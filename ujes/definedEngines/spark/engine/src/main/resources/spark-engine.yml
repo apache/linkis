@@ -1,0 +1,15 @@
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+  instance:
+    lease-expiration-duration-in-seconds: 30
+    lease-renewal-interval-in-seconds: 10
+#required（必须）
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info
+#    register-with-eureka: false
+#    fetch-registry: false

@@ -1,0 +1,294 @@
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.webank.wedatasphere.linkis.engine.executors
+
+import java.text.NumberFormat
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicLong
+
+import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
+import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration
+import com.webank.wedatasphere.linkis.engine.exception.{NoSupportEngineException, SparkEngineException}
+import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineExecutorContext}
+import com.webank.wedatasphere.linkis.engine.spark.common._
+import com.webank.wedatasphere.linkis.engine.spark.utils.EngineUtils
+import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
+import com.webank.wedatasphere.linkis.resourcemanager.{DriverAndYarnResource, LoadInstanceResource, YarnResource}
+import com.webank.wedatasphere.linkis.scheduler.exception.DWCJobRetryException
+import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorState.{ExecutorState => _}
+import com.webank.wedatasphere.linkis.scheduler.executer._
+import com.webank.wedatasphere.linkis.storage.domain.{Column, DataType}
+import com.webank.wedatasphere.linkis.storage.resultset.ResultSetFactory
+import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
+import org.apache.commons.lang.StringUtils
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.DataFrame
+import org.apache.spark.ui.jobs.JobProgressListener
+import org.scalactic.Pass
+
+import scala.collection.mutable.ArrayBuffer
+
+/**
+  * Created by allenlliu on 2019/4/8.
+  */
+class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int, sparkExecutors: Seq[SparkExecutor])
+  extends EngineExecutor(outputPrintLimit, false) with SingleTaskOperateSupport with SingleTaskInfoSupport with Logging {
+  private val jobListener = sc.getClass.getDeclaredMethod("jobProgressListener").invoke(sc).asInstanceOf[JobProgressListener]
+  val queryNum = new AtomicLong(0)
+  private var jobGroup: String = _
+
+  override def init() = {
+    info(s"Ready to change engine state!")
+    //    this.setCodeParser(new SparkCombinedCodeParser())
+    val heartbeat = Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
+      override def run(): Unit = {
+        if (sc.isStopped) {
+          error("Spark application has already stopped, please restart a new engine.")
+          transition(ExecutorState.Error)
+        }
+      }
+    }, 1000, 3000, TimeUnit.MILLISECONDS)
+    super.init()
+  }
+
+  override def getName: String = sc.appName
+
+  //Runtime resources, because of the time constraints, so take it directly in the conf（运行时资源 这里由于时间紧迫，所以先直接在conf里面拿）
+  override def getActualUsedResources: DriverAndYarnResource = {
+    info("Begin to get actual used resources!")
+    Utils.tryCatch({
+      //      val driverHost: String = sc.getConf.get("spark.driver.host")
+      //      val executorMemList = sc.getExecutorMemoryStatus.filter(x => !x._1.split(":")(0).equals(driverHost)).map(x => x._2._1)
+      val executorNum: Int = sc.getConf.get("spark.executor.instances").toInt
+      val executorMem: Long = ByteTimeUtils.byteStringAsBytes(sc.getConf.get("spark.executor.memory")) * executorNum
+
+      //      if(executorMemList.size>0) {
+      //        executorMem = executorMemList.reduce((x, y) => x + y)
+      //      }
+      val driverMem: Long = ByteTimeUtils.byteStringAsBytes(sc.getConf.get("spark.driver.memory"))
+      //      val driverMemList = sc.getExecutorMemoryStatus.filter(x => x._1.split(":")(0).equals(driverHost)).map(x => x._2._1)
+      //      if(driverMemList.size > 0) {
+      //          driverMem = driverMemList.reduce((x, y) => x + y)
+      //      }
+      val sparkExecutorCores = sc.getConf.get("spark.executor.cores").toInt * executorNum
+      val sparkDriverCores = sc.getConf.get("spark.driver.cores").toInt
+      val queue = sc.getConf.get("spark.yarn.queue")
+      info("Current actual used resources is driverMem:" + driverMem + ",driverCores:" + sparkDriverCores + ",executorMem:" + executorMem + ",executorCores:" + sparkExecutorCores + ",queue:" + queue)
+      new DriverAndYarnResource(
+        new LoadInstanceResource(driverMem, sparkDriverCores, 1),
+        new YarnResource(executorMem, sparkExecutorCores, 0, queue, sc.applicationId)
+      )
+    })(t => {
+      warn("Get actual used resource exception", t)
+      null
+    })
+  }
+
+  private[executors] var engineExecutorContext: EngineExecutorContext = _
+
+  override protected def executeLine(engineExecutorContext: EngineExecutorContext, code: String): ExecuteResponse = Utils.tryFinally {
+    if (sc.isStopped) {
+      error("Spark application has already stopped, please restart it.")
+      transition(ExecutorState.Error)
+      throw new DWCJobRetryException("Spark application sc has already stopped, please restart it.")
+    }
+    this.engineExecutorContext = engineExecutorContext
+    val runType = engineExecutorContext.getProperties.get("runType").asInstanceOf[String]
+    var kind: Kind = null
+    if (StringUtils.isNotBlank(runType)) {
+      runType.toLowerCase match {
+        case "python" | "py" | "pyspark" => kind = PySpark()
+        case "sql" | "sparksql" => kind = SparkSQL()
+        case "scala" => kind = SparkScala()
+        case _ => kind = SparkSQL()
+      }
+    }
+
+    val _code = Kind.getRealCode(code)
+    info(s"Ready to run code with kind $kind.")
+    jobGroup = String.valueOf("dwc-spark-mix-code-" + queryNum.incrementAndGet())
+    //    val executeCount = queryNum.get().toInt - 1
+    info("Set jobGroup to " + jobGroup)
+    sc.setJobGroup(jobGroup, _code, true)
+
+    val response = Utils.tryFinally(sparkExecutors.find(_.kind == kind).map(_.execute(this, _code, engineExecutorContext, jobGroup)).getOrElse(throw new NoSupportEngineException(40008, s"Not supported $kind executor!"))) {
+      this.engineExecutorContext.pushProgress(progress(), getProgressInfo)
+      jobGroup = null
+      this.engineExecutorContext = null
+      sc.clearJobGroup()
+    }
+    info(s"Start to structure sparksql resultset")
+    response
+  }(Pass)
+
+  override protected def executeCompletely(engineExecutorContext: EngineExecutorContext, code: String, completedLine: String): ExecuteResponse = {
+    val newcode = completedLine + code
+    info("newcode is " + newcode)
+    executeLine(engineExecutorContext, newcode)
+  }
+
+
+  override def createEngineExecutorContext(executeRequest: ExecuteRequest): EngineExecutorContext = {
+    val engineExecutorContext = super.createEngineExecutorContext(executeRequest)
+    executeRequest match {
+      case runTypeExecuteRequest: RunTypeExecuteRequest => engineExecutorContext.addProperty("runType", runTypeExecuteRequest.runType)
+      case _ =>
+    }
+    engineExecutorContext
+  }
+
+  override def pause(): Boolean = ???
+
+  override def kill(): Boolean = {
+    if (!sc.isStopped) {
+      sc.cancelAllJobs
+      true
+    } else {
+      false
+    }
+  }
+
+  override def resume(): Boolean = ???
+
+  override def progress(): Float = if (jobGroup == null) 0
+  else {
+    var totalTask = 0
+    var runTask = 0
+    val activeJobs = jobListener.activeJobs
+    val completedJobs = jobListener.completedJobs
+    activeJobs.values.foreach(f => {
+      if (f.jobGroup.getOrElse("").equals(jobGroup)) {
+        runTask = runTask + f.numCompletedTasks
+        totalTask = totalTask + f.numTasks
+      }
+    })
+    completedJobs.foreach(f => {
+      if (f.jobGroup.getOrElse("").equals(jobGroup)) {
+        runTask = runTask + f.numCompletedTasks + f.numKilledTasks + f.numSkippedTasks
+        totalTask = totalTask + f.numTasks
+      }
+    })
+    info("Current JobGroup " + jobGroup + " progress is runTask:" + runTask + ",totalTask:" + totalTask)
+    if (engineExecutorContext.getTotalParagraph != 0 && totalTask != 0) {
+      val res = (engineExecutorContext.getCurrentParagraph * 1f - 1f) / engineExecutorContext.getTotalParagraph + (runTask * 1f / totalTask) / engineExecutorContext.getTotalParagraph
+      info("Current progress is " + res)
+      res
+    } else if (engineExecutorContext.getTotalParagraph != 0) {
+        val res2 = (engineExecutorContext.getCurrentParagraph * 1f - 1f) / engineExecutorContext.getTotalParagraph
+        info("Current progress is " + res2)
+        res2
+    } else {
+      0
+    }
+  }
+
+  override def getProgressInfo: Array[JobProgressInfo] = if (jobGroup == null) Array.empty
+  else {
+    info("request new progress info for jobGroup is " + jobGroup)
+    var progressInfoArray = ArrayBuffer[JobProgressInfo]()
+    val activeJobs = jobListener.activeJobs
+    val completedJobs = jobListener.completedJobs
+    activeJobs.values.foreach(f => {
+      if (f.jobGroup.getOrElse("").equals(jobGroup)) {
+        val progress = JobProgressInfo(f.jobGroup.getOrElse(""), f.numTasks, f.numActiveTasks, f.numFailedTasks, f.numCompletedTasks + f.numSkippedTasks)
+        progressInfoArray += progress
+      }
+    })
+    completedJobs.foreach(f => {
+      if (f.jobGroup.getOrElse("").equals(jobGroup)) {
+        val progress = JobProgressInfo(f.jobGroup.getOrElse(""), f.numTasks, f.numActiveTasks, f.numFailedTasks, f.numCompletedTasks + f.numSkippedTasks)
+        progressInfoArray += progress
+      }
+    })
+    progressInfoArray.toArray
+  }
+
+  override def log(): String = {
+    ""
+  }
+
+  override def close(): Unit = ???
+}
+
+object SQLSession extends Logging {
+  val nf = NumberFormat.getInstance()
+  nf.setGroupingUsed(false)
+  nf.setMaximumFractionDigits(SparkConfiguration.SPARK_NF_FRACTION_LENGTH.getValue)
+
+  def showDF(sc: SparkContext, jobGroup: String, df: Any, alias: String, maxResult: Int, engineExecutorContext: EngineExecutorContext): Unit = {
+    //
+    if (sc.isStopped) {
+      error("Spark application has already stopped in showDF, please restart it.")
+      throw new DWCJobRetryException("Spark application sc has already stopped, please restart it.")
+    }
+    val startTime = System.currentTimeMillis()
+    //    sc.setJobGroup(jobGroup, "Get IDE-SQL Results.", false)
+    val dataFrame = df.asInstanceOf[DataFrame]
+    val iterator = Utils.tryThrow(dataFrame.toLocalIterator) { t => sc.clearJobGroup()
+      throw new SparkEngineException(40002, s"dataFrame to local exception", t)
+    }
+    //var columns: List[Attribute] = null
+    // get field names
+
+    val columnsSet = dataFrame.schema
+    val columns = columnsSet.map(c =>
+      Column(c.name, DataType.toDataType(c.dataType.typeName.toLowerCase), c.getComment().orNull)).toArray[Column]
+    if (columns == null || columns.isEmpty) return
+    val metaData = new TableMetaData(columns)
+    val writer = if (StringUtils.isNotBlank(alias))
+      engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE, alias)
+    else engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
+    writer.addMetaData(metaData)
+    var index = 0
+    Utils.tryThrow({
+      while (index < maxResult && iterator.hasNext) {
+        val row = iterator.next()
+        val r: Array[Any] = columns.indices.map { i =>
+          val data = row(i) match {
+            case value: String => value.replaceAll("\n|\t", " ")
+            case value: Double => nf.format(value)
+            case value: Any => value.toString
+            case _ => null
+          }
+          data
+        }.toArray
+        writer.addRecord(new TableRecord(r))
+        index += 1
+      }
+    }) { t => sc.clearJobGroup()
+      throw new SparkEngineException(40001, s"read record  exception", t)
+    }
+    warn(s"Time taken: ${System.currentTimeMillis() - startTime}, Fetched $index row(s).")
+    engineExecutorContext.appendStdout(s"${EngineUtils.getName} >> Time taken: ${System.currentTimeMillis() - startTime}, Fetched $index row(s).")
+    sc.clearJobGroup()
+    engineExecutorContext.sendResultSet(writer)
+  }
+
+  def showHTML(sc: SparkContext, jobGroup: String, htmlContent: Any, engineExecutorContext: EngineExecutorContext): Unit = {
+    val startTime = System.currentTimeMillis()
+    val writer = engineExecutorContext.createResultSetWriter(ResultSetFactory.HTML_TYPE)
+    val metaData = new LineMetaData(null)
+    writer.addMetaData(metaData)
+    writer.addRecord(new LineRecord(htmlContent.toString))
+    warn(s"Time taken: ${System.currentTimeMillis() - startTime}")
+    sc.clearJobGroup()
+    engineExecutorContext.sendResultSet(writer)
+  }
+}
+
+

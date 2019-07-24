@@ -1,0 +1,20 @@
+server:
+  port: 8993  #The port that the module provides services (required)(该模块提供服务的端口（必须）)
+spring:
+  application:
+    name: pythonEngine  #Module name for high availability (required)(模块名，用于做高可用（必须）)
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+  instance:
+    lease-expiration-duration-in-seconds: 30
+    lease-renewal-interval-in-seconds: 10
+#required（必须）
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info
+#    register-with-eureka: false
+#    fetch-registry: false

@@ -1,0 +1,45 @@
+package com.webank.wedatasphere.linkis.application.restful.remote;
+
+import com.webank.wedatasphere.linkis.application.exception.ApplicationException;
+import org.codehaus.jackson.JsonNode;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.POST;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+
+/**
+ * Created by johnnwang on 2019/1/17.
+ */
+@FeignClient(name = "cloud-application")
+public interface ApplicationRestfulRemote {
+    @PostMapping("/api/application/createApplication")
+    Response createApplication(@Context HttpServletRequest req,JsonNode json) throws IOException, ApplicationException;
+
+    @PostMapping("/api/application/removeApplication")
+    Response removeApplication(@Context HttpServletRequest req,JsonNode json) throws IOException, ApplicationException;
+
+    @PostMapping("/api/application/updateApplication")
+    Response updateApplication(@Context HttpServletRequest req,JsonNode json) throws IOException, ApplicationException;
+
+    @GetMapping("/api/application/{applicationId}/get")
+    Response getApplication(@Context HttpServletRequest req,@PathVariable Long applicationId);
+
+    @PostMapping("/api/application/list")
+    Response listApplication(@Context HttpServletRequest req);
+
+    @GetMapping("/api/application/{applicationId}/open")
+    Response openApplication(@Context HttpServletRequest req,@PathVariable Long applicationId) throws IOException;
+
+    @PostMapping("/api/application/regist")
+    Response regist(@Context HttpServletRequest req,JsonNode json) throws ApplicationException;
+
+    @GetMapping("/api/application/getBaseInfo")
+    Response getBaseInfo(@Context HttpServletRequest req) throws IOException, ApplicationException;
+}

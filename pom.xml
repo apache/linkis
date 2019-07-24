@@ -22,7 +22,7 @@
 
     <groupId>com.webank.wedatasphere.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>0.5.0-SNAPSHOT</version>
+    <version>0.5.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -89,7 +89,7 @@
 
         <slf4j.version>1.7.12</slf4j.version>
         <json4s.version>3.2.11</json4s.version>
-        <linkis.version>0.5.0-SNAPSHOT</linkis.version>
+        <linkis.version>0.5.0</linkis.version>
         <maven.version>3.3.3</maven.version>
     </properties>
 

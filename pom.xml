@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2019 WeBank
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.webank.wedatasphere.linkis</groupId>
+    <artifactId>linkis</artifactId>
+    <version>0.5.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>core/cloudProtocol</module>
+        <module>core/common</module>
+        <module>core/scheduler</module>
+        <module>core/cloudModule</module>
+        <module>core/cloudRPC</module>
+        <module>core/cloudMybatis</module>
+        <module>storage/storage</module>
+        <module>resourceManager/resourcemanagercommon</module>
+        <module>resourceManager/resourcemanagerclient</module>
+        <module>resourceManager/resourcemanagerserver</module>
+        <module>publicService/udf</module>
+        <module>publicService/application</module>
+        <module>publicService/database</module>
+        <module>publicService/query</module>
+        <module>publicService/configuration</module>
+        <module>publicService/variable</module>
+        <module>publicService/workspace</module>
+        <module>ujes/engine</module>
+        <module>ujes/enginemanager</module>
+        <module>ujes/entrance</module>
+        <module>ujes/definedEngines/spark/engine</module>
+        <module>ujes/definedEngines/spark/enginemanager</module>
+        <module>ujes/definedEngines/spark/entrance</module>
+
+        <module>ujes/definedEngines/hive/engine</module>
+        <module>ujes/definedEngines/hive/enginemanager</module>
+        <module>ujes/definedEngines/hive/entrance</module>
+
+        <module>ujes/definedEngines/python/engine</module>
+        <module>ujes/definedEngines/python/enginemanager</module>
+        <module>ujes/definedEngines/python/entrance</module>
+
+        <module>ujes/definedEngines/pipeline/engine</module>
+        <module>ujes/definedEngines/pipeline/enginemanager</module>
+        <module>ujes/definedEngines/pipeline/entrance</module>
+        <module>gateway/core</module>
+        <module>gateway/springcloudgateway</module>
+        <module>gateway/gateway-ujes-support</module>
+        <module>eurekaServer</module>
+        <module>publicService</module>
+        <module>assembly</module>
+    </modules>
+
+    <properties>
+
+        <hadoop.version>2.7.2</hadoop.version>
+
+        <spring.eureka.version>1.4.4.RELEASE</spring.eureka.version>
+        <spring.boot.version>2.0.3.RELEASE</spring.boot.version>
+        <gson.version>2.8.5</gson.version>
+
+        <fasterxml.jackson.version>2.9.6</fasterxml.jackson.version>
+        <scala.version>2.11.8</scala.version>
+        <jdk.compile.version>1.8</jdk.compile.version>
+        <plugin.scala.version>2.15.2</plugin.scala.version>
+        <scala.binary.version>2.11</scala.binary.version>
+        <jersey.version>2.16</jersey.version>
+
+        <jersey.servlet.version>2.23.1</jersey.servlet.version>
+        <jetty.version>9.4.11.v20180605</jetty.version>
+
+        <slf4j.version>1.7.12</slf4j.version>
+        <json4s.version>3.2.11</json4s.version>
+        <linkis.version>0.5.0-SNAPSHOT</linkis.version>
+        <maven.version>3.3.3</maven.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>com.webank.wedatasphere.linkis</groupId>
+                <artifactId>linkis-module</artifactId>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-tomcat</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>hibernate-validator</artifactId>
+                        <groupId>org.hibernate.validator</groupId>
+                    </exclusion>
+                </exclusions>
+                <version>${linkis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.webank.wedatasphere.linkis</groupId>
+                <artifactId>linkis-common</artifactId>
+                <version>${linkis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.webank.wedatasphere.linkis</groupId>
+                <artifactId>linkis-mybatis</artifactId>
+                <version>${linkis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Finchley.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
+
+            <!-- scala version -->
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>${scala.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-compiler</artifactId>
+                <version>${scala.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-reflect</artifactId>
+                <version>${scala.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scalap</artifactId>
+                <version>${scala.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.6</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>14.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>3.2.2</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+
+    <profiles>
+        <profile>
+            <id>product</id>
+            <properties>
+                <project.release.version>0.0.3-SNAPSHOT</project.release.version>
+            </properties>
+        </profile>
+    </profiles>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>1.4.1</version>
+                    <executions>
+                        <execution>
+                            <id>enforce-versions</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <requireMavenVersion>
+                                        <version>${maven.version}</version>
+                                    </requireMavenVersion>
+                                    <requireJavaVersion>
+                                        <version>${java.version}</version>
+                                    </requireJavaVersion>
+                                    <bannedDependencies>
+                                        <excludes>
+                                            <exclude>org.jboss.netty</exclude>
+                                        </excludes>
+                                        <searchTransitive>true</searchTransitive>
+                                    </bannedDependencies>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.5.1</version>
+                    <configuration>
+                        <source>${jdk.compile.version}</source>
+                        <target>${jdk.compile.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>net.alchim31.maven</groupId>
+                    <artifactId>scala-maven-plugin</artifactId>
+                    <version>3.2.2</version>
+                    <executions>
+                        <execution>
+                            <id>eclipse-add-source</id>
+                            <goals>
+                                <goal>add-source</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>scala-compile-first</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>scala-test-compile-first</id>
+                            <phase>process-test-resources</phase>
+                            <goals>
+                                <goal>testCompile</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>attach-scaladocs</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>doc-jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <scalaVersion>${scala.version}</scalaVersion>
+                        <recompileMode>incremental</recompileMode>
+                        <useZincServer>true</useZincServer>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

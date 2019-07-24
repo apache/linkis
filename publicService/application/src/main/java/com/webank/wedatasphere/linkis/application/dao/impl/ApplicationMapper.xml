@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Copyright 2019 WeBank
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="com.webank.wedatasphere.linkis.application.dao.ApplicationMapper">
+
+    <resultMap id="wfApplicationMapper" type="com.webank.wedatasphere.linkis.application.entity.Application">
+        <result column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="source" property="source" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="is_published" property="isPublished" jdbcType="TINYINT"/>
+        <result column="is_transfer" property="isTransfer" jdbcType="TINYINT"/>
+        <result column="visibility" property="visibility" jdbcType="TINYINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="org_id" property="orgId" jdbcType="BIGINT"/>
+        <result column="initial_org_id" property="initialOrgId" jdbcType="BIGINT"/>
+        <result column="json_path" property="jsonPath" jdbcType="VARCHAR"/>
+        <result column="isAsh" property="isAsh" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <resultMap id="projectVOMapper" type="com.webank.wedatasphere.linkis.application.entity.ProjectVO">
+        <result column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="is_project_need_init" property="isProjectNeedInit" jdbcType="TINYINT"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="user_init_url" property="userInitUrl" jdbcType="VARCHAR"/>
+        <result column="is_user_need_init" property="isUserNeedInit" jdbcType="TINYINT"/>
+        <result column="is_project_inited" property="isProjectInited" jdbcType="TINYINT"/>
+        <result column="project_json" property="projectJson" jdbcType="VARCHAR"/>
+        <result column="level" property="level" jdbcType="BIGINT"/>
+        <result column="user_json" property="userJson" jdbcType="VARCHAR"/>
+        <result column="is_new_feature" property="isNewFeature" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <insert id="insertWFApplication" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.webank.wedatasphere.linkis.application.entity.Application">
+            INSERT INTO linkis_develop_application
+            VALUES (#{id},#{name},#{source}, #{version},#{description},#{userId},#{isPublished},#{createTime},#{updateTime},#{orgId}
+            ,#{visibility},#{isTransfer},#{initialOrgId},#{jsonPath},#{isAsh},#{pic},#{starNum})
+    </insert>
+
+    <delete id="deleteWFApplication">
+        DELETE FROM linkis_develop_application WHERE id =#{applicationId}
+    </delete>
+
+    <select id="listWFApplication" resultMap="wfApplicationMapper">
+        select * from linkis_develop_application WHERE user_id =#{userId} ;
+    </select>
+
+    <select id="selectWFApplication" resultType="com.webank.wedatasphere.linkis.application.entity.Application">
+        select * from linkis_develop_application WHERE id =#{applicationId} ;
+    </select>
+
+    <update id="updateWFApplication" parameterType="com.webank.wedatasphere.linkis.application.entity.Application">
+        UPDATE linkis_develop_application
+        <trim prefix="set" suffixOverrides=",">
+            <if test="name != null">`name`=#{name},</if>
+            <if test="description != null">description=#{description},</if>
+            <if test="jsonPath != null">json_path=#{jsonPath},</if>
+            <if test="updateTime != null">update_time=#{updateTime},</if>
+            <if test="version != null">version=#{version},</if>
+        </trim>
+        WHERE id =#{id}
+    </update>
+
+    <select id="selectUserIdByName" resultType="Long">
+        SELECT id FROM linkis_user WHERE username = #{userName}
+    </select>
+
+    <select id="selectUserByName" resultType="com.webank.wedatasphere.linkis.application.entity.ApplicationUser">
+        SELECT * FROM linkis_user WHERE username = #{userName}
+    </select>
+
+    <insert id="inserUser" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.webank.wedatasphere.linkis.application.entity.ApplicationUser">
+        INSERT INTO linkis_user VALUES (#{id},#{email},#{userName},#{password},#{admin},#{active},#{name},#{description},
+        #{department},#{avatar},#{createTime},#{createBy},#{updateTime},#{updateBy},#{isFirstLogin})
+    </insert>
+
+    <update id="updateUserFirstLoginStatus">
+        UPDATE linkis_user SET is_first_login = FALSE WHERE id = #{id}
+    </update>
+
+    <select id="selectAllProject" resultType="com.webank.wedatasphere.linkis.application.entity.Project">
+        select * from linkis_project_list
+    </select>
+
+    <select id="listNeedUserInitProject" resultType="com.webank.wedatasphere.linkis.application.entity.Project">
+        SELECT  * FROM  linkis_project_list where is_user_need_init = true
+    </select>
+    <insert id="insertProjectUser" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.webank.wedatasphere.linkis.application.entity.ProjectUser">
+        INSERT INTO linkis_project_user VALUES (#{id},#{projectId},#{json},#{userId},#{isInitSuccess},#{isNewFeature})
+    </insert>
+    <update id="updateProjectUser" parameterType="com.webank.wedatasphere.linkis.application.entity.ProjectUser">
+        UPDATE linkis_project_user
+        <trim prefix="set" suffixOverrides=",">
+            <if test="json != null">json=#{json},</if>
+            <if test="isInitSuccess != null">is_init_success=#{isInitSuccess},</if>
+            <if test="isNewFeature != null">is_new_feature=#{isNewFeature},</if>
+        </trim>
+        WHERE user_id =#{userId} AND project_id = #{projectId}
+    </update>
+
+    <select id="listInitedProject" resultType="com.webank.wedatasphere.linkis.application.entity.Project">
+        SELECT bdpl.*  FROM linkis_project_list bdpl RIGHT JOIN  linkis_project_user bdpu ON bdpl.id = bdpu.project_id WHERE bdpu.user_id = #{userId}
+    </select>
+
+    <select id="getProjectVO" resultMap="projectVOMapper">
+        SELECT bdpl.id,bdpl.name,bdpl.is_project_need_init,bdpl.url,bdpl.is_user_need_init,bdpl.is_project_inited,bdpl.json AS project_json,bdpl.level,bdpl.user_init_url
+        ,bdpu.json AS user_json,bdpu.is_new_feature
+        FROM linkis_project_list bdpl
+        JOIN linkis_project_user bdpu on bdpl.id = bdpu.project_id
+        WHERE bdpu.user_id = #{userId} AND bdpl.id =#{projectId}
+    </select>
+
+    <insert id="register" useGeneratedKeys="true" keyProperty="id" parameterType="com.webank.wedatasphere.linkis.application.entity.Project">
+        INSERT INTO linkis_project_list(name,is_project_need_init,url,is_user_need_init,is_project_inited,json,level,user_init_url) VALUES (#{name},#{isProjectNeedInit},#{url},#{isUserNeedInit},#{isProjectInited},#{json},#{level},#{userInitUrl})
+    </insert>
+    <select id="getPorjectByName" resultType="com.webank.wedatasphere.linkis.application.entity.Project">
+        SELECT * FROM linkis_project_list WHERE name = #{name}
+    </select>
+
+    <update id="updateProjectByName" parameterType ="com.webank.wedatasphere.linkis.application.entity.Project" >
+        UPDATE linkis_project_list
+        <trim prefix="set" suffixOverrides=",">
+            <if test="json != null">json=#{json},</if>
+            <if test="url != null">url=#{url},</if>
+            <if test="level != null">level=#{level},</if>
+            <if test="userInitUrl != null">user_init_url=#{userInitUrl},</if>
+        </trim>
+        WHERE name =#{name}
+    </update>
+
+</mapper>

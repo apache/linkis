@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Copyright 2019 WeBank
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.webank.wedatasphere.linkis.resourcemanager.dao.EmResourceMetaDataDao">
+    <resultMap id="EmResourceMetaDataMap"
+               type="com.webank.wedatasphere.linkis.resourcemanager.domain.EmResourceMetaData">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="em_application_name" property="emApplicationName" jdbcType="VARCHAR"/>
+        <result column="em_instance" property="emInstance" jdbcType="VARCHAR"/>
+        <result column="total_resource" property="totalResource" jdbcType="VARCHAR"/>
+        <result column="protected_resource" property="protectedResource" jdbcType="VARCHAR"/>
+        <result column="resource_policy" property="resourcePolicy" jdbcType="VARCHAR"/>
+        <result column="used_resource" property="usedResource" jdbcType="VARCHAR"/>
+        <result column="left_resource" property="leftResource" jdbcType="VARCHAR"/>
+        <result column="locked_resource" property="lockedResource" jdbcType="VARCHAR"/>
+        <result column="register_time" property="registerTime" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="EmResourceMetaData_Column_List_Insert">
+        em_application_name, em_instance, total_resource, protected_resource, resource_policy, used_resource, left_resource, locked_resource, register_time
+    </sql>
+
+    <sql id="EmResourceMetaData_Column_List">
+        id,
+        <include refid="EmResourceMetaData_Column_List_Insert"/>
+    </sql>
+
+    <select id="getAll" resultMap="EmResourceMetaDataMap">
+        select
+        <include refid="EmResourceMetaData_Column_List"/>
+        from linkis_em_resource_meta_data
+    </select>
+
+    <select id="getByEmName" resultMap="EmResourceMetaDataMap">
+        select
+        <include refid="EmResourceMetaData_Column_List"/>
+        from linkis_em_resource_meta_data
+        where em_application_name=#{emApplicationName}
+    </select>
+
+    <select id="getByEmInstance" resultMap="EmResourceMetaDataMap">
+        select
+        <include refid="EmResourceMetaData_Column_List"/>
+        from linkis_em_resource_meta_data
+        where em_application_name=#{emApplicationName} and em_instance =#{emInstance}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
+            parameterType="com.webank.wedatasphere.linkis.resourcemanager.domain.EmResourceMetaData">
+        INSERT INTO linkis_em_resource_meta_data (
+        <include refid="EmResourceMetaData_Column_List_Insert"/>
+        ) VALUES (
+        #{emApplicationName},#{emInstance},#{totalResource},#{protectedResource},#{resourcePolicy},#{usedResource},#{leftResource},#{lockedResource},#{registerTime}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE linkis_em_resource_meta_data
+        <set>
+            <if test="emApplicationName != null">em_application_name=#{emApplicationName},</if>
+            <if test="emInstance != null">em_instance=#{emInstance},</if>
+            <if test="totalResource != null">total_resource=#{totalResource},</if>
+            <if test="protectedResource != null">protected_resource=#{protectedResource},</if>
+            <if test="resourcePolicy != null">resource_policy=#{resourcePolicy},</if>
+            used_resource=#{usedResource},
+            left_resource=#{leftResource},
+            locked_resource=#{lockedResource}
+            <if test="registerTime != null">, register_time=#{registerTime},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM linkis_em_resource_meta_data WHERE id=#{0}
+    </delete>
+
+</mapper>

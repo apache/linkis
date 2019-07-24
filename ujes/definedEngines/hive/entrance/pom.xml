@@ -21,34 +21,18 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.5.0</version>
+        <version>0.5.0-SNAPSHOT</version>
     </parent>
-
-    <artifactId>linkis-eureka-server</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <packaging>jar</packaging>
+
+    <artifactId>linkis-hive-entrance</artifactId>
+
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-eureka-server</artifactId>
-            <version>${spring.eureka.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>hibernate-validator</artifactId>
-                    <groupId>org.hibernate.validator</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-ujes-entrance</artifactId>
+            <version>${linkis.version}</version>
         </dependency>
     </dependencies>
     <build>
@@ -87,7 +71,7 @@
                 </executions>
                 <configuration>
                     <skipAssembly>false</skipAssembly>
-                    <finalName>eureka</finalName>
+                    <finalName>linkis-ujes-hive-entrance</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <attach>false</attach>
                     <descriptors>
@@ -103,4 +87,5 @@
         </resources>
         <finalName>${project.artifactId}-${project.version}</finalName>
     </build>
+
 </project>

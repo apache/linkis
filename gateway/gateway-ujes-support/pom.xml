@@ -18,39 +18,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.5.0</version>
+        <version>0.5.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>linkis-eureka-server</artifactId>
-    <modelVersion>4.0.0</modelVersion>
-    <packaging>jar</packaging>
+    <artifactId>linkis-gateway-ujes-support</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-eureka-server</artifactId>
-            <version>${spring.eureka.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>hibernate-validator</artifactId>
-                    <groupId>org.hibernate.validator</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-gateway-springcloudgateway</artifactId>
+            <version>${linkis.version}</version>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -80,18 +65,18 @@
                         </goals>
                         <configuration>
                             <descriptors>
-                                <descriptor>src/main/assembly/distribution.xml</descriptor>
+                                <descriptor>../gateway-ujes-support/src/main/assembly/distribution.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
                 </executions>
                 <configuration>
                     <skipAssembly>false</skipAssembly>
-                    <finalName>eureka</finalName>
+                    <finalName>linkis-gateway</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <attach>false</attach>
                     <descriptors>
-                        <descriptor>src/main/assembly/distribution.xml</descriptor>
+                        <descriptor>../gateway-ujes-support/src/main/assembly/distribution.xml</descriptor>
                     </descriptors>
                 </configuration>
             </plugin>
@@ -103,4 +88,5 @@
         </resources>
         <finalName>${project.artifactId}-${project.version}</finalName>
     </build>
+
 </project>

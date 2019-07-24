@@ -58,13 +58,13 @@ class TestEngineExecutor(outputPrintLimit: Int, isSupportParallelism: Boolean) e
     null
   }
 
-  override def getName: String = ???
+  override def getName: String = ""
 
-  override def getActualUsedResources: Resource = ???
+  override def getActualUsedResources: Resource = null
 
-  override protected def executeLine(engineExecutorContext: EngineExecutorContext, code: String): ExecuteResponse = ???
+  override protected def executeLine(engineExecutorContext: EngineExecutorContext, code: String): ExecuteResponse = null
 
-  override protected def executeCompletely(engineExecutorContext: EngineExecutorContext, code: String, completedLine: String): ExecuteResponse = ???
+  override protected def executeCompletely(engineExecutorContext: EngineExecutorContext, code: String, completedLine: String): ExecuteResponse = null
 
-  override def close(): Unit = ???
+  override def close(): Unit = null
 }

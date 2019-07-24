@@ -1,4 +1,4 @@
-## 1 Introduction 
+## Introduction 
 
 WilLink is a collection of middleware services for financial-level big data platforms. Connected to WilLink foreground system, a user can obtain the capabilities of financial-level multi-tenant, resource management and permission isolation. Besides, unified variables, functions and source file management across multiple foreground systems are realized. In addition, it empowers users to get lifecycle management capabilities for high-concurrency, high-performance and high-availability jobs.
 
@@ -6,7 +6,7 @@ Based on the microservices architecture, WilLink also supports plug-in connectio
 
 WilLink, the link between user and data platform. 
 
-## 2 Features
+## Features
 
 - Unified Job Execution Services:  A distributed REST/WebSocket container designed for receiving data analysis and exploration requests submitted by foreground system.
 
@@ -28,21 +28,21 @@ WilLink, the link between user and data platform.
 
 - Metadata Services: Real-time display of dataset table structure and partition. 
 
-## 3 QuickStart
+## QuickStart
 
 Read the Quick Start.
 
-## 4 Architecture
+## Architecture
 
-## 5 RoadMap
+## RoadMap
 
-## 6 Contributing
+## Contributing
 
-## 7 Adopters
+## Adopters
 
-## 8 Communication
+## Communication
 
-## 9 License
+## License
 
 Scriptest is under the Apache 2.0 license. See the [LICENSE ](http://www.apache.org/licenses/LICENSE-2.0)file for details.
 

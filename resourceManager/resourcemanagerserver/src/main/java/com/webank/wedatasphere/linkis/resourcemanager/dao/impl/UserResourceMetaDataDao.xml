@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Copyright 2019 WeBank
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.webank.wedatasphere.linkis.resourcemanager.dao.UserResourceMetaDataDao">
+    <resultMap id="UserResourceMetaDataMap"
+               type="com.webank.wedatasphere.linkis.resourcemanager.domain.UserResourceMetaData">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user" property="user" jdbcType="VARCHAR"/>
+        <result column="ticket_id" property="ticketId" jdbcType="VARCHAR"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="em_application_name" property="emApplicationName" jdbcType="VARCHAR"/>
+        <result column="em_instance" property="emInstance" jdbcType="VARCHAR"/>
+        <result column="engine_application_name" property="engineApplicationName" jdbcType="VARCHAR"/>
+        <result column="engine_instance" property="engineInstance" jdbcType="VARCHAR"/>
+        <result column="user_locked_resource" property="userLockedResource" jdbcType="VARCHAR"/>
+        <result column="user_used_resource" property="userUsedResource" jdbcType="VARCHAR"/>
+        <result column="resource_type" property="resourceType" jdbcType="VARCHAR"/>
+        <result column="locked_time" property="lockedTime" jdbcType="BIGINT"/>
+        <result column="used_time" property="usedTime" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="UserResourceMetaData_Column_List_Insert">
+        user, ticket_id, creator, em_application_name, em_instance, engine_application_name, engine_instance, user_locked_resource, user_used_resource, resource_type, locked_time, used_time
+    </sql>
+
+    <sql id="UserResourceMetaData_Column_List">
+        id,
+        <include refid="UserResourceMetaData_Column_List_Insert"/>
+    </sql>
+
+    <select id="getAll" resultMap="UserResourceMetaDataMap">
+        select
+        <include refid="UserResourceMetaData_Column_List"/>
+        from linkis_user_resource_meta_data
+    </select>
+
+    <select id="getByUser" resultMap="UserResourceMetaDataMap">
+        select
+        <include refid="UserResourceMetaData_Column_List"/>
+        from linkis_user_resource_meta_data
+        where user=#{user}
+    </select>
+
+    <select id="getByTicketId" resultMap="UserResourceMetaDataMap">
+        select
+        <include refid="UserResourceMetaData_Column_List"/>
+        from linkis_user_resource_meta_data
+        where ticket_id=#{ticketId}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
+            parameterType="com.webank.wedatasphere.linkis.resourcemanager.domain.UserResourceMetaData">
+        INSERT INTO linkis_user_resource_meta_data (
+        <include refid="UserResourceMetaData_Column_List_Insert"/>
+        ) VALUES (
+        #{user},#{ticketId},#{creator},#{emApplicationName},#{emInstance},#{engineApplicationName},#{engineInstance},#{userLockedResource},#{userUsedResource},#{resourceType},#{lockedTime},#{usedTime}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE linkis_user_resource_meta_data
+        <set>
+            engine_application_name=#{engineApplicationName},
+            engine_instance=#{engineInstance},
+            user_locked_resource=#{userLockedResource},
+            user_used_resource=#{userUsedResource},
+            locked_time=#{lockedTime},
+            used_time=#{usedTime}
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM linkis_user_resource_meta_data WHERE id=#{0}
+    </delete>
+
+    <delete id="deleteByEmInstance">
+        DELETE FROM linkis_user_resource_meta_data WHERE em_application_name=#{emApplicationName} and em_instance =#{emInstance}
+    </delete>
+
+    <delete id="deleteByUser">
+        DELETE FROM linkis_user_resource_meta_data WHERE user=#{user}
+    </delete>
+
+</mapper>

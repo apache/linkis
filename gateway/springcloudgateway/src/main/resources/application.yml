@@ -1,0 +1,35 @@
+server:
+  port: 9001  #该模块提供服务的端口（必须）
+spring:
+  application:
+    name: DataWorkCloud-Gateway  #模块名，用于做高可用（必须）
+  cloud:
+    gateway:
+      routes:
+        - id: dws
+          uri: locahost
+          predicates:
+          - Path=/dws/
+        - id: dws/vg
+          uri: locahost
+          predicates:
+          - Path=/dws/vg/
+        - id: dws/easyide
+          uri: locahost
+          predicates:
+          - Path=/dws/easyide/
+#指定eureka Server的地址，用于注册（必须）
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: locahost
+    registry-fetch-interval-seconds: 5
+  instance:
+    metadata-map:
+      test: wedatasphere
+#（必须）
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info

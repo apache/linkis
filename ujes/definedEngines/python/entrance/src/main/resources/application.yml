@@ -1,0 +1,21 @@
+server:
+  port: 19235
+spring:
+  application:
+    name: pythonentrance
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:20303/eureka/
+  instance:
+    metadata-map:
+      test: enjoyyin
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info
+logging:
+  config: classpath:log4j2.xml

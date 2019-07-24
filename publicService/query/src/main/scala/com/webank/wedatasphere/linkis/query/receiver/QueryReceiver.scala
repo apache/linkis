@@ -44,5 +44,5 @@ class QueryReceiver extends Receiver{
     case t:RequestQueryTask =>queryService.query(message.asInstanceOf[RequestQueryTask])
   }
 
-  override def receiveAndReply(message: Any, duration: Duration, sender: Sender): Any = ???
+  override def receiveAndReply(message: Any, duration: Duration, sender: Sender): Any = {}
 }

@@ -211,7 +211,7 @@ class IOEngineExecutor extends EngineExecutor(outputPrintLimit = 10, true) with 
     }
   }
 
-  override protected def executeCompletely(engineExecutorContext: EngineExecutorContext, code: String, completedLine: String): ExecuteResponse = ???
+  override protected def executeCompletely(engineExecutorContext: EngineExecutorContext, code: String, completedLine: String): ExecuteResponse = null
 
   override def kill(jobId: String): Boolean = true
 

@@ -43,7 +43,7 @@ class StorageCSVWriter(charsetP: String, separatorP: String) extends CSVFsWriter
   private val buffer: StringBuilder = new StringBuilder(40000)
   private var counter: Int = _
 
-  override def setIsLastRow(value: Boolean): Unit = ???
+  override def setIsLastRow(value: Boolean): Unit = {}
 
   def collectionInputStream(content: Array[String]): Unit = {
     content.foreach(f => counter += f.length)
@@ -79,7 +79,7 @@ class StorageCSVWriter(charsetP: String, separatorP: String) extends CSVFsWriter
     collectionInputStream(body)
   }
 
-  override def flush(): Unit = ???
+  override def flush(): Unit = {}
 
   override def close(): Unit = {
     if (stream != null) stream.close()

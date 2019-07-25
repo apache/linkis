@@ -1,13 +1,13 @@
-###Willink快速使用文档
-####1.概述
-Willink为用户提供了客户端的实现，用户可以使用UJESClient对Willink后台服务实现快速访问。
-####2.UJESClient使用
+### Linkis快速使用文档
+#### 1.概述
+Linkis为用户提供了客户端的实现，用户可以使用UJESClient对Linkis后台服务实现快速访问。
+#### 2.UJESClient使用
 
 **2.1 Maven引入**
 ```xml
 <dependency>
-  <groupId>com.webank.wedatasphere.willink</groupId>
-  <artifactId>willink-ujes-client</artifactId>
+  <groupId>com.webank.wedatasphere.Linkis</groupId>
+  <artifactId>Linkis-ujes-client</artifactId>
   <version>0.5.0</version>
 </dependency>
 ```
@@ -16,12 +16,12 @@ Willink为用户提供了客户端的实现，用户可以使用UJESClient对Wil
 **2.2 Client配置**
 
 UJESClient的实例化需要事先进行配置。配置的方式是通过DWSClientBuilder进行构建，获取DWSClientConfig的实例，构建需要设定的参数如下
-- ServerUrl Willink服务器端网关的地址,如http://{ip}:{port}
+- ServerUrl Linkis服务器端网关的地址,如http://{ip}:{port}
 - connectionTimeOut 客户端连接超时时间
-- AuthenticationStrategy Willink认证方式
+- AuthenticationStrategy Linkis认证方式
 - AuthTokenKey 认证key，一般为用户名
 - AuthTokenValue 认证value，一般为用户名对应的密码
-- DWSVersion Willink后台协议的版本，当前版本为v1
+- DWSVersion Linkis后台协议的版本，当前版本为v1
 
 **2.3 UJESClient实例化**
 
@@ -29,32 +29,32 @@ UJESClient的实例化很简单，只需要传入的2.1中已经配置好的Clie
 
 **2.4 UJESClient请求服务**
 
-UJESClient实例化之后,可以调用execute方法请求Willink的后台服务，execute需要传入JobExecutionAction的实例作为参数，JobExecutionAction实例可以通过JobExecutionAction.builder()进行构建，需要传入的参数如下
-- creator 请求Willink的UJES客户端所在的系统名
-- EngineType 希望请求的Willink的执行引擎类型，如Spark hive等
+UJESClient实例化之后,可以调用execute方法请求Linkis的后台服务，execute需要传入JobExecutionAction的实例作为参数，JobExecutionAction实例可以通过JobExecutionAction.builder()进行构建，需要传入的参数如下
+- creator 请求Linkis的UJES客户端所在的系统名
+- EngineType 希望请求的Linkis的执行引擎类型，如Spark hive等
 - User 请求用户
 - ExecutionCode 请求执行的代码
-UJESClient将JobExecutionAction的实例提交到Willink服务端后，会返回一个JobExecuteResult，其中有execID和taskID，
+UJESClient将JobExecutionAction的实例提交到Linkis服务端后，会返回一个JobExecuteResult，其中有execID和taskID，
 用户想要查看任务的日志或者状态等信息，可以使用UJESClient的log和status方法，传入返回的JobExecuteResult作为参数可以获取到。
 
-####3.参考实现
+#### 3.参考实现
 
 - **JAVA**
 ```java
 package com.webank.bdp.dataworkcloud.ujes.client;
 
-import com.webank.wedatasphere.willink.common.utils.Utils;
-import com.webank.wedatasphere.willink.httpclient.dws.authentication.StaticAuthenticationStrategy;
-import com.webank.wedatasphere.willink.httpclient.dws.config.DWSClientConfig;
-import com.webank.wedatasphere.willink.httpclient.dws.config.DWSClientConfigBuilder;
-import com.webank.wedatasphere.willink.ujes.client.UJESClient;
-import com.webank.wedatasphere.willink.ujes.client.UJESClientImpl;
-import com.webank.wedatasphere.willink.ujes.client.request.JobExecuteAction;
-import com.webank.wedatasphere.willink.ujes.client.request.ResultSetAction;
-import com.webank.wedatasphere.willink.ujes.client.response.JobExecuteResult;
-import com.webank.wedatasphere.willink.ujes.client.response.JobInfoResult;
-import com.webank.wedatasphere.willink.ujes.client.response.JobProgressResult;
-import com.webank.wedatasphere.willink.ujes.client.response.JobStatusResult;
+import com.webank.wedatasphere.Linkis.common.utils.Utils;
+import com.webank.wedatasphere.Linkis.httpclient.dws.authentication.StaticAuthenticationStrategy;
+import com.webank.wedatasphere.Linkis.httpclient.dws.config.DWSClientConfig;
+import com.webank.wedatasphere.Linkis.httpclient.dws.config.DWSClientConfigBuilder;
+import com.webank.wedatasphere.Linkis.ujes.client.UJESClient;
+import com.webank.wedatasphere.Linkis.ujes.client.UJESClientImpl;
+import com.webank.wedatasphere.Linkis.ujes.client.request.JobExecuteAction;
+import com.webank.wedatasphere.Linkis.ujes.client.request.ResultSetAction;
+import com.webank.wedatasphere.Linkis.ujes.client.response.JobExecuteResult;
+import com.webank.wedatasphere.Linkis.ujes.client.response.JobInfoResult;
+import com.webank.wedatasphere.Linkis.ujes.client.response.JobProgressResult;
+import com.webank.wedatasphere.Linkis.ujes.client.response.JobStatusResult;
 import org.apache.commons.io.IOUtils;
 
 import java.util.concurrent.TimeUnit;
@@ -95,11 +95,11 @@ public class UJESClientImplTestJ{
 
 import java.util.concurrent.TimeUnit
 
-import com.webank.wedatasphere.willink.common.utils.Utils
-import com.webank.wedatasphere.willink.httpclient.dws.authentication.StaticAuthenticationStrategy
-import com.webank.wedatasphere.willink.httpclient.dws.config.DWSClientConfigBuilder
-import com.webank.wedatasphere.willink.ujes.client.request.JobExecuteAction.EngineType
-import com.webank.wedatasphere.willink.ujes.client.request.{JobExecuteAction, ResultSetAction}
+import com.webank.wedatasphere.Linkis.common.utils.Utils
+import com.webank.wedatasphere.Linkis.httpclient.dws.authentication.StaticAuthenticationStrategy
+import com.webank.wedatasphere.Linkis.httpclient.dws.config.DWSClientConfigBuilder
+import com.webank.wedatasphere.Linkis.ujes.client.request.JobExecuteAction.EngineType
+import com.webank.wedatasphere.Linkis.ujes.client.request.{JobExecuteAction, ResultSetAction}
 import org.apache.commons.io.IOUtils
 
 object UJESClientImplTest extends App {

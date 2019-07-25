@@ -46,7 +46,7 @@
        vi /conf/config.sh   
         
    - 指定部署用户：deployUser
-   - 指定安装目录：WILLINK_INSTALL_HOME
+   - 指定安装目录：Linkis_INSTALL_HOME
    - 指定日志存储路径
    - 指定结果集存储路径
    - 指定各个服务安装所在的机器IP地址和端口号

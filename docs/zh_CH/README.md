@@ -74,7 +74,8 @@ Linkis基于微服务架构，提供了金融级多租户隔离、资源管控�
 
 **QQ group:**
 <br>
-![introduction03](docs/en_US/images/introduction/introduction04.jpg)
+
+![introduction04](images/introduction/introduction04.jpg)
 
 **License：Linkis is under the Apache 2.0 license. See the [LICENSE](/LICENSE) file for details.**
 

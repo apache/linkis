@@ -1,10 +1,10 @@
 ## Introduction 
 
-WilLink is a collection of middleware services for financial-level big data platforms. Connected to WilLink foreground system, a user can obtain the capabilities of financial-level multi-tenant, resource management and permission isolation. Besides, unified variables, functions and source file management across multiple foreground systems are realized. In addition, it empowers users to get lifecycle management capabilities for high-concurrency, high-performance and high-availability jobs.
+Linkis is a collection of middleware services for financial-level big data platforms. Connected to Linkis foreground system, a user can obtain the capabilities of financial-level multi-tenant, resource management and permission isolation. Besides, unified variables, functions and source file management across multiple foreground systems are realized. In addition, it empowers users to get lifecycle management capabilities for high-concurrency, high-performance and high-availability jobs.
 
-Based on the microservices architecture, WilLink also supports plug-in connection to various back-end big data computing and storage engines, allowing users’ data development/display tool system instantly upgrading to financial level. 
+Based on the microservices architecture, Linkis also supports plug-in connection to various back-end big data computing and storage engines, allowing users’ data development/display tool system instantly upgrading to financial level. 
 
-WilLink, the link between user and data platform. 
+Linkis, the link between user and data platform. 
 
 ## Features
 

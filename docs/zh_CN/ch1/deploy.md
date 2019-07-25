@@ -12,17 +12,19 @@
 
 ### (2) 创建部署用户
 
-例如部署用户是hadoop账号<br>
+例如部署用户是hadoop账号
+
 1. 在所有需要部署的机器上创建部署用户
    
-     sudo useradd hadoop
-     sudo cp ~/.bashrc /home/hadoop
+         sudo useradd hadoop
+     
+         sudo cp ~/.bashrc /home/hadoop
 
 2. 因为Linkis的服务是以 sudo -u ${linux-user} 方式来切换引擎，从而执行作业，所以部署用户需要有 sudo 权限，而且是免密的。
 
-    vi /etc/sudoers
+         vi /etc/sudoers
 
-    hadoop  ALL=(ALL)       NOPASSWD: NOPASSWD: ALL
+         hadoop  ALL=(ALL)       NOPASSWD: NOPASSWD: ALL
 
 ### (3) ssh免密配置
 

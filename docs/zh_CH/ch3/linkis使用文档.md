@@ -295,18 +295,18 @@ HTTP接口需要在提交执行之后,需要采用HTTP轮询的方式请求获�
 
 ###3.客户端SDK接入
 客户端SDK接入请查看 
-* [Linkis快速使用文档](ch2/li)
+* [Linkis快速使用文档](/docs/zh_CH/ch2/linkis快速使用文档.md)
 
 
 
-####4. 多引擎类型支持
+#### 4. 多引擎类型支持
 后台开发人员在使用Linkis的时候，不但可以直接使用Linkis已经开发的执行引擎，也可以根据自己的需求使用框架开发出自己的应用。Linkis的接入方式简单,可以分成Entrance，EngineManager和Engine几个模块。其中Entrance、EngineManager和Engine三个模块的作用和架构可以查看UJES架构设计文档(**真实链接**)
 
-####约定
+#### 约定
 
 Linkis项目使用了Spring框架作为底层技术，所以一些类实例可以直接通过Spring的注解进行注入。Linkis框架提供了一些通用实现，如果用户想要使用自己编写的类，可以使用直接使用并覆盖掉通用实现。
 
-#####4.1Entrance模块接入
+##### 4.1Entrance模块接入
 **1)maven依赖**
 ```xml
 <dependency>
@@ -322,7 +322,7 @@ Entrance没有必须要实例化的接口，以下接口可以根据需要进行
 -	EngineRequester。用于获得一个RequestEngine类，该类用于向EngineManager请求一个新的Engine。
 -	Scheduler。用于实现调度，默认已实现了多用户并发、单个用户内FIFO执行的调度模式，如无特殊需求，不建议实例化。
 
-#####4.2EngineManager模块接入
+##### 4.2EngineManager模块接入
 **1)maven依赖**
 ```xml
 <dependency>
@@ -342,7 +342,7 @@ EngineManager需要对以下接口根据需要进行实现:
 - resources，这是一个spring实体bean，主要用于像RM注册资源，resources是ModuleInfo的实例，需要用户提供一个，以供依赖注入。
 
 
-#####4.3Engine模块接入
+##### 4.3Engine模块接入
 **1)maven依赖**
 ```xml
 <dependency>

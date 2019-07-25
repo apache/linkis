@@ -30,14 +30,27 @@ Based on the microservices architecture, Linkis provides enterprise-level featur
 - Metadata Services: Real-time display of dataset table structure and partitions.
  
 
-## QuickStart
+# QuickStart：
 
-Read the Quick Start.
+[Read the Quick Start.](docs/en_US/ch2/Linkis%20Quick%20Start.md)
 
-## Architecture
+----
+
+# Quick Use:
+
+[Read the Quick Use](docs/en_US/ch3/Linkis%20User%20Manual.md)
+
+----
+
+# Architecture：
+
+![introduction02](docs/zh_CH/images/introduction/introduction02.png)
+
+----
 
 ## Communication
-
+If you want the fastest response, please give us an issue; or you can scan the code into the WeChat group:
+![introduction03](images/introduction/introduction03.jpg)
 ## License
 
 Linkis is under the Apache 2.0 license. See the [LICENSE ](http://www.apache.org/licenses/LICENSE-2.0)file for details.

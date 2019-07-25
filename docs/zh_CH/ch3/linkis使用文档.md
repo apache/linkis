@@ -5,9 +5,9 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Linkis项目是微众银行大数据平台自研的一种大数据作业提交方案及可扩展框架。项目使用方式方便，用户可以结合微众银行另一项开源项目——意书(这里要用http链接)直接进行使用，当然用户也可以根据规定的前端接口进行接入。Linkis也提供了客户端的实现，用户可以通过使用Linkis的sdk直接访问服务端。另外，Linkis作为一个可扩展性很强的框架,用户可以通过SDK的方式开发自己的应用。
 
 
-####2.前端接入
+#### 2.前端接入
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Linkis项目前端接口提供了两种方式，HTTP和WebSocket。Websocket方式相比于HTTP方式具有对服务器友好，信息推送更加及时等优势，但是WebSocket在用户使用的时候可能出现断开连接的情况，所以开源项目意书在对接Linkis时候，采用了WebSocket和HTTP结合的方式，正常情况下使用websocket与Linkis进行通信，出现WebSocket断开连接的时候，就会切换为HTTP的方式与后台进行交互。
-#####2.1接口规范
+##### 2.1接口规范
 Linkis在前后端进行交互的时候，自定义了一套自己的接口规范。<br>
 **1).URL规范**
 ```
@@ -39,7 +39,7 @@ Linkis在前后端进行交互的时候，自定义了一套自己的接口规�
 - message：返回请求的提示信息。如果status非0时，message返回的是错误信息，其中data有可能存在stack字段，返回具体的堆栈信息。
 
 
-#####2.2WebSocket接口描述
+##### 2.2WebSocket接口描述
 
 
 **1).建立连接**<br>
@@ -180,7 +180,7 @@ WebSocket中的接口返回的示例如下
 
 
 
-#####2.3HTTP接口描述
+##### 2.3HTTP接口描述
 HTTP接口需要在提交执行之后,需要采用HTTP轮询的方式请求获取作业的状态、日志、进度等信息
 
 
@@ -293,7 +293,7 @@ HTTP接口需要在提交执行之后,需要采用HTTP轮询的方式请求获�
 
 
 
-###3.客户端SDK接入
+### 3.客户端SDK接入
 客户端SDK接入请查看 
 * [Linkis快速使用文档](/docs/zh_CH/ch2/linkis快速使用文档.md)
 

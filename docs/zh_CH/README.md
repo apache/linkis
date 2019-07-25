@@ -1,4 +1,4 @@
-#引言：
+# 引言：
 
 Linkis是一个打通了多个计算存储引擎如：Spark、Flink、Hive、Python和HBase等，对外提供统一REST/WS/JDBC接口，提交执行SQL、Pyspark、HiveQL、Scala等脚本的数据中间件。
 
@@ -6,7 +6,7 @@ Linkis基于微服务架构，提供了金融级多租户隔离、资源管控�
 
 ----
 
-#核心特点：
+# 核心特点：
 
 **统一作业执行服务**：一个分布式的REST/WebSocket服务，用于接收用户提交的各种脚本请求。
 

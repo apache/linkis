@@ -57,7 +57,9 @@ If you want the fastest response, please give us an issue; or you can scan the c
 ![introduction03](docs/en_US/images/introduction/introduction03.jpg)
 
 **QQ group:**
-![introduction03](docs/en_US/images/introduction/introduction04.jpg)
+<br>
+
+![introduction04](docs/en_US/images/introduction/introduction04.jpg)
 
 ## License
 

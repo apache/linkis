@@ -1,5 +1,11 @@
-[阅读中文文档](docs/zh_CH/README.md)
-## Introduction 
+Linkis
+============
+
+[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+
+[English](docs/en_US/README.md) | [Chinese](docs/zh_CN/README.md)
+
+## Introduction
 
 Linkis connects with compuation/storage engines(Spark, Flink, Hive, Python and HBase), exposes REST/WS interface, and executes multi-language jobs(SQL, Pyspark, HiveQL and Scala), as a data middleware.
 

@@ -34,12 +34,6 @@ Read the Quick Start.
 
 ## Architecture
 
-## RoadMap
-
-## Contributing
-
-## Adopters
-
 ## Communication
 
 ## License

@@ -1,4 +1,4 @@
-.###Linkis User Manual
+##Linkis User Manual
 
 ####1.Summary
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Designed by Webank independently, Linkis is an extensible framework and a sophisticated solution for big data task submission. Conveniently, it could be used directly together with Scriptest, which is another open-source project powered by Webank. And those frontend APIs are also available for users. A client implementation is also provided as an SDK to interact directly with background services. As an highly extensible framework, users can leverage the SDK to develop their own applications.

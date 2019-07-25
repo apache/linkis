@@ -38,7 +38,7 @@ Based on the microservices architecture, Linkis provides enterprise-level featur
  
  **Compared with similar systems**
 
-![introduction01](docs/en_US/images/introduction/introduction01.png)
+![introduction01](docs/en_US/ch1/deploy.md)
 
 # QuickStart：
 
@@ -48,7 +48,7 @@ Based on the microservices architecture, Linkis provides enterprise-level featur
 
 # Quick Use:
 
-[Read the Quick Use](docs/en_US/ch3/Linkis%20User%20Manual.md)
+[Read the Quick Use](docs/en_US/ch2/Linkis%20Quick%20Start.md)
 
 ----
 

@@ -1,5 +1,4 @@
-#
-引言：
+#引言：
 
 Linkis是一个打通了多个计算存储引擎如：Spark、Flink、Hive、Python和HBase等，对外提供统一REST/WS/JDBC接口，提交执行SQL、Pyspark、HiveQL、Scala等脚本的数据中间件。
 
@@ -51,13 +50,13 @@ Linkis基于微服务架构，提供了金融级多租户隔离、资源管控�
 ----
 # QuickStart：
 
-Read the Quick Start.
+[Read the Quick Start.](ch2/linkis快速使用文档.md)
 
 ----
 
 # Quick Use:
 
-Read the Quick Use
+[Read the Quick Use](ch3/linkis使用文档.md)
 
 ----
 
@@ -73,6 +72,6 @@ Read the Quick Use
 
 ![introduction03](images/introduction/introduction03.jpg)
 
-**License：Linkis is under the Apache 2.0 license. See the LICENSE file for details.**
+**License：Linkis is under the Apache 2.0 license. See the [LICENSE](/LICENSE) file for details.**
 
 

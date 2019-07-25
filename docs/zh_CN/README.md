@@ -57,13 +57,13 @@ Linkis基于微服务架构，提供了金融级多租户隔离、资源管控�
 ----
 # QuickStart：
 
-Read the [Quick Start.](ch2/linkis快速使用文档.md)
+Read the [Quick Start.](ch2/deploy.md)
 
 ----
 
 # Quick Use:
 
-Read the [Quick Use](ch3/linkis使用文档.md)
+Read the [Quick Use](ch3/linkis快速使用文档.md)
 
 ----
 

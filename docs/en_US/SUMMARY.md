@@ -3,7 +3,7 @@
 * [Introduction](README.md)
 * [System deployment documentation](ch1/deploy.md)
 * [linkis quick start](ch2/Linkis%20Quick%20Start.md)
-* [Linkis User Manual.md](ch3/Linkis%20User%20Manual.md)
+* [Linkis User Manual](ch3/Linkis%20User%20Manual.md)
 * [架构设计]()
     * [UJES架构设计](ch4/Linkis-UJES设计文档.md)
     * [RM架构设计](ch4/Linkis-RM设计文档.md)

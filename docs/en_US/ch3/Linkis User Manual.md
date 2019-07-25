@@ -1,11 +1,11 @@
-##Linkis User Manual
+## Linkis User Manual
 
-####1.Summary
+#### 1.Summary
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Designed by Webank independently, Linkis is an extensible framework and a sophisticated solution for big data task submission. Conveniently, it could be used directly together with Scriptest, which is another open-source project powered by Webank. And those frontend APIs are also available for users. A client implementation is also provided as an SDK to interact directly with background services. As an highly extensible framework, users can leverage the SDK to develop their own applications.
 
-####2.Frontend Adaption
+#### 2.Frontend Adaption
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Two protocols are supported for frontend APIs: HTTP and WebSocket. Compared with HTTP, Websocket is more friendly to servers and behaved more efficiently in message pushing. But WebSocket is unstable and users are easily to be disconnected by accident. So Scriptest combined both ways to adapt with Linkis. It communicates with Linkis by websocket in normal circumstances, and failover to HTTP protocol in case the Websocket connection was down.
-#####2.1 API Specs
+##### 2.1 API Specs
 Linkis has its own specs for front-backend adaption.<br>
 
 **1).URL specs**
@@ -38,7 +38,7 @@ Linkis has its own specs for front-backend adaption.<br>
 - message：Return hint message of the request. If the status is not 0, this message returns error messages. At the same time 'data' may return the stack information in its 'stack' column. 
 
 
-#####2.2WebSocket API Description
+##### 2.2WebSocket API Description
 
 
 **1).Establish connection**<br>
@@ -296,7 +296,7 @@ For HTTP API, polling should be used to retrieve the status, logs and progress i
 #### 4. Multiple engine type support
 Except using the engines developed by Linkis directly, backend developers can also develop their own applications based on their requirements. Divided into Entrance, EngineManager and Engine modules, one can easily split an application to adapt to Linkis. The purpose and architecture of these three modules please refer to Linkis Architect Design Docs.
 
-####Convention
+#### Convention
 
 Linkis uses Spring framework as the underlying technique. So instances of some classes can be injected using Spring annotations. Linkis provides some default common implementations. If customized classes are needed by users, they can be directly injected and replace the current implementations.
 

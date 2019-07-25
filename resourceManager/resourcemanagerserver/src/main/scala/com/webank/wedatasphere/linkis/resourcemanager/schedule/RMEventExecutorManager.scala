@@ -26,13 +26,13 @@ import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEvent
 import scala.concurrent.duration.Duration
 
 /**
-  * Created by shanhuang on 9/11/18.
+  * Created by shanhuang on 2018/9/27.
   */
 class RMEventExecutorManager extends ExecutorManager {
-  private var notifyRMEventListenerBus = _
-  private var metricRMEventListenerBus = _
-  private var notifyExecutor = _
-  private var metricExecutor = _
+  private var notifyRMEventListenerBus: NotifyRMEventListenerBus = _
+  private var metricRMEventListenerBus: MetricRMEventListenerBus = _
+  private var notifyExecutor: NotifyRMEventExecutor = _
+  private var metricExecutor: MetricRMEventExecutor = _
   private val RM_NOTIFY_CONSTRUCTOR_LOCK = new Object()
   private val RM_METRIC_CONSTRUCTOR_LOCK = new Object()
 
@@ -46,32 +46,46 @@ class RMEventExecutorManager extends ExecutorManager {
 
   override def setExecutorListener(executorListener: ExecutorListener) = ???
 
-  override protected def createExecutor(event: SchedulerEvent) = event match {
-    case n: NotifyRMEvent => {
-      if (notifyExecutor != null) notifyExecutor else RM_NOTIFY_CONSTRUCTOR_LOCK.synchronized {
-        if (notifyExecutor == null) {
-          notifyExecutor = new NotifyRMEventExecutor(1)
-          notifyExecutor.setNotifyRMEventListenerBus(this.notifyRMEventListenerBus)
-          notifyExecutor.setState(ExecutorState.Idle)
+  override protected def createExecutor(event: SchedulerEvent) = {
+    event match {
+      case n: NotifyRMEvent => {
+        if (notifyExecutor != null) {
+          notifyExecutor
+        } else {
+          RM_NOTIFY_CONSTRUCTOR_LOCK.synchronized {
+            if (notifyExecutor == null) {
+              notifyExecutor = new NotifyRMEventExecutor(1)
+              notifyExecutor.setNotifyRMEventListenerBus(this.notifyRMEventListenerBus)
+              notifyExecutor.setState(ExecutorState.Idle)
+            }
+            notifyExecutor
+          }
         }
-        notifyExecutor
       }
-    }
-    case m: MetricRMEvent => {
-      if (metricExecutor != null) metricExecutor else RM_METRIC_CONSTRUCTOR_LOCK.synchronized {
-        if (metricExecutor == null) {
-          metricExecutor = new MetricRMEventExecutor(2)
-          metricExecutor.setMetricRMEventListenerBus(this.metricRMEventListenerBus)
-          metricExecutor.setState(ExecutorState.Idle)
+      case m: MetricRMEvent => {
+        if (metricExecutor != null) {
+          metricExecutor
+        } else {
+          RM_METRIC_CONSTRUCTOR_LOCK.synchronized {
+            if (metricExecutor == null) {
+              metricExecutor = new MetricRMEventExecutor(2)
+              metricExecutor.setMetricRMEventListenerBus(this.metricRMEventListenerBus)
+              metricExecutor.setState(ExecutorState.Idle)
+            }
+            metricExecutor
+          }
         }
-        metricExecutor
       }
     }
   }
 
   override def askExecutor(event: SchedulerEvent) = {
     val executor = createExecutor(event)
-    if (executor.state == ExecutorState.Idle || executor.state == ExecutorState.Busy) Some(executor) else throw new RMErrorException(11009, "Ask executor error")
+    if (executor.state == ExecutorState.Idle || executor.state == ExecutorState.Busy) {
+      Some(executor)
+    } else {
+      throw new RMErrorException(11009,"Ask executor error")
+    }
   }
 
   override def askExecutor(event: SchedulerEvent, wait: Duration) = ???
@@ -80,7 +94,9 @@ class RMEventExecutorManager extends ExecutorManager {
 
   override def getByGroup(groupName: String) = ???
 
-  override protected def delete(executor: Executor) = executor.close()
+  override protected def delete(executor: Executor) = {
+    executor.close()
+  }
 
   override def shutdown() = {
     notifyExecutor.close()

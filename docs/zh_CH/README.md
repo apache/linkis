@@ -71,7 +71,7 @@ Read the Quick Use
 
 如果您想得到最快的响应，请给我们提issue；或者您也可以扫码进群：
 
-![introduction03](/docs/zh_CH/images/introduction/introduction03.png)
+![introduction03](/docs/zh_CH/images/introduction/introduction03.jpg)
 
 **License：Linkis is under the Apache 2.0 license. See the LICENSE file for details.**
 

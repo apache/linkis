@@ -28,17 +28,17 @@ import com.webank.wedatasphere.linkis.scheduler.queue._
 import scala.collection.mutable.ArrayBuffer
 
 /**
-  * Created by shanhuang on 9/11/18.
+  * Created by shanhuang on 2018/9/18.
   */
 class RMEventConsumer(schedulerContext: SchedulerContext,
                       executeService: ExecutorService) extends Consumer(schedulerContext, executeService) {
-  private var queue = _
-  private var group = _
+  private var queue: ConsumeQueue = _
+  private var group: Group = _
   private var maxRunningJobsNum = 1000
   //Not put(暂未放)
   private val runningJobs = new Array[SchedulerEvent](maxRunningJobsNum)
   private val executorManager = schedulerContext.getOrCreateExecutorManager
-  private var rmConsumerListener = _
+  private var rmConsumerListener : RMConsumerListener = _
   var future: Future[_] = _
 
   def this(schedulerContext: SchedulerContext, executeService: ExecutorService, group: Group) = {
@@ -47,9 +47,9 @@ class RMEventConsumer(schedulerContext: SchedulerContext,
     maxRunningJobsNum = group.getMaximumCapacity
   }
 
-  def start(): Unit = future = executeService.submit(this)
+  def start():Unit = future = executeService.submit(this)
 
-  def setRmConsumerListener(rmConsumerListener: RMConsumerListener): Unit = {
+  def setRmConsumerListener(rmConsumerListener: RMConsumerListener): Unit ={
     this.rmConsumerListener = rmConsumerListener
   }
 
@@ -67,7 +67,7 @@ class RMEventConsumer(schedulerContext: SchedulerContext,
 
   override def getRunningEvents = getEvents(_.isRunning)
 
-  private def getEvents(op: SchedulerEvent => Boolean) = {
+  private def getEvents(op: SchedulerEvent => Boolean): Array[SchedulerEvent] = {
     val result = ArrayBuffer[SchedulerEvent]()
     runningJobs.filter(_ != null).filter(x => op(x)).foreach(result += _)
     result.toArray
@@ -85,20 +85,24 @@ class RMEventConsumer(schedulerContext: SchedulerContext,
 
   def loop(): Unit = {
     var event = queue.take()
-    while (event.turnToScheduled() != true) event = queue.take()
-    if (rmConsumerListener != null) rmConsumerListener.beforeEventExecute(this, event.asInstanceOf[RMEvent])
+    while (event.turnToScheduled() != true) {
+      event = queue.take()
+    }
+    if(rmConsumerListener != null){rmConsumerListener.beforeEventExecute(this,event.asInstanceOf[RMEvent])}
     Utils.tryAndError({
       val executor = executorManager.askExecutor(event)
-      if (executor.isDefined) event match {
-        case x: MetricRMEvent => {
-          Utils.tryQuietly(executor.get.asInstanceOf[MetricRMEventExecutor].execute(new EventJob(x)))
-        }
-        case y: NotifyRMEvent => {
-          Utils.tryQuietly(executor.get.asInstanceOf[NotifyRMEventExecutor].execute(new EventJob(y)))
+      if (executor.isDefined) {
+        event match {
+          case x: MetricRMEvent =>{
+            Utils.tryQuietly(executor.get.asInstanceOf[MetricRMEventExecutor].execute(new EventJob(x)))
+          }
+          case y: NotifyRMEvent =>{
+            Utils.tryQuietly(executor.get.asInstanceOf[NotifyRMEventExecutor].execute(new EventJob(y)))
+          }
         }
       }
     })
-    if (rmConsumerListener != null) rmConsumerListener.afterEventExecute(this, event.asInstanceOf[RMEvent])
+    if(rmConsumerListener != null){rmConsumerListener.afterEventExecute(this,event.asInstanceOf[RMEvent])}
   }
 
   override def shutdown() = {

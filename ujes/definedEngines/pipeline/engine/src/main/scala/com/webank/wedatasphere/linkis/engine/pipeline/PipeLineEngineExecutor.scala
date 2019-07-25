@@ -79,7 +79,7 @@ class PipeLineEngineExecutor(options: JMap[String, String]) extends EngineExecut
     }
   }
 
-  override protected def executeCompletely(engineExecutorContext: EngineExecutorContext, code: String, completedLine: String): ExecuteResponse = ???
+  override protected def executeCompletely(engineExecutorContext: EngineExecutorContext, code: String, completedLine: String): ExecuteResponse = null
 
 
   override def close(): Unit = {

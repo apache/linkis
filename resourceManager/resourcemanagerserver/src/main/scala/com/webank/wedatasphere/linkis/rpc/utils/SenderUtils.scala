@@ -21,10 +21,13 @@ import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.rpc.sender.SpringMVCRPCSender
 
 /**
-  * Created by shanhuang on 9/11/18.
+  * Created by shanhuang on 2019/1/11.
   */
+
 object SenderUtils {
 
-  def getSenderServiceInstance(sender: Sender): ServiceInstance = sender.asInstanceOf[SpringMVCRPCSender].serviceInstance
+  def getSenderServiceInstance(sender:Sender):ServiceInstance = {
+    sender.asInstanceOf[SpringMVCRPCSender].serviceInstance
+  }
 
 }

@@ -28,9 +28,9 @@ import org.json4s.jackson.JsonMethods._
 import com.webank.wedatasphere.linkis.common.utils.Logging
 
 /**
-  * Created by shanhuang on 9/11/18.
+  * Created by shanhuang on 2019/1/11.
   */
-trait RequestParams extends Logging {
+trait RequestParams  extends Logging {
   private def isDigits(digits: String) = if (digits != null && digits.matches("\\d+")) true
   else false
 
@@ -53,7 +53,7 @@ trait RequestParams extends Logging {
 
   protected def getResourceRequestPolicy(reqParam: util.Map[String, String]): ResourceRequestPolicy = {
     val rrp = reqParam.get("resourceRequestPolicy")
-    var value = null
+    var value: ResourceRequestPolicy = null;
     rrp match {
       case "Memory" =>
         value = ResourceRequestPolicy.Memory
@@ -77,30 +77,29 @@ trait RequestParams extends Logging {
     value
   }
 
-  protected def getResource(rep_resource: String): (Resource, String) = {
+  protected def getResource(rep_resource: String): (Resource,String) = {
     //    val totalResource = reqParam.get("totalResource")
     val json = parse(rep_resource)
     //确保隐式转换成功
     implicit val formats = DefaultFormats
     val resource = json match {
-      case JObject(List(("memory", memory))) => (new MemoryResource(memory.extract[Long]), "memory")
-      case JObject(List(("cores", cores))) => (new CPUResource(cores.extract[Int]), "cpu")
-      case JObject(List(("instance", instances))) => (new InstanceResource(instances.extract[Int]), "instance")
-      case JObject(List(("memory", memory), ("cores", cores))) => (new LoadResource(memory.extract[Long], cores.extract[Int]), "Load")
+      case JObject(List(("memory", memory))) => (new MemoryResource(memory.extract[Long]),"memory")
+      case JObject(List(("cores", cores))) => (new CPUResource(cores.extract[Int]),"cpu")
+      case JObject(List(("instance", instances))) => (new InstanceResource(instances.extract[Int]),"instance")
+      case JObject(List(("memory", memory), ("cores", cores))) =>( new LoadResource(memory.extract[Long], cores.extract[Int]),"Load")
       case JObject(List(("memory", memory), ("cores", cores), ("instance", instances))) =>
-        (new LoadInstanceResource(memory.extract[Long], cores.extract[Int], instances.extract[Int]), "loadInstance")
-      case JObject(List(("queueName", queueName), ("queueMemory", queueMemory), ("queueCores", queueCores), ("queueInstances", queueInstances))) =>
-        (new YarnResource(queueMemory.extract[Long], queueCores.extract[Int], queueInstances.extract[Int], queueName.extract[String]), "yarn")
+        (new LoadInstanceResource(memory.extract[Long], cores.extract[Int], instances.extract[Int]),"loadInstance")
+      case JObject(List(("queueName", queueName),("queueMemory", queueMemory), ("queueCores", queueCores), ("queueInstances", queueInstances))) =>
+        (new YarnResource(queueMemory.extract[Long], queueCores.extract[Int], queueInstances.extract[Int], queueName.extract[String]),"yarn")
       case JObject(List(("memory", memory), ("cores", cores), ("instance", instances),
-      ("queueName", queueName), ("queueMemory", queueMemory), ("queueCores", queueCores), ("queueInstances", queueInstances))) =>
+      ("queueName", queueName),("queueMemory", queueMemory), ("queueCores", queueCores), ("queueInstances", queueInstances))) =>
         (new DriverAndYarnResource(new LoadInstanceResource(memory.extract[Long], cores.extract[Int], instances.extract[Int]),
-          new YarnResource(queueMemory.extract[Long], queueCores.extract[Int], queueInstances.extract[Int], queueName.extract[String])), "driverAndYarn")
+          new YarnResource(queueMemory.extract[Long], queueCores.extract[Int], queueInstances.extract[Int], queueName.extract[String])),"driverAndYarn")
 
       case JObject(List(("resources", resources))) =>
-        (new SpecialResource(resources.extract[util.Map[String, AnyVal]]), "special")
+        ( new SpecialResource(resources.extract[Map[String, AnyVal]]),"special")
     }
     resource
   }
-
   //protected TimeUnit parseTime(String time)
 }

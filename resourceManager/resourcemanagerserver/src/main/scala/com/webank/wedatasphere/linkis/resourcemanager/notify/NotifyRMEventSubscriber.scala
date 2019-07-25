@@ -31,7 +31,7 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 /**
-  * Created by shanhuang on 9/11/18.
+  * Created by shanhuang on 2019/1/11.
   */
 class NotifyRMEventSubscriber(val topic: String, val zk: ZooKeeper, val eventScheduler: Scheduler) extends AutoTopicSubscriber[NotifyRMEvent] with Logging {
 
@@ -48,28 +48,30 @@ class NotifyRMEventSubscriber(val topic: String, val zk: ZooKeeper, val eventSch
     case e: KeeperException => error(s"Failed to create topic[$topic]: ", e)
   }
 
-  def start() = if (started.compareAndSet(false, true)) {
-    //synchronize event queues, watch for new sub queues
-    for (moduleScope <- zk.getChildren("/" + topic, new TopicWatcher)) {
-      zk.exists("/" + topic + "/" + moduleScope, new DataNodeWatcher(moduleScope))
-      moduleScopes.add(moduleScope)
-    }
-  } elseinfo (s"Subscriber already started.")
+  def start() = {
+    if(started.compareAndSet(false, true)){
+      //synchronize event queues, watch for new sub queues
+      for(moduleScope <- zk.getChildren("/" + topic, new TopicWatcher)){
+        zk.exists("/" + topic + "/" + moduleScope, new DataNodeWatcher(moduleScope))
+        moduleScopes.add(moduleScope)
+      }
+    }else info(s"Subscriber already started.")
+  }
 
-  class DataNodeWatcher(val moduleScope: String) extends Watcher {
+  class DataNodeWatcher(val moduleScope: String) extends Watcher{
     override def process(watchedEvent: WatchedEvent): Unit = {
-      if (watchedEvent.getType.equals(EventType.NodeDataChanged)) {
+      if(watchedEvent.getType.equals(EventType.NodeDataChanged)){
         val event = deserialize(zk.getData(watchedEvent.getPath, new DataNodeWatcher(moduleScope), null))
         receive(event)
       } else if (watchedEvent.getType.equals(EventType.NodeDeleted)) moduleScopes.remove(moduleScope) else zk.exists(watchedEvent.getPath, new DataNodeWatcher(moduleScope))
     }
   }
 
-  class TopicWatcher extends Watcher {
+  class TopicWatcher extends Watcher{
     override def process(watchedEvent: WatchedEvent): Unit = {
       val subQueues = zk.getChildren("/" + topic, new TopicWatcher)
-      if (watchedEvent.getType.equals(EventType.NodeChildrenChanged)) subQueues.foreach { moduleScope =>
-        if (!moduleScopes.contains(moduleScope)) {
+      if(watchedEvent.getType.equals(EventType.NodeChildrenChanged)) subQueues.foreach{ moduleScope =>
+        if(!moduleScopes. contains(moduleScope)){
           moduleScopes.add(moduleScope)
           val event = deserialize(zk.getData("/" + topic + "/" + moduleScope, new DataNodeWatcher(moduleScope), null))
           receive(event)
@@ -78,13 +80,15 @@ class NotifyRMEventSubscriber(val topic: String, val zk: ZooKeeper, val eventSch
     }
   }
 
-  def stop() = started.compareAndSet(true, false)
+  def stop() = {
+    started.compareAndSet(true, false)
+  }
 
   def readHistory(condition: NotifyRMEvent => Boolean): Unit = {
     info("Started submitting history events.")
     val children = zk.getChildren(historyRoot + "/" + topic, false)
-    for (child <- children) {
-      zk.getChildren(historyRoot + "/" + topic + "/" + child, false).map(element => {
+    for(child <- children){
+      zk.getChildren(historyRoot + "/" + topic + "/" + child, false).map( element =>{
         deserialize(zk.getData(historyRoot + "/" + topic + "/" + child + "/" + element, false, null))
       })
         .filter(condition)
@@ -103,7 +107,7 @@ class NotifyRMEventSubscriber(val topic: String, val zk: ZooKeeper, val eventSch
     read[NotifyRMEvent](eventJson)
   }
 
-  def serialize(event: NotifyRMEvent): Array[Byte] = write(event).getBytes
+  def serialize(event: NotifyRMEvent) : Array[Byte] = write(event).getBytes
 
   override def receive(event: NotifyRMEvent): Unit = {
     try {
@@ -118,8 +122,7 @@ class NotifyRMEventSubscriber(val topic: String, val zk: ZooKeeper, val eventSch
 
 }
 
-object NotifyRMEventSubscriber {
+object NotifyRMEventSubscriber{
   def apply(topic: String, zk: ZooKeeper, eventScheduler: Scheduler): NotifyRMEventSubscriber = new NotifyRMEventSubscriber(topic, zk, eventScheduler)
-
   def apply(topic: String, eventScheduler: Scheduler): NotifyRMEventSubscriber = new NotifyRMEventSubscriber(topic, ZookeeperUtils.getOrCreateZookeeper(), eventScheduler)
 }

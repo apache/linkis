@@ -48,13 +48,17 @@ Based on the microservices architecture, Linkis provides enterprise-level featur
 
 # Architecture：
 
-![introduction02](docs/zh_CH/images/introduction/introduction02.png)
+![introduction02](docs/en_US/images/introduction/introduction02.png)
 
 ----
 
 ## Communication
 If you want the fastest response, please give us an issue; or you can scan the code into the WeChat group:
-![introduction03](docs/zh_CH/images/introduction/introduction03.jpg)
+![introduction03](docs/en_US/images/introduction/introduction03.jpg)
+
+**QQ group:**
+![introduction03](docs/en_US/images/introduction/introduction04.jpg)
+
 ## License
 
 Linkis is under the Apache 2.0 license. See the [LICENSE ](http://www.apache.org/licenses/LICENSE-2.0)file for details.

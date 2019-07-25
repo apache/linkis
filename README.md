@@ -1,3 +1,4 @@
+[阅读中文文档](docs/zh_CH/README.md)
 ## Introduction 
 
 Linkis connects with compuation/storage engines(Spark, Flink, Hive, Python and HBase), exposes REST/WS interface, and executes multi-language jobs(SQL, Pyspark, HiveQL and Scala), as a data middleware.
@@ -29,14 +30,36 @@ Based on the microservices architecture, Linkis provides enterprise-level featur
 
 - Metadata Services: Real-time display of dataset table structure and partitions.
  
+ **Compared with similar systems**
 
-## QuickStart
+![introduction01](docs/en_US/images/introduction/introduction01.png)
 
-Read the Quick Start.
+# QuickStart：
 
-## Architecture
+[Read the Quick Start.](docs/en_US/ch2/Linkis%20Quick%20Start.md)
+
+----
+
+# Quick Use:
+
+[Read the Quick Use](docs/en_US/ch3/Linkis%20User%20Manual.md)
+
+----
+
+# Architecture：
+
+![introduction02](docs/en_US/images/introduction/introduction02.png)
+
+----
 
 ## Communication
+If you want the fastest response, please give us an issue; or you can scan the code into the WeChat group:
+![introduction03](docs/en_US/images/introduction/introduction03.jpg)
+
+**QQ group:**
+<br>
+
+![introduction04](docs/en_US/images/introduction/introduction04.jpg)
 
 ## License
 

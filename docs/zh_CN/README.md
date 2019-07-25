@@ -47,7 +47,7 @@ Linkis基于微服务架构，提供了金融级多租户隔离、资源管控�
 
 **元数据服务**：实时的库表结构和分区情况展示。
 
-### 与类似系统的对比：
+## 与类似系统的对比：
 
 ![introduction01](images/introduction/introduction01.png)
 

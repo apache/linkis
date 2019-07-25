@@ -40,7 +40,7 @@ Read the Quick Start.
 
 ## Architecture：
 
-![introduction01](/images/introduction/introduction01.png)
+![introduction01](/docs/zh_CH/images/introduction/introduction01.png)
 
 **第五章：RoadMap**
 

@@ -1,14 +1,14 @@
-##Willink使用文档
+## Linkis使用文档
 
 
-####1.概述
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Willink项目是微众银行大数据平台自研的一种大数据作业提交方案及可扩展框架。项目使用方式方便，用户可以结合微众银行另一项开源项目——意书(这里要用http链接)直接进行使用，当然用户也可以根据规定的前端接口进行接入。Willink也提供了客户端的实现，用户可以通过使用willink的sdk直接访问服务端。另外，Willink作为一个可扩展性很强的框架,用户可以通过SDK的方式开发自己的应用。
+#### 1.概述
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Linkis项目是微众银行大数据平台自研的一种大数据作业提交方案及可扩展框架。项目使用方式方便，用户可以结合微众银行另一项开源项目——意书(这里要用http链接)直接进行使用，当然用户也可以根据规定的前端接口进行接入。Linkis也提供了客户端的实现，用户可以通过使用Linkis的sdk直接访问服务端。另外，Linkis作为一个可扩展性很强的框架,用户可以通过SDK的方式开发自己的应用。
 
 
 ####2.前端接入
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Willink项目前端接口提供了两种方式，HTTP和WebSocket。Websocket方式相比于HTTP方式具有对服务器友好，信息推送更加及时等优势，但是WebSocket在用户使用的时候可能出现断开连接的情况，所以开源项目意书在对接Willink时候，采用了WebSocket和HTTP结合的方式，正常情况下使用websocket与Willink进行通信，出现WebSocket断开连接的时候，就会切换为HTTP的方式与后台进行交互。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Linkis项目前端接口提供了两种方式，HTTP和WebSocket。Websocket方式相比于HTTP方式具有对服务器友好，信息推送更加及时等优势，但是WebSocket在用户使用的时候可能出现断开连接的情况，所以开源项目意书在对接Linkis时候，采用了WebSocket和HTTP结合的方式，正常情况下使用websocket与Linkis进行通信，出现WebSocket断开连接的时候，就会切换为HTTP的方式与后台进行交互。
 #####2.1接口规范
-Willink在前后端进行交互的时候，自定义了一套自己的接口规范。<br>
+Linkis在前后端进行交互的时候，自定义了一套自己的接口规范。<br>
 **1).URL规范**
 ```
 /api/rest_j/v1/{applicationName}/.+
@@ -17,7 +17,7 @@ Willink在前后端进行交互的时候，自定义了一套自己的接口规�
 
 - rest_j表示接口符合Jersey规范
 - rest_s表示接口符合springMVC Rest规范
-- v1为服务的版本号，**版本号会随着Willink版本进行升级**
+- v1为服务的版本号，**版本号会随着Linkis版本进行升级**
 - {applicationName}为微服务名
 
 **2).请求规范**
@@ -44,14 +44,14 @@ Willink在前后端进行交互的时候，自定义了一套自己的接口规�
 
 **1).建立连接**<br>
 <br>
-此接口是为了和Willink建立一个WebSocket连接。
+此接口是为了和Linkis建立一个WebSocket连接。
 - `/api/rest_j/entrance/connect`
 - 请求方式 **GET**
 - 响应状态码 **101**<br>
 
 **2).请求执行任务**<br>
 <br>
-请求执行任务是将用户的作业提交到Willink进行执行的接口
+请求执行任务是将用户的作业提交到Linkis进行执行的接口
 - 接口 `/api/rest_j/entrance/execute`
 - 提交方式 `POST`<br>
 - 请求JSON示例
@@ -79,7 +79,7 @@ Willink在前后端进行交互的时候，自定义了一套自己的接口规�
 		"executionCode":"show tables",
 		"runType":"sql",
 		"source":{
-			"scriptPath": "/home/willink/willink.sql"
+			"scriptPath": "/home/Linkis/Linkis.sql"
 		},
     "websocketTag":"37fcbd8b762d465a0c870684a0261c6e"
 	}
@@ -197,7 +197,7 @@ HTTP接口需要在提交执行之后,需要采用HTTP轮询的方式请求获�
 		"executionCode":"show tables",
 		"runType":"sql",
 		"source":{
-			"scriptPath": "/home/willink/willink.sql"
+			"scriptPath": "/home/Linkis/Linkis.sql"
 		}
 }
 ```
@@ -205,7 +205,7 @@ HTTP接口需要在提交执行之后,需要采用HTTP轮询的方式请求获�
 
 **2).获取状态**<br>
 <br>
-建立连接是WebSocket特有的一个接口,是为了和Willink建立一个WebSocket连接
+建立连接是WebSocket特有的一个接口,是为了和Linkis建立一个WebSocket连接
 - 接口 `/api/rest_j/entrance/${execID}/status`
 - 提交方式 `GET`<br>
 - 返回示例
@@ -223,7 +223,7 @@ HTTP接口需要在提交执行之后,需要采用HTTP轮询的方式请求获�
 
 **3).获取日志**<br>
 <br>
-建立连接是WebSocket特有的一个接口,是为了和Willink建立一个WebSocket连接
+建立连接是WebSocket特有的一个接口,是为了和Linkis建立一个WebSocket连接
 - 接口 `/api/rest_j/entrance/${execID}/log?fromLine=${fromLine}&size=${size}`
 - 提交方式 `GET`
 - 请求参数fromLine是指从第几行开始获取，size是指该次请求获取几行日志
@@ -243,7 +243,7 @@ HTTP接口需要在提交执行之后,需要采用HTTP轮询的方式请求获�
 
 **4).获取进度**<br>
 <br>
-建立连接是WebSocket特有的一个接口,是为了和Willink建立一个WebSocket连接
+建立连接是WebSocket特有的一个接口,是为了和Linkis建立一个WebSocket连接
 - 接口 `/api/rest_j/entrance/${execID}/progress`
 - 提交方式 `GET`<br>
 - 返回示例
@@ -276,7 +276,7 @@ HTTP接口需要在提交执行之后,需要采用HTTP轮询的方式请求获�
 ```
 **5).kill任务**<br>
 <br>
-建立连接是WebSocket特有的一个接口,是为了和Willink建立一个WebSocket连接
+建立连接是WebSocket特有的一个接口,是为了和Linkis建立一个WebSocket连接
 - 接口 `/api/rest_j/entrance/${execID}/kill`
 - 提交方式 `POST`
 - 返回示例，其中返回的fromLine需要下次日志请求的参数
@@ -295,23 +295,23 @@ HTTP接口需要在提交执行之后,需要采用HTTP轮询的方式请求获�
 
 ###3.客户端SDK接入
 客户端SDK接入请查看 
-* [willink快速使用文档](ch2/li)
+* [Linkis快速使用文档](ch2/li)
 
 
 
 ####4. 多引擎类型支持
-后台开发人员在使用Willink的时候，不但可以直接使用Willink已经开发的执行引擎，也可以根据自己的需求使用框架开发出自己的应用。Willink的接入方式简单,可以分成Entrance，EngineManager和Engine几个模块。其中Entrance、EngineManager和Engine三个模块的作用和架构可以查看UJES架构设计文档(**真实链接**)
+后台开发人员在使用Linkis的时候，不但可以直接使用Linkis已经开发的执行引擎，也可以根据自己的需求使用框架开发出自己的应用。Linkis的接入方式简单,可以分成Entrance，EngineManager和Engine几个模块。其中Entrance、EngineManager和Engine三个模块的作用和架构可以查看UJES架构设计文档(**真实链接**)
 
 ####约定
 
-Willink项目使用了Spring框架作为底层技术，所以一些类实例可以直接通过Spring的注解进行注入。Willink框架提供了一些通用实现，如果用户想要使用自己编写的类，可以使用直接使用并覆盖掉通用实现。
+Linkis项目使用了Spring框架作为底层技术，所以一些类实例可以直接通过Spring的注解进行注入。Linkis框架提供了一些通用实现，如果用户想要使用自己编写的类，可以使用直接使用并覆盖掉通用实现。
 
 #####4.1Entrance模块接入
 **1)maven依赖**
 ```xml
 <dependency>
-  <groupId>com.webank.wedatasphere.willink</groupId>
-  <artifactId>willink-ujes-entrance</artifactId>
+  <groupId>com.webank.wedatasphere.Linkis</groupId>
+  <artifactId>Linkis-ujes-entrance</artifactId>
   <version>0.5.0</version>
 </dependency>
 ```
@@ -326,8 +326,8 @@ Entrance没有必须要实例化的接口，以下接口可以根据需要进行
 **1)maven依赖**
 ```xml
 <dependency>
-  <groupId>com.webank.wedatasphere.willink</groupId>
-  <artifactId>willink-ujes-enginemanager</artifactId>
+  <groupId>com.webank.wedatasphere.Linkis</groupId>
+  <artifactId>Linkis-ujes-enginemanager</artifactId>
   <version>0.5.0</version>
 </dependency>
 ```
@@ -346,8 +346,8 @@ EngineManager需要对以下接口根据需要进行实现:
 **1)maven依赖**
 ```xml
 <dependency>
-  <groupId>com.webank.wedatasphere.willink</groupId>
-  <artifactId>willink-ujes-engine</artifactId>
+  <groupId>com.webank.wedatasphere.Linkis</groupId>
+  <artifactId>Linkis-ujes-engine</artifactId>
   <version>0.5.0</version>
 </dependency>
 ```

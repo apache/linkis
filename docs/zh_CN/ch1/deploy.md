@@ -4,23 +4,23 @@
 
 - Mysql (5.5+) : 必装
 - JDK (1.8.0_141) : 必装
-- ZooKeeper(3.4.9) ：必装
 - Hadoop(2.7.2) ：必装， 
 - Hive(1.2.1) : 选装，hive引擎节点需要安装
 - Spark(2.1.0) :  必装，Spark引擎节点需要安装
 
- 注意：Linkis本身不依赖Hadoop、Hive、Spark,仅是会调用他们的Client，用于对应任务的运行。
+  **注意：Linkis本身不依赖Hadoop、Hive、Spark,仅是会调用他们的Client，用于对应任务的运行。**
 
 ### (2) 创建部署用户
-   
-     sudo useradd -Ghadoop  xxx
-     sudo cp ~/.bashrc /home/xxx
 
-在所有需要部署的机器上创建部署用户，因为部署服务是以 sudo -u {linux-user} 方式来执行作业，所以部署用户需要有 sudo 权限，而且是免密的。
+例如部署用户是hadoop账号<br>
+1. 在所有需要部署的机器上创建部署用户
+   
+     sudo useradd hadoop
+     sudo cp ~/.bashrc /home/hadoop
+
+2. 因为Linkis的服务是以 sudo -u ${linux-user} 方式来切换引擎，从而执行作业，所以部署用户需要有 sudo 权限，而且是免密的。
 
     vi /etc/sudoers
-
-例如部署用户是hadoop账号
 
     hadoop  ALL=(ALL)       NOPASSWD: NOPASSWD: ALL
 

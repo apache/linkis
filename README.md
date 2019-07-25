@@ -32,7 +32,7 @@ Based on the microservices architecture, Linkis provides enterprise-level featur
  
  **Compared with similar systems**
 
-![introduction01](docs/zh_CH/images/introduction/introduction01.png)
+![introduction01](docs/en_US/images/introduction/introduction01.png)
 
 # QuickStart：
 

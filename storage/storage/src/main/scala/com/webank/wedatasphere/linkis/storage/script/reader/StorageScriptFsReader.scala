@@ -70,10 +70,10 @@ class StorageScriptFsReader(pathP: FsPath, charsetP: String, inputStreamP: Input
   }
 
   @scala.throws[IOException]
-  override def skip(recordNum: Int): Int = ???
+  override def skip(recordNum: Int): Int = -1
 
   @scala.throws[IOException]
-  override def getPosition: Long = ???
+  override def getPosition: Long = -1L
 
   @scala.throws[IOException]
   override def hasNext: Boolean = lineText != null

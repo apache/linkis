@@ -27,13 +27,13 @@ import com.webank.wedatasphere.linkis.scheduler.queue.{ConsumerManager, GroupFac
 object EngineTimedLockManagerTest {
 
   val lockManager = new EngineTimedLockManager(new SchedulerContext(){
-    override def getOrCreateGroupFactory: GroupFactory = ???
+    override def getOrCreateGroupFactory: GroupFactory = null
 
-    override def getOrCreateConsumerManager: ConsumerManager = ???
+    override def getOrCreateConsumerManager: ConsumerManager = null
 
-    override def getOrCreateExecutorManager: ExecutorManager = ???
+    override def getOrCreateExecutorManager: ExecutorManager = null
 
-    override def getOrCreateSchedulerListenerBus: ListenerEventBus[_ <: SchedulerEventListener, _ <: ScheduleEvent] = ???
+    override def getOrCreateSchedulerListenerBus: ListenerEventBus[_ <: SchedulerEventListener, _ <: ScheduleEvent] = null
   })
 
   val executor = new TestExecutor(111);
@@ -68,13 +68,13 @@ class TestThread(val executor: Executor, val name: String, val sleep: Long) exte
 }
 
 class TestExecutor(val id: Long) extends Executor{
-  override def getId: Long = {id}
+  override def getId: Long = id
 
-  override def execute(executeRequest: ExecuteRequest): ExecuteResponse = ???
+  override def execute(executeRequest: ExecuteRequest): ExecuteResponse = null
 
-  override def state: ExecutorState = ???
+  override def state: ExecutorState = null
 
-  override def getExecutorInfo: ExecutorInfo = ???
+  override def getExecutorInfo: ExecutorInfo = null
 
-  override def close(): Unit = ???
+  override def close(): Unit = {}
 }

@@ -126,7 +126,7 @@ class StorageExcelWriter(charsetP: String, sheetNameP: String, dateFormatP: Stri
   }
 
 
-  override def flush(): Unit = ???
+  override def flush(): Unit = {}
 
   override def close(): Unit = {
     Utils.tryFinally(if (workBook != null) workBook.close())()

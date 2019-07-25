@@ -21,30 +21,41 @@ import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
 import com.webank.wedatasphere.linkis.scheduler.queue.GroupFactory
 
 /**
-  * Created by shanhuang on 9/11/18.
+  * Created by shanhuang on 2018/9/25.
   */
-class EventSchedulerContextImpl(maxParallelismUsers: Int) extends EventSchedulerContext with Logging {
+class EventSchedulerContextImpl(maxParallelismUsers: Int) extends EventSchedulerContext with Logging{
   private val RM_CONTEXT_CONSTRUCTOR_LOCK = new Object()
-  private var consumerManager = _
-  private var executorManager = _
-  private var groupFactory = _
+  private var consumerManager: EventConsumerManager = _
+  private var executorManager: RMEventExecutorManager = _
+  private var groupFactory: GroupFactory = _
 
   override def getOrCreateGroupFactory = {
     RM_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-      if (groupFactory == null) groupFactory = new EventGroupFactoryImpl()
+      if (groupFactory == null) {
+        groupFactory = new EventGroupFactoryImpl()
+      }
     }
     groupFactory
 
   }
 
-  override def getOrCreateConsumerManager = RM_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-    if (consumerManager == null) consumerManager = new EventConsumerManager(this, maxParallelismUsers)
-    consumerManager
+  override def getOrCreateConsumerManager = {
+    RM_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
+      if (consumerManager == null) {
+        consumerManager = new EventConsumerManager(this, maxParallelismUsers)
+      }
+      consumerManager
+    }
+
   }
 
-  override def getOrCreateExecutorManager = RM_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-    if (executorManager == null) executorManager = new RMEventExecutorManager()
-    executorManager
+  override def getOrCreateExecutorManager = {
+    RM_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
+      if (executorManager == null) {
+        executorManager = new RMEventExecutorManager()
+      }
+      executorManager
+    }
   }
 
   override def getOrCreateSchedulerListenerBus = ???

@@ -15,17 +15,15 @@
  */
 
 package com.webank.wedatasphere.linkis.resourcemanager.schedule
-
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.resourcemanager.event.RMEvent
 
 /**
-  * Created by shanhuang on 9/11/18.
+  * Created by shanhuang on 2018/10/15.
   */
-class RMConsumerListenerImpl extends RMConsumerListener with Logging {
-  private var consumer = _
-  private var lastProcessTime = _
-
+class RMConsumerListenerImpl extends  RMConsumerListener with  Logging{
+  private var consumer: RMEventConsumer = _
+  private var lastProcessTime : Long = _
   override def beforeEventExecute(consumer: RMEventConsumer, event: RMEvent) = {
     this.consumer = consumer
     this.lastProcessTime = System.currentTimeMillis
@@ -38,12 +36,14 @@ class RMConsumerListenerImpl extends RMConsumerListener with Logging {
 
   override def checkConsumerHealthy(timeLimit: Long) = {
     val waitTime = System.currentTimeMillis - lastProcessTime
-    if (lastProcessTime != 0 && waitTime > timeLimit) {
-      error("checkConsumerHealthy is false " + consumer.getGroup.getGroupName + "wait time" + waitTime)
+    if(lastProcessTime != 0 && waitTime > timeLimit){
+      error("checkConsumerHealthy is false "+ consumer.getGroup.getGroupName + "wait time"+ waitTime)
       false
-    } else if (consumer.future.isCancelled || consumer.future.isDone) {
-      error("checkConsumerHealthy is false for future is completed " + consumer.getGroup.getGroupName)
+    } else if(consumer.future.isCancelled || consumer.future.isDone){
+      error("checkConsumerHealthy is false for future is completed "+ consumer.getGroup.getGroupName)
       false
-    } else true
+    }else{
+      true
+    }
   }
 }

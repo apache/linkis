@@ -27,7 +27,6 @@
 
     <artifactId>publicservice</artifactId>
 
-
     <dependencies>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>

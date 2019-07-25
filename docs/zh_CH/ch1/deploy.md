@@ -12,6 +12,9 @@
  注意：Linkis本身不依赖Hadoop、Hive、Spark,仅是会调用他们的Client，用于对应任务的运行。
 
 ### (2) 创建部署用户
+   
+     sudo useradd -Ghadoop  xxx
+     sudo cp ~/.bashrc /home/xxx
 
 在所有需要部署的机器上创建部署用户，因为部署服务是以 sudo -u {linux-user} 方式来执行作业，所以部署用户需要有 sudo 权限，而且是免密的。
 
@@ -41,15 +44,16 @@
 ## 3、安装：
    先解压安装包到安装目录，并对解压后文件进行配置修改。
    
+      tar -xvf  assembly-0.5.0-SNAPSHOT-dist.tar.gz
    （1）修改基础配置  
    
        vi /conf/config.sh   
         
    - 指定部署用户：deployUser
    - 指定安装目录：LINKIS_INSTALL_HOME
-   - 指定日志存储路径
-   - 指定结果集存储路径
-   - 指定各个服务安装所在的机器IP地址和端口号
+   - 指定日志存储路径：USER_LOG_PATH
+   - 指定结果集HDFS存储路径：RESULT_STORE_PATH
+   - 指定各个服务安装所在的机器IP地址和端口号:* _INSTALL_IP, * _PORT
         
    （2）修改数据库配置 
    
@@ -57,6 +61,11 @@
             
    - 设置数据库的连接信息
    - 包括IP地址、数据库名称、用户名、端口
+   - MYSQL_HOST=
+   - MYSQL_PORT=
+   - MYSQL_DB=
+   - MYSQL_USER=
+   - MYSQL_PASSWORD=
 
    （3）执行安装脚本：
    

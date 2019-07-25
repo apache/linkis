@@ -31,9 +31,7 @@ WilLink, the link between user and data platform.
 ## QuickStart
 
 Read the Quick Start.
-
-## Architecture
-
+ 
 ## RoadMap
 
 ## Contributing

@@ -3,7 +3,7 @@ Linkis
 
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-[English](docs/en_US/README.md) | [Chinese](docs/zh_CN/README.md)
+[English](../../README.md) | 中文
 
 # 引言：
 
@@ -60,9 +60,17 @@ Read the [Quick Start](ch1/deploy.md)
 
 ----
 
-# Quick Use:
+# 快速使用文档:
 
-Read the [Quick Use](ch2/linkis快速使用文档.md)
+请点击[快速使用文档](ch2/linkis快速使用文档.md)
+
+----
+
+----
+
+# 使用文档
+
+请点击[使用文档](ch3/linkis使用文档.md)
 
 ----
 

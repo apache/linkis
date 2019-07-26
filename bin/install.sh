@@ -1,7 +1,7 @@
 #!/bin/sh
 
-workDir=`dirname $0`
-workDir=`cd ${workDir};pwd`
+shellDir=`dirname $0`
+workDir=`cd ${shellDir}/..;pwd`
 
 
 
@@ -193,11 +193,15 @@ installPackage
 ###update linkis.properties
 echo "$SERVERNAME-step4:update linkis conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
+ENGINE_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis-engine.properties
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVERNAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.core.jar.*#wds.linkis.enginemanager.core.jar=$SERVER_HOME/$SERVERNAME/lib/linkis-ujes-spark-engine-0.5.0.jar#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.spark.driver.conf.mainjar.*#wds.linkis.spark.driver.conf.mainjar=$SERVER_HOME/$SERVERNAME/conf:$SERVER_HOME/$SERVERNAME/lib/*#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#spark.config.dir.*#spark.config.dir=$SPARK_CONF_DIR#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#SPARK.HOME.*#spark.home=$SPARK_HOME#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#spark.home.*#spark.home=$SPARK_HOME#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#spark.home.*#spark.home=$SPARK_HOME#g\" $ENGINE_CONF_PATH"
 ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/netty-3.6.2.Final.jar"
 ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/netty-all-4.0.23.Final.jar"
 ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/jackson-core-2.6.5.jar"

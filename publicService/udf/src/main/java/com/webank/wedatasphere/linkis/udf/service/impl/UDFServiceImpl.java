@@ -94,7 +94,7 @@ public class UDFServiceImpl implements UDFService {
     private void validateJarFile(UDFInfo udfInfo, String userName) throws UDFException {
         File targetFile = new File(UdfConfiguration.UDF_TMP_PATH().getValue() + udfInfo.getPath());
         FsPath fsPath = new FsPath("file://" + udfInfo.getPath());
-        Fs remoteFs = FSFactory.getFsByProxyUser(fsPath, userName);
+        Fs remoteFs = FSFactory.getFs(fsPath);
         try{
             remoteFs.init(null);
             if(remoteFs.exists(fsPath)){

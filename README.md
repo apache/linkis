@@ -54,7 +54,7 @@ Based on the microservices architecture, Linkis provides enterprise-level featur
 
 # Architecture：
 
-![introduction02](docs/en_US/images/introduction/introduction02.png)
+![introduction02](./docs/en_US/images/introduction/introduction02.png)
 
 ----
 

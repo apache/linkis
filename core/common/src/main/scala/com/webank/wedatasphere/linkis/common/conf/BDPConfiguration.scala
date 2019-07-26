@@ -19,7 +19,6 @@ package com.webank.wedatasphere.linkis.common.conf
 import java.io.{File, FileInputStream, IOException, InputStream}
 import java.util.Properties
 
-import com.sun.deploy.util.StringUtils
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils

@@ -59,7 +59,7 @@ Based on the microservices architecture, Linkis provides enterprise-level featur
 ----
 
 ## Communication
-If you want the fastest response, please give us an issue，or you can scan the code into the WeChat group and QQ group:
+If you want the fastest response, please give us an issue, or you can scan the code into the WeChat group and QQ group:
 ![introduction05](docs/en_US/images/introduction/introduction05.png)
 
 ## License

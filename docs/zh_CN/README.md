@@ -53,7 +53,6 @@ Linkis基于微服务架构，提供了金融级多租户隔离、资源管控�
 
 
 
-
 ----
 # QuickStart：
 
@@ -75,15 +74,12 @@ Read the [Quick Use](ch2/linkis快速使用文档.md)
 
 # Communication
 
-如果您想得到最快的响应，请给我们提issue；或者您也可以扫码进群：
+如果您想得到最快的响应，请给我们提issue，或者您也可以扫码进群：
 
-![introduction03](images/introduction/introduction03.jpg)
+![introduction05](images/introduction/introduction05.png)
 
-**QQ group:**
-<br>
+# License
 
-![introduction04](images/introduction/introduction04.jpg)
-
-**License：Linkis is under the Apache 2.0 license. See the [LICENSE](/LICENSE) file for details.**
+**Linkis is under the Apache 2.0 license. See the [LICENSE](/LICENSE) file for details.**
 
 

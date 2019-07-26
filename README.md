@@ -35,7 +35,7 @@ Based on the microservices architecture, Linkis provides enterprise-level featur
 - Material Library: System and user-level material management, capable of sharing, transferring materials and automatic lifecycle management. 
 
 - Metadata Services: Real-time display of dataset table structure and partitions.
- 
+
  **Compared with similar systems**
 
 ![introduction01](docs/en_US/images/introduction/introduction01.png)
@@ -59,13 +59,8 @@ Based on the microservices architecture, Linkis provides enterprise-level featur
 ----
 
 ## Communication
-If you desire immediate response, please kindly raise issues to us or scan the below QR code by WeChat to join our group:
-![introduction03](docs/en_US/images/introduction/introduction03.jpg)
-
-**QQ group:**
-<br>
-
-![introduction04](docs/en_US/images/introduction/introduction04.jpg)
+If you want the fastest response, please give us an issue, or you can scan the code into the WeChat group and QQ group:
+![introduction05](docs/en_US/images/introduction/introduction05.png)
 
 ## License
 

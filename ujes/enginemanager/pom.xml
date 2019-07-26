@@ -59,6 +59,12 @@
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
             <version>${linkis.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.monitorjbl</groupId>
+                    <artifactId>xlsx-streamer</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

@@ -36,6 +36,8 @@ private[conf] object BDPConfiguration extends Logging {
   private val sysProps = sys.props
   private val extractConfig = new Properties
 
+  private val env = sys.env
+
   val propertyFile = sysProps.getOrElse("wds.linkis.configuration", DEFAULT_PROPERTY_FILE_NAME)
   private val configFileURL = getClass.getClassLoader.getResource(propertyFile)
   info(configFileURL.getPath)
@@ -59,7 +61,11 @@ private[conf] object BDPConfiguration extends Logging {
     if(StringUtils.isNotEmpty(value)) {
       return Some(value)
     }
-    sysProps.get(key).orElse(sys.props.get(key))
+    val propsValue =  sysProps.get(key).orElse(sys.props.get(key))
+    if(propsValue.isDefined){
+      return propsValue
+    }
+    env.get(key)
   }
 
   def properties = {
@@ -67,6 +73,7 @@ private[conf] object BDPConfiguration extends Logging {
     props.putAll(sysProps)
     props.putAll(config)
     props.putAll(extractConfig)
+    props.putAll(env)
     props
   }
 

@@ -136,6 +136,8 @@ ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.username.*#wds.
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.workspace.filesystem.localuserrootpath.*#wds.linkis.workspace.filesystem.localuserrootpath=$WORKSPACE_PATH#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.workspace.filesystem.hdfsuserrootpath.prefix.*#wds.linkis.workspace.filesystem.hdfsuserrootpath.prefix=$HDFS_PATH#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
 echo "<----------------$SERVERNAME:end------------------->"
 ##publicservice end
 

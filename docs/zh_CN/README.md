@@ -3,7 +3,7 @@ Linkis
 
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-[English](docs/en_US/README.md) | [Chinese](docs/zh_CN/README.md)
+[English](../../README.md) | 中文
 
 # 引言：
 

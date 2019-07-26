@@ -60,9 +60,17 @@ Read the [Quick Start](ch1/deploy.md)
 
 ----
 
-# Quick Use:
+# 快速使用文档:
 
-Read the [Quick Use](ch2/linkis快速使用文档.md)
+请点击[快速使用文档](ch2/linkis快速使用文档.md)
+
+----
+
+----
+
+# 使用文档
+
+请点击[使用文档](ch3/linkis使用文档.md)
 
 ----
 

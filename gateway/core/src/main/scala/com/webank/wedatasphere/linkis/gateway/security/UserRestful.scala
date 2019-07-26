@@ -104,7 +104,7 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful {
     } else {
       //warn: For easy to useing linkis,Admin skip login
       if(GatewayConfiguration.ADMIN_USER.getValue.equals(userName.toString) && userName.toString.equals(password.toString)){
-          GatewaySSOUtils.setLoginUser(gatewayContext, userName)
+          GatewaySSOUtils.setLoginUser(gatewayContext, userName.toString)
           "login successful(登录成功)！".data("userName", userName)
             .data("isAdmin", true)
             .data("loginNum", 4)

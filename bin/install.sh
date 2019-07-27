@@ -242,6 +242,7 @@ SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVERNAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/servlet-api-2.5.jar"
 echo "<----------------$SERVERNAME:end------------------->"
 ##HiveEM install end
 

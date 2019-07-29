@@ -7,9 +7,9 @@
 - ZooKeeper (3.4.9) : Required
 - Hadoop (2.7.2) : Required
 - Hive (1.2.1) : Optional, Hive engine nodes need to be installed.
-- Spark (2.1.0) : Required, Spark engine nodes need to be installed.
+- Spark (2.1.0) : Optional, Spark engine nodes need to be installed.
 
-Notes:  Linkis itself does not depend on Hadoop, Hive or Spark, it only calls their clients when running the corresponding tasks.
+Notes:  Linkis itself does not depend on Hadoop, it only calls their clients when running the corresponding tasks.
 
 ### (2) Create deploy users
 

@@ -55,7 +55,7 @@
 
 
 ## 2、编译打包（可跳过）：
-   ###如用户不想自己编译，可以直接在release页面下载安装包进行第三部安装即可。
+   ### 如用户不想自己编译，可以直接在release页面下载安装包进行第三部安装即可。
    从git获取项目代码后，使用maven打包项目安装包。   
 
    （1） 如果是本地第一次使用，必须在最外层工程pom.xml所在目录先执行以下命令，否则直接执行步骤2即可：
@@ -68,12 +68,13 @@
          
    （3） 获取安装包，在工程的assembly->target目录下：
    
-         assembly-0.5.0-SNAPSHOT-dist.tar.gz
+         wedatasphere-linkis-0.5.0-dist.tar.gz
           
 ## 3、安装：
    先解压安装包到安装目录，并对解压后文件进行配置修改。
    
-      tar -xvf  assembly-0.5.0-SNAPSHOT-dist.tar.gz
+      tar -xvf  wedatasphere-linkis-0.5.0-dist.tar.gz
+      
    （1）修改基础配置  
    
        vi /conf/config.sh   
@@ -86,13 +87,13 @@
    - 同时需要在配置文件中，根据实际安装路径设置如下环境变量，未使用到的某个引擎可以不用设置。
    
    ```
-   ##COMMON CONFIG
-   HADOOP_CONF_DIR=/appcom/config/hadoop-config
-   SPARK_CONF_DIR=/appcon/config/spark-config
-   HIVE_CONF_DIR=/appcom/config/hive-config
-   HADOOP_HOME=/appcom/Install/hadoop
-   SPARK_HOME=/appcom/Install/spark
-   HIVE_HOME=/appcom/Install/hive
+      ##COMMON CONFIG
+      HADOOP_CONF_DIR=/appcom/config/hadoop-config
+      SPARK_CONF_DIR=/appcon/config/spark-config
+      HIVE_CONF_DIR=/appcom/config/hive-config
+      HADOOP_HOME=/appcom/Install/hadoop
+      SPARK_HOME=/appcom/Install/spark
+      HIVE_HOME=/appcom/Install/hive
    ```
         
    （2）修改数据库配置 

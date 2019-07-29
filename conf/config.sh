@@ -6,8 +6,6 @@ LINKIS_INSTALL_HOME=
 LINKIS_VERSION=0.5.0
 #path to store user's log
 USER_LOG_PATH=file://
-#path to store result
-RESULT_STORE_PATH=hdfs://
 ##EUREKA
 EUREKA_INSTALL_IP=
 EUREKA_PORT=20303
@@ -22,6 +20,7 @@ LDAP_BASEDN=dc=webank,dc=com
 #PUBLICSERVICE_INSTALL_IP
 PUBLICSERVICE_PORT=9002
 WORKSPACE_PATH=file:///tmp/linkis/
+#path to store result and user's root hdfs path
 HDFS_PATH=hdfs:///tmp/linkis
 
 ##database

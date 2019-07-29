@@ -3,11 +3,13 @@ Linkis
 
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-[English](docs/en_US/README.md) | [Chinese](docs/zh_CN/README.md)
+English | [中文](docs/zh_CN/README.md)
 
 ## Introduction
 
-Linkis connects with compuation/storage engines(Spark, Flink, Hive, Python and HBase), exposes REST/WS interface, and executes multi-language jobs(SQL, Pyspark, HiveQL and Scala), as a data middleware.
+Linkis helps easily connect to various back-end computation/storage engines(Spark, Python, HBase ...), exposes various interfaces(REST, WebSocket, Java ...), with multi-tenancy, high performance, and resource control.
+
+Linkis connects with computation/storage engines(Spark, Hive, Python and HBase), exposes REST/WS interface, and executes multi-language jobs(SQL, Pyspark, HiveQL and Scala), as a data middleware.
 
 Based on the microservices architecture, Linkis provides enterprise-level features of financial-level multi-tenant isolation, resource management and access control. It also offers convenient support to manage unified variables, UDFs, functions and resource files. it is also guaranteed with sophisticated task/job lifecycle management capabilities under high-concurrency, high-performance and high-availability scenarios.
 
@@ -42,13 +44,19 @@ Based on the microservices architecture, Linkis provides enterprise-level featur
 
 # QuickStart：
 
-[Read the Quick Start.](docs/en_US/ch1/deploy.md)
+Read the [Quick Start](docs/en_US/ch1/deploy.md)
 
 ----
 
 # Quick Use:
 
-[Read the Quick Use](docs/en_US/ch2/Linkis%20Quick%20Start.md)
+Read the [Quick Use](docs/en_US/ch2/Linkis%20Quick%20Start.md)
+
+----
+
+# User Manual
+
+Read the [User Manual](ch3/linkis使用文档.md)
 
 ----
 

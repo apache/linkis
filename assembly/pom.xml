@@ -25,7 +25,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>assembly</artifactId>
+    <artifactId>wedatasphere-linkis</artifactId>
     <build>
         <plugins>
             <plugin>
@@ -50,7 +50,7 @@
             <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>2.3</version>
                     <executions>
                         <execution>
                             <id>dist</id>
@@ -59,9 +59,13 @@
                                 <goal>single</goal>
                             </goals>
                             <configuration>
-                                <descriptors>
-                                    <descriptor>src/main/assembly/assembly.xml</descriptor>
-                                </descriptors>
+                                    <skipAssembly>false</skipAssembly>
+                                    <finalName>wedatasphere-linkis-${linkis.version}-dist</finalName>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                    <attach>false</attach>
+                                    <descriptors>
+                                        <descriptor>src/main/assembly/assembly.xml</descriptor>
+                                    </descriptors>
                             </configuration>
                         </execution>
                     </executions>

@@ -261,7 +261,7 @@ public class FsRestfulApi implements FsRestfulRemote {
         }
         DirFileTree dirFileTree = new DirFileTree();
         dirFileTree.setPath(fsPath.getSchemaPath());
-        if(!isInUserWorkspace(path,userName)) throw new WorkSpaceException("The user does not have permission to view the contents of the directory");
+        //if(!isInUserWorkspace(path,userName)) throw new WorkSpaceException("The user does not have permission to view the contents of the directory");
         if (!fileSystem.canExecute(fsPath) || !fileSystem.canRead(fsPath)) {
             throw new WorkSpaceException("The user does not have permission to view the contents of the directory(该用户无权限查看该目录的内容)");
         }

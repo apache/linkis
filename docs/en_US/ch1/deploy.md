@@ -4,7 +4,6 @@
 
 - Mysql (5.5+) : Required
 - JDK (1.8.0_141) : Required
-- ZooKeeper (3.4.9) : Required
 - Hadoop (2.7.2) : Required
 - Hive (1.2.1) : Optional, Hive engine nodes need to be installed.
 - Spark (2.1.0) : Optional, Spark engine nodes need to be installed.

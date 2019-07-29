@@ -85,17 +85,7 @@
    - 指定日志存储路径：USER_LOG_PATH
    - 指定结果集HDFS存储路径：RESULT_STORE_PATH
    - 指定各个服务安装所在的机器IP地址和端口号:* _INSTALL_IP, * _PORT
-   - 同时需要在配置文件中，根据实际安装路径设置如下环境变量，未使用到的某个引擎可以不用设置。
    
-   ```
-      ##COMMON CONFIG
-      HADOOP_CONF_DIR=/appcom/config/hadoop-config
-      SPARK_CONF_DIR=/appcon/config/spark-config
-      HIVE_CONF_DIR=/appcom/config/hive-config
-      HADOOP_HOME=/appcom/Install/hadoop
-      SPARK_HOME=/appcom/Install/spark
-      HIVE_HOME=/appcom/Install/hive
-   ```
         
    （2）修改数据库配置 
    

@@ -7,7 +7,7 @@ English | [中文](docs/zh_CN/README.md)
 
 ## Introduction
 
-Linkis helps easily connect to various back-end computation/storage engines(Spark, Python, HBase...), with multi-tenancy, high performance, and resource control.
+Linkis helps easily connect to various back-end computation/storage engines(Spark, Python, HBase ...), exposes various interfaces(REST, WebSocket, Java ...), with multi-tenancy, high performance, and resource control.
 
 Linkis connects with computation/storage engines(Spark, Hive, Python and HBase), exposes REST/WS interface, and executes multi-language jobs(SQL, Pyspark, HiveQL and Scala), as a data middleware.
 

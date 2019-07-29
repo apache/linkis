@@ -4,21 +4,42 @@
 
 - Mysql (5.5+) : 必装
 - JDK (1.8.0_141) : 必装
-- Hadoop(2.7.2) ：必装， 
+- Hadoop(2.7.2) ：选装，如需使用hive\spark引擎功能则需要安装Hadoop，只使用Python无需安装 
 - Hive(1.2.1) : 选装，hive引擎节点需要安装
-- Spark(2.1.0) :  必装，Spark引擎节点需要安装
+- Spark(2.1.0) : 选装，Spark引擎节点需要安装
 
   **注意：Linkis本身不依赖Hive、Spark等服务，仅是会调用他们的Client，用于对应任务的运行。**
-
-### (2) 创建部署用户
+  
+  机器环境变量设置，具体路径根据实际安装情况来设置，有使用到Hadoop,Spark,Hive时，需设置对应的环境变量，
+  下方为示例：
+    ```
+      export JAVA_HOME=/nemo/jdk1.8.0_141
+      #HADOOP  
+      export HADOOP_HOME=/appcom/Install/hadoop
+      export HADOOP_COMMON_HOME=/appcom/Install/hadoop
+      export HADOOP_CONF_DIR=/appcom/config/hadoop-config    
+      #Spark
+      export SPARK_HOME=/appcom/Install/spark
+      export SPARK_CONF_DIR=/appcom/config/spark-config/spark-submit
+      export SPARK_CMD=/appcom/Install/spark-cmd
+      #Hive
+      export HIVE_HOME=/appcom/Install/hive
+      export HIVE_LIB=/appcom/Install/hive/lib
+      export HIVE_CONF_DIR=/appcom/config/hive-config
+    ```
+ 
+### (2) 创建用户
 
 例如部署用户是hadoop账号
 
-1. 在所有需要部署的机器上创建部署用户
+1. 在所有需要部署的机器上创建部署用户,用于安装
    
-         sudo useradd hadoop
+         sudo useradd hadoop  
+         
+    创建使用用户：
+         sudo useradd -Ghadoop xxx
      
-         sudo cp ~/.bashrc /home/hadoop
+         sudo cp ~/.bashrc /home/xxx
 
 2. 因为Linkis的服务是以 sudo -u ${linux-user} 方式来切换引擎，从而执行作业，所以部署用户需要有 sudo 权限，而且是免密的。
 

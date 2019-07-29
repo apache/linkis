@@ -16,23 +16,20 @@
       export JAVA_HOME=/nemo/jdk1.8.0_141
       #HADOOP  
       export HADOOP_HOME=/appcom/Install/hadoop
-      export HADOOP_COMMON_HOME=/appcom/Install/hadoop
       export HADOOP_CONF_DIR=/appcom/config/hadoop-config    
       #Spark
       export SPARK_HOME=/appcom/Install/spark
       export SPARK_CONF_DIR=/appcom/config/spark-config/spark-submit
-      export SPARK_CMD=/appcom/Install/spark-cmd
       #Hive
       export HIVE_HOME=/appcom/Install/hive
-      export HIVE_LIB=/appcom/Install/hive/lib
       export HIVE_CONF_DIR=/appcom/config/hive-config
     ```
  
 ### (2) 创建用户
 
-例如部署用户是hadoop账号
+例如: **部署用户是hadoop账号**
 
-1. 在所有需要部署的机器上创建部署用户,用于安装
+1. 在所有需要部署的机器上创建部署用户，用于安装
    
          sudo useradd hadoop  
          
@@ -51,11 +48,14 @@
 
 ### (3) ssh免密配置
 
+
 在部署机器和其他安装机器上配置ssh免密登录，如果要在部署机上安装，需要将主机器和各个其它机器SSH打通
 
 
 ## 2、编译打包（可跳过）：
-   ### 如用户不想自己编译，可以直接在release页面下载安装包进行第三部安装即可。
+
+   ### 如果用户不想自己编译，可以直接在release页面下载安装包，本步骤可以直接跳过。
+   
    从git获取项目代码后，使用maven打包项目安装包。   
 
    （1） 如果是本地第一次使用，必须在最外层工程pom.xml所在目录先执行以下命令，否则直接执行步骤2即可：
@@ -71,6 +71,7 @@
          wedatasphere-linkis-0.5.0-dist.tar.gz
           
 ## 3、安装：
+
    先解压安装包到安装目录，并对解压后文件进行配置修改。
    
       tar -xvf  wedatasphere-linkis-0.5.0-dist.tar.gz

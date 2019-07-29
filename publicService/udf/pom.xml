@@ -26,8 +26,8 @@
 
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
-    <name>BDP-UDF udf module</name>
-    <artifactId>linkis-cs-udf</artifactId>
+    <name>linkis-udf</name>
+    <artifactId>linkis-udf</artifactId>
 
     <properties>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>

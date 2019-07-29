@@ -55,7 +55,6 @@
             </excludes>-->
             <excludes>
                 <exclude>antlr:antlr:jar</exclude>
-                <exclude>aopalliance:aopalliance:jar</exclude>
                 <exclude>asm:asm:jar</exclude>
                 <exclude>cglib:cglib:jar</exclude>
                 <exclude>com.amazonaws:aws-java-sdk-autoscaling:jar</exclude>
@@ -113,7 +112,6 @@
                 <exclude>commons-cli:commons-cli:jar</exclude>
                 <exclude>commons-collections:commons-collections:jar</exclude>
                 <exclude>commons-configuration:commons-configuration:jar</exclude>
-                <exclude>commons-daemon:commons-daemon:jar</exclude>
                 <exclude>commons-dbcp:commons-dbcp:jar</exclude>
                 <exclude>commons-digester:commons-digester:jar</exclude>
                 <exclude>commons-io:commons-io:jar</exclude>
@@ -235,7 +233,6 @@
                 <exclude>org.jvnet:tiger-types:jar</exclude>
                 <exclude>org.latencyutils:LatencyUtils:jar</exclude>
                 <exclude>org.mortbay.jasper:apache-el:jar</exclude>
-                <exclude>org.mortbay.jetty:jetty:jar</exclude>
                 <exclude>org.mortbay.jetty:jetty-util:jar</exclude>
                 <exclude>org.ow2.asm:asm-analysis:jar</exclude>
                 <exclude>org.ow2.asm:asm-commons:jar</exclude>
@@ -321,4 +318,3 @@
     </fileSets>
 
 </assembly>
-

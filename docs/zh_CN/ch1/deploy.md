@@ -37,9 +37,11 @@
          sudo useradd hadoop  
          
     创建使用用户：
+    ```
          sudo useradd -Ghadoop xxx
      
          sudo cp ~/.bashrc /home/xxx
+    ```
 
 2. 因为Linkis的服务是以 sudo -u ${linux-user} 方式来切换引擎，从而执行作业，所以部署用户需要有 sudo 权限，而且是免密的。
 
@@ -52,15 +54,18 @@
 在部署机器和其他安装机器上配置ssh免密登录，如果要在部署机上安装，需要将主机器和各个其它机器SSH打通
 
 
-## 2、编译打包：
-   从git获取项目代码后，使用maven打包项目安装包(如已有安装包可以直接进行安装，不需要编译打包)。
-   
-   （1） 在最外层工程pom.xml所在目录执行以下命令
-   
-         mvn clean install
-   （2） 如果是本地第一次使用，必须先执行以下命令，否则执行步骤1即可：
+## 2、编译打包（可跳过）：
+   ###如用户不想自己编译，可以直接在release页面下载安装包进行第三部安装即可。
+   从git获取项目代码后，使用maven打包项目安装包。   
+
+   （1） 如果是本地第一次使用，必须在最外层工程pom.xml所在目录先执行以下命令，否则直接执行步骤2即可：
    
          mvn -N  install
+         
+   （2） 在最外层工程pom.xml所在目录执行以下命令
+      
+         mvn clean install
+         
    （3） 获取安装包，在工程的assembly->target目录下：
    
          assembly-0.5.0-SNAPSHOT-dist.tar.gz
@@ -78,6 +83,17 @@
    - 指定日志存储路径：USER_LOG_PATH
    - 指定结果集HDFS存储路径：RESULT_STORE_PATH
    - 指定各个服务安装所在的机器IP地址和端口号:* _INSTALL_IP, * _PORT
+   - 同时需要在配置文件中，根据实际安装路径设置如下环境变量，未使用到的某个引擎可以不用设置。
+   
+   ```
+   ##COMMON CONFIG
+   HADOOP_CONF_DIR=/appcom/config/hadoop-config
+   SPARK_CONF_DIR=/appcon/config/spark-config
+   HIVE_CONF_DIR=/appcom/config/hive-config
+   HADOOP_HOME=/appcom/Install/hadoop
+   SPARK_HOME=/appcom/Install/spark
+   HIVE_HOME=/appcom/Install/hive
+   ```
         
    （2）修改数据库配置 
    
@@ -97,3 +113,8 @@
 
 ## 4、启动服务：
         sh  ./bin/start-all.sh
+        
+    可以在Eureka界面查看服务启动成功情况，查看方法：
+    使用eureka的IP地址+端口号port, 在浏览器中打开，查看服务是否注册成功即可。
+   
+       

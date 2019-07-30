@@ -87,10 +87,7 @@
     LINKIS_INSTALL_HOME=/appcom/Install/Linkis    # 指定安装目录
     WORKSPACE_USER_ROOT_PATH=/tmp/hadoop    # 指定用户根目录，一般用于存储用户的脚本文件和日志文件等，是用户的工作空间。
     HDFS_USER_ROOT_PATH=hdfs:///tmp/linkis   # 指定用户的HDFS根目录，一般用于存储Job的结果集文件
-    # 以下为Hive Metadata的元数据库信息，请指定JDBC的URL、USER和PASSWORD
-    HIVE_META_URL=
-    HIVE_META_USER=
-    HIVE_META_PASSWORD=
+    
    ```
         
    （2）修改数据库配置 

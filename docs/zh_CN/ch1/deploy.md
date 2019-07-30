@@ -124,5 +124,5 @@
     
     如下图，如您的Eureka主页出现以下微服务，则表示服务都启动成功，可以正常对外提供服务了：
     
-   
+   ![Eureka](../images/ch1/Eureka_homepage.png)
        

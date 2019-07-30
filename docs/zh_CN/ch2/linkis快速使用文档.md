@@ -10,6 +10,8 @@ Linkis为用户提供了Java客户端的实现，用户可以使用UJESClient对
         com.webank.wedatasphere.linkis.ujes.client.UJESClientImplTest # 基于Scala实现的测试类
 
    如果您clone了Linkis的源代码，可以直接运行这两个测试类。
+   
+   **下面具体介绍如何快速实现一次对Linkis的代码提交执行。**
 
 #### 3 快速实现
 

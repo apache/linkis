@@ -12,7 +12,7 @@
  
 ### (2) 创建用户
 
-例如: **部署用户是hadoop账号**
+   例如: **部署用户是hadoop账号**
 
 1. 在所有需要部署的机器上创建部署用户，用于安装
    
@@ -28,14 +28,11 @@
 3. **如果您需要使用Spark和Hive，还需在每台安装节点设置如下的全局环境变量**，
   
     修改安装用户的.bash_rc，命令如下：
-
-        ```
+        
            vim /home/hadoop/.bash_rc
-        ```
-
+        
     下方为环境变量示例：
 
-        ```
           export JAVA_HOME=/nemo/jdk1.8.0_141
           #HADOOP  
           export HADOOP_HOME=/appcom/Install/hadoop
@@ -46,7 +43,7 @@
           #Hive
           export HIVE_HOME=/appcom/Install/hive
           export HIVE_CONF_DIR=/appcom/config/hive-config
-        ```
+
 
 ### (3) ssh免密配置
 

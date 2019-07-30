@@ -6,12 +6,12 @@ Linkis provides a client implementation for users to have quick-access to Linkis
 **2.1 Client Configuration**
 
 Configurations are necessary before instantiating a UJESClient object. To do the configuration, an instance of DWSClientConfig should be obtained from DWSClientBuilder. Parameters should be specified as below:
-- ServerUrl The address of Linkis gateway, i.e. http://{ip}:{port}
-- connectionTimeOut The connection timeout of the client
-- AuthenticationStrategy The authentication strategy of Linkis
-- AuthTokenKey The authentication key，usually the username
-- AuthTokenValue The authentication value，usually the password
-- DWSVersion The version of Linkis background protocol, currently v1
+- ServerUrl: The address of Linkis gateway, i.e. http://{ip}:{port}
+- connectionTimeOut: The connection timeout of the client
+- AuthenticationStrategy: The authentication strategy of Linkis
+- AuthTokenKey: The authentication key，usually the username
+- AuthTokenValue: The authentication value，usually the password
+- DWSVersion: The version of Linkis background protocol, currently v1
 
 **2.2 UJESClient Instantiation**
 
@@ -20,10 +20,10 @@ The instantiation of UJESClient is very convenient. Simply passing a ClientConfi
 **2.3 Service Request by UJESClient**
 
 After the instantiation of UJESClient, the 'execute' method is invokable to request the background services of Linkis. An instance of JobExectutionAction should be passed as parameter, which can be obtained by invoking JobExecutionAction.builder() with following parameters:
-- creator The name of the system which holds the UJES client and requests for Linkis
-- EngineType The engine type expected by the client, i.e. Spark, Hive, etc...
-- User The user who makes this request
-- ExecutionCode The code which is requested to be executed
+- creator: The name of the system which holds the UJES client and requests for Linkis
+- EngineType: The engine type expected by the client, i.e. Spark, Hive, etc...
+- User: The user who makes this request
+- ExecutionCode: The code which is requested to be executed
 After the UJESClient submitted the JobExecutionAction instance to Linkis services, a JobExecutionResult with execId and taskID information would be returned. To track the logs or the status of a task, users can pass the corresponding JobExecuteResult as the parameter to the 'log' or 'status' methods of UJESClient.
 
 #### 3.Sample Implementation

@@ -110,10 +110,18 @@ public class FsRestfulApi implements FsRestfulRemote {
         String path = null;
         String returnType = null;
         if(pathType.equals("hdfs")){
-            path = WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue() + userName + WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_SUFFIX.getValue();
+            if (WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue().toString().endsWith("/")){
+                path = WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue() + userName + WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_SUFFIX.getValue();
+            }else{
+                path = WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue() + "/" +  userName + WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_SUFFIX.getValue();
+            }
             returnType = "HDFS";
         }else {
-            path = WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue() + userName + "/";
+            if (WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue().toString().endsWith("/")){
+                path = WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue() + userName + "/";
+            }else{
+                path = WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue() + "/" + userName + "/";
+            }
             returnType = "Local";
         }
         FsPath fsPath = new FsPath(path);

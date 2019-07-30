@@ -16,9 +16,9 @@ HDFS_USER_ROOT_PATH=hdfs:///tmp/linkis
 
 
 ### Provide the DB information of Hive metadata database.
-HIVE_META_URL=
-HIVE_META_USER=
-HIVE_META_PASSWORD=
+#HIVE_META_URL=
+#HIVE_META_USER=
+#HIVE_META_PASSWORD=
 
 
 ################### The install Configuration of all Micro-Services #####################

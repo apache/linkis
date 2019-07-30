@@ -106,8 +106,13 @@ object YarnUtil extends Logging{
     }
     val future = Http(url > as.json4s.Json).map {resp =>
       val childQueues = resp \ "scheduler" \ "schedulerInfo" \ "rootQueue"  \ "childQueues"
+      if(childQueues == JNull || childQueues == JNothing)
+        throw new RMWarnException(111006, s"Ask for the information of queue $queueName, but got unknown response: $resp.")
       val queue = getQueue(childQueues)
-      if(queue.isEmpty) throw new RMWarnException(111006, s"queue $queueName is not exists in YARN.")
+      if(queue.isEmpty) {
+        debug(s"cannot find any information about queue $queueName, response: " + resp)
+        throw new RMWarnException(111006, s"queue $queueName is not exists in YARN.")
+      }
       (getYarnResource(queue.map( _ \ "maxResources")).get,
         getYarnResource(queue.map( _ \ "usedResources")).get)
     }

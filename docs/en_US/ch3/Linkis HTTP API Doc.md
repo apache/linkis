@@ -6,7 +6,7 @@
 
 The data development IDE tool [Scriptis](https://github.com/WeBankFinTech/Scriptis) combined both ways to adapt with Willink. It communicates with Willink by websocket in normal circumstances, and failover to HTTP protocol in case the Websocket connection was down.
 
-#####2.1 API Specs
+##### 2.1 API Specs
 Linkis defined its own specs for front-backend adaption.<br>
 
 **1).URL specs**
@@ -39,7 +39,7 @@ Linkis defined its own specs for front-backend adaption.<br>
 - message：Return hint message of the request. If the status is not 0, this message returns error messages. At the same time 'data' may return the stack information in its 'stack' column. 
 
 
-#####2.2 HTTP API description
+##### 2.2 HTTP API description
 For HTTP API, polling should be used to retrieve the status, logs and progress information after submission.
 
 

@@ -33,7 +33,7 @@ At the same time of introducing new open-source components to solve the pain poi
 To construct a enterprise-level big data platform with sufficient & powerful functional tools and application systems, below questions should be taken into concern:
 <br>
 
-![Questions to concern](../../../zh_CN/images/ch3/要解决的问题.jpg)
+![Questions to concern](../../zh_CN/images/ch3/要解决的问题.jpg)
 <br>
 
 1. How to immediately gain the enterprise-level capabilities of multi-tenant isolation, elastic scaling and resource governance?

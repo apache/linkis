@@ -59,4 +59,4 @@ Linkis provides below common modules to abstract, analyze and solve most problem
 
 ![Functions and modules diagram](../images/ch3/功能模块图.png)
 
-Linkis, the edage tool to build up a finance and enterprise level big data platforms!
+Linkis, the edge-cutting tool to build up a finance and enterprise level big data platforms!

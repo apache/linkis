@@ -116,7 +116,7 @@
     mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB -e "source ${workDir}/db/linkis_dml.sql"
    ```
 
-   （3）执行安装脚本：
+   （4）执行安装脚本：
    
         sh ./bin/install.sh       
 

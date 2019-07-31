@@ -1,6 +1,6 @@
-# DWS-RM设计文档
+# Linkis RM设计文档
 ## 背景
-在微服务场景下，各种服务所需要消耗和占用的资源具有多样性，不像传统大型应用一样容易管理。DWS-RM提供对资源的统一分配和回收的服务，在大量服务高频率启动和关闭的情况下，保证服务对资源的消耗不超出限制。
+在微服务场景下，各种服务所需要消耗和占用的资源具有多样性，不像传统大型应用一样容易管理。Linkis RM提供对资源的统一分配和回收的服务，在大量服务高频率启动和关闭的情况下，保证服务对资源的消耗不超出限制。
 ## 产品设计
 ### 总体架构图
 RM维护引擎管理器上报的可用资源信息，处理引擎提出的资源申请，并记录成功申请后的实际资源使用信息。
@@ -13,7 +13,7 @@ RM维护引擎管理器上报的可用资源信息，处理引擎提出的资源
 ```
 
 用户资源记录表：
-bdp_dwc_user_resource_meta_data: 
+linkis_user_resource_meta_data: 
 	id
 	user
 	ticket_id
@@ -29,7 +29,7 @@ bdp_dwc_user_resource_meta_data:
 	used_time
 
 模块资源记录表：
-bdp_dwc_em_resource_meta_data: 
+linkis_em_resource_meta_data: 
 	id
 	em_application_name
 	em_instance
@@ -42,13 +42,13 @@ bdp_dwc_em_resource_meta_data:
 	register_time: long
 
 模块policy表：
-bdp_dwc_em_meta_data: 
+linkis_em_meta_data: 
 	id
 	em_name
 	resource_request_policy
 
 锁：该表需要添加unique constraint：（scope，user, module_application_name, module_instance），用来保证锁不被强制多次同时获取。
-bdp_dwc_resource_lock: 
+linkis_resource_lock: 
 	id
 	user
 	em_application_name
@@ -90,9 +90,9 @@ bdp_dwc_resource_lock:
 	3)	资源类型：如LoadResource，DriverAndYarnResource等类型名称。
 	4)	EM名称：如sparkEngineManager等提供资源的EM名称。
 	5)	EM实例：机器名加端口名。
-1. RM在收到资源注册请求后，在表bdp_dwc_module_resource_meta_data中新增一条记录，内容与接口的参数信息一致。
+1. RM在收到资源注册请求后，在表linkis_module_resource_meta_data中新增一条记录，内容与接口的参数信息一致。
 1. 持有资源的EM在关闭时，将通过RPC调用unregister接口，传入自己的EM实例信息作为参数，来进行资源的下线。
-1. RM在收到资源下线请求后，在bdp_dwc_module_resource_meta_data表中找到EM实例信息对应的那一行，进行删除处理；同时在bdp_dwc_user_resource_meta_data表中，找到该EM实例对应的所有行，进行删除处理。
+1. RM在收到资源下线请求后，在linkis_module_resource_meta_data表中找到EM实例信息对应的那一行，进行删除处理；同时在linkis_user_resource_meta_data表中，找到该EM实例对应的所有行，进行删除处理。
 
 ## 资源的分配与回收
 1.	接收用户的资源申请。
@@ -112,8 +112,8 @@ bdp_dwc_resource_lock:
 	&ensp;&ensp;i.	EM锁。获得该锁以后，将不允许其它针对该EM的资源操作。
 	&ensp;&ensp;ii.	用户锁。获得该锁以后，将不允许该用户的其它资源操作。
 	b)	在两个锁均成功获得后，将再次重复判断一遍资源是否足够，如果依然足够，则继续进行后续步骤。
-	c)	为该资源申请生成一个UUID，并在bdp_dwc_user_resource_meta_data表中插入一条用户资源记录（pre_used_resource为申请的资源数量，used_resource为null）。
-	d)	在bdp_dwc_module_resource_meta_data表中更新对应的EM资源记录字段（locked_resource,left_resource）。
+	c)	为该资源申请生成一个UUID，并在linkis_user_resource_meta_data表中插入一条用户资源记录（pre_used_resource为申请的资源数量，used_resource为null）。
+	d)	在linkis_module_resource_meta_data表中更新对应的EM资源记录字段（locked_resource,left_resource）。
 	e)	提交一个定时任务，该任务如果不被取消，则在固定时间后回滚c、d两步的操作，并将UUID作废，以便未被实际使用的已锁定资源不会被无限占据。
 	f)	将UUID返回给资源申请方。
 	g)	无论以上步骤中发生了什么，都在最后释放a中获得的两个锁。
@@ -130,7 +130,7 @@ bdp_dwc_resource_lock:
 	d)	更新对应的模块资源记录(清理used_resource，恢复left_resource)。
 
 ## EM锁与用户锁的实现
-通过bdp_dwc_resource_lock表来实现锁，利用数据库本身的unique constraint机制保证数据不被抢写。
+通过linkis_resource_lock表来实现锁，利用数据库本身的unique constraint机制保证数据不被抢写。
 1.	EM锁：针对全局锁住对某个EM的某个实例的操作。
 	a)	获得锁：
 	&ensp;&ensp;i.	检查是否存在user为null、且application和instance栏位为对应值的记录，若有，则说明该锁已被其它实例获得，轮询等待。

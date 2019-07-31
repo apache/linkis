@@ -48,13 +48,12 @@ SERVERNAME=eureka
 SERVER_IP=$EUREKA_INSTALL_IP
 SERVER_PORT=$EUREKA_PORT
 SERVER_HOME=$LINKIS_INSTALL_HOME
-EUEKEA_URL=http://$EUREKA_INSTALL_IP:$EUREKA_PORT/eureka/
 echo "$SERVERNAME-step1: create dir"
 if test -z "$SERVER_IP"
 then
   SERVER_IP=$local_host
 fi
-
+EUEKEA_URL=http://$SERVER_IP:$EUREKA_PORT/eureka/
 if ! ssh $SERVER_IP test -e $SERVER_HOME; then
   ssh $SERVER_IP "sudo mkdir -p $SERVER_HOME;sudo chown -R $deployUser:$deployUser $SERVER_HOME"
 fi
@@ -134,10 +133,10 @@ SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.workspace.filesystem.localuserrootpath.*#wds.linkis.workspace.filesystem.localuserrootpath=$WORKSPACE_PATH#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.workspace.filesystem.hdfsuserrootpath.prefix.*#wds.linkis.workspace.filesystem.hdfsuserrootpath.prefix=$HDFS_PATH#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.workspace.filesystem.localuserrootpath.*#wds.linkis.workspace.filesystem.localuserrootpath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.workspace.filesystem.hdfsuserrootpath.prefix.*#wds.linkis.workspace.filesystem.hdfsuserrootpath.prefix=$HDFS_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
 echo "<----------------$SERVERNAME:end------------------->"
 ##publicservice end
 
@@ -156,11 +155,11 @@ SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hive.meta.url.*#hive.meta.url=$HIVE_META_URL#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hive.meta.user.*#hive.meta.user=$HIVE_META_USER#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hive.meta.password.*#hive.meta.password=$HIVE_META_PASSWORD#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hive.meta.url.*#hive.meta.url=$HIVE_META_URL#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hive.meta.user.*#hive.meta.user=$HIVE_META_USER#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hive.meta.password.*#hive.meta.password=$HIVE_META_PASSWORD#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
 echo "<----------------$SERVERNAME:end------------------->"
 ##database end
 
@@ -179,8 +178,8 @@ SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
 echo "<----------------$SERVERNAME:end------------------->"
 ##ResourceManager install end
 
@@ -199,16 +198,17 @@ ENGINE_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis-engine.properties
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVERNAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.core.jar.*#wds.linkis.enginemanager.core.jar=$SERVER_HOME/$SERVERNAME/lib/linkis-ujes-spark-engine-0.5.0.jar#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.spark.driver.conf.mainjar.*#wds.linkis.spark.driver.conf.mainjar=$SERVER_HOME/$SERVERNAME/conf:$SERVER_HOME/$SERVERNAME/lib/*#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#spark.config.dir.*#spark.config.dir=$SPARK_CONF_DIR#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#spark.home.*#spark.home=$SPARK_HOME#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#spark.home.*#spark.home=$SPARK_HOME#g\" $ENGINE_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#spark.config.dir.*#spark.config.dir=$SPARK_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#spark.home.*#spark.home=$SPARK_HOME#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#spark.home.*#spark.home=$SPARK_HOME#g\" $ENGINE_CONF_PATH"
 ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/netty-3.6.2.Final.jar"
 ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/netty-all-4.0.23.Final.jar"
 ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/jackson-core-2.6.5.jar"
 ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/jackson-databind-2.6.5.jar"
 ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/jackson-mapper-asl-1.9.2.jar"
+ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/netty-all-4.0.42.Final.jar"
 echo "<----------------$SERVERNAME:end------------------->"
 ##SparkEM install end
 
@@ -221,10 +221,10 @@ installPackage
 ###update linkis.properties
 echo "$SERVERNAME-step4:update linkis conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$USER_LOG_PATH#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$RESULT_STORE_PATH#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$HDFS_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
 echo "<----------------$SERVERNAME:end------------------->"
 ##SparkEntrance install end
 
@@ -240,8 +240,8 @@ installPackage
 echo "$SERVERNAME-step4:update linkis conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVERNAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/servlet-api-2.5.jar"
 echo "<----------------$SERVERNAME:end------------------->"
 ##HiveEM install end
@@ -255,10 +255,10 @@ installPackage
 ###update linkis.properties
 echo "$SERVERNAME-step4:update linkis conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$USER_LOG_PATH#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$RESULT_STORE_PATH#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$HDFS_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
 echo "<----------------$SERVERNAME:end------------------->"
 ##HiveEntrance install end
 
@@ -276,8 +276,8 @@ installPackage
 echo "$SERVERNAME-step4:update linkis conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVERNAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
 echo "<----------------$SERVERNAME:end------------------->"
 
 
@@ -290,10 +290,10 @@ installPackage
 ###update linkis.properties
 echo "$SERVERNAME-step4:update linkis conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$USER_LOG_PATH#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$RESULT_STORE_PATH#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$HDFS_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
 echo "<----------------$SERVERNAME:end------------------->"
 ##PythonEntrance install end
 
@@ -309,8 +309,8 @@ installPackage
 echo "$SERVERNAME-step4:update linkis conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVERNAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
 echo "<----------------$SERVERNAME:end------------------->"
 
 
@@ -323,10 +323,10 @@ installPackage
 ###update linkis.properties
 echo "$SERVERNAME-step4:update linkis conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$USER_LOG_PATH#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$RESULT_STORE_PATH#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$HDFS_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
+#ssh $SERVER_IP "sed -i  \"s#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
 echo "<----------------$SERVERNAME:end------------------->"
 
 
@@ -337,5 +337,5 @@ echo "<----------------$SERVERNAME:end------------------->"
 
 
 ##init db
-#mysql -h$MYSQL_HOST -p$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB -e "source ${workDir}/db/linkis_ddl.sql"
-#mysql -h$MYSQL_HOST -p$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB -e "source ${workDir}/db/linkis_dml.sql"
+#mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB -e "source ${workDir}/db/linkis_ddl.sql"
+#mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB -e "source ${workDir}/db/linkis_dml.sql"

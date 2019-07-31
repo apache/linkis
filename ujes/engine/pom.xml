@@ -57,7 +57,7 @@
         </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-cs-udf</artifactId>
+            <artifactId>linkis-udf</artifactId>
             <version>${linkis.version}</version>
         </dependency>
         <dependency>

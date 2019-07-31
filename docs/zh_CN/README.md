@@ -49,7 +49,7 @@ Linkis基于微服务架构，提供了金融级多租户隔离、资源管控�
 
 ## 与类似系统的对比：
 
-![introduction01](images/introduction/introduction01.png)
+![comparison_table](images/introduction/comparison_table.png)
 
 
 
@@ -77,7 +77,7 @@ Linkis基于微服务架构，提供了金融级多租户隔离、资源管控�
 
 # Architecture：
 
-![introduction02](images/introduction/introduction02.png)
+![introduction_new](images/introduction/introduction_new.png)
 
 ----
 

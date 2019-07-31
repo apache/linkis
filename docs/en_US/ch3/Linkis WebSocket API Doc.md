@@ -1,8 +1,8 @@
-## Linkis HTTP API Doc
+## Linkis WebSocket API Doc
 
 
 #### 1.Summary
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Linkis provides an adaption method by HTTP, for the convenience of the frontend of functional applications.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Linkis provides an adaption method by WebSocket, for the convenience of the frontend of functional applications.
 
 The data development IDE tool [Scriptis](https://github.com/WeBankFinTech/Scriptis) combined both ways to adapt with Linkis. It communicates with Linkis by websocket in normal circumstances, and failover to HTTP protocol in case the Websocket connection was down.
 
@@ -39,15 +39,22 @@ Linkis defined its own specs for front-backend adaption.<br>
 - message：Return hint message of the request. If the status is not 0, this message returns error messages. At the same time 'data' may return the stack information in its 'stack' column. 
 
 
-##### 2.2 HTTP API description
-For HTTP API, polling should be used to retrieve the status, logs and progress information after submission.
+##### 2.2WebSocket API Description
 
 
-**1).Request execution**
+**1).Establish connection**<br>
+<br>
+Used to establish a WebSocket connection with Linkis.
+- API `/api/rest_j/entrance/connect`
+- HTTP Method **GET**
+- Status Code **101**<br>
 
+**2).Request execution**<br>
+<br>
+Used to submit user jobs to Linkis for execution.
 - API `/api/rest_j/entrance/execute`
-- HTTP Method `POST`
-
+- HTTP Method `POST`<br>
+- Sample Json request body
 ```json
 {
  	"method":"/api/rest_j/v1/entrance/execute",
@@ -78,7 +85,7 @@ For HTTP API, polling should be used to retrieve the status, logs and progress i
 	}
 }
 ```
--Description of parameters in the request body data
+- Descriptions for parameters of request body data<br>
 
 |  Parameter Name | Parameter Definition |  Type | Comments   |
 | ------------ | ------------ | ------------ | ------------ |
@@ -89,6 +96,7 @@ For HTTP API, polling should be used to retrieve the status, logs and progress i
 | runType  | Assuming that the user executes a spark job, he may choose python, R or SQL as runType|  String | Not null  |
 | scriptPath  | The script path of the execution code  |  String | For Scriptest, it shouldn't be null with executionCode at the same time  |
                                         Table 1 Descriptions for the parameters
+
 
 - Sample Json response body
 ```json
@@ -105,89 +113,68 @@ For HTTP API, polling should be used to retrieve the status, logs and progress i
 - execID is a unique ID of String type generated for each user task after submitted to Linkis. It is only used during the execution period, like PID. The format of execID is (length of requestApplicationName)(length of executeAppName)(length of Instance)${requestApplicationName}${executeApplicationName}${entranceInstance infomation ip+port}${requestApplicationName}_${umUser}_${index}
 - taskID is a unique ID of Long type genenrated incrementally by the database for each task.
 
+**3).The push mechanism for task status, logs and progress**<br>
 
+After submission, the status, logs and progress information will be pushed by the server. They could be retrieved by websocket protocol.
+The API is consistent with HTTP protocol as mentioned below. The only difference is that the schema of websocket is ws://, but http:// for HTTP protocol.
 
-
-**2).Retrieve status**<br>
-<br>
-- API `/api/rest_j/entrance/${execID}/status`
-- HTTP Method `GET`<br>
-- Sample response body
-```json
-{
- "method": "/api/rest_j/v1/entrance/{execID}/status",
- "status": 0,
- "message": "Succeeded to retrieve status",
- "data": {
-   "execID": "${execID}",
-   "status": "Running"
- }
-}
-```
-
-**3).Retrieve logs**<br>
-<br>
-- API `/api/rest_j/entrance/${execID}/log?fromLine=${fromLine}&size=${size}`
-- HTTP Method `GET`
-- Parameter fromLine specifies from which line to start. Parameter size specifies the number of lines should be retrieved for this request.
-- Sample response body, the returned fromLine indicates the value of parameter fromLine for next request.
+Sample response of WebSocket API
+- Logs
 ```json
 {
   "method": "/api/rest_j/v1/entrance/${execID}/log",
   "status": 0,
-  "message": "Return logs information",
+  "message": "Returned log information",
   "data": {
     "execID": "${execID}",
-	"log": ["errorLogs","warnLogs","infoLogs", "allLogs],
+	"log": ["errorLog","warnLog","infoLog", "allLog"],
+  "taskID":28594,
 	"fromLine": 56
-  }
+  },
+  "websocketTag":"37fcbd8b762d465a0c870684a0261c6e"
 }
 ```
-
-**4).Retrieve progress**<br>
-<br>
-- API `/api/rest_j/entrance/${execID}/progress`
-- HTTP Method `GET`<br>
-- Sample response body
+- Status
 ```json
 {
-  "method": "/api/rest_j/v1/entrance/{execID}/progress",
+  "method": "/api/rest_j/v1/entrance/${execID}/status",
+  "status": 0,
+  "message": "Return status information",
+  "data": {
+    "execID": "${execID}",
+    "taskID":28594,
+	  "status": "Running",
+  },
+  "websocketTag":"37fcbd8b762d465a0c870684a0261c6e"
+}
+```
+- Progress
+```json
+{
+  "method": "/api/rest_j/v1/entrance/${execID}/log",
   "status": 0,
   "message": "Return progress information",
   "data": {
     "execID": "${execID}",
-	"progress": 0.2,
-	"progressInfo": [
-		{
-			"id": "job-1",
-			"succeedTasks": 2,
-			"failedTasks": 0,
-			"runningTasks": 5,
-			"totalTasks": 10
-		},
-		{
-			"id": "job-2",
-			"succeedTasks": 5,
-			"failedTasks": 0,
-			"runningTasks": 5,
-			"totalTasks": 10
-		}
-	]
-  }
-}
-```
-**5).kill task**<br>
-<br>
-- API `/api/rest_j/entrance/${execID}/kill`
-- HTTP Method `POST`
-- Sample response body
-```json
-{
- "method": "/api/rest_j/v1/entrance/{execID}/kill",
- "status": 0,
- "message": "OK",
- "data": {
-   "execID":"${execID}"
-  }
+    "taskID":28594,
+    "progress": 0.2,
+  	"progressInfo": [
+  		{
+  			"id": "job-1",
+  			"succeedTasks": 2,
+  			"failedTasks": 0,
+  			"runningTasks": 5,
+  			"totalTasks": 10
+  		},
+  		{
+  			"id": "job-2",
+  			"succeedTasks": 5,
+  			"failedTasks": 0,
+  			"runningTasks": 5,
+  			"totalTasks": 10
+  		}
+  	]
+  },
+  "websocketTag":"37fcbd8b762d465a0c870684a0261c6e"
 }
 ```

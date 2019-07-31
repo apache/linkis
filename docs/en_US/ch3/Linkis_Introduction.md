@@ -15,7 +15,7 @@ Currently, it is the common solution for all the enterprises to introduce multip
 As shown in the below diagram, with the increased number of concrete applications, tooling systems and underlying computation/storage engines, the whole data platform turns to a reticulation structure.
 <br>
 
-![Original big data ecosystem diagram](../images/ch3/原大数据生态图.jpg)
+![Original big data ecosystem diagram](docs/zh_CN/images/ch3/原大数据生态图.jpg)
 
 <br>
 At the same time of introducing new open-source components to solve the pain points, those new components must be adapted with different functional applications or underlying computation/storage engines, leading to more pain points:
@@ -33,7 +33,7 @@ At the same time of introducing new open-source components to solve the pain poi
 To construct a enterprise-level big data platform with sufficient & powerful functional tools and application systems, below questions should be taken into concern:
 <br>
 
-![Questions to concern](../images/ch3/要解决的问题.jpg)
+![Questions to concern](docs/zh_CN/images/ch3/要解决的问题.jpg)
 <br>
 
 1. How to immediately gain the enterprise-level capabilities of multi-tenant isolation, elastic scaling and resource governance?
@@ -51,12 +51,12 @@ We redefined the "connection" layer of data platforms and provided our exclusive
 Linkis connects with computation/storage engines(Spark, Flink, Hive, Python and HBase), exposes REST/WebSocket/JDBC interface, and executes multi-language jobs(SQL, Pyspark, HiveQL and Scala), as a data middleware.
 
 
-![Solution](../images/ch3/解决方案.jpg)
+![Solution](docs/zh_CN/images/ch3/解决方案.jpg)
 
 <br>
 Linkis provides below common modules to abstract, analyze and solve most problems on big data platform layer:
 <br>
 
-![Functions and modules diagram](../images/ch3/功能模块图.png)
+![Functions and modules diagram](docs/zh_CN/images/ch3/功能模块图.png)
 
 Linkis, the edge-cutting tool to build up a finance and enterprise level big data platforms!

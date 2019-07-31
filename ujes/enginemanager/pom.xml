@@ -36,7 +36,7 @@
         </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-cs-udf</artifactId>
+            <artifactId>linkis-udf</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>com.webank.wedatasphere.linkis</groupId>

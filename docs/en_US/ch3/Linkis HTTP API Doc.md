@@ -4,7 +4,7 @@
 #### 1.Summary
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Linkis provides an adaption method by HTTP, for the convenience of the frontend of functional applications.
 
-The data development IDE tool [Scriptis](https://github.com/WeBankFinTech/Scriptis) combined both ways to adapt with Willink. It communicates with Willink by websocket in normal circumstances, and failover to HTTP protocol in case the Websocket connection was down.
+The data development IDE tool [Scriptis](https://github.com/WeBankFinTech/Scriptis) combined both ways to adapt with Linkis. It communicates with Linkis by websocket in normal circumstances, and failover to HTTP protocol in case the Websocket connection was down.
 
 ##### 2.1 API Specs
 Linkis defined its own specs for front-backend adaption.<br>
@@ -17,7 +17,7 @@ Linkis defined its own specs for front-backend adaption.<br>
 
 - rest_j means the API is conformed to Jersey standards
 - rest_s means the API is conformed to springMVC Rest standards
-- v1 is the version of services，**The version will be upgraded with Willink releases**
+- v1 is the version of services，**The version will be upgraded with Linkis releases**
 - {applicationName} is the microservice name 
 
 **2).Request specs**
@@ -102,7 +102,7 @@ For HTTP API, polling should be used to retrieve the status, logs and progress i
  }
 }
 ```
-- execID is a unique ID of String type generated for each user task after submitted to Willink. It is only used during the execution period, like PID. The format of execID is (length of requestApplicationName)(length of executeAppName)(length of Instance)${requestApplicationName}${executeApplicationName}${entranceInstance infomation ip+port}${requestApplicationName}_${umUser}_${index}
+- execID is a unique ID of String type generated for each user task after submitted to Linkis. It is only used during the execution period, like PID. The format of execID is (length of requestApplicationName)(length of executeAppName)(length of Instance)${requestApplicationName}${executeApplicationName}${entranceInstance infomation ip+port}${requestApplicationName}_${umUser}_${index}
 - taskID is a unique ID of Long type genenrated incrementally by the database for each task.
 
 

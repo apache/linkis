@@ -104,6 +104,17 @@
     MYSQL_USER=
     MYSQL_PASSWORD=
    ```
+   
+    (3) 导入相关表到数据库
+    
+    因为担心用户重复执行install.sh脚本，把数据库中的用户数据清空，所以在install.sh中注释掉了以下的两行导入表元数据代码。
+    
+    如果您确定是**第一次**部署，可以手动修改install.sh脚本，将注释去掉。
+   
+   ```shell
+    mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB -e "source ${workDir}/db/linkis_ddl.sql"
+    mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB -e "source ${workDir}/db/linkis_dml.sql"
+   ```
 
    （3）执行安装脚本：
    

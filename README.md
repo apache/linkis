@@ -54,7 +54,7 @@ Based on the microservices architecture, Linkis provides enterprise-level featur
 
 [[WebSocket APIs for frontend applications](docs/en_US/ch3/Linkis WebSocket API Doc.md)
 
-[How to adapt Linkis with a new computation or storage engine](docs/en_US/ch3/How to adapt Linkis with a new computation or storage engine.md)
+[How to adapt Linkis with a new computation or storage engine](docs/en_US/ch3/How_to_adapt_Linkis_with_a_new_computation_or_storage_engine.md)
 
 ----
 

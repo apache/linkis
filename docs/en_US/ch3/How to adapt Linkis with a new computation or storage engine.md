@@ -29,7 +29,7 @@ Linkis has an elastic underlying achitecture and provides common implementations
 **2)Interfaces to be implemented**
 
 There is no compulsary interface in Entrance. Below interfaces can be implemented on demand.
-- EntranceParser. Used to parse request maps from frontend to a persistable Task. Class AbstractEntranceParser is already provided and only parseToTask method needs to be overrided. Willink provides CommonEntranceParser as the default implementation.
+- EntranceParser. Used to parse request maps from frontend to a persistable Task. Class AbstractEntranceParser is already provided and only parseToTask method needs to be overrided. Linkis provides CommonEntranceParser as the default implementation.
 - EngineRequester. Used to build a RequestEngine object, which can be used to request a new engine from the EngineManager.
 - Scheduler. Used to schedule tasks. The default implementation provides parallel mode for multi-user situations and FIFO mode for single user pattern. It is not suggested to be customized without special purposes.
 

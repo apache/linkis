@@ -56,7 +56,7 @@ Read the [Quick Use](docs/en_US/ch2/Linkis%20Quick%20Start.md)
 
 # User Manual
 
-Read the [User Manual](ch3/linkis使用文档.md)
+Read the [User Manual](docs/en_US/ch3/Linkis%20User%20Manual.md)
 
 ----
 

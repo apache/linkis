@@ -265,13 +265,13 @@ object PythonSession {
     info("this is pythonPath")
     val pythonPath = new ArrayBuffer[String]
     //借用spark的py4j
-    val pythonHomePath = new File(SPARK_HOME.getValue, "python").getPath
+    val pythonHomePath = new File(PythonEngineConfiguration.PY4J_HOME.getValue)
     info(s"pythonHomePath => $pythonHomePath" )
-    val pythonParentPath = new File(pythonHomePath, "lib")
-    info(s"pythonParentPath => $pythonParentPath" )
-    pythonPath += pythonHomePath
+    //val pythonParentPath = new File(pythonHomePath, "lib")
+    //info(s"pythonParentPath => $pythonParentPath" )
+    pythonPath += pythonHomePath.getPath
     info(s"pythonPath => $pythonPath" )
-    pythonParentPath.listFiles(new FileFilter {
+    pythonHomePath.listFiles(new FileFilter {
       override def accept(pathname: File): Boolean = pathname.getName.endsWith(".zip")
     }).foreach(f => pythonPath += f.getPath)
     pythonPath.mkString(File.pathSeparator)

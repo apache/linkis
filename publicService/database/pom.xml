@@ -25,7 +25,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
-    <name>BDP DataWorkshop Database Project</name>
+    <name>linkis-database</name>
 
     <artifactId>linkis-database</artifactId>
     <properties>

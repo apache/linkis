@@ -43,7 +43,7 @@ object EngineConfiguration {
 
   val ENGINE_LOG_SEND_TIME_INTERVAL = CommonVars("wds.linkis.engine.log.send.time.interval", 3)
 
-  val TMP_PATH = CommonVars("wds.linkis.dataworkclod.engine.tmp.path","file:///appcom/tmp/")
+  val TMP_PATH = CommonVars("wds.linkis.dataworkclod.engine.tmp.path","file:///tmp/")
 
   val ENGINE_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.engine.application.name", "")
 

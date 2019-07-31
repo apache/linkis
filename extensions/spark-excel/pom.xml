@@ -130,14 +130,14 @@
         <repository>
             <id>webank-repo</id>
             <name>webank-repo</name>
-            <url>***REMOVED***
+            <url>http://maven.weoa.com/nexus/content/repositories/releases
             </url>
         </repository>
         <!-- Publish the versioned snapshots here -->
         <snapshotRepository>
             <id>webank-repo</id>
             <name>webank-repo</name>
-            <url>***REMOVED***
+            <url>http://maven.weoa.com/nexus/content/repositories/snapshots
             </url>
         </snapshotRepository>
     </distributionManagement>

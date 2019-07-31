@@ -52,6 +52,10 @@
                     <artifactId>websocket-server</artifactId>
                     <groupId>org.eclipse.jetty.websocket</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>io.netty </groupId>
+                    <artifactId>netty-all</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>

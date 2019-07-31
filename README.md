@@ -42,21 +42,19 @@ Based on the microservices architecture, Linkis provides enterprise-level featur
 
 ![introduction01](docs/en_US/images/introduction/introduction01.png)
 
-# QuickStart：
+# Documentations：
 
-Read the [Quick Start](docs/en_US/ch1/deploy.md)
+[Linkis, make big data easier](docs/en_US/ch3/Linkis Introduction.md)
 
-----
+[Linkis Quick Deploy](docs/en_US/ch1/deploy.md)
 
-# Quick Use:
+[Linkis Quick Start & Java SDK documentation](docs/en_US/ch3/Linkis Java SDK doc.md)
 
-Read the [Quick Use](docs/en_US/ch2/Linkis%20Quick%20Start.md)
+[HTTP APIs for frontend applications](docs/en_US/ch3/Linkis HTTP API Doc.md)
 
-----
+[[WebSocket APIs for frontend applications](docs/en_US/ch3/Linkis WebSocket API Doc.md)
 
-# User Manual
-
-Read the [User Manual](docs/en_US/ch3/Linkis%20User%20Manual.md)
+[How to adapt Linkis with a new computation or storage engine](docs/en_US/ch3/How to adapt Linkis with a new computation or storage engine.md)
 
 ----
 

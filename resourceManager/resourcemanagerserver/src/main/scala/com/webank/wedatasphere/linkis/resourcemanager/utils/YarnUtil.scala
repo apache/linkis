@@ -42,13 +42,14 @@ object YarnUtil extends Logging{
   private implicit val executor = ExecutionContext.global
   private val yarnConf = new YarnConfiguration()
   private var rm_web_address: String = _
-
+  private var hadoop_version:String = "2.7.2"
   implicit val format = DefaultFormats
 
   def init() = {
     yarnConf.addResource(new Path(HDFSUtils.hadoopConfDir, YarnConfiguration.CORE_SITE_CONFIGURATION_FILE))
     yarnConf.addResource(new Path(HDFSUtils.hadoopConfDir, YarnConfiguration.YARN_SITE_CONFIGURATION_FILE))
     reloadRMWebAddress()
+    getHadoopVersion()
   }
   init()
   private def reloadRMWebAddress() = {
@@ -78,6 +79,16 @@ object YarnUtil extends Logging{
     info(s"Resource Manager WebApp address: $rm_web_address.")
   }
 
+  private def getHadoopVersion():Unit = {
+    val url = dispatch.url(rm_web_address) / "ws" / "v1" / "cluster" / "info"
+    val future = Http(url > as.json4s.Json).map {resp =>
+      val resourceManagerVersion = resp \ "clusterInfo" \ "resourceManagerVersion"
+      info(s"Hadoop version is $resourceManagerVersion")
+      hadoop_version = resourceManagerVersion.asInstanceOf[String]
+    }
+  }
+
+
   def getQueueInfo(queueName: String): (YarnResource, YarnResource) = {
     val url = dispatch.url(rm_web_address) / "ws" / "v1" / "cluster" / "scheduler"
     url.setContentType("application/json", "UTF-8")
@@ -104,10 +115,17 @@ object YarnUtil extends Logging{
         }
       case JNull | JNothing => None
     }
+    def getChildQueues(resp:JValue):JValue = {
+      val childQueues = if (hadoop_version < "2.8") {
+        resp \ "scheduler" \ "schedulerInfo" \ "rootQueue"  \ "childQueues"
+      }else{
+        resp \ "scheduler" \ "schedulerInfo" \ "rootQueue"  \ "childQueues" \ "queue"
+      }
+      childQueues
+    }
+
     val future = Http(url > as.json4s.Json).map {resp =>
-      val childQueues = resp \ "scheduler" \ "schedulerInfo" \ "rootQueue"  \ "childQueues"
-      if(childQueues == JNull || childQueues == JNothing)
-        throw new RMWarnException(111006, s"Ask for the information of queue $queueName, but got unknown response: $resp.")
+      val childQueues = getChildQueues(resp)
       val queue = getQueue(childQueues)
       if(queue.isEmpty) {
         debug(s"cannot find any information about queue $queueName, response: " + resp)

@@ -40,7 +40,7 @@ class EntranceGroupFactory extends GroupFactory {
       //TODO Query the database and get initCapacity, maxCapacity, maxRunningJobs, maxAskExecutorTimes(查询数据库，拿到initCapacity、maxCapacity、maxRunningJobs、maxAskExecutorTimes)
       val initCapacity = 100
       val maxCapacity = 100
-      var maxRunningJobs =  3
+      var maxRunningJobs =  EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue
       val maxAskExecutorTimes = EntranceConfiguration.MAX_ASK_EXECUTOR_TIME.getValue.toLong
       if (groupName.split("_").length < 2){
         logger.warn(s"name style of group: $groupName is not correct, we will set default value for the group")
@@ -55,7 +55,7 @@ class EntranceGroupFactory extends GroupFactory {
         try{
           maxRunningJobs = Integer.parseInt(keyAndValue.get(EntranceConfiguration.WDS_LINKIS_INSTANCE.key))
         }catch{
-          case t:Throwable => logger.error("get maxRunningJobs from configuration failed",t)
+          case t:Throwable => logger.warn("Get maxRunningJobs from configuration server failed! Next use the default value to continue.",t)
         }
       }
       logger.info("groupName: {} =>  maxRunningJobs is {}", groupName, maxRunningJobs)

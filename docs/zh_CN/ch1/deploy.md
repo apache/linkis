@@ -4,7 +4,7 @@
 
 - Mysql (5.5+) : 必装
 - JDK (1.8.0_141) : 必装
-- Hadoop(2.7.2) ：选装，如需使用hive\spark引擎功能则需要安装Hadoop，只使用Python无需安装 
+- Hadoop(**社区版3.0以下都支持，CDH版可能存在兼容性问题**) ：选装，如需使用hive\spark引擎功能则需要安装Hadoop，只使用Python无需安装 
 - Hive(1.2.1，**内部没有测过2.0和2.0以上版本，可能存在兼容性问题**) : 选装，hive引擎节点需要安装
 - Spark(**只支持2.2.0以下，暂不支持Spark2.2以上的版本**) : 选装，Spark引擎节点需要安装
 - Python(2.x和3.x都支持)：选装，使用python引擎时需要安装
@@ -104,8 +104,19 @@
     MYSQL_USER=
     MYSQL_PASSWORD=
    ```
+   
+   (3) 导入相关表到数据库
+    
+   因为担心用户重复执行install.sh脚本，把数据库中的用户数据清空，所以在install.sh中注释掉了以下的两行导入表元数据代码。
+    
+   如果您确定是**第一次**部署，可以手动修改install.sh脚本，将注释去掉。
+   
+   ```shell
+    mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB -e "source ${workDir}/db/linkis_ddl.sql"
+    mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB -e "source ${workDir}/db/linkis_dml.sql"
+   ```
 
-   （3）执行安装脚本：
+   （4）执行安装脚本：
    
         sh ./bin/install.sh       
 

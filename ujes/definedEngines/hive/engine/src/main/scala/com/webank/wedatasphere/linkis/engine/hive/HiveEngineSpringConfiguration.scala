@@ -40,6 +40,6 @@ class HiveEngineSpringConfiguration {
   @Bean(Array("engineHooks"))
   def generateEngineHooks:Array[EngineHook] = {
     LOG.info("engineHooks are set in hive.")
-    Array(new ReleaseEngineHook, new MaxExecuteNumEngineHook, new HiveAddJarsEngineHook, new JarUdfEngineHook, new UseDatabaseEngineHook)
+    Array(new ReleaseEngineHook, new MaxExecuteNumEngineHook, new HiveAddJarsEngineHook, new JarUdfEngineHook)
   }
 }

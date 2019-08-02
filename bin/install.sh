@@ -41,7 +41,7 @@ local_host="`hostname --fqdn`"
 
 ##stop server
 echo "step2,stop server"
-sh ${workDir}/bin/stop_all.sh
+sh ${workDir}/bin/stop-all.sh
 
 ##Eurkea install
 SERVERNAME=eureka

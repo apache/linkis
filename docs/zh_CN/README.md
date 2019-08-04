@@ -55,7 +55,7 @@ Linkis基于微服务架构，提供了金融级多租户隔离、资源管控�
 
 ----
 
-## 文档列表
+# 文档列表
 
 [Linkis，让大数据变得更容易](ch3/linkis详细介绍文档.md)
 
@@ -67,7 +67,7 @@ Linkis基于微服务架构，提供了金融级多租户隔离、资源管控�
 
 [上层前端应用的WebSocket接入文档](ch3/WebSocket接入文档.md)
 
-[Linkis如何快速接入新的底层计算存储引擎](ch3/Linkis如何接入新的底层计算存储引擎.md)
+[Linkis如何快速实现一个新的底层计算存储引擎](ch3/Linkis如何接入新的底层计算存储引擎.md)
 
 [Linkis资源管理服务RM设计文档](ch4/Linkis-RM设计文档.md)
 
@@ -81,14 +81,48 @@ Linkis基于微服务架构，提供了金融级多租户隔离、资源管控�
 
 ----
 
+# RoadMap
+
+### 1. Linkis管理台
+
+- 用户可以查看和管理自己的Job
+- 用户可以查看和管理自己的引擎
+- 用户可以查看Yarn的资源使用情况和用户资源使用排名
+- 用户可以配置引擎的启动参数
+- 用户可以设置变量
+
+### 2. 对外接口，提供JDBC通用接口
+
+丰富Linkis的对外接口，外部用户可以通过JDBC的方式，访问Linkis。
+
+### 3. 底层的计算存储引擎，新增对JDBC的支持
+
+实现一个全新的JDBC引擎，底层支持直接对接MySQL、TiDB等。
+
+### 4. 适配Spark2.2以上的版本
+
+适配Spark2.2以上的版本，支持Spark现有的所有版本
+
+<br>
+
+**如果您有任何需求，欢迎给我们提issue，我们将会及时给您回复。**
+
+----
+
+# Contributing
+
+非常欢迎广大的社区伙伴给我们贡献新引擎和代码！
+
+----
+
 # Communication
 
 如果您想得到最快的响应，请给我们提issue，或者您也可以扫码进群：
 
 ![introduction05](images/introduction/introduction05.png)
 
+----
+
 # License
 
 **Linkis is under the Apache 2.0 license. See the [LICENSE](/LICENSE) file for details.**
-
-

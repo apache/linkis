@@ -41,7 +41,7 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
   protected var port: Int = _
   protected var request: RequestEngine = _
   protected var userEngineResource: UserEngineResource = _
-  private[this] var _executable: Path = AbsolutePath("/appcom/Install/spark-cmd/bin/spark-submit")
+  private[this] var _executable: Path = AbsolutePath(SPARK_SUBMIT_CMD.getValue)
   private[this] var _master: Option[String] = None
   private[this] var _deployMode: Option[String] = None
   private[this] var _className: Option[String] = None

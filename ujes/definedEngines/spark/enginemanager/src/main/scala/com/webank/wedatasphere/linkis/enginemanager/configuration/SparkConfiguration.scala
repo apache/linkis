@@ -65,6 +65,8 @@ object SparkConfiguration extends Logging {
   val DEFAULT_JAVA_OPTS = CommonVars[String]("wds.linkis.engine.javaOpts.default", "-server -XX:+UseG1GC -XX:MaxPermSize=250m -XX:PermSize=128m " +
     "-Xloggc:%s -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Dwds.linkis.configuration=linkis-engine.properties")
   val SPARK_ML_BUCKET_FIELDS = CommonVars[String]("wds.linkis.engine.spark.ml.bucketFields", "age[0,18,30,60,100]")
+
+  val SPARK_SUBMIT_CMD = CommonVars[String]("wds.linkis.engine.spark.submit.cmd", "spark-submit")
   private var Ports: ArrayBuffer[Int] = _
 
   def getJavaRemotePort = {

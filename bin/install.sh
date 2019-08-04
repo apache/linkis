@@ -33,7 +33,7 @@ fi
 sudo yum install -y expect
 
 ##load config
-echo "step1:load config"
+echo "step1:load config "
 source ${workDir}/conf/config.sh
 source ${workDir}/conf/db.sh
 

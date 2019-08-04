@@ -17,6 +17,7 @@
 package com.webank.wedatasphere.linkis.database.hive.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.util.StringUtils;
 import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.database.util.DWSConfig;
 import com.webank.wedatasphere.linkis.database.util.HiveUtils;
@@ -47,11 +48,16 @@ public class HiveDataSourceConfig extends JavaLog {
         boolean testWhileIdle = true;
         boolean testOnBorrow = true;
         boolean testOnReturn = true;
-        HiveConf hiveConf = HiveUtils.getDefaultConf(com.webank.wedatasphere.linkis.common.conf.Configuration.HADOOP_ROOT_USER().getValue());
-        String url = hiveConf.get("javax.jdo.option.ConnectionURL");
-        String username = hiveConf.get("javax.jdo.option.ConnectionUserName");
-        String password = hiveConf.get("javax.jdo.option.ConnectionPassword");
-
+        String url = DWSConfig.HIVE_META_URL.getValue();
+        String username = DWSConfig.HIVE_META_USER.getValue();
+        String password = DWSConfig.HIVE_META_PASSWORD.getValue();
+        if(StringUtils.isEmpty(url) || StringUtils.isEmpty(username) || StringUtils.isEmpty(password)){
+            HiveConf hiveConf = HiveUtils.getDefaultConf(com.webank.wedatasphere.linkis.common.conf.Configuration.HADOOP_ROOT_USER().getValue());
+            url = hiveConf.get("javax.jdo.option.ConnectionURL");
+            username = hiveConf.get("javax.jdo.option.ConnectionUserName");
+            password = hiveConf.get("javax.jdo.option.ConnectionPassword");
+            info("Database connection address information from hiveConf");
+        }
         DruidDataSource dataSource = new DruidDataSource();
         info("Database connection address information =(数据库连接地址信息=)" + url);
         dataSource.setUrl(url);

@@ -28,9 +28,9 @@
     <name>linkis-database</name>
 
     <artifactId>linkis-database</artifactId>
-    <properties>
-        <hive.version>1.2.1</hive.version>
-    </properties>
+    <!--<properties>-->
+        <!--<hive.version>1.2.1</hive.version>-->
+    <!--</properties>-->
     <dependencies>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>

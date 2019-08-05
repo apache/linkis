@@ -70,13 +70,13 @@
          
    （3） 获取安装包，在工程的assembly->target目录下：
    
-         wedatasphere-linkis-0.5.0-dist.tar.gz
+         wedatasphere-linkis-0.6.0-dist.tar.gz
           
 ## 3、安装：
 
    先解压安装包到安装目录，并对解压后文件进行配置修改。
    
-      tar -xvf  wedatasphere-linkis-0.5.0-dist.tar.gz
+      tar -xvf  wedatasphere-linkis-0.6.0-dist.tar.gz
       
    （1）修改基础配置  
    

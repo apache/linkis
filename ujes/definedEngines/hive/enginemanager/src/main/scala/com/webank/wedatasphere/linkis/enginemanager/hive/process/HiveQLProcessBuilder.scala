@@ -60,7 +60,7 @@ class HiveQLProcessBuilder extends JavaProcessEngineBuilder{
   override protected def getExtractClasspath: Array[String] = {
     if (StringUtils.isNotBlank(HiveEngineConfiguration.HIVE_CLIENT_EXTRACLASSPATH.getValue)){
       HiveEngineConfiguration.HIVE_CLIENT_EXTRACLASSPATH.getValue.split(",")
-    }else Array[String]("/appcom/commonlib/webank_bdp_udf.jar")
+    }else Array.empty
   }
 
   /**

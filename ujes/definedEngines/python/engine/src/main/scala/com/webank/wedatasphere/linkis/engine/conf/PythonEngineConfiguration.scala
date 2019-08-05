@@ -18,10 +18,12 @@ package com.webank.wedatasphere.linkis.engine.conf
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 
+
 /**
   * created by allenlliu on 2019/3/21
   * Description:
   */
 object PythonEngineConfiguration {
   val PYTHON_CONSOLE_OUTPUT_LINE_LIMIT = CommonVars("wds.linkis.python.line.limit", 10)
+  val PY4J_HOME = CommonVars("wds.linkis.python.py4j.path", this.getClass.getResource("/").getPath)
 }

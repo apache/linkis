@@ -21,7 +21,7 @@ import java.net.ConnectException
 import com.fasterxml.jackson.core.JsonParseException
 import com.webank.wedatasphere.linkis.common.utils.{HDFSUtils, Logging, Utils}
 import com.webank.wedatasphere.linkis.resourcemanager.YarnResource
-import com.webank.wedatasphere.linkis.resourcemanager.exception.{RMErrorException, RMWarnException}
+import com.webank.wedatasphere.linkis.resourcemanager.exception.{RMErrorException, RMFatalException, RMWarnException}
 import dispatch.{Http, as}
 import org.apache.commons.lang.StringUtils
 import org.apache.hadoop.fs.Path
@@ -42,13 +42,14 @@ object YarnUtil extends Logging{
   private implicit val executor = ExecutionContext.global
   private val yarnConf = new YarnConfiguration()
   private var rm_web_address: String = _
-
+  private var hadoop_version:String = "2.7.2"
   implicit val format = DefaultFormats
 
   def init() = {
     yarnConf.addResource(new Path(HDFSUtils.hadoopConfDir, YarnConfiguration.CORE_SITE_CONFIGURATION_FILE))
     yarnConf.addResource(new Path(HDFSUtils.hadoopConfDir, YarnConfiguration.YARN_SITE_CONFIGURATION_FILE))
     reloadRMWebAddress()
+    Utils.tryAndErrorMsg(getHadoopVersion())("Failed to get HadoopVersion")
   }
   init()
   private def reloadRMWebAddress() = {
@@ -67,6 +68,19 @@ object YarnUtil extends Logging{
           info(s"the first, use $rm_web_address to ensure the right rm_web_address.")
         }
       }
+      if(StringUtils.isEmpty(this.rm_web_address)){
+        val yarnWebUrl = yarnConf.get("yarn.resourcemanager.webapp.address")
+        if(StringUtils.isEmpty(yarnWebUrl)) {
+            val yarnHttps = yarnConf.get("yarn.resourcemanager.webapp.https.address")
+            if(StringUtils.isEmpty(yarnHttps)){
+              throw new RMFatalException(11005,"Cannot find yarn resourcemanager restful address,please to configure yarn-site.xml")
+            } else {
+              this.rm_web_address  = if(yarnHttps.startsWith("https")) yarnHttps else "https://" + yarnHttps
+            }
+        } else{
+          this.rm_web_address  = if(yarnWebUrl.startsWith("http")) yarnWebUrl else "http://" + yarnWebUrl
+        }
+      }
     } else {
       info(s"find RM_HA_ID $rmHAId, will try to load the right rm_web_address from HA mode.")
       yarnConf.set(YarnConfiguration.RM_HA_ID, rmHAId)
@@ -77,6 +91,16 @@ object YarnUtil extends Logging{
     }
     info(s"Resource Manager WebApp address: $rm_web_address.")
   }
+
+  private def getHadoopVersion():Unit = {
+    val url = dispatch.url(rm_web_address) / "ws" / "v1" / "cluster" / "info"
+    val future = Http(url > as.json4s.Json).map {resp =>
+      val resourceManagerVersion = resp \ "clusterInfo" \ "resourceManagerVersion"
+      info(s"Hadoop version is $resourceManagerVersion")
+      hadoop_version = resourceManagerVersion.values.asInstanceOf[String]
+    }
+  }
+
 
   def getQueueInfo(queueName: String): (YarnResource, YarnResource) = {
     val url = dispatch.url(rm_web_address) / "ws" / "v1" / "cluster" / "scheduler"
@@ -104,10 +128,22 @@ object YarnUtil extends Logging{
         }
       case JNull | JNothing => None
     }
+    def getChildQueues(resp:JValue):JValue = {
+      val childQueues = if (hadoop_version.startsWith("2.7")) {
+        resp \ "scheduler" \ "schedulerInfo" \ "rootQueue"  \ "childQueues"
+      }else{
+        resp \ "scheduler" \ "schedulerInfo" \ "rootQueue"  \ "childQueues" \ "queue"
+      }
+      childQueues
+    }
+
     val future = Http(url > as.json4s.Json).map {resp =>
-      val childQueues = resp \ "scheduler" \ "schedulerInfo" \ "rootQueue"  \ "childQueues"
+      val childQueues = getChildQueues(resp)
       val queue = getQueue(childQueues)
-      if(queue.isEmpty) throw new RMWarnException(111006, s"queue $queueName is not exists in YARN.")
+      if(queue.isEmpty) {
+        debug(s"cannot find any information about queue $queueName, response: " + resp)
+        throw new RMWarnException(111006, s"queue $queueName is not exists in YARN.")
+      }
       (getYarnResource(queue.map( _ \ "maxResources")).get,
         getYarnResource(queue.map( _ \ "usedResources")).get)
     }

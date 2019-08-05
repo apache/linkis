@@ -22,7 +22,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.5.0-SNAPSHOT</version>
+        <version>0.5.0</version>
     </parent>
     <artifactId>linkis-gateway-core</artifactId>
 
@@ -51,6 +51,10 @@
                 <exclusion>
                     <artifactId>websocket-server</artifactId>
                     <groupId>org.eclipse.jetty.websocket</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty </groupId>
+                    <artifactId>netty-all</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

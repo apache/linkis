@@ -94,7 +94,7 @@ public class UDFServiceImpl implements UDFService {
     private void validateJarFile(UDFInfo udfInfo, String userName) throws UDFException {
         File targetFile = new File(UdfConfiguration.UDF_TMP_PATH().getValue() + udfInfo.getPath());
         FsPath fsPath = new FsPath("file://" + udfInfo.getPath());
-        Fs remoteFs = FSFactory.getFsByProxyUser(fsPath, userName);
+        Fs remoteFs = FSFactory.getFs(fsPath);
         try{
             remoteFs.init(null);
             if(remoteFs.exists(fsPath)){
@@ -110,23 +110,23 @@ public class UDFServiceImpl implements UDFService {
             logger.error(e);
             throw new UDFException("Verify that there is a problem with the UDF jar package(校验UDF jar包存在问题)：" + e.getMessage());
         }
-        File hiveDependency = new File(UdfConfiguration.UDF_HIVE_EXEC_PATH().getValue());
-        String udfClassName = StringUtils.substringBetween(udfInfo.getRegisterFormat(), "\"", "\"");
-        try{
-            URL[] url = {new URL("file://" + targetFile.getAbsolutePath()), new URL("file://" + hiveDependency.getAbsolutePath())};
-            URLClassLoader loader = URLClassLoader.newInstance(url);
-            Class clazz = loader.loadClass(udfClassName);
-            Constructor constructor = clazz.getConstructor(new Class[0]);
-            if(!Modifier.isPublic(constructor.getModifiers())) throw new NoSuchMethodException();
-        }catch (ClassNotFoundException cne){
-            throw new UDFException("There is a problem verifying the UDF jar package: the class is not found(校验UDF jar包存在问题：找不到类) " + cne.getMessage());
-        } catch (NoSuchMethodException e) {
-            throw new UDFException("There is a problem verifying the UDF jar package: class(校验UDF jar包存在问题：类) " + udfClassName + " Missing public no-argument constructor(缺少public的无参数构造方法)");
-        }catch (Exception e){
-            throw new UDFException("Verify that there is a problem with the UDF jar package(校验UDF jar包存在问题)：" + e.getMessage());
-        } finally {
-            targetFile.delete();
-        }
+//        File hiveDependency = new File(UdfConfiguration.UDF_HIVE_EXEC_PATH().getValue());
+//        String udfClassName = StringUtils.substringBetween(udfInfo.getRegisterFormat(), "\"", "\"");
+//        try{
+//            URL[] url = {new URL("file://" + targetFile.getAbsolutePath()), new URL("file://" + hiveDependency.getAbsolutePath())};
+//            URLClassLoader loader = URLClassLoader.newInstance(url);
+//            Class clazz = loader.loadClass(udfClassName);
+//            Constructor constructor = clazz.getConstructor(new Class[0]);
+//            if(!Modifier.isPublic(constructor.getModifiers())) throw new NoSuchMethodException();
+//        }catch (ClassNotFoundException cne){
+//            throw new UDFException("There is a problem verifying the UDF jar package: the class is not found(校验UDF jar包存在问题：找不到类) " + cne.getMessage());
+//        } catch (NoSuchMethodException e) {
+//            throw new UDFException("There is a problem verifying the UDF jar package: class(校验UDF jar包存在问题：类) " + udfClassName + " Missing public no-argument constructor(缺少public的无参数构造方法)");
+//        }catch (Exception e){
+//            throw new UDFException("Verify that there is a problem with the UDF jar package(校验UDF jar包存在问题)：" + e.getMessage());
+//        } finally {
+//            targetFile.delete();
+//        }
     }
 
     @Override

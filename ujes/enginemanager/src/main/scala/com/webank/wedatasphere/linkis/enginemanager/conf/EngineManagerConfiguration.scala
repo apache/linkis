@@ -31,5 +31,5 @@ object EngineManagerConfiguration {
   val UNKNOWN_ENGINE_SCAN_INTERVAL = CommonVars("wds.linkis.engine.unknown.scan.interval", new TimeType("2m")) //清除失去掌控的Engine
   val ENGINE_UDF_APP_NAME = CommonVars("wds.linkis.engine.udf.app.name", "cloud-publicservice")
   val ENGINE_UDF_BUILT_IN_PATH = CommonVars("wds.linkis.engine.udf.app.name", "/commonlib/webank_bdp_udf.jar")
-  val ENGINE_UDF_BUFFER = CommonVars("wds.linkis.engine.udf.buffer", "/appcom/tmp/dataworkcloud/udf/")
+  val ENGINE_UDF_BUFFER = CommonVars("wds.linkis.engine.udf.buffer", "/tmp/udf/")
 }

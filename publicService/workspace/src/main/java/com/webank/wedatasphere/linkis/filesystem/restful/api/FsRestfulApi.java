@@ -110,10 +110,18 @@ public class FsRestfulApi implements FsRestfulRemote {
         String path = null;
         String returnType = null;
         if(pathType.equals("hdfs")){
-            path = WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue() + userName + WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_SUFFIX.getValue();
+            if (WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue().toString().endsWith("/")){
+                path = WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue() + userName + WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_SUFFIX.getValue();
+            }else{
+                path = WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue() + "/" +  userName + WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_SUFFIX.getValue();
+            }
             returnType = "HDFS";
         }else {
-            path = WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue() + userName + "/";
+            if (WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue().toString().endsWith("/")){
+                path = WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue() + userName + "/";
+            }else{
+                path = WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue() + "/" + userName + "/";
+            }
             returnType = "Local";
         }
         FsPath fsPath = new FsPath(path);
@@ -261,7 +269,7 @@ public class FsRestfulApi implements FsRestfulRemote {
         }
         DirFileTree dirFileTree = new DirFileTree();
         dirFileTree.setPath(fsPath.getSchemaPath());
-        if(!isInUserWorkspace(path,userName)) throw new WorkSpaceException("The user does not have permission to view the contents of the directory");
+        //if(!isInUserWorkspace(path,userName)) throw new WorkSpaceException("The user does not have permission to view the contents of the directory");
         if (!fileSystem.canExecute(fsPath) || !fileSystem.canRead(fsPath)) {
             throw new WorkSpaceException("The user does not have permission to view the contents of the directory(该用户无权限查看该目录的内容)");
         }

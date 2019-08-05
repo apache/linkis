@@ -1,5 +1,5 @@
 import os, sys, getopt, traceback, json, re
-import resource
+#import resource
 
 # set memory
 #memoryLimit = long(sys.argv[3])
@@ -12,12 +12,10 @@ for i in range(len(paths)):
 
 from py4j.java_gateway import java_import, JavaGateway, GatewayClient
 from py4j.protocol import Py4JJavaError, Py4JNetworkError
-import ast
 import traceback
 import warnings
 import signal
 import base64
-import pandas as pd
 from py4j.java_gateway import JavaGateway
 from io import BytesIO
 try:

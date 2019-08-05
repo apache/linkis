@@ -24,8 +24,10 @@ import com.webank.wedatasphere.linkis.common.conf.CommonVars$;
 public class DWSConfig {
 
     public static CommonVars<String> IDE_URL = CommonVars$.MODULE$.apply("wds.linkis.ide.url", "locahost");
-    public static CommonVars<String> HADOOP_CONF_DIR = CommonVars$.MODULE$.apply("hadoop.config.dir", "");
-    public static CommonVars<String> HIVE_CONF_DIR = CommonVars$.MODULE$.apply("hive.config.dir", "");
+    public static CommonVars<String> HADOOP_CONF_DIR = CommonVars$.MODULE$.apply("hadoop.config.dir",
+            CommonVars$.MODULE$.apply("HADOOP_CONF_DIR", "/appcom/config/hadoop-config").getValue());
+    public static CommonVars<String> HIVE_CONF_DIR = CommonVars$.MODULE$.apply("hive.config.dir",
+            CommonVars$.MODULE$.apply("HIVE_CONF_DIR", "/appcom/config/hadoop-config").getValue());
     public static CommonVars<String> HIVE_META_URL = CommonVars$.MODULE$.apply("hive.meta.url", "");
     public static CommonVars<String> HIVE_META_USER = CommonVars$.MODULE$.apply("hive.meta.user", "");
     public static CommonVars<String> HIVE_META_PASSWORD = CommonVars$.MODULE$.apply("hive.meta.password", "");

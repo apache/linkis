@@ -49,6 +49,8 @@ object EnvConfiguration {
   val ENGINE_CLIENT_MEMORY = CommonVars[ByteType]("wds.linkis.engine.client.memory", new ByteType("2g"), "指定所有Engine客户端的默认内存大小")
   val ENGINE_CLIENT_EXTRACLASSPATH = CommonVars[String]("wds.linkis.engine.client.extraClassPath", "", "指定用户自定义的jar包全路径（多个以英文,分隔）。")
 
+  val HADOOP_LIB_NATIVE = CommonVars[String]("linkis.hadoop.lib.native","/appcom/Install/hadoop/lib/native")
+
   private val LOG4J_PROPERTIES_FILE = CommonVars[String]("wds.linkis.engine.log4j.properties.file", "engine-log4j.properties")
   private val LOG_PATH_FOR_GC_FILE = CommonVars[String]("wds.linkis.engine.gclog.path", "/appcom/logs/dataworkcloud/")
   private val LOG_PATH_FOR_ENGINE_GROUP = "dataworkcloud.engine.group"

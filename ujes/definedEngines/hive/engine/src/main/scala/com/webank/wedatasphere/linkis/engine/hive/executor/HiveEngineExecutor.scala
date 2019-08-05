@@ -141,20 +141,20 @@ class HiveEngineExecutor(outputPrintLimit:Int,
               val startTime = System.currentTimeMillis()
               try{
                 //to get hive query plan
-                val context = new Context(hiveConf)
-                val parseDriver = new ParseDriver
-                val tree = ParseUtils.findRootNonNullToken(parseDriver.parse(realCode, context))
-                val sem = SemanticAnalyzerFactory.get(hiveConf, tree)
-                sem.analyze(tree, context)
-                sem.validate()
-                val queryPlan = new QueryPlan(realCode, sem, 0L, null, "query")
-                val numberOfJobs = Utilities.getMRTasks(queryPlan.getRootTasks).size
-                numberOfMRJobs = numberOfJobs
-                queryPlan.getRootTasks foreach {task =>
-                  LOG.info(s"MR job jobID ${task.getJobID} and job is ${task.getMapWork.size()}")
-                }
-                LOG.info(s"$realCode has $numberOfJobs MR jobs to do")
-                if (numberOfJobs != 0) engineExecutorContext.appendStdout(s"Your hive sql has $numberOfJobs MR jobs to do")
+//                val context = new Context(hiveConf)
+//                val parseDriver = new ParseDriver
+//                val tree = ParseUtils.findRootNonNullToken(parseDriver.parse(realCode, context))
+//                val sem = SemanticAnalyzerFactory.get(hiveConf, tree)
+//                sem.analyze(tree, context)
+//                sem.validate()
+//                val queryPlan = new QueryPlan(realCode, sem, 0L, null, "query")
+//                val numberOfJobs = Utilities.getMRTasks(queryPlan.getRootTasks).size
+                numberOfMRJobs = 1
+//                queryPlan.getRootTasks foreach {task =>
+//                  LOG.info(s"MR job jobID ${task.getJobID} and job is ${task.getMapWork.size()}")
+//                }
+//                LOG.info(s"$realCode has $numberOfJobs MR jobs to do")
+//                if (numberOfJobs != 0) engineExecutorContext.appendStdout(s"Your hive sql has $numberOfJobs MR jobs to do")
                 val hiveResponse:CommandProcessorResponse = driver.run(realCode)
                 if (hiveResponse.getResponseCode != 0) {
                   LOG.error("Hive query failed, reason: ", hiveResponse.getException)

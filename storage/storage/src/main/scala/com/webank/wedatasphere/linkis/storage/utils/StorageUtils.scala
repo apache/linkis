@@ -21,6 +21,7 @@ import java.lang.reflect.Method
 
 import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
 import com.webank.wedatasphere.linkis.common.utils.{HDFSUtils, Logging, Utils}
+import com.webank.wedatasphere.linkis.storage.exception.StorageFatalException
 import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, ResultSetWriter}
 import org.apache.commons.lang.StringUtils
@@ -161,7 +162,10 @@ object StorageUtils extends Logging{
 
   def isHDFSNode:Boolean = {
     val confPath = new File(HDFSUtils.hadoopConfDir)
-    if(!confPath.exists() || confPath.isFile) false else true
+    //TODO IO-client mode need return false
+    if(!confPath.exists() || confPath.isFile)
+      throw new StorageFatalException(50001, "HDFS configuration was not read, please configure hadoop.config.dir or add env:HADOOP_CONF_DIR")
+    else true
   }
 
   /**

@@ -85,8 +85,8 @@ echo "Public Service is Starting"
 PUB_SERVICE_NAME="publicservice"
 PUB_SERVICE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${PUB_SERVICE_NAME}/bin
 PUB_SERVICE_START_CMD="cd ${PUB_SERVICE_BIN}; dos2unix ./*; dos2unix ../conf/*; sh start-${PUB_SERVICE_NAME}.sh > /dev/null"
-if [ -n "${PUB_SERVICE_INSTALL_IP}" ];then
-    ssh ${PUB_SERVICE_INSTALL_IP} "${PUB_SERVICE_START_CMD}"
+if [ -n "${PUBLICSERVICE_INSTALL_IP}" ];then
+    ssh ${PUBLICSERVICE_INSTALL_IP} "${PUB_SERVICE_START_CMD}"
 else
     ssh ${local_host} "${PUB_SERVICE_START_CMD}"
 fi
@@ -111,8 +111,8 @@ echo "Resource Manager is Starting"
 RM_NAME="resourcemanager"
 RM_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${RM_NAME}/bin
 RM_START_CMD="cd ${RM_BIN}; dos2unix ./*; dos2unix ../conf/*; sh start-${RM_NAME}.sh > /dev/null"
-if [ -n "${RM_INSTALL_IP}" ];then
-    ssh ${RM_INSTALL_IP} "${RM_START_CMD}"
+if [ -n "${RESOURCEMANAGER_INSTALL_IP}" ];then
+    ssh ${RESOURCEMANAGER_INSTALL_IP} "${RM_START_CMD}"
 else
     ssh ${local_host} "${RM_START_CMD}"
 fi

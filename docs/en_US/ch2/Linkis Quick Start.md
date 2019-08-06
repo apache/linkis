@@ -57,8 +57,8 @@ public class UJESClientImplTestJ{
                 .discoveryFrequency(1, TimeUnit.MINUTES)
                 .loadbalancerEnabled(true).maxConnectionSize(5)
                 .retryEnabled(false).readTimeout(30000)
-                .setAuthenticationStrategy(new StaticAuthenticationStrategy()).setAuthTokenKey("johnnwang")
-                .setAuthTokenValue("Abcd1234"))).setDWSVersion("v1").build();
+                .setAuthenticationStrategy(new StaticAuthenticationStrategy()).setAuthTokenKey("${username}")
+                .setAuthTokenValue("${password}"))).setDWSVersion("v1").build();
         UJESClient client = new UJESClientImpl(clientConfig);
 
         JobExecuteResult jobExecuteResult = client.execute(JobExecuteAction.builder().setCreator("UJESClient-Test")

@@ -61,7 +61,7 @@ public class UJESClientImplTestJ{
                 .maxConnectionSize(5)   //Max connection size, aka the max concurrent threshold
                 .retryEnabled(false).readTimeout(30000)   //whether to retry after failure
                 .setAuthenticationStrategy(new StaticAuthenticationStrategy())   //AuthenticationStrategy, The authentication strategy of Linkis
-                .setAuthTokenKey("johnnwang").setAuthTokenValue("Abcd1234")))  //The authentication key，usually the username;The authentication value，usually the password
+                .setAuthTokenKey("${username}").setAuthTokenValue("${password}")))  //The authentication key，usually the username;The authentication value，usually the password
                 .setDWSVersion("v1").build();  //The version of Linkis background protocol, currently v1
         
         // 2. Create a UJESClient from DWSClientConfig

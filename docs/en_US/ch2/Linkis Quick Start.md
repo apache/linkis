@@ -52,7 +52,7 @@ import java.util.concurrent.TimeUnit;
 
 public class UJESClientImplTestJ{
     public static void main(String[] args){
-        DWSClientConfig clientConfig = ((DWSClientConfigBuilder) (DWSClientConfigBuilder.newBuilder().addUJESServerUrl("http://10.255.0.70:20817")
+        DWSClientConfig clientConfig = ((DWSClientConfigBuilder) (DWSClientConfigBuilder.newBuilder().addUJESServerUrl("http://${ip}:${port}")
                 .connectionTimeout(30000).discoveryEnabled(true)
                 .discoveryFrequency(1, TimeUnit.MINUTES)
                 .loadbalancerEnabled(true).maxConnectionSize(5)
@@ -63,7 +63,7 @@ public class UJESClientImplTestJ{
 
         JobExecuteResult jobExecuteResult = client.execute(JobExecuteAction.builder().setCreator("UJESClient-Test")
                 .addExecuteCode("show tables")
-                .setEngineType(JobExecuteAction.EngineType$.MODULE$.HIVE()).setUser("johnnwang").build());
+                .setEngineType(JobExecuteAction.EngineType$.MODULE$.HIVE()).setUser("${username}").build());
         System.out.println("execId: " + jobExecuteResult.getExecID() + ", taskId: " + jobExecuteResult.taskID());
         JobStatusResult status = client.status(jobExecuteResult);
         while(!status.isCompleted()) {

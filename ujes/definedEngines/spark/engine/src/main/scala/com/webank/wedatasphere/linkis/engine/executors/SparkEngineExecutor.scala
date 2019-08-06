@@ -39,7 +39,7 @@ import org.apache.commons.lang.StringUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.ui.jobs.JobProgressListener
-import org.scalactic.Pass
+
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -134,7 +134,7 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
     }
     info(s"Start to structure sparksql resultset")
     response
-  }(Pass)
+  }{}
 
   override protected def executeCompletely(engineExecutorContext: EngineExecutorContext, code: String, completedLine: String): ExecuteResponse = {
     val newcode = completedLine + code

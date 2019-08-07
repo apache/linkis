@@ -146,7 +146,6 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     @Override
     public JsonNode getDbs(String userName) throws Exception {
-        //TODO Also need to write SQL authorized by ROLE(还需要写通过ROLE授权的SQL)
         List<String> dbs = hiveMetaDao.getDbsByUser(userName);
         ArrayNode dbsNode = jsonMapper.createArrayNode();
         for(String db : dbs){

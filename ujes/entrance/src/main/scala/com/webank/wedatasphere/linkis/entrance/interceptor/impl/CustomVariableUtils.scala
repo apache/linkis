@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat
 import java.util
 import java.util.{Calendar, Date}
 
-import com.sun.jdi.FloatValue
+//import com.sun.jdi.FloatValue
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.interceptor.exception.VarSubstitutionException

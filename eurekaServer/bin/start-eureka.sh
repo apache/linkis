@@ -15,7 +15,7 @@ if [[ -f "${EUREKA_SERVER_PID}" ]]; then
 fi
 
 export EUREKA_SERVER_LOG_PATH=$HOME/logs
-export EUREKA_SERVER_HEAP_SIZE="2G"
+export EUREKA_SERVER_HEAP_SIZE="1G"
 export EUREKA_SERVER_CLASS=${EUREKA_SERVER_CLASS:-com.webank.wedatasphere.linkis.eureka.SpringCloudEurekaApplication}
 
 profiles='eureka'

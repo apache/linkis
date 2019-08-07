@@ -6,7 +6,7 @@
 
     <groupId>com.webank.weDataSphere</groupId>
     <artifactId>spark-excel_2.11</artifactId>
-    <version>0.5.0</version>
+    <version>0.6.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -125,22 +125,6 @@
         </dependency>
 
     </dependencies>
-    <distributionManagement>
-        <!-- Publish the versioned releases here -->
-        <repository>
-            <id>webank-repo</id>
-            <name>webank-repo</name>
-            <url>http://maven.weoa.com/nexus/content/repositories/releases
-            </url>
-        </repository>
-        <!-- Publish the versioned snapshots here -->
-        <snapshotRepository>
-            <id>webank-repo</id>
-            <name>webank-repo</name>
-            <url>http://maven.weoa.com/nexus/content/repositories/snapshots
-            </url>
-        </snapshotRepository>
-    </distributionManagement>
     <build>
         <plugins>
             <plugin>

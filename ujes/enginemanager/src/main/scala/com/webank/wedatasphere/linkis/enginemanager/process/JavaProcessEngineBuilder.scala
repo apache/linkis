@@ -76,7 +76,7 @@ abstract class JavaProcessEngineBuilder extends ProcessEngineBuilder {
     }
     val classpath = getClasspath(request.properties, getExtractClasspath)
     classpathCheck(classpath)
-    commandLine += "-Djava.library.path=/appcom/Install/hadoop/lib/native"
+    commandLine += "-Djava.library.path=" + HADOOP_LIB_NATIVE.getValue
     commandLine += "-cp"
     commandLine += classpath.mkString(":")
     commandLine += "com.webank.wedatasphere.linkis.engine.DataWorkCloudEngineApplication"

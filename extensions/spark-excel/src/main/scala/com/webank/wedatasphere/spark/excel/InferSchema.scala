@@ -3,9 +3,7 @@ package com.webank.wedatasphere.spark.excel
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
 
-/**
-  * Created by johnnwang on 2019/7/24.
-  */
+
 private[excel] object InferSchema {
 
   type CellType = Int

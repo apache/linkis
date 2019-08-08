@@ -63,7 +63,7 @@ if test -z "$SERVER_IP"
 then
   SERVER_IP=$local_host
 fi
-EUEKEA_URL=http://$SERVER_IP:$EUREKA_PORT/eureka/
+EUREKA_URL=http://$SERVER_IP:$EUREKA_PORT/eureka/
 if ! ssh $SERVER_IP test -e $SERVER_HOME; then
   ssh $SERVER_IP "sudo mkdir -p $SERVER_HOME;sudo chown -R $deployUser:$deployUser $SERVER_HOME"
   isSuccess "create the dir of $SERVER_HOME"
@@ -77,7 +77,7 @@ ssh $SERVER_IP "cd $SERVER_HOME/;rm -rf eureka;unzip  $SERVERNAME.zip > /dev/nul
 echo "$SERVERNAME-step3:subsitution conf"
 eureka_conf_path=$SERVER_HOME/$SERVERNAME/conf/application-$SERVERNAME.yml
 ssh $SERVER_IP "sed -i  \"s#port:.*#port: $SERVER_PORT#g\" $eureka_conf_path"
-ssh $SERVER_IP "sed -i  \"s#defaultZone:.*#defaultZone: $EUEKEA_URL#g\" $eureka_conf_path"
+ssh $SERVER_IP "sed -i  \"s#defaultZone:.*#defaultZone: $EUREKA_URL#g\" $eureka_conf_path"
 ssh $SERVER_IP "sed -i  \"s#hostname:.*#hostname: $SERVER_IP#g\" $eureka_conf_path"
 isSuccess "subsitution conf of $SERVERNAME"
 echo "<----------------$SERVERNAME:end------------------->"
@@ -115,7 +115,7 @@ fi
 echo "$SERVERNAME-step3:subsitution conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/application.yml
 ssh $SERVER_IP "sed -i  \"s#port:.*#port: $SERVER_PORT#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#defaultZone:.*#defaultZone: $EUEKEA_URL#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#defaultZone:.*#defaultZone: $EUREKA_URL#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#hostname:.*#hostname: $SERVER_IP#g\" $SERVER_CONF_PATH"
 isSuccess "subsitution conf of $SERVERNAME"
 }
@@ -210,7 +210,7 @@ echo "$SERVERNAME-step4:update linkis conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
 ENGINE_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis-engine.properties
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVERNAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.core.jar.*#wds.linkis.enginemanager.core.jar=$SERVER_HOME/$SERVERNAME/lib/linkis-ujes-spark-engine-0.6.0.jar#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.core.jar.*#wds.linkis.enginemanager.core.jar=$SERVER_HOME/$SERVERNAME/lib/linkis-ujes-spark-engine-$LINKIS_VERSION.jar#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.spark.driver.conf.mainjar.*#wds.linkis.spark.driver.conf.mainjar=$SERVER_HOME/$SERVERNAME/conf:$SERVER_HOME/$SERVERNAME/lib/*#g\" $SERVER_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVERNAME"
 ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/netty-3.6.2.Final.jar"

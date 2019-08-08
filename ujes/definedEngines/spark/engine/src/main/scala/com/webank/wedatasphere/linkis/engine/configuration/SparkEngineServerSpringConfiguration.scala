@@ -19,7 +19,6 @@ package com.webank.wedatasphere.linkis.engine.configuration
 import com.webank.wedatasphere.linkis.engine.condition.EngineHooksCondition
 import com.webank.wedatasphere.linkis.engine.execute.hook._
 import com.webank.wedatasphere.linkis.engine.execute.{CodeParser, EngineHook, SparkCombinedCodeParser}
-import com.webank.wedatasphere.linkis.tispark.engine.hook.UserDataBaseHook
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.{Bean, Conditional, Configuration}
 
@@ -34,5 +33,5 @@ class SparkEngineServerSpringConfiguration {
 
   @Bean(Array("engineHooks"))
   @Conditional(Array(classOf[EngineHooksCondition]))
-  def createEngineHooks(): Array[EngineHook] = Array(new ReleaseEngineHook, new MaxExecuteNumEngineHook, new JarUdfEngineHook, new PyUdfEngineHook, new ScalaUdfEngineHook, new PyFunctionEngineHook, new ScalaFunctionEngineHook,new UserDataBaseHook)
+  def createEngineHooks(): Array[EngineHook] = Array(new ReleaseEngineHook, new MaxExecuteNumEngineHook, new JarUdfEngineHook, new PyUdfEngineHook, new ScalaUdfEngineHook, new PyFunctionEngineHook, new ScalaFunctionEngineHook)
 }

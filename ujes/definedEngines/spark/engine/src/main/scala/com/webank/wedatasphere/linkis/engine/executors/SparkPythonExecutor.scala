@@ -38,7 +38,6 @@ import org.apache.commons.exec.CommandLine
 import org.apache.commons.lang.StringUtils
 import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.execution.datasources.csv.{RddToDFUtil, UDF}
 import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession}
 import org.apache.spark.{SparkContext, SparkException}
 import py4j.GatewayServer
@@ -256,16 +255,11 @@ class SparkPythonExecutor(val sc: SparkContext,  val sqlContext: SQLContext,sess
     info("Pyspark showHTML execute success!")
   }
 
-  def rddToDF(tokenRdd: RDD[Array[String]], header: Array[String]) = RddToDFUtil.rddToDF(sparkSession, tokenRdd, header)
-
   import scala.collection.JavaConverters._
   def saveDFToCsv(df: Any, path: String, hasHeader: Boolean = true ,
                   isOverwrite: Boolean = false, option: util.Map[String, Any] = new util.HashMap()): Boolean ={
     CsvRelation.saveDFToCsv(sparkSession,df.asInstanceOf[DataFrame],path, hasHeader,isOverwrite, option.asScala.toMap)
   }
-  def listUDFs() = UDF.listUDFs
-
-  def existsUDF(name: String) = UDF.existsUDF(name)
 
 
 }

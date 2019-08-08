@@ -249,16 +249,7 @@ class SparkScalaExecutor(val sparkConf: SparkConf) extends SparkExecutor{
       sparkILoop.processLine("def showAlias(df: Any, alias:String): Unit = showDF(sparkContext, jobGroup.toString, df, alias,10000, engineExecutorContext.getEngineExecutorContext)")
       sparkILoop.processLine("def show(df: Any): Unit = showDF(sparkContext, jobGroup.toString, df,\"\",10000,engineExecutorContext.getEngineExecutorContext)")
       sparkILoop.processLine("def showHtml(content: Any): Unit = showHTML(sparkContext, jobGroup.toString, content, engineExecutorContext.getEngineExecutorContext)")
-      sparkILoop.processLine("import org.apache.spark.sql.execution.datasources.csv._")
-      sparkILoop.processLine("def rddToDF(tokenRdd: org.apache.spark.rdd.RDD[Array[String]],header: Array[String]) = RddToDFUtil.rddToDF(spark,tokenRdd,header)")
-      sparkILoop.processLine("def createTempView(tableName:String,hdfsPath:String,separator: String = \",\") " +
-        "= RddToDFUtil.createTempView(spark,tableName,hdfsPath,separator)")
-      sparkILoop.processLine("def createDashBoardView(tableName:String,hdfsPath:String,inferSchema: Boolean = false) " +
-        "= RddToDFUtil.createTempView(spark,tableName,hdfsPath,isIdeResult = true,inferSchema = inferSchema)")
-      sparkILoop.processLine("def clearExpireTable(tableName:String) = RddToDFUtil.clearExpireTable(spark,tableName)")
       sparkILoop.processLine("import org.apache.spark.sql.UDFRegistration")
-      sparkILoop.processLine("val udf = UDF")
-      sparkILoop.processLine("implicit def toUDFMethod(udf: UDF.type): UDFRegistration = sqlContext.udf")
       sparkILoop.processLine("implicit val sparkSession = spark")
       bindFlag = true
       warn(s"init sparkILoop cost ${System.currentTimeMillis() - startTime}.")

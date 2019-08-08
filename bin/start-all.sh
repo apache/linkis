@@ -30,6 +30,14 @@ workDir=`cd "$workDir"; pwd`
 CONF_DIR="${workDir}"/../conf
 CONF_FILE=${CONF_DIR}/config.sh
 
+function isSuccess(){
+if [ $? -ne 0 ]; then
+    echo "ERROR:  " + $1
+    exit 1
+else
+    echo "INFO:" + $1
+fi
+}
 #安装dos2unix
 sudo yum install dos2unix
 
@@ -46,7 +54,6 @@ if [ -z ${LINKIS_INSTALL_HOME} ];then
         source ${CONF_FILE}
     fi
 fi
-
 APP_PREFIX="linkis-"
 
 
@@ -59,10 +66,11 @@ EUREKA_BIN=${LINKIS_INSTALL_HOME}/${EUREKA_NAME}/bin
 EUREKA_START_CMD="cd ${EUREKA_BIN}; dos2unix ./*; dos2unix ../conf/*; sh start-${EUREKA_NAME}.sh > /dev/null"
 if [ -n "${EUREKA_INSTALL_IP}" ];then
     ssh ${EUREKA_INSTALL_IP} "${EUREKA_START_CMD}"
+
 else
     ssh ${local_host} "${EUREKA_START_CMD}"
 fi
-echo "Eureka Server started "
+isSuccess "eureka started"
 
 sleep 3
 
@@ -76,7 +84,7 @@ if [ -n "${GATEWAY_INSTALL_IP}"  ];then
 else
     ssh ${local_host} "${GATEWAY_START_CMD}"
 fi
-echo "Gateway started "
+isSuccess "Gateway started "
 
 sleep 3
 
@@ -90,7 +98,7 @@ if [ -n "${PUBLICSERVICE_INSTALL_IP}" ];then
 else
     ssh ${local_host} "${PUB_SERVICE_START_CMD}"
 fi
-echo "Public Service started "
+isSuccess "Public Service started "
 sleep 3
 
 #database
@@ -103,7 +111,7 @@ if [ -n "${DATABASE_INSTALL_IP}" ];then
 else
     ssh ${local_host} "${DATABASE_START_CMD}"
 fi
-echo "Database started "
+isSuccess  "Database started "
 sleep 3
 
 #Resource Manager
@@ -116,7 +124,7 @@ if [ -n "${RESOURCEMANAGER_INSTALL_IP}" ];then
 else
     ssh ${local_host} "${RM_START_CMD}"
 fi
-echo "Resource Manager started "
+isSuccess "Resource Manager started "
 
 
 echo "sleep 10 seconds to wait RM to start"

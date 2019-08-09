@@ -46,7 +46,7 @@ class FIFOSchedulerContextImpl(val maxParallelismUsers: Int) extends  SchedulerC
     }
   }
 
-  override def getOrCreateExecutorManager = ???
+  override def getOrCreateExecutorManager = null
 
-  override def getOrCreateSchedulerListenerBus = ???
+  override def getOrCreateSchedulerListenerBus = null
 }

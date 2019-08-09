@@ -137,12 +137,6 @@ def show_matplotlib(p, fmt="png", width="auto", height="auto", **kwargs):
     intp.showHTML(jobGroup,html.format(width=width, height=height, img=img_str))
     img.close()
 
-def rddToDF(rdd, header):
-    from pyspark import RDD
-    if isinstance(rdd, RDD):
-        intp.rddToDF(rdd, header)
-    else:
-        raise Exception("rdd is not RDD")
 
 def saveDFToCsv(df, path, hasheader=True,isOverwrite=False,option={}):
     from pyspark.sql import DataFrame
@@ -178,10 +172,7 @@ class UDF(object):
         self.sqlc = sqlc
     def register(self, udfName, udf):
         self.sqlc.registerFunction(udfName, udf)
-    def listUDFs(self):
-        self.intp.listUDFs()
-    def existsUDF(self, name):
-        self.intp.existsUDF(name)
+
 udf = UDF(intp, sqlc)
 intp.onPythonScriptInitialized()
 

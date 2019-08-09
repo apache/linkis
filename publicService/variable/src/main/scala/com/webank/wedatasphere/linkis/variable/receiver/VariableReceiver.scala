@@ -41,5 +41,5 @@ class VariableReceiver extends Receiver{
     case e:RequestQueryAppVariable =>variableService.queryAppVariable(e.userName,e.creator,e.appName)
   }
 
-  override def receiveAndReply(message: Any, duration: Duration, sender: Sender): Any = ???
+  override def receiveAndReply(message: Any, duration: Duration, sender: Sender): Any = {}
 }

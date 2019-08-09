@@ -58,6 +58,7 @@ object PythonInterpreter {
     env.put("PYSPARK_GATEWAY_PORT", "" + gatewayServer.getListeningPort)
     env.put("SPARK_HOME", SparkConfiguration.SPARK_HOME.getValue)
 
+    env.put("PYSPARK_ALLOW_INSECURE_GATEWAY" , "1")
     //    builder.redirectError(Redirect.INHERIT)
 
     val process = builder.start()

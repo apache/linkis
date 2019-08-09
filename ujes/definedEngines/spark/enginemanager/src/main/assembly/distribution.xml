@@ -187,6 +187,7 @@
                 <exclude>org.yaml:snakeyaml:jar</exclude>
                 <exclude>xerces:xercesImpl:jar</exclude>
                 <exclude>xmlenc:xmlenc:jar</exclude>
+                <exclude>org.apache.spark:spark*</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

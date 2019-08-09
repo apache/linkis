@@ -39,7 +39,6 @@ object EngineUtils {
   private val user:String = System.getProperty("user.name")
   private var sparkVersion: String = _
   private  var fileSystem : com.webank.wedatasphere.linkis.common.io.Fs = _
-  val sparkHome = CommonVars("spark.home", CommonVars[String]("SPARK_HOME", "/appcom/Install/spark").getValue).getValue
 
 
   def getName:String = Sender.getThisServiceInstance.getInstance

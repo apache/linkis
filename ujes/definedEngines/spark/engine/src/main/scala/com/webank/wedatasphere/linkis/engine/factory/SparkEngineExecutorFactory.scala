@@ -32,6 +32,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.springframework.stereotype.Component
 import com.google.common.base.Joiner
 import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
+import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration
 import org.apache.spark.util.SparkUtils
 
 import scala.collection.mutable.ArrayBuffer
@@ -50,7 +51,7 @@ class SparkEngineExecutorFactory extends EngineExecutorFactory with Logging{
     val conf = new SparkConf(true).setAppName(options.getOrDefault("spark.app.name", "dwc-spark-apps"))
     val master = conf.getOption("spark.master").getOrElse(CommonVars("spark.master", "yarn").getValue)
     info(s"------ Create new SparkContext {$master} -------")
-    val pysparkBasePath = EngineUtils.sparkHome
+    val pysparkBasePath = SparkConfiguration.SPARK_HOME.getValue
     val pysparkPath = new File(pysparkBasePath, "python" + File.separator + "lib")
     val pythonLibUris = pysparkPath.listFiles().map(_.toURI.toString).filter(_.endsWith(".zip"))
     if (pythonLibUris.length == 2) {

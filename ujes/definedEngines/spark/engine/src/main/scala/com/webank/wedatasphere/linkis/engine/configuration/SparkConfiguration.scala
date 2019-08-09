@@ -30,7 +30,7 @@ object SparkConfiguration {
   val DWC_SPARK_USEHIVECONTEXT = CommonVars[Boolean]("wds.linkis.spark.useHiveContext", true)
   val SPARK_LANGUAGE_REPL_INIT_TIME = CommonVars[TimeType]("wds.linkis.engine.spark.language-repl.init.time", new TimeType("30s"))
   val SPARK_REPL_CLASSDIR = CommonVars[String]("spark.repl.classdir", "/tmp", "默认master")
-  val SPARK_HOME = CommonVars[String]("spark.home","/appcom/Install/spark")
+  val SPARK_HOME = CommonVars[String]("spark.home", CommonVars[String]("SPARK_HOME", "/appcom/Install/spark").getValue)
   val PROCESS_MAX_THREADS = CommonVars[Int]("wds.linkis.process.threadpool.max", 100)
   val SPARK_NF_FRACTION_LENGTH = CommonVars[Int]("wds.linkis.engine.spark.fraction.length", 30)
   val SPARK_CONSOLE_OUTPUT_NUM = CommonVars[Int]("wds.linkis.spark.output.line.limit", 10)

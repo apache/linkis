@@ -49,6 +49,8 @@ Linkis基于微服务架构，提供了金融级多租户隔离、资源管控�
 
 ## 与类似系统的对比：
 
+Linkis跟Apache Livy和Apache Zeppelin Interpreter的定位不一样，但是由于开源社区目前尚没有同类竞品，所以这里做一个简单对比供大家参考。
+
 ![comparison_table](images/introduction/comparison_table.png)
 
 
@@ -59,19 +61,16 @@ Linkis基于微服务架构，提供了金融级多租户隔离、资源管控�
 
 [Linkis，让大数据变得更容易](ch3/linkis详细介绍文档.md)
 
-[Linkis快速部署文档](ch1/deploy.md)
+[Linkis快速部署文档](https://github.com/WeBankFinTech/Linkis/wiki/%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85Linkis)
 
-[Linkis快速使用文档 & Java SDK文档](ch2/linkis快速使用文档.md)
+[Linkis快速使用文档](https://github.com/WeBankFinTech/Linkis/wiki/%E5%BF%AB%E9%80%9F%E4%BD%BF%E7%94%A8%E6%96%87%E6%A1%A3)
 
-[上层前端应用的HTTP接入文档](ch3/HTTP接入文档.md)
+[上层前端应用的HTTP接入文档](https://github.com/WeBankFinTech/Linkis/wiki/%E4%B8%8A%E5%B1%82%E5%89%8D%E7%AB%AF%E5%BA%94%E7%94%A8HTTP%E6%8E%A5%E5%85%A5%E6%96%87%E6%A1%A3)
 
-[上层前端应用的WebSocket接入文档](ch3/WebSocket接入文档.md)
+[上层前端应用的WebSocket接入文档](https://github.com/WeBankFinTech/Linkis/wiki/%E4%B8%8A%E5%B1%82%E5%89%8D%E7%AB%AF%E5%BA%94%E7%94%A8WebSocket%E6%8E%A5%E5%85%A5%E6%96%87%E6%A1%A3)
 
-[Linkis如何快速实现一个新的底层计算存储引擎](ch3/Linkis如何接入新的底层计算存储引擎.md)
+**更多文档，请[点我访问](https://github.com/WeBankFinTech/Linkis/wiki)**
 
-[Linkis资源管理服务RM设计文档](ch4/Linkis-RM设计文档.md)
-
-[Linkis统一作业执行服务UJES设计文档](ch4/Linkis-UJES设计文档.md)
 
 ----
 

@@ -42,5 +42,5 @@ class ConfigurationReceiver extends Receiver{
     case e:RequestQueryAppConfigWithGlobal =>configurationService.queryAppConfigWithGlobal(e.userName,e.creator,e.appName,e.isMerge)
   }
 
-  override def receiveAndReply(message: Any, duration: Duration, sender: Sender): Any = ???
+  override def receiveAndReply(message: Any, duration: Duration, sender: Sender): Any = {}
 }

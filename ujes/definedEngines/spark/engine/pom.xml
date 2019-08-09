@@ -31,7 +31,7 @@
     <!--<version>${bdp.ide.version}</version>-->
     <!--<name>linkis-Spark-Engine</name>-->
     <properties>
-        <spark.version>2.1.0</spark.version>
+        <spark.version>2.4.3</spark.version>
     </properties>
 
 

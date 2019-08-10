@@ -62,7 +62,7 @@ class SparkScalaExecutor(val sparkConf: SparkConf) extends SparkExecutor{
   var outputDir: File = _
   protected implicit val executor = Utils.newCachedExecutionContext(5, "Spark-Scala-REPL-Thread-", true)
   @throws(classOf[IOException])
-  override def open = ???
+  override def open = {}
 
 
 

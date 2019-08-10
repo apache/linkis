@@ -32,7 +32,6 @@ object EnvConfiguration {
   val HADOOP_CONF_DIR = CommonVars[String]("hadoop.config.dir", CommonVars[String]("HADOOP_CONF_DIR", "/appcom/config/hadoop-config").getValue)
   val HBASE_HOME = CommonVars[String]("hbase.home", CommonVars[String]("HBASE_HOME", "/appcom/Install/hbase").getValue)
   val HBASE_CONF_DIR = CommonVars[String]("hbase.config.dir", CommonVars[String]("HBASE_CONF_DIR", "/appcom/config/hbase-config").getValue)
-  val SPARK_HOME = CommonVars[String]("spark.home", CommonVars[String]("SPARK_HOME", "/appcom/Install/spark").getValue)
   val SPARK_CONF_DIR = CommonVars[String]("spark.config.dir", CommonVars[String]("SPARK_CONF_DIR", "/appcom/config/spark-config").getValue)
   val HIVE_CONF_DIR = CommonVars[String]("hive.config.dir", CommonVars[String]("HIVE_CONF_DIR", "/appcom/config/hive-config").getValue)
 

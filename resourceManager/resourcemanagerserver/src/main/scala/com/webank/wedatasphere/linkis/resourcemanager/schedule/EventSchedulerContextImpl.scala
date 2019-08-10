@@ -58,5 +58,5 @@ class EventSchedulerContextImpl(maxParallelismUsers: Int) extends EventScheduler
     }
   }
 
-  override def getOrCreateSchedulerListenerBus = ???
+  override def getOrCreateSchedulerListenerBus = null
 }

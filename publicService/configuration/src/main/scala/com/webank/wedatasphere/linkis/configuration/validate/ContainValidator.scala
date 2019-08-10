@@ -20,7 +20,7 @@ package com.webank.wedatasphere.linkis.configuration.validate
   * Created by allenlliu on 2019/4/8.
   */
 class ContainValidator extends Validator{
-  override def validate(value: String, range: String): Boolean = ???
+  override def validate(value: String, range: String): Boolean = false
 
   override var kind: String = "Contains"
 }

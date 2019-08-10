@@ -44,7 +44,7 @@ class RMEventExecutorManager extends ExecutorManager {
     this.metricRMEventListenerBus = metricRMEventListenerBus
   }
 
-  override def setExecutorListener(executorListener: ExecutorListener) = ???
+  override def setExecutorListener(executorListener: ExecutorListener) = {}
 
   override protected def createExecutor(event: SchedulerEvent) = {
     event match {
@@ -88,11 +88,11 @@ class RMEventExecutorManager extends ExecutorManager {
     }
   }
 
-  override def askExecutor(event: SchedulerEvent, wait: Duration) = ???
+  override def askExecutor(event: SchedulerEvent, wait: Duration) = null
 
-  override def getById(id: Long) = ???
+  override def getById(id: Long) = null
 
-  override def getByGroup(groupName: String) = ???
+  override def getByGroup(groupName: String) = null
 
   override protected def delete(executor: Executor) = {
     executor.close()

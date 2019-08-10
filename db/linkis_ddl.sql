@@ -77,7 +77,7 @@ CREATE TABLE `linkis_user` (
   `avatar` varchar(255) DEFAULT NULL COMMENT 'Path of the avator',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `create_by` bigint(20) DEFAULT '0',
-  `update_time` timestamp NOT NULL DEFAULT '1970-01-01 08:00:01',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_by` bigint(20) DEFAULT '0',
   `is_first_login` bit(1) DEFAULT NULL COMMENT 'If it is the first time to log in',
   PRIMARY KEY (`id`)
@@ -329,7 +329,7 @@ CREATE TABLE `linkis_udf` (
   `is_shared` bit(1) DEFAULT NULL,
   `tree_id` bigint(20) NOT NULL,
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `update_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

@@ -193,6 +193,7 @@ SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/json4s-*3.5.3.jar"
 isSuccess "subsitution linkis.properties of $SERVERNAME"
 echo "<----------------$SERVERNAME:end------------------->"
 ##ResourceManager install end
@@ -213,13 +214,6 @@ ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.en
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.core.jar.*#wds.linkis.enginemanager.core.jar=$SERVER_HOME/$SERVERNAME/lib/linkis-ujes-spark-engine-$LINKIS_VERSION.jar#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.spark.driver.conf.mainjar.*#wds.linkis.spark.driver.conf.mainjar=$SERVER_HOME/$SERVERNAME/conf:$SERVER_HOME/$SERVERNAME/lib/*#g\" $SERVER_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVERNAME"
-ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/netty-3.6.2.Final.jar"
-ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/netty-all-4.0.23.Final.jar"
-ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/jackson-core-2.6.5.jar"
-ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/jackson-databind-2.6.5.jar"
-ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/jackson-mapper-asl-1.9.2.jar"
-ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/netty-all-4.0.42.Final.jar"
-
 echo "<----------------$SERVERNAME:end------------------->"
 ##SparkEM install end
 

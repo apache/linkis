@@ -47,7 +47,7 @@ After getting the project from git, use maven to package the project installatio
 (3) Get the installation package, in the assembly->target directory:
 
 ```
-	wedatasphere-linkis-0.6.0-dist.tar.gz
+	wedatasphere-linkis-0.7.0-dist.tar.gz
 ```
 
 ## 3 Installation 
@@ -55,7 +55,7 @@ After getting the project from git, use maven to package the project installatio
 Unzip the installation package to the installation directory and modify the configuration file after decompression.
 
 ```
-	tar -xvf  wedatasphere-linkis-0.6.0-dist.tar.gz
+	tar -xvf  wedatasphere-linkis-0.7.0-dist.tar.gz
 ```
 
 (1) Modify the basic configuration

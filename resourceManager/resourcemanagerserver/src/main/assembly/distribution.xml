@@ -144,7 +144,7 @@
                 <exclude>commons-lang:commons-lang:jar</exclude>
                 <exclude>commons-logging:commons-logging:jar</exclude>
                 <exclude>commons-net:commons-net:jar</exclude>
-                <exclude>io.netty:netty:jar</exclude>
+                <!--<exclude>io.netty:netty:jar</exclude>-->
                 <exclude>io.netty:netty-all:jar</exclude>
                 <exclude>io.netty:netty-buffer:jar</exclude>
                 <exclude>io.netty:netty-codec:jar</exclude>
@@ -204,9 +204,9 @@
                 <exclude>org.eclipse.jetty:jetty-xml:jar</exclude>
                 <exclude>org.fusesource.leveldbjni:leveldbjni-all:jar</exclude>
                 <exclude>org.hdrhistogram:HdrHistogram:jar</exclude>
-                <exclude>org.json4s:json4s-ast_2.11:jar</exclude>
-                <exclude>org.json4s:json4s-core_2.11:jar</exclude>
-                <exclude>org.json4s:json4s-jackson_2.11:jar</exclude>
+                <!--<exclude>org.json4s:json4s-ast_2.11:jar</exclude>-->
+                <!--<exclude>org.json4s:json4s-core_2.11:jar</exclude>-->
+                <!--<exclude>org.json4s:json4s-jackson_2.11:jar</exclude>-->
                 <exclude>org.jsoup:jsoup:jar</exclude>
                 <exclude>org.mortbay.jetty:jetty:jar</exclude>
                 <exclude>org.mortbay.jetty:jetty-util:jar</exclude>

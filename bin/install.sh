@@ -48,7 +48,7 @@ function checkPythonAndJava(){
 function checkHadoopAndHive(){
 	hdfs version
 	isSuccess "execute hdfs version"
-	hive -h
+	hive --help
 	isSuccess "execute hive -h"
 }
 

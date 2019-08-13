@@ -231,23 +231,7 @@ echo "<----------------$SERVERNAME:end------------------->"
 ##publicservice end
 
 
-##linkis-database install
-PACKAGE_DIR=linkis/linkis-database
-SERVERNAME=linkis-database
-SERVER_IP=$DATABASE_INSTALL_IP
-SERVER_PORT=$DATABASE_PORT
-SERVER_HOME=$LINKIS_INSTALL_HOME
-###install dir
-installPackage
-###update linkis.properties
-echo "$SERVERNAME-step4:update linkis conf"
-SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g\" $SERVER_CONF_PATH"
-isSuccess "subsitution linkis.properties of $SERVERNAME"
-echo "<----------------$SERVERNAME:end------------------->"
-##database end
+
 
 
 ##ResourceManager install
@@ -315,6 +299,24 @@ if [[ '1' = "$INSTALL_MODE" ]];then
 	echo "Lite install end"
 	exit 0
 fi
+
+##linkis-database install
+PACKAGE_DIR=linkis/linkis-database
+SERVERNAME=linkis-database
+SERVER_IP=$DATABASE_INSTALL_IP
+SERVER_PORT=$DATABASE_PORT
+SERVER_HOME=$LINKIS_INSTALL_HOME
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVERNAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g\" $SERVER_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVERNAME"
+echo "<----------------$SERVERNAME:end------------------->"
+##database end
 
 ##HiveEM install
 PACKAGE_DIR=linkis/ujes/hive

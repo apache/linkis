@@ -76,12 +76,6 @@ PYTHON_EM_PORT=12001
 PYTHON_ENTRANCE_PORT=12002
 
 
-### PIPELINE
-### This service is used to provide export/import capability.
-PIPELINE_INSTALL_IP=127.0.0.1
-PIPELINE_EM_PORT=13001
-PIPELINE_ENTRANCE_PORT=13002
-
 
 ########################################################################################
 

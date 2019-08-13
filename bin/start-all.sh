@@ -110,7 +110,7 @@ echo "<-------------------------------->"
 echo "Begin to start Database"
 DATABASE_NAME="database"
 DATABASE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${DATABASE_NAME}/bin
-DATABASE_START_CMD="cd ${DATABASE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh start-${DATABASE_NAME}.sh > /dev/null"
+DATABASE_START_CMD="if [ -d ${DATABASE_BIN} ];then cd ${DATABASE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh start-database.sh > /dev/null;else echo 'WARNING:Database will not start';fi"
 if [ -n "${DATABASE_INSTALL_IP}" ];then
     ssh ${DATABASE_INSTALL_IP} "${DATABASE_START_CMD}"
 else

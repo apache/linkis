@@ -110,7 +110,7 @@ echo "<-------------------------------->"
 echo "Begin to stop Database"
 DATABASE_NAME="database"
 DATABASE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${DATABASE_NAME}/bin
-DATABASE_STOP_CMD="cd ${DATABASE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-${DATABASE_NAME}.sh > /dev/null"
+DATABASE_STOP_CMD="if [ -d ${DATABASE_BIN} ];then cd ${DATABASE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-database.sh > /dev/null;else echo 'WARNING:Database did not start';fi"
 if [ -n "${DATABASE_INSTALL_IP}" ];then
     ssh ${DATABASE_INSTALL_IP} "${DATABASE_STOP_CMD}"
 else
@@ -141,7 +141,7 @@ echo "<-------------------------------->"
 echo "Begin to stop Spark Entrance"
 SPARK_ENTRANCE_NAME="ujes-spark-entrance"
 SPARK_ENTRANCE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${SPARK_ENTRANCE_NAME}/bin
-SPARK_ENTRANCE_STOP_CMD="if [ -d ${SPARK_ENTRANCE_BIN} ];then cd ${SPARK_ENTRANCE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-sparkentrance.sh > /dev/null;else echo 'WARNING:Spark Entrance will not stop';fi"
+SPARK_ENTRANCE_STOP_CMD="if [ -d ${SPARK_ENTRANCE_BIN} ];then cd ${SPARK_ENTRANCE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-sparkentrance.sh > /dev/null;else echo 'WARNING:Spark Entrance did not start';fi"
 if [ -n "${SPARK_INSTALL_IP}" ];then
     ssh ${SPARK_INSTALL_IP} "${SPARK_ENTRANCE_STOP_CMD}"
 else
@@ -155,7 +155,7 @@ echo "<-------------------------------->"
 echo "Begin to Spark Engine Manager"
 SPARK_EM_NAME="ujes-spark-enginemanager"
 SPARK_EM_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${SPARK_EM_NAME}/bin
-SPARK_EM_STOP_CMD="if [ -d ${SPARK_EM_BIN} ];then cd ${SPARK_EM_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-sparkenginemanager.sh > /dev/null;else echo 'WARNING:Spark EM will not stop';fi"
+SPARK_EM_STOP_CMD="if [ -d ${SPARK_EM_BIN} ];then cd ${SPARK_EM_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-sparkenginemanager.sh > /dev/null;else echo 'WARNING:Spark EM did not start';fi"
 if [ -n "${SPARK_INSTALL_IP}" ];then
     ssh ${SPARK_INSTALL_IP} "${SPARK_EM_STOP_CMD}"
 else
@@ -169,7 +169,7 @@ echo "<-------------------------------->"
 echo "Begin to stop Hive Entrance"
 HIVE_ENTRANCE_NAME="ujes-hive-entrance"
 HIVE_ENTRANCE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${HIVE_ENTRANCE_NAME}/bin
-HIVE_ENTRANCE_STOP_CMD="if [ -d ${HIVE_ENTRANCE_BIN} ];then cd ${HIVE_ENTRANCE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-hiveentrance.sh > /dev/null;else echo 'WARNING:Hive Entrance will not stop';fi"
+HIVE_ENTRANCE_STOP_CMD="if [ -d ${HIVE_ENTRANCE_BIN} ];then cd ${HIVE_ENTRANCE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-hiveentrance.sh > /dev/null;else echo 'WARNING:Hive Entrance did not start';fi"
 if [ -n "${HIVE_INSTALL_IP}" ];then
     ssh ${HIVE_INSTALL_IP} "${HIVE_ENTRANCE_STOP_CMD}"
 else
@@ -182,7 +182,7 @@ echo "<-------------------------------->"
 echo "Begin to stop Hive Engine Manager"
 HIVE_EM_NAME="ujes-hive-enginemanager"
 HIVE_EM_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${HIVE_EM_NAME}/bin
-HIVE_EM_STOP_CMD="if [ -d ${HIVE_EM_BIN} ];then cd ${HIVE_EM_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-hiveenginemanager.sh > /dev/null;else echo 'WARNING:Hive EM will not stop';fi"
+HIVE_EM_STOP_CMD="if [ -d ${HIVE_EM_BIN} ];then cd ${HIVE_EM_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-hiveenginemanager.sh > /dev/null;else echo 'WARNING:Hive EM did not start';fi"
 if [ -n "${HIVE_INSTALL_IP}" ];then
     ssh ${HIVE_INSTALL_IP} "${HIVE_EM_STOP_CMD}"
 else
@@ -196,7 +196,7 @@ echo "<-------------------------------->"
 echo "Begin to stop Python Entrance"
 PYTHON_ENTRANCE_NAME="ujes-python-entrance"
 PYTHON_ENTRANCE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${PYTHON_ENTRANCE_NAME}/bin
-PYTHON_ENTRANCE_STOP_CMD="if [ -d ${PYTHON_ENTRANCE_BIN} ];then cd ${PYTHON_ENTRANCE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-pythonentrance.sh > /dev/null;else echo 'WARNING:Python Entrance will not stop';fi"
+PYTHON_ENTRANCE_STOP_CMD="if [ -d ${PYTHON_ENTRANCE_BIN} ];then cd ${PYTHON_ENTRANCE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-pythonentrance.sh > /dev/null;else echo 'WARNING:Python Entrance did not start';fi"
 if [ -n "${PYTHON_INSTALL_IP}" ];then
     ssh ${PYTHON_INSTALL_IP} "${PYTHON_ENTRANCE_STOP_CMD}"
 else
@@ -209,7 +209,7 @@ echo "<-------------------------------->"
 echo "Begin to stop Python Engine Manager"
 PYTHON_EM_NAME="ujes-python-enginemanager"
 PYTHON_EM_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${PYTHON_EM_NAME}/bin
-PYTHON_EM_STOP_CMD="if [ -d ${PYTHON_EM_BIN} ];then cd ${PYTHON_EM_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-pythonenginemanager.sh > /dev/null;else echo 'WARNING:Python EM will not stop';fi"
+PYTHON_EM_STOP_CMD="if [ -d ${PYTHON_EM_BIN} ];then cd ${PYTHON_EM_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-pythonenginemanager.sh > /dev/null;else echo 'WARNING:Python EM did not start';fi"
 if [ -n "${PYTHON_INSTALL_IP}" ];then
     ssh ${PYTHON_INSTALL_IP} "${PYTHON_EM_STOP_CMD}"
 else

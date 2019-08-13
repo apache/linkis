@@ -1,5 +1,6 @@
 import sys, getopt, traceback, json, re
-
+import os
+os.environ['PYSPARK_ALLOW_INSECURE_GATEWAY']='1'
 zipPaths = sys.argv[3]
 paths = zipPaths.split(':')
 for i in range(len(paths)):

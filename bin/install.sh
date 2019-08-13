@@ -121,8 +121,8 @@ else
 fi
 
 ##stop server
-echo "step2,stop server"
-sh ${workDir}/bin/stop-all.sh
+#echo "step2,stop server"
+#sh ${workDir}/bin/stop-all.sh
 
 ##Eurkea install
 SERVERNAME=eureka

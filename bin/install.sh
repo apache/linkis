@@ -37,6 +37,26 @@ else
     echo "Succeed to" + $1
 fi
 }
+
+function checkPythonAndJava(){
+	python --version
+	isSuccess "execute python --version"
+	java -version
+	isSuccess "execute java --version"
+}
+
+function checkHadoopAndHive(){
+	hdfs version
+	isSuccess "execute hdfs version"
+	hive -h
+	isSuccess "execute hive -h"
+}
+
+function checkSpark(){
+	spark-submit --version
+	isSuccess "execute spark-submit --version"
+}
+
 ##install env:expect,
 sudo yum install -y expect
 isSuccess "install expect"
@@ -48,6 +68,57 @@ source ${workDir}/conf/db.sh
 isSuccess "load config"
 
 local_host="`hostname --fqdn`"
+
+##env check
+echo "Please enter the mode selection such as: 1"
+echo " 1: Lite(精简版)"
+echo " 2: Simple(简单版)"
+echo " 3: Standard(标准版)"
+echo ""
+
+INSTALL_MODE=1
+
+read -p "Please input the choice:"  idx
+if [[ '1' = "$idx" ]];then
+  INSTALL_MODE=1
+  echo "You chose Lite installation mode"
+  checkPythonAndJava
+elif [[ '2' = "$idx" ]];then
+  INSTALL_MODE=2
+  echo "You chose Simple installation mode"
+  checkPythonAndJava
+  checkHadoopAndHive
+elif [[ '3' = "$idx" ]];then
+  INSTALL_MODE=3
+  echo "You chose Standard installation mode"
+  checkPythonAndJava
+  checkHadoopAndHive
+  checkSpark
+else
+  echo "no choice,exit!"
+  exit 1
+fi
+
+
+##env check
+echo "Do you empty Linkis table information in the database?"
+echo " 1: Rebuild the table(重新建表)"
+echo " 2: Do not execute table-building statements(不执行建表语句)"
+echo ""
+
+MYSQL_INSTALL_MODE=1
+
+read -p "Please input the choice:"  idx
+if [[ '1' = "$idx" ]];then
+  MYSQL_INSTALL_MODE=1
+  echo "You chose Rebuild the table"
+elif [[ '2' = "$idx" ]];then
+  MYSQL_INSTALL_MODE=2
+  echo "You chose not execute table-building statements"
+else
+  echo "no choice,exit!"
+  exit 1
+fi
 
 ##stop server
 echo "step2,stop server"
@@ -160,23 +231,7 @@ echo "<----------------$SERVERNAME:end------------------->"
 ##publicservice end
 
 
-##linkis-database install
-PACKAGE_DIR=linkis/linkis-database
-SERVERNAME=linkis-database
-SERVER_IP=$DATABASE_INSTALL_IP
-SERVER_PORT=$DATABASE_PORT
-SERVER_HOME=$LINKIS_INSTALL_HOME
-###install dir
-installPackage
-###update linkis.properties
-echo "$SERVERNAME-step4:update linkis conf"
-SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g\" $SERVER_CONF_PATH"
-isSuccess "subsitution linkis.properties of $SERVERNAME"
-echo "<----------------$SERVERNAME:end------------------->"
-##database end
+
 
 
 ##ResourceManager install
@@ -197,6 +252,113 @@ ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/json4s-*3.5.3.jar"
 isSuccess "subsitution linkis.properties of $SERVERNAME"
 echo "<----------------$SERVERNAME:end------------------->"
 ##ResourceManager install end
+
+##init db
+if [[ '1' = "$MYSQL_INSTALL_MODE" ]];then
+	mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB -e "source ${workDir}/db/linkis_ddl.sql"
+	isSuccess "source linkis_ddl.sql"
+	mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB -e "source ${workDir}/db/linkis_dml.sql"
+	isSuccess "source linkis_dml.sql"
+	echo "Rebuild the table"
+fi
+
+
+
+##PythonEM install
+PACKAGE_DIR=linkis/ujes/python
+SERVERNAME=linkis-ujes-python-enginemanager
+SERVER_IP=$PYTHON_INSTALL_IP
+SERVER_PORT=$PYTHON_EM_PORT
+SERVER_HOME=$LINKIS_INSTALL_HOME
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVERNAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVERNAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVERNAME"
+echo "<----------------$SERVERNAME:end------------------->"
+
+
+##PythonEntrance install
+PACKAGE_DIR=linkis/ujes/python
+SERVERNAME=linkis-ujes-python-entrance
+SERVER_PORT=$PYTHON_ENTRANCE_PORT
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVERNAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$RESULT_SET_ROOT_PATH#g\" $SERVER_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVERNAME"
+echo "<----------------$SERVERNAME:end------------------->"
+##PythonEntrance install end
+
+if [[ '1' = "$INSTALL_MODE" ]];then
+	echo "Lite install end"
+	exit 0
+fi
+
+##linkis-database install
+PACKAGE_DIR=linkis/linkis-database
+SERVERNAME=linkis-database
+SERVER_IP=$DATABASE_INSTALL_IP
+SERVER_PORT=$DATABASE_PORT
+SERVER_HOME=$LINKIS_INSTALL_HOME
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVERNAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g\" $SERVER_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVERNAME"
+echo "<----------------$SERVERNAME:end------------------->"
+##database end
+
+##HiveEM install
+PACKAGE_DIR=linkis/ujes/hive
+SERVERNAME=linkis-ujes-hive-enginemanager
+SERVER_IP=$HIVE_INSTALL_IP
+SERVER_PORT=$HIVE_EM_PORT
+SERVER_HOME=$LINKIS_INSTALL_HOME
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVERNAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVERNAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVERNAME"
+ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/servlet-api-2.5.jar"
+echo "<----------------$SERVERNAME:end------------------->"
+##HiveEM install end
+
+##HiveEntrance install
+PACKAGE_DIR=linkis/ujes/hive
+SERVERNAME=linkis-ujes-hive-entrance
+SERVER_PORT=$HIVE_ENTRANCE_PORT
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVERNAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$RESULT_SET_ROOT_PATH#g\" $SERVER_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVERNAME"
+echo "<----------------$SERVERNAME:end------------------->"
+##HiveEntrance install end
+
+
+if [[ '2' = "$INSTALL_MODE" ]];then
+	echo "Simple install end"
+	exit 0
+fi
+
+if [[ '3' != "$INSTALL_MODE" ]];then
+	exit 0
+fi
 
 ##SparkEM install
 PACKAGE_DIR=linkis/ujes/spark
@@ -231,111 +393,3 @@ ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultS
 isSuccess "subsitution linkis.properties of $SERVERNAME"
 echo "<----------------$SERVERNAME:end------------------->"
 ##SparkEntrance install end
-
-##HiveEM install
-PACKAGE_DIR=linkis/ujes/hive
-SERVERNAME=linkis-ujes-hive-enginemanager
-SERVER_IP=$HIVE_INSTALL_IP
-SERVER_PORT=$HIVE_EM_PORT
-SERVER_HOME=$LINKIS_INSTALL_HOME
-###install dir
-installPackage
-###update linkis.properties
-echo "$SERVERNAME-step4:update linkis conf"
-SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVERNAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
-isSuccess "subsitution linkis.properties of $SERVERNAME"
-ssh $SERVER_IP "rm $SERVER_HOME/$SERVERNAME/lib/servlet-api-2.5.jar"
-echo "<----------------$SERVERNAME:end------------------->"
-##HiveEM install end
-
-##HiveEntrance install
-PACKAGE_DIR=linkis/ujes/hive
-SERVERNAME=linkis-ujes-hive-entrance
-SERVER_PORT=$HIVE_ENTRANCE_PORT
-###install dir
-installPackage
-###update linkis.properties
-echo "$SERVERNAME-step4:update linkis conf"
-SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$HDFS_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
-isSuccess "subsitution linkis.properties of $SERVERNAME"
-echo "<----------------$SERVERNAME:end------------------->"
-##HiveEntrance install end
-
-
-
-##PythonEM install
-PACKAGE_DIR=linkis/ujes/python
-SERVERNAME=linkis-ujes-python-enginemanager
-SERVER_IP=$PYTHON_INSTALL_IP
-SERVER_PORT=$PYTHON_EM_PORT
-SERVER_HOME=$LINKIS_INSTALL_HOME
-###install dir
-installPackage
-###update linkis.properties
-echo "$SERVERNAME-step4:update linkis conf"
-SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVERNAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
-isSuccess "subsitution linkis.properties of $SERVERNAME"
-echo "<----------------$SERVERNAME:end------------------->"
-
-
-##PythonEntrance install
-PACKAGE_DIR=linkis/ujes/python
-SERVERNAME=linkis-ujes-python-entrance
-SERVER_PORT=$PYTHON_ENTRANCE_PORT
-###install dir
-installPackage
-###update linkis.properties
-echo "$SERVERNAME-step4:update linkis conf"
-SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$HDFS_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
-isSuccess "subsitution linkis.properties of $SERVERNAME"
-echo "<----------------$SERVERNAME:end------------------->"
-##PythonEntrance install end
-
-##pipelineEM install
-PACKAGE_DIR=linkis/ujes/pipeline
-SERVERNAME=linkis-ujes-pipeline-enginemanager
-SERVER_IP=$PIPELINE_INSTALL_IP
-SERVER_PORT=$PIPELINE_EM_PORT
-SERVER_HOME=$LINKIS_INSTALL_HOME
-###install dir
-installPackage
-###update linkis.properties
-echo "$SERVERNAME-step4:update linkis conf"
-SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVERNAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
-isSuccess "subsitution linkis.properties of $SERVERNAME"
-echo "<----------------$SERVERNAME:end------------------->"
-
-
-##pipelineEntrance install
-PACKAGE_DIR=linkis/ujes/pipeline
-SERVERNAME=linkis-ujes-pipeline-entrance
-SERVER_PORT=$PIPELINE_ENTRANCE_PORT
-###install dir
-installPackage
-###update linkis.properties
-echo "$SERVERNAME-step4:update linkis conf"
-SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
-ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$HDFS_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
-isSuccess "subsitution linkis.properties of $SERVERNAME"
-echo "<----------------$SERVERNAME:end------------------->"
-
-
-
-
-
-
-
-
-##init db
-mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB -e "source ${workDir}/db/linkis_ddl.sql"
-isSuccess "source linkis_ddl.sql"
-mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB -e "source ${workDir}/db/linkis_dml.sql"
-isSuccess "source linkis_dml.sql"

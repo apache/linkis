@@ -129,10 +129,6 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
   override def build(engineRequest: EngineResource, request: RequestEngine): Unit = {
     this.request = request
     userEngineResource = engineRequest.asInstanceOf[UserEngineResource]
-    val sparkhome = SPARK_HOME.getValue(request.properties)
-    if (StringUtils.isEmpty(sparkhome)) {
-      warn("We cannot find the spark home, use spark-submit to run application.")
-    }
     val darResource: DriverAndYarnResource = engineRequest.getResource.asInstanceOf[DriverAndYarnResource]
     val properties = request.properties
     this.master("yarn")

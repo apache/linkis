@@ -55,7 +55,6 @@
                 <exclude>io.netty:netty*</exclude>
             </excludes>-->
             <excludes>
-                <exclude>antlr:antlr:jar</exclude>
                 <exclude>asm:asm:jar</exclude>
                 <exclude>cglib:cglib:jar</exclude>
                 <exclude>com.fasterxml.jackson.core:jackson-annotations:jar</exclude>
@@ -86,12 +85,10 @@
                 <exclude>commons-collections:commons-collections:jar</exclude>
                 <exclude>commons-configuration:commons-configuration:jar</exclude>
                 <exclude>commons-daemon:commons-daemon:jar</exclude>
-                <exclude>commons-dbcp:commons-dbcp:jar</exclude>
                 <exclude>commons-digester:commons-digester:jar</exclude>
                 <exclude>commons-httpclient:commons-httpclient:jar</exclude>
                 <exclude>commons-io:commons-io:jar</exclude>
                 <exclude>commons-lang:commons-lang:jar</exclude>
-                <exclude>commons-pool:commons-pool:jar</exclude>
                 <exclude>io.netty:netty-buffer:jar</exclude>
                 <exclude>io.netty:netty-codec:jar</exclude>
                 <exclude>io.netty:netty-codec-http:jar</exclude>
@@ -111,8 +108,6 @@
                 <exclude>log4j:log4j:jar</exclude>
                 <exclude>net.databinder.dispatch:dispatch-core_2.11:jar</exclude>
                 <exclude>net.databinder.dispatch:dispatch-json4s-jackson_2.11:jar</exclude>
-                <exclude>org.antlr:antlr-runtime:jar</exclude>
-                <exclude>org.antlr:stringtemplate:jar</exclude>
                 <exclude>org.apache.commons:commons-compress:jar</exclude>
                 <exclude>org.apache.curator:curator-client:jar</exclude>
                 <exclude>org.apache.curator:curator-framework:jar</exclude>
@@ -183,10 +178,11 @@
                 <exclude>org.springframework:spring-expression:jar</exclude>
                 <exclude>org.springframework:spring-jcl:jar</exclude>
                 <exclude>org.springframework:spring-web:jar</exclude>
-                <exclude>org.tukaani:xz:jar</exclude>
+                <!--<exclude>org.tukaani:xz:jar</exclude>-->
                 <exclude>org.yaml:snakeyaml:jar</exclude>
                 <exclude>xerces:xercesImpl:jar</exclude>
                 <exclude>xmlenc:xmlenc:jar</exclude>
+                <exclude>org.apache.spark:spark*</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

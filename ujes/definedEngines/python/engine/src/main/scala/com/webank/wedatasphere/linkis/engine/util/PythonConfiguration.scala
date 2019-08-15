@@ -8,7 +8,6 @@ import com.webank.wedatasphere.linkis.common.utils.Logging
   */
 object PythonConfiguration extends Logging {
 
-  val SPARK_HOME = CommonVars[String]("spark.home", CommonVars[String]("SPARK_HOME", "/appcom/Install/spark").getValue)
 
   val PYTHON_SCRIPT:CommonVars[String] = CommonVars[String]("python.script", "python3", "Specify a Python startup script that accepts only shared storage paths（指定Python启动脚本，该路径只接受共享存储的路径）.")
   val PYTHON_PATH:CommonVars[String] = CommonVars[String]("python.path", "", "Specify Python's extra path, which only accepts shared storage paths（指定Python额外的path，该路径只接受共享存储的路径）.")

@@ -39,7 +39,6 @@ object EngineUtils {
   private val user:String = System.getProperty("user.name")
   private var sparkVersion: String = _
   private  var fileSystem : com.webank.wedatasphere.linkis.common.io.Fs = _
-  val sparkHome = CommonVars("spark.home", CommonVars[String]("SPARK_HOME", "/appcom/Install/spark").getValue).getValue
 
 
   def getName:String = Sender.getThisServiceInstance.getInstance
@@ -53,7 +52,7 @@ object EngineUtils {
     if(sparkVersion != null) {
       return sparkVersion
     }
-    val sparkSubmit = CommonVars("wds.linkis.server.spark-submit", "spark.submit").getValue
+    val sparkSubmit = CommonVars("wds.linkis.server.spark-submit", "spark-submit").getValue
     val pb = new ProcessBuilder(sparkSubmit, "--version")
     pb.redirectErrorStream(true)
     pb.redirectInput(ProcessBuilder.Redirect.PIPE)

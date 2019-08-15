@@ -185,7 +185,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <project.release.version>0.0.5</project.release.version>
+                <project.release.version>0.7.0</project.release.version>
                 <netty.version>4.1.17.Final</netty.version>
                 <json4s.version>3.5.3</json4s.version>
             </properties>
@@ -193,7 +193,7 @@
         <profile>
             <id>spark2.1</id>
             <properties>
-                <project.release.version>0.0.5</project.release.version>
+                <project.release.version>0.7.0</project.release.version>
                 <netty.version>4.0.47.Final</netty.version>
                 <json4s.version>3.2.11</json4s.version>
             </properties>

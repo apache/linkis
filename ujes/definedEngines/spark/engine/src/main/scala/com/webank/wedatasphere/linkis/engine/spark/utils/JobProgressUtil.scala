@@ -1,7 +1,7 @@
 package com.webank.wedatasphere.linkis.engine.spark.utils
 
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
-import org.apache.spark.{JobExecutionStatus, SparkContext}
+import org.apache.spark.{JobExecutionStatus, SparkContext, SparkJobInfo}
 
 /**
   * Created by johnnwang on 2019/5/9.
@@ -27,8 +27,7 @@ object JobProgressUtil {
     val jobIds = sc.statusTracker.getJobIdsForGroup(jobGroup)
     val activeJobs = jobIds.flatMap { id => sc.statusTracker.getJobInfo(id) }.filter(_.status() == JobExecutionStatus.RUNNING)
     val progressInfos = activeJobs.map { job =>
-      val stages = job.stageIds().flatMap(sc.statusTracker.getStageInfo)
-      JobProgressInfo(jobGroup, stages.map(_.numTasks()).sum, stages.map(_.numActiveTasks()).sum,stages.map(_.numFailedTasks()).sum, stages.map(_.numCompletedTasks()).sum)
+      getJobProgressInfoByStages(job, sc, jobGroup)
     }
     progressInfos
   }
@@ -37,9 +36,25 @@ object JobProgressUtil {
     val jobIds = sc.statusTracker.getJobIdsForGroup(jobGroup)
     val completedJobs = jobIds.flatMap { id => sc.statusTracker.getJobInfo(id) }.filter(_.status() == JobExecutionStatus.SUCCEEDED)
     val progressInfos = completedJobs.map { job =>
-      val stages = job.stageIds().flatMap(sc.statusTracker.getStageInfo)
-      JobProgressInfo(jobGroup, stages.map(_.numTasks()).sum, stages.map(_.numActiveTasks()).sum,stages.map(_.numFailedTasks()).sum, stages.map(_.numCompletedTasks()).sum)
+      getJobProgressInfoByStages(job, sc, jobGroup)
     }
     progressInfos
   }
+
+  private  def getJobProgressInfoByStages(job:SparkJobInfo, sc:SparkContext, jobGroup : String) : JobProgressInfo = {
+    val stages = job.stageIds().flatMap(sc.statusTracker.getStageInfo)
+
+    var numTasks = 0
+    var numActiveTasks = 0
+    var numFailedTasks = 0
+
+    stages.foreach{stageInfo =>
+      numTasks += stageInfo.numTasks()
+      numActiveTasks += stageInfo.numActiveTasks()
+      numFailedTasks += stageInfo.numFailedTasks()
+    }
+    val numSucceedTasks = numTasks - numActiveTasks - numFailedTasks
+    JobProgressInfo(getJobId(job.jobId(), jobGroup), numTasks, numActiveTasks, numFailedTasks, numSucceedTasks)
+  }
+  private def getJobId( jobId : Int , jobGroup : String ): String = "jobId-" + jobId + "(" + jobGroup + ")"
 }

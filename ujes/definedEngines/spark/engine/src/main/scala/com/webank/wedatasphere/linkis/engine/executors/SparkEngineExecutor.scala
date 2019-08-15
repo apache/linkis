@@ -162,9 +162,9 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
 
   override def resume(): Boolean = false
 
-  override def progress(): Float = if (jobGroup == null) 0
+  override def progress(): Float =if (jobGroup == null || engineExecutorContext.getTotalParagraph == 0) 0
   else {
-   JobProgressUtil.progress(sc,jobGroup)
+    (engineExecutorContext.getCurrentParagraph * 1f - 1f )/ engineExecutorContext.getTotalParagraph + JobProgressUtil.progress(sc,jobGroup)/engineExecutorContext.getTotalParagraph
   }
 
   override def getProgressInfo: Array[JobProgressInfo] = if (jobGroup == null) Array.empty

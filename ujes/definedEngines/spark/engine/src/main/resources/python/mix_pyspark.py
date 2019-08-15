@@ -1,6 +1,6 @@
 import sys, getopt, traceback, json, re
-import matplotlib
-matplotlib.use('Agg')
+import os
+os.environ['PYSPARK_ALLOW_INSECURE_GATEWAY']='1'
 zipPaths = sys.argv[3]
 paths = zipPaths.split(':')
 for i in range(len(paths)):
@@ -26,6 +26,27 @@ except ImportError:
 
 # for back compatibility
 from pyspark.sql import SQLContext, HiveContext, Row
+
+def setup_matplotlib():
+    # If we don't have matplotlib installed don't bother continuing
+    try:
+        import matplotlib
+    except ImportError:
+        return
+    try:
+        matplotlib.use('module://backend_zinline')
+        import backend_zinline
+
+        # Everything looks good so make config assuming that we are using
+        # an inline backend
+        self.configure_mpl(width=600, height=400, dpi=72,
+                           fontsize=10, interactive=True, format='png')
+    except ImportError:
+        # Fall back to Agg if no custom backend installed
+        matplotlib.use('Agg')
+        print("Unable to load inline matplotlib backend, "
+              "falling back to Agg")
+setup_matplotlib()
 
 class Logger(object):
     def __init__(self):
@@ -53,6 +74,7 @@ class ErrorLogger(object):
     def flush(self):
         pass
 
+
 class SparkVersion(object):
     SPARK_1_4_0 = 140
     SPARK_1_3_0 = 130
@@ -65,6 +87,7 @@ class SparkVersion(object):
 
     def isImportAllPackageUnderSparkSql(self):
         return self.version >= self.SPARK_1_3_0
+
 
 output = Logger()
 errorOutput = ErrorLogger()
@@ -137,12 +160,6 @@ def show_matplotlib(p, fmt="png", width="auto", height="auto", **kwargs):
     intp.showHTML(jobGroup,html.format(width=width, height=height, img=img_str))
     img.close()
 
-def rddToDF(rdd, header):
-    from pyspark import RDD
-    if isinstance(rdd, RDD):
-        intp.rddToDF(rdd, header)
-    else:
-        raise Exception("rdd is not RDD")
 
 def saveDFToCsv(df, path, hasheader=True,isOverwrite=False,option={}):
     from pyspark.sql import DataFrame
@@ -178,10 +195,7 @@ class UDF(object):
         self.sqlc = sqlc
     def register(self, udfName, udf):
         self.sqlc.registerFunction(udfName, udf)
-    def listUDFs(self):
-        self.intp.listUDFs()
-    def existsUDF(self, name):
-        self.intp.existsUDF(name)
+
 udf = UDF(intp, sqlc)
 intp.onPythonScriptInitialized()
 

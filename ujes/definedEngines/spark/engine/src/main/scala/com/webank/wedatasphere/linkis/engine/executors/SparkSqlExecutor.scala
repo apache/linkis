@@ -76,8 +76,8 @@ class SparkSqlExecutor(val sc: SparkContext,val sqlContext: SQLContext) extends 
 
   override def kind: Kind = SparkSQL()
 
-  override def open: Unit = ???
+  override def open: Unit = {}
 
-  override def close: Unit = ???
+  override def close: Unit = {}
 
 }

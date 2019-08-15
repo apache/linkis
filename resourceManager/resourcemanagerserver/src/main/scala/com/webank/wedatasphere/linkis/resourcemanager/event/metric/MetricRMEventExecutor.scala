@@ -57,11 +57,11 @@ class MetricRMEventExecutor(id: Int) extends AbstractExecutor(id) {
   }
 
 
-  override def getExecutorInfo = ???
+  override def getExecutorInfo = null
 
   override protected def callback() = {
 
   }
 
-  override def close(): Unit = ???
+  override def close(): Unit = {}
 }

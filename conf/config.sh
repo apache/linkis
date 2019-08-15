@@ -10,10 +10,11 @@ LINKIS_INSTALL_HOME=/appcom/Install/Linkis        #Must provided
 ### Specifies the user workspace, which is used to store the user's script files and log files.
 ### Generally local directory
 WORKSPACE_USER_ROOT_PATH=file:///tmp/linkis/
-### Path to store job ResultSet and user's root hdfs path
+### User's root hdfs path
 HDFS_USER_ROOT_PATH=hdfs:///tmp/linkis
 
-
+### Path to store job ResultSet：file or hdfs path
+RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis
 
 ### Provide the DB information of Hive metadata database.
 #HIVE_META_URL=
@@ -75,12 +76,6 @@ PYTHON_EM_PORT=12001
 PYTHON_ENTRANCE_PORT=12002
 
 
-### PIPELINE
-### This service is used to provide export/import capability.
-PIPELINE_INSTALL_IP=127.0.0.1
-PIPELINE_EM_PORT=13001
-PIPELINE_ENTRANCE_PORT=13002
-
 
 ########################################################################################
 
@@ -89,4 +84,4 @@ PIPELINE_ENTRANCE_PORT=13002
 #LDAP_BASEDN=dc=webank,dc=com
 
 
-LINKIS_VERSION=0.6.0
+LINKIS_VERSION=0.7.0

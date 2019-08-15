@@ -22,7 +22,7 @@
 
     <groupId>com.webank.wedatasphere.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>0.6.0</version>
+    <version>0.7.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -84,12 +84,13 @@
         <jersey.servlet.version>2.23.1</jersey.servlet.version>
         <jetty.version>9.4.11.v20180605</jetty.version>
         <slf4j.version>1.7.12</slf4j.version>
-        <linkis.version>0.6.0</linkis.version>
+        <linkis.version>0.7.0</linkis.version>
         <maven.version>3.3.3</maven.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+
             <dependency>
                 <groupId>com.webank.wedatasphere.linkis</groupId>
                 <artifactId>linkis-module</artifactId>

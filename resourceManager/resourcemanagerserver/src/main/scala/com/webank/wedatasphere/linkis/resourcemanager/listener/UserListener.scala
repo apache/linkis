@@ -49,7 +49,7 @@ class UserListener extends MetricRMEventListener with Logging {
     }
   }
 
-  def onEventError(event: Event, t: scala.Throwable): scala.Unit = ???
+  def onEventError(event: Event, t: scala.Throwable): scala.Unit = {}
 }
 
 class userEventByUserName extends Comparator[UserSessionStartEvent] {

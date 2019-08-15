@@ -48,7 +48,7 @@ class ParallelSchedulerContextImpl(val maxParallelismUsers: Int) extends  Schedu
     }
   }
 
-  override def getOrCreateExecutorManager = ???
+  override def getOrCreateExecutorManager = null
 
-  override def getOrCreateSchedulerListenerBus = ???
+  override def getOrCreateSchedulerListenerBus = null
 }

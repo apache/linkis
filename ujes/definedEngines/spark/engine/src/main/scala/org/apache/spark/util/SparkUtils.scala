@@ -35,6 +35,10 @@ object SparkUtils {
 
   //  def getUserJars(conf : SparkConf, isShell : Boolean) = Utils.getUserJars(conf)
 
-  def unionFileLists(leftList: Option[String], rightList: Option[String])
-  = Utils.unionFileLists(leftList, rightList)
+  def unionFileLists(leftList: Option[String], rightList: Option[String]): Set[String] = {
+    var allFiles = Set[String]()
+    leftList.foreach { value => allFiles ++= value.split(",") }
+    rightList.foreach { value => allFiles ++= value.split(",") }
+    allFiles.filter { _.nonEmpty }
+  }
 }

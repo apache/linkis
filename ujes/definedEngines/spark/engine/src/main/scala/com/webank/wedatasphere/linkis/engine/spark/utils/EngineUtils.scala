@@ -52,7 +52,7 @@ object EngineUtils {
     if(sparkVersion != null) {
       return sparkVersion
     }
-    val sparkSubmit = CommonVars("wds.linkis.server.spark-submit", "spark.submit").getValue
+    val sparkSubmit = CommonVars("wds.linkis.server.spark-submit", "spark-submit").getValue
     val pb = new ProcessBuilder(sparkSubmit, "--version")
     pb.redirectErrorStream(true)
     pb.redirectInput(ProcessBuilder.Redirect.PIPE)

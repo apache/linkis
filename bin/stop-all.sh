@@ -30,8 +30,16 @@ workDir=`cd "$workDir"; pwd`
 CONF_DIR="${workDir}"/../conf
 CONF_FILE=${CONF_DIR}/config.sh
 
+function isSuccess(){
+if [ $? -ne 0 ]; then
+    echo "ERROR:  " + $1
+    exit 1
+else
+    echo "INFO:" + $1
+fi
+}
 #安装dos2unix
-sudo yum install dos2unix
+sudo yum install dos2unix > /dev/null 2>&1
 
 #获取本机IP
 local_host="`hostname --fqdn`"
@@ -46,172 +54,192 @@ if [ -z ${LINKIS_INSTALL_HOME} ];then
         source ${CONF_FILE}
     fi
 fi
-
 APP_PREFIX="linkis-"
 
 
 
 #顺序启动linkis的各个微服务,如果用户没有指定微服务的部署ip，则在本地启动
 #eureka
-echo "Eureka Server is Stoping"
+echo "<-------------------------------->"
+echo "Begin to stop Eureka Server"
 EUREKA_NAME="eureka"
 EUREKA_BIN=${LINKIS_INSTALL_HOME}/${EUREKA_NAME}/bin
-EUREKA_STOP_CMD="cd ${EUREKA_BIN}; sh stop-${EUREKA_NAME}.sh > /dev/null"
+EUREKA_STOP_CMD="cd ${EUREKA_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-${EUREKA_NAME}.sh > /dev/null"
 if [ -n "${EUREKA_INSTALL_IP}" ];then
     ssh ${EUREKA_INSTALL_IP} "${EUREKA_STOP_CMD}"
+
 else
     ssh ${local_host} "${EUREKA_STOP_CMD}"
 fi
-echo "Eureka Server stoped "
-
+isSuccess "End to stop Eureka Server"
+echo "<-------------------------------->"
+sleep 3
 
 #gateway
-echo "Gateway is Stoping"
+echo "<-------------------------------->"
+echo "Begin to stop Gateway"
 GATEWAY_NAME="gateway"
 GATEWAY_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${GATEWAY_NAME}/bin
-GATEWAY_STOP_CMD="cd ${GATEWAY_BIN}; sh stop-${GATEWAY_NAME}.sh > /dev/null"
+GATEWAY_STOP_CMD="cd ${GATEWAY_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-${GATEWAY_NAME}.sh > /dev/null"
 if [ -n "${GATEWAY_INSTALL_IP}"  ];then
     ssh ${GATEWAY_INSTALL_IP} "${GATEWAY_STOP_CMD}"
 else
     ssh ${local_host} "${GATEWAY_STOP_CMD}"
 fi
-echo "Gateway stoped "
+isSuccess "End to stop Gateway"
+echo "<-------------------------------->"
+sleep 3
 
 #pub_service
-echo "Public Service is Stoping"
+echo "<-------------------------------->"
+echo "Begin to stop Public Service"
 PUB_SERVICE_NAME="publicservice"
 PUB_SERVICE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${PUB_SERVICE_NAME}/bin
-PUB_SERVICE_STOP_CMD="cd ${PUB_SERVICE_BIN}; sh stop-${PUB_SERVICE_NAME}.sh > /dev/null"
+PUB_SERVICE_STOP_CMD="cd ${PUB_SERVICE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-${PUB_SERVICE_NAME}.sh > /dev/null"
 if [ -n "${PUBLICSERVICE_INSTALL_IP}" ];then
     ssh ${PUBLICSERVICE_INSTALL_IP} "${PUB_SERVICE_STOP_CMD}"
 else
-    ssh ${local_host} "${PUB_SERVICE_STOP_CMD}"
+        ssh ${local_host} "${PUB_SERVICE_STOP_CMD}"
 fi
-echo "Public Service stoped "
-
+isSuccess "End to stop Public Service"
+echo "<-------------------------------->"
+sleep 3
 
 #database
-echo "Database is Stoping"
+echo "<-------------------------------->"
+echo "Begin to stop Database"
 DATABASE_NAME="database"
 DATABASE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${DATABASE_NAME}/bin
-DATABASE_STOP_CMD="cd ${DATABASE_BIN}; sh stop-${DATABASE_NAME}.sh > /dev/null"
+DATABASE_STOP_CMD="if [ -d ${DATABASE_BIN} ];then cd ${DATABASE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-database.sh > /dev/null;else echo 'WARNING:Database did not start';fi"
 if [ -n "${DATABASE_INSTALL_IP}" ];then
     ssh ${DATABASE_INSTALL_IP} "${DATABASE_STOP_CMD}"
 else
     ssh ${local_host} "${DATABASE_STOP_CMD}"
 fi
-echo "database stoped "
-
+isSuccess  "End to stop Database"
+echo "<-------------------------------->"
+sleep 3
 
 #Resource Manager
-echo "Resource Manager is Stoping"
+echo "<-------------------------------->"
+echo "Begin to stop Resource Manager"
 RM_NAME="resourcemanager"
 RM_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${RM_NAME}/bin
-RM_STOP_CMD="cd ${RM_BIN}; sh stop-${RM_NAME}.sh > /dev/null"
+RM_STOP_CMD="cd ${RM_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-${RM_NAME}.sh > /dev/null"
 if [ -n "${RESOURCEMANAGER_INSTALL_IP}" ];then
     ssh ${RESOURCEMANAGER_INSTALL_IP} "${RM_STOP_CMD}"
 else
     ssh ${local_host} "${RM_STOP_CMD}"
 fi
-echo "Resource Manager stoped "
+isSuccess "End to stop Resource Manager"
+echo "<-------------------------------->"
+
+sleep 3
 
 #SparkEntrance
-echo "Spark Entrance is Stoping"
+echo "<-------------------------------->"
+echo "Begin to stop Spark Entrance"
 SPARK_ENTRANCE_NAME="ujes-spark-entrance"
 SPARK_ENTRANCE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${SPARK_ENTRANCE_NAME}/bin
-SPARK_ENTRANCE_STOP_CMD="cd ${SPARK_ENTRANCE_BIN}; sh stop-sparkentrance.sh > /dev/null"
+SPARK_ENTRANCE_STOP_CMD="if [ -d ${SPARK_ENTRANCE_BIN} ];then cd ${SPARK_ENTRANCE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-sparkentrance.sh > /dev/null;else echo 'WARNING:Spark Entrance did not start';fi"
 if [ -n "${SPARK_INSTALL_IP}" ];then
     ssh ${SPARK_INSTALL_IP} "${SPARK_ENTRANCE_STOP_CMD}"
 else
     ssh ${local_host} "${SPARK_ENTRANCE_STOP_CMD}"
 fi
-echo "Spark Entrance stoped "
+echo "End to stop Spark Entrance"
+echo "<-------------------------------->"
 
 #Spark Engine Manager
-echo "Spark Engine Manager is Stoping"
+echo "<-------------------------------->"
+echo "Begin to Spark Engine Manager"
 SPARK_EM_NAME="ujes-spark-enginemanager"
 SPARK_EM_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${SPARK_EM_NAME}/bin
-SPARK_EM_STOP_CMD="cd ${SPARK_EM_BIN}; sh stop-sparkenginemanager.sh > /dev/null"
+SPARK_EM_STOP_CMD="if [ -d ${SPARK_EM_BIN} ];then cd ${SPARK_EM_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-sparkenginemanager.sh > /dev/null;else echo 'WARNING:Spark EM did not start';fi"
 if [ -n "${SPARK_INSTALL_IP}" ];then
     ssh ${SPARK_INSTALL_IP} "${SPARK_EM_STOP_CMD}"
 else
     ssh ${local_host} "${SPARK_EM_STOP_CMD}"
 fi
-echo "Spark Engine Manager stoped "
-
+echo "End to stop Spark Engine Manager "
+echo "<-------------------------------->"
 
 #HiveEntrance
-echo "Hive Entrance is Stoping"
+echo "<-------------------------------->"
+echo "Begin to stop Hive Entrance"
 HIVE_ENTRANCE_NAME="ujes-hive-entrance"
 HIVE_ENTRANCE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${HIVE_ENTRANCE_NAME}/bin
-HIVE_ENTRANCE_STOP_CMD="cd ${HIVE_ENTRANCE_BIN}; sh stop-hiveentrance.sh > /dev/null"
+HIVE_ENTRANCE_STOP_CMD="if [ -d ${HIVE_ENTRANCE_BIN} ];then cd ${HIVE_ENTRANCE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-hiveentrance.sh > /dev/null;else echo 'WARNING:Hive Entrance did not start';fi"
 if [ -n "${HIVE_INSTALL_IP}" ];then
     ssh ${HIVE_INSTALL_IP} "${HIVE_ENTRANCE_STOP_CMD}"
 else
     ssh ${local_host} "${HIVE_ENTRANCE_STOP_CMD}"
 fi
-echo "Hive Entrance stoped "
-
+echo "End to stop Hive Entrance"
+echo "<-------------------------------->"
 #Hive Engine Manager
-echo "Hive Engine Manager is Stoping"
+echo "<-------------------------------->"
+echo "Begin to stop Hive Engine Manager"
 HIVE_EM_NAME="ujes-hive-enginemanager"
 HIVE_EM_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${HIVE_EM_NAME}/bin
-HIVE_EM_STOP_CMD="cd ${HIVE_EM_BIN}; sh stop-hiveenginemanager.sh > /dev/null"
+HIVE_EM_STOP_CMD="if [ -d ${HIVE_EM_BIN} ];then cd ${HIVE_EM_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-hiveenginemanager.sh > /dev/null;else echo 'WARNING:Hive EM did not start';fi"
 if [ -n "${HIVE_INSTALL_IP}" ];then
     ssh ${HIVE_INSTALL_IP} "${HIVE_EM_STOP_CMD}"
 else
     ssh ${local_host} "${HIVE_EM_STOP_CMD}"
 fi
-echo "Hive Engine Manager stoped "
-
+echo "End to stop Hive Engine Manager"
+echo "<-------------------------------->"
 
 #PythonEntrance
-echo "Python Entrance is Stoping"
+echo "<-------------------------------->"
+echo "Begin to stop Python Entrance"
 PYTHON_ENTRANCE_NAME="ujes-python-entrance"
 PYTHON_ENTRANCE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${PYTHON_ENTRANCE_NAME}/bin
-PYTHON_ENTRANCE_STOP_CMD="cd ${PYTHON_ENTRANCE_BIN}; sh stop-pythonentrance.sh > /dev/null"
+PYTHON_ENTRANCE_STOP_CMD="if [ -d ${PYTHON_ENTRANCE_BIN} ];then cd ${PYTHON_ENTRANCE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-pythonentrance.sh > /dev/null;else echo 'WARNING:Python Entrance did not start';fi"
 if [ -n "${PYTHON_INSTALL_IP}" ];then
     ssh ${PYTHON_INSTALL_IP} "${PYTHON_ENTRANCE_STOP_CMD}"
 else
     ssh ${local_host} "${PYTHON_ENTRANCE_STOP_CMD}"
 fi
-echo "Python Entrance stoped "
-
+echo "End to stop Python Entrance"
+echo "<-------------------------------->"
 #Python Engine Manager
-echo "Python Engine Manager is Stoping"
+echo "<-------------------------------->"
+echo "Begin to stop Python Engine Manager"
 PYTHON_EM_NAME="ujes-python-enginemanager"
 PYTHON_EM_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${PYTHON_EM_NAME}/bin
-PYTHON_EM_STOP_CMD="cd ${PYTHON_EM_BIN}; sh stop-pythonenginemanager.sh > /dev/null"
+PYTHON_EM_STOP_CMD="if [ -d ${PYTHON_EM_BIN} ];then cd ${PYTHON_EM_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-pythonenginemanager.sh > /dev/null;else echo 'WARNING:Python EM did not start';fi"
 if [ -n "${PYTHON_INSTALL_IP}" ];then
     ssh ${PYTHON_INSTALL_IP} "${PYTHON_EM_STOP_CMD}"
 else
     ssh ${local_host} "${PYTHON_EM_STOP_CMD}"
 fi
-echo "Python Engine Manager stoped "
+echo "End to stop Python Engine Manager"
+echo "<-------------------------------->"
 
 
 
-
-#PipelineEntrance
-echo "Pipeline Entrance is Stoping"
-PIPELINE_ENTRANCE_NAME="ujes-pipeline-entrance"
-PIPELINE_ENTRANCE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${PIPELINE_ENTRANCE_NAME}/bin
-PIPELINE_ENTRANCE_STOP_CMD="cd ${PIPELINE_ENTRANCE_BIN}; sh stop-pipelineentrance.sh > /dev/null"
-if [ -n "${PIPELINE_INSTALL_IP}" ];then
-    ssh ${PIPELINE_INSTALL_IP} "${PIPELINE_ENTRANCE_STOP_CMD}"
-else
-    ssh ${local_host} "${PIPELINE_ENTRANCE_STOP_CMD}"
-fi
-echo "Pipeline Entrance stoped "
-
-#Pipeline Engine Manager
-echo "Pipeline Engine Manager is Stoping"
-PIPELINE_EM_NAME="ujes-pipeline-enginemanager"
-PIPELINE_EM_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${PIPELINE_EM_NAME}/bin
-PIPELINE_EM_STOP_CMD="cd ${PIPELINE_EM_BIN}; sh stop-pipelineenginemanager.sh > /dev/null"
-if [ -n "${PIPELINE_INSTALL_IP}" ];then
-    ssh ${PIPELINE_INSTALL_IP} "${PIPELINE_EM_STOP_CMD}"
-else
-    ssh ${local_host} "${PIPELINE_EM_STOP_CMD}"
-fi
-echo "Pipeline Engine Manager stoped "
+##PipelineEntrance
+#echo "Pipeline Entrance is Stoping"
+#PIPELINE_ENTRANCE_NAME="ujes-pipeline-entrance"
+#PIPELINE_ENTRANCE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${PIPELINE_ENTRANCE_NAME}/bin
+#PIPELINE_ENTRANCE_STOP_CMD="cd ${PIPELINE_ENTRANCE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-pipelineentrance.sh > /dev/null"
+#if [ -n "${PIPELINE_INSTALL_IP}" ];then
+#    ssh ${PIPELINE_INSTALL_IP} "${PIPELINE_ENTRANCE_STOP_CMD}"
+#else
+#    ssh ${local_host} "${PIPELINE_ENTRANCE_STOP_CMD}"
+#fi
+#echo "Pipeline Entrance stoped "
+#
+##Pipeline Engine Manager
+#echo "Pipeline Engine Manager is Stoping"
+#PIPELINE_EM_NAME="ujes-pipeline-enginemanager"
+#PIPELINE_EM_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${PIPELINE_EM_NAME}/bin
+#PIPELINE_EM_STOP_CMD="cd ${PIPELINE_EM_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-pipelineenginemanager.sh > /dev/null"
+#if [ -n "${PIPELINE_INSTALL_IP}" ];then
+#    ssh ${PIPELINE_INSTALL_IP} "${PIPELINE_EM_STOP_CMD}"
+#else
+#    ssh ${local_host} "${PIPELINE_EM_STOP_CMD}"
+#fi
+#echo "Pipeline Engine Manager stoped "

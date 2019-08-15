@@ -22,7 +22,7 @@ export DWS_ENGINE_MANAGER_JAVA_OPTS="-Xms$DWS_ENGINE_MANAGER_HEAP_SIZE -Xmx$DWS_
 nohup java $DWS_ENGINE_MANAGER_JAVA_OPTS -cp $HOME/conf:$HOME/lib/* com.webank.wedatasphere.linkis.DataWorkCloudApplication 2>&1 > $DWS_ENGINE_MANAGER_LOG_PATH/linkis.out &
 pid=$!
 
-{}
+
 
 if [[ -z "${pid}" ]]; then
     echo "Spark Entrance start failed!"

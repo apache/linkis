@@ -62,15 +62,13 @@ Linkis跟Apache Livy和Apache Zeppelin Interpreter的定位不一样，但是由
 
 # 文档列表
 
-[Linkis，让大数据变得更容易](ch3/linkis详细介绍文档.md)
-
-[Linkis快速部署文档](https://github.com/WeBankFinTech/Linkis/wiki/%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85Linkis)
-
-[Linkis快速使用文档](https://github.com/WeBankFinTech/Linkis/wiki/%E5%BF%AB%E9%80%9F%E4%BD%BF%E7%94%A8%E6%96%87%E6%A1%A3)
+[Linkis快速安装使用文档](https://github.com/WeBankFinTech/Linkis/wiki/%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8Linkis)
 
 [上层前端应用的HTTP接入文档](https://github.com/WeBankFinTech/Linkis/wiki/%E4%B8%8A%E5%B1%82%E5%89%8D%E7%AB%AF%E5%BA%94%E7%94%A8HTTP%E6%8E%A5%E5%85%A5%E6%96%87%E6%A1%A3)
 
 [上层前端应用的WebSocket接入文档](https://github.com/WeBankFinTech/Linkis/wiki/%E4%B8%8A%E5%B1%82%E5%89%8D%E7%AB%AF%E5%BA%94%E7%94%A8WebSocket%E6%8E%A5%E5%85%A5%E6%96%87%E6%A1%A3)
+
+[Linkis架构文档](https://github.com/WeBankFinTech/Linkis/wiki/%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%BB%8B%E7%BB%8D)
 
 **更多文档，请[点我访问](https://github.com/WeBankFinTech/Linkis/wiki)**
 

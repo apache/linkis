@@ -25,7 +25,7 @@ import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration
 import com.webank.wedatasphere.linkis.engine.exception.{NoSupportEngineException, SparkEngineException}
 import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineExecutorContext}
 import com.webank.wedatasphere.linkis.engine.spark.common._
-import com.webank.wedatasphere.linkis.engine.spark.utils.EngineUtils
+import com.webank.wedatasphere.linkis.engine.spark.utils.{EngineUtils, JobProgressUtil}
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
 import com.webank.wedatasphere.linkis.resourcemanager.{DriverAndYarnResource, LoadInstanceResource, YarnResource}
 import com.webank.wedatasphere.linkis.scheduler.exception.DWCJobRetryException
@@ -38,8 +38,6 @@ import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.commons.lang.StringUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.DataFrame
-import org.apache.spark.ui.jobs.JobProgressListener
-
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -48,7 +46,6 @@ import scala.collection.mutable.ArrayBuffer
   */
 class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int, sparkExecutors: Seq[SparkExecutor])
   extends EngineExecutor(outputPrintLimit, false) with SingleTaskOperateSupport with SingleTaskInfoSupport with Logging {
-  private val jobListener = sc.getClass.getDeclaredMethod("jobProgressListener").invoke(sc).asInstanceOf[JobProgressListener]
   val queryNum = new AtomicLong(0)
   private var jobGroup: String = _
 
@@ -152,7 +149,7 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
     engineExecutorContext
   }
 
-  override def pause(): Boolean = ???
+  override def pause(): Boolean = false
 
   override def kill(): Boolean = {
     if (!sc.isStopped) {
@@ -163,58 +160,19 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
     }
   }
 
-  override def resume(): Boolean = ???
+  override def resume(): Boolean = false
 
   override def progress(): Float = if (jobGroup == null) 0
   else {
-    var totalTask = 0
-    var runTask = 0
-    val activeJobs = jobListener.activeJobs
-    val completedJobs = jobListener.completedJobs
-    activeJobs.values.foreach(f => {
-      if (f.jobGroup.getOrElse("").equals(jobGroup)) {
-        runTask = runTask + f.numCompletedTasks
-        totalTask = totalTask + f.numTasks
-      }
-    })
-    completedJobs.foreach(f => {
-      if (f.jobGroup.getOrElse("").equals(jobGroup)) {
-        runTask = runTask + f.numCompletedTasks + f.numKilledTasks + f.numSkippedTasks
-        totalTask = totalTask + f.numTasks
-      }
-    })
-    info("Current JobGroup " + jobGroup + " progress is runTask:" + runTask + ",totalTask:" + totalTask)
-    if (engineExecutorContext.getTotalParagraph != 0 && totalTask != 0) {
-      val res = (engineExecutorContext.getCurrentParagraph * 1f - 1f) / engineExecutorContext.getTotalParagraph + (runTask * 1f / totalTask) / engineExecutorContext.getTotalParagraph
-      info("Current progress is " + res)
-      res
-    } else if (engineExecutorContext.getTotalParagraph != 0) {
-        val res2 = (engineExecutorContext.getCurrentParagraph * 1f - 1f) / engineExecutorContext.getTotalParagraph
-        info("Current progress is " + res2)
-        res2
-    } else {
-      0
-    }
+   JobProgressUtil.progress(sc,jobGroup)
   }
 
   override def getProgressInfo: Array[JobProgressInfo] = if (jobGroup == null) Array.empty
   else {
     info("request new progress info for jobGroup is " + jobGroup)
-    var progressInfoArray = ArrayBuffer[JobProgressInfo]()
-    val activeJobs = jobListener.activeJobs
-    val completedJobs = jobListener.completedJobs
-    activeJobs.values.foreach(f => {
-      if (f.jobGroup.getOrElse("").equals(jobGroup)) {
-        val progress = JobProgressInfo(f.jobGroup.getOrElse(""), f.numTasks, f.numActiveTasks, f.numFailedTasks, f.numCompletedTasks + f.numSkippedTasks)
-        progressInfoArray += progress
-      }
-    })
-    completedJobs.foreach(f => {
-      if (f.jobGroup.getOrElse("").equals(jobGroup)) {
-        val progress = JobProgressInfo(f.jobGroup.getOrElse(""), f.numTasks, f.numActiveTasks, f.numFailedTasks, f.numCompletedTasks + f.numSkippedTasks)
-        progressInfoArray += progress
-      }
-    })
+    val progressInfoArray = ArrayBuffer[JobProgressInfo]()
+    progressInfoArray ++= JobProgressUtil.getActiveJobProgressInfo(sc,jobGroup)
+    progressInfoArray ++= JobProgressUtil.getCompletedJobProgressInfo(sc,jobGroup)
     progressInfoArray.toArray
   }
 
@@ -222,7 +180,7 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
     ""
   }
 
-  override def close(): Unit = ???
+  override def close(): Unit = {}
 }
 
 object SQLSession extends Logging {

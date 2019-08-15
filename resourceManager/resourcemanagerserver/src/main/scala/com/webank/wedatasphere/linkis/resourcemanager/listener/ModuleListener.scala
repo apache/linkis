@@ -57,7 +57,7 @@ class ModuleListener extends NotifyRMEventListener with Logging {
     }
   }
 
-  override def onEventError(event: com.webank.wedatasphere.linkis.common.listener.Event, t: scala.Throwable): scala.Unit = ???
+  override def onEventError(event: com.webank.wedatasphere.linkis.common.listener.Event, t: scala.Throwable): scala.Unit = {}
 
 }
 

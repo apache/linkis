@@ -44,7 +44,7 @@ class EventSchedulerImpl(schedulerContext: SchedulerContext) extends EventSchedu
     "OK"
   }
 
-  override def start() = ???
+  override def start() = {}
 
   override def getName = "EventParallelScheduler"
 

@@ -32,7 +32,11 @@ trait GatewayHttpRequest {
 
   def getHeaders: JMap[String, Array[String]]
 
+  def addHeader(headerName: String, headers: Array[String]): Unit
+
   def getQueryParams: JMap[String, Array[String]]
+
+  def addCookie(cookieName: String, cookies: Array[Cookie]): Unit
 
   def getCookies: JMap[String, Array[Cookie]]
 

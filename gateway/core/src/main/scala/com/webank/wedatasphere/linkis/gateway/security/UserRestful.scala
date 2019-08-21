@@ -19,6 +19,7 @@ package com.webank.wedatasphere.linkis.gateway.security
 import com.webank.wedatasphere.linkis.common.utils.{RSAUtils, Utils}
 import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
 import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
+import com.webank.wedatasphere.linkis.gateway.security.sso.SSOInterceptor
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import com.webank.wedatasphere.linkis.server.security.SSOUtils
 import com.webank.wedatasphere.linkis.server.{Message, _}
@@ -68,6 +69,7 @@ abstract class AbstractUserRestful extends UserRestful {
 
   def logout(gatewayContext: GatewayContext): Message = {
     GatewaySSOUtils.removeLoginUser(gatewayContext)
+    if(GatewayConfiguration.ENABLE_SSO_LOGIN.getValue) SSOInterceptor.getSSOInterceptor.logout(gatewayContext)
     if(resourceReleases != null) resourceReleases.foreach(_.release(gatewayContext))
     "Logout successful(退出登录成功)！"
   }

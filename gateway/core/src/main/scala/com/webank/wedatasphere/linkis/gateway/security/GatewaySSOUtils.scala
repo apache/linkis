@@ -17,8 +17,7 @@
 package com.webank.wedatasphere.linkis.gateway.security
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
+import com.webank.wedatasphere.linkis.gateway.http.{GatewayContext, GatewayHttpRequest}
 import com.webank.wedatasphere.linkis.server.exception.LoginExpireException
 import com.webank.wedatasphere.linkis.server.security.{SSOUtils, ServerSSOUtils}
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter._
@@ -41,13 +40,12 @@ object GatewaySSOUtils extends Logging {
   }
   def getLoginUsername(gatewayContext: GatewayContext): String = SSOUtils.getLoginUsername(getCookies(gatewayContext))
   def setLoginUser(gatewayContext: GatewayContext, username: String): Unit = {
-    if(GatewayConfiguration.ENABLE_PROXY_USER.getValue){
-      val proxyUser = ProxyUserUtils.getProxyUser(username)
-      info(s"switched to proxy user $proxyUser for umUser $username.")
-      SSOUtils.setLoginUser(c => gatewayContext.getResponse.addCookie(c), proxyUser)
-    } else {
-      SSOUtils.setLoginUser(c => gatewayContext.getResponse.addCookie(c), username)
-    }
+    val proxyUser = ProxyUserUtils.getProxyUser(username)
+    SSOUtils.setLoginUser(c => gatewayContext.getResponse.addCookie(c), proxyUser)
+  }
+  def setLoginUser(request: GatewayHttpRequest, username: String): Unit = {
+    val proxyUser = ProxyUserUtils.getProxyUser(username)
+    SSOUtils.setLoginUser(c => request.addCookie(c.getName, Array(c)), proxyUser)
   }
   def removeLoginUser(gatewayContext: GatewayContext): Unit = {
     SSOUtils.removeLoginUser(gatewayContext.getRequest.getCookies.flatMap(_._2).toArray)

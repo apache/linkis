@@ -33,6 +33,8 @@ trait GatewayHttpResponse {
 
   def writeWebSocket(message: String): Unit
 
+  def redirectTo(url: String): Unit
+
   def sendResponse(): Unit
 
   def isCommitted: Boolean

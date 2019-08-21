@@ -35,6 +35,7 @@ class SpringCloudGatewayHttpResponse(response: ServerHttpResponse) extends Gatew
 
   private val cachedHTTPResponseMsg = new StringBuilder
   private val cachedWebSocketResponseMsg = new StringBuilder
+  private val cachedRedirectUrlMsg = new StringBuilder
   private var responseMono: Mono[Void] = _
 
   override def addCookie(cookie: Cookie): Unit = {
@@ -55,6 +56,13 @@ class SpringCloudGatewayHttpResponse(response: ServerHttpResponse) extends Gatew
 
   override def sendResponse(): Unit = if(responseMono == null) synchronized {
     if(responseMono != null) return
+    if(cachedRedirectUrlMsg.nonEmpty) {
+      if(response.getStatusCode == null || (response.getStatusCode != null && !response.getStatusCode.is3xxRedirection()))
+        response.setStatusCode(HttpStatus.TEMPORARY_REDIRECT)
+      response.getHeaders.set("Location", cachedRedirectUrlMsg.toString)
+      responseMono = response.setComplete()
+      return
+    }
     setHeader("Content-Type", "application/json;charset=UTF-8")
     if(cachedHTTPResponseMsg.nonEmpty) {
       val dataBuffer = response.bufferFactory().wrap(cachedHTTPResponseMsg.toString.getBytes(Configuration.BDP_ENCODING.getValue))
@@ -77,7 +85,9 @@ class SpringCloudGatewayHttpResponse(response: ServerHttpResponse) extends Gatew
 
   override def isCommitted: Boolean = responseMono != null
 
-  def getResponseMono = responseMono
+  def getResponseMono: Mono[Void] = responseMono
 
   override def writeWebSocket(message: String): Unit = cachedWebSocketResponseMsg.append(message)
+
+  override def redirectTo(url: String): Unit = cachedRedirectUrlMsg.append(url)
 }

@@ -29,6 +29,7 @@ class WebsocketGatewayHttpResponse extends GatewayHttpResponse {
   override def setStatus(status: Int): Unit = {}
   override def write(message: String): Unit = {}
   override def writeWebSocket(message: String): Unit = cachedWebSocketResponseMsg.append(message)
+  override def redirectTo(url: String): Unit = {}
   override def sendResponse(): Unit = {}
   def getWebSocketMsg: String = cachedWebSocketResponseMsg.toString()
   override def isCommitted: Boolean = cachedWebSocketResponseMsg.nonEmpty

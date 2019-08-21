@@ -116,7 +116,7 @@ object YarnUtil extends Logging{
         queue.foreach { q =>
           val yarnQueueName = (q \ "queueName").asInstanceOf[JString].values
           if(yarnQueueName == realQueueName) return Some(q)
-          else if(realQueueName.startsWith(yarnQueueName + ".")) return getQueue(q \ "childQueues")
+          else if(realQueueName.startsWith(yarnQueueName + ".")) return getQueue(getChildQueues(q))
         }
         None
       case JObject(queue) =>
@@ -128,17 +128,14 @@ object YarnUtil extends Logging{
         }
       case JNull | JNothing => None
     }
-    def getChildQueues(resp:JValue):JValue = {
-      val childQueues = if (hadoop_version.startsWith("2.7")) {
-        resp \ "scheduler" \ "schedulerInfo" \ "rootQueue"  \ "childQueues"
-      }else{
-        resp \ "scheduler" \ "schedulerInfo" \ "rootQueue"  \ "childQueues" \ "queue"
-      }
-      childQueues
+    def getChildQueues(resp:JValue):JValue = if (hadoop_version.startsWith("2.7")) {
+      resp  \ "childQueues"
+    } else {
+      resp \ "childQueues" \ "queue"
     }
 
     val future = Http(url > as.json4s.Json).map {resp =>
-      val childQueues = getChildQueues(resp)
+      val childQueues = getChildQueues(resp \ "scheduler" \ "schedulerInfo" \ "rootQueue")
       val queue = getQueue(childQueues)
       if(queue.isEmpty) {
         debug(s"cannot find any information about queue $queueName, response: " + resp)

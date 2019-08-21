@@ -21,29 +21,29 @@ import java.util.concurrent.TimeUnit
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration._
-import com.webank.wedatasphere.linkis.gateway.exception.GatewayErrorException
 import org.apache.commons.lang.StringUtils
 
 object ProxyUserUtils extends Logging {
 
-  var props = new Properties
+  private val props = new Properties
   if(ENABLE_PROXY_USER.getValue){
     Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
       override def run(): Unit = {
         info("loading proxy users.")
         val newProps = new Properties
         newProps.load(this.getClass.getResourceAsStream(PROXY_USER_CONFIG.getValue))
-        props = newProps
+        props.clear()
+        props.putAll(newProps)
       }
     }, 0, PROXY_USER_SCAN_INTERVAL.getValue, TimeUnit.MILLISECONDS)
   }
 
-  def getProxyUser(umUser: String): String ={
+  def getProxyUser(umUser: String): String = if(ENABLE_PROXY_USER.getValue) {
     val proxyUser = props.getProperty(umUser)
-    if(StringUtils.isBlank(proxyUser)){
-      throw new GatewayErrorException(10033, "No proxy users available(无可用的代理用户)。");
+    if(StringUtils.isBlank(proxyUser)) umUser else {
+      info(s"switched to proxy user $proxyUser for umUser $umUser.")
+      proxyUser
     }
-    proxyUser
-  }
+  } else umUser
 
 }

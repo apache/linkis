@@ -29,6 +29,9 @@ object GatewayConfiguration {
 
   val PASS_AUTH_REQUEST_URI = CommonVars("wds.linkis.gateway.conf.url.pass.auth", "/dws/").getValue.split(",")
 
+  val ENABLE_SSO_LOGIN = CommonVars("wds.linkis.gateway.conf.enable.sso", false)
+  val SSO_INTERCEPTOR_CLASS = CommonVars("wds.linkis.gateway.conf.sso.interceptor", "")
+
   val ADMIN_USER = CommonVars("wds.linkis.gateway.admin.user", "hadoop")
 
 }

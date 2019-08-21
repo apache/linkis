@@ -18,11 +18,16 @@ package com.webank.wedatasphere.linkis.gateway.springcloud.http
 
 import java.net.{InetSocketAddress, URI}
 
+import com.webank.wedatasphere.linkis.gateway.exception.GatewayErrorException
 import com.webank.wedatasphere.linkis.gateway.http.GatewayHttpRequest
 import com.webank.wedatasphere.linkis.server._
+import io.netty.handler.codec.http.cookie.DefaultCookie
 import javax.servlet.http.Cookie
 import org.apache.commons.lang.StringUtils
 import org.springframework.http.server.reactive.AbstractServerHttpRequest
+import reactor.ipc.netty.http.server.HttpServerRequest
+
+import scala.collection.JavaConversions
 
 /**
   * created by cooperyang on 2019/1/9.
@@ -59,13 +64,31 @@ class SpringCloudGatewayHttpRequest(request: AbstractServerHttpRequest) extends 
   private var requestURI: String = _
   private var requestAutowired = false
 
-  def setRequestURI(requestURI: String) = this.requestURI = requestURI
+  def setRequestURI(requestURI: String): Unit = this.requestURI = requestURI
+
+  def getRequest = request
 
   override def getRequestURI: String = if(StringUtils.isNotBlank(requestURI)) requestURI else request.getPath.pathWithinApplication.value
 
   override def getURI: URI = if(StringUtils.isNotBlank(requestURI)) new URI(requestURI) else request.getURI
 
   override def getHeaders: JMap[String, Array[String]] = headers
+
+  override def addHeader(headerName: String, headers: Array[String]): Unit =
+    request.getHeaders.addAll(headerName, JavaConversions.seqAsJavaList(headers.toList))
+
+  override def addCookie(cookieName: String, cookies: Array[Cookie]): Unit = request.getNativeRequest match {
+    case httpServerRequest: HttpServerRequest =>
+      httpServerRequest.asInstanceOf[HttpServerRequest].cookies().put(cookieName, JavaConversions.setAsJavaSet(cookies.map { c =>
+        val cookie = new DefaultCookie(c.getName, c.getValue)
+        cookie.setDomain(c.getDomain)
+        cookie.setMaxAge(c.getMaxAge)
+        cookie.setPath(c.getPath)
+        cookie.setSecure(c.getSecure)
+        cookie
+      }.toSet))
+    case _ => throw new GatewayErrorException(10040, "Not support method: addCookie in GatewayHttpRequest.")
+  }
 
   override def getQueryParams: JMap[String, Array[String]] = queryParams
 

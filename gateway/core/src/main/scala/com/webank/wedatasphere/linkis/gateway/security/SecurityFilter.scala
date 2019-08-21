@@ -23,6 +23,7 @@ import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
 import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
+import com.webank.wedatasphere.linkis.gateway.security.sso.SSOInterceptor
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import com.webank.wedatasphere.linkis.server.exception.{LoginExpireException, NonLoginException}
 import com.webank.wedatasphere.linkis.server.{Message, validateFailed}
@@ -63,10 +64,11 @@ object SecurityFilter {
           return false
       }
     }
+    val isPassAuthRequest = GatewayConfiguration.PASS_AUTH_REQUEST_URI.exists(gatewayContext.getRequest.getRequestURI.startsWith)
     if(gatewayContext.getRequest.getRequestURI.startsWith(ServerConfiguration.BDP_SERVER_USER_URI.getValue)) {
       userRestful.doUserRequest(gatewayContext)
       false
-    } else if(GatewayConfiguration.PASS_AUTH_REQUEST_URI.exists(gatewayContext.getRequest.getRequestURI.startsWith)) {
+    } else if(isPassAuthRequest && !GatewayConfiguration.ENABLE_SSO_LOGIN.getValue) {
       GatewaySSOUtils.info("No login needed for proxy uri: " + gatewayContext.getRequest.getRequestURI)
       true
     } else {
@@ -86,6 +88,20 @@ object SecurityFilter {
         GatewaySSOUtils.info("test mode! login for uri: " + gatewayContext.getRequest.getRequestURI)
         GatewaySSOUtils.setLoginUser(gatewayContext, testUser)
         true
+      } else if(GatewayConfiguration.ENABLE_SSO_LOGIN.getValue) {
+        val user = SSOInterceptor.getSSOInterceptor.getUser(gatewayContext)
+        if(StringUtils.isNotBlank(user)) {
+          GatewaySSOUtils.setLoginUser(gatewayContext.getRequest, user)
+          true
+        } else if(isPassAuthRequest) {
+          gatewayContext.getResponse.redirectTo(SSOInterceptor.getSSOInterceptor.redirectTo(gatewayContext.getRequest.getURI))
+          gatewayContext.getResponse.sendResponse()
+          false
+        } else {
+          filterResponse(gatewayContext, Message.noLogin("You are not logged in, please login first(您尚未登录，请先登录)!")
+            .data("enableSSO", true).data("SSOURL", SSOInterceptor.getSSOInterceptor.redirectTo(gatewayContext.getRequest.getURI)) << gatewayContext.getRequest.getRequestURI)
+          false
+        }
       } else {
         filterResponse(gatewayContext, Message.noLogin("You are not logged in, please login first(您尚未登录，请先登录)!") << gatewayContext.getRequest.getRequestURI)
         false

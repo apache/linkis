@@ -105,10 +105,6 @@ object SpringCloudGatewayConfiguration extends Logging {
   val WEBSOCKET_URI = normalPath(ServerConfiguration.BDP_SERVER_SOCKET_URI.getValue)
   def normalPath(path: String): String = if(path.endsWith("/")) path else path + "/"
 
-  val ENABLE_PROXY_USER = CommonVars("wds.linkis.gateway.conf.enable.proxy.user", false)
-  val PROXY_USER_CONFIG = CommonVars("wds.linkis.gateway.conf.proxy.user.config", "proxy.properties")
-  val PROXY_USER_SCAN_INTERVAL = CommonVars("wds.linkis.gateway.conf.proxy.user.scan.interval", 1000 * 60 * 10)
-
   def isMergeModuleInstance(serviceId: String): Boolean = serviceId.startsWith(MERGE_MODULE_INSTANCE_HEADER)
 
   private val regex = "(\\d+).+".r

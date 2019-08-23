@@ -29,6 +29,8 @@ import reactor.ipc.netty.NettyPipeline;
 import reactor.ipc.netty.http.websocket.WebsocketOutbound;
 
 import javax.servlet.http.Cookie;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * created by cooperyang on 2019/1/9.
@@ -44,11 +46,29 @@ public class SpringCloudHttpUtils {
 
     public static void addIgnoreTimeoutSignal(HttpHeaders httpHeaders) {
         Cookie cookie = com.webank.wedatasphere.linkis.server.security.SecurityFilter.ignoreTimeoutSignal();
-        HttpCookie httpCookie = new HttpCookie(cookie.getName(), cookie.getValue());
-        if(!httpHeaders.containsKey("Cookie")) {
-            httpHeaders.set("Cookie", httpCookie.toString());
-        } else {
-            httpHeaders.set("Cookie", httpHeaders.getFirst("Cookie") + ";" + httpCookie.toString());
+        Map<String, Cookie[]> cookies = new HashMap<>();
+        cookies.put(cookie.getName(), new Cookie[]{cookie});
+        addCookies(httpHeaders, cookies);
+    }
+
+    public static void addCookies(HttpHeaders httpHeaders, Map<String, Cookie[]> cookies) {
+        if(cookies == null || cookies.isEmpty()) {
+            return;
+        }
+        StringBuilder cookieStr = new StringBuilder();
+        for (String cookieName: cookies.keySet()) {
+            Cookie[] cookie = cookies.get(cookieName);
+            if(cookie == null || cookie.length == 0) continue;
+            HttpCookie httpCookie = new HttpCookie(cookie[0].getName(), cookie[0].getValue());
+            cookieStr.append(httpCookie.toString()).append(";");
+        }
+        if(cookieStr.length() > 1) {
+            cookieStr.setLength(cookieStr.length() - 1);
+            if(!httpHeaders.containsKey("Cookie")) {
+                httpHeaders.set("Cookie", cookieStr.toString());
+            } else {
+                httpHeaders.set("Cookie", httpHeaders.getFirst("Cookie") + ";" + cookieStr.toString());
+            }
         }
     }
 }

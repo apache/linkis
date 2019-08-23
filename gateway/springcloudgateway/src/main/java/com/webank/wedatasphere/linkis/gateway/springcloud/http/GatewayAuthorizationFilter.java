@@ -179,8 +179,13 @@ public class GatewayAuthorizationFilter extends JavaLog implements GlobalFilter,
                 exchange.getAttributes().put(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR, realRoute);
             }
         }
-        ServerHttpRequest request = exchange.getRequest().mutate().headers(SpringCloudHttpUtils::addIgnoreTimeoutSignal).build();
-        return chain.filter(exchange.mutate().request(request).build());
+        ServerHttpRequest.Builder builder = exchange.getRequest().mutate().headers(SpringCloudHttpUtils::addIgnoreTimeoutSignal);
+        if(!((SpringCloudGatewayHttpRequest) gatewayContext.getRequest()).getAddCookies().isEmpty()) {
+            builder.headers(httpHeaders -> {
+                SpringCloudHttpUtils.addCookies(httpHeaders, ((SpringCloudGatewayHttpRequest) gatewayContext.getRequest()).getAddCookies());
+            });
+        }
+        return chain.filter(exchange.mutate().request(builder.build()).build());
     }
 
     @Override

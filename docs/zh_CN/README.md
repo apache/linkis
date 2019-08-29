@@ -14,10 +14,11 @@ Linkis基于微服务架构，提供了金融级多租户隔离、资源管控�
 
 ![Linkis效果图](images/ch3/解决方案.jpg)
 <br>
+<br>
 
 基于Linkis数据中间件的架构设计理念，我们在上层构建了很多的应用系统。
 
-- 目前已开源的有：**数据研发IDE工具**[Scriptis](https://github.com/WeBankFinTech/Scriptis)。
+- 目前已开源的有：[**数据研发IDE工具Scriptis**](https://github.com/WeBankFinTech/Scriptis)。
 
 - 即将开源的有：**数据可视化展示工具**、**图形化工作流工具**和**数据质量工具**。
 

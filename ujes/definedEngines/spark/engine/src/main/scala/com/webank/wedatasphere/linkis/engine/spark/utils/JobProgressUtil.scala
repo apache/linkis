@@ -1,6 +1,8 @@
 package com.webank.wedatasphere.linkis.engine.spark.utils
 
 import java.text.NumberFormat
+
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
 import org.apache.commons.lang.time.DateFormatUtils
 import org.apache.spark.{JobExecutionStatus, SparkContext, SparkJobInfo}
@@ -8,7 +10,7 @@ import org.apache.spark.{JobExecutionStatus, SparkContext, SparkJobInfo}
 /**
   * Created by johnnwang on 2019/5/9.
   */
-object JobProgressUtil {
+object JobProgressUtil extends Logging{
   def progress(sc: SparkContext, jobGroup : String):Float = {
     val jobIds = sc.statusTracker.getJobIdsForGroup(jobGroup)
     val jobs = jobIds.flatMap { id => sc.statusTracker.getJobInfo(id) }

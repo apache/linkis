@@ -83,7 +83,7 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
       //          driverMem = driverMemList.reduce((x, y) => x + y)
       //      }
       val sparkExecutorCores = sc.getConf.get("spark.executor.cores").toInt * executorNum
-      val sparkDriverCores = sc.getConf.get("spark.driver.cores").toInt
+      val sparkDriverCores = sc.getConf.get("spark.driver.cores", "1").toInt
       val queue = sc.getConf.get("spark.yarn.queue")
       info("Current actual used resources is driverMem:" + driverMem + ",driverCores:" + sparkDriverCores + ",executorMem:" + executorMem + ",executorCores:" + sparkExecutorCores + ",queue:" + queue)
       new DriverAndYarnResource(

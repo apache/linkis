@@ -38,11 +38,11 @@
         <module>resourceManager/resourcemanagerserver</module>
         <module>publicService/udf</module>
         <module>publicService/application</module>
-        <module>publicService/database</module>
-        <module>publicService/query</module>
+        <module>publicService/jobhistory</module>
         <module>publicService/configuration</module>
         <module>publicService/variable</module>
         <module>publicService/workspace</module>
+        <module>metadata</module>
         <module>ujes/engine</module>
         <module>ujes/enginemanager</module>
         <module>ujes/entrance</module>

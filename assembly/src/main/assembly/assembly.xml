@@ -200,9 +200,9 @@
     <!--database-->
     <fileSet>
       <directory>
-        ${project.parent.basedir}/publicService/database/target/
+        ${project.parent.basedir}/metadata/target/
       </directory>
-      <outputDirectory>share/linkis/linkis-database/</outputDirectory>
+      <outputDirectory>share/linkis/linkis-metadata/</outputDirectory>
       <includes>
         <include>*.zip</include>
       </includes>

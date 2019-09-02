@@ -1,6 +1,8 @@
 package com.webank.wedatasphere.linkis.engine.spark.utils
 
+import java.text.NumberFormat
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
+import org.apache.commons.lang.time.DateFormatUtils
 import org.apache.spark.{JobExecutionStatus, SparkContext, SparkJobInfo}
 
 /**
@@ -19,7 +21,7 @@ object JobProgressUtil {
     if (taskCount == 0) {
       0f
     } else {
-      (100 * completedTaskCount.toDouble / taskCount).toFloat
+      (completedTaskCount.toDouble / taskCount).toFloat
     }
   }
 
@@ -27,7 +29,12 @@ object JobProgressUtil {
     val jobIds = sc.statusTracker.getJobIdsForGroup(jobGroup)
     val activeJobs = jobIds.flatMap { id => sc.statusTracker.getJobInfo(id) }.filter(_.status() == JobExecutionStatus.RUNNING)
     val progressInfos = activeJobs.map { job =>
-      getJobProgressInfoByStages(job, sc, jobGroup)
+      val jobProgressInfo = getJobProgressInfoByStages(job, sc, jobGroup)
+      val timestamp = DateFormatUtils.format(System.currentTimeMillis, "yyyy-MM-dd HH:mm:ss")
+      val progress = jobProgressInfo.succeedTasks * 1d /  jobProgressInfo.totalTasks
+      info(s"${jobProgressInfo.id} numTasks = ${jobProgressInfo.totalTasks}, numCompletedTasks = ${jobProgressInfo.succeedTasks}," +
+        s" numActiveTasks = ${jobProgressInfo.runningTasks} , completed:${percentageFormat(progress)}")
+      jobProgressInfo
     }
     progressInfos
   }
@@ -47,14 +54,27 @@ object JobProgressUtil {
     var numTasks = 0
     var numActiveTasks = 0
     var numFailedTasks = 0
-
+    var numSucceedTasks = 0
     stages.foreach{stageInfo =>
-      numTasks += stageInfo.numTasks()
-      numActiveTasks += stageInfo.numActiveTasks()
-      numFailedTasks += stageInfo.numFailedTasks()
+      if (stageInfo.submissionTime() > 0){
+        numTasks += stageInfo.numTasks()
+        numActiveTasks += stageInfo.numActiveTasks()
+        numFailedTasks += stageInfo.numFailedTasks()
+        numSucceedTasks += stageInfo.numCompletedTasks()
+      }
     }
-    val numSucceedTasks = numTasks - numActiveTasks - numFailedTasks
     JobProgressInfo(getJobId(job.jobId(), jobGroup), numTasks, numActiveTasks, numFailedTasks, numSucceedTasks)
   }
+
   private def getJobId( jobId : Int , jobGroup : String ): String = "jobId-" + jobId + "(" + jobGroup + ")"
+
+  private var _percentFormat: NumberFormat = _
+
+  def percentageFormat(decimal: Double): String = {
+    if(_percentFormat == null) {
+      _percentFormat = NumberFormat.getPercentInstance
+      _percentFormat.setMinimumFractionDigits(2)
+    }
+    _percentFormat.format(decimal)
+  }
 }

@@ -87,9 +87,13 @@ class EntranceReceiver extends Receiver with Logging {
     case ResponseTaskError(execId, errorMsg) =>
       findEngineExecuteAsynReturn(execId, sender, "ResponseTaskError").foreach(_.notifyError(errorMsg))
     case ResponseTaskProgress(execId, progress, progressInfo) =>
-      Utils.tryAndWarn(onOperate(execId, sender, entranceContext.getOrCreatePersistenceManager().onProgressUpdate(_, progress, progressInfo), "ResponseTaskProgress"))
-      onOperate(execId, sender, _.asInstanceOf[EntranceJob].setProgressInfo(progressInfo), "ResponseTaskProgress")
-      onOperate(execId, sender, job => entranceContext.getOrCreateEventListenerBus.post(EntranceProgressEvent(job, progress, progressInfo)), "ResponseTaskProgress")
+      Utils.tryAndWarn {
+        onOperate(execId, sender, job => {
+          entranceContext.getOrCreateEventListenerBus.post(EntranceProgressEvent(job, progress, progressInfo))
+          entranceContext.getOrCreatePersistenceManager().onProgressUpdate(job, progress, progressInfo)
+          job.asInstanceOf[EntranceJob].setProgressInfo(progressInfo)
+        }, "ResponseTaskProgress")
+      }
     case ResponseTaskLog(execId, log) =>
       onOperate(execId, sender, entranceContext.getOrCreateLogManager().onLogUpdate(_, log), "ResponseTaskLog")
     case ResponseTaskResultSet(execId, output, alias) =>

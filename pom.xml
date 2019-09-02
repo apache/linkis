@@ -38,7 +38,7 @@
         <module>resourceManager/resourcemanagerserver</module>
         <module>publicService/udf</module>
         <module>publicService/application</module>
-        <module>publicService/jobhistory</module>"
+        <module>publicService/jobhistory</module>
         <module>publicService/configuration</module>
         <module>publicService/variable</module>
         <module>publicService/workspace</module>

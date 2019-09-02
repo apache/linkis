@@ -38,6 +38,7 @@ import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.commons.lang.StringUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.types.{StructField, StructType}
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -48,6 +49,8 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
   extends EngineExecutor(outputPrintLimit, false) with SingleTaskOperateSupport with SingleTaskInfoSupport with Logging {
   val queryNum = new AtomicLong(0)
   private var jobGroup: String = _
+
+  private var oldprogress:Float = 0f
 
   override def init() = {
     info(s"Ready to change engine state!")
@@ -105,6 +108,7 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
       throw new DWCJobRetryException("Spark application sc has already stopped, please restart it.")
     }
     this.engineExecutorContext = engineExecutorContext
+    oldprogress = 0f
     val runType = engineExecutorContext.getProperties.get("runType").asInstanceOf[String]
     var kind: Kind = null
     if (StringUtils.isNotBlank(runType)) {
@@ -124,14 +128,16 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
     sc.setJobGroup(jobGroup, _code, true)
 
     val response = Utils.tryFinally(sparkExecutors.find(_.kind == kind).map(_.execute(this, _code, engineExecutorContext, jobGroup)).getOrElse(throw new NoSupportEngineException(40008, s"Not supported $kind executor!"))) {
-      this.engineExecutorContext.pushProgress(progress(), getProgressInfo)
+      this.engineExecutorContext.pushProgress(1, getProgressInfo)
       jobGroup = null
       this.engineExecutorContext = null
       sc.clearJobGroup()
     }
     info(s"Start to structure sparksql resultset")
     response
-  }{}
+  }{
+    oldprogress = 0f
+  }
 
   override protected def executeCompletely(engineExecutorContext: EngineExecutorContext, code: String, completedLine: String): ExecuteResponse = {
     val newcode = completedLine + code
@@ -162,14 +168,19 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
 
   override def resume(): Boolean = false
 
-  override def progress(): Float =if (jobGroup == null || engineExecutorContext.getTotalParagraph == 0) 0
+  override def progress(): Float = if (jobGroup == null || engineExecutorContext.getTotalParagraph == 0) 0
   else {
-    (engineExecutorContext.getCurrentParagraph * 1f - 1f )/ engineExecutorContext.getTotalParagraph + JobProgressUtil.progress(sc,jobGroup)/engineExecutorContext.getTotalParagraph
+    debug("request new progress for jobGroup is " + jobGroup + "old progress:" + oldprogress)
+    val newProgress = (engineExecutorContext.getCurrentParagraph * 1f - 1f )/ engineExecutorContext.getTotalParagraph + JobProgressUtil.progress(sc,jobGroup)/engineExecutorContext.getTotalParagraph - 0.01f
+    if(newProgress < oldprogress && oldprogress < 0.98) oldprogress else {
+      oldprogress = newProgress
+      newProgress
+    }
   }
 
   override def getProgressInfo: Array[JobProgressInfo] = if (jobGroup == null) Array.empty
   else {
-    info("request new progress info for jobGroup is " + jobGroup)
+    debug("request new progress info for jobGroup is " + jobGroup)
     val progressInfoArray = ArrayBuffer[JobProgressInfo]()
     progressInfoArray ++= JobProgressUtil.getActiveJobProgressInfo(sc,jobGroup)
     progressInfoArray ++= JobProgressUtil.getCompletedJobProgressInfo(sc,jobGroup)
@@ -180,7 +191,13 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
     ""
   }
 
-  override def close(): Unit = {}
+  override def close(): Unit = {
+    sparkExecutors foreach {
+      executor => Utils.tryCatch(executor.close){
+        case e:Exception => logger.error("c;pse")
+      }
+    }
+  }
 }
 
 object SQLSession extends Logging {
@@ -197,13 +214,28 @@ object SQLSession extends Logging {
     val startTime = System.currentTimeMillis()
     //    sc.setJobGroup(jobGroup, "Get IDE-SQL Results.", false)
     val dataFrame = df.asInstanceOf[DataFrame]
-    val iterator = Utils.tryThrow(dataFrame.toLocalIterator) { t => sc.clearJobGroup()
+    val iterator = Utils.tryThrow(dataFrame.toLocalIterator) { t =>
       throw new SparkEngineException(40002, s"dataFrame to local exception", t)
     }
     //var columns: List[Attribute] = null
     // get field names
-
-    val columnsSet = dataFrame.schema
+    //logger.info("SCHEMA BEGIN")
+    import java.util
+    val colSet = new util.HashSet[String]()
+    val schema = dataFrame.schema
+    var columnsSet:StructType = null
+    schema foreach (s => colSet.add(s.name))
+    if (colSet.size() < schema.size){
+      val arr:ArrayBuffer[StructField] = new ArrayBuffer[StructField]()
+      dataFrame.queryExecution.analyzed.output foreach {
+        attri => val tempAttri = StructField(attri.qualifiedName, attri.dataType, attri.nullable, attri.metadata)
+          arr += tempAttri
+      }
+      columnsSet = StructType(arr.toArray)
+    }else{
+      columnsSet = schema
+    }
+    //val columnsSet = dataFrame.schema
     val columns = columnsSet.map(c =>
       Column(c.name, DataType.toDataType(c.dataType.typeName.toLowerCase), c.getComment().orNull)).toArray[Column]
     if (columns == null || columns.isEmpty) return
@@ -228,12 +260,11 @@ object SQLSession extends Logging {
         writer.addRecord(new TableRecord(r))
         index += 1
       }
-    }) { t => sc.clearJobGroup()
+    }) { t =>
       throw new SparkEngineException(40001, s"read record  exception", t)
     }
     warn(s"Time taken: ${System.currentTimeMillis() - startTime}, Fetched $index row(s).")
     engineExecutorContext.appendStdout(s"${EngineUtils.getName} >> Time taken: ${System.currentTimeMillis() - startTime}, Fetched $index row(s).")
-    sc.clearJobGroup()
     engineExecutorContext.sendResultSet(writer)
   }
 
@@ -244,9 +275,8 @@ object SQLSession extends Logging {
     writer.addMetaData(metaData)
     writer.addRecord(new LineRecord(htmlContent.toString))
     warn(s"Time taken: ${System.currentTimeMillis() - startTime}")
-    sc.clearJobGroup()
+
     engineExecutorContext.sendResultSet(writer)
   }
 }
-
 

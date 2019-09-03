@@ -54,8 +54,8 @@ public class HiveMybatisConfiguration extends JavaLog {
 
     @Bean(name = "hiveSqlSessionFactory")
     public SqlSessionFactoryBean hiveSqlSessionFactory() {
-        String typeAliasesPackage = "com.webank.wedatasphere.linkis.database.hive.dao";
-        String mapperLocations = "classpath:com/webank/wedatasphere/linkis/database/hive/dao/impl/*.xml";
+        String typeAliasesPackage = "com.webank.wedatasphere.linkis.metadata.hive.dao";
+        String mapperLocations = "classpath:com/webank/wedatasphere/linkis/metadata/hive/dao/impl/*.xml";
         String configLocation = MybatisConfiguration.BDP_SERVER_MYBATIS_CONFIGLOCATION.getValue();
         try {
             SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();

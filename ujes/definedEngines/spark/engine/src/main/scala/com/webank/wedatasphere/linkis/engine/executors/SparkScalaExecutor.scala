@@ -25,8 +25,9 @@ import com.webank.wedatasphere.linkis.engine.execute.EngineExecutorContext
 import com.webank.wedatasphere.linkis.engine.rs.RsOutputStream
 import com.webank.wedatasphere.linkis.engine.spark.common.SparkScala
 import com.webank.wedatasphere.linkis.scheduler.executer._
-import com.webank.wedatasphere.linkis.storage.resultset.ResultSetWriter
+import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 import org.apache.commons.io.IOUtils
+import org.apache.commons.lang.StringUtils
 import org.apache.spark.sql.{SQLContext, SparkSession}
 import org.apache.spark.util.SparkUtils
 import org.apache.spark.{SparkConf, SparkContext}
@@ -149,7 +150,7 @@ class SparkScalaExecutor(val sparkConf: SparkConf) extends SparkExecutor{
             lineOutputStream.flush()
             engineExecutorContext.appendStdout("scala> " + code)
             val outStr = lineOutputStream.toString()
-            if(outStr.length >0) {
+            if( StringUtils.isEmpty(outStr) && ResultSetFactory.getInstance.isResultSet(outStr)) {
               val output = Utils.tryQuietly(ResultSetWriter.getRecordByRes(outStr, SPARK_CONSOLE_OUTPUT_NUM.getValue))
               val res = output.map(x => x.toString).toList.mkString("\n")
               if (res.length > 0) {

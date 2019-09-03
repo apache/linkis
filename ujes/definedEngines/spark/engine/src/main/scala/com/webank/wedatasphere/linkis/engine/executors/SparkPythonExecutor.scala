@@ -24,7 +24,7 @@ import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.engine.Interpreter.PythonInterpreter._
 import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration._
-import com.webank.wedatasphere.linkis.engine.configuration.{ SparkConfiguration}
+import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration
 import com.webank.wedatasphere.linkis.engine.exception.ExecuteError
 import com.webank.wedatasphere.linkis.engine.execute.EngineExecutorContext
 import com.webank.wedatasphere.linkis.engine.imexport.CsvRelation
@@ -32,7 +32,7 @@ import com.webank.wedatasphere.linkis.engine.rs.RsOutputStream
 import com.webank.wedatasphere.linkis.engine.spark.common.PySpark
 import com.webank.wedatasphere.linkis.engine.spark.utils.EngineUtils
 import com.webank.wedatasphere.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
-import com.webank.wedatasphere.linkis.storage.resultset.ResultSetWriter
+import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.lang.StringUtils
@@ -189,7 +189,7 @@ class SparkPythonExecutor(val sc: SparkContext,  val sqlContext: SQLContext,sess
     lineOutputStream.flush()
     engineExecutorContext.appendStdout(s"${EngineUtils.getName} >> $code")
     val outStr = lineOutputStream.toString()
-    if(outStr.length >0) {
+    if(StringUtils.isEmpty(outStr) && ResultSetFactory.getInstance.isResultSet(outStr)) {
       val output = Utils.tryQuietly(ResultSetWriter.getRecordByRes(outStr, SPARK_CONSOLE_OUTPUT_NUM.getValue))
       val res = output.map(x => x.toString).toList.mkString("\n")
       if (res.length > 0) {

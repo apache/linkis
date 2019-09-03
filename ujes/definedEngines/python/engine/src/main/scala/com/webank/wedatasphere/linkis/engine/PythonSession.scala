@@ -122,7 +122,7 @@ class PythonSession extends Logging {
       outputStream.flush()
       val outStr = outputStream.toString()
       //logger.info("outStr is {}", outStr)
-      if (StringUtils.isNotBlank(outStr)){
+      if (StringUtils.isEmpty(outStr) && ResultSetFactory.getInstance.isResultSet(outStr)){
         val output = Utils.tryQuietly(ResultSetWriter.getRecordByRes(outStr, PythonEngineConfiguration.PYTHON_CONSOLE_OUTPUT_LINE_LIMIT.getValue))
         val output1 = Utils.tryQuietly(ResultSetWriter.getLastRecordByRes(outStr))
         //val res = output.map(x => x.toString).toList.mkString("\n")

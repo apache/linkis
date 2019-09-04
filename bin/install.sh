@@ -101,19 +101,19 @@ fi
 
 
 ##env check
-echo "Do you empty Linkis table information in the database?"
-echo " 1: Rebuild the table(重新建表)"
-echo " 2: Do not execute table-building statements(不执行建表语句)"
+echo "Do you want to clear Linkis table information in the database?"
+echo " 1: Do not execute table-building statements(不执行建表语句)"
+echo " 2: Clear all data and rebuild the tables？(清除数据并重新建表)"
 echo ""
 
 MYSQL_INSTALL_MODE=1
 
 read -p "Please input the choice:"  idx
-if [[ '1' = "$idx" ]];then
-  MYSQL_INSTALL_MODE=1
-  echo "You chose Rebuild the table"
-elif [[ '2' = "$idx" ]];then
+if [[ '2' = "$idx" ]];then
   MYSQL_INSTALL_MODE=2
+  echo "You chose Rebuild the table"
+elif [[ '1' = "$idx" ]];then
+  MYSQL_INSTALL_MODE=1
   echo "You chose not execute table-building statements"
 else
   echo "no choice,exit!"
@@ -254,7 +254,7 @@ echo "<----------------$SERVERNAME:end------------------->"
 ##ResourceManager install end
 
 ##init db
-if [[ '1' = "$MYSQL_INSTALL_MODE" ]];then
+if [[ '2' = "$MYSQL_INSTALL_MODE" ]];then
 	mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB -e "source ${workDir}/db/linkis_ddl.sql"
 	isSuccess "source linkis_ddl.sql"
 	mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB -e "source ${workDir}/db/linkis_dml.sql"

@@ -67,6 +67,7 @@
         <module>eurekaServer</module>
         <module>publicService</module>
         <module>assembly</module>
+        <module>ujes/jdbc</module>
     </modules>
 
     <properties>

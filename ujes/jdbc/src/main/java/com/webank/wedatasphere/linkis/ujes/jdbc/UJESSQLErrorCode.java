@@ -2,6 +2,7 @@ package com.webank.wedatasphere.linkis.ujes.jdbc;
 
 /**
  * Created by leebai on 2019/8/8.
+ * Modified by owenxu on 2019/8/8.
  */
 public enum UJESSQLErrorCode {
     BAD_URL(80000,"bad url"),

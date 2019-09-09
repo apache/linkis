@@ -19,8 +19,8 @@ public class UJESSQLDriver extends UJESSQLDriverMain implements Driver {
         }
     }
 
-    static String URL_PREFIX = "jdbc:ujes://";
-    static String URL_REGEX = "jdbc:ujes://([^:]+)(:\\d+)?(/[^\\?]+)?(\\?\\S+)?";
+    static String URL_PREFIX = "jdbc:linkis://";
+    static String URL_REGEX = "jdbc:linkis://([^:]+)(:\\d+)?(/[^\\?]+)?(\\?\\S+)?";
 
     static String HOST = "HOST";
     static String PORT = "PORT";

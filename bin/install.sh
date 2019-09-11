@@ -1,5 +1,8 @@
 #!/bin/sh
 
+#Actively load user env
+source ~/.bash_profile
+
 shellDir=`dirname $0`
 workDir=`cd ${shellDir}/..;pwd`
 

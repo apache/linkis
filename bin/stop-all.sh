@@ -22,6 +22,8 @@
 info="We will stop all linkis applications, it will take some time, please wait"
 echo ${info}
 
+#Actively load user env
+source ~/.bash_profile
 
 workDir=`dirname "${BASH_SOURCE-$0}"`
 workDir=`cd "$workDir"; pwd`

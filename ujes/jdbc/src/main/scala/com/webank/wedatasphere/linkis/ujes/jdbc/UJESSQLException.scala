@@ -12,12 +12,11 @@ class UJESSQLException (errorCode: UJESSQLErrorCode) extends ErrorException(erro
     setDesc(msg)
   }
 
-
-  /**
-    * add to deal with errorinfo derived from jobInfo
-    * @param errorCode
-    * @param msg
-    */
+/**
+  * add to deal with errorinfo derived from jobInfo
+  * @param errorCode
+  * @param msg
+  */
   def this(errorCode: Int,msg: String) {
     this(UJESSQLErrorCode.ERRORINFO_FROM_JOBINFO)
     setDesc(msg)

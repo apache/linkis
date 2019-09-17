@@ -1,6 +1,9 @@
 package com.webank.wedatasphere.linkis.ujes.jdbc;
 
 import com.webank.wedatasphere.linkis.common.conf.Configuration;
+import com.webank.wedatasphere.linkis.common.utils.Logging;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -15,7 +18,8 @@ public class UJESSQLDriver extends UJESSQLDriverMain implements Driver {
         try {
             DriverManager.registerDriver(new UJESSQLDriver());
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger logger = LoggerFactory.getLogger(UJESSQLDriver.class);
+            logger.info("Load driver failed",e);
         }
     }
 

@@ -46,8 +46,8 @@ PUBLICSERVICE_PORT=9002
 
 
 ### Hive Metadata Query service, provide the metadata information of Hive databases.
-DATABASE_INSTALL_IP=127.0.0.1
-DATABASE_PORT=9008
+METADATA_INSTALL_IP=127.0.0.1
+METADATA_PORT=9008
 
 
 ### ResourceManager

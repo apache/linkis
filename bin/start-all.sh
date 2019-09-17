@@ -110,13 +110,13 @@ sleep 3
 #metadata
 echo "<-------------------------------->"
 echo "Begin to start metadata"
-DATABASE_NAME="metadata"
-DATABASE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${DATABASE_NAME}/bin
-DATABASE_START_CMD="if [ -d ${DATABASE_BIN} ];then cd ${DATABASE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh start-database.sh > /dev/null;else echo 'WARNING:Metadata will not start';fi"
-if [ -n "${DATABASE_INSTALL_IP}" ];then
-    ssh ${DATABASE_INSTALL_IP} "${DATABASE_START_CMD}"
+METADATA_NAME="metadata"
+METADATA_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${METADATA_NAME}/bin
+METADATA_START_CMD="if [ -d ${METADATA_BIN} ];then cd ${METADATA_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh start-metadata.sh > /dev/null;else echo 'WARNING:Metadata will not start';fi"
+if [ -n "${METADATA_INSTALL_IP}" ];then
+    ssh ${METADATA_INSTALL_IP} "${METADATA_START_CMD}"
 else
-    ssh ${local_host} "${DATABASE_START_CMD}"
+    ssh ${local_host} "${METADATA_START_CMD}"
 fi
 isSuccess  "End to start Metadata"
 echo "<-------------------------------->"

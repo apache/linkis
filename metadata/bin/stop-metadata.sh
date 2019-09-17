@@ -4,7 +4,7 @@ cd `dirname $0`
 cd ..
 HOME=`pwd`
 
-export DWS_ENGINE_MANAGER_PID=$HOME/bin/linkis-enginemanager.pid
+export DWS_ENGINE_MANAGER_PID=$HOME/bin/linkis-metadata.pid
 
 function wait_for_DWS_ENGINE_MANAGER_to_die() {
   local pid
@@ -34,14 +34,14 @@ function wait_for_DWS_ENGINE_MANAGER_to_die() {
 }
 
 if [[ ! -f "${DWS_ENGINE_MANAGER_PID}" ]]; then
-    echo "Dataworkcloud Database is not running"
+    echo "Linkis-Metadata is not running"
 else
     pid=$(cat ${DWS_ENGINE_MANAGER_PID})
     if [[ -z "${pid}" ]]; then
-      echo "Dataworkcloud Database is not running"
+      echo "Linkis-Metadata is not running"
     else
       wait_for_DWS_ENGINE_MANAGER_to_die $pid 40
       $(rm -f ${DWS_ENGINE_MANAGER_PID})
-      echo "Dataworkcloud Database is stopped."
+      echo "Linkis-Metadata is stopped."
     fi
 fi

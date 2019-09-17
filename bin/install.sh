@@ -122,7 +122,7 @@ fi
 ##env check
 echo "Do you want to clear Linkis table information in the database?"
 echo " 1: Do not execute table-building statements(不执行建表语句)"
-echo " 2: Clear all data and rebuild the tables？(清除数据并重新建表)"
+echo " 2: Dangerous! Clear all data and rebuild the tables(危险！清除所有表数据并重新建表)"
 echo ""
 
 MYSQL_INSTALL_MODE=1
@@ -322,8 +322,8 @@ fi
 ##linkis-metadata install
 PACKAGE_DIR=linkis/linkis-metadata
 SERVERNAME=linkis-metadata
-SERVER_IP=$DATABASE_INSTALL_IP
-SERVER_PORT=$DATABASE_PORT
+SERVER_IP=$METADATA_INSTALL_IP
+SERVER_PORT=$METADATA_PORT
 SERVER_HOME=$LINKIS_INSTALL_HOME
 ###install dir
 installPackage
@@ -335,7 +335,7 @@ ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.username.*#wds.
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g\" $SERVER_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVERNAME"
 echo "<----------------$SERVERNAME:end------------------->"
-##database end
+##metadata end
 
 ##HiveEM install
 PACKAGE_DIR=linkis/ujes/hive

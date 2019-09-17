@@ -22,6 +22,8 @@
 info="We will stop all linkis applications, it will take some time, please wait"
 echo ${info}
 
+#Actively load user env
+source ~/.bash_profile
 
 workDir=`dirname "${BASH_SOURCE-$0}"`
 workDir=`cd "$workDir"; pwd`
@@ -105,18 +107,18 @@ isSuccess "End to stop Public Service"
 echo "<-------------------------------->"
 sleep 3
 
-#database
+#metadata
 echo "<-------------------------------->"
-echo "Begin to stop Database"
-DATABASE_NAME="database"
-DATABASE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${DATABASE_NAME}/bin
-DATABASE_STOP_CMD="if [ -d ${DATABASE_BIN} ];then cd ${DATABASE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-database.sh > /dev/null;else echo 'WARNING:Database did not start';fi"
-if [ -n "${DATABASE_INSTALL_IP}" ];then
-    ssh ${DATABASE_INSTALL_IP} "${DATABASE_STOP_CMD}"
+echo "Begin to stop Metadata."
+METADATA_NAME="metadata"
+METADATA_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${METADATA_NAME}/bin
+METADATA_STOP_CMD="if [ -d ${METADATA_BIN} ];then cd ${METADATA_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-metadata.sh > /dev/null;else echo 'WARNING:Metadata did not start';fi"
+if [ -n "${METADATA_INSTALL_IP}" ];then
+    ssh ${METADATA_INSTALL_IP} "${METADATA_STOP_CMD}"
 else
-    ssh ${local_host} "${DATABASE_STOP_CMD}"
+    ssh ${local_host} "${METADATA_STOP_CMD}"
 fi
-isSuccess  "End to stop Database"
+isSuccess  "End to stop Metadata."
 echo "<-------------------------------->"
 sleep 3
 

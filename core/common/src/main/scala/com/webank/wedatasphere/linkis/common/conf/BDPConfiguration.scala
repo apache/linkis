@@ -40,7 +40,6 @@ private[conf] object BDPConfiguration extends Logging {
 
   val propertyFile = sysProps.getOrElse("wds.linkis.configuration", DEFAULT_PROPERTY_FILE_NAME)
   private val configFileURL = getClass.getClassLoader.getResource(propertyFile)
-  info(configFileURL.getPath)
   if (configFileURL != null && new File(configFileURL.getPath).exists) initConfig(config, configFileURL.getPath)
   else warn(s"******************************** Notice: The dataworkcloud configuration file $propertyFile is not exists! ***************************")
 

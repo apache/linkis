@@ -12,7 +12,7 @@ public class CreateConnection {
 
     public static UJESSQLConnection getConnection() throws ClassNotFoundException, SQLException {
         Class.forName("com.webank.wedatasphere.linkis.ujes.jdbc.UJESSQLDriver");
-        conn = (UJESSQLConnection) DriverManager.getConnection("jdbc:linkis://10.107.116.246:20817","johnnwang","Abcd1234");
+        conn = (UJESSQLConnection) DriverManager.getConnection("url","username","password");
         return conn;
     }
 }

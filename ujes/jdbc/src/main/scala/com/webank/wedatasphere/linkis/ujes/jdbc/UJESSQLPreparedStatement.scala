@@ -1,7 +1,3 @@
-/*
- * Created by ${USER} on ${DATE}.
- */
-
 package com.webank.wedatasphere.linkis.ujes.jdbc
 
 import java.io.{InputStream, Reader}

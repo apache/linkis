@@ -1,6 +1,5 @@
 package com.webank.wedatasphere.linkis.ujes.jdbc;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

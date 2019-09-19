@@ -18,7 +18,6 @@
 
 
 # Stop all linkis applications
-# 启动linkis所有的后台微服务应用
 info="We will stop all linkis applications, it will take some time, please wait"
 echo ${info}
 
@@ -40,10 +39,10 @@ else
     echo "INFO:" + $1
 fi
 }
-#安装dos2unix
+
 sudo yum install dos2unix > /dev/null 2>&1
 
-#获取本机IP
+
 local_host="`hostname --fqdn`"
 
 #if there is no LINKIS_INSTALL_HOME，we need to source config again
@@ -60,7 +59,7 @@ APP_PREFIX="linkis-"
 
 
 
-#顺序启动linkis的各个微服务,如果用户没有指定微服务的部署ip，则在本地启动
+
 #eureka
 echo "<-------------------------------->"
 echo "Begin to stop Eureka Server"

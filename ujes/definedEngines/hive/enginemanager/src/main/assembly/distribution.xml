@@ -299,6 +299,7 @@
             </includes>
             <fileMode>0777</fileMode>
             <outputDirectory>conf</outputDirectory>
+            <lineEnding>unix</lineEnding>
         </fileSet>
         <fileSet>
             <directory>${basedir}/bin</directory>
@@ -307,6 +308,7 @@
             </includes>
             <fileMode>0777</fileMode>
             <outputDirectory>bin</outputDirectory>
+            <lineEnding>unix</lineEnding>
         </fileSet>
         <fileSet>
             <directory>.</directory>

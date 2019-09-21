@@ -45,7 +45,7 @@ import org.json4s.{DefaultFormats, Formats}
 import scala.collection.Iterable
 import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext,ExecutionContextExecutorService, Future}
 
 /**
   * Created by enjoyyin on 2019/5/20.
@@ -249,5 +249,6 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
       case _ =>
     }
     dispatch.Http.shutdown()
+    executors.asInstanceOf[ExecutionContextExecutorService].shutdown()
   }
 }

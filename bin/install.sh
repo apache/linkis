@@ -52,7 +52,7 @@ function checkHadoopAndHive(){
 	hdfs version
 	isSuccess "execute hdfs version"
 	hive --help
-	isSuccess "execute hive -h"
+	#isSuccess "execute hive -h"
 }
 
 function checkSpark(){
@@ -90,9 +90,9 @@ local_host="`hostname --fqdn`"
 
 ##env check
 echo "Please enter the mode selection such as: 1"
-echo " 1: Lite(精简版)"
-echo " 2: Simple(简单版)"
-echo " 3: Standard(标准版)"
+echo " 1: Lite"
+echo " 2: Simple"
+echo " 3: Standard"
 echo ""
 
 INSTALL_MODE=1
@@ -121,8 +121,8 @@ fi
 
 ##env check
 echo "Do you want to clear Linkis table information in the database?"
-echo " 1: Do not execute table-building statements(不执行建表语句)"
-echo " 2: Dangerous! Clear all data and rebuild the tables(危险！清除所有表数据并重新建表)"
+echo " 1: Do not execute table-building statements"
+echo " 2: Dangerous! Clear all data and rebuild the tables"
 echo ""
 
 MYSQL_INSTALL_MODE=1
@@ -421,6 +421,23 @@ echo "$SERVERNAME-step4:update linkis conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
 ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$HDFS_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVERNAME"
+echo "<----------------$SERVERNAME:end------------------->"
+##SparkEntrance install end
+
+
+##JDBCEntrance install
+PACKAGE_DIR=linkis/ujes/jdbc
+SERVERNAME=linkis-ujes-jdbc-entrance
+SERVER_PORT=$JDBC_ENTRANCE_PORT
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVERNAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$HDFS_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "cd $SERVER_HOME/$SERVERNAME/lib;" $SERVER_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVERNAME"
 echo "<----------------$SERVERNAME:end------------------->"
 ##SparkEntrance install end

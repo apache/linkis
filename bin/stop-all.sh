@@ -221,6 +221,23 @@ echo "<-------------------------------->"
 
 
 
+#JDBCEntrance
+echo "<-------------------------------->"
+echo "Begin to stop JDBC Entrance"
+JDBC_ENTRANCE_NAME="ujes-jdbc-entrance"
+JDBC_ENTRANCE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${JDBC_ENTRANCE_NAME}/bin
+JDBC_ENTRANCE_STOP_CMD="if [ -d ${JDBC_ENTRANCE_BIN} ];then cd ${JDBC_ENTRANCE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-jdbcentrance.sh > /dev/null;else echo 'WARNING:JDBC Entrance will not start';fi"
+if [ -n "${JDBC_INSTALL_IP}" ];then
+    ssh ${JDBC_INSTALL_IP} "${JDBC_ENTRANCE_STOP_CMD}"
+else
+    ssh ${local_host} "${JDBC_ENTRANCE_STOP_CMD}"
+fi
+echo "End to stop JDBC Entrance"
+echo "<-------------------------------->"
+
+sleep 3
+
+
 ##PipelineEntrance
 #echo "Pipeline Entrance is Stoping"
 #PIPELINE_ENTRANCE_NAME="ujes-pipeline-entrance"

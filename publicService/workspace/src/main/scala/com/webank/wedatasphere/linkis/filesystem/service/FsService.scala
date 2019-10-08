@@ -97,9 +97,8 @@ class FsService {
     } catch {
       //If rpc fails to get fs, for example, io-engine restarts or hangs.(如果rpc获取fs失败了 比如io-engine重启或者挂掉)
       case e: Exception => {
-        LOGGER.info(e.getMessage)
+        LOGGER.info("Requesting IO-Engine to initialize fileSystem failed",e)
         //todo Clean up the cache(清理缓存 目前先遗留)
-        LOGGER.info("Start fs to clean up the cache...(开始fs清理缓存...)")
         /*FsCache.fsInfo.foreach{
           case (_,list) =>list synchronized list.filter(f =>true).foreach(f =>list -=f)
         }*/

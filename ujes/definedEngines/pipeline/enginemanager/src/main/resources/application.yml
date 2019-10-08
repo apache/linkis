@@ -14,12 +14,12 @@
 # limitations under the License.
 #
 server:
-  port: 90028  #The port that the module provides services (required)(该模块提供服务的端口（必须）)
+  port: 90028  #The port that the module provides services (required)
 spring:
   application:
-    name: pipeLineEngineManager  #Module name for high availability (required)(模块名，用于做高可用（必须）)
+    name: pipeLineEngineManager  #Module name for high availability (required)
 
-#Specify the address of the eureka server for registration (required)(指定eureka Server的地址，用于注册（必须）)
+#Specify the address of the eureka server for registration (required)
 eureka:
   client:
     serviceUrl:
@@ -27,13 +27,13 @@ eureka:
   instance:
     metadata-map:
       test: johnnwang
-#required（必须）
+#required
 management:
   endpoints:
     web:
       exposure:
         include: refresh,info
-##LOG path?(日志路径?)
+##LOG path?
 logging:
   config: classpath:log4j2.xml
 #    register-with-eureka: false

@@ -32,6 +32,7 @@
         <module>core/cloudModule</module>
         <module>core/cloudRPC</module>
         <module>core/cloudMybatis</module>
+        <module>core/httpclient</module>
         <module>storage/storage</module>
         <module>resourceManager/resourcemanagercommon</module>
         <module>resourceManager/resourcemanagerclient</module>
@@ -61,11 +62,14 @@
         <module>ujes/definedEngines/pipeline/engine</module>
         <module>ujes/definedEngines/pipeline/enginemanager</module>
         <module>ujes/definedEngines/pipeline/entrance</module>
+        <module>ujes/definedEngines/jdbc/entrance</module>
         <module>gateway/core</module>
         <module>gateway/springcloudgateway</module>
         <module>gateway/gateway-ujes-support</module>
+        <module>gateway/gateway-httpclient-support</module>
         <module>eurekaServer</module>
         <module>publicService</module>
+        <module>ujes/client</module>
         <module>assembly</module>
     </modules>
 

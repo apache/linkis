@@ -41,6 +41,7 @@
       <includes>
         <include>**/*</include>
       </includes>
+      <lineEnding>unix</lineEnding>
     </fileSet>
 
     <fileSet>
@@ -51,6 +52,7 @@
       <includes>
         <include>**/*</include>
       </includes>
+      <lineEnding>unix</lineEnding>
     </fileSet>
 
     <fileSet>
@@ -61,6 +63,7 @@
       <includes>
         <include>**/*</include>
       </includes>
+      <lineEnding>unix</lineEnding>
     </fileSet>
 
     <!--spark-->
@@ -146,6 +149,18 @@
         <include>*.zip</include>
       </includes>
     </fileSet>
+
+    <!--jdbc-->
+    <fileSet>
+      <directory>
+        ${project.parent.basedir}/ujes/definedEngines/jdbc/entrance/target/
+      </directory>
+      <outputDirectory>share/linkis/ujes/jdbc</outputDirectory>
+      <includes>
+        <include>*.zip</include>
+      </includes>
+    </fileSet>
+
     <!--resourcemanager-->
     <fileSet>
       <directory>

@@ -20,14 +20,17 @@ import java.text.DateFormat
 import java.util.{Date, Locale}
 
 import com.webank.wedatasphere.linkis.common.conf.Configuration
+import com.webank.wedatasphere.linkis.common.exception.DWCException
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
 import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
 import com.webank.wedatasphere.linkis.gateway.security.sso.SSOInterceptor
+import com.webank.wedatasphere.linkis.gateway.security.token.TokenAuthentication
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import com.webank.wedatasphere.linkis.server.exception.{LoginExpireException, NonLoginException}
 import com.webank.wedatasphere.linkis.server.{Message, validateFailed}
 import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang.exception.ExceptionUtils
 
 /**
   * created by cooperyang on 2019/1/9.
@@ -41,7 +44,7 @@ object SecurityFilter {
   private var userRestful: UserRestful = _
   def setUserRestful(userRestful: UserRestful): Unit = this.userRestful = userRestful
 
-  private def filterResponse(gatewayContext: GatewayContext, message: Message): Unit = {
+  def filterResponse(gatewayContext: GatewayContext, message: Message): Unit = {
     gatewayContext.getResponse.setStatus(Message.messageToHttpStatus(message))
     gatewayContext.getResponse.write(message)
     gatewayContext.getResponse.sendResponse()
@@ -66,11 +69,20 @@ object SecurityFilter {
     }
     val isPassAuthRequest = GatewayConfiguration.PASS_AUTH_REQUEST_URI.exists(gatewayContext.getRequest.getRequestURI.startsWith)
     if(gatewayContext.getRequest.getRequestURI.startsWith(ServerConfiguration.BDP_SERVER_USER_URI.getValue)) {
-      userRestful.doUserRequest(gatewayContext)
+      Utils.tryCatch(userRestful.doUserRequest(gatewayContext)){ t =>
+        val message = t match {
+          case dwc: DWCException => dwc.getMessage
+          case _ => "login failed! reason: " + ExceptionUtils.getRootCauseMessage(t)
+        }
+        GatewaySSOUtils.error("login failed!", t)
+        filterResponse(gatewayContext, Message.error(message).<<(gatewayContext.getRequest.getRequestURI))
+      }
       false
     } else if(isPassAuthRequest && !GatewayConfiguration.ENABLE_SSO_LOGIN.getValue) {
       GatewaySSOUtils.info("No login needed for proxy uri: " + gatewayContext.getRequest.getRequestURI)
       true
+    } else if(TokenAuthentication.isTokenRequest(gatewayContext)) {
+      TokenAuthentication.tokenAuth(gatewayContext)
     } else {
       val userName = Utils.tryCatch(GatewaySSOUtils.getLoginUser(gatewayContext)){
         case n @ (_: NonLoginException | _: LoginExpireException )=>

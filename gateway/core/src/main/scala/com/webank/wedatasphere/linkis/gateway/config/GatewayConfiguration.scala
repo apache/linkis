@@ -27,6 +27,12 @@ object GatewayConfiguration {
   val PROXY_USER_CONFIG = CommonVars("wds.linkis.gateway.conf.proxy.user.config", "proxy.properties")
   val PROXY_USER_SCAN_INTERVAL = CommonVars("wds.linkis.gateway.conf.proxy.user.scan.interval", 1000 * 60 * 10)
 
+  val TOKEN_KEY = "Token-Code"
+  val TOKEN_USER_KEY = "Token-User"
+  val ENABLE_TOKEN_AUTHENTICATION = CommonVars("wds.linkis.gateway.conf.enable.token.auth", false)
+  val TOKEN_AUTHENTICATION_CONFIG = CommonVars("wds.linkis.gateway.conf.token.auth.config", "token.properties")
+  val TOKEN_AUTHENTICATION_SCAN_INTERVAL = CommonVars("wds.linkis.gateway.conf.token.auth.scan.interval", 1000 * 60 * 10)
+
   val PASS_AUTH_REQUEST_URI = CommonVars("wds.linkis.gateway.conf.url.pass.auth", "/dws/").getValue.split(",")
 
   val ENABLE_SSO_LOGIN = CommonVars("wds.linkis.gateway.conf.enable.sso", false)

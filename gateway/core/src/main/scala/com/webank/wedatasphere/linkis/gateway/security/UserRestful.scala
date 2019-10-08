@@ -35,9 +35,9 @@ trait UserRestful {
 }
 abstract class AbstractUserRestful extends UserRestful {
 
-  private var resourceReleases: Array[ResourceRelease] = Array.empty
+  private var securityHooks: Array[SecurityHook] = Array.empty
 
-  def setResourceReleases(resourceReleases: Array[ResourceRelease]): Unit = this.resourceReleases = resourceReleases
+  def setSecurityHooks(securityHooks: Array[SecurityHook]): Unit = this.securityHooks = securityHooks
 
   private val userRegex = {
     var userURI = ServerConfiguration.BDP_SERVER_USER_URI.getValue
@@ -65,16 +65,24 @@ abstract class AbstractUserRestful extends UserRestful {
     gatewayContext.getResponse.sendResponse()
   }
 
-  def login(gatewayContext: GatewayContext): Message
+  def login(gatewayContext: GatewayContext): Message = {
+    val message = tryLogin(gatewayContext)
+    if(securityHooks != null) securityHooks.foreach(_.postLogin(gatewayContext))
+    message
+  }
+
+  protected def tryLogin(context: GatewayContext): Message
 
   def logout(gatewayContext: GatewayContext): Message = {
     GatewaySSOUtils.removeLoginUser(gatewayContext)
     if(GatewayConfiguration.ENABLE_SSO_LOGIN.getValue) SSOInterceptor.getSSOInterceptor.logout(gatewayContext)
-    if(resourceReleases != null) resourceReleases.foreach(_.release(gatewayContext))
+    if(securityHooks != null) securityHooks.foreach(_.preLogout(gatewayContext))
     "Logout successful(退出登录成功)！"
   }
 
-  def userInfo(gatewayContext: GatewayContext): Message
+  def userInfo(gatewayContext: GatewayContext): Message = {
+    "get user information succeed!".data("userName", GatewaySSOUtils.getLoginUsername(gatewayContext))
+  }
 
   def publicKey(gatewayContext: GatewayContext): Message = {
     val message = Message.ok("Gain success(获取成功)！").data("enable", SSOUtils.sslEnable)
@@ -89,7 +97,7 @@ abstract class AbstractUserRestful extends UserRestful {
 }
 abstract class UserPwdAbstractUserRestful extends AbstractUserRestful {
 
-  override def login(gatewayContext: GatewayContext): Message = {
+  override protected def tryLogin(gatewayContext: GatewayContext): Message = {
     val userNameArray = gatewayContext.getRequest.getQueryParams.get("userName")
     val passwordArray = gatewayContext.getRequest.getQueryParams.get("password")
     val (userName, password) = if(userNameArray != null && userNameArray.nonEmpty &&
@@ -102,15 +110,13 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful {
     if(userName == null || StringUtils.isBlank(userName.toString)) {
       Message.error("Username can not be empty(用户名不能为空)！")
     } else if(password == null || StringUtils.isBlank(password.toString)) {
-      Message.error("password can not be blank(密码不能为空)！")
+      Message.error("Password can not be blank(密码不能为空)！")
     } else {
       //warn: For easy to useing linkis,Admin skip login
       if(GatewayConfiguration.ADMIN_USER.getValue.equals(userName.toString) && userName.toString.equals(password.toString)){
           GatewaySSOUtils.setLoginUser(gatewayContext, userName.toString)
           "login successful(登录成功)！".data("userName", userName)
             .data("isAdmin", true)
-            .data("loginNum", 4)
-            .data("lastLoginTime", System.currentTimeMillis)
       } else {
         val lowerCaseUserName = userName.toString.toLowerCase
         val message = login(lowerCaseUserName, password.toString)

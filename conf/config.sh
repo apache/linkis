@@ -76,6 +76,12 @@ PYTHON_EM_PORT=12001
 PYTHON_ENTRANCE_PORT=12002
 
 
+### JDBC
+### This service is used to provide jdbc capability.
+JDBC_INSTALL_IP=127.0.0.1
+JDBC_ENTRANCE_PORT=9888
+
+
 
 ########################################################################################
 

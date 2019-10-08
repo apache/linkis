@@ -32,7 +32,7 @@ import scala.collection.JavaConversions._
 /**
   * created by cooperyang on 2019/5/23.
   */
-@DWSHttpMessageResult("/api/rest_j/v\\d+/filesystem/getDirFileTrees")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/publicservice/getDirFileTrees")
 class ResultSetListResult extends DWSResult with UserAction {
 
   @BeanProperty var dirFileTrees: util.Map[String, Object] = _

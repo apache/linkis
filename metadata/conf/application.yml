@@ -1,10 +1,10 @@
 server:
-  port: 9022  #该模块提供服务的端口（必须）
+  port: 9022
 spring:
   application:
-    name: cloud-datasource  #模块名，用于做高可用（必须）
+    name: cloud-datasource
 
-#指定eureka Server的地址，用于注册（必须）
+
 eureka:
   client:
     serviceUrl:
@@ -12,7 +12,7 @@ eureka:
   instance:
     metadata-map:
       test: wedatasphere
-#（必须）
+
 management:
   endpoints:
     web:

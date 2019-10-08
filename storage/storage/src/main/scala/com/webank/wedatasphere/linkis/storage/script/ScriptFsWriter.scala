@@ -20,8 +20,8 @@ import java.io.OutputStream
 
 import com.webank.wedatasphere.linkis.common.io.{FsPath, FsWriter, MetaData}
 import com.webank.wedatasphere.linkis.storage.LineRecord
-import com.webank.wedatasphere.linkis.storage.script.compaction.{DefaultCompaction, PYScriptCompaction, QLScriptCompaction}
-import com.webank.wedatasphere.linkis.storage.script.parser.{OtherScriptParser, PYScriptParser, QLScriptParser}
+import com.webank.wedatasphere.linkis.storage.script.compaction.{PYScriptCompaction, QLScriptCompaction, ScalaScriptCompaction}
+import com.webank.wedatasphere.linkis.storage.script.parser.{PYScriptParser, QLScriptParser, ScalaScriptParser}
 import com.webank.wedatasphere.linkis.storage.script.writer.StorageScriptFsWriter
 
 abstract class ScriptFsWriter extends FsWriter {
@@ -38,11 +38,11 @@ object ScriptFsWriter {
 
 
 object ParserFactory {
-  def listParsers(): Array[Parser] = Array(PYScriptParser(), QLScriptParser(),OtherScriptParser())
+  def listParsers(): Array[Parser] = Array(PYScriptParser(), QLScriptParser(),ScalaScriptParser())
 }
 
 object Compaction {
-  def listCompactions(): Array[Compaction] = Array(PYScriptCompaction(),QLScriptCompaction(),DefaultCompaction())
+  def listCompactions(): Array[Compaction] = Array(PYScriptCompaction(),QLScriptCompaction(),ScalaScriptCompaction())
 }
 
 trait Parser {
@@ -57,7 +57,7 @@ trait Parser {
 
 trait Compaction {
 
-  def prefisConf:String
+  def prefixConf:String
 
   def prefix: String
 

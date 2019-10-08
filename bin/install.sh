@@ -424,3 +424,19 @@ ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultS
 isSuccess "subsitution linkis.properties of $SERVERNAME"
 echo "<----------------$SERVERNAME:end------------------->"
 ##SparkEntrance install end
+
+
+##JDBCEntrance install
+PACKAGE_DIR=linkis/ujes/jdbc
+SERVERNAME=linkis-ujes-jdbc-entrance
+SERVER_PORT=$JDBC_ENTRANCE_PORT
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVERNAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+ssh $SERVER_IP "sed -i  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$HDFS_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVERNAME"
+echo "<----------------$SERVERNAME:end------------------->"
+##SparkEntrance install end

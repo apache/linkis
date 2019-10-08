@@ -14,12 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.security
+package com.webank.wedatasphere.linkis.gateway.springcloud.websocket
 
 import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
+import com.webank.wedatasphere.linkis.gateway.security.SecurityHook
+import org.springframework.stereotype.Component
 
-trait ResourceRelease {
+/**
+  * created by cooperyang on 2019/1/9.
+  */
+@Component
+class SpringCloudGatewayWebSocketSecurityHook extends SecurityHook {
+  override def preLogout(gatewayContext: GatewayContext): Unit = {
+    val inetAddress = gatewayContext.getRequest.getRemoteAddress
+    SpringCloudGatewayWebsocketUtils.removeGatewayWebSocketSessionConnection(inetAddress)
+  }
 
-  def release(gatewayContext: GatewayContext): Unit
-
+  override def postLogin(gatewayContext: GatewayContext): Unit = {}
 }

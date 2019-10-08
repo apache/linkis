@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.gateway.config
 
-import com.webank.wedatasphere.linkis.gateway.security.{LDAPUserRestful, ResourceRelease, SecurityFilter, UserRestful}
+import com.webank.wedatasphere.linkis.gateway.security.{LDAPUserRestful, SecurityHook, SecurityFilter, UserRestful}
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -49,9 +49,9 @@ class GatewaySpringConfiguration {
   @Bean(Array("userRestful"))
   @ConditionalOnMissingBean
   @Autowired(required = false)
-  def createUserRestful(resourceReleases: Array[ResourceRelease]): UserRestful = {
+  def createUserRestful(securityHooks: Array[SecurityHook]): UserRestful = {
     val userRestful = new LDAPUserRestful
-    if(resourceReleases != null) userRestful.setResourceReleases(resourceReleases)
+    if(securityHooks != null) userRestful.setSecurityHooks(securityHooks)
     userRestful
   }
 

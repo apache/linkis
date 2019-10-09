@@ -35,4 +35,8 @@ object RPCConfiguration {
   val BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX = CommonVars("wds.linkis.rpc.sender.asyn.consumer.freeTime.max", new TimeType("2m"))
   val BDP_RPC_SENDER_ASYN_QUEUE_CAPACITY = CommonVars("wds.linkis.rpc.sender.asyn.queue.size.max", 300)
 
+  val ENABLE_PUBLIC_SERVICE = CommonVars("wds.linkis.gateway.conf.enable.publicservice", true)
+  val PUBLIC_SERVICE_APPLICATION_NAME = CommonVars("wds.linkis.gateway.conf.publicservice.name", "publicservice")
+  val PUBLIC_SERVICE_LIST = CommonVars("wds.linkis.gateway.conf.publicservice.list", "query,jobhistory,application,configuration,filesystem,udf,variable").getValue.split(",")
+
 }

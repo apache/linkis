@@ -20,6 +20,7 @@ import java.util
 
 import com.webank.wedatasphere.linkis.DataWorkCloudApplication
 import com.webank.wedatasphere.linkis.common.ServiceInstance
+import com.webank.wedatasphere.linkis.rpc.conf.RPCConfiguration
 import com.webank.wedatasphere.linkis.rpc.sender.SpringMVCRPCSender
 
 import scala.concurrent.duration.Duration
@@ -69,6 +70,8 @@ object Sender {
   private val serviceInstanceToSenders = new util.HashMap[ServiceInstance, Sender]
   def getSender(applicationName: String): Sender = getSender(ServiceInstance(applicationName, null))
   def getSender(serviceInstance: ServiceInstance): Sender = {
+    if(RPCConfiguration.ENABLE_PUBLIC_SERVICE.getValue && RPCConfiguration.PUBLIC_SERVICE_LIST.contains(serviceInstance.getApplicationName))
+      serviceInstance.setApplicationName(RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue)
     if(!serviceInstanceToSenders.containsKey(serviceInstance)) serviceInstanceToSenders synchronized {
       if(!serviceInstanceToSenders.containsKey(serviceInstance))
         serviceInstanceToSenders.put(serviceInstance, new SpringMVCRPCSender(serviceInstance))

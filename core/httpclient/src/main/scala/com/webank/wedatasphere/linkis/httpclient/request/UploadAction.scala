@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Created by ${USER} on ${DATE}.
- */
-
 package com.webank.wedatasphere.linkis.httpclient.request
 
 import scala.tools.nsc.interpreter.InputStream
@@ -30,15 +26,20 @@ import java.util
 trait UploadAction extends UserAction {
 
   /**
-    * The file to be uploaded, the key is the file name, and the value is the file path.
-    * 需要上传的文件，key为文件名，value为文件路径
+    * The file to be uploaded, the key is the parameter name, and the value is the file path.
+    * 需要上传的文件，key为参数名，value为文件路径
     */
   val files: util.Map[String, String]
   /**
-    * The input stream that needs to be uploaded, the key is the file name, and the value is the input stream.
-    * 需要上传的输入流，key为文件名，value为输入流
+    * The inputStream that needs to be uploaded, the key is the parameter name, and the value is the input stream.
+    * 需要上传的输入流，key为参数名，value为输入流
     */
   def inputStreams: util.Map[String, InputStream] = new util.HashMap[String, InputStream]()
+  /**
+    * The inputStream that needs to be uploaded, the key is the parameter name, and the value is the fileName of inputStream.
+    * 需要上传的输入流，key为参数名，value为输入流的文件名
+    */
+  def inputStreamNames: util.Map[String, String] = new util.HashMap[String, String]()
   def user: Option[String] = Option(getUser)
 
 }

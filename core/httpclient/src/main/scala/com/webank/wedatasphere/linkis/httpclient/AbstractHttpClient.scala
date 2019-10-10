@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Created by ${USER} on ${DATE}.
- */
-
 package com.webank.wedatasphere.linkis.httpclient
 
 import java.io.{File, InputStream}
@@ -138,7 +134,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
     }
     var request = requestAction match {
       case upload: UploadAction =>
-        req.setContentType("multipart/form-data", Configuration.BDP_ENCODING.getValue).POST
+        req = req.setContentType("multipart/form-data", Configuration.BDP_ENCODING.getValue).POST
         if(upload.files != null && upload.files.nonEmpty) {
           val fs = upload.user.map(getFsByUser(_, new FsPath(upload.files.head._2)))
           upload.files.foreach { case (k, v) =>
@@ -157,7 +153,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
             val filePart = new FilePart(k, new PartSource{
               val length = v.available
               override def getLength: Long = length
-              override def getFileName: String = k
+              override def getFileName: String = upload.inputStreamNames.getOrDefault(k, k)
               override def createInputStream(): InputStream = v
             })
             req = req.addBodyPart(filePart)

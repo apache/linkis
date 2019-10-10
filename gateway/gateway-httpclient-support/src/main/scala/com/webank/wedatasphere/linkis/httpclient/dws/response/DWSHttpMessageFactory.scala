@@ -32,7 +32,9 @@ import scala.collection.JavaConversions._
   */
 object DWSHttpMessageFactory {
 
-  private val methodToHttpMessageClasses = new Reflections("com.webank").getTypesAnnotatedWith(classOf[DWSHttpMessageResult])
+  private val reflections = new Reflections("com.webank.wedatasphere", classOf[DWSHttpMessageResult].getClassLoader)
+
+  private val methodToHttpMessageClasses = reflections.getTypesAnnotatedWith(classOf[DWSHttpMessageResult])
     .filter(ClassUtils.isAssignable(_, classOf[Result])).map { c =>
     val httpMessageResult = c.getAnnotation(classOf[DWSHttpMessageResult])
     httpMessageResult.value() -> DWSHttpMessageResultInfo(httpMessageResult.value(), c)

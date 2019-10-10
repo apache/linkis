@@ -20,6 +20,7 @@ import com.webank.wedatasphere.linkis.DataWorkCloudApplication
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.gateway.http.{GatewayContext, GatewayRoute}
+import com.webank.wedatasphere.linkis.rpc.conf.RPCConfiguration
 import com.webank.wedatasphere.linkis.rpc.interceptor.ServiceInstanceUtils
 import com.webank.wedatasphere.linkis.server.Message
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
@@ -92,7 +93,9 @@ class DefaultGatewayParser(gatewayParsers: Array[GatewayParser]) extends Abstrac
         responseHeartbeat(gatewayContext)
       case COMMON_REGEX(version, serviceId) =>
         if(sendResponseWhenNotMatchVersion(gatewayContext, version)) return
-        gatewayContext.getGatewayRoute.setServiceInstance(ServiceInstance(serviceId, null))
+        val applicationName = if(RPCConfiguration.ENABLE_PUBLIC_SERVICE.getValue && RPCConfiguration.PUBLIC_SERVICE_LIST.contains(serviceId))
+          RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue else serviceId
+        gatewayContext.getGatewayRoute.setServiceInstance(ServiceInstance(applicationName, null))
       case p if p.startsWith("/dws/") =>
         //TODO add version support
         val params = gatewayContext.getGatewayRoute.getParams

@@ -70,21 +70,6 @@ source ${workDir}/conf/config.sh
 source ${workDir}/conf/db.sh
 isSuccess "load config"
 
-echo "create hdfs  directory and local directory"
-if [ "$WORKSPACE_USER_ROOT_PATH" != "" ]
-then
-  localRootDir=$WORKSPACE_USER_ROOT_PATH
-  if [[ $WORKSPACE_USER_ROOT_PATH == file://* ]]
-  then
-    localRootDir=${WORKSPACE_USER_ROOT_PATH#file://}
-  fi
-  mkdir $localRootDir/$deployUser
-fi
-
-if [ "$HDFS_USER_ROOT_PATH" != "" ]
-then
-  hdfs dfs -mkdir $HDFS_USER_ROOT_PATH/$deployUser
-fi
 
 local_host="`hostname --fqdn`"
 
@@ -138,6 +123,24 @@ else
   echo "no choice,exit!"
   exit 1
 fi
+
+
+echo "create hdfs  directory and local directory"
+if [ "$WORKSPACE_USER_ROOT_PATH" != "" ]
+then
+  localRootDir=$WORKSPACE_USER_ROOT_PATH
+  if [[ $WORKSPACE_USER_ROOT_PATH == file://* ]]
+  then
+    localRootDir=${WORKSPACE_USER_ROOT_PATH#file://}
+  fi
+  mkdir $localRootDir/$deployUser
+fi
+isSuccess "create  local directory"
+if [ "$HDFS_USER_ROOT_PATH" != "" ]
+then
+  hdfs dfs -mkdir $HDFS_USER_ROOT_PATH/$deployUser
+fi
+isSuccess "create  hdfs directory"
 
 ##stop server
 #echo "step2,stop server"

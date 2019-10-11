@@ -63,7 +63,6 @@
       <includes>
         <include>**/*</include>
       </includes>
-      <lineEnding>unix</lineEnding>
     </fileSet>
 
     <!--spark-->

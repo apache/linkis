@@ -9,9 +9,9 @@ LINKIS_INSTALL_HOME=/appcom/Install/Linkis        #Must provided
 
 ### Specifies the user workspace, which is used to store the user's script files and log files.
 ### Generally local directory
-WORKSPACE_USER_ROOT_PATH=file:///tmp/linkis/
+WORKSPACE_USER_ROOT_PATH=file:///tmp/linkis/ ##file:// required
 ### User's root hdfs path
-HDFS_USER_ROOT_PATH=hdfs:///tmp/linkis
+HDFS_USER_ROOT_PATH=hdfs:///tmp/linkis ##hdfs:// required
 
 ### Path to store job ResultSet：file or hdfs path
 RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis

@@ -70,8 +70,8 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     /**
      * The execute function handles the request submitted by the user to execute the task, and the execution ID is returned to the user.
      * execute函数处理的是用户提交执行任务的请求，返回给用户的是执行ID
-     * @param json Incoming key-value pair(传入的键值对)
-     * @return Repsonse
+     * json Incoming key-value pair(传入的键值对)
+     * Repsonse
      */
     @Override
     @POST

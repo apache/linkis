@@ -40,7 +40,7 @@ else
 fi
 }
 
-sudo yum install dos2unix > /dev/null 2>&1
+sudo yum -y install dos2unix
 
 
 local_host="`hostname --fqdn`"

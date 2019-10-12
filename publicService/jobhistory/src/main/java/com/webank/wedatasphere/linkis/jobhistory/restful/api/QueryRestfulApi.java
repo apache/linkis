@@ -42,8 +42,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author johnnwang
- * @date 2018/10/19
+ * johnnwang
+ * 018/10/19
  */
 @Component
 @Path("/publicservice")

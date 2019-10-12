@@ -77,8 +77,8 @@ import java.util.Map;
 
 
 /**
- * @author johnnwang
- * @date 2018/10/25
+ *  johnnwang
+ *  2018/10/25
  */
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes({MediaType.APPLICATION_JSON, MediaType.MULTIPART_FORM_DATA})

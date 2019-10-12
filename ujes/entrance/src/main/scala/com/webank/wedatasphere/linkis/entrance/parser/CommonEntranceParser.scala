@@ -38,8 +38,8 @@ class CommonEntranceParser extends AbstractEntranceParser{
   private val logger = LoggerFactory.getLogger(classOf[CommonEntranceParser])
   /**
     * parse params to be a task
-    * @param params json data from frontend
-    * @return
+    * params json data from frontend
+    *
     */
   override def parseToTask(params: util.Map[String, Any]): Task = {
     val task = new RequestPersistTask

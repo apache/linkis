@@ -20,13 +20,7 @@ package com.webank.wedatasphere.linkis.entrance.exception;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 
-/**
- * @Title: EntranceFileNotFoundException
- * @ProjectName linkis-Spark
- * @author georgeqiao
- * @date 2018/10/28 10:47
- * @Description: TODO
- */
+
 public class EntranceFileNotFoundException extends ErrorException {
     public EntranceFileNotFoundException(int errCode, String message){
         super(errCode, message);

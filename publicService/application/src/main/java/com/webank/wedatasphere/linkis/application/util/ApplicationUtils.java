@@ -97,11 +97,11 @@ public class ApplicationUtils {
     }
 
     public static void createExampleFile(String creator) throws IOException, NoSuchFieldException, IllegalAccessException {
-        createExampleFile(ApplicationScalaConfiguration.INIT_EXAMPLE_SQL_NAME().getValue(),creator,"show databases;");
+       /* createExampleFile(ApplicationScalaConfiguration.INIT_EXAMPLE_SQL_NAME().getValue(),creator,"show databases;");
         createExampleFile(ApplicationScalaConfiguration.INIT_EXAMPLE_SCALA_NAME().getValue(),creator,"print(\"hello dwc\")");
         createExampleFile(ApplicationScalaConfiguration.INIT_EXAMPLE_SPY_NAME().getValue(),creator,"print(\"hello dwc\")");
         createExampleFile(ApplicationScalaConfiguration.INIT_EXAMPLE_HQL_NAME().getValue(),creator,"show databases;");
-        createExampleFile(ApplicationScalaConfiguration.INIT_EXAMPLE_PYTHON_NAME().getValue(),creator,"print(\"hello dwc\")");
+        createExampleFile(ApplicationScalaConfiguration.INIT_EXAMPLE_PYTHON_NAME().getValue(),creator,"print(\"hello dwc\")");*/
     }
 
     public static  void createExampleFile(String fileName,String creator,String fileContent) throws IOException, NoSuchFieldException, IllegalAccessException {

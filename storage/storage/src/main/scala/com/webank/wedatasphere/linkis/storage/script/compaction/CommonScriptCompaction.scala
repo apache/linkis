@@ -23,13 +23,10 @@ import com.webank.wedatasphere.linkis.storage.script.{Compaction, Variable}
   */
 abstract class CommonScriptCompaction extends Compaction {
 
-  override def prefisConf: String = "conf@set"
-
   override def compact(variable: Variable): String = {
     variable.sortParent match {
       case "variable" => prefix + " " + variable.key + "=" + variable.value
-      case "configuration" =>prefisConf + " " + variable.sort + " " + variable.key + "=" + variable.value
-      //todo Throw an exception(抛出异常)
+      case _ =>prefixConf + " " + variable.sortParent + " " + variable.sort + " " + variable.key + "=" + variable.value
     }
   }
 }

@@ -17,7 +17,7 @@
 package com.webank.wedatasphere.linkis.storage.script.parser
 
 import com.webank.wedatasphere.linkis.storage.exception.StorageErrorException
-import com.webank.wedatasphere.linkis.storage.script.{Parser, Variable}
+import com.webank.wedatasphere.linkis.storage.script.{Parser, Variable, VariableParser}
 
 
 /**
@@ -25,16 +25,23 @@ import com.webank.wedatasphere.linkis.storage.script.{Parser, Variable}
   */
 abstract class CommonScriptParser extends Parser {
 
-  override def prefixConf: String = "conf@set"
-
   @scala.throws[StorageErrorException]
   def parse(line: String): Variable = {
     val variableReg = ("\\s*" + prefix + "\\s*(.+)\\s*" + "=" + "\\s*(.+)\\s*").r
-    val configReg = ("\\s*" + prefixConf + "\\s*(.+)\\s*(.+)\\s*" + "=" + "\\s*(.+)\\s*").r
     line match {
-      case variableReg(key, value) => new Variable("variable", null, key.trim, value.trim)
-      case configReg(sort,key,value) => new Variable("configuration",sort.trim,key.trim,value.trim)
-      case _ => throw new StorageErrorException(65000, "Invalid custom parameter(不合法的自定义参数)")
+      case variableReg(key, value) => Variable(VariableParser.VARIABLE, null, key.trim, value.trim)
+      case _ => {
+        val split = line.split("=")
+        if (split.length != 2) throw new StorageErrorException(65000, "不合法的自定义参数")
+        val value = split(1).trim
+        val subSplit = split(0).split(" ")
+        if (subSplit.filter(_ != "").size != 4) throw new StorageErrorException(65000, "不合法的自定义参数")
+        if(!subSplit.filter(_ != "")(0).equals(prefixConf))throw new StorageErrorException(65000, "不合法的自定义参数")
+        val sortParent = subSplit.filter(_ != "")(1).trim
+        val sort = subSplit.filter(_ != "")(2).trim
+        val key = subSplit.filter(_ != "")(3).trim
+        Variable(sortParent, sort, key,value)
+      }
     }
   }
 }

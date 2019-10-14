@@ -25,10 +25,12 @@ class PYScriptParser private extends CommonScriptParser {
 
   override def belongTo(suffix: String): Boolean = {
     suffix match {
-      case "python"|"py" => true
+      case "python"|"py"|"sh" => true
       case _ => false
     }
   }
+
+  override def prefixConf: String = "#conf@set"
 }
 
 object PYScriptParser {

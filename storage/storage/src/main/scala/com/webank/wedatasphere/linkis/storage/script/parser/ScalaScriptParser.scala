@@ -14,21 +14,27 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.script.compaction
+package com.webank.wedatasphere.linkis.storage.script.parser
 
 /**
-  * Created by johnnwang on 2019/2/25.
+  * Created by johnnwang on 2018/11/7.
   */
-class DefaultCompaction private extends CommonScriptCompaction{
-  override def prefix: String = "!default@set"
+class ScalaScriptParser private extends CommonScriptParser {
+  //todo To be determined(待定)
+  override def prefix: String = "//@set"
 
-  override def belongTo(suffix: String): Boolean = suffix match {
-    case "r" | "out" |"scala" => true
-    case _ => false
+  override def belongTo(suffix: String): Boolean = {
+    suffix match {
+      case "scala" => true
+      case _ => false
+    }
   }
-}
-object DefaultCompaction{
-  private val compaction: DefaultCompaction = new DefaultCompaction
 
-  def apply(): CommonScriptCompaction = compaction
+  override def prefixConf: String = "//conf@set"
+}
+
+object ScalaScriptParser {
+  val otherScriptParser: ScalaScriptParser = new ScalaScriptParser
+
+  def apply(): CommonScriptParser = otherScriptParser
 }

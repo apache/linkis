@@ -30,6 +30,8 @@ class QLScriptParser private extends CommonScriptParser {
       case _ => false
     }
   }
+
+  override def prefixConf: String = "--conf@set"
 }
 
 object QLScriptParser {

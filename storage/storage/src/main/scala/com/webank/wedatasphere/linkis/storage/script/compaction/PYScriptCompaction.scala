@@ -29,6 +29,8 @@ class PYScriptCompaction private extends CommonScriptCompaction {
   }
 
   override def prefix: String = "#@set"
+
+  override def prefixConf: String = "#conf@set"
 }
 
 object PYScriptCompaction {

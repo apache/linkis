@@ -94,6 +94,8 @@
         <module>ujes/definedEngines/pipeline/enginemanager</module>
         <module>ujes/definedEngines/pipeline/entrance</module>
         <module>ujes/definedEngines/jdbc/entrance</module>
+        <module>ujes/definedEngines/mlsql/entrance</module>
+        
         <module>gateway/core</module>
         <module>gateway/springcloudgateway</module>
         <module>gateway/gateway-ujes-support</module>

@@ -237,6 +237,21 @@ echo "<-------------------------------->"
 
 sleep 3
 
+#MLSQLEntrance
+echo "<-------------------------------->"
+echo "Begin to stop MLSQL Entrance"
+MLSQL_ENTRANCE_NAME="ujes-mlsql-entrance"
+MLSQL_ENTRANCE_BIN=${LINKIS_INSTALL_HOME}/${APP_PREFIX}${MLSQL_ENTRANCE_NAME}/bin
+MLSQL_ENTRANCE_START_CMD="if [ -d ${MLSQL_ENTRANCE_BIN} ];then cd ${MLSQL_ENTRANCE_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh stop-mlsqlentrance.sh > /dev/null;else echo 'WARNING:MLSQL Entrance will not start';fi"
+if [ -n "${MLSQL_INSTALL_IP}" ];then
+    ssh ${MLSQL_INSTALL_IP} "${MLSQL_ENTRANCE_START_CMD}"
+else
+    ssh ${local_host} "${MLSQL_ENTRANCE_START_CMD}"
+fi
+echo "End to stop MLSQL Entrance"
+echo "<-------------------------------->"
+
+sleep 3
 
 ##PipelineEntrance
 #echo "Pipeline Entrance is Stoping"

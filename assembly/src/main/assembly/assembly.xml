@@ -160,6 +160,17 @@
       </includes>
     </fileSet>
 
+    <!--mlsql-->
+    <fileSet>
+      <directory>
+        ${project.parent.basedir}/ujes/definedEngines/mlsql/entrance/target/
+      </directory>
+      <outputDirectory>share/linkis/ujes/mlsql</outputDirectory>
+      <includes>
+        <include>*.zip</include>
+      </includes>
+    </fileSet>
+
     <!--resourcemanager-->
     <fileSet>
       <directory>

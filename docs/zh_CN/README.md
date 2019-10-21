@@ -101,17 +101,20 @@ Linkis跟Apache Livy和Apache Zeppelin Interpreter的定位不一样，但是由
 - 用户可以配置引擎的启动参数
 - 用户可以设置变量
 
-### 2. 对外接口，提供JDBC通用接口
+### 2. 支持标签功能
 
-丰富Linkis的对外接口，外部用户可以通过JDBC的方式，访问Linkis。
+- 支持给EngineManager打标签
+- 启动引擎时，支持为引擎打标签
+- 支持通过标签访问目标引擎
 
-### 3. 底层的计算存储引擎，新增对JDBC的支持
+### 3. AppGovernance应用治理实现
 
-实现一个全新的JDBC引擎，底层支持直接对接MySQL、TiDB等。
+- 系统级、用户级应用全生命周期管理，包括离线批量、交互式查询和实时流式应用
+- 为离线和交互式应用提供复用能力和智能切换能力
+- 智能限流、应用智能保护
 
-### 4. 适配Spark2.2以上的版本
+### 4. 支持Flink和Spark Structured Streaming
 
-适配Spark2.2以上的版本，支持Spark现有的所有版本
 
 <br>
 

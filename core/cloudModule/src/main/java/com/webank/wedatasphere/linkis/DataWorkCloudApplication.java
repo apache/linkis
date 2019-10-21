@@ -32,7 +32,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.boot.web.embedded.jetty.JettyServerCustomizer;
@@ -61,7 +60,6 @@ import java.util.EnumSet;
 /**
  * Created by enjoyyin on 2018/8/6.
  */
-@SpringBootApplication
 @EnableDiscoveryClient
 @RefreshScope
 @ComponentScan(basePackages = "com.webank.wedatasphere.linkis",
@@ -80,6 +78,7 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
         RuntimeDelegate.setInstance(new org.glassfish.jersey.internal.RuntimeDelegateImpl());
         final SpringApplication application = new SpringApplication(DataWorkCloudApplication.class);
         application.addListeners(new ApplicationListener<ApplicationPreparedEvent>(){
+            @Override
             public void onApplicationEvent(ApplicationPreparedEvent applicationPreparedEvent) {
                 logger.info("add config from config server...");
                 if(applicationContext == null) {
@@ -91,6 +90,7 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
             }
         });
         application.addListeners(new ApplicationListener<RefreshScopeRefreshedEvent>() {
+            @Override
             public void onApplicationEvent(RefreshScopeRefreshedEvent applicationEvent) {
                 logger.info("refresh config from config server...");
                 updateRemoteConfig();
@@ -172,8 +172,10 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
     @Bean
     public WebServerFactoryCustomizer<JettyServletWebServerFactory> jettyFactoryCustomizer() {
         return new WebServerFactoryCustomizer<JettyServletWebServerFactory>() {
+            @Override
             public void customize(JettyServletWebServerFactory jettyServletWebServerFactory) {
                 jettyServletWebServerFactory.addServerCustomizers(new JettyServerCustomizer() {
+                    @Override
                     public void customize(Server server) {
                         Handler[] childHandlersByClass = server.getChildHandlersByClass(WebAppContext.class);
                         final WebAppContext webApp = (WebAppContext) childHandlersByClass[0];

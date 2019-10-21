@@ -30,11 +30,11 @@ import com.webank.wedatasphere.linkis.udf.utils.UdfConfiguration;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,7 +55,7 @@ import static com.webank.wedatasphere.linkis.udf.utils.ConstantVar.UDF_JAR;
 @Service
 public class UDFServiceImpl implements UDFService {
 
-    private static final Logger logger = Logger.getLogger(UDFServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(UDFServiceImpl.class);
 
     Map<String, Collection<Integer>> categoryToCodes = new HashedMap();
     {
@@ -107,7 +107,7 @@ public class UDFServiceImpl implements UDFService {
                 IOUtils.closeQuietly(remoteStream);
             }
         }catch (IOException e){
-            logger.error(e);
+            logger.error(e.getMessage());
             throw new UDFException("Verify that there is a problem with the UDF jar package(校验UDF jar包存在问题)：" + e.getMessage());
         }
 //        File hiveDependency = new File(UdfConfiguration.UDF_HIVE_EXEC_PATH().getValue());

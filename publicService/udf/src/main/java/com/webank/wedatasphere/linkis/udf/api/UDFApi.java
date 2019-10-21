@@ -32,7 +32,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -55,7 +55,7 @@ import java.util.*;
 @Component
 public class UDFApi {
 
-    private static final Logger logger = Logger.getLogger(UDFApi.class);
+    private static final Logger logger =LoggerFactory.getLogger(UDFApi.class);
     private static final Set<String> specialTypes = Sets.newHashSet("bdp", "sys", "share");
 
     @Autowired

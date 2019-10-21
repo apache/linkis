@@ -68,7 +68,7 @@ object YarnUtil extends Logging{
           info(s"the first, use $rm_web_address to ensure the right rm_web_address.")
         }
       }
-      if(StringUtils.isEmpty(this.rm_web_address)){
+      if(StringUtils.isEmpty(this.rm_web_address)){         
         val yarnWebUrl = yarnConf.get("yarn.resourcemanager.webapp.address")
         if(StringUtils.isEmpty(yarnWebUrl)) {
             val yarnHttps = yarnConf.get("yarn.resourcemanager.webapp.https.address")

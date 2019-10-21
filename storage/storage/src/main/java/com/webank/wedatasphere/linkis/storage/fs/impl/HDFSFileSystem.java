@@ -17,10 +17,7 @@
 package com.webank.wedatasphere.linkis.storage.fs.impl;
 
 import com.webank.wedatasphere.linkis.common.io.FsPath;
-import com.webank.wedatasphere.linkis.common.io.FsReader;
-import com.webank.wedatasphere.linkis.common.io.FsWriter;
 import com.webank.wedatasphere.linkis.common.utils.HDFSUtils;
-import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.storage.domain.FsPathListWithError;
 import com.webank.wedatasphere.linkis.storage.fs.FileSystem;
 import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration;
@@ -40,7 +37,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -169,6 +165,7 @@ public class HDFSFileSystem extends FileSystem {
      * FS interface method start
      */
 
+    @Override
     public void init(Map<String, String> properties) throws IOException {
         if (MapUtils.isNotEmpty(properties) && properties.containsKey(StorageConfiguration.PROXY_USER().key())) {
             user = StorageConfiguration.PROXY_USER().getValue(properties);
@@ -177,7 +174,6 @@ public class HDFSFileSystem extends FileSystem {
         if (user == null) {
             throw new IOException("User cannot be empty(用户不能为空)");
         }
-
         conf = HDFSUtils.getConfiguration(user);
 
         if (MapUtils.isNotEmpty(properties)) {
@@ -197,20 +193,24 @@ public class HDFSFileSystem extends FileSystem {
         }
     }
 
+    @Override
     public String fsName() {
         return "hdfs";
     }
 
 
+    @Override
     public String rootUserName() {
         return StorageConfiguration.HDFS_ROOT_USER().getValue();
     }
 
 
+    @Override
     public FsPath get(String dest) throws IOException {
         return fillStorageFile(new FsPath(dest), fs.getFileStatus(new Path(dest)));
     }
 
+    @Override
     public InputStream read(FsPath dest) throws IOException {
         if (!canRead(dest)) {
             throw new IOException("You have not permission to access path " + dest.getPath());
@@ -218,6 +218,7 @@ public class HDFSFileSystem extends FileSystem {
         return fs.open(new Path(dest.getPath()));
     }
 
+    @Override
     public OutputStream write(FsPath dest, boolean overwrite) throws IOException {
         String path = dest.getPath();
         if (!exists(dest)) {
@@ -236,13 +237,14 @@ public class HDFSFileSystem extends FileSystem {
         }
     }
 
+    @Override
     public boolean create(String dest) throws IOException {
         if (!canExecute(getParentPath(dest))) {
             throw new IOException("You have not permission to access path " + dest);
         }
         return fs.createNewFile(new Path(dest));
     }
-
+    @Override
     public List<FsPath> list(FsPath path) throws IOException {
         FileStatus[] stat = fs.listStatus(new Path(path.getPath()));
         List<FsPath> fsPaths = new ArrayList<FsPath>();
@@ -251,19 +253,19 @@ public class HDFSFileSystem extends FileSystem {
         }
         return fsPaths;
     }
-
+    @Override
     public boolean canRead(FsPath dest) throws IOException {
         return canAccess(dest, FsAction.READ);
     }
-
+    @Override
     public boolean canWrite(FsPath dest) throws IOException {
         return canAccess(dest, FsAction.WRITE);
     }
-
+    @Override
     public boolean exists(FsPath dest) throws IOException {
         return fs.exists(new Path(dest.getPath()));
     }
-
+    @Override
     public boolean delete(FsPath dest) throws IOException {
         String path = dest.getPath();
         if (!isOwner(path)) {
@@ -271,14 +273,14 @@ public class HDFSFileSystem extends FileSystem {
         }
         return fs.delete(new Path(path), true);
     }
-
+    @Override
     public boolean renameTo(FsPath oldDest, FsPath newDest) throws IOException {
         if (!isOwner(oldDest.getPath())) {
             throw new IOException("You have not permission to rename path " + oldDest.getPath());
         }
         return fs.rename(new Path(oldDest.getPath()), new Path(newDest.getPath()));
     }
-
+    @Override
     public void close() throws IOException {
         fs.close();
     }

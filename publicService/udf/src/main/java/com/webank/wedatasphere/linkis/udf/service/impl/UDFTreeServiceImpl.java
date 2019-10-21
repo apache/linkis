@@ -24,7 +24,8 @@ import com.webank.wedatasphere.linkis.udf.excepiton.UDFException;
 import com.webank.wedatasphere.linkis.udf.service.UDFService;
 import com.webank.wedatasphere.linkis.udf.service.UDFTreeService;
 import org.apache.commons.collections.map.HashedMap;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ import java.util.*;
 @Service
 public class UDFTreeServiceImpl implements UDFTreeService {
 
-    private static final Logger logger = Logger.getLogger(UDFTreeServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(UDFTreeServiceImpl.class);
 
     @Autowired
     private UDFTreeDao udfTreeDao;

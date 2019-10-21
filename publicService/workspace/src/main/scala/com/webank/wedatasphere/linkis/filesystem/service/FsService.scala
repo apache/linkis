@@ -43,6 +43,7 @@ class FsService {
     if (FsCache.fsInfo.get(user) != null) {
       //The outer layer does not add more judgments, it is also ok, it is to lock the user's fs group.(外层不加多个判断也ok，都是要锁用户的fs组)
       FsCache.fsInfo.get(user) synchronized {
+        System.out.println(fsPath.getFsType)
         if (FsCache.fsInfo.get(user).filter(_.fs.fsName().equals(fsPath.getFsType)).isEmpty) {
           FsCache.fsInfo.get(user) += produceFSInfo(user, fsPath)
         } else {

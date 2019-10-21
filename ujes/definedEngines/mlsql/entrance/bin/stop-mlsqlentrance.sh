@@ -34,14 +34,14 @@ function wait_for_DWS_ENGINE_MANAGER_to_die() {
 }
 
 if [[ ! -f "${DWS_ENGINE_MANAGER_PID}" ]]; then
-    echo "JDBC Entrance is not running"
+    echo "MLSQL Entrance is not running"
 else
     pid=$(cat ${DWS_ENGINE_MANAGER_PID})
     if [[ -z "${pid}" ]]; then
-      echo "JDBC Entrance is not running"
+      echo "MLSQL Entrance is not running"
     else
       wait_for_DWS_ENGINE_MANAGER_to_die $pid 40
       $(rm -f ${DWS_ENGINE_MANAGER_PID})
-      echo "JDBC Entrance is stopped."
+      echo "MLSQL Entrance is stopped."
     fi
 fi

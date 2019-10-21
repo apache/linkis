@@ -25,7 +25,7 @@ class MLSQLEntranceJob extends EntranceExecutionJob with Logging {
     }
   }
 
-  //use executor execute jdbc code (使用executor执行jdbc脚本代码)
+  //use executor execute MLSQL code (使用executor执行MLSQL脚本代码)
   override def run(): Unit = {
     if (!isScheduled) return
     startTime = System.currentTimeMillis

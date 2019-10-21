@@ -190,6 +190,7 @@ public class HDFSFileSystem extends FileSystem {
 
         }
         /*conf.set("fs.hdfs.impl.disable.cache","true");*/
+        conf.set("fs.hdfs.impl","org.apache.hadoop.hdfs.DistributedFileSystem");
         fs = HDFSUtils.getHDFSUserFileSystem(user, conf);
         if (fs == null) {
             throw new IOException("init HDFS FileSystem failed!");

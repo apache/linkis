@@ -31,7 +31,7 @@ class JobLogAction private() extends GetAction with UJESJobAction {
 
   private var execId: String = _
 
-  override def suffixURLs: Array[String] = Array("entrance", execId, "progress")
+  override def suffixURLs: Array[String] = Array("entrance", execId, "log")
 
 }
 

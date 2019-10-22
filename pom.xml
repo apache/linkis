@@ -74,7 +74,7 @@
     </modules>
 
     <properties>
-        <hadoop.version>2.7.2</hadoop.version>
+        <hadoop.version>3.1.1</hadoop.version>
         <hive.version>1.2.1</hive.version>
         <spring.eureka.version>1.4.4.RELEASE</spring.eureka.version>
         <spring.boot.version>2.0.3.RELEASE</spring.boot.version>

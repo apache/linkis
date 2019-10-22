@@ -74,15 +74,15 @@
                 <exclude>com.sun.jersey.contribs:jersey-apache-client4:jar</exclude>
                 <exclude>com.webank.wedatasphere.linkis:linkis-common:jar</exclude>
                 <exclude>commons-beanutils:commons-beanutils:jar</exclude>
-                <exclude>commons-beanutils:commons-beanutils-core:jar</exclude>
+                <!--<exclude>commons-beanutils:commons-beanutils-core:jar</exclude>-->
                 <exclude>commons-cli:commons-cli:jar</exclude>
                 <exclude>commons-codec:commons-codec:jar</exclude>
                 <exclude>commons-collections:commons-collections:jar</exclude>
                 <exclude>commons-configuration:commons-configuration:jar</exclude>
                 <exclude>commons-daemon:commons-daemon:jar</exclude>
-               <!--  <exclude>commons-dbcp:commons-dbcp:jar</exclude> -->
-                <exclude>commons-digester:commons-digester:jar</exclude>
-                <exclude>commons-httpclient:commons-httpclient:jar</exclude>
+                <!--  <exclude>commons-dbcp:commons-dbcp:jar</exclude> -->
+                <!--<exclude>commons-digester:commons-digester:jar</exclude>-->
+                <!--<exclude>commons-httpclient:commons-httpclient:jar</exclude>-->
                 <exclude>commons-io:commons-io:jar</exclude>
                 <exclude>commons-lang:commons-lang:jar</exclude>
                 <!-- <exclude>commons-pool:commons-pool:jar</exclude> -->
@@ -110,20 +110,20 @@
                 <exclude>org.apache.curator:curator-client:jar</exclude>
                 <exclude>org.apache.curator:curator-framework:jar</exclude>
                 <exclude>org.apache.curator:curator-recipes:jar</exclude>
-                <exclude>org.apache.directory.api:api-asn1-api:jar</exclude>
-                <exclude>org.apache.directory.api:api-util:jar</exclude>
-                <exclude>org.apache.directory.server:apacheds-i18n:jar</exclude>
-                <exclude>org.apache.directory.server:apacheds-kerberos-codec:jar</exclude>
+                <!--<exclude>org.apache.directory.api:api-asn1-api:jar</exclude>-->
+                <!--<exclude>org.apache.directory.api:api-util:jar</exclude>-->
+                <!--<exclude>org.apache.directory.server:apacheds-i18n:jar</exclude>-->
+                <!--<exclude>org.apache.directory.server:apacheds-kerberos-codec:jar</exclude>-->
                 <exclude>org.apache.hadoop:hadoop-auth:jar</exclude>
                 <exclude>org.apache.hadoop:hadoop-common:jar</exclude>
                 <exclude>org.apache.hadoop:hadoop-hdfs:jar</exclude>
-                <exclude>org.apache.htrace:htrace-core:jar</exclude>
+                <!--<exclude>org.apache.htrace:htrace-core:jar</exclude>-->
                 <exclude>org.apache.logging.log4j:log4j-api:jar</exclude>
                 <exclude>org.apache.zookeeper:zookeeper:jar</exclude>
                 <exclude>org.aspectj:aspectjweaver:jar</exclude>
                 <exclude>org.bouncycastle:bcpkix-jdk15on:jar</exclude>
                 <exclude>org.bouncycastle:bcprov-jdk15on:jar</exclude>
-                <exclude>org.codehaus.jackson:jackson-core-asl:jar</exclude>
+                <!--<exclude>org.codehaus.jackson:jackson-core-asl:jar</exclude>-->
                 <exclude>org.eclipse.jetty:jetty-continuation:jar</exclude>
                 <exclude>org.eclipse.jetty:jetty-http:jar</exclude>
                 <exclude>org.eclipse.jetty:jetty-io:jar</exclude>
@@ -136,19 +136,19 @@
                 <exclude>org.eclipse.jetty:jetty-webapp:jar</exclude>
                 <exclude>org.eclipse.jetty:jetty-xml:jar</exclude>
                 <exclude>org.fusesource.leveldbjni:leveldbjni-all:jar</exclude>
-               <!--  <exclude>org.glassfish.hk2.external:javax.inject:jar</exclude>
-                <exclude>org.glassfish.hk2:hk2-utils:jar</exclude>
-                <exclude>org.glassfish.hk2:osgi-resource-locator:jar</exclude>
-                <exclude>org.glassfish.jersey.containers:jersey-container-servlet:jar</exclude>
-                <exclude>org.glassfish.jersey.core:jersey-client:jar</exclude>
-                <exclude>org.glassfish.jersey.core:jersey-server:jar</exclude>
-                <exclude>org.glassfish.jersey.media:jersey-media-jaxb:jar</exclude> -->
+                <!--  <exclude>org.glassfish.hk2.external:javax.inject:jar</exclude>
+                 <exclude>org.glassfish.hk2:hk2-utils:jar</exclude>
+                 <exclude>org.glassfish.hk2:osgi-resource-locator:jar</exclude>
+                 <exclude>org.glassfish.jersey.containers:jersey-container-servlet:jar</exclude>
+                 <exclude>org.glassfish.jersey.core:jersey-client:jar</exclude>
+                 <exclude>org.glassfish.jersey.core:jersey-server:jar</exclude>
+                 <exclude>org.glassfish.jersey.media:jersey-media-jaxb:jar</exclude> -->
                 <exclude>org.json4s:json4s-ast_2.11:jar</exclude>
                 <exclude>org.json4s:json4s-core_2.11:jar</exclude>
                 <exclude>org.json4s:json4s-jackson_2.11:jar</exclude>
                 <exclude>org.jsoup:jsoup:jar</exclude>
-                <exclude>org.mortbay.jetty:jetty:jar</exclude>
-                <exclude>org.mortbay.jetty:jetty-util:jar</exclude>
+                <!--<exclude>org.mortbay.jetty:jetty:jar</exclude>-->
+                <!--<exclude>org.mortbay.jetty:jetty-util:jar</exclude>-->
                 <exclude>org.scala-lang.modules:scala-parser-combinators_2.11:jar</exclude>
                 <exclude>org.scala-lang:scala-compiler:jar</exclude>
                 <exclude>org.scala-lang:scala-library:jar</exclude>
@@ -177,8 +177,8 @@
                 <exclude>org.springframework:spring-web:jar</exclude>
                 <exclude>org.tukaani:xz:jar</exclude>
                 <exclude>org.yaml:snakeyaml:jar</exclude>
-                <exclude>xerces:xercesImpl:jar</exclude>
-                <exclude>xmlenc:xmlenc:jar</exclude>
+                <!--<exclude>xerces:xercesImpl:jar</exclude>-->
+                <!--<exclude>xmlenc:xmlenc:jar</exclude>-->
             </excludes>
         </dependencySet>
     </dependencySets>

@@ -111,15 +111,15 @@
                 <exclude>com.webank.wedatasphere.linkis:linkis-common:jar</exclude>
                 <exclude>com.webank.wedatasphere.linkis:linkis-module:jar</exclude>
                 <exclude>commons-beanutils:commons-beanutils:jar</exclude>
-                <exclude>commons-beanutils:commons-beanutils-core:jar</exclude>
+                <!--<exclude>commons-beanutils:commons-beanutils-core:jar</exclude>-->
                 <exclude>commons-cli:commons-cli:jar</exclude>
                 <exclude>commons-codec:commons-codec:jar</exclude>
                 <exclude>commons-collections:commons-collections:jar</exclude>
                 <exclude>commons-configuration:commons-configuration:jar</exclude>
                 <exclude>commons-daemon:commons-daemon:jar</exclude>
                 <exclude>commons-dbcp:commons-dbcp:jar</exclude>
-                <exclude>commons-digester:commons-digester:jar</exclude>
-                <exclude>commons-httpclient:commons-httpclient:jar</exclude>
+                <!--<exclude>commons-digester:commons-digester:jar</exclude>-->
+                <!--<exclude>commons-httpclient:commons-httpclient:jar</exclude>-->
                 <exclude>commons-io:commons-io:jar</exclude>
                 <exclude>commons-jxpath:commons-jxpath:jar</exclude>
                 <exclude>commons-lang:commons-lang:jar</exclude>
@@ -163,15 +163,15 @@
                 <exclude>org.apache.curator:curator-client:jar</exclude>
                 <exclude>org.apache.curator:curator-framework:jar</exclude>
                 <exclude>org.apache.curator:curator-recipes:jar</exclude>
-                <exclude>org.apache.directory.api:api-asn1-api:jar</exclude>
-                <exclude>org.apache.directory.api:api-util:jar</exclude>
-                <exclude>org.apache.directory.server:apacheds-i18n:jar</exclude>
-                <exclude>org.apache.directory.server:apacheds-kerberos-codec:jar</exclude>
+                <!--<exclude>org.apache.directory.api:api-asn1-api:jar</exclude>-->
+                <!--<exclude>org.apache.directory.api:api-util:jar</exclude>-->
+                <!--<exclude>org.apache.directory.server:apacheds-i18n:jar</exclude>-->
+                <!--<exclude>org.apache.directory.server:apacheds-kerberos-codec:jar</exclude>-->
                 <exclude>org.apache.hadoop:hadoop-annotations:jar</exclude>
                 <exclude>org.apache.hadoop:hadoop-auth:jar</exclude>
                 <exclude>org.apache.hadoop:hadoop-common:jar</exclude>
                 <exclude>org.apache.hadoop:hadoop-hdfs:jar</exclude>
-                <exclude>org.apache.htrace:htrace-core:jar</exclude>
+                <!--<exclude>org.apache.htrace:htrace-core:jar</exclude>-->
                 <exclude>org.apache.httpcomponents:httpclient:jar</exclude>
                 <exclude>org.apache.httpcomponents:httpcore:jar</exclude>
                 <exclude>org.apache.logging.log4j:log4j-api:jar</exclude>
@@ -246,8 +246,8 @@
                 <exclude>org.jvnet:tiger-types:jar</exclude>
                 <exclude>org.latencyutils:LatencyUtils:jar</exclude>
                 <exclude>org.mortbay.jasper:apache-el:jar</exclude>
-                <exclude>org.mortbay.jetty:jetty:jar</exclude>
-                <exclude>org.mortbay.jetty:jetty-util:jar</exclude>
+                <!--<exclude>org.mortbay.jetty:jetty:jar</exclude>-->
+                <!--<exclude>org.mortbay.jetty:jetty-util:jar</exclude>-->
                 <exclude>org.ow2.asm:asm-analysis:jar</exclude>
                 <exclude>org.ow2.asm:asm-commons:jar</exclude>
                 <exclude>org.ow2.asm:asm-tree:jar</exclude>
@@ -297,8 +297,8 @@
                 <exclude>org.tukaani:xz:jar</exclude>
                 <exclude>org.yaml:snakeyaml:jar</exclude>
                 <exclude>software.amazon.ion:ion-java:jar</exclude>
-                <exclude>xerces:xercesImpl:jar</exclude>
-                <exclude>xmlenc:xmlenc:jar</exclude>
+                <!--<exclude>xerces:xercesImpl:jar</exclude>-->
+                <!--<exclude>xmlenc:xmlenc:jar</exclude>-->
                 <exclude>xmlpull:xmlpull:jar</exclude>
                 <exclude>xpp3:xpp3_min:jar</exclude>
             </excludes>

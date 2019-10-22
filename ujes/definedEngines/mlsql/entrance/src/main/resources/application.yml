@@ -1,0 +1,23 @@
+server:
+  port: 28975
+spring:
+  application:
+    name: mlsqlEntrance
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://xxx.xxx.xxx.xxx:20307/eureka/
+  instance:
+    metadata-map:
+      test: none
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info
+logging:
+  config: classpath:log4j2.xml
+

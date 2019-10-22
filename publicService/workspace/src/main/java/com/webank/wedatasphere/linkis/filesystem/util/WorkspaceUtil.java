@@ -16,19 +16,9 @@
 
 package com.webank.wedatasphere.linkis.filesystem.util;
 
-import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException;
-import org.apache.hadoop.conf.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -56,7 +46,9 @@ public class WorkspaceUtil {
                 || path.endsWith(".r")
                 || path.endsWith(".out")
                 || path.endsWith(".scala")
-                || path.endsWith(".py")) {
+                || path.endsWith(".py")
+                || path.endsWith(".mlsql")
+        ) {
             return "script";
         } else if (path.endsWith(".dolphin")) {
             return "resultset";

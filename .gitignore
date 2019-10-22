@@ -48,3 +48,5 @@ ujes/definedEngines/spark/entrance/target/
 ujes/engine/target/
 ujes/enginemanager/target/
 ujes/entrance/target/
+
+ujes/definedEngines/mlsql/entrance/target

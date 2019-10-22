@@ -167,5 +167,14 @@ object JobExecuteAction {
       }
       override def getDefaultRunType: RunType = PY
     }
+    val MLSQL = new EngineType {
+      override val toString: String = "mlsql"
+
+      val ML = new RunType {
+        override val toString: String = "mlsql"
+      }
+
+      override def getDefaultRunType: RunType = ML
+    }
   }
 }

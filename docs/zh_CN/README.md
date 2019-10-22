@@ -7,7 +7,7 @@ Linkis
 
 # 引言：
 
-Linkis是一个打通了多个计算存储引擎如：Spark、TiSpark、Hive、Python和HBase等，对外提供统一REST/WebSocket/JDBC接口，提交执行SQL、Pyspark、HiveQL、Scala等脚本的数据中间件。
+Linkis是一个打通了多个计算存储引擎如：Spark、TiSpark、Hive、Python和HBase等，对外提供统一REST/WebSocket/JDBC接口，提交执行SQL、Pyspark、HiveQL、Scala等脚本的计算中间件。
 
 Linkis基于微服务架构，提供了金融级多租户隔离、资源管控、权限隔离等企业级特性，支持统一变量、UDF、函数、用户资源文件管理，具备高并发、高性能、高可用的大数据作业/请求全生命周期管理能力。
 
@@ -16,7 +16,7 @@ Linkis基于微服务架构，提供了金融级多租户隔离、资源管控�
 <br>
 <br>
 
-基于Linkis数据中间件的架构设计理念，我们在上层构建了很多的应用系统。
+基于Linkis计算中间件的架构设计理念，我们在上层构建了很多的应用系统。
 
 - 目前已开源的有：[**数据研发IDE工具Scriptis**](https://github.com/WeBankFinTech/Scriptis)。
 

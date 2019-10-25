@@ -316,7 +316,7 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     //      addList("--archives", _archives.map(fromPath))
     //    }
     addOpt("--class", _className)
-    addOpt("", Some(ENGINEMANAGER_JAR.getValue))
+    addOpt("", Some(ENGINE_JAR.getValue))
     //    addOpt("--spring-conf", Some("ribbon.ReadTimeout=1200000"))
     //    addOpt("--spring-conf", Some("ribbon.ConnectTimeout=300000"))
     //    addOpt("--spring-conf", Some("feign.hystrix.enabled=false"))

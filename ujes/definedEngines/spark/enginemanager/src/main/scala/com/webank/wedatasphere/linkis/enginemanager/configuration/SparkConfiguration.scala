@@ -19,6 +19,7 @@ package com.webank.wedatasphere.linkis.enginemanager.configuration
 
 import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration}
 import com.webank.wedatasphere.linkis.common.utils.{ClassUtils, Logging}
+import com.webank.wedatasphere.linkis.engine.factory.SparkEngineExecutorFactory
 import com.webank.wedatasphere.linkis.enginemanager.AbstractEngineCreator
 import com.webank.wedatasphere.linkis.enginemanager.process.{JavaProcessEngineBuilder, SparkSubmitProcessBuilder}
 
@@ -60,7 +61,7 @@ object SparkConfiguration extends Logging {
   val SPARK_OUTPUTDIR = CommonVars[String]("spark.outputDir", "/home/georgeqiao", "Default output path（默认输出路径）")
 
   val DWC_SPARK_USEHIVECONTEXT = CommonVars[Boolean]("wds.linkis.spark.useHiveContext", true)
-  val ENGINEMANAGER_JAR = CommonVars[String]("wds.linkis.enginemanager.core.jar", ClassUtils.jarOfClass(classOf[SparkSubmitProcessBuilder]).head)
+  val ENGINE_JAR = CommonVars[String]("wds.linkis.enginemanager.core.jar", ClassUtils.jarOfClass(classOf[SparkEngineExecutorFactory]).head)
   val SPARK_DRIVER_CLASSPATH = CommonVars[String]("wds.linkis.spark.driver.conf.mainjar", "")
   val SPARK_DRIVER_EXTRA_JAVA_OPTIONS = CommonVars[String]("spark.driver.extraJavaOptions", "\"-Dwds.linkis.configuration=linkis-engine.properties " + getJavaRemotePort + "\"")
   val DEFAULT_JAVA_OPTS = CommonVars[String]("wds.linkis.engine.javaOpts.default", "-server -XX:+UseG1GC -XX:MaxPermSize=250m -XX:PermSize=128m " +

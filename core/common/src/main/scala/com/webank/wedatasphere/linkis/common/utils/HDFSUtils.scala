@@ -31,8 +31,8 @@ import org.apache.hadoop.security.UserGroupInformation
   */
 object HDFSUtils {
 
-  val hadoopHome = CommonVars("HADOOP_HOME", CommonVars("hadoop.home", "").getValue).getValue
-  val hadoopConfDir = CommonVars("HADOOP_CONF_DIR", CommonVars("hadoop.config.dir", "").getValue).getValue
+  val hadoopHome = CommonVars("hadoop.home", CommonVars("HADOOP_HOME", "").getValue).getValue
+  val hadoopConfDir = CommonVars("hadoop.config.dir", CommonVars("HADOOP_CONF_DIR", "").getValue).getValue
 
   def getConfiguration(user: String): Configuration = getConfiguration(user, hadoopConfDir)
 

@@ -93,6 +93,7 @@ class QueryServiceImpl extends QueryService with Logging {
   def requestPersistTaskTask2QueryTask(requestPersistTask: RequestPersistTask): QueryTask = {
     val task: QueryTask = new QueryTask
     BeanUtils.copyProperties(requestPersistTask, task)
+    task.setSourceJson(BDPJettyServerHelper.gson.toJson(requestPersistTask.getSource))
     if (requestPersistTask.getParams != null)
       task.setParamsJson(BDPJettyServerHelper.gson.toJson(requestPersistTask.getParams))
     else

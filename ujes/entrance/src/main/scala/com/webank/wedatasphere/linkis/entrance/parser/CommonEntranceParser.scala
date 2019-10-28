@@ -57,6 +57,7 @@ class CommonEntranceParser extends AbstractEntranceParser{
     val formatCode = params.get(TaskConstant.FORMATCODE).asInstanceOf[Boolean]
     var creator = params.get(TaskConstant.REQUESTAPPLICATIONNAME).asInstanceOf[String]
     val scriptPath = params.get(TaskConstant.SCRIPTPATH).asInstanceOf[String]
+    val source = params.getOrDefault(TaskConstant.SOURCE,new util.HashMap[String,String]()).asInstanceOf[util.Map[String,String]]
     val executeApplicationName = params.get(TaskConstant.EXECUTEAPPLICATIONNAME).asInstanceOf[String]
     if (StringUtils.isEmpty(creator)) creator = EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue
     if (StringUtils.isEmpty(executeApplicationName)) throw new EntranceIllegalParamException(20006, "param executeApplicationName can not be empty or null")
@@ -73,6 +74,8 @@ class CommonEntranceParser extends AbstractEntranceParser{
       if (formatCode) executionCode = format(executionCode)
       task.setExecutionCode(executionCode)
     }
+    if (source.isEmpty) source.put(TaskConstant.SCRIPTPATH,scriptPath)
+    task.setSource(source)
     if (StringUtils.isNotEmpty(scriptPath)) {
       task.setScriptPath(scriptPath)
 //      val strings = StringUtils.split(scriptPath, ".")

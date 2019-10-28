@@ -17,10 +17,13 @@
 package com.webank.wedatasphere.linkis.jobhistory.conversions
 
 import java.io.File
+import java.util
 
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.protocol.query.{RequestPersistTask, RequestQueryTask}
 import com.webank.wedatasphere.linkis.protocol.utils.ZuulEntranceUtils
 import com.webank.wedatasphere.linkis.jobhistory.entity.{QueryTask, QueryTaskVO}
+import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 import org.springframework.beans.BeanUtils
 import org.springframework.util.StringUtils
@@ -28,7 +31,7 @@ import org.springframework.util.StringUtils
 /**
   * Created by johnnwang on 2019/2/25.
   */
-object TaskConversions {
+object TaskConversions extends Logging{
 
   implicit def requestQueryTask2QueryTask(requestQueryTask: RequestQueryTask): QueryTask = {
     val task: QueryTask = new QueryTask
@@ -43,6 +46,7 @@ object TaskConversions {
   implicit def queryTask2RequestPersistTask(queryTask: QueryTask): RequestPersistTask = {
     val task = new RequestPersistTask
     BeanUtils.copyProperties(queryTask, task)
+    task.setSource(BDPJettyServerHelper.gson.fromJson(queryTask.getSourceJson, classOf[java.util.HashMap[String, String]]))
     task.setParams(BDPJettyServerHelper.gson.fromJson(queryTask.getParamsJson, classOf[java.util.HashMap[String, Object]]))
     task
   }
@@ -60,10 +64,17 @@ object TaskConversions {
   implicit def queryTask2QueryTaskVO(queryTask: QueryTask): QueryTaskVO = {
     val taskVO = new QueryTaskVO
     BeanUtils.copyProperties(queryTask, taskVO)
-    if (!StringUtils.isEmpty(queryTask.getScriptPath()))
-      taskVO.setFileName(new File(queryTask.getScriptPath()).getName())
-    else
-      taskVO.setFileName(null)
+    var source:util.HashMap[String, String] = null
+    var scriptPath:String = null
+    Utils.tryQuietly()
+    Utils.tryCatch{
+      source = BDPJettyServerHelper.gson.fromJson(queryTask.getSourceJson, classOf[java.util.HashMap[String, String]])
+      if(source != null)scriptPath = source.get(TaskConstant.SCRIPTPATH)
+    }{
+      case e:Exception =>logger.info("script转化map失败，忽略",e);scriptPath = queryTask.getSourceJson
+    }
+    if (!StringUtils.isEmpty(scriptPath))
+      taskVO.setFileName(new File(scriptPath).getName())
 
     if (queryTask.getExecId() != null && queryTask.getExecuteApplicationName() != null && queryTask.getInstance() != null) {
       taskVO.setStrongerExecId(ZuulEntranceUtils.generateExecID(queryTask.getExecId(),

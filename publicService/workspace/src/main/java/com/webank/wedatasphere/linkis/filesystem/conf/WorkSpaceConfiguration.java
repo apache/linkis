@@ -27,4 +27,8 @@ public class WorkSpaceConfiguration {
     public static final CommonVars HDFS_USER_ROOT_PATH_PREFIX = CommonVars$.MODULE$.apply("wds.linkis.workspace.filesystem.hdfsuserrootpath.prefix","hdfs:///tmp/");
     public static final CommonVars HDFS_USER_ROOT_PATH_SUFFIX = CommonVars$.MODULE$.apply("wds.linkis.workspace.filesystem.hdfsuserrootpath.suffix","/linkis/");
     public static final CommonVars<Integer> RESULT_SET_DOWNLOAD_MAX_SIZE = CommonVars$.MODULE$.apply("wds.linkis.workspace.resultset.download.maxsize",5000);
+    public static final CommonVars<Boolean> RESULT_SET_DOWNLOAD_IS_LIMIT = CommonVars$.MODULE$.apply("wds.linkis.workspace.resultset.download.is.limit",true);
+    public static final CommonVars<Integer> RESULT_SET_DOWNLOAD_MAX_SIZE_CSV = CommonVars$.MODULE$.apply("wds.linkis.workspace.resultset.download.maxsize.csv",5000);
+    public static final CommonVars<Integer> RESULT_SET_DOWNLOAD_MAX_SIZE_EXCEL = CommonVars$.MODULE$.apply("wds.linkis.workspace.resultset.download.maxsize.excel",5000);
+
 }

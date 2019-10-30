@@ -603,7 +603,7 @@ public class FsRestfulApi implements FsRestfulRemote {
         CSVFsWriter csvfsWriter = null;
         ExcelFsWriter excelFsWriter = null;
         Integer index = 0;
-        boolean isLimitDownloadSize = WorkSpaceConfiguration.RESULT_SET_DOWNLOAD_MAX_SIZE.getValue() > 0;
+        boolean isLimitDownloadSize = WorkSpaceConfiguration.RESULT_SET_DOWNLOAD_IS_LIMIT.getValue();
         com.webank.wedatasphere.linkis.common.io.resultset.ResultSetReader<? extends MetaData, ? extends Record> resultSetReader = null;
         try {
             if (StringUtils.isEmpty(charset)) {
@@ -637,7 +637,7 @@ public class FsRestfulApi implements FsRestfulRemote {
                 if (metaData instanceof TableMetaData) {
                     TableMetaData tableMetaData = (TableMetaData) metaData;
                     csvfsWriter.addMetaData(tableMetaData);
-                    while (resultSetReader.hasNext() && (!isLimitDownloadSize || index < WorkSpaceConfiguration.RESULT_SET_DOWNLOAD_MAX_SIZE.getValue())) {
+                    while (resultSetReader.hasNext() && (!isLimitDownloadSize || index < WorkSpaceConfiguration.RESULT_SET_DOWNLOAD_MAX_SIZE_CSV.getValue())) {
                         index +=1;
                         csvfsWriter.addRecord(resultSetReader.getRecord());
                     }
@@ -649,7 +649,7 @@ public class FsRestfulApi implements FsRestfulRemote {
                         stringBuilder.append(lineMetaData.getMetaData());
                         stringBuilder.append("\n");
                     }
-                    while (resultSetReader.hasNext() && (!isLimitDownloadSize || index < WorkSpaceConfiguration.RESULT_SET_DOWNLOAD_MAX_SIZE.getValue())) {
+                    while (resultSetReader.hasNext() && (!isLimitDownloadSize || index < WorkSpaceConfiguration.RESULT_SET_DOWNLOAD_MAX_SIZE_CSV.getValue())) {
                         index +=1;
                         LineRecord lineRecord = (LineRecord) resultSetReader.getRecord();
                         stringBuilder.append(lineRecord.getLine());
@@ -665,7 +665,7 @@ public class FsRestfulApi implements FsRestfulRemote {
                 response.addHeader("Content-Type", Constants.XLSXRESPONSE);
                 excelFsWriter = ExcelFsWriter.getExcelFsWriter(Constants.FILEDEFAULTCHARSET, Constants.DEFAULTSHEETNAME, Constants.DEFAULTDATETYPE);
                 excelFsWriter.addMetaData(tableMetaData);
-                while (resultSetReader.hasNext() && (!isLimitDownloadSize || index < WorkSpaceConfiguration.RESULT_SET_DOWNLOAD_MAX_SIZE.getValue())) {
+                while (resultSetReader.hasNext() && (!isLimitDownloadSize || index < WorkSpaceConfiguration.RESULT_SET_DOWNLOAD_MAX_SIZE_EXCEL.getValue())) {
                     index +=1;
                     excelFsWriter.addRecord(resultSetReader.getRecord());
                 }

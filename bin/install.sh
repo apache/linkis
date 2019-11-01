@@ -5,7 +5,6 @@ source ~/.bash_profile
 
 shellDir=`dirname $0`
 workDir=`cd ${shellDir}/..;pwd`
-SSH_PORT=22
 
 
 #To be compatible with MacOS and Linux

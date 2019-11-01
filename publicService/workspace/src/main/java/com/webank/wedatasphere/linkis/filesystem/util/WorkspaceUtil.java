@@ -40,6 +40,7 @@ public class WorkspaceUtil {
         }
         if (path.endsWith(".sql")
                 || path.endsWith(".hql")
+                || path.endsWith(".iql")
                 || path.endsWith(".txt")
                 || path.endsWith(".python")
                 || path.endsWith(".log")

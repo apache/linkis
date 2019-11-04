@@ -110,8 +110,7 @@ object YarnUtil extends Logging{
       jValue.map(r => new YarnResource((r \ "memory").asInstanceOf[JInt].values.toLong * 1024l * 1024l, (r \ "vCores").asInstanceOf[JInt].values.toInt, 0, queueName))
     }
 
-    var realQueueName = ""
-    var schedulerType = ""
+    val realQueueName = "root." + queueName
     def getQueue(queues: JValue): Option[JValue] = queues match {
       case JArray(queue) =>
         queue.foreach { q =>
@@ -129,31 +128,21 @@ object YarnUtil extends Logging{
         }
       case JNull | JNothing => None
     }
-    def getChildQueues(resp:JValue):JValue = {
-      if ("capacityScheduler".equals(schedulerType)) {
-        realQueueName = queueName
-        resp \ "queues" \ "queue"
-      } else {
-        realQueueName = "root." + queueName
-        if (hadoop_version.startsWith("2.7")) {
-          resp \ "rootQueue"  \ "childQueues"
-        } else {
-          resp \ "rootQueue" \ "childQueues" \ "queue"
-        }
-      }
+    def getChildQueues(resp:JValue):JValue = if (hadoop_version.startsWith("2.7")) {
+      resp  \ "childQueues"
+    } else {
+      resp \ "childQueues" \ "queue"
     }
 
     val future = Http(url > as.json4s.Json).map {resp =>
-      schedulerType = (resp \ "scheduler" \ "schedulerInfo" \ "type").asInstanceOf[JString].values
-      val childQueues = getChildQueues(resp \ "scheduler" \ "schedulerInfo")
+      val childQueues = getChildQueues(resp \ "scheduler" \ "schedulerInfo" \ "rootQueue")
       val queue = getQueue(childQueues)
       if(queue.isEmpty) {
         debug(s"cannot find any information about queue $queueName, response: " + resp)
         throw new RMWarnException(111006, s"queue $queueName is not exists in YARN.")
       }
-      if ("capacityScheduler".equals(schedulerType))
-        (getYarnResource(queue.map( _ \ "maxEffectiveCapacity")).get, getYarnResource(queue.map( _ \ "resourcesUsed")).get)
-      else (getYarnResource(queue.map( _ \ "maxResources")).get, getYarnResource(queue.map( _ \ "usedResources")).get)
+      (getYarnResource(queue.map( _ \ "maxResources")).get,
+        getYarnResource(queue.map( _ \ "usedResources")).get)
     }
     Utils.tryCatch(Await.result(future, Duration.Inf))( t => {
       if((t.getCause.isInstanceOf[JsonParseException] && t.getCause.getMessage.contains("This is standby RM"))

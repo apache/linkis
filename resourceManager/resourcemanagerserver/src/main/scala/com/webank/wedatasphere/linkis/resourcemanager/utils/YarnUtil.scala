@@ -110,7 +110,7 @@ object YarnUtil extends Logging{
       jValue.map(r => new YarnResource((r \ "memory").asInstanceOf[JInt].values.toLong * 1024l * 1024l, (r \ "vCores").asInstanceOf[JInt].values.toInt, 0, queueName))
     }
 
-    val realQueueName = "root." + queueName
+    var realQueueName = "root." + queueName
     def getQueue(queues: JValue): Option[JValue] = queues match {
       case JArray(queue) =>
         queue.foreach { q =>
@@ -134,15 +134,55 @@ object YarnUtil extends Logging{
       resp \ "childQueues" \ "queue"
     }
 
-    val future = Http(url > as.json4s.Json).map {resp =>
-      val childQueues = getChildQueues(resp \ "scheduler" \ "schedulerInfo" \ "rootQueue")
-      val queue = getQueue(childQueues)
-      if(queue.isEmpty) {
-        debug(s"cannot find any information about queue $queueName, response: " + resp)
-        throw new RMWarnException(111006, s"queue $queueName is not exists in YARN.")
+    def getQueueOfCapacity(queues: JValue): Option[JValue] = {
+      queues match {
+        case JArray(queue) =>
+          queue.foreach { q =>
+            val yarnQueueName = (q \ "queueName").asInstanceOf[JString].values
+            if(yarnQueueName == realQueueName) return Some(q)
+            else if((q \ "queues").toOption.nonEmpty) {
+              val matchQueue = getQueueOfCapacity(getChildQueuesOfCapacity(q))
+              if (matchQueue.nonEmpty) return matchQueue
+            }
+          }
+          None
+        case JObject(queue) =>
+          if(queue.find(_._1 == "queueName").exists(_._2.asInstanceOf[JString].values == realQueueName)) return Some(queues)
+          else if((queues \ "queues").toOption.nonEmpty) {
+            val matchQueue = getQueueOfCapacity(getChildQueuesOfCapacity(queues))
+            if (matchQueue.nonEmpty) return matchQueue
+          }
+          None
+        case JNull | JNothing => None
       }
-      (getYarnResource(queue.map( _ \ "maxResources")).get,
-        getYarnResource(queue.map( _ \ "usedResources")).get)
+    }
+
+    def getChildQueuesOfCapacity(resp:JValue):JValue = resp \ "queues" \ "queue"
+
+    val future = Http(url > as.json4s.Json).map {resp =>
+      val schedulerType = (resp \ "scheduler" \ "schedulerInfo" \ "type").asInstanceOf[JString].values
+      if ("capacityScheduler".equals(schedulerType)) {
+        realQueueName = queueName
+        val childQueues = getChildQueuesOfCapacity(resp \ "scheduler" \ "schedulerInfo")
+        val queue = getQueueOfCapacity(childQueues)
+        if(queue.isEmpty) {
+          debug(s"cannot find any information about queue $queueName, response: " + resp)
+          throw new RMWarnException(111006, s"queue $queueName is not exists in YARN.")
+        }
+        (getYarnResource(queue.map( _ \ "maxEffectiveCapacity")).get, getYarnResource(queue.map( _ \ "resourcesUsed")).get)
+      } else if ("fairScheduler".equals(schedulerType)) {
+        val childQueues = getChildQueues(resp \ "scheduler" \ "schedulerInfo" \ "rootQueue")
+        val queue = getQueue(childQueues)
+        if(queue.isEmpty) {
+          debug(s"cannot find any information about queue $queueName, response: " + resp)
+          throw new RMWarnException(111006, s"queue $queueName is not exists in YARN.")
+        }
+        (getYarnResource(queue.map( _ \ "maxResources")).get,
+          getYarnResource(queue.map( _ \ "usedResources")).get)
+      } else {
+        debug(s"only support fairScheduler or capacityScheduler, schedulerType: $schedulerType , response: " + resp)
+        throw new RMWarnException(111006, s"only support fairScheduler or capacityScheduler, schedulerType: $schedulerType")
+      }
     }
     Utils.tryCatch(Await.result(future, Duration.Inf))( t => {
       if((t.getCause.isInstanceOf[JsonParseException] && t.getCause.getMessage.contains("This is standby RM"))
@@ -195,3 +235,4 @@ object YarnUtil extends Logging{
 
 
 }
+

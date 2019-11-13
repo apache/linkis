@@ -41,7 +41,7 @@ import org.apache.hadoop.hive.ql.exec.mr.HadoopJobExecHelper
 import org.apache.hadoop.hive.ql.parse.{ParseDriver, ParseUtils, SemanticAnalyzerFactory}
 import org.apache.hadoop.hive.ql.processors.{CommandProcessor, CommandProcessorFactory, CommandProcessorResponse}
 import org.apache.hadoop.hive.ql.session.SessionState
-import org.apache.hadoop.hive.ql.{CommandNeedRetryException, Context, Driver, QueryPlan}
+import org.apache.hadoop.hive.ql.{Context, Driver, QueryPlan}
 import org.apache.hadoop.mapred.RunningJob
 import org.apache.hadoop.security.UserGroupInformation
 import org.slf4j.LoggerFactory
@@ -137,7 +137,7 @@ class HiveEngineExecutor(outputPrintLimit:Int,
             var columnCount:Int = 0
             while(needRetry){
               needRetry = false
-              driver.setTryCount(tryCount + 1)
+//              driver.setTryCount(tryCount + 1)
               val startTime = System.currentTimeMillis()
               try{
                 //to get hive query plan
@@ -202,8 +202,8 @@ class HiveEngineExecutor(outputPrintLimit:Int,
                 engineExecutorContext.sendResultSet(resultSetWriter)
                 IOUtils.closeQuietly(resultSetWriter)
               }catch{
-                case e:CommandNeedRetryException =>  tryCount += 1
-                  needRetry = true
+                case e: Exception =>  tryCount += 1
+//                  needRetry = true
                   HiveProgressHelper.clearHiveProgress()
                   singleSqlProgressMap.clear()
                   clearCurrentProgress()

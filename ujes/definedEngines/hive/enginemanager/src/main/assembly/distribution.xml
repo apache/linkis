@@ -54,7 +54,7 @@
                 <exclude>io.netty:netty*</exclude>
             </excludes>-->
             <excludes>
-                <exclude>antlr:antlr:jar</exclude>
+                <!--<exclude>antlr:antlr:jar</exclude>-->
                 <exclude>asm:asm:jar</exclude>
                 <exclude>cglib:cglib:jar</exclude>
                 <exclude>com.amazonaws:aws-java-sdk-autoscaling:jar</exclude>
@@ -146,7 +146,7 @@
                 <exclude>net.databinder.dispatch:dispatch-core_2.11:jar</exclude>
                 <exclude>net.databinder.dispatch:dispatch-json4s-jackson_2.11:jar</exclude>
                 <exclude>org.antlr:antlr-runtime:jar</exclude>
-                <exclude>org.antlr:stringtemplate:jar</exclude>
+                <!--<exclude>org.antlr:stringtemplate:jar</exclude>-->
                 <exclude>org.apache.commons:commons-compress:jar</exclude>
                 <exclude>org.apache.commons:commons-math:jar</exclude>
                 <exclude>org.apache.commons:commons-math3:jar</exclude>
@@ -234,7 +234,7 @@
                 <exclude>org.latencyutils:LatencyUtils:jar</exclude>
                 <exclude>org.mortbay.jasper:apache-el:jar</exclude>
                 <!--<exclude>org.mortbay.jetty:jetty-util:jar</exclude>-->
-                <exclude>org.ow2.asm:asm-analysis:jar</exclude>
+                <!--<exclude>org.ow2.asm:asm-analysis:jar</exclude>-->
                 <exclude>org.ow2.asm:asm-commons:jar</exclude>
                 <exclude>org.ow2.asm:asm-tree:jar</exclude>
                 <exclude>org.reflections:reflections:jar</exclude>
@@ -280,7 +280,7 @@
                 <exclude>org.springframework:spring-jcl:jar</exclude>
                 <exclude>org.springframework:spring-web:jar</exclude>
                 <exclude>org.springframework:spring-webmvc:jar</exclude>
-                <exclude>org.tukaani:xz:jar</exclude>
+                <!--<exclude>org.tukaani:xz:jar</exclude>-->
                 <exclude>org.yaml:snakeyaml:jar</exclude>
                 <exclude>software.amazon.ion:ion-java:jar</exclude>
                 <!--<exclude>xerces:xercesImpl:jar</exclude>-->

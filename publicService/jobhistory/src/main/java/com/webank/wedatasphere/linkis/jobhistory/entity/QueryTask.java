@@ -39,9 +39,17 @@ public class QueryTask {
     private String errDesc;
     private String executeApplicationName;
     private String requestApplicationName;
-    private String scriptPath;
     private String runType;
     private String paramsJson;
+    private String sourceJson;
+
+    public String getSourceJson() {
+        return sourceJson;
+    }
+
+    public void setSourceJson(String sourceJson) {
+        this.sourceJson = sourceJson;
+    }
 
     public Long getTaskID() {
         return taskID;
@@ -177,14 +185,6 @@ public class QueryTask {
 
     public void setRequestApplicationName(String requestApplicationName) {
         this.requestApplicationName = requestApplicationName;
-    }
-
-    public String getScriptPath() {
-        return scriptPath;
-    }
-
-    public void setScriptPath(String scriptPath) {
-        this.scriptPath = scriptPath;
     }
 
     public String getRunType() {

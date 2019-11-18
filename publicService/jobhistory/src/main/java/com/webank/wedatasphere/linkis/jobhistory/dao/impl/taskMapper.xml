@@ -23,6 +23,7 @@
     <resultMap id="taskMapper" type="com.webank.wedatasphere.linkis.jobhistory.entity.QueryTask">
         <id column="id" property="taskID" jdbcType="BIGINT"/>
         <result column="params" property="paramsJson" jdbcType="LONGVARCHAR"/>
+        <result column="script_path" property="sourceJson" jdbcType="LONGVARCHAR"/>
     </resultMap>
 
     <sql id="task_List">
@@ -36,7 +37,7 @@
         #{umUser},#{executionCode},#{progress},
         #{logPath},#{resultLocation},#{status},
         #{createdTime},#{updatedTime},#{runType},
-        #{errCode},#{errDesc},#{executeApplicationName},#{requestApplicationName},#{scriptPath},#{paramsJson},#{engineInstance})
+        #{errCode},#{errDesc},#{executeApplicationName},#{requestApplicationName},#{sourceJson},#{paramsJson},#{engineInstance})
     </insert>
 
     <select id="selectTask" resultMap="taskMapper" parameterType="com.webank.wedatasphere.linkis.jobhistory.entity.QueryTask">
@@ -59,7 +60,7 @@
             <if test="errDesc != null">and err_desc = #{errDesc}</if>
             <if test="executeApplicationName != null">and execute_application_name = #{executeApplicationName}</if>
             <if test="requestApplicationName != null">and request_application_name = #{requestApplicationName}</if>
-            <if test="scriptPath != null">and script_path = #{scriptPath}</if>
+            <if test="sourceJson != null">and script_path = #{sourceJson}</if>
             <if test="paramsJson != null">and params = #{paramsJson}</if>
         </where>
     </select>
@@ -95,7 +96,7 @@
             <if test="errDesc != null">err_desc=#{errDesc},</if>
             <if test="executeApplicationName != null">execute_application_name=#{executeApplicationName},</if>
             <if test="requestApplicationName != null">request_application_name=#{requestApplicationName},</if>
-            <if test="scriptPath != null"> script_path = #{scriptPath},</if>
+            <if test="sourceJson != null"> script_path = #{sourceJson},</if>
             <if test="paramsJson != null"> params = #{paramsJson},</if>
             <if test="engineInstance != null"> engine_instance = #{engineInstance},</if>
         </trim>

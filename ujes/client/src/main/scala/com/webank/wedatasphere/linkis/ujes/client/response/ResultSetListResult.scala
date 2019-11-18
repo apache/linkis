@@ -32,15 +32,15 @@ import scala.collection.JavaConversions._
 /**
   * created by cooperyang on 2019/5/23.
   */
-@DWSHttpMessageResult("/api/rest_j/v\\d+/publicservice/getDirFileTrees")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/filesystem/getDirFileTrees")
 class ResultSetListResult extends DWSResult with UserAction {
 
   @BeanProperty var dirFileTrees: util.Map[String, Object] = _
 
-  def getResultSetList = dirFileTrees.get("children") match {
+  def getResultSetList = if(dirFileTrees != null) dirFileTrees.get("children") match {
     case list: util.List[util.Map[String, Object]] =>
       list.map(_.get("path").asInstanceOf[String]).toArray
     case _ => Array.empty[String]
-  }
+  } else Array.empty[String]
 
 }

@@ -64,7 +64,7 @@ import java.util.EnumSet;
 @SpringBootApplication
 @EnableDiscoveryClient
 @RefreshScope
-@ComponentScan(basePackages = "com.webank.wedatasphere.linkis",
+@ComponentScan(basePackages = "com.webank.wedatasphere",
         excludeFilters = @ComponentScan.Filter(type = FilterType.CUSTOM, classes = {DataWorkCloudCustomExcludeFilter.class}))
 public class DataWorkCloudApplication extends SpringBootServletInitializer {
     private static final Log logger = LogFactory.getLog(DataWorkCloudApplication.class);

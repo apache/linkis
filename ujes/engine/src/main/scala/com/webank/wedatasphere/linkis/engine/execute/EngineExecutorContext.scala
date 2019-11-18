@@ -120,7 +120,7 @@ class EngineExecutorContext(engineExecutor: EngineExecutor) extends Logging{
     val path = ENGINE_RESULT_SET_STORE_PATH.getValue
     (if(path.endsWith("/")) path else path + "/") + "user" + "/" +
       DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd") + "/" + Sender.getThisServiceInstance.getApplicationName +
-      "/" + Sender.getThisServiceInstance.getInstance + "/" + System.nanoTime
+      "/" + System.nanoTime
   }
 
   def createDefaultResultSetWriter(): ResultSetWriter[_ <: MetaData, _ <: Record] = createResultSetWriter(resultSetFactory.getResultSetByType(engineExecutor.getDefaultResultSetType))

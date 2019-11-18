@@ -30,7 +30,7 @@ import org.apache.commons.lang.StringUtils
   */
 class JobInfoAction extends GetAction with UJESJobAction {
   private var taskId: String = _
-  override def suffixURLs: Array[String] = Array("publicservice", taskId, "get")
+  override def suffixURLs: Array[String] = Array("jobhistory", taskId, "get")
 }
 object JobInfoAction {
   def builder(): Builder = new Builder

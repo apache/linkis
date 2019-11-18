@@ -34,7 +34,7 @@ import org.apache.commons.beanutils.BeanUtils
 /**
   * created by cooperyang on 2019/5/23.
   */
-@DWSHttpMessageResult("/api/rest_j/v\\d+/publicservice/\\S+/get")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/jobhistory/\\S+/get")
 class JobInfoResult extends DWSResult with UserAction with Status {
 
   private var task: java.util.Map[_, _] = _

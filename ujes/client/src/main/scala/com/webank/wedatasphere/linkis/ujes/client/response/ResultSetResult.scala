@@ -29,7 +29,7 @@ import scala.beans.BeanProperty
 /**
   * created by cooperyang on 2019/5/23.
   */
-@DWSHttpMessageResult("/api/rest_j/v\\d+/publicservice/openFile")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/filesystem/openFile")
 class ResultSetResult extends DWSResult with UserAction {
 
   private var `type`: String = _

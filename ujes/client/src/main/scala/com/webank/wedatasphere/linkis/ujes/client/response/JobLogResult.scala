@@ -20,6 +20,8 @@
 
 package com.webank.wedatasphere.linkis.ujes.client.response
 
+import java.util
+
 import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
 import scala.beans.BeanProperty
@@ -30,7 +32,7 @@ import scala.beans.BeanProperty
 @DWSHttpMessageResult("/api/rest_j/v\\d+/entrance/(\\S+)/log")
 class JobLogResult extends UJESJobResult {
 
-  @BeanProperty var log: String = _
+  @BeanProperty var log: util.ArrayList[String] = _
   @BeanProperty var fromLine: Int = _
 
 }

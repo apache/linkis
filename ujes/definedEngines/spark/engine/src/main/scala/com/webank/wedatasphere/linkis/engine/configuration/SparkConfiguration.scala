@@ -35,6 +35,6 @@ object SparkConfiguration {
   val SPARK_NF_FRACTION_LENGTH = CommonVars[Int]("wds.linkis.engine.spark.fraction.length", 30)
   val SPARK_CONSOLE_OUTPUT_NUM = CommonVars[Int]("wds.linkis.spark.output.line.limit", 10)
   val DOLPHIN_LIMIT_LEN = CommonVars("wds.linkis.dolphin.limit.len",5000)
-
+  val MDQ_APPLICATION_NAME = CommonVars("wds.linkis.mdq.application.name", "cloud-datasource")
   val SHOW_DF_MAX_RES = CommonVars("wds.linkis.show.df.max.res",Int.MaxValue)
 }

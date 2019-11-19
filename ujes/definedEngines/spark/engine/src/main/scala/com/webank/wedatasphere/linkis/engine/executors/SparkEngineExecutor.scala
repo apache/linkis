@@ -24,6 +24,7 @@ import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging, Util
 import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration
 import com.webank.wedatasphere.linkis.engine.exception.{NoSupportEngineException, SparkEngineException}
 import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineExecutorContext}
+import com.webank.wedatasphere.linkis.engine.extension.{SparkPostExecutionHook, SparkPreExecutionHook}
 import com.webank.wedatasphere.linkis.engine.spark.common._
 import com.webank.wedatasphere.linkis.engine.spark.utils.{EngineUtils, JobProgressUtil}
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
@@ -115,12 +116,14 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
       runType.toLowerCase match {
         case "python" | "py" | "pyspark" => kind = PySpark()
         case "sql" | "sparksql" => kind = SparkSQL()
-        case "scala" => kind = SparkScala()
+        case "scala" |SparkKind.FUNCTION_MDQ_TYPE => kind = SparkScala()
         case _ => kind = SparkSQL()
       }
     }
-
-    val _code = Kind.getRealCode(code)
+    var preCode = code
+    //Pre-execution hook
+    SparkPreExecutionHook.getSparkPreExecutionHooks().foreach(hook => preCode = hook.callPreExecutionHook(engineExecutorContext,preCode))
+    val _code = Kind.getRealCode(preCode)
     info(s"Ready to run code with kind $kind.")
     jobGroup = String.valueOf("dwc-spark-mix-code-" + queryNum.incrementAndGet())
     //    val executeCount = queryNum.get().toInt - 1
@@ -130,12 +133,13 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
     val response = Utils.tryFinally(sparkExecutors.find(_.kind == kind).map(_.execute(this, _code, engineExecutorContext, jobGroup)).getOrElse(throw new NoSupportEngineException(40008, s"Not supported $kind executor!"))) {
       this.engineExecutorContext.pushProgress(1, getProgressInfo)
       jobGroup = null
-      this.engineExecutorContext = null
       sc.clearJobGroup()
     }
-    info(s"Start to structure sparksql resultset")
+    //Post-execution hook
+    SparkPostExecutionHook.getSparkPostExecutionHooks().foreach(_.callPostExecutionHook(engineExecutorContext,response,code))
     response
   }{
+    this.engineExecutorContext = null
     oldprogress = 0f
   }
 

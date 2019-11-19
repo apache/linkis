@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.webank.wedatasphere.linkis.bml.dao.ResourceDao">
+
+    <resultMap id="Resource" type="com.webank.wedatasphere.linkis.bml.Entity.Resource">
+        <result property="resourceId" column="resource_id"/>
+        <result property="user" column="owner"/>
+        <result property="resourceHeader" column="resource_header"/>
+        <result property="isPrivate" column="is_private"/>
+        <result property="downloadedFileName" column="downloaded_file_name"/>
+        <result property="system" column="sys"/>
+        <result property="isExpire" column="is_expire"/>
+        <result property="expireType" column="expire_type"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updator" column="updator"/>
+        <result property="enableFlag" column="enable_flag"/>
+    </resultMap>
+
+
+
+
+
+    <sql id="resource_columns">
+      `resource_id`,`is_private`, `resource_header`, `downloaded_file_name`, `sys`,
+      `create_time`,`owner`,`is_expire`,`expire_time`,`max_version`,`update_time`,`updator`,`enable_flag`
+    </sql>
+
+
+    <select id="getResource" resultMap="Resource" parameterType="java.lang.String">
+        select * from linkis_resources where resource_id = #{resourceId} and enable_flag = 1
+    </select>
+
+    <select id="getResources" resultMap="Resource" parameterType="java.util.Map">
+        select resource_id, owner, sys from linkis_resources
+        <where>
+            enable_flag = 1
+            <if test="resourceId != null and resourceId != '' ">
+                and resource_id = #{resourceId}
+            </if>
+            <if test="owner != null and owner != '' ">
+                and owner = #{owner}
+            </if>
+            <if test="sys != null and sys != '' ">
+                and sys = #{sys}
+            </if>
+        </where>
+    </select>
+
+    <update id="deleteResource">
+        UPDATE linkis_resources SET
+          enable_flag = 0
+        WHERE resource_id = #{resourceId} and enable_flag = 1
+    </update>
+
+    <update id="batchDeleteResources">
+        UPDATE linkis_resources SET
+        enable_flag = 0
+        <where>
+            enable_flag = 1
+            <if test="resourceIds != null">
+                AND resource_id IN
+                <foreach collection="resourceIds" item="resourceId" index="index" separator="," open="("
+                         close=")">
+                    #{resourceId}
+                </foreach>
+            </if>
+        </where>
+    </update>
+
+    <insert id="uploadResource" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.webank.wedatasphere.linkis.bml.Entity.Resource">
+      INSERT INTO linkis_resources(<include refid="resource_columns"/>)
+          VALUES (#{resourceId},#{isPrivate},#{resourceHeader},#{downloadedFileName},#{system},
+                    #{createTime},#{user},#{isExpire},#{expireTime},#{maxVersion},#{updateTime},
+                    #{updator},#{enableFlag})
+    </insert>
+
+
+</mapper>
+

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.webank.wedatasphere.linkis.bml.dao.TaskDao">
+
+    <resultMap id="ResourceTask" type="com.webank.wedatasphere.linkis.bml.Entity.ResourceTask">
+        <id property="id" column="id"/>
+        <result property="resourceId" column="resource_id"/>
+        <result property="version" column="version"/>
+        <result property="operation" column="operation"/>
+        <result property="state" column="state"/>
+        <result property="submitUser" column="submit_user"/>
+        <result property="system" column="system"/>
+        <result property="instance" column="instance"/>
+        <result property="clientIp" column="client_ip"/>
+        <result property="errMsg" column="err_msg"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="lastUpdateTime" column="last_update_time"/>
+    </resultMap>
+
+    <sql id="resource_task_columns">
+      `resource_id`,`version`,`operation`,`state`, `submit_user`,`system`,`instance`,
+      `client_ip`,`err_msg`,`start_time`,`end_time`,`last_update_time`, `extra_params`
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
+            parameterType="com.webank.wedatasphere.linkis.bml.Entity.ResourceTask">
+        INSERT INTO linkis_resources_task(<include refid="resource_task_columns"/>)
+        VALUES (#{resourceId}, #{version}, #{operation}, #{state}, #{submitUser}, #{system}, #{instance},
+        #{clientIp}, #{errMsg}, #{startTime}, #{endTime}, #{lastUpdateTime}, #{extraParams})
+    </insert>
+
+    <update id="updateState">
+        UPDATE linkis_resources_task SET
+          state = #{state} , end_time = #{updateTime}, last_update_time = #{updateTime}
+        WHERE id = #{taskId}
+    </update>
+
+    <update id="updateState2Failed">
+        UPDATE linkis_resources_task SET
+          state = #{state} , end_time = #{updateTime}, last_update_time = #{updateTime}, err_msg = #{errMsg}
+        WHERE id = #{taskId}
+    </update>
+
+    <select id="getNewestVersion" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT max(version)
+        FROM linkis_resources_task
+        WHERE resource_id = #{resourceId}
+    </select>
+</mapper>
+

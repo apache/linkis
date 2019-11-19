@@ -103,6 +103,9 @@
         <module>eurekaServer</module>
         <module>publicService</module>
         <module>ujes/client</module>
+        <module>bml/bmlcommon</module>
+        <module>bml/bmlclient</module>
+        <module>bml/bmlserver</module>
         <module>assembly</module>
     </modules>
 

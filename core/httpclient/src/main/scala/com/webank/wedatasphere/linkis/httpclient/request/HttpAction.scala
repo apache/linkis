@@ -38,7 +38,7 @@ trait HttpAction extends Action {
   def getCookies: Array[Cookie] = cookies.toArray(new Array[Cookie](cookies.size()))
   def addCookie(cookie: javax.servlet.http.Cookie): Unit =
     cookies.add(Cookie.newValidCookie(cookie.getName, cookie.getValue, cookie.getDomain,
-      null, cookie.getPath, -1, cookie.getMaxAge, cookie.getSecure, true))
+      cookie.getValue, cookie.getPath, -1, cookie.getMaxAge, cookie.getSecure, true))
   def addCookie(cookie: Cookie): Unit = cookies.add(cookie)
 
   def getURL: String

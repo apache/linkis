@@ -23,10 +23,10 @@ import com.webank.wedatasphere.linkis.common.conf.CommonVars
   */
 object BmlConfiguration {
   val GATEWAY_IP:CommonVars[String] =
-    CommonVars[String]("wds.linkis.gateway.ip", "10.107.118.108", "DWS gateway的ip地址")
+    CommonVars[String]("wds.linkis.gateway.ip", "ip", "DWS gateway的ip地址")
 
   val GATEWAY_PORT:CommonVars[Int] =
-    CommonVars[Int]("wds.linkis.gateway.port", 9001, "DWS gateway的端口")
+    CommonVars[Int]("wds.linkis.gateway.port", 1000, "DWS gateway的端口")
 
   val DWS_VERSION:CommonVars[String] = CommonVars[String]("wds.linkis.bml.dws.version", "v1")
 

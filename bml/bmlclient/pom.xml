@@ -69,18 +69,7 @@
         </resources>
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>webank-releases</id>
-            <name>webank-releases</name>
-            <url>http://maven.weoa.com/nexus/content/repositories/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>webank-snapshots</id>
-            <name>webank-snapshots</name>
-            <url>http://maven.weoa.com/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
+
 
 
 

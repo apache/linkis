@@ -8,7 +8,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://10.255.0.70:20303/eureka/
+      defaultZone: http://${ip}:${port}/eureka/
   instance:
     metadata-map:
       test: enjoyyin

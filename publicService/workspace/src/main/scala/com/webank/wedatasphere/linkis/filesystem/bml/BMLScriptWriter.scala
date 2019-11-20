@@ -40,9 +40,9 @@ class BMLScriptWriter private (private val fileName: String) extends FsWriter {
 
   def getInputStream():InputStream= new ByteArrayInputStream(stringBuilder.toString().getBytes("utf-8"))
 
-  override def close(): Unit = ???
+  override def close(): Unit = {}
 
-  override def flush(): Unit = ???
+  override def flush(): Unit = {}
 }
 
 object BMLScriptWriter{

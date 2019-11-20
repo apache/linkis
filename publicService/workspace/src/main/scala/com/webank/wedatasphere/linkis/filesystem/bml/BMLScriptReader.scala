@@ -55,16 +55,16 @@ class BMLScriptReader private(private val inputStream: InputStream, private val 
   }
 
   @scala.throws[IOException]
-  override def skip(recordNum: Int): Int = ???
+  override def skip(recordNum: Int): Int = 0
 
   @scala.throws[IOException]
-  override def getPosition: Long = ???
+  override def getPosition: Long = 0L
 
   @scala.throws[IOException]
   override def hasNext: Boolean = lineText != null
 
   @scala.throws[IOException]
-  override def available: Long = ???
+  override def available: Long = 0L
 
   override def close(): Unit = {
     if (BufferedReader != null) BufferedReader.close()

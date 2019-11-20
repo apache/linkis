@@ -21,11 +21,11 @@ import java.util
 import java.util.Date
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.protocol.query._
 import com.webank.wedatasphere.linkis.jobhistory.dao.TaskMapper
 import com.webank.wedatasphere.linkis.jobhistory.entity.{QueryTask, QueryTaskVO}
 import com.webank.wedatasphere.linkis.jobhistory.service.QueryService
 import com.webank.wedatasphere.linkis.jobhistory.transitional.TransitionalQueryService
+import com.webank.wedatasphere.linkis.protocol.query._
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -93,7 +93,8 @@ class QueryServiceImpl extends QueryService with Logging {
   def requestPersistTaskTask2QueryTask(requestPersistTask: RequestPersistTask): QueryTask = {
     val task: QueryTask = new QueryTask
     BeanUtils.copyProperties(requestPersistTask, task)
-    task.setSourceJson(BDPJettyServerHelper.gson.toJson(requestPersistTask.getSource))
+    if(requestPersistTask.getSource != null)
+      task.setSourceJson(BDPJettyServerHelper.gson.toJson(requestPersistTask.getSource))
     if (requestPersistTask.getParams != null)
       task.setParamsJson(BDPJettyServerHelper.gson.toJson(requestPersistTask.getParams))
     else

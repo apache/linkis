@@ -24,7 +24,7 @@ import com.webank.wedatasphere.linkis.common.conf.CommonVars
 object WorkspaceClientConf {
 
   val gateway: String =
-    CommonVars[String]("wds.linkis.gateway.address", "http://10.107.116.246:20817").getValue
+    CommonVars[String]("wds.linkis.gateway.address", s"address").getValue
 
   val prefix: String =
     CommonVars[String]("wds.linkis.filesystem.prefixutl", "/api/rest_j/v1/filesystem").getValue

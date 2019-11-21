@@ -142,6 +142,8 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("path:(路径：)" + path + "Is empty!(为空！)");
         }
+        WorkspaceUtil.pathSafeCheck(path,userName);
+        WorkspaceUtil.fileAndDirNameSpecialCharCheck(path);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         fsValidate(fileSystem);
@@ -161,6 +163,8 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("Path(路径)：" + path + "Is empty!(为空！)");
         }
+        WorkspaceUtil.pathSafeCheck(path,userName);
+        WorkspaceUtil.fileAndDirNameSpecialCharCheck(path);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         fsValidate(fileSystem);
@@ -181,6 +185,9 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(oldDest)) {
             throw new WorkSpaceException("Path(路径)：" + oldDest + "Is empty!(为空！)");
         }
+        WorkspaceUtil.pathSafeCheck(oldDest,userName);
+        WorkspaceUtil.pathSafeCheck(newDest,userName);
+        WorkspaceUtil.fileAndDirNameSpecialCharCheck(newDest);
         if (StringUtils.isEmpty(newDest)) {
             //No change in file name(文件名字无变化)
             return Message.messageToResponse(Message.ok());
@@ -206,6 +213,7 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("Path(路径)：" + path + "Is empty!(为空！)");
         }
+        WorkspaceUtil.pathSafeCheck(path,userName);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         fsValidate(fileSystem);
@@ -232,6 +240,7 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("Path(路径)：" + path + "Is empty!(为空！)");
         }
+        WorkspaceUtil.pathSafeCheck(path,userName);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         fsValidate(fileSystem);
@@ -261,6 +270,7 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("Path(路径)：" + path + "Is empty!(为空！)");
         }
+        WorkspaceUtil.pathSafeCheck(path,userName);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         fsValidate(fileSystem);
@@ -321,6 +331,7 @@ public class FsRestfulApi implements FsRestfulRemote {
             if (StringUtils.isEmpty(path)) {
                 throw new WorkSpaceException("Path(路径)：" + path + "Is empty!(为空！)");
             }
+            WorkspaceUtil.pathSafeCheck(path,userName);
             if (StringUtils.isEmpty(charset)) {
                 charset = "utf-8";
             }
@@ -396,6 +407,7 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("Path(路径)：" + path + "Is empty!(为空！)");
         }
+        WorkspaceUtil.pathSafeCheck(path,userName);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         fsValidate(fileSystem);
@@ -552,6 +564,7 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("Path(路径)：" + path + "is empty!(为空！)");
         }
+        WorkspaceUtil.pathSafeCheck(path,userName);
         String charset = (String) json.get("charset");
         if (StringUtils.isEmpty(charset)) {
             charset = "utf-8";
@@ -619,6 +632,7 @@ public class FsRestfulApi implements FsRestfulRemote {
             if (StringUtils.isEmpty(path)) {
                 throw new WorkSpaceException("Path(路径)：" + path + "is empty(为空)！");
             }
+            WorkspaceUtil.pathSafeCheck(path,userName);
             String type = WorkspaceUtil.getOpenFileTypeByFileName(path);
             if (!"resultset".equals(type)) {
                 throw new WorkSpaceException("unsupported type");
@@ -727,6 +741,7 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("Path(路径)：" + path + "is empty!(为空！)");
         }
+        WorkspaceUtil.pathSafeCheck(path,userName);
         String suffix = path.substring(path.lastIndexOf("."));
         FsPath fsPath = new FsPath(path);
         Map<String, Object> res = new HashMap<String, Object>();
@@ -797,6 +812,7 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("Path(路径)：" + path + "is empty!(为空！)");
         }
+        WorkspaceUtil.pathSafeCheck(path,userName);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         fsValidate(fileSystem);

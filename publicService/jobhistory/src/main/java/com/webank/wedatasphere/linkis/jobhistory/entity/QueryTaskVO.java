@@ -45,6 +45,15 @@ public class QueryTaskVO {
     private Long costTime;
     private String strongerExecId;
     private String fileName;
+    private String sourceJson;
+
+    public String getSourceJson() {
+        return sourceJson;
+    }
+
+    public void setSourceJson(String sourceJson) {
+        this.sourceJson = sourceJson;
+    }
 
     public String getFileName() {
         return fileName;

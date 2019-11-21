@@ -44,7 +44,6 @@ public class QueryTaskVO {
     private String paramsJson;
     private Long costTime;
     private String strongerExecId;
-    private String fileName;
     private String sourceJson;
 
     public String getSourceJson() {
@@ -53,14 +52,6 @@ public class QueryTaskVO {
 
     public void setSourceJson(String sourceJson) {
         this.sourceJson = sourceJson;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 
     public Long getTaskID() {

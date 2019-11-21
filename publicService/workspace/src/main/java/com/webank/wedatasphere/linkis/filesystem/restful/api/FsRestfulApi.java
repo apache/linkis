@@ -164,7 +164,6 @@ public class FsRestfulApi implements FsRestfulRemote {
             throw new WorkSpaceException("Path(路径)：" + path + "Is empty!(为空！)");
         }
         WorkspaceUtil.pathSafeCheck(path,userName);
-        WorkspaceUtil.fileAndDirNameSpecialCharCheck(path);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         fsValidate(fileSystem);

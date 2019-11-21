@@ -78,6 +78,9 @@ public class WorkspaceUtil {
         if(!path.contains(StorageUtils.FILE_SCHEMA()) && !path.contains(StorageUtils.HDFS_SCHEMA())){
             throw new WorkSpaceException("the path should contain schema");
         }
+        if(path.contains("../")){
+            throw new WorkSpaceException("Relative path not allowed");
+        }
         if(!path.contains(userLocalRootPath) && !path.contains(userHdfsRootPath)){
             throw new WorkSpaceException("The path needs to be within the user's own workspace path");
         }

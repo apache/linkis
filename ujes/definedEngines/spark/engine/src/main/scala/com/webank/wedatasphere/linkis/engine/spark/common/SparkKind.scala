@@ -38,6 +38,7 @@ object SparkKind {
   val MIX_TYPE = "mix"
   val SPARKSQL_TYPE = "sparksql"
   val SPARKMLSQL_TYPE = "mlsql"
+  val FUNCTION_MDQ_TYPE = "function.mdq"
 
   def getCodeKind(code: String): Kind = {
     getKind(Kind.getKind(code))

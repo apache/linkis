@@ -229,7 +229,15 @@
             </properties>
         </profile>
         <profile>
-            <id>spark2.1</id>
+            <id>spark2.3</id>
+            <properties>
+                <project.release.version>0.9.0</project.release.version>
+                <netty.version>4.1.17.Final</netty.version>
+                <json4s.version>3.2.11</json4s.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>spark2.2-2.0</id>
             <properties>
                 <project.release.version>0.9.0</project.release.version>
                 <netty.version>4.0.47.Final</netty.version>

@@ -29,7 +29,7 @@ object Configuration {
   val KERBEROS_ENABLE = CommonVars("wds.linkis.keytab.enable", false)
   val KEYTAB_FILE = CommonVars("wds.linkis.keytab.file", "/appcom/keytab/")
   val KERBEROS_PRINCIPAL = "wds.linkis.kerberos.principal"
-  val kEYTAB_HOST = CommonVars("wds.linkis.keytab.host", "bdphbs030003")
+  val kEYTAB_HOST = CommonVars("wds.linkis.keytab.host", "127.0.0.1")
 
   val IS_TEST_MODE = CommonVars("wds.linkis.test.mode", false)
 

@@ -114,9 +114,9 @@ object EngineUtils {
     inputStream
   }
 
-  def getResultStrByDolphinContent(dolphinContent:String):String = {
+  def getResultStrByDolphinTextContent(dolphinContent:String):String = {
     val resultSetReader = ResultSetReader.getResultSetReader(dolphinContent)
-    val errorMsg =  resultSetReader.getMetaData match {
+    resultSetReader.getMetaData match {
       case metadata:LineMetaData =>
         val sb = new StringBuilder
         while (resultSetReader.hasNext){
@@ -125,7 +125,6 @@ object EngineUtils {
         sb.toString()
       case _ => dolphinContent
     }
-    errorMsg
   }
 
 }

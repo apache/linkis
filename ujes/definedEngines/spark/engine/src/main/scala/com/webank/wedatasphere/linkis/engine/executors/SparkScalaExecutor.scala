@@ -24,6 +24,7 @@ import com.webank.wedatasphere.linkis.engine.exception.{ApplicationAlreadyStoppe
 import com.webank.wedatasphere.linkis.engine.execute.EngineExecutorContext
 import com.webank.wedatasphere.linkis.engine.rs.RsOutputStream
 import com.webank.wedatasphere.linkis.engine.spark.common.SparkScala
+import com.webank.wedatasphere.linkis.engine.spark.utils.EngineUtils
 import com.webank.wedatasphere.linkis.scheduler.executer._
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 import org.apache.commons.io.IOUtils
@@ -95,6 +96,7 @@ class SparkScalaExecutor(val sparkConf: SparkConf) extends SparkExecutor{
 
   override def execute(sparkEngineExecutor: SparkEngineExecutor, code: String,engineExecutorContext: EngineExecutorContext,jobGroup:String):ExecuteResponse = {
     this.jobGroup.append(jobGroup)
+    Thread.currentThread().setContextClassLoader(sparkILoop.intp.classLoader)
     if(engineExecutorContext != this.engineExecutorContextFactory.getEngineExecutorContext){
      lineOutputStream.reset(engineExecutorContext)
     }
@@ -150,7 +152,7 @@ class SparkScalaExecutor(val sparkConf: SparkConf) extends SparkExecutor{
             lineOutputStream.flush()
             engineExecutorContext.appendStdout("scala> " + code)
             val outStr = lineOutputStream.toString()
-            if( StringUtils.isEmpty(outStr) && ResultSetFactory.getInstance.isResultSet(outStr)) {
+            if( StringUtils.isNotEmpty(outStr) && ResultSetFactory.getInstance.isResultSet(outStr)) {
               val output = Utils.tryQuietly(ResultSetWriter.getRecordByRes(outStr, SPARK_CONSOLE_OUTPUT_NUM.getValue))
               val res = output.map(x => x.toString).toList.mkString("\n")
               if (res.length > 0) {
@@ -159,13 +161,15 @@ class SparkScalaExecutor(val sparkConf: SparkConf) extends SparkExecutor{
             }
             SuccessExecuteResponse()
           case Results.Incomplete =>
+            error("incomplete code.")
             IncompleteExecuteResponse(null)
           case Results.Error =>
-            lineOutputStream.flush()
-            val errorMsg = lineOutputStream.toString
-            engineExecutorContext.appendStdout("Execute code error for "+  errorMsg)
+            val output = lineOutputStream.toString
+            lineOutputStream.close()
+            val errorMsg = EngineUtils.getResultStrByDolphinTextContent(output)
+            error("Execute code error for "+  errorMsg)
             IOUtils.closeQuietly(lineOutputStream)
-            ErrorExecuteResponse("execute sparkScala failed!",new ExecuteError(40005, errorMsg))
+            ErrorExecuteResponse("",new ExecuteError(40005, "execute sparkScala failed!"))
         }
       }
       result

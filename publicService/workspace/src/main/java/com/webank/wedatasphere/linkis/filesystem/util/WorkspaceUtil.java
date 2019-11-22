@@ -16,9 +16,14 @@
 
 package com.webank.wedatasphere.linkis.filesystem.util;
 
+import com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration;
 import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException;
+import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.util.regex.Pattern;
 
 /**
@@ -60,4 +65,35 @@ public class WorkspaceUtil {
     public static Boolean logMatch(String code ,String pattern){
         return Pattern.matches(pattern,code);
     }
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceUtil.class);
+
+    public static void pathSafeCheck(String path,String userName) throws WorkSpaceException {
+        LOGGER.info("start safe check path params..");
+        LOGGER.info(path);
+        String userLocalRootPath = WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue() + userName;
+        String userHdfsRootPath = WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue() + userName + WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_SUFFIX.getValue();
+        LOGGER.info(userLocalRootPath);
+        LOGGER.info(userHdfsRootPath);
+        if(!path.contains(StorageUtils.FILE_SCHEMA()) && !path.contains(StorageUtils.HDFS_SCHEMA())){
+            throw new WorkSpaceException("the path should contain schema");
+        }
+        if(path.contains("../")){
+            throw new WorkSpaceException("Relative path not allowed");
+        }
+        if(!path.contains(userLocalRootPath) && !path.contains(userHdfsRootPath)){
+            throw new WorkSpaceException("The path needs to be within the user's own workspace path");
+        }
+    }
+
+    public static void fileAndDirNameSpecialCharCheck(String path) throws WorkSpaceException {
+        String name = new File(path).getName();
+        LOGGER.info(path);
+        String specialRegEx = "[ _`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]|\n|\r|\t";
+        Pattern specialPattern = Pattern.compile(specialRegEx);
+        if(specialPattern.matcher(name).find()){
+            throw new WorkSpaceException("the path exist special char");
+        }
+    }
+
 }

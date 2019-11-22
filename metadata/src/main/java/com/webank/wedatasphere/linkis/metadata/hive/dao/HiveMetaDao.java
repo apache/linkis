@@ -16,16 +16,20 @@
 
 package com.webank.wedatasphere.linkis.metadata.hive.dao;
 
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 import java.util.Map;
 /**
  * Created by shanhuang on 9/13/18.
  */
 public interface HiveMetaDao {
+    String getLocationByDbAndTable(Map<String, String> map);
     List<String> getDbsByUser(String userName);
     List<Map<String, Object>> getTablesByDbNameAndUser(Map<String, String> map);
     Long getPartitionSize(Map<String, String> map);
     List<String> getPartitions(Map<String, String> map);
     List<Map<String, Object>> getColumns(Map<String, String> map);
     List<Map<String, Object>> getPartitionKeys(Map<String, String> map);
+    String getTableComment(@Param("DbName") String DbName, @Param("tableName") String tableName);
 }

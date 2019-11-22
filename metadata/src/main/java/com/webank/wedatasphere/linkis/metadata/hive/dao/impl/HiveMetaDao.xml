@@ -18,6 +18,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.webank.wedatasphere.linkis.metadata.hive.dao.HiveMetaDao">
 
+    <select id="getLocationByDbAndTable" resultType="java.lang.String" parameterType="map">
+        select LOCATION from SDS where SD_ID in (
+        select SD_ID from `TBLS`
+        where TBL_NAME = #{tableName,jdbcType=VARCHAR}
+        and DB_ID in (select DB_ID from `DBS` where NAME = #{dbName,jdbcType=VARCHAR})
+        )
+    </select>
+
     <select id="getDbsByUser" resultType="java.lang.String" parameterType="java.lang.String">
         select NAME from(
         select t2.NAME  as NAME
@@ -111,6 +119,19 @@
         where TBL_NAME = #{tableName,jdbcType=VARCHAR}
         and DB_ID in (select DB_ID from `DBS` where NAME = #{dbName,jdbcType=VARCHAR})
         );
+    </select>
+
+    <select id="getTableComment" resultType="String">
+        SELECT
+        tp.PARAM_VALUE
+        FROM
+        `DBS` d
+        LEFT JOIN `TBLS` t ON d.DB_ID = t.DB_ID
+        LEFT JOIN `TABLE_PARAMS` tp ON t.TBL_ID = tp.TBL_ID
+        WHERE
+        tp.PARAM_KEY = 'comment'
+        AND d.`NAME` = #{DbName}
+        AND t.TBL_NAME = #{tableName}
     </select>
 
 </mapper>

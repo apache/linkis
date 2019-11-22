@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.webank.wedatasphere.linkis.bml.dao.DownloadDao">
+
+    <resultMap id="DownloadModel" type="com.webank.wedatasphere.linkis.bml.Entity.DownloadModel">
+
+    </resultMap>
+
+
+    <insert id="insertDownloadModel" useGeneratedKeys="true" keyColumn="id" keyProperty="id"
+            parameterType="com.webank.wedatasphere.linkis.bml.Entity.DownloadModel">
+        insert into `linkis_resources_download_history` ( `start_time`,`end_time`,`client_ip`,`state`,`resource_id`,`version`,`downloader`)
+        values(#{downloadModel.startTime}, #{downloadModel.endTime}, #{downloadModel.clientIp}, #{downloadModel.state}, #{downloadModel.resourceId}, #{downloadModel.version}, #{downloadModel.downloader})
+    </insert>
+
+</mapper>
+

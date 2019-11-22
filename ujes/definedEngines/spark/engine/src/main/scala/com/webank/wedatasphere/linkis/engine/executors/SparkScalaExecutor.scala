@@ -166,7 +166,7 @@ class SparkScalaExecutor(val sparkConf: SparkConf) extends SparkExecutor{
           case Results.Error =>
             val output = lineOutputStream.toString
             lineOutputStream.close()
-            val errorMsg = EngineUtils.getResultStrByDolphinContent(output)
+            val errorMsg = EngineUtils.getResultStrByDolphinTextContent(output)
             error("Execute code error for "+  errorMsg)
             IOUtils.closeQuietly(lineOutputStream)
             ErrorExecuteResponse("",new ExecuteError(40005, "execute sparkScala failed!"))

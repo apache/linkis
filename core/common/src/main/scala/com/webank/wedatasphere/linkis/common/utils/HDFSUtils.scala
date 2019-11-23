@@ -63,12 +63,20 @@ object HDFSUtils {
   def getUserGroupInformation(userName: String): UserGroupInformation ={
     if(KERBEROS_ENABLE.getValue) {
       val path = new File(KEYTAB_FILE.getValue , userName + ".keytab").getPath
-      val user = userName + "/" + kEYTAB_HOST.getValue
+      val user = getKerberosUser(userName)
       UserGroupInformation.setConfiguration(getConfiguration(userName))
       UserGroupInformation.loginUserFromKeytabAndReturnUGI(user, path)
     } else {
       UserGroupInformation.createRemoteUser(userName)
     }
+  }
+
+  def getKerberosUser(userName: String): String = {
+    var user = userName
+    if(KERBEROS_ENABLE.getValue){
+      user = user+ "/" + kEYTAB_HOST.getValue
+    }
+    user
   }
 
 }

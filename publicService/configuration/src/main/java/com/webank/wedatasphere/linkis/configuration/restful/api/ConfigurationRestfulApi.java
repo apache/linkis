@@ -42,7 +42,7 @@ import java.util.Map;
  * Created by allenlliu on 2018/10/17.
  */
 @Component
-@Path("/publicservice")
+@Path("/configuration")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ConfigurationRestfulApi {

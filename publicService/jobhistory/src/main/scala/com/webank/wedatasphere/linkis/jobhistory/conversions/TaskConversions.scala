@@ -64,18 +64,6 @@ object TaskConversions extends Logging{
   implicit def queryTask2QueryTaskVO(queryTask: QueryTask): QueryTaskVO = {
     val taskVO = new QueryTaskVO
     BeanUtils.copyProperties(queryTask, taskVO)
-    var source:util.HashMap[String, String] = null
-    var scriptPath:String = null
-    Utils.tryQuietly()
-    Utils.tryCatch{
-      source = BDPJettyServerHelper.gson.fromJson(queryTask.getSourceJson, classOf[java.util.HashMap[String, String]])
-      if(source != null)scriptPath = source.get(TaskConstant.SCRIPTPATH)
-    }{
-      case e:Exception =>logger.info("script转化map失败，忽略",e);scriptPath = queryTask.getSourceJson
-    }
-    if (!StringUtils.isEmpty(scriptPath))
-      taskVO.setFileName(new File(scriptPath).getName())
-
     if (queryTask.getExecId() != null && queryTask.getExecuteApplicationName() != null && queryTask.getInstance() != null) {
       taskVO.setStrongerExecId(ZuulEntranceUtils.generateExecID(queryTask.getExecId(),
         queryTask.getExecuteApplicationName(), queryTask.getInstance(), queryTask.getRequestApplicationName))
@@ -87,13 +75,13 @@ object TaskConversions extends Logging{
       if (createdTime != null && updatedTime != null) {
         taskVO.setCostTime(queryTask.getUpdatedTime().getTime() - queryTask.getCreatedTime().getTime());
       } else {
-        taskVO.setCostTime(null);
+        taskVO.setCostTime(null)
       }
     } else {
       if (createdTime != null) {
         taskVO.setCostTime(System.currentTimeMillis() - queryTask.getCreatedTime().getTime());
       } else {
-        taskVO.setCostTime(null);
+        taskVO.setCostTime(null)
       }
     }
     taskVO

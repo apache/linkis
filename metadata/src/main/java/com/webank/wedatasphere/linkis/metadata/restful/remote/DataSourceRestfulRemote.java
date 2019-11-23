@@ -42,12 +42,12 @@ public interface DataSourceRestfulRemote {
     public Response queryTables(@RequestParam("database") String database, HttpServletRequest req);
 
     @GetMapping("/api/datasource/columns")
-    public Response queryTableMeta(@RequestParam("database") String database,  @RequestParam("table") String table, HttpServletRequest req);
+    public Response queryTableMeta(@RequestParam("database") String database, @RequestParam("table") String table, HttpServletRequest req);
 
     @GetMapping("/api/datasource/size")
-    public Response sizeOf(@RequestParam("database") String database,  @RequestParam("table") String table, @RequestParam("partition") String partition, HttpServletRequest req);
+    public Response sizeOf(@RequestParam("database") String database, @RequestParam("table") String table, @RequestParam("partition") String partition, HttpServletRequest req);
 
     @GetMapping("/api/datasource/partitions")
-    public Response partitions(@RequestParam("database") String database,  @RequestParam("table") String table, HttpServletRequest req);
+    public Response partitions(@RequestParam("database") String database, @RequestParam("table") String table, HttpServletRequest req);
 
 }

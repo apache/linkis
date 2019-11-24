@@ -16,13 +16,11 @@
 
 package com.webank.wedatasphere.linkis.common.conf
 
-import java.io.{File, FileInputStream, IOException, InputStream}
+import java.io._
 import java.util.Properties
-
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
-
 import scala.collection.JavaConversions._
 
 /**
@@ -31,6 +29,7 @@ import scala.collection.JavaConversions._
 private[conf] object BDPConfiguration extends Logging {
 
   val DEFAULT_PROPERTY_FILE_NAME = "linkis.properties"
+  val CHARSET_NAME = "utf-8"
 
   private val config = new Properties
   private val sysProps = sys.props
@@ -45,12 +44,17 @@ private[conf] object BDPConfiguration extends Logging {
 
   private def initConfig(config: Properties, filePath: String) {
     var inputStream: InputStream = null
+    var inputStreamReader: InputStreamReader = null
     try {
       inputStream = new FileInputStream(filePath)
-      config.load(inputStream)
+      inputStreamReader = new InputStreamReader(inputStream, CHARSET_NAME)
+      config.load(inputStreamReader)
     } catch { case e: IOException =>
       error("Can't load " + propertyFile, e)
-    } finally IOUtils.closeQuietly(inputStream)
+    } finally {
+      IOUtils.closeQuietly(inputStream)
+      IOUtils.closeQuietly(inputStreamReader)
+    }
   }
 
   def getOption(key: String): Option[String] = {

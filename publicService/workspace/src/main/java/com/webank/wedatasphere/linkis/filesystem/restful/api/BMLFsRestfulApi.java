@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes({MediaType.APPLICATION_JSON})
 @Component
-@Path("publicservice")
+@Path("filesystem")
 public class BMLFsRestfulApi {
     @Autowired
     BMLHelper bmlHelper;

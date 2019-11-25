@@ -46,7 +46,7 @@ import java.util.List;
  * 018/10/19
  */
 @Component
-@Path("/publicservice")
+@Path("/jobhistory")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class QueryRestfulApi{

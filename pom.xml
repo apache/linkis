@@ -65,6 +65,9 @@
         <module>core/cloudMybatis</module>
         <module>core/httpclient</module>
         <module>storage/storage</module>
+        <module>bml/bmlcommon</module>
+        <module>bml/bmlclient</module>
+        <module>bml/bmlserver</module>
         <module>resourceManager/resourcemanagercommon</module>
         <module>resourceManager/resourcemanagerclient</module>
         <module>resourceManager/resourcemanagerserver</module>

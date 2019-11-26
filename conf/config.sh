@@ -88,6 +88,12 @@ JDBC_ENTRANCE_PORT=9888
 MLSQL_INSTALL_IP=127.0.0.1
 MLSQL_ENTRANCE_PORT=9889
 
+
+### BML
+### This service is used to provide BML capability.
+BML_INSTALL_IP=127.0.0.1
+BML_PORT=9999
+
 ########################################################################################
 
 ## LDAP is for enterprise authorization, if you just want to have a try, ignore it.

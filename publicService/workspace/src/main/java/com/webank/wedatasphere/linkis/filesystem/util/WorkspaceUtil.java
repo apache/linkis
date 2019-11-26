@@ -71,8 +71,18 @@ public class WorkspaceUtil {
     public static void pathSafeCheck(String path,String userName) throws WorkSpaceException {
         LOGGER.info("start safe check path params..");
         LOGGER.info(path);
-        String userLocalRootPath = WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue() + userName;
-        String userHdfsRootPath = WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue() + userName + WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_SUFFIX.getValue();
+        String userLocalRootPath = null;
+        if (WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue().toString().endsWith(File.separator)){
+            userLocalRootPath = WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue() + userName;
+        }else{
+            userLocalRootPath = WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue() + File.separator + userName;
+        }
+        String userHdfsRootPath = null;
+        if (WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue().toString().endsWith(File.separator)){
+            userHdfsRootPath = WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue() + userName + WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_SUFFIX.getValue();
+        }else{
+            userHdfsRootPath = WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue() + File.separator + userName + WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_SUFFIX.getValue();
+        }
         LOGGER.info(userLocalRootPath);
         LOGGER.info(userHdfsRootPath);
         if(!path.contains(StorageUtils.FILE_SCHEMA()) && !path.contains(StorageUtils.HDFS_SCHEMA())){

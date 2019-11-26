@@ -287,20 +287,20 @@ echo "<----------------$SERVER_NAME:end------------------->"
 
 ##BML install
 PACKAGE_DIR=linkis/linkis-bml
-SERVERNAME=linkis-bml
+SERVER_NAME=linkis-bml
 SERVER_IP=$BML_INSTALL_IP
 SERVER_PORT=$BML_PORT
 SERVER_HOME=$LINKIS_INSTALL_HOME
 ###install dir
 installPackage
 ###update linkis.properties
-echo "$SERVERNAME-step4:update linkis conf"
-SERVER_CONF_PATH=$SERVER_HOME/$SERVERNAME/conf/linkis.properties
+echo "$SERVER_NAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
 ssh -p $SSH_PORT $SERVER_IP "sed -i ${txt}  \"s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g\" $SERVER_CONF_PATH"
 ssh -p $SSH_PORT $SERVER_IP "sed -i ${txt}  \"s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g\" $SERVER_CONF_PATH"
 ssh -p $SSH_PORT $SERVER_IP "sed -i ${txt}  \"s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g\" $SERVER_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVERNAME"
-echo "<----------------$SERVERNAME:end------------------->"
+echo "<----------------$SERVER_NAME:end------------------->"
 ##BML end
 
 

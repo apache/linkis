@@ -187,7 +187,7 @@
                 <exclude>org.tukaani:xz:jar</exclude>
                 <exclude>org.yaml:snakeyaml:jar</exclude>
                 <exclude>xerces:xercesImpl:jar</exclude>
-                <exclude>xml-apis:xml-apis:jar</exclude>
+                <!--<exclude>xml-apis:xml-apis:jar</exclude>-->
                 <exclude>xmlenc:xmlenc:jar</exclude>
             </excludes>
         </dependencySet>

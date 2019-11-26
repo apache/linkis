@@ -21,7 +21,7 @@ import java.nio.file.Paths
 import java.security.PrivilegedExceptionAction
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.common.conf.Configuration.{HADOOP_ROOT_USER, KERBEROS_ENABLE, KEYTAB_FILE, kEYTAB_HOST}
+import com.webank.wedatasphere.linkis.common.conf.Configuration.{HADOOP_ROOT_USER, KERBEROS_ENABLE, KEYTAB_FILE, kEYTAB_HOST,KEYTAB_HOST_ENABLED}
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.security.UserGroupInformation
@@ -73,7 +73,7 @@ object HDFSUtils {
 
   def getKerberosUser(userName: String): String = {
     var user = userName
-    if(KERBEROS_ENABLE.getValue){
+    if(KEYTAB_HOST_ENABLED.getValue){
       user = user+ "/" + kEYTAB_HOST.getValue
     }
     user

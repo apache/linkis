@@ -64,15 +64,16 @@ public class LinkisMybatisConfig {
         boolean testWhileIdle = true;
         boolean testOnBorrow = true;
         boolean testOnReturn = true;
-        HiveConf hiveConf = HiveUtils.getDefaultConf(com.webank.wedatasphere.linkis.common.conf.Configuration.HADOOP_ROOT_USER().getValue());
-        String url = hiveConf.get("javax.jdo.option.ConnectionURL");
-        String username = hiveConf.get("javax.jdo.option.ConnectionUserName");
-        String password = hiveConf.get("javax.jdo.option.ConnectionPassword");
-        if(url == null || username == null && password == null){
+
+        String url =  DWSConfig.HIVE_META_URL.getValue();
+        String username =  DWSConfig.HIVE_META_USER.getValue();
+        String password = DWSConfig.HIVE_META_PASSWORD.getValue();
+        if(StringUtils.isBlank(url) || StringUtils.isBlank(username)  || StringUtils.isBlank(password)) {
+            HiveConf hiveConf = HiveUtils.getDefaultConf(com.webank.wedatasphere.linkis.common.conf.Configuration.HADOOP_ROOT_USER().getValue());
             logger.info("从配置文件中读取hive数据库连接地址");
-            url = DWSConfig.HIVE_META_URL.getValue();
-            username = DWSConfig.HIVE_META_USER.getValue();
-            password = DWSConfig.HIVE_META_PASSWORD.getValue();
+            url = hiveConf.get("javax.jdo.option.ConnectionURL");
+            username = hiveConf.get("javax.jdo.option.ConnectionUserName");
+            password = hiveConf.get("javax.jdo.option.ConnectionPassword");
         }
         logger.info("数据库连接地址信息=" + url);
         datasource.setUrl(url);

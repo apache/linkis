@@ -24,7 +24,7 @@ import com.webank.wedatasphere.linkis.common.conf.CommonVars
   * Description:
   */
 object BmlServerConfiguration {
-  val BML_HDFS_PREFIX = CommonVars("wds.linkis.bml.hdfs.prefix", "/tmp/wds-ide")
+  val BML_HDFS_PREFIX = CommonVars("wds.linkis.bml.hdfs.prefix", "/tmp/linkis")
 
   val BML_CLEAN_EXPIRED_TIME:CommonVars[Int] = CommonVars[Int]("wds.linkis.bml.cleanExpired.time", 100)
 

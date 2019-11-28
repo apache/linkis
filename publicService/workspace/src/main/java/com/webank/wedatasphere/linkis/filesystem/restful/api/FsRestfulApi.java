@@ -83,7 +83,7 @@ import java.util.Map;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes({MediaType.APPLICATION_JSON, MediaType.MULTIPART_FORM_DATA})
 @Component
-@Path("publicservice")
+@Path("filesystem")
 public class FsRestfulApi implements FsRestfulRemote {
     @Autowired
     private FsService fsService;

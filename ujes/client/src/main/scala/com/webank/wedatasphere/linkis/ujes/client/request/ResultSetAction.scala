@@ -28,7 +28,7 @@ import com.webank.wedatasphere.linkis.ujes.client.exception.UJESClientBuilderExc
   * created by cooperyang on 2019/5/23.
   */
 class ResultSetAction private() extends GetAction with UJESJobAction {
-  override def suffixURLs: Array[String] = Array("publicservice", "openFile")
+  override def suffixURLs: Array[String] = Array("filesystem", "openFile")
 }
 object ResultSetAction {
   def builder(): Builder = new Builder

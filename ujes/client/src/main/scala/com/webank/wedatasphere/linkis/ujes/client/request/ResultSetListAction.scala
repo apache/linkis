@@ -28,7 +28,7 @@ import com.webank.wedatasphere.linkis.ujes.client.response.JobInfoResult
   * created by cooperyang on 2019/5/23.
   */
 class ResultSetListAction extends GetAction with UJESJobAction {
-  override def suffixURLs: Array[String] = Array("publicservice", "getDirFileTrees")
+  override def suffixURLs: Array[String] = Array("filesystem", "getDirFileTrees")
 }
 object ResultSetListAction {
   def builder(): Builder = new Builder

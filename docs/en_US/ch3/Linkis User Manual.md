@@ -306,7 +306,7 @@ Linkis uses Spring framework as the underlying technique. So instances of some c
 <dependency>
   <groupId>com.webank.wedatasphere.linkis</groupId>
   <artifactId>linkis-ujes-entrance</artifactId>
-  <version>0.9.0</version>
+  <version>0.9.1</version>
 </dependency>
 ```
 **2)Interfaces to be implemented**
@@ -322,7 +322,7 @@ There is no compulsory interface in Entrance. Below interfaces can be implemente
 <dependency>
   <groupId>com.webank.wedatasphere.linkis</groupId>
   <artifactId>linkis-ujes-enginemanager</artifactId>
-  <version>0.9.0</version>
+  <version>0.9.1</version>
 </dependency>
 ```
 
@@ -341,7 +341,7 @@ Here ProcessEngineBuilder has already provided a class called JavaProcessEngineB
 <dependency>
   <groupId>com.webank.wedatasphere.linkis</groupId>
   <artifactId>linkis-ujes-engine</artifactId>
-  <version>0.9.0</version>
+  <version>0.9.1</version>
 </dependency>
 ```
 **2)Interfaces to be implemented**

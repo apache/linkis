@@ -312,7 +312,7 @@ Linkis项目使用了Spring框架作为底层技术，所以一些类实例可�
 <dependency>
   <groupId>com.webank.wedatasphere.Linkis</groupId>
   <artifactId>Linkis-ujes-entrance</artifactId>
-  <version>0.9.0</version>
+  <version>0.9.1</version>
 </dependency>
 ```
 **2)需要实现的接口**
@@ -328,7 +328,7 @@ Entrance没有必须要实例化的接口，以下接口可以根据需要进行
 <dependency>
   <groupId>com.webank.wedatasphere.Linkis</groupId>
   <artifactId>Linkis-ujes-enginemanager</artifactId>
-  <version>0.9.0</version>
+  <version>0.9.1</version>
 </dependency>
 ```
 
@@ -348,7 +348,7 @@ EngineManager需要对以下接口根据需要进行实现:
 <dependency>
   <groupId>com.webank.wedatasphere.Linkis</groupId>
   <artifactId>Linkis-ujes-engine</artifactId>
-  <version>0.9.0</version>
+  <version>0.9.1</version>
 </dependency>
 ```
 **2)需要实现的接口**

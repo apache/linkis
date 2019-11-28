@@ -182,6 +182,17 @@
       </includes>
     </fileSet>
 
+    <!--bml-->
+    <fileSet>
+      <directory>
+        ${project.parent.basedir}/bml/bmlserver/target/
+      </directory>
+      <outputDirectory>share/linkis/linkis-bml/</outputDirectory>
+      <includes>
+        <include>*.zip</include>
+      </includes>
+    </fileSet>
+
     <!--gateway-->
     <fileSet>
       <directory>

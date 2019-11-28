@@ -51,7 +51,7 @@ import java.util.*;
 /**
  * Created by johnnwang on 8/11/18.
  */
-@Path("publicservice")
+@Path("udf")
 @Component
 public class UDFApi {
 

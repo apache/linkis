@@ -182,7 +182,7 @@
                 <exclude>org.springframework:spring-context:jar</exclude>
                 <exclude>org.springframework:spring-core:jar</exclude>
                 <exclude>org.springframework:spring-expression:jar</exclude>
-                <exclude>org.springframework:spring-jcl:jar</exclude>
+                <!--<exclude>org.springframework:spring-jcl:jar</exclude>-->
                 <exclude>org.springframework:spring-web:jar</exclude>
                 <exclude>org.tukaani:xz:jar</exclude>
                 <exclude>org.yaml:snakeyaml:jar</exclude>

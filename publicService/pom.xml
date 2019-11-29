@@ -29,6 +29,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty</artifactId>
+            <version>3.6.2.Final</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-application</artifactId>
             <version>${linkis.version}</version>

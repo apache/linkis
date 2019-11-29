@@ -128,7 +128,7 @@
                 <exclude>commons-net:commons-net:jar</exclude>
                 <exclude>commons-pool:commons-pool:jar</exclude>
                 <exclude>io.micrometer:micrometer-core:jar</exclude>
-                <exclude>io.netty:netty:jar</exclude>
+                <!--<exclude>io.netty:netty:jar</exclude>-->
                 <exclude>io.netty:netty-all:jar</exclude>
                 <exclude>io.netty:netty-buffer:jar</exclude>
                 <exclude>io.netty:netty-codec:jar</exclude>

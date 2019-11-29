@@ -18,12 +18,16 @@ package com.webank.wedatasphere.linkis.engine.execute
 
 import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.engine.conf.EngineConfiguration
 import com.webank.wedatasphere.linkis.engine.exception.EngineErrorException
+import com.webank.wedatasphere.linkis.engine.extension.EnginePreExecuteHook
 import com.webank.wedatasphere.linkis.resourcemanager.Resource
 import com.webank.wedatasphere.linkis.scheduler.executer._
 import com.webank.wedatasphere.linkis.storage.resultset.ResultSetFactory
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
+
+import scala.collection.mutable.ArrayBuffer
 
 /**
   * Created by enjoyyin on 2018/9/17.
@@ -39,6 +43,24 @@ abstract class EngineExecutor(outputPrintLimit: Int, isSupportParallelism: Boole
 
   private var executedNum = 0
   private var succeedNum = 0
+
+
+  private val enginePreExecuteHooks:Array[EnginePreExecuteHook] = {
+    val hooks = new ArrayBuffer[EnginePreExecuteHook]()
+    EngineConfiguration.ENGINE_PRE_EXECUTE_HOOK_CLASSES.getValue.split(",") foreach {
+      hookStr => Utils.tryCatch{
+        val clazz = Class.forName(hookStr)
+        val obj = clazz.newInstance()
+        obj match {
+          case hook:EnginePreExecuteHook => hooks += hook
+          case _ => logger.warn(s"obj is not a engineHook obj is ${obj.getClass}")
+        }
+      }{
+        case e:Exception => logger.error("failed to load class", e)
+      }
+    }
+    hooks.toArray
+  }
 
 
   def setCodeParser(codeParser: CodeParser) = this.codeParser = Some(codeParser)
@@ -95,6 +117,15 @@ abstract class EngineExecutor(outputPrintLimit: Int, isSupportParallelism: Boole
       else if(isSupportParallelism) whenAvailable(f) else ensureIdle(f)
     ensureOp {
       val engineExecutorContext = createEngineExecutorContext(executeRequest)
+      Utils.tryCatch{
+        enginePreExecuteHooks foreach {
+          hook => logger.info(s"${hook.hookName} begins to do a hook")
+            hook.callPreExecuteHook(engineExecutorContext, executeRequest)
+            logger.info(s"${hook.hookName} ends to do a hook")
+        }
+      }{
+        case e:Exception => logger.info("failed to do with hook")
+      }
       var response: ExecuteResponse = null
       val incomplete = new StringBuilder
       val codes = Utils.tryCatch(codeParser.map(_.parse(executeRequest.code, engineExecutorContext)).getOrElse(Array(executeRequest.code))){

@@ -57,6 +57,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-bml-hook</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-core_${scala.binary.version}</artifactId>
             <version>${spark.version}</version>

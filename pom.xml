@@ -77,8 +77,10 @@
         <module>publicService/configuration</module>
         <module>publicService/variable</module>
         <module>publicService/workspace</module>
+        <module>publicService/workspace/client/workspace-httpclient</module>
         <module>metadata</module>
         <module>ujes/engine</module>
+        <module>bml/bml-engine-hook</module>
         <module>ujes/enginemanager</module>
         <module>ujes/entrance</module>
         <module>ujes/definedEngines/spark/engine</module>

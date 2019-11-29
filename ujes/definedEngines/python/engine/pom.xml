@@ -65,6 +65,11 @@
         <artifactId>scalatest_2.11</artifactId>
         <version>2.2.6</version>
         </dependency>
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-bml-hook</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

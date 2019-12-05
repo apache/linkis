@@ -17,26 +17,27 @@
 package com.webank.wedatasphere.linkis.storage.domain
 
 import java.sql.{Date, Timestamp}
+import com.webank.wedatasphere.linkis.common.utils.Utils
+import com.webank.wedatasphere.linkis.common.utils.Logging
 
 /**
   * Created by johnnwang on 10/17/18.
   */
-object DataType {
+object DataType extends Logging{
 
 
   val NULL_VALUE = "NULL"
   //TODO Change to fine-grained regular expressions(改为精细化正则表达式)
-  val DECIMAL_REGEX = "decimal\\(\\d*\\,\\d*\\)".r.unanchored
+  val DECIMAL_REGEX = "^decimal\\(\\d*\\,\\d*\\)".r.unanchored
 
-  val SHORT_REGEX = "short.*".r.unanchored
+  val SHORT_REGEX = "^short.*".r.unanchored
   val INT_REGEX = "^int.*".r.unanchored
-  val LONG_REGEX = "long.*".r.unanchored
-  val BIGINT_REGEX = "bigint.*".r.unanchored
-  val FLOAT_REGEX = "float.*".r.unanchored
-  val DOUBLE_REGEX = "double.*".r.unanchored
-
-
-  val VARCHAR_REGEX = "varchar.*".r.unanchored
+  val LONG_REGEX = "^long.*".r.unanchored
+  val BIGINT_REGEX = "^bigint.*".r.unanchored
+  val FLOAT_REGEX = "^float.*".r.unanchored
+  val DOUBLE_REGEX = "^double.*".r.unanchored
+  
+  val VARCHAR_REGEX = "^varchar.*".r.unanchored
   val CHAR_REGEX = "^char.*".r.unanchored
 
   val ARRAY_REGEX = "array.*".r.unanchored
@@ -69,24 +70,25 @@ object DataType {
     case _ => StringType
   }
 
-  def toValue(dataType: DataType, value: String): Any = dataType match {
+def toValue(dataType: DataType, value: String): Any = Utils.tryCatch(dataType match {
     case NullType => null
     case StringType | CharType | VarcharType | StructType | ListType | ArrayType | MapType => value
     case BooleanType =>  if(isNull(value)) null else value.toBoolean
     case ShortIntType => if(isNull(value)) null else value.toShort
     case IntType =>if(isNull(value)) null else value.toInt
-    case LongType => if(isNull(value)) null else value.toLong
+    case LongType | BigIntType => if(isNull(value)) null else value.toLong
     case FloatType => if(isNull(value)) null else value.toFloat
     case DoubleType  => if(isNull(value)) null else value.toDouble
     case DecimalType => if(isNull(value)) null else BigDecimal(value)
     case DateType => if(isNull(value)) null else Date.valueOf(value)
-    case TimestampType => if(isNull(value)) null else Timestamp.valueOf(value)
+    case TimestampType => if(isNull(value)) null else Timestamp.valueOf(value).toString.stripSuffix(".0")
     case BinaryType => if(isNull(value)) null else value.getBytes()
     case _ => value
+    }){
+    t => warn(s"Failed to  $value switch  to dataType:",t)
+    value
   }
-  def main(args: Array[String]): Unit = {
-    println(toDataType("aint"))
-  }
+
   def isNull(value:String):Boolean= if(value == null || value == NULL_VALUE || value.trim == "") true else false
 }
 
@@ -100,6 +102,7 @@ case object BooleanType extends DataType("boolean", 16)
 case object TinyIntType extends DataType("tinyint", -6)
 case object ShortIntType extends DataType("short", 5)
 case object IntType extends DataType("int", 4)
+case object BigIntType extends DataType("bigint", -5)
 case object LongType extends DataType("long", -5)
 case object FloatType extends DataType("float", 6)
 case object DoubleType extends DataType("double", 8)

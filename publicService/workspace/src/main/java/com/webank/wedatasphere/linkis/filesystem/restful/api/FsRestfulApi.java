@@ -27,6 +27,8 @@ import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException;
 import com.webank.wedatasphere.linkis.filesystem.restful.remote.FsRestfulRemote;
 import com.webank.wedatasphere.linkis.filesystem.service.FsService;
 import com.webank.wedatasphere.linkis.filesystem.util.Constants;
+import com.webank.wedatasphere.linkis.filesystem.util.FsUtil;
+import com.webank.wedatasphere.linkis.filesystem.util.FsUtil$;
 import com.webank.wedatasphere.linkis.filesystem.util.WorkspaceUtil;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
@@ -98,8 +100,9 @@ public class FsRestfulApi implements FsRestfulRemote {
 
     private void fsValidate(FileSystem fileSystem) throws WorkSpaceException {
         if (fileSystem == null){
-            throw new WorkSpaceException("The user has obtained the filesystem for more than " + WorkSpaceConfiguration.FILESYSTEM_GET_TIMEOUT.getValue().toString()
-                    + "ms. Please contact the administrator.（用户获取filesystem的时间超过" + WorkSpaceConfiguration.FILESYSTEM_GET_TIMEOUT.getValue().toString() + "ms，请联系管理员）");
+
+            throw new WorkSpaceException("The user has obtained the filesystem for more than " + FsUtil.FILESYSTEM_GET_TIMEOUT().getValue().toString()
+                    + "ms. Please contact the administrator.（用户获取filesystem的时间超过" + FsUtil.FILESYSTEM_GET_TIMEOUT().getValue().toString() + "ms，请联系管理员）");
         }
     }
 

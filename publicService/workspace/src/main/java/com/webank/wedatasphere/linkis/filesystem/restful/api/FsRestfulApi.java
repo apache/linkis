@@ -98,7 +98,8 @@ public class FsRestfulApi implements FsRestfulRemote {
 
     private void fsValidate(FileSystem fileSystem) throws WorkSpaceException {
         if (fileSystem == null){
-            throw new WorkSpaceException("The user has obtained the filesystem for more than 2s. Please contact the administrator.（用户获取filesystem的时间超过2s，请联系管理员）");
+            throw new WorkSpaceException("The user has obtained the filesystem for more than " + WorkSpaceConfiguration.FILESYSTEM_GET_TIMEOUT.getValue().toString()
+                    + "ms. Please contact the administrator.（用户获取filesystem的时间超过" + WorkSpaceConfiguration.FILESYSTEM_GET_TIMEOUT.getValue().toString() + "ms，请联系管理员）");
         }
     }
 

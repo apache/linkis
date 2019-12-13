@@ -346,7 +346,12 @@ public class FsRestfulApi implements FsRestfulRemote {
             int bytesRead = 0;
             response.setCharacterEncoding(charset);
             java.nio.file.Path source = Paths.get(fsPath.getPath());
-            response.addHeader("Content-Type", Files.probeContentType(source));
+            String contentType = Files.probeContentType(source);
+            if(!StringUtils.isEmpty(contentType)) {
+                response.addHeader("Content-Type", contentType);
+            } else {
+                response.addHeader("Content-Type", "multipart/form-data");
+            }
             response.addHeader("Content-Disposition", "attachment;filename="
                     + new File(fsPath.getPath()).getName());
             outputStream = response.getOutputStream();

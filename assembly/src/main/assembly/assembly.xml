@@ -128,7 +128,7 @@
       </includes>
     </fileSet>
 
-    <!--pipeline-->
+   <!-- &lt;!&ndash;pipeline&ndash;&gt;
     <fileSet>
       <directory>
         ${project.parent.basedir}/ujes/definedEngines/pipeline/entrance/target/
@@ -147,7 +147,7 @@
       <includes>
         <include>*.zip</include>
       </includes>
-    </fileSet>
+    </fileSet>-->
 
     <!--jdbc-->
     <fileSet>
@@ -160,7 +160,7 @@
       </includes>
     </fileSet>
 
-    <!--mlsql-->
+   <!-- &lt;!&ndash;mlsql&ndash;&gt;
     <fileSet>
       <directory>
         ${project.parent.basedir}/ujes/definedEngines/mlsql/entrance/target/
@@ -169,7 +169,7 @@
       <includes>
         <include>*.zip</include>
       </includes>
-    </fileSet>
+    </fileSet>-->
 
     <!--resourcemanager-->
     <fileSet>
@@ -216,7 +216,7 @@
       <!--module-->
       <fileSet>
           <directory>
-              ${project.parent.basedir}/core/cloudModule/target/
+              ${project.parent.basedir}/assembly/public-module/target/
           </directory>
           <outputDirectory>share/linkis/module/</outputDirectory>
           <includes>

@@ -36,7 +36,7 @@
             <useStrictFiltering>true</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
 
-            <excludes>
+           <!-- <excludes>
                 <exclude>antlr:antlr:jar</exclude>
                 <exclude>aopalliance:aopalliance:jar</exclude>
                 <exclude>asm:asm:jar</exclude>
@@ -285,7 +285,7 @@
                 <exclude>xmlenc:xmlenc:jar</exclude>
                 <exclude>xmlpull:xmlpull:jar</exclude>
                 <exclude>xpp3:xpp3_min:jar</exclude>
-            </excludes>
+            </excludes>-->
         </dependencySet>
     </dependencySets>
 

@@ -16,14 +16,12 @@
 
 package com.webank.wedatasphere.linkis.engine.hive.hook
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineExecutorContext, EngineHook}
 import com.webank.wedatasphere.linkis.engine.hive.executor.HiveEngineExecutor
 import com.webank.wedatasphere.linkis.server.JMap
 import org.apache.commons.lang.StringUtils
 import org.slf4j.LoggerFactory
 
-import scala.collection.mutable.ArrayBuffer
 
 /**
   * created by cooperyang on 2019/3/18

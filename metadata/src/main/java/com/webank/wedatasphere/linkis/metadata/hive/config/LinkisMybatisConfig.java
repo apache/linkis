@@ -23,11 +23,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,7 +40,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,7 +66,7 @@ public class LinkisMybatisConfig {
         String username =  DWSConfig.HIVE_META_USER.getValue();
         String password = DWSConfig.HIVE_META_PASSWORD.getValue();
         if(StringUtils.isBlank(url) || StringUtils.isBlank(username)  || StringUtils.isBlank(password)) {
-            HiveConf hiveConf = HiveUtils.getDefaultConf(com.webank.wedatasphere.linkis.common.conf.Configuration.HADOOP_ROOT_USER().getValue());
+            HiveConf hiveConf = HiveUtils.getDefaultConf(System.getProperty("user.name"));
             logger.info("从配置文件中读取hive数据库连接地址");
             url = hiveConf.get("javax.jdo.option.ConnectionURL");
             username = hiveConf.get("javax.jdo.option.ConnectionUserName");

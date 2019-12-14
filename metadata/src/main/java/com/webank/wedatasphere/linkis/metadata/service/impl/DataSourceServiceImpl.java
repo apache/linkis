@@ -18,9 +18,9 @@ package com.webank.wedatasphere.linkis.metadata.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.webank.wedatasphere.linkis.common.conf.Configuration;
 import com.webank.wedatasphere.linkis.common.utils.ByteTimeUtils;
-import com.webank.wedatasphere.linkis.common.utils.HDFSUtils;
+import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf;
+import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils;
 import com.webank.wedatasphere.linkis.metadata.dao.DataSourceDao;
 import com.webank.wedatasphere.linkis.metadata.domain.DataSource;
 import com.webank.wedatasphere.linkis.metadata.hive.dao.HiveMetaDao;
@@ -326,7 +326,7 @@ public class DataSourceServiceImpl implements DataSourceService {
         if (hiveDB == null) {
             synchronized (this) {
                 if (hiveDB == null) {
-                    hiveDB = Hive.get(HiveUtils.getDefaultConf(Configuration.HADOOP_ROOT_USER().getValue()));
+                    hiveDB = Hive.get(HiveUtils.getDefaultConf(HadoopConf.HADOOP_ROOT_USER().getValue()));
                 }
             }
         }

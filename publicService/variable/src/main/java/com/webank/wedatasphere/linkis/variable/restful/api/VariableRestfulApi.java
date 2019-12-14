@@ -42,7 +42,7 @@ import java.util.List;
  */
 
 @Component
-@Path("/publicservice")
+@Path("/variable")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class VariableRestfulApi {

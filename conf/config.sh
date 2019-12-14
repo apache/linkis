@@ -105,6 +105,7 @@ BML_PORT=9113
 #LDAP_BASEDN=dc=webank,dc=com
 
 ## java application default jvm memory
+
 SERVER_HEAP_SIZE="512M"
 
 LINKIS_VERSION=0.9.2

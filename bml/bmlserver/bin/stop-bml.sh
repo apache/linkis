@@ -2,11 +2,11 @@
 
 cd `dirname $0`
 cd ..
-HOE=`pwd`
+HOME=`pwd`
 
-export DWS_ENTRANCE_PID=$HOE/bin/linkis-entrance.pid
+export SERVER_PID=$HOME/bin/linkis.pid
 
-function wait_for_DWS_ENGINE_MANAGER_to_die() {
+function wait_for_server_to_die() {
   local pid
   local count
   pid=$1
@@ -33,15 +33,15 @@ function wait_for_DWS_ENGINE_MANAGER_to_die() {
   fi
 }
 
-if [[ ! -f "${DWS_ENTRANCE_PID}" ]]; then
-    echo "Dataworkcloud Entrance is not running"
+if [[ ! -f "${SERVER_PID}" ]]; then
+    echo "server $SERVER_NAME is not running"
 else
-    pid=$(cat ${DWS_ENTRANCE_PID})
+    pid=$(cat ${SERVER_PID})
     if [[ -z "${pid}" ]]; then
-      echo "Dataworkcloud Entrance is not running"
+      echo "server $SERVER_NAME is not running"
     else
-      wait_for_DWS_ENGINE_MANAGER_to_die $pid 40
-      $(rm -f ${DWS_ENTRANCE_PID})
-      echo "Dataworkcloud Entrance is stopped."
+      wait_for_server_to_die $pid 40
+      $(rm -f ${SERVER_PID})
+      echo "server $SERVER_NAME is stopped."
     fi
 fi

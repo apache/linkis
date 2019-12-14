@@ -33,10 +33,10 @@ abstract class StorageResultSet[K <: MetaData, V <: Record] extends ResultSet[K,
 
 
   override def getResultSetPath(parentDir: FsPath, fileName: String): FsPath = {
-    val path = if(parentDir.getPath.endsWith("/"))
-      parentDir.toPath + fileName + Dolphin.DOLPHIN_FILE_SUFFIX
+    val path = if(parentDir.getSchemaPath.endsWith("/"))
+      parentDir.getSchemaPath + fileName + Dolphin.DOLPHIN_FILE_SUFFIX
     else
-      parentDir.toPath + "/" + fileName  + Dolphin.DOLPHIN_FILE_SUFFIX
+      parentDir.getSchemaPath + "/" + fileName  + Dolphin.DOLPHIN_FILE_SUFFIX
     new FsPath(path)
   }
 

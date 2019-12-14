@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.common.utils
 
-import org.apache.commons.logging.LogFactory
+import org.slf4j.LoggerFactory
 
 /**
   * Created by enjoyyin on 2018/1/9.
@@ -30,7 +30,7 @@ class JavaLog {
 //      }
 //    }
 //  }
-  protected implicit lazy val logger = LogFactory.getLog(getClass)//LoggerFactory.getLogger(getClass)
+  protected implicit lazy val logger = LoggerFactory.getLogger(getClass)//LoggerFactory.getLogger(getClass)
 
   def debug(message: Object): Unit = if (logger.isDebugEnabled && message != null) logger.debug(message.toString)
 

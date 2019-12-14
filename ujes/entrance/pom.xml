@@ -23,7 +23,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.9.0</version>
+        <version>0.9.1</version>
     </parent>
     <artifactId>linkis-ujes-entrance</artifactId>
 

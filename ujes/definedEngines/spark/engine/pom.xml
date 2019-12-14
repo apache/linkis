@@ -23,7 +23,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.9.0</version>
+        <version>0.9.1</version>
     </parent>
 
     <artifactId>linkis-ujes-spark-engine</artifactId>
@@ -55,6 +55,11 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-bml-hook</artifactId>
+            <version>${linkis.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>

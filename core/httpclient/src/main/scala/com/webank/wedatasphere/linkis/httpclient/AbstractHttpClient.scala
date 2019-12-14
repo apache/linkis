@@ -23,7 +23,7 @@ import com.ning.http.client.Response
 import com.ning.http.multipart.{FilePart, PartSource, StringPart}
 import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
-import com.webank.wedatasphere.linkis.common.utils.{FsPartSource, Utils}
+import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.httpclient.authentication.{AbstractAuthenticationStrategy, AuthenticationAction, HttpAuthentication}
 import com.webank.wedatasphere.linkis.httpclient.config.ClientConfig
 import com.webank.wedatasphere.linkis.httpclient.discovery.{AbstractDiscovery, Discovery, HeartbeatAction}

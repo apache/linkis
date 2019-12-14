@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
  * Created by johnnwang on 2019/1/18.
  */
 @Component
-@Path("/publicservice")
+@Path("/application")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ApplicationRestfulApi {

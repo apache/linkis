@@ -18,7 +18,6 @@ package com.webank.wedatasphere.linkis.storage.factory.impl;
 
 
 import com.webank.wedatasphere.linkis.common.io.Fs;
-import com.webank.wedatasphere.linkis.common.io.FsPath;
 import com.webank.wedatasphere.linkis.storage.factory.BuildFactory;
 import com.webank.wedatasphere.linkis.storage.fs.FileSystem;
 import com.webank.wedatasphere.linkis.storage.fs.impl.HDFSFileSystem;
@@ -26,7 +25,6 @@ import com.webank.wedatasphere.linkis.storage.io.IOMethodInterceptor;
 import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
 import net.sf.cglib.proxy.Enhancer;
 
-import java.io.IOException;
 
 /**
  * Created by johnnwang on 10/17/18.

@@ -22,16 +22,13 @@ package com.webank.wedatasphere.linkis.common.conf
 object Configuration {
 
   val BDP_ENCODING = CommonVars("wds.linkis.encoding", "utf-8")
+
   val DEFAULT_DATE_PATTERN = CommonVars("wds.linkis.date.pattern", "yyyy-MM-dd'T'HH:mm:ssZ")
-  val HADOOP_ROOT_USER = CommonVars("wds.linkis.hadoop.root.user", "hadoop")
+
   val FIELD_SPLIT = CommonVars("wds.linkis.field.split", "hadoop")
 
-  val KERBEROS_ENABLE = CommonVars("wds.linkis.keytab.enable", false)
-  val KEYTAB_FILE = CommonVars("wds.linkis.keytab.file", "/appcom/keytab/")
-  val KERBEROS_PRINCIPAL = "wds.linkis.kerberos.principal"
-  val kEYTAB_HOST = CommonVars("wds.linkis.keytab.host", "127.0.0.1")
-  val KEYTAB_HOST_ENABLED = CommonVars("wds.linkis.keytab.host.enabled", false)
-
   val IS_TEST_MODE = CommonVars("wds.linkis.test.mode", false)
+
+  val hadoopConfDir = CommonVars("hadoop.config.dir", CommonVars("HADOOP_CONF_DIR", "").getValue).getValue
 
 }

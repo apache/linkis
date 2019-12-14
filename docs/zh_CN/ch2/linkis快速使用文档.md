@@ -21,7 +21,7 @@ Linkis为用户提供了Java客户端的实现，用户可以使用UJESClient对
 <dependency>
   <groupId>com.webank.wedatasphere.Linkis</groupId>
   <artifactId>Linkis-ujes-client</artifactId>
-  <version>0.9.1</version>
+  <version>0.9.2</version>
 </dependency>
 ```
 

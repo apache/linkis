@@ -37,5 +37,5 @@ public interface ResourceHelper {
     public String getSchema();
 
 
-    boolean checkIfExists(String path) throws IOException;
+    boolean checkIfExists(String path, String user) throws IOException;
 }

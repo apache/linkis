@@ -46,44 +46,16 @@ abstract class ErrorCodeManager {
   }
 }
 
-abstract class FileErrorCodeManager extends ErrorCodeManager{
-  override def getErrorCodes: Array[ErrorCode] = (new ArrayBuffer[ErrorCode]() ++= getCommonErrorCodes ++= getErrorCodesDynamic).toArray
-
-  val errorCodeFileDir:String = {
-    val specifiedDir = EntranceConfiguration.ERROR_CODE_FILE_DIR.getValue
-    if (specifiedDir.endsWith("/")) specifiedDir else specifiedDir + "/"
-  }
-
-  val errorCodeFile:String
-
-  private val logger:Logger = LoggerFactory.getLogger(classOf[ErrorCodeManager])
-
-  private val user = EntranceConfiguration.ENTRANCE_USER.getValue
-  private val fileSystem = FSFactory.getFs(new FsPath(errorCodeFileDir))
-  fileSystem.init(new util.HashMap[String, String]())
-  val dynamicErrorCodes:ArrayBuffer[ErrorCode] = new ArrayBuffer[ErrorCode]()
-
-  Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
-    override def run(): Unit = {
-      logger.info("start to get error code properties from {}", errorCodeFile)
-      dynamicErrorCodes.clear()
-      val bufferedReader = new BufferedReader(new InputStreamReader(fileSystem.read(new FsPath(errorCodeFile)), "utf-8"))
-      var line:String = null
-      while({line = bufferedReader.readLine(); line != null}){
-        val arr = line.split(",")
-        if (arr.length < 3){
-          logger.warn("errorcode line {} format is not correct", line)
-        }else{
-          dynamicErrorCodes += ErrorCode(arr(0).r.unanchored, arr(1), arr(2))
-        }
-      }
-    }
-  }, 0, 1,TimeUnit.HOURS)
 
 
-  def getErrorCodesDynamic:Array[ErrorCode] = dynamicErrorCodes.toArray
+/**
+  * errorCodeManager的单例对象,主要是用来生成固定的错误码
+  */
+object FixedErrorCodeManager extends ErrorCodeManager {
 
-  def getCommonErrorCodes:Array[ErrorCode] = {
+
+
+  override def getErrorCodes: Array[ErrorCode] = {
     Array(ErrorCode("queue (\\S+) is not exists in YARN".r.unanchored, "10001", "会话创建失败，%s队列不存在，请检查队列设置是否正确"),
       ErrorCode("User (\\S+) cannot submit applications to queue (\\S+)".r.unanchored, "10001", "会话创建失败，用户%s不能提交应用到队列：%s，请检查队列设置是否正确"),
       ErrorCode("您本次向任务队列（[a-zA-Z_0-9\\.]+）请求资源（(.+)），任务队列最大可用资源（.+），任务队列剩余可用资源（(.+)）您已占用任务队列资源（.+）".r.unanchored, "20001", "Session创建失败，当前申请资源%s，队列可用资源%s,请检查资源配置是否合理"),
@@ -129,16 +101,6 @@ abstract class FileErrorCodeManager extends ErrorCodeManager{
       ErrorCode("""资源""".r.unanchored, "60035", "资源不足，启动引擎失败")
     )
   }
-}
-
-/**
-  * errorCodeManager的单例对象,主要是用来生成固定的错误码
-  */
-object FixedErrorCodeManager extends FileErrorCodeManager {
-
-  override val errorCodeFile: String = ""
-
-  override def getErrorCodes: Array[ErrorCode] = getCommonErrorCodes
 }
 
 

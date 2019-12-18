@@ -42,7 +42,6 @@ fi
 }
 
 sudo yum -y install dos2unix > /dev/null 2>&1
-sudo yum -y  install dos2unix > /dev/null 2>&1
 
 local_host="`hostname --fqdn`"
 
@@ -95,6 +94,11 @@ SERVER_REMOTE_START_CMD="source /etc/profile;source ~/.bash_profile;cd ${SERVER_
 if test -z "$SERVER_IP"
 then
   SERVER_IP=$local_host
+fi
+
+if  executeCMD $SERVER_IP test -e $SERVER_BIN; then
+  echo "$SERVER_NAME is not installed,the startup steps will be skipped"
+  return
 fi
 
 isLocal $SERVER_IP

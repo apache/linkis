@@ -64,9 +64,31 @@ function checkPythonAndJava(){
 }
 
 function checkHadoopAndHive(){
-	hdfs version
-	isSuccess "execute hdfs version"
-	hive --help
+	hadoopVersion="`hdfs version`"
+    defaultHadoopVersion="2.7"
+    checkversion "$hadoopVersion" $defaultHadoopVersion hadoop
+    checkversion "$(whereis hive)" "1.2" hive
+}
+
+function checkversion(){
+versionStr=$1
+defaultVersion=$2
+module=$3
+
+result=$(echo $versionStr | grep "$defaultVersion")
+if [ -n "$result" ]; then
+    echo "$module version match"
+else
+   echo "WARN: Your $module version is not $defaultVersion, there may be compatibility issues:"
+   echo " 1: Continue installation, there may be compatibility issues"
+   echo " 2: Exit installation"
+   echo ""
+   read -p "Please input the choice:"  idx
+   if [[ '2' = "$idx" ]];then
+    echo "You chose  Exit installation"
+    exit 1
+   fi
+fi
 }
 
 function checkSpark(){
@@ -216,7 +238,7 @@ if [ "$HDFS_USER_ROOT_PATH" != "" ]
 then
   hdfs dfs -mkdir -p $HDFS_USER_ROOT_PATH/$deployUser
 fi
-isSuccess "create  hdfs directory"
+
 
 ##stop server
 #echo "step2,stop server"
@@ -460,6 +482,8 @@ installPackage
 echo "$SERVER_NAME-step4:update linkis conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVER_NAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
+executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_CONF_PATH"
 SERVER_ENGINE_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis-engine.properties
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_ENGINE_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_ENGINE_CONF_PATH"

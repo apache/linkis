@@ -25,13 +25,13 @@ RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis
 #HIVE_META_PASSWORD=
 
 ###HADOOP CONF DIR
-HADOOP_CONF_DIR=/etc/hadoop/hadoop-conf
+HADOOP_CONF_DIR=/appcom/config/hadoop-config
 
 ###HIVE CONF DIR
-HIVE_CONF_DIR=/etc/hive/hive-conf
+HIVE_CONF_DIR=/appcom/config/hive-config
 
 ###SPARK CONF DIR
-SPARK_CONF_DIR=/etc/spark/spark-conf
+SPARK_CONF_DIR=/appcom/config/spark-config
 
 ################### The install Configuration of all Micro-Services #####################
 #
@@ -105,7 +105,6 @@ BML_PORT=9113
 #LDAP_BASEDN=dc=webank,dc=com
 
 ## java application default jvm memory
-
-SERVER_HEAP_SIZE="512M"
+export SERVER_HEAP_SIZE="512M"
 
 LINKIS_VERSION=0.9.2

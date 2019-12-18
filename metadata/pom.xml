@@ -236,6 +236,10 @@
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpcore</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>javax.rs.ws</artifactId>
+                    <groupId>jsr311-api</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 

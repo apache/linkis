@@ -34,16 +34,15 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration.Duration
-
 /**
  * Created by shanhuang on 2018/9/24.
  */
-object YarnUtil extends Logging {
+object YarnUtil extends Logging{
 
   private implicit val executor = ExecutionContext.global
   private val yarnConf = new YarnConfiguration()
   private var rm_web_address: String = _
-  private var hadoop_version: String = "2.7.2"
+  private var hadoop_version:String = "2.7.2"
   implicit val format = DefaultFormats
 
   def init() = {
@@ -52,36 +51,34 @@ object YarnUtil extends Logging {
     reloadRMWebAddress()
     Utils.tryAndErrorMsg(getHadoopVersion())("Failed to get HadoopVersion")
   }
-
   init()
-
   private def reloadRMWebAddress() = {
     val rmHAId = RMHAUtils.findActiveRMHAId(yarnConf)
-    if (rmHAId == null) {
-      if (StringUtils.isNotEmpty(this.rm_web_address)) {
+    if(rmHAId == null) {
+      if(StringUtils.isNotEmpty(this.rm_web_address)) {
         info(s"cannot find RM_HA_ID, instead of the old rm_web_address ${this.rm_web_address}, now try to failover to the another one.")
         val rm_web_address = RMHAUtils.getRMHAWebappAddresses(yarnConf).filterNot(this.rm_web_address.contains).head
-        this.rm_web_address = if (rm_web_address.startsWith("http")) rm_web_address
-        else if (YarnConfiguration.useHttps(yarnConf)) "https://" + rm_web_address else "http://" + rm_web_address
+        this.rm_web_address = if(rm_web_address.startsWith("http")) rm_web_address
+        else if(YarnConfiguration.useHttps(yarnConf)) "https://" + rm_web_address else "http://" + rm_web_address
       } else {
         info("cannot find RM_HA_ID, will try to load the right rm_web_address by send http requests.")
-        RMHAUtils.getRMHAWebappAddresses(yarnConf).map(f => if (f.startsWith("http")) f
-        else if (YarnConfiguration.useHttps(yarnConf)) "https://" + f else "http://" + f).foreach { f =>
+        RMHAUtils.getRMHAWebappAddresses(yarnConf).map(f => if(f.startsWith("http")) f
+        else if(YarnConfiguration.useHttps(yarnConf)) "https://" + f else "http://" + f).foreach { f =>
           this.rm_web_address = f
           info(s"the first, use $rm_web_address to ensure the right rm_web_address.")
         }
       }
-      if (StringUtils.isEmpty(this.rm_web_address)) {
+      if(StringUtils.isEmpty(this.rm_web_address)){
         val yarnWebUrl = yarnConf.get("yarn.resourcemanager.webapp.address")
-        if (StringUtils.isEmpty(yarnWebUrl)) {
+        if(StringUtils.isEmpty(yarnWebUrl)) {
           val yarnHttps = yarnConf.get("yarn.resourcemanager.webapp.https.address")
-          if (StringUtils.isEmpty(yarnHttps)) {
-            throw new RMFatalException(11005, "Cannot find yarn resourcemanager restful address,please to configure yarn-site.xml")
+          if(StringUtils.isEmpty(yarnHttps)){
+            throw new RMFatalException(11005,"Cannot find yarn resourcemanager restful address,please to configure yarn-site.xml")
           } else {
-            this.rm_web_address = if (yarnHttps.startsWith("https")) yarnHttps else "https://" + yarnHttps
+            this.rm_web_address  = if(yarnHttps.startsWith("https")) yarnHttps else "https://" + yarnHttps
           }
-        } else {
-          this.rm_web_address = if (yarnWebUrl.startsWith("http")) yarnWebUrl else "http://" + yarnWebUrl
+        } else{
+          this.rm_web_address  = if(yarnWebUrl.startsWith("http")) yarnWebUrl else "http://" + yarnWebUrl
         }
       }
     } else {
@@ -90,14 +87,14 @@ object YarnUtil extends Logging {
       val socketAddress = yarnConf.getSocketAddr(YarnConfiguration.RM_WEBAPP_ADDRESS,
         YarnConfiguration.DEFAULT_RM_WEBAPP_ADDRESS, YarnConfiguration.DEFAULT_RM_WEBAPP_PORT)
       val rm_web_address = socketAddress.getHostName + ":" + socketAddress.getPort
-      this.rm_web_address = if (YarnConfiguration.useHttps(yarnConf)) "https://" + rm_web_address else "http://" + rm_web_address
+      this.rm_web_address = if(YarnConfiguration.useHttps(yarnConf)) "https://"  + rm_web_address else "http://" + rm_web_address
     }
     info(s"Resource Manager WebApp address: $rm_web_address.")
   }
 
-  private def getHadoopVersion(): Unit = {
+  private def getHadoopVersion():Unit = {
     val url = dispatch.url(rm_web_address) / "ws" / "v1" / "cluster" / "info"
-    val future = Http(url > as.json4s.Json).map { resp =>
+    val future = Http(url > as.json4s.Json).map {resp =>
       val resourceManagerVersion = resp \ "clusterInfo" \ "resourceManagerVersion"
       info(s"Hadoop version is $resourceManagerVersion")
       hadoop_version = resourceManagerVersion.values.asInstanceOf[String]
@@ -126,27 +123,25 @@ object YarnUtil extends Logging {
     }
 
     var realQueueName = "root." + queueName
-
     def getQueue(queues: JValue): Option[JValue] = queues match {
       case JArray(queue) =>
         queue.foreach { q =>
           val yarnQueueName = (q \ "queueName").asInstanceOf[JString].values
-          if (yarnQueueName == realQueueName) return Some(q)
-          else if (realQueueName.startsWith(yarnQueueName + ".")) return getQueue(getChildQueues(q))
+          if(yarnQueueName == realQueueName) return Some(q)
+          else if(realQueueName.startsWith(yarnQueueName + ".")) return getQueue(getChildQueues(q))
         }
         None
       case JObject(queue) =>
-        if (queue.find(_._1 == "queueName").exists(_._2.asInstanceOf[JString].values == realQueueName)) Some(queues)
+        if(queue.find(_._1 == "queueName").exists(_._2.asInstanceOf[JString].values == realQueueName)) Some(queues)
         else {
           val childQueues = queue.find(_._1 == "childQueues")
-          if (childQueues.isEmpty) None
+          if(childQueues.isEmpty) None
           else getQueue(childQueues.map(_._2).get)
         }
       case JNull | JNothing => None
     }
-
-    def getChildQueues(resp: JValue): JValue = if (hadoop_version.startsWith("2.7")) {
-      resp \ "childQueues"
+    def getChildQueues(resp:JValue):JValue = if (hadoop_version.startsWith("2.7")) {
+      resp  \ "childQueues"
     } else {
       resp \ "childQueues" \ "queue"
     }
@@ -156,16 +151,16 @@ object YarnUtil extends Logging {
         case JArray(queue) =>
           queue.foreach { q =>
             val yarnQueueName = (q \ "queueName").asInstanceOf[JString].values
-            if (yarnQueueName == realQueueName) return Some(q)
-            else if ((q \ "queues").toOption.nonEmpty) {
+            if(yarnQueueName == realQueueName) return Some(q)
+            else if((q \ "queues").toOption.nonEmpty) {
               val matchQueue = getQueueOfCapacity(getChildQueuesOfCapacity(q))
               if (matchQueue.nonEmpty) return matchQueue
             }
           }
           None
         case JObject(queue) =>
-          if (queue.find(_._1 == "queueName").exists(_._2.asInstanceOf[JString].values == realQueueName)) return Some(queues)
-          else if ((queues \ "queues").toOption.nonEmpty) {
+          if(queue.find(_._1 == "queueName").exists(_._2.asInstanceOf[JString].values == realQueueName)) return Some(queues)
+          else if((queues \ "queues").toOption.nonEmpty) {
             val matchQueue = getQueueOfCapacity(getChildQueuesOfCapacity(queues))
             if (matchQueue.nonEmpty) return matchQueue
           }
@@ -174,35 +169,35 @@ object YarnUtil extends Logging {
       }
     }
 
-    def getChildQueuesOfCapacity(resp: JValue): JValue = resp \ "queues" \ "queue"
+    def getChildQueuesOfCapacity(resp:JValue):JValue = resp \ "queues" \ "queue"
 
-    val future = Http(url > as.json4s.Json).map { resp =>
+    val future = Http(url > as.json4s.Json).map {resp =>
       val schedulerType = (resp \ "scheduler" \ "schedulerInfo" \ "type").asInstanceOf[JString].values
       if ("capacityScheduler".equals(schedulerType)) {
         realQueueName = queueName
         val childQueues = getChildQueuesOfCapacity(resp \ "scheduler" \ "schedulerInfo")
         val queue = getQueueOfCapacity(childQueues)
-        if (queue.isEmpty) {
+        if(queue.isEmpty) {
           debug(s"cannot find any information about queue $queueName, response: " + resp)
           throw new RMWarnException(111006, s"queue $queueName is not exists in YARN.")
         }
-        (maxEffectiveHandle(queue).get, getYarnResource(queue.map(_ \ "resourcesUsed")).get)
+        (maxEffectiveHandle(queue).get, getYarnResource(queue.map( _ \ "resourcesUsed")).get)
       } else if ("fairScheduler".equals(schedulerType)) {
         val childQueues = getChildQueues(resp \ "scheduler" \ "schedulerInfo" \ "rootQueue")
         val queue = getQueue(childQueues)
-        if (queue.isEmpty) {
+        if(queue.isEmpty) {
           debug(s"cannot find any information about queue $queueName, response: " + resp)
           throw new RMWarnException(111006, s"queue $queueName is not exists in YARN.")
         }
-        (getYarnResource(queue.map(_ \ "maxResources")).get,
-          getYarnResource(queue.map(_ \ "usedResources")).get)
+        (getYarnResource(queue.map( _ \ "maxResources")).get,
+          getYarnResource(queue.map( _ \ "usedResources")).get)
       } else {
         debug(s"only support fairScheduler or capacityScheduler, schedulerType: $schedulerType , response: " + resp)
         throw new RMWarnException(111006, s"only support fairScheduler or capacityScheduler, schedulerType: $schedulerType")
       }
     }
-    Utils.tryCatch(Await.result(future, Duration.Inf))(t => {
-      if ((t.getCause.isInstanceOf[JsonParseException] && t.getCause.getMessage.contains("This is standby RM"))
+    Utils.tryCatch(Await.result(future, Duration.Inf))( t => {
+      if((t.getCause.isInstanceOf[JsonParseException] && t.getCause.getMessage.contains("This is standby RM"))
         || t.getCause.isInstanceOf[ConnectException]) {
         reloadRMWebAddress()
         getQueueInfo(queueName)
@@ -219,14 +214,14 @@ object YarnUtil extends Logging {
     }
 
     val realQueueName = "root." + queueName
-    val future = Http(url > as.json4s.Json).map { resp =>
+    val future = Http(url > as.json4s.Json).map {resp =>
       resp \ "apps" \ "app" match {
         case JArray(apps) =>
           val appInfoBuffer = new ArrayBuffer[YarnAppInfo]()
           apps.foreach { app =>
             val yarnQueueName = (app \ "queue").asInstanceOf[JString].values
             val state = (app \ "state").asInstanceOf[JString].values
-            if (yarnQueueName == realQueueName && (state == "RUNNING" || state == "ACCEPTED")) {
+            if(yarnQueueName == realQueueName && (state == "RUNNING" || state == "ACCEPTED")){
               val appInfo = new YarnAppInfo(
                 (app \ "id").asInstanceOf[JString].values,
                 (app \ "user").asInstanceOf[JString].values,
@@ -241,8 +236,8 @@ object YarnUtil extends Logging {
         case JNull | JNothing => new Array[YarnAppInfo](0)
       }
     }
-    Utils.tryCatch(Await.result(future, Duration.Inf))(t => {
-      if ((t.getCause.isInstanceOf[JsonParseException] && t.getCause.getMessage.contains("This is standby RM"))
+    Utils.tryCatch(Await.result(future, Duration.Inf))( t => {
+      if((t.getCause.isInstanceOf[JsonParseException] && t.getCause.getMessage.contains("This is standby RM"))
         || t.getCause.isInstanceOf[ConnectException]) {
         reloadRMWebAddress()
         getApplicationsInfo(queueName)

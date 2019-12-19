@@ -68,6 +68,7 @@ public class WorkspaceUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceUtil.class);
 
+    //TODO update pathSafeCheck rule
     public static void pathSafeCheck(String path,String userName) throws WorkSpaceException {
         /*LOGGER.info("start safe check path params..");
         LOGGER.info(path);

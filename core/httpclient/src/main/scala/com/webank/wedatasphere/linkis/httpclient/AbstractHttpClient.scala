@@ -248,3 +248,12 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
     executors.asInstanceOf[ExecutionContextExecutorService].shutdown()
   }
 }
+
+class FsPartSource (fs: Fs, path: String) extends PartSource {
+  val fsPath = fs.get(path)
+  override def getLength: Long = fsPath.getLength
+
+  override def createInputStream(): InputStream = fs.read(fsPath)
+
+  override def getFileName: String = fsPath.toFile.getName
+}

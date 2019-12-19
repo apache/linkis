@@ -115,7 +115,7 @@ need_cmd() {
     fi
 }
 
-sudo yum -y install dos2unix > /dev/null 2>&1
+
 
 sh ${workDir}/bin/checkEnv.sh
 isSuccess "failed to check env"

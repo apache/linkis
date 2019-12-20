@@ -55,7 +55,7 @@ public class HdfsResourceHelper implements ResourceHelper {
         Fs fileSystem = null;
         try {
             FsPath fsPath = new FsPath(path);
-            fileSystem = FSFactory.getFs(fsPath);
+            fileSystem = FSFactory.getFsByProxyUser(fsPath, user);
             fileSystem.init(new HashMap<String, String>());
             if (!fileSystem.exists(fsPath)) FileSystemUtils.createNewFile(fsPath, user, true);
             outputStream = fileSystem.write(fsPath, false);
@@ -125,7 +125,7 @@ public class HdfsResourceHelper implements ResourceHelper {
 
 
     @Override
-    public boolean checkIfExists(String path) throws IOException {
+    public boolean checkIfExists(String path, String user) throws IOException {
         Fs fileSystem = FSFactory.getFs(new FsPath(path));
         fileSystem.init(new HashMap<String, String>());
         try {

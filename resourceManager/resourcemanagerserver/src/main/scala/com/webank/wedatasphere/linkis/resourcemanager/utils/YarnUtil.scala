@@ -137,10 +137,13 @@ object YarnUtil extends Logging{
         }
       case JNull | JNothing => None
     }
-    def getChildQueues(resp:JValue):JValue = if (hadoop_version.startsWith("2.7")) {
-      resp  \ "childQueues"
-    } else {
-      resp \ "childQueues" \ "queue"
+    def getChildQueues(resp:JValue):JValue =  {
+      val queues = resp \ "childQueues" \ "queue"
+
+      if(queues != null && queues != JNull && queues != JNothing ) {
+        info(s"test queue:$queues")
+        queues
+      } else resp  \ "childQueues"
     }
 
     def getQueueOfCapacity(queues: JValue): Option[JValue] = {

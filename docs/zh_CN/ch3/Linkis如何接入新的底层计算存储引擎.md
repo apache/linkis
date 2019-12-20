@@ -22,7 +22,7 @@ Linkis的底层架构非常灵活，所有的顶层接口几乎都提供了一�
 <dependency>
   <groupId>com.webank.wedatasphere.Linkis</groupId>
   <artifactId>Linkis-ujes-entrance</artifactId>
-  <version>0.9.1</version>
+  <version>0.9.2</version>
 </dependency>
 ```
 
@@ -42,7 +42,7 @@ Linkis的底层架构非常灵活，所有的顶层接口几乎都提供了一�
 <dependency>
   <groupId>com.webank.wedatasphere.Linkis</groupId>
   <artifactId>Linkis-ujes-enginemanager</artifactId>
-  <version>0.9.1</version>
+  <version>0.9.2</version>
 </dependency>
 ```
 
@@ -74,7 +74,7 @@ Linkis的底层架构非常灵活，所有的顶层接口几乎都提供了一�
 <dependency>
   <groupId>com.webank.wedatasphere.Linkis</groupId>
   <artifactId>Linkis-ujes-engine</artifactId>
-  <version>0.9.1</version>
+  <version>0.9.2</version>
 </dependency>
 ```
 

@@ -19,7 +19,9 @@ package com.webank.wedatasphere.linkis.resourcemanager.utils
 import java.net.ConnectException
 
 import com.fasterxml.jackson.core.JsonParseException
-import com.webank.wedatasphere.linkis.common.utils.{HDFSUtils, Logging, Utils}
+import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.common.conf.Configuration.hadoopConfDir
 import com.webank.wedatasphere.linkis.resourcemanager.YarnResource
 import com.webank.wedatasphere.linkis.resourcemanager.exception.{RMErrorException, RMFatalException, RMWarnException}
 import dispatch.{Http, as}
@@ -40,19 +42,26 @@ import scala.concurrent.duration.Duration
 object YarnUtil extends Logging{
 
   private implicit val executor = ExecutionContext.global
-  private val yarnConf = new YarnConfiguration()
-  private var rm_web_address: String = _
+  private var yarnConf: YarnConfiguration = _
+  private var rm_web_address: String = CommonVars("wds.linkis.yarn.rm.web.address", "").getValue
   private var hadoop_version:String = "2.7.2"
   implicit val format = DefaultFormats
 
   def init() = {
-    yarnConf.addResource(new Path(HDFSUtils.hadoopConfDir, YarnConfiguration.CORE_SITE_CONFIGURATION_FILE))
-    yarnConf.addResource(new Path(HDFSUtils.hadoopConfDir, YarnConfiguration.YARN_SITE_CONFIGURATION_FILE))
-    reloadRMWebAddress()
+    if(StringUtils.isBlank(this.rm_web_address)){
+      yarnConf = new YarnConfiguration()
+      yarnConf.addResource(new Path(hadoopConfDir, YarnConfiguration.CORE_SITE_CONFIGURATION_FILE))
+      yarnConf.addResource(new Path(hadoopConfDir, YarnConfiguration.YARN_SITE_CONFIGURATION_FILE))
+      reloadRMWebAddress()
+    }
+    info(s"This yarn  rm web address is:${this.rm_web_address}")
     Utils.tryAndErrorMsg(getHadoopVersion())("Failed to get HadoopVersion")
   }
+
   init()
+
   private def reloadRMWebAddress() = {
+
     val rmHAId = RMHAUtils.findActiveRMHAId(yarnConf)
     if(rmHAId == null) {
       if(StringUtils.isNotEmpty(this.rm_web_address)) {
@@ -128,10 +137,13 @@ object YarnUtil extends Logging{
         }
       case JNull | JNothing => None
     }
-    def getChildQueues(resp:JValue):JValue = if (hadoop_version.startsWith("2.7")) {
-      resp  \ "childQueues"
-    } else {
-      resp \ "childQueues" \ "queue"
+    def getChildQueues(resp:JValue):JValue =  {
+      val queues = resp \ "childQueues" \ "queue"
+
+      if(queues != null && queues != JNull && queues != JNothing ) {
+        info(s"test queue:$queues")
+        queues
+      } else resp  \ "childQueues"
     }
 
     def getQueueOfCapacity(queues: JValue): Option[JValue] = {

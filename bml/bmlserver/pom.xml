@@ -5,24 +5,13 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.9.1</version>
+        <version>0.9.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>linkis-bmlserver</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-module</artifactId>
-            <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>asm</artifactId>
-                    <groupId>org.ow2.asm</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-mybatis</artifactId>
@@ -37,17 +26,19 @@
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cloudRPC</artifactId>
             <version>${linkis.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>asm</artifactId>
+                    <groupId>org.ow2.asm</groupId>
+                </exclusion>
+            </exclusions>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
             <version>${linkis.version}</version>
-        </dependency>
-        <!--添加pageHelper依赖-->
-        <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper-spring-boot-starter</artifactId>
-            <version>1.2.5</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>

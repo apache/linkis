@@ -52,22 +52,18 @@ import java.util.concurrent.TimeUnit;
 
 public class UJESClientImplTestJ{
     public static void main(String[] args){
-
         DWSClientConfig clientConfig = ((DWSClientConfigBuilder) (DWSClientConfigBuilder.newBuilder().addUJESServerUrl("http://${ip}:${port}")
-
                 .connectionTimeout(30000).discoveryEnabled(true)
                 .discoveryFrequency(1, TimeUnit.MINUTES)
                 .loadbalancerEnabled(true).maxConnectionSize(5)
                 .retryEnabled(false).readTimeout(30000)
                 .setAuthenticationStrategy(new StaticAuthenticationStrategy()).setAuthTokenKey("${username}")
                 .setAuthTokenValue("${password}"))).setDWSVersion("v1").build();
-
         UJESClient client = new UJESClientImpl(clientConfig);
 
         JobExecuteResult jobExecuteResult = client.execute(JobExecuteAction.builder().setCreator("UJESClient-Test")
                 .addExecuteCode("show tables")
                 .setEngineType(JobExecuteAction.EngineType$.MODULE$.HIVE()).setUser("${username}").build());
-
         System.out.println("execId: " + jobExecuteResult.getExecID() + ", taskId: " + jobExecuteResult.taskID());
         JobStatusResult status = client.status(jobExecuteResult);
         while(!status.isCompleted()) {

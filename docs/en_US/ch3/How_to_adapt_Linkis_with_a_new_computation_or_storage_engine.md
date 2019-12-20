@@ -22,7 +22,7 @@ Linkis has an elastic underlying achitecture and provides common implementations
 <dependency>
   <groupId>com.webank.wedatasphere.Linkis</groupId>
   <artifactId>Linkis-ujes-entrance</artifactId>
-  <version>0.9.1</version>
+  <version>0.9.2</version>
 </dependency>
 ```
 
@@ -41,7 +41,7 @@ There is no compulsary interface in Entrance. Below interfaces can be implemente
 <dependency>
   <groupId>com.webank.wedatasphere.Linkis</groupId>
   <artifactId>Linkis-ujes-enginemanager</artifactId>
-  <version>0.9.1</version>
+  <version>0.9.2</version>
 </dependency>
 ```
 
@@ -65,7 +65,7 @@ Below interfaces/beans are optional in EngineManager:
 <dependency>
   <groupId>com.webank.wedatasphere.Linkis</groupId>
   <artifactId>Linkis-ujes-engine</artifactId>
-  <version>0.9.1</version>
+  <version>0.9.2</version>
 </dependency>
 ```
 

@@ -33,7 +33,7 @@ INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `app
 
 
 SELECT @application_id := id from linkis_application where name = '通用设置';
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.yarnqueue', 'yarn队列名', 'yarn队列名', @application_id, 'ide', 'None', NULL, '0', '0', '1');
+INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.yarnqueue', 'yarn队列名', 'yarn队列名', @application_id, 'default', 'None', NULL, '0', '0', '1');
 INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.preheating.time', '预热时间', '预热时间', @application_id, '9:00', 'None', NULL, '0', '0', '1');
 INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.tmpfile.clean.time', 'tmp文件清理时间', 'tmp文件清理时间', @application_id, '10:00', 'None', NULL, '0', '0', '1');
 

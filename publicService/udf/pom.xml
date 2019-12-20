@@ -21,7 +21,7 @@
     <parent>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <artifactId>linkis</artifactId>
-        <version>0.9.1</version>
+        <version>0.9.2</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -33,15 +33,12 @@
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-module</artifactId>
-            <scope>provided</scope>
-        </dependency>
+
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cloudRPC</artifactId>
             <version>${linkis.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
@@ -51,6 +48,7 @@
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
             <version>${linkis.version}</version>
+            <scope>provided</scope>
         </dependency>
 
 

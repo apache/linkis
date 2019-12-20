@@ -35,74 +35,8 @@
             <unpack>false</unpack>
             <useStrictFiltering>true</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
-            <!--<excludes>
-                <exclude>log4j:log4j:*</exclude>
-                <exclude>org.springframework.cloud:spring-*:*</exclude>
-                <exclude>org.springframework.*</exclude>
-                <exclude>org.scala*</exclude>
-                <exclude>org.slf4j:*</exclude>
-                <exclude>org.json*</exclude>
-                <exclude>org.mybatis</exclude>
-                <exclude>com.google*</exclude>
-                <exclude>com.fasterxml*</exclude>
-                <exclude>com.sun.jersey*</exclude>
-                <exclude>org.eclipse.jetty*</exclude>
-                <exclude>org.apache.commons:commons*</exclude>
-                <exclude>commons*</exclude>
-                <exclude>org.apache.hadoop:*</exclude>
-                <exclude>io.netty:netty*</exclude>
-            </excludes>-->
-            <excludes>
-                <!--<exclude>commons-beanutils:commons-b*</exclude>
-                <exclude>commons-cli:commons-cli</exclude>
-                <exclude>commons-collections:commons-collections</exclude>
-                <exclude>org.apache.commons:commons-compress</exclude>
-                <exclude>commons-configuration:commons-configuration</exclude>
-                <exclude>commons-daemon:commons-daemon</exclude>
-                <exclude>commons-digester:commons-digester</exclude>
-                <exclude>commons-h*</exclude>
-                <exclude>commons-i*</exclude>
-                <exclude>commons-l*</exclude>
-                <exclude>org.apache.commons:commons-math3</exclude>
-                <exclude>commons-n*</exclude>
-                <exclude>org.apache.curator:curator-*</exclude>
-                <exclude>net.databinder.dispatch:dispatch*</exclude>
-                <exclude>com.google.guava:guava</exclude>
-                <exclude>com.google.code.gson:gson</exclude>
-                <exclude>org.apache.hadoop:hadoop-a*</exclude>
-                <exclude>org.apache.hadoop:hadoop-common</exclude>
-                <exclude>org.apache.hadoop:hadoop-hdfs</exclude>
-                <exclude>org.hdrhistogram:HdrHistogram</exclude>
-                <exclude>org.apache.htrace:htrace-core</exclude>
-                <exclude>org.apache.httpcomponents:httpcore</exclude>
-                <exclude>org.apache.httpcomponents:httpclient</exclude>
-                <exclude>com.netflix.hystrix:hystrix-core</exclude>
-                <exclude>com.fasterxml.jackson.core:jackson-annotations</exclude>
-                <exclude>com.fasterxml.jackson.core:jackson-core</exclude>
-                <exclude>com.fasterxml.jackson.core:jackson-databind</exclude>
-                <exclude>org.codehaus.jackson:jackson-jaxrs</exclude>
-                <exclude>com.fasterxml.jackson.module:jackson-module-paranamer</exclude>
-                <exclude>com.fasterxml.jackson.module:jackson-module-scala_${scala.binary.version}</exclude>
-                <exclude>javax.annotation:javax.annotation-api</exclude>
-                <exclude>javax.inject:javax.inject</exclude>
-                <exclude>javax.servlet:javax.servlet-api</exclude>
-                <exclude>javax.xml.bind:jaxb-api</exclude>
-                <exclude>com.sun.xml.bind:jaxb-impl</exclude>
-                <exclude>com.sun.jersey.contribs:jersey-apache-client4</exclude>
-                <exclude>com.sun.jersey:jersey-core</exclude>
-                <exclude>com.sun.jersey:jersey-json</exclude>
-                <exclude>com.sun.jersey:jersey-server</exclude>
-                <exclude>org.codehaus.jettison:jettison</exclude>
-                <exclude>org.mortbay.jetty:jetty</exclude>
-                <exclude>org.eclipse.jetty:jetty-continuation</exclude>
-                <exclude>org.eclipse.jetty:jetty-http</exclude>
-                <exclude>org.eclipse.jetty:jetty-io</exclude>
-                <exclude>org.eclipse.jetty:jetty-jndi</exclude>
-                <exclude>org.eclipse.jetty:jetty-plus</exclude>
-                <exclude>org.eclipse.jetty:jetty-security</exclude>
-                <exclude>org.eclipse.jetty:jetty-server</exclude>
-                <exclude>org.eclipse.jetty:jetty-servlet</exclude>
-                <exclude>org.eclipse.jetty:jetty-util</exclude>-->
+           <!-- <excludes>
+
                 <exclude>aopalliance:aopalliance:jar</exclude>
                 <exclude>com.fasterxml.jackson.core:jackson-annotations:jar</exclude>
                 <exclude>com.fasterxml.jackson.core:jackson-core:jar</exclude>
@@ -110,7 +44,6 @@
                 <exclude>com.fasterxml.jackson.module:jackson-module-paranamer:jar</exclude>
                 <exclude>com.fasterxml.jackson.module:jackson-module-scala_2.11:jar</exclude>
                 <exclude>com.google.code.findbugs:jsr305:jar</exclude>
-                <exclude>com.google.code.gson:gson:jar</exclude>
                 <exclude>com.google.guava:guava:jar</exclude>
                 <exclude>com.google.protobuf:protobuf-java:jar</exclude>
                 <exclude>com.netflix.archaius:archaius-core:jar</exclude>
@@ -132,20 +65,14 @@
                 <exclude>com.sun.xml.bind:jaxb-impl:jar</exclude>
                 <exclude>com.thoughtworks.paranamer:paranamer:jar</exclude>
                 <exclude>com.webank.wedatasphere.linkis:linkis-common:jar</exclude>
-                <exclude>commons-beanutils:commons-beanutils:jar</exclude>
-                <exclude>commons-beanutils:commons-beanutils-core:jar</exclude>
                 <exclude>commons-cli:commons-cli:jar</exclude>
                 <exclude>commons-collections:commons-collections:jar</exclude>
                 <exclude>commons-configuration:commons-configuration:jar</exclude>
-                <exclude>commons-daemon:commons-daemon:jar</exclude>
-                <exclude>commons-digester:commons-digester:jar</exclude>
-                <exclude>commons-httpclient:commons-httpclient:jar</exclude>
                 <exclude>commons-io:commons-io:jar</exclude>
                 <exclude>commons-lang:commons-lang:jar</exclude>
                 <exclude>commons-logging:commons-logging:jar</exclude>
                 <exclude>commons-net:commons-net:jar</exclude>
-                <!--<exclude>io.netty:netty:jar</exclude>-->
-                <exclude>io.netty:netty-all:jar</exclude>
+                &lt;!&ndash;<exclude>io.netty:netty:jar</exclude>&ndash;&gt;
                 <exclude>io.netty:netty-buffer:jar</exclude>
                 <exclude>io.netty:netty-codec:jar</exclude>
                 <exclude>io.netty:netty-codec-http:jar</exclude>
@@ -160,56 +87,20 @@
                 <exclude>javax.activation:activation:jar</exclude>
                 <exclude>javax.annotation:javax.annotation-api:jar</exclude>
                 <exclude>javax.inject:javax.inject:jar</exclude>
-                <exclude>javax.servlet:javax.servlet-api:jar</exclude>
-                <exclude>javax.servlet.jsp:jsp-api:jar</exclude>
                 <exclude>javax.xml.bind:jaxb-api:jar</exclude>
                 <exclude>javax.xml.stream:stax-api:jar</exclude>
                 <exclude>log4j:log4j:jar</exclude>
-                <exclude>net.databinder.dispatch:dispatch-core_2.11:jar</exclude>
-                <exclude>net.databinder.dispatch:dispatch-json4s-jackson_2.11:jar</exclude>
-                <exclude>org.apache.commons:commons-compress:jar</exclude>
-                <exclude>org.apache.commons:commons-math3:jar</exclude>
-                <exclude>org.apache.curator:curator-client:jar</exclude>
-                <exclude>org.apache.curator:curator-framework:jar</exclude>
-                <exclude>org.apache.curator:curator-recipes:jar</exclude>
-                <exclude>org.apache.directory.api:api-asn1-api:jar</exclude>
-                <exclude>org.apache.directory.api:api-util:jar</exclude>
-                <exclude>org.apache.directory.server:apacheds-i18n:jar</exclude>
-                <exclude>org.apache.directory.server:apacheds-kerberos-codec:jar</exclude>
-                <exclude>org.apache.hadoop:hadoop-annotations:jar</exclude>
-                <exclude>org.apache.hadoop:hadoop-auth:jar</exclude>
-                <exclude>org.apache.hadoop:hadoop-common:jar</exclude>
-                <exclude>org.apache.hadoop:hadoop-hdfs:jar</exclude>
-                <exclude>org.apache.htrace:htrace-core:jar</exclude>
                 <exclude>org.apache.httpcomponents:httpclient:jar</exclude>
                 <exclude>org.apache.httpcomponents:httpcore:jar</exclude>
                 <exclude>org.apache.logging.log4j:log4j-api:jar</exclude>
-                <exclude>org.apache.zookeeper:zookeeper:jar</exclude>
                 <exclude>org.aspectj:aspectjweaver:jar</exclude>
                 <exclude>org.bouncycastle:bcpkix-jdk15on:jar</exclude>
                 <exclude>org.bouncycastle:bcprov-jdk15on:jar</exclude>
                 <exclude>org.codehaus.jackson:jackson-jaxrs:jar</exclude>
                 <exclude>org.codehaus.jackson:jackson-xc:jar</exclude>
                 <exclude>org.codehaus.jettison:jettison:jar</exclude>
-                <exclude>org.eclipse.jetty:jetty-continuation:jar</exclude>
-                <exclude>org.eclipse.jetty:jetty-http:jar</exclude>
-                <exclude>org.eclipse.jetty:jetty-io:jar</exclude>
-                <exclude>org.eclipse.jetty:jetty-jndi:jar</exclude>
-                <exclude>org.eclipse.jetty:jetty-plus:jar</exclude>
-                <exclude>org.eclipse.jetty:jetty-security:jar</exclude>
-                <exclude>org.eclipse.jetty:jetty-server:jar</exclude>
-                <exclude>org.eclipse.jetty:jetty-servlet:jar</exclude>
-                <exclude>org.eclipse.jetty:jetty-util:jar</exclude>
-                <exclude>org.eclipse.jetty:jetty-webapp:jar</exclude>
-                <exclude>org.eclipse.jetty:jetty-xml:jar</exclude>
-                <exclude>org.fusesource.leveldbjni:leveldbjni-all:jar</exclude>
                 <exclude>org.hdrhistogram:HdrHistogram:jar</exclude>
-                <!--<exclude>org.json4s:json4s-ast_2.11:jar</exclude>-->
-                <!--<exclude>org.json4s:json4s-core_2.11:jar</exclude>-->
-                <!--<exclude>org.json4s:json4s-jackson_2.11:jar</exclude>-->
                 <exclude>org.jsoup:jsoup:jar</exclude>
-                <exclude>org.mortbay.jetty:jetty:jar</exclude>
-                <exclude>org.mortbay.jetty:jetty-util:jar</exclude>
                 <exclude>org.scala-lang.modules:scala-parser-combinators_2.11:jar</exclude>
                 <exclude>org.scala-lang.modules:scala-xml_2.11:jar</exclude>
                 <exclude>org.scala-lang:scala-compiler:jar</exclude>
@@ -238,10 +129,7 @@
                 <exclude>org.springframework:spring-web:jar</exclude>
                 <exclude>org.tukaani:xz:jar</exclude>
                 <exclude>org.yaml:snakeyaml:jar</exclude>
-                <exclude>xerces:xercesImpl:jar</exclude>
-                <exclude>xml-apis:xml-apis:jar</exclude>
-                <exclude>xmlenc:xmlenc:jar</exclude>
-            </excludes>
+            </excludes>-->
         </dependencySet>
     </dependencySets>
 

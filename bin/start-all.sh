@@ -22,6 +22,7 @@ info="We will start all linkis applications, it will take some time, please wait
 echo ${info}
 
 #Actively load user env
+source /etc/profile
 source ~/.bash_profile
 
 workDir=`dirname "${BASH_SOURCE-$0}"`
@@ -33,17 +34,42 @@ CONF_FILE=${CONF_DIR}/config.sh
 
 function isSuccess(){
 if [ $? -ne 0 ]; then
-    echo "ERROR:  " + $1
+    echo "Failed to " + $1
     exit 1
 else
-    echo "INFO:" + $1
+    echo "Succeed to" + $1
 fi
 }
 
-sudo yum -y install dos2unix > /dev/null 2>&1
-
 
 local_host="`hostname --fqdn`"
+
+ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
+
+function isLocal(){
+    if [ "$1" == "127.0.0.1" ];then
+        return 0
+    elif [ $1 == "localhost" ]; then
+        return 0
+    elif [ $1 == $local_host ]; then
+        return 0
+    elif [ $1 == $ipaddr ]; then
+        return 0
+    fi
+        return 1
+}
+
+function executeCMD(){
+   isLocal $1
+   flag=$?
+   echo "Is local "$flag
+   if [ $flag == "0" ];then
+      eval $2
+   else
+      ssh -p $SSH_PORT $1 $2
+   fi
+
+}
 
 #if there is no LINKIS_INSTALL_HOME，we need to source config again
 if [ -z ${LINKIS_INSTALL_HOME} ];then
@@ -62,11 +88,25 @@ echo "<-------------------------------->"
 echo "Begin to start $SERVER_NAME"
 SERVER_PATH=${APP_PREFIX}${SERVER_NAME}
 SERVER_BIN=${LINKIS_INSTALL_HOME}/${SERVER_PATH}/bin
-SERVER_START_CMD="source ~/.bash_profile;cd ${SERVER_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh start-${SERVER_NAME}.sh > /dev/null 2>&1"
-if [ -n "${SERVER_IP}"  ];then
-    ssh -p $SSH_PORT ${SERVER_IP} "${SERVER_START_CMD}"
+SERVER_LOCAL_START_CMD="dos2unix ${SERVER_BIN}/* > /dev/null 2>&1; dos2unix ${SERVER_BIN}/../conf/* > /dev/null 2>&1; sh ${SERVER_BIN}/start-${SERVER_NAME}.sh"
+SERVER_REMOTE_START_CMD="source /etc/profile;source ~/.bash_profile;cd ${SERVER_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh start-${SERVER_NAME}.sh > /dev/null 2>&1"
+if test -z "$SERVER_IP"
+then
+  SERVER_IP=$local_host
+fi
+
+if  executeCMD $SERVER_IP test -e $SERVER_BIN; then
+  echo "$SERVER_NAME is not installed,the startup steps will be skipped"
+  return
+fi
+
+isLocal $SERVER_IP
+flag=$?
+echo "Is local "$flag
+if [ $flag == "0" ];then
+   eval $SERVER_LOCAL_START_CMD
 else
-    ssh -p $SSH_PORT ${local_host} "${SERVER_START_CMD}"
+   ssh -p $SSH_PORT $SERVER_IP $SERVER_REMOTE_START_CMD
 fi
 isSuccess "End to start $SERVER_NAME"
 echo "<-------------------------------->"
@@ -92,15 +132,15 @@ SERVER_NAME="publicservice"
 SERVER_IP=$PUBLICSERVICE_INSTALL_IP
 startApp
 
-#bml
-SERVER_NAME="bml"
-SERVER_IP=$BML_INSTALL_IP
-startApp
-
 
 #metadata
 SERVER_NAME="metadata"
 SERVER_IP=$METADATA_INSTALL_IP
+startApp
+
+#bml
+SERVER_NAME="bml"
+SERVER_IP=$BML_INSTALL_IP
 startApp
 
 #resourcemanager
@@ -111,6 +151,17 @@ echo "sleep 15 seconds to wait RM to be ready"
 sleep 15
 
 APP_PREFIX="linkis-ujes-"
+
+#python-entrance
+SERVER_NAME="python-entrance"
+SERVER_IP=$PYTHON_INSTALL_IP
+startApp
+
+#python-enginemanager
+SERVER_NAME="python-enginemanager"
+SERVER_IP=$PYTHON_INSTALL_IP
+startApp
+
 #spark-entrance
 SERVER_NAME="spark-entrance"
 SERVER_IP=$SPARK_INSTALL_IP
@@ -132,17 +183,6 @@ SERVER_NAME="hive-enginemanager"
 SERVER_IP=$HIVE_INSTALL_IP
 startApp
 
-#python-entrance
-SERVER_NAME="python-entrance"
-SERVER_IP=$PYTHON_INSTALL_IP
-startApp
-
-#python-enginemanager
-SERVER_NAME="python-enginemanager"
-SERVER_IP=$PYTHON_INSTALL_IP
-startApp
-
-
 
 #JDBCEntrance
 SERVER_NAME="jdbc-entrance"
@@ -150,9 +190,88 @@ SERVER_IP=$JDBC_INSTALL_IP
 startApp
 
 
-#mlsql-entrance
-SERVER_NAME="mlsql-entrance"
-SERVER_IP=$MLSQL_INSTALL_IP
-startApp
-
 echo "start-all shell script executed completely"
+
+echo "Start to check all dss microservice"
+
+function checkServer(){
+echo "<-------------------------------->"
+echo "Begin to check $SERVER_NAME"
+if test -z "$SERVER_IP"
+then
+  SERVER_IP=$local_host
+fi
+sh $workDir/checkServices.sh $SERVER_NAME $SERVER_IP $SERVER_PORT
+isSuccess "start $SERVER_NAME "
+echo "<-------------------------------->"
+sleep 3
+}
+SERVER_NAME="eureka"
+SERVER_IP=$EUREKA_INSTALL_IP
+SERVER_PORT=$EUREKA_PORT
+checkServer
+
+APP_PREFIX="linkis-"
+SERVER_NAME=$APP_PREFIX"gateway"
+SERVER_IP=$GATEWAY_INSTALL_IP
+SERVER_PORT=$GATEWAY_PORT
+checkServer
+
+SERVER_NAME=$APP_PREFIX"publicservice"
+SERVER_IP=$PUBLICSERVICE_INSTALL_IP
+SERVER_PORT=$PUBLICSERVICE_PORT
+checkServer
+
+SERVER_NAME=$APP_PREFIX"metadata"
+SERVER_IP=$METADATA_INSTALL_IP
+SERVER_PORT=$METADATA_PORT
+checkServer
+
+SERVER_NAME=$APP_PREFIX"resourcemanager"
+SERVER_IP=$RESOURCEMANAGER_INSTALL_IP
+SERVER_PORT=$RESOURCEMANAGER_PORT
+checkServer
+
+
+SERVER_NAME=$APP_PREFIX"bml"
+SERVER_IP=$BML_INSTALL_IP
+SERVER_PORT=$BML_PORT
+checkServer
+
+APP_PREFIX="linkis-ujes-"
+SERVER_NAME=$APP_PREFIX"python-entrance"
+SERVER_IP=$PYTHON_INSTALL_IP
+SERVER_PORT=$PYTHON_ENTRANCE_PORT
+checkServer
+
+SERVER_NAME=$APP_PREFIX"python-enginemanager"
+SERVER_IP=$PYTHON_INSTALL_IP
+SERVER_PORT=$PYTHON_EM_PORT
+checkServer
+
+SERVER_NAME=$APP_PREFIX"spark-entrance"
+SERVER_IP=$SPARK_INSTALL_IP
+SERVER_PORT=$SPARK_ENTRANCE_PORT
+checkServer
+
+SERVER_NAME=$APP_PREFIX"spark-enginemanager"
+SERVER_IP=$SPARK_INSTALL_IP
+SERVER_PORT=$SPARK_EM_PORT
+checkServer
+
+SERVER_NAME=$APP_PREFIX"hive-enginemanager"
+SERVER_IP=$HIVE_INSTALL_IP
+SERVER_PORT=$HIVE_EM_PORT
+checkServer
+
+SERVER_NAME=$APP_PREFIX"hive-entrance"
+SERVER_IP=$HIVE_INSTALL_IP
+SERVER_PORT=$HIVE_ENTRANCE_PORT
+checkServer
+
+SERVER_NAME=$APP_PREFIX"jdbc-entrance"
+SERVER_IP=$JDBC_INSTALL_IP
+SERVER_PORT=$JDBC_ENTRANCE_PORT
+checkServer
+
+echo "Linkis started successfully"

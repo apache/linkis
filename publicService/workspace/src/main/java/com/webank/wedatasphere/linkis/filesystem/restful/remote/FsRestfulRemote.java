@@ -61,6 +61,9 @@ public interface FsRestfulRemote {
     @PostMapping("/api/filesystem/download")
     void download(@Context HttpServletRequest req, @Context HttpServletResponse response, @RequestBody Map<String,String> json) throws IOException, WorkSpaceException;
 
+    @PostMapping("/api/filesystem/resultdownload")
+    void resultDownload(@Context HttpServletRequest req, @Context HttpServletResponse response, @RequestBody Map<String,String> json) throws IOException, WorkSpaceException;
+
     @GetMapping("/api/filesystem/isExit")
     Response isExist(@Context HttpServletRequest req, @QueryParam("path")String path) throws IOException, WorkSpaceException;
 

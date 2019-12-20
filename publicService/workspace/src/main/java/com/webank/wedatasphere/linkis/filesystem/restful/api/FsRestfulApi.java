@@ -27,6 +27,8 @@ import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException;
 import com.webank.wedatasphere.linkis.filesystem.restful.remote.FsRestfulRemote;
 import com.webank.wedatasphere.linkis.filesystem.service.FsService;
 import com.webank.wedatasphere.linkis.filesystem.util.Constants;
+import com.webank.wedatasphere.linkis.filesystem.util.FsUtil;
+import com.webank.wedatasphere.linkis.filesystem.util.FsUtil$;
 import com.webank.wedatasphere.linkis.filesystem.util.WorkspaceUtil;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
@@ -98,7 +100,9 @@ public class FsRestfulApi implements FsRestfulRemote {
 
     private void fsValidate(FileSystem fileSystem) throws WorkSpaceException {
         if (fileSystem == null){
-            throw new WorkSpaceException("The user has obtained the filesystem for more than 2s. Please contact the administrator.（用户获取filesystem的时间超过2s，请联系管理员）");
+
+            throw new WorkSpaceException("The user has obtained the filesystem for more than " + FsUtil.FILESYSTEM_GET_TIMEOUT().getValue().toString()
+                    + "ms. Please contact the administrator.（用户获取filesystem的时间超过" + FsUtil.FILESYSTEM_GET_TIMEOUT().getValue().toString() + "ms，请联系管理员）");
         }
     }
 
@@ -346,7 +350,12 @@ public class FsRestfulApi implements FsRestfulRemote {
             int bytesRead = 0;
             response.setCharacterEncoding(charset);
             java.nio.file.Path source = Paths.get(fsPath.getPath());
-            response.addHeader("Content-Type", Files.probeContentType(source));
+            String contentType = Files.probeContentType(source);
+            if(!StringUtils.isEmpty(contentType)) {
+              response.addHeader("Content-Type", contentType);
+            } else {
+                  response.addHeader("Content-Type", "multipart/form-data");
+            }
             response.addHeader("Content-Disposition", "attachment;filename="
                     + new File(fsPath.getPath()).getName());
             outputStream = response.getOutputStream();
@@ -368,6 +377,89 @@ public class FsRestfulApi implements FsRestfulRemote {
             StorageUtils.close(outputStream, inputStream, null);
         }
     }
+
+  /**
+     * @param req
+     * @param response
+     * @param json
+     * @throws IOException
+     */
+    @POST
+    @Path("/resultdownload")
+    @Override
+    public void resultDownload(@Context HttpServletRequest req,
+                         @Context HttpServletResponse response,
+                         @RequestBody Map<String, String> json) throws IOException, WorkSpaceException {
+        FileSystem fileSystem = null;
+        InputStream inputStream = null;
+        ServletOutputStream outputStream = null;
+        com.webank.wedatasphere.linkis.common.io.resultset.ResultSetReader<? extends MetaData, ? extends Record> resultSetReader = null;
+        try {
+            String charset = json.get("charset");
+            String userName = SecurityFilter.getLoginUsername(req);
+            String path = json.get("path");
+            if (StringUtils.isEmpty(path)) {
+                throw new WorkSpaceException("Path(路径)：" + path + "Is empty!(为空！)");
+            }
+            if (StringUtils.isEmpty(charset)) {
+                charset = "utf-8";
+            }
+            LOGGER.info("resultdownload:"+userName+",path:"+path);
+            FsPath fsPath = new FsPath(path);
+            fileSystem = fsService.getFileSystem(userName, fsPath);
+            fsValidate(fileSystem);
+            if (!fileSystem.exists(fsPath)) {
+                throw new WorkSpaceException("The downloaded directory does not exist!(下载的目录不存在!)");
+            }
+            ResultSetFactory instance = ResultSetFactory$.MODULE$.getInstance();
+            ResultSet<? extends MetaData, ? extends Record> resultSet = instance.getResultSetByPath(fsPath);
+            resultSetReader = ResultSetReader.getResultSetReader(resultSet, fileSystem.read(fsPath));
+            MetaData metaData = resultSetReader.getMetaData();
+            outputStream = response.getOutputStream();
+            response.setCharacterEncoding(charset);
+            response.addHeader("Content-Type", "multipart/form-data");
+            if (metaData instanceof TableMetaData) {
+                ArrayList<String> resulstsetColumn = new ArrayList<>();
+                while (resultSetReader.hasNext()) {
+                    Record record = resultSetReader.getRecord();
+                    TableRecord tableRecord = (TableRecord) record;
+                    Object[] row = tableRecord.row();
+                    for (Object o : row) {
+                        resulstsetColumn.add(o == null ? "NULL" : o.toString());
+                    }
+                    //字段之间tab分割
+                    String rs = org.apache.commons.lang.StringUtils.join(resulstsetColumn, "\t");
+                    outputStream.write(rs.getBytes("utf-8"));
+                    outputStream.write(System.getProperty("line.separator").getBytes());                                     
+                    resulstsetColumn.clear();
+                } 
+            }
+            if (metaData instanceof LineMetaData) {
+                     while (resultSetReader.hasNext()) {
+                    Record record = resultSetReader.getRecord();
+                    LineRecord lineRecord = (LineRecord) record;
+                        outputStream.write(lineRecord.getLine().getBytes("utf-8"));
+                            outputStream.write(System.getProperty("line.separator").getBytes());                                     
+                 } 
+            }
+        } catch (Exception e) {
+                LOGGER.error("output fail", e);
+            response.reset();
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/plain; charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            writer.append("error(错误):" + e.getMessage());
+            writer.flush();
+            writer.close();
+        } finally {
+                resultSetReader.close();
+            if (outputStream != null) {
+                outputStream.flush();
+            }
+            StorageUtils.close(outputStream, inputStream, null);
+        }
+    }
+    
 
     @GET
     @Path("/isExist")

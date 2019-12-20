@@ -201,6 +201,12 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
   protected def responseToResult(response: Response, requestAction: Action): Result = {
     val result = requestAction match {
       case download: DownloadAction =>
+        val statusCode = response.getStatusCode
+        if(statusCode != 200) {
+           val responseBody = response.getResponseBody
+           val url = response.getUri.toString
+           throw new HttpClientResultException(s"URL $url request failed! ResponseBody is $responseBody." )
+        }
         download.write(response.getResponseBodyAsStream)
         Result()
       case heartbeat: HeartbeatAction =>

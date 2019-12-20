@@ -23,7 +23,7 @@ import com.ning.http.client.Response
 import com.ning.http.multipart.{FilePart, PartSource, StringPart}
 import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
-import com.webank.wedatasphere.linkis.common.utils.{FsPartSource, Utils}
+import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.httpclient.authentication.{AbstractAuthenticationStrategy, AuthenticationAction, HttpAuthentication}
 import com.webank.wedatasphere.linkis.httpclient.config.ClientConfig
 import com.webank.wedatasphere.linkis.httpclient.discovery.{AbstractDiscovery, Discovery, HeartbeatAction}
@@ -247,4 +247,13 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
     dispatch.Http.shutdown()
     executors.asInstanceOf[ExecutionContextExecutorService].shutdown()
   }
+}
+
+class FsPartSource (fs: Fs, path: String) extends PartSource {
+  val fsPath = fs.get(path)
+  override def getLength: Long = fsPath.getLength
+
+  override def createInputStream(): InputStream = fs.read(fsPath)
+
+  override def getFileName: String = fsPath.toFile.getName
 }

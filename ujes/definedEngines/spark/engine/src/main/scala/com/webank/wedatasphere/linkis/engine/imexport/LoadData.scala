@@ -18,10 +18,11 @@ package com.webank.wedatasphere.linkis.engine.imexport
 
 import java.io.{BufferedInputStream, File, FileInputStream}
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration
-import com.webank.wedatasphere.linkis.common.utils.{HDFSUtils, Logging, Utils}
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engine.imexport.util.ImExportUtils
+import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils
 import com.webank.wedatasphere.linkis.storage.excel.XlsUtils
+import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.io.IOUtils
@@ -87,9 +88,7 @@ object LoadData extends Logging {
 
     if ("hdfs".equalsIgnoreCase(pathType)) {
       if (".xls".equalsIgnoreCase(suffix)) {
-        val config = HDFSUtils.getConfiguration(Configuration.HADOOP_ROOT_USER.getValue)
-        config.setBoolean("fs.hdfs.impl.disable.cache", true)
-        fs = HDFSUtils.getHDFSUserFileSystem(System.getProperty("user.name"), config)
+
         path = XlsUtils.excelToCsv(fs.open(new Path(path)), fs, hasHeader, sheetNames)
         hasHeader = false
       } else {
@@ -99,15 +98,11 @@ object LoadData extends Logging {
       if (".xlsx".equalsIgnoreCase(suffix)) {
         path = "file://" + path
       } else if (".xls".equalsIgnoreCase(suffix)) {
-        val config = HDFSUtils.getConfiguration(Configuration.HADOOP_ROOT_USER.getValue)
-        config.setBoolean("fs.hdfs.impl.disable.cache", true)
-        fs = HDFSUtils.getHDFSUserFileSystem(System.getProperty("user.name"), config)
+        fs = getHDFSFileSystem
         path = XlsUtils.excelToCsv(new FileInputStream(path), fs, hasHeader, sheetNames)
         hasHeader = false
       } else {
-        val config = HDFSUtils.getConfiguration(Configuration.HADOOP_ROOT_USER.getValue)
-        config.setBoolean("fs.hdfs.impl.disable.cache", true)
-        fs = HDFSUtils.getHDFSUserFileSystem(System.getProperty("user.name"), config)
+        fs = getHDFSFileSystem
         path = copyFileToHdfs(path, fs)
       }
     }
@@ -250,5 +245,11 @@ object LoadData extends Logging {
     case "binary" => BinaryType
     case "decimal" => DecimalType(precision, scale)
     case _ => throw new IllegalArgumentException(s"unknown dataType $dataType.")
+  }
+
+  def getHDFSFileSystem: FileSystem = {
+    val config = HDFSUtils.getConfiguration(StorageUtils.getJvmUser)
+    config.setBoolean("fs.hdfs.impl.disable.cache", true)
+    HDFSUtils.getHDFSUserFileSystem(StorageUtils.getJvmUser, config)
   }
 }

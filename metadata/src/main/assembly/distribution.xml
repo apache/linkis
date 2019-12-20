@@ -35,26 +35,8 @@
             <unpack>false</unpack>
             <useStrictFiltering>true</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
-            <!--<excludes>
-                <exclude>log4j:log4j:*</exclude>
-                <exclude>org.springframework.cloud:spring-*:*</exclude>
-                <exclude>org.springframework.*</exclude>
-                <exclude>org.glassfish.*</exclude>
-                <exclude>org.scala*</exclude>
-                <exclude>org.slf4j:*</exclude>
-                <exclude>org.json*</exclude>
-                <exclude>org.mybatis</exclude>
-                <exclude>cglib:*</exclude>
-                <exclude>com.google*</exclude>
-                <exclude>com.fasterxml*</exclude>
-                <exclude>com.sun.jersey*</exclude>
-                <exclude>org.eclipse.jetty*</exclude>
-                <exclude>org.apache.commons:commons*</exclude>
-                <exclude>commons*</exclude>
-                <exclude>org.apache.hadoop:*</exclude>
-                <exclude>io.netty:netty*</exclude>
-            </excludes>-->
-            <excludes>
+
+           <!-- <excludes>
                 <exclude>antlr:antlr:jar</exclude>
                 <exclude>aopalliance:aopalliance:jar</exclude>
                 <exclude>com.fasterxml.jackson.core:jackson-annotations:jar</exclude>
@@ -75,7 +57,6 @@
                 <exclude>com.netflix.ribbon:ribbon-loadbalancer:jar</exclude>
                 <exclude>com.netflix.ribbon:ribbon-transport:jar</exclude>
                 <exclude>com.netflix.servo:servo-core:jar</exclude>
-                <exclude>com.ning:async-http-client:jar</exclude>
                 <exclude>com.sun.jersey.contribs:jersey-apache-client4:jar</exclude>
                 <exclude>com.sun.jersey:jersey-client:jar</exclude>
                 <exclude>com.sun.jersey:jersey-core:jar</exclude>
@@ -182,14 +163,14 @@
                 <exclude>org.springframework:spring-context:jar</exclude>
                 <exclude>org.springframework:spring-core:jar</exclude>
                 <exclude>org.springframework:spring-expression:jar</exclude>
-                <!--<exclude>org.springframework:spring-jcl:jar</exclude>-->
+                &lt;!&ndash;<exclude>org.springframework:spring-jcl:jar</exclude>&ndash;&gt;
                 <exclude>org.springframework:spring-web:jar</exclude>
                 <exclude>org.tukaani:xz:jar</exclude>
                 <exclude>org.yaml:snakeyaml:jar</exclude>
                 <exclude>xerces:xercesImpl:jar</exclude>
                 <exclude>xml-apis:xml-apis:jar</exclude>
                 <exclude>xmlenc:xmlenc:jar</exclude>
-            </excludes>
+            </excludes>-->
         </dependencySet>
     </dependencySets>
 

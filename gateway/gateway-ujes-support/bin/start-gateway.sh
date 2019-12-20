@@ -4,34 +4,35 @@ cd `dirname $0`
 cd ..
 HOME=`pwd`
 
-export EUREKA_SERVER_PID=$HOME/bin/linkis.pid
+export SERVER_PID=$HOME/bin/linkis.pid
+export SERVER_LOG_PATH=$HOME/logs
+export SERVER_CLASS=com.webank.wedatasphere.linkis.DataWorkCloudApplication
 
-if [[ -f "${EUREKA_SERVER_PID}" ]]; then
-    pid=$(cat ${EUREKA_SERVER_PID})
+if test -z "$SERVER_HEAP_SIZE"
+then
+  export SERVER_HEAP_SIZE="512M"
+fi
+
+if test -z "$SERVER_JAVA_OPTS"
+then
+  export SERVER_JAVA_OPTS=" -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$HOME/logs/linkis-gc.log"
+fi
+
+if [[ -f "${SERVER_PID}" ]]; then
+    pid=$(cat ${SERVER_PID})
     if kill -0 ${pid} >/dev/null 2>&1; then
-      echo "Gateway Server is already running."
-      return 0;
+      echo "Server is already running."
+      exit 1
     fi
 fi
 
-export EUREKA_SERVER_LOG_PATH=$HOME/logs
-export EUREKA_SERVER_HEAP_SIZE="2G"
-export EUREKA_SERVER_CLASS=${EUREKA_SERVER_CLASS:-com.webank.wedatasphere.linkis.DataWorkCloudApplication}
-
-
-if [ $1 ];then
-        type=$1
-fi
-
-export EUREKA_SERVER_JAVA_OPTS="-Xms$EUREKA_SERVER_HEAP_SIZE -Xmx$EUREKA_SERVER_HEAP_SIZE -XX:+UseG1GC -XX:MaxPermSize=500m -Xloggc:$HOME/logs/gateway-gc.log"
-
-java $EUREKA_SERVER_JAVA_OPTS -cp $HOME/conf:$HOME/lib/* $EUREKA_SERVER_CLASS  2>&1 > $EUREKA_SERVER_LOG_PATH/linkis.out &
+nohup java $SERVER_JAVA_OPTS -cp $HOME/conf:$HOME/lib/* $SERVER_CLASS 2>&1 > $SERVER_LOG_PATH/linkis.out &
 pid=$!
-sleep 2
 if [[ -z "${pid}" ]]; then
-    echo "Gateway SERVER start failed!"
+    echo "server $SERVER_NAME start failed!"
     exit 1
 else
-    echo "Gateway SERVER start succeed!"
-    echo $pid > $EUREKA_SERVER_PID
+    echo "server $SERVER_NAME start succeeded!"
+    echo $pid > $SERVER_PID
+    sleep 1
 fi

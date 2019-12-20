@@ -19,7 +19,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 
 import com.webank.wedatasphere.linkis.common.utils.ByteTimeUtils;
-import com.webank.wedatasphere.linkis.common.utils.HDFSUtils;
+import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils;
 import com.webank.wedatasphere.linkis.metadata.dao.MdqDao;
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.DomainCoversionUtils;
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableBO;

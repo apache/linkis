@@ -23,11 +23,11 @@ import com.ning.http.client.Response
 import com.ning.http.multipart.{FilePart, PartSource, StringPart}
 import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
-import com.webank.wedatasphere.linkis.common.utils.{FsPartSource, Utils}
+import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.httpclient.authentication.{AbstractAuthenticationStrategy, AuthenticationAction, HttpAuthentication}
 import com.webank.wedatasphere.linkis.httpclient.config.ClientConfig
 import com.webank.wedatasphere.linkis.httpclient.discovery.{AbstractDiscovery, Discovery, HeartbeatAction}
-import com.webank.wedatasphere.linkis.httpclient.exception.HttpMessageParseException
+import com.webank.wedatasphere.linkis.httpclient.exception.{HttpClientResultException, HttpMessageParseException}
 import com.webank.wedatasphere.linkis.httpclient.loadbalancer.{AbstractLoadBalancer, DefaultLoadbalancerStrategy, LoadBalancer}
 import com.webank.wedatasphere.linkis.httpclient.request._
 import com.webank.wedatasphere.linkis.httpclient.response._
@@ -201,6 +201,12 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
   protected def responseToResult(response: Response, requestAction: Action): Result = {
     val result = requestAction match {
       case download: DownloadAction =>
+        val statusCode = response.getStatusCode
+        if(statusCode != 200) {
+           val responseBody = response.getResponseBody
+           val url = response.getUri.toString
+           throw new HttpClientResultException(s"URL $url request failed! ResponseBody is $responseBody." )
+        }
         download.write(response.getResponseBodyAsStream)
         Result()
       case heartbeat: HeartbeatAction =>
@@ -247,4 +253,13 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
     dispatch.Http.shutdown()
     executors.asInstanceOf[ExecutionContextExecutorService].shutdown()
   }
+}
+
+class FsPartSource (fs: Fs, path: String) extends PartSource {
+  val fsPath = fs.get(path)
+  override def getLength: Long = fsPath.getLength
+
+  override def createInputStream(): InputStream = fs.read(fsPath)
+
+  override def getFileName: String = fsPath.toFile.getName
 }

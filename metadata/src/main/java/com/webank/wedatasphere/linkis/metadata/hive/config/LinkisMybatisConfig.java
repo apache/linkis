@@ -21,6 +21,8 @@ import com.webank.wedatasphere.linkis.metadata.util.HiveUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.conf.HiveConf;
+import org.apache.ibatis.mapping.DatabaseIdProvider;
+import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
@@ -39,9 +41,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+
+import java.util.*;
+
 
 @Configuration
 @EnableTransactionManagement(order = 2)
@@ -176,6 +178,8 @@ public class LinkisMybatisConfig {
             }
            /* Resource[] resources = new PathMatchingResourcePatternResolver().getResources(mapperLocations);
             sessionFactoryBean.setMapperLocations(resources);*/
+           // Add mybatis database id provider configuration to support hive postgresql metadata(添加MyBatis配置以支持Hive PG元数据库)
+            sessionFactoryBean.setDatabaseIdProvider(getDatabaseIdProvider());
 //            Set the location of the mybatis-config.xml configuration file(设置mybatis-config.xml配置文件位置)
             sessionFactoryBean.setConfigLocation(new DefaultResourceLoader().getResource(configLocation));
 
@@ -187,6 +191,15 @@ public class LinkisMybatisConfig {
             logger.error("mybatis sqlSessionFactoryBean create error",e);
             return null;
         }
+    }
+
+    private DatabaseIdProvider getDatabaseIdProvider() {
+        VendorDatabaseIdProvider databaseIdProvider = new VendorDatabaseIdProvider();
+        Properties databaseIdProperties = new Properties();
+        databaseIdProperties.put("MySQL", "mysql");
+        databaseIdProperties.put("PostgreSQL", "postgresql");
+        databaseIdProvider.setProperties(databaseIdProperties);
+        return databaseIdProvider;
     }
 
     @Primary

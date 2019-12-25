@@ -542,7 +542,7 @@ CREATE TABLE if not exists `linkis_resources_download_history` (
 
 
 
---创建资源任务表,包括上传,更新,下载
+-- 创建资源任务表,包括上传,更新,下载
 drop table if exists `linkis_resources_task`;
 CREATE TABLE if not exists `linkis_resources_task` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,

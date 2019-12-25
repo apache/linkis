@@ -255,7 +255,7 @@ then
   SERVER_IP=$local_host
 fi
 EUREKA_URL=http://$SERVER_IP:$EUREKA_PORT/eureka/
-if ! executeCMD $SERVER_IP test -e $SERVER_HOME; then
+if ! executeCMD $SERVER_IP "test -e $SERVER_HOME"; then
   executeCMD $SERVER_IP  "sudo mkdir -p $SERVER_HOME;sudo chown -R $deployUser:$deployUser $SERVER_HOME"
   isSuccess "create the dir of $SERVER_HOME"
 fi
@@ -283,7 +283,7 @@ then
   SERVER_IP=$local_host
 fi
 
-if ! executeCMD $SERVER_IP test -e $SERVER_HOME; then
+if ! executeCMD $SERVER_IP "test -e $SERVER_HOME"; then
   executeCMD $SERVER_IP "sudo mkdir -p $SERVER_HOME;sudo chown -R $deployUser:$deployUser $SERVER_HOME"
   isSuccess "create the dir of  $SERVER_NAME"
 fi

@@ -95,6 +95,11 @@ then
   SERVER_IP=$local_host
 fi
 
+if ! executeCMD $SERVER_IP "test -e $SERVER_BIN"; then
+  echo "$SERVER_NAME is not installed,the stopApp steps will be skipped"
+  return
+fi
+
 isLocal $SERVER_IP
 flag=$?
 echo "Is local "$flag

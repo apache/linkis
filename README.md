@@ -20,12 +20,12 @@ Based on the microservices architecture, Linkis provides enterprise-level featur
 <br>
 <br>
 
-Based on the concept of the computation middleware architecture of Linkis, we have built a large amount of applications and systems on top of it.
+Based on the concept of the computation middleware architecture of Linkis, we have built a large amount of applications and systems on top of it.Currently available open-source project: 
+ - [**DataSphere Studio - Data Application Development& Management Portal**](https://github.com/WeBankFinTech/DataSphereStudio)
+ - [**Qualitis - Data Quality Tool**](https://github.com/WeBankFinTech/Qualitis)
+ - [**Scriptis - Data Development IDE Tool**](https://github.com/WeBankFinTech/Scriptis)
+ - [**Visualis - Data Visualization Tool**](https://github.com/WeBankFinTech/Visualis)
 
- - Currently available open-source project: [**Scriptis - Data Development IDE Tool**](https://github.com/WeBankFinTech/Scriptis).
-
- - Upcoming open-source projects：**Data Visualization Tool**, **Graphic Workflow Tool** and **Data Quality Tool**.
- 
  There will be more tools released as open-source projects, please stay tuned!
 
 ## Features

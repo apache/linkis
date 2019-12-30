@@ -80,8 +80,8 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>javax.rs.ws</artifactId>
-                    <groupId>jsr311-api</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                    <groupId>javax.ws.rs</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -143,8 +143,8 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>javax.rs.ws</artifactId>
-                    <groupId>jsr311-api</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                    <groupId>javax.ws.rs</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -166,8 +166,8 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>javax.rs.ws</artifactId>
-                    <groupId>jsr311-api</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                    <groupId>javax.ws.rs</groupId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
@@ -193,8 +193,8 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>javax.rs.ws</artifactId>
-                    <groupId>jsr311-api</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                    <groupId>javax.ws.rs</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -212,8 +212,8 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>javax.rs.ws</artifactId>
-                    <groupId>jsr311-api</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                    <groupId>javax.ws.rs</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -235,8 +235,8 @@
                     <artifactId>jetty-all</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>javax.rs.ws</artifactId>
-                    <groupId>jsr311-api</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                    <groupId>javax.ws.rs</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -258,8 +258,8 @@
                     <artifactId>hadoop-yarn-server-resourcemanager</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>javax.rs.ws</artifactId>
-                    <groupId>jsr311-api</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                    <groupId>javax.ws.rs</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -293,8 +293,8 @@
                     <artifactId>jersey-json</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>javax.rs.ws</artifactId>
-                    <groupId>jsr311-api</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                    <groupId>javax.ws.rs</groupId>
                 </exclusion>
                 <exclusion>
                     <groupId>net.java.dev.jets3t</groupId>

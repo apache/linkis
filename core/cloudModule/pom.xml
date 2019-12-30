@@ -258,8 +258,8 @@
             <artifactId>jersey-json</artifactId>
             <exclusions>
                 <exclusion>
-                    <artifactId>javax.rs.ws</artifactId>
-                    <groupId>jsr311-api</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                    <groupId>javax.ws.rs</groupId>
                 </exclusion>
             </exclusions>
             <version>1.19</version>

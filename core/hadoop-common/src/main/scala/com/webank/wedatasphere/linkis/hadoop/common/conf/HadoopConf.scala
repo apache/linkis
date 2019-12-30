@@ -13,7 +13,7 @@ object HadoopConf {
 
   val KEYTAB_FILE = CommonVars("wds.linkis.keytab.file", "/appcom/keytab/")
 
-  val kEYTAB_HOST = CommonVars("wds.linkis.keytab.host", "127.0.0.1")
+  val KEYTAB_HOST = CommonVars("wds.linkis.keytab.host", "127.0.0.1")
 
   val KEYTAB_HOST_ENABLED = CommonVars("wds.linkis.keytab.host.enabled", false)
 

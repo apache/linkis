@@ -51,8 +51,8 @@
                     <artifactId>jersey-json</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>javax.rs.ws</artifactId>
-                    <groupId>jsr311-api</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                    <groupId>javax.ws.rs</groupId>
                 </exclusion>
                 <exclusion>
                     <groupId>net.java.dev.jets3t</groupId>

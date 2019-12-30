@@ -56,7 +56,7 @@ object HDFSUtils {
   def getKerberosUser(userName: String): String = {
     var user = userName
     if(KEYTAB_HOST_ENABLED.getValue){
-      user = user+ "/" + kEYTAB_HOST.getValue
+      user = user+ "/" + KEYTAB_HOST.getValue
     }
     user
   }

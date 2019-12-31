@@ -89,7 +89,7 @@ public class ResourceServiceImpl implements ResourceService {
             String path = resourceHelper.generatePath(user, fileName, properties);
             StringBuilder sb = new StringBuilder();
             //在upload之前首先应该判断一下这个path是否是已经存在了，如果存在了，抛出异常
-            boolean isFileExists = resourceHelper.checkIfExists(path);
+            boolean isFileExists = resourceHelper.checkIfExists(path, user);
 //            if (isFileExists){
 //                throw new ErrorException(70035, "同名文件已经于今日已经上传,请使用更新操作");
 //            }

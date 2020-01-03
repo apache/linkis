@@ -49,4 +49,14 @@ ujes/engine/target/
 ujes/enginemanager/target/
 ujes/entrance/target/
 
-ujes/definedEngines/mlsql/entrance/target
+ujes/definedEngines/mlsql/entrance/target/
+assembly/public-module/target/
+bml/bml-engine-hook/target/
+bml/bmlclient/target/
+bml/bmlcommon/target/
+bml/bmlserver/target/
+core/hadoop-common/target/
+publicService/workspace/client/workspace-httpclient/target/
+userControl/target/
+
+

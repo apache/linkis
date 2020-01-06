@@ -52,8 +52,8 @@ class EventConsumerManager(schedulerContext: SchedulerContext,
       info("Monitor consumer thread is running")
       while (true) {
         Utils.tryQuietly {
-          checkAllConsumerHealthy()
           Thread.sleep(5000)
+          checkAllConsumerHealthy()
         }
       }
     }

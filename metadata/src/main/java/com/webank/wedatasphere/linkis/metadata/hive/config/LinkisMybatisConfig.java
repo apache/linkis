@@ -21,13 +21,13 @@ import com.webank.wedatasphere.linkis.metadata.util.HiveUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.conf.HiveConf;
+import org.apache.ibatis.mapping.DatabaseIdProvider;
+import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,10 +41,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+
+import java.util.*;
+
 
 @Configuration
 @EnableTransactionManagement(order = 2)
@@ -69,7 +68,7 @@ public class LinkisMybatisConfig {
         String username =  DWSConfig.HIVE_META_USER.getValue();
         String password = DWSConfig.HIVE_META_PASSWORD.getValue();
         if(StringUtils.isBlank(url) || StringUtils.isBlank(username)  || StringUtils.isBlank(password)) {
-            HiveConf hiveConf = HiveUtils.getDefaultConf(com.webank.wedatasphere.linkis.common.conf.Configuration.HADOOP_ROOT_USER().getValue());
+            HiveConf hiveConf = HiveUtils.getDefaultConf(System.getProperty("user.name"));
             logger.info("从配置文件中读取hive数据库连接地址");
             url = hiveConf.get("javax.jdo.option.ConnectionURL");
             username = hiveConf.get("javax.jdo.option.ConnectionUserName");
@@ -179,6 +178,8 @@ public class LinkisMybatisConfig {
             }
            /* Resource[] resources = new PathMatchingResourcePatternResolver().getResources(mapperLocations);
             sessionFactoryBean.setMapperLocations(resources);*/
+           // Add mybatis database id provider configuration to support hive postgresql metadata(添加MyBatis配置以支持Hive PG元数据库)
+            sessionFactoryBean.setDatabaseIdProvider(getDatabaseIdProvider());
 //            Set the location of the mybatis-config.xml configuration file(设置mybatis-config.xml配置文件位置)
             sessionFactoryBean.setConfigLocation(new DefaultResourceLoader().getResource(configLocation));
 
@@ -190,6 +191,15 @@ public class LinkisMybatisConfig {
             logger.error("mybatis sqlSessionFactoryBean create error",e);
             return null;
         }
+    }
+
+    private DatabaseIdProvider getDatabaseIdProvider() {
+        VendorDatabaseIdProvider databaseIdProvider = new VendorDatabaseIdProvider();
+        Properties databaseIdProperties = new Properties();
+        databaseIdProperties.put("MySQL", "mysql");
+        databaseIdProperties.put("PostgreSQL", "postgresql");
+        databaseIdProvider.setProperties(databaseIdProperties);
+        return databaseIdProvider;
     }
 
     @Primary

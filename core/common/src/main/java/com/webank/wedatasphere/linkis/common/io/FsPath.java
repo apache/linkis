@@ -17,12 +17,13 @@
 package com.webank.wedatasphere.linkis.common.io;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.hadoop.fs.Path;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
@@ -163,7 +164,7 @@ public class FsPath {
      * @return if no storage type pointed, hdfs type will returned
      */
     public String getFsType() {
-        return getFsType("hdfs");
+        return getFsType("file");
     }
 
     public String getFsType(String defaultType) {
@@ -180,7 +181,7 @@ public class FsPath {
     }
 
     public Path toPath() {
-        return new Path(uri);
+        return FileSystems.getDefault().getPath(uri.toString());
     }
 
     public boolean isOwner(String user) {

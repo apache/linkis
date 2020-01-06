@@ -15,12 +15,11 @@
  */
 package com.webank.wedatasphere.linkis.metadata.ddl
 
-import com.google.gson.Gson
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.metadata.conf.MdqConfiguration
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.{MdqTableBO, MdqTableFieldsInfoBO}
 import com.webank.wedatasphere.linkis.metadata.exception.MdqIllegalParamException
-import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer

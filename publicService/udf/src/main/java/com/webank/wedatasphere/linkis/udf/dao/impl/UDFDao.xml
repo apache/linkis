@@ -114,7 +114,7 @@
         INSERT INTO linkis_udf_user_load_info (`udf_id`,`user_name`) VALUES (#{arg0},#{arg1})
     </insert>
 
-    <select id="getUDFSByUserName" resultMap="UDFResultMap">
+    <!--select id="getUDFSByUserName" resultMap="UDFResultMap">
         select
         <include refid="udf_Column_List"/>
         from linkis_udf
@@ -203,6 +203,114 @@
         SELECT user_name
         from linkis_udf_manager
         where user_name=#{userName}
+    </select-->
+    <select id="getUDFSByUserName" resultMap="UDFResultMap">
+        select
+        <include refid="udf_Column_List"/>
+        from linkis_udf
+        where create_user = 'root'
+        <!--#{arg0}-->
+    </select>
+
+    <select id="getUDFSByTreeIdAndUser" resultMap="UDFInfoMap">
+        select
+        *, 1 as is_load
+        from linkis_udf
+        where tree_id = #{arg0} and create_user = 'root'
+        <!--#{arg1}-->
+        and udf_type in
+        <foreach collection="arg2" open="(" separator="," close=")" item="item">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <select id="getUDFInfoByTreeId" resultMap="UDFInfoMap">
+        select a.*,if(b.udf_id IS NULL,0,1) as is_load
+        from
+        (select * from linkis_udf where tree_id = #{arg0} and udf_type in
+        <foreach collection="arg2" open="(" separator="," close=")" item="item">
+            #{item}
+        </foreach>
+        ) a
+        left join
+        (select udf_id from linkis_udf_user_load_info where user_name = 'root'
+        <!--#{arg1}-->
+        ) b
+        on a.id=b.udf_id;
+    </select>
+
+    <select id="getLoadedUDFs" resultMap="UDFInfoMap">
+        select b.*,if(a.udf_id IS NULL,0,1) as is_load
+        from
+        (select udf_id from linkis_udf_user_load_info where user_name = 'root'
+        <!--#{arg0}-->
+        ) a
+        join
+        linkis_udf b
+        on a.udf_id=b.id;
+    </select>
+
+    <select id="getSameSysCount" resultType="java.lang.Long" >
+        select count(1) linkis_udf where user_name="sys" and  udf_name=#{arg0}
+    </select>
+
+    <select id="getSameLoadCount" resultType="java.lang.Long" >
+        select count(1)
+        from
+        (select udf_id from linkis_udf_user_load_info where user_name =
+        'root'
+        <!--#{arg0}-->
+        ) a
+        join
+        linkis_udf b
+        on a.udf_id=b.id
+        where b.udf_name=#{arg1}
+    </select>
+
+    <select id="getSameJarUDF" resultMap="UDFInfoMap">
+        select b.*,if(a.udf_id IS NULL,0,1) as is_load
+        from
+        (select udf_id from linkis_udf_user_load_info where user_name =
+        'root'
+        <!--#{arg0}-->
+        ) a
+        join
+        linkis_udf b
+        on a.udf_id=b.id
+        where udf_type=0
+        and b.path like CONCAT('%',#{arg1})
+    </select>
+
+    <select id="getSameNameCountByUser" resultType="java.lang.Long" >
+        select
+        count(1)
+        from
+        linkis_udf
+        where udf_name=#{arg0}
+        and create_user in ('root'
+        <!--#{arg1}-->
+        ,'sys','bdp')
+    </select>
+
+    <select id="selectSharedUDFInfosByTreeIdAndUserName" resultMap="UDFInfoMap">
+        SELECT bu.*,if(buuli.udf_id IS NULL,0,1) as is_load
+        FROM linkis_udf_shared_user busu
+        JOIN linkis_udf bu  on bu.id = busu.udf_id
+        LEFT JOIN linkis_udf_user_load_info buuli on  buuli.udf_id =bu.id and buuli.user_name=#{userName}
+        where busu.user_name = 'root'
+        <!--#{userName}-->
+        and tree_id=#{TreeId} and bu.udf_type in
+        <foreach collection="categoryCodes" open="(" separator="," close=")" item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectUDFManager" resultMap="UDFManagerMap" >
+        SELECT user_name
+        from linkis_udf_manager
+        where user_name='root'
+        <!--#{userName}-->
     </select>
 
     <select id="selectAllUser" resultType="String">
@@ -247,20 +355,3 @@
         on busu.udf_id = bu.id
         where bu.is_expire = false  and bu.udf_name=#{udfName}
     </select>
-
-    <select id="selectIdByUserName" resultType="Long">
-        SELECT id
-        FROM linkis_user
-        where username =#{userName}
-    </select>
-
-    <insert id="insertSharedUser">
-        insert into linkis_udf_shared_user(udf_id,user_name)
-        VALUES (#{udfId},#{addSharedUser})
-    </insert>
-
-    <delete id="deleteSharedUser">
-        DELETE from linkis_udf_shared_user where udf_id =#{udfId} and user_name=#{removeSharedUser}
-    </delete>
-
-</mapper>

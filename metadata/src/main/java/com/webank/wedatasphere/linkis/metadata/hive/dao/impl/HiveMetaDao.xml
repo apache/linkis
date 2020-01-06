@@ -26,7 +26,7 @@
         )
     </select>
 
-    <select id="getDbsByUser" resultType="java.lang.String" parameterType="java.lang.String" databaseId="mysql">
+    <!--select id="getDbsByUser" resultType="java.lang.String" parameterType="java.lang.String" databaseId="mysql">
         select NAME from(
                             select t2.NAME  as NAME
                             from DB_PRIVS t1, DBS t2
@@ -41,9 +41,12 @@
                               and t2.DB_ID=t3.DB_ID) a
         GROUP BY NAME
         order by NAME
+    </select-->
+    <select id="getDbsByUser" resultType="java.lang.String" parameterType="java.lang.String">
+        				select `NAME` from DBS order by `NAME`
     </select>
 
-    <select id="getTablesByDbNameAndUser" resultType="map"  parameterType="map" databaseId="mysql">
+    <!--select id="getTablesByDbNameAndUser" resultType="map"  parameterType="map" databaseId="mysql">
         select t2.TBL_NAME as NAME, t2.TBL_TYPE as TYPE, t2.CREATE_TIME as CREATE_TIME, t2.LAST_ACCESS_TIME as LAST_ACCESS_TIME, t2.OWNER as OWNER
         from DB_PRIVS t1,TBLS t2, DBS t3
         where  t1.DB_ID =t3.DB_ID
@@ -76,6 +79,11 @@
           and t1.PRINCIPAL_NAME in (select ROLE_NAME from ROLES where ROLE_ID in (select ROLE_ID from ROLE_MAP where PRINCIPAL_NAME = #{userName,jdbcType=VARCHAR}))
           and t3.NAME = #{dbName,jdbcType=VARCHAR}
         order by NAME;
+    </select-->
+  <select id="getTablesByDbNameAndUser" resultType="map"  parameterType="map">
+        select t2.TBL_NAME as NAME, t2.TBL_TYPE as TYPE, t2.CREATE_TIME as CREATE_TIME, t2.LAST_ACCESS_TIME as LAST_ACCESS_TIME, t2.OWNER as OWNER
+        from TBLS t2 WHERE t2.DB_ID = (select DB_ID from DBS where `NAME` = #{dbName,jdbcType=VARCHAR})
+         order by NAME;
     </select>
 
     <select id="getPartitionSize" resultType="java.lang.Long"  parameterType="map" databaseId="mysql">

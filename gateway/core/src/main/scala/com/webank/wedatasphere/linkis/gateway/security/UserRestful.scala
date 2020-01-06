@@ -157,19 +157,6 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
 
   protected def register(gatewayContext: GatewayContext) : Message
 
-  private def getRandomProxyUser(): String = {
-    var name = null.asInstanceOf[String]
-    val userList = GatewayConfiguration.PROXY_USER_LIST
-    val size = userList.size
-    if (size <= 0) {
-      warn(s"Invalid Gateway proxy user list")
-    } else {
-      val rand = new Random()
-      name = userList(rand.nextInt(size))
-    }
-    name
-  }
-
   def userControlLogin(userName: String, password: String, gatewayContext: GatewayContext): Message = {
     var message = Message.ok()
     // usercontrol switch on(开启了用户控制开关)
@@ -182,18 +169,9 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
                 message.data("errmsg", r.getErrMsg)
               }
               if (0 == r.getStatus) {
+                GatewaySSOUtils.setLoginUser(gatewayContext, userName.toString)
                 message.setStatus(0)
                 message.setMessage("Login successful(登录成功)")
-                val proxyUser = getRandomProxyUser()
-                if (StringUtils.isNotBlank(proxyUser)) {
-                  GatewaySSOUtils.setLoginUser(gatewayContext, proxyUser)
-                  message.setMessage("Login successful(登录成功)")
-                    .data("userName", proxyUser)
-                    .data("isAdmin", false)
-                } else {
-                  message = Message.error("Invalid proxy user, please contact with administrator(代理用户无效，请联系管理员)")
-                }
-
               } else {
                 message = Message.error("Invalid username or password, please check and try again later(用户名或密码无效，请稍后再试)")
               }

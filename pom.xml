@@ -134,7 +134,7 @@
         <maven.version>3.3.3</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dispatch.version>0.11.2</dispatch.version>
-        <jsoup.version>1.8.2</jsoup.version>
+        <jsoup.version>1.12.1</jsoup.version>
     </properties>
 
     <dependencyManagement>

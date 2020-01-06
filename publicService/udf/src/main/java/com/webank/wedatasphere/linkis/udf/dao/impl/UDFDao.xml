@@ -355,3 +355,20 @@
         on busu.udf_id = bu.id
         where bu.is_expire = false  and bu.udf_name=#{udfName}
     </select>
+
+    <select id="selectIdByUserName" resultType="Long">
+        SELECT id
+        FROM linkis_user
+        where username =#{userName}
+    </select>
+
+    <insert id="insertSharedUser">
+        insert into linkis_udf_shared_user(udf_id,user_name)
+        VALUES (#{udfId},#{addSharedUser})
+    </insert>
+
+    <delete id="deleteSharedUser">
+        DELETE from linkis_udf_shared_user where udf_id =#{udfId} and user_name=#{removeSharedUser}
+    </delete>
+
+</mapper>

@@ -26,5 +26,5 @@ trait RMConsumerListener {
 
   def afterEventExecute(consumer: RMEventConsumer, event: RMEvent): Unit
 
-  def checkConsumerHealthy(timeLimit: Long): Boolean
+  def checkConsumerHealthy(consumer: RMEventConsumer, timeLimit: Long): Boolean
 }

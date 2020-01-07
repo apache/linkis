@@ -62,14 +62,18 @@ class EventConsumerManager(schedulerContext: SchedulerContext,
   monitorThread.start()
 
   def checkAllConsumerHealthy(): Unit = {
-    consumerListenerMap.foreach(x => {
-      if (!x._2.checkConsumerHealthy(10000)) {
-        val oldConsumer = consumerGroupMap.get(x._1).getOrElse(null);
-        val newConsumer = createConsumerFromConsumer(oldConsumer)
-        consumerGroupMap.update(x._1, newConsumer)
-        if (oldConsumer != null) oldConsumer.shutdown()
-      }
-    })
+    Utils.tryCatch {
+      consumerListenerMap.foreach(x => {
+        val consumer = consumerGroupMap.get(x._1).getOrElse(null);
+        if (consumer != null && !x._2.checkConsumerHealthy(consumer, 10000)) {
+          val newConsumer = createConsumerFromConsumer(consumer)
+          consumerGroupMap.update(x._1, newConsumer)
+          consumer.shutdown()
+        }
+      })
+    } {
+      case t => warn("fail to checkAllConsumerHealthy!", t)
+    }
   }
 
   override def setConsumerListener(consumerListener: ConsumerListener) = {

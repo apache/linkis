@@ -33,7 +33,6 @@ class JDBCSpringConfiguration {
   private val logger = LoggerFactory.getLogger(classOf[JDBCSpringConfiguration])
 
   @EntranceExecutorManagerBeanAnnotation
-  @ConditionalOnMissingBean(value = Array(classOf[EntranceExecutorManager]))
   def generateEntranceExecutorManager(@GroupFactoryBeanAnnotation.GroupFactoryAutowiredAnnotation groupFactory: GroupFactory,
                                       @EngineBuilderBeanAnnotation.EngineBuilderAutowiredAnnotation engineBuilder: EngineBuilder,
                                       @EngineRequesterBeanAnnotation.EngineRequesterAutowiredAnnotation engineRequester: EngineRequester,
@@ -46,7 +45,6 @@ class JDBCSpringConfiguration {
 
 
   @EntranceParserBeanAnnotation
-  @ConditionalOnMissingBean(name = Array(EntranceParserBeanAnnotation.BEAN_NAME))
   def generateEntranceParser():EntranceParser = {
     logger.info("begin to get JDBC Entrance parser")
     new JDBCEntranceParser()

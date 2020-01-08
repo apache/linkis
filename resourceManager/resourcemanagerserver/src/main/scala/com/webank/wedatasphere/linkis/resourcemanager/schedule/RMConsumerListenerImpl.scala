@@ -24,6 +24,11 @@ import com.webank.wedatasphere.linkis.resourcemanager.event.RMEvent
 class RMConsumerListenerImpl extends  RMConsumerListener with  Logging{
   private var consumer: RMEventConsumer = _
   private var lastProcessTime : Long = _
+
+  override def setConsumer(consumer: RMEventConsumer) = {
+    this.consumer = consumer
+  }
+
   override def beforeEventExecute(consumer: RMEventConsumer, event: RMEvent) = {
     this.consumer = consumer
     this.lastProcessTime = System.currentTimeMillis
@@ -34,7 +39,7 @@ class RMConsumerListenerImpl extends  RMConsumerListener with  Logging{
     this.lastProcessTime = 0
   }
 
-  override def checkConsumerHealthy(consumer: RMEventConsumer, timeLimit: Long) = {
+  override def checkConsumerHealthy(timeLimit: Long) = {
     val waitTime = System.currentTimeMillis - lastProcessTime
     if(lastProcessTime != 0 && waitTime > timeLimit){
       error("checkConsumerHealthy is false "+ consumer.getGroup.getGroupName + "wait time"+ waitTime)

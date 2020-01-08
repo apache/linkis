@@ -54,14 +54,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     public Response listOptions(@QueryParam("type") String type, @QueryParam("path") String path, @Context HttpServletRequest req) {
         String userName = SecurityFilter.getLoginUsername(req);
         JsonNode options = null;
-        if(Constants.SCRIPT.equals(type)) {
-            try {
-                options = dataSourceService.getDirContent(path, userName);
-            } catch (Exception e) {
-                logger.error("Failed to get file directory(获取文件目录失败)：", e);
-                return Message.messageToResponse(Message.error("Failed to get file directory(获取文件目录失败)", e));
-            }
-        }else if(Constants.TABLE.equals(type) && StringUtils.isBlank(path)) {
+        if(Constants.TABLE.equals(type) && StringUtils.isBlank(path)) {
             try {
                 options = dataSourceService.getDbs(userName);
             } catch (Exception e) {

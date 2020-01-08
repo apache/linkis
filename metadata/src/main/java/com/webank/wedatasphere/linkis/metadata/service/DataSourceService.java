@@ -16,23 +16,12 @@
 
 package com.webank.wedatasphere.linkis.metadata.service;
 
-import com.webank.wedatasphere.linkis.metadata.domain.DataSource;
 import org.codehaus.jackson.JsonNode;
 /**
  * Created by shanhuang on 9/13/18.
  */
 public interface DataSourceService {
-
-    void create(DataSource dataSource, String userName) throws Exception;
-
-    void update(DataSource dataSource, String userName) throws Exception;
-
-    void delete(Integer id) throws Exception;
-
-    public String analyseDataSourceSql(DataSource dataSource) throws Exception;
-
-    JsonNode getDirContent(String path, String userName) throws Exception;
-
+    
     JsonNode getDbs(String userName) throws Exception;
 
     JsonNode getDbsWithTables(String userName) throws Exception;

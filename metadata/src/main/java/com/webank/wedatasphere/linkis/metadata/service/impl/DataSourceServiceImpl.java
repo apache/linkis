@@ -21,8 +21,6 @@ import com.google.common.collect.Maps;
 import com.webank.wedatasphere.linkis.common.utils.ByteTimeUtils;
 import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf;
 import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils;
-import com.webank.wedatasphere.linkis.metadata.dao.DataSourceDao;
-import com.webank.wedatasphere.linkis.metadata.domain.DataSource;
 import com.webank.wedatasphere.linkis.metadata.hive.dao.HiveMetaDao;
 import com.webank.wedatasphere.linkis.metadata.service.DataSourceService;
 import com.webank.wedatasphere.linkis.metadata.util.DWSConfig;
@@ -58,83 +56,12 @@ public class DataSourceServiceImpl implements DataSourceService {
     private static Hive hiveDB = null;
     private static FileSystem rootHdfs = null;
 
-    @Autowired(required = false)
-    DataSourceDao dataSourceDao;
-
     @Autowired
     HiveMetaDao hiveMetaDao;
 
     HttpClient client = new HttpClient();
 
     ObjectMapper jsonMapper = new ObjectMapper();
-
-    @Override
-    public void create(DataSource dataSource, String userName) throws Exception {
-        dataSource.setInfoOnCreate(userName);
-        dataSourceDao.insert(dataSource);
-
-        DataSource left = dataSource;
-        DataSource right = dataSource.getRight();
-        while(right != null){
-            right.setViewId(left.getViewId());
-            right.setInfoOnCreate(userName);
-            dataSourceDao.insert(right);
-            left.setRightId(right.getId());
-            dataSourceDao.update(left);
-            left = right;
-            right = left.getRight();
-        }
-    }
-
-    @Override
-    public void update(DataSource dataSource, String userName) throws Exception {
-        dataSource.setInfoOnUpdate(userName);
-        dataSourceDao.update(dataSource);
-    }
-
-    @Override
-    public void delete(Integer id) throws Exception {
-        dataSourceDao.deleteById(id);
-    }
-
-    @Override
-    public String analyseDataSourceSql(DataSource dataSource) throws Exception {
-        List<DataSource> flatDataSources = Lists.newArrayList();
-        DataSource toAnalyse = dataSource;
-        while(toAnalyse != null){
-            toAnalyse.setSql(getSqlByType(toAnalyse));
-            flatDataSources.add(toAnalyse);
-            toAnalyse = toAnalyse.getRight();
-        }
-        // TODO velocity
-
-        return null;
-    }
-
-    private String getSqlByType(DataSource dataSource){
-
-
-        return null;
-    }
-
-    @Override
-    public JsonNode getDirContent(String path, String userName) throws Exception {
-        PostMethod post = new PostMethod(DWSConfig.IDE_URL.getValue() + "api/fileSystem/fileManageBrowser");
-        post.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-        post.setParameter("user", userName);
-        if(StringUtils.isNotBlank(path)) post.setParameter("path", path);
-        post.setParameter("type", "script");
-        JsonNode response;
-        try {
-            client.executeMethod(post);
-            response = jsonMapper.readTree(post.getResponseBodyAsStream());
-        } catch (Exception e) {
-            throw new Exception("Failed to get file directory(获取文件目录失败)。", e);
-        } finally {
-            post.releaseConnection();
-        }
-        return response;
-    }
 
     @Override
     public JsonNode getDbs(String userName) throws Exception {

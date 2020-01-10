@@ -111,7 +111,7 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
 }
 abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Logging{
 
-  private val sender: Sender = Sender.getSender(GatewayConfiguration.QUERY_PERSISTENCE_SPRING_APPLICATION_NAME.getValue)
+  private val sender: Sender = Sender.getSender(GatewayConfiguration.USERCONTROL_SPRING_APPLICATION_NAME.getValue)
   private val LINE_DELIMITER = "</br>"
 
   override protected def tryLogin(gatewayContext: GatewayContext): Message = {

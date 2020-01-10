@@ -21,8 +21,8 @@ class UserControlReceiver extends Receiver {
   override def receive(message: Any, sender: Sender): Unit = {}
 
   override def receiveAndReply(message: Any, sender: Sender): Any = message match {
-    case t: RequestLogin => userControlService.login(message.asInstanceOf[RequestLogin])
-    case t: RequestRegister => userControlService.register(message.asInstanceOf[RequestRegister])
+    case t: RequestLogin => userControlService.login(t)
+    case t: RequestRegister => userControlService.register(t)
   }
 
   override def receiveAndReply(message:  Any, duration:  Duration, sender:  Sender): Any = {}

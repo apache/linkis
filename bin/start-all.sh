@@ -25,11 +25,10 @@ echo ${info}
 source /etc/profile
 source ~/.bash_profile
 
-workDir=`dirname "${BASH_SOURCE-$0}"`
-workDir=`cd "$workDir"; pwd`
+shellDir=`dirname $0`
+workDir=`cd ${shellDir}/..;pwd`
 
-
-CONF_DIR="${workDir}"/../conf
+CONF_DIR="${workDir}"/conf
 export LINKIS_DSS_CONF_FILE=${LINKIS_DSS_CONF_FILE:-"${CONF_DIR}/config.sh"}
 export DISTRIBUTION=${DISTRIBUTION:-"${CONF_DIR}/config.sh"}
 #source $LINKIS_DSS_CONF_FILE
@@ -211,7 +210,7 @@ if ! executeCMD $SERVER_IP "test -e $SERVER_BIN"; then
   return
 fi
 
-sh $workDir/checkServices.sh $SERVER_NAME $SERVER_IP $SERVER_PORT
+sh $workDir/bin/checkServices.sh $SERVER_NAME $SERVER_IP $SERVER_PORT
 isSuccess "start $SERVER_NAME "
 echo "<-------------------------------->"
 sleep 3

@@ -30,8 +30,9 @@ workDir=`cd "$workDir"; pwd`
 
 
 CONF_DIR="${workDir}"/../conf
-CONF_FILE=${CONF_DIR}/config.sh
-
+export LINKIS_DSS_CONF_FILE=${LINKIS_DSS_CONF_FILE:-"${CONF_DIR}/config.sh"}
+export DISTRIBUTION=${DISTRIBUTION:-"${CONF_DIR}/config.sh"}
+source ${DISTRIBUTION}
 function isSuccess(){
 if [ $? -ne 0 ]; then
     echo "ERROR:  " + $1
@@ -74,11 +75,11 @@ function executeCMD(){
 #if there is no LINKIS_INSTALL_HOME，we need to source config again
 if [ -z ${LINKIS_INSTALL_HOME} ];then
     echo "Warning: LINKIS_INSTALL_HOME does not exist, we will source config"
-    if [ ! -f "${CONF_FILE}" ];then
+    if [ ! -f "${LINKIS_DSS_CONF_FILE}" ];then
         echo "Error: can not find config file, stop applications failed"
         exit 1
     else
-        source ${CONF_FILE}
+        source ${LINKIS_DSS_CONF_FILE}
     fi
 fi
 APP_PREFIX="linkis-"
@@ -93,6 +94,11 @@ SERVER_REMOTE_STOP_CMD="source /etc/profile;source ~/.bash_profile;cd ${SERVER_B
 if test -z "$SERVER_IP"
 then
   SERVER_IP=$local_host
+fi
+
+if ! executeCMD $SERVER_IP "test -e $SERVER_BIN"; then
+  echo "$SERVER_NAME is not installed,the stopApp steps will be skipped"
+  return
 fi
 
 isLocal $SERVER_IP

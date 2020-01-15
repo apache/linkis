@@ -93,7 +93,7 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,
      if(isEmpty) return ""
       new String(buffer.toArray,Dolphin.CHAR_SET)
     } else {
-      storePath.getPath
+     storePath.getSchemaPath
     }
   }
 

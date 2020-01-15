@@ -88,6 +88,7 @@
         <module>gateway/gateway-ujes-support</module>
         <module>eurekaServer</module>
         <module>publicService</module>
+        <module>userControl</module>
         <module>ujes/engine</module>
         <module>ujes/enginemanager</module>
         <module>ujes/entrance</module>

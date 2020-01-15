@@ -1,3 +1,8 @@
+#!/bin/sh
+
+shellDir=`dirname $0`
+workDir=`cd ${shellDir}/..;pwd`
+
 ###
 SSH_PORT=22
 
@@ -6,7 +11,7 @@ deployUser=hadoop
 
 
 ### The install home path of Linkis
-LINKIS_INSTALL_HOME=/appcom/Install/Linkis        #Must provided
+LINKIS_INSTALL_HOME=$workDir        #Must provided
 
 
 
@@ -107,4 +112,4 @@ BML_PORT=9113
 ## java application default jvm memory
 export SERVER_HEAP_SIZE="512M"
 
-LINKIS_VERSION=0.9.2
+LINKIS_VERSION=0.9.3

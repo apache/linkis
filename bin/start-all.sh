@@ -25,13 +25,14 @@ echo ${info}
 source /etc/profile
 source ~/.bash_profile
 
-workDir=`dirname "${BASH_SOURCE-$0}"`
-workDir=`cd "$workDir"; pwd`
+shellDir=`dirname $0`
+workDir=`cd ${shellDir}/..;pwd`
 
-
-CONF_DIR="${workDir}"/../conf
-CONF_FILE=${CONF_DIR}/config.sh
-
+CONF_DIR="${workDir}"/conf
+export LINKIS_DSS_CONF_FILE=${LINKIS_DSS_CONF_FILE:-"${CONF_DIR}/config.sh"}
+export DISTRIBUTION=${DISTRIBUTION:-"${CONF_DIR}/config.sh"}
+#source $LINKIS_DSS_CONF_FILE
+source ${DISTRIBUTION}
 function isSuccess(){
 if [ $? -ne 0 ]; then
     echo "Failed to " + $1
@@ -73,12 +74,12 @@ function executeCMD(){
 
 #if there is no LINKIS_INSTALL_HOME，we need to source config again
 if [ -z ${LINKIS_INSTALL_HOME} ];then
-    echo "Warning: LINKIS_INSTALL_HOME does not exist, we will source config"
-    if [ ! -f "${CONF_FILE}" ];then
+    echo "Info: LINKIS_INSTALL_HOME does not exist, we will source config"
+    if [ ! -f "${LINKIS_DSS_CONF_FILE}" ];then
         echo "Error: can not find config file, start applications failed"
         exit 1
     else
-        source ${CONF_FILE}
+        source ${LINKIS_DSS_CONF_FILE}
     fi
 fi
 APP_PREFIX="linkis-"
@@ -95,7 +96,7 @@ then
   SERVER_IP=$local_host
 fi
 
-if  executeCMD $SERVER_IP test -e $SERVER_BIN; then
+if ! executeCMD $SERVER_IP "test -e $SERVER_BIN"; then
   echo "$SERVER_NAME is not installed,the startup steps will be skipped"
   return
 fi
@@ -201,7 +202,15 @@ if test -z "$SERVER_IP"
 then
   SERVER_IP=$local_host
 fi
-sh $workDir/checkServices.sh $SERVER_NAME $SERVER_IP $SERVER_PORT
+
+SERVER_BIN=${LINKIS_INSTALL_HOME}/$SERVER_NAME/bin
+
+if ! executeCMD $SERVER_IP "test -e $SERVER_BIN"; then
+  echo "$SERVER_NAME is not installed,the checkServer steps will be skipped"
+  return
+fi
+
+sh $workDir/bin/checkServices.sh $SERVER_NAME $SERVER_IP $SERVER_PORT
 isSuccess "start $SERVER_NAME "
 echo "<-------------------------------->"
 sleep 3

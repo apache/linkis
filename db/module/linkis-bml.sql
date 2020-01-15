@@ -17,10 +17,10 @@ CREATE TABLE `linkis_resources` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
---修改expire_type的默认值为NULL
+-- 修改expire_type的默认值为NULL
 alter table linkis_resources alter column expire_type set default null;
 
---修改expire_time的默认值为NULL
+-- 修改expire_time的默认值为NULL
 alter table linkis_resources alter column expire_time set default null;
 
 
@@ -40,15 +40,15 @@ CREATE TABLE `linkis_resources_version` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---添加start_byte 和 end_byte 字段
+-- 添加start_byte 和 end_byte 字段
 ALTER TABLE `linkis_resources_version` ADD COLUMN `start_byte` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 AFTER `size`;
 
 ALTER TABLE `linkis_resources_version` ADD COLUMN `end_byte` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 AFTER `start_byte`;
 
---version字段修改
+-- version字段修改
 alter table `linkis_resources_version` modify column `version` varchar(20) not null;
 
---给resource_id 和 version 加上联合唯一约束
+-- 给resource_id 和 version 加上联合唯一约束
 alter table `linkis_resources_version` add unique key `resource_id_version`(`resource_id`, `version`);
 
 
@@ -75,13 +75,13 @@ CREATE TABLE `linkis_resources_download_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
---删除resources_version_id 字段
+-- 删除resources_version_id 字段
 alter table `linkis_resources_download_history` drop column `resources_version_id`;
 
---添加resource_id 字段
+-- 添加resource_id 字段
 alter table `linkis_resources_download_history` add column `resource_id` varchar(50) not null after `state`;
 
---添加version字段
+-- 添加version字段
 alter table `linkis_resources_download_history` add column `version` varchar(20) not null after `resource_id`;
 
 create table dws_bml_resources_contentType (
@@ -93,7 +93,7 @@ create table dws_bml_resources_contentType (
   UNIQUE KEY `whitelist_contentType_uindex` (`content_type`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---创建资源任务表,包括上传,更新,下载
+-- 创建资源任务表,包括上传,更新,下载
 CREATE TABLE `linkis_resources_task` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `resource_id` varchar(50) DEFAULT NULL COMMENT '资源id，资源的uuid',

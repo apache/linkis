@@ -51,10 +51,8 @@ class EventConsumerManager(schedulerContext: SchedulerContext,
     override def run(): Unit = {
       info("Monitor consumer thread is running")
       while (true) {
-        Utils.tryQuietly {
-          checkAllConsumerHealthy()
-          Thread.sleep(5000)
-        }
+        Utils.tryAndWarn(checkAllConsumerHealthy())
+        Utils.tryQuietly(Thread.sleep(5000))
       }
     }
   }
@@ -100,6 +98,7 @@ class EventConsumerManager(schedulerContext: SchedulerContext,
     val consumer = new RMEventConsumer(schedulerContext, getOrCreateExecutorService, group)
     consumer.start()
     val listener = new RMConsumerListenerImpl
+    listener.setConsumer(consumer)
     consumer.setConsumeQueue(new LoopArrayQueue(group))
     consumer.setRmConsumerListener(listener)
     consumerGroupMap.put(groupName, consumer)
@@ -118,6 +117,7 @@ class EventConsumerManager(schedulerContext: SchedulerContext,
       newConsumer = new RMEventConsumer(schedulerContext, getOrCreateExecutorService, group)
       newConsumer.start()
       val listener = new RMConsumerListenerImpl
+      listener.setConsumer(newConsumer)
       newConsumer.setConsumeQueue(oldConsumer.getConsumeQueue)
       newConsumer.setRmConsumerListener(listener)
       consumerListenerMap.update(groupName, listener)

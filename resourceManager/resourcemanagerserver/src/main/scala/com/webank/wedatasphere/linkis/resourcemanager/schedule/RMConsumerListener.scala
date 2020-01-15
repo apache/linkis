@@ -22,6 +22,9 @@ import com.webank.wedatasphere.linkis.resourcemanager.event.RMEvent
   * Created by shanhuang on 9/11/18.
   */
 trait RMConsumerListener {
+
+  def setConsumer(consumer: RMEventConsumer): Unit
+
   def beforeEventExecute(consumer: RMEventConsumer, event: RMEvent): Unit
 
   def afterEventExecute(consumer: RMEventConsumer, event: RMEvent): Unit

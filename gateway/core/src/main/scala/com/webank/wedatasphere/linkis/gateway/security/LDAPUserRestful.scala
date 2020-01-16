@@ -33,4 +33,8 @@ class LDAPUserRestful extends UserPwdAbstractUserRestful with Logging {
     Message.error("wrong user name or password(用户名或密码错误)！")
   }
 
+  override def register(gatewayContext: GatewayContext): Message = {
+    Message.error("please implements the register method(请自行实现注册方法)")
+  }
+
 }

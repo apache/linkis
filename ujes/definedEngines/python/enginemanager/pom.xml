@@ -23,17 +23,17 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.9.2</version>
+        <version>0.9.3</version>
     </parent>
 
     <artifactId>linkis-python-enginemanager</artifactId>
-    <version>0.9.2</version>
+    <version>0.9.3</version>
     <packaging>jar</packaging>
     <!--<version>${bdp.ide.version}</version>-->
     <!--<name>linkis-Spark-EngineManager</name>-->
 
     <properties>
-        <dwc.python.version>0.9.2</dwc.python.version>
+        <dwc.python.version>0.9.3</dwc.python.version>
     </properties>
     <dependencies>
 

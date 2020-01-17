@@ -20,8 +20,11 @@ shellDir=`dirname $0`
 workDir=`cd ${shellDir}/..;pwd`
 
 ##load config
-source ${workDir}/conf/config.sh
-
+#source ${workDir}/conf/config.sh
+export LINKIS_DSS_CONF_FILE=${LINKIS_DSS_CONF_FILE:-"${workDir}/conf/config.sh"}
+export DISTRIBUTION=${DISTRIBUTION:-"${workDir}/conf/config.sh"}
+source ${LINKIS_DSS_CONF_FILE}
+source ${DISTRIBUTION}
 MICRO_SERVICE_NAME=$1
 MICRO_SERVICE_IP=$2
 MICRO_SERVICE_PORT=$3
@@ -56,7 +59,11 @@ function executeCMD(){
 }
 
 echo "Start to Check if your microservice:$MICRO_SERVICE_NAME is normal via telnet"
-
+echo "--------------------------------------------------------------------------------------------------------------------------"
+echo $MICRO_SERVICE_NAME
+echo $MICRO_SERVICE_IP
+echo $MICRO_SERVICE_PORT
+echo "--------------------------------------------------------------------------------------------------------------------------"
 result=`echo -e "\n" | telnet $MICRO_SERVICE_IP $MICRO_SERVICE_PORT 2>/dev/null | grep Connected | wc -l`
 if [ $result -eq 1 ]; then
       echo "$MICRO_SERVICE_NAME is ok."

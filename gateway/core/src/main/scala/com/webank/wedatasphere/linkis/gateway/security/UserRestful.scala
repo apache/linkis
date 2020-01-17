@@ -16,10 +16,15 @@
 
 package com.webank.wedatasphere.linkis.gateway.security
 
-import com.webank.wedatasphere.linkis.common.utils.{RSAUtils, Utils}
+import java.util.Random
+
+import com.google.gson.{Gson, JsonObject}
+import com.webank.wedatasphere.linkis.common.utils.{Logging, RSAUtils, Utils}
 import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
 import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
 import com.webank.wedatasphere.linkis.gateway.security.sso.SSOInterceptor
+import com.webank.wedatasphere.linkis.protocol.usercontrol.{RequestLogin, RequestRegister, ResponseLogin, ResponseRegister}
+import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import com.webank.wedatasphere.linkis.server.security.SSOUtils
 import com.webank.wedatasphere.linkis.server.{Message, _}
@@ -33,7 +38,7 @@ trait UserRestful {
   def doUserRequest(gatewayContext: GatewayContext): Unit
 
 }
-abstract class AbstractUserRestful extends UserRestful {
+abstract class AbstractUserRestful extends UserRestful with Logging {
 
   private var securityHooks: Array[SecurityHook] = Array.empty
 
@@ -48,6 +53,7 @@ abstract class AbstractUserRestful extends UserRestful {
   override def doUserRequest(gatewayContext: GatewayContext): Unit = {
     val path = gatewayContext.getRequest.getRequestURI.replace(userRegex, "")
     val message = path match {
+      case "register" => register(gatewayContext)
       case "login" =>
         Utils.tryCatch {
           val loginUser = GatewaySSOUtils.getLoginUsername(gatewayContext)
@@ -58,6 +64,7 @@ abstract class AbstractUserRestful extends UserRestful {
       case "publicKey" => publicKey(gatewayContext)
       case "heartbeat" => heartbeat(gatewayContext)
       case _ =>
+        warn(s"Unknown request URI" + path)
         Message.error("unknown request URI " + path)
     }
     gatewayContext.getResponse.write(message)
@@ -68,6 +75,11 @@ abstract class AbstractUserRestful extends UserRestful {
   def login(gatewayContext: GatewayContext): Message = {
     val message = tryLogin(gatewayContext)
     if(securityHooks != null) securityHooks.foreach(_.postLogin(gatewayContext))
+    message
+  }
+
+  def register(gatewayContext: GatewayContext): Message = {
+    val message = tryRegister(gatewayContext)
     message
   }
 
@@ -94,8 +106,13 @@ abstract class AbstractUserRestful extends UserRestful {
     GatewaySSOUtils.getLoginUsername(gatewayContext)
     "Maintain heartbeat success(维系心跳成功)！"
   }(t => Message.noLogin(t.getMessage))
+
+  protected def tryRegister(context: GatewayContext): Message
 }
-abstract class UserPwdAbstractUserRestful extends AbstractUserRestful {
+abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Logging{
+
+  private val sender: Sender = Sender.getSender(GatewayConfiguration.USERCONTROL_SPRING_APPLICATION_NAME.getValue)
+  private val LINE_DELIMITER = "</br>"
 
   override protected def tryLogin(gatewayContext: GatewayContext): Message = {
     val userNameArray = gatewayContext.getRequest.getQueryParams.get("userName")
@@ -118,9 +135,19 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful {
           "login successful(登录成功)！".data("userName", userName)
             .data("isAdmin", true)
       } else {
-        val lowerCaseUserName = userName.toString.toLowerCase
-        val message = login(lowerCaseUserName, password.toString)
-        if(message.getStatus == 0) GatewaySSOUtils.setLoginUser(gatewayContext, lowerCaseUserName)
+        // firstly for test user
+        var message = Message.ok()
+        if (GatewayConfiguration.USERCONTROL_SWITCH_ON.getValue) {
+          message = userControlLogin(userName.toString, password.toString, gatewayContext)
+        } else {
+          // standard login
+          val lowerCaseUserName = userName.toString.toLowerCase
+          message = login(lowerCaseUserName, password.toString)
+          if(message.getStatus == 0) GatewaySSOUtils.setLoginUser(gatewayContext, lowerCaseUserName)
+        }
+        if (message.getData.containsKey("errmsg")) {
+          message.setMessage(message.getMessage + LINE_DELIMITER + message.getData.get("errmsg").toString)
+        }
         message
       }
     }
@@ -128,4 +155,79 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful {
 
   protected def login(userName: String, password: String): Message
 
+  protected def register(gatewayContext: GatewayContext) : Message
+
+  def userControlLogin(userName: String, password: String, gatewayContext: GatewayContext): Message = {
+    var message = Message.ok()
+    // usercontrol switch on(开启了用户控制开关)
+          val requestLogin = new RequestLogin
+    requestLogin.setUserName(userName.toString).setPassword(password.toString)
+          Utils.tryCatch(sender.ask(requestLogin) match {
+            case r: ResponseLogin =>
+              message.setStatus(r.getStatus)
+              if (StringUtils.isNotBlank(r.getErrMsg)) {
+                message.data("errmsg", r.getErrMsg)
+              }
+              if (0 == r.getStatus) {
+                GatewaySSOUtils.setLoginUser(gatewayContext, userName.toString)
+                message.setStatus(0)
+                message.setMessage("Login successful(登录成功)")
+              } else {
+                message = Message.error("Invalid username or password, please check and try again later(用户名或密码无效，请稍后再试)")
+              }
+          }) {
+      t => {
+              warn(s"Login rpc request error, err message ", t)
+              message.setStatus(1)
+              message.setMessage("System error, please try again later(系统异常，请稍后再试)")
+              message.data("errmsg", t.getMessage)
+          }
+        }
+        message
+      }
+
+  override def tryRegister(gatewayContext: GatewayContext): Message = {
+    var message = Message.ok()
+    if (GatewayConfiguration.USERCONTROL_SWITCH_ON.getValue) {
+      message = userControlRegister(gatewayContext)
+    } else {
+      // TODO use normal register only when it's implemented(仅当实现了通用注册，才可以调注册接口)
+      message = register(gatewayContext)
+  }
+    message
+  }
+
+  /**
+    * userControl register(用户控制模块登录)
+    * @param gatewayContext
+    * @return
+    */
+  private def userControlRegister(gatewayContext: GatewayContext): Message = {
+    val message = Message.ok()
+    val gson = new Gson
+    val requestRegister = new RequestRegister
+    val requestBody: String = gatewayContext.getRequest.getRequestBody
+    Utils.tryCatch({
+      requestRegister.setParams(requestBody)
+      sender.ask(requestRegister) match {
+        case r: ResponseRegister =>
+          message.setStatus(r.getStatus)
+          message.setMessage(r.getMessage)
+          var map = r.getData
+          message.setData(map)
+          message.setMethod(r.getMethod)
+          info(s"Register rpc success. requestRegister=" + gson.toJson(requestRegister) + ", response=" + gson.toJson(r))
+        }
+    }) {
+      e =>
+       warn(s"Register rpc request error. err message ", e)
+        message.setStatus(1)
+        message.setMessage("System, please try again later(系统异常，请稍后再试)")
+    }
+    if (message.getData.containsKey("errmsg")) {
+      // for frontend display
+      message.setMessage(message.getMessage + LINE_DELIMITER + message.getData.get("errmsg").toString)
+    }
+    message
+  }
 }

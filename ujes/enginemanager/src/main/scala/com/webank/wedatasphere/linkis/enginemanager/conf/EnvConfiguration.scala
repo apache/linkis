@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.enginemanager.conf
 
-import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars}
+import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars, Configuration}
 import EngineManagerConfiguration.ENGINE_SPRING_APPLICATION_NAME
 import org.apache.commons.lang.time.DateFormatUtils
 
@@ -44,7 +44,7 @@ object EnvConfiguration {
   val ENGINE_MANAGER_PROTECTED_INSTANCES = CommonVars[Integer]("wds.linkis.enginemanager.protected.engine.instances", 2)
 
   val DEFAULT_JAVA_OPTS = CommonVars[String]("wds.linkis.engine.javaOpts.default", "-server -XX:+UseG1GC -XX:MaxPermSize=250m -XX:PermSize=128m " +
-    "-Xloggc:%s -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Dwds.linkis.configuration=linkis-engine.properties")
+    "-Xloggc:%s -XX:+PrintGCDetails  -Dhdp.version="+Configuration.HDP_VERSION+" -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Dwds.linkis.configuration=linkis-engine.properties")
   val ENGINE_CLIENT_MEMORY = CommonVars[ByteType]("wds.linkis.engine.client.memory", new ByteType("2g"), "指定所有Engine客户端的默认内存大小")
   val ENGINE_CLIENT_EXTRACLASSPATH = CommonVars[String]("wds.linkis.engine.client.extraClassPath", "", "指定用户自定义的jar包全路径（多个以英文,分隔）。")
 

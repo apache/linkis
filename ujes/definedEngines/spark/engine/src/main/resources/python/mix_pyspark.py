@@ -76,8 +76,8 @@ class ErrorLogger(object):
 
 
 class SparkVersion(object):
-    SPARK_1_4_0 = 140
-    SPARK_1_3_0 = 130
+    SPARK_1_4_0 = '140'
+    SPARK_1_3_0 = '130'
 
     def __init__(self, versionNumber):
         self.version = versionNumber
@@ -95,7 +95,7 @@ sys.stdout = output
 sys.stderr = errorOutput
 
 client = GatewayClient(port=int(sys.argv[1]))
-sparkVersion = SparkVersion(int(sys.argv[2]))
+sparkVersion = SparkVersion(sys.argv[2])
 
 if sparkVersion.isAutoConvertEnabled():
     gateway = JavaGateway(client, auto_convert = True)

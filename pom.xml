@@ -116,7 +116,7 @@
     </modules>
 
     <properties>
-        <hadoop.version>2.7.2</hadoop.version>
+        <hadoop.version>2.7.3</hadoop.version>
         <hive.version>1.2.1</hive.version>
         <spring.eureka.version>1.4.4.RELEASE</spring.eureka.version>
         <spring.boot.version>2.0.3.RELEASE</spring.boot.version>
@@ -135,7 +135,7 @@
         <maven.version>3.3.3</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dispatch.version>0.11.2</dispatch.version>
-        <jsoup.version>1.8.2</jsoup.version>
+        <jsoup.version>1.12.1</jsoup.version>
     </properties>
 
     <dependencyManagement>

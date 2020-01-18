@@ -17,7 +17,7 @@
 package com.webank.wedatasphere.linkis.enginemanager.configuration
 
 
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration}
+import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration, Configuration}
 import com.webank.wedatasphere.linkis.common.utils.{ClassUtils, Logging}
 import com.webank.wedatasphere.linkis.engine.factory.SparkEngineExecutorFactory
 import com.webank.wedatasphere.linkis.enginemanager.AbstractEngineCreator
@@ -65,7 +65,7 @@ object SparkConfiguration extends Logging {
   val SPARK_DRIVER_CLASSPATH = CommonVars[String]("wds.linkis.spark.driver.conf.mainjar", "")
   val SPARK_DRIVER_EXTRA_JAVA_OPTIONS = CommonVars[String]("spark.driver.extraJavaOptions", "\"-Dwds.linkis.configuration=linkis-engine.properties " + getJavaRemotePort + "\"")
   val DEFAULT_JAVA_OPTS = CommonVars[String]("wds.linkis.engine.javaOpts.default", "-server -XX:+UseG1GC -XX:MaxPermSize=250m -XX:PermSize=128m " +
-    "-Xloggc:%s -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Dwds.linkis.configuration=linkis-engine.properties")
+    "-Xloggc:%s -XX:+PrintGCDetails  -Dhdp.version="+Configuration.HDP_VERSION+"  -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Dwds.linkis.configuration=linkis-engine.properties")
   val SPARK_ML_BUCKET_FIELDS = CommonVars[String]("wds.linkis.engine.spark.ml.bucketFields", "age[0,18,30,60,100]")
 
   val SPARK_SUBMIT_CMD = CommonVars[String]("wds.linkis.engine.spark.submit.cmd", "spark-submit")

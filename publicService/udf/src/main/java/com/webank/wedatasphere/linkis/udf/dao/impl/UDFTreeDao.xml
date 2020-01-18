@@ -64,7 +64,7 @@
         where id = #{arg0} and category = #{arg1}
     </select>
 
-    <select id="getTreesByParentId" resultMap="UDFTreeResultMap" parameterType="java.util.Map">
+    <!--select id="getTreesByParentId" resultMap="UDFTreeResultMap" parameterType="java.util.Map">
         select
         <include refid="udf_Tree_List"/>
         from linkis_udf_tree
@@ -74,6 +74,29 @@
         </if>
         <if test="userName != null">
             And user_name = #{userName,jdbcType=VARCHAR}
+        </if>
+        <if test="category != null">
+            And category = #{category,jdbcType=VARCHAR}
+        </if>
+    </select-->
+  
+  <select id="getTreesByParentId" resultMap="UDFTreeResultMap" parameterType="java.util.Map">
+        select
+        <include refid="udf_Tree_List"/>
+        from linkis_udf_tree
+        where 1=1
+        <if test="parent != null">
+            And parent = #{parent,jdbcType=BIGINT}
+        </if>
+        <if test="userName != null">
+            <if test="userName == 'sys' or userName == 'bdp' or userName == 'share' or userName == 'sys'">
+                And user_name = #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="userName != 'sys' and userName != 'bdp' and userName != 'share' and userName != 'sys'">
+                And user_name = 'root'
+            </if>
+
+            <!--#{userName,jdbcType=VARCHAR}-->
         </if>
         <if test="category != null">
             And category = #{category,jdbcType=VARCHAR}

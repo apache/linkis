@@ -30,5 +30,7 @@ object Configuration {
   val IS_TEST_MODE = CommonVars("wds.linkis.test.mode", false)
 
   val hadoopConfDir = CommonVars("hadoop.config.dir", CommonVars("HADOOP_CONF_DIR", "").getValue).getValue
+ 
+  val HDP_VERSION = CommonVars("wds.linkis.hdp.version", "2.6.4.0-91")
 
 }

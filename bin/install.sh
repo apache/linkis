@@ -392,6 +392,8 @@ executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.server.mybatis.datasource
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.workspace.filesystem.localuserrootpath.*#wds.linkis.workspace.filesystem.localuserrootpath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.workspace.filesystem.hdfsuserrootpath.prefix.*#wds.linkis.workspace.filesystem.hdfsuserrootpath.prefix=$HDFS_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.gateway.ip.*#wds.linkis.gateway.ip=$GATEWAY_INSTALL_IP#g\" $SERVER_CONF_PATH"
+executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.gateway.port.*#wds.linkis.gateway.port=$GATEWAY_PORT#g\" $SERVER_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVER_NAME"
 echo "<----------------$SERVER_NAME:end------------------->"
 ##publicservice end

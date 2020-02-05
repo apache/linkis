@@ -173,6 +173,7 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
     public WebServerFactoryCustomizer<JettyServletWebServerFactory> jettyFactoryCustomizer() {
         return new WebServerFactoryCustomizer<JettyServletWebServerFactory>() {
             public void customize(JettyServletWebServerFactory jettyServletWebServerFactory) {
+                jettyServletWebServerFactory.getJsp().setRegistered(false);
                 jettyServletWebServerFactory.addServerCustomizers(new JettyServerCustomizer() {
                     public void customize(Server server) {
                         Handler[] childHandlersByClass = server.getChildHandlersByClass(WebAppContext.class);

@@ -11,6 +11,7 @@ import com.webank.wedatasphere.linkis.engine.shell.conf.ShellEngineConfiguration
 import com.webank.wedatasphere.linkis.engine.shell.exception.ShellCodeErrorException
 import org.apache.commons.lang.StringUtils
 import com.webank.wedatasphere.linkis.engine.execute.EngineExecutor
+import org.apache.commons.io.IOUtils
 
 /**
   * created by cooperyang on 2019/5/14
@@ -31,12 +32,14 @@ class ShellEngineExecutor(user:String)
   override protected def executeLine(engineExecutorContext: EngineExecutorContext, code: String): ExecuteResponse = {
     val trimCode = code.trim
     logger.info(s"user $user begin to run code $trimCode")
+    var bufferedReader:BufferedReader = null
+    var errorsReader:BufferedReader = null
     try{
       val processBuilder:ProcessBuilder = new ProcessBuilder(generateRunCode(code):_*)
       processBuilder.redirectErrorStream(true)
       process = processBuilder.start()
-      val bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream))
-      val errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream))
+      bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream))
+      errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream))
       var line:String = null
       while({line = bufferedReader.readLine(); line != null}){
         logger.info(line)
@@ -57,6 +60,9 @@ class ShellEngineExecutor(user:String)
         ErrorExecuteResponse("run shell failed" ,e)
       }
       case t:Throwable => ErrorExecuteResponse("执行shell进程内部错误", t)
+    }finally {
+      IOUtils.closeQuietly(bufferedReader)
+      IOUtils.closeQuietly(errorsReader)
     }
   }
 

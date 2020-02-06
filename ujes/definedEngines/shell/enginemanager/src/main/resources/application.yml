@@ -1,0 +1,22 @@
+server:
+  port: 10099  #The port that the module provides services (required)
+spring:
+  application:
+    name: shellEngineManager  #Module name for high availability (required)
+
+#Specify the address of the eureka server for registration (required)
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:20303/eureka/
+  instance:
+    metadata-map:
+      test: enjoyyin
+#required
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info
+logging:
+  config: classpath:log4j2.xml

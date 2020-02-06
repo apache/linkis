@@ -34,6 +34,7 @@
             <artifactId>linkis-gateway-httpclient-support</artifactId>
             <version>${linkis.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-common</artifactId>

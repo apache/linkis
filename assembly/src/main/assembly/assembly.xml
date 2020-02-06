@@ -130,12 +130,12 @@
       </includes>
     </fileSet>
 
-   <!-- &lt;!&ndash;pipeline&ndash;&gt;
+    <!--shell-->
     <fileSet>
       <directory>
-        ${project.parent.basedir}/ujes/definedEngines/pipeline/entrance/target/
+        ${project.parent.basedir}/ujes/definedEngines/shell/entrance/target/
       </directory>
-      <outputDirectory>share/linkis/ujes/pipeline</outputDirectory>
+      <outputDirectory>share/linkis/ujes/shell</outputDirectory>
       <includes>
         <include>*.zip</include>
       </includes>
@@ -143,13 +143,36 @@
 
     <fileSet>
       <directory>
-        ${project.parent.basedir}/ujes/definedEngines/pipeline/enginemanager/target/
+        ${project.parent.basedir}/ujes/definedEngines/shell/enginemanager/target/
       </directory>
-      <outputDirectory>share/linkis/ujes/pipeline</outputDirectory>
+      <outputDirectory>share/linkis/ujes/shell</outputDirectory>
       <includes>
         <include>*.zip</include>
       </includes>
-    </fileSet>-->
+    </fileSet>
+
+
+
+    <!-- &lt;!&ndash;pipeline&ndash;&gt;
+     <fileSet>
+       <directory>
+         ${project.parent.basedir}/ujes/definedEngines/pipeline/entrance/target/
+       </directory>
+       <outputDirectory>share/linkis/ujes/pipeline</outputDirectory>
+       <includes>
+         <include>*.zip</include>
+       </includes>
+     </fileSet>
+
+     <fileSet>
+       <directory>
+         ${project.parent.basedir}/ujes/definedEngines/pipeline/enginemanager/target/
+       </directory>
+       <outputDirectory>share/linkis/ujes/pipeline</outputDirectory>
+       <includes>
+         <include>*.zip</include>
+       </includes>
+     </fileSet>-->
 
     <!--jdbc-->
     <fileSet>

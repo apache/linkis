@@ -54,6 +54,7 @@ public class WorkspaceUtil {
                 || path.endsWith(".py")
                 || path.endsWith(".mlsql")
                 || path.endsWith(".jdbc")
+                || path.endsWith(".shell")
         ) {
             return "script";
         } else if (path.endsWith(".dolphin")) {

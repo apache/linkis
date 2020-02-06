@@ -61,7 +61,7 @@ trait CommentHelper{
 
 object SQLCommentHelper extends CommentHelper {
   override val commentPattern: Regex = """\s*--.+\s*""".r.unanchored
-  private val comment = "(?ms)([\"'](?:''|[^'])*['\"])|--.*?$|/\\*.*?\\*/"
+  private val comment = "(?ms)([\"']*['\"])|--.*?$|/\\*.*?\\*/"
   override def dealComment(code: String): String = {
     val p = Pattern.compile(comment)
     val sql = p.matcher(code).replaceAll("$1")

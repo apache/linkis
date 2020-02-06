@@ -156,6 +156,16 @@ SERVER_NAME="python-enginemanager"
 SERVER_IP=$PYTHON_INSTALL_IP
 stopApp
 
+#shell-entrance
+SERVER_NAME="shell-entrance"
+SERVER_IP=$SHELL_INSTALL_IP
+stopApp
+
+#shell-enginemanager
+SERVER_NAME="shell-enginemanager"
+SERVER_IP=$SHELL_INSTALL_IP
+stopApp
+
 #spark-entrance
 SERVER_NAME="spark-entrance"
 SERVER_IP=$SPARK_INSTALL_IP

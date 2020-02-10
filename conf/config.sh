@@ -97,6 +97,13 @@ PYTHON_ENTRANCE_PORT=9110
 #JDBC_INSTALL_IP=127.0.0.1
 JDBC_ENTRANCE_PORT=9111
 
+### SHELL
+### This service is used to provide shell capability.
+#SHELL_INSTALL_IP=127.0.0.1
+SHELL_EM_PORT=9114
+SHELL_ENTRANCE_PORT=9115
+
+
 
 ### BML
 ### This service is used to provide BML capability.

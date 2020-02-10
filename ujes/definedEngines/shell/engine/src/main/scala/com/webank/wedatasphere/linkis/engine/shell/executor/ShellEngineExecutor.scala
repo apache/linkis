@@ -31,7 +31,7 @@ class ShellEngineExecutor(user:String)
 
   override protected def executeLine(engineExecutorContext: EngineExecutorContext, code: String): ExecuteResponse = {
     val trimCode = code.trim
-    logger.info(s"user $user begin to run code $trimCode")
+    info(s"user $user begin to run code $trimCode")
     var bufferedReader:BufferedReader = null
     var errorsReader:BufferedReader = null
     try{
@@ -42,21 +42,21 @@ class ShellEngineExecutor(user:String)
       errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream))
       var line:String = null
       while({line = bufferedReader.readLine(); line != null}){
-        logger.info(line)
+        info(line)
         engineExecutorContext.appendStdout(line)
       }
       val errorLog = Stream.continually(errorsReader.readLine).takeWhile(_ != null).mkString("\n")
       val exitCode = process.waitFor()
       if (StringUtils.isNotEmpty(errorLog) || exitCode != 0){
-        logger.error(s"exitCode is $exitCode")
-        logger.error(errorLog)
+        error(s"exitCode is $exitCode")
+        error(errorLog)
         engineExecutorContext.appendStdout("shell执行失败")
         engineExecutorContext.appendStdout(errorLog)
         ErrorExecuteResponse("run shell failed", ShellCodeErrorException())
       }else SuccessExecuteResponse()
     }catch{
       case e:Exception => {
-        logger.error("Execute shell code failed, reason:", e)
+        error("Execute shell code failed, reason:", e)
         ErrorExecuteResponse("run shell failed" ,e)
       }
       case t:Throwable => ErrorExecuteResponse("执行shell进程内部错误", t)
@@ -84,9 +84,9 @@ class ShellEngineExecutor(user:String)
       process.destroy()
       true
     }catch{
-      case e:Exception => logger.error(s"kill process ${process.toString} failed ", e)
+      case e:Exception => error(s"kill process ${process.toString} failed ", e)
         false
-      case t:Throwable => logger.error(s"kill process ${process.toString} failed " ,t)
+      case t:Throwable => error(s"kill process ${process.toString} failed " ,t)
         false
     }
   }

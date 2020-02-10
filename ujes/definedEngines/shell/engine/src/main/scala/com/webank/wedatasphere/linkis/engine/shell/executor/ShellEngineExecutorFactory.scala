@@ -17,7 +17,7 @@ class ShellEngineExecutorFactory extends EngineExecutorFactory with Logging{
     //todo 可能会有一些设置环境变量的操作
     import scala.collection.JavaConverters._
     options.asScala foreach {
-      case (k, v) => logger.info(s"key is $k, value is $v")
+      case (k, v) => info(s"key is $k, value is $v")
     }
     val user:String = System.getProperty("user.name")
     if (StringUtils.isEmpty(user)) throw NoCorrectUserException()

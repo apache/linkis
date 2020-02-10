@@ -1,5 +1,6 @@
 package com.webank.wedatasphere.linkis.shell.enginemanager.conf
 
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.enginemanager.EngineHook
 import com.webank.wedatasphere.linkis.enginemanager.conf.EnvConfiguration
 import com.webank.wedatasphere.linkis.enginemanager.hook.{ConsoleConfigurationEngineHook, JarLoaderEngineHook}
@@ -14,8 +15,7 @@ import org.springframework.context.annotation.{Bean, Configuration}
   * Description:
   */
 @Configuration
-class ShellEngineManagerConfiguration {
-  private val logger:Logger = LoggerFactory.getLogger(getClass)
+class ShellEngineManagerConfiguration extends Logging {
 
   @Bean(Array("resources"))
   def createResource(): ModuleInfo = {
@@ -25,7 +25,7 @@ class ShellEngineManagerConfiguration {
 
     val protectResource = new LoadInstanceResource(EnvConfiguration.ENGINE_MANAGER_PROTECTED_MEMORY.getValue.toLong,
       EnvConfiguration.ENGINE_MANAGER_PROTECTED_CORES.getValue, EnvConfiguration.ENGINE_MANAGER_PROTECTED_CORES.getValue)
-    logger.info(s"create resource for shell engine totalResource is $totalResource, protectResource is $protectResource")
+    info(s"create resource for shell engine totalResource is $totalResource, protectResource is $protectResource")
     ModuleInfo(Sender.getThisServiceInstance, totalResource, protectResource, ResourceRequestPolicy.LoadInstance)
   }
 

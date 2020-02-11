@@ -2,6 +2,14 @@
 .idea
 .DS_Store
 
+
+# Package Files #
+*.class
+*.jar
+*.war
+*.ear
+
+
 assembly/target
 
 core/cloudModule/target/
@@ -48,6 +56,7 @@ ujes/definedEngines/spark/entrance/target/
 ujes/engine/target/
 ujes/enginemanager/target/
 ujes/entrance/target/
+ujes/jdbc/target/
 
 ujes/definedEngines/mlsql/entrance/target/
 assembly/public-module/target/

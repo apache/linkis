@@ -17,10 +17,8 @@ package com.webank.wedatasphere.linkis.metadata.hive.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.webank.wedatasphere.linkis.metadata.util.DWSConfig;
-import com.webank.wedatasphere.linkis.metadata.util.HiveUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -67,14 +65,11 @@ public class LinkisMybatisConfig {
         String url =  DWSConfig.HIVE_META_URL.getValue();
         String username =  DWSConfig.HIVE_META_USER.getValue();
         String password = DWSConfig.HIVE_META_PASSWORD.getValue();
-        if(StringUtils.isBlank(url) || StringUtils.isBlank(username)  || StringUtils.isBlank(password)) {
-            HiveConf hiveConf = HiveUtils.getDefaultConf(System.getProperty("user.name"));
-            logger.info("从配置文件中读取hive数据库连接地址");
-            url = hiveConf.get("javax.jdo.option.ConnectionURL");
-            username = hiveConf.get("javax.jdo.option.ConnectionUserName");
-            password = hiveConf.get("javax.jdo.option.ConnectionPassword");
-        }
         logger.info("数据库连接地址信息=" + url);
+        if(StringUtils.isBlank(url) || StringUtils.isBlank(username)  || StringUtils.isBlank(password)) {
+           throw new  RuntimeException("The metadata service depends on hive metadata JDBC information. " +
+                   "Please configure hive.meta related parameters(metadata服务依赖hive元数据JDBC的信息，请配置hive.meta相关参数).");
+        }
         datasource.setUrl(url);
         datasource.setUsername(username);
         datasource.setPassword(password);

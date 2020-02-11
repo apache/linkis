@@ -278,6 +278,7 @@ isSuccess "create  $RESULT_SET_ROOT_PATH directory"
 
 ##init db
 if [[ '2' = "$MYSQL_INSTALL_MODE" ]];then
+    mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD --default-character-set=utf8 -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DB DEFAULT CHARSET utf8 COLLATE utf8_general_ci;"
 	mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${workDir}/db/linkis_ddl.sql"
 	isSuccess "source linkis_ddl.sql"
 	mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${workDir}/db/linkis_dml.sql"
@@ -610,6 +611,38 @@ executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.resultSet.store.path.*#wd
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVER_NAME"
 echo "<----------------$SERVER_NAME:end------------------->"
-##SparkEntrance install end
+##JDBCEntrance install end
+
+
+##ShellEM install
+PACKAGE_DIR=linkis/ujes/shell
+SERVER_NAME=linkis-ujes-shell-enginemanager
+SERVER_IP=$SHELL_INSTALL_IP
+SERVER_PORT=$SHELL_EM_PORT
+SERVER_HOME=$LINKIS_INSTALL_HOME
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVER_NAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
+executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVER_NAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
+SERVER_ENGINE_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis-engine.properties
+executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_ENGINE_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVER_NAME"
+echo "<----------------$SERVER_NAME:end------------------->"
+
+##SHELLEntrance install
+PACKAGE_DIR=linkis/ujes/shell
+SERVER_NAME=linkis-ujes-shell-entrance
+SERVER_PORT=$SHELL_ENTRANCE_PORT
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVER_NAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
+executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVER_NAME"
+echo "<----------------$SERVER_NAME:end------------------->"
+##SHELLEntrance install end
 
 

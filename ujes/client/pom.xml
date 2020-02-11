@@ -34,6 +34,12 @@
             <artifactId>linkis-gateway-httpclient-support</artifactId>
             <version>${linkis.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-common</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
@@ -41,19 +47,8 @@
         </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-cloudRPC</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-protocol</artifactId>
             <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.webank.wedatasphere.linkis</groupId>
-                    <artifactId>linkis-common</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 

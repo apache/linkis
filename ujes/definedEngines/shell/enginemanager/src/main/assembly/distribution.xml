@@ -34,10 +34,6 @@
             <unpack>false</unpack>
             <useStrictFiltering>true</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
-        <excludes>
-            <exclude>org.apache.httpcomponents:httpclient:jar</exclude>
-            <exclude>org.apache.httpcomponents:httpcore:jar</exclude>
-        </excludes>
         </dependencySet>
     </dependencySets>
 

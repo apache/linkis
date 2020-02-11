@@ -24,6 +24,7 @@
         <version>0.9.3</version>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <artifactId>linkis</artifactId>
+        <relativePath>../../../../pom.xml</relativePath>
     </parent>
 
     <packaging>jar</packaging>

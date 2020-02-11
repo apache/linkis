@@ -24,10 +24,10 @@
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <version>0.9.3</version>
+        <relativePath>../../../../pom.xml</relativePath>
     </parent>
 
     <artifactId>linkis-python-engine</artifactId>
-    <version>${linkis.version}</version>
     <packaging>jar</packaging>
 
 

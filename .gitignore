@@ -53,6 +53,10 @@ ujes/definedEngines/python/entrance/target/
 ujes/definedEngines/spark/engine/target/
 ujes/definedEngines/spark/enginemanager/target/
 ujes/definedEngines/spark/entrance/target/
+ujes/definedEngines/shell/entrance/target/
+ujes/definedEngines/shell/engine/target/
+ujes/definedEngines/shell/enginemanager/target/
+
 ujes/engine/target/
 ujes/enginemanager/target/
 ujes/entrance/target/

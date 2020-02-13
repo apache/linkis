@@ -104,6 +104,9 @@
         <module>ujes/definedEngines/python/engine</module>
         <module>ujes/definedEngines/python/enginemanager</module>
         <module>ujes/definedEngines/python/entrance</module>
+        <module>ujes/definedEngines/shell/engine</module>
+        <module>ujes/definedEngines/shell/enginemanager</module>
+        <module>ujes/definedEngines/shell/entrance</module>
         <module>ujes/definedEngines/jdbc/entrance</module>
         <module>ujes/client</module>
         <module>ujes/definedEngines/pipeline/engine</module>
@@ -297,20 +300,7 @@
                         </execution>
                     </executions>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.5</version>
-                    <executions>
-                        <execution>
-                            <id>sign-artifacts</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>sign</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
+
                </plugins>
             </build>
         </profile>

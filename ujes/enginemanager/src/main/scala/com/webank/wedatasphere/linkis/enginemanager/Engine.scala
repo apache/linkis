@@ -29,6 +29,7 @@ abstract class Engine {
   def setResource(resource: Resource): Unit = this.resource = resource
   def getResource = resource
 
+  def getHost: String
   def getPort: Int
   def init(): Unit
   def shutdown(): Unit

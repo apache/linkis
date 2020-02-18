@@ -45,7 +45,7 @@ fi
 
 local_host="`hostname --fqdn`"
 
-ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
+ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}'|awk 'NR==1')
 
 function isLocal(){
     if [ "$1" == "127.0.0.1" ];then

@@ -58,7 +58,8 @@ class EngineReceiver extends Receiver with JobListener with ProgressListener wit
 
   private val engineCallback = EngineCallback.mapToEngineCallback(DWCArgumentsParser.getDWCOptionMap)
   private val resourceManagerClient = new ResourceManagerClient(ServiceInstance(engineCallback.applicationName, engineCallback.instance))
-  private implicit val userWithCreator = UserWithCreator(System.getProperty("user.name"), DWCArgumentsParser.getDWCOptionMap("creator"))
+//  private implicit val userWithCreator = UserWithCreator(System.getProperty("user.name"), DWCArgumentsParser.getDWCOptionMap("creator"))
+  private implicit val userWithCreator = UserWithCreator(DWCArgumentsParser.getDWCOptionMap("user"), DWCArgumentsParser.getDWCOptionMap("creator"))
   @Autowired
   private var engineServer: EngineServer = _
   @EngineExecutorManagerAutowiredAnnotation
@@ -66,7 +67,7 @@ class EngineReceiver extends Receiver with JobListener with ProgressListener wit
   private var engine: EngineExecutor  = _
   private var waitForReleaseLocks: Array[String] = _
   private var parallelismEngineHeartbeat: Option[Future[_]] = None
-
+  private val address = Sender.getThisInstance.substring(0, Sender.getThisInstance.lastIndexOf(":"))
   //Report the PID first(先上报PID)
 
   @PostConstruct
@@ -81,6 +82,7 @@ class EngineReceiver extends Receiver with JobListener with ProgressListener wit
       throw new EngineErrorException(40015, "Cannot find the instance information of engineManager, can not complete the callback.(找不到engineManager的instance信息，不能完成callback.)")
     val sender = Sender.getSender(ServiceInstance(engineCallback.applicationName, engineCallback.instance))
     sender.send(ResponseEnginePid(port, pid))
+    sender.send(ResponseEngineHost(port, address))
     //Timely report heartbeat(定时汇报心跳)
     val heartbeat = Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
       override def run(): Unit = {

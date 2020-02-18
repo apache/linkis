@@ -132,7 +132,7 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     val darResource: DriverAndYarnResource = engineRequest.getResource.asInstanceOf[DriverAndYarnResource]
     val properties = request.properties
     this.master("yarn")
-    this.deployMode("client")
+    this.deployMode(SPARK_DEPLOY_MODE.getValue(properties))
     val driverJavaSet = "\"-Dwds.linkis.configuration=linkis-engine.properties " + SparkConfiguration.getJavaRemotePort + "\""
     this.conf(SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, driverJavaSet)
     this.name(properties.getOrDefault("appName", "sparksqltest"))
@@ -145,6 +145,7 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     this.numExecutors(DWC_SPARK_EXECUTOR_INSTANCES.getValue(properties))
     properties.getOrDefault("files", "").split(",").map(RelativePath).foreach(file)
     properties.getOrDefault("jars", "").split(",").map(RelativePath).foreach(jar)
+    SPARK_APPLICATION_JARS.getValue(properties).split(",").map(RelativePath).foreach(jar)
     proxyUser(properties.getOrDefault("proxyUser", ""))
     this.queue(darResource.yarnResource.queueName)
 

@@ -20,6 +20,7 @@ import java.text.NumberFormat
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
 
+import com.webank.wedatasphere.linkis.common.conf.DWCArgumentsParser
 import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration
 import com.webank.wedatasphere.linkis.engine.exception.{NoSupportEngineException, SparkEngineException}
@@ -155,6 +156,9 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
     executeRequest match {
       case runTypeExecuteRequest: RunTypeExecuteRequest => engineExecutorContext.addProperty("runType", runTypeExecuteRequest.runType)
       case _ =>
+    }
+    if (DWCArgumentsParser.getDWCOptionMap.contains("user") && DWCArgumentsParser.getDWCOptionMap.get("user").isDefined) {
+      engineExecutorContext.addProperty("user", DWCArgumentsParser.getDWCOptionMap.get("user").get)
     }
     engineExecutorContext
   }

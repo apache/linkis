@@ -60,6 +60,8 @@ object DataWorkCloudEngineApplication {
   private val logger = LoggerFactory.getLogger(getClass)
   logger.info(s"Now log4j2 Rolling File is set to be $logName")
   logger.info(s"Now shortLogFile is set to be $shortLogFile")
+
+  private val WAIT_LOCK = new Object;
   def main(args: Array[String]): Unit = {
     val parser = DWCArgumentsParser.parse(args)
     DWCArgumentsParser.setDWCOptionMap(parser.getDWCConfMap)
@@ -69,5 +71,11 @@ object DataWorkCloudEngineApplication {
     else
       DataWorkCloudApplication.setProperty(ServerConfiguration.BDP_SERVER_EXCLUDE_PACKAGES.key, existsExcludePackages + ",com.webank.wedatasphere.linkis.enginemanager")
     DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(parser.getSpringConfMap))
+
+    // spark cluster block main thread
+    Runtime.getRuntime.addShutdownHook(new Thread(new Runnable {
+      override def run(): Unit = WAIT_LOCK.synchronized { WAIT_LOCK.notifyAll() }
+    }))
+    WAIT_LOCK.synchronized { WAIT_LOCK.wait() }
   }
 }

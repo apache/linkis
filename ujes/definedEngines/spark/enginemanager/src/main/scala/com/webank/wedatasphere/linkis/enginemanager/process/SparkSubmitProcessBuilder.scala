@@ -291,14 +291,16 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     addOpt("--deploy-mode", _deployMode)
     addOpt("--name", _name)
     //addOpt("--jars",Some(ENGINEMANAGER_JAR.getValue))
-    info("No need to add jars for "+_jars.map(fromPath).exists(x => x.equals("hdfs:///")).toString())
-    if(_jars.map(fromPath).exists(x => x.equals("hdfs:///")) != true) {
+    _jars = _jars.filter(_.isNotBlankPath())
+    if(!_jars.isEmpty) {
       addList("--jars", _jars.map(fromPath))
     }
-    if(_pyFiles.map(fromPath).exists(x => x.equals("hdfs:///")) != true) {
+    _pyFiles = _pyFiles.filter(_.isNotBlankPath())
+    if(!_pyFiles.isEmpty) {
       addList("--py-files", _pyFiles.map(fromPath))
     }
-    if(_files.map(fromPath).exists(x => x.equals("hdfs:///")) != true) {
+    _files = _files.filter(_.isNotBlankPath())
+    if(!_files.isEmpty) {
       addList("--files", _files.map(fromPath))
     }
     _conf.foreach { case (key, value) => if (key.startsWith("spark.")) addOpt("--conf", Option(f"""$key=$value"""))
@@ -368,10 +370,21 @@ object SparkSubmitProcessBuilder {
     new SparkSubmitProcessBuilder
   }
 
-  sealed trait Path
+  sealed trait Path {
 
-  case class AbsolutePath(path: String) extends Path
+    def isNotBlankPath(): Boolean;
 
-  case class RelativePath(path: String) extends Path
+    protected def isNotBlankPath(path: String): Boolean = {
+      StringUtils.isNotBlank(path) && !"/".equals(path.trim) && !"hdfs:///".equals(path.trim) && !"file:///".equals(path.trim)
+    }
+  }
+
+  case class AbsolutePath(path: String) extends Path {
+    override def isNotBlankPath(): Boolean = isNotBlankPath(path)
+  }
+
+  case class RelativePath(path: String) extends Path {
+    override def isNotBlankPath(): Boolean = isNotBlankPath(path)
+  }
 
 }

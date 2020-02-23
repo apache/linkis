@@ -150,12 +150,11 @@ object YarnUtil extends Logging{
       case JNull | JNothing => None
     }
     def getChildQueues(resp:JValue):JValue =  {
-      val queues = resp \ "childQueues" \ "queue"
-
-      if(queues != null && queues != JNull && queues != JNothing ) {
-        info(s"test queue:$queues")
-        queues
-      } else resp  \ "childQueues"
+      val queues = resp \ "childQueues" match {
+        case child: JObject => child \ "queue"
+        case children: JArray => children
+      }
+      queues
     }
 
     def getQueueOfCapacity(queues: JValue): Option[JValue] = {

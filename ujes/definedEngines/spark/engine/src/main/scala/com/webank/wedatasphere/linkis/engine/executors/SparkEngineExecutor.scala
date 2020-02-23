@@ -157,7 +157,7 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
       case runTypeExecuteRequest: RunTypeExecuteRequest => engineExecutorContext.addProperty("runType", runTypeExecuteRequest.runType)
       case _ =>
     }
-    if (DWCArgumentsParser.getDWCOptionMap.contains("user") && DWCArgumentsParser.getDWCOptionMap.get("user").isDefined) {
+    if (DWCArgumentsParser.getDWCOptionMap.contains("user")) {
       engineExecutorContext.addProperty("user", DWCArgumentsParser.getDWCOptionMap.get("user").get)
     }
     engineExecutorContext

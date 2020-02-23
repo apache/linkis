@@ -348,8 +348,14 @@ public class UDFApi {
             //Verify that the udf function has been shared(校验udf函数是否已经被分享)
             UDFInfo udfInfo = mapper.readValue(json.get("udfInfo"), UDFInfo.class);
 
+            UDFTree sharedTree;
+            Long shareParentId = json.get("shareParentId").getLongValue();
             String category = udfInfo.getUdfType() == 3 || udfInfo.getUdfType() == 4 ? ConstantVar.FUNCTION : ConstantVar.UDF;
-            UDFTree sharedTree = udfTreeService.getSharedTree(category);
+            if (shareParentId > 0) {  // 目录
+                sharedTree = udfTreeService.getTreeById(shareParentId, userName, "share", category);
+            } else {
+                sharedTree = udfTreeService.getSharedTree(category);
+            }
             if (sharedTree == null){
                 throw new UDFException("No shared directories!(没有共享目录!)");
             }
@@ -360,7 +366,7 @@ public class UDFApi {
                 throw  new UDFException("This file is being shared!(该文件正在分享中!)");
             }
 
-            String sharedPath = fileName +"";
+            String sharedPath = udfInfo.getPath();
             //Verify sharing path---plus timestamp, it should not be repeated(校验分享路径---加上时间戳,应该不会重复)
             //Copy the file to a shared directory(将文件拷贝到共享目录下)
 

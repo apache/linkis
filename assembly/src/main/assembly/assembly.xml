@@ -41,6 +41,7 @@
       <includes>
         <include>**/*</include>
       </includes>
+      <fileMode>0777</fileMode>
       <lineEnding>unix</lineEnding>
     </fileSet>
 
@@ -52,6 +53,7 @@
       <includes>
         <include>**/*</include>
       </includes>
+      <fileMode>0777</fileMode>
       <lineEnding>unix</lineEnding>
     </fileSet>
 
@@ -128,12 +130,12 @@
       </includes>
     </fileSet>
 
-    <!--pipeline-->
+    <!--shell-->
     <fileSet>
       <directory>
-        ${project.parent.basedir}/ujes/definedEngines/pipeline/entrance/target/
+        ${project.parent.basedir}/ujes/definedEngines/shell/entrance/target/
       </directory>
-      <outputDirectory>share/linkis/ujes/pipeline</outputDirectory>
+      <outputDirectory>share/linkis/ujes/shell</outputDirectory>
       <includes>
         <include>*.zip</include>
       </includes>
@@ -141,13 +143,36 @@
 
     <fileSet>
       <directory>
-        ${project.parent.basedir}/ujes/definedEngines/pipeline/enginemanager/target/
+        ${project.parent.basedir}/ujes/definedEngines/shell/enginemanager/target/
       </directory>
-      <outputDirectory>share/linkis/ujes/pipeline</outputDirectory>
+      <outputDirectory>share/linkis/ujes/shell</outputDirectory>
       <includes>
         <include>*.zip</include>
       </includes>
     </fileSet>
+
+
+
+    <!-- &lt;!&ndash;pipeline&ndash;&gt;
+     <fileSet>
+       <directory>
+         ${project.parent.basedir}/ujes/definedEngines/pipeline/entrance/target/
+       </directory>
+       <outputDirectory>share/linkis/ujes/pipeline</outputDirectory>
+       <includes>
+         <include>*.zip</include>
+       </includes>
+     </fileSet>
+
+     <fileSet>
+       <directory>
+         ${project.parent.basedir}/ujes/definedEngines/pipeline/enginemanager/target/
+       </directory>
+       <outputDirectory>share/linkis/ujes/pipeline</outputDirectory>
+       <includes>
+         <include>*.zip</include>
+       </includes>
+     </fileSet>-->
 
     <!--jdbc-->
     <fileSet>
@@ -160,7 +185,7 @@
       </includes>
     </fileSet>
 
-    <!--mlsql-->
+   <!-- &lt;!&ndash;mlsql&ndash;&gt;
     <fileSet>
       <directory>
         ${project.parent.basedir}/ujes/definedEngines/mlsql/entrance/target/
@@ -169,7 +194,7 @@
       <includes>
         <include>*.zip</include>
       </includes>
-    </fileSet>
+    </fileSet>-->
 
     <!--resourcemanager-->
     <fileSet>
@@ -216,7 +241,7 @@
       <!--module-->
       <fileSet>
           <directory>
-              ${project.parent.basedir}/core/cloudModule/target/
+              ${project.parent.basedir}/assembly/public-module/target/
           </directory>
           <outputDirectory>share/linkis/module/</outputDirectory>
           <includes>

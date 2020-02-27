@@ -19,7 +19,9 @@ package com.webank.wedatasphere.linkis.resourcemanager.utils
 import java.net.ConnectException
 
 import com.fasterxml.jackson.core.JsonParseException
-import com.webank.wedatasphere.linkis.common.utils.{HDFSUtils, Logging, Utils}
+import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.common.conf.Configuration.hadoopConfDir
 import com.webank.wedatasphere.linkis.resourcemanager.YarnResource
 import com.webank.wedatasphere.linkis.resourcemanager.exception.{RMErrorException, RMFatalException, RMWarnException}
 import dispatch.{Http, as}
@@ -35,24 +37,31 @@ import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration.Duration
 /**
-  * Created by shanhuang on 2018/9/24.
-  */
+ * Created by shanhuang on 2018/9/24.
+ */
 object YarnUtil extends Logging{
 
   private implicit val executor = ExecutionContext.global
-  private val yarnConf = new YarnConfiguration()
-  private var rm_web_address: String = _
+  private var yarnConf: YarnConfiguration = _
+  private var rm_web_address: String = CommonVars("wds.linkis.yarn.rm.web.address", "").getValue
   private var hadoop_version:String = "2.7.2"
   implicit val format = DefaultFormats
 
   def init() = {
-    yarnConf.addResource(new Path(HDFSUtils.hadoopConfDir, YarnConfiguration.CORE_SITE_CONFIGURATION_FILE))
-    yarnConf.addResource(new Path(HDFSUtils.hadoopConfDir, YarnConfiguration.YARN_SITE_CONFIGURATION_FILE))
-    reloadRMWebAddress()
+    if(StringUtils.isBlank(this.rm_web_address)){
+      yarnConf = new YarnConfiguration()
+      yarnConf.addResource(new Path(hadoopConfDir, YarnConfiguration.CORE_SITE_CONFIGURATION_FILE))
+      yarnConf.addResource(new Path(hadoopConfDir, YarnConfiguration.YARN_SITE_CONFIGURATION_FILE))
+      reloadRMWebAddress()
+    }
+    info(s"This yarn  rm web address is:${this.rm_web_address}")
     Utils.tryAndErrorMsg(getHadoopVersion())("Failed to get HadoopVersion")
   }
+
   init()
+
   private def reloadRMWebAddress() = {
+
     val rmHAId = RMHAUtils.findActiveRMHAId(yarnConf)
     if(rmHAId == null) {
       if(StringUtils.isNotEmpty(this.rm_web_address)) {
@@ -71,12 +80,12 @@ object YarnUtil extends Logging{
       if(StringUtils.isEmpty(this.rm_web_address)){
         val yarnWebUrl = yarnConf.get("yarn.resourcemanager.webapp.address")
         if(StringUtils.isEmpty(yarnWebUrl)) {
-            val yarnHttps = yarnConf.get("yarn.resourcemanager.webapp.https.address")
-            if(StringUtils.isEmpty(yarnHttps)){
-              throw new RMFatalException(11005,"Cannot find yarn resourcemanager restful address,please to configure yarn-site.xml")
-            } else {
-              this.rm_web_address  = if(yarnHttps.startsWith("https")) yarnHttps else "https://" + yarnHttps
-            }
+          val yarnHttps = yarnConf.get("yarn.resourcemanager.webapp.https.address")
+          if(StringUtils.isEmpty(yarnHttps)){
+            throw new RMFatalException(11005,"Cannot find yarn resourcemanager restful address,please to configure yarn-site.xml")
+          } else {
+            this.rm_web_address  = if(yarnHttps.startsWith("https")) yarnHttps else "https://" + yarnHttps
+          }
         } else{
           this.rm_web_address  = if(yarnWebUrl.startsWith("http")) yarnWebUrl else "http://" + yarnWebUrl
         }
@@ -110,6 +119,18 @@ object YarnUtil extends Logging{
       jValue.map(r => new YarnResource((r \ "memory").asInstanceOf[JInt].values.toLong * 1024l * 1024l, (r \ "vCores").asInstanceOf[JInt].values.toInt, 0, queueName))
     }
 
+    def maxEffectiveHandle(queueValue: Option[JValue]): Option[YarnResource] = {
+      val url = dispatch.url(rm_web_address) / "ws" / "v1" / "cluster" / "metrics"
+      url.setContentType("application/json", "UTF-8")
+      val totalResouceInfo = Http(url > as.json4s.Json).map { resp => ((resp \ "clusterMetrics" \ "totalMB").asInstanceOf[JInt].values.toLong, (resp \ "clusterMetrics" \ "totalVirtualCores").asInstanceOf[JInt].values.toLong) }
+      val totalResouceInfoResponse = Await.result(totalResouceInfo, Duration.create(10, "seconds"))
+
+      queueValue.map(r => {
+        val effectiveResource = (r \ "absoluteCapacity").asInstanceOf[JDecimal].values.toDouble- (r \ "absoluteUsedCapacity").asInstanceOf[JDecimal].values.toDouble
+        new YarnResource(math.floor(effectiveResource * totalResouceInfoResponse._1 * 1024l * 1024l/100).toLong, math.floor(effectiveResource * totalResouceInfoResponse._2/100).toInt, 0, queueName)
+      })
+    }
+
     var realQueueName = "root." + queueName
     def getQueue(queues: JValue): Option[JValue] = queues match {
       case JArray(queue) =>
@@ -128,10 +149,13 @@ object YarnUtil extends Logging{
         }
       case JNull | JNothing => None
     }
-    def getChildQueues(resp:JValue):JValue = if (hadoop_version.startsWith("2.7")) {
-      resp  \ "childQueues"
-    } else {
-      resp \ "childQueues" \ "queue"
+    def getChildQueues(resp:JValue):JValue =  {
+      val queues = resp \ "childQueues" \ "queue"
+
+      if(queues != null && queues != JNull && queues != JNothing ) {
+        info(s"test queue:$queues")
+        queues
+      } else resp  \ "childQueues"
     }
 
     def getQueueOfCapacity(queues: JValue): Option[JValue] = {
@@ -169,7 +193,7 @@ object YarnUtil extends Logging{
           debug(s"cannot find any information about queue $queueName, response: " + resp)
           throw new RMWarnException(111006, s"queue $queueName is not exists in YARN.")
         }
-        (getYarnResource(queue.map( _ \ "maxEffectiveCapacity")).get, getYarnResource(queue.map( _ \ "resourcesUsed")).get)
+        (maxEffectiveHandle(queue).get, getYarnResource(queue.map( _ \ "resourcesUsed")).get)
       } else if ("fairScheduler".equals(schedulerType)) {
         val childQueues = getChildQueues(resp \ "scheduler" \ "schedulerInfo" \ "rootQueue")
         val queue = getQueue(childQueues)

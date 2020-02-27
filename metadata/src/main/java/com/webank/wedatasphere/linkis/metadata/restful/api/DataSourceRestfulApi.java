@@ -31,6 +31,10 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Created by shanhuang on 9/13/18.
  */
@@ -40,6 +44,8 @@ import javax.ws.rs.core.Response;
 @Component
 public class DataSourceRestfulApi implements DataSourceRestfulRemote {
 
+    private static final Log logger = LogFactory.getLog(DataSourceRestfulApi.class);
+
     @Autowired
     DataSourceService dataSourceService;
 
@@ -48,22 +54,18 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     public Response listOptions(@QueryParam("type") String type, @QueryParam("path") String path, @Context HttpServletRequest req) {
         String userName = SecurityFilter.getLoginUsername(req);
         JsonNode options = null;
-        if(Constants.SCRIPT.equals(type)) {
-            try {
-                options = dataSourceService.getDirContent(path, userName);
-            } catch (Exception e) {
-                return Message.messageToResponse(Message.error("Failed to get file directory(获取文件目录失败)", e));
-            }
-        }else if(Constants.TABLE.equals(type) && StringUtils.isBlank(path)) {
+        if(Constants.TABLE.equals(type) && StringUtils.isBlank(path)) {
             try {
                 options = dataSourceService.getDbs(userName);
             } catch (Exception e) {
+                logger.error("Failed to get database(获取数据库失败)：", e);
                 return Message.messageToResponse(Message.error("Failed to get database(获取数据库失败)", e));
             }
         }else if(Constants.TABLE.equals(type)) {
             try {
                 options = dataSourceService.queryTables(path, userName);
             } catch (Exception e) {
+                logger.error("Failed to get data table（获取数据表失败）：", e);
                 return Message.messageToResponse(Message.error("Failed to get data table（获取数据表失败）", e));
             }
         }
@@ -78,6 +80,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             JsonNode dbs = dataSourceService.getDbs(userName);
             return Message.messageToResponse(Message.ok("").data("dbs", dbs));
         } catch (Exception e) {
+            logger.error("Failed to get database(获取数据库失败)：", e);
             return Message.messageToResponse(Message.error("Failed to get database(获取数据库失败)", e));
         }
     }
@@ -90,7 +93,8 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             JsonNode dbs = dataSourceService.getDbsWithTables(userName);
             return Message.messageToResponse(Message.ok("").data("dbs", dbs));
         } catch (Exception e) {
-            return Message.messageToResponse(Message.error("Failed to get database(获取数据库失败)", e));
+            logger.error("Failed to get allDbs and tables(获取数据全部的库表信息失败)：", e);
+            return Message.messageToResponse(Message.error("Failed to get allDbs and tables(获取数据全部的库表信息失败)", e));
         }
     }
 
@@ -103,7 +107,8 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             JsonNode tables = dataSourceService.queryTables(database, userName);
             return Message.messageToResponse(Message.ok("").data("tables", tables));
         } catch (Exception e) {
-            return Message.messageToResponse(Message.error("Failed to get database(获取数据库失败)", e));
+            logger.error("Failed to get tables(获取数据表信息失败)：", e);
+            return Message.messageToResponse(Message.error("Failed to get tables(获取数据表信息失败)", e));
         }
     }
 
@@ -115,6 +120,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             JsonNode columns = dataSourceService.queryTableMeta(database, table, userName);
             return Message.messageToResponse(Message.ok("").data("columns", columns));
         } catch (Exception e) {
+            logger.error("Failed to get data table structure(获取数据表结构失败):", e);
             return Message.messageToResponse(Message.error("Failed to get data table structure(获取数据表结构失败)", e));
         }
     }
@@ -132,6 +138,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             }
             return Message.messageToResponse(Message.ok("").data("sizeInfo", sizeNode));
         } catch (Exception e) {
+            logger.error("Failed to get table partition size(获取表分区大小失败):", e);
             return Message.messageToResponse(Message.error("Failed to get table partition size(获取表分区大小失败)", e));
         }
     }
@@ -144,6 +151,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             JsonNode partitionNode = dataSourceService.getPartitions(database, table, userName);
             return Message.messageToResponse(Message.ok("").data("partitionInfo", partitionNode));
         } catch (Exception e) {
+            logger.error("Failed to get table partition(获取表分区失败):", e);
             return Message.messageToResponse(Message.error("Failed to get table partition(获取表分区失败)", e));
         }
     }

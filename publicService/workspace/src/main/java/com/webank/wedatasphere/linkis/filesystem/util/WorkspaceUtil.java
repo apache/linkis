@@ -53,6 +53,8 @@ public class WorkspaceUtil {
                 || path.endsWith(".scala")
                 || path.endsWith(".py")
                 || path.endsWith(".mlsql")
+                || path.endsWith(".jdbc")
+                || path.endsWith(".sh")
         ) {
             return "script";
         } else if (path.endsWith(".dolphin")) {
@@ -68,8 +70,9 @@ public class WorkspaceUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceUtil.class);
 
+    //TODO update pathSafeCheck rule
     public static void pathSafeCheck(String path,String userName) throws WorkSpaceException {
-        LOGGER.info("start safe check path params..");
+        /*LOGGER.info("start safe check path params..");
         LOGGER.info(path);
         String userLocalRootPath = null;
         if (WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue().toString().endsWith(File.separator)){
@@ -93,7 +96,7 @@ public class WorkspaceUtil {
         }
         if(!path.contains(userLocalRootPath) && !path.contains(userHdfsRootPath)){
             throw new WorkSpaceException("The path needs to be within the user's own workspace path");
-        }
+        }*/
     }
 
     public static void fileAndDirNameSpecialCharCheck(String path) throws WorkSpaceException {

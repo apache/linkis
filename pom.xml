@@ -234,9 +234,6 @@
     <profiles>
         <profile>
             <id>product</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <project.release.version>0.9.3</project.release.version>
                 <netty.version>4.1.17.Final</netty.version>
@@ -252,6 +249,9 @@
             </properties>
         </profile>
         <profile>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <id>spark2.2-2.0</id>
             <properties>
                 <project.release.version>0.9.3</project.release.version>

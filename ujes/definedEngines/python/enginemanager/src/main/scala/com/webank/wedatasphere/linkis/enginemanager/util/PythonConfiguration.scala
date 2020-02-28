@@ -27,7 +27,7 @@ object PythonConfiguration extends Logging {
   val PYTHON_PATH:CommonVars[String] = CommonVars[String]("python.path", "", "Specify Python's extra path, which only accepts shared storage paths（指定Python额外的path，该路径只接受共享存储的路径）.")
   val PYTHON_JAVA_CLIENT_MEMORY:CommonVars[ByteType] = CommonVars[ByteType]("python.java.client.memory", new ByteType("1g"), "指定Python Java客户端进程的内存大小")
   val PYTHON_JAVA_CLIENT_OPTS:CommonVars[String] = CommonVars[String]("python.java.client.opts", "-server -XX:+UseG1GC -XX:MetaspaceSize=250m -XX:MetaspaceSize=128m " +
-    "-Xloggc:%s -XX:+PrintGCDetails  -Dhdp.version="+Configuration.HDP_VERSION+"  -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps",
+    "-Xloggc:%s -XX:+PrintGCDetails  -Dhdp.version="+Configuration.HDP_VERSION.getValue+"  -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps",
     "Specify the option parameter of the Python Java client process (please modify it carefully!!!)（指定Python Java客户端进程的option参数（请谨慎修改！！！））")
   val PYTHON_CLIENT_MEMORY:CommonVars[ByteType] = CommonVars[ByteType]("python.client.memory", new ByteType("4g"), "Specify the memory size of the Python process（指定Python进程的内存大小）")
   val PYTHON_CLIENT_CORES:CommonVars[Int] = CommonVars[Int]("python.client.cores", 1, "Specify the CPU size that the Python process can consume（指定Python进程能占用的CPU大小）")

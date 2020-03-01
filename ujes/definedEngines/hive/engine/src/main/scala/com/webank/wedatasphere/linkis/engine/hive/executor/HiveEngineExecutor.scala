@@ -369,11 +369,11 @@ object HiveDriverProxy extends Logging {
   private val COMMAND_NEED_RETRY_EXCEPTION_CLASS_STR = "org.apache.hadoop.hive.ql.CommandNeedRetryException"
   private val IDRIVER_CLASS_STR = "org.apache.hadoop.hive.ql.IDriver"
 
-  val COMMAND_NEED_RETRY_EXCEPTION_CLASS = Utils.tryAndWarn {
+  val COMMAND_NEED_RETRY_EXCEPTION_CLASS = Utils.tryQuietly {
     Thread.currentThread().getContextClassLoader
       .loadClass(COMMAND_NEED_RETRY_EXCEPTION_CLASS_STR)
   }
-  val IDRIVER_CLASS = Utils.tryAndWarn {
+  val IDRIVER_CLASS = Utils.tryQuietly {
     Thread.currentThread().getContextClassLoader
       .loadClass(IDRIVER_CLASS_STR)
   }

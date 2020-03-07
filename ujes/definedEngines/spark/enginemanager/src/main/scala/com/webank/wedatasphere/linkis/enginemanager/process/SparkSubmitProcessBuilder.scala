@@ -18,6 +18,7 @@
 package com.webank.wedatasphere.linkis.enginemanager.process
 
 import java.lang.ProcessBuilder.Redirect
+import java.util
 
 import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging}
 import com.webank.wedatasphere.linkis.enginemanager.EngineResource
@@ -32,6 +33,7 @@ import com.webank.wedatasphere.linkis.resourcemanager.DriverAndYarnResource
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.JavaConversions._
 
 /**
   * Created by allenlliu on 2019/4/8.
@@ -130,22 +132,23 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     this.request = request
     userEngineResource = engineRequest.asInstanceOf[UserEngineResource]
     val darResource: DriverAndYarnResource = engineRequest.getResource.asInstanceOf[DriverAndYarnResource]
-    val properties = request.properties
+    val properties = new util.HashMap[String,String](request.properties)
     this.master("yarn")
-    this.deployMode(SPARK_DEPLOY_MODE.getValue(properties))
+    this.deployMode(SPARK_DEPLOY_MODE.getValueAndRemove(properties))
     val driverJavaSet = "\"-Dwds.linkis.configuration=linkis-engine.properties " + SparkConfiguration.getJavaRemotePort + "\""
     this.conf(SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, driverJavaSet)
     this.name(properties.getOrDefault("appName", "sparksqltest"))
     this.className(properties.getOrDefault("className", "com.webank.wedatasphere.linkis.engine.DataWorkCloudEngineApplication"))
     properties.getOrDefault("archives", "").toString.split(",").map(RelativePath).foreach(this.archive)
     this.driverCores(DWC_SPARK_DRIVER_CORES)
-    this.driverMemory(DWC_SPARK_DRIVER_MEMORY.getValue(properties) + "G")
-    this.executorCores(DWC_SPARK_EXECUTOR_CORES.getValue(properties))
-    this.executorMemory(DWC_SPARK_EXECUTOR_MEMORY.getValue(properties) + "G")
-    this.numExecutors(DWC_SPARK_EXECUTOR_INSTANCES.getValue(properties))
+    this.driverMemory(DWC_SPARK_DRIVER_MEMORY.getValueAndRemove(properties) + "G")
+    this.executorCores(DWC_SPARK_EXECUTOR_CORES.getValueAndRemove(properties))
+    this.executorMemory(DWC_SPARK_EXECUTOR_MEMORY.getValueAndRemove(properties) + "G")
+    this.numExecutors(DWC_SPARK_EXECUTOR_INSTANCES.getValueAndRemove(properties))
     properties.getOrDefault("files", "").split(",").map(RelativePath).foreach(file)
     properties.getOrDefault("jars", "").split(",").map(RelativePath).foreach(jar)
-    SPARK_APPLICATION_JARS.getValue(properties).split(",").map(RelativePath).foreach(jar)
+    SPARK_APPLICATION_JARS.getValueAndRemove(properties).split(",").map(RelativePath).foreach(jar)
+    SPARK_EXTRA_JARS.getValueAndRemove(properties).split(",").map(RelativePath).foreach(jar)
     proxyUser(properties.getOrDefault("proxyUser", ""))
     this.queue(darResource.yarnResource.queueName)
 
@@ -155,6 +158,8 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     this.redirectOutput(Redirect.PIPE)
     this.redirectErrorStream(true)
     this.env("spark.app.name", properties.getOrDefault("appName", "dwc" + request.creator))
+
+    properties.filter(i => (i._1.startsWith("spark.") || i._1.startsWith("hive.")) && StringUtils.isNotBlank(i._2)).foreach(i => conf(i._1, i._2))
 
   }
 

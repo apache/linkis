@@ -122,6 +122,8 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
     }
     var preCode = code
     //Pre-execution hook
+    info(s"yarn application id: ${sc.applicationId}")
+    engineExecutorContext.appendStdout(s"yarn application id: ${sc.applicationId}")
     SparkPreExecutionHook.getSparkPreExecutionHooks().foreach(hook => preCode = hook.callPreExecutionHook(engineExecutorContext,preCode))
     val _code = Kind.getRealCode(preCode)
     info(s"Ready to run code with kind $kind.")

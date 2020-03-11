@@ -18,7 +18,8 @@ package com.webank.wedatasphere.linkis.httpclient.authentication
 
 import java.util.concurrent.ConcurrentHashMap
 
-import com.ning.http.client.Response
+import org.apache.http.HttpEntity
+import org.apache.http.HttpResponse
 import com.webank.wedatasphere.linkis.httpclient.Client
 import com.webank.wedatasphere.linkis.httpclient.config.ClientConfig
 import com.webank.wedatasphere.linkis.httpclient.request.{Action, UserAction}
@@ -76,7 +77,7 @@ abstract class AbstractAuthenticationStrategy extends AuthenticationStrategy {
 
   protected def getAuthenticationAction(requestAction: Action, serverUrl: String): AuthenticationAction
 
-  def getAuthenticationResult(response: Response, requestAction: AuthenticationAction): AuthenticationResult
+  def getAuthenticationResult(response: HttpResponse, requestAction: AuthenticationAction): AuthenticationResult
 
   def isTimeout(authentication: Authentication): Boolean = System.currentTimeMillis() - authentication.getLastAccessTime >= sessionMaxAliveTime
 }

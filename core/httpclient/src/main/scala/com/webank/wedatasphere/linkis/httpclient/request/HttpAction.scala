@@ -22,7 +22,8 @@ package com.webank.wedatasphere.linkis.httpclient.request
 
 import java.util
 
-import com.ning.http.client.cookie.Cookie
+import org.apache.http.cookie.Cookie
+import org.apache.http.impl.cookie.BasicClientCookie
 
 /**
   * Created by enjoyyin on 2019/5/16.
@@ -36,9 +37,14 @@ trait HttpAction extends Action {
   def addHeader(key: String, value: String): Unit = headerParams.put(key, value)
 
   def getCookies: Array[Cookie] = cookies.toArray(new Array[Cookie](cookies.size()))
-  def addCookie(cookie: javax.servlet.http.Cookie): Unit =
-    cookies.add(Cookie.newValidCookie(cookie.getName, cookie.getValue, cookie.getDomain,
-      cookie.getValue, cookie.getPath, -1, cookie.getMaxAge, cookie.getSecure, true))
+  def addCookie(cookie: javax.servlet.http.Cookie): Unit = {
+    var newcookie:BasicClientCookie = new BasicClientCookie(cookie.getName, cookie.getValue)
+    newcookie.setDomain(cookie.getDomain)
+    newcookie.setPath(cookie.getPath)
+    newcookie.setSecure(true)
+    cookies.add(newcookie)
+  }
+
   def addCookie(cookie: Cookie): Unit = cookies.add(cookie)
 
   def getURL: String

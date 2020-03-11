@@ -18,8 +18,8 @@ package com.webank.wedatasphere.linkis.httpclient.dws.authentication
 
 import java.util
 
-import com.ning.http.client.Response
-import com.ning.http.client.cookie.Cookie
+import org.apache.http.cookie.Cookie
+import org.apache.http.HttpResponse
 import com.webank.wedatasphere.linkis.httpclient.authentication._
 import com.webank.wedatasphere.linkis.httpclient.dws.exception.AuthenticationFailedException
 import com.webank.wedatasphere.linkis.httpclient.request.{Action, UserAction}
@@ -51,7 +51,7 @@ class TokenAuthenticationStrategy(override protected val sessionMaxAliveTime: Lo
 
   override protected def getAuthenticationAction(requestAction: Action, serverUrl: String): AuthenticationAction = null
 
-  override def getAuthenticationResult(response: Response, requestAction: AuthenticationAction): AuthenticationResult = null
+  override def getAuthenticationResult(response: HttpResponse, requestAction: AuthenticationAction): AuthenticationResult = null
 
 }
 object TokenAuthenticationStrategy {

@@ -25,7 +25,8 @@ import java.net.ConnectException
 import java.util
 import java.util.concurrent.ScheduledFuture
 
-import com.ning.http.client.Response
+import org.apache.http.HttpEntity
+import org.apache.http.HttpResponse
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.httpclient.Client
 import com.webank.wedatasphere.linkis.httpclient.exception.DiscoveryException
@@ -129,7 +130,7 @@ abstract class AbstractDiscovery extends Discovery with Closeable with Logging {
 
   protected def getHeartbeatAction(serverUrl: String): HeartbeatAction
 
-  def getHeartbeatResult(response: Response, requestAction: HeartbeatAction): HeartbeatResult
+  def getHeartbeatResult(response: HttpResponse, requestAction: HeartbeatAction): HeartbeatResult
 
   override def addDiscoveryListener(discoveryListener: DiscoveryListener): Unit =
     discoveryListeners.add(discoveryListener)

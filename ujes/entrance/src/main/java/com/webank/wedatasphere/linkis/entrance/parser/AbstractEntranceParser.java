@@ -75,6 +75,11 @@ public abstract class AbstractEntranceParser extends EntranceParser {
                 && StringUtils.isNotEmpty(job.getErrorResponse().message())) {
                 ((RequestPersistTask) task).setErrDesc(job.getErrorResponse().message());
             }
+            //if job is successful, errCode and errDesc needs to be null
+            if (job.isSucceed()){
+                ((RequestPersistTask) task).setErrCode(null);
+                ((RequestPersistTask) task).setErrDesc(null);
+            }
         }else{
             logger.warn("not supported task type");
         }

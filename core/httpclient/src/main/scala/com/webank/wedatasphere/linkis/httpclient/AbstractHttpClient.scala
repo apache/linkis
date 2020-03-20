@@ -18,7 +18,6 @@ package com.webank.wedatasphere.linkis.httpclient
 
 import java.io.{File, InputStream}
 import java.util.concurrent.TimeUnit
-
 import com.ning.http.client.Response
 import com.ning.http.multipart.{FilePart, PartSource, StringPart}
 import com.webank.wedatasphere.linkis.common.conf.Configuration

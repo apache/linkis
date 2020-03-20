@@ -20,7 +20,7 @@
 
 package com.webank.wedatasphere.linkis.httpclient.authentication
 
-import com.ning.http.client.cookie.Cookie
+import org.apache.http.cookie.Cookie
 
 /**
   * Created by enjoyyin on 2019/5/16.

@@ -18,22 +18,35 @@ package com.webank.wedatasphere.linkis.httpclient.dws.response
 
 import java.util
 
-import com.ning.http.client.Response
-import com.ning.http.client.cookie.Cookie
+import org.apache.http.HttpResponse
+import org.apache.http.cookie.Cookie
 import com.webank.wedatasphere.linkis.httpclient.authentication.{Authentication, AuthenticationResult, HttpAuthentication}
 import com.webank.wedatasphere.linkis.httpclient.exception.HttpMessageParseException
-
+import org.apache.http.util.EntityUtils
 import scala.collection.JavaConversions
 
 /**
   * created by cooperyang on 2019/5/22.
   */
-class DWSAuthenticationResult(response: Response, serverUrl: String) extends AuthenticationResult with DWSResult {
+class DWSAuthenticationResult(response: HttpResponse, serverUrl: String) extends AuthenticationResult with DWSResult {
 
-  set(response.getResponseBody, response.getStatusCode, response.getUri.toString, response.getContentType)
-  override def getAuthentication: Authentication = if(getStatus == 0) new HttpAuthentication {
+    var entity = response.getEntity
+    var responseBody: String = null
+    if (entity != null) {
+      responseBody = EntityUtils.toString(entity, "UTF-8")
+    }
+    val statusCode: Int = response.getStatusLine.getStatusCode
+    val url: String = serverUrl
+    val contentType: String = entity.getContentType.getValue
+    
+    
+    set(responseBody, statusCode, url, contentType)
+
+    override def getAuthentication: Authentication = if(getStatus == 0) new HttpAuthentication {
     private var lastAccessTime: Long = System.currentTimeMillis
-    override def authToCookies: Array[Cookie] = JavaConversions.asScalaBuffer(response.getCookies).toArray
+   
+    //TODO fix by hui.zhu
+    override def authToCookies: Array[Cookie] = Array.empty
 
     override def authToHeaders: util.Map[String, String] = new util.HashMap[String, String]()
 

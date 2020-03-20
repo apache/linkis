@@ -20,7 +20,7 @@
 
 package com.webank.wedatasphere.linkis.httpclient.dws.discovery
 
-import com.ning.http.client.Response
+import org.apache.http.HttpResponse
 import com.webank.wedatasphere.linkis.httpclient.discovery.{AbstractDiscovery, HeartbeatAction, HeartbeatResult}
 import com.webank.wedatasphere.linkis.httpclient.dws.request.DWSHeartbeatAction
 import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSHeartbeatResult
@@ -43,7 +43,7 @@ class DWSGatewayDiscovery extends AbstractDiscovery {
 
   override protected def getHeartbeatAction(serverUrl: String): HeartbeatAction = new DWSHeartbeatAction(serverUrl)
 
-  override def getHeartbeatResult(response: Response, requestAction: HeartbeatAction): HeartbeatResult = requestAction match {
+  override def getHeartbeatResult(response: HttpResponse, requestAction: HeartbeatAction): HeartbeatResult = requestAction match {
     case h: DWSHeartbeatAction => new DWSHeartbeatResult(response, h.serverUrl)
   }
 }

@@ -28,7 +28,7 @@ import com.webank.wedatasphere.linkis.protocol.engine.RequestEngine
 import org.apache.commons.lang.StringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -36,9 +36,7 @@ import scala.collection.mutable.ArrayBuffer
  * Created by liangqilang on 2019-11-01 zhuhui@kanzhun.com
  * 
  */
-class ImpalaQLProcessBuilder extends JavaProcessEngineBuilder{
-
-  private val LOG = LoggerFactory.getLogger(getClass)
+class ImpalaQLProcessBuilder extends JavaProcessEngineBuilder with Logging{
 
   override protected def getExtractJavaOpts: String = {
      val javaOpts = new ArrayBuffer[String]()

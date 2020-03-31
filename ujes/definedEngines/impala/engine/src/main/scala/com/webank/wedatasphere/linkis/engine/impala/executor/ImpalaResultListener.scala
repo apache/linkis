@@ -12,6 +12,7 @@ import com.webank.wedatasphere.linkis.engine.impala.client.protocol.ExecStatus
 import com.webank.wedatasphere.linkis.engine.impala.client.ImpalaClient
 import com.webank.wedatasphere.linkis.engine.impala.client.thrift.ImpalaThriftClientOnHiveServer2
 import com.webank.wedatasphere.linkis.engine.impala.client.ImpalaResultSet
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import org.slf4j.LoggerFactory
 import com.webank.wedatasphere.linkis.engine.impala.exception.ImpalaQueryFailedException
 import com.webank.wedatasphere.linkis.engine.impala.common.ImpalaUtils
@@ -29,10 +30,8 @@ import org.apache.commons.lang.StringUtils
  * Created by liangqilang on 2019-11-01 zhuhui@kanzhun.com
  * 
  */
-class ImpalaResultListener extends ResultListener {
+class ImpalaResultListener extends ResultListener with Logging{
 
-  private val LOG = LoggerFactory.getLogger(getClass)
-  
   private var impalaJobID: String = _
 
   private var sqlProgress: Float = 0.0f
@@ -63,14 +62,14 @@ class ImpalaResultListener extends ResultListener {
   @Override def success(resultSet: ImpalaResultSet) {
     val startTime = System.currentTimeMillis()
     var columnsString: java.util.List[String] = resultSet.getColumns()
-    LOG.info(s"Time taken: ${ImpalaUtils.msDurationToString(System.currentTimeMillis() - startTime)}, begin to fetch results.")
+    info(s"Time taken: ${ImpalaUtils.msDurationToString(System.currentTimeMillis() - startTime)}, begin to fetch results.")
     if (null == columnsString) {
       throw ImpalaQueryFailedException(41005, "cannot get the schemas of column.")
     }
     import scala.collection.JavaConverters._
     val columns = columnsString.asScala.map(fieldSchema => Column(justFieldName(fieldSchema), null, null)).toArray[Column]
     val metaData = new TableMetaData(columns)
-    LOG.debug("Scala field Schemas are " + columns.mkString(" "))
+    debug("Scala field Schemas are " + columns.mkString(" "))
     val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
     resultSetWriter.addMetaData(metaData)
     val result = new util.ArrayList[String]()
@@ -80,7 +79,6 @@ class ImpalaResultListener extends ResultListener {
         val arr:Array[Object] = resultSet.getValues
         val arrAny:ArrayBuffer[Any] = new ArrayBuffer[Any]()
         if (arr.length != 0) arr foreach arrAny.add else for(i <-1 to columns.length) arrAny add ""
-        LOG.debug("TableRecord are " + arrAny.toArray.mkString(" "))
         resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
         rows += result.size
         result.clear()
@@ -91,7 +89,7 @@ class ImpalaResultListener extends ResultListener {
     engineExecutorContext.sendResultSet(resultSetWriter)
     IOUtils.closeQuietly(resultSetWriter)
     engineExecutorContext.appendStdout(s"Fetched  $columnCount col(s) : $rows row(s) in hive")
-    LOG.info(s"Fetched  $columnCount col(s) : $rows row(s) in impala")
+    info(s"Fetched  $columnCount col(s) : $rows row(s) in impala")
   }
 
   private def justFieldName(schemaName: String): String = {
@@ -100,7 +98,6 @@ class ImpalaResultListener extends ResultListener {
   }
 
   @Override def error(status: ExecStatus) {
-    LOG.error("impala query failed, reason: ", status.getErrorMessage())
     val errorException = ImpalaQueryFailedException(41004, "impala query failed:" + status.getErrorMessage())
     throw errorException
   }
@@ -113,6 +110,6 @@ class ImpalaResultListener extends ResultListener {
 
    
   @Override def message(message: java.util.List[String] ) {
-    message.foreach(e => LOG.info(e))
+    message.foreach(e => info(e))
   }
 }

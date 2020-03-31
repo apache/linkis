@@ -24,6 +24,7 @@ import com.webank.wedatasphere.linkis.resourcemanager.{LoadInstanceResource, Res
 import com.webank.wedatasphere.linkis.rpc.Sender
 import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.context.annotation.{Bean, Configuration}
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 
 
 /**
@@ -32,9 +33,7 @@ import org.springframework.context.annotation.{Bean, Configuration}
  * 
  */
 @Configuration
-class ImpalaEngineManagerSpringConfiguration {
-
-  private val logger:Logger = LoggerFactory.getLogger(getClass)
+class ImpalaEngineManagerSpringConfiguration extends Logging{
 
   @Bean(Array("resources"))
   def createResource(): ModuleInfo = {
@@ -50,6 +49,5 @@ class ImpalaEngineManagerSpringConfiguration {
   def createEngineHook(): Array[EngineHook] = {
     Array(new ConsoleConfigurationEngineHook, new JarLoaderEngineHook)// TODO
   }
-
 
 }

@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.engine.impala.executor
 
 import java.security.PrivilegedExceptionAction
 import java.util.concurrent.atomic.AtomicBoolean
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.engine.execute.{ EngineExecutor, EngineExecutorContext, SQLCodeParser }
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
@@ -65,9 +66,7 @@ import java.util.concurrent.LinkedBlockingQueue
  * Created by liangqilang on 2019-11-01 zhuhui@kanzhun.com
  * 
  */
-class ImpalaEngineExecutor(outputPrintLimit: Int, impalaClient: ImpalaClient, ugi: UserGroupInformation) extends EngineExecutor(outputPrintLimit, isSupportParallelism = false) with SingleTaskOperateSupport with SingleTaskInfoSupport {
-
-  private val LOG = LoggerFactory.getLogger(getClass)
+class ImpalaEngineExecutor(outputPrintLimit: Int, impalaClient: ImpalaClient, ugi: UserGroupInformation) extends EngineExecutor(outputPrintLimit, isSupportParallelism = false) with SingleTaskOperateSupport with SingleTaskInfoSupport with Logging{
 
   private val nameSuffix: String = "_ImpalaEngineExecutor"
 
@@ -89,7 +88,7 @@ class ImpalaEngineExecutor(outputPrintLimit: Int, impalaClient: ImpalaClient, ug
 
   override def init(): Unit = {
     transition(ExecutorState.Idle)
-    LOG.info(s"Ready to change engine state!")
+    info(s"Ready to change engine state!")
     setCodeParser(new SQLCodeParser)
     super.init()
   }
@@ -105,13 +104,12 @@ class ImpalaEngineExecutor(outputPrintLimit: Int, impalaClient: ImpalaClient, ug
     var realCode = code.trim()
     //拆行执行
     while (realCode.startsWith("\n")) realCode = StringUtils.substringAfter(realCode, "\n")
-    LOG.info(s"impala client begins to run hql code:\n ${realCode.trim}")
+    info(s"impala client begins to run iql code:\n ${realCode.trim}")
     if (realCode.trim.length > 500) {
       engineExecutorContext.appendStdout(s"$getName >> ${realCode.trim.substring(0, 500)} ...")
     } else engineExecutorContext.appendStdout(s"$getName >> ${realCode.trim}")
     val tokens = realCode.trim.split("""\s+""")
     this.engineExecutorContext = engineExecutorContext
-    LOG.debug("ugi is " + ugi.getUserName)
     var hasResult: Boolean = false
     var rows: Int = 0
     var columnCount: Int = 0
@@ -119,10 +117,7 @@ class ImpalaEngineExecutor(outputPrintLimit: Int, impalaClient: ImpalaClient, ug
     try {
       var impalaResultListener: ImpalaResultListener = new ImpalaResultListener()
       impalaResultListener.setEngineExecutorContext(engineExecutorContext)
-      if (null == impalaClient) {
-        LOG.error("null  impalaClient!!");
-      }
-      LOG.info(s"impala client begin submit job.")
+      info(s"impala client begin submit job.")
       singleSqlProgressList.add(impalaResultListener)
       impalaClient.execute(realCode, impalaResultListener);
     } catch {
@@ -130,10 +125,10 @@ class ImpalaEngineExecutor(outputPrintLimit: Int, impalaClient: ImpalaClient, ug
         clearCurrentProgress()
         singleCodeCompleted.set(true)
         singleSqlProgressList.clear()
-        LOG.error(s"query failed, reason:", t)
+        error(s"impala query failed, reason:", t)
         return ErrorExecuteResponse(t.getMessage, t)
     }
-    LOG.info(s"impala client finish job success")
+    info(s"impala client finish job success")
     clearCurrentProgress()
     singleCodeCompleted.set(true)
     singleSqlProgressList.clear()
@@ -164,7 +159,7 @@ class ImpalaEngineExecutor(outputPrintLimit: Int, impalaClient: ImpalaClient, ug
       var nowProgress: Float = 0.0F
       import scala.collection.JavaConversions._
       singleSqlProgressList.foreach(progress => {
-        LOG.info(s"impala totalProgress is $totalProgress totalSQLs: $totalSQLs, currentSQL: $currentSQL,currentBegin: $currentBegin _name: " + progress.getJobID() + " progress" + progress.getSqlProgress())
+        info(s"impala totalProgress is $totalProgress totalSQLs: $totalSQLs, currentSQL: $currentSQL,currentBegin: $currentBegin _name: " + progress.getJobID() + " progress" + progress.getSqlProgress())
         totalProgress += progress.getSqlProgress()
       })
       try {
@@ -173,7 +168,7 @@ class ImpalaEngineExecutor(outputPrintLimit: Int, impalaClient: ImpalaClient, ug
         case e: Exception => nowProgress = 0.0f
         case _            => nowProgress = 0.0f
       }
-      LOG.info(s"impala progress is $nowProgress")
+      info(s"impala progress is $nowProgress")
       if (nowProgress.isNaN) return 0.0f
       (nowProgress + currentBegin)
     } else 0.0f
@@ -192,16 +187,16 @@ class ImpalaEngineExecutor(outputPrintLimit: Int, impalaClient: ImpalaClient, ug
   override def log(): String = ""
 
   override def kill(): Boolean = {
-    LOG.info("impala begins to kill job")
+    info("impala begins to kill job")
     //逐个取消任务
     for (progress <- singleSqlProgressList) {
       Utils.tryCatch(impalaClient.cancel(progress.getJobID())) {
-        case e: Exception => logger.error("c;pse")
+        case e: Exception => error("c;pse")
       }
     }
     clearCurrentProgress()
     singleSqlProgressList.clear()
-    LOG.info("impala killed job successfully")
+    info("impala killed job successfully")
     true
 
   }

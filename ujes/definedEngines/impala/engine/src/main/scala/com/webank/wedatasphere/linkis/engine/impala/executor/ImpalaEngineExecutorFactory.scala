@@ -36,6 +36,7 @@ import com.webank.wedatasphere.linkis.engine.impala.client.factory.ImpalaClientF
 import com.webank.wedatasphere.linkis.engine.impala.client.protocol.ExecProgress
 import com.webank.wedatasphere.linkis.engine.impala.client.protocol.ExecStatus
 import com.webank.wedatasphere.linkis.engine.impala.client.ImpalaClient
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 
 
 /**
@@ -44,9 +45,8 @@ import com.webank.wedatasphere.linkis.engine.impala.client.ImpalaClient
  *  
  */
 @Component
-class ImpalaEngineExecutorFactory extends EngineExecutorFactory {
-  private val logger = LoggerFactory.getLogger(getClass)
-  
+class ImpalaEngineExecutorFactory extends EngineExecutorFactory with Logging{
+
   private val BDP_QUEUE_NAME: String = "wds.linkis.yarnqueue"
 
   override def createExecutor(options: JMap[String, String]): EngineExecutor = {
@@ -63,7 +63,7 @@ class ImpalaEngineExecutorFactory extends EngineExecutorFactory {
       .withHeartBeatsInSecond(2)
       .withSubmitQueue(queueName)
       .build();
-     logger.info("Success to create Impala client Executor," + impalaClient.getExecutionCount)
+     info("Success to create Impala client Executor," + impalaClient.getExecutionCount)
      new ImpalaEngineExecutor(5000, impalaClient, ugi)
   }
 

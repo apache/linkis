@@ -18,25 +18,23 @@ package com.webank.wedatasphere.linkis.engine.impala.log
 
 import java.util
 
-import org.slf4j.LoggerFactory
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 
 
 
-object LogHelper {
+object LogHelper extends Logging {
   private val logPattern = """Stage-(\d+)\s+map\s+=\s+(\d+)%,\s+reduce\s+=\s+(\d+)%""".r.unanchored
-  private val logger = LoggerFactory.getLogger(getClass)
   private val appidPattern = """The url to track the job: http://(.*)/proxy/(.*)/""".r.unanchored
   private val successPattern = """change state Running => Succeed""".r.unanchored
   private val failedPattern = """change state Running => Failed""".r.unanchored
  
   def checkPattern(log:String):java.util.List[ImpalaProgress] = {
-    //logger.info("checkPattern is starting")
     val impalaProgresses = new util.ArrayList[ImpalaProgress]()
     logPattern findAllIn log foreach {
       case logPattern(stage, map, reduce) => val impalaProgress =
         new ImpalaProgress(Integer.parseInt(stage), Integer.parseInt(map), Integer.parseInt(reduce))
         impalaProgresses.add(impalaProgress)
-      case _ => logger.warn(s"log $log pattern can not be matched")
+      case _ => warn(s"log $log pattern can not be matched")
     }
     impalaProgresses
   }
@@ -59,12 +57,5 @@ object LogHelper {
       case _ => false
     }
   }
-
-
-  def main(args: Array[String]): Unit = {
-    val log = "ssssx"
-    println(matchCompletedPattern(log))
-  }
-
 
 }

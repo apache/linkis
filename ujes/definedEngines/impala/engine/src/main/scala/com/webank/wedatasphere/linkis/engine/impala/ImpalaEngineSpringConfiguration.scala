@@ -20,6 +20,7 @@ import com.webank.wedatasphere.linkis.engine.execute.hook._
 import com.webank.wedatasphere.linkis.engine.execute.{CodeParser, EngineHook, SQLCodeParser}
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.{Bean, Configuration}
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 
 /**
  *
@@ -27,19 +28,18 @@ import org.springframework.context.annotation.{Bean, Configuration}
  * 
  */
 @Configuration
-class ImpalaEngineSpringConfiguration {
+class ImpalaEngineSpringConfiguration extends Logging{
 
-  private val LOG = LoggerFactory.getLogger(getClass)
 
   @Bean(Array("codeParser"))
   def generateCodeParser:CodeParser = {
-    LOG.info("code Parser is set in impala")
+    info("code Parser is set in impala")
     new SQLCodeParser()
   }
 
   @Bean(Array("engineHooks"))
   def generateEngineHooks:Array[EngineHook] = {
-    LOG.info("engineHooks are set in impala.")
+    info("engineHooks are set in impala.")
     Array(new ReleaseEngineHook, new MaxExecuteNumEngineHook)
   }
 }

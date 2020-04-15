@@ -17,8 +17,6 @@
 package com.webank.wedatasphere.linkis.common.utils;
 
 import org.apache.commons.lang.StringUtils;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -26,6 +24,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 public class DESUtil {
     private final static String DES = "DES";
@@ -46,7 +45,7 @@ public class DESUtil {
             }
         }
         byte[] bt = encrypt(data.getBytes(), key.getBytes());
-        String strs = new BASE64Encoder().encode(bt);
+        String strs = Base64.getEncoder().encodeToString(bt);
         return strs;
     }
 
@@ -68,8 +67,7 @@ public class DESUtil {
                 i++;
             }
         }
-        BASE64Decoder decoder = new BASE64Decoder();
-        byte[] buf = decoder.decodeBuffer(data);
+        byte[] buf = Base64.getDecoder().decode(data);
         byte[] bt = decrypt(buf, key.getBytes());
         return new String(bt);
     }

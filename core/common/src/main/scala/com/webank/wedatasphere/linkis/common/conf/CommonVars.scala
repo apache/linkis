@@ -27,6 +27,12 @@ case class CommonVars[T](key: String, defaultValue: T, value: T, description: St
     if(properties == null || !properties.containsKey(key) || properties.get(key) == null) getValue
     else BDPConfiguration.formatValue(defaultValue, Option(properties.get(key))).get
   }
+
+  def getValueAndRemove(properties: java.util.Map[String, String]): T = {
+    if(properties == null || !properties.containsKey(key) || properties.get(key) == null) getValue
+    else BDPConfiguration.formatValue(defaultValue, Option(properties.remove(key))).get
+  }
+
   def getValue(properties: Map[String, String]): T = getValue(mapAsJavaMap(properties))
   def acquireNew: T = BDPConfiguration.getOption(this).getOrElse(defaultValue)
 }

@@ -20,6 +20,7 @@ import java.text.NumberFormat
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
 
+import com.webank.wedatasphere.linkis.common.conf.DWCArgumentsParser
 import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration
 import com.webank.wedatasphere.linkis.engine.exception.{NoSupportEngineException, SparkEngineException}
@@ -122,6 +123,8 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
     }
     var preCode = code
     //Pre-execution hook
+    info(s"yarn application id: ${sc.applicationId}")
+    engineExecutorContext.appendStdout(s"yarn application id: ${sc.applicationId}")
     SparkPreExecutionHook.getSparkPreExecutionHooks().foreach(hook => preCode = hook.callPreExecutionHook(engineExecutorContext,preCode))
     val _code = Kind.getRealCode(preCode)
     info(s"Ready to run code with kind $kind.")
@@ -155,6 +158,9 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
     executeRequest match {
       case runTypeExecuteRequest: RunTypeExecuteRequest => engineExecutorContext.addProperty("runType", runTypeExecuteRequest.runType)
       case _ =>
+    }
+    if (DWCArgumentsParser.getDWCOptionMap.contains("user")) {
+      engineExecutorContext.addProperty("user", DWCArgumentsParser.getDWCOptionMap.get("user").get)
     }
     engineExecutorContext
   }

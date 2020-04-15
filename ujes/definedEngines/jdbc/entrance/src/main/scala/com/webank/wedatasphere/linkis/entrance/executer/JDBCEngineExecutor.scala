@@ -15,7 +15,7 @@
  */
 package com.webank.wedatasphere.linkis.entrance.executer
 
-import java.sql.{SQLFeatureNotSupportedException, Statement}
+import java.sql.{Connection, SQLFeatureNotSupportedException, Statement}
 import java.util
 
 import com.webank.wedatasphere.linkis.common.io.FsPath
@@ -43,6 +43,7 @@ class JDBCEngineExecutor(outputPrintLimit: Int, properties: util.HashMap[String,
   private val LOG = LoggerFactory.getLogger(getClass)
   private val connectionManager = ConnectionManager.getInstance()
   private var statement: Statement = null
+  private var connection:Connection = null
   private val name: String = Sender.getThisServiceInstance.getInstance
   private val persistEngine = new EntranceResultSetEngine()
   //execute line number，as alias and progress line
@@ -53,7 +54,7 @@ class JDBCEngineExecutor(outputPrintLimit: Int, properties: util.HashMap[String,
   protected def executeLine(code: String, storePath: String, alias: String): ExecuteResponse = {
     val realCode = code.trim()
     LOG.info(s"jdbc client begins to run jdbc code:\n ${realCode.trim}")
-    val connection = connectionManager.getConnection(properties)
+    connection = connectionManager.getConnection(properties)
     statement = connection.createStatement()
     LOG.info(s"create statement is:  $statement")
     val isResultSetAvailable = statement.execute(code)
@@ -202,6 +203,11 @@ class JDBCEngineExecutor(outputPrintLimit: Int, properties: util.HashMap[String,
             totalCodeLineNumber=0
             logger.error("JDBC query failed", t)
             return ErrorExecuteResponse("JDBC query failed", t)
+        }finally {
+          Utils.tryQuietly{
+            statement.close()
+            connection.close()
+          }
         }
       }
     }

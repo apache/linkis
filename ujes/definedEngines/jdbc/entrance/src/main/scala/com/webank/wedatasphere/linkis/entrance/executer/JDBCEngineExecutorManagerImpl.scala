@@ -38,7 +38,6 @@ class JDBCEngineExecutorManagerImpl(groupFactory: GroupFactory,
                                     entranceExecutorRulers: Array[EntranceExecutorRuler])
   extends EntranceExecutorManagerImpl(groupFactory,engineBuilder, engineRequester,
     engineSelector, engineManager, entranceExecutorRulers) with Logging{
-  private val JDBCEngineExecutor = new util.HashMap[String, JDBCEngineExecutor]()
   logger.info("JDBC EngineManager Registered")
   override protected def createExecutor(event: SchedulerEvent): EntranceEngine = event match {
     case job: JDBCEntranceJob =>
@@ -68,7 +67,6 @@ class JDBCEngineExecutorManagerImpl(groupFactory: GroupFactory,
       JDBCParams.put("jdbc.username",userName)
       JDBCParams.put("jdbc.password",password)
       if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(userName) && !StringUtils.isEmpty(password)) {
-        JDBCEngineExecutor.put(url + ":" + userName + ":" + password, new JDBCEngineExecutor(5000, JDBCParams))
         new JDBCEngineExecutor(5000, JDBCParams)
       }else {
         logger.error(s"jdbc url is $url, jdbc username is $userName")
@@ -94,32 +92,8 @@ class JDBCEngineExecutorManagerImpl(groupFactory: GroupFactory,
 
   private def findUsefulExecutor(job: Job): Option[Executor] = job match{
     case job:JDBCEntranceJob =>
-      val params: util.Map[String, Any] = job.getParams
-      logger.info("BEGAIN TO GET configuration：" +params.get("configuration"))
-      val tmpParams=params.get("configuration").asInstanceOf[util.Map[String, Any]].get("runtime").asInstanceOf[util.Map[String, Any]]
-      var url=""
-      var userName=""
-      var password =""
-      if(tmpParams != null){
-        if(tmpParams.get("jdbc.url") != null &&tmpParams.get("jdbc.username") != null&& tmpParams.get("jdbc.password") != null){
-          url = tmpParams.get("jdbc.url").toString
-          userName = tmpParams.get("jdbc.username").toString
-          password = tmpParams.get("jdbc.password").toString
-        }
-      }
-      //如果jobparams中没有jdbc连接,从configuration中获取
-      if(StringUtils.isEmpty(url)||StringUtils.isEmpty(userName)||StringUtils.isEmpty(password)){
-        val jdbcConfiguration = UserConfiguration.getCacheMap(RequestQueryAppConfigWithGlobal(job.getUser,job.getCreator,"jdbc",true))
-        url = jdbcConfiguration.get("jdbc.url")
-        userName = jdbcConfiguration.get("jdbc.username")
-        password = jdbcConfiguration.get("jdbc.password")
-      }
-      val key = url + ":" + userName + ":" + password
-      if (JDBCEngineExecutor.containsKey(key)){
-        Some(JDBCEngineExecutor.get(key))
-      }else{
-        None
-      }
+      Some(createExecutor(job))
+    case _ => None
   }
 
   override def getById(id: Long): Option[Executor] = ???

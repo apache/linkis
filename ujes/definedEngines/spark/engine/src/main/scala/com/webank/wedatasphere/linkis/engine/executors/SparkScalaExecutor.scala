@@ -17,6 +17,7 @@
 package com.webank.wedatasphere.linkis.engine.executors
 
 import java.io.{File, IOException}
+import java.net.URLClassLoader
 
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration._
@@ -34,6 +35,7 @@ import org.apache.spark.util.SparkUtils
 import org.apache.spark.{SparkConf, SparkContext}
 
 import _root_.scala.tools.nsc.GenericRunnerSettings
+import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
 import scala.tools.nsc.interpreter.{ILoop, JPrintWriter, Results}
 
@@ -205,10 +207,24 @@ class SparkScalaExecutor(val sparkConf: SparkConf) extends SparkExecutor{
     } else {
       sparkJars.map(_.split(",")).map(_.filter(_.nonEmpty)).toSeq.flatten
     }
+
+     // get root classpath
+     val cl = getClass.getClassLoader
+     var rootClassPath = new ArrayBuffer[String]
+     if (cl.isInstanceOf[URLClassLoader]) {
+       val urlLoader = cl.asInstanceOf[URLClassLoader]
+       for (url <- urlLoader.getURLs) {
+         if (url.getProtocol == "file") {
+           rootClassPath += url.getFile
+         }
+       }
+       rootClassPath.map(new File(_).getAbsolutePath)
+     }
+
     val classpathJars = System.getProperty("java.class.path").split(":").filter(_.endsWith(".jar"))
     //.filterNot(f=> f.contains("spark-") || f.contains("datanucleus"))
     val classpath = jars.mkString(File.pathSeparator) + File.pathSeparator +
-      classpathJars.mkString(File.pathSeparator)
+      classpathJars.mkString(File.pathSeparator) + File.pathSeparator + rootClassPath.mkString(File.pathSeparator)
     debug("Spark shell add jars: " + classpath)
     settings.processArguments(List("-Yrepl-class-based",
       "-Yrepl-outdir", s"${outputDir.getAbsolutePath}","-classpath", classpath), true)

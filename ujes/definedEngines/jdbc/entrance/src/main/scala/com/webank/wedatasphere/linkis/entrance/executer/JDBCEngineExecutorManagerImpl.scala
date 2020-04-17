@@ -19,6 +19,7 @@ import java.util
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.entrance.cache.UserConfiguration
+import com.webank.wedatasphere.linkis.entrance.conf.JDBCConfiguration
 import com.webank.wedatasphere.linkis.entrance.exception.JDBCParamsIllegalException
 import com.webank.wedatasphere.linkis.entrance.execute._
 import com.webank.wedatasphere.linkis.entrance.execute.impl.EntranceExecutorManagerImpl
@@ -61,13 +62,13 @@ class JDBCEngineExecutorManagerImpl(groupFactory: GroupFactory,
         val jdbcConfiguration = UserConfiguration.getCacheMap(RequestQueryAppConfigWithGlobal(job.getUser,job.getCreator,"jdbc",true))
         url = jdbcConfiguration.get("jdbc.url")
         userName = jdbcConfiguration.get("jdbc.username")
-        password = jdbcConfiguration.get("jdbc.password")
+        password = if (jdbcConfiguration.get("jdbc.password") == null) "" else jdbcConfiguration.get("jdbc.password")
       }
       JDBCParams.put("jdbc.url",url)
       JDBCParams.put("jdbc.username",userName)
       JDBCParams.put("jdbc.password",password)
-      if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(userName) && !StringUtils.isEmpty(password)) {
-        new JDBCEngineExecutor(5000, JDBCParams)
+      if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(userName)) {
+        new JDBCEngineExecutor(JDBCConfiguration.ENGINE_DEFAULT_LIMIT.getValue, JDBCParams)
       }else {
         logger.error(s"jdbc url is $url, jdbc username is $userName")
         throw JDBCParamsIllegalException("jdbc url or username or password may be null at least")

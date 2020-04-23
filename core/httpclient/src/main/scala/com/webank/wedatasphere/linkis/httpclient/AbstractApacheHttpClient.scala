@@ -145,7 +145,7 @@ abstract class AbstractApacheHttpClient(clientConfig: ClientConfig, clientName: 
         realURL = getRequestUrl(requestAction.getURL, requestAction.getRequestBody)
     }
     
-    if(clientConfig.getAuthenticationStrategy != null) clientConfig.getAuthenticationStrategy.login(requestAction, realURL) match {
+    if(clientConfig.getAuthenticationStrategy != null) clientConfig.getAuthenticationStrategy.login(requestAction, realURL.replaceAll(requestAction.getURL, "")) match {
       case authAction: HttpAuthentication =>
         val cookies = authAction.authToCookies
         if(cookies != null && cookies.nonEmpty) cookies.foreach(requestAction.addCookie)

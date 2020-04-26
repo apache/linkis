@@ -17,6 +17,7 @@
 package com.webank.wedatasphere.linkis.resourcemanager.utils
 
 import java.net.ConnectException
+import java.security.PrivilegedExceptionAction
 
 import com.fasterxml.jackson.core.JsonParseException
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
@@ -27,6 +28,9 @@ import com.webank.wedatasphere.linkis.resourcemanager.exception.{RMErrorExceptio
 import dispatch.{Http, as}
 import org.apache.commons.lang.StringUtils
 import org.apache.hadoop.fs.Path
+import org.apache.hadoop.security.UserGroupInformation
+import org.apache.hadoop.yarn.api.records.QueueACL
+import org.apache.hadoop.yarn.client.api.YarnClient
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.util.RMHAUtils
 import org.json4s.JsonAST._
@@ -43,17 +47,23 @@ object YarnUtil extends Logging{
 
   private implicit val executor = ExecutionContext.global
   private var yarnConf: YarnConfiguration = _
+  private var yarnClient:YarnClient = _
   private var rm_web_address: String = CommonVars("wds.linkis.yarn.rm.web.address", "").getValue
   private var hadoop_version:String = "2.7.2"
   implicit val format = DefaultFormats
 
   def init() = {
+    yarnConf = new YarnConfiguration()
+    yarnConf.addResource(new Path(hadoopConfDir, YarnConfiguration.CORE_SITE_CONFIGURATION_FILE))
+    yarnConf.addResource(new Path(hadoopConfDir, YarnConfiguration.YARN_SITE_CONFIGURATION_FILE))
     if(StringUtils.isBlank(this.rm_web_address)){
-      yarnConf = new YarnConfiguration()
-      yarnConf.addResource(new Path(hadoopConfDir, YarnConfiguration.CORE_SITE_CONFIGURATION_FILE))
-      yarnConf.addResource(new Path(hadoopConfDir, YarnConfiguration.YARN_SITE_CONFIGURATION_FILE))
       reloadRMWebAddress()
     }
+    Utils.tryQuietly({
+      yarnClient = YarnClient.createYarnClient();
+      yarnClient.init(yarnConf)
+      yarnClient.start()
+    })
     info(s"This yarn  rm web address is:${this.rm_web_address}")
     Utils.tryAndErrorMsg(getHadoopVersion())("Failed to get HadoopVersion")
   }
@@ -258,5 +268,27 @@ object YarnUtil extends Logging{
   }
 
 
+  def getOwnQueues(userName: String): Array[String] = Utils.tryCatch {
+    val queuePrefix = "root."
+    UserGroupInformation.createRemoteUser(userName).doAs(new PrivilegedExceptionAction[Array[String]] {
+      override def run(): Array[String] = {
+        yarnClient.getQueueAclsInfo
+          .filter(info => info.getUserAcls.contains(QueueACL.ADMINISTER_QUEUE) || info.getUserAcls.contains(QueueACL.SUBMIT_APPLICATIONS))
+          .map(info => {
+            val queueName = if (info.getQueueName.startsWith(queuePrefix)) {
+              info.getQueueName.substring(queuePrefix.length)
+            } else {
+              info.getQueueName
+            }
+            queueName
+          }).toArray
+      }
+    })
+  } {
+    t: Throwable => {
+      warn("get own queues error, msg: {}", t)
+      Array()
+    }
+  }
 }
 

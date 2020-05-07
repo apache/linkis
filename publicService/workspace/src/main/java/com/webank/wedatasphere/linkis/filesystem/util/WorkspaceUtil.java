@@ -102,7 +102,7 @@ public class WorkspaceUtil {
     public static void fileAndDirNameSpecialCharCheck(String path) throws WorkSpaceException {
         String name = new File(path).getName();
         LOGGER.info(path);
-        String specialRegEx = "[ _`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]|\n|\r|\t";
+        String specialRegEx = "[ _`~!@#$%^&*()+=|{}':;',\\[\\]<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]|\n|\r|\t";
         Pattern specialPattern = Pattern.compile(specialRegEx);
         if(specialPattern.matcher(name).find()){
             throw new WorkSpaceException("the path exist special char");

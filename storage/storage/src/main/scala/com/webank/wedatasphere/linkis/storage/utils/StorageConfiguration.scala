@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.storage.utils
 
-import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars, Configuration}
+import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars}
 
 /**
   * Created by johnnwang on 10/15/18.
@@ -29,7 +29,7 @@ object StorageConfiguration {
 
   val HDFS_ROOT_USER = CommonVars("wds.linkis.storage.hdfs.root.user", "hadoop")
 
-  val LOCAL_ROOT_USER = CommonVars("wds.linkis.storage.hdfs.root.user", "root")
+  val LOCAL_ROOT_USER = CommonVars("wds.linkis.storage.local.root.user", "root")
 
   val STORAGE_USER_GROUP = CommonVars("wds.linkis.storage.fileSystem.group", "bdap")
 

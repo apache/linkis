@@ -356,8 +356,10 @@ public class FsRestfulApi implements FsRestfulRemote {
             } else {
                   response.addHeader("Content-Type", "multipart/form-data");
             }
+            String downloadFileName = new File(fsPath.getPath()).getName();
+            WorkspaceUtil.downloadResponseHeadCheck(downloadFileName);
             response.addHeader("Content-Disposition", "attachment;filename="
-                    + new File(fsPath.getPath()).getName());
+                    + downloadFileName);
             outputStream = response.getOutputStream();
             while ((bytesRead = inputStream.read(buffer, 0, 1024)) != -1) {
                 outputStream.write(buffer, 0, bytesRead);
@@ -783,8 +785,10 @@ public class FsRestfulApi implements FsRestfulRemote {
             } else {
                 throw new WorkSpaceException("unsupported type");
             }
+            String downloadFileName = new String(outputFileName.getBytes("UTF-8"), "ISO8859-1") + "." + outputFileType;
+            WorkspaceUtil.downloadResponseHeadCheck(downloadFileName);
             response.addHeader("Content-Disposition", "attachment;filename="
-                    + new String(outputFileName.getBytes("UTF-8"), "ISO8859-1") + "." + outputFileType);
+                    + downloadFileName);
 
             outputStream = response.getOutputStream();
             byte[] buffer = new byte[1024];

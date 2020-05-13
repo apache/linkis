@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.filesystem.util;
 
-import com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration;
 import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException;
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -106,6 +104,12 @@ public class WorkspaceUtil {
         Pattern specialPattern = Pattern.compile(specialRegEx);
         if(specialPattern.matcher(name).find()){
             throw new WorkSpaceException("the path exist special char");
+        }
+    }
+
+    public static void downloadResponseHeadCheck(String str) throws WorkSpaceException {
+        if(str.contains("\n") || str.contains("\r")){
+            throw new WorkSpaceException(String.format("illegal str %s",str));
         }
     }
 

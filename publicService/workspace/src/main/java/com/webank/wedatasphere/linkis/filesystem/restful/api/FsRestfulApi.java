@@ -363,11 +363,12 @@ public class FsRestfulApi implements FsRestfulRemote {
                 outputStream.write(buffer, 0, bytesRead);
             }
         } catch (Exception e) {
+            LOGGER.error("download error(下载出错)：",e);
             response.reset();
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/plain; charset=utf-8");
             PrintWriter writer = response.getWriter();
-            writer.append("error(错误):" + e.getMessage());
+            writer.append("download error(下载出错)");
             writer.flush();
             writer.close();
         } finally {
@@ -443,12 +444,12 @@ public class FsRestfulApi implements FsRestfulRemote {
                  } 
             }
         } catch (Exception e) {
-                LOGGER.error("output fail", e);
+            LOGGER.error("resultset download error(结果集下载出错)：", e);
             response.reset();
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/plain; charset=utf-8");
             PrintWriter writer = response.getWriter();
-            writer.append("error(错误):" + e.getMessage());
+            writer.append("resultset download error(结果集下载出错)");
             writer.flush();
             writer.close();
         } finally {
@@ -792,12 +793,12 @@ public class FsRestfulApi implements FsRestfulRemote {
                 outputStream.write(buffer, 0, bytesRead);
             }
         } catch (Exception e) {
-            LOGGER.error("output fail", e);
+            LOGGER.error("resultset to excel/csv error(结果集导出出错)：", e);
             response.reset();
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/plain; charset=utf-8");
             PrintWriter writer = response.getWriter();
-            writer.append("error(错误):" + e.getMessage());
+            writer.append("resultset to excel/csv error(结果集导出出错)");
             writer.flush();
             writer.close();
         } finally {

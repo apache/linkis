@@ -16,7 +16,9 @@
 
 package com.webank.wedatasphere.linkis.filesystem.util;
 
+import static com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration.*;
 import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException;
+import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -70,19 +72,19 @@ public class WorkspaceUtil {
 
     //TODO update pathSafeCheck rule
     public static void pathSafeCheck(String path,String userName) throws WorkSpaceException {
-        /*LOGGER.info("start safe check path params..");
+        LOGGER.info("start safe check path params..");
         LOGGER.info(path);
         String userLocalRootPath = null;
-        if (WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue().toString().endsWith(File.separator)){
-            userLocalRootPath = WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue() + userName;
+        if (LOCAL_USER_ROOT_PATH.getValue().toString().endsWith(File.separator)){
+            userLocalRootPath = LOCAL_USER_ROOT_PATH.getValue() + userName;
         }else{
-            userLocalRootPath = WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue() + File.separator + userName;
+            userLocalRootPath = LOCAL_USER_ROOT_PATH.getValue() + File.separator + userName;
         }
         String userHdfsRootPath = null;
-        if (WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue().toString().endsWith(File.separator)){
-            userHdfsRootPath = WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue() + userName + WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_SUFFIX.getValue();
+        if (HDFS_USER_ROOT_PATH_PREFIX.getValue().toString().endsWith(File.separator)){
+            userHdfsRootPath = HDFS_USER_ROOT_PATH_PREFIX.getValue() + userName + HDFS_USER_ROOT_PATH_SUFFIX.getValue();
         }else{
-            userHdfsRootPath = WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue() + File.separator + userName + WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_SUFFIX.getValue();
+            userHdfsRootPath = HDFS_USER_ROOT_PATH_PREFIX.getValue() + File.separator + userName + HDFS_USER_ROOT_PATH_SUFFIX.getValue();
         }
         LOGGER.info(userLocalRootPath);
         LOGGER.info(userHdfsRootPath);
@@ -94,7 +96,7 @@ public class WorkspaceUtil {
         }
         if(!path.contains(userLocalRootPath) && !path.contains(userHdfsRootPath)){
             throw new WorkSpaceException("The path needs to be within the user's own workspace path");
-        }*/
+        }
     }
 
     public static void fileAndDirNameSpecialCharCheck(String path) throws WorkSpaceException {

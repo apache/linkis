@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
@@ -74,20 +75,12 @@ public class WorkspaceUtil {
     public static void pathSafeCheck(String path,String userName) throws WorkSpaceException {
         LOGGER.info("start safe check path params..");
         LOGGER.info(path);
-        String userLocalRootPath = null;
-        if (LOCAL_USER_ROOT_PATH.getValue().toString().endsWith(File.separator)){
-            userLocalRootPath = LOCAL_USER_ROOT_PATH.getValue() + userName;
-        }else{
-            userLocalRootPath = LOCAL_USER_ROOT_PATH.getValue() + File.separator + userName;
-        }
-        String userHdfsRootPath = null;
-        if (HDFS_USER_ROOT_PATH_PREFIX.getValue().toString().endsWith(File.separator)){
-            userHdfsRootPath = HDFS_USER_ROOT_PATH_PREFIX.getValue() + userName + HDFS_USER_ROOT_PATH_SUFFIX.getValue();
-        }else{
-            userHdfsRootPath = HDFS_USER_ROOT_PATH_PREFIX.getValue() + File.separator + userName + HDFS_USER_ROOT_PATH_SUFFIX.getValue();
-        }
+        String userLocalRootPath = suffixTuning(LOCAL_USER_ROOT_PATH.getValue().toString()) + userName;
+        String userHdfsRootPath = suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue().toString()) + userName
+                + HDFS_USER_ROOT_PATH_SUFFIX.getValue().toString();
         LOGGER.info(userLocalRootPath);
         LOGGER.info(userHdfsRootPath);
+        userHdfsRootPath = StringUtils.trimTrailingCharacter(userHdfsRootPath,File.separatorChar);
         if(!path.contains(StorageUtils.FILE_SCHEMA()) && !path.contains(StorageUtils.HDFS_SCHEMA())){
             throw new WorkSpaceException("the path should contain schema");
         }
@@ -97,6 +90,18 @@ public class WorkspaceUtil {
         if(!path.contains(userLocalRootPath) && !path.contains(userHdfsRootPath)){
             throw new WorkSpaceException("The path needs to be within the user's own workspace path");
         }
+    }
+
+    public static Function<String, String> suffixTuningFunction = p -> {
+        if (p.endsWith(File.separator))
+            return p;
+         else
+            return p + File.separator;
+
+    };
+
+    public static String suffixTuning(String path) {
+        return suffixTuningFunction.apply(path);
     }
 
     public static void fileAndDirNameSpecialCharCheck(String path) throws WorkSpaceException {

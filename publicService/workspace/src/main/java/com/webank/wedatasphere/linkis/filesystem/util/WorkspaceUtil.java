@@ -73,6 +73,7 @@ public class WorkspaceUtil {
 
     //TODO update pathSafeCheck rule
     public static void pathSafeCheck(String path,String userName) throws WorkSpaceException {
+        if(!FILESYSTEM_PATH_CHECK_TRIGGER.getValue()) return;
         LOGGER.info("start safe check path params..");
         LOGGER.info(path);
         String userLocalRootPath = suffixTuning(LOCAL_USER_ROOT_PATH.getValue().toString()) + userName;

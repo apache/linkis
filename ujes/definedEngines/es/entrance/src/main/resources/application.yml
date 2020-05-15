@@ -1,0 +1,24 @@
+server:
+  port: 10009
+spring:
+  application:
+    name: esEntrance
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:20303/eureka/
+  instance:
+    metadata-map:
+      test: enjoyyin
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info
+logging:
+  config: classpath:log4j2.xml
+#    register-with-eureka: false
+#    fetch-registry: false

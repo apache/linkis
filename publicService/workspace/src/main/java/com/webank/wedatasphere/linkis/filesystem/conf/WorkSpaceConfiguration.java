@@ -30,5 +30,6 @@ public class WorkSpaceConfiguration {
     public static final CommonVars<Boolean> RESULT_SET_DOWNLOAD_IS_LIMIT = CommonVars$.MODULE$.apply("wds.linkis.workspace.resultset.download.is.limit",true);
     public static final CommonVars<Integer> RESULT_SET_DOWNLOAD_MAX_SIZE_CSV = CommonVars$.MODULE$.apply("wds.linkis.workspace.resultset.download.maxsize.csv",5000);
     public static final CommonVars<Integer> RESULT_SET_DOWNLOAD_MAX_SIZE_EXCEL = CommonVars$.MODULE$.apply("wds.linkis.workspace.resultset.download.maxsize.excel",5000);
+    public static final CommonVars<Boolean> FILESYSTEM_PATH_CHECK_TRIGGER = CommonVars$.MODULE$.apply("wds.linkis.workspace.filesystem.path.check", false);
 
 }

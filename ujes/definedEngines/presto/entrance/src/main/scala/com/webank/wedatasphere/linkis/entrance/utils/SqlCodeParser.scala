@@ -8,7 +8,6 @@ import scala.collection.mutable.ArrayBuffer
 /**
  * Created by yogafire on 2020/5/11
  */
-//FIXME 能不能把parser统一到common包里？
 object SqlCodeParser {
   val separator = ";"
   val defaultLimit: Int = PrestoConfiguration.PRESTO_DEFAULT_LIMIT.getValue

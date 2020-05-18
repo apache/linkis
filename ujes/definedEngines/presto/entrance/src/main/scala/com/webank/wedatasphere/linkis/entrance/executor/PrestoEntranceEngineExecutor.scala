@@ -4,11 +4,12 @@ import java.sql.SQLException
 import java.util.Objects
 
 import com.facebook.presto.client.{ClientSession, QueryStatusInfo, StatementClient, StatementClientFactory}
+import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.entrance.configuration.PrestoConfiguration
-import com.webank.wedatasphere.linkis.entrance.exception.PrestoException
+import com.webank.wedatasphere.linkis.entrance.exception.PrestoStateInvalidException
 import com.webank.wedatasphere.linkis.entrance.execute.{EngineExecuteAsynReturn, EntranceEngine, EntranceJob, StorePathExecuteRequest}
 import com.webank.wedatasphere.linkis.entrance.persistence.EntranceResultSetEngine
 import com.webank.wedatasphere.linkis.entrance.utils.SqlCodeParser
@@ -35,6 +36,8 @@ class PrestoEntranceEngineExecutor(job: EntranceJob, clientSession: ClientSessio
   //total line number
   private var totalCodeLineNumber = 0
 
+  override def getModuleInstance: ServiceInstance = ServiceInstance("prestoEngine", "")
+
   override def execute(executeRequest: ExecuteRequest): ExecuteResponse = {
     if (StringUtils.isEmpty(executeRequest.code)) {
       return IncompleteExecuteResponse("execute codes can not be empty)")
@@ -56,8 +59,6 @@ class PrestoEntranceEngineExecutor(job: EntranceJob, clientSession: ClientSessio
               persistEngine.persistResultSet(job, aliasOutputExecuteResponse)
             case SuccessExecuteResponse() =>
               info(s"sql execute successfully : $code")
-            case IncompleteExecuteResponse(_) =>
-              error(s"sql execute failed : $code")
             case _ =>
               warn("no matching exception")
           }
@@ -81,6 +82,7 @@ class PrestoEntranceEngineExecutor(job: EntranceJob, clientSession: ClientSessio
       })
     }
     totalCodeLineNumber = 0
+    job.setResultSize(0)
     SuccessExecuteResponse()
   }
 
@@ -102,7 +104,6 @@ class PrestoEntranceEngineExecutor(job: EntranceJob, clientSession: ClientSessio
         }
       }
     }
-    //FIXME 客户端异常校验
     verifyServerError(statement)
     response
   }
@@ -122,7 +123,6 @@ class PrestoEntranceEngineExecutor(job: EntranceJob, clientSession: ClientSessio
     val totalSplits = statement.getStats.getTotalSplits
     val runningSplits = statement.getStats.getRunningSplits
     val completedSplits = statement.getStats.getCompletedSplits
-    //FIXME presto有没有failed splits？
     Array[JobProgressInfo](JobProgressInfo(statement.currentStatusInfo().getId, totalSplits, runningSplits, 0, completedSplits))
   }
 
@@ -178,7 +178,7 @@ class PrestoEntranceEngineExecutor(job: EntranceJob, clientSession: ClientSessio
     AliasOutputExecuteResponse(alias, output)
   }
 
-  // check server error
+  // check presto error
   def verifyServerError(statement: StatementClient): Unit = {
     if (statement.isFinished) {
       val info: QueryStatusInfo = statement.finalStatusInfo()
@@ -192,7 +192,7 @@ class PrestoEntranceEngineExecutor(job: EntranceJob, clientSession: ClientSessio
         throw new SQLException(message, error.getSqlState, error.getErrorCode, cause)
       }
     } else {
-      throw new PrestoException("Presto status error, execute is not finished.")
+      throw PrestoStateInvalidException("Presto status error. execute is not finished.")
     }
   }
 }

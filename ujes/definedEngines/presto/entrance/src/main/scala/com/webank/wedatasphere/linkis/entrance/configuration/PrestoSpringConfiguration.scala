@@ -3,7 +3,6 @@ package com.webank.wedatasphere.linkis.entrance.configuration
 import java.util.concurrent.TimeUnit
 
 import com.facebook.presto.client.SocketChannelSocketFactory
-import com.webank.wedatasphere.linkis.entrance.EntranceParser
 import com.webank.wedatasphere.linkis.entrance.annotation._
 import com.webank.wedatasphere.linkis.entrance.configuration.PrestoConfiguration._
 import com.webank.wedatasphere.linkis.entrance.execute._
@@ -29,11 +28,6 @@ class PrestoSpringConfiguration {
                                       @Autowired entranceExecutorRulers: Array[EntranceExecutorRuler]): EntranceExecutorManager =
     new PrestoEntranceEngineExecutorManager(groupFactory, engineBuilder, engineRequester, engineSelector, engineManager, entranceExecutorRulers)
 
-  @EntranceParserBeanAnnotation
-  def generateEntranceParser(): EntranceParser = {
-    new PrestoEntranceParser()
-  }
-
   @Bean
   def okHttpClient(): OkHttpClient = {
     val builder = new OkHttpClient.Builder
@@ -45,7 +39,7 @@ class PrestoSpringConfiguration {
         chain.proceed(chain.request().newBuilder()
           .header("Authorization", Credentials.basic(PRESTO_USER_NAME.getValue, PRESTO_PASSWORD.getValue)).build())
       })
-      //FIXME build https config
+      //TODO build https config
     }
     builder.build
   }

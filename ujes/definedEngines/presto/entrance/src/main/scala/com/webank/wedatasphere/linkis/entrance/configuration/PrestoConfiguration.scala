@@ -19,7 +19,7 @@ object PrestoConfiguration {
   val PRESTO_PASSWORD = CommonVars("wds.linkis.presto.password", "")
   val PRESTO_CATALOG = CommonVars("wds.linkis.presto.catalog", "system")
   val PRESTO_SCHEMA = CommonVars("wds.linkis.presto.schema", "")
-  val PRESTO_RESOURCE = CommonVars("wds.linkis.presto.resource", "global")
+  val PRESTO_RESOURCE = CommonVars("wds.linkis.presto.source", "global")
   val PRESTO_RESULTS_MAX_CACHE = CommonVars("wds.linkis.presto.resultSet.cache.max", new ByteType("512k"))
 
 

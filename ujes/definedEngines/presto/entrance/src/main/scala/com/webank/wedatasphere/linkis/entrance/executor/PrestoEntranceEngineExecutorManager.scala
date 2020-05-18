@@ -3,7 +3,7 @@ package com.webank.wedatasphere.linkis.entrance.executor
 import java.net.URI
 import java.util
 import java.util.concurrent.TimeUnit
-import java.util.{Locale, Optional, TimeZone}
+import java.util.{Collections, Locale, Optional, TimeZone}
 
 import com.facebook.presto.client.ClientSession
 import com.facebook.presto.spi.security.SelectedRole
@@ -19,7 +19,7 @@ import okhttp3.OkHttpClient
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
 
 
@@ -52,33 +52,36 @@ class PrestoEntranceEngineExecutorManager(groupFactory: GroupFactory,
 
   override protected def createExecutor(schedulerEvent: SchedulerEvent): EntranceEngine = schedulerEvent match {
     case job: EntranceJob =>
-      //FIXME 校验resourcemanager
+      //TODO check resourcemanager
 
-      //FIXME 之后替换为获取datasource
-      val runTimeParams = job.getParams.get("configuration").asInstanceOf[util.Map[String, Any]]
+      //TODO replace datasource config
+      val startupConf = job.getParams.get("configuration").asInstanceOf[util.Map[String, Any]]
+        .get("startup").asInstanceOf[util.Map[String, String]]
+      val runtimeConf = job.getParams.get("configuration").asInstanceOf[util.Map[String, Any]]
         .get("runtime").asInstanceOf[util.Map[String, String]]
-      val clientSession = getClientSession(runTimeParams)
+      val clientSession = getClientSession(startupConf, runtimeConf)
       new PrestoEntranceEngineExecutor(job, clientSession, okHttpClient)
   }
 
-  def getClientSession(config: util.Map[String, String]): ClientSession = {
-    val httpUri: URI = URI.create(getFinalConfig(config, PRESTO_URL))
-    val user: String = PRESTO_USER_NAME.getValue
-    val clientInfo: String = getFinalConfig(config, PRESTO_RESOURCE)
-    val catalog: String = getFinalConfig(config, PRESTO_CATALOG)
-    val schema: String = getFinalConfig(config, PRESTO_SCHEMA)
-    val properties: java.util.Map[String, String] = config.filter(entry => StringUtils.isNotEmpty(entry._1) && entry._1.trim.startsWith("wds.linkis.presto"))
+  def getClientSession(startupConf: util.Map[String, String], runtimeConf: util.Map[String, String]): ClientSession = {
+    val httpUri: URI = URI.create(getFinalConfig(startupConf, PRESTO_URL))
+    val user: String = getFinalConfig(startupConf, PRESTO_USER_NAME)
+    val source: String = getFinalConfig(startupConf, PRESTO_RESOURCE)
+    val catalog: String = getFinalConfig(startupConf, PRESTO_CATALOG)
+    val schema: String = getFinalConfig(startupConf, PRESTO_SCHEMA)
 
+    val properties: util.Map[String, String] = runtimeConf
+
+    val clientInfo: String = "Linkis"
     val transactionId: String = null
-    val traceToken: java.util.Optional[String] = Optional.empty()
-    val source: String = "linkis"
-    val clientTags: java.util.Set[String] = Set[String]()
+    val traceToken: util.Optional[String] = Optional.empty()
+    val clientTags: util.Set[String] = Collections.emptySet()
     val timeZonId = TimeZone.getDefault.getID
     val locale: Locale = Locale.getDefault
-    val resourceEstimates: java.util.Map[String, String] = new util.HashMap[String, String](1, 1)
-    val preparedStatements: java.util.Map[String, String] = new util.HashMap[String, String](1, 1)
-    val roles: java.util.Map[String, SelectedRole] = new util.HashMap[String, SelectedRole](1, 1)
-    val extraCredentials: java.util.Map[String, String] = new util.HashMap[String, String](1, 1)
+    val resourceEstimates: util.Map[String, String] = Collections.emptyMap()
+    val preparedStatements: util.Map[String, String] = Collections.emptyMap()
+    val roles: java.util.Map[String, SelectedRole] = Collections.emptyMap()
+    val extraCredentials: util.Map[String, String] = Collections.emptyMap()
     //0不设限
     val clientRequestTimeout: io.airlift.units.Duration = new io.airlift.units.Duration(0, TimeUnit.MILLISECONDS)
 
@@ -86,10 +89,10 @@ class PrestoEntranceEngineExecutorManager(groupFactory: GroupFactory,
       resourceEstimates, properties, preparedStatements, roles, extraCredentials, transactionId, clientRequestTimeout)
   }
 
-  private def getFinalConfig(config: util.Map[String, String], key: CommonVars[String]): String = {
-    val value = config.get(key)
+  private def getFinalConfig(config: util.Map[String, String], vars: CommonVars[String]): String = {
+    val value = config.get(vars.key)
     if (StringUtils.isEmpty(value)) {
-      key.getValue
+      vars.getValue
     } else {
       value
     }

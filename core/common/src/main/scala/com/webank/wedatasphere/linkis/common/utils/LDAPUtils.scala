@@ -17,9 +17,9 @@
 package com.webank.wedatasphere.linkis.common.utils
 
 import java.util.Hashtable
-import javax.naming.Context
-import javax.naming.ldap.InitialLdapContext
 
+import javax.naming.{Context, NamingException}
+import javax.naming.ldap.InitialLdapContext
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 
 
@@ -31,22 +31,20 @@ object LDAPUtils extends Logging {
   val url =  CommonVars("wds.linkis.ldap.proxy.url", "").getValue
   val baseDN = CommonVars("wds.linkis.ldap.proxy.baseDN", "").getValue
   def login(userID: String, password: String): Unit = {
+
+    if(userID.isEmpty) throw new NamingException("userID is null")
+
     val env = new Hashtable[String, String]()
-    val bindDN = userID
+    val bindDN = "uid="+userID+","
     val bindPassword = password
     env.put(Context.SECURITY_AUTHENTICATION, "simple")
     env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory")
-    env.put(Context.PROVIDER_URL, url + baseDN)
-    env.put(Context.SECURITY_PRINCIPAL, bindDN)
+    env.put(Context.PROVIDER_URL, url)
+    env.put(Context.SECURITY_PRINCIPAL, bindDN+baseDN)
     env.put(Context.SECURITY_CREDENTIALS, bindPassword)
-//    Utils.tryCatch {
-      new InitialLdapContext(env, null)
-      info(s"user $userID login success.")
-//      true
-//    } { e =>
-//        error(s"user $userID login failed.", e)
-//        false
-//    }
+
+    new InitialLdapContext(env, null)
+    info(s"user $userID login success.")
   }
 }
 

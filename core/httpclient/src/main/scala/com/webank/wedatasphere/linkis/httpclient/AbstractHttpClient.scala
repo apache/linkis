@@ -61,7 +61,7 @@ import org.apache.http.HttpResponse
 /**
   * Created by enjoyyin on 2019/5/20.
   */
-abstract class AbstractApacheHttpClient(clientConfig: ClientConfig, clientName: String) extends Client {
+abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String) extends Client {
 
   protected implicit val formats: Formats = DefaultFormats
   protected implicit val executors: ExecutionContext = Utils.newCachedExecutionContext(clientConfig.getMaxConnection, clientName, false)

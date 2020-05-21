@@ -93,7 +93,7 @@ object EsClientFactory {
     }
     val client = builder.build
 
-    val sniffer = if (ES_SNIFFER_ENABLE.getValue) {
+    val sniffer = if (ES_SNIFFER_ENABLE.getValue(options)) {
       Sniffer.builder(client).build
     } else null
 

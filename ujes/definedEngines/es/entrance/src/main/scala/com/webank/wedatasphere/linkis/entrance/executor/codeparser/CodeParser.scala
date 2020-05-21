@@ -4,6 +4,7 @@ import com.webank.wedatasphere.linkis.entrance.conf.EsEntranceConfiguration
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.JavaConversions._
 
 /**
  *
@@ -25,7 +26,7 @@ class EsJsonCodeParser extends CodeParser {
 
     var status = 0
     var isBegin = false
-    code.trim.chars().forEach{
+    code.trim.chars().forEach {
       case '{' => {
         if (status == 0) {
           if (isBegin && !statementBuffer.isEmpty) {

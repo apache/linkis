@@ -27,7 +27,7 @@ class EsEntranceEngineTests {
 
     options.put("runType", "esjson")
 
-    entranceEngine = new EsEntranceEngine(1, options)
+    entranceEngine = new EsEntranceEngine(1, options, () => {})
     entranceEngine.init()
   }
 

@@ -2,8 +2,9 @@ package com.webank.wedatasphere.linkis.entrance.execute
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.entrance.execute.impl.EntranceExecutorManagerImpl
-import com.webank.wedatasphere.linkis.scheduler.executer.Executor
+import com.webank.wedatasphere.linkis.scheduler.executer.{Executor, ExecutorState}
 import com.webank.wedatasphere.linkis.scheduler.queue.{GroupFactory, Job, SchedulerEvent}
+import org.apache.commons.io.IOUtils
 
 /**
  *
@@ -31,5 +32,9 @@ class EsEntranceExecutorManager(groupFactory: GroupFactory,
     case _ => None
   }
 
-  override def shutdown(): Unit = super.shutdown()
+  override def shutdown(): Unit = {
+    super.shutdown()
+    getOrCreateEngineManager.listEngines(engine => ExecutorState.isAvailable(engine.state))
+      .foreach(engine => IOUtils.closeQuietly(engine))
+  }
 }

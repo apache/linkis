@@ -18,8 +18,9 @@ import org.apache.commons.io.IOUtils
 import org.apache.http.entity.ContentType
 import org.apache.http.util.EntityUtils
 import org.elasticsearch.client.Response
-
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.JavaConversions._
+
 
 /**
  *
@@ -84,14 +85,14 @@ class ResponseHandlerImpl extends ResponseHandler {
         columns += Column("_type", StringType, "")
         columns += Column("_id", StringType, "")
         columns += Column("_score", DoubleType, "")
-        hits.forEach {
+        hits.foreach {
           case obj: ObjectNode => {
-            val lineValues = ArrayBuffer[Any]("", "", "", 0.0)
-            obj.fields().forEachRemaining(entry => {
+            val lineValues = new Array[Any](columns.length).toBuffer
+            obj.fields().foreach(entry => {
               val key = entry.getKey
               val value = entry.getValue
               if ("_source".equals(key.trim)) {
-                value.fields().forEachRemaining(sourceEntry => {
+                value.fields().foreach(sourceEntry => {
                   val sourcekey = sourceEntry.getKey
                   val sourcevalue = sourceEntry.getValue
                   val index = columns.indexWhere(_.columnName.equals(sourcekey))
@@ -125,15 +126,15 @@ class ResponseHandlerImpl extends ResponseHandler {
       case rows: ArrayNode => {
         isTable = true
         jsonNode.get("columns").asInstanceOf[ArrayNode]
-          .forEach(node => {
+          .foreach(node => {
             val name = node.get("name").asText()
             val estype = node.get("type").asText().trim
             columns += Column(name, getNodeTypeByEsType(estype), "")
           })
-        rows.forEach {
+        rows.foreach {
           case row: ArrayNode => {
             val lineValues = new ArrayBuffer[Any]()
-            row.forEach(node => lineValues += getNodeValue(node))
+            row.foreach(node => lineValues += getNodeValue(node))
             records += new TableRecord(lineValues.toArray)
           }
           case _ =>

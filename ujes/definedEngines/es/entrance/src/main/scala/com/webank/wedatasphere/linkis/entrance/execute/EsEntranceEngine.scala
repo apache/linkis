@@ -18,7 +18,7 @@ import org.apache.commons.lang.exception.ExceptionUtils
  * @author wang_zh
  * @date 2020/5/11
  */
-class EsEntranceEngine(id: Long, properties: JMap[String, String]) extends EntranceEngine(id) with SingleTaskOperateSupport with SingleTaskInfoSupport {
+class EsEntranceEngine(id: Long, properties: JMap[String, String], resourceRelease: () => Unit) extends EntranceEngine(id) with SingleTaskOperateSupport with SingleTaskInfoSupport {
 
   private var client: EsClient = _
   private var engineExecutor: EsEngineExecutor = _
@@ -56,20 +56,25 @@ class EsEntranceEngine(id: Long, properties: JMap[String, String]) extends Entra
               persistEngine.persistResultSet(job, aliasOutputExecuteResponse)
             case SuccessExecuteResponse() =>
               info(s"execute execute successfully : ${code}")
-            case IncompleteExecuteResponse(_) =>
-              error(s"execute execute failed : ${code}")
-              job.getLogListener.foreach(_.onLogUpdate(job,  LogUtils.generateERROR( s"execute execute failed : ${code}")))
-            case e: ErrorExecuteResponse =>
-              error(s"execute code $code failed!", e.t)
-              job.getLogListener.foreach(_.onLogUpdate(job,  LogUtils.generateERROR( s"execute code $code failed!" + ExceptionUtils.getFullStackTrace(e.t))))
+            case incompleteResponse: IncompleteExecuteResponse =>
+              warn(s"execute execute failed, code: ${code}, msg: ${incompleteResponse.message}")
+              val msg = if(StringUtils.isNotEmpty(incompleteResponse.message)) incompleteResponse.message else "incomplete code."
+              job.getLogListener.foreach(_.onLogUpdate(job,  LogUtils.generateWarn( s"execute incomplete code, code: ${code}, msg: ${msg}")))
+            case errorResponse: ErrorExecuteResponse =>
+              error(s"execute code $code failed!", errorResponse.t)
+              job.getLogListener.foreach(_.onLogUpdate(job,  LogUtils.generateERROR( s"execute code $code failed!" + ExceptionUtils.getFullStackTrace(errorResponse.t))))
+              return errorResponse
             case _ =>
               warn("no matching exception")
-              job.getLogListener.foreach(_.onLogUpdate(job,  LogUtils.generateERROR( "no matching exception")))
+              job.getLogListener.foreach(_.onLogUpdate(job,  LogUtils.generateERROR( s"execute code $code failed! no matching exception")))
+              return ErrorExecuteResponse("no matching exception", null)
           }
           codeLine = codeLine + 1
+          // update progress
+          job.getProgressListener.map(_.onProgressUpdate(job, progress, getProgressInfo))
         } catch {
           case t: Throwable =>
-            return ErrorExecuteResponse("EsEntranceEngine ,execute exception ", t)
+            return ErrorExecuteResponse("EsEntranceEngine execute exception. ", t)
         } finally {
 
         }
@@ -119,10 +124,9 @@ class EsEntranceEngine(id: Long, properties: JMap[String, String]) extends Entra
   override def close(): Unit = {
     try {
       this.job.setResultSize(0)
-
       this.engineExecutor.close
-      // TODO 释放资源
-
+      // 释放资源
+      resourceRelease()
     } catch {
       case _: Throwable =>
     } finally {

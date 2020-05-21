@@ -15,7 +15,7 @@ object EsEntranceConfiguration {
   val ES_AUTH_CACHE = CommonVars("wds.linkis.es.auth.cache", true)
   val ES_USERNAME = CommonVars("wds.linkis.es.username", "")
   val ES_PASSWORD = CommonVars("wds.linkis.es.password", "")
-  val ES_SNIFFER_ENABLE = CommonVars("wds.linkis.es.sniffer.enable", true)
+  val ES_SNIFFER_ENABLE = CommonVars("wds.linkis.es.sniffer.enable", false)
   val ES_HTTP_METHOD = CommonVars("wds.linkis.es.http.method", "GET")
   val ES_HTTP_ENDPOINT = CommonVars("wds.linkis.es.http.endpoint", "/_search")
   val ES_HTTP_SQL_ENDPOINT = CommonVars("wds.linkis.es.sql.endpoint", "/_sql")

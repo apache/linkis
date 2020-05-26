@@ -20,9 +20,9 @@ import com.webank.wedatasphere.linkis.common.log.LogUtils;
 import com.webank.wedatasphere.linkis.entrance.EntranceServer;
 import com.webank.wedatasphere.linkis.entrance.annotation.EntranceServerBeanAnnotation;
 import com.webank.wedatasphere.linkis.entrance.background.BackGroundService;
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration;
 import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob;
 import com.webank.wedatasphere.linkis.entrance.log.LogReader;
+import com.webank.wedatasphere.linkis.entrance.utils.JobHistoryHelper;
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant;
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo;
 import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask;
@@ -37,9 +37,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestParam;
 import scala.Option;
 
 import javax.servlet.http.HttpServletRequest;
@@ -113,10 +111,22 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     @Override
     @GET
     @Path("/{id}/status")
-    public Response status(@PathParam("id") String id) {
+    public Response status(@PathParam("id") String id, @QueryParam("taskID")String taskID) {
         Message message = null;
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
-        Option<Job> job = entranceServer.getJob(realId);
+        Option<Job> job = Option.apply(null);
+        try{
+            job = entranceServer.getJob(realId);
+        }catch(Exception e){
+            logger.warn("获取任务 {} 状态时出现错误", realId, e);
+            //如果获取错误了,证明在内存中已经没有了,去jobhistory找寻一下taskID代表的任务的状态，然后返回
+            long realTaskID = Long.parseLong(taskID);
+            String status = JobHistoryHelper.getStatusByTaskID(realTaskID);
+            message = Message.ok();
+            message.setMethod("/api/entrance/" + id + "/status");
+            message.data("status",status).data("execID", id);
+            return Message.messageToResponse(message);
+        }
         if (job.isDefined()){
             message = Message.ok();
             message.setMethod("/api/entrance/" + id + "/status");
@@ -139,20 +149,20 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         Option<Job> job = entranceServer.getJob(realId);
         if (job.isDefined()){
             JobProgressInfo[] jobProgressInfos = ((EntranceJob)job.get()).getProgressInfo();
-            Map<String, Object> map = new HashMap<>();
             if (jobProgressInfos == null){
                 message = Message.error("Can not get the corresponding progress information, it may be that the corresponding progress information has not been generated(不能获取相应的进度信息,可能是相应的进度信息还未生成)");
                 message.setMethod("/api/entrance/" + id + "/progress");
             }else{
-                for(JobProgressInfo jobProgressInfo : jobProgressInfos){
+                List<Map<String, Object>> list = new ArrayList<>();
+                for(JobProgressInfo jobProgressInfo : jobProgressInfos) {
+                    Map<String, Object> map = new HashMap<>();
                     map.put("id", jobProgressInfo.id());
                     map.put("succeedTasks", jobProgressInfo.succeedTasks());
                     map.put("failedTasks", jobProgressInfo.failedTasks());
                     map.put("runningTasks", jobProgressInfo.runningTasks());
                     map.put("totalTasks", jobProgressInfo.totalTasks());
+                    list.add(map);
                 }
-                List<Map<String, Object>> list = new ArrayList<>();
-                list.add(map);
                 message = Message.ok();
                 message.setMethod("/api/entrance/" + id + "/progress");
                 message.data("progress",job.get().getProgress()).data("execID", id).data("progressInfo", list);
@@ -279,9 +289,21 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     @Override
     @GET
     @Path("/{id}/kill")
-    public Response kill(@PathParam("id")String id) {
+    public Response kill(@PathParam("id")String id, @QueryParam("taskID") long taskID) {
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
-        Option<Job> job = entranceServer.getJob(realId);
+        //通过jobid获取job,可能会由于job找不到而导致有looparray的报错,一旦报错的话，就可以将该任务直接置为Cancenlled
+        Option<Job> job = Option.apply(null);
+        try{
+            job = entranceServer.getJob(realId);
+        }catch(Exception e){
+            logger.warn("can not find a job in entranceServer, will force to kill it", e);
+            //如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
+            JobHistoryHelper.forceKill(taskID);
+            Message message = Message.ok("强制杀死任务");
+            message.setMethod("/api/entrance/" + id + "/kill");
+            message.setStatus(0);
+            return Message.messageToResponse(message);
+        }
         Message message = null;
         if (job.isEmpty()){
             message = Message.error("Can't find execID(不能找到execID): " + id + "Corresponding job, can't kill(对应的job，不能进行kill)");

@@ -16,11 +16,6 @@
 
 package com.webank.wedatasphere.linkis.engine.execute
 
-import java.io.File
-
-import com.google.common.io.Resources
-import org.apache.commons.io.FileUtils
-
 //object SparkCombinedCodeParserTest {
 //  def main(args: Array[String]): Unit = {
 //    val parser = new SparkCombinedCodeParser

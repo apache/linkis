@@ -16,13 +16,9 @@
 
 package com.webank.wedatasphere.linkis.engine.pipeline.executor
 import com.webank.wedatasphere.linkis.common.io.FsPath
-import com.webank.wedatasphere.linkis.engine.execute.EngineExecutorContext
-import com.webank.wedatasphere.linkis.engine.pipeline.util.PipeLineConstants
 import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
-import com.webank.wedatasphere.linkis.server._
 import com.webank.wedatasphere.linkis.storage.FSFactory
 import org.apache.commons.io.IOUtils
-import org.springframework.stereotype.Component
 
 /**
   * Created by johnnwang on 2019/1/30.

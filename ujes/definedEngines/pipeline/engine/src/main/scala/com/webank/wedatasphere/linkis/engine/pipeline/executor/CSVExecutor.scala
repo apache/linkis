@@ -15,20 +15,16 @@
  */
 
 package com.webank.wedatasphere.linkis.engine.pipeline.executor
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream, InputStream, OutputStream}
+import java.io.OutputStream
 
 import com.webank.wedatasphere.linkis.common.io.FsPath
-import com.webank.wedatasphere.linkis.engine.execute.EngineExecutorContext
 import com.webank.wedatasphere.linkis.engine.pipeline.exception.PipeLineErrorException
-import com.webank.wedatasphere.linkis.engine.pipeline.util.{PipeLineConstants, PipeLineUtils}
+import com.webank.wedatasphere.linkis.engine.pipeline.util.PipeLineUtils
 import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
-import com.webank.wedatasphere.linkis.server._
 import com.webank.wedatasphere.linkis.storage.FSFactory
 import com.webank.wedatasphere.linkis.storage.csv.CSVFsWriter
-import com.webank.wedatasphere.linkis.storage.excel.ExcelFsWriter
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetReader}
 import org.apache.commons.io.IOUtils
-import org.springframework.stereotype.Component
 
 /**
   * Created by johnnwang on 2019/1/30.

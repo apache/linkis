@@ -28,7 +28,6 @@ import com.webank.wedatasphere.linkis.filesystem.restful.remote.FsRestfulRemote;
 import com.webank.wedatasphere.linkis.filesystem.service.FsService;
 import com.webank.wedatasphere.linkis.filesystem.util.Constants;
 import com.webank.wedatasphere.linkis.filesystem.util.FsUtil;
-import com.webank.wedatasphere.linkis.filesystem.util.FsUtil$;
 import com.webank.wedatasphere.linkis.filesystem.util.WorkspaceUtil;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;

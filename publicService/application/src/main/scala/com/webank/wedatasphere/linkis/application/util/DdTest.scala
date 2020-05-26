@@ -16,8 +16,6 @@
 
 package com.webank.wedatasphere.linkis.application.util
 
-import java.util.Date
-
 /**
   * Created by johnnwang on 2019/2/14.
   */

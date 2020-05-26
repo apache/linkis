@@ -16,8 +16,8 @@
 
 package com.webank.wedatasphere.linkis.jobhistory.receiver
 
-import com.webank.wedatasphere.linkis.protocol.query.QueryProtocol
 import com.webank.wedatasphere.linkis.jobhistory.service.QueryService
+import com.webank.wedatasphere.linkis.protocol.query.QueryProtocol
 import com.webank.wedatasphere.linkis.rpc.{RPCMessageEvent, Receiver, ReceiverChooser}
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired

@@ -17,7 +17,6 @@
 package com.webank.wedatasphere.linkis.storage.excel
 
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util
 
 import com.webank.wedatasphere.linkis.common.io.{MetaData, Record}

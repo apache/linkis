@@ -19,7 +19,6 @@ package com.webank.wedatasphere.linkis.storage.pipeline;
 import com.webank.wedatasphere.linkis.common.io.FsReader;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**

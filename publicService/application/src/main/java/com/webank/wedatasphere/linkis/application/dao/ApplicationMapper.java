@@ -19,7 +19,6 @@ package com.webank.wedatasphere.linkis.application.dao;
 import com.webank.wedatasphere.linkis.application.entity.*;
 import org.apache.ibatis.annotations.Param;
 
-import javax.ws.rs.Path;
 import java.util.List;
 
 /**

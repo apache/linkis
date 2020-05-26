@@ -17,14 +17,12 @@
 package com.webank.test
 
 
-import com.webank.wedatasphere.linkis.resourcemanager.domain.{ModuleInfo, ModuleInfoSerializer, ModuleInstanceSerializer, ModuleResourceInfo}
-import com.webank.wedatasphere.linkis.resourcemanager.event.notify.{NotifyRMEvent, NotifyRMEventSerializer}
-import com.webank.wedatasphere.linkis.resourcemanager.{LoadResource, ResourceRequestPolicy, ResourceSerializer, YarnResource}
+import com.webank.wedatasphere.linkis.resourcemanager.domain.{ModuleInfoSerializer, ModuleInstanceSerializer}
+import com.webank.wedatasphere.linkis.resourcemanager.event.notify.NotifyRMEventSerializer
+import com.webank.wedatasphere.linkis.resourcemanager.{ResourceSerializer, YarnResource}
 import org.json4s.JsonAST.JObject
-import org.json4s.{CustomSerializer, DefaultFormats, Extraction}
 import org.json4s.JsonDSL._
-import org.json4s.jackson.JsonMethods._
-import org.json4s.jackson.Serialization._
+import org.json4s.{CustomSerializer, DefaultFormats, Extraction}
 
 
 /**

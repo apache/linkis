@@ -16,7 +16,6 @@
 
 package com.webank.wedatasphere.linkis.variable.restful.api;
 
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import com.webank.wedatasphere.linkis.variable.entity.VarKeyValueVO;

@@ -16,8 +16,6 @@
 
 package com.webank.wedatasphere.linkis.engine.pipeline.executor
 
-import org.springframework.beans.factory.annotation.Autowired
-
 /**
   * Created by johnnwang on 2019/1/30.
   */

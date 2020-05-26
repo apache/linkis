@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.engine.pipeline.executor
 
-import com.webank.wedatasphere.linkis.engine.execute.EngineExecutorContext
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteResponse
-import com.webank.wedatasphere.linkis.server._
 
 /**
   * Created by johnnwang on 2019/1/30.

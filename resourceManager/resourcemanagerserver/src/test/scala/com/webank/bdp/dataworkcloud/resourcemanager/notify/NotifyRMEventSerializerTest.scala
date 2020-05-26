@@ -16,16 +16,9 @@
 
 package com.webank.wedatasphere.linkis.resourcemanager.notify
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.resourcemanager.{MemoryResource, ResourceRequestPolicy}
-import com.webank.wedatasphere.linkis.resourcemanager.domain._
-import com.webank.wedatasphere.linkis.resourcemanager.event.EventScope
 import com.webank.wedatasphere.linkis.resourcemanager.event.notify._
 import org.json4s.DefaultFormats
-import org.json4s.jackson.Serialization.read
-import org.json4s.jackson.Serialization.write
-
-import scala.collection.mutable.ArrayBuffer
+import org.json4s.jackson.Serialization.{read, write}
 
 object NotifyRMEventSerializerTest {
 

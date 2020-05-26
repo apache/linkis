@@ -17,10 +17,7 @@
 package com.webank.wedatasphere.linkis.variable.service;
 
 import com.webank.wedatasphere.linkis.protocol.variable.ResponseQueryVariable;
-import com.webank.wedatasphere.linkis.variable.entity.VarKey;
-import com.webank.wedatasphere.linkis.variable.entity.VarKeyUser;
 import com.webank.wedatasphere.linkis.variable.entity.VarKeyValueVO;
-import com.webank.wedatasphere.linkis.variable.entity.VarTree;
 
 import java.util.List;
 

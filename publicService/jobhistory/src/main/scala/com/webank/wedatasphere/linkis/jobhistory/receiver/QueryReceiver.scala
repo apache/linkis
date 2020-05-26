@@ -16,11 +16,9 @@
 
 package com.webank.wedatasphere.linkis.jobhistory.receiver
 
-import com.webank.wedatasphere.linkis.protocol.query.{RequestInsertTask, RequestQueryTask, RequestUpdateTask}
 import com.webank.wedatasphere.linkis.jobhistory.service.QueryService
+import com.webank.wedatasphere.linkis.protocol.query.{RequestInsertTask, RequestQueryTask, RequestUpdateTask}
 import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
 
 import scala.concurrent.duration.Duration
 

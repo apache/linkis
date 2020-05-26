@@ -17,7 +17,10 @@
 package com.webank.wedatasphere.linkis.configuration.dao;
 
 
-import com.webank.wedatasphere.linkis.configuration.entity.*;
+import com.webank.wedatasphere.linkis.configuration.entity.ConfigKey;
+import com.webank.wedatasphere.linkis.configuration.entity.ConfigKeyUser;
+import com.webank.wedatasphere.linkis.configuration.entity.ConfigKeyValue;
+import com.webank.wedatasphere.linkis.configuration.entity.ConfigTree;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

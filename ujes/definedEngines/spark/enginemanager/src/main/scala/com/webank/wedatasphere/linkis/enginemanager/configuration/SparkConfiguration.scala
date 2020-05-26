@@ -21,7 +21,6 @@ import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration}
 import com.webank.wedatasphere.linkis.common.utils.{ClassUtils, Logging}
 import com.webank.wedatasphere.linkis.engine.factory.SparkEngineExecutorFactory
 import com.webank.wedatasphere.linkis.enginemanager.AbstractEngineCreator
-import com.webank.wedatasphere.linkis.enginemanager.process.{JavaProcessEngineBuilder, SparkSubmitProcessBuilder}
 
 import scala.collection.mutable.ArrayBuffer
 /**

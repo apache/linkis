@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.configuration.validate
 
-import com.google.gson.{GsonBuilder, JsonSyntaxException}
+import com.google.gson.GsonBuilder
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationException
 

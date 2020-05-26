@@ -15,7 +15,6 @@
  */
 package com.webank.wedatasphere.linkis.filesystem
 
-import com.google.gson.Gson
 import com.webank.wedatasphere.linkis.filesystem.action.OpenScriptFromBMLAction
 import com.webank.wedatasphere.linkis.filesystem.conf.WorkspaceClientConf
 import com.webank.wedatasphere.linkis.filesystem.request.{WorkspaceClient, WorkspaceHttpConf}

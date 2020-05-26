@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.filesystem.util;
 
-import com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration;
 import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException;
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;

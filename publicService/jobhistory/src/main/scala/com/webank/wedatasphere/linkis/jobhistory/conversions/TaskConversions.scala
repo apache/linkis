@@ -16,17 +16,12 @@
 
 package com.webank.wedatasphere.linkis.jobhistory.conversions
 
-import java.io.File
-import java.util
-
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.jobhistory.entity.{QueryTask, QueryTaskVO}
 import com.webank.wedatasphere.linkis.protocol.query.{RequestPersistTask, RequestQueryTask}
 import com.webank.wedatasphere.linkis.protocol.utils.ZuulEntranceUtils
-import com.webank.wedatasphere.linkis.jobhistory.entity.{QueryTask, QueryTaskVO}
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 import org.springframework.beans.BeanUtils
-import org.springframework.util.StringUtils
 
 /**
   * Created by johnnwang on 2019/2/25.

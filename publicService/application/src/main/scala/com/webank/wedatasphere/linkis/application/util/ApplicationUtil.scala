@@ -19,7 +19,7 @@ package com.webank.wedatasphere.linkis.application.util
 import java.text.SimpleDateFormat
 import java.util.Date
 
-import com.webank.wedatasphere.linkis.application.conf.{ApplicationConfiguration, ApplicationScalaConfiguration}
+import com.webank.wedatasphere.linkis.application.conf.ApplicationScalaConfiguration
 
 /**
   * Created by johnnwang on 2019/2/14.

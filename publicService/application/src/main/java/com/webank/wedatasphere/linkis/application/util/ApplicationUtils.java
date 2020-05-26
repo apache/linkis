@@ -16,13 +16,12 @@
 
 package com.webank.wedatasphere.linkis.application.util;
 
+import com.webank.wedatasphere.linkis.application.conf.ApplicationConfiguration;
 import com.webank.wedatasphere.linkis.application.conf.ApplicationScalaConfiguration;
 import com.webank.wedatasphere.linkis.application.exception.ApplicationException;
 import com.webank.wedatasphere.linkis.common.io.FsPath;
-import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.storage.FSFactory;
 import com.webank.wedatasphere.linkis.storage.fs.FileSystem;
-import com.webank.wedatasphere.linkis.application.conf.ApplicationConfiguration;
 import com.webank.wedatasphere.linkis.storage.utils.FileSystemUtils;
 import lombok.Cleanup;
 import org.apache.commons.io.IOUtils;
@@ -30,7 +29,6 @@ import org.apache.commons.io.IOUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.util.UUID;
 
 /**

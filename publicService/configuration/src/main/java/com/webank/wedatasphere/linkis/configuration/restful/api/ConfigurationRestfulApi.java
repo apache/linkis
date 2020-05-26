@@ -16,8 +16,6 @@
 
 package com.webank.wedatasphere.linkis.configuration.restful.api;
 
-import com.webank.wedatasphere.linkis.configuration.entity.ConfigKey;
-import com.webank.wedatasphere.linkis.configuration.entity.ConfigKeyUser;
 import com.webank.wedatasphere.linkis.configuration.entity.ConfigKeyValueVO;
 import com.webank.wedatasphere.linkis.configuration.entity.ConfigTree;
 import com.webank.wedatasphere.linkis.configuration.service.ConfigurationService;
@@ -36,7 +34,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by allenlliu on 2018/10/17.

@@ -16,9 +16,12 @@
 
 package com.webank.wedatasphere.linkis.jobhistory.service;
 
-import com.webank.wedatasphere.linkis.protocol.query.*;
 import com.webank.wedatasphere.linkis.jobhistory.entity.QueryTask;
 import com.webank.wedatasphere.linkis.jobhistory.entity.QueryTaskVO;
+import com.webank.wedatasphere.linkis.protocol.query.RequestInsertTask;
+import com.webank.wedatasphere.linkis.protocol.query.RequestQueryTask;
+import com.webank.wedatasphere.linkis.protocol.query.RequestUpdateTask;
+import com.webank.wedatasphere.linkis.protocol.query.ResponsePersist;
 
 import java.util.Date;
 import java.util.List;

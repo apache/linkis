@@ -18,8 +18,6 @@ package com.webank.wedatasphere.linkis.udf.api.rpc
 
 import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
 import com.webank.wedatasphere.linkis.udf.service.UDFTreeService
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
 
 import scala.concurrent.duration.Duration
 

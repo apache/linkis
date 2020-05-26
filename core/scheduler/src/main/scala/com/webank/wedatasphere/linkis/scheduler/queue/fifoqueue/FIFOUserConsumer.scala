@@ -27,7 +27,7 @@ import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
 import com.webank.wedatasphere.linkis.scheduler.exception.SchedulerErrorException
 import com.webank.wedatasphere.linkis.scheduler.executer.Executor
-import com.webank.wedatasphere.linkis.scheduler.future.{BDPFuture, BDPFutureTask}
+import com.webank.wedatasphere.linkis.scheduler.future.BDPFutureTask
 import com.webank.wedatasphere.linkis.scheduler.queue._
 
 import scala.collection.mutable.ArrayBuffer

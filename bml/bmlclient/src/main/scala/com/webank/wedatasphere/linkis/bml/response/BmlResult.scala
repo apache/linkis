@@ -21,8 +21,6 @@ import com.webank.wedatasphere.linkis.bml.protocol.ResourceVersions
 import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 
-import scala.beans.BeanProperty
-
 /**
   * created by cooperyang on 2019/5/23
   * Description:

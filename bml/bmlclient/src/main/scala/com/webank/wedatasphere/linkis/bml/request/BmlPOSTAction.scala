@@ -19,11 +19,7 @@ import java.io.{File, InputStream}
 import java.util
 
 import com.webank.wedatasphere.linkis.bml.http.HttpConf
-
-import scala.collection.JavaConversions._
-import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.httpclient.request._
-import com.webank.wedatasphere.linkis.storage.FSFactory
 
 /**
   * created by cooperyang on 2019/5/23

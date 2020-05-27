@@ -29,11 +29,10 @@ import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.httpclient.authentication.AuthenticationStrategy
 import com.webank.wedatasphere.linkis.httpclient.config.{ClientConfig, ClientConfigBuilder}
 import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
-import com.webank.wedatasphere.linkis.httpclient.dws.authentication.{StaticAuthenticationStrategy, TokenAuthenticationStrategy}
+import com.webank.wedatasphere.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy
 import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig
 import com.webank.wedatasphere.linkis.storage.FSFactory
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
 /**

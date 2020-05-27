@@ -39,4 +39,7 @@ object RPCConfiguration {
   val PUBLIC_SERVICE_APPLICATION_NAME = CommonVars("wds.linkis.gateway.conf.publicservice.name", "publicservice")
   val PUBLIC_SERVICE_LIST = CommonVars("wds.linkis.gateway.conf.publicservice.list", "query,jobhistory,application,configuration,filesystem,udf,variable").getValue.split(",")
 
+  val BDP_RPC_INSTANCE_ALIAS_SERVICE_REFRESH_INTERVAL = CommonVars("wds.linkis.rpc.instancealias.refresh.interval", new TimeType("3s"))
+
+  val CONTEXT_SERVICE_APPLICATION_NAME = CommonVars("wds.linkis.gateway.conf.contextservice.name", "contextservice")
 }

@@ -1,0 +1,68 @@
+package com.webank.wedatasphere.linkis.cs.contextcache.parser;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
+import com.webank.wedatasphere.linkis.cs.contextcache.conf.ContextCacheConf;
+import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * @author peacewong
+ * @date 2020/2/9 16:19
+ */
+@Component
+public class DefaultContextKeyValueParser implements ContextKeyValueParser {
+
+    private static final Logger logger = LoggerFactory.getLogger(DefaultContextKeyValueParser.class);
+
+
+    private ObjectMapper jackson = BDPJettyServerHelper.jacksonJson();
+
+    @PostConstruct
+    private void init() {
+        logger.info("init keyValueParser");
+    }
+
+
+    @Override
+    public Set<String> parse(ContextKeyValue contextKeyValue) {
+        //先解析key
+        Set<String> keywordSet = new HashSet<>();
+        try {
+            if (contextKeyValue != null && contextKeyValue.getContextValue() != null && StringUtils.isNotBlank(contextKeyValue.getContextValue().getKeywords())){
+                String keywordObj = contextKeyValue.getContextValue().getKeywords();
+
+                try {
+                    Set<String> keySet = jackson.readValue(keywordObj, new TypeReference<Set<String>>() {});
+                    keywordSet.addAll(keySet);
+                 } catch (Exception e) {
+                    //TODO Delete later
+                    logger.info("deal Exception", e);
+                    String[] keywords = keywordObj.split(ContextCacheConf.KEYWORD_SPLIT);
+                    for (String keyword: keywords){
+                        keywordSet.add(keyword);
+                    }
+                }
+                //TODO The contextKey default are keyword
+                keywordSet.add(contextKeyValue.getContextKey().getKey());
+            }
+        } catch (Exception e){
+            if (null != contextKeyValue && null != contextKeyValue.getContextKey() && StringUtils.isNotBlank(contextKeyValue.getContextKey().getKey())){
+                logger.error("Failed to parse keywords of " + contextKeyValue.getContextKey().getKey(), e);
+            } else {
+                logger.error("Failed to parse keywords of contextKey", e);
+            }
+
+        }
+        return keywordSet;
+    }
+
+}

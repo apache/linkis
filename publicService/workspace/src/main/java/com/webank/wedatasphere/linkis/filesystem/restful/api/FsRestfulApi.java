@@ -448,7 +448,7 @@ public class FsRestfulApi implements FsRestfulRemote {
             writer.flush();
             writer.close();
         } finally {
-                resultSetReader.close();
+            IOUtils.closeQuietly(resultSetReader);
             if (outputStream != null) {
                 outputStream.flush();
             }
@@ -506,7 +506,7 @@ public class FsRestfulApi implements FsRestfulRemote {
         }
         Object fileContent = null;
         Integer totalLine = null;
-        Integer totalPage = 0;
+        int totalPage = 0;
         String type = WorkspaceUtil.getOpenFileTypeByFileName(path);
         if ("script".equals(type)) {
             ScriptFsReader scriptFsReader = ScriptFsReader.getScriptFsReader(fsPath, StringUtils.isEmpty(charset) ? "utf-8" : charset, fileSystem.read(fsPath));
@@ -585,7 +585,7 @@ public class FsRestfulApi implements FsRestfulRemote {
                 pageSize = 5000;
             }
             page = 1;
-            Integer rowNum = 0;
+            int rowNum = 0;
             if (metaData instanceof LineMetaData) {
                 LineMetaData lineMetaData = (LineMetaData) metaData;
                 message.data("metadata", lineMetaData.getMetaData());
@@ -700,7 +700,7 @@ public class FsRestfulApi implements FsRestfulRemote {
         FileSystem fileSystem = null;
         CSVFsWriter csvfsWriter = null;
         ExcelFsWriter excelFsWriter = null;
-        Integer index = 0;
+        int index = 0;
         boolean isLimitDownloadSize = WorkSpaceConfiguration.RESULT_SET_DOWNLOAD_IS_LIMIT.getValue();
         com.webank.wedatasphere.linkis.common.io.resultset.ResultSetReader<? extends MetaData, ? extends Record> resultSetReader = null;
         try {
@@ -743,7 +743,7 @@ public class FsRestfulApi implements FsRestfulRemote {
                 } else {
                     StringBuilder stringBuilder = new StringBuilder();
                     LineMetaData lineMetaData = (LineMetaData) metaData;
-                    if ("NULL".equals(lineMetaData)) {
+                    if (!"NULL".equals(lineMetaData.getMetaData())) {
                         stringBuilder.append(lineMetaData.getMetaData());
                         stringBuilder.append("\n");
                     }
@@ -856,7 +856,8 @@ public class FsRestfulApi implements FsRestfulRemote {
                 escapeQuotes = false;
             }
             String[][] column = null;
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in, encoding));
+            InputStreamReader inputStreamReader = new InputStreamReader(in, encoding);
+            BufferedReader reader = new BufferedReader(inputStreamReader);
             String header = reader.readLine();
             if (StringUtils.isEmpty(header)) {
                 throw new WorkSpaceException("The file content is empty and cannot be imported!(文件内容为空，不能进行导入操作！)");
@@ -884,6 +885,8 @@ public class FsRestfulApi implements FsRestfulRemote {
             }
             res.put("columnName", column[0]);
             res.put("columnType", column[1]);
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(inputStreamReader);
         }
         StorageUtils.close(null, in, null);
         return Message.messageToResponse(Message.ok().data("formate", res));

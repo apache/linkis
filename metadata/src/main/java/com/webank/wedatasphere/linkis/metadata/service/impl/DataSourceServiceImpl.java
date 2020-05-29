@@ -46,7 +46,7 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     Logger logger = Logger.getLogger(DataSourceServiceImpl.class);
 
-    private static FileSystem rootHdfs = null;
+    private volatile static FileSystem rootHdfs = null;
 
     @Autowired
     HiveMetaDao hiveMetaDao;

@@ -135,7 +135,7 @@ public class BmlRestfulApi {
                 resourceVersionsVO.setUser(user);
                 message.data("ResourceVersions", resourceVersionsVO);
             }else{
-                logger.warn("user {} 获取资源未报错，但是获取到的version长度为0", user, resourceId);
+                logger.warn("user {}，resourceId {} 获取资源未报错，但是获取到的version长度为0", user, resourceId);
                 message = Message.error("未能正确获取到版本信息");
                 message.setMethod(URL_PREFIX + "getVersions");
                 message.setStatus(2);
@@ -238,12 +238,12 @@ public class BmlRestfulApi {
         Message message = null;
         ResourceTask resourceTask = taskService.createDeleteVersionTask(resourceId, version, user, HttpRequestHelper.getIp(request));
         try{
-            logger.info("用户 {} 开始删除 resourceId: {} version: {} 的资源", resourceId, version);
+            logger.info("用户 {} 开始删除 resourceId: {} version: {} 的资源",user, resourceId, version);
             versionService.deleteResourceVersion(resourceId, version);
             message = Message.ok("删除版本成功");
             message.setMethod(URL_PREFIX + "deleteVersion");
             message.setStatus(0);
-            logger.info("用户 {} 结束删除 resourceId: {} version: {} 的资源", resourceId, version);
+            logger.info("用户 {} 结束删除 resourceId: {} version: {} 的资源",user, resourceId, version);
             taskService.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
             logger.info("删除版本成功.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.SUCCESS.getValue());
         }catch(final Exception e){

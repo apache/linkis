@@ -135,7 +135,7 @@ public class BmlRestfulApi {
                 resourceVersionsVO.setUser(user);
                 message.data("ResourceVersions", resourceVersionsVO);
             }else{
-                logger.warn("user {}，resouceId {} 获取资源未报错，但是获取到的version长度为0", user, resourceId);
+                logger.warn("user {}，resourceId {} 获取资源未报错，但是获取到的version长度为0", user, resourceId);
                 message = Message.error("未能正确获取到版本信息");
                 message.setMethod(URL_PREFIX + "getVersions");
                 message.setStatus(2);

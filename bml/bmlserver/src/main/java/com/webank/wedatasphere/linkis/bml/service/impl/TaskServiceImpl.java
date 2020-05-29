@@ -96,13 +96,12 @@ public class TaskServiceImpl implements TaskService {
   @Override
   public ResourceTask createUpdateTask(String resourceId, String user,
       FormDataMultiPart formDataMultiPart, Map<String, Object> properties) throws Exception{
-      final String resourceIdLock = resourceId.intern();
       /*
       多个BML服务器实例对同一资源resourceId同时更新,规定只能有一个实例能更新成功,
       实现方案是:linkis_resources_task.resource_id和version设置唯一索引
       同一台服务器实例对同一资源更新,上传资源前，需要对resourceId这个字符串的intern进行加锁，这样所有需要更新该资源的用户都会同步
        */
-      synchronized (resourceIdLock){
+      synchronized (Constant.intern.intern(resourceId)){
         String system = resourceDao.getResource(resourceId).getSystem();
         //生成新的version
         String lastVersion = getResourceLastVersion(resourceId);

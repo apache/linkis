@@ -93,14 +93,13 @@ public class VersionServiceImpl implements VersionService {
         ResourceHelper resourceHelper = ResourceHelperFactory.getResourceHelper();
         FormDataBodyPart file = formDataMultiPart.getField("file");
         InputStream inputStream = file.getValueAs(InputStream.class);
-        final String resourceIdLock = resourceId.intern();
         FormDataContentDisposition fileDetail = file.getFormDataContentDisposition();
         String fileName = new String(fileDetail.getFileName().getBytes("ISO8859-1"), "UTF-8");
         //获取资源的path
         String path = versionDao.getResourcePath(resourceId);
         String newVersion;
         //上传资源前，需要对resourceId这个字符串的intern进行加锁，这样所有需要更新该资源的用户都会同步
-        synchronized (resourceIdLock){
+        synchronized (Constant.intern.intern(resourceId)){
             //资源上传到hdfs
             StringBuilder stringBuilder = new StringBuilder();
             long size = resourceHelper.upload(path, user, inputStream, stringBuilder);

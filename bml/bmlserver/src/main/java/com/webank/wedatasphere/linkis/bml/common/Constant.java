@@ -15,6 +15,8 @@
  */
 package com.webank.wedatasphere.linkis.bml.common;
 
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
 import com.google.common.collect.Lists;
 
 import java.util.Arrays;
@@ -38,5 +40,7 @@ public interface Constant {
     String VERSION_FORMAT = "%06d";
 
     String VERSION_PREFIX = "v";
+
+    Interner<String> intern = Interners.<String>newWeakInterner();
 
 }

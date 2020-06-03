@@ -16,9 +16,7 @@
 
 package com.webank.test
 
-import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Utils}
 import com.webank.wedatasphere.linkis.resourcemanager.utils.YarnUtil
-import com.webank.wedatasphere.linkis.resourcemanager.{DriverAndYarnResource, LoadInstanceResource, Resource, YarnResource}
 
 /**
   * Created by johnnwang on 2018/12/29.

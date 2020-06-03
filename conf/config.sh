@@ -110,6 +110,10 @@ SHELL_ENTRANCE_PORT=9115
 #BML_INSTALL_IP=127.0.0.1
 BML_PORT=9113
 
+### cs
+#CS_INSTALL_IP=127.0.0.1
+CS_PORT=9116
+
 ########################################################################################
 
 ## LDAP is for enterprise authorization, if you just want to have a try, ignore it.
@@ -119,4 +123,4 @@ BML_PORT=9113
 ## java application default jvm memory
 export SERVER_HEAP_SIZE="512M"
 
-LINKIS_VERSION=0.9.3
+LINKIS_VERSION=0.9.4

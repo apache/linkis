@@ -18,11 +18,11 @@ package com.webank.wedatasphere.linkis.resourcemanager.service.metadata
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.resourcemanager.{Resource, ResourceSerializer}
 import com.webank.wedatasphere.linkis.resourcemanager.dao.UserResourceMetaDataDao
-import com.webank.wedatasphere.linkis.resourcemanager.domain.{UserModuleRecord, UserResourceMetaData}
+import com.webank.wedatasphere.linkis.resourcemanager.domain.UserResourceMetaData
 import com.webank.wedatasphere.linkis.resourcemanager.event.notify.UserPreUsedEvent
 import com.webank.wedatasphere.linkis.resourcemanager.exception.{RMErrorException, RMWarnException}
+import com.webank.wedatasphere.linkis.resourcemanager.{Resource, ResourceSerializer}
 import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization.{read, write}
 import org.springframework.beans.factory.annotation.Autowired

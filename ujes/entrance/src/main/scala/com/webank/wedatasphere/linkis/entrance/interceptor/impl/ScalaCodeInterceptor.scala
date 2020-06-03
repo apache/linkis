@@ -18,7 +18,6 @@ package com.webank.wedatasphere.linkis.entrance.interceptor.impl
 
 import java.lang
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
 import com.webank.wedatasphere.linkis.entrance.interceptor.exception.ScalaCodeCheckException

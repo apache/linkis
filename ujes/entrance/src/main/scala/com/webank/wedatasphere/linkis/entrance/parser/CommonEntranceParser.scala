@@ -56,14 +56,13 @@ class CommonEntranceParser extends AbstractEntranceParser{
     }
     val formatCode = params.get(TaskConstant.FORMATCODE).asInstanceOf[Boolean]
     var creator = params.get(TaskConstant.REQUESTAPPLICATIONNAME).asInstanceOf[String]
-    val scriptPath = params.get(TaskConstant.SCRIPTPATH).asInstanceOf[String]
     val source = params.getOrDefault(TaskConstant.SOURCE,new util.HashMap[String,String]()).asInstanceOf[util.Map[String,String]]
     val executeApplicationName = params.get(TaskConstant.EXECUTEAPPLICATIONNAME).asInstanceOf[String]
     if (StringUtils.isEmpty(creator)) creator = EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue
     if (StringUtils.isEmpty(executeApplicationName)) throw new EntranceIllegalParamException(20006, "param executeApplicationName can not be empty or null")
     /* When the execution type is IDE, executionCode and scriptPath cannot be empty at the same time*/
     /*当执行类型为IDE的时候，executionCode和scriptPath不能同时为空*/
-    if (EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue.equals(creator) && StringUtils.isEmpty(scriptPath) &&
+    if (EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue.equals(creator) && StringUtils.isEmpty(source.get(TaskConstant.SCRIPTPATH)) &&
       StringUtils.isEmpty(executionCode))
       throw new EntranceIllegalParamException(20007, "param executionCode and scriptPath can not be empty at the same time")
     var runType:String = null
@@ -74,20 +73,7 @@ class CommonEntranceParser extends AbstractEntranceParser{
       if (formatCode) executionCode = format(executionCode)
       task.setExecutionCode(executionCode)
     }
-    if (source.isEmpty) source.put(TaskConstant.SCRIPTPATH,scriptPath)
     task.setSource(source)
-    if (StringUtils.isNotEmpty(scriptPath)) {
-      task.setScriptPath(scriptPath)
-//      val strings = StringUtils.split(scriptPath, ".")
-//      if (strings.length >= 2) {
-//        /*获得执行脚本文件的后缀名,如果不能从一个执行脚本的后缀名判断出类型，可能需要报错*/
-//        //todo If you can't get it from the file suffix name(如果不能从文件后缀名得到)
-//        runType = strings(strings.length - 1)
-//        if (ParserUtils.getCorrespondingType(runType) != null) runType = ParserUtils.getCorrespondingType(runType)
-//        else logger.warn("未能找到相应的执行类型:" + runType)
-//      }
-//      else logger.warn("scriptPath:" + scriptPath + "没有后缀名, 无法判断任务是哪种类型")
-    }
     task.setEngineType(runType)
     //为了兼容代码，让engineType和runType都有同一个属性
     task.setRunType(runType)

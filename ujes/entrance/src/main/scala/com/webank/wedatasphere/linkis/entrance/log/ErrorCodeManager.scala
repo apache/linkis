@@ -16,18 +16,6 @@
 
 package com.webank.wedatasphere.linkis.entrance.log
 
-import java.io.{BufferedReader, FileInputStream, InputStreamReader}
-import java.util
-import java.util.concurrent.TimeUnit
-
-import com.webank.wedatasphere.linkis.common.io.FsPath
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.storage.FSFactory
-import org.slf4j.{Logger, LoggerFactory}
-
-import scala.collection.mutable.ArrayBuffer
-
 /**
   * Created by enjoyyin on 2018/9/4.
   */

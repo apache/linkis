@@ -20,7 +20,7 @@ import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.engine.execute.EngineExecutorContext
 import com.webank.wedatasphere.linkis.engine.pipeline.OutputStreamCache
 import com.webank.wedatasphere.linkis.engine.pipeline.constant.PipeLineConstant._
-import com.webank.wedatasphere.linkis.engine.pipeline.conversions.FsConversions._
+import com.webank.wedatasphere.linkis.engine.pipeline.conversions.FsConvertions._
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteResponse
 import com.webank.wedatasphere.linkis.server._
 import com.webank.wedatasphere.linkis.storage.FSFactory

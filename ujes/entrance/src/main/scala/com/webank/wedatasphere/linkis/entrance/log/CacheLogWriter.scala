@@ -33,11 +33,12 @@ class CacheLogWriter(logPath:String,
   def getCache:Option[Cache] = Some(sharedCache)
 
   private def cache(msg:String): Unit = {
-    val removed = sharedCache.cachedLogs.add(msg)
-    if (removed != null){
-      this synchronized{
+    this synchronized {
+      val removed = sharedCache.cachedLogs.add(msg)
+      if (removed != null){
         val logs = sharedCache.cachedLogs.toList
         val sb = new StringBuilder
+        sb.append(removed).append("\n")
         logs.filter(_ != null).foreach(log => sb.append(log).append("\n"))
         sharedCache.cachedLogs.fakeClear()
         super.write(sb.toString())

@@ -21,8 +21,6 @@ import com.webank.wedatasphere.linkis.bml.protocol.ResourceVersions
 import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 
-import scala.beans.BeanProperty
-
 /**
   * created by cooperyang on 2019/5/23
   * Description:
@@ -105,4 +103,9 @@ class BmlGetBasicResult extends BmlResult{
   var downloadedFileName:String = _
   def getDownloadedFileName:String = this.downloadedFileName
   def setDownloadedFileName(downloadedFileName:String):Unit = this.downloadedFileName = downloadedFileName
+}
+
+@DWSHttpMessageResult("/api/rest_j/v\\d+/bml/delete")
+class BmlDeleteResult extends BmlResult{
+
 }

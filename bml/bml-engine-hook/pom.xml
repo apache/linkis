@@ -14,10 +14,10 @@
 
     <dependencies>
         <dependency>
-        <groupId>com.webank.wedatasphere.linkis</groupId>
-        <artifactId>linkis-common</artifactId>
-        <scope>provided</scope>
-    </dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-bmlclient</artifactId>

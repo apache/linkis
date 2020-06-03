@@ -14,27 +14,23 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.script.compaction
+package com.webank.wedatasphere.linkis.storage.source
+
+import com.webank.wedatasphere.linkis.storage.resultset.table.TableRecord
+import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
 
 /**
-  * Created by johnnwang on 2018/10/23.
+  * Created by patinousward on 2020/1/15.
   */
-class PYScriptCompaction private extends CommonScriptCompaction {
+class ResultsetFileSource extends AbstractFileSource {
 
-  override def belongTo(suffix: String): Boolean = {
-    suffix match {
-      case "python"|"py"|"sh" => true
-      case _ => false
-    }
+  shuffler = {
+    case t: TableRecord => new TableRecord(t.row.map {
+      case null => params.getOrDefault("nullValue", "NULL")
+      case value: Double => StorageUtils.doubleToString(value)
+      case r => r
+    })
+    case record => record
   }
 
-  override def prefix: String = "#@set"
-
-  override def prefixConf: String = "#conf@set"
-}
-
-object PYScriptCompaction {
-  val pYScriptCompaction: PYScriptCompaction = new PYScriptCompaction
-
-  def apply(): CommonScriptCompaction = pYScriptCompaction
 }

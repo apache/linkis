@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.page
-
-import java.util
+package com.webank.wedatasphere.linkis.filesystem.constant;
 
 /**
-  * Created by johnnwang on 2019/4/17.
-  */
-trait PageHelper {
-  protected var fromIndex:Int
-  protected var toIndex:Int
-  protected var body:util.ArrayList[util.ArrayList[String]]
-  protected var params: util.HashMap[String, String]
-  var totalPage:Int
-  def init:Unit
+ * Created by patinousward on 2018/10/17.
+ */
+public class WorkSpaceConstants {
+    public static final String XLSX_RESPONSE_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    public static final String DEFAULT_DATE_TYPE = "yyyy-MM-dd HH:mm:ss";
+    public static final String LOCAL_RETURN_TYPE = "Local";
+    public static final String BLANK = "BLANK";
 }

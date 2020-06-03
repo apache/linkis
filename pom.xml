@@ -101,6 +101,14 @@
         <module>ujes/definedEngines/hive/enginemanager</module>
         <module>ujes/definedEngines/hive/entrance</module>
 
+        <module>datasource/datasourcemanager/common</module>
+        <module>datasource/datasourcemanager/server</module>
+        <module>datasource/metadatamanager/common</module>
+        <module>datasource/metadatamanager/server</module>
+        <module>datasource/metadatamanager/service/elasticsearch</module>
+        <module>datasource/metadatamanager/service/hive</module>
+        <module>datasource/metadatamanager/service/mysql</module>
+
         <module>ujes/definedEngines/python/engine</module>
         <module>ujes/definedEngines/python/enginemanager</module>
         <module>ujes/definedEngines/python/entrance</module>

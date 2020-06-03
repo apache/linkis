@@ -21,7 +21,7 @@ import com.webank.wedatasphere.linkis.scheduler.queue.Job
 import org.springframework.stereotype.Component
 
 /**
- * created by patinousward on 2019/12/9
+ * created by cooperyang on 2019/12/9
  * Description:
  */
 @Component("engineParser")

@@ -21,7 +21,6 @@ import java.text.SimpleDateFormat
 import java.util
 import java.util.{Calendar, Date}
 
-//import com.sun.jdi.FloatValue
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.interceptor.exception.VarSubstitutionException
@@ -31,13 +30,11 @@ import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
 import com.webank.wedatasphere.linkis.protocol.variable.{RequestQueryAppVariable, ResponseQueryVariable}
 import com.webank.wedatasphere.linkis.rpc.Sender
 import org.apache.commons.lang.StringUtils
-
-import scala.collection.mutable.ArrayBuffer
-//import com.webank.wedatasphere.linkis.entrance.log.LogManager
 import org.apache.commons.lang.time.DateUtils
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 import scala.util.control.Exception._
 
 /**
@@ -66,8 +63,8 @@ object CustomVariableUtils extends Logging {
 
     * 1. 从代码中得到用户定义的变量，进行替换
     * 2. 如果1没有做，那么从args中得到用户定义的变量，进行替换
-    * 3. 如果2没有做，从控制台中得到用户定义的变量，进行替换
-    *
+    * 3. 如果2没有做，从CS中得到用户定义的变量，进行替换
+    *3. 如果3没有做，从控制台中得到用户定义的变量，进行替换
     * @param task : requestPersistTask
     * @return
     */
@@ -77,7 +74,7 @@ object CustomVariableUtils extends Logging {
     var codeType = SQL_TYPE
     runType match {
       case "hql" | "sql" | "jdbc" | "hive" => codeType = SQL_TYPE
-      case "python" => codeType = PY_TYPE
+      case "python" | "py" => codeType = PY_TYPE
       case "java" => codeType = JAVA_TYPE
       case "scala" => codeType = SCALA_TYPE
       case _ => return (false, code)
@@ -86,106 +83,57 @@ object CustomVariableUtils extends Logging {
     var run_date:CustomDateType = null
     val nameAndType = mutable.Map[String, VariableType]()
     val nameAndValue: mutable.Map[String, String] = getCustomVar(code, codeType)
-    /* The first step is to replace the variable from code*/
-    /*第一步来自code的变量替换*/
-    nameAndValue.foreach {
-      case (name, value) => {
-        name match {
-          case RUN_DATE => {
-            if (value.length == 8) run_date = new CustomDateType(value, false)
-            else
-              throw  VarSubstitutionException(20040, "please use correct date format,example:run_date=20170101")
-          }
-          case _ => /*if ((allCatch opt value.toLong).isDefined) {
-            nameAndType(name) = LongType(value.toLong)
-          } else*/ if ((allCatch opt value.toDouble).isDefined) {
-            nameAndType(name) = DoubleValue(value.toDouble)
-          } else {
-            nameAndType(name) = StringType(value)
+
+    def putNameAndType(data: mutable.Map[String, String]): Unit = if (null != data) data foreach {
+      case (key, value) => key match {
+        case RUN_DATE => if (nameAndType.get(RUN_DATE).isEmpty) {
+          val run_date_str = value.asInstanceOf[String]
+          if (StringUtils.isNotEmpty(run_date_str)) {
+            run_date = new CustomDateType(run_date_str, false)
+            nameAndType(RUN_DATE) = DateType(run_date)
           }
         }
-      }
-    }
-    if (run_date != null){
-      nameAndType(RUN_DATE) = DateType(run_date)
-    }
-    /* Perform the second step to replace the parameters passed in args*/
-    /* 进行第二步，对args传进的参数进行替换*/
-    task match {
-      case requestPersistTask:RequestPersistTask => TaskUtils.getVariableMap(requestPersistTask.getParams.map{case (k, v) => k -> v.asInstanceOf[Any]}) match {
-        case args:java.util.Map[String, Any] =>
-          //Implicit conversion to scala map for subsequent operations(隐式转成scala的Map，方便后续操作)
-          val scalaArgs:mutable.Map[String, Any] = args
-          scalaArgs foreach {
-            case (key, value) => key match {
-              case RUN_DATE => if (nameAndType.get(RUN_DATE).isEmpty) {
-                val run_date_str = value.asInstanceOf[String]
-                if (StringUtils.isNotEmpty(run_date_str)){
-                  run_date = new CustomDateType(run_date_str, false)
-                  nameAndType(RUN_DATE) = DateType(run_date)
-                }
-              }
-              case _ => if (nameAndType.get(key).isEmpty){
-                val value_str = value.asInstanceOf[String]
-                if(StringUtils.isNotEmpty(value_str)){
-                  /*if ((allCatch opt value_str.toLong).isDefined) {
-                    nameAndType(key) = LongType(value_str.toLong)
-                  } else*/ if ((allCatch opt value_str.toDouble).isDefined) {
-                    nameAndType(key) = DoubleValue(value_str.toDouble)
-                  } else {
-                    nameAndType(key) = StringType(value_str)
-                  }
-                }
-              }
+        case _ => if (nameAndType.get(key).isEmpty && StringUtils.isNotEmpty(value)) {
+            if ((allCatch opt value.toDouble).isDefined) {
+              nameAndType(key) = DoubleValue(value.toDouble)
+            } else {
+              nameAndType(key) = StringType(value)
             }
           }
-        case _ =>
       }
+    }
+
+    //The first step is to replace the variable from code
+    //第一步来自code的变量替换
+    putNameAndType(nameAndValue)
+
+    task match {
+      case requestPersistTask:RequestPersistTask =>
+        /* Perform the second step to replace the parameters passed in args*/
+        /* 进行第二步，对args传进的参数进行替换*/
+        val variableMap = TaskUtils.getVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
+          .map{case (k, v) => k -> v.asInstanceOf[String]}
+        putNameAndType(variableMap)
       case _ =>
     }
-    /* Go to the third step and take the user's parameters to the cloud-publicservice module.*/
-    /*进行第三步，向cloud-publicservice模块去拿用户的参数*/
+    /* Go to the four step and take the user's parameters to the cloud-publicservice module.*/
+    /*进行第四步，向cloud-publicservice模块去拿用户的参数*/
     val sender = Sender.getSender(EntranceConfiguration.CLOUD_CONSOLE_VARIABLE_SPRING_APPLICATION_NAME.getValue)
     task match {
       case requestPersistTask:RequestPersistTask =>
         val umUser:String = requestPersistTask.getUmUser
         val creator:String = requestPersistTask.getRequestApplicationName
         val runType:String = requestPersistTask.getRunType
-//        val requestQueryAppConfig:RequestQueryAppConfig = RequestQueryAppConfig(umUser, creator, runType)
-//        val responseQueryConfig = sender.ask(requestQueryAppConfig).asInstanceOf[ResponseQueryConfig]
-//        val keyAndValue = responseQueryConfig.getKeyAndValue
         val requestQueryAppVariable:RequestQueryAppVariable = RequestQueryAppVariable(umUser, creator, runType)
         val response:ResponseQueryVariable = sender.ask(requestQueryAppVariable).asInstanceOf[ResponseQueryVariable]
         val keyAndValue = response.getKeyAndValue
         val keyAndValueScala:mutable.Map[String, String] = keyAndValue
-        keyAndValueScala foreach {
-          case (key, value) => key match {
-            case RUN_DATE => if (nameAndType.get(RUN_DATE).isEmpty) {
-              val run_date_str = value.asInstanceOf[String]
-              if (StringUtils.isNotEmpty(run_date_str)){
-                run_date = new CustomDateType(run_date_str, false)
-                nameAndType(RUN_DATE) = DateType(run_date)
-              }
-            }
-            case _ => if (nameAndType.get(key).isEmpty){
-              val value_str = value.asInstanceOf[String]
-              if(StringUtils.isNotEmpty(value_str)){
-                /*if ((allCatch opt value_str.toLong).isDefined) {
-                  nameAndType(key) = LongType(value_str.toLong)
-                } else*/ if ((allCatch opt value_str.toDouble).isDefined) {
-                  nameAndType(key) = DoubleValue(value_str.toDouble)
-                } else {
-                  nameAndType(key) = StringType(value_str)
-                }
-              }
-            }
-          }
-        }
+        putNameAndType(keyAndValueScala)
       case _ =>
     }
     /*The last step, if you have not set run_date, then it is the default */
     /*最后一步，如果都没有设置run_date，那么就是默认*/
-    if (nameAndType.get(RUN_DATE).isEmpty){
+    if (nameAndType.get(RUN_DATE).isEmpty || null == run_date){
       run_date = new CustomDateType(getYesterday(false), false)
       nameAndType(RUN_DATE) = DateType(new CustomDateType(run_date.toString, false))
     }
@@ -213,8 +161,8 @@ object CustomVariableUtils extends Logging {
     */
   def parserVar(code: String, nameAndType: mutable.Map[String, VariableType]): String = {
 
-    val codeReg = "\\$\\{\\s*[A-Za-z][A-Za-z0-9_]*\\s*[\\+\\-\\*/]?\\s*[A-Za-z0-9_\\.]*\\s*\\}".r
-    val calReg = "(\\s*[A-Za-z][A-Za-z0-9_]*\\s*)([\\+\\-\\*/]?)(\\s*[A-Za-z0-9_\\.]*\\s*)".r
+    val codeReg = "\\$\\{\\s*[A-Za-z][A-Za-z0-9_\\.]*\\s*[\\+\\-\\*/]?\\s*[A-Za-z0-9_\\.]*\\s*\\}".r
+    val calReg = "(\\s*[A-Za-z][A-Za-z0-9_\\.]*\\s*)([\\+\\-\\*/]?)(\\s*[A-Za-z0-9_\\.]*\\s*)".r
     val parseCode = new StringBuilder
     val codes = codeReg.split(code)
     val expressionCache = mutable.HashSet[String]()
@@ -369,11 +317,11 @@ object CustomVariableUtils extends Logging {
             val nameSet = res(0).split("@set")
             if (nameSet != null && nameSet.length == 2) {
               val name = nameSet(1).trim
-              if (nameAndValue.getOrElse(name, null) == null) {
-                nameAndValue(name) = res(1).trim
-              } else {
-                throw  VarSubstitutionException(20043, s"$name is defined repeatedly")
-              }
+              //if (nameAndValue.getOrElse(name, null) == null) {
+              nameAndValue(name) = res(1).trim
+             // } else {
+              //  throw  VarSubstitutionException(20043, s"$name is defined repeatedly")
+             // }
             }
           } else {
             if (res.length > 2) {

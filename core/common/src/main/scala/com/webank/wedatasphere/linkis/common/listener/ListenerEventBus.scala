@@ -17,7 +17,7 @@
 package com.webank.wedatasphere.linkis.common.listener
 
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicLong}
-import java.util.concurrent.{CopyOnWriteArrayList, Future, TimeoutException}
+import java.util.concurrent.{ArrayBlockingQueue, CopyOnWriteArrayList, Future, LinkedBlockingQueue, TimeoutException}
 
 import com.webank.wedatasphere.linkis.common.collection.BlockingLoopArray
 import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
@@ -85,7 +85,7 @@ private[wedatasphere] abstract class ListenerEventBus[L <: EventListener, E <: E
 //  protected val listenerConsumerThreadSize: Int = 5
 //  protected val listenerThreadMaxFreeTime: Long = ByteTimeUtils.timeStringAsMs("2m")
 
-  private lazy val eventQueue = new BlockingLoopArray[E](eventQueueCapacity)
+  private lazy val eventQueue = new ArrayBlockingQueue[E](eventQueueCapacity)
   protected val executorService = Utils.newCachedThreadPool(listenerConsumerThreadSize + 2, name + "-Consumer-ThreadPool", true)
   private val eventDealThreads = Array.tabulate(listenerConsumerThreadSize)(new ListenerEventThread(_))
   private val started = new AtomicBoolean(false)
@@ -160,7 +160,7 @@ private[wedatasphere] abstract class ListenerEventBus[L <: EventListener, E <: E
     * The use of synchronized here guarantees that all events that once belonged to this queue
     * have already been processed by all attached listeners, if this returns true.
     */
-  private def queueIsEmpty: Boolean = synchronized { !eventQueue.nonEmpty && !eventDealThreads.exists(_.isRunning) }
+  private def queueIsEmpty: Boolean = synchronized { eventQueue.isEmpty && !eventDealThreads.exists(_.isRunning) }
 
   /**
     * Stop the listener bus. It will wait until the queued events have been processed, but drop the

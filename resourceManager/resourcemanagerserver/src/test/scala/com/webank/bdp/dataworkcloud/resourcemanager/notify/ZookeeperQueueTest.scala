@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.notify
+package com.webank.bdp.dataworkcloud.resourcemanager.notify
 
 import com.webank.wedatasphere.linkis.resourcemanager.event.EventScope.{EventScope => _, _}
-import com.webank.wedatasphere.linkis.resourcemanager.event._
-import com.webank.wedatasphere.linkis.resourcemanager.event.notify.{DefaultNotifyRMEvent, NotifyRMEvent}
+import com.webank.wedatasphere.linkis.resourcemanager.event.notify.DefaultNotifyRMEvent
 import com.webank.wedatasphere.linkis.resourcemanager.schedule.{EventSchedulerContextImpl, EventSchedulerImpl}
-import org.json4s.DefaultFormats
-import org.json4s.jackson.Serialization.{read, write}
 
 object ZookeeperQueueTest {
 

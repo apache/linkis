@@ -15,7 +15,6 @@
  */
 package com.webank.wedatasphere.linkis.metadata.domain.mdq.vo;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

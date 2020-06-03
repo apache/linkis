@@ -18,13 +18,14 @@ package com.webank.wedatasphere.linkis.storage.utils
 
 import java.io.{Closeable, File, InputStream, OutputStream}
 import java.lang.reflect.Method
+import java.text.NumberFormat
 
 import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.storage.exception.StorageFatalException
-import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, ResultSetWriter}
+import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.mutable
@@ -41,6 +42,13 @@ object StorageUtils extends Logging{
   val FILE_SCHEMA = "file://"
   val HDFS_SCHEMA = "hdfs://"
 
+  private val nf = NumberFormat.getInstance()
+  nf.setGroupingUsed(false)
+  nf.setMaximumFractionDigits(StorageConfiguration.DOUBLE_FRACTION_LEN.getValue)
+
+  def doubleToString(value:Double): String ={
+    nf.format(value)
+  }
 
   def loadClass[T](classStr: String, op: T => String): Map[String, T] = {
     val _classes = classStr.split(",")

@@ -16,7 +16,6 @@
 
 package com.webank.wedatasphere.linkis.enginemanager.impl
 
-import com.webank.wedatasphere.linkis.common.utils.ByteTimeUtils
 import com.webank.wedatasphere.linkis.enginemanager._
 import com.webank.wedatasphere.linkis.enginemanager.conf.EngineManagerConfiguration.ENGINE_SPRING_APPLICATION_NAME
 import com.webank.wedatasphere.linkis.enginemanager.conf.EnvConfiguration._

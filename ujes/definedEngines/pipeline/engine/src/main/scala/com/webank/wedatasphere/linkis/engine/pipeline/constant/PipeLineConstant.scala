@@ -17,7 +17,7 @@
 package com.webank.wedatasphere.linkis.engine.pipeline.constant
 
 /**
-  * Created by patinousward on 2018/11/16.
+  * Created by johnnwang on 2018/11/16.
   */
 object PipeLineConstant {
   val DEFAULTC_HARSET = "utf-8"

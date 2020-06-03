@@ -18,7 +18,7 @@ package com.webank.wedatasphere.linkis.engine.pipeline
 import com.webank.wedatasphere.linkis.engine.execute.CommonEngineJob
 
 /**
- * created by patinousward on 2019/12/9
+ * created by cooperyang on 2019/12/9
  * Description:
  */
 class PipeEngineJob extends CommonEngineJob {

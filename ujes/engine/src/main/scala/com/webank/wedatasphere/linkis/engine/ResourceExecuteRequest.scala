@@ -5,5 +5,5 @@ package com.webank.wedatasphere.linkis.engine
   * Description:
   */
 trait ResourceExecuteRequest {
-  val resources:java.util.List[Object]
+  def resources:java.util.List[Object]
 }

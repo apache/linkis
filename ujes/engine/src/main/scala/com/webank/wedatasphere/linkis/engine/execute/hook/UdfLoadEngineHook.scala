@@ -21,7 +21,6 @@ import java.io.File
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engine.conf.EngineConfiguration._
 import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineHook}
-import com.webank.wedatasphere.linkis.protocol.engine.RequestEngine
 import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteRequest, RunTypeExecuteRequest}
 import com.webank.wedatasphere.linkis.server.JMap
@@ -30,10 +29,9 @@ import com.webank.wedatasphere.linkis.udf.entity.{UDFInfo, UDFTree}
 import org.apache.commons.collections.CollectionUtils
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
-import org.codehaus.jackson.map.ObjectMapper
 
-import scala.collection.mutable
 import scala.collection.JavaConversions._
+import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 abstract class UdfLoadEngineHook extends EngineHook with Logging{ self =>

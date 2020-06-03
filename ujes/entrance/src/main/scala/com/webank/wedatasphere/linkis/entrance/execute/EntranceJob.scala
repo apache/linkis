@@ -20,6 +20,7 @@ import java.util
 import java.util.concurrent.atomic.AtomicInteger
 
 import com.webank.wedatasphere.linkis.common.log.LogUtils
+import com.webank.wedatasphere.linkis.entrance.EntranceContext
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.event._
 import com.webank.wedatasphere.linkis.entrance.exception.EntranceErrorException
@@ -47,6 +48,7 @@ abstract class EntranceJob extends LockJob {
   private var progressInfo:Array[JobProgressInfo] = Array.empty
   private val persistedResultSets = new AtomicInteger(0)
   private var resultSize = -1
+  private var entranceContext:EntranceContext = _
   def getTask:Task = task
   def setTask(task:Task):Unit = this.task = task
   def setCreator(creator: String): Unit = this.creator = creator
@@ -60,6 +62,9 @@ abstract class EntranceJob extends LockJob {
   def getEntranceListenerBus = this.entranceListenerBus
   def setProgressInfo(progressInfo:Array[JobProgressInfo]):Unit = this.progressInfo = progressInfo
   def getProgressInfo:Array[JobProgressInfo] = this.progressInfo
+  def setEntranceContext(entranceContext: EntranceContext):Unit = this.entranceContext = entranceContext
+  def getEntraceCotnext:EntranceContext = this.entranceContext
+
 
   def setResultSize(resultSize: Int): Unit = {
     this.resultSize = resultSize
@@ -136,6 +141,11 @@ abstract class EntranceJob extends LockJob {
       case _ =>
     }
     super.transitionCompleted(executeCompleted)
+  }
+
+  def transitionCompleted(executeCompleted: CompletedExecuteResponse, reason: String): Unit = {
+    info("Job directly completed with reason: " + reason)
+    transitionCompleted(executeCompleted)
   }
 
   override protected def isJobShouldRetry(errorExecuteResponse: ErrorExecuteResponse): Boolean = isJobSupportRetry && errorExecuteResponse != null &&

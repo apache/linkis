@@ -19,7 +19,6 @@ package com.webank.wedatasphere.linkis.engine.configuration
 import com.webank.wedatasphere.linkis.engine.condition.EngineHooksCondition
 import com.webank.wedatasphere.linkis.engine.execute.hook._
 import com.webank.wedatasphere.linkis.engine.execute.{CodeParser, EngineHook, SparkCombinedCodeParser}
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.{Bean, Conditional, Configuration}
 
 /**

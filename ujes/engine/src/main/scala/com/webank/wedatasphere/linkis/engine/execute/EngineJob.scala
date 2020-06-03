@@ -16,14 +16,17 @@
 
 package com.webank.wedatasphere.linkis.engine.execute
 
+import com.webank.wedatasphere.linkis.engine.{PropertiesExecuteRequest, ResourceExecuteRequest}
 import com.webank.wedatasphere.linkis.protocol.engine.RequestTask
 import com.webank.wedatasphere.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteRequest, JobExecuteRequest, RunTypeExecuteRequest}
 import com.webank.wedatasphere.linkis.scheduler.queue.{Job, JobInfo}
-
+import java.util
 /**
   * Created by enjoyyin on 2018/9/25.
   */
-abstract class EngineJob extends Job with SenderContainer
+abstract class EngineJob extends Job with SenderContainer{
+  val resourcesStr:String = "resources"
+}
 
 class CommonEngineJob extends EngineJob with SyncSenderContainer {
   protected var request: RequestTask = _
@@ -36,13 +39,24 @@ class CommonEngineJob extends EngineJob with SyncSenderContainer {
   override def isJobSupportRetry: Boolean = false
 
   override protected def jobToExecuteRequest: ExecuteRequest = {
+
     if (request.getProperties.containsKey("runType") && request.getProperties.containsKey(RequestTask.RESULT_SET_STORE_PATH))
-      return new ExecuteRequest with JobExecuteRequest with StorePathExecuteRequest with RunTypeExecuteRequest{
+      return  new ExecuteRequest with JobExecuteRequest with StorePathExecuteRequest
+        with RunTypeExecuteRequest with ResourceExecuteRequest with PropertiesExecuteRequest {
         override val code: String = request.getCode
         override val jobId: String = CommonEngineJob.this.getId
         override val storePath: String = request.getProperties.get(RequestTask.RESULT_SET_STORE_PATH).toString
-        override val runType: String = request.getProperties.get("runType").toString
+        override val runType: String = if (request.getProperties.get("runType") != null) {
+          request.getProperties.get("runType").toString
+        } else "sql"
+        override def resources: util.List[Object] = properties.get(resourcesStr) match {
+          case rs:util.List[Object] => rs
+          case _ => logger.warn(s"${CommonEngineJob.this.getId} resources type is not correct")
+            null
+        }
+        override val properties: util.Map[String, Object] = request.getProperties
       }
+
     if(request.getProperties.containsKey(RequestTask.RESULT_SET_STORE_PATH)) new ExecuteRequest with JobExecuteRequest with StorePathExecuteRequest {
       override val code: String = request.getCode
       override val jobId: String = CommonEngineJob.this.getId

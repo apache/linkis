@@ -23,11 +23,14 @@ import java.util.concurrent.atomic.AtomicInteger
 import com.webank.wedatasphere.linkis.common.io.resultset.{ResultSet, ResultSetWriter}
 import com.webank.wedatasphere.linkis.common.io.{FsPath, MetaData, Record}
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.cs.client.utils.ContextServiceUtils
+import com.webank.wedatasphere.linkis.cs.storage.CSTableResultSetWriter
 import com.webank.wedatasphere.linkis.engine.conf.EngineConfiguration.{ENGINE_RESULT_SET_MAX_CACHE, ENGINE_RESULT_SET_STORE_PATH}
 import com.webank.wedatasphere.linkis.engine.exception.EngineErrorException
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
 import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.scheduler.executer.{AliasOutputExecuteResponse, OutputExecuteResponse}
+import com.webank.wedatasphere.linkis.storage.resultset.table.TableResultSet
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.commons.io.IOUtils
@@ -36,7 +39,7 @@ import org.apache.commons.lang.time.DateFormatUtils
 
 import scala.collection.mutable.ArrayBuffer
 
-class EngineExecutorContext(engineExecutor: EngineExecutor) extends Logging{
+class EngineExecutorContext(engineExecutor: EngineExecutor) extends Logging {
 
   private val resultSetFactory = ResultSetFactory.getInstance
   private val resultSetWriters = ArrayBuffer[ResultSetWriter[_ <: MetaData, _ <: Record]]()
@@ -48,17 +51,21 @@ class EngineExecutorContext(engineExecutor: EngineExecutor) extends Logging{
   private val aliasNum = new AtomicInteger(0)
   protected var storePath: Option[String] = None
 
-  private val properties:java.util.Map[String,Object] = new util.HashMap[String, Object]()
+  private val properties: java.util.Map[String, Object] = new util.HashMap[String, Object]()
 
   private var totalParagraph = 0
   private var currentParagraph = 0
 
   def kill(): Unit = interrupted = true
+
   def isKilled: Boolean = interrupted
 
   def getTotalParagraph: Int = totalParagraph
+
   def setTotalParagraph(totalParagraph: Int): Unit = this.totalParagraph = totalParagraph
+
   def getCurrentParagraph: Int = currentParagraph
+
   def setCurrentParagraph(currentParagraph: Int): Unit = this.currentParagraph = currentParagraph
 
   def pushProgress(progress: Float, progressInfo: Array[JobProgressInfo]): Unit =
@@ -66,10 +73,10 @@ class EngineExecutorContext(engineExecutor: EngineExecutor) extends Logging{
 
   def sendResultSet(resultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record]): Unit = {
     val fileName = new File(resultSetWriter.toFSPath.getPath).getName
-    val index = if(fileName.indexOf(".") < 0) fileName.length else fileName.indexOf(".")
-    val alias = if(fileName.startsWith("_")) fileName.substring(1, index) else fileName.substring(0, fileName.indexOf("_"))
-//    resultSetWriter.flush()
-    Utils.tryFinally(sendResultSet(resultSetWriter.toString(), alias)){
+    val index = if (fileName.indexOf(".") < 0) fileName.length else fileName.indexOf(".")
+    val alias = if (fileName.startsWith("_")) fileName.substring(1, index) else fileName.substring(0, fileName.indexOf("_"))
+    //    resultSetWriter.flush()
+    Utils.tryFinally(sendResultSet(resultSetWriter.toString(), alias)) {
       IOUtils.closeQuietly(resultSetWriter)
       resultSetWriters synchronized resultSetWriters -= resultSetWriter
     }
@@ -78,8 +85,8 @@ class EngineExecutorContext(engineExecutor: EngineExecutor) extends Logging{
   def sendResultSet(output: String): Unit = sendResultSet(output, "_" + aliasNum.getAndIncrement())
 
   def appendTextResultSet(output: String): Unit = {
-    if(defaultResultSetWriter == null) aliasNum synchronized {
-      if(defaultResultSetWriter == null) {
+    if (defaultResultSetWriter == null) aliasNum synchronized {
+      if (defaultResultSetWriter == null) {
         defaultResultSetWriter = createDefaultResultSetWriter(ResultSetFactory.TEXT_TYPE)
         defaultResultSetWriter.addMetaData(new LineMetaData())
         resultSetWriters += defaultResultSetWriter
@@ -91,12 +98,12 @@ class EngineExecutorContext(engineExecutor: EngineExecutor) extends Logging{
   private def sendResultSet(output: String, alias: String): Unit = {
     if (StringUtils.isEmpty(output)) return
     if (resultSetFactory.isResultSetPath(output))
-      engineExecutor.getResultSetListener.foreach{ l =>
+      engineExecutor.getResultSetListener.foreach { l =>
         jobId.foreach(l.onResultSetCreated(_, output, alias))
         resultSize += 1
       }
     else if (resultSetFactory.isResultSet(output))
-      engineExecutor.getResultSetListener.foreach{ l =>
+      engineExecutor.getResultSetListener.foreach { l =>
         jobId.foreach(l.onResultSetCreated(_, output, alias))
         resultSize += 1
       }
@@ -104,7 +111,9 @@ class EngineExecutorContext(engineExecutor: EngineExecutor) extends Logging{
   }
 
   def setJobId(jobId: String) = this.jobId = Option(jobId)
+
   def getJobId = jobId
+
   def setStorePath(storePath: String) = this.storePath = Option(storePath)
 
   def sendResultSet(outputExecuteResponse: OutputExecuteResponse): Unit = outputExecuteResponse match {
@@ -112,13 +121,13 @@ class EngineExecutorContext(engineExecutor: EngineExecutor) extends Logging{
     case output: OutputExecuteResponse => sendResultSet(output.getOutput, "_" + aliasNum.getAndIncrement())
   }
 
-  def getProperties:java.util.Map[String, Object] = properties
+  def getProperties: java.util.Map[String, Object] = properties
 
-  def addProperty(key:String, value:String):Unit = properties.put(key, value)
+  def addProperty(key: String, value: String): Unit = properties.put(key, value)
 
   protected def getDefaultStorePath: String = {
     val path = ENGINE_RESULT_SET_STORE_PATH.getValue
-    (if(path.endsWith("/")) path else path + "/") + "user" + "/" +
+    (if (path.endsWith("/")) path else path + "/") + "user" + "/" +
       DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd") + "/" + Sender.getThisServiceInstance.getApplicationName +
       "/" + System.nanoTime
   }
@@ -139,15 +148,33 @@ class EngineExecutorContext(engineExecutor: EngineExecutor) extends Logging{
 
   def createResultSetWriter(resultSet: ResultSet[_ <: MetaData, _ <: Record], alias: String): ResultSetWriter[_ <: MetaData, _ <: Record] = {
     val filePath = storePath.getOrElse(getDefaultStorePath)
-    val fileName = if(StringUtils.isEmpty(alias)) "_" + aliasNum.getAndIncrement() else alias + "_" + aliasNum.getAndIncrement()
+    val fileName = if (StringUtils.isEmpty(alias)) "_" + aliasNum.getAndIncrement() else alias + "_" + aliasNum.getAndIncrement()
     val resultSetPath = resultSet.getResultSetPath(new FsPath(filePath), fileName)
-    val resultSetWriter = ResultSetWriter.getResultSetWriter(resultSet, ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath)
+    //update by peaceWong 20200402
+    val resultSetWriter = resultSet match {
+      case result: TableResultSet =>
+        val contextIDStr = ContextServiceUtils.getContextIDStrByMap(getProperties)
+        val nodeName = ContextServiceUtils.getNodeNameStrByMap(getProperties)
+        if (StringUtils.isNotBlank(contextIDStr) && StringUtils.isNotBlank(nodeName)) {
+          new CSTableResultSetWriter(result, ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath, contextIDStr, nodeName, alias)
+        } else {
+          ResultSetWriter.getResultSetWriter(resultSet, ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath)
+        }
+      case _ => ResultSetWriter.getResultSetWriter(resultSet, ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath)
+    }
+    //update by peaceWong 20200402 end
     resultSetWriters synchronized resultSetWriters += resultSetWriter
     resultSetWriter
   }
 
-  def appendStdout(log: String): Unit = if(!engineExecutor.isEngineInitialized)
+  def appendStdout(log: String): Unit = if (!engineExecutor.isEngineInitialized)
     engineExecutor.info(log) else engineExecutor.getLogListener.foreach(ll => jobId.foreach(ll.onLogUpdate(_, log)))
+
+  def sendProgress(progress: Float, progressInfos: Array[JobProgressInfo]): Unit = {
+    if (engineExecutor.isEngineInitialized) {
+      engineExecutor.getJobProgressListener.foreach(ll => jobId.foreach(ll.onProgressUpdate(_, progress, progressInfos)))
+    }
+  }
 
   def close(): Unit = {
     resultSetWriters.toArray.foreach(sendResultSet)

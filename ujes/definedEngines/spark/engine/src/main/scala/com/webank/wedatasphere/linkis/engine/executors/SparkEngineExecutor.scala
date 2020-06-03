@@ -22,8 +22,9 @@ import java.util.concurrent.atomic.AtomicLong
 
 import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration
+import com.webank.wedatasphere.linkis.engine.cs.CSSparkHelper
 import com.webank.wedatasphere.linkis.engine.exception.{NoSupportEngineException, SparkEngineException}
-import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineExecutorContext}
+import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineExecutorContext, SparkCombinedCodeParser}
 import com.webank.wedatasphere.linkis.engine.extension.{SparkPostExecutionHook, SparkPreExecutionHook}
 import com.webank.wedatasphere.linkis.engine.spark.common._
 import com.webank.wedatasphere.linkis.engine.spark.utils.{EngineUtils, JobProgressUtil}
@@ -64,6 +65,7 @@ class SparkEngineExecutor(val sc: SparkContext, id: Long, outputPrintLimit: Int,
         }
       }
     }, 1000, 3000, TimeUnit.MILLISECONDS)
+    setCodeParser(new SparkCombinedCodeParser)
     super.init()
   }
 
@@ -225,15 +227,26 @@ object SQLSession extends Logging {
     // get field names
     //logger.info("SCHEMA BEGIN")
     import java.util
+
+    import scala.collection.JavaConversions._
     val colSet = new util.HashSet[String]()
     val schema = dataFrame.schema
     var columnsSet:StructType = null
     schema foreach (s => colSet.add(s.name))
     if (colSet.size() < schema.size){
       val arr:ArrayBuffer[StructField] = new ArrayBuffer[StructField]()
+      val tmpSet = new util.HashSet[StructField]()
       dataFrame.queryExecution.analyzed.output foreach {
         attri => val tempAttri = StructField(attri.qualifiedName, attri.dataType, attri.nullable, attri.metadata)
-          arr += tempAttri
+          tmpSet += tempAttri
+      }
+      if (tmpSet.size() < schema.size){
+        dataFrame.queryExecution.analyzed.output foreach {
+          attri => val tempAttri = StructField(attri.toString(), attri.dataType, attri.nullable, attri.metadata)
+            arr += tempAttri
+        }
+      }else{
+        tmpSet.foreach(arr += _)
       }
       columnsSet = StructType(arr.toArray)
     }else{
@@ -242,6 +255,7 @@ object SQLSession extends Logging {
     //val columnsSet = dataFrame.schema
     val columns = columnsSet.map(c =>
       Column(c.name, DataType.toDataType(c.dataType.typeName.toLowerCase), c.getComment().orNull)).toArray[Column]
+    columns.foreach(c => info(s"c is ${c.columnName}, comment is ${c.comment}"))
     if (columns == null || columns.isEmpty) return
     val metaData = new TableMetaData(columns)
     val writer = if (StringUtils.isNotBlank(alias))

@@ -79,7 +79,7 @@ public class TestListenerManager {
         testContextKeyValue.setContextValue(testContextValue);
         defaultContextKeyEvent.setContextKeyValue(testContextKeyValue);
         contextAsyncListenerBus.doPostEvent(contextKeyCallbackEngine, defaultContextKeyEvent);
-        ArrayList<ContextKeyValueBean> clientSource2ListenerCallback = contextKeyCallbackEngine.getListenerCallback("");
+        ArrayList<ContextKeyValueBean> clientSource2ListenerCallback = contextKeyCallbackEngine.getListenerCallback("127.0.0.1:8888");
         System.out.println("----------------------------------------------------------------------");
         for (ContextKeyValueBean contextKeyValueBean : clientSource2ListenerCallback) {
             System.out.println("返回的bean里面对应的contexID: " + contextKeyValueBean.getCsID().getContextId());

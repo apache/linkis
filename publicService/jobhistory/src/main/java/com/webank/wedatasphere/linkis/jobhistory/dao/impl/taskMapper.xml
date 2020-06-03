@@ -28,7 +28,8 @@
 
     <sql id="task_List">
         id, `instance`, `exec_id`, `um_user`, `execution_code`, `progress`,`log_path`,
-        `result_location`,`status`,`created_time`,`updated_time`,`run_type`,`err_code`,`err_desc`,`execute_application_name`,`request_application_name`,`script_path`,`params`,`engine_instance`
+        `result_location`,`status`,`created_time`,`updated_time`,`run_type`,`err_code`,`err_desc`,`execute_application_name`,`request_application_name`,`script_path`,`params`,`engine_instance`,
+        `engine_start_time`
     </sql>
 
     <insert id="insertTask" useGeneratedKeys="true" keyProperty="taskID" parameterType="com.webank.wedatasphere.linkis.jobhistory.entity.QueryTask">
@@ -37,7 +38,9 @@
         #{umUser},#{executionCode},#{progress},
         #{logPath},#{resultLocation},#{status},
         #{createdTime},#{updatedTime},#{runType},
-        #{errCode},#{errDesc},#{executeApplicationName},#{requestApplicationName},#{sourceJson},#{paramsJson},#{engineInstance})
+        #{errCode},#{errDesc},#{executeApplicationName},
+        #{requestApplicationName},#{sourceJson},#{paramsJson},
+        #{engineInstance},#{engineStartTime})
     </insert>
 
     <select id="selectTask" resultMap="taskMapper" parameterType="com.webank.wedatasphere.linkis.jobhistory.entity.QueryTask">
@@ -62,6 +65,7 @@
             <if test="requestApplicationName != null">and request_application_name = #{requestApplicationName}</if>
             <if test="sourceJson != null">and script_path = #{sourceJson}</if>
             <if test="paramsJson != null">and params = #{paramsJson}</if>
+            <if test="engineStartTime != null">and engine_start_time = #{engineStartTime}</if>
         </where>
     </select>
 
@@ -99,6 +103,7 @@
             <if test="sourceJson != null"> script_path = #{sourceJson},</if>
             <if test="paramsJson != null"> params = #{paramsJson},</if>
             <if test="engineInstance != null"> engine_instance = #{engineInstance},</if>
+            <if test="engineStartTime != null"> engine_start_time = #{engineStartTime},</if>
         </trim>
         WHERE id =#{taskID}
     </update>

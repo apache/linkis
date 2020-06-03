@@ -21,8 +21,10 @@ import java.net.ConnectException
 
 import com.netflix.client.ClientException
 import com.webank.wedatasphere.linkis.rpc.exception.NoInstanceExistsException
+import com.webank.wedatasphere.linkis.rpc.sender.SpringCloudFeignConfigurationCache
 import feign.RetryableException
 import org.apache.commons.lang.StringUtils
+import scala.collection.JavaConversions._
 
 /**
   * Created by enjoyyin on 2019/2/22.
@@ -50,4 +52,11 @@ object RPCUtils {
     case _ => false
   }
 
+  def findService(parsedServiceId: String, tooManyDeal: List[String] => Option[String]): Option[String] = {
+    val services = SpringCloudFeignConfigurationCache.getDiscoveryClient
+      .getServices.filter(_.toLowerCase.contains(parsedServiceId.toLowerCase)).toList
+    if(services.length == 1) Some(services.head)
+    else if(services.length > 1) tooManyDeal(services)
+    else None
+  }
 }

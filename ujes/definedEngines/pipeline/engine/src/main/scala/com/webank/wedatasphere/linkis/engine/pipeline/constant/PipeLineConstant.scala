@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engine.pipeline.exception
-
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+package com.webank.wedatasphere.linkis.engine.pipeline.constant
 
 /**
- * Created by johnnwang on 2018/11/16.
- */
-class PipeLineErrorException(errCode: Int, desc: String) extends ErrorException(errCode, desc) {
-
+  * Created by patinousward on 2018/11/16.
+  */
+object PipeLineConstant {
+  val DEFAULTC_HARSET = "utf-8"
+  val DEFAULT_SHEETNAME = "result"
+  val DEFAULT_DATEFORMATE = "yyyy-MM-dd HH:mm:ss"
+  val PIPELINE_OUTPUT_ISOVERWRITE = "pipeline.output.isoverwtite"
+  val PIPELINE_OUTPUT_SHUFFLE_NULL_TYPE = "pipeline.output.shuffle.null.type"
+  val PIPELINE_OUTPUT_CHARSET = "pipeline.output.charset"
+  val PIPELINE_FIELD_SPLIT = "pipeline.field.split"
+  val BLANK = "BLANK"
 }

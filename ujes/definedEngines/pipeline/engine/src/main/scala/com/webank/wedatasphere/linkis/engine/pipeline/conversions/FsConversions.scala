@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engine.pipeline.exception
+package com.webank.wedatasphere.linkis.engine.pipeline.conversions
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import java.io.Closeable
+
+import com.webank.wedatasphere.linkis.common.io.Fs
 
 /**
- * Created by johnnwang on 2018/11/16.
+ * Created by patinousward on 2020/2/4.
  */
-class PipeLineErrorException(errCode: Int, desc: String) extends ErrorException(errCode, desc) {
+object FsConversions {
 
+  implicit def fsToFsClosable(fs: Fs): Closeable = {
+    new FsClosable(fs)
+  }
+}
+
+class FsClosable(fs: Fs) extends Closeable {
+  override def close(): Unit = {
+    fs.close()
+  }
 }

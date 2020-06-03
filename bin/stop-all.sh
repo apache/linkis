@@ -33,44 +33,9 @@ CONF_DIR="${workDir}"/../conf
 export LINKIS_DSS_CONF_FILE=${LINKIS_DSS_CONF_FILE:-"${CONF_DIR}/config.sh"}
 export DISTRIBUTION=${DISTRIBUTION:-"${CONF_DIR}/config.sh"}
 source ${DISTRIBUTION}
-function isSuccess(){
-if [ $? -ne 0 ]; then
-    echo "ERROR:  " + $1
-    exit 1
-else
-    echo "INFO:" + $1
-fi
-}
 
+source ${workDir}/bin/common.sh
 
-local_host="`hostname --fqdn`"
-
-ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}'|awk 'NR==1')
-
-function isLocal(){
-    if [ "$1" == "127.0.0.1" ];then
-        return 0
-    elif [ $1 == "localhost" ]; then
-        return 0
-    elif [ $1 == $local_host ]; then
-        return 0
-    elif [ $1 == $ipaddr ]; then
-        return 0
-    fi
-        return 1
-}
-
-function executeCMD(){
-   isLocal $1
-   flag=$?
-   echo "Is local "$flag
-   if [ $flag == "0" ];then
-      eval $2
-   else
-      ssh -p $SSH_PORT $1 $2
-   fi
-
-}
 
 #if there is no LINKIS_INSTALL_HOME，we need to source config again
 if [ -z ${LINKIS_INSTALL_HOME} ];then
@@ -143,6 +108,10 @@ SERVER_NAME="metadata"
 SERVER_IP=$METADATA_INSTALL_IP
 stopApp
 
+#cs-server
+SERVER_NAME="cs-server"
+SERVER_IP=$CS_INSTALL_IP
+stopApp
 
 APP_PREFIX="linkis-ujes-"
 
@@ -187,11 +156,27 @@ SERVER_NAME="hive-enginemanager"
 SERVER_IP=$HIVE_INSTALL_IP
 stopApp
 
+#cs-server
+SERVER_NAME="cs-server"
+SERVER_IP=$CS_INSTALL_IP
+stopApp
 
 
 #JDBCEntrance
 SERVER_NAME="jdbc-entrance"
 SERVER_IP=$JDBC_INSTALL_IP
+stopApp
+
+SERVER_NAME="pipeline-entrance"
+SERVER_IP=$PIPELINE_INSTALL_IP
+stopApp
+
+SERVER_NAME="pipeline-enginemanager"
+SERVER_IP=$PIPELINE_INSTALL_IP
+stopApp
+
+SERVER_NAME="io-enginemanager"
+SERVER_IP=$IO_INSTALL_IP
 stopApp
 
 

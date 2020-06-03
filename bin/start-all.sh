@@ -33,44 +33,9 @@ export LINKIS_DSS_CONF_FILE=${LINKIS_DSS_CONF_FILE:-"${CONF_DIR}/config.sh"}
 export DISTRIBUTION=${DISTRIBUTION:-"${CONF_DIR}/config.sh"}
 #source $LINKIS_DSS_CONF_FILE
 source ${DISTRIBUTION}
-function isSuccess(){
-if [ $? -ne 0 ]; then
-    echo "Failed to " + $1
-    exit 1
-else
-    echo "Succeed to" + $1
-fi
-}
 
+source ${workDir}/bin/common.sh
 
-local_host="`hostname --fqdn`"
-
-ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}'|awk 'NR==1')
-
-function isLocal(){
-    if [ "$1" == "127.0.0.1" ];then
-        return 0
-    elif [ $1 == "localhost" ]; then
-        return 0
-    elif [ $1 == $local_host ]; then
-        return 0
-    elif [ $1 == $ipaddr ]; then
-        return 0
-    fi
-        return 1
-}
-
-function executeCMD(){
-   isLocal $1
-   flag=$?
-   echo "Is local "$flag
-   if [ $flag == "0" ];then
-      eval $2
-   else
-      ssh -p $SSH_PORT $1 $2
-   fi
-
-}
 
 #if there is no LINKIS_INSTALL_HOME，we need to source config again
 if [ -z ${LINKIS_INSTALL_HOME} ];then
@@ -144,6 +109,11 @@ SERVER_NAME="bml"
 SERVER_IP=$BML_INSTALL_IP
 startApp
 
+#cs-server
+SERVER_NAME="cs-server"
+SERVER_IP=$CS_INSTALL_IP
+startApp
+
 #resourcemanager
 SERVER_NAME="resourcemanager"
 SERVER_IP=$RESOURCEMANAGER_INSTALL_IP
@@ -201,6 +171,7 @@ SERVER_IP=$JDBC_INSTALL_IP
 startApp
 
 
+
 echo "start-all shell script executed completely"
 
 echo "Start to check all dss microservice"
@@ -223,7 +194,7 @@ fi
 sh $workDir/bin/checkServices.sh $SERVER_NAME $SERVER_IP $SERVER_PORT
 isSuccess "start $SERVER_NAME "
 echo "<-------------------------------->"
-sleep 3
+sleep 5
 }
 SERVER_NAME="eureka"
 SERVER_IP=$EUREKA_INSTALL_IP
@@ -255,6 +226,11 @@ checkServer
 SERVER_NAME=$APP_PREFIX"bml"
 SERVER_IP=$BML_INSTALL_IP
 SERVER_PORT=$BML_PORT
+checkServer
+
+#cs-server
+SERVER_NAME="cs-server"
+SERVER_IP=$CS_INSTALL_IP
 checkServer
 
 APP_PREFIX="linkis-ujes-"
@@ -292,5 +268,6 @@ SERVER_NAME=$APP_PREFIX"jdbc-entrance"
 SERVER_IP=$JDBC_INSTALL_IP
 SERVER_PORT=$JDBC_ENTRANCE_PORT
 checkServer
+
 
 echo "Linkis started successfully"

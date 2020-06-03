@@ -42,6 +42,14 @@ public class QueryTask {
     private String runType;
     private String paramsJson;
     private String sourceJson;
+    private Date engineStartTime;
+    public Date getEngineStartTime() {
+        return engineStartTime;
+    }
+
+    public void setEngineStartTime(Date engineStartTime) {
+        this.engineStartTime = engineStartTime;
+    }
 
     public String getSourceJson() {
         return sourceJson;

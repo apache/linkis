@@ -20,32 +20,38 @@ import java.net.ConnectException
 
 import com.fasterxml.jackson.core.JsonParseException
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.common.conf.Configuration.hadoopConfDir
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.resourcemanager.YarnResource
 import com.webank.wedatasphere.linkis.resourcemanager.exception.{RMErrorException, RMFatalException, RMWarnException}
-import dispatch.{Http, as}
 import org.apache.commons.lang.StringUtils
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.util.RMHAUtils
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
 import org.json4s.JsonAST._
+import org.json4s.jackson.JsonMethods._
 import org.json4s.{DefaultFormats, JValue}
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
-import scala.concurrent.{Await, ExecutionContext}
-import scala.concurrent.duration.Duration
 /**
- * Created by shanhuang on 2018/9/24.
- */
+  * Created by shanhuang on 2018/9/24.
+  */
 object YarnUtil extends Logging{
 
-  private implicit val executor = ExecutionContext.global
-  private var yarnConf: YarnConfiguration = _
-  private var rm_web_address: String = CommonVars("wds.linkis.yarn.rm.web.address", "").getValue
-  private var hadoop_version:String = "2.7.2"
+
   implicit val format = DefaultFormats
+
+  private var yarnConf: YarnConfiguration = _
+
+  private var rm_web_address: String = CommonVars("wds.linkis.yarn.rm.web.address", "").getValue
+
+  private var hadoop_version:String = "2.7.2"
+
+  private val httpClient = HttpClients.createDefault()
 
   def init() = {
     if(StringUtils.isBlank(this.rm_web_address)){
@@ -101,30 +107,31 @@ object YarnUtil extends Logging{
     info(s"Resource Manager WebApp address: $rm_web_address.")
   }
 
+  private def getResponseByUrl(url: String): JValue = {
+    val httpGet = new HttpGet(rm_web_address + "/ws/v1/cluster/" + url)
+    httpGet.addHeader("Accept", "application/json")
+    val response = httpClient.execute(httpGet)
+    parse(EntityUtils.toString(response.getEntity()))
+  }
+
   private def getHadoopVersion():Unit = {
-    val url = dispatch.url(rm_web_address) / "ws" / "v1" / "cluster" / "info"
-    val future = Http(url > as.json4s.Json).map {resp =>
-      val resourceManagerVersion = resp \ "clusterInfo" \ "resourceManagerVersion"
-      info(s"Hadoop version is $resourceManagerVersion")
-      hadoop_version = resourceManagerVersion.values.asInstanceOf[String]
-    }
+    val resourceManagerVersion = getResponseByUrl("info") \ "clusterInfo" \ "resourceManagerVersion"
+
+    info(s"Hadoop version is $resourceManagerVersion")
+
+    hadoop_version = resourceManagerVersion.values.asInstanceOf[String]
   }
 
 
   def getQueueInfo(queueName: String): (YarnResource, YarnResource) = {
-    val url = dispatch.url(rm_web_address) / "ws" / "v1" / "cluster" / "scheduler"
-    url.setContentType("application/json", "UTF-8")
 
     def getYarnResource(jValue: Option[JValue]): Option[YarnResource] = {
       jValue.map(r => new YarnResource((r \ "memory").asInstanceOf[JInt].values.toLong * 1024l * 1024l, (r \ "vCores").asInstanceOf[JInt].values.toInt, 0, queueName))
     }
 
     def maxEffectiveHandle(queueValue: Option[JValue]): Option[YarnResource] = {
-      val url = dispatch.url(rm_web_address) / "ws" / "v1" / "cluster" / "metrics"
-      url.setContentType("application/json", "UTF-8")
-      val totalResouceInfo = Http(url > as.json4s.Json).map { resp => ((resp \ "clusterMetrics" \ "totalMB").asInstanceOf[JInt].values.toLong, (resp \ "clusterMetrics" \ "totalVirtualCores").asInstanceOf[JInt].values.toLong) }
-      val totalResouceInfoResponse = Await.result(totalResouceInfo, Duration.create(10, "seconds"))
-
+      val metrics = getResponseByUrl( "metrics")
+      val totalResouceInfoResponse = ((metrics \ "clusterMetrics" \ "totalMB").asInstanceOf[JInt].values.toLong, (metrics \ "clusterMetrics" \ "totalVirtualCores").asInstanceOf[JInt].values.toLong)
       queueValue.map(r => {
         val effectiveResource = (r \ "absoluteCapacity").asInstanceOf[JDecimal].values.toDouble- (r \ "absoluteUsedCapacity").asInstanceOf[JDecimal].values.toDouble
         new YarnResource(math.floor(effectiveResource * totalResouceInfoResponse._1 * 1024l * 1024l/100).toLong, math.floor(effectiveResource * totalResouceInfoResponse._2/100).toInt, 0, queueName)
@@ -151,8 +158,7 @@ object YarnUtil extends Logging{
     }
     def getChildQueues(resp:JValue):JValue =  {
       val queues = resp \ "childQueues" \ "queue"
-
-      if(queues != null && queues != JNull && queues != JNothing ) {
+      if(queues != null && queues != JNull && queues != JNothing && queues.children.nonEmpty) {
         info(s"test queue:$queues")
         queues
       } else resp  \ "childQueues"
@@ -183,57 +189,61 @@ object YarnUtil extends Logging{
 
     def getChildQueuesOfCapacity(resp:JValue):JValue = resp \ "queues" \ "queue"
 
-    val future = Http(url > as.json4s.Json).map {resp =>
+    def getResources(): (YarnResource, YarnResource) = {
+      val resp = getResponseByUrl("scheduler")
       val schedulerType = (resp \ "scheduler" \ "schedulerInfo" \ "type").asInstanceOf[JString].values
       if ("capacityScheduler".equals(schedulerType)) {
         realQueueName = queueName
         val childQueues = getChildQueuesOfCapacity(resp \ "scheduler" \ "schedulerInfo")
         val queue = getQueueOfCapacity(childQueues)
-        if(queue.isEmpty) {
+        if (queue.isEmpty) {
           debug(s"cannot find any information about queue $queueName, response: " + resp)
-          throw new RMWarnException(111006, s"queue $queueName is not exists in YARN.")
+          throw new RMWarnException(11006, s"queue $queueName is not exists in YARN.")
         }
         (maxEffectiveHandle(queue).get, getYarnResource(queue.map( _ \ "resourcesUsed")).get)
       } else if ("fairScheduler".equals(schedulerType)) {
         val childQueues = getChildQueues(resp \ "scheduler" \ "schedulerInfo" \ "rootQueue")
         val queue = getQueue(childQueues)
-        if(queue.isEmpty) {
+        if (queue.isEmpty) {
           debug(s"cannot find any information about queue $queueName, response: " + resp)
-          throw new RMWarnException(111006, s"queue $queueName is not exists in YARN.")
+          throw new RMWarnException(11006, s"queue $queueName is not exists in YARN.")
         }
-        (getYarnResource(queue.map( _ \ "maxResources")).get,
-          getYarnResource(queue.map( _ \ "usedResources")).get)
+        (getYarnResource(queue.map(_ \ "maxResources")).get,
+          getYarnResource(queue.map(_ \ "usedResources")).get)
       } else {
         debug(s"only support fairScheduler or capacityScheduler, schedulerType: $schedulerType , response: " + resp)
-        throw new RMWarnException(111006, s"only support fairScheduler or capacityScheduler, schedulerType: $schedulerType")
+        throw new RMWarnException(11006, s"only support fairScheduler or capacityScheduler, schedulerType: $schedulerType")
       }
     }
-    Utils.tryCatch(Await.result(future, Duration.Inf))( t => {
-      if((t.getCause.isInstanceOf[JsonParseException] && t.getCause.getMessage.contains("This is standby RM"))
+
+    Utils.tryCatch(getResources())(t => {
+      if ((t.getCause.isInstanceOf[JsonParseException] && t.getCause.getMessage.contains("This is standby RM"))
         || t.getCause.isInstanceOf[ConnectException]) {
         reloadRMWebAddress()
         getQueueInfo(queueName)
-      } else throw new RMErrorException(111006, "Get the Yarn queue information exception.(获取Yarn队列信息异常)", t)
+      } else throw new RMErrorException(11006, "Get the Yarn queue information exception" +
+        ".(获取Yarn队列信息异常)", t)
     })
   }
 
   def getApplicationsInfo(queueName: String): Array[YarnAppInfo] = {
-    val url = dispatch.url(rm_web_address) / "ws" / "v1" / "cluster" / "apps"
-    url.setContentType("application/json", "UTF-8")
+
 
     def getYarnResource(jValue: Option[JValue]): Option[YarnResource] = {
       jValue.map(r => new YarnResource((r \ "allocatedMB").asInstanceOf[JInt].values.toLong * 1024l * 1024l, (r \ "allocatedVCores").asInstanceOf[JInt].values.toInt, 0, queueName))
     }
 
     val realQueueName = "root." + queueName
-    val future = Http(url > as.json4s.Json).map {resp =>
+
+    def getAppInfos(): Array[YarnAppInfo] = {
+      val resp = getResponseByUrl("apps")
       resp \ "apps" \ "app" match {
         case JArray(apps) =>
           val appInfoBuffer = new ArrayBuffer[YarnAppInfo]()
           apps.foreach { app =>
             val yarnQueueName = (app \ "queue").asInstanceOf[JString].values
             val state = (app \ "state").asInstanceOf[JString].values
-            if(yarnQueueName == realQueueName && (state == "RUNNING" || state == "ACCEPTED")){
+            if (yarnQueueName == realQueueName && (state == "RUNNING" || state == "ACCEPTED")) {
               val appInfo = new YarnAppInfo(
                 (app \ "id").asInstanceOf[JString].values,
                 (app \ "user").asInstanceOf[JString].values,
@@ -248,12 +258,13 @@ object YarnUtil extends Logging{
         case JNull | JNothing => new Array[YarnAppInfo](0)
       }
     }
-    Utils.tryCatch(Await.result(future, Duration.Inf))( t => {
-      if((t.getCause.isInstanceOf[JsonParseException] && t.getCause.getMessage.contains("This is standby RM"))
+
+    Utils.tryCatch(getAppInfos())(t => {
+      if ((t.getCause.isInstanceOf[JsonParseException] && t.getCause.getMessage.contains("This is standby RM"))
         || t.getCause.isInstanceOf[ConnectException]) {
         reloadRMWebAddress()
         getApplicationsInfo(queueName)
-      } else throw new RMErrorException(111006, "Get the Yarn Application information exception.(获取Yarn Application信息异常)", t)
+      } else throw new RMErrorException(11006, "Get the Yarn Application information exception.(获取Yarn Application信息异常)", t)
     })
   }
 

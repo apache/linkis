@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.notify
+package com.webank.bdp.dataworkcloud.resourcemanager.notify
 
 import com.webank.wedatasphere.linkis.resourcemanager.event.EventScope
-import com.webank.wedatasphere.linkis.resourcemanager.event.EventScope.Instance
 import com.webank.wedatasphere.linkis.resourcemanager.event.notify.DefaultNotifyRMEvent
 
 object ZookeeperPubTest {

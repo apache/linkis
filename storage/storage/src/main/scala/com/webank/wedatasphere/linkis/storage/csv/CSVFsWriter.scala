@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.storage.csv
 
-import java.io.InputStream
+import java.io.OutputStream
 
 import com.webank.wedatasphere.linkis.common.io.FsWriter
 
@@ -26,14 +26,9 @@ import com.webank.wedatasphere.linkis.common.io.FsWriter
 abstract class CSVFsWriter extends FsWriter {
   val charset: String
   val separator: String
-  var isLastRow: Boolean = false
-
-  def setIsLastRow(value: Boolean): Unit
-
-  def getCSVStream: InputStream
 }
 
 object CSVFsWriter {
-  def getCSVFSWriter(charset: String, separator: String): CSVFsWriter = new StorageCSVWriter(charset, separator)
+  def getCSVFSWriter(charset: String, separator: String, outputStream: OutputStream): CSVFsWriter = new StorageCSVWriter(charset, separator, outputStream)
 }
 

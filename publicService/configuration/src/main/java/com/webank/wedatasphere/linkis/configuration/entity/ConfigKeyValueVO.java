@@ -31,6 +31,33 @@ public class ConfigKeyValueVO {
     private String value;
     private Integer level;
     private String defaultValue;
+    private String validateType;
+    private String validateRange;
+    private String unit;
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getValidateRange() {
+        return validateRange;
+    }
+
+    public void setValidateRange(String validateRange) {
+        this.validateRange = validateRange;
+    }
+
+    public String getValidateType() {
+        return validateType;
+    }
+
+    public void setValidateType(String validateType) {
+        this.validateType = validateType;
+    }
 
     public Long getKeyID() {
         return keyID;

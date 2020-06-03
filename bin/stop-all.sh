@@ -33,6 +33,33 @@ CONF_DIR="${workDir}"/../conf
 export LINKIS_DSS_CONF_FILE=${LINKIS_DSS_CONF_FILE:-"${CONF_DIR}/config.sh"}
 export DISTRIBUTION=${DISTRIBUTION:-"${CONF_DIR}/config.sh"}
 source ${DISTRIBUTION}
+function isSuccess(){
+if [ $? -ne 0 ]; then
+    echo "ERROR:  " + $1
+    exit 1
+else
+    echo "INFO:" + $1
+fi
+}
+
+
+local_host="`hostname --fqdn`"
+
+ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}'|awk 'NR==1')
+
+function isLocal(){
+    if [ "$1" == "127.0.0.1" ];then
+        return 0
+    elif [ $1 == "localhost" ]; then
+        return 0
+    elif [ $1 == $local_host ]; then
+        return 0
+    elif [ $1 == $ipaddr ]; then
+        return 0
+    fi
+        return 1
+}
+
 
 source ${workDir}/bin/common.sh
 

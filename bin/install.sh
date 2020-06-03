@@ -122,6 +122,35 @@ source ${DISTRIBUTION}
 isSuccess "load config"
 
 
+local_host="`hostname --fqdn`"
+
+ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}'|awk 'NR==1')
+
+function isLocal(){
+    if [ "$1" == "127.0.0.1" ];then
+        return 0
+    elif [ $1 == "localhost" ]; then
+        return 0
+    elif [ $1 == $local_host ]; then
+        return 0
+    elif [ $1 == $ipaddr ]; then
+        return 0
+    fi
+        return 1
+}
+
+function executeCMD(){
+   isLocal $1
+   flag=$?
+   if [ $flag == "0" ];then
+      echo "Is local execution:$2"
+      eval $2
+   else
+      echo "Is remote execution:$2"
+      ssh -p $SSH_PORT $1 $2
+   fi
+
+
 
 ##install mode choice
 if [ "$INSTALL_MODE" == "" ];then

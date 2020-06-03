@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.webank.wedatasphere.linkis.engine.pipeline
 
-package com.webank.wedatasphere.linkis.engine.pipeline.exception
-
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import com.webank.wedatasphere.linkis.engine.execute.CommonEngineJob
 
 /**
- * Created by johnnwang on 2018/11/16.
+ * created by patinousward on 2019/12/9
+ * Description:
  */
-class PipeLineErrorException(errCode: Int, desc: String) extends ErrorException(errCode, desc) {
-
+class PipeEngineJob extends CommonEngineJob {
+  override def kill(): Unit = {
+    info("begin to remove osCache:" + this.getId)
+    OutputStreamCache.osCache.get(this.getId).close() //因为SingleTaskInfoSupport，应该是没有并发问题的
+    super.kill()
+  }
 }

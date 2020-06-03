@@ -13,23 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.webank.wedatasphere.linkis.engine.pipeline
 
-import com.webank.wedatasphere.linkis.engine.pipeline.domain.PipeEntity
-import com.webank.wedatasphere.linkis.engine.pipeline.util.PipeLineUtil
+import com.webank.wedatasphere.linkis.engine.EngineParser
+import com.webank.wedatasphere.linkis.protocol.engine.RequestTask
+import com.webank.wedatasphere.linkis.scheduler.queue.Job
+import org.springframework.stereotype.Component
 
 /**
-  * Created by johnnwang on 2018/11/14.
-  */
-object PipeTest {
-  def main(args: Array[String]): Unit = {
-    val out01 = "from file:///appcom/bdap/johnnwang/ to hdfs:///tmp/bdp-ide/johnnwang/test1/new_py_180910175033.python"
-    val regex = ("(?i)\\s*from\\s+(\\S+)\\s+to\\s+(\\S+)\\s?").r
-    out01 match {
-      case regex(source,desct) => print(source.contains("."))
-    }
-
+ * created by patinousward on 2019/12/9
+ * Description:
+ */
+@Component("engineParser")
+class PipelineEngineParser extends EngineParser {
+  override def parseToJob(request: RequestTask): Job = {
+    val job = new PipeEngineJob
+    job.setRequestTask(request)
+    job
   }
-
 }

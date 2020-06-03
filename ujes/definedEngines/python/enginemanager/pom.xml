@@ -32,9 +32,6 @@
     <!--<version>${bdp.ide.version}</version>-->
     <!--<name>linkis-Spark-EngineManager</name>-->
 
-    <properties>
-        <dwc.python.version>0.9.4</dwc.python.version>
-    </properties>
     <dependencies>
 
         <dependency>

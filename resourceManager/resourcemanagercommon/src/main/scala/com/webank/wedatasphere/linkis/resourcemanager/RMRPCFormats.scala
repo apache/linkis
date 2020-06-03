@@ -18,7 +18,7 @@ package com.webank.wedatasphere.linkis.resourcemanager
 
 import com.webank.wedatasphere.linkis.resourcemanager.domain.{ModuleInfoSerializer, ModuleInstanceSerializer, ModuleResourceInfoSerializer}
 import com.webank.wedatasphere.linkis.rpc.transform.RPCFormats
-import org.json4s.{DefaultFormats, Formats, Serializer}
+import org.json4s.Serializer
 import org.springframework.stereotype.Component
 
 /**

@@ -21,8 +21,6 @@ import com.webank.wedatasphere.linkis.resourcemanager.domain.{UserPreUsedResourc
 import com.webank.wedatasphere.linkis.resourcemanager.event.EventScope
 import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState._
 
-import scala.collection.mutable.ArrayBuffer
-
 /**
   * Created by shanhuang on 9/11/18.
   */

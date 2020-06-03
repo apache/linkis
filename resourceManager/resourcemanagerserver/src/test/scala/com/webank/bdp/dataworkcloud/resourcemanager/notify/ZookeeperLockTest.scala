@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.notify
+package com.webank.bdp.dataworkcloud.resourcemanager.notify
 
 object ZookeeperLockTest {
 

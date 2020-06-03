@@ -17,15 +17,13 @@
 package com.webank.wedatasphere.linkis.resourcemanager.service.metadata
 
 import java.util
-import java.util.Map.Entry
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.protocol.config.{RequestQueryAppConfigWithGlobal, ResponseQueryConfig}
+import com.webank.wedatasphere.linkis.protocol.config.RequestQueryAppConfigWithGlobal
 import com.webank.wedatasphere.linkis.protocol.utils.ProtocolUtils
 import com.webank.wedatasphere.linkis.resourcemanager.ResourceRequestPolicy._
 import com.webank.wedatasphere.linkis.resourcemanager._
 import com.webank.wedatasphere.linkis.resourcemanager.exception.RMWarnException
-import com.webank.wedatasphere.linkis.resourcemanager.utils.RMConfiguration
 import com.webank.wedatasphere.linkis.resourcemanager.utils.RMConfiguration._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component

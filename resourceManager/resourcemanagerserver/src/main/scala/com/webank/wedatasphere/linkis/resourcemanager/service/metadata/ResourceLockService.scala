@@ -16,8 +16,6 @@
 
 package com.webank.wedatasphere.linkis.resourcemanager.service.metadata
 
-import java.util.concurrent.TimeUnit
-
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.resourcemanager.dao.ResourceLockDao

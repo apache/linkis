@@ -18,14 +18,13 @@ package com.webank.wedatasphere.linkis.resourcemanager.restful
 
 import java.util
 import java.util.Map
-import java.util.concurrent.TimeUnit
 
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.resourcemanager.ResourceRequestPolicy.ResourceRequestPolicy
 import com.webank.wedatasphere.linkis.resourcemanager._
 import org.json4s.JsonAST.JObject
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
-import com.webank.wedatasphere.linkis.common.utils.Logging
 
 /**
   * Created by shanhuang on 2019/1/11.

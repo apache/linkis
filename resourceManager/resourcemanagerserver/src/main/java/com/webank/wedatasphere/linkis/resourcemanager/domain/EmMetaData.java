@@ -16,8 +16,6 @@
 
 package com.webank.wedatasphere.linkis.resourcemanager.domain;
 
-import java.util.Date;
-
 /**
  * Created by shanhuang on 9/11/18.
  */

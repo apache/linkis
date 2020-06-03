@@ -20,8 +20,6 @@ import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.resourcemanager.domain.{ModuleInfo, ModuleResourceInfo}
 import com.webank.wedatasphere.linkis.resourcemanager.service.rm.DefaultResourceManager
 
-import scala.concurrent.duration.TimeUnit
-
 /**
   * Created by shanhuang on 9/11/18.
   */

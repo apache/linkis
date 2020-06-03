@@ -17,19 +17,24 @@
 package com.webank.wedatasphere.linkis.engine.pipeline.executor
 
 import com.webank.wedatasphere.linkis.engine.execute.EngineExecutorContext
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteResponse
-import com.webank.wedatasphere.linkis.server._
+import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
 
 /**
-  * Created by johnnwang on 2019/1/30.
-  */
+ * Created by johnnwang on 2019/1/30.
+ */
 trait PipeLineExecutor {
   var options: java.util.Map[String, String] = _
-  def execute(sourcePath: String,destPath: String): ExecuteResponse
-  def Kind:String
-  def init(newOptions:java.util.Map[String, String]): Unit ={
+
+  def execute(sourcePath: String, destPath: String, engineExecutorContext: EngineExecutorContext): ExecuteResponse = {
+    cleanOptions
+    SuccessExecuteResponse()
+  }
+
+  def Kind: String
+
+  def init(newOptions: java.util.Map[String, String]): Unit = {
     options = newOptions
   }
 
-  def cleanOptions= options = null
+  def cleanOptions = options = null
 }

@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.webank.wedatasphere.linkis.engine.pipeline
 
-package com.webank.wedatasphere.linkis.engine.pipeline.exception
-
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import java.io.OutputStream
 
 /**
- * Created by johnnwang on 2018/11/16.
+ * created by patinousward on 2019/12/9
+ * Description:
  */
-class PipeLineErrorException(errCode: Int, desc: String) extends ErrorException(errCode, desc) {
-
+object OutputStreamCache {
+  final val osCache = new java.util.HashMap[String, OutputStream]()
 }

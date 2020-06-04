@@ -1,0 +1,23 @@
+server:
+  port: 8294
+spring:
+  application:
+    name: mdm-service-mysql
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${ip}:${port}/eureka/
+  instance:
+    metadata-map:
+      test: wedatasphere
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info
+logging:
+  config: classpath:log4j2.xml
+
+

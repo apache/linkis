@@ -51,6 +51,12 @@
             <version>2.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-cs-common</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -18,16 +18,33 @@ package com.webank.wedatasphere.linkis.httpclient.dws.response
 
 import java.util
 
-import com.ning.http.client.Response
 import com.webank.wedatasphere.linkis.httpclient.discovery.HeartbeatResult
+import org.apache.http.HttpResponse
+import org.apache.http.util.EntityUtils
 
 /**
   * created by cooperyang on 2019/5/22.
   */
-class DWSHeartbeatResult(response: Response, serverUrl: String) extends HeartbeatResult with DWSResult {
+class DWSHeartbeatResult(response: HttpResponse, serverUrl: String) extends HeartbeatResult with DWSResult {
 
-  set(response.getResponseBody, response.getStatusCode, response.getUri.toString, response.getContentType)
-  if(getStatus != 0) warn(s"heartbeat to gateway $serverUrl failed! message: $getMessage.")
+
+  setResponse()
+
+  private def setResponse(): Unit = {
+    val entity = response.getEntity
+    val responseBody: String = if (entity != null) {
+      EntityUtils.toString(entity, "UTF-8")
+    } else {
+      null
+    }
+    val statusCode: Int = response.getStatusLine.getStatusCode
+    val url: String = serverUrl
+    val contentType: String = entity.getContentType.getValue
+    set(responseBody, statusCode, url, contentType)
+  }
+
+
+  if (getStatus != 0) warn(s"heartbeat to gateway $serverUrl failed! message: $getMessage.")
   override val isHealthy: Boolean = getData.get("isHealthy") match {
     case b: java.lang.Boolean => b
     case s if s != null => s.toString.toBoolean

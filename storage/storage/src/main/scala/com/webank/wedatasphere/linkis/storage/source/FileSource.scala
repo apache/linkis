@@ -27,7 +27,7 @@ import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration
 import org.apache.commons.math3.util.Pair
 
 /**
- * Created by patinousward on 2020/1/15.
+ * Created by johnnwang on 2020/1/15.
  */
 trait FileSource extends Closeable {
 

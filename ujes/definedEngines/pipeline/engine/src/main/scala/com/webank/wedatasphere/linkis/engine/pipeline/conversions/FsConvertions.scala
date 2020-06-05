@@ -30,8 +30,3 @@ object FsConvertions {
   }
 }
 
-class FsClosable(fs: Fs) extends Closeable {
-  override def close(): Unit = {
-    fs.close()
-  }
-}

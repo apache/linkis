@@ -122,35 +122,6 @@ source ${DISTRIBUTION}
 isSuccess "load config"
 
 
-local_host="`hostname --fqdn`"
-
-ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}'|awk 'NR==1')
-
-function isLocal(){
-    if [ "$1" == "127.0.0.1" ];then
-        return 0
-    elif [ $1 == "localhost" ]; then
-        return 0
-    elif [ $1 == $local_host ]; then
-        return 0
-    elif [ $1 == $ipaddr ]; then
-        return 0
-    fi
-        return 1
-}
-
-function executeCMD(){
-   isLocal $1
-   flag=$?
-   if [ $flag == "0" ];then
-      echo "Is local execution:$2"
-      eval $2
-   else
-      echo "Is remote execution:$2"
-      ssh -p $SSH_PORT $1 $2
-   fi
-
-
 
 ##install mode choice
 if [ "$INSTALL_MODE" == "" ];then
@@ -164,7 +135,7 @@ if [ "$INSTALL_MODE" == "" ];then
 fi
 
 if [[ '1' = "$INSTALL_MODE" ]];then
-  echo "You chose Lite installation mode" 
+  echo "You chose Lite installation mode"
   checkPythonAndJava
 elif [[ '2' = "$INSTALL_MODE" ]];then
   echo "You chose Simple installation mode"
@@ -247,7 +218,7 @@ then
     localRootDir=${RESULT_SET_ROOT_PATH#hdfs://}
         hdfs dfs -mkdir -p $localRootDir/$deployUser
   else
-    echo "does not support $RESULT_SET_ROOT_PATH filesystem types"        
+    echo "does not support $RESULT_SET_ROOT_PATH filesystem types"
   fi
 fi
 isSuccess "create  $RESULT_SET_ROOT_PATH directory"

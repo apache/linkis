@@ -268,6 +268,15 @@
         <include>*.zip</include>
       </includes>
     </fileSet>
+    <fileSet>
+      <directory>
+        ${project.parent.basedir}/contextservice/cs-server/target/
+      </directory>
+      <outputDirectory>share/linkis/linkis-cs-server/</outputDirectory>
+      <includes>
+        <include>*.zip</include>
+      </includes>
+    </fileSet>
   </fileSets>
 
   <dependencySets>

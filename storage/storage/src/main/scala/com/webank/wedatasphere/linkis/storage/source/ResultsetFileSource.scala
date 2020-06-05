@@ -20,7 +20,7 @@ import com.webank.wedatasphere.linkis.storage.resultset.table.TableRecord
 import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
 
 /**
-  * Created by patinousward on 2020/1/15.
+  * Created by johnnwang on 2020/1/15.
   */
 class ResultsetFileSource extends AbstractFileSource {
 

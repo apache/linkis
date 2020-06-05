@@ -28,7 +28,7 @@ import org.apache.commons.math3.util.Pair
 import scala.collection.JavaConversions._
 
 /**
-  * Created by patinousward on 2020/1/15.
+  * Created by johnnwang on 2020/1/15.
   */
 abstract class AbstractFileSource extends FileSource {
 

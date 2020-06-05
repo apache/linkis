@@ -16,6 +16,7 @@ data:
     # See the License for the specific language governing permissions and
     # limitations under the License.
     #
+    aaa=111
     wds.linkis.test.mode=true
     wds.linkis.server.version=v1
     wds.linkis.ldap.proxy.url=

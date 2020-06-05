@@ -29,10 +29,16 @@ spec:
         imagePullPolicy: Always
         ports:
         - name: http
-          containerPort: 14004
+          containerPort: 14005
         env:
           - name: eurekaurl
             value: http://10.206.0.12:20230/eureka/
+          - name: EUREKA_URL
+            value: http://10.206.0.12:20230/eureka/
+          - name: SERVER_HEAP_SIZE
+            value: 1024M
+          - name: START_PORT
+            value: "14005"
         volumeMounts:
           - name: linkis-ujes-jdbcentrance-config
             mountPath: /opt/ihome/conf

@@ -103,7 +103,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <repository>zhangrong1027/linkis</repository>
+                    <repository>hub.ihomefnt.com/library/linkis</repository>
                     <tag>linkis-ujes-shell-enginemanager</tag>
                     <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>
                 </configuration>

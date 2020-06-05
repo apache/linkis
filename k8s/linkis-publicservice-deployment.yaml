@@ -7,7 +7,6 @@ spec:
   selector:
     matchLabels:
       app: linkis-publicservice
-      # release: dev
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -17,7 +16,7 @@ spec:
     metadata:
       labels:
         app: linkis-publicservice
-        # release: dev
+        release: dev
     spec:
       containers:
       - name: linkis-publicservice
@@ -33,6 +32,12 @@ spec:
         env:
           - name: eurekaurl
             value: http://10.206.0.12:20230/eureka/
+          - name: EUREKA_URL
+            value: http://10.206.0.12:20230/eureka/
+          - name: SERVER_HEAP_SIZE
+            value: 1024M
+          - name: START_PORT
+            value: "14003"
         volumeMounts:
           - name: linkis-publicservice-config
             mountPath: /opt/ihome/conf

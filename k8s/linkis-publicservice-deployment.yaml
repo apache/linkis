@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-publicservice-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-publicservice
+      # release: dev
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: linkis-publicservice
+        # release: dev
+    spec:
+      containers:
+      - name: linkis-publicservice
+        image: zhangrong1027/linkis:linkis-publicservice
+        imagePullPolicy: Always
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sh","/opt/ihome/linkis-publicservice/bin/stop.sh"]
+        ports:
+        - name: http
+          containerPort: 14003
+        env:
+          - name: eurekaurl
+            value: http://10.206.0.12:20230/eureka/
+        volumeMounts:
+          - name: linkis-publicservice-config
+            mountPath: /opt/ihome/conf
+      imagePullSecrets:
+        - name: registry-key
+      volumes:
+        - name: linkis-publicservice-config
+          configMap:
+            name: linkis-publicservice-config

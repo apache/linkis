@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-resourcemanager-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-resourcemanager
+      # release: dev
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: linkis-resourcemanager
+        # release: dev
+    spec:
+      containers:
+      - name: linkis-resourcemanager
+        image: zhangrong1027/linkis:linkis-resourcemanager
+        lifecycle:
+            preStop:
+              exec:
+                command: ["sh","/opt/ihome/linkis-resourcemanager/bin/stop.sh"]
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 14004
+        env:
+          - name: eurekaurl
+            value: http://10.206.0.12:20230/eureka/
+        volumeMounts:
+          - name: linkis-resourcemanager-config
+            mountPath: /opt/ihome/conf
+      imagePullSecrets:
+        - name: registry-key
+      volumes:
+        - name: linkis-resourcemanager-config
+          configMap:
+            name: linkis-resourcemanager-config

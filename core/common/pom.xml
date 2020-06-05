@@ -112,7 +112,46 @@
             <artifactId>commons-codec</artifactId>
             <version>1.10</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.json4s</groupId>
+                    <artifactId>json4s-jackson_2.11</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.json4s</groupId>
+            <artifactId>json4s-core_2.11</artifactId>
+            <version>3.2.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json4s</groupId>
+            <artifactId>json4s-jackson_2.11</artifactId>
+            <version>3.2.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json4s</groupId>
+            <artifactId>json4s-ast_2.11</artifactId>
+            <version>3.2.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.4</version>
+        </dependency>
+        <dependency>
+            <groupId>net.databinder.dispatch</groupId>
+            <artifactId>dispatch-core_2.11</artifactId>
+            <version>0.11.2</version>
+        </dependency>
+        <dependency>
+            <groupId>net.databinder.dispatch</groupId>
+            <artifactId>dispatch-json4s-jackson_2.11</artifactId>
+            <version>0.11.2</version>
+        </dependency>
     </dependencies>
 
 

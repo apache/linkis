@@ -114,6 +114,15 @@ BML_PORT=9113
 #CS_INSTALL_IP=127.0.0.1
 CS_PORT=9116
 
+
+### datasource management server
+#DSM_INSTALL_IP=127.0.0.1
+DSM_PORT=9117
+
+### metadata management server
+#MDM_INSTALL_IP=127.0.0.1
+MDM_PORT=9118
+
 ########################################################################################
 
 ## LDAP is for enterprise authorization, if you just want to have a try, ignore it.

@@ -644,4 +644,37 @@ echo "<----------------$SERVER_NAME:end------------------->"
 ##SHELLEntrance install end
 
 
+##Datasource Manager Server install
+PACKAGE_DIR=linkis/datasource/linkis-dsm-server
+SERVER_NAME=linkis-dsm-server
+SERVER_PORT=$DSM_PORT
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVER_NAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
+executeCMD $SERVER_IP  "sed -i ${txt}  \"s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g\" $SERVER_CONF_PATH"
+executeCMD $SERVER_IP  "sed -i ${txt}  \"s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g\" $SERVER_CONF_PATH"
+executeCMD $SERVER_IP  "sed -i ${txt}  \"s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g\" $SERVER_CONF_PATH"
+executeCMD $SERVER_IP  "sed -i ${txt}  \"s#wds.linkis.server.dsm.admin.users.*#wds.linkis.server.dsm.admin.users=$deployUser#g\" $SERVER_CONF_PATH"
+replaceConf "wds.linkis.gateway.url" "http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT" "$SERVER_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVER_NAME"
+echo "<----------------$SERVER_NAME:end------------------->"
+##Datasource Manager Server install end
+
+
+
+##Metadata Manager Server install
+PACKAGE_DIR=linkis/datasource/linkis-mdm-server
+SERVER_NAME=linkis-mdm-server
+SERVER_PORT=$MDM_PORT
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVER_NAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
+replaceConf "wds.linkis.gateway.url" "http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT" "$SERVER_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVER_NAME"
+echo "<----------------$SERVER_NAME:end------------------->"
+##Metadata Manager Server install end
 

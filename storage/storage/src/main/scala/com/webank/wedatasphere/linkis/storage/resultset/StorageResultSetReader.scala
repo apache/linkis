@@ -20,7 +20,7 @@ import java.io.{ByteArrayInputStream, IOException, InputStream}
 
 import com.webank.wedatasphere.linkis.common.io.resultset.{ResultSet, ResultSetReader}
 import com.webank.wedatasphere.linkis.common.io.{MetaData, Record}
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.storage.domain.Dolphin
 import com.webank.wedatasphere.linkis.storage.exception.StorageWarnException
 import com.webank.wedatasphere.linkis.storage.utils.StorageUtils

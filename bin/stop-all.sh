@@ -140,6 +140,16 @@ SERVER_NAME="cs-server"
 SERVER_IP=$CS_INSTALL_IP
 stopApp
 
+#datasource management
+SERVER_NAME="dsm-server"
+SERVER_IP=$DSM_INSTALL_IP
+stopApp
+
+#metadata management
+SERVER_NAME="mdm-server"
+SERVER_IP=$MDM_INSTALL_IP
+stopApp
+
 APP_PREFIX="linkis-ujes-"
 
 #python-entrance

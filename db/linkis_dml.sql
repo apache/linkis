@@ -234,3 +234,7 @@ SELECT @tree_id1:=t.id from linkis_config_tree t LEFT JOIN  linkis_application a
 insert into `linkis_config_key_tree` VALUES(NULL,@key_id1,@tree_id1);
 insert into `linkis_config_key_tree` VALUES(NULL,@key_id2,@tree_id1);
 insert into `linkis_config_key_tree` VALUES(NULL,@key_id3,@tree_id1);
+
+INSERT INTO `linkis_datasource_type`(`icon`, `name`) VALUES('0x001', 'ElasticSearch');
+INSERT INTO `linkis_datasource_type`(`icon`, `name`) VALUES('0x001', 'Hive');
+INSERT INTO `linkis_datasource_type`(`icon`, `name`) VALUES('0x001', 'MySql');

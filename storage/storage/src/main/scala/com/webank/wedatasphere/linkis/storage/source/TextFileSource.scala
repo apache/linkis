@@ -23,7 +23,7 @@ import com.webank.wedatasphere.linkis.storage.script.ScriptRecord
 import org.apache.commons.math3.util.Pair
 
 /**
-  * Created by patinousward on 2020/1/15.
+  * Created by johnnwang on 2020/1/15.
   */
 class TextFileSource extends AbstractFileSource {
 

@@ -17,14 +17,12 @@
 package com.webank.wedatasphere.linkis.storage.resultset
 
 import java.io.{IOException, OutputStream}
-import java.util
 
 import com.webank.wedatasphere.linkis.common.io.resultset.{ResultSerializer, ResultSet, ResultSetWriter}
 import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath, MetaData, Record}
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.storage.FSFactory
 import com.webank.wedatasphere.linkis.storage.domain.Dolphin
-import com.webank.wedatasphere.linkis.storage.exception.StorageErrorException
 import com.webank.wedatasphere.linkis.storage.utils.{FileSystemUtils, StorageUtils}
 
 import scala.collection.mutable.ArrayBuffer
@@ -55,6 +53,8 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,
 
   private var proxyUser:String = StorageUtils.getJvmUser
 
+  def getMetaData: MetaData = rMetaData
+
   def setProxyUser(proxyUser:String): Unit = {
     this.proxyUser = proxyUser
   }
@@ -72,7 +72,7 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,
        fs = FSFactory.getFsByProxyUser(storePath,proxyUser)
       fs.init(null)
       FileSystemUtils.createNewFile(storePath, proxyUser,true)
-      outputStream = fs.write(storePath, false)
+      outputStream = fs.write(storePath, true)
       info(s"Succeed to create a new file:$storePath")
     }
   }

@@ -16,11 +16,7 @@
 
 package com.webank.wedatasphere.linkis.storage.script
 
-import java.io.{FileInputStream, FileOutputStream}
 import java.util
-
-import com.google.gson.{Gson, GsonBuilder}
-import com.webank.wedatasphere.linkis.common.io.FsPath
 
 import scala.collection.mutable.ArrayBuffer
 

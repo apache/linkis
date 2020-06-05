@@ -83,6 +83,7 @@ function startApp(){
 echo "<-------------------------------->"
 echo "Begin to start $SERVER_NAME"
 SERVER_PATH=${APP_PREFIX}${SERVER_NAME}
+
 SERVER_BIN=${LINKIS_INSTALL_HOME}/${SERVER_PATH}/bin
 SERVER_LOCAL_START_CMD="dos2unix ${SERVER_BIN}/* > /dev/null 2>&1; dos2unix ${SERVER_BIN}/../conf/* > /dev/null 2>&1; sh ${SERVER_BIN}/start-${SERVER_NAME}.sh"
 SERVER_REMOTE_START_CMD="source /etc/profile;source ~/.bash_profile;cd ${SERVER_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh start-${SERVER_NAME}.sh > /dev/null 2>&1"
@@ -142,6 +143,16 @@ startApp
 #cs-server
 SERVER_NAME="cs-server"
 SERVER_IP=$CS_INSTALL_IP
+startApp
+
+#datasource management
+SERVER_NAME="dsm-server"
+SERVER_IP=$DSM_INSTALL_IP
+startApp
+
+#metadata management
+SERVER_NAME="mdm-server"
+SERVER_IP=$MDM_INSTALL_IP
 startApp
 
 #resourcemanager

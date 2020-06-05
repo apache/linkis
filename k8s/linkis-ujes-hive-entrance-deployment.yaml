@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-ujes-spark-entrance-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-ujes-spark-entrance
+      # release: dev
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: linkis-ujes-spark-entrance
+        # release: dev
+    spec:
+      containers:
+        - name: linkis-ujes-spark-entrance
+          image: zhangrong1027/linkis:linkis-ujes-spark-enginemanager
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh","/opt/ihome/linkis-ujes-spark-entrance/bin/stop.sh"]
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 16000
+          env:
+            - name: eurekaurl
+              value: http://10.206.0.12:20230/eureka/
+            - name: EUREKA_URL
+              value: http://10.206.0.12:20230/eureka/
+            - name: SERVER_HEAP_SIZE
+              value: 1024M
+            - name: START_PORT
+              value: "16000"
+          volumeMounts:
+            - name: linkis-ujes-spark-enginemanager-config
+              mountPath: /opt/ihome/conf
+      imagePullSecrets:
+        - name: registry-key
+      volumes:
+        - name: linkis-ujes-spark-enginemanager-config
+          configMap:
+            name: linkis-ujes-spark-enginemanager-config

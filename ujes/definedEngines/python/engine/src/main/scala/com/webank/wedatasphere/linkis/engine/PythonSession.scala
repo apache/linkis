@@ -23,30 +23,27 @@ package com.webank.wedatasphere.linkis.engine
 import java.io.{File, FileFilter, FileOutputStream, InputStream}
 import java.net.ServerSocket
 import java.nio.file.Files
-
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engine.exception.{ExecuteException, PythonExecuteError, QueryFailedException}
-import com.webank.wedatasphere.linkis.engine.util.PythonConfiguration._
-import com.webank.wedatasphere.linkis.engine.util._
-import org.apache.commons.exec.CommandLine
-import org.apache.commons.lang.StringUtils
-import py4j.GatewayServer
 import java.util.{List => JList}
 
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engine.conf.PythonEngineConfiguration
-
-import scala.collection.JavaConverters._
+import com.webank.wedatasphere.linkis.engine.exception.{ExecuteException, PythonExecuteError}
 import com.webank.wedatasphere.linkis.engine.execute.EngineExecutorContext
 import com.webank.wedatasphere.linkis.engine.rs.RsOutputStream
-import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
+import com.webank.wedatasphere.linkis.engine.util.PythonConfiguration._
+import com.webank.wedatasphere.linkis.engine.util._
 import com.webank.wedatasphere.linkis.storage.domain._
-import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
+import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
+import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
+import org.apache.commons.lang.StringUtils
 import org.scalactic.Pass
+import py4j.GatewayServer
 
 import scala.collection.JavaConversions._
-import scala.collection.JavaConverters
+import scala.collection.JavaConverters._
 import scala.collection.mutable.{ArrayBuffer, StringBuilder}
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future, Promise}

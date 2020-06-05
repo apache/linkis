@@ -16,14 +16,13 @@
 
 package com.webank.wedatasphere.linkis.storage.excel
 
-import java.io.IOException
-import java.text.SimpleDateFormat
+import java.io._
 import java.util
 
 import com.webank.wedatasphere.linkis.common.io.{MetaData, Record}
-import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.storage.domain.DataType
 import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+import org.apache.commons.io.IOUtils
 import org.apache.poi.ss.usermodel._
 import org.apache.poi.xssf.streaming.{SXSSFSheet, SXSSFWorkbook}
 
@@ -32,10 +31,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Created by johnnwang on 2018/11/12.
   */
-class StorageExcelWriter(charsetP: String, sheetNameP: String, dateFormatP: String) extends ExcelFsWriter {
-  override val charset: String = charsetP
-  override val sheetName: String = sheetNameP
-  override val dateFormat: String = dateFormatP
+class StorageExcelWriter(val charset: String, val sheetName: String, val dateFormat: String, val outputStream: OutputStream) extends ExcelFsWriter {
 
   private var workBook: SXSSFWorkbook = _
   private var sheet: SXSSFSheet = _
@@ -43,7 +39,10 @@ class StorageExcelWriter(charsetP: String, sheetNameP: String, dateFormatP: Stri
   private var types: Array[DataType] = _
   private var rowPoint = 0
   private var columnCounter = 0
-  private val styles = new util.HashMap[String,CellStyle]()
+  private val styles = new util.HashMap[String, CellStyle]()
+  private var isFlush = true
+  private val os = new ByteArrayOutputStream()
+  private var is: ByteArrayInputStream = _
 
   def init = {
     workBook = new SXSSFWorkbook()
@@ -61,8 +60,8 @@ class StorageExcelWriter(charsetP: String, sheetNameP: String, dateFormatP: Stri
   }
 
   def getWorkBook: Workbook = {
-    //Adaptive column width(自适应列宽)
-    sheet.trackAllColumnsForAutoSizing();
+    //自适应列宽
+    sheet.trackAllColumnsForAutoSizing()
     for (elem <- 0 to columnCounter) {
       sheet.autoSizeColumn(elem)
     }
@@ -78,13 +77,13 @@ class StorageExcelWriter(charsetP: String, sheetNameP: String, dateFormatP: Stri
     style
   }
 
-  def getCellStyle(dataType: DataType):CellStyle = {
+  def getCellStyle(dataType: DataType): CellStyle = {
     val style = styles.get(dataType.typeName)
     if (style == null) {
       val newStyle = createCellStyle(dataType)
-      styles.put(dataType.typeName,newStyle)
+      styles.put(dataType.typeName, newStyle)
       newStyle
-    } else{
+    } else {
       style
     }
   }
@@ -109,16 +108,14 @@ class StorageExcelWriter(charsetP: String, sheetNameP: String, dateFormatP: Stri
 
   @scala.throws[IOException]
   override def addRecord(record: Record): Unit = {
-    // TODO: Do you need to replace the null value?(是否需要替换null值)
+    // TODO: 是否需要替换null值
     val tableBody = sheet.createRow(rowPoint)
     var colunmPoint = 0
     val excelRecord = record.asInstanceOf[TableRecord].row
     for (elem <- excelRecord) {
       val cell = tableBody.createCell(colunmPoint)
       val dataType = types.apply(colunmPoint)
-      dataType.toString match {
-        case _ =>if(elem !=null) cell.setCellValue(elem.toString) else cell.setCellValue(DataType.NULL_VALUE)
-      }
+      cell.setCellValue(elem.toString) //read时候进行null替换等等
       cell.setCellStyle(getCellStyle(dataType))
       colunmPoint += 1
     }
@@ -126,10 +123,28 @@ class StorageExcelWriter(charsetP: String, sheetNameP: String, dateFormatP: Stri
   }
 
 
-  override def flush(): Unit = {}
+  override def flush(): Unit = {
+    getWorkBook.write(os)
+    val content: Array[Byte] = os.toByteArray
+    is = new ByteArrayInputStream(content)
+    val buffer: Array[Byte] = new Array[Byte](1024)
+    var bytesRead: Int = 0
+    while (isFlush) {
+      bytesRead = is.read(buffer, 0, 1024)
+      if (bytesRead == -1) {
+        isFlush = false
+      } else {
+        outputStream.write(buffer, 0, bytesRead)
+      }
+    }
+  }
 
   override def close(): Unit = {
-    Utils.tryFinally(if (workBook != null) workBook.close())()
+    if (isFlush) flush()
+    IOUtils.closeQuietly(outputStream)
+    IOUtils.closeQuietly(is)
+    IOUtils.closeQuietly(os)
+    IOUtils.closeQuietly(workBook)
   }
 
 }

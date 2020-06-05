@@ -16,9 +16,8 @@
 
 package com.webank.wedatasphere.linkis.resourcemanager
 
-import com.webank.wedatasphere.linkis.resourcemanager.domain.{ModuleInfo, ModuleResourceInfo}
-import com.webank.wedatasphere.linkis.resourcemanager.{Resource, ResultResource}
 import com.webank.wedatasphere.linkis.common.ServiceInstance
+import com.webank.wedatasphere.linkis.resourcemanager.domain.ModuleResourceInfo
 
 
 /**

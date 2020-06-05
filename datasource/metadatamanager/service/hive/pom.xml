@@ -18,7 +18,7 @@
   <parent>
     <artifactId>linkis</artifactId>
     <groupId>com.webank.wedatasphere.linkis</groupId>
-    <version>0.9.3</version>
+    <version>0.9.4</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>linkis-metadatamanager-service-hive</artifactId>
@@ -106,10 +106,51 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.3</version>
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/distribution.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <skipAssembly>false</skipAssembly>
+          <finalName>linkis-mdm-service-hive</finalName>
+          <appendAssemblyId>false</appendAssemblyId>
+          <attach>false</attach>
+          <descriptors>
+            <descriptor>src/main/assembly/distribution.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>
     </plugins>
     <resources>
       <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+      <resource>
         <directory>src/main/resources</directory>
+        <excludes>
+          <exclude>**/*.properties</exclude>
+          <exclude>**/application.yml</exclude>
+          <exclude>**/bootstrap.yml</exclude>
+          <exclude>**/log4j2.xml</exclude>
+        </excludes>
       </resource>
     </resources>
     <finalName>${project.artifactId}-${project.version}</finalName>

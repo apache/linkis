@@ -23,7 +23,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.9.3</version>
+        <version>0.9.4</version>
     </parent>
 
     <artifactId>linkis-ujes-entranceclient</artifactId>
@@ -39,6 +39,12 @@
                     <artifactId>linkis-io-entrance</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-cloudRPC</artifactId>
+            <version>${linkis.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

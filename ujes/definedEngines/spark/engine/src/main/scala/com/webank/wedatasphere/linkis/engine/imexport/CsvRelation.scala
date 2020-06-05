@@ -22,7 +22,7 @@ import java.sql.{Date, Timestamp}
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engine.imexport.util.ImExportUtils
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.io.{IOUtils, LongWritable, Text}

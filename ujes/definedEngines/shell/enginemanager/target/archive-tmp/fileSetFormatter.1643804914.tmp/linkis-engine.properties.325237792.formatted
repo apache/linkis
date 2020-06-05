@@ -1,0 +1,7 @@
+wds.linkis.server.restful.scan.packages=com.webank.wedatasphere.linkis.engine.restful
+wds.linkis.engine.application.name=shellEngine
+wds.linkis.server.component.exclude.packages=com.webank.wedatasphere.linkis.enginemanager.,com.webank.wedatasphere.linkis.udf.
+wds.linkis.server.component.exclude.classes=com.webank.wedatasphere.linkis.resourcemanager.service.annotation.RMAnnotationParser
+wds.linkis.server.version=v1
+wds.linkis.engine.ignore.words=org.apache.spark,org.apache,com.netflix,hive.ql,hive.metastore
+wds.linkis.engine.pass.words=org.apache.hadoop.hive.ql.exec.Task

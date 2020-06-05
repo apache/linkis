@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: linkis-gateway-service
+spec:
+  selector:
+    app: linkis-gateway
+  ports:
+    - name: http
+      port: 14001
+      protocol: TCP
+      targetPort: 14001
+  type: NodePort

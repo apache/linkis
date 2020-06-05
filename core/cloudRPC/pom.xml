@@ -41,7 +41,23 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-feign</artifactId>
             <version>${spring.eureka.version}</version>
+          <exclusions>
+            <exclusion>
+              <artifactId>netty-codec</artifactId>
+              <groupId>io.netty</groupId>
+            </exclusion>
+              <exclusion>
+                  <artifactId>netty-transport</artifactId>
+                  <groupId>io.netty</groupId>
+              </exclusion>
+          </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.json4s</groupId>
+            <artifactId>json4s-jackson_2.11</artifactId>
+            <version>3.5.3</version>
+        </dependency>
+
     </dependencies>
 
     <build>

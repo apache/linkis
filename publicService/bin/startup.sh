@@ -34,7 +34,7 @@ fi
 
 cp -f /opt/ihome/conf/linkis.properties /opt/ihome/linkis-publicservice/conf
 
-nohup java $SERVER_JAVA_OPTS -Deurekaurl=$EUREKA_URL -Duser.timezone=Asia/Shanghai -cp $HOME/conf:$HOME/lib/* $SERVER_CLASS --server.port=$START_PORT 2>&1 > $SERVER_LOG_PATH/linkis-gateway.log &
+nohup java $SERVER_JAVA_OPTS -Deurekaurl=$EUREKA_URL -Duser.timezone=Asia/Shanghai -cp $HOME/conf:$HOME/lib/* $SERVER_CLASS --server.port=$START_PORT 2>&1 > $SERVER_LOG_PATH/linkis-publicservice.log &
 
 pid=$!
 if [[ -z "${pid}" ]]; then

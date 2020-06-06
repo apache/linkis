@@ -113,7 +113,7 @@
                 </executions>
                 <configuration>
                     <repository>10.206.0.5/library/linkis</repository>
-                    <tag>linkis-ujes-pipeline-enginemanger</tag>
+                    <tag>linkis-ujes-pipeline-enginemanager</tag>
                     <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>
                 </configuration>
             </plugin>

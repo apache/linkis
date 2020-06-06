@@ -1,5 +1,5 @@
 FROM centos:latest
-MAINTAINER zhangrong
+MAINTAINER brian.rongzhang@gmail.com
 
 RUN yum -y install wget tar && \
     mkdir /opt/{flink,hadoop,spark,hive}

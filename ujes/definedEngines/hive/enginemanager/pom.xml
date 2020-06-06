@@ -122,7 +122,7 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-bml-hook</artifactId>
-            <version>0.9.2</version>
+            <version>0.9.3</version>
         </dependency>
     </dependencies>
     <build>

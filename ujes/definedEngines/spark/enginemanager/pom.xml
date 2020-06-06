@@ -102,7 +102,7 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-hadoop-common</artifactId>
-            <version>0.9.2</version>
+            <version>${linkis.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>

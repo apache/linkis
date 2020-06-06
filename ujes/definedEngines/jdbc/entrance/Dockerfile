@@ -8,4 +8,4 @@ COPY target/linkis-ujes-jdbc-entrance.zip /opt/ihome
 RUN unzip linkis-ujes-jdbc-entrance.zip
 
 WORKDIR /opt/ihome/linkis-ujes-jdbc-entrance/bin
-ENTRYPOINT ["/opt/ihome/linkis-ujes-jdbcentrance/bin/startup.sh"]
+ENTRYPOINT ["/opt/ihome/linkis-ujes-jdbc-entrance/bin/startup.sh"]

@@ -20,7 +20,7 @@ spec:
         # release: dev
     spec:
       containers:
-      - name: linkis-ujes-jdbcentrance
+      - name: linkis-ujes-jdbc-entrance
         image: 10.206.0.5/library/linkis:linkis-jdbc-entrance
         lifecycle:
           preStop:
@@ -40,7 +40,7 @@ spec:
           - name: START_PORT
             value: "14005"
         volumeMounts:
-          - name: linkis-ujes-jdbcentrance-config
+          - name: linkis-ujes-jdbc-entrance-config
             mountPath: /opt/ihome/conf
       imagePullSecrets:
         - name: registry-key

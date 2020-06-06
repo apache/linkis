@@ -127,7 +127,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <repository>hub.ihomefnt.com/library/linkis</repository>
+                    <repository>10.206.0.5/library/linkis</repository>
                     <tag>linkis-ujes-python-enginemanager</tag>
                     <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>
                 </configuration>

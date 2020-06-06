@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: linkis-gateway
-        image: hub.ihomefnt.com/library/linkis:linkis-gateway
+        image: 10.206.0.5/library/linkis:linkis-gateway
         lifecycle:
             preStop:
               exec:

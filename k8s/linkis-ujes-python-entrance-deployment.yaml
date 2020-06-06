@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: linkis-ujes-python-enginemanager-deployment
+  name: linkis-ujes-python-entrance-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: linkis-ujes-python-enginemanager
+      app: linkis-ujes-python-entrance
       # release: dev
   strategy:
     rollingUpdate:
@@ -16,16 +16,16 @@ spec:
   template:
     metadata:
       labels:
-        app: linkis-ujes-python-enginemanager
+        app: linkis-ujes-python-entrance
         # release: dev
     spec:
       containers:
-        - name: linkis-ujes-python-enginemanager
-          image: zhangrong1027/linkis:linkis-ujes-python-enginemanager
+        - name: linkis-ujes-python-entrance
+          image: zhangrong1027/linkis:linkis-ujes-python-entrance
           lifecycle:
             preStop:
               exec:
-                command: ["sh","/opt/ihome/linkis-ujes-python-enginemanager/bin/stop.sh"]
+                command: ["sh","/opt/ihome/linkis-ujes-python-entrance/bin/stop.sh"]
           imagePullPolicy: Always
           ports:
             - name: http
@@ -40,11 +40,11 @@ spec:
             - name: START_PORT
               value: "16000"
           volumeMounts:
-            - name: linkis-ujes-python-enginemanager-config
+            - name: linkis-ujes-python-entrance-config
               mountPath: /opt/ihome/conf
       imagePullSecrets:
         - name: registry-key
       volumes:
-        - name: linkis-ujes-python-enginemanager-config
+        - name: linkis-ujes-python-entrance-config
           configMap:
-            name: linkis-ujes-python-enginemanager-config
+            name: linkis-ujes-python-entrance-config

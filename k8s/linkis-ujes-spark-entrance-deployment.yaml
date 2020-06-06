@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: linkis-ujes-jdbcentrance-deployment
+  name: linkis-ujes-spark-entrance-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: linkis-ujes-spark-enginemanager
+      app: linkis-ujes-spark-entrance
       # release: dev
   strategy:
     rollingUpdate:
@@ -16,16 +16,16 @@ spec:
   template:
     metadata:
       labels:
-        app: linkis-ujes-spark-enginemanager
+        app: linkis-ujes-spark-entrance
         # release: dev
     spec:
       containers:
-        - name: linkis-ujes-jdbcentrance
+        - name: linkis-ujes-spark-entrance
           image: zhangrong1027/linkis:linkis-ujes-spark-enginemanager
           lifecycle:
             preStop:
               exec:
-                command: ["sh","/opt/ihome/linkis-ujes-spark-enginemanager/bin/stop.sh"]
+                command: ["sh","/opt/ihome/linkis-ujes-spark-entrance/bin/stop.sh"]
           imagePullPolicy: Always
           ports:
             - name: http

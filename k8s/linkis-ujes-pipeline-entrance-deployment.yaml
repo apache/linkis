@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: linkis-ujes-mlsql-entrance-deployment
+  name: linkis-ujes-pipeline-entrance-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: linkis-ujes-mlsql-entrance
+      app: linkis-ujes-pipeline-entrance
       # release: dev
   strategy:
     rollingUpdate:
@@ -16,16 +16,16 @@ spec:
   template:
     metadata:
       labels:
-        app: linkis-ujes-mlsql-entrance
+        app: linkis-ujes-pipeline-entrance
         # release: dev
     spec:
       containers:
-        - name: linkis-ujes-mlsql-entrance
-          image: zhangrong1027/linkis:linkis-ujes-mlsql-entrance
+        - name: linkis-ujes-pipeline-entrance
+          image: zhangrong1027/linkis:linkis-ujes-pipeline-entrance
           lifecycle:
             preStop:
               exec:
-                command: ["sh","/opt/ihome/linkis-ujes-mlsql-entrance/bin/stop.sh"]
+                command: ["sh","/opt/ihome/linkis-ujes-pipeline-entrance/bin/stop.sh"]
           imagePullPolicy: Always
           ports:
             - name: http
@@ -40,11 +40,11 @@ spec:
             - name: START_PORT
               value: "16000"
           volumeMounts:
-            - name: linkis-ujes-mlsql-entrance-config
+            - name: linkis-ujes-pipeline-entrance-config
               mountPath: /opt/ihome/conf
       imagePullSecrets:
         - name: registry-key
       volumes:
-        - name: linkis-ujes-mlsql-entrance-config
+        - name: linkis-ujes-pipeline-entrance-config
           configMap:
-            name: linkis-ujes-mlsql-entrance-config
+            name: linkis-ujes-pipeline-entrance-config

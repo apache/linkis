@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: linkis-gateway-deployment
+  name: linkis-bml-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: linkis-gateway
+      app: linkis-bml
       # release: dev
   strategy:
     rollingUpdate:
@@ -17,16 +17,16 @@ spec:
   template:
     metadata:
       labels:
-        app: linkis-gateway
+        app: linkis-bml
         # release: dev
     spec:
       containers:
-      - name: linkis-gateway
-        image: hub.ihomefnt.com/library/linkis:linkis-gateway
+      - name: linkis-bml
+        image: hub.ihomefnt.com/library/linkis:linkis-bml
         lifecycle:
             preStop:
               exec:
-                command: ["sh","/opt/ihome/linkis-gateway/bin/stop.sh"]
+                command: ["sh","/opt/ihome/linkis-bml/bin/stop.sh"]
         imagePullPolicy: Always
         ports:
         - name: http
@@ -44,6 +44,6 @@ spec:
       imagePullSecrets:
         - name: registry-key
       volumes:
-        - name: linkis-gateway-config
+        - name: linkis-bml-config
           configMap:
-            name: linkis-gateway-config
+            name: linkis-bml-config

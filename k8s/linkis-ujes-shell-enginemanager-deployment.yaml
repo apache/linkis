@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: linkis-ujes-shell-enginemanager
-          image: zhangrong1027/linkis:linkis-ujes-shell-enginemanager
+          image: 10.206.0.5/library/linkis:linkis-ujes-shell-enginemanager
           lifecycle:
             preStop:
               exec:

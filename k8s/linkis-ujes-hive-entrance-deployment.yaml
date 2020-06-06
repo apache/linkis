@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: linkis-ujes-hive-entrance
-          image: zhangrong1027/linkis:linkis-ujes-hive-enginemanager
+          image: 10.206.0.5/library/linkis:linkis-ujes-hive-enginemanager
           lifecycle:
             preStop:
               exec:

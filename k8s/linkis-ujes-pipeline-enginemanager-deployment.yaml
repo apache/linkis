@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: linkis-ujes-mlsql-entrance
-          image: zhangrong1027/linkis:linkis-ujes-pipeline-enginemanager
+          image: 10.206.0.5/library/linkis:linkis-ujes-pipeline-enginemanager
           lifecycle:
             preStop:
               exec:

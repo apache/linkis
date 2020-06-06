@@ -1,5 +1,7 @@
 FROM 10.206.0.5/library/linkis:emr-base-spark2.4.4
 
+MAINTAINER brian.rongzhang@gmail.com
+
 RUN yum install -y unzip
 WORKDIR /opt/ihome
 

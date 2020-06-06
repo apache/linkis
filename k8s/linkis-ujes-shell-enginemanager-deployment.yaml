@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: linkis-ujes-spark-enginemanager-deployment
+  name: linkis-ujes-shell-enginemanager-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: linkis-ujes-spark-enginemanager
+      app: linkis-ujes-shell-enginemanager
       # release: dev
   strategy:
     rollingUpdate:
@@ -16,16 +16,16 @@ spec:
   template:
     metadata:
       labels:
-        app: linkis-ujes-spark-enginemanager
+        app: linkis-ujes-shell-enginemanager
         # release: dev
     spec:
       containers:
-        - name: linkis-ujes-spark-enginemanager
-          image: zhangrong1027/linkis:linkis-ujes-spark-enginemanager
+        - name: linkis-ujes-shell-enginemanager
+          image: zhangrong1027/linkis:linkis-ujes-shell-enginemanager
           lifecycle:
             preStop:
               exec:
-                command: ["sh","/opt/ihome/linkis-ujes-spark-enginemanager/bin/stop.sh"]
+                command: ["sh","/opt/ihome/linkis-ujes-shell-enginemanager/bin/stop.sh"]
           imagePullPolicy: Always
           ports:
             - name: http
@@ -40,11 +40,11 @@ spec:
             - name: START_PORT
               value: "16000"
           volumeMounts:
-            - name: linkis-ujes-spark-enginemanager-config
+            - name: linkis-ujes-shell-enginemanager-config
               mountPath: /opt/ihome/conf
       imagePullSecrets:
         - name: registry-key
       volumes:
-        - name: linkis-ujes-spark-enginemanager-config
+        - name: linkis-ujes-shell-enginemanager-config
           configMap:
-            name: linkis-ujes-spark-enginemanager-config
+            name: linkis-ujes-shell-enginemanager-config

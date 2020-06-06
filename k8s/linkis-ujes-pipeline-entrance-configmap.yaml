@@ -17,23 +17,29 @@ data:
     # limitations under the License.
     #
 
+
     wds.linkis.server.restful.scan.packages=com.webank.wedatasphere.linkis.entrance.restful
 
-    wds.linkis.engine.application.name=mlsqlEngine
-    wds.linkis.enginemanager.application.name=mlsql
+    wds.linkis.engine.application.name=pipeLineEngine
+    wds.linkis.enginemanager.application.name=pipeLineEngineManager
 
     wds.linkis.query.application.name=cloud-publicservice
 
     wds.linkis.console.config.application.name=cloud-publicservice
     wds.linkis.engine.creation.wait.time.max=20m
+
+
+    wds.linkis.resultSet.store.path=hdfs:///
+
     wds.linkis.server.version=v1
-    # hadoop.config.dir=
-    wds.linkis.entrance.config.logPath=file:///tmp/linkis/
-
-    wds.linkis.resultSet.store.path=file:///tmp/linkis
-
     wds.linkis.server.socket.mode=true
-    # wds.linkis.test.mode=true
+
+    bdp.server.distinct.mode=true
+
+    #hadoop.config.dir=/appcom/config/hadoop-config
+    #spark.config.dir=/appcom/config/spark-config
+
+
 
 
 kind: ConfigMap
@@ -45,9 +51,9 @@ metadata:
     fieldsV1:
       f:data:
         .: {}
-        f:linkis-ujes-mlsql-entrance.properties: {}
+        f:linkis-ujes-pipeline-entrance.properties: {}
     manager: kubectl
     operation: Update
-  name: linkis-ujes-mlsql-entrance-config
+  name: linkis-ujes-pipeline-entrance-config
   namespace: default
 

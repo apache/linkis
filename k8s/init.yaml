@@ -1,0 +1,16 @@
+kubectl create -f register.yaml
+
+kubectl create -f linkis-gateway-configmap.yaml
+kubectl create -f linkis-metadata-configmap.yaml
+kubectl create -f linkis-publicservice-configmap.yaml
+kubectl create -f linkis-resourcemanager-configmap.yaml
+kubectl create -f linkis-ujes-jdbcentrance-configmap.yaml
+
+kubectl create -f linkis-gateway-deployment.yaml
+kubectl create -f linkis-metadata-deployment.yaml
+kubectl create -f linkis-publicservice-deployment.yaml
+kubectl create -f linkis-resourcemanager-deployment.yaml
+kubectl create -f linkis-ujes-jdbcentrance-deployment.yaml
+
+kubectl create -f linkis-gateway-service.yaml
+

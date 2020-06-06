@@ -18,28 +18,19 @@ data:
     #
 
 
+
+
     wds.linkis.server.restful.scan.packages=com.webank.wedatasphere.linkis.entrance.restful
-
     wds.linkis.engine.application.name=pipeLineEngine
-    wds.linkis.enginemanager.application.name=pipeLineEngineManager
-
-    wds.linkis.query.application.name=cloud-publicservice
+    wds.linkis.server.component.exclude.packages=com.webank.wedatasphere.linkis.engine.,com.webank.wedatasphere.linkis.udf.
 
     wds.linkis.console.config.application.name=cloud-publicservice
-    wds.linkis.engine.creation.wait.time.max=20m
-
-
-    wds.linkis.resultSet.store.path=hdfs:///
-
-    wds.linkis.server.version=v1
-    wds.linkis.server.socket.mode=true
-
-    bdp.server.distinct.mode=true
-
     #hadoop.config.dir=/appcom/config/hadoop-config
     #spark.config.dir=/appcom/config/spark-config
 
-
+    #rootScript shell path
+    wds.linkis.enginemanager.sudo.script=/appcom/tmp/johnnwang/Install/linkis-ujes-spark-enginemanager/bin/rootScript.sh
+    wds.linkis.server.version=v1
 
 
 kind: ConfigMap
@@ -51,9 +42,9 @@ metadata:
     fieldsV1:
       f:data:
         .: {}
-        f:linkis-ujes-pipeline-entrance.properties: {}
+        f:linkis-ujes-pipeline-enginemanager.properties: {}
     manager: kubectl
     operation: Update
-  name: linkis-ujes-pipeline-entrance-config
+  name: linkis-ujes-pipeline-enginemanager-config
   namespace: default
 

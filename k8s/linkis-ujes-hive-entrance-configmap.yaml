@@ -20,24 +20,21 @@ data:
 
     wds.linkis.server.restful.scan.packages=com.webank.wedatasphere.linkis.entrance.restful
 
-    wds.linkis.engine.application.name=sparkEngine
-    wds.linkis.enginemanager.application.name=sparkEngineManager
+    wds.linkis.engine.application.name=hiveEngine
+    wds.linkis.enginemanager.application.name=hiveEngineManager
 
     wds.linkis.query.application.name=cloud-publicservice
 
-    wds.linkis.console.configuration.application.name=cloud-publicservice
+    wds.linkis.console.config.application.name=cloud-publicservice
     wds.linkis.engine.creation.wait.time.max=20m
-    wds.linkis.console.variable.application.name=cloud-publicservice
-
     wds.linkis.server.version=v1
+    #hadoop config dir
     #hadoop.config.dir=/appcom/config/hadoop-config
-    #spark.config.dir=/appcom/config/spark-config
-
     wds.linkis.entrance.config.logPath=file:///appcom/logs/dataworkcloud/dwc/
 
-    wds.linkis.server.socket.mode=true
-
     wds.linkis.resultSet.store.path=hdfs:///
+
+    wds.linkis.server.socket.mode=true
 
 kind: ConfigMap
 metadata:

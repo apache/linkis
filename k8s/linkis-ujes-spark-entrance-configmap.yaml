@@ -19,14 +19,25 @@ data:
 
 
     wds.linkis.server.restful.scan.packages=com.webank.wedatasphere.linkis.entrance.restful
+
     wds.linkis.engine.application.name=sparkEngine
-    wds.linkis.server.component.exclude.packages=com.webank.wedatasphere.linkis.engine.,com.webank.wedatasphere.linkis.udf.
+    wds.linkis.enginemanager.application.name=sparkEngineManager
+
+    wds.linkis.query.application.name=cloud-publicservice
+
+    wds.linkis.console.configuration.application.name=cloud-publicservice
+    wds.linkis.engine.creation.wait.time.max=20m
+    wds.linkis.console.variable.application.name=cloud-publicservice
+
     wds.linkis.server.version=v1
-    wds.linkis.console.config.application.name=cloud-publicservice
-    wds.linkis.engine.udf.app.name=cloud-publicservice
-    wds.linkis.enginemanager.sudo.script=/appcom/tmp/johnnwang/Install/linkis-ujes-spark-enginemanager/bin/rootScript.sh
-    wds.linkis.spark.driver.conf.mainjar=
+    #hadoop.config.dir=/appcom/config/hadoop-config
     #spark.config.dir=/appcom/config/spark-config
+
+    wds.linkis.entrance.config.logPath=file:///appcom/logs/dataworkcloud/dwc/
+
+    wds.linkis.server.socket.mode=true
+
+    wds.linkis.resultSet.store.path=hdfs:///
 
 kind: ConfigMap
 metadata:
@@ -37,9 +48,9 @@ metadata:
     fieldsV1:
       f:data:
         .: {}
-        f:linkis-ujes-spark-enginemanager.properties: {}
+        f:linkis-ujes-spark-entrance.properties: {}
     manager: kubectl
     operation: Update
-  name: linkis-ujes-spark-enginemanager-config
+  name: linkis-ujes-spark-entrance-config
   namespace: default
 

@@ -18,12 +18,25 @@ data:
     #
 
 
-
     wds.linkis.server.restful.scan.packages=com.webank.wedatasphere.linkis.entrance.restful
+
     wds.linkis.engine.application.name=pythonEngine
-    wds.linkis.server.component.exclude.packages=com.webank.wedatasphere.linkis.engine.,com.webank.wedatasphere.linkis.udf.
+    wds.linkis.enginemanager.application.name=pythonEngineManager
+
+    wds.linkis.query.application.name=cloud-publicservice
+
+    wds.linkis.console.configuration.application.name=cloud-publicservice
+    wds.linkis.engine.creation.wait.time.max=2m
     wds.linkis.server.version=v1
-    wds.linkis.enginemanager.sudo.script=rootScript.sh
+
+    wds.linkis.entrance.config.logPath=file:///appcom/logs/dataworkcloud/dwc/
+
+    wds.linkis.server.socket.mode=true
+
+
+    #hadoop.config.dir=/appcom/config/hadoop-config
+
+    wds.linkis.resultSet.store.path=hdfs:///
 
 kind: ConfigMap
 metadata:
@@ -34,9 +47,9 @@ metadata:
     fieldsV1:
       f:data:
         .: {}
-        f:linkis-ujes-python-enginemanager.properties: {}
+        f:linkis-ujes-python-entrance.properties: {}
     manager: kubectl
     operation: Update
-  name: linkis-ujes-python-enginemanager-config
+  name: linkis-ujes-python-entrance-config
   namespace: default
 

@@ -17,16 +17,19 @@ data:
     # limitations under the License.
     #
 
+      wds.linkis.server.restful.scan.packages=com.webank.wedatasphere.linkis.entrance.restful
+      wds.linkis.engine.application.name=hiveEngine
+      wds.linkis.server.component.exclude.packages=com.webank.wedatasphere.linkis.engine.,com.webank.wedatasphere.linkis.udf.
+      wds.linkis.server.version=v1
 
-    wds.linkis.server.restful.scan.packages=com.webank.wedatasphere.linkis.entrance.restful
-    wds.linkis.engine.application.name=sparkEngine
-    wds.linkis.server.component.exclude.packages=com.webank.wedatasphere.linkis.engine.,com.webank.wedatasphere.linkis.udf.
-    wds.linkis.server.version=v1
-    wds.linkis.console.config.application.name=cloud-publicservice
-    wds.linkis.engine.udf.app.name=cloud-publicservice
-    wds.linkis.enginemanager.sudo.script=/appcom/tmp/johnnwang/Install/linkis-ujes-spark-enginemanager/bin/rootScript.sh
-    wds.linkis.spark.driver.conf.mainjar=
-    #spark.config.dir=/appcom/config/spark-config
+      #sudo script
+      wds.linkis.enginemanager.sudo.script=/appcom/Install/WillinkInstall/linkis-ujes-spark-enginemanager/bin/rootScript.sh
+
+    #hadoop config
+    #hadoop.config.dir=/appcom/config/hadoop-config
+
+    #hive config
+    #hive.config.dir=
 
 kind: ConfigMap
 metadata:
@@ -37,9 +40,9 @@ metadata:
     fieldsV1:
       f:data:
         .: {}
-        f:linkis-ujes-spark-enginemanager.properties: {}
+        f:linkis-ujes-hive-enginemanager.properties: {}
     manager: kubectl
     operation: Update
-  name: linkis-ujes-spark-enginemanager-config
+  name: linkis-ujes-hive-enginemanager-config
   namespace: default
 

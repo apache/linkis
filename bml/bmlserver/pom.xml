@@ -112,6 +112,25 @@
                     </descriptors>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.3.4</version>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <repository>10.206.0.5/library/linkis</repository>
+                    <tag>linkis-bml</tag>
+                    <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>
+                </configuration>
+            </plugin>
         </plugins>
         <resources>
             <resource>

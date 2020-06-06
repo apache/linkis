@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: linkis-resourcemanager
-        image: zhangrong1027/linkis:linkis-resourcemanager
+        image: 10.206.0.5/library/linkis:linkis-resourcemanager
         lifecycle:
             preStop:
               exec:

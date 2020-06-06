@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: linkis-ujes-python-entrance
-          image: zhangrong1027/linkis:linkis-ujes-python-entrance
+          image: 10.206.0.5/library/linkis:linkis-ujes-python-entrance
           lifecycle:
             preStop:
               exec:

@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: linkis-ujes-python-enginemanager
-          image: zhangrong1027/linkis:linkis-ujes-python-enginemanager
+          image: 10.206.0.5/library/linkis:linkis-ujes-python-enginemanager
           lifecycle:
             preStop:
               exec:

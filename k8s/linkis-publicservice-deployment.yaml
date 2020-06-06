@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: linkis-publicservice
-        image: zhangrong1027/linkis:linkis-publicservice
+        image: 10.206.0.5/library/linkis:linkis-publicservice
         imagePullPolicy: Always
         lifecycle:
           preStop:

@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: linkis-ujes-jdbcentrance
-        image: zhangrong1027/linkis:linkis-jdbcentrance
+        image: 10.206.0.5/library/linkis:linkis-jdbcentrance
         lifecycle:
           preStop:
             exec:

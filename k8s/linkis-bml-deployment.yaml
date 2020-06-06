@@ -20,6 +20,16 @@ spec:
         app: linkis-bml
         # release: dev
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - linkis-bml
+              topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-bml
         image: 10.206.0.5/library/linkis:linkis-bml

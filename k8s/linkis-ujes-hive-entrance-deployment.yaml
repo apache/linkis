@@ -19,6 +19,16 @@ spec:
         app: linkis-ujes-hive-entrance
         # release: dev
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - linkis-ujes-hive-entrance
+              topologyKey: "kubernetes.io/hostname"
       containers:
         - name: linkis-ujes-hive-entrance
           image: 10.206.0.5/library/linkis:linkis-ujes-hive-enginemanager

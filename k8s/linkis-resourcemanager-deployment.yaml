@@ -19,6 +19,16 @@ spec:
         app: linkis-resourcemanager
         release: dev
     spec:
+      affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                    - key: "app"
+                      operator: In
+                      values:
+                        - linkis-resourcemanager
+                topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-resourcemanager
         image: 10.206.0.5/library/linkis:linkis-resourcemanager

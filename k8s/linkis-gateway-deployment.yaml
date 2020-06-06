@@ -7,19 +7,28 @@ spec:
   selector:
     matchLabels:
       app: linkis-gateway
-      # release: dev
   strategy:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
     type: RollingUpdate
-  
+
   template:
     metadata:
       labels:
         app: linkis-gateway
-        # release: dev
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - linkis-gateway
+              topologyKey: "kubernetes.io/hostname"
+        
       containers:
       - name: linkis-gateway
         image: 10.206.0.5/library/linkis:linkis-gateway

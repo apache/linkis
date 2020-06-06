@@ -19,6 +19,16 @@ spec:
         app: linkis-ujes-mlsql-entrance
         # release: dev
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - linkis-ujes-mlsql-entrance
+              topologyKey: "kubernetes.io/hostname"
       containers:
         - name: linkis-ujes-mlsql-entrance
           image: 10.206.0.5/library/linkis:linkis-ujes-mlsql-entrance

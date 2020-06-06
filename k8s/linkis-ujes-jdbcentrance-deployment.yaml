@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: linkis-ujes-jdbcentrance-deployment
+  name: linkis-ujes-jdbc-entrance-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: linkis-ujes-jdbcentrance
+      app: linkis-ujes-jdbc-entrance
       # release: dev
   strategy:
     rollingUpdate:
@@ -16,16 +16,16 @@ spec:
   template:
     metadata:
       labels:
-        app: linkis-ujes-jdbcentrance
+        app: linkis-ujes-jdbc-entrance
         # release: dev
     spec:
       containers:
       - name: linkis-ujes-jdbcentrance
-        image: 10.206.0.5/library/linkis:linkis-jdbcentrance
+        image: 10.206.0.5/library/linkis:linkis-jdbc-entrance
         lifecycle:
           preStop:
             exec:
-              command: ["sh","/opt/ihome/linkis-ujes-jdbcentrance/bin/stop.sh"]
+              command: ["sh","/opt/ihome/linkis-ujes-jdbc-entrance/bin/stop.sh"]
         imagePullPolicy: Always
         ports:
         - name: http
@@ -45,6 +45,6 @@ spec:
       imagePullSecrets:
         - name: registry-key
       volumes:
-        - name: linkis-ujes-jdbcentrance-config
+        - name: linkis-ujes-jdbc-entrance-config
           configMap:
-            name: linkis-ujes-jdbcentrance-config
+            name: linkis-ujes-jdbc-entrance-config

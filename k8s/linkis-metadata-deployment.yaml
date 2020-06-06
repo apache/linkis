@@ -19,6 +19,16 @@ spec:
         app: linkis-metadata
         # release: dev
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - linkis-metadata
+              topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-metadata
         image: zhangrong1027/linkis:linkis-metadata

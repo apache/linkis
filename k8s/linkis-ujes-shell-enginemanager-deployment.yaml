@@ -19,6 +19,16 @@ spec:
         app: linkis-ujes-shell-enginemanager
         # release: dev
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - linkis-ujes-shell-enginemanager
+              topologyKey: "kubernetes.io/hostname"
       containers:
         - name: linkis-ujes-shell-enginemanager
           image: 10.206.0.5/library/linkis:linkis-ujes-shell-enginemanager

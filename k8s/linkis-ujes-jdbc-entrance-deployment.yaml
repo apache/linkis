@@ -19,6 +19,16 @@ spec:
         app: linkis-ujes-jdbc-entrance
         # release: dev
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - linkis-ujes-jdbc-entrance
+              topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-ujes-jdbc-entrance
         image: 10.206.0.5/library/linkis:linkis-jdbc-entrance

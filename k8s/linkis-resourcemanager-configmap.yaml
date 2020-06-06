@@ -40,7 +40,7 @@ metadata:
     fieldsV1:
       f:data:
         .: {}
-        f:linkis-publicservice.properties: {}
+        f:linkis-resourcemanager.properties: {}
     manager: kubectl
     operation: Update
   name: linkis-resourcemanager-config

@@ -140,7 +140,7 @@
                 </executions>
                 <configuration>
                     <repository>10.206.0.5/library/linkis</repository>
-                    <tag>linkis-ujes-jdbcentrance</tag>
+                    <tag>linkis-ujes-jdbc-entrance</tag>
                     <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>
                 </configuration>
             </plugin>

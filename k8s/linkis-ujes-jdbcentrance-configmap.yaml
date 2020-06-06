@@ -44,9 +44,9 @@ metadata:
     fieldsV1:
       f:data:
         .: {}
-        f:linkis-publicservice.properties: {}
+        f:linkis-ujes-jdbc-entrance.properties: {}
     manager: kubectl
     operation: Update
-  name: linkis-ujes-jdbcentrance-config
+  name: linkis-ujes-jdbc-entrance-config
   namespace: default
 

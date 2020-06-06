@@ -14,7 +14,7 @@ fi
 
 if test -z "$SERVER_JAVA_OPTS"
 then
-  export SERVER_JAVA_OPTS=" -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$HOME/logs/linkis-ujes-jdbcentrance-gc.log"
+  export SERVER_JAVA_OPTS=" -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC   -Xloggc:$HOME/logs/linkis-ujes-jdbc-entrance-gc.log"
 fi
 
 if test -z "$START_PORT"
@@ -32,7 +32,7 @@ if [[ -f "${SERVER_PID}" ]]; then
     fi
 fi
 
-cp -f /opt/ihome/conf/linkis.properties /opt/ihome/linkis-ujes-jdbcentrance/conf
+cp -f /opt/ihome/conf/linkis.properties /opt/ihome/linkis-ujes-jdbc-entrance/conf
 
 nohup java $SERVER_JAVA_OPTS -Deurekaurl=$EUREKA_URL -Duser.timezone=Asia/Shanghai -cp $HOME/conf:$HOME/lib/* $SERVER_CLASS --server.port=$START_PORT 2>&1 > $SERVER_LOG_PATH/linkis-gateway.log &
 

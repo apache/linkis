@@ -89,7 +89,7 @@
                         <phase>package</phase>
                         <goals>
                             <goal>build</goal>
-                            <goal>push</goal>
+                            <goal>tag</goal>
                         </goals>
                     </execution>
                 </executions>

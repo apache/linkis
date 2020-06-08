@@ -70,12 +70,6 @@
         </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-cloudRPC</artifactId>
-            <version>${linkis.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>
@@ -122,7 +116,7 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-bml-hook</artifactId>
-            <version>0.9.3</version>
+            <version>${linkis.version}</version>
         </dependency>
     </dependencies>
     <build>

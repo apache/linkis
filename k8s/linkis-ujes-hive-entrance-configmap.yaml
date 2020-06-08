@@ -45,9 +45,9 @@ metadata:
     fieldsV1:
       f:data:
         .: {}
-        f:linkis-ujes-spark-entrance.properties: {}
+        f:linkis-ujes-hive-entrance.properties: {}
     manager: kubectl
     operation: Update
-  name: linkis-ujes-spark-entrance-config
+  name: linkis-ujes-hive-entrance-config
   namespace: default
 

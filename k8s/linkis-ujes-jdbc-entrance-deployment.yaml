@@ -31,7 +31,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-ujes-jdbc-entrance
-        image: 10.206.0.5/library/linkis:linkis-jdbc-entrance
+        image: 10.206.0.5/library/linkis:linkis-ujes-jdbc-entrance
         lifecycle:
           preStop:
             exec:

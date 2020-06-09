@@ -29,6 +29,15 @@ spec:
                     values:
                       - linkis-ujes-jdbc-entrance
               topologyKey: "kubernetes.io/hostname"
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              preference:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - node3
       containers:
       - name: linkis-ujes-jdbc-entrance
         image: 10.206.0.5/library/linkis:linkis-ujes-jdbc-entrance

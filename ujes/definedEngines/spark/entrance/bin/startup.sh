@@ -19,7 +19,7 @@ fi
 
 if test -z "$START_PORT"
 then
-  export START_PORT=16000
+  export START_PORT=21000
 fi
 
 export SERVER_PID=$HOME/bin/linkis.pid

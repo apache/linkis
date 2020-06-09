@@ -50,7 +50,7 @@ spec:
             - name: START_PORT
               value: "16000"
           volumeMounts:
-            - name: linkis-ujes-spark-enginemanager-config
+            - name: linkis-ujes-spark-entrance-config
               mountPath: /opt/ihome/conf
       imagePullSecrets:
         - name: registry-key

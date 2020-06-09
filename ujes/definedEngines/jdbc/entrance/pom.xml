@@ -125,12 +125,16 @@
             <artifactId>linkis-common</artifactId>
             <version>${linkis.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.thrift</groupId>
             <artifactId>libthrift</artifactId>
             <version>0.9.3</version>
             <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.5</version>
         </dependency>
     </dependencies>
     <build>

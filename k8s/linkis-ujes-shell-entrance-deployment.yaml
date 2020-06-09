@@ -49,6 +49,11 @@ spec:
           ports:
             - name: http
               containerPort: 20000
+          livenessProbe:
+            tcpSocket:
+              port: 20000
+            initialDelaySeconds: 15
+            periodSeconds: 20
           env:
             - name: eurekaurl
               value: http://10.206.0.12:20230/eureka/

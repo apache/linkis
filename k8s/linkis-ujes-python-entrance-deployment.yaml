@@ -48,7 +48,7 @@ spec:
             - name: SERVER_HEAP_SIZE
               value: 1024M
             - name: START_PORT
-              value: "16000"
+              value: "19000"
           volumeMounts:
             - name: linkis-ujes-python-entrance-config
               mountPath: /opt/ihome/conf

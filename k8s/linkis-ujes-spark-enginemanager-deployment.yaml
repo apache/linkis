@@ -28,7 +28,17 @@ spec:
                     operator: In
                     values:
                       - linkis-ujes-spark-enginemanager
+                      - linkis-ujes-hive-enginemanager
               topologyKey: "kubernetes.io/hostname"
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              preference:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - node2
       containers:
         - name: linkis-ujes-spark-enginemanager
           image: 10.206.0.5/library/linkis:linkis-ujes-spark-enginemanager

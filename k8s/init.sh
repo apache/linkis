@@ -8,7 +8,7 @@ kubectl create -f linkis-bml-configmap.yaml
 kubectl create -f linkis-ujes-hive-enginemanager-configmap.yaml
 kubectl create -f linkis-ujes-hive-entrance-configmap.yaml
 kubectl create -f linkis-ujes-jdbc-entrance-configmap.yaml
-kubectl create -f linkis-mlsql-entrance-configmap.yaml
+kubectl create -f linkis-ujes-mlsql-entrance-configmap.yaml
 kubectl create -f linkis-ujes-pipeline-enginemanager-configmap.yaml
 kubectl create -f linkis-ujes-pipeline-entrance-configmap.yaml
 kubectl create -f linkis-ujes-python-enginemanager-configmap.yaml

@@ -29,6 +29,15 @@ spec:
                     values:
                       - linkis-ujes-hive-entrance
               topologyKey: "kubernetes.io/hostname"
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              preference:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - node1
       containers:
         - name: linkis-ujes-hive-entrance
           image: 10.206.0.5/library/linkis:linkis-ujes-hive-entrance

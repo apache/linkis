@@ -46,7 +46,7 @@ class EsEngineRequester(groupFactory: GroupFactory, rmClient: ResourceManagerCli
           engine.setGroup(groupFactory.getOrCreateGroup(getGroupName(requestEngine.creator, requestEngine.user)))
           engine.setUser(requestEngine.user)
           engine.setCreator(requestEngine.creator)
-          engine.updateState(ExecutorState.Starting, ExecutorState.Idle, null, null)
+//          engine.updateState(ExecutorState.Starting, ExecutorState.Idle, null, null)
           engine.setJob(entranceJob)
           engine.init()
           executorListener.foreach(_.onExecutorCreated(engine))

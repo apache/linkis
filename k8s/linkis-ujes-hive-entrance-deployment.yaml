@@ -31,7 +31,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
         - name: linkis-ujes-hive-entrance
-          image: 10.206.0.5/library/linkis:linkis-ujes-hive-enginemanager
+          image: 10.206.0.5/library/linkis:linkis-ujes-hive-entrance
           lifecycle:
             preStop:
               exec:

@@ -31,7 +31,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
         - name: linkis-ujes-spark-entrance
-          image: 10.206.0.5/library/linkis:linkis-ujes-spark-enginemanager
+          image: 10.206.0.5/library/linkis:linkis-ujes-spark-entrance
           lifecycle:
             preStop:
               exec:
@@ -55,6 +55,6 @@ spec:
       imagePullSecrets:
         - name: registry-key
       volumes:
-        - name: linkis-ujes-spark-enginemanager-config
+        - name: linkis-ujes-spark-entrance-config
           configMap:
-            name: linkis-ujes-spark-enginemanager-config
+            name: linkis-ujes-spark-entrance-config

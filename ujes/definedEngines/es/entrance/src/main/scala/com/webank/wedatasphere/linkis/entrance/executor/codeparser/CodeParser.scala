@@ -64,7 +64,7 @@ class EsSQLCodeParser extends CodeParser {
 
   override def parse(code: String): Array[String] = {
     // sql to request body
-    parseSql(code).map(String.format(SQL_FORMAT, _))
+    parseSql(code).map(item => item.trim.replaceAll("\\s+", " ")).map(String.format(SQL_FORMAT, _))
   }
 
   val separator = ";"

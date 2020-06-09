@@ -9,6 +9,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone: ${eurekaurl}
+    registry-fetch-interval-seconds: 30
   instance:
     lease-renewal-interval-in-second: 5
     lease-expiration-duration-in-second: 10

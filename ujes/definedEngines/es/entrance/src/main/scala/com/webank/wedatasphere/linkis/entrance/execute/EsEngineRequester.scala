@@ -50,6 +50,7 @@ class EsEngineRequester(groupFactory: GroupFactory, rmClient: ResourceManagerCli
           engine.setJob(entranceJob)
           engine.init()
           executorListener.foreach(_.onExecutorCreated(engine))
+          rmClient.resourceInited(UserResultResource(ticketId, requestEngine.user), new InstanceResource(1))
           Option(engine)
         }
       }

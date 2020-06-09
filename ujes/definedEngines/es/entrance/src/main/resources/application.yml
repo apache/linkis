@@ -2,7 +2,7 @@ server:
   port: 10009
 spring:
   application:
-    name: esEntrance
+    name: elasticsearchEntrance
 
 
 eureka:

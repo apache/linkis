@@ -75,7 +75,7 @@ class EsClientImpl(datasourceName:String, client: RestClient, sniffer: Sniffer)
     val username = ES_USERNAME.getValue(options)
     val password = ES_PASSWORD.getValue(options)
     // username / password convert to base auth
-    if (!ES_AUTH_CACHE.getValue &&  StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
+    if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
       val authHeader = authenticate(new UsernamePasswordCredentials(username, password), UTF_8.name())
       builder.addHeader(authHeader.getName, authHeader.getValue)
     }

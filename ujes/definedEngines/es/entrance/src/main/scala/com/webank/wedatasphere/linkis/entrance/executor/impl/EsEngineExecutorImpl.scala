@@ -35,7 +35,7 @@ class EsEngineExecutorImpl(runType:String, client: EsClient, properties: JMap[St
       }
       case _ => CodeParser.ESJSON_CODE_PARSER
     }
-    this.user = properties.get(TaskConstant.UMUSER, StorageUtils.getJvmUser)
+    this.user = properties.getOrDefault(TaskConstant.UMUSER, StorageUtils.getJvmUser)
   }
 
   override def parse(code: String): Array[String] = {

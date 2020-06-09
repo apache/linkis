@@ -48,8 +48,8 @@ class EsEntranceEngine(id: Long, properties: JMap[String, String], resourceRelea
     if (!codes.isEmpty) {
       totalCodeLineNumber = codes.length
       codeLine = 0
-      codes.foreach { code =>
-        try {
+      try {
+        codes.foreach { code =>
           val executeRes = executeLine(code)
           executeRes match {
             case aliasOutputExecuteResponse: AliasOutputExecuteResponse =>
@@ -72,19 +72,20 @@ class EsEntranceEngine(id: Long, properties: JMap[String, String], resourceRelea
           codeLine = codeLine + 1
           // update progress
           job.getProgressListener.map(_.onProgressUpdate(job, progress, getProgressInfo))
-        } catch {
-          case t: Throwable =>
-            return ErrorExecuteResponse("EsEntranceEngine execute exception. ", t)
-        } finally {
-
         }
+      } catch {
+        case t: Throwable =>
+          return ErrorExecuteResponse("EsEntranceEngine execute exception. ", t)
+      } finally {
+        this.close()
       }
+    } else {
+      this.close()
     }
-    this.close()
     SuccessExecuteResponse()
   }
 
-  protected def executeLine(code: String): ExecuteResponse = this.engineExecutor.executeLine(code, storePath, codeLine.toString)
+  protected def executeLine(code: String): ExecuteResponse = this.engineExecutor.executeLine(code, storePath, s"_$codeLine")
 
   override protected def callExecute(request: RequestTask): EngineExecuteAsynReturn = ???
 

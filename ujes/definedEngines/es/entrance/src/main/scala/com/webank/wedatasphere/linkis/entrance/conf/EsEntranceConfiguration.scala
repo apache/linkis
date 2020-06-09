@@ -12,7 +12,7 @@ object EsEntranceConfiguration {
   // es client
   val ES_CLUSTER = CommonVars("wds.linkis.es.cluster", "")
   val ES_DATASOURCE_NAME = CommonVars("wds.linkis.es.datasource", "default_datasource")
-  val ES_AUTH_CACHE = CommonVars("wds.linkis.es.auth.cache", true)
+  val ES_AUTH_CACHE = CommonVars("wds.linkis.es.auth.cache", false)
   val ES_USERNAME = CommonVars("wds.linkis.es.username", "")
   val ES_PASSWORD = CommonVars("wds.linkis.es.password", "")
   val ES_SNIFFER_ENABLE = CommonVars("wds.linkis.es.sniffer.enable", false)
@@ -24,7 +24,7 @@ object EsEntranceConfiguration {
 
   // entrance resource
   val ENTRANCE_MAX_JOB_INSTANCE = CommonVars("wds.linkis.entrance.max.job.instance", 100)
-  val ENTRANCE_PROTECTED_JOB_INSTANCE = CommonVars("wds.linkis.entrance.protected.job.instance", 80)
+  val ENTRANCE_PROTECTED_JOB_INSTANCE = CommonVars("wds.linkis.entrance.protected.job.instance", 20)
   val ENGINE_DEFAULT_LIMIT = CommonVars("wds.linkis.engine.default.limit", 5000)
 
   // resultSet

@@ -8,7 +8,7 @@ import com.webank.wedatasphere.linkis.entrance.executor.impl.EsEngineExecutorImp
 import com.webank.wedatasphere.linkis.entrance.persistence.EntranceResultSetEngine
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
 import com.webank.wedatasphere.linkis.protocol.engine.{JobProgressInfo, RequestTask}
-import com.webank.wedatasphere.linkis.scheduler.executer.{AliasOutputExecuteResponse, ErrorExecuteResponse, ExecuteRequest, ExecuteResponse, IncompleteExecuteResponse, SingleTaskInfoSupport, SingleTaskOperateSupport, SuccessExecuteResponse}
+import com.webank.wedatasphere.linkis.scheduler.executer.{AliasOutputExecuteResponse, ErrorExecuteResponse, ExecuteRequest, ExecuteResponse, ExecutorState, IncompleteExecuteResponse, SingleTaskInfoSupport, SingleTaskOperateSupport, SuccessExecuteResponse}
 import com.webank.wedatasphere.linkis.server.JMap
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
@@ -119,9 +119,6 @@ class EsEntranceEngine(id: Long, properties: JMap[String, String], resourceRelea
 
   override def toString: String = s"EsEntranceEngine($id)"
 
-  // used by EsEngineManager to correct EntranceEngine used resources(用于 EsEngineManager 修正 Engine 使用的资源)
-  @volatile var isClose = false
-
   override def close(): Unit = {
     try {
       this.job.setResultSize(0)
@@ -131,8 +128,12 @@ class EsEntranceEngine(id: Long, properties: JMap[String, String], resourceRelea
     } catch {
       case _: Throwable =>
     } finally {
-      this.isClose = true
+      this.updateState(ExecutorState.Starting, ExecutorState.Dead, null, null)
     }
   }
 
+  override def hashCode(): Int = {
+    val state = Seq(id)
+    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+  }
 }

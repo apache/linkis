@@ -146,7 +146,6 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("path:(路径：)" + path + "Is empty!(为空！)");
         }
-        WorkspaceUtil.pathSafeCheck(path,userName);
         WorkspaceUtil.fileAndDirNameSpecialCharCheck(path);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
@@ -167,7 +166,6 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("Path(路径)：" + path + "Is empty!(为空！)");
         }
-        WorkspaceUtil.pathSafeCheck(path,userName);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         fsValidate(fileSystem);
@@ -188,8 +186,6 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(oldDest)) {
             throw new WorkSpaceException("Path(路径)：" + oldDest + "Is empty!(为空！)");
         }
-        WorkspaceUtil.pathSafeCheck(oldDest,userName);
-        WorkspaceUtil.pathSafeCheck(newDest,userName);
         WorkspaceUtil.fileAndDirNameSpecialCharCheck(newDest);
         if (StringUtils.isEmpty(newDest)) {
             //No change in file name(文件名字无变化)
@@ -216,7 +212,6 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("Path(路径)：" + path + "Is empty!(为空！)");
         }
-        WorkspaceUtil.pathSafeCheck(path,userName);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         fsValidate(fileSystem);
@@ -243,7 +238,6 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("Path(路径)：" + path + "Is empty!(为空！)");
         }
-        WorkspaceUtil.pathSafeCheck(path,userName);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         fsValidate(fileSystem);
@@ -334,7 +328,6 @@ public class FsRestfulApi implements FsRestfulRemote {
             if (StringUtils.isEmpty(path)) {
                 throw new WorkSpaceException("Path(路径)：" + path + "Is empty!(为空！)");
             }
-            WorkspaceUtil.pathSafeCheck(path,userName);
             if (StringUtils.isEmpty(charset)) {
                 charset = "utf-8";
             }
@@ -356,18 +349,21 @@ public class FsRestfulApi implements FsRestfulRemote {
             } else {
                   response.addHeader("Content-Type", "multipart/form-data");
             }
+            String downloadFileName = new File(fsPath.getPath()).getName();
+            WorkspaceUtil.downloadResponseHeadCheck(downloadFileName);
             response.addHeader("Content-Disposition", "attachment;filename="
-                    + new File(fsPath.getPath()).getName());
+                    + downloadFileName);
             outputStream = response.getOutputStream();
             while ((bytesRead = inputStream.read(buffer, 0, 1024)) != -1) {
                 outputStream.write(buffer, 0, bytesRead);
             }
         } catch (Exception e) {
+            LOGGER.error("download error(下载出错)：",e);
             response.reset();
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/plain; charset=utf-8");
             PrintWriter writer = response.getWriter();
-            writer.append("error(错误):" + e.getMessage());
+            writer.append("download error(下载出错)");
             writer.flush();
             writer.close();
         } finally {
@@ -443,12 +439,12 @@ public class FsRestfulApi implements FsRestfulRemote {
                  } 
             }
         } catch (Exception e) {
-                LOGGER.error("output fail", e);
+            LOGGER.error("resultset download error(结果集下载出错)：", e);
             response.reset();
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/plain; charset=utf-8");
             PrintWriter writer = response.getWriter();
-            writer.append("error(错误):" + e.getMessage());
+            writer.append("resultset download error(结果集下载出错)");
             writer.flush();
             writer.close();
         } finally {
@@ -498,7 +494,6 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("Path(路径)：" + path + "Is empty!(为空！)");
         }
-        WorkspaceUtil.pathSafeCheck(path,userName);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         fsValidate(fileSystem);
@@ -655,7 +650,6 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("Path(路径)：" + path + "is empty!(为空！)");
         }
-        WorkspaceUtil.pathSafeCheck(path,userName);
         String charset = (String) json.get("charset");
         if (StringUtils.isEmpty(charset)) {
             charset = "utf-8";
@@ -723,7 +717,6 @@ public class FsRestfulApi implements FsRestfulRemote {
             if (StringUtils.isEmpty(path)) {
                 throw new WorkSpaceException("Path(路径)：" + path + "is empty(为空)！");
             }
-            WorkspaceUtil.pathSafeCheck(path,userName);
             String type = WorkspaceUtil.getOpenFileTypeByFileName(path);
             if (!"resultset".equals(type)) {
                 throw new WorkSpaceException("unsupported type");
@@ -782,8 +775,10 @@ public class FsRestfulApi implements FsRestfulRemote {
             } else {
                 throw new WorkSpaceException("unsupported type");
             }
+            String downloadFileName = new String(outputFileName.getBytes("UTF-8"), "ISO8859-1") + "." + outputFileType;
+            WorkspaceUtil.downloadResponseHeadCheck(downloadFileName);
             response.addHeader("Content-Disposition", "attachment;filename="
-                    + new String(outputFileName.getBytes("UTF-8"), "ISO8859-1") + "." + outputFileType);
+                    + downloadFileName);
 
             outputStream = response.getOutputStream();
             byte[] buffer = new byte[1024];
@@ -792,12 +787,12 @@ public class FsRestfulApi implements FsRestfulRemote {
                 outputStream.write(buffer, 0, bytesRead);
             }
         } catch (Exception e) {
-            LOGGER.error("output fail", e);
+            LOGGER.error("resultset to excel/csv error(结果集导出出错)：", e);
             response.reset();
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/plain; charset=utf-8");
             PrintWriter writer = response.getWriter();
-            writer.append("error(错误):" + e.getMessage());
+            writer.append("resultset to excel/csv error(结果集导出出错)");
             writer.flush();
             writer.close();
         } finally {
@@ -832,7 +827,6 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("Path(路径)：" + path + "is empty!(为空！)");
         }
-        WorkspaceUtil.pathSafeCheck(path,userName);
         String suffix = path.substring(path.lastIndexOf("."));
         FsPath fsPath = new FsPath(path);
         Map<String, Object> res = new HashMap<String, Object>();
@@ -903,7 +897,6 @@ public class FsRestfulApi implements FsRestfulRemote {
         if (StringUtils.isEmpty(path)) {
             throw new WorkSpaceException("Path(路径)：" + path + "is empty!(为空！)");
         }
-        WorkspaceUtil.pathSafeCheck(path,userName);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         fsValidate(fileSystem);

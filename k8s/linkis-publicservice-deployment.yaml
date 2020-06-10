@@ -42,8 +42,8 @@ spec:
         livenessProbe:
             tcpSocket:
               port: 14003
-            initialDelaySeconds: 15
-            periodSeconds: 20
+            initialDelaySeconds: 30
+            periodSeconds: 60
         env:
           - name: eurekaurl
             value: http://10.206.0.12:20230/eureka/

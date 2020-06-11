@@ -16,8 +16,9 @@
 
 package com.webank.wedatasphere.linkis.gateway.security
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.gateway.http.{GatewayContext, GatewayHttpRequest}
+import com.webank.wedatasphere.linkis.common.utils.{DESUtil, Logging, Utils}
+import com.webank.wedatasphere.linkis.gateway.http.{GatewayContext, GatewayHttpRequest, GatewayHttpResponse}
+import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import com.webank.wedatasphere.linkis.server.exception.LoginExpireException
 import com.webank.wedatasphere.linkis.server.security.{SSOUtils, ServerSSOUtils}
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter._
@@ -29,6 +30,7 @@ import scala.collection.JavaConversions._
   * created by cooperyang on 2019/1/9.
   */
 object GatewaySSOUtils extends Logging {
+  private val captcha_name = "captcha"
   private def getCookies(gatewayContext: GatewayContext): Array[Cookie] = gatewayContext.getRequest.getCookies.flatMap(_._2).toArray
   def getLoginUser(gatewayContext: GatewayContext): Option[String] = {
     val cookies = getCookies(gatewayContext)
@@ -52,4 +54,21 @@ object GatewaySSOUtils extends Logging {
     SSOUtils.removeLoginUserByAddCookie(c => gatewayContext.getResponse.addCookie(c))
   }
   def updateLastAccessTime(gatewayContext: GatewayContext): Unit = SSOUtils.updateLastAccessTime(gatewayContext.getRequest.getCookies.flatMap(_._2).toArray)
+  def setCaptcha(response: GatewayHttpResponse, code:String): Unit = {
+    val encryptionCode = DESUtil.encrypt(code, ServerConfiguration.cryptKey)
+    val cookie = new Cookie(captcha_name, encryptionCode);
+    cookie.setMaxAge(180);
+    cookie.setHttpOnly(true);
+    response.addCookie(cookie);
+  }
+  def getCaptcha(gatewayContext: GatewayContext): String = {
+    val cookies = getCookies(gatewayContext)
+    var result = "";
+    for ( i <- 0 to (cookies.length - 1) ) {
+      if (cookies(i).getName()==captcha_name) result = cookies(i).getValue();
+    }
+    val code = DESUtil.decrypt(result, ServerConfiguration.cryptKey)
+    code
+  }
 }
+

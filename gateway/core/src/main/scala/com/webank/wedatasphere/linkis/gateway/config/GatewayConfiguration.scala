@@ -49,4 +49,6 @@ object GatewayConfiguration {
     * QUERY_PERSISTENCE_SPRING_APPLICATION_NAME 是表示usercontrol模块在springcloud中的应用名称
     */
   val USERCONTROL_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.query.application.name", "cloud-usercontrol")
+
+  val ENABLE_LOGIN_CAPTCHA = CommonVars("wds.linkis.gateway.conf.enable.login.captcha", false)
 }

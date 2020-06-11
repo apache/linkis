@@ -148,7 +148,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <repository>10.206.0.5/library/linkis</repository>
+                    <repository>${harbor.reposity}</repository>
                     <tag>linkis-ujes-pipeline-entrance</tag>
                     <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>
                 </configuration>

@@ -139,6 +139,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dispatch.version>0.11.2</dispatch.version>
         <jsoup.version>1.8.2</jsoup.version>
+        <harbor.reposity>10.206.0.5/library/linkis</harbor.reposity>
     </properties>
 
     <dependencyManagement>

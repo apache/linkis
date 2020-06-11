@@ -33,7 +33,6 @@ data:
 
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2020-05-29T07:58:40Z"
   managedFields:
   - apiVersion: v1
     fieldsType: FieldsV1

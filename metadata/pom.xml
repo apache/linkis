@@ -222,7 +222,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <repository>10.206.0.5/library/linkis</repository>
+                    <repository>${harbor.reposity}</repository>
                     <tag>linkis-metadata</tag>
                     <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>
                 </configuration>

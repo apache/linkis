@@ -66,6 +66,9 @@ public class TransitionalQueryService {
     }
 
     private boolean shouldUpdate(String oldStatus, String newStatus) {
+        //运行中的任务会突然失败然后重试
+        if(TaskStatus.valueOf(newStatus).equals(TaskStatus.WaitForRetry) && (TaskStatus.valueOf(oldStatus).equals(TaskStatus.Running) || TaskStatus.valueOf(oldStatus).equals(TaskStatus.Failed) ))
+            return true;
         return TaskStatus.valueOf(oldStatus).ordinal() <= TaskStatus.valueOf(newStatus).ordinal();
     }
 }

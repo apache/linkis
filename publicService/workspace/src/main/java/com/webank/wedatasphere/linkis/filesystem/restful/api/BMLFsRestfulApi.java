@@ -97,16 +97,18 @@ public class BMLFsRestfulApi {
         writer.addRecord(new ScriptRecord(scriptContent));
         InputStream inputStream = writer.getInputStream();
         String version=null;
-        if(resourceId == null){
-            // TODO: 2019/5/28 新增文件
-            Map<String, Object> bmlResponse = bmlHelper.upload(userName, inputStream, fileName);
-            resourceId = bmlResponse.get("resourceId").toString();
-            version = bmlResponse.get("version").toString();
-        }else {
-            // TODO: 2019/5/28 更新文件
-            Map<String, Object> bmlResponse = bmlHelper.update(userName, resourceId, inputStream);
-            resourceId = bmlResponse.get("resourceId").toString();
-            version = bmlResponse.get("version").toString();
+        synchronized (bmlHelper) { //出现多个version一样的数据,理论上应该在源头上加锁,后面改
+            if (resourceId == null) {
+                // TODO: 2019/5/28 新增文件
+                Map<String, Object> bmlResponse = bmlHelper.upload(userName, inputStream, fileName);
+                resourceId = bmlResponse.get("resourceId").toString();
+                version = bmlResponse.get("version").toString();
+            } else {
+                // TODO: 2019/5/28 更新文件
+                Map<String, Object> bmlResponse = bmlHelper.update(userName, resourceId, inputStream);
+                resourceId = bmlResponse.get("resourceId").toString();
+                version = bmlResponse.get("version").toString();
+            }
         }
         // TODO: 2019/5/28 close 流
         if(inputStream != null) inputStream.close();

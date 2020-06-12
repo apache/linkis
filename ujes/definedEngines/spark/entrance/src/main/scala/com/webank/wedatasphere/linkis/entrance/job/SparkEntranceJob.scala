@@ -16,7 +16,6 @@
 
 package com.webank.wedatasphere.linkis.entrance.job
 
-
 /**
   * Created by allenlliu on 2018/12/5.
   */

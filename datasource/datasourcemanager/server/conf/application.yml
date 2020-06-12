@@ -1,0 +1,24 @@
+server:
+  port: 8196
+spring:
+  application:
+    name: dsm-server
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${ip}:${port}/eureka/
+  instance:
+    metadata-map:
+      test: wedatasphere
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info
+logging:
+  config: classpath:log4j2.xml
+
+
+

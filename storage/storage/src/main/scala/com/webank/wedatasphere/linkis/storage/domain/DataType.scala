@@ -17,8 +17,8 @@
 package com.webank.wedatasphere.linkis.storage.domain
 
 import java.sql.{Date, Timestamp}
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.common.utils.Logging
+
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 
 /**
   * Created by johnnwang on 10/17/18.

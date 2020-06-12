@@ -25,7 +25,7 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface DownloadDao {
 
-    void insertDownloadModel(@Param("downloadModel")DownloadModel downloadModel);
+    void insertDownloadModel(@Param("downloadModel") DownloadModel downloadModel);
 
 
 }

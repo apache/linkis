@@ -24,7 +24,6 @@ import java.util.{List, Map}
 
 import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
-
 import org.json4s._
 import org.json4s.jackson.Serialization._
 

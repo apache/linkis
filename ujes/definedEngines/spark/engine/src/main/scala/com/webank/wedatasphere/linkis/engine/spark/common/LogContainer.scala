@@ -17,8 +17,8 @@
 package com.webank.wedatasphere.linkis.engine.spark.common
 
 import scala.collection.Iterable
-import scala.collection.mutable.ArrayBuffer
 import scala.collection.JavaConversions._
+import scala.collection.mutable.ArrayBuffer
 
 /**
   * Created by allenlliu on 2018/11/19.

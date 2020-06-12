@@ -16,8 +16,8 @@
 
 package com.webank.wedatasphere.linkis.resourcemanager.schedule
 
-import com.webank.wedatasphere.linkis.scheduler.queue.{ConsumerManager, SchedulerEvent}
-import com.webank.wedatasphere.linkis.scheduler.{AbstractScheduler, Scheduler, SchedulerContext}
+import com.webank.wedatasphere.linkis.scheduler.queue.ConsumerManager
+import com.webank.wedatasphere.linkis.scheduler.{AbstractScheduler, SchedulerContext}
 
 /**
   * Created by shanhuang on 9/11/18.

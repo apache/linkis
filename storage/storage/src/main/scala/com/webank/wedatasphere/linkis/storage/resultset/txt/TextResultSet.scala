@@ -17,8 +17,8 @@
 package com.webank.wedatasphere.linkis.storage.resultset.txt
 
 import com.webank.wedatasphere.linkis.common.io.resultset.{ResultDeserializer, ResultSerializer}
-import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, StorageResultSet}
+import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
 
 /**
   * Created by johnnwang on 10/20/18.

@@ -36,7 +36,7 @@ object LogHelper {
   def setLogListener(logListener: LogListener):Unit = this.logListener = logListener
 
   def pushAllRemainLogs():Unit = {
-    logger.info(s"start to push all remain logs, and size is ${logCache.getRemain.size()}")
+    logger.info(s"start to push all remain logs")
     Thread.sleep(30)
     //logCache.synchronized{
       if (logListener == null){

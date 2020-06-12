@@ -139,20 +139,20 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         Option<Job> job = entranceServer.getJob(realId);
         if (job.isDefined()){
             JobProgressInfo[] jobProgressInfos = ((EntranceJob)job.get()).getProgressInfo();
-            Map<String, Object> map = new HashMap<>();
             if (jobProgressInfos == null){
                 message = Message.error("Can not get the corresponding progress information, it may be that the corresponding progress information has not been generated(不能获取相应的进度信息,可能是相应的进度信息还未生成)");
                 message.setMethod("/api/entrance/" + id + "/progress");
             }else{
+                List<Map<String, Object>> list = new ArrayList<>();
                 for(JobProgressInfo jobProgressInfo : jobProgressInfos){
+                    Map<String, Object> map = new HashMap<>();
                     map.put("id", jobProgressInfo.id());
                     map.put("succeedTasks", jobProgressInfo.succeedTasks());
                     map.put("failedTasks", jobProgressInfo.failedTasks());
                     map.put("runningTasks", jobProgressInfo.runningTasks());
                     map.put("totalTasks", jobProgressInfo.totalTasks());
+                    list.add(map);
                 }
-                List<Map<String, Object>> list = new ArrayList<>();
-                list.add(map);
                 message = Message.ok();
                 message.setMethod("/api/entrance/" + id + "/progress");
                 message.data("progress",job.get().getProgress()).data("execID", id).data("progressInfo", list);

@@ -3,20 +3,31 @@ package com.webank.wedatasphere.linkis.entrance.executor
 import java.net.URI
 import java.util
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicLong
 import java.util.{Collections, Locale, Optional, TimeZone}
 
 import com.facebook.presto.client.ClientSession
+import com.facebook.presto.spi.resourceGroups.SelectionCriteria
 import com.facebook.presto.spi.security.SelectedRole
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import com.facebook.presto.spi.session.ResourceEstimates
+import com.webank.wedatasphere.linkis.common.conf.ByteType
+import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.configuration.PrestoConfiguration._
 import com.webank.wedatasphere.linkis.entrance.execute._
 import com.webank.wedatasphere.linkis.entrance.execute.impl.EntranceExecutorManagerImpl
-import com.webank.wedatasphere.linkis.scheduler.executer.Executor
+import com.webank.wedatasphere.linkis.entrance.utils.PrestoResourceUtils
+import com.webank.wedatasphere.linkis.protocol.config.{RequestQueryAppConfigWithGlobal, ResponseQueryConfig}
+import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
+import com.webank.wedatasphere.linkis.resourcemanager._
+import com.webank.wedatasphere.linkis.resourcemanager.client.ResourceManagerClient
+import com.webank.wedatasphere.linkis.resourcemanager.exception.RMWarnException
+import com.webank.wedatasphere.linkis.rpc.Sender
+import com.webank.wedatasphere.linkis.scheduler.executer.{Executor, ExecutorState}
 import com.webank.wedatasphere.linkis.scheduler.listener.ExecutorListener
 import com.webank.wedatasphere.linkis.scheduler.queue.{GroupFactory, SchedulerEvent}
 import okhttp3.OkHttpClient
-import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 
 import scala.collection.JavaConverters._
@@ -38,11 +49,18 @@ class PrestoEntranceEngineExecutorManager(groupFactory: GroupFactory,
 
   @Autowired
   private var okHttpClient: OkHttpClient = _
+  @Autowired
+  private var rmClient: ResourceManagerClient = _
+
+  private val idGenerator = new AtomicLong(0)
 
   override def setExecutorListener(executorListener: ExecutorListener): Unit = super.setExecutorListener(executorListener)
 
   override def askExecutor(schedulerEvent: SchedulerEvent): Option[Executor] = schedulerEvent match {
-    case job: EntranceJob => Some(createExecutor(job))
+    case job: EntranceJob =>
+      val executor = createExecutor(job)
+      initialEntranceEngine(executor)
+      Some(executor)
     case _ => None
   }
 
@@ -52,25 +70,49 @@ class PrestoEntranceEngineExecutorManager(groupFactory: GroupFactory,
 
   override protected def createExecutor(schedulerEvent: SchedulerEvent): EntranceEngine = schedulerEvent match {
     case job: EntranceJob =>
-      //TODO check resourcemanager
+      //FIXME replace datasource config
+      val configMap = getUserConfig(job)
 
-      //TODO replace datasource config
-      val startupConf = job.getParams.get("configuration").asInstanceOf[util.Map[String, Any]]
-        .get("startup").asInstanceOf[util.Map[String, String]]
-      val runtimeConf = job.getParams.get("configuration").asInstanceOf[util.Map[String, Any]]
-        .get("runtime").asInstanceOf[util.Map[String, String]]
-      val clientSession = getClientSession(startupConf, runtimeConf)
-      new PrestoEntranceEngineExecutor(job, clientSession, okHttpClient)
+      val clientSession = getClientSession(job.getUser, configMap)
+
+      val criteria = new SelectionCriteria(true, job.getUser, Optional.of(clientSession.getSource), Collections.emptySet(), new ResourceEstimates(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()), Optional.empty())
+      val memory: Long = new ByteType(configMap.asScala.filter(config => PRESTO_REQUEST_MEMORY.key.equals(config._1)).values.head).toLong
+      val groupName = PrestoResourceUtils.getGroupName(criteria, PRESTO_RESOURCE_CONFIG_PATH.getValue(configMap))
+      val requestResource = new InstanceAndPrestoResource(new InstanceResource(1), new PrestoResource(memory, 1, groupName, PRESTO_URL.getValue))
+      rmClient.requestResource(job.getUser, job.getCreator, requestResource) match {
+        case NotEnoughResource(reason) => throw new RMWarnException(40001, LogUtils.generateWarn(reason))
+        case AvailableResource(ticketId) =>
+          rmClient.resourceInited(UserResultResource(ticketId, job.getUser), requestResource)
+          new PrestoEntranceEngineExecutor(idGenerator.getAndIncrement(), job, clientSession, okHttpClient, () => rmClient.resourceReleased(UserResultResource(ticketId, job.getUser)))
+      }
   }
 
-  def getClientSession(startupConf: util.Map[String, String], runtimeConf: util.Map[String, String]): ClientSession = {
-    val httpUri: URI = URI.create(getFinalConfig(startupConf, PRESTO_URL))
-    val user: String = getFinalConfig(startupConf, PRESTO_USER_NAME)
-    val source: String = getFinalConfig(startupConf, PRESTO_RESOURCE)
-    val catalog: String = getFinalConfig(startupConf, PRESTO_CATALOG)
-    val schema: String = getFinalConfig(startupConf, PRESTO_SCHEMA)
+  private def getUserConfig(job: EntranceJob): util.Map[String, String] = {
+    val configMap = new util.HashMap[String, String]()
+    val runtimeMap: util.Map[String, Any] = TaskUtils.getRuntimeMap(job.getParams)
+    val startupMap: util.Map[String, Any] = TaskUtils.getStartupMap(job.getParams)
+    startupMap.forEach((k, v) => if (v != null) configMap.put(k, v.toString))
+    runtimeMap.forEach((k, v) => if (v != null) configMap.put(k, v.toString))
 
-    val properties: util.Map[String, String] = runtimeConf
+    val sender = Sender.getSender(EntranceConfiguration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
+    val response = sender.ask(RequestQueryAppConfigWithGlobal(job.getUser, job.getCreator, "presto", isMerge = true)).asInstanceOf[ResponseQueryConfig]
+    val appConfig = response.getKeyAndValue
+    if (appConfig != null) {
+      appConfig.forEach((k, v) => if (!configMap.containsKey(k)) configMap.put(k, v))
+    }
+    configMap
+  }
+
+  private def getClientSession(user: String, configMap: util.Map[String, String]): ClientSession = {
+    val httpUri: URI = URI.create(PRESTO_URL.getValue(configMap))
+    val source: String = PRESTO_SOURCE.getValue(configMap)
+    val catalog: String = PRESTO_CATALOG.getValue(configMap)
+    val schema: String = PRESTO_SCHEMA.getValue(configMap)
+
+    val properties: util.Map[String, String] = configMap.asScala
+      .filter(tuple => tuple._1.startsWith("presto.session."))
+      .map(tuple => (tuple._1.substring("presto.session.".length), tuple._2))
+      .asJava
 
     val clientInfo: String = "Linkis"
     val transactionId: String = null
@@ -89,13 +131,10 @@ class PrestoEntranceEngineExecutorManager(groupFactory: GroupFactory,
       resourceEstimates, properties, preparedStatements, roles, extraCredentials, transactionId, clientRequestTimeout)
   }
 
-  private def getFinalConfig(config: util.Map[String, String], vars: CommonVars[String]): String = {
-    val value = config.get(vars.key)
-    if (StringUtils.isEmpty(value)) {
-      vars.getValue
-    } else {
-      value
-    }
+  override def shutdown(): Unit = {
+    super.shutdown()
+    engineManager.listEngines(engine => ExecutorState.isAvailable(engine.state))
+      .foreach(engine => engine.asInstanceOf[PrestoEntranceEngineExecutor].shutdown())
   }
 
 }

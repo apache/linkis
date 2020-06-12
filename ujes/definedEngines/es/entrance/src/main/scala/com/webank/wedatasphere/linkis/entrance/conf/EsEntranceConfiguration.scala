@@ -11,7 +11,7 @@ object EsEntranceConfiguration {
 
   // es client
   val ES_CLUSTER = CommonVars("wds.linkis.es.cluster", "")
-  val ES_DATASOURCE_NAME = CommonVars("wds.linkis.es.datasource", "default_datasource")
+  val ES_DATASOURCE_NAME = CommonVars("wds.linkis.datasource", "default_datasource")
   val ES_AUTH_CACHE = CommonVars("wds.linkis.es.auth.cache", false)
   val ES_USERNAME = CommonVars("wds.linkis.es.username", "")
   val ES_PASSWORD = CommonVars("wds.linkis.es.password", "")

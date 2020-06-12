@@ -29,7 +29,7 @@ class SQLLimitEntranceInterceptor extends EntranceInterceptor {
   override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = {
     task match {
       case requestPersistTask:RequestPersistTask => requestPersistTask.getEngineType.toLowerCase() match {
-        case "hql" | "sql" | "jdbc"|"hive" => val executionCode = requestPersistTask.getExecutionCode
+        case "hql" | "sql" | "jdbc"|"hive" | "psql" | "essql" => val executionCode = requestPersistTask.getExecutionCode
           SQLExplain.dealSQLLimit(executionCode, requestPersistTask, logAppender)
         case _ =>
       }

@@ -44,10 +44,9 @@ class CommentInterceptor extends EntranceInterceptor {
     */
   override def apply(task: Task, logAppender: lang.StringBuilder): Task = task match {
     case requestPersistTask:RequestPersistTask => requestPersistTask.getRunType match {
-      case "sql" | "hql"  => requestPersistTask.setExecutionCode(SQLCommentHelper.dealComment(requestPersistTask.getExecutionCode))
+      case "sql" | "hql" | "psql" | "essql"  => requestPersistTask.setExecutionCode(SQLCommentHelper.dealComment(requestPersistTask.getExecutionCode))
       case "python" | "py" => requestPersistTask.setExecutionCode(PythonCommentHelper.dealComment(requestPersistTask.getExecutionCode))
-      case "scala" | "java" => requestPersistTask.setExecutionCode(ScalaCommentHelper.dealComment(requestPersistTask.getExecutionCode))
-      case "sh" | "shell" =>
+      case "scala" | "java" | "esjson" => requestPersistTask.setExecutionCode(ScalaCommentHelper.dealComment(requestPersistTask.getExecutionCode))
       case _ => requestPersistTask.setExecutionCode(SQLCommentHelper.dealComment(requestPersistTask.getExecutionCode))
     }
       requestPersistTask

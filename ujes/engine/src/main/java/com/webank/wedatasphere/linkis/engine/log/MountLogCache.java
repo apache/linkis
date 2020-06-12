@@ -18,8 +18,6 @@ package com.webank.wedatasphere.linkis.engine.log;
 
 import com.webank.wedatasphere.linkis.engine.conf.EngineConfiguration$;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.LogEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,7 +119,7 @@ public class MountLogCache extends AbstractLogCache{
     }
 
     @Override
-    public List<String> getRemain() {
+    public synchronized List<String> getRemain() {
         return logs.getRemain();
     }
 

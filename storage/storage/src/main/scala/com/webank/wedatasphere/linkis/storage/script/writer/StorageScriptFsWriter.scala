@@ -16,43 +16,57 @@
 
 package com.webank.wedatasphere.linkis.storage.script.writer
 
-import java.io.{IOException, OutputStream}
+import java.io.{ByteArrayInputStream, IOException, InputStream, OutputStream}
 import java.util
 
 import com.webank.wedatasphere.linkis.common.io.{FsPath, MetaData, Record}
-import com.webank.wedatasphere.linkis.storage.script.{Compaction, ScriptFsWriter, ScriptMetaData, ScriptRecord}
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
+import com.webank.wedatasphere.linkis.storage.LineRecord
+import com.webank.wedatasphere.linkis.storage.script.{Compaction, ScriptFsWriter, ScriptMetaData}
+import com.webank.wedatasphere.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 import org.apache.commons.io.IOUtils
 
 /**
   * Created by johnnwang on 2018/10/23.
   */
-class StorageScriptFsWriter(pathP: FsPath, charsetP: String, outputStreamP: OutputStream) extends ScriptFsWriter {
-  override val path: FsPath = pathP
-  override val charset: String = charsetP
-  override val outputStream: OutputStream = outputStreamP
+class StorageScriptFsWriter(val path: FsPath, val charset: String, outputStream: OutputStream = null) extends ScriptFsWriter {
+
+  private val stringBuilder = new StringBuilder
 
   @scala.throws[IOException]
   override def addMetaData(metaData: MetaData): Unit = {
     val compactions = Compaction.listCompactions().filter(p => p.belongTo(StorageUtils.pathToSuffix(path.getPath)))
-    val metadataLineJ = new util.ArrayList[String]()
+    val metadataLine = new util.ArrayList[String]()
     if (compactions.length > 0) {
-      metaData.asInstanceOf[ScriptMetaData].getMetaData.map(compactions(0).compact).foreach(metadataLineJ.add)
-      IOUtils.writeLines(metadataLineJ, "\n", outputStream, charset)
+      metaData.asInstanceOf[ScriptMetaData].getMetaData.map(compactions(0).compact).foreach(metadataLine.add)
+      if (outputStream != null) {
+        IOUtils.writeLines(metadataLine, "\n", outputStream, charset)
+      } else {
+        import scala.collection.JavaConversions._
+        metadataLine.foreach(m => stringBuilder.append(s"$m\n"))
+      }
     }
   }
 
   @scala.throws[IOException]
   override def addRecord(record: Record): Unit = {
-    val scriptRecord = record.asInstanceOf[ScriptRecord]
-    IOUtils.write(scriptRecord.getLine, outputStream, charset)
+    //转成LineRecord而不是TableRecord是为了兼容非Table类型的结果集写到本类中
+    val scriptRecord = record.asInstanceOf[LineRecord]
+    if (outputStream != null) {
+      IOUtils.write(scriptRecord.getLine, outputStream, charset)
+    } else {
+      stringBuilder.append(scriptRecord.getLine)
+    }
   }
 
   override def close(): Unit = {
-    StorageUtils.close(outputStream)
+    IOUtils.closeQuietly(outputStream)
   }
 
   override def flush(): Unit = if (outputStream != null) outputStream.flush()
+
+  def getInputStream(): InputStream = {
+    new ByteArrayInputStream(stringBuilder.toString().getBytes(StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue))
+  }
 
 }
 

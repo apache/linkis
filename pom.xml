@@ -22,7 +22,7 @@
 
     <groupId>com.webank.wedatasphere.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>0.9.3</version>
+    <version>0.9.4</version>
     <packaging>pom</packaging>
 
     <name>Linkis Project Parent POM</name>
@@ -57,42 +57,41 @@
 
     <modules>
 
-       <module>core/common</module>
+        <module>core/common</module>
         <module>core/cloudProtocol</module>
         <module>core/scheduler</module>
         <module>core/cloudModule</module>
         <module>core/cloudRPC</module>
         <module>core/cloudMybatis</module>
-        <module>core/httpclient</module>
         <module>core/hadoop-common</module>
+        <module>core/httpclient</module>
         <module>storage/storage</module>
-
         <module>bml/bmlcommon</module>
         <module>bml/bmlclient</module>
+        <module>bml/bmlserver</module>
         <module>resourceManager/resourcemanagercommon</module>
         <module>resourceManager/resourcemanagerclient</module>
-        <module>gateway/core</module>
-        <module>gateway/springcloudgateway</module>
-        <module>gateway/gateway-httpclient-support</module>
-
+        <module>resourceManager/resourcemanagerserver</module>
         <module>publicService/udf</module>
         <module>publicService/application</module>
         <module>publicService/jobhistory</module>
         <module>publicService/configuration</module>
         <module>publicService/variable</module>
+        <module>contextservice/cs-common</module>
+        <module>contextservice/cs-client</module>
+        <module>contextservice/cs-listener</module>
+        <module>contextservice/cs-ujes-client</module>
+        <module>contextservice/cs-cache</module>
+        <module>contextservice/cs-persistence</module>
+        <module>contextservice/cs-highavailable</module>
+        <module>ujes/entrance</module>
+        <module>ujes/entranceclient</module>
         <module>publicService/workspace</module>
         <module>publicService/workspace/client/workspace-httpclient</module>
-        <module>bml/bmlserver</module>
-        <module>resourceManager/resourcemanagerserver</module>
         <module>metadata</module>
-        <module>gateway/gateway-ujes-support</module>
-        <module>eurekaServer</module>
-        <module>publicService</module>
-        <module>userControl</module>
         <module>ujes/engine</module>
-        <module>ujes/enginemanager</module>
-        <module>ujes/entrance</module>
         <module>bml/bml-engine-hook</module>
+        <module>ujes/enginemanager</module>
         <module>ujes/definedEngines/spark/engine</module>
         <module>ujes/definedEngines/spark/enginemanager</module>
         <module>ujes/definedEngines/spark/entrance</module>
@@ -104,15 +103,34 @@
         <module>ujes/definedEngines/python/engine</module>
         <module>ujes/definedEngines/python/enginemanager</module>
         <module>ujes/definedEngines/python/entrance</module>
-        <module>ujes/definedEngines/shell/engine</module>
-        <module>ujes/definedEngines/shell/enginemanager</module>
-        <module>ujes/definedEngines/shell/entrance</module>
-        <module>ujes/definedEngines/jdbc/entrance</module>
-        <module>ujes/client</module>
+
         <module>ujes/definedEngines/pipeline/engine</module>
         <module>ujes/definedEngines/pipeline/enginemanager</module>
         <module>ujes/definedEngines/pipeline/entrance</module>
+        <module>ujes/definedEngines/jdbc/entrance</module>
         <module>ujes/definedEngines/mlsql/entrance</module>
+
+        <module>ujes/definedEngines/shell/engine</module>
+        <module>ujes/definedEngines/shell/entrance</module>
+        <module>ujes/definedEngines/shell/enginemanager</module>
+
+
+        <module>gateway/core</module>
+        <module>gateway/springcloudgateway</module>
+        <module>gateway/gateway-ujes-support</module>
+        <module>gateway/gateway-httpclient-support</module>
+        <module>eurekaServer</module>
+        <module>publicService</module>
+        <module>ujes/client</module>
+        <module>contextservice/cs-server</module>
+        <module>contextservice/cs-search</module>
+        <module>datasource/metadatamanager/common</module>
+        <module>datasource/metadatamanager/server</module>
+        <module>datasource/metadatamanager/service/mysql</module>
+        <module>datasource/metadatamanager/service/elasticsearch</module>
+        <module>datasource/metadatamanager/service/hive</module>
+        <module>datasource/datasourcemanager/common</module>
+        <module>datasource/datasourcemanager/server</module>
         <module>assembly/public-module</module>
         <module>assembly</module>
 
@@ -124,7 +142,7 @@
         <spring.eureka.version>1.4.4.RELEASE</spring.eureka.version>
         <spring.boot.version>2.0.3.RELEASE</spring.boot.version>
         <gson.version>2.8.5</gson.version>
-        <fasterxml.jackson.version>2.9.6</fasterxml.jackson.version>
+        <fasterxml.jackson.version>2.10.0</fasterxml.jackson.version>
         <scala.version>2.11.8</scala.version>
         <jdk.compile.version>1.8</jdk.compile.version>
         <plugin.scala.version>2.15.2</plugin.scala.version>
@@ -133,12 +151,12 @@
         <jersey.servlet.version>2.23.1</jersey.servlet.version>
         <jetty.version>9.4.11.v20180605</jetty.version>
         <httpclient.version>4.5.4</httpclient.version>
+        <httpmime.version>4.5.4</httpmime.version>
         <slf4j.version>1.7.12</slf4j.version>
-        <linkis.version>0.9.3</linkis.version>
+        <linkis.version>0.9.4</linkis.version>
         <maven.version>3.3.3</maven.version>
+        <xstream.core.version>1.4.11.1</xstream.core.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dispatch.version>0.11.2</dispatch.version>
-        <jsoup.version>1.8.2</jsoup.version>
     </properties>
 
     <dependencyManagement>
@@ -184,6 +202,11 @@
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.thoughtworks.xstream</groupId>
+                <artifactId>xstream</artifactId>
+                <version>${xstream.core.version}</version>
+            </dependency>
 
             <!-- scala version -->
             <dependency>
@@ -214,7 +237,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>14.0</version>
+                <version>25.1-jre</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -238,7 +261,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <project.release.version>0.9.3</project.release.version>
+                <project.release.version>0.9.4</project.release.version>
                 <netty.version>4.1.17.Final</netty.version>
                 <json4s.version>3.5.3</json4s.version>
             </properties>
@@ -246,7 +269,7 @@
         <profile>
             <id>spark2.3</id>
             <properties>
-                <project.release.version>0.9.3</project.release.version>
+                <project.release.version>0.9.4</project.release.version>
                 <netty.version>4.1.17.Final</netty.version>
                 <json4s.version>3.2.11</json4s.version>
             </properties>
@@ -254,7 +277,7 @@
         <profile>
             <id>spark2.2-2.0</id>
             <properties>
-                <project.release.version>0.9.3</project.release.version>
+                <project.release.version>0.9.4</project.release.version>
                 <netty.version>4.0.47.Final</netty.version>
                 <json4s.version>3.2.11</json4s.version>
             </properties>
@@ -264,44 +287,44 @@
             <id>release</id>
             <build>
                 <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.1.0</version>
-                    <configuration>
-                        <attach>true</attach>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>create-source-jar</id>
-                            <goals>
-                                <goal>jar-no-fork</goal>
-                                <goal>test-jar-no-fork</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <configuration>
+                            <attach>true</attach>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>create-source-jar</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                    <goal>test-jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.0.0-M1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.0.1</version>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <version>3.0.0-M1</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
 
-               </plugins>
+                </plugins>
             </build>
         </profile>
 

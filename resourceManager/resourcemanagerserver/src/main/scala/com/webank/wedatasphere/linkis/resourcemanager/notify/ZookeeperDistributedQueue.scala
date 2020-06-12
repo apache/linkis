@@ -22,7 +22,7 @@ import com.webank.wedatasphere.linkis.common.utils.Logging
 import org.apache.zookeeper.ZooDefs.Ids
 import org.apache.zookeeper.{CreateMode, KeeperException, ZKUtil, ZooKeeper}
 
-import collection.JavaConversions._
+import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 /**

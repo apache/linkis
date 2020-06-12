@@ -16,12 +16,18 @@
 
 package com.webank.wedatasphere.linkis.filesystem.exception;
 
+import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+
 /**
  * Created by johnnwang on 2018/10/30.
  */
-public class WorkSpaceException extends  Exception {
+public class WorkSpaceException extends ErrorException {
 
-    public WorkSpaceException(String msg){
-        super(msg);
+    public WorkSpaceException(int errCode, String desc) {
+        super(errCode, desc);
+    }
+
+    public WorkSpaceException(int errCode, String desc, String ip, int port, String serviceKind) {
+        super(errCode, desc, ip, port, serviceKind);
     }
 }

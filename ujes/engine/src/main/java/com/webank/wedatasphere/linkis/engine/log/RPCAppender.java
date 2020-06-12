@@ -22,18 +22,10 @@
  */
 package com.webank.wedatasphere.linkis.engine.log;
 
-import com.webank.wedatasphere.linkis.engine.EngineReceiver;
 import com.webank.wedatasphere.linkis.rpc.Sender;
 import com.webank.wedatasphere.linkis.scheduler.listener.LogListener;
-import com.webank.wedatasphere.linkis.scheduler.queue.Job;
-import com.webank.wedatasphere.linkis.server.Message;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class RPCAppender extends AppenderSkeleton {

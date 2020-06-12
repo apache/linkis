@@ -16,11 +16,9 @@
 
 package com.webank.wedatasphere.linkis.engine.pipeline.executor
 
-import org.springframework.beans.factory.annotation.Autowired
-
 /**
-  * Created by johnnwang on 2019/1/30.
-  */
+ * Created by johnnwang on 2019/1/30.
+ */
 object PipeLineExecutorFactory {
-  def listPipeLineExecutor:Array[PipeLineExecutor] = Array(CopyExecutor.getInstance,CSVExecutor.getInstance,ExcelExecutor.getInstance)
+  def listPipeLineExecutor: Array[PipeLineExecutor] = Array(CopyExecutor.getInstance, CSVExecutor.getInstance, ExcelExecutor.getInstance)
 }

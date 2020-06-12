@@ -23,29 +23,28 @@ import java.util.concurrent.atomic.AtomicLong
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.engine.Interpreter.PythonInterpreter._
-import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration._
 import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration
+import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration._
 import com.webank.wedatasphere.linkis.engine.exception.ExecuteError
 import com.webank.wedatasphere.linkis.engine.execute.EngineExecutorContext
 import com.webank.wedatasphere.linkis.engine.imexport.CsvRelation
 import com.webank.wedatasphere.linkis.engine.rs.RsOutputStream
 import com.webank.wedatasphere.linkis.engine.spark.common.PySpark
 import com.webank.wedatasphere.linkis.engine.spark.utils.EngineUtils
-import com.webank.wedatasphere.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
+import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
-import org.apache.commons.io.IOUtils
 import org.apache.commons.exec.CommandLine
+import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
+import org.apache.spark.SparkContext
 import org.apache.spark.api.java.JavaSparkContext
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession}
-import org.apache.spark.{SparkContext, SparkException}
 import py4j.GatewayServer
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.StringBuilder
-import scala.concurrent.duration.Duration
 import scala.concurrent._
+import scala.concurrent.duration.Duration
 
 /**
   * Created by allenlliu on 2018/11/19.

@@ -17,14 +17,12 @@
 package com.webank.wedatasphere.linkis.engine.pipeline
 
 import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineExecutorFactory}
-import com.webank.wedatasphere.linkis.engine.pipeline.exception.PipeLineErrorException
-import com.webank.wedatasphere.linkis.engine.pipeline.executor.{CSVExecutor, CopyExecutor, ExcelExecutor}
 import com.webank.wedatasphere.linkis.server.JMap
 import org.springframework.stereotype.Component
 
 /**
-  * Created by johnnwang on 2018/11/13.
-  */
+ * Created by johnnwang on 2018/11/13.
+ */
 @Component("engineExecutorFactory")
 class PipeLineEngineExecutorFactory extends EngineExecutorFactory {
   override def createExecutor(options: JMap[String, String]): EngineExecutor = new PipeLineEngineExecutor(options)

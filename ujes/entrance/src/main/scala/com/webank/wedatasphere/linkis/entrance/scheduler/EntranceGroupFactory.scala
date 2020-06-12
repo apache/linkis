@@ -16,11 +16,10 @@
 
 package com.webank.wedatasphere.linkis.entrance.scheduler
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
 import com.webank.wedatasphere.linkis.entrance.persistence.HaPersistenceTask
-import com.webank.wedatasphere.linkis.protocol.config.{RequestQueryAppConfig, RequestQueryGlobalConfig, ResponseQueryConfig}
+import com.webank.wedatasphere.linkis.protocol.config.{RequestQueryAppConfig, ResponseQueryConfig}
 import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelGroup
 import com.webank.wedatasphere.linkis.scheduler.queue.{Group, GroupFactory, SchedulerEvent}

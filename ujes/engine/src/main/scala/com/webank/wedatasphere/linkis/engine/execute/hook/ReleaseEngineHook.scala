@@ -18,13 +18,12 @@ package com.webank.wedatasphere.linkis.engine.execute.hook
 
 import java.util.concurrent.TimeUnit
 
-import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engine.conf.EngineConfiguration
 import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineHook}
 import com.webank.wedatasphere.linkis.protocol.engine.EngineState.Idle
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorState
 import com.webank.wedatasphere.linkis.server.JMap
-import org.apache.commons.lang.StringUtils
 
 /**
   * Created by enjoyyin on 2018/9/27.

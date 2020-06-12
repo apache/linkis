@@ -45,14 +45,7 @@ else
     exit 1
 fi
 
-function isSuccess(){
-if [ $? -ne 0 ]; then
-    echo "Failed to " + $1
-    exit 1
-else
-    echo "Succeed to" + $1
-fi
-}
+source ${workDir}/bin/common.sh
 
 function checkPythonAndJava(){
     python --version
@@ -128,52 +121,9 @@ source ${LINKIS_DB_CONFIG_PATH}
 source ${DISTRIBUTION}
 isSuccess "load config"
 
-local_host="`hostname --fqdn`"
 
-ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
-
-function isLocal(){
-    if [ "$1" == "127.0.0.1" ];then
-        return 0
-    elif [ $1 == "localhost" ]; then
-        return 0
-    elif [ $1 == $local_host ]; then
-        return 0
-    elif [ $1 == $ipaddr ]; then
-        return 0
-    fi
-        return 1
-}
-
-function executeCMD(){
-   isLocal $1
-   flag=$?
-   if [ $flag == "0" ];then
-      echo "Is local execution:$2"
-      eval $2
-   else
-      echo "Is remote execution:$2"
-      ssh -p $SSH_PORT $1 $2
-   fi
-
-}
-function copyFile(){
-   isLocal $1
-   flag=$?
-   src=$2
-   dest=$3
-   if [ $flag == "0" ];then
-      echo "Is local cp "
-      eval "cp -r $src $dest"
-   else
-      echo "Is remote cp "
-      scp -r -P $SSH_PORT  $src $1:$dest
-   fi
-
-}
 
 ##install mode choice
-
 if [ "$INSTALL_MODE" == "" ];then
   echo "Please enter the mode selection such as: 1"
   echo " 1: Lite"
@@ -185,7 +135,7 @@ if [ "$INSTALL_MODE" == "" ];then
 fi
 
 if [[ '1' = "$INSTALL_MODE" ]];then
-  echo "You chose Lite installation mode" 
+  echo "You chose Lite installation mode"
   checkPythonAndJava
 elif [[ '2' = "$INSTALL_MODE" ]];then
   echo "You chose Simple installation mode"
@@ -233,7 +183,6 @@ then
   elif [[ $WORKSPACE_USER_ROOT_PATH == hdfs://* ]];then
     localRootDir=${WORKSPACE_USER_ROOT_PATH#hdfs://}
     hdfs dfs -mkdir -p $localRootDir/$deployUser
-    hdfs dfs -chmod -R 775 $localRootDir/$deployUser
   else
     echo "does not support $WORKSPACE_USER_ROOT_PATH filesystem types"
   fi
@@ -251,7 +200,6 @@ then
   elif [[ $HDFS_USER_ROOT_PATH == hdfs://* ]];then
     localRootDir=${HDFS_USER_ROOT_PATH#hdfs://}
     hdfs dfs -mkdir -p $localRootDir/$deployUser
-    hdfs dfs -chmod -R 775 $localRootDir/$deployUser
   else
     echo "does not support $HDFS_USER_ROOT_PATH filesystem types"
   fi
@@ -269,9 +217,8 @@ then
   elif [[ $RESULT_SET_ROOT_PATH == hdfs://* ]];then
     localRootDir=${RESULT_SET_ROOT_PATH#hdfs://}
         hdfs dfs -mkdir -p $localRootDir/$deployUser
-        hdfs dfs -chmod -R 775 $localRootDir/$deployUser
   else
-    echo "does not support $RESULT_SET_ROOT_PATH filesystem types"        
+    echo "does not support $RESULT_SET_ROOT_PATH filesystem types"
   fi
 fi
 isSuccess "create  $RESULT_SET_ROOT_PATH directory"
@@ -335,20 +282,19 @@ if ! executeCMD $SERVER_IP "test -e $SERVER_HOME"; then
   isSuccess "create the dir of  $SERVER_NAME"
 fi
 
+if ! executeCMD $SERVER_IP "test -e $SERVER_HOME/module"; then
+    copyFile $SERVER_IP ${workDir}/share/linkis/module/module.zip $SERVER_HOME
+    isSuccess "cp module.zip"
+    executeCMD $SERVER_IP  "cd $SERVER_HOME/;unzip -o  module.zip > /dev/null;cd -"
+    isSuccess "unzip module.zip"
+fi
+
 echo "$SERVER_NAME-step2:copy install package"
 copyFile $SERVER_IP ${workDir}/share/$PACKAGE_DIR/$SERVER_NAME.zip $SERVER_HOME
 isSuccess "copy  ${SERVER_NAME}.zip"
 executeCMD $SERVER_IP "cd $SERVER_HOME/;rm -rf $SERVER_NAME-bak; mv -f $SERVER_NAME $SERVER_NAME-bak;cd -"
 executeCMD $SERVER_IP "cd $SERVER_HOME/;unzip -o $SERVER_NAME.zip > /dev/null; cd -"
 isSuccess "unzip  ${SERVER_NAME}.zip"
-if [ "$SERVER_NAME" != "linkis-gateway" ]
-then
-    copyFile $SERVER_IP ${workDir}/share/linkis/module/module.zip $SERVER_HOME
-    isSuccess "cp module.zip"
-    executeCMD $SERVER_IP  "cd $SERVER_HOME/;rm -rf modulebak;mv -f module modulebak;cd -"
-    executeCMD $SERVER_IP  "cd $SERVER_HOME/;unzip -o  module.zip > /dev/null;cp -f module/lib/* $SERVER_HOME/$SERVER_NAME/lib/;cd -"
-    isSuccess "unzip module.zip"
-fi
 echo "$SERVER_NAME-step3:subsitution conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/application.yml
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#port:.*#port: $SERVER_PORT#g\" $SERVER_CONF_PATH"
@@ -358,12 +304,32 @@ isSuccess "subsitution conf of $SERVER_NAME"
 }
 ##function end
 
+##cp module to em lib
+function emExtraInstallModule(){
+    executeCMD $SERVER_IP  "cd $SERVER_HOME/;cp -f module/lib/* $SERVER_HOME/$SERVER_NAME/lib/;cd -"
+    isSuccess "copy module"
+}
+##replace conf  1. replace if it exists 2.not exists add
+function replaceConf(){
+    option=$1
+    value=$2
+    file=$3
+    executeCMD $SERVER_IP  "grep -q '^$option' $file && sed -i ${txt} 's/^$option.*/$option=$value/' $file || echo '$option=$value' >> $file"
+    isSuccess "copy module"
+}
+
+
 ##GateWay Install
 PACKAGE_DIR=springcloud/gateway
 SERVER_NAME=linkis-gateway
 SERVER_IP=$GATEWAY_INSTALL_IP
 SERVER_PORT=$GATEWAY_PORT
 SERVER_HOME=$LINKIS_INSTALL_HOME
+if test -z "$SERVER_IP"
+then
+  GATEWAY_INSTALL_IP=$local_host
+fi
+
 ###install dir
 installPackage
 ###update linkis.properties
@@ -393,8 +359,7 @@ executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.server.mybatis.datasource
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.workspace.filesystem.localuserrootpath.*#wds.linkis.workspace.filesystem.localuserrootpath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.workspace.filesystem.hdfsuserrootpath.prefix.*#wds.linkis.workspace.filesystem.hdfsuserrootpath.prefix=$HDFS_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
-executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.gateway.ip.*#wds.linkis.gateway.ip=$GATEWAY_INSTALL_IP#g\" $SERVER_CONF_PATH"
-executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.gateway.port.*#wds.linkis.gateway.port=$GATEWAY_PORT#g\" $SERVER_CONF_PATH"
+replaceConf "wds.linkis.gateway.url" "http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT" "$SERVER_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVER_NAME"
 echo "<----------------$SERVER_NAME:end------------------->"
 ##publicservice end
@@ -428,12 +393,14 @@ SERVER_PORT=$PYTHON_EM_PORT
 SERVER_HOME=$LINKIS_INSTALL_HOME
 ###install dir
 installPackage
+emExtraInstallModule
 ###update linkis.properties
 echo "$SERVER_NAME-step4:update linkis conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVER_NAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
 SERVER_ENGINE_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis-engine.properties
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_ENGINE_CONF_PATH"
+replaceConf "wds.linkis.gateway.url" "http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT" "$SERVER_ENGINE_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVER_NAME"
 echo "<----------------$SERVER_NAME:end------------------->"
 
@@ -450,6 +417,7 @@ SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$RESULT_SET_ROOT_PATH#g\" $SERVER_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+replaceConf "wds.linkis.gateway.url" "http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT" "$SERVER_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVER_NAME"
 echo "<----------------$SERVER_NAME:end------------------->"
 ##PythonEntrance install end
@@ -510,6 +478,24 @@ isSuccess "subsitution linkis.properties of $SERVER_NAME"
 echo "<----------------$SERVER_NAME:end------------------->"
 ##metadata end
 
+##linkis-cs-server install
+PACKAGE_DIR=linkis/linkis-cs-server
+SERVER_NAME=linkis-cs-server
+SERVER_IP=$CS_INSTALL_IP
+SERVER_PORT=$CS_PORT
+SERVER_HOME=$LINKIS_INSTALL_HOME
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVER_NAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
+executeCMD $SERVER_IP  "sed -i ${txt}  \"s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g\" $SERVER_CONF_PATH"
+executeCMD $SERVER_IP  "sed -i ${txt}  \"s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g\" $SERVER_CONF_PATH"
+executeCMD $SERVER_IP  "sed -i ${txt}  \"s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g\" $SERVER_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVER_NAME"
+echo "<----------------$SERVER_NAME:end------------------->"
+##cs end
+
 ##HiveEM install
 PACKAGE_DIR=linkis/ujes/hive
 SERVER_NAME=linkis-ujes-hive-enginemanager
@@ -518,6 +504,7 @@ SERVER_PORT=$HIVE_EM_PORT
 SERVER_HOME=$LINKIS_INSTALL_HOME
 ###install dir
 installPackage
+emExtraInstallModule
 ###update linkis.properties
 echo "$SERVER_NAME-step4:update linkis conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
@@ -527,7 +514,9 @@ executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hive.config.dir.*#hive.config.dir=
 SERVER_ENGINE_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis-engine.properties
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_ENGINE_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g\" $SERVER_ENGINE_CONF_PATH"
+replaceConf "wds.linkis.gateway.url" "http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT" "$SERVER_ENGINE_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVER_NAME"
+executeCMD $SERVER_IP   "rm $SERVER_HOME/$SERVER_NAME/lib/guava-25.1-jre.jar"
 executeCMD $SERVER_IP   "rm $SERVER_HOME/$SERVER_NAME/lib/servlet-api-2.5.jar"
 echo "<----------------$SERVER_NAME:end------------------->"
 ##HiveEM install end
@@ -544,6 +533,7 @@ SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$RESULT_SET_ROOT_PATH#g\" $SERVER_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+replaceConf "wds.linkis.gateway.url" "http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT" "$SERVER_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVER_NAME"
 echo "<----------------$SERVER_NAME:end------------------->"
 ##HiveEntrance install end
@@ -566,6 +556,7 @@ SERVER_PORT=$SPARK_EM_PORT
 SERVER_HOME=$LINKIS_INSTALL_HOME
 ###install dir
 installPackage
+emExtraInstallModule
 ###update linkis.properties
 echo "$SERVER_NAME-step4:update linkis conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
@@ -576,6 +567,7 @@ executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.spark.driver.conf.mainjar
 SERVER_ENGINE_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis-engine.properties
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_ENGINE_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#spark.config.dir.*#spark.config.dir=$SPARK_CONF_DIR#g\" $SERVER_ENGINE_CONF_PATH"
+replaceConf "wds.linkis.gateway.url" "http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT" "$SERVER_ENGINE_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVER_NAME"
 echo "<----------------$SERVER_NAME:end------------------->"
 ##SparkEM install end
@@ -592,6 +584,7 @@ SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$HDFS_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+replaceConf "wds.linkis.gateway.url" "http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT" "$SERVER_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVER_NAME"
 echo "<----------------$SERVER_NAME:end------------------->"
 ##SparkEntrance install end
@@ -600,6 +593,7 @@ echo "<----------------$SERVER_NAME:end------------------->"
 ##JDBCEntrance install
 PACKAGE_DIR=linkis/ujes/jdbc
 SERVER_NAME=linkis-ujes-jdbc-entrance
+SERVER_IP=$JDBC_INSTALL_IP
 SERVER_PORT=$JDBC_ENTRANCE_PORT
 ###install dir
 installPackage
@@ -609,6 +603,7 @@ SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.entrance.config.logPath.*#wds.linkis.entrance.config.logPath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$HDFS_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+replaceConf "wds.linkis.gateway.url" "http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT" "$SERVER_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVER_NAME"
 echo "<----------------$SERVER_NAME:end------------------->"
 ##JDBCEntrance install end
@@ -622,12 +617,14 @@ SERVER_PORT=$SHELL_EM_PORT
 SERVER_HOME=$LINKIS_INSTALL_HOME
 ###install dir
 installPackage
+emExtraInstallModule
 ###update linkis.properties
 echo "$SERVER_NAME-step4:update linkis conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVER_NAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
 SERVER_ENGINE_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis-engine.properties
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_ENGINE_CONF_PATH"
+replaceConf "wds.linkis.gateway.url" "http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT" "$SERVER_ENGINE_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVER_NAME"
 echo "<----------------$SERVER_NAME:end------------------->"
 
@@ -641,8 +638,43 @@ installPackage
 echo "$SERVER_NAME-step4:update linkis conf"
 SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+replaceConf "wds.linkis.gateway.url" "http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT" "$SERVER_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVER_NAME"
 echo "<----------------$SERVER_NAME:end------------------->"
 ##SHELLEntrance install end
 
+
+##Datasource Manager Server install
+PACKAGE_DIR=linkis/datasource/linkis-dsm-server
+SERVER_NAME=linkis-dsm-server
+SERVER_PORT=$DSM_PORT
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVER_NAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
+executeCMD $SERVER_IP  "sed -i ${txt}  \"s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g\" $SERVER_CONF_PATH"
+executeCMD $SERVER_IP  "sed -i ${txt}  \"s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g\" $SERVER_CONF_PATH"
+executeCMD $SERVER_IP  "sed -i ${txt}  \"s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g\" $SERVER_CONF_PATH"
+executeCMD $SERVER_IP  "sed -i ${txt}  \"s#wds.linkis.server.dsm.admin.users.*#wds.linkis.server.dsm.admin.users=$deployUser#g\" $SERVER_CONF_PATH"
+replaceConf "wds.linkis.gateway.url" "http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT" "$SERVER_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVER_NAME"
+echo "<----------------$SERVER_NAME:end------------------->"
+##Datasource Manager Server install end
+
+
+
+##Metadata Manager Server install
+PACKAGE_DIR=linkis/datasource/linkis-mdm-server
+SERVER_NAME=linkis-mdm-server
+SERVER_PORT=$MDM_PORT
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVER_NAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
+replaceConf "wds.linkis.gateway.url" "http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT" "$SERVER_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVER_NAME"
+echo "<----------------$SERVER_NAME:end------------------->"
+##Metadata Manager Server install end
 

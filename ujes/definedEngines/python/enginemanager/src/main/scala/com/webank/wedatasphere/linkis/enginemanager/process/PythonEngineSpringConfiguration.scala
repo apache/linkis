@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.enginemanager.process
 
-import com.webank.wedatasphere.linkis.enginemanager.EngineHook
 import com.webank.wedatasphere.linkis.enginemanager.conf.EnvConfiguration
-import com.webank.wedatasphere.linkis.enginemanager.hook.{ConsoleConfigurationEngineHook, JarUdfEngineHook, PyFunctionEngineHook, PyUdfEngineHook}
 import com.webank.wedatasphere.linkis.resourcemanager.domain.ModuleInfo
 import com.webank.wedatasphere.linkis.resourcemanager.{LoadInstanceResource, ResourceRequestPolicy}
 import com.webank.wedatasphere.linkis.rpc.Sender

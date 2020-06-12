@@ -3,15 +3,14 @@ package com.webank.wedatasphere.linkis.engine.shell.executor
 import java.io.{BufferedReader, InputStreamReader}
 
 import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineExecutorContext}
+import com.webank.wedatasphere.linkis.engine.shell.conf.ShellEngineConfiguration
+import com.webank.wedatasphere.linkis.engine.shell.exception.ShellCodeErrorException
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
 import com.webank.wedatasphere.linkis.resourcemanager.{LoadInstanceResource, Resource}
 import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.scheduler.executer._
-import com.webank.wedatasphere.linkis.engine.shell.conf.ShellEngineConfiguration
-import com.webank.wedatasphere.linkis.engine.shell.exception.ShellCodeErrorException
-import org.apache.commons.lang.StringUtils
-import com.webank.wedatasphere.linkis.engine.execute.EngineExecutor
 import org.apache.commons.io.IOUtils
+import org.apache.commons.lang.StringUtils
 
 /**
   * created by cooperyang on 2019/5/14

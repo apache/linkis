@@ -25,6 +25,7 @@ package com.webank.wedatasphere.linkis.entrance.persistence;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.common.io.FsPath;
 import com.webank.wedatasphere.linkis.entrance.EntranceContext;
+import com.webank.wedatasphere.linkis.entrance.cs.CSEntranceHelper;
 import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob;
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo;
 import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask;
@@ -79,7 +80,6 @@ public class QueryPersistenceManager extends PersistenceManager{
     public void onResultSetCreated(Job job, OutputExecuteResponse response) {
         String path;
         boolean isEntranceJob = job instanceof EntranceJob;
-//        if(isEntranceJob) ((EntranceJob)job).incrementResultSetPersist();
         try {
             path = createResultSetEngine().persistResultSet(job, response);
         } catch (Throwable e) {
@@ -98,14 +98,18 @@ public class QueryPersistenceManager extends PersistenceManager{
                 } catch (Throwable e1){
                     logger.error("job {} onLogUpdate error, reason:", job.getId(), e1);
                 } //ignore it
-                if(isEntranceJob) ((EntranceJob)job).incrementResultSetPersisted();
+                if(isEntranceJob) {
+                    ((EntranceJob)job).incrementResultSetPersisted();
+                }
                 return;
             }
             if(task instanceof RequestPersistTask) {
                 RequestPersistTask requestPersistTask = (RequestPersistTask) task;
                 if(StringUtils.isEmpty(requestPersistTask.getResultLocation())) synchronized (task) {
                     if(StringUtils.isNotEmpty(requestPersistTask.getResultLocation())) {
-                        if(isEntranceJob) ((EntranceJob)job).incrementResultSetPersisted();
+                        if(isEntranceJob) {
+                            ((EntranceJob)job).incrementResultSetPersisted();
+                        }
                         return;
                     }
                     try {
@@ -117,7 +121,9 @@ public class QueryPersistenceManager extends PersistenceManager{
                 }
             }
         }
-        if(isEntranceJob) ((EntranceJob)job).incrementResultSetPersisted();
+        if(isEntranceJob) {
+            ((EntranceJob)job).incrementResultSetPersisted();
+        }
     }
 
     @Override
@@ -153,6 +159,15 @@ public class QueryPersistenceManager extends PersistenceManager{
 
     @Override
     public void onJobCompleted(Job job) {
+        //update by peaceWong(2020/05/10) to set jobID to CS
+        try {
+            if (job.isSucceed()) {
+                CSEntranceHelper.registerCSRSData(job);
+            }
+        } catch (Throwable e) {
+            logger.error("Failed to register cs rs data ", e);
+        }
+        //end update
         updateJobStatus(job);
     }
 
@@ -163,12 +178,15 @@ public class QueryPersistenceManager extends PersistenceManager{
         }
         try{
            task = this.entranceContext.getOrCreateEntranceParser().parseToTask(job);
+            if (job.isSucceed()){
+                //如果是job是成功的，那么需要将task的错误描述等都要设置为null
+                ((RequestPersistTask)task).setErrCode(null);
+                ((RequestPersistTask)task).setErrDesc(null);
+            }
         }catch(ErrorException e){
             entranceContext.getOrCreateLogManager().onLogUpdate(job, e.getMessage());
             logger.error("update job status failed, reason:", e);
         }
-        //TODO If the execution fails, there may be an error message, you need to call job.getErrorResponse to persist the error message.(如果是执行失败了，可能会有错误信息，需要调用job.getErrorResponse持久化错误信息)
-        //TODO The error message is compared with the error code of errorListener(错误信息要跟errorListener的错误码信息对比)
         try {
             createPersistenceEngine().updateIfNeeded(task);
         } catch (ErrorException e) {

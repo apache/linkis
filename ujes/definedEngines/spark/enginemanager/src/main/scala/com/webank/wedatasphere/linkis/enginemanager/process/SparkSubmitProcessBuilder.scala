@@ -19,7 +19,7 @@ package com.webank.wedatasphere.linkis.enginemanager.process
 
 import java.lang.ProcessBuilder.Redirect
 
-import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging}
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.enginemanager.EngineResource
 import com.webank.wedatasphere.linkis.enginemanager.conf.EnvConfiguration._
 import com.webank.wedatasphere.linkis.enginemanager.configuration.SparkConfiguration
@@ -29,7 +29,6 @@ import com.webank.wedatasphere.linkis.enginemanager.impl.UserEngineResource
 import com.webank.wedatasphere.linkis.enginemanager.process.SparkSubmitProcessBuilder.{AbsolutePath, Path, RelativePath}
 import com.webank.wedatasphere.linkis.protocol.engine.RequestEngine
 import com.webank.wedatasphere.linkis.resourcemanager.DriverAndYarnResource
-import org.apache.commons.lang.StringUtils
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -135,7 +134,7 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     this.deployMode("client")
     val driverJavaSet = "\"-Dwds.linkis.configuration=linkis-engine.properties " + SparkConfiguration.getJavaRemotePort + "\""
     this.conf(SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, driverJavaSet)
-    this.name(properties.getOrDefault("appName", "sparksqltest"))
+    this.name(properties.getOrDefault("appName", "linkis"))
     this.className(properties.getOrDefault("className", "com.webank.wedatasphere.linkis.engine.DataWorkCloudEngineApplication"))
     properties.getOrDefault("archives", "").toString.split(",").map(RelativePath).foreach(this.archive)
     this.driverCores(DWC_SPARK_DRIVER_CORES)
@@ -153,7 +152,7 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     this.driverClassPath(SPARK_DRIVER_CLASSPATH.getValue)
     this.redirectOutput(Redirect.PIPE)
     this.redirectErrorStream(true)
-    this.env("spark.app.name", properties.getOrDefault("appName", "dwc" + request.creator))
+    this.env("spark.app.name", properties.getOrDefault("appName", "linkis" + request.creator))
 
   }
 

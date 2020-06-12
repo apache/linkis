@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.resourcemanager.notify
 
-import java.util.concurrent.{ConcurrentHashMap, ScheduledThreadPoolExecutor}
+import java.util.concurrent.ScheduledThreadPoolExecutor
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.resourcemanager.event.notify._
@@ -25,7 +25,7 @@ import org.apache.zookeeper._
 import org.json4s._
 import org.json4s.jackson.Serialization.{read, write}
 
-import collection.JavaConversions._
+import scala.collection.JavaConversions._
 
 /**
   * Created by shanhuang on 9/11/18.

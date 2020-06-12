@@ -55,7 +55,7 @@ public interface VersionDao {
 
 
     @Select("select start_byte from linkis_resources_version where resource_id = #{resourceId} and version = #{version}")
-    long getStartByteForResource(@Param("resourceId") String resourceId, @Param("version")String version);
+    long getStartByteForResource(@Param("resourceId") String resourceId, @Param("version") String version);
 
 
 
@@ -75,14 +75,14 @@ public interface VersionDao {
 
 
     @Select("select enable_flag from `linkis_resources_version` where resource_id = #{resourceId} and version = #{version}")
-    int selectResourceVersionEnbleFlag(@Param("resourceId") String resourceId, @Param("version")String version);
+    int selectResourceVersionEnbleFlag(@Param("resourceId") String resourceId, @Param("version") String version);
 
     /**
      * 将resourceId对应的所有版本的enable_flag设为0，这样就不能继续访问该资源的任意版本
      * @param resourceId resourceId
      */
     @Update("update `linkis_resources_version` set enable_flag = 0 where resource_id = #{resourceId}")
-    void deleteResource(@Param("resourceId")String resourceId);
+    void deleteResource(@Param("resourceId") String resourceId);
 
 
     void batchDeleteResources(@Param("resourceIds") List<String> resourceIds);
@@ -92,6 +92,6 @@ public interface VersionDao {
 
 
 
-    List<Version> selectVersionByPage(@Param("resourceId")String resourceId);
+    List<Version> selectVersionByPage(@Param("resourceId") String resourceId);
 
 }

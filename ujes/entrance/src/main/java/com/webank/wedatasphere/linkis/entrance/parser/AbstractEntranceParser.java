@@ -112,6 +112,7 @@ public abstract class AbstractEntranceParser extends EntranceParser {
             //job.setProgressListener(entranceContext.getOrCreatePersistenceManager());
             //job.setJobListener(entranceContext.getOrCreatePersistenceManager());
             job.setEntranceListenerBus(entranceContext.getOrCreateEventListenerBus());
+            job.setEntranceContext(entranceContext);
             job.setListenerEventBus(null);
             job.setProgress(0f);
         }

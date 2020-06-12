@@ -17,7 +17,7 @@
 package com.webank.wedatasphere.linkis.engine
 
 import java.lang.management.ManagementFactory
-import java.util.concurrent.{Future, ScheduledFuture, TimeUnit}
+import java.util.concurrent.{Future, TimeUnit}
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.conf.DWCArgumentsParser
@@ -28,7 +28,7 @@ import com.webank.wedatasphere.linkis.engine.conf.EngineConfiguration.{ENGINE_PU
 import com.webank.wedatasphere.linkis.engine.exception.{EngineErrorException, JobNotExistsException}
 import com.webank.wedatasphere.linkis.engine.execute.scheduler.EngineGroupFactory
 import com.webank.wedatasphere.linkis.engine.execute.{CommonEngineJob, _}
-import com.webank.wedatasphere.linkis.engine.log.{LogHelper, MountLogCache, SendAppender}
+import com.webank.wedatasphere.linkis.engine.log.{LogHelper, SendAppender}
 import com.webank.wedatasphere.linkis.protocol.UserWithCreator
 import com.webank.wedatasphere.linkis.protocol.engine._
 import com.webank.wedatasphere.linkis.resourcemanager.UserResultResource

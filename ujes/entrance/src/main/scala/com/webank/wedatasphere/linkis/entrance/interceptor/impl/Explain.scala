@@ -21,7 +21,7 @@ import java.util.regex.Pattern
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 import com.webank.wedatasphere.linkis.common.log.LogUtils
-import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.entrance.interceptor.exception.{PythonCodeCheckException, ScalaCodeCheckException}
 import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
 import org.apache.commons.lang.StringUtils
@@ -82,6 +82,8 @@ object SQLExplain extends Explain {
   val SQL_APPEND_LIMIT:String = " limit " + SQL_DEFAULT_LIMIT.getValue
   val DROP_TABLE_SQL = "\\s*drop\\s+table\\s+\\w+\\s*"
   val CREATE_DATABASE_SQL = "\\s*create\\s+database\\s+\\w+\\s*"
+  private val LINE_BREAK = "\n"
+  private val COMMENT_FLAG = "--"
   val SET_OWN_USER = "set owner user"
   private val LIMIT:String = "limit"
   private val LIMIT_UPPERCASE:String = "LIMIT"
@@ -131,7 +133,9 @@ object SQLExplain extends Explain {
     if (StringUtils.isEmpty(code)) {
       return false
     }
-    code.trim.split("\\s+")(0).equalsIgnoreCase("select")
+    //如果一段sql是 --xxx回车select * from default.users，那么他也是select语句
+    val realCode = cleanComment(code)
+    realCode.trim.split("\\s+")(0).equalsIgnoreCase("select")
   }
 
   def continueWhenError = false
@@ -141,7 +145,24 @@ object SQLExplain extends Explain {
       return false
     }
     val realCode = cmd.trim
-    if (realCode.toLowerCase().contains(LIMIT)) false else true
+    //limit往往就是在sql语句中最后的，所以需要进行最后的判断
+    val arr = realCode.split("\\s+")
+    val words = new ArrayBuffer[String]()
+    arr foreach {
+      w => w.split("\n") foreach (words += _)
+    }
+    val a = words.toArray
+    val length = a.length
+    val second_last = a(length - 2)
+    !"limit".equals(second_last.toLowerCase())
+  }
+
+  private def cleanComment(sql:String):String = {
+    val cleanSql = new StringBuilder
+    sql.trim.split(LINE_BREAK) foreach {
+      singleSql => if (!singleSql.trim().startsWith(COMMENT_FLAG)) cleanSql.append(singleSql).append(LINE_BREAK)
+    }
+    cleanSql.toString().trim
   }
 
   def isSelectOverLimit(cmd: String): Boolean = {

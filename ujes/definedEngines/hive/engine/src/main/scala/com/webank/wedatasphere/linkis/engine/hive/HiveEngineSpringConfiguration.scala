@@ -18,7 +18,7 @@ package com.webank.wedatasphere.linkis.engine.hive
 
 import com.webank.wedatasphere.linkis.engine.execute.hook._
 import com.webank.wedatasphere.linkis.engine.execute.{CodeParser, EngineHook, SQLCodeParser}
-import com.webank.wedatasphere.linkis.engine.hive.hook.{HiveAddJarsEngineHook, UseDatabaseEngineHook}
+import com.webank.wedatasphere.linkis.engine.hive.hook.HiveAddJarsEngineHook
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.{Bean, Configuration}
 

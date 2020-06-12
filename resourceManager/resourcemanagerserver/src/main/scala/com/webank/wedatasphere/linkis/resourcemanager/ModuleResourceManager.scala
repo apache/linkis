@@ -16,9 +16,8 @@
 
 package com.webank.wedatasphere.linkis.resourcemanager
 
-
 import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.resourcemanager.domain.{EmResourceMetaData, ModuleResourceInfo, ModuleResourceRecord}
+import com.webank.wedatasphere.linkis.resourcemanager.domain.{EmResourceMetaData, ModuleResourceInfo}
 import com.webank.wedatasphere.linkis.resourcemanager.event.notify.{ModuleRegisterEvent, ModuleUnregisterEvent, NotifyRMEventListener}
 
 /**

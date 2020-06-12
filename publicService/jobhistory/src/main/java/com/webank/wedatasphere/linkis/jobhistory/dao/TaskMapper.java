@@ -33,8 +33,8 @@ public interface TaskMapper {
 
     void updateTask(QueryTask queryTask);
 
-    List<QueryTask> search(@Param("taskID")Long  taskID, @Param("umUser")String username, @Param("status")List<String> status,
-                                    @Param("startDate")Date startDate, @Param("endDate")Date endDate,@Param("executeApplicationName")String executeApplicationName);
+    List<QueryTask> search(@Param("taskID") Long taskID, @Param("umUser") String username, @Param("status") List<String> status,
+                           @Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("executeApplicationName") String executeApplicationName);
 
     String selectTaskStatusForUpdate(Long taskID);
 }

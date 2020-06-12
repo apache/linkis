@@ -20,7 +20,9 @@ import com.webank.wedatasphere.linkis.configuration.entity.ConfigKey;
 import com.webank.wedatasphere.linkis.configuration.entity.ConfigKeyUser;
 import com.webank.wedatasphere.linkis.configuration.entity.ConfigKeyValueVO;
 import com.webank.wedatasphere.linkis.configuration.entity.ConfigTree;
+import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationException;
 import com.webank.wedatasphere.linkis.configuration.service.ConfigurationService;
+import com.webank.wedatasphere.linkis.configuration.util.ConfigurationConfiguration;
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
@@ -28,6 +30,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -51,6 +54,61 @@ public class ConfigurationRestfulApi {
     ConfigurationService configurationService;
 
     ObjectMapper mapper = new ObjectMapper();
+
+    @GET
+    @Path("/addKey")
+    public Response addKey(@Context HttpServletRequest req,
+                                   @QueryParam("appName") String appName,
+                                   @QueryParam("creator") String creator,
+                                   @QueryParam("token") String token,
+                                   @QueryParam("treeName") String treeName,
+                                   @QueryParam("keyJson") String keyJson) throws ConfigurationException {
+        String username = SecurityFilter.getLoginUsername(req);
+        if(StringUtils.isEmpty(appName) || StringUtils.isEmpty(creator) || StringUtils.isEmpty(token)){
+            throw new ConfigurationException("params cannot be empty!");
+        }
+        //todo检验token
+        if(!token.equals(ConfigurationConfiguration.COPYKEYTOKEN)){
+            throw new ConfigurationException("token is error");
+        }
+        List<ConfigKey> keys = configurationService.listKeyByCreatorAndAppName(creator,appName);
+        if(keys.isEmpty()){
+            //判断和copyKeyFromIDE相反,只允许在有key的情况下添加
+            throw new ConfigurationException(creator + ":" + appName +  ",keys is empty ,cannot add key");
+        }
+        ConfigKey configKey = BDPJettyServerHelper.gson().fromJson(keyJson, ConfigKey.class);
+        // TODO: 2019/12/30  configKey参数校验
+        configurationService.addKey(creator,appName,treeName,configKey);
+        return Message.messageToResponse(Message.ok());
+    }
+
+
+    @GET
+    @Path("/copyKeyFromIDE")
+    public Response copyKeyFromIDE(@Context HttpServletRequest req,
+                                  @QueryParam("appName") String appName,
+                                  @QueryParam("creator") String creator,
+                                  @QueryParam("token") String token) throws ConfigurationException {
+        String username = SecurityFilter.getLoginUsername(req);
+        if(StringUtils.isEmpty(appName) || StringUtils.isEmpty(creator) || StringUtils.isEmpty(token)){
+            throw new ConfigurationException("params cannot be empty!");
+        }
+        //todo检验token
+        if(!token.equals(ConfigurationConfiguration.COPYKEYTOKEN)){
+            throw new ConfigurationException("token is error");
+        }
+        List<ConfigKey> keys = configurationService.listKeyByCreatorAndAppName(creator,appName);
+        if(!keys.isEmpty()){
+            throw new ConfigurationException(creator + ":" + appName +  ",keys is no empty cannot copy key");
+        }
+        configurationService.insertCreator(creator);
+        List<ConfigKey> IDEkeys = configurationService.listKeyByCreatorAndAppName("IDE",appName);
+        if (IDEkeys.isEmpty()) {
+            throw new ConfigurationException("IDE:"+ appName + ",cannot find any key to copy");
+        }
+        IDEkeys.forEach(k ->configurationService.copyKeyFromIDE(k,creator,appName));
+        return Message.messageToResponse(Message.ok());
+    }
 
     @GET
     @Path("/getFullTreesByAppName")

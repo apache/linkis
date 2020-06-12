@@ -19,25 +19,25 @@ package com.webank.wedatasphere.linkis.filesystem.service
 import java.util.concurrent.{Callable, FutureTask, TimeUnit}
 
 import com.webank.wedatasphere.linkis.common.io.FsPath
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.filesystem.cache.FsCache
+import com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration
 import com.webank.wedatasphere.linkis.filesystem.entity.FSInfo
-import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException
-import com.webank.wedatasphere.linkis.filesystem.util.FsUtil
+import com.webank.wedatasphere.linkis.filesystem.exception.WorkspaceExceptionManager
 import com.webank.wedatasphere.linkis.storage.FSFactory
 import com.webank.wedatasphere.linkis.storage.fs.FileSystem
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
-import scala.collection.mutable.ArrayBuffer
 import scala.collection.JavaConversions._
+import scala.collection.mutable.ArrayBuffer
 import scala.concurrent._
 
 /**
   * Created by johnnwang on 2019/2/11.
   */
 @Service
-class FsService {
-  private val LOGGER = LoggerFactory.getLogger(getClass)
+class FsService extends Logging {
+
 
   def getFileSystemCache(user: String, fsPath: FsPath): FileSystem = {
     if (FsCache.fsInfo.get(user) != null) {
@@ -69,23 +69,28 @@ class FsService {
   }
 
   def getFileSystem(user: String, fsPath: FsPath): FileSystem = {
+    var fs:FileSystem = null
     val start = System.currentTimeMillis()
     val task: FutureTask[FileSystem] = new FutureTask[FileSystem](new Callable[FileSystem] {
       override def call(): FileSystem = {
-        getFileSystemCache(user, fsPath)
+        fs = Utils.tryAndError(getFileSystemCache(user, fsPath))
+        fs
       }
     })
-    FsUtil.executorService.execute(task)
+    WorkSpaceConfiguration.executorService.execute(task)
+    val timeout: java.lang.Long = WorkSpaceConfiguration.FILESYSTEM_GET_TIMEOUT.getValue
     try {
-      task.get(FsUtil.FILESYSTEM_GET_TIMEOUT.getValue, TimeUnit.MILLISECONDS)
+      task.get(timeout, TimeUnit.MILLISECONDS)
     } catch {
-      case e: InterruptedException => LOGGER.info(e.getMessage); task.cancel(true); null
-      case e: ExecutionException => LOGGER.info(e.getMessage); task.cancel(true); null
-      case e: TimeoutException => LOGGER.info(e.getMessage); task.cancel(true); null
+      case e: InterruptedException => error("Failed to getFileSystem", e); task.cancel(true); null
+      case e: ExecutionException => error("Failed to getFileSystem", e); task.cancel(true); null
+      case e: TimeoutException => error("Failed to getFileSystem", e); task.cancel(true); null
     } finally {
       val end = System.currentTimeMillis()
-      LOGGER.info(s"${user} gets the ${fsPath.getFsType} type filesystem using a total of ${end - start} milliseconds(${user}获取${fsPath.getFsType}类型的filesystem一共使用了${end - start}毫秒)")
+      info(s"${user} gets the ${fsPath.getFsType} type filesystem using a total of ${end - start} milliseconds(${user}获取${fsPath.getFsType}类型的filesystem一共使用了${end - start}毫秒)")
     }
+    if(fs == null) throw WorkspaceExceptionManager.createException(80002,timeout,timeout)
+    fs
   }
 
 
@@ -97,12 +102,12 @@ class FsService {
     } catch {
       //If rpc fails to get fs, for example, io-engine restarts or hangs.(如果rpc获取fs失败了 比如io-engine重启或者挂掉)
       case e: Exception => {
-        LOGGER.info("Requesting IO-Engine to initialize fileSystem failed",e)
+        error("Requesting IO-Engine to initialize fileSystem failed", e)
         //todo Clean up the cache(清理缓存 目前先遗留)
         /*FsCache.fsInfo.foreach{
           case (_,list) =>list synchronized list.filter(f =>true).foreach(f =>list -=f)
         }*/
-        throw new WorkSpaceException("Requesting IO-Engine to initialize fileSystem failed!(请求IO-Engine初始化fileSystem失败！)");
+        throw WorkspaceExceptionManager.createException(80001)
       }
     }
   }

@@ -19,7 +19,6 @@ package com.webank.wedatasphere.linkis.engine
 import java.io.Closeable
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
-import javax.annotation.PreDestroy
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

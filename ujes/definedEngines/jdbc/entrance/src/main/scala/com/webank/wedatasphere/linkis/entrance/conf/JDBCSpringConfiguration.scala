@@ -23,7 +23,6 @@ import com.webank.wedatasphere.linkis.entrance.parser.JDBCEntranceParser
 import com.webank.wedatasphere.linkis.scheduler.queue.GroupFactory
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Configuration
 
 @Configuration

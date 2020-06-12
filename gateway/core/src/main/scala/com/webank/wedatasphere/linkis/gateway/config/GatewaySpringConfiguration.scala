@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.gateway.config
 
-import com.webank.wedatasphere.linkis.gateway.security.{LDAPUserRestful, SecurityHook, SecurityFilter, UserRestful}
+import com.webank.wedatasphere.linkis.gateway.security.{LDAPUserRestful, SecurityFilter, SecurityHook, UserRestful}
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean

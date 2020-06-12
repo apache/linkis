@@ -9,5 +9,5 @@ import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteRequest
   */
 trait EnginePreExecuteHook {
   val hookName:String
-  def callPreExecuteHook(engineExecutorContext:EngineExecutorContext, executeRequest: ExecuteRequest)
+  def callPreExecuteHook(engineExecutorContext:EngineExecutorContext, executeRequest: ExecuteRequest, code: String): String
 }

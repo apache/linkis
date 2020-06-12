@@ -130,6 +130,9 @@ public class QueryPersistenceManager extends PersistenceManager{
     @Override
     public void onProgressUpdate(Job job, float progress, JobProgressInfo[] progressInfo) {
         job.setProgress(progress);
+        if (job instanceof EntranceJob){
+            ((EntranceJob) job).setProgressInfo(progressInfo);
+        }
         updateJobStatus(job);
     }
 

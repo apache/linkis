@@ -9,34 +9,43 @@ import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.entrance.configuration.PrestoConfiguration
-import com.webank.wedatasphere.linkis.entrance.exception.PrestoStateInvalidException
+import com.webank.wedatasphere.linkis.entrance.exception.{PrestoClientException, PrestoStateInvalidException}
 import com.webank.wedatasphere.linkis.entrance.execute.{EngineExecuteAsynReturn, EntranceEngine, EntranceJob, StorePathExecuteRequest}
 import com.webank.wedatasphere.linkis.entrance.persistence.EntranceResultSetEngine
 import com.webank.wedatasphere.linkis.entrance.utils.SqlCodeParser
 import com.webank.wedatasphere.linkis.protocol.engine.{JobProgressInfo, RequestTask}
 import com.webank.wedatasphere.linkis.scheduler.executer._
+import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState
 import com.webank.wedatasphere.linkis.storage.domain.Column
 import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 import okhttp3.OkHttpClient
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang.exception.ExceptionUtils
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 
 
 /**
  * Created by yogafire on 2020/4/30
  */
-class PrestoEntranceEngineExecutor(job: EntranceJob, clientSession: ClientSession, okHttpClient: OkHttpClient) extends EntranceEngine(id = 0) with SingleTaskOperateSupport with SingleTaskInfoSupport with Logging {
+class PrestoEntranceEngineExecutor(id: Long, job: EntranceJob, clientSession: ClientSession, okHttpClient: OkHttpClient, releaseResource: () => Unit) extends EntranceEngine(id = id) with SingleTaskOperateSupport with SingleTaskInfoSupport with Logging {
   private var statement: StatementClient = _
   private val persistEngine = new EntranceResultSetEngine()
   //execute line number，as alias and progress line
   private var codeLine = 0
   //total line number
   private var totalCodeLineNumber = 0
+  private val jobProgressInfos = mutable.ListBuffer[JobProgressInfo]()
+  private val serviceInstance: ServiceInstance = ServiceInstance("prestoEngine", "")
 
-  override def getModuleInstance: ServiceInstance = ServiceInstance("prestoEngine", "")
+  override def getModuleInstance: ServiceInstance = serviceInstance
+
+  override def setServiceInstance(applicationName: String, instance: String): Unit = {}
+
+  override def toString: String = s"${serviceInstance.getApplicationName}Entrance($getId, $getUser, $getCreator, ${serviceInstance.getInstance})"
 
   override def execute(executeRequest: ExecuteRequest): ExecuteResponse = {
     if (StringUtils.isEmpty(executeRequest.code)) {
@@ -50,10 +59,10 @@ class PrestoEntranceEngineExecutor(job: EntranceJob, clientSession: ClientSessio
     val codes = SqlCodeParser.parse(executeRequest.code)
     if (!codes.isEmpty) {
       totalCodeLineNumber = codes.length
-      codeLine = 0
+      transition(ExecutorState.Busy)
       codes.foreach(code => {
         try {
-          val executeRes = executeLine(code, storePath, codeLine.toString)
+          val executeRes = executeLine(code, storePath, s"_$codeLine")
           executeRes match {
             case aliasOutputExecuteResponse: AliasOutputExecuteResponse =>
               persistEngine.persistResultSet(job, aliasOutputExecuteResponse)
@@ -62,27 +71,17 @@ class PrestoEntranceEngineExecutor(job: EntranceJob, clientSession: ClientSessio
             case _ =>
               warn("no matching exception")
           }
-          codeLine = codeLine + 1
+          codeLine += 1
         } catch {
-          case e: Exception =>
-            totalCodeLineNumber = 0
-            error("Presto Exception", e)
-            job.getLogListener.foreach(_.onLogUpdate(job, LogUtils.generateERROR(e.getMessage)))
-            return ErrorExecuteResponse("Presto execute exception", e)
           case t: Throwable =>
-            totalCodeLineNumber = 0
             error("Presto execute failed", t)
-            job.getLogListener.foreach(_.onLogUpdate(job, LogUtils.generateERROR(t.getMessage)))
+            job.getLogListener.foreach(_.onLogUpdate(job, LogUtils.generateERROR(ExceptionUtils.getFullStackTrace(t))))
+            close()
             return ErrorExecuteResponse("Presto execute failed", t)
-        } finally {
-          Utils.tryQuietly({
-            statement.close()
-          })
         }
       })
     }
-    totalCodeLineNumber = 0
-    job.setResultSize(0)
+    close()
     SuccessExecuteResponse()
   }
 
@@ -96,14 +95,9 @@ class PrestoEntranceEngineExecutor(job: EntranceJob, clientSession: ClientSessio
 
     var response: ExecuteResponse = SuccessExecuteResponse()
     if (statement.isRunning || (statement.isFinished && statement.finalStatusInfo().getError == null)) {
-      if (statement.currentStatusInfo().getUpdateType == null) {
-        response = queryOutput(statement, storePath, alias)
-      } else {
-        while (statement.isRunning) {
-          statement.advance()
-        }
-      }
+      response = queryOutput(statement, storePath, alias)
     }
+
     verifyServerError(statement)
     response
   }
@@ -115,38 +109,70 @@ class PrestoEntranceEngineExecutor(job: EntranceJob, clientSession: ClientSessio
 
   override def close(): Unit = {
     statement.close()
+    totalCodeLineNumber = 0
+    transition(ExecutorState.Dead)
+    job.setResultSize(0)
+    releaseResource.apply()
   }
 
-  override def progress(): Float = (codeLine.toFloat / totalCodeLineNumber) * statement.getStats.getProgressPercentage.getAsDouble.toFloat
+  def shutdown(): Unit = {
+    close()
+    job.afterStateChanged(job.getState, SchedulerEventState.Cancelled)
+  }
+
+  override def progress(): Float = {
+    Utils.tryCatch({
+      val progress = (codeLine.toFloat + (statement.getStats.getProgressPercentage.orElse(0) * 0.01f).toFloat) / totalCodeLineNumber
+      return progress
+    }) {
+      t: Throwable => warn(s"get presto progress error. ${t.getMessage}")
+    }
+    0
+  }
 
   override def getProgressInfo: Array[JobProgressInfo] = {
-    val totalSplits = statement.getStats.getTotalSplits
-    val runningSplits = statement.getStats.getRunningSplits
-    val completedSplits = statement.getStats.getCompletedSplits
-    Array[JobProgressInfo](JobProgressInfo(statement.currentStatusInfo().getId, totalSplits, runningSplits, 0, completedSplits))
+    Utils.tryCatch({
+      var statusInfo: QueryStatusInfo = null
+      if (statement.isFinished) {
+        statusInfo = statement.finalStatusInfo()
+      } else {
+        statusInfo = statement.currentStatusInfo()
+      }
+      val progressInfo = JobProgressInfo(statusInfo.getId, statement.getStats.getTotalSplits, statement.getStats.getRunningSplits, 0, statement.getStats.getCompletedSplits)
+      if (jobProgressInfos.size > codeLine) {
+        jobProgressInfos(codeLine) = progressInfo
+      } else {
+        jobProgressInfos += progressInfo
+      }
+    }) {
+      t: Throwable => warn(s"update presto progressInfo error. ${t.getMessage}")
+    }
+    jobProgressInfos.toArray
   }
 
 
   override protected def callExecute(request: RequestTask): EngineExecuteAsynReturn = ???
 
-  override def log(): String = "Presto entrance is running"
+  override def log(): String = ""
 
   override def pause(): Boolean = ???
 
   override def resume(): Boolean = ???
 
   def initialStatusUpdates(statement: StatementClient): Unit = {
-    while (statement.isRunning && statement.currentData().getData == null) {
+    while (statement.isRunning
+      && (statement.currentData().getData == null || statement.currentStatusInfo().getUpdateType != null)) {
+      job.getProgressListener.foreach(_.onProgressUpdate(job, progress(), getProgressInfo))
       statement.advance()
     }
   }
 
-  def queryOutput(statement: StatementClient, storePath: String, alias: String): AliasOutputExecuteResponse = {
+  private def queryOutput(statement: StatementClient, storePath: String, alias: String): AliasOutputExecuteResponse = {
     var columnCount = 0
     var rows = 0
     val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.TABLE_TYPE)
     val resultSetPath = resultSet.getResultSetPath(new FsPath(storePath), alias)
-    val resultSetWriter = ResultSetWriter.getResultSetWriter(resultSet, PrestoConfiguration.PRESTO_RESULTS_MAX_CACHE.getValue.toLong, resultSetPath, job.asInstanceOf[EntranceJob].getUser)
+    val resultSetWriter = ResultSetWriter.getResultSetWriter(resultSet, PrestoConfiguration.ENTRANCE_RESULTS_MAX_CACHE.getValue.toLong, resultSetPath, job.getUser)
     Utils.tryFinally({
       var results: QueryStatusInfo = null
       if (statement.isRunning) {
@@ -168,6 +194,7 @@ class PrestoEntranceEngineExecutor(job: EntranceJob, clientSession: ClientSessio
           resultSetWriter.addRecord(new TableRecord(rowArray.toArray))
           rows += 1
         }
+        job.getProgressListener.foreach(_.onProgressUpdate(job, progress(), getProgressInfo))
         statement.advance()
       }
     })(IOUtils.closeQuietly(resultSetWriter))
@@ -179,7 +206,8 @@ class PrestoEntranceEngineExecutor(job: EntranceJob, clientSession: ClientSessio
   }
 
   // check presto error
-  def verifyServerError(statement: StatementClient): Unit = {
+  private def verifyServerError(statement: StatementClient): Unit = {
+    job.getProgressListener.foreach(_.onProgressUpdate(job, progress(), getProgressInfo))
     if (statement.isFinished) {
       val info: QueryStatusInfo = statement.finalStatusInfo()
       if (info.getError != null) {
@@ -191,8 +219,12 @@ class PrestoEntranceEngineExecutor(job: EntranceJob, clientSession: ClientSessio
         }
         throw new SQLException(message, error.getSqlState, error.getErrorCode, cause)
       }
+    } else if (statement.isClientAborted) {
+      warn(s"Presto statement is killed by ${job.getUser}")
+    } else if (statement.isClientError) {
+      throw PrestoClientException("Presto client error.")
     } else {
-      throw PrestoStateInvalidException("Presto status error. execute is not finished.")
+      throw PrestoStateInvalidException("Presto status error. Statement is not finished.")
     }
   }
 }

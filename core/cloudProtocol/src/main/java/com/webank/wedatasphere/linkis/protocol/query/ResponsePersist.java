@@ -29,7 +29,7 @@ import java.util.Map;
 public class ResponsePersist implements QueryProtocol {
     private Integer status;
     private String msg;
-    private Map<String,Object> data;
+    private Map<String, Object> data;
 
     public Integer getStatus() {
         return status;

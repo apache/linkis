@@ -22,7 +22,6 @@ import com.webank.wedatasphere.linkis.storage.domain.FsPathListWithError;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * Created by johnnwang on 10/15/18.

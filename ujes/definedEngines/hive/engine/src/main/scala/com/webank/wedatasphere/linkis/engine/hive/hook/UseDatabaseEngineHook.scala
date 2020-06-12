@@ -22,8 +22,6 @@ import com.webank.wedatasphere.linkis.server.JMap
 import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
-import scala.collection.mutable.ArrayBuffer
-
 /**
   * created by cooperyang on 2019/4/22
   * Description:

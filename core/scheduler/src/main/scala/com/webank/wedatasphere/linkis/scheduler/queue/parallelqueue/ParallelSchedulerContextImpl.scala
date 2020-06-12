@@ -16,8 +16,11 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue
 
+import com.webank.wedatasphere.linkis.common.listener.ListenerEventBus
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
+import com.webank.wedatasphere.linkis.scheduler.event.{ScheduleEvent, SchedulerEventListener}
+import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorManager
 
 
 /**
@@ -48,7 +51,7 @@ class ParallelSchedulerContextImpl(val maxParallelismUsers: Int) extends  Schedu
     }
   }
 
-  override def getOrCreateExecutorManager = null
+  override def getOrCreateExecutorManager: ExecutorManager = null
 
-  override def getOrCreateSchedulerListenerBus = null
+  override def getOrCreateSchedulerListenerBus: ListenerEventBus[_<: SchedulerEventListener, _<: ScheduleEvent] = null
 }

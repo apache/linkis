@@ -38,8 +38,8 @@ INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `applicatio
 INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.tmpfile.clean.time', 'tmp文件清理时间', 'tmp文件清理时间', @application_id, '10:00', 'None', NULL, '0', '0', '1');
 
 INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.yarnqueue.cores.max', '取值范围：1-500，单位：个', '队列CPU使用上限', @application_id, '150', 'Regex', '^(?:[1-9]\\d?|[1234]\\d{2}|500)$', '0', '0', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.yarnqueue.memory.max', '取值范围：1-1000，单位：G', '队列内存使用上限', @application_id, '300G', 'Regex', '^([1-9]\\d{0,2}|1000)(G|g)$', '0', '0', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.client.memory.max', '取值范围：1-1000，单位：G', '驱动器内存使用上限', @application_id, '20G', 'Regex', '^([1-9]\\d{0,1}|100)(G|g)$', '0', '0', '1');
+INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `unit`) VALUES (0, 'wds.linkis.yarnqueue.memory.max', '取值范围：1-1000，单位：G', '队列内存使用上限', @application_id, '300G', 'Regex', '^([1-9]\\d{0,2}|1000)(G|g)$', '0', '0', '1', 'G');
+INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `unit`) VALUES (0, 'wds.linkis.client.memory.max', '取值范围：1-1000，单位：G', '驱动器内存使用上限', @application_id, '20G', 'Regex', '^([1-9]\\d{0,1}|100)(G|g)$', '0', '0', '1', 'G');
 INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.instance', '范围：1-20，单位：个', '引擎最大并发数', @application_id, '10', 'NumInterval', '[1,20]', '0', '0', '1');
 
 
@@ -234,3 +234,7 @@ SELECT @tree_id1:=t.id from linkis_config_tree t LEFT JOIN  linkis_application a
 insert into `linkis_config_key_tree` VALUES(NULL,@key_id1,@tree_id1);
 insert into `linkis_config_key_tree` VALUES(NULL,@key_id2,@tree_id1);
 insert into `linkis_config_key_tree` VALUES(NULL,@key_id3,@tree_id1);
+
+INSERT INTO `linkis_datasource_type`(`icon`, `name`) VALUES('0x001', 'ElasticSearch');
+INSERT INTO `linkis_datasource_type`(`icon`, `name`) VALUES('0x001', 'Hive');
+INSERT INTO `linkis_datasource_type`(`icon`, `name`) VALUES('0x001', 'MySql');

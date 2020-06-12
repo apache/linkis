@@ -19,12 +19,9 @@ package com.webank.wedatasphere.linkis.engine.executors
 import java.io.IOException
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineExecutorContext}
+import com.webank.wedatasphere.linkis.engine.execute.EngineExecutorContext
 import com.webank.wedatasphere.linkis.engine.spark.common.Kind
-import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteResponse
-import org.apache.spark.SparkContext
-import org.apache.spark.sql.SQLContext
 
 /**
   * Created by allenlliu on 2019/4/8.

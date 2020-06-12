@@ -22,7 +22,6 @@ import com.webank.wedatasphere.linkis.jobhistory.entity.QueryTask;
 import com.webank.wedatasphere.linkis.jobhistory.entity.QueryTaskVO;
 import com.webank.wedatasphere.linkis.jobhistory.exception.QueryException;
 import com.webank.wedatasphere.linkis.jobhistory.service.QueryService;
-import com.webank.wedatasphere.linkis.jobhistory.util.QueryUtil;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.slf4j.Logger;
@@ -80,7 +79,6 @@ public class QueryRestfulApi{
         if (startDate != null && endDate == null){
             endDate = System.currentTimeMillis();
         }
-        PageHelper.startPage(pageNow,pageSize);
         Date sDate = null;
         Date eDate = null;
         if (startDate != null){
@@ -93,11 +91,18 @@ public class QueryRestfulApi{
             instance.add(Calendar.DAY_OF_MONTH,1);
             eDate  = instance.getTime();
         }
-        List<QueryTask> queryTasks = queryService.search(taskID,username,status, sDate,eDate,executeApplicationName);
+        List<QueryTask> queryTasks = null;
+        PageHelper.startPage(pageNow,pageSize);
+        try {
+            queryTasks = queryService.search(taskID,username,status, sDate,eDate,executeApplicationName);
+        }finally {
+            PageHelper.clearPage();
+        }
+
         PageInfo<QueryTask> pageInfo = new PageInfo<>(queryTasks);
         List<QueryTask> list = pageInfo.getList();
         long total = pageInfo.getTotal();
-        List<QueryTaskVO> vos = QueryUtil.getQueryVOList(list);
+        List<QueryTaskVO> vos = queryService.getQueryVOList(list);
         return Message.messageToResponse(Message.ok().data("tasks", vos).data("totalPage",total));
     }
 }

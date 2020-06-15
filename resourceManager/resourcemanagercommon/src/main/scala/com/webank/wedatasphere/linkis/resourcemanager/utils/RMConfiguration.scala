@@ -66,4 +66,8 @@ object RMConfiguration {
 
   //configuration
   val CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.rm.conf.application.name", "cloud-publicservice")
+
+  //presto
+  val USER_AVAILABLE_PRESTO_MEMORY = CommonVars[ByteType]("wds.linkis.presto.max.memory", new ByteType("100GB"))
+  val USER_AVAILABLE_PRESTO_INSTANCES = CommonVars[Int]("wds.linkis.presto.max.instances", 20)
 }

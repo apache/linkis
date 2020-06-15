@@ -21,5 +21,5 @@ package com.webank.wedatasphere.linkis.resourcemanager
   */
 object ResourceRequestPolicy extends Enumeration {
   type ResourceRequestPolicy = Value
-  val Default, Memory, CPU, Load, Instance, LoadInstance, Yarn, DriverAndYarn, Special = Value
+  val Default, Memory, CPU, Load, Instance, LoadInstance, Yarn, DriverAndYarn, Presto, InstanceAndPresto, Special = Value
 }

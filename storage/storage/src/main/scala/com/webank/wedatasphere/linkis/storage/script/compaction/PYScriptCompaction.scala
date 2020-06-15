@@ -23,7 +23,7 @@ class PYScriptCompaction private extends CommonScriptCompaction {
 
   override def belongTo(suffix: String): Boolean = {
     suffix match {
-      case "python"|"py" => true
+      case "python"|"py"|"sh" => true
       case _ => false
     }
   }

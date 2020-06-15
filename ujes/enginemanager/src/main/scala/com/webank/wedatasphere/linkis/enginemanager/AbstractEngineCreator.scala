@@ -22,7 +22,7 @@ import com.webank.wedatasphere.linkis.common.conf.DWCArgumentsParser
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.enginemanager.conf.EngineManagerConfiguration
 import com.webank.wedatasphere.linkis.enginemanager.exception.EngineManagerErrorException
-import com.webank.wedatasphere.linkis.enginemanager.impl.{UserEngineResource, UserTimeoutEngineResource}
+import com.webank.wedatasphere.linkis.enginemanager.impl.UserTimeoutEngineResource
 import com.webank.wedatasphere.linkis.enginemanager.process.{CommonProcessEngine, ProcessEngine, ProcessEngineBuilder}
 import com.webank.wedatasphere.linkis.protocol.engine.{EngineCallback, RequestEngine}
 import com.webank.wedatasphere.linkis.rpc.Sender

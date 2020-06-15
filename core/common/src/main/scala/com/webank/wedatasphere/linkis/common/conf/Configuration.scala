@@ -16,10 +16,12 @@
 
 package com.webank.wedatasphere.linkis.common.conf
 
+import com.webank.wedatasphere.linkis.common.utils.Logging
+
 /**
   * Created by enjoyyin on 2018/4/18.
   */
-object Configuration {
+object Configuration extends Logging {
 
   val BDP_ENCODING = CommonVars("wds.linkis.encoding", "utf-8")
 
@@ -32,5 +34,18 @@ object Configuration {
   val hadoopConfDir = CommonVars("hadoop.config.dir", CommonVars("HADOOP_CONF_DIR", "").getValue).getValue
  
   val HDP_VERSION = CommonVars("wds.linkis.hdp.version", "2.6.4.0-91")
+
+  val GATEWAY_URL: CommonVars[String] = CommonVars[String]("wds.linkis.gateway.url", "http://localhost:9001/")
+
+  def getGateWayURL(): String = {
+    val url = GATEWAY_URL.getValue.trim
+    val gatewayUr = if (url.endsWith("/")) {
+      url.substring(0, url.length - 1)
+    } else {
+      url
+    }
+    info(s"gatewayUrl is $gatewayUr")
+    gatewayUr
+  }
 
 }

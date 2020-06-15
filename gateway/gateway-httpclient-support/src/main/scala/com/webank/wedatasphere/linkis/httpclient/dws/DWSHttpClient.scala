@@ -24,7 +24,6 @@ import java.text.SimpleDateFormat
 import java.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ning.http.client.Response
 import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
 import com.webank.wedatasphere.linkis.httpclient.AbstractHttpClient
 import com.webank.wedatasphere.linkis.httpclient.discovery.Discovery
@@ -37,6 +36,7 @@ import com.webank.wedatasphere.linkis.httpclient.response.{HttpResult, ListResul
 import com.webank.wedatasphere.linkis.storage.FSFactory
 import org.apache.commons.beanutils.BeanUtils
 import org.apache.commons.lang.ClassUtils
+import org.apache.http.HttpResponse
 
 import scala.collection.JavaConversions.mapAsJavaMap
 
@@ -44,7 +44,7 @@ import scala.collection.JavaConversions.mapAsJavaMap
   * created by cooperyang on 2019/5/20.
   */
 class DWSHttpClient(clientConfig: DWSClientConfig, clientName: String)
-    extends AbstractHttpClient(clientConfig, clientName) {
+  extends AbstractHttpClient(clientConfig, clientName) {
 
   override protected def createDiscovery(): Discovery = new DWSGatewayDiscovery
 
@@ -57,21 +57,25 @@ class DWSHttpClient(clientConfig: DWSClientConfig, clientName: String)
     requestAction
   }
 
-  override protected def httpResponseToResult(response: Response, requestAction: HttpAction): Option[Result] = {
-    val url = requestAction.getURL
+  override protected def httpResponseToResult(response: HttpResponse, requestAction: HttpAction, responseBody: String): Option[Result] = {
+    var entity = response.getEntity
+    val statusCode: Int = response.getStatusLine.getStatusCode
+    val url: String = requestAction.getURL
+    val contentType: String = entity.getContentType.getValue
     DWSHttpMessageFactory.getDWSHttpMessageResult(url).map { case DWSHttpMessageResultInfo(_, clazz) =>
       clazz match {
         case c if ClassUtils.isAssignable(c, classOf[DWSResult]) =>
           val dwsResult = clazz.getConstructor().newInstance().asInstanceOf[DWSResult]
-          dwsResult.set(response.getResponseBody, response.getStatusCode, response.getUri.toString, response.getContentType)
+          dwsResult.set(responseBody, statusCode, url, contentType)
           BeanUtils.populate(dwsResult, dwsResult.getData)
           return Some(dwsResult)
         case _ =>
       }
+
       def transfer(value: Result, map: Map[String, Object]): Unit = {
         value match {
           case httpResult: HttpResult =>
-            httpResult.set(response.getResponseBody, response.getStatusCode, response.getUri.toString, response.getContentType)
+            httpResult.set(responseBody, statusCode, url, contentType)
           case _ =>
         }
         val javaMap = mapAsJavaMap(map)
@@ -89,17 +93,18 @@ class DWSHttpClient(clientConfig: DWSClientConfig, clientName: String)
             transfer(value, map)
             value
           }.toArray
-          new ListResult(response.getResponseBody, results)
+          new ListResult(responseBody, results)
       }
     }.orElse(nonDWSResponseToResult(response, requestAction))
   }
 
-  protected def nonDWSResponseToResult(response: Response, requestAction: HttpAction): Option[Result] = None
+  protected def nonDWSResponseToResult(response: HttpResponse, requestAction: HttpAction): Option[Result] = None
 
   protected def fillResultFields(responseMap: util.Map[String, Object], value: Result): Unit = {}
 
   //TODO Consistent with workspace, plus expiration time(与workspace保持一致，加上过期时间)
   override protected def getFsByUser(user: String, path: FsPath): Fs = FSFactory.getFsByProxyUser(path, user)
+
 }
 object DWSHttpClient {
   val jacksonJson = new ObjectMapper().setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"))

@@ -33,8 +33,8 @@ class SparkCodeCheckInterceptor extends EntranceInterceptor{
   override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = {
     task match {
       case requestPersistTask: RequestPersistTask =>
-        requestPersistTask.getExecuteApplicationName.toLowerCase() match {
-          case "spark" | "scala" => val stringBuilder:StringBuilder = new StringBuilder()
+        requestPersistTask.getRunType.toLowerCase() match {
+          case "scala" => val stringBuilder:StringBuilder = new StringBuilder()
             val isAuth = SparkExplain.authPass(requestPersistTask.getExecutionCode, stringBuilder)
             if (!isAuth){
               throw CodeCheckException(20050, "spark code check failed")

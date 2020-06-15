@@ -23,7 +23,6 @@ import com.webank.wedatasphere.linkis.engine.execute.CodeType.CodeType
 import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
-import scala.collection.immutable.HashSet
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
@@ -101,8 +100,11 @@ class PythonCodeParser extends SingleCodeParser {
         statementBuffer.append(l)
         recordBrackets(bracketStack, l)
       case l if quotationMarks => statementBuffer.append(l)
-        recordBrackets(bracketStack, l)
+      //shanhuang 用于修复python的引号问题
+      //recordBrackets(bracketStack, l)
       case l if notDoc && l.startsWith("#") =>
+      case l if StringUtils.isNotBlank(statementBuffer.last) && statementBuffer.last.endsWith("""\""") =>
+        statementBuffer.append(l)
       case l if notDoc && l.startsWith(" ") =>
         statementBuffer.append(l)
         recordBrackets(bracketStack, l.trim)
@@ -180,13 +182,13 @@ class SQLCodeParser extends SingleCodeParser {
     if (StringUtils.contains(code, separator)) {
       StringUtils.split(code, ";").foreach{
         case s if StringUtils.isBlank(s) =>
-        case s if isSelectCmdNoLimit(s) => appendStatement(s + " limit " + defaultLimit);
+        case s if isSelectCmdNoLimit(s) => appendStatement(s);
         case s => appendStatement(s);
       }
     } else {
       code match {
         case s if StringUtils.isBlank(s) =>
-        case s if isSelectCmdNoLimit(s) => appendStatement(s + " limit " + defaultLimit);
+        case s if isSelectCmdNoLimit(s) => appendStatement(s);
         case s => appendStatement(s);
       }
     }

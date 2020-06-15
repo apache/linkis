@@ -2,8 +2,8 @@ package com.webank.wedatasphere.linkis.engine.shell.executor
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineExecutorFactory}
-import com.webank.wedatasphere.linkis.server.JMap
 import com.webank.wedatasphere.linkis.engine.shell.exception.NoCorrectUserException
+import com.webank.wedatasphere.linkis.server.JMap
 import org.apache.commons.lang.StringUtils
 import org.springframework.stereotype.Component
 

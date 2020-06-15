@@ -19,14 +19,13 @@ package com.webank.wedatasphere.linkis.engine.hive.common
 import java.io.File
 import java.nio.file.Paths
 
+import com.webank.wedatasphere.linkis.common.conf.{Configuration => CommonConfiguration}
 import com.webank.wedatasphere.linkis.engine.hive.exception.HadoopConfSetFailedException
-
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.hive.conf
 import org.apache.hadoop.hive.conf.HiveConf
 import org.apache.hadoop.hive.ql.Driver
-import com.webank.wedatasphere.linkis.common.conf.{Configuration => CommonConfiguration}
 
 /**
   * created by cooperyang on 2018/11/22

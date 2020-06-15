@@ -74,3 +74,6 @@ case class ResourceVersions(resourceId:String,
 case class BmlResourceVersionsResponse(isSuccess:Boolean,
                                        resourceId:String,
                                        resourceVersions: ResourceVersions) extends BmlResponse(isSuccess)
+
+
+case class BmlDeleteResponse(isSuccess:Boolean) extends BmlResponse(isSuccess)

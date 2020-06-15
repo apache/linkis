@@ -16,8 +16,8 @@
 
 package com.webank.wedatasphere.linkis.storage.resultset
 
+import com.webank.wedatasphere.linkis.common.io.resultset.ResultSet
 import com.webank.wedatasphere.linkis.common.io.{FsPath, MetaData, Record}
-import com.webank.wedatasphere.linkis.common.io.resultset.{ResultDeserializer, ResultSerializer, ResultSet}
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.storage.domain.Dolphin
 import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration

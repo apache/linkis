@@ -23,7 +23,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.9.3</version>
+        <version>0.9.4</version>
     </parent>
 
     <artifactId>linkis-gateway-ujes-support</artifactId>
@@ -49,6 +49,12 @@
             <groupId>javax.servlet.jsp</groupId>
             <artifactId>jsp-api</artifactId>
             <version>2.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-cs-common</artifactId>
+            <version>${linkis.version}</version>
         </dependency>
 
     </dependencies>

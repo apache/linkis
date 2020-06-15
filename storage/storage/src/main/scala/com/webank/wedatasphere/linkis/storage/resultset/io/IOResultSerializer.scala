@@ -16,8 +16,8 @@
 
 package com.webank.wedatasphere.linkis.storage.resultset.io
 
-import com.webank.wedatasphere.linkis.common.io.{MetaData, Record}
 import com.webank.wedatasphere.linkis.common.io.resultset.ResultSerializer
+import com.webank.wedatasphere.linkis.common.io.{MetaData, Record}
 import com.webank.wedatasphere.linkis.storage.domain.Dolphin
 import org.apache.commons.codec.binary.Base64
 

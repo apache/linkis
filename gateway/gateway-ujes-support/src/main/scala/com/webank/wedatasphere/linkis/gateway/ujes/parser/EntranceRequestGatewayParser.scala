@@ -19,11 +19,10 @@ package com.webank.wedatasphere.linkis.gateway.ujes.parser
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
 import com.webank.wedatasphere.linkis.gateway.parser.AbstractGatewayParser
+import com.webank.wedatasphere.linkis.gateway.ujes.parser.EntranceExecutionGatewayParser._
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
 import com.webank.wedatasphere.linkis.protocol.utils.ZuulEntranceUtils
 import org.springframework.stereotype.Component
-
-import EntranceExecutionGatewayParser._
 
 /**
   * created by cooperyang on 2019/5/15.

@@ -37,4 +37,7 @@ object SparkConfiguration {
   val DOLPHIN_LIMIT_LEN = CommonVars("wds.linkis.dolphin.limit.len",5000)
   val MDQ_APPLICATION_NAME = CommonVars("wds.linkis.mdq.application.name", "cloud-datasource")
   val SHOW_DF_MAX_RES = CommonVars("wds.linkis.show.df.max.res",Int.MaxValue)
+
+
+  val SPARK_PRE_EXECUTION_HOOKS = CommonVars("wds.linkis.spark.pre.execution.hooks", "com.webank.wedatasphere.linkis.engine.cs.CSSparkPreExecutionHook")
 }

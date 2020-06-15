@@ -41,14 +41,12 @@ class BmlEnginePreExecuteHook extends EnginePreExecuteHook with Logging{
 
   val pathType:String = "file://"
 
-  override def callPreExecuteHook(engineExecutorContext: EngineExecutorContext, executeRequest: ExecuteRequest): Unit = {
-    //1.删除工作目录以前的资源文件
-    //2.下载资源到当前进程的工作目录
-
+  override def callPreExecuteHook(engineExecutorContext: EngineExecutorContext, executeRequest: ExecuteRequest, code: String): String = {
     val workDir = BmlHookUtils.getCurrentWorkDir
     val jobId = engineExecutorContext.getJobId
     executeRequest match {
       case resourceExecuteRequest:ResourceExecuteRequest => val resources = resourceExecuteRequest.resources
+        if (null == resources) return code
         resources foreach {
           case resource:util.Map[String, Object] => val fileName = resource.get(FILE_NAME_STR).toString
             val resourceId = resource.get(RESOURCE_ID_STR).toString
@@ -74,5 +72,6 @@ class BmlEnginePreExecuteHook extends EnginePreExecuteHook with Logging{
         }
       case _ =>
     }
+    if (StringUtils.isNotBlank(code)) code else executeRequest.code
   }
 }

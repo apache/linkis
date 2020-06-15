@@ -16,7 +16,6 @@
 
 package com.webank.wedatasphere.linkis.engine.hive.progress
 
-import java.util
 import java.util.concurrent.LinkedBlockingQueue
 
 import com.webank.wedatasphere.linkis.engine.hive.log.HiveProgress

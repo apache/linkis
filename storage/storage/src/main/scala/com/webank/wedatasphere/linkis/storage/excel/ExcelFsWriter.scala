@@ -16,21 +16,20 @@
 
 package com.webank.wedatasphere.linkis.storage.excel
 
+import java.io.OutputStream
+
 import com.webank.wedatasphere.linkis.common.io.FsWriter
-import org.apache.poi.ss.usermodel.Workbook
 
 /**
   * Created by johnnwang on 2018/11/12.
   */
-abstract class ExcelFsWriter extends FsWriter{
-  val charset:String
-  val sheetName:String
-  val dateFormat:String
-
-  def getWorkBook: Workbook
+abstract class ExcelFsWriter extends FsWriter {
+  val charset: String
+  val sheetName: String
+  val dateFormat: String
 }
 
-object ExcelFsWriter{
-  def getExcelFsWriter(charset:String,sheetName:String,dateFormat:String):ExcelFsWriter = new StorageExcelWriter(charset,sheetName,dateFormat)
+object ExcelFsWriter {
+  def getExcelFsWriter(charset: String, sheetName: String, dateFormat: String, outputStream: OutputStream): ExcelFsWriter = new StorageExcelWriter(charset, sheetName, dateFormat, outputStream: OutputStream)
 }
 

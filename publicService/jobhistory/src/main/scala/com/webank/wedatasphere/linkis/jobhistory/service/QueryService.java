@@ -34,7 +34,9 @@ public interface QueryService {
 
     ResponsePersist query(RequestQueryTask requestQueryTask);
 
-    QueryTaskVO getTaskByID(Long taskID,String userName);
+    QueryTaskVO getTaskByID(Long taskID, String userName);
 
     List<QueryTask> search(Long taskID, String username, String status, Date sDate, Date eDate, String executeApplicationName);
+
+    List<QueryTaskVO> getQueryVOList(List<QueryTask> list);
 }

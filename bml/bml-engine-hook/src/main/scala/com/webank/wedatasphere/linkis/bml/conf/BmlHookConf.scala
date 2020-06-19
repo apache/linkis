@@ -1,5 +1,6 @@
 package com.webank.wedatasphere.linkis.bml.conf
 
+import com.webank.wedatasphere.linkis.bml.utils.BmlHookUtils
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 
 /**
@@ -7,5 +8,5 @@ import com.webank.wedatasphere.linkis.common.conf.CommonVars
   * Description:
   */
 object BmlHookConf {
-  val WORK_DIR_STR = CommonVars("wds.linkis.bml.work.dir", "user.dir")
+  val WORK_DIR_STR = CommonVars("wds.linkis.bml.work.dir", BmlHookUtils.getCurrentWorkDir)
 }

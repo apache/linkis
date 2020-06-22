@@ -191,7 +191,7 @@ class JDBCEngineExecutor(outputPrintLimit: Int, properties: util.HashMap[String,
       codeLine = 0
       codes.foreach { code =>
         try {
-          val executeRes = executeLine(code, storePath, codeLine.toString)
+          val executeRes = executeLine(code, storePath, s"_$codeLine")
           executeRes match {
             case aliasOutputExecuteResponse: AliasOutputExecuteResponse =>
               persistEngine.persistResultSet(executeRequest.asInstanceOf[JDBCJobExecuteRequest].job, aliasOutputExecuteResponse)

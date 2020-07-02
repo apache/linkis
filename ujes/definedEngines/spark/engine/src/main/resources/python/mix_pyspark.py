@@ -95,7 +95,8 @@ sys.stdout = output
 sys.stderr = errorOutput
 
 client = GatewayClient(port=int(sys.argv[1]))
-sparkVersion = SparkVersion(int(sys.argv[2]))
+sparkVersionNum = sys.argv[2].replace("cloudera3","")
+sparkVersion = SparkVersion(int(sparkVersionNum))
 
 if sparkVersion.isAutoConvertEnabled():
     gateway = JavaGateway(client, auto_convert = True)

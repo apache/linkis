@@ -21,6 +21,7 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, RSAUtils, Utils}
 import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
 import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
 import com.webank.wedatasphere.linkis.gateway.security.sso.SSOInterceptor
+import com.webank.wedatasphere.linkis.gateway.security.upf.UpfAuthentication
 import com.webank.wedatasphere.linkis.protocol.usercontrol.{RequestLogin, RequestRegister, ResponseLogin, ResponseRegister}
 import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
@@ -128,7 +129,7 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
       Message.error("Password can not be blank(密码不能为空)！")
     } else {
       //warn: For easy to useing linkis,Admin skip login
-      if(/*GatewayConfiguration.ADMIN_USER.getValue.equals(userName.toString) &&*/ userName.toString.equals(password.toString)){
+      if(/*GatewayConfiguration.ADMIN_USER.getValue.equals(userName.toString) &&*/ UpfAuthentication.validateUpfUser(userName.toString,password.toString)){
           GatewaySSOUtils.setLoginUser(gatewayContext, userName.toString)
           "login successful(登录成功)！".data("userName", userName)
             .data("isAdmin", true)

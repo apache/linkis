@@ -52,7 +52,7 @@ object UpfAuthentication extends Logging {
 
    def validateUpfUser(user: String, pass: String): Boolean = {
     val upfPass = props.getProperty(user)
-    if(upfPass == "*" || upfPass.equals(pass)) true
+    if((upfPass != null) && (upfPass.equals("*") || upfPass.equals(pass))) true
     else false
   }
 

@@ -42,7 +42,7 @@ import java.util.Map;
  * @Date 2020/3/6
  */
 public class DefaultSearchService implements SearchService {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultSearchService.class);
+    private static final Logger logger = ()(DefaultSearchService.class);
     private static final Gson gson = new Gson();
     private static SearchService searchService = null;
 

@@ -19,6 +19,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.webank.wedatasphere.linkis.common.listener.Event;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
 import com.webank.wedatasphere.linkis.cs.contextcache.cache.csid.ContextIDValue;
@@ -49,9 +50,7 @@ import static com.webank.wedatasphere.linkis.cs.listener.event.enumeration.Opera
  * @date 2020/2/12 17:50
  */
 @Component
-public class DefaultContextCache implements ContextCache , CSIDListener {
-
-    private static final Logger logger = LoggerFactory.getLogger(DefaultContextCache.class);
+public class DefaultContextCache extends JavaLog implements ContextCache, CSIDListener {
 
     ContextAsyncListenerBus listenerBus = DefaultContextListenerManager.getInstance().getContextAsyncListenerBus();
 
@@ -60,14 +59,14 @@ public class DefaultContextCache implements ContextCache , CSIDListener {
     private RemovalListener<String, ContextIDValue> contextIDRemoveListener;
 
     @Autowired
-    private ContextIDValueGenerator contextIDValueGenerator ;
+    private ContextIDValueGenerator contextIDValueGenerator;
 
-    private Cache<String, ContextIDValue> cache =  null;
+    private Cache<String, ContextIDValue> cache = null;
 
     private ContextCacheMetric contextCacheMetric = new DefaultContextCacheMetric();
 
     @PostConstruct
-    private void init(){
+    private void init() {
         this.cache = CacheBuilder.newBuilder().maximumSize(3000)
                 .removalListener(contextIDRemoveListener)
                 .recordStats().build();
@@ -75,12 +74,12 @@ public class DefaultContextCache implements ContextCache , CSIDListener {
 
     @Override
     public ContextIDValue getContextIDValue(ContextID contextID) throws CSErrorException {
-        if(null == contextID || StringUtils.isBlank(contextID.getContextId())) {
+        if (null == contextID || StringUtils.isBlank(contextID.getContextId())) {
             return null;
         }
         try {
             ContextIDValue contextIDValue = cache.getIfPresent(contextID.getContextId());
-            if (contextIDValue == null){
+            if (contextIDValue == null) {
                 contextIDValue = contextIDValueGenerator.createContextIDValue(contextID);
                 put(contextIDValue);
                 DefaultContextIDEvent defaultContextIDEvent = new DefaultContextIDEvent();
@@ -93,17 +92,17 @@ public class DefaultContextCache implements ContextCache , CSIDListener {
             defaultContextIDEvent.setOperateType(ACCESS);
             listenerBus.post(defaultContextIDEvent);
             return contextIDValue;
-        } catch (Exception e){
+        } catch (Exception e) {
             String errorMsg = String.format("Failed to get contextIDValue of ContextID(%s)", contextID.getContextId());
-            logger.error(errorMsg);
+            logger().error(errorMsg);
             throw new CSErrorException(97001, errorMsg, e);
         }
     }
 
     @Override
     public void remove(ContextID contextID) {
-        if ( null != contextID && StringUtils.isNotBlank(contextID.getContextId())){
-            logger.info("From cache to remove contextID:{}", contextID.getContextId());
+        if (null != contextID && StringUtils.isNotBlank(contextID.getContextId())) {
+            logger().info("From cache to remove contextID:{}", contextID.getContextId());
             cache.invalidate(contextID.getContextId());
         }
     }
@@ -111,7 +110,7 @@ public class DefaultContextCache implements ContextCache , CSIDListener {
     @Override
     public void put(ContextIDValue contextIDValue) throws CSErrorException {
 
-        if(contextIDValue != null && StringUtils.isNotBlank(contextIDValue.getContextID())){
+        if (contextIDValue != null && StringUtils.isNotBlank(contextIDValue.getContextID())) {
             cache.put(contextIDValue.getContextID(), contextIDValue);
         }
     }
@@ -119,11 +118,11 @@ public class DefaultContextCache implements ContextCache , CSIDListener {
     @Override
     public Map<String, ContextIDValue> getAllPresent(List<ContextID> contextIDList) {
         List<String> contextIDKeys = contextIDList.stream().map(contextID -> {
-            if(StringUtils.isBlank(contextID.getContextId())) {
-                return  null;
+            if (StringUtils.isBlank(contextID.getContextId())) {
+                return null;
             }
             return contextID.getContextId();
-        }).filter(StringUtils :: isNotBlank).collect(Collectors.toList());
+        }).filter(StringUtils::isNotBlank).collect(Collectors.toList());
         return cache.getAllPresent(contextIDKeys);
     }
 
@@ -134,7 +133,7 @@ public class DefaultContextCache implements ContextCache , CSIDListener {
 
     @Override
     public void putAll(List<ContextIDValue> contextIDValueList) throws CSErrorException {
-        for (ContextIDValue contextIDValue : contextIDValueList){
+        for (ContextIDValue contextIDValue : contextIDValueList) {
             put(contextIDValue);
         }
     }
@@ -160,41 +159,41 @@ public class DefaultContextCache implements ContextCache , CSIDListener {
             contextIDMetric.addCount();
             getContextCacheMetric().addCount();
         } catch (CSErrorException e) {
-            logger.error("Failed to deal CSIDAccess event csid is {}", contextID.getContextId());
+            logger().error("Failed to deal CSIDAccess event csid is {}", contextID.getContextId());
         }
     }
 
     @Override
     public void onCSIDADD(ContextIDEvent contextIDEvent) {
-        logger.info("deal contextID ADD event of {}", contextIDEvent.getContextID());
+        logger().info("deal contextID ADD event of {}", contextIDEvent.getContextID());
         getContextCacheMetric().addCount();
         getContextCacheMetric().setCachedCount(getContextCacheMetric().getCachedCount() + 1);
-        logger.info("Now, The cachedCount is (%d)", getContextCacheMetric().getCachedCount());
+        logger().info("Now, The cachedCount is (%d)", getContextCacheMetric().getCachedCount());
     }
 
     @Override
     public void onCSIDRemoved(ContextIDEvent contextIDEvent) {
-        logger.info("deal contextID remove event of {}", contextIDEvent.getContextID());
+        logger().info("deal contextID remove event of {}", contextIDEvent.getContextID());
         getContextCacheMetric().setCachedCount(getContextCacheMetric().getCachedCount() - 1);
-        logger.info("Now, The cachedCount is (%d)", getContextCacheMetric().getCachedCount());
+        logger().info("Now, The cachedCount is (%d)", getContextCacheMetric().getCachedCount());
     }
 
     @Override
-    public void onEventError( Event event,  Throwable t) {
-        logger.error("Failed to deal event", t);
+    public void onEventError(Event event, Throwable t) {
+        logger().error("Failed to deal event", t);
     }
 
     @Override
     public void onEvent(Event event) {
         DefaultContextIDEvent defaultContextIDEvent = null;
-        if (event != null && event instanceof DefaultContextIDEvent){
+        if (event != null && event instanceof DefaultContextIDEvent) {
             defaultContextIDEvent = (DefaultContextIDEvent) event;
         }
         if (null == defaultContextIDEvent) {
             return;
         }
-        if (ADD.equals(defaultContextIDEvent.getOperateType())){
-           onCSIDADD(defaultContextIDEvent);
+        if (ADD.equals(defaultContextIDEvent.getOperateType())) {
+            onCSIDADD(defaultContextIDEvent);
         } else if (DELETE.equals(defaultContextIDEvent.getOperateType())) {
             onCSIDRemoved(defaultContextIDEvent);
         } else {

@@ -26,8 +26,6 @@ import java.util.List;
 
 public class ContextTypeContextSearchFetcher extends AbstractContextCacheFetcher{
 
-    private static final Logger logger = LoggerFactory.getLogger(ContextTypeContextSearchFetcher.class);
-
     ContextType contextType;
 
     public ContextTypeContextSearchFetcher(ContextCacheService contextCacheService, ContextType contextType) {

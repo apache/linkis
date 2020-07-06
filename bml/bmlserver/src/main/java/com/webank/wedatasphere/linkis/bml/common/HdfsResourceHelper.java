@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.bml.common;
 import com.webank.wedatasphere.linkis.bml.conf.BmlServerConfiguration;
 import com.webank.wedatasphere.linkis.common.io.Fs;
 import com.webank.wedatasphere.linkis.common.io.FsPath;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.storage.FSFactory;
 import com.webank.wedatasphere.linkis.storage.utils.FileSystemUtils;
 import org.apache.commons.codec.binary.Hex;
@@ -40,9 +41,7 @@ import java.util.Map;
  * created by cooperyang on 2019/5/21
  * Description: 资源文件上传到hdfs存储目录，存储的原则是一个资源
  */
-public class HdfsResourceHelper implements ResourceHelper {
-
-    private static final Logger logger = LoggerFactory.getLogger(HdfsResourceHelper.class);
+public class HdfsResourceHelper extends JavaLog implements ResourceHelper {
 
     private static final String SCHEMA = "hdfs://";
 
@@ -70,12 +69,12 @@ public class HdfsResourceHelper implements ResourceHelper {
                 stringBuilder.append(Hex.encodeHexString(md5Digest.digest()));
             }
         } catch (final IOException e) {
-            logger.error("{} write to {} failed, reason is, IOException:", user, path, e);
+            logger().error("{} write to {} failed, reason is, IOException:", user, path, e);
             UploadResourceException uploadResourceException = new UploadResourceException();
             uploadResourceException.initCause(e);
             throw uploadResourceException;
         } catch (final Throwable t) {
-            logger.error("{} write to {} failed, reason is", user, path, t);
+            logger().error("{} write to {} failed, reason is", user, path, t);
             UploadResourceException uploadResourceException = new UploadResourceException();
             uploadResourceException.initCause(t);
             throw uploadResourceException;

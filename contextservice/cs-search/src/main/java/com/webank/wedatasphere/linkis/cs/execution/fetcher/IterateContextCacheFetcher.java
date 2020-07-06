@@ -30,7 +30,6 @@ import java.util.List;
 
 public class IterateContextCacheFetcher extends AbstractContextCacheFetcher{
 
-    private static final Logger logger = LoggerFactory.getLogger(IterateContextCacheFetcher.class);
 
     ContextSearchRuler contextSearchRuler;
 

@@ -15,6 +15,7 @@
  */
 package com.webank.wedatasphere.linkis.cs.contextcache.cache.cskey.impl;
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
@@ -31,10 +32,8 @@ import java.util.*;
  * @author peacewong
  * @date 2020/2/11 20:06
  */
-public class ContextValueMapSetImpl implements ContextValueMapSet {
+public class ContextValueMapSetImpl extends JavaLog implements ContextValueMapSet {
 
-
-    private static final Logger logger = LoggerFactory.getLogger(ContextInvertedIndexSetImpl.class);
 
     Map<String, Map<String, ContextKeyValue>> contextValueMapSet = new HashMap<>();
 
@@ -47,7 +46,7 @@ public class ContextValueMapSetImpl implements ContextValueMapSet {
         if (!contextValueMapSet.containsKey(csType)) {
             synchronized (csType.intern()) {
                 if (!contextValueMapSet.containsKey(csType)) {
-                    logger.info("For ContextType({}) init ContextValueMap", csType);
+                    logger().info("For ContextType({}) init ContextValueMap", csType);
                     contextValueMapSet.put(csType, new HashMap<String, ContextKeyValue>(16));
                 }
             }

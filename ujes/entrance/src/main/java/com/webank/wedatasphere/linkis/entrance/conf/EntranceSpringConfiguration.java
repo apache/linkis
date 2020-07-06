@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.entrance.conf;
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.entrance.EntranceContext;
 import com.webank.wedatasphere.linkis.entrance.EntranceParser;
 import com.webank.wedatasphere.linkis.entrance.annotation.*;
@@ -52,11 +53,10 @@ import static com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
  * Description:This configuration class is used to generate some singleton classes in the entity module.(该配置类用于生成entrance模块中的一些单例类)
  */
 @Configuration
-public class EntranceSpringConfiguration {
+public class EntranceSpringConfiguration extends JavaLog {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
     {
-        logger.info("load the ujes-entrance spring configuration.");
+        logger().info("load the ujes-entrance spring configuration.");
     }
 
     @EntranceParserBeanAnnotation

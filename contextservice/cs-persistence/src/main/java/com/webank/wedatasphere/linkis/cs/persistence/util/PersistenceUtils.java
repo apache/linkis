@@ -43,7 +43,6 @@ public class PersistenceUtils {
 
     private static ObjectMapper json = BDPJettyServerHelper.jacksonJson();
 
-    private static final Logger logger = LoggerFactory.getLogger(PersistenceUtils.class);
 
     private static String generateGetMethod(Field field) {
         String fieldName = field.getName();

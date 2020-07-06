@@ -16,6 +16,7 @@
 package com.webank.wedatasphere.linkis.cs.client.service;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.client.ContextClient;
 import com.webank.wedatasphere.linkis.cs.client.builder.ContextClientFactory;
 import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
@@ -37,9 +38,7 @@ import java.util.List;
  * @author peacewong
  * @date 2020/3/13 20:23
  */
-public class CSResultDataServiceImpl  implements CSResultDataService{
-
-    private final static Logger logger = LoggerFactory.getLogger(CSResultDataServiceImpl.class);
+public class CSResultDataServiceImpl  extends JavaLog implements CSResultDataService{
 
     private SearchService searchService = DefaultSearchService.getInstance();
 
@@ -70,8 +69,8 @@ public class CSResultDataServiceImpl  implements CSResultDataService{
             ContextKey contextKey = SerializeHelper.deserializeContextKey(contextKeyStr);
             return searchService.getContextValue(contextID, contextKey, CSResultData.class);
         } catch (ErrorException e) {
-            logger.error("Deserialize failed, invalid contextId : " + contextIDStr + ", or contextKey : " + contextKeyStr + ", e : " + e.getMessage());
-            logger.error("exception ", e);
+            logger().error("Deserialize failed, invalid contextId : " + contextIDStr + ", or contextKey : " + contextKeyStr + ", e : " + e.getMessage());
+            logger().error("exception ", e);
             throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize failed, invalid contextId : " + contextIDStr + ", or contextKey : " + contextKeyStr + ", e : " + e.getMessage());
         }
     }
@@ -86,7 +85,7 @@ public class CSResultDataServiceImpl  implements CSResultDataService{
             contextValue.setValue(csResultData);
             contextClient.update(contextID, contextKey, contextValue);
         } catch (ErrorException e) {
-            logger.error("Deserialize error. e ", e);
+            logger().error("Deserialize error. e ", e);
             throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize error. e : " + e.getDesc());
         }
     }
@@ -104,7 +103,7 @@ public class CSResultDataServiceImpl  implements CSResultDataService{
             }
             return rsList;
         } catch (ErrorException e) {
-            logger.error("Deserialize contextID error. contextIDStr : " + contextIDStr, e);
+            logger().error("Deserialize contextID error. contextIDStr : " + contextIDStr, e);
             throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize contextID error. contextIDStr : " + contextIDStr + "e : " + e.getDesc());
         }
     }

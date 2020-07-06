@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.jobhistory.restful.api;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.jobhistory.entity.QueryTask;
 import com.webank.wedatasphere.linkis.jobhistory.entity.QueryTaskVO;
 import com.webank.wedatasphere.linkis.jobhistory.exception.QueryException;
@@ -48,9 +49,7 @@ import java.util.List;
 @Path("/jobhistory")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class QueryRestfulApi{
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+public class QueryRestfulApi extends JavaLog {
 
     @Autowired
     private QueryService queryService;

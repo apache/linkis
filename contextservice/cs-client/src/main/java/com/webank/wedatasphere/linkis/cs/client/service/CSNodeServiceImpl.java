@@ -15,6 +15,7 @@
  */
 package com.webank.wedatasphere.linkis.cs.client.service;
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.client.ContextClient;
 import com.webank.wedatasphere.linkis.cs.client.builder.ContextClientFactory;
 import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
@@ -28,9 +29,7 @@ import org.slf4j.LoggerFactory;
  * @author peacewong
  * @date 2020/3/21 19:18
  */
-public class CSNodeServiceImpl implements CSNodeService{
-
-    private final static Logger logger = LoggerFactory.getLogger(CSNodeServiceImpl.class);
+public class CSNodeServiceImpl extends JavaLog implements CSNodeService {
 
     private SearchService searchService = DefaultSearchService.getInstance();
 
@@ -59,7 +58,7 @@ public class CSNodeServiceImpl implements CSNodeService{
             ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
             contextClient.removeAllValueByKeyPrefixAndContextType(contextID, ContextType.METADATA, CSCommonUtils.NODE_PREFIX + ndeName);
         } catch (Exception e) {
-            logger.error("Failed to init node cs Info", e);
+            logger().error("Failed to init node cs Info", e);
         }
     }
 }

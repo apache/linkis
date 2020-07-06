@@ -26,13 +26,12 @@ public class SizeEstimator {
 
     private static final Logger logger = LoggerFactory.getLogger(SizeEstimator.class);
 
-
     private static ClassIntrospector classIntrospector = new ClassIntrospector();
 
     public static Long estimate(Object obj) {
         try {
-            if (obj == null){
-                return  0L;
+            if (obj == null) {
+                return 0L;
             }
             ObjectInfo info = classIntrospector.introspect(obj);
             return info.getDeepSize();

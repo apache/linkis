@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.cs.server.service;
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSWarnException;
 import com.webank.wedatasphere.linkis.cs.server.protocol.HttpRequestProtocol;
@@ -34,9 +35,8 @@ import java.util.Optional;
 /**
  * Created by patinousward on 2020/2/18.
  */
-public abstract class AbstractService implements Service {
+public abstract class AbstractService extends JavaLog implements Service {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public boolean ifAccept(HttpJob job) {
@@ -63,7 +63,7 @@ public abstract class AbstractService implements Service {
                 responseProtocol.setResponseData(response);
             }
         } catch (Exception e) {
-            logger.error(String.format("execute %s service failed:", getName()), e);
+            logger().error(String.format("execute %s service failed:", getName()), e);
             throw new CSWarnException(97000, e.getMessage());
         }
     }

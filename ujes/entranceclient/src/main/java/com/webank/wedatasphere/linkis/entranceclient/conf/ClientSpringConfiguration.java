@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.entranceclient.conf;
 
 import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
 import com.webank.wedatasphere.linkis.common.conf.CommonVars;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.entrance.annotation.EntranceExecutorManagerBeanAnnotation;
 import com.webank.wedatasphere.linkis.entrance.annotation.NewEngineBroadcastListenerBeanAnnotation;
 import com.webank.wedatasphere.linkis.entrance.annotation.ResponseEngineStatusChangedBroadcastListenerBeanAnnotation;
@@ -53,11 +54,10 @@ import org.springframework.context.annotation.Configuration;
   */
 @Configuration
 @AutoConfigureBefore({EntranceSpringConfiguration.class, RPCReceiveRestful.class})
-class ClientSpringConfiguration {
+class ClientSpringConfiguration extends JavaLog {
 
-  private Logger logger = LoggerFactory.getLogger(getClass());
   {
-    logger.info("start a multi-entrance application...");
+    logger().info("start a multi-entrance application...");
   }
 
     @ClientEntranceParserBeanAnnotation
@@ -125,11 +125,11 @@ class ClientSpringConfiguration {
                                            @ClientEngineSelectorBeanAnnotation.ClientEngineSelectorAutowiredAnnotation EngineSelector clientEngineSelector,
                                            @ClientEngineRequesterAutowiredAnnotation ClientEngineRequester clientEngineRequester,
                                            @Autowired EntranceExecutorRuler[] entranceExecutorRulers) {
-    logger.warn("try to check the rpc receiver consumer threadPool...");
+    logger().warn("try to check the rpc receiver consumer threadPool...");
       setClientValue(RPCConfiguration.BDP_RPC_RECEIVER_ASYN_QUEUE_CAPACITY(), ClientConfiguration.BDP_RPC_RECEIVER_ASYN_QUEUE_CAPACITY_FOR_CLIENT());
     setClientValue(RPCConfiguration.BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_MAX(), ClientConfiguration.BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_MAX_FOR_CLIENT());
       EntranceClientImpl client = EntranceClientImpl.apply(ClientConfiguration.CLIENT_DEFAULT_NAME());
-    logger.warn("Multi-entrance application is ready to initial EntranceClient " + client.getEntranceClientName());
+    logger().warn("Multi-entrance application is ready to initial EntranceClient " + client.getEntranceClientName());
     client.init(clientEntranceParser, clientGroupFactory, clientEngineBuilder, clientEngineRequester,
       clientEngineSelector, clientInterceptors, entranceExecutorRulers,
       ClientConfiguration.CLIENT_DEFAULT_PARALLELISM_USERS().getValue());
@@ -152,7 +152,7 @@ class ClientSpringConfiguration {
     if(queueSize < queueSizeValue) {
       String key = fromConf.key();
       DataWorkCloudApplication.setProperty(key, String.valueOf(queueSizeValue));
-      logger.warn("Multi-entrance application set " + key + "=" + queueSizeValue);
+      logger().warn("Multi-entrance application set " + key + "=" + queueSizeValue);
     }
   }
 }

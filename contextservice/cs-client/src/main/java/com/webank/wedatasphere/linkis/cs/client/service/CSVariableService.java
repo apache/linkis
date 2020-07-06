@@ -16,6 +16,7 @@
 package com.webank.wedatasphere.linkis.cs.client.service;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.client.ContextClient;
 import com.webank.wedatasphere.linkis.cs.client.builder.ContextClientFactory;
 import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
@@ -37,9 +38,8 @@ import java.util.List;
  * @author peacewong
  * @date 2020/3/12 20:29
  */
-public class CSVariableService  implements VariableService{
+public class CSVariableService  extends JavaLog implements VariableService{
 
-    private final static Logger logger = LoggerFactory.getLogger(CSVariableService.class);
 
     private SearchService searchService = DefaultSearchService.getInstance();
 
@@ -62,7 +62,7 @@ public class CSVariableService  implements VariableService{
             }
             return rsList;
         } catch (Throwable e) {
-            logger.error("Failed to get variable : " + contextIDStr, e);
+            logger().error("Failed to get variable : " + contextIDStr, e);
            // throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Failed to get variable : " + contextIDStr + "e : " + e.getMessage());
         }
         return rsList;
@@ -78,7 +78,7 @@ public class CSVariableService  implements VariableService{
             contextValue.setValue(linkisVariable);
             contextClient.update(contextID, contextKey, contextValue);
         } catch (ErrorException e) {
-            logger.error("Deserialize error. e ");
+            logger().error("Deserialize error. e ");
             throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize error. e : ", e);
         }
     }

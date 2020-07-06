@@ -17,6 +17,7 @@ package com.webank.wedatasphere.linkis.cs.highavailable.ha.impl;
 
 import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.HAContextID;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.CommonHAContextID;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
@@ -38,12 +39,12 @@ import java.util.List;
  * @Date 2020/2/19
  */
 @Component
-public class ContextHACheckerImpl implements ContextHAChecker {
+public class ContextHACheckerImpl extends JavaLog implements ContextHAChecker {
 
-    private final static Logger logger = LoggerFactory.getLogger(ContextHACheckerImpl.class);
 
     @Autowired
     private InstanceAliasManagerImpl instanceAliasManager;
+
     /**
      * ${第一个instance长度}${第二个instance长度}{instance别名1}{instance别名2}{实际ID}
      *
@@ -65,6 +66,7 @@ public class ContextHACheckerImpl implements ContextHAChecker {
 
     /**
      * 主备实例同时有效，且id为有效的HAID或数字时才有效
+     *
      * @param haContextID
      * @return
      * @throws CSErrorException
@@ -102,7 +104,7 @@ public class ContextHACheckerImpl implements ContextHAChecker {
         } else if (isHAIDValid(haContextID.getContextId())) {
             return haContextID.getContextId();
         } else {
-            logger.error("ConvertHAIDToHAKey error, invald HAID : " + haContextID.getContextId());
+            logger().error("ConvertHAIDToHAKey error, invald HAID : " + haContextID.getContextId());
             throw new CSErrorException(ErrorCode.INVALID_HAID, "ConvertHAIDToHAKey error, invald HAID : " + haContextID.getContextId());
         }
     }
@@ -110,6 +112,7 @@ public class ContextHACheckerImpl implements ContextHAChecker {
     /**
      * Encode HAContextID to HAKey String.
      * ${第一个instance长度}${第二个instance长度}{instance别名0}{instance别名2}{实际ID}
+     *
      * @return
      */
     private String encode(HAContextID haContextID) throws CSErrorException {
@@ -142,7 +145,7 @@ public class ContextHACheckerImpl implements ContextHAChecker {
     public HAContextID parseHAIDFromKey(String haIDKey) throws CSErrorException {
         HAContextID haContextID = null;
         if (StringUtils.isBlank(haIDKey) || !CSHighAvailableUtils.checkHAIDBasicFormat(haIDKey)) {
-            logger.error("Invalid haIDKey : " + haIDKey);
+            logger().error("Invalid haIDKey : " + haIDKey);
             throw new CSErrorException(ErrorCode.INVALID_HAID, "Invalid haIDKey : " + haIDKey);
         }
         return CSHighAvailableUtils.decodeHAID(haIDKey);

@@ -17,6 +17,7 @@ package com.webank.wedatasphere.linkis.cs.persistence.persistence.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
 import com.webank.wedatasphere.linkis.cs.common.listener.ContextIDListener;
@@ -38,9 +39,8 @@ import java.io.IOException;
  * Created by patinousward on 2020/2/12.
  */
 @Component
-public class ContextIDPersistenceImpl implements ContextIDPersistence {
+public class ContextIDPersistenceImpl extends JavaLog implements ContextIDPersistence {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private ContextIDMapper contextIDMapper;
@@ -58,7 +58,7 @@ public class ContextIDPersistenceImpl implements ContextIDPersistence {
             contextID.setContextId(pContextID.getFirst().getContextId());
             return contextID;
         } catch (JsonProcessingException e) {
-            logger.error("writeAsJson failed:", e);
+            logger().error("writeAsJson failed:", e);
             throw new CSErrorException(97000, e.getMessage());
         }
     }
@@ -84,7 +84,7 @@ public class ContextIDPersistenceImpl implements ContextIDPersistence {
             ContextID contextID = PersistenceUtils.transfer(extraFieldClass, pContextID);
             return contextID;
         } catch (IOException e) {
-            logger.error("readJson failed:", e);
+            logger().error("readJson failed:", e);
             throw new CSErrorException(97000, e.getMessage());
         }
     }

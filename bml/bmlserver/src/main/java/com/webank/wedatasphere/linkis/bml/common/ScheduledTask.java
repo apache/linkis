@@ -17,6 +17,9 @@ package com.webank.wedatasphere.linkis.bml.common;
 import com.webank.wedatasphere.linkis.bml.conf.BmlServerConfiguration;
 import com.webank.wedatasphere.linkis.bml.service.ResourceService;
 import com.webank.wedatasphere.linkis.bml.service.VersionService;
+import com.webank.wedatasphere.linkis.common.log.LogUtils;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
+import com.webank.wedatasphere.linkis.common.utils.Logging;
 import com.webank.wedatasphere.linkis.common.utils.Utils;
 
 import org.slf4j.Logger;
@@ -33,7 +36,7 @@ import javax.annotation.PostConstruct;
  * Description:
  */
 @Component
-public class ScheduledTask {
+public class ScheduledTask extends JavaLog {
 
 
     @Autowired
@@ -41,8 +44,6 @@ public class ScheduledTask {
 
     @Autowired
     private VersionService versionService;
-
-    private Logger logger = LoggerFactory.getLogger(ScheduledTask.class);
 
     private class CleanExpiredThread implements Runnable{
         @Override
@@ -54,7 +55,7 @@ public class ScheduledTask {
 
     @PostConstruct
     public void init(){
-        logger.info("Schedule Task is init");
+        logger().info("Schedule Task is init");
         CleanExpiredThread cleanExpiredThread = new CleanExpiredThread();
         Utils.defaultScheduler().scheduleAtFixedRate(cleanExpiredThread, 10,
                                                      ((Number)BmlServerConfiguration.BML_CLEAN_EXPIRED_TIME().getValue()).intValue(), TimeUnit.SECONDS);

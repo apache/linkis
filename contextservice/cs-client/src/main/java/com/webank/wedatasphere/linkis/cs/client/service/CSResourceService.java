@@ -16,6 +16,7 @@
 package com.webank.wedatasphere.linkis.cs.client.service;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
 import com.webank.wedatasphere.linkis.cs.common.entity.metadata.CSTable;
 import com.webank.wedatasphere.linkis.cs.common.entity.resource.BMLResource;
@@ -35,9 +36,7 @@ import java.util.Map;
  * @Author alexyang
  * @Date 2020/3/9
  */
-public class CSResourceService implements ResourceService {
-
-    private static final Logger logger = LoggerFactory.getLogger(CSResourceService.class);
+public class CSResourceService extends JavaLog implements ResourceService {
 
     private static CSResourceService csResourceService;
 
@@ -65,7 +64,7 @@ public class CSResourceService implements ResourceService {
             ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
             return DefaultSearchService.getInstance().searchUpstreamContextMap(contextID, nodeName, Integer.MAX_VALUE, BMLResource.class);
         } catch (ErrorException e) {
-            logger.error("Deserialize contextid error. contextID : " + contextIDStr + ", e ", e);
+            logger().error("Deserialize contextid error. contextID : " + contextIDStr + ", e ", e);
             throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize contextid error. contextID : " + contextIDStr + ", e " + e.getDesc());
         }
     }
@@ -83,7 +82,7 @@ public class CSResourceService implements ResourceService {
             }
             return rsList;
         } catch (ErrorException e) {
-            logger.error("Failed to get Resource: " + e.getMessage());
+            logger().error("Failed to get Resource: " + e.getMessage());
             throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize contextID error. contextIDStr : ", e);
         }
     }

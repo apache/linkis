@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.cs.server.restful;
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
@@ -31,8 +32,6 @@ import com.webank.wedatasphere.linkis.server.Message;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -55,9 +54,8 @@ import java.util.Map;
 @Path("contextservice")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class ContextRestfulApi implements CsRestfulParent {
+public class ContextRestfulApi extends JavaLog implements CsRestfulParent {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContextRestfulApi.class);
 
     @Autowired
     private CsScheduler csScheduler;
@@ -145,9 +143,9 @@ public class ContextRestfulApi implements CsRestfulParent {
     @Path("removeAllValueByKeyPrefixAndContextType")
     public Response removeAllValueByKeyPrefixAndContextType(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
-        String  contextType = jsonNode.get(ContextHTTPConstant.CONTEXT_KEY_TYPE_STR).getTextValue();
+        String contextType = jsonNode.get(ContextHTTPConstant.CONTEXT_KEY_TYPE_STR).getTextValue();
         String keyPrefix = jsonNode.get(ContextHTTPConstant.CONTEXT_KEY_PREFIX_STR).getTextValue();
-        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVEALL, contextID, ContextType.valueOf(contextType),keyPrefix);
+        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVEALL, contextID, ContextType.valueOf(contextType), keyPrefix);
         return Message.messageToResponse(generateResponse(answerJob, ""));
     }
 
@@ -156,7 +154,7 @@ public class ContextRestfulApi implements CsRestfulParent {
     public Response removeAllValueByKeyPrefix(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         String keyPrefix = jsonNode.get(ContextHTTPConstant.CONTEXT_KEY_PREFIX_STR).getTextValue();
-        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVEALL, contextID,keyPrefix);
+        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVEALL, contextID, keyPrefix);
         return Message.messageToResponse(generateResponse(answerJob, ""));
     }
 

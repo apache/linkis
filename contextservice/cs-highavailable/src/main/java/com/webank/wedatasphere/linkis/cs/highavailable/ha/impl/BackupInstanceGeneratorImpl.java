@@ -16,6 +16,7 @@
 package com.webank.wedatasphere.linkis.cs.highavailable.ha.impl;
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
 import com.webank.wedatasphere.linkis.cs.highavailable.exception.ErrorCode;
 import com.webank.wedatasphere.linkis.cs.highavailable.ha.BackupInstanceGenerator;
@@ -32,8 +33,7 @@ import java.util.List;
 import java.util.Random;
 
 @Component
-public class BackupInstanceGeneratorImpl implements BackupInstanceGenerator {
-    private final static Logger logger = LoggerFactory.getLogger(BackupInstanceGeneratorImpl.class);
+public class BackupInstanceGeneratorImpl extends JavaLog implements BackupInstanceGenerator {
 
     @Autowired
     private InstanceAliasManager instanceAliasManager;
@@ -59,7 +59,7 @@ public class BackupInstanceGeneratorImpl implements BackupInstanceGenerator {
         try {
             mainInstance = instanceAliasManager.getInstanceByAlias(mainInstanceAlias);
         } catch (Exception e) {
-            logger.error("Get Instance error, alias : {}, message : {}", mainInstanceAlias, e.getMessage());
+            logger().error("Get Instance error, alias : {}, message : {}", mainInstanceAlias, e.getMessage());
             throw new CSErrorException(ErrorCode.INVALID_INSTANCE_ALIAS, e.getMessage() + ", alias : " + mainInstanceAlias);
         }
         List<ServiceInstance> allInstanceList = instanceAliasManager.getAllInstanceList();
@@ -75,7 +75,7 @@ public class BackupInstanceGeneratorImpl implements BackupInstanceGenerator {
             return instanceAliasManager.getAliasByServiceInstance(remainInstanceList.get(index));
         } else {
             // only one service instance
-            logger.error("Only one instance, no remains.");
+            logger().error("Only one instance, no remains.");
             return instanceAliasManager.getAliasByServiceInstance(mainInstance);
         }
     }

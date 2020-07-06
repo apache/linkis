@@ -17,6 +17,7 @@ package com.webank.wedatasphere.linkis.cs.client.http;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.common.listener.Event;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.cs.client.builder.ContextClientConfig;
 import com.webank.wedatasphere.linkis.cs.client.builder.HttpContextClientConfig;
@@ -48,10 +49,7 @@ import java.util.concurrent.TimeUnit;
  * Description: heartbeater类的作用是为了csclient能够和csserver进行每秒钟交互的一个类，从server中获取内容，
  * 然后封装成事件投递到 事件总线，来让监听器进行消费
  */
-public class HttpHeartBeater implements HeartBeater {
-
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpHeartBeater.class);
+public class HttpHeartBeater extends JavaLog implements HeartBeater {
 
     private ContextClientListenerBus<ContextClientListener, Event> contextClientListenerBus =
             ContextClientListenerManager.getContextClientListenerBus();
@@ -65,10 +63,9 @@ public class HttpHeartBeater implements HeartBeater {
     private DWSHttpClient dwsHttpClient;
 
 
-
-    public HttpHeartBeater(ContextClientConfig contextClientConfig){
-        if (contextClientConfig instanceof HttpContextClientConfig){
-            HttpContextClientConfig httpContextClientConfig = (HttpContextClientConfig)contextClientConfig;
+    public HttpHeartBeater(ContextClientConfig contextClientConfig) {
+        if (contextClientConfig instanceof HttpContextClientConfig) {
+            HttpContextClientConfig httpContextClientConfig = (HttpContextClientConfig) contextClientConfig;
             ClientConfig clientConfig = httpContextClientConfig.getClientConfig();
             DWSClientConfig dwsClientConfig = new DWSClientConfig(clientConfig);
             dwsClientConfig.setDWSVersion(ContextClientConf.LINKIS_WEB_VERSION().getValue());
@@ -77,40 +74,37 @@ public class HttpHeartBeater implements HeartBeater {
     }
 
 
-
-
-
     @Override
     @SuppressWarnings("unchecked")
     public void heartBeat() {
         ContextHeartBeatAction contextHeartBeatAction = new ContextHeartBeatAction(client_source);
         contextHeartBeatAction.getRequestPayloads().put("source", client_source);
         Result result = null;
-        try{
+        try {
             result = dwsHttpClient.execute(contextHeartBeatAction);
-        }catch(Exception e){
-            LOGGER.error("执行heartbeat出现失败", e);
-            return ;
+        } catch (Exception e) {
+            logger().error("执行heartbeat出现失败", e);
+            return;
         }
-        if (result instanceof ContextHeartBeatResult){
-            ContextHeartBeatResult contextHeartBeatResult = (ContextHeartBeatResult)result;
-            Map<String,Object> data = contextHeartBeatResult.getData();
+        if (result instanceof ContextHeartBeatResult) {
+            ContextHeartBeatResult contextHeartBeatResult = (ContextHeartBeatResult) result;
+            Map<String, Object> data = contextHeartBeatResult.getData();
             Object object = data.get("ContextKeyValueBean");
             List<ContextKeyValueBean> kvBeans = new ArrayList<>();
-            if (object instanceof List){
-                List<Object> list = (List<Object>)object;
+            if (object instanceof List) {
+                List<Object> list = (List<Object>) object;
                 list.stream().
                         filter(Objects::nonNull).
                         map(Object::toString).
                         map(str -> {
-                            try{
+                            try {
                                 return SerializeHelper.deserializeContextKVBean(str);
-                            }catch(ErrorException e){
+                            } catch (ErrorException e) {
                                 return null;
                             }
                         }).filter(Objects::nonNull).forEach(kvBeans::add);
             }
-            if (kvBeans.size() > 0){
+            if (kvBeans.size() > 0) {
                 dealCallBack(kvBeans);
             }
         }
@@ -118,7 +112,7 @@ public class HttpHeartBeater implements HeartBeater {
 
     @Override
     public void dealCallBack(List<ContextKeyValueBean> kvs) {
-        for(ContextKeyValueBean kv : kvs){
+        for (ContextKeyValueBean kv : kvs) {
             //todo 先忽略掉contextIDEvent
             ContextKeyValue contextKeyValue = new CommonContextKeyValue();
             contextKeyValue.setContextKey(kv.getCsKey());
@@ -144,12 +138,12 @@ public class HttpHeartBeater implements HeartBeater {
 
     @Override
     public void close() throws IOException {
-        try{
-            if (null != this.dwsHttpClient){
+        try {
+            if (null != this.dwsHttpClient) {
                 this.dwsHttpClient.close();
             }
-        } catch (Exception e){
-            LOGGER.error("Failed to close httpContextClient", e);
+        } catch (Exception e) {
+            logger().error("Failed to close httpContextClient", e);
             throw new IOException(e);
         }
     }

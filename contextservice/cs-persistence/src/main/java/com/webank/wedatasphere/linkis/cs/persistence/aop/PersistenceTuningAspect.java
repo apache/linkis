@@ -16,6 +16,7 @@
 package com.webank.wedatasphere.linkis.cs.persistence.aop;
 
 import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.persistence.conf.PersistenceConf;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -36,9 +37,7 @@ import java.lang.reflect.Method;
  */
 @Aspect
 @Component
-public class PersistenceTuningAspect {
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+public class PersistenceTuningAspect extends JavaLog {
 
     private boolean tuningIsOpen = false;
 
@@ -58,9 +57,9 @@ public class PersistenceTuningAspect {
                     if (context != null) {
                         try {
                             tuningObject = context.getBean(tuningClass);
-                            logger.info("find singleton tuning Object from IOC");
+                            logger().info("find singleton tuning Object from IOC");
                         } catch (NoSuchBeanDefinitionException e) {
-                            logger.info("can not find singleton  tuning Object from IOC");
+                            logger().info("can not find singleton  tuning Object from IOC");
                         }
                     }
                     if (tuningObject == null) {
@@ -70,7 +69,7 @@ public class PersistenceTuningAspect {
                     tuningIsOpen = true;
                 } catch (ClassNotFoundException | InstantiationException |
                         IllegalAccessException | NoSuchMethodException e) {
-                    logger.warn("can not load tuning class,tuning is close", e);
+                    logger().warn("can not load tuning class,tuning is close", e);
                 } finally {
                     isInited = true;
                 }
@@ -88,7 +87,7 @@ public class PersistenceTuningAspect {
             init();
         }
         if (!tuningIsOpen) {
-            logger.info("tuning is close..return the real");
+            logger().info("tuning is close..return the real");
             return point.proceed();
         }
         Signature signature = point.getSignature();
@@ -98,7 +97,7 @@ public class PersistenceTuningAspect {
         MethodSignature methodSignature = (MethodSignature) signature;
         Object target = point.getTarget();
         Method currentMethod = target.getClass().getMethod(methodSignature.getName(), methodSignature.getParameterTypes());
-        logger.info("调用方法：" + currentMethod.getName());
+        logger().info("调用方法：" + currentMethod.getName());
         return tuningMethod.invoke(tuningObject, point.proceed());
     }
 

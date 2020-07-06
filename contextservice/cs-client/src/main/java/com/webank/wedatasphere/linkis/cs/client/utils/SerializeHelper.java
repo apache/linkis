@@ -32,9 +32,6 @@ import org.slf4j.LoggerFactory;
  */
 public class SerializeHelper {
 
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SerializeHelper.class);
-
     public static final SerializationHelper SERIALIZE_HELPER = ContextSerializationHelper.getInstance();
 
     public static String serializeContextID(ContextID contextID) throws ErrorException{

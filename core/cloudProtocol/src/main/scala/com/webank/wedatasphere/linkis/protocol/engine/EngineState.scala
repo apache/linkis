@@ -17,15 +17,24 @@
 package com.webank.wedatasphere.linkis.protocol.engine
 
 /**
-  * Created by enjoyyin on 2018/9/27.
-  */
+ * Created by enjoyyin on 2018/9/27.
+ */
 object EngineState extends Enumeration {
   type EngineState = Value
+  // 开始，空闲，忙绿，关闭，错误，死亡，成功
   val Starting, Idle, Busy, ShuttingDown, Error, Dead, Success = Value
+
+  /**
+   * 根据执行状态判断是否完成，
+   *
+   * @param executorState
+   * @return
+   */
   def isCompleted(executorState: EngineState): Boolean = executorState match {
     case Error | Dead | Success => true
     case _ => false
   }
+
   def isAvailable(executorState: EngineState): Boolean = executorState match {
     case Idle | Busy => true
     case _ => false

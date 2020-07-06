@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.cs.server.parser;
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.common.annotation.KeywordMethod;
 import com.webank.wedatasphere.linkis.cs.server.conf.ContextServerConf;
 import org.apache.commons.lang.StringUtils;
@@ -37,9 +38,8 @@ import java.util.regex.Pattern;
  * @date 2020/2/9 16:19
  */
 @Component
-public class DefaultKeywordParser implements KeywordParser {
+public class DefaultKeywordParser extends JavaLog implements KeywordParser {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultKeywordParser.class);
 
 
     Map<String, Set<KeywordMethodEntity>> keywordMethods = new HashMap<>();
@@ -49,7 +49,7 @@ public class DefaultKeywordParser implements KeywordParser {
 
     @PostConstruct
     private void init() {
-        logger.info("init keyValueParser");
+        logger().info("init keyValueParser");
         scanKeywordMethods();
     }
 
@@ -121,7 +121,7 @@ public class DefaultKeywordParser implements KeywordParser {
         try {
             keywords =  parseKeywords(obj);
         } catch (Exception e){
-           logger.error("Failed to parse keywords ", e);
+           logger().error("Failed to parse keywords ", e);
         }
         return keywords;
     }

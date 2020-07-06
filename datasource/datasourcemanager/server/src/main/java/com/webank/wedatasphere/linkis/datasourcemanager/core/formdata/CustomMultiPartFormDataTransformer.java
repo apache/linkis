@@ -15,6 +15,7 @@ package com.webank.wedatasphere.linkis.datasourcemanager.core.formdata;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.common.exception.WarnException;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.ServiceErrorCode;
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -38,8 +39,7 @@ import java.util.*;
  * @author alexwu
  * 2020/02/12
  */
-public class CustomMultiPartFormDataTransformer implements MultiPartFormDataTransformer{
-    private static final Logger LOG = LoggerFactory.getLogger(CustomMultiPartFormDataTransformer.class);
+public class CustomMultiPartFormDataTransformer extends JavaLog implements MultiPartFormDataTransformer{
     @Override
     public <T> T transformToObject(FormDataMultiPart formData, Class<?> clazz,
                                    Validator beanValidator)
@@ -67,7 +67,7 @@ public class CustomMultiPartFormDataTransformer implements MultiPartFormDataTran
                 }
             });
         }catch(Exception e){
-            LOG.error("Error in transform multipart from: " + e.getMessage());
+            logger().error("Error in transform multipart from: " + e.getMessage());
             throw new ErrorException(ServiceErrorCode.TRANSFORM_FORM_ERROR.getValue(), "Error in transform multipart from: " + e.getMessage());
         }
         if(null != beanValidator){

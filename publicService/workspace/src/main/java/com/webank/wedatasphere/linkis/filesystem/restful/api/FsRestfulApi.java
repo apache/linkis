@@ -22,6 +22,7 @@ import com.webank.wedatasphere.linkis.common.io.FsWriter;
 import com.webank.wedatasphere.linkis.common.io.MetaData;
 import com.webank.wedatasphere.linkis.common.io.Record;
 import com.webank.wedatasphere.linkis.common.io.resultset.ResultSet;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.filesystem.entity.DirFileTree;
 import com.webank.wedatasphere.linkis.filesystem.entity.LogLevel;
 import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException;
@@ -86,12 +87,10 @@ import static com.webank.wedatasphere.linkis.filesystem.constant.WorkSpaceConsta
 @Consumes({MediaType.APPLICATION_JSON, MediaType.MULTIPART_FORM_DATA})
 @Component
 @Path("filesystem")
-public class FsRestfulApi {
+public class FsRestfulApi extends JavaLog {
 
     @Autowired
     private FsService fsService;
-
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @GET
     @Path("/getUserRootPath")
@@ -160,7 +159,8 @@ public class FsRestfulApi {
         String newDest = json.get("newDest").getTextValue();
         String userName = SecurityFilter.getLoginUsername(req);
         if (FILESYSTEM_PATH_CHECK_TRIGGER.getValue()) {
-            LOGGER.info(String.format("path check trigger is open,now check the path,oldDest:%s,newDest:%s", oldDest, newDest));
+            logger().info(String.format("path check trigger is open,now check the path,oldDest:%s,newDest:%s", oldDest,
+                    newDest));
             PathValidator$.MODULE$.validate(oldDest, userName);
             PathValidator$.MODULE$.validate(newDest, userName);
         }
@@ -311,7 +311,7 @@ public class FsRestfulApi {
                 outputStream.write(buffer, 0, bytesRead);
             }
         } catch (Exception e) {
-            LOGGER.error("download error(下载出错)：", e);
+            logger().error("download error(下载出错)：", e);
             response.reset();
             response.setCharacterEncoding(Consts.UTF_8.toString());
             response.setContentType("text/plain; charset=utf-8");
@@ -353,7 +353,7 @@ public class FsRestfulApi {
             if (StringUtils.isEmpty(charset)) {
                 charset = "utf-8";
             }
-            LOGGER.info("resultdownload:" + userName + ",path:" + path);
+            logger().info("resultdownload:" + userName + ",path:" + path);
             FsPath fsPath = new FsPath(path);
             fileSystem = fsService.getFileSystem(userName, fsPath);
             if (!fileSystem.exists(fsPath)) {
@@ -391,7 +391,7 @@ public class FsRestfulApi {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("resultset download error(结果集下载出错)：", e);
+            logger().error("resultset download error(结果集下载出错)：", e);
             response.reset();
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/plain; charset=utf-8");
@@ -565,12 +565,12 @@ public class FsRestfulApi {
             fileSource.write(fsWriter);
             fsWriter.flush();
         } catch (Exception e) {
-            LOGGER.error("resultset to excel/csv error(结果集导出出错)：", e);
+            logger().error("resultSet to excel/csv error(结果集导出出错)：", e);
             response.reset();
             response.setCharacterEncoding(Consts.UTF_8.toString());
             response.setContentType("text/plain; charset=utf-8");
             writer = response.getWriter();
-            writer.append("resultset to excel/csv error(结果集导出出错)");
+            writer.append("resultSet to excel/csv error(结果集导出出错)");
             writer.flush();
         } finally {
             if (outputStream != null) {

@@ -17,6 +17,7 @@ package com.webank.wedatasphere.linkis.cs.persistence.persistence.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextScope;
 import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
@@ -48,7 +49,7 @@ import java.util.stream.Collectors;
  * Created by patinousward on 2020/2/13.
  */
 @Component
-public class ContextMapPersistenceImpl implements ContextMapPersistence {
+public class ContextMapPersistenceImpl extends JavaLog implements ContextMapPersistence {
 
     @Autowired
     private ContextMapMapper contextMapMapper;
@@ -59,7 +60,6 @@ public class ContextMapPersistenceImpl implements ContextMapPersistence {
 
     private Class<PersistenceContextKeyValue> pKVClass = PersistenceContextKeyValue.class;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ObjectMapper json = BDPJettyServerHelper.jacksonJson();
 
@@ -81,7 +81,7 @@ public class ContextMapPersistenceImpl implements ContextMapPersistence {
             pKV.getFirst().setContextValue(pV.getFirst());
             contextMapMapper.createMap(pKV.getFirst());
         } catch (JsonProcessingException e) {
-            logger.error("writeAsJson failed:", e);
+            logger().error("writeAsJson failed:", e);
             throw new CSErrorException(97000, e.getMessage());
         }
     }
@@ -118,7 +118,7 @@ public class ContextMapPersistenceImpl implements ContextMapPersistence {
             ExtraFieldClass extraFieldClass = json.readValue(pKV.getProps(), ExtraFieldClass.class);
             ContextKey key = PersistenceUtils.transfer(extraFieldClass.getOneSub(0), pK);
             ContextValue value = PersistenceUtils.transfer(extraFieldClass.getOneSub(1), pV);
-            if(value != null){
+            if (value != null) {
                 value.setValue(serialHelper.deserialize(pV.getValueStr()));
             }
             ContextKeyValue kv = PersistenceUtils.transfer(extraFieldClass, pKV);
@@ -126,7 +126,7 @@ public class ContextMapPersistenceImpl implements ContextMapPersistence {
             kv.setContextValue(value);
             return kv;
         } catch (IOException e) {
-            logger.error("readJson failed:", e);
+            logger().error("readJson failed:", e);
             throw new CSErrorException(97000, e.getMessage());
         }
     }
@@ -183,12 +183,12 @@ public class ContextMapPersistenceImpl implements ContextMapPersistence {
 
     @Override
     public void removeByKeyPrefix(ContextID contextID, String keyPrefix) {
-        contextMapMapper.removeByKeyPrefix(contextID,keyPrefix);
+        contextMapMapper.removeByKeyPrefix(contextID, keyPrefix);
     }
 
     @Override
     public void removeByKeyPrefix(ContextID contextID, ContextType contextType, String keyPrefix) {
-        contextMapMapper.removeByKeyPrefixAndContextType(contextID,contextType,keyPrefix);
+        contextMapMapper.removeByKeyPrefixAndContextType(contextID, contextType, keyPrefix);
     }
 
 }

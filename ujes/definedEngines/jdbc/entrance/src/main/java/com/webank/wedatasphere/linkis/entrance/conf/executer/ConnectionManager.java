@@ -15,6 +15,7 @@
  */
 package com.webank.wedatasphere.linkis.entrance.conf.executer;
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.commons.lang.StringUtils;
@@ -30,9 +31,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public  class  ConnectionManager {
+public  class  ConnectionManager extends JavaLog {
 
-    Logger logger = LoggerFactory.getLogger(ConnectionManager.class);
 
     private final Map<String, DataSource> databaseToDataSources = new HashMap<String, DataSource>();
 
@@ -65,7 +65,7 @@ public  class  ConnectionManager {
             try {
                 Class.forName(supportedDBInfo[1]);
             } catch (ClassNotFoundException e) {
-                logger.info("Load " + supportedDBInfo[0] + " driver failed",e);
+                logger().info("Load " + supportedDBInfo[0] + " driver failed",e);
             }
             supportedDBNames.add(supportedDBInfo[0]);
             this.supportedDBs.put(supportedDBInfo[0], supportedDBInfo[1]);

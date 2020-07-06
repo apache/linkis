@@ -37,7 +37,6 @@ import java.util.*;
  */
 public class LocalFileSystem extends FileSystem {
 
-
     private static final Logger LOG = LoggerFactory.getLogger(LocalFileSystem.class);
 
     private Map<String, String> properties;

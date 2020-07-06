@@ -30,8 +30,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ContextKeyListener implements ContextClientListener{
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContextKeyListener.class);
-
     private ContextKey contextKey;
 
     private Context context;

@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.cs.server.protocol;
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.server.Message;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -25,9 +26,8 @@ import org.springframework.util.StringUtils;
 /**
  * Created by patinousward on 2020/2/18.
  */
-public class RestResponseProtocol implements HttpResponseProtocol<Message> {
+public class RestResponseProtocol extends JavaLog implements HttpResponseProtocol<Message> {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private final Object lock = new Object();
 
@@ -44,7 +44,7 @@ public class RestResponseProtocol implements HttpResponseProtocol<Message> {
 
     @Override
     public void waitTimeEnd(long mills) throws InterruptedException {
-        logger.info(String.format("start to wait %smills until job complete", mills));
+        logger().info(String.format("start to wait %smills until job complete", mills));
         synchronized (lock) {
             lock.wait(mills);
         }
@@ -52,7 +52,7 @@ public class RestResponseProtocol implements HttpResponseProtocol<Message> {
 
     @Override
     public void notifyJob() {
-        logger.info("notify the job");
+        logger().info("notify the job");
         synchronized (lock) {
             lock.notify();
         }

@@ -39,7 +39,7 @@ import java.util.Properties;
  */
 public class ContextServiceUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(ContextServiceUtils.class);
+    private static final Logger logger = ()(ContextServiceUtils.class);
 
     /**
      * TODO get instances

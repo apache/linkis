@@ -48,47 +48,45 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
 /**
-  * created by cooperyang on 2018/11/22
-  * Description:
-  */
-class HiveEngineExecutor(outputPrintLimit:Int,
+ * created by cooperyang on 2018/11/22
+ * Description:
+ */
+class HiveEngineExecutor(outputPrintLimit: Int,
                          sessionState: SessionState,
-                         ugi:UserGroupInformation,
-                         hiveConf:HiveConf)
-  extends EngineExecutor(outputPrintLimit, isSupportParallelism = false) with SingleTaskOperateSupport with SingleTaskInfoSupport {
+                         ugi: UserGroupInformation,
+                         hiveConf: HiveConf)
+  extends EngineExecutor(outputPrintLimit, isSupportParallelism = false) with SingleTaskOperateSupport with SingleTaskInfoSupport with Logging {
 
-  private val LOG = LoggerFactory.getLogger(getClass)
+  private val name: String = Sender.getThisServiceInstance.getInstance
 
-  private val name:String = Sender.getThisServiceInstance.getInstance
+  private var initialized: Boolean = false
 
-  private var initialized:Boolean = false
+  private var proc: CommandProcessor = _
 
-  private var proc:CommandProcessor = _
+  private var map: Int = 0
 
-  private var map:Int = 0
-
-  private var reduce:Int = 0
+  private var reduce: Int = 0
 
   private val totalTask = 200.0f
 
-  private var singleLineProgress:Float = 0.0f
+  private var singleLineProgress: Float = 0.0f
 
-  private var engineExecutorContext:EngineExecutorContext = _
+  private var engineExecutorContext: EngineExecutorContext = _
 
-  private val singleCodeCompleted:AtomicBoolean = new AtomicBoolean(false)
+  private val singleCodeCompleted: AtomicBoolean = new AtomicBoolean(false)
 
-  private var numberOfMRJobs:Int = -1
+  private var numberOfMRJobs: Int = -1
 
-  private var currentSqlProgress:Float = 0.0f
+  private var currentSqlProgress: Float = 0.0f
 
-  private val singleSqlProgressMap:util.Map[String, Float] = new util.HashMap[String, Float]()
+  private val singleSqlProgressMap: util.Map[String, Float] = new util.HashMap[String, Float]()
 
 
   override def getName: String = name
 
-  override def init():Unit = {
+  override def init(): Unit = {
     transition(ExecutorState.Idle)
-    LOG.info(s"Ready to change engine state!")
+    logger.info(s"Ready to change engine state!")
     setCodeParser(new SQLCodeParser)
     super.init()
   }
@@ -104,49 +102,49 @@ class HiveEngineExecutor(outputPrintLimit:Int,
     singleCodeCompleted.set(false)
     currentSqlProgress = 0.0f
     var realCode = code.trim()
-    while(realCode.startsWith("\n")) realCode = StringUtils.substringAfter(realCode, "\n")
-    LOG.info(s"hive client begins to run hql code:\n ${realCode.trim}")
-    if (realCode.trim.length > 500){
+    while (realCode.startsWith("\n")) realCode = StringUtils.substringAfter(realCode, "\n")
+    logger.info(s"hive client begins to run hql code:\n ${realCode.trim}")
+    if (realCode.trim.length > 500) {
       engineExecutorContext.appendStdout(s"$getName >> ${realCode.trim.substring(0, 500)} ...")
     } else engineExecutorContext.appendStdout(s"$getName >> ${realCode.trim}")
     val tokens = realCode.trim.split("""\s+""")
     //if(!initialized){
-      SessionState.setCurrentSessionState(sessionState)
-     // initialized = true
-   // }
+    SessionState.setCurrentSessionState(sessionState)
+    // initialized = true
+    // }
     this.engineExecutorContext = engineExecutorContext
     val proc = CommandProcessorFactory.get(tokens, hiveConf)
     this.proc = proc
-    LOG.debug("ugi is " + ugi.getUserName)
+    logger.debug("UserGroupInformation is " + ugi.getUserName)
     ugi.doAs(new PrivilegedExceptionAction[ExecuteResponse]() {
       override def run(): ExecuteResponse = {
         proc match {
           case any if HiveDriverProxy.isDriver(any) =>
             val driver = new HiveDriverProxy(any)
-            var needRetry:Boolean = true
-            var tryCount:Int = 0
-            var hasResult:Boolean = false
-            var rows:Int = 0
-            var columnCount:Int = 0
-            while(needRetry){
+            var needRetry: Boolean = true
+            var tryCount: Int = 0
+            var hasResult: Boolean = false
+            var rows: Int = 0
+            var columnCount: Int = 0
+            while (needRetry) {
               needRetry = false
               driver.setTryCount(tryCount)
               val startTime = System.currentTimeMillis()
-              try{
+              try {
                 numberOfMRJobs = 1
-                val hiveResponse:CommandProcessorResponse = driver.run(realCode)
+                val hiveResponse: CommandProcessorResponse = driver.run(realCode)
                 if (hiveResponse.getResponseCode != 0) {
-                  LOG.error("Hive query failed, reason: ", hiveResponse.getException)
+                  logger.error("Hive query failed, reason: ", hiveResponse.getException)
                   val errorException = HiveQueryFailedException(41004, "hive query failed:" + hiveResponse.getErrorMessage)
                   errorException.initCause(hiveResponse.getException)
                   throw errorException
                 }
                 engineExecutorContext.appendStdout(s"Time taken: ${HiveUtils.msDurationToString(System.currentTimeMillis() - startTime)}, begin to fetch results.")
-                LOG.info(s"$getName >> Time taken: ${HiveUtils.msDurationToString(System.currentTimeMillis() - startTime)}, begin to fetch results.")
+                logger.info(s"$getName >> Time taken: ${HiveUtils.msDurationToString(System.currentTimeMillis() - startTime)}, begin to fetch results.")
                 val fieldSchemas = if (hiveResponse.getSchema != null) hiveResponse.getSchema.getFieldSchemas
                 else if (driver.getSchema != null) driver.getSchema.getFieldSchemas
                 else throw HiveQueryFailedException(41005, "cannot get the field schemas.")
-                LOG.debug("fieldSchemas are " + fieldSchemas)
+                logger.debug("fieldSchemas are " + fieldSchemas)
                 if (fieldSchemas == null) {
                   numberOfMRJobs = -1
                   singleCodeCompleted.set(true)
@@ -155,20 +153,20 @@ class HiveEngineExecutor(outputPrintLimit:Int,
                 }
                 hasResult = true
                 import scala.collection.JavaConversions._
-                val scalaFieldSchemas:scala.collection.mutable.Buffer[FieldSchema] = fieldSchemas
-                LOG.debug("Scala field Schemas are " + scalaFieldSchemas.mkString(" "))
+                val scalaFieldSchemas: scala.collection.mutable.Buffer[FieldSchema] = fieldSchemas
+                logger.debug("Scala field Schemas are " + scalaFieldSchemas.mkString(" "))
                 val columns = scalaFieldSchemas.map(fieldSchema => Column(justFieldName(fieldSchema.getName),
                   DataType.toDataType(fieldSchema.getType.toLowerCase()), fieldSchema.getComment)).toArray[Column]
                 val metaData = new TableMetaData(columns)
                 val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
                 resultSetWriter.addMetaData(metaData)
                 val result = new util.ArrayList[String]()
-                while(driver.getResults(result)){
-                  val scalaResult:scala.collection.mutable.Buffer[String] = result
+                while (driver.getResults(result)) {
+                  val scalaResult: scala.collection.mutable.Buffer[String] = result
                   scalaResult foreach { s =>
-                    val arr:Array[String] = s.split("\t")
-                    val arrAny:ArrayBuffer[Any] = new ArrayBuffer[Any]()
-                    if (arr.length != 0) arr foreach arrAny.add else for(i <-1 to columns.length) arrAny add ""
+                    val arr: Array[String] = s.split("\t")
+                    val arrAny: ArrayBuffer[Any] = new ArrayBuffer[Any]()
+                    if (arr.length != 0) arr foreach arrAny.add else for (i <- 1 to columns.length) arrAny add ""
                     resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
                   }
                   rows += result.size
@@ -177,15 +175,15 @@ class HiveEngineExecutor(outputPrintLimit:Int,
                 columnCount = if (fieldSchemas != null) fieldSchemas.size() else 0
                 engineExecutorContext.sendResultSet(resultSetWriter)
                 IOUtils.closeQuietly(resultSetWriter)
-              }catch{
-                case e if HiveDriverProxy.isCommandNeedRetryException(e) =>  tryCount += 1
+              } catch {
+                case e if HiveDriverProxy.isCommandNeedRetryException(e) => tryCount += 1
                   needRetry = true
                   HiveProgressHelper.clearHiveProgress()
                   singleSqlProgressMap.clear()
                   clearCurrentProgress()
                   HiveProgressHelper.storeSingleSQLProgress(0.0f)
-                  LOG.warn("Retry hive query with a different approach...")
-                case t:Throwable => LOG.error(s"query failed, reason:",t)
+                  logger.warn("Retry hive query with a different approach...")
+                case t: Throwable => logger.error(s"query failed, reason:", t)
                   HiveProgressHelper.clearHiveProgress()
                   clearCurrentProgress()
                   HiveProgressHelper.storeSingleSQLProgress(0.0f)
@@ -197,7 +195,7 @@ class HiveEngineExecutor(outputPrintLimit:Int,
             }
             if (hasResult) {
               engineExecutorContext.appendStdout(s"Fetched  $columnCount col(s) : $rows row(s) in hive")
-              LOG.info(s"$getName >> Fetched  $columnCount col(s) : $rows row(s) in hive")
+              logger.info(s"$getName >> Fetched  $columnCount col(s) : $rows row(s) in hive")
             }
             clearCurrentProgress()
             HiveProgressHelper.clearHiveProgress()
@@ -206,8 +204,8 @@ class HiveEngineExecutor(outputPrintLimit:Int,
             numberOfMRJobs = -1
             singleSqlProgressMap.clear()
             SuccessExecuteResponse()
-          case _ =>  val resp = proc.run(realCode.substring(tokens(0).length).trim)
-            if(resp.getResponseCode != 0) {
+          case _ => val resp = proc.run(realCode.substring(tokens(0).length).trim)
+            if (resp.getResponseCode != 0) {
               clearCurrentProgress()
               HiveProgressHelper.clearHiveProgress()
               singleSqlProgressMap.clear()
@@ -224,15 +222,15 @@ class HiveEngineExecutor(outputPrintLimit:Int,
     })
   }
 
-  private def clearCurrentProgress():Unit = {
+  private def clearCurrentProgress(): Unit = {
     reduce = 0
     map = 0
     singleLineProgress = 0.0f
   }
 
 
-  private def justFieldName(schemaName:String):String = {
-    LOG.debug("schemaName: " + schemaName)
+  private def justFieldName(schemaName: String): String = {
+    logger.debug("schemaName: " + schemaName)
     val arr = schemaName.split("\\.")
     if (arr.length == 2) arr(1) else schemaName
   }
@@ -250,55 +248,58 @@ class HiveEngineExecutor(outputPrintLimit:Int,
 
 
   override def progress(): Float = {
-    if (engineExecutorContext != null){
+    if (engineExecutorContext != null) {
       val totalSQLs = engineExecutorContext.getTotalParagraph
       val currentSQL = engineExecutorContext.getCurrentParagraph
       val currentBegin = (currentSQL - 1) / totalSQLs.asInstanceOf[Float]
 
       HadoopJobExecHelper.runningJobs synchronized {
         HadoopJobExecHelper.runningJobs foreach {
-          runningJob => val name = runningJob.getID.toString
+          runningJob =>
+            val name = runningJob.getID.toString
             val _progress = runningJob.reduceProgress() + runningJob.mapProgress()
             singleSqlProgressMap.put(name, _progress / 2)
         }
       }
-      var totalProgress:Float = 0.0F
+      var totalProgress: Float = 0.0F
       singleSqlProgressMap foreach {
         case (_name, _progress) => totalProgress += _progress
       }
-      try{
+      try {
         totalProgress = totalProgress / (numberOfMRJobs * totalSQLs)
-      }catch{
-        case e:Exception => totalProgress = 0.0f
+      } catch {
+        case e: Exception => totalProgress = 0.0f
         case _ => totalProgress = 0.0f
       }
 
       logger.info(s"hive progress is $totalProgress")
       if (totalProgress.isNaN) return 0.0f
       totalProgress + currentBegin
-    }else 0.0f
+    } else 0.0f
   }
 
   override def getProgressInfo: Array[JobProgressInfo] = {
-    val arrayBuffer:ArrayBuffer[JobProgressInfo] = new ArrayBuffer[JobProgressInfo]()
+    val arrayBuffer: ArrayBuffer[JobProgressInfo] = new ArrayBuffer[JobProgressInfo]()
     if (HadoopJobExecHelper.runningJobs.isEmpty) return arrayBuffer.toArray
-    singleSqlProgressMap synchronized{
+    singleSqlProgressMap synchronized {
       val set = singleSqlProgressMap.keySet()
       val tempSet = new util.HashSet[RunningJob](HadoopJobExecHelper.runningJobs)
       import scala.collection.JavaConverters._
       set.asScala foreach {
-        key => if (!tempSet.contains(key)){
-          arrayBuffer += JobProgressInfo(key, 200, 0, 0, 200)
-        }
+        key =>
+          if (!tempSet.contains(key)) {
+            arrayBuffer += JobProgressInfo(key, 200, 0, 0, 200)
+          }
       }
     }
 
     HadoopJobExecHelper.runningJobs synchronized {
       HadoopJobExecHelper.runningJobs foreach {
-        runningJob => val succeedTask = ((runningJob.mapProgress() + runningJob.reduceProgress()) * 100).asInstanceOf[Int]
-          if (succeedTask.equals(totalTask.asInstanceOf[Int]) || runningJob.isComplete || runningJob.isSuccessful){
+        runningJob =>
+          val succeedTask = ((runningJob.mapProgress() + runningJob.reduceProgress()) * 100).asInstanceOf[Int]
+          if (succeedTask.equals(totalTask.asInstanceOf[Int]) || runningJob.isComplete || runningJob.isSuccessful) {
             arrayBuffer += JobProgressInfo(runningJob.getID.toString, totalTask.asInstanceOf[Int], 0, 0, totalTask.asInstanceOf[Int])
-          }else{
+          } else {
             arrayBuffer += JobProgressInfo(runningJob.getID.toString, totalTask.asInstanceOf[Int], 1, 0, succeedTask)
           }
       }
@@ -310,12 +311,12 @@ class HiveEngineExecutor(outputPrintLimit:Int,
   override def log(): String = ""
 
   override def kill(): Boolean = {
-    LOG.info("hive begins to kill job")
+    logger.info("hive begins to kill job")
     HadoopJobExecHelper.killRunningJobs()
     clearCurrentProgress()
     singleSqlProgressMap.clear()
     HiveProgressHelper.clearHiveProgress()
-    LOG.info("hive killed job successfully")
+    logger.info("hive killed job successfully")
     true
   }
 

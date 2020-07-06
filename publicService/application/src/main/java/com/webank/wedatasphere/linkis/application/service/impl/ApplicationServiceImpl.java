@@ -23,14 +23,13 @@ import com.webank.wedatasphere.linkis.application.exception.ApplicationException
 import com.webank.wedatasphere.linkis.application.service.ApplicationService;
 import com.webank.wedatasphere.linkis.application.util.ApplicationUtil;
 import com.webank.wedatasphere.linkis.application.util.ApplicationUtils;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import lombok.Cleanup;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,9 +46,8 @@ import java.util.Map;
  * Created by johnnwang on 2019/1/18.
  */
 @Service
-public class ApplicationServiceImpl implements ApplicationService {
+public class ApplicationServiceImpl extends JavaLog implements ApplicationService {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Autowired
     ApplicationMapper applicationMapper;
@@ -117,7 +115,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             applicationMapper.insertProjectUser(projectUser);
         }catch (Exception e){
             //Violation of the unique constraint, temporarily not processed(违反唯一约束，暂时不做处理)
-            LOGGER.info(e.getMessage());
+            logger().info(e.getMessage());
         }
     }
 
@@ -149,16 +147,16 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .setConnectionRequestTimeout(1000).setSocketTimeout(5000).build();
             HttpGet httpGet = new HttpGet(userInitUrl);
             httpGet.setConfig(config);
-            LOGGER.info(req.getHeader("Cookie"));
+            logger().info(req.getHeader("Cookie"));
             httpGet.setHeader("Cookie", req.getHeader("Cookie"));
             @Cleanup CloseableHttpResponse response = client.execute(httpGet);
             int statusCode = response.getStatusLine().getStatusCode();
-            LOGGER.info("Initialize the user, the http request response status code is(初始化用户，http请求响应状态码为)："+statusCode);
+            logger().info("Initialize the user, the http request response status code is(初始化用户，http请求响应状态码为)："+statusCode);
             if(response.getStatusLine().getStatusCode()!=200){
                 throw new ApplicationException("Http request response status code is abnormal(http请求响应状态码异常)");
             }
         } catch (Exception e) {
-            LOGGER.info(e.getMessage());
+            logger().info(e.getMessage());
             return false;
         }
         return true;
@@ -252,16 +250,16 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .setConnectionRequestTimeout(1000).setSocketTimeout(5000).build();
             HttpGet httpGet = new HttpGet(userInitUrl);
             httpGet.setConfig(config);
-            LOGGER.info(req.getHeader("Cookie"));
+            logger().info(req.getHeader("Cookie"));
             httpGet.setHeader("Cookie", req.getHeader("Cookie"));
             @Cleanup CloseableHttpResponse response = client.execute(httpGet);
             int statusCode = response.getStatusLine().getStatusCode();
-            LOGGER.info("Initialize the user, the http request response status code is(初始化用户，http请求响应状态码为)："+statusCode);
+            logger().info("Initialize the user, the http request response status code is(初始化用户，http请求响应状态码为)："+statusCode);
             if(response.getStatusLine().getStatusCode()!=200){
                 throw new ApplicationException("Http request response status code is abnormal(http请求响应状态码异常)");
             }
         } catch (Exception e) {
-            LOGGER.info(e.getMessage());
+            logger().info(e.getMessage());
             return objectHashMap;
         }
         objectHashMap.put("isSucceed",true);

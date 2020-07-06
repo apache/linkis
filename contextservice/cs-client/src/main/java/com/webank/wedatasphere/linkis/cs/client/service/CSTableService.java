@@ -16,6 +16,7 @@
 package com.webank.wedatasphere.linkis.cs.client.service;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.client.ContextClient;
 import com.webank.wedatasphere.linkis.cs.client.builder.ContextClientFactory;
 import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
@@ -37,9 +38,8 @@ import java.util.List;
  * @Author alexyang
  * @Date 2020/3/9
  */
-public class CSTableService implements TableService {
+public class CSTableService extends JavaLog implements TableService {
 
-    private final static Logger logger = LoggerFactory.getLogger(CSTableService.class);
 
     private SearchService searchService = DefaultSearchService.getInstance();
 
@@ -88,7 +88,7 @@ public class CSTableService implements TableService {
             }
             return rsList;
         } catch (ErrorException e) {
-            logger.error("Deserialize contextID error. contextIDStr : " + contextIDStr);
+            logger().error("Deserialize contextID error. contextIDStr : " + contextIDStr);
             throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "getUpstreamTables error ", e);
         }
     }
@@ -188,7 +188,7 @@ public class CSTableService implements TableService {
                     }
                 } catch (Exception e) {
                     tableName = tmpTable;
-                    logger.warn("Failed to build tmp tableName", e);
+                    logger().warn("Failed to build tmp tableName", e);
                     break;
                 }
             }

@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.cs.highavailable.ha.impl;
 import com.google.gson.Gson;
 import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.HAContextID;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.CommonHAContextID;
@@ -33,9 +34,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ContextHAIDGeneratorImpl implements ContextHAIDGenerator {
+public class ContextHAIDGeneratorImpl extends JavaLog implements ContextHAIDGenerator {
 
-    private static final Logger logger = LoggerFactory.getLogger(ContextHAIDGeneratorImpl.class);
 
     @Autowired
     private BackupInstanceGenerator backupInstanceGenerator;
@@ -52,17 +52,17 @@ public class ContextHAIDGeneratorImpl implements ContextHAIDGenerator {
 
         ServiceInstance mainInstance = DataWorkCloudApplication.getServiceInstance();
         if (null == mainInstance || StringUtils.isBlank(mainInstance.getInstance())) {
-            logger.error("MainInstance cannot be null.");
+            logger().error("MainInstance cannot be null.");
             throw new CSErrorException(ErrorCode.INVALID_INSTANCE, "MainInstance backupInstance cannot be null.");
         }
         String mainInstanceAlias = instanceAliasConverter.instanceToAlias(mainInstance.getInstance());
         String backupInstance = backupInstanceGenerator.chooseBackupInstance(mainInstanceAlias);
         if (StringUtils.isBlank(backupInstance)) {
-            logger.error("Generate backupInstance cannot be null.");
+            logger().error("Generate backupInstance cannot be null.");
             throw new CSErrorException(ErrorCode.GENERATE_BACKUP_INSTANCE_ERROR, "Generate backupInstance cannot be null.");
         }
         HAContextID haContextID = new CommonHAContextID(mainInstanceAlias, backupInstance, contextIDKey);
-        logger.info("Generate a haContextID : {}" + new Gson().toJson(haContextID));
+        logger().info("Generate a haContextID : {}" + new Gson().toJson(haContextID));
         return haContextID;
     }
 

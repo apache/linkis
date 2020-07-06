@@ -14,6 +14,7 @@
 package com.webank.wedatasphere.linkis.metadatamanager.service;
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.metadatamanager.common.domain.MetaColumnInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +31,8 @@ import java.util.stream.Collectors;
  * @author davidhua
  * 2020/02/14
  */
-public class SqlConnection implements Closeable {
+public class SqlConnection extends JavaLog implements Closeable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SqlConnection.class);
 
     private static final CommonVars<String> SQL_DRIVER_CLASS =
             CommonVars.apply("wds.linkis.server.mdm.service.sql.driver", "com.mysql.jdbc.Driver");
@@ -46,7 +46,7 @@ public class SqlConnection implements Closeable {
 
     public SqlConnection(String host, Integer port,
                          String username, String password,
-                         Map<String, Object> extraParams ) throws ClassNotFoundException, SQLException {
+                         Map<String, Object> extraParams) throws ClassNotFoundException, SQLException {
         connectMessage = new ConnectMessage(host, port, username, password, extraParams);
         conn = getDBConnection(connectMessage, "");
         //Try to create statement
@@ -58,10 +58,10 @@ public class SqlConnection implements Closeable {
         java.util.List<java.lang.String> dataBaseName = new ArrayList<>();
         Statement stmt = null;
         ResultSet rs = null;
-        try{
+        try {
             stmt = conn.createStatement();
             rs = stmt.executeQuery("SHOW DATABASES");
-            while (rs.next()){
+            while (rs.next()) {
                 dataBaseName.add(rs.getString(1));
             }
         } finally {
@@ -81,19 +81,19 @@ public class SqlConnection implements Closeable {
                 tableNames.add(rs.getString(1));
             }
             return tableNames;
-        } finally{
+        } finally {
             closeResource(null, stmt, rs);
         }
     }
 
     public List<MetaColumnInfo> getColumns(String database, String table) throws SQLException, ClassNotFoundException {
         List<MetaColumnInfo> columns = new ArrayList<>();
-        String columnSql = "SELECT * FROM `" + database +"`.`" + table + "` WHERE 1 = 2";
+        String columnSql = "SELECT * FROM `" + database + "`.`" + table + "` WHERE 1 = 2";
         PreparedStatement ps = null;
         ResultSet rs = null;
         ResultSetMetaData meta = null;
         try {
-            List<String> primaryKeys = getPrimaryKeys(getDBConnection(connectMessage, database),  table);
+            List<String> primaryKeys = getPrimaryKeys(getDBConnection(connectMessage, database), table);
             ps = conn.prepareStatement(columnSql);
             rs = ps.executeQuery();
             meta = rs.getMetaData();
@@ -103,12 +103,12 @@ public class SqlConnection implements Closeable {
                 info.setIndex(i);
                 info.setName(meta.getColumnName(i));
                 info.setType(meta.getColumnTypeName(i));
-                if(primaryKeys.contains(meta.getColumnName(i))){
+                if (primaryKeys.contains(meta.getColumnName(i))) {
                     info.setPrimaryKey(true);
                 }
                 columns.add(info);
             }
-        }finally {
+        } finally {
             closeResource(null, ps, rs);
         }
         return columns;
@@ -116,8 +116,9 @@ public class SqlConnection implements Closeable {
 
     /**
      * Get primary keys
+     *
      * @param connection connection
-     * @param table table name
+     * @param table      table name
      * @return
      * @throws SQLException
      */
@@ -127,12 +128,12 @@ public class SqlConnection implements Closeable {
         try {
             DatabaseMetaData dbMeta = connection.getMetaData();
             rs = dbMeta.getPrimaryKeys(null, null, table);
-            while(rs.next()){
+            while (rs.next()) {
                 primaryKeys.add(rs.getString("column_name"));
             }
             return primaryKeys;
-        }finally{
-            if(null != rs){
+        } finally {
+            if (null != rs) {
                 closeResource(connection, null, rs);
             }
         }
@@ -140,23 +141,24 @@ public class SqlConnection implements Closeable {
 
     /**
      * close database resource
+     *
      * @param connection connection
-     * @param statement statement
-     * @param resultSet result set
+     * @param statement  statement
+     * @param resultSet  result set
      */
-    private void closeResource(Connection connection,  Statement statement, ResultSet resultSet){
+    private void closeResource(Connection connection, Statement statement, ResultSet resultSet) {
         try {
-            if(null != resultSet && !resultSet.isClosed()) {
+            if (null != resultSet && !resultSet.isClosed()) {
                 resultSet.close();
             }
-            if(null != statement && !statement.isClosed()){
+            if (null != statement && !statement.isClosed()) {
                 statement.close();
             }
-            if(null != connection && !connection.isClosed()){
+            if (null != connection && !connection.isClosed()) {
                 connection.close();
             }
-        }catch (SQLException e){
-            LOG.warn("Fail to release resource [" + e.getMessage() +"]", e);
+        } catch (SQLException e) {
+            logger().warn("Fail to release resource [" + e.getMessage() + "]", e);
         }
     }
 
@@ -177,7 +179,7 @@ public class SqlConnection implements Closeable {
                 .collect(Collectors.joining("&"));
         Class.forName(SQL_DRIVER_CLASS.getValue());
         String url = String.format(SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
-        if(!connectMessage.extraParams.isEmpty()) {
+        if (!connectMessage.extraParams.isEmpty()) {
             url += "?" + extraParamString;
         }
         return DriverManager.getConnection(url, connectMessage.username, connectMessage.password);
@@ -186,7 +188,7 @@ public class SqlConnection implements Closeable {
     /**
      * Connect message
      */
-    private static class ConnectMessage{
+    private static class ConnectMessage {
         private String host;
 
         private Integer port;
@@ -199,7 +201,7 @@ public class SqlConnection implements Closeable {
 
         public ConnectMessage(String host, Integer port,
                               String username, String password,
-                              Map<String, Object> extraParams){
+                              Map<String, Object> extraParams) {
             this.host = host;
             this.port = port;
             this.username = username;

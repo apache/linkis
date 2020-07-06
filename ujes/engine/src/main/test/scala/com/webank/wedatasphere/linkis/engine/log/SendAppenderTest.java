@@ -37,7 +37,7 @@ public class SendAppenderTest {
     private static final Logger logger = LoggerFactory.getLogger(SendAppenderTest.class);
 
     @Before
-    public void init(){
+    public void init() {
         LogListener logListener = new LogListener() {
             @Override
             public void onLogUpdate(Job job, String log) {
@@ -48,7 +48,7 @@ public class SendAppenderTest {
     }
 
     @Test
-    public void testAppend()throws Exception{
+    public void testAppend() throws Exception {
 
         logger.info("I am a logger");
         logger.info("I am a logger1");
@@ -58,9 +58,9 @@ public class SendAppenderTest {
         logger.info("I am a logger5");
         logger.info("I am a logger6");
         logger.info("I am a logger7");
-        try{
+        try {
             new FileInputStream("sss");
-        }catch(Exception e){
+        } catch (Exception e) {
             logger.error("this is an error", e);
         }
         Thread.sleep(3000);

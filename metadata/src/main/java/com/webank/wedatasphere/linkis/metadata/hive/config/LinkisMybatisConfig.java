@@ -16,6 +16,7 @@
 package com.webank.wedatasphere.linkis.metadata.hive.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.metadata.util.DWSConfig;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -45,9 +46,7 @@ import java.util.*;
 
 @Configuration
 @EnableTransactionManagement(order = 2)
-public class LinkisMybatisConfig {
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+public class LinkisMybatisConfig extends JavaLog {
 
     private DruidDataSource hiveDataSource() {
         DruidDataSource datasource = new DruidDataSource();
@@ -62,13 +61,13 @@ public class LinkisMybatisConfig {
         boolean testOnBorrow = true;
         boolean testOnReturn = true;
 
-        String url =  DWSConfig.HIVE_META_URL.getValue();
-        String username =  DWSConfig.HIVE_META_USER.getValue();
+        String url = DWSConfig.HIVE_META_URL.getValue();
+        String username = DWSConfig.HIVE_META_USER.getValue();
         String password = DWSConfig.HIVE_META_PASSWORD.getValue();
-        logger.info("数据库连接地址信息=" + url);
-        if(StringUtils.isBlank(url) || StringUtils.isBlank(username)  || StringUtils.isBlank(password)) {
-           throw new  RuntimeException("The metadata service depends on hive metadata JDBC information. " +
-                   "Please configure hive.meta related parameters(metadata服务依赖hive元数据JDBC的信息，请配置hive.meta相关参数).");
+        logger().info("数据库连接地址信息=" + url);
+        if (StringUtils.isBlank(url) || StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+            throw new RuntimeException("The metadata service depends on hive metadata JDBC information. " +
+                    "Please configure hive.meta related parameters(metadata服务依赖hive元数据JDBC的信息，请配置hive.meta相关参数).");
         }
         datasource.setUrl(url);
         datasource.setUsername(username);
@@ -118,7 +117,7 @@ public class LinkisMybatisConfig {
         datasource.setTestOnBorrow(testOnBorrow);
         datasource.setTestOnReturn(testOnReturn);
         datasource.setPoolPreparedStatements(poolPreparedStatements);
-        logger.info("Database connection address information(数据库连接地址信息)=" + dbUrl);
+        logger().info("Database connection address information(数据库连接地址信息)=" + dbUrl);
         return datasource;
     }
 
@@ -132,7 +131,7 @@ public class LinkisMybatisConfig {
             hiveDataSource.init();
             mysqlDataSource.init();
         } catch (SQLException sql) {
-            logger.error("连接数据库失败：",sql);
+            logger().error("连接数据库失败：", sql);
         }
 
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
@@ -156,34 +155,34 @@ public class LinkisMybatisConfig {
             SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
             sessionFactoryBean.setDataSource(dataSource);
 
-            logger.info("Mybatis typeAliasesPackage=" + typeAliasesPackage);
-            logger.info("Mybatis mapperLocations=" + mapperLocations);
-            logger.info("Mybatis configLocation=" + configLocation);
+            logger().info("Mybatis typeAliasesPackage=" + typeAliasesPackage);
+            logger().info("Mybatis mapperLocations=" + mapperLocations);
+            logger().info("Mybatis configLocation=" + configLocation);
             // Read configuration(读取配置)
             sessionFactoryBean.setTypeAliasesPackage(typeAliasesPackage);
 
             //Set the location of the mapper.xml file(设置mapper.xml文件所在位置)
-            if(StringUtils.isNotBlank(mapperLocations)) {
+            if (StringUtils.isNotBlank(mapperLocations)) {
                 String[] mapperArray = mapperLocations.split(",");
                 List<Resource> resources = new ArrayList<>();
-                for(String mapperLocation : mapperArray){
-                    CollectionUtils.addAll(resources,new PathMatchingResourcePatternResolver().getResources(mapperLocation));
+                for (String mapperLocation : mapperArray) {
+                    CollectionUtils.addAll(resources, new PathMatchingResourcePatternResolver().getResources(mapperLocation));
                 }
                 sessionFactoryBean.setMapperLocations(resources.toArray(new Resource[0]));
             }
            /* Resource[] resources = new PathMatchingResourcePatternResolver().getResources(mapperLocations);
             sessionFactoryBean.setMapperLocations(resources);*/
-           // Add mybatis database id provider configuration to support hive postgresql metadata(添加MyBatis配置以支持Hive PG元数据库)
+            // Add mybatis database id provider configuration to support hive postgresql metadata(添加MyBatis配置以支持Hive PG元数据库)
             sessionFactoryBean.setDatabaseIdProvider(getDatabaseIdProvider());
 //            Set the location of the mybatis-config.xml configuration file(设置mybatis-config.xml配置文件位置)
             sessionFactoryBean.setConfigLocation(new DefaultResourceLoader().getResource(configLocation));
 
             return sessionFactoryBean.getObject();
         } catch (IOException e) {
-            logger.error("mybatis resolver mapper*xml is error",e);
+            logger().error("mybatis resolver mapper*xml is error", e);
             return null;
         } catch (Exception e) {
-            logger.error("mybatis sqlSessionFactoryBean create error",e);
+            logger().error("mybatis sqlSessionFactoryBean create error", e);
             return null;
         }
     }

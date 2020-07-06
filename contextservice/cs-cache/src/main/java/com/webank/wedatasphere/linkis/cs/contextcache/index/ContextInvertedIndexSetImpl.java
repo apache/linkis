@@ -15,6 +15,7 @@
  */
 package com.webank.wedatasphere.linkis.cs.contextcache.index;
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
 import org.slf4j.Logger;
@@ -26,9 +27,8 @@ import java.util.*;
  * @author peacewong
  * @date 2020/2/10 19:54
  */
-public class ContextInvertedIndexSetImpl  implements ContextInvertedIndexSet{
+public class ContextInvertedIndexSetImpl extends JavaLog implements ContextInvertedIndexSet{
 
-    private static final Logger logger = LoggerFactory.getLogger(ContextInvertedIndexSetImpl.class);
 
     private Map<String, ContextInvertedIndex> invertedIndexMap = new HashMap<>();
 
@@ -38,7 +38,7 @@ public class ContextInvertedIndexSetImpl  implements ContextInvertedIndexSet{
         if (! invertedIndexMap.containsKey(csType)){
             synchronized (csType.intern()){
                 if (! invertedIndexMap.containsKey(csType)){
-                    logger.info("For ContextType({}) init invertedIndex", csType);
+                    logger().info("For ContextType({}) init invertedIndex", csType);
                     invertedIndexMap.put(csType, new DefaultContextInvertedIndex());
                 }
             }

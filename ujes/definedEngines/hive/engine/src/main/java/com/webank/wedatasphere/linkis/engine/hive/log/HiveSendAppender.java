@@ -40,8 +40,6 @@ import java.util.List;
 @Plugin(name = "HiveSend", category = "Core", elementType = "appender", printObject = true)
 public class HiveSendAppender extends SendAppender{
 
-    private static final Logger logger = LoggerFactory.getLogger(HiveSendAppender.class);
-
     public HiveSendAppender(final String name, final Filter filter, final Layout<? extends Serializable> layout,
                             final boolean ignoreExceptions){
         super(name, filter, layout, ignoreExceptions);

@@ -15,6 +15,7 @@
  */
 package com.webank.wedatasphere.linkis.metadata.hive.config;
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
@@ -32,9 +33,8 @@ import java.lang.reflect.Method;
 
 @Aspect
 @Component
-public class MultiSourceExAop implements Ordered {
+public class MultiSourceExAop extends JavaLog implements Ordered {
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Pointcut(value = "@annotation(com.webank.wedatasphere.linkis.metadata.hive.config.DataSource)")
     private void cut() {
@@ -57,15 +57,15 @@ public class MultiSourceExAop implements Ordered {
         DataSource datasource = currentMethod.getAnnotation(DataSource.class);
         if (datasource != null) {
             DataSourceContextHolder.setDataSourceType(datasource.name());
-            log.debug("设置数据源为：" + datasource.name());
+            logger().debug("设置数据源为：" + datasource.name());
         } else {
             DataSourceContextHolder.setDataSourceType(DSEnum.FIRST_DATA_SOURCE);
-            log.debug("设置数据源为：hiveDataSource");
+            logger().debug("设置数据源为：hiveDataSource");
         }
         try {
             return point.proceed();
         } finally {
-            log.debug("清空数据源信息！");
+            logger().debug("清空数据源信息！");
             DataSourceContextHolder.clearDataSourceType();
         }
     }

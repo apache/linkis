@@ -15,6 +15,7 @@
  */
 package com.webank.wedatasphere.linkis.cs.persistence.persistence.impl;
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.common.entity.listener.CommonContextKeyListenerDomain;
 import com.webank.wedatasphere.linkis.cs.common.entity.listener.ContextKeyListenerDomain;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
@@ -40,7 +41,7 @@ import java.util.stream.Collectors;
  * Created by patinousward on 2020/2/17.
  */
 @Component
-public class ContextKeyListenerPersistenceImpl implements ContextKeyListenerPersistence {
+public class ContextKeyListenerPersistenceImpl extends JavaLog implements ContextKeyListenerPersistence {
 
     @Autowired
     private ContextKeyListenerMapper contextKeyListenerMapper;
@@ -51,7 +52,6 @@ public class ContextKeyListenerPersistenceImpl implements ContextKeyListenerPers
     @Autowired
     private ContextMapPersistence contextMapPersistence;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public void create(ContextID contextID, ContextKeyListenerDomain contextKeyListenerDomain) throws CSErrorException {
@@ -85,7 +85,7 @@ public class ContextKeyListenerPersistenceImpl implements ContextKeyListenerPers
                 .map(PersistenceContextKeyValue::getId).collect(Collectors.toList());
         ArrayList<ContextKeyListenerDomain> domains = new ArrayList<>();
         if (!keyIds.isEmpty()) {
-            logger.info("fetch %s keyIds by contextId %s", keyIds.size(), contextID.getContextId());
+            logger().info("fetch %s keyIds by contextId %s", keyIds.size(), contextID.getContextId());
             List<PersistenceContextKeyListener> listeners = contextKeyListenerMapper.getAll(keyIds);
             for (PersistenceContextKeyListener listener : listeners) {
                 domains.add(pDomainToCommon(listener, contextID, pKVs));

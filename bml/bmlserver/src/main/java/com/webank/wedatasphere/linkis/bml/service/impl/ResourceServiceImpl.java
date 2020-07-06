@@ -24,6 +24,7 @@ import com.webank.wedatasphere.linkis.bml.dao.ResourceDao;
 import com.webank.wedatasphere.linkis.bml.dao.VersionDao;
 import com.webank.wedatasphere.linkis.bml.service.ResourceService;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -44,9 +45,7 @@ import java.util.Map;
  * Created by cooperyang on 2019/5/17.
  */
 @Service
-public class ResourceServiceImpl implements ResourceService {
-
-    private static final Logger logger = LoggerFactory.getLogger(ResourceServiceImpl.class);
+public class ResourceServiceImpl extends JavaLog implements ResourceService {
 
     @Autowired
     private ResourceDao resourceDao;
@@ -101,7 +100,7 @@ public class ResourceServiceImpl implements ResourceService {
             Resource resource = Resource.createNewResource(resourceId, user, fileName, properties);
             //插入一条记录到resource表
             long id = resourceDao.uploadResource(resource);
-            logger.info("{} uploaded a resource and resourceId is {}", user, resource.getResourceId());
+            logger().info("{} uploaded a resource and resourceId is {}", user, resource.getResourceId());
             //插入一条记录到resource version表
             String clientIp = (String) properties.get("clientIp");
             ResourceVersion resourceVersion = ResourceVersion.createNewResourceVersion(resourceId, path, md5String,

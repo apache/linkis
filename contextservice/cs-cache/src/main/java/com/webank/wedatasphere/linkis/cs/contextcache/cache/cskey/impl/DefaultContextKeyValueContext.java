@@ -15,6 +15,7 @@
  */
 package com.webank.wedatasphere.linkis.cs.contextcache.cache.cskey.impl;
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
@@ -48,9 +49,7 @@ import java.util.Set;
  */
 @Component
 @Scope("prototype")
-public class DefaultContextKeyValueContext implements ContextKeyValueContext {
-
-    private static final Logger logger = LoggerFactory.getLogger(DefaultContextKeyValueContext.class);
+public class DefaultContextKeyValueContext extends JavaLog implements ContextKeyValueContext {
 
     ContextInvertedIndexSet contextInvertedIndexSet = new ContextInvertedIndexSetImpl();
 
@@ -61,7 +60,7 @@ public class DefaultContextKeyValueContext implements ContextKeyValueContext {
     private ContextID contextID;
 
     @Autowired
-    ContextKeyValueParser contextKeyValueParser ;
+    ContextKeyValueParser contextKeyValueParser;
 
     @Override
     public ContextID getContextID() {
@@ -70,10 +69,10 @@ public class DefaultContextKeyValueContext implements ContextKeyValueContext {
 
     @Override
     public void setContextID(ContextID contextID) throws CSWarnException {
-        if (this.contextID == null){
+        if (this.contextID == null) {
             this.contextID = contextID;
         } else {
-            logger.error("Do not set contextID repeatedly.The current context is {}", this.contextID.getContextId());
+            logger().error("Do not set contextID repeatedly.The current context is {}", this.contextID.getContextId());
             throw new CSWarnException(97001, "Do not set contextID repeatedly");
         }
 
@@ -109,7 +108,7 @@ public class DefaultContextKeyValueContext implements ContextKeyValueContext {
         defaultContextKeyEvent.setContextID(contextID);
         defaultContextKeyEvent.setContextKeyValue(contextKeyValue);
         defaultContextKeyEvent.setOldValue(oldValue);
-        if (null != oldValue ){
+        if (null != oldValue) {
             defaultContextKeyEvent.setOperateType(OperateType.UPDATE);
         } else {
             defaultContextKeyEvent.setOperateType(OperateType.ADD);
@@ -124,7 +123,7 @@ public class DefaultContextKeyValueContext implements ContextKeyValueContext {
             return null;
         }
         ContextKeyValue contextKeyValue = getContextValueMapSet().remove(contextKey.getKey(), contextKey.getContextType());
-        if (null == contextKeyValue){
+        if (null == contextKeyValue) {
             return null;
         }
         Set<String> keyWords = getContextKeyValueParser().parse(contextKeyValue);
@@ -133,7 +132,7 @@ public class DefaultContextKeyValueContext implements ContextKeyValueContext {
         while (iterator.hasNext()) {
             contextInvertedIndexSet.remove(iterator.next(), contextKey.getKey(), contextKey.getContextType());
         }
-        logger.info("Succeed to remove contextKey of {}", contextKey.getKey());
+        logger().info("Succeed to remove contextKey of {}", contextKey.getKey());
         DefaultContextKeyEvent defaultContextKeyEvent = new DefaultContextKeyEvent();
         defaultContextKeyEvent.setContextID(contextID);
         defaultContextKeyEvent.setContextKeyValue(contextKeyValue);
@@ -184,10 +183,10 @@ public class DefaultContextKeyValueContext implements ContextKeyValueContext {
         defaultContextKeyEvent.setOperateType(OperateType.REMOVEALL);
         listenerBus.post(defaultContextKeyEvent);
         getContextInvertedIndexSet().removeAll(contextType);
-        logger.warn("ContextID({}) removeAll contextKey of  contextType({})", contextID.getContextId(), contextType.name());
+        logger().warn("ContextID({}) removeAll contextKey of  contextType({})", contextID.getContextId(),
+                contextType.name());
         return getContextValueMapSet().removeAll(contextType);
     }
-
 
 
     @Override
@@ -201,11 +200,11 @@ public class DefaultContextKeyValueContext implements ContextKeyValueContext {
     @Override
     public void removeByKeyPrefix(String preFix) {
         List<ContextKey> removeKeys = getContextValueMapSet().findByKeyPrefix(preFix);
-        if (CollectionUtils.isNotEmpty(removeKeys)){
-            for (ContextKey key : removeKeys){
+        if (CollectionUtils.isNotEmpty(removeKeys)) {
+            for (ContextKey key : removeKeys) {
                 remove(key);
             }
-            logger.warn("Remove keyValue by key preFix: " + preFix);
+            logger().warn("Remove keyValue by key preFix: " + preFix);
         }
 
     }
@@ -213,11 +212,11 @@ public class DefaultContextKeyValueContext implements ContextKeyValueContext {
     @Override
     public void removeByKeyPrefix(String preFix, ContextType csType) {
         List<ContextKey> removeKeys = getContextValueMapSet().findByKeyPrefix(preFix, csType);
-        if (CollectionUtils.isNotEmpty(removeKeys)){
-            for (ContextKey key : removeKeys){
+        if (CollectionUtils.isNotEmpty(removeKeys)) {
+            for (ContextKey key : removeKeys) {
                 remove(key);
             }
-            logger.warn("Remove keyValue by key preFix{} and csType{} ", preFix, csType);
+            logger().warn("Remove keyValue by key preFix{} and csType{} ", preFix, csType);
         }
     }
 }

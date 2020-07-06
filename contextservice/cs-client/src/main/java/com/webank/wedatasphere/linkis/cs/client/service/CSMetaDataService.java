@@ -17,6 +17,7 @@ package com.webank.wedatasphere.linkis.cs.client.service;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.common.io.MetaData;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
@@ -32,9 +33,8 @@ import java.util.Map;
  * @Author alexyang
  * @Date 2020/3/9
  */
-public class CSMetaDataService implements MetaDataService {
+public class CSMetaDataService extends JavaLog implements MetaDataService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CSMetaDataService.class);
 
     private static CSMetaDataService csMetaDataService;
 
@@ -62,7 +62,7 @@ public class CSMetaDataService implements MetaDataService {
             ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
             return DefaultSearchService.getInstance().searchUpstreamContextMap(contextID, nodeName, Integer.MAX_VALUE, MetaData.class);
         } catch (ErrorException e) {
-            logger.error("Deserialize contextid error. contextID : " + contextIDStr + ", e ", e);
+            logger().error("Deserialize contextid error. contextID : " + contextIDStr + ", e ", e);
             throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize contextid error. contextID : " + contextIDStr + ", e " + e.getDesc());
         }
     }

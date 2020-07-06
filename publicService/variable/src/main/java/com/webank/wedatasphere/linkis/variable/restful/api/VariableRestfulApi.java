@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.variable.restful.api;
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
@@ -45,14 +46,12 @@ import java.util.List;
 @Path("/variable")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class VariableRestfulApi {
+public class VariableRestfulApi extends JavaLog {
 
     @Autowired
     private VariableService variableService;
 
     ObjectMapper mapper = new ObjectMapper();
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /*@POST
     @Path("addGlobalVariable")

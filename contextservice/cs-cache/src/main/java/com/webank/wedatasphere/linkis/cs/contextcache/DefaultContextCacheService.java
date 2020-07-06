@@ -15,6 +15,7 @@
  */
 package com.webank.wedatasphere.linkis.cs.contextcache;
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextScope;
 import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
@@ -40,9 +41,7 @@ import java.util.stream.Collectors;
  * @date 2020/2/12 21:25
  */
 @Component
-public class DefaultContextCacheService implements ContextCacheService {
-
-    private static final Logger logger = LoggerFactory.getLogger(DefaultContextCacheService.class);
+public class DefaultContextCacheService extends JavaLog implements ContextCacheService {
 
 
     @Autowired
@@ -55,10 +54,12 @@ public class DefaultContextCacheService implements ContextCacheService {
             return null;
         }
 
-        logger.info("Start to put contextKey({}) to ContextID({})", csKeyValue.getContextKey().getKey(), contextID.getContextId());
+        logger().info("Start to put contextKey({}) to ContextID({})", csKeyValue.getContextKey().getKey(),
+                contextID.getContextId());
         ContextIDValue contextIDValue = contextCache.getContextIDValue(contextID);
         ContextKeyValue oldValue = contextIDValue.getContextKeyValueContext().put(csKeyValue);
-        logger.info("Finished to put contextKey({}) to ContextID({})", csKeyValue.getContextKey().getKey(), contextID.getContextId());
+        logger().info("Finished to put contextKey({}) to ContextID({})", csKeyValue.getContextKey().getKey(),
+                contextID.getContextId());
 
         return oldValue;
     }
@@ -72,7 +73,7 @@ public class DefaultContextCacheService implements ContextCacheService {
             ContextIDValue contextIDValue = contextCache.getContextIDValue(contextID);
             return contextIDValue.getContextKeyValueContext().remove(csKey);
         } catch (Exception e) {
-            logger.error(String.format("Failed to rest contextID(%s) of csKey(%s)",
+            logger().error(String.format("Failed to rest contextID(%s) of csKey(%s)",
                     contextID.getContextId(), csKey.getKey()), e);
         }
         return null;
@@ -87,7 +88,7 @@ public class DefaultContextCacheService implements ContextCacheService {
             ContextIDValue contextIDValue = contextCache.getContextIDValue(contextID);
             return contextIDValue.getContextKeyValueContext().getContextKeyValue(csKey, csKey.getContextType());
         } catch (Exception e) {
-            logger.error(String.format("Failed to get contextID(%s) of csKey(%s)",
+            logger().error(String.format("Failed to get contextID(%s) of csKey(%s)",
                     contextID.getContextId(), csKey.getKey()), e);
         }
         return null;
@@ -102,7 +103,7 @@ public class DefaultContextCacheService implements ContextCacheService {
             ContextIDValue contextIDValue = contextCache.getContextIDValue(contextID);
             return contextIDValue.getContextKeyValueContext().getValues(keyword, csType);
         } catch (Exception e) {
-            logger.error(String.format("Failed to getValues contextID(%s) of keyword(%s)",
+            logger().error(String.format("Failed to getValues contextID(%s) of keyword(%s)",
                     contextID.getContextId(), keyword), e);
         }
         return null;
@@ -117,7 +118,7 @@ public class DefaultContextCacheService implements ContextCacheService {
             ContextIDValue contextIDValue = contextCache.getContextIDValue(contextID);
             return contextIDValue.getContextKeyValueContext().getAllLikes(regex, csType);
         } catch (Exception e) {
-            logger.error(String.format("Failed to getAllLikes contextID(%s) of regex(%s)",
+            logger().error(String.format("Failed to getAllLikes contextID(%s) of regex(%s)",
                     contextID.getContextId(), regex), e);
         }
         return null;
@@ -133,7 +134,7 @@ public class DefaultContextCacheService implements ContextCacheService {
             ContextIDValue contextIDValue = contextCache.getContextIDValue(contextID);
             return contextIDValue.getContextKeyValueContext().getAll();
         } catch (Exception e) {
-            logger.error(String.format("Failed to getAllByType contextID(%s)",
+            logger().error(String.format("Failed to getAllByType contextID(%s)",
                     contextID.getContextId()), e);
         }
         return null;
@@ -153,7 +154,7 @@ public class DefaultContextCacheService implements ContextCacheService {
                         .collect(Collectors.toList());
             }
         } catch (Exception e) {
-            logger.error(String.format("Failed to getAllByScope contextID(%s) of ContextScope(%s) of csType(%s)",
+            logger().error(String.format("Failed to getAllByScope contextID(%s) of ContextScope(%s) of csType(%s)",
                     contextID.getContextId(), scope, csType), e);
         }
         return null;
@@ -169,7 +170,7 @@ public class DefaultContextCacheService implements ContextCacheService {
             List<ContextKeyValue> allValues = contextIDValue.getContextKeyValueContext().getAllValues(csType);
             return allValues;
         } catch (Exception e) {
-            logger.error(String.format("Failed to getAllByType contextID(%s) of csType(%s)",
+            logger().error(String.format("Failed to getAllByType contextID(%s) of csType(%s)",
                     contextID.getContextId(), csType), e);
         }
         return null;
@@ -184,7 +185,7 @@ public class DefaultContextCacheService implements ContextCacheService {
             ContextIDValue contextIDValue = contextCache.getContextIDValue(contextID);
             return contextIDValue.getContextKeyValueContext().remove(csKey);
         } catch (Exception e) {
-            logger.error(String.format("Failed to remove contextID(%s) of csKey(%s)",
+            logger().error(String.format("Failed to remove contextID(%s) of csKey(%s)",
                     contextID.getContextId(), csKey.getKey()), e);
         }
         return null;
@@ -198,7 +199,7 @@ public class DefaultContextCacheService implements ContextCacheService {
         try {
             contextCache.remove(contextID);
         } catch (Exception e) {
-            logger.error(String.format("Failed to removeAll contextID(%s)", contextID.getContextId()), e);
+            logger().error(String.format("Failed to removeAll contextID(%s)", contextID.getContextId()), e);
         }
     }
 
@@ -222,7 +223,8 @@ public class DefaultContextCacheService implements ContextCacheService {
             ContextIDValue contextIDValue = contextCache.getContextIDValue(contextID);
             contextIDValue.getContextKeyValueContext().removeAll(csType);
         } catch (Exception e) {
-            logger.error(String.format("Failed to removeAll contextID(%s) of csType(%s)", contextID.getContextId(), csType), e);
+            logger().error(String.format("Failed to removeAll contextID(%s) of csType(%s)", contextID.getContextId(),
+                    csType), e);
         }
     }
 
@@ -235,7 +237,7 @@ public class DefaultContextCacheService implements ContextCacheService {
             ContextIDValue contextIDValue = contextCache.getContextIDValue(contextID);
             contextIDValue.getContextKeyValueContext().removeByKeyPrefix(preFix);
         } catch (Exception e) {
-            logger.error(String.format("Failed to removeByKeyPrefix contextID(%s) of key preFix(%s)",
+            logger().error(String.format("Failed to removeByKeyPrefix contextID(%s) of key preFix(%s)",
                     contextID.getContextId(), preFix), e);
         }
     }
@@ -249,7 +251,7 @@ public class DefaultContextCacheService implements ContextCacheService {
             ContextIDValue contextIDValue = contextCache.getContextIDValue(contextID);
             contextIDValue.getContextKeyValueContext().removeByKeyPrefix(preFix, csType);
         } catch (Exception e) {
-            logger.error(String.format("Failed to removeByKeyPrefix contextID(%s) of key preFix(%s) and csyTye(%s)",
+            logger().error(String.format("Failed to removeByKeyPrefix contextID(%s) of key preFix(%s) and csyTye(%s)",
                     contextID.getContextId(), preFix, csType.name()), e);
         }
     }

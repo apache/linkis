@@ -109,7 +109,6 @@ object Main{
 //  private val sender:Sender =
 //    Sender.getSender(EntranceConfiguration.QUERY_PERSISTENCE_SPRING_APPLICATION_NAME.getValue, 1000 * 60 * 60, 100)
 //
-//  private val logger:Logger = LoggerFactory.getLogger(getClass)
 //  private var errorCodes:Array[ErrorCode] = _
 //
 //  class FetchErrorCodeThread extends Runnable{

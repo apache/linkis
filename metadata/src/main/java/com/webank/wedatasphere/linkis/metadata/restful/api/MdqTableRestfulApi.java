@@ -16,6 +16,7 @@
 package com.webank.wedatasphere.linkis.metadata.restful.api;
 
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.metadata.ddl.ImportDDLCreator;
 import com.webank.wedatasphere.linkis.metadata.ddl.ScalaDDLCreator;
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableBO;
@@ -45,9 +46,7 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Component
-public class MdqTableRestfulApi {
-
-    private static final Logger logger = LoggerFactory.getLogger(MdqTableRestfulApi.class);
+public class MdqTableRestfulApi extends JavaLog {
 
     @Autowired
     private MdqService mdqService;
@@ -64,7 +63,7 @@ public class MdqTableRestfulApi {
         } else {
             tableBaseInfo = mdqService.getTableBaseInfoFromHive(database, tableName, userName);
         }
-        return Message.messageToResponse(Message.ok().data("tableBaseInfo",tableBaseInfo));
+        return Message.messageToResponse(Message.ok().data("tableBaseInfo", tableBaseInfo));
     }
 
     @GET
@@ -78,7 +77,7 @@ public class MdqTableRestfulApi {
         } else {
             tableFieldsInfo = mdqService.getTableFieldsInfoFromHive(database, tableName, userName);
         }
-        return Message.messageToResponse(Message.ok().data("tableFieldsInfo",tableFieldsInfo));
+        return Message.messageToResponse(Message.ok().data("tableFieldsInfo", tableFieldsInfo));
     }
 
     @GET
@@ -87,44 +86,43 @@ public class MdqTableRestfulApi {
                                           @Context HttpServletRequest req) throws IOException {
         String userName = SecurityFilter.getLoginUsername(req);
         MdqTableStatisticInfoVO tableStatisticInfo = mdqService.getTableStatisticInfo(database, tableName, userName);
-        return Message.messageToResponse(Message.ok().data("tableStatisticInfo",tableStatisticInfo));
+        return Message.messageToResponse(Message.ok().data("tableStatisticInfo", tableStatisticInfo));
     }
 
     @GET
     @Path("active")
-    public Response active(@QueryParam("tableId") Long tableId,@Context HttpServletRequest req) {
+    public Response active(@QueryParam("tableId") Long tableId, @Context HttpServletRequest req) {
         mdqService.activateTable(tableId);
         return Message.messageToResponse(Message.ok());
     }
 
     @POST
     @Path("persistTable")
-    public Response persistTable(@Context HttpServletRequest req,JsonNode json) throws IOException {
+    public Response persistTable(@Context HttpServletRequest req, JsonNode json) throws IOException {
         String userName = SecurityFilter.getLoginUsername(req);
         MdqTableBO table = mapper.readValue(json.get("table"), MdqTableBO.class);
-        mdqService.persistTable(table,userName);
+        mdqService.persistTable(table, userName);
         return Message.messageToResponse(Message.ok());
     }
 
 
     @POST
     @Path("displaysql")
-    public Response displaySql(@Context HttpServletRequest request, JsonNode json){
+    public Response displaySql(@Context HttpServletRequest request, JsonNode json) {
         String userName = SecurityFilter.getLoginUsername(request);
-        logger.info("display sql for user {} ", userName);
-        StringBuilder sb = new StringBuilder();
-        String retSql = "";
-        MdqTableBO tableBO = null;
-        try{
+        logger().info("display sql for user {} ", userName);
+        String retSql;
+        MdqTableBO tableBO;
+        try {
             tableBO = mapper.readValue(json.get("table"), MdqTableBO.class);
             MdqTableImportInfoBO importInfo = tableBO.getImportInfo();
-            if (importInfo != null){
+            if (importInfo != null) {
                 retSql = ImportDDLCreator.createDDL(tableBO, userName);
-            }else{
+            } else {
                 retSql = ScalaDDLCreator.createDDL(tableBO, userName);
             }
-        }catch(Exception e){
-            logger.error("json parse to bean failed",e);
+        } catch (Exception e) {
+            logger().error("json parse to bean failed", e);
             Message message = Message.error("display ddl failed");
             return Message.messageToResponse(message);
         }

@@ -15,6 +15,7 @@ package com.webank.wedatasphere.linkis.metadatamanager.common.service;
 
 import com.google.common.cache.Cache;
 import com.webank.wedatasphere.linkis.common.exception.WarnException;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.metadatamanager.common.Json;
 import com.webank.wedatasphere.linkis.metadatamanager.common.cache.CacheManager;
 import com.webank.wedatasphere.linkis.metadatamanager.common.cache.ConnCacheManager;
@@ -37,8 +38,7 @@ import java.util.function.Function;
 /**
  * Created by jackyxxie on 2020/2/10.
  */
-public abstract class AbstractMetaService<C extends Closeable> implements MetadataService {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractMetaService.class);
+public abstract class AbstractMetaService<C extends Closeable> extends JavaLog implements MetadataService {
     private static final String CONN_CACHE_REQ = "_STORED";
 
 
@@ -50,17 +50,19 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
     protected Cache<String, MetadataConnection<C>> reqCache;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         connCacheManager = ConnCacheManager.custom();
         initCache(connCacheManager);
     }
+
     /**
      * If want to use cache component, you should invoke this in constructor method
+     *
      * @param cacheManager
      */
-    protected void initCache(CacheManager cacheManager){
+    protected void initCache(CacheManager cacheManager) {
         String prefix = this.getClass().getSimpleName();
-        reqCache = cacheManager.buildCache(prefix + CONN_CACHE_REQ, notification ->{
+        reqCache = cacheManager.buildCache(prefix + CONN_CACHE_REQ, notification -> {
             assert notification.getValue() != null;
             close(notification.getValue().getConnection());
         });
@@ -96,57 +98,62 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
 
     /**
      * Get database list by connection
+     *
      * @param connection metadata connection
      * @return
      */
-    public List<String> queryDatabases(C connection){
+    public List<String> queryDatabases(C connection) {
         throw new WarnException(-1, "This method is no supported");
     }
 
     /**
      * Get table list by connection and database
+     *
      * @param connection metadata connection
-     * @param database database
+     * @param database   database
      * @return
      */
-    public List<String> queryTables(C connection, String database){
+    public List<String> queryTables(C connection, String database) {
         throw new WarnException(-1, "This method is no supported");
     }
 
     /**
      * Get partitions by connection, database and table
+     *
      * @param connection metadata connection
-     * @param database database
-     * @param table table
+     * @param database   database
+     * @param table      table
      * @return
      */
-    public MetaPartitionInfo queryPartitions(C connection, String database, String table){
+    public MetaPartitionInfo queryPartitions(C connection, String database, String table) {
         throw new WarnException(-1, "This method is no supported");
     }
 
     /**
      * Get columns by connection, database and table
+     *
      * @param connection metadata connection
-     * @param database database
-     * @param table table
+     * @param database   database
+     * @param table      table
      * @return
      */
-    public List<MetaColumnInfo> queryColumns(C connection, String database, String table){
+    public List<MetaColumnInfo> queryColumns(C connection, String database, String table) {
         throw new WarnException(-1, "This method is no supported");
     }
 
     /**
      * Get table properties
+     *
      * @param connection metadata connection
-     * @param database database
-     * @param table table
+     * @param database   database
+     * @param table      table
      * @return
      */
-    public Map<String, String> queryTableProps(C connection, String database, String table){
+    public Map<String, String> queryTableProps(C connection, String database, String table) {
         throw new WarnException(-1, "This method is no supported");
     }
 
-    protected void close(C connection){
+    protected void close(C connection) {
         try {
             connection.close();
         } catch (IOException e) {
@@ -154,47 +161,48 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
         }
     }
 
-    protected <R>R getConnAndRun(String operator, Map<String, Object> params, Function<C, R> action) {
+    protected <R> R getConnAndRun(String operator, Map<String, Object> params, Function<C, R> action) {
         String cacheKey = "";
-        try{
+        try {
             cacheKey = md5String(Json.toJson(params, null), "", 2);
             MetadataConnection<C> connection;
-            if(null != reqCache) {
+            if (null != reqCache) {
                 connection = reqCache.get(cacheKey, () -> getConnection(operator, params));
-            }else{
+            } else {
                 connection = getConnection(operator, params);
             }
             return run(connection, action);
-        }catch(Exception e){
-            LOG.error("Error to invoke meta service", e);
-            if(StringUtils.isNotBlank(cacheKey)){
+        } catch (Exception e) {
+            logger().error("Error to invoke meta service", e);
+            if (StringUtils.isNotBlank(cacheKey)) {
                 reqCache.invalidate(cacheKey);
             }
             throw new MetaRuntimeException(e.getMessage());
         }
     }
-    private <R>R run(MetadataConnection<C> connection, Function<C, R> action){
-        if(connection.isLock()){
+
+    private <R> R run(MetadataConnection<C> connection, Function<C, R> action) {
+        if (connection.isLock()) {
             connection.getLock().lock();
-            try{
+            try {
                 return action.apply(connection.getConnection());
-            }finally{
+            } finally {
                 connection.getLock().unlock();
             }
-        }else{
+        } else {
             return action.apply(connection.getConnection());
         }
     }
 
-    private String md5String(String source, String salt, int iterator){
+    private String md5String(String source, String salt, int iterator) {
         StringBuilder token = new StringBuilder();
-        try{
+        try {
             MessageDigest digest = MessageDigest.getInstance("md5");
-            if(StringUtils.isNotEmpty(salt)){
+            if (StringUtils.isNotEmpty(salt)) {
                 digest.update(salt.getBytes(StandardCharsets.UTF_8));
             }
             byte[] result = digest.digest(source.getBytes());
-            for(int i = 0; i < iterator - 1; i++){
+            for (int i = 0; i < iterator - 1; i++) {
                 digest.reset();
                 result = digest.digest(result);
             }
@@ -205,7 +213,7 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
                 }
                 token.append(Integer.toHexString(temp));
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
         return token.toString();

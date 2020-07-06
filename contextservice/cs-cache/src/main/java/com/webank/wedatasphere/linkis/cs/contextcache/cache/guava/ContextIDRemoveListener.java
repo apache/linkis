@@ -17,6 +17,7 @@ package com.webank.wedatasphere.linkis.cs.contextcache.cache.guava;
 
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.contextcache.cache.csid.ContextIDValue;
 import com.webank.wedatasphere.linkis.cs.listener.ListenerBus.ContextAsyncListenerBus;
 import com.webank.wedatasphere.linkis.cs.listener.event.impl.DefaultContextIDEvent;
@@ -29,9 +30,7 @@ import org.springframework.stereotype.Component;
 import static com.webank.wedatasphere.linkis.cs.listener.event.enumeration.OperateType.ACCESS;
 
 @Component
-public class ContextIDRemoveListener implements RemovalListener<String, ContextIDValue> {
-
-    private static final Logger logger = LoggerFactory.getLogger(ContextIDRemoveListener.class);
+public class ContextIDRemoveListener extends JavaLog implements RemovalListener<String, ContextIDValue> {
 
 
     ContextAsyncListenerBus listenerBus = DefaultContextListenerManager.getInstance().getContextAsyncListenerBus();
@@ -44,11 +43,11 @@ public class ContextIDRemoveListener implements RemovalListener<String, ContextI
         if (StringUtils.isBlank(contextIDStr) || null == value || null == value.getContextID() ){
             return;
         }
-        logger.info("Start to remove ContextID({}) from cache", contextIDStr);
+        logger().info("Start to remove ContextID({}) from cache", contextIDStr);
         DefaultContextIDEvent defaultContextIDEvent = new DefaultContextIDEvent();
         defaultContextIDEvent.setContextID(value.getContextKeyValueContext().getContextID());
         defaultContextIDEvent.setOperateType(ACCESS);
         listenerBus.post(defaultContextIDEvent);
-        logger.info("Finished to remove ContextID({}) from cache", contextIDStr);
+        logger().info("Finished to remove ContextID({}) from cache", contextIDStr);
     }
 }

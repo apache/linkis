@@ -27,7 +27,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class ContextIDCacheLoader extends CacheLoader<String, ContextIDValue> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ContextIDCacheLoader.class);
 
     @Autowired
     private ContextIDValueGenerator contextIDValueGenerator;

@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.cs.server.scheduler;
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.server.scheduler.linkisImpl.CsJobListener;
 import com.webank.wedatasphere.linkis.cs.server.scheduler.linkisImpl.CsSchedulerJob;
 import com.webank.wedatasphere.linkis.cs.server.service.Service;
@@ -37,9 +38,8 @@ import java.util.Optional;
  * Created by patinousward on 2020/2/21.
  */
 @Component
-public class DefaultCsScheduler implements CsScheduler {
+public class DefaultCsScheduler extends JavaLog implements CsScheduler {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private Scheduler scheduler;
@@ -90,7 +90,7 @@ public class DefaultCsScheduler implements CsScheduler {
         //从多个serveice中找出一个合适执行的service
         Optional<Service> service = Arrays.stream(getServices()).filter(s -> s.ifAccept(job)).findFirst();
         if (service.isPresent()) {
-            logger.info(String.format("find %s service to execute job",service.get().getName()));
+            logger().info(String.format("find %s service to execute job",service.get().getName()));
             csJob.setConsuemr(service.get()::accept);
         }
         return csJob;

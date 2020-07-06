@@ -16,6 +16,7 @@
 package com.webank.wedatasphere.linkis.cs.contextcache.cache.csid.impl;
 
 import com.webank.wedatasphere.linkis.common.exception.FatalException;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.common.entity.listener.ContextIDListenerDomain;
 import com.webank.wedatasphere.linkis.cs.common.entity.listener.ContextKeyListenerDomain;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
@@ -46,9 +47,7 @@ import java.util.List;
  * @date 2020/2/13 14:52
  */
 @Component
-public abstract class ContextIDValueGeneratorImpl implements ContextIDValueGenerator {
-
-    private static final Logger logger = LoggerFactory.getLogger(ContextIDValueGeneratorImpl.class);
+public abstract class ContextIDValueGeneratorImpl extends JavaLog implements ContextIDValueGenerator {
 
 
     @Lookup
@@ -69,7 +68,7 @@ public abstract class ContextIDValueGeneratorImpl implements ContextIDValueGener
     private DefaultContextKeyCallbackEngine contextKeyCallbackEngine;
 
     @PostConstruct
-    void init() throws FatalException{
+    void init() throws FatalException {
         try {
             this.contextIDCallbackEngine = DefaultContextListenerManager.getInstance().getContextIDCallbackEngine();
             this.contextKeyCallbackEngine = DefaultContextListenerManager.getInstance().getContextKeyCallbackEngine();
@@ -84,9 +83,9 @@ public abstract class ContextIDValueGeneratorImpl implements ContextIDValueGener
 
     @Override
     public ContextIDValue createContextIDValue(ContextID contextID) throws CSErrorException {
-        logger.info("Start to createContextIDValue of ContextID({}) ", contextID.getContextId());
+        logger().info("Start to createContextIDValue of ContextID({}) ", contextID.getContextId());
 
-        if (contextMapPersistence == null ) {
+        if (contextMapPersistence == null) {
             throw new CSErrorException(97001, "Failed to get proxy of contextMapPersistence");
         }
 
@@ -98,26 +97,26 @@ public abstract class ContextIDValueGeneratorImpl implements ContextIDValueGener
 
 
         try {
-            logger.info("For contextID({}) register contextKeyListener", contextID.getContextId());
+            logger().info("For contextID({}) register contextKeyListener", contextID.getContextId());
             List<ContextKeyListenerDomain> contextKeyListenerPersistenceAll = this.contextKeyListenerPersistence.getAll(contextID);
-            if (CollectionUtils.isNotEmpty(contextKeyListenerPersistenceAll)){
-                for (ContextKeyListenerDomain contextKeyListenerDomain : contextKeyListenerPersistenceAll){
+            if (CollectionUtils.isNotEmpty(contextKeyListenerPersistenceAll)) {
+                for (ContextKeyListenerDomain contextKeyListenerDomain : contextKeyListenerPersistenceAll) {
                     this.contextKeyCallbackEngine.registerClient(contextKeyListenerDomain);
                 }
             }
-            logger.info("For contextID({}) register contextIDListener", contextID.getContextId());
+            logger().info("For contextID({}) register contextIDListener", contextID.getContextId());
             List<ContextIDListenerDomain> contextIDListenerPersistenceAll = this.contextIDListenerPersistence.getAll(contextID);
 
-            if (CollectionUtils.isNotEmpty(contextIDListenerPersistenceAll)){
-                for (ContextIDListenerDomain contextIDListenerDomain : contextIDListenerPersistenceAll){
+            if (CollectionUtils.isNotEmpty(contextIDListenerPersistenceAll)) {
+                for (ContextIDListenerDomain contextIDListenerDomain : contextIDListenerPersistenceAll) {
                     this.contextIDCallbackEngine.registerClient(contextIDListenerDomain);
                 }
             }
         } catch (Throwable e) {
-            logger.error("Failed to register listener: ", e);
+            logger().error("Failed to register listener: ", e);
         }
 
-        logger.info("Finished to createContextIDValue of ContextID({}) ", contextID.getContextId());
+        logger().info("Finished to createContextIDValue of ContextID({}) ", contextID.getContextId());
         return new ContextIDValueImpl(contextID.getContextId(), contextKeyValueContext);
     }
 

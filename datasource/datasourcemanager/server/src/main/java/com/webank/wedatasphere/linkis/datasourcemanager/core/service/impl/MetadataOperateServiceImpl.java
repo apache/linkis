@@ -15,6 +15,7 @@ package com.webank.wedatasphere.linkis.datasourcemanager.core.service.impl;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.common.exception.WarnException;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.FormStreamContent;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.service.BmlAppService;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.service.MetadataOperateService;
@@ -39,28 +40,28 @@ import static com.webank.wedatasphere.linkis.datasourcemanager.common.ServiceErr
  * 2020/02/14
  */
 @Service
-public class MetadataOperateServiceImpl implements MetadataOperateService {
+public class MetadataOperateServiceImpl extends JavaLog implements MetadataOperateService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MetadataOperateService.class);
     @Autowired
     private BmlAppService bmlAppService;
+
     @Override
-    public void doRemoteConnect(String mdRemoteServiceName ,
+    public void doRemoteConnect(String mdRemoteServiceName,
                                 String operator, Map<String, Object> connectParams) throws WarnException {
         List<String> uploadedResources = new ArrayList<>();
-        try{
+        try {
             connectParams.entrySet().removeIf(entry -> {
                 Object paramValue = entry.getValue();
                 //Upload stream resource in connection parameters
-                if(paramValue instanceof FormStreamContent){
-                    FormStreamContent streamContent = (FormStreamContent)paramValue;
+                if (paramValue instanceof FormStreamContent) {
+                    FormStreamContent streamContent = (FormStreamContent) paramValue;
                     String fileName = streamContent.getFileName();
                     InputStream inputStream = streamContent.getStream();
-                    if (null != inputStream){
+                    if (null != inputStream) {
                         try {
                             String resourceId = bmlAppService.clientUploadResource(operator,
                                     fileName, inputStream);
-                            if(null == resourceId){
+                            if (null == resourceId) {
                                 return true;
                             }
                             uploadedResources.add(resourceId);
@@ -72,7 +73,7 @@ public class MetadataOperateServiceImpl implements MetadataOperateService {
                 }
                 return false;
             });
-            LOG.info("Send request to metadata service:[" + mdRemoteServiceName + "] for building a connection");
+            logger().info("Send request to metadata service:[" + mdRemoteServiceName + "] for building a connection");
             //Get a sender
             Sender sender = Sender.getSender(mdRemoteServiceName);
             try {
@@ -87,20 +88,20 @@ public class MetadataOperateServiceImpl implements MetadataOperateService {
                     throw new WarnException(REMOTE_METADATA_SERVICE_ERROR.getValue(),
                             "Remote Service Error[远端服务出错, 联系运维处理]");
                 }
-            }catch(Throwable t){
-                if(!(t instanceof WarnException)) {
+            } catch (Throwable t) {
+                if (!(t instanceof WarnException)) {
                     throw new WarnException(REMOTE_METADATA_SERVICE_ERROR.getValue(),
                             "Remote Service Error[远端服务出错, 联系运维处理]");
                 }
                 throw t;
             }
-        }finally{
-            if(!uploadedResources.isEmpty()){
-                uploadedResources.forEach( resourceId ->{
-                    try{
+        } finally {
+            if (!uploadedResources.isEmpty()) {
+                uploadedResources.forEach(resourceId -> {
+                    try {
                         //Proxy to delete resource
                         bmlAppService.clientRemoveResource(operator, resourceId);
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         //ignore
                     }
                 });

@@ -15,6 +15,7 @@
  */
 package com.webank.wedatasphere.linkis.cs.client.service;
 
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.client.ContextClient;
 import com.webank.wedatasphere.linkis.cs.client.builder.ContextClientFactory;
 import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
@@ -33,9 +34,8 @@ import java.util.List;
  * @Author alexyang
  * @Date 2020/3/21
  */
-public class CSWorkServiceImpl implements CSWorkService {
+public class CSWorkServiceImpl extends JavaLog implements CSWorkService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CSWorkServiceImpl.class);
     private CSWorkServiceImpl() {}
     private static CSWorkService csWorkService = null;
 
@@ -67,7 +67,8 @@ public class CSWorkServiceImpl implements CSWorkService {
                 contextClient.removeAllValueByKeyPrefix(contextID, getWorkTypePrefix(type));
             }
         } catch (Exception e) {
-            logger.error("InitContextInfo error. contextIDStr : {}, workTypes : {}" + contextIDStr, CSCommonUtils.gson.toJson(workTypes));
+            logger().error("InitContextInfo error. contextIDStr : {}, workTypes : {}" + contextIDStr,
+                    CSCommonUtils.gson.toJson(workTypes));
             throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "InitContextInfo error. contextIDStr : " + contextIDStr + ", workTypes : " + CSCommonUtils.gson.toJson(workTypes), e);
         }
     }
@@ -88,7 +89,7 @@ public class CSWorkServiceImpl implements CSWorkService {
                 prefix = CSCommonUtils.NODE_PREFIX;
                 break;
             default:
-                logger.error("Invalid workType : {}", workType);
+                logger().error("Invalid workType : {}", workType);
         }
         return prefix;
     }

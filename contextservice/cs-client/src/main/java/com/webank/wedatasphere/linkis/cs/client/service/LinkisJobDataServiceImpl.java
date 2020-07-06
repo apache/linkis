@@ -16,6 +16,7 @@
 package com.webank.wedatasphere.linkis.cs.client.service;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.cs.client.ContextClient;
 import com.webank.wedatasphere.linkis.cs.client.builder.ContextClientFactory;
 import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
@@ -34,9 +35,8 @@ import org.slf4j.LoggerFactory;
  * @author peacewong
  * @date 2020/3/13 22:12
  */
-public class LinkisJobDataServiceImpl implements LinkisJobDataService {
+public class LinkisJobDataServiceImpl extends JavaLog implements LinkisJobDataService {
 
-    private final static Logger logger = LoggerFactory.getLogger(LinkisJobDataServiceImpl.class);
 
     private SearchService searchService = DefaultSearchService.getInstance();
 
@@ -67,8 +67,8 @@ public class LinkisJobDataServiceImpl implements LinkisJobDataService {
             ContextKey contextKey = SerializeHelper.deserializeContextKey(contextKeyStr);
             return searchService.getContextValue(contextID, contextKey, LinkisJobData.class);
         } catch (ErrorException e) {
-            logger.error("Deserialize failed, invalid contextId : " + contextIDStr + ", or contextKey : " + contextKeyStr + ", e : " + e.getMessage());
-            logger.error("exception ", e);
+            logger().error("Deserialize failed, invalid contextId : " + contextIDStr + ", or contextKey : " + contextKeyStr + ", e : " + e.getMessage());
+            logger().error("exception ", e);
             throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize failed, invalid contextId : " + contextIDStr + ", or contextKey : " + contextKeyStr + ", e : " + e.getMessage());
         }
     }
@@ -83,7 +83,7 @@ public class LinkisJobDataServiceImpl implements LinkisJobDataService {
             contextValue.setValue(linkisJobData);
             contextClient.update(contextID, contextKey, contextValue);
         } catch (ErrorException e) {
-            logger.error("Deserialize error. e ", e);
+            logger().error("Deserialize error. e ", e);
             throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize error. e : " + e.getDesc());
         }
     }

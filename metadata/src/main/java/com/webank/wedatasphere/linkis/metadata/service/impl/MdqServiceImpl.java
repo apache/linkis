@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.metadata.service.impl;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.webank.wedatasphere.linkis.common.utils.ByteTimeUtils;
+import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils;
 import com.webank.wedatasphere.linkis.metadata.dao.MdqDao;
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.DomainCoversionUtils;
@@ -54,14 +55,12 @@ import java.util.stream.Collectors;
 
 
 @Service
-public class MdqServiceImpl implements MdqService {
+public class MdqServiceImpl extends JavaLog implements MdqService {
     @Autowired
     private MdqDao mdqDao;
 
     @Autowired
     private HiveMetaDao hiveMetaDao;
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     @DataSource(name = DSEnum.SECONDE_DATA_SOURCE)
@@ -115,18 +114,18 @@ public class MdqServiceImpl implements MdqService {
         if (isImport) {
             importType = mdqTableBO.getImportInfo().getImportType();
         }
-        logger.info("库名:" + database + "表名:" + tableName + "是否是分区:"
+        logger().info("库名:" + database + "表名:" + tableName + "是否是分区:"
                 + isPartitionsTabble + "是否是导入创建:" + isImport + "导入类型:" + importType);
         if (oldTable != null) {
             if (isImport && (importType == MdqImportType.Csv.ordinal() || importType == MdqImportType.Excel.ordinal())) {
                 String destination = mdqTableBO.getImportInfo().getArgs().get("destination");
                 HashMap hashMap = new Gson().fromJson(destination, HashMap.class);
                 if (Boolean.valueOf(hashMap.get("importData").toString())) {
-                    logger.info("只是单纯增加分区列，不删除掉原来的表");
+                    logger().info("只是单纯增加分区列，不删除掉原来的表");
                     return;
                 }
             }
-            logger.info("将覆盖掉原来通过向导建立的表:" + oldTable);
+            logger().info("将覆盖掉原来通过向导建立的表:" + oldTable);
             mdqDao.deleteTableBaseInfo(oldTable.getId());
         }
     }
@@ -275,7 +274,7 @@ public class MdqServiceImpl implements MdqService {
         param.put("dbName", database);
         param.put("tableName", tableName);
         String tableLocation = hiveMetaDao.getLocationByDbAndTable(param);
-        logger.info("tableLocation:" + tableLocation);
+        logger().info("tableLocation:" + tableLocation);
         return tableLocation;
     }
 

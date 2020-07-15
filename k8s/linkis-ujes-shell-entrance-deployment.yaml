@@ -54,7 +54,7 @@ spec:
                       - node2
       containers:
         - name: linkis-ujes-shell-entrance
-          image: 10.206.0.5/library/linkis:linkis-ujes-shell-entrance
+          image: zhangrong1027/linkis:linkis-ujes-shell-entrance
           lifecycle:
             preStop:
               exec:

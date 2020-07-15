@@ -46,7 +46,7 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-resourcemanager
-        image: 10.206.0.5/library/linkis:linkis-resourcemanager
+        image: zhangrong1027/linkis:linkis-resourcemanager
         lifecycle:
             preStop:
               exec:

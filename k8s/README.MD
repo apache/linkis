@@ -39,9 +39,9 @@ Linkis on kubernetes
  
 ###基础镜像编译
 cd emr-base
-docker build -t 10.206.0.5/library/linkis:emr-base-spark2.4.4 .
+docker build -t zhangrong1027/linkis:emr-base-spark2.4.4 .
 推送基础镜像到harbor
-docker push  10.206.0.5/library/linkis:emr-base-spark2.4.4 
+docker push  zhangrong1027/linkis:emr-base-spark2.4.4 
 
 
 
@@ -53,7 +53,7 @@ docker push  10.206.0.5/library/linkis:emr-base-spark2.4.4
     mvn clean package  -f gateway/gateway-ujes-support/pom.xml
     docker images | grep linkis-gateway
 可以看到已经编译好的镜像
-    docker push 10.206.0.5/library/linkis:linkis-gateway   
+    docker push zhangrong1027/linkis:linkis-gateway   
 
 #K8S部署
 1.修改k8s目录下的docker secret

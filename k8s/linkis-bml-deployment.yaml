@@ -47,7 +47,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-bml
-        image: 10.206.0.5/library/linkis:linkis-bml
+        image: zhangrong1027/linkis:linkis-bml
         lifecycle:
             preStop:
               exec:

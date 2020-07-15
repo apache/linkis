@@ -54,7 +54,7 @@ spec:
                       - node3
       containers:
       - name: linkis-ujes-jdbc-entrance
-        image: 10.206.0.5/library/linkis:linkis-ujes-jdbc-entrance
+        image: zhangrong1027/linkis:linkis-ujes-jdbc-entrance
         lifecycle:
           preStop:
             exec:

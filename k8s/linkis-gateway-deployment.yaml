@@ -45,7 +45,7 @@ spec:
         
       containers:
       - name: linkis-gateway
-        image: 10.206.0.5/library/linkis:linkis-gateway
+        image: zhangrong1027/linkis:linkis-gateway
         lifecycle:
             preStop:
               exec:

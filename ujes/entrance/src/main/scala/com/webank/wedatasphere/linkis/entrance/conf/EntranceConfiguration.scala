@@ -85,6 +85,7 @@ object EntranceConfiguration {
     */
   val DEFAULT_RUN_TYPE = CommonVars("wds.linkis.default.runType", "sql")
 
+  val LOG_WARN_EXCLUDE = CommonVars("wds.linkis.warn.log.exclude", "org.apache,hive.ql,hive.metastore,com.netflix,com.webank.wedatasphere")
 
   val CLEAR_LOG = CommonVars("wds.linkis.log.clear", false)
 
@@ -92,7 +93,7 @@ object EntranceConfiguration {
     * LOG_EXCLUDE is used to remove the log of the framework log, such as hive spark spring, so that it is not pushed to the front end through websocket.
     * LOG_EXCLUDE 是用来进行把框架日志，比如hive spark spring等日志进行剔除，不让其通过websocket进行推送到前端
     */
-  val LOG_EXCLUDE = CommonVars("wds.linkis.log.exclude", "org.apache,hive.ql,hive.metastore,com.netflix,cn.webank.bdp,com.webank")
+  val LOG_EXCLUDE = CommonVars("wds.linkis.log.exclude", "org.apache,hive.ql,hive.metastore,com.netflix,com.webank.wedatasphere,com.webank")
 
   /**
     * wds.linkis.dwc.instance is a parameter used to control the number of engines each user starts.
@@ -119,4 +120,26 @@ object EntranceConfiguration {
 
   val HIVE_STAGE_NAME = CommonVars("wds.linkis.hive.stage.name", "Stage-")
 
+  val SPARK_SPECIAL_LOG_INCLUDE = CommonVars("wds.linkis.spark.special.log.include", "com.webank.wedatasphere.linkis.engine.spark.utils.JobProgressUtil")
+
+
+  val SPARK_PROGRESS_NAME = CommonVars("wds.linkis.spark.progress.name", "com.webank.wedatasphere.linkis.engine.spark.utils.JobProgressUtil$")
+
+  val END_FLAG = CommonVars("bdp.dataworkcloud.entrance.end.flag", "info -")
+
+  val HIVE_CREATE_TABLE_LOG = CommonVars("wds.linkis.hive.create.table.log", "numFiles")
+
+  val HIVE_PRINT_INFO_LOG = CommonVars("wds.linkis.hive.printinfo.log", "printInfo -")
+
+
+
+  val IS_BDP_ENV = CommonVars("wds.linkis.entrance.bdp.env", "true")
+
+
+  val SHELL_DANGER_USAGE = CommonVars("wds.linkis.shell.danger.usage", "rm,sh,find,kill,python,for,source,hdfs,hadoop,spark-sql,spark-submit,pyspark,spark-shell,hive,yarn")
+  val SHELL_WHITE_USAGE = CommonVars("wds.linkis.shell.white.usage", "cd,ls")
+
+  val FLOW_EXECUTION_CREATOR = CommonVars("wds.linkis.entrance.flow.creator", "nodeexecution")
+
+  val SCHEDULER_CREATOR = CommonVars("wds.linkis.entrance.scheduler.creator", "scheduler")
 }

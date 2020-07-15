@@ -17,14 +17,12 @@
 package com.webank.wedatasphere.linkis.resourcemanager
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging}
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.resourcemanager.ResourceRequestPolicy.ResourceRequestPolicy
-import com.webank.wedatasphere.linkis.resourcemanager.exception.{RMErrorException, RMWarnException}
+import com.webank.wedatasphere.linkis.resourcemanager.exception.RMWarnException
 import com.webank.wedatasphere.linkis.resourcemanager.service.metadata.{ModuleResourceRecordService, UserMetaData, UserResourceRecordService}
 import com.webank.wedatasphere.linkis.resourcemanager.utils.YarnUtil
 import org.json4s.DefaultFormats
-import org.json4s.jackson.JsonMethods._
-import org.springframework.beans.factory.annotation.Autowired
 
 /**
   * Created by shanhuang on 9/11/18.

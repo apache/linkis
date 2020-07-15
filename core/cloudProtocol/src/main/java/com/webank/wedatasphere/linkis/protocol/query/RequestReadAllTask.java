@@ -16,8 +16,6 @@
 
 package com.webank.wedatasphere.linkis.protocol.query;
 
-import com.webank.wedatasphere.linkis.protocol.task.Task;
-
 /**
  * created by enjoyyin on 2018/10/9
  * Description:

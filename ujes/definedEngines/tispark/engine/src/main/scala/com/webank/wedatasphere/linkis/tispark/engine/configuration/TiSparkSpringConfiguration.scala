@@ -16,11 +16,6 @@
 
 package com.webank.wedatasphere.linkis.tispark.engine.configuration
 
-import com.webank.wedatasphere.linkis.engine.execute.EngineHook
-import com.webank.wedatasphere.linkis.engine.execute.hook._
-import com.webank.wedatasphere.linkis.tispark.engine.hook.{TiSparkHook, UserDataBaseHook}
-import org.springframework.context.annotation.{Bean, Configuration}
-
 /**
   * Created by johnnwang on 2019/6/26.
   */

@@ -33,19 +33,13 @@ export LINKIS_DSS_CONF_FILE=${LINKIS_DSS_CONF_FILE:-"${CONF_DIR}/config.sh"}
 export DISTRIBUTION=${DISTRIBUTION:-"${CONF_DIR}/config.sh"}
 #source $LINKIS_DSS_CONF_FILE
 source ${DISTRIBUTION}
-function isSuccess(){
-if [ $? -ne 0 ]; then
-    echo "Failed to " + $1
-    exit 1
-else
-    echo "Succeed to" + $1
-fi
-}
+
+source ${workDir}/bin/common.sh
 
 
 local_host="`hostname --fqdn`"
 
-ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
+ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}'|awk 'NR==1')
 
 function isLocal(){
     if [ "$1" == "127.0.0.1" ];then
@@ -72,6 +66,7 @@ function executeCMD(){
 
 }
 
+
 #if there is no LINKIS_INSTALL_HOME，we need to source config again
 if [ -z ${LINKIS_INSTALL_HOME} ];then
     echo "Info: LINKIS_INSTALL_HOME does not exist, we will source config"
@@ -88,6 +83,7 @@ function startApp(){
 echo "<-------------------------------->"
 echo "Begin to start $SERVER_NAME"
 SERVER_PATH=${APP_PREFIX}${SERVER_NAME}
+
 SERVER_BIN=${LINKIS_INSTALL_HOME}/${SERVER_PATH}/bin
 SERVER_LOCAL_START_CMD="dos2unix ${SERVER_BIN}/* > /dev/null 2>&1; dos2unix ${SERVER_BIN}/../conf/* > /dev/null 2>&1; sh ${SERVER_BIN}/start-${SERVER_NAME}.sh"
 SERVER_REMOTE_START_CMD="source /etc/profile;source ~/.bash_profile;cd ${SERVER_BIN}; dos2unix ./* > /dev/null 2>&1; dos2unix ../conf/* > /dev/null 2>&1; sh start-${SERVER_NAME}.sh > /dev/null 2>&1"
@@ -142,6 +138,21 @@ startApp
 #bml
 SERVER_NAME="bml"
 SERVER_IP=$BML_INSTALL_IP
+startApp
+
+#cs-server
+SERVER_NAME="cs-server"
+SERVER_IP=$CS_INSTALL_IP
+startApp
+
+#datasource management
+SERVER_NAME="dsm-server"
+SERVER_IP=$DSM_INSTALL_IP
+startApp
+
+#metadata management
+SERVER_NAME="mdm-server"
+SERVER_IP=$MDM_INSTALL_IP
 startApp
 
 #resourcemanager
@@ -201,6 +212,7 @@ SERVER_IP=$JDBC_INSTALL_IP
 startApp
 
 
+
 echo "start-all shell script executed completely"
 
 echo "Start to check all dss microservice"
@@ -223,7 +235,7 @@ fi
 sh $workDir/bin/checkServices.sh $SERVER_NAME $SERVER_IP $SERVER_PORT
 isSuccess "start $SERVER_NAME "
 echo "<-------------------------------->"
-sleep 3
+sleep 5
 }
 SERVER_NAME="eureka"
 SERVER_IP=$EUREKA_INSTALL_IP
@@ -255,6 +267,11 @@ checkServer
 SERVER_NAME=$APP_PREFIX"bml"
 SERVER_IP=$BML_INSTALL_IP
 SERVER_PORT=$BML_PORT
+checkServer
+
+#cs-server
+SERVER_NAME="cs-server"
+SERVER_IP=$CS_INSTALL_IP
 checkServer
 
 APP_PREFIX="linkis-ujes-"
@@ -292,5 +309,6 @@ SERVER_NAME=$APP_PREFIX"jdbc-entrance"
 SERVER_IP=$JDBC_INSTALL_IP
 SERVER_PORT=$JDBC_ENTRANCE_PORT
 checkServer
+
 
 echo "Linkis started successfully"

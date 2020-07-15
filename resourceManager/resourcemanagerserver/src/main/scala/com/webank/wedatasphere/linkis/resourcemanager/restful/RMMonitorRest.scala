@@ -23,13 +23,12 @@ import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.protocol.config.RequestQueryAppConfigWithGlobal
 import com.webank.wedatasphere.linkis.protocol.engine.{RequestEngineStatus, RequestUserEngineKill, ResponseEngineStatus, ResponseUserEngineKill}
 import com.webank.wedatasphere.linkis.protocol.utils.ProtocolUtils
-import com.webank.wedatasphere.linkis.resourcemanager.{ResourceSerializer, _}
-import com.webank.wedatasphere.linkis.resourcemanager.domain.{ModuleInstanceSerializer, UserResourceMetaData, UserResourceRecord}
+import com.webank.wedatasphere.linkis.resourcemanager.domain.{ModuleInstanceSerializer, UserResourceMetaData}
 import com.webank.wedatasphere.linkis.resourcemanager.service.metadata.{ModuleResourceRecordService, UserConfiguration, UserResourceRecordService}
-import com.webank.wedatasphere.linkis.resourcemanager.utils.{RMConfiguration, YarnAppInfo, YarnUtil}
+import com.webank.wedatasphere.linkis.resourcemanager.utils.{RMConfiguration, YarnUtil}
+import com.webank.wedatasphere.linkis.resourcemanager.{ResourceSerializer, _}
 import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorState
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorState.ExecutorState
 import com.webank.wedatasphere.linkis.server.Message
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter
 import javax.servlet.http.HttpServletRequest

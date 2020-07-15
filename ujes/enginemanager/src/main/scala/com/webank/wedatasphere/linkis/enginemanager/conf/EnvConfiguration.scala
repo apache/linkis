@@ -17,7 +17,7 @@
 package com.webank.wedatasphere.linkis.enginemanager.conf
 
 import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars}
-import EngineManagerConfiguration.ENGINE_SPRING_APPLICATION_NAME
+import com.webank.wedatasphere.linkis.enginemanager.conf.EngineManagerConfiguration.ENGINE_SPRING_APPLICATION_NAME
 import org.apache.commons.lang.time.DateFormatUtils
 
 /**

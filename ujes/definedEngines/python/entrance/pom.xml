@@ -23,7 +23,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.9.3</version>
+        <version>0.9.4</version>
     </parent>
 	
 	<artifactId>linkis-python-entracne</artifactId>
@@ -132,26 +132,26 @@
                     </descriptors>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>1.3.4</version>
-                <executions>
-                    <execution>
-                        <id>default</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build</goal>
-                            <goal>tag</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <repository>${harbor.reposity}</repository>
-                    <tag>linkis-ujes-python-entrance</tag>
-                    <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>com.spotify</groupId>-->
+<!--                <artifactId>dockerfile-maven-plugin</artifactId>-->
+<!--                <version>1.3.4</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>default</id>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>build</goal>-->
+<!--                            <goal>tag</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--                    <repository>${harbor.reposity}</repository>-->
+<!--                    <tag>linkis-ujes-python-entrance</tag>-->
+<!--                    <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
         <resources>
             <resource>

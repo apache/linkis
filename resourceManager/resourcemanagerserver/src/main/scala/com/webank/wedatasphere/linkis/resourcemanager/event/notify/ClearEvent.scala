@@ -17,7 +17,7 @@
 package com.webank.wedatasphere.linkis.resourcemanager.event.notify
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.resourcemanager.domain.{UserPreUsedResource, UserResourceInfo, UserUsedResource}
+import com.webank.wedatasphere.linkis.resourcemanager.domain.{UserPreUsedResource, UserUsedResource}
 import com.webank.wedatasphere.linkis.resourcemanager.event.EventScope
 import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState.SchedulerEventState
 

@@ -17,7 +17,6 @@
 package com.webank.wedatasphere.linkis.entrance.interceptor.impl
 
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
-import com.webank.wedatasphere.linkis.entrance.interceptor.exception.LimitCheckException
 import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 

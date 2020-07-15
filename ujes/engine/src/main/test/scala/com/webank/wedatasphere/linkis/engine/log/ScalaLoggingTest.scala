@@ -16,7 +16,6 @@
 
 package scala.com.webank.wedatasphere.linkis.engine.log
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
 import org.slf4j.{Logger, LoggerFactory}
 
 /**

@@ -16,12 +16,8 @@
 
 package com.webank.wedatasphere.linkis.resourcemanager.notify
 
-import java.util.List
-
 import com.webank.wedatasphere.linkis.resourcemanager.utils.RMConfiguration
-import org.apache.commons.lang.StringUtils
-import org.apache.zookeeper.{CreateMode, WatchedEvent, Watcher, ZooKeeper}
-import org.apache.zookeeper.data.ACL
+import org.apache.zookeeper.{WatchedEvent, Watcher, ZooKeeper}
 
 /**
   * Created by shanhuang on 9/11/18.

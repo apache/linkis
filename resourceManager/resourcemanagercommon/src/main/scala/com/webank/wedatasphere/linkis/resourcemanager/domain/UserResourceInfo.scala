@@ -16,11 +16,11 @@
 
 package com.webank.wedatasphere.linkis.resourcemanager.domain
 
-import com.webank.wedatasphere.linkis.resourcemanager.{Resource, ResourceSerializer}
 import com.webank.wedatasphere.linkis.common.ServiceInstance
-import org.json4s.{CustomSerializer, DefaultFormats, Extraction}
-import org.json4s.JsonAST.{JObject, JValue}
+import com.webank.wedatasphere.linkis.resourcemanager.{Resource, ResourceSerializer}
+import org.json4s.JsonAST.JObject
 import org.json4s.JsonDSL._
+import org.json4s.{CustomSerializer, DefaultFormats, Extraction}
 
 /**
   * Created by shanhuang on 9/11/18.

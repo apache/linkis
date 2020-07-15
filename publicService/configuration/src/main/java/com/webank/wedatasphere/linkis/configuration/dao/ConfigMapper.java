@@ -35,16 +35,28 @@ public interface ConfigMapper {
 
     ConfigTree selectTreeByTreeID(@Param("id") Long id);
 
-    List<ConfigKey> selectKeysByTreeID(@Param("treeID") Long treeID,@Param("creatorID") Long creatorID);
+    List<ConfigKey> selectKeysByTreeID(@Param("treeID") Long treeID, @Param("creatorID") Long creatorID);
 
     void insertValue(ConfigKeyUser configKeyUser);
 
     ConfigKeyUser selectValueByKeyId(@Param("keyID") Long keyID, @Param("userName") String userName, @Param("appID") Long appID);
 
-    List<ConfigKeyValue> selectAllAppKVs( @Param("creatorID")Long creatorID,@Param("appID") Long appID);
+    List<ConfigKeyValue> selectAllAppKVs(@Param("creatorID") Long creatorID, @Param("appID") Long appID);
 
-    void updateUserValue(@Param("value") String value,@Param("id") Long id);
+    void updateUserValue(@Param("value") String value, @Param("id") Long id);
 
     ConfigKey selectKeyByKeyID(Long keyID);
+
+    List<ConfigKey> listKeyByCreatorAndAppName(@Param("creatorID") Long creatorID, @Param("appID") Long appID);
+
+    void insertCreator(String creator);
+
+    Long selectTreeIDByKeyID(Long keyID);
+
+    void insertKey(ConfigKey key);
+
+    void insertKeyTree(@Param("keyID") Long keyID, @Param("treeID") Long treeID);
+
+    ConfigTree selectTreeByAppIDAndName(@Param("appID") Long appID, @Param("treeName") String treeName);
 
 }

@@ -61,3 +61,13 @@ docker push  10.206.0.5/library/linkis:emr-base-spark2.4.4
 2.修改k8s目录下的linkis-*- configmap.yaml
   例如gateway/linkis.properties 复制到k8s/linkis-gateway-configmap.yaml
 3.运行k8s 目录下的 sh init.sh
+
+#.spark 是虚机部署的情况下，k8s环境虚拟2层网络打通虚机 ip 段
+ 静态路由+iptables/netfilter地址伪装
+ executor到pod，svc 网络通
+ executor添加静态路由表
+ route add -net   10.83.0.0  netmask  255.255.0.0  gw  10.20.20.204
+ route add -net   172.27.0.0 netmask  255.255.0.0  gw  10.20.20.204
+ k8s node节点上做ip  masque
+ iptables -t nat -A POSTROUTING -s  10.20.20.0 /24 -d  10.83.0.0/16 -j MASQUERADE
+ iptables -t nat -A POSTROUTING -s  10.20.20.0 /24 -d  172.27.0.0 /12 -j  MASQUERADE

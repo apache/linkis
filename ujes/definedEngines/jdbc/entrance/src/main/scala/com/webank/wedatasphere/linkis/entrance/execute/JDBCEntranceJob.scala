@@ -54,6 +54,7 @@ class JDBCEntranceJob extends EntranceExecutionJob{
     }
     executeResponse match {
       case r: CompletedExecuteResponse =>
+        setResultSize(0)
         transitionCompleted(r)
       case _ => logger.error("not completed")
     }

@@ -47,6 +47,7 @@ class CommentInterceptor extends EntranceInterceptor {
       case "sql" | "hql"  => requestPersistTask.setExecutionCode(SQLCommentHelper.dealComment(requestPersistTask.getExecutionCode))
       case "python" | "py" => requestPersistTask.setExecutionCode(PythonCommentHelper.dealComment(requestPersistTask.getExecutionCode))
       case "scala" | "java" => requestPersistTask.setExecutionCode(ScalaCommentHelper.dealComment(requestPersistTask.getExecutionCode))
+      case "sh" | "shell" =>
       case _ => requestPersistTask.setExecutionCode(SQLCommentHelper.dealComment(requestPersistTask.getExecutionCode))
     }
       requestPersistTask
@@ -61,7 +62,7 @@ trait CommentHelper{
 
 object SQLCommentHelper extends CommentHelper {
   override val commentPattern: Regex = """\s*--.+\s*""".r.unanchored
-  private val comment = "(?ms)([\"'](?:''|[^'])*['\"])|--.*?$|/\\*.*?\\*/"
+  private val comment = "(?ms)([\"']*['\"])|--.*?$|/\\*.*?\\*/"
   override def dealComment(code: String): String = {
     val p = Pattern.compile(comment)
     val sql = p.matcher(code).replaceAll("$1")

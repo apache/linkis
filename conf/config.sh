@@ -1,3 +1,8 @@
+#!/bin/sh
+
+shellDir=`dirname $0`
+workDir=`cd ${shellDir}/..;pwd`
+
 ###
 SSH_PORT=22
 
@@ -6,7 +11,7 @@ deployUser=hadoop
 
 
 ### The install home path of Linkis
-LINKIS_INSTALL_HOME=/appcom/Install/Linkis        #Must provided
+LINKIS_INSTALL_HOME=$workDir        #Must provided
 
 
 
@@ -20,9 +25,9 @@ HDFS_USER_ROOT_PATH=hdfs:///tmp/linkis ##hdfs:// required
 RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis
 
 ### Provide the DB information of Hive metadata database.
-#HIVE_META_URL=
-#HIVE_META_USER=
-#HIVE_META_PASSWORD=
+HIVE_META_URL=
+HIVE_META_USER=
+HIVE_META_PASSWORD=
 
 ###HADOOP CONF DIR
 HADOOP_CONF_DIR=/appcom/config/hadoop-config
@@ -92,6 +97,13 @@ PYTHON_ENTRANCE_PORT=9110
 #JDBC_INSTALL_IP=127.0.0.1
 JDBC_ENTRANCE_PORT=9111
 
+### SHELL
+### This service is used to provide shell capability.
+#SHELL_INSTALL_IP=127.0.0.1
+SHELL_EM_PORT=9114
+SHELL_ENTRANCE_PORT=9115
+
+
 
 ### BML
 ### This service is used to provide BML capability.
@@ -107,4 +119,4 @@ BML_PORT=9113
 ## java application default jvm memory
 export SERVER_HEAP_SIZE="512M"
 
-LINKIS_VERSION=0.9.2
+LINKIS_VERSION=0.9.3

@@ -23,7 +23,7 @@ Linkis provides a Java client implementation for users to have quick-access to L
 <dependency>
   <groupId>com.webank.wedatasphere.Linkis</groupId>
   <artifactId>Linkis-ujes-client</artifactId>
-  <version>0.9.2</version>
+  <version>0.9.3</version>
 </dependency>
 ```
 

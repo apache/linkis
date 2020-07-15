@@ -21,7 +21,7 @@
     <parent>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <artifactId>linkis</artifactId>
-        <version>0.9.2</version>
+        <version>0.9.3</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -49,6 +49,21 @@
             <artifactId>linkis-storage</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-exec</artifactId>
+            <version>1.2.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.hive</groupId>
+                    <artifactId>hive-llap-tez</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 

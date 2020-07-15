@@ -24,6 +24,11 @@ import com.webank.wedatasphere.linkis.resourcemanager.event.RMEvent
 class RMConsumerListenerImpl extends  RMConsumerListener with  Logging{
   private var consumer: RMEventConsumer = _
   private var lastProcessTime : Long = _
+
+  override def setConsumer(consumer: RMEventConsumer) = {
+    this.consumer = consumer
+  }
+
   override def beforeEventExecute(consumer: RMEventConsumer, event: RMEvent) = {
     this.consumer = consumer
     this.lastProcessTime = System.currentTimeMillis

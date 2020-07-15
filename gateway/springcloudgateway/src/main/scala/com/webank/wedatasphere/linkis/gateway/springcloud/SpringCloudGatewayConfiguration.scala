@@ -119,4 +119,6 @@ object SpringCloudGatewayConfiguration extends Logging {
 
   def mergeServiceInstance(serviceInstance: ServiceInstance): String = MERGE_MODULE_INSTANCE_HEADER + serviceInstance.getApplicationName.length +
     serviceInstance.getApplicationName + serviceInstance.getInstance.replaceAll(":", "---")
+    // app register with ip
+    .replaceAll("\\.", "--")
 }

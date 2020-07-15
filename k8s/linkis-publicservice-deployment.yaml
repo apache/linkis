@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-publicservice-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-publicservice
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: linkis-publicservice
+        release: dev
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - linkis-publicservice
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: linkis-publicservice
+        image: 10.206.0.5/library/linkis:linkis-publicservice
+        imagePullPolicy: Always
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sh","/opt/ihome/linkis-publicservice/bin/stop.sh"]
+        ports:
+        - name: http
+          containerPort: 14003
+        livenessProbe:
+            tcpSocket:
+              port: 14003
+            initialDelaySeconds: 30
+            periodSeconds: 60
+        env:
+          - name: eurekaurl
+            value: http://10.206.0.12:20230/eureka/
+          - name: EUREKA_URL
+            value: http://10.206.0.12:20230/eureka/
+          - name: SERVER_HEAP_SIZE
+            value: 1024M
+          - name: START_PORT
+            value: "14003"
+        volumeMounts:
+          - name: linkis-publicservice-config
+            mountPath: /opt/ihome/conf
+      imagePullSecrets:
+        - name: registry-key
+      volumes:
+        - name: linkis-publicservice-config
+          configMap:
+            name: linkis-publicservice-config

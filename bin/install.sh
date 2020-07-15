@@ -15,13 +15,11 @@
 # limitations under the License.
 #
 
-
 #Actively load user env
 source ~/.bash_profile
 
 shellDir=`dirname $0`
 workDir=`cd ${shellDir}/..;pwd`
-
 
 #To be compatible with MacOS and Linux
 txt=""
@@ -57,14 +55,14 @@ fi
 }
 
 function checkPythonAndJava(){
-	python --version
-	isSuccess "execute python --version"
-	java -version
-	isSuccess "execute java --version"
+    python --version
+    isSuccess "execute python --version"
+    java -version
+    isSuccess "execute java --version"
 }
 
 function checkHadoopAndHive(){
-	hadoopVersion="`hdfs version`"
+    hadoopVersion="`hdfs version`"
     defaultHadoopVersion="2.7"
     checkversion "$hadoopVersion" $defaultHadoopVersion hadoop
     checkversion "$(whereis hive)" "1.2" hive
@@ -118,14 +116,17 @@ need_cmd() {
 
 
 sh ${workDir}/bin/checkEnv.sh
-isSuccess "failed to check env"
+isSuccess "check env"
 
 ##load config
 echo "step1:load config "
-source ${workDir}/conf/config.sh
-source ${workDir}/conf/db.sh
+export LINKIS_CONFIG_PATH=${LINKIS_CONFIG_PATH:-"${workDir}/conf/config.sh"}
+export LINKIS_DB_CONFIG_PATH=${LINKIS_DB_CONFIG_PATH:-"${workDir}/conf/db.sh"}
+export DISTRIBUTION=${DISTRIBUTION:-"${workDir}/conf/config.sh"}
+source ${LINKIS_CONFIG_PATH}
+source ${LINKIS_DB_CONFIG_PATH}
+source ${DISTRIBUTION}
 isSuccess "load config"
-
 
 local_host="`hostname --fqdn`"
 
@@ -171,27 +172,26 @@ function copyFile(){
 
 }
 
-##env check
-echo "Please enter the mode selection such as: 1"
-echo " 1: Lite"
-echo " 2: Simple"
-echo " 3: Standard"
-echo ""
+##install mode choice
 
-INSTALL_MODE=1
+if [ "$INSTALL_MODE" == "" ];then
+  echo "Please enter the mode selection such as: 1"
+  echo " 1: Lite"
+  echo " 2: Simple"
+  echo " 3: Standard"
+  echo ""
+  read -p "Please input the choice:"  idx
+  INSTALL_MODE=$idx
+fi
 
-read -p "Please input the choice:"  idx
-if [[ '1' = "$idx" ]];then
-  INSTALL_MODE=1
-  echo "You chose Lite installation mode"
+if [[ '1' = "$INSTALL_MODE" ]];then
+  echo "You chose Lite installation mode" 
   checkPythonAndJava
-elif [[ '2' = "$idx" ]];then
-  INSTALL_MODE=2
+elif [[ '2' = "$INSTALL_MODE" ]];then
   echo "You chose Simple installation mode"
   checkPythonAndJava
   checkHadoopAndHive
-elif [[ '3' = "$idx" ]];then
-  INSTALL_MODE=3
+elif [[ '3' = "$INSTALL_MODE" ]];then
   echo "You chose Standard installation mode"
   checkPythonAndJava
   checkHadoopAndHive
@@ -200,7 +200,6 @@ else
   echo "no choice,exit!"
   exit 1
 fi
-
 
 ##env check
 echo "Do you want to clear Linkis table information in the database?"
@@ -227,22 +226,69 @@ echo "create hdfs  directory and local directory"
 if [ "$WORKSPACE_USER_ROOT_PATH" != "" ]
 then
   localRootDir=$WORKSPACE_USER_ROOT_PATH
-  if [[ $WORKSPACE_USER_ROOT_PATH == file://* ]]
-  then
+  if [[ $WORKSPACE_USER_ROOT_PATH == file://* ]];then
     localRootDir=${WORKSPACE_USER_ROOT_PATH#file://}
+    mkdir -p $localRootDir/$deployUser
+    sudo chmod -R 775 $localRootDir/$deployUser
+  elif [[ $WORKSPACE_USER_ROOT_PATH == hdfs://* ]];then
+    localRootDir=${WORKSPACE_USER_ROOT_PATH#hdfs://}
+    hdfs dfs -mkdir -p $localRootDir/$deployUser
+    hdfs dfs -chmod -R 775 $localRootDir/$deployUser
+  else
+    echo "does not support $WORKSPACE_USER_ROOT_PATH filesystem types"
   fi
-  mkdir -p $localRootDir/$deployUser
 fi
-isSuccess "create  local directory"
+isSuccess "create  $WORKSPACE_USER_ROOT_PATH directory"
+
+
 if [ "$HDFS_USER_ROOT_PATH" != "" ]
 then
-  hdfs dfs -mkdir -p $HDFS_USER_ROOT_PATH/$deployUser
+    localRootDir=$HDFS_USER_ROOT_PATH
+  if [[ $HDFS_USER_ROOT_PATH == file://* ]];then
+    localRootDir=${HDFS_USER_ROOT_PATH#file://}
+    mkdir -p $localRootDir/$deployUser
+    sudo chmod -R 775 $localRootDir/$deployUser
+  elif [[ $HDFS_USER_ROOT_PATH == hdfs://* ]];then
+    localRootDir=${HDFS_USER_ROOT_PATH#hdfs://}
+    hdfs dfs -mkdir -p $localRootDir/$deployUser
+    hdfs dfs -chmod -R 775 $localRootDir/$deployUser
+  else
+    echo "does not support $HDFS_USER_ROOT_PATH filesystem types"
+  fi
+fi
+isSuccess "create  $HDFS_USER_ROOT_PATH directory"
+
+
+if [ "$RESULT_SET_ROOT_PATH" != "" ]
+then
+  localRootDir=$RESULT_SET_ROOT_PATH
+  if [[ $RESULT_SET_ROOT_PATH == file://* ]];then
+    localRootDir=${RESULT_SET_ROOT_PATH#file://}
+        mkdir -p $localRootDir/$deployUser
+        sudo chmod -R 775 $localRootDir/$deployUser
+  elif [[ $RESULT_SET_ROOT_PATH == hdfs://* ]];then
+    localRootDir=${RESULT_SET_ROOT_PATH#hdfs://}
+        hdfs dfs -mkdir -p $localRootDir/$deployUser
+        hdfs dfs -chmod -R 775 $localRootDir/$deployUser
+  else
+    echo "does not support $RESULT_SET_ROOT_PATH filesystem types"        
+  fi
+fi
+isSuccess "create  $RESULT_SET_ROOT_PATH directory"
+
+##init db
+if [[ '2' = "$MYSQL_INSTALL_MODE" ]];then
+    mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD --default-character-set=utf8 -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DB DEFAULT CHARSET utf8 COLLATE utf8_general_ci;"
+	mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${workDir}/db/linkis_ddl.sql"
+	isSuccess "source linkis_ddl.sql"
+	mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${workDir}/db/linkis_dml.sql"
+	isSuccess "source linkis_dml.sql"
+	echo "Rebuild the table"
 fi
 
-
-##stop server
-#echo "step2,stop server"
-#sh ${workDir}/bin/stop-all.sh
+##Deal special symbol '#'
+HIVE_META_PASSWORD=$(echo ${HIVE_META_PASSWORD//'#'/'\#'})
+MYSQL_PASSWORD=$(echo ${MYSQL_PASSWORD//'#'/'\#'})
 
 ##Eurkea install
 SERVER_NAME=eureka
@@ -255,6 +301,7 @@ then
   SERVER_IP=$local_host
 fi
 EUREKA_URL=http://$SERVER_IP:$EUREKA_PORT/eureka/
+
 if ! executeCMD $SERVER_IP "test -e $SERVER_HOME"; then
   executeCMD $SERVER_IP  "sudo mkdir -p $SERVER_HOME;sudo chown -R $deployUser:$deployUser $SERVER_HOME"
   isSuccess "create the dir of $SERVER_HOME"
@@ -346,6 +393,8 @@ executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.server.mybatis.datasource
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.workspace.filesystem.localuserrootpath.*#wds.linkis.workspace.filesystem.localuserrootpath=$WORKSPACE_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.workspace.filesystem.hdfsuserrootpath.prefix.*#wds.linkis.workspace.filesystem.hdfsuserrootpath.prefix=$HDFS_USER_ROOT_PATH#g\" $SERVER_CONF_PATH"
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.gateway.ip.*#wds.linkis.gateway.ip=$GATEWAY_INSTALL_IP#g\" $SERVER_CONF_PATH"
+executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.gateway.port.*#wds.linkis.gateway.port=$GATEWAY_PORT#g\" $SERVER_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVER_NAME"
 echo "<----------------$SERVER_NAME:end------------------->"
 ##publicservice end
@@ -369,16 +418,6 @@ executeCMD $SERVER_IP   "rm $SERVER_HOME/$SERVER_NAME/lib/json4s-*3.5.3.jar"
 echo "subsitution linkis.properties of $SERVER_NAME"
 echo "<----------------$SERVER_NAME:end------------------->"
 ##ResourceManager install end
-
-##init db
-if [[ '2' = "$MYSQL_INSTALL_MODE" ]];then
-	mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${workDir}/db/linkis_ddl.sql"
-	isSuccess "source linkis_ddl.sql"
-	mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${workDir}/db/linkis_dml.sql"
-	isSuccess "source linkis_dml.sql"
-	echo "Rebuild the table"
-fi
-
 
 
 ##PythonEM install
@@ -464,6 +503,7 @@ then
 fi
 if [ "$HIVE_META_PASSWORD" != "" ]
 then
+  HIVE_META_PASSWORD=$(echo ${HIVE_META_PASSWORD//'#'/'\#'})
   executeCMD $SERVER_IP   "sed -i ${txt}  \"s#hive.meta.password.*#hive.meta.password=$HIVE_META_PASSWORD#g\" $SERVER_CONF_PATH"
 fi
 isSuccess "subsitution linkis.properties of $SERVER_NAME"
@@ -571,6 +611,38 @@ executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.resultSet.store.path.*#wd
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
 isSuccess "subsitution linkis.properties of $SERVER_NAME"
 echo "<----------------$SERVER_NAME:end------------------->"
-##SparkEntrance install end
+##JDBCEntrance install end
+
+
+##ShellEM install
+PACKAGE_DIR=linkis/ujes/shell
+SERVER_NAME=linkis-ujes-shell-enginemanager
+SERVER_IP=$SHELL_INSTALL_IP
+SERVER_PORT=$SHELL_EM_PORT
+SERVER_HOME=$LINKIS_INSTALL_HOME
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVER_NAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
+executeCMD $SERVER_IP   "sed -i ${txt}  \"s#wds.linkis.enginemanager.sudo.script.*#wds.linkis.enginemanager.sudo.script=$SERVER_HOME/$SERVER_NAME/bin/rootScript.sh#g\" $SERVER_CONF_PATH"
+SERVER_ENGINE_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis-engine.properties
+executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_ENGINE_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVER_NAME"
+echo "<----------------$SERVER_NAME:end------------------->"
+
+##SHELLEntrance install
+PACKAGE_DIR=linkis/ujes/shell
+SERVER_NAME=linkis-ujes-shell-entrance
+SERVER_PORT=$SHELL_ENTRANCE_PORT
+###install dir
+installPackage
+###update linkis.properties
+echo "$SERVER_NAME-step4:update linkis conf"
+SERVER_CONF_PATH=$SERVER_HOME/$SERVER_NAME/conf/linkis.properties
+executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g\" $SERVER_CONF_PATH"
+isSuccess "subsitution linkis.properties of $SERVER_NAME"
+echo "<----------------$SERVER_NAME:end------------------->"
+##SHELLEntrance install end
 
 

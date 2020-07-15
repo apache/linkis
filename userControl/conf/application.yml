@@ -1,0 +1,28 @@
+server:
+  port: 9002
+spring:
+  application:
+    name: cloud-usercontrol
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: locahost
+  instance:
+    metadata-map:
+      test: wedatasphere
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info
+logging:
+  config: classpath:log4j2.xml
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: countSql

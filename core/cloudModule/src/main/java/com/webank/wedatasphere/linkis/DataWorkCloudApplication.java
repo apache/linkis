@@ -138,9 +138,9 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
     private static void initDWCApplication() {
         serviceInstance = new ServiceInstance();
         serviceInstance.setApplicationName(applicationContext.getEnvironment().getProperty("spring.application.name"));
-        serviceInstance.setInstance(Utils.getComputerName() + ":" + applicationContext.getEnvironment().getProperty("server.port"));
+        serviceInstance.setInstance(Utils.getLocalHostname() + ":" + applicationContext.getEnvironment().getProperty("server.port"));
         DWCException.setApplicationName(serviceInstance.getApplicationName());
-        DWCException.setHostname(Utils.getComputerName());
+        DWCException.setHostname(Utils.getLocalHostname());
         DWCException.setHostPort(Integer.parseInt(applicationContext.getEnvironment().getProperty("server.port")));
     }
 
@@ -173,6 +173,7 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
     public WebServerFactoryCustomizer<JettyServletWebServerFactory> jettyFactoryCustomizer() {
         return new WebServerFactoryCustomizer<JettyServletWebServerFactory>() {
             public void customize(JettyServletWebServerFactory jettyServletWebServerFactory) {
+                jettyServletWebServerFactory.getJsp().setRegistered(false);
                 jettyServletWebServerFactory.addServerCustomizers(new JettyServerCustomizer() {
                     public void customize(Server server) {
                         Handler[] childHandlersByClass = server.getChildHandlersByClass(WebAppContext.class);

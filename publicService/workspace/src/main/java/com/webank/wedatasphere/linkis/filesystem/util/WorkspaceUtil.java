@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.filesystem.util;
 
-import com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration;
+import static com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration.*;
 import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException;
 import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
 import org.slf4j.Logger;
@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
@@ -53,6 +54,8 @@ public class WorkspaceUtil {
                 || path.endsWith(".scala")
                 || path.endsWith(".py")
                 || path.endsWith(".mlsql")
+                || path.endsWith(".jdbc")
+                || path.endsWith(".sh")
         ) {
             return "script";
         } else if (path.endsWith(".dolphin")) {
@@ -70,22 +73,15 @@ public class WorkspaceUtil {
 
     //TODO update pathSafeCheck rule
     public static void pathSafeCheck(String path,String userName) throws WorkSpaceException {
-        /*LOGGER.info("start safe check path params..");
+        if(!FILESYSTEM_PATH_CHECK_TRIGGER.getValue()) return;
+        LOGGER.info("start safe check path params..");
         LOGGER.info(path);
-        String userLocalRootPath = null;
-        if (WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue().toString().endsWith(File.separator)){
-            userLocalRootPath = WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue() + userName;
-        }else{
-            userLocalRootPath = WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH.getValue() + File.separator + userName;
-        }
-        String userHdfsRootPath = null;
-        if (WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue().toString().endsWith(File.separator)){
-            userHdfsRootPath = WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue() + userName + WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_SUFFIX.getValue();
-        }else{
-            userHdfsRootPath = WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX.getValue() + File.separator + userName + WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_SUFFIX.getValue();
-        }
+        String userLocalRootPath = suffixTuning(LOCAL_USER_ROOT_PATH.getValue().toString()) + userName;
+        String userHdfsRootPath = suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue().toString()) + userName
+                + HDFS_USER_ROOT_PATH_SUFFIX.getValue().toString();
         LOGGER.info(userLocalRootPath);
         LOGGER.info(userHdfsRootPath);
+        userHdfsRootPath = StringUtils.trimTrailingCharacter(userHdfsRootPath,File.separatorChar);
         if(!path.contains(StorageUtils.FILE_SCHEMA()) && !path.contains(StorageUtils.HDFS_SCHEMA())){
             throw new WorkSpaceException("the path should contain schema");
         }
@@ -94,7 +90,19 @@ public class WorkspaceUtil {
         }
         if(!path.contains(userLocalRootPath) && !path.contains(userHdfsRootPath)){
             throw new WorkSpaceException("The path needs to be within the user's own workspace path");
-        }*/
+        }
+    }
+
+    public static Function<String, String> suffixTuningFunction = p -> {
+        if (p.endsWith(File.separator))
+            return p;
+         else
+            return p + File.separator;
+
+    };
+
+    public static String suffixTuning(String path) {
+        return suffixTuningFunction.apply(path);
     }
 
     public static void fileAndDirNameSpecialCharCheck(String path) throws WorkSpaceException {
@@ -104,6 +112,12 @@ public class WorkspaceUtil {
         Pattern specialPattern = Pattern.compile(specialRegEx);
         if(specialPattern.matcher(name).find()){
             throw new WorkSpaceException("the path exist special char");
+        }
+    }
+
+    public static void downloadResponseHeadCheck(String str) throws WorkSpaceException {
+        if(str.contains("\n") || str.contains("\r")){
+            throw new WorkSpaceException(String.format("illegal str %s",str));
         }
     }
 

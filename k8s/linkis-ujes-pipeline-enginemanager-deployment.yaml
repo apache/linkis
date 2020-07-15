@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-ujes-pipeline-enginemanager-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-ujes-pipeline-enginemanager
+      # release: dev
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: linkis-ujes-pipeline-enginemanager
+        # release: dev
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - linkis-ujes-pipeline-enginemanager
+              topologyKey: "kubernetes.io/hostname"
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              preference:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - node3
+      containers:
+        - name: linkis-ujes-mlsql-entrance
+          image: 10.206.0.5/library/linkis:linkis-ujes-pipeline-enginemanager
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh","/opt/ihome/linkis-ujes-pipeline-enginemanager/bin/stop.sh"]
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 18001
+          livenessProbe:
+            tcpSocket:
+              port: 18001
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          env:
+            - name: eurekaurl
+              value: http://10.206.0.12:20230/eureka/
+            - name: EUREKA_URL
+              value: http://10.206.0.12:20230/eureka/
+            - name: SERVER_HEAP_SIZE
+              value: 1024M
+            - name: START_PORT
+              value: "18001"
+          volumeMounts:
+            - name: linkis-ujes-pipeline-enginemanager-config
+              mountPath: /opt/ihome/conf
+      imagePullSecrets:
+        - name: registry-key
+      volumes:
+        - name: linkis-ujes-pipeline-enginemanager-config
+          configMap:
+            name: linkis-ujes-pipeline-enginemanager-config

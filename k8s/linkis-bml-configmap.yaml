@@ -1,0 +1,31 @@
+apiVersion: v1
+data:
+  linkis.properties: |+
+    wds.linkis.server.mybatis.mapperLocations=classpath:com/webank/wedatasphere/linkis/bml/dao/impl/*.xml
+    wds.linkis.server.mybatis.typeAliasesPackage=com.webank.wedatasphere.linkis.bml.dao
+    wds.linkis.server.mybatis.BasePackage=com.webank.wedatasphere.linkis.bml.dao
+    wds.test.mode=true
+    wds.linkis.server.restful.scan.packages=com.webank.wedatasphere.linkis.bml.restful
+
+    #sit
+    wds.linkis.server.mybatis.datasource.url=
+    wds.linkis.server.mybatis.datasource.username=
+    wds.linkis.server.mybatis.datasource.password=
+    wds.linkis.server.version=v1
+
+    #hadoop.config.dir
+
+kind: ConfigMap
+metadata:
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:data:
+        .: {}
+        f:linkis-bml.properties: {}
+    manager: kubectl
+    operation: Update
+  name: linkis-bml-config
+  namespace: default
+

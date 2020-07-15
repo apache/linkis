@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-gateway-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-gateway
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+
+  template:
+    metadata:
+      labels:
+        app: linkis-gateway
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - linkis-gateway
+              topologyKey: "kubernetes.io/hostname"
+        
+      containers:
+      - name: linkis-gateway
+        image: 10.206.0.5/library/linkis:linkis-gateway
+        lifecycle:
+            preStop:
+              exec:
+                command: ["sh","/opt/ihome/linkis-gateway/bin/stop.sh"]
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 14001
+        livenessProbe:
+            tcpSocket:
+              port: 14001
+            initialDelaySeconds: 15
+            periodSeconds: 20
+        env:
+          - name: EUREKA_URL
+            value: http://10.206.0.12:20230/eureka/
+          - name: SERVER_HEAP_SIZE
+            value: 1024M
+          - name: START_PORT
+            value: "14001"
+        volumeMounts:
+          - name: linkis-gateway-config
+            mountPath: /opt/ihome/conf
+      imagePullSecrets:
+        - name: registry-key
+      volumes:
+        - name: linkis-gateway-config
+          configMap:
+            name: linkis-gateway-config

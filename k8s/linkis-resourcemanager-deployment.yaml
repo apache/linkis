@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-resourcemanager-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-resourcemanager
+      # release: dev
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: linkis-resourcemanager
+        release: dev
+    spec:
+      affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                    - key: "app"
+                      operator: In
+                      values:
+                        - linkis-resourcemanager
+                topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: linkis-resourcemanager
+        image: 10.206.0.5/library/linkis:linkis-resourcemanager
+        lifecycle:
+            preStop:
+              exec:
+                command: ["sh","/opt/ihome/linkis-resourcemanager/bin/stop.sh"]
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 14004
+        livenessProbe:
+            tcpSocket:
+              port: 14004
+            initialDelaySeconds: 15
+            periodSeconds: 20
+        env:
+          - name: eurekaurl
+            value: http://10.206.0.12:20230/eureka/
+          - name: EUREKA_URL
+            value: http://10.206.0.12:20230/eureka/
+          - name: SERVER_HEAP_SIZE
+            value: 1024M
+          - name: START_PORT
+            value: "14004"
+        volumeMounts:
+          - name: linkis-resourcemanager-config
+            mountPath: /opt/ihome/conf
+      imagePullSecrets:
+        - name: registry-key
+      volumes:
+        - name: linkis-resourcemanager-config
+          configMap:
+            name: linkis-resourcemanager-config

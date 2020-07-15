@@ -1,0 +1,49 @@
+apiVersion: v1
+data:
+  linkis.properties: |+
+    #
+    # Copyright 2019 WeBank
+    #
+    # Licensed under the Apache License, Version 2.0 (the "License");
+    #  you may not use this file except in compliance with the License.
+    # You may obtain a copy of the License at
+    #
+    # http://www.apache.org/licenses/LICENSE-2.0
+    #
+    # Unless required by applicable law or agreed to in writing, software
+    # distributed under the License is distributed on an "AS IS" BASIS,
+    # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    # See the License for the specific language governing permissions and
+    # limitations under the License.
+    #
+
+
+
+
+    wds.linkis.server.restful.scan.packages=com.webank.wedatasphere.linkis.entrance.restful
+    wds.linkis.engine.application.name=pipeLineEngine
+    wds.linkis.server.component.exclude.packages=com.webank.wedatasphere.linkis.engine.,com.webank.wedatasphere.linkis.udf.
+
+    wds.linkis.console.config.application.name=cloud-publicservice
+    #hadoop.config.dir=/appcom/config/hadoop-config
+    #spark.config.dir=/appcom/config/spark-config
+
+    #rootScript shell path
+    wds.linkis.enginemanager.sudo.script=/appcom/tmp/johnnwang/Install/linkis-ujes-spark-enginemanager/bin/rootScript.sh
+    wds.linkis.server.version=v1
+
+
+kind: ConfigMap
+metadata:
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:data:
+        .: {}
+        f:linkis-ujes-pipeline-enginemanager.properties: {}
+    manager: kubectl
+    operation: Update
+  name: linkis-ujes-pipeline-enginemanager-config
+  namespace: default
+

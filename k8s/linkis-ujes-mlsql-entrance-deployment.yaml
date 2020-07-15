@@ -54,7 +54,7 @@ spec:
                       - node3
       containers:
         - name: linkis-ujes-mlsql-entrance
-          image: 10.206.0.5/library/linkis:linkis-ujes-mlsql-entrance
+          image: zhangrong1027/linkis:linkis-ujes-mlsql-entrance
           lifecycle:
             preStop:
               exec:

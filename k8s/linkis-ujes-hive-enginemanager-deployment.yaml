@@ -55,7 +55,7 @@ spec:
                       - node1
       containers:
         - name: linkis-ujes-hive-enginemanager
-          image: 10.206.0.5/library/linkis:linkis-ujes-hive-enginemanager
+          image: zhangrong1027/linkis:linkis-ujes-hive-enginemanager
           lifecycle:
             preStop:
               exec:

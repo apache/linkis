@@ -52,7 +52,7 @@ spec:
                       - node2
       containers:
         - name: scriptis
-          image: 10.206.0.5/library/linkis:scriptis
+          image: zhangrong1027/linkis:scriptis
           imagePullPolicy: Always
           ports:
             - name: http

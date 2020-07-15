@@ -54,7 +54,7 @@ spec:
                       - node2
       containers:
         - name: linkis-ujes-shell-entrance
-          image: zhangrong1027/linkis:linkis-ujes-shell-entrance
+          image: zhangrong1027/linkis:linkis-ujes-shell-entrance-0.9.4
           lifecycle:
             preStop:
               exec:
@@ -70,9 +70,15 @@ spec:
             periodSeconds: 20
           env:
             - name: eurekaurl
-              value: http://10.206.0.12:20230/eureka/
+              valueFrom:
+                configMapKeyRef:
+                  name: eureka-config
+                  key: eurekaUrl
             - name: EUREKA_URL
-              value: http://10.206.0.12:20230/eureka/
+              valueFrom:
+                configMapKeyRef:
+                  name: eureka-config
+                  key: eurekaUrl
             - name: SERVER_HEAP_SIZE
               value: 1024M
             - name: START_PORT
@@ -97,3 +103,6 @@ spec:
         - name: varlog
           hostPath:
             path: /var/log
+        - name: eureka-config
+          configMap:
+            name: eureka-config

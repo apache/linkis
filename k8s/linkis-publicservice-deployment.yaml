@@ -44,7 +44,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-publicservice
-        image: zhangrong1027/linkis:linkis-publicservice
+        image: zhangrong1027/linkis:linkis-publicservice-0.9.4
         imagePullPolicy: Always
         lifecycle:
           preStop:
@@ -60,9 +60,15 @@ spec:
             periodSeconds: 60
         env:
           - name: eurekaurl
-            value: http://10.206.0.12:20230/eureka/
+            valueFrom:
+              configMapKeyRef:
+                name: eureka-config
+                key: eurekaUrl
           - name: EUREKA_URL
-            value: http://10.206.0.12:20230/eureka/
+            valueFrom:
+              configMapKeyRef:
+                name: eureka-config
+                key: eurekaUrl
           - name: SERVER_HEAP_SIZE
             value: 1024M
           - name: START_PORT
@@ -87,3 +93,6 @@ spec:
         - name: varlog
           hostPath:
             path: /var/log
+        - name: eureka-config
+          configMap:
+            name: eureka-config

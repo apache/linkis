@@ -45,7 +45,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-dsm-server
-        image: zhangrong1027/linkis:linkis-dsm-server
+        image: zhangrong1027/linkis:linkis-dsm-server-0.9.4
         lifecycle:
           preStop:
             exec:
@@ -61,9 +61,15 @@ spec:
             periodSeconds: 20
         env:
           - name: eurekaurl
-            value: http://10.206.0.12:20230/eureka/
+            valueFrom:
+              configMapKeyRef:
+                name: eureka-config
+                key: eurekaUrl
           - name: EUREKA_URL
-            value: http://10.206.0.12:20230/eureka/
+            valueFrom:
+              configMapKeyRef:
+                name: eureka-config
+                key: eurekaUrl
           - name: SERVER_HEAP_SIZE
             value: 1024M
           - name: START_PORT
@@ -78,6 +84,9 @@ spec:
       imagePullSecrets:
         - name: registry-key
       volumes:
+        - name: eureka-config
+          configMap:
+            name: eureka-config
         - name: linkis-dsm-server-config
           configMap:
             name: linkis-dsm-server-config

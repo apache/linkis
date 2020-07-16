@@ -24,9 +24,13 @@ spec:
         paths:
           - path: /api
             backend:
-              serviceName: linkis-gateway
+              serviceName: linkis-gateway-service
               servicePort: 14001
           - path: /ws
             backend:
-              serviceName: linkis-gateway
+              serviceName: linkis-gateway-service
               servicePort: 14001
+          - path: /
+            backend:
+              serviceName: scriptis-service
+              servicePort: 80

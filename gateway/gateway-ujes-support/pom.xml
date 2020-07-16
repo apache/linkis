@@ -138,8 +138,8 @@
 <!--                    </execution>-->
 <!--                </executions>-->
 <!--                <configuration>-->
-<!--                    <repository>${harbor.reposity}</repository>-->
-<!--                    <tag>linkis-gateway</tag>-->
+<!--                    <repository>${harbor.reposity}/linkis-gateway</repository>-->
+<!--                    <tag>${linkis.version}</tag>-->
 <!--                    <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>-->
 <!--                </configuration>-->
 <!--            </plugin>-->

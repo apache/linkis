@@ -222,8 +222,8 @@
 <!--                    </execution>-->
 <!--                </executions>-->
 <!--                <configuration>-->
-<!--                    <repository>${harbor.reposity}</repository>-->
-<!--                    <tag>linkis-metadata</tag>-->
+<!--                    <repository>${harbor.reposity}/linkis-metadata</repository>-->
+<!--                    <tag>${linkis.version}</tag>-->
 <!--                    <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>-->
 <!--                </configuration>-->
 <!--            </plugin>-->

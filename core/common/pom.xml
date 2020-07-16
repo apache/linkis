@@ -170,6 +170,12 @@
             <groupId>net.databinder.dispatch</groupId>
             <artifactId>dispatch-json4s-jackson_2.11</artifactId>
             <version>0.11.2</version>
+          <exclusions>
+            <exclusion>
+              <artifactId>json4s-jackson_2.11</artifactId>
+              <groupId>org.json4s</groupId>
+            </exclusion>
+          </exclusions>
         </dependency>
     </dependencies>
 

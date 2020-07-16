@@ -109,8 +109,8 @@
 <!--                    </execution>-->
 <!--                </executions>-->
 <!--                <configuration>-->
-<!--                    <repository>${harbor.reposity}</repository>-->
-<!--                    <tag>linkis-ujes-shell-entrance</tag>-->
+<!--                    <repository>${harbor.reposity}/linkis-ujes-shell-entrance</repository>-->
+<!--                    <tag>${linkis.version}</tag>-->
 <!--                    <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>-->
 <!--                </configuration>-->
 <!--            </plugin>-->

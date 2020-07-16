@@ -369,8 +369,8 @@
 <!--                    </execution>-->
 <!--                </executions>-->
 <!--                <configuration>-->
-<!--                    <repository>${harbor.reposity}</repository>-->
-<!--                    <tag>linkis-resourcemanager</tag>-->
+<!--                    <repository>${harbor.reposity}/linkis-resourcemanager</repository>-->
+<!--                    <tag>${linkis.version}</tag>-->
 <!--                    <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>-->
 <!--                </configuration>-->
 <!--            </plugin>-->

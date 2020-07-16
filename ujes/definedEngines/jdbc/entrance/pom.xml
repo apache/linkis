@@ -247,8 +247,8 @@
 <!--                    </execution>-->
 <!--                </executions>-->
 <!--                <configuration>-->
-<!--                    <repository>${harbor.reposity}</repository>-->
-<!--                    <tag>linkis-ujes-jdbc-entrance</tag>-->
+<!--                    <repository>${harbor.reposity}/linkis-ujes-jdbc-entrance</repository>-->
+<!--                    <tag>${linkis.version}</tag>-->
 <!--                    <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>-->
 <!--                </configuration>-->
 <!--            </plugin>-->

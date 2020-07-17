@@ -30,6 +30,7 @@ object VariableParser {
   val RUNTIME: String = "runtime"
   val STARTUP: String = "startup"
   val SPECIAL: String = "special"
+  val DATASOURCE: String = "datasource"
 
   def getVariables(params: util.Map[String, Object]): Array[Variable] = {
     import scala.collection.JavaConversions._
@@ -40,7 +41,7 @@ object VariableParser {
     params.getOrDefault(CONFIGURATION, new util.HashMap[String, Object])
       .asInstanceOf[util.Map[String, Object]]
       .foreach {
-        f => f._2.asInstanceOf[util.Map[String, Object]].foreach(p => p._2 match {
+        f => f._2.asInstanceOf[util.Map[String, Object]].filter(_._2 != null).foreach(p => p._2 match {
           case e: util.Map[String, Object] => e.foreach(s => variables += Variable(f._1, p._1, s._1, s._2.toString))
           case _ => variables += Variable(CONFIGURATION, f._1, p._1, p._2.toString)
         })
@@ -55,7 +56,7 @@ object VariableParser {
     variables.filter(_.sort == null).foreach(f => vars += f.key -> f.value)
     variables.filter(_.sort != null).foreach {
       f => f.sort match {
-        case STARTUP | RUNTIME | SPECIAL =>
+        case STARTUP | RUNTIME | SPECIAL | DATASOURCE =>
           if (confs.get(f.sort) == null)
             confs += f.sort -> createMap(f)
           else
@@ -72,7 +73,7 @@ object VariableParser {
     }
     val params = new util.HashMap[String, Object]
     if(vars.size() >0)params += VARIABLE -> vars
-    if(vars.size() >0)params += CONFIGURATION -> confs
+    if(confs.size() >0)params += CONFIGURATION -> confs
     params
   }
 

@@ -24,6 +24,7 @@
         <version>0.9.4</version>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <artifactId>linkis</artifactId>
+        <relativePath>../../../pom.xml</relativePath>
     </parent>
 
     <packaging>jar</packaging>
@@ -33,14 +34,12 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-ujes-engine</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
+            </dependency>
 
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
+            </dependency>
     </dependencies>
     <build>
         <plugins>

@@ -48,8 +48,7 @@ object YarnUtil extends Logging{
   private var yarnConf: YarnConfiguration = _
 
   private var rm_web_address: String = CommonVars("wds.linkis.yarn.rm.web.address", "").getValue
-
-  private var hadoop_version:String = "2.7.2"
+  private var hadoop_version:String = "2.7.3"
 
   private val httpClient = HttpClients.createDefault()
 

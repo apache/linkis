@@ -16,7 +16,8 @@
 
 package com.webank.wedatasphere.linkis.gateway.config
 
-import com.webank.wedatasphere.linkis.gateway.security.{LDAPUserRestful, SecurityFilter, SecurityHook, UserRestful}
+import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import com.webank.wedatasphere.linkis.gateway.security._
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -27,6 +28,8 @@ import org.springframework.context.annotation.{Bean, Configuration}
   */
 @Configuration
 class GatewaySpringConfiguration {
+
+  val loginAuthStragegy = CommonVars("login.auth.stragegy", "ldap").getValue
 
   @Autowired
   private var userRestful: UserRestful = _
@@ -50,7 +53,7 @@ class GatewaySpringConfiguration {
   @ConditionalOnMissingBean
   @Autowired(required = false)
   def createUserRestful(securityHooks: Array[SecurityHook]): UserRestful = {
-    val userRestful = new LDAPUserRestful
+    var userRestful = if("ldap".equals(loginAuthStragegy)) new LDAPUserRestful else new ServiceUserRestful  
     if(securityHooks != null) userRestful.setSecurityHooks(securityHooks)
     userRestful
   }

@@ -47,6 +47,7 @@ import com.webank.wedatasphere.linkis.storage.script.*;
 import com.webank.wedatasphere.linkis.storage.source.FileSource;
 import com.webank.wedatasphere.linkis.storage.source.FileSource$;
 import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.math3.util.Pair;
 import org.apache.http.Consts;
@@ -478,6 +479,23 @@ public class FsRestfulApi {
         String scriptContent = (String) json.get("scriptContent");
         Object params = json.get("params");
         Map<String, Object> map = (Map<String, Object>) params;
+
+        if (path.endsWith(".jdbc")) {
+            if (MapUtils.isEmpty(map)) {
+                throw WorkspaceExceptionManager.createException(80031);
+            }
+
+            Map<String, Object> configuration = (Map<String, Object>) map.get("configuration");
+            if (MapUtils.isEmpty(configuration)) {
+                throw WorkspaceExceptionManager.createException(80031);
+            }
+
+            Map<String, Object> datasource = (Map<String, Object>) configuration.get("datasource");
+            if (MapUtils.isEmpty(datasource)) {
+                throw WorkspaceExceptionManager.createException(80031);
+            }
+        }
+
         Variable[] v = VariableParser.getVariables(map);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);

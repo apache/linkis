@@ -31,8 +31,7 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-ujes-spark-engine</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
+            </dependency>
 
         <dependency>
             <groupId>com.pingcap.tispark</groupId>

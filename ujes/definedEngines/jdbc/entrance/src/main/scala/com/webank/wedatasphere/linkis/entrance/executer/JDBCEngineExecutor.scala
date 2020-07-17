@@ -74,7 +74,7 @@ class JDBCEngineExecutor(outputPrintLimit: Int, properties: util.HashMap[String,
         val md = JDBCResultSet.getMetaData
         val metaArrayBuffer = new ArrayBuffer[Tuple2[String, String]]()
         for (i <- 1 to md.getColumnCount) {
-          metaArrayBuffer.add(Tuple2(md.getColumnName(i), JDBCHelper.getTypeStr(md.getColumnType(i))))
+          metaArrayBuffer.add(Tuple2(md.getColumnLabel(i), JDBCHelper.getTypeStr(md.getColumnType(i))))
         }
         val columns = metaArrayBuffer.map { c => Column(c._1, DataType.toDataType(c._2), "") }.toArray[Column]
         val metaData = new TableMetaData(columns)

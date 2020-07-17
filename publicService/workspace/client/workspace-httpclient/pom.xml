@@ -7,7 +7,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.9.4</version>
+        <version>0.13.0</version>
         <relativePath>../../../../pom.xml</relativePath>
     </parent>
     <artifactId>linkis-workspace-httpclient</artifactId>

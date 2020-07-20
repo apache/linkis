@@ -20,7 +20,6 @@ import java.io.File
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineHook}
-import com.webank.wedatasphere.linkis.protocol.engine.RequestEngine
 import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteRequest, RunTypeExecuteRequest}
 import com.webank.wedatasphere.linkis.server.JMap
 import org.apache.commons.io.FileUtils

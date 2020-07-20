@@ -33,6 +33,13 @@ object GatewayConfiguration {
   val TOKEN_AUTHENTICATION_CONFIG = CommonVars("wds.linkis.gateway.conf.token.auth.config", "token.properties")
   val TOKEN_AUTHENTICATION_SCAN_INTERVAL = CommonVars("wds.linkis.gateway.conf.token.auth.scan.interval", 1000 * 60 * 10)
 
+  val UPF_USER_KEY = "Upf-User"
+  val UPS_PASS_KEY = "Upf-Pass"
+  val ENABLE_UPF_AUTHENTICATION = CommonVars("wds.linkis.gateway.conf.enable.upf.auth", true)
+  val UPF_AUTHENTICATION_CONFIG = CommonVars("wds.linkis.gateway.conf.upf.auth.config", "upf.properties")
+  val UPF_AUTHENTICATION_SCAN_INTERVAL = CommonVars("wds.linkis.gateway.conf.upf.auth.scan.interval", 1000 * 60 * 10)
+
+
   val PASS_AUTH_REQUEST_URI = CommonVars("wds.linkis.gateway.conf.url.pass.auth", "/dws/").getValue.split(",")
 
   val ENABLE_SSO_LOGIN = CommonVars("wds.linkis.gateway.conf.enable.sso", false)

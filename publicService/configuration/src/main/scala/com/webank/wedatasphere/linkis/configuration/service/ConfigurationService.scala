@@ -21,7 +21,7 @@ import java.util
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.configuration.dao.ConfigMapper
-import com.webank.wedatasphere.linkis.configuration.entity._
+import com.webank.wedatasphere.linkis.configuration.entity.{ConfigKey, _}
 import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationException
 import com.webank.wedatasphere.linkis.configuration.util.Constants
 import com.webank.wedatasphere.linkis.configuration.validate.ValidatorManager
@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 /**
   * Created by allenlliu on 2019/4/8.
@@ -42,9 +43,44 @@ class ConfigurationService extends Logging {
 
   @Autowired private var validatorManager: ValidatorManager = _
 
+  @Transactional
+  def addKey(creator:String,appName:String,treeName:String,key: ConfigKey): Unit ={
+    val appID:Long = configMapper.selectAppIDByAppName(appName)
+    val creatorID: Long = configMapper.selectAppIDByAppName(creator)
+    val tree:ConfigTree = configMapper.selectTreeByAppIDAndName(appID,treeName)
+    key.setId(null)
+    key.setApplicationID(creatorID)
+    configMapper.insertKey(key)
+    configMapper.insertKeyTree(key.getId,tree.getId)
+  }
+
+  def insertCreator(creator:String): Unit ={
+    val creatorID: Long = configMapper.selectAppIDByAppName(creator)
+    if(creatorID == null) configMapper.insertCreator(creator) else warn(s"creator${creator} exists")
+  }
+
+  def listKeyByCreatorAndAppName(creator:String, appName:String):java.util.List[ConfigKey] ={
+    val creatorID: Long = configMapper.selectAppIDByAppName(creator)
+    val appID:Long = configMapper.selectAppIDByAppName(appName)
+    configMapper.listKeyByCreatorAndAppName(creatorID,appID)
+  }
+
+  @Transactional
+  def copyKeyFromIDE(key:ConfigKey,creator:String, appName:String) ={
+    val creatorID: Long = configMapper.selectAppIDByAppName(creator)
+    key.setApplicationID(creatorID)
+    val treeID = configMapper.selectTreeIDByKeyID(key.getId)
+    key.setId(null)
+    configMapper.insertKey(key)
+    configMapper.insertKeyTree(key.getId,treeID)
+  }
+
 
   def updateUserValue(setting: ConfigKeyValueVO) = {
     if (!StringUtils.isEmpty(setting.getValue)) {
+      if(!StringUtils.isEmpty(setting.getUnit) && !setting.getValue.contains(setting.getUnit) && !setting.getValue.contains(setting.getUnit.toLowerCase)){
+        setting.setValue(setting.getValue + setting.getUnit)
+      }
       val key = configMapper.selectKeyByKeyID(setting.getKeyID)
       info(s"Save parameter ${key.getKey} value ${setting.getValue} is not empty, enter checksum...(保存参数${key.getKey}值${setting.getValue}不为空，进入校验...)")
       if (!validatorManager.getOrCreateValidator(key.getValidateType).validate(setting.getValue, key.getValidateRange)) {
@@ -83,6 +119,7 @@ class ConfigurationService extends Logging {
     vo.setValidateType(key.getValidateType)
     vo.setValue(value.getValue)
     vo.setValueID(value.getId)
+    vo.setUnit(key.getUnit)
     vo
   }
 
@@ -138,8 +175,8 @@ class ConfigurationService extends Logging {
   }
 
   private def getValueByKeyId(keyID: Long, userName: String, appName: String): ConfigKeyUser = {
-    val appID = configMapper.selectAppIDByAppName(appName);
-    configMapper.selectValueByKeyId(keyID, userName, appID);
+    val appID = configMapper.selectAppIDByAppName(appName)
+    configMapper.selectValueByKeyId(keyID, userName, appID)
   }
 
   def queryAppConfigWithGlobal(userName: String, creator: String, appName: String, isMerge: Boolean): ResponseQueryConfig = {

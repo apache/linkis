@@ -1,4 +1,4 @@
-/*
+package com.webank.wedatasphere.linkis.server.rpc;/*
 package com.webank.wedatasphere.linkis.server.rpc;
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance;

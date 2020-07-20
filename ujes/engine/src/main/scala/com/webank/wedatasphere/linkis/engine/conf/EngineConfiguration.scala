@@ -60,4 +60,10 @@ object EngineConfiguration {
   val ENGINE_PUSH_PROGRESS_TO_ENTRANCE = CommonVars("wds.linkis.engine.push.progress.enable", true)
 
   val ENGINE_PRE_EXECUTE_HOOK_CLASSES = CommonVars("wds.linkis.engine.pre.hook.class", "com.webank.wedatasphere.linkis.bml.hook.BmlEnginePreExecuteHook")
+
+  val ENGINE_IGNORE_WORDS = CommonVars("wds.linkis.engine.ignore.words", "org.apache.spark.deploy.yarn.Client")
+
+  val ENGINE_PASS_WORDS = CommonVars("wds.linkis.engine.pass.words", "org.apache.hadoop.hive.ql.exec.Task")
+
+  val ENGINE_TUNING_DX_PERIOD = CommonVars("wds.linkis.engine.tuning.dx.period", 1000*60*5)
 }

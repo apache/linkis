@@ -53,7 +53,7 @@ public interface TaskService {
    * @param updateTime 操作时间
    * @param errMsg 异常信息
    */
-  void updateState2Failed( long taskId, String state, Date updateTime, String errMsg);
+  void updateState2Failed(long taskId, String state, Date updateTime, String errMsg);
 
   ResourceTask createDeleteVersionTask(String resourceId, String version, String user, String ip);
 

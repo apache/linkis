@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.entrance.interceptor
 
-import com.webank.wedatasphere.linkis.common.exception.{ErrorException, WarnException}
+import com.webank.wedatasphere.linkis.common.exception.ErrorException
 import com.webank.wedatasphere.linkis.protocol.task.Task
 
 /**

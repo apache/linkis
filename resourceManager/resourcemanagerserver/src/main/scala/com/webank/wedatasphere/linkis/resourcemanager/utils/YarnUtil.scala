@@ -47,7 +47,6 @@ object YarnUtil extends Logging{
 
   private implicit val executor = ExecutionContext.global
   private var yarnConf: YarnConfiguration = _
-  private var yarnClient:YarnClient = _
   private var rm_web_address: String = CommonVars("wds.linkis.yarn.rm.web.address", "").getValue
   private var hadoop_version:String = "2.7.2"
   implicit val format = DefaultFormats
@@ -59,11 +58,6 @@ object YarnUtil extends Logging{
     if(StringUtils.isBlank(this.rm_web_address)){
       reloadRMWebAddress()
     }
-    Utils.tryQuietly({
-      yarnClient = YarnClient.createYarnClient();
-      yarnClient.init(yarnConf)
-      yarnClient.start()
-    })
     info(s"This yarn  rm web address is:${this.rm_web_address}")
     Utils.tryAndErrorMsg(getHadoopVersion())("Failed to get HadoopVersion")
   }
@@ -266,21 +260,30 @@ object YarnUtil extends Logging{
     })
   }
 
-
   def getOwnQueues(userName: String): Array[String] = Utils.tryCatch {
     val queuePrefix = "root."
     UserGroupInformation.createRemoteUser(userName).doAs(new PrivilegedExceptionAction[Array[String]] {
       override def run(): Array[String] = {
-        yarnClient.getQueueAclsInfo
-          .filter(info => info.getUserAcls.contains(QueueACL.ADMINISTER_QUEUE) || info.getUserAcls.contains(QueueACL.SUBMIT_APPLICATIONS))
-          .map(info => {
-            val queueName = if (info.getQueueName.startsWith(queuePrefix)) {
-              info.getQueueName.substring(queuePrefix.length)
-            } else {
-              info.getQueueName
-            }
-            queueName
-          }).toArray
+        val yarnClient = YarnClient.createYarnClient();
+        try {
+          yarnClient.init(yarnConf)
+          yarnClient.start()
+          yarnClient.getQueueAclsInfo
+            .filter(aclsInfo => {
+//              info(s"""queue: ${aclsInfo.getQueueName}, acls: ${aclsInfo.getUserAcls.mkString(",")}""")
+              aclsInfo.getUserAcls.contains(QueueACL.ADMINISTER_QUEUE) || aclsInfo.getUserAcls.contains(QueueACL.SUBMIT_APPLICATIONS)
+            })
+            .map(info => {
+              val queueName = if (info.getQueueName.startsWith(queuePrefix)) {
+                info.getQueueName.substring(queuePrefix.length)
+              } else {
+                info.getQueueName
+              }
+              queueName
+            }).toArray
+        } finally {
+          yarnClient.close()
+        }
       }
     })
   } {

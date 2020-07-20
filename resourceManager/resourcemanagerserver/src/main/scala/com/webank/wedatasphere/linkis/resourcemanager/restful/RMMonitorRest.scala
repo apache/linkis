@@ -236,8 +236,10 @@ class RMMonitorRest {
     val userConfiguration = UserConfiguration.getCacheMap(RequestQueryAppConfigWithGlobal(userName, null, null, true))
     queues.add(RMConfiguration.USER_AVAILABLE_YARN_QUEUE_NAME.getValue(userConfiguration))
     queues.add(RMConfiguration.USER_AVAILABLE_YARN_QUEUE_NAME.getValue)
-    // add own queues
-    YarnUtil.getOwnQueues(userName).map(queues.add(_))
+    // auto add acl queues
+    if (RMConfiguration.USER_AVAILABLE_YARN_QUEUE_ACLS_AUTO.getValue) {
+      YarnUtil.getOwnQueues(userName).map(queues.add(_))
+    }
     appendMessageData(message, "queues", queues)
   }
 

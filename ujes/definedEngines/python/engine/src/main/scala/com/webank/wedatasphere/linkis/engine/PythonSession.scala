@@ -43,7 +43,6 @@ import com.webank.wedatasphere.linkis.storage.domain._
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.commons.io.IOUtils
-import org.scalactic.Pass
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters
@@ -131,7 +130,6 @@ class PythonSession extends Logging {
         logger.info("result is {} ", res)
         if (StringUtils.isNotBlank(res)) engineExecutorContext.appendStdout(res)
       }
-      Pass
     })
   }
 

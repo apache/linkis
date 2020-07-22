@@ -18,12 +18,12 @@ package com.webank.wedatasphere.linkis.storage.resultset
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.io.{FsPath, MetaData, Record}
 import com.webank.wedatasphere.linkis.common.io.resultset.ResultSet
+import com.webank.wedatasphere.linkis.common.io.{FsPath, MetaData, Record}
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.storage.FSFactory
 import com.webank.wedatasphere.linkis.storage.domain.Dolphin
-import com.webank.wedatasphere.linkis.storage.exception.{StorageErrorException, StorageFatalException, StorageWarnException}
+import com.webank.wedatasphere.linkis.storage.exception.{StorageErrorException, StorageWarnException}
 import com.webank.wedatasphere.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 import org.apache.commons.lang.StringUtils
 
@@ -75,6 +75,7 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging{
     val resultSetType = Dolphin.getType(inputStream)
     if(StringUtils.isEmpty(resultSetType)) throw new StorageWarnException(51000, s"The file (${fsPath.getPath}) is empty(文件(${fsPath.getPath}) 为空)")
     Utils.tryQuietly(inputStream.close())
+    Utils.tryQuietly(fs.close())
     getResultSetByType(resultSetType)
   }
 

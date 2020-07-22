@@ -15,24 +15,25 @@
  */
 
 package com.webank.wedatasphere.linkis.engine.Interpreter
-import org.apache.spark.{SparkContext, SparkException}
-import org.json4s.jackson.JsonMethods._
-import org.json4s.jackson.Serialization.write
-import org.json4s.{DefaultFormats, JValue}
-import py4j.GatewayServer
+
 import java.io._
 import java.nio.file.Files
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engine.configuration.{SparkConfiguration}
+import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration
 import com.webank.wedatasphere.linkis.engine.spark.common.LineBufferedStream
 import com.webank.wedatasphere.linkis.engine.spark.utils.EngineUtils
 import com.webank.wedatasphere.linkis.storage.FSFactory
 import org.apache.commons.io.IOUtils
 import org.apache.spark.sql._
 import org.apache.spark.sql.catalyst.expressions.Attribute
+import org.apache.spark.{SparkContext, SparkException}
+import org.json4s.jackson.JsonMethods._
+import org.json4s.jackson.Serialization.write
+import org.json4s.{DefaultFormats, JValue}
+import py4j.GatewayServer
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer

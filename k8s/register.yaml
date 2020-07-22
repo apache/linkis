@@ -1,5 +1,5 @@
 kubectl create secret docker-registry registry-key \
---docker-server=https://10.206.0.5/library/linkis \
+--docker-server=https://zhangrong1027/linkis \
 --docker-username=admin \
 --docker-password=***** \
 --docker-email=brian.rongzhang@gmail.com

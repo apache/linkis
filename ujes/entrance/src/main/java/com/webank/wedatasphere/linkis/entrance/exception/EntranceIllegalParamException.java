@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.entrance.exception;
 
-import com.webank.wedatasphere.linkis.common.exception.DWCRuntimeException;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.common.exception.ExceptionLevel;
 
 /**
  * created by enjoyyin on 2018/10/8

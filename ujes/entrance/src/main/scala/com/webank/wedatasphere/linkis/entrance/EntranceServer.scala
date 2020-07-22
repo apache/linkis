@@ -18,7 +18,6 @@ package com.webank.wedatasphere.linkis.entrance
 
 import com.webank.wedatasphere.linkis.common.exception.{DWCException, DWCRuntimeException, ErrorException}
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.exception.{EntranceErrorException, SubmitFailedException}
 import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
 import com.webank.wedatasphere.linkis.entrance.log.LogReader

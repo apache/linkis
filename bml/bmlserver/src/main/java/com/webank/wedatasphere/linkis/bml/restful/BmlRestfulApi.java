@@ -15,17 +15,9 @@
  */
 package com.webank.wedatasphere.linkis.bml.restful;
 
-import com.webank.wedatasphere.linkis.bml.Entity.DownloadModel;
-import com.webank.wedatasphere.linkis.bml.Entity.Resource;
-import com.webank.wedatasphere.linkis.bml.Entity.ResourceTask;
-import com.webank.wedatasphere.linkis.bml.Entity.ResourceVersion;
-import com.webank.wedatasphere.linkis.bml.Entity.Version;
-import com.webank.wedatasphere.linkis.bml.common.Constant;
-import com.webank.wedatasphere.linkis.bml.service.BmlService;
-import com.webank.wedatasphere.linkis.bml.service.DownloadService;
-import com.webank.wedatasphere.linkis.bml.service.ResourceService;
-import com.webank.wedatasphere.linkis.bml.service.TaskService;
-import com.webank.wedatasphere.linkis.bml.service.VersionService;
+import com.webank.wedatasphere.linkis.bml.Entity.*;
+import com.webank.wedatasphere.linkis.bml.common.*;
+import com.webank.wedatasphere.linkis.bml.service.*;
 import com.webank.wedatasphere.linkis.bml.threading.TaskState;
 import com.webank.wedatasphere.linkis.bml.util.HttpRequestHelper;
 import com.webank.wedatasphere.linkis.bml.vo.ResourceBasicVO;
@@ -33,8 +25,6 @@ import com.webank.wedatasphere.linkis.bml.vo.ResourceVO;
 import com.webank.wedatasphere.linkis.bml.vo.ResourceVersionsVO;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.server.Message;
-import com.webank.wedatasphere.linkis.bml.common.*;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
@@ -45,25 +35,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * created by cooperyang on 2019/5/14

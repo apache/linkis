@@ -21,7 +21,7 @@ import java.util.concurrent.locks.ReentrantLock
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engine.configuration.{SparkConfiguration}
+import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration
 import org.apache.commons.io.IOUtils
 
 import scala.concurrent.duration.Duration

@@ -17,7 +17,6 @@
 package com.webank.wedatasphere.linkis.engine.lock
 
 import com.webank.wedatasphere.linkis.common.listener.ListenerEventBus
-import com.webank.wedatasphere.linkis.engine.lock.EngineTimedLockManagerTest.lockManager
 import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
 import com.webank.wedatasphere.linkis.scheduler.event.{ScheduleEvent, SchedulerEventListener}
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorState.ExecutorState

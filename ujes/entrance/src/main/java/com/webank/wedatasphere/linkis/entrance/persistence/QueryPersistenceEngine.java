@@ -23,6 +23,7 @@
 package com.webank.wedatasphere.linkis.entrance.persistence;
 
 import com.google.gson.Gson;
+import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration;
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration$;
 import com.webank.wedatasphere.linkis.entrance.exception.EntranceIllegalParamException;
 import com.webank.wedatasphere.linkis.entrance.exception.EntranceRPCException;
@@ -82,10 +83,6 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine{
                 if (object == null){
                     throw new QueryFailedException(20011, "insert task failed, reason: " + message);
                 }
-/*                if (object instanceof Long){
-                    Long taskID = (Long)object;
-                    ((RequestPersistTask) task).setTaskID(taskID);
-                }*/
                 String taskStr = object.toString();
                 Long taskID = Long.parseLong(taskStr.substring(0,taskStr.indexOf(".")));
                 ((RequestPersistTask) task).setTaskID(taskID);

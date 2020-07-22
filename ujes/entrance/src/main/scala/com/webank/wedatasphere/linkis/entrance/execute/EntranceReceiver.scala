@@ -19,10 +19,9 @@ package com.webank.wedatasphere.linkis.entrance.execute
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.entrance.EntranceContext
 import com.webank.wedatasphere.linkis.entrance.annotation.EntranceContextBeanAnnotation
-import com.webank.wedatasphere.linkis.entrance.event.{EntranceProgressEvent}
+import com.webank.wedatasphere.linkis.entrance.event.EntranceProgressEvent
 import com.webank.wedatasphere.linkis.entrance.utils.RPCUtils
 import com.webank.wedatasphere.linkis.protocol.engine._
-
 import com.webank.wedatasphere.linkis.rpc.exception.DWCRPCRetryException
 import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
 import com.webank.wedatasphere.linkis.scheduler.executer.AliasOutputExecuteResponse

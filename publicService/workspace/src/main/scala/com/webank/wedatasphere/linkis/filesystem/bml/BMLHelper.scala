@@ -21,13 +21,14 @@ import java.util.UUID
 
 import com.webank.wedatasphere.linkis.bml.client.{BmlClient, BmlClientFactory}
 import com.webank.wedatasphere.linkis.bml.protocol.{BmlDownloadResponse, BmlUpdateResponse, BmlUploadResponse}
-import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException
+import com.webank.wedatasphere.linkis.filesystem.exception.WorkspaceExceptionManager
 import org.springframework.stereotype.Component
 
 import scala.collection.JavaConversions._
+
 /**
-  * Created by patinousward
-  */
+ * Created by patinousward
+ */
 @Component
 class BMLHelper {
 
@@ -35,16 +36,26 @@ class BMLHelper {
     val inputStream = new ByteArrayInputStream(content.getBytes("utf-8"))
     val client: BmlClient = createBMLClient(userName)
     val resource: BmlUploadResponse = client.uploadResource(userName, fileName, inputStream)
-    if (!resource.isSuccess) throw new WorkSpaceException("上传失败")
+    if (!resource.isSuccess) throw WorkspaceExceptionManager.createException(80021)
     val map = new util.HashMap[String, Object]
     map += "resourceId" -> resource.resourceId
     map += "version" -> resource.version
   }
 
+  def upload(userName: String, inputStream: InputStream, fileName: String, projectName: String): util.Map[String, Object] = {
+    val client: BmlClient = createBMLClient(userName)
+    val resource: BmlUploadResponse = client.uploadResource(userName, fileName, inputStream)
+    if (!resource.isSuccess) throw WorkspaceExceptionManager.createException(80021)
+    val map = new util.HashMap[String, Object]
+    map += "resourceId" -> resource.resourceId
+    map += "version" -> resource.version
+  }
+
+
   def upload(userName: String, inputStream: InputStream, fileName: String): util.Map[String, Object] = {
     val client: BmlClient = createBMLClient(userName)
     val resource: BmlUploadResponse = client.uploadResource(userName, fileName, inputStream)
-    if (!resource.isSuccess) throw new WorkSpaceException("上传失败")
+    if (!resource.isSuccess) throw WorkspaceExceptionManager.createException(80021)
     val map = new util.HashMap[String, Object]
     map += "resourceId" -> resource.resourceId
     map += "version" -> resource.version
@@ -53,7 +64,7 @@ class BMLHelper {
   def update(userName: String, resourceId: String, inputStream: InputStream): util.Map[String, Object] = {
     val client: BmlClient = createBMLClient(userName)
     val resource: BmlUpdateResponse = client.updateResource(userName, resourceId, "", inputStream)
-    if (!resource.isSuccess) throw new WorkSpaceException("更新失败")
+    if (!resource.isSuccess) throw WorkspaceExceptionManager.createException(80022)
     val map = new util.HashMap[String, Object]
     map += "resourceId" -> resource.resourceId
     map += "version" -> resource.version
@@ -62,8 +73,8 @@ class BMLHelper {
   def update(userName: String, resourceId: String, content: String): util.Map[String, Object] = {
     val inputStream = new ByteArrayInputStream(content.getBytes("utf-8"))
     val client: BmlClient = createBMLClient(userName)
-    val resource: BmlUpdateResponse = client.updateResource(userName, resourceId, UUID.randomUUID().toString+".json", inputStream)
-    if (!resource.isSuccess) throw new WorkSpaceException("更新失败")
+    val resource: BmlUpdateResponse = client.updateResource(userName, resourceId, UUID.randomUUID().toString + ".json", inputStream)
+    if (!resource.isSuccess) throw WorkspaceExceptionManager.createException(80022)
     val map = new util.HashMap[String, Object]
     map += "resourceId" -> resource.resourceId
     map += "version" -> resource.version
@@ -72,11 +83,12 @@ class BMLHelper {
   def query(userName: String, resourceId: String, version: String): util.Map[String, Object] = {
     val client: BmlClient = createBMLClient(userName)
     var resource: BmlDownloadResponse = null
-    if (version == null) resource = client.downloadResource(userName, resourceId,null) else resource = client.downloadResource(userName, resourceId, version)
-    if (!resource.isSuccess) throw new WorkSpaceException("下载失败")
+    if (version == null) resource = client.downloadResource(userName, resourceId, null)
+    else resource = client.downloadResource(userName, resourceId, version)
+    if (!resource.isSuccess) throw WorkspaceExceptionManager.createException(80023)
     val map = new util.HashMap[String, Object]
     map += "path" -> resource.fullFilePath
-    map += "stream" ->resource.inputStream
+    map += "stream" -> resource.inputStream
   }
 
   private def inputstremToString(inputStream: InputStream): String = scala.io.Source.fromInputStream(inputStream).mkString

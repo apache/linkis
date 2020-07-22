@@ -16,7 +16,6 @@
 
 package com.webank.wedatasphere.linkis.engine.pipeline
 
-
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineExecutorContext}
 import com.webank.wedatasphere.linkis.engine.pipeline.exception.PipeLineErrorException
@@ -29,8 +28,8 @@ import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteResponse, Singl
 import com.webank.wedatasphere.linkis.server._
 
 /**
-  * Created by johnnwang on 2018/11/13.
-  */
+ * Created by johnnwang on 2018/11/13.
+ */
 class PipeLineEngineExecutor(options: JMap[String, String]) extends EngineExecutor(outputPrintLimit = 10, false) with SingleTaskInfoSupport with Logging {
   override def getName: String = "pipeLineEngine"
 
@@ -38,7 +37,7 @@ class PipeLineEngineExecutor(options: JMap[String, String]) extends EngineExecut
   private var index = 0
   private var progressInfo: JobProgressInfo = _
 
-  override def getActualUsedResources: Resource = new LoadInstanceResource(Runtime.getRuntime.totalMemory() - Runtime.getRuntime.freeMemory(), 2, 1)
+  override def getActualUsedResources: Resource = new LoadInstanceResource(Runtime.getRuntime.totalMemory() - Runtime.getRuntime.freeMemory(), 1, 1)
 
   override def init(): Unit = {
     info("init pipeLineEngine...")
@@ -64,9 +63,9 @@ class PipeLineEngineExecutor(options: JMap[String, String]) extends EngineExecut
       code match {
         case regex(sourcePath, destPath) => {
           if (destPath.contains(".")) {
-            PipeLineExecutorFactory.listPipeLineExecutor.find(f => "cp".equals(f.Kind)).get.execute(sourcePath, destPath)
+            PipeLineExecutorFactory.listPipeLineExecutor.find(f => "cp".equals(f.Kind)).get.execute(sourcePath, destPath, engineExecutorContext)
           } else {
-            PipeLineExecutorFactory.listPipeLineExecutor.find(f => newOptions.get("pipeline.output.mold").equalsIgnoreCase(f.Kind)).map(_.execute(sourcePath, destPath)).get
+            PipeLineExecutorFactory.listPipeLineExecutor.find(f => newOptions.get("pipeline.output.mold").equalsIgnoreCase(f.Kind)).map(_.execute(sourcePath, destPath, engineExecutorContext)).get
           }
         }
         case _ => throw new PipeLineErrorException(70007, "")
@@ -75,6 +74,8 @@ class PipeLineEngineExecutor(options: JMap[String, String]) extends EngineExecut
       case e: Exception => failedTasks = 1; succeedTasks = 0; throw e
     }
     finally {
+      info("begin to remove osCache:" + engineExecutorContext.getJobId.get)
+      OutputStreamCache.osCache.remove(engineExecutorContext.getJobId.get)
       progressInfo = JobProgressInfo(getName + "_" + index, 1, 0, failedTasks, succeedTasks)
     }
   }

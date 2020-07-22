@@ -56,12 +56,13 @@ class JarLoaderEngineHook extends EngineHook with Logging{
   }
 
   protected def isJarExists(udfInfo: UDFInfo) : Boolean = {
-    if(FileUtils.getFile(udfInfo.getPath).exists()){
-      true
-    } else {
-      info(s"The jar file [${udfInfo.getPath}] of UDF [${udfInfo.getUdfName}] doesn't exist, ignore it.")
-      false
-    }
+    true
+//    if(FileUtils.getFile(udfInfo.getPath).exists()){
+//      true
+//    } else {
+//      info(s"The jar file [${udfInfo.getPath}] of UDF [${udfInfo.getUdfName}] doesn't exist, ignore it.")
+//      false
+//    }
   }
 
   protected def extractUdfInfos(requestEngine: RequestEngine): mutable.ArrayBuffer[UDFInfo] = {

@@ -17,7 +17,6 @@ package com.webank.wedatasphere.linkis.metadata.service.impl;
 
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
-
 import com.webank.wedatasphere.linkis.common.utils.ByteTimeUtils;
 import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils;
 import com.webank.wedatasphere.linkis.metadata.dao.MdqDao;
@@ -84,6 +83,13 @@ public class MdqServiceImpl implements MdqService {
         mdqDao.insertTable(table);
         List<MdqTableFieldsInfoBO> tableFieldsInfo = mdqTableBO.getTableFieldsInfo();
         List<MdqField> mdqFieldList = DomainCoversionUtils.mdqTableFieldsInfoBOListToMdqFieldList(tableFieldsInfo, table.getId());
+        if(table.getPartitionTable() && table.getImport()){
+            //创建表是导入,并且是分区表的话,自动去掉最后一个ds列
+            List<MdqField> collect = mdqFieldList.stream().filter(f -> "ds".equals(f.getName())).collect(Collectors.toList());
+            if(collect.size() > 1){
+                mdqFieldList.remove(collect.get(1));
+            }
+        }
         mdqDao.insertFields(mdqFieldList);
         if (mdqTableBO.getImportInfo() != null) {
             MdqTableImportInfoBO importInfo = mdqTableBO.getImportInfo();
@@ -237,6 +243,7 @@ public class MdqServiceImpl implements MdqService {
         mdqTablePartitionStatisticInfoVO.setName(new Path(path).getName());
         mdqTablePartitionStatisticInfoVO.setFileNum(getTableFileNum(path));
         mdqTablePartitionStatisticInfoVO.setPartitionSize(getTableSize(path));
+        mdqTablePartitionStatisticInfoVO.setModificationTime(getTableModificationTime(path));
         FileStatus tableFile = getRootHdfs().getFileStatus(new Path(path));
         FileStatus[] fileStatuses = getRootHdfs().listStatus(tableFile.getPath());
         List<FileStatus> collect = Arrays.stream(fileStatuses).filter(f -> f.isDirectory()).collect(Collectors.toList());
@@ -244,6 +251,14 @@ public class MdqServiceImpl implements MdqService {
             mdqTablePartitionStatisticInfoVO.getChildrens().add(create(fileStatuse.getPath().toString()));
         }
         return mdqTablePartitionStatisticInfoVO;
+    }
+
+    private Date getTableModificationTime(String tableLocation) throws IOException {
+        if (StringUtils.isNotBlank(tableLocation)) {
+            FileStatus tableFile = getRootHdfs().getFileStatus(new Path(tableLocation));
+            return new Date(tableFile.getModificationTime());
+        }
+        return null;
     }
 
     private int getPartitionsNum(String tableLocation) throws IOException {

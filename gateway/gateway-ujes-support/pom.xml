@@ -23,7 +23,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.9.3</version>
+        <version>0.9.4</version>
     </parent>
 
     <artifactId>linkis-gateway-ujes-support</artifactId>
@@ -70,6 +70,13 @@
             <artifactId>netty-transport-native-epoll</artifactId>
             <version>4.1.25.Final</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-cs-common</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -116,26 +123,26 @@
                     </descriptors>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>1.3.4</version>
-                <executions>
-                    <execution>
-                        <id>default</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build</goal>
-                            <goal>tag</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <repository>${harbor.reposity}</repository>
-                    <tag>linkis-gateway</tag>
-                    <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>com.spotify</groupId>-->
+<!--                <artifactId>dockerfile-maven-plugin</artifactId>-->
+<!--                <version>1.3.4</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>default</id>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>build</goal>-->
+<!--                            <goal>tag</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--                    <repository>${harbor.reposity}/linkis-gateway</repository>-->
+<!--                    <tag>${linkis.version}</tag>-->
+<!--                    <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
         <resources>
             <resource>

@@ -16,6 +16,7 @@
 package com.webank.wedatasphere.linkis.metadata.domain.mdq.vo;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -23,6 +24,15 @@ public class MdqTablePartitionStatisticInfoVO {
     private Integer fileNum;
     private String partitionSize;
     private String name;
+    private Date modificationTime;
+
+    public Date getModificationTime() {
+        return modificationTime;
+    }
+
+    public void setModificationTime(Date modificationTime) {
+        this.modificationTime = modificationTime;
+    }
 
     public String getName() {
         return name;

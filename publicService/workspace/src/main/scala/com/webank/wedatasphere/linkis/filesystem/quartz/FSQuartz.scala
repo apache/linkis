@@ -35,7 +35,8 @@ class FSQuartz extends QuartzJobBean with Logging{
           try {
             f.fs.close()
           }catch {
-            case e:Exception =>info(e.getMessage);info("Requesting IO-Engine call close failed! But still have to continue to clean up the expired fs!(请求IO-Engine调用close失败！但还是要继续清理过期fs！)")
+            case e: Exception =>
+              info("Requesting IO-Engine call close failed! But still have to continue to clean up the expired fs!", e)
           }
           list -= f
         }

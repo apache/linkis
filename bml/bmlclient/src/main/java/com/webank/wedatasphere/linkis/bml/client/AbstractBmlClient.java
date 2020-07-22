@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public abstract class AbstractBmlClient implements BmlClient{
     protected String user;
-    protected java.util.Map<String, Object> properties;
+    protected Map<String, Object> properties;
 
     public String getUser() {
         return user;

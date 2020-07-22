@@ -1,5 +1,7 @@
 kubectl create -f register.yaml
 
+kubectl apply -f linkis-eureka-configmap.yaml
+
 kubectl create -f linkis-gateway-configmap.yaml
 kubectl create -f linkis-metadata-configmap.yaml
 kubectl create -f linkis-publicservice-configmap.yaml
@@ -17,6 +19,12 @@ kubectl create -f linkis-ujes-shell-enginemanager-configmap.yaml
 kubectl create -f linkis-ujes-shell-entrance-configmap.yaml
 kubectl create -f linkis-ujes-spark-entrance-configmap.yaml
 kubectl create -f linkis-ujes-spark-enginemanager-configmap.yaml
+
+kubectl create -f linkis-dsm-server-configmap.yaml
+kubectl create -f linkis-mdm-server-configmap.yaml
+kubectl create -f linkis-mdm-service-es-configmap.yaml
+kubectl create -f linkis-mdm-service-hive-configmap.yaml
+kubectl create -f linkis-mdm-service-mysql-configmap.yaml
 
 
 kubectl create -f linkis-gateway-deployment.yaml
@@ -38,4 +46,11 @@ kubectl create -f linkis-ujes-spark-entrance-deployment.yaml
 kubectl create -f linkis-ujes-spark-enginemanager-deployment.yaml
 
 kubectl create -f linkis-gateway-service.yaml
+
+
+kubectl create -f linkis-dsm-server-deployment.yaml
+kubectl create -f linkis-mdm-server-deployment.yaml
+kubectl create -f linkis-mdm-service-es-deployment.yaml
+kubectl create -f linkis-mdm-service-hive-deployment.yaml
+kubectl create -f linkis-mdm-service-mysql-deployment.yaml
 

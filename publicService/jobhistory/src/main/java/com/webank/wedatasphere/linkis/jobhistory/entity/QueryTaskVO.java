@@ -39,12 +39,33 @@ public class QueryTaskVO {
     private String errDesc;
     private String executeApplicationName;
     private String requestApplicationName;
-    private String scriptPath;
     private String runType;
     private String paramsJson;
     private Long costTime;
     private String strongerExecId;
     private String sourceJson;
+    /**
+     * source字段:用来将sourceJson的value取出来进行拼接返回给前台展示
+     */
+    private String sourceTailor;
+
+    private Date engineStartTime;
+
+    public Date getEngineStartTime() {
+        return engineStartTime;
+    }
+
+    public void setEngineStartTime(Date engineStartTime) {
+        this.engineStartTime = engineStartTime;
+    }
+
+    public String getSourceTailor() {
+        return sourceTailor;
+    }
+
+    public void setSourceTailor(String sourceTailor) {
+        this.sourceTailor = sourceTailor;
+    }
 
     public String getSourceJson() {
         return sourceJson;
@@ -188,14 +209,6 @@ public class QueryTaskVO {
 
     public void setRequestApplicationName(String requestApplicationName) {
         this.requestApplicationName = requestApplicationName;
-    }
-
-    public String getScriptPath() {
-        return scriptPath;
-    }
-
-    public void setScriptPath(String scriptPath) {
-        this.scriptPath = scriptPath;
     }
 
     public String getRunType() {

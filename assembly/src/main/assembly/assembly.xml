@@ -268,7 +268,41 @@
         <include>*.zip</include>
       </includes>
     </fileSet>
+    <!-- context service-->
+    <fileSet>
+      <directory>
+        ${project.parent.basedir}/contextservice/cs-server/target/
+      </directory>
+      <outputDirectory>share/linkis/linkis-cs-server/</outputDirectory>
+      <includes>
+        <include>*.zip</include>
+      </includes>
+    </fileSet>
+    <!--datasource manage server-->
+    <fileSet>
+      <directory>
+        ${project.parent.basedir}/datasource/datasourcemanager/server/target
+      </directory>
+      <outputDirectory>share/linkis/datasource/linkis-dsm-server/</outputDirectory>
+      <includes>
+        <include>*.zip</include>
+      </includes>
+    </fileSet>
+
+
+    <!--metadata manage server-->
+    <fileSet>
+      <directory>
+        ${project.parent.basedir}/datasource/metadatamanager/server/target
+      </directory>
+      <outputDirectory>share/linkis/datasource/linkis-mdm-server/</outputDirectory>
+      <includes>
+        <include>*.zip</include>
+      </includes>
+    </fileSet>
   </fileSets>
+
+
 
   <dependencySets>
     <dependencySet>

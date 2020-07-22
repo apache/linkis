@@ -17,7 +17,6 @@
 package com.webank.wedatasphere.linkis.resourcemanager
 
 import com.webank.wedatasphere.linkis.resourcemanager.service.DefaultRMContext
-import com.webank.wedatasphere.linkis.resourcemanager.service.metadata.{ModuleResourceRecordService, ResourceLockService}
 import com.webank.wedatasphere.linkis.scheduler.Scheduler
 
 /**

@@ -57,4 +57,6 @@ object StorageConfiguration {
   val IO_INIT_RETRY_LIMIT = CommonVars("wds.linkis.storage.io.init.retry.limit", 10)
 
   val STORAGE_HDFS_GROUP = CommonVars("wds.linkis.storage.fileSystem.hdfs.group", "hadoop")
+
+  val DOUBLE_FRACTION_LEN = CommonVars[Int]("wds.linkis.double.fraction.length", 30)
 }

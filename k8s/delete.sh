@@ -18,6 +18,11 @@ kubectl delete -f linkis-ujes-shell-entrance-configmap.yaml
 kubectl delete -f linkis-ujes-spark-entrance-configmap.yaml
 kubectl delete -f linkis-ujes-spark-enginemanager-configmap.yaml
 
+kubectl delete -f linkis-dsm-server-configmap.yaml
+kubectl delete -f linkis-mdm-server-configmap.yaml
+kubectl delete -f linkis-mdm-service-es-configmap.yaml
+kubectl delete -f linkis-mdm-service-hive-configmap.yaml
+kubectl delete -f linkis-mdm-service-mysql-configmap.yaml
 
 kubectl delete -f linkis-gateway-deployment.yaml
 kubectl delete -f linkis-bml-deployment.yaml
@@ -38,4 +43,12 @@ kubectl delete -f linkis-ujes-spark-entrance-deployment.yaml
 kubectl delete -f linkis-ujes-spark-enginemanager-deployment.yaml
 
 kubectl delete -f linkis-gateway-service.yaml
+
+kubectl delete -f linkis-dsm-server-deployment.yaml
+kubectl delete -f linkis-mdm-server-deployment.yaml
+kubectl delete -f linkis-mdm-service-es-deployment.yaml
+kubectl delete -f linkis-mdm-service-hive-deployment.yaml
+kubectl delete -f linkis-mdm-service-mysql-deployment.yaml
+
+
 

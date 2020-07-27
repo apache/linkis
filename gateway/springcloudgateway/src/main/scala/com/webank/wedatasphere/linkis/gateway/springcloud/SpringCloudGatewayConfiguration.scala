@@ -112,7 +112,10 @@ object SpringCloudGatewayConfiguration extends Logging {
     serviceInstanceString match {
       case regex(num) =>
         serviceInstanceString = serviceInstanceString.substring(num.length)
-        ServiceInstance(serviceInstanceString.substring(0, num.toInt), serviceInstanceString.substring(num.toInt).replaceAll("---", ":"))
+        ServiceInstance(serviceInstanceString.substring(0, num.toInt),
+          serviceInstanceString.substring(num.toInt).replaceAll("---", ":")
+          // app register with ip
+          .replaceAll("--", "."))
     }
   }
 

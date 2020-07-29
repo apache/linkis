@@ -25,35 +25,93 @@
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <version>0.9.4</version>
     </parent>
-	
-	<artifactId>linkis-ujes-spark-entracne</artifactId>
-    <!--<packaging>jar</packaging>-->
-    <!--<version>${bdp.ide.version}</version>-->
-    <!--<name>linkis-Spark-Entracne</name>-->
 
+    <artifactId>linkis-python-enginemanager</artifactId>
+    <version>0.9.4</version>
+    <packaging>jar</packaging>
+    <!--<version>${bdp.ide.version}</version>-->
+    <!--<name>linkis-Spark-EngineManager</name>-->
+
+    <properties>
+        <dwc.python.version>0.9.4</dwc.python.version>
+    </properties>
     <dependencies>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-exec</artifactId>
+            <version>1.3</version>
+        </dependency>
 
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-ujes-entrance</artifactId>
+            <artifactId>linkis-ujes-enginemanager</artifactId>
             <version>${linkis.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cloudRPC</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
-        
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-python-engine</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-cloudRPC</artifactId>
+            <version>${linkis.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>tomcat</groupId>
+                    <artifactId>jasper-compiler</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>tomcat</groupId>
+                    <artifactId>jasper-runtime</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apache.tomcat</groupId>-->
+<!--            <artifactId>jasper</artifactId>-->
+<!--            <version>6.0.53</version>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-storage</artifactId>
+            <version>${linkis.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>tomcat</groupId>
+                    <artifactId>jasper-compiler</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>tomcat</groupId>
+                    <artifactId>jasper-runtime</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -90,7 +148,7 @@
                 </executions>
                 <configuration>
                     <skipAssembly>false</skipAssembly>
-                    <finalName>linkis-ujes-spark-entrance</finalName>
+                    <finalName>linkis-ujes-python-enginemanager</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <attach>false</attach>
                     <descriptors>
@@ -98,12 +156,39 @@
                     </descriptors>
                 </configuration>
             </plugin>
+<!--            <plugin>-->
+<!--                <groupId>com.spotify</groupId>-->
+<!--                <artifactId>dockerfile-maven-plugin</artifactId>-->
+<!--                <version>1.3.4</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>default</id>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>build</goal>-->
+<!--                            <goal>tag</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--                    <repository>${harbor.reposity}/linkis-ujes-python-enginemanager</repository>-->
+<!--                    <tag>${linkis.version}</tag>-->
+<!--                    <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
         <resources>
             <resource>
                 <directory>${basedir}/src/main/resources</directory>
+                <excludes>
+                    <!--<exclude>**/bdp.properties</exclude>
+                    <exclude>**/application.yml</exclude>
+                    <exclude>**/log4j.properties</exclude>-->
+                </excludes>
             </resource>
         </resources>
         <finalName>${project.artifactId}-${project.version}</finalName>
     </build>
+
+
 </project>

@@ -105,7 +105,7 @@ object PythonCommentHelper extends CommentHelper{
 
 object ScalaCommentHelper extends CommentHelper{
   override val commentPattern: Regex = """^\s*//.+\s*""".r.unanchored
-  private val scalaCommentPattern:String = "(?ms)([\"'](?:|[^'])*['\"])|//.*?$|/\\*.*?\\*/"
+  private val scalaCommentPattern: String = "(?ms)(([\"][^\"]*[\"])|(['][^']*[']))|//.*?$|/\\*.*?\\*/"
   override def dealComment(code: String): String = {
     val p = Pattern.compile(scalaCommentPattern)
     p.matcher(code).replaceAll("$1")

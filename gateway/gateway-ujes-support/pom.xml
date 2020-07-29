@@ -50,26 +50,6 @@
             <artifactId>jsp-api</artifactId>
             <version>2.1</version>
         </dependency>
-        <dependency>
-            <groupId>org.json4s</groupId>
-            <artifactId>json4s-jackson_2.11</artifactId>
-            <version>3.2.11</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.9.6</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.25.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-transport-native-epoll</artifactId>
-            <version>4.1.25.Final</version>
-        </dependency>
 
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
@@ -123,26 +103,6 @@
                     </descriptors>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>com.spotify</groupId>-->
-<!--                <artifactId>dockerfile-maven-plugin</artifactId>-->
-<!--                <version>1.3.4</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>default</id>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>build</goal>-->
-<!--                            <goal>tag</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <repository>${harbor.reposity}/linkis-gateway</repository>-->
-<!--                    <tag>${linkis.version}</tag>-->
-<!--                    <dockerInfoDirectory>${basedir}/dockerinfo</dockerInfoDirectory>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
         </plugins>
         <resources>
             <resource>

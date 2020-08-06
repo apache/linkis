@@ -80,6 +80,7 @@ abstract class EntranceServer extends Logging {
       error
     }
     getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(task)
+    //EntranceExecutionJob
     val job = getEntranceContext.getOrCreateEntranceParser().parseToJob(task)
     job.init()
     job.setLogListener(getEntranceContext.getOrCreateLogManager())

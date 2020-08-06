@@ -30,6 +30,7 @@ import org.slf4j.{Logger, LoggerFactory}
 
 /**
   * Created by enjoyyin on 2019/1/22.
+ *  查询消费组，查看资源
   */
 class EntranceGroupFactory extends GroupFactory {
 

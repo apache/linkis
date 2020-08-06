@@ -73,7 +73,7 @@ class BMLScriptReader private(private val inputStream: InputStream, private val 
   }
 
   def init(): Unit = {
-    inputStreamReader = new InputStreamReader(inputStream)
+    inputStreamReader = new InputStreamReader(inputStream,"UTF-8")
     BufferedReader = new BufferedReader(inputStreamReader)
   }
 

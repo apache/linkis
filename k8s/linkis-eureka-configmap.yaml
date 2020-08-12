@@ -18,5 +18,5 @@ kind: ConfigMap
 metadata:
   name: eureka-config
 data:
-  eurekaUrl: http://127.0.0.1:20230/eureka/
+  eurekaUrl: http://10.206.0.12:20230/eureka/
 

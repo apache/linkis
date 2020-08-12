@@ -19,11 +19,11 @@ data:
 
     #wds.linkis.test.mode=true
 
-    wds.linkis.server.mybatis.datasource.url=jdbc:mysql://127.0.0.1:3306/linkis
+    wds.linkis.server.mybatis.datasource.url=${mysql.url}
 
-    wds.linkis.server.mybatis.datasource.username=root
+    wds.linkis.server.mybatis.datasource.username=${mysql.username}
 
-    wds.linkis.server.mybatis.datasource.password=password
+    wds.linkis.server.mybatis.datasource.password=${mysql.password}
 
 
     wds.linkis.log.clear=true

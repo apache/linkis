@@ -73,7 +73,7 @@ object UJESClientImplTest extends App {
 
 object Test2 {
   def main(args: Array[String]): Unit = {
-    val uri = new URI("lb://merge-gw-13mlsqlentrance127.0.0.1---8889")
+    val uri = new URI("lb://merge-gw-13mlsqlentrance192.168.216.157---8889")
     println(uri.getHost)
 
     val uri2 = new URI("lb://mlsqlentrance")

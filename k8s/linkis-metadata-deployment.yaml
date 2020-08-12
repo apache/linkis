@@ -90,7 +90,7 @@ spec:
         #        - name: resultset
         #          nfs:
         #            path: /data/k8s
-        #            server: 127.0.0.1
+        #            server: 10.206.0.12
         - name: varlog
           hostPath:
             path: /var/log

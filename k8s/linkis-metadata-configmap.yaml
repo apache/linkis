@@ -18,11 +18,11 @@ data:
 
     #wds.linkis.test.mode=true
 
-    wds.linkis.server.mybatis.datasource.url=jdbc:mysql://192.168.1.28:3306/linkis
+    wds.linkis.server.mybatis.datasource.url=${mysql.url}
 
-    wds.linkis.server.mybatis.datasource.username=root
+    wds.linkis.server.mybatis.datasource.username=${mysql.username}
 
-    wds.linkis.server.mybatis.datasource.password=aijia1234567
+    wds.linkis.server.mybatis.datasource.password=${mysql.password}
 
 
     wds.linkis.log.clear=true
@@ -39,9 +39,9 @@ data:
     wds.linkis.server.mybatis.BasePackage=com.webank.wedatasphere.linkis.metadata.hive.dao,com.webank.wedatasphere.linkis.metadata.dao
 
     ##datasource
-    hive.meta.url=jdbc:mysql://hive-master.db.ihomefnt.com:3306/hive
-    hive.meta.user=hive_rw
-    hive.meta.password=i%eqkKGG@lb1b
+    hive.meta.url=${hivemeta.url}
+    hive.meta.user=${hivemeta.username}
+    hive.meta.password=${hivemeta.password}
 
     #hive.config.dir
 

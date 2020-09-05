@@ -15,7 +15,10 @@
  */
 package com.webank.wedatasphere.linkis.entrance.utils
 
+import java.util.function.{Consumer, Supplier}
+
 import com.facebook.presto.resourceGroups.{FileResourceGroupConfig, FileResourceGroupConfigurationManager}
+import com.facebook.presto.spi.memory.{ClusterMemoryPoolManager, MemoryPoolId, MemoryPoolInfo}
 import com.facebook.presto.spi.resourceGroups.SelectionCriteria
 import com.webank.wedatasphere.linkis.entrance.exception.PrestoSourceGroupException
 
@@ -33,10 +36,14 @@ object PrestoResourceUtils {
     if (!groupManagerMap.contains(filePath)) {
       val config = new FileResourceGroupConfig()
       config.setConfigFile(filePath)
-      groupManagerMap += (filePath -> new FileResourceGroupConfigurationManager((_, _) => {}, config))
+      groupManagerMap += (filePath -> new FileResourceGroupConfigurationManager(new ClusterMemoryPoolManager {
+        override def addChangeListener(poolId: MemoryPoolId, listener: Consumer[MemoryPoolInfo]): Unit = {}
+      }, config))
     }
     groupManagerMap(filePath).`match`(criteria)
-      .orElseThrow(() => PrestoSourceGroupException("Presto resource group not found."))
+      .orElseThrow(new Supplier[Throwable] {
+        override def get(): Throwable = PrestoSourceGroupException("Presto resource group not found.")
+      })
       .getResourceGroupId.toString
   }
 }

@@ -46,6 +46,7 @@ import okhttp3.OkHttpClient
 import org.springframework.beans.factory.annotation.Autowired
 
 import scala.collection.JavaConverters._
+import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
 
 
@@ -106,14 +107,14 @@ class PrestoEntranceEngineExecutorManager(groupFactory: GroupFactory,
     val configMap = new util.HashMap[String, String]()
     val runtimeMap: util.Map[String, Any] = TaskUtils.getRuntimeMap(job.getParams)
     val startupMap: util.Map[String, Any] = TaskUtils.getStartupMap(job.getParams)
-    startupMap.forEach((k, v) => if (v != null) configMap.put(k, v.toString))
-    runtimeMap.forEach((k, v) => if (v != null) configMap.put(k, v.toString))
+    startupMap.foreach(item => if (item._2 != null) configMap.put(item._1, item._2.toString))
+    runtimeMap.foreach(item => if (item._2 != null) configMap.put(item._1, item._2.toString))
 
     val sender = Sender.getSender(EntranceConfiguration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
     val response = sender.ask(RequestQueryAppConfigWithGlobal(job.getUser, job.getCreator, "presto", isMerge = true)).asInstanceOf[ResponseQueryConfig]
     val appConfig = response.getKeyAndValue
     if (appConfig != null) {
-      appConfig.forEach((k, v) => if (!configMap.containsKey(k)) configMap.put(k, v))
+      appConfig.foreach(item => if (!configMap.containsKey(item._1)) configMap.put(item._1, item._2))
     }
     configMap
   }

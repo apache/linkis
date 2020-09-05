@@ -41,7 +41,7 @@ class EsJsonCodeParser extends CodeParser {
 
     var status = 0
     var isBegin = false
-    code.trim.chars().forEach {
+    code.trim.toCharArray().foreach {
       case '{' => {
         if (status == 0) {
           if (isBegin && !statementBuffer.isEmpty) {
@@ -58,12 +58,12 @@ class EsJsonCodeParser extends CodeParser {
         status += 1
         statementBuffer.append('}')
       }
-      case char: Int => if (status == 0 && isBegin && !statementBuffer.isEmpty) {
+      case char: Char => if (status == 0 && isBegin && !statementBuffer.isEmpty) {
         codeBuffer.append(new String(statementBuffer.toArray))
         statementBuffer.clear()
         isBegin = false
       } else {
-        statementBuffer.append(char.toChar)
+        statementBuffer.append(char)
       }
     }
 

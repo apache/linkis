@@ -29,7 +29,7 @@ import org.apache.http.client.CredentialsProvider
 import org.apache.http.impl.client.BasicCredentialsProvider
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
 import org.apache.http.message.BasicHeader
-import org.elasticsearch.client.RestClient
+import org.elasticsearch.client.{RestClient, RestClientBuilder}
 import org.elasticsearch.client.sniff.Sniffer
 
 import scala.collection.JavaConversions._
@@ -94,14 +94,15 @@ object EsClientFactory {
 
     val httpHosts = cluster.map(item => new HttpHost(item._1, item._2))
     val builder = RestClient.builder(httpHosts: _*)
-      .setHttpClientConfigCallback((httpClientBuilder: HttpAsyncClientBuilder) => {
-        if(!ES_AUTH_CACHE.getValue) {
-          httpClientBuilder.disableAuthCaching
-        }
+      .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+        override def customizeHttpClient(httpAsyncClientBuilder: HttpAsyncClientBuilder): HttpAsyncClientBuilder = {
+          if(!ES_AUTH_CACHE.getValue) {
+            httpAsyncClientBuilder.disableAuthCaching
+          }
 //        httpClientBuilder.setDefaultRequestConfig(RequestConfig.DEFAULT)
 //        httpClientBuilder.setDefaultConnectionConfig(ConnectionConfig.DEFAULT)
-        httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
-
+          httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
+        }
       })
     if (defaultHeaders != null) {
       builder.setDefaultHeaders(defaultHeaders)

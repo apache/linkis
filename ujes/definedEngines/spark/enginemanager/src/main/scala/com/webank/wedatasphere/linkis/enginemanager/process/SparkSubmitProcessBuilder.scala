@@ -132,7 +132,8 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     val darResource: DriverAndYarnResource = engineRequest.getResource.asInstanceOf[DriverAndYarnResource]
     val properties = request.properties
     this.master("yarn")
-    this.deployMode("client")
+    this.deployMode(SPARK_DEPLOY_MODE.getValue)
+
     val driverJavaSet = "\"-Dwds.linkis.configuration=linkis-engine.properties " + SparkConfiguration.getJavaRemotePort + "\""
     this.conf(SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, driverJavaSet)
     this.name(properties.getOrDefault("appName", "sparksqltest"))

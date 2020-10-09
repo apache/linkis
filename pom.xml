@@ -93,6 +93,12 @@
         <module>ujes/enginemanager</module>
         <module>ujes/entrance</module>
         <module>bml/bml-engine-hook</module>
+
+        <module>ujes/definedEngines/sqoop/engine</module>
+        <module>ujes/definedEngines/sqoop/enginemanager</module>
+        <module>ujes/definedEngines/sqoop/entrance</module>
+
+
         <module>ujes/definedEngines/spark/engine</module>
         <module>ujes/definedEngines/spark/enginemanager</module>
         <module>ujes/definedEngines/spark/entrance</module>
@@ -125,7 +131,7 @@
         <spring.boot.version>2.0.3.RELEASE</spring.boot.version>
         <gson.version>2.8.5</gson.version>
         <fasterxml.jackson.version>2.9.6</fasterxml.jackson.version>
-        <scala.version>2.11.8</scala.version>
+        <scala.version>2.11.12</scala.version>
         <jdk.compile.version>1.8</jdk.compile.version>
         <plugin.scala.version>2.15.2</plugin.scala.version>
         <scala.binary.version>2.11</scala.binary.version>

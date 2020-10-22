@@ -24,6 +24,6 @@ class SqoopEngineExecutorFactory extends EngineExecutorFactory with Logging{
     val user:String = System.getProperty("user.name")
     if (StringUtils.isEmpty(user)) throw NoCorrectUserException()
 
-
+    new SqoopEngineExecutor(user)
   }
 }

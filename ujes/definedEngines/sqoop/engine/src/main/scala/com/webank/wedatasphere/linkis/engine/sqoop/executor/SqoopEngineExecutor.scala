@@ -1,6 +1,6 @@
 package com.webank.wedatasphere.linkis.engine.sqoop.executor
 
-import java.io.BufferedReader
+import java.io.{BufferedReader, InputStreamReader}
 
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineExecutorContext}
@@ -34,9 +34,12 @@ class SqoopEngineExecutor(user:String) extends EngineExecutor(SqoopEngineConfigu
     var bufferedReader:BufferedReader = null
     var errorsReader:BufferedReader = null
     try {
-      val processBuilder:ProcessBuilder = new ProcessBuilder(code)
+
+      val processBuilder:ProcessBuilder = new ProcessBuilder(generateRunCode(code):_*)
       processBuilder.redirectErrorStream(true)
       process = processBuilder.start()
+      bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream))
+      errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream))
       var line:String = null
       while({line = bufferedReader.readLine(); line != null}){
         info(line)
@@ -66,6 +69,10 @@ class SqoopEngineExecutor(user:String) extends EngineExecutor(SqoopEngineConfigu
     }
 
 
+  }
+
+  private def generateRunCode(code: String):Array[String] = {
+    Array("sh", "-c", code)
   }
 
   override protected def executeCompletely(engineExecutorContext: EngineExecutorContext, code: String, completedLine: String): ExecuteResponse = {

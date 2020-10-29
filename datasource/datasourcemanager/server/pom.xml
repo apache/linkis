@@ -52,6 +52,10 @@
           <artifactId>asm</artifactId>
           <groupId>org.ow2.asm</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>com.webank.wedatasphere.linkis</artifactId>
+          <groupId>linkis-module</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <!--jersey bean validation-->
@@ -91,6 +95,7 @@
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-cloudRPC</artifactId>
       <version>${linkis.version}</version>
+      <scope>provided</scope>
     </dependency>
     <!--Metadata common-->
     <dependency>

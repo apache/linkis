@@ -54,7 +54,7 @@ spec:
                       - node3
       containers:
         - name: linkis-ujes-pipeline-entrance
-          image: zhangrong1027/linkis:linkis-ujes-pipeline-entrance-0.9.4
+          image: zhangrong1027/linkis:linkis-ujes-pipeline-entrance-0.10.0
           lifecycle:
             preStop:
               exec:

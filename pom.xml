@@ -22,7 +22,7 @@
 
     <groupId>com.webank.wedatasphere.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>0.9.4</version>
+    <version>0.10.0</version>
     <packaging>pom</packaging>
 
     <name>Linkis Project Parent POM</name>
@@ -153,7 +153,7 @@
         <httpclient.version>4.5.4</httpclient.version>
         <httpmime.version>4.5.4</httpmime.version>
         <slf4j.version>1.7.12</slf4j.version>
-        <linkis.version>0.9.4</linkis.version>
+        <linkis.version>0.10.0</linkis.version>
         <maven.version>3.3.3</maven.version>
         <xstream.core.version>1.4.11.1</xstream.core.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -264,7 +264,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <project.release.version>0.9.4</project.release.version>
+                <project.release.version>0.10.0</project.release.version>
                 <netty.version>4.1.17.Final</netty.version>
                 <json4s.version>3.5.3</json4s.version>
             </properties>
@@ -272,7 +272,7 @@
         <profile>
             <id>spark2.3</id>
             <properties>
-                <project.release.version>0.9.4</project.release.version>
+                <project.release.version>0.10.0</project.release.version>
                 <netty.version>4.1.17.Final</netty.version>
                 <json4s.version>3.2.11</json4s.version>
             </properties>
@@ -280,7 +280,7 @@
         <profile>
             <id>spark2.2-2.0</id>
             <properties>
-                <project.release.version>0.9.4</project.release.version>
+                <project.release.version>0.10.0</project.release.version>
                 <netty.version>4.0.47.Final</netty.version>
                 <json4s.version>3.2.11</json4s.version>
             </properties>

@@ -52,6 +52,7 @@ public class WorkspaceExceptionManager {
             put("80028", "the path exist special char");
             put("80029", "empty dir!");
             put("80030", "illegal str %s");
+            put("80031", "请选择数据源");
         }
     };
 

@@ -60,6 +60,7 @@ abstract class JavaProcessEngineBuilder extends ProcessEngineBuilder {
     } else {
       commandLine += Paths.get(javaHome, "bin/java").toAbsolutePath.toFile.getAbsolutePath
     }
+    commandLine += ("-Duser.timezone=Asia/Shanghai")
     val clientMemory = ENGINE_CLIENT_MEMORY.getValue(request.properties).toString
     commandLine += ("-Xmx" + clientMemory)
     commandLine += ("-Xms" + clientMemory)

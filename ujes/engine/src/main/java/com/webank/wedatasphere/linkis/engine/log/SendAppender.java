@@ -20,6 +20,7 @@ import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.engine.conf.EngineConfiguration;
 import com.webank.wedatasphere.linkis.engine.conf.EngineConfiguration$;
 import com.webank.wedatasphere.linkis.scheduler.listener.LogListener;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
@@ -51,25 +52,33 @@ public class SendAppender extends AbstractAppender {
     private LogCache logCache;
     private static final Logger logger = LoggerFactory.getLogger(SendAppender.class);
 
+    private static final String IGNORE_WORDS = EngineConfiguration.ENGINE_IGNORE_WORDS().getValue();
+
+    private static final String[] IGNORE_WORD_ARR = IGNORE_WORDS.split(",");
+
+    private static final String PASS_WORDS = EngineConfiguration.ENGINE_PASS_WORDS().getValue();
+
+    private static final String[] PASS_WORDS_ARR = PASS_WORDS.split(",");
+
     class SendThread implements Runnable{
         @Override
         public void run() {
-           if (logListener == null){
+            if (logListener == null){
                 //ignore
-           }else{
-               if (logCache == null){
-                   logger.warn("logCache is null");
-                   return;
-               }
-               List<String> logs = logCache.getRemain();
-               if (logs.size() > 0){
-                   StringBuilder sb = new StringBuilder();
-                   for(String log : logs){
-                       sb.append(log);
-                   }
-                   logListener.onLogUpdate(null, sb.toString());
-               }
-           }
+            }else{
+                if (logCache == null){
+                    logger.warn("logCache is null");
+                    return;
+                }
+                List<String> logs = logCache.getRemain();
+                if (logs.size() > 0){
+                    StringBuilder sb = new StringBuilder();
+                    for(String log : logs){
+                        sb.append(log).append("\n");
+                    }
+                    logListener.onLogUpdate(null, sb.toString());
+                }
+            }
         }
     }
 
@@ -77,8 +86,7 @@ public class SendAppender extends AbstractAppender {
     public SendAppender(final String name, final Filter filter, final Layout<? extends Serializable> layout,
                         final boolean ignoreExceptions) {
         super(name, filter, layout, ignoreExceptions);
-        //todo enjoyyin 500 to be made configurable ide number（500要做成可配置ide数字）
-        //this.logCache = new MountLogCache((Integer) EngineConfiguration.ENGINE_LOG_CACHE_NUM().getValue());
+        //todo cooperyang 500要做成可配置ide数字
         this.logCache = LogHelper.logCache();
         SendThread thread = new SendThread();
         Utils.defaultScheduler().scheduleAtFixedRate(thread, 10, (Integer)EngineConfiguration$.MODULE$.ENGINE_LOG_SEND_TIME_INTERVAL().getValue(), TimeUnit.MILLISECONDS);
@@ -88,16 +96,34 @@ public class SendAppender extends AbstractAppender {
         logListener = ll;
     }
 
-//    public static void setLogCache(LogCache lc){
-//        logCache = lc;
-//    }
+
 
     @Override
     public void append(LogEvent event) {
         if (logListener == null) {
             return;
         }
-        logCache.cacheLog(new String(getLayout().toByteArray(event)));
+        String logStr = new String(getLayout().toByteArray(event));
+        if (event.getLevel().intLevel() == Level.INFO.intLevel()){
+            boolean flag = false;
+            for(String ignoreLog : IGNORE_WORD_ARR){
+                if (logStr.contains(ignoreLog)){
+                    flag = true;
+                    break;
+                }
+            }
+            for(String word : PASS_WORDS_ARR){
+                if(logStr.contains(word)){
+                    flag = false;
+                    break;
+                }
+            }
+            if (!flag) {
+                logCache.cacheLog(logStr);
+            }
+        }else{
+            logCache.cacheLog(logStr);
+        }
     }
 
     @PluginFactory

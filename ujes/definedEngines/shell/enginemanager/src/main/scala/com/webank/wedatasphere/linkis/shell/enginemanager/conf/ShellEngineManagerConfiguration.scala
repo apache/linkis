@@ -3,11 +3,10 @@ package com.webank.wedatasphere.linkis.shell.enginemanager.conf
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.enginemanager.EngineHook
 import com.webank.wedatasphere.linkis.enginemanager.conf.EnvConfiguration
-import com.webank.wedatasphere.linkis.enginemanager.hook.{ConsoleConfigurationEngineHook, JarLoaderEngineHook}
-import com.webank.wedatasphere.linkis.resourcemanager.{LoadInstanceResource, ResourceRequestPolicy}
+import com.webank.wedatasphere.linkis.enginemanager.hook.ConsoleConfigurationEngineHook
 import com.webank.wedatasphere.linkis.resourcemanager.domain.ModuleInfo
+import com.webank.wedatasphere.linkis.resourcemanager.{LoadInstanceResource, ResourceRequestPolicy}
 import com.webank.wedatasphere.linkis.rpc.Sender
-import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.context.annotation.{Bean, Configuration}
 
 /**

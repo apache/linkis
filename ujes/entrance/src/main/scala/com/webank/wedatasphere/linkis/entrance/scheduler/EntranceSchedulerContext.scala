@@ -21,8 +21,6 @@ import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
 import com.webank.wedatasphere.linkis.scheduler.event.{ScheduleEvent, SchedulerEventListener}
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorManager
 import com.webank.wedatasphere.linkis.scheduler.queue.{ConsumerManager, GroupFactory}
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
 
 /**
   * Created by enjoyyin on 2019/1/22.

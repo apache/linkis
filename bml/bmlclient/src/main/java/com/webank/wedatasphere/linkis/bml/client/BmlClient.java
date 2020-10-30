@@ -91,4 +91,11 @@ public interface BmlClient {
     public BmlResourceVersionsResponse getVersions(String user, String resourceId);
 
 
+    /**
+     *
+     */
+    public BmlDeleteResponse deleteResource(String user, String resourceId, String version);
+
+    public BmlDeleteResponse deleteResource(String user, String resourceId);
+
 }

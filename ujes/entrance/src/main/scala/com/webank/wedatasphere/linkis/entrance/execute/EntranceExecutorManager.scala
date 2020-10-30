@@ -16,8 +16,12 @@
 
 package com.webank.wedatasphere.linkis.entrance.execute
 
+import java.util.Date
+
 import com.webank.wedatasphere.linkis.common.exception.WarnException
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.entrance.job.EntranceExecutionJob
+import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorState.ExecutorState
 import com.webank.wedatasphere.linkis.scheduler.executer.{Executor, ExecutorManager}
 import com.webank.wedatasphere.linkis.scheduler.listener.ExecutorListener
@@ -77,11 +81,8 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory) extends Execu
 
   protected def findExecutors(job: Job): Array[EntranceEngine] = {
     val groupName = groupFactory.getGroupNameByEvent(job)
-    //logger.info(s"${job.getId} groupName is ${groupName}")
     var engines = getOrCreateEngineManager().listEngines(_.getGroup.getGroupName == groupName)
-    //logger.info(s"in findExecutors fun engines is $engines")
     getOrCreateEntranceExecutorRulers().foreach(ruler => engines = ruler.rule(engines, job))
-    //logger.info(s"after findExecutors fun engines is $engines")
     engines
   }
 
@@ -111,6 +112,11 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory) extends Execu
       findUsefulExecutor(job).orElse {
         val executor = createExecutor(job)
         if(executor != null) {
+          job match{
+            case entranceExecutionJob: EntranceExecutionJob => val task = entranceExecutionJob.getTask
+              task.asInstanceOf[RequestPersistTask].setEngineStartTime(new Date())
+            case _ =>
+          }
           if(!job.isCompleted){
             val lock = getOrCreateEngineSelector().lockEngine(executor)
             setLock(lock, job)

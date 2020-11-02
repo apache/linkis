@@ -4,7 +4,7 @@ set user [lindex $argv 0]
 set command [lindex $argv 1]
 set timeout -1
 
-spawn su -
+spawn sudo su -
 expect "~]# "
 send "useradd -d /home/$user $user\r"
 expect "~]#" {

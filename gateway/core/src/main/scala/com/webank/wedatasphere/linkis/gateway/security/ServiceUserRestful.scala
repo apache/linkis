@@ -19,7 +19,7 @@ package com.webank.wedatasphere.linkis.gateway.security
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
 import com.webank.wedatasphere.linkis.server._
-import dispatch.{Http, as}
+import scalaj.http._
 import org.json4s.JsonAST.JBool
 import com.google.gson.GsonBuilder
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
@@ -53,23 +53,25 @@ class ServiceUserRestful extends UserPwdAbstractUserRestful with Logging {
 
   case class UserInfo(account: String, password: String)
 
-  def authenticate(userName: String, password: String): Boolean = {
+  case class NcRespose(code: Int, success: JBool)
+  
+  def authenticate(userName: String, password: String): Unit = {
     if (StringUtils.isEmpty(loginAuthVerifyUrl)) {
       error(s"authenticate url not config.")
       throw new Exception("authenticate failed")
     }
-    val req = dispatch.url(loginAuthVerifyUrl).POST
-      .setContentType("application/json", "UTF-8")
-      .setBody(gson.toJson(UserInfo(userName, password)))
+    val jsonStr = Http(loginAuthVerifyUrl)
+      .postData(gson.toJson(UserInfo(userName, password)))
+      .header("Content-Type", "application/json")
+      .header("Charset", "UTF-8")
+      .asString
+      .body
 
-    val future = Http(req > as.json4s.Json).map { resp =>
-      (resp \ "success").asInstanceOf[JBool].value
-    }
-    val result = Utils.tryCatch(Await.result(future, Duration.Inf))(t => {
-      error(s"authenticate with user: ${userName} error, url: $loginAuthVerifyUrl", t)
+    val respose = gson.fromJson(jsonStr, classOf[NcRespose])    
+
+    if (!respose.success.value) {
       throw new Exception("authenticate failed")
-    })
-    result
+    }
   }
 
 }

@@ -173,26 +173,9 @@
             <version>4.5.4</version>
         </dependency>
         <dependency>
-            <groupId>net.databinder.dispatch</groupId>
-            <artifactId>dispatch-core_2.11</artifactId>
-            <version>0.11.2</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>scala-xml_2.11</artifactId>
-                    <groupId>org.scala-lang.modules</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>net.databinder.dispatch</groupId>
-            <artifactId>dispatch-json4s-jackson_2.11</artifactId>
-            <version>0.11.2</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>json4s-jackson_2.11</artifactId>
-                    <groupId>org.json4s</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.scalaj</groupId>
+            <artifactId>scalaj-http_${scala.binary.version}</artifactId>
+            <version>2.4.1</version>
         </dependency>
     </dependencies>
 

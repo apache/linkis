@@ -36,8 +36,6 @@ class SecurityFilter extends Filter with Logging {
   private val refererValidate = ServerConfiguration.BDP_SERVER_SECURITY_REFERER_VALIDATE.getValue
   private val localAddress = ServerConfiguration.BDP_SERVER_ADDRESS.getValue
   protected val testUser = ServerConfiguration.BDP_TEST_USER.getValue
-  private val PASS_AUTH_REQUEST_URI = CommonVars("wds.linkis.conf.url.pass.auth",
-    ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue + "/oneservice/execute/").getValue.split(",")
 
   override def init(filterConfig: FilterConfig): Unit = {}
 
@@ -65,17 +63,13 @@ class SecurityFilter extends Filter with Logging {
           return false
       }
     }
-
-    val isPassAuthRequest = PASS_AUTH_REQUEST_URI.exists(request.getRequestURI.startsWith)
+    
     if(request.getRequestURI == ServerConfiguration.BDP_SERVER_SECURITY_SSL_URI.getValue) {
       val message = Message.ok("Get success!(获取成功！)").data("enable", SSOUtils.sslEnable)
       if(SSOUtils.sslEnable) message.data("publicKey", RSAUtils.getDefaultPublicKey())
       filterResponse(message)
       false
     } else if(request.getRequestURI == ServerConfiguration.BDP_SERVER_RESTFUL_LOGIN_URI.getValue) {
-      true
-    } else if(isPassAuthRequest) {
-      logger.info("No login needed for uri: " + request.getRequestURI)
       true
     } else {
       val userName = Utils.tryCatch(SecurityFilter.getLoginUser(request)){

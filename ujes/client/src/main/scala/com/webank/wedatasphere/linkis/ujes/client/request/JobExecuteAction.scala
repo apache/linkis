@@ -126,11 +126,12 @@ object JobExecuteAction {
       this
     }
 
-    def setDatasourceParams(specialMap: util.Map[String, Any]): Builder = {
+    def setDatasourceParams(datasourceMap: util.Map[String, Any]): Builder = {
       if(this.params == null) this synchronized {
         if(this.params == null) this.params = new util.HashMap[String, Any]
       }
-      TaskUtils.addDatasourceMap(this.params, specialMap)
+      var runtimeMap:util.Map[String, Any] = TaskUtils.getRuntimeMap(this.params)
+      TaskUtils.addDatasourceMap(runtimeMap, datasourceMap)
       this
     }
     def setVariableMap(variableMap: util.Map[String, Any]): Builder = {

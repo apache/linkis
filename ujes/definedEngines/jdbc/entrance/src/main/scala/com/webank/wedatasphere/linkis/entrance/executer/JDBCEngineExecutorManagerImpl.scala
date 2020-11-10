@@ -25,6 +25,7 @@ import com.webank.wedatasphere.linkis.entrance.exception.JDBCParamsIllegalExcept
 import com.webank.wedatasphere.linkis.entrance.execute._
 import com.webank.wedatasphere.linkis.entrance.execute.impl.EntranceExecutorManagerImpl
 import com.webank.wedatasphere.linkis.protocol.config.RequestQueryAppConfigWithGlobal
+import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
 import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.scheduler.executer.Executor
 import com.webank.wedatasphere.linkis.scheduler.listener.ExecutorListener
@@ -131,7 +132,9 @@ class JDBCEngineExecutorManagerImpl(groupFactory: GroupFactory,
   val sender : Sender = Sender.getSender("dsm-server")
   def getDatasourceInfo(params : util.Map[String, Any]) : (String, String, String) = {
     val datasourceId = params.get("configuration").asInstanceOf[util.Map[String, Any]]
-      .getOrDefault("datasource", new util.HashMap[String, Any]())
+      .getOrDefault(TaskConstant.PARAMS_CONFIGURATION_RUNTIME, new util.HashMap[String, Any]())
+      .asInstanceOf[util.Map[String, Any]]
+      .getOrDefault(TaskConstant.PARAMS_CONFIGURATION_DATASOURCE, new util.HashMap[String, Any]())
       .asInstanceOf[util.Map[String, Any]].get("datasourceId")
     logger.info(s"begin to get datasource info from dsm, datasourceId: ${datasourceId}")
     if (datasourceId != null) {

@@ -30,7 +30,6 @@ object VariableParser {
   val RUNTIME: String = "runtime"
   val STARTUP: String = "startup"
   val SPECIAL: String = "special"
-  val DATASOURCE: String = "datasource"
 
   def getVariables(params: util.Map[String, Object]): Array[Variable] = {
     import scala.collection.JavaConversions._
@@ -56,7 +55,7 @@ object VariableParser {
     variables.filter(_.sort == null).foreach(f => vars += f.key -> f.value)
     variables.filter(_.sort != null).foreach {
       f => f.sort match {
-        case STARTUP | RUNTIME | SPECIAL | DATASOURCE =>
+        case STARTUP | RUNTIME | SPECIAL =>
           if (confs.get(f.sort) == null)
             confs += f.sort -> createMap(f)
           else

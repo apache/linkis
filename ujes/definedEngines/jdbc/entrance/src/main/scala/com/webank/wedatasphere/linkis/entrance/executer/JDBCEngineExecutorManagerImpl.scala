@@ -48,20 +48,7 @@ class JDBCEngineExecutorManagerImpl(groupFactory: GroupFactory,
     case job: JDBCEntranceJob =>
       val JDBCParams = new util.HashMap[String, String]()
       val params = job.getParams
-//      val tmpParams=params.get("variable").asInstanceOf[util.Map[String, Any]]
-//      var url=""
-//      var userName=""
-//      var password =""
-//
-//      if(tmpParams != null ){
-//        if(tmpParams.get("jdbc.url") != null &&tmpParams.get("jdbc.username") != null&& tmpParams.get("jdbc.password") != null){
-//          url = tmpParams.get("jdbc.url").toString
-//          userName = tmpParams.get("jdbc.username").toString
-//          password = tmpParams.get("jdbc.password").toString
-//        }
-//      }
       var (url, userName, password) = getDatasourceInfo(params)
-
       //如果jobparams中没有jdbc连接,从configuration中获取
       if(StringUtils.isEmpty(url)||StringUtils.isEmpty(userName)||StringUtils.isEmpty(password)){
         val jdbcConfiguration = UserConfiguration.getCacheMap(RequestQueryAppConfigWithGlobal(job.getUser,job.getCreator,"jdbc",true))
@@ -101,17 +88,6 @@ class JDBCEngineExecutorManagerImpl(groupFactory: GroupFactory,
     case job:JDBCEntranceJob =>
       val params: util.Map[String, Any] = job.getParams
       logger.info("BEGAIN TO GET configuration：" +params.get("configuration"))
-//      val tmpParams=params.get("variable").asInstanceOf[util.Map[String, Any]]
-//      var url=""
-//      var userName=""
-//      var password =""
-//      if(tmpParams != null){
-//        if(tmpParams.get("jdbc.url") != null &&tmpParams.get("jdbc.username") != null&& tmpParams.get("jdbc.password") != null){
-//          url = tmpParams.get("jdbc.url").toString
-//          userName = tmpParams.get("jdbc.username").toString
-//          password = tmpParams.get("jdbc.password").toString
-//        }
-//      }
       var (url, userName, password) = getDatasourceInfo(params)
       //如果jobparams中没有jdbc连接,从configuration中获取
       if(StringUtils.isEmpty(url)||StringUtils.isEmpty(userName)||StringUtils.isEmpty(password)){

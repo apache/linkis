@@ -15,8 +15,13 @@ Linkis on kubernetes
  $ echo pid >> tasks
 
 #部署文档
+## 环境变量设置
+
+> 设置harbor的地址环境变量
+
+    export HARBOR=
+    
 ##基础镜像及各服务镜像编译方法
-  10.206.0.5是我私人的harbor地址，可以修改为公司内部
   registry.yaml 修改对应harbor的账号，密码，镜像内网地址
   基础镜像基于centos最新版本
   目录结构如下
@@ -39,9 +44,9 @@ Linkis on kubernetes
  
 ###基础镜像编译
 cd emr-base
-docker build -t 10.206.0.5/library/linkis:emr-base-spark2.4.4 .
+docker build -t $HARBOR/library/linkis:emr-base-spark2.4.4 .
 推送基础镜像到harbor
-docker push  10.206.0.5/library/linkis:emr-base-spark2.4.4 
+docker push  $HARBOR/library/linkis:emr-base-spark2.4.4 
 
 
 
@@ -53,7 +58,7 @@ docker push  10.206.0.5/library/linkis:emr-base-spark2.4.4
     mvn clean package  -f gateway/gateway-ujes-support/pom.xml
     docker images | grep linkis-gateway
 可以看到已经编译好的镜像
-    docker push 10.206.0.5/library/linkis:linkis-gateway   
+    docker push $HARBOR/library/linkis:linkis-gateway   
 
 #K8S部署
 1.修改k8s目录下的docker secret

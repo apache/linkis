@@ -89,10 +89,10 @@ class SparkVersion(object):
         return self.version >= self.SPARK_1_3_0
 
 try:
-    client = GatewayClient(port=int(sys.argv[1]))
-except:
     client = GatewayClient(port=int(sys.argv[1]),
                            gateway_parameters=GatewayParameters(port = int(sys.argv[1]), auto_convert = True, auth_token = sys.argv[3]))
+except:
+    client = GatewayClient(port=int(sys.argv[1]))
 
 sparkVersion = SparkVersion(int(sys.argv[2]))
 

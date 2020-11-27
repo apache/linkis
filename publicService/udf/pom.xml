@@ -63,6 +63,7 @@
                     <artifactId>hive-llap-tez</artifactId>
                 </exclusion>
             </exclusions>
+            <scope>provided</scope>
         </dependency>
 
 

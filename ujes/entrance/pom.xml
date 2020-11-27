@@ -42,6 +42,7 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cloudRPC</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -53,7 +54,7 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cs-ujes-client</artifactId>
-            </dependency>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

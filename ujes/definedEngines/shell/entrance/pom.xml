@@ -33,7 +33,7 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-ujes-entrance</artifactId>
-            </dependency>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

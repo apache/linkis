@@ -38,6 +38,7 @@
           <groupId>org.ow2.asm</groupId>
         </exclusion>
       </exclusions>
+      <scope>provided</scope>
     </dependency>
     <!--Metadata common-->
     <dependency>
@@ -59,7 +60,8 @@
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-cloudRPC</artifactId>
-      </dependency>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>

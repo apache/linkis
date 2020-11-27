@@ -69,6 +69,8 @@
         <module>bml/bmlcommon</module>
         <module>bml/bmlclient</module>
         <module>bml/bmlserver</module>
+        <module>datasource/datasourcemanager/common</module>
+        <module>datasource/metadatamanager/common</module>
         <module>resourceManager/resourcemanagercommon</module>
         <module>resourceManager/resourcemanagerclient</module>
         <module>resourceManager/resourcemanagerserver</module>
@@ -124,22 +126,13 @@
         <module>ujes/client</module>
         <module>contextservice/cs-server</module>
         <module>contextservice/cs-search</module>
-        <module>datasource/metadatamanager/common</module>
         <module>datasource/metadatamanager/server</module>
         <module>datasource/metadatamanager/service/mysql</module>
         <module>datasource/metadatamanager/service/elasticsearch</module>
         <module>datasource/metadatamanager/service/hive</module>
-        <module>datasource/datasourcemanager/common</module>
         <module>datasource/datasourcemanager/server</module>
         <module>assembly/public-module</module>
         <module>assembly</module>
-        <module>extensions/spark-excel</module>
-        <module>storage/pesIO/io-engine</module>
-        <module>storage/pesIO/io-enginemanager</module>
-        <module>storage/pesIO/io-entrance</module>
-        <module>userControl</module>
-        <module>ujes/jdbc</module>
-
     </modules>
 
     <properties>

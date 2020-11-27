@@ -29,8 +29,6 @@ import org.springframework.context.annotation.{Bean, Configuration}
 @Configuration
 class GatewaySpringConfiguration {
 
-  val loginAuthStragegy = CommonVars("login.auth.stragegy", "ldap").getValue
-
   @Autowired
   private var userRestful: UserRestful = _
 
@@ -53,7 +51,7 @@ class GatewaySpringConfiguration {
   @ConditionalOnMissingBean
   @Autowired(required = false)
   def createUserRestful(securityHooks: Array[SecurityHook]): UserRestful = {
-    var userRestful = if("ldap".equals(loginAuthStragegy)) new LDAPUserRestful else new ServiceUserRestful  
+    val userRestful = new LDAPUserRestful
     if(securityHooks != null) userRestful.setSecurityHooks(securityHooks)
     userRestful
   }

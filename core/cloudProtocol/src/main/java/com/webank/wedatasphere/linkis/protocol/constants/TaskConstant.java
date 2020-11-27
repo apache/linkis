@@ -40,4 +40,5 @@ public interface TaskConstant {
     String PARAMS_CONFIGURATION_STARTUP = "startup";
     String PARAMS_CONFIGURATION_RUNTIME = "runtime";
     String PARAMS_CONFIGURATION_SPECIAL = "special";
+    String PARAMS_CONFIGURATION_DATASOURCE = "datasource";
 }

@@ -29,7 +29,6 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-common</artifactId>
-            <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

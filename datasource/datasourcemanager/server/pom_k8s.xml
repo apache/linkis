@@ -19,6 +19,7 @@
     <artifactId>linkis</artifactId>
     <groupId>com.webank.wedatasphere.linkis</groupId>
     <version>0.10.0</version>
+    <relativePath>../../../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -33,7 +34,6 @@
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-module</artifactId>
-      <version>${linkis.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>asm</artifactId>
@@ -53,7 +53,6 @@
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-datasourcemanager-common</artifactId>
-      <version>${linkis.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>asm</artifactId>
@@ -85,76 +84,22 @@
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-bmlclient</artifactId>
-      <version>${linkis.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.webank.wedatasphere.linkis</groupId>
-      <artifactId>linkis-bmlcommon</artifactId>
-      <version>${linkis.version}</version>
-    </dependency>
+
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-mybatis</artifactId>
-      <version>${linkis.version}</version>
     </dependency>
     <!--rpc-->
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-cloudRPC</artifactId>
-      <version>${linkis.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>asm</artifactId>
-          <groupId>org.ow2.asm</groupId>
-        </exclusion>
-        <exclusion>
-          <groupId>tomcat</groupId>
-          <artifactId>jasper-compiler</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>tomcat</groupId>
-          <artifactId>jasper-runtime</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-feign</artifactId>
-      <version>${spring.eureka.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>netty-codec</artifactId>
-          <groupId>io.netty</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>netty-transport</artifactId>
-          <groupId>io.netty</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.webank.wedatasphere.linkis</groupId>
-      <artifactId>linkis-protocol</artifactId>
-      <version>${linkis.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.webank.wedatasphere.linkis</groupId>
-      <artifactId>linkis-httpclient</artifactId>
-      <version>${linkis.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.webank.wedatasphere.linkis</groupId>
-      <artifactId>linkis-gateway-httpclient-support</artifactId>
-      <version>${linkis.version}</version>
-    </dependency>
-
     <!--Metadata common-->
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-metadatamanager-common</artifactId>
-      <version>${linkis.version}</version>
     </dependency>
-
     <dependency>
       <artifactId>hk2-api</artifactId>
       <groupId>org.glassfish.hk2</groupId>

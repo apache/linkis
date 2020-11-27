@@ -132,8 +132,7 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     val properties = request.properties
     this.master("yarn")
     this.deployMode("client")
-    val driverJavaSet = "\"-Dwds.linkis.configuration=linkis-engine.properties " + SparkConfiguration.getJavaRemotePort + "\""
-    this.conf(SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, driverJavaSet)
+    this.conf(SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, SPARK_DRIVER_EXTRA_JAVA_OPTIONS.getValue)
     this.name(properties.getOrDefault("appName", "linkis"))
     this.className(properties.getOrDefault("className", "com.webank.wedatasphere.linkis.engine.DataWorkCloudEngineApplication"))
     properties.getOrDefault("archives", "").toString.split(",").map(RelativePath).foreach(this.archive)

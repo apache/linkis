@@ -22,6 +22,7 @@
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <version>0.10.0</version>
+	<relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -92,6 +93,10 @@
                     <groupId>org.scala-lang</groupId>
                     <artifactId>scala-reflect</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>paranamer</artifactId>
+                    <groupId>com.thoughtworks.paranamer</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -143,13 +148,19 @@
         </dependency>
         <dependency>
             <groupId>org.json4s</groupId>
-            <artifactId>json4s-core_2.11</artifactId>
+            <artifactId>json4s-core_${scala.binary.version}</artifactId>
             <version>3.2.11</version>
         </dependency>
         <dependency>
             <groupId>org.json4s</groupId>
-            <artifactId>json4s-jackson_2.11</artifactId>
+            <artifactId>json4s-jackson_${scala.binary.version}</artifactId>
             <version>3.2.11</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jackson-databind</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.json4s</groupId>
@@ -160,22 +171,6 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.4</version>
-        </dependency>
-        <dependency>
-            <groupId>net.databinder.dispatch</groupId>
-            <artifactId>dispatch-core_2.11</artifactId>
-            <version>0.11.2</version>
-        </dependency>
-        <dependency>
-            <groupId>net.databinder.dispatch</groupId>
-            <artifactId>dispatch-json4s-jackson_2.11</artifactId>
-            <version>0.11.2</version>
-          <exclusions>
-            <exclusion>
-              <artifactId>json4s-jackson_2.11</artifactId>
-              <groupId>org.json4s</groupId>
-            </exclusion>
-          </exclusions>
         </dependency>
     </dependencies>
 

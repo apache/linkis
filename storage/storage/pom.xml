@@ -24,6 +24,7 @@
         <version>0.10.0</version>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <artifactId>linkis</artifactId>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
 
@@ -34,14 +35,12 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-common</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
+            </dependency>
 
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-hadoop-common</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
+            </dependency>
 
         <dependency>
             <groupId>org.json4s</groupId>

@@ -120,10 +120,6 @@
                     <groupId>org.apache.hadoop</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>hadoop-mapreduce-client-core</artifactId>
-                    <groupId>org.apache.hadoop</groupId>
-                </exclusion>
-                <exclusion>
                     <artifactId>hadoop-yarn-common</artifactId>
                     <groupId>org.apache.hadoop</groupId>
                 </exclusion>
@@ -138,10 +134,6 @@
                 <exclusion>
                     <artifactId>hbase-client</artifactId>
                     <groupId>org.apache.hbase</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>guava</artifactId>
-                    <groupId>com.google.guava</groupId>
                 </exclusion>
                 <exclusion>
                     <artifactId>jackson-databind</artifactId>

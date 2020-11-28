@@ -35,12 +35,12 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-common</artifactId>
-            </dependency>
+        </dependency>
 
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-hadoop-common</artifactId>
-            </dependency>
+        </dependency>
 
         <dependency>
             <groupId>org.json4s</groupId>

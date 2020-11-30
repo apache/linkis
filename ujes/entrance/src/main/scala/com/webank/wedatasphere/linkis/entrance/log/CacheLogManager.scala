@@ -22,7 +22,6 @@
   */
 package com.webank.wedatasphere.linkis.entrance.log
 
-
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.exception.{CacheNotReadyException, EntranceErrorCode}
 import com.webank.wedatasphere.linkis.entrance.job.EntranceExecutionJob

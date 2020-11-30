@@ -23,17 +23,17 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.9.4</version>
+        <version>0.10.0</version>
+	<relativePath>../../../../pom.xml</relativePath>
     </parent>
 
     <artifactId>linkis-python-enginemanager</artifactId>
-    <version>0.9.4</version>
     <packaging>jar</packaging>
     <!--<version>${bdp.ide.version}</version>-->
     <!--<name>linkis-Spark-EngineManager</name>-->
 
     <properties>
-        <dwc.python.version>0.9.4</dwc.python.version>
+        
     </properties>
     <dependencies>
 
@@ -46,27 +46,22 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-ujes-enginemanager</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
+            </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cloudRPC</artifactId>
-            <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-python-engine</artifactId>
-            <version>${linkis.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
-            <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 
     <build>

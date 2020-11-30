@@ -23,7 +23,8 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.9.4</version>
+        <version>0.10.0</version>
+	<relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>linkis-gateway-springcloudgateway</artifactId>
 
@@ -31,7 +32,12 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-gateway-core</artifactId>
-            <version>${linkis.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>json4s-jackson_2.11</artifactId>
+                    <groupId>org.json4s</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -45,6 +51,10 @@
                 <exclusion>
                     <artifactId>spring-boot-starter-logging</artifactId>
                     <groupId>org.springframework.boot</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jackson-databind</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

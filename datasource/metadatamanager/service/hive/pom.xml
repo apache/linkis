@@ -18,28 +18,25 @@
   <parent>
     <artifactId>linkis</artifactId>
     <groupId>com.webank.wedatasphere.linkis</groupId>
-    <version>0.9.4</version>
+    <version>0.10.0</version>
+    <relativePath>../../../../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>linkis-metadatamanager-service-hive</artifactId>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <hive.version>1.2.1</hive.version>
-    <hadoop.version>2.7.2</hadoop.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-metadatamanager-common</artifactId>
-      <version>${linkis.version}</version>
-    </dependency>
+      </dependency>
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-module</artifactId>
-      <version>${linkis.version}</version>
-    </dependency>
+      </dependency>
     <!--Hive dependencies-->
     <dependency>
       <groupId>org.apache.hadoop</groupId>
@@ -87,8 +84,7 @@
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-bmlclient</artifactId>
-      <version>${linkis.version}</version>
-    </dependency>
+      </dependency>
   </dependencies>
 
   <build>

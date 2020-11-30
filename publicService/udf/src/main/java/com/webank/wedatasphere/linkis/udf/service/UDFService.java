@@ -28,11 +28,11 @@ import java.util.Map;
  */
 public interface UDFService {
 
-    UDFInfo addUDF(UDFInfo udfInfo,  String userName) throws UDFException;
+    UDFInfo addUDF(UDFInfo udfInfo, String userName) throws UDFException;
 
     UDFInfo updateUDF(UDFInfo udfInfo, String userName) throws UDFException;
 
-    Boolean deleteUDF(Long id,  String userName) throws UDFException;
+    Boolean deleteUDF(Long id, String userName) throws UDFException;
 
     UDFInfo getUDFById(Long id, String userName) throws UDFException;
 

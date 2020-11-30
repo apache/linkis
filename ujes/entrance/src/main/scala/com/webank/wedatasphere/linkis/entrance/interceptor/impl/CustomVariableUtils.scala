@@ -16,7 +16,6 @@
 
 package com.webank.wedatasphere.linkis.entrance.interceptor.impl
 
-
 import java.text.SimpleDateFormat
 import java.util
 import java.util.{Calendar, Date}

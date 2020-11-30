@@ -16,7 +16,6 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue
 
-
 import java.util.concurrent.{ExecutorService, ThreadPoolExecutor}
 
 import com.webank.wedatasphere.linkis.common.utils.Utils

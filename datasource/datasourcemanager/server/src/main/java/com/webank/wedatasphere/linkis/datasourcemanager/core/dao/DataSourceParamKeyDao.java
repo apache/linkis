@@ -37,6 +37,6 @@ public interface DataSourceParamKeyDao {
      * @param scope scope
      * @return
      */
-    List<DataSourceParamKeyDefinition> listByDataSourceTypeAndScope(@Param("dataSourceTypeId")Long dataSourceTypeId,
-                                                                    @Param("scope")DataSourceParamKeyDefinition.Scope scope);
+    List<DataSourceParamKeyDefinition> listByDataSourceTypeAndScope(@Param("dataSourceTypeId") Long dataSourceTypeId,
+                                                                    @Param("scope") DataSourceParamKeyDefinition.Scope scope);
 }

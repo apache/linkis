@@ -30,7 +30,7 @@ public interface UDFTreeService {
 
     UDFTree updateTree(UDFTree udfTree, String userName) throws UDFException;
 
-    Boolean deleteTree(Long id,  String userName) throws UDFException;
+    Boolean deleteTree(Long id, String userName) throws UDFException;
 
     UDFTree getTreeById(Long id, String userName, String type, String category) throws UDFException;
 

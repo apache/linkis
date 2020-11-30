@@ -15,6 +15,7 @@
  */
 
 package com.webank.wedatasphere.linkis.entrance.interceptor
+
 import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 

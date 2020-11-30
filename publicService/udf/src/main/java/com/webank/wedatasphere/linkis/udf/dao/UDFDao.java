@@ -58,7 +58,7 @@ public interface UDFDao {
 
     long getSameSysCount(String udfName);
 
-    long getSameLoadCount(String userName,String udfName);
+    long getSameLoadCount(String userName, String udfName);
 
     List<UDFInfo> getSameJarUDF(String userName, String path);
 
@@ -72,19 +72,19 @@ public interface UDFDao {
 
     long getShareSameNameCountByUser(@Param("udfName") String udfName);
 
-    void insertUDFSharedUser(@Param("udfId")Long udfId, @Param("shareUserName") String shareUserName);
+    void insertUDFSharedUser(@Param("udfId") Long udfId, @Param("shareUserName") String shareUserName);
 
     void updateUDFIsShared(@Param("isShared") Boolean isShared, @Param("id") long id);
 
-    Long selectAllShareUDFInfoIdByUDFId(@Param("userName") String userName,@Param("udfName")String udfName);
+    Long selectAllShareUDFInfoIdByUDFId(@Param("userName") String userName, @Param("udfName") String udfName);
 
     Long selectIdByUserName(@Param("userName") String userName);
 
     void updateSharedUDFInfoExpire(Long shareUDFId);
 
-    List<String> selectAllShareUsersByUDFIdAndUseName(@Param("userName") String userName,@Param("udfName")String udfName);
+    List<String> selectAllShareUsersByUDFIdAndUseName(@Param("userName") String userName, @Param("udfName") String udfName);
 
-    void insertSharedUser(@Param("addSharedUser")String sharedUser,@Param("udfId") Long udfId);
+    void insertSharedUser(@Param("addSharedUser") String sharedUser, @Param("udfId") Long udfId);
 
-    void deleteSharedUser(@Param("removeSharedUser") String oldsharedUser,@Param("udfId") Long udfId);
+    void deleteSharedUser(@Param("removeSharedUser") String oldsharedUser, @Param("udfId") Long udfId);
 }

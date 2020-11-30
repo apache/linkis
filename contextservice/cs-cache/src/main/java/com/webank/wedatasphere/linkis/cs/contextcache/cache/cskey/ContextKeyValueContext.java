@@ -52,7 +52,7 @@ public interface ContextKeyValueContext {
 
     List<ContextKeyValue>  getAllValues(ContextType contextType);
 
-    List<ContextKeyValue>  getAllLikes(String regex,ContextType contextType);
+    List<ContextKeyValue>  getAllLikes(String regex, ContextType contextType);
 
     List<ContextKeyValue> getAll();
 

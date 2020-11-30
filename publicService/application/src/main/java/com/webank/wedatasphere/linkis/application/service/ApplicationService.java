@@ -54,9 +54,9 @@ public interface ApplicationService {
 
     ProjectVO getProjectVO(Long userId, Long projectId);
 
-    Boolean userInit(String userInitUrl,HttpServletRequest req);
+    Boolean userInit(String userInitUrl, HttpServletRequest req);
 
-    ApplicationUser firstLogin(HttpServletRequest req,String creator) throws IllegalAccessException, NoSuchFieldException, IOException;
+    ApplicationUser firstLogin(HttpServletRequest req, String creator) throws IllegalAccessException, NoSuchFieldException, IOException;
 
     void notFirstLogin(ApplicationUser user, HttpServletRequest req);
 

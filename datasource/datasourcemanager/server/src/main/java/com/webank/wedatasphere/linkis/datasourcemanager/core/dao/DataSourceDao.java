@@ -56,8 +56,8 @@ public interface DataSourceDao {
      * @param createSystem create system
      * @return affect row
      */
-    int removeOne(@Param("dataSourceId")Long dataSourceId,
-                  @Param("createSystem")String createSystem);
+    int removeOne(@Param("dataSourceId") Long dataSourceId,
+                  @Param("createSystem") String createSystem);
 
 
     /**

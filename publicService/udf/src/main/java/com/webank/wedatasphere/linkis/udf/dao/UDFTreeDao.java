@@ -30,7 +30,7 @@ public interface UDFTreeDao {
 
     void updateTree(UDFTree udfTree);
 
-    void deleteTree(Long id,  String userName);
+    void deleteTree(Long id, String userName);
 
     UDFTree getTreeById(Long id, String category);
 

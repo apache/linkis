@@ -55,7 +55,7 @@ public class SqlConnection implements Closeable {
     }
 
     public List<String> getAllDatabases() throws SQLException {
-        java.util.List<java.lang.String> dataBaseName = new ArrayList<>();
+        List<String> dataBaseName = new ArrayList<>();
         Statement stmt = null;
         ResultSet rs = null;
         try{

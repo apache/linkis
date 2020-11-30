@@ -116,7 +116,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine{
             logger.error("By taskID: {} request the corresponding task return status code is not 0, the query fails(通过taskID: {} 请求相应的task返回状态码不为0，查询失败)", taskID);
             throw new QueryFailedException(20010, "retrieve task failed, reason: " + message);
         }
-        java.util.Map<String, Object> data = responsePersist.getData();
+        Map<String, Object> data = responsePersist.getData();
         if (data != null){
            Object object = data.get(TaskConstant.TASK);
            if (object instanceof List){

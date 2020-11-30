@@ -23,7 +23,8 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.9.4</version>
+        <version>0.10.0</version>
+	<relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>linkis-ujes-engine</artifactId>
@@ -32,19 +33,16 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-scheduler</artifactId>
-            <version>${linkis.version}</version>
         </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cloudRPC</artifactId>
-            <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-resourcemanager-client</artifactId>
-            <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.webank.wedatasphere.linkis</groupId>
@@ -55,13 +53,11 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
-            <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-udf</artifactId>
-            <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.webank.wedatasphere.linkis</groupId>
@@ -79,11 +75,9 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cs-ujes-client</artifactId>
-            <version>${linkis.version}</version>
         </dependency>
 
     </dependencies>

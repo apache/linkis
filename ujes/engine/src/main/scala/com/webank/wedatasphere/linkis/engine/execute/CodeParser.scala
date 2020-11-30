@@ -16,7 +16,6 @@
 
 package com.webank.wedatasphere.linkis.engine.execute
 
-
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engine.conf.EngineConfiguration
 import com.webank.wedatasphere.linkis.engine.execute.CodeType.CodeType

@@ -16,7 +16,6 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue
 
-
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.scheduler.{AbstractScheduler, Scheduler, SchedulerContext}
 import com.webank.wedatasphere.linkis.scheduler.queue._

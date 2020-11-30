@@ -35,5 +35,5 @@ public interface ParameterValidateStrategy {
      * @return new value
      */
     Object validate(DataSourceParamKeyDefinition keyDefinition,
-                  Object actualValue) throws ParameterValidateException;
+                    Object actualValue) throws ParameterValidateException;
 }

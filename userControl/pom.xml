@@ -21,7 +21,8 @@
     <parent>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <artifactId>linkis</artifactId>
-        <version>0.9.4</version>
+        <version>0.10.0</version>
+	<relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -41,7 +42,6 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cloudRPC</artifactId>
-            <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>httpclient</artifactId>
@@ -56,8 +56,7 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
+            </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-quartz</artifactId>

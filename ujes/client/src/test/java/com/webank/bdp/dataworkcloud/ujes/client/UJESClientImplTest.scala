@@ -18,7 +18,7 @@
  * created by cooperyang on 2019/07/24.
  */
 
-package com.webank.wedatasphere.linkis.ujes.client
+package com.webank.bdp.dataworkcloud.ujes.client
 
 import java.util.concurrent.TimeUnit
 

@@ -18,7 +18,8 @@
   <parent>
     <artifactId>linkis</artifactId>
     <groupId>com.webank.wedatasphere.linkis</groupId>
-    <version>0.9.4</version>
+    <version>0.10.0</version>
+    <relativePath>../../../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -33,19 +34,26 @@
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-module</artifactId>
-      <version>${linkis.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>asm</artifactId>
           <groupId>org.ow2.asm</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>hk2-api</artifactId>
+          <groupId>org.glassfish.hk2</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jersey-common</artifactId>
+          <groupId>org.glassfish.jersey.core</groupId>
+        </exclusion>
       </exclusions>
+      <scope>provided</scope>
     </dependency>
     <!-- data source manager common dependency-->
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-datasourcemanager-common</artifactId>
-      <version>${linkis.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>asm</artifactId>
@@ -77,25 +85,42 @@
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-bmlclient</artifactId>
-      <version>${linkis.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-mybatis</artifactId>
-      <version>${linkis.version}</version>
     </dependency>
     <!--rpc-->
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-cloudRPC</artifactId>
-      <version>${linkis.version}</version>
+      <scope>provided</scope>
     </dependency>
     <!--Metadata common-->
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-metadatamanager-common</artifactId>
-      <version>${linkis.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>hk2-api</artifactId>
+      <groupId>org.glassfish.hk2</groupId>
+      <version>2.4.0-b34</version>
+    </dependency>
+    <dependency>
+      <groupId>org.json4s</groupId>
+      <artifactId>json4s-jackson_2.11</artifactId>
+      <version>${json4s.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.json4s</groupId>
+      <artifactId>json4s-core_2.11</artifactId>
+      <version>${json4s.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.json4s</groupId>
+      <artifactId>json4s-ast_2.11</artifactId>
+      <version>${json4s.version}</version>
     </dependency>
   </dependencies>
 

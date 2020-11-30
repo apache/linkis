@@ -80,11 +80,12 @@ public class ResourceServiceImpl implements ResourceService {
         ResourceHelper resourceHelper = ResourceHelperFactory.getResourceHelper();
         List<FormDataBodyPart> files = formDataMultiPart.getFields("file");
         List<UploadResult> results = new ArrayList<>();
+        String resourceId = (String) properties.get("resourceId");
         for (FormDataBodyPart p : files) {
             InputStream inputStream = p.getValueAs(InputStream.class);
             FormDataContentDisposition fileDetail = p.getFormDataContentDisposition();
             String fileName = new String(fileDetail.getFileName().getBytes("ISO8859-1"), "UTF-8");
-            String path = resourceHelper.generatePath(user, fileName, properties);
+            String path = resourceHelper.generatePath(user, resourceId, properties);
             StringBuilder sb = new StringBuilder();
             //在upload之前首先应该判断一下这个path是否是已经存在了，如果存在了，抛出异常
             boolean isFileExists = resourceHelper.checkIfExists(path, user);
@@ -97,7 +98,6 @@ public class ResourceServiceImpl implements ResourceService {
             if (StringUtils.isNotEmpty(md5String) && size >= 0) {
                 isSuccess = true;
             }
-            String resourceId = (String) properties.get("resourceId");
             Resource resource = Resource.createNewResource(resourceId, user, fileName, properties);
             //插入一条记录到resource表
             long id = resourceDao.uploadResource(resource);

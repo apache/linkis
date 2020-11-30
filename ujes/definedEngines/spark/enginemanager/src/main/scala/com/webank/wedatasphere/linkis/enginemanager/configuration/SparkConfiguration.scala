@@ -45,7 +45,6 @@ object SparkConfiguration extends Logging {
   val SPARK_WARN_QUEUE_USED_CAPACITY = CommonVars[Float]("wds.linkis.engine.spark.warning.queue.used", 0.5f)
   val SPARK_WARN_QUEUE_USER_ALLOCATE_SESSION = CommonVars[Int]("wds.linkis.engine.spark.warning.user.sessions.max", 3)
 
-  val TIMEZONE = CommonVars[String]("user.timezone", defaultValue = "Asia/Shanghai")
   val PROXY_USER = CommonVars[String]("spark.proxy.user", "${UM}")
   val SPARK_CLIENT_MODE = "client"
   val SPARK_CLUSTER_MODE = "cluster"
@@ -68,7 +67,7 @@ object SparkConfiguration extends Logging {
   val SPARK_ML_BUCKET_FIELDS = CommonVars[String]("wds.linkis.engine.spark.ml.bucketFields", "age[0,18,30,60,100]")
 
   val SPARK_SUBMIT_CMD = CommonVars[String]("wds.linkis.engine.spark.submit.cmd", "spark-submit")
-
+  val TIMEZONE = CommonVars[String]("user.timezone", defaultValue = "Asia/Shanghai")
   
   private var Ports: ArrayBuffer[Int] = _
 

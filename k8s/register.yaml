@@ -1,0 +1,5 @@
+kubectl create secret docker-registry registry-key \
+--docker-server=https://zhangrong1027/linkis \
+--docker-username=admin \
+--docker-password=***** \
+--docker-email=brian.rongzhang@gmail.com

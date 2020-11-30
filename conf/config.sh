@@ -132,4 +132,4 @@ MDM_PORT=9118
 ## java application default jvm memory
 export SERVER_HEAP_SIZE="512M"
 
-LINKIS_VERSION=0.9.4
+LINKIS_VERSION=0.10.0

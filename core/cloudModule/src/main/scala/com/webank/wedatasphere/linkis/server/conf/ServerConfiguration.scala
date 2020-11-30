@@ -97,5 +97,4 @@ object ServerConfiguration {
   val BDP_SERVER_RESTFUL_SCAN_PACKAGES = CommonVars("wds.linkis.server.restful.scan.packages", "")
   val BDP_SERVER_RESTFUL_REGISTER_CLASSES = CommonVars("wds.linkis.server.restful.register.classes", "")
 //  val BDP_SERVER_SOCKET_SERVICE_SCAN_PACKAGES = CommonVars("wds.linkis.server.socket.service.scan.packages", BDP_SERVER_RESTFUL_SCAN_PACKAGES.getValue)
-
 }

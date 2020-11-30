@@ -138,9 +138,9 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
     private static void initDWCApplication() {
         serviceInstance = new ServiceInstance();
         serviceInstance.setApplicationName(applicationContext.getEnvironment().getProperty("spring.application.name"));
-        serviceInstance.setInstance(Utils.getComputerName() + ":" + applicationContext.getEnvironment().getProperty("server.port"));
+        serviceInstance.setInstance(Utils.getLocalHostname() + ":" + applicationContext.getEnvironment().getProperty("server.port"));
         DWCException.setApplicationName(serviceInstance.getApplicationName());
-        DWCException.setHostname(Utils.getComputerName());
+        DWCException.setHostname(Utils.getLocalHostname());
         DWCException.setHostPort(Integer.parseInt(applicationContext.getEnvironment().getProperty("server.port")));
     }
 

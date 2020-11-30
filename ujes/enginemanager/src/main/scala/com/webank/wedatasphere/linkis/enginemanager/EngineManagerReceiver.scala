@@ -137,7 +137,7 @@ class EngineManagerReceiver extends Receiver with EngineListener with Logging wi
     }
   }, 2, 2, TimeUnit.MINUTES)
   override def onEngineCreated(request: RequestEngine, engine: Engine): Unit = {
-    info("User " + request.user + "created a new engine " + engine + ", creator=" + request.creator)
+    info("User " + request.user + ", created a new engine " + engine + ", creator=" + request.creator)
     request match {
       case timeoutRequest: TimeoutRequestEngine =>
         initEngines.add(TimeoutEngine(engine, timeoutRequest.timeout))

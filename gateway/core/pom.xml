@@ -22,7 +22,8 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.9.4</version>
+        <version>0.10.0</version>
+	<relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>linkis-gateway-core</artifactId>
 
@@ -30,7 +31,6 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cloudRPC</artifactId>
-            <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -55,6 +55,10 @@
                 <exclusion>
                     <groupId>io.netty </groupId>
                     <artifactId>netty-all</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>json4s-jackson_2.11</artifactId>
+                    <groupId>org.json4s</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

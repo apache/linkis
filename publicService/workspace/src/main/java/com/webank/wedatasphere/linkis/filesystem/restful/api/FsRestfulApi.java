@@ -29,6 +29,7 @@ import com.webank.wedatasphere.linkis.filesystem.exception.WorkspaceExceptionMan
 import com.webank.wedatasphere.linkis.filesystem.service.FsService;
 import com.webank.wedatasphere.linkis.filesystem.util.WorkspaceUtil;
 import com.webank.wedatasphere.linkis.filesystem.validator.PathValidator$;
+import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import com.webank.wedatasphere.linkis.storage.LineMetaData;
@@ -43,10 +44,15 @@ import com.webank.wedatasphere.linkis.storage.resultset.ResultSetFactory$;
 import com.webank.wedatasphere.linkis.storage.resultset.ResultSetReader;
 import com.webank.wedatasphere.linkis.storage.resultset.table.TableMetaData;
 import com.webank.wedatasphere.linkis.storage.resultset.table.TableRecord;
-import com.webank.wedatasphere.linkis.storage.script.*;
+import com.webank.wedatasphere.linkis.storage.script.ScriptFsWriter;
+import com.webank.wedatasphere.linkis.storage.script.ScriptMetaData;
+import com.webank.wedatasphere.linkis.storage.script.ScriptRecord;
+import com.webank.wedatasphere.linkis.storage.script.Variable;
+import com.webank.wedatasphere.linkis.storage.script.VariableParser;
 import com.webank.wedatasphere.linkis.storage.source.FileSource;
 import com.webank.wedatasphere.linkis.storage.source.FileSource$;
 import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.math3.util.Pair;
 import org.apache.http.Consts;
@@ -65,17 +71,42 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration.*;
-import static com.webank.wedatasphere.linkis.filesystem.constant.WorkSpaceConstants.*;
+import static com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration.FILESYSTEM_PATH_CHECK_TRIGGER;
+import static com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_PREFIX;
+import static com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration.HDFS_USER_ROOT_PATH_SUFFIX;
+import static com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration.LOCAL_USER_ROOT_PATH;
+import static com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration.RESULT_SET_DOWNLOAD_IS_LIMIT;
+import static com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration.RESULT_SET_DOWNLOAD_MAX_SIZE_CSV;
+import static com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration.RESULT_SET_DOWNLOAD_MAX_SIZE_EXCEL;
+import static com.webank.wedatasphere.linkis.filesystem.constant.WorkSpaceConstants.BLANK;
+import static com.webank.wedatasphere.linkis.filesystem.constant.WorkSpaceConstants.DEFAULT_DATE_TYPE;
+import static com.webank.wedatasphere.linkis.filesystem.constant.WorkSpaceConstants.LOCAL_RETURN_TYPE;
+import static com.webank.wedatasphere.linkis.filesystem.constant.WorkSpaceConstants.XLSX_RESPONSE_CONTENT_TYPE;
 
 
 /**
@@ -478,6 +509,23 @@ public class FsRestfulApi {
         String scriptContent = (String) json.get("scriptContent");
         Object params = json.get("params");
         Map<String, Object> map = (Map<String, Object>) params;
+
+        if (path.endsWith(".jdbc")) {
+            if (MapUtils.isEmpty(map)) {
+                throw WorkspaceExceptionManager.createException(80031);
+            }
+
+            Map<String, Object> configuration = (Map<String, Object>) map.get("configuration");
+            if (MapUtils.isEmpty(configuration)) {
+                throw WorkspaceExceptionManager.createException(80031);
+            }
+
+            Map<String, Object> datasource = (Map<String, Object>)((Map<String, Object>)configuration.getOrDefault(TaskConstant.PARAMS_CONFIGURATION_RUNTIME, new HashMap<String, Object>())).get(TaskConstant.PARAMS_CONFIGURATION_DATASOURCE);
+            if (MapUtils.isEmpty(datasource)) {
+                throw WorkspaceExceptionManager.createException(80031);
+            }
+        }
+
         Variable[] v = VariableParser.getVariables(map);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);

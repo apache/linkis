@@ -20,6 +20,7 @@ import java.nio.file.Paths
 
 import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration}
 import com.webank.wedatasphere.linkis.common.utils.ClassUtils
+import com.webank.wedatasphere.linkis.enginemanager.conf.EnvConfiguration
 import com.webank.wedatasphere.linkis.enginemanager.conf.EnvConfiguration._
 import com.webank.wedatasphere.linkis.enginemanager.exception.EngineManagerErrorException
 import com.webank.wedatasphere.linkis.enginemanager.impl.UserEngineResource
@@ -60,6 +61,7 @@ abstract class JavaProcessEngineBuilder extends ProcessEngineBuilder {
     } else {
       commandLine += Paths.get(javaHome, "bin/java").toAbsolutePath.toFile.getAbsolutePath
     }
+    commandLine += ("-D" + EnvConfiguration.TIMEZONE.key + "=" + EnvConfiguration.TIMEZONE.getValue)
     val clientMemory = ENGINE_CLIENT_MEMORY.getValue(request.properties).toString
     commandLine += ("-Xmx" + clientMemory)
     commandLine += ("-Xms" + clientMemory)

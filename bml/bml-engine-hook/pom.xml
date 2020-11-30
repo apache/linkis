@@ -5,13 +5,12 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.9.4</version>
+        <version>0.10.0</version>
+	<relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>linkis-bml-hook</artifactId>
-    <version>${linkis.version}</version>
-
     <dependencies>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
@@ -21,7 +20,6 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-bmlclient</artifactId>
-            <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
@@ -68,13 +66,11 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
-            <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-ujes-engine</artifactId>
-            <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

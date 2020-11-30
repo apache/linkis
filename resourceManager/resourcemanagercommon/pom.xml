@@ -21,9 +21,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <version>0.9.4</version>
+        <version>0.10.0</version>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <artifactId>linkis</artifactId>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>linkis-resourcemanager-common</artifactId>
     <packaging>jar</packaging>
@@ -31,7 +32,6 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cloudRPC</artifactId>
-            <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

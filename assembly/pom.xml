@@ -21,7 +21,8 @@
     <parent>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <artifactId>linkis</artifactId>
-        <version>0.9.4</version>
+        <version>0.10.0</version>
+	<relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -60,7 +61,7 @@
                             </goals>
                             <configuration>
                                     <skipAssembly>false</skipAssembly>
-                                    <finalName>wedatasphere-linkis-${linkis.version}-dist</finalName>
+                                    <finalName>wedatasphere-linkis-${project.version}-dist</finalName>
                                     <appendAssemblyId>false</appendAssemblyId>
                                     <attach>false</attach>
                                     <descriptors>

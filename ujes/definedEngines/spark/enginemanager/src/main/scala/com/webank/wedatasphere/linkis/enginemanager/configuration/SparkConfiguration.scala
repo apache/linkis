@@ -45,6 +45,7 @@ object SparkConfiguration extends Logging {
   val SPARK_WARN_QUEUE_USED_CAPACITY = CommonVars[Float]("wds.linkis.engine.spark.warning.queue.used", 0.5f)
   val SPARK_WARN_QUEUE_USER_ALLOCATE_SESSION = CommonVars[Int]("wds.linkis.engine.spark.warning.user.sessions.max", 3)
 
+  val TIMEZONE = CommonVars[String]("user.timezone", defaultValue = "Asia/Shanghai")
   val PROXY_USER = CommonVars[String]("spark.proxy.user", "${UM}")
   val SPARK_CLIENT_MODE = "client"
   val SPARK_CLUSTER_MODE = "cluster"
@@ -61,12 +62,14 @@ object SparkConfiguration extends Logging {
   val DWC_SPARK_USEHIVECONTEXT = CommonVars[Boolean]("wds.linkis.spark.useHiveContext", true)
   val ENGINE_JAR = CommonVars[String]("wds.linkis.enginemanager.core.jar", ClassUtils.jarOfClass(classOf[SparkEngineExecutorFactory]).head)
   val SPARK_DRIVER_CLASSPATH = CommonVars[String]("wds.linkis.spark.driver.conf.mainjar", "")
-  val SPARK_DRIVER_EXTRA_JAVA_OPTIONS = CommonVars[String]("spark.driver.extraJavaOptions", "\"-Dwds.linkis.configuration=linkis-engine.properties " + getJavaRemotePort + "\"")
+  val SPARK_DRIVER_EXTRA_JAVA_OPTIONS = CommonVars[String]("spark.driver.extraJavaOptions", "\"-Dwds.linkis.configuration=linkis-engine.properties -Duser.timezone=" + TIMEZONE.getValue + " " + getJavaRemotePort + "\"")
   val DEFAULT_JAVA_OPTS = CommonVars[String]("wds.linkis.engine.javaOpts.default", "-server -XX:+UseG1GC -XX:MaxPermSize=250m -XX:PermSize=128m " +
     "-Xloggc:%s -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Dwds.linkis.configuration=linkis-engine.properties")
   val SPARK_ML_BUCKET_FIELDS = CommonVars[String]("wds.linkis.engine.spark.ml.bucketFields", "age[0,18,30,60,100]")
 
   val SPARK_SUBMIT_CMD = CommonVars[String]("wds.linkis.engine.spark.submit.cmd", "spark-submit")
+
+  
   private var Ports: ArrayBuffer[Int] = _
 
   def getJavaRemotePort = {

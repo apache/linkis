@@ -87,6 +87,7 @@ class HiveQLProcessBuilder extends JavaProcessEngineBuilder{
     } else {
       commandLine += Paths.get(javaHome, "bin/java").toAbsolutePath.toFile.getAbsolutePath
     }
+    commandLine += ("-D" + HiveEngineConfiguration.TIMEZONE.key + "=" + HiveEngineConfiguration.TIMEZONE.getValue)
     if (request.properties.containsKey(HiveEngineConfiguration.HIVE_CLIENT_MEMORY.key)){
       val settingClientMemory = request.properties.get(HiveEngineConfiguration.HIVE_CLIENT_MEMORY.key)
       if (!settingClientMemory.toLowerCase().endsWith("g")){

@@ -20,9 +20,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <version>0.9.4</version>
+        <version>0.10.0</version>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <artifactId>linkis</artifactId>
+        <relativePath>../../../pom.xml</relativePath>
     </parent>
 
     <packaging>jar</packaging>
@@ -31,13 +32,11 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
+            </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-ujes-entranceclient</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
+            </dependency>
 
     </dependencies>
     <build>

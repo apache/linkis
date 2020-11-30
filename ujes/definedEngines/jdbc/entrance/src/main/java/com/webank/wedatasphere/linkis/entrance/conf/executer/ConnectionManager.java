@@ -156,7 +156,16 @@ public  class  ConnectionManager {
                 }
             }
         }
-        return dataSource.getConnection();
+        Connection connection = dataSource.getConnection();
+        if (connection.isClosed()) {
+            synchronized (databaseToDataSources) {
+                databaseToDataSources.remove(key);
+                dataSource = createDataSources(properties);
+                databaseToDataSources.put(key, dataSource);
+                connection = dataSource.getConnection();
+            }
+        }
+        return connection;
     }
 
     public void close() {

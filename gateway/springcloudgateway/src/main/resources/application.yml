@@ -22,7 +22,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: locahost
+      defaultZone: ${eurekaurl}
     registry-fetch-interval-seconds: 5
   instance:
     metadata-map:

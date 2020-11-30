@@ -23,7 +23,8 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.9.4</version>
+        <version>0.10.0</version>
+	<relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>linkis-gateway-ujes-support</artifactId>
@@ -32,7 +33,6 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-gateway-springcloudgateway</artifactId>
-            <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.eclipse.jetty</groupId>
@@ -50,13 +50,10 @@
             <artifactId>jsp-api</artifactId>
             <version>2.1</version>
         </dependency>
-
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cs-common</artifactId>
-            <version>${linkis.version}</version>
         </dependency>
-
     </dependencies>
 
     <build>

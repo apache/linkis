@@ -27,6 +27,7 @@ class QLScriptParser private extends CommonScriptParser {
     suffix match {
       case "sql" => true
       case "hql" => true
+      case "jdbc" => true
       case _ => false
     }
   }

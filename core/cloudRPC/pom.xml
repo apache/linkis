@@ -21,7 +21,8 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.9.4</version>
+        <version>0.10.0</version>
+	<relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -31,8 +32,7 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-protocol</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
+            </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-module</artifactId>
@@ -41,6 +41,90 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-feign</artifactId>
             <version>${spring.eureka.version}</version>
+          <exclusions>
+            <exclusion>
+              <artifactId>netty-codec</artifactId>
+              <groupId>io.netty</groupId>
+            </exclusion>
+              <exclusion>
+                  <artifactId>netty-transport</artifactId>
+                  <groupId>io.netty</groupId>
+              </exclusion>
+              <exclusion>
+                  <artifactId>jersey-client</artifactId>
+                  <groupId>com.sun.jersey</groupId>
+              </exclusion>
+              <exclusion>
+                  <artifactId>jersey-apache-client4</artifactId>
+                  <groupId>com.sun.jersey.contribs</groupId>
+              </exclusion>
+              <exclusion>
+                  <artifactId>jackson-databind</artifactId>
+                  <groupId>com.fasterxml.jackson.core</groupId>
+              </exclusion>
+              <exclusion>
+                  <artifactId>jackson-core</artifactId>
+                  <groupId>com.fasterxml.jackson.core</groupId>
+              </exclusion>
+              <exclusion>
+                  <artifactId>jackson-annotations</artifactId>
+                  <groupId>com.fasterxml.jackson.core</groupId>
+              </exclusion>
+              <exclusion>
+                  <artifactId>httpclient</artifactId>
+                  <groupId>org.apache.httpcomponents</groupId>
+              </exclusion>
+              <exclusion>
+                  <artifactId>spring-cloud-commons</artifactId>
+                  <groupId>org.springframework.cloud</groupId>
+              </exclusion>
+              <exclusion>
+                  <artifactId>HdrHistogram</artifactId>
+                  <groupId>org.hdrhistogram</groupId>
+              </exclusion>
+              <exclusion>
+                  <artifactId>jsr305</artifactId>
+                  <groupId>com.google.code.findbugs</groupId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.springframework.cloud</groupId>
+                  <artifactId>spring-cloud-starter</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.springframework.cloud</groupId>
+                  <artifactId>spring-cloud-starter-openfeign</artifactId>
+              </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.json4s</groupId>
+            <artifactId>json4s-jackson_${scala.binary.version}</artifactId>
+            <version>3.5.3</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jackson-databind</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>2.0.0.RELEASE</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jackson-databind</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jackson-core</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jackson-annotations</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

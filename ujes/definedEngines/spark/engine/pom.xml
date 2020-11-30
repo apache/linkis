@@ -41,7 +41,7 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-ujes-engine</artifactId>
-        </dependency>
+            </dependency>
 
 
 

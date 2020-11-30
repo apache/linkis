@@ -120,7 +120,6 @@
                     <artifactId>jasper-runtime</artifactId>
                 </exclusion>
             </exclusions>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
@@ -139,7 +138,6 @@
                     <artifactId>jasper-runtime</artifactId>
                 </exclusion>
             </exclusions>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

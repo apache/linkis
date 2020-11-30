@@ -33,7 +33,7 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-scheduler</artifactId>
-        </dependency>
+            </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cloudRPC</artifactId>
@@ -74,6 +74,44 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-cloudRPC</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>tomcat</groupId>
+                    <artifactId>jasper-compiler</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>tomcat</groupId>
+                    <artifactId>jasper-runtime</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-storage</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>tomcat</groupId>
+                    <artifactId>jasper-compiler</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>tomcat</groupId>
+                    <artifactId>jasper-runtime</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
         </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>

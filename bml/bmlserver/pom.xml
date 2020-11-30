@@ -6,6 +6,7 @@
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <version>0.10.0</version>
+	<relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,30 +16,52 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-mybatis</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+            </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-bmlcommon</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+            </dependency>
+
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cloudRPC</artifactId>
-            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>asm</artifactId>
                     <groupId>org.ow2.asm</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>tomcat</groupId>
+                    <artifactId>jasper-compiler</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>tomcat</groupId>
+                    <artifactId>jasper-runtime</artifactId>
+                </exclusion>
             </exclusions>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>tomcat</groupId>
+                    <artifactId>jasper-compiler</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>tomcat</groupId>
+                    <artifactId>jasper-runtime</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
         </dependency>
 
     </dependencies>

@@ -179,16 +179,189 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cloudRPC</artifactId>
-            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>tomcat</groupId>
+                    <artifactId>jasper-compiler</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>tomcat</groupId>
+                    <artifactId>jasper-runtime</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>javax.inject</artifactId>
+                    <groupId>org.glassfish.hk2.external</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
-            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>tomcat</groupId>
+                    <artifactId>jasper-compiler</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>tomcat</groupId>
+                    <artifactId>jasper-runtime</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
         </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-bml-hook</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-common</artifactId>
+            <version>${hbase.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jersey-json</artifactId>
+                    <groupId>com.sun.jersey</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jetty</artifactId>
+                    <groupId>org.mortbay.jetty</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jetty-util</artifactId>
+                    <groupId>org.mortbay.jetty</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jetty-sslengine</artifactId>
+                    <groupId>org.mortbay.jetty</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>httpclient</artifactId>
+                    <groupId>org.apache.httpcomponents</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>httpcore</artifactId>
+                    <groupId>org.apache.httpcomponents</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>hadoop-annotations</artifactId>
+                    <groupId>org.apache.hadoop</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>hadoop-auth</artifactId>
+                    <groupId>org.apache.hadoop</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-mapreduce</artifactId>
+            <version>${hbase.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jetty-util</artifactId>
+                    <groupId>org.mortbay.jetty</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jetty-util</artifactId>
+                    <groupId>org.eclipse.jetty</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-server</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jetty-http</artifactId>
+                    <groupId>org.eclipse.jetty</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jetty-webapp</artifactId>
+                    <groupId>org.eclipse.jetty</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jetty-servlet</artifactId>
+                    <groupId>org.eclipse.jetty</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jetty-security</artifactId>
+                    <groupId>org.eclipse.jetty</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jetty-util-ajax</artifactId>
+                    <groupId>org.eclipse.jetty</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-log4j12</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jersey-server</artifactId>
+                    <groupId>org.glassfish.jersey.core</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jersey-container-servlet-core</artifactId>
+                    <groupId>org.glassfish.jersey.containers</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jersey-json</artifactId>
+                    <groupId>com.sun.jersey</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jetty</artifactId>
+                    <groupId>org.mortbay.jetty</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>netty-all</artifactId>
+                    <groupId>io.netty</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>servlet-api</artifactId>
+                    <groupId>javax.servlet</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>hadoop-yarn-api</artifactId>
+                    <groupId>org.apache.hadoop</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>hadoop-annotations</artifactId>
+                    <groupId>org.apache.hadoop</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>hadoop-auth</artifactId>
+                    <groupId>org.apache.hadoop</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
     <build>
@@ -197,6 +370,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
             </plugin>
+
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>

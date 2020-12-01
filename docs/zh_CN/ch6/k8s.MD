@@ -16,6 +16,7 @@ Linkis on kubernetes
      $ echo pid >> tasks
 
 #部署文档
+    
 ##基础镜像及各服务镜像编译方法
 
   目前所有微服务镜像都上传到dockerhub，https://hub.docker.com/repository/docker/zhangrong1027/linkis,webank
@@ -41,56 +42,65 @@ Linkis on kubernetes
   
   三.基础镜像创建文件（使用官方维护的镜像可以跳过该步骤）
    自己制作基础镜像方法如下：
-   基础镜像基于centos最新版本
+   *  环境变量设置
+   
+        > 设置harbor的地址环境变量
+        ```
+        export HARBOR_LINKIS=
+        ```
+      
+   * 基础镜像编译打包
+        > 打包
+        ```
+        cd Linkis/emr-base
+        docker build -t $HARBOR_LINKIS/linkis:emr-base-spark2.4.4 .
+        ```
+        > 推送
+        ```
+        docker push  $HARBOR_LINKIS/linkis:emr-base-spark2.4.4 
+        ```
+   * 基础依赖包编译
+        ```
+        mvn clean install -Dmaven.test.skip=true
+        ```
 
-      目录结构如下 
-      --linkis 
-        --emr-base
-           --Dockerfile
-           --README.MD
-           --hadoop
-              --etc
-                 --conf
-                   -- hdfs-site.xml
-                   -- yarn-site.xml
-                   -- map-red.xml
-                   ...
-           -- hive
-              --conf 
-           -- jdk-8u211-linux-x64.tar.gz
-           -- scala-2.11.0.tgz
-           -- spark-2.4.4-bin-hadoop2.7.tgz
-
-    ### 基础镜像编译
-    cd Linkis/emr-base
-    docker build -t zhangrong1027/linkis:emr-base-spark2.4.4 .
-    推送基础镜像到harbor
-    docker push  zhangrong1027/linkis:emr-base-spark2.4.4 
-
-
-
-    ### 编译各微服务镜像
-    各个微服务basedir下面有对应module 的dockerfile
-    与公司内部的CI/CD集成，可以通过mvn docker插件直接编译docker 镜像
-    编译
-        Linkis 根目录执行
-        mvn clean package  -f gateway/gateway-ujes-support/pom_k8s.xml
-        docker images | grep linkis-gateway
-    可以看到已经编译好的镜像
-        docker push zhangrong1027/linkis:linkis-gateway   
-
+   * 替换各个微服务Dockerfile的基础镜像为自己的私服地址
+        ```
+        find . -name Dockerfile | xargs grep -rl "FROM chongchuanbing/linkis" | xargs sed -i "" "s?FROM chongchuanbing/linkis?FROM $HARBOR_LINKIS/linkis?"
+        grep -rl "image: docker.io/chongchuanbing/linkis" k8s | xargs sed -i "" "s?image: chongchuanbing/linkis?image: $HARBOR_LINKIS/linkis?"
+        ```
+   
+   * 编译各微服务镜像
+   
+        > 各个微服务basedir下面有对应 module 的 Dockerfile
+    与公司内部的CI/CD集成，可以通过mvn docker插件直接编译docker镜像
+        ```
+        sh k8s/package.sh
+        sh k8s/build.sh
+        sh k8s/push.sh
+        ```
+     
   四、K8S部署
-  
-    1.启动eureka
+    
+    1.大数据环境配置
+      > 主要涉及 hadoop，hive，spark环境配置，需要将几个组件的配置在k8s各个节点上
+      
+      ｜ 组件 ｜ 版本 |  节点目录 ｜
+      ｜ ---  | --- |  ---    |
+      | hadoop | 2.7.7 | /opt/hadoop/hadoop-2.7.7 |
+      | hive  | 2.3.6  | /opt/hive/apache-hive-2.3.6-bin |
+      | spark | 2.4    | /opt/spark/spark-2.4.4-bin-hadoop2.7 |   
+      
+    2.启动eureka
       eureka部署在k8s的任意一个node节点上就可以
       启动eureka成功后
       修改Linkis/k8s/linkis-eureka-configmap.yaml中的eurekaUrl
       
-    2.修改k8s目录下的linkis-*- configmap.yaml
+    3.修改k8s目录下的linkis-*- configmap.yaml
       特别注意配置文件的正确性，避免后续部署的低级问题出现，如数据库连接不上，hdfs地址不正确等等
       例如gateway/linkis.properties 复制到k8s/linkis-gateway-configmap.yaml
       
-    3.运行k8s目录下的 
+    4.运行k8s目录下的 
       sh init.sh
       观察eureka上注册的服务，一共22个，都启动成功基本就没有问题
 

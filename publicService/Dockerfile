@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM zhangrong1027/linkis:emr-base-spark2.4.4
+FROM chongchuanbing/linkis:emr-base-spark2.4.4
 MAINTAINER brian.rongzhang@gmail.com
 
 RUN yum install -y unzip

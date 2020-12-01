@@ -45,7 +45,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-mdm-server
-        image: zhangrong1027/linkis:linkis-mdm-server-0.10.0
+        image: chongchuanbing/linkis:linkis-mdm-server-0.10.0
         lifecycle:
           preStop:
             exec:
@@ -81,6 +81,12 @@ spec:
           #            mountPath: /opt/ihome/data
           - name: varlog
             mountPath: /opt/ihome/linkis-mdm-server/logs
+          - name: hadoop-config
+            mountPath: /opt/hadoop/hadoop-2.7.7/etc/hadoop
+          - name: hive-config
+            mountPath: /opt/hive/apache-hive-2.3.6-bin/conf
+          - name: spark-config
+            mountPath: /opt/spark/spark-2.4.4-bin-hadoop2.7/conf
       imagePullSecrets:
         - name: registry-key
       volumes:
@@ -97,3 +103,12 @@ spec:
         - name: eureka-config
           configMap:
             name: eureka-config
+        - name: hadoop-config
+          hostPath:
+            path: /opt/hadoop/hadoop-2.7.7/etc/hadoop
+        - name: hive-config
+          hostPath:
+            path: /opt/hive/apache-hive-2.3.6-bin/conf
+        - name: spark-config
+          hostPath:
+            path: /opt/spark/spark-2.4.4-bin-hadoop2.7/conf

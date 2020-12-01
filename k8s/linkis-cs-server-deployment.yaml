@@ -12,55 +12,60 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: linkis-gateway-deployment
+  name: linkis-cs-server-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: linkis-gateway
+      app: linkis-cs-server
+      # release: dev
   strategy:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
     type: RollingUpdate
-
   template:
     metadata:
       labels:
-        app: linkis-gateway
+        app: linkis-cs-server
+        release: dev
     spec:
       affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: "app"
-                    operator: In
-                    values:
-                      - linkis-gateway
-              topologyKey: "kubernetes.io/hostname"
-        
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                    - key: "app"
+                      operator: In
+                      values:
+                        - linkis-cs-server
+                topologyKey: "kubernetes.io/hostname"
       containers:
-      - name: linkis-gateway
-        image: chongchuanbing/linkis:linkis-gateway-0.10.0
+      - name: linkis-cs-server
+        image: chongchuanbing/linkis:linkis-cs-server-0.10.0
         lifecycle:
             preStop:
               exec:
-                command: ["sh","/opt/ihome/linkis-gateway/bin/stop.sh"]
+                command: ["sh","/opt/ihome/linkis-cs-server/bin/stop.sh"]
         imagePullPolicy: Always
         ports:
         - name: http
-          containerPort: 14001
-          protocol: TCP
+          containerPort: 14004
         livenessProbe:
             tcpSocket:
-              port: 14001
+              port: 14004
             initialDelaySeconds: 15
             periodSeconds: 20
         env:
+          - name: eurekaurl
+            valueFrom:
+              configMapKeyRef:
+                name: eureka-config
+                key: eurekaUrl
           - name: EUREKA_URL
             valueFrom:
               configMapKeyRef:
@@ -69,14 +74,14 @@ spec:
           - name: SERVER_HEAP_SIZE
             value: 1024M
           - name: START_PORT
-            value: "14001"
+            value: "14004"
         volumeMounts:
-          - name: linkis-gateway-config
+          - name: linkis-cs-server-config
             mountPath: /opt/ihome/conf
-#          - name: resultset
-#            mountPath: /opt/ihome/data
+          #          - name: resultset
+          #            mountPath: /opt/ihome/data
           - name: varlog
-            mountPath: /opt/ihome/linkis-gateway/logs
+            mountPath: /opt/ihome/linkis-cs-server/logs
           - name: hadoop-config
             mountPath: /opt/hadoop/hadoop-2.7.7/etc/hadoop
           - name: hive-config
@@ -86,13 +91,13 @@ spec:
       imagePullSecrets:
         - name: registry-key
       volumes:
-        - name: linkis-gateway-config
+        - name: linkis-cs-server-config
           configMap:
-            name: linkis-gateway-config
-#        - name: resultset
-#          nfs:
-#            path: /data/k8s
-#            server: 10.206.0.12
+            name: linkis-cs-server-config
+        #        - name: resultset
+        #          nfs:
+        #            path: /data/k8s
+        #            server: 10.206.0.12
         - name: varlog
           hostPath:
             path: /var/log

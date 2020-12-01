@@ -21,16 +21,41 @@ RUN yum -y install wget tar && \
 
 WORKDIR /tmp
 
-COPY hive/conf /opt/hive/apache-hive-2.3.6-bin/conf
-COPY hadoop/conf /opt/hadoop/hadoop-2.7.7/etc/hadoop
-COPY jdk-8u221-linux-x64.tar.gz  /tmp
-COPY scala-2.11.8.tgz /tmp
-COPY spark-2.4.4-bin-hadoop2.7.tgz /tmp
+RUN wget -O jdk-8u221-linux-x64.tar.gz \
+  -c --content-disposition \
+  "https://javadl.oracle.com/webapps/download/AutoDL?BundleId=239835_230deb18db3e4014bb8e3e8324f81b43" && \
+   wget "https://archive.apache.org/dist/flink/flink-1.7.2/flink-1.7.2-bin-hadoop27-scala_2.11.tgz" && \
+   wget "https://downloads.lightbend.com/scala/2.11.8/scala-2.11.8.tgz" && \
+   wget "http://archive.apache.org/dist/spark/spark-2.4.4/spark-2.4.4-bin-hadoop2.7.tgz" && \
+   wget "http://archive.apache.org/dist/hive/hive-2.3.6/apache-hive-2.3.6-bin.tar.gz" && \
+   wget "http://archive.apache.org/dist/hadoop/common/hadoop-2.7.7/hadoop-2.7.7.tar.gz"
 
-RUN tar xf jdk-8u221-linux-x64.tar.gz -C /usr/local/ && \
+
+#COPY flink-1.7.2-bin-hadoop27-scala_2.11.tgz .
+#COPY scala-2.11.8.tgz .
+#COPY jdk-8u221-linux-x64.tar.gz .
+#COPY hadoop-2.7.7.tar.gz .
+#COPY spark-2.4.4-bin-hadoop2.7.tgz .
+#COPY apache-hive-2.3.6-bin.tar.gz .
+
+RUN tar xf flink-1.7.2-bin-hadoop27-scala_2.11.tgz -C /opt/flink/ && \
     tar xf scala-2.11.8.tgz -C /usr/local/ && \
+    tar xf jdk-8u221-linux-x64.tar.gz -C /usr/local/ && \
+    tar xf hadoop-2.7.7.tar.gz -C /opt/hadoop/ && \
     tar xf spark-2.4.4-bin-hadoop2.7.tgz -C /opt/spark/ && \
+    tar xf apache-hive-2.3.6-bin.tar.gz -C /opt/hive/ && \
     rm -f *.tgz *.tar.gz
+
+#COPY hive/conf /opt/hive/apache-hive-2.3.6-bin/conf
+#COPY hadoop/conf /opt/hadoop/hadoop-2.7.7/etc/hadoop
+#COPY jdk-8u221-linux-x64.tar.gz  /tmp
+#COPY scala-2.11.8.tgz /tmp
+#COPY spark-2.4.4-bin-hadoop2.7.tgz /tmp
+#
+#RUN tar xf jdk-8u221-linux-x64.tar.gz -C /usr/local/ && \
+#    tar xf scala-2.11.8.tgz -C /usr/local/ && \
+#    tar xf spark-2.4.4-bin-hadoop2.7.tgz -C /opt/spark/ && \
+#    rm -f *.tgz *.tar.gz
 
 ENV TIME_ZONE Asia/Shanghai
 ENV SPARK_HOME=/opt/spark/spark-2.4.4-bin-hadoop2.7

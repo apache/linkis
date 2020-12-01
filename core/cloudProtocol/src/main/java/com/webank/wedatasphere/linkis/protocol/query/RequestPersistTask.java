@@ -62,7 +62,7 @@ public class RequestPersistTask implements Task {
     private Map<String, String> source;
     /**
      * runType需要和executeApplicationName结合使用，如用户选择了Spark做为服务，他还需要指明使用哪种执行方式，比如pySpark RSpark等
-     * runType和runType是同一个属性，为了兼容以前的代码
+     * runType和engineType是同一个属性，为了兼容以前的代码
      */
     private String runType;
     private String engineType;

@@ -44,7 +44,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-publicservice
-        image: chongchuanbing/linkis:linkis-publicservice-0.10.0
+        image: wedatasphere/linkis:linkis-publicservice-0.10.0
         imagePullPolicy: Always
         lifecycle:
           preStop:

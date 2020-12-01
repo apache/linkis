@@ -52,7 +52,7 @@ spec:
                       - node2
       containers:
         - name: scriptis
-          image: chongchuanbing/linkis:scriptis
+          image: wedatasphere/linkis:scriptis
           imagePullPolicy: Always
           ports:
             - name: http

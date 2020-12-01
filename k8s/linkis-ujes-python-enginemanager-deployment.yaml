@@ -54,7 +54,7 @@ spec:
                       - node3
       containers:
         - name: linkis-ujes-python-enginemanager
-          image: chongchuanbing/linkis:linkis-ujes-python-enginemanager-0.10.0
+          image: wedatasphere/linkis:linkis-ujes-python-enginemanager-0.10.0
           lifecycle:
             preStop:
               exec:

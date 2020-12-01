@@ -19,8 +19,7 @@ Linkis on kubernetes
     
 ##The method of compiling basic image and each microservice image
 
-  Currently all microservice images are uploaded to dockerhub，https://hub.docker.com/repository/docker/zhangrong1027/linkis,webank
-  After the applied mirror warehouse, we will continue to maintain docker to the new mirror warehouse
+  Currently all microservice images are uploaded to dockerhub，https://hub.docker.com/repository/docker/wedatasphere/linkis
   
   In consideration of the deployment version of the virtual machine, we add a new pom_k8s.xml，the default packaging method is the same as before. If you want to compile the image yourself, you need to quote pom_k8s.xml
   

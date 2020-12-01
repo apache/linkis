@@ -19,8 +19,7 @@ Linkis on kubernetes
     
 ##基础镜像及各服务镜像编译方法
 
-  目前所有微服务镜像都上传到dockerhub，https://hub.docker.com/repository/docker/zhangrong1027/linkis,webank
-  申请的镜像仓库下来，我们会持续维护docker到新镜像仓库
+  目前所有微服务镜像都上传到dockerhub，https://hub.docker.com/repository/docker/wedatasphere/linkis
   
   出于对虚机部署版本的考虑，新增了pom_k8s.xml，默认打包方式跟之前保持一致，如果想要自己编译镜像，需要引用pom_k8s.xml
   
@@ -66,8 +65,8 @@ Linkis on kubernetes
 
    * 替换各个微服务Dockerfile的基础镜像为自己的私服地址
         ```
-        find . -name Dockerfile | xargs grep -rl "FROM chongchuanbing/linkis" | xargs sed -i "" "s?FROM chongchuanbing/linkis?FROM $HARBOR_LINKIS/linkis?"
-        grep -rl "image: docker.io/chongchuanbing/linkis" k8s | xargs sed -i "" "s?image: chongchuanbing/linkis?image: $HARBOR_LINKIS/linkis?"
+        find . -name Dockerfile | xargs grep -rl "FROM wedatasphere/linkis" | xargs sed -i "" "s?FROM wedatasphere/linkis?FROM $HARBOR_LINKIS/linkis?"
+        grep -rl "image: wedatasphere/linkis" k8s | xargs sed -i "" "s?image: wedatasphere/linkis?image: $HARBOR_LINKIS/linkis?"
         ```
    
    * 编译各微服务镜像

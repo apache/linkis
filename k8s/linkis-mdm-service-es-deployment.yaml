@@ -45,7 +45,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-mdm-service-es
-        image: chongchuanbing/linkis:linkis-mdm-service-es-0.10.0
+        image: wedatasphere/linkis:linkis-mdm-service-es-0.10.0
         lifecycle:
           preStop:
             exec:

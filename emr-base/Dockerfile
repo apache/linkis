@@ -14,7 +14,7 @@
 # limitations under the License.
 
 FROM centos:latest
-MAINTAINER brian.rongzhang@gmail.com
+MAINTAINER wedatasphere@webank.com
 
 RUN yum -y install wget tar && \
     mkdir /opt/{flink,hadoop,spark,hive}

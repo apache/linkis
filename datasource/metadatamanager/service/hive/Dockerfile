@@ -13,15 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM zhangrong1027/linkis:emr-base-spark2.4.4
+FROM wedatasphere/linkis:emr-base-spark2.4.4
 
-MAINTAINER brian.rongzhang@gmail.com
+MAINTAINER wedatasphere@webank.com
 
 RUN yum install -y unzip
-WORKDIR /opt/ihome
+WORKDIR /opt/linkis
 
-COPY target/linkis-mdm-service-hive.zip /opt/ihome
+COPY target/linkis-mdm-service-hive.zip /opt/linkis
 RUN unzip linkis-mdm-service-hive.zip
 
-WORKDIR /opt/ihome/linkis-mdm-service-hive/bin
-ENTRYPOINT ["/opt/ihome/linkis-mdm-service-hive/bin/startup.sh"]
+WORKDIR /opt/linkis/linkis-mdm-service-hive/bin
+ENTRYPOINT ["/opt/linkis/linkis-mdm-service-hive/bin/startup.sh"]

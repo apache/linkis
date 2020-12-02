@@ -1,5 +1,5 @@
 kubectl create secret docker-registry registry-key \
---docker-server=https://zhangrong1027/linkis \
---docker-username=admin \
+--docker-server=https://wedatasphere/linkis \
+--docker-username=wedatasphere \
 --docker-password=***** \
---docker-email=brian.rongzhang@gmail.com
+--docker-email=wedatasphere@webank.com

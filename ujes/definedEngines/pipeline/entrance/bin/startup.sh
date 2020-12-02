@@ -32,7 +32,7 @@ if [[ -f "${SERVER_PID}" ]]; then
     fi
 fi
 
-cp -f /opt/ihome/conf/linkis.properties /opt/ihome/linkis-ujes-pipeline-entrance/conf
+cp -f /opt/linkis/conf/linkis.properties /opt/linkis/linkis-ujes-pipeline-entrance/conf
 
 nohup java $SERVER_JAVA_OPTS -Deurekaurl=$EUREKA_URL -Duser.timezone=Asia/Shanghai -cp $HOME/conf:$HOME/lib/* $SERVER_CLASS --server.port=$START_PORT 2>&1 > $SERVER_LOG_PATH/linkis-ujes-pipline-entrance.log &
 

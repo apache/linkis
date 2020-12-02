@@ -44,12 +44,12 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-publicservice
-        image: zhangrong1027/linkis:linkis-publicservice-0.10.0
+        image: wedatasphere/linkis:linkis-publicservice-0.10.0
         imagePullPolicy: Always
         lifecycle:
           preStop:
             exec:
-              command: ["sh","/opt/ihome/linkis-publicservice/bin/stop.sh"]
+              command: ["sh","/opt/linkis/linkis-publicservice/bin/stop.sh"]
         ports:
         - name: http
           containerPort: 14003
@@ -75,11 +75,17 @@ spec:
             value: "14003"
         volumeMounts:
           - name: linkis-publicservice-config
-            mountPath: /opt/ihome/conf
+            mountPath: /opt/linkis/conf
           #          - name: resultset
-          #            mountPath: /opt/ihome/data
+          #            mountPath: /opt/linkis/data
           - name: varlog
-            mountPath: /opt/ihome/linkis-publicservice/logs
+            mountPath: /opt/linkis/linkis-publicservice/logs
+          - name: hadoop-config
+            mountPath: /opt/hadoop/hadoop-2.7.7/etc/hadoop
+          - name: hive-config
+            mountPath: /opt/hive/apache-hive-2.3.6-bin/conf
+          - name: spark-config
+            mountPath: /opt/spark/spark-2.4.4-bin-hadoop2.7/conf
       imagePullSecrets:
         - name: registry-key
       volumes:
@@ -96,3 +102,12 @@ spec:
         - name: eureka-config
           configMap:
             name: eureka-config
+        - name: hadoop-config
+          hostPath:
+            path: /opt/hadoop/hadoop-2.7.7/etc/hadoop
+        - name: hive-config
+          hostPath:
+            path: /opt/hive/apache-hive-2.3.6-bin/conf
+        - name: spark-config
+          hostPath:
+            path: /opt/spark/spark-2.4.4-bin-hadoop2.7/conf

@@ -158,7 +158,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dispatch.version>0.11.2</dispatch.version>
         <jsoup.version>1.8.2</jsoup.version>
-        <harbor.reposity>zhangrong1027/linkis</harbor.reposity>
+        <harbor.reposity>wedatasphere/linkis</harbor.reposity>
     </properties>
 
     <dependencyManagement>

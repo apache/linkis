@@ -50,7 +50,7 @@ spec:
         lifecycle:
             preStop:
               exec:
-                command: ["sh","/opt/ihome/linkis-resourcemanager/bin/stop.sh"]
+                command: ["sh","/opt/linkis/linkis-resourcemanager/bin/stop.sh"]
         imagePullPolicy: Always
         ports:
         - name: http
@@ -77,11 +77,11 @@ spec:
             value: "14004"
         volumeMounts:
           - name: linkis-resourcemanager-config
-            mountPath: /opt/ihome/conf
+            mountPath: /opt/linkis/conf
           #          - name: resultset
-          #            mountPath: /opt/ihome/data
+          #            mountPath: /opt/linkis/data
           - name: varlog
-            mountPath: /opt/ihome/linkis-resourcemanager/logs
+            mountPath: /opt/linkis/linkis-resourcemanager/logs
           - name: hadoop-config
             mountPath: /opt/hadoop/hadoop-2.7.7/etc/hadoop
           - name: hive-config

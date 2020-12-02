@@ -16,10 +16,10 @@
 FROM wedatasphere/linkis:emr-base-spark2.4.4
 MAINTAINER wedatasphere@webank.com
 RUN yum install -y unzip
-WORKDIR /opt/ihome
+WORKDIR /opt/linkis
 
-COPY target/linkis-ujes-python-enginemanager.zip /opt/ihome
+COPY target/linkis-ujes-python-enginemanager.zip /opt/linkis
 RUN unzip linkis-ujes-python-enginemanager.zip
 
-WORKDIR /opt/ihome/linkis-ujes-python-enginemanager/bin
-ENTRYPOINT ["/opt/ihome/linkis-ujes-python-enginemanager/bin/startup.sh"]
+WORKDIR /opt/linkis/linkis-ujes-python-enginemanager/bin
+ENTRYPOINT ["/opt/linkis/linkis-ujes-python-enginemanager/bin/startup.sh"]

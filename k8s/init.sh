@@ -6,6 +6,7 @@ kubectl create -f linkis-gateway-configmap.yaml
 kubectl create -f linkis-metadata-configmap.yaml
 kubectl create -f linkis-publicservice-configmap.yaml
 kubectl create -f linkis-resourcemanager-configmap.yaml
+kubectl create -f linkis-cs-server-configmap.yaml
 kubectl create -f linkis-bml-configmap.yaml
 kubectl create -f linkis-ujes-hive-enginemanager-configmap.yaml
 kubectl create -f linkis-ujes-hive-entrance-configmap.yaml
@@ -32,6 +33,7 @@ kubectl create -f linkis-bml-deployment.yaml
 kubectl create -f linkis-metadata-deployment.yaml
 kubectl create -f linkis-publicservice-deployment.yaml
 kubectl create -f linkis-resourcemanager-deployment.yaml
+kubectl create -f linkis-cs-server-deployment.yaml
 kubectl create -f linkis-ujes-jdbc-entrance-deployment.yaml
 kubectl create -f linkis-ujes-hive-entrance-deployment.yaml
 kubectl create -f linkis-ujes-hive-enginemanager-deployment.yaml

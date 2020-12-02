@@ -13,15 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM zhangrong1027/linkis:emr-base-spark2.4.4
+FROM wedatasphere/linkis:emr-base-spark2.4.4
 
-MAINTAINER brian.rongzhang@gmail.com
+MAINTAINER wedatasphere@webank.com
 
 RUN yum install -y unzip
-WORKDIR /opt/ihome
+WORKDIR /opt/linkis
 
-COPY target/linkis-gateway.zip /opt/ihome
+COPY target/linkis-gateway.zip /opt/linkis
 RUN unzip linkis-gateway.zip
 
-WORKDIR /opt/ihome/linkis-gateway/bin
-ENTRYPOINT ["/opt/ihome/linkis-gateway/bin/startup.sh"]
+WORKDIR /opt/linkis/linkis-gateway/bin
+ENTRYPOINT ["/opt/linkis/linkis-gateway/bin/startup.sh"]

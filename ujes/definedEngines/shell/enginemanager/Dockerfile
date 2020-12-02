@@ -14,7 +14,7 @@
 # limitations under the License.
 
 FROM wedatasphere/linkis:emr-base-spark2.4.4
-MAINTAINER brian.rongzhang@gmail.com
+MAINTAINER wedatasphere@webank.com
 RUN yum install -y unzip
 WORKDIR /opt/ihome
 

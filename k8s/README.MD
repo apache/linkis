@@ -66,7 +66,7 @@ Linkis on kubernetes
    * 替换各个微服务Dockerfile的基础镜像为自己的私服地址
         ```
         find . -name Dockerfile | xargs grep -rl "FROM wedatasphere/linkis" | xargs sed -i "" "s?FROM wedatasphere/linkis?FROM $HARBOR_LINKIS/linkis?"
-        grep -rl "image: wedatasphere/linkis" k8s | xargs sed -i "" "s?image: wedatasphere/linkis?image: $HARBOR_LINKIS/linkis?"
+        find . -name "*.yaml" | xargs grep -rl "image: wedatasphere/linkis" | xargs sed -i "" "s?image: wedatasphere/linkis?image: $HARBOR_LINKIS/linkis?"
         ```
    
    * 编译各微服务镜像

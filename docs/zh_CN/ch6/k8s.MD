@@ -31,9 +31,9 @@ Linkis on kubernetes
       或者手动创建secret，后续拉取镜像使用，私有docker仓库请修改成私有reposity地址
       $kubectl create secret docker-registry registry-key \
        --docker-server=https://hub.docker.com \
-       --docker-username=zhangrong1027 \
+       --docker-username=wedatasphere \
        --docker-password=***** \
-       --docker-email=brian.rongzhang@gmail.com
+       --docker-email=wedatasphere@webank.com
   
   二.NFS/ceph 搭建
   
@@ -65,8 +65,8 @@ Linkis on kubernetes
 
    * 替换各个微服务Dockerfile的基础镜像为自己的私服地址
         ```
-        find . -name Dockerfile | xargs grep -rl "FROM chongchuanbing/linkis" | xargs sed -i "" "s?FROM chongchuanbing/linkis?FROM $HARBOR_LINKIS/linkis?"
-        grep -rl "image: docker.io/chongchuanbing/linkis" k8s | xargs sed -i "" "s?image: chongchuanbing/linkis?image: $HARBOR_LINKIS/linkis?"
+        find . -name Dockerfile | xargs grep -rl "FROM wedatasphere/linkis" | xargs sed -i "" "s?FROM wedatasphere/linkis?FROM $HARBOR_LINKIS/linkis?"
+        find . -name "*.yaml" | xargs grep -rl "image: wedatasphere/linkis" | xargs sed -i "" "s?image: wedatasphere/linkis?image: $HARBOR_LINKIS/linkis?"
         ```
    
    * 编译各微服务镜像

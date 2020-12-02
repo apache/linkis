@@ -31,9 +31,9 @@ Linkis on kubernetes
       Or create a secret manually, and then pull the mirror to use. Please modify the private docker warehouse to a private repository address
       $kubectl create secret docker-registry registry-key \
        --docker-server=https://hub.docker.com \
-       --docker-username=zhangrong1027 \
+       --docker-username=wedatasphere \
        --docker-password=***** \
-       --docker-email=brian.rongzhang@gmail.com
+       --docker-email=wedatasphere@webank.com
   
   二.NFS/ceph build
   
@@ -65,8 +65,8 @@ Linkis on kubernetes
 
    * Replace the basic image of each microservice Dockerfile with your own private server address
         ```
-        find . -name Dockerfile | xargs grep -rl "FROM chongchuanbing/linkis" | xargs sed -i "" "s?FROM chongchuanbing/linkis?FROM $HARBOR_LINKIS/linkis?"
-        grep -rl "image: docker.io/chongchuanbing/linkis" k8s | xargs sed -i "" "s?image: chongchuanbing/linkis?image: $HARBOR_LINKIS/linkis?"
+        find . -name Dockerfile | xargs grep -rl "FROM wedatasphere/linkis" | xargs sed -i "" "s?FROM wedatasphere/linkis?FROM $HARBOR_LINKIS/linkis?"
+        find . -name "*.yaml" | xargs grep -rl "image: wedatasphere/linkis" | xargs sed -i "" "s?image: wedatasphere/linkis?image: $HARBOR_LINKIS/linkis?"
         ```
    
    * Compile each microservice image

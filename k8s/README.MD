@@ -31,9 +31,9 @@ Linkis on kubernetes
       或者手动创建secret，后续拉取镜像使用，私有docker仓库请修改成私有reposity地址
       $kubectl create secret docker-registry registry-key \
        --docker-server=https://hub.docker.com \
-       --docker-username=zhangrong1027 \
+       --docker-username=wedatasphere \
        --docker-password=***** \
-       --docker-email=brian.rongzhang@gmail.com
+       --docker-email=wedatasphere@webank.com
   
   二.NFS/ceph 搭建
   

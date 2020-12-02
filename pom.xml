@@ -94,10 +94,6 @@
         <module>ujes/entrance</module>
         <module>bml/bml-engine-hook</module>
 
-        <module>ujes/definedEngines/sqoop/engine</module>
-        <module>ujes/definedEngines/sqoop/enginemanager</module>
-        <module>ujes/definedEngines/sqoop/entrance</module>
-
 
         <module>ujes/definedEngines/spark/engine</module>
         <module>ujes/definedEngines/spark/enginemanager</module>

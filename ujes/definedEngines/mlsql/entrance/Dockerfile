@@ -17,10 +17,10 @@ FROM wedatasphere/linkis:emr-base-spark2.4.4
 MAINTAINER wedatasphere@webank.com
 
 RUN yum install -y unzip
-WORKDIR /opt/ihome
+WORKDIR /opt/linkis
 
-COPY target/linkis-ujes-mlsql-entrance.zip /opt/ihome
+COPY target/linkis-ujes-mlsql-entrance.zip /opt/linkis
 RUN unzip linkis-ujes-mlsql-entrance.zip
 
-WORKDIR /opt/ihome/linkis-ujes-mlsql-entrance/bin
-ENTRYPOINT ["/opt/ihome/linkis-ujes-mlsql-entrance/bin/startup.sh"]
+WORKDIR /opt/linkis/linkis-ujes-mlsql-entrance/bin
+ENTRYPOINT ["/opt/linkis/linkis-ujes-mlsql-entrance/bin/startup.sh"]

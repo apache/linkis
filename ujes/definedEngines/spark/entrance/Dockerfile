@@ -16,10 +16,10 @@
 FROM wedatasphere/linkis:emr-base-spark2.4.4
 MAINTAINER wedatasphere@webank.com
 RUN yum install -y unzip
-WORKDIR /opt/ihome
+WORKDIR /opt/linkis
 
-COPY target/linkis-ujes-spark-entrance.zip /opt/ihome
+COPY target/linkis-ujes-spark-entrance.zip /opt/linkis
 RUN unzip linkis-ujes-spark-entrance.zip
 
-WORKDIR /opt/ihome/linkis-ujes-spark-entrance/bin
-ENTRYPOINT ["/opt/ihome/linkis-ujes-spark-entrance/bin/startup.sh"]
+WORKDIR /opt/linkis/linkis-ujes-spark-entrance/bin
+ENTRYPOINT ["/opt/linkis/linkis-ujes-spark-entrance/bin/startup.sh"]

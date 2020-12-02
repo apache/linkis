@@ -17,10 +17,10 @@ FROM wedatasphere/linkis:emr-base-spark2.4.4
 MAINTAINER wedatasphere@webank.com
 
 RUN yum install -y unzip
-WORKDIR /opt/ihome
+WORKDIR /opt/linkis
 
-COPY target/linkis-publicservice.zip /opt/ihome
+COPY target/linkis-publicservice.zip /opt/linkis
 RUN unzip linkis-publicservice.zip
 
-WORKDIR /opt/ihome/linkis-publicservice/bin
-ENTRYPOINT ["/opt/ihome/linkis-publicservice/bin/startup.sh"]
+WORKDIR /opt/linkis/linkis-publicservice/bin
+ENTRYPOINT ["/opt/linkis/linkis-publicservice/bin/startup.sh"]

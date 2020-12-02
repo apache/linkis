@@ -18,10 +18,10 @@ FROM wedatasphere/linkis:emr-base-spark2.4.4
 MAINTAINER wedatasphere@webank.com
 
 RUN yum install -y unzip
-WORKDIR /opt/ihome
+WORKDIR /opt/linkis
 
-COPY target/linkis-mdm-server.zip /opt/ihome
+COPY target/linkis-mdm-server.zip /opt/linkis
 RUN unzip linkis-mdm-server.zip
 
-WORKDIR /opt/ihome/linkis-mdm-server/bin
-ENTRYPOINT ["/opt/ihome/linkis-mdm-server/bin/startup.sh"]
+WORKDIR /opt/linkis/linkis-mdm-server/bin
+ENTRYPOINT ["/opt/linkis/linkis-mdm-server/bin/startup.sh"]

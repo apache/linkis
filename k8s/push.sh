@@ -15,9 +15,9 @@ docker push $HARBOR_LINKIS/linkis:linkis-resourcemanager-0.10.0
 
 docker push $HARBOR_LINKIS/linkis:linkis-cs-server-0.10.0
 
-docker push $HARBOR_LINKIS/linkis:linkis-metadata0.10.0
+docker push $HARBOR_LINKIS/linkis:linkis-metadata-0.10.0
 
-docker push $HARBOR_LINKIS/linkis:linkis-publicservice0.10.0
+docker push $HARBOR_LINKIS/linkis:linkis-publicservice-0.10.0
 
 docker push $HARBOR_LINKIS/linkis:linkis-ujes-spark-enginemanager-0.10.0
 docker push $HARBOR_LINKIS/linkis:linkis-ujes-spark-entrance-0.10.0

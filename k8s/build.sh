@@ -17,9 +17,9 @@ docker build -t $HARBOR_LINKIS/linkis:linkis-resourcemanager-0.10.0 -f resourceM
 
 docker build -t $HARBOR_LINKIS/linkis:linkis-cs-server-0.10.0 -f contextservice/cs-server/Dockerfile contextservice/cs-server
 
-docker build -t $HARBOR_LINKIS/linkis:linkis-metadata0.10.0 -f metadata/Dockerfile metadata
+docker build -t $HARBOR_LINKIS/linkis:linkis-metadata-0.10.0 -f metadata/Dockerfile metadata
 
-docker build -t $HARBOR_LINKIS/linkis:linkis-publicservice0.10.0 -f publicService/Dockerfile publicService
+docker build -t $HARBOR_LINKIS/linkis:linkis-publicservice-0.10.0 -f publicService/Dockerfile publicService
 
 docker build -t $HARBOR_LINKIS/linkis:linkis-ujes-spark-enginemanager-0.10.0 -f ujes/definedEngines/spark/enginemanager/Dockerfile ujes/definedEngines/spark/enginemanager
 docker build -t $HARBOR_LINKIS/linkis:linkis-ujes-spark-entrance-0.10.0 -f ujes/definedEngines/spark/entrance/Dockerfile ujes/definedEngines/spark/entrance

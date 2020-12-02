@@ -109,9 +109,9 @@ Linkis on kubernetes
      executor to pod, svc network communication
      
      executor adds static routing table
-     route add -net   10.83.0.0  netmask  255.255.0.0  gw  10.20.20.204
-     route add -net   172.27.0.0 netmask  255.255.0.0  gw  10.20.20.204
+     route add -net   127.0.0.1  netmask  255.255.0.0  gw  127.0.0.1
+     route add -net   127.0.0.1 netmask  255.255.0.0  gw  127.0.0.1
      
      Do ip masque on k8s node
-     iptables -t nat -A POSTROUTING -s  10.20.20.0 /24 -d  10.83.0.0/16 -j MASQUERADE
-     iptables -t nat -A POSTROUTING -s  10.20.20.0 /24 -d  172.27.0.0 /12 -j  MASQUERADE
+     iptables -t nat -A POSTROUTING -s  127.0.0.1 /24 -d  127.0.0.1/16 -j MASQUERADE
+     iptables -t nat -A POSTROUTING -s  127.0.0.1 /24 -d  127.0.0.1 /12 -j  MASQUERADE

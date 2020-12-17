@@ -291,7 +291,7 @@ DROP TABLE IF EXISTS `linkis_udf_tree`;
 CREATE TABLE `linkis_udf_tree` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `parent` bigint(20) NOT NULL,
-  `name` varchar(100) DEFAULT NULL COMMENT 'Category name of the function. It would be displayed in the front-end',
+  `name` varchar(200) DEFAULT NULL COMMENT 'Category name of the function. It would be displayed in the front-end',
   `user_name` varchar(50) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

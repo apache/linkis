@@ -47,6 +47,7 @@ class CommentInterceptor extends EntranceInterceptor {
       case "sql" | "hql" | "psql" | "essql"  => requestPersistTask.setExecutionCode(SQLCommentHelper.dealComment(requestPersistTask.getExecutionCode))
       case "python" | "py" => requestPersistTask.setExecutionCode(PythonCommentHelper.dealComment(requestPersistTask.getExecutionCode))
       case "scala" | "java" | "esjson" => requestPersistTask.setExecutionCode(ScalaCommentHelper.dealComment(requestPersistTask.getExecutionCode))
+      case "sh" | "shell" =>
       case _ => requestPersistTask.setExecutionCode(SQLCommentHelper.dealComment(requestPersistTask.getExecutionCode))
     }
       requestPersistTask

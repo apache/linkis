@@ -236,6 +236,8 @@ class SparkScalaExecutor(val sparkConf: SparkConf) extends SparkExecutor{
       sparkILoop.processLine("import org.apache.spark.SparkContext")
       sparkILoop.processLine("import org.apache.spark.sql.SparkSession")
       sparkILoop.processLine("import org.apache.spark.sql.SQLContext")
+      sparkILoop.processLine("import org.apache.spark.streaming.dstream._")
+      sparkILoop.processLine("import org.apache.spark.streaming._")
       sparkILoop.bind("sc", "org.apache.spark.SparkContext", sparkContext, List("""@transient"""))
       sparkILoop.bind("spark", "org.apache.spark.sql.SparkSession", sparkSession, List("""@transient"""))
       sparkILoop.bind("sqlContext", "org.apache.spark.sql.SQLContext", _sqlContext, List("""@transient"""))

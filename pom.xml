@@ -116,6 +116,9 @@
         <module>ujes/definedEngines/shell/entrance</module>
         <module>ujes/definedEngines/shell/enginemanager</module>
 
+        <module>ujes/definedEngines/presto/entrance</module>
+
+        <module>ujes/definedEngines/es/entrance</module>
 
         <module>gateway/core</module>
         <module>gateway/springcloudgateway</module>
@@ -133,12 +136,14 @@
         <module>datasource/datasourcemanager/server</module>
         <module>assembly/public-module</module>
         <module>assembly</module>
+
     </modules>
 
     <properties>
         <hadoop.version>2.7.2</hadoop.version>
         <hive.version>1.2.1</hive.version>
         <hbase.version>2.1.9</hbase.version>
+        <presto.version>0.234</presto.version>
         <spring.eureka.version>1.4.4.RELEASE</spring.eureka.version>
         <spring.boot.version>2.0.3.RELEASE</spring.boot.version>
         <gson.version>2.8.5</gson.version>
@@ -407,7 +412,7 @@
                 <artifactId>linkis-mlsql-entrance</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>com.webank.wedatasphere.linkis</groupId>
                 <artifactId>linkis-mybatis</artifactId>
@@ -599,7 +604,7 @@
                 <artifactId>wedatasphere-linkis</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>

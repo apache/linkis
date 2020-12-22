@@ -17,6 +17,7 @@
 package com.webank.wedatasphere.linkis.resourcemanager.utils
 
 import java.net.ConnectException
+import java.security.PrivilegedExceptionAction
 
 import com.fasterxml.jackson.core.JsonParseException
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
@@ -26,6 +27,9 @@ import com.webank.wedatasphere.linkis.resourcemanager.YarnResource
 import com.webank.wedatasphere.linkis.resourcemanager.exception.{RMErrorException, RMFatalException, RMWarnException}
 import org.apache.commons.lang.StringUtils
 import org.apache.hadoop.fs.Path
+import org.apache.hadoop.security.UserGroupInformation
+import org.apache.hadoop.yarn.api.records.QueueACL
+import org.apache.hadoop.yarn.client.api.YarnClient
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.util.RMHAUtils
 import org.apache.http.client.methods.HttpGet
@@ -54,10 +58,10 @@ object YarnUtil extends Logging{
   private val httpClient = HttpClients.createDefault()
 
   def init() = {
+    yarnConf = new YarnConfiguration()
+    yarnConf.addResource(new Path(hadoopConfDir, YarnConfiguration.CORE_SITE_CONFIGURATION_FILE))
+    yarnConf.addResource(new Path(hadoopConfDir, YarnConfiguration.YARN_SITE_CONFIGURATION_FILE))
     if(StringUtils.isBlank(this.rm_web_address)){
-      yarnConf = new YarnConfiguration()
-      yarnConf.addResource(new Path(hadoopConfDir, YarnConfiguration.CORE_SITE_CONFIGURATION_FILE))
-      yarnConf.addResource(new Path(hadoopConfDir, YarnConfiguration.YARN_SITE_CONFIGURATION_FILE))
       reloadRMWebAddress()
     }
     info(s"This yarn  rm web address is:${this.rm_web_address}")
@@ -157,11 +161,11 @@ object YarnUtil extends Logging{
       case JNull | JNothing => None
     }
     def getChildQueues(resp:JValue):JValue =  {
-      val queues = resp \ "childQueues" \ "queue"
-      if(queues != null && queues != JNull && queues != JNothing && queues.children.nonEmpty) {
-        info(s"test queue:$queues")
-        queues
-      } else resp  \ "childQueues"
+      val queues = resp \ "childQueues" match {
+        case child: JObject => child \ "queue"
+        case children: JArray => children
+      }
+      queues
     }
 
     def getQueueOfCapacity(queues: JValue): Option[JValue] = {
@@ -268,6 +272,37 @@ object YarnUtil extends Logging{
     })
   }
 
-
+  def getOwnQueues(userName: String): Array[String] = Utils.tryCatch {
+    val queuePrefix = "root."
+    UserGroupInformation.createRemoteUser(userName).doAs(new PrivilegedExceptionAction[Array[String]] {
+      override def run(): Array[String] = {
+        val yarnClient = YarnClient.createYarnClient();
+        try {
+          yarnClient.init(yarnConf)
+          yarnClient.start()
+          yarnClient.getQueueAclsInfo
+            .filter(aclsInfo => {
+//              info(s"""queue: ${aclsInfo.getQueueName}, acls: ${aclsInfo.getUserAcls.mkString(",")}""")
+              aclsInfo.getUserAcls.contains(QueueACL.ADMINISTER_QUEUE) || aclsInfo.getUserAcls.contains(QueueACL.SUBMIT_APPLICATIONS)
+            })
+            .map(info => {
+              val queueName = if (info.getQueueName.startsWith(queuePrefix)) {
+                info.getQueueName.substring(queuePrefix.length)
+              } else {
+                info.getQueueName
+              }
+              queueName
+            }).toArray
+        } finally {
+          yarnClient.close()
+        }
+      }
+    })
+  } {
+    t: Throwable => {
+      warn("get own queues error, msg: {}", t)
+      Array()
+    }
+  }
 }
 

@@ -15,11 +15,10 @@
  */
 package com.webank.wedatasphere.linkis.entrance.conf.executer;
 
+import com.webank.wedatasphere.linkis.entrance.conf.JDBCConfiguration;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -27,6 +26,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,8 +55,7 @@ public  class  ConnectionManager {
     }
 
     {
-        String supportedDBString ="mysql=>com.mysql.jdbc.Driver,postgresql=>org.postgresql.Driver," +
-                "oracle=>oracle.jdbc.driver.OracleDriver,hive2=>org.apache.hive.jdbc.HiveDriver";
+        String supportedDBString = JDBCConfiguration.JDBC_SUPPORT_DBS().getValue();
         String[] supportedDBs =  supportedDBString.split(",");
         for (String supportedDB : supportedDBs) {
             String[] supportedDBInfo = supportedDB.split("=>");
@@ -87,11 +87,12 @@ public  class  ConnectionManager {
         throw new IllegalArgumentException("Illegal url or not supported url type (url: " + url + ").");
     }
 
-    private final Pattern pattern = Pattern.compile("^(jdbc:\\w+://\\S+:[0-9]+)\\s*");
     private String getRealURL(String url) {
-        Matcher matcher = pattern.matcher(url.trim());
-        matcher.find();
-        return matcher.group(1);
+        int index = url.indexOf("?");
+        if (index < 0) {
+            index = url.length();
+        }
+        return url.substring(0, index);
     }
 
 
@@ -102,7 +103,7 @@ public  class  ConnectionManager {
         validateURL(url);
         int index = url.indexOf(":") + 1;
         String dbType = url.substring(index, url.indexOf(":", index));
-        System.out.println(String.format("Try to Create a new %s JDBC DBCP with url(%s), username(%s), password(%s).", dbType, url, username, password));
+        logger.info(String.format("Try to Create a new %s JDBC DBCP with url(%s), username(%s), password(%s).", dbType, url, username, password));
         Properties props = new Properties();
         props.put("driverClassName", supportedDBs.get(dbType));
         props.put("url", url.trim());
@@ -115,7 +116,6 @@ public  class  ConnectionManager {
         props.put("testOnBorrow", false);
         props.put("testWhileIdle", true);
         props.put("validationQuery", "select 1");
-        props.put("initialSize", 1);
         BasicDataSource dataSource;
         try {
             dataSource = (BasicDataSource) BasicDataSourceFactory.createDataSource(props);

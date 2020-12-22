@@ -154,7 +154,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 message.setMethod("/api/entrance/" + id + "/progress");
             }else{
                 List<Map<String, Object>> list = new ArrayList<>();
-                for(JobProgressInfo jobProgressInfo : jobProgressInfos) {
+                for(JobProgressInfo jobProgressInfo : jobProgressInfos){
                     Map<String, Object> map = new HashMap<>();
                     map.put("id", jobProgressInfo.id());
                     map.put("succeedTasks", jobProgressInfo.succeedTasks());

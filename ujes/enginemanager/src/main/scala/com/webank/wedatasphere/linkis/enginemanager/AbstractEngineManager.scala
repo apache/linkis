@@ -88,8 +88,9 @@ abstract class AbstractEngineManager extends EngineManager with Logging {
             removeInInitPort()
             engineListener.foreach(_.onEngineInited(engine))
         }
-        if(duration > 0 && System.currentTimeMillis - startTime < duration)
-          Utils.tryQuietly(Await.result(future, Duration(System.currentTimeMillis - startTime, TimeUnit.MILLISECONDS)))
+        val useTime = System.currentTimeMillis - startTime
+        if(duration > 0 && useTime < duration)
+          Utils.tryQuietly(Await.result(future, Duration(duration - useTime, TimeUnit.MILLISECONDS)))
 //        if(duration > 0) {
 //          val leftTime = duration - System.currentTimeMillis + startTime
 //          Utils.tryThrow(Await.result(future, Duration(leftTime, TimeUnit.MILLISECONDS))) {t =>

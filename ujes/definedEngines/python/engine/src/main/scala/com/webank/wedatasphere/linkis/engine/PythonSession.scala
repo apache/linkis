@@ -39,7 +39,6 @@ import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
-import org.scalactic.Pass
 import py4j.GatewayServer
 
 import scala.collection.JavaConversions._
@@ -128,7 +127,6 @@ class PythonSession extends Logging {
         logger.info("result is {} ", res)
         if (StringUtils.isNotBlank(res)) engineExecutorContext.appendStdout(res)
       }
-      Pass
     })
   }
 

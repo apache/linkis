@@ -58,11 +58,12 @@ abstract class EngineExecutorManager extends ExecutorManager with Logging {
     if(executor == null) synchronized {
       if(executor == null) {
         var options: JMap[String, String] = DWCArgumentsParser.getDWCOptionMap
+        //TODO getUDF peaceWong
         getEngineHooks.foreach(hook => options = hook.beforeCreateEngine(options))
         executor = getOrCreateEngineExecutorFactory().createExecutor(options)
+        executor.setCodeParser(getOrCreateCodeParser())
         executor.init()
         executor.setLogListener(jobLogListener)
-        executor.setCodeParser(getOrCreateCodeParser())
         executor.setResultSetListener(resultSetListener)
         //TODO Consider adding timeout（考虑加上超时时间）
         getEngineHooks.foreach(_.afterCreatedEngine(executor))

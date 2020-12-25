@@ -1,0 +1,123 @@
+#
+#  Copyright 2019 WeBank
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-ujes-python-enginemanager-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-ujes-python-enginemanager
+      # release: dev
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: linkis-ujes-python-enginemanager
+        # release: dev
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - linkis-ujes-python-enginemanager
+              topologyKey: "kubernetes.io/hostname"
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              preference:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - node3
+      containers:
+        - name: linkis-ujes-python-enginemanager
+          image: wedatasphere/linkis:linkis-ujes-python-enginemanager-0.10.0
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh","/opt/linkis/linkis-ujes-python-enginemanager/bin/stop.sh"]
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 19001
+          livenessProbe:
+            tcpSocket:
+              port: 19001
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          env:
+            - name: eurekaurl
+              valueFrom:
+                configMapKeyRef:
+                  name: eureka-config
+                  key: eurekaUrl
+            - name: EUREKA_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: eureka-config
+                  key: eurekaUrl
+            - name: SERVER_HEAP_SIZE
+              value: 1024M
+            - name: START_PORT
+              value: "19001"
+          volumeMounts:
+            - name: linkis-ujes-python-enginemanager-config
+              mountPath: /opt/linkis/conf
+            #          - name: resultset
+            #            mountPath: /opt/linkis/data
+            - name: varlog
+              mountPath: /opt/linkis/linkis-ujes-python-enginemanager/logs
+            - name: hadoop-config
+              mountPath: /opt/hadoop/hadoop-2.7.7/etc/hadoop
+            - name: hive-config
+              mountPath: /opt/hive/apache-hive-2.3.6-bin/conf
+            - name: spark-config
+              mountPath: /opt/spark/spark-2.4.4-bin-hadoop2.7/conf
+      imagePullSecrets:
+        - name: registry-key
+      volumes:
+        - name: linkis-ujes-python-enginemanager-config
+          configMap:
+            name: linkis-ujes-python-enginemanager-config
+        #        - name: resultset
+        #          nfs:
+        #            path: /data/k8s
+        #            server: 10.206.0.12
+        - name: varlog
+          hostPath:
+            path: /var/log
+        - name: eureka-config
+          configMap:
+            name: eureka-config
+        - name: hadoop-config
+          hostPath:
+            path: /opt/hadoop/hadoop-2.7.7/etc/hadoop
+        - name: hive-config
+          hostPath:
+            path: /opt/hive/apache-hive-2.3.6-bin/conf
+        - name: spark-config
+          hostPath:
+            path: /opt/spark/spark-2.4.4-bin-hadoop2.7/conf

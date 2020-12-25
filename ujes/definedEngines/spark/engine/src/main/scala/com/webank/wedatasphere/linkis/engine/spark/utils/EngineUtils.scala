@@ -27,9 +27,9 @@ import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration._
 import com.webank.wedatasphere.linkis.engine.spark.common.LineBufferedProcess
 import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.storage.{FSFactory, LineMetaData}
 import com.webank.wedatasphere.linkis.storage.resultset.ResultSetReader
 import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
+import com.webank.wedatasphere.linkis.storage.{FSFactory, LineMetaData}
 
 import scala.util.Random
 

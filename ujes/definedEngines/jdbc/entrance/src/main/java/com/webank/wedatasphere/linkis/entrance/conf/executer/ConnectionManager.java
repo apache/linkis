@@ -19,6 +19,8 @@ import com.webank.wedatasphere.linkis.entrance.conf.JDBCConfiguration;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -28,6 +30,8 @@ import java.sql.Statement;
 import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public  class  ConnectionManager {
 
@@ -154,7 +158,16 @@ public  class  ConnectionManager {
                 }
             }
         }
-        return dataSource.getConnection();
+        Connection connection = dataSource.getConnection();
+        if (connection.isClosed()) {
+            synchronized (databaseToDataSources) {
+                databaseToDataSources.remove(key);
+                dataSource = createDataSources(properties);
+                databaseToDataSources.put(key, dataSource);
+                connection = dataSource.getConnection();
+            }
+        }
+        return connection;
     }
 
     public void close() {

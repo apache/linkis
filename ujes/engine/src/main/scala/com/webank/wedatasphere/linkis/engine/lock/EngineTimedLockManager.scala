@@ -16,15 +16,11 @@
 
 package com.webank.wedatasphere.linkis.engine.lock
 
-import java.util.concurrent.{ConcurrentHashMap, ScheduledThreadPoolExecutor, TimeUnit}
-
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engine.LockManager
 import com.webank.wedatasphere.linkis.engine.execute.EngineExecutorManager
 import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorState
-
-import scala.collection.JavaConversions._
 
 class EngineTimedLockManager(schedulerContext: SchedulerContext) extends LockManager(schedulerContext) with  Logging{
 

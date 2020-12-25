@@ -17,7 +17,7 @@
 package com.webank.wedatasphere.linkis.resourcemanager.domain
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance
-import org.json4s.{CustomSerializer, DefaultFormats, Extraction}
+import org.json4s.CustomSerializer
 import org.json4s.JsonAST.JObject
 import org.json4s.JsonDSL._
 

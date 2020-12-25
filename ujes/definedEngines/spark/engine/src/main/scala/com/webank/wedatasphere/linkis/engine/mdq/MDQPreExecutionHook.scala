@@ -16,7 +16,6 @@
 package com.webank.wedatasphere.linkis.engine.mdq
 
 import java.util
-import javax.annotation.PostConstruct
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration
@@ -27,6 +26,7 @@ import com.webank.wedatasphere.linkis.engine.spark.common.SparkKind
 import com.webank.wedatasphere.linkis.protocol.mdq.{DDLRequest, DDLResponse}
 import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
+import javax.annotation.PostConstruct
 import org.apache.commons.lang.StringUtils
 import org.springframework.stereotype.Component
 

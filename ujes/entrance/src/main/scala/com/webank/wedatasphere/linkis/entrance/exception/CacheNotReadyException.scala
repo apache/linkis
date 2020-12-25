@@ -22,7 +22,7 @@
   */
 package com.webank.wedatasphere.linkis.entrance.exception
 
-import com.webank.wedatasphere.linkis.common.exception.{DWCException, ErrorException, ExceptionLevel}
+import com.webank.wedatasphere.linkis.common.exception.{ErrorException, ExceptionLevel}
 
 case class CacheNotReadyException(errCode:Int,
                                   desc:String) extends ErrorException(errCode, desc){

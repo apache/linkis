@@ -18,7 +18,6 @@ package com.webank.wedatasphere.linkis.enginemanager.pipeline
 
 import com.webank.wedatasphere.linkis.enginemanager.AbstractEngineCreator
 import com.webank.wedatasphere.linkis.enginemanager.process.ProcessEngineBuilder
-import org.springframework.stereotype.Component
 
 /**
   * Created by johnnwang on 2018/11/15.

@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit
 import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.enginemanager.conf.EngineManagerConfiguration
-import com.webank.wedatasphere.linkis.enginemanager.exception.{EngineManagerErrorException, EngineManagerWarnException}
+import com.webank.wedatasphere.linkis.enginemanager.exception.{EMRetryException, EngineManagerErrorException, EngineManagerWarnException}
 import com.webank.wedatasphere.linkis.protocol.engine.RequestEngine
 import com.webank.wedatasphere.linkis.resourcemanager.{AvailableResource, NotEnoughResource, Resource}
 
@@ -49,7 +49,7 @@ abstract class AbstractEngineManager extends EngineManager with Logging {
     val resource = Utils.tryThrow(getEngineManagerContext.getOrCreateEngineResourceFactory
       .createEngineResource(realRequest)){t =>
       warn(s"In the configuration of ${realRequest.creator}, there is a parameter configuration in the wrong format!(${realRequest.creator}的配置中，存在错误格式的参数配置！)", t)
-      throw new EngineManagerErrorException(30000, s"In the configuration of ${realRequest.creator}, there is a parameter configuration in the wrong format!(${realRequest.creator}的配置中，存在错误格式的参数配置！)")
+      throw new EngineManagerErrorException(11011, s"In the configuration of ${realRequest.creator}, there is a parameter configuration in the wrong format!(${realRequest.creator}的配置中，存在错误格式的参数配置！)")
     }
     val nodeResourceInfo = this.registerResources()
     val usedResource = getEngineManagerContext.getOrCreateEngineFactory.getUsedResources.getOrElse(Resource.getZeroResource(resource.getResource))
@@ -59,7 +59,7 @@ abstract class AbstractEngineManager extends EngineManager with Logging {
       info("ProtectedResource: "+ nodeResourceInfo.protectedResource.toString)
       info("UsedResource: "+ usedResource.toString)
       info("RequestResource: "+ resource.getResource.toString)
-      throw new EngineManagerErrorException(31000, "The remote server resource has been used up, please switch to the remote server and try again!(远程服务器资源已被用光，请切换远程服务器再试！)")
+      throw new EngineManagerWarnException(31000, "远程服务器资源已被用光，请切换远程服务器再试！")
     }
     getEngineManagerContext.getOrCreateResourceRequester.request(resource) match {
       case NotEnoughResource(reason) =>

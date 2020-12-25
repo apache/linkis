@@ -23,7 +23,6 @@ import com.webank.wedatasphere.linkis.resourcemanager.domain.ModuleInfo
 import com.webank.wedatasphere.linkis.resourcemanager.utils.RMConfiguration
 import com.webank.wedatasphere.linkis.resourcemanager.{ResourceRequestPolicy => _, _}
 import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.rpc.transform.RPCProduct
 import javax.annotation.PostConstruct
 import org.springframework.stereotype.Component
 

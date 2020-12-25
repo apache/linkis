@@ -1,6 +1,12 @@
 package com.webank.wedatasphere.linkis.ujes.jdbc
 
-import java.sql.{Connection, DatabaseMetaData, ResultSet, RowIdLifetime}
+import java.io.{InputStream, Reader}
+import java.net.URL
+
+import scala.collection.mutable.ArrayBuffer
+import java.sql.{Blob, Clob, Connection, DatabaseMetaData, Date, NClob, Ref, ResultSet, ResultSetMetaData, RowId, RowIdLifetime, SQLException, SQLWarning, SQLXML, Statement, Time, Timestamp}
+import java.{sql, util}
+import java.util.{ArrayList, Calendar, List, SortedMap, TreeMap}
 
 /**
   * Created by owenxu on 2019/8/8.
@@ -249,13 +255,48 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends Data
 
   override def getProcedureColumns(catalog: String, schemaPattern: String, procedureNamePattern: String, columnNamePattern: String): ResultSet = null
 
-  override def getTables(catalog: String, schemaPattern: String, tableNamePattern: String, types: Array[String]): ResultSet = null
+  override def getTables(catalog: String, schemaPattern: String, tableNamePattern: String, types: Array[String]): ResultSet = {
+//    if(tableNamePattern.contains("%")) throw new UJESSQLException(UJESSQLErrorCode
+//      .NOSUPPORT_METADATA,"unsupport like sql")
+    System.out.println("---getTables begin--")
+    System.out.println("catalog:"+catalog+",schema:"+schemaPattern+"," +
+      "tablename:"+tableNamePattern+",type:"+types+",catlog:"+this.ujesSQLConnection.getCatalog+",schema:"+this.ujesSQLConnection.getSchema)
 
-  override def getSchemas: ResultSet = null
+    val executeQueryResultSet =this.ujesSQLConnection.createStatement().executeQuery("desc " +
+      "movie")
 
-  override def getCatalogs: ResultSet = null
+    printRs(executeQueryResultSet)
+    System.out.println("---getTables end--")
+    executeQueryResultSet
+  }
 
-  override def getTableTypes: ResultSet = null
+
+  override def getSchemas: ResultSet = {
+    println("---getschema begin--")
+    val executeQueryResultSet =this.ujesSQLConnection.createStatement().executeQuery("show tables")
+
+    printRs(executeQueryResultSet)
+    println("---getschema end--")
+    executeQueryResultSet
+  }
+
+  private def printRs(rs:ResultSet):Unit={
+    while(rs.next()){
+      val metaData = rs.getMetaData
+      println("#######begin")
+      for(i<-1 until metaData.getColumnCount){
+        System.out.println(metaData.getColumnName(i) + ":" + metaData.getColumnTypeName(i) + ": "
+          + rs.getObject(i)+"\r\n")
+      }
+      println("#######end")
+    }
+  }
+
+
+
+  override def getCatalogs =  throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getCatalogs not supported")
+
+  override def getTableTypes: ResultSet = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getTableTypes not supported")
 
   override def getColumns(catalog: String, schemaPattern: String, tableNamePattern: String, columnNamePattern: String): ResultSet = null
 
@@ -341,7 +382,7 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends Data
 
   override def getRowIdLifetime: RowIdLifetime = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getRowIdLifetime not supported")
 
-  override def getSchemas(catalog: String, schemaPattern: String): ResultSet = null
+  override def getSchemas(catalog: String, schemaPattern: String): ResultSet =  throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getSchemas not supported")
 
   override def supportsStoredFunctionsUsingCallSyntax(): Boolean = false
 

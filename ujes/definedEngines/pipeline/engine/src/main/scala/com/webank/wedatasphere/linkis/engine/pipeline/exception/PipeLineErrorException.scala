@@ -19,8 +19,8 @@ package com.webank.wedatasphere.linkis.engine.pipeline.exception
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
 /**
-  * Created by johnnwang on 2018/11/16.
-  */
+ * Created by johnnwang on 2018/11/16.
+ */
 class PipeLineErrorException(errCode: Int, desc: String) extends ErrorException(errCode, desc) {
 
 }

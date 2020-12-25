@@ -16,7 +16,6 @@
 
 package com.webank.wedatasphere.linkis.entrance.job;
 
-import com.webank.wedatasphere.linkis.common.conf.TimeType;
 import com.webank.wedatasphere.linkis.common.log.LogUtils;
 import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.entrance.execute.*;

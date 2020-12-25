@@ -24,7 +24,10 @@ CREATE TABLE `linkis_task` (
   `script_path` varchar(200) DEFAULT NULL COMMENT 'Path of the script in workspace',
   `params` text COMMENT 'Configuration item of the parameters', 
   `engine_instance` varchar(50) DEFAULT NULL COMMENT 'An instance of engine, consists of IP address of the engine server and port',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+  `engine_start_time` time DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `created_time` (`created_time`),
+  KEY `um_user` (`um_user`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
  

@@ -16,8 +16,8 @@
 
 package com.webank.wedatasphere.linkis.engine
 
-import com.webank.wedatasphere.linkis.engine.execute.{CodeParser, EngineHook, PythonCodeParser, SQLCodeParser}
 import com.webank.wedatasphere.linkis.engine.execute.hook.{MaxExecuteNumEngineHook, ReleaseEngineHook}
+import com.webank.wedatasphere.linkis.engine.execute.{CodeParser, EngineHook, PythonCodeParser}
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component

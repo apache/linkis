@@ -17,10 +17,9 @@
 package com.webank.wedatasphere.linkis.resourcemanager.event.notify
 
 import com.webank.wedatasphere.linkis.common.listener.ListenerBus
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.resourcemanager.event.RMEvent
 import com.webank.wedatasphere.linkis.resourcemanager.schedule.RMEventExecuteRequest
-import com.webank.wedatasphere.linkis.resourcemanager.exception.RMErrorException
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorState.ExecutorState
 import com.webank.wedatasphere.linkis.scheduler.executer.{ExecutorState => _, _}
 

@@ -24,10 +24,10 @@ import com.webank.wedatasphere.linkis.enginemanager.conf.EnvConfiguration.{DEFAU
 import com.webank.wedatasphere.linkis.enginemanager.hive.conf.HiveEngineConfiguration
 import com.webank.wedatasphere.linkis.enginemanager.impl.UserEngineResource
 import com.webank.wedatasphere.linkis.enginemanager.process.JavaProcessEngineBuilder
+import com.webank.wedatasphere.linkis.enginemanager.{AbstractEngineCreator, EngineResource}
 import com.webank.wedatasphere.linkis.protocol.engine.RequestEngine
 import org.apache.commons.lang.StringUtils
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -88,6 +88,7 @@ class HiveQLProcessBuilder extends JavaProcessEngineBuilder{
     } else {
       commandLine += Paths.get(javaHome, "bin/java").toAbsolutePath.toFile.getAbsolutePath
     }
+    commandLine += ("-D" + HiveEngineConfiguration.TIMEZONE.key + "=" + HiveEngineConfiguration.TIMEZONE.getValue)
     if (request.properties.containsKey(HiveEngineConfiguration.HIVE_CLIENT_MEMORY.key)){
       val settingClientMemory = request.properties.get(HiveEngineConfiguration.HIVE_CLIENT_MEMORY.key)
       if (!settingClientMemory.toLowerCase().endsWith("g")){

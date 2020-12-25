@@ -24,6 +24,10 @@
         id, `application_id`,`key_id`,`user_name`,`value`
     </sql>
 
+    <sql id="key_List">
+        id, `key`,`description`,`name`,`application_id`,`default_value`,`validate_type`,`validate_range`,`is_hidden`,`is_advanced`,`level`,`unit`
+    </sql>
+
     <select id="selectAppIDByAppName" resultType="Long">
         SELECT bda.id from linkis_application bda WHERE bda.name=#{name}
     </select>
@@ -111,6 +115,47 @@
 
     <select id="selectKeyByKeyID" resultType="com.webank.wedatasphere.linkis.configuration.entity.ConfigKey">
         SELECT * from linkis_config_key where id = #{keyID}
+    </select>
+
+    <select id="listKeyByCreatorAndAppName" resultType="com.webank.wedatasphere.linkis.configuration.entity.ConfigKey">
+        SELECT
+            `key`.*
+        FROM
+            linkis_config_tree tree,
+            linkis_config_key_tree kt,
+            linkis_config_key `key`
+        WHERE
+            tree.id = kt.tree_id
+        AND kt.key_id = `key`.id
+        AND `key`.application_id = #{creatorID}
+        AND tree.application_id = #{appID}
+    </select>
+
+    <insert id="insertCreator">
+        INSERT INTO linkis_application values(NULL,#{creator},NULL,NULL)
+    </insert>
+
+    <select id="selectTreeIDByKeyID" resultType="Long">
+        SELECT
+            kt.tree_id
+        FROM
+            linkis_config_key_tree kt
+        WHERE
+            kt.key_id = #{keyID}
+    </select>
+
+    <insert id="insertKey" useGeneratedKeys="true" keyProperty="id" parameterType ="com.webank.wedatasphere.linkis.configuration.entity.ConfigKey">
+        INSERT INTO linkis_config_key(<include refid="key_List"/>)
+        VALUES (#{id},#{key},#{description},
+        #{name},#{applicationID},#{defaultValue},#{validateType},#{validateRange},#{isAdvanced},#{isHidden},#{level},#{unit})
+    </insert>
+
+    <insert id="insertKeyTree">
+        INSERT INTO linkis_config_key_tree values(NULL,#{keyID},#{treeID})
+    </insert>
+
+    <select id="selectTreeByAppIDAndName" resultType="com.webank.wedatasphere.linkis.configuration.entity.ConfigTree">
+        SELECT * FROM  linkis_config_tree WHERE `name` = #{treeName} AND `application_id` = #{appID}
     </select>
 
 </mapper>

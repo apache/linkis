@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.enginemanager.impl
 
-import com.webank.wedatasphere.linkis.enginemanager.{AbstractEngineManager, Engine, EngineManagerContext}
+import com.webank.wedatasphere.linkis.enginemanager.{AbstractEngineManager, EngineManagerContext}
 import com.webank.wedatasphere.linkis.resourcemanager.domain.ModuleInfo
 import com.webank.wedatasphere.linkis.resourcemanager.service.annotation.{EnableResourceManager, RegisterResource}
 import org.springframework.beans.factory.annotation.Autowired

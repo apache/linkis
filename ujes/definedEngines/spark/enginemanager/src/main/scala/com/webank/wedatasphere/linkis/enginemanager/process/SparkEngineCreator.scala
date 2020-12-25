@@ -18,11 +18,8 @@ package com.webank.wedatasphere.linkis.enginemanager.process
 
 import com.webank.wedatasphere.linkis.common.conf.DWCArgumentsParser
 import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.enginemanager.conf.EngineManagerConfiguration
+import com.webank.wedatasphere.linkis.enginemanager.AbstractEngineCreator
 import com.webank.wedatasphere.linkis.enginemanager.impl.UserTimeoutEngineResource
-import com.webank.wedatasphere.linkis.enginemanager.{AbstractEngineCreator, Engine, EngineManagerReceiver, EngineResource}
-import com.webank.wedatasphere.linkis.protocol.engine.{EngineCallback, RequestEngine}
-import com.webank.wedatasphere.linkis.rpc.Sender
 import org.springframework.stereotype.Component
 
 /**

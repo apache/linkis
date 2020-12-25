@@ -20,14 +20,13 @@ import java.io.{BufferedReader, InputStreamReader, PrintWriter}
 import java.util.concurrent.TimeUnit
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engine.spark.common.{LineBufferedStream, Starting, State}
+import com.webank.wedatasphere.linkis.engine.spark.common.{LineBufferedStream, Starting, State, _}
 import com.webank.wedatasphere.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.commons.io.IOUtils
 import org.json4s._
 
-import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration.Duration
-import com.webank.wedatasphere.linkis.engine.spark.common._
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 /**
   * Created by allenlliu on 2018/11/19.

@@ -16,10 +16,9 @@
 
 package com.webank.wedatasphere.linkis.storage.utils
 
-import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.storage.FSFactory
-import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetReader}
 import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetReader}
 
 /**
   * Created by johnnwang on 2019/3/7.

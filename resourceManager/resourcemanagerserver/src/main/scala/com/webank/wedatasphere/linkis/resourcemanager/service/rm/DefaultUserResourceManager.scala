@@ -22,12 +22,9 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.resourcemanager.event.notify._
 import com.webank.wedatasphere.linkis.resourcemanager.service.metadata.{ModuleResourceRecordService, UserResourceRecordService}
 import com.webank.wedatasphere.linkis.resourcemanager.utils.RMUtils
-
 import com.webank.wedatasphere.linkis.resourcemanager.{Resource, UserResourceManager}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-
-import scala.collection.mutable
 
 /**
   * Created by johnnwang on 2018/9/15.

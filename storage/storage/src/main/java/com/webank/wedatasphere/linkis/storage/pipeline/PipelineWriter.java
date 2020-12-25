@@ -18,7 +18,6 @@ package com.webank.wedatasphere.linkis.storage.pipeline;
 
 import com.webank.wedatasphere.linkis.common.io.FsWriter;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**

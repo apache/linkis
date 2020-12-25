@@ -31,6 +31,26 @@ resourceManager/resourcemanagercommon/target/
 resourceManager/resourcemanagerserver/target/
 storage/storage/target/
 
+contextservice/cs-cache/target
+contextservice/cs-client/target
+contextservice/cs-common/target
+contextservice/cs-highavailable/target
+contextservice/cs-listener/target
+contextservice/cs-persistence/target
+contextservice/cs-search/target
+contextservice/cs-server/target
+contextservice/cs-ujes-client/target
+
+datasource/datasourcemanager/common/target
+datasource/datasourcemanager/server/target
+datasource/metadatamanager/common/target
+datasource/metadatamanager/server/target
+datasource/metadatamanager/service/elasticsearch/target
+datasource/metadatamanager/service/hive/target
+datasource/metadatamanager/service/mysql/target
+
+
+
 ujes/client/target/
 ujes/definedEngines/hive/engine/target/
 ujes/definedEngines/hive/enginemanager/target/

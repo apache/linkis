@@ -17,13 +17,11 @@
 package com.webank.wedatasphere.linkis.resourcemanager.service
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.resourcemanager._
 import com.webank.wedatasphere.linkis.resourcemanager.event.notify.NotifyRMEventListenerBus
 import com.webank.wedatasphere.linkis.resourcemanager.schedule.{EventSchedulerContextImpl, EventSchedulerImpl, RMEventExecutorManager}
-
 import com.webank.wedatasphere.linkis.resourcemanager.service.metadata.{ModuleResourceRecordService, ResourceLockService}
-
 import com.webank.wedatasphere.linkis.resourcemanager.utils.{RMConfiguration, RMUtils}
-import com.webank.wedatasphere.linkis.resourcemanager.{RequestResourceService, _}
 import com.webank.wedatasphere.linkis.scheduler.Scheduler
 
 

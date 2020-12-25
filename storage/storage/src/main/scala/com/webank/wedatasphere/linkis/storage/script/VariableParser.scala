@@ -16,11 +16,7 @@
 
 package com.webank.wedatasphere.linkis.storage.script
 
-import java.io.{FileInputStream, FileOutputStream}
 import java.util
-
-import com.google.gson.{Gson, GsonBuilder}
-import com.webank.wedatasphere.linkis.common.io.FsPath
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -44,7 +40,7 @@ object VariableParser {
     params.getOrDefault(CONFIGURATION, new util.HashMap[String, Object])
       .asInstanceOf[util.Map[String, Object]]
       .foreach {
-        f => f._2.asInstanceOf[util.Map[String, Object]].foreach(p => p._2 match {
+        f => f._2.asInstanceOf[util.Map[String, Object]].filter(_._2 != null).foreach(p => p._2 match {
           case e: util.Map[String, Object] => e.foreach(s => variables += Variable(f._1, p._1, s._1, s._2.toString))
           case _ => variables += Variable(CONFIGURATION, f._1, p._1, p._2.toString)
         })

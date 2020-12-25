@@ -17,7 +17,6 @@
 package com.webank.wedatasphere.linkis.engine
 
 import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
-import com.webank.wedatasphere.linkis.scheduler.executer.Executor
 
 /**
   * Created by enjoyyin on 2018/9/3.

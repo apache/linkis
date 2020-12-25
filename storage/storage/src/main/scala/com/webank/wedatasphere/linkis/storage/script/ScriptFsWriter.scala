@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.storage.script
 
-import java.io.OutputStream
+import java.io.{InputStream, OutputStream}
 
 import com.webank.wedatasphere.linkis.common.io.{FsPath, FsWriter, MetaData}
 import com.webank.wedatasphere.linkis.storage.LineRecord
@@ -28,17 +28,19 @@ abstract class ScriptFsWriter extends FsWriter {
 
   val path: FsPath
   val charset: String
-  val outputStream: OutputStream
+
+  def getInputStream(): InputStream
 
 }
 
 object ScriptFsWriter {
-  def getScriptFsWriter(path: FsPath, charset: String,outputStream: OutputStream): ScriptFsWriter = new StorageScriptFsWriter(path, charset,outputStream)
+  def getScriptFsWriter(path: FsPath, charset: String, outputStream: OutputStream = null): ScriptFsWriter =
+    new StorageScriptFsWriter(path, charset, outputStream)
 }
 
 
 object ParserFactory {
-  def listParsers(): Array[Parser] = Array(PYScriptParser(), QLScriptParser(),ScalaScriptParser())
+  def listParsers(): Array[Parser] = Array(PYScriptParser(), QLScriptParser(), ScalaScriptParser())
 }
 
 object Compaction {
@@ -46,7 +48,7 @@ object Compaction {
 }
 
 trait Parser {
-  def prefixConf:String
+  def prefixConf: String
 
   def prefix: String
 
@@ -57,7 +59,7 @@ trait Parser {
 
 trait Compaction {
 
-  def prefixConf:String
+  def prefixConf: String
 
   def prefix: String
 
@@ -79,5 +81,5 @@ class ScriptMetaData(var variables: Array[Variable]) extends MetaData {
 class ScriptRecord(line: String) extends LineRecord(line)
 
 //definition  variable; specialConfiguration ;runConfiguration; startUpConfiguration;
-case class Variable(sortParent:String,sort:String,key: String, value: String)
+case class Variable(sortParent: String, sort: String, key: String, value: String)
 

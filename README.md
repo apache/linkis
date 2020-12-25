@@ -14,9 +14,9 @@ Linkis connects with computation/storage engines(Spark, Hive, Python and HBase),
 Based on the microservices architecture, Linkis provides enterprise-level features of multi-tenant isolation, resource management and access control. It also offers convenient support to manage unified variables, UDFs, functions and resource files. it is also guaranteed with sophisticated task/job lifecycle management capabilities under high-concurrency, high-performance and high-availability scenarios.
 
 
-![linkis-intro-01](https://github.com/WeBankFinTech/Linkis/blob/master/images/linkis-intro-01.png?raw=true)
+![linkis-intro-01](https://user-images.githubusercontent.com/11496700/84615498-c3030200-aefb-11ea-9b16-7e4058bf6026.png)
 
-![linkis-intro-03](https://github.com/WeBankFinTech/Linkis/blob/master/images/linkis-intro-03.png?raw=true)
+![linkis-intro-03](https://user-images.githubusercontent.com/11496700/84615483-bb435d80-aefb-11ea-81b5-67f62b156628.png)
 <br>
 <br>
 
@@ -55,7 +55,7 @@ Based on the concept of the computation middleware architecture of Linkis, we ha
 
  **Compared with similar systems**
 
-![introduction01](docs/en_US/images/introduction/introduction01.png)
+![introduction01](https://user-images.githubusercontent.com/11496700/84625630-403b7080-af16-11ea-8816-392dda3584d1.png)
 
 # Documentations：
 
@@ -75,16 +75,15 @@ Based on the concept of the computation middleware architecture of Linkis, we ha
 
 # Architecture：
 
-![introduction02](./docs/en_US/images/introduction/introduction02.png)
+![introduction02](https://user-images.githubusercontent.com/11496700/84615549-e9c13880-aefb-11ea-870e-6d2e9b8fa08d.png)
 
 ----
 
 ## Communication
 If you desire immediate response, please kindly raise issues to us or scan the below QR code by WeChat and QQ to join our group:
 <br>
-![introduction05](docs/en_US/images/introduction/introduction05.png)
+![introduction05](https://user-images.githubusercontent.com/11496700/84615565-f2197380-aefb-11ea-8288-c2d7b0410933.png)
 
 ## License
 
 Linkis is under the Apache 2.0 license. See the [LICENSE ](http://www.apache.org/licenses/LICENSE-2.0)file for details.
-

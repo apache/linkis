@@ -6,10 +6,10 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 import com.monitorjbl.xlsx.StreamingReader
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import org.apache.commons.lang.StringUtils
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.poi.ss.usermodel.{Cell, CellType, DataFormatter, DateUtil, Sheet, Workbook, WorkbookFactory, Row => SheetRow}
-import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
 import org.apache.spark.sql.catalyst.util.DateTimeUtils
@@ -231,7 +231,7 @@ case class ExcelRelation(
             case CellType.NUMERIC => cell.getNumericCellValue.toString
             case _ => dataFormatter.formatCellValue(cell)
           }
-        case CellType.ERROR =>logInfo(s"解析excel遇到错误公式数据${cell.getStringCellValue},置为空值");""
+        case CellType.ERROR =>logger.info(s"解析excel遇到错误公式数据${cell.getStringCellValue},置为空值");""
         case _ => dataFormatter.formatCellValue(cell)
       }
     lazy val numericValue =

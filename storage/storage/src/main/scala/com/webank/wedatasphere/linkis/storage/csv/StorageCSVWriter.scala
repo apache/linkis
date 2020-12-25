@@ -17,79 +17,60 @@
 package com.webank.wedatasphere.linkis.storage.csv
 
 import java.io._
-import java.util
-import java.util.Collections
 
 import com.webank.wedatasphere.linkis.common.io.{MetaData, Record}
 import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.storage.domain.DataType
 import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+import org.apache.commons.io.IOUtils
 
 /**
   * Created by johnnwang on 2018/11/12.
   */
-class StorageCSVWriter(charsetP: String, separatorP: String) extends CSVFsWriter with Logging {
-
-  override val charset: String = charsetP
-  override val separator: String = separatorP
+class StorageCSVWriter(val charset: String, val separator: String, val outputStream: OutputStream) extends CSVFsWriter with Logging {
 
   private val delimiter = separator match {
     case "," => ','
-    case _ =>'\t'
+    case _ => '\t'
   }
 
-  private val cSVWriter = new util.ArrayList[InputStream]()
-  private var stream: SequenceInputStream = _
-  private val buffer: StringBuilder = new StringBuilder(40000)
-  private var counter: Int = _
-
-  override def setIsLastRow(value: Boolean): Unit = {}
-
-  def collectionInputStream(content: Array[String]): Unit = {
-    content.foreach(f => counter += f.length)
-    counter += content.size
-    if (counter >= 40000) {
-      cSVWriter.add(new ByteArrayInputStream(buffer.toString().getBytes(charset)))
-      buffer.clear()
-      content.indices.map {
-        case 0 => content(0)
-        case i => delimiter + content(i)
-      }.foreach(buffer.append)
-      buffer.append("\n")
-      counter = buffer.length
-    } else {
-      content.indices.map {
-        case 0 => content(0)
-        case i => delimiter + content(i)
-      }.foreach(buffer.append)
-      buffer.append("\n")
-      counter = buffer.length
-    }
-  }
+  private val buffer: StringBuilder = new StringBuilder(50000)
 
   @scala.throws[IOException]
   override def addMetaData(metaData: MetaData): Unit = {
     val head = metaData.asInstanceOf[TableMetaData].columns.map(_.columnName)
-    collectionInputStream(head)
+    write(head)
+    //IOUtils.write(compact(head).getBytes(charset),outputStream)
+  }
+
+  private def compact(row: Array[String]): String = {
+    val tmp = row.foldLeft("")((l, r) => l + delimiter + r)
+    tmp.substring(1, tmp.length) + "\n"
+  }
+
+  private def write(row: Array[String]) = {
+    val cotent: String = compact(row)
+    if (buffer.length + cotent.length > 49500) {
+      IOUtils.write(buffer.toString().getBytes(charset), outputStream)
+      buffer.clear()
+    }
+    buffer.append(cotent)
   }
 
   @scala.throws[IOException]
   override def addRecord(record: Record): Unit = {
-    val body = record.asInstanceOf[TableRecord].row.map(f => if (f != null) f.toString else DataType.NULL_VALUE)
-    collectionInputStream(body)
+    val body = record.asInstanceOf[TableRecord].row.map(_.toString) //read时候进行null替换等等
+    write(body)
+    //IOUtils.write(compact(body).getBytes(charset),outputStream)
   }
 
-  override def flush(): Unit = {}
+  override def flush(): Unit = {
+    IOUtils.write(buffer.toString().getBytes(charset), outputStream)
+    buffer.clear()
+  }
 
   override def close(): Unit = {
-    if (stream != null) stream.close()
+    flush()
+    IOUtils.closeQuietly(outputStream)
   }
 
-  override def getCSVStream: InputStream = {
-    cSVWriter.add(new ByteArrayInputStream(buffer.toString().getBytes(charset)))
-    buffer.clear()
-    counter = 0 //Subsequent move to flush(后续挪到flush)
-    stream = new SequenceInputStream(Collections.enumeration(cSVWriter))
-    stream
-  }
 }

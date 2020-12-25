@@ -26,7 +26,7 @@ if [[ -f "${SERVER_PID}" ]]; then
     fi
 fi
 
-nohup java $SERVER_JAVA_OPTS -cp $HOME/conf:$HOME/lib/* $SERVER_CLASS 2>&1 > $SERVER_LOG_PATH/linkis.out &
+nohup java $SERVER_JAVA_OPTS -cp ../module/lib/*:$HOME/conf:$HOME/lib/* $SERVER_CLASS 2>&1 > $SERVER_LOG_PATH/linkis.out &
 pid=$!
 if [[ -z "${pid}" ]]; then
     echo "server $SERVER_NAME start failed!"

@@ -26,8 +26,8 @@ import com.webank.wedatasphere.linkis.resourcemanager._
 import com.webank.wedatasphere.linkis.resourcemanager.domain._
 import com.webank.wedatasphere.linkis.resourcemanager.event.EventScope
 import com.webank.wedatasphere.linkis.resourcemanager.event.notify.{ModuleRegisterEvent, _}
-import com.webank.wedatasphere.linkis.resourcemanager.schedule.EventGroupFactory
 import com.webank.wedatasphere.linkis.resourcemanager.exception.{RMErrorException, RMWarnException}
+import com.webank.wedatasphere.linkis.resourcemanager.schedule.EventGroupFactory
 import com.webank.wedatasphere.linkis.resourcemanager.service.metadata.{ModuleResourceRecordService, ResourceLockService, UserMetaData, UserResourceRecordService}
 import com.webank.wedatasphere.linkis.resourcemanager.utils.RMConfiguration
 import com.webank.wedatasphere.linkis.rpc.Sender

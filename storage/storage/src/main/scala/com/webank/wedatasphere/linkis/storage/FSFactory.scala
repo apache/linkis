@@ -21,7 +21,6 @@ import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.storage.exception.StorageFatalException
 import com.webank.wedatasphere.linkis.storage.factory.BuildFactory
 import com.webank.wedatasphere.linkis.storage.utils.{StorageConfiguration, StorageUtils}
-import net.sf.cglib.proxy.Enhancer
 
 /**
   * Created by johnnwang on 10/17/18.

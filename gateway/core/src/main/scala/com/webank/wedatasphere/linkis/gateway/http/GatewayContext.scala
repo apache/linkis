@@ -16,6 +16,10 @@
 
 package com.webank.wedatasphere.linkis.gateway.http
 
+import java.util
+
+import com.webank.wedatasphere.linkis.server.JMap
+
 /**
   * created by cooperyang on 2019/1/9.
   */
@@ -32,12 +36,15 @@ trait GatewayContext {
   def setGatewayRoute(gatewayRoute: GatewayRoute): Unit
   def getGatewayRoute: GatewayRoute
 
+  def getParams: JMap[String, String]
 }
 class BaseGatewayContext extends GatewayContext {
   private var request: GatewayHttpRequest = _
   private var response: GatewayHttpResponse = _
   private var webSocketRequest: Boolean = false
   private var gatewayRoute: GatewayRoute = _
+
+  private val props: JMap[String, String] = new util.HashMap[String, String]()
 
   override def getRequest: GatewayHttpRequest = request
 
@@ -54,4 +61,6 @@ class BaseGatewayContext extends GatewayContext {
   override def setGatewayRoute(gatewayRoute: GatewayRoute): Unit = this.gatewayRoute = gatewayRoute
 
   override def getGatewayRoute: GatewayRoute = gatewayRoute
+
+  override def getParams: JMap[String, String] = this.props
 }

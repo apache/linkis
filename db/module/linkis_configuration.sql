@@ -61,6 +61,7 @@ CREATE TABLE `linkis_config_key` (
   `is_hidden` tinyint(1) DEFAULT NULL COMMENT 'Whether it is hidden from user. If set to 1(true), then user cannot modify, however, it could still be used in back-end',
   `is_advanced` tinyint(1) DEFAULT NULL COMMENT 'Whether it is an advanced parameter. If set to 1(true), parameters would be displayed only when user choose to do so',
   `level` tinyint(1) DEFAULT NULL COMMENT 'Basis for displaying sorting in the front-end. Higher the level is, higher the rank the parameter gets',
+  `unit` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `application_id` (`application_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;

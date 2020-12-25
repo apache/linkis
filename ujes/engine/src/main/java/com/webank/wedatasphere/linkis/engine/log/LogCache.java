@@ -17,8 +17,6 @@
 package com.webank.wedatasphere.linkis.engine.log;
 
 
-import org.apache.logging.log4j.core.LogEvent;
-
 import java.util.List;
 
 /**

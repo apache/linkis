@@ -32,7 +32,15 @@ public class ConfigKey {
     private Boolean isAdvanced;
     private Boolean isHidden;
     private Integer level;
+    private String unit;
 
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
 
     public Long getId() {
         return id;

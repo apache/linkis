@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.httpclient.dws.config
 
-import com.webank.wedatasphere.linkis.httpclient.config.{ClientConfig, ClientConfigBuilder}
+import com.webank.wedatasphere.linkis.httpclient.config.ClientConfigBuilder
 import com.webank.wedatasphere.linkis.httpclient.dws.exception.UnknownVersionException
 import org.apache.commons.lang.StringUtils
 

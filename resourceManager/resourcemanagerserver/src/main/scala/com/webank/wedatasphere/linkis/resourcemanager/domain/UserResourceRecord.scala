@@ -16,7 +16,6 @@
 
 package com.webank.wedatasphere.linkis.resourcemanager.domain
 
-
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.resourcemanager.Resource
 

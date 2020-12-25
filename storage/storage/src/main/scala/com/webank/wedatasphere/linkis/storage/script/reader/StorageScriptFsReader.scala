@@ -21,6 +21,7 @@ import java.io._
 import com.webank.wedatasphere.linkis.common.io.{FsPath, MetaData, Record}
 import com.webank.wedatasphere.linkis.storage.script._
 import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
+import org.apache.commons.io.IOUtils
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -28,14 +29,10 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Created by johnnwang on 2018/10/23.
   */
-class StorageScriptFsReader(pathP: FsPath, charsetP: String, inputStreamP: InputStream) extends ScriptFsReader {
+class StorageScriptFsReader(val path: FsPath, val charset: String, val inputStream: InputStream) extends ScriptFsReader {
 
-  override val path: FsPath = pathP
-  override val charset: String = charsetP
-
-  private val inputStream: InputStream = inputStreamP
   private var inputStreamReader: InputStreamReader = _
-  private var BufferedReader: BufferedReader = _
+  private var bufferedReader: BufferedReader = _
 
   private var metadata: ScriptMetaData = _
 
@@ -47,7 +44,7 @@ class StorageScriptFsReader(pathP: FsPath, charsetP: String, inputStreamP: Input
 
     if (metadata == null) throw new IOException("Must read metadata first(必须先读取metadata)")
     val record = new ScriptRecord(lineText)
-    lineText = BufferedReader.readLine()
+    lineText = bufferedReader.readLine()
     record
   }
 
@@ -55,10 +52,10 @@ class StorageScriptFsReader(pathP: FsPath, charsetP: String, inputStreamP: Input
   override def getMetaData: MetaData = {
     if (metadata == null) init()
     val parser = ParserFactory.listParsers().filter(p => p.belongTo(StorageUtils.pathToSuffix(path.getPath)))
-    lineText = BufferedReader.readLine()
-    while (hasNext && parser.length > 0 && isMetadata(lineText, parser(0).prefix,parser(0).prefixConf)) {
+    lineText = bufferedReader.readLine()
+    while (hasNext && parser.length > 0 && isMetadata(lineText, parser(0).prefix, parser(0).prefixConf)) {
       variables += parser(0).parse(lineText)
-      lineText = BufferedReader.readLine()
+      lineText = bufferedReader.readLine()
     }
     metadata = new ScriptMetaData(variables.toArray)
     metadata
@@ -66,7 +63,7 @@ class StorageScriptFsReader(pathP: FsPath, charsetP: String, inputStreamP: Input
 
   def init(): Unit = {
     inputStreamReader = new InputStreamReader(inputStream)
-    BufferedReader = new BufferedReader(inputStreamReader)
+    bufferedReader = new BufferedReader(inputStreamReader)
   }
 
   @scala.throws[IOException]
@@ -82,25 +79,26 @@ class StorageScriptFsReader(pathP: FsPath, charsetP: String, inputStreamP: Input
   override def available: Long = if (inputStream != null) inputStream.available() else 0L
 
   override def close(): Unit = {
-    if (BufferedReader != null) BufferedReader.close()
-    if (inputStreamReader != null) inputStreamReader.close()
-    if (inputStream != null) inputStream.close()
+    IOUtils.closeQuietly(bufferedReader)
+    IOUtils.closeQuietly(inputStreamReader)
+    IOUtils.closeQuietly(inputStream)
   }
 
   /**
     * Determine if the read line is metadata(判断读的行是否是metadata)
+    *
     * @param line
     * @return
     */
-  def isMetadata(line: String, prefix: String,prefixConf:String): Boolean = {
+  def isMetadata(line: String, prefix: String, prefixConf: String): Boolean = {
     val regex = ("\\s*" + prefix + "\\s*(.+)\\s*" + "=" + "\\s*(.+)\\s*").r
     line match {
-      case regex(_,_) => true
+      case regex(_, _) => true
       case _ => {
         val split: Array[String] = line.split("=")
-        if(split.size !=2)  return false
-        if (split(0).split(" ").filter(_!="").size != 4)  return false
-        if(!split(0).split(" ").filter(_!="")(0).equals(prefixConf)) return  false
+        if (split.size != 2) return false
+        if (split(0).split(" ").filter(_ != "").size != 4) return false
+        if (!split(0).split(" ").filter(_ != "")(0).equals(prefixConf)) return false
         true
       }
     }

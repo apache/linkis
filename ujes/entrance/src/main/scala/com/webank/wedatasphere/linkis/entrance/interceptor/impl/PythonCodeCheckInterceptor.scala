@@ -31,7 +31,7 @@ class PythonCodeCheckInterceptor extends EntranceInterceptor{
   override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = task match{
     case requestPersistTask:RequestPersistTask =>
       val error = new StringBuilder
-      requestPersistTask.getEngineType match {
+      requestPersistTask.getRunType match {
         case "python" | "pyspark" =>
           Utils.tryThrow(PythonExplain.authPass(requestPersistTask.getExecutionCode, error)){
             case PythonCodeCheckException(errCode,errDesc) =>

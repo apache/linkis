@@ -16,16 +16,18 @@
 package com.webank.wedatasphere.linkis.filesystem.restful.api;
 
 import com.google.gson.Gson;
+import com.webank.wedatasphere.linkis.common.io.FsPath;
 import com.webank.wedatasphere.linkis.filesystem.bml.BMLHelper;
-import com.webank.wedatasphere.linkis.filesystem.bml.BMLScriptReader;
-import com.webank.wedatasphere.linkis.filesystem.bml.BMLScriptWriter;
 import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException;
+import com.webank.wedatasphere.linkis.filesystem.exception.WorkspaceExceptionManager;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
-import com.webank.wedatasphere.linkis.storage.script.ScriptMetaData;
-import com.webank.wedatasphere.linkis.storage.script.ScriptRecord;
-import com.webank.wedatasphere.linkis.storage.script.Variable;
-import com.webank.wedatasphere.linkis.storage.script.VariableParser;
+import com.webank.wedatasphere.linkis.storage.script.*;
+import com.webank.wedatasphere.linkis.storage.script.writer.StorageScriptFsWriter;
+import com.webank.wedatasphere.linkis.storage.source.FileSource;
+import com.webank.wedatasphere.linkis.storage.source.FileSource$;
+import org.apache.commons.math3.util.Pair;
+import org.apache.http.Consts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -38,18 +40,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+
 /**
  * Created by patinousward
-*/
+ */
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes({MediaType.APPLICATION_JSON})
 @Component
 @Path("filesystem")
 public class BMLFsRestfulApi {
+
     @Autowired
     BMLHelper bmlHelper;
 
@@ -58,58 +60,96 @@ public class BMLFsRestfulApi {
     public Response openScriptFromBML(@Context HttpServletRequest req,
                                       @QueryParam("resourceId") String resourceId,
                                       @QueryParam("version") String version,
-                                      @QueryParam("fileName") String fileName,String userNameRpc) throws IOException, WorkSpaceException {
-        String userName = req == null?userNameRpc: SecurityFilter.getLoginUsername(req);
-        Map<String, Object> query = bmlHelper.query(userName,resourceId,version);
-        if(fileName ==null) fileName = "test_faker.sql";  // TODO: 2019/5/31 通过物料库获取 文件类型
-        BMLScriptReader reader = BMLScriptReader.getBMLScriptReader((InputStream) query.get("stream"), fileName);
-        ScriptMetaData metaData = (ScriptMetaData) reader.getMetaData();
-        Map<String, Object> params = VariableParser.getMap(metaData.getMetaData());
-        StringBuilder scriptContent = new StringBuilder();
-        while (reader.hasNext()){
-            ScriptRecord record = (ScriptRecord) reader.getRecord();
-            scriptContent.append(record.getLine() +"\n");
+                                      @QueryParam("creator") String creator,
+                                      @QueryParam("projectName") String projectName,
+                                      @DefaultValue("test.sql") @QueryParam("fileName") String fileName) throws IOException, WorkSpaceException {
+        String userName = SecurityFilter.getLoginUsername(req);
+        Map<String, Object> query = bmlHelper.query(userName, resourceId, version);
+        InputStream inputStream = (InputStream) query.get("stream");
+        try (FileSource fileSource = FileSource$.MODULE$.create(new FsPath(fileName), inputStream)) {
+            Pair<Object, ArrayList<String[]>> collect = fileSource.collect();
+            Message message;
+            try {
+                message = new Gson().fromJson(collect.getSecond().get(0)[0], Message.class);
+                if (message == null) throw WorkspaceExceptionManager.createException(80019);
+            } catch (Exception e) {
+                return Message.messageToResponse(Message.ok().data("scriptContent", collect.getSecond().get(0)[0]).data("metadata", collect.getFirst()));
+            }
+            if (message.getStatus() != 0) {
+                throw new WorkSpaceException(80020, message.getMessage());
+            }
+            return Message.messageToResponse(Message.ok().data("scriptContent", collect.getSecond().get(0)[0]).data("metadata", collect.getFirst()));
         }
-        Message message = null;
-        try {
-            message = new Gson().fromJson(scriptContent.toString(), Message.class);
-        }catch (Exception e){
-            return Message.messageToResponse(Message.ok().data("scriptContent",scriptContent.toString()).data("metadata",params));
-        }
-        if(message.getStatus() != 0){
-            throw new WorkSpaceException(message.getMessage());
-        }
-        return Message.messageToResponse(Message.ok().data("scriptContent",scriptContent.toString()).data("metadata",params));
     }
+
+
+    @GET
+    @Path("/product/openScriptFromBML")
+    public Response openScriptFromProductBML(@Context HttpServletRequest req,
+                                      @QueryParam("resourceId") String resourceId,
+                                      @QueryParam("version") String version,
+                                      @QueryParam("creator") String creator,
+                                      @DefaultValue("test.sql") @QueryParam("fileName") String fileName) throws IOException, WorkSpaceException {
+        String userName = SecurityFilter.getLoginUsername(req);
+        if (!StringUtils.isEmpty(creator)){
+            userName = creator;
+        }
+        Map<String, Object> query = bmlHelper.query(userName, resourceId, version);
+        InputStream inputStream = (InputStream) query.get("stream");
+        try (FileSource fileSource = FileSource$.MODULE$.create(new FsPath(fileName), inputStream)) {
+            Pair<Object, ArrayList<String[]>> collect = fileSource.collect();
+            Message message;
+            try {
+                message = new Gson().fromJson(collect.getSecond().get(0)[0], Message.class);
+                if (message == null) {
+                    throw WorkspaceExceptionManager.createException(80019);
+                }
+            } catch (Exception e) {
+                return Message.messageToResponse(Message.ok().data("scriptContent", collect.getSecond().get(0)[0]).data("metadata", collect.getFirst()));
+            }
+            if (message.getStatus() != 0) {
+                throw new WorkSpaceException(80020, message.getMessage());
+            }
+            return Message.messageToResponse(Message.ok().data("scriptContent", collect.getSecond().get(0)[0]).data("metadata", collect.getFirst()));
+        }
+    }
+
+
 
     @POST
     @Path("/saveScriptToBML")
     public Response saveScriptToBML(@Context HttpServletRequest req, @RequestBody Map<String, Object> json) throws IOException {
-        String userName = req == null?(String) json.get("userName"): SecurityFilter.getLoginUsername(req);
+        String userName = SecurityFilter.getLoginUsername(req);
         String scriptContent = (String) json.get("scriptContent");
-        Map<String, Object> params = (Map<String, Object>)json.get("metadata");
+        Map<String, Object> params = (Map<String, Object>) json.get("metadata");
         String fileName = (String) json.get("fileName");
         String resourceId = (String) json.get("resourceId");
-        BMLScriptWriter writer = BMLScriptWriter.getBMLScriptWriter(fileName);
+        String creator = (String)json.get("creator");
+        String projectName = (String)json.get("projectName");
+        ScriptFsWriter writer = StorageScriptFsWriter.getScriptFsWriter(new FsPath(fileName), Consts.UTF_8.toString(), null);
         Variable[] v = VariableParser.getVariables(params);
         List<Variable> variableList = Arrays.stream(v).filter(var -> !StringUtils.isEmpty(var.value())).collect(Collectors.toList());
         writer.addMetaData(new ScriptMetaData(variableList.toArray(new Variable[0])));
         writer.addRecord(new ScriptRecord(scriptContent));
-        InputStream inputStream = writer.getInputStream();
-        String version=null;
-        if(resourceId == null){
-            // TODO: 2019/5/28 新增文件
-            Map<String, Object> bmlResponse = bmlHelper.upload(userName, inputStream, fileName);
-            resourceId = bmlResponse.get("resourceId").toString();
-            version = bmlResponse.get("version").toString();
-        }else {
-            // TODO: 2019/5/28 更新文件
-            Map<String, Object> bmlResponse = bmlHelper.update(userName, resourceId, inputStream);
-            resourceId = bmlResponse.get("resourceId").toString();
-            version = bmlResponse.get("version").toString();
+        try (InputStream inputStream = writer.getInputStream()) {
+            String version;
+            if (resourceId == null) {
+                //  新增文件
+                Map<String, Object> bmlResponse = new HashMap<>();
+                if (!StringUtils.isEmpty(projectName)) {
+                    bmlResponse = bmlHelper.upload(userName, inputStream, fileName, projectName);
+                }else{
+                    bmlResponse = bmlHelper.upload(userName, inputStream, fileName);
+                }
+                resourceId = bmlResponse.get("resourceId").toString();
+                version = bmlResponse.get("version").toString();
+            } else {
+                //  更新文件
+                Map<String, Object> bmlResponse = bmlHelper.update(userName, resourceId, inputStream);
+                resourceId = bmlResponse.get("resourceId").toString();
+                version = bmlResponse.get("version").toString();
+            }
+            return Message.messageToResponse(Message.ok().data("resourceId", resourceId).data("version", version));
         }
-        // TODO: 2019/5/28 close 流
-        if(inputStream != null) inputStream.close();
-        return Message.messageToResponse(Message.ok().data("resourceId",resourceId).data("version",version));
     }
 }

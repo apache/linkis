@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,10 +22,10 @@ import java.net.ConnectException
 import java.util
 import java.util.concurrent.ScheduledFuture
 
-import com.ning.http.client.Response
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.httpclient.Client
 import com.webank.wedatasphere.linkis.httpclient.exception.DiscoveryException
+import org.apache.http.HttpResponse
 
 import scala.collection.JavaConversions._
 import scala.concurrent.duration.TimeUnit
@@ -129,7 +126,7 @@ abstract class AbstractDiscovery extends Discovery with Closeable with Logging {
 
   protected def getHeartbeatAction(serverUrl: String): HeartbeatAction
 
-  def getHeartbeatResult(response: Response, requestAction: HeartbeatAction): HeartbeatResult
+  def getHeartbeatResult(response: HttpResponse, requestAction: HeartbeatAction): HeartbeatResult
 
   override def addDiscoveryListener(discoveryListener: DiscoveryListener): Unit =
     discoveryListeners.add(discoveryListener)

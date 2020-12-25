@@ -16,10 +16,8 @@
 
 package com.webank.wedatasphere.linkis.engine.execute
 
-import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engine.conf.EngineConfiguration
-import com.webank.wedatasphere.linkis.engine.exception.EngineErrorException
 import com.webank.wedatasphere.linkis.engine.extension.EnginePreExecuteHook
 import com.webank.wedatasphere.linkis.resourcemanager.Resource
 import com.webank.wedatasphere.linkis.scheduler.executer._
@@ -49,14 +47,14 @@ abstract class EngineExecutor(outputPrintLimit: Int, isSupportParallelism: Boole
     val hooks = new ArrayBuffer[EnginePreExecuteHook]()
     EngineConfiguration.ENGINE_PRE_EXECUTE_HOOK_CLASSES.getValue.split(",") foreach {
       hookStr => Utils.tryCatch{
-        val clazz = Class.forName(hookStr)
+        val clazz = Class.forName(hookStr.trim)
         val obj = clazz.newInstance()
         obj match {
           case hook:EnginePreExecuteHook => hooks += hook
           case _ => logger.warn(s"obj is not a engineHook obj is ${obj.getClass}")
         }
       }{
-        case e:Exception => logger.error("failed to load class", e)
+        case e:Exception => logger.error(s"failed to load class ${hookStr}")
       }
     }
     hooks.toArray
@@ -117,20 +115,22 @@ abstract class EngineExecutor(outputPrintLimit: Int, isSupportParallelism: Boole
       else if(isSupportParallelism) whenAvailable(f) else ensureIdle(f)
     ensureOp {
       val engineExecutorContext = createEngineExecutorContext(executeRequest)
+      var hookedCode = executeRequest.code;
       Utils.tryCatch{
         enginePreExecuteHooks foreach {
           hook => logger.info(s"${hook.hookName} begins to do a hook")
-            hook.callPreExecuteHook(engineExecutorContext, executeRequest)
+            hookedCode =  hook.callPreExecuteHook(engineExecutorContext, executeRequest, hookedCode)
             logger.info(s"${hook.hookName} ends to do a hook")
         }
       }{
-        case e:Exception => logger.info("failed to do with hook")
+        case e:Throwable => logger.info("failed to do with hook", e)
       }
+      info(s"hooked after code:$hookedCode")
       var response: ExecuteResponse = null
       val incomplete = new StringBuilder
-      val codes = Utils.tryCatch(codeParser.map(_.parse(executeRequest.code, engineExecutorContext)).getOrElse(Array(executeRequest.code))){
-        e => warn("Your code failed to commit one line at a time, and is now ready to execute as a full commit(您的代码在进行一行一行代码提交时失败，现在准备按照全部提交的方式进行执行)",e)
-          Array(executeRequest.code)
+      val codes = Utils.tryCatch(codeParser.map(_.parse(hookedCode, engineExecutorContext)).getOrElse(Array(hookedCode))){
+        e => info("Your code will be submitted in overall mode")
+          Array(hookedCode)
       }
       engineExecutorContext.setTotalParagraph(codes.length)
       codes.indices.foreach { index =>
@@ -145,7 +145,7 @@ abstract class EngineExecutor(outputPrintLimit: Int, isSupportParallelism: Boole
         //engineExecutorContext.appendStdout(getName + ">> " + incomplete.toString().trim + " complete ")
         response match {
           case e: ErrorExecuteResponse =>
-            error(s"execute code $code failed!", e.t)
+            error(s"execute code failed!", e.t)
             return response
           case SuccessExecuteResponse() =>
             engineExecutorContext.appendStdout("\n")

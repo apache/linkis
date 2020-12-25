@@ -15,10 +15,11 @@
  */
 package com.webank.wedatasphere.linkis.entrance.execute
 
+import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.entrance.job.EntranceExecutionJob
 import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
-import com.webank.wedatasphere.linkis.scheduler.executer.{CompletedExecuteResponse, ErrorExecuteResponse, ExecuteRequest}
+import com.webank.wedatasphere.linkis.scheduler.executer.{CompletedExecuteResponse, ErrorExecuteResponse, ExecuteRequest, SuccessExecuteResponse}
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
 import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState.Running
 
@@ -47,13 +48,19 @@ class JDBCEntranceJob extends EntranceExecutionJob{
     val executeResponse = Utils.tryCatch(getExecutor.execute(jobToExecuteRequest())){
       case t: InterruptedException =>
         warn(s"job $toString is interrupted by user!", t)
+        getLogWriter.foreach(writer => writer.write(LogUtils.generateERROR(t.toString)))
         ErrorExecuteResponse("job is interrupted by user!", t)
       case t:ErrorExecuteResponse =>
         warn(s"execute job $toString failed!", t)
+        getLogWriter.foreach(writer => writer.write(LogUtils.generateERROR(t.toString)))
         ErrorExecuteResponse("execute job failed!", t)
     }
     executeResponse match {
-      case r: CompletedExecuteResponse =>
+      case r: SuccessExecuteResponse =>
+        setResultSize(0)
+        transitionCompleted(r)
+      case r: ErrorExecuteResponse =>
+        getLogWriter.foreach(writer => writer.write(LogUtils.generateERROR(r.toString)))
         setResultSize(0)
         transitionCompleted(r)
       case _ => logger.error("not completed")

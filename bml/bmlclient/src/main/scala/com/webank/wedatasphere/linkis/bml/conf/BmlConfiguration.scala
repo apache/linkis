@@ -22,11 +22,7 @@ import com.webank.wedatasphere.linkis.common.conf.CommonVars
   * Description:
   */
 object BmlConfiguration {
-  val GATEWAY_IP:CommonVars[String] =
-    CommonVars[String]("wds.linkis.gateway.ip", "ip", "DWS gateway的ip地址")
 
-  val GATEWAY_PORT:CommonVars[Int] =
-    CommonVars[Int]("wds.linkis.gateway.port", 1000, "DWS gateway的端口")
 
   val DWS_VERSION:CommonVars[String] = CommonVars[String]("wds.linkis.bml.dws.version", "v1")
 
@@ -46,6 +42,8 @@ object BmlConfiguration {
   val GET_RESOURCES:CommonVars[String] = CommonVars[String]("wds.linkis.bml.getResourceMsg.url","getResourceMsg", "获取资源的信息")
 
   val DOWNLOAD_URL:CommonVars[String] = CommonVars[String]("wds.linkis.bml.download.url", "download")
+
+  val DELETE_URL:CommonVars[String] = CommonVars[String]("wds.linkis.bml.delete.url", "delete")
 
   val GET_VERSIONS_URL:CommonVars[String] = CommonVars[String]("wds.linkis.bml.getVersions.url", "getVersions")
 

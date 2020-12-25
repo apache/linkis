@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Copyright 2019 WeBank
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="com.webank.wedatasphere.linkis.cs.persistence.dao.ContextIDMapper">
+
+    <sql id="context_id">
+        `id`,`user`,`application`,`source`,`expire_type`,`expire_time`,`instance`,`backup_instance`
+    </sql>
+
+    <insert id="createContextID" useGeneratedKeys="true" keyProperty="contextId"
+            parameterType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextID">
+        INSERT INTO linkis_cs_context_id(<include refid="context_id"/>)
+        VALUES (#{contextId},#{user},#{application},#{source},#{expireType},#{expireTime},#{instance},#{backupInstance})
+    </insert>
+
+    <delete id="deleteContextID">
+        DELETE FROM linkis_cs_context_id where id = #{contextId}
+    </delete>
+
+    <resultMap id="PersistenceContextID"
+               type="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextID">
+        <id column="id" property="contextId"/>
+    </resultMap>
+
+    <select id="getContextID" resultMap="PersistenceContextID">
+        SELECT * FROM linkis_cs_context_id where id = #{contextId}
+    </select>
+
+    <update id="updateContextID"
+            parameterType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextID">
+        UPDATE linkis_cs_context_id
+        <trim prefix="set" suffixOverrides=",">
+            <if test="user != null">`user` = #{user},</if>
+            <if test="application != null">`application` = #{application},</if>
+            <if test="expireType != null">`expire_type` = #{expireType},</if>
+            <if test="expireTime != null">`expire_time` = #{expireTime},</if>
+            <if test="instance != null">`instance` = #{instance},</if>
+            <if test="backupInstance != null">`backup_instance` = #{backupInstance},</if>
+        </trim>
+        WHERE id = #{contextId}
+    </update>
+
+</mapper>

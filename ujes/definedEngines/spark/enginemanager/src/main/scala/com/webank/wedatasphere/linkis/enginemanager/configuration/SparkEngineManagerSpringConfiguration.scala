@@ -22,7 +22,6 @@ import com.webank.wedatasphere.linkis.enginemanager.hook._
 import com.webank.wedatasphere.linkis.resourcemanager.domain.ModuleInfo
 import com.webank.wedatasphere.linkis.resourcemanager.{DriverAndYarnResource, LoadInstanceResource, ResourceRequestPolicy}
 import com.webank.wedatasphere.linkis.rpc.Sender
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.{Bean, Configuration}
 
 /**

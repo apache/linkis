@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.resourcemanager.utils
 
-import com.webank.wedatasphere.linkis.common.exception.DWCException
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import org.slf4j.Logger
 
 /**
   * Created by shanhuang on 9/11/18.

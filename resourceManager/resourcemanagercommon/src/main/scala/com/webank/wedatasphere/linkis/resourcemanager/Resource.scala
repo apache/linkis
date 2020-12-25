@@ -21,12 +21,12 @@ import com.webank.wedatasphere.linkis.resourcemanager.ResourceRequestPolicy._
 import com.webank.wedatasphere.linkis.resourcemanager.exception.RMWarnException
 import com.webank.wedatasphere.linkis.resourcemanager.utils.RMByteTimeUtils
 import org.apache.commons.lang.StringUtils
-import org.json4s.{CustomSerializer, DefaultFormats, Extraction}
 import org.json4s.JsonAST.JObject
 import org.json4s.JsonDSL._
+import org.json4s.jackson.Serialization
+import org.json4s.{CustomSerializer, DefaultFormats, Extraction}
 
 import scala.collection.JavaConversions
-import org.json4s.jackson.Serialization
 
 /**
   * Created by shanhuang on 9/11/18.

@@ -20,7 +20,7 @@ package com.webank.wedatasphere.linkis.enginemanager.process
 import java.lang.ProcessBuilder.Redirect
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging}
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.enginemanager.EngineResource
 import com.webank.wedatasphere.linkis.enginemanager.conf.EnvConfiguration._
 import com.webank.wedatasphere.linkis.enginemanager.configuration.SparkConfiguration
@@ -135,9 +135,8 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     val properties = new util.HashMap[String,String](request.properties)
     this.master("yarn")
     this.deployMode(SPARK_DEPLOY_MODE.getValueAndRemove(properties))
-    val driverJavaSet = "\"-Dwds.linkis.configuration=linkis-engine.properties " + SparkConfiguration.getJavaRemotePort + "\""
-    this.conf(SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, driverJavaSet)
-    this.name(properties.getOrDefault("appName", "sparksqltest"))
+    this.conf(SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, SPARK_DRIVER_EXTRA_JAVA_OPTIONS.getValue)
+    this.name(properties.getOrDefault("appName", "linkis"))
     this.className(properties.getOrDefault("className", "com.webank.wedatasphere.linkis.engine.DataWorkCloudEngineApplication"))
     properties.getOrDefault("archives", "").toString.split(",").map(RelativePath).foreach(this.archive)
     this.driverCores(DWC_SPARK_DRIVER_CORES)
@@ -157,7 +156,7 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     this.driverClassPath(SPARK_DRIVER_CLASSPATH.getValue)
     this.redirectOutput(Redirect.PIPE)
     this.redirectErrorStream(true)
-    this.env("spark.app.name", properties.getOrDefault("appName", "dwc" + request.creator))
+    this.env("spark.app.name", properties.getOrDefault("appName", "linkis" + request.creator))
 
     properties.filter(i => (i._1.startsWith("spark.") || i._1.startsWith("hive.")) && StringUtils.isNotBlank(i._2)).foreach(i => conf(i._1, i._2))
 

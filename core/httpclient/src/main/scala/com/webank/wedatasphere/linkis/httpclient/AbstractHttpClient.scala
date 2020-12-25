@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,11 +13,9 @@
 
 package com.webank.wedatasphere.linkis.httpclient
 
-import java.io.{File, InputStream}
+import java.util
 import java.util.concurrent.TimeUnit
 
-import com.ning.http.client.Response
-import com.ning.http.multipart.{FilePart, PartSource, StringPart}
 import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
 import com.webank.wedatasphere.linkis.common.utils.Utils
@@ -31,17 +26,25 @@ import com.webank.wedatasphere.linkis.httpclient.exception.{HttpClientResultExce
 import com.webank.wedatasphere.linkis.httpclient.loadbalancer.{AbstractLoadBalancer, DefaultLoadbalancerStrategy, LoadBalancer}
 import com.webank.wedatasphere.linkis.httpclient.request._
 import com.webank.wedatasphere.linkis.httpclient.response._
-import dispatch._
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
-import org.apache.http.HttpException
+import org.apache.http.client.entity.UrlEncodedFormEntity
+import org.apache.http.client.methods.{CloseableHttpResponse, HttpGet, HttpPost}
+import org.apache.http.client.utils.URIBuilder
+import org.apache.http.entity.mime.MultipartEntityBuilder
+import org.apache.http.entity.{ContentType, StringEntity}
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.message.BasicNameValuePair
+import org.apache.http.util.EntityUtils
+import org.apache.http.{HttpException, HttpResponse, _}
 import org.json4s.jackson.Serialization.read
 import org.json4s.{DefaultFormats, Formats}
 
 import scala.collection.Iterable
 import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext,ExecutionContextExecutorService, Future}
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService}
+
 
 /**
   * Created by enjoyyin on 2019/5/20.
@@ -51,9 +54,11 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
   protected implicit val formats: Formats = DefaultFormats
   protected implicit val executors: ExecutionContext = Utils.newCachedExecutionContext(clientConfig.getMaxConnection, clientName, false)
   protected val httpTimeout: Duration = if (clientConfig.getReadTimeout > 0) Duration(clientConfig.getReadTimeout, TimeUnit.MILLISECONDS)
-    else Duration.Inf
+  else Duration.Inf
 
-  if(clientConfig.getAuthenticationStrategy != null) clientConfig.getAuthenticationStrategy match {
+  protected val httpClient = HttpClients.createDefault()
+
+  if (clientConfig.getAuthenticationStrategy != null) clientConfig.getAuthenticationStrategy match {
     case auth: AbstractAuthenticationStrategy => auth.setClient(this)
     case _ =>
   }
@@ -70,8 +75,8 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
       //如果discovery没有启用，那么启用loadBalancer是没有意义的
       val loadBalancer = if (clientConfig.isLoadbalancerEnabled && this.clientConfig.getLoadbalancerStrategy != null)
         Some(this.clientConfig.getLoadbalancerStrategy.createLoadBalancer())
-        else if(clientConfig.isLoadbalancerEnabled) Some(DefaultLoadbalancerStrategy.createLoadBalancer())
-        else None
+      else if (clientConfig.isLoadbalancerEnabled) Some(DefaultLoadbalancerStrategy.createLoadBalancer())
+      else None
       loadBalancer match {
         case Some(lb: AbstractLoadBalancer) =>
           discovery.foreach(_.addDiscoveryListener(lb))
@@ -90,20 +95,18 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
     if(!requestAction.isInstanceOf[HttpAction])
       throw new UnsupportedOperationException("only HttpAction supported, but the fact is " + requestAction.getClass)
     val action = prepareAction(requestAction.asInstanceOf[HttpAction])
-    val req = prepareReq(action)
-    val response = if(!clientConfig.isRetryEnabled) executeRequest(req, Some(waitTime).filter(_ > 0))
-      else clientConfig.getRetryHandler.retry(executeRequest(req, Some(waitTime).filter(_ > 0)), action.getClass.getSimpleName + "HttpRequest")
+    val response: CloseableHttpResponse = executeHttpAction(action)
     responseToResult(response, action)
   }
 
   override def execute(requestAction: Action, resultListener: ResultListener): Unit = {
-    if(!requestAction.isInstanceOf[HttpAction])
+    if (!requestAction.isInstanceOf[HttpAction]) {
       throw new UnsupportedOperationException("only HttpAction supported, but the fact is " + requestAction.getClass)
+    }
     val action = prepareAction(requestAction.asInstanceOf[HttpAction])
-    val req = prepareReq(action)
-    val response = executeAsyncRequest(req)
-    response.onSuccess{case r => resultListener.onSuccess(responseToResult(r, action))}
-    response.onFailure{case t => resultListener.onFailure(t)}
+    val response: CloseableHttpResponse = executeHttpAction(action)
+    //response.onSuccess{case r => resultListener.onSuccess(responseToResult(r, action))}
+    //response.onFailure{case t => resultListener.onFailure(t)}
   }
 
   protected def getRequestUrl(suffixUrl: String, requestBody: String): String = {
@@ -121,93 +124,113 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
 
   protected def prepareAction(requestAction: HttpAction): HttpAction = requestAction
 
-  protected def prepareReq(requestAction: HttpAction): Req = {
+  protected def executeHttpAction(requestAction: HttpAction): CloseableHttpResponse = {
     var realURL = ""
-    var req = requestAction match {
+    requestAction match {
       case serverUrlAction: ServerUrlAction =>
-        realURL = serverUrlAction.serverUrl
-        dispatch.url(connectUrl(serverUrlAction.serverUrl, requestAction.getURL))
+        realURL = connectUrl(serverUrlAction.serverUrl, requestAction.getURL)
       case _ =>
-        val url = getRequestUrl(requestAction.getURL, requestAction.getRequestBody)
-        realURL = url.replaceAll(requestAction.getURL, "")
-        dispatch.url(url)
+        realURL = getRequestUrl(requestAction.getURL, requestAction.getRequestBody)
     }
-    var request = requestAction match {
-      case upload: UploadAction =>
-        req = req.setContentType("multipart/form-data", Configuration.BDP_ENCODING.getValue).POST
-        if(upload.files != null && upload.files.nonEmpty) {
-          val fs = upload.user.map(getFsByUser(_, new FsPath(upload.files.head._2)))
-          upload.files.foreach { case (k, v) =>
-            if(StringUtils.isEmpty(v)) throw new HttpException(s"$k 的文件路径不能为空！")
-            val filePart = fs.map(f => if(f.exists(new FsPath(v))) new FilePart(k, new FsPartSource(f, v))
-              else throw new HttpException(s"File $v 不存在！")).getOrElse{
-                val f = new File(v)
-                if(!f.exists() || !f.isFile) throw new HttpException(s"File $v 不存在！")
-                else new FilePart(k, f)
-            }
-            req = req.addBodyPart(filePart)
-          }
-        }
-        if(upload.inputStreams != null)
-          upload.inputStreams.foreach { case (k, v) =>
-            val filePart = new FilePart(k, new PartSource{
-              val length = v.available
-              override def getLength: Long = length
-              override def getFileName: String = upload.inputStreamNames.getOrDefault(k, k)
-              override def createInputStream(): InputStream = v
-            })
-            req = req.addBodyPart(filePart)
-          }
-        upload match {
-          case get: GetAction => get.getParameters.foreach { case (k, v) => req = req.addBodyPart(new StringPart(k, v.toString)) }
-          case _ =>
-        }
-        req
-      case post: POSTAction =>
-        req = req.POST
-        if(!post.getParameters.isEmpty) post.getParameters.foreach{ case (k, v) => req = req.addQueryParameter(k, v.toString)}
-        if(post.getFormParams.nonEmpty) {
-          req.setContentType("application/x-www-form-urlencoded", Configuration.BDP_ENCODING.getValue) << post.getFormParams
-        } else req.setContentType("application/json", Configuration.BDP_ENCODING.getValue) << post.getRequestPayload
-      case get: GetAction =>
-        if(!get.getParameters.isEmpty) get.getParameters.foreach{ case (k, v) => req = req.addQueryParameter(k, v.toString)}
-        req.GET
-      case _ =>
-        req.POST.setBody(requestAction.getRequestBody)
-          .setContentType("application/json", Configuration.BDP_ENCODING.getValue)
-    }
-    if(clientConfig.getAuthenticationStrategy != null) clientConfig.getAuthenticationStrategy.login(requestAction, realURL) match {
+
+    if (clientConfig.getAuthenticationStrategy != null) clientConfig.getAuthenticationStrategy.login(requestAction, realURL.replaceAll(requestAction.getURL, "")) match {
       case authAction: HttpAuthentication =>
         val cookies = authAction.authToCookies
-        if(cookies != null && cookies.nonEmpty) cookies.foreach(requestAction.addCookie)
+        if (cookies != null && cookies.nonEmpty) cookies.foreach(requestAction.addCookie)
         val headers = authAction.authToHeaders
-        if(headers != null && headers.nonEmpty) headers.foreach{case (k, v) => requestAction.addHeader(k, v.toString)}
+        if (headers != null && !headers.isEmpty()) {
+          headers.foreach { case (k, v) => requestAction.addHeader(k.toString(), v.toString()) }
+        }
       case _ =>
     }
-    if(requestAction.getHeaders.nonEmpty) request = request <:< requestAction.getHeaders
-    if(requestAction.getCookies.nonEmpty) requestAction.getCookies.foreach(c => request = request.addCookie(c))
-    request
+
+    var response: CloseableHttpResponse = null
+    requestAction match {
+      case upload: UploadAction =>
+        val httpPost = new HttpPost(realURL)
+        val builder = MultipartEntityBuilder.create()
+        if(upload.inputStreams != null)
+          upload.inputStreams.foreach { case (k, v) =>
+            builder.addBinaryBody(k, v, ContentType.create("multipart/form-data"), k)
+          }
+        upload match {
+          case get: GetAction => get.getParameters.
+            retain((k, v) => v != null && k != null).
+            foreach { case (k, v) => builder.addTextBody(k.toString, v.toString) }
+          case _ =>
+        }
+        upload match {
+          case get: GetAction => get.getHeaders.
+            retain((k, v) => v != null && k != null).
+            foreach { case (k, v) => httpPost.addHeader(k.toString, v.toString) }
+          case _ =>
+        }
+        val httpEntity = builder.build()
+        httpPost.setEntity(httpEntity)
+        response = httpClient.execute(httpPost)
+      case post: POSTAction =>
+        val httpPost = new HttpPost(realURL)
+        if (post.getParameters.nonEmpty || post.getFormParams.nonEmpty) {
+          val nvps = new util.ArrayList[NameValuePair]
+          if (post.getParameters.nonEmpty) {
+            post.getParameters.foreach { case (k, v) => nvps.add(new BasicNameValuePair(k, v.toString())) }
+          }
+          if (post.getFormParams.nonEmpty) {
+            post.getFormParams.foreach { case (k, v) => nvps.add(new BasicNameValuePair(k, v.toString())) }
+          }
+          httpPost.setEntity(new UrlEncodedFormEntity(nvps))
+        }
+
+        if (StringUtils.isNotBlank(post.getRequestPayload)) {
+          val stringEntity = new StringEntity(post.getRequestPayload, "UTF-8")
+          stringEntity.setContentEncoding(Configuration.BDP_ENCODING.getValue)
+          stringEntity.setContentType("application/json")
+          httpPost.setEntity(stringEntity)
+        }
+
+        if (requestAction.getHeaders.nonEmpty) {
+          requestAction.getHeaders.foreach { case (k, v) => httpPost.addHeader(k.toString(), v.toString()) }
+        }
+        response = httpClient.execute(httpPost)
+      case get: GetAction =>
+        val builder = new URIBuilder(realURL)
+        if (!get.getParameters.isEmpty) {
+          get.getParameters.foreach { case (k, v) => builder.addParameter(k.toString(), v.toString()) }
+        }
+        val httpGet = new HttpGet(builder.build())
+        if (requestAction.getHeaders.nonEmpty) {
+          requestAction.getHeaders.foreach { case (k, v) => httpGet.addHeader(k.toString(), v.toString()) }
+        }
+        response = httpClient.execute(httpGet);
+      case _ =>
+        val httpost = new HttpPost(realURL)
+        val stringEntity = new StringEntity(requestAction.getRequestBody, "UTF-8")
+        stringEntity.setContentEncoding(Configuration.BDP_ENCODING.getValue)
+        stringEntity.setContentType("application/json")
+        httpost.setEntity(stringEntity)
+        if (requestAction.getHeaders.nonEmpty) {
+          requestAction.getHeaders.foreach { case (k, v) => httpost.addHeader(k.toString(), v.toString()) }
+        }
+        response = httpClient.execute(httpost)
+    }
+    response
   }
 
   protected def getFsByUser(user: String, path: FsPath): Fs
 
-  protected def executeRequest(req: Req, waitTime: Option[Long]): Response = {
-    val response = executeAsyncRequest(req)
-    Await.result(response, Duration(waitTime.getOrElse(clientConfig.getReadTimeout), TimeUnit.MILLISECONDS))
-  }
-
-  protected def executeAsyncRequest(req: Req): Future[Response] = Http(req > as.Response(r => r))
-
-  protected def responseToResult(response: Response, requestAction: Action): Result = {
+  protected def responseToResult(response: HttpResponse, requestAction: Action): Result = {
+    var entity = response.getEntity
     val result = requestAction match {
       case download: DownloadAction =>
-        val statusCode = response.getStatusCode
-        if(statusCode != 200) {
-           val responseBody = response.getResponseBody
-           val url = response.getUri.toString
-           throw new HttpClientResultException(s"URL $url request failed! ResponseBody is $responseBody." )
+        val statusCode = response.getStatusLine.getStatusCode
+        if (statusCode != 200) {
+          var responseBody: String = null
+          if (entity != null) {
+            responseBody = EntityUtils.toString(entity, "UTF-8")
+          }
+          throw new HttpClientResultException(s"request failed! ResponseBody is $responseBody.")
         }
-        download.write(response.getResponseBodyAsStream)
+        download.write(entity.getContent)
         Result()
       case heartbeat: HeartbeatAction =>
         discovery.map {
@@ -219,8 +242,12 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
           case _ => throw new HttpMessageParseException("AuthenticationStrategy is not enable, login is not needed!")
         }
       case httpAction: HttpAction =>
-        httpResponseToResult(response, httpAction)
-          .getOrElse(throw new HttpMessageParseException("cannot parse message: " + response.getResponseBody))
+        var responseBody: String = null
+        if (entity != null) {
+          responseBody = EntityUtils.toString(entity, "UTF-8")
+        }
+        httpResponseToResult(response, httpAction, responseBody)
+          .getOrElse(throw new HttpMessageParseException("cannot parse message: " + responseBody))
     }
     result match {
       case userAction: UserAction => requestAction match {
@@ -232,34 +259,29 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
     result
   }
 
-  protected def httpResponseToResult(response: Response, requestAction: HttpAction): Option[Result]
+  protected def httpResponseToResult(response: HttpResponse, requestAction: HttpAction, responseBody: String): Option[Result]
 
-  protected def deserializeResponseBody(response: Response): Iterable[_] = {
-    val responseBody = response.getResponseBody
-    if(responseBody.startsWith("{") && responseBody.endsWith("}"))
+  protected def deserializeResponseBody(response: HttpResponse): Iterable[_] = {
+    var entity = response.getEntity
+    var responseBody: String = null
+    if (entity != null) {
+      responseBody = EntityUtils.toString(entity, "UTF-8")
+    }
+    if (responseBody.startsWith("{") && responseBody.endsWith("}"))
       read[Map[String, Object]](responseBody)
-    else if(responseBody.startsWith("[") && responseBody.endsWith("}"))
+    else if (responseBody.startsWith("[") && responseBody.endsWith("}"))
       read[List[Map[String, Object]]](responseBody)
-    else if(StringUtils.isEmpty(responseBody)) Map.empty[String, Object]
-    else if(responseBody.length > 200) throw new HttpException(responseBody.substring(0, 200))
+    else if (StringUtils.isEmpty(responseBody)) Map.empty[String, Object]
+    else if (responseBody.length > 200) throw new HttpException(responseBody.substring(0, 200))
     else throw new HttpException(responseBody)
   }
 
   override def close(): Unit = {
-    discovery.foreach{
+    discovery.foreach {
       case d: AbstractDiscovery => IOUtils.closeQuietly(d)
       case _ =>
     }
-    dispatch.Http.shutdown()
+    httpClient.close()
     executors.asInstanceOf[ExecutionContextExecutorService].shutdown()
   }
-}
-
-class FsPartSource (fs: Fs, path: String) extends PartSource {
-  val fsPath = fs.get(path)
-  override def getLength: Long = fsPath.getLength
-
-  override def createInputStream(): InputStream = fs.read(fsPath)
-
-  override def getFileName: String = fsPath.toFile.getName
 }

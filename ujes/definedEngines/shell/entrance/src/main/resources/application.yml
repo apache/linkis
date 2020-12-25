@@ -8,8 +8,12 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:20303/eureka/
+      defaultZone: ${eurekaurl}
   instance:
+    lease-renewal-interval-in-second: 5
+    lease-expiration-duration-in-second: 10
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
     metadata-map:
       test: enjoyyin
 

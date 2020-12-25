@@ -290,6 +290,31 @@ class HttpBmlClient extends AbstractBmlClient{
   }
 
 
+  /**
+   *
+   */
+  override def deleteResource(user: String, resourceId: String, version: String): BmlDeleteResponse = {
+    null
+  }
+
+  override def deleteResource(user: String, resourceId: String): BmlDeleteResponse = {
+    val deleteAction = BmlDeleteAction(resourceId)
+    deleteAction.getParameters.put("resourceId", resourceId)
+    val result = dwsClient.execute(deleteAction)
+    result match {
+      case bmlDeleteResult: BmlDeleteResult => val isSuccess= if (bmlDeleteResult.getStatus == 0) true else false
+        if (isSuccess){
+          BmlDeleteResponse(isSuccess)
+        }else{
+          logger.error(s"user $user update resource failed, status code is ${bmlDeleteResult.getStatusCode}")
+          BmlDeleteResponse(isSuccess)
+        }
+      case r:BmlResult => logger.error(s"result type ${r.getResultType} not match BmlResourceDownloadResult")
+        throw POSTResultNotMatchException()
+      case _ =>  throw POSTResultNotMatchException()
+    }
+  }
+
   //todo 现在是为了通过编译
   private def getInputStream(str: String):InputStream = {
     null

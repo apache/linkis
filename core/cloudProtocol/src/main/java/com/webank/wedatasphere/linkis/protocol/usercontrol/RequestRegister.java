@@ -16,8 +16,6 @@
 
 package com.webank.wedatasphere.linkis.protocol.usercontrol;
 
-import java.util.Date;
-
 /**
  * Created by alexyang
  */

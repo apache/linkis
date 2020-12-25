@@ -25,6 +25,7 @@ class QLScriptCompaction private extends CommonScriptCompaction{
     suffix match {
       case "sql" => true
       case "hql" => true
+      case "jdbc" => true
       case _ => false
     }
   }

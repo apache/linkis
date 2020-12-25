@@ -29,9 +29,11 @@ MICRO_SERVICE_NAME=$1
 MICRO_SERVICE_IP=$2
 MICRO_SERVICE_PORT=$3
 
+
+source ${workDir}/bin/common.sh
 local_host="`hostname --fqdn`"
 
-ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
+ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}'|awk 'NR==1')
 
 function isLocal(){
     if [ "$1" == "127.0.0.1" ];then
@@ -57,6 +59,7 @@ function executeCMD(){
    fi
 
 }
+
 
 echo "Start to Check if your microservice:$MICRO_SERVICE_NAME is normal via telnet"
 echo "--------------------------------------------------------------------------------------------------------------------------"

@@ -21,8 +21,6 @@ import com.webank.wedatasphere.linkis.entrance.execute.StorePathExecuteRequest
 import com.webank.wedatasphere.linkis.entrance.job.EntranceExecutionJob
 import com.webank.wedatasphere.linkis.scheduler.executer.{AliasOutputExecuteResponse, OutputExecuteResponse}
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
-import com.webank.wedatasphere.linkis.storage.FSFactory
-import com.webank.wedatasphere.linkis.storage.fs.FileSystem
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 import com.webank.wedatasphere.linkis.storage.utils.{FileSystemUtils, StorageUtils}
 import org.apache.commons.io.IOUtils

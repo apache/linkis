@@ -31,7 +31,29 @@ object ClassUtils {
     }
   }
 
-  def getClassInstance[T](className: String): T ={
+  def getClassInstance[T](className: String): T = {
     Thread.currentThread.getContextClassLoader.loadClass(className).asInstanceOf[Class[T]].newInstance()
   }
+
+  def getFieldVal(o: Any, name: String): Any = {
+    Utils.tryThrow {
+      val field = o.getClass.getDeclaredField(name)
+      field.setAccessible(true)
+      field.get(o)
+    } {
+      case t: Throwable => throw t
+    }
+  }
+
+  def setFieldVal(o: Any, name: String, value: Any): Unit = {
+    Utils.tryThrow {
+      val field = o.getClass.getDeclaredField(name)
+      field.setAccessible(true)
+      field.set(o, value.asInstanceOf[AnyRef])
+    } {
+      case t: Throwable => throw t
+    }
+  }
+
+
 }

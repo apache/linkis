@@ -1,0 +1,46 @@
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.webank.wedatasphere.linkis.cs.execution.matcher;
+
+import com.webank.wedatasphere.linkis.cs.condition.Condition;
+import com.webank.wedatasphere.linkis.cs.condition.impl.*;
+
+public class ConditionMatcherResolver {
+
+    public static ContextSearchMatcher getMatcher(Condition condition){
+        if(condition == null){
+            return new SkipContextSearchMather(condition);
+        }
+        if(condition instanceof ContextTypeCondition){
+            return new ContextTypeContextSearchMatcher((ContextTypeCondition) condition);
+        } else if(condition instanceof ContextScopeCondition){
+            return new ContextScopeContextSearchMatcher((ContextScopeCondition) condition);
+        } else if(condition instanceof RegexCondition){
+            return new RegexContextSearchMatcher((RegexCondition) condition);
+        } else if(condition instanceof ContainsCondition){
+            return new ContainsContextSearchMatcher((ContainsCondition) condition);
+        } else if(condition instanceof AndCondition){
+            return new AndLogicContextSearchMatcher((AndCondition) condition);
+        } else if(condition instanceof OrCondition){
+            return new OrLogicContextSearchMatcher((OrCondition) condition);
+        }else if(condition instanceof NearestCondition){
+            return new NearestLogicContextSearchMatcher((NearestCondition) condition);
+        }else if(condition instanceof ContextValueTypeCondition){
+            return new ContextValueTypeContextSearchMatcher((ContextValueTypeCondition) condition);
+        }
+        return new SkipContextSearchMather(condition);
+    }
+}

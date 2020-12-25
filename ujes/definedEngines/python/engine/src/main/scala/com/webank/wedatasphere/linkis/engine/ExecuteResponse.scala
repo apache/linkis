@@ -16,7 +16,6 @@
 
 package com.webank.wedatasphere.linkis.engine
 
-
 import com.webank.wedatasphere.linkis.engine.exception.QueryFailedException
 import org.json4s.JValue
 import org.json4s.JsonAST.JString

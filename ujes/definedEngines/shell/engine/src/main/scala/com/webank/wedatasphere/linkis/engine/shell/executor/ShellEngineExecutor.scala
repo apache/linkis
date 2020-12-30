@@ -42,7 +42,7 @@ class ShellEngineExecutor(user:String)
       var line:String = null
       while({line = bufferedReader.readLine(); line != null}){
         info(line)
-        engineExecutorContext.appendStdout(line)
+        engineExecutorContext.appendTextResultSet(line)
       }
       val errorLog = Stream.continually(errorsReader.readLine).takeWhile(_ != null).mkString("\n")
       val exitCode = process.waitFor()

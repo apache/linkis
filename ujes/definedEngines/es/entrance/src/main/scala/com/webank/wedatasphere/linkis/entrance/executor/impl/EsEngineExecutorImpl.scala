@@ -78,7 +78,8 @@ class EsEngineExecutorImpl(runType:String, client: EsClient, properties: JMap[St
 
   // convert response to executeResponse
   private def convertResponse(response: Response, storePath: String, alias: String): ExecuteResponse =  Utils.tryCatch[ExecuteResponse]{
-    if (response.getStatusLine.getStatusCode == 200) {
+    val statusCode = response.getStatusLine.getStatusCode
+    if (statusCode >= 200 && statusCode < 300) {
       val output = ResponseHandler.RESPONSE_HANDLER.handle(response, storePath, alias, this.user)
       AliasOutputExecuteResponse(alias, output)
     } else {

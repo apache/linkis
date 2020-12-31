@@ -117,14 +117,7 @@ object EsClientFactory {
     new EsClientImpl(datasourceName, client, sniffer)
   }
 
-  // default cluster
-  private val defaultCluster:Array[(String, Int)] = getCluster(ES_CLUSTER.getValue)
-
-  private val credentialsProvider: CredentialsProvider = {
-    val credentialsProvider = new BasicCredentialsProvider()
-    setAuthScope(defaultCluster, ES_USERNAME.getValue, ES_PASSWORD.getValue)
-    credentialsProvider
-  }
+  private val credentialsProvider: CredentialsProvider = new BasicCredentialsProvider()
 
   private val defaultClient = {
     val cluster = ES_CLUSTER.getValue

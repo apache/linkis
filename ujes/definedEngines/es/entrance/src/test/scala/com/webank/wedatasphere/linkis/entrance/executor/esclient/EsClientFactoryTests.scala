@@ -33,7 +33,7 @@ class EsClientFactoryTests {
 
   val options: JMap[String, String] = new util.HashMap[String, String]()
   options.put("wds.linkis.es.cluster", "127.0.0.1:9200")
-  options.put("wds.linkis.es.datasource", "test")
+  options.put("wds.linkis.datasource", "test")
 
   @Test
   def test() = {

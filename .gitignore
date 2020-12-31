@@ -2,6 +2,8 @@
 .idea
 .DS_Store
 
+target/
+
 assembly/target
 
 core/cloudModule/target/

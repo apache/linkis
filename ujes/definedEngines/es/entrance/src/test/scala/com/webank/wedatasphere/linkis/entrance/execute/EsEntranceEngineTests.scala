@@ -38,7 +38,7 @@ class EsEntranceEngineTests {
   def init(): Unit = {
     options = new util.HashMap[String, String]()
     options.put("wds.linkis.es.cluster", "127.0.0.1:9200")
-    options.put("wds.linkis.es.datasource", "test")
+    options.put("wds.linkis.datasource", "test")
 
     options.put("runType", "esjson")
 

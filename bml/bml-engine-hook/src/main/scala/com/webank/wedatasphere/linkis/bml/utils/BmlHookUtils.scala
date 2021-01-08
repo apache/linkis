@@ -1,7 +1,5 @@
 package com.webank.wedatasphere.linkis.bml.utils
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
-
 /**
   * created by cooperyang on 2019/9/24
   * Description:

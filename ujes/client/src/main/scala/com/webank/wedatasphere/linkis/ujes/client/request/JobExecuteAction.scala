@@ -125,11 +125,20 @@ object JobExecuteAction {
       TaskUtils.addSpecialMap(this.params, specialMap)
       this
     }
+
+    def setDatasourceParams(datasourceMap: util.Map[String, Any]): Builder = {
+      if(this.params == null) this synchronized {
+        if(this.params == null) this.params = new util.HashMap[String, Any]
+      }
+      var runtimeMap:util.Map[String, Any] = TaskUtils.getRuntimeMap(this.params)
+      TaskUtils.addDatasourceMap(runtimeMap, datasourceMap)
+      this
+    }
     def setVariableMap(variableMap: util.Map[String, Any]): Builder = {
       if(this.params == null) this synchronized {
         if(this.params == null) this.params = new util.HashMap[String, Any]
       }
-      TaskUtils.addSpecialMap(this.params, variableMap)
+      TaskUtils.addVariableMap(this.params, variableMap)
       this
     }
 
@@ -206,6 +215,13 @@ object JobExecuteAction {
         override val toString: String = "python"
       }
       override def getDefaultRunType: RunType = PY
+    }
+    val JDBC = new EngineType{
+      override val toString: String = "jdbc"
+      val JC = new RunType {
+        override val toString: String = "jdbc"
+      }
+      override def getDefaultRunType: RunType = JC
     }
   }
 }

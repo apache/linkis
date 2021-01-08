@@ -45,7 +45,7 @@ fi
 
 local_host="`hostname --fqdn`"
 
-ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
+ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}'|awk 'NR==1')
 
 function isLocal(){
     if [ "$1" == "127.0.0.1" ];then
@@ -60,17 +60,9 @@ function isLocal(){
         return 1
 }
 
-function executeCMD(){
-   isLocal $1
-   flag=$?
-   echo "Is local "$flag
-   if [ $flag == "0" ];then
-      eval $2
-   else
-      ssh -p $SSH_PORT $1 $2
-   fi
 
-}
+source ${workDir}/bin/common.sh
+
 
 #if there is no LINKIS_INSTALL_HOME，we need to source config again
 if [ -z ${LINKIS_INSTALL_HOME} ];then
@@ -143,6 +135,20 @@ SERVER_NAME="metadata"
 SERVER_IP=$METADATA_INSTALL_IP
 stopApp
 
+#cs-server
+SERVER_NAME="cs-server"
+SERVER_IP=$CS_INSTALL_IP
+stopApp
+
+#datasource management
+SERVER_NAME="dsm-server"
+SERVER_IP=$DSM_INSTALL_IP
+stopApp
+
+#metadata management
+SERVER_NAME="mdm-server"
+SERVER_IP=$MDM_INSTALL_IP
+stopApp
 
 APP_PREFIX="linkis-ujes-"
 
@@ -187,11 +193,27 @@ SERVER_NAME="hive-enginemanager"
 SERVER_IP=$HIVE_INSTALL_IP
 stopApp
 
+#cs-server
+SERVER_NAME="cs-server"
+SERVER_IP=$CS_INSTALL_IP
+stopApp
 
 
 #JDBCEntrance
 SERVER_NAME="jdbc-entrance"
 SERVER_IP=$JDBC_INSTALL_IP
+stopApp
+
+SERVER_NAME="pipeline-entrance"
+SERVER_IP=$PIPELINE_INSTALL_IP
+stopApp
+
+SERVER_NAME="pipeline-enginemanager"
+SERVER_IP=$PIPELINE_INSTALL_IP
+stopApp
+
+SERVER_NAME="io-enginemanager"
+SERVER_IP=$IO_INSTALL_IP
 stopApp
 
 

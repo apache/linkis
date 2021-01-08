@@ -22,9 +22,8 @@ import java.util.regex.Pattern
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
 import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
-import org.apache.commons.lang.StringUtils
+import org.slf4j.{Logger, LoggerFactory}
 
-import scala.collection.mutable.ArrayBuffer
 import scala.util.matching.Regex
 
 /**
@@ -44,9 +43,9 @@ class CommentInterceptor extends EntranceInterceptor {
     */
   override def apply(task: Task, logAppender: lang.StringBuilder): Task = task match {
     case requestPersistTask:RequestPersistTask => requestPersistTask.getRunType match {
-      case "sql" | "hql"  => requestPersistTask.setExecutionCode(SQLCommentHelper.dealComment(requestPersistTask.getExecutionCode))
+      case "sql" | "hql" | "psql" | "essql"  => requestPersistTask.setExecutionCode(SQLCommentHelper.dealComment(requestPersistTask.getExecutionCode))
       case "python" | "py" => requestPersistTask.setExecutionCode(PythonCommentHelper.dealComment(requestPersistTask.getExecutionCode))
-      case "scala" | "java" => requestPersistTask.setExecutionCode(ScalaCommentHelper.dealComment(requestPersistTask.getExecutionCode))
+      case "scala" | "java" | "esjson" => requestPersistTask.setExecutionCode(ScalaCommentHelper.dealComment(requestPersistTask.getExecutionCode))
       case "sh" | "shell" =>
       case _ => requestPersistTask.setExecutionCode(SQLCommentHelper.dealComment(requestPersistTask.getExecutionCode))
     }
@@ -63,26 +62,18 @@ trait CommentHelper{
 object SQLCommentHelper extends CommentHelper {
   override val commentPattern: Regex = """\s*--.+\s*""".r.unanchored
   private val comment = "(?ms)([\"']*['\"])|--.*?$|/\\*.*?\\*/"
+  private val logger:Logger = LoggerFactory.getLogger(getClass)
   override def dealComment(code: String): String = {
-    val p = Pattern.compile(comment)
-    val sql = p.matcher(code).replaceAll("$1")
-    sql
-//    val clearCode = new ArrayBuffer[String]()
-////    code.split(";") foreach {
-////      case commentPattern() =>
-////      case singleCode:String => clearCode += singleCode
-////      case _ =>
-////    }
-////    clearCode.mkString(";")
-//    code.split(";") foreach(singleLine =>{
-//      val tempCode = new ArrayBuffer[String]()
-//      singleLine.split("\n") foreach (line => tempCode +=
-//        line.substring(0, line.length - commentPattern.findFirstIn(line).getOrElse("").length))
-//      clearCode += tempCode.mkString("\n")
-//    })
-//    val resultCode = new ArrayBuffer[String]()
-//    clearCode.filter(StringUtils.isNotBlank).foreach(resultCode += _)
-//    resultCode.mkString(";")
+    try{
+      val p = Pattern.compile(comment)
+      val sql = p.matcher(code).replaceAll("$1")
+      sql
+    }catch{
+      case e:Exception => logger.warn("sql comment failed")
+        code
+      case t:Throwable => logger.warn("sql comment failed")
+        code
+    }
   }
 }
 
@@ -90,33 +81,17 @@ object PythonCommentHelper extends CommentHelper{
   override val commentPattern: Regex = """^\s*#.+\s*""".r.unanchored
   val pythonCommentPattern:String = "(?ms)([\"'](?:|[^'])*['\"])|#.*?$|/\\*.*?\\*/"
   override def dealComment(code: String): String = {
-    //val p = Pattern.compile(pythonCommentPattern)
-    //p.matcher(code).replaceAll("$1")
     code
-//    val clearCode = new ArrayBuffer[String]()
-//    code.split("\n") foreach {
-//      case commentPattern() =>
-//      case singleCode:String => clearCode += singleCode
-//      case _ =>
-//    }
-//    clearCode.mkString("\n")
   }
 }
 
 
 object ScalaCommentHelper extends CommentHelper{
   override val commentPattern: Regex = """^\s*//.+\s*""".r.unanchored
-  private val scalaCommentPattern:String = "(?ms)([\"'](?:|[^'])*['\"])|//.*?$|/\\*.*?\\*/"
+  private val scalaCommentPattern: String = "(?ms)(([\"][^\"]*[\"])|(['][^']*[']))|//.*?$|/\\*.*?\\*/"
   override def dealComment(code: String): String = {
     val p = Pattern.compile(scalaCommentPattern)
     p.matcher(code).replaceAll("$1")
-//    val clearCode = new ArrayBuffer[String]()
-//    code.split("\n") foreach {
-//      case commentPattern() =>
-//      case singleCode:String => clearCode += singleCode
-//      case _ =>
-//    }
-//    clearCode.mkString("\n")
   }
 }
 

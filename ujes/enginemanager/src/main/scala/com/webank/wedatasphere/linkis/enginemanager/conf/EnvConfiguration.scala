@@ -17,7 +17,7 @@
 package com.webank.wedatasphere.linkis.enginemanager.conf
 
 import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars}
-import EngineManagerConfiguration.ENGINE_SPRING_APPLICATION_NAME
+import com.webank.wedatasphere.linkis.enginemanager.conf.EngineManagerConfiguration.ENGINE_SPRING_APPLICATION_NAME
 import org.apache.commons.lang.time.DateFormatUtils
 
 /**
@@ -27,6 +27,7 @@ object EnvConfiguration {
 
   val JAVA_HOME = CommonVars[String]("java.home", CommonVars[String]("JAVA_HOME", "/nemo/jdk1.7.0_67").getValue)
   val SCALA_HOME = CommonVars[String]("scala.home", CommonVars[String]("SCALA_HOME", "").getValue)
+  val TIMEZONE = CommonVars[String]("user.timezone", defaultValue = "Asia/Shanghai")
 
   val HADOOP_HOME = CommonVars[String]("hadoop.home", CommonVars[String]("HADOOP_HOME", "/appcom/Install/hadoop").getValue)
   val HADOOP_CONF_DIR = CommonVars[String]("hadoop.config.dir", CommonVars[String]("HADOOP_CONF_DIR", "/appcom/config/hadoop-config").getValue)

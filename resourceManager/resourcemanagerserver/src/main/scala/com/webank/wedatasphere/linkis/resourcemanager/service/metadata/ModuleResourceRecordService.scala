@@ -17,20 +17,18 @@
 package com.webank.wedatasphere.linkis.resourcemanager.service.metadata
 
 import java.util
-import java.util.{Date, List}
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.resourcemanager.{Resource, ResourceRequestPolicy, ResourceSerializer}
 import com.webank.wedatasphere.linkis.resourcemanager.dao.{EmMetaDataDao, EmResourceMetaDataDao}
 import com.webank.wedatasphere.linkis.resourcemanager.domain.{EmMetaData, EmResourceMetaData, ModuleInfo, ModuleResourceRecord}
 import com.webank.wedatasphere.linkis.resourcemanager.exception.RMErrorException
+import com.webank.wedatasphere.linkis.resourcemanager.{Resource, ResourceRequestPolicy, ResourceSerializer}
 import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization.{read, write}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-import collection.JavaConversions._
 import scala.collection.JavaConversions
 
 /**

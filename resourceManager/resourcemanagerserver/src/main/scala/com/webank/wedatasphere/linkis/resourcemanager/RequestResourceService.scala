@@ -16,15 +16,16 @@
 
 package com.webank.wedatasphere.linkis.resourcemanager
 
+import java.util.concurrent.ExecutionException
+
+import com.fasterxml.jackson.core.JsonParseException
 import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging}
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.resourcemanager.ResourceRequestPolicy.ResourceRequestPolicy
-import com.webank.wedatasphere.linkis.resourcemanager.exception.{RMErrorException, RMWarnException}
+import com.webank.wedatasphere.linkis.resourcemanager.exception.RMWarnException
 import com.webank.wedatasphere.linkis.resourcemanager.service.metadata.{ModuleResourceRecordService, UserMetaData, UserResourceRecordService}
-import com.webank.wedatasphere.linkis.resourcemanager.utils.YarnUtil
+import com.webank.wedatasphere.linkis.resourcemanager.utils.{PrestoResourceUtil, YarnUtil}
 import org.json4s.DefaultFormats
-import org.json4s.jackson.JsonMethods._
-import org.springframework.beans.factory.annotation.Autowired
 
 /**
   * Created by shanhuang on 9/11/18.
@@ -112,6 +113,70 @@ class DefaultReqResourceService(userMetaData: UserMetaData, userResourceRecordSe
 
   override def canRequest(moduleInstance: ServiceInstance, user: String, creator: String, requestResource: Resource): Boolean = {
     super.canRequest(moduleInstance, user, creator, requestResource)
+  }
+}
+
+class PrestoReqResourceService(userMetaData: UserMetaData,userResourceRecordService: UserResourceRecordService,moduleResourceRecordService: ModuleResourceRecordService,val userResourceManager: UserResourceManager,
+                               val moduleResourceManager: ModuleResourceManager) extends RequestResourceService(userMetaData, userResourceRecordService, moduleResourceRecordService, userResourceManager, moduleResourceManager) {
+  override val requestPolicy: ResourceRequestPolicy = Presto
+
+  override def canRequest(moduleInstance: ServiceInstance, user: String, creator: String, requestResource: Resource): Boolean = {
+    if (!super.canRequest(moduleInstance, user, creator, requestResource)) return false
+    val prestoResource: PrestoResource = requestResource.asInstanceOf[PrestoResource]
+    try {
+      val (maxCapacity, usedCapacity) = PrestoResourceUtil.getGroupInfo(prestoResource.groupName, prestoResource.prestoUrl)
+      info(s"This group:${maxCapacity.groupName} used resource:$usedCapacity and max resource：$maxCapacity")
+      val queueLeftResource = maxCapacity - usedCapacity
+      if (queueLeftResource < prestoResource) {
+        info(s"User: $user request group (${maxCapacity.groupName}) resource $prestoResource is greater than group (${maxCapacity.groupName}) remaining resources $queueLeftResource(用户:$user 请求的队列（${maxCapacity.groupName}）资源$prestoResource 大于队列（${maxCapacity.groupName}）剩余资源$queueLeftResource) ")
+        throw new RMWarnException(111007, s"${generateNotEnoughMessage(prestoResource, queueLeftResource)}")
+      } else {
+        true
+      }
+    } catch {
+      case e: ExecutionException =>
+        if(e.getCause.isInstanceOf[JsonParseException] && e.getCause.getMessage.contains("does not exist")){
+          //The caller must ensure that the resource group exists.
+          warn(s"Resource group: ${prestoResource.groupName} needs to be initialized in presto server: ${prestoResource.prestoUrl}")
+          true
+        }else{
+          throw e
+        }
+      case t: Throwable => throw t
+    }
+  }
+}
+
+
+class InstanceAndPrestoReqResourceService(userMetaData: UserMetaData,userResourceRecordService: UserResourceRecordService,moduleResourceRecordService: ModuleResourceRecordService,val userResourceManager: UserResourceManager,
+                               val moduleResourceManager: ModuleResourceManager) extends RequestResourceService(userMetaData, userResourceRecordService, moduleResourceRecordService, userResourceManager, moduleResourceManager) {
+  override val requestPolicy: ResourceRequestPolicy = InstanceAndPresto
+
+  override def canRequest(moduleInstance: ServiceInstance, user: String, creator: String, requestResource: Resource): Boolean = {
+    if (!super.canRequest(moduleInstance, user, creator, requestResource)) return false
+    val instanceAndPresto = requestResource.asInstanceOf[InstanceAndPrestoResource]
+    val prestoResource = instanceAndPresto.prestoResource
+    try {
+      val (maxCapacity, usedCapacity) = PrestoResourceUtil.getGroupInfo(prestoResource.groupName, prestoResource.prestoUrl)
+      info(s"This group:${maxCapacity.groupName} used resource:$usedCapacity and max resource：$maxCapacity")
+      val queueLeftResource = maxCapacity - usedCapacity
+      if (queueLeftResource < prestoResource) {
+        info(s"User: $user request group (${maxCapacity.groupName}) resource $prestoResource is greater than group (${maxCapacity.groupName}) remaining resources $queueLeftResource(用户:$user 请求的队列（${maxCapacity.groupName}）资源$prestoResource 大于队列（${maxCapacity.groupName}）剩余资源$queueLeftResource) ")
+        throw new RMWarnException(111007, s"${generateNotEnoughMessage(prestoResource, queueLeftResource)}")
+      } else {
+        true
+      }
+    } catch {
+      case e: ExecutionException =>
+        if(e.getCause.isInstanceOf[JsonParseException] && e.getCause.getMessage.contains("does not exist")){
+          //The caller must ensure that the resource group exists.
+          warn(s"Resource group: ${prestoResource.groupName} needs to be initialized in presto server: ${prestoResource.prestoUrl}")
+          true
+        }else{
+          throw e
+        }
+      case t: Throwable => throw t
+    }
   }
 }
 

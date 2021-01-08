@@ -19,6 +19,7 @@ package com.webank.wedatasphere.linkis.entrance.restful
 import java.util
 
 import javax.servlet.http.HttpServletRequest
+import javax.ws.rs.QueryParam
 import javax.ws.rs.core.{Context, Response}
 import org.springframework.web.bind.annotation.{PathVariable, RequestBody, RequestMapping, RequestMethod}
 
@@ -34,7 +35,7 @@ trait EntranceRestfulRemote {
 //  def get(@PathVariable("id") id: String): Response
 
   @RequestMapping(value = Array("/entrance/{id}/status"), method = Array(RequestMethod.GET))
-  def status(@PathVariable("id") id: String): Response
+  def status(@PathVariable("id") id: String, @QueryParam("taskID") taskID:String): Response
 
 
   @RequestMapping(value = Array("/entrance/{id}/progress"), method = Array(RequestMethod.POST))
@@ -48,7 +49,7 @@ trait EntranceRestfulRemote {
   def log(@Context req: HttpServletRequest, @PathVariable("id") id: String): Response
 
   @RequestMapping(value = Array("/entrance/{id}/kill"), method = Array(RequestMethod.POST))
-  def kill(@PathVariable("id") id: String): Response
+  def kill(@PathVariable("id") id: String, @QueryParam("taskID") taskID:Long): Response
 
   @RequestMapping(value = Array("/entrance/{id}/pause"), method = Array(RequestMethod.POST))
   def pause(@PathVariable("id") id: String): Response

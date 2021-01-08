@@ -17,15 +17,13 @@
 package com.webank.wedatasphere.linkis.resourcemanager.service.metadata
 
 import java.util
-import java.util.Map.Entry
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.protocol.config.{RequestQueryAppConfigWithGlobal, ResponseQueryConfig}
+import com.webank.wedatasphere.linkis.protocol.config.RequestQueryAppConfigWithGlobal
 import com.webank.wedatasphere.linkis.protocol.utils.ProtocolUtils
 import com.webank.wedatasphere.linkis.resourcemanager.ResourceRequestPolicy._
 import com.webank.wedatasphere.linkis.resourcemanager._
 import com.webank.wedatasphere.linkis.resourcemanager.exception.RMWarnException
-import com.webank.wedatasphere.linkis.resourcemanager.utils.RMConfiguration
 import com.webank.wedatasphere.linkis.resourcemanager.utils.RMConfiguration._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -68,6 +66,9 @@ class DefaultUserMetaData extends UserMetaData with Logging {
       new YarnResource(USER_AVAILABLE_YARN_INSTANCE_MEMORY.getValue(userConfiguration).toLong,
         USER_AVAILABLE_YARN_INSTANCE_CPU.getValue(userConfiguration),
         USER_AVAILABLE_YARN_INSTANCE.getValue(userConfiguration), USER_AVAILABLE_YARN_QUEUE_NAME.getValue(userConfiguration)))
+    case Presto => new PrestoResource(USER_AVAILABLE_PRESTO_MEMORY.getValue.toLong, USER_AVAILABLE_PRESTO_INSTANCES.getValue)
+    case InstanceAndPresto => new InstanceAndPrestoResource(new InstanceResource(USER_AVAILABLE_INSTANCE.getValue(userConfiguration))
+      ,new PrestoResource(USER_AVAILABLE_PRESTO_MEMORY.getValue(userConfiguration).toLong, USER_AVAILABLE_PRESTO_INSTANCES.getValue(userConfiguration)))
     case Special => new SpecialResource(new java.util.HashMap[String, AnyVal]())
     case _ => throw new RMWarnException(111003, "not supported resource result policy ")
   }

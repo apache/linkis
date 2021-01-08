@@ -34,6 +34,11 @@ trait ResponseEngine extends RetryableProtocol {
 case class ResponseEnginePid(port: Int, pid: String) extends RetryableProtocol
 /**
   * engine send to engineManager
+  * @param host
+  */
+case class ResponseEngineHost(port: Int, host: String) extends RetryableProtocol
+/**
+  * engine send to engineManager
   * @param port
   * @param status
   * @param initErrorMsg

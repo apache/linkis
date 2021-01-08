@@ -20,8 +20,8 @@ import com.webank.wedatasphere.linkis.common.utils.{DESUtil, Logging, Utils}
 import com.webank.wedatasphere.linkis.gateway.http.{GatewayContext, GatewayHttpRequest, GatewayHttpResponse}
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import com.webank.wedatasphere.linkis.server.exception.LoginExpireException
-import com.webank.wedatasphere.linkis.server.security.{SSOUtils, ServerSSOUtils}
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter._
+import com.webank.wedatasphere.linkis.server.security.{SSOUtils, ServerSSOUtils}
 import javax.servlet.http.Cookie
 
 import scala.collection.JavaConversions._

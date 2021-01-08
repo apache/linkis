@@ -17,7 +17,6 @@
 package com.webank.wedatasphere.linkis.entrance.interceptor.impl
 
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
-import com.webank.wedatasphere.linkis.entrance.interceptor.exception.LimitCheckException
 import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 
@@ -29,7 +28,7 @@ class SQLLimitEntranceInterceptor extends EntranceInterceptor {
   override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = {
     task match {
       case requestPersistTask:RequestPersistTask => requestPersistTask.getEngineType.toLowerCase() match {
-        case "hql" | "sql" | "jdbc"|"hive" => val executionCode = requestPersistTask.getExecutionCode
+        case "hql" | "sql" | "jdbc"|"hive" | "psql" | "essql" => val executionCode = requestPersistTask.getExecutionCode
           SQLExplain.dealSQLLimit(executionCode, requestPersistTask, logAppender)
         case _ =>
       }

@@ -41,4 +41,6 @@ object HiveEngineConfiguration {
     val HIVE_MAX_PARALLELISM_USERS = CommonVars("wds.linkis.engine.hive.user.parallelism", 100)
     val HIVE_USER_MAX_WAITING_SIZE = CommonVars("wds.linkis.engine.hive.user.waiting.max", 100)
     val HIVE_ENGINE_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.engine.application.name", "hiveEngine")
+
+    val TIMEZONE = CommonVars[String]("user.timezone", defaultValue = "Asia/Shanghai")
 }

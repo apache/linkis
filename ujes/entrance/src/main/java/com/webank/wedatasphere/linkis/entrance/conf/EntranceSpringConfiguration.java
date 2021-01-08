@@ -90,18 +90,24 @@ public class EntranceSpringConfiguration {
 
     @EntranceListenerBusBeanAnnotation
     @ConditionalOnMissingBean(name = {EntranceListenerBusBeanAnnotation.BEAN_NAME})
-    public EntranceEventListenerBus<EntranceEventListener, EntranceEvent> generateEntranceEventListenerBus(){
+    public EntranceEventListenerBus<EntranceEventListener, EntranceEvent> generateEntranceEventListenerBus() {
         EntranceEventListenerBus<EntranceEventListener, EntranceEvent> entranceEventListenerBus = new EntranceEventListenerBus<EntranceEventListener, EntranceEvent>();
         entranceEventListenerBus.start();
         return entranceEventListenerBus;
     }
 
+    /**
+     * Update by peaceWong add CSEntranceInterceptor
+     *
+     * @return
+     */
     @EntranceInterceptorBeanAnnotation
     @ConditionalOnMissingBean(name = {EntranceInterceptorBeanAnnotation.BEAN_NAME})
     public EntranceInterceptor[] generateEntranceInterceptors() {
-        return new EntranceInterceptor[] {new PythonCodeCheckInterceptor(), new DBInfoCompleteInterceptor(), new SparkCodeCheckInterceptor(),
+        return new EntranceInterceptor[]{new CSEntranceInterceptor(),  new PythonCodeCheckInterceptor(), new DBInfoCompleteInterceptor(), new SparkCodeCheckInterceptor(),
                 new SQLCodeCheckInterceptor(), new VarSubstitutionInterceptor(), new LogPathCreateInterceptor(),
-                new StorePathEntranceInterceptor(), new ScalaCodeInterceptor(), new SQLLimitEntranceInterceptor(),new CommentInterceptor()};
+                new StorePathEntranceInterceptor(), new ScalaCodeInterceptor(), new SQLLimitEntranceInterceptor(), new CommentInterceptor(),
+               };
     }
 
     @ErrorCodeListenerBeanAnnotation

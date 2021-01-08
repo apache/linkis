@@ -19,8 +19,8 @@ package com.webank.wedatasphere.linkis.gateway.security
 import java.awt.Font
 import java.util
 import java.util.Random
-
 import com.google.gson.{Gson, JsonObject}
+import com.google.gson.Gson
 import com.webank.wedatasphere.linkis.common.utils.{Logging, RSAUtils, Utils}
 import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
 import com.webank.wedatasphere.linkis.gateway.http.GatewayContext

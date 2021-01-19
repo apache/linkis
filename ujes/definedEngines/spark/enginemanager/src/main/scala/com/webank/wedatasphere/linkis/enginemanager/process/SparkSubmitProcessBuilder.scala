@@ -20,14 +20,14 @@ package com.webank.wedatasphere.linkis.enginemanager.process
 import java.lang.ProcessBuilder.Redirect
 import java.util
 
+import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.enginemanager.EngineResource
 import com.webank.wedatasphere.linkis.enginemanager.conf.EnvConfiguration._
-import com.webank.wedatasphere.linkis.enginemanager.configuration.SparkConfiguration
 import com.webank.wedatasphere.linkis.enginemanager.configuration.SparkConfiguration._
 import com.webank.wedatasphere.linkis.enginemanager.configuration.SparkResourceConfiguration._
 import com.webank.wedatasphere.linkis.enginemanager.impl.UserEngineResource
-import com.webank.wedatasphere.linkis.enginemanager.process.SparkSubmitProcessBuilder.{AbsolutePath, Path, RelativePath}
+import com.webank.wedatasphere.linkis.enginemanager.process.SparkSubmitProcessBuilder._
 import com.webank.wedatasphere.linkis.protocol.engine.RequestEngine
 import com.webank.wedatasphere.linkis.resourcemanager.DriverAndYarnResource
 import org.apache.commons.lang.StringUtils
@@ -134,20 +134,20 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     val darResource: DriverAndYarnResource = engineRequest.getResource.asInstanceOf[DriverAndYarnResource]
     val properties = new util.HashMap[String,String](request.properties)
     this.master("yarn")
-    this.deployMode(SPARK_DEPLOY_MODE.getValueAndRemove(properties))
+    this.deployMode(getValueAndRemove(properties, SPARK_DEPLOY_MODE))
     this.conf(SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, SPARK_DRIVER_EXTRA_JAVA_OPTIONS.getValue)
     this.name(properties.getOrDefault("appName", "linkis"))
     this.className(properties.getOrDefault("className", "com.webank.wedatasphere.linkis.engine.DataWorkCloudEngineApplication"))
     properties.getOrDefault("archives", "").toString.split(",").map(RelativePath).foreach(this.archive)
     this.driverCores(DWC_SPARK_DRIVER_CORES)
-    this.driverMemory(DWC_SPARK_DRIVER_MEMORY.getValueAndRemove(properties) + "G")
-    this.executorCores(DWC_SPARK_EXECUTOR_CORES.getValueAndRemove(properties))
-    this.executorMemory(DWC_SPARK_EXECUTOR_MEMORY.getValueAndRemove(properties) + "G")
-    this.numExecutors(DWC_SPARK_EXECUTOR_INSTANCES.getValueAndRemove(properties))
+    this.driverMemory(getValueAndRemove(properties, DWC_SPARK_DRIVER_MEMORY) + "G")
+    this.executorCores(getValueAndRemove(properties, DWC_SPARK_EXECUTOR_CORES))
+    this.executorMemory(getValueAndRemove(properties, DWC_SPARK_EXECUTOR_MEMORY) + "G")
+    this.numExecutors(getValueAndRemove(properties, DWC_SPARK_EXECUTOR_INSTANCES))
     properties.getOrDefault("files", "").split(",").map(RelativePath).foreach(file)
     properties.getOrDefault("jars", "").split(",").map(RelativePath).foreach(jar)
-    SPARK_APPLICATION_JARS.getValueAndRemove(properties).split(",").map(RelativePath).foreach(jar)
-    SPARK_EXTRA_JARS.getValueAndRemove(properties).split(",").map(RelativePath).foreach(jar)
+    getValueAndRemove(properties, SPARK_APPLICATION_JARS).split(",").map(RelativePath).foreach(jar)
+    getValueAndRemove(properties, SPARK_EXTRA_JARS).split(",").map(RelativePath).foreach(jar)
     proxyUser(properties.getOrDefault("proxyUser", ""))
     this.queue(darResource.yarnResource.queueName)
 
@@ -390,6 +390,12 @@ object SparkSubmitProcessBuilder {
 
   case class RelativePath(path: String) extends Path {
     override def isNotBlankPath(): Boolean = isNotBlankPath(path)
+  }
+
+  def getValueAndRemove[T](properties: java.util.Map[String, String], commonVars: CommonVars[T]): T = {
+    val value = commonVars.getValue(properties)
+    properties.remove(commonVars.key)
+    value
   }
 
 }

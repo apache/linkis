@@ -19,10 +19,11 @@ package com.webank.wedatasphere.linkis.gateway.ujes.route
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.gateway.exception.TooManyServiceException
 import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
-import com.webank.wedatasphere.linkis.gateway.route.AbstractGatewayRouter
+import com.webank.wedatasphere.linkis.gateway.route.{AbstractGatewayRouter, GatewayRouter}
 import com.webank.wedatasphere.linkis.gateway.ujes.parser.EntranceExecutionGatewayParser
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
 import org.apache.commons.lang.StringUtils
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 /**
@@ -30,6 +31,9 @@ import org.springframework.stereotype.Component
   */
 @Component
 class EntranceGatewayRouter extends AbstractGatewayRouter {
+
+  @Autowired(required = false)
+  private var rules: Array[EntranceGatewayRouterRuler] = _
 
   protected def findEntranceService(parsedServiceId: String) = findService(parsedServiceId, list => {
     val services = list.filter(_.toLowerCase.contains("entrance"))
@@ -52,7 +56,13 @@ class EntranceGatewayRouter extends AbstractGatewayRouter {
           warn(s"Cannot find a service which named $creator, now redirect to $applicationName entrance.")
           findEntranceService(applicationName)
         }
-        serviceId.map(ServiceInstance(_, gatewayContext.getGatewayRoute.getServiceInstance.getInstance)).orNull
+        serviceId.map(applicationName => {
+          rules match {
+            case array: Array[EntranceGatewayRouterRuler] => array.foreach(_.rule(applicationName, gatewayContext))
+            case _ =>
+          }
+          ServiceInstance(applicationName, gatewayContext.getGatewayRoute.getServiceInstance.getInstance)
+        }).orNull
       case _ => null
     }
   }

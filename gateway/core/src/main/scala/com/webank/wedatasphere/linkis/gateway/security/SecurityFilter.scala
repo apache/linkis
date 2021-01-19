@@ -103,6 +103,7 @@ object SecurityFilter {
       } else if(GatewayConfiguration.ENABLE_SSO_LOGIN.getValue) {
         val user = SSOInterceptor.getSSOInterceptor.getUser(gatewayContext)
         if(StringUtils.isNotBlank(user)) {
+          GatewaySSOUtils.setLoginUser(gatewayContext, user)
           GatewaySSOUtils.setLoginUser(gatewayContext.getRequest, user)
           true
         } else if(isPassAuthRequest) {

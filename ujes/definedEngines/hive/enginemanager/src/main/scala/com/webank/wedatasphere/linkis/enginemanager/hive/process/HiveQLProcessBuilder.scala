@@ -19,7 +19,8 @@ package com.webank.wedatasphere.linkis.enginemanager.hive.process
 import java.nio.file.Paths
 
 import com.webank.wedatasphere.linkis.common.conf.Configuration
-import com.webank.wedatasphere.linkis.enginemanager.conf.EnvConfiguration.{DEFAULT_JAVA_OPTS, JAVA_HOME, engineGCLogPath}
+import com.webank.wedatasphere.linkis.enginemanager.{AbstractEngineCreator, EngineResource}
+import com.webank.wedatasphere.linkis.enginemanager.conf.EnvConfiguration.{DEFAULT_JAVA_OPTS, ENGINE_CLIENT_MEMORY, HADOOP_LIB_NATIVE, JAVA_HOME, engineGCLogPath}
 import com.webank.wedatasphere.linkis.enginemanager.hive.conf.HiveEngineConfiguration
 import com.webank.wedatasphere.linkis.enginemanager.impl.UserEngineResource
 import com.webank.wedatasphere.linkis.enginemanager.process.JavaProcessEngineBuilder
@@ -117,7 +118,7 @@ class HiveQLProcessBuilder extends JavaProcessEngineBuilder{
     var classpath = getClasspath(request.properties, getExtractClasspath)
     classpath = classpath ++ request.properties.get("jars").split(",")
     classpathCheck(classpath)
-    commandLine += "-Djava.library.path=/appcom/Install/hadoop/lib/native"
+    commandLine += "-Djava.library.path=" + HADOOP_LIB_NATIVE.getValue
     commandLine += "-cp"
     commandLine += classpath.mkString(":")
     commandLine += "com.webank.wedatasphere.linkis.engine.DataWorkCloudEngineApplication"

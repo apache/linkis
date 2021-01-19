@@ -63,7 +63,10 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
   override def afterPropertiesSet(): Unit = {
     requestResourceServices = Array(new DefaultReqResourceService(userMetaData, userResourceRecordService, moduleResourceRecordService, userResourceManager, moduleResourceManager),
       new YarnReqResourceService(userMetaData, userResourceRecordService, moduleResourceRecordService, userResourceManager, moduleResourceManager),
-      new DriverAndYarnReqResourceService(userMetaData, userResourceRecordService, moduleResourceRecordService, userResourceManager, moduleResourceManager))
+      new DriverAndYarnReqResourceService(userMetaData, userResourceRecordService, moduleResourceRecordService, userResourceManager, moduleResourceManager),
+      new PrestoReqResourceService(userMetaData, userResourceRecordService, moduleResourceRecordService, userResourceManager, moduleResourceManager),
+      new InstanceAndPrestoReqResourceService(userMetaData, userResourceRecordService, moduleResourceRecordService, userResourceManager, moduleResourceManager)
+    )
 
     future = Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
       override def run(): Unit = {
@@ -411,6 +414,8 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
   def getRequestResourceService(moduleInstance: ServiceInstance): RequestResourceService = {
     //2.Can I apply?(是否可以申请)
     val requestResourceService = moduleResourceRecordService.getModulePolicy(moduleInstance.getApplicationName) match {
+      case Presto => requestResourceServices.find(requestResourceService => requestResourceService != null && requestResourceService.requestPolicy == Presto)
+      case InstanceAndPresto => requestResourceServices.find(requestResourceService => requestResourceService != null && requestResourceService.requestPolicy == InstanceAndPresto)
       case Yarn => requestResourceServices.find(requestResourceService => requestResourceService != null && requestResourceService.requestPolicy == Yarn)
       case DriverAndYarn => requestResourceServices.find(requestResourceService => requestResourceService != null && requestResourceService.requestPolicy == DriverAndYarn)
       case _ => requestResourceServices.find(requestResourceService => requestResourceService != null && requestResourceService.requestPolicy == Default)

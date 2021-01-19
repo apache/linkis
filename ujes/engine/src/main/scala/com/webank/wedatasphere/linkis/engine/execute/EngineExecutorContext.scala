@@ -32,6 +32,7 @@ import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.scheduler.executer.{AliasOutputExecuteResponse, OutputExecuteResponse}
 import com.webank.wedatasphere.linkis.storage.resultset.table.TableResultSet
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
+import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
 import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
@@ -126,8 +127,12 @@ class EngineExecutorContext(engineExecutor: EngineExecutor) extends Logging {
   def addProperty(key: String, value: String): Unit = properties.put(key, value)
 
   protected def getDefaultStorePath: String = {
+    val user = properties.get("user") match {
+      case value:String => value
+      case _ => StorageUtils.getJvmUser
+    }
     val path = ENGINE_RESULT_SET_STORE_PATH.getValue
-    (if (path.endsWith("/")) path else path + "/") + "user" + "/" +
+    (if (path.endsWith("/")) path else path + "/") + user + "/" +
       DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd") + "/" + Sender.getThisServiceInstance.getApplicationName +
       "/" + System.nanoTime
   }
@@ -158,9 +163,15 @@ class EngineExecutorContext(engineExecutor: EngineExecutor) extends Logging {
         if (StringUtils.isNotBlank(contextIDStr) && StringUtils.isNotBlank(nodeName)) {
           new CSTableResultSetWriter(result, ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath, contextIDStr, nodeName, alias)
         } else {
-          ResultSetWriter.getResultSetWriter(resultSet, ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath)
+          properties.get("user") match {
+            case value:String => ResultSetWriter.getResultSetWriter(resultSet, ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath, value)
+            case _ => ResultSetWriter.getResultSetWriter(resultSet, ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath)
+          }
         }
-      case _ => ResultSetWriter.getResultSetWriter(resultSet, ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath)
+      case _ => properties.get("user") match {
+        case value:String => ResultSetWriter.getResultSetWriter(resultSet, ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath, value)
+        case _ => ResultSetWriter.getResultSetWriter(resultSet, ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath)
+      }
     }
     //update by peaceWong 20200402 end
     resultSetWriters synchronized resultSetWriters += resultSetWriter

@@ -21,8 +21,8 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.10.0</version>
-	<relativePath>../../pom.xml</relativePath>
+        <version>0.11.0</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -132,6 +132,10 @@
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
             <version>2.0.0.RELEASE</version>
             <exclusions>
+                <exclusion>
+                    <artifactId>jsr311-api</artifactId>
+                    <groupId>javax.ws.rs</groupId>
+                </exclusion>
                 <exclusion>
                     <artifactId>jackson-databind</artifactId>
                     <groupId>com.fasterxml.jackson.core</groupId>

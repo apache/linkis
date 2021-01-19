@@ -20,7 +20,7 @@ import java.io.{InputStream, OutputStream}
 
 import com.webank.wedatasphere.linkis.common.io.{FsPath, FsWriter, MetaData}
 import com.webank.wedatasphere.linkis.storage.LineRecord
-import com.webank.wedatasphere.linkis.storage.script.compaction.{PYScriptCompaction, QLScriptCompaction, ScalaScriptCompaction}
+import com.webank.wedatasphere.linkis.storage.script.compaction.{PYScriptCompaction, QLScriptCompaction, ScalaScriptCompaction, ShellScriptCompaction}
 import com.webank.wedatasphere.linkis.storage.script.parser.{PYScriptParser, QLScriptParser, ScalaScriptParser}
 import com.webank.wedatasphere.linkis.storage.script.writer.StorageScriptFsWriter
 
@@ -44,7 +44,7 @@ object ParserFactory {
 }
 
 object Compaction {
-  def listCompactions(): Array[Compaction] = Array(PYScriptCompaction(), QLScriptCompaction(), ScalaScriptCompaction())
+  def listCompactions(): Array[Compaction] = Array(PYScriptCompaction(),QLScriptCompaction(),ScalaScriptCompaction(),ShellScriptCompaction())
 }
 
 trait Parser {

@@ -46,6 +46,7 @@ object RMConfiguration {
   val USER_AVAILABLE_YARN_INSTANCE_MEMORY = CommonVars("wds.linkis.yarnqueue.memory.max", new ByteType("100g"))
   val USER_AVAILABLE_YARN_INSTANCE = CommonVars("wds.linkis.yarn.instance.max", 3)
   val USER_AVAILABLE_YARN_QUEUE_NAME = CommonVars("wds.linkis.yarnqueue", "ide")
+  val USER_AVAILABLE_YARN_QUEUE_ACLS_AUTO = CommonVars("wds.linkis.yarnqueue.acls.auto", false)
 
   val USER_MODULE_WAIT_USED = CommonVars("wds.linkis.rm.user.module.wait.used", 60 * 10L)
   val USER_MODULE_WAIT_RELEASE = CommonVars("wds.linkis.rm.user.module.wait.used", -1L)
@@ -66,4 +67,8 @@ object RMConfiguration {
 
   //configuration
   val CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.rm.conf.application.name", "cloud-publicservice")
+
+  //presto
+  val USER_AVAILABLE_PRESTO_MEMORY = CommonVars[ByteType]("wds.linkis.presto.max.memory", new ByteType("100GB"))
+  val USER_AVAILABLE_PRESTO_INSTANCES = CommonVars[Int]("wds.linkis.presto.max.instances", 20)
 }

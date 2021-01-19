@@ -2,6 +2,8 @@
 .idea
 .DS_Store
 
+target/
+
 assembly/target
 
 core/cloudModule/target/
@@ -65,6 +67,7 @@ ujes/definedEngines/python/entrance/target/
 ujes/definedEngines/spark/engine/target/
 ujes/definedEngines/spark/enginemanager/target/
 ujes/definedEngines/spark/entrance/target/
+ujes/definedEngines/presto/entrance/target/
 ujes/engine/target/
 ujes/enginemanager/target/
 ujes/entrance/target/

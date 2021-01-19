@@ -44,6 +44,7 @@ trait ProcessEngine extends Engine with Logging {
   override val getCreateTime: Long = System.currentTimeMillis
   private var process: Process = _
   private var pid: String = _
+  private var host: String = _
   private var sender: Sender = _
   private var _state: EngineState = Starting
   private var initErrorMsg: String = _
@@ -56,6 +57,8 @@ trait ProcessEngine extends Engine with Logging {
 
   def setPort(port: Int) = this.port = port
   override def getPort = port
+
+  override def getHost = host
 
   def setTicketId(ticketId: String) = this.ticketId = ticketId
   override def getTicketId = ticketId
@@ -112,6 +115,11 @@ trait ProcessEngine extends Engine with Logging {
 
   def callback(pid: String, sender: Sender): Unit = {
     if(StringUtils.isEmpty(this.pid)) this.pid = pid
+    if(this.sender == null) this.sender = sender
+  }
+
+  def callbackHost(host: String, sender: Sender): Unit = {
+    if(StringUtils.isEmpty(this.host)) this.host = host
     if(this.sender == null) this.sender = sender
   }
 

@@ -59,7 +59,7 @@ class EngineFactoryImpl(rmClient: ResourceManagerClient) extends EngineFactory w
           engine.getInitedTime > 0 && System.currentTimeMillis - engine.getInitedTime > ENGINE_CAN_SCAN_AFTER_INIT.getValue.toLong}
         val existsEngineInstances = Sender.getInstances(ENGINE_SPRING_APPLICATION_NAME.getValue).map(_.getInstance)
         aliveEngines.filter{ case (port, engine) =>
-            val instance = EngineManagerReceiver.getInstanceByPort(port)
+            val instance = EngineManagerReceiver.getInstanceByEngine(engine)
             if(!existsEngineInstances.contains(instance)) {
               warn(s"$engine has already been dead, now remove it, and unregister it for RM.")
               delete(engine)

@@ -23,7 +23,7 @@ import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.entrance.conf.JDBCConfiguration.ENGINE_RESULT_SET_MAX_CACHE
 import com.webank.wedatasphere.linkis.entrance.conf.executer.ConnectionManager
 import com.webank.wedatasphere.linkis.entrance.exception.{JDBCSQLFeatureNotSupportedException, JDBCStateMentNotInitialException}
-import com.webank.wedatasphere.linkis.entrance.execute.{EngineExecuteAsynReturn, EntranceEngine, JDBCJobExecuteRequest, StorePathExecuteRequest}
+import com.webank.wedatasphere.linkis.entrance.execute.{EngineExecuteAsynReturn, EntranceEngine, EntranceJob, JDBCJobExecuteRequest, StorePathExecuteRequest}
 import com.webank.wedatasphere.linkis.entrance.persistence.EntranceResultSetEngine
 import com.webank.wedatasphere.linkis.protocol.engine.{JobProgressInfo, RequestTask}
 import com.webank.wedatasphere.linkis.rpc.Sender
@@ -31,6 +31,8 @@ import com.webank.wedatasphere.linkis.scheduler.executer._
 import com.webank.wedatasphere.linkis.storage.domain.{Column, DataType}
 import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
+import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
+import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 import org.slf4j.LoggerFactory
 
@@ -50,6 +52,7 @@ class JDBCEngineExecutor(outputPrintLimit: Int, properties: util.HashMap[String,
   private var codeLine = 0
   //total line number
   private var totalCodeLineNumber = 0
+  private var executeUser: String = _
 
   protected def executeLine(code: String, storePath: String, alias: String): ExecuteResponse = {
     val realCode = code.trim()
@@ -80,7 +83,7 @@ class JDBCEngineExecutor(outputPrintLimit: Int, properties: util.HashMap[String,
         val metaData = new TableMetaData(columns)
         val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.TABLE_TYPE)
         val resultSetPath = resultSet.getResultSetPath(new FsPath(storePath), alias)
-        val resultSetWriter = ResultSetWriter.getResultSetWriter(resultSet, ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath)
+        val resultSetWriter = ResultSetWriter.getResultSetWriter(resultSet, ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath, executeUser)
         resultSetWriter.addMetaData(metaData)
         var count = 0
         Utils.tryCatch({
@@ -103,6 +106,7 @@ class JDBCEngineExecutor(outputPrintLimit: Int, properties: util.HashMap[String,
           JDBCResultSet.close()
           statement.close()
           connection.close()
+          IOUtils.closeQuietly(resultSetWriter)
         }
         LOG.info("sql execute completed")
         AliasOutputExecuteResponse(alias, output)
@@ -175,6 +179,11 @@ class JDBCEngineExecutor(outputPrintLimit: Int, properties: util.HashMap[String,
       case _ => ""
     }
 
+    this.executeUser =  executeRequest match {
+      case jobExecuteRequest: JDBCJobExecuteRequest => jobExecuteRequest.job.asInstanceOf[EntranceJob].getUser
+      case _ => StorageUtils.getJvmUser
+    }
+
     val codes = JDBCSQLCodeParser.parse(executeRequest.code)
 
     if (!codes.isEmpty) {
@@ -182,7 +191,7 @@ class JDBCEngineExecutor(outputPrintLimit: Int, properties: util.HashMap[String,
       codeLine = 0
       codes.foreach { code =>
         try {
-          val executeRes = executeLine(code, storePath, codeLine.toString)
+          val executeRes = executeLine(code, storePath, s"_$codeLine")
           executeRes match {
             case aliasOutputExecuteResponse: AliasOutputExecuteResponse =>
               persistEngine.persistResultSet(executeRequest.asInstanceOf[JDBCJobExecuteRequest].job, aliasOutputExecuteResponse)

@@ -21,6 +21,7 @@ import com.webank.wedatasphere.linkis.common.exception.WarnException
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.datasourcemanager.common.protocol.{DsInfoQueryRequest, DsInfoResponse}
 import com.webank.wedatasphere.linkis.entrance.cache.UserConfiguration
+import com.webank.wedatasphere.linkis.entrance.conf.JDBCConfiguration
 import com.webank.wedatasphere.linkis.entrance.exception.JDBCParamsIllegalException
 import com.webank.wedatasphere.linkis.entrance.execute._
 import com.webank.wedatasphere.linkis.entrance.execute.impl.EntranceExecutorManagerImpl
@@ -42,7 +43,6 @@ class JDBCEngineExecutorManagerImpl(groupFactory: GroupFactory,
                                     entranceExecutorRulers: Array[EntranceExecutorRuler])
   extends EntranceExecutorManagerImpl(groupFactory,engineBuilder, engineRequester,
     engineSelector, engineManager, entranceExecutorRulers) with Logging{
-  private val JDBCEngineExecutor = new util.HashMap[String, JDBCEngineExecutor]()
   logger.info("JDBC EngineManager Registered")
   override protected def createExecutor(event: SchedulerEvent): EntranceEngine = event match {
     case job: JDBCEntranceJob =>
@@ -54,14 +54,13 @@ class JDBCEngineExecutorManagerImpl(groupFactory: GroupFactory,
         val jdbcConfiguration = UserConfiguration.getCacheMap(RequestQueryAppConfigWithGlobal(job.getUser,job.getCreator,"jdbc",true))
         url = jdbcConfiguration.get("jdbc.url")
         userName = jdbcConfiguration.get("jdbc.username")
-        password = jdbcConfiguration.get("jdbc.password")
+        password = if (jdbcConfiguration.get("jdbc.password") == null) "" else jdbcConfiguration.get("jdbc.password")
       }
       JDBCParams.put("jdbc.url",url)
       JDBCParams.put("jdbc.username",userName)
       JDBCParams.put("jdbc.password",password)
-      if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(userName) && !StringUtils.isEmpty(password)) {
-        JDBCEngineExecutor.put(url + ":" + userName + ":" + password, new JDBCEngineExecutor(5000, JDBCParams))
-        new JDBCEngineExecutor(5000, JDBCParams)
+      if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(userName)) {
+        new JDBCEngineExecutor(JDBCConfiguration.ENGINE_DEFAULT_LIMIT.getValue, JDBCParams)
       }else {
         logger.error(s"jdbc url is $url, jdbc username is $userName")
         throw JDBCParamsIllegalException("jdbc url or username or password may be null at least")
@@ -85,24 +84,9 @@ class JDBCEngineExecutorManagerImpl(groupFactory: GroupFactory,
 
 
   private def findUsefulExecutor(job: Job): Option[Executor] = job match{
-    case job:JDBCEntranceJob =>
-      val params: util.Map[String, Any] = job.getParams
-      logger.info("BEGAIN TO GET configuration：" +params.get("configuration"))
-      var (url, userName, password) = getDatasourceInfo(params)
-      //如果jobparams中没有jdbc连接,从configuration中获取
-      if(StringUtils.isEmpty(url)||StringUtils.isEmpty(userName)||StringUtils.isEmpty(password)){
-        val jdbcConfiguration = UserConfiguration.getCacheMap(RequestQueryAppConfigWithGlobal(job.getUser,job.getCreator,"jdbc",true))
-        url = jdbcConfiguration.get("jdbc.url")
-        userName = jdbcConfiguration.get("jdbc.username")
-        password = jdbcConfiguration.get("jdbc.password")
-      }
-      val key = url + ":" + userName + ":" + password
-      logger.info("findUsefulExecutor - datasource key: " + key + ", cachedKey: " + JDBCEngineExecutor.keySet())
-      if (JDBCEngineExecutor.containsKey(key)){
-        Some(JDBCEngineExecutor.get(key))
-      }else{
-        None
-      }
+   case job:JDBCEntranceJob =>
+      Some(createExecutor(job))
+    case _ => None
   }
 
   val sender : Sender = Sender.getSender("dsm-server")

@@ -91,7 +91,7 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
     val msg = RPCProduct.getRPCProduct.toMessage(message)
     msg.data("duration", timeout.toMillis)
     BaseRPCSender.addInstanceInfo(msg.getData)
-    val response = getRPC.receiveAndReply(msg)
+    val response = getRPC.receiveAndReplyInMills(msg)
     RPCConsumer.getRPCConsumer.toObject(response)
   }
 

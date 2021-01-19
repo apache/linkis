@@ -48,7 +48,11 @@ class SparkEngineExecutorFactory extends EngineExecutorFactory with Logging{
     info(s"------ Create new SparkContext {$master} -------")
     val pysparkBasePath = SparkConfiguration.SPARK_HOME.getValue
     val pysparkPath = new File(pysparkBasePath, "python" + File.separator + "lib")
-    val pythonLibUris = pysparkPath.listFiles().map(_.toURI.toString).filter(_.endsWith(".zip"))
+    val pythonLibUris = if(pysparkPath.exists()) {
+      pysparkPath.listFiles().map(_.toURI.toString).filter(_.endsWith(".zip"))
+    } else {
+      Array.empty[String]
+    }
     if (pythonLibUris.length == 2) {
       val confValue1 = Utils.tryQuietly(CommonVars("spark.yarn.dist.files","").getValue)
       val confValue2 = Utils.tryQuietly(conf.get("spark.yarn.dist.files"))

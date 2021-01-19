@@ -49,6 +49,7 @@ object CustomVariableUtils extends Logging {
   val R_TYPE:String = "r"
   val RUN_DATE = "run_date"
   val TEAM:String = "team"
+  val SHELL_TYPE:String="shell"
 
   /**
     * date Format
@@ -73,10 +74,11 @@ object CustomVariableUtils extends Logging {
     val umUser:String = task.asInstanceOf[RequestPersistTask].getUmUser
     var codeType = SQL_TYPE
     runType match {
-      case "hql" | "sql" | "jdbc" | "hive" => codeType = SQL_TYPE
-      case "python" | "py" => codeType = PY_TYPE
+      case "hql" | "sql" | "jdbc" | "hive" | "psql" | "essql" => codeType = SQL_TYPE
+      case "python" => codeType = PY_TYPE
       case "java" => codeType = JAVA_TYPE
-      case "scala" => codeType = SCALA_TYPE
+      case "scala" | "esjson" => codeType = SCALA_TYPE
+      case "shell" | "sh" => codeType = SHELL_TYPE
       case _ => return (false, code)
     }
 
@@ -161,55 +163,59 @@ object CustomVariableUtils extends Logging {
     */
   def parserVar(code: String, nameAndType: mutable.Map[String, VariableType]): String = {
 
-    val codeReg = "\\$\\{\\s*[A-Za-z][A-Za-z0-9_\\.]*\\s*[\\+\\-\\*/]?\\s*[A-Za-z0-9_\\.]*\\s*\\}".r
-    val calReg = "(\\s*[A-Za-z][A-Za-z0-9_\\.]*\\s*)([\\+\\-\\*/]?)(\\s*[A-Za-z0-9_\\.]*\\s*)".r
-    val parseCode = new StringBuilder
-    val codes = codeReg.split(code)
+    val codeReg = "\\$\\{\\s*[A-Za-z][A-Za-z0-9_]*\\s*[\\+\\-\\*/]?\\s*[A-Za-z0-9_\\.]*\\s*\\}".r
+    val calReg = "(\\s*[A-Za-z][A-Za-z0-9_]*\\s*)([\\+\\-\\*/]?)(\\s*[A-Za-z0-9_\\.]*\\s*)".r
     val expressionCache = mutable.HashSet[String]()
+    var targetCode = code
+    var noChange = false
+    while (!noChange && codeReg.findFirstIn(targetCode).isDefined) {
+      var i = 0
+      val parseCode = new StringBuilder
+      val codes = codeReg.split(targetCode)
+      codeReg.findAllIn(targetCode).foreach(str => {
+        calReg.findFirstMatchIn(str).foreach(ma => {
+          i = i + 1
+          val name = ma.group(1)
+          val signal = ma.group(2)
+          val bValue = ma.group(3)
 
-    var i = 0
-
-    codeReg.findAllIn(code).foreach(str => {
-      calReg.findFirstMatchIn(str).foreach(ma => {
-        i = i + 1
-        val name = ma.group(1)
-        val signal = ma.group(2)
-        val bValue = ma.group(3)
-
-        if (name == null || name.trim.isEmpty) {
-          throw  VarSubstitutionException(20041,s"[$str] replaced var is null")
-        } else {
-          var expression = name.trim
-          val varType = nameAndType.get(name.trim).orNull
-          if (varType == null) {
-            warn(s"Use undefined variables or use the set method: [$str](使用了未定义的变量或者使用了set方式:[$str])")
-            parseCode ++= codes(i - 1) ++ str
+          if (name == null || name.trim.isEmpty) {
+            throw  VarSubstitutionException(20041,s"[$str] replaced var is null")
           } else {
-            var res: String = varType.getValue
-            if (signal != null && !signal.trim.isEmpty) {
-              if (bValue == null || bValue.trim.isEmpty) {
-                throw VarSubstitutionException(20042, s"[$str] expression is not right, please check")
-              } else {
-                expression = expression + "_" + signal.trim + "_" + bValue.trim
-                res = varType.calculator(signal.trim, bValue.trim)
+            var expression = name.trim
+            val varType = nameAndType.get(name.trim).orNull
+            if (varType == null) {
+              warn(s"Use undefined variables or use the set method: [$str](使用了未定义的变量或者使用了set方式:[$str])")
+              parseCode ++= codes(i - 1) ++ str
+            } else {
+              var res: String = varType.getValue
+              if (signal != null && !signal.trim.isEmpty) {
+                if (bValue == null || bValue.trim.isEmpty) {
+                  throw VarSubstitutionException(20042, s"[$str] expression is not right, please check")
+                } else {
+                  expression = expression + "_" + signal.trim + "_" + bValue.trim
+                  res = varType.calculator(signal.trim, bValue.trim)
+                }
               }
+              if (!expressionCache.contains(expression)) {
+                info(s"Variable expression [$str] = $res(变量表达式[$str] = $res)")
+                //println(s"变量表达式[$str] = $res")
+                expressionCache += expression
+              }
+              //println(s"变量表达式序号:$i\t[$str] = $res")
+              parseCode ++= codes(i - 1) ++ res
             }
-            if (!expressionCache.contains(expression)) {
-              info(s"Variable expression [$str] = $res(变量表达式[$str] = $res)")
-              //println(s"变量表达式[$str] = $res")
-              expressionCache += expression
-            }
-            //println(s"变量表达式序号:$i\t[$str] = $res")
-            parseCode ++= codes(i - 1) ++ res
           }
-        }
+        })
       })
-    })
-    if (i == codes.length - 1) {
-      parseCode ++= codes(i)
+      if (i == codes.length - 1) {
+        parseCode ++= codes(i)
+      }
+      val parsedCode = org.apache.commons.lang.StringUtils.strip(deleteUselessSemicolon(parseCode))
+      if (targetCode.equals(parsedCode)) noChange = true
+      targetCode = parsedCode
     }
-    val parsedCode = deleteUselessSemicolon(parseCode)
-    org.apache.commons.lang.StringUtils.strip(parsedCode)
+    targetCode
     //   Utils.trimBlank()
   }
 
@@ -304,6 +310,8 @@ object CustomVariableUtils extends Logging {
       case SCALA_TYPE => varString = """\s*//@set\s*.+\s*"""
         errString = """\s*//@.+"""
       case JAVA_TYPE => varString = """\s*!!@set\s*.+\s*"""
+      case SHELL_TYPE =>  varString = """\s*#@set\s*.+\s*"""
+        errString = """\s*#@"""
     }
 
     val customRegex = varString.r.unanchored

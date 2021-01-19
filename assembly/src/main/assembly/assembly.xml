@@ -196,6 +196,28 @@
       </includes>
     </fileSet>-->
 
+    <!-- elasticsearch -->
+    <fileSet>
+      <directory>
+        ${project.parent.basedir}/ujes/definedEngines/es/entrance/target/
+      </directory>
+      <outputDirectory>share/linkis/ujes/es</outputDirectory>
+      <includes>
+        <include>*.zip</include>
+      </includes>
+    </fileSet>
+
+    <!-- presto -->
+    <fileSet>
+      <directory>
+        ${project.parent.basedir}/ujes/definedEngines/presto/entrance/target/
+      </directory>
+      <outputDirectory>share/linkis/ujes/presto</outputDirectory>
+      <includes>
+        <include>*.zip</include>
+      </includes>
+    </fileSet>
+
     <!--resourcemanager-->
     <fileSet>
       <directory>

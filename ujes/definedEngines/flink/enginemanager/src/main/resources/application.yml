@@ -1,0 +1,22 @@
+server:
+  port: 10100  #The port that the module provides services (required)(该模块提供服务的端口（必须）)
+spring:
+  application:
+    name: flinkEngineManager  #Module name for high availability (required)(模块名，用于做高可用（必须）)
+
+#Specify the address of the eureka server for registration (required)(指定eureka Server的地址，用于注册（必须）)
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://bxv-dapgateway-06:20303/eureka/
+  instance:
+    metadata-map:
+      test: enjoyyin
+#required（必须）
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info
+logging:
+  config: classpath:log4j2.xml

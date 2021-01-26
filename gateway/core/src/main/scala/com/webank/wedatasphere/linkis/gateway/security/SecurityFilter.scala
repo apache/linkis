@@ -114,6 +114,9 @@ object SecurityFilter {
             .data("enableSSO", true).data("SSOURL", SSOInterceptor.getSSOInterceptor.redirectTo(gatewayContext.getRequest.getURI)) << gatewayContext.getRequest.getRequestURI)
           false
         }
+      } else if (gatewayContext.getRequest.getRequestURI.contains("/visualis/") && gatewayContext.getRequest.getRequestURI.contains("/share/")){
+        GatewaySSOUtils.info("Not logged in, still let it pass (visualis-share url): " + gatewayContext.getRequest.getRequestURI)
+        true
       } else {
         filterResponse(gatewayContext, Message.noLogin("You are not logged in, please login first(您尚未登录，请先登录)!") << gatewayContext.getRequest.getRequestURI)
         false

@@ -13,11 +13,11 @@ linkis-commons/linkis-rpc/target/
 linkis-commons/linkis-common/target/
 linkis-commons/linkis-httpclient/target/
 linkis-commons/linkis-scheduler/target/
-eurekaServer/target/
-gateway/core/target/
-gateway/gateway-httpclient-support/target/
-gateway/gateway-ujes-support/target/
-gateway/springcloudgateway/target/
+linkis-spring-cloud-services/linkis-service-discovery/linkis-eureka/target/
+linkis-spring-cloud-services/linkis-service-gateway/linkis-gateway-core/target/
+linkis-spring-cloud-services/linkis-service-gateway/linkis-gateway-httpclient-support/target/
+linkis-spring-cloud-services/linkis-service-gateway/linkis-gateway-server-support/target/
+linkis-spring-cloud-services/linkis-service-gateway/linkis-spring-cloud-gateway/target/
 
 
 metadata/target/

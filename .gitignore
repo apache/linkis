@@ -53,7 +53,7 @@ datasource/metadatamanager/service/mysql/target
 
 
 
-ujes/client/target/
+linkis-computation-governance/linkis-computation-client/target/
 ujes/definedEngines/hive/engine/target/
 ujes/definedEngines/hive/enginemanager/target/
 ujes/definedEngines/hive/entrance/target/
@@ -70,7 +70,7 @@ ujes/definedEngines/spark/entrance/target/
 ujes/definedEngines/presto/entrance/target/
 ujes/engine/target/
 ujes/enginemanager/target/
-ujes/entrance/target/
+linkis-computation-governance/linkis-entrance/target/
 
 ujes/definedEngines/mlsql/entrance/target/
 assembly/public-module/target/

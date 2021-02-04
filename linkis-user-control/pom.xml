@@ -27,8 +27,8 @@
 
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
-    <name>linkis-usercontrol</name>
-    <artifactId>linkis-usercontrol</artifactId>
+
+    <artifactId>linkis-user-control</artifactId>
 
     <properties>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>

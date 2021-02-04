@@ -26,16 +26,17 @@
         <version>0.11.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <artifactId>linkis-ujes-entrance</artifactId>
+
+    <artifactId>linkis-entranceclient</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-scheduler</artifactId>
+            <artifactId>linkis-ujes-entrance</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>com.webank.wedatasphere.linkis</groupId>
-                    <artifactId>linkis-common</artifactId>
+                    <artifactId>linkis-io-entrance</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -43,31 +44,6 @@
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cloudRPC</artifactId>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-storage</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-cs-ujes-client</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -77,6 +53,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
             </plugin>
+
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
@@ -84,15 +61,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*.yml</exclude>
-                        <exclude>**/*.properties</exclude>
-                        <exclude>**/*.sh</exclude>
-                        <exclude>log4j2-spring.xml</exclude>
-                        <exclude>${basedir}/src/test/*</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
         <resources>
@@ -102,5 +70,6 @@
         </resources>
         <finalName>${project.artifactId}-${project.version}</finalName>
     </build>
+
 
 </project>

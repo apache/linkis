@@ -5,20 +5,21 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>dev-0.11.0</version>
-        <relativePath>../../pom.xml</relativePath>
+        <version>0.11.0</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>linkis-gateway</artifactId>
+    <artifactId>linkis-computation-governance</artifactId>
 
     <packaging>pom</packaging>
     <modules>
 
-        <module>linkis-gateway-core</module>
-        <module>linkis-gateway-httpclient-support</module>
-        <module>linkis-spring-cloud-gateway</module>
-        <module>linkis-gateway-server-support</module>
+
+        <module>linkis-entrance</module>
+        <module>linkis-entrance-client</module>
+        <module>linkis-computation-client</module>
+        <!-- <module>linkis-jdbc-driver</module>-->
 
     </modules>
 

@@ -14,6 +14,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -23,54 +24,35 @@
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <version>0.11.0</version>
-        <relativePath>../../pom.xml</relativePath>
+        <relativePath>../../../pom.xml</relativePath>
     </parent>
-    <artifactId>linkis-gateway-core</artifactId>
+
+    <artifactId>linkis-gateway-server-support</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-cloudRPC</artifactId>
+            <artifactId>linkis-gateway-springcloudgateway</artifactId>
             <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-web</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-jetty</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-server</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-webapp</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>websocket-server</artifactId>
-                    <groupId>org.eclipse.jetty.websocket</groupId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.netty </groupId>
-                    <artifactId>netty-all</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>json4s-jackson_2.11</artifactId>
-                    <groupId>org.json4s</groupId>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-server</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
-            <groupId>org.eclipse.jetty.websocket</groupId>
-            <artifactId>websocket-client</artifactId>
-            <version>${jetty.version}</version>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.1</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.websocket</groupId>
-            <artifactId>websocket-servlet</artifactId>
-            <version>${jetty.version}</version>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-cs-common</artifactId>
         </dependency>
     </dependencies>
 
@@ -88,19 +70,40 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.3</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/distribution.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
                 <configuration>
-                    <excludes>
-                        <exclude>**/*.yml</exclude>
-                        <exclude>**/*.properties</exclude>
-                        <exclude>**/*.sh</exclude>
-                    </excludes>
-                    <skip>true</skip>
+                    <skipAssembly>false</skipAssembly>
+                    <finalName>linkis-gateway</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <attach>false</attach>
+                    <descriptors>
+                        <descriptor>src/main/assembly/distribution.xml</descriptor>
+                    </descriptors>
                 </configuration>
             </plugin>
         </plugins>
         <resources>
             <resource>
-                <directory>${basedir}/src/main/resources</directory>
+                <directory>src/main/resources</directory>
             </resource>
         </resources>
         <finalName>${project.artifactId}-${project.version}</finalName>

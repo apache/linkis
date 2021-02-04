@@ -24,10 +24,10 @@
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <version>0.11.0</version>
-        <relativePath>../../pom.xml</relativePath>
+        <relativePath>../../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>linkis-gateway-ujes-support</artifactId>
+    <artifactId>linkis-gateway-server-support</artifactId>
 
     <dependencies>
         <dependency>
@@ -105,7 +105,7 @@
                         </goals>
                         <configuration>
                             <descriptors>
-                                <descriptor>../gateway-ujes-support/src/main/assembly/distribution.xml</descriptor>
+                                <descriptor>src/main/assembly/distribution.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
@@ -116,7 +116,7 @@
                     <appendAssemblyId>false</appendAssemblyId>
                     <attach>false</attach>
                     <descriptors>
-                        <descriptor>../gateway-ujes-support/src/main/assembly/distribution.xml</descriptor>
+                        <descriptor>src/main/assembly/distribution.xml</descriptor>
                     </descriptors>
                 </configuration>
             </plugin>

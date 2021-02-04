@@ -5,23 +5,22 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.11.0</version>
-        <relativePath>../pom.xml</relativePath>
+        <version>dev-1.0.0</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>linkis-commons</artifactId>
+    <artifactId>linkis-gateway</artifactId>
+
     <packaging>pom</packaging>
     <modules>
-        <module>linkis-common</module>
-        <module>linkis-hadoop-common</module>
-        <module>linkis-httpclient</module>
-        <module>linkis-protocol</module>
-        <module>linkis-scheduler</module>
-        <module>linkis-module</module>
-        <module>linkis-mybatis</module>
-        <module>linkis-rpc</module>
+
+        <module>linkis-gateway-core</module>
+        <module>linkis-gateway-httpclient-support</module>
+        <module>linkis-spring-cloud-gateway</module>
+        <module>linkis-gateway-server-support</module>
+
     </modules>
+
 
 </project>

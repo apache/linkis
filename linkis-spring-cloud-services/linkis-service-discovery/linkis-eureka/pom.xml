@@ -22,10 +22,10 @@
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <version>0.11.0</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>linkis-eureka-server</artifactId>
+    <artifactId>linkis-eureka</artifactId>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
 
@@ -99,7 +99,7 @@
         </plugins>
         <resources>
             <resource>
-                <directory>${basedir}/src/main/resources</directory>
+                <directory>src/main/resources</directory>
             </resource>
         </resources>
         <finalName>${project.artifactId}-${project.version}</finalName>

@@ -80,6 +80,6 @@ bml/bmlcommon/target/
 bml/bmlserver/target/
 linkis-commons/linkis-hadoop-common/target/
 publicService/workspace/client/workspace-httpclient/target/
-userControl/target/
+linkis-user-control/target/
 
 

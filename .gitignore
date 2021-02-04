@@ -6,13 +6,13 @@ target/
 
 assembly/target
 
-core/cloudModule/target/
-core/cloudMybatis/target/
-core/cloudProtocol/target/
-core/cloudRPC/target/
-core/common/target/
-core/httpclient/target/
-core/scheduler/target/
+linkis-commons/linkis-module/target/
+linkis-commons/linkis-mybatis/target/
+linkis-commons/linkis-protocol/target/
+linkis-commons/linkis-rpc/target/
+linkis-commons/linkis-common/target/
+linkis-commons/linkis-httpclient/target/
+linkis-commons/linkis-scheduler/target/
 eurekaServer/target/
 gateway/core/target/
 gateway/gateway-httpclient-support/target/
@@ -78,7 +78,7 @@ bml/bml-engine-hook/target/
 bml/bmlclient/target/
 bml/bmlcommon/target/
 bml/bmlserver/target/
-core/hadoop-common/target/
+linkis-commons/linkis-hadoop-common/target/
 publicService/workspace/client/workspace-httpclient/target/
 userControl/target/
 

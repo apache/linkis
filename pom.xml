@@ -57,14 +57,7 @@
 
     <modules>
 
-        <module>core/common</module>
-        <module>core/cloudProtocol</module>
-        <module>core/scheduler</module>
-        <module>core/cloudModule</module>
-        <module>core/cloudRPC</module>
-        <module>core/cloudMybatis</module>
-        <module>core/hadoop-common</module>
-        <module>core/httpclient</module>
+        <module>linkis-commons</module>
         <module>storage/storage</module>
         <module>bml/bmlcommon</module>
         <module>bml/bmlclient</module>

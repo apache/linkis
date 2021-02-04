@@ -31,7 +31,7 @@ publicService/workspace/target/
 resourceManager/resourcemanagerclient/target/
 resourceManager/resourcemanagercommon/target/
 resourceManager/resourcemanagerserver/target/
-storage/storage/target/
+linkis-storage/target/
 
 contextservice/cs-cache/target
 contextservice/cs-client/target

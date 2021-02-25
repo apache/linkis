@@ -16,9 +16,12 @@
 package com.webank.wedatasphere.linkis.entrance.executor
 
 import java.sql.SQLException
+import java.util
 import java.util.Objects
+import java.util.concurrent.atomic.AtomicReference
 
 import com.facebook.presto.client.{ClientSession, QueryStatusInfo, StatementClient, StatementClientFactory}
+import com.facebook.presto.spi.security.SelectedRole
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.common.log.LogUtils
@@ -46,7 +49,7 @@ import scala.collection.mutable
 /**
  * Created by yogafire on 2020/4/30
  */
-class PrestoEntranceEngineExecutor(id: Long, job: EntranceJob, clientSession: ClientSession, okHttpClient: OkHttpClient, releaseResource: () => Unit) extends EntranceEngine(id = id) with SingleTaskOperateSupport with SingleTaskInfoSupport with Logging {
+class PrestoEntranceEngineExecutor(id: Long, job: EntranceJob, clientSession: AtomicReference[ClientSession], okHttpClient: OkHttpClient, releaseResource: () => Unit) extends EntranceEngine(id = id) with SingleTaskOperateSupport with SingleTaskInfoSupport with Logging {
   private var statement: StatementClient = _
   private val persistEngine = new EntranceResultSetEngine()
   //execute line number，as alias and progress line
@@ -104,7 +107,7 @@ class PrestoEntranceEngineExecutor(id: Long, job: EntranceJob, clientSession: Cl
     val realCode = code.trim
     info(s"presto client begins to run psql code:\n $realCode")
 
-    statement = StatementClientFactory.newStatementClient(okHttpClient, clientSession, realCode)
+    statement = StatementClientFactory.newStatementClient(okHttpClient, clientSession.get(), realCode)
 
     initialStatusUpdates(statement)
 
@@ -114,6 +117,9 @@ class PrestoEntranceEngineExecutor(id: Long, job: EntranceJob, clientSession: Cl
     }
 
     verifyServerError(statement)
+
+    updateSession(statement)
+
     response
   }
 
@@ -241,5 +247,48 @@ class PrestoEntranceEngineExecutor(id: Long, job: EntranceJob, clientSession: Cl
     } else {
       throw PrestoStateInvalidException("Presto status error. Statement is not finished.")
     }
+  }
+
+  private def updateSession(statement: StatementClient): Unit = {
+    var newSession = clientSession.get()
+    // update catalog and schema if present
+    if (statement.getSetCatalog.isPresent || statement.getSetSchema.isPresent) {
+      newSession = ClientSession.builder(newSession)
+        .withCatalog(statement.getSetCatalog.orElse(newSession.getCatalog))
+        .withSchema(statement.getSetSchema.orElse(newSession.getSchema))
+        .build
+    }
+
+    // update transaction ID if necessary
+    if (statement.isClearTransactionId) newSession = ClientSession.stripTransactionId(newSession)
+
+    var builder: ClientSession.Builder = ClientSession.builder(newSession)
+
+    if (statement.getStartedTransactionId != null) builder = builder.withTransactionId(statement.getStartedTransactionId)
+
+    // update session properties if present
+    if (!statement.getSetSessionProperties.isEmpty || !statement.getResetSessionProperties.isEmpty) {
+      val sessionProperties: util.Map[String, String] = new util.HashMap[String, String](newSession.getProperties)
+      sessionProperties.putAll(statement.getSetSessionProperties)
+      sessionProperties.keySet.removeAll(statement.getResetSessionProperties)
+      builder = builder.withProperties(sessionProperties)
+    }
+
+    // update session roles
+    if (!statement.getSetRoles.isEmpty) {
+      val roles: util.Map[String, SelectedRole] = new util.HashMap[String, SelectedRole](newSession.getRoles)
+      roles.putAll(statement.getSetRoles)
+      builder = builder.withRoles(roles)
+    }
+
+    // update prepared statements if present
+    if (!statement.getAddedPreparedStatements.isEmpty || !statement.getDeallocatedPreparedStatements.isEmpty) {
+      val preparedStatements: util.Map[String, String] = new util.HashMap[String, String](newSession.getPreparedStatements)
+      preparedStatements.putAll(statement.getAddedPreparedStatements)
+      preparedStatements.keySet.removeAll(statement.getDeallocatedPreparedStatements)
+      builder = builder.withPreparedStatements(preparedStatements)
+    }
+
+    clientSession.set(newSession)
   }
 }

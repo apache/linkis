@@ -6,54 +6,54 @@ target/
 
 assembly/target
 
-core/cloudModule/target/
-core/cloudMybatis/target/
-core/cloudProtocol/target/
-core/cloudRPC/target/
-core/common/target/
-core/httpclient/target/
-core/scheduler/target/
-eurekaServer/target/
-gateway/core/target/
-gateway/gateway-httpclient-support/target/
-gateway/gateway-ujes-support/target/
-gateway/springcloudgateway/target/
+linkis-commons/linkis-module/target/
+linkis-commons/linkis-mybatis/target/
+linkis-commons/linkis-protocol/target/
+linkis-commons/linkis-rpc/target/
+linkis-commons/linkis-common/target/
+linkis-commons/linkis-httpclient/target/
+linkis-commons/linkis-scheduler/target/
+linkis-spring-cloud-services/linkis-service-discovery/linkis-eureka/target/
+linkis-spring-cloud-services/linkis-service-gateway/linkis-gateway-core/target/
+linkis-spring-cloud-services/linkis-service-gateway/linkis-gateway-httpclient-support/target/
+linkis-spring-cloud-services/linkis-service-gateway/linkis-gateway-server-support/target/
+linkis-spring-cloud-services/linkis-service-gateway/linkis-spring-cloud-gateway/target/
 
 
-metadata/target/
-publicService/application/target/
-publicService/configuration/target/
-publicService/jobhistory/target/
-publicService/target/
-publicService/udf/target/
-publicService/variable/target/
-publicService/workspace/target/
+linkis-public-enhancements/linkis-datasource/linkis-metadata/target/
+linkis-public-enhancements/linkis-publicservice/application/target/
+linkis-public-enhancements/linkis-publicservice/configuration/target/
+linkis-public-enhancements/linkis-publicservice/jobhistory/target/
+linkis-public-enhancements/linkis-publicservice/target/
+linkis-public-enhancements/linkis-publicservice/udf/target/
+linkis-public-enhancements/linkis-publicservice/variable/target/
+linkis-public-enhancements/linkis-publicservice/workspace/target/
 resourceManager/resourcemanagerclient/target/
 resourceManager/resourcemanagercommon/target/
 resourceManager/resourcemanagerserver/target/
-storage/storage/target/
+linkis-storage/target/
 
-contextservice/cs-cache/target
-contextservice/cs-client/target
-contextservice/cs-common/target
-contextservice/cs-highavailable/target
-contextservice/cs-listener/target
-contextservice/cs-persistence/target
-contextservice/cs-search/target
-contextservice/cs-server/target
-contextservice/cs-ujes-client/target
+linkis-public-enhancements/linkis-context-service/linkis-cs-cache/target
+linkis-public-enhancements/linkis-context-service/linkis-cs-client/target
+linkis-public-enhancements/linkis-context-service/linkis-cs-common/target
+linkis-public-enhancements/linkis-context-service/linkis-cs-highavailable/target
+linkis-public-enhancements/linkis-context-service/linkis-cs-listener/target
+linkis-public-enhancements/linkis-context-service/linkis-cs-persistence/target
+linkis-public-enhancements/linkis-context-service/linkis-cs-search/target
+linkis-public-enhancements/linkis-context-service/linkis-cs-server/target
+linkis-public-enhancements/linkis-context-service/linkis-cs-engine-support/target
 
-datasource/datasourcemanager/common/target
-datasource/datasourcemanager/server/target
-datasource/metadatamanager/common/target
-datasource/metadatamanager/server/target
-datasource/metadatamanager/service/elasticsearch/target
-datasource/metadatamanager/service/hive/target
-datasource/metadatamanager/service/mysql/target
+linkis-public-enhancements/linkis-datasource/datasourcemanager/common/target
+linkis-public-enhancements/linkis-datasource/datasourcemanager/server/target
+linkis-public-enhancements/linkis-datasource/metadatamanager/common/target
+linkis-public-enhancements/linkis-datasource/metadatamanager/server/target
+linkis-public-enhancements/linkis-datasource/metadatamanager/service/elasticsearch/target
+linkis-public-enhancements/linkis-datasource/metadatamanager/service/hive/target
+linkis-public-enhancements/linkis-datasource/metadatamanager/service/mysql/target
 
 
 
-ujes/client/target/
+linkis-computation-governance/linkis-computation-client/target/
 ujes/definedEngines/hive/engine/target/
 ujes/definedEngines/hive/enginemanager/target/
 ujes/definedEngines/hive/entrance/target/
@@ -70,16 +70,16 @@ ujes/definedEngines/spark/entrance/target/
 ujes/definedEngines/presto/entrance/target/
 ujes/engine/target/
 ujes/enginemanager/target/
-ujes/entrance/target/
+linkis-computation-governance/linkis-entrance/target/
 
 ujes/definedEngines/mlsql/entrance/target/
 assembly/public-module/target/
-bml/bml-engine-hook/target/
-bml/bmlclient/target/
-bml/bmlcommon/target/
-bml/bmlserver/target/
-core/hadoop-common/target/
-publicService/workspace/client/workspace-httpclient/target/
-userControl/target/
+linkis-public-enhancements/linkis-bml/linkis-bml-engine-hook/target/
+linkis-public-enhancements/linkis-bml/linkis-bml-client/target/
+linkis-public-enhancements/linkis-bml/linkis-bml-common/target/
+linkis-public-enhancements/linkis-bml/linkis-bml-server/target/
+linkis-commons/linkis-hadoop-common/target/
+linkis-public-enhancements/linkis-publicservice/workspace/client/workspace-httpclient/target/
+linkis-user-control/target/
 
 

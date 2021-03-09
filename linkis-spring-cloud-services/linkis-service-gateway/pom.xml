@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>linkis</artifactId>
+        <groupId>com.webank.wedatasphere.linkis</groupId>
+        <version>dev-0.11.0</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>linkis-gateway</artifactId>
+
+    <packaging>pom</packaging>
+    <modules>
+
+        <module>linkis-gateway-core</module>
+        <module>linkis-gateway-httpclient-support</module>
+        <module>linkis-spring-cloud-gateway</module>
+        <module>linkis-gateway-server-support</module>
+
+    </modules>
+
+
+</project>

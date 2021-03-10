@@ -24,11 +24,6 @@ import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.Singl
 import com.webank.wedatasphere.linkis.manager.engineplugin.shell.executor.ShellEngineConnExecutor
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineRunTypeLabel, EngineType, RunType}
 
-/**
-  * @author alexyang
-  * @date 2020/12/3
-  * @description
-  */
 class ShellEngineConnFactory extends SingleExecutorEngineConnFactory {
 
 

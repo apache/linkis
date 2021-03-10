@@ -34,10 +34,6 @@ import org.apache.commons.lang.StringUtils
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  *
-  * @param id
-  */
 class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging {
 
   private var engineExecutionContext: EngineExecutionContext = _

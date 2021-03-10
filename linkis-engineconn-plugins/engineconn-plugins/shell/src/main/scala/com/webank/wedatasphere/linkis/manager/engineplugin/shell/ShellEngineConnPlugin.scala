@@ -27,11 +27,6 @@ import com.webank.wedatasphere.linkis.manager.engineplugin.shell.factory.ShellEn
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
 
-/**
- * @author alexyang
- * @date 2020/12/3
- * @description
- */
 class ShellEngineConnPlugin extends EngineConnPlugin {
 
   private val EP_CONTEXT_CONSTRUCTOR_LOCK = new Object()

@@ -18,11 +18,6 @@ package com.webank.wedatasphere.linkis.manager.engineplugin.shell.builder
 
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
 
-/**
- * @author alexyang
- * @date 2020/12/3
- * @description
- */
 class ShellProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder{
 
 }

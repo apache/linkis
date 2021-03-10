@@ -18,10 +18,6 @@ package com.webank.wedatasphere.linkis.manager.engineplugin.shell.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-/**
-  * created by peacewong
-  * Description:
-  */
 case class NoCorrectUserException() extends ErrorException(50036, "No illegal user holds this process")
 
 

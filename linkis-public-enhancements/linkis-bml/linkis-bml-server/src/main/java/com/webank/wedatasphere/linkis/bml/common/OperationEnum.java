@@ -15,10 +15,6 @@
  */
 package com.webank.wedatasphere.linkis.bml.common;
 
-/**
- * @author cooperyang
- * @date 2019-9-17
- */
 public enum OperationEnum {
     /**
      * 任务操作类型

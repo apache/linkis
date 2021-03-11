@@ -21,10 +21,6 @@ import com.webank.wedatasphere.linkis.bml.protocol.ResourceVersions
 import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 
-/**
-  * created by cooperyang on 2019/5/23
-  * Description:
-  */
 abstract class BmlResult extends DWSResult{
   private var resourceId:String = _
   private var version:String = _
@@ -46,9 +42,24 @@ class BmlUpdateResult extends BmlResult {
 
 }
 
+@DWSHttpMessageResult("/api/rest_j/v\\d+/bml/updateShareResource")
+class BmlUpdateShareResourceResult extends BmlResult {
+
+}
+
+
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/bml/upload")
 class BmlUploadResult extends BmlResult {
+}
+
+
+
+
+
+
+@DWSHttpMessageResult("/api/rest_j/v\\d+/bml/uploadShareResource")
+class BmlUploadShareResourceResult extends BmlResult {
 }
 
 
@@ -107,5 +118,27 @@ class BmlGetBasicResult extends BmlResult{
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/bml/delete")
 class BmlDeleteResult extends BmlResult{
+
+}
+
+@DWSHttpMessageResult("/api/rest_j/v\\d+/bml/createBmlProject")
+class BmlCreateBmlProjectResult extends BmlResult{
+
+}
+
+@DWSHttpMessageResult("/api/rest_j/v\\d+/bml/attachResourceAndProject")
+class BmlAttachResult extends BmlResult{
+
+}
+
+@DWSHttpMessageResult("/api/rest_j/v\\d+/bml/downloadShareResource")
+class BmlDownloadShareResult extends BmlResult{
+
+}
+
+
+
+@DWSHttpMessageResult("/api/rest_j/v\\d+/bml/updateProjectUsers")
+class BmlUpdateProjectResult extends BmlResult{
 
 }

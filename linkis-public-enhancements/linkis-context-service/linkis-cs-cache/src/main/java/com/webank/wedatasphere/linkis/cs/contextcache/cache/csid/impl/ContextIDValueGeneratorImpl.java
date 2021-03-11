@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -24,6 +24,7 @@ import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
 import com.webank.wedatasphere.linkis.cs.contextcache.cache.csid.ContextIDValue;
 import com.webank.wedatasphere.linkis.cs.contextcache.cache.csid.ContextIDValueGenerator;
 import com.webank.wedatasphere.linkis.cs.contextcache.cache.cskey.ContextKeyValueContext;
+import com.webank.wedatasphere.linkis.cs.listener.ListenerBus.ContextAsyncListenerBus;
 import com.webank.wedatasphere.linkis.cs.listener.callback.imp.DefaultContextIDCallbackEngine;
 import com.webank.wedatasphere.linkis.cs.listener.callback.imp.DefaultContextKeyCallbackEngine;
 import com.webank.wedatasphere.linkis.cs.listener.manager.imp.DefaultContextListenerManager;
@@ -41,15 +42,12 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-/**
- * @author peacewong
- * @date 2020/2/13 14:52
- */
 @Component
 public abstract class ContextIDValueGeneratorImpl implements ContextIDValueGenerator {
 
     private static final Logger logger = LoggerFactory.getLogger(ContextIDValueGeneratorImpl.class);
 
+    private ContextAsyncListenerBus listenerBus = DefaultContextListenerManager.getInstance().getContextAsyncListenerBus();
 
     @Lookup
     protected abstract ContextKeyValueContext getContextKeyValueContext();
@@ -108,8 +106,8 @@ public abstract class ContextIDValueGeneratorImpl implements ContextIDValueGener
             logger.info("For contextID({}) register contextIDListener", contextID.getContextId());
             List<ContextIDListenerDomain> contextIDListenerPersistenceAll = this.contextIDListenerPersistence.getAll(contextID);
 
-            if (CollectionUtils.isNotEmpty(contextIDListenerPersistenceAll)){
-                for (ContextIDListenerDomain contextIDListenerDomain : contextIDListenerPersistenceAll){
+            if (CollectionUtils.isNotEmpty(contextIDListenerPersistenceAll)) {
+                for (ContextIDListenerDomain contextIDListenerDomain : contextIDListenerPersistenceAll) {
                     this.contextIDCallbackEngine.registerClient(contextIDListenerDomain);
                 }
             }
@@ -118,7 +116,9 @@ public abstract class ContextIDValueGeneratorImpl implements ContextIDValueGener
         }
 
         logger.info("Finished to createContextIDValue of ContextID({}) ", contextID.getContextId());
-        return new ContextIDValueImpl(contextID.getContextId(), contextKeyValueContext);
+        ContextIDValueImpl contextIDValue = new ContextIDValueImpl(contextID.getContextId(), contextKeyValueContext);
+        listenerBus.addListener(contextIDValue);
+        return contextIDValue;
     }
 
 }

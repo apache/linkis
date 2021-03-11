@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.cs.client.http;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
@@ -20,19 +21,21 @@ import com.webank.wedatasphere.linkis.common.listener.Event;
 import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.cs.client.builder.ContextClientConfig;
 import com.webank.wedatasphere.linkis.cs.client.builder.HttpContextClientConfig;
-import com.webank.wedatasphere.linkis.cs.client.listener.*;
+import com.webank.wedatasphere.linkis.cs.client.listener.ContextClientListener;
+import com.webank.wedatasphere.linkis.cs.client.listener.ContextClientListenerBus;
+import com.webank.wedatasphere.linkis.cs.client.listener.ContextClientListenerManager;
+import com.webank.wedatasphere.linkis.cs.client.listener.HeartBeater;
 import com.webank.wedatasphere.linkis.cs.client.utils.ContextClientConf;
 import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.*;
+import com.webank.wedatasphere.linkis.cs.common.entity.source.CommonContextKeyValue;
+import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
 import com.webank.wedatasphere.linkis.cs.listener.callback.imp.ContextKeyValueBean;
 import com.webank.wedatasphere.linkis.cs.listener.event.enumeration.OperateType;
 import com.webank.wedatasphere.linkis.cs.listener.event.impl.DefaultContextKeyEvent;
 import com.webank.wedatasphere.linkis.httpclient.config.ClientConfig;
 import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient;
 import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig;
-import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult;
 import com.webank.wedatasphere.linkis.httpclient.response.Result;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +47,6 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
- * created by cooperyang on 2020/2/18
  * Description: heartbeater类的作用是为了csclient能够和csserver进行每秒钟交互的一个类，从server中获取内容，
  * 然后封装成事件投递到 事件总线，来让监听器进行消费
  */

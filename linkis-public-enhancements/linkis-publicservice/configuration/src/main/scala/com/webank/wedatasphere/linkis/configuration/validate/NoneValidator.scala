@@ -16,12 +16,6 @@
 
 package com.webank.wedatasphere.linkis.configuration.validate
 
-import org.springframework.stereotype.Component
-
-/**
-  * Created by allenlliu on 2019/4/8.
-  */
-
 class NoneValidator  extends Validator{
   override def validate(value: String, range: String): Boolean = true
 

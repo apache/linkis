@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -16,19 +16,30 @@
 
 package com.webank.wedatasphere.linkis.configuration.entity;
 
-import java.util.ArrayList;
+public class CategoryLabel extends ConfigLabel {
 
-public class ConfigTree {
-    private String name;
+    private Integer categoryId;
+
+    private Integer level;
+
     private String description;
-    private ArrayList<ConfigKeyValue> settings = new ArrayList();
 
-    public String getName() {
-        return name;
+    private String tag;
+
+    public Integer getCategoryId() {
+        return categoryId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 
     public String getDescription() {
@@ -39,11 +50,12 @@ public class ConfigTree {
         this.description = description;
     }
 
-    public ArrayList<ConfigKeyValue> getSettings() {
-        return settings;
+    public String getTag() {
+        return tag;
     }
 
-    public void setSettings(ArrayList<ConfigKeyValue> settings) {
-        this.settings = settings;
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 }
+

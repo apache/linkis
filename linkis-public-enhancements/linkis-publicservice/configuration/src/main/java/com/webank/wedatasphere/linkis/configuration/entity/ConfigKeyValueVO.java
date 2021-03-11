@@ -16,10 +16,6 @@
 
 package com.webank.wedatasphere.linkis.configuration.entity;
 
-/**
- * Created by allenlliu on 2019/4/8.
- */
-
 public class ConfigKeyValueVO {
     private Long keyID;
     private String key;

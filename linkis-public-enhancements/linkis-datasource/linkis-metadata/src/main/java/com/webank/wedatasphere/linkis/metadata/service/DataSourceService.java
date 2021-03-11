@@ -17,11 +17,9 @@
 package com.webank.wedatasphere.linkis.metadata.service;
 
 import org.codehaus.jackson.JsonNode;
-/**
- * Created by shanhuang on 9/13/18.
- */
+
 public interface DataSourceService {
-    
+
     JsonNode getDbs(String userName) throws Exception;
 
     JsonNode getDbsWithTables(String userName) throws Exception;

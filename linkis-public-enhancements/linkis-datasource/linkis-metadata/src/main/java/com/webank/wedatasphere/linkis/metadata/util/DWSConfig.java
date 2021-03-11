@@ -18,12 +18,9 @@ package com.webank.wedatasphere.linkis.metadata.util;
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars;
 import com.webank.wedatasphere.linkis.common.conf.CommonVars$;
-/**
- * Created by shanhuang on 9/13/18.
- */
+
 public class DWSConfig {
 
-    public static CommonVars<String> IDE_URL = CommonVars$.MODULE$.apply("wds.linkis.ide.url", "locahost");
     public static CommonVars<String> HADOOP_CONF_DIR = CommonVars$.MODULE$.apply("hadoop.config.dir",
             CommonVars$.MODULE$.apply("HADOOP_CONF_DIR", "/appcom/config/hadoop-config").getValue());
     public static CommonVars<String> HIVE_CONF_DIR = CommonVars$.MODULE$.apply("hive.config.dir",
@@ -52,4 +49,6 @@ public class DWSConfig {
     public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_TESTONBORROW = CommonVars.apply("wds.linkis.server.mybatis.datasource.testOnBorrow", new Boolean(false));
     public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_TESTONRETURN = CommonVars.apply("wds.linkis.server.mybatis.datasource.testOnReturn", new Boolean(false));
     public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_POOLPREPAREDSTATEMENTS = CommonVars.apply("wds.linkis.server.mybatis.datasource.poolPreparedStatements", new Boolean(true));
+
+    public static final CommonVars<Boolean> HIVE_PASS_ENCODE_ENABLED = CommonVars.apply("wds.linkis.metadata.hive.encode.enabled", new Boolean(false));
 }

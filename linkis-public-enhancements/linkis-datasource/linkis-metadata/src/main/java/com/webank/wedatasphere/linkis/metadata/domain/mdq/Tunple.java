@@ -14,20 +14,28 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.util;
+package com.webank.wedatasphere.linkis.metadata.domain.mdq;
 
 
-public class Constants {
+public class Tunple<K, V> {
+    private final K key;
+    private final V value;
 
-    public static final String APPLICATION_NAME = "Datasource";
+    public Tunple(K k, V v) {
+        this.key = k;
+        this.value = v;
+    }
 
-    public static final String SUBMITTED = "submitted";
-    public static final String APPROVED = "approved";
-    public static final String REJECTED = "rejected";
+    public Tunple(Tunple<? extends K, ? extends V> entry) {
+        this(entry.getKey(), entry.getValue());
+    }
 
-    public static final String COLUMN = "column";
-    public static final String ROW = "row";
-    public static final String TABLE = "table";
-    public static final String SCRIPT = "script";
+    public K getKey() {
+        return this.key;
+    }
+
+    public V getValue() {
+        return this.value;
+    }
 
 }

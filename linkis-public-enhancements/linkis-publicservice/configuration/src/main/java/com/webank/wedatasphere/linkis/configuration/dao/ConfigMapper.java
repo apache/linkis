@@ -17,46 +17,36 @@
 package com.webank.wedatasphere.linkis.configuration.dao;
 
 
-import com.webank.wedatasphere.linkis.configuration.entity.*;
+import com.webank.wedatasphere.linkis.configuration.entity.CategoryLabel;
+import com.webank.wedatasphere.linkis.configuration.entity.ConfigKey;
+import com.webank.wedatasphere.linkis.configuration.entity.ConfigKeyValue;
+import com.webank.wedatasphere.linkis.configuration.entity.ConfigValue;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-/**
- * Created by allenlliu on 2018/10/16.
- */
 public interface ConfigMapper {
+
+    List<ConfigKeyValue> getConfigByEngineUserCreator(@Param("engineType") String engineType, @Param("creator") String creator, @Param("userName") String userName);
+
+    List<ConfigKeyValue> getConfigKeyByLabelIds(@Param("ids") List<Integer> ids);
+
+    List<ConfigKeyValue> getConfigKeyValueByLabelId(@Param("labelId") Integer labelId);
 
     Long selectAppIDByAppName(@Param("name") String appName);
 
-    List<ConfigKeyValue> selectAppconfigByAppIDAndCreatorID(@Param("userName") String userName, @Param("creatorID") Long creatorID, @Param("appID") Long appID);
-
-    List<ConfigTree> selectTreesByAppNameAndParentID(@Param("appName") String appName, @Param("parentID") Long parentID);
-
-    ConfigTree selectTreeByTreeID(@Param("id") Long id);
-
-    List<ConfigKey> selectKeysByTreeID(@Param("treeID") Long treeID, @Param("creatorID") Long creatorID);
-
-    void insertValue(ConfigKeyUser configKeyUser);
-
-    ConfigKeyUser selectValueByKeyId(@Param("keyID") Long keyID, @Param("userName") String userName, @Param("appID") Long appID);
-
-    List<ConfigKeyValue> selectAllAppKVs(@Param("creatorID") Long creatorID, @Param("appID") Long appID);
+    void insertValue(ConfigValue configValue);
 
     void updateUserValue(@Param("value") String value, @Param("id") Long id);
 
-    ConfigKey selectKeyByKeyID(Long keyID);
+    ConfigKey selectKeyByKeyID(@Param("id") Long keyID);
 
-    List<ConfigKey> listKeyByCreatorAndAppName(@Param("creatorID") Long creatorID, @Param("appID") Long appID);
+    List<ConfigKey> listKeyByEngineType(@Param("engineType") String engineType);
 
     void insertCreator(String creator);
 
-    Long selectTreeIDByKeyID(Long keyID);
+    List<CategoryLabel> getCategory();
 
     void insertKey(ConfigKey key);
-
-    void insertKeyTree(@Param("keyID") Long keyID, @Param("treeID") Long treeID);
-
-    ConfigTree selectTreeByAppIDAndName(@Param("appID") Long appID, @Param("treeName") String treeName);
 
 }

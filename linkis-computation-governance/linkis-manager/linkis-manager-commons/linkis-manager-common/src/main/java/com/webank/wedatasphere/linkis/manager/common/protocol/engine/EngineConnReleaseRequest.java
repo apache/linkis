@@ -18,10 +18,7 @@ package com.webank.wedatasphere.linkis.manager.common.protocol.engine;
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
 
-/**
- * @author peacewong
- * @date 2020/9/14 19:27
- */
+
 public class EngineConnReleaseRequest implements EngineRequest {
 
 

@@ -19,10 +19,6 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * created by cooperyang on 2019/5/23
- * Description:
- */
 public class HttpRequestHelper {
 
     private static final String UN_KNOWN = "unKnown";

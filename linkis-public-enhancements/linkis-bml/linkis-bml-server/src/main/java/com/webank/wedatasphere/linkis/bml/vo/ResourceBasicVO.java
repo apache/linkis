@@ -18,7 +18,6 @@ package com.webank.wedatasphere.linkis.bml.vo;
 import java.util.Date;
 
 /**
- * created by cooperyang on 2019/5/30
  * Description: 给用户查看的资源基本信息的VO类
  */
 

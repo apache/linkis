@@ -19,14 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-/**
- * created by cooperyang on 2019/5/21
- * Description:
- */
 public interface ResourceHelper {
 
 
-    public long upload(String path, String user, InputStream inputStream, StringBuilder stringBuilder) throws UploadResourceException;
+    public long upload(String path, String user, InputStream inputStream, StringBuilder stringBuilder, boolean overwrite) throws UploadResourceException;
 
     public void update(String path);
 

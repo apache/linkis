@@ -1,12 +1,9 @@
 <!--
   ~ Copyright 2019 WeBank
-  ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
-  ~
   ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,9 +50,22 @@
       <includes>
         <include>**/*</include>
       </includes>
-      <fileMode>0777</fileMode>
+        <fileMode>0777</fileMode>
       <lineEnding>unix</lineEnding>
     </fileSet>
+
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/sbin/
+          </directory>
+          <outputDirectory>sbin</outputDirectory>
+          <includes>
+              <include>**/*</include>
+          </includes>
+          <fileMode>0777</fileMode>
+          <directoryMode>0755</directoryMode>
+          <lineEnding>unix</lineEnding>
+      </fileSet>
 
     <fileSet>
       <directory>
@@ -67,264 +77,322 @@
       </includes>
     </fileSet>
 
-    <!--spark-->
+            <!--spark-->
     <fileSet>
       <directory>
-          ${project.parent.basedir}/ujes/definedEngines/spark/entrance/target/
+          ${project.parent.basedir}/linkis-engineconn-plugins/engineconn-plugins/spark/target/out/
       </directory>
-      <outputDirectory>share/linkis/ujes/spark</outputDirectory>
+      <outputDirectory>lib/linkis-engineconn-plugins/</outputDirectory>
       <includes>
-        <include>*.zip</include>
+        <include>**/*</include>
       </includes>
     </fileSet>
 
+            <!--hive-->
     <fileSet>
       <directory>
-          ${project.parent.basedir}/ujes/definedEngines/spark/enginemanager/target/
+          ${project.parent.basedir}/linkis-engineconn-plugins/engineconn-plugins/hive/target/out/
       </directory>
-      <outputDirectory>share/linkis/ujes/spark</outputDirectory>
+      <outputDirectory>lib/linkis-engineconn-plugins/</outputDirectory>
       <includes>
-        <include>*.zip</include>
+        <include>**/*</include>
       </includes>
     </fileSet>
 
-    <!--hive-->
+            <!--python-->
     <fileSet>
       <directory>
-          ${project.parent.basedir}/ujes/definedEngines/hive/entrance/target/
+        ${project.parent.basedir}/linkis-engineconn-plugins/engineconn-plugins/python/target/out/
       </directory>
-      <outputDirectory>share/linkis/ujes/hive</outputDirectory>
+      <outputDirectory>lib/linkis-engineconn-plugins/</outputDirectory>
       <includes>
-        <include>*.zip</include>
+        <include>**/*</include>
       </includes>
     </fileSet>
 
+            <!--shell-->
     <fileSet>
       <directory>
-          ${project.parent.basedir}/ujes/definedEngines/hive/enginemanager/target/
+        ${project.parent.basedir}/linkis-engineconn-plugins/engineconn-plugins/shell/target/out/
       </directory>
-      <outputDirectory>share/linkis/ujes/hive</outputDirectory>
+      <outputDirectory>lib/linkis-engineconn-plugins/</outputDirectory>
       <includes>
-        <include>*.zip</include>
-      </includes>
-    </fileSet>
-
-    <!--python-->
-    <fileSet>
-      <directory>
-        ${project.parent.basedir}/ujes/definedEngines/python/entrance/target/
-      </directory>
-      <outputDirectory>share/linkis/ujes/python</outputDirectory>
-      <includes>
-        <include>*.zip</include>
-      </includes>
-    </fileSet>
-
-    <fileSet>
-      <directory>
-        ${project.parent.basedir}/ujes/definedEngines/python/enginemanager/target/
-      </directory>
-      <outputDirectory>share/linkis/ujes/python</outputDirectory>
-      <includes>
-        <include>*.zip</include>
-      </includes>
-    </fileSet>
-
-    <!--shell-->
-    <fileSet>
-      <directory>
-        ${project.parent.basedir}/ujes/definedEngines/shell/entrance/target/
-      </directory>
-      <outputDirectory>share/linkis/ujes/shell</outputDirectory>
-      <includes>
-        <include>*.zip</include>
-      </includes>
-    </fileSet>
-
-    <fileSet>
-      <directory>
-        ${project.parent.basedir}/ujes/definedEngines/shell/enginemanager/target/
-      </directory>
-      <outputDirectory>share/linkis/ujes/shell</outputDirectory>
-      <includes>
-        <include>*.zip</include>
+        <include>**/*</include>
       </includes>
     </fileSet>
 
 
-
-    <!-- &lt;!&ndash;pipeline&ndash;&gt;
-     <fileSet>
-       <directory>
-         ${project.parent.basedir}/ujes/definedEngines/pipeline/entrance/target/
-       </directory>
-       <outputDirectory>share/linkis/ujes/pipeline</outputDirectory>
-       <includes>
-         <include>*.zip</include>
-       </includes>
-     </fileSet>
-
-     <fileSet>
-       <directory>
-         ${project.parent.basedir}/ujes/definedEngines/pipeline/enginemanager/target/
-       </directory>
-       <outputDirectory>share/linkis/ujes/pipeline</outputDirectory>
-       <includes>
-         <include>*.zip</include>
-       </includes>
-     </fileSet>-->
-
-    <!--jdbc-->
-    <fileSet>
-      <directory>
-        ${project.parent.basedir}/ujes/definedEngines/jdbc/entrance/target/
-      </directory>
-      <outputDirectory>share/linkis/ujes/jdbc</outputDirectory>
-      <includes>
-        <include>*.zip</include>
-      </includes>
-    </fileSet>
-
-   <!-- &lt;!&ndash;mlsql&ndash;&gt;
-    <fileSet>
-      <directory>
-        ${project.parent.basedir}/ujes/definedEngines/mlsql/entrance/target/
-      </directory>
-      <outputDirectory>share/linkis/ujes/mlsql</outputDirectory>
-      <includes>
-        <include>*.zip</include>
-      </includes>
-    </fileSet>-->
-
-    <!-- elasticsearch -->
-    <fileSet>
-      <directory>
-        ${project.parent.basedir}/ujes/definedEngines/es/entrance/target/
-      </directory>
-      <outputDirectory>share/linkis/ujes/es</outputDirectory>
-      <includes>
-        <include>*.zip</include>
-      </includes>
-    </fileSet>
-
-    <!-- presto -->
-    <fileSet>
-      <directory>
-        ${project.parent.basedir}/ujes/definedEngines/presto/entrance/target/
-      </directory>
-      <outputDirectory>share/linkis/ujes/presto</outputDirectory>
-      <includes>
-        <include>*.zip</include>
-      </includes>
-    </fileSet>
-
-    <!--resourcemanager-->
-    <fileSet>
-      <directory>
-        ${project.parent.basedir}/resourceManager/resourcemanagerserver/target/
-      </directory>
-      <outputDirectory>share/linkis/rm/</outputDirectory>
-      <includes>
-        <include>*.zip</include>
-      </includes>
-    </fileSet>
-
-    <!--bml-->
-    <fileSet>
-      <directory>
-        ${project.parent.basedir}/bml/bmlserver/target/
-      </directory>
-      <outputDirectory>share/linkis/linkis-bml/</outputDirectory>
-      <includes>
-        <include>*.zip</include>
-      </includes>
-    </fileSet>
-
-    <!--gateway-->
-    <fileSet>
-      <directory>
-        ${project.parent.basedir}/gateway/gateway-ujes-support/target/
-      </directory>
-      <outputDirectory>share/springcloud/gateway/</outputDirectory>
-      <includes>
-        <include>*.zip</include>
-      </includes>
-    </fileSet>
-      <!--eurekaserver-->
+      <!--lib-->
+        <!--linkis-spring-cloud-services-->
+            <!--linkis-gateway-->
       <fileSet>
           <directory>
-              ${project.parent.basedir}/eurekaServer/target/
+              ${project.parent.basedir}/linkis-spring-cloud-services/linkis-service-gateway/linkis-gateway-server-support/target/out/lib
           </directory>
-          <outputDirectory>share/springcloud/eureka/</outputDirectory>
+          <outputDirectory>
+              lib/linkis-spring-cloud-services/linkis-mg-gateway
+          </outputDirectory>
           <includes>
-              <include>*.zip</include>
+              <include>*.jar</include>
           </includes>
       </fileSet>
-      <!--module-->
+
       <fileSet>
           <directory>
-              ${project.parent.basedir}/assembly/public-module/target/
+              ${project.parent.basedir}/linkis-spring-cloud-services/linkis-service-gateway/linkis-gateway-server-support/target/out/conf
           </directory>
-          <outputDirectory>share/linkis/module/</outputDirectory>
+          <outputDirectory>
+              conf/linkis-spring-cloud-services/linkis-mg-gateway
+          </outputDirectory>
           <includes>
-              <include>*.zip</include>
+              <include>*</include>
           </includes>
       </fileSet>
-     <!--publicservice-->
-    <fileSet>
-      <directory>
-        ${project.parent.basedir}/publicService/target/
-      </directory>
-      <outputDirectory>share/linkis/linkis-publicservice/</outputDirectory>
-      <includes>
-        <include>*.zip</include>
-      </includes>
-    </fileSet>
-    <!--database-->
-    <fileSet>
-      <directory>
-        ${project.parent.basedir}/metadata/target/
-      </directory>
-      <outputDirectory>share/linkis/linkis-metadata/</outputDirectory>
-      <includes>
-        <include>*.zip</include>
-      </includes>
-    </fileSet>
-    <!-- context service-->
-    <fileSet>
-      <directory>
-        ${project.parent.basedir}/contextservice/cs-server/target/
-      </directory>
-      <outputDirectory>share/linkis/linkis-cs-server/</outputDirectory>
-      <includes>
-        <include>*.zip</include>
-      </includes>
-    </fileSet>
-    <!--datasource manage server-->
-    <fileSet>
-      <directory>
-        ${project.parent.basedir}/datasource/datasourcemanager/server/target
-      </directory>
-      <outputDirectory>share/linkis/datasource/linkis-dsm-server/</outputDirectory>
-      <includes>
-        <include>*.zip</include>
-      </includes>
-    </fileSet>
 
 
-    <!--metadata manage server-->
-    <fileSet>
-      <directory>
-        ${project.parent.basedir}/datasource/metadatamanager/server/target
-      </directory>
-      <outputDirectory>share/linkis/datasource/linkis-mdm-server/</outputDirectory>
-      <includes>
-        <include>*.zip</include>
-      </includes>
-    </fileSet>
+            <!--linkis-eureka-->
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-spring-cloud-services/linkis-service-discovery/linkis-eureka/target/out/lib
+          </directory>
+          <outputDirectory>
+              lib/linkis-spring-cloud-services/linkis-mg-eureka
+          </outputDirectory>
+          <includes>
+              <include>*.jar</include>
+          </includes>
+      </fileSet>
+
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-spring-cloud-services/linkis-service-discovery/linkis-eureka/target/out/conf
+          </directory>
+          <outputDirectory>
+              conf/linkis-spring-cloud-services/linkis-mg-eureka
+          </outputDirectory>
+          <includes>
+              <include>*</include>
+          </includes>
+      </fileSet>
+
+      <!--lib-->
+        <!--linkis-commons-->
+            <!--public-module-->
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/assembly/public-module/target/out/lib
+          </directory>
+          <outputDirectory>lib/linkis-commons/public-module/</outputDirectory>
+          <includes>
+              <include>*.jar</include>
+          </includes>
+      </fileSet>
+
+      <!--lib-->
+        <!--linkis-computation-governance-->
+            <!--linkis-gc-manager-->
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-computation-governance/linkis-engineconn-manager/linkis-engineconn-manager-server/target/out/lib
+          </directory>
+          <outputDirectory>
+              lib/linkis-computation-governance/linkis-cg-engineconnmanager
+          </outputDirectory>
+          <includes>
+              <include>*.jar</include>
+          </includes>
+      </fileSet>
+
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-computation-governance/linkis-engineconn-manager/linkis-engineconn-manager-server/target/out/conf
+          </directory>
+          <outputDirectory>
+              conf/linkis-computation-governance/linkis-cg-engineconnmanager
+          </outputDirectory>
+          <includes>
+              <include>*</include>
+          </includes>
+      </fileSet>
+
+            <!--engineConnPlugin-->
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-engineconn-plugins/linkis-engineconn-plugin-framework/linkis-engineconn-plugin-server/target/out/lib/
+          </directory>
+          <outputDirectory>
+              lib/linkis-computation-governance/linkis-cg-engineplugin
+          </outputDirectory>
+          <includes>
+              <include>*.jar</include>
+          </includes>
+      </fileSet>
+
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-engineconn-plugins/linkis-engineconn-plugin-framework/linkis-engineconn-plugin-server/target/out/conf/
+          </directory>
+          <outputDirectory>
+              conf/linkis-computation-governance/linkis-cg-engineplugin
+          </outputDirectory>
+          <includes>
+              <include>*</include>
+          </includes>
+      </fileSet>
+
+            <!--application-manager-->
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-computation-governance/linkis-manager/linkis-application-manager/target/out/lib
+          </directory>
+          <outputDirectory>
+              lib/linkis-computation-governance/linkis-cg-linkismanager
+          </outputDirectory>
+          <includes>
+              <include>*.jar</include>
+          </includes>
+      </fileSet>
+
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-computation-governance/linkis-manager/linkis-application-manager/target/out/conf
+          </directory>
+          <outputDirectory>
+              conf/linkis-computation-governance/linkis-cg-linkismanager
+          </outputDirectory>
+          <includes>
+              <include>*</include>
+          </includes>
+      </fileSet>
+
+            <!--entrance-->
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-computation-governance/linkis-entrance/target/out/lib
+          </directory>
+          <outputDirectory>
+              lib/linkis-computation-governance/linkis-cg-entrance
+          </outputDirectory>
+          <includes>
+              <include>*.jar</include>
+          </includes>
+      </fileSet>
+
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-computation-governance/linkis-entrance/target/out/conf
+          </directory>
+          <outputDirectory>
+              conf/linkis-computation-governance/linkis-cg-entrance
+          </outputDirectory>
+          <includes>
+              <include>*</include>
+          </includes>
+      </fileSet>
+
+      <!--lib-->
+        <!--linkis-public-enhancements-->
+            <!--bml-->
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-public-enhancements/linkis-bml/linkis-bml-server/target/out/lib
+          </directory>
+          <outputDirectory>
+              lib/linkis-public-enhancements/linkis-ps-bml
+          </outputDirectory>
+          <includes>
+              <include>*.jar</include>
+          </includes>
+      </fileSet>
+
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-public-enhancements/linkis-bml/linkis-bml-server/target/out/conf
+          </directory>
+          <outputDirectory>
+              conf/linkis-public-enhancements/linkis-ps-bml
+          </outputDirectory>
+          <includes>
+              <include>*</include>
+          </includes>
+      </fileSet>
+
+            <!--publicservice-->
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-public-enhancements/linkis-publicservice/target/out/lib
+          </directory>
+          <outputDirectory>
+              lib/linkis-public-enhancements/linkis-ps-publicservice
+          </outputDirectory>
+          <includes>
+              <include>*.jar</include>
+          </includes>
+      </fileSet>
+
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-public-enhancements/linkis-publicservice/target/out/conf
+          </directory>
+          <outputDirectory>
+              conf/linkis-public-enhancements/linkis-ps-publicservice
+          </outputDirectory>
+          <includes>
+              <include>*</include>
+          </includes>
+      </fileSet>
+
+            <!--datasource-->
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-public-enhancements/linkis-datasource/linkis-metadata/target/out/lib
+          </directory>
+          <outputDirectory>
+              lib/linkis-public-enhancements/linkis-ps-datasource
+          </outputDirectory>
+          <includes>
+              <include>*.jar</include>
+          </includes>
+      </fileSet>
+
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-public-enhancements/linkis-datasource/linkis-metadata/target/out/conf
+          </directory>
+          <outputDirectory>
+              conf/linkis-public-enhancements/linkis-ps-datasource
+          </outputDirectory>
+          <includes>
+              <include>*</include>
+          </includes>
+      </fileSet>
+
+        <!--linkis-contextservice-->
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-public-enhancements/linkis-context-service/linkis-cs-server/target/out/lib
+          </directory>
+          <outputDirectory>
+              lib/linkis-public-enhancements/linkis-ps-cs
+          </outputDirectory>
+          <includes>
+              <include>*.jar</include>
+          </includes>
+      </fileSet>
+
+      <fileSet>
+          <directory>
+              ${project.parent.basedir}/linkis-public-enhancements/linkis-context-service/linkis-cs-server/target/out/conf
+          </directory>
+          <outputDirectory>
+              conf/linkis-public-enhancements/linkis-ps-cs
+          </outputDirectory>
+          <includes>
+              <include>*</include>
+          </includes>
+      </fileSet>
+
   </fileSets>
-
-
 
   <dependencySets>
     <dependencySet>

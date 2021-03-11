@@ -20,9 +20,6 @@ import com.google.common.collect.Lists;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by cooperyang on 2019/5/21.
- */
 public interface Constant {
 
     String FILE_SYSTEM_USER = "neiljianliu";

@@ -24,32 +24,28 @@ import com.webank.wedatasphere.linkis.bml.conf.BmlConfiguration
 import com.webank.wedatasphere.linkis.bml.http.HttpConf
 import com.webank.wedatasphere.linkis.bml.protocol._
 import com.webank.wedatasphere.linkis.bml.request._
-import com.webank.wedatasphere.linkis.bml.response._
+import com.webank.wedatasphere.linkis.bml.response.{BmlCreateBmlProjectResult, _}
 import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.httpclient.authentication.AuthenticationStrategy
 import com.webank.wedatasphere.linkis.httpclient.config.{ClientConfig, ClientConfigBuilder}
 import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
-import com.webank.wedatasphere.linkis.httpclient.dws.authentication.{StaticAuthenticationStrategy, TokenAuthenticationStrategy}
+import com.webank.wedatasphere.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy
 import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig
 import com.webank.wedatasphere.linkis.storage.FSFactory
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
-/**
-  * created by cooperyang on 2019/5/23
-  * Description:
-  */
 class HttpBmlClient extends AbstractBmlClient{
 
   private val logger:Logger = LoggerFactory.getLogger(classOf[HttpBmlClient])
 
   val serverUrl:String = HttpConf.gatewayInstance
   val maxConnection:Int = 10
-  val readTimeout:Int = 10000
+  val readTimeout:Int = 10 * 60 * 1000
   val authenticationStrategy:AuthenticationStrategy = new TokenAuthenticationStrategy()
-  val clientConfig:ClientConfig = ClientConfigBuilder.newBuilder().addUJESServerUrl(serverUrl)
-    .connectionTimeout(30000).discoveryEnabled(false)
+  val clientConfig:ClientConfig = ClientConfigBuilder.newBuilder().addServerUrl(serverUrl)
+    .connectionTimeout(5 * 60 * 1000).discoveryEnabled(false)
     .loadbalancerEnabled(false).maxConnectionSize(maxConnection)
     .retryEnabled(false).readTimeout(readTimeout)
     .setAuthenticationStrategy(authenticationStrategy).setAuthTokenKey(BmlConfiguration.AUTH_TOKEN_KEY.getValue)
@@ -70,25 +66,12 @@ class HttpBmlClient extends AbstractBmlClient{
   override def downloadResource(user: String, resourceId: String, version: String): BmlDownloadResponse = {
     val bmlDownloadAction = BmlDownloadAction()
     import scala.collection.JavaConversions._
-    bmlDownloadAction.getParameters +="resourceId"->resourceId
+    bmlDownloadAction.getParameters += "resourceId" -> resourceId
     // TODO: 不能放非空的参数
-    if(version != null)bmlDownloadAction.getParameters +="version"->version
+    if(version != null)bmlDownloadAction.getParameters += "version" -> version
     bmlDownloadAction.setUser(user)
     val result = dwsClient.execute(bmlDownloadAction)
-    new BmlDownloadResponse(true,bmlDownloadAction.getInputStream,resourceId,version,null)
-    /*    result match {
-          case downloadResult:BmlResourceDownloadResult => val isSuccess = if (downloadResult.getStatusCode == 0) true else false
-            if (isSuccess){
-              downloadResult.setInputStream(bmlDownloadAction.getInputStream)
-              BmlDownloadResponse(isSuccess, downloadResult.inputStream, downloadResult.getResourceId, downloadResult.getVersion, "")
-            }else{
-              logger.error(s"user ${user} download resource $resourceId  version $version failed, status code is ${ downloadResult.getStatusCode}")
-              BmlDownloadResponse(isSuccess, null, null, null, null)
-            }
-          case r:BmlResult => logger.error(s"result type ${r.getResultType} not match BmlResourceDownloadResult")
-            throw POSTResultNotMatchException()
-          case _ => throw POSTResultNotMatchException()
-        }*/
+    BmlDownloadResponse(isSuccess = true, bmlDownloadAction.getInputStream, resourceId, version, null)
   }
 
   /**
@@ -101,44 +84,14 @@ class HttpBmlClient extends AbstractBmlClient{
     * @return 返回的inputStream已经被全部读完，所以返回一个null,另外的fullFileName是整个文件的名字
     */
   override def downloadResource(user: String, resourceId: String, version: String, path: String, overwrite:Boolean = false): BmlDownloadResponse = {
-    //1检查目录是否存在,包括path的schema
-    //2检查文件是否存在，如果文件存在，并且overwrite是false，则报错
-    //3获取downloaded_file_name 拼成一个完整的filePath
-    //4获取inputStream，然后写入到filePath中
     val fsPath = new FsPath(path)
     val fileSystem = FSFactory.getFsByProxyUser(fsPath, user)
     fileSystem.init(new util.HashMap[String, String]())
-//    if (fileSystem.exists(fsPath)){
-//      logger.error(s"path $path not exists")
-//      throw IllegalPathException()
-//    }
-//    val getBasicAction = BmlGetBasicAction(resourceId)
-//    val getBasicResult = dwsClient.execute(getBasicAction) match{
-//      case result:BmlGetBasicResult => result
-//      case _ => throw GetResultNotMatchException()
-//    }
-
-//    val fileName:StringBuilder = new StringBuilder
-//    fileName.append(path).append(if (path.endsWith("/")) "" else "/")
-
-//    if (getBasicResult != null && getBasicResult.getStatusCode == 0){
-//      val downloadedFileName = getBasicResult.downloadedFileName
-//      if (StringUtils.isNotEmpty(downloadedFileName)){
-//        fileName.append(downloadedFileName)
-//      }else{
-//        throw BmlResponseErrorException("返回的downloadedFileName参数为空")
-//      }
-//    }else{
-//      logger.error(s"获取 $resourceId 资源失败, BmlServer的返回码是 ${getBasicResult.getStatusCode}")
-//      throw BmlResponseErrorException("通过http方式获取")
-//    }
-
     val fullFileName = path
-    val downloadAction = BmlDownloadAction() // TODO: 这里暂时还没改
+    val downloadAction = BmlDownloadAction()
     import scala.collection.JavaConversions._
     downloadAction.getParameters += "resourceId" -> resourceId
-    // TODO: 不能放非空的参数
-    if(version != null) downloadAction.getParameters += "version" -> version
+    if(StringUtils.isNotEmpty(version)) downloadAction.getParameters += "version" -> version
     downloadAction.setUser(user)
     val downloadResult = dwsClient.execute(downloadAction)
     val fullFilePath = new FsPath(fullFileName)
@@ -158,11 +111,49 @@ class HttpBmlClient extends AbstractBmlClient{
         IOUtils.closeQuietly(inputStream)
         IOUtils.closeQuietly(outputStream)
       }
-      BmlDownloadResponse(true, null, resourceId, version, fullFileName)
+      BmlDownloadResponse(isSuccess = true, null, resourceId, version, fullFileName)
     }else{
-      BmlDownloadResponse(false, null, null, null, null)
+      BmlDownloadResponse(isSuccess = false, null, null, null, null)
     }
   }
+
+
+  override def downloadShareResource(user: String, resourceId: String, version: String, path: String,
+                                     overwrite:Boolean = false): BmlDownloadResponse = {
+    val fsPath = new FsPath(path)
+    val fileSystem = FSFactory.getFsByProxyUser(fsPath, user)
+    fileSystem.init(new util.HashMap[String, String]())
+    val fullFileName = path
+    val downloadAction = BmlDownloadShareAction()
+    import scala.collection.JavaConversions._
+    downloadAction.getParameters += "resourceId" -> resourceId
+    if(StringUtils.isNotEmpty(version)) downloadAction.getParameters += "version" -> version
+    downloadAction.setUser(user)
+    val downloadResult = dwsClient.execute(downloadAction)
+    val fullFilePath = new FsPath(fullFileName)
+    if (downloadResult != null){
+      val inputStream = downloadAction.getInputStream
+      val outputStream = fileSystem.write(fullFilePath, overwrite)
+      try{
+        IOUtils.copy(inputStream, outputStream)
+      }catch{
+        case e:IOException => logger.error("inputStream和outputStream流copy失败", e)
+          val exception = BmlClientFailException("inputStream和outputStream流copy失败")
+          exception.initCause(e)
+          throw e
+        case t:Throwable => logger.error("流复制失败",t)
+          throw t
+      }finally{
+        IOUtils.closeQuietly(inputStream)
+        IOUtils.closeQuietly(outputStream)
+      }
+      BmlDownloadResponse(isSuccess = true, null, resourceId, version, fullFileName)
+    }else{
+      BmlDownloadResponse(isSuccess = false, null, null, null, null)
+    }
+  }
+
+
 
   /**
     * 更新资源信息
@@ -320,4 +311,144 @@ class HttpBmlClient extends AbstractBmlClient{
     null
   }
 
+  override def createBmlProject(creator: String,
+                                projectName: String,
+                                accessUsers: util.List[String], editUsers: util.List[String]): BmlCreateProjectResponse = {
+    val createBmlProjectAction = CreateBmlProjectAction()
+    createBmlProjectAction.setUser(creator)
+    createBmlProjectAction.getRequestPayloads.put("projectName", projectName)
+    createBmlProjectAction.getRequestPayloads.put("editUsers", editUsers)
+    createBmlProjectAction.getRequestPayloads.put("accessUsers", accessUsers)
+    val result = dwsClient.execute(createBmlProjectAction)
+    result match {
+      case bmlCreateBmlProjectResult: BmlCreateBmlProjectResult => val isSuccess= if (bmlCreateBmlProjectResult.getStatus == 0) true else false
+        if (isSuccess){
+          BmlCreateProjectResponse(isSuccess)
+        }else{
+          logger.error(s"user $user create bml project, status code is ${bmlCreateBmlProjectResult.getStatusCode}")
+          BmlCreateProjectResponse(isSuccess)
+        }
+      case r:BmlResult => logger.error(s"result type ${r.getResultType} not match BmlCreateBmlProjectResult")
+        throw POSTResultNotMatchException()
+      case _ =>  throw POSTResultNotMatchException()
+    }
+  }
+
+  override def uploadShareResource(user: String, projectName: String, filePath: String,
+                                   inputStream: InputStream): BmlUploadResponse = {
+    val _inputStreams = new util.HashMap[String, InputStream]()
+    _inputStreams.put("file", inputStream)
+    val uploadAction = BmlUploadShareResourceAction(null, _inputStreams)
+    uploadAction.inputStreamNames.put("file", pathToName(filePath))
+    uploadAction.setUser(user)
+    uploadAction.getParameters.put("projectName", projectName)
+    uploadAction.getRequestPayloads.put("projectName", projectName)
+    val result = dwsClient.execute(uploadAction)
+    result match {
+      case bmlUploadResult:BmlUploadShareResourceResult => val isSuccess = if(bmlUploadResult.getStatus == 0) true else false
+        if (isSuccess){
+          val resourceId = bmlUploadResult.getResourceId
+          val version =  bmlUploadResult.getVersion
+          BmlUploadResponse(isSuccess, resourceId,version)
+        }else{
+          logger.error(s"user $user upload resource failed, status code is ${bmlUploadResult.getStatusCode}")
+          BmlUploadResponse(isSuccess, null, null)
+        }
+      case r:BmlResult => logger.error(s"result type ${r.getResultType} not match BmlResourceDownloadResult")
+        throw POSTResultNotMatchException()
+      case _ => throw POSTResultNotMatchException()
+    }
+  }
+
+  override def uploadShareResource(user: String, projectName: String, filePath: String): BmlUploadResponse = ???
+
+  override def downloadShareResource(user: String, resourceId: String, version: String): BmlDownloadResponse = {
+    val bmlDownloadShareAction = BmlDownloadShareAction()
+    import scala.collection.JavaConversions._
+    bmlDownloadShareAction.getParameters += "resourceId" -> resourceId
+    // TODO: 不能放非空的参数
+    if(version != null)bmlDownloadShareAction.getParameters += "version" -> version
+    bmlDownloadShareAction.setUser(user)
+    val result = dwsClient.execute(bmlDownloadShareAction)
+    BmlDownloadResponse(isSuccess = true, bmlDownloadShareAction.getInputStream, resourceId, version, null)
+  }
+
+  override def downloadShareResource(user: String, resourceId: String): BmlDownloadResponse = ???
+
+  override def updateShareResource(user: String, resourceId: String, filePath: String,
+                                   inputStream: InputStream): BmlUpdateResponse = {
+    val _inputStreams = new util.HashMap[String, InputStream]()
+    _inputStreams.put("file", inputStream)
+    val bmlUpdateShareResourceAction = BmlUpdateShareResourceAction(null, _inputStreams)
+    bmlUpdateShareResourceAction.setUser(user)
+    bmlUpdateShareResourceAction.inputStreamNames.put("file", pathToName(filePath))
+    bmlUpdateShareResourceAction.getParameters.put("resourceId",resourceId)
+    val result = dwsClient.execute(bmlUpdateShareResourceAction)
+    result match{
+      case bmlUpdateShareResourceResult:BmlUpdateShareResourceResult => val isSuccess = if (bmlUpdateShareResourceResult.getStatus == 0) true else false
+        if (isSuccess){
+          val resourceId = bmlUpdateShareResourceResult.getResourceId
+          val version = bmlUpdateShareResourceResult.getVersion
+          BmlUpdateResponse(isSuccess, resourceId, version)
+        }else{
+          logger.error(s"user $user update resource failed, status code is ${bmlUpdateShareResourceResult.getStatusCode}")
+          BmlUpdateResponse(isSuccess, null, null)
+        }
+      case r:BmlResult => logger.error(s"result type ${r.getResultType} not match BmlResourceDownloadResult")
+        throw POSTResultNotMatchException()
+      case _ => throw POSTResultNotMatchException()
+    }
+  }
+
+  override def updateShareResource(user: String, resourceId: String, filePath: String): BmlUpdateResponse = ???
+
+  override def getProjectInfoByName(projectName: String): BmlProjectInfoResponse = ???
+
+  override def getResourceInfo(resourceId: String): BmlResourceInfoResponse = ???
+
+  override def getProjectPriv(projectName: String): BmlProjectPrivResponse = ???
+
+  override def attachResourceAndProject(projectName: String, resourceId: String): BmlAttachResourceAndProjectResponse = {
+    val bmlAttachAction = BmlAttachAction()
+    bmlAttachAction.setUser(this.getUser)
+    bmlAttachAction.getRequestPayloads.put("projectName", projectName)
+    bmlAttachAction.getRequestPayloads.put("resourceId", resourceId)
+    val result = dwsClient.execute(bmlAttachAction)
+    result match {
+      case bmlAttachResult: BmlAttachResult => val isSuccess= if (bmlAttachResult.getStatus == 0) true else false
+        if (isSuccess){
+          BmlAttachResourceAndProjectResponse(isSuccess)
+        }else{
+          logger.error(s"user $user create bml project, status code is ${bmlAttachResult.getStatusCode}")
+          BmlAttachResourceAndProjectResponse(isSuccess)
+        }
+      case r:BmlResult => logger.error(s"result type ${r.getResultType} not match BmlCreateBmlProjectResult")
+        throw POSTResultNotMatchException()
+      case _ =>  throw POSTResultNotMatchException()
+    }
+  }
+
+  override def updateProjectPriv(username: String,
+                                 projectName: String,
+                                 editUsers: util.List[String],
+                                 accessUsers: util.List[String]): BmlUpdateProjectPrivResponse = {
+    val updateBmlProjectAction = UpdateBmlProjectAction()
+    updateBmlProjectAction.setUser(username)
+    updateBmlProjectAction.getRequestPayloads.put("projectName", projectName)
+    updateBmlProjectAction.getRequestPayloads.put("editUsers", editUsers)
+    updateBmlProjectAction.getRequestPayloads.put("accessUsers", accessUsers)
+    val result = dwsClient.execute(updateBmlProjectAction)
+    result match {
+      case bmlUpdateProjectResult: BmlUpdateProjectResult => val isSuccess = if (bmlUpdateProjectResult.getStatus == 0) true else false
+        if (isSuccess){
+          BmlUpdateProjectPrivResponse(isSuccess)
+        }else{
+          logger.error(s"user $user update bml project, status code is ${bmlUpdateProjectResult.getStatusCode}")
+          BmlUpdateProjectPrivResponse(isSuccess)
+        }
+      case r:BmlResult => logger.error(s"result type ${r.getResultType} not match BmlUpdateProjectResult")
+        throw POSTResultNotMatchException()
+      case _ =>  throw POSTResultNotMatchException()
+    }
+  }
 }

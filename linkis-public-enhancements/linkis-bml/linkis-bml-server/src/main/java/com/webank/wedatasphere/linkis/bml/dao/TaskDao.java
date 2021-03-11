@@ -16,15 +16,10 @@
 package com.webank.wedatasphere.linkis.bml.dao;
 
 import com.webank.wedatasphere.linkis.bml.Entity.ResourceTask;
-
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 
-/**
- * @author cooperyang
- * @date 2019-9-16
- */
 public interface TaskDao {
 
   /**

@@ -19,10 +19,6 @@ import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
 
 import scala.concurrent.duration.Duration
 
-/**
-  * created by cooperyang on 2019/5/14
-  * Description:
-  */
 class BmlReceiver extends Receiver{
 
 

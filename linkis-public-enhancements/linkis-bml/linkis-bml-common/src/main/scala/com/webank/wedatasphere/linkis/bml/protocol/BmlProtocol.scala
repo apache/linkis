@@ -17,10 +17,6 @@ package com.webank.wedatasphere.linkis.bml.protocol
 
 import java.io.InputStream
 
-/**
-  * created by cooperyang on 2019/5/14
-  * Description:
-  */
 trait BmlProtocol {
 
 }
@@ -77,3 +73,19 @@ case class BmlResourceVersionsResponse(isSuccess:Boolean,
 
 
 case class BmlDeleteResponse(isSuccess:Boolean) extends BmlResponse(isSuccess)
+
+
+case class BmlCreateProjectResponse(isSuccess:Boolean) extends BmlResponse(isSuccess)
+
+
+case class BmlProjectInfoResponse(isSuccess:Boolean) extends BmlResponse(isSuccess)
+
+case class BmlResourceInfoResponse(isSuccess:Boolean) extends BmlResponse(isSuccess)
+
+case class BmlProjectPrivResponse(isSuccess:Boolean) extends BmlResponse(isSuccess)
+
+
+case class BmlAttachResourceAndProjectResponse(isSuccess:Boolean) extends BmlResponse(isSuccess)
+
+
+case class BmlUpdateProjectPrivResponse(isSuccess:Boolean) extends BmlResponse(isSuccess)

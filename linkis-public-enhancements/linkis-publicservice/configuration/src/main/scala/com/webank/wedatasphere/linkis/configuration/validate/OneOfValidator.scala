@@ -18,9 +18,6 @@ package com.webank.wedatasphere.linkis.configuration.validate
 
 import com.google.gson.GsonBuilder
 
-/**
-  * Created by allenlliu on 2019/4/8.
-  */
 class OneOfValidator extends Validator{
 
   override def validate(value: String, range: String): Boolean = {

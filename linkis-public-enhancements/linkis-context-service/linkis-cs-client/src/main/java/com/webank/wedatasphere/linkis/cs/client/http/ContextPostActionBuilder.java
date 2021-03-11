@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.cs.client.http;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
+import com.webank.wedatasphere.linkis.cs.common.entity.history.ContextHistory;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
 import com.webank.wedatasphere.linkis.cs.common.protocol.ContextHTTPConstant;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by v_wbjftang on 2020/3/4.
- */
 public class ContextPostActionBuilder {
 
     private final DefaultContextPostAction action;
@@ -47,6 +46,11 @@ public class ContextPostActionBuilder {
         return this;
     }
 
+    public ContextPostActionBuilder with(ContextHistory history) throws ErrorException {
+        String historyStr = SerializeHelper.serializeContextHistory(history);
+        requestParams.put(ContextHTTPConstant.CONTEXT_HISTORY_KEY, historyStr);
+        return this;
+    }
 
     public ContextPostActionBuilder with(String key, Object object) throws ErrorException {
         requestParams.put(key, object);

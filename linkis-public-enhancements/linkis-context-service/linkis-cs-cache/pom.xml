@@ -18,8 +18,8 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.11.0</version>
-        <relativePath>../../../pom.xml</relativePath>
+        <version>dev-1.0.0</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -30,22 +30,37 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cs-common</artifactId>
-            </dependency>
+            <version>${linkis.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cs-persistence</artifactId>
-            </dependency>
+            <version>${linkis.version}</version>
+
+        </dependency>
 
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.9.10</version>
+            <version>${reflections.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-module</artifactId>
+            <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -58,7 +73,7 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cs-listener</artifactId>
-            <scope>compile</scope>
+            <version>dev-1.0.0</version>
         </dependency>
 
     </dependencies>

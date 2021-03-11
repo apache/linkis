@@ -6,7 +6,7 @@ Linkis是为了解决计算治理的中间件，用Hive常常会用到tez引擎�
 
 ### 1.2 架构
 
-![图片](docs/zh_CN/images/tez/hive_tez.png)
+![图片](../images/tez/hive_tez.png)
 
 Linkis的Hive引擎执行任务流程
 
@@ -27,11 +27,11 @@ HiveEngine中用到org.apache.hadoop.hive.ql.Driver 去调用Hql，这里面涉�
 
 1.linkis-ujes-hive-enginemanager目录下，lib文件夹，添加Tez依赖。把/opt/cloudera/parcels/CDH/lib/tez 目录下，tez-*前缀的jar都放到linkis-ujes-hive-enginemanager/lib目录下。
 
-![图片](docs/zh_CN/images/tez/hive_tez2.png)
+![图片](../images/tez/hive_tez2.png)
 
 2.CDH Hive配置tez依赖。
 
-![图片](docs/zh_CN/images/tez/hive_tez3.png)
+![图片](../images/tez/hive_tez3.png)
 
 3.因为CDH配置的变量存储在元数据库中，所以把/etc/hive/conf配置独立出来，在linkis-ujes-hive-enginemanager conf文件夹下，把linkis-engine.properties和linkis.properties
 
@@ -78,7 +78,7 @@ hive.config.dir=/home/hdfs/etc/hive
 ```
 /home/hdfs/etc/hive文件夹内容：
 
-![图片](docs/zh_CN/images/tez/hive_tez4.png)
+![图片](../images/tez/hive_tez4.png)
 
 ## 三.作者介绍
 

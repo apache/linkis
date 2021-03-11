@@ -23,14 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
-/**
- * Created by shanhuang on 9/13/18.
- */
+
 @FeignClient(name = Constants.APPLICATION_NAME)
 public interface DataSourceRestfulRemote {
-
-    @GetMapping("/api/datasource/options")
-    public Response listOptions(@RequestParam("type") String type, @RequestParam("path") String path, HttpServletRequest req);
 
     @GetMapping("/api/datasource/dbs")
     public Response queryDatabaseInfo(HttpServletRequest req);

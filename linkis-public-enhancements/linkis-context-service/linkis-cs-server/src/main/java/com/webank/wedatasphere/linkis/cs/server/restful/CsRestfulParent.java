@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.cs.server.restful;
 
+import com.webank.wedatasphere.linkis.cs.common.entity.history.ContextHistory;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
@@ -39,9 +40,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by patinousward on 2020/2/22.
- */
 public interface CsRestfulParent {
 
     default HttpAnswerJob submitRestJob(HttpServletRequest req,
@@ -116,6 +114,8 @@ public interface CsRestfulParent {
         return deserialize(jsonNode, "contextKeyValue");
     }
 
-
+    default ContextHistory getContextHistoryFromJsonNode(JsonNode jsonNode) throws CSErrorException, IOException, ClassNotFoundException {
+        return deserialize(jsonNode, "contextHistory");
+    }
 
 }

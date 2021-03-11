@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -33,9 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by patinousward on 2020/2/21.
- */
+
 @Component
 public class DefaultCsScheduler implements CsScheduler {
 

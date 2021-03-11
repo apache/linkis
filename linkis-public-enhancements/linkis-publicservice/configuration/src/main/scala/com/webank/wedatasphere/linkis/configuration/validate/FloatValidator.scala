@@ -20,9 +20,6 @@ import com.google.gson.GsonBuilder
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationException
 
-/**
-  * Created by allenlliu on 2019/4/8.
-  */
 class FloatValidator extends Validator with Logging{
   override def validate(value: String, range: String): Boolean = {
     try {

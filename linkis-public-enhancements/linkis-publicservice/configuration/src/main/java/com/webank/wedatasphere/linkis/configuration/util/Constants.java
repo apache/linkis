@@ -16,9 +16,6 @@
 
 package com.webank.wedatasphere.linkis.configuration.util;
 
-/**
- * Created by allenlliu on 2018/10/17.
- */
 public class Constants {
     public static final String GOLBAL_CONFIG_NAME = "通用设置";
 }

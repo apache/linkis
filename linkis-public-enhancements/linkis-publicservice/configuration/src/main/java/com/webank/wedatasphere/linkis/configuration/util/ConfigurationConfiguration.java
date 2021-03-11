@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -17,11 +17,20 @@
 package com.webank.wedatasphere.linkis.configuration.util;
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars$;
+import com.webank.wedatasphere.linkis.manager.label.entity.Label;
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel;
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.UserCreatorLabel;
 
-/**
- * Created by patinousward on 2019/12/30.
- */
+import java.util.ArrayList;
+
 public class ConfigurationConfiguration {
 
-    public static final String COPYKEYTOKEN = CommonVars$.MODULE$.apply("wds.linkis.configuration.copykey.token","e1051-s").getValue();
+    public static final ArrayList<Label> PERMIT_LABEL_TYPE = new ArrayList<>();
+
+    public static final String COPYKEYTOKEN = CommonVars$.MODULE$.apply("wds.linkis.configuration.copykey.token","e8724-e").getValue();
+
+    static{
+        PERMIT_LABEL_TYPE.add(new UserCreatorLabel());
+        PERMIT_LABEL_TYPE.add(new EngineTypeLabel());
+    }
 }

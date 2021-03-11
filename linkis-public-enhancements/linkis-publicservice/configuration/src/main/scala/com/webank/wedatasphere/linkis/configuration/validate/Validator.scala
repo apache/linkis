@@ -16,9 +16,6 @@
 
 package com.webank.wedatasphere.linkis.configuration.validate
 
-/**
-  * Created by allenlliu on 2019/4/8.
-  */
 trait Validator {
   var kind:String
   def validate(value: String,range:String):Boolean

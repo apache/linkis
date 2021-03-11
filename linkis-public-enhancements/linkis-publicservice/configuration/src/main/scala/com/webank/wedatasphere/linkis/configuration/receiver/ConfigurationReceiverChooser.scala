@@ -17,15 +17,12 @@
 package com.webank.wedatasphere.linkis.configuration.receiver
 
 import com.webank.wedatasphere.linkis.configuration.service.ConfigurationService
-import com.webank.wedatasphere.linkis.protocol.config.ConfigProtocol
+import com.webank.wedatasphere.linkis.governance.common.protocol.conf.ConfigProtocol
 import com.webank.wedatasphere.linkis.rpc.{RPCMessageEvent, Receiver, ReceiverChooser}
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-/**
-  * Created by allenlliu on 2019/7/13.
-  */
 @Component
 class ConfigurationReceiverChooser extends ReceiverChooser {
 

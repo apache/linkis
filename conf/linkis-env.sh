@@ -1,19 +1,20 @@
-#!/bin/sh
+#!/bin/bash
+#
+# description:  Starts and stops Server
+#
+# @name:        linkis-demo
 
-shellDir=`dirname $0`
-workDir=`cd ${shellDir}/..;pwd`
+# @created:     01.16.2021
+#
+# Modified for Linkis 1.0.0
 
-###
-SSH_PORT=22
+# SSH_PORT=22
 
 ### deploy user
 deployUser=hadoop
 
-
-### The install home path of Linkis
-LINKIS_INSTALL_HOME=$workDir        #Must provided
-
-
+##Linkis_SERVER_VERSION
+LINKIS_SERVER_VERSION=v1
 
 ### Specifies the user workspace, which is used to store the user's script files and log files.
 ### Generally local directory
@@ -22,12 +23,20 @@ WORKSPACE_USER_ROOT_PATH=file:///tmp/linkis/ ##file:// required
 HDFS_USER_ROOT_PATH=hdfs:///tmp/linkis ##hdfs:// required
 
 ### Path to store job ResultSet:file or hdfs path
-RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis
+RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis ##hdfs:// required
+
+### Path to store started engines and engine logs, must be local
+ENGINECONN_ROOT_PATH=/appcom/tmp   ## file://  required
+
+ENTRANCE_CONFIG_LOG_PATH=hdfs:///tmp/linkis/ ##file:// required
 
 ### Provide the DB information of Hive metadata database.
 HIVE_META_URL=
 HIVE_META_USER=
 HIVE_META_PASSWORD=
+
+##YARN REST URL  spark engine required
+YARN_RESTFUL_URL=http://127.0.0.1:8088
 
 ###HADOOP CONF DIR
 HADOOP_CONF_DIR=/appcom/config/hadoop-config
@@ -37,6 +46,13 @@ HIVE_CONF_DIR=/appcom/config/hive-config
 
 ###SPARK CONF DIR
 SPARK_CONF_DIR=/appcom/config/spark-config
+
+## Engine version conf
+#SPARK_VERSION
+#SPARK_VERSION=2.4.3
+##HIVE_VERSION
+#HIVE_VERSION=1.2.1
+#PYTHON_VERSION=python2
 
 ################### The install Configuration of all Micro-Services #####################
 #
@@ -51,85 +67,69 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 ###  You can access it in your browser at the address below:http://${EUREKA_INSTALL_IP}:${EUREKA_PORT}
 #EUREKA_INSTALL_IP=127.0.0.1         # Microservices Service Registration Discovery Center
 EUREKA_PORT=20303
+EUREKA_PREFER_IP=false
 
 ###  Gateway install information
 #GATEWAY_INSTALL_IP=127.0.0.1
 GATEWAY_PORT=9001
 
+### ApplicationManager
+#MANAGER_INSTALL_IP=127.0.0.1
+MANAGER_PORT=9101
+
+### EngineManager
+#ENGINECONNMANAGER_INSTALL_IP=127.0.0.1
+ENGINECONNMANAGER_PORT=9102
+
+
+
+### EnginePluginServer
+#ENGINECONN_PLUGIN_SERVER_INSTALL_IP=127.0.0.1
+ENGINECONN_PLUGIN_SERVER_PORT=9103
+
+### LinkisEntrance
+#ENTRANCE_INSTALL_IP=127.0.0.1
+ENTRANCE_PORT=9104
+
 ###  publicservice
 #PUBLICSERVICE_INSTALL_IP=127.0.0.1
-PUBLICSERVICE_PORT=9102
+PUBLICSERVICE_PORT=9105
 
 
 ### Hive Metadata Query service, provide the metadata information of Hive databases.
-#METADATA_INSTALL_IP=127.0.0.1
-METADATA_PORT=9103
-
-
-### ResourceManager
-#RESOURCEMANAGER_INSTALL_IP=127.0.0.1
-RESOURCEMANAGER_PORT=9104
-
-
-### Spark
-### This service is used to provide spark capability.
-#SPARK_INSTALL_IP=127.0.0.1
-SPARK_EM_PORT=9105
-SPARK_ENTRANCE_PORT=9106
-
-
-### Hive
-### This service is used to provide hive capability.
-#HIVE_INSTALL_IP=127.0.0.1
-HIVE_EM_PORT=9107
-HIVE_ENTRANCE_PORT=9108
-
-
-### PYTHON
-### This service is used to provide python capability.
-#PYTHON_INSTALL_IP=127.0.0.1
-PYTHON_EM_PORT=9109
-PYTHON_ENTRANCE_PORT=9110
-
-
-### JDBC
-### This service is used to provide jdbc capability.
-#JDBC_INSTALL_IP=127.0.0.1
-JDBC_ENTRANCE_PORT=9111
-
-### SHELL
-### This service is used to provide shell capability.
-#SHELL_INSTALL_IP=127.0.0.1
-SHELL_EM_PORT=9114
-SHELL_ENTRANCE_PORT=9115
-
-
+#DATASOURCE_INSTALL_IP=127.0.0.1
+DATASOURCE_PORT=9106
 
 ### BML
 ### This service is used to provide BML capability.
 #BML_INSTALL_IP=127.0.0.1
-BML_PORT=9113
+BML_PORT=9107
 
 ### cs
 #CS_INSTALL_IP=127.0.0.1
-CS_PORT=9116
-
-
-### datasource management server
-#DSM_INSTALL_IP=127.0.0.1
-DSM_PORT=9117
-
-### metadata management server
-#MDM_INSTALL_IP=127.0.0.1
-MDM_PORT=9118
+CS_PORT=9108
 
 ########################################################################################
 
 ## LDAP is for enterprise authorization, if you just want to have a try, ignore it.
 #LDAP_URL=ldap://localhost:1389/
 #LDAP_BASEDN=dc=webank,dc=com
+#LDAP_USER_NAME_FORMAT=cn=%s@xxx.com,OU=xxx,DC=xxx,DC=com
 
 ## java application default jvm memory
 export SERVER_HEAP_SIZE="512M"
 
-LINKIS_VERSION=0.11.0
+if test -z "$EUREKA_INSTALL_IP"
+then
+  export EUREKA_INSTALL_IP="`hostname --fqdn`"
+fi
+if [ "true" != "$EUREKA_PREFER_IP" ]
+then
+  export EUREKA_HOSTNAME=$EUREKA_INSTALL_IP
+fi
+export EUREKA_URL=http://$EUREKA_INSTALL_IP:$EUREKA_PORT/eureka/
+
+LINKIS_VERSION=1.0.0
+
+# for install
+LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module

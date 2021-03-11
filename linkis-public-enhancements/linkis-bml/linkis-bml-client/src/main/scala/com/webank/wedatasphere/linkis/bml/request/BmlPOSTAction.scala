@@ -16,19 +16,34 @@
 package com.webank.wedatasphere.linkis.bml.request
 
 import java.io.{File, InputStream}
-import java.util
+import java.lang.reflect.Type
+import java.{lang, util}
 
+import com.google.gson._
 import com.webank.wedatasphere.linkis.bml.http.HttpConf
 import com.webank.wedatasphere.linkis.httpclient.request._
 
-/**
-  * created by cooperyang on 2019/5/23
-  * Description:
-  */
+trait BmlAction extends UserAction{
 
-abstract class BmlPOSTAction extends POSTAction
+  private var user:String = _
 
-abstract class BmlGETAction extends GetAction
+  override def setUser(user: String): Unit = this.user = user
+
+  override def getUser: String = this.user
+
+  implicit val gson = new GsonBuilder().setPrettyPrinting().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").serializeNulls
+    .registerTypeAdapter(classOf[java.lang.Double], new JsonSerializer[java.lang.Double] {
+      override def serialize(t: lang.Double, `type`: Type, jsonSerializationContext: JsonSerializationContext): JsonElement =
+        if(t == t.longValue()) new JsonPrimitive(t.longValue()) else new JsonPrimitive(t)
+    }).create
+}
+
+abstract class BmlPOSTAction extends POSTAction with BmlAction{
+  override def getRequestPayload: String = gson.toJson(getRequestPayloads)
+}
+
+
+abstract class BmlGETAction extends GetAction with BmlAction
 
 
 /**
@@ -57,18 +72,6 @@ case class BmlUploadAction(filePaths:Array[String],
 
   override def inputStreamNames: util.Map[String, String] = streamNames
 
-  //  override def inputStreams: util.Map[String, InputStream] = {
-  //    if (files.size() == 0) new util.HashMap[String, InputStream]() else{
-  //      val map = new util.HashMap[String, InputStream]()
-  //      files foreach {
-  //        case (fileName, filePath) => val fs = FSFactory.getFs(new FsPath(filePath))
-  //          fs.init(null)
-  //          val inputStream = fs.read(new FsPath(filePath))
-  //
-  //      }
-  //    }
-  //  }
-
   private var _user:String = _
 
   override def setUser(user: String): Unit = this._user = user
@@ -79,6 +82,39 @@ case class BmlUploadAction(filePaths:Array[String],
 
   override def getURL: String = HttpConf.uploadURL
 }
+
+case class BmlUploadShareResourceAction(filePaths:Array[String],
+                                        _inputStreams:util.Map[String,InputStream])
+  extends BmlPOSTAction with UploadAction{
+  override def getURL: String = HttpConf.uploadShareResourceUrl
+  private val streamNames = new util.HashMap[String,String]
+
+  override val files: util.Map[String, String] = {
+    if (null == filePaths || filePaths.length == 0) new util.HashMap[String,String]() else{
+      val map = new java.util.HashMap[String, String]
+      filePaths foreach {
+        filePath => val arr = filePath.split(File.separator)
+          val fileName = arr(arr.length - 1)
+          map.put("file", filePath)
+      }
+      map
+    }
+  }
+
+  override def inputStreams: util.Map[String, InputStream] = _inputStreams
+
+  override def inputStreamNames: util.Map[String, String] = streamNames
+
+  private var _user:String = _
+
+  override def setUser(user: String): Unit = this._user = user
+
+  override def getUser: String = this._user
+
+  override def getRequestPayload: String = ""
+}
+
+
 
 case class BmlUpdateAction(filePaths:Array[String],
                            _inputStreams:util.Map[String,InputStream]) extends BmlPOSTAction with UploadAction{
@@ -111,6 +147,39 @@ case class BmlUpdateAction(filePaths:Array[String],
 }
 
 
+
+case class BmlUpdateShareResourceAction(filePaths:Array[String],
+                                        _inputStreams:util.Map[String,InputStream])extends BmlPOSTAction with UploadAction{
+  override def getURL: String = HttpConf.updateShareResourceUrl
+
+  override def getRequestPayload: String = ""
+
+  private var _user:String = _
+
+  private val streamNames = new util.HashMap[String,String]
+
+  override val files: util.Map[String, String] = {
+    if (null == filePaths || filePaths.length == 0) new util.HashMap[String,String]() else{
+      val map = new java.util.HashMap[String, String]
+      filePaths foreach {
+        filePath => val arr = filePath.split(File.separator)
+          val fileName = arr(arr.length - 1)
+          map.put("file", filePath)
+      }
+      map
+    }
+  }
+
+  override def setUser(user: String): Unit = this._user = user
+
+  override def getUser: String = this._user
+  override def inputStreams: util.Map[String, InputStream] = _inputStreams
+
+  override def inputStreamNames: util.Map[String, String] = streamNames
+}
+
+
+
 case class BmlDownloadAction() extends BmlGETAction with DownloadAction with UserAction{
 
   private var inputStream:InputStream = _
@@ -128,6 +197,26 @@ case class BmlDownloadAction() extends BmlGETAction with DownloadAction with Use
 
   override def getUser: String = this.user
 }
+
+
+case class BmlDownloadShareAction() extends BmlGETAction with DownloadAction with UserAction{
+
+  private var inputStream:InputStream = _
+  private var user:String = _
+
+  def getInputStream:InputStream = this.inputStream
+
+  def setInputStream(inputStream: InputStream):Unit = this.inputStream = inputStream
+
+  override def getURL: String = HttpConf.downloadShareURL
+
+  override def write(inputStream: InputStream): Unit = this.inputStream = inputStream
+
+  override def setUser(user: String): Unit = this.user = user
+
+  override def getUser: String = this.user
+}
+
 
 
 
@@ -177,3 +266,15 @@ case class BmlDeleteAction(resourceId:String) extends BmlPOSTAction {
 
 
 
+case class CreateBmlProjectAction() extends BmlPOSTAction{
+  override def getURL: String = HttpConf.createProjectUrl
+}
+
+case class UpdateBmlProjectAction() extends BmlPOSTAction{
+  override def getURL: String = HttpConf.updateProjectUrl
+}
+
+
+case class BmlAttachAction()extends BmlPOSTAction{
+  override def getURL: String = HttpConf.attachUrl
+}

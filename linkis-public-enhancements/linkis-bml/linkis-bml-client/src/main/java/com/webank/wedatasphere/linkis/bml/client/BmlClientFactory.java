@@ -19,10 +19,6 @@ import com.webank.wedatasphere.linkis.bml.client.impl.HttpBmlClient;
 
 import java.util.Map;
 
-/**
- * created by cooperyang on 2019/5/15
- * Description:
- */
 public class BmlClientFactory {
     public static BmlClient createBmlClient(){
         return createBmlClient(null, null);

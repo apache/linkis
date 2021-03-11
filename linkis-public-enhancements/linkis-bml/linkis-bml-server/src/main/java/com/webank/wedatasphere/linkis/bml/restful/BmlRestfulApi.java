@@ -44,10 +44,6 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * created by cooperyang on 2019/5/14
- * Description:
- */
 @Path("bml")
 @Component
 public class BmlRestfulApi {
@@ -69,7 +65,7 @@ public class BmlRestfulApi {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static final String URL_PREFIX = "/bml/";
+    public static final String URL_PREFIX = "/bml/";
 
     @GET
     @Path("getVersions")
@@ -467,11 +463,11 @@ public class BmlRestfulApi {
         String user = RestfulUtils.getUserName(request);
         if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
             logger.error("错误的resourceId  is {} ", resourceId);
-            throw new BmlServerParaErrorException("resourceId:"+resourceId+"为空,非法或者已被删除!");
+            throw new BmlServerParaErrorException("resourceId: " + resourceId + " 为空,非法或者已被删除!");
         }
         if (StringUtils.isEmpty(versionService.getNewestVersion(resourceId))) {
             logger.error("resourceId:{} 之前未上传物料,或物料已被删除,请先调用上传接口.", resourceId);
-            throw new BmlServerParaErrorException("resourceId:"+resourceId+" 之前未上传物料,或物料已被删除,请先调用上传接口.!");
+            throw new BmlServerParaErrorException("resourceId: " + resourceId + " 之前未上传物料,或物料已被删除,请先调用上传接口.!");
         }
         Message message;
         try{
@@ -479,7 +475,10 @@ public class BmlRestfulApi {
             String clientIp = HttpRequestHelper.getIp(request);
             Map<String, Object> properties = new HashMap<>();
             properties.put("clientIp", clientIp);
-            ResourceTask resourceTask = taskService.createUpdateTask(resourceId, user, formDataMultiPart, properties);
+            ResourceTask resourceTask = null;
+            synchronized (resourceId.intern()){
+                resourceTask = taskService.createUpdateTask(resourceId, user, formDataMultiPart, properties);
+            }
             message = Message.ok("提交更新资源任务成功");
             message.data("resourceId",resourceId).data("version", resourceTask.getVersion()).data("taskId", resourceTask.getId());
         }catch(final ErrorException e){
@@ -539,6 +538,13 @@ public class BmlRestfulApi {
         }
 
         return Message.messageToResponse(message);
+    }
+
+
+    @GET
+    @Path("getResourceInfo")
+    public Response getResourceInfo(@Context HttpServletRequest request, @QueryParam("resourceId") String resourceId){
+        return Message.messageToResponse(Message.ok("获取信息成功"));
     }
 
 

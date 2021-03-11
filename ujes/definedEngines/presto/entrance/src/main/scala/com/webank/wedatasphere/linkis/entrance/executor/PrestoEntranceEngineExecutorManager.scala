@@ -18,7 +18,7 @@ package com.webank.wedatasphere.linkis.entrance.executor
 import java.net.URI
 import java.util
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.{AtomicLong, AtomicReference}
 import java.util.{Collections, Locale, Optional, TimeZone}
 
 import com.facebook.presto.client.ClientSession
@@ -92,14 +92,14 @@ class PrestoEntranceEngineExecutorManager(groupFactory: GroupFactory,
       val clientSession = getClientSession(job.getUser, configMap)
 
       val criteria = new SelectionCriteria(true, job.getUser, Optional.of(clientSession.getSource), Collections.emptySet(), new ResourceEstimates(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()), Optional.empty())
-      val memory: Long = new ByteType(configMap.asScala.filter(config => PRESTO_REQUEST_MEMORY.key.equals(config._1)).values.head).toLong
+      val memory: Long = new ByteType(PRESTO_REQUEST_MEMORY.getValue(configMap)).toLong
       val groupName = PrestoResourceUtils.getGroupName(criteria, PRESTO_RESOURCE_CONFIG_PATH.getValue(configMap))
       val requestResource = new InstanceAndPrestoResource(new InstanceResource(1), new PrestoResource(memory, 1, groupName, PRESTO_URL.getValue))
       rmClient.requestResource(job.getUser, job.getCreator, requestResource) match {
         case NotEnoughResource(reason) => throw new RMWarnException(40001, LogUtils.generateWarn(reason))
         case AvailableResource(ticketId) =>
           rmClient.resourceInited(UserResultResource(ticketId, job.getUser), requestResource)
-          new PrestoEntranceEngineExecutor(idGenerator.getAndIncrement(), job, clientSession, okHttpClient, () => rmClient.resourceReleased(UserResultResource(ticketId, job.getUser)))
+          new PrestoEntranceEngineExecutor(idGenerator.getAndIncrement(), job, new AtomicReference[ClientSession](clientSession), okHttpClient, () => rmClient.resourceReleased(UserResultResource(ticketId, job.getUser)))
       }
   }
 

@@ -1,19 +1,15 @@
 server:
-  port: 9022
+  port: 9106
 spring:
   application:
-    name: cloud-datasource
+    name: linkis-ps-datasource
 
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: ${eurekaurl}
+      defaultZone: http://127.0.0.1:20303/eureka/
   instance:
-    lease-renewal-interval-in-second: 5
-    lease-expiration-duration-in-second: 10
-    prefer-ip-address: true
-    instance-id: ${spring.cloud.client.ip-address}:${server.port}
     metadata-map:
       test: wedatasphere
 
@@ -22,5 +18,8 @@ management:
     web:
       exposure:
         include: refresh,info
+  health:
+    db:
+      enabled: false
 logging:
   config: classpath:log4j2.xml

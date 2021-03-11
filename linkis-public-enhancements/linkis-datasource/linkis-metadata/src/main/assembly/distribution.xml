@@ -1,12 +1,9 @@
 <!--
   ~ Copyright 2019 WeBank
-  ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
-  ~
   ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,9 +17,9 @@
         xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/2.3 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
     <id>linkis-metadata</id>
     <formats>
-        <format>zip</format>
+        <format>dir</format>
     </formats>
-    <includeBaseDirectory>true</includeBaseDirectory>
+    <includeBaseDirectory>false</includeBaseDirectory>
     <baseDirectory>linkis-metadata</baseDirectory>
 
     <dependencySets>
@@ -33,10 +30,28 @@
             <useProjectArtifact>true</useProjectArtifact>
             <useTransitiveDependencies>true</useTransitiveDependencies>
             <unpack>false</unpack>
-            <useStrictFiltering>true</useStrictFiltering>
+            <useStrictFiltering>false</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
-
-           <!-- <excludes>
+            <!--<excludes>
+                <exclude>log4j:log4j:*</exclude>
+                <exclude>org.springframework.cloud:spring-*:*</exclude>
+                <exclude>org.springframework.*</exclude>
+                <exclude>org.glassfish.*</exclude>
+                <exclude>org.scala*</exclude>
+                <exclude>org.slf4j:*</exclude>
+                <exclude>org.json*</exclude>
+                <exclude>org.mybatis</exclude>
+                <exclude>cglib:*</exclude>
+                <exclude>com.google*</exclude>
+                <exclude>com.fasterxml*</exclude>
+                <exclude>com.sun.jersey*</exclude>
+                <exclude>org.eclipse.jetty*</exclude>
+                <exclude>org.apache.commons:commons*</exclude>
+                <exclude>commons*</exclude>
+                <exclude>org.apache.hadoop:*</exclude>
+                <exclude>io.netty:netty*</exclude>
+            </excludes>-->
+            <excludes>
                 <exclude>antlr:antlr:jar</exclude>
                 <exclude>aopalliance:aopalliance:jar</exclude>
                 <exclude>com.fasterxml.jackson.core:jackson-annotations:jar</exclude>
@@ -57,6 +72,7 @@
                 <exclude>com.netflix.ribbon:ribbon-loadbalancer:jar</exclude>
                 <exclude>com.netflix.ribbon:ribbon-transport:jar</exclude>
                 <exclude>com.netflix.servo:servo-core:jar</exclude>
+                <exclude>com.ning:async-http-client:jar</exclude>
                 <exclude>com.sun.jersey.contribs:jersey-apache-client4:jar</exclude>
                 <exclude>com.sun.jersey:jersey-client:jar</exclude>
                 <exclude>com.sun.jersey:jersey-core:jar</exclude>
@@ -163,14 +179,14 @@
                 <exclude>org.springframework:spring-context:jar</exclude>
                 <exclude>org.springframework:spring-core:jar</exclude>
                 <exclude>org.springframework:spring-expression:jar</exclude>
-                &lt;!&ndash;<exclude>org.springframework:spring-jcl:jar</exclude>&ndash;&gt;
+                <!--<exclude>org.springframework:spring-jcl:jar</exclude>-->
                 <exclude>org.springframework:spring-web:jar</exclude>
                 <exclude>org.tukaani:xz:jar</exclude>
                 <exclude>org.yaml:snakeyaml:jar</exclude>
                 <exclude>xerces:xercesImpl:jar</exclude>
                 <exclude>xml-apis:xml-apis:jar</exclude>
                 <exclude>xmlenc:xmlenc:jar</exclude>
-            </excludes>-->
+            </excludes>
         </dependencySet>
     </dependencySets>
 
@@ -184,7 +200,7 @@
             <outputDirectory>conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
-        <fileSet>
+        <!--<fileSet>
             <directory>${basedir}/bin</directory>
             <includes>
                 <include>*</include>
@@ -199,7 +215,7 @@
                 <exclude>*/**</exclude>
             </excludes>
             <outputDirectory>logs</outputDirectory>
-        </fileSet>
+        </fileSet>-->
     </fileSets>
 
 </assembly>

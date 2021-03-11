@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,11 +13,11 @@
 package com.webank.wedatasphere.linkis.metadata.hive.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf;
 import com.webank.wedatasphere.linkis.metadata.util.DWSConfig;
+import com.webank.wedatasphere.linkis.metadata.util.HiveUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.ibatis.mapping.DatabaseIdProvider;
-import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
@@ -39,9 +36,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.io.IOException;
 import java.sql.SQLException;
-
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Configuration
 @EnableTransactionManagement(order = 2)
@@ -65,11 +62,19 @@ public class LinkisMybatisConfig {
         String url =  DWSConfig.HIVE_META_URL.getValue();
         String username =  DWSConfig.HIVE_META_USER.getValue();
         String password = DWSConfig.HIVE_META_PASSWORD.getValue();
-        logger.info("数据库连接地址信息=" + url);
         if(StringUtils.isBlank(url) || StringUtils.isBlank(username)  || StringUtils.isBlank(password)) {
-           throw new  RuntimeException("The metadata service depends on hive metadata JDBC information. " +
-                   "Please configure hive.meta related parameters(metadata服务依赖hive元数据JDBC的信息，请配置hive.meta相关参数).");
+            org.apache.hadoop.conf.Configuration hiveConf = HiveUtils.getDefaultConf(HadoopConf.HADOOP_ROOT_USER().getValue());
+            logger.info("从配置文件中读取hive数据库连接地址");
+            url = hiveConf.get("javax.jdo.option.ConnectionURL");
+            username = hiveConf.get("javax.jdo.option.ConnectionUserName");
+            password = hiveConf.get("javax.jdo.option.ConnectionPassword");
+            if (DWSConfig.HIVE_PASS_ENCODE_ENABLED.getValue()) {
+                logger.info("hive meta password is encode ");
+                password = HiveUtils.decode(password);
+            }
+
         }
+        logger.info("数据库连接地址信息=" + url);
         datasource.setUrl(url);
         datasource.setUsername(username);
         datasource.setPassword(password);
@@ -173,8 +178,6 @@ public class LinkisMybatisConfig {
             }
            /* Resource[] resources = new PathMatchingResourcePatternResolver().getResources(mapperLocations);
             sessionFactoryBean.setMapperLocations(resources);*/
-           // Add mybatis database id provider configuration to support hive postgresql metadata(添加MyBatis配置以支持Hive PG元数据库)
-            sessionFactoryBean.setDatabaseIdProvider(getDatabaseIdProvider());
 //            Set the location of the mybatis-config.xml configuration file(设置mybatis-config.xml配置文件位置)
             sessionFactoryBean.setConfigLocation(new DefaultResourceLoader().getResource(configLocation));
 
@@ -186,15 +189,6 @@ public class LinkisMybatisConfig {
             logger.error("mybatis sqlSessionFactoryBean create error",e);
             return null;
         }
-    }
-
-    private DatabaseIdProvider getDatabaseIdProvider() {
-        VendorDatabaseIdProvider databaseIdProvider = new VendorDatabaseIdProvider();
-        Properties databaseIdProperties = new Properties();
-        databaseIdProperties.put("MySQL", "mysql");
-        databaseIdProperties.put("PostgreSQL", "postgresql");
-        databaseIdProvider.setProperties(databaseIdProperties);
-        return databaseIdProvider;
     }
 
     @Primary

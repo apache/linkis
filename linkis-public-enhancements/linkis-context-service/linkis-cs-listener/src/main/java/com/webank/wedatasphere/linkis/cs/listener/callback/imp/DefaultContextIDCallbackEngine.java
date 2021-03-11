@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.cs.listener.callback.imp;
 
 import com.google.common.collect.HashMultimap;
@@ -20,29 +21,18 @@ import com.webank.wedatasphere.linkis.common.listener.Event;
 import com.webank.wedatasphere.linkis.cs.common.entity.listener.CommonContextIDListenerDomain;
 import com.webank.wedatasphere.linkis.cs.common.entity.listener.ListenerDomain;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
-import com.webank.wedatasphere.linkis.cs.common.listener.ContextIDListener;
 import com.webank.wedatasphere.linkis.cs.listener.CSIDListener;
 import com.webank.wedatasphere.linkis.cs.listener.callback.ContextIDCallbackEngine;
 import com.webank.wedatasphere.linkis.cs.listener.event.ContextIDEvent;
 import com.webank.wedatasphere.linkis.cs.listener.event.impl.DefaultContextIDEvent;
-import com.webank.wedatasphere.linkis.cs.listener.event.impl.DefaultContextKeyEvent;
 import com.webank.wedatasphere.linkis.cs.listener.manager.imp.DefaultContextListenerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.webank.wedatasphere.linkis.cs.listener.event.enumeration.OperateType.ADD;
-
-/**
- * @Author: chaogefeng
- * @Date: 2020/2/20
- */
 public class DefaultContextIDCallbackEngine implements CSIDListener, ContextIDCallbackEngine {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultContextIDCallbackEngine.class);
@@ -51,6 +41,7 @@ public class DefaultContextIDCallbackEngine implements CSIDListener, ContextIDCa
     private List<ContextID> removedContextIDS = new ArrayList<>();
 
 
+    //不关心返回ContextKeyValueBean里面的cskeys和 value
     @Override
     public ArrayList<ContextKeyValueBean> getListenerCallback(String source) {
         Set<ContextID> ContextIDSets = registerCSIDcsClients.get(source);
@@ -65,6 +56,17 @@ public class DefaultContextIDCallbackEngine implements CSIDListener, ContextIDCa
         return contextKeyValueBeans;
     }
 
+    //ContextIDCallbackEngine 只监听ContextID ，对csKeys无感，可为空
+//    @Override
+//    public void registerClient(ContextID csId, List<ContextKey> csKeys, ClientSource csClient) {
+//
+//        String instance = csClient.getInstance();
+//        if (instance != null && csId != null) {
+//            synchronized (registerCSIDcsClients) {
+//                registerCSIDcsClients.put(instance, csId);
+//            }
+//        }
+//    }
 
     @Override
     public void registerClient(ListenerDomain listenerDomain) {

@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -25,9 +25,6 @@ import com.webank.wedatasphere.linkis.cs.listener.callback.imp.ContextKeyValueBe
 
 import java.util.List;
 
-/**
- * Created by patinousward on 2020/2/18.
- */
 public abstract class ContextListenerService extends AbstractService {
 
     public abstract void onBind(ContextID contextID, ContextIDListenerDomain listener) throws CSErrorException;

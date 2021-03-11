@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -23,15 +23,11 @@ import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextValue;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.condition.Condition;
 import com.webank.wedatasphere.linkis.cs.exception.ContextSearchFailedException;
 
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by patinousward on 2020/2/18.
- */
 public abstract class ContextService extends AbstractService {
 
     public abstract ContextValue getContextValue(ContextID contextID, ContextKey contextKey);

@@ -18,9 +18,6 @@ package com.webank.wedatasphere.linkis.configuration.validate
 
 import org.apache.commons.lang.StringUtils
 
-/**
-  * Created by allenlliu on 2019/4/22.
-  */
 class RegexValidator extends Validator{
   override var kind: String = "Regex"
 

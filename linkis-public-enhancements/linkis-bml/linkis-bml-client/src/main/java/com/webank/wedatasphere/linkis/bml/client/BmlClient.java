@@ -18,11 +18,8 @@ package com.webank.wedatasphere.linkis.bml.client;
 import com.webank.wedatasphere.linkis.bml.protocol.*;
 
 import java.io.InputStream;
+import java.util.List;
 
-/**
- * created by cooperyang on 2019/5/15
- * Description:
- */
 public interface BmlClient {
     /**
      * 传入resourceID bmlclient会resource的输入流,如果不传入version,默认返回最新的版本
@@ -97,5 +94,32 @@ public interface BmlClient {
     public BmlDeleteResponse deleteResource(String user, String resourceId, String version);
 
     public BmlDeleteResponse deleteResource(String user, String resourceId);
+
+    public BmlCreateProjectResponse createBmlProject(String creator, String projectName, List<String> accessUsers, List<String> editUsers);
+
+    BmlUpdateProjectPrivResponse updateProjectPriv(String username, String projectName, List<String> editUsers, List<String> accessUsers);
+
+    public BmlUploadResponse uploadShareResource(String user, String projectName, String filePath, InputStream inputStream);
+
+    public BmlUploadResponse uploadShareResource(String user, String projectName, String filePath);
+
+    public BmlDownloadResponse downloadShareResource(String user, String resourceId, String version);
+
+    public BmlDownloadResponse downloadShareResource(String user, String resourceId);
+
+    public BmlUpdateResponse updateShareResource(String user, String resourceId, String filePath, InputStream inputStream);
+
+    public BmlUpdateResponse updateShareResource(String user, String resourceId, String filePath);
+
+    BmlProjectInfoResponse getProjectInfoByName(String projectName);
+
+    BmlResourceInfoResponse getResourceInfo(String resourceId);
+
+    BmlProjectPrivResponse getProjectPriv(String projectName);
+
+    BmlAttachResourceAndProjectResponse attachResourceAndProject(String projectName, String resourceId);
+
+    BmlDownloadResponse downloadShareResource(String user, String resourceId, String version, String path, boolean overwrite);
+
 
 }

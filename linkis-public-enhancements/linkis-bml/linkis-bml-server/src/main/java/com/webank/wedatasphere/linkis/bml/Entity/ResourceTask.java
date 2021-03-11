@@ -23,10 +23,6 @@ import com.webank.wedatasphere.linkis.rpc.Sender;
 import java.util.Date;
 import java.util.Map;
 
-/**
- * @author cooperyang
- * @date 2019-9-16
- */
 public class ResourceTask {
 
     private long id;
@@ -75,6 +71,8 @@ public class ResourceTask {
 
     private Date lastUpdateTime;
 
+    private static final String DEFAULT_SYSTEM = "dss";
+
     public static ResourceTask createUploadTask(String resourceId, String user,
         Map<String, Object> properties) {
         ResourceTask resourceTask = new ResourceTask();
@@ -83,7 +81,11 @@ public class ResourceTask {
         resourceTask.setOperation(OperationEnum.UPLOAD.getValue());
         resourceTask.setState(TaskState.SCHEDULED.getValue());
         resourceTask.setSubmitUser(user);
-        resourceTask.setSystem((String)properties.get("system"));
+        if (null != properties.get("system")){
+            resourceTask.setSystem((String)properties.get("system"));
+        }else{
+            resourceTask.setSystem(DEFAULT_SYSTEM);
+        }
         resourceTask.setClientIp((String)properties.get("clientIp"));
         resourceTask.setInstance(Sender.getThisInstance());
         resourceTask.setStartTime(new Date());

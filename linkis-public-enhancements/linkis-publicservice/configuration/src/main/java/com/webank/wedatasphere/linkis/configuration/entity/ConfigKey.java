@@ -16,30 +16,36 @@
 
 package com.webank.wedatasphere.linkis.configuration.entity;
 
-/**
- * Created by allenlliu on 2018/10/17.
- */
-
 public class ConfigKey {
     private Long id;
     private String key;
     private String description;
     private String name;
-    private Long applicationID;
+    private String engineType;
     private String defaultValue;
     private String validateType;
     private String validateRange;
     private Boolean isAdvanced;
     private Boolean isHidden;
     private Integer level;
-    private String unit;
+    private String treeName;
 
-    public String getUnit() {
-        return unit;
+
+
+    public String getEngineType() {
+        return engineType;
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
+    public void setEngineType(String engineType) {
+        this.engineType = engineType;
+    }
+
+    public String getTreeName() {
+        return treeName;
+    }
+
+    public void setTreeName(String treeName) {
+        this.treeName = treeName;
     }
 
     public Long getId() {
@@ -74,13 +80,6 @@ public class ConfigKey {
         this.name = name;
     }
 
-    public Long getApplicationID() {
-        return applicationID;
-    }
-
-    public void setApplicationID(Long applicationID) {
-        this.applicationID = applicationID;
-    }
 
     public String getDefaultValue() {
         return defaultValue;

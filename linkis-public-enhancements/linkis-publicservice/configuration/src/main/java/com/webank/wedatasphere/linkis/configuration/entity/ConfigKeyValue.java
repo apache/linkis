@@ -16,27 +16,32 @@
 
 package com.webank.wedatasphere.linkis.configuration.entity;
 
-/**
- * Created by allenlliu on 2019/4/8.
- */
-
 public class ConfigKeyValue {
-    private Long keyID;
+    private Long id;
     private String key;
     private String description;
     private String name;
-    private Long creatorID;
     private String defaultValue;
     private String validateType;
     private String validateRange;
     private Boolean isAdvanced;
     private Boolean isHidden;
     private Integer level;
-    private Long valueID;
-    private Long applicationID;
-    private String userName;
-    private String value;
+    private String engineType;
+    private String treeName;
+    private Long valueId;
+    private String configValue;
+    private Integer configLabelId;
     private String unit;
+
+
+    public String getEngineType() {
+        return engineType;
+    }
+
+    public void setEngineType(String engineType) {
+        this.engineType = engineType;
+    }
 
     public String getUnit() {
         return unit;
@@ -46,13 +51,48 @@ public class ConfigKeyValue {
         this.unit = unit;
     }
 
-    public Long getKeyID() {
-        return keyID;
+    public String getConfigValue() {
+        return configValue;
     }
 
-    public void setKeyID(Long keyID) {
-        this.keyID = keyID;
+    public void setConfigValue(String configValue) {
+        this.configValue = configValue;
     }
+
+    public Integer getConfigLabelId() {
+        return configLabelId;
+    }
+
+    public void setConfigLabelId(Integer configLabelId) {
+        this.configLabelId = configLabelId;
+    }
+
+    public String getTreeName() {
+        return treeName;
+    }
+
+    public void setTreeName(String treeName) {
+        this.treeName = treeName;
+    }
+
+    public Long getValueId() {
+        return valueId;
+    }
+
+    public void setValueId(Long valueId) {
+        this.valueId = valueId;
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
 
     public String getKey() {
         return key;
@@ -76,14 +116,6 @@ public class ConfigKeyValue {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Long getCreatorID() {
-        return creatorID;
-    }
-
-    public void setCreatorID(Long creatorID) {
-        this.creatorID = creatorID;
     }
 
     public String getDefaultValue() {
@@ -124,38 +156,6 @@ public class ConfigKeyValue {
 
     public void setHidden(Boolean hidden) {
         isHidden = hidden;
-    }
-
-    public Long getValueID() {
-        return valueID;
-    }
-
-    public void setValueID(Long valueID) {
-        this.valueID = valueID;
-    }
-
-    public Long getApplicationID() {
-        return applicationID;
-    }
-
-    public void setApplicationID(Long applicationID) {
-        this.applicationID = applicationID;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     public Integer getLevel() {

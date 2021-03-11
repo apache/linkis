@@ -16,14 +16,10 @@
 
 package com.webank.wedatasphere.linkis.configuration.validate
 
-import javax.annotation.PostConstruct
-
 import com.webank.wedatasphere.linkis.common.utils.Logging
+import javax.annotation.PostConstruct
 import org.springframework.stereotype.Component
 
-/**
-  * Created by allenlliu on 2019/4/8.
-  */
 @Component
 class ValidatorManagerImpl extends ValidatorManager with Logging{
 

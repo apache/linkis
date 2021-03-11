@@ -17,14 +17,11 @@
 package com.webank.wedatasphere.linkis.configuration.receiver
 
 import com.webank.wedatasphere.linkis.configuration.service.ConfigurationService
-import com.webank.wedatasphere.linkis.protocol.config.{RequestQueryAppConfig, RequestQueryAppConfigWithGlobal, RequestQueryGlobalConfig}
+import com.webank.wedatasphere.linkis.governance.common.protocol.conf.{RequestConfigByLabel, RequestQueryEngineConfig, RequestQueryEngineTypeDefault, RequestQueryGlobalConfig}
 import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
 
 import scala.concurrent.duration.Duration
 
-/**
-  * Created by allenlliu on 2018/10/16.
-  */
 class ConfigurationReceiver extends Receiver{
 
   private var configurationService:ConfigurationService = _
@@ -37,9 +34,10 @@ class ConfigurationReceiver extends Receiver{
   override def receive(message: Any, sender: Sender): Unit = {}
 
   override def receiveAndReply(message: Any, sender: Sender): Any = message match {
-    case RequestQueryGlobalConfig(userName:String)=>configurationService.queryGolbalConfig(userName)
-    case e:RequestQueryAppConfig =>configurationService.queryAppConfig(e.userName,e.creator,e.appName)
-    case e:RequestQueryAppConfigWithGlobal =>configurationService.queryAppConfigWithGlobal(e.userName,e.creator,e.appName,e.isMerge)
+    case RequestQueryGlobalConfig(username) => configurationService.queryGlobalConfig(username)
+    case RequestQueryEngineTypeDefault(engineType) => configurationService.queryDefaultEngineConfig(engineType)
+    case RequestQueryEngineConfig(userCreatorLabel,engineTypeLabel,filter) => configurationService.queryConfig(userCreatorLabel,engineTypeLabel,filter)
+    case RequestConfigByLabel(labelList,isMerge) => configurationService.queryConfigByLabel(labelList, isMerge)
   }
 
   override def receiveAndReply(message: Any, duration: Duration, sender: Sender): Any = {}

@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-/**
-  * author: enjoyyin
-  * date: 2018/9/5
-  * time: 11:14
-  * Description:
-  */
+
 package com.webank.wedatasphere.linkis.entrance.log
 
 import java.io.{IOException, InputStream}
@@ -46,7 +41,7 @@ class CacheLogReader(logPath:String ,
   private def createInputStream: InputStream = {
     if (fileSystem == null) this synchronized {
       if (fileSystem == null){
-        fileSystem = FSFactory.getFs(new FsPath(logPath))
+        fileSystem = FSFactory.getFsByProxyUser(new FsPath(logPath), user)
         fileSystem.init(new util.HashMap[String, String]())
       }
     }

@@ -14,9 +14,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.exception
+package com.webank.wedatasphere.linkis.entrance;
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
-case class JobHistoryFailedException(errorMsg:String) extends ErrorException(50081, errorMsg)
+
+public class LinkisEntranceApplication {
+
+    private static final Log logger = LogFactory.getLog(DataWorkCloudApplication.class);
+
+    public static void main(String[] args) throws ReflectiveOperationException {
+        logger.info("Start to running LinkisManagerApplication");
+        DataWorkCloudApplication.main(args);
+    }
+}

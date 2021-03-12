@@ -20,15 +20,16 @@ import java.lang.reflect.UndeclaredThrowableException
 import java.net.ConnectException
 
 import com.netflix.client.ClientException
+import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.rpc.exception.NoInstanceExistsException
-import com.webank.wedatasphere.linkis.rpc.sender.SpringCloudFeignConfigurationCache
+import com.webank.wedatasphere.linkis.rpc.sender.{SpringCloudFeignConfigurationCache, SpringMVCRPCSender}
+import com.webank.wedatasphere.linkis.rpc.{BaseRPCSender, Sender}
 import feign.RetryableException
 import org.apache.commons.lang.StringUtils
+
 import scala.collection.JavaConversions._
 
-/**
-  * Created by enjoyyin on 2019/2/22.
-  */
+
 object RPCUtils {
 
   def isReceiverNotExists(t: Throwable): Boolean = t match {
@@ -59,4 +60,16 @@ object RPCUtils {
     else if(services.length > 1) tooManyDeal(services)
     else None
   }
+
+  def getServiceInstanceFromSender(sender: Sender): ServiceInstance = {
+    sender match {
+      case springMVCRPCSender: SpringMVCRPCSender =>
+        springMVCRPCSender.serviceInstance
+      case baseRPCSender: BaseRPCSender =>
+        ServiceInstance(baseRPCSender.getApplicationName, null)
+      case _ =>
+        null
+    }
+  }
+
 }

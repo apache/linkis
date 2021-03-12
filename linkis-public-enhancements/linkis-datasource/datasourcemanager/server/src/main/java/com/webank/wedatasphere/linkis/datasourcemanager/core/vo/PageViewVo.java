@@ -13,10 +13,6 @@
 
 package com.webank.wedatasphere.linkis.datasourcemanager.core.vo;
 
-/**
- * @author georgeqiao
- * 2020/02/11
- */
 public class PageViewVo {
     private int currentPage;
     private int pageSize;

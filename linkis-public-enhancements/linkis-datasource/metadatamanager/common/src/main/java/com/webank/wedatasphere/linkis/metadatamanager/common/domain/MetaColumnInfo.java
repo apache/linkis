@@ -20,7 +20,6 @@ import java.io.Serializable;
 
 /**
  * The meta information of field
- * Created by jackyxxie on 2020/2/10.
  */
 @JsonSerialize(include= JsonSerialize.Inclusion.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)

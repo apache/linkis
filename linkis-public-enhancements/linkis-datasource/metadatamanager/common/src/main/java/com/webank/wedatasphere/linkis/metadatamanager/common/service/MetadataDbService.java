@@ -19,9 +19,6 @@ import com.webank.wedatasphere.linkis.metadatamanager.common.domain.MetaPartitio
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by jackyxxie on 2020/2/10.
- */
 public interface MetadataDbService extends BaseMetadataService {
 
     /**

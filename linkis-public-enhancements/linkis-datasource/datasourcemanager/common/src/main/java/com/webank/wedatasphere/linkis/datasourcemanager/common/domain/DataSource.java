@@ -25,8 +25,6 @@ import java.util.*;
 
 /**
  * Store the data source information
- * @author kirkzhou
- * 2020/02/11
  */
 @JsonSerialize(include= JsonSerialize.Inclusion.NON_EMPTY)
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"}, ignoreUnknown = true)

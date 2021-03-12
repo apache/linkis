@@ -19,9 +19,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 
-/**
- * Created by jackyxxie on 2020/2/14.
- */
 public interface CacheManager {
     /**
      * build simple cache

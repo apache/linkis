@@ -24,7 +24,6 @@ import java.util.Map;
 
 /**
  * The meta information of partition
- * Created by jackyxxie on 2020/2/10.
  */
 @JsonSerialize(include= JsonSerialize.Inclusion.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -35,8 +35,6 @@ import java.util.*;
 
 /**
  * Custom Transformer of multipart form
- * @author alexwu
- * 2020/02/12
  */
 public class CustomMultiPartFormDataTransformer implements MultiPartFormDataTransformer{
     private static final Logger LOG = LoggerFactory.getLogger(CustomMultiPartFormDataTransformer.class);

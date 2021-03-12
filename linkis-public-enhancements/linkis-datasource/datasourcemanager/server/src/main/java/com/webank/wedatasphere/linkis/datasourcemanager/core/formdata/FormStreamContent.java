@@ -19,8 +19,6 @@ import java.util.Map;
 
 /**
  * Stream content
- * @author alexwu
- * 2020/02/12
  */
 public class FormStreamContent {
     private InputStream stream;

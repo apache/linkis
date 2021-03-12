@@ -32,10 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author alexyang
- * 2020/02/10
- */
 @Service
 public class MetadataAppServiceImpl implements MetadataAppService {
     private Sender dataSourceRpcSender;

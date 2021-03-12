@@ -80,7 +80,3 @@ hive.config.dir=/home/hdfs/etc/hive
 
 ![图片](../images/tez/hive_tez4.png)
 
-## 三.作者介绍
-
-李孟，目前就职于知因智慧数据科技有限公司，负责数据中台数据引擎基础架构设计和中间件开发，专注云计算大数据方向。
-

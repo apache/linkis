@@ -18,14 +18,11 @@ package com.webank.wedatasphere.linkis.rpc.sender
 
 import java.util
 
-import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.rpc.Receiver
+import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
 
 import scala.concurrent.duration.Duration
 
-/**
-  * Created by enjoyyin on 2018/11/3.
-  */
+
 private class UnionSender private(receiver: Receiver, recycler: Receiver) extends Sender {
 
   override def ask(message: Any): Any =

@@ -16,16 +16,13 @@
 
 package com.webank.wedatasphere.linkis.storage.script.compaction
 
-/**
-  * Created by johnnwang on 2018/10/24.
-  */
+
 class QLScriptCompaction private extends CommonScriptCompaction{
 
   override def belongTo(suffix: String): Boolean = {
     suffix match {
       case "sql" => true
       case "hql" => true
-      case "jdbc" => true
       case _ => false
     }
   }

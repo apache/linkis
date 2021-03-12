@@ -22,9 +22,6 @@ import com.webank.wedatasphere.linkis.common.io.{FsPath, MetaData, Record}
 import scala.collection.mutable
 
 
-/**
-  * Created by johnnwang on 10/16/18.
-  */
 
 trait ResultSetFactory extends scala.AnyRef {
   def getResultSetByType(resultSetType : scala.Predef.String) :ResultSet[_ <: MetaData, _ <: Record]
@@ -55,7 +52,7 @@ object ResultSetFactory {
   val HTML_TYPE = "5"
 
   /**
-    * Result set corresponding type record(结果集对应类型记录)
+    * TODO 修改为注册形式，并修改ResultSet的getResultType逻辑 Result set corresponding type record(结果集对应类型记录)
     */
   val resultSetType = mutable.LinkedHashMap[String, String](TEXT_TYPE -> "TEXT",
     TABLE_TYPE -> "TABLE" ,

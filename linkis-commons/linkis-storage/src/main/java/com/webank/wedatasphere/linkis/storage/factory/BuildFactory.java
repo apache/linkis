@@ -18,10 +18,12 @@ package com.webank.wedatasphere.linkis.storage.factory;
 
 import com.webank.wedatasphere.linkis.common.io.Fs;
 
-/**
- * Created by johnnwang on 10/17/18.
- */
+
 public interface BuildFactory {
+
     Fs getFs(String user, String proxyUser);
+
+    Fs getFs(String user, String proxyUser, String label);
+
     String fsName();
 }

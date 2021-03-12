@@ -25,9 +25,7 @@ import com.webank.wedatasphere.linkis.storage.script.{Compaction, ScriptFsWriter
 import com.webank.wedatasphere.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 import org.apache.commons.io.IOUtils
 
-/**
-  * Created by johnnwang on 2018/10/23.
-  */
+
 class StorageScriptFsWriter(val path: FsPath, val charset: String, outputStream: OutputStream = null) extends ScriptFsWriter {
 
   private val stringBuilder = new StringBuilder

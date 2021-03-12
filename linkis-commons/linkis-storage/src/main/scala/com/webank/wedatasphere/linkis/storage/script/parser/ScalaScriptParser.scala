@@ -14,11 +14,25 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.exception
+package com.webank.wedatasphere.linkis.storage.script.parser
 
-/**
-  * Created by johnnwang on 2019/2/24.
-  */
-class FSNotInitException extends Exception{
 
+class ScalaScriptParser private extends CommonScriptParser {
+  //todo To be determined(待定)
+  override def prefix: String = "//@set"
+
+  override def belongTo(suffix: String): Boolean = {
+    suffix match {
+      case "scala" => true
+      case _ => false
+    }
+  }
+
+  override def prefixConf: String = "//conf@set"
+}
+
+object ScalaScriptParser {
+  val otherScriptParser: ScalaScriptParser = new ScalaScriptParser
+
+  def apply(): CommonScriptParser = otherScriptParser
 }

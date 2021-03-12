@@ -23,9 +23,7 @@ import com.webank.wedatasphere.linkis.storage.domain.FsPathListWithError;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * Created by johnnwang on 10/15/18.
- */
+
 public abstract class FileSystem implements Fs{
 
     protected  String user;
@@ -52,12 +50,18 @@ public abstract class FileSystem implements Fs{
 
     public abstract boolean mkdirs(FsPath dest) throws IOException;
 
+    public abstract boolean copy(String origin, String dest) throws IOException;
+
     public FsPathListWithError listPathWithError(FsPath path) throws IOException {
         return null;
     }
 
     public   boolean createNewFile(FsPath dest) throws IOException{
         return create(dest.getPath());
+    }
+
+    public boolean copyFile(FsPath origin, FsPath dest) throws IOException{
+        return copy(origin.getPath(), dest.getPath());
     }
 
     /**

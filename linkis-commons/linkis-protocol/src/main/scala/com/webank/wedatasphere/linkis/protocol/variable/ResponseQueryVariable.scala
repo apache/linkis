@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.protocol.variable
 
 import java.util
 
-/**
-  * Created by enjoyyin on 2018/10/18.
-  */
+
 class ResponseQueryVariable extends VariableProtocol {
   private var keyAndValue: util.Map[String, String] = _
   def getKeyAndValue :util.Map[String, String] = keyAndValue

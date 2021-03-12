@@ -16,10 +16,7 @@
 
 package com.webank.wedatasphere.linkis.protocol.task
 
-/**
-  * created by enjoyyin on 2018/10/8
-  * Description:
-  */
+
 trait Task {
 
   def getInstance: String

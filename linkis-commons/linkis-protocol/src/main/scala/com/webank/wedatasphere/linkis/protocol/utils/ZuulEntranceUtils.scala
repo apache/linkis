@@ -18,10 +18,7 @@ package com.webank.wedatasphere.linkis.protocol.utils
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 
-/**
-  * created by enjoyyin on 2018/11/8
-  * Description:
-  */
+
 object ZuulEntranceUtils {
 
 

@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.protocol.usercontrol;
 
-/**
- * Created by alexyang
- */
+
 public class RequestRegister implements UserControlRegtisterProtocol{
 
     // json string

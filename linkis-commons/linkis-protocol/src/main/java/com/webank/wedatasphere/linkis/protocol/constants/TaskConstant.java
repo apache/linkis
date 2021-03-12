@@ -16,10 +16,7 @@
 
 package com.webank.wedatasphere.linkis.protocol.constants;
 
-/**
- * created by enjoyyin on 2018/10/10
- * Description:
- */
+
 public interface TaskConstant {
 
     String UMUSER = "umUser";

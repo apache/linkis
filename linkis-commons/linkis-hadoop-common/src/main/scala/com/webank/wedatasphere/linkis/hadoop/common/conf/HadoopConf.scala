@@ -15,9 +15,7 @@ package com.webank.wedatasphere.linkis.hadoop.common.conf
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 
-/**
-  * Created by johnnwang on 2019/12/11.
-  */
+
 object HadoopConf {
 
   val HADOOP_ROOT_USER = CommonVars("wds.linkis.hadoop.root.user", "hadoop")
@@ -29,5 +27,9 @@ object HadoopConf {
   val KEYTAB_HOST = CommonVars("wds.linkis.keytab.host", "127.0.0.1")
 
   val KEYTAB_HOST_ENABLED = CommonVars("wds.linkis.keytab.host.enabled", false)
+
+  val hadoopConfDir = CommonVars("hadoop.config.dir", CommonVars("HADOOP_CONF_DIR", "").getValue).getValue
+
+  val HADOOP_EXTERNAL_CONF_DIR_PREFIX = CommonVars("wds.linkis.hadoop.external.conf.dir.prefix", "/appcom/config/external-conf/hadoop")
 
 }

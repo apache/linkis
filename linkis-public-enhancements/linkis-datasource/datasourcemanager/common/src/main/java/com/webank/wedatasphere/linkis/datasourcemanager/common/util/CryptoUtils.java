@@ -19,16 +19,10 @@ import org.apache.commons.lang.StringUtils;
 import java.io.*;
 import java.security.MessageDigest;
 
-/**
- * @author kirkzhou
- * 用于密码的加密解密
- *
- */
 public class CryptoUtils {
     private CryptoUtils(){
     }
     /**
-     * 序列化对象为String字符
      *
      * @param o Object
      * @return String
@@ -49,7 +43,6 @@ public class CryptoUtils {
     }
 
     /**
-     * 反序列化字符串为对象
      *
      * @param str String
      * @return Object

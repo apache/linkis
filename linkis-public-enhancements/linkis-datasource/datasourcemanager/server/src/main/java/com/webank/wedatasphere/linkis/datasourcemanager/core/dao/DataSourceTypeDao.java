@@ -16,10 +16,7 @@ package com.webank.wedatasphere.linkis.datasourcemanager.core.dao;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceType;
 
 import java.util.List;
-/**
- * @author dennyzhou-zdx
- * 2020/02/14
- */
+
 public interface DataSourceTypeDao {
     /**
      * Get all types

@@ -28,7 +28,6 @@ import java.util.ArrayList;
 
 /**
  * Json utils
- * Created by jackyxxie on 2018/9/3.
  */
 public class Json {
     private static final String PREFIX = "[";

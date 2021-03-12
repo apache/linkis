@@ -31,8 +31,6 @@ import java.io.InputStream;
 
 /**
  * Wrap the communication between Bml service
- * @author davidhua
- * 2020/02/15
  */
 @Service
 @RefreshScope

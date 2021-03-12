@@ -13,8 +13,5 @@
 
 package com.webank.wedatasphere.linkis.metadatamanager.common.service;
 
-/**
- * Created by jackyxxie on 2020/2/10.
- */
 public interface MetadataService extends MetadataDbService {
 }

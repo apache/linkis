@@ -17,8 +17,6 @@ import com.webank.wedatasphere.linkis.common.conf.CommonVars;
 
 /**
  * Configuration
- * @author davidhua
- * 2020/02/14
  */
 public class ElasticParamsMapper {
     public static final CommonVars<String> PARAM_ES_URLS =

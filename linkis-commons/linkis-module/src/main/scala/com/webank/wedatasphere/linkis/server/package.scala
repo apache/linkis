@@ -18,11 +18,11 @@ package com.webank.wedatasphere.linkis
 
 import java.util
 
-import javax.servlet.http.HttpServletRequest
 import com.webank.wedatasphere.linkis.common.exception.{ErrorException, ExceptionManager, FatalException, WarnException}
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.server.exception.{BDPServerErrorException, NonLoginException}
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter
+import javax.servlet.http.HttpServletRequest
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
 import org.slf4j.Logger

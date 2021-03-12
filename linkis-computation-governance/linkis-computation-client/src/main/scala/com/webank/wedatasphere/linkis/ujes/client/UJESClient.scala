@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
-
 package com.webank.wedatasphere.linkis.ujes.client
 
 import java.io.Closeable
@@ -31,12 +27,12 @@ import com.webank.wedatasphere.linkis.ujes.client.request.JobExecIdAction.JobSer
 import com.webank.wedatasphere.linkis.ujes.client.request._
 import com.webank.wedatasphere.linkis.ujes.client.response._
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 abstract class UJESClient extends Closeable {
 
   def execute(jobExecuteAction: JobExecuteAction): JobExecuteResult = executeUJESJob(jobExecuteAction).asInstanceOf[JobExecuteResult]
+
+  def submit(jobSubmitAction: JobSubmitAction): JobExecuteResult = executeUJESJob(jobSubmitAction).asInstanceOf[JobExecuteResult]
+
 
   protected[client] def executeUJESJob(ujesJobAction: UJESJobAction): Result
 
@@ -65,8 +61,6 @@ abstract class UJESClient extends Closeable {
 
   def kill(jobExecuteResult: JobExecuteResult): JobKillResult = executeJobExecIdAction(jobExecuteResult, JobServiceType.JobKill)
 
-
-
   def pause(jobExecuteResult: JobExecuteResult): JobPauseResult = executeJobExecIdAction(jobExecuteResult, JobServiceType.JobPause)
 
   def getJobInfo(jobExecuteResult: JobExecuteResult): JobInfoResult = {
@@ -76,6 +70,19 @@ abstract class UJESClient extends Closeable {
 
   def resultSet(resultSetAction: ResultSetAction): ResultSetResult =
     executeUJESJob(resultSetAction).asInstanceOf[ResultSetResult]
+
+  def getDBS(getDBSAction: GetDBSAction): GetDBSResult = {
+    executeUJESJob(getDBSAction).asInstanceOf[GetDBSResult]
+  }
+
+  def getTables(getTableAction: GetTablesAction): GetTablesResult = {
+    executeUJESJob(getTableAction).asInstanceOf[GetTablesResult]
+  }
+
+  def getColumns(getColumnsAction: GetColumnsAction): GetColumnsResult = {
+    executeUJESJob(getColumnsAction).asInstanceOf[GetColumnsResult]
+  }
+
 }
 object UJESClient {
   def apply(clientConfig: DWSClientConfig): UJESClient = new UJESClientImpl(clientConfig)
@@ -87,7 +94,7 @@ object UJESClient {
 
   def apply(serverUrl: String, readTimeout: Int, maxConnection: Int,
             authenticationStrategy: AuthenticationStrategy, dwsVersion: String): UJESClient = {
-    val clientConfig = DWSClientConfigBuilder.newBuilder().addUJESServerUrl(serverUrl)
+    val clientConfig = DWSClientConfigBuilder.newBuilder().addServerUrl(serverUrl)
       .connectionTimeout(30000).discoveryEnabled(false)
         .loadbalancerEnabled(false).maxConnectionSize(maxConnection)
       .retryEnabled(false).readTimeout(readTimeout)
@@ -103,7 +110,7 @@ object UJESClient {
 
   def getDiscoveryClient(serverUrl: String, readTimeout: Int, maxConnection: Int,
                          authenticationStrategy: AuthenticationStrategy, dwsVersion: String): UJESClient = {
-    val clientConfig = DWSClientConfigBuilder.newBuilder().addUJESServerUrl(serverUrl)
+    val clientConfig = DWSClientConfigBuilder.newBuilder().addServerUrl(serverUrl)
       .connectionTimeout(30000).discoveryEnabled(true)
       .discoveryFrequency(1, TimeUnit.MINUTES)
       .loadbalancerEnabled(true).maxConnectionSize(maxConnection)

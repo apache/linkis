@@ -1,8 +1,8 @@
 server:
-  port: 9105
+  port: 9666
 spring:
   application:
-    name: linkis-ps-publicservice
+    name: linkis-ps-storage-script-dev
 
 
 eureka:

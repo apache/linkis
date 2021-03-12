@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.execute
+package com.webank.wedatasphere.linkis.entrance.interceptor.exception
 
-/**
-  * Created by enjoyyin on 2018/9/10.
-  */
-abstract class EngineSelector extends EngineLockListener {
+import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-  /**
-    *
-    * @param engines
-    * @return
-    */
-  def chooseEngine(engines: Array[EntranceEngine]): Option[EntranceEngine]
 
-  def lockEngine(engine: EntranceEngine): Option[String]
+case class LabelCheckException(errCode: Int,
+                               errDesc: String) extends ErrorException(errCode, errDesc) {
 
 }

@@ -21,8 +21,9 @@ import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.entrance.execute.*;
 import com.webank.wedatasphere.linkis.entrance.log.*;
 import com.webank.wedatasphere.linkis.entrance.persistence.HaPersistenceTask;
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask;
+import com.webank.wedatasphere.linkis.manager.label.entity.Label;
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant;
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask;
 import com.webank.wedatasphere.linkis.protocol.task.Task;
 import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils;
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteRequest;
@@ -37,12 +38,10 @@ import scala.Option;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
-/**
- * created by enjoyyin on 2018/10/17
- * Description:
- */
+
 public class EntranceExecutionJob extends EntranceJob implements LogHandler {
 
     private LogReader logReader;
@@ -51,14 +50,15 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
     private WebSocketLogWriter webSocketLogWriter;
     private static final Logger logger = LoggerFactory.getLogger(EntranceExecutionJob.class);
 
-    public class EntranceExecuteRequest implements ExecuteRequest, LockExecuteRequest, JobExecuteRequest, RuntimePropertiesExecuteRequest {
+    public class EntranceExecuteRequest implements ExecuteRequest, LabelExecuteRequest, JobExecuteRequest, RuntimePropertiesExecuteRequest {
 
         private String executionCode;
 
-        public void setExecutionCode(){
+
+        public void setExecutionCode() {
             Task task = getTask();
-            if (task instanceof RequestPersistTask){
-                this.executionCode =  ((RequestPersistTask) task).getExecutionCode();
+            if (task instanceof RequestPersistTask) {
+                this.executionCode = ((RequestPersistTask) task).getExecutionCode();
             }
         }
 
@@ -68,22 +68,27 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
         }
 
         @Override
-        public String lock() {
-            return getLock();
-        }
-
-        @Override
         public String jobId() {
             return getId();
         }
 
+
         @Override
         public Map<String, Object> properties() {
             Map<String, Object> properties = TaskUtils.getRuntimeMap(getParams());
-            if(getTask() instanceof RequestPersistTask) {
+            if (getTask() instanceof RequestPersistTask) {
                 properties.put(TaskConstant.RUNTYPE, ((RequestPersistTask) getTask()).getRunType());
             }
             return properties;
+        }
+
+        @Override
+        public List<Label<?>> labels() {
+            Task task = getTask();
+            if (task instanceof RequestPersistTask) {
+                return ((RequestPersistTask) task).getLabels();
+            }
+            return null;
         }
     }
 

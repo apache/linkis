@@ -16,28 +16,26 @@
 
 package com.webank.wedatasphere.linkis.entrance.execute
 
-import com.webank.wedatasphere.linkis.protocol.engine.{RequestTask, RequestTaskExecute}
+import com.webank.wedatasphere.linkis.governance.common.protocol.task.{RequestTask, RequestTaskExecute}
 import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteRequest, JobExecuteRequest}
 
 import scala.collection.JavaConversions
 
-/**
-  * Created by enjoyyin on 2018/9/17.
-  */
+
 trait ExecuteRequestInterceptor {
 
   def apply(requestTask: RequestTask, executeRequest: ExecuteRequest): RequestTask
 
 }
-object LockExecuteRequestInterceptor extends ExecuteRequestInterceptor {
+object LabelExecuteRequestInterceptor extends ExecuteRequestInterceptor {
   override def apply(requestTask: RequestTask, executeRequest: ExecuteRequest): RequestTask = executeRequest match {
-    case lock: LockExecuteRequest =>
-      val rq = if(requestTask == null) {
+    case labelExecuteRequest: LabelExecuteRequest =>
+      val rq = if (requestTask == null) {
         val requestTask = new RequestTaskExecute
         requestTask.setCode(executeRequest.code)
         requestTask
       } else requestTask
-      rq.setLock(lock.lock)
+      rq.setLabels(labelExecuteRequest.labels)
       rq
     case _ => requestTask
   }
@@ -87,15 +85,3 @@ object RuntimePropertiesExecuteRequestInterceptor extends ExecuteRequestIntercep
     case _ => requestTask
   }
 }
-
-//object RunTypeExecuteRequestInterceptor extends ExecuteRequestInterceptor{
-//  private val runType:String = "runType"
-//  override def apply(requestTask: RequestTask, executeRequest: ExecuteRequest): RequestTask = {
-//    executeRequest match {
-//      case r:RunTypeExecuteRequest =>
-//        requestTask.data(runType, r.runType)
-//      case _ =>
-//    }
-//    requestTask
-//  }
-//}

@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.interceptor.exception
+package com.webank.wedatasphere.linkis.entrance.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
 
-case class VarSubstitutionException(errCode: Int,
-                                    errDesc: String) extends ErrorException(errCode, errDesc) {
-}
+case class SensitiveTablesCheckException(errorMsg:String) extends ErrorException(50079, errorMsg)
+
+case class DangerousGramsCheckException(errorMsg:String) extends ErrorException(50081, errorMsg)

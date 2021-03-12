@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,114 +13,84 @@
 
 package com.webank.wedatasphere.linkis.entrance.execute
 
+import java.util
 import java.util.Date
+import java.util.concurrent.atomic.AtomicLong
 
 import com.webank.wedatasphere.linkis.common.exception.WarnException
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.entrance.exception.EntranceErrorException
 import com.webank.wedatasphere.linkis.entrance.job.EntranceExecutionJob
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorState.ExecutorState
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
+import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils
+import com.webank.wedatasphere.linkis.orchestrator.ecm.EngineConnManager
+import com.webank.wedatasphere.linkis.orchestrator.ecm.entity.{DefaultMarkReq, MarkReq, Policy}
+import com.webank.wedatasphere.linkis.orchestrator.ecm.service.impl.ComputationConcurrentEngineConnExecutor
+import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
 import com.webank.wedatasphere.linkis.scheduler.executer.{Executor, ExecutorManager}
-import com.webank.wedatasphere.linkis.scheduler.listener.ExecutorListener
-import com.webank.wedatasphere.linkis.scheduler.queue.{GroupFactory, Job, LockJob, SchedulerEvent}
+import com.webank.wedatasphere.linkis.scheduler.queue.{GroupFactory, Job, SchedulerEvent}
+import com.webank.wedatasphere.linkis.server.JMap
+import org.apache.commons.lang.StringUtils
 
+import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
 
-/**
-  * Created by enjoyyin on 2018/9/10.
-  */
-abstract class EntranceExecutorManager(groupFactory: GroupFactory) extends ExecutorManager with Logging {
-  @volatile private var executorListener: Option[ExecutorListener] = None
 
-  def getOrCreateEngineBuilder(): EngineBuilder
+abstract class EntranceExecutorManager(groupFactory: GroupFactory, val engineConnManager: EngineConnManager) extends ExecutorManager with Logging {
 
-  def getOrCreateEngineManager(): EngineManager
+  private val idGenerator = new AtomicLong(0)
 
-  def getOrCreateEngineRequester(): EngineRequester
+  private val idToEngines = new util.HashMap[Long, EntranceExecutor]
 
-  def getOrCreateEngineSelector(): EngineSelector
-
-  def getOrCreateEntranceExecutorRulers(): Array[EntranceExecutorRuler]
+  private val instanceToEngines = new util.HashMap[String, EntranceExecutor]
 
   def getOrCreateInterceptors(): Array[ExecuteRequestInterceptor]
 
-  private def getExecutorListeners: Array[ExecutorListener] =
-    executorListener.map(l => Array(getOrCreateEngineManager(), l)).getOrElse(Array(getOrCreateEngineManager()))
-
-  override def setExecutorListener(executorListener: ExecutorListener): Unit =
-    this.executorListener = Option(executorListener)
-
-  def initialEntranceEngine(engine: EntranceEngine): Unit = {
-    executorListener.map(_ => new ExecutorListener {
-      override def onExecutorCreated(executor: Executor): Unit = getExecutorListeners.foreach(_.onExecutorCreated(executor))
-      override def onExecutorCompleted(executor: Executor, message: String): Unit = getExecutorListeners.foreach(_.onExecutorCompleted(executor, message))
-      override def onExecutorStateChanged(executor: Executor, fromState: ExecutorState, toState: ExecutorState): Unit =
-        getExecutorListeners.foreach(_.onExecutorStateChanged(executor, fromState, toState))
-    }).orElse(Some(getOrCreateEngineManager())).foreach(engine.setExecutorListener)
-    engine.setInterceptors(getOrCreateInterceptors())
-    engine.setEngineLockListener(getOrCreateEngineSelector())
-    getExecutorListeners.foreach(_.onExecutorCreated(engine))
-  }
-
-  override protected def createExecutor(schedulerEvent: SchedulerEvent): EntranceEngine = schedulerEvent match {
-    case job: Job =>
-      val newEngine = getOrCreateEngineRequester().request(job)
-      newEngine.foreach(initialEntranceEngine)
-      //There may be a situation where the broadcast is faster than the return. Here, you need to get the EntranceEngine that is actually stored in the EngineManager.
-      //可能存在广播比返回快的情况，这里需拿到实际存入EngineManager的EntranceEngine
-      newEngine.flatMap(engine => getOrCreateEngineManager().get(engine.getModuleInstance.getInstance)).orNull
-  }
-
-  private def setLock(lock: Option[String], job: Job): Unit = lock.foreach(l => job match {
-    case lj: LockJob => lj.setLock(l)
-    case _ =>
-  })
-
-  protected def findExecutors(job: Job): Array[EntranceEngine] = {
-    val groupName = groupFactory.getGroupNameByEvent(job)
-    var engines = getOrCreateEngineManager().listEngines(_.getGroup.getGroupName == groupName)
-    getOrCreateEntranceExecutorRulers().foreach(ruler => engines = ruler.rule(engines, job))
-    engines
-  }
-
-  private def findUsefulExecutor(job: Job): Option[Executor] = {
-    val engines = findExecutors(job).toBuffer
-    if(engines.isEmpty) {
-      return None
-    }
-    var engine: Option[EntranceEngine] = None
-    var lock: Option[String] = None
-    while(lock.isEmpty && engines.nonEmpty) {
-      engine = getOrCreateEngineSelector().chooseEngine(engines.toArray)
-      var ruleEngines = engine.map(Array(_)).getOrElse(Array.empty)
-      getOrCreateEntranceExecutorRulers().foreach(ruler => ruleEngines = ruler.rule(ruleEngines, job))
-      if(engine.isEmpty) {
-        return None
+  override def delete(executor: Executor): Unit = {
+    if (null != executor) {
+      executor.close()
+      val entranceExecutor = idToEngines.remove(executor.getId)
+      instanceToEngines.remove(entranceExecutor.getInstance.getInstance)
+      entranceExecutor.getEngineConnExecutor() match {
+        case current: ComputationConcurrentEngineConnExecutor =>
+        case _ => engineConnManager.releaseEngineConnExecutor(entranceExecutor.getEngineConnExecutor(), entranceExecutor.mark)
       }
-      ruleEngines.foreach(e => lock = getOrCreateEngineSelector().lockEngine(e))
-      engine.foreach(engines -= _)
     }
-    setLock(lock, job)
-    lock.flatMap(_ => engine)
   }
+
+  protected def createMarkReq(requestPersistTask: RequestPersistTask): MarkReq = {
+    val markReq = new DefaultMarkReq
+    markReq.setPolicyObj(Policy.Task)
+    markReq.setCreateService(requestPersistTask.getCreateService)
+    markReq.setDescription(requestPersistTask.getDescription)
+    markReq.setEngineConnCount(3)
+    val properties = if (requestPersistTask.getParams == null) new util.HashMap[String, String]
+    else {
+      val startupMap = TaskUtils.getStartupMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
+      val properties = new JMap[String, String]
+      startupMap.foreach { case (k, v) => if (v != null && StringUtils.isNotEmpty(v.toString)) properties.put(k, v.toString) }
+      properties
+    }
+    // todo get default config from db
+    markReq.setProperties(properties)
+    markReq.setUser(requestPersistTask.getUmUser)
+    markReq.setLabels(LabelUtils.labelsToMap(requestPersistTask.getLabels))
+    markReq
+  }
+
 
   override def askExecutor(schedulerEvent: SchedulerEvent): Option[Executor] = schedulerEvent match {
     case job: Job =>
-      findUsefulExecutor(job).orElse {
-        val executor = createExecutor(job)
-        if(executor != null) {
-          job match{
-            case entranceExecutionJob: EntranceExecutionJob => val task = entranceExecutionJob.getTask
-              task.asInstanceOf[RequestPersistTask].setEngineStartTime(new Date())
-            case _ =>
-          }
-          if(!job.isCompleted){
-            val lock = getOrCreateEngineSelector().lockEngine(executor)
-            setLock(lock, job)
-            lock.map(_ => executor)
-          }else Some(executor)
-        } else None
-      }
+      val executor = createExecutor(job)
+      if (executor != null) {
+        job match {
+          case entranceExecutionJob: EntranceExecutionJob => val task = entranceExecutionJob.getTask
+            task.asInstanceOf[RequestPersistTask].setEngineStartTime(new Date())
+          case _ =>
+        }
+        Some(executor)
+      } else None
+
   }
 
   override def askExecutor(schedulerEvent: SchedulerEvent, wait: Duration): Option[Executor] = schedulerEvent match {
@@ -131,7 +98,7 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory) extends Execu
       val startTime = System.currentTimeMillis()
       var warnException: WarnException = null
       var executor: Option[Executor] = None
-      while(System.currentTimeMillis - startTime < wait.toMillis && executor.isEmpty)
+      while (System.currentTimeMillis - startTime < wait.toMillis && executor.isEmpty)
         Utils.tryCatch(askExecutor(job)) {
           case warn: WarnException =>
             this.warn("request engine failed!", warn)
@@ -141,24 +108,54 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory) extends Execu
         } match {
           case Some(e) => executor = Option(e)
           case _ =>
-            if(System.currentTimeMillis - startTime < wait.toMillis) {
+            if (System.currentTimeMillis - startTime < wait.toMillis) {
               val interval = math.min(3000, wait.toMillis - System.currentTimeMillis + startTime)
-              getOrCreateEngineManager().waitForIdle(interval)
+              //getOrCreateEngineManager().waitForIdle(interval)
             }
         }
-      if(warnException != null && executor.isEmpty) throw warnException
+      if (warnException != null && executor.isEmpty) throw warnException
       executor
   }
 
-  override def getById(id: Long): Option[Executor] = Option(getOrCreateEngineManager().get(id))
+  override def getById(id: Long): Option[Executor] = {
+    Option(idToEngines.get(id))
+  }
 
-  override def getByGroup(groupName: String): Array[Executor] =
-    getOrCreateEngineManager().listEngines(_.getGroup.getGroupName == groupName).map(_.asInstanceOf)
+  override def getByGroup(groupName: String): Array[Executor] = {
+    //TODO by peaceWong
+    null
+  }
 
-  override protected def delete(executor: Executor): Unit = {
-    getOrCreateEngineManager().delete(executor.getId)
-    getExecutorListeners.foreach(_.onExecutorCompleted(executor, "deleted by ExecutorManager."))
+  override protected def createExecutor(schedulerEvent: SchedulerEvent): EntranceExecutor = schedulerEvent match {
+    case job: EntranceJob =>
+      job.getTask match {
+        case requestPersistTask: RequestPersistTask =>
+          // CreateMarkReq
+          val markReq = createMarkReq(requestPersistTask)
+          // getMark
+          val mark = engineConnManager.applyMark(markReq)
+          // getEngineConn Executor
+          job.getLogListener.foreach(_.onLogUpdate(job, "Background is starting a new engine for you, it may take several seconds, please wait"))
+          val engineConnExecutor = engineConnManager.getAvailableEngineConnExecutor(mark)
+          //TODO 修改Executor创建为builder模式
+          val entranceEntranceExecutor = new DefaultEntranceExecutor(idGenerator.incrementAndGet(), mark)
+          idToEngines.put(entranceEntranceExecutor.getId, entranceEntranceExecutor)
+          instanceToEngines.put(engineConnExecutor.getServiceInstance.getInstance, entranceEntranceExecutor)
+          entranceEntranceExecutor.setEngineConnExecutor(engineConnExecutor)
+          entranceEntranceExecutor.setInterceptors(getOrCreateInterceptors())
+          job.getLogListener.foreach(_.onLogUpdate(job, s" Congratulations! Your new engine has started successfully，Engine are ${engineConnExecutor.getServiceInstance}"))
+          entranceEntranceExecutor
+        case _ =>
+          throw new EntranceErrorException(20001, "Task is not requestPersistTask, cannot to create Executor")
+      }
+    case _ =>
+      throw new EntranceErrorException(20001, "Task is not EntranceJob, cannot to create Executor")
   }
 
   override def shutdown(): Unit = {}
+
+  def getEntranceExecutorByInstance(instance: String): Option[EntranceExecutor] = {
+    Option(instanceToEngines.get(instance))
+  }
+
 }

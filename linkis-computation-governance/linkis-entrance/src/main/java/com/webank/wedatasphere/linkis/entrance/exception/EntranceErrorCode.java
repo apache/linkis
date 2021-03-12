@@ -27,7 +27,10 @@ public enum EntranceErrorCode {
      *
      */
     CACHE_NOT_READY(200, "shared cache not ready"),
-    ENTRANCE_CAST_FAIL(20002, "class cast failed")
+    ENTRANCE_CAST_FAIL(20002, "class cast failed"),
+    PARAM_CANNOT_EMPTY(20008, "params cannot be empty "),
+    LABEL_PARAMS_INVALID(20009, "Label params invalid. ")
+
     ;
     private int errCode;
     private String desc;

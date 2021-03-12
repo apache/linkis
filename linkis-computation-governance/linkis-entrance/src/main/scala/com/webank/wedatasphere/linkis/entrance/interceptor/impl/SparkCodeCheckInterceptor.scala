@@ -18,25 +18,24 @@ package com.webank.wedatasphere.linkis.entrance.interceptor.impl
 
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
 import com.webank.wedatasphere.linkis.entrance.interceptor.exception.CodeCheckException
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 
 /**
-  * created by enjoyyin on 2018/10/22
   * Description:
   * Yòng yú jiǎnchá spark dàimǎ
   * 11/5000
   * Used to check the spark code(用于检查spark代码)
   */
-class SparkCodeCheckInterceptor extends EntranceInterceptor{
+class SparkCodeCheckInterceptor extends EntranceInterceptor {
 
   override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = {
     task match {
       case requestPersistTask: RequestPersistTask =>
         requestPersistTask.getRunType.toLowerCase() match {
-          case "scala" => val stringBuilder:StringBuilder = new StringBuilder()
+          case "scala" => val stringBuilder: StringBuilder = new StringBuilder()
             val isAuth = SparkExplain.authPass(requestPersistTask.getExecutionCode, stringBuilder)
-            if (!isAuth){
+            if (!isAuth) {
               throw CodeCheckException(20050, "spark code check failed")
             }
           case _ =>

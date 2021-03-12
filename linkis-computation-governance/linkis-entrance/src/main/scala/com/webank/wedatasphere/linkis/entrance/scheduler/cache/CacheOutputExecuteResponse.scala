@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.execute
+package com.webank.wedatasphere.linkis.entrance.scheduler.cache
 
-import com.webank.wedatasphere.linkis.protocol.engine.{RequestEngine, ResponseEngineStatus}
+import com.webank.wedatasphere.linkis.scheduler.executer.OutputExecuteResponse
 
-/**
-  * Created by enjoyyin on 2018/9/25.
-  */
-trait EngineBuilder {
-
-  def buildEngine(instance: String): EntranceEngine
-
-  def buildEngine(instance: String, requestEngine: RequestEngine): EntranceEngine
-
-  def buildEngine(responseEngineStatus: ResponseEngineStatus): EntranceEngine
-
+case class CacheOutputExecuteResponse(alias: String, output: String) extends OutputExecuteResponse{
+  override def getOutput: String = output
 }

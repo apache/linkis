@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,8 +24,8 @@ import com.webank.wedatasphere.linkis.common.io.FsPath;
 import com.webank.wedatasphere.linkis.entrance.EntranceContext;
 import com.webank.wedatasphere.linkis.entrance.cs.CSEntranceHelper;
 import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob;
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask;
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo;
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask;
 import com.webank.wedatasphere.linkis.protocol.task.Task;
 import com.webank.wedatasphere.linkis.scheduler.executer.OutputExecuteResponse;
 import com.webank.wedatasphere.linkis.scheduler.queue.Job;
@@ -84,7 +81,7 @@ public class QueryPersistenceManager extends PersistenceManager{
             path = createResultSetEngine().persistResultSet(job, response);
         } catch (Throwable e) {
             job.onFailure("persist resultSet failed!", e);
-            if(isEntranceJob) ((EntranceJob)job).incrementResultSetPersisted();
+            if (isEntranceJob) ((EntranceJob) job).incrementResultSetPersisted();
             return;
         }
         if(StringUtils.isNotBlank(path)) {
@@ -99,7 +96,7 @@ public class QueryPersistenceManager extends PersistenceManager{
                     logger.error("job {} onLogUpdate error, reason:", job.getId(), e1);
                 } //ignore it
                 if(isEntranceJob) {
-                    ((EntranceJob)job).incrementResultSetPersisted();
+                    ((EntranceJob) job).incrementResultSetPersisted();
                 }
                 return;
             }
@@ -108,7 +105,7 @@ public class QueryPersistenceManager extends PersistenceManager{
                 if(StringUtils.isEmpty(requestPersistTask.getResultLocation())) synchronized (task) {
                     if(StringUtils.isNotEmpty(requestPersistTask.getResultLocation())) {
                         if(isEntranceJob) {
-                            ((EntranceJob)job).incrementResultSetPersisted();
+                            ((EntranceJob) job).incrementResultSetPersisted();
                         }
                         return;
                     }
@@ -122,13 +119,13 @@ public class QueryPersistenceManager extends PersistenceManager{
             }
         }
         if(isEntranceJob) {
-            ((EntranceJob)job).incrementResultSetPersisted();
+            ((EntranceJob) job).incrementResultSetPersisted();
         }
     }
 
     @Override
     public void onResultSizeCreated(Job job, int resultSize) {
-        if(job instanceof EntranceJob) {
+        if (job instanceof EntranceJob) {
             ((EntranceJob) job).setResultSize(resultSize);
         }
     }
@@ -136,9 +133,6 @@ public class QueryPersistenceManager extends PersistenceManager{
     @Override
     public void onProgressUpdate(Job job, float progress, JobProgressInfo[] progressInfo) {
         job.setProgress(progress);
-        if (job instanceof EntranceJob){
-            ((EntranceJob) job).setProgressInfo(progressInfo);
-        }
         updateJobStatus(job);
     }
 
@@ -162,7 +156,7 @@ public class QueryPersistenceManager extends PersistenceManager{
 
     @Override
     public void onJobCompleted(Job job) {
-        //update by peaceWong(2020/05/10) to set jobID to CS
+        //update by peaceWong to set jobID to CS
         try {
             if (job.isSucceed()) {
                 CSEntranceHelper.registerCSRSData(job);
@@ -170,7 +164,6 @@ public class QueryPersistenceManager extends PersistenceManager{
         } catch (Throwable e) {
             logger.error("Failed to register cs rs data ", e);
         }
-        //end update
         updateJobStatus(job);
     }
 

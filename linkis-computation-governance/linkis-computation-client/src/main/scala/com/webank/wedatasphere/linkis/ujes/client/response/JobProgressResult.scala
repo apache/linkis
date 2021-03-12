@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
-
 package com.webank.wedatasphere.linkis.ujes.client.response
 
 import java.util.{List, Map}
@@ -29,9 +25,6 @@ import org.json4s.jackson.Serialization._
 
 import scala.collection.JavaConversions._
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 @DWSHttpMessageResult("/api/rest_j/v\\d+/entrance/(\\S+)/progress")
 class JobProgressResult extends UJESJobResult {
 

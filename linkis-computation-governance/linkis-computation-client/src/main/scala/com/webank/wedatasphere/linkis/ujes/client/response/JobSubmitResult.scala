@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.client.request
 
-trait UserAction extends com.webank.wedatasphere.linkis.httpclient.request.UserAction {
-  private var user: String = _
+package com.webank.wedatasphere.linkis.ujes.client.response
 
-  override def setUser(user: String): Unit = this.user = user
+import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
-  override def getUser: String = user
+import scala.beans.BeanProperty
+
+@DWSHttpMessageResult("/api/rest_j/v\\d+/entrance/submit")
+class JobSubmitResult extends UJESJobResult {
+
+  @BeanProperty var taskID: String = _
+
 }

@@ -25,9 +25,6 @@ import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
 
 import scala.concurrent.duration.Duration
 
-/**
-  * Created by johnnwang on 2018/10/16.
-  */
 class QueryReceiver extends Receiver {
 
   private var queryService: QueryService = _

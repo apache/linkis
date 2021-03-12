@@ -23,9 +23,6 @@ import com.webank.wedatasphere.linkis.jobhistory.entity.QueryTaskVO;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by johnnwang on 2019/2/25.
- */
 public interface QueryService {
 
     ResponsePersist add(RequestInsertTask requestInsertTask);

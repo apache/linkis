@@ -37,9 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-/**
-  * Created by johnnwang on 2019/2/25.
-  */
 @Service
 class QueryServiceImpl extends QueryService with Logging {
   @Autowired

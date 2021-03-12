@@ -31,9 +31,6 @@ import com.webank.wedatasphere.linkis.storage.utils.{FileSystemUtils, StorageUti
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.time.DateFormatUtils
 
-/**
-  * Created by johnnwang on 2019/2/25.
-  */
 object QueryUtils extends Logging {
 
   private val CODE_STORE_PREFIX = CommonVars("bdp.dataworkcloud.query.store.prefix", "hdfs:///tmp/bdp-ide/")

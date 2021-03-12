@@ -24,9 +24,6 @@ import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-/**
-  * Created by johnnwang on 2019/7/13.
-  */
 @Component
 class QueryReceiverChooser extends ReceiverChooser {
 

@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright 2019 WeBank
-  ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
-  ~
   ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +20,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.11.0</version>
+        <version>dev-1.0.0</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
 
@@ -32,7 +29,8 @@
     <dependencies>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-gateway-springcloudgateway</artifactId>
+            <artifactId>linkis-spring-cloud-gateway</artifactId>
+            <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.eclipse.jetty</groupId>
@@ -42,6 +40,10 @@
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-server</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                    <groupId>org.springframework.boot</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -50,10 +52,39 @@
             <artifactId>jsp-api</artifactId>
             <version>2.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-actuator-autoconfigure</artifactId>
+            <version>${spring.cloud.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cs-common</artifactId>
+            <version>${linkis.version}</version>
         </dependency>
+
+        <!-- instance label -->
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-instance-label</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -85,25 +116,25 @@
                         </goals>
                         <configuration>
                             <descriptors>
-                                <descriptor>src/main/assembly/distribution.xml</descriptor>
+                                <descriptor>/src/main/assembly/distribution.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
                 </executions>
                 <configuration>
                     <skipAssembly>false</skipAssembly>
-                    <finalName>linkis-gateway</finalName>
+                    <finalName>out</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <attach>false</attach>
                     <descriptors>
-                        <descriptor>src/main/assembly/distribution.xml</descriptor>
+                        <descriptor>/src/main/assembly/distribution.xml</descriptor>
                     </descriptors>
                 </configuration>
             </plugin>
         </plugins>
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>${basedir}/src/main/resources</directory>
             </resource>
         </resources>
         <finalName>${project.artifactId}-${project.version}</finalName>

@@ -20,9 +20,6 @@ import com.webank.wedatasphere.linkis.httpclient.authentication.AuthenticationAc
 import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
 import com.webank.wedatasphere.linkis.httpclient.request.POSTAction
 
-/**
-  * created by cooperyang on 2019/5/22.
-  */
 abstract class AbstractAuthenticationAction(override val serverUrl: String) extends POSTAction with AuthenticationAction {
   private var user: String = _
   private var password: String = _

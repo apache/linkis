@@ -16,6 +16,9 @@
 
 package com.webank.wedatasphere.linkis.gateway.security
 
+import java.nio.charset.StandardCharsets
+import java.util.Random
+
 import com.google.gson.Gson
 import com.webank.wedatasphere.linkis.common.utils.{Logging, RSAUtils, Utils}
 import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
@@ -26,17 +29,15 @@ import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import com.webank.wedatasphere.linkis.server.security.SSOUtils
 import com.webank.wedatasphere.linkis.server.{Message, _}
+import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang.StringUtils
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 trait UserRestful {
 
   def doUserRequest(gatewayContext: GatewayContext): Unit
 
 }
-abstract class AbstractUserRestful extends UserRestful with Logging {
+abstract class AbstractUserRestful extends UserRestful with Logging{
 
   private var securityHooks: Array[SecurityHook] = Array.empty
 
@@ -61,13 +62,26 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
       case "userInfo" => userInfo(gatewayContext)
       case "publicKey" => publicKey(gatewayContext)
       case "heartbeat" => heartbeat(gatewayContext)
+      case "proxy" => proxy(gatewayContext)
       case _ =>
-        warn(s"Unknown request URI" + path)
         Message.error("unknown request URI " + path)
     }
     gatewayContext.getResponse.write(message)
     gatewayContext.getResponse.setStatus(Message.messageToHttpStatus(message))
     gatewayContext.getResponse.sendResponse()
+  }
+
+  def proxy(gatewayContext: GatewayContext) : Message = {
+    val proxyUser = gatewayContext.getRequest.getQueryParams.get("proxyUser")(0)
+    val validationCode = gatewayContext.getRequest.getQueryParams.get("validationCode")(0)
+    // validate
+    if(ProxyUserUtils.validate(proxyUser, validationCode)){
+      val lowerCaseUserName = proxyUser.toString.toLowerCase
+      GatewaySSOUtils.setLoginUser(gatewayContext, lowerCaseUserName)
+      "代理成功".data("proxyUser", proxyUser)
+    } else {
+      Message.error("Validation failed")
+    }
   }
 
   def login(gatewayContext: GatewayContext): Message = {
@@ -95,43 +109,82 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
   }
 
   def publicKey(gatewayContext: GatewayContext): Message = {
-    val message = Message.ok("Gain success(获取成功)！").data("enable", SSOUtils.sslEnable)
-    if(SSOUtils.sslEnable) message.data("publicKey", RSAUtils.getDefaultPublicKey())
+    val message = Message.ok("Gain success(获取成功)！").data("enableSSL", SSOUtils.sslEnable)
+    if (GatewayConfiguration.LOGIN_ENCRYPT_ENABLE.getValue) {
+      info(s"DEBUG: privateKey : " + RSAUtils.getDefaultPrivateKey())
+      //      info(s"DEBUG: publicKey: " + RSAUtils.getDefaultPublicKey())
+      val timeStamp = System.currentTimeMillis()
+      info(s"DEBUG: time " + timeStamp)
+      message.data("debugTime", timeStamp)
+      message.data("publicKey", RSAUtils.getDefaultPublicKey())
+    }
+    message.data("enableLoginEncrypt", GatewayConfiguration.LOGIN_ENCRYPT_ENABLE.getValue)
     message
   }
 
   def heartbeat(gatewayContext: GatewayContext): Message = Utils.tryCatch {
     GatewaySSOUtils.getLoginUsername(gatewayContext)
-    "Maintain heartbeat success(维系心跳成功)！"
+    val retMessage = Message.ok("Maintain heartbeat success(维系心跳成功)")
+    retMessage.setStatus(0)
+    retMessage
   }(t => Message.noLogin(t.getMessage))
 
   protected def tryRegister(context: GatewayContext): Message
 }
-abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Logging{
+abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Logging {
 
   private val sender: Sender = Sender.getSender(GatewayConfiguration.USERCONTROL_SPRING_APPLICATION_NAME.getValue)
   private val LINE_DELIMITER = "</br>"
+  private val USERNAME_STR = "userName"
+  private val PASSWD_STR = "password"
+  private val PASSWD_ENCRYPT_STR = "passwdEncrypt"
 
   override protected def tryLogin(gatewayContext: GatewayContext): Message = {
-    val userNameArray = gatewayContext.getRequest.getQueryParams.get("userName")
-    val passwordArray = gatewayContext.getRequest.getQueryParams.get("password")
-    val (userName, password) = if(userNameArray != null && userNameArray.nonEmpty &&
+    val userNameArray = gatewayContext.getRequest.getQueryParams.get(USERNAME_STR)
+    var passwordArray = gatewayContext.getRequest.getQueryParams.get(PASSWD_STR)
+    val passwordArrayEncrypt = gatewayContext.getRequest.getQueryParams.get(PASSWD_ENCRYPT_STR)
+    if (null == passwordArray || passwordArray.isEmpty || StringUtils.isBlank(passwordArray.head)) {
+      passwordArray = passwordArrayEncrypt
+    }
+    val (userName, passwordEncrypt) = if (userNameArray != null && userNameArray.nonEmpty &&
       passwordArray != null && passwordArray.nonEmpty)
       (userNameArray.head, passwordArray.head)
-    else if(StringUtils.isNotBlank(gatewayContext.getRequest.getRequestBody)){
+    else if (StringUtils.isNotBlank(gatewayContext.getRequest.getRequestBody)) {
       val json = BDPJettyServerHelper.gson.fromJson(gatewayContext.getRequest.getRequestBody, classOf[java.util.Map[String, Object]])
-      (json.get("userName"), json.get("password"))
+      val tmpUsername = json.getOrDefault(USERNAME_STR, null)
+      var tmpPasswd = json.getOrDefault(PASSWD_STR, null)
+      if (null == tmpPasswd) {
+        tmpPasswd = json.getOrDefault(PASSWD_ENCRYPT_STR, null)
+      }
+      (tmpUsername, tmpPasswd)
     } else (null, null)
     if(userName == null || StringUtils.isBlank(userName.toString)) {
       Message.error("Username can not be empty(用户名不能为空)！")
-    } else if(password == null || StringUtils.isBlank(password.toString)) {
+    } else if(passwordEncrypt == null || StringUtils.isBlank(passwordEncrypt.toString)) {
       Message.error("Password can not be blank(密码不能为空)！")
     } else {
       //warn: For easy to useing linkis,Admin skip login
-      if(GatewayConfiguration.ADMIN_USER.getValue.equals(userName.toString) && userName.toString.equals(password.toString)){
-          GatewaySSOUtils.setLoginUser(gatewayContext, userName.toString)
-          "login successful(登录成功)！".data("userName", userName)
-            .data("isAdmin", true)
+
+      var password : String = null
+      password = passwordEncrypt.asInstanceOf[String]
+
+      if (GatewayConfiguration.LOGIN_ENCRYPT_ENABLE.getValue) {
+        info(s"passwordEncrypt or : " + passwordEncrypt + ", username : " + userName)
+        if (null != passwordEncrypt) {
+          Utils.tryAndError({
+            info("\npasswdEncrypt : " + passwordEncrypt + "\npublicKeyStr : " + RSAUtils.getDefaultPublicKey()
+              + "\nprivateKeyStr : " + RSAUtils.getDefaultPrivateKey())
+            val passwdOriObj = RSAUtils.decrypt(Base64.decodeBase64(passwordEncrypt.asInstanceOf[String].getBytes(StandardCharsets.UTF_8)))
+            password = new String(passwdOriObj, StandardCharsets.UTF_8)
+          })
+        }
+      }
+      //      info("\npasswdOri :" + password)
+
+      if(GatewayConfiguration.ADMIN_USER.getValue.equals(userName.toString) && userName.toString.equals(password.toString)) {
+        GatewaySSOUtils.setLoginUser(gatewayContext, userName.toString)
+        "login successful(登录成功)！".data("userName", userName)
+          .data("isAdmin", true)
       } else {
         // firstly for test user
         var message = Message.ok()
@@ -141,6 +194,7 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
           // standard login
           val lowerCaseUserName = userName.toString.toLowerCase
           message = login(lowerCaseUserName, password.toString)
+          //fakeLogin(lowerCaseUserName, password.toString)
           if(message.getStatus == 0) GatewaySSOUtils.setLoginUser(gatewayContext, lowerCaseUserName)
         }
         if (message.getData.containsKey("errmsg")) {
@@ -153,36 +207,56 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
 
   protected def login(userName: String, password: String): Message
 
-  protected def register(gatewayContext: GatewayContext) : Message
+  private def getRandomProxyUser(): String = {
+    var name = null.asInstanceOf[String]
+    val userList = GatewayConfiguration.PROXY_USER_LIST
+    val size = userList.size
+    if (size <= 0) {
+      warn(s"Invalid Gateway proxy user list")
+    } else {
+      val rand = new Random()
+      name = userList(rand.nextInt(size))
+    }
+    name
+  }
 
   def userControlLogin(userName: String, password: String, gatewayContext: GatewayContext): Message = {
     var message = Message.ok()
     // usercontrol switch on(开启了用户控制开关)
-          val requestLogin = new RequestLogin
+    val requestLogin = new RequestLogin
     requestLogin.setUserName(userName.toString).setPassword(password.toString)
-          Utils.tryCatch(sender.ask(requestLogin) match {
-            case r: ResponseLogin =>
-              message.setStatus(r.getStatus)
-              if (StringUtils.isNotBlank(r.getErrMsg)) {
-                message.data("errmsg", r.getErrMsg)
-              }
-              if (0 == r.getStatus) {
-                GatewaySSOUtils.setLoginUser(gatewayContext, userName.toString)
-                message.setStatus(0)
-                message.setMessage("Login successful(登录成功)")
-              } else {
-                message = Message.error("Invalid username or password, please check and try again later(用户名或密码无效，请稍后再试)")
-              }
-          }) {
-      t => {
-              warn(s"Login rpc request error, err message ", t)
-              message.setStatus(1)
-              message.setMessage("System error, please try again later(系统异常，请稍后再试)")
-              message.data("errmsg", t.getMessage)
-          }
+    Utils.tryCatch(sender.ask(requestLogin) match {
+      case r: ResponseLogin =>
+        message.setStatus(r.getStatus)
+        if (StringUtils.isNotBlank(r.getErrMsg)) {
+          message.data("errmsg", r.getErrMsg)
         }
-        message
+        if (0 == r.getStatus) {
+          message.setStatus(0)
+          message.setMessage("Login successful(登录成功)")
+          val proxyUser = getRandomProxyUser()
+          if (StringUtils.isNotBlank(proxyUser)) {
+            GatewaySSOUtils.setLoginUser(gatewayContext, proxyUser)
+            message.setMessage("Login successful(登录成功)")
+              .data("userName", proxyUser)
+              .data("isAdmin", false)
+          } else {
+            message = Message.error("Invalid proxy user, please contact with administrator(代理用户无效，请联系管理员)")
+          }
+
+        } else {
+          message = Message.error("Invalid username or password, please check and try again later(用户名或密码无效，请稍后再试)")
+        }
+    }) {
+      t => {
+        warn(s"Login rpc request error, err message ", t)
+        message.setStatus(1)
+        message.setMessage("System error, please try again later(系统异常，请稍后再试)")
+        message.data("errmsg", t.getMessage)
       }
+    }
+    message
+  }
 
   override def tryRegister(gatewayContext: GatewayContext): Message = {
     var message = Message.ok()
@@ -190,8 +264,8 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
       message = userControlRegister(gatewayContext)
     } else {
       // TODO use normal register only when it's implemented(仅当实现了通用注册，才可以调注册接口)
-      message = register(gatewayContext)
-  }
+      message = Message.error("请自行实现注册方法！")
+    }
     message
   }
 
@@ -215,10 +289,10 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
           message.setData(map)
           message.setMethod(r.getMethod)
           info(s"Register rpc success. requestRegister=" + gson.toJson(requestRegister) + ", response=" + gson.toJson(r))
-        }
+      }
     }) {
       e =>
-       warn(s"Register rpc request error. err message ", e)
+        warn(s"Register rpc request error. err message ", e)
         message.setStatus(1)
         message.setMessage("System, please try again later(系统异常，请稍后再试)")
     }
@@ -228,4 +302,6 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
     }
     message
   }
+
+
 }

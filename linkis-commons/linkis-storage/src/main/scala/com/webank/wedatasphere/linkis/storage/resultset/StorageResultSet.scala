@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.storage.domain.Dolphin
 import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration
 
-/**
-  * Created by johnnwang on 10/20/18.
-  */
+
 abstract class StorageResultSet[K <: MetaData, V <: Record] extends ResultSet[K, V] with Logging{
 
   val resultHeaderBytes = Dolphin.MAGIC_BYTES ++ Dolphin.getIntBytes(resultSetType().toInt)
@@ -33,10 +31,10 @@ abstract class StorageResultSet[K <: MetaData, V <: Record] extends ResultSet[K,
 
 
   override def getResultSetPath(parentDir: FsPath, fileName: String): FsPath = {
-    val path = if(parentDir.getSchemaPath.endsWith("/"))
-      parentDir.getSchemaPath + fileName + Dolphin.DOLPHIN_FILE_SUFFIX
+    val path = if(parentDir.getPath.endsWith("/"))
+      parentDir.toPath + fileName + Dolphin.DOLPHIN_FILE_SUFFIX
     else
-      parentDir.getSchemaPath + "/" + fileName  + Dolphin.DOLPHIN_FILE_SUFFIX
+      parentDir.toPath + "/" + fileName  + Dolphin.DOLPHIN_FILE_SUFFIX
     new FsPath(path)
   }
 

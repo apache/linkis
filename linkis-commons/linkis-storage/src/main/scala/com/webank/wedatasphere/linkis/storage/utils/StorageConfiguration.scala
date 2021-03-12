@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,9 +15,7 @@ package com.webank.wedatasphere.linkis.storage.utils
 
 import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars}
 
-/**
-  * Created by johnnwang on 10/15/18.
-  */
+
 object StorageConfiguration {
 
   val PROXY_USER = CommonVars("wds.linkis.storage.proxy.user", "${UM}")
@@ -48,8 +43,8 @@ object StorageConfiguration {
 
   val IO_USER = CommonVars("wds.linkis.storage.io.user", "root")
   val IO_FS_EXPIRE_TIME = CommonVars("wds.linkis.storage.io.fs.num", 1000*60*10)
-  val IO_PROXY_READ_FETCH_SIZE  = CommonVars("wds.linkis.storage.io.read.fetch.size", new ByteType("100k"))
-  val IO_PROXY_WRITE_CACHE_SIZE  = CommonVars("wds.linkis.storage.io.write.cache.size", new ByteType("64k"))
+  val IO_PROXY_READ_FETCH_SIZE = CommonVars("wds.linkis.storage.io.read.fetch.size", new ByteType("100k"))
+  val IO_PROXY_WRITE_CACHE_SIZE = CommonVars("wds.linkis.storage.io.write.cache.size", new ByteType("64k"))
 
   val IO_DEFAULT_CREATOR = CommonVars("wds.linkis.storage.io.default.creator", "ujes")
   val IO_FS_RE_INIT = CommonVars("wds.linkis.storage.io.fs.re.init", "re-init")
@@ -59,4 +54,9 @@ object StorageConfiguration {
   val STORAGE_HDFS_GROUP = CommonVars("wds.linkis.storage.fileSystem.hdfs.group", "hadoop")
 
   val DOUBLE_FRACTION_LEN = CommonVars[Int]("wds.linkis.double.fraction.length", 30)
+
+  val HDFS_PATH_PREFIX_CHECK_ON = CommonVars[Boolean]("wds.linkis.storage.hdfs.prefix_check.enable", true)
+
+  val HDFS_PATH_PREFIX_REMOVE = CommonVars[Boolean]("wds.linkis.storage.hdfs.prefxi.remove", true)
+
 }

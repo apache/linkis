@@ -17,7 +17,6 @@
 package com.webank.wedatasphere.linkis.storage.script.parser
 
 /**
-  * Created by johnnwang on 2018/10/23.
   * Parser for .sql and .hql scripts(.sql 和.hql脚本的解析器)
   */
 class QLScriptParser private extends CommonScriptParser {
@@ -27,7 +26,6 @@ class QLScriptParser private extends CommonScriptParser {
     suffix match {
       case "sql" => true
       case "hql" => true
-      case "jdbc" => true
       case _ => false
     }
   }

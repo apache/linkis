@@ -1,11 +1,6 @@
 package com.webank.wedatasphere.linkis.storage.script.compaction
 
-/**
- * @Classname ShellScriptCompaction
- * @Description TODO
- * @Date 2020/12/17 9:11
- * @Created by limeng
- */
+
 class ShellScriptCompaction private extends CommonScriptCompaction{
   override def prefixConf: String = "#conf@set"
 

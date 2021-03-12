@@ -26,9 +26,7 @@ import org.apache.commons.io.IOUtils
 import scala.collection.mutable.ArrayBuffer
 
 
-/**
-  * Created by johnnwang on 2018/10/23.
-  */
+
 class StorageScriptFsReader(val path: FsPath, val charset: String, val inputStream: InputStream) extends ScriptFsReader {
 
   private var inputStreamReader: InputStreamReader = _

@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,11 +18,13 @@ import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils;
 import com.webank.wedatasphere.linkis.storage.domain.FsPathListWithError;
 import com.webank.wedatasphere.linkis.storage.fs.FileSystem;
 import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration;
+import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.permission.FsAction;
 import org.apache.hadoop.fs.permission.FsPermission;
@@ -40,13 +39,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by johnnwang on 10/15/18.
- */
+
 public class HDFSFileSystem extends FileSystem {
 
+    public static final String HDFS_PREFIX_WITHOUT_AUTH = "hdfs:///";
+    public static final String HDFS_PREFIX_WITH_AUTH = "hdfs://";
     private org.apache.hadoop.fs.FileSystem fs = null;
     private Configuration conf = null;
+
+    private String label = null;
 
     private static final Logger logger = LoggerFactory.getLogger(HDFSFileSystem.class);
 
@@ -82,27 +83,27 @@ public class HDFSFileSystem extends FileSystem {
 
     @Override
     public boolean setOwner(FsPath dest, String user, String group) throws IOException {
-        fs.setOwner(new Path(dest.getPath()), user, group);
+        fs.setOwner(new Path(checkHDFSPath(dest.getPath())), user, group);
         return true;
     }
 
     @Override
     public boolean setOwner(FsPath dest, String user) throws IOException {
-        Path path = new Path(dest.getPath());
+        Path path = new Path(checkHDFSPath(dest.getPath()));
         fs.setOwner(path, user, fs.getFileStatus(path).getGroup());
         return true;
     }
 
     @Override
     public boolean setGroup(FsPath dest, String group) throws IOException {
-        Path path = new Path(dest.getPath());
+        Path path = new Path(checkHDFSPath(dest.getPath()));
         fs.setOwner(path, fs.getFileStatus(path).getOwner(), group);
         return true;
     }
 
     @Override
     public boolean mkdir(FsPath dest) throws IOException {
-        String path = dest.getPath();
+        String path = checkHDFSPath(dest.getPath());
         if (!canExecute(getParentPath(path))) {
             throw new IOException("You have not permission to access path " + path);
         }
@@ -111,7 +112,7 @@ public class HDFSFileSystem extends FileSystem {
 
     @Override
     public boolean mkdirs(FsPath dest) throws IOException {
-        String path = dest.getPath();
+        String path = checkHDFSPath(dest.getPath());
         FsPath parentPath = getParentPath(path);
         while (!exists(parentPath)) {
             parentPath = getParentPath(parentPath.getPath());
@@ -125,7 +126,7 @@ public class HDFSFileSystem extends FileSystem {
 
     @Override
     public boolean setPermission(FsPath dest, String permission) throws IOException {
-        String path = dest.getPath();
+        String path = checkHDFSPath(dest.getPath());
         if (!isOwner(path)) {
             throw new IOException(path + " only can be set by owner.");
         }
@@ -150,10 +151,10 @@ public class HDFSFileSystem extends FileSystem {
 
     @Override
     public FsPathListWithError listPathWithError(FsPath path) throws IOException {
-        FileStatus[] stat = fs.listStatus(new Path(path.getPath()));
+        FileStatus[] stat = fs.listStatus(new Path(checkHDFSPath(path.getPath())));
         List<FsPath> fsPaths = new ArrayList<FsPath>();
         for (FileStatus f : stat) {
-            fsPaths.add(fillStorageFile(new FsPath(f.getPath().toUri().getPath()), f));
+            fsPaths.add(fillStorageFile(new FsPath(StorageUtils.HDFS_SCHEMA() + f.getPath().toUri().getPath()), f));
         }
         if (fsPaths.isEmpty()) {
             return null;
@@ -164,7 +165,7 @@ public class HDFSFileSystem extends FileSystem {
     /**
      * FS interface method start
      */
-
+    @Override
     public void init(Map<String, String> properties) throws IOException {
         if (MapUtils.isNotEmpty(properties) && properties.containsKey(StorageConfiguration.PROXY_USER().key())) {
             user = StorageConfiguration.PROXY_USER().getValue(properties);
@@ -174,7 +175,7 @@ public class HDFSFileSystem extends FileSystem {
             throw new IOException("User cannot be empty(用户不能为空)");
         }
 
-        conf = HDFSUtils.getConfiguration(user);
+        conf = HDFSUtils.getConfigurationByLabel(user, label);
 
         if (MapUtils.isNotEmpty(properties)) {
             for (String key : properties.keySet()) {
@@ -192,20 +193,23 @@ public class HDFSFileSystem extends FileSystem {
         }
     }
 
+
+    @Override
     public String fsName() {
         return "hdfs";
     }
 
-
+    @Override
     public String rootUserName() {
         return StorageConfiguration.HDFS_ROOT_USER().getValue();
     }
 
-
+    @Override
     public FsPath get(String dest) throws IOException {
         return fillStorageFile(new FsPath(dest), fs.getFileStatus(new Path(dest)));
     }
 
+    @Override
     public InputStream read(FsPath dest) throws IOException {
         if (!canRead(dest)) {
             throw new IOException("You have not permission to access path " + dest.getPath());
@@ -213,8 +217,9 @@ public class HDFSFileSystem extends FileSystem {
         return fs.open(new Path(dest.getPath()));
     }
 
+    @Override
     public OutputStream write(FsPath dest, boolean overwrite) throws IOException {
-        String path = dest.getPath();
+        String path = checkHDFSPath(dest.getPath());
         if (!exists(dest)) {
             if (!canWrite(dest.getParent())) {
                 throw new IOException("You have not permission to access path " + dest.getParent());
@@ -231,15 +236,25 @@ public class HDFSFileSystem extends FileSystem {
         }
     }
 
+    @Override
     public boolean create(String dest) throws IOException {
         if (!canExecute(getParentPath(dest))) {
             throw new IOException("You have not permission to access path " + dest);
         }
-        return fs.createNewFile(new Path(dest));
+        return fs.createNewFile(new Path(checkHDFSPath(dest)));
     }
 
+    @Override
+    public boolean copy(String origin, String dest) throws IOException {
+        if (!canExecute(getParentPath(dest))) {
+            throw new IOException("You have not permission to access path " + dest);
+        }
+        return FileUtil.copy(fs, new Path(checkHDFSPath(origin)), fs, new Path(checkHDFSPath(dest)), false, true, fs.getConf());
+    }
+
+    @Override
     public List<FsPath> list(FsPath path) throws IOException {
-        FileStatus[] stat = fs.listStatus(new Path(path.getPath()));
+        FileStatus[] stat = fs.listStatus(new Path(checkHDFSPath(path.getPath())));
         List<FsPath> fsPaths = new ArrayList<FsPath>();
         for (FileStatus f : stat) {
             fsPaths.add(fillStorageFile(new FsPath(f.getPath().toUri().getPath()), f));
@@ -247,33 +262,39 @@ public class HDFSFileSystem extends FileSystem {
         return fsPaths;
     }
 
+    @Override
     public boolean canRead(FsPath dest) throws IOException {
         return canAccess(dest, FsAction.READ);
     }
 
+    @Override
     public boolean canWrite(FsPath dest) throws IOException {
         return canAccess(dest, FsAction.WRITE);
     }
 
+    @Override
     public boolean exists(FsPath dest) throws IOException {
-        return fs.exists(new Path(dest.getPath()));
+        return fs.exists(new Path(checkHDFSPath(dest.getPath())));
     }
 
+    @Override
     public boolean delete(FsPath dest) throws IOException {
-        String path = dest.getPath();
+        String path = checkHDFSPath(dest.getPath());
         if (!isOwner(path)) {
             throw new IOException("You have not permission to delete path " + path);
         }
         return fs.delete(new Path(path), true);
     }
 
+    @Override
     public boolean renameTo(FsPath oldDest, FsPath newDest) throws IOException {
-        if (!isOwner(oldDest.getPath())) {
+        if (!isOwner(checkHDFSPath(oldDest.getPath()))) {
             throw new IOException("You have not permission to rename path " + oldDest.getPath());
         }
-        return fs.rename(new Path(oldDest.getPath()), new Path(newDest.getPath()));
+        return fs.rename(new Path(checkHDFSPath(oldDest.getPath())), new Path(checkHDFSPath(newDest.getPath())));
     }
 
+    @Override
     public void close() throws IOException {
         fs.close();
     }
@@ -303,7 +324,7 @@ public class HDFSFileSystem extends FileSystem {
     }
 
     private boolean canAccess(FsPath fsPath, FsAction access) throws IOException {
-        String path = fsPath.getPath();
+        String path = checkHDFSPath(fsPath.getPath());
         if (!exists(fsPath)) {
             throw new IOException("directory or file not exists: " + path);
         }
@@ -337,4 +358,49 @@ public class HDFSFileSystem extends FileSystem {
         return false;
     }
 
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    private String checkHDFSPath(String path) {
+        try {
+            boolean checkHdfsPath = (boolean) StorageConfiguration.HDFS_PATH_PREFIX_CHECK_ON().getValue();
+            if (checkHdfsPath) {
+                boolean rmHdfsPrefix = (boolean) StorageConfiguration.HDFS_PATH_PREFIX_REMOVE().getValue();
+                if (rmHdfsPrefix) {
+                    if (StringUtils.isBlank(path)) {
+                        return path;
+                    }
+                    if (path.startsWith(HDFS_PREFIX_WITHOUT_AUTH)) {
+                        // leave the first "/" in path
+                        int remainIndex = HDFS_PREFIX_WITHOUT_AUTH.length() - 1;
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("checkHDFSPath  ori path : {}, after path : {}", path, path.substring(remainIndex));
+                        }
+                        return path.substring(remainIndex);
+                    } else if (path.startsWith(HDFS_PREFIX_WITH_AUTH)) {
+                        int remainIndex = HDFS_PREFIX_WITH_AUTH.length();
+                        String[] t1 = path.substring(remainIndex).split("/", 2);
+                        if (t1.length != 2) {
+                            logger.error("checkHDFSPath Invalid path: " + path);
+                            return path;
+                        }
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("checkHDFSPath  ori path : {}, after path : {}", path, "/" + t1[1]);
+                        }
+                        return "/" + t1[1];
+                    } else {
+                        return path;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("checkHDFSPath error. msg : " + e.getMessage() + " ", e);
+        }
+        return path;
+    }
 }

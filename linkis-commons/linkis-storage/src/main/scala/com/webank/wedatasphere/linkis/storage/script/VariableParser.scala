@@ -40,12 +40,19 @@ object VariableParser {
     params.getOrDefault(CONFIGURATION, new util.HashMap[String, Object])
       .asInstanceOf[util.Map[String, Object]]
       .foreach {
-        f => f._2.asInstanceOf[util.Map[String, Object]].filter(_._2 != null).foreach(p => p._2 match {
-          case e: util.Map[String, Object] => e.foreach(s => variables += Variable(f._1, p._1, s._1, s._2.toString))
+        f => f._2.asInstanceOf[util.Map[String, Object]].filter(s => ! isContextIDINFO(s._1)).foreach(p => p._2 match {
+          case e: util.Map[String, Object] => {
+            e.filter(s => ! isContextIDINFO(s._1)).foreach(s => variables += Variable(f._1, p._1, s._1, s._2.toString))
+          }
           case _ => variables += Variable(CONFIGURATION, f._1, p._1, p._2.toString)
         })
       }
     variables.toArray
+  }
+
+  //TODO need delete 20200321 update by peaceWong
+  def isContextIDINFO(key : String): Boolean ={
+    "contextID".equalsIgnoreCase(key) || "nodeName".equalsIgnoreCase(key)
   }
 
   def getMap(variables: Array[Variable]): util.Map[String, Object] = {
@@ -72,7 +79,7 @@ object VariableParser {
     }
     val params = new util.HashMap[String, Object]
     if(vars.size() >0)params += VARIABLE -> vars
-    if(confs.size() >0)params += CONFIGURATION -> confs
+    if(vars.size() >0)params += CONFIGURATION -> confs
     params
   }
 

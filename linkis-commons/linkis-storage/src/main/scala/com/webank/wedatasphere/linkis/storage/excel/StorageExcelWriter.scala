@@ -33,16 +33,16 @@ import scala.collection.mutable.ArrayBuffer
   */
 class StorageExcelWriter(val charset: String, val sheetName: String, val dateFormat: String, val outputStream: OutputStream) extends ExcelFsWriter {
 
-  private var workBook: SXSSFWorkbook = _
-  private var sheet: SXSSFSheet = _
-  private var format: DataFormat = _
-  private var types: Array[DataType] = _
-  private var rowPoint = 0
-  private var columnCounter = 0
-  private val styles = new util.HashMap[String, CellStyle]()
-  private var isFlush = true
-  private val os = new ByteArrayOutputStream()
-  private var is: ByteArrayInputStream = _
+  protected var workBook: SXSSFWorkbook = _
+  protected var sheet: SXSSFSheet = _
+  protected var format: DataFormat = _
+  protected var types: Array[DataType] = _
+  protected var rowPoint = 0
+  protected var columnCounter = 0
+  protected val styles = new util.HashMap[String, CellStyle]()
+  protected var isFlush = true
+  protected val os = new ByteArrayOutputStream()
+  protected var is: ByteArrayInputStream = _
 
   def init = {
     workBook = new SXSSFWorkbook()

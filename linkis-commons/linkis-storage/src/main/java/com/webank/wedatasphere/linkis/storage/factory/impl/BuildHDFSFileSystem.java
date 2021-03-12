@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,15 +18,13 @@ import com.webank.wedatasphere.linkis.common.io.Fs;
 import com.webank.wedatasphere.linkis.storage.factory.BuildFactory;
 import com.webank.wedatasphere.linkis.storage.fs.FileSystem;
 import com.webank.wedatasphere.linkis.storage.fs.impl.HDFSFileSystem;
-import com.webank.wedatasphere.linkis.storage.io.IOMethodInterceptor;
+import com.webank.wedatasphere.linkis.storage.io.IOMethodInterceptorCreator$;
 import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
 import net.sf.cglib.proxy.Enhancer;
 
 
-/**
- * Created by johnnwang on 10/17/18.
- */
 public class BuildHDFSFileSystem implements BuildFactory {
+
 
     /**
      * If it is a node with hdfs configuration file, then go to the proxy mode of hdfs, if not go to io proxy mode
@@ -48,10 +43,18 @@ public class BuildHDFSFileSystem implements BuildFactory {
             //TODO Agent user(代理的用户)
             Enhancer enhancer = new Enhancer();
             enhancer.setSuperclass(HDFSFileSystem.class.getSuperclass());
-            enhancer.setCallback(new IOMethodInterceptor(fsName()));
+            enhancer.setCallback(IOMethodInterceptorCreator$.MODULE$.getIOMethodInterceptor(fsName()));
             fs = (FileSystem) enhancer.create();
         }
         fs.setUser(proxyUser);
+        return fs;
+    }
+
+    @Override
+    public Fs getFs(String user, String proxyUser, String label) {
+        HDFSFileSystem fs = new HDFSFileSystem();
+        fs.setUser(proxyUser);
+        fs.setLabel(label);
         return fs;
     }
 

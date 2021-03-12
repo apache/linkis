@@ -18,12 +18,19 @@ package com.webank.wedatasphere.linkis.storage.resultset.table
 
 import com.webank.wedatasphere.linkis.common.io.Record
 import com.webank.wedatasphere.linkis.storage.resultset.ResultRecord
+import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
 
-/**
-  * Created by johnnwang on 10/16/18.
-  */
+
 class TableRecord(val row:Array[Any]) extends ResultRecord{
+
   override def cloneRecord(): Record = {
     new TableRecord(row)
   }
+
+  def tableRecordToString(nullValue:String = "NULL"):Array[String] = {
+    row.map{ col =>
+      StorageUtils.colToString(col,nullValue)
+    }
+  }
+
 }

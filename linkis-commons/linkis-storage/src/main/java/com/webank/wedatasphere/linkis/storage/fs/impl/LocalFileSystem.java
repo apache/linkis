@@ -23,6 +23,7 @@ import com.webank.wedatasphere.linkis.storage.exception.StorageWarnException;
 import com.webank.wedatasphere.linkis.storage.fs.FileSystem;
 import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +33,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.*;
 import java.util.*;
 
-/**
- * Created by johnnwang on 10/15/18.
- */
+
 public class LocalFileSystem extends FileSystem {
 
 
@@ -140,6 +139,29 @@ public class LocalFileSystem extends FileSystem {
                 setPermission(new FsPath(dirToMake.getAbsolutePath()), "rwxr-x---");
             } else {
                 return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean copy(String origin, String dest) throws IOException {
+        File file = new File(dest);
+        if(!isOwner(file.getParent())) {
+            throw new IOException("you have on permission to create file " + dest);
+        }
+        FileUtils.copyFile(new File(origin), file);
+        try {
+            setPermission(new FsPath(dest), "rwxr-----");
+            if(!user.equals(getOwner(dest))) {
+                setOwner(new FsPath(dest), user, null);
+            }
+        } catch (Throwable e) {
+            file.delete();
+            if(e instanceof IOException) {
+                throw (IOException) e;
+            } else {
+                throw new IOException(e);
             }
         }
         return true;

@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.common.io;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,7 +26,7 @@ import java.util.Map;
 /**
  * Created by enjoyyin on 2017/2/4.
  */
-public interface Fs {
+public interface Fs extends Closeable {
 
     public abstract void init(Map<String, String> properties) throws IOException;
 
@@ -52,7 +53,5 @@ public interface Fs {
     public abstract boolean delete(FsPath dest) throws IOException;
 
     public abstract boolean renameTo(FsPath oldDest, FsPath newDest) throws IOException;
-
-    public abstract void close() throws IOException;
 
 }

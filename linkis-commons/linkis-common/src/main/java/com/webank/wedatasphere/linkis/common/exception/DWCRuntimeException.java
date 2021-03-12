@@ -25,9 +25,7 @@ package com.webank.wedatasphere.linkis.common.exception;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.webank.wedatasphere.linkis.common.exception.DWCException.applicationName;
-import static com.webank.wedatasphere.linkis.common.exception.DWCException.hostname;
-import static com.webank.wedatasphere.linkis.common.exception.DWCException.hostPort;
+import static com.webank.wedatasphere.linkis.common.exception.DWCException.*;
 
 public abstract class DWCRuntimeException extends RuntimeException{
 

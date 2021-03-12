@@ -22,9 +22,6 @@ import com.webank.wedatasphere.linkis.rpc.RPCSpringBeanCache
 
 import scala.concurrent.duration.Duration
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 object ServiceInstanceUtils {
 
   def getRPCServerLoader: RPCServerLoader = RPCSpringBeanCache.getRPCServerLoader

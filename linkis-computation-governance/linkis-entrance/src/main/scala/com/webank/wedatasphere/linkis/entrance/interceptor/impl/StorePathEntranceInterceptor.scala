@@ -16,20 +16,19 @@
 
 package com.webank.wedatasphere.linkis.entrance.interceptor.impl
 
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.entrance.cache.GlobalConfigurationKeyValueCache
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 import org.apache.commons.lang.time.DateFormatUtils
 
-/**
-  * Created by enjoyyin on 2018/11/3.
-  */
-class StorePathEntranceInterceptor extends EntranceInterceptor {
+
+class StorePathEntranceInterceptor extends EntranceInterceptor with Logging {
   /**
     * The apply function is to supplement the information of the incoming parameter task, making the content of this task more complete.
-  * Additional information includes: database information supplement, custom variable substitution, code check, limit limit, etc.
+    *   * Additional information includes: database information supplement, custom variable substitution, code check, limit limit, etc.
     * apply函数是对传入参数task进行信息的补充，使得这个task的内容更加完整。
     * 补充的信息包括: 数据库信息补充、自定义变量替换、代码检查、limit限制等
     *
@@ -38,9 +37,9 @@ class StorePathEntranceInterceptor extends EntranceInterceptor {
     */
   override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = task match {
     case persistTask: RequestPersistTask =>
-      val globalConfig = GlobalConfigurationKeyValueCache.getCacheMap(persistTask)
+      val globalConfig = Utils.tryAndWarn(GlobalConfigurationKeyValueCache.getCacheMap(persistTask))
       var parentPath: String = null
-      if (globalConfig.containsKey(EntranceConfiguration.RESULT_SET_STORE_PATH.key))
+      if (null != globalConfig && globalConfig.containsKey(EntranceConfiguration.RESULT_SET_STORE_PATH.key))
         parentPath = EntranceConfiguration.RESULT_SET_STORE_PATH.getValue(globalConfig)
       else {
         parentPath = EntranceConfiguration.RESULT_SET_STORE_PATH.getValue

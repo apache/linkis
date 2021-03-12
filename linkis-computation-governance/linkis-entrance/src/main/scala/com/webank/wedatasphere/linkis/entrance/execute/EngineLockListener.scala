@@ -16,10 +16,9 @@
 
 package com.webank.wedatasphere.linkis.entrance.execute
 
-/**
-  * Created by enjoyyin on 2018/9/15.
-  */
+
 trait EngineLockListener {
-  def onEngineLocked(engine: EntranceEngine, lock: String): Unit
-  def onEngineLockUsed(engine: EntranceEngine): Unit
+  def onEngineLocked(engine: EntranceExecutor, lock: String): Unit
+
+  def onEngineLockUsed(engine: EntranceExecutor): Unit
 }

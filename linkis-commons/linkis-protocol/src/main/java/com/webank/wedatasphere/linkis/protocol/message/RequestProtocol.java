@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.query;
+package com.webank.wedatasphere.linkis.protocol.message;
 
 
-/**
- * Created by enjoyyin on 2018/9/30.
- */
-public class RequestUpdateTask extends RequestPersistTask implements QueryProtocol {
+public interface RequestProtocol extends HttpPrototol {
+
 }

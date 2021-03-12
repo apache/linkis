@@ -16,31 +16,21 @@
 
 package com.webank.wedatasphere.linkis.gateway.ujes.parser
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
 import com.webank.wedatasphere.linkis.gateway.parser.AbstractGatewayParser
 import com.webank.wedatasphere.linkis.gateway.ujes.parser.EntranceExecutionGatewayParser._
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
 import com.webank.wedatasphere.linkis.protocol.utils.ZuulEntranceUtils
 import org.springframework.stereotype.Component
 
-/**
-  * created by cooperyang on 2019/5/15.
-  */
 @Component
 class EntranceRequestGatewayParser extends AbstractGatewayParser {
   override def shouldContainRequestBody(gatewayContext: GatewayContext): Boolean = false
 
   override def parse(gatewayContext: GatewayContext): Unit = gatewayContext.getRequest.getRequestURI match {
     case EntranceRequestGatewayParser.ENTRANCE_REQUEST_REGEX(version, execId) =>
-      if(sendResponseWhenNotMatchVersion(gatewayContext, version)) return
-      val moduleInfo = ZuulEntranceUtils.parseExecID(execId)
-      val serviceInstance = if(moduleInfo.length == 3) ServiceInstance(moduleInfo(0), moduleInfo(1))
-      else {
-        gatewayContext.getGatewayRoute.getParams.put(TaskConstant.REQUESTAPPLICATIONNAME, moduleInfo(0))
-        ServiceInstance(moduleInfo(1), moduleInfo(2))
-      }
-      gatewayContext.getGatewayRoute.setServiceInstance(serviceInstance)
+      if (sendResponseWhenNotMatchVersion(gatewayContext, version)) return
+      val serviceInstances = ZuulEntranceUtils.parseServiceInstanceByExecID(execId)
+      gatewayContext.getGatewayRoute.setServiceInstance(serviceInstances(0))
     case _ =>
   }
 }

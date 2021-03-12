@@ -19,9 +19,6 @@ package com.webank.wedatasphere.linkis.httpclient.dws.request
 import com.webank.wedatasphere.linkis.httpclient.discovery.HeartbeatAction
 import com.webank.wedatasphere.linkis.httpclient.request.GetAction
 
-/**
-  * created by cooperyang on 2019/5/22.
-  */
 class DWSHeartbeatAction(override val serverUrl: String) extends GetAction with DWSHttpAction with HeartbeatAction {
   override def getRequestBody: String = ""
 

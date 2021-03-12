@@ -23,9 +23,6 @@ import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
 import com.webank.wedatasphere.linkis.httpclient.exception.HttpClientResultException
 import com.webank.wedatasphere.linkis.httpclient.response.HttpResult
 
-/**
-  * created by cooperyang on 2019/5/22.
-  */
 trait DWSResult extends Logging with HttpResult {
 
   private var resultMap: util.Map[String, Object] = _

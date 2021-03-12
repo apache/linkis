@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
-
 package com.webank.wedatasphere.linkis.ujes.client
 import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
 import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig
@@ -25,9 +21,6 @@ import com.webank.wedatasphere.linkis.httpclient.request.Action
 import com.webank.wedatasphere.linkis.httpclient.response.Result
 import com.webank.wedatasphere.linkis.ujes.client.request.UJESJobAction
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 class UJESClientImpl(clientConfig: DWSClientConfig) extends UJESClient {
   private val dwsHttpClient = new DWSHttpClient(clientConfig, "UJES-Job-Execution-Thread")
   override protected[client] def executeUJESJob(ujesJobAction: UJESJobAction): Result = ujesJobAction match {

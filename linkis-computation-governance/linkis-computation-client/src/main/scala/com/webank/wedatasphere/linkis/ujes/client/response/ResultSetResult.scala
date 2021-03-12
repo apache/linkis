@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
-
 package com.webank.wedatasphere.linkis.ujes.client.response
 
 import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
@@ -26,9 +22,6 @@ import com.webank.wedatasphere.linkis.ujes.client.request.UserAction
 
 import scala.beans.BeanProperty
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 @DWSHttpMessageResult("/api/rest_j/v\\d+/filesystem/openFile")
 class ResultSetResult extends DWSResult with UserAction {
 

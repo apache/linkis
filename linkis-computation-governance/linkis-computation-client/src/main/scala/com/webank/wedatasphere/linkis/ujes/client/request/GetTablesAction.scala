@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,45 +14,42 @@
  * limitations under the License.
  */
 
-
 package com.webank.wedatasphere.linkis.ujes.client.request
 
 import com.webank.wedatasphere.linkis.httpclient.request.GetAction
 import com.webank.wedatasphere.linkis.ujes.client.exception.UJESClientBuilderException
-import com.webank.wedatasphere.linkis.ujes.client.response.JobInfoResult
 
-class ResultSetListAction extends GetAction with UJESJobAction {
-  override def suffixURLs: Array[String] = Array("filesystem", "getDirFileTrees")
+class GetTablesAction extends GetAction with UJESJobAction {
+  override def suffixURLs: Array[String] = Array("datasource",  "tables")
 }
-object ResultSetListAction {
-  def builder(): Builder = new Builder
-  class Builder private[ResultSetListAction]() {
-    private var user: String = _
-    private var path: String = _
 
-    def set(jobInfoResult: JobInfoResult): Builder = {
-      this.user = jobInfoResult.getRequestPersistTask.getUmUser
-      this.path = jobInfoResult.getRequestPersistTask.getResultLocation
-      this
-    }
+object GetTablesAction {
+  def builder(): Builder = new Builder
+  class Builder private[GetTablesAction]() {
+
+    private var user: String = _
+
+    private var database: String = _
 
     def setUser(user: String): Builder = {
       this.user = user
       this
     }
 
-    def setPath(path: String): Builder = {
-      this.path = path
+    def setDatabase(database: String): Builder = {
+      this.database = database
       this
     }
 
-    def build(): ResultSetListAction = {
+
+    def build(): GetTablesAction = {
       if(user == null) throw new UJESClientBuilderException("user is needed!")
-      if(path == null) throw new UJESClientBuilderException("path is needed!")
-      val resultSetListAction = new ResultSetListAction
-      resultSetListAction.setParameter("path", path)
-      resultSetListAction.setUser(user)
-      resultSetListAction
+      if(database == null) throw new UJESClientBuilderException("database is needed!")
+      val getTableAction = new GetTablesAction
+      getTableAction.setUser(user)
+      getTableAction.setParameter("database", database)
+      getTableAction
     }
+
   }
 }

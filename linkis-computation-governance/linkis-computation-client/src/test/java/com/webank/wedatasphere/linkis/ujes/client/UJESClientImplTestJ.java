@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.bdp.dataworkcloud.ujes.client;
+package com.webank.wedatasphere.linkis.ujes.client;
 
 import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy;
 import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig;
 import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfigBuilder;
-import com.webank.wedatasphere.linkis.ujes.client.UJESClient;
-import com.webank.wedatasphere.linkis.ujes.client.UJESClientImpl;
 import com.webank.wedatasphere.linkis.ujes.client.request.JobExecuteAction;
 import com.webank.wedatasphere.linkis.ujes.client.request.ResultSetAction;
 import com.webank.wedatasphere.linkis.ujes.client.response.JobExecuteResult;
@@ -35,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 
 public class UJESClientImplTestJ{
     public static void main(String[] args){
-        DWSClientConfig clientConfig = ((DWSClientConfigBuilder) (DWSClientConfigBuilder.newBuilder().addUJESServerUrl("http://localhost:port")
+        DWSClientConfig clientConfig = ((DWSClientConfigBuilder) (DWSClientConfigBuilder.newBuilder().addServerUrl("http://localhost:port")
                 .connectionTimeout(30000).discoveryEnabled(true)
                 .discoveryFrequency(1, TimeUnit.MINUTES)
                 .loadbalancerEnabled(true).maxConnectionSize(5)

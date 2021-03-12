@@ -3,9 +3,7 @@ package com.webank.wedatasphere.linkis.filesystem.exception;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by v_wbjftang on 2020/1/16.
- */
+
 public class WorkspaceExceptionManager {
 
     private static Map<String, String> desc = new HashMap<String, String>(32) {

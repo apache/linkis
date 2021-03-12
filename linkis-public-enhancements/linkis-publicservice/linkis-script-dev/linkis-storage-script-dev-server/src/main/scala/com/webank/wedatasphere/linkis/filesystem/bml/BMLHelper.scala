@@ -25,9 +25,7 @@ import com.webank.wedatasphere.linkis.filesystem.exception.WorkspaceExceptionMan
 import org.springframework.stereotype.Component
 
 import scala.collection.JavaConversions._
-/**
-  * Created by patinousward
-  */
+
 @Component
 class BMLHelper {
 

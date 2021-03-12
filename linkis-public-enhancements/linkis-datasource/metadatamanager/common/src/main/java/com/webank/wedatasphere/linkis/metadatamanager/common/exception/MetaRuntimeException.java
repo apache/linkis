@@ -15,9 +15,6 @@ package com.webank.wedatasphere.linkis.metadatamanager.common.exception;
 
 import com.webank.wedatasphere.linkis.common.exception.WarnException;
 
-/**
- * Created by jackyxxie on 2020/2/10.
- */
 public class MetaRuntimeException extends WarnException {
     private static final int ERROR_CODE = 99900;
     public MetaRuntimeException(String desc) {

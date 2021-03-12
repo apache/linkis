@@ -1,21 +1,37 @@
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.webank.wedatasphere.linkis.ujes.jdbc
 
 import java.sql.{Connection, Driver, DriverManager, DriverPropertyInfo, SQLFeatureNotSupportedException}
 import java.util.Properties
 import java.util.logging.Logger
 
-import UJESSQLDriverMain._
+import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.ujes.jdbc.UJESSQLDriverMain._
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions
 
-/**
-  * Created by enjoyyin on 2019/5/27.
-  */
-class UJESSQLDriverMain extends Driver {
-  override def connect(url: String, info: Properties): Connection = if(acceptsURL(url)) {
-    val props = if(info != null) info else new Properties
+class UJESSQLDriverMain extends Driver with Logging{
+
+  override def connect(url: String, properties: Properties): Connection = if(acceptsURL(url)) {
+    val props = if(properties != null) properties else new Properties
     props.putAll(parseURL(url))
+    info(s"input url:$url, properties:$properties")
     val ujesClient = UJESClientFactory.getUJESClient(props)
     new UJESSQLConnection(ujesClient, props)
   } else throw new UJESSQLException(UJESSQLErrorCode.BAD_URL, "bad url: " + url)

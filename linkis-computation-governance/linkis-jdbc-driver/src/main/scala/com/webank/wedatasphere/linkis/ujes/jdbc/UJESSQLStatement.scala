@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.webank.wedatasphere.linkis.ujes.jdbc
 
 import java.sql.{Connection, ResultSet, SQLWarning, Statement}
@@ -8,14 +24,12 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.ujes.client.request.JobExecuteAction
 import com.webank.wedatasphere.linkis.ujes.client.request.JobExecuteAction.EngineType
 import com.webank.wedatasphere.linkis.ujes.client.response.JobExecuteResult
+import com.webank.wedatasphere.linkis.ujes.jdbc.hook.JDBCDriverPreExecutionHook
 
 import scala.collection.JavaConversions
 import scala.concurrent.TimeoutException
 import scala.concurrent.duration.Duration
 
-/**
-  * Created by owenxu on 2019/8/19
-  */
 class UJESSQLStatement(private[jdbc] val ujesSQLConnection: UJESSQLConnection) extends Statement with Logging{
 
   private var jobExecuteResult: JobExecuteResult = _
@@ -24,6 +38,8 @@ class UJESSQLStatement(private[jdbc] val ujesSQLConnection: UJESSQLConnection) e
   private var maxRows: Int = 0
   private var fetchSize = 100
   private var queryTimeout = 0
+
+  private var queryEnd = false
 
   private[jdbc] def throwWhenClosed[T](op: => T): T = ujesSQLConnection.throwWhenClosed {
     if(isClosed) throw new UJESSQLException(UJESSQLErrorCode.STATEMENT_CLOSED)
@@ -46,7 +62,7 @@ class UJESSQLStatement(private[jdbc] val ujesSQLConnection: UJESSQLConnection) e
   }
 
   def clearQuery(): Unit = {
-    if(jobExecuteResult != null) {
+    if(jobExecuteResult != null && ! queryEnd) {
       Utils.tryAndWarn(ujesSQLConnection.ujesClient.kill(jobExecuteResult))
       jobExecuteResult = null
     }
@@ -79,10 +95,17 @@ class UJESSQLStatement(private[jdbc] val ujesSQLConnection: UJESSQLConnection) e
   override def setCursorName(name: String): Unit = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT, "setCursorName not supported")
 
   override def execute(sql: String): Boolean = throwWhenClosed {
-    val action = JobExecuteAction.builder().setEngineType(EngineType.SPARK).addExecuteCode(sql)
+    var parsedSQL = sql
+    JDBCDriverPreExecutionHook.getPreExecutionHooks.foreach{
+      preExecution =>
+        parsedSQL = preExecution.callPreExecutionHook(parsedSQL)
+    }
+    val action = JobExecuteAction.builder().setEngineType(EngineType.SPARK).addExecuteCode(parsedSQL)
       .setCreator(ujesSQLConnection.creator).setUser(ujesSQLConnection.user)
+
     if(ujesSQLConnection.variableMap.nonEmpty) action.setVariableMap(JavaConversions.mapAsJavaMap(ujesSQLConnection.variableMap))
     jobExecuteResult = ujesSQLConnection.ujesClient.execute(action.build())
+    queryEnd = false
     var status = ujesSQLConnection.ujesClient.status(jobExecuteResult)
     val atMost = if(queryTimeout > 0) Duration(queryTimeout, TimeUnit.MILLISECONDS) else Duration.Inf
     if(!status.isCompleted) Utils.tryThrow{
@@ -99,7 +122,7 @@ class UJESSQLStatement(private[jdbc] val ujesSQLConnection: UJESSQLConnection) e
     if(!closed) {
       var jobInfo = ujesSQLConnection.ujesClient.getJobInfo(jobExecuteResult)
       if(status.isFailed) throw new ErrorException(jobInfo.getRequestPersistTask.getErrCode,jobInfo.getRequestPersistTask.getErrDesc)
-      var jobInfoStatus = jobInfo.getJobStatus
+      val jobInfoStatus = jobInfo.getJobStatus
       if(!jobInfoStatus.equals("Succeed")) Utils.tryThrow{
         Utils.waitUntil(() => {
           jobInfo = ujesSQLConnection.ujesClient.getJobInfo(jobExecuteResult)
@@ -116,6 +139,7 @@ class UJESSQLStatement(private[jdbc] val ujesSQLConnection: UJESSQLConnection) e
         case t => t
       }
       val resultSetList = jobInfo.getResultSetList(ujesSQLConnection.ujesClient)
+      queryEnd = true
       if(resultSetList != null) {
         resultSet = new UJESSQLResultSet(resultSetList, this, maxRows, fetchSize)
         true

@@ -16,20 +16,25 @@
 
 package com.webank.wedatasphere.linkis.scheduler.executer
 
-/**
-  * Created by enjoyyin on 2018/8/31.
-  */
+
 trait ExecuteResponse
 trait CompletedExecuteResponse extends ExecuteResponse
 case class SuccessExecuteResponse() extends CompletedExecuteResponse
+
 trait OutputExecuteResponse extends ExecuteResponse {
   def getOutput: String
 }
+
 case class AliasOutputExecuteResponse(alias: String, output: String) extends OutputExecuteResponse {
   override def getOutput: String = output
 }
+
 case class ErrorExecuteResponse(message: String, t: Throwable) extends CompletedExecuteResponse
+
 case class IncompleteExecuteResponse(message: String) extends ExecuteResponse
+
+case class SubmitResponse(taskId: String) extends ExecuteResponse
+
 trait AsynReturnExecuteResponse extends ExecuteResponse {
   def notify(rs: ExecuteResponse => Unit): Unit
 }

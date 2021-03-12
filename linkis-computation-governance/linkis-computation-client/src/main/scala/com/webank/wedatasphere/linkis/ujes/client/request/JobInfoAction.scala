@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
-
 package com.webank.wedatasphere.linkis.ujes.client.request
 
 import com.webank.wedatasphere.linkis.httpclient.request.GetAction
@@ -25,9 +21,6 @@ import com.webank.wedatasphere.linkis.ujes.client.exception.UJESClientBuilderExc
 import com.webank.wedatasphere.linkis.ujes.client.response.JobExecuteResult
 import org.apache.commons.lang.StringUtils
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 class JobInfoAction extends GetAction with UJESJobAction {
   private var taskId: String = _
   override def suffixURLs: Array[String] = Array("jobhistory", taskId, "get")

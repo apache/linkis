@@ -20,8 +20,8 @@ package com.webank.wedatasphere.linkis.protocol
   * Created by enjoyyin on 2019/1/7.
   */
 trait RetryableProtocol extends Protocol {
-  val retryNum = 2
-  val period = 1000l
-  val maxPeriod = 3000l
-  val retryExceptions = Array.empty[Class[_  <: Throwable]]
+  def retryNum: Int = 2
+  def period: Long = 1000l
+  def maxPeriod: Long = 3000l
+  def retryExceptions: Array[Class[_ <: Throwable]] = Array.empty[Class[_  <: Throwable]]
 }

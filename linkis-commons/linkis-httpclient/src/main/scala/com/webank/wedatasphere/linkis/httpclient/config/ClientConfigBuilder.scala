@@ -42,7 +42,7 @@ class ClientConfigBuilder protected() {
   protected var retryEnabled: Boolean = _
   protected var retryHandler: RetryHandler = _
 
-  def addUJESServerUrl(serverUrl: String): this.type = {
+  def addServerUrl(serverUrl: String): this.type = {
     this.serverUrl = serverUrl
     this
   }

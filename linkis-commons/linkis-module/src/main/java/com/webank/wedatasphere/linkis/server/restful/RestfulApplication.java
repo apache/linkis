@@ -40,7 +40,7 @@ public class RestfulApplication extends ResourceConfig {
         if(StringUtils.isNotBlank(registerClasses)) {
             for(String clazz : registerClasses.split(",")) {
                 logger.info("register " + clazz);
-                register(Class.forName(clazz));
+                register(Class.forName(clazz, true, Thread.currentThread().getContextClassLoader()));
             }
         }
         String packages = ServerConfiguration.BDP_SERVER_RESTFUL_SCAN_PACKAGES().acquireNew();

@@ -15,9 +15,6 @@ package com.webank.wedatasphere.linkis.metadatamanager.common;
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars;
 
-/**
- * Created by jackyxxie on 2020/2/10.
- */
 public class MdmConfiguration {
 
     public static CommonVars<String> METADATA_SERVICE_APPLICATION =

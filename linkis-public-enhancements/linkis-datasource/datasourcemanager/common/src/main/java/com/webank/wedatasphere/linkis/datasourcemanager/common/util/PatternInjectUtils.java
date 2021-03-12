@@ -21,10 +21,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author kirkzhou
- * 2018/10/26
- */
 public class PatternInjectUtils {
 
     private PatternInjectUtils(){

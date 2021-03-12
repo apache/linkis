@@ -28,10 +28,7 @@ import com.webank.wedatasphere.linkis.datasourcemanager.common.protocol.{DsInfoQ
 import com.webank.wedatasphere.linkis.datasourcemanager.core.restful.RestfulApiHelper
 import com.webank.wedatasphere.linkis.datasourcemanager.core.service.{DataSourceInfoService, DataSourceRelateService}
 import com.webank.wedatasphere.linkis.datasourcemanager.core.restful.RestfulApiHelper
-/**
- * @author georgeqiao
- *  2020/02/10
- */
+
 @Component
 class DsmReceiver extends Receiver with Logging{
 

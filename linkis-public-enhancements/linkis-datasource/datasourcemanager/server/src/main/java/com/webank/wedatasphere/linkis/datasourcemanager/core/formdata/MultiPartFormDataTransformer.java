@@ -21,8 +21,6 @@ import javax.validation.Validator;
 
 /**
  * Transformer of multipart form
- * @author alexwu
- * 2020/02/12
  */
 public interface MultiPartFormDataTransformer {
     /**

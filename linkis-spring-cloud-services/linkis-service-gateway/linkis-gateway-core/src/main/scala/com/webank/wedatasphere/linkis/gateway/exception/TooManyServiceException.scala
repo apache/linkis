@@ -18,7 +18,4 @@ package com.webank.wedatasphere.linkis.gateway.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 class TooManyServiceException(message: String) extends ErrorException(11010, message)

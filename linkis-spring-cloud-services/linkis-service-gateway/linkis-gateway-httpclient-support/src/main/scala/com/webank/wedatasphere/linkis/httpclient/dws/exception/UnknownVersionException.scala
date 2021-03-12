@@ -18,7 +18,4 @@ package com.webank.wedatasphere.linkis.httpclient.dws.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-/**
-  * created by cooperyang on 2019/5/27.
-  */
 class UnknownVersionException extends ErrorException(10901, "ClientConfig must specify the DWS version(ClientConfig必须指定DWS版本)！")

@@ -71,7 +71,7 @@ object StorageUtils extends Logging{
     * @return
     */
   def loadClasses[T](classStr: String, pge:String, op: Class[T] => String): Map[String, Class[T]] = {
-    val _classes: Array[String] = if(StringUtils.isEmpty(pge))classStr.split(",") else classStr.split(",").map{ value:String => pge + "." + value }
+    val _classes: Array[String] = if(StringUtils.isEmpty(pge))classStr.split(",") else classStr.split(",").map{ value:String => pge + "" + value }
     val classes = mutable.LinkedHashMap[String, Class[T]]()
     for (clazz <- _classes) {
       Utils.tryAndError({

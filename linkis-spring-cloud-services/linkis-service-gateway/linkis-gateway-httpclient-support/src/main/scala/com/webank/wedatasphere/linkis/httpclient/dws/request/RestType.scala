@@ -20,9 +20,6 @@
 
 package com.webank.wedatasphere.linkis.httpclient.dws.request
 
-/**
-  * created by cooperyang on 2019/5/16.
-  */
 object RestType extends Enumeration {
   type RestType = Value
   val JERSEY = Value(1, "rest_j")

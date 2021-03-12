@@ -26,9 +26,6 @@ import com.webank.wedatasphere.linkis.server.Message
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import org.apache.commons.lang.StringUtils
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 trait GatewayParser {
 
   def shouldContainRequestBody(gatewayContext: GatewayContext): Boolean

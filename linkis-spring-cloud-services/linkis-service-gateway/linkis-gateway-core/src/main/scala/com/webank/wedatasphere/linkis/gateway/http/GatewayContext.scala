@@ -20,9 +20,6 @@ import java.util
 
 import com.webank.wedatasphere.linkis.server.JMap
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 trait GatewayContext {
 
   def getRequest: GatewayHttpRequest

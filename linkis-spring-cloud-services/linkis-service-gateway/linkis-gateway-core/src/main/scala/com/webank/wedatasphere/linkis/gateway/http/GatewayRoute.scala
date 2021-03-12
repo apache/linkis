@@ -16,7 +16,10 @@
 
 package com.webank.wedatasphere.linkis.gateway.http
 
+import java.util
+
 import com.webank.wedatasphere.linkis.common.ServiceInstance
+import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.server.JMap
 
 /**
@@ -27,6 +30,7 @@ class GatewayRoute {
   private var requestURI: String = _
   private var serviceInstance: ServiceInstance = _
   private var params: JMap[String, String] = new JMap[String, String]
+  private var routeLabels: util.List[_ <:Label[_]] = _
 
   def setRequestURI(requestURI: String):Unit = this.requestURI = requestURI
   def getRequestURI:String = requestURI
@@ -34,4 +38,6 @@ class GatewayRoute {
   def getServiceInstance:ServiceInstance = serviceInstance
   def setParams(params: JMap[String, String]):Unit = this.params = params
   def getParams:JMap[String, String] = params
+  def getLabels:util.List[_ <:Label[_]] = routeLabels
+  def setLabels(labels: util.List[_ <:Label[_]]):Unit = this.routeLabels = labels
 }

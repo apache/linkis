@@ -22,9 +22,6 @@ package com.webank.wedatasphere.linkis.httpclient.dws.request
 
 import com.webank.wedatasphere.linkis.httpclient.dws.request.RestType.RestType
 
-/**
-  * created by cooperyang on 2019/5/16.
-  */
 trait DWSHttpAction {
 
   private var dwsVersion: String = _

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.webank.wedatasphere.linkis.ujes.jdbc
 
 import java.sql.{Blob, CallableStatement, Clob, Connection, DatabaseMetaData, NClob, PreparedStatement, ResultSet, SQLException, SQLWarning, SQLXML, Savepoint, Statement, Struct}
@@ -12,9 +28,6 @@ import org.apache.commons.lang.StringUtils
 
 import scala.collection.{JavaConversions, mutable}
 
-/**
-  * Created by enjoyyin on 2019/5/27.
-  */
 class UJESSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Properties) extends Connection with Logging {
   private[jdbc] var creator = "IDE"
   private[jdbc] val variableMap = {
@@ -31,19 +44,32 @@ class UJESSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Propert
     }
     map.toMap
   }
-  private[jdbc] val dbName = props.getProperty(DB_NAME)
+  private[jdbc] val dbName = if (StringUtils.isNotBlank(props.getProperty(DB_NAME))) props.getProperty(DB_NAME) else "default"
+
   private val runningSQLStatements = new util.LinkedList[Statement]
+
   private var closed = false
+
+  private var inited = false
+
   private[jdbc] val user = props.getProperty(USER)
+
   private[jdbc] val serverURL = props.getProperty("URL")
+
+
 
   private[jdbc] def throwWhenClosed[T](op: => T): T =
     if(isClosed) throw new UJESSQLException(UJESSQLErrorCode.CONNECTION_CLOSED)
     else op
 
   private def createStatementAndAdd[T<:Statement](op: => T): T = throwWhenClosed {
+
     val statement = op
     runningSQLStatements.add(statement)
+    if (! inited) {
+      inited = true
+      Utils.tryAndWarn(statement.execute(s"USE $dbName"))
+    }
     statement
   }
   def getProps : Properties = props
@@ -52,7 +78,11 @@ class UJESSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Propert
 
   override def createStatement(): Statement = createStatementAndAdd(new UJESSQLStatement(this))
 
-  override def prepareStatement(sql: String): UJESSQLPreparedStatement = createStatementAndAdd(new UJESSQLPreparedStatement(this, sql))
+  override def prepareStatement(sql: String): UJESSQLPreparedStatement = {
+    val statement = createStatementAndAdd(new UJESSQLPreparedStatement(this, sql))
+    statement.clearQuery()
+    statement
+  }
 
   override def createStatement(resultSetType: Int, resultSetConcurrency: Int): Statement = {
     if (resultSetConcurrency != ResultSet.CONCUR_READ_ONLY)
@@ -92,11 +122,11 @@ class UJESSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Propert
 
   override def clearWarnings(): Unit = {}
 
-  override def setAutoCommit(autoCommit: Boolean): Unit = if(autoCommit) throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "setAutoCommit not supported")
+  override def setAutoCommit(autoCommit: Boolean): Unit = {}
 
   override def getAutoCommit: Boolean = true
 
-  override def commit(): Unit = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "commit not supported")
+  override def commit(): Unit = {}
 
   override def prepareCall(sql: String): CallableStatement = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "prepareCall not supported")
 
@@ -152,7 +182,7 @@ class UJESSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Propert
 
   override def createSQLXML(): SQLXML = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "createSQLXML not supported")
 
-  override def isValid(timeout: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "isValid not supported")
+  override def isValid(timeout: Int): Boolean = true
 
   override def setClientInfo(name: String, value: String): Unit = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "setClientInfo not supported")
 

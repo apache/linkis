@@ -30,7 +30,7 @@ class SQLCodeCheckInterceptor extends EntranceInterceptor{
   override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = task match {
     case requestPersistTask:RequestPersistTask =>
       requestPersistTask.getEngineType.toLowerCase() match {
-        case "hql" | "sql" | "jdbc"|"hive" =>
+        case "hql" | "sql" | "jdbc"|"hive" | "psql" | "essql" =>
           val sb:StringBuilder = new StringBuilder
           val isAuth:Boolean = SQLExplain.authPass(requestPersistTask.getExecutionCode, sb)
           if (!isAuth) {

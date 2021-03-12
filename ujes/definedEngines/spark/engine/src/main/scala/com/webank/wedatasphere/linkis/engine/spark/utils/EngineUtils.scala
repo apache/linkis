@@ -27,9 +27,9 @@ import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration._
 import com.webank.wedatasphere.linkis.engine.spark.common.LineBufferedProcess
 import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.storage.{FSFactory, LineMetaData}
 import com.webank.wedatasphere.linkis.storage.resultset.ResultSetReader
 import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
+import com.webank.wedatasphere.linkis.storage.{FSFactory, LineMetaData}
 
 import scala.util.Random
 
@@ -49,11 +49,17 @@ object EngineUtils {
     Utils.tryFinally(socket.getLocalPort){ Utils.tryQuietly(socket.close())}
   }
 
+  private val sparkVersionVar = CommonVars("wds.linkis.engine.spark.version", "")
+
   def sparkSubmitVersion(): String = {
     if(sparkVersion != null) {
       return sparkVersion
     }
-    val sparkSubmit = CommonVars("wds.linkis.server.spark-submit", "spark-submit").getValue
+    if (sparkVersionVar.getValue != null && !"".equals(sparkVersionVar.getValue.trim)) {
+      sparkVersion = sparkVersionVar.getValue.trim
+      return sparkVersion
+    }
+    val sparkSubmit = CommonVars("wds.linkis.engine.spark.submit.cmd", "spark-submit").getValue
     val pb = new ProcessBuilder(sparkSubmit, "--version")
     pb.redirectErrorStream(true)
     pb.redirectInput(ProcessBuilder.Redirect.PIPE)
@@ -62,7 +68,7 @@ object EngineUtils {
     val exitCode = process.waitFor()
     val output = process.inputIterator.mkString("\n")
 
-    val regex = """version (.*)""".r.unanchored
+    val regex = """version ([\d.]*)""".r.unanchored
 
     sparkVersion = output match {
       case regex(version) => version

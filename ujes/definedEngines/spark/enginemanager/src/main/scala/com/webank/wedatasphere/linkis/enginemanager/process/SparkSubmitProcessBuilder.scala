@@ -18,20 +18,22 @@
 package com.webank.wedatasphere.linkis.enginemanager.process
 
 import java.lang.ProcessBuilder.Redirect
+import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging}
+import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.enginemanager.EngineResource
 import com.webank.wedatasphere.linkis.enginemanager.conf.EnvConfiguration._
-import com.webank.wedatasphere.linkis.enginemanager.configuration.SparkConfiguration
 import com.webank.wedatasphere.linkis.enginemanager.configuration.SparkConfiguration._
 import com.webank.wedatasphere.linkis.enginemanager.configuration.SparkResourceConfiguration._
 import com.webank.wedatasphere.linkis.enginemanager.impl.UserEngineResource
-import com.webank.wedatasphere.linkis.enginemanager.process.SparkSubmitProcessBuilder.{AbsolutePath, Path, RelativePath}
+import com.webank.wedatasphere.linkis.enginemanager.process.SparkSubmitProcessBuilder._
 import com.webank.wedatasphere.linkis.protocol.engine.RequestEngine
 import com.webank.wedatasphere.linkis.resourcemanager.DriverAndYarnResource
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.JavaConversions._
 
 /**
   * Created by allenlliu on 2019/4/8.
@@ -130,21 +132,22 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     this.request = request
     userEngineResource = engineRequest.asInstanceOf[UserEngineResource]
     val darResource: DriverAndYarnResource = engineRequest.getResource.asInstanceOf[DriverAndYarnResource]
-    val properties = request.properties
+    val properties = new util.HashMap[String,String](request.properties)
     this.master("yarn")
-    this.deployMode("client")
-    val driverJavaSet = "\"-Dwds.linkis.configuration=linkis-engine.properties " + SparkConfiguration.getJavaRemotePort + "\""
-    this.conf(SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, driverJavaSet)
-    this.name(properties.getOrDefault("appName", "sparksqltest"))
+    this.deployMode(getValueAndRemove(properties, SPARK_DEPLOY_MODE))
+    this.conf(SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, SPARK_DRIVER_EXTRA_JAVA_OPTIONS.getValue)
+    this.name(properties.getOrDefault("appName", "linkis"))
     this.className(properties.getOrDefault("className", "com.webank.wedatasphere.linkis.engine.DataWorkCloudEngineApplication"))
     properties.getOrDefault("archives", "").toString.split(",").map(RelativePath).foreach(this.archive)
     this.driverCores(DWC_SPARK_DRIVER_CORES)
-    this.driverMemory(DWC_SPARK_DRIVER_MEMORY.getValue(properties) + "G")
-    this.executorCores(DWC_SPARK_EXECUTOR_CORES.getValue(properties))
-    this.executorMemory(DWC_SPARK_EXECUTOR_MEMORY.getValue(properties) + "G")
-    this.numExecutors(DWC_SPARK_EXECUTOR_INSTANCES.getValue(properties))
+    this.driverMemory(getValueAndRemove(properties, DWC_SPARK_DRIVER_MEMORY) + "G")
+    this.executorCores(getValueAndRemove(properties, DWC_SPARK_EXECUTOR_CORES))
+    this.executorMemory(getValueAndRemove(properties, DWC_SPARK_EXECUTOR_MEMORY) + "G")
+    this.numExecutors(getValueAndRemove(properties, DWC_SPARK_EXECUTOR_INSTANCES))
     properties.getOrDefault("files", "").split(",").map(RelativePath).foreach(file)
     properties.getOrDefault("jars", "").split(",").map(RelativePath).foreach(jar)
+    getValueAndRemove(properties, SPARK_APPLICATION_JARS).split(",").map(RelativePath).foreach(jar)
+    getValueAndRemove(properties, SPARK_EXTRA_JARS).split(",").map(RelativePath).foreach(jar)
     proxyUser(properties.getOrDefault("proxyUser", ""))
     this.queue(darResource.yarnResource.queueName)
 
@@ -153,7 +156,9 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     this.driverClassPath(SPARK_DRIVER_CLASSPATH.getValue)
     this.redirectOutput(Redirect.PIPE)
     this.redirectErrorStream(true)
-    this.env("spark.app.name", properties.getOrDefault("appName", "dwc" + request.creator))
+    this.env("spark.app.name", properties.getOrDefault("appName", "linkis" + request.creator))
+
+    properties.filter(i => (i._1.startsWith("spark.") || i._1.startsWith("hive.")) && StringUtils.isNotBlank(i._2)).foreach(i => conf(i._1, i._2))
 
   }
 
@@ -291,14 +296,16 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     addOpt("--deploy-mode", _deployMode)
     addOpt("--name", _name)
     //addOpt("--jars",Some(ENGINEMANAGER_JAR.getValue))
-    info("No need to add jars for "+_jars.map(fromPath).exists(x => x.equals("hdfs:///")).toString())
-    if(_jars.map(fromPath).exists(x => x.equals("hdfs:///")) != true) {
+    _jars = _jars.filter(_.isNotBlankPath())
+    if(!_jars.isEmpty) {
       addList("--jars", _jars.map(fromPath))
     }
-    if(_pyFiles.map(fromPath).exists(x => x.equals("hdfs:///")) != true) {
+    _pyFiles = _pyFiles.filter(_.isNotBlankPath())
+    if(!_pyFiles.isEmpty) {
       addList("--py-files", _pyFiles.map(fromPath))
     }
-    if(_files.map(fromPath).exists(x => x.equals("hdfs:///")) != true) {
+    _files = _files.filter(_.isNotBlankPath())
+    if(!_files.isEmpty) {
       addList("--files", _files.map(fromPath))
     }
     _conf.foreach { case (key, value) => if (key.startsWith("spark.")) addOpt("--conf", Option(f"""$key=$value"""))
@@ -368,10 +375,27 @@ object SparkSubmitProcessBuilder {
     new SparkSubmitProcessBuilder
   }
 
-  sealed trait Path
+  sealed trait Path {
 
-  case class AbsolutePath(path: String) extends Path
+    def isNotBlankPath(): Boolean;
 
-  case class RelativePath(path: String) extends Path
+    protected def isNotBlankPath(path: String): Boolean = {
+      StringUtils.isNotBlank(path) && !"/".equals(path.trim) && !"hdfs:///".equals(path.trim) && !"file:///".equals(path.trim)
+    }
+  }
+
+  case class AbsolutePath(path: String) extends Path {
+    override def isNotBlankPath(): Boolean = isNotBlankPath(path)
+  }
+
+  case class RelativePath(path: String) extends Path {
+    override def isNotBlankPath(): Boolean = isNotBlankPath(path)
+  }
+
+  def getValueAndRemove[T](properties: java.util.Map[String, String], commonVars: CommonVars[T]): T = {
+    val value = commonVars.getValue(properties)
+    properties.remove(commonVars.key)
+    value
+  }
 
 }

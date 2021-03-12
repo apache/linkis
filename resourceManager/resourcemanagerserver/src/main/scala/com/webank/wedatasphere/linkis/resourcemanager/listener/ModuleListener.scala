@@ -16,13 +16,11 @@
 
 package com.webank.wedatasphere.linkis.resourcemanager.listener
 
-
 import java.util
 import java.util.concurrent.ConcurrentHashMap
-import java.util.{Collections, Comparator, List => JList, Map => JMap}
+import java.util.{Comparator, Map => JMap}
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.resourcemanager.RMContext
 import com.webank.wedatasphere.linkis.resourcemanager.event.notify.{ModuleRegisterEvent, ModuleUnregisterEvent, NotifyRMEvent, NotifyRMEventListener}
 
 import scala.beans.BeanProperty

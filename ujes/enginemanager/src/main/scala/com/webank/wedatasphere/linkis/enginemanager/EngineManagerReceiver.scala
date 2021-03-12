@@ -59,7 +59,10 @@ class EngineManagerReceiver extends Receiver with EngineListener with Logging wi
     engineManager.getEngineManagerContext.getOrCreateEngineFactory.list().find(_.getPort == port).map(_.asInstanceOf[ProcessEngine])
 
   private def getMsg(state: EngineState, responseEngineStatusCallback: ResponseEngineStatusCallback): Any = {
-    val instance = EngineManagerReceiver.getInstanceByPort(responseEngineStatusCallback.port)
+    val instance = findEngine(responseEngineStatusCallback.port).get match {
+      case engine:ProcessEngine => EngineManagerReceiver.getInstanceByEngine(engine)
+      case _ => EngineManagerReceiver.getInstanceByPort(responseEngineStatusCallback.port)
+    }
     state match {
       case Idle | Busy =>
         ResponseNewEngine(ENGINE_SPRING_APPLICATION_NAME.getValue, instance)
@@ -71,6 +74,8 @@ class EngineManagerReceiver extends Receiver with EngineListener with Logging wi
   override def receive(message: Any, sender: Sender): Unit = message match {
     case ResponseEnginePid(port, pid) =>
       findEngine(port).foreach(_.callback(pid, sender))
+    case ResponseEngineHost(port, host) =>
+      findEngine(port).foreach(_.callbackHost(host, sender))
     case ResponseEngineStatusCallback(port, status, initErrorMsg) =>
       findEngine(port).foreach(_.callback(status, initErrorMsg))
       val obj = getMsg(EngineState(status), ResponseEngineStatusCallback(port, status, initErrorMsg))
@@ -137,7 +142,7 @@ class EngineManagerReceiver extends Receiver with EngineListener with Logging wi
     }
   }, 2, 2, TimeUnit.MINUTES)
   override def onEngineCreated(request: RequestEngine, engine: Engine): Unit = {
-    info("User " + request.user + "created a new engine " + engine + ", creator=" + request.creator)
+    info("User " + request.user + ", created a new engine " + engine + ", creator=" + request.creator)
     request match {
       case timeoutRequest: TimeoutRequestEngine =>
         initEngines.add(TimeoutEngine(engine, timeoutRequest.timeout))
@@ -186,6 +191,12 @@ class EngineManagerReceiver extends Receiver with EngineListener with Logging wi
 object EngineManagerReceiver {
   private val address = Sender.getThisInstance.substring(0, Sender.getThisInstance.lastIndexOf(":"))
   def getInstanceByPort(port: Int): String = address + ":" + port
+
+  def getInstanceByEngine(engine: Engine): String = if (StringUtils.isNotBlank(engine.getHost)) {
+    engine.getHost + ":" + engine.getPort
+  } else {
+    getInstanceByPort(engine.getPort)
+  }
 
   def isEngineBelongTo(instance: String): Boolean = instance.startsWith(address)
 

@@ -16,7 +16,6 @@
 
 package com.webank.wedatasphere.linkis.resourcemanager.notify
 
-
 /**
   * Created by shanhuang on 9/11/18.
   */

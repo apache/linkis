@@ -1,0 +1,35 @@
+server:
+  port: 8296
+spring:
+  application:
+    name: mdm-server
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${eurekaurl}
+    registry-fetch-interval-seconds: 5
+  instance:
+    lease-renewal-interval-in-second: 5
+    lease-expiration-duration-in-second: 10
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    metadata-map:
+      test: wedatasphere
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info
+logging:
+  config: classpath:log4j2.xml
+
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: countSql
+

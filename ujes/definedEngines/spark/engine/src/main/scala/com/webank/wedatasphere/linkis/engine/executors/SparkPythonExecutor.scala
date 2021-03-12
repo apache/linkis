@@ -17,35 +17,36 @@
 package com.webank.wedatasphere.linkis.engine.executors
 
 import java.io._
+import java.net.InetAddress
 import java.util
 import java.util.concurrent.atomic.AtomicLong
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.engine.Interpreter.PythonInterpreter._
-import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration._
 import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration
+import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration._
 import com.webank.wedatasphere.linkis.engine.exception.ExecuteError
 import com.webank.wedatasphere.linkis.engine.execute.EngineExecutorContext
 import com.webank.wedatasphere.linkis.engine.imexport.CsvRelation
 import com.webank.wedatasphere.linkis.engine.rs.RsOutputStream
 import com.webank.wedatasphere.linkis.engine.spark.common.PySpark
 import com.webank.wedatasphere.linkis.engine.spark.utils.EngineUtils
-import com.webank.wedatasphere.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
+import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
-import org.apache.commons.io.IOUtils
 import org.apache.commons.exec.CommandLine
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang.{RandomStringUtils, StringUtils}
+import org.apache.commons.io.IOUtils
+import org.apache.spark.SparkContext
 import org.apache.spark.api.java.JavaSparkContext
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession}
-import org.apache.spark.{SparkContext, SparkException}
 import py4j.GatewayServer
+import py4j.GatewayServer.GatewayServerBuilder
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.StringBuilder
-import scala.concurrent.duration.Duration
 import scala.concurrent._
+import scala.concurrent.duration.Duration
 
 /**
   * Created by allenlliu on 2018/11/19.
@@ -64,6 +65,21 @@ class SparkPythonExecutor(val sc: SparkContext,  val sqlContext: SQLContext,sess
   implicit var sparkSession: SparkSession = session
   private[executors] var engineExecutorContext: EngineExecutorContext = _
   private val lineOutputStream = new RsOutputStream
+
+  private lazy val py4jToken: String = RandomStringUtils.randomAlphanumeric(256)
+
+  private lazy val gwBuilder: GatewayServerBuilder = {
+    val builder = new GatewayServerBuilder()
+      .javaPort(0)
+      .callbackClient(0, InetAddress.getByName(GatewayServer.DEFAULT_ADDRESS))
+      .connectTimeout(GatewayServer.DEFAULT_CONNECT_TIMEOUT)
+      .readTimeout(GatewayServer.DEFAULT_READ_TIMEOUT)
+      .customCommands(null)
+
+    try builder.authToken(py4jToken) catch {
+      case err: Throwable => builder
+    }
+  }
 
   val SUCCESS = "success"
   @throws(classOf[IOException])
@@ -96,7 +112,7 @@ class SparkPythonExecutor(val sc: SparkContext,  val sqlContext: SQLContext,sess
     val pythonScriptPath = CommonVars("python.script.path", "python/mix_pyspark.py").getValue
 
     val port = EngineUtils.findAvailPort
-    gatewayServer = new GatewayServer(this, port)
+    gatewayServer = gwBuilder.entryPoint(this).javaPort(port).build()
     gatewayServer.start()
 
     info("Pyspark process file path is: " + getClass.getClassLoader.getResource(pythonScriptPath).toURI)
@@ -119,6 +135,7 @@ class SparkPythonExecutor(val sc: SparkContext,  val sqlContext: SQLContext,sess
     cmd.addArgument(createFakeShell(pythonScriptPath).getAbsolutePath, false)
     cmd.addArgument(port.toString, false)
     cmd.addArgument(EngineUtils.sparkSubmitVersion().replaceAll("\\.", ""), false)
+    cmd.addArgument(py4jToken, false)
     cmd.addArgument(pythonClasspath.toString(), false)
     cmd.addArgument(pyFiles, false)
 

@@ -16,13 +16,6 @@
 
 package com.webank.wedatasphere.linkis.tispark.engine.hook
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engine.exception.EngineErrorException
-import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineHook}
-import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteRequest, RunTypeExecuteRequest}
-import com.webank.wedatasphere.linkis.server.JMap
-import org.apache.commons.lang.StringUtils
-
 /**
   * Created by johnnwang on 2019/6/26.
   */

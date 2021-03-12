@@ -22,9 +22,6 @@ package com.webank.wedatasphere.linkis.httpclient.dws.annotation;
 
 import java.lang.annotation.*;
 
-/**
- * created by cooperyang on 2019/5/20.
- */
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

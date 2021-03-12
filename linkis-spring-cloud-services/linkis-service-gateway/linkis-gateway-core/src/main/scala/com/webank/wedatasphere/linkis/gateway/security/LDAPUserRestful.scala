@@ -20,9 +20,6 @@ import com.webank.wedatasphere.linkis.common.utils.{LDAPUtils, Logging, Utils}
 import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
 import com.webank.wedatasphere.linkis.server._
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 class LDAPUserRestful extends UserPwdAbstractUserRestful with Logging {
 
   override def login(userName: String, password: String): Message = Utils.tryCatch{
@@ -34,7 +31,7 @@ class LDAPUserRestful extends UserPwdAbstractUserRestful with Logging {
   }
 
   override def register(gatewayContext: GatewayContext): Message = {
-    Message.error("please implements the register method(请自行实现注册方法)")
+    super.register(gatewayContext)
   }
 
 }

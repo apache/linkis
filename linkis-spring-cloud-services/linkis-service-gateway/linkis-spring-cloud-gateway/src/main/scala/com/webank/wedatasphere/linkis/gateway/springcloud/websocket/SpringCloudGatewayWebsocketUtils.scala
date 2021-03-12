@@ -36,9 +36,6 @@ import reactor.core.publisher.{Flux, Mono}
 
 import scala.collection.JavaConversions._
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 object SpringCloudGatewayWebsocketUtils extends Logging {//(websocketRoutingFilter: WebsocketRoutingFilter,
 //                                        webSocketClient: WebSocketClient,
 //                                        webSocketService: WebSocketService,

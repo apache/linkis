@@ -21,9 +21,6 @@ import java.net.{InetSocketAddress, URI}
 import com.webank.wedatasphere.linkis.server.JMap
 import javax.servlet.http.Cookie
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 trait GatewayHttpRequest {
 
   def getRequestURI: String

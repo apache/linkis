@@ -27,7 +27,7 @@ linkis-public-enhancements/linkis-publicservice/jobhistory/target/
 linkis-public-enhancements/linkis-publicservice/target/
 linkis-public-enhancements/linkis-publicservice/udf/target/
 linkis-public-enhancements/linkis-publicservice/linkis-variable/target/
-linkis-public-enhancements/linkis-publicservice/workspace/target/
+linkis-public-enhancements/linkis-publicservice/linkis-script-dev/target/
 resourceManager/resourcemanagerclient/target/
 resourceManager/resourcemanagercommon/target/
 resourceManager/resourcemanagerserver/target/
@@ -79,7 +79,7 @@ linkis-public-enhancements/linkis-bml/linkis-bml-client/target/
 linkis-public-enhancements/linkis-bml/linkis-bml-common/target/
 linkis-public-enhancements/linkis-bml/linkis-bml-server/target/
 linkis-commons/linkis-hadoop-common/target/
-linkis-public-enhancements/linkis-publicservice/workspace/client/workspace-httpclient/target/
+linkis-public-enhancements/linkis-publicservice/linkis-script-dev/linkis-storage-script-dev-client/target/
 linkis-user-control/target/
 
 

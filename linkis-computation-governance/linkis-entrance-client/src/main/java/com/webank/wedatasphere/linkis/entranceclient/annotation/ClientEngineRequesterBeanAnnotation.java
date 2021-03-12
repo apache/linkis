@@ -27,9 +27,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Created by johnnwang on 2019/2/15.
- */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Bean(value = ClientEngineRequesterBeanAnnotation.BEAN_NAME)

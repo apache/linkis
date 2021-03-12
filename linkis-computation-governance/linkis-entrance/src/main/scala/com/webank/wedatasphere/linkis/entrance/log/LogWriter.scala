@@ -24,12 +24,10 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.entrance.exception.EntranceErrorException
 import com.webank.wedatasphere.linkis.storage.FSFactory
 import com.webank.wedatasphere.linkis.storage.utils.FileSystemUtils
-import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
+import org.apache.hadoop.hdfs.client.HdfsDataOutputStream
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 abstract class LogWriter(charset: String) extends Closeable with Flushable with Logging {
 
   private var firstWrite = true
@@ -52,15 +50,25 @@ abstract class LogWriter(charset: String) extends Closeable with Flushable with 
 
 
 
-  def flush(): Unit = Utils.tryQuietly(outputStream.flush(),  t => {
-    warn("Error encounters when flush log,", t)
-  })
-
+  def flush(): Unit = Utils.tryAndWarnMsg[Unit] {
+    outputStream match {
+      case hdfs: HdfsDataOutputStream =>
+        // todo check
+        hdfs.hsync()
+      case _ =>
+        outputStream.flush()
+    }
+  }("Error encounters when flush log, ")
 
   def close(): Unit = {
     flush()
-    if (outputStream != null) IOUtils.closeQuietly(outputStream)
-
+    if (outputStream != null) {
+      Utils.tryCatch{
+        outputStream.close()
+      }{
+        case t:Throwable => //ignore
+      }
+    }
   }
 }
 
@@ -68,11 +76,11 @@ abstract class AbstractLogWriter(logPath: String,
                                  user: String,
                                  charset: String) extends LogWriter(charset) {
   if(StringUtils.isBlank(logPath)) throw new EntranceErrorException(20301, "logPath cannot be empty.")
-  protected val fileSystem = FSFactory.getFs(new FsPath(logPath))
+  protected val fileSystem = FSFactory.getFsByProxyUser(new FsPath(logPath), user)
   fileSystem.init(new util.HashMap[String, String]())
 
   protected val outputStream: OutputStream = {
-    FileSystemUtils.createNewFile(new FsPath(logPath), true)
+    FileSystemUtils.createNewFile(new FsPath(logPath), user, true)
     fileSystem.write(new FsPath(logPath), true)
   }
 

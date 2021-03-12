@@ -18,13 +18,13 @@ package com.webank.wedatasphere.linkis.entrance.log
 
 import com.webank.wedatasphere.linkis.entrance.EntranceParser
 import com.webank.wedatasphere.linkis.entrance.persistence.PersistenceManager
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
+import org.apache.commons.lang.StringUtils
+import org.slf4j.{Logger, LoggerFactory}
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 trait ErrorCodeListener {
 
   def onErrorCodeCreated(job: Job, errorCode: String, detailErrorMsg: String)
@@ -34,6 +34,8 @@ class PersistenceErrorCodeListener extends ErrorCodeListener{
 
   private var persistenceManager: PersistenceManager = _
   private var entranceParser: EntranceParser = _
+
+  private val logger:Logger = LoggerFactory.getLogger(classOf[PersistenceErrorCodeListener])
 
   def setPersistenceManager(persistenceManager: PersistenceManager): Unit = this.persistenceManager = persistenceManager
   def getPersistenceManager = persistenceManager
@@ -51,8 +53,14 @@ class PersistenceErrorCodeListener extends ErrorCodeListener{
     */
   override def onErrorCodeCreated(job: Job, errorCode: String, detailErrorMsg: String): Unit = {
     val task:Task = this.entranceParser.parseToTask(job)
-    task.asInstanceOf[RequestPersistTask].setErrCode(Integer.parseInt(errorCode))
-    task.asInstanceOf[RequestPersistTask].setErrDesc(detailErrorMsg)
-    persistenceManager.createPersistenceEngine().updateIfNeeded(task)
+    task match{
+      case requestPersistTask:RequestPersistTask => if (StringUtils.isEmpty(requestPersistTask.getErrDesc) || "50032".equals(errorCode)){
+        requestPersistTask.setErrCode(Integer.parseInt(errorCode))
+        val realErrorMsg = if (detailErrorMsg.length <= 255) detailErrorMsg else detailErrorMsg.substring(0, 255)
+        requestPersistTask.setErrDesc(realErrorMsg)
+        persistenceManager.createPersistenceEngine().updateIfNeeded(task)
+      }
+      case _ => logger.warn("task {} is not a instance of RequestPersistTask", task.getExecId)
+    }
   }
 }

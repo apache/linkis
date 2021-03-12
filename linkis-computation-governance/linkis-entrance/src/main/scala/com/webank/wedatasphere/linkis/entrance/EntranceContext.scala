@@ -23,9 +23,7 @@ import com.webank.wedatasphere.linkis.entrance.log.LogManager
 import com.webank.wedatasphere.linkis.entrance.persistence.PersistenceManager
 import com.webank.wedatasphere.linkis.scheduler.Scheduler
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 abstract class EntranceContext {
 
   def getOrCreateScheduler(): Scheduler
@@ -40,6 +38,7 @@ abstract class EntranceContext {
 
   /**
     * Please note: it can be empty(请注意：可以为空)
+    *
     * @return
     */
   def getOrCreateEventListenerBus: EntranceEventListenerBus[EntranceEventListener, EntranceEvent]

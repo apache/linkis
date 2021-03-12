@@ -15,18 +15,18 @@
  */
 
 package com.webank.wedatasphere.linkis.entrance.interceptor
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
+
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 
 /**
-  * created by enjoyyin on 2018/12/5
   * Description: this interceptor is used to complete code with run type for
   * further use in engine
   */
 class RuntypeInterceptor extends EntranceInterceptor {
 
-  override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = task match{
-    case requestPersistTask:RequestPersistTask =>
+  override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = task match {
+    case requestPersistTask: RequestPersistTask =>
       requestPersistTask.getRunType.toLowerCase() match {
         case "python" | "py" | "pyspark" => val code = requestPersistTask.getExecutionCode
           requestPersistTask.setExecutionCode("%python\n" + code)

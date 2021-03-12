@@ -17,21 +17,16 @@
 
 <configuration status="error" monitorInterval="30">
     <appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M - %msg%xEx%n"/>
-        </Console>
-        <RollingFile name="RollingFile" fileName="logs/linkis.log"
-                     filePattern="logs/$${date:yyyy-MM}/linkis-log-%d{yyyy-MM-dd}-%i.log">
+        <RollingFile name="RollingFile" fileName="${env:SERVER_LOG_PATH}/linkis.log"
+                     filePattern="${env:SERVER_LOG_PATH}/$${date:yyyy-MM}/linkis-log-%d{yyyy-MM-dd}-%i.log">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
             <SizeBasedTriggeringPolicy size="100MB"/>
-            <DefaultRolloverStrategy max="20"/>
+            <DefaultRolloverStrategy max="10"/>
         </RollingFile>
     </appenders>
     <loggers>
         <root level="INFO">
             <appender-ref ref="RollingFile"/>
-            <appender-ref ref="Console"/>
         </root>
     </loggers>
 </configuration>

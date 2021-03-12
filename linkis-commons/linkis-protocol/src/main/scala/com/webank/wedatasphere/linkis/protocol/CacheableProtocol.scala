@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.protocol
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 trait CacheableProtocol extends Protocol {
   override def toString: String = super.toString
 }

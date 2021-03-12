@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.protocol.utils
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 
-/**
-  * Created by enjoyyin on 2019/1/7.
-  */
+
 object ProtocolUtils {
 
   val SERVICE_SUFFIX = CommonVars("wds.linkis.service.suffix","engineManager,entrance,engine")

@@ -17,13 +17,11 @@
 package com.webank.wedatasphere.linkis.scheduler
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.scheduler.queue.{Job, SchedulerEvent}
+import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEvent
 import com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue.FIFOScheduler
 import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelScheduler
 
-/**
-  * Created by enjoyyin on 2018/9/1.
-  */
+
 abstract class Scheduler {
   def init(): Unit
   def start(): Unit

@@ -16,10 +16,6 @@
 
 package com.webank.wedatasphere.linkis.ujes.jdbc.utils;
 
-/**
- * @author peacewong
- * @date 2020/6/29 22:34
- */
 public class JDBCUtils {
 
 

@@ -17,13 +17,14 @@
 package com.webank.wedatasphere.linkis.protocol.engine
 
 import com.webank.wedatasphere.linkis.protocol.RetryableProtocol
+import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
 
 /**
   *
   * Request status information from an engine(向某一个engine请求状态信息)
   * Created by enjoyyin on 2018/9/27.
   */
-case class RequestEngineStatus(messageType: Int) extends RetryableProtocol
+case class RequestEngineStatus(messageType: Int) extends RetryableProtocol with RequestProtocol
 object RequestEngineStatus {
   val Status_Only = 1
   val Status_Overload = 2

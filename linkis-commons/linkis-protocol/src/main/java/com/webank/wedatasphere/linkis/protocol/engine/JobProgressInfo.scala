@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.query;
+package com.webank.wedatasphere.linkis.protocol.engine
 
 
+case class JobProgressInfo(id: String, totalTasks: Int, runningTasks: Int, failedTasks: Int, succeedTasks: Int)
 
-/**
- * Created by enjoyyin on 2018/9/30.
- */
-public class RequestInsertTask extends RequestPersistTask implements QueryProtocol {
-}

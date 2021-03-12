@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,9 +24,7 @@ import com.webank.wedatasphere.linkis.storage.utils.{FileSystemUtils, StorageUti
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  * Created by johnnwang on 10/17/18.
-  */
+
 class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,V], maxCacheSize: Long,
                            storePath: FsPath) extends ResultSetWriter[K,V](resultSet = resultSet, maxCacheSize = maxCacheSize, storePath = storePath) with Logging{
 
@@ -51,35 +46,35 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,
 
   private var rMetaData: MetaData = _
 
-  private var proxyUser:String = StorageUtils.getJvmUser
+  private var proxyUser: String = StorageUtils.getJvmUser
 
   def getMetaData: MetaData = rMetaData
 
-  def setProxyUser(proxyUser:String): Unit = {
+  def setProxyUser(proxyUser: String): Unit = {
     this.proxyUser = proxyUser
   }
 
-  def isEmpty:Boolean = {
-   rMetaData == null && buffer.length <= Dolphin.FILE_EMPTY
+  def isEmpty: Boolean = {
+    rMetaData == null && buffer.length <= Dolphin.FILE_EMPTY
   }
 
   def init(): Unit = {
-    writeLine(resultSet.getResultSetHeader)
+    writeLine(resultSet.getResultSetHeader, true)
   }
 
   def createNewFile: Unit = {
-    if(storePath != null && outputStream == null){
-       fs = FSFactory.getFsByProxyUser(storePath,proxyUser)
+    if (storePath != null && outputStream == null) {
+      fs = FSFactory.getFsByProxyUser(storePath, proxyUser)
       fs.init(null)
-      FileSystemUtils.createNewFile(storePath, proxyUser,true)
+      FileSystemUtils.createNewFile(storePath, proxyUser, true)
       outputStream = fs.write(storePath, true)
       info(s"Succeed to create a new file:$storePath")
     }
   }
 
-  def writeLine(bytes: Array[Byte]): Unit = {
-    if(buffer.length  > maxCacheSize) {
-      if(outputStream == null) {
+  def writeLine(bytes: Array[Byte], cache: Boolean = false): Unit = {
+    if (buffer.length > maxCacheSize && !cache) {
+      if (outputStream == null) {
         createNewFile
       }
       flush()
@@ -88,12 +83,13 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,
       buffer.appendAll(bytes)
     }
   }
+
   override def toString: String = {
    if(outputStream == null){
      if(isEmpty) return ""
       new String(buffer.toArray,Dolphin.CHAR_SET)
     } else {
-     storePath.getSchemaPath
+      storePath.getSchemaPath
     }
   }
 
@@ -115,7 +111,7 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,
       {
         rMetaData = metaData
         init()
-        writeLine(serializer.metaDataToBytes(metaData))
+        writeLine(serializer.metaDataToBytes(metaData), true)
       }
       moveToWriteRow = true
     }

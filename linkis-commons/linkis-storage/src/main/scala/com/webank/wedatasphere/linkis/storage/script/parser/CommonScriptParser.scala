@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.storage.exception.StorageErrorException
 import com.webank.wedatasphere.linkis.storage.script.{Parser, Variable, VariableParser}
 
 
-/**
-  * Created by johnnwang on 2018/10/23.
-  */
+
 abstract class CommonScriptParser extends Parser {
 
   @scala.throws[StorageErrorException]

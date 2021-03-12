@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,9 +17,7 @@ import com.webank.wedatasphere.linkis.storage.FSFactory
 import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetReader}
 
-/**
-  * Created by johnnwang on 2019/3/7.
-  */
+
 object StorageHelper {
 
   def main(args: Array[String]): Unit = {
@@ -41,7 +36,8 @@ object StorageHelper {
 
   /**
     * Get the number of table result set file lines(获得表格结果集文件行数)
-    * @param path
+    *
+    * @param args
     */
   def  getTableResLines(args: Array[String]) = {
     val resPath = StorageUtils.getFsPath(args(0))

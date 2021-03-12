@@ -25,10 +25,22 @@ import com.webank.wedatasphere.linkis.storage.FSFactory
 import com.webank.wedatasphere.linkis.storage.fs.FileSystem
 import com.webank.wedatasphere.linkis.storage.fs.impl.LocalFileSystem
 
-/**
-  * Created by johnnwang on 2018/11/2.
-  */
+
 object FileSystemUtils extends Logging{
+
+  def copyFile(filePath: FsPath, origin: FsPath, user: String): Unit = {
+    val fileSystem = FSFactory.getFsByProxyUser(filePath,user).asInstanceOf[FileSystem]
+    Utils.tryFinally {
+      fileSystem.init(null)
+      if (!fileSystem.exists(filePath)) {
+        if (!fileSystem.exists(filePath.getParent)) {
+          fileSystem.mkdirs(filePath.getParent)
+        }
+        fileSystem.createNewFile(filePath)
+      }
+      fileSystem.copyFile(origin, filePath)
+    }(Utils.tryQuietly(fileSystem.close()))
+  }
 
   /**
     * Create a new file(创建新文件)

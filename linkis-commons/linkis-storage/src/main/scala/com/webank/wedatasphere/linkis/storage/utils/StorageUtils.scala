@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,9 +17,9 @@ import java.io.{Closeable, File, InputStream, OutputStream}
 import java.lang.reflect.Method
 import java.text.NumberFormat
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf
 import com.webank.wedatasphere.linkis.storage.exception.StorageFatalException
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, ResultSetWriter}
 import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
@@ -30,14 +27,10 @@ import org.apache.commons.lang.StringUtils
 
 import scala.collection.mutable
 
-/**
-  * Created by johnnwang on 10/17/18.
-  */
 object StorageUtils extends Logging{
 
   val HDFS = "hdfs"
   val FILE = "file"
-  val FIXED_INSTANCE = "fixedInstance"
 
   val FILE_SCHEMA = "file://"
   val HDFS_SCHEMA = "hdfs://"
@@ -71,7 +64,7 @@ object StorageUtils extends Logging{
     * @return
     */
   def loadClasses[T](classStr: String, pge:String, op: Class[T] => String): Map[String, Class[T]] = {
-    val _classes: Array[String] = if(StringUtils.isEmpty(pge))classStr.split(",") else classStr.split(",").map{ value:String => pge + "" + value }
+    val _classes: Array[String] = if(StringUtils.isEmpty(pge))classStr.split(",") else classStr.split(",").map{ value:String => pge + "." + value }
     val classes = mutable.LinkedHashMap[String, Class[T]]()
     for (clazz <- _classes) {
       Utils.tryAndError({
@@ -170,7 +163,7 @@ object StorageUtils extends Logging{
   def getJvmUser:String = System.getProperty("user.name")
 
   def isHDFSNode:Boolean = {
-    val confPath = new File(Configuration.hadoopConfDir)
+    val confPath = new File(HadoopConf.hadoopConfDir)
     //TODO IO-client mode need return false
     if(!confPath.exists() || confPath.isFile)
       throw new StorageFatalException(50001, "HDFS configuration was not read, please configure hadoop.config.dir or add env:HADOOP_CONF_DIR")
@@ -199,6 +192,17 @@ object StorageUtils extends Logging{
       count += 1
     }
     count
+  }
+
+  def colToString(col:Any,nullValue:String = "NULL"):String ={
+    if(null == col) nullValue
+    else {
+      col match {
+        case value:Double => doubleToString(value)
+        case "NULL" | "" => nullValue
+        case _ => col.toString
+      }
+    }
   }
 
 }

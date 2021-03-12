@@ -17,14 +17,10 @@
 package com.webank.wedatasphere.linkis.storage.domain
 
 import java.sql.{Date, Timestamp}
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.common.utils.Logging
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 
-/**
-  * Created by johnnwang on 10/17/18.
-  */
+
 object DataType extends Logging{
 
 
@@ -38,7 +34,8 @@ object DataType extends Logging{
   val BIGINT_REGEX = "^bigint.*".r.unanchored
   val FLOAT_REGEX = "^float.*".r.unanchored
   val DOUBLE_REGEX = "^double.*".r.unanchored
-  
+
+
   val VARCHAR_REGEX = "^varchar.*".r.unanchored
   val CHAR_REGEX = "^char.*".r.unanchored
 
@@ -55,7 +52,8 @@ object DataType extends Logging{
     case "string" => StringType
     case "boolean" => BooleanType
     case SHORT_REGEX() => ShortIntType
-    case LONG_REGEX() | BIGINT_REGEX() => LongType
+    case LONG_REGEX()  => LongType
+    case BIGINT_REGEX() => BigIntType
     case INT_REGEX() | "integer" | "smallint" => IntType
     case FLOAT_REGEX() => FloatType
     case DOUBLE_REGEX() => DoubleType
@@ -72,7 +70,7 @@ object DataType extends Logging{
     case _ => StringType
   }
 
-def toValue(dataType: DataType, value: String): Any = Utils.tryCatch(dataType match {
+  def toValue(dataType: DataType, value: String): Any = Utils.tryCatch(dataType match {
     case NullType => null
     case StringType | CharType | VarcharType | StructType | ListType | ArrayType | MapType => value
     case BooleanType =>  if(isNull(value)) null else value.toBoolean
@@ -86,11 +84,10 @@ def toValue(dataType: DataType, value: String): Any = Utils.tryCatch(dataType ma
     case TimestampType => if(isNull(value)) null else Timestamp.valueOf(value).toString.stripSuffix(".0")
     case BinaryType => if(isNull(value)) null else value.getBytes()
     case _ => value
-    }){
+  }){
     t => warn(s"Failed to  $value switch  to dataType:",t)
-    value
+      value
   }
-
   def isNull(value:String):Boolean= if(value == null || value == NULL_VALUE || value.trim == "") true else false
 }
 
@@ -104,8 +101,8 @@ case object BooleanType extends DataType("boolean", 16)
 case object TinyIntType extends DataType("tinyint", -6)
 case object ShortIntType extends DataType("short", 5)
 case object IntType extends DataType("int", 4)
-case object BigIntType extends DataType("bigint", -5)
 case object LongType extends DataType("long", -5)
+case object BigIntType extends DataType("bigint", -5)
 case object FloatType extends DataType("float", 6)
 case object DoubleType extends DataType("double", 8)
 case object CharType extends DataType("char", 1)

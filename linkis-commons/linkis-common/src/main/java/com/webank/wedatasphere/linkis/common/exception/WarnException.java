@@ -22,8 +22,6 @@
  */
 package com.webank.wedatasphere.linkis.common.exception;
 
-import java.util.Map;
-
 public class WarnException extends DWCRuntimeException{
     private ExceptionLevel level = ExceptionLevel.WARN;
     public WarnException(int errCode, String desc){

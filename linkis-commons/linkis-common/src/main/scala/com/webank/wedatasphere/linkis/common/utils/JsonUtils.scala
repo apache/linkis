@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.io;
+package com.webank.wedatasphere.linkis.common.utils
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.net.*;
+import java.text.SimpleDateFormat
 
-/**
- * Created by enjoyyin on 2018/10/24.
- */
-public class TestMain {
-    public static void main(String[] args) throws FileNotFoundException, URISyntaxException, MalformedURLException, UnknownHostException {
-        FsPath fsPath = new FsPath("hdfs:///test");
-        System.out.print(fsPath.getPath());
-    }
+import com.fasterxml.jackson.databind.ObjectMapper
+
+
+object JsonUtils {
+
+  //TODO add gson
+
+  implicit val jackson = new ObjectMapper().setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"))
+
 }

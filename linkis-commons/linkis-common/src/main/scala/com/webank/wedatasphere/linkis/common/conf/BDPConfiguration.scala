@@ -16,20 +16,21 @@
 
 package com.webank.wedatasphere.linkis.common.conf
 
-import java.io._
+import java.io.{File, FileInputStream, IOException, InputStream}
 import java.util.Properties
+
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
+
 import scala.collection.JavaConversions._
 
-/**
-  * Created by enjoyyin on 2018/1/9.
-  */
+
 private[conf] object BDPConfiguration extends Logging {
 
   val DEFAULT_PROPERTY_FILE_NAME = "linkis.properties"
-  val CHARSET_NAME = "utf-8"
+
+  val DEFAULT_SERVER_CONF_FILE_NAME = "linkis-server.properties"
 
   private val config = new Properties
   private val sysProps = sys.props
@@ -37,24 +38,50 @@ private[conf] object BDPConfiguration extends Logging {
 
   private val env = sys.env
 
-  val propertyFile = sysProps.getOrElse("wds.linkis.configuration", DEFAULT_PROPERTY_FILE_NAME)
-  private val configFileURL = getClass.getClassLoader.getResource(propertyFile)
-  if (configFileURL != null && new File(configFileURL.getPath).exists) initConfig(config, configFileURL.getPath)
-  else warn(s"******************************** Notice: The dataworkcloud configuration file $propertyFile is not exists! ***************************")
+
+  private def init: Unit = {
+
+    // load pub linkis conf
+    val propertyFile = sysProps.getOrElse("wds.linkis.configuration", DEFAULT_PROPERTY_FILE_NAME)
+    val configFileURL = getClass.getClassLoader.getResource(propertyFile)
+    if (configFileURL != null && new File(configFileURL.getPath).exists) initConfig(config, configFileURL.getPath)
+    else warn(s"******************************** Notice: The Linkis configuration file $propertyFile is not exists! ***************************")
+
+    // load pub linkis conf
+    val serverConf = sysProps.getOrElse("wds.linkis.server.conf", DEFAULT_SERVER_CONF_FILE_NAME)
+    val serverConfFileURL = getClass.getClassLoader.getResource(serverConf)
+    if (serverConfFileURL != null && new File(serverConfFileURL.getPath).exists) initConfig(config, serverConfFileURL.getPath)
+    else warn(s"******************************** Notice: The Linkis serverConf file $serverConfFileURL is not exists! ***************************")
+
+    // load  server confs
+    val propertyFileOptions = sysProps.get("wds.linkis.server.confs")
+    if (propertyFileOptions.isDefined) {
+      val propertyFiles = propertyFileOptions.get.split(",")
+      propertyFiles.foreach { propertyF =>
+        val configFileURL = getClass.getClassLoader.getResource(propertyF)
+        if (configFileURL != null && new File(configFileURL.getPath).exists) initConfig(config, configFileURL.getPath)
+        else warn(s"******************************** Notice: The Linkis configuration file $propertyF is not exists! ***************************")
+      }
+    }
+
+  }
+
+  try {
+    init
+  } catch {
+    case e: Throwable =>
+      warn("Failed to init conf", e)
+  }
 
   private def initConfig(config: Properties, filePath: String) {
     var inputStream: InputStream = null
-    var inputStreamReader: InputStreamReader = null
     try {
       inputStream = new FileInputStream(filePath)
-      inputStreamReader = new InputStreamReader(inputStream, CHARSET_NAME)
-      config.load(inputStreamReader)
-    } catch { case e: IOException =>
-      error("Can't load " + propertyFile, e)
-    } finally {
-      IOUtils.closeQuietly(inputStream)
-      IOUtils.closeQuietly(inputStreamReader)
-    }
+      config.load(inputStream)
+    } catch {
+      case e: IOException =>
+        error("Can't load " + filePath, e)
+    } finally IOUtils.closeQuietly(inputStream)
   }
 
   def getOption(key: String): Option[String] = {

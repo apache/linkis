@@ -18,15 +18,14 @@ package com.webank.wedatasphere.linkis.entrance.exception;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 
-/**
- * created by enjoyyin on 2018/10/8
- * Description:
- */
+
 public class EntranceIllegalParamException extends ErrorException {
 
     public EntranceIllegalParamException(int errCode, String message){
         super(errCode, message);
     }
 
-
+    public EntranceIllegalParamException(EntranceErrorCode entranceErrorCode) {
+        super(entranceErrorCode.getErrCode(), entranceErrorCode.getDesc());
+    }
 }

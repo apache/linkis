@@ -23,13 +23,12 @@
 package com.webank.wedatasphere.linkis.entrance.persistence;
 
 import com.google.gson.Gson;
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration;
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration$;
 import com.webank.wedatasphere.linkis.entrance.exception.EntranceIllegalParamException;
 import com.webank.wedatasphere.linkis.entrance.exception.EntranceRPCException;
 import com.webank.wedatasphere.linkis.entrance.exception.QueryFailedException;
+import com.webank.wedatasphere.linkis.governance.common.entity.task.*;
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant;
-import com.webank.wedatasphere.linkis.protocol.query.*;
 import com.webank.wedatasphere.linkis.protocol.task.Task;
 import com.webank.wedatasphere.linkis.rpc.Sender;
 import org.slf4j.Logger;
@@ -49,7 +48,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine{
 
     public QueryPersistenceEngine(){
         /*
-            Get the corresponding sender through datawork-cloud-publicservice(通过datawork-cloud-publicservice 拿到对应的sender)
+            Get the corresponding sender through datawork-linkis-publicservice(通过datawork-linkis-publicservice 拿到对应的sender)
          */
          sender = Sender.getSender(EntranceConfiguration$.MODULE$.QUERY_PERSISTENCE_SPRING_APPLICATION_NAME().getValue());
     }
@@ -84,7 +83,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine{
                     throw new QueryFailedException(20011, "insert task failed, reason: " + message);
                 }
                 String taskStr = object.toString();
-                Long taskID = Long.parseLong(taskStr.substring(0,taskStr.indexOf(".")));
+                Long taskID = Long.parseLong(taskStr);
                 ((RequestPersistTask) task).setTaskID(taskID);
             }
         }else{
@@ -116,7 +115,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine{
             logger.error("By taskID: {} request the corresponding task return status code is not 0, the query fails(通过taskID: {} 请求相应的task返回状态码不为0，查询失败)", taskID);
             throw new QueryFailedException(20010, "retrieve task failed, reason: " + message);
         }
-        java.util.Map<String, Object> data = responsePersist.getData();
+        Map<String, Object> data = responsePersist.getData();
         if (data != null){
            Object object = data.get(TaskConstant.TASK);
            if (object instanceof List){

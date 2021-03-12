@@ -21,19 +21,19 @@ import com.webank.wedatasphere.linkis.entrance.EntranceParser;
 import com.webank.wedatasphere.linkis.entrance.exception.EntranceIllegalParamException;
 import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob;
 import com.webank.wedatasphere.linkis.entrance.job.EntranceExecutionJob;
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask;
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask;
+import com.webank.wedatasphere.linkis.governance.common.utils.GovernanceConstant;
 import com.webank.wedatasphere.linkis.protocol.task.Task;
+import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils;
 import com.webank.wedatasphere.linkis.scheduler.queue.Job;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.Map;
 
-/**
- * created by enjoyyin on 2018/10/11
- * Description:
- */
+
 public abstract class AbstractEntranceParser extends EntranceParser {
 
     private EntranceContext entranceContext;
@@ -61,26 +61,21 @@ public abstract class AbstractEntranceParser extends EntranceParser {
         if (job == null){
             throw new EntranceIllegalParamException(20002, "job can't be null");
         }
-        Task task = ((EntranceJob)job).getTask();
+        Task task = ((EntranceJob) job).getTask();
         if(StringUtils.isEmpty(task.getExecId())) {
             task.setExecId(job.getId());
         }
-        if (task instanceof RequestPersistTask){
+        if (task instanceof RequestPersistTask) {
             ((RequestPersistTask) task).setProgress(job.getProgress());
             ((RequestPersistTask) task).setStatus(job.getState().toString());
             ((RequestPersistTask) task).setUpdatedTime(new Date(System.currentTimeMillis()));
             ((RequestPersistTask) task).setProgress(job.getProgress());
-            if(job.isCompleted() && !job.isSucceed() && job.getErrorResponse() != null
+            if (job.isCompleted() && !job.isSucceed() && job.getErrorResponse() != null
                     && StringUtils.isBlank(((RequestPersistTask) task).getErrDesc())
-                && StringUtils.isNotEmpty(job.getErrorResponse().message())) {
+                    && StringUtils.isNotEmpty(job.getErrorResponse().message())) {
                 ((RequestPersistTask) task).setErrDesc(job.getErrorResponse().message());
             }
-            //if job is successful, errCode and errDesc needs to be null
-            if (job.isSucceed()){
-                ((RequestPersistTask) task).setErrCode(null);
-                ((RequestPersistTask) task).setErrDesc(null);
-            }
-        }else{
+        } else {
             logger.warn("not supported task type");
         }
         return task;
@@ -92,25 +87,27 @@ public abstract class AbstractEntranceParser extends EntranceParser {
 
     /**
      * Parse a task into an executable job(将一个task解析成一个可执行的job)
+     *
      * @param task
      * @return
      */
     @Override
     public Job parseToJob(Task task) throws EntranceIllegalParamException {
-        if (task == null){
+        if (task == null) {
             throw new EntranceIllegalParamException(20001, "task can't be null");
         }
         EntranceJob job = null;
 
-        if (task instanceof RequestPersistTask){
+        if (task instanceof RequestPersistTask) {
             job = createEntranceJob();
             job.setTask(task);
             job.setUser(((RequestPersistTask) task).getUmUser());
             job.setCreator(((RequestPersistTask) task).getRequestApplicationName());
+
             job.setParams(((RequestPersistTask) task).getParams());
-            //job.setLogListener(entranceContext.getOrCreateLogManager());
-            //job.setProgressListener(entranceContext.getOrCreatePersistenceManager());
-            //job.setJobListener(entranceContext.getOrCreatePersistenceManager());
+            //TODO 放置source到RequestTask的properties中，后续会进行优化
+            Map<String, Object> properties = TaskUtils.getRuntimeMap(job.getParams());
+            properties.put(GovernanceConstant.TASK_SOURCE_MAP_KEY(), ((RequestPersistTask) task).getSource());
             job.setEntranceListenerBus(entranceContext.getOrCreateEventListenerBus());
             job.setEntranceContext(entranceContext);
             job.setListenerEventBus(null);

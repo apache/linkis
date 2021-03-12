@@ -25,10 +25,7 @@ import com.webank.wedatasphere.linkis.rpc.Sender;
 
 import javax.annotation.PostConstruct;
 
-/**
- * created by enjoyyin on 2018/10/12
- * Description:
- */
+
 @EntranceServerBeanAnnotation
 public class DefaultEntranceServer extends EntranceServer {
 
@@ -46,6 +43,7 @@ public class DefaultEntranceServer extends EntranceServer {
     @PostConstruct
     public void init() {
         getEntranceWebSocketService();
+        addRunningJobEngineStatusMonitor();
     }
 
     @Override
@@ -63,4 +61,7 @@ public class DefaultEntranceServer extends EntranceServer {
         return getEntranceContext().getOrCreateLogManager().getLogReader(execId);
     }
 
+    private void addRunningJobEngineStatusMonitor() {
+
+    }
 }

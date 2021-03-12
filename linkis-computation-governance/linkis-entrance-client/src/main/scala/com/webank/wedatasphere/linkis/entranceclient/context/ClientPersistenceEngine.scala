@@ -21,9 +21,6 @@ import java.lang
 import com.webank.wedatasphere.linkis.entrance.persistence.PersistenceEngine
 import com.webank.wedatasphere.linkis.protocol.task.Task
 
-/**
-  * Created by johnnwang on 2018/10/30.
-  */
 class ClientPersistenceEngine extends PersistenceEngine {
   override def persist(task: Task): Unit = {}
 

@@ -17,27 +17,25 @@
 package com.webank.wedatasphere.linkis.entranceclient.execute
 
 import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
-import com.webank.wedatasphere.linkis.entranceclient.context.ClientTask
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteRequest, JobExecuteRequest}
 import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState.SchedulerEventState
 import com.webank.wedatasphere.linkis.scheduler.queue.{JobInfo, SchedulerEventState}
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  * Created by johnnwang on 2018/10/30.
-  */
 class ClientJob extends EntranceJob {
 
   private val resultSets = ArrayBuffer[String]()
 
   def addResultSet(resultSet: String): Unit = resultSets += resultSet
+
   def getResultSets: Array[String] = resultSets.toArray
 
   def waitForComplete(): Unit = {
-    if(SchedulerEventState.isCompleted(this.getState)) return
+    if (SchedulerEventState.isCompleted(this.getState)) return
     resultSets synchronized {
-      while(!SchedulerEventState.isCompleted(this.getState)) resultSets.wait()
+      while (!SchedulerEventState.isCompleted(this.getState)) resultSets.wait()
     }
   }
 
@@ -51,11 +49,11 @@ class ClientJob extends EntranceJob {
   override def init(): Unit = {}
 
   override protected def jobToExecuteRequest: ExecuteRequest = new ExecuteRequest with JobExecuteRequest {
-    override val code: String = getTask.asInstanceOf[ClientTask].getCode
+    override val code: String = getTask.asInstanceOf[RequestPersistTask].getCode
     override val jobId: String = getId
   }
 
-  override def getName: String = getTask.asInstanceOf[ClientTask].getCreator + "_" + getTask.asInstanceOf[ClientTask].getUser + "_" + getId
+  override def getName: String = getTask.asInstanceOf[RequestPersistTask].getRequestApplicationName + "_" + getTask.asInstanceOf[RequestPersistTask].getUmUser + "_" + getId
 
   override def getJobInfo: JobInfo = null
 

@@ -18,9 +18,6 @@ package com.webank.wedatasphere.linkis.entranceclient
 
 import com.webank.wedatasphere.linkis.entranceclient.execute.ClientJob
 
-/**
-  * Created by johnnwang on 2019/1/22.
-  */
 trait EntranceClient {
 
   def getEntranceClientName: String

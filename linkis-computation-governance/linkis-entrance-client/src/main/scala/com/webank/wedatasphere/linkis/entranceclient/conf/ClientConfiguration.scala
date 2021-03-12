@@ -18,9 +18,6 @@ package com.webank.wedatasphere.linkis.entranceclient.conf
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 
-/**
-  * Created by johnnwang on 2019/1/22.
-  */
 object ClientConfiguration {
 
   val CLIENT_ENGINE_MANAGER_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.client.enginemanager.application.name.default", "IOEngineManager")

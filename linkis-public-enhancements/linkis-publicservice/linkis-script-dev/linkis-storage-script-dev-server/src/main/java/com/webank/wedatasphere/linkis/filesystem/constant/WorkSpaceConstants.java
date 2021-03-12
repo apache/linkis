@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.filesystem.constant;
 
-/**
- * Created by johnnwang on 2018/10/17.
- */
+
 public class WorkSpaceConstants {
     public static final String XLSX_RESPONSE_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     public static final String DEFAULT_DATE_TYPE = "yyyy-MM-dd HH:mm:ss";

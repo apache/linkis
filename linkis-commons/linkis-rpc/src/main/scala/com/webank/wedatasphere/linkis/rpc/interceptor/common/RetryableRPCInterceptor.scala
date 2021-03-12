@@ -22,16 +22,14 @@ import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.exception.DWCRetryException
 import com.webank.wedatasphere.linkis.common.utils.RetryHandler
 import com.webank.wedatasphere.linkis.protocol.RetryableProtocol
-import com.webank.wedatasphere.linkis.rpc.exception.{DWCRPCRetryException, NoInstanceExistsException}
+import com.webank.wedatasphere.linkis.rpc.exception.DWCRPCRetryException
 import com.webank.wedatasphere.linkis.rpc.interceptor.{RPCInterceptor, RPCInterceptorChain, RPCInterceptorExchange, ServiceInstanceRPCInterceptorChain}
 import com.webank.wedatasphere.linkis.rpc.utils.RPCUtils
 import feign.RetryableException
 import org.apache.commons.lang.StringUtils
 import org.springframework.stereotype.Component
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 @Component
 class RetryableRPCInterceptor extends RPCInterceptor {
   override val order: Int = 20

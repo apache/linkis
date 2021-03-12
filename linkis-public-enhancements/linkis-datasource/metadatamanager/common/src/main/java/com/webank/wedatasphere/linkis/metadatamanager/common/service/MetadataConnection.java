@@ -17,7 +17,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Connection for metadata
- * Created by jackyxxie on 2020/2/10.
  */
 public class MetadataConnection<C> {
     /***

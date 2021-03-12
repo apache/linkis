@@ -18,8 +18,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.11.0</version>
-        <relativePath>../../../../pom.xml</relativePath>
+        <version>dev-1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -33,6 +32,7 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-common</artifactId>
+            <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>asm</artifactId>
@@ -43,8 +43,9 @@
         <!--rpc-->
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-cloudRPC</artifactId>
-            </dependency>
+            <artifactId>linkis-rpc</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -17,9 +17,6 @@ package com.webank.wedatasphere.linkis.metadatamanager.common.service;
 import java.io.Closeable;
 import java.util.Map;
 
-/**
- * Created by jackyxxie on 2020/02/10.
- */
 public interface BaseMetadataService {
 
     /**

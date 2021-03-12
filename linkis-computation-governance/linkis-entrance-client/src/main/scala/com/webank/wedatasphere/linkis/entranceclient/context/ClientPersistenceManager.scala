@@ -23,9 +23,6 @@ import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
 import com.webank.wedatasphere.linkis.scheduler.executer.OutputExecuteResponse
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
 
-/**
-  * Created by johnnwang on 2018/10/30.
-  */
 class ClientPersistenceManager extends PersistenceManager {
   private val persistenceEngine = new ClientPersistenceEngine
   override def getEntranceContext: EntranceContext = null

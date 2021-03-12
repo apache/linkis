@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.protocol.usercontrol;
 
 import java.util.Date;
 
-/**
- * Created by alexyang
- */
+
 public class ResponseLogin implements UserControlLoginProtocol {
 
     private String userName;

@@ -14,21 +14,8 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.usercontrol;
+package com.webank.wedatasphere.linkis.protocol.engine
 
 
-public class RequestRegister implements UserControlRegtisterProtocol{
+case class JobProgressInfo(id: String, totalTasks: Int, runningTasks: Int, failedTasks: Int, succeedTasks: Int)
 
-    // json string
-    private String params;
-
-    public RequestRegister() {};
-
-    public String getParams() {
-        return params;
-    }
-
-    public void setParams(String params) {
-        this.params = params;
-    }
-}

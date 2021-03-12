@@ -13,16 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.webank.wedatasphere.linkis.protocol;
 
-package com.webank.wedatasphere.linkis.protocol.config
 
-import java.util
+public class AbstractRetryableProtocol implements RetryableProtocol {
 
-/**
-  * Created by enjoyyin on 2018/10/17.
-  */
-class ResponseQueryConfig extends ConfigProtocol {
-  private var keyAndValue: util.Map[String, String] = _
-  def getKeyAndValue :util.Map[String, String] = keyAndValue
-  def setKeyAndValue(keyAndValue :util.Map[String, String]) :Unit = this.keyAndValue =keyAndValue
+    @Override
+    public long maxPeriod() {
+        return 3000L;
+    }
+
+    @Override
+    public Class<? extends Throwable>[] retryExceptions() {
+        return new Class[]{};
+    }
+
+    @Override
+    public int retryNum() {
+        return 2;
+    }
+
+    @Override
+    public long period() {
+        return 1000L;
+    }
+
 }

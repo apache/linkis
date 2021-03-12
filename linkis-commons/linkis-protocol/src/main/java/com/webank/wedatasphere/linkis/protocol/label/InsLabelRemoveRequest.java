@@ -14,21 +14,28 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.usercontrol;
+package com.webank.wedatasphere.linkis.protocol.label;
+
+import com.webank.wedatasphere.linkis.common.ServiceInstance;
 
 
-public class RequestRegister implements UserControlRegtisterProtocol{
+public class InsLabelRemoveRequest implements LabelRequest{
 
-    // json string
-    private String params;
+    private ServiceInstance serviceInstance;
 
-    public RequestRegister() {};
+    public InsLabelRemoveRequest(){
 
-    public String getParams() {
-        return params;
     }
 
-    public void setParams(String params) {
-        this.params = params;
+    public InsLabelRemoveRequest(ServiceInstance serviceInstance){
+        this.serviceInstance = serviceInstance;
+    }
+
+    public ServiceInstance getServiceInstance() {
+        return serviceInstance;
+    }
+
+    public void setServiceInstance(ServiceInstance serviceInstance) {
+        this.serviceInstance = serviceInstance;
     }
 }

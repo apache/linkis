@@ -16,10 +16,8 @@
 
 package com.webank.wedatasphere.linkis.protocol.engine
 
-/**
-  * Created by enjoyyin on 2018/9/27.
-  */
-object EngineState extends Enumeration {
+
+object EngineState0 extends Enumeration {
   type EngineState = Value
   val Starting, Idle, Busy, ShuttingDown, Error, Dead, Success = Value
   def isCompleted(executorState: EngineState): Boolean = executorState match {

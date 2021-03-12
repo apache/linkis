@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.scheduler.executer
 
-/**
-  * Created by enjoyyin on 2018/8/31.
-  */
+
 trait ExecuteRequest {
   val code: String
 }
@@ -27,4 +25,10 @@ trait JobExecuteRequest {
 }
 trait RunTypeExecuteRequest{
   val runType:String
+}
+trait PythonExecuteRequest{
+  val sparkPythonVersion:String
+  val sparkPythonExtraPackage:String
+  val pythonVersion:String
+  val pythonExtraPackage:String
 }

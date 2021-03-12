@@ -17,16 +17,14 @@
 package com.webank.wedatasphere.linkis.scheduler.executer
 
 import com.webank.wedatasphere.linkis.scheduler.listener.ExecutorListener
-import com.webank.wedatasphere.linkis.scheduler.queue.{Job, SchedulerEvent}
+import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEvent
 
 import scala.concurrent.duration.Duration
 
-/**
-  * Created by enjoyyin on 2018/9/1.
-  */
+
 abstract class ExecutorManager {
 
-  def setExecutorListener(executorListener: ExecutorListener): Unit
+  def setExecutorListener(engineListener: ExecutorListener): Unit
 
   protected def createExecutor(event: SchedulerEvent): Executor
 
@@ -38,7 +36,7 @@ abstract class ExecutorManager {
 
   def getByGroup(groupName: String): Array[Executor]
 
-  protected def delete(executor: Executor): Unit
+  def delete(executor: Executor): Unit
 
   def shutdown(): Unit
 

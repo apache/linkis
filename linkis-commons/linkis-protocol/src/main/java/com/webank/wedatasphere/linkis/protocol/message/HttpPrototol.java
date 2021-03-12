@@ -14,21 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.usercontrol;
+
+package com.webank.wedatasphere.linkis.protocol.message;
+
+import com.webank.wedatasphere.linkis.protocol.Protocol;
 
 
-public class RequestRegister implements UserControlRegtisterProtocol{
-
-    // json string
-    private String params;
-
-    public RequestRegister() {};
-
-    public String getParams() {
-        return params;
-    }
-
-    public void setParams(String params) {
-        this.params = params;
-    }
+public interface HttpPrototol extends Protocol {
 }

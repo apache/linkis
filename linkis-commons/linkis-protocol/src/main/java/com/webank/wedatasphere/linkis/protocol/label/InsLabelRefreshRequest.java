@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.query;
+package com.webank.wedatasphere.linkis.protocol.label;
+
+import com.webank.wedatasphere.linkis.common.ServiceInstance;
+
+import java.util.Map;
 
 
+public class InsLabelRefreshRequest extends InsLabelAttachRequest{
 
-/**
- * Created by enjoyyin on 2018/9/30.
- */
-public class RequestInsertTask extends RequestPersistTask implements QueryProtocol {
+    public InsLabelRefreshRequest(){
+
+    }
+
+    public InsLabelRefreshRequest(ServiceInstance serviceInstance, Map<String, Object> labels){
+        super(serviceInstance, labels);
+    }
 }

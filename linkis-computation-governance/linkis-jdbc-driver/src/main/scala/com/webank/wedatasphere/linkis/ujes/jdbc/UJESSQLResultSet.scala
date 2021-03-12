@@ -1,19 +1,31 @@
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.webank.wedatasphere.linkis.ujes.jdbc
 
 import java.io.{InputStream, Reader}
 import java.math.MathContext
 import java.net.URL
-import java.sql.{Blob, Clob, Connection, Date, NClob, Ref, ResultSet, ResultSetMetaData, RowId, SQLWarning, SQLXML, Statement, Time, Timestamp}
+import java.sql.{Blob, Clob, Connection, Date, NClob, Ref, ResultSet, RowId, SQLWarning, SQLXML, Statement, Time, Timestamp}
 import java.util.Calendar
 import java.{sql, util}
+
 import com.webank.wedatasphere.linkis.ujes.client.request.ResultSetAction
 import com.webank.wedatasphere.linkis.ujes.client.response.ResultSetResult
-
-
-
-/**
-  * Created by leebai on 2019/8/14.
-  */
+import org.apache.commons.lang.StringUtils
 
 class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLStatement, maxRows: Int, fetchSize: Int) extends ResultSet {
 
@@ -26,7 +38,6 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
 
   private var resultSetMetaData: UJESSQLResultSetMetaData = new UJESSQLResultSetMetaData
 
-  private var maxRowNum : Int = _
 
   private var fetchSizeNum : Int = _
 
@@ -36,11 +47,7 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
 
   private var path : String = null
 
-  private val page : Int = 1
-
-  private val pageSize : Int = 5000
-
-  private var metaData : util.ArrayList[String] = _
+  private var metaData : util.List[util.Map[String, String]] = _
 
   private val statement : UJESSQLStatement = ujesStatement
 
@@ -50,28 +57,42 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
 
   private var warningChain : SQLWarning = null
 
+  init()
+
   private def getResultSetPath(resultSetList: Array[String]): String = {
-    resultSetList(resultSetList.length-1)
+    if (resultSetList.length > 0){
+      resultSetList(resultSetList.length-1)
+    } else {
+      ""
+    }
   }
 
   private def resultSetResultInit(): Unit = {
     if (path == null) path = getResultSetPath(resultSetList)
     val user = connection.getProps.getProperty("user")
-    val resultAction = ResultSetAction.builder.setUser(user).setPath(path).build()
-    resultSetResult = connection.ujesClient.resultSet(resultAction)
+    if (StringUtils.isNotBlank(path)){
+      val resultAction = ResultSetAction.builder.setUser(user).setPath(path).build()
+      resultSetResult = connection.ujesClient.resultSet(resultAction)
+    }
   }
 
   private def metaDataInit(): Unit = {
-    metaData = resultSetResult.getMetadata.asInstanceOf[util.ArrayList[String]]
+    if ( null == resultSetResult ){
+      return
+    }
+    metaData = resultSetResult.getMetadata.asInstanceOf[util.List[util.Map[String, String]]]
     for(cursor <- 1 to metaData.size()){
-      val str: Array[String] = metaData.get(cursor-1).split(",")
-      resultSetMetaData.setColumnNameProperties(cursor,str(0).split(":")(1))
-      resultSetMetaData.setDataTypeProperties(cursor,str(1).split(":")(1))
-      resultSetMetaData.setCommentPropreties(cursor,str(2).split(":")(1))
+      val col = metaData.get(cursor - 1)
+      resultSetMetaData.setColumnNameProperties(cursor, col.get("columnName"))
+      resultSetMetaData.setDataTypeProperties(cursor, col.get("dataType"))
+      resultSetMetaData.setCommentPropreties(cursor, col.get("comment"))
     }
   }
 
   private def resultSetInit(): Unit  = {
+    if ( null == resultSetResult ){
+      return
+    }
     resultSetRow = resultSetResult.getFileContent.asInstanceOf[util.ArrayList[util.ArrayList[String]]]
   }
 
@@ -90,7 +111,7 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
   override def next(): Boolean = {
     if(metaData == null) init()
     currentRowCursor += 1
-    if(currentRowCursor > resultSetRow.size()-1) false
+    if(null == resultSetRow || currentRowCursor > resultSetRow.size()-1) false
     else{
       updateCurrentRow(currentRowCursor)
       true
@@ -204,7 +225,10 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
     if(wasNull()) {
       throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
     }else{
-      any.asInstanceOf[Long]
+      any match {
+        case i:Integer => i.longValue()
+        case _ => any.asInstanceOf[Long]
+      }
     }
   }
 
@@ -356,6 +380,7 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
   }
 
   override def getMetaData: UJESSQLResultSetMetaData = {
+    if(metaData == null) init()
     resultSetMetaData
   }
 

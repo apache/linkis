@@ -14,10 +14,6 @@ import org.springframework.stereotype.Component
 
 import scala.collection.JavaConversions._
 
-/**
- * @Author alexyang
- * @Date 2020/2/18
- */
 @Component
 class InstanceAliasManagerImpl extends InstanceAliasManager with Logging {
 

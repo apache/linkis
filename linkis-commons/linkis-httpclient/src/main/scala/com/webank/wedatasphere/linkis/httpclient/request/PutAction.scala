@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-/*
- * Created by ${USER} on ${DATE}.
- */
+package com.webank.wedatasphere.linkis.httpclient.request
 
-package com.webank.wedatasphere.linkis.httpclient.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+abstract class PutAction extends POSTAction
 
-/**
-  * Created by enjoyyin on 2019/5/21.
-  */
-class HttpMessageParseException(errorDesc: String) extends ErrorException(10900, errorDesc)
-class HttpMethodNotSupportException(errorDesc: String) extends ErrorException(10902, errorDesc)
+abstract class DeleteAction extends GetAction
+
+abstract class HeadAction extends GetAction
+
+abstract class OptionsAction extends GetAction

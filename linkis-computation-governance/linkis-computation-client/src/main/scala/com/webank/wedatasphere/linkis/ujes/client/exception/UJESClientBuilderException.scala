@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
-
 package com.webank.wedatasphere.linkis.ujes.client.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 class UJESClientBuilderException(errorDesc: String) extends ErrorException(47000, errorDesc)
 class UJESJobException(errorCode: Int, errorDesc: String) extends ErrorException(errorCode, errorDesc) {
   def this(errorDesc: String) = this(47001, errorDesc)

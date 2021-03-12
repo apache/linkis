@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
-
 package com.webank.wedatasphere.linkis.ujes.client
 
 import java.util.concurrent.TimeUnit
@@ -29,12 +25,9 @@ import com.webank.wedatasphere.linkis.ujes.client.request.JobExecuteAction.Engin
 import com.webank.wedatasphere.linkis.ujes.client.request.{JobExecuteAction, ResultSetAction}
 import org.apache.commons.io.IOUtils
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 object UJESClientImplTest extends App {
 
-  val clientConfig = DWSClientConfigBuilder.newBuilder().addUJESServerUrl("http://localhost:port")
+  val clientConfig = DWSClientConfigBuilder.newBuilder().addServerUrl("http://localhost:port")
     .connectionTimeout(30000).discoveryEnabled(true)
     .discoveryFrequency(1, TimeUnit.MINUTES)
     .loadbalancerEnabled(true).maxConnectionSize(5)

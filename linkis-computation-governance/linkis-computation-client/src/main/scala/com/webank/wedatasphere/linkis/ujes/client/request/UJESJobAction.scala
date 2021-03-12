@@ -14,15 +14,8 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
-
 package com.webank.wedatasphere.linkis.ujes.client.request
 
 import com.webank.wedatasphere.linkis.httpclient.dws.request.DWSHttpAction
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 trait UJESJobAction extends DWSHttpAction with UserAction

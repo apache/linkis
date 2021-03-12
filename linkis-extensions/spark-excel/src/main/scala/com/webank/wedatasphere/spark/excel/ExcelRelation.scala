@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.webank.wedatasphere.spark.excel
 
 import java.math.BigDecimal
@@ -6,13 +22,11 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 import com.monitorjbl.xlsx.StreamingReader
-import com.webank.wedatasphere.linkis.common.utils.Logging
 import org.apache.commons.lang.StringUtils
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.poi.ss.usermodel.{Cell, CellType, DataFormatter, DateUtil, Sheet, Workbook, WorkbookFactory, Row => SheetRow}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
-import org.apache.spark.sql.catalyst.util.DateTimeUtils
 import org.apache.spark.sql.sources._
 import org.apache.spark.sql.types._
 
@@ -32,11 +46,11 @@ case class ExcelRelation(
   timestampFormat: Option[String] = None,
   maxRowsInMemory: Option[Int] = None,
   excerptSize: Int = 10,
-  parameters: Map[String, String] = null,dateFormat: List[String]
+  parameters: Map[String, String] = null,dateFormat: List[String],indexes:Array[Int]
 )(@transient val sqlContext: SQLContext)
     extends BaseRelation
     with TableScan
-    with PrunedScan with Logging{
+    with PrunedScan{
 
   private val path = new Path(location)
 
@@ -44,7 +58,21 @@ case class ExcelRelation(
     row.eachCellIterator(startColumn, endColumn).to[Vector]
 
   private def openWorkbook(): Workbook = {
-    val inputStream = FileSystem.get(path.toUri, sqlContext.sparkContext.hadoopConfiguration).open(path)
+
+    val fs = FileSystem.get(path.toUri, sqlContext.sparkContext.hadoopConfiguration)
+    // if failed try to refresh nfs cache
+    val inputStream =
+    try{
+      fs.open(path)
+    } catch {
+      case e:Throwable =>
+        fs.listFiles(path.getParent, false)
+        fs.open(path)
+      case _ =>
+        fs.listFiles(path.getParent, false)
+        fs.open(path)
+    }
+
     maxRowsInMemory
       .map { maxRowsInMem =>
         StreamingReader
@@ -107,6 +135,20 @@ case class ExcelRelation(
     val init = if (useHeader) excerpt else firstRowWithData :: excerpt
     init.iterator ++ restIterator(workbook, excerpt.size)
   }
+
+  private def getFirstRow(wb:Workbook):org.apache.poi.ss.usermodel.Row ={
+    val names = sheetName.getOrElse("sheet1")
+    var  sheet:Sheet = null
+    if("sheet1".equals(names) || ! names.contains(',')){
+      sheet = findSheet(wb, sheetName)
+    } else {
+      val sheetName = names.split(',')(0)
+      sheet = findSheet(wb,Some(sheetName))
+    }
+    val i = sheet.iterator.asScala
+    if(i.hasNext)i.next() else null
+  }
+
 
   /**
     * 遍历所有sheet
@@ -191,14 +233,15 @@ case class ExcelRelation(
             case c => throw new RuntimeException(s"Unknown color type $c: ${c.getClass}")
           }
         }
-        { row: SheetRow =>
-          val cell = row.getCell(columnIndex + startColumn)
-          if (cell == null) {
-            null
-          } else {
-            cellExtractor(cell)
-          }
+      { row: SheetRow =>
+        val index = indexes(columnIndex)
+        val cell = row.getCell(index + startColumn)
+        if (cell == null) {
+          null
+        } else {
+          cellExtractor(cell)
         }
+      }
       }
       .to[Vector]
     val workbook = openWorkbook()
@@ -231,7 +274,7 @@ case class ExcelRelation(
             case CellType.NUMERIC => cell.getNumericCellValue.toString
             case _ => dataFormatter.formatCellValue(cell)
           }
-        case CellType.ERROR =>logger.info(s"解析excel遇到错误公式数据${cell.getStringCellValue},置为空值");""
+        case CellType.ERROR =>"" //logInfo(s"解析excel遇到错误公式数据${cell.getStringCellValue},置为空值")
         case _ => dataFormatter.formatCellValue(cell)
       }
     lazy val numericValue =

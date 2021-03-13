@@ -46,7 +46,7 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-resourcemanager
-        image: wedatasphere/linkis:linkis-resourcemanager-0.11.0
+        image: wedatasphere/linkis:linkis-resourcemanager-1.0.0-RC1
         lifecycle:
             preStop:
               exec:

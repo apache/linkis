@@ -54,7 +54,7 @@ spec:
                       - node3
       containers:
         - name: linkis-ujes-pipeline-entrance
-          image: wedatasphere/linkis:linkis-ujes-pipeline-entrance-0.11.0
+          image: wedatasphere/linkis:linkis-ujes-pipeline-entrance-1.0.0-RC1
           lifecycle:
             preStop:
               exec:

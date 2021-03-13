@@ -54,7 +54,7 @@ spec:
                       - node2
       containers:
         - name: linkis-ujes-shell-enginemanager
-          image: wedatasphere/linkis:linkis-ujes-shell-enginemanager-0.11.0
+          image: wedatasphere/linkis:linkis-ujes-shell-enginemanager-1.0.0-RC1
           lifecycle:
             preStop:
               exec:

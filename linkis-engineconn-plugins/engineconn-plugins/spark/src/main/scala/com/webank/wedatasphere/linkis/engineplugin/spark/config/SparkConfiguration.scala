@@ -57,7 +57,7 @@ object SparkConfiguration extends Logging {
 
   val ENGINE_JAR = CommonVars[String]("wds.linkis.enginemanager.core.jar", getMainJarName)
 
-  val DEFAULT_SPARK_JAR_NAME = CommonVars[String]("wds.linkis.ecp.spark.default.jar", "linkis-engineconn-launch-dev-1.0.0.jar")
+  val DEFAULT_SPARK_JAR_NAME = CommonVars[String]("wds.linkis.ecp.spark.default.jar", "linkis-engineconn-launch-1.0.0-RC1.jar")
 
   val SPARK_DRIVER_CLASSPATH = CommonVars[String]("wds.linkis.spark.driver.extra.class.path", "")
 

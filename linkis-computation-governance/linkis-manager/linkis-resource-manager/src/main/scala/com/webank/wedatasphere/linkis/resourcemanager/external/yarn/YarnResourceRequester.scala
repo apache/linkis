@@ -47,6 +47,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
 
   override def requestResourceInfo(identifier: ExternalResourceIdentifier, provider: ExternalResourceProvider): NodeResource = {
     val rmWebAddress = provider.getConfigMap.get("rmWebAddress").asInstanceOf[String]
+    info(s"rmWebAddress: $rmWebAddress")
     val queueName = identifier.asInstanceOf[YarnResourceIdentifier].getQueueName
     this.provider = provider
     def getHadoopVersion() = if(provider.getConfigMap.get("hadoopVersion") != null) provider.getConfigMap.get("hadoopVersion").asInstanceOf[String] else {
@@ -89,8 +90,8 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     def getChildQueues(resp:JValue):JValue =  {
       val queues = resp \ "childQueues" \ "queue"
 
-      if(queues != null && queues != JNull && queues != JNothing ) {
-        info(s"test queue:$queues")
+      if(queues != null && queues != JNull && queues != JNothing && null != queues.children && queues.children.nonEmpty) {
+        info(s"queues:$queues")
         queues
       } else resp  \ "childQueues"
     }

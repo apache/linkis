@@ -20,7 +20,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>dev-1.0.0</version>
+        <version>1.0.0-RC1</version>
     </parent>
 
     <artifactId>linkis-storage-script-dev-client</artifactId>

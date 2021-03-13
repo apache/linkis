@@ -21,7 +21,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>dev-1.0.0</version>
+        <version>1.0.0-RC1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -35,7 +35,6 @@
         <module>linkis-manager-commons/linkis-manager-service-common</module>
         <module>linkis-manager-commons/linkis-resource-manager-common</module>
         <module>linkis-manager-persistence</module>
-        <module>linkis-manager-client</module>
         <module>linkis-manager-monitor</module>
         <module>linkis-resource-manager</module>
         <module>linkis-application-manager</module>

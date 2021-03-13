@@ -47,7 +47,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-bml
-        image: wedatasphere/linkis:linkis-bml-0.11.0
+        image: wedatasphere/linkis:linkis-bml-1.0.0-RC1
         lifecycle:
             preStop:
               exec:

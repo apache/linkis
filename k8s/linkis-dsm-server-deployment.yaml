@@ -45,7 +45,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-dsm-server
-        image: wedatasphere/linkis:linkis-dsm-server-0.11.0
+        image: wedatasphere/linkis:linkis-dsm-server-1.0.0-RC1
         lifecycle:
           preStop:
             exec:

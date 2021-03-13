@@ -14,7 +14,6 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -25,18 +24,17 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>linkis-engineconn</artifactId>
+    <artifactId>linkis-public-enhancements</artifactId>
     <packaging>pom</packaging>
-    <modules>
-        <module>linkis-engineconn-common</module>
-        <module>linkis-engineconn-core</module>
-        <module>linkis-engineconn-executor/executor-core</module>
-        <module>linkis-engineconn-launch</module>
-        <module>linkis-engineconn-executor/accessible-executor</module>
-        <module>linkis-engineconn-executor/resource-executor</module>
-        <module>linkis-engineconn-executor/callback-service</module>
-        <module>linkis-computation-engineconn</module>
-    </modules>
 
+    <modules>
+        <module>linkis-bml</module>
+        <module>linkis-context-service</module>
+        <module>linkis-datasource/linkis-metadata</module>
+        <module>linkis-publicservice</module>
+
+        <!--<module>linkis-user-control</module>-->
+
+    </modules>
 
 </project>

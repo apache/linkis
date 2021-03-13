@@ -54,7 +54,7 @@ spec:
                       - node2
       containers:
         - name: linkis-ujes-spark-entrance
-          image: wedatasphere/linkis:linkis-ujes-spark-entrance-0.11.0
+          image: wedatasphere/linkis:linkis-ujes-spark-entrance-1.0.0-RC1
           lifecycle:
             preStop:
               exec:

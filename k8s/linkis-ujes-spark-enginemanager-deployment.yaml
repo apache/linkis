@@ -55,7 +55,7 @@ spec:
                       - node2
       containers:
         - name: linkis-ujes-spark-enginemanager
-          image: wedatasphere/linkis:linkis-ujes-spark-enginemanager-0.11.0
+          image: wedatasphere/linkis:linkis-ujes-spark-enginemanager-1.0.0-RC1
           lifecycle:
             preStop:
               exec:

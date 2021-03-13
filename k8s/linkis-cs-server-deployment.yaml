@@ -46,7 +46,7 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
       containers:
       - name: linkis-cs-server
-        image: wedatasphere/linkis:linkis-cs-server-0.11.0
+        image: wedatasphere/linkis:linkis-cs-server-1.0.0-RC1
         lifecycle:
             preStop:
               exec:

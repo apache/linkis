@@ -45,7 +45,7 @@ spec:
         
       containers:
       - name: linkis-gateway
-        image: wedatasphere/linkis:linkis-gateway-0.11.0
+        image: wedatasphere/linkis:linkis-gateway-1.0.0-RC1
         lifecycle:
             preStop:
               exec:

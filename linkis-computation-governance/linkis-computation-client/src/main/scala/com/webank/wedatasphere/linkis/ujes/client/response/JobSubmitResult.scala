@@ -22,8 +22,7 @@ import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageRe
 import scala.beans.BeanProperty
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/entrance/submit")
-class JobSubmitResult extends UJESJobResult {
+class JobSubmitResult extends JobExecuteResult {
 
-  @BeanProperty var taskID: String = _
 
 }

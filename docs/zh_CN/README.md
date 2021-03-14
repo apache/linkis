@@ -66,9 +66,15 @@ Linkis 在上层应用和底层引擎之间构建了一层计算中间件，上�
 
 # 文档列表
 
+### Linkis1.0 常用文档
+
 [**Linkis1.0 快速安装使用文档**](https://github.com/WeBankFinTech/Linkis/wiki/%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8Linkis-1.0-RC1)
 
+[**Linkis1.0 用户使用文档**](https://github.com/WeBankFinTech/Linkis/wiki/Linkis1.0%E7%94%A8%E6%88%B7%E4%BD%BF%E7%94%A8%E6%96%87%E6%A1%A3)
+
 [**快速了解 Linkis1.0 全新架构**](https://github.com/WeBankFinTech/Linkis/wiki/Linkis1.0%E4%B8%8ELinkis0.X%E7%9A%84%E5%8C%BA%E5%88%AB%E7%AE%80%E8%BF%B0)
+
+### Linkis0.X 常用文档
 
 [Linkis0.X 快速安装使用文档](https://github.com/WeBankFinTech/Linkis/wiki/%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8Linkis)
 
@@ -78,8 +84,7 @@ Linkis 在上层应用和底层引擎之间构建了一层计算中间件，上�
 
 [Linkis0.X 架构文档](https://github.com/WeBankFinTech/Linkis/wiki/%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%BB%8B%E7%BB%8D)
 
-**更多文档，请[点我访问](https://github.com/WeBankFinTech/Linkis/wiki)**
-
+**更多关于 Linkis1.0 和 Linkis0.X 的文档，请 [点我访问](https://github.com/WeBankFinTech/Linkis/wiki)**
 
 ----
 

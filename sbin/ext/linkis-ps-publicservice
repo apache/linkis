@@ -1,0 +1,73 @@
+#!/bin/bash
+#
+# description:  publicservice start cmd
+# @created:     01.16.2021
+#
+# Modified for Linkis 1.0.0
+
+# get log directory
+
+source $LINKIS_CONF_DIR/linkis-env.sh
+SERVER_SUFFIX="linkis-public-enhancements/linkis-ps-publicservice"
+## set log
+if [ "$LINKIS_LOG_DIR" = "" ]; then
+  export LINKIS_LOG_DIR="$LINKIS_HOME/logs"
+fi
+export SERVER_LOG_PATH=$LINKIS_LOG_DIR/$SERVER_SUFFIX
+if [ ! -w "$SERVER_LOG_PATH" ] ; then
+  mkdir -p "$SERVER_LOG_PATH"
+fi
+
+if test -z "$SERVER_HEAP_SIZE"
+then
+  export SERVER_HEAP_SIZE="512M"
+fi
+
+if test -z "$SERVER_JAVA_OPTS"
+then
+  export SERVER_JAVA_OPTS=" -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$SERVER_LOG_PATH/linkis-gc.log"
+fi
+
+
+export SERVER_CLASS=com.webank.wedatasphere.linkis.DataWorkCloudApplication
+
+## conf dir
+export SERVER_CONF_PATH=$LINKIS_CONF_DIR:$LINKIS_CONF_DIR/$SERVER_SUFFIX
+
+## commons lib
+export LINKIS_COMMONS_LIB=$LINKIS_HOME/$LINKIS_PUBLIC_MODULE
+if [ ! -r "$LINKIS_COMMONS_LIB" ] ; then
+    echo "linkis commons lib not exists $LINKIS_COMMONS_LIB"
+    exit 1
+fi
+
+## server lib
+export SERVER_LIB=$LINKIS_HOME/lib/$SERVER_SUFFIX
+if [ ! -r "$SERVER_LIB" ] ; then
+    echo "server lib not exists $SERVER_LIB"
+    exit 1
+fi
+
+## set class path
+export SERVER_CLASS_PATH=$SERVER_CONF_PATH:$LINKIS_COMMONS_LIB/*:$SERVER_LIB/*
+
+## set spring args
+if [ "$PUBLICSERVICE_PORT" != "" ]; then
+  SPRING_ARGS="--server.port=$PUBLICSERVICE_PORT"
+fi
+
+if [ "$EUREKA_URL" != "" ]; then
+  SPRING_ARGS="$SPRING_ARGS --eureka.client.serviceUrl.defaultZone=$EUREKA_URL"
+fi
+
+nohup java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS 2>&1 > $SERVER_LOG_PATH/linkis.out &
+
+pid=$!
+sleep 2
+if [[ -z "${pid}" ]]; then
+    echo "server $SERVER_NAME start failed!"
+    exit 1
+else
+    echo "server $SERVER_NAME start succeeded!"
+    echo $pid > $SERVER_PID
+fi

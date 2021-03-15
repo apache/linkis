@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright 2019 WeBank
-  ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
-  ~
   ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +19,7 @@
 
     <groupId>com.webank.wedatasphere.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>0.11.0</version>
+    <version>1.0.0-RC1</version>
     <packaging>pom</packaging>
 
     <name>Linkis Project Parent POM</name>
@@ -45,125 +42,62 @@
     </scm>
 
     <developers>
-        <developer>
-            <id>peace</id>
-            <name>peace wong</name>
-            <email>wpeace1212@gmail.com</email>
-            <url>https://github.com/peacewong</url>
-            <organization>WeBankFinTech</organization>
-            <organizationUrl>https://github.com/WeBankFinTech</organizationUrl>
-        </developer>
+
     </developers>
 
     <modules>
 
-        <module>core/common</module>
-        <module>core/cloudProtocol</module>
-        <module>core/scheduler</module>
-        <module>core/cloudModule</module>
-        <module>core/cloudRPC</module>
-        <module>core/cloudMybatis</module>
-        <module>core/hadoop-common</module>
-        <module>core/httpclient</module>
-        <module>storage/storage</module>
-        <module>bml/bmlcommon</module>
-        <module>bml/bmlclient</module>
-        <module>bml/bmlserver</module>
-        <module>datasource/datasourcemanager/common</module>
-        <module>datasource/metadatamanager/common</module>
-        <module>resourceManager/resourcemanagercommon</module>
-        <module>resourceManager/resourcemanagerclient</module>
-        <module>resourceManager/resourcemanagerserver</module>
-        <module>publicService/udf</module>
-        <module>publicService/application</module>
-        <module>publicService/jobhistory</module>
-        <module>publicService/configuration</module>
-        <module>publicService/variable</module>
-        <module>contextservice/cs-common</module>
-        <module>contextservice/cs-client</module>
-        <module>contextservice/cs-listener</module>
-        <module>contextservice/cs-ujes-client</module>
-        <module>contextservice/cs-cache</module>
-        <module>contextservice/cs-persistence</module>
-        <module>contextservice/cs-highavailable</module>
-        <module>ujes/entrance</module>
-        <module>ujes/entranceclient</module>
-        <module>publicService/workspace</module>
-        <module>publicService/workspace/client/workspace-httpclient</module>
-        <module>metadata</module>
-        <module>ujes/engine</module>
-        <module>bml/bml-engine-hook</module>
-        <module>ujes/enginemanager</module>
-        <module>ujes/definedEngines/spark/engine</module>
-        <module>ujes/definedEngines/spark/enginemanager</module>
-        <module>ujes/definedEngines/spark/entrance</module>
+        <module>linkis-commons</module>
 
-        <module>ujes/definedEngines/hive/engine</module>
-        <module>ujes/definedEngines/hive/enginemanager</module>
-        <module>ujes/definedEngines/hive/entrance</module>
-
-        <module>ujes/definedEngines/python/engine</module>
-        <module>ujes/definedEngines/python/enginemanager</module>
-        <module>ujes/definedEngines/python/entrance</module>
-
-        <module>ujes/definedEngines/pipeline/engine</module>
-        <module>ujes/definedEngines/pipeline/enginemanager</module>
-        <module>ujes/definedEngines/pipeline/entrance</module>
-        <module>ujes/definedEngines/jdbc/entrance</module>
-        <module>ujes/definedEngines/mlsql/entrance</module>
-
-        <module>ujes/definedEngines/shell/engine</module>
-        <module>ujes/definedEngines/shell/entrance</module>
-        <module>ujes/definedEngines/shell/enginemanager</module>
-
-        <module>ujes/definedEngines/presto/entrance</module>
-
-        <module>ujes/definedEngines/es/entrance</module>
-
-        <module>gateway/core</module>
-        <module>gateway/springcloudgateway</module>
-        <module>gateway/gateway-ujes-support</module>
-        <module>gateway/gateway-httpclient-support</module>
-        <module>eurekaServer</module>
-        <module>publicService</module>
-        <module>ujes/client</module>
-        <module>contextservice/cs-server</module>
-        <module>contextservice/cs-search</module>
-        <module>datasource/metadatamanager/server</module>
-        <module>datasource/metadatamanager/service/mysql</module>
-        <module>datasource/metadatamanager/service/elasticsearch</module>
-        <module>datasource/metadatamanager/service/hive</module>
-        <module>datasource/datasourcemanager/server</module>
         <module>assembly/public-module</module>
+
+        <module>linkis-spring-cloud-services</module>
+
+        <module>linkis-public-enhancements</module>
+
+        <module>linkis-orchestrator</module>
+
+        <module>linkis-computation-governance</module>
+
+        <module>linkis-engineconn-plugins</module>
+
         <module>assembly</module>
 
     </modules>
 
     <properties>
+        <linkis.version>1.0.0-RC1</linkis.version>
         <hadoop.version>2.7.2</hadoop.version>
-        <hive.version>1.2.1</hive.version>
-        <hbase.version>2.1.9</hbase.version>
-        <presto.version>0.234</presto.version>
-        <spring.eureka.version>1.4.4.RELEASE</spring.eureka.version>
-        <spring.boot.version>2.0.3.RELEASE</spring.boot.version>
+        <spring.eureka.version>2.2.6.RELEASE</spring.eureka.version>
+        <spring.feign.version>2.2.6.RELEASE</spring.feign.version>
+        <spring.boot.version>2.3.7.RELEASE</spring.boot.version>
+        <spring.cloud.version>2.2.6.RELEASE</spring.cloud.version>
+        <guava.version>25.1-jre</guava.version>
         <gson.version>2.8.5</gson.version>
-        <fasterxml.jackson.version>2.10.0</fasterxml.jackson.version>
-        <scala.version>2.11.8</scala.version>
+        <fasterxml.jackson.version>2.11.3</fasterxml.jackson.version>
+        <scala.version>2.11.12</scala.version>
         <jdk.compile.version>1.8</jdk.compile.version>
         <plugin.scala.version>2.15.2</plugin.scala.version>
         <scala.binary.version>2.11</scala.binary.version>
+        <netty.version>4.1.44.Final</netty.version>
+        <json4s.version>3.5.3</json4s.version>
         <jersey.version>2.16</jersey.version>
         <jersey.servlet.version>2.23.1</jersey.servlet.version>
-        <jetty.version>9.4.11.v20180605</jetty.version>
+        <jetty.version>9.4.20.v20190813</jetty.version>
         <httpclient.version>4.5.4</httpclient.version>
         <httpmime.version>4.5.4</httpmime.version>
-        <slf4j.version>1.7.12</slf4j.version>
+        <slf4j.version>1.7.30</slf4j.version>
         <maven.version>3.3.3</maven.version>
-        <xstream.core.version>1.4.11.1</xstream.core.version>
+        <xstream.core.version>1.4.15</xstream.core.version>
+        <spring.version>5.2.12.RELEASE</spring.version>
+        <spring.security.cryto.version>5.3.6.RELEASE</spring.security.cryto.version>
+        <reflections.version>0.9.10</reflections.version>
+        <mybatis-plus.boot.starter.version>3.4.1</mybatis-plus.boot.starter.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dispatch.version>0.11.2</dispatch.version>
-        <jsoup.version>1.8.2</jsoup.version>
-        <harbor.reposity>wedatasphere/linkis</harbor.reposity>
+        <javassist.version>3.19.0-GA</javassist.version>
+        <commons-collections.version>3.2.2</commons-collections.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <commons-io.version>2.4</commons-io.version>
     </properties>
 
     <dependencyManagement>
@@ -182,433 +116,25 @@
                         <groupId>org.hibernate.validator</groupId>
                     </exclusion>
                 </exclusions>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-application</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-bml-hook</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-bmlclient</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-bmlcommon</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-bmlserver</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-cloudRPC</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-configuration</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-cs-cache</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-cs-client</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-cs-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-cs-highavailable</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-cs-listener</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-cs-persistence</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-cs-search</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-cs-server</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-cs-ujes-client</artifactId>
-                <version>${project.version}</version>
+                <version>${linkis.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.webank.wedatasphere.linkis</groupId>
                 <artifactId>linkis-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-datasourcemanager-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-datasourcemanager-server</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-eureka-server</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-gateway-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-gateway-httpclient-support</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-gateway-springcloudgateway</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-gateway-ujes-support</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-hadoop-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-hive-engine</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-hive-engineManager</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-hive-entrance</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-httpclient</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-jdbc-entrance</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-jobhistory</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-metadata</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-metadatamanager-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-metadatamanager-server</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-metadatamanager-service-es</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-metadatamanager-service-hive</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-metadatamanager-service-mysql</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-mlsql-entrance</artifactId>
-                <version>${project.version}</version>
+                <version>${linkis.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.webank.wedatasphere.linkis</groupId>
                 <artifactId>linkis-mybatis</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-pipeline-engine</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-pipeline-enginemanager</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-pipeline-entrance</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-protocol</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-python-engine</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-python-enginemanager</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-python-entrance</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-resourcemanager-client</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-resourcemanager-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-resourcemanager-server</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-scheduler</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-shell-engine</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-shell-enginemanager</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-shell-entrance</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-storage</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-udf</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-ujes-client</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-ujes-engine</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-ujes-enginemanager</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-ujes-entrance</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-ujes-entranceclient</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-ujes-jdbc</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-ujes-spark-engine</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-ujes-spark-enginemanager</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-ujes-spark-entracne</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-variable</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-workspace</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>linkis-workspace-httpclient</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>public-module</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>publicservice</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
-                <artifactId>wedatasphere-linkis</artifactId>
-                <version>${project.version}</version>
+                <version>${linkis.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Finchley.RELEASE</version>
+                <version>Hoxton.SR1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -647,12 +173,12 @@
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
-                <version>2.6</version>
+                <version>${commons-lang.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>25.1-jre</version>
+                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -662,7 +188,7 @@
             <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
-                <version>3.2.2</version>
+                <version>${commons-collections.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -670,33 +196,6 @@
 
 
     <profiles>
-        <profile>
-            <id>product</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <project.release.version>0.11.0</project.release.version>
-                <netty.version>4.1.17.Final</netty.version>
-                <json4s.version>3.5.3</json4s.version>
-            </properties>
-        </profile>
-        <profile>
-            <id>spark2.3</id>
-            <properties>
-                <project.release.version>0.11.0</project.release.version>
-                <netty.version>4.1.17.Final</netty.version>
-                <json4s.version>3.2.11</json4s.version>
-            </properties>
-        </profile>
-        <profile>
-            <id>spark2.2-2.0</id>
-            <properties>
-                <project.release.version>0.11.0</project.release.version>
-                <netty.version>4.0.47.Final</netty.version>
-                <json4s.version>3.2.11</json4s.version>
-            </properties>
-        </profile>
 
         <profile>
             <id>release</id>
@@ -738,25 +237,26 @@
                             </execution>
                         </executions>
                     </plugin>
-
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
 
     </profiles>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <build>
         <pluginManagement>

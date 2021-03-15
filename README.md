@@ -7,11 +7,11 @@ English | [中文](docs/zh_CN/README.md)
 
 ## Introduction
 
-Linkis builds a layer of computation middleware between the upper-level application and the underlying engine. The upper-level applications can connect to the bottom layer computation and storage engine by the standard interfaces such as REST/WS/JDBC provided by Linkis to connect to MySQL/Spark/Hive/Presto/Flink, etc, and achieves the intercommunication of user resources such as unified variables, scripts, UDFs, functions and resource files.
+ Linkis builds a layer of computation middleware between the upper-level application and the underlying engine. The upper-level applications can connect to the bottom layer computation and storage engine by the standard interfaces such as REST/WS/JDBC provided by Linkis to connect to MySQL/Spark/Hive/Presto/Flink, etc, and achieves the intercommunication of user resources such as unified variables, scripts, UDFs, functions and resource files.
 
-As a computation middleware, it provides powerful connectivity, reuse, expansion, and management capabilities. And by decoupling the application layer and the engine layer, the complex network call relationship is simplified, and the overall complexity and development, operation and maintenance costs are reduced.
+ As a computation middleware, it provides powerful connectivity, reuse, expansion, and management capabilities. And by decoupling the application layer and the engine layer, the complex network call relationship is simplified, and the overall complexity and development, operation and maintenance costs are reduced.
 
-Since Linkis was open sourced in 2019, it has accumulated nearly 700 trial companies and 1000+ sandbox trial users, which involved in multiple industries such as the Internet, finance, and communications. Many companies have used them as a unified entrance for the underlying computation storage engine components of the big data platform.
+ Since Linkis was open sourced in 2019, it has accumulated nearly **700** trial companies and **1000+** sandbox trial users, which involved in multiple industries such as the Internet, finance, and communications. Many companies have used them as a unified entrance for the underlying computation storage engine components of the big data platform.
 
 
 ![linkis-intro-01](https://user-images.githubusercontent.com/11496700/84615498-c3030200-aefb-11ea-9b16-7e4058bf6026.png)
@@ -20,9 +20,9 @@ Since Linkis was open sourced in 2019, it has accumulated nearly 700 trial compa
 <br>
 <br>
 
-Based on the concept of the computation middleware architecture of Linkis, we have built a large amount of applications and systems on top of it. Currently available open-source project: 
+ Based on the concept of the computation middleware architecture of Linkis, we have built a large amount of applications and systems on top of it. Currently available open-source project: 
  
- - [**DataSphere Studio - Data Application Development& Management Portal**](https://github.com/WeBankFinTech/DataSphereStudio)
+ - [**DataSphere Studio - Data Application Development & Management Framework**](https://github.com/WeBankFinTech/DataSphereStudio)
  
  - [**Qualitis - Data Quality Tool**](https://github.com/WeBankFinTech/Qualitis)
  
@@ -38,13 +38,13 @@ Based on the concept of the computation middleware architecture of Linkis, we ha
 
 - **Support for abundant underlying computation storage engine**.
 
-    **Currently supported computation storage engines**: Spark, Hive, Python, Presto, ElasticSearch, MLSQL, TiSpark, JDBC, Shell, etc.
+    **Currently supported computation storage engines**: Spark, Hive, Python, Presto, ElasticSearch, MLSQL, TiSpark, JDBC, Shell, etc;
     
-    **Supporting computation storage engine**: Flink, Impala, Clickhouse, etc.
+    **Supporting computation storage engine**: Flink, Impala, Clickhouse, etc;
     
-    **Supported script languages**: SparkSQL, Scala, Pyspark, R, Python, JDBC, HiveQL and Shell, etc.;
+    **Supported script languages**: SparkSQL, Scala, Pyspark, R, Python, JDBC, HiveQL and Shell, etc.
   
-- **Powerful computation governance capabilities**: Linkis 1.0 is divided into three categories in total: public enhancement service, computation governance service, and microservice governance service. The three categories are as follows:
+- **Powerful computation governance capabilities**. Linkis 1.0 is divided into three categories in total: public enhancement service, computation governance service, and microservice governance service. The three categories are as follows:
                                                     
     1. Public enhancement service are the material library service, context service, data source service and public service provided by Linkis 0.X;
                                                     
@@ -55,11 +55,11 @@ Based on the concept of the computation middleware architecture of Linkis, we ha
 
 - **Support for full stack computation storage engine architecture**. As a computation middleware, it will receive, execute and manage tasks and requests from users for various computation storage engines, including batch tasks, interactive query tasks, real-time streaming tasks and storage tasks, and provide powerful computation governance capabilities such as reuse, warm-up , current-limiting, engine-switching, full life cycle management of engines;
 
-- **More powerful resource management capabilities**. ResourceManager not only extends the resource management capabilities of Linkis0.X for Yarn and Linkis EngineManager, but also provides tag-based multi-level resource allocation and recycling capabilities, allowing ResourceManager have powerful resource management capabilities across mutil Yarn clusters and mutil computation resource types.
+- **More powerful resource management capabilities**. ResourceManager not only extends the resource management capabilities of Linkis0.X for Yarn and Linkis EngineManager, but also provides tag-based multi-level resource allocation and recycling capabilities, allowing ResourceManager have powerful resource management capabilities across mutil Yarn clusters and mutil computation resource types;
 
-- **labeling in full-process**.Based on multi-level combined tags, Linkis1.0 provides cross-IDC and cross-cluster computation task routing management and control capabilities, and multi-tenant isolation capabilities for EngineConnManager and EngineConn;
+- **labeling in full-process**. Based on multi-level combined tags, Linkis1.0 provides cross-IDC and cross-cluster computation task routing management and control capabilities, and multi-tenant isolation capabilities for EngineConnManager and EngineConn;
 
-- **Unified Context Service**.Unified user and system resource files (JAR, ZIP, Properties, etc.), unified management of parameters and variables across users, systems, and calculation engines, one setting and automatic reference everywhere;
+- **Unified Context Service**. Unified user and system resource files (JAR, ZIP, Properties, etc.), unified management of parameters and variables across users, systems, and calculation engines, one setting and automatic reference everywhere;
 
 - **Unified materials**. System and user-level material management, which can be shared and transferred across users and systems, and support automatic management of the entire life cycle.
 
@@ -92,7 +92,7 @@ Based on the concept of the computation middleware architecture of Linkis, we ha
 
 # Architecture：
 
-![architecture]()
+![architecture](images/en_US/Linkis1.0/architecture/Linkis1.0-architecture.png)
 
 ----
 
@@ -119,18 +119,18 @@ Based on the concept of the computation middleware architecture of Linkis, we ha
 - Optimize ElasticSearch engine for new architecture
 - Optimize Impala engine for new architecture
 
-If you have any needs, please submit an issue, and we will reply to you in time.
+ If you have any needs, please submit an issue, and we will reply to you in time.
 
 # Contributing
 
-We welcome all community partners to contribute new computation storage engines and other codes to us!
+ We welcome all community partners to contribute new computation storage engines and other codes to us!
 
 ## Communication
 
-If you desire immediate response, please kindly raise issues to us or scan the below QR code by WeChat and QQ to join our group:
+ If you desire immediate response, please kindly raise issues to us or scan the below QR code by WeChat and QQ to join our group:
 <br>
 ![introduction05](https://user-images.githubusercontent.com/11496700/84615565-f2197380-aefb-11ea-8288-c2d7b0410933.png)
 
 ## License
 
-Linkis is under the Apache 2.0 license. See the [LICENSE ](http://www.apache.org/licenses/LICENSE-2.0)file for details.
+ Linkis is under the Apache 2.0 license. See the [LICENSE ](http://www.apache.org/licenses/LICENSE-2.0)file for details.

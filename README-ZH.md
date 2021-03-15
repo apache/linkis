@@ -3,7 +3,7 @@ Linkis
 
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-[English](../../README.md) | 中文
+[English](README.md) | 中文
 
 # 引言：
 
@@ -13,7 +13,13 @@ Linkis 在上层应用和底层引擎之间构建了一层计算中间件，上�
 
 自2019年开源以来，累计试用企业近 **700** 家，沙箱试用用户 **1000+**，涉及 互联网、金融、通信等多个行业，被很多企业用作大数据平台底层计算存储引擎组件的统一入口。
 
-![Linkis效果图](images/ch3/解决方案.jpg)
+没有 Linkis 之前如下：
+
+![原大数据生态图](docs/zh_CN/images/ch3/原大数据生态图.jpg)
+
+有了 Linkis 之后如下：
+
+![Linkis效果图](docs/zh_CN/images/ch3/解决方案.jpg)
 <br>
 <br>
 
@@ -90,7 +96,7 @@ Linkis 在上层应用和底层引擎之间构建了一层计算中间件，上�
 
 # Architecture：
 
-![introduction_new](../../images/zh_CN/Linkis1.0/architecture/Linkis1.0-architecture.png)
+![introduction_new](images/zh_CN/Linkis1.0/architecture/Linkis1.0-architecture.png)
 
 ----
 
@@ -134,7 +140,7 @@ Linkis 在上层应用和底层引擎之间构建了一层计算中间件，上�
 
 如果您想得到最快的响应，请给我们提issue，或者您也可以扫码进群：
 
-![introduction05](images/introduction/introduction05.png)
+![introduction05](docs/zh_CN/images/introduction/introduction05.png)
 
 ----
 

@@ -5,13 +5,13 @@ Linkis
 
 English | [中文](README-ZH.md)
 
-## Introduction
+# Introduction
 
- Linkis builds a layer of computation middleware between the upper-level application and the underlying engine. The upper-level applications can connect to the bottom layer computation and storage engine by the standard interfaces such as REST/WS/JDBC provided by Linkis to connect to MySQL/Spark/Hive/Presto/Flink, etc, and achieves the intercommunication of user resources such as unified variables, scripts, UDFs, functions and resource files.
+ Linkis builds a layer of computation middleware between the upper-level applications and the underlying engines. By using a series of standard interfaces such as REST/WS/JDBC provided by Linkis, the upper-level applications can easily access the underlying engines such as MySQL/Spark/Hive/Presto/Flink, etc and achieve the intercommunication of user resources like unified variables, scripts, UDFs, functions and resource files.
 
- As a computation middleware, it provides powerful connectivity, reuse, expansion, and management capabilities. And by decoupling the application layer and the engine layer, the complex network call relationship is simplified, and the overall complexity and development, operation and maintenance costs are reduced.
+As a computation middleware, Linkis provides powerful connectivity, reuse, expansion, and management capabilities. And by decoupling the application layer and the engine layer, it simplifies the complex network call relationship, and thus reduce the overall complexity and save the development and maintenance  costs as well.
 
- Since Linkis was open sourced in 2019, it has accumulated nearly **700** trial companies and **1000+** sandbox trial users, which involved in multiple industries such as the Internet, finance, and communications. Many companies have used them as a unified entrance for the underlying computation storage engine components of the big data platform.
+Since Linkis was open sourced in 2019, it has accumulated nearly **700** trial companies and **1000+** sandbox trial users, which involved in multiple industries, ranging from Internet, finance to communications and so on. Meanwhile, many companies have already used Linkis as a unified entrance for the underlying computation and storage engine components of the big data platform.
 
 
 ![linkis-intro-01](https://user-images.githubusercontent.com/11496700/84615498-c3030200-aefb-11ea-9b16-7e4058bf6026.png)
@@ -20,27 +20,27 @@ English | [中文](README-ZH.md)
 <br>
 <br>
 
- Based on the concept of the computation middleware architecture of Linkis, we have built a large amount of applications and systems on top of it. Currently available open-source project: 
- 
+ Based on the concept of the computation middleware architecture of Linkis, we have built a large amount of applications and systems on top of it. The following is the currently available open-source projects: 
+
  - [**DataSphere Studio - Data Application Development & Management Framework**](https://github.com/WeBankFinTech/DataSphereStudio)
- 
+
  - [**Qualitis - Data Quality Tool**](https://github.com/WeBankFinTech/Qualitis)
- 
+
  - [**Scriptis - Data Development IDE Tool**](https://github.com/WeBankFinTech/Scriptis)
- 
+
  - [**Visualis - Data Visualization Tool**](https://github.com/WeBankFinTech/Visualis)
 
  - [**Schedulis - Workflow Task Scheduling Tool**](https://github.com/WeBankFinTech/Schedulis)
 
- There will be more tools released as open-source projects, please stay tuned!
+More upcoming tools  ready to be open-sourced, please stay tuned!
 
-## Features
+# Features
 
-- **Support for abundant underlying computation storage engine**.
+- **Support for abundant underlying computation storage engines**.
 
     **Currently supported computation storage engines**: Spark, Hive, Python, Presto, ElasticSearch, MLSQL, TiSpark, JDBC, Shell, etc;
     
-    **Computation storage engines being provided support**: Flink, Impala, Clickhouse, etc;
+    **Computation storage engines to be supported**: Flink, Impala, Clickhouse, etc;
     
     **Supported script languages**: SparkSQL, Scala, Pyspark, R, Python, JDBC, HiveQL and Shell, etc.
   
@@ -53,15 +53,15 @@ English | [中文](README-ZH.md)
     3. The computation governance service includes the focal point of Linkis 1.0. It can be divided into three stages named submission -> preparation -> execution, to comprehensively upgrade the ability of Linkis to execute, manage and control user tasks.
 
 
-- **Support for full stack computation storage engine architecture**. As a computation middleware, it receives, executes and manages tasks and requests from users for various computation storage engines, including batch tasks, interactive query tasks, real-time streaming tasks and storage tasks, and provides powerful computation governance capabilities such as reusage, warm-up , current-limiting, engine-switching and full life cycle management of engines;
+- **Support for full stack computation storage engine architecture**. As a computation middleware, it will receive, execute and manage tasks and requests from users for various computation storage engines, including batch tasks, interactive query tasks, real-time streaming tasks and storage tasks, and provide powerful computation governance capabilities such as reuse, warm-up , current-limiting, engine-switching, full life cycle management of engines;
 
-- **More powerful resource management capabilities**. ResourceManager not only extends the resource management capabilities of Linkis0.X for Yarn and Linkis EngineManager, but also provides tag-based multi-level resource allocation and recycling capabilities, allowing ResourceManager have powerful resource management capabilities across mutiple Yarn clusters and mutiple computation resource types;
+- **More powerful resource management capabilities**.  ResourceManager is not only capable of managing resources for Yarn and Linkis EngineManger as in Linkis0.X, but also extends its capabilities to providing tag-based multi-level resource allocation and recycling , allowing itself to have powerful resource management capabilities across mutiple Yarn clusters and mutiple computation resource types;
 
-- **Whole-process labelization**. Based on multi-level combined labels, Linkis1.0 provides cross-IDC and cross-cluster computation task routing management and control capabilities, and multi-tenant isolation capabilities for EngineConnManager and EngineConn;
+- **labeling in full-process**. Based on multi-level combined tags, Linkis1.0 provides cross-IDC and cross-cluster computation task routing management and control capabilities, and multi-tenant isolation capabilities for EngineConnManager and EngineConn;
 
-- **Unified Context Service**. Unified user and system resource files (JAR, ZIP, Properties, etc.), unified management of parameters and variables across users, systems, and calculation engines. Once set, automatically referenced anywhere;
+- **Unified Context Service**. Unified user and system resource files (JAR, ZIP, Properties, etc.), unified management of parameters and variables across users, systems, and calculation engines, one setting and automatic reference everywhere;
 
-- **Unified materials**. Includes system and user-level material management. These materials can be shared and transferred across different users and systems, and will be automatically managed during their entire life cycle.
+- **Unified materials**. System and user-level material management, which can be shared and transferred across users and systems, and support automatic management of the entire life cycle.
 
 
 # Documentations：
@@ -125,12 +125,12 @@ English | [中文](README-ZH.md)
 
  We welcome all community partners to contribute new computation storage engines and other codes to us!
 
-## Communication
+# Communication
 
  If you desire immediate response, please kindly raise issues to us or scan the below QR code by WeChat and QQ to join our group:
 <br>
 ![introduction05](https://user-images.githubusercontent.com/11496700/84615565-f2197380-aefb-11ea-8288-c2d7b0410933.png)
 
-## License
+# License
 
  Linkis is under the Apache 2.0 license. See the [LICENSE ](http://www.apache.org/licenses/LICENSE-2.0)file for details.

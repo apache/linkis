@@ -7,11 +7,11 @@ English | [中文](docs/zh_CN/README.md)
 
 ## Introduction
 
-Linkis helps easily connect to various back-end computation/storage engines(Spark, Python, TiDB...), exposes various interfaces(REST, JDBC, Java ...), with multi-tenancy, high performance, and resource control.
+Linkis builds a layer of computation middleware between the upper-level application and the underlying engine. The upper-level applications can connect to the bottom layer computation and storage engine by the standard interfaces such as REST/WS/JDBC provided by Linkis to connect to MySQL/Spark/Hive/Presto/Flink, etc, and achieves the intercommunication of user resources such as unified variables, scripts, UDFs, functions and resource files.
 
-Linkis connects with computation/storage engines(Spark, Hive, Python and HBase), exposes REST/WS interface, and executes multi-language jobs(SQL, Pyspark, HiveQL and Scala), as a computation middleware.
+As a computation middleware, it provides powerful connectivity, reuse, expansion, and management capabilities. And by decoupling the application layer and the engine layer, the complex network call relationship is simplified, and the overall complexity and development, operation and maintenance costs are reduced.
 
-Based on the microservices architecture, Linkis provides enterprise-level features of multi-tenant isolation, resource management and access control. It also offers convenient support to manage unified variables, UDFs, functions and resource files. it is also guaranteed with sophisticated task/job lifecycle management capabilities under high-concurrency, high-performance and high-availability scenarios.
+Since Linkis was open sourced in 2019, it has accumulated nearly 700 trial companies and 1000+ sandbox trial users, which involved in multiple industries such as the Internet, finance, and communications. Many companies have used them as a unified entrance for the underlying computation storage engine components of the big data platform.
 
 
 ![linkis-intro-01](https://user-images.githubusercontent.com/11496700/84615498-c3030200-aefb-11ea-9b16-7e4058bf6026.png)
@@ -20,44 +20,61 @@ Based on the microservices architecture, Linkis provides enterprise-level featur
 <br>
 <br>
 
-Based on the concept of the computation middleware architecture of Linkis, we have built a large amount of applications and systems on top of it.Currently available open-source project: 
+Based on the concept of the computation middleware architecture of Linkis, we have built a large amount of applications and systems on top of it. Currently available open-source project: 
+ 
  - [**DataSphere Studio - Data Application Development& Management Portal**](https://github.com/WeBankFinTech/DataSphereStudio)
+ 
  - [**Qualitis - Data Quality Tool**](https://github.com/WeBankFinTech/Qualitis)
+ 
  - [**Scriptis - Data Development IDE Tool**](https://github.com/WeBankFinTech/Scriptis)
+ 
  - [**Visualis - Data Visualization Tool**](https://github.com/WeBankFinTech/Visualis)
+
+ - [**Schedulis - Workflow Task Scheduling Tool**](https://github.com/WeBankFinTech/Schedulis)
 
  There will be more tools released as open-source projects, please stay tuned!
 
 ## Features
 
-- Unified Job Execution Services: A distributed REST/WebSocket service for processing scripts execution requests from user.
+- **Support for abundant underlying computation storage engine**.
 
-  Available computation engines so far: Spark, Python, TiSpark, Hive and Shell.
-
-  Available languages so far: SparkSQL, Spark Scala, PySpark, R, Python, HQL and Shell.
-
-- Resource Management Services: Available for real-time control/limit of resource usage from both perspectives of amount and load for both systems and users. With dynamic charts of resource statistics, it is convenient to monitor and manage resource usage for systems and users.
+    **Currently supported computation storage engines**: Spark, Hive, Python, Presto, ElasticSearch, MLSQL, TiSpark, JDBC, Shell, etc.
+    
+    **Supporting computation storage engine**: Flink, Impala, Clickhouse, etc.
+    
+    **Supported script languages**: SparkSQL, Scala, Pyspark, R, Python, JDBC, HiveQL and Shell, etc.;
   
-	Available resource types so far: Yarn queue resources, server(CPU and memory), number of concurrent instances per user.
+- **Powerful computation governance capabilities**: Linkis 1.0 is divided into three categories in total: public enhancement service, computation governance service, and microservice governance service. The three categories are as follows:
+                                                    
+    1. Public enhancement service are the material library service, context service, data source service and public service provided by Linkis 0.X;
+                                                    
+    2. The microservice governance service are Spring Cloud Gateway, Eureka and Open Feign already provided by Linkis 0.X, and Linkis 1.0 will also provide support for Nacos;
+                                                    
+    3. Computation governance service are the core focus of Linkis 1.0. which divided three stages named submission -> preparation -> execution, to comprehensively upgrade Linkis's ability to execute, manage and control the user tasks.
 
 
-- Application Management Services: Manages global user applications, including offline batch applications, interactive query applications and real-time streaming applications. Also provides powerful reusability especially for offline and interactive applications, with complete lifecycle management which automatically releases idle applications for users.
+- **Support for full stack computation storage engine architecture**. As a computation middleware, it will receive, execute and manage tasks and requests from users for various computation storage engines, including batch tasks, interactive query tasks, real-time streaming tasks and storage tasks, and provide powerful computation governance capabilities such as reuse, warm-up , current-limiting, engine-switching, full life cycle management of engines;
 
-- Unified Storage Services: The generic IO architecture can quickly integrate with various storage systems and provide a unified invokable entrance. It is also highly integrated with most common data formats and easy to use.
+- **More powerful resource management capabilities**. ResourceManager not only extends the resource management capabilities of Linkis0.X for Yarn and Linkis EngineManager, but also provides tag-based multi-level resource allocation and recycling capabilities, allowing ResourceManager have powerful resource management capabilities across mutil Yarn clusters and mutil computation resource types.
 
-- Unified Context Services: Unite resources files of users and systems (JAR, ZIP, Properties). With unified management of arguments/variables for users, systems and engines, it is achieved that modification in random place will reflect in all the other places automatically.
+- **labeling in full-process**.Based on multi-level combined tags, Linkis1.0 provides cross-IDC and cross-cluster computation task routing management and control capabilities, and multi-tenant isolation capabilities for EngineConnManager and EngineConn;
 
+- **Unified Context Service**.Unified user and system resource files (JAR, ZIP, Properties, etc.), unified management of parameters and variables across users, systems, and calculation engines, one setting and automatic reference everywhere;
 
+- **Unified materials**. System and user-level material management, which can be shared and transferred across users and systems, and support automatic management of the entire life cycle.
 
-- Material Library: System and user-level material management, capable of sharing, transferring materials and automatic lifecycle management. 
-
-- Metadata Services: Real-time display of dataset table structure and partitions.
-
- **Compared with similar systems**
-
-![introduction01](https://user-images.githubusercontent.com/11496700/84625630-403b7080-af16-11ea-8816-392dda3584d1.png)
 
 # Documentations：
+
+### Linkis1.0 documentations
+
+[**Linkis1.0 Quick Deploy**](https://github.com/WeBankFinTech/Linkis/wiki/%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8Linkis-1.0-RC1)
+
+[**Linkis1.0 User Documentation**](https://github.com/WeBankFinTech/Linkis/wiki/Linkis1.0%E7%94%A8%E6%88%B7%E4%BD%BF%E7%94%A8%E6%96%87%E6%A1%A3)
+
+[**Quickly understand the new architecture of Linkis1.0**](https://github.com/WeBankFinTech/Linkis/wiki/Linkis1.0%E4%B8%8ELinkis0.X%E7%9A%84%E5%8C%BA%E5%88%AB%E7%AE%80%E8%BF%B0)
+
+### Linkis0.X documentations
 
 [Linkis, make big data easier](docs/en_US/ch3/Linkis_Introduction.md)
 
@@ -75,11 +92,41 @@ Based on the concept of the computation middleware architecture of Linkis, we ha
 
 # Architecture：
 
-![introduction02](https://user-images.githubusercontent.com/11496700/84615549-e9c13880-aefb-11ea-870e-6d2e9b8fa08d.png)
+![architecture]()
 
 ----
 
+# RoadMap
+
+### 1. Implement Orchestrator architecture and support for rich computation and orchestration strategies:
+
+- Support multi-active
+- Support active and standby
+- Support transaction
+- Support playback
+- Support mixed computation of multiple data sources
+- Support heterogeneous computation of multiple data sources
+
+### 2. Linkis1.0 management console optimization
+
+- Unified data source module optimization
+- UDF module optimization
+- JobHistory is planned to support the display of detailed Metrics information of all orchestration tasks of one job in Orchestrator.
+
+### 3. Linkis1.0 supports Flink engine and completes the new architecture adaptation of all unadapted engines
+
+- Optimize Presto engine for new architecture
+- Optimize ElasticSearch engine for new architecture
+- Optimize Impala engine for new architecture
+
+If you have any needs, please submit an issue, and we will reply to you in time.
+
+# Contributing
+
+We welcome all community partners to contribute new computation storage engines and other codes to us!
+
 ## Communication
+
 If you desire immediate response, please kindly raise issues to us or scan the below QR code by WeChat and QQ to join our group:
 <br>
 ![introduction05](https://user-images.githubusercontent.com/11496700/84615565-f2197380-aefb-11ea-8288-c2d7b0410933.png)

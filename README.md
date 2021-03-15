@@ -40,28 +40,28 @@ English | [中文](docs/zh_CN/README.md)
 
     **Currently supported computation storage engines**: Spark, Hive, Python, Presto, ElasticSearch, MLSQL, TiSpark, JDBC, Shell, etc;
     
-    **Supporting computation storage engine**: Flink, Impala, Clickhouse, etc;
+    **Computation storage engines being provided support**: Flink, Impala, Clickhouse, etc;
     
     **Supported script languages**: SparkSQL, Scala, Pyspark, R, Python, JDBC, HiveQL and Shell, etc.
   
-- **Powerful computation governance capabilities**. Linkis 1.0 is divided into three categories in total: public enhancement service, computation governance service, and microservice governance service. The three categories are as follows:
+- **Powerful computation governance capabilities**. Linkis 1.0 is divided into three categories in total: public enhancement services, computation governance services, and microservice governance services. These three categories are as follows:
                                                     
-    1. Public enhancement service are the material library service, context service, data source service and public service provided by Linkis 0.X;
+    1. The public enhancement service includes the material library service, context service, data source service and public services already provided by Linkis 0.X;
                                                     
-    2. The microservice governance service are Spring Cloud Gateway, Eureka and Open Feign already provided by Linkis 0.X, and Linkis 1.0 will also provide support for Nacos;
+    2. The microservice governance service includes Spring Cloud Gateway, Eureka and Open Feign already provided by Linkis 0.X, with extra Nacos support which will be provided by Linkis 1.0;
                                                     
-    3. Computation governance service are the core focus of Linkis 1.0. which divided three stages named submission -> preparation -> execution, to comprehensively upgrade Linkis's ability to execute, manage and control the user tasks.
+    3. The computation governance service includes the focal point of Linkis 1.0. It can be divided into three stages named submission -> preparation -> execution, to comprehensively upgrade the ability of Linkis to execute, manage and control user tasks.
 
 
-- **Support for full stack computation storage engine architecture**. As a computation middleware, it will receive, execute and manage tasks and requests from users for various computation storage engines, including batch tasks, interactive query tasks, real-time streaming tasks and storage tasks, and provide powerful computation governance capabilities such as reuse, warm-up , current-limiting, engine-switching, full life cycle management of engines;
+- **Support for full stack computation storage engine architecture**. As a computation middleware, it receives, executes and manages tasks and requests from users for various computation storage engines, including batch tasks, interactive query tasks, real-time streaming tasks and storage tasks, and provides powerful computation governance capabilities such as reusage, warm-up , current-limiting, engine-switching and full life cycle management of engines;
 
-- **More powerful resource management capabilities**. ResourceManager not only extends the resource management capabilities of Linkis0.X for Yarn and Linkis EngineManager, but also provides tag-based multi-level resource allocation and recycling capabilities, allowing ResourceManager have powerful resource management capabilities across mutil Yarn clusters and mutil computation resource types;
+- **More powerful resource management capabilities**. ResourceManager not only extends the resource management capabilities of Linkis0.X for Yarn and Linkis EngineManager, but also provides tag-based multi-level resource allocation and recycling capabilities, allowing ResourceManager have powerful resource management capabilities across mutiple Yarn clusters and mutiple computation resource types;
 
-- **labeling in full-process**. Based on multi-level combined tags, Linkis1.0 provides cross-IDC and cross-cluster computation task routing management and control capabilities, and multi-tenant isolation capabilities for EngineConnManager and EngineConn;
+- **Whole-process labelization**. Based on multi-level combined labels, Linkis1.0 provides cross-IDC and cross-cluster computation task routing management and control capabilities, and multi-tenant isolation capabilities for EngineConnManager and EngineConn;
 
-- **Unified Context Service**. Unified user and system resource files (JAR, ZIP, Properties, etc.), unified management of parameters and variables across users, systems, and calculation engines, one setting and automatic reference everywhere;
+- **Unified Context Service**. Unified user and system resource files (JAR, ZIP, Properties, etc.), unified management of parameters and variables across users, systems, and calculation engines. Once set, automatically referenced anywhere;
 
-- **Unified materials**. System and user-level material management, which can be shared and transferred across users and systems, and support automatic management of the entire life cycle.
+- **Unified materials**. Includes system and user-level material management. These materials can be shared and transferred across different users and systems, and will be automatically managed during their entire life cycle.
 
 
 # Documentations：

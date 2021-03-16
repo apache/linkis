@@ -104,3 +104,6 @@ assembly/target
 assembly/public-module/target/
 
 
+/linkis-computation-governance/linkis-engineconn/linkis-engineconn-core/target/
+/linkis-public-enhancements/linkis-publicservice/linkis-instance-label/linkis-instance-label-server/target/
+/linkis-public-enhancements/linkis-publicservice/linkis-instance-label/linkis-instance-label-client/target/

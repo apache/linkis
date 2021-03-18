@@ -91,27 +91,16 @@ class JDBCEngineExecutorManagerImpl(groupFactory: GroupFactory,
 
   val sender : Sender = Sender.getSender("dsm-server")
   def getDatasourceInfo(params : util.Map[String, Any]) : (String, String, String) = {
-    val datasourceId = params.get("configuration").asInstanceOf[util.Map[String, Any]]
+    val runtime = params.get("configuration").asInstanceOf[util.Map[String, Any]]
       .getOrDefault(TaskConstant.PARAMS_CONFIGURATION_RUNTIME, new util.HashMap[String, Any]())
       .asInstanceOf[util.Map[String, Any]]
-      .getOrDefault(TaskConstant.PARAMS_CONFIGURATION_DATASOURCE, new util.HashMap[String, Any]())
-      .asInstanceOf[util.Map[String, Any]].get("datasourceId")
-    logger.info(s"begin to get datasource info from dsm, datasourceId: ${datasourceId}")
-    if (datasourceId != null) {
-      val ds = sender.ask(DsInfoQueryRequest(String.valueOf(datasourceId), "BDP")) match {
-        case r: DsInfoResponse => r
-        case warn: WarnException => throw warn
-      }
-      logger.info(s"get datasource info result: ${ds}")
-      if (ds.status) {
-        val url = ds.params.get("jdbc.url").asInstanceOf[String]
-        val userName = ds.params.get("jdbc.username").asInstanceOf[String]
-        val password = ds.params.get("jdbc.password").asInstanceOf[String]
-        logger.info(s"get from dsm: url: ${url}, username: ${userName}, password: ${password}")
-        return (url, userName, password)
-      }
+    if (runtime != null) {
+      val url = runtime.get("jdbc.url").asInstanceOf[String]
+      val userName = runtime.get("jdbc.username").asInstanceOf[String]
+      val password = runtime.get("jdbc.password").asInstanceOf[String]
+      logger.info(s"get from dsm: url: ${url}, username: ${userName}, password: ${password}")
+      return (url, userName, password)
     }
-
     ("", "", "")
   }
 

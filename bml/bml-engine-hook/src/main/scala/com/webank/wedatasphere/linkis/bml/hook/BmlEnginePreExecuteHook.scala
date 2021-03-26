@@ -4,6 +4,7 @@ import java.io.File
 import java.util
 
 import com.webank.wedatasphere.linkis.bml.client.{BmlClient, BmlClientFactory}
+import com.webank.wedatasphere.linkis.bml.conf.BmlHookConf
 import com.webank.wedatasphere.linkis.bml.exception.BmlHookDownloadException
 import com.webank.wedatasphere.linkis.bml.utils.BmlHookUtils
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
@@ -41,15 +42,14 @@ class BmlEnginePreExecuteHook extends EnginePreExecuteHook with Logging{
 
   val pathType:String = "file://"
 
-  override def callPreExecuteHook(engineExecutorContext: EngineExecutorContext, executeRequest: ExecuteRequest): Unit = {
-    //1.删除工作目录以前的资源文件
-    //2.下载资源到当前进程的工作目录
-
-    val workDir = BmlHookUtils.getCurrentWorkDir
+  override def callPreExecuteHook(engineExecutorContext: EngineExecutorContext, executeRequest: ExecuteRequest, code: String): String = {
+    val workDir = BmlHookConf.WORK_DIR_STR.getValue
     val jobId = engineExecutorContext.getJobId
+    var hookCode = code
     executeRequest match {
       case resourceExecuteRequest:ResourceExecuteRequest => val resources = resourceExecuteRequest.resources
-        resources foreach {
+        if (null == resources) return hookCode
+        val resourcePaths = resources map {
           case resource:util.Map[String, Object] => val fileName = resource.get(FILE_NAME_STR).toString
             val resourceId = resource.get(RESOURCE_ID_STR).toString
             val version = resource.get(VERSION_STR).toString
@@ -67,12 +67,23 @@ class BmlEnginePreExecuteHook extends EnginePreExecuteHook with Logging{
             }
             if (response.isSuccess){
               logger.info(s"for job $jobId resourceId $resourceId version $version download to path $fullPath ok")
+              fullPath
             }else{
               logger.warn(s"for job $jobId resourceId $resourceId version $version download to path $fullPath Failed")
+              null
             }
-          case _ => logger.warn("job resource cannot download")
+          case _ =>
+            logger.warn("job resource cannot download")
+            null
         }
+        hookCode = if (StringUtils.isNotBlank(hookCode)) hookCode else executeRequest.code
+        hookCode = callResourcesDownloadedHook(resourcePaths.toArray, engineExecutorContext, executeRequest, hookCode)
       case _ =>
     }
+    if (StringUtils.isNotBlank(hookCode)) hookCode else executeRequest.code
+  }
+
+  def callResourcesDownloadedHook(resourcePaths: Array[String], engineExecutorContext: EngineExecutorContext, executeRequest: ExecuteRequest, code: String): String = {
+    code
   }
 }

@@ -19,24 +19,19 @@ package com.webank.wedatasphere.linkis.engine.factory
 import java.io.File
 import java.lang.reflect.Constructor
 
+import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration
 import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration._
 import com.webank.wedatasphere.linkis.engine.exception.SparkSessionNullException
 import com.webank.wedatasphere.linkis.engine.execute.EngineExecutorFactory
 import com.webank.wedatasphere.linkis.engine.executors.{SparkEngineExecutor, SparkPythonExecutor, SparkScalaExecutor, SparkSqlExecutor}
-import com.webank.wedatasphere.linkis.engine.spark.utils.EngineUtils
 import com.webank.wedatasphere.linkis.server.JMap
 import org.apache.commons.lang.StringUtils
 import org.apache.spark.sql.{SQLContext, SparkSession}
+import org.apache.spark.util.SparkUtils
 import org.apache.spark.{SparkConf, SparkContext}
 import org.springframework.stereotype.Component
-import com.google.common.base.Joiner
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
-import com.webank.wedatasphere.linkis.engine.configuration.SparkConfiguration
-import org.apache.spark.util.SparkUtils
-
-import scala.collection.mutable.ArrayBuffer
-import scala.collection.JavaConversions._
 /**
   * Created by allenlliu on 2019/4/8.
   */
@@ -53,7 +48,11 @@ class SparkEngineExecutorFactory extends EngineExecutorFactory with Logging{
     info(s"------ Create new SparkContext {$master} -------")
     val pysparkBasePath = SparkConfiguration.SPARK_HOME.getValue
     val pysparkPath = new File(pysparkBasePath, "python" + File.separator + "lib")
-    val pythonLibUris = pysparkPath.listFiles().map(_.toURI.toString).filter(_.endsWith(".zip"))
+    val pythonLibUris = if(pysparkPath.exists()) {
+      pysparkPath.listFiles().map(_.toURI.toString).filter(_.endsWith(".zip"))
+    } else {
+      Array.empty[String]
+    }
     if (pythonLibUris.length == 2) {
       val confValue1 = Utils.tryQuietly(CommonVars("spark.yarn.dist.files","").getValue)
       val confValue2 = Utils.tryQuietly(conf.get("spark.yarn.dist.files"))

@@ -79,4 +79,7 @@ object TaskUtils {
   def addSpecialMap(params: util.Map[String, Any], specialMap: util.Map[String, Any]) =
     addConfigurationMap(params, specialMap, TaskConstant.PARAMS_CONFIGURATION_SPECIAL)
 
+  def addDatasourceMap(params: util.Map[String, Any], datasourceMap: util.Map[String, Any]) =
+    addConfigurationMap(params, datasourceMap, TaskConstant.PARAMS_CONFIGURATION_DATASOURCE)
+
 }

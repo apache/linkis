@@ -17,7 +17,6 @@
 package com.webank.wedatasphere.linkis.storage.factory;
 
 import com.webank.wedatasphere.linkis.common.io.Fs;
-import com.webank.wedatasphere.linkis.common.io.FsPath;
 
 /**
  * Created by johnnwang on 10/17/18.

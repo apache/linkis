@@ -20,14 +20,14 @@ import java.nio.file.Paths
 
 import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.enginemanager.{AbstractEngineCreator, EngineResource}
-import com.webank.wedatasphere.linkis.enginemanager.conf.EnvConfiguration.{DEFAULT_JAVA_OPTS, ENGINE_CLIENT_MEMORY, JAVA_HOME, engineGCLogPath}
+import com.webank.wedatasphere.linkis.enginemanager.conf.EnvConfiguration.{DEFAULT_JAVA_OPTS, ENGINE_CLIENT_MEMORY, HADOOP_LIB_NATIVE, JAVA_HOME, engineGCLogPath}
 import com.webank.wedatasphere.linkis.enginemanager.hive.conf.HiveEngineConfiguration
 import com.webank.wedatasphere.linkis.enginemanager.impl.UserEngineResource
 import com.webank.wedatasphere.linkis.enginemanager.process.JavaProcessEngineBuilder
+import com.webank.wedatasphere.linkis.enginemanager.{AbstractEngineCreator, EngineResource}
 import com.webank.wedatasphere.linkis.protocol.engine.RequestEngine
 import org.apache.commons.lang.StringUtils
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -88,6 +88,7 @@ class HiveQLProcessBuilder extends JavaProcessEngineBuilder{
     } else {
       commandLine += Paths.get(javaHome, "bin/java").toAbsolutePath.toFile.getAbsolutePath
     }
+    commandLine += ("-D" + HiveEngineConfiguration.TIMEZONE.key + "=" + HiveEngineConfiguration.TIMEZONE.getValue)
     if (request.properties.containsKey(HiveEngineConfiguration.HIVE_CLIENT_MEMORY.key)){
       val settingClientMemory = request.properties.get(HiveEngineConfiguration.HIVE_CLIENT_MEMORY.key)
       if (!settingClientMemory.toLowerCase().endsWith("g")){
@@ -117,7 +118,7 @@ class HiveQLProcessBuilder extends JavaProcessEngineBuilder{
     var classpath = getClasspath(request.properties, getExtractClasspath)
     classpath = classpath ++ request.properties.get("jars").split(",")
     classpathCheck(classpath)
-    commandLine += "-Djava.library.path=/appcom/Install/hadoop/lib/native"
+    commandLine += "-Djava.library.path=" + HADOOP_LIB_NATIVE.getValue
     commandLine += "-cp"
     commandLine += classpath.mkString(":")
     commandLine += "com.webank.wedatasphere.linkis.engine.DataWorkCloudEngineApplication"

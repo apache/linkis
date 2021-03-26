@@ -16,15 +16,13 @@
 
 package com.webank.wedatasphere.linkis.engine.executors
 
-import java.util.UUID
-
-import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging}
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engine.PythonSession
 import com.webank.wedatasphere.linkis.engine.exception.EngineException
 import com.webank.wedatasphere.linkis.engine.execute.{EngineExecutor, EngineExecutorContext}
 import com.webank.wedatasphere.linkis.engine.rs.RsOutputStream
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
-import com.webank.wedatasphere.linkis.resourcemanager.{LoadInstanceResource, LoadResource, Resource}
+import com.webank.wedatasphere.linkis.resourcemanager.{LoadInstanceResource, Resource}
 import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.scheduler.executer._
 import org.apache.commons.io.IOUtils

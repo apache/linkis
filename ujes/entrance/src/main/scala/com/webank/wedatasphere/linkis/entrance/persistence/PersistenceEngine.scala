@@ -19,7 +19,6 @@ package com.webank.wedatasphere.linkis.entrance.persistence
 import java.io.{Closeable, Flushable}
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.entrance.exception.EntranceIllegalParamException
 import com.webank.wedatasphere.linkis.protocol.task.Task
 
 /**

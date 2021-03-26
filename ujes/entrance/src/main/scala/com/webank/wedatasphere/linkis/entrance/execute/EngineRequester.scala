@@ -17,6 +17,7 @@
 package com.webank.wedatasphere.linkis.entrance.execute
 
 import java.util
+import java.util.concurrent.TimeUnit
 
 import com.webank.wedatasphere.linkis.common.exception.WarnException
 import com.webank.wedatasphere.linkis.common.log.LogUtils
@@ -30,6 +31,8 @@ import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorState
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorState._
 import com.webank.wedatasphere.linkis.scheduler.listener.ExecutorListener
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
+
+import scala.concurrent.duration.{Duration, TimeUnit}
 
 
 /**
@@ -48,7 +51,11 @@ abstract class EngineRequester extends Logging {
 
   def request(job: Job): Option[EntranceEngine] = {
     val requestEngine = createRequestEngine(job)
-    val engineInitThread = getSender.ask(requestEngine) match {
+    val response = requestEngine match {
+      case t: TimeoutRequestEngine => getSender.ask(requestEngine, Duration(t.timeout, TimeUnit.MILLISECONDS))
+      case _ => getSender.ask(requestEngine)
+    }
+    val engineInitThread = response match {
       case ResponseNewEngineStatus(instance, responseEngineStatus) =>
         new EngineInitThread(instance, requestEngine).notifyThread(responseEngineStatus)
       case r: ResponseNewEngine =>

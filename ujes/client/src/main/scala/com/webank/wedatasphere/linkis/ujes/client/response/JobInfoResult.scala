@@ -23,6 +23,7 @@ package com.webank.wedatasphere.linkis.ujes.client.response
 import java.util
 import java.util.Date
 
+import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
@@ -48,9 +49,16 @@ class JobInfoResult extends DWSResult with UserAction with Status {
     val updatedTime = task.get("updatedTime").asInstanceOf[Long]
     task.remove("createdTime")
     task.remove("updatedTime")
-    BeanUtils.populate(requestPersistTask, task)
+    task.remove("engineStartTime")
+    Utils.tryCatch{
+      BeanUtils.populate(requestPersistTask, task.asInstanceOf[util.Map[String, _]])
+    }{
+      case e:Exception => error("copy failed", e)
+    }
+    requestPersistTask.setStatus(task.get("status").asInstanceOf[String])
     requestPersistTask.setCreatedTime(new Date(createdTime))
     requestPersistTask.setUpdatedTime(new Date(updatedTime))
+    requestPersistTask.setEngineStartTime(new Date(updatedTime))
   }
 
   def getTask = task

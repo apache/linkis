@@ -1,0 +1,43 @@
+### execute es json
+POST {{host}}/api/rest_j/v1/entrance/execute
+Content-Type: application/json
+
+{
+  "executeApplicationName": "esentrance",
+  "executionCode": "{\"query\":{\"match_all\":{}}}",
+  "runType": "esjson",
+  "params": {
+    "runType": "esjson",
+    "variable": {},
+    "configuration": {
+      "runtime": {
+        "wds.linkis.es.http.endpoint": "_search?format=text&pretty"
+      },
+      "startup": {}
+    }
+  },
+  "scriptPath": "hdfs:///linkis/workspace/wang_zh/test.esjson"
+}
+
+### execute es sql
+POST {{host}}/api/rest_j/v1/entrance/execute
+Content-Type: application/json
+
+{
+  "executeApplicationName": "esentrance",
+  "executionCode": "SELECT * FROM test1",
+  "runType": "essql",
+  "params": {
+    "runType": "essql",
+    "variable": {},
+    "configuration": {
+      "runtime": {
+        "wds.linkis.es.http.endpoint": "_sql?format=smile"
+      },
+      "startup": {}
+    }
+  },
+  "scriptPath": "hdfs:///linkis/workspace/wang_zh/test.esjson"
+}
+
+###

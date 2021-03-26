@@ -1,12 +1,12 @@
 import sys, getopt, traceback, json, re
 import os
 os.environ['PYSPARK_ALLOW_INSECURE_GATEWAY']='1'
-zipPaths = sys.argv[3]
+zipPaths = sys.argv[4]
 paths = zipPaths.split(':')
 for i in range(len(paths)):
     sys.path.insert(0, paths[i])
 
-from py4j.java_gateway import java_import, JavaGateway, GatewayClient
+from py4j.java_gateway import java_import, JavaGateway, GatewayClient, GatewayParameters
 from py4j.protocol import Py4JJavaError
 from pyspark.conf import SparkConf
 from pyspark.context import SparkContext
@@ -88,17 +88,20 @@ class SparkVersion(object):
     def isImportAllPackageUnderSparkSql(self):
         return self.version >= self.SPARK_1_3_0
 
+try:
+    client = GatewayClient(port=int(sys.argv[1]),
+                           gateway_parameters=GatewayParameters(port = int(sys.argv[1]), auto_convert = True, auth_token = sys.argv[3]))
+except:
+    client = GatewayClient(port=int(sys.argv[1]))
 
-output = Logger()
-errorOutput = ErrorLogger()
-sys.stdout = output
-sys.stderr = errorOutput
-
-client = GatewayClient(port=int(sys.argv[1]))
 sparkVersion = SparkVersion(int(sys.argv[2]))
 
 if sparkVersion.isAutoConvertEnabled():
-    gateway = JavaGateway(client, auto_convert = True)
+    try:
+        gateway = JavaGateway(client, auto_field = True, auto_convert = True,
+                              gateway_parameters=GatewayParameters(port = int(sys.argv[1]), auto_convert = True, auth_token = sys.argv[3]))
+    except:
+        gateway = JavaGateway(client, auto_convert = True)
 else:
     gateway = JavaGateway(client)
 
@@ -120,6 +123,11 @@ else:
     java_import(gateway.jvm, "org.apache.spark.sql.hive.TestHiveContext")
 
 jobGroup = ""
+
+output = Logger()
+errorOutput = ErrorLogger()
+sys.stdout = output
+sys.stderr = errorOutput
 
 def show(obj):
     from pyspark.sql import DataFrame
@@ -181,7 +189,7 @@ spark = SparkSession(sc, intp.getSparkSession())
 
 ##add pyfiles
 try:
-    pyfile = sys.argv[4]
+    pyfile = sys.argv[5]
     pyfiles = pyfile.split(',')
     for i in range(len(pyfiles)):
         if ""!=pyfiles[i]:

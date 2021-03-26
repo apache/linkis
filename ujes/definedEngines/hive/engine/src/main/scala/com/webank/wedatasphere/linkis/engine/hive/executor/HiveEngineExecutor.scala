@@ -36,10 +36,10 @@ import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.hadoop.hive.conf.HiveConf
 import org.apache.hadoop.hive.metastore.api.{FieldSchema, Schema}
+import org.apache.hadoop.hive.ql.Driver
 import org.apache.hadoop.hive.ql.exec.mr.HadoopJobExecHelper
 import org.apache.hadoop.hive.ql.processors.{CommandProcessor, CommandProcessorFactory, CommandProcessorResponse}
 import org.apache.hadoop.hive.ql.session.SessionState
-import org.apache.hadoop.hive.ql.Driver
 import org.apache.hadoop.mapred.RunningJob
 import org.apache.hadoop.security.UserGroupInformation
 import org.slf4j.LoggerFactory
@@ -369,11 +369,11 @@ object HiveDriverProxy extends Logging {
   private val COMMAND_NEED_RETRY_EXCEPTION_CLASS_STR = "org.apache.hadoop.hive.ql.CommandNeedRetryException"
   private val IDRIVER_CLASS_STR = "org.apache.hadoop.hive.ql.IDriver"
 
-  val COMMAND_NEED_RETRY_EXCEPTION_CLASS = Utils.tryAndWarn {
+  val COMMAND_NEED_RETRY_EXCEPTION_CLASS = Utils.tryQuietly {
     Thread.currentThread().getContextClassLoader
       .loadClass(COMMAND_NEED_RETRY_EXCEPTION_CLASS_STR)
   }
-  val IDRIVER_CLASS = Utils.tryAndWarn {
+  val IDRIVER_CLASS = Utils.tryQuietly {
     Thread.currentThread().getContextClassLoader
       .loadClass(IDRIVER_CLASS_STR)
   }

@@ -16,7 +16,10 @@
 #
 
 #Actively load user env
-source ~/.bash_profile
+profile=~/.bash_profile
+if [ ! -f '$profile' ]; then
+ source $profile
+fi
 
 local_host="`hostname --fqdn`"
 

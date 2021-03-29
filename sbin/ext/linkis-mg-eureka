@@ -52,7 +52,7 @@ if [ "$EUREKA_URL" != "" ]; then
   SPRING_ARGS="$SPRING_ARGS --eureka.client.serviceUrl.defaultZone=$EUREKA_URL"
 fi
 
-if [ "$$EUREKA_PREFER_IP" == "true" ]; then
+if [ "$EUREKA_PREFER_IP" == "true" ]; then
   SPRING_ARGS="$SPRING_ARGS --eureka.instance.preferIpAddress=true "
 else
   SPRING_ARGS="$SPRING_ARGS --eureka.instance.hostname=$EUREKA_HOSTNAME"

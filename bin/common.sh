@@ -17,7 +17,7 @@
 
 #Actively load user env
 profile=~/.bash_profile
-if [ ! -f '$profile' ]; then
+if [ -f '$profile' ]; then
  source $profile
 fi
 

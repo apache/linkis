@@ -120,6 +120,10 @@
 
         <module>ujes/definedEngines/es/entrance</module>
 
+        <module>ujes/definedEngines/impala/engine</module>
+        <module>ujes/definedEngines/impala/enginemanager</module>
+        <module>ujes/definedEngines/impala/entrance</module>
+
         <module>gateway/core</module>
         <module>gateway/springcloudgateway</module>
         <module>gateway/gateway-ujes-support</module>
@@ -566,6 +570,24 @@
             <dependency>
                 <groupId>com.webank.wedatasphere.linkis</groupId>
                 <artifactId>linkis-ujes-spark-entracne</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>com.webank.wedatasphere.linkis</groupId>
+                <artifactId>linkis-ujes-impala-engine</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.webank.wedatasphere.linkis</groupId>
+                <artifactId>linkis-ujes-impala-enginemanager</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.webank.wedatasphere.linkis</groupId>
+                <artifactId>linkis-ujes-impala-entracne</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

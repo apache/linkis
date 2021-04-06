@@ -218,6 +218,27 @@
       </includes>
     </fileSet>
 
+   <!--impala-->
+    <fileSet>
+      <directory>
+          ${project.parent.basedir}/ujes/definedEngines/impala/entrance/target/
+      </directory>
+      <outputDirectory>share/linkis/ujes/impala</outputDirectory>
+      <includes>
+        <include>*.zip</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>
+          ${project.parent.basedir}/ujes/definedEngines/impala/enginemanager/target/
+      </directory>
+      <outputDirectory>share/linkis/ujes/impala</outputDirectory>
+      <includes>
+        <include>*.zip</include>
+      </includes>
+    </fileSet>
+    
     <!--resourcemanager-->
     <fileSet>
       <directory>

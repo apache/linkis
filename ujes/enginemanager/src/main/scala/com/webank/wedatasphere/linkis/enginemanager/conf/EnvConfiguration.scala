@@ -35,6 +35,9 @@ object EnvConfiguration {
   val HBASE_CONF_DIR = CommonVars[String]("hbase.config.dir", CommonVars[String]("HBASE_CONF_DIR", "/appcom/config/hbase-config").getValue)
   val SPARK_CONF_DIR = CommonVars[String]("spark.config.dir", CommonVars[String]("SPARK_CONF_DIR", "/appcom/config/spark-config").getValue)
   val HIVE_CONF_DIR = CommonVars[String]("hive.config.dir", CommonVars[String]("HIVE_CONF_DIR", "/appcom/config/hive-config").getValue)
+  val FLINK_HOME = CommonVars[String]("flink.home", CommonVars[String]("FLINK_HOME", "/appcom/Install/flink").getValue)
+  val FLINK_CONF_DIR = CommonVars[String]("flink.config.dir", CommonVars[String]("FLINK_CONF_DIR", "/appcom/config/flink-config").getValue)
+
 
   val ENGINE_MANAGER_MAX_MEMORY_AVAILABLE = CommonVars[ByteType]("wds.linkis.enginemanager.memory.max", new ByteType("40g"))
   val ENGINE_MANAGER_MAX_CORES_AVAILABLE = CommonVars[Integer]("wds.linkis.enginemanager.cores.max", 20)

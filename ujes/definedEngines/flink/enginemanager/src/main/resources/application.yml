@@ -1,0 +1,27 @@
+server:
+  port: 10100  #The port that the module provides services (required)(该模块提供服务的端口（必须）)
+spring:
+  application:
+    name: flinkEngineManager  #Module name for high availability (required)(模块名，用于做高可用（必须）)
+
+#Specify the address of the eureka server for registration (required)
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${eurekaurl}
+  instance:
+    lease-renewal-interval-in-second: 5
+    lease-expiration-duration-in-second: 10
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    metadata-map:
+      test: enjoyyin
+
+#required（必须）
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info
+logging:
+  config: classpath:log4j2.xml

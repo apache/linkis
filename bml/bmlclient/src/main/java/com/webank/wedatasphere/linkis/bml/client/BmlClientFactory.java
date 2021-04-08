@@ -16,14 +16,24 @@
 package com.webank.wedatasphere.linkis.bml.client;
 
 import com.webank.wedatasphere.linkis.bml.client.impl.HttpBmlClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * created by cooperyang on 2019/5/15
  * Description:
  */
 public class BmlClientFactory {
+
+
+    private static final Map<String, BmlClient> bmlClientMap = new ConcurrentHashMap<>();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BmlClientFactory.class);
+
+
     public static BmlClient createBmlClient(){
         return createBmlClient(null, null);
     }
@@ -35,10 +45,15 @@ public class BmlClientFactory {
 
 
     public static BmlClient createBmlClient(String user, Map<String, Object> properties){
-        AbstractBmlClient bmlClient = new HttpBmlClient();
-        bmlClient.setUser(user);
-        bmlClient.setProperties(properties);
-        return bmlClient;
+
+        if (!bmlClientMap.containsKey(user)){
+            LOGGER.info("no available bml client for {},we will create a new one", user);
+            AbstractBmlClient bmlClient = new HttpBmlClient();
+            bmlClient.setUser(user);
+            bmlClient.setProperties(properties);
+            bmlClientMap.put(user, bmlClient);
+        }
+        return bmlClientMap.get(user);
     }
 
 

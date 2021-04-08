@@ -17,7 +17,6 @@ package com.webank.wedatasphere.linkis.bml.client.impl
 
 import java.io.{File, IOException, InputStream}
 import java.util
-
 import com.webank.wedatasphere.linkis.bml.client.AbstractBmlClient
 import com.webank.wedatasphere.linkis.bml.common._
 import com.webank.wedatasphere.linkis.bml.conf.BmlConfiguration
@@ -25,7 +24,8 @@ import com.webank.wedatasphere.linkis.bml.http.HttpConf
 import com.webank.wedatasphere.linkis.bml.protocol._
 import com.webank.wedatasphere.linkis.bml.request._
 import com.webank.wedatasphere.linkis.bml.response._
-import com.webank.wedatasphere.linkis.common.io.FsPath
+import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
+import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.httpclient.authentication.AuthenticationStrategy
 import com.webank.wedatasphere.linkis.httpclient.config.{ClientConfig, ClientConfigBuilder}
 import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
@@ -76,19 +76,6 @@ class HttpBmlClient extends AbstractBmlClient{
     bmlDownloadAction.setUser(user)
     val result = dwsClient.execute(bmlDownloadAction)
     new BmlDownloadResponse(true,bmlDownloadAction.getInputStream,resourceId,version,null)
-    /*    result match {
-          case downloadResult:BmlResourceDownloadResult => val isSuccess = if (downloadResult.getStatusCode == 0) true else false
-            if (isSuccess){
-              downloadResult.setInputStream(bmlDownloadAction.getInputStream)
-              BmlDownloadResponse(isSuccess, downloadResult.inputStream, downloadResult.getResourceId, downloadResult.getVersion, "")
-            }else{
-              logger.error(s"user ${user} download resource $resourceId  version $version failed, status code is ${ downloadResult.getStatusCode}")
-              BmlDownloadResponse(isSuccess, null, null, null, null)
-            }
-          case r:BmlResult => logger.error(s"result type ${r.getResultType} not match BmlResourceDownloadResult")
-            throw POSTResultNotMatchException()
-          case _ => throw POSTResultNotMatchException()
-        }*/
   }
 
   /**
@@ -108,31 +95,6 @@ class HttpBmlClient extends AbstractBmlClient{
     val fsPath = new FsPath(path)
     val fileSystem = FSFactory.getFsByProxyUser(fsPath, user)
     fileSystem.init(new util.HashMap[String, String]())
-//    if (fileSystem.exists(fsPath)){
-//      logger.error(s"path $path not exists")
-//      throw IllegalPathException()
-//    }
-//    val getBasicAction = BmlGetBasicAction(resourceId)
-//    val getBasicResult = dwsClient.execute(getBasicAction) match{
-//      case result:BmlGetBasicResult => result
-//      case _ => throw GetResultNotMatchException()
-//    }
-
-//    val fileName:StringBuilder = new StringBuilder
-//    fileName.append(path).append(if (path.endsWith("/")) "" else "/")
-
-//    if (getBasicResult != null && getBasicResult.getStatusCode == 0){
-//      val downloadedFileName = getBasicResult.downloadedFileName
-//      if (StringUtils.isNotEmpty(downloadedFileName)){
-//        fileName.append(downloadedFileName)
-//      }else{
-//        throw BmlResponseErrorException("返回的downloadedFileName参数为空")
-//      }
-//    }else{
-//      logger.error(s"获取 $resourceId 资源失败, BmlServer的返回码是 ${getBasicResult.getStatusCode}")
-//      throw BmlResponseErrorException("通过http方式获取")
-//    }
-
     val fullFileName = path
     val downloadAction = BmlDownloadAction() // TODO: 这里暂时还没改
     import scala.collection.JavaConversions._
@@ -157,6 +119,10 @@ class HttpBmlClient extends AbstractBmlClient{
       }finally{
         IOUtils.closeQuietly(inputStream)
         IOUtils.closeQuietly(outputStream)
+        Utils.tryCatch(fileSystem.close()){
+          t:Throwable => logger.warn("failed to close filesystem")
+            //close it first and I think it should be cached
+        }
       }
       BmlDownloadResponse(true, null, resourceId, version, fullFileName)
     }else{

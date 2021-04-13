@@ -106,7 +106,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     val pythonScriptPath = CommonVars("python.script.path", "python/mix_pyspark.py").getValue
 
     val port: Int = EngineUtils.findAvailPort
-    gatewayServer = new GatewayServer(this, port)
+    gatewayServer = new GatewayServer.GatewayServerBuilder().entryPoint(this).authToken("Ctyun@2020").javaPort(port).build()
     gatewayServer.start()
 
     info("Pyspark process file path is: " + getClass.getClassLoader.getResource(pythonScriptPath).toURI)

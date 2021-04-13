@@ -1,8 +1,6 @@
 import sys, getopt, traceback, json, re
 import os
-os.environ['PYSPARK_ALLOW_INSECURE_GATEWAY']='1'
 import matplotlib
-import os
 os.environ['PYSPARK_ALLOW_INSECURE_GATEWAY']='1'
 matplotlib.use('Agg')
 zipPaths = sys.argv[3]
@@ -10,7 +8,7 @@ paths = zipPaths.split(':')
 for i in range(len(paths)):
     sys.path.insert(0, paths[i])
 
-from py4j.java_gateway import java_import, JavaGateway, GatewayClient
+from py4j.java_gateway import java_import, JavaGateway, GatewayClient, GatewayParameters
 from py4j.protocol import Py4JJavaError
 from pyspark.conf import SparkConf
 from pyspark.context import SparkContext
@@ -29,7 +27,7 @@ except ImportError:
   from io import StringIO
 
 # for back compatibility
-from pyspark.sql import SQLContext, HiveContext, Row
+from pyspark.sql import SQLContext, Row
 
 class Logger(object):
     def __init__(self):
@@ -75,11 +73,17 @@ errorOutput = ErrorLogger()
 sys.stdout = output
 sys.stderr = errorOutput
 
-client = GatewayClient(port=int(sys.argv[1]))
+# client = GatewayClient(port=int(sys.argv[1]))
+port=int(sys.argv[1])
+client = GatewayClient(port)
 sparkVersion = SparkVersion(int(sys.argv[2]))
 
 if sparkVersion.isAutoConvertEnabled():
-    gateway = JavaGateway(client, auto_convert = True)
+    gateway = JavaGateway(
+        gateway_parameters=GatewayParameters(
+            port=port,
+            auth_token="Ctyun@2020",
+            auto_convert=True))
 else:
     gateway = JavaGateway(client)
 
@@ -156,9 +160,10 @@ jsc = intp.getJavaSparkContext()
 jconf = intp.getSparkConf()
 conf = SparkConf(_jvm = gateway.jvm, _jconf = jconf)
 sc = SparkContext(jsc=jsc, gateway=gateway, conf=conf)
-sqlc = HiveContext(sc, intp.sqlContext())
-sqlContext = sqlc
-spark = SparkSession(sc, intp.getSparkSession())
+# sqlc = HiveContext(sc, intp.sqlContext())
+# sqlContext = sqlc
+#spark = SparkSession(sc, intp.getSparkSession())
+spark = SparkSession(sc, intp.getSparkSession()).builder.enableHiveSupport().getOrCreate()
 
 ##add pyfiles
 try:
@@ -180,7 +185,7 @@ class UDF(object):
         self.intp.listUDFs()
     def existsUDF(self, name):
         self.intp.existsUDF(name)
-udf = UDF(intp, sqlc)
+# udf = UDF(intp, sqlc)
 intp.onPythonScriptInitialized(os.getpid())
 
 while True :

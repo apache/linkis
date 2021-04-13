@@ -21,10 +21,6 @@
     <artifactId>linkis-flink-engine</artifactId>
     <properties>
         <flink.version>1.11.1</flink.version>
-        <hadoop.version>2.6.0-cdh5.9.2</hadoop.version>
-        <scala.macros.version>2.0.1</scala.macros.version>
-        <scala.binary.version>2.11</scala.binary.version>
-        <scala.version>2.11.12</scala.version>
     </properties>
     <dependencies>
         <dependency>

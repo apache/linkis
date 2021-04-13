@@ -219,7 +219,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
     sparkILoop.settings = settings
     sparkILoop.createInterpreter()
 
-    val in0 = getField(sparkILoop, "$in0").asInstanceOf[Option[BufferedReader]]
+    val in0 = getField(sparkILoop, "in0").asInstanceOf[Option[BufferedReader]]
     val reader = in0.fold(sparkILoop.chooseReader(settings))(r => SimpleReader(r,
       jOut, interactive = true))
 

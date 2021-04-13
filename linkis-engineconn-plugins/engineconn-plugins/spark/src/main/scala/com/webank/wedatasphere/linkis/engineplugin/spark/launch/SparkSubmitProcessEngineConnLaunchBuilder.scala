@@ -324,7 +324,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
       driverJavaSet.append(s" -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${variable(RANDOM_PORT)}")
     }
     this.conf(SparkConfiguration.SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, driverJavaSet.toString())
-    this.conf("spark.sql.extensions", "com.webank.wedatasphere.linkis.hook.spark.extension.SparkHistoryExtension")
+//    this.conf("spark.sql.extensions", "com.webank.wedatasphere.linkis.hook.spark.extension.SparkHistoryExtension")
     this.name(properties.getOrDefault("appName", "linkis"))
     this.className(properties.getOrDefault("className", getMainClass))
     properties.getOrDefault("archives", "").toString.split(",").map(RelativePath).foreach(this.archive)

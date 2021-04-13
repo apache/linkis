@@ -50,6 +50,7 @@ object EngineConnServer extends Logging {
       info("Finished to execute hook of afterExecutionExecute")
       EngineConnHook.getEngineConnHooks.foreach(_.afterEngineServerStartSuccess(getEngineCreationContext, engineConn))
     } { t =>
+      t.printStackTrace()
       EngineConnHook.getEngineConnHooks.foreach(_.afterEngineServerStartFailed(getEngineCreationContext, t))
     }
 

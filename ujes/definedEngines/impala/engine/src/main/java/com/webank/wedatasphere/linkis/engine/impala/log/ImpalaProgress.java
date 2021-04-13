@@ -13,15 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.webank.wedatasphere.linkis.engine.impala.log;
-
 /**
- * 
- * @Author liangqilang
- * @Mail zhuhui@kanzhun.com
- * @Desctiption
- * @Date 2019-11-01
+ *
+ * Created by dingqihuang on Sep 20, 2019
+ *
  */
 public class ImpalaProgress {
     private int stage;

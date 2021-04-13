@@ -19,7 +19,7 @@
         <result property="dataSourceName" column="datasource_name"/>
         <result property="dataSourceDesc" column="datasource_desc"/>
         <result property="dataSourceTypeId" column="datasource_type_id"/>
-        <result property="createIdentify" column="create_identity"/>
+        <result property="createIdentify" column="create_identify"/>
         <result property="createSystem" column="create_system"/>
         <result property="parameter" column="parameter"/>
         <result property="dataSourceEnvId" column="datasource_env_id"/>
@@ -27,6 +27,8 @@
         <result property="modifyTime" column="modify_time"/>
         <result property="modifyUser" column="modify_user"/>
         <result property="createUser" column="create_user"/>
+        <result property="labels" column="labels"/>
+        <result property="version" column="version"/>
         <association property="dataSourceType" javaType="DataSourceType">
             <result property="icon" column="icon"/>
             <result property="name" column="name"/>
@@ -42,7 +44,7 @@
         <result property="dataSourceName" column="datasource_name"/>
         <result property="dataSourceDesc" column="datasource_desc"/>
         <result property="dataSourceTypeId" column="datasource_type_id"/>
-        <result property="createIdentify" column="create_identity"/>
+        <result property="createIdentify" column="create_identify"/>
         <result property="createSystem" column="create_system"/>
         <result property="parameter" column="parameter"/>
         <result property="dataSourceEnvId" column="datasource_env_id"/>
@@ -50,6 +52,9 @@
         <result property="modifyTime" column="modify_time"/>
         <result property="modifyUser" column="modify_user"/>
         <result property="createUser" column="create_user"/>
+        <result property="labels" column="labels"/>
+        <result property="version" column="version"/>
+        <result property="expire" column="expire"/>
     </resultMap>
 
     <sql id="data_source_insert_columns">
@@ -73,7 +78,7 @@
         t.`name`, t.`icon`,
         d.`id`, d.`datasource_name`, d.`datasource_type_id`, d.`datasource_desc`,
         d.`create_identify`, d.`create_system`, d.`create_user`, d.`parameter`, d.`create_time`,
-        d.`modify_user`, d.`modify_time`, d.`datasource_env_id`
+        d.`modify_user`, d.`modify_time`, d.`datasource_env_id`, d.`labels`, d.`version`
     </sql>
 
     <insert id="insertOne" useGeneratedKeys="true" keyProperty="id" parameterType="DataSource">
@@ -92,9 +97,6 @@
         INNER JOIN `linkis_datasource` d ON t.`id` = d.`datasource_type_id`]]>
         <where>
             d.`id` = #{dataSourceId}
-            <if test="createSystem != null and createSystem != ''">
-                AND d.`create_system` = #{createSystem}
-            </if>
         </where>
     </select>
 
@@ -104,9 +106,6 @@
         <![CDATA[ FROM `linkis_datasource` ]]>
         <where>
             `id` = #{dataSourceId}
-            <if test="createSystem != null and createSystem != ''">
-                AND `create_system` = #{createSystem}
-            </if>
         </where>
     </select>
 
@@ -119,9 +118,6 @@
         <![CDATA[DELETE FROM `linkis_datasource`]]>
         <where>
             `id` = #{dataSourceId}
-            <if test="createSystem != null and createSystem != ''">
-                AND `create_system` = #{createSystem}
-            </if>
         </where>
     </delete>
 
@@ -145,12 +141,21 @@
         </where>
     </update>
 
+    <update id="expireOne">
+        <![CDATA[UPDATE `linkis_datasource`]]>
+        <set>
+            <![CDATA[`expire` = true]]>
+        </set>
+        <where>
+            `id` = #{dataSourceId}
+        </where>
+    </update>
+
     <select id="selectByPageVo" resultMap="dataSourceMap">
         <![CDATA[SELECT ]]>
         <include refid="data_source_query_page"/>
         <![CDATA[ FROM `linkis_datasource` ]]>
         <where>
-            <![CDATA[`create_system` = #{createSystem}]]>
             <if test="dataSourceName != null and dataSourceName != ''">
                 <![CDATA[AND `datasource_name` like concat('%', #{dataSourceName}, '%')]]>
             </if>
@@ -161,12 +166,12 @@
                 <choose>
                     <when test="createIdentifyList.size() == 1">
                         <foreach collection="createIdentifyList" separator="" item="item" open="AND " close="">
-                            <![CDATA[`create_identity` = #{item}]]>
+                            <![CDATA[`create_identify` = #{item}]]>
                         </foreach>
                     </when>
                     <otherwise>
                         <foreach collection="createIdentifyList" separator="," item="item"
-                                 open="AND `create_identity` IN(" close=")">
+                                 open="AND `create_identify` IN(" close=")">
                             <![CDATA[#{item}]]>
                         </foreach>
                     </otherwise>

@@ -59,12 +59,13 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     def getYarnResource(jValue: Option[JValue]) = jValue.map(r => new YarnResource((r \ "memory").asInstanceOf[JInt].values.toLong * 1024l * 1024l, (r \ "vCores").asInstanceOf[JInt].values.toInt, 0, queueName))
 
     def maxEffectiveHandle(queueValue: Option[JValue]): Option[YarnResource] = {
-      val metrics = getResponseByUrl( "metrics", rmWebAddress)
-      val totalResouceInfoResponse = ((metrics \ "clusterMetrics" \ "totalMB").asInstanceOf[JInt].values.toLong, (metrics \ "clusterMetrics" \ "totalVirtualCores").asInstanceOf[JInt].values.toLong)
-      queueValue.map(r => {
-        val effectiveResource = (r \ "absoluteCapacity").asInstanceOf[JDouble].values - (r \ "absoluteUsedCapacity").asInstanceOf[JDouble].values
-        new YarnResource(math.floor(effectiveResource * totalResouceInfoResponse._1 * 1024l * 1024l/100).toLong, math.floor(effectiveResource * totalResouceInfoResponse._2/100).toInt, 0, queueName)
-      })
+      val memory = queueValue.map( _ \ "capacities" \ "queueCapacitiesByPartition" \ "effectiveMaxResource" \ "memory") match {
+        case Some(JArray(List(JInt(x)))) => x.toLong * 1024 * 1024
+      }
+      val vCores = queueValue.map( _ \ "capacities" \ "queueCapacitiesByPartition" \ "effectiveMaxResource" \ "vCores") match {
+        case Some(JArray(List(JInt(x)))) => x.toInt
+      }
+      queueValue.map(r => new YarnResource(memory, vCores, 0, queueName))
     }
 
     var realQueueName = "root." + queueName
@@ -130,7 +131,18 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
           debug(s"cannot find any information about queue $queueName, response: " + resp)
           throw new RMWarnException(11006, s"queue $queueName is not exists in YARN.")
         }
-        (maxEffectiveHandle(queue).get, getYarnResource(queue.map(_ \ "resourcesUsed")).get)
+        val memory = queue.map( _ \ "capacities" \ "queueCapacitiesByPartition" \ "configuredMaxResource" \ "memory") match {
+          case Some(JArray(List(JInt(x)))) => x.toLong * 1024 * 1024
+        }
+        val vCores = queue.map( _ \ "capacities" \ "queueCapacitiesByPartition" \ "configuredMaxResource" \ "vCores") match {
+          case Some(JArray(List(JInt(x)))) => x.toInt
+        }
+        if(memory == 0 && vCores == 0){
+          (maxEffectiveHandle(queue).get, getYarnResource(queue.map(_ \ "resourcesUsed")).get)
+        }else{
+          (new YarnResource(memory, vCores, 0, queueName), getYarnResource(queue.map( _ \ "resourcesUsed")).get)
+        }
+
       } else if ("fairScheduler".equals(schedulerType)) {
         val childQueues = getChildQueues(resp \ "scheduler" \ "schedulerInfo" \ "rootQueue")
         val queue = getQueue(childQueues)

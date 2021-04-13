@@ -82,12 +82,12 @@
     </sql>
 
     <insert id="insertOne" useGeneratedKeys="true" keyProperty="id" parameterType="DataSource">
-        <![CDATA[INSERT INTO `linkis_datasource`(]]>
+        INSERT INTO `linkis_datasource`(
         <include refid="data_source_insert_columns"/>
-        <![CDATA[) VALUES(#{dataSourceName}, #{dataSourceTypeId},
+        ) VALUES(#{dataSourceName}, #{dataSourceTypeId},
         #{dataSourceDesc,jdbcType=VARCHAR}, #{createIdentify}, #{createSystem}, #{createUser},
         #{parameter}, #{createTime}, #{modifyUser,jdbcType=VARCHAR}, #{modifyTime,jdbcType=DATE},
-         #{dataSourceEnvId,jdbcType=INTEGER})]]>
+         #{dataSourceEnvId,jdbcType=INTEGER})
     </insert>
 
     <select id="selectOneDetail" resultMap="dataSourceDetailMap">

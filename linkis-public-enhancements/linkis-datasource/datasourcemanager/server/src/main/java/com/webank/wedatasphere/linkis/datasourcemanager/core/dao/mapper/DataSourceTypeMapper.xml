@@ -24,10 +24,10 @@
     </resultMap>
 
     <select id="getAllTypes" resultMap="dataSourceTypeMap">
-        <![CDATA[SELECT * FROM `linkis_datasource_type`;]]>
+        SELECT * FROM `linkis_datasource_type`;
     </select>
 
     <select id="selectOne" resultMap="dataSourceTypeMap">
-        <![CDATA[SELECT * FROM `linkis_datasource_type` WHERE id = #{id};]]>
+        SELECT * FROM `linkis_datasource_type` WHERE id = #{id};
     </select>
 </mapper>

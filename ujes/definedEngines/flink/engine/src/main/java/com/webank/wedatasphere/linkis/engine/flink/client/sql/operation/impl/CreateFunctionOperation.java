@@ -26,11 +26,6 @@ import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.client.config.entries.FunctionEntry;
 import org.apache.flink.table.functions.UserDefinedFunction;
 
-/**
- * @author gongzhiyao
- * @date 2021-01-29 23:27
- * @Description:
- */
 public class CreateFunctionOperation implements NonJobOperation {
     private final ExecutionContext<?> context;
     private final String              functionName;

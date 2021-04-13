@@ -45,10 +45,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
-
-/**
- * 实时结果变更 Created by liangqilang on 01 20, 2021
- */
 public class ChangelogResult<C> extends AbstractResult<C, Tuple2<Boolean, Row>> {
 
 	private Logger LOG = LoggerFactory.getLogger(getClass());

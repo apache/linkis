@@ -18,11 +18,6 @@ package com.webank.wedatasphere.linkis.enginemanager.impala.conf
 
 import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars}
 
-/**
- *
- * Created by liangqilang on 2019-11-01 zhuhui@kanzhun.com
- * 
- */
 object ImpalaResourceConfiguration {
   val IMPALA_ENGINE_REQUEST_MEMORY = CommonVars[ByteType]("impala.client.memory", new ByteType("2g"))
   val IMPALA_ENGINE_REQUEST_CORES = CommonVars[Int]("wds.linkis.impalaengine.cores.request", 1)

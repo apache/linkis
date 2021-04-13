@@ -20,7 +20,7 @@ import org.apache.flink.yarn.YarnClusterClientFactory;
 import org.apache.flink.yarn.configuration.YarnDeploymentTarget;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 /**
- * 主要解决多yarn环境的加载问题 Created by liangqilang on 01 20, 2021
+ * 主要解决多yarn环境的加载问题
  */
 public class MultipleYarnJobClusterExecutor extends AbstractJobClusterExecutor<ApplicationId, YarnClusterClientFactory> {
     public static final String NAME;

@@ -21,11 +21,6 @@ import com.webank.wedatasphere.linkis.engine.impala.client.exception.ExceptionCo
 import com.webank.wedatasphere.linkis.engine.impala.client.exception.SubmitException;
 import org.apache.hive.service.cli.thrift.TStatus;
 
-/**
- *
- * Created by dingqihuang on Sep 20, 2019
- *
- */
 public class ImpalaThriftUtil {
     private static final char[] hexCode = "0123456789abcdef".toCharArray();
 

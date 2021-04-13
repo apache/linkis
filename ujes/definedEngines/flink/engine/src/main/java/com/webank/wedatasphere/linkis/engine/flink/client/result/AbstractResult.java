@@ -19,11 +19,6 @@ import com.webank.wedatasphere.linkis.engine.flink.common.ResultListener;
 
 import java.util.List;
 
-
-
-/**
- * Created by liangqilang on 01 20, 2021
- */
 public abstract class AbstractResult<C, R> implements Result<C, R> {
 
 

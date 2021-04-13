@@ -55,10 +55,6 @@ import com.webank.wedatasphere.linkis.storage.resultset.table.*;
 
 import java.io.IOException;
 import java.util.*;
-
-/**
- * Created by liangqilang on 01 20, 2021
- */
 public class SQLTaskHandler extends AbstractTaskHandler {
 
     private Logger LOG = LoggerFactory.getLogger(getClass());

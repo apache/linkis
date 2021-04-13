@@ -21,11 +21,6 @@ import com.webank.wedatasphere.linkis.engine.impala.client.protocol.ExecStatus;
 
 import java.util.List;
 
-/**
- *
- * Created by dingqihuang on Sep 20, 2019
- *
- */
 public interface ResultListener {
 	
 	/**

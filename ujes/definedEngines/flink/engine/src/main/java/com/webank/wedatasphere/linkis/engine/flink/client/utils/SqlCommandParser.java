@@ -57,9 +57,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * Created by liangqilang on 01 20, 2021
- */
 public final class SqlCommandParser {
 
 	private SqlCommandParser() {

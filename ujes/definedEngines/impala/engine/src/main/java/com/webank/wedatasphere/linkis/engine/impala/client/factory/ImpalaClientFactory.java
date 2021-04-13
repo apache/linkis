@@ -43,11 +43,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.regex.Matcher;
 
-/**
- *
- * Created by dingqihuang on Sep 20, 2019
- *
- */
 public class ImpalaClientFactory {
 
     private static TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {

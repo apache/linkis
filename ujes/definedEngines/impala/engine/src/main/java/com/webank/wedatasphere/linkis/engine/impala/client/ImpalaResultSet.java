@@ -16,11 +16,6 @@
 package com.webank.wedatasphere.linkis.engine.impala.client;
 
 import java.util.List;
-
-
-/**
- * Created by dingqihuang on 2019-11-01
- */
 public interface ImpalaResultSet extends AutoCloseable {
 	/**
 	 * 获取下一行数据

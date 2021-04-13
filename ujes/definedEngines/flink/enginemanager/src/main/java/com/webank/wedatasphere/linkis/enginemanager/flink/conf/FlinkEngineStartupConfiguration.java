@@ -18,13 +18,6 @@ package com.webank.wedatasphere.linkis.enginemanager.flink.conf;
 import com.webank.wedatasphere.linkis.common.conf.CommonVars;
 import com.webank.wedatasphere.linkis.common.conf.CommonVars$;
 import com.webank.wedatasphere.linkis.common.conf.*;
-
-
-/**
- *
- * Created by liangqilang on 01 20, 2021
- *
- */
 public class FlinkEngineStartupConfiguration {
 
 

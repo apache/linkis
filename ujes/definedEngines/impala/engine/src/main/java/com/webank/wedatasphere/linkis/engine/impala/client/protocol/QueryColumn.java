@@ -18,11 +18,6 @@ package com.webank.wedatasphere.linkis.engine.impala.client.protocol;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- *
- * Created by dingqihuang on Sep 20, 2019
- *
- */
 public class QueryColumn {
 	private String label;
 	private int index;

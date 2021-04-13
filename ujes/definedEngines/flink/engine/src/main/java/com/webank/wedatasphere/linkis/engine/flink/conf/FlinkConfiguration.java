@@ -18,9 +18,6 @@ package com.webank.wedatasphere.linkis.engine.flink.conf;
 import com.webank.wedatasphere.linkis.common.conf.CommonVars;
 import com.webank.wedatasphere.linkis.common.conf.CommonVars$;
 
-/**
- * Created by liangqilang on 01 20, 2021
- */
 public class FlinkConfiguration {
     public static final CommonVars FLINK_ENGINE_SPRING_APPLICATION_NAME  = CommonVars$.MODULE$.apply("wds.linkis.engine.application.name", "flinkEngine");
     public static final CommonVars STREAMMANAGER_SPRING_APPLICATION_NAME = CommonVars$.MODULE$.apply("wds.linkis.streammanager.application.name", "cloud-streammanager");

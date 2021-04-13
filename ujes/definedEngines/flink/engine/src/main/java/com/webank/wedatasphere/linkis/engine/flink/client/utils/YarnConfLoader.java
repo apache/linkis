@@ -20,10 +20,6 @@ import org.apache.hadoop.yarn.conf.YarnConfiguration;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
-
-/**
- * Created by liangqilang on 01 20, 2021
- */
 public class YarnConfLoader {
 	public static YarnConfiguration getYarnConf(String yarnConfDir) {
 		YarnConfiguration yarnConf = new YarnConfiguration();

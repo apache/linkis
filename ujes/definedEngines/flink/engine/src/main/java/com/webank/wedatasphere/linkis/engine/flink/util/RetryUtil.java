@@ -32,7 +32,7 @@ import com.github.rholder.retry.WaitStrategies;
 import com.google.common.base.Predicate;
 
 /**
- * 基于guava-retry的重试工具类 Created by liangqilang on 01 20, 2021
+ * 基于guava-retry的重试工具类
  */
 public class RetryUtil {
 

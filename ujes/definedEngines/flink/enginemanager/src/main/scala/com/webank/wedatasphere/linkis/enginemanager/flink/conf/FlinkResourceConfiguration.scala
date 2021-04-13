@@ -17,12 +17,6 @@
 package com.webank.wedatasphere.linkis.enginemanager.flink.conf
 
 import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars}
-
-/**
- *
- * Created by liangqilang on 2019-11-01 zhuhui@kanzhun.com
- * 
- */
 object FlinkResourceConfiguration {
   val FLINK_ENGINE_REQUEST_MEMORY = CommonVars[ByteType]("flink.client.memory", new ByteType("2g"))
   val FLINK_ENGINE_REQUEST_CORES = CommonVars[Int]("wds.linkis.flinkengine.cores.request", 1)

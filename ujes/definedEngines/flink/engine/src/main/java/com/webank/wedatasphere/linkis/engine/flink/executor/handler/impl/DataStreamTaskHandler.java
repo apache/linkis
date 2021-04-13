@@ -38,10 +38,6 @@ import org.apache.logging.log4j.util.Strings;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-/**
- * Created by liangqilang on 01 20, 2021
- */
 public class DataStreamTaskHandler extends AbstractTaskHandler {
 
     private String[] programArguments;

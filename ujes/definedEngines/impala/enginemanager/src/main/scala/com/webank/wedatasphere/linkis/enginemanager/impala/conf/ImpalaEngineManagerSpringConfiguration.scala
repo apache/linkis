@@ -25,12 +25,6 @@ import com.webank.wedatasphere.linkis.rpc.Sender
 import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.context.annotation.{Bean, Configuration}
 
-
-/**
- *
- * Created by liangqilang on 2019-11-01 zhuhui@kanzhun.com
- * 
- */
 @Configuration
 class ImpalaEngineManagerSpringConfiguration {
 

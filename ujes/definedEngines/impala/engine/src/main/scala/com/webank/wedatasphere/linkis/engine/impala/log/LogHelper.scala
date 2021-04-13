@@ -20,12 +20,6 @@ import java.util
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 
-
-/**
- *
- * Created by liangqilang on 2019-11-01 zhuhui@kanzhun.com
- *
- */
 object LogHelper extends Logging {
   private val logPattern = """Stage-(\d+)\s+map\s+=\s+(\d+)%,\s+reduce\s+=\s+(\d+)%""".r.unanchored
   private val appidPattern = """The url to track the job: http://(.*)/proxy/(.*)/""".r.unanchored

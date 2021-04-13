@@ -33,7 +33,7 @@ import static org.apache.flink.configuration.ConfigOptions.key;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /**
- * 主要解决多yarn环境的加载问题 Created by liangqilang on 01 20, 2021
+ * 主要解决多yarn环境的加载问题
  */
 public class MultipleYarnClusterClientFactory<ClusterID> extends YarnClusterClientFactory {
 

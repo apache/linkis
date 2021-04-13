@@ -26,10 +26,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.lang.reflect.Array;
-
-/**
- * Created by liangqilang on 01 20, 2021
- */
 @Configuration
 public class FlinkEngineSpringConfiguration  {
 

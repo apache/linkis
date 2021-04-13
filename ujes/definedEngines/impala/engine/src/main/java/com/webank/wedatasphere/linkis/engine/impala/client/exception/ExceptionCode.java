@@ -17,12 +17,6 @@ package com.webank.wedatasphere.linkis.engine.impala.client.exception;
 
 import lombok.Getter;
 
-
-/**
- *
- * Created by dingqihuang on Sep 20, 2019
- *
- */
 @Getter
 public enum ExceptionCode {
 	ClosedError("Session is closed."),

@@ -30,11 +30,6 @@ import org.apache.commons.io.IOUtils
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
-/**
- *
- * Created by liangqilang on 2019-11-01 zhuhui@kanzhun.com
- * 
- */
 class ImpalaResultListener extends ResultListener with Logging{
 
   private var impalaJobID: String = _

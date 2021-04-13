@@ -61,11 +61,6 @@ import com.webank.wedatasphere.linkis.engine.impala.client.ImpalaClient
 import com.webank.wedatasphere.linkis.engine.impala.client.thrift.ImpalaThriftClientOnHiveServer2
 import java.util.concurrent.LinkedBlockingQueue
 
-/**
- *
- * Created by liangqilang on 2019-11-01 zhuhui@kanzhun.com
- * 
- */
 class ImpalaEngineExecutor(outputPrintLimit: Int, impalaClient: ImpalaClient, ugi: UserGroupInformation) extends EngineExecutor(outputPrintLimit, isSupportParallelism = false) with SingleTaskOperateSupport with SingleTaskInfoSupport with Logging{
 
   private val nameSuffix: String = "_ImpalaEngineExecutor"

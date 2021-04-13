@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 /**
- * Impala客户端 Created by liangqilang on 2019-11-01 zhuhui@kanzhun.com
+ * Impala客户端
  */
 public interface ImpalaClient extends AutoCloseable {
 	

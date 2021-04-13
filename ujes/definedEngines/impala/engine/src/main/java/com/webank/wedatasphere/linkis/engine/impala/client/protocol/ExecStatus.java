@@ -21,11 +21,6 @@ import org.apache.hive.service.cli.thrift.TOperationState;
 
 import java.util.Set;
 
-/**
- *
- * Created by dingqihuang on Sep 20, 2019
- *
- */
 public class ExecStatus {
     private final static Set<Integer> ACTIVE_STATE = ImmutableSet.of(
             TOperationState.INITIALIZED_STATE.getValue(),

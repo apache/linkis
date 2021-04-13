@@ -31,11 +31,6 @@ import org.springframework.stereotype.Component
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
- *
- * Created by liangqilang on 2019-11-01 zhuhui@kanzhun.com
- * 
- */
 class ImpalaQLProcessBuilder extends JavaProcessEngineBuilder{
 
   private val LOG = LoggerFactory.getLogger(getClass)

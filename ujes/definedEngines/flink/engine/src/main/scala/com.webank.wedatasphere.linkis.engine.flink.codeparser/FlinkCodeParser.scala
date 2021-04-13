@@ -13,19 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.webank.wedatasphere.linkis.engine.flink.codeparser
-
-
 import com.webank.wedatasphere.linkis.engine.execute.CodeType.CodeType
 import com.webank.wedatasphere.linkis.engine.execute.{CodeType, EngineExecutorContext, SingleCodeParser}
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.mutable.ArrayBuffer
-
-/**
- * Created by liangqilang on 01 20, 2021
- */
  class FlinkCodeParser extends SingleCodeParser{
 
   override val codeType: CodeType = CodeType.Flink

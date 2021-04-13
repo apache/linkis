@@ -22,10 +22,6 @@ import org.apache.flink.configuration.Configuration;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
-
-/**
- * Created by liangqilang on 01 20, 2021
- */
 public final class ConfigurationParseUtils {
     private static ObjectMapper objectMapper = new ObjectMapper();
 

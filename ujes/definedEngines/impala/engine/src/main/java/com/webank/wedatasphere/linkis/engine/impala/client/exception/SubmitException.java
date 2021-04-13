@@ -15,11 +15,6 @@
  */
 package com.webank.wedatasphere.linkis.engine.impala.client.exception;
 
-/**
- *
- * Created by dingqihuang on Sep 20, 2019
- *
- */
 public class SubmitException extends Exception {
 
 	/**

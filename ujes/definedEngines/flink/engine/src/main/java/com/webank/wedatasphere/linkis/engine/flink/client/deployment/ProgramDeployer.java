@@ -25,9 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 
-/**
- * Created by liangqilang on 01 20, 2021
- */
 public class ProgramDeployer {
 	private static final Logger LOG = LoggerFactory.getLogger(ProgramDeployer.class);
 

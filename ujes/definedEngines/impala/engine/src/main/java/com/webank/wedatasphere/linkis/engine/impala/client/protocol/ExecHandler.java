@@ -18,11 +18,7 @@ import com.webank.wedatasphere.linkis.engine.impala.client.ResultListener;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-/**
- *
- * Created by dingqihuang on Sep 20, 2019
- *
- */
+
 @ToString
 @NoArgsConstructor
 public abstract class ExecHandler<T> implements AutoCloseable {

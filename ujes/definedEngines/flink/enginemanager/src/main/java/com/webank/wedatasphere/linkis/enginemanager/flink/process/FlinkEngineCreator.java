@@ -26,13 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import scala.collection.JavaConversions;
-
-
-/**
- *
- * Created by liangqilang on 01 20, 2021
- *
- */
 @Component("engineCreator")
 public class FlinkEngineCreator extends AbstractEngineCreator {
 

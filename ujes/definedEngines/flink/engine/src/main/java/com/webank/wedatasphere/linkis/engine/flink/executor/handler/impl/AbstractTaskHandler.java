@@ -40,9 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Created by liangqilang on 01 20, 2021
- */
 public abstract class AbstractTaskHandler implements TaskHandler {
 
      private Logger LOG = LoggerFactory.getLogger(getClass());

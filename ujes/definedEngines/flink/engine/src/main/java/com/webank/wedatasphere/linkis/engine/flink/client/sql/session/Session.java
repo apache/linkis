@@ -42,9 +42,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Created by liangqilang on 01 20, 2021
- */
 public class Session {
     private static final Logger LOG = LoggerFactory.getLogger(Session.class);
 

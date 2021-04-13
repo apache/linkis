@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 package com.webank.wedatasphere.linkis.engine.impala.log;
-/**
- *
- * Created by dingqihuang on Sep 20, 2019
- *
- */
+
 public class ImpalaProgress {
     private int stage;
     private int map;

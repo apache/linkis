@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 /**
- * A default implementation of JobOperation Created by liangqilang on 01 20, 2021
+ * A default implementation of JobOperation
  */
 public abstract class AbstractJobOperation implements JobOperation {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractJobOperation.class);

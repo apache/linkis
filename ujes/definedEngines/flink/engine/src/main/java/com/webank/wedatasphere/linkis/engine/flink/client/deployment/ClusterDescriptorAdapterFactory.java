@@ -26,9 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-/**
- * Created by liangqilang on 01 20, 2021
- */
 public class ClusterDescriptorAdapterFactory {
 
 	private static Logger LOG = LoggerFactory.getLogger(ClusterDescriptorAdapterFactory.class);

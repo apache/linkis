@@ -24,9 +24,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  *
- * @description: 启动引擎，解决多集群、多版本问题。
- * Created by liangqilang on 01 20, 2021
- *
+ * 启动引擎，解决多集群、多版本问题。*
  */
 public class FlinkEngineProcessBuilder extends JavaProcessEngineBuilder {
 

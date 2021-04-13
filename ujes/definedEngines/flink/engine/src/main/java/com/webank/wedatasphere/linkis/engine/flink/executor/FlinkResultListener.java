@@ -36,9 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * 结果异步监听 Created by liangqilang on 01 20, 2021
- */
 public class FlinkResultListener implements ResultListener {
 
     private Logger LOG = LoggerFactory.getLogger(getClass());

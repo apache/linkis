@@ -57,9 +57,6 @@ import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
-/**
- * Created by liangqilang on 01 20, 2021
- */
 public class FlinkEngineExecutor extends EngineExecutor implements SingleTaskOperateSupport, SingleTaskInfoSupport {
     private Logger LOG = LoggerFactory.getLogger(getClass());
     private String nameSuffix = "_FlinkEngineExecutor";

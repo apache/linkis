@@ -22,11 +22,6 @@ import com.webank.wedatasphere.linkis.enginemanager.AbstractEngineResourceFactor
 import com.webank.wedatasphere.linkis.resourcemanager.{LoadInstanceResource, Resource}
 import org.springframework.stereotype.Component
 
-/**
- *
- * Created by liangqilang on 2019-11-01 zhuhui@kanzhun.com
- * 
- */
 @Component("engineResourceFactory")
 class ImpalaEngineResourceFactory extends AbstractEngineResourceFactory{
   

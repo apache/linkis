@@ -24,9 +24,7 @@ import org.apache.flink.client.ClientUtils;
 
 import java.util.Map;
 
-/**
- * Created by liangqilang on 01 20, 2021
- */
+
 public class SessionClusterDescriptorAdapter<ClusterID> extends ClusterDescriptorAdapter<ClusterID> {
 	public SessionClusterDescriptorAdapter(
 			ExecutionContext<ClusterID> executionContext,

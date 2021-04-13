@@ -22,11 +22,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.{Bean, Configuration}
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 
-/**
- *
- * Created by liangqilang on 2019-11-01 zhuhui@kanzhun.com
- * 
- */
 @Configuration
 class ImpalaEngineSpringConfiguration extends Logging{
 

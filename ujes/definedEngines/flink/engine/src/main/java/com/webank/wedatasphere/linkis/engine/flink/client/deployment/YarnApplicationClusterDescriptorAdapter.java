@@ -47,9 +47,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by liangqilang on 01 20, 2021
- */
+
 public class YarnApplicationClusterDescriptorAdapter<ClusterID> extends ClusterDescriptorAdapter<ClusterID> {
 
     private static final Logger  LOG                   = LoggerFactory.getLogger(YarnApplicationClusterDescriptorAdapter.class);

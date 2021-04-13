@@ -18,10 +18,6 @@ package com.webank.wedatasphere.linkis.engine.impala.client;
 import org.apache.thrift.transport.TTransport;
 
 import javax.net.ssl.TrustManager;
-
-/**
- * Created by dingqihuang on 2019-11-01
- */
 public abstract class ImpalaTransportFactory<T extends TTransport> {
 	
 	/**

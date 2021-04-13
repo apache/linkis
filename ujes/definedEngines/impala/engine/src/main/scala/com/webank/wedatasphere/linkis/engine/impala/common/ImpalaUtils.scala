@@ -23,11 +23,6 @@ import com.webank.wedatasphere.linkis.enginemanager.conf.EnvConfiguration
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.Path
 
-/**
- *
- * Created by liangqilang on 2019-11-01 zhuhui@kanzhun.com
- * 
- */
 object ImpalaUtils {
 
   def msDurationToString(ms: Long): String = {

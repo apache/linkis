@@ -26,12 +26,6 @@ import org.springframework.stereotype.Component
 
 import scala.util.Random
 
-
-/**
- *
- * Created by liangqilang on 2019-11-01 zhuhui@kanzhun.com
- *  
- */
 @Component
 class ImpalaEngineExecutorFactory extends EngineExecutorFactory with Logging{
 

@@ -18,11 +18,6 @@ package com.webank.wedatasphere.linkis.entrance.conf
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 
-
-/**
-  * created by zhuhui on 2019/10/10
-  * Description:
-  */
 object ImpalaEntranceConfiguration {
   val IMPALA_ERROR_CODE_FILE = CommonVars("wds.linkis.impala.errorcode.file", "impalaErrorCode.txt")
 }

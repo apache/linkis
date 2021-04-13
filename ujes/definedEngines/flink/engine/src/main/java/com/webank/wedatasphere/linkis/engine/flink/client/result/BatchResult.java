@@ -39,11 +39,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
-
-
-/**
- * 批计算结果 Created by liangqilang on 01 20, 2021
- */
 public class BatchResult<C> extends AbstractResult<C, Row> {
 
 	private Logger LOG = LoggerFactory.getLogger(getClass());

@@ -24,9 +24,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 
-/**
- * Created by liangqilang on 01 20, 2021
- */
 public class EnvironmentUtil {
 	private static final Logger LOG = LoggerFactory.getLogger(EnvironmentUtil.class);
 

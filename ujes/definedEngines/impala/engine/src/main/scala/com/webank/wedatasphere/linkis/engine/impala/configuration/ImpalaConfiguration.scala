@@ -17,11 +17,6 @@ package com.webank.wedatasphere.linkis.engine.impala.configuration
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 
-/**
- *
- * Created by liangqilang on 2019-11-01 zhuhui@kanzhun.com
- * 
- */
 object ImpalaConfiguration {
   
     val IMPALA_COORDINATOR_HOSTS = CommonVars("wds.linkis.engine.impala.coordinator.hosts", "127.0.0.1")

@@ -21,13 +21,6 @@ import com.webank.wedatasphere.linkis.enginemanager.process.CommonProcessEngine;
 import com.webank.wedatasphere.linkis.enginemanager.process.JavaProcessEngineBuilder;
 import com.webank.wedatasphere.linkis.enginemanager.process.ProcessEngineBuilder;
 import org.apache.commons.lang.StringUtils;
-
-
-/**
- *
- * Created by liangqilang on 01 20, 2021
- *
- */
 public class FlinkCommonProcessEngine extends CommonProcessEngine {
 
 

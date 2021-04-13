@@ -34,7 +34,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
 /**
- * 集群交互适配器，适合datastream、sql方式作业 Created by liangqilang on 01 20, 2021
+ * 集群交互适配器，适合datastream、sql方式作业
  */
 public abstract class ClusterDescriptorAdapter<ClusterID> {
 	public static final Logger LOG = LoggerFactory.getLogger(ClusterDescriptorAdapter.class);

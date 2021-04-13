@@ -17,12 +17,6 @@ package com.webank.wedatasphere.linkis.engine.impala.client.util;
 
 import java.nio.charset.Charset;
 import java.util.regex.Pattern;
-
-/**
- *
- * Created by dingqihuang on Sep 20, 2019
- *
- */
 public class Constant {
 	public static final String REQUEST_POOL = "REQUEST_POOL";
 	

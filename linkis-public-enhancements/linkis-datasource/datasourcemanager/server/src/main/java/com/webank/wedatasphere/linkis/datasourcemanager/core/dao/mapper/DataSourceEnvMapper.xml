@@ -23,7 +23,7 @@
         <result property="createUser" column="create_user"/>
         <result property="modifyTime" column="modify_time"/>
         <result property="modifyUser" column="modify_user"/>
-        <result property="dataSourceTypeId" column="datasource_type_id"/>
+        <result property="dataSourceTypeId" column="data_source_type_id"/>
         <association property="dataSourceType" javaType="DataSourceType">
             <result property="icon" column="icon"/>
             <result property="name" column="name"/>
@@ -61,14 +61,15 @@
 
     <select id="selectByPageVo" resultMap="dataSourceEnvMap">
         <![CDATA[SELECT e.`id`, e.`env_name`, e.`env_desc`, e.`parameter`, e.`create_time`,
-        e.`create_user`, e.`modify_time`, e.`modify_user`, e.`datasource_type_id`
-            FROM `linkis_datasource_env` e ]]>
+        e.`create_user`, e.`modify_time`, e.`modify_user`, te.`data_source_type_id`
+            FROM `linkis_datasource_env` e INNER JOIN `linkis_datasource_type_env` te
+             ON e.`id` = te.`env_id`]]>
         <where>
             <if test="envName != null and envName != ''">
                 <![CDATA[e.`env_name` like concat('%', #{envName}, '%')]]>
             </if>
             <if test="dataSourceTypeId != null and dataSourceTypeId > 0">
-                <![CDATA[AND e.`datasource_type_id` = #{dataSourceTypeId}]]>
+                <![CDATA[AND te.`data_source_type_id` = #{dataSourceTypeId}]]>
             </if>
         </where>
     </select>

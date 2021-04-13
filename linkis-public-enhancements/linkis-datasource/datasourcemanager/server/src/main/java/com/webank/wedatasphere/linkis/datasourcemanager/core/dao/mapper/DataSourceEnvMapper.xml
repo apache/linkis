@@ -55,9 +55,8 @@
     </insert>
 
     <select id="listByTypeId" resultMap="dataSourceEnvMap">
-        <![CDATA[SELECT `id`, `env_name` FROM `linkis_datasource_env`
-        WHERE `id` IN (SELECT `env_id` FROM `linkis_datasource_type_env`
-        WHERE `data_source_type_id` = #{id})]]>
+        SELECT `id`, `env_name` FROM `linkis_datasource_env`
+        WHERE `datasource_type_id` = #{id}
     </select>
 
     <select id="selectByPageVo" resultMap="dataSourceEnvMap">

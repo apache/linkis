@@ -33,7 +33,7 @@ class SparkEngineConnResourceFactory extends AbstractEngineResourceFactory with 
     val executorNum = LINKIS_SPARK_EXECUTOR_INSTANCES.getValue(properties)
     new DriverAndYarnResource(
       new LoadInstanceResource(ByteTimeUtils.byteStringAsBytes(LINKIS_SPARK_DRIVER_MEMORY.getValue(properties) + "G"),
-        LINKIS_SPARK_DRIVER_CORES,
+        LINKIS_SPARK_DRIVER_CORES.getValue,
         1),
       new YarnResource(ByteTimeUtils.byteStringAsBytes(LINKIS_SPARK_EXECUTOR_MEMORY.getValue(properties) * executorNum + "G"),
         LINKIS_SPARK_EXECUTOR_CORES.getValue(properties) * executorNum,

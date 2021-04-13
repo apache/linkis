@@ -25,7 +25,7 @@ import com.webank.wedatasphere.linkis.common.conf.CommonVars
 object SparkResourceConfiguration {
 
   val LINKIS_SPARK_DRIVER_MEMORY = CommonVars[Int]("spark.driver.memory", 2) //单位为G
-  val LINKIS_SPARK_DRIVER_CORES = 1 //Fixed to 1（固定为1） CommonVars[Int]("wds.linkis.driver.cores", 1)
+  val LINKIS_SPARK_DRIVER_CORES = CommonVars[Int]("spark.driver.cores", 1) //Fixed to 1（固定为1） CommonVars[Int]("wds.linkis.driver.cores", 1)
 
   val LINKIS_SPARK_EXECUTOR_MEMORY = CommonVars[Int]("spark.executor.memory", 4) //单位为G
   val LINKIS_SPARK_EXECUTOR_CORES = CommonVars[Int]("spark.executor.cores", 2)

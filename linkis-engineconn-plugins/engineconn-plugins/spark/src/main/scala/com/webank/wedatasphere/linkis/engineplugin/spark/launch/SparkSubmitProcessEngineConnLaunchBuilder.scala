@@ -328,7 +328,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
     this.name(properties.getOrDefault("appName", "linkis"))
     this.className(properties.getOrDefault("className", getMainClass))
     properties.getOrDefault("archives", "").toString.split(",").map(RelativePath).foreach(this.archive)
-    this.driverCores(SparkResourceConfiguration.LINKIS_SPARK_DRIVER_CORES)
+    this.driverCores(SparkResourceConfiguration.LINKIS_SPARK_DRIVER_CORES.getValue)
     this.driverMemory(SparkResourceConfiguration.LINKIS_SPARK_DRIVER_MEMORY.getValue(properties) + "G")
     this.executorCores(SparkResourceConfiguration.LINKIS_SPARK_EXECUTOR_CORES.getValue(properties))
     this.executorMemory(SparkResourceConfiguration.LINKIS_SPARK_EXECUTOR_MEMORY.getValue(properties) + "G")

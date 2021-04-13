@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicLong
 import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Utils}
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import com.webank.wedatasphere.linkis.engineplugin.spark.common.Kind
+import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkResourceConfiguration._
 import com.webank.wedatasphere.linkis.engineplugin.spark.extension.{SparkPostExecutionHook, SparkPreExecutionHook}
 import com.webank.wedatasphere.linkis.engineplugin.spark.utils.JobProgressUtil
 import com.webank.wedatasphere.linkis.governance.common.exception.DWCJobRetryException
@@ -154,7 +155,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
       //          driverMem = driverMemList.reduce((x, y) => x + y)
       //      }
       val sparkExecutorCores = sc.getConf.get("spark.executor.cores").toInt * executorNum
-      val sparkDriverCores = sc.getConf.get("spark.driver.cores").toInt
+      val sparkDriverCores = sc.getConf.get("spark.driver.cores",LINKIS_SPARK_DRIVER_CORES.toString).toInt
       val queue = sc.getConf.get("spark.yarn.queue")
       info("Current actual used resources is driverMem:" + driverMem + ",driverCores:" + sparkDriverCores + ",executorMem:" + executorMem + ",executorCores:" + sparkExecutorCores + ",queue:" + queue)
       val uesdResource = new DriverAndYarnResource(

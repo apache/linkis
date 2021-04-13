@@ -84,22 +84,22 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     }
 
     @Override
-    public DataSource getDataSourceInfo(Long dataSourceId, String createSystem) {
-         return dataSourceDao.selectOneDetail(dataSourceId, createSystem);
+    public DataSource getDataSourceInfo(Long dataSourceId, String version) {
+         return dataSourceDao.selectOneDetail(dataSourceId, version);
     }
 
     @Override
     public DataSource getDataSourceInfoBrief(Long dataSourceId, String createSystem) {
-        return dataSourceDao.selectOne(dataSourceId, createSystem);
+        return dataSourceDao.selectOne(dataSourceId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long removeDataSourceInfo(Long dataSourceId, String createSystem) {
-        DataSource dataSource = dataSourceDao.selectOne(dataSourceId, createSystem);
+        DataSource dataSource = dataSourceDao.selectOne(dataSourceId);
         if(null != dataSource){
             //First to delete record in db
-            int affect = dataSourceDao.removeOne(dataSourceId, createSystem);
+            int affect = dataSourceDao.removeOne(dataSourceId);
             if(affect > 0){
                 //Remove resource
                 Map<String, Object> connectParams = dataSource.getConnectParams();
@@ -223,6 +223,24 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         List<DataSourceEnv> queryList = dataSourceEnvDao.selectByPageVo(dataSourceEnvVo);
         PageInfo<DataSourceEnv> pageInfo = new PageInfo<>(queryList);
         return pageInfo.getList();
+    }
+
+    /**
+     * expire data source
+     * @param dataSourceId
+     * @return
+     */
+    @Override
+    public Long expireDataSource(Long dataSourceId) {
+        DataSource dataSource = dataSourceDao.selectOne(dataSourceId);
+        if(null != dataSource){
+            //First to delete record in db
+            int affect = dataSourceDao.expireOne(dataSourceId);
+            if(affect > 0){
+                return dataSourceId;
+            }
+        }
+        return -1L;
     }
 
     /**

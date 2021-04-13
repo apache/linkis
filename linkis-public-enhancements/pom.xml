@@ -31,10 +31,14 @@
         <module>linkis-bml</module>
         <module>linkis-context-service</module>
         <module>linkis-datasource/linkis-metadata</module>
+        <module>linkis-datasource/datasourcemanager/common</module>
+        <module>linkis-datasource/datasourcemanager/server</module>
+        <module>linkis-datasource/metadatamanager/common</module>
+        <module>linkis-datasource/metadatamanager/server</module>
+        <module>linkis-datasource/metadatamanager/service/mysql</module>
         <module>linkis-publicservice</module>
 
         <!--<module>linkis-user-control</module>-->
-
     </modules>
 
 </project>

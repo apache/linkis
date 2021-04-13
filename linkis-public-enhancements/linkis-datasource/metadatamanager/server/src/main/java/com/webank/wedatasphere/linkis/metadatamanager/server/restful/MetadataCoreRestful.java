@@ -31,7 +31,8 @@ import java.util.Map;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Component
-public class MetadataCoreRestful {
+public class
+MetadataCoreRestful {
 
     @Autowired
     private MetadataAppService metadataAppService;
@@ -41,9 +42,7 @@ public class MetadataCoreRestful {
     public Response getDatabases(@PathParam("data_source_id")String dataSourceId,
                                  @QueryParam("system")String system){
         try{
-            if(StringUtils.isBlank(system)){
-                return Message.messageToResponse(Message.error("'system' is missing[缺少系统名]"));
-            }
+
             List<String> databases = metadataAppService.getDatabasesByDsId(dataSourceId, system);
             return Message.messageToResponse(Message.ok().data("dbs", databases));
         }catch(Exception e){

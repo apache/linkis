@@ -39,10 +39,10 @@ public interface DataSourceInfoService {
     /**
      * Get data source
      * @param dataSourceId id
-     * @param createSystem system name
+     * @param version version
      * @return data source entity
      */
-    DataSource getDataSourceInfo(Long dataSourceId, String createSystem);
+    DataSource getDataSourceInfo(Long dataSourceId, String version);
 
     /**
      * Get data source brief information
@@ -113,4 +113,11 @@ public interface DataSourceInfoService {
      * @return
      */
     List<DataSourceEnv> queryDataSourceEnvPage(DataSourceEnvVo dataSourceEnvVo);
+
+    /**
+     * exoire data source
+     * @param dataSourceId
+     * @return
+     */
+    Long expireDataSource(Long dataSourceId);
 }

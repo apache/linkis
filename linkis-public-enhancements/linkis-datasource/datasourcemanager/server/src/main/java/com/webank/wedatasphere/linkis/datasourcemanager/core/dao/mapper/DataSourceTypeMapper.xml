@@ -16,9 +16,11 @@
 <mapper namespace="com.webank.wedatasphere.linkis.datasourcemanager.core.dao.DataSourceTypeDao">
     <resultMap id="dataSourceTypeMap" type="dataSourceType">
         <result property="id" column="id"/>
-        <result property="icon" column="icon"/>
-        <result property="description" column="description"/>
         <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="option" column="option"/>
+        <result property="classifier" column="classifier"/>
+        <result property="icon" column="icon"/>
     </resultMap>
 
     <select id="getAllTypes" resultMap="dataSourceTypeMap">

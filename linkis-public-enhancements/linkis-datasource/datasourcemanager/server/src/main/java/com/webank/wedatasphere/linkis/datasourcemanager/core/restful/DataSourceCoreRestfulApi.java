@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -77,6 +78,40 @@ public class DataSourceCoreRestfulApi {
         this.formDataTransformer = FormDataTransformerFactory.buildCustom();
     }
 
+
+    @GET
+    @Path("/type/all")
+    public Response getAllDataSourceTypes() {
+        return RestfulApiHelper.doAndResponse(() -> {
+            List<DataSourceType> dataSourceTypes = dataSourceRelateService.getAllDataSourceTypes();
+            return Message.ok().data("type_list", dataSourceTypes);
+        }, "/data_source/type/all", "Fail to get all types of data source[获取数据源类型列表失败]");
+    }
+
+
+    @GET
+    @Path("/key_define/type/{type_id}")
+    public Response getKeyDefinitionsByType(@PathParam("type_id") Long dataSourceTypeId) {
+        return RestfulApiHelper.doAndResponse(() -> {
+                    List<DataSourceParamKeyDefinition> keyDefinitions = dataSourceRelateService.getKeyDefinitionsByType(dataSourceTypeId);
+                    return Message.ok().data("key_define", keyDefinitions);
+                }, "/data_source/key_define/type/" + dataSourceTypeId,
+                "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
+    }
+
+    @GET
+    @Path("/key_define/type/{type_id}/{scope}")
+    public Response getKeyDefinitionsByTypeAndScope(@PathParam("type_id") Long dataSourceTypeId,
+                                                    @PathParam("scope") String scopeValue) {
+        return RestfulApiHelper.doAndResponse(() -> {
+                    DataSourceParamKeyDefinition.Scope scope = DataSourceParamKeyDefinition.Scope.valueOf(scopeValue.toUpperCase());
+                    List<DataSourceParamKeyDefinition> keyDefinitions = dataSourceRelateService
+                            .getKeyDefinitionsByType(dataSourceTypeId, scope);
+                    return Message.ok().data("key_define", keyDefinitions);
+                }, "/data_source/key_define/type/" + dataSourceTypeId + "/" + scopeValue,
+                "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
+    }
+
     @POST
     @Path("/info/json")
     public Response insertJsonInfo(DataSource dataSource, @Context HttpServletRequest req) {
@@ -91,6 +126,31 @@ public class DataSourceCoreRestfulApi {
             insertDataSourceConfig(dataSource);
             return Message.ok().data("insert_id", dataSource.getId());
         }, "/data_source/info/json", "Fail to insert data source[新增数据源失败]");
+    }
+
+    /**
+     * create or update parameter, save a version of parameter,return version number.
+     * @param connectParams
+     * @param req
+     * @return
+     */
+    @POST
+    @Path("/parameter/{datasource_id}/json")
+    public Response insertJsonParameter(
+            @PathParam("datasource_id") Long datasourceId,
+            @RequestParam("connectParams") Map<String, Object> connectParams, @Context HttpServletRequest req) {
+        return RestfulApiHelper.doAndResponse(() -> {
+
+//            DataSource dataSource = dataSourceInfoService.getDataSourceInfoBrief(datasourceId);
+//            List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
+//                    .getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
+//            parameterValidator.validate(keyDefinitionList, connectParams);
+//            //Encrypt password value type
+//            RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
+
+            long versionId = dataSourceInfoService.insertDataSourceParameter(datasourceId, connectParams);
+            return Message.ok().data("version", versionId);
+        }, "/data_source/parameter/" + datasourceId + "/json", "Fail to insert data source parameter [保存数据源参数失败]");
     }
 
     @POST
@@ -110,19 +170,40 @@ public class DataSourceCoreRestfulApi {
         }, "/data_source/info/form", "Fail to insert data source[新增数据源失败]");
     }
 
+    /**
+     * get datasource detail, for current version
+     * @param dataSourceId
+     * @param request
+     * @return
+     */
+    @GET
+    @Path("/info/{data_source_id}")
+    public Response getInfoByDataSourceId(@PathParam("data_source_id") Long dataSourceId,
+                                          @Context HttpServletRequest request) {
+        return RestfulApiHelper.doAndResponse(() -> {
+            DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceId);
+            // Decrypt
+            if (null != dataSource) {
+                RestfulApiHelper.decryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId())
+                        , dataSource.getConnectParams());
+            }
+            return Message.ok().data("info", dataSource);
+        }, "/data_source/info/" + dataSourceId, "Fail to access data source[获取数据源信息失败]");
+    }
 
+    /**
+     * get datasource detail
+     * @param dataSourceId
+     * @param version
+     * @return
+     */
     @GET
     @Path("/info/{data_source_id}/{version}")
-    public Response getInfoByDataSourceId(@QueryParam("system") String createSystem,
-                                          @PathParam("data_source_id") Long dataSourceId,
-                                          @PathParam("version") String version,
-                                          @Context HttpServletRequest request) {
-        System.out.println("dataSourceId:" + dataSourceId);
-        System.out.println("version:" + version);
+    public Response getInfoByDataSourceIdAndVersion(@PathParam("data_source_id") Long dataSourceId,
+                                                    @PathParam("version") Long version) {
         return RestfulApiHelper.doAndResponse(() -> {
-            LOG.info("system:" + createSystem);
             DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceId, version);
-            //Decrypt
+            // Decrypt
             if (null != dataSource) {
                 RestfulApiHelper.decryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId())
                         , dataSource.getConnectParams());
@@ -132,12 +213,23 @@ public class DataSourceCoreRestfulApi {
     }
 
 
+    @POST
+    @Path("/publish/{datasource_id}/{version_id}")
+    public Response publishByDataSourceId(@PathParam("datasource_id") Long dataSourceId,
+                                          @PathParam("version_id") Long versionId,
+                                          @Context HttpServletRequest request) {
+        return RestfulApiHelper.doAndResponse(() -> {
+            int updateResult = dataSourceInfoService.publishByDataSourceId(dataSourceId, versionId);
+            return Message.ok().data("updateResult", updateResult);
+        }, "/data_source/publish/" + dataSourceId + "/" + versionId, "Fail to publish datasource[数据源版本发布失败]");
+    }
+
+
     @DELETE
     @Path("/info/{data_source_id}")
-    public Response removeDataSource(@QueryParam("system") String createSystem,
-                                     @PathParam("data_source_id") Long dataSourceId) {
+    public Response removeDataSource(@PathParam("data_source_id") Long dataSourceId) {
         return RestfulApiHelper.doAndResponse(() -> {
-            Long removeId = dataSourceInfoService.removeDataSourceInfo(dataSourceId, createSystem);
+            Long removeId = dataSourceInfoService.removeDataSourceInfo(dataSourceId, "");
             if (removeId < 0) {
                 return Message.error("Fail to remove data source[删除数据源信息失败], [id:" + dataSourceId + "]");
             }
@@ -172,7 +264,7 @@ public class DataSourceCoreRestfulApi {
             dataSource.setId(dataSourceId);
             dataSource.setModifyUser(userName);
             dataSource.setModifyTime(Calendar.getInstance().getTime());
-            DataSource storedDataSource = dataSourceInfoService.getDataSourceInfoBrief(dataSourceId, dataSource.getCreateSystem());
+            DataSource storedDataSource = dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
             if (null == storedDataSource) {
                 return Message.error("Fail to update data source[更新数据源失败], " + "[Please check the id:'"
                         + dataSourceId + "' and create system: '" + dataSource.getCreateSystem() + " is correct ']");
@@ -186,7 +278,7 @@ public class DataSourceCoreRestfulApi {
     @PUT
     @Path("/{data_source_id}/{version}/op/connect")
     public Response connectDataSource(@PathParam("data_source_id") Long dataSourceId,
-                                      @PathParam("version") String version,
+                                      @PathParam("version") Long version,
                                            @Context HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(() -> {
             String operator = SecurityFilter.getLoginUsername(req);
@@ -210,7 +302,7 @@ public class DataSourceCoreRestfulApi {
             dataSource.setId(dataSourceId);
             dataSource.setModifyUser(userName);
             dataSource.setModifyTime(Calendar.getInstance().getTime());
-            DataSource storedDataSource = dataSourceInfoService.getDataSourceInfoBrief(dataSourceId, dataSource.getCreateSystem());
+            DataSource storedDataSource = dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
             if (null == storedDataSource) {
                 return Message.error("Fail to update data source[更新数据源失败], " +
                         "[Please check the id:'" + dataSourceId + "' and create system: '" + dataSource.getCreateSystem() + " is correct ']");
@@ -239,38 +331,6 @@ public class DataSourceCoreRestfulApi {
         }, "/data_source/info", "Fail to query page of data source[查询数据源失败]");
     }
 
-    @GET
-    @Path("/key_define/type/{type_id}")
-    public Response getKeyDefinitionsByType(@PathParam("type_id") Long dataSourceTypeId) {
-        return RestfulApiHelper.doAndResponse(() -> {
-                    List<DataSourceParamKeyDefinition> keyDefinitions = dataSourceRelateService.getKeyDefinitionsByType(dataSourceTypeId);
-                    return Message.ok().data("key_define", keyDefinitions);
-                }, "/data_source/key_define/type/" + dataSourceTypeId,
-                "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
-    }
-
-    @GET
-    @Path("/key_define/type/{type_id}/{scope}")
-    public Response getKeyDefinitionsByTypeAndScope(@PathParam("type_id") Long dataSourceTypeId,
-                                                    @PathParam("scope") String scopeValue) {
-        return RestfulApiHelper.doAndResponse(() -> {
-                    DataSourceParamKeyDefinition.Scope scope = DataSourceParamKeyDefinition.Scope.valueOf(scopeValue.toUpperCase());
-                    List<DataSourceParamKeyDefinition> keyDefinitions = dataSourceRelateService
-                            .getKeyDefinitionsByType(dataSourceTypeId, scope);
-                    return Message.ok().data("key_define", keyDefinitions);
-                }, "/data_source/key_define/type/" + dataSourceTypeId + "/" + scopeValue,
-                "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
-    }
-
-    @GET
-    @Path("/type/all")
-    public Response getAllDataSourceTypes() {
-        return RestfulApiHelper.doAndResponse(() -> {
-            List<DataSourceType> dataSourceTypes = dataSourceRelateService.getAllDataSourceTypes();
-            return Message.ok().data("type_list", dataSourceTypes);
-        }, "/data_source/type/all", "Fail to get all types of data source[获取数据源类型列表失败]");
-    }
-
     /**
      * Inner method to insert data source
      *
@@ -286,10 +346,6 @@ public class DataSourceCoreRestfulApi {
         List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
                 .getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
         dataSource.setKeyDefinitions(keyDefinitionList);
-        Map<String, Object> connectParams = dataSource.getConnectParams();
-        parameterValidator.validate(keyDefinitionList, connectParams);
-        //Encrypt password value type
-        RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
         dataSourceInfoService.saveDataSourceInfo(dataSource);
     }
 

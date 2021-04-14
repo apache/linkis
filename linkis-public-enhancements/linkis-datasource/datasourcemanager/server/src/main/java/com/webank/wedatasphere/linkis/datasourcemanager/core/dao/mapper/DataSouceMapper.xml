@@ -27,8 +27,8 @@
         <result property="modifyTime" column="modify_time"/>
         <result property="modifyUser" column="modify_user"/>
         <result property="createUser" column="create_user"/>
+        <result property="versionId" column="version_id"/>
         <result property="labels" column="labels"/>
-        <result property="version" column="version"/>
         <association property="dataSourceType" javaType="DataSourceType">
             <result property="icon" column="icon"/>
             <result property="name" column="name"/>
@@ -53,7 +53,6 @@
         <result property="modifyUser" column="modify_user"/>
         <result property="createUser" column="create_user"/>
         <result property="labels" column="labels"/>
-        <result property="version" column="version"/>
         <result property="expire" column="expire"/>
     </resultMap>
 
@@ -78,7 +77,7 @@
         t.`name`, t.`icon`,
         d.`id`, d.`datasource_name`, d.`datasource_type_id`, d.`datasource_desc`,
         d.`create_identify`, d.`create_system`, d.`create_user`, d.`parameter`, d.`create_time`,
-        d.`modify_user`, d.`modify_time`, d.`datasource_env_id`, d.`labels`, d.`version`
+        d.`modify_user`, d.`modify_time`, d.`datasource_env_id`, d.`version_id`, d.`labels`
     </sql>
 
     <insert id="insertOne" useGeneratedKeys="true" keyProperty="id" parameterType="DataSource">
@@ -179,4 +178,14 @@
             </if>
         </where>
     </select>
+
+    <update id="setVersionId">
+        UPDATE `linkis_datasource`
+        <set>
+            <![CDATA[`version_id` = #{versionId}]]>
+        </set>
+        <where>
+            `id` = #{dataSourceId}
+        </where>
+    </update>
 </mapper>

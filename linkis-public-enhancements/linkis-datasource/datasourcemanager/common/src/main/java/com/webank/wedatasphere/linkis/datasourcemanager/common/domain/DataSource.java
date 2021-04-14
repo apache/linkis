@@ -94,7 +94,9 @@ public class DataSource {
 
     private String labels;
 
-    private String version;
+    private Long versionId;
+
+    private List<DatasourceVersion> versions = new ArrayList<>();
 
     private boolean expire;
 
@@ -194,17 +196,6 @@ public class DataSource {
         this.modifyTime = modifyTime;
     }
 
-    public Map<String, Object> getConnectParams() {
-        if(connectParams.isEmpty() && StringUtils.isNotBlank(parameter)){
-            connectParams.putAll(Objects.requireNonNull(Json.fromJson(parameter, Map.class)));
-        }
-        return connectParams;
-    }
-
-    public void setConnectParams(Map<String, Object> connectParams) {
-        this.connectParams = connectParams;
-    }
-
     public String getCreateUser() {
         return createUser;
     }
@@ -253,13 +244,22 @@ public class DataSource {
         this.labels = labels;
     }
 
-    public String getVersion() {
-        return version;
+
+    public Map<String, Object> getConnectParams() {
+        if(connectParams.isEmpty() && StringUtils.isNotBlank(parameter)){
+            connectParams.putAll(Objects.requireNonNull(Json.fromJson(parameter, Map.class)));
+        }
+        return connectParams;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setConnectParams(Map<String, Object> connectParams) {
+        this.connectParams = connectParams;
     }
+
+    public List<DatasourceVersion> getVersion() {
+        return versions;
+    }
+
 
     public boolean isExpire() {
         return expire;
@@ -267,5 +267,17 @@ public class DataSource {
 
     public void setExpire(boolean expire) {
         this.expire = expire;
+    }
+
+    public void setVersions(List<DatasourceVersion> versions) {
+        this.versions = versions;
+    }
+
+    public Long getVersionId() {
+        return versionId;
+    }
+
+    public void setVersionId(Long versionId) {
+        this.versionId = versionId;
     }
 }

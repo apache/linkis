@@ -34,11 +34,9 @@ public interface DataSourceDao {
     /**
      * View detail
      * @param dataSourceId data source id
-     * @param version version
      * @return data source entity
      */
-    DataSource selectOneDetail(@Param("dataSourceId") Long dataSourceId,
-                               @Param("version") String version);
+    DataSource selectOneDetail(@Param("dataSourceId") Long dataSourceId);
 
     /**
      * View normal
@@ -73,4 +71,10 @@ public interface DataSourceDao {
      * @return query list
      */
     List<DataSource> selectByPageVo(DataSourceVo dataSourceVo);
+
+    /**
+     * update version id
+     * @param versionId
+     */
+    int setVersionId(Long versionId);
 }

@@ -30,7 +30,7 @@ class DsmReceiver extends Receiver with Logging{
     case DsInfoQueryRequest(id, system) =>
       if ( id.toLong > 0 &&  Some(system).isDefined ) {
         Utils.tryCatch {
-          val dataSource: DataSource = dataSourceInfoService.getDataSourceInfo(id.toLong, system)
+          val dataSource: DataSource = dataSourceInfoService.getDataSourceInfo(id.toLong)
           if ( null != dataSource ) {
             RestfulApiHelper.decryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId),
               dataSource.getConnectParams)
@@ -53,7 +53,7 @@ class DsmReceiver extends Receiver with Logging{
     case DsInfoQueryRequest(id, system) =>
       if ( id.toLong > 0 &&  Some(system).isDefined ) {
         Utils.tryCatch {
-          val dataSource: DataSource = dataSourceInfoService.getDataSourceInfo(id.toLong, system)
+          val dataSource: DataSource = dataSourceInfoService.getDataSourceInfo(id.toLong)
           if ( null != dataSource ) {
             RestfulApiHelper.decryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId),
               dataSource.getConnectParams)

@@ -29,9 +29,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by liangqilang on 01 20, 2021
- */
+
 public interface TaskHandler {
 
      void initFlinkContext(EngineExecutorContext engineExecutorContext,DefaultContext defaultContext, SessionManager sessionManager,  Map<String, String> jobExecuteParams) throws IllegalArgumentException;

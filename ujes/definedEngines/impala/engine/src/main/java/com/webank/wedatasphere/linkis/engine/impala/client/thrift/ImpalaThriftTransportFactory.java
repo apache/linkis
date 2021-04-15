@@ -37,10 +37,7 @@ import java.net.Socket;
 import java.security.SecureRandom;
 import java.util.Random;
 
-/**
- * @author dingqihuang
- * @version Nov 5, 2019
- */
+
 @Slf4j
 public class ImpalaThriftTransportFactory extends ImpalaTransportFactory<TTransport> {
 

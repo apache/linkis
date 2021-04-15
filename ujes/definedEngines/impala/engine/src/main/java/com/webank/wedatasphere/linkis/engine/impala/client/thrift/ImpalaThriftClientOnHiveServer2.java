@@ -56,8 +56,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 基于Thrift协议并以HiveServer2进行通信的Impala客户端
  *
- * @author dingqihuang
- * @version Sep 20, 2019
  */
 @Slf4j
 public class ImpalaThriftClientOnHiveServer2 extends TimerTask implements ImpalaClient {

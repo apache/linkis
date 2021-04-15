@@ -13,6 +13,7 @@
 
 package com.webank.wedatasphere.linkis.datasourcemanager.core.service;
 
+import com.github.pagehelper.PageInfo;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceEnv;
@@ -77,7 +78,7 @@ public interface DataSourceInfoService {
      * @param dataSourceVo data source view entity
      * @return
      */
-    List<DataSource> queryDataSourceInfoPage(DataSourceVo dataSourceVo);
+    PageInfo<DataSource> queryDataSourceInfoPage(DataSourceVo dataSourceVo);
 
     /**
      * Save data source environment

@@ -13,6 +13,7 @@
 
 package com.webank.wedatasphere.linkis.datasourcemanager.core.restful;
 
+import com.github.pagehelper.PageInfo;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceType;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.FormDataTransformerFactory;
@@ -205,11 +206,11 @@ public class DataSourceCoreRestfulApi {
             DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceId, version);
             // Decrypt
             if (null != dataSource) {
-                RestfulApiHelper.decryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId())
+                RestfulApiHelper.encryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId())
                         , dataSource.getConnectParams());
             }
             return Message.ok().data("info", dataSource);
-        }, "/data_source/info/" + dataSourceId, "Fail to access data source[获取数据源信息失败]");
+        }, "/data_source/info/" + dataSourceId + "/" + version, "Fail to access data source[获取数据源信息失败]");
     }
 
 
@@ -326,8 +327,9 @@ public class DataSourceCoreRestfulApi {
                     identifies, createSystem);
             dataSourceVo.setCurrentPage(null != currentPage ? currentPage : 1);
             dataSourceVo.setPageSize(null != pageSize ? pageSize : 10);
-            List<DataSource> queryList = dataSourceInfoService.queryDataSourceInfoPage(dataSourceVo);
-            return Message.ok().data("query_list", queryList);
+            PageInfo<DataSource> pageInfo = dataSourceInfoService.queryDataSourceInfoPage(dataSourceVo);
+            List<DataSource> queryList = pageInfo.getList();
+            return Message.ok().data("query_list", queryList).data("totalPage", pageInfo.getTotal());
         }, "/data_source/info", "Fail to query page of data source[查询数据源失败]");
     }
 

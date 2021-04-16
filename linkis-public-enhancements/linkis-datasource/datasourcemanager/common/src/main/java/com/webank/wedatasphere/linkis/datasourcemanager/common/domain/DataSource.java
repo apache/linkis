@@ -98,6 +98,8 @@ public class DataSource {
 
     private List<DatasourceVersion> versions = new ArrayList<>();
 
+    private Long publishedVersionId;
+
     private boolean expire;
 
     /**
@@ -279,5 +281,13 @@ public class DataSource {
 
     public void setVersionId(Long versionId) {
         this.versionId = versionId;
+    }
+
+    public Long getPublishedVersionId() {
+        return publishedVersionId;
+    }
+
+    public void setPublishedVersionId(Long publishedVersionId) {
+        this.publishedVersionId = publishedVersionId;
     }
 }

@@ -16,6 +16,7 @@ package com.webank.wedatasphere.linkis.datasourcemanager.core.restful;
 import com.github.pagehelper.PageInfo;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceType;
+import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DatasourceVersion;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.FormDataTransformerFactory;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.MultiPartFormDataTransformer;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.service.DataSourceInfoService;
@@ -211,6 +212,27 @@ public class DataSourceCoreRestfulApi {
             }
             return Message.ok().data("info", dataSource);
         }, "/data_source/info/" + dataSourceId + "/" + version, "Fail to access data source[获取数据源信息失败]");
+    }
+
+    /**
+     * get verion list for datasource
+     * @param datasourceId
+     * @param request
+     * @return
+     */
+    @GET
+    @Path("/{data_source_id}/versions")
+    public Response getVersionList(@PathParam("data_source_id") Long datasourceId,
+                                          @Context HttpServletRequest request) {
+        return RestfulApiHelper.doAndResponse(() -> {
+            List<DatasourceVersion> versions = dataSourceInfoService.getVersionList(datasourceId);
+            // Decrypt
+//            if (null != versions) {
+//                RestfulApiHelper.decryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId())
+//                        , dataSource.getConnectParams());
+//            }
+            return Message.ok().data("versions", versions);
+        }, "/data_source/" + datasourceId + "/versions", "Fail to access data source[获取数据源信息失败]");
     }
 
 

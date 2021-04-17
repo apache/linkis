@@ -27,6 +27,7 @@ import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidateException;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidator;
+import com.webank.wedatasphere.linkis.metadatamanager.common.Json;
 import com.webank.wedatasphere.linkis.metadatamanager.common.MdmConfiguration;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
@@ -132,7 +133,7 @@ public class DataSourceCoreRestfulApi {
 
     /**
      * create or update parameter, save a version of parameter,return version number.
-     * @param connectParams
+     * @param params
      * @param req
      * @return
      */
@@ -140,8 +141,11 @@ public class DataSourceCoreRestfulApi {
     @Path("/parameter/{datasource_id}/json")
     public Response insertJsonParameter(
             @PathParam("datasource_id") Long datasourceId,
-            @RequestParam("connectParams") Map<String, Object> connectParams, @Context HttpServletRequest req) {
+            @RequestParam("params") Map<String, Object> params,
+            @Context HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(() -> {
+            String connectParams = Json.toJson(params.get("connectParams"), null);
+            String comment = params.get("comment").toString();
 
 //            DataSource dataSource = dataSourceInfoService.getDataSourceInfoBrief(datasourceId);
 //            List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
@@ -150,7 +154,7 @@ public class DataSourceCoreRestfulApi {
 //            //Encrypt password value type
 //            RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
 
-            long versionId = dataSourceInfoService.insertDataSourceParameter(datasourceId, connectParams);
+            long versionId = dataSourceInfoService.insertDataSourceParameter(datasourceId, connectParams, comment);
             return Message.ok().data("version", versionId);
         }, "/data_source/parameter/" + datasourceId + "/json", "Fail to insert data source parameter [保存数据源参数失败]");
     }

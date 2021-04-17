@@ -66,15 +66,16 @@ linkis-public-enhancements/linkis-datasource/metadatamanager/server/target/
 linkis-public-enhancements/linkis-datasource/metadatamanager/service/elasticsearch/target/
 linkis-public-enhancements/linkis-datasource/metadatamanager/service/hive/target/
 linkis-public-enhancements/linkis-datasource/metadatamanager/service/mysql/target/
-linkis-public-enhancements/linkis-publicService/linkis-configuration/target/
-linkis-public-enhancements/linkis-publicService/linkis-instance-label/client/target/
-linkis-public-enhancements/linkis-publicService/linkis-instance-label/target/
-linkis-public-enhancements/linkis-publicService/linkis-jobhistory/target/
-linkis-public-enhancements/linkis-publicService/linkis-script-dev/linkis-storage-script-dev-client/target/
-linkis-public-enhancements/linkis-publicService/linkis-script-dev/linkis-storage-script-dev-server/target/
-linkis-public-enhancements/linkis-publicService/linkis-udf/target/
-linkis-public-enhancements/linkis-publicService/linkis-variable/target/
-linkis-public-enhancements/linkis-publicService/target/
+linkis-public-enhancements/linkis-publicservice/linkis-configuration/target/
+linkis-public-enhancements/linkis-publicservice/linkis-instance-label/client/target/
+linkis-public-enhancements/linkis-publicservice/linkis-instance-label/target/
+linkis-public-enhancements/linkis-publicservice/linkis-instance-label/linkis-instance-label-server/target/
+linkis-public-enhancements/linkis-publicservice/linkis-jobhistory/target/
+linkis-public-enhancements/linkis-publicservice/linkis-script-dev/linkis-storage-script-dev-client/target/
+linkis-public-enhancements/linkis-publicservice/linkis-script-dev/linkis-storage-script-dev-server/target/
+linkis-public-enhancements/linkis-publicservice/linkis-udf/target/
+linkis-public-enhancements/linkis-publicservice/linkis-variable/target/
+linkis-public-enhancements/linkis-publicservice/target/
 
 
 linkis-spring-cloud-services/linkis-service-discovery/linkis-eureka/target/

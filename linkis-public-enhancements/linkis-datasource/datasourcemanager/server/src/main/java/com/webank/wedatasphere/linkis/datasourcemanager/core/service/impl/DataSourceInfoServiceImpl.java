@@ -270,7 +270,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     }
 
     /**
-     * insert a datasource parameter, return new version
+     * insert a datasource parameter, return new version, and update current versionId of datasource
      *
      * @param datasourceId
      * @param connectParams
@@ -283,8 +283,8 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         Long latestVersion = dataSourceVersionDao.getLatestVersion(datasourceId);
         DatasourceVersion datasourceVersion = new DatasourceVersion();
         datasourceVersion.setCreateUser(username);
-        long newVersion = latestVersion + 1;
-        datasourceVersion.setVersionId(newVersion);
+        long newVersionId = latestVersion + 1;
+        datasourceVersion.setVersionId(newVersionId);
         datasourceVersion.setDatasourceId(datasourceId);
         // todo: check and remove
         datasourceVersion.setParameter(Json.toJson(connectParams, null));
@@ -293,7 +293,9 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         }
         // todo: update create time and create user
         dataSourceVersionDao.insertOne(datasourceVersion);
-        return newVersion;
+        // update version id
+        dataSourceDao.updateVersionId(datasourceId, newVersionId);
+        return newVersionId;
     }
 
     /**

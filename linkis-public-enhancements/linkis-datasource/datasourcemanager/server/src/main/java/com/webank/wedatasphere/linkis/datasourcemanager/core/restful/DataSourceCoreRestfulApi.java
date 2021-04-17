@@ -161,6 +161,7 @@ public class DataSourceCoreRestfulApi {
             RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
 
             long versionId = dataSourceInfoService.insertDataSourceParameter(datasourceId, connectParams, userName, comment);
+
             return Message.ok().data("version", versionId);
         }, "/data_source/parameter/" + datasourceId + "/json", "Fail to insert data source parameter [保存数据源参数失败]");
     }

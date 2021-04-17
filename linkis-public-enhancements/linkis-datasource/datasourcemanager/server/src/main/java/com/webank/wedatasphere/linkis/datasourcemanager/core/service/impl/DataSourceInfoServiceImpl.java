@@ -258,14 +258,14 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
     /**
      * publish datasource by id
-     * copy field parameter of the table datasource, and insert it into datasource_version table;
+     * set published_version_id to versionId;
      *
      * @param dataSourceId
      * @return
      */
     @Override
     public int publishByDataSourceId(Long dataSourceId, Long versionId) {
-        int updateResult = dataSourceDao.setVersionId(versionId);
+        int updateResult = dataSourceDao.setPublishedVersionId(versionId);
         return updateResult;
     }
 
@@ -274,20 +274,36 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
      *
      * @param datasourceId
      * @param connectParams
+     * @param comment
      * @return
      */
     @Override
-    public long insertDataSourceParameter(Long datasourceId, Map<String, Object> connectParams) {
+    public long insertDataSourceParameter(Long datasourceId, String connectParams, String comment) {
         Long latestVersion = dataSourceVersionDao.getLatestVersion(datasourceId);
         DatasourceVersion datasourceVersion = new DatasourceVersion();
         long newVersion = latestVersion + 1;
         datasourceVersion.setVersionId(newVersion);
         datasourceVersion.setDatasourceId(datasourceId);
         // todo: check and remove
-        datasourceVersion.setParameter(Json.toJson(connectParams, null));
+        datasourceVersion.setParameter(connectParams);
+        if(null != comment) {
+            datasourceVersion.setComment(comment);
+        }
         // todo: update create time and create user
         dataSourceVersionDao.insertOne(datasourceVersion);
         return newVersion;
+    }
+
+    /**
+     * get datasource version list
+     *
+     * @param datasourceId
+     * @return
+     */
+    @Override
+    public List<DatasourceVersion> getVersionList(Long datasourceId) {
+        List<DatasourceVersion> versionList = dataSourceVersionDao.getVersionsFromDatasourceId(datasourceId);
+        return versionList;
     }
 
     /**

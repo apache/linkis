@@ -16,6 +16,7 @@ package com.webank.wedatasphere.linkis.datasourcemanager.core.restful;
 import com.github.pagehelper.PageInfo;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceType;
+import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DatasourceVersion;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.FormDataTransformerFactory;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.MultiPartFormDataTransformer;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.service.DataSourceInfoService;
@@ -26,6 +27,7 @@ import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidateException;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidator;
+import com.webank.wedatasphere.linkis.metadatamanager.common.Json;
 import com.webank.wedatasphere.linkis.metadatamanager.common.MdmConfiguration;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
@@ -131,7 +133,7 @@ public class DataSourceCoreRestfulApi {
 
     /**
      * create or update parameter, save a version of parameter,return version number.
-     * @param connectParams
+     * @param params
      * @param req
      * @return
      */
@@ -139,8 +141,11 @@ public class DataSourceCoreRestfulApi {
     @Path("/parameter/{datasource_id}/json")
     public Response insertJsonParameter(
             @PathParam("datasource_id") Long datasourceId,
-            @RequestParam("connectParams") Map<String, Object> connectParams, @Context HttpServletRequest req) {
+            @RequestParam("params") Map<String, Object> params,
+            @Context HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(() -> {
+            String connectParams = Json.toJson(params.get("connectParams"), null);
+            String comment = params.get("comment").toString();
 
             DataSource dataSource = dataSourceInfoService.getDataSourceInfoBrief(datasourceId);
             List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
@@ -149,7 +154,7 @@ public class DataSourceCoreRestfulApi {
             //Encrypt password value type
             RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
 
-            long versionId = dataSourceInfoService.insertDataSourceParameter(datasourceId, connectParams);
+            long versionId = dataSourceInfoService.insertDataSourceParameter(datasourceId, connectParams, comment);
             return Message.ok().data("version", versionId);
         }, "/data_source/parameter/" + datasourceId + "/json", "Fail to insert data source parameter [保存数据源参数失败]");
     }
@@ -211,6 +216,27 @@ public class DataSourceCoreRestfulApi {
             }
             return Message.ok().data("info", dataSource);
         }, "/data_source/info/" + dataSourceId + "/" + version, "Fail to access data source[获取数据源信息失败]");
+    }
+
+    /**
+     * get verion list for datasource
+     * @param datasourceId
+     * @param request
+     * @return
+     */
+    @GET
+    @Path("/{data_source_id}/versions")
+    public Response getVersionList(@PathParam("data_source_id") Long datasourceId,
+                                          @Context HttpServletRequest request) {
+        return RestfulApiHelper.doAndResponse(() -> {
+            List<DatasourceVersion> versions = dataSourceInfoService.getVersionList(datasourceId);
+            // Decrypt
+//            if (null != versions) {
+//                RestfulApiHelper.decryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId())
+//                        , dataSource.getConnectParams());
+//            }
+            return Message.ok().data("versions", versions);
+        }, "/data_source/" + datasourceId + "/versions", "Fail to access data source[获取数据源信息失败]");
     }
 
 

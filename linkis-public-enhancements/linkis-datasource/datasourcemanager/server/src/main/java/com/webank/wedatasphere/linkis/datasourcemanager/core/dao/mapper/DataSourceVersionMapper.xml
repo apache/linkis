@@ -18,12 +18,13 @@
         <result property="versionId" column="version_id"/>
         <result property="datasourceId" column="datasource_id"/>
         <result property="parameter" column="parameter"/>
+        <result property="comment" column="comment"/>
         <result property="createTime" column="create_time"/>
         <result property="createUser" column="create_user"/>
     </resultMap>
 
     <sql id="datasource_version_insert_columns">
-        `version_id`, `datasource_id`, `parameter`, `create_time`, `create_user`
+        `version_id`, `datasource_id`, `parameter`, `comment`, `create_time`, `create_user`
     </sql>
 
     <select id="getLatestVersion" resultType="Long">
@@ -33,11 +34,17 @@
     <insert id="insertOne" parameterType="datasourceVersion">
         INSERT INTO `linkis_datasource_version`(
         <include refid="datasource_version_insert_columns"/>
-        ) VALUES(#{versionId}, #{datasourceId}, #{parameter}, #{createTime,jdbcType=DATE}, #{createUser})
+        ) VALUES(#{versionId}, #{datasourceId}, #{parameter}, #{comment}, #{createTime,jdbcType=DATE}, #{createUser})
     </insert>
 
     <select id="selectOneVersion" resultType="string">
         SELECT `parameter`
          FROM `linkis_datasource_version` WHERE datasource_id = #{dataSourceId} and `version_id` = #{version};
+    </select>
+
+    <select id="getVersionsFromDatasourceId" resultMap="dataSourceVersionMap">
+        <![CDATA[SELECT ]]>
+        <include refid="datasource_version_insert_columns"/>
+        FROM `linkis_datasource_version` WHERE datasource_id = #{dataSourceId};
     </select>
 </mapper>

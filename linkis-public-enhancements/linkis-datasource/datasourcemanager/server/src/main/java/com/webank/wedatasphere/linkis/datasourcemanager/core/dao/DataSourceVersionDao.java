@@ -16,6 +16,8 @@ package com.webank.wedatasphere.linkis.datasourcemanager.core.dao;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DatasourceVersion;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 
 public interface DataSourceVersionDao {
 
@@ -39,4 +41,11 @@ public interface DataSourceVersionDao {
      * @return
      */
     String selectOneVersion(@Param("dataSourceId")Long dataSourceId, @Param("version")Long version);
+
+    /**
+     * get version list from datasource id
+     * @param dataSourceId
+     * @return
+     */
+    List<DatasourceVersion> getVersionsFromDatasourceId(Long dataSourceId);
 }

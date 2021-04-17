@@ -74,7 +74,8 @@ public interface DataSourceDao {
 
     /**
      * update version id
+     * @param dataSourceId
      * @param versionId
      */
-    int setPublishedVersionId(Long versionId);
+    int setPublishedVersionId(@Param("dataSourceId")Long dataSourceId, @Param("versionId")Long versionId);
 }

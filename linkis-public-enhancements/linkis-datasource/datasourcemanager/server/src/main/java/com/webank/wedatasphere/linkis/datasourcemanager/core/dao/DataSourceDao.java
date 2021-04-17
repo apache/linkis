@@ -73,9 +73,16 @@ public interface DataSourceDao {
     List<DataSource> selectByPageVo(DataSourceVo dataSourceVo);
 
     /**
-     * update version id
+     * update published version id
      * @param dataSourceId
      * @param versionId
      */
     int setPublishedVersionId(@Param("dataSourceId")Long dataSourceId, @Param("versionId")Long versionId);
+
+    /**
+     * update version id
+     * @param datasourceId
+     * @param versionId
+     */
+    void updateVersionId(@Param("dataSourceId")Long datasourceId, @Param("versionId")long versionId);
 }

@@ -206,4 +206,14 @@
             `id` = #{dataSourceId}
         </where>
     </update>
+
+    <update id="updateVersionId">
+        UPDATE `linkis_datasource`
+        <set>
+            <![CDATA[`version_id` = #{versionId}]]>
+        </set>
+        <where>
+            `id` = #{dataSourceId}
+        </where>
+    </update>
 </mapper>

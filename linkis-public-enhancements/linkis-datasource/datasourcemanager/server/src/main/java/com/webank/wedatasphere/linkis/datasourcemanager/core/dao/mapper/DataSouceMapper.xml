@@ -28,12 +28,14 @@
         <result property="modifyUser" column="modify_user"/>
         <result property="createUser" column="create_user"/>
         <result property="versionId" column="version_id"/>
+        <result property="publishedVersionId" column="published_version_id"/>
         <result property="labels" column="labels"/>
         <association property="dataSourceType" javaType="DataSourceType">
             <result property="icon" column="icon"/>
             <result property="name" column="name"/>
         </association>
-        <association property="dataSourceEnv" javaType="DataSourceEnv" column="datasource_env_id" select="selectEnvById">
+        <association property="dataSourceEnv" javaType="DataSourceEnv" column="datasource_env_id"
+                     select="selectEnvById">
             <result property="envName" column="env_name"/>
             <result property="parameter" column="env_parameter"/>
         </association>
@@ -45,6 +47,8 @@
         <result property="dataSourceDesc" column="datasource_desc"/>
         <result property="dataSourceTypeId" column="datasource_type_id"/>
         <result property="createIdentify" column="create_identify"/>
+        <result property="versionId" column="version_id"/>
+        <result property="publishedVersionId" column="published_version_id"/>
         <result property="createSystem" column="create_system"/>
         <result property="parameter" column="parameter"/>
         <result property="dataSourceEnvId" column="datasource_env_id"/>
@@ -54,27 +58,37 @@
         <result property="createUser" column="create_user"/>
         <result property="labels" column="labels"/>
         <result property="expire" column="expire"/>
+        <association property="dataSourceType" javaType="DataSourceType">
+            <result property="id" column="id"/>
+            <result property="name" column="name"/>
+        </association>
     </resultMap>
 
     <sql id="data_source_insert_columns">
-        `datasource_name`, `datasource_type_id`, `datasource_desc`,
+        `datasource_name`
+        , `datasource_type_id`, `datasource_desc`,
         `create_identify`, `create_system`, `create_user`, `parameter`, `create_time`,
         `modify_user`, `modify_time`, `datasource_env_id`
     </sql>
 
     <sql id="data_source_query_columns">
-        `id`, `datasource_name`, `datasource_type_id`, `datasource_desc`,
+        `id`
+        , `datasource_name`, `datasource_type_id`, `datasource_desc`,
         `create_identify`, `create_system`, `create_user`, `parameter`, `create_time`,
         `modify_user`, `modify_time`, `datasource_env_id`
     </sql>
 
     <sql id="data_source_query_page">
-        `id`, `datasource_name`, `datasource_type_id`, `datasource_desc`,
-        `create_identify`, `create_system`, `create_user`, `create_time`,
-        `modify_user`, `modify_time`, `datasource_env_id`
+        d.`id`
+        , d.`datasource_name`, d.`datasource_type_id`, t.`name`, d.`datasource_desc`,
+        d.`create_identify`, d.`create_system`, d.`create_user`, d.`create_time`,
+        d.`modify_user`, d.`modify_time`, d.`datasource_env_id`, d.`version_id`, d.`published_version_id`
     </sql>
     <sql id="data_source_join_type">
-        t.`name`, t.`icon`,
+        t
+        .
+        `name`
+        , t.`icon`,
         d.`id`, d.`datasource_name`, d.`datasource_type_id`, d.`datasource_desc`,
         d.`create_identify`, d.`create_system`, d.`create_user`, d.`parameter`, d.`create_time`,
         d.`modify_user`, d.`modify_time`, d.`datasource_env_id`, d.`version_id`, d.`labels`
@@ -86,7 +100,7 @@
         ) VALUES(#{dataSourceName}, #{dataSourceTypeId},
         #{dataSourceDesc,jdbcType=VARCHAR}, #{createIdentify}, #{createSystem}, #{createUser},
         #{parameter}, #{createTime}, #{modifyUser,jdbcType=VARCHAR}, #{modifyTime,jdbcType=DATE},
-         #{dataSourceEnvId,jdbcType=INTEGER})
+        #{dataSourceEnvId,jdbcType=INTEGER})
     </insert>
 
     <select id="selectOneDetail" resultMap="dataSourceDetailMap">
@@ -109,8 +123,11 @@
     </select>
 
     <select id="selectEnvById" resultType="DataSourceEnv">
-        <![CDATA[SELECT `env_name`, `parameter` AS `env_parameter`
-        FROM `linkis_datasource_env` WHERE `id` = #{id};]]>
+        <![CDATA[
+        SELECT `env_name`, `parameter` AS `env_parameter`
+        FROM `linkis_datasource_env`
+        WHERE `id` = #{id};
+        ]]>
     </select>
 
     <delete id="removeOne">
@@ -153,7 +170,8 @@
     <select id="selectByPageVo" resultMap="dataSourceMap">
         <![CDATA[SELECT ]]>
         <include refid="data_source_query_page"/>
-        <![CDATA[ FROM `linkis_datasource` ]]>
+        <![CDATA[ FROM `linkis_datasource_type` t
+    INNER JOIN `linkis_datasource` d ON t.`id` = d.`datasource_type_id`]]>
         <where>
             <if test="dataSourceName != null and dataSourceName != ''">
                 <![CDATA[AND `datasource_name` like concat('%', #{dataSourceName}, '%')]]>
@@ -161,28 +179,28 @@
             <if test="dataSourceTypeId != null and dataSourceTypeId > 0">
                 <![CDATA[AND `datasource_type_id` = #{dataSourceTypeId}]]>
             </if>
-            <if test="createIdentifyList.size() > 0">
-                <choose>
-                    <when test="createIdentifyList.size() == 1">
-                        <foreach collection="createIdentifyList" separator="" item="item" open="AND " close="">
-                            <![CDATA[`create_identify` = #{item}]]>
-                        </foreach>
-                    </when>
-                    <otherwise>
-                        <foreach collection="createIdentifyList" separator="," item="item"
-                                 open="AND `create_identify` IN(" close=")">
-                            <![CDATA[#{item}]]>
-                        </foreach>
-                    </otherwise>
-                </choose>
-            </if>
+<!--            <if test="createIdentifyList.size() > 0">-->
+<!--                <choose>-->
+<!--                    <when test="createIdentifyList.size() == 1">-->
+<!--                        <foreach collection="createIdentifyList" separator="" item="item" open="AND " close="">-->
+<!--                            <![CDATA[`create_identify` = #{item}]]>-->
+<!--                        </foreach>-->
+<!--                    </when>-->
+<!--                    <otherwise>-->
+<!--                        <foreach collection="createIdentifyList" separator="," item="item"-->
+<!--                                 open="AND `create_identify` IN(" close=")">-->
+<!--                            <![CDATA[#{item}]]>-->
+<!--                        </foreach>-->
+<!--                    </otherwise>-->
+<!--                </choose>-->
+<!--            </if>-->
         </where>
     </select>
 
-    <update id="setVersionId">
+    <update id="setPublishedVersionId">
         UPDATE `linkis_datasource`
         <set>
-            <![CDATA[`version_id` = #{versionId}]]>
+            <![CDATA[`published_version_id` = #{versionId}]]>
         </set>
         <where>
             `id` = #{dataSourceId}

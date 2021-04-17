@@ -258,14 +258,14 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
     /**
      * publish datasource by id
-     * copy field parameter of the table datasource, and insert it into datasource_version table;
+     * set published_version_id to versionId;
      *
      * @param dataSourceId
      * @return
      */
     @Override
     public int publishByDataSourceId(Long dataSourceId, Long versionId) {
-        int updateResult = dataSourceDao.setVersionId(versionId);
+        int updateResult = dataSourceDao.setPublishedVersionId(versionId);
         return updateResult;
     }
 

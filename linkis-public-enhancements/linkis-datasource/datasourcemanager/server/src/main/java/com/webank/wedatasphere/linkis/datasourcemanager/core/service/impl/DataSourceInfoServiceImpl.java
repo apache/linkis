@@ -265,7 +265,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
      */
     @Override
     public int publishByDataSourceId(Long dataSourceId, Long versionId) {
-        int updateResult = dataSourceDao.setPublishedVersionId(versionId);
+        int updateResult = dataSourceDao.setPublishedVersionId(dataSourceId, versionId);
         return updateResult;
     }
 

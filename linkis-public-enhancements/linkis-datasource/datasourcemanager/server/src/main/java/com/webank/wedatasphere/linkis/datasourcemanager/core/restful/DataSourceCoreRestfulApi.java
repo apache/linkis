@@ -253,7 +253,10 @@ public class DataSourceCoreRestfulApi {
                                           @Context HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(() -> {
             int updateResult = dataSourceInfoService.publishByDataSourceId(dataSourceId, versionId);
-            return Message.ok().data("updateResult", updateResult);
+            if(0 == updateResult) {
+                return Message.error("publish error");
+            }
+            return Message.ok();
         }, "/data_source/publish/" + dataSourceId + "/" + versionId, "Fail to publish datasource[数据源版本发布失败]");
     }
 

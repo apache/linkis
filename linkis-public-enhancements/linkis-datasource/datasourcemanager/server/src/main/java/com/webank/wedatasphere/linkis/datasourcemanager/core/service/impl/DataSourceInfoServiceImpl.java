@@ -265,7 +265,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
      */
     @Override
     public int publishByDataSourceId(Long dataSourceId, Long versionId) {
-        int updateResult = dataSourceDao.setPublishedVersionId(versionId);
+        int updateResult = dataSourceDao.setPublishedVersionId(dataSourceId, versionId);
         return updateResult;
     }
 
@@ -274,18 +274,20 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
      *
      * @param datasourceId
      * @param connectParams
+     * @param username
      * @param comment
      * @return
      */
     @Override
-    public long insertDataSourceParameter(Long datasourceId, String connectParams, String comment) {
+    public long insertDataSourceParameter(Long datasourceId, Map<String, Object> connectParams, String username, String comment) {
         Long latestVersion = dataSourceVersionDao.getLatestVersion(datasourceId);
         DatasourceVersion datasourceVersion = new DatasourceVersion();
+        datasourceVersion.setCreateUser(username);
         long newVersion = latestVersion + 1;
         datasourceVersion.setVersionId(newVersion);
         datasourceVersion.setDatasourceId(datasourceId);
         // todo: check and remove
-        datasourceVersion.setParameter(connectParams);
+        datasourceVersion.setParameter(Json.toJson(connectParams, null));
         if(null != comment) {
             datasourceVersion.setComment(comment);
         }

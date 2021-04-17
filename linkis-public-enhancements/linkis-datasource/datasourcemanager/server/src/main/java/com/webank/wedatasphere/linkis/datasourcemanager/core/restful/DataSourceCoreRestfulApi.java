@@ -15,6 +15,7 @@ package com.webank.wedatasphere.linkis.datasourcemanager.core.restful;
 
 import com.github.pagehelper.PageInfo;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import com.webank.wedatasphere.linkis.datasourcemanager.common.ServiceErrorCode;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceType;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DatasourceVersion;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.FormDataTransformerFactory;
@@ -144,17 +145,22 @@ public class DataSourceCoreRestfulApi {
             @RequestParam("params") Map<String, Object> params,
             @Context HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(() -> {
-            String connectParams = Json.toJson(params.get("connectParams"), null);
+            Map<String, Object> connectParams = (Map) params.get("connectParams");
             String comment = params.get("comment").toString();
+            String userName = SecurityFilter.getLoginUsername(req);
 
             DataSource dataSource = dataSourceInfoService.getDataSourceInfoBrief(datasourceId);
+            if(null == dataSource) {
+                // todo DatasourceException
+                throw new ErrorException(ServiceErrorCode.DATASOURCE_NOTFOUND_ERROR.getValue(), "datasource not found " );
+            }
             List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
                     .getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
             parameterValidator.validate(keyDefinitionList, connectParams);
             //Encrypt password value type
             RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
 
-            long versionId = dataSourceInfoService.insertDataSourceParameter(datasourceId, connectParams, comment);
+            long versionId = dataSourceInfoService.insertDataSourceParameter(datasourceId, connectParams, userName, comment);
             return Message.ok().data("version", versionId);
         }, "/data_source/parameter/" + datasourceId + "/json", "Fail to insert data source parameter [保存数据源参数失败]");
     }
@@ -211,7 +217,7 @@ public class DataSourceCoreRestfulApi {
             DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceId, version);
             // Decrypt
             if (null != dataSource) {
-                RestfulApiHelper.decryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId())
+                RestfulApiHelper.encryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId())
                         , dataSource.getConnectParams());
             }
             return Message.ok().data("info", dataSource);
@@ -247,7 +253,10 @@ public class DataSourceCoreRestfulApi {
                                           @Context HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(() -> {
             int updateResult = dataSourceInfoService.publishByDataSourceId(dataSourceId, versionId);
-            return Message.ok().data("updateResult", updateResult);
+            if(0 == updateResult) {
+                return Message.error("publish error");
+            }
+            return Message.ok();
         }, "/data_source/publish/" + dataSourceId + "/" + versionId, "Fail to publish datasource[数据源版本发布失败]");
     }
 
@@ -393,9 +402,9 @@ public class DataSourceCoreRestfulApi {
         List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
                 .getKeyDefinitionsByType(updatedOne.getDataSourceTypeId());
         updatedOne.setKeyDefinitions(keyDefinitionList);
-//        Map<String, Object> connectParams = updatedOne.getConnectParams();
-//        parameterValidator.validate(keyDefinitionList, connectParams);
-//        RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
+        Map<String, Object> connectParams = updatedOne.getConnectParams();
+        parameterValidator.validate(keyDefinitionList, connectParams);
+        RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
         dataSourceInfoService.updateDataSourceInfo(updatedOne, storedOne);
     }
 

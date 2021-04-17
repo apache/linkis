@@ -22,6 +22,7 @@ import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceVo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface DataSourceInfoService {
 
@@ -141,9 +142,10 @@ public interface DataSourceInfoService {
      * @param datasourceId
      * @param connectParams
      * @param comment
+     * @Param username
      * @return
      */
-    long insertDataSourceParameter(Long datasourceId, String connectParams, String comment);
+    long insertDataSourceParameter(Long datasourceId, Map<String, Object> connectParams, String username, String comment);
 
     /**
      * get datasource version list

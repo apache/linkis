@@ -2,7 +2,7 @@ server:
   port: 8294
 spring:
   application:
-    name: linkis-ps-metadatamanager-mysql
+    name: mdm-service-mysql
 
 eureka:
   client:

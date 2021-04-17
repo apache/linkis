@@ -82,7 +82,7 @@
         d.`id`
         , d.`datasource_name`, d.`datasource_type_id`, t.`name`, d.`datasource_desc`,
         d.`create_identify`, d.`create_system`, d.`create_user`, d.`create_time`,
-        d.`modify_user`, d.`modify_time`, d.`datasource_env_id`, d.`version_id`, d.`published_version_id`
+        d.`modify_user`, d.`modify_time`, d.`datasource_env_id`, d.`version_id`,d.`published_version_id`, d.`expire`
     </sql>
     <sql id="data_source_join_type">
         t

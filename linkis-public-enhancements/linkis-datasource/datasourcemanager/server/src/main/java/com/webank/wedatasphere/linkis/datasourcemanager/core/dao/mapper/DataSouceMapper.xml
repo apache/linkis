@@ -68,7 +68,7 @@
         `datasource_name`
         , `datasource_type_id`, `datasource_desc`,
         `create_identify`, `create_system`, `create_user`, `parameter`, `create_time`,
-        `modify_user`, `modify_time`, `datasource_env_id`
+        `modify_user`, `modify_time`, `datasource_env_id`, `labels`
     </sql>
 
     <sql id="data_source_query_columns">
@@ -82,7 +82,7 @@
         d.`id`
         , d.`datasource_name`, d.`datasource_type_id`, t.`name`, d.`datasource_desc`,
         d.`create_identify`, d.`create_system`, d.`create_user`, d.`create_time`,
-        d.`modify_user`, d.`modify_time`, d.`datasource_env_id`, d.`version_id`,d.`published_version_id`, d.`expire`
+        d.`modify_user`, d.`modify_time`, d.`datasource_env_id`, d.`labels`, d.`version_id`,d.`published_version_id`, d.`expire`
     </sql>
     <sql id="data_source_join_type">
         t
@@ -100,7 +100,7 @@
         ) VALUES(#{dataSourceName}, #{dataSourceTypeId},
         #{dataSourceDesc,jdbcType=VARCHAR}, #{createIdentify}, #{createSystem}, #{createUser},
         #{parameter}, #{createTime}, #{modifyUser,jdbcType=VARCHAR}, #{modifyTime,jdbcType=DATE},
-        #{dataSourceEnvId,jdbcType=INTEGER})
+        #{dataSourceEnvId,jdbcType=INTEGER}, #{labels})
     </insert>
 
     <select id="selectOneDetail" resultMap="dataSourceDetailMap">

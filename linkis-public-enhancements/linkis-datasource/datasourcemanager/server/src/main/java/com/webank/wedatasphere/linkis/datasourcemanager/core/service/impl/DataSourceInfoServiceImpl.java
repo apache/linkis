@@ -274,17 +274,21 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
      *
      * @param datasourceId
      * @param connectParams
+     * @param comment
      * @return
      */
     @Override
-    public long insertDataSourceParameter(Long datasourceId, Map<String, Object> connectParams) {
+    public long insertDataSourceParameter(Long datasourceId, String connectParams, String comment) {
         Long latestVersion = dataSourceVersionDao.getLatestVersion(datasourceId);
         DatasourceVersion datasourceVersion = new DatasourceVersion();
         long newVersion = latestVersion + 1;
         datasourceVersion.setVersionId(newVersion);
         datasourceVersion.setDatasourceId(datasourceId);
         // todo: check and remove
-        datasourceVersion.setParameter(Json.toJson(connectParams, null));
+        datasourceVersion.setParameter(connectParams);
+        if(null != comment) {
+            datasourceVersion.setComment(comment);
+        }
         // todo: update create time and create user
         dataSourceVersionDao.insertOne(datasourceVersion);
         return newVersion;

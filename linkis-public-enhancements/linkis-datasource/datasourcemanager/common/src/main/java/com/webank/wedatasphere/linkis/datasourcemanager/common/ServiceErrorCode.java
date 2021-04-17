@@ -31,4 +31,7 @@ public class ServiceErrorCode {
 
     public static CommonVars<Integer> PARAM_VALIDATE_ERROR =
             CommonVars.apply("wds.linkis.server.dsm.error-code.param-validate", 99986);
+
+    public static CommonVars<Integer> DATASOURCE_NOTFOUND_ERROR =
+            CommonVars.apply("wds.linkis.server.dsm.error-code.datasource-not-found", 99988);
 }

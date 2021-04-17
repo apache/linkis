@@ -40,4 +40,10 @@
         SELECT `parameter`
          FROM `linkis_datasource_version` WHERE datasource_id = #{dataSourceId} and `version_id` = #{version};
     </select>
+
+    <select id="getVersionsFromDatasourceId" resultMap="dataSourceVersionMap">
+        <![CDATA[SELECT ]]>
+        <include refid="datasource_version_insert_columns"/>
+        FROM `linkis_datasource_version` WHERE datasource_id = #{dataSourceId};
+    </select>
 </mapper>

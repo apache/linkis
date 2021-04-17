@@ -291,6 +291,18 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     }
 
     /**
+     * get datasource version list
+     *
+     * @param datasourceId
+     * @return
+     */
+    @Override
+    public List<DatasourceVersion> getVersionList(Long datasourceId) {
+        List<DatasourceVersion> versionList = dataSourceVersionDao.getVersionsFromDatasourceId(datasourceId);
+        return versionList;
+    }
+
+    /**
      * @param userName
      * @param keyDefinitionList
      * @param updatedParams

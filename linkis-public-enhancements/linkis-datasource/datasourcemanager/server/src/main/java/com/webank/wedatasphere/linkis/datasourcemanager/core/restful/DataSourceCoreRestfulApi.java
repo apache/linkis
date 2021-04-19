@@ -284,7 +284,7 @@ public class DataSourceCoreRestfulApi {
             DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceId, version);
             // Decrypt
             if (null != dataSource) {
-                RestfulApiHelper.encryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId())
+                RestfulApiHelper.decryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId())
                         , dataSource.getConnectParams());
             }
             return Message.ok().data("info", dataSource);

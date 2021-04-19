@@ -41,7 +41,7 @@ public class BmlProjectRestful {
     private static final String PROJECT_NAME_STR = "projectName";
     private static final String EDIT_USERS_STR = "editUsers";
     private static final String ACCESS_USERS_STR = "accessUsers";
-    public static final String DEFAULT_PROXY_USER = "hadoop";
+    public static final String DEFAULT_PROXY_USER = "dss";
 
     @Autowired
     private BmlProjectService bmlProjectService;
@@ -192,7 +192,7 @@ public class BmlProjectRestful {
                 LOGGER.error("{} 对工程 {} 没有查看权限, 下载资源失败", user, projectName);
                 throw new BmlProjectNoEditException(user + " 对工程 { " + projectName + " }没有编辑权限,上传资源失败");
             }
-            LOGGER.info("用户 {} 开始下载资源 resourceId is {}, version is {} ,ip is {}, 并代理成hadoop ", user, resourceId, version, ip);
+            LOGGER.info("用户 {} 开始下载资源 resourceId is {}, version is {} ,ip is {}, 并代理成dss ", user, resourceId, version, ip);
             Map<String, Object> properties = new HashMap<>();
             boolean downloadResult = versionService.downloadResource(DEFAULT_PROXY_USER, resourceId, version, resp.getOutputStream(), properties);
             downloadModel.setEndTime(new Date(System.currentTimeMillis()));

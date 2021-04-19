@@ -59,7 +59,7 @@ abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchSe
     Future {
       val iterator = IOUtils.lineIterator(launch.getProcessInputStream, "utf-8")
       while (!isCompleted(engineConn) && iterator.hasNext) {
-        println(s"${engineConn.getTickedId}:${iterator.next()}")
+        info(s"${engineConn.getTickedId}:${iterator.next()}")
       }
       val exitCode = Option(launch.processWaitFor)
       if (exitCode.exists(_ != 0)) {

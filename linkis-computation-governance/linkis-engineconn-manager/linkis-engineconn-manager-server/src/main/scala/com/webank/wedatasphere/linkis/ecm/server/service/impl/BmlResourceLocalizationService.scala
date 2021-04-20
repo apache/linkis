@@ -127,7 +127,7 @@ class BmlResourceLocalizationService extends ResourceLocalizationService {
       case BmlResource.BmlResourceVisibility.Label =>
     }
 
-    val workDirPath = new FsPath(workDir)
+    val workDirPath = new FsPath(localDirsHandleService.getEngineConnPublicDir)
     fs.setPermission(workDirPath, "rwxrwxrwx")
 
     def set777(path: FsPath): Unit = {

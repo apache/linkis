@@ -108,16 +108,6 @@ class BmlResourceLocalizationService extends ResourceLocalizationService {
           FileSystemUtils.mkdirs(fs, new FsPath(unzipDir), Utils.getJvmUser)
           ZipUtils.unzip(bmlResourceDir + File.separator + resource.getFileName, unzipDir)
           fs.delete(new FsPath(bmlResourceDir + File.separator + resource.getFileName))
-
-          val publicDirPath = new FsPath(publicDir)
-          fs.setPermission(publicDirPath, "rwxrwxrwx")
-
-          def set777(path: FsPath): Unit ={
-            fs.setPermission(path, "rwxrwxrwx")
-            fs.list(path).foreach(set777)
-          }
-          fs.list(publicDirPath).foreach(set777)
-
         }
         //2.软连，并且添加到map
         val dirAndFileList = fs.listPathWithError(fsPath)
@@ -136,6 +126,16 @@ class BmlResourceLocalizationService extends ResourceLocalizationService {
         }
       case BmlResource.BmlResourceVisibility.Label =>
     }
+
+    val workDirPath = new FsPath(workDir)
+    fs.setPermission(workDirPath, "rwxrwxrwx")
+
+    def set777(path: FsPath): Unit = {
+      fs.setPermission(path, "rwxrwxrwx")
+      fs.list(path).foreach(set777)
+    }
+
+    fs.list(workDirPath).foreach(set777)
   }
 
 }

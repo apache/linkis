@@ -94,6 +94,11 @@ class BmlResourceLocalizationService extends ResourceLocalizationService {
   }
 
   def downloadBmlResource(request: ProcessEngineConnLaunchRequest, linkDirs: mutable.HashMap[String, String], resource: BmlResource, workDir: String): Unit = {
+    def set777(path: FsPath): Unit = {
+      fs.setPermission(path, "rwxrwxrwx")
+      fs.list(path).foreach(set777)
+    }
+
     val resourceId = resource.getResourceId
     val version = resource.getVersion
     val user = request.user
@@ -108,6 +113,10 @@ class BmlResourceLocalizationService extends ResourceLocalizationService {
           FileSystemUtils.mkdirs(fs, new FsPath(unzipDir), Utils.getJvmUser)
           ZipUtils.unzip(bmlResourceDir + File.separator + resource.getFileName, unzipDir)
           fs.delete(new FsPath(bmlResourceDir + File.separator + resource.getFileName))
+
+          val bmlResourceDirPath=new FsPath(bmlResourceDir)
+          fs.setPermission(bmlResourceDirPath, "rwxrwxrwx")
+          fs.list(bmlResourceDirPath).foreach(set777)
         }
         //2.软连，并且添加到map
         val dirAndFileList = fs.listPathWithError(fsPath)
@@ -123,19 +132,12 @@ class BmlResourceLocalizationService extends ResourceLocalizationService {
           ECMUtils.downLoadBmlResourceToLocal(resource, user, fsPath.getPath)
           ZipUtils.unzip(schema + workDir + File.separator + resource.getFileName, fsPath.getSchemaPath)
           fs.delete(new FsPath(schema + workDir + File.separator + resource.getFileName))
+
+          fs.setPermission(fsPath, "rwxrwxrwx")
+          fs.list(fsPath).foreach(set777)
         }
       case BmlResource.BmlResourceVisibility.Label =>
     }
-
-    val workDirPath = new FsPath(localDirsHandleService.getEngineConnPublicDir)
-    fs.setPermission(workDirPath, "rwxrwxrwx")
-
-    def set777(path: FsPath): Unit = {
-      fs.setPermission(path, "rwxrwxrwx")
-      fs.list(path).foreach(set777)
-    }
-
-    fs.list(workDirPath).foreach(set777)
   }
 
 }

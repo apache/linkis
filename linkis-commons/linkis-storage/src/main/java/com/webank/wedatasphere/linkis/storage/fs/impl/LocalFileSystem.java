@@ -136,7 +136,7 @@ public class LocalFileSystem extends FileSystem {
                 if(!user.equals(getOwner(dirToMake.getAbsolutePath()))) {
                     setOwner(new FsPath(dirToMake.getAbsolutePath()), user, null);
                 }
-                setPermission(new FsPath(dirToMake.getAbsolutePath()), "rwxr-x---");
+                setPermission(new FsPath(dirToMake.getAbsolutePath()), "rwxr-xr--");
             } else {
                 return false;
             }

@@ -97,7 +97,7 @@ abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunc
       }
     }
     getExtraClassPathFile.foreach { file: String =>
-      addPathToClassPath(environment, Seq(variable(PWD), new File(file).getName))
+      addPathToClassPath(environment, file)
     }
     engineConnBuildRequest match {
       case richer: RicherEngineConnBuildRequest =>

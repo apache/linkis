@@ -62,6 +62,10 @@ class BmlResourceLocalizationService extends ResourceLocalizationService {
         val user = request.user
         val ticketId = request.ticketId
         val workDir = createDirIfNotExit(localDirsHandleService.getEngineConnWorkDir(user, ticketId))
+        fs.setPermission(new FsPath(workDir), "777")
+        fs.setPermission(new FsPath(workDir).getParent, "777")
+        fs.setPermission(new FsPath(workDir).getParent.getParent, "777")
+        fs.setPermission(new FsPath(workDir).getParent.getParent.getParent, "777")
         val emHomeDir = createDirIfNotExit(localDirsHandleService.getEngineConnManagerHomeDir)
         val logDirs = createDirIfNotExit(localDirsHandleService.getEngineConnLogDir(user, ticketId))
         val tmpDirs = createDirIfNotExit(localDirsHandleService.getEngineConnTmpDir(user, ticketId))
@@ -94,11 +98,6 @@ class BmlResourceLocalizationService extends ResourceLocalizationService {
   }
 
   def downloadBmlResource(request: ProcessEngineConnLaunchRequest, linkDirs: mutable.HashMap[String, String], resource: BmlResource, workDir: String): Unit = {
-    def set777(path: FsPath): Unit = {
-      fs.setPermission(path, "rwxrwxrwx")
-      fs.list(path).foreach(set777)
-    }
-
     val resourceId = resource.getResourceId
     val version = resource.getVersion
     val user = request.user
@@ -114,9 +113,14 @@ class BmlResourceLocalizationService extends ResourceLocalizationService {
           ZipUtils.unzip(bmlResourceDir + File.separator + resource.getFileName, unzipDir)
           fs.delete(new FsPath(bmlResourceDir + File.separator + resource.getFileName))
 
-          val bmlResourceDirPath=new FsPath(bmlResourceDir)
-          fs.setPermission(bmlResourceDirPath, "rwxrwxrwx")
-          fs.list(bmlResourceDirPath).foreach(set777)
+          def set777(path: FsPath): Unit = {
+            fs.setPermission(path, "rwxrwxrwx")
+            Option(fs.list(path)).foreach(_.foreach(set777))
+          }
+
+          val publicDirPath = new FsPath(publicDir)
+          fs.setPermission(publicDirPath, "rwxrwxrwx")
+          fs.list(fsPath).foreach(set777)
         }
         //2.软连，并且添加到map
         val dirAndFileList = fs.listPathWithError(fsPath)
@@ -132,9 +136,6 @@ class BmlResourceLocalizationService extends ResourceLocalizationService {
           ECMUtils.downLoadBmlResourceToLocal(resource, user, fsPath.getPath)
           ZipUtils.unzip(schema + workDir + File.separator + resource.getFileName, fsPath.getSchemaPath)
           fs.delete(new FsPath(schema + workDir + File.separator + resource.getFileName))
-
-          fs.setPermission(fsPath, "rwxrwxrwx")
-          fs.list(fsPath).foreach(set777)
         }
       case BmlResource.BmlResourceVisibility.Label =>
     }

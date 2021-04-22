@@ -17,6 +17,7 @@ import com.github.pagehelper.PageInfo;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceEnv;
+import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DatasourceVersion;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceVo;
@@ -139,13 +140,15 @@ public interface DataSourceInfoService {
 
     /**
      * insert a datasource parameter, return new version
+     *
+     * @param keyDefinitionList
      * @param datasourceId
      * @param connectParams
      * @param comment
      * @Param username
      * @return
      */
-    long insertDataSourceParameter(Long datasourceId, Map<String, Object> connectParams, String username, String comment);
+    long insertDataSourceParameter(List<DataSourceParamKeyDefinition> keyDefinitionList, Long datasourceId, Map<String, Object> connectParams, String username, String comment) throws ErrorException;
 
     /**
      * get datasource version list

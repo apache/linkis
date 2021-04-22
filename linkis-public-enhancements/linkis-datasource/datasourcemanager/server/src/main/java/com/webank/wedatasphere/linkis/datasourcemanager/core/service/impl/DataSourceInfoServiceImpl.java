@@ -272,6 +272,8 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     /**
      * insert a datasource parameter, return new version, and update current versionId of datasource
      *
+     *
+     * @param keyDefinitionList
      * @param datasourceId
      * @param connectParams
      * @param username
@@ -279,7 +281,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
      * @return
      */
     @Override
-    public long insertDataSourceParameter(Long datasourceId, Map<String, Object> connectParams, String username, String comment) {
+    public long insertDataSourceParameter(List<DataSourceParamKeyDefinition> keyDefinitionList, Long datasourceId, Map<String, Object> connectParams, String username, String comment) throws ErrorException {
         Long latestVersion = dataSourceVersionDao.getLatestVersion(datasourceId);
         DatasourceVersion datasourceVersion = new DatasourceVersion();
         datasourceVersion.setCreateUser(username);
@@ -287,14 +289,19 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         datasourceVersion.setVersionId(newVersionId);
         datasourceVersion.setDatasourceId(datasourceId);
         // todo: check and remove
-        datasourceVersion.setParameter(Json.toJson(connectParams, null));
+//        datasourceVersion.setParameter(Json.toJson(connectParams, null));
         if(null != comment) {
             datasourceVersion.setComment(comment);
         }
         // todo: update create time and create user
-        dataSourceVersionDao.insertOne(datasourceVersion);
-        // update version id
-        dataSourceDao.updateVersionId(datasourceId, newVersionId);
+        // todo: update file to bml and insert
+        storeConnectParams(username, keyDefinitionList, connectParams, params -> {
+            datasourceVersion.setParameter(params);
+            dataSourceVersionDao.insertOne(datasourceVersion);
+            // update version id
+            dataSourceDao.updateVersionId(datasourceId, newVersionId);
+        });
+
         return newVersionId;
     }
 

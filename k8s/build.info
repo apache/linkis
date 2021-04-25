@@ -1,0 +1,11 @@
+linkis-eureka                       linkis-spring-cloud-services/linkis-service-discovery/linkis-eureka
+linkis-service-gateway              linkis-spring-cloud-services/linkis-service-gateway
+
+linkis-engineconn-manager-server    linkis-computation-governance/linkis-engineconn-manager/linkis-engineconn-manager-server
+linkis-engineconn-plugin-server     linkis-engineconn-plugins/linkis-engineconn-plugin-framework/linkis-engineconn-plugin-server
+linkis-entrance                     linkis-computation-governance/linkis-entrance
+linkis-manager                      linkis-computation-governance/linkis-manager
+
+linkis-bml-server                   linkis-public-enhancements/linkis-bml/linkis-bml-server
+linkis-cs-server                    linkis-public-enhancements/linkis-context-service/linkis-cs-server
+linkis-publicservice                linkis-public-enhancements/linkis-publicservice

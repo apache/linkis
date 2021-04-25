@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-service-gateway
+  namespace: preprod
+  labels:
+    app: linkis-service-gateway
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-service-gateway
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: linkis-service-gateway
+        version: v1
+    spec:
+      containers:
+        - image: nm.hub.com/luban/linkis-service-gateway:1.0
+          imagePullPolicy: Always
+          name: linkis-service-gateway
+          ports:
+            - containerPort: 9001
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - "sh"
+                  - "-c"
+                  - >
+                    cp /etc/security/keytabs/krb5.conf /etc/krb5.conf;
+                    cp /etc/security/keytabs/sssd.conf /etc/sssd/sssd.conf;
+                    sssd;
+                    echo "* */1 * * * /etc/security/keytabs/kinit.sh" >> /var/spool/cron/root;
+                    crond;
+          env:
+            - name: EUREKA_URL
+              value: "http://linkis-eureka-service:20303/eureka/"
+            - name: START_PORT
+              value: "9001"
+          volumeMounts:
+            - name: log
+              mountPath: /opt/linkis/linkis-gateway/logs
+            - name: linkis-properties
+              mountPath: /opt/linkis/conf/linkis.properties
+            - name: kerberos
+              mountPath: /etc/security/keytabs/
+              readOnly: true
+      volumes:
+        - name: log
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/linkis/logs/gateway
+        - name: linkis-properties
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/linkis/config/linkis-service-gateway/linkis.properties
+        - name: kerberos
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/kerberos/

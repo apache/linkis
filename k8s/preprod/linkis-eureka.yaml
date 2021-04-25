@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: linkis-eureka
+  namespace: preprod
+  labels:
+    app: linkis-eureka
+    service: linkis-eureka
+spec:
+  ports:
+    - name: http
+      port: 20303
+      targetPort: 20303
+      nodePort: 30353
+  selector:
+    app: linkis-eureka
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-eureka
+  namespace: prod-luban
+  labels:
+    app: linkis-eureka
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-eureka
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: linkis-eureka
+        version: v1
+    spec:
+      containers:
+        - image: nm.hub.com/luban/linkis-eureka:1.0
+          imagePullPolicy: Always
+          name: linkis-eureka
+          ports:
+            - containerPort: 20303
+          env:
+            - name: EUREKA_URL
+              value: "http://127.0.0.1:20303/eureka/"
+            - name: EUREKA_PORT
+              value: "20303"
+          volumeMounts:
+            - name: log
+              mountPath: /opt/linkis/linkis-eureka/logs
+      volumes:
+        - name: log
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/linkis/logs/linkis-eureka

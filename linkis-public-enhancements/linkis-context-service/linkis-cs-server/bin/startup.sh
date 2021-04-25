@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export $CS_PORT=9108
+export CS_PORT=9108
 export SERVER_CLASS=com.webank.wedatasphere.linkis.cs.server.LinkisCSApplication
 
 cd `dirname $0`

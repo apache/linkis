@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export $MANAGER_PORT=9101
+export MANAGER_PORT=9101
 export SERVER_CLASS=com.webank.wedatasphere.linkis.manager.am.LinkisManagerApplication
 
 cd `dirname $0`

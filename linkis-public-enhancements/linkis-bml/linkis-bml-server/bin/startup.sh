@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export $BML_PORT=9107
+export BML_PORT=9107
 export SERVER_CLASS=com.webank.wedatasphere.linkis.bml.LinkisBMLApplication
 
 cd `dirname $0`

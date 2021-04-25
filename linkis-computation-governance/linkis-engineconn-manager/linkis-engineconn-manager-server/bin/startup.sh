@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export $ENGINECONNMANAGER_PORT=9102
+export ENGINECONNMANAGER_PORT=9102
 export SERVER_CLASS=com.webank.wedatasphere.linkis.ecm.server.ECMApplication
 
 cd `dirname $0`

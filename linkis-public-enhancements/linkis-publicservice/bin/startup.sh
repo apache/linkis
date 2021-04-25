@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export $PUBLICSERVICE_PORT=9104
+export PUBLICSERVICE_PORT=9104
 export SERVER_CLASS=com.webank.wedatasphere.linkis.DataWorkCloudApplication
 
 cd `dirname $0`

@@ -1,6 +1,10 @@
 #!/bin/bash
 
-export $EUREKA_PORT=20303
+
+if [ -z $EUREKA_PORT ]; then
+  export EUREKA_PORT=20303
+fi
+export SERVER_CLASS=com.webank.wedatasphere.linkis.eureka.SpringCloudEurekaApplication
 
 cd `dirname $0`
 cd ..
@@ -20,8 +24,6 @@ if test -z "$SERVER_JAVA_OPTS"
 then
   export SERVER_JAVA_OPTS=" -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$SERVER_LOG_PATH/linkis-gc.log"
 fi
-
-export SERVER_CLASS=com.webank.wedatasphere.linkis.eureka.SpringCloudEurekaApplication
 
 export SERVER_CLASS_PATH=$SERVER_CONF_PATH:$SERVER_LIB/*
 

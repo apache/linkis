@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export $ENGINECONN_PLUGIN_SERVER_PORT=9103
+export ENGINECONN_PLUGIN_SERVER_PORT=9103
 export SERVER_CLASS=com.webank.wedatasphere.linkis.engineplugin.server.LinkisEngineConnPluginServer
 
 cd `dirname $0`

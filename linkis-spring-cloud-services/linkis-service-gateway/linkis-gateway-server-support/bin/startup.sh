@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export $GATEWAY_PORT=9001
+export GATEWAY_PORT=9001
 export SERVER_CLASS=com.webank.wedatasphere.linkis.gateway.springcloud.LinkisGatewayApplication
 
 cd `dirname $0`

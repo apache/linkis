@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export $ENTRANCE_PORT=9104
+export ENTRANCE_PORT=9104
 export SERVER_CLASS=com.webank.wedatasphere.linkis.entrance.LinkisEntranceApplication
 
 cd `dirname $0`

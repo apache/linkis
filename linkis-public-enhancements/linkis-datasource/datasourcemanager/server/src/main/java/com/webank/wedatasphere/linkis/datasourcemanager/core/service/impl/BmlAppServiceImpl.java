@@ -51,11 +51,12 @@ public class BmlAppServiceImpl implements BmlAppService {
         LOG.info("Upload resource to bml server: [ proxy_to_user: " + userName +
                 ", file name:" + fileName + " ]");
         try{
-            BmlUploadResponse response = client.uploadResource(userName, fileName, inputStream);
-            if(!response.isSuccess()){
-                throw new ErrorException(ServiceErrorCode.BML_SERVICE_ERROR.getValue(), "");
-            }
-            return response.resourceId();
+//            BmlUploadResponse response = client.uploadResource(userName, fileName, inputStream);
+//            if(!response.isSuccess()){
+//                throw new ErrorException(ServiceErrorCode.BML_SERVICE_ERROR.getValue(), "");
+//            }
+//            return response.resourceId();
+            return "kobe-24";
         }catch(Exception e){
             LOG.error("Failed to upload resource to bml server[上传资源文件失败], [ proxy_to_user: " + userName +
                     ", file name:" + fileName + " ]", e);

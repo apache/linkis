@@ -36,6 +36,7 @@
         <module>linkis-datasource/metadatamanager/common</module>
         <module>linkis-datasource/metadatamanager/server</module>
         <module>linkis-datasource/metadatamanager/service/mysql</module>
+        <module>linkis-datasource/metadatamanager/service/hive</module>
         <module>linkis-publicservice</module>
 
         <!--<module>linkis-user-control</module>-->

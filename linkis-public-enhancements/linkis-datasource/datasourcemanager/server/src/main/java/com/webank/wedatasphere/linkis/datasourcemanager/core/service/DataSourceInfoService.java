@@ -13,13 +13,17 @@
 
 package com.webank.wedatasphere.linkis.datasourcemanager.core.service;
 
+import com.github.pagehelper.PageInfo;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceEnv;
+import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
+import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DatasourceVersion;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceVo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface DataSourceInfoService {
 
@@ -37,20 +41,25 @@ public interface DataSourceInfoService {
     void addEnvParamsToDataSource(Long dataSourceEnvId, DataSource dataSource);
 
     /**
-     * Get data source
+     * Get data source for current version
      * @param dataSourceId id
-     * @param version version
      * @return data source entity
      */
-    DataSource getDataSourceInfo(Long dataSourceId, String version);
+    DataSource getDataSourceInfo(Long dataSourceId);
+
+    /**
+     * Get data source
+     * @param dataSourceId id
+     * @return data source entity
+     */
+    DataSource getDataSourceInfo(Long dataSourceId, Long version);
 
     /**
      * Get data source brief information
      * @param dataSourceId data source id
-     * @param createSystem system
      * @return
      */
-    DataSource getDataSourceInfoBrief(Long dataSourceId, String createSystem);
+    DataSource getDataSourceInfoBrief(Long dataSourceId);
     /**
      * Remove data source
      * @param dataSourceId id
@@ -71,7 +80,7 @@ public interface DataSourceInfoService {
      * @param dataSourceVo data source view entity
      * @return
      */
-    List<DataSource> queryDataSourceInfoPage(DataSourceVo dataSourceVo);
+    PageInfo<DataSource> queryDataSourceInfoPage(DataSourceVo dataSourceVo);
 
     /**
      * Save data source environment
@@ -120,4 +129,31 @@ public interface DataSourceInfoService {
      * @return
      */
     Long expireDataSource(Long dataSourceId);
+
+    /**
+     * publish datasource by id
+     * @param dataSourceId
+     * @Param versionId
+     * @return
+     */
+    int publishByDataSourceId(Long dataSourceId, Long versionId);
+
+    /**
+     * insert a datasource parameter, return new version
+     *
+     * @param keyDefinitionList
+     * @param datasourceId
+     * @param connectParams
+     * @param comment
+     * @Param username
+     * @return
+     */
+    long insertDataSourceParameter(List<DataSourceParamKeyDefinition> keyDefinitionList, Long datasourceId, Map<String, Object> connectParams, String username, String comment) throws ErrorException;
+
+    /**
+     * get datasource version list
+     * @param datasourceId
+     * @return
+     */
+    List<DatasourceVersion> getVersionList(Long datasourceId);
 }

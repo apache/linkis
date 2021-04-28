@@ -14,9 +14,12 @@
 package com.webank.wedatasphere.linkis.datasourcemanager.core.dao;
 
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceType;
+import io.protostuff.Response;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface DataSourceTypeDao {
     /**
      * Get all types

@@ -70,10 +70,10 @@ public class DataSource {
     @JsonIgnore
     private String parameter;
 
-    /**
-     * ID of data source environment
-     */
-    private Long dataSourceEnvId;
+//    /**
+//     * ID of data source environment
+//     */
+//    private Long dataSourceEnvId;
 
     /**
      * Create time
@@ -174,13 +174,13 @@ public class DataSource {
         this.parameter = parameter;
     }
 
-    public Long getDataSourceEnvId() {
-        return dataSourceEnvId;
-    }
-
-    public void setDataSourceEnvId(Long dataSourceEnvId) {
-        this.dataSourceEnvId = dataSourceEnvId;
-    }
+//    public Long getDataSourceEnvId() {
+//        return dataSourceEnvId;
+//    }
+//
+//    public void setDataSourceEnvId(Long dataSourceEnvId) {
+//        this.dataSourceEnvId = dataSourceEnvId;
+//    }
 
     public Date getCreateTime() {
         return createTime;

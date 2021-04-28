@@ -266,8 +266,12 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
      */
     @Override
     public int publishByDataSourceId(Long dataSourceId, Long versionId) {
-        int updateResult = dataSourceDao.setPublishedVersionId(dataSourceId, versionId);
-        return updateResult;
+        Long latestVersion = dataSourceVersionDao.getLatestVersion(dataSourceId);
+        if(versionId > latestVersion){
+            // can't publish a version that does not exist
+            return 0;
+        }
+        return dataSourceDao.setPublishedVersionId(dataSourceId, versionId);
     }
 
     /**

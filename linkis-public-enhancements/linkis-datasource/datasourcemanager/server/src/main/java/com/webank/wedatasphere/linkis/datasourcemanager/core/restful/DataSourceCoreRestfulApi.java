@@ -161,12 +161,15 @@ public class DataSourceCoreRestfulApi {
         }, "/data_source/parameter/" + datasourceId + "/json", "Fail to insert data source parameter [保存数据源参数失败]");
     }
 
+
+/*
     /**
      * create or update parameter, save a version of parameter,return version id.
      * @param multiPartForm
      * @param req
      * @return
      */
+    /*
     @POST
     @Path("/parameter/{datasource_id}/form")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -183,7 +186,6 @@ public class DataSourceCoreRestfulApi {
 
             DataSource dataSource = dataSourceInfoService.getDataSourceInfoBrief(datasourceId);
             if(null == dataSource) {
-                // todo DatasourceException
                 throw new ErrorException(ServiceErrorCode.DATASOURCE_NOTFOUND_ERROR.getValue(), "datasource not found " );
             }
             List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
@@ -196,7 +198,8 @@ public class DataSourceCoreRestfulApi {
 
             return Message.ok().data("version", versionId);
         }, "/data_source/parameter/" + datasourceId + "/json", "Fail to insert data source parameter [保存数据源参数失败]");
-    }
+    }*/
+/*
 
     @POST
     @Path("/info/form")
@@ -214,6 +217,7 @@ public class DataSourceCoreRestfulApi {
             return Message.error("Empty request");
         }, "/data_source/info/form", "Fail to insert data source[新增数据源失败]");
     }
+*/
 
     /**
      * get datasource detail, for current version

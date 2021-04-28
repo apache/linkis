@@ -48,4 +48,11 @@ public interface DataSourceVersionDao {
      * @return
      */
     List<DatasourceVersion> getVersionsFromDatasourceId(Long dataSourceId);
+
+    /**
+     * remove all versions form datasourceId
+     * @param dataSourceId
+     * @return
+     */
+    int removeFromDataSourceId(Long dataSourceId);
 }

@@ -47,4 +47,11 @@
         <include refid="datasource_version_insert_columns"/>
         FROM `linkis_datasource_version` WHERE datasource_id = #{dataSourceId};
     </select>
+
+    <delete id="removeFromDataSourceId">
+        <![CDATA[DELETE FROM `linkis_datasource_version`]]>
+        <where>
+            `datasource_id` = #{dataSourceId}
+        </where>
+    </delete>
 </mapper>

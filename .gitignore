@@ -42,9 +42,9 @@ linkis-computation-governance/linkis-manager/linkis-manager-commons/linkis-resou
 linkis-computation-governance/linkis-manager/linkis-manager-monitor/target/
 linkis-computation-governance/linkis-manager/linkis-manager-persistence/target/
 linkis-computation-governance/linkis-manager/linkis-resource-manager/target/
+linkis-computation-governance/linkis-engineconn/linkis-engineconn-core/target
 
-
-
+linkis-public-enhancements/linkis-publicservice/linkis-instance-label/linkis-instance-label-client/target
 linkis-public-enhancements/linkis-bml/linkis-bml-client/target/
 linkis-public-enhancements/linkis-bml/linkis-bml-common/target/
 linkis-public-enhancements/linkis-bml/linkis-bml-server/target/
@@ -60,6 +60,7 @@ linkis-public-enhancements/linkis-context-service/linkis-cs-search/target/
 linkis-public-enhancements/linkis-context-service/linkis-cs-server/target/
 linkis-public-enhancements/linkis-datasource/datasourcemanager/common/target/
 linkis-public-enhancements/linkis-datasource/datasourcemanager/server/target/
+linkis-public-enhancements/linkis-datasource/datasource-client/target/
 linkis-public-enhancements/linkis-datasource/linkis-metadata/target/
 linkis-public-enhancements/linkis-datasource/metadatamanager/common/target/
 linkis-public-enhancements/linkis-datasource/metadatamanager/server/target/
@@ -104,4 +105,5 @@ linkis-orchestrator/plugin/linkis-orchestrator-ecm-plugin/target/
 assembly/target
 assembly/public-module/target/
 
+metastore_db/
 

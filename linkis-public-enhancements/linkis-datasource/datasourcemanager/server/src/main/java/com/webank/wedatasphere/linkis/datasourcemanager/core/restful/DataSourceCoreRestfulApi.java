@@ -265,23 +265,26 @@ public class DataSourceCoreRestfulApi {
 
     /**
      * get verion list for datasource
-     * @param datasourceId
+     * @param dataSourceId
      * @param request
      * @return
      */
     @GET
     @Path("/{data_source_id}/versions")
-    public Response getVersionList(@PathParam("data_source_id") Long datasourceId,
+    public Response getVersionList(@PathParam("data_source_id") Long dataSourceId,
                                           @Context HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(() -> {
-            List<DatasourceVersion> versions = dataSourceInfoService.getVersionList(datasourceId);
+            DataSource dataSource = dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
+            List<DatasourceVersion> versions = dataSourceInfoService.getVersionList(dataSourceId);
             // Decrypt
-//            if (null != versions) {
-//                RestfulApiHelper.decryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId())
-//                        , dataSource.getConnectParams());
-//            }
+            if (null != versions) {
+                versions.forEach(version -> {
+                    RestfulApiHelper.decryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId())
+                            , version.getConnectParams());
+                });
+            }
             return Message.ok().data("versions", versions);
-        }, "/data_source/" + datasourceId + "/versions", "Fail to access data source[获取数据源信息失败]");
+        }, "/data_source/" + dataSourceId + "/versions", "Fail to access data source[获取数据源信息失败]");
     }
 
 
@@ -300,6 +303,11 @@ public class DataSourceCoreRestfulApi {
     }
 
 
+    /**
+     * Dangerous operation!
+     * @param dataSourceId
+     * @return
+     */
     @DELETE
     @Path("/info/{data_source_id}")
     public Response removeDataSource(@PathParam("data_source_id") Long dataSourceId) {

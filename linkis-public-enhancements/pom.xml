@@ -23,6 +23,7 @@
         <module>linkis-datasource/metadatamanager/server</module>
         <module>linkis-datasource/metadatamanager/service/mysql</module>
         <module>linkis-datasource/metadatamanager/service/hive</module>
+        <module>linkis-datasource/metadatamanager/service/kafka</module>
         <module>linkis-publicservice</module>
     </modules>
 

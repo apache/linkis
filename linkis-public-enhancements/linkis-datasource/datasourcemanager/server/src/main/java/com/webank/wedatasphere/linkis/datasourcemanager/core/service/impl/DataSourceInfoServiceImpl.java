@@ -113,23 +113,26 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
             //First to delete record in db
             int affect = dataSourceDao.removeOne(dataSourceId);
             if (affect > 0) {
-                //Remove resource
-                Map<String, Object> connectParams = dataSource.getConnectParams();
-                List<DataSourceParamKeyDefinition> keyDefinitions = dataSourceParamKeyDao
-                        .listByDataSourceType(dataSource.getDataSourceTypeId());
-                keyDefinitions.forEach(keyDefinition -> {
-                    if (keyDefinition.getValueType() == DataSourceParamKeyDefinition.ValueType.FILE
-                            && keyDefinition.getScope() != DataSourceParamKeyDefinition.Scope.ENV
-                            && connectParams.containsKey(keyDefinition.getKey())) {
-                        try {
-                            //Proxy creator to delete resource
-                            bmlAppService.clientRemoveResource(dataSource.getCreateUser(), String
-                                    .valueOf(connectParams.get(keyDefinition.getKey())));
-                        } catch (Exception e) {
-                            //Ignore remove error
-                        }
-                    }
-                });
+                // delete parameter version
+                int versionNum = dataSourceVersionDao.removeFromDataSourceId(dataSourceId);
+
+                // todo: Remove resource
+//                Map<String, Object> connectParams = dataSource.getConnectParams();
+//                List<DataSourceParamKeyDefinition> keyDefinitions = dataSourceParamKeyDao
+//                        .listByDataSourceType(dataSource.getDataSourceTypeId());
+//                keyDefinitions.forEach(keyDefinition -> {
+//                    if (keyDefinition.getValueType() == DataSourceParamKeyDefinition.ValueType.FILE
+//                            && keyDefinition.getScope() != DataSourceParamKeyDefinition.Scope.ENV
+//                            && connectParams.containsKey(keyDefinition.getKey())) {
+//                        try {
+//                            //Proxy creator to delete resource
+//                            bmlAppService.clientRemoveResource(dataSource.getCreateUser(), String
+//                                    .valueOf(connectParams.get(keyDefinition.getKey())));
+//                        } catch (Exception e) {
+//                            //Ignore remove error
+//                        }
+//                    }
+//                });
                 return dataSourceId;
             }
         }

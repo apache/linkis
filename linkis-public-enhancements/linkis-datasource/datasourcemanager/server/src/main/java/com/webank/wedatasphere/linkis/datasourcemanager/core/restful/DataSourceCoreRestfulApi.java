@@ -130,6 +130,32 @@ public class DataSourceCoreRestfulApi {
         }, "/data_source/info/json", "Fail to insert data source[新增数据源失败]");
     }
 
+    @PUT
+    @Path("/info/{data_source_id}/json")
+    public Response updateDataSourceInJson(DataSource dataSource,
+                                           @PathParam("data_source_id") Long dataSourceId,
+                                           @Context HttpServletRequest req) {
+        return RestfulApiHelper.doAndResponse(() -> {
+            String userName = SecurityFilter.getLoginUsername(req);
+            //Bean validation
+            Set<ConstraintViolation<DataSource>> result = beanValidator.validate(dataSource, Default.class);
+            if (result.size() > 0) {
+                throw new ConstraintViolationException(result);
+            }
+            dataSource.setId(dataSourceId);
+            dataSource.setModifyUser(userName);
+            dataSource.setModifyTime(Calendar.getInstance().getTime());
+            DataSource storedDataSource = dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
+            if (null == storedDataSource) {
+                return Message.error("This data source was not found [更新数据源失败]");
+            }
+//            dataSource.setCreateUser(storedDataSource.getCreateUser());
+            dataSourceInfoService.updateDataSourceInfo(dataSource);
+//            updateDataSourceConfig(dataSource);
+            return Message.ok().data("update_id", dataSourceId);
+        }, "/data_source/info/" + dataSourceId + "/json", "Fail to update data source[更新数据源失败]");
+    }
+
     /**
      * create or update parameter, save a version of parameter,return version id.
      * @param params
@@ -332,31 +358,7 @@ public class DataSourceCoreRestfulApi {
         }, "/data_source/info/" + dataSourceId + "/expire", "Fail to expire data source[数据源过期失败]");
     }
 
-    @PUT
-    @Path("/info/{data_source_id}/json")
-    public Response updateDataSourceInJson(DataSource dataSource,
-                                           @PathParam("data_source_id") Long dataSourceId,
-                                           @Context HttpServletRequest req) {
-        return RestfulApiHelper.doAndResponse(() -> {
-            String userName = SecurityFilter.getLoginUsername(req);
-            //Bean validation
-            Set<ConstraintViolation<DataSource>> result = beanValidator.validate(dataSource, Default.class);
-            if (result.size() > 0) {
-                throw new ConstraintViolationException(result);
-            }
-            dataSource.setId(dataSourceId);
-            dataSource.setModifyUser(userName);
-            dataSource.setModifyTime(Calendar.getInstance().getTime());
-            DataSource storedDataSource = dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
-            if (null == storedDataSource) {
-                return Message.error("Fail to update data source[更新数据源失败], " + "[Please check the id:'"
-                        + dataSourceId + "' and create system: '" + dataSource.getCreateSystem() + " is correct ']");
-            }
-            dataSource.setCreateUser(storedDataSource.getCreateUser());
-            updateDataSourceConfig(dataSource, storedDataSource);
-            return Message.ok().data("update_id", dataSourceId);
-        }, "/data_source/info/" + dataSourceId + "/json", "Fail to update data source[更新数据源失败]");
-    }
+
 
     @PUT
     @Path("/{data_source_id}/{version}/op/connect")
@@ -391,7 +393,8 @@ public class DataSourceCoreRestfulApi {
                         "[Please check the id:'" + dataSourceId + "' and create system: '" + dataSource.getCreateSystem() + " is correct ']");
             }
             dataSource.setCreateUser(storedDataSource.getCreateUser());
-            updateDataSourceConfig(dataSource, storedDataSource);
+            dataSourceInfoService.updateDataSourceInfo(dataSource);
+//            updateDataSourceConfig(dataSource);
             return Message.ok().data("update_id", dataSourceId);
         }, "/data_source/info/" + dataSourceId + "/form", "Fail to update data source[更新数据源失败]");
     }
@@ -422,11 +425,6 @@ public class DataSourceCoreRestfulApi {
      * @throws ParameterValidateException
      */
     private void insertDataSource(DataSource dataSource) throws ErrorException {
-//        if (null != dataSource.getDataSourceEnvId()) {
-//            //Merge parameters
-//            dataSourceInfoService.addEnvParamsToDataSource(dataSource.getDataSourceEnvId(), dataSource);
-//        }
-        //Validate connect parameters
         List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
                 .getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
         dataSource.setKeyDefinitions(keyDefinitionList);
@@ -437,22 +435,17 @@ public class DataSourceCoreRestfulApi {
      * Inner method to update data source
      *
      * @param updatedOne new entity
-     * @param storedOne  old entity
      * @throws ErrorException
      */
-    private void updateDataSourceConfig(DataSource updatedOne, DataSource storedOne) throws ErrorException {
-//        if (null != updatedOne.getDataSourceEnvId()) {
-//            //Merge parameters
-//            dataSourceInfoService.addEnvParamsToDataSource(updatedOne.getDataSourceEnvId(), updatedOne);
-//        }
-        //Validate connect parameters
-        List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
-                .getKeyDefinitionsByType(updatedOne.getDataSourceTypeId());
-        updatedOne.setKeyDefinitions(keyDefinitionList);
-        Map<String, Object> connectParams = updatedOne.getConnectParams();
-        parameterValidator.validate(keyDefinitionList, connectParams);
-        RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
-        dataSourceInfoService.updateDataSourceInfo(updatedOne, storedOne);
+    private void updateDataSourceConfig(DataSource updatedOne) throws ErrorException {
+//        //Validate connect parameters
+//        List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
+//                .getKeyDefinitionsByType(updatedOne.getDataSourceTypeId());
+//        updatedOne.setKeyDefinitions(keyDefinitionList);
+//        Map<String, Object> connectParams = updatedOne.getConnectParams();
+//        parameterValidator.validate(keyDefinitionList, connectParams);
+//        RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
+        dataSourceInfoService.updateDataSourceInfo(updatedOne);
     }
 
 

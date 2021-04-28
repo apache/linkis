@@ -145,9 +145,9 @@
             </if>
             <![CDATA[`create_identify` = #{createIdentify,jdbcType=VARCHAR},]]>
             <![CDATA[`create_system` = #{createSystem,jdbcType=VARCHAR},]]>
-            <![CDATA[`parameter` = #{parameter,jdbcType=VARCHAR},]]>
             <![CDATA[`modify_time` = #{modifyTime,jdbcType=DATE},]]>
-            <![CDATA[`modify_user` = #{modifyUser,jdbcType=VARCHAR}]]>
+            <![CDATA[`modify_user` = #{modifyUser,jdbcType=VARCHAR},]]>
+            <![CDATA[`labels` = #{labels,jdbcType=VARCHAR}]]>
         </set>
         <where>
             `id` = #{id}

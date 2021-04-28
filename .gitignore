@@ -70,6 +70,7 @@ linkis-public-enhancements/linkis-datasource/metadatamanager/server/target/
 linkis-public-enhancements/linkis-datasource/metadatamanager/service/elasticsearch/target/
 linkis-public-enhancements/linkis-datasource/metadatamanager/service/hive/target/
 linkis-public-enhancements/linkis-datasource/metadatamanager/service/mysql/target/
+linkis-public-enhancements/linkis-datasource/metadatamanager/service/kafka/target/
 linkis-public-enhancements/linkis-publicservice/linkis-configuration/target/
 linkis-public-enhancements/linkis-publicservice/linkis-instance-label/client/target/
 linkis-public-enhancements/linkis-publicservice/linkis-instance-label/target/

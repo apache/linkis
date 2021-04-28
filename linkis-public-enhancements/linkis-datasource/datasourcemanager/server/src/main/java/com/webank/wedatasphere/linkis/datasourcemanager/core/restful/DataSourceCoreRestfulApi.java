@@ -125,7 +125,7 @@ public class DataSourceCoreRestfulApi {
                 throw new ConstraintViolationException(result);
             }
             dataSource.setCreateUser(userName);
-            insertDataSourceConfig(dataSource);
+            insertDataSource(dataSource);
             return Message.ok().data("insert_id", dataSource.getId());
         }, "/data_source/info/json", "Fail to insert data source[新增数据源失败]");
     }
@@ -149,7 +149,6 @@ public class DataSourceCoreRestfulApi {
 
             DataSource dataSource = dataSourceInfoService.getDataSourceInfoBrief(datasourceId);
             if(null == dataSource) {
-                // todo DatasourceException
                 throw new ErrorException(ServiceErrorCode.DATASOURCE_NOTFOUND_ERROR.getValue(), "datasource not found " );
             }
             List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
@@ -211,7 +210,7 @@ public class DataSourceCoreRestfulApi {
                 String userName = SecurityFilter.getLoginUsername(request);
                 DataSource dataSource = formDataTransformer.transformToObject(multiPartForm, DataSource.class, beanValidator);
                 dataSource.setCreateUser(userName);
-                insertDataSourceConfig(dataSource);
+                insertDataSource(dataSource);
                 return Message.ok().data("insert_id", dataSource.getId());
             }
             return Message.error("Empty request");
@@ -410,7 +409,7 @@ public class DataSourceCoreRestfulApi {
      * @param dataSource data source entity
      * @throws ParameterValidateException
      */
-    private void insertDataSourceConfig(DataSource dataSource) throws ErrorException {
+    private void insertDataSource(DataSource dataSource) throws ErrorException {
 //        if (null != dataSource.getDataSourceEnvId()) {
 //            //Merge parameters
 //            dataSourceInfoService.addEnvParamsToDataSource(dataSource.getDataSourceEnvId(), dataSource);
@@ -430,10 +429,10 @@ public class DataSourceCoreRestfulApi {
      * @throws ErrorException
      */
     private void updateDataSourceConfig(DataSource updatedOne, DataSource storedOne) throws ErrorException {
-        if (null != updatedOne.getDataSourceEnvId()) {
-            //Merge parameters
-            dataSourceInfoService.addEnvParamsToDataSource(updatedOne.getDataSourceEnvId(), updatedOne);
-        }
+//        if (null != updatedOne.getDataSourceEnvId()) {
+//            //Merge parameters
+//            dataSourceInfoService.addEnvParamsToDataSource(updatedOne.getDataSourceEnvId(), updatedOne);
+//        }
         //Validate connect parameters
         List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
                 .getKeyDefinitionsByType(updatedOne.getDataSourceTypeId());

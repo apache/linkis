@@ -106,9 +106,9 @@ public class DataSourceOperateRestfulApi {
      * @param dataSource
      */
     protected void doConnect(String operator, DataSource dataSource) throws ParameterValidateException {
-        if(null != dataSource.getDataSourceEnvId()){
-            dataSourceInfoService.addEnvParamsToDataSource(dataSource.getDataSourceEnvId(), dataSource);
-        }
+//        if(null != dataSource.getDataSourceEnvId()){
+//            dataSourceInfoService.addEnvParamsToDataSource(dataSource.getDataSourceEnvId(), dataSource);
+//        }
         //Validate connect parameters
         List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
                 .getKeyDefinitionsByType(dataSource.getDataSourceTypeId());

@@ -66,12 +66,13 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveDataSourceInfo(DataSource dataSource) throws ErrorException {
-        storeConnectParams(dataSource.getCreateUser(), dataSource.getKeyDefinitions(),
-                dataSource.getConnectParams(), parameter -> {
-                    dataSource.setParameter(parameter);
-                    //Save information into database
-                    dataSourceDao.insertOne(dataSource);
-                });
+//        storeConnectParams(dataSource.getCreateUser(), dataSource.getKeyDefinitions(),
+//                dataSource.getConnectParams(), parameter -> {
+//                    dataSource.setParameter(parameter);
+//                    //Save information into database
+//                    dataSourceDao.insertOne(dataSource);
+//                });
+        dataSourceDao.insertOne(dataSource);
     }
 
     @Override
@@ -281,26 +282,38 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public long insertDataSourceParameter(List<DataSourceParamKeyDefinition> keyDefinitionList, Long datasourceId, Map<String, Object> connectParams, String username, String comment) throws ErrorException {
-        Long latestVersion = dataSourceVersionDao.getLatestVersion(datasourceId);
+
         DatasourceVersion datasourceVersion = new DatasourceVersion();
         datasourceVersion.setCreateUser(username);
-        long newVersionId = latestVersion + 1;
-        datasourceVersion.setVersionId(newVersionId);
         datasourceVersion.setDatasourceId(datasourceId);
-        // todo: check and remove
-//        datasourceVersion.setParameter(Json.toJson(connectParams, null));
         if(null != comment) {
             datasourceVersion.setComment(comment);
         }
-        // todo: update create time and create user
-        // todo: update file to bml and insert
-        storeConnectParams(username, keyDefinitionList, connectParams, params -> {
-            datasourceVersion.setParameter(params);
-            dataSourceVersionDao.insertOne(datasourceVersion);
-            // update version id
-            dataSourceDao.updateVersionId(datasourceId, newVersionId);
-        });
+
+        // 1. set version + 1
+        Long latestVersion = dataSourceVersionDao.getLatestVersion(datasourceId);
+        long newVersionId = latestVersion + 1;
+        datasourceVersion.setVersionId(newVersionId);
+
+        // 2. set parameter, (check connectParams and remove if not in definedKeyNames);
+        List<String> definedKeyNames = keyDefinitionList.stream().map(DataSourceParamKeyDefinition::getKey)
+                .collect(Collectors.toList());
+        connectParams.entrySet().removeIf(entry -> !definedKeyNames.contains(entry.getKey()));
+        datasourceVersion.setParameter(Json.toJson(connectParams, null));
+
+        // 3. insert to dataSourceVersionDao
+        dataSourceVersionDao.insertOne(datasourceVersion);
+
+        // 4. update version id for dataSourceDao
+        dataSourceDao.updateVersionId(datasourceId, newVersionId);
+//        storeConnectParams(username, keyDefinitionList, connectParams, params -> {
+//            datasourceVersion.setParameter(params);
+//            dataSourceVersionDao.insertOne(datasourceVersion);
+//            // update version id
+//            dataSourceDao.updateVersionId(datasourceId, newVersionId);
+//        });
 
         return newVersionId;
     }

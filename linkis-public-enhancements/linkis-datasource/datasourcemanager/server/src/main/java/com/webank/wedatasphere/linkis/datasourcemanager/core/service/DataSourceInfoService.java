@@ -71,9 +71,8 @@ public interface DataSourceInfoService {
     /**
      * Update data source
      * @param updatedOne updated data source
-     * @param storedOne stored data source
      */
-    void updateDataSourceInfo(DataSource updatedOne, DataSource storedOne) throws ErrorException;
+    void updateDataSourceInfo(DataSource updatedOne) throws ErrorException;
 
     /**
      * Page query of data source

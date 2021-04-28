@@ -141,14 +141,15 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateDataSourceInfo(DataSource updatedOne, DataSource storedOne) throws ErrorException {
-        updateConnectParams(updatedOne.getCreateUser(), updatedOne.getKeyDefinitions(),
-                updatedOne.getConnectParams(), storedOne.getConnectParams(),
-                parameter -> {
-                    updatedOne.setParameter(parameter);
-                    //Save information into database
-                    dataSourceDao.updateOne(updatedOne);
-                });
+    public void updateDataSourceInfo(DataSource updatedOne) {
+//        updateConnectParams(updatedOne.getCreateUser(), updatedOne.getKeyDefinitions(),
+//                updatedOne.getConnectParams(), storedOne.getConnectParams(),
+//                parameter -> {
+//                    updatedOne.setParameter(parameter);
+//                    //Save information into database
+//                    dataSourceDao.updateOne(updatedOne);
+//                });
+        dataSourceDao.updateOne(updatedOne);
     }
 
     @Override

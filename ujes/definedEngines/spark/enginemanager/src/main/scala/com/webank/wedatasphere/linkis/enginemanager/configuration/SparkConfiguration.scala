@@ -49,7 +49,7 @@ object SparkConfiguration extends Logging {
   val PROXY_USER = CommonVars[String]("spark.proxy.user", "${UM}")
   val SPARK_CLIENT_MODE = "client"
   val SPARK_CLUSTER_MODE = "cluster"
-  val SPARK_DEPLOY_MODE = CommonVars[String]("spark.submit.deployMode", SPARK_CLIENT_MODE)
+  val SPARK_DEPLOY_MODE = CommonVars[String]("spark.submit.deployMode", SPARK_CLUSTER_MODE)
   val SPARK_APPLICATION_JARS = CommonVars[String]("spark.application.jars", "", "User-defined jars, separated by English, must be uploaded to HDFS first, and must be full path to HDFS.（用户自定义jar包，多个以英文,隔开，必须先上传到HDFS，且需为HDFS全路径。）")
 
   val SPARK_EXTRA_JARS = CommonVars[String]("spark.jars", "", "Additional jar package, Driver and Executor take effect（额外的jar包，Driver和Executor生效）")
@@ -63,6 +63,20 @@ object SparkConfiguration extends Logging {
   val ENGINE_JAR = CommonVars[String]("wds.linkis.enginemanager.core.jar", ClassUtils.jarOfClass(classOf[SparkEngineExecutorFactory]).head)
   val SPARK_DRIVER_CLASSPATH = CommonVars[String]("wds.linkis.spark.driver.conf.mainjar", "")
   val SPARK_DRIVER_EXTRA_JAVA_OPTIONS = CommonVars[String]("spark.driver.extraJavaOptions", "\"-Dwds.linkis.configuration=linkis-engine.properties -Duser.timezone=" + TIMEZONE.getValue + " " + getJavaRemotePort + "\"")
+
+  val SPARK_DYNAMIC_ALLOCATTON_ENABLED = CommonVars[String]("spark.dynamicAllocation.enabled", "false")
+  // config for only cluster mode
+  val SPARK_DRIVER_USER_CLASSPATH_FIRST = CommonVars[String]("spark.dirver.userClassPathFirst", "")
+  val SPARK_CLUSTER_ARCHIVES = CommonVars[String]("spark.cluster.archives", "")
+  val SPARK_YARN_APPMASTER_ENV_PYSPARK_PYTHON = CommonVars[String]("spark.yarn.appMasterEnv.PYSPARK_PYTHON", CommonVars[String]("spark.cluster.pyspark.python", "").getValue)
+  val SPARK_YARN_APPMASTER_ENV_PYSPARK_DRIVER_PYTHON = CommonVars[String]("spark.yarn.appMasterEnv.PYSPARK_DRIVER_PYTHON", CommonVars[String]("spark.cluster.pyspark.python", "").getValue)
+  val SPARK_EXECUTOR_ENV_PYSPARK_PYTHON = CommonVars[String]("spark.executorEnv.PYSPARK_PYTHON", CommonVars[String]("spark.cluster.pyspark.pyhton", "").getValue)
+  val SPARK_EXECUTOR_ENV_PYSPARK_DRIVER_PYTHON = CommonVars[String]("spark.executorEnv.PYSPARK_DRIVER.PYTHON", CommonVars[String]("spark.cluster.pyspark.python", "").getValue)
+  val SPARK_PYSPARK_PYTHON = CommonVars[String]("spark.pyspark.python", CommonVars[String]("spark.cluster.pyspark.python", "").getValue)
+  val SPARK_PYSPARK_DRIVER_PYTHON = CommonVars[String]("spark.pyspark.driver.python", CommonVars[String]("spark.cluster.pyspark.python", "").getValue)
+  val SPARK_EXECUTOR_ENV_PYTHON_PATH = CommonVars[String]("spark.executorEnv.PYTHONPATH", "")
+  val SPARK_CLUSTER_JARS = CommonVars[String]("spark.cluster.jars", "")
+
   val DEFAULT_JAVA_OPTS = CommonVars[String]("wds.linkis.engine.javaOpts.default", "-server -XX:+UseG1GC -XX:MaxPermSize=250m -XX:PermSize=128m " +
     "-Xloggc:%s -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Dwds.linkis.configuration=linkis-engine.properties")
   val SPARK_ML_BUCKET_FIELDS = CommonVars[String]("wds.linkis.engine.spark.ml.bucketFields", "age[0,18,30,60,100]")

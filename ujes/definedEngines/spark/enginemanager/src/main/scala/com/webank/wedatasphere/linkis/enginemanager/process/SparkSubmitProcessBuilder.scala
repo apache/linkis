@@ -20,6 +20,7 @@ package com.webank.wedatasphere.linkis.enginemanager.process
 import java.lang.ProcessBuilder.Redirect
 import java.util
 
+
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.enginemanager.EngineResource
@@ -134,8 +135,25 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     val darResource: DriverAndYarnResource = engineRequest.getResource.asInstanceOf[DriverAndYarnResource]
     val properties = new util.HashMap[String,String](request.properties)
     this.master("yarn")
-    this.deployMode(getValueAndRemove(properties, SPARK_DEPLOY_MODE))
+    this.deployMode(SPARK_DEPLOY_MODE.getValue)
     this.conf(SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, SPARK_DRIVER_EXTRA_JAVA_OPTIONS.getValue)
+    this.conf(SPARK_DYNAMIC_ALLOCATTON_ENABLED.key, SPARK_DYNAMIC_ALLOCATTON_ENABLED.getValue)
+
+    // cluster
+    if ("cluster".equals(SPARK_DEPLOY_MODE.getValue)) {
+      this.conf(SPARK_DRIVER_USER_CLASSPATH_FIRST.key, SPARK_DRIVER_USER_CLASSPATH_FIRST.getValue)
+      this.conf(SPARK_YARN_APPMASTER_ENV_PYSPARK_PYTHON.key, SPARK_YARN_APPMASTER_ENV_PYSPARK_PYTHON.getValue)
+      this.conf(SPARK_YARN_APPMASTER_ENV_PYSPARK_DRIVER_PYTHON.key, SPARK_YARN_APPMASTER_ENV_PYSPARK_DRIVER_PYTHON.getValue)
+      this.conf(SPARK_EXECUTOR_ENV_PYSPARK_PYTHON.key, SPARK_EXECUTOR_ENV_PYSPARK_PYTHON.getValue)
+      this.conf(SPARK_EXECUTOR_ENV_PYSPARK_DRIVER_PYTHON.key, SPARK_EXECUTOR_ENV_PYSPARK_DRIVER_PYTHON.getValue)
+      this.conf(SPARK_PYSPARK_PYTHON.key, SPARK_PYSPARK_PYTHON.getValue)
+      this.conf(SPARK_PYSPARK_DRIVER_PYTHON.key, SPARK_PYSPARK_DRIVER_PYTHON.getValue)
+      this.conf(SPARK_EXECUTOR_ENV_PYTHON_PATH.key, SPARK_EXECUTOR_ENV_PYTHON_PATH.getValue)
+
+      SPARK_CLUSTER_JARS.getValue.split("").map(RelativePath).foreach(jar)
+      SPARK_CLUSTER_ARCHIVES.getValue.split(",").map(RelativePath).foreach(archive)
+    }
+
     this.name(properties.getOrDefault("appName", "linkis"))
     this.className(properties.getOrDefault("className", "com.webank.wedatasphere.linkis.engine.DataWorkCloudEngineApplication"))
     properties.getOrDefault("archives", "").toString.split(",").map(RelativePath).foreach(this.archive)
@@ -319,9 +337,9 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     addOpt("--executor-cores", _executorCores)
     addOpt("--num-executors", _numExecutors)
     addOpt("--queue", _queue)
-    //    if(!_archives.map(fromPath).equals("")) {
-    //      addList("--archives", _archives.map(fromPath))
-    //    }
+    if(!_archives.map(fromPath).equals("")) {
+      addList("--archives", _archives.map(fromPath))
+    }
     addOpt("--class", _className)
     addOpt("", Some(ENGINE_JAR.getValue))
     //    addOpt("--spring-conf", Some("ribbon.ReadTimeout=1200000"))

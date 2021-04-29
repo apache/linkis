@@ -28,17 +28,19 @@ import com.webank.wedatasphere.linkis.rpc.interceptor._
 import com.webank.wedatasphere.linkis.rpc.transform.{RPCConsumer, RPCProduct}
 import com.webank.wedatasphere.linkis.server.Message
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
+import feign.Request.Options
 import feign.{Feign, Retryer}
 
 import scala.concurrent.duration.Duration
 import scala.runtime.BoxedUnit
 
 /**
-  * Created by enjoyyin on 2018/8/29.
-  */
+ * Created by enjoyyin on 2018/8/29.
+ */
 private[rpc] class BaseRPCSender extends Sender with Logging {
   private var name: String = _
   private var rpc: RPCReceiveRemote = _
+  private var longReadTimeoutRpc: RPCReceiveRemote = _
 
   protected def getRPCInterceptors: Array[RPCInterceptor] = Array.empty
 
@@ -57,15 +59,24 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
     }
     rpc
   }
+  private def getLongReadTimeoutRpc: RPCReceiveRemote = {
+    if (longReadTimeoutRpc == null) this synchronized {
+      if (longReadTimeoutRpc == null) longReadTimeoutRpc = newRPC(new Options(10000,1800000))
+    }
+    longReadTimeoutRpc
+  }
+  private def newRPC(): RPCReceiveRemote = {
+    newRPC(null)
+  }
 
   private[rpc] def getApplicationName = name
-
 
   protected def doBuilder(builder: Feign.Builder): Unit =
     builder.retryer(Retryer.NEVER_RETRY)
 
-  private def newRPC: RPCReceiveRemote = {
+  private def newRPC(option: Options): RPCReceiveRemote = {
     val builder = Feign.builder
+    if (option != null) builder.options(option)
     doBuilder(builder)
     var url = if(name.startsWith("http://")) name else "http://" + name
     if(url.endsWith("/")) url = url.substring(0, url.length - 1)
@@ -91,7 +102,7 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
     val msg = RPCProduct.getRPCProduct.toMessage(message)
     msg.data("duration", timeout.toMillis)
     BaseRPCSender.addInstanceInfo(msg.getData)
-    val response = getRPC.receiveAndReplyInMills(msg)
+    val response = getLongReadTimeoutRpc.receiveAndReplyInMills(msg)
     RPCConsumer.getRPCConsumer.toObject(response)
   }
 
@@ -108,21 +119,21 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
 
 
   /**
-    * Deliver is an asynchronous method that requests the target microservice asynchronously, ensuring that the target microservice is requested once,
-    * but does not guarantee that the target microservice will successfully receive the request.
-    * deliver是一个异步方法，该方法异步请求目标微服务，确保一定会请求目标微服务一次，但不保证目标微服务一定能成功接收到本次请求。
-    * @param message 请求的参数
-    */
+   * Deliver is an asynchronous method that requests the target microservice asynchronously, ensuring that the target microservice is requested once,
+   * but does not guarantee that the target microservice will successfully receive the request.
+   * deliver是一个异步方法，该方法异步请求目标微服务，确保一定会请求目标微服务一次，但不保证目标微服务一定能成功接收到本次请求。
+   * @param message 请求的参数
+   */
   override def deliver(message: Any): Unit =
     BaseRPCSender.rpcSenderListenerBus.post(RPCMessageEvent(message, ServiceInstance(name, null)))
 
   protected def getRPCSenderListenerBus = BaseRPCSender.rpcSenderListenerBus
 
   override def equals(obj: scala.Any): Boolean = if(obj == null) false
-    else obj match {
-      case sender: BaseRPCSender => name == sender.name
-      case _ => false
-    }
+  else obj match {
+    case sender: BaseRPCSender => name == sender.name
+    case _ => false
+  }
 
   override def hashCode(): Int = if(name == null) 0 else name.hashCode
 

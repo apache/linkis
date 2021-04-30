@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -75,6 +76,11 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         dataSourceDao.insertOne(dataSource);
     }
 
+    /**
+     * The DataSource parameter takes precedence over the environment parameter
+     * @param dataSourceEnvId data source environment
+     * @param dataSource data source
+     */
     @Override
     public void addEnvParamsToDataSource(Long dataSourceEnvId, DataSource dataSource) {
         DataSourceEnv dataSourceEnv = dataSourceEnvDao.selectOneDetail(dataSourceEnvId);
@@ -97,6 +103,29 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
         String parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, version);
         dataSource.setParameter(parameter);
+        return dataSource;
+    }
+
+    /**
+     * get datasource info for connect, if there is a dependency environment,
+     * merge datasource parameter and environment parameter.
+     *
+     * @param dataSourceId
+     * @param version
+     * @return
+     */
+    @Override
+    public DataSource getDataSourceInfoForConnect(Long dataSourceId, Long version) {
+        DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
+        String parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, version);
+        dataSource.setParameter(parameter);
+        Map<String, String> connectParams = Objects.requireNonNull(Json.fromJson(parameter, Map.class));
+        if(connectParams.containsKey("envId")) {
+            Long envId = Long.valueOf(connectParams.get("envId"));
+            // remove envId for connect
+            dataSource.getConnectParams().remove("envId");
+            addEnvParamsToDataSource(envId, dataSource);
+        }
         return dataSource;
     }
 
@@ -337,6 +366,8 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         List<DatasourceVersion> versionList = dataSourceVersionDao.getVersionsFromDatasourceId(datasourceId);
         return versionList;
     }
+
+
 
     /**
      * @param userName

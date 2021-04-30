@@ -156,6 +156,7 @@ public class DataSourceCoreRestfulApi {
 
     /**
      * create or update parameter, save a version of parameter,return version id.
+     *
      * @param params
      * @param req
      * @return
@@ -172,8 +173,8 @@ public class DataSourceCoreRestfulApi {
             String userName = SecurityFilter.getLoginUsername(req);
 
             DataSource dataSource = dataSourceInfoService.getDataSourceInfoBrief(datasourceId);
-            if(null == dataSource) {
-                throw new ErrorException(ServiceErrorCode.DATASOURCE_NOTFOUND_ERROR.getValue(), "datasource not found " );
+            if (null == dataSource) {
+                throw new ErrorException(ServiceErrorCode.DATASOURCE_NOTFOUND_ERROR.getValue(), "datasource not found ");
             }
             List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
                     .getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
@@ -247,6 +248,7 @@ public class DataSourceCoreRestfulApi {
 
     /**
      * get datasource detail, for current version
+     *
      * @param dataSourceId
      * @param request
      * @return
@@ -268,6 +270,7 @@ public class DataSourceCoreRestfulApi {
 
     /**
      * get datasource detail
+     *
      * @param dataSourceId
      * @param version
      * @return
@@ -289,6 +292,7 @@ public class DataSourceCoreRestfulApi {
 
     /**
      * get verion list for datasource
+     *
      * @param dataSourceId
      * @param request
      * @return
@@ -296,7 +300,7 @@ public class DataSourceCoreRestfulApi {
     @GET
     @Path("/{data_source_id}/versions")
     public Response getVersionList(@PathParam("data_source_id") Long dataSourceId,
-                                          @Context HttpServletRequest request) {
+                                   @Context HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(() -> {
             DataSource dataSource = dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
             List<DatasourceVersion> versions = dataSourceInfoService.getVersionList(dataSourceId);
@@ -319,7 +323,7 @@ public class DataSourceCoreRestfulApi {
                                           @Context HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(() -> {
             int updateResult = dataSourceInfoService.publishByDataSourceId(dataSourceId, versionId);
-            if(0 == updateResult) {
+            if (0 == updateResult) {
                 return Message.error("publish error");
             }
             return Message.ok();
@@ -329,6 +333,7 @@ public class DataSourceCoreRestfulApi {
 
     /**
      * Dangerous operation!
+     *
      * @param dataSourceId
      * @return
      */
@@ -357,22 +362,26 @@ public class DataSourceCoreRestfulApi {
     }
 
 
-
     @PUT
     @Path("/{data_source_id}/{version}/op/connect")
     public Response connectDataSource(@PathParam("data_source_id") Long dataSourceId,
                                       @PathParam("version") Long version,
-                                           @Context HttpServletRequest req) {
+                                      @Context HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(() -> {
             String operator = SecurityFilter.getLoginUsername(req);
-            DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceId, version);
-            metadataOperateService.doRemoteConnect(MdmConfiguration.METADATA_SERVICE_APPLICATION.getValue()
-                            + (StringUtils.isNotBlank(dataSource.getDataSourceType().getName())?("-" +dataSource.getDataSourceType().getName().toLowerCase()) : ""),
-                    operator, dataSource.getConnectParams());;
+            DataSource dataSource = dataSourceInfoService.getDataSourceInfoForConnect(dataSourceId, version);
+
+
+            String dataSourceTypeName = dataSource.getDataSourceType().getName();
+            String mdRemoteServiceName = MdmConfiguration.METADATA_SERVICE_APPLICATION.getValue()
+                    + (StringUtils.isNotBlank(dataSourceTypeName) ? ("-" + dataSourceTypeName.toLowerCase()) : "");
+
+            metadataOperateService.doRemoteConnect(mdRemoteServiceName, operator, dataSource.getConnectParams());
+            ;
             return Message.ok().data("ok", true);
         }, "/data_source/info/" + dataSourceId + "/" + version + "/op/connect", "Fail to connect data source[连接数据源失败]");
     }
-
+/*
     @PUT
     @Path("/info/{data_source_id}/form")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -395,7 +404,7 @@ public class DataSourceCoreRestfulApi {
 //            updateDataSourceConfig(dataSource);
             return Message.ok().data("update_id", dataSourceId);
         }, "/data_source/info/" + dataSourceId + "/form", "Fail to update data source[更新数据源失败]");
-    }
+    }*/
 
     @GET
     @Path("/info")

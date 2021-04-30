@@ -155,4 +155,14 @@ public interface DataSourceInfoService {
      * @return
      */
     List<DatasourceVersion> getVersionList(Long datasourceId);
+
+    /**
+     * get datasource info for connect, if there is a dependency environment,
+     * merge datasource parameter and environment parameter.
+     *
+     * @param dataSourceId
+     * @param version
+     * @return
+     */
+    DataSource getDataSourceInfoForConnect(Long dataSourceId, Long version);
 }

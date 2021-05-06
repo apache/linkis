@@ -10,35 +10,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.hadoop.common.utils
 
 import java.io.File
 import java.nio.file.Paths
 import java.security.PrivilegedExceptionAction
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration.hadoopConfDir
-import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf._
+import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf
+import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf.{hadoopConfDir, _}
+import org.apache.commons.lang.StringUtils
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.security.UserGroupInformation
+
 /**
   * Created by enjoyyin on 2019/5/27.
   */
 object HDFSUtils {
 
 
-
   def getConfiguration(user: String): Configuration = getConfiguration(user, hadoopConfDir)
+
+  def getConfigurationByLabel(user: String, label: String): Configuration = {
+    getConfiguration(user, getHadoopConDirByLabel(label))
+  }
+
+  private def getHadoopConDirByLabel(label: String): String = {
+    if (StringUtils.isBlank(label)) {
+      hadoopConfDir
+    } else {
+      val prefix = if (HadoopConf.HADOOP_EXTERNAL_CONF_DIR_PREFIX.getValue.endsWith("/")) {
+        HadoopConf.HADOOP_EXTERNAL_CONF_DIR_PREFIX.getValue
+      } else {
+        HadoopConf.HADOOP_EXTERNAL_CONF_DIR_PREFIX.getValue + "/"
+      }
+      prefix + label
+    }
+  }
 
   def getConfiguration(user: String, hadoopConfDir: String): Configuration = {
     val confPath = new File(hadoopConfDir)
-    if(!confPath.exists() || confPath.isFile) {
+    if (!confPath.exists() || confPath.isFile) {
       throw new RuntimeException(s"Create hadoop configuration failed, path $hadoopConfDir not exists.")
     }
     val conf = new Configuration()
     conf.addResource(new Path(Paths.get(hadoopConfDir, "core-site.xml").toAbsolutePath.toFile.getAbsolutePath))
     conf.addResource(new Path(Paths.get(hadoopConfDir, "hdfs-site.xml").toAbsolutePath.toFile.getAbsolutePath))
-    conf.addResource(new Path(Paths.get(hadoopConfDir, "yarn-site.xml").toAbsolutePath.toFile.getAbsolutePath))
     conf
   }
 
@@ -68,7 +86,7 @@ object HDFSUtils {
   def getKerberosUser(userName: String): String = {
     var user = userName
     if(KEYTAB_HOST_ENABLED.getValue){
-      user = user+ "/" + KEYTAB_HOST.getValue
+      user = user + "/" + KEYTAB_HOST.getValue
     }
     user
   }

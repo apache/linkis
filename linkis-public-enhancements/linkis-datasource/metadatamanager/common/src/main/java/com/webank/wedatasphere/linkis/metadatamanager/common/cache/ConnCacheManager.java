@@ -18,9 +18,6 @@ import com.google.common.cache.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by jackyxxie on 2020/02/14.
- */
 public class ConnCacheManager implements CacheManager {
     private ConcurrentHashMap<String, Cache> cacheStore = new ConcurrentHashMap<>();
     private ConnCacheManager(){

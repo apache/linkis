@@ -15,10 +15,6 @@ package com.webank.wedatasphere.linkis.metadatamanager.service;
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars;
 
-/**
- * @author davidhua
- * 2020/02/14
- */
 public class HiveParamsMapper {
 
     public static final CommonVars<String> PARAM_HIVE_PRINCIPLE =

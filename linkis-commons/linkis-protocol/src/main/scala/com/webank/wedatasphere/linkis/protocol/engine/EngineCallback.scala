@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.protocol.engine
 
-/**
-  * Created by enjoyyin on 2018/9/26.
-  */
+
 object EngineCallback {
   private val DWC_APPLICATION_NAME = "dwc.application.name"
   private val DWC_INSTANCE = "dwc.application.instance"

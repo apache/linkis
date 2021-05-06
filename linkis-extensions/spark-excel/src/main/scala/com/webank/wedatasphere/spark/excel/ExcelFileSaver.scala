@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.webank.wedatasphere.spark.excel
 
 import java.io.{BufferedOutputStream, OutputStream}
@@ -5,9 +21,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 import org.apache.hadoop.fs.{FileSystem, Path}
-import org.apache.poi.ss.usermodel.IndexedColors
+import org.apache.poi.ss.usermodel.{IndexedColors, _}
 import org.apache.poi.xssf.streaming.SXSSFWorkbook
-import org.apache.poi.ss.usermodel._
 import org.apache.spark.sql.DataFrame
 
 import scala.language.postfixOps
@@ -16,6 +31,7 @@ object ExcelFileSaver {
   final val DEFAULT_SHEET_NAME = "Sheet1"
   final val DEFAULT_DATE_FORMAT = "yyyy-MM-dd"
   final val DEFAULT_TIMESTAMP_FORMAT = "yyyy-mm-dd hh:mm:ss.000"
+  final val DEFAULT_EXPORT_NULL_VALUE = "SHUFFLEOFF"
 }
 
 class ExcelFileSaver(fs: FileSystem) {
@@ -28,7 +44,8 @@ class ExcelFileSaver(fs: FileSystem) {
             sheetName: String = DEFAULT_SHEET_NAME,
             useHeader: Boolean = true,
             dateFormat: String = DEFAULT_DATE_FORMAT,
-            timestampFormat: String = DEFAULT_TIMESTAMP_FORMAT
+            timestampFormat: String = DEFAULT_TIMESTAMP_FORMAT,
+            exportNullValue:String = DEFAULT_EXPORT_NULL_VALUE
           ): Unit = {
     fs.setVerifyChecksum(false)
     val headerRow = dataFrame.schema.map(_.name)
@@ -37,9 +54,21 @@ class ExcelFileSaver(fs: FileSystem) {
     if (useHeader) excelWriter.writeHead(headerRow)
     while (dataRows.hasNext) {
       val line = dataRows.next().toSeq
-      excelWriter.writerRow(line)
+      excelWriter.writerRow(line,exportNullValue)
     }
-    excelWriter.close(new BufferedOutputStream(fs.create(location)))
+    // if failed try to refresh nfs cache
+    val out: OutputStream =
+    try{
+      fs.create(location)
+    } catch {
+      case e:Throwable =>
+        fs.listFiles(location.getParent, false)
+        fs.create(location)
+      case _ =>
+        fs.listFiles(location.getParent, false)
+        fs.create(location)
+    }
+    excelWriter.close(new BufferedOutputStream(out))
   }
 
   def autoClose[A <: AutoCloseable, B](closeable: A)(fun: (A) => B): B = {
@@ -85,10 +114,10 @@ class ExcelWriter(sheetName: String, dateFormat: String, timestampFormat: String
     rowNum = rowNum + 1
   }
 
-  def writerRow(line: Seq[Any]): Unit = {
+  def writerRow(line: Seq[Any],exportNullValue:String): Unit = {
     val row = sheet.createRow(rowNum)
     for (i <- line.indices) {
-      createCell(row, i, line(i))
+      createCell(row, i, line(i),exportNullValue)
     }
     rowNum = rowNum + 1
   }
@@ -108,12 +137,17 @@ class ExcelWriter(sheetName: String, dateFormat: String, timestampFormat: String
     cell.setCellValue(date)
   }
 
-  def createCell(row: Row, col: Int, value: Any): Unit = {
+  def createCell(row: Row, col: Int, value: Any,exportNullValue:String): Unit = {
     val cell = row.createCell(col)
     value match {
       case t: java.sql.Timestamp => setTimestampValue(cell, new Date(t.getTime))
       case d: java.sql.Date => setDateValue(cell, new Date(d.getTime))
-      case s: String => cell.setCellValue(s)
+      case s: String => {
+        if(("NULL".equals(s) || "".equals(s)) && !"SHUFFLEOFF".equals(exportNullValue))
+          cell.setCellValue(exportNullValue)
+        else
+          cell.setCellValue(s)
+      }
       case f: Float => cell.setCellValue(f)
       case d: Double => cell.setCellValue(d)
       case b: Boolean => cell.setCellValue(b)
@@ -123,7 +157,7 @@ class ExcelWriter(sheetName: String, dateFormat: String, timestampFormat: String
       case l: Long => cell.setCellValue(l)
       case b: BigDecimal => cell.setCellValue(b.doubleValue())
       case b: java.math.BigDecimal => cell.setCellValue(b.doubleValue())
-      case null => cell.setCellValue("NULL")
+      case null => if("SHUFFLEOFF".equals(exportNullValue)) cell.setCellValue("NULL") else cell.setCellValue(exportNullValue)
       case _ => cell.setCellValue(value.toString)
     }
   }

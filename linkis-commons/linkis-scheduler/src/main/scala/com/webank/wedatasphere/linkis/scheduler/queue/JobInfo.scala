@@ -16,8 +16,6 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue
 
-import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState.SchedulerEventState
-
 /**
   * Created by enjoyyin on 2018/9/4.
   * JobInfo Is the job information that the server sends to the front end.（是服务端传给前端的job信息）

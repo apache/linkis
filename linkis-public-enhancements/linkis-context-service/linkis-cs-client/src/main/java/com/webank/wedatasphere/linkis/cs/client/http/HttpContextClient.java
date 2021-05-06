@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.cs.client.http;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
@@ -30,6 +31,7 @@ import com.webank.wedatasphere.linkis.cs.client.utils.ExceptionHelper;
 import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
 import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextScope;
 import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
+import com.webank.wedatasphere.linkis.cs.common.entity.history.ContextHistory;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.*;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
 import com.webank.wedatasphere.linkis.cs.common.protocol.ContextHTTPConstant;
@@ -50,7 +52,6 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * created by cooperyang on 2020/2/11
  * Description: HttpContextClient是ContextClient的使用Http方式进行通信的具体实现
  * 一般可以将其做成单例
  */
@@ -541,7 +542,64 @@ public class HttpContextClient extends AbstractContextClient {
         return null;
     }
 
+    @Override
+    public void createHistory(ContextID contextID, ContextHistory history) throws ErrorException {
+        String contextIDStr = SerializeHelper.serializeContextID(contextID);
+        DefaultContextPostAction action = ContextPostActionBuilder.of(ContextServerHttpConf.createContextHistory())
+                .with(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr).with(history)
+                .addHeader(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr).build();
+        checkDWSResult(execute(action));
+    }
 
+    @Override
+    public void removeHistory(ContextID contextID, ContextHistory history) throws ErrorException {
+        String contextIDStr = SerializeHelper.serializeContextID(contextID);
+        DefaultContextPostAction action = ContextPostActionBuilder.of(ContextServerHttpConf.removeContextHistory())
+                .with(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr).with(history)
+                .addHeader(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr).build();
+        checkDWSResult(execute(action));
+    }
+
+    @Override
+    public List<ContextHistory> getHistories(ContextID contextID) throws ErrorException {
+        String contextIDStr = SerializeHelper.serializeContextID(contextID);
+        DefaultContextPostAction action = ContextPostActionBuilder.of(ContextServerHttpConf.getContextHistories())
+                .with(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr)
+                .addHeader(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr).build();
+        DWSResult dwsResult = checkDWSResult(execute(action));
+        ContextHistoriesGetResult result = (ContextHistoriesGetResult) dwsResult;
+        ArrayList<ContextHistory> histories = new ArrayList<>();
+        for (String s : result.getContextHistory()) {
+            histories.add(SerializeHelper.deserializeContextHistory(s));
+        }
+        return histories;
+    }
+
+    @Override
+    public ContextHistory getHistory(ContextID contextID, String source) throws ErrorException {
+        String contextIDStr = SerializeHelper.serializeContextID(contextID);
+        DefaultContextPostAction action = ContextPostActionBuilder.of(ContextServerHttpConf.getContextHistory())
+                .with(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr).with("source",source)
+                .addHeader(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr).build();
+        DWSResult dwsResult = checkDWSResult(execute(action));
+        ContextHistoryGetResult result = (ContextHistoryGetResult) dwsResult;
+        return result.getContextHistory() == null?null:SerializeHelper.deserializeContextHistory(result.getContextHistory());
+    }
+
+    @Override
+    public List<ContextHistory> searchHistory(ContextID contextID, String... keyword) throws ErrorException {
+        String contextIDStr = SerializeHelper.serializeContextID(contextID);
+        DefaultContextPostAction action = ContextPostActionBuilder.of(ContextServerHttpConf.searchContextHistory())
+                .with(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr).with("keywords",keyword)
+                .addHeader(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr).build();
+        DWSResult dwsResult = checkDWSResult(execute(action));
+        ContextHistoriesGetResult result = (ContextHistoriesGetResult) dwsResult;
+        ArrayList<ContextHistory> histories = new ArrayList<>();
+        for (String s : result.getContextHistory()) {
+            histories.add(SerializeHelper.deserializeContextHistory(s));
+        }
+        return histories;
+    }
 
     @Override
     public void removeAllValueByKeyPrefixAndContextType(ContextID contextID, ContextType contextType, String keyPrefix) throws ErrorException {

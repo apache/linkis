@@ -16,20 +16,31 @@
 
 package com.webank.wedatasphere.linkis.gateway.ujes.parser
 
+import java.util
+
 import com.webank.wedatasphere.linkis.common.ServiceInstance
+import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
 import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
 import com.webank.wedatasphere.linkis.gateway.parser.AbstractGatewayParser
 import com.webank.wedatasphere.linkis.gateway.springcloud.SpringCloudGatewayConfiguration._
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
-import org.apache.commons.lang.StringUtils
+import com.webank.wedatasphere.linkis.gateway.ujes.route.label.RouteLabelParser
+import com.webank.wedatasphere.linkis.instance.label.service.InsLabelService
+import com.webank.wedatasphere.linkis.manager.label.entity.route.RouteLabel
+import javax.annotation.Resource
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-/**
-  * created by cooperyang on 2019/5/15.
-  */
+import scala.collection.JavaConversions._
+
 @Component
 class EntranceExecutionGatewayParser extends AbstractGatewayParser {
+
+
+  @Autowired
+  private var routeLabelParsers: util.List[RouteLabelParser] = _
+
+  @Resource
+  private var insLabelService: InsLabelService = _
 
   override def shouldContainRequestBody(gatewayContext: GatewayContext): Boolean = gatewayContext.getRequest.getRequestURI match {
     case EntranceExecutionGatewayParser.ENTRANCE_EXECUTION_REGEX(_, _) => true
@@ -38,34 +49,34 @@ class EntranceExecutionGatewayParser extends AbstractGatewayParser {
 
   override def parse(gatewayContext: GatewayContext): Unit = gatewayContext.getRequest.getRequestURI match {
     case EntranceExecutionGatewayParser.ENTRANCE_EXECUTION_REGEX(version, _) =>
-      if(sendResponseWhenNotMatchVersion(gatewayContext, version)) return
-      //var (creator, executeApplicationName): (String, String) = null
-      var creator:String = null
-      var executeApplicationName:String = null
-      if(StringUtils.isNotBlank(gatewayContext.getRequest.getRequestBody)) {
-        val json = BDPJettyServerHelper.gson.fromJson(gatewayContext.getRequest.getRequestBody, classOf[java.util.Map[String, Object]])
-        json.get(TaskConstant.EXECUTEAPPLICATIONNAME) match {
-          case s: String => executeApplicationName = s
-          case _ =>
-        }
-        json.get(TaskConstant.REQUESTAPPLICATIONNAME) match {
-          case s: String => creator = s
-          case _ =>
-        }
-      }
+      if (sendResponseWhenNotMatchVersion(gatewayContext, version)) return
+      val routeLabelsOption = parseToRouteLabels(gatewayContext)
       val path = gatewayContext.getRequest.getRequestURI
-      if(StringUtils.isBlank(executeApplicationName)) {
-        sendErrorResponse(s"requestUri $path need request parameter " + TaskConstant.EXECUTEAPPLICATIONNAME, gatewayContext)
+      val applicationName = if (routeLabelsOption.isDefined && routeLabelsOption.get.nonEmpty) {
+        val instances = insLabelService.searchInstancesByLabels(routeLabelsOption.get)
+        if (instances.isEmpty) {
+          GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue
+        } else {
+          instances(0).getApplicationName
+        }
       } else {
-        info(s"GatewayParser parse requestUri $path to service $creator or $executeApplicationName.")
-        if(StringUtils.isNotBlank(creator))  gatewayContext.getGatewayRoute.getParams.put(TaskConstant.REQUESTAPPLICATIONNAME, creator)
-        gatewayContext.getGatewayRoute.setServiceInstance(ServiceInstance(executeApplicationName, null))
+        GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue
       }
+      info(s"GatewayParser parse requestUri $path to service ${applicationName}.")
+      gatewayContext.getGatewayRoute.setServiceInstance(ServiceInstance(applicationName, null))
     case _ =>
+  }
+
+  protected def parseToRouteLabels(gatewayContext: GatewayContext): Option[util.List[RouteLabel]] = {
+    var routeLabels: Option[util.List[RouteLabel]] = None
+    for (parser <- routeLabelParsers if routeLabels.isEmpty || routeLabels.get.isEmpty) {
+      routeLabels = Option(parser.parse(gatewayContext))
+    }
+    routeLabels
   }
 }
 
 object EntranceExecutionGatewayParser {
   val ENTRANCE_HEADER = normalPath(API_URL_PREFIX) + "rest_[a-zA-Z][a-zA-Z_0-9]*/(v\\d+)/entrance/"
-  val ENTRANCE_EXECUTION_REGEX = (ENTRANCE_HEADER + "(execute|backgroundservice)").r
+  val ENTRANCE_EXECUTION_REGEX = (ENTRANCE_HEADER + "(execute|backgroundservice|submit)").r
 }

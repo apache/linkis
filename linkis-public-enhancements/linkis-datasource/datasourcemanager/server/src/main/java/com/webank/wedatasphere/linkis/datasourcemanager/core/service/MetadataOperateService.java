@@ -20,8 +20,6 @@ import java.util.Map;
 
 /**
  * Metadata service
- * @author davidhua
- * 2020/02/14
  */
 public interface MetadataOperateService {
 

@@ -16,9 +16,10 @@
 
 package com.webank.wedatasphere.linkis.common.utils
 
+import java.nio.charset.StandardCharsets
 import java.security.{KeyPair, KeyPairGenerator, PrivateKey, PublicKey}
-import javax.crypto.Cipher
 
+import javax.crypto.Cipher
 import org.apache.commons.codec.binary.Hex
 import org.apache.commons.net.util.Base64
 
@@ -33,7 +34,10 @@ object RSAUtils {
     keyPair.generateKeyPair()
   }
   def getDefaultPublicKey(): String = {
-    new String(Base64.encodeBase64(keyPair.getPublic.getEncoded))
+    new String(Base64.encodeBase64(keyPair.getPublic.getEncoded), StandardCharsets.UTF_8)
+  }
+  def getDefaultPrivateKey(): String = {
+    new String(Base64.encodeBase64(keyPair.getPrivate.getEncoded), StandardCharsets.UTF_8)
   }
   def encrypt(data: Array[Byte], publicKey: PublicKey): Array[Byte] = {
     val cipher = Cipher.getInstance("RSA")

@@ -23,7 +23,6 @@ import com.webank.wedatasphere.linkis.bml.common.ResourceHelperFactory;
 import com.webank.wedatasphere.linkis.bml.dao.ResourceDao;
 import com.webank.wedatasphere.linkis.bml.dao.VersionDao;
 import com.webank.wedatasphere.linkis.bml.service.ResourceService;
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -40,9 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by cooperyang on 2019/5/17.
- */
 @Service
 public class ResourceServiceImpl implements ResourceService {
 
@@ -74,25 +70,21 @@ public class ResourceServiceImpl implements ResourceService {
         versionDao.batchDeleteResources(resourceIds);
     }
 
-    @Transactional(rollbackFor = ErrorException.class)
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public List<UploadResult> upload(FormDataMultiPart formDataMultiPart, String user, Map<String, Object> properties)throws Exception{
+    public List<UploadResult> upload(FormDataMultiPart formDataMultiPart, String user, Map<String, Object> properties) throws Exception{
         ResourceHelper resourceHelper = ResourceHelperFactory.getResourceHelper();
         List<FormDataBodyPart> files = formDataMultiPart.getFields("file");
         List<UploadResult> results = new ArrayList<>();
-        String resourceId = (String) properties.get("resourceId");
         for (FormDataBodyPart p : files) {
+            String resourceId = (String) properties.get("resourceId");
             InputStream inputStream = p.getValueAs(InputStream.class);
             FormDataContentDisposition fileDetail = p.getFormDataContentDisposition();
             String fileName = new String(fileDetail.getFileName().getBytes("ISO8859-1"), "UTF-8");
-            String path = resourceHelper.generatePath(user, resourceId, properties);
+            fileName = resourceId;
+            String path = resourceHelper.generatePath(user, fileName, properties);
             StringBuilder sb = new StringBuilder();
-            //在upload之前首先应该判断一下这个path是否是已经存在了，如果存在了，抛出异常
-            boolean isFileExists = resourceHelper.checkIfExists(path, user);
-//            if (isFileExists){
-//                throw new ErrorException(70035, "同名文件已经于今日已经上传,请使用更新操作");
-//            }
-            long size = resourceHelper.upload(path, user, inputStream, sb);
+            long size = resourceHelper.upload(path, user, inputStream, sb, true);
             String md5String = sb.toString();
             boolean isSuccess = false;
             if (StringUtils.isNotEmpty(md5String) && size >= 0) {

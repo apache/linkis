@@ -2,7 +2,7 @@ server:
   port: 9001  #该模块提供服务的端口（必须）
 spring:
   application:
-    name: DataWorkCloud-Gateway  #模块名，用于做高可用（必须）
+    name: linkis-mg-gateway  #模块名，用于做高可用（必须）
   cloud:
     gateway:
       routes:
@@ -22,7 +22,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: ${eurekaurl}
+      defaultZone: locahost
     registry-fetch-interval-seconds: 5
   instance:
     metadata-map:

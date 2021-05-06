@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,15 +13,15 @@
 
 package com.webank.wedatasphere.linkis.entrance.conf;
 
-import com.webank.wedatasphere.linkis.entrance.EntranceContext;
 import com.webank.wedatasphere.linkis.entrance.EntranceParser;
+import com.webank.wedatasphere.linkis.entrance.EntranceServer;
 import com.webank.wedatasphere.linkis.entrance.annotation.*;
 import com.webank.wedatasphere.linkis.entrance.background.BackGroundService;
 import com.webank.wedatasphere.linkis.entrance.event.EntranceEvent;
 import com.webank.wedatasphere.linkis.entrance.event.EntranceEventListener;
 import com.webank.wedatasphere.linkis.entrance.event.EntranceEventListenerBus;
-import com.webank.wedatasphere.linkis.entrance.execute.*;
-import com.webank.wedatasphere.linkis.entrance.execute.impl.*;
+import com.webank.wedatasphere.linkis.entrance.execute.EntranceExecutionService;
+import com.webank.wedatasphere.linkis.entrance.execute.impl.EntranceExecutorManagerImpl;
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor;
 import com.webank.wedatasphere.linkis.entrance.interceptor.impl.*;
 import com.webank.wedatasphere.linkis.entrance.log.*;
@@ -32,26 +29,29 @@ import com.webank.wedatasphere.linkis.entrance.parser.CommonEntranceParser;
 import com.webank.wedatasphere.linkis.entrance.persistence.*;
 import com.webank.wedatasphere.linkis.entrance.scheduler.EntranceGroupFactory;
 import com.webank.wedatasphere.linkis.entrance.scheduler.EntranceSchedulerContext;
-import com.webank.wedatasphere.linkis.rpc.ReceiverChooser;
+import com.webank.wedatasphere.linkis.orchestrator.ecm.EngineConnManagerBuilder;
+import com.webank.wedatasphere.linkis.orchestrator.ecm.EngineConnManagerBuilder$;
+import com.webank.wedatasphere.linkis.orchestrator.ecm.entity.Policy;
 import com.webank.wedatasphere.linkis.scheduler.Scheduler;
 import com.webank.wedatasphere.linkis.scheduler.SchedulerContext;
+import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorManager;
 import com.webank.wedatasphere.linkis.scheduler.queue.ConsumerManager;
 import com.webank.wedatasphere.linkis.scheduler.queue.GroupFactory;
 import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelConsumerManager;
 import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Configuration;
 
 import static com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration.ENTRANCE_SCHEDULER_MAX_PARALLELISM_USERS;
 
 /**
- * created by enjoyyin on 2018/10/16
  * Description:This configuration class is used to generate some singleton classes in the entity module.(该配置类用于生成entrance模块中的一些单例类)
  */
 @Configuration
+@AutoConfigureBefore({EntranceServer.class, EntranceExecutionService.class})
 public class EntranceSpringConfiguration {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -59,11 +59,7 @@ public class EntranceSpringConfiguration {
         logger.info("load the ujes-entrance spring configuration.");
     }
 
-    @EntranceParserBeanAnnotation
-    @ConditionalOnMissingBean(name = {EntranceParserBeanAnnotation.BEAN_NAME})
-    public EntranceParser generateEntranceParser(){
-        return new CommonEntranceParser();
-    }
+
 
     @PersistenceEngineBeanAnnotation
     @ConditionalOnMissingBean(name = {PersistenceEngineBeanAnnotation.BEAN_NAME})
@@ -81,12 +77,18 @@ public class EntranceSpringConfiguration {
     @ConditionalOnMissingBean(name = {PersistenceManagerBeanAnnotation.BEAN_NAME})
     public PersistenceManager generatePersistenceManager(@PersistenceEngineBeanAnnotation.PersistenceEngineAutowiredAnnotation PersistenceEngine persistenceEngine,
                                                          @ResultSetEngineBeanAnnotation.ResultSetEngineAutowiredAnnotation ResultSetEngine resultSetEngine){
+        logger.info("init PersistenceManager.");
         QueryPersistenceManager persistenceManager = new QueryPersistenceManager();
         persistenceManager.setPersistenceEngine(persistenceEngine);
         persistenceManager.setResultSetEngine(resultSetEngine);
         return persistenceManager;
     }
 
+    @EntranceParserBeanAnnotation
+    @ConditionalOnMissingBean(name = {EntranceParserBeanAnnotation.BEAN_NAME})
+    public EntranceParser generateEntranceParser(){
+        return new CommonEntranceParser();
+    }
 
     @EntranceListenerBusBeanAnnotation
     @ConditionalOnMissingBean(name = {EntranceListenerBusBeanAnnotation.BEAN_NAME})
@@ -104,7 +106,7 @@ public class EntranceSpringConfiguration {
     @EntranceInterceptorBeanAnnotation
     @ConditionalOnMissingBean(name = {EntranceInterceptorBeanAnnotation.BEAN_NAME})
     public EntranceInterceptor[] generateEntranceInterceptors() {
-        return new EntranceInterceptor[]{new CSEntranceInterceptor(),  new PythonCodeCheckInterceptor(), new DBInfoCompleteInterceptor(), new SparkCodeCheckInterceptor(),
+        return new EntranceInterceptor[]{new CSEntranceInterceptor(), new PythonCodeCheckInterceptor(), new DBInfoCompleteInterceptor(), new SparkCodeCheckInterceptor(),
                 new SQLCodeCheckInterceptor(), new VarSubstitutionInterceptor(), new LogPathCreateInterceptor(),
                 new StorePathEntranceInterceptor(), new ScalaCodeInterceptor(), new SQLLimitEntranceInterceptor(), new CommentInterceptor(),
                };
@@ -152,18 +154,18 @@ public class EntranceSpringConfiguration {
     @SchedulerContextBeanAnnotation
     @ConditionalOnMissingBean(name = {SchedulerContextBeanAnnotation.BEAN_NAME})
     public SchedulerContext generateSchedulerContext(@GroupFactoryBeanAnnotation.GroupFactoryAutowiredAnnotation GroupFactory groupFactory,
-                                                     @EntranceExecutorManagerBeanAnnotation.EntranceExecutorManagerAutowiredAnnotation EntranceExecutorManager executorManager,
+                                                     @EntranceExecutorManagerBeanAnnotation.EntranceExecutorManagerAutowiredAnnotation ExecutorManager executorManager,
                                                      @ConsumerManagerBeanAnnotation.ConsumerManagerAutowiredAnnotation ConsumerManager consumerManager) {
         return new EntranceSchedulerContext(groupFactory, consumerManager, executorManager);
     }
 
-    @EngineRequesterBeanAnnotation
+   /* @EngineRequesterBeanAnnotation
     @ConditionalOnMissingBean(name = {EngineRequesterBeanAnnotation.BEAN_NAME})
     public EngineRequester generateEngineRequester(){
         return new EngineRequesterImpl();
     }
-
-    @EngineSelectorBeanAnnotation
+*/
+  /*  @EngineSelectorBeanAnnotation
     @ConditionalOnMissingBean(name = {EngineSelectorBeanAnnotation.BEAN_NAME})
     public EngineSelector generateEngineSelector(@EntranceListenerBusBeanAnnotation.EntranceListenerBusAutowiredAnnotation
                                                              EntranceEventListenerBus<EntranceEventListener, EntranceEvent> entranceEventListenerBus) {
@@ -171,8 +173,8 @@ public class EntranceSpringConfiguration {
         singleEngineSelector.setEntranceEventListenerBus(entranceEventListenerBus);
         return singleEngineSelector;
     }
-
-    @EngineBuilderBeanAnnotation
+*/
+    /*@EngineBuilderBeanAnnotation
     @ConditionalOnMissingBean(name = {EngineBuilderBeanAnnotation.BEAN_NAME})
     public EngineBuilder generateEngineBuilder(@GroupFactoryBeanAnnotation.GroupFactoryAutowiredAnnotation GroupFactory groupFactory) {
         return new AbstractEngineBuilder(groupFactory) {
@@ -181,49 +183,39 @@ public class EntranceSpringConfiguration {
                 return new SingleEntranceEngine(id);
             }
         };
-    }
+    }*/
 
-    @EngineManagerBeanAnnotation
+   /* @EngineManagerBeanAnnotation
     @ConditionalOnMissingBean(name = {EngineManagerBeanAnnotation.BEAN_NAME})
     public EngineManager generateEngineManager() {
         return new EngineManagerImpl();
-    }
+    }*/
 
     @EntranceExecutorManagerBeanAnnotation
     @ConditionalOnMissingBean(name = {EntranceExecutorManagerBeanAnnotation.BEAN_NAME})
-    public EntranceExecutorManager generateExecutorManager(@GroupFactoryBeanAnnotation.GroupFactoryAutowiredAnnotation GroupFactory groupFactory,
-                                                   @EngineBuilderBeanAnnotation.EngineBuilderAutowiredAnnotation EngineBuilder engineBuilder,
-                                                   @EngineRequesterBeanAnnotation.EngineRequesterAutowiredAnnotation EngineRequester engineRequester,
-                                                   @EngineSelectorBeanAnnotation.EngineSelectorAutowiredAnnotation EngineSelector engineSelector,
-                                                   @EngineManagerBeanAnnotation.EngineManagerAutowiredAnnotation EngineManager engineManager,
-                                                   @Autowired EntranceExecutorRuler[] entranceExecutorRulers){
-        return new EntranceExecutorManagerImpl(groupFactory, engineBuilder,
-                engineRequester, engineSelector, engineManager, entranceExecutorRulers);
+    public ExecutorManager generateExecutorManager(@GroupFactoryBeanAnnotation.GroupFactoryAutowiredAnnotation GroupFactory groupFactory) {
+        EngineConnManagerBuilder engineConnManagerBuilder = EngineConnManagerBuilder$.MODULE$.builder();
+        engineConnManagerBuilder.setPolicy(Policy.Process);
+        return new EntranceExecutorManagerImpl(groupFactory, engineConnManagerBuilder.build());
     }
 
     @SchedulerBeanAnnotation
     @ConditionalOnMissingBean(name = {SchedulerBeanAnnotation.BEAN_NAME})
-    public Scheduler generateScheduler(@SchedulerContextBeanAnnotation.SchedulerContextAutowiredAnnotation SchedulerContext schedulerContext){
+    public Scheduler generateScheduler(@SchedulerContextBeanAnnotation.SchedulerContextAutowiredAnnotation SchedulerContext schedulerContext) {
         Scheduler scheduler = new ParallelScheduler(schedulerContext);
         scheduler.init();
         scheduler.start();
         return scheduler;
     }
 
-    @ReceiverChooserBeanAnnotation
-    @ConditionalOnMissingBean(name = {ReceiverChooserBeanAnnotation.BEAN_NAME})
-    public ReceiverChooser generateEntranceReceiverChooser(@EntranceContextBeanAnnotation.EntranceContextAutowiredAnnotation
-                                                   EntranceContext entranceContext) {
-        return new EntranceReceiverChooser(entranceContext);
-    }
 
     @BackGroundServiceBeanAnnotation
     @ConditionalOnMissingBean(name = {BackGroundServiceBeanAnnotation.BEAN_NAME})
-    public BackGroundService[] generateBackGroundService(){
+    public BackGroundService[] generateBackGroundService() {
         return new BackGroundService[]{};
     }
 
-    @NewEngineBroadcastListenerBeanAnnotation
+  /*  @NewEngineBroadcastListenerBeanAnnotation
     @ConditionalOnMissingBean(name = {NewEngineBroadcastListenerBeanAnnotation.BEAN_NAME})
     public NewEngineBroadcastListener generateNewEngineBroadcastListener(@EntranceExecutorManagerBeanAnnotation.EntranceExecutorManagerAutowiredAnnotation
                                                                                  EntranceExecutorManager entranceExecutorManager) {
@@ -239,5 +231,5 @@ public class EntranceSpringConfiguration {
         ResponseEngineStatusChangedBroadcastListener broadcastListener = new ResponseEngineStatusChangedBroadcastListener();
         broadcastListener.setEntranceExecutorManager(entranceExecutorManager);
         return broadcastListener;
-    }
+    }*/
 }

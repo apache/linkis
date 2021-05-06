@@ -15,10 +15,6 @@
  */
 package com.webank.wedatasphere.linkis.bml.vo;
 
-/**
- * created by cooperyang on 2019/5/29
- * Description:
- */
 public class ResourceVO {
     private String user;
     private String resourceId;

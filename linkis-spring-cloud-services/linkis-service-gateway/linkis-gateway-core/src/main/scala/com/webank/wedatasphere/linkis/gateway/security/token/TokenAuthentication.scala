@@ -28,9 +28,6 @@ import com.webank.wedatasphere.linkis.server.Message
 import org.apache.commons.io.{FileUtils, IOUtils}
 import org.apache.commons.lang.StringUtils
 
-/**
-  * created by enjoyyin on 2019/10/4.
-  */
 object TokenAuthentication extends Logging {
 
   private val (props, file) = if(ENABLE_TOKEN_AUTHENTICATION.getValue)
@@ -73,19 +70,11 @@ object TokenAuthentication extends Logging {
       SecurityFilter.filterResponse(gatewayContext, message)
       return false
     }
-    var token = "";
-    var tokenUser = "";
-    val requestHeaders = gatewayContext.getRequest.getHeaders
-    if (requestHeaders.containsKey(TOKEN_KEY) && requestHeaders.containsKey(TOKEN_USER_KEY)) {
-      token = requestHeaders.get(TOKEN_KEY)(0)
-      tokenUser = requestHeaders.get(TOKEN_USER_KEY)(0)
-    }
+    var token = gatewayContext.getRequest.getHeaders.get(TOKEN_KEY)(0)
+    var tokenUser = gatewayContext.getRequest.getHeaders.get(TOKEN_USER_KEY)(0)
     if(StringUtils.isBlank(token) || StringUtils.isBlank(tokenUser)) {
-      val cookies = gatewayContext.getRequest.getCookies
-      if (cookies.containsKey(TOKEN_KEY) && cookies.containsKey(TOKEN_USER_KEY)) {
-        token = cookies.get(TOKEN_KEY)(0).getValue
-        tokenUser = cookies.get(TOKEN_USER_KEY)(0).getValue
-      }
+      token = gatewayContext.getRequest.getCookies.get(TOKEN_KEY)(0).getValue
+      tokenUser = gatewayContext.getRequest.getCookies.get(TOKEN_USER_KEY)(0).getValue
       if(StringUtils.isBlank(token) || StringUtils.isBlank(tokenUser)) {
         val message = Message.noLogin(s"请在Header或Cookie中同时指定$TOKEN_KEY 和 $TOKEN_USER_KEY，以便完成token认证！") << gatewayContext.getRequest.getRequestURI
         SecurityFilter.filterResponse(gatewayContext, message)

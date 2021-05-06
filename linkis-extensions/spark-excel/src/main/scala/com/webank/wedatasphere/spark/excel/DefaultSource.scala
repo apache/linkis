@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.webank.wedatasphere.spark.excel
 
 import org.apache.hadoop.fs.Path
@@ -35,7 +51,8 @@ class DefaultSource extends RelationProvider with SchemaRelationProvider with Cr
       maxRowsInMemory = parameters.get("maxRowsInMemory").map(_.toInt),
       excerptSize = parameters.get("excerptSize").fold(10)(_.toInt),
       parameters = parameters,
-      dateFormat = parameters.get("dateFormats").getOrElse("yyyy-MM-dd").split(";").toList
+      dateFormat = parameters.get("dateFormats").getOrElse("yyyy-MM-dd").split(";").toList,
+      indexes = parameters.getOrElse("indexes","-1").split(",").map(_.toInt)
     )(sqlContext)
   }
 
@@ -50,6 +67,10 @@ class DefaultSource extends RelationProvider with SchemaRelationProvider with Cr
     val useHeader = checkParameter(parameters, "useHeader").toBoolean
     val dateFormat = parameters.getOrElse("dateFormat", ExcelFileSaver.DEFAULT_DATE_FORMAT)
     val timestampFormat = parameters.getOrElse("timestampFormat", ExcelFileSaver.DEFAULT_TIMESTAMP_FORMAT)
+    val exportNullValue = parameters.getOrElse("exportNullValue","SHUFFLEOFF") match {
+      case "BLANK" =>""
+      case s:String =>s
+    }
     val filesystemPath = new Path(path)
     val fs = filesystemPath.getFileSystem(sqlContext.sparkContext.hadoopConfiguration)
     fs.setWriteChecksum(false)
@@ -75,7 +96,8 @@ class DefaultSource extends RelationProvider with SchemaRelationProvider with Cr
         sheetName = sheetName,
         useHeader = useHeader,
         dateFormat = dateFormat,
-        timestampFormat = timestampFormat
+        timestampFormat = timestampFormat,
+        exportNullValue = exportNullValue
       )
     }
 

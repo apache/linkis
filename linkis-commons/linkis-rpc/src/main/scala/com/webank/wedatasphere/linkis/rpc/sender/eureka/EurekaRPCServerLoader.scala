@@ -16,7 +16,6 @@
 
 package com.webank.wedatasphere.linkis.rpc.sender.eureka
 
-import com.netflix.loadbalancer.{DynamicServerListLoadBalancer, ILoadBalancer}
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.rpc.conf.RPCConfiguration
@@ -25,9 +24,7 @@ import org.springframework.cloud.netflix.eureka.EurekaDiscoveryClient.EurekaServ
 
 import scala.concurrent.duration.Duration
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 class EurekaRPCServerLoader extends AbstractRPCServerLoader {
 
   override def refreshAllServers(): Unit = Utils.tryAndWarn(EurekaClientRefreshUtils().refreshEurekaClient())

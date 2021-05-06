@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
-
 package com.webank.wedatasphere.linkis.ujes.client.response
 
 import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 @DWSHttpMessageResult("/api/rest_j/v\\d+/entrance/(\\S+)/status")
 class JobStatusResult extends UJESJobResult with Status {
 

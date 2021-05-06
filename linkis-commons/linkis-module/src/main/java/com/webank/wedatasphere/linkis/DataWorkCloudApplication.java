@@ -32,6 +32,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
@@ -102,6 +103,9 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
                 application.addListeners((ApplicationListener<?>) Class.forName(listener).newInstance());
             }
         }
+        if("true".equals(ServerConfiguration.IS_GATEWAY().getValue())){
+            application.setWebApplicationType(WebApplicationType.REACTIVE);
+        }
         applicationContext = application.run(args);
     }
 
@@ -138,9 +142,9 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
     private static void initDWCApplication() {
         serviceInstance = new ServiceInstance();
         serviceInstance.setApplicationName(applicationContext.getEnvironment().getProperty("spring.application.name"));
-        serviceInstance.setInstance(Utils.getLocalHostname() + ":" + applicationContext.getEnvironment().getProperty("server.port"));
+        serviceInstance.setInstance(Utils.getComputerName() + ":" + applicationContext.getEnvironment().getProperty("server.port"));
         DWCException.setApplicationName(serviceInstance.getApplicationName());
-        DWCException.setHostname(Utils.getLocalHostname());
+        DWCException.setHostname(Utils.getComputerName());
         DWCException.setHostPort(Integer.parseInt(applicationContext.getEnvironment().getProperty("server.port")));
     }
 
@@ -173,7 +177,6 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
     public WebServerFactoryCustomizer<JettyServletWebServerFactory> jettyFactoryCustomizer() {
         return new WebServerFactoryCustomizer<JettyServletWebServerFactory>() {
             public void customize(JettyServletWebServerFactory jettyServletWebServerFactory) {
-                jettyServletWebServerFactory.getJsp().setRegistered(false);
                 jettyServletWebServerFactory.addServerCustomizers(new JettyServerCustomizer() {
                     public void customize(Server server) {
                         Handler[] childHandlersByClass = server.getChildHandlersByClass(WebAppContext.class);

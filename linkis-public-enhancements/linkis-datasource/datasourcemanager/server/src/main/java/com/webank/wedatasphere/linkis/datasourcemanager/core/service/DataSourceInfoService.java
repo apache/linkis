@@ -21,11 +21,6 @@ import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceVo;
 
 import java.util.List;
 
-
-/**
- * @author davidhua
- * 2020/02/13
- */
 public interface DataSourceInfoService {
 
     /**

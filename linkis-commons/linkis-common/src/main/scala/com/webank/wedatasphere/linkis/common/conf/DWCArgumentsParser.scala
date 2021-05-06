@@ -18,14 +18,14 @@ package com.webank.wedatasphere.linkis.common.conf
 
 import org.apache.commons.lang.StringUtils
 
-import scala.collection.{JavaConversions, mutable}
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.{JavaConversions, mutable}
 
 /**
   * Created by enjoyyin on 2018/9/26.
   */
 object DWCArgumentsParser {
-  protected val DWC_CONF = "--dwc-conf"
+  protected val DWC_CONF = "--engineconn-conf"
   protected val SPRING_CONF = "--spring-conf"
   private var dwcOptionMap = Map.empty[String, String]
 

@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,43 +14,29 @@
 package com.webank.wedatasphere.linkis.entrance.conf
 
 import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 
-/**
-  * Created by enjoyyin on 2018/9/10.
-  */
+
 object EntranceConfiguration {
 
   val ENTRANCE_SCHEDULER_MAX_PARALLELISM_USERS = CommonVars("wds.linkis.entrance.scheduler.maxParallelismUsers", new Integer(1000))
   val ENTRANCE_LISTENER_BUS_EVENT_QUEUE_CAPACITY = CommonVars("wds.linkis.entrance.listenerBus.queue.capacity", new Integer(5000))
 
   val JOB_MAX_PERSIST_WAIT_TIME = CommonVars("wds.linkis.entrance.job.persist.wait.max", new TimeType("5m"))
-  val JOB_STATUS_HEARTBEAT_TIME = CommonVars("wds.linkis.entrance.job.heartbeat", new TimeType("2m"))
-  val ENGINE_STATUS_HEARTBEAT_TIME = CommonVars("wds.linkis.entrance.engine.heartbeat", new TimeType("2m"))
-  val ENGINE_LIST_FRESH_INTERVAL = CommonVars("wds.linkis.entrance.engine.fresh.interval", new TimeType("2m"))
-  val UN_HEALTH_ENGINE_SCAN_TIME = CommonVars("wds.linkis.entrance.un-health.engine.scan.interval", new TimeType("5m"))
-  val ENGINE_LOCK_SCAN_TIME = CommonVars("wds.linkis.entrance.engine-lock.scan.time", new TimeType("1m"))
 
-  val ENGINE_MANAGER_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.enginemanager.application.name", "")
-  val ENGINE_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.engine.application.name", "")
+  val MULTI_ENTRANCE_CONDITION = CommonVars("wds.linkis.entrance.multi.entrance.flag", true)
 
-  val ENGINE_LOCK_MAX_HOLDER_TIME = CommonVars("wds.linkis.engine.lock.timeout", new TimeType("2m"))
-  val ENGINE_CREATE_MAX_WAIT_TIME = CommonVars("wds.linkis.engine.creation.wait.time.max", new TimeType("2m"))
-
-  val CONCURRENT_ENGINE_MAX_PARALLELISM = CommonVars("wds.linkis.entrance.engine.maxParallelismJobs", new Integer(5))
-
-  val RESULT_SET_STORE_PATH = CommonVars("wds.linkis.resultSet.store.path", "")
+  val RESULT_SET_STORE_PATH = CommonVars("wds.linkis.resultSet.store.path", CommonVars[String]("wds.linkis.filesystem.hdfs.root.path").getValue)
 
   /**
     * QUERY_PERSISTENCE_SPRING_APPLICATION_NAME is the name of the application that represents the query module in springcloud
     * QUERY_PERSISTENCE_SPRING_APPLICATION_NAME 是表示query模块在springcloud中的应用名称
     */
-  val QUERY_PERSISTENCE_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.query.application.name", "cloud-publicservice")
+  val QUERY_PERSISTENCE_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.query.application.name", "linkis-ps-publicservice")
   /**
     * DEFAULT_LOGPATH_PREFIX is the prefix that represents the default log storage path
     * DEFAULT_LOGPATH_PREFIX 是表示默认的日志存储路径的前缀
     */
-  val DEFAULT_LOGPATH_PREFIX = CommonVars("wds.linkis.entrance.config.logPath", "file:///" + ServerConfiguration.BDP_SERVER_HOME.getValue + "/logs/applications/")
+  val DEFAULT_LOGPATH_PREFIX = CommonVars[String]("wds.linkis.entrance.config.log.path", CommonVars[String]("wds.linkis.filesystem.hdfs.root.path").getValue)
   /**
     * Default_Cache_Max is used to specify the size of the LoopArray of the CacheLogWriter
     * Default_Cache_Max 是用来指定CacheLogWriter的LoopArray的大小
@@ -68,8 +51,8 @@ object EntranceConfiguration {
     * The application name of the console module in spring-cloud
     * console 模块在spring-cloud中的应用名称
     */
-  val CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.console.configuration.application.name", "cloud-publicservice")
-  val CLOUD_CONSOLE_VARIABLE_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.console.variable.application.name", "cloud-publicservice")
+  val CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.console.configuration.application.name", "linkis-ps-publicservice")
+  val CLOUD_CONSOLE_VARIABLE_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.console.variable.application.name", "linkis-ps-publicservice")
   /**
     * The logPath in the console module returns the key in the map.
     * console 模块中logPath在返回map中的key
@@ -84,6 +67,8 @@ object EntranceConfiguration {
     * runType
     */
   val DEFAULT_RUN_TYPE = CommonVars("wds.linkis.default.runType", "sql")
+
+  val DEFAULT_CREATE_SERVICE = CommonVars("wds.linkis.default.create.service", "dss")
 
   val LOG_WARN_EXCLUDE = CommonVars("wds.linkis.warn.log.exclude", "org.apache,hive.ql,hive.metastore,com.netflix,com.webank.wedatasphere")
 
@@ -131,15 +116,42 @@ object EntranceConfiguration {
 
   val HIVE_PRINT_INFO_LOG = CommonVars("wds.linkis.hive.printinfo.log", "printInfo -")
 
+  val DATAMAP_APPID = CommonVars("wds.linkis.entrance.datawmap.appid", "75116e6f690e6d222fb55f2dd6f9cb5a")
 
+  val DATAMAP_APPTOKEN = CommonVars("wds.linkis.entrance.datamap.apptoken",
+    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiJjb29wZXJ5YW5nIiwiYXBwa2V5IjoiNzUxMTZlNmY2OTBlNmQyMjJmYjU1ZjJkZDZmOWNiNWEiLCJpYXQiOjE1NzE4MTQxOTYzNDZ9.JfjvsiNMWSc1RnQh1k7vsNjwp4YRquT_XXbYmlEgBgc")
+
+
+  val DATA_MAP_IP = CommonVars("wds.linkis.entrance.datamap.ip", "")
+
+  //val DATA_MAP_PORT = CommonVars("wds.linkis.entrance.datamap.port", "8122")
+  val DATA_MAP_PORT = CommonVars("wds.linkis.entrance.datamap.port", "9001")
 
   val IS_BDP_ENV = CommonVars("wds.linkis.entrance.bdp.env", "true")
 
 
+  val SHELL_DANGER_CHECK_SWITCH = CommonVars("wds.linkis.entrance.shell.danger.check.enabled", false)
   val SHELL_DANGER_USAGE = CommonVars("wds.linkis.shell.danger.usage", "rm,sh,find,kill,python,for,source,hdfs,hadoop,spark-sql,spark-submit,pyspark,spark-shell,hive,yarn")
   val SHELL_WHITE_USAGE = CommonVars("wds.linkis.shell.white.usage", "cd,ls")
 
   val FLOW_EXECUTION_CREATOR = CommonVars("wds.linkis.entrance.flow.creator", "nodeexecution")
 
   val SCHEDULER_CREATOR = CommonVars("wds.linkis.entrance.scheduler.creator", "scheduler")
+
+
+  val IS_QML = CommonVars("wds.linkis.entrance.is.qml", false)
+
+  val PROGRESS_PUSH = CommonVars[String]("wds.linkis.entrance.push.progress", "false")
+
+  val CONCURRENT_FACTORY_MAX_CAPACITY = CommonVars("wds.linkis.concurrent.group.factory.capacity", 1000)
+
+  val CONCURRENT_MAX_RUNNING_JOBS = CommonVars("wds.linkis.concurrent.group.factory.running.jobs", 30)
+
+  val CONCURRENT_EXECUTOR_TIME = CommonVars("wds.linkis.concurrent.group.factory.executor.time", 5 * 60 * 1000)
+
+  val ENGINE_MANAGER_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.enginemanager.application.name", "linkis-cg-engineconnmanager")
+
+  val ENTRANCE_ENGINE_LASTUPDATE_TIMEOUT = CommonVars("wds.linkis.entrance.engine.lastupdate.timeout", new TimeType("5s"))
+  val ENTRANCE_ENGINE_ACTIVITY_TIMEOUT = CommonVars("wds.linkis.entrance.engine.timeout", new TimeType("10s"))
+  val ENTRANCE_ENGINE_ACTIVITY_MONITOR_INTERVAL = CommonVars("wds.linkis.entrance.engine.activity_monitor.interval", new TimeType("3s"))
 }

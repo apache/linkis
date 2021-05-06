@@ -19,9 +19,6 @@ import com.webank.wedatasphere.linkis.bml.Entity.Version;
 
 import java.util.List;
 
-/**
- * Created by cooperyang on 2019/5/16.
- */
 public class ResourceVersionsVO {
 
     private String resourceId;

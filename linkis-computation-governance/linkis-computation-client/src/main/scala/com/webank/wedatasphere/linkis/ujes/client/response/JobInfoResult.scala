@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,9 +11,6 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
 
 package com.webank.wedatasphere.linkis.ujes.client.response
 
@@ -24,17 +18,14 @@ import java.util
 import java.util.Date
 
 import com.webank.wedatasphere.linkis.common.utils.Utils
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
 import com.webank.wedatasphere.linkis.ujes.client.UJESClient
 import com.webank.wedatasphere.linkis.ujes.client.exception.UJESJobException
 import com.webank.wedatasphere.linkis.ujes.client.request.{ResultSetListAction, UserAction}
 import org.apache.commons.beanutils.BeanUtils
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 @DWSHttpMessageResult("/api/rest_j/v\\d+/jobhistory/\\S+/get")
 class JobInfoResult extends DWSResult with UserAction with Status {
 

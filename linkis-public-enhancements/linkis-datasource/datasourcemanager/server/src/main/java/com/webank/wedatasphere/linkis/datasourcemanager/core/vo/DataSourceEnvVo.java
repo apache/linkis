@@ -14,10 +14,6 @@
 package com.webank.wedatasphere.linkis.datasourcemanager.core.vo;
 
 
-/**
- * @author georgeqiao
- * 2020/02/11
- */
 public class DataSourceEnvVo extends PageViewVo{
 
     private String envName;

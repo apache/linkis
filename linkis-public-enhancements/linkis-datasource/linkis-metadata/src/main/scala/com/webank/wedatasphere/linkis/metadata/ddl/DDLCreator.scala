@@ -29,7 +29,7 @@ trait SQLConst{
 
   val COMMENT:String = "comment"
 
-  val CREATE_TABLE = "create table "
+  val CREATE_TABLE = "create table if not exists "
 
   val PARTITIONED_BY = "partitioned by"
 

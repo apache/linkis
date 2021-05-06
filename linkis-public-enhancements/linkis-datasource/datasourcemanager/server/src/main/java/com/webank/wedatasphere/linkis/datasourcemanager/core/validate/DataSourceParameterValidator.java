@@ -24,12 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author georgeqiao
- * 2020/02/11
- */
-
-
 @Component
 public class DataSourceParameterValidator implements ParameterValidator {
     @PostConstruct

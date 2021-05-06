@@ -16,26 +16,47 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue
 
-import java.util.concurrent.ExecutorService
+import java.util.concurrent.{ExecutorService, TimeUnit}
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.scheduler.conf.SchedulerConfiguration
 import com.webank.wedatasphere.linkis.scheduler.listener.ConsumerListener
 import com.webank.wedatasphere.linkis.scheduler.queue._
 import com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue.FIFOUserConsumer
 
 import scala.collection.mutable
 
-/**
-  * Created by enjoyyin on 2018/9/11.
-  */
-class ParallelConsumerManager(maxParallelismUsers: Int)extends  ConsumerManager{
+
+class ParallelConsumerManager(maxParallelismUsers: Int) extends  ConsumerManager with Logging{
 
   private val UJES_CONTEXT_CONSTRUCTOR_LOCK = new Object()
+
+  private val CONSUMER_LOCK = new Object()
+
   private var consumerListener: Option[ConsumerListener] = None
 
   private var executorService: ExecutorService = _
 
   private val consumerGroupMap = new mutable.HashMap[String, FIFOUserConsumer]()
+
+  /**
+    * Clean up idle consumers regularly
+    */
+  if (SchedulerConfiguration.FIFO_CONSUMER_AUTO_CLEAR_ENABLED.getValue) {
+    info("The feature that auto  Clean up idle consumers is enabled ")
+    Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
+      override def run(): Unit = CONSUMER_LOCK.synchronized {
+        info("Start to Clean up idle consumers ")
+        val nowTime = System.currentTimeMillis()
+        consumerGroupMap.values.filter(_.isIdle)
+          .filter(consumer => nowTime - consumer.getLastTime > SchedulerConfiguration.FIFO_CONSUMER_MAX_IDLE_TIME)
+          .foreach(consumer => destroyConsumer(consumer.getGroup.getGroupName))
+        info(s"Finished to Clean up idle consumers,cost ${System.currentTimeMillis() - nowTime} ms ")
+      }
+    },
+      SchedulerConfiguration.FIFO_CONSUMER_IDLE_SCAN_INIT_TIME.getValue.toLong,
+      SchedulerConfiguration.FIFO_CONSUMER_IDLE_SCAN_INTERVAL.getValue.toLong, TimeUnit.MILLISECONDS)
+  }
 
   override def setConsumerListener(consumerListener: ConsumerListener) = {
     this.consumerListener = Some(consumerListener)
@@ -49,7 +70,8 @@ class ParallelConsumerManager(maxParallelismUsers: Int)extends  ConsumerManager{
       executorService
   }
 
-  override def getOrCreateConsumer(groupName: String) = if(consumerGroupMap.contains(groupName)) consumerGroupMap(groupName)
+  override def getOrCreateConsumer(groupName: String) = CONSUMER_LOCK.synchronized {
+    val consumer = if (consumerGroupMap.contains(groupName)) consumerGroupMap(groupName)
     else UJES_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
       consumerGroupMap.getOrElse(groupName, {
         val newConsumer = createConsumer(groupName)
@@ -61,6 +83,9 @@ class ParallelConsumerManager(maxParallelismUsers: Int)extends  ConsumerManager{
         newConsumer.start()
         newConsumer
       })
+    }
+    consumer.setLastTime(System.currentTimeMillis())
+    consumer
   }
 
   override protected def createConsumer(groupName: String) = {
@@ -73,6 +98,7 @@ class ParallelConsumerManager(maxParallelismUsers: Int)extends  ConsumerManager{
       tmpConsumer.shutdown()
       consumerGroupMap.remove(groupName)
       consumerListener.foreach(_.onConsumerDestroyed(tmpConsumer))
+      warn(s"Consumer of  group ($groupName) is destroyed")
     }
 
   override def shutdown() = {

@@ -26,3 +26,4 @@ import com.webank.wedatasphere.linkis.common.exception.ErrorException
   * Created by enjoyyin on 2019/5/21.
   */
 class HttpMessageParseException(errorDesc: String) extends ErrorException(10900, errorDesc)
+class HttpMethodNotSupportException(errorDesc: String) extends ErrorException(10902, errorDesc)

@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
-
 package com.webank.wedatasphere.linkis.ujes.client.request
 
 import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.httpclient.request.GetAction
 import com.webank.wedatasphere.linkis.ujes.client.exception.UJESClientBuilderException
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 class ResultSetAction private() extends GetAction with UJESJobAction {
   override def suffixURLs: Array[String] = Array("filesystem", "openFile")
 }

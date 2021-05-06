@@ -26,10 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @author davidhua
- * 2020/02/14
- */
 public class SqlConnection implements Closeable {
 
     private static final Logger LOG = LoggerFactory.getLogger(SqlConnection.class);

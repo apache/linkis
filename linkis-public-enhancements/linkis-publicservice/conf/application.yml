@@ -1,20 +1,15 @@
 server:
-  port: 9002
+  port: 9105
 spring:
   application:
-    name: cloud-publicservice
+    name: linkis-ps-publicservice
 
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: ${eurekaurl}
-    registry-fetch-interval-seconds: 30
+      defaultZone: http://127.0.0.1:20303/eureka/
   instance:
-    lease-renewal-interval-in-second: 5
-    lease-expiration-duration-in-second: 10
-    prefer-ip-address: true
-    instance-id: ${spring.cloud.client.ip-address}:${server.port}
     metadata-map:
       test: wedatasphere
 
@@ -31,3 +26,7 @@ pagehelper:
   reasonable: true
   support-methods-arguments: true
   params: countSql
+
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000

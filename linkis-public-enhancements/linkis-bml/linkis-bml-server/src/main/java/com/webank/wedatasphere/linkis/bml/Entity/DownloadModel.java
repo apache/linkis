@@ -17,10 +17,6 @@ package com.webank.wedatasphere.linkis.bml.Entity;
 
 import java.util.Date;
 
-/**
- * created by cooperyang on 2019/5/30
- * Description:
- */
 public class DownloadModel {
     private int id;
     private Date startTime;

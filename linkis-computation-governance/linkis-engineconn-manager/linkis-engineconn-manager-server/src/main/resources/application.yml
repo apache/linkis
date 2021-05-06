@@ -1,0 +1,29 @@
+server:
+  port: 9102
+spring:
+  application:
+    name: linkis-cg-engineconnmanager
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:20303/eureka/
+  instance:
+    metadata-map:
+      test: wedatasphere
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info
+  health:
+    db:
+      enabled: false
+logging:
+  config: classpath:log4j2.xml
+
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000

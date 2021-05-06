@@ -17,8 +17,6 @@ import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource
 
 /**
  * Parameter validate strategy
- * @author georgeqiao
- * 2020/02/11
  */
 public interface ParameterValidateStrategy {
     /**

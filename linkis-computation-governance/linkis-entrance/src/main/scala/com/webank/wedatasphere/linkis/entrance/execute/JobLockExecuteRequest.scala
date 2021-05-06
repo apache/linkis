@@ -16,15 +16,15 @@
 
 package com.webank.wedatasphere.linkis.entrance.execute
 
-/**
-  * Created by enjoyyin on 2018/9/15.
-  */
+import com.webank.wedatasphere.linkis.manager.label.entity.Label
+
+
 trait ReconnectExecuteRequest {
   val execId: String
 }
 
-trait LockExecuteRequest {
-  val lock: String
+trait LabelExecuteRequest {
+  val labels: java.util.List[Label[_]]
 }
 
 trait StorePathExecuteRequest {

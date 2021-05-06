@@ -19,14 +19,13 @@ package com.webank.wedatasphere.linkis.scheduler.executer
 import java.io.Closeable
 
 import com.webank.wedatasphere.linkis.protocol.engine.EngineState
-import com.webank.wedatasphere.linkis.protocol.engine.EngineState.EngineState
 
-/**
-  * Created by enjoyyin on 2018/8/31.
-  */
+
 trait Executor extends Closeable {
+
   def getId: Long
   def execute(executeRequest: ExecuteRequest): ExecuteResponse
+
   def state: ExecutorState.ExecutorState
 
   def getExecutorInfo: ExecutorInfo
@@ -41,7 +40,9 @@ object ExecutorState {
   val Dead = EngineState.Dead
   val Success = EngineState.Success
 
-  def apply(x: Int): ExecutorState = EngineState(x)
+  def apply(x: Int): ExecutorState = EngineState.values()(x)
+
   def isCompleted(state: ExecutorState) = EngineState.isCompleted(state.asInstanceOf[EngineState])
+
   def isAvailable(state: ExecutorState) = EngineState.isAvailable(state.asInstanceOf[EngineState])
 }

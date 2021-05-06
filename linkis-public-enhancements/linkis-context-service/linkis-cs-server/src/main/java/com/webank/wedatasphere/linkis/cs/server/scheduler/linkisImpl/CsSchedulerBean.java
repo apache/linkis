@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -25,15 +25,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-/**
- * Created by patinousward on 2020/2/18.
- */
+
 @Configuration
-@Import(CsExecutorManager.class)
+@Import(CsExecutorExecutionManager.class)
 public class CsSchedulerBean {
 
     @Bean
-    public SchedulerContext getSchedulerContext(CsExecutorManager csExecutorManager) {
+    public SchedulerContext getSchedulerContext(CsExecutorExecutionManager csExecutorManager) {
         return new ParallelSchedulerContextImpl(3000) {
             @Override
             public ExecutorManager getOrCreateExecutorManager() {

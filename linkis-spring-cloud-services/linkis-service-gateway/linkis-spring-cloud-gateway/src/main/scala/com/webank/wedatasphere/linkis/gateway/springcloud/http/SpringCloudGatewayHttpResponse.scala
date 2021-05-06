@@ -25,12 +25,9 @@ import org.reactivestreams.Publisher
 import org.springframework.http.server.reactive.{AbstractServerHttpResponse, ServerHttpResponse}
 import org.springframework.http.{HttpStatus, ResponseCookie}
 import reactor.core.publisher.{Flux, Mono}
-import reactor.ipc.netty.http.server.HttpServerResponse
-import reactor.ipc.netty.http.websocket.{WebsocketInbound, WebsocketOutbound}
+import reactor.netty.http.server.HttpServerResponse
+import reactor.netty.http.websocket.{WebsocketInbound, WebsocketOutbound}
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 class SpringCloudGatewayHttpResponse(response: ServerHttpResponse) extends GatewayHttpResponse {
 
   private val cachedHTTPResponseMsg = new StringBuilder

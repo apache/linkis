@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +18,7 @@ import com.webank.wedatasphere.linkis.common.utils.ByteTimeUtils;
 import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils;
 import com.webank.wedatasphere.linkis.metadata.dao.MdqDao;
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.DomainCoversionUtils;
+import com.webank.wedatasphere.linkis.metadata.domain.mdq.Tunple;
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableBO;
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableBaseInfoBO;
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableFieldsInfoBO;
@@ -83,10 +81,10 @@ public class MdqServiceImpl implements MdqService {
         mdqDao.insertTable(table);
         List<MdqTableFieldsInfoBO> tableFieldsInfo = mdqTableBO.getTableFieldsInfo();
         List<MdqField> mdqFieldList = DomainCoversionUtils.mdqTableFieldsInfoBOListToMdqFieldList(tableFieldsInfo, table.getId());
-        if(table.getPartitionTable() && table.getImport()){
+        if (table.getPartitionTable() && table.getImport()) {
             //创建表是导入,并且是分区表的话,自动去掉最后一个ds列
             List<MdqField> collect = mdqFieldList.stream().filter(f -> "ds".equals(f.getName())).collect(Collectors.toList());
-            if(collect.size() > 1){
+            if (collect.size() > 1) {
                 mdqFieldList.remove(collect.get(1));
             }
         }
@@ -220,11 +218,71 @@ public class MdqServiceImpl implements MdqService {
         } else {
             //分区表
             mdqTableStatisticInfoVO.setPartitionsNum(getPartitionsNum(tableLocation));
-            mdqTableStatisticInfoVO.setPartitions(getMdqTablePartitionStatisticInfoVO(partitions, tableLocation));
+            mdqTableStatisticInfoVO.setPartitions(getMdqTablePartitionStatisticInfoVO(partitions, ""));
         }
         return mdqTableStatisticInfoVO;
     }
 
+    @Override
+    public MdqTablePartitionStatisticInfoVO getPartitionStatisticInfo(String database, String tableName, String userName,
+                                                                      String partitionPath) throws IOException {
+        String tableLocation = getTableLocation(database, tableName);
+        logger.info("start to get partitionStatisticInfo,path:{}", tableLocation + partitionPath);
+        return create(tableLocation + partitionPath);
+    }
+
+    public static void main(String[] args) {
+        ArrayList<String> strings = new ArrayList<String>() {
+            {
+                add("year=2020/day=0605/time=004");
+                add("year=2020/day=0605");
+                add("year=2020/day=0606");
+                add("year=2019/day=0606");
+                add("year=2019/day=0605");
+                add("year=2021");
+            }
+        };
+        MdqServiceImpl mdqService = new MdqServiceImpl();
+        List<MdqTablePartitionStatisticInfoVO> mdqTablePartitionStatisticInfoVO = mdqService.getMdqTablePartitionStatisticInfoVO(strings, "");
+        System.out.println(mdqTablePartitionStatisticInfoVO);
+    }
+
+    public List<MdqTablePartitionStatisticInfoVO> getMdqTablePartitionStatisticInfoVO(List<String> partitions, String partitionPath) {
+        //part_name(year=2020/day=0605) => MdqTablePartitionStatisticInfoVO 这里只是返回name，没有相关的分区统计数据
+        ArrayList<MdqTablePartitionStatisticInfoVO> statisticInfoVOS = new ArrayList<>();
+        Map<String, List<Tunple<String, String>>> partitionsStr = partitions.stream().map(this::splitStrByFirstSlanting)
+                .filter(Objects::nonNull)//去掉null的
+                .collect(Collectors.groupingBy(Tunple::getKey));
+        partitionsStr.forEach((k, v) -> {
+            MdqTablePartitionStatisticInfoVO mdqTablePartitionStatisticInfoVO = new MdqTablePartitionStatisticInfoVO();
+            mdqTablePartitionStatisticInfoVO.setName(k);
+            String subPartitionPath = String.format("%s/%s", partitionPath, k);
+            mdqTablePartitionStatisticInfoVO.setPartitionPath(subPartitionPath);
+            List<String> subPartitions = v.stream().map(Tunple::getValue).collect(Collectors.toList());
+            List<MdqTablePartitionStatisticInfoVO> childrens = getMdqTablePartitionStatisticInfoVO(subPartitions, subPartitionPath);
+            mdqTablePartitionStatisticInfoVO.setChildrens(childrens);
+            statisticInfoVOS.add(mdqTablePartitionStatisticInfoVO);
+        });
+        return statisticInfoVOS;
+    }
+
+    /**
+     * 将分区string year=2020/day=0605/time=006 转成Tunple(year=2020,day=0605/time=006) 这种形式
+     *
+     * @param str
+     * @return
+     */
+    private Tunple<String, String> splitStrByFirstSlanting(String str) {
+        if (StringUtils.isBlank(str)) return null;
+        int index = str.indexOf("/");
+        if (index == -1) {
+            return new Tunple<>(str, null);
+        } else {
+            return new Tunple<>(str.substring(0, index), str.substring(index + 1));
+        }
+    }
+
+/*    @Deprecated
     private List<MdqTablePartitionStatisticInfoVO> getMdqTablePartitionStatisticInfoVO(List<String> partitions, String tableLocation) throws IOException {
         //partitions.sort((a,b)-> -a.compareTo(b));
         //partitions
@@ -236,7 +294,7 @@ public class MdqServiceImpl implements MdqService {
             list.add(create(fileStatuse.getPath().toString()));
         }
         return list;
-    }
+    }*/
 
     private MdqTablePartitionStatisticInfoVO create(String path) throws IOException {
         MdqTablePartitionStatisticInfoVO mdqTablePartitionStatisticInfoVO = new MdqTablePartitionStatisticInfoVO();
@@ -244,12 +302,13 @@ public class MdqServiceImpl implements MdqService {
         mdqTablePartitionStatisticInfoVO.setFileNum(getTableFileNum(path));
         mdqTablePartitionStatisticInfoVO.setPartitionSize(getTableSize(path));
         mdqTablePartitionStatisticInfoVO.setModificationTime(getTableModificationTime(path));
+        /* 移除递归。否则hdfs很慢，分区多的时候会超时
         FileStatus tableFile = getRootHdfs().getFileStatus(new Path(path));
         FileStatus[] fileStatuses = getRootHdfs().listStatus(tableFile.getPath());
         List<FileStatus> collect = Arrays.stream(fileStatuses).filter(f -> f.isDirectory()).collect(Collectors.toList());
         for (FileStatus fileStatuse : collect) {
             mdqTablePartitionStatisticInfoVO.getChildrens().add(create(fileStatuse.getPath().toString()));
-        }
+        }*/
         return mdqTablePartitionStatisticInfoVO;
     }
 

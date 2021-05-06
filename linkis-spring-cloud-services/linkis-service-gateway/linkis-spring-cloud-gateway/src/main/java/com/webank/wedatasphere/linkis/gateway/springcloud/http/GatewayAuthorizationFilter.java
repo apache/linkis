@@ -17,11 +17,14 @@
 package com.webank.wedatasphere.linkis.gateway.springcloud.http;
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
+import com.webank.wedatasphere.linkis.common.conf.CommonVars;
 import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.gateway.exception.GatewayWarnException;
 import com.webank.wedatasphere.linkis.gateway.http.BaseGatewayContext;
 import com.webank.wedatasphere.linkis.gateway.parser.GatewayParser;
 import com.webank.wedatasphere.linkis.gateway.route.GatewayRouter;
+import com.webank.wedatasphere.linkis.gateway.security.LinkisPreFilter;
+import com.webank.wedatasphere.linkis.gateway.security.LinkisPreFilter$;
 import com.webank.wedatasphere.linkis.gateway.security.SecurityFilter;
 import com.webank.wedatasphere.linkis.gateway.springcloud.SpringCloudGatewayConfiguration;
 import com.webank.wedatasphere.linkis.server.Message;
@@ -34,8 +37,10 @@ import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.support.DefaultServerRequest;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.Ordered;
+import org.springframework.core.codec.AbstractDataBufferDecoder;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
+import org.springframework.http.codec.DecoderHttpMessageReader;
 import org.springframework.http.server.reactive.AbstractServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
@@ -45,15 +50,17 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
-/**
- * created by cooperyang on 2019/1/9.
- */
 public class GatewayAuthorizationFilter extends JavaLog implements GlobalFilter, Ordered {
 
     private GatewayParser parser;
     private GatewayRouter router;
     private GatewayProperties gatewayProperties;
+
+    private final Integer MAX_BUFFER_SIZE = CommonVars.apply("wds.linkis.gateway.max.buffer.size", 128 * 1024 * 1024).getValue();
+
+    private List<LinkisPreFilter> linkisPreFilters = LinkisPreFilter$.MODULE$.getLinkisPreFilters();
 
     public GatewayAuthorizationFilter(GatewayParser parser, GatewayRouter router, GatewayProperties gatewayProperties) {
         this.parser = parser;
@@ -133,11 +140,19 @@ public class GatewayAuthorizationFilter extends JavaLog implements GlobalFilter,
 
     private Mono<Void> gatewayDeal(ServerWebExchange exchange, GatewayFilterChain chain, BaseGatewayContext gatewayContext) {
         SpringCloudGatewayHttpResponse gatewayHttpResponse = (SpringCloudGatewayHttpResponse) gatewayContext.getResponse();
+
         if(!SecurityFilter.doFilter(gatewayContext)) {
             return gatewayHttpResponse.getResponseMono();
         } else if(gatewayContext.isWebSocketRequest()) {
             return chain.filter(exchange);
         }
+
+        for (LinkisPreFilter linkisPreFilter : linkisPreFilters){
+            if (! linkisPreFilter.doFilter(gatewayContext)) {
+                return gatewayHttpResponse.getResponseMono();
+            }
+        }
+
         ServiceInstance serviceInstance;
         try {
             parser.parse(gatewayContext);
@@ -149,8 +164,11 @@ public class GatewayAuthorizationFilter extends JavaLog implements GlobalFilter,
             warn("", t);
             Message message = Message.error(t)
                     .$less$less(gatewayContext.getRequest().getRequestURI());
-            if(!gatewayContext.isWebSocketRequest()) gatewayHttpResponse.write(Message.response(message));
-            else gatewayHttpResponse.writeWebSocket(Message.response(message));
+            if (!gatewayContext.isWebSocketRequest()) {
+                gatewayHttpResponse.write(Message.response(message));
+            } else {
+                gatewayHttpResponse.writeWebSocket(Message.response(message));
+            }
             gatewayHttpResponse.sendResponse();
             return gatewayHttpResponse.getResponseMono();
         }
@@ -194,12 +212,18 @@ public class GatewayAuthorizationFilter extends JavaLog implements GlobalFilter,
         Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
         BaseGatewayContext gatewayContext = getBaseGatewayContext(exchange, route);
         if(!gatewayContext.isWebSocketRequest() && parser.shouldContainRequestBody(gatewayContext)) {
-            return new DefaultServerRequest(exchange).bodyToMono(String.class).flatMap(requestBody -> {
-                ((SpringCloudGatewayHttpRequest)gatewayContext.getRequest()).setRequestBody(requestBody);
+            DefaultServerRequest defaultServerRequest = new DefaultServerRequest(exchange);
+            defaultServerRequest.messageReaders().stream().filter(reader -> reader instanceof DecoderHttpMessageReader)
+                    .filter(httpMessageReader -> ((DecoderHttpMessageReader<?>) httpMessageReader).getDecoder() instanceof AbstractDataBufferDecoder)
+                    .forEach(httpMessageReader -> ((AbstractDataBufferDecoder<?>) ((DecoderHttpMessageReader<?>) httpMessageReader).getDecoder()).setMaxInMemorySize(MAX_BUFFER_SIZE));
+            return defaultServerRequest.bodyToMono(String.class).flatMap(requestBody -> {
+                ((SpringCloudGatewayHttpRequest) gatewayContext.getRequest()).setRequestBody(requestBody);
                 ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(request) {
                     @Override
                     public Flux<DataBuffer> getBody() {
-                        if(StringUtils.isBlank(requestBody)) return Flux.empty();
+                        if (StringUtils.isBlank(requestBody)) {
+                            return Flux.empty();
+                        }
                         DataBufferFactory bufferFactory = exchange.getResponse().bufferFactory();
                         return Flux.just(bufferFactory.wrap(requestBody.getBytes(StandardCharsets.UTF_8)));
                     }

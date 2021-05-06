@@ -29,16 +29,18 @@ import com.webank.wedatasphere.linkis.entrance.background.BackGroundService;
 import com.webank.wedatasphere.linkis.entrance.event.EntranceEvent;
 import com.webank.wedatasphere.linkis.entrance.event.EntranceEventListener;
 import com.webank.wedatasphere.linkis.entrance.event.EntranceEventListenerBus;
-import com.webank.wedatasphere.linkis.entrance.execute.EntranceExecutorManager;
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor;
 import com.webank.wedatasphere.linkis.entrance.log.LogManager;
 import com.webank.wedatasphere.linkis.entrance.persistence.PersistenceManager;
 import com.webank.wedatasphere.linkis.scheduler.Scheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 
 @EntranceContextBeanAnnotation
 public class DefaultEntranceContext extends EntranceContext {
+    private static Logger logger = LoggerFactory.getLogger(DefaultEntranceContext.class);
 
     @EntranceParserBeanAnnotation.EntranceParserAutowiredAnnotation
     private EntranceParser entranceParser;
@@ -79,11 +81,12 @@ public class DefaultEntranceContext extends EntranceContext {
     @PostConstruct
     public void init() {
         entranceParser.setEntranceContext(this);
+        logger.info("Finished init entranceParser from postConstruct end!");
         persistenceManager.setEntranceContext(this);
         logManager.setEntranceContext(this);
-        if(scheduler.getSchedulerContext().getOrCreateExecutorManager() instanceof EntranceExecutorManager) {
+       /* if(scheduler.getSchedulerContext().getOrCreateExecutorManager() instanceof EntranceExecutorManager) {
             listenerBus.addListener(((EntranceExecutorManager) scheduler.getSchedulerContext().getOrCreateExecutorManager()).getOrCreateEngineManager());
-        }
+        }*/
     }
 
     @Override

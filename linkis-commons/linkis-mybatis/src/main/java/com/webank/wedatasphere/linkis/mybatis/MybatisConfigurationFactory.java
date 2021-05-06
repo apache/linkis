@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.mybatis;
 
-import com.github.pagehelper.PageHelper;
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.github.pagehelper.PageInterceptor;
 import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.mybatis.conf.MybatisConfiguration;
@@ -59,14 +59,14 @@ public class MybatisConfigurationFactory extends JavaLog {
     // Provide SqlSeesion(提供SqlSeesion)
     @Bean(name = "sqlSessionFactory")
     @Primary
-    public SqlSessionFactory sqlSessionFactory() {
+    public MybatisSqlSessionFactoryBean sqlSessionFactory() {
         String typeAliasesPackage = MybatisConfiguration.BDP_SERVER_MYBATIS_TYPEALIASESPACKAGE.getValue();
         //Configure the mapper scan to find all mapper.xml mapping files(配置mapper的扫描，找到所有的mapper.xml映射文件)
         String mapperLocations = MybatisConfiguration.BDP_SERVER_MYBATIS_MAPPER_LOCATIONS.getValue();
         //Load the global configuration file(加载全局的配置文件)
         String configLocation = MybatisConfiguration.BDP_SERVER_MYBATIS_CONFIGLOCATION.getValue();
         try {
-            SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
+            MybatisSqlSessionFactoryBean sessionFactoryBean = new MybatisSqlSessionFactoryBean();
             sessionFactoryBean.setDataSource(dataSource);
 
             info("Mybatis typeAliasesPackage=" + typeAliasesPackage);
@@ -89,11 +89,12 @@ public class MybatisConfigurationFactory extends JavaLog {
 //            Set the location of the mybatis-config.xml configuration file(设置mybatis-config.xml配置文件位置)
             sessionFactoryBean.setConfigLocation(new DefaultResourceLoader().getResource(configLocation));
 
+
 //            Add paging plugin, print sql plugin(添加分页插件、打印sql插件)
             Interceptor[] plugins = new Interceptor[]{pageInterceptor()};
             sessionFactoryBean.setPlugins(plugins);
 
-            return sessionFactoryBean.getObject();
+            return sessionFactoryBean;
         } catch (IOException e) {
             error("mybatis resolver mapper*xml is error",e);
             return null;

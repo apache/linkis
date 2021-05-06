@@ -1,18 +1,30 @@
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.webank.wedatasphere.linkis.ujes.jdbc
 
-/**
-  * Created by leebai on 2019/8/19.
-  */
-
-import java.sql.{ResultSetMetaData, Types}
+import java.sql.ResultSetMetaData
 import java.util
 
 class UJESSQLResultSetMetaData extends ResultSetMetaData {
   private val columnNameProperties: util.HashMap[Int,String] = new util.HashMap[Int,String]()
 
-  private var dataTypeProperties: util.HashMap[Int,String] = new util.HashMap[Int,String]()
+  private val dataTypeProperties: util.HashMap[Int,String] = new util.HashMap[Int,String]()
 
-  private var commentProperties: util.HashMap[Int,String] = new util.HashMap[Int,String]()
+  private val commentProperties: util.HashMap[Int,String] = new util.HashMap[Int,String]()
 
   private[jdbc] def setColumnNameProperties(column: Int,columnName: String): Unit ={
     if(column != null && columnName != null){
@@ -40,17 +52,17 @@ class UJESSQLResultSetMetaData extends ResultSetMetaData {
     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA)
   }
 
-  override def isCaseSensitive(column: Int): Boolean = {     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA)   }
+  override def isCaseSensitive(column: Int): Boolean = true
 
-  override def isSearchable(column: Int): Boolean = {     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA)   }
+  override def isSearchable(column: Int): Boolean = true
 
-  override def isCurrency(column: Int): Boolean = {     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA)   }
+  override def isCurrency(column: Int): Boolean = true
 
-  override def isNullable(column: Int): Int = {     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA)   }
+  override def isNullable(column: Int): Int = 1
 
-  override def isSigned(column: Int): Boolean = {     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA)   }
+  override def isSigned(column: Int): Boolean = true
 
-  override def getColumnDisplaySize(column: Int): Int = {     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA)   }
+  override def getColumnDisplaySize(column: Int): Int = 1
 
   override def getColumnLabel(column: Int): String = {
     if(columnNameProperties.get(column) == null) {
@@ -64,7 +76,8 @@ class UJESSQLResultSetMetaData extends ResultSetMetaData {
 
   override def getSchemaName(column: Int): String = {     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA)   }
 
-  override def getPrecision(column: Int): Int = {     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA)   }
+  //TODO 修改该参数
+  override def getPrecision(column: Int): Int = 2147483647
 
   override def getScale(column: Int): Int = {
     columnNameProperties.size

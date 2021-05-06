@@ -20,10 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
 
-/**
- * created by cooperyang on 2019/5/23
- * Description:
- */
 public class MD5Utils {
 
     private static final char[] HEX_DIGITS = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};

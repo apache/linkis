@@ -23,10 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * @author davidhua
- * 2020/02/14
- */
 @Service
 public class DataSourceRelateServiceImpl implements DataSourceRelateService {
 

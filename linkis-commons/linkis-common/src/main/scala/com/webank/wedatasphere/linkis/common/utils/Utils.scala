@@ -284,5 +284,6 @@ object Utils extends Logging {
     }
   }
 
+  def getJvmUser: String = System.getProperty("user.name")
 
 }

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: DataWorkCloud
+    name: linkis-mg-eureka
   profiles: eureka
 
 server:
@@ -13,7 +13,7 @@ eureka:
 #    register-with-eureka: false
 #    fetch-registry: false
     serviceUrl:
-      defaultZone: http://ip:port/eureka/
+      defaultZone: http://127.0.0.1:20303/eureka/
 #  server:
 #    enableSelfPreservation: false
     enable-self-preservation: false

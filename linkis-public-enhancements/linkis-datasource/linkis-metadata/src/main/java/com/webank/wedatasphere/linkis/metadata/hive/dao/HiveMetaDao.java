@@ -20,9 +20,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
-/**
- * Created by shanhuang on 9/13/18.
- */
+
 public interface HiveMetaDao {
     String getLocationByDbAndTable(Map<String, String> map);
     List<String> getDbsByUser(String userName);

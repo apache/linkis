@@ -17,16 +17,14 @@
 package com.webank.wedatasphere.linkis.rpc.transform
 
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
-import org.json4s.{CustomSerializer, JArray, JObject}
-import org.json4s.jackson.Serialization.write
 import org.json4s.jackson.JsonMethods.parse
+import org.json4s.jackson.Serialization.write
+import org.json4s.{CustomSerializer, JArray, JObject}
 
 //TODO is now only the simplest implementation, and there is a need to optimize it later.(TODO 现在只做最简单的实现，后续有需要再优化)
-/**
-  * Created by enjoyyin on 2018/10/27.
-  */
+
 object JavaCollectionSerializer extends CustomSerializer[java.util.List[_]](implicit formats => ( {
-  case j: JArray=> BDPJettyServerHelper.gson.fromJson(write(j), classOf[java.util.List[_]])
+  case j: JArray => BDPJettyServerHelper.gson.fromJson(write(j), classOf[java.util.List[_]])
 }, {
   case list: java.util.List[_] => parse(BDPJettyServerHelper.gson.toJson(list))
 }

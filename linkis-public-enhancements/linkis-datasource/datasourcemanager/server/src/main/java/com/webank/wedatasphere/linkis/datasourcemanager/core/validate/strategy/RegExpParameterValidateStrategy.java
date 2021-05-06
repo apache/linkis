@@ -22,8 +22,6 @@ import java.util.List;
 
 /**
  * RegExpression validate strategy
- * @author georgeqiao
- * 2020/02/11
  */
 public class RegExpParameterValidateStrategy implements ParameterValidateStrategy {
 

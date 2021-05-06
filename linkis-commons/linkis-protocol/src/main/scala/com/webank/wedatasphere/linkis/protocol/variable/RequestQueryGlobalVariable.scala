@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.protocol.variable
 
 import com.webank.wedatasphere.linkis.protocol.{CacheableProtocol, RetryableProtocol}
 
-/**
-  * Created by enjoyyin on 2018/10/18.
-  */
+
 trait VariableProtocol
 
 case class RequestQueryGlobalVariable (userName:String) extends CacheableProtocol with RetryableProtocol with VariableProtocol

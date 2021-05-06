@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
 @Bean(value = EntranceExecutorManagerBeanAnnotation.BEAN_NAME)
 @Component(value = EntranceExecutorManagerBeanAnnotation.BEAN_NAME)
 public @interface EntranceExecutorManagerBeanAnnotation {
-    String BEAN_NAME = "entranceExecutorManager";
+    String BEAN_NAME = "executorManager";
     @AliasFor(annotation = Component.class)
     String value() default BEAN_NAME;
 

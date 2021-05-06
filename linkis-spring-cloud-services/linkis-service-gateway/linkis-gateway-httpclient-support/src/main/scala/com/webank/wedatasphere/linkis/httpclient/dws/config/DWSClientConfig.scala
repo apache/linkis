@@ -23,9 +23,6 @@ import com.webank.wedatasphere.linkis.httpclient.loadbalancer.LoadBalancerStrate
 
 import scala.concurrent.duration.TimeUnit
 
-/**
-  * created by cooperyang on 2019/5/27.
-  */
 class DWSClientConfig private[config](serverUrl: String, discoveryEnabled: Boolean, discoveryPeriod: Long, discoveryTimeUnit: TimeUnit,
                                        loadbalancerEnabled: Boolean, loadbalancerStrategy: LoadBalancerStrategy, authenticationStrategy: AuthenticationStrategy,
                                        connectTimeout: Long, readTimeout: Long, maxConnection: Int, retryEnabled: Boolean, retryHandler: RetryHandler,

@@ -17,22 +17,21 @@
 package com.webank.wedatasphere.linkis.entrance.interceptor.impl
 
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 
 /**
-  * created by enjoyyin on 2018/10/19
   * Description: LimitEntranceInterceptor Interceptors are used to set certain restrictions(拦截器用于对某些限制的设定)
   */
 class SQLLimitEntranceInterceptor extends EntranceInterceptor {
   override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = {
     task match {
-      case requestPersistTask:RequestPersistTask => requestPersistTask.getEngineType.toLowerCase() match {
-        case "hql" | "sql" | "jdbc"|"hive" | "psql" | "essql" => val executionCode = requestPersistTask.getExecutionCode
+      case requestPersistTask: RequestPersistTask => requestPersistTask.getEngineType.toLowerCase() match {
+        case "hql" | "sql" | "jdbc" | "hive" => val executionCode = requestPersistTask.getExecutionCode
           SQLExplain.dealSQLLimit(executionCode, requestPersistTask, logAppender)
         case _ =>
       }
-      requestPersistTask
+        requestPersistTask
       case _ => task
     }
   }

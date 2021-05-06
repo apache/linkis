@@ -16,26 +16,36 @@
 
 package com.webank.wedatasphere.linkis.gateway.security
 
+import java.io.File
 import java.util.Properties
 import java.util.concurrent.TimeUnit
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration._
+import org.apache.commons.io.{FileUtils, IOUtils}
 import org.apache.commons.lang.StringUtils
 
 object ProxyUserUtils extends Logging {
 
-  private val props = new Properties
-  if(ENABLE_PROXY_USER.getValue){
+  private val (props, file) = if(ENABLE_PROXY_USER.getValue)
+    (new Properties, new File(this.getClass.getClassLoader.getResource(PROXY_USER_CONFIG.getValue).toURI.getPath))
+  else (null, null)
+  private var lastModified = 0l
+
+  if(ENABLE_PROXY_USER.getValue) {
     Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
-      override def run(): Unit = {
-        info("loading proxy users.")
-        val newProps = new Properties
-        newProps.load(this.getClass.getResourceAsStream(PROXY_USER_CONFIG.getValue))
-        props.clear()
-        props.putAll(newProps)
-      }
-    }, 0, PROXY_USER_SCAN_INTERVAL.getValue, TimeUnit.MILLISECONDS)
+      override def run(): Unit = Utils.tryAndError(init())
+    }, PROXY_USER_SCAN_INTERVAL.getValue, PROXY_USER_SCAN_INTERVAL.getValue, TimeUnit.MILLISECONDS)
+    init()
+  }
+
+  private def init(): Unit = if(file.lastModified() > lastModified) {
+    lastModified = file.lastModified()
+    info(s"loading proxy authentication file $file.")
+    val newProps = new Properties
+    val input = FileUtils.openInputStream(file)
+    Utils.tryFinally(newProps.load(input))(IOUtils.closeQuietly(input))
+    props.putAll(newProps)
   }
 
   def getProxyUser(umUser: String): String = if(ENABLE_PROXY_USER.getValue) {
@@ -45,5 +55,19 @@ object ProxyUserUtils extends Logging {
       proxyUser
     }
   } else umUser
+
+  def validate(proxyUser: String, token: String) : Boolean = {
+    if(!ENABLE_PROXY_USER.getValue){
+      return false
+    }
+    val allowedUsers = props.getProperty(token)
+    if(StringUtils.isBlank(allowedUsers)){
+      return false;
+    }
+    if("*".equals(allowedUsers)){
+      return true;
+    }
+    return allowedUsers.split(",").contains(proxyUser)
+  }
 
 }

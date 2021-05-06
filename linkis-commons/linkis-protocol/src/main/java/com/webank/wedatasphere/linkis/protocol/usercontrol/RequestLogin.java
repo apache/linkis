@@ -17,9 +17,7 @@
 package com.webank.wedatasphere.linkis.protocol.usercontrol;
 
 
-/**
- * Created by alexyang
- */
+
 public class RequestLogin   implements UserControlLoginProtocol {
 
     private String userName;

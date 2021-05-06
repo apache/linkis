@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -13,15 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.cs.listener.callback;
 
-/**
- * @Author: chaogefeng
- * @Date: 2020/2/20
- */
 public interface AbstractCallbackEngine extends CallbackEngine {
-    //todo
-    //实现事件的存储和按需消费:存储这些变化的事件，并且按需消费
+    // 实现事件的存储和按需消费:存储这些变化的事件，并且按需消费
     //事件超过一定时间还没被消费，自动移除
     //cskey被五个client注册了listener，如果有挂掉，那么必须要一个最大消费时间的机制
 }

@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright 2019 WeBank
-  ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
-  ~
   ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,8 +18,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.11.0</version>
-        <relativePath>../../pom.xml</relativePath>
+        <version>1.0.0-RC1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -32,88 +28,37 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-protocol</artifactId>
-            </dependency>
+            <version>${linkis.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-module</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-feign</artifactId>
-            <version>${spring.eureka.version}</version>
-          <exclusions>
-            <exclusion>
-              <artifactId>netty-codec</artifactId>
-              <groupId>io.netty</groupId>
-            </exclusion>
-              <exclusion>
-                  <artifactId>netty-transport</artifactId>
-                  <groupId>io.netty</groupId>
-              </exclusion>
-              <exclusion>
-                  <artifactId>jersey-client</artifactId>
-                  <groupId>com.sun.jersey</groupId>
-              </exclusion>
-              <exclusion>
-                  <artifactId>jersey-apache-client4</artifactId>
-                  <groupId>com.sun.jersey.contribs</groupId>
-              </exclusion>
-              <exclusion>
-                  <artifactId>jackson-databind</artifactId>
-                  <groupId>com.fasterxml.jackson.core</groupId>
-              </exclusion>
-              <exclusion>
-                  <artifactId>jackson-core</artifactId>
-                  <groupId>com.fasterxml.jackson.core</groupId>
-              </exclusion>
-              <exclusion>
-                  <artifactId>jackson-annotations</artifactId>
-                  <groupId>com.fasterxml.jackson.core</groupId>
-              </exclusion>
-              <exclusion>
-                  <artifactId>httpclient</artifactId>
-                  <groupId>org.apache.httpcomponents</groupId>
-              </exclusion>
-              <exclusion>
-                  <artifactId>spring-cloud-commons</artifactId>
-                  <groupId>org.springframework.cloud</groupId>
-              </exclusion>
-              <exclusion>
-                  <artifactId>HdrHistogram</artifactId>
-                  <groupId>org.hdrhistogram</groupId>
-              </exclusion>
-              <exclusion>
-                  <artifactId>jsr305</artifactId>
-                  <groupId>com.google.code.findbugs</groupId>
-              </exclusion>
-              <exclusion>
-                  <groupId>org.springframework.cloud</groupId>
-                  <artifactId>spring-cloud-starter</artifactId>
-              </exclusion>
-              <exclusion>
-                  <groupId>org.springframework.cloud</groupId>
-                  <artifactId>spring-cloud-starter-openfeign</artifactId>
-              </exclusion>
-          </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.json4s</groupId>
-            <artifactId>json4s-jackson_${scala.binary.version}</artifactId>
-            <version>3.5.3</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>jackson-databind</artifactId>
-                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>spring-cloud-commons</artifactId>
+                    <groupId>org.springframework.cloud</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
-            <version>2.0.0.RELEASE</version>
+            <version>${spring.feign.version}</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>jackson-databind</artifactId>
+                    <artifactId>spring-boot-autoconfigure</artifactId>
+                    <groupId>org.springframework.boot</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-boot-starter-aop</artifactId>
+                    <groupId>org.springframework.boot</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-web</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jackson-annotations</artifactId>
                     <groupId>com.fasterxml.jackson.core</groupId>
                 </exclusion>
                 <exclusion>
@@ -121,11 +66,77 @@
                     <groupId>com.fasterxml.jackson.core</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>jackson-annotations</artifactId>
+                    <artifactId>jackson-databind</artifactId>
                     <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jsr305</artifactId>
+                    <groupId>com.google.code.findbugs</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>HdrHistogram</artifactId>
+                    <groupId>org.hdrhistogram</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-cloud-commons</artifactId>
+                    <groupId>org.springframework.cloud</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-cloud-starter-openfeign</artifactId>
+                    <groupId>org.springframework.cloud</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>${spring.cloud.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-boot-autoconfigure</artifactId>
+                    <groupId>org.springframework.boot</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-boot-starter-aop</artifactId>
+                    <groupId>org.springframework.boot</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-cloud-commons</artifactId>
+                    <groupId>org.springframework.cloud</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-web</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-commons</artifactId>
+            <version>${spring.cloud.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-security-crypto</artifactId>
+                    <groupId>org.springframework.security</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>io.protostuff</groupId>
+            <artifactId>protostuff-core</artifactId>
+            <version>1.6.2</version>
+            <scope>compile</scope>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/io.protostuff/protostuff-runtime -->
+        <dependency>
+            <groupId>io.protostuff</groupId>
+            <artifactId>protostuff-runtime</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>

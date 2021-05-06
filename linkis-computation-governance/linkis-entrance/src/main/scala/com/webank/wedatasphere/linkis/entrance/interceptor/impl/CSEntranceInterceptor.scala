@@ -18,13 +18,10 @@ import java.lang
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.entrance.cs.CSEntranceHelper
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 
-/**
-  * @author peacewong
-  * @date 2020/3/24 18:28
-  */
+
 class CSEntranceInterceptor extends EntranceInterceptor with Logging {
 
   override def apply(task: Task, logAppender: lang.StringBuilder): Task = {

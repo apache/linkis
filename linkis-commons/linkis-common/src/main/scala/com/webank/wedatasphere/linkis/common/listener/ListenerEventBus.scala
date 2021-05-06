@@ -17,9 +17,8 @@
 package com.webank.wedatasphere.linkis.common.listener
 
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicLong}
-import java.util.concurrent.{ArrayBlockingQueue, CopyOnWriteArrayList, Future, LinkedBlockingQueue, TimeoutException}
+import java.util.concurrent.{ArrayBlockingQueue, CopyOnWriteArrayList, Future, TimeoutException}
 
-import com.webank.wedatasphere.linkis.common.collection.BlockingLoopArray
 import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.commons.lang.time.DateFormatUtils
 

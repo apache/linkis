@@ -18,9 +18,6 @@ package com.webank.wedatasphere.linkis.gateway.http
 
 import javax.servlet.http.Cookie
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 trait GatewayHttpResponse {
 
   def addCookie(cookie: Cookie): Unit

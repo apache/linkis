@@ -46,13 +46,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by cooperyang on 2019/5/17.
- */
 @Service
 public class VersionServiceImpl implements VersionService {
 
     private static final Logger logger = LoggerFactory.getLogger(VersionServiceImpl.class);
+
+
+    /**
+     * 版本更新的时候,OVER_WRITE一律为false
+     */
+    private static final boolean OVER_WRITE = false;
 
     @Autowired
     private VersionDao versionDao;
@@ -88,7 +91,7 @@ public class VersionServiceImpl implements VersionService {
 
     @Override
     public String updateVersion(String resourceId, String user, FormDataMultiPart formDataMultiPart,
-                                Map<String, Object> params)throws Exception{
+                                Map<String, Object> params) throws Exception {
         ResourceHelper resourceHelper = ResourceHelperFactory.getResourceHelper();
         FormDataBodyPart file = formDataMultiPart.getField("file");
         InputStream inputStream = file.getValueAs(InputStream.class);
@@ -99,10 +102,10 @@ public class VersionServiceImpl implements VersionService {
         String path = versionDao.getResourcePath(resourceId);
         String newVersion;
         //上传资源前，需要对resourceId这个字符串的intern进行加锁，这样所有需要更新该资源的用户都会同步
-        synchronized (resourceIdLock){
+        //synchronized (resourceIdLock.intern()){
             //资源上传到hdfs
             StringBuilder stringBuilder = new StringBuilder();
-            long size = resourceHelper.upload(path, user, inputStream, stringBuilder);
+            long size = resourceHelper.upload(path, user, inputStream, stringBuilder, OVER_WRITE);
             String md5String = stringBuilder.toString();
             String clientIp = params.get("clientIp").toString();
             //生成新的version
@@ -113,7 +116,7 @@ public class VersionServiceImpl implements VersionService {
             ResourceVersion resourceVersion = ResourceVersion.createNewResourceVersion(resourceId, path,
                     md5String, clientIp, size, newVersion, startByte);
             versionDao.insertNewVersion(resourceVersion);
-        }
+        //}
         return newVersion;
     }
 

@@ -39,10 +39,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * @author davidhua
- * 2020/02/14
- */
 @Component
 public class HiveMetaService extends AbstractMetaService<HiveConnection> {
 

@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.protocol
 
-/**
-  * Created by enjoyyin on 2019/1/7.
-  */
+
 trait IRServiceGroupProtocol extends IRProtocol with InstanceProtocol {
   val userWithCreator: UserWithCreator
 

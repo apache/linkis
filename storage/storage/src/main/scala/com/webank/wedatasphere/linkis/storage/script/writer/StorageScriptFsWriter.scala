@@ -53,6 +53,7 @@ class StorageScriptFsWriter(val path: FsPath, val charset: String, outputStream:
     val scriptRecord = record.asInstanceOf[LineRecord]
     if (outputStream != null) {
       IOUtils.write(scriptRecord.getLine, outputStream, charset)
+      IOUtils.write("\n", outputStream, charset)
     } else {
       stringBuilder.append(scriptRecord.getLine)
     }

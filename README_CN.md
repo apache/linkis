@@ -15,26 +15,6 @@ Linkis 自2019年开源发布以来，已累计积累了700多家试验企业和
 
 ![有了Linkis 之后](images/after_linkis_cn.png)
 
-基于Linkis 计算中间件，我们在大数据平台套件[WeDataSphere](https://github.com/WeBankFinTech/WeDataSphere) 中构建了许多应用和工具系统。下面是目前可用的开源项目。
-
-![wedatasphere_stack_Linkis](images/wedatasphere_stack_Linkis.png)
-
-- [**DataSphere Studio** - 数据应用开发管理门户](https://github.com/WeBankFinTech/DataSphereStudio)
-
-- [**Scriptis** - 数据研发IDE工具](https://github.com/WeBankFinTech/Scriptis)
-
-- [**Visualis** - 数据可视化工具](https://github.com/WeBankFinTech/Visualis)
-
-- [**Schedulis** - 工作流调度工具](https://github.com/WeBankFinTech/Schedulis)
-
-- [**Qualitis** - 数据质量工具](https://github.com/WeBankFinTech/Qualitis)
-
-- [**MLLabis** - 容器化机器学习notebook 开发环境](https://github.com/WeBankFinTech/prophecis)
-
-更多项目开源准备中，敬请期待。
-
-----
-
 # 核心特点
 
 - **丰富的底层计算存储引擎支持**。  
@@ -85,8 +65,26 @@ Linkis 基于微服务架构开发，其服务可以分为3类:计算治理服�
 - 公共增强服务，包括上下文服务、物料管理服务及数据源服务等;
 - 微服务治理服务，包括定制化的Spring Cloud Gateway、Eureka、Open Feign。
 
-下面是LiNKIS 的架构概要图. 更多详细架构文档请见 [Linkis-Doc/Architecture](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/zh_CN/Architecture_Documents).
+下面是Linkis 的架构概要图. 更多详细架构文档请见 [Linkis-Doc/Architecture](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/zh_CN/Architecture_Documents).
 ![architecture](images/Linkis_1.0_architecture.png)
+
+基于Linkis 计算中间件，我们在大数据平台套件[WeDataSphere](https://github.com/WeBankFinTech/WeDataSphere) 中构建了许多应用和工具系统。下面是目前可用的开源项目。
+
+![wedatasphere_stack_Linkis](images/wedatasphere_stack_Linkis.png)
+
+- [**DataSphere Studio** - 数据应用集成开发框架](https://github.com/WeBankFinTech/DataSphereStudio)
+
+- [**Scriptis** - 数据研发IDE工具](https://github.com/WeBankFinTech/Scriptis)
+
+- [**Visualis** - 数据可视化工具](https://github.com/WeBankFinTech/Visualis)
+
+- [**Schedulis** - 工作流调度工具](https://github.com/WeBankFinTech/Schedulis)
+
+- [**Qualitis** - 数据质量工具](https://github.com/WeBankFinTech/Qualitis)
+
+- [**MLLabis** - 容器化机器学习notebook 开发环境](https://github.com/WeBankFinTech/prophecis)
+
+更多项目开源准备中，敬请期待。
 
 # 贡献
 

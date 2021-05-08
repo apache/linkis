@@ -3,7 +3,7 @@ Linkis
 
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-[English](README.md) | [中文](README-CN.md)
+[English](README.md) | [中文](README_CN.md)
 
 # Introduction
 
@@ -83,7 +83,7 @@ You can find examples and guidance for how to use and manage Linkis in [User_Man
 
 # Documentation
 
-The documentation of linkis is in the [wiki](https://github.com/WeBankFinTech/Linkis/wiki) or in the [docs/](https://github.com/WeBankFinTech/Linkis/tree/master/docs) directory of the source code.
+The documentation of linkis is in [Linkis-Doc](https://github.com/WeBankFinTech/Linkis-Doc) or in the [wiki](https://github.com/WeBankFinTech/Linkis/wiki).
 
 # Architecture
 Linkis services could be divided into three categories: computation governance services, public enhancement services and microservice governance services.  

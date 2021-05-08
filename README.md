@@ -18,24 +18,6 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 
 ![linkis-intro-03](https://user-images.githubusercontent.com/11496700/84615483-bb435d80-aefb-11ea-81b5-67f62b156628.png)
 
-Based on Linkis the computation middleware, we've built a lot of applications and tools on top of it in the Big data platform suite [WeDataSphere](https://github.com/WeBankFinTech/WeDataSphere). Below are the currently available open-source projects.
-
-![wedatasphere_stack_Linkis](images/wedatasphere_stack_Linkis.png)
-
- - [**DataSphere Studio** - Data Application Integration& Development Framework](https://github.com/WeBankFinTech/DataSphereStudio)
-
- - [**Scriptis** - Data Development IDE Tool](https://github.com/WeBankFinTech/Scriptis)
-
- - [**Visualis** - Data Visualization Tool](https://github.com/WeBankFinTech/Visualis)
-
- - [**Schedulis** - Workflow Task Scheduling Tool](https://github.com/WeBankFinTech/Schedulis)
-
- - [**Qualitis** - Data Quality Tool](https://github.com/WeBankFinTech/Qualitis)
- 
- - [**MLLabis** - Machine Learning Notebook IDE](https://github.com/WeBankFinTech/prophecis)
-
-More projects upcoming, please stay tuned.
-
 # Features
 
 - **Support for diverse underlying computation storage engines**.  
@@ -93,6 +75,24 @@ Linkis services could be divided into three categories: computation governance s
 
 Below is the Linkis architecture diagram. You can find more detailed architecture docs in [Linkis-Doc/Architecture](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/zh_CN/Architecture_Documents).
 ![architecture](images/Linkis_1.0_architecture.png)
+
+Based on Linkis the computation middleware, we've built a lot of applications and tools on top of it in the big data platform suite [WeDataSphere](https://github.com/WeBankFinTech/WeDataSphere). Below are the currently available open-source projects.
+
+![wedatasphere_stack_Linkis](images/wedatasphere_stack_Linkis.png)
+
+- [**DataSphere Studio** - Data Application Integration& Development Framework](https://github.com/WeBankFinTech/DataSphereStudio)
+
+- [**Scriptis** - Data Development IDE Tool](https://github.com/WeBankFinTech/Scriptis)
+
+- [**Visualis** - Data Visualization Tool](https://github.com/WeBankFinTech/Visualis)
+
+- [**Schedulis** - Workflow Task Scheduling Tool](https://github.com/WeBankFinTech/Schedulis)
+
+- [**Qualitis** - Data Quality Tool](https://github.com/WeBankFinTech/Qualitis)
+
+- [**MLLabis** - Machine Learning Notebook IDE](https://github.com/WeBankFinTech/prophecis)
+
+More projects upcoming, please stay tuned.
 
 # Contributing
 

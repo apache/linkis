@@ -37,8 +37,9 @@ Linkis 文档位于[Linkis-Doc](https://github.com/WeBankFinTech/Linkis-Doc) ，
 
 Linkis 源码可能会产生一些临时分支，但真正有明确意义的只有以下三个分支：  
 - master: 最近一次稳定 release 的源码，偶尔会多几次 hotfix 提交；
-- branch-*: 最新稳定版； 
-- dev-*: 主要开发分支。
+- release-*: 稳定的release 版本； 
+- dev-*: 主要开发分支；
+- feature-*: 针对某些较大、需要社区联合开发的新特性的开发分支
 
 请注意：大特性的dev分支，在命名时除了版本号，还会加上相应的命名说明，如：dev-0.10.0-flink，指0.10.0的flink特性开发分支。
 

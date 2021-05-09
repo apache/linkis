@@ -220,15 +220,60 @@ class SQLCodeParser extends SingleCodeParser {
   }
 }
 
+class JsonCodeParser extends SingleCodeParser {
+
+  override val codeType: CodeType = CodeType.JSON
+
+  override def parse(code: String, engineExecutorContext: EngineExecutionContext): Array[String] = {
+    // parse json code
+    val codeBuffer = new ArrayBuffer[String]()
+    val statementBuffer = new ArrayBuffer[Char]()
+
+    var status = 0
+    var isBegin = false
+    code.trim.toCharArray().foreach {
+      case '{' => {
+        if (status == 0) {
+          if (isBegin && !statementBuffer.isEmpty) {
+            codeBuffer.append(new String(statementBuffer.toArray))
+            statementBuffer.clear()
+          } else {
+            isBegin = true
+          }
+        }
+        status -= 1
+        statementBuffer.append('{')
+      }
+      case '}' => {
+        status += 1
+        statementBuffer.append('}')
+      }
+      case char: Char => if (status == 0 && isBegin && !statementBuffer.isEmpty) {
+        codeBuffer.append(new String(statementBuffer.toArray))
+        statementBuffer.clear()
+        isBegin = false
+      } else {
+        statementBuffer.append(char)
+      }
+    }
+
+    if(statementBuffer.nonEmpty) codeBuffer.append(new String(statementBuffer.toArray))
+
+    codeBuffer.toArray
+  }
+
+}
+
 object CodeType extends Enumeration {
   type CodeType = Value
-  val Python, SQL, Scala, Shell, Other = Value
+  val Python, SQL, Scala, Shell, JSON, Other = Value
 
   def getType(codeType: String): CodeType = codeType.toLowerCase() match {
     case "python" | "pyspark" | "py" => Python
-    case "sql" | "hql" => SQL
+    case "sql" | "hql" | "essql" => SQL
     case "scala" => Scala
     case "shell" => Shell
+    case "esjson" => JSON
     case _ => Other
   }
 }

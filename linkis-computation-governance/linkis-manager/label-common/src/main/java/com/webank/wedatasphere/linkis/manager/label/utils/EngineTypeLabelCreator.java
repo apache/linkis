@@ -45,6 +45,8 @@ public class EngineTypeLabelCreator {
                     defaultVersion.put(EngineType.JDBC().toString(), LabelCommonConfig.JDBC_ENGINE_VERSION.getValue());
                     defaultVersion.put(EngineType.PIPELINE().toString(), LabelCommonConfig.PIPELINE_ENGINE_VERSION.getValue());
                     defaultVersion.put(EngineType.SHELL().toString(), LabelCommonConfig.SHELL_ENGINE_VERSION.getValue());
+                    defaultVersion.put(EngineType.ELASTICSEARCH().toString(), LabelCommonConfig.ELASTICSEARCH_ENGINE_VERSION.getValue());
+                    defaultVersion.put(EngineType.PRESTO().toString(), LabelCommonConfig.PRESTO_ENGINE_VERSION.getValue());
                     defaultVersion.put(EngineType.APPCONN().toString(), LabelCommonConfig.APPCONN_ENGINE_VERSION.getValue());
                     defaultVersion.put("*", "*");
                 }

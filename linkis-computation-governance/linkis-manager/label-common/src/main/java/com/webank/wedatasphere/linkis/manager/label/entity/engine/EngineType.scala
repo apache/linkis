@@ -38,7 +38,7 @@ object EngineType extends Enumeration with Logging {
 
   val PIPELINE = Value("pipeline")
 
-  val ES = Value("es")
+  val ELASTICSEARCH = Value("elasticsearch")
 
   val PRESTO = Value("presto")
 

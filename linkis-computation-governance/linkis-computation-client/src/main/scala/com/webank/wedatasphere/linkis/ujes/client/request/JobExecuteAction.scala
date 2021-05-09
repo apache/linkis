@@ -211,5 +211,16 @@ object JobExecuteAction {
       }
       override def getDefaultRunType: RunType = JDBC_RunType
     }
+
+    val ELASTICSEARCH = new EngineType {
+      override val toString: String = "elasticsearch"
+      val SQL = new RunType {
+        override val toString: String = "essql"
+      }
+      val JSON = new RunType {
+        override val toString: String = "esjson"
+      }
+      override def getDefaultRunType: RunType = JSON
+    }
   }
 }

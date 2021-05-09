@@ -20,6 +20,7 @@ import com.webank.wedatasphere.linkis.engineconn.computation.executor.entity.Eng
 import com.webank.wedatasphere.linkis.engineconn.executor.entity.ConcurrentExecutor
 import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteResponse
+import scala.collection.JavaConverters._
 
 
 abstract class ConcurrentComputationExecutor(override val outputPrintLimit: Int = 1000) extends ComputationExecutor(outputPrintLimit) with ConcurrentExecutor {
@@ -44,4 +45,13 @@ abstract class ConcurrentComputationExecutor(override val outputPrintLimit: Int 
   protected override  def ensureOp[A](f: => A): A = if (!isEngineInitialized)
     f
   else ensureIdle(f, false)
+
+  override def killAll(): Unit = {
+    taskCache.asMap().keySet().asScala.foreach(killTask(_))
+  }
+
+  override def close(): Unit = {
+    killAll()
+    super.close()
+  }
 }

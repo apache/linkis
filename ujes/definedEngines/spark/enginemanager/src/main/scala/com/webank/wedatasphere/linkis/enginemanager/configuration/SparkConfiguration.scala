@@ -63,13 +63,27 @@ object SparkConfiguration extends Logging {
   val ENGINE_JAR = CommonVars[String]("wds.linkis.enginemanager.core.jar", ClassUtils.jarOfClass(classOf[SparkEngineExecutorFactory]).head)
   val SPARK_DRIVER_CLASSPATH = CommonVars[String]("wds.linkis.spark.driver.conf.mainjar", "")
   val SPARK_DRIVER_EXTRA_JAVA_OPTIONS = CommonVars[String]("spark.driver.extraJavaOptions", "\"-Dwds.linkis.configuration=linkis-engine.properties -Duser.timezone=" + TIMEZONE.getValue + " " + getJavaRemotePort + "\"")
+
+  val SPARK_DYNAMIC_ALLOCATTON_ENABLED = CommonVars[String]("spark.dynamicAllocation.enabled", "false")
+  // config for only cluster mode
+  val SPARK_DRIVER_USER_CLASSPATH_FIRST = CommonVars[String]("spark.dirver.userClassPathFirst", "")
+  val SPARK_CLUSTER_ARCHIVES = CommonVars[String]("spark.cluster.archives", "")
+  val SPARK_YARN_APPMASTER_ENV_PYSPARK_PYTHON = CommonVars[String]("spark.yarn.appMasterEnv.PYSPARK_PYTHON", CommonVars[String]("spark.cluster.pyspark.python", "").getValue)
+  val SPARK_YARN_APPMASTER_ENV_PYSPARK_DRIVER_PYTHON = CommonVars[String]("spark.yarn.appMasterEnv.PYSPARK_DRIVER_PYTHON", CommonVars[String]("spark.cluster.pyspark.python", "").getValue)
+  val SPARK_EXECUTOR_ENV_PYSPARK_PYTHON = CommonVars[String]("spark.executorEnv.PYSPARK_PYTHON", CommonVars[String]("spark.cluster.pyspark.pyhton", "").getValue)
+  val SPARK_EXECUTOR_ENV_PYSPARK_DRIVER_PYTHON = CommonVars[String]("spark.executorEnv.PYSPARK_DRIVER.PYTHON", CommonVars[String]("spark.cluster.pyspark.python", "").getValue)
+  val SPARK_PYSPARK_PYTHON = CommonVars[String]("spark.pyspark.python", CommonVars[String]("spark.cluster.pyspark.python", "").getValue)
+  val SPARK_PYSPARK_DRIVER_PYTHON = CommonVars[String]("spark.pyspark.driver.python", CommonVars[String]("spark.cluster.pyspark.python", "").getValue)
+  val SPARK_EXECUTOR_ENV_PYTHON_PATH = CommonVars[String]("spark.executorEnv.PYTHONPATH", "")
+  val SPARK_CLUSTER_JARS = CommonVars[String]("spark.cluster.jars", "")
+
   val DEFAULT_JAVA_OPTS = CommonVars[String]("wds.linkis.engine.javaOpts.default", "-server -XX:+UseG1GC -XX:MaxPermSize=250m -XX:PermSize=128m " +
     "-Xloggc:%s -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Dwds.linkis.configuration=linkis-engine.properties")
   val SPARK_ML_BUCKET_FIELDS = CommonVars[String]("wds.linkis.engine.spark.ml.bucketFields", "age[0,18,30,60,100]")
 
   val SPARK_SUBMIT_CMD = CommonVars[String]("wds.linkis.engine.spark.submit.cmd", "spark-submit")
 
-  
+
   private var Ports: ArrayBuffer[Int] = _
 
   def getJavaRemotePort = {

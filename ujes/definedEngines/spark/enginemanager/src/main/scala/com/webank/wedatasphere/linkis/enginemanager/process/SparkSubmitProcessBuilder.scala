@@ -32,9 +32,6 @@ import com.webank.wedatasphere.linkis.protocol.engine.RequestEngine
 import com.webank.wedatasphere.linkis.resourcemanager.DriverAndYarnResource
 import org.apache.commons.lang.StringUtils
 
-import scala.collection.mutable.ArrayBuffer
-import scala.collection.JavaConversions._
-
 /**
   * Created by allenlliu on 2019/4/8.
   */
@@ -134,8 +131,24 @@ class SparkSubmitProcessBuilder extends ProcessEngineBuilder with Logging {
     val darResource: DriverAndYarnResource = engineRequest.getResource.asInstanceOf[DriverAndYarnResource]
     val properties = new util.HashMap[String,String](request.properties)
     this.master("yarn")
-    this.deployMode(getValueAndRemove(properties, SPARK_DEPLOY_MODE))
+    this.deployMode(SPARK_DEPLOY_MODE.getValue)
     this.conf(SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, SPARK_DRIVER_EXTRA_JAVA_OPTIONS.getValue)
+
+    // cluster
+    if ("cluster".equals(SPARK_DEPLOY_MODE.getValue)) {
+      this.conf(SPARK_DRIVER_USER_CLASSPATH_FIRST.key, SPARK_DRIVER_USER_CLASSPATH_FIRST.getValue)
+      this.conf(SPARK_YARN_APPMASTER_ENV_PYSPARK_PYTHON.key, SPARK_YARN_APPMASTER_ENV_PYSPARK_PYTHON.getValue)
+      this.conf(SPARK_YARN_APPMASTER_ENV_PYSPARK_DRIVER_PYTHON.key, SPARK_YARN_APPMASTER_ENV_PYSPARK_DRIVER_PYTHON.getValue)
+      this.conf(SPARK_EXECUTOR_ENV_PYSPARK_PYTHON.key, SPARK_EXECUTOR_ENV_PYSPARK_PYTHON.getValue)
+      this.conf(SPARK_EXECUTOR_ENV_PYSPARK_DRIVER_PYTHON.key, SPARK_EXECUTOR_ENV_PYSPARK_DRIVER_PYTHON.getValue)
+      this.conf(SPARK_PYSPARK_PYTHON.key, SPARK_PYSPARK_PYTHON.getValue)
+      this.conf(SPARK_PYSPARK_DRIVER_PYTHON.key, SPARK_PYSPARK_DRIVER_PYTHON.getValue)
+      this.conf(SPARK_EXECUTOR_ENV_PYTHON_PATH.key, SPARK_EXECUTOR_ENV_PYTHON_PATH.getValue)
+
+      SPARK_CLUSTER_JARS.getValue.split("").map(RelativePath).foreach(jar)
+      SPARK_CLUSTER_ARCHIVES.getValue.split(",").map(RelativePath).foreach(archive)
+    }
+
     this.name(properties.getOrDefault("appName", "linkis"))
     this.className(properties.getOrDefault("className", "com.webank.wedatasphere.linkis.engine.DataWorkCloudEngineApplication"))
     properties.getOrDefault("archives", "").toString.split(",").map(RelativePath).foreach(this.archive)

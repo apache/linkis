@@ -17,15 +17,18 @@
 package com.webank.wedatasphere.linkis.common.conf
 
 import java.io._
+import java.nio.file.Files
 import java.util.Properties
+
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
+
 import scala.collection.JavaConversions._
 
 /**
-  * Created by enjoyyin on 2018/1/9.
-  */
+ * Created by enjoyyin on 2018/1/9.
+ */
 private[conf] object BDPConfiguration extends Logging {
 
   val DEFAULT_PROPERTY_FILE_NAME = "linkis.properties"
@@ -40,6 +43,10 @@ private[conf] object BDPConfiguration extends Logging {
   val propertyFile = sysProps.getOrElse("wds.linkis.configuration", DEFAULT_PROPERTY_FILE_NAME)
   private val configFileURL = getClass.getClassLoader.getResource(propertyFile)
   if (configFileURL != null && new File(configFileURL.getPath).exists) initConfig(config, configFileURL.getPath)
+  if (configFileURL != null) {
+    val filePath = if (new File(configFileURL.getPath).exists) configFileURL.getPath else createFakeFile(configFileURL.getPath)
+    initConfig(config, filePath)
+  }
   else warn(s"******************************** Notice: The dataworkcloud configuration file $propertyFile is not exists! ***************************")
 
   private def initConfig(config: Properties, filePath: String) {
@@ -55,6 +62,29 @@ private[conf] object BDPConfiguration extends Logging {
       IOUtils.closeQuietly(inputStream)
       IOUtils.closeQuietly(inputStreamReader)
     }
+  }
+
+  def createFakeFile(innerFile: String): String = {
+
+    val fileType = innerFile.substring(innerFile.lastIndexOf(".") + 1)
+    val fileName = innerFile.substring(innerFile.lastIndexOf("!") + 2)
+    warn(s"************************* onelink spark load properties fileName: $fileName ***************************** ")
+    val source:InputStream = getClass.getClassLoader.getResourceAsStream(fileName)
+    val file = Files.createTempFile("", fileType).toFile
+    file.deleteOnExit()
+
+    val sink = new FileOutputStream(file)
+    val buf = new Array[Byte](1024)
+    var n = source.read(buf)
+
+    while (n > 0) {
+      sink.write(buf, 0, n)
+      n = source.read(buf)
+    }
+    source.close()
+    sink.close()
+
+    file.getAbsolutePath
   }
 
   def getOption(key: String): Option[String] = {

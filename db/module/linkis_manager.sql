@@ -140,7 +140,7 @@ CREATE TABLE `linkis_manager_metrics_history` (
 DROP TABLE IF EXISTS `linkis_manager_service_instance_metrics`;
 
 CREATE TABLE `linkis_manager_service_instance_metrics` (
-  `instance` varchar(32) COLLATE utf8_bin NOT NULL,
+  `instance` varchar(64) COLLATE utf8_bin NOT NULL,
   `instance_status` int(11) DEFAULT NULL,
   `overload` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `heartbeat_msg` varchar(255) COLLATE utf8_bin DEFAULT NULL,

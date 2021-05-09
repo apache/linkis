@@ -4,6 +4,7 @@
 
 
 out/
+target/
 linkis.ipr
 linkis.iws
 

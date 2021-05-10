@@ -2,10 +2,9 @@
 
 | **版本管理信息表** |                                   |
 | ----------- | --------------------------------- |
-| 文档所属目录      | Contributing/Contributing.md      |
-| 现行版本        | 1.0 版，2020年3月                     |
-| 现行版本发布日期    | 2020 年 3 月 6 日                    |
-| 修订信息        | 1. 第一次发布 Linkis 项目Contributing规范。 |
+| 现行版本        | 1.1 版，2021年5月                     |
+| 现行版本发布日期    | 2021 年 5 月 6 日                    |
+| 修订信息        | 1. 增加Issue 提交指引，修改一些描述 |
 
 非常感谢贡献Linkis项目！在参与贡献之前，请仔细阅读以下指引。
 
@@ -17,15 +16,18 @@
 
 ### 1.2 功能交流、实现、重构
 
-在交流过程中，详细描述新功能（或重构）的细节、机制和使用场景，能够促使它更好更快地被实现。**如果计划实现一个重大的功能（或重构），请务必通过 Issue 或其他方式与核心开发团队进行沟通**，这样大家能以最效率的方式来推进它。包含 `#feature` 标签的打开的 Issue 都是需要被实现的新功能，包含 `#enhancement` 标签打开的 Issue 都是需要改进重构的功能。
+在交流过程中，详细描述新功能（或重构）的细节、机制和使用场景，能够促使它更好更快地被实现（包括测试用例和代码，及CI/CD相关工作）。**如果计划实现一个重大的功能（或重构），请务必通过 Issue 或其他方式与核心开发团队进行沟通**，这样大家能以最效率的方式来推进它。包含 `#feature` 标签的打开的 Issue 都是需要被实现的新功能，包含 `#enhancement` 标签打开的 Issue 都是需要改进重构的功能。
 
 ### 1.3 Issue 答疑
 
-帮助回答 Issue 中的使用问题是为 Linkis 社区做贡献的一个非常有价值的方式；社区中总会有新用户不断进来，在帮助新用户的同时，也可以展现你的专业知识。
+帮助回答 Issue 中的使用问题是为 Linkis 社区做贡献的一个非常有价值的方式；社区中总会有新用户不断进来，在帮助新用户的同时，也可以展现您的专业知识。
 
 ### 1.4 文档改进
 
-Linkis 用户手册文档在 docs/ 目录下，我们使用了 [jekyll](https://jekyllrb.com/) 作为 Linkis 的文档服务，可以编辑目录里的 Markdown 文件来对文档做改进。
+Linkis 文档位于[Linkis-Doc](https://github.com/WeBankFinTech/Linkis-Doc) ，文档的补充完善对于Linkis 的发展也至关重要。
+
+### 1.5 其他
+包括参与和帮助组织社区交流、社区运营活动等，其他能够帮助Linkis 项目和社区的活动。
 
 ---
 
@@ -33,11 +35,11 @@ Linkis 用户手册文档在 docs/ 目录下，我们使用了 [jekyll](https://
 
 ### 2.1 分支结构
 
-Linkis 源码可能会产生一些临时分支，但真正有明确意义的只有以下三个分支：
-
+Linkis 源码可能会产生一些临时分支，但真正有明确意义的只有以下三个分支：  
 - master: 最近一次稳定 release 的源码，偶尔会多几次 hotfix 提交；
-- branch-*: 最新稳定版； 
+- release-*: 稳定的release 版本； 
 - dev-*: 主要开发分支；
+- feature-*: 针对某些较大、需要社区联合开发的新特性的开发分支
 
 请注意：大特性的dev分支，在命名时除了版本号，还会加上相应的命名说明，如：dev-0.10.0-flink，指0.10.0的flink特性开发分支。
 
@@ -102,9 +104,14 @@ git clone https://github.com/yourname/Linkis.git --branch dev-*
 1. 打完整 release 包需要修改根目录下 /assembly/src/main/assembly/assembly.xml 中相关版本信息，然后在根目录下执行: `mvn clean package` 即可；
 2. 打 每个模块 的包可直接在 模块目录下执行 `mvn clean package`。
 
-### 2.3 Pull Request 指引
+### 2.3 Issue 提交指引
+- 如果您还不知道怎样向开源项目发起 PR，请参考[About issues](https://docs.github.com/en/github/managing-your-work-on-github/about-issues)
+- Issue 名称，应一句话简单描述您的问题或建议；为了项目的国际化推广，请用英文，或中英文双语书写 issue.
+- 每个Issue，请至少带上component 和type 两个label，如component=Computation Governance/EngineConn，type=Improvement.参考:[issue #590](https://github.com/WeBankFinTech/Linkis/issues/590)
 
-- 如果你还不知道怎样向开源项目发起 PR，请参考[这篇说明](https://help.github.com/en/articles/about-pull-requests)
+### 2.3 Pull Request(PR) 提交指引
+
+- 如果您还不知道怎样向开源项目发起 PR，请参考[About pull requests](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests)
 - 无论是 Bug 修复，还是新功能开发，请将 PR 提交到 dev-* 分支。
 - PR 和提交名称遵循 `<type>(<scope>): <subject>` 原则，详情可以参考阮一峰的 [Commit message 和 Change log 编写指南](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html) 这篇文章。
 - 如果 PR 中包含新功能，理应将文档更新包含在本次 PR 中。
@@ -113,7 +120,7 @@ git clone https://github.com/yourname/Linkis.git --branch dev-*
 
 ### 2.4 Review 标准
 
-在贡献代码之前，可以了解一下什么样的提交在 Review 中是受欢迎的。简单来说，如果一项提交能带来尽可能多增益和尽可能少的副作用或风险，那它被合并的几率就越高，Review 的速度也会越快。风险大、价值低的提交是几乎不可能被合并的，并且有可能会被拒绝连 Review 的机会都没有。
+在贡献代码之前，可以了解一下什么样的提交在 Review 中是受欢迎的。简单来说，如果一项提交能带来尽可能多增益和尽可能少的副作用或风险，那它被合并的几率就越高，Review 的速度也会越快。风险大、价值低的提交是几乎不可能被合并的，并且有可能会被拒绝 Review。
 
 #### 2.4.1 增益
 
@@ -149,7 +156,7 @@ git clone https://github.com/yourname/Linkis.git --branch dev-*
 
 #### 3.1.1 如何成为 Committer
 
-如果你对 Linkis 提过颇具价值的 PR 并且被合并，或是连续贡献超过半年，且至少主导过一次版本的发布，你可以通过官方微信群找到Linkis项目的一个 PMC ，如果他愿意提名你为 committer，并愿意为你陈述你的贡献给所有 PMC和Committer，那么接下来会发起一次投票；PMC和其他 Committers 将会一起投票决定是否允许你的加入，如果得到足够票数，你将成为 Linkis 项目的 Committer。
+如果您对 Linkis 提过颇具价值的 PR 并且被合并，或是连续贡献超过半年，且至少主导过一次版本的发布，您可以通过官方微信群找到Linkis项目的一个 PMC ，如果他愿意提名您为 committer，并愿意为您陈述您的贡献给所有 PMC和Committer，那么接下来会发起一次投票；PMC和其他 Committers 将会一起投票决定是否允许您的加入，如果得到足够票数，您将成为 Linkis 项目的 Committer。
 
 #### 3.1.2 Committer 的权利
 
@@ -163,7 +170,7 @@ git clone https://github.com/yourname/Linkis.git --branch dev-*
 
 #### 3.2.1 如何成为 Committee 成员
 
-如果你是 Linkis 项目的 Committer，并且你贡献的所有内容得到了其他 Committee 成员的认可，你可以申请成为 Linkis Committee 成员，其他 Committee 成员将会一起投票决定是否允许你的加入，如果全票通过，你将成为 Linkis Committee 成员。
+如果您是 Linkis 项目的 Committer，并且您贡献的所有内容得到了其他 Committee 成员的认可，您可以申请成为 Linkis Committee 成员，其他 Committee 成员将会一起投票决定是否允许您的加入，如果全票通过，您将成为 Linkis Committee 成员。
 
 #### 3.2.2 Committee 成员的权利
 

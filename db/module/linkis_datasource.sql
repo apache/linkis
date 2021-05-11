@@ -12,14 +12,14 @@ CREATE TABLE `linkis_datasource`
     `datasource_type_id`   int(11)                       NOT NULL,
     `create_identify`      varchar(255) COLLATE utf8_bin          DEFAULT NULL,
     `create_system`        varchar(255) COLLATE utf8_bin          DEFAULT NULL,
-#     `parameter`            varchar(255) COLLATE utf8_bin NULL DEFAULT NULL,
-    `create_time`          datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `modify_time`          datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `parameter`            varchar(255) COLLATE utf8_bin NULL DEFAULT NULL,
+    `create_time`          datetime                      NULL DEFAULT CURRENT_TIMESTAMP,
+    `modify_time`          datetime                      NULL DEFAULT CURRENT_TIMESTAMP,
     `create_user`          varchar(255) COLLATE utf8_bin          DEFAULT NULL,
     `modify_user`          varchar(255) COLLATE utf8_bin          DEFAULT NULL,
     `labels`               varchar(255) COLLATE utf8_bin          DEFAULT NULL,
     `version_id`           int(11)                                DEFAULT NULL COMMENT 'current version id',
-    `expire`               tinyint(1)                    NOT NULL,
+    `expire`               tinyint(1)                    DEFAULT 0,
     `published_version_id` int(11)                                DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB

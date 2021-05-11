@@ -316,3 +316,30 @@ INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`,
 
 insert  into `linkis_external_resource_provider`(`id`,`resource_type`,`name`,`labels`,`config`) values
 (1,'Yarn','sit',NULL,'{\r\n\"rmWebAddress\": \"@YARN_RESTFUL_URL\",\r\n\"hadoopVersion\": \"2.7.2\",\r\n\"authorEnable\":true,\r\n\"user\":\"hadoop\",\r\n\"pwd\":\"897ede66a860\"\r\n}');
+
+-- ----------------------------
+-- Records of linkis_datasource_env, this data is for test
+-- ----------------------------
+INSERT INTO `linkis_datasource_env` VALUES (1, '测试环境', '测试', 2, '{\"ip\":\"192.168.1.1\", \"port\":\"3308\"}', '2021-04-07 22:40:54', 'Adam', '2021-04-07 22:41:02', 'Adam');
+INSERT INTO `linkis_datasource_env` VALUES (2, '生产环境mysql', '测试', 2, '{\"ip\":\"192.168.1.1\"}', '2021-04-07 22:40:54', 'Adam', '2021-04-07 22:40:54', 'Adam');
+INSERT INTO `linkis_datasource_env` VALUES (3, '测试环境hive', '测试', 2, '{\"wds.linkis.server.mdm.service.hive.uris\":\"192.168.1.1\",\"wds.linkis.server.mdm.service.hive.principle\":\"td\'d\'d\",\"wds.linkis.server.mdm.service.hive.keytab\":\"keytab\"}', '2021-04-07 22:40:54', 'Adam', '2021-04-07 22:40:54', 'Adam');
+INSERT INTO `linkis_datasource_env` VALUES (4, '测试环境es', '测试', 3, '{\"wds.linkis.server.mdm.service.es.urls\":\"\",\"wds.linkis.server.mdm.service.es.username\":\"\",\"wds.linkis.server.mdm.service.es.password\":\"\"}', NULL, NULL, NULL, 'Adam');
+
+
+-- ----------------------------
+-- Records of linkis_datasource_type_key
+-- ----------------------------
+INSERT INTO `linkis_datasource_type_key` VALUES (1, 1, 'host', 'Host', NULL, 'TEXT', NULL, 1, 'mysql Host ', NULL, NULL, NULL, NULL, '2021-04-08 03:13:36', '2021-04-08 03:13:36');
+INSERT INTO `linkis_datasource_type_key` VALUES (2, 1, 'port', '端口', NULL, 'TEXT', NULL, 1, '端口', NULL, NULL, NULL, NULL, '2021-04-17 03:10:28', '2021-04-17 03:10:28');
+INSERT INTO `linkis_datasource_type_key` VALUES (4, 1, 'username', '用户名', NULL, 'TEXT', NULL, 1, '用户名', '^[A-Za-z]+$', NULL, NULL, NULL, '2021-04-12 01:54:39', '2021-04-12 01:54:39');
+INSERT INTO `linkis_datasource_type_key` VALUES (5, 1, 'password', '密码', NULL, 'PASSWORD', NULL, 1, '密码', '^[a-zA-Z0-9]{6,16}$', NULL, NULL, NULL, '2021-04-12 01:54:39', '2021-04-12 01:54:39');
+INSERT INTO `linkis_datasource_type_key` VALUES (6, 2, 'file', 'keytab', NULL, 'FILE', NULL, 0, 'keytab文件', NULL, NULL, NULL, NULL, '2021-04-12 02:38:11', '2021-04-12 02:38:11');
+INSERT INTO `linkis_datasource_type_key` VALUES (7, 2, 'envId', '集群环境', '', 'SELECT', NULL, 1, '集群配置', NULL, NULL, NULL, 'http://localhost:8080/api/rest_j/v1/data_source/env_list/all/type/2', '2021-04-13 01:53:57', '2021-04-13 01:53:57');
+
+
+-- ----------------------------
+-- Records of linkis_datasource_type
+-- ----------------------------
+INSERT INTO `linkis_datasource_type` VALUES (1, 'mysql', 'mysql数据库', 'mysql数据库', '关系型数据库', 'https://img.alicdn.com/imgextra/i4/O1CN01uLYwgg1zS93Aq9W8C_!!6000000006712-2-tps-280-176.png');
+INSERT INTO `linkis_datasource_type` VALUES (2, 'hive', 'hive数据库', 'hive', '大数据存储', 'https://img.alicdn.com/imgextra/i4/O1CN01uLYwgg1zS93Aq9W8C_!!6000000006712-2-tps-280-176.png');
+INSERT INTO `linkis_datasource_type` VALUES (3, 'presto', 'presto SQL', 'presto', '大数据存储', 'https://img.alicdn.com/imgextra/i4/O1CN01uLYwgg1zS93Aq9W8C_!!6000000006712-2-tps-280-176.png');

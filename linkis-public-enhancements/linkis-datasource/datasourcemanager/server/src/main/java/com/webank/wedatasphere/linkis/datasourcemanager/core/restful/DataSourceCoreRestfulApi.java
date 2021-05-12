@@ -19,11 +19,13 @@ import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.FormDataTr
 import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.MultiPartFormDataTransformer;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.service.DataSourceInfoService;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.service.DataSourceRelateService;
+import com.webank.wedatasphere.linkis.datasourcemanager.core.service.MetadataOperateService;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceVo;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidateException;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidator;
+import com.webank.wedatasphere.linkis.metadatamanager.common.MdmConfiguration;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.apache.commons.lang.StringUtils;
@@ -64,11 +66,14 @@ public class DataSourceCoreRestfulApi {
     @Autowired
     private Validator beanValidator;
 
+    @Autowired
+    private MetadataOperateService metadataOperateService;
+
     private MultiPartFormDataTransformer formDataTransformer;
 
 
     @PostConstruct
-    public void initRestful(){
+    public void initRestful() {
         this.formDataTransformer = FormDataTransformerFactory.buildCustom();
     }
 
@@ -79,7 +84,7 @@ public class DataSourceCoreRestfulApi {
             String userName = SecurityFilter.getLoginUsername(req);
             //Bean validation
             Set<ConstraintViolation<DataSource>> result = beanValidator.validate(dataSource, Default.class);
-            if(result.size() > 0){
+            if (result.size() > 0) {
                 throw new ConstraintViolationException(result);
             }
             dataSource.setCreateUser(userName);
@@ -92,9 +97,9 @@ public class DataSourceCoreRestfulApi {
     @Path("/info/form")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response insertFormConfig(FormDataMultiPart multiPartForm,
-                                     @Context HttpServletRequest request){
+                                     @Context HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(() -> {
-            if(null != multiPartForm) {
+            if (null != multiPartForm) {
                 String userName = SecurityFilter.getLoginUsername(request);
                 DataSource dataSource = formDataTransformer.transformToObject(multiPartForm, DataSource.class, beanValidator);
                 dataSource.setCreateUser(userName);
@@ -105,18 +110,20 @@ public class DataSourceCoreRestfulApi {
         }, "/data_source/info/form", "Fail to insert data source[新增数据源失败]");
     }
 
+
     @GET
-    @Path("/info/{data_source_id}")
-    public Response getInfoByDataSourceId(@QueryParam("system")String createSystem,
-                                            @PathParam("data_source_id")Long dataSourceId,
-                                            @Context HttpServletRequest request){
+    @Path("/info/{data_source_id}/{version}")
+    public Response getInfoByDataSourceId(@QueryParam("system") String createSystem,
+                                          @PathParam("data_source_id") Long dataSourceId,
+                                          @PathParam("version") String version,
+                                          @Context HttpServletRequest request) {
+        System.out.println("dataSourceId:" + dataSourceId);
+        System.out.println("version:" + version);
         return RestfulApiHelper.doAndResponse(() -> {
-            if(StringUtils.isBlank(createSystem)){
-                return Message.error("'create system' is missing[缺少系统名]");
-            }
-            DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceId, createSystem);
+            LOG.info("system:" + createSystem);
+            DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceId, version);
             //Decrypt
-            if(null != dataSource) {
+            if (null != dataSource) {
                 RestfulApiHelper.decryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId())
                         , dataSource.getConnectParams());
             }
@@ -127,52 +134,76 @@ public class DataSourceCoreRestfulApi {
 
     @DELETE
     @Path("/info/{data_source_id}")
-    public Response removeDataSource(@QueryParam("system")String createSystem,
-                                     @PathParam("data_source_id")Long dataSourceId){
+    public Response removeDataSource(@QueryParam("system") String createSystem,
+                                     @PathParam("data_source_id") Long dataSourceId) {
         return RestfulApiHelper.doAndResponse(() -> {
-            if(StringUtils.isBlank(createSystem)){
-                return Message.error("'create system' is missing[缺少系统名]");
-            }
             Long removeId = dataSourceInfoService.removeDataSourceInfo(dataSourceId, createSystem);
-            if(removeId < 0){
-                return Message.error("Fail to remove data source[删除数据源信息失败], [id:" + dataSourceId +"]");
+            if (removeId < 0) {
+                return Message.error("Fail to remove data source[删除数据源信息失败], [id:" + dataSourceId + "]");
             }
             return Message.ok().data("remove_id", removeId);
-        }, "/data_source/info/" + dataSourceId,"Fail to remove data source[删除数据源信息失败]");
+        }, "/data_source/info/" + dataSourceId, "Fail to remove data source[删除数据源信息失败]");
+    }
+
+    @PUT
+    @Path("/info/{data_source_id}/expire")
+    public Response expireDataSource(@PathParam("data_source_id") Long dataSourceId) {
+        return RestfulApiHelper.doAndResponse(() -> {
+            Long expireId = dataSourceInfoService.expireDataSource(dataSourceId);
+            if (expireId < 0) {
+                return Message.error("Fail to expire data source[数据源过期失败], [id:" + dataSourceId + "]");
+            }
+            return Message.ok().data("expire_id", expireId);
+        }, "/data_source/info/" + dataSourceId + "/expire", "Fail to expire data source[数据源过期失败]");
     }
 
     @PUT
     @Path("/info/{data_source_id}/json")
     public Response updateDataSourceInJson(DataSource dataSource,
-                                           @PathParam("data_source_id")Long dataSourceId,
-                                           @Context HttpServletRequest req){
+                                           @PathParam("data_source_id") Long dataSourceId,
+                                           @Context HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(() -> {
             String userName = SecurityFilter.getLoginUsername(req);
             //Bean validation
             Set<ConstraintViolation<DataSource>> result = beanValidator.validate(dataSource, Default.class);
-            if(result.size() > 0){
+            if (result.size() > 0) {
                 throw new ConstraintViolationException(result);
             }
             dataSource.setId(dataSourceId);
             dataSource.setModifyUser(userName);
             dataSource.setModifyTime(Calendar.getInstance().getTime());
             DataSource storedDataSource = dataSourceInfoService.getDataSourceInfoBrief(dataSourceId, dataSource.getCreateSystem());
-            if(null == storedDataSource){
+            if (null == storedDataSource) {
                 return Message.error("Fail to update data source[更新数据源失败], " + "[Please check the id:'"
-                        + dataSourceId +"' and create system: '"+dataSource.getCreateSystem()+" is correct ']");
+                        + dataSourceId + "' and create system: '" + dataSource.getCreateSystem() + " is correct ']");
             }
             dataSource.setCreateUser(storedDataSource.getCreateUser());
             updateDataSourceConfig(dataSource, storedDataSource);
             return Message.ok().data("update_id", dataSourceId);
-        }, "/data_source/info/"+dataSourceId+"/json","Fail to update data source[更新数据源失败]");
+        }, "/data_source/info/" + dataSourceId + "/json", "Fail to update data source[更新数据源失败]");
+    }
+
+    @PUT
+    @Path("/{data_source_id}/{version}/op/connect")
+    public Response connectDataSource(@PathParam("data_source_id") Long dataSourceId,
+                                      @PathParam("version") String version,
+                                           @Context HttpServletRequest req) {
+        return RestfulApiHelper.doAndResponse(() -> {
+            String operator = SecurityFilter.getLoginUsername(req);
+            DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceId, version);
+            metadataOperateService.doRemoteConnect(MdmConfiguration.METADATA_SERVICE_APPLICATION.getValue()
+                            + (StringUtils.isNotBlank(dataSource.getDataSourceType().getName())?("-" +dataSource.getDataSourceType().getName().toLowerCase()) : ""),
+                    operator, dataSource.getConnectParams());;
+            return Message.ok().data("ok", true);
+        }, "/data_source/info/" + dataSourceId + "/" + version + "/op/connect", "Fail to connect data source[连接数据源失败]");
     }
 
     @PUT
     @Path("/info/{data_source_id}/form")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response updateDataSourceInForm(FormDataMultiPart multiPartForm,
-                                           @PathParam("data_source_id")Long dataSourceId,
-                                           @Context HttpServletRequest req){
+                                           @PathParam("data_source_id") Long dataSourceId,
+                                           @Context HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(() -> {
             String userName = SecurityFilter.getLoginUsername(req);
             DataSource dataSource = formDataTransformer.transformToObject(multiPartForm, DataSource.class, beanValidator);
@@ -180,9 +211,9 @@ public class DataSourceCoreRestfulApi {
             dataSource.setModifyUser(userName);
             dataSource.setModifyTime(Calendar.getInstance().getTime());
             DataSource storedDataSource = dataSourceInfoService.getDataSourceInfoBrief(dataSourceId, dataSource.getCreateSystem());
-            if(null == storedDataSource){
+            if (null == storedDataSource) {
                 return Message.error("Fail to update data source[更新数据源失败], " +
-                        "[Please check the id:'" + dataSourceId +"' and create system: '"+dataSource.getCreateSystem()+" is correct ']");
+                        "[Please check the id:'" + dataSourceId + "' and create system: '" + dataSource.getCreateSystem() + " is correct ']");
             }
             dataSource.setCreateUser(storedDataSource.getCreateUser());
             updateDataSourceConfig(dataSource, storedDataSource);
@@ -192,20 +223,17 @@ public class DataSourceCoreRestfulApi {
 
     @GET
     @Path("/info")
-    public Response queryDataSource(@QueryParam("system")String createSystem,
-                                    @QueryParam("name")String dataSourceName,
-                                    @QueryParam("typeId")Long dataSourceTypeId,
-                                    @QueryParam("identifies")String identifies,
-                                    @QueryParam("currentPage")Integer currentPage,
-                                    @QueryParam("pageSize")Integer pageSize){
+    public Response queryDataSource(@QueryParam("system") String createSystem,
+                                    @QueryParam("name") String dataSourceName,
+                                    @QueryParam("typeId") Long dataSourceTypeId,
+                                    @QueryParam("identifies") String identifies,
+                                    @QueryParam("currentPage") Integer currentPage,
+                                    @QueryParam("pageSize") Integer pageSize) {
         return RestfulApiHelper.doAndResponse(() -> {
-            if(StringUtils.isBlank(createSystem)){
-                return Message.error("'create system' is missing[缺少系统名]");
-            }
             DataSourceVo dataSourceVo = new DataSourceVo(dataSourceName, dataSourceTypeId,
                     identifies, createSystem);
             dataSourceVo.setCurrentPage(null != currentPage ? currentPage : 1);
-            dataSourceVo.setPageSize(null != pageSize? pageSize : 10);
+            dataSourceVo.setPageSize(null != pageSize ? pageSize : 10);
             List<DataSource> queryList = dataSourceInfoService.queryDataSourceInfoPage(dataSourceVo);
             return Message.ok().data("query_list", queryList);
         }, "/data_source/info", "Fail to query page of data source[查询数据源失败]");
@@ -213,30 +241,30 @@ public class DataSourceCoreRestfulApi {
 
     @GET
     @Path("/key_define/type/{type_id}")
-    public Response getKeyDefinitionsByType(@PathParam("type_id") Long dataSourceTypeId){
+    public Response getKeyDefinitionsByType(@PathParam("type_id") Long dataSourceTypeId) {
         return RestfulApiHelper.doAndResponse(() -> {
-            List<DataSourceParamKeyDefinition> keyDefinitions = dataSourceRelateService.getKeyDefinitionsByType(dataSourceTypeId);
-            return Message.ok().data("key_define", keyDefinitions);
-        }, "/data_source/key_define/type/" + dataSourceTypeId,
+                    List<DataSourceParamKeyDefinition> keyDefinitions = dataSourceRelateService.getKeyDefinitionsByType(dataSourceTypeId);
+                    return Message.ok().data("key_define", keyDefinitions);
+                }, "/data_source/key_define/type/" + dataSourceTypeId,
                 "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
     }
 
     @GET
     @Path("/key_define/type/{type_id}/{scope}")
     public Response getKeyDefinitionsByTypeAndScope(@PathParam("type_id") Long dataSourceTypeId,
-                                                    @PathParam("scope") String scopeValue){
+                                                    @PathParam("scope") String scopeValue) {
         return RestfulApiHelper.doAndResponse(() -> {
-            DataSourceParamKeyDefinition.Scope scope = DataSourceParamKeyDefinition.Scope.valueOf(scopeValue.toUpperCase());
-            List<DataSourceParamKeyDefinition> keyDefinitions = dataSourceRelateService
-                    .getKeyDefinitionsByType(dataSourceTypeId, scope);
-            return Message.ok().data("key_define", keyDefinitions);
-        }, "/data_source/key_define/type/" + dataSourceTypeId + "/" + scopeValue,
+                    DataSourceParamKeyDefinition.Scope scope = DataSourceParamKeyDefinition.Scope.valueOf(scopeValue.toUpperCase());
+                    List<DataSourceParamKeyDefinition> keyDefinitions = dataSourceRelateService
+                            .getKeyDefinitionsByType(dataSourceTypeId, scope);
+                    return Message.ok().data("key_define", keyDefinitions);
+                }, "/data_source/key_define/type/" + dataSourceTypeId + "/" + scopeValue,
                 "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
     }
 
     @GET
     @Path("/type/all")
-    public Response getAllDataSourceTypes(){
+    public Response getAllDataSourceTypes() {
         return RestfulApiHelper.doAndResponse(() -> {
             List<DataSourceType> dataSourceTypes = dataSourceRelateService.getAllDataSourceTypes();
             return Message.ok().data("type_list", dataSourceTypes);
@@ -245,11 +273,12 @@ public class DataSourceCoreRestfulApi {
 
     /**
      * Inner method to insert data source
+     *
      * @param dataSource data source entity
      * @throws ParameterValidateException
      */
     private void insertDataSourceConfig(DataSource dataSource) throws ErrorException {
-        if(null != dataSource.getDataSourceEnvId()){
+        if (null != dataSource.getDataSourceEnvId()) {
             //Merge parameters
             dataSourceInfoService.addEnvParamsToDataSource(dataSource.getDataSourceEnvId(), dataSource);
         }
@@ -257,7 +286,7 @@ public class DataSourceCoreRestfulApi {
         List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
                 .getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
         dataSource.setKeyDefinitions(keyDefinitionList);
-        Map<String,Object> connectParams = dataSource.getConnectParams();
+        Map<String, Object> connectParams = dataSource.getConnectParams();
         parameterValidator.validate(keyDefinitionList, connectParams);
         //Encrypt password value type
         RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
@@ -266,12 +295,13 @@ public class DataSourceCoreRestfulApi {
 
     /**
      * Inner method to update data source
+     *
      * @param updatedOne new entity
-     * @param storedOne old entity
+     * @param storedOne  old entity
      * @throws ErrorException
      */
-    private void updateDataSourceConfig(DataSource updatedOne, DataSource storedOne) throws ErrorException{
-        if(null != updatedOne.getDataSourceEnvId()){
+    private void updateDataSourceConfig(DataSource updatedOne, DataSource storedOne) throws ErrorException {
+        if (null != updatedOne.getDataSourceEnvId()) {
             //Merge parameters
             dataSourceInfoService.addEnvParamsToDataSource(updatedOne.getDataSourceEnvId(), updatedOne);
         }
@@ -284,7 +314,6 @@ public class DataSourceCoreRestfulApi {
         RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
         dataSourceInfoService.updateDataSourceInfo(updatedOne, storedOne);
     }
-
 
 
 }

@@ -106,10 +106,13 @@ public class DataSourceOperateRestfulApi {
      * @param dataSource
      */
     protected void doConnect(String operator, DataSource dataSource) throws ParameterValidateException {
-//        if(null != dataSource.getDataSourceEnvId()){
-//            dataSourceInfoService.addEnvParamsToDataSource(dataSource.getDataSourceEnvId(), dataSource);
-//        }
-        //Validate connect parameters
+        if(dataSource.getConnectParams().containsKey("envId")){
+            try{
+                dataSourceInfoService.addEnvParamsToDataSource(Long.parseLong((String)dataSource.getConnectParams().get("envId")), dataSource);
+            }catch (Exception e){
+                throw new ParameterValidateException("envId atypical" + e);
+            }
+        }
         List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
                 .getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
         dataSource.setKeyDefinitions(keyDefinitionList);

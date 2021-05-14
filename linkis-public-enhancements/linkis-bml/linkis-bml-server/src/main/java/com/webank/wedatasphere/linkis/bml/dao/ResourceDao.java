@@ -16,17 +16,12 @@
 package com.webank.wedatasphere.linkis.bml.dao;
 
 import com.webank.wedatasphere.linkis.bml.Entity.Resource;
-
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 import java.util.Map;
 
-/**
- * created by cooperyang on 2019/5/14
- * Description:
- */
 public interface ResourceDao {
 
     List<Resource> getResources(Map paramMap);

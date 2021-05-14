@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,15 +33,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-/**
- * Created by shanhuang on 9/13/18.
- */
 @Service
 public class DataSourceServiceImpl implements DataSourceService {
 
-    Logger logger = Logger.getLogger(DataSourceServiceImpl.class);
+    private static final Logger logger = Logger.getLogger(DataSourceServiceImpl.class);
 
     private static FileSystem rootHdfs = null;
 
@@ -53,6 +50,7 @@ public class DataSourceServiceImpl implements DataSourceService {
 
 
     ObjectMapper jsonMapper = new ObjectMapper();
+
 
     @Override
     public JsonNode getDbs(String userName) throws Exception {
@@ -146,8 +144,9 @@ public class DataSourceServiceImpl implements DataSourceService {
     @Override
     public JsonNode getTableSize(String dbName, String tableName, String userName) {
         logger.info("getTable:" + userName);
-        String tableSize = "";
 
+
+        String tableSize = "";
         try {
             FileStatus tableFile = getRootHdfs().getFileStatus(new Path(this.getTableLocation(dbName, tableName)));
             if (tableFile.isDirectory()) {
@@ -173,7 +172,9 @@ public class DataSourceServiceImpl implements DataSourceService {
         map.put("partitionName", partitionName);
         map.put("userName", userName);
         Long partitionSize = hiveMetaDao.getPartitionSize(map);
-        if (partitionSize == null) partitionSize = 0L;
+        if (partitionSize == null) {
+            partitionSize = 0L;
+        }
         ObjectNode sizeJson = jsonMapper.createObjectNode();
         sizeJson.put("size", ByteTimeUtils.bytesToString(partitionSize));
         sizeJson.put("tableName", dbName + "." + tableName);

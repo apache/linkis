@@ -29,10 +29,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static org.apache.hadoop.fs.FileSystem.FS_DEFAULT_NAME_KEY;
 
-/**
- * @author davidhua
- * 2020/02/14
- */
 public class HiveConnection implements Closeable {
 
     private Hive hiveClient;

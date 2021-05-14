@@ -1,18 +1,34 @@
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.webank.wedatasphere.linkis.ujes.jdbc
 
 import java.io.{InputStream, Reader}
 import java.net.URL
-import java.sql.{Blob, Clob, Connection, Date, NClob, ParameterMetaData, PreparedStatement, Ref, ResultSet, ResultSetMetaData, RowId, SQLWarning, SQLXML, Time, Timestamp}
+import java.sql.{Blob, Clob, Date, NClob, ParameterMetaData, PreparedStatement, Ref, ResultSetMetaData, RowId, SQLXML, Time, Timestamp}
 import java.util
 import java.util.Calendar
 
-
-/**
-  * Created by leebai on 2019/8/16
-  */
 class UJESSQLPreparedStatement(ujesSQLConnection: UJESSQLConnection, sql: String) extends UJESSQLStatement(ujesSQLConnection) with PreparedStatement {
 
   private val parameters = new util.HashMap[Int,Any]
+
+  private var parameterMetaData: ParameterMetaData = _
+
+  private var batchTimes = 0
 
   private def updateSql(sql: String, parameters: util.HashMap[Int,Any]) : String = {
     if(!sql.contains("?")){
@@ -153,11 +169,23 @@ class UJESSQLPreparedStatement(ujesSQLConnection: UJESSQLConnection, sql: String
   }
 
   override def execute(): Boolean = {
-    super.execute(updateSql(sql,parameters))
+    val res = super.execute(updateSql(sql,parameters))
+    for (i <- 1 to batchTimes) {
+      super.execute(updateSql(sql,parameters))
+    }
+    res
+  }
+
+  override def executeBatch(): Array[Int] = {
+
+    for (i <- 0 to batchTimes) {
+      super.execute(updateSql(sql,parameters))
+    }
+    Array(1,1)
   }
 
   override def addBatch(): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    this.batchTimes = this.batchTimes + 1
   }
 
   override def setCharacterStream(parameterIndex: Int, reader: Reader, length: Int): Unit = {
@@ -182,7 +210,8 @@ class UJESSQLPreparedStatement(ujesSQLConnection: UJESSQLConnection, sql: String
 
   override def getMetaData: ResultSetMetaData = {
     if(super.getResultSet == null){
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_NULL)
+      //TODO 这里应该返回的是获取到到的结果集元数据
+      return new UJESSQLResultSetMetaData
     }
     super.getResultSet.getMetaData
   }
@@ -208,7 +237,12 @@ class UJESSQLPreparedStatement(ujesSQLConnection: UJESSQLConnection, sql: String
   }
 
   override def getParameterMetaData: ParameterMetaData = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    synchronized {
+      if (null == this.parameterMetaData) {
+        this.parameterMetaData = new LinkisParameterMetaData(sql.count(_ =='?' ))
+      }
+    }
+    this.parameterMetaData
   }
 
   override def setRowId(parameterIndex: Int, x: RowId): Unit = {

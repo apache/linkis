@@ -24,9 +24,6 @@ import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import org.apache.commons.io.input.NullInputStream
 import org.apache.commons.io.output.NullOutputStream
 
-/**
-  * Created by johnnwang on 2018/10/30.
-  */
 class ClientLogManager extends CacheLogManager {
   override def getLogReader(execId: String): LogReader = {
     new CacheLogReader("", ServerConfiguration.BDP_SERVER_ENCODING.getValue,

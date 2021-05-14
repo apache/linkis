@@ -22,8 +22,6 @@
  */
 package com.webank.wedatasphere.linkis.common.exception;
 
-import java.util.Map;
-
 public class FatalException extends DWCException{
     private ExceptionLevel level = ExceptionLevel.FATAL;
     public FatalException(int errCode, String desc){

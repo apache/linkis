@@ -20,10 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author georgeqiao
- * 2020/02/11
- */
 public class DataSourceVo extends PageViewVo{
 
     private String dataSourceName;

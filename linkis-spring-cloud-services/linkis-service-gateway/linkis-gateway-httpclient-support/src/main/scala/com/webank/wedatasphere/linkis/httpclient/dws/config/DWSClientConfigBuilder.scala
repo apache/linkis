@@ -20,9 +20,6 @@ import com.webank.wedatasphere.linkis.httpclient.config.ClientConfigBuilder
 import com.webank.wedatasphere.linkis.httpclient.dws.exception.UnknownVersionException
 import org.apache.commons.lang.StringUtils
 
-/**
-  * created by cooperyang on 2019/5/27.
-  */
 class DWSClientConfigBuilder private() extends ClientConfigBuilder {
 
   private var dwsVersion: String = _

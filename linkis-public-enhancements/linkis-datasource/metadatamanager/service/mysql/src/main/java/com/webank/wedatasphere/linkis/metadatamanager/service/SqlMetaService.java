@@ -24,10 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author davidhua
- * 2020/02/14
- */
 @Component
 public class SqlMetaService extends AbstractMetaService<SqlConnection> {
     @Override

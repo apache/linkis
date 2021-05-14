@@ -23,13 +23,13 @@ import java.text.SimpleDateFormat
 import java.util.EnumSet
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import javax.servlet.{DispatcherType, Filter}
 import com.google.gson._
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration._
 import com.webank.wedatasphere.linkis.server.restful.RestfulApplication
 import com.webank.wedatasphere.linkis.server.socket.ControllerServer
 import com.webank.wedatasphere.linkis.server.socket.controller.{ServerEventService, ServerListenerEventBus}
+import javax.servlet.{DispatcherType, Filter}
 import org.apache.commons.io.FileUtils
 import org.eclipse.jetty.server.session.SessionHandler
 import org.eclipse.jetty.servlet.{DefaultServlet, FilterHolder, ServletContextHandler, ServletHolder}

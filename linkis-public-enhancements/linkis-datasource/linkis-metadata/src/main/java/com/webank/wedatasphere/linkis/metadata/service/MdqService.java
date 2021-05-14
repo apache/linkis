@@ -20,7 +20,9 @@ package com.webank.wedatasphere.linkis.metadata.service;
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableBO;
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.MdqTableBaseInfoVO;
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.MdqTableFieldsInfoVO;
+import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO;
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
+import com.webank.wedatasphere.linkis.metadata.exception.MdqIllegalParamException;
 
 import java.io.IOException;
 import java.util.List;
@@ -62,4 +64,6 @@ public interface MdqService {
     List<MdqTableFieldsInfoVO> getTableFieldsInfoFromHive(String database, String tableName, String user);
 
     MdqTableStatisticInfoVO getTableStatisticInfoFromHive(String database, String tableName, String user) throws IOException;
+
+    MdqTablePartitionStatisticInfoVO getPartitionStatisticInfo(String database, String tableName, String userName, String partitionName) throws IOException, MdqIllegalParamException;
 }

@@ -23,10 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @author davidhua
- * 2020/02/14
- */
 @Component
 public class ElasticMetaService extends AbstractMetaService<ElasticConnection> {
     @Override

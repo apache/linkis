@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.cs.listener.callback.imp;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multiset;
 import com.webank.wedatasphere.linkis.common.listener.Event;
-import com.webank.wedatasphere.linkis.cs.common.entity.listener.CommonContextIDListenerDomain;
 import com.webank.wedatasphere.linkis.cs.common.entity.listener.CommonContextKeyListenerDomain;
 import com.webank.wedatasphere.linkis.cs.common.entity.listener.ListenerDomain;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
@@ -26,18 +25,14 @@ import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
 import com.webank.wedatasphere.linkis.cs.listener.CSKeyListener;
 import com.webank.wedatasphere.linkis.cs.listener.callback.ContextKeyCallbackEngine;
 import com.webank.wedatasphere.linkis.cs.listener.event.ContextKeyEvent;
-import com.webank.wedatasphere.linkis.cs.listener.event.impl.DefaultContextIDEvent;
 import com.webank.wedatasphere.linkis.cs.listener.event.impl.DefaultContextKeyEvent;
 import com.webank.wedatasphere.linkis.cs.listener.manager.imp.DefaultContextListenerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Set;
 
-/**
- * @Author: chaogefeng
- * @Date: 2020/2/20
- */
 public class DefaultContextKeyCallbackEngine implements CSKeyListener, ContextKeyCallbackEngine {
     private static final Logger logger = LoggerFactory.getLogger(DefaultContextKeyCallbackEngine.class);
 
@@ -93,7 +88,9 @@ public class DefaultContextKeyCallbackEngine implements CSKeyListener, ContextKe
             defaultContextKeyEvent = (DefaultContextKeyEvent) event;
         }
         if (null == defaultContextKeyEvent) {
-            logger.info("defaultContextKeyEvent event 为空");
+            if (logger.isDebugEnabled()) {
+                logger.debug("defaultContextKeyEvent event 为空");
+            }
             return;
         }
         logger.info("defaultContextKeyEvent 要更新事件的ID: " + defaultContextKeyEvent.getContextID().getContextId());
@@ -107,7 +104,7 @@ public class DefaultContextKeyCallbackEngine implements CSKeyListener, ContextKe
                 onCSKeyAccess(defaultContextKeyEvent);
                 break;
             default:
-                logger.info("检查defaultContextKeyEvent event操作类型");
+                logger.info("检查defaultContextKeyEvent event操作类型: {}", defaultContextKeyEvent.getOperateType());
         }
     }
 
@@ -134,13 +131,13 @@ public class DefaultContextKeyCallbackEngine implements CSKeyListener, ContextKe
     }
 
 
-    //todo
+    //暂时先不实现
     @Override
     public void onCSKeyAccess(ContextKeyEvent cskeyEvent) {
 
     }
 
-    //todo
+    //暂时先不实现
     @Override
     public void onEventError(Event event, Throwable t) {
 

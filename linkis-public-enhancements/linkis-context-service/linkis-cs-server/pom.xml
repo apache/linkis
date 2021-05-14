@@ -18,8 +18,8 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.11.0</version>
-        <relativePath>../../../pom.xml</relativePath>
+        <version>1.0.0-RC1</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -29,13 +29,13 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cs-common</artifactId>
-            <version>${project.version}</version>
+            <version>${linkis.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cs-cache</artifactId>
-            <version>${project.version}</version>
+            <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.webank.wedatasphere.linkis</groupId>
@@ -47,13 +47,13 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cs-listener</artifactId>
-            <version>${project.version}</version>
+            <version>${linkis.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cs-persistence</artifactId>
-            <version>${project.version}</version>
+            <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.webank.wedatasphere.linkis</groupId>
@@ -65,11 +65,11 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cs-highavailable</artifactId>
-            <version>${project.version}</version>
+            <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.webank.wedatasphere.linkis</groupId>
-                    <artifactId>linkis-module</artifactId>
+                    <artifactId>linkis-message-scheduler</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -77,26 +77,20 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cs-search</artifactId>
-            <version>${project.version}</version>
+            <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.webank.wedatasphere.linkis</groupId>
-                    <artifactId>linkis-module</artifactId>
+                    <artifactId>linkis-message-scheduler</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-cloudRPC</artifactId>
-            <version>${project.version}</version>
+            <artifactId>linkis-message-scheduler</artifactId>
+            <version>${linkis.version}</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-scheduler</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -153,7 +147,7 @@
                 </executions>
                 <configuration>
                     <skipAssembly>false</skipAssembly>
-                    <finalName>linkis-cs-server</finalName>
+                    <finalName>out</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <attach>false</attach>
                     <descriptors>

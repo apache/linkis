@@ -17,9 +17,6 @@ package com.webank.wedatasphere.linkis.bml.Entity;
 
 import java.util.Date;
 
-/**
- * Created by cooperyang on 2019/5/16.
- */
 public class ResourceVersion {
 
     private long id;

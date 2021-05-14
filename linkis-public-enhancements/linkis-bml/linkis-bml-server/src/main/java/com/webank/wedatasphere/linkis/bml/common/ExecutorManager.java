@@ -17,7 +17,6 @@ package com.webank.wedatasphere.linkis.bml.common;
 
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
 import com.webank.wedatasphere.linkis.bml.conf.BmlServerConfiguration;
 
 import java.util.concurrent.LinkedBlockingQueue;
@@ -28,8 +27,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * 线程池管理器，用于获取各个线程池单例
  *
- * @author cooperyang
- * @date 2019-9-16
  */
 public class ExecutorManager {
 

@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.metadata.util;
 
-/**
- * Created by shanhuang on 9/13/18.
- */
+
 public class Constants {
 
     public static final String APPLICATION_NAME = "Datasource";

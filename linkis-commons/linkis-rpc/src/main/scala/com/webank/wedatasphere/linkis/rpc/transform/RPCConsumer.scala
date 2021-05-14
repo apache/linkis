@@ -19,15 +19,12 @@ package com.webank.wedatasphere.linkis.rpc.transform
 import com.webank.wedatasphere.linkis.common.exception.ExceptionManager
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.rpc.exception.DWCURIException
-import com.webank.wedatasphere.linkis.server.{BDPJettyServerHelper, JMap, Message, EXCEPTION_MSG}
-import org.json4s.jackson.Serialization
+import com.webank.wedatasphere.linkis.rpc.serializer.ProtostuffSerializeUtil
+import com.webank.wedatasphere.linkis.server.{EXCEPTION_MSG, JMap, Message}
 
-import scala.reflect.ManifestFactory
 import scala.runtime.BoxedUnit
 
-/**
-  * Created by enjoyyin on 2018/9/13.
-  */
+
 private[linkis] trait RPCConsumer {
 
   def toObject(message: Message): Any
@@ -43,7 +40,7 @@ private[linkis] object RPCConsumer {
           if(data.isEmpty) return BoxedUnit.UNIT
           val objectStr = data.get(OBJECT_VALUE).toString
           val objectClass = data.get(CLASS_VALUE).toString
-          val clazz = Utils.tryThrow(Class.forName(objectClass)){
+          val clazz = Utils.tryThrow(Class.forName(objectClass)) {
             case _: ClassNotFoundException =>
               new DWCURIException(10003, s"The corresponding anti-sequence class $objectClass was not found.(找不到对应的反序列类$objectClass.)")
             case t: ExceptionInInitializerError =>
@@ -52,12 +49,14 @@ private[linkis] object RPCConsumer {
               exception
             case t: Throwable => t
           }
-          if(data.get(IS_SCALA_CLASS).toString.toBoolean) {
+//          if (null != data.get(IS_REQUEST_PROTOCOL_CLASS) && data.get(IS_REQUEST_PROTOCOL_CLASS).toString.toBoolean) {
+            ProtostuffSerializeUtil.deserialize(objectStr, clazz)
+          /*} else if (data.get(IS_SCALA_CLASS).toString.toBoolean) {
             val realClass = getSerializableScalaClass(clazz)
             Serialization.read(objectStr)(formats, ManifestFactory.classType(realClass))
           } else {
             BDPJettyServerHelper.gson.fromJson(objectStr, clazz)
-          }
+          }*/
         case 4 =>
           val errorMsg = message.getData.get(EXCEPTION_MSG).asInstanceOf[JMap[String, Object]]
           ExceptionManager.generateException(errorMsg)

@@ -30,9 +30,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.context.event.EventListener
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 @Configuration
 @EnableFeignClients
 class RPCSpringConfiguration extends Logging {
@@ -45,11 +43,12 @@ class RPCSpringConfiguration extends Logging {
   @EventListener
   def completeInitialize(applicationPreparedEvent: ApplicationPreparedEvent): Unit = {
     val restfulClasses = ServerConfiguration.BDP_SERVER_RESTFUL_REGISTER_CLASSES.getValue
+    val rpcRestfulName = applicationPreparedEvent.getApplicationContext.getBean(classOf[RPCReceiveRestful]).getClass.getName
     if(StringUtils.isEmpty(restfulClasses))
-      DataWorkCloudApplication.setProperty(ServerConfiguration.BDP_SERVER_RESTFUL_REGISTER_CLASSES.key, classOf[RPCReceiveRestful].getName)
+      DataWorkCloudApplication.setProperty(ServerConfiguration.BDP_SERVER_RESTFUL_REGISTER_CLASSES.key, rpcRestfulName)
     else
       DataWorkCloudApplication.setProperty(ServerConfiguration.BDP_SERVER_RESTFUL_REGISTER_CLASSES.key, restfulClasses +
-        "," + classOf[RPCReceiveRestful].getName)
+        "," + rpcRestfulName)
     info("DataWorkCloud RPC need register RPCReceiveRestful, now add it to configuration.")
   }
 

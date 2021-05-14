@@ -23,15 +23,16 @@ import javax.ws.rs.QueryParam
 import javax.ws.rs.core.{Context, Response}
 import org.springframework.web.bind.annotation.{PathVariable, RequestBody, RequestMapping, RequestMethod}
 
-/**
-  * Created by enjoyyin on 2018/9/3.
-  */
+
 trait EntranceRestfulRemote {
 
   @RequestMapping(value = Array("/entrance/execute"), method = Array(RequestMethod.POST))
   def execute(@Context req: HttpServletRequest, @RequestBody json: util.Map[String, Any]): Response
 
-//  @RequestMapping(value = Array("/api/entrance/{id}"), method = Array(RequestMethod.GET))
+  @RequestMapping(value = Array("/entrance/submit"), method = Array(RequestMethod.POST))
+  def submit(@Context req: HttpServletRequest, @RequestBody json: util.Map[String, Any]): Response
+
+  //  @RequestMapping(value = Array("/api/entrance/{id}"), method = Array(RequestMethod.GET))
 //  def get(@PathVariable("id") id: String): Response
 
   @RequestMapping(value = Array("/entrance/{id}/status"), method = Array(RequestMethod.GET))

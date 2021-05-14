@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -20,9 +20,6 @@ import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceType;
 import com.webank.wedatasphere.linkis.cs.server.protocol.HttpRequestProtocol;
 import com.webank.wedatasphere.linkis.cs.server.protocol.HttpResponseProtocol;
 
-/**
- * Created by patinousward on 2020/2/22.
- */
 public abstract class HttpAnswerJobBuilder extends HttpJobBuilder {
 
     @Override

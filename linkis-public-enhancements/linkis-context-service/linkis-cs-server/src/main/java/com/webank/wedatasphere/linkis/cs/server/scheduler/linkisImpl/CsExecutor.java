@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
+/*
 package com.webank.wedatasphere.linkis.cs.server.scheduler.linkisImpl;
 
+import com.webank.wedatasphere.linkis.protocol.engine.EngineState;
 import com.webank.wedatasphere.linkis.protocol.engine.EngineState$;
 import com.webank.wedatasphere.linkis.scheduler.executer.*;
 import scala.Enumeration;
 
 import java.io.IOException;
 
-/**
- * Created by patinousward on 2020/2/22.
- */
 public class CsExecutor implements Executor {
 
     private long id;
@@ -63,3 +62,4 @@ public class CsExecutor implements Executor {
     public void close() throws IOException {
     }
 }
+*/

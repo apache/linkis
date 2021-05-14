@@ -20,11 +20,20 @@ import java.util.Date;
 import java.util.List;
 
 
-public class MdqTablePartitionStatisticInfoVO {
+public class MdqTablePartitionStatisticInfoVO implements Comparable<MdqTablePartitionStatisticInfoVO> {
     private Integer fileNum;
     private String partitionSize;
     private String name;
     private Date modificationTime;
+    private String partitionPath;
+
+    public String getPartitionPath() {
+        return partitionPath;
+    }
+
+    public void setPartitionPath(String partitionPath) {
+        this.partitionPath = partitionPath;
+    }
 
     public Date getModificationTime() {
         return modificationTime;
@@ -67,5 +76,10 @@ public class MdqTablePartitionStatisticInfoVO {
 
     public void setPartitionSize(String partitionSize) {
         this.partitionSize = partitionSize;
+    }
+
+    @Override
+    public int compareTo(MdqTablePartitionStatisticInfoVO o) {
+        return o.name.compareTo(this.name);
     }
 }

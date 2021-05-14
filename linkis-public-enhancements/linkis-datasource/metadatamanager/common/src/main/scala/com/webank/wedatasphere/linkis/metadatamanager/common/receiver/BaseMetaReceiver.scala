@@ -22,9 +22,6 @@ import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 
 import scala.concurrent.duration.Duration
 
-/**
- * Created by jackyxxie on 2020/2/10.
- */
 class BaseMetaReceiver extends Receiver with Logging{
   protected var metadataService: MetadataService = _
 

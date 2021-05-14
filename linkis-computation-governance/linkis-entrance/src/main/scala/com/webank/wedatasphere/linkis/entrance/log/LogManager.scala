@@ -16,15 +16,14 @@
 
 package com.webank.wedatasphere.linkis.entrance.log
 
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.entrance.EntranceContext
 import com.webank.wedatasphere.linkis.entrance.job.EntranceExecutionJob
 import com.webank.wedatasphere.linkis.scheduler.listener.LogListener
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
-abstract class LogManager extends LogListener {
+
+abstract class LogManager extends LogListener with Logging{
 
   protected var errorCodeListener: Option[ErrorCodeListener] = None
   protected var errorCodeManager: Option[ErrorCodeManager] = None
@@ -39,24 +38,22 @@ abstract class LogManager extends LogListener {
   def createLogWriter(job: Job): LogWriter
 
  override def onLogUpdate(job: Job, log: String): Unit = {
-   job match{
-     case entranceExecutionJob:EntranceExecutionJob =>
-       if (entranceExecutionJob.getLogWriter.isEmpty) entranceExecutionJob synchronized {
-         if(entranceExecutionJob.getLogWriter.isEmpty) createLogWriter(entranceExecutionJob)
-       }
-       entranceExecutionJob.getLogWriter.foreach(logWriter => logWriter.write(log))
-       entranceExecutionJob.getWebSocketLogWriter.foreach(writer => writer.write(log))
-       errorCodeManager.foreach(_.errorMatch(log).foreach{ case(code, errorMsg) =>
-         errorCodeListener.foreach(_.onErrorCodeCreated(job, code, errorMsg))
-       })
-     case _ =>
+   Utils.tryCatch{
+     job match{
+       case entranceExecutionJob: EntranceExecutionJob =>
+         if (entranceExecutionJob.getLogWriter.isEmpty) entranceExecutionJob synchronized {
+           if (entranceExecutionJob.getLogWriter.isEmpty) createLogWriter(entranceExecutionJob)
+         }
+         entranceExecutionJob.getLogWriter.foreach(logWriter => logWriter.write(log))
+         entranceExecutionJob.getWebSocketLogWriter.foreach(writer => writer.write(log))
+         errorCodeManager.foreach(_.errorMatch(log).foreach { case (code, errorMsg) =>
+           errorCodeListener.foreach(_.onErrorCodeCreated(job, code, errorMsg))
+         })
+       case _ =>
+     }
+   }{
+     case e: Exception => logger.warn(s"write log for job ${job.getId} failed", e)
+     case t: Throwable => logger.warn(s"write log for job ${job.getId} failed", t)
    }
-//   if (job.isInstanceOf[EntranceExecutionJob]){
-//     if (job.asInstanceOf[EntranceExecutionJob].getLogWriter.isEmpty) createLogWriter(job)
-//     job.asInstanceOf[EntranceExecutionJob].getLogWriter.foreach(logWriter => logWriter.write(log))
-//     createErrorCodeManager().errorMatch(log).foreach{ case(code, errorMsg) =>
-//       errorCodeListener.foreach(_.onErrorCodeCreated(job, code, errorMsg))
-//     }
-//   }
  }
 }

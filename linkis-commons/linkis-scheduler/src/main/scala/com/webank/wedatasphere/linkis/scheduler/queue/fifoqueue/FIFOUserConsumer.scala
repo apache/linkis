@@ -16,13 +16,12 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue
 
-/**
-  * Created by enjoyyin on 2018/9/7.
-  */
+
 
 import java.util.concurrent.{ExecutorService, Future}
 
 import com.webank.wedatasphere.linkis.common.exception.{ErrorException, WarnException}
+import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
 import com.webank.wedatasphere.linkis.scheduler.exception.SchedulerErrorException
@@ -30,6 +29,7 @@ import com.webank.wedatasphere.linkis.scheduler.executer.Executor
 import com.webank.wedatasphere.linkis.scheduler.future.{BDPFuture, BDPFutureTask}
 import com.webank.wedatasphere.linkis.scheduler.queue._
 
+import scala.beans.BeanProperty
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.TimeoutException
 
@@ -41,11 +41,19 @@ class FIFOUserConsumer(schedulerContext: SchedulerContext,
   private val runningJobs = new Array[Job](maxRunningJobsNum)
   private var future: Future[_] = _
 
+  private var bdpFutureTask: BDPFuture = _
+
+  @BeanProperty
+  var lastTime: Long = _
+
   def this(schedulerContext: SchedulerContext,executeService: ExecutorService) = {
     this(schedulerContext,executeService, null)
   }
 
-  def start(): Unit = future = executeService.submit(this)
+  def start(): Unit = {
+    future = executeService.submit(this)
+    bdpFutureTask = new BDPFutureTask(this.future)
+  }
 
   override def setConsumeQueue(consumeQueue: ConsumeQueue) = {
     queue = consumeQueue
@@ -59,7 +67,7 @@ class FIFOUserConsumer(schedulerContext: SchedulerContext,
     this.fifoGroup = group.asInstanceOf[FIFOGroup]
   }
 
-  override def getRunningEvents = getEvents(_.isRunning)
+  override def getRunningEvents = getEvents(e => e.isRunning || e.isWaitForRetry)
 
   private def getEvents(op: SchedulerEvent => Boolean): Array[SchedulerEvent] = {
     val result = ArrayBuffer[SchedulerEvent]()
@@ -80,13 +88,7 @@ class FIFOUserConsumer(schedulerContext: SchedulerContext,
   protected def askExecutorGap(): Unit = {}
 
   protected def loop(): Unit = {
-    val completedNums = runningJobs.filter(e => e == null || e.isCompleted)
-    if (completedNums.length < 1) {
-      Utils.tryQuietly(Thread.sleep(1000))  //TODO can also be optimized to optimize by implementing JobListener(TODO 还可以优化，通过实现JobListener进行优化)
-      return
-    }
     var isRetryJob = false
-    var event: Option[SchedulerEvent] = None
     def getWaitForRetryEvent: Option[SchedulerEvent] = {
       val waitForRetryJobs = runningJobs.filter(job => job != null && job.isJobCanRetry)
       waitForRetryJobs.find{job =>
@@ -97,27 +99,36 @@ class FIFOUserConsumer(schedulerContext: SchedulerContext,
         isRetryJob
       }
     }
-    while(event.isEmpty) {
-      val takeEvent = if(getRunningEvents.isEmpty) Option(queue.take()) else queue.take(3000)
-      event = if(takeEvent.exists(e => Utils.tryCatch(e.turnToScheduled()) {t =>
-          takeEvent.get.asInstanceOf[Job].onFailure("Job state flipped to Scheduled failed(Job状态翻转为Scheduled失败)！", t)
+    var event: Option[SchedulerEvent] = getWaitForRetryEvent
+    if(event.isEmpty) {
+      val completedNums = runningJobs.filter(e => e == null || e.isCompleted)
+      if (completedNums.length < 1) {
+        Utils.tryQuietly(Thread.sleep(1000))  //TODO 还可以优化，通过实现JobListener进行优化
+        return
+      }
+      while(event.isEmpty) {
+        val takeEvent = if(getRunningEvents.isEmpty) Option(queue.take()) else queue.take(3000)
+        event = if(takeEvent.exists(e => Utils.tryCatch(e.turnToScheduled()) {t =>
+          takeEvent.get.asInstanceOf[Job].onFailure("Job状态翻转为Scheduled失败！", t)
           false
-      })) takeEvent else getWaitForRetryEvent
+        })) takeEvent else getWaitForRetryEvent
+      }
     }
     event.foreach { case job: Job =>
       Utils.tryCatch {
         val (totalDuration, askDuration) = (fifoGroup.getMaxAskExecutorDuration, fifoGroup.getAskExecutorInterval)
         var executor: Option[Executor] = None
-        job.consumerFuture = new BDPFutureTask(this.future)
+        job.consumerFuture = bdpFutureTask
         Utils.waitUntil(() => {
           executor = Utils.tryCatch(schedulerContext.getOrCreateExecutorManager.askExecutor(job, askDuration)) {
             case warn: WarnException =>
-              job.getLogListener.foreach(_.onLogUpdate(job, warn.getDesc))
+              job.getLogListener.foreach(_.onLogUpdate(job, LogUtils.generateWarn(warn.getDesc)))
               None
-            case e:ErrorException =>
-              job.getLogListener.foreach(_.onLogUpdate(job, e.getDesc))
+            case e: ErrorException =>
+              job.getLogListener.foreach(_.onLogUpdate(job, LogUtils.generateERROR(e.getMessage)))
               throw e
             case error: Throwable =>
+              job.getLogListener.foreach(_.onLogUpdate(job, LogUtils.generateERROR(error.getMessage)))
               throw error
           }
           Utils.tryQuietly(askExecutorGap())
@@ -136,7 +147,7 @@ class FIFOUserConsumer(schedulerContext: SchedulerContext,
           job.onFailure("The request engine times out and the cluster cannot provide enough resources(请求引擎超时，集群不能提供足够的资源).",
             new SchedulerErrorException(11055, "Insufficient resources, requesting available engine timeout(资源不足，请求可用引擎超时)！"))
         case error: Throwable =>
-          job.onFailure("Request engine failed, possibly due to insufficient resources or background process error(请求引擎失败，可能是由于资源不足或后台进程错误)!", error)
+          job.onFailure("请求引擎失败，可能是由于后台进程错误!请联系管理员", error)
           if(job.isWaitForRetry) {
             warn(s"Ask executor for Job $job failed, wait for the next retry!", error)
             if(!isRetryJob)  putToRunningJobs(job)
@@ -153,5 +164,15 @@ class FIFOUserConsumer(schedulerContext: SchedulerContext,
   override def shutdown() = {
     future.cancel(true)
     super.shutdown()
+  }
+
+  /**
+    * Determine whether the consumer is idle, by determining whether the queue and running job are empty
+    * @return
+    */
+  def isIdle: Boolean = {
+    info(s"${getGroup.getGroupName} queue isEmpty:${queue.isEmpty},size ${queue.size}")
+    info(s"${getGroup.getGroupName} running jobs is not empty:${this.runningJobs.exists(job => job !=null && ! job.isCompleted)}")
+    this.queue.peek.isEmpty && ! this.runningJobs.exists(job => job !=null && ! job.isCompleted)
   }
 }

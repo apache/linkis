@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
-
 package com.webank.wedatasphere.linkis.ujes.client.request
 
 import java.util
@@ -29,9 +25,6 @@ import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
 import com.webank.wedatasphere.linkis.ujes.client.exception.UJESClientBuilderException
 import org.apache.commons.lang.StringUtils
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 class JobExecuteAction private() extends POSTAction with UJESJobAction {
   override def suffixURLs: Array[String] = Array("entrance", "execute")
   override def getRequestPayload: String = DWSHttpClient.jacksonJson.writeValueAsString(getRequestPayloads)
@@ -125,15 +118,6 @@ object JobExecuteAction {
       TaskUtils.addSpecialMap(this.params, specialMap)
       this
     }
-
-    def setDatasourceParams(datasourceMap: util.Map[String, Any]): Builder = {
-      if(this.params == null) this synchronized {
-        if(this.params == null) this.params = new util.HashMap[String, Any]
-      }
-      var runtimeMap:util.Map[String, Any] = TaskUtils.getRuntimeMap(this.params)
-      TaskUtils.addDatasourceMap(runtimeMap, datasourceMap)
-      this
-    }
     def setVariableMap(variableMap: util.Map[String, Any]): Builder = {
       if(this.params == null) this synchronized {
         if(this.params == null) this.params = new util.HashMap[String, Any]
@@ -163,8 +147,11 @@ object JobExecuteAction {
       if(formatCode) executeAction.addRequestPayload(TaskConstant.FORMATCODE, true)
       if(StringUtils.isBlank(creator)) throw new UJESClientBuilderException("creator is needed!")
       executeAction.addRequestPayload(TaskConstant.REQUESTAPPLICATIONNAME, creator)
-      if(StringUtils.isEmpty(scriptPath) && StringUtils.isEmpty(executeCode))
+      if(StringUtils.isEmpty(scriptPath) && StringUtils.isEmpty(executeCode) && params == null)
         throw new UJESClientBuilderException("scriptPath or executeCode is needed!")
+      if(StringUtils.isEmpty(scriptPath) && StringUtils.isEmpty(executeCode)) {
+        addExecuteCode(params.toString)
+      }
       executeAction.addRequestPayload(TaskConstant.EXECUTIONCODE, executeCode)
       executeAction.addRequestPayload(TaskConstant.SCRIPTPATH, scriptPath)
       if(params == null) params = new util.HashMap[String, Any]()
@@ -216,12 +203,13 @@ object JobExecuteAction {
       }
       override def getDefaultRunType: RunType = PY
     }
-    val JDBC = new EngineType{
+
+    val JDBC = new EngineType {
       override val toString: String = "jdbc"
-      val JC = new RunType {
+      val JDBC_RunType = new RunType {
         override val toString: String = "jdbc"
       }
-      override def getDefaultRunType: RunType = JC
+      override def getDefaultRunType: RunType = JDBC_RunType
     }
   }
 }

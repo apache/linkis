@@ -25,23 +25,21 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.ipc.netty.NettyPipeline;
-import reactor.ipc.netty.http.websocket.WebsocketOutbound;
+import reactor.netty.http.websocket.WebsocketOutbound;
 
 import javax.servlet.http.Cookie;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * created by cooperyang on 2019/1/9.
- */
 public class SpringCloudHttpUtils {
 
     public static Mono<Void> sendWebSocket(WebsocketOutbound out, DataBuffer dataBuffer) {
         WebSocketMessage webSocketMessage = new WebSocketMessage(WebSocketMessage.Type.TEXT, dataBuffer).retain();
         TextWebSocketFrame textWebSocketFrame = new TextWebSocketFrame(NettyDataBufferFactory.toByteBuf(webSocketMessage.getPayload()));
         Flux<WebSocketFrame> frames = Flux.just(textWebSocketFrame);
-        return out.options(NettyPipeline.SendOptions::flushOnEach).sendObject(frames).then();
+        //todo
+        return out.sendObject(frames).then();
+        //return out.options(NettyPipeline.SendOptions::flushOnEach).sendObject(frames).then();
     }
 
     public static void addIgnoreTimeoutSignal(HttpHeaders httpHeaders) {

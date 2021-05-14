@@ -21,17 +21,16 @@ import java.util
 
 import com.webank.wedatasphere.linkis.DataWorkCloudApplication
 import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
 import com.webank.wedatasphere.linkis.rpc.exception.DWCURIException
-import com.webank.wedatasphere.linkis.server.{BDPJettyServerHelper, EXCEPTION_MSG, Message}
+import com.webank.wedatasphere.linkis.rpc.serializer.ProtostuffSerializeUtil
+import com.webank.wedatasphere.linkis.server.{EXCEPTION_MSG, Message}
 import org.apache.commons.lang.ClassUtils
-import org.json4s.jackson.Serialization
 import org.json4s.{DefaultFormats, Formats, Serializer}
 
 import scala.collection.JavaConversions
 
-/**
-  * Created by enjoyyin on 2018/9/13.
-  */
+
 private[linkis] trait RPCProduct {
 
   def toMessage(t: Any): Message
@@ -42,6 +41,8 @@ private[linkis] trait RPCProduct {
 
 }
 private[linkis] object RPCProduct extends Logging {
+
+  private[rpc] val IS_REQUEST_PROTOCOL_CLASS = "rpc_is_request_protocol"
   private[rpc] val IS_SCALA_CLASS = "rpc_is_scala_class"
   private[rpc] val CLASS_VALUE = "rpc_object_class"
   private[rpc] val OBJECT_VALUE = "rpc_object_value"
@@ -49,20 +50,26 @@ private[linkis] object RPCProduct extends Logging {
   private var serializerClasses: List[Class[_]] = List.empty
   private val rpcProduct: RPCProduct = new RPCProduct {
     private val rpcFormats = DataWorkCloudApplication.getApplicationContext.getBeansOfType(classOf[RPCFormats])
-    if(rpcFormats != null && !rpcFormats.isEmpty) {
+    if (rpcFormats != null && !rpcFormats.isEmpty) {
       val serializers = JavaConversions.mapAsScalaMap(rpcFormats).map(_._2.getSerializers).toArray.flatMap(_.iterator)
       setFormats(serializers)
     }
     override def toMessage(t: Any): Message = {
-      if(t == null) throw new DWCURIException(10001, "The transmitted bean is Null.(传输的bean为Null.)")
+      if (t == null) throw new DWCURIException(10001, "The transmitted bean is Null.(传输的bean为Null.)")
       val message = Message.ok("RPC Message.")
-      if(isScalaClass(t)){
+      if (isRequestProtocol(t)) {
+        message.data(IS_REQUEST_PROTOCOL_CLASS, "true")
+      } else {
+        message.data(IS_REQUEST_PROTOCOL_CLASS, "false")
+      }
+        message.data(OBJECT_VALUE, ProtostuffSerializeUtil.serialize(t))
+      /*} else if (isScalaClass(t)) {
         message.data(IS_SCALA_CLASS, "true")
         message.data(OBJECT_VALUE, Serialization.write(t.asInstanceOf[AnyRef]))
       } else {
         message.data(IS_SCALA_CLASS, "false")
         message.data(OBJECT_VALUE, BDPJettyServerHelper.gson.toJson(t))
-      }
+      }*/
       message.setMethod("/rpc/message")
       message.data(CLASS_VALUE, t.getClass.getName)
     }
@@ -86,19 +93,25 @@ private[linkis] object RPCProduct extends Logging {
     info("RPC Serializers: " + this.formats.customSerializers.map(_.getClass.getSimpleName) + ", serializerClasses: " +
       "" + serializerClasses)
   }
+
   private def getActualTypeClass(classType: Type): Class[_] = classType match {
     case p: ParameterizedType =>
       val params = p.getActualTypeArguments
-      if(params == null || params.isEmpty) null
+      if (params == null || params.isEmpty) null
       else getActualTypeClass(params(0))
     case c: Class[_] => c
     case _ => null
   }
+
+  private[rpc] def isRequestProtocol(obj: Any): Boolean = obj.isInstanceOf[RequestProtocol]
+
   private[rpc] def isScalaClass(obj: Any): Boolean =
     (obj.isInstanceOf[Product] && obj.isInstanceOf[Serializable]) ||
       serializerClasses.exists(ClassUtils.isAssignable(obj.getClass, _)) ||
-        obj.getClass.getName.startsWith("scala.")
+      obj.getClass.getName.startsWith("scala.")
+
   private[rpc] def getSerializableScalaClass(clazz: Class[_]): Class[_] =
     serializerClasses.find(ClassUtils.isAssignable(clazz, _)).getOrElse(clazz)
+
   def getRPCProduct: RPCProduct = rpcProduct
 }

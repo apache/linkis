@@ -16,6 +16,8 @@
 
 package com.webank.wedatasphere.linkis.gateway.route
 
+import java.util
+
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.gateway.exception.TooManyServiceException
@@ -26,13 +28,13 @@ import com.webank.wedatasphere.linkis.server.Message
 import com.webank.wedatasphere.linkis.server.exception.NoApplicationExistsException
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
+import scala.collection.JavaConversions._
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 trait GatewayRouter {
 
   def route(gatewayContext: GatewayContext): ServiceInstance
+
+  def order():Int = -1
 
 }
 abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
@@ -61,9 +63,32 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
     else if(services.length > 1) tooManyDeal(services)
     else None
   }
+
+  protected def retainAllInRegistry(serviceId: String, serviceInstances: util.List[ServiceInstance]): util.List[ServiceInstance] ={
+    val instancesInRegistry = SpringCloudFeignConfigurationCache.getDiscoveryClient
+      .getInstances(serviceId).map( instance => instance.getHost + ":" + instance.getPort)
+    serviceInstances.filter(instance => {
+      instancesInRegistry.contains(instance.getInstance)
+    })
+  }
+
+  protected def removeAllFromRegistry(serviceId: String, serviceInstances: util.List[ServiceInstance]): util.List[ServiceInstance] = {
+    var serviceInstancesInRegistry = SpringCloudFeignConfigurationCache.getDiscoveryClient
+      .getInstances(serviceId).map( instance =>
+      ServiceInstance(serviceId, instance.getHost + ":" + instance.getPort)
+    )
+    serviceInstances.foreach(serviceInstance => {
+      serviceInstancesInRegistry = serviceInstancesInRegistry.filterNot(_.equals(serviceInstance))
+    })
+    serviceInstancesInRegistry
+  }
 }
 
-class DefaultGatewayRouter(gatewayRouters: Array[GatewayRouter]) extends AbstractGatewayRouter{
+class DefaultGatewayRouter(var gatewayRouters: Array[GatewayRouter]) extends AbstractGatewayRouter{
+
+  gatewayRouters = gatewayRouters.sortWith((left, right) => {
+    left.order() < right.order()
+  })
 
   private def findCommonService(parsedServiceId: String) = findService(parsedServiceId, services => {
     val errorMsg = new TooManyServiceException(s"Cannot find a correct serviceId for parsedServiceId $parsedServiceId, service list is: " + services)

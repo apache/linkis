@@ -235,16 +235,16 @@ public class ByteTimeUtils {
 
         double value;
         String unit;
-        if (size >= 2*TB) {
+        if (size >= 2*TB || -2*TB >= size) {
             value = size * 1f / TB;
             unit = "TB";
-        } else if (size >= 2*GB) {
+        } else if (size >= 2*GB || -2*GB >= size) {
             value = size * 1f / GB;
             unit = "GB";
-        } else if (size >= 2*MB) {
+        } else if (size >= 2*MB || -2*MB >= size) {
             value = size * 1f / MB;
             unit = "MB";
-        } else if (size >= 2*KB) {
+        } else if (size >= 2*KB || -2*KB >= size) {
             value = size * 1f / KB;
             unit = "KB";
         } else {

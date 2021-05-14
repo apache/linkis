@@ -19,22 +19,21 @@ package com.webank.wedatasphere.linkis.entrance.interceptor.impl
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
 import com.webank.wedatasphere.linkis.entrance.interceptor.exception.PythonCodeCheckException
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 import org.apache.commons.lang.exception.ExceptionUtils
 
 /**
-  * created by enjoyyin on 2018/10/22
   * Description: Check for python code, prohibiting the use of sys, os, and creating processes(用于python代码的检查，禁止使用sys、os以及创建进程等行为)
   */
-class PythonCodeCheckInterceptor extends EntranceInterceptor{
-  override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = task match{
-    case requestPersistTask:RequestPersistTask =>
+class PythonCodeCheckInterceptor extends EntranceInterceptor {
+  override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = task match {
+    case requestPersistTask: RequestPersistTask =>
       val error = new StringBuilder
       requestPersistTask.getRunType match {
-        case "python" | "pyspark" =>
-          Utils.tryThrow(PythonExplain.authPass(requestPersistTask.getExecutionCode, error)){
-            case PythonCodeCheckException(errCode,errDesc) =>
+        case "python" | "pyspark" | "py" =>
+          Utils.tryThrow(PythonExplain.authPass(requestPersistTask.getExecutionCode, error)) {
+            case PythonCodeCheckException(errCode, errDesc) =>
               requestPersistTask.setErrCode(errCode)
               requestPersistTask.setErrDesc(errDesc)
               PythonCodeCheckException(errCode, errDesc)

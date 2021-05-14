@@ -15,9 +15,6 @@
  */
 package com.webank.wedatasphere.linkis.bml.Entity;
 
-/**
- * Created by cooperyang on 2019/5/16.
- */
 public class Version {
 
     private String version;

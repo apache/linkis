@@ -30,9 +30,9 @@ import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
 import com.webank.wedatasphere.linkis.entrance.job.EntranceExecutionJob
 import com.webank.wedatasphere.linkis.entrance.log.LogReader
 import com.webank.wedatasphere.linkis.entrance.restful.EntranceRestfulApi
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.utils.ZuulEntranceUtils
 import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.scheduler.queue.{Job, SchedulerEventState}
@@ -41,9 +41,7 @@ import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import com.webank.wedatasphere.linkis.server.socket.controller.{ServerEvent, ServerEventService, SocketServerEvent}
 import org.apache.commons.lang.StringUtils
 
-/**
-  * Created by enjoyyin on 2018/9/14.
-  */
+
 class EntranceWebSocketService extends ServerEventService with EntranceEventListener {
 
   private val jobIdToEventId = new util.HashMap[String, Integer]
@@ -59,7 +57,6 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
   private val killUrlPattern = (restfulURI + """entrance/(.+)/kill""").r
   private val pauseUrlPattern = (restfulURI + """entrance/(.+)/pause""").r
   private val backgroundUrlPattern = restfulURI + """entrance/backgroundservice"""
-  private val runtimeTuningUrlPattern = (restfulURI + """entrance/(.+)/runtimeTuning""").r
 
   def setEntranceServer(entranceServer: EntranceServer):Unit = this.entranceServer = entranceServer
   def setEntranceRestfulApi(entranceRestfulApi: EntranceRestfulApi):Unit = this.entranceRestfulApi = entranceRestfulApi
@@ -140,13 +137,9 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
       LogUtils.generateInfo(s"Your job's execution code is (after variable substitution and code check) "))
     entranceServer.getEntranceContext.getOrCreateLogManager().onLogUpdate(job,
       "************************************SCRIPT CODE************************************")
-//    entranceServer.getEntranceContext.getOrCreateLogManager().onLogUpdate(job,task.asInstanceOf[RequestPersistTask].getCode)
     val code = task.asInstanceOf[RequestPersistTask].getCode
     val codeLength = code.length()
-    val pushLog = if (codeLength > 1000){
-      code.substring(0, 1000) + " ... "
-    } else code
-    entranceServer.getEntranceContext.getOrCreateLogManager().onLogUpdate(job,pushLog)
+    entranceServer.getEntranceContext.getOrCreateLogManager().onLogUpdate(job,code)
     entranceServer.getEntranceContext.getOrCreateLogManager().onLogUpdate(job,
     "************************************SCRIPT CODE************************************")
     entranceServer.getEntranceContext.getOrCreateLogManager().onLogUpdate(job,
@@ -167,11 +160,11 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
     var retMessage:Message = null
     val realID = ZuulEntranceUtils.parseExecID(id)(3)
     entranceServer.getJob(realID) foreach {
-      case entranceExecutionJob:EntranceExecutionJob => {
+      case entranceExecutionJob: EntranceExecutionJob => {
         info(s"begin to get job $realID log via websocket")
-        val logsArr:Array[String] = new Array[String](4)
+        val logsArr: Array[String] = new Array[String](4)
         entranceExecutionJob.getWebSocketLogReader.foreach(logReader => logReader.readArray(logsArr, 0, 100))
-        val logList:util.List[String] = new util.ArrayList[String]()
+        val logList: util.List[String] = new util.ArrayList[String]()
         logsArr foreach logList.add
         retMessage = Message.ok("Successfully obtained log information(成功获取到日志信息)")
         retMessage.data("execID", id).data("log", logList).data("websocketTag", websocketTagJobID.get(realID))
@@ -196,11 +189,11 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
     //val realID:String = if (entranceServer.getJob(id).isDefined) id else ZuulEntranceUtils.parseExecID(id)(2)
     val realID:String = if (!id.contains(":")) id else ZuulEntranceUtils.parseExecID(id)(3)
     entranceServer.getJob(realID) foreach {
-      case entranceExecutionJob:EntranceExecutionJob =>
+      case entranceExecutionJob: EntranceExecutionJob =>
         val longExecID = ZuulEntranceUtils.generateExecID(realID,
           entranceExecutionJob.getTask.asInstanceOf[RequestPersistTask].getExecuteApplicationName, Sender.getThisInstance,
           entranceExecutionJob.getTask.asInstanceOf[RequestPersistTask].getRequestApplicationName)
-        if(!jobIdToEventId.containsKey(realID) && event != null) jobIdToEventId synchronized jobIdToEventId.put(realID, event.getId)
+        if (!jobIdToEventId.containsKey(realID) && event != null) jobIdToEventId synchronized jobIdToEventId.put(realID, event.getId)
         val status = entranceExecutionJob.getState
 
         retMessage = Message.ok("Get the status of the task successfully(获取任务状态成功)")
@@ -226,7 +219,7 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
     var retMessage:Message = null
     val realID = ZuulEntranceUtils.parseExecID(id)(3)
     entranceServer.getJob(realID) foreach {
-      case entranceExecutionJob:EntranceExecutionJob => {
+      case entranceExecutionJob: EntranceExecutionJob => {
         val progress = entranceExecutionJob.getProgress
         retMessage = Message.ok("Get the task progress successfully(获取任务进度成功)")
         val taskID = entranceExecutionJob.getTask.asInstanceOf[RequestPersistTask].getTaskID
@@ -254,16 +247,16 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
     var retMessage:Message = null
     val realID = ZuulEntranceUtils.parseExecID(id)(3)
     entranceServer.getJob(realID) foreach {
-      case entranceExecutionJob:EntranceExecutionJob =>
-        try{
+      case entranceExecutionJob: EntranceExecutionJob =>
+        try {
           entranceExecutionJob.kill()
           retMessage = Message.ok("Kill task succeeded(kill任务成功)")
           retMessage.setMethod(restfulURI + "entrance/" + id + "/kill")
           retMessage.setStatus(0)
           return retMessage
-        }catch{
-          case e:Exception => retMessage = Message.error("Kill task failed(kill任务失败)", e)
-          case t:Throwable => retMessage = Message.error("Kill task failed(kill任务失败)", t)
+        } catch {
+          case e: Exception => retMessage = Message.error("Kill task failed(kill任务失败)", e)
+          case t: Throwable => retMessage = Message.error("Kill task failed(kill任务失败)", t)
         }
       case _ =>
     }
@@ -380,27 +373,33 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
         }
       }
     })
-    val logList:util.List[String] = new util.ArrayList[String]()
+    if (StringUtils.isBlank(info.toString()) &&
+      StringUtils.isBlank(warn.toString()) &&
+      StringUtils.isBlank(error.toString()) &&
+      StringUtils.isBlank(all.toString())) {
+      return
+    }
+    val logList: util.List[String] = new util.ArrayList[String]()
     logList.add(error.toString())
     logList.add(warn.toString())
     logList.add(info.toString())
     logList.add(all.toString())
     message = Message.ok("Return log information(返回日志信息)")
     val executeApplicationName = job.asInstanceOf[EntranceJob].getTask.asInstanceOf[RequestPersistTask].getExecuteApplicationName
-    val creator:String = job.asInstanceOf[EntranceJob].getTask.asInstanceOf[RequestPersistTask].getRequestApplicationName
-    val execID:String = ZuulEntranceUtils.generateExecID(job.getId, executeApplicationName, Sender.getThisInstance, creator)
+    val creator: String = job.asInstanceOf[EntranceJob].getTask.asInstanceOf[RequestPersistTask].getRequestApplicationName
+    val execID: String = ZuulEntranceUtils.generateExecID(job.getId, executeApplicationName, Sender.getThisInstance, creator)
     message.setMethod(restfulURI + "entrance/" + execID + "/log")
     val taskID = job.asInstanceOf[EntranceJob].getTask.asInstanceOf[RequestPersistTask].getTaskID
-    message.data("execID",execID).data("log", logList).data("websocketTag", websocketTagJobID.get(job.getId)).data("taskID", taskID)
+    message.data("execID", execID).data("log", logList).data("websocketTag", websocketTagJobID.get(job.getId)).data("taskID", taskID)
     sendMsg(job, message)
   }
   def pushProgressToFrontend(job: Job, progress: Float, progressInfo: Array[JobProgressInfo]): Unit = {
     val progressInfoMap = progressInfo.map(info => toJavaMap(Map("id" -> info.id, "succeedTasks" -> info.succeedTasks,
-      "failedTasks" -> info.failedTasks , "runningTasks" -> info.runningTasks, "totalTasks" -> info.totalTasks)))
+      "failedTasks" -> info.failedTasks, "runningTasks" -> info.runningTasks, "totalTasks" -> info.totalTasks)))
     val executeApplicationName = job.asInstanceOf[EntranceJob].getTask.asInstanceOf[RequestPersistTask].getExecuteApplicationName
     val creator = job.asInstanceOf[EntranceJob].getTask.asInstanceOf[RequestPersistTask].getRequestApplicationName
     job.asInstanceOf[EntranceJob].setProgressInfo(progressInfo)
-    val execID:String = ZuulEntranceUtils.generateExecID(job.getId, executeApplicationName, Sender.getThisInstance, creator)
+    val execID: String = ZuulEntranceUtils.generateExecID(job.getId, executeApplicationName, Sender.getThisInstance, creator)
     val message = Message.ok("返回进度信息!")
     message.setMethod(restfulURI + "entrance/" + execID + "/progress")
     val taskID = job.asInstanceOf[EntranceJob].getTask.asInstanceOf[RequestPersistTask].getTaskID

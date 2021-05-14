@@ -18,9 +18,6 @@ package com.webank.wedatasphere.linkis.gateway.exception
 
 import com.webank.wedatasphere.linkis.common.exception.{ErrorException, WarnException}
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 class GatewayErrorException(errorCode: Int, message: String) extends ErrorException(errorCode, message)
 
 class GatewayWarnException(errorCode: Int, message: String) extends WarnException(errorCode, message)

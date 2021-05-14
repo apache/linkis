@@ -16,10 +16,9 @@
 
 package com.webank.wedatasphere.linkis.server.restful
 
-import javax.ws.rs.core.Response
-
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.server.{Message, catchIt}
+import javax.ws.rs.core.Response
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.{Around, Aspect, Pointcut}
 import org.springframework.stereotype.Component

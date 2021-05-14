@@ -17,11 +17,7 @@ import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-/**
- *
- * @author dennyzhou-zdx
- * 2020/02/14
- */
+
 public interface DataSourceParamKeyDao {
 
     /**

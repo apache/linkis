@@ -45,10 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author liaoyt
- * 2020/02/10
- */
 @Path("/data_source/op/")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)

@@ -20,10 +20,6 @@ import com.webank.wedatasphere.linkis.metadatamanager.common.domain.MetaPartitio
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author alexyang
- * 2020/02/10
- */
 public interface MetadataAppService {
 
     /**

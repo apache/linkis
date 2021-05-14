@@ -17,8 +17,6 @@ import com.webank.wedatasphere.linkis.common.conf.CommonVars;
 
 /**
  * Configuration
- * @author kirkzhou
- * 2020/02/14
  */
 public class DsmConfiguration {
 

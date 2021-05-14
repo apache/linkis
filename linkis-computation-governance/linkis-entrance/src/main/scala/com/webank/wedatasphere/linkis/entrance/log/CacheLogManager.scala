@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-/**
-  * author: enjoyyin
-  * date: 2018/9/11
-  * time: 15:51
-  * Description:
-  */
-package com.webank.wedatasphere.linkis.entrance.log
 
+package com.webank.wedatasphere.linkis.entrance.log
 
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.exception.{CacheNotReadyException, EntranceErrorCode}
 import com.webank.wedatasphere.linkis.entrance.job.EntranceExecutionJob
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
 /**
   * LogManager implementation, using a singleton class
@@ -37,23 +31,23 @@ class CacheLogManager extends LogManager {
   override def getLogReader(execId: String): LogReader = {
     var retLogReader:LogReader = null
      this.entranceContext.getOrCreateScheduler().get(execId).foreach {
-      case entranceExecutionJob: EntranceExecutionJob =>
-        retLogReader =  entranceExecutionJob.getLogReader.getOrElse({
-          this.synchronized{
-            val logWriter:CacheLogWriter =
-              entranceExecutionJob.getLogWriter.getOrElse(createLogWriter(entranceExecutionJob)).asInstanceOf[CacheLogWriter]
-            val sharedCache:Cache = logWriter.getCache.
-              getOrElse(throw CacheNotReadyException(EntranceErrorCode.CACHE_NOT_READY.getErrCode,EntranceErrorCode.CACHE_NOT_READY.getDesc))
-            val logPath:String = entranceExecutionJob.getTask match {
-              case requestPersistTask:RequestPersistTask => requestPersistTask.getLogPath
-              case _ => null
-            }
-            new CacheLogReader(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue,sharedCache, entranceExecutionJob.getUser)
-          }
-        })
-        entranceExecutionJob.setLogReader(retLogReader)
-      case _ => null
-    }
+       case entranceExecutionJob: EntranceExecutionJob =>
+         retLogReader = entranceExecutionJob.getLogReader.getOrElse({
+           this.synchronized {
+             val logWriter: CacheLogWriter =
+               entranceExecutionJob.getLogWriter.getOrElse(createLogWriter(entranceExecutionJob)).asInstanceOf[CacheLogWriter]
+             val sharedCache: Cache = logWriter.getCache.
+               getOrElse(throw CacheNotReadyException(EntranceErrorCode.CACHE_NOT_READY.getErrCode, EntranceErrorCode.CACHE_NOT_READY.getDesc))
+             val logPath: String = entranceExecutionJob.getTask match {
+               case requestPersistTask: RequestPersistTask => requestPersistTask.getLogPath
+               case _ => null
+             }
+             new CacheLogReader(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, sharedCache, entranceExecutionJob.getUser)
+           }
+         })
+         entranceExecutionJob.setLogReader(retLogReader)
+       case _ => null
+     }
     retLogReader
   }
 
@@ -61,16 +55,16 @@ class CacheLogManager extends LogManager {
   override def createLogWriter(job: Job): LogWriter = {
 
     job match {
-      case entranceExecutionJob:EntranceExecutionJob => {
-        val cache:Cache = Cache(EntranceConfiguration.DEFAULT_CACHE_MAX.getValue)
-        val logPath:String = entranceExecutionJob.getTask.asInstanceOf[RequestPersistTask].getLogPath
-        val cacheLogWriter:CacheLogWriter =
-          new CacheLogWriter(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue,cache, entranceExecutionJob.getUser)
+      case entranceExecutionJob: EntranceExecutionJob => {
+        val cache: Cache = Cache(EntranceConfiguration.DEFAULT_CACHE_MAX.getValue)
+        val logPath: String = entranceExecutionJob.getTask.asInstanceOf[RequestPersistTask].getLogPath
+        val cacheLogWriter: CacheLogWriter =
+          new CacheLogWriter(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, cache, entranceExecutionJob.getUser)
         entranceExecutionJob.setLogWriter(cacheLogWriter)
-        val webSocketCacheLogReader:WebSocketCacheLogReader =
+        val webSocketCacheLogReader: WebSocketCacheLogReader =
           new WebSocketCacheLogReader(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, cache, entranceExecutionJob.getUser)
         entranceExecutionJob.setWebSocketLogReader(webSocketCacheLogReader)
-        val webSocketLogWriter:WebSocketLogWriter = new WebSocketLogWriter(entranceExecutionJob, entranceContext.getOrCreateEventListenerBus)
+        val webSocketLogWriter: WebSocketLogWriter = new WebSocketLogWriter(entranceExecutionJob, entranceContext.getOrCreateEventListenerBus)
         entranceExecutionJob.setWebSocketLogWriter(webSocketLogWriter)
         cacheLogWriter
       }

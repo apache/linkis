@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright 2019 WeBank
-  ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
-  ~
   ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,8 +20,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>0.11.0</version>
-        <relativePath>../../pom.xml</relativePath>
+        <version>1.0.0-RC1</version>
     </parent>
     <artifactId>linkis-entrance</artifactId>
 
@@ -32,6 +28,7 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-scheduler</artifactId>
+            <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.webank.wedatasphere.linkis</groupId>
@@ -39,21 +36,25 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-cloudRPC</artifactId>
+            <artifactId>linkis-rpc</artifactId>
+            <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
+            <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-cs-ujes-client</artifactId>
+            <artifactId>linkis-cs-engine-support</artifactId>
+            <version>${linkis.version}</version>
         </dependency>
 
         <dependency>
@@ -69,6 +70,20 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-computation-governance-common</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-orchestrator-ecm-plugin</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -77,6 +92,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
             </plugin>
+
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
@@ -84,20 +100,40 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.3</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/distribution.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
                 <configuration>
-                    <excludes>
-                        <exclude>**/*.yml</exclude>
-                        <exclude>**/*.properties</exclude>
-                        <exclude>**/*.sh</exclude>
-                        <exclude>log4j2-spring.xml</exclude>
-                        <exclude>${basedir}/src/test/*</exclude>
-                    </excludes>
+                    <skipAssembly>false</skipAssembly>
+                    <finalName>out</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <attach>false</attach>
+                    <descriptors>
+                        <descriptor>src/main/assembly/distribution.xml</descriptor>
+                    </descriptors>
                 </configuration>
             </plugin>
         </plugins>
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>${basedir}/src/main/resources</directory>
             </resource>
         </resources>
         <finalName>${project.artifactId}-${project.version}</finalName>

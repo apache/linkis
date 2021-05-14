@@ -17,9 +17,7 @@
 package com.webank.wedatasphere.linkis.metadata.domain;
 
 import java.util.Date;
-/**
- * Created by shanhuang on 9/13/18.
- */
+
 public class AbstractAuditable {
     private Date created;
     private Date updated;

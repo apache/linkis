@@ -33,10 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author davidhua
- * 2020/02/14
- */
 public class ElasticConnection implements Closeable {
 
     public static final String DEFAULT_TYPE_NAME = "type";

@@ -17,10 +17,6 @@ package com.webank.wedatasphere.linkis.bml.model;
 
 import java.util.Date;
 
-/**
- * created by cooperyang on 2019/5/14
- * Description:
- */
 public abstract class AbstractAuditable {
     private Date created;
     private Date updated;

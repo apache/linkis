@@ -27,9 +27,6 @@ import org.reflections.Reflections
 
 import scala.collection.JavaConversions._
 
-/**
-  * created by cooperyang on 2019/5/21.
-  */
 object DWSHttpMessageFactory {
 
   private val reflections = new Reflections("com.webank.wedatasphere", classOf[DWSHttpMessageResult].getClassLoader)

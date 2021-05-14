@@ -27,9 +27,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
- * @author kirkzhou
  * Json utils
- * 2018/9/3
  */
 public class Json {
     private static final String PREFIX = "[";

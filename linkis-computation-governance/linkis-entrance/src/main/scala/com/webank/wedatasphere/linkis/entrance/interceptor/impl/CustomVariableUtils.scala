@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +13,6 @@
 
 package com.webank.wedatasphere.linkis.entrance.interceptor.impl
 
-
 import java.text.SimpleDateFormat
 import java.util
 import java.util.{Calendar, Date}
@@ -24,7 +20,7 @@ import java.util.{Calendar, Date}
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.interceptor.exception.VarSubstitutionException
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
 import com.webank.wedatasphere.linkis.protocol.variable.{RequestQueryAppVariable, ResponseQueryVariable}
@@ -37,9 +33,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.util.control.Exception._
 
-/**
-  * Created by enjoyyin on 11/14/17.
-  */
+
 object CustomVariableUtils extends Logging {
   //hql sql jdbc to sql python to py
   val SQL_TYPE = "sql"
@@ -49,36 +43,37 @@ object CustomVariableUtils extends Logging {
   val R_TYPE:String = "r"
   val RUN_DATE = "run_date"
   val TEAM:String = "team"
-  val SHELL_TYPE:String="shell"
 
   /**
     * date Format
     */
   val dateFormat = new SimpleDateFormat("yyyyMMdd")
   val dateFormat_std = new SimpleDateFormat("yyyy-MM-dd")
+
   /**
     * replace custom variable
     * 1. Get the user-defined variable from the code and replace it
-  * 2. If 1 is not done, then get the user-defined variable from args and replace it.
-  * 3. If 2 is not done, get the user-defined variable from the console and replace it.
-
+    *   * 2. If 1 is not done, then get the user-defined variable from args and replace it.
+    *   * 3. If 2 is not done, get the user-defined variable from the console and replace it.
+    *
     * 1. 从代码中得到用户定义的变量，进行替换
     * 2. 如果1没有做，那么从args中得到用户定义的变量，进行替换
     * 3. 如果2没有做，从CS中得到用户定义的变量，进行替换
     *3. 如果3没有做，从控制台中得到用户定义的变量，进行替换
+    *
     * @param task : requestPersistTask
     * @return
     */
   def replaceCustomVar(task: Task, runType: String): (Boolean, String) = {
-    val code:String = task.asInstanceOf[RequestPersistTask].getExecutionCode
-    val umUser:String = task.asInstanceOf[RequestPersistTask].getUmUser
+    val code: String = task.asInstanceOf[RequestPersistTask].getExecutionCode
+    val umUser: String = task.asInstanceOf[RequestPersistTask].getUmUser
     var codeType = SQL_TYPE
     runType match {
-      case "hql" | "sql" | "jdbc" | "hive" | "psql" | "essql" => codeType = SQL_TYPE
-      case "python" => codeType = PY_TYPE
+      case "hql" | "sql" | "jdbc" | "hive" => codeType = SQL_TYPE
+      case "python" | "py" => codeType = PY_TYPE
       case "java" => codeType = JAVA_TYPE
-      case "scala" | "esjson" => codeType = SCALA_TYPE
-      case "shell" | "sh" => codeType = SHELL_TYPE
+      case "scala" => codeType = SCALA_TYPE
+      case "sh" | "shell" => codeType = SQL_TYPE
       case _ => return (false, code)
     }
 
@@ -101,7 +96,7 @@ object CustomVariableUtils extends Logging {
             } else {
               nameAndType(key) = StringType(value)
             }
-          }
+        }
       }
     }
 
@@ -110,26 +105,26 @@ object CustomVariableUtils extends Logging {
     putNameAndType(nameAndValue)
 
     task match {
-      case requestPersistTask:RequestPersistTask =>
+      case requestPersistTask: RequestPersistTask =>
         /* Perform the second step to replace the parameters passed in args*/
         /* 进行第二步，对args传进的参数进行替换*/
         val variableMap = TaskUtils.getVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
-          .map{case (k, v) => k -> v.asInstanceOf[String]}
+          .map { case (k, v) => k -> v.asInstanceOf[String] }
         putNameAndType(variableMap)
       case _ =>
     }
-    /* Go to the four step and take the user's parameters to the cloud-publicservice module.*/
-    /*进行第四步，向cloud-publicservice模块去拿用户的参数*/
+    /* Go to the four step and take the user's parameters to the linkis-ps-publicservice module.*/
+    /*进行第四步，向linkis-ps-publicservice模块去拿用户的参数*/
     val sender = Sender.getSender(EntranceConfiguration.CLOUD_CONSOLE_VARIABLE_SPRING_APPLICATION_NAME.getValue)
     task match {
-      case requestPersistTask:RequestPersistTask =>
-        val umUser:String = requestPersistTask.getUmUser
-        val creator:String = requestPersistTask.getRequestApplicationName
-        val runType:String = requestPersistTask.getRunType
-        val requestQueryAppVariable:RequestQueryAppVariable = RequestQueryAppVariable(umUser, creator, runType)
-        val response:ResponseQueryVariable = sender.ask(requestQueryAppVariable).asInstanceOf[ResponseQueryVariable]
+      case requestPersistTask: RequestPersistTask =>
+        val umUser: String = requestPersistTask.getUmUser
+        val creator: String = requestPersistTask.getRequestApplicationName
+        val runType: String = requestPersistTask.getRunType
+        val requestQueryAppVariable: RequestQueryAppVariable = RequestQueryAppVariable(umUser, creator, runType)
+        val response: ResponseQueryVariable = sender.ask(requestQueryAppVariable).asInstanceOf[ResponseQueryVariable]
         val keyAndValue = response.getKeyAndValue
-        val keyAndValueScala:mutable.Map[String, String] = keyAndValue
+        val keyAndValueScala: mutable.Map[String, String] = keyAndValue
         putNameAndType(keyAndValueScala)
       case _ =>
     }
@@ -163,59 +158,55 @@ object CustomVariableUtils extends Logging {
     */
   def parserVar(code: String, nameAndType: mutable.Map[String, VariableType]): String = {
 
-    val codeReg = "\\$\\{\\s*[A-Za-z][A-Za-z0-9_]*\\s*[\\+\\-\\*/]?\\s*[A-Za-z0-9_\\.]*\\s*\\}".r
-    val calReg = "(\\s*[A-Za-z][A-Za-z0-9_]*\\s*)([\\+\\-\\*/]?)(\\s*[A-Za-z0-9_\\.]*\\s*)".r
+    val codeReg = "\\$\\{\\s*[A-Za-z][A-Za-z0-9_\\.]*\\s*[\\+\\-\\*/]?\\s*[A-Za-z0-9_\\.]*\\s*\\}".r
+    val calReg = "(\\s*[A-Za-z][A-Za-z0-9_\\.]*\\s*)([\\+\\-\\*/]?)(\\s*[A-Za-z0-9_\\.]*\\s*)".r
+    val parseCode = new StringBuilder
+    val codes = codeReg.split(code)
     val expressionCache = mutable.HashSet[String]()
-    var targetCode = code
-    var noChange = false
-    while (!noChange && codeReg.findFirstIn(targetCode).isDefined) {
-      var i = 0
-      val parseCode = new StringBuilder
-      val codes = codeReg.split(targetCode)
-      codeReg.findAllIn(targetCode).foreach(str => {
-        calReg.findFirstMatchIn(str).foreach(ma => {
-          i = i + 1
-          val name = ma.group(1)
-          val signal = ma.group(2)
-          val bValue = ma.group(3)
 
-          if (name == null || name.trim.isEmpty) {
-            throw  VarSubstitutionException(20041,s"[$str] replaced var is null")
+    var i = 0
+
+    codeReg.findAllIn(code).foreach(str => {
+      calReg.findFirstMatchIn(str).foreach(ma => {
+        i = i + 1
+        val name = ma.group(1)
+        val signal = ma.group(2)
+        val bValue = ma.group(3)
+
+        if (name == null || name.trim.isEmpty) {
+          throw  VarSubstitutionException(20041,s"[$str] replaced var is null")
+        } else {
+          var expression = name.trim
+          val varType = nameAndType.get(name.trim).orNull
+          if (varType == null) {
+            warn(s"Use undefined variables or use the set method: [$str](使用了未定义的变量或者使用了set方式:[$str])")
+            parseCode ++= codes(i - 1) ++ str
           } else {
-            var expression = name.trim
-            val varType = nameAndType.get(name.trim).orNull
-            if (varType == null) {
-              warn(s"Use undefined variables or use the set method: [$str](使用了未定义的变量或者使用了set方式:[$str])")
-              parseCode ++= codes(i - 1) ++ str
-            } else {
-              var res: String = varType.getValue
-              if (signal != null && !signal.trim.isEmpty) {
-                if (bValue == null || bValue.trim.isEmpty) {
-                  throw VarSubstitutionException(20042, s"[$str] expression is not right, please check")
-                } else {
-                  expression = expression + "_" + signal.trim + "_" + bValue.trim
-                  res = varType.calculator(signal.trim, bValue.trim)
-                }
+            var res: String = varType.getValue
+            if (signal != null && !signal.trim.isEmpty) {
+              if (bValue == null || bValue.trim.isEmpty) {
+                throw VarSubstitutionException(20042, s"[$str] expression is not right, please check")
+              } else {
+                expression = expression + "_" + signal.trim + "_" + bValue.trim
+                res = varType.calculator(signal.trim, bValue.trim)
               }
-              if (!expressionCache.contains(expression)) {
-                info(s"Variable expression [$str] = $res(变量表达式[$str] = $res)")
-                //println(s"变量表达式[$str] = $res")
-                expressionCache += expression
-              }
-              //println(s"变量表达式序号:$i\t[$str] = $res")
-              parseCode ++= codes(i - 1) ++ res
             }
+            if (!expressionCache.contains(expression)) {
+              info(s"Variable expression [$str] = $res(变量表达式[$str] = $res)")
+              //println(s"变量表达式[$str] = $res")
+              expressionCache += expression
+            }
+            //println(s"变量表达式序号:$i\t[$str] = $res")
+            parseCode ++= codes(i - 1) ++ res
           }
-        })
+        }
       })
-      if (i == codes.length - 1) {
-        parseCode ++= codes(i)
-      }
-      val parsedCode = org.apache.commons.lang.StringUtils.strip(deleteUselessSemicolon(parseCode))
-      if (targetCode.equals(parsedCode)) noChange = true
-      targetCode = parsedCode
+    })
+    if (i == codes.length - 1) {
+      parseCode ++= codes(i)
     }
-    targetCode
+    val parsedCode = deleteUselessSemicolon(parseCode)
+    org.apache.commons.lang.StringUtils.strip(parsedCode)
     //   Utils.trimBlank()
   }
 
@@ -310,8 +301,6 @@ object CustomVariableUtils extends Logging {
       case SCALA_TYPE => varString = """\s*//@set\s*.+\s*"""
         errString = """\s*//@.+"""
       case JAVA_TYPE => varString = """\s*!!@set\s*.+\s*"""
-      case SHELL_TYPE =>  varString = """\s*#@set\s*.+\s*"""
-        errString = """\s*#@"""
     }
 
     val customRegex = varString.r.unanchored
@@ -387,7 +376,7 @@ object CustomVariableUtils extends Logging {
   def main(args: Array[String]): Unit = {
     val code = "--@set a=1\n--@set b=2\nselect ${a +2},${a   + 1},${a},${a },${b},${b}"
     val task = new RequestPersistTask
-    val args:java.util.Map[String, Object] = new util.HashMap[String, Object]()
+    val args: java.util.Map[String, Object] = new util.HashMap[String, Object]()
     args.put(RUN_DATE, "20181030")
     task.setExecutionCode(code)
     task.setParams(args)

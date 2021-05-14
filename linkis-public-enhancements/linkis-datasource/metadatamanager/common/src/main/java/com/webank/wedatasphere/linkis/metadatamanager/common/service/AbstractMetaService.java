@@ -34,9 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-/**
- * Created by jackyxxie on 2020/2/10.
- */
 public abstract class AbstractMetaService<C extends Closeable> implements MetadataService {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMetaService.class);
     private static final String CONN_CACHE_REQ = "_STORED";

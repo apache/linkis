@@ -34,10 +34,6 @@ import java.util.Map;
 import static com.webank.wedatasphere.linkis.datasourcemanager.common.ServiceErrorCode.BML_SERVICE_ERROR;
 import static com.webank.wedatasphere.linkis.datasourcemanager.common.ServiceErrorCode.REMOTE_METADATA_SERVICE_ERROR;
 
-/**
- * @author davidhua
- * 2020/02/14
- */
 @Service
 public class MetadataOperateServiceImpl implements MetadataOperateService {
 

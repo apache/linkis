@@ -20,7 +20,7 @@ import java.net.InetSocketAddress
 import java.util.function
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.gateway.exception.GatewayErrorException
 import com.webank.wedatasphere.linkis.gateway.springcloud.websocket.SpringCloudGatewayWebsocketUtils._
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
@@ -30,15 +30,12 @@ import org.springframework.web.reactive.socket.adapter.ReactorNettyWebSocketSess
 import org.springframework.web.reactive.socket.adapter.ReactorNettyWebSocketSession.WebSocketConnection
 import org.springframework.web.reactive.socket.{CloseStatus, HandshakeInfo, WebSocketMessage, WebSocketSession}
 import reactor.core.publisher.{Flux, Mono}
-import reactor.ipc.netty.http.websocket.{WebsocketInbound, WebsocketOutbound}
+import reactor.netty.http.websocket.{WebsocketInbound, WebsocketOutbound}
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 class GatewayWebSocketSessionConnection(val webSocketSession: ReactorNettyWebSocketSession, val user: String, startTime: Long)
-  extends GatewayWebSocketSession(webSocketSession) with Logging {
+  extends GatewayWebSocketSession(webSocketSession) {
   def this(webSocketSession: WebSocketSession, user: String) = this(webSocketSession.asInstanceOf[ReactorNettyWebSocketSession], user, System.currentTimeMillis)
   private val proxySessions = new ArrayBuffer[ProxyGatewayWebSocketSession](5)
   def add(serviceInstance: ServiceInstance, proxySession: WebSocketSession): Unit = synchronized {
@@ -53,7 +50,8 @@ class GatewayWebSocketSessionConnection(val webSocketSession: ReactorNettyWebSoc
     }
   }
 
-  def getAddress: InetSocketAddress = webSocketConnection.getInbound.remoteAddress()
+  //todo
+  def getAddress: InetSocketAddress = null
 
   def getProxyWebSocketSession(serviceInstance: ServiceInstance): Option[ProxyGatewayWebSocketSession] = {
     val proxySession = proxySessions.find(_.serviceInstance.getApplicationName == serviceInstance.getApplicationName)
@@ -113,7 +111,9 @@ class GatewayWebSocketSession private(inbound: WebsocketInbound,
     this.webSocketConnection = webSocketSession
   }
   protected var webSocketConnection: WebSocketConnection = _
-  def isAlive: Boolean = !webSocketConnection.getInbound.context().isDisposed
+
+  //todo
+  def isAlive: Boolean = true
 
   override def receive(): Flux[WebSocketMessage] = webSocketConnection.getInbound
     .aggregateFrames(ServerConfiguration.BDP_SERVER_SOCKET_TEXT_MESSAGE_SIZE_MAX.getValue.toInt)

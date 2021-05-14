@@ -1,16 +1,31 @@
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.webank.wedatasphere.linkis.ujes.jdbc
 
-import java.io.{InputStream, Reader}
-import java.net.URL
+import java.sql.{Connection, DatabaseMetaData, ResultSet, RowIdLifetime}
+import java.util
 
-import scala.collection.mutable.ArrayBuffer
-import java.sql.{Blob, Clob, Connection, DatabaseMetaData, Date, NClob, Ref, ResultSet, ResultSetMetaData, RowId, RowIdLifetime, SQLException, SQLWarning, SQLXML, Statement, Time, Timestamp}
-import java.{sql, util}
-import java.util.{ArrayList, Calendar, List, SortedMap, TreeMap}
+import com.webank.wedatasphere.linkis.ujes.client.request.{GetColumnsAction, GetDBSAction, GetTablesAction}
+import com.webank.wedatasphere.linkis.ujes.jdbc.entity.JdbcColumn
+import com.webank.wedatasphere.linkis.ujes.jdbc.utils.JDBCUtils
+import org.apache.commons.lang.StringUtils
 
-/**
-  * Created by owenxu on 2019/8/8.
-  */
+import scala.collection.JavaConversions._
+
 class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends DatabaseMetaData {
   override def allProceduresAreCallable(): Boolean = false
 
@@ -19,9 +34,9 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends Data
   override def getURL: String = ujesSQLConnection.getProps.getProperty("URL")
 
   override def getUserName: String =
-    if(ujesSQLConnection.getProps.containsKey("user"))
+    if (ujesSQLConnection.getProps.containsKey("user"))
       ujesSQLConnection.getProps.getProperty("user")
-    else throw new UJESSQLException(UJESSQLErrorCode.PARAMS_NOT_FOUND,"Missing user information")
+    else throw new UJESSQLException(UJESSQLErrorCode.PARAMS_NOT_FOUND, "Missing user information")
 
   override def isReadOnly: Boolean = false
 
@@ -67,7 +82,7 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends Data
 
   override def getIdentifierQuoteString: String = " "
 
-  override def getSQLKeywords: String = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getSQLKeywords not supported")
+  override def getSQLKeywords: String = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getSQLKeywords not supported")
 
   override def getNumericFunctions: String = ""
 
@@ -197,45 +212,45 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends Data
 
   override def getMaxBinaryLiteralLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxBinaryLiteralLength not supported")
 
-  override def getMaxCharLiteralLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getMaxCharLiteralLength not supported")
+  override def getMaxCharLiteralLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxCharLiteralLength not supported")
 
   override def getMaxColumnNameLength: Int = 128
 
   override def getMaxColumnsInGroupBy: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxColumnsInGroupBy not supported")
 
-  override def getMaxColumnsInIndex: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getMaxColumnsInIndex not supported")
+  override def getMaxColumnsInIndex: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxColumnsInIndex not supported")
 
-  override def getMaxColumnsInOrderBy: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getMaxColumnsInOrderBy not supported")
+  override def getMaxColumnsInOrderBy: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxColumnsInOrderBy not supported")
 
-  override def getMaxColumnsInSelect: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getMaxColumnsInSelect not supported")
+  override def getMaxColumnsInSelect: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxColumnsInSelect not supported")
 
-  override def getMaxColumnsInTable: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getMaxColumnsInTable not supported")
+  override def getMaxColumnsInTable: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxColumnsInTable not supported")
 
   override def getMaxConnections: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxConnections not supported")
 
-  override def getMaxCursorNameLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getMaxCursorNameLength not supported")
+  override def getMaxCursorNameLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxCursorNameLength not supported")
 
-  override def getMaxIndexLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getMaxIndexLength not supported")
+  override def getMaxIndexLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxIndexLength not supported")
 
-  override def getMaxSchemaNameLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getMaxSchemaNameLength not supported")
+  override def getMaxSchemaNameLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxSchemaNameLength not supported")
 
-  override def getMaxProcedureNameLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getMaxProcedureNameLength not supported")
+  override def getMaxProcedureNameLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxProcedureNameLength not supported")
 
-  override def getMaxCatalogNameLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getMaxCatalogNameLength not supported")
+  override def getMaxCatalogNameLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxCatalogNameLength not supported")
 
-  override def getMaxRowSize: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getMaxRowSize not supported")
+  override def getMaxRowSize: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxRowSize not supported")
 
-  override def doesMaxRowSizeIncludeBlobs(): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"doesMaxRowSizeIncludeBlobs not supported")
+  override def doesMaxRowSizeIncludeBlobs(): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "doesMaxRowSizeIncludeBlobs not supported")
 
-  override def getMaxStatementLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getMaxStatementLength not supported")
+  override def getMaxStatementLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxStatementLength not supported")
 
-  override def getMaxStatements: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getMaxStatements not supported")
+  override def getMaxStatements: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxStatements not supported")
 
-  override def getMaxTableNameLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getMaxTableNameLength not supported")
+  override def getMaxTableNameLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxTableNameLength not supported")
 
-  override def getMaxTablesInSelect: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getMaxTablesInSelect not supported")
+  override def getMaxTablesInSelect: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxTablesInSelect not supported")
 
-  override def getMaxUserNameLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getMaxUserNameLength not supported")
+  override def getMaxUserNameLength: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxUserNameLength not supported")
 
   override def getDefaultTransactionIsolation: Int = 0
 
@@ -247,58 +262,200 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends Data
 
   override def supportsDataManipulationTransactionsOnly(): Boolean = false
 
-  override def dataDefinitionCausesTransactionCommit(): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"dataDefinitionCausesTransactionCommit not supported")
+  override def dataDefinitionCausesTransactionCommit(): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "dataDefinitionCausesTransactionCommit not supported")
 
-  override def dataDefinitionIgnoredInTransactions(): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"dataDefinitionIgnoredInTransactions not supported")
+  override def dataDefinitionIgnoredInTransactions(): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "dataDefinitionIgnoredInTransactions not supported")
 
   override def getProcedures(catalog: String, schemaPattern: String, procedureNamePattern: String): ResultSet = null
 
   override def getProcedureColumns(catalog: String, schemaPattern: String, procedureNamePattern: String, columnNamePattern: String): ResultSet = null
 
   override def getTables(catalog: String, schemaPattern: String, tableNamePattern: String, types: Array[String]): ResultSet = {
-//    if(tableNamePattern.contains("%")) throw new UJESSQLException(UJESSQLErrorCode
-//      .NOSUPPORT_METADATA,"unsupport like sql")
-    System.out.println("---getTables begin--")
-    System.out.println("catalog:"+catalog+",schema:"+schemaPattern+"," +
-      "tablename:"+tableNamePattern+",type:"+types+",catlog:"+this.ujesSQLConnection.getCatalog+",schema:"+this.ujesSQLConnection.getSchema)
+    val resultCatalog = if (StringUtils.isNotBlank(catalog)) {
+      catalog
+    } else {
+      s"${getUserName}_ind"
+    }
+    val getTableAction = GetTablesAction.builder().setUser(getUserName).setDatabase(resultCatalog).build()
+    val result = ujesSQLConnection.ujesClient.getTables(getTableAction)
+    val tables = result.getTables
+    val resultTables = new util.ArrayList[util.Map[String, String]]()
+    tables.foreach { table =>
+      val tableType = if (table.get("isView").asInstanceOf[Boolean]) TableType.VIEW.name() else TableType.TABLE.name()
+      val resultTable = new util.HashMap[String, String]()
+      resultTable.put("catalog", resultCatalog)
+      resultTable.put("tableName", table.get("tableName").asInstanceOf[String])
+      resultTable.put("tableType", tableType)
+      if (null == types || types.contains(tableType)) {
+        resultTables.add(resultTable)
+      }
+    }
+    new LinkisMetaDataResultSet[util.Map[String, String]](util.Arrays.asList("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "TABLE_TYPE", "REMARKS"), util.Arrays.asList("string", "string", "string", "string", "string"), resultTables) {
 
-    val executeQueryResultSet =this.ujesSQLConnection.createStatement().executeQuery("desc " +
-      "movie")
+      private var cnt = 0
 
-    printRs(executeQueryResultSet)
-    System.out.println("---getTables end--")
-    executeQueryResultSet
+      override def next(): Boolean = {
+        if (cnt < data.size()) {
+          val resultTable = new util.ArrayList[Object](5)
+          val table = data.get(cnt)
+          resultTable.add(table.get("catalog"))
+          resultTable.add(null)
+          resultTable.add(table.get("tableName"))
+          resultTable.add(table.get("tableType"))
+          resultTable.add(table.get(""))
+          row = resultTable
+          cnt = cnt + 1
+          true
+        } else {
+          false
+        }
+      }
+    }
+
   }
-
 
   override def getSchemas: ResultSet = {
-    println("---getschema begin--")
-    val executeQueryResultSet =this.ujesSQLConnection.createStatement().executeQuery("show tables")
-
-    printRs(executeQueryResultSet)
-    println("---getschema end--")
-    executeQueryResultSet
+    new LinkisMetaDataResultSet(util.Arrays.asList("TABLE_SCHEM", "TABLE_CATALOG"), util.Arrays.asList("string", "string"), null) {
+      override def next(): Boolean = false
+    }
   }
 
-  private def printRs(rs:ResultSet):Unit={
-    while(rs.next()){
-      val metaData = rs.getMetaData
-      println("#######begin")
-      for(i<-1 until metaData.getColumnCount){
-        System.out.println(metaData.getColumnName(i) + ":" + metaData.getColumnTypeName(i) + ": "
-          + rs.getObject(i)+"\r\n")
+  override def getCatalogs: ResultSet = {
+    val getDBSAction = GetDBSAction.builder().setUser(getUserName).build()
+    val dBSResult = ujesSQLConnection.ujesClient.getDBS(getDBSAction)
+    val dbsName = dBSResult.getDBSName()
+    new LinkisMetaDataResultSet[String](util.Arrays.asList("TABLE_SCHEM", "TABLE_CATALOG"), util.Arrays.asList("string", "string"), dbsName) {
+      private var cnt = 0
+
+      override def next(): Boolean = {
+        if (cnt < data.size()) {
+          val db = new util.ArrayList[Object](2)
+          db.add(null)
+          db.add(data.get(cnt))
+          row = db
+          cnt = cnt + 1
+          true
+        } else {
+          false
+        }
       }
-      println("#######end")
+    }
+  }
+
+  override def getTableTypes: ResultSet = {
+    val typesList = TableType.values()
+    new LinkisMetaDataResultSet[TableType](util.Arrays.asList("TABLE_TYPE"), util.Arrays.asList("string"), typesList.toList) {
+      private var cnt = 0
+
+      override def next(): Boolean = {
+        if (cnt < data.size()) {
+          val types = new util.ArrayList[Object](1)
+          types.add(data.get(cnt).name())
+          row = types
+          cnt = cnt + 1
+          true
+        } else {
+          false
+        }
+      }
     }
   }
 
 
+  override def getColumns(catalog: String, schemaPattern: String, tableNamePattern: String, columnNamePattern: String): ResultSet = {
+    val resultCatalog = if (StringUtils.isNotBlank(catalog)) {
+      catalog
+    } else {
+      s"${getUserName}_ind"
+    }
 
-  override def getCatalogs =  throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getCatalogs not supported")
+    val getColumnsAction = GetColumnsAction.builder().setUser(getUserName).setDatabase(resultCatalog).setTable(JDBCUtils.convertPattern(tableNamePattern)).build()
+    val result = ujesSQLConnection.ujesClient.getColumns(getColumnsAction)
+    val columns = result.getColumns
+    val resultColumns = new util.ArrayList[JdbcColumn]()
+    var ordinalPos = 1
+    columns.foreach { column =>
+      val jdbcColumn = new JdbcColumn(column.get("columnName").asInstanceOf[String],
+        tableNamePattern,
+        resultCatalog,
+        column.get("columnType").asInstanceOf[String],
+        column.get("columnComment").asInstanceOf[String],
+        ordinalPos
+      )
+      resultColumns.add(jdbcColumn)
+      ordinalPos = ordinalPos + 1
+    }
+    new LinkisMetaDataResultSet[JdbcColumn](util.Arrays.asList("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "DATA_TYPE"
+      , "TYPE_NAME", "COLUMN_SIZE", "BUFFER_LENGTH", "DECIMAL_DIGITS"
+      , "NUM_PREC_RADIX", "NULLABLE", "REMARKS", "COLUMN_DEF", "SQL_DATA_TYPE"
+      , "SQL_DATETIME_SUB", "CHAR_OCTET_LENGTH", "ORDINAL_POSITION"
+      , "IS_NULLABLE", "SCOPE_CATLOG", "SCOPE_SCHEMA", "SCOPE_TABLE"
+      , "SOURCE_DATA_TYPE"),
+      util.Arrays.asList("string", "string", "string", "string", "int", "string"
+        , "int", "int", "int", "int", "int", "string"
+        , "string", "int", "int", "int", "int"
+        , "string", "string", "string", "string", "int"), resultColumns) {
 
-  override def getTableTypes: ResultSet = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getTableTypes not supported")
+      private var cnt = 0
 
-  override def getColumns(catalog: String, schemaPattern: String, tableNamePattern: String, columnNamePattern: String): ResultSet = null
+      override def next(): Boolean = {
+        if (cnt < data.size()) {
+          val jdbcColumn = new util.ArrayList[Object](20)
+          val column = data.get(cnt)
+          jdbcColumn.add(column.getTableCatalog) // TABLE_CAT String => table catalog (may be null)
+
+          jdbcColumn.add(null) // TABLE_SCHEM String => table schema (may be null)
+
+          jdbcColumn.add(column.getTableName) // TABLE_NAME String => table name
+
+          jdbcColumn.add(column.getColumnName) // COLUMN_NAME String => column name
+
+          jdbcColumn.add(column.getSqlType) // DATA_TYPE short => SQL type from java.sql.Types
+
+          jdbcColumn.add(column.getType) // TYPE_NAME String => Data source dependent type name.
+
+          jdbcColumn.add(column.getColumnSize) // COLUMN_SIZE int => column size.
+
+          jdbcColumn.add(null) // BUFFER_LENGTH is not used.
+
+          jdbcColumn.add(column.getDecimalDigits) // DECIMAL_DIGITS int => number of fractional digits
+
+          jdbcColumn.add(column.getNumPrecRadix) // NUM_PREC_RADIX int => typically either 10 or 2
+
+          jdbcColumn.add(DatabaseMetaData.columnNullable.asInstanceOf[Object]) // NULLABLE int => is NULL allowed?
+
+          jdbcColumn.add(column.getComment) // REMARKS String => comment describing column (may be null)
+
+          jdbcColumn.add(null) // COLUMN_DEF String => default value (may be null)
+
+          jdbcColumn.add(null) // SQL_DATA_TYPE int => unused
+
+          jdbcColumn.add(null) // SQL_DATETIME_SUB int => unused
+
+          jdbcColumn.add(null) // CHAR_OCTET_LENGTH int
+
+          jdbcColumn.add(column.getOrdinalPos.asInstanceOf[Object]) // ORDINAL_POSITION int
+
+          jdbcColumn.add("YES") // IS_NULLABLE String
+
+          jdbcColumn.add(null) // SCOPE_CATLOG String
+
+          jdbcColumn.add(null) // SCOPE_SCHEMA String
+
+          jdbcColumn.add(null) // SCOPE_TABLE String
+
+          jdbcColumn.add(null) // SOURCE_DATA_TYPE short
+
+          row = jdbcColumn
+          cnt = cnt + 1
+          true
+        } else {
+          false
+        }
+      }
+    }
+
+  }
 
   override def getColumnPrivileges(catalog: String, schema: String, table: String, columnNamePattern: String): ResultSet = null
 
@@ -324,21 +481,21 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends Data
 
   override def supportsResultSetConcurrency(`type`: Int, concurrency: Int): Boolean = false
 
-  override def ownUpdatesAreVisible(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"ownUpdatesAreVisible not supported")
+  override def ownUpdatesAreVisible(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "ownUpdatesAreVisible not supported")
 
-  override def ownDeletesAreVisible(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"ownDeletesAreVisible not supported")
+  override def ownDeletesAreVisible(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "ownDeletesAreVisible not supported")
 
-  override def ownInsertsAreVisible(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"ownInsertsAreVisible not supported")
+  override def ownInsertsAreVisible(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "ownInsertsAreVisible not supported")
 
-  override def othersUpdatesAreVisible(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"othersUpdatesAreVisible not supported")
+  override def othersUpdatesAreVisible(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "othersUpdatesAreVisible not supported")
 
-  override def othersDeletesAreVisible(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"othersDeletesAreVisible not supported")
+  override def othersDeletesAreVisible(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "othersDeletesAreVisible not supported")
 
-  override def othersInsertsAreVisible(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"othersInsertsAreVisible not supported")
+  override def othersInsertsAreVisible(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "othersInsertsAreVisible not supported")
 
-  override def updatesAreDetected(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"updatesAreDetected not supported")
+  override def updatesAreDetected(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "updatesAreDetected not supported")
 
-  override def deletesAreDetected(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"deletesAreDetected not supported")
+  override def deletesAreDetected(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "deletesAreDetected not supported")
 
   override def insertsAreDetected(`type`: Int): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "insertsAreDetected not supported")
 
@@ -356,15 +513,15 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends Data
 
   override def supportsGetGeneratedKeys(): Boolean = false
 
-  override def getSuperTypes(catalog: String, schemaPattern: String, typeNamePattern: String): ResultSet = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getSuperTypes not supported")
+  override def getSuperTypes(catalog: String, schemaPattern: String, typeNamePattern: String): ResultSet = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getSuperTypes not supported")
 
-  override def getSuperTables(catalog: String, schemaPattern: String, tableNamePattern: String): ResultSet = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getSuperTables not supported")
+  override def getSuperTables(catalog: String, schemaPattern: String, tableNamePattern: String): ResultSet = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getSuperTables not supported")
 
-  override def getAttributes(catalog: String, schemaPattern: String, typeNamePattern: String, attributeNamePattern: String): ResultSet = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getAttributes not supported")
+  override def getAttributes(catalog: String, schemaPattern: String, typeNamePattern: String, attributeNamePattern: String): ResultSet = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getAttributes not supported")
 
   override def supportsResultSetHoldability(holdability: Int): Boolean = false
 
-  override def getResultSetHoldability: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getResultSetHoldability not supported")
+  override def getResultSetHoldability: Int = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getResultSetHoldability not supported")
 
   override def getDatabaseMajorVersion: Int = 1
 
@@ -376,19 +533,19 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends Data
 
   override def getSQLStateType: Int = 2
 
-  override def locatorsUpdateCopy(): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"locatorsUpdateCopy not supported")
+  override def locatorsUpdateCopy(): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "locatorsUpdateCopy not supported")
 
   override def supportsStatementPooling(): Boolean = false
 
-  override def getRowIdLifetime: RowIdLifetime = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getRowIdLifetime not supported")
+  override def getRowIdLifetime: RowIdLifetime = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getRowIdLifetime not supported")
 
-  override def getSchemas(catalog: String, schemaPattern: String): ResultSet =  throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getSchemas not supported")
+  override def getSchemas(catalog: String, schemaPattern: String): ResultSet = null
 
   override def supportsStoredFunctionsUsingCallSyntax(): Boolean = false
 
-  override def autoCommitFailureClosesAllResultSets(): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"autoCommitFailureClosesAllResultSets not supported")
+  override def autoCommitFailureClosesAllResultSets(): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "autoCommitFailureClosesAllResultSets not supported")
 
-  override def getClientInfoProperties: ResultSet = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"getClientInfoProperties not supported")
+  override def getClientInfoProperties: ResultSet = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getClientInfoProperties not supported")
 
   override def getFunctions(catalog: String, schemaPattern: String, functionNamePattern: String): ResultSet = null
 
@@ -396,9 +553,9 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends Data
 
   override def getPseudoColumns(catalog: String, schemaPattern: String, tableNamePattern: String, columnNamePattern: String): ResultSet = null
 
-  override def generatedKeyAlwaysReturned(): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"generatedKeyAlwaysReturned not supported")
+  override def generatedKeyAlwaysReturned(): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "generatedKeyAlwaysReturned not supported")
 
-  override def unwrap[T](iface: Class[T]): T = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"unwrap not supported")
+  override def unwrap[T](iface: Class[T]): T = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "unwrap not supported")
 
-  override def isWrapperFor(iface: Class[_]): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA,"isWrapperFor not supported")
+  override def isWrapperFor(iface: Class[_]): Boolean = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "isWrapperFor not supported")
 }

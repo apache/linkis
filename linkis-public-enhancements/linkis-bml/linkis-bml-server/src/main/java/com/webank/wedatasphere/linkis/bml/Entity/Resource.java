@@ -18,9 +18,6 @@ package com.webank.wedatasphere.linkis.bml.Entity;
 import java.util.Date;
 import java.util.Map;
 
-/**
- * Created by cooperyang on 2019/5/16.
- */
 public class Resource {
 
     private static final String MAX_VERSION = "maxVersion";

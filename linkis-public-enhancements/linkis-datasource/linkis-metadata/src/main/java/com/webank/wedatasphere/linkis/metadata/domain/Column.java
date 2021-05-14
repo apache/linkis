@@ -15,9 +15,7 @@
  */
 
 package com.webank.wedatasphere.linkis.metadata.domain;
-/**
- * Created by shanhuang on 9/13/18.
- */
+
 public class Column extends AbstractAuditable{
     private Integer id;
     private String name;

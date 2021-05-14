@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
 
 package com.webank.wedatasphere.linkis.ujes.client.response
 
-import scala.beans.BeanProperty
 import java.util
 
 import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 import com.webank.wedatasphere.linkis.ujes.client.request.UserAction
 
+import scala.beans.BeanProperty
 import scala.collection.JavaConversions._
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 @DWSHttpMessageResult("/api/rest_j/v\\d+/filesystem/getDirFileTrees")
 class ResultSetListResult extends DWSResult with UserAction {
 

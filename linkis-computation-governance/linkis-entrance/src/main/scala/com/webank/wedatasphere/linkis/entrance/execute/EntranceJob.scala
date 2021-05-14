@@ -20,56 +20,70 @@ import java.util
 import java.util.concurrent.atomic.AtomicInteger
 
 import com.webank.wedatasphere.linkis.common.log.LogUtils
+import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.entrance.EntranceContext
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.event._
 import com.webank.wedatasphere.linkis.entrance.exception.EntranceErrorException
 import com.webank.wedatasphere.linkis.entrance.persistence.HaPersistenceTask
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
+import com.webank.wedatasphere.linkis.orchestrator.ecm.service.EngineConnExecutor
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
-import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
 import com.webank.wedatasphere.linkis.rpc.utils.RPCUtils
 import com.webank.wedatasphere.linkis.scheduler.executer.{CompletedExecuteResponse, ErrorExecuteResponse}
 import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState._
-import com.webank.wedatasphere.linkis.scheduler.queue.{LockJob, SchedulerEventState}
+import com.webank.wedatasphere.linkis.scheduler.queue.{Job, SchedulerEventState}
 
-/**
-  * Created by enjoyyin on 2018/9/26.
-  */
-abstract class EntranceJob extends LockJob {
+
+abstract class EntranceJob extends Job {
 
   private var creator: String = _
   private var user: String = _
   private var params: util.Map[String, Any] = new util.HashMap[String, Any](1)
-  private var task:Task = _
-  //entranceListenerBus may not exist(entranceListenerBus可能不存在)
+  private var task: Task = _
+
   private var entranceListenerBus: Option[EntranceEventListenerBus[EntranceEventListener, EntranceEvent]] = None
-  private var progressInfo:Array[JobProgressInfo] = Array.empty
+  private var progressInfo: Array[JobProgressInfo] = Array.empty
   private val persistedResultSets = new AtomicInteger(0)
   private var resultSize = -1
-  private var entranceContext:EntranceContext = _
-  def getTask:Task = task
-  def setTask(task:Task):Unit = this.task = task
+  private var entranceContext: EntranceContext = _
+
+  def getTask: Task = task
+
+  def setTask(task: Task): Unit = this.task = task
+
   def setCreator(creator: String): Unit = this.creator = creator
-  def getCreator:String = creator
-  def setUser(user: String):Unit = this.user = user
-  def getUser:String = user
-  def setParams(params: util.Map[String, Any]):Unit = this.params = params
-  def getParams:util.Map[String, Any] = params
-  def setEntranceListenerBus(entranceListenerBus: EntranceEventListenerBus[EntranceEventListener, EntranceEvent]):Unit =
+
+  def getCreator: String = creator
+
+  def setUser(user: String): Unit = this.user = user
+
+  def getUser: String = user
+
+  def setParams(params: util.Map[String, Any]): Unit = this.params = params
+
+  def getParams: util.Map[String, Any] = params
+
+  def setEntranceListenerBus(entranceListenerBus: EntranceEventListenerBus[EntranceEventListener, EntranceEvent]): Unit =
     this.entranceListenerBus = Option(entranceListenerBus)
+
   def getEntranceListenerBus = this.entranceListenerBus
-  def setProgressInfo(progressInfo:Array[JobProgressInfo]):Unit = this.progressInfo = progressInfo
-  def getProgressInfo:Array[JobProgressInfo] = this.progressInfo
-  def setEntranceContext(entranceContext: EntranceContext):Unit = this.entranceContext = entranceContext
-  def getEntraceCotnext:EntranceContext = this.entranceContext
+
+  def setProgressInfo(progressInfo: Array[JobProgressInfo]): Unit = this.progressInfo = progressInfo
+
+  def getProgressInfo: Array[JobProgressInfo] = this.progressInfo
+
+  def setEntranceContext(entranceContext: EntranceContext): Unit = this.entranceContext = entranceContext
+
+  def getEntranceContext: EntranceContext = this.entranceContext
 
 
   def setResultSize(resultSize: Int): Unit = {
     this.resultSize = resultSize
     persistedResultSets synchronized persistedResultSets.notify()
   }
+
   def incrementResultSetPersisted(): Unit = {
     persistedResultSets.incrementAndGet()
     persistedResultSets synchronized persistedResultSets.notify()
@@ -78,48 +92,54 @@ abstract class EntranceJob extends LockJob {
   protected def isWaitForPersistedTimeout(startWaitForPersistedTime: Long): Boolean =
     System.currentTimeMillis - startWaitForPersistedTime >= EntranceConfiguration.JOB_MAX_PERSIST_WAIT_TIME.getValue.toLong
 
-  override def afterStateChanged(fromState: SchedulerEventState, toState: SchedulerEventState): Unit = {
-    if(SchedulerEventState.isCompleted(toState) && (resultSize < 0 || persistedResultSets.get() < resultSize)) {
+
+  override def beforeStateChanged(fromState: SchedulerEventState, toState: SchedulerEventState): Unit = {
+    if (SchedulerEventState.isCompleted(toState) && (resultSize < 0 || persistedResultSets.get() < resultSize)) {
       val startWaitForPersistedTime = System.currentTimeMillis
       persistedResultSets synchronized {
-        while((resultSize < 0 || persistedResultSets.get() < resultSize) && getErrorResponse == null && !isWaitForPersistedTimeout(startWaitForPersistedTime))
+        while ((resultSize < 0 || persistedResultSets.get() < resultSize) && getErrorResponse == null && !isWaitForPersistedTimeout(startWaitForPersistedTime))
           persistedResultSets.wait(3000)
       }
-      if(isWaitForPersistedTimeout(startWaitForPersistedTime)) onFailure("persist resultSets timeout!", new EntranceErrorException(20305, "persist resultSets timeout!"))
-      if(isSucceed && getErrorResponse != null){
-        val _toState = if(getErrorResponse.t == null) Cancelled else Failed
+      if (isWaitForPersistedTimeout(startWaitForPersistedTime)) onFailure("persist resultSets timeout!", new EntranceErrorException(20305, "persist resultSets timeout!"))
+      if (isSucceed && getErrorResponse != null) {
+        val _toState = if (getErrorResponse.t == null) Cancelled else Failed
         transition(_toState)
         return
       }
     }
-    if(SchedulerEventState.isRunning(toState)) {
+    super.beforeStateChanged(fromState, toState)
+  }
+
+  override def afterStateChanged(fromState: SchedulerEventState, toState: SchedulerEventState): Unit = {
+    if (SchedulerEventState.isRunning(toState)) {
       def setEngineInstance(task: Task): Unit = task match {
         case requestTask: RequestPersistTask => getExecutor match {
-          case engine: EntranceEngine => requestTask.setEngineInstance(engine.getModuleInstance.getInstance)
+          case engine: EntranceExecutor => requestTask.setEngineInstance(engine.getInstance.getInstance)
           case _ =>
         }
         case haTask: HaPersistenceTask => setEngineInstance(haTask.task)
         case _ =>
       }
+
       setEngineInstance(task)
     }
     super.afterStateChanged(fromState, toState)
     toState match {
       case Scheduled =>
-        getLogListener.foreach(_.onLogUpdate(this,  LogUtils.generateInfo( "Your job is Scheduled. Please wait it to run.")))
+        getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo("Your job is Scheduled. Please wait it to run.")))
       case WaitForRetry =>
-        getLogListener.foreach(_.onLogUpdate(this,  LogUtils.generateInfo( "Your job is turn to retry. Please wait it to schedule.")))
+        getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo("Your job is turn to retry. Please wait it to schedule.")))
       case Running =>
-        getLogListener.foreach(_.onLogUpdate(this,  LogUtils.generateInfo( "Your job is Running now. Please wait it to complete.")))
+        getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo("Your job is Running now. Please wait it to complete.")))
       //TODO job start event
       case _ if SchedulerEventState.isCompleted(toState) =>
         endTime = System.currentTimeMillis()
-        if(getJobInfo != null) getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo(getJobInfo.getMetric)))
-        if(isSucceed)
+        if (getJobInfo != null) getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo(getJobInfo.getMetric)))
+        if (isSucceed)
           getLogListener.foreach(_.onLogUpdate(this,
-            LogUtils.generateInfo( "Congratulations. Your job completed with status Success.")))
+            LogUtils.generateInfo("Congratulations. Your job completed with status Success.")))
         else getLogListener.foreach(_.onLogUpdate(this,
-          LogUtils.generateInfo( s"Sorry. Your job completed with a status $toState. You can view logs for the reason.")))
+          LogUtils.generateInfo(s"Sorry. Your job completed with a status $toState. You can view logs for the reason.")))
         this.setProgress(1.0f)
         entranceListenerBus.foreach(_.post(EntranceProgressEvent(this, 1.0f, this.getProgressInfo)))
         this.getProgressListener.foreach(listener => listener.onProgressUpdate(this, 1.0f, Array[JobProgressInfo]()))
@@ -140,7 +160,13 @@ abstract class EntranceJob extends LockJob {
         entranceListenerBus.foreach(_.post(MissingEngineNotifyEvent(this, error.t, getExecutor)))
       case _ =>
     }
+    Utils.tryAndErrorMsg(clearInstanceInfo())("Failed to clear executor")
     super.transitionCompleted(executeCompleted)
+  }
+
+  private def clearInstanceInfo(): Unit = {
+    val executorManager = entranceContext.getOrCreateScheduler().getSchedulerContext.getOrCreateExecutorManager
+    executorManager.delete(getExecutor)
   }
 
   def transitionCompleted(executeCompleted: CompletedExecuteResponse, reason: String): Unit = {
@@ -149,21 +175,22 @@ abstract class EntranceJob extends LockJob {
   }
 
   override protected def isJobShouldRetry(errorExecuteResponse: ErrorExecuteResponse): Boolean = isJobSupportRetry && errorExecuteResponse != null &&
-    (if(RPCUtils.isReceiverNotExists(errorExecuteResponse.t)) {
+    (if (RPCUtils.isReceiverNotExists(errorExecuteResponse.t)) {
       getExecutor match {
-        case e: EntranceEngine =>
-          val instance = e.getModuleInstance.getInstance
+        case e: EntranceExecutor =>
+          val instance = e.getInstance.getInstance
           getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateSystemWarn(s"Since the submitted engine rejects the connection, the system will automatically retry and exclude the engine $instance.(由于提交的引擎拒绝连接，系统将自动进行重试，并排除引擎 $instance.)")))
-          val specialMap = TaskUtils.getSpecialMap(getParams)
-          if(specialMap.isEmpty) {
-            TaskUtils.addSpecialMap(getParams, specialMap)
-            specialMap.put(ExceptInstanceEntranceExecutorRuler.EXCEPT_INSTANCES, instance)
-          } else if(specialMap.containsKey(ExceptInstanceEntranceExecutorRuler.EXCEPT_INSTANCES)) {
-            val instances = ExceptInstanceEntranceExecutorRuler.deserializable(specialMap.get(ExceptInstanceEntranceExecutorRuler.EXCEPT_INSTANCES).toString) :+ instance
-            specialMap.put(ExceptInstanceEntranceExecutorRuler.EXCEPT_INSTANCES, ExceptInstanceEntranceExecutorRuler.serializable(instances))
-          } else specialMap.put(ExceptInstanceEntranceExecutorRuler.EXCEPT_INSTANCES, instance)
         case _ =>
       }
       true
     } else super.isJobShouldRetry(errorExecuteResponse))
+
+  def operation[T](operate: EntranceExecutor => T ): T = {
+    this.getExecutor match {
+      case entranceExecutor: EntranceExecutor =>
+        operate(entranceExecutor)
+      case _ => throw new EntranceErrorException(10000, "不支持的操作")
+    }
+
+  }
 }

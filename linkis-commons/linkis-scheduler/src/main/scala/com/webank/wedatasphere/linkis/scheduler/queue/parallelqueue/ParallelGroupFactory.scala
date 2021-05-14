@@ -16,13 +16,11 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue
 
-import com.webank.wedatasphere.linkis.scheduler.queue.{Group, GroupFactory, Job, SchedulerEvent}
+import com.webank.wedatasphere.linkis.scheduler.queue.{Group, GroupFactory, SchedulerEvent}
 
 import scala.collection.mutable
 
-/**
-  * Created by enjoyyin on 2018/9/12.
-  */
+
 class ParallelGroupFactory extends GroupFactory{
   private val groupMap = new mutable.HashMap[String, Group]()
   def getInitCapacity(groupName: String): Int= 100

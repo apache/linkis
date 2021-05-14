@@ -17,7 +17,7 @@
 package com.webank.wedatasphere.linkis.entrance.parser;
 
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration$;
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask;
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask;
 import com.webank.wedatasphere.linkis.protocol.task.Task;
 import org.apache.commons.lang.StringUtils;
 
@@ -25,10 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-/**
- * created by enjoyyin on 2018/10/17
- * Description:
- */
+
 public final class ParserUtils {
 
 

@@ -18,10 +18,8 @@ package com.webank.wedatasphere.linkis.protocol.usercontrol;
 
 import java.util.HashMap;
 
-/**
- * Created by alexyang
- */
-public class ResponseRegister implements UserControlRegtisterProtocol {
+
+public class ResponseRegister implements UserControlRegtisterProtocol{
 
     private int status;
     private String message;

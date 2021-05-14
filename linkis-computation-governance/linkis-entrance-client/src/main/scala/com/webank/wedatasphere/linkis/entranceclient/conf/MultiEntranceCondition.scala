@@ -18,13 +18,9 @@ package com.webank.wedatasphere.linkis.entranceclient.conf
 
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entranceclient
-import org.apache.commons.lang.StringUtils
 import org.springframework.context.annotation.{Condition, ConditionContext}
 import org.springframework.core.`type`.AnnotatedTypeMetadata
 
-/**
-  * Created by johnnwang on 2019/1/22.
-  */
 class MultiEntranceCondition extends Condition {
   override def matches(conditionContext: ConditionContext, annotatedTypeMetadata: AnnotatedTypeMetadata): Boolean =
     entranceclient.conf.MultiEntranceCondition.isMultiEntranceApplication
@@ -34,5 +30,5 @@ class SingleEntranceCondition extends Condition {
     !entranceclient.conf.MultiEntranceCondition.isMultiEntranceApplication
 }
 object MultiEntranceCondition {
-  def isMultiEntranceApplication: Boolean = StringUtils.isNotBlank(EntranceConfiguration.ENGINE_MANAGER_SPRING_APPLICATION_NAME.getValue)
+  def isMultiEntranceApplication: Boolean = EntranceConfiguration.MULTI_ENTRANCE_CONDITION.getValue
 }

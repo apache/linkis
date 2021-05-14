@@ -20,9 +20,9 @@
         xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/2.3 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
     <id>linkis-cs-server</id>
     <formats>
-        <format>zip</format>
+        <format>dir</format>
     </formats>
-    <includeBaseDirectory>true</includeBaseDirectory>
+    <includeBaseDirectory>false</includeBaseDirectory>
     <baseDirectory>linkis-cs-server</baseDirectory>
 
     <dependencySets>
@@ -49,7 +49,7 @@
             <outputDirectory>conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
-        <fileSet>
+        <!--<fileSet>
             <directory>${basedir}/bin</directory>
             <includes>
                 <include>*</include>
@@ -64,7 +64,7 @@
                 <exclude>*/**</exclude>
             </excludes>
             <outputDirectory>logs</outputDirectory>
-        </fileSet>
+        </fileSet>-->
     </fileSets>
 
 </assembly>

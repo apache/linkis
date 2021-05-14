@@ -18,10 +18,7 @@ package com.webank.wedatasphere.linkis.entrance.interceptor.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-/**
-  * created by enjoyyin on 2018/10/19
-  * Description:
-  */
-case class VarSubstitutionException(errCode:Int,
-                                    errDesc:String) extends ErrorException(errCode,errDesc){
+
+case class VarSubstitutionException(errCode: Int,
+                                    errDesc: String) extends ErrorException(errCode, errDesc) {
 }

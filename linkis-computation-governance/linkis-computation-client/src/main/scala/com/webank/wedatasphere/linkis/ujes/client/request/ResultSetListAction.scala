@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
 
 package com.webank.wedatasphere.linkis.ujes.client.request
 
@@ -24,9 +21,6 @@ import com.webank.wedatasphere.linkis.httpclient.request.GetAction
 import com.webank.wedatasphere.linkis.ujes.client.exception.UJESClientBuilderException
 import com.webank.wedatasphere.linkis.ujes.client.response.JobInfoResult
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 class ResultSetListAction extends GetAction with UJESJobAction {
   override def suffixURLs: Array[String] = Array("filesystem", "getDirFileTrees")
 }

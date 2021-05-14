@@ -19,7 +19,7 @@ package com.webank.wedatasphere.linkis.server.security
 import java.text.DateFormat
 import java.util.{Date, Locale}
 
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration}
+import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.utils.{Logging, RSAUtils, Utils}
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import com.webank.wedatasphere.linkis.server.exception.{IllegalUserTicketException, LoginExpireException, NonLoginException}
@@ -32,10 +32,12 @@ import org.apache.commons.lang.StringUtils
 /**
   * Created by enjoyyin on 2018/1/9.
   */
-class SecurityFilter extends Filter with Logging {
+class SecurityFilter extends Filter {
+
   private val refererValidate = ServerConfiguration.BDP_SERVER_SECURITY_REFERER_VALIDATE.getValue
   private val localAddress = ServerConfiguration.BDP_SERVER_ADDRESS.getValue
   protected val testUser = ServerConfiguration.BDP_TEST_USER.getValue
+
 
   override def init(filterConfig: FilterConfig): Unit = {}
 
@@ -48,10 +50,10 @@ class SecurityFilter extends Filter with Logging {
 
   def doFilter(request: HttpServletRequest)(implicit response: HttpServletResponse): Boolean = {
     addAccessHeaders(response)
-    if(refererValidate) {
+    if (refererValidate) {
       //Security certification support, referer limited(安全认证支持，referer限定)
       val referer = request.getHeader("Referer")
-      if(StringUtils.isNotEmpty(referer) && !referer.trim.contains(localAddress)) {
+      if (StringUtils.isNotEmpty(referer) && !referer.trim.contains(localAddress)) {
         filterResponse(validateFailed("不允许的跨站请求！"))
         return false
       }
@@ -63,7 +65,6 @@ class SecurityFilter extends Filter with Logging {
           return false
       }
     }
-    
     if(request.getRequestURI == ServerConfiguration.BDP_SERVER_SECURITY_SSL_URI.getValue) {
       val message = Message.ok("Get success!(获取成功！)").data("enable", SSOUtils.sslEnable)
       if(SSOUtils.sslEnable) message.data("publicKey", RSAUtils.getDefaultPublicKey())

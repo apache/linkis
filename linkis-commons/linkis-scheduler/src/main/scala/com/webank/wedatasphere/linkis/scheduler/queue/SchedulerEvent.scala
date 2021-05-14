@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.scheduler.exception.SchedulerErrorException
 import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState._
 
-/**
-  * Created by enjoyyin on 2018/9/17.
-  */
+
 trait SchedulerEvent extends Logging {
 
   private[queue] var id: String = _
@@ -58,19 +56,26 @@ trait SchedulerEvent extends Logging {
   def cancel() = transition(Cancelled)
 
   def isWaiting = state == Inited
+
   def isScheduled = state == Scheduled
+
   def isRunning = state == Running
+
   def isCompleted = SchedulerEventState.isCompleted(state)
+
   def isSucceed: Boolean = SchedulerEventState.isSucceed(state)
+
   def isWaitForRetry: Boolean = state == WaitForRetry
 
   def getState = state
 
   def afterStateChanged(fromState: SchedulerEventState, toState: SchedulerEventState): Unit
 
+  def beforeStateChanged(fromState: SchedulerEventState, toState: SchedulerEventState): Unit = {}
+
   protected def transition(state: SchedulerEventState): Unit = synchronized {
-    if(state.id < this.state.id && state != WaitForRetry)
-      throw new SchedulerErrorException(12000, s"Task status flip error! Cause: Failed to flip from ${this.state} to $state.（任务状态翻转出错！原因：不允许从${this.state} 翻转为$state.）")//抛异常
+    if (state.id < this.state.id && state != WaitForRetry)
+      throw new SchedulerErrorException(12000, s"Task status flip error! Cause: Failed to flip from ${this.state} to $state.（任务状态翻转出错！原因：不允许从${this.state} 翻转为$state.）") //抛异常
     info(s"$toString change state ${this.state} => $state.")
     val oldState = this.state
     this.state = state

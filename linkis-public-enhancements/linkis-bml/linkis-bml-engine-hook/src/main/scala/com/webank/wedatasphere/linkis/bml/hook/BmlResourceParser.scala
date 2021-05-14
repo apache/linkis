@@ -1,10 +1,5 @@
 package com.webank.wedatasphere.linkis.bml.hook
 
-/**
-  * created by cooperyang on 2019/9/23
-  * Description:
-  */
-
 case class ResourceVersion(resourceId:String, version:String)
 
 

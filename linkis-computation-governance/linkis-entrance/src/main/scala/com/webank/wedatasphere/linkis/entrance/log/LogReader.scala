@@ -26,9 +26,7 @@ import org.apache.commons.lang.StringUtils
 
 import scala.util.matching.Regex
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 abstract class LogReader(charset: String) extends Closeable with Logging{
   import LogReader._
 
@@ -70,9 +68,30 @@ abstract class LogReader(charset: String) extends Closeable with Logging{
             if (!flag) concatLog(length, singleLog, warning, all)
           case INFO_HEADER1() | INFO_HEADER2() =>
             val hiveLogSpecial:String = EntranceConfiguration.HIVE_SPECIAL_LOG_INCLUDE.getValue
+            val sparkLogSpecial:String = EntranceConfiguration.SPARK_SPECIAL_LOG_INCLUDE.getValue
+            val hiveCreateTableLog:String = EntranceConfiguration.HIVE_CREATE_TABLE_LOG.getValue
+            if (singleLog.contains(hiveLogSpecial) && singleLog.contains(hiveCreateTableLog)){
+              val threadName = EntranceConfiguration.HIVE_THREAD_NAME.getValue
+              val printInfo = EntranceConfiguration.HIVE_PRINT_INFO_LOG.getValue
+              val start = singleLog.indexOf(threadName)
+              val end = singleLog.indexOf(printInfo) + printInfo.length
+              if(start > 0 && end > 0) {
+                val realLog = singleLog.substring(0, start) + singleLog.substring(end, singleLog.length)
+                concatLog(length, realLog, info, all)
+              }
+            }
             if (singleLog.contains(hiveLogSpecial) && singleLog.contains("map") && singleLog.contains("reduce")){
               val start = singleLog.indexOf(EntranceConfiguration.HIVE_THREAD_NAME.getValue)
               val end = singleLog.indexOf(EntranceConfiguration.HIVE_STAGE_NAME.getValue)
+              if(start > 0 && end > 0) {
+                val realLog = singleLog.substring(0, start) + singleLog.substring(end, singleLog.length)
+                concatLog(length, realLog, info, all)
+              }
+            }else if (singleLog.contains(sparkLogSpecial)){
+              val className = EntranceConfiguration.SPARK_PROGRESS_NAME.getValue
+              val endFlag = EntranceConfiguration.END_FLAG.getValue
+              val start = singleLog.indexOf(className)
+              val end = singleLog.indexOf(endFlag) + endFlag.length
               if(start > 0 && end > 0) {
                 val realLog = singleLog.substring(0, start) + singleLog.substring(end, singleLog.length)
                 concatLog(length, realLog, info, all)

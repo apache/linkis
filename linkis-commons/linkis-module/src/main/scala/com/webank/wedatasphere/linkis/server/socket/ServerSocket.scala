@@ -20,8 +20,8 @@ import java.util.concurrent.TimeUnit
 
 import com.webank.wedatasphere.linkis.common.collection.BlockingLoopArray
 import com.webank.wedatasphere.linkis.common.utils.Utils
-import javax.servlet.http.HttpServletRequest
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter
+import javax.servlet.http.HttpServletRequest
 import org.eclipse.jetty.websocket.api.{Session, WebSocketAdapter}
 
 /**

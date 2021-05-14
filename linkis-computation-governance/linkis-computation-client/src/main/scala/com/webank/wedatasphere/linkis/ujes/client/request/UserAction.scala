@@ -14,15 +14,8 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
-
 package com.webank.wedatasphere.linkis.ujes.client.request
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 trait UserAction extends com.webank.wedatasphere.linkis.httpclient.request.UserAction {
   private var user: String = _
 

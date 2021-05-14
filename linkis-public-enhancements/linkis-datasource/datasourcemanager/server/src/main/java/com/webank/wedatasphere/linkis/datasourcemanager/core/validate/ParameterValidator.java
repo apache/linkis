@@ -18,12 +18,6 @@ import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author georgeqiao
- * 2020/02/11
- */
-
-
 public interface ParameterValidator {
     /**
      * Register validate strategy

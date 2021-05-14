@@ -18,26 +18,25 @@ package com.webank.wedatasphere.linkis.entrance.interceptor.impl
 
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
 import com.webank.wedatasphere.linkis.entrance.interceptor.exception.CodeCheckException
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 
 /**
-  * created by enjoyyin on 2018/10/22
   * Description:
   */
-class SQLCodeCheckInterceptor extends EntranceInterceptor{
+class SQLCodeCheckInterceptor extends EntranceInterceptor {
 
   override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = task match {
-    case requestPersistTask:RequestPersistTask =>
+    case requestPersistTask: RequestPersistTask =>
       requestPersistTask.getEngineType.toLowerCase() match {
-        case "hql" | "sql" | "jdbc"|"hive" | "psql" | "essql" =>
-          val sb:StringBuilder = new StringBuilder
-          val isAuth:Boolean = SQLExplain.authPass(requestPersistTask.getExecutionCode, sb)
+        case "hql" | "sql" | "jdbc" | "hive" =>
+          val sb: StringBuilder = new StringBuilder
+          val isAuth: Boolean = SQLExplain.authPass(requestPersistTask.getExecutionCode, sb)
           if (!isAuth) {
             throw CodeCheckException(20051, "sql code check failed, reason is " + sb.toString())
           }
         case _ =>
-        }
+      }
       requestPersistTask
   }
 }

@@ -27,10 +27,6 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author alexyang
- * 2020/02/10
- */
 @Path("/metadata")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)

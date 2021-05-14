@@ -17,15 +17,11 @@ package com.webank.wedatasphere.linkis.bml.service;
 
 import com.webank.wedatasphere.linkis.bml.Entity.Resource;
 import com.webank.wedatasphere.linkis.bml.service.impl.ResourceServiceImpl;
-
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by cooperyang on 2019/5/17.
- */
 public interface ResourceService {
 
    List<Resource> getResources(Map paramMap);

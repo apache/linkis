@@ -3,10 +3,6 @@ package com.webank.wedatasphere.linkis.rpc.instancealias
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import javax.annotation.Nullable
 
-/**
- * @Author alexyang
- * @Date 2020/2/18
- */
 trait InstanceAliasManager {
 
   def getAliasByServiceInstance(instance: ServiceInstance): String

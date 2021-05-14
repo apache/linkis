@@ -16,13 +16,17 @@
 
 package com.webank.wedatasphere.linkis.gateway.security
 
+import java.io.File
 import java.text.DateFormat
+import java.util
+import java.util.concurrent.TimeUnit
 import java.util.{Date, Locale}
 
 import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.exception.DWCException
-import com.webank.wedatasphere.linkis.common.utils.Utils
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
+import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration._
 import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
 import com.webank.wedatasphere.linkis.gateway.security.sso.SSOInterceptor
 import com.webank.wedatasphere.linkis.gateway.security.token.TokenAuthentication
@@ -32,31 +36,44 @@ import com.webank.wedatasphere.linkis.server.{Message, validateFailed}
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
-object SecurityFilter {
+object SecurityFilter extends Logging {
 
   private val refererValidate = ServerConfiguration.BDP_SERVER_SECURITY_REFERER_VALIDATE.getValue
-  private val localAddress = ServerConfiguration.BDP_SERVER_ADDRESS.getValue
+  private val referers = ServerConfiguration.BDP_SERVER_ADDRESS.getValue
   protected val testUser: String = ServerConfiguration.BDP_TEST_USER.getValue
 
-  private var userRestful: UserRestful = _
-  def setUserRestful(userRestful: UserRestful): Unit = this.userRestful = userRestful
+  private val ipSet = new util.HashSet[String]()
 
-  def filterResponse(gatewayContext: GatewayContext, message: Message): Unit = {
-    gatewayContext.getResponse.setStatus(Message.messageToHttpStatus(message))
-    gatewayContext.getResponse.write(message)
-    gatewayContext.getResponse.sendResponse()
+  if (ENABLE_GATEWAY_AUTH.getValue) {
+    Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
+      override def run(): Unit = Utils.tryAndError(init())
+    }, 0, 2, TimeUnit.MINUTES)
   }
 
   def doFilter(gatewayContext: GatewayContext): Boolean = {
     addAccessHeaders(gatewayContext)
-    if(refererValidate) {
+    if (ENABLE_GATEWAY_AUTH.getValue) {
+      val host = gatewayContext.getRequest.getRemoteAddress.getAddress.toString.replaceAll("/", "")
+      val port = gatewayContext.getRequest.getRemoteAddress.getPort
+      if (!ipSet.contains(host)) {
+        logger.error(s"${host} and ${port} is not in whitelist, it is dangerous")
+        filterResponse(gatewayContext, Message.error(s"$host is not in whitelist"))
+        return false
+      }
+    }
+    gatewayContext.getRequest.getURI.getHost
+    if (refererValidate) {
       //Security certification support, referer limited(安全认证支持，referer限定)
       val referer = gatewayContext.getRequest.getHeaders.get("Referer")
-      if(referer != null && referer.nonEmpty && StringUtils.isNotEmpty(referer.head) && !referer.head.trim.contains(localAddress)) {
+      val refList = if (StringUtils.isNotEmpty(referers)) referers.split(",") else Array.empty
+      val flag = refList.exists(ref =>
+        referer != null && referer.nonEmpty && StringUtils.isNotEmpty(referer.head) && referer.head.trim().contains(ref))
+      if (referer != null && referer.nonEmpty && StringUtils.isNotEmpty(referer.head) && !flag) {
         filterResponse(gatewayContext, validateFailed("Unallowed cross-site request(不允许的跨站请求)！"))
+        return false
+      }
+      if (!gatewayContext.isWebSocketRequest && (referer == null || referer.isEmpty || StringUtils.isEmpty(referer.head))){
+        filterResponse(gatewayContext, validateFailed("referer为空,不能继续访问"))
         return false
       }
       //Security certification support, solving verb tampering(安全认证支持，解决动词篡改)
@@ -103,7 +120,6 @@ object SecurityFilter {
       } else if(GatewayConfiguration.ENABLE_SSO_LOGIN.getValue) {
         val user = SSOInterceptor.getSSOInterceptor.getUser(gatewayContext)
         if(StringUtils.isNotBlank(user)) {
-          GatewaySSOUtils.setLoginUser(gatewayContext, user)
           GatewaySSOUtils.setLoginUser(gatewayContext.getRequest, user)
           true
         } else if(isPassAuthRequest) {
@@ -119,6 +135,27 @@ object SecurityFilter {
         filterResponse(gatewayContext, Message.noLogin("You are not logged in, please login first(您尚未登录，请先登录)!") << gatewayContext.getRequest.getRequestURI)
         false
       }
+    }
+  }
+
+
+  private var userRestful: UserRestful = _
+
+  def setUserRestful(userRestful: UserRestful): Unit = this.userRestful = userRestful
+
+  def filterResponse(gatewayContext: GatewayContext, message: Message): Unit = {
+    gatewayContext.getResponse.setStatus(Message.messageToHttpStatus(message))
+    gatewayContext.getResponse.write(message)
+    gatewayContext.getResponse.sendResponse()
+  }
+
+  private def init(): Unit = {
+    Utils.tryAndError {
+      val authFile = new File(this.getClass.getClassLoader.getResource(AUTH_IP_FILE.getValue).toURI.getPath)
+      import scala.io.Source
+      val source = Source.fromFile(authFile, "UTF-8")
+      val lines = source.getLines().toArray
+      lines.foreach(ipSet.add)
     }
   }
 

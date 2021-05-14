@@ -21,28 +21,27 @@ import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
 import com.webank.wedatasphere.linkis.entrance.interceptor.exception.VarSubstitutionException
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 import org.apache.commons.lang.exception.ExceptionUtils
 
 /**
-  * created by enjoyyin on 2018/10/19
   * Description: For variable substitution(用于变量替换)
   */
-class VarSubstitutionInterceptor extends EntranceInterceptor{
+class VarSubstitutionInterceptor extends EntranceInterceptor {
 
   @throws[ErrorException]
   override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = {
     task match {
-      case requestPersistTask:RequestPersistTask =>
+      case requestPersistTask: RequestPersistTask =>
         Utils.tryThrow {
           logAppender.append(LogUtils.generateInfo("Program is substituting variables for you") + "\n")
           val (result, code) = CustomVariableUtils.replaceCustomVar(requestPersistTask, requestPersistTask.getEngineType)
           if (result) requestPersistTask.setExecutionCode(code)
-          logAppender.append(LogUtils.generateInfo( "Variables substitution ended successfully") + "\n")
+          logAppender.append(LogUtils.generateInfo("Variables substitution ended successfully") + "\n")
           requestPersistTask
-        }{
-          case e:VarSubstitutionException =>
+        } {
+          case e: VarSubstitutionException =>
             val exception = VarSubstitutionException(20050, "Variable replacement failed!(变量替换失败！)" + ExceptionUtils.getRootCauseMessage(e))
             exception.initCause(e)
             exception

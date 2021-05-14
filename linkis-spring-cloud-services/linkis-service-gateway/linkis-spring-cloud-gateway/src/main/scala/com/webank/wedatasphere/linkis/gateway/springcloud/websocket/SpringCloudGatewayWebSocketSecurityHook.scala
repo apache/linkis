@@ -20,9 +20,6 @@ import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
 import com.webank.wedatasphere.linkis.gateway.security.SecurityHook
 import org.springframework.stereotype.Component
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 @Component
 class SpringCloudGatewayWebSocketSecurityHook extends SecurityHook {
   override def preLogout(gatewayContext: GatewayContext): Unit = {

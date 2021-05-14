@@ -16,14 +16,14 @@
 
 package com.webank.wedatasphere.linkis.scheduler.listener
 
+import com.webank.wedatasphere.linkis.protocol.engine.EngineState
 import com.webank.wedatasphere.linkis.scheduler.executer.Executor
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorState._
 
-/**
-  * Created by enjoyyin on 2018/9/3.
-  */
+
 trait ExecutorListener extends SchedulerListener {
   def onExecutorCreated(executor: Executor): Unit
+
   def onExecutorCompleted(executor: Executor, message: String): Unit
-  def onExecutorStateChanged(executor: Executor, fromState: ExecutorState, toState: ExecutorState): Unit
+
+  def onExecutorStateChanged(executor: Executor, fromState: EngineState, toState: EngineState): Unit
 }

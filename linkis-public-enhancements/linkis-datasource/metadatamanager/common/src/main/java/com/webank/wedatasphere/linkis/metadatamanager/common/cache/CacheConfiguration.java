@@ -15,9 +15,6 @@ package com.webank.wedatasphere.linkis.metadatamanager.common.cache;
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars;
 
-/**
- * Created by jackyxxie on 2020/02/14.
- */
 public class CacheConfiguration {
 
     public static CommonVars<Long> CACHE_MAX_SIZE =

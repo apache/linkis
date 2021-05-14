@@ -16,12 +16,15 @@
 
 package com.webank.wedatasphere.linkis.protocol.constants;
 
-/**
- * created by enjoyyin on 2018/10/10
- * Description:
- */
+
 public interface TaskConstant {
+
     String UMUSER = "umUser";
+
+    String SUBMIT_USER = "submitUser";
+
+    String EXECUTE_USER = "executeUser";
+
     String TASKTYPE = "taskType";
     String STORAGETYPE = "storageType";
     String EXECUTIONCODE = "executionCode";
@@ -34,11 +37,20 @@ public interface TaskConstant {
     String SCRIPTPATH = "scriptPath";
     String SOURCE = "source";
     String RUNTYPE = "runType";
+    String CACHE = "cache";
+    String CACHE_EXPIRE_AFTER = "cacheExpireAfter";
+    String READ_FROM_CACHE = "readFromCache";
+    String READ_CACHE_BEFORE = "readCacheBefore";
 
     String PARAMS_VARIABLE = "variable";
     String PARAMS_CONFIGURATION = "configuration";
     String PARAMS_CONFIGURATION_STARTUP = "startup";
     String PARAMS_CONFIGURATION_RUNTIME = "runtime";
     String PARAMS_CONFIGURATION_SPECIAL = "special";
-    String PARAMS_CONFIGURATION_DATASOURCE = "datasource";
+
+    String LABELS = "labels";
+    String EXECUTION_CONTENT = "executionContent";
+    String CODE = "code";
+
+
 }

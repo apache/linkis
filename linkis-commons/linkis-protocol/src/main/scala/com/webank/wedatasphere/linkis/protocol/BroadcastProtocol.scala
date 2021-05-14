@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.protocol
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 trait BroadcastProtocol extends Protocol {
 
   val throwsIfAnyFailed = false

@@ -16,16 +16,12 @@
 
 package com.webank.wedatasphere.linkis.gateway.config
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.gateway.security._
+import com.webank.wedatasphere.linkis.gateway.security.{LDAPUserRestful, SecurityFilter, SecurityHook, UserRestful}
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.{Bean, Configuration}
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 @Configuration
 class GatewaySpringConfiguration {
 

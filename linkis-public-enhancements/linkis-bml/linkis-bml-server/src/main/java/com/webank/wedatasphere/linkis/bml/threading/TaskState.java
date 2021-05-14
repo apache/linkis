@@ -15,10 +15,6 @@
  */
 package com.webank.wedatasphere.linkis.bml.threading;
 
-/**
- * created by cooperyang on 2019/9/16
- * Description:
- */
 public enum TaskState {
     /**
      * 任务的状态的内容

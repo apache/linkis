@@ -19,9 +19,6 @@ package com.webank.wedatasphere.linkis.gateway.springcloud.websocket
 import com.webank.wedatasphere.linkis.gateway.http.GatewayHttpResponse
 import javax.servlet.http.Cookie
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 class WebsocketGatewayHttpResponse extends GatewayHttpResponse {
   private val cachedWebSocketResponseMsg = new StringBuilder
   override def addCookie(cookie: Cookie): Unit = {}

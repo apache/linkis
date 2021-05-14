@@ -17,13 +17,10 @@
 package com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue
 
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.scheduler.{AbstractScheduler, Scheduler, SchedulerContext}
 import com.webank.wedatasphere.linkis.scheduler.queue._
+import com.webank.wedatasphere.linkis.scheduler.{AbstractScheduler, SchedulerContext}
 
-/**
-  * Created by enjoyyin on 2018/9/13.
-  */
+
 class FIFOScheduler(val schedulerContext: SchedulerContext) extends AbstractScheduler {
   private var consumerManager: ConsumerManager = _
 

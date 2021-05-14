@@ -53,9 +53,6 @@ import java.util.stream.Collectors;
 
 import static com.webank.wedatasphere.linkis.gateway.springcloud.websocket.SpringCloudGatewayWebsocketUtils.*;
 
-/**
- * created by cooperyang on 2019/1/9.
- */
 public class SpringCloudGatewayWebsocketFilter implements GlobalFilter, Ordered {
     private WebsocketRoutingFilter websocketRoutingFilter;
     private WebSocketClient webSocketClient;

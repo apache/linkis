@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.cs.contextcache.cache;
 
 import com.google.common.cache.Cache;
@@ -44,16 +45,12 @@ import java.util.stream.Collectors;
 
 import static com.webank.wedatasphere.linkis.cs.listener.event.enumeration.OperateType.*;
 
-/**
- * @author peacewong
- * @date 2020/2/12 17:50
- */
 @Component
 public class DefaultContextCache implements ContextCache , CSIDListener {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultContextCache.class);
 
-    ContextAsyncListenerBus listenerBus = DefaultContextListenerManager.getInstance().getContextAsyncListenerBus();
+    private ContextAsyncListenerBus listenerBus = DefaultContextListenerManager.getInstance().getContextAsyncListenerBus();
 
 
     @Autowired
@@ -68,6 +65,7 @@ public class DefaultContextCache implements ContextCache , CSIDListener {
 
     @PostConstruct
     private void init(){
+        listenerBus.addListener(this);
         this.cache = CacheBuilder.newBuilder().maximumSize(3000)
                 .removalListener(contextIDRemoveListener)
                 .recordStats().build();

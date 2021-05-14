@@ -26,8 +26,6 @@ import static com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.Cus
 
 /**
  * Type validate strategy
- * @author georgeqiao
- * 2020/02/13
  */
 public class TypeParameterValidateStrategy implements ParameterValidateStrategy {
     @Override

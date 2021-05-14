@@ -18,12 +18,18 @@ package com.webank.wedatasphere.linkis.common.utils
 
 import java.lang.management.ManagementFactory
 
+import com.sun.management.OperatingSystemMXBean
+
 object OverloadUtils {
+
+  def getOSBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean.asInstanceOf[OperatingSystemMXBean]
 
   def getProcessMaxMemory: Long = ManagementFactory.getMemoryMXBean.getHeapMemoryUsage.getMax
 
   def getProcessUsedMemory: Long = ManagementFactory.getMemoryMXBean.getHeapMemoryUsage.getUsed
 
   def getSystemCPUUsed: Float = ManagementFactory.getOperatingSystemMXBean.getSystemLoadAverage.toFloat
+
+  def getSystemFreeMemory: Long = getOSBean.getFreePhysicalMemorySize
 
 }

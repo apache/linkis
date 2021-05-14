@@ -25,8 +25,8 @@ import com.webank.wedatasphere.linkis.cs.common.entity.source.{CommonContextKey,
 import com.webank.wedatasphere.linkis.cs.common.utils.CSCommonUtils
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
 import org.apache.commons.lang.StringUtils
@@ -34,10 +34,7 @@ import org.apache.commons.lang.StringUtils
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
-/**
-  * @author peacewong
-  * @date 2020/3/5 15:33
-  */
+
 object CSEntranceHelper extends Logging {
 
 
@@ -150,7 +147,7 @@ object CSEntranceHelper extends Logging {
     * @return
     */
   def addCSVariable(requestPersistTask: RequestPersistTask): Unit = {
-    val variableMap = new mutable.HashMap[String, String]()
+    val variableMap = new util.HashMap[String, Any]()
     val (contextIDValueStr, nodeNameStr) = getContextInfo(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
 
     if (StringUtils.isNotBlank(contextIDValueStr)) {
@@ -161,7 +158,9 @@ object CSEntranceHelper extends Logging {
           variableMap.put(linkisVariable.getKey, linkisVariable.getValue)
         }
       }
-      TaskUtils.addVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]], variableMap)
+      if(variableMap.nonEmpty){
+        TaskUtils.addVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]], variableMap)
+      }
       info(s"parse variable end nodeName:$nodeNameStr")
     }
   }

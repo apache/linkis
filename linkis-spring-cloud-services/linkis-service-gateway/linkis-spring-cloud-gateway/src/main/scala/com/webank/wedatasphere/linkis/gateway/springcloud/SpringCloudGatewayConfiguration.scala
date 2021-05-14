@@ -28,21 +28,19 @@ import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
+import org.springframework.cloud.client
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient
 import org.springframework.cloud.gateway.config.{GatewayAutoConfiguration, GatewayProperties}
 import org.springframework.cloud.gateway.filter._
 import org.springframework.cloud.gateway.route.builder.{PredicateSpec, RouteLocatorBuilder}
 import org.springframework.cloud.gateway.route.{Route, RouteLocator}
-import org.springframework.cloud.netflix.ribbon.{RibbonLoadBalancerClient, SpringClientFactory}
+import org.springframework.cloud.netflix.ribbon._
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.web.reactive.socket.client.WebSocketClient
 import org.springframework.web.reactive.socket.server.WebSocketService
 
 import scala.collection.JavaConversions._
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 @Configuration
 @AutoConfigureAfter(Array(classOf[GatewaySpringConfiguration], classOf[GatewayAutoConfiguration]))
 class SpringCloudGatewayConfiguration {
@@ -83,13 +81,33 @@ class SpringCloudGatewayConfiguration {
       }).build()
 
   @Bean
-  def createLoadBalancerClient(springClientFactory: SpringClientFactory) = new RibbonLoadBalancerClient(springClientFactory) {
+  def createLoadBalancerClient(springClientFactory: SpringClientFactory):RibbonLoadBalancerClient = new RibbonLoadBalancerClient(springClientFactory) {
     override def getServer(serviceId: String): Server = if(isMergeModuleInstance(serviceId)) {
       val serviceInstance = getServiceInstance(serviceId)
       info("redirect to " + serviceInstance)  //TODO test,wait for delete
       val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
       lb.getAllServers.find(_.getHostPort == serviceInstance.getInstance).get
     } else super.getServer(serviceId)
+
+    def isSecure(server: Server, serviceId: String) = {
+      val config = springClientFactory.getClientConfig(serviceId)
+      val serverIntrospector = serverIntrospectorFun(serviceId)
+      RibbonUtils.isSecure(config, serverIntrospector, server)
+    }
+
+    def serverIntrospectorFun(serviceId: String) = {
+      var serverIntrospector = springClientFactory.getInstance(serviceId, classOf[ServerIntrospector])
+      if (serverIntrospector == null) serverIntrospector = new DefaultServerIntrospector
+      serverIntrospector
+    }
+
+    override def choose(serviceId: String, hint:Any): client.ServiceInstance = if(isMergeModuleInstance(serviceId)) {
+      val serviceInstance = getServiceInstance(serviceId)
+      info("redirect to " + serviceInstance)
+      val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
+      val server = lb.getAllServers.find(_.getHostPort == serviceInstance.getInstance).get
+      new RibbonLoadBalancerClient.RibbonServer(serviceId, server, isSecure(server, serviceId), serverIntrospectorFun(serviceId).getMetadata(server))
+    } else super.choose(serviceId, hint)
   }
 
 }
@@ -112,15 +130,10 @@ object SpringCloudGatewayConfiguration extends Logging {
     serviceInstanceString match {
       case regex(num) =>
         serviceInstanceString = serviceInstanceString.substring(num.length)
-        ServiceInstance(serviceInstanceString.substring(0, num.toInt),
-          serviceInstanceString.substring(num.toInt).replaceAll("---", ":")
-          // app register with ip
-          .replaceAll("--", "."))
+        ServiceInstance(serviceInstanceString.substring(0, num.toInt), serviceInstanceString.substring(num.toInt).replaceAll("---", ":"))
     }
   }
 
   def mergeServiceInstance(serviceInstance: ServiceInstance): String = MERGE_MODULE_INSTANCE_HEADER + serviceInstance.getApplicationName.length +
     serviceInstance.getApplicationName + serviceInstance.getInstance.replaceAll(":", "---")
-    // app register with ip
-    .replaceAll("\\.", "--")
 }

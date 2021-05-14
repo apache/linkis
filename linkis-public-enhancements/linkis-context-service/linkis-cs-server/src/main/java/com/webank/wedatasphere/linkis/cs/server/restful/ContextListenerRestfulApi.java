@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -42,9 +42,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 
-/**
- * Created by patinousward on 2020/2/18.
- */
+
 @Component
 @Path("/contextservice")
 @Produces(MediaType.APPLICATION_JSON)

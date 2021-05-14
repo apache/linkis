@@ -18,10 +18,6 @@ import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource
 
 import java.util.List;
 
-/**
- * @author davidhua
- * 2020/02/14
- */
 public interface DataSourceRelateService {
     /**
      * Get key definitions by data source type and scope

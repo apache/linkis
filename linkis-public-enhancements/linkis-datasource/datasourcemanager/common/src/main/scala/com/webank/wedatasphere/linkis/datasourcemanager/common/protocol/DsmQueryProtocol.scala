@@ -17,8 +17,6 @@ import java.util
 
 /**
  * Store error code map
- * @author kirkzhou
- * 2020/02/11
  */
 trait DsmQueryProtocol {
 

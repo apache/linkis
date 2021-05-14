@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.cs.client.utils;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import com.webank.wedatasphere.linkis.cs.common.entity.history.ContextHistory;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
@@ -26,10 +28,6 @@ import com.webank.wedatasphere.linkis.cs.listener.callback.imp.ContextKeyValueBe
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * created by cooperyang on 2020/2/23
- * Description:
- */
 public class SerializeHelper {
 
 
@@ -73,6 +71,12 @@ public class SerializeHelper {
         return (ContextKeyValue)SERIALIZE_HELPER.deserialize(contextKVStr);
     }
 
+    public static String serializeContextHistory(ContextHistory history) throws ErrorException{
+        return SERIALIZE_HELPER.serialize(history);
+    }
 
+    public static ContextHistory deserializeContextHistory(String history) throws ErrorException{
+        return (ContextHistory)SERIALIZE_HELPER.deserialize(history);
+    }
 
 }

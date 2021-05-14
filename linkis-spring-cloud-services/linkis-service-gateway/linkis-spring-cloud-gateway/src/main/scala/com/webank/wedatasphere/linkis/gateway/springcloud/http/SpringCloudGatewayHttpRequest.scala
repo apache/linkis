@@ -26,9 +26,6 @@ import org.springframework.http.server.reactive.AbstractServerHttpRequest
 
 import scala.collection.JavaConversions
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
 class SpringCloudGatewayHttpRequest(request: AbstractServerHttpRequest) extends GatewayHttpRequest {
 
   private val headers = {

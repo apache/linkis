@@ -17,7 +17,6 @@ package com.webank.wedatasphere.linkis.bml.service;
 
 import com.webank.wedatasphere.linkis.bml.Entity.ResourceVersion;
 import com.webank.wedatasphere.linkis.bml.Entity.Version;
-
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import java.io.IOException;
@@ -25,9 +24,6 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by cooperyang on 2019/5/17.
- */
 public interface VersionService {
 
    Version getVersion(String resourceId, String version);
@@ -38,7 +34,7 @@ public interface VersionService {
 
    List<ResourceVersion> getAllResourcesViaSystem(String system, String user);
    //分页查询VResourcesViaSystem
-   public List<ResourceVersion> selectResourcesViaSystemByPage(int currentPage, int pageSize, String system, String user);
+   public List<ResourceVersion> selectResourcesViaSystemByPage(int currentPage, int pageSize,String system, String user);
 
    void deleteResourceVersion(String resourceId, String version);
 
@@ -55,7 +51,7 @@ public interface VersionService {
    List<Version> getVersions(String resourceId);
 
    //分页查询Version
-   List<Version> selectVersionByPage(int currentPage, int pageSize, String resourceId);
+   List<Version> selectVersionByPage(int currentPage, int pageSize,String resourceId);
 
 
 

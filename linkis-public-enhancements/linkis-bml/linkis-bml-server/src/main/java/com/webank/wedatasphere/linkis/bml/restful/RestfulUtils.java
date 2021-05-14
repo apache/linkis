@@ -20,15 +20,10 @@ import com.webank.wedatasphere.linkis.bml.common.Constant;
 import com.webank.wedatasphere.linkis.bml.service.ResourceService;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.servlet.http.HttpServletRequest;
-
-/**
- * created by cooperyang on 2019/5/30
- * Description:
- */
 public class RestfulUtils {
 
 

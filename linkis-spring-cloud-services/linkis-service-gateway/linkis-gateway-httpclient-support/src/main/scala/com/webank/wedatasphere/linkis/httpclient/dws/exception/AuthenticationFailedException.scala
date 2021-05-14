@@ -18,7 +18,4 @@ package com.webank.wedatasphere.linkis.httpclient.dws.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 class AuthenticationFailedException(errorDesc: String) extends ErrorException(10901, errorDesc)

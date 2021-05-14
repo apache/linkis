@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
-
 package com.webank.wedatasphere.linkis.ujes.client.response
 
 import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 import com.webank.wedatasphere.linkis.ujes.client.request.UserAction
 
-/**
-  * created by cooperyang on 2019/5/23.
-  */
 trait UJESJobResult extends DWSResult with UserAction {
 
   private var execID: String = _

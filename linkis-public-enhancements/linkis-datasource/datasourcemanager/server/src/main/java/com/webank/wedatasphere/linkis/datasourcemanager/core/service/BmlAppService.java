@@ -19,8 +19,6 @@ import java.io.InputStream;
 
 /**
  * BML application service
- * @author davidhua
- * 2020/02/14
  */
 public interface BmlAppService {
 

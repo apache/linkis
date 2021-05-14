@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,15 +18,13 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.entrance.exception.{EntranceErrorException, SubmitFailedException}
 import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
 import com.webank.wedatasphere.linkis.entrance.log.LogReader
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.scheduler.queue.{Job, SchedulerEventState}
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 abstract class EntranceServer extends Logging {
 
   private var entranceWebSocketService: Option[EntranceWebSocketService] = None

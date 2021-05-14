@@ -43,11 +43,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-
-/**
- * @author davidhua
- * 2020/02/13
- */
 @Service
 public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 

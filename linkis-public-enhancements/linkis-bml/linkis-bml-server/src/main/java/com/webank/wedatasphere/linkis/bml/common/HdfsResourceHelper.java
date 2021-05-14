@@ -37,7 +37,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * created by cooperyang on 2019/5/21
  * Description: 资源文件上传到hdfs存储目录，存储的原则是一个资源
  */
 public class HdfsResourceHelper implements ResourceHelper {
@@ -48,17 +47,27 @@ public class HdfsResourceHelper implements ResourceHelper {
 
     @Override
     public long upload(String path, String user, InputStream inputStream,
-                       StringBuilder stringBuilder) throws UploadResourceException {
+                       StringBuilder stringBuilder, boolean overwrite) throws UploadResourceException {
         OutputStream outputStream = null;
-        long size = -1;
+        InputStream is0 = null;
+        InputStream is1 = null;
+        long size = 0;
         Fs fileSystem = null;
         try {
             FsPath fsPath = new FsPath(path);
             fileSystem = FSFactory.getFsByProxyUser(fsPath, user);
             fileSystem.init(new HashMap<String, String>());
-            if (!fileSystem.exists(fsPath)) FileSystemUtils.createNewFile(fsPath, user, true);
-            outputStream = fileSystem.write(fsPath, false);
+            if (!fileSystem.exists(fsPath)) {
+                FileSystemUtils.createNewFile(fsPath, user, true);
+            }
             byte[] buffer = new byte[1024];
+            long beforeSize = -1;
+            is0 = fileSystem.read(fsPath);
+            int ch0 = 0;
+            while((ch0 = is0.read(buffer)) != -1){
+                beforeSize += ch0;
+            }
+            outputStream = fileSystem.write(fsPath, overwrite);
             int ch = 0;
             MessageDigest md5Digest = DigestUtils.getMd5Digest();
             while ((ch = inputStream.read(buffer)) != -1) {
@@ -69,6 +78,14 @@ public class HdfsResourceHelper implements ResourceHelper {
             if (stringBuilder != null) {
                 stringBuilder.append(Hex.encodeHexString(md5Digest.digest()));
             }
+            //通过文件名获取的文件所有的字节，这样就避免了错误更新后的更新都是错的
+            long afterSize = -1;
+            is1 = fileSystem.read(fsPath);
+            int ch1 = 0;
+            while((ch1 = is1.read(buffer)) != -1){
+                afterSize += ch1;
+            }
+            size = Math.max(size, afterSize - beforeSize);
         } catch (final IOException e) {
             logger.error("{} write to {} failed, reason is, IOException:", user, path, e);
             UploadResourceException uploadResourceException = new UploadResourceException();
@@ -81,14 +98,17 @@ public class HdfsResourceHelper implements ResourceHelper {
             throw uploadResourceException;
         } finally {
             IOUtils.closeQuietly(outputStream);
-            if (fileSystem != null) try {
-                fileSystem.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (fileSystem != null){
+                try {
+                    fileSystem.close();
+                } catch (IOException e) {
+                    logger.error("close filesystem failed", e);
+                }
             }
             IOUtils.closeQuietly(inputStream);
+            IOUtils.closeQuietly(is0);
+            IOUtils.closeQuietly(is1);
         }
-        size += 1;
         return size;
     }
 
@@ -125,7 +145,7 @@ public class HdfsResourceHelper implements ResourceHelper {
 
     @Override
     public boolean checkIfExists(String path, String user) throws IOException {
-        Fs fileSystem = FSFactory.getFs(new FsPath(path));
+        Fs fileSystem = FSFactory.getFsByProxyUser(new FsPath(path), user);
         fileSystem.init(new HashMap<String, String>());
         try {
             return fileSystem.exists(new FsPath(path));

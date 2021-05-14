@@ -1,12 +1,9 @@
 /*
  * Copyright 2019 WeBank
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,9 +28,9 @@ object Configuration extends Logging {
 
   val IS_TEST_MODE = CommonVars("wds.linkis.test.mode", false)
 
-  val hadoopConfDir = CommonVars("hadoop.config.dir", CommonVars("HADOOP_CONF_DIR", "").getValue).getValue
+  val LINKIS_HOME = CommonVars("wds.linkis.home", CommonVars("LINKIS_HOME", "/appcom/Install/LinkisInstall"))
 
-  val GATEWAY_URL: CommonVars[String] = CommonVars[String]("wds.linkis.gateway.url", "http://localhost:9001/")
+  val GATEWAY_URL: CommonVars[String] = CommonVars[String]("wds.linkis.gateway.url", "http://127.0.0.1:9001/")
 
   def getGateWayURL(): String = {
     val url = GATEWAY_URL.getValue.trim

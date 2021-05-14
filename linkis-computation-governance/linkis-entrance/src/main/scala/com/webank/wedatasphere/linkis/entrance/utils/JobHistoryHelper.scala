@@ -1,21 +1,33 @@
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.webank.wedatasphere.linkis.entrance.utils
 
 import java.util
 
-import com.google.gson.Gson
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.exception.JobHistoryFailedException
+import com.webank.wedatasphere.linkis.governance.common.entity.task.{RequestPersistTask, RequestQueryTask, RequestUpdateTask, ResponsePersist}
 import com.webank.wedatasphere.linkis.protocol.query.cache.{CacheTaskResult, RequestReadCache}
-import com.webank.wedatasphere.linkis.protocol.query.{RequestPersistTask, RequestQueryTask, RequestUpdateTask, ResponsePersist}
 import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState
 
-/**
- * created by cooperyang on 2020/1/2
- * Description:
- */
+
 object JobHistoryHelper extends Logging{
 
   private val sender = Sender.getSender(EntranceConfiguration.QUERY_PERSISTENCE_SPRING_APPLICATION_NAME.getValue)
@@ -61,13 +73,7 @@ object JobHistoryHelper extends Logging{
           }else{
             val data = responsePersist.getData
             data.get(TASK_MAP_KEY) match {
-              case tasks:util.List[util.Map[String, Object]] => tasks.get(0) match {
-                case map:util.Map[String, Object] => val gson = new Gson()
-                  val json = gson.toJson(map)
-                  val requestPersistTask = gson.fromJson(json, classOf[RequestPersistTask])
-                  requestPersistTask
-                case _ => throw JobHistoryFailedException(s"query from jobhistory not a correct RequestPersistTask type taskId is $taskID")
-              }
+              case tasks: util.List[RequestPersistTask] => tasks.get(0)
               case _ => throw JobHistoryFailedException(s"query from jobhistory not a correct List type taskId is $taskID")
             }
           }

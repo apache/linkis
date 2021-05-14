@@ -20,8 +20,6 @@ import java.util.List;
 
 /**
  * Data source dao
- * @author dennyzhou-zdx
- * 2020/02/14
  */
 public interface DataSourceEnvDao {
 

@@ -62,14 +62,14 @@ object FileImportDDLHelper extends ImportHelper with Logging {
     var destination = "val destination = \"\"\"" + _destination +  "\"\"\"\n"
     createTableCode.append(source)
     createTableCode.append(destination)
-    createTableCode.append("com.webank.bdp.dataworkcloud.engine.imexport.LoadData.loadDataToTable(spark,source,destination)")
+    createTableCode.append("com.webank.wedatasphere.linkis.engine.imexport.LoadData.loadDataToTable(spark,source,destination)")
     val resultCode = createTableCode.toString()
     logger.info(s"end to generate code for ${mdqTableBO.getTableBaseInfo.getBase.getName} code is $resultCode")
     resultCode
 //    if(storePath == null){
-//      newExecutionCode += "com.webank.bdp.dataworkcloud.engine.imexport.LoadData.loadDataToTable(spark,source,destination)"
+//      newExecutionCode += "com.webank.wedatasphere.linkis.engine.imexport.LoadData.loadDataToTable(spark,source,destination)"
 //    }else{
-//      newExecutionCode += "com.webank.bdp.dataworkcloud.engine.imexport.LoadData.loadDataToTableByFile(spark,destination,source)"
+//      newExecutionCode += "com.webank.wedatasphere.linkis.engine.imexport.LoadData.loadDataToTableByFile(spark,destination,source)"
 //    }
   }
 }
@@ -152,7 +152,7 @@ object HiveImportDDLHelper extends ImportHelper with SQLConst with Logging{
         //插入数据
         executeCode.append(SPARK_SQL).append(LEFT_PARENTHESES).append(MARKS)
         executeCode.append(INSERT_OVERWRITE + destinationDatabase + "." + destinationTable).append(SPACE)
-        executeCode.append("partition").append(LEFT_PARENTHESES).append("ds=").append(standardDs).append(RIGHT_PARENTHESES).append(SPACE)
+        executeCode.append("partition").append(LEFT_PARENTHESES).append("ds=").append("\"").append(standardDs).append("\"").append(RIGHT_PARENTHESES).append(SPACE)
         executeCode.append(AS_SELECT).append(SPACE).append(insertFieldsArray.mkString(COMMA)).append(SPACE)
         executeCode.append(FROM).append(sourceDatabase).append(".").append(sourceTableName)
         executeCode.append(MARKS).append(RIGHT_PARENTHESES)
@@ -173,7 +173,7 @@ object HiveImportDDLHelper extends ImportHelper with SQLConst with Logging{
           //直接插入
           executeCode.append(SPARK_SQL).append(LEFT_PARENTHESES).append(MARKS)
           executeCode.append(INSERT_OVERWRITE + destinationDatabase + "." + destinationTable).append(SPACE)
-          executeCode.append("partition").append(LEFT_PARENTHESES).append("ds=").append(standardDs).append(RIGHT_PARENTHESES).append(SPACE)
+          executeCode.append("partition").append(LEFT_PARENTHESES).append("ds=").append("\"").append(standardDs).append("\"").append(RIGHT_PARENTHESES).append(SPACE)
           executeCode.append(AS_SELECT).append(SPACE).append(insertFieldsArray.mkString(COMMA)).append(SPACE)
           executeCode.append(FROM).append(sourceDatabase).append(".").append(sourceTableName)
           executeCode.append(MARKS).append(RIGHT_PARENTHESES)

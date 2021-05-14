@@ -34,13 +34,11 @@ import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
 
 
-/**
-  * Created by enjoyyin on 2018/8/31.
-  */
+
 abstract class Job extends Runnable with SchedulerEvent with Closeable with Logging {
 
   import SchedulerEventState._
-  private[queue] var future: Future[_] = _
+  private[linkis] var future: Future[_] = _
   /**
     * the future of consumer
     */
@@ -52,10 +50,10 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   private var jobListener: Option[JobListener] = None
   private var logListener: Option[LogListener] = None
   private var progressListener: Option[ProgressListener] = None
-  private var interrupt = false
+  private[linkis] var interrupt = false
   private var progress: Float = 0f
   private var retryNum = 0
-  private var errorExecuteResponse: ErrorExecuteResponse = _
+  private[linkis] var errorExecuteResponse: ErrorExecuteResponse = _
 
   override def isWaiting = super.isWaiting && !interrupt
   override def isCompleted = super.isCompleted || interrupt
@@ -124,7 +122,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
     * updated by enjoyyin
     * After some jobs call kill, they cannot be killed correctly, causing the state to not be flipped.（一些job调用kill之后，不能被正确kill，导致状态不能翻转）
     */
-  private def forceCancel(t:Throwable):Unit = {
+  protected def forceCancel(t: Throwable): Unit = {
     logger.info(s"force to cancel job $getName")
     val executeCompleted = ErrorExecuteResponse("force to transition Failed", t)
     transitionCompleted(executeCompleted)
@@ -162,8 +160,16 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   def getErrorResponse = errorExecuteResponse
 
   protected def existsJobDaemon: Boolean = false
+
   protected def createJobDaemon: JobDaemon = new JobDaemon(this, jobDaemonUpdateInterval, executor)
+
   protected def jobDaemonUpdateInterval: Long = 1000l
+
+  override def beforeStateChanged(fromState: SchedulerEventState, toState: SchedulerEventState): Unit = toState match {
+    case Succeed | Failed | Cancelled | Timeout =>
+      jobListener.foreach(_.onJobCompleted(this))
+    case _ =>
+  }
 
   override def afterStateChanged(fromState: SchedulerEventState, toState: SchedulerEventState): Unit = toState match {
     case Inited =>
@@ -171,8 +177,8 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
     //TODO Add event（加事件）
     case Scheduled =>
       jobListener.foreach(_.onJobScheduled(this))
-     // logListener.foreach(_.onLogUpdate(this, "job is scheduled."))
-      //TODO Add event（加事件）
+    // logListener.foreach(_.onLogUpdate(this, "job is scheduled."))
+    //TODO Add event（加事件）
     case Running =>
       jobListener.foreach(_.onJobRunning(this))
       //logListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo( "job is running.")))

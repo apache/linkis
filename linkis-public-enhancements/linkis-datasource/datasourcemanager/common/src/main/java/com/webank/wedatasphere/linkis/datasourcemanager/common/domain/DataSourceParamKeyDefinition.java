@@ -23,8 +23,6 @@ import java.util.Map;
 
 /**
  * Parameter key definition for data source type
- * @author kirkzhou
- * 2020/02/11
  */
 @JsonSerialize(include= JsonSerialize.Inclusion.NON_EMPTY)
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"}, ignoreUnknown = true)

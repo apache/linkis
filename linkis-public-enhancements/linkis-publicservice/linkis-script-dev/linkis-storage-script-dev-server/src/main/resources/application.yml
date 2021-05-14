@@ -1,0 +1,32 @@
+server:
+  port: 9666
+spring:
+  application:
+    name: linkis-ps-storage-script-dev
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:20303/eureka/
+  instance:
+    metadata-map:
+      test: wedatasphere
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info
+logging:
+  config: classpath:log4j2.xml
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: countSql
+
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000

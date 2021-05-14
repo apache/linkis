@@ -29,8 +29,6 @@ import java.util.Map;
 
 /**
  * Helper of restful api entrance
- * @author liaoyt
- * 2020/02/10
  */
 public class RestfulApiHelper {
     /**

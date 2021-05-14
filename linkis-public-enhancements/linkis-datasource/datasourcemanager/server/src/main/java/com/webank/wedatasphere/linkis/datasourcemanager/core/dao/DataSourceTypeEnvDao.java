@@ -15,10 +15,6 @@ package com.webank.wedatasphere.linkis.datasourcemanager.core.dao;
 
 import org.apache.ibatis.annotations.Param;
 
-/**
- * @author dennyzhu-zdx
- * 2020/02/14
- */
 public interface DataSourceTypeEnvDao {
 
     /**

@@ -17,35 +17,19 @@
 package com.webank.wedatasphere.linkis.entrance.execute.impl
 
 import com.webank.wedatasphere.linkis.entrance.execute._
+import com.webank.wedatasphere.linkis.orchestrator.ecm.EngineConnManager
+import com.webank.wedatasphere.linkis.scheduler.listener.ExecutorListener
 import com.webank.wedatasphere.linkis.scheduler.queue.GroupFactory
 
 /**
   * Created by enjoyyin on 2018/9/26.
   */
 class EntranceExecutorManagerImpl(groupFactory: GroupFactory,
-                                  engineBuilder: EngineBuilder,
-                                  engineRequester: EngineRequester,
-                                  engineSelector: EngineSelector,
-                                  engineManager: EngineManager,
-                                  entranceExecutorRulers: Array[EntranceExecutorRuler]) extends EntranceExecutorManager(groupFactory) {
+                                  engineConnManager: EngineConnManager) extends EntranceExecutorManager(groupFactory, engineConnManager) {
 
-  engineManager.setEntranceExecutorManager(this)
-  engineRequester.setEngineBuilder(engineBuilder)
-  engineRequester.setExecutorListener(engineManager)
-  private val _entranceExecutorRulers = entranceExecutorRulers.map(_.cloneNew())
-  _entranceExecutorRulers.foreach(_.setEngineManager(engineManager))
-  info("load entranceExecutorRules => " + _entranceExecutorRulers.toList)
-
-  override def getOrCreateEngineBuilder(): EngineBuilder = engineBuilder
-
-  override def getOrCreateEngineManager(): EngineManager = engineManager
-
-  override def getOrCreateEngineRequester(): EngineRequester = engineRequester
-
-  override def getOrCreateEngineSelector(): EngineSelector = engineSelector
-
-  override def getOrCreateEntranceExecutorRulers(): Array[EntranceExecutorRuler] = _entranceExecutorRulers
 
   override def getOrCreateInterceptors(): Array[ExecuteRequestInterceptor] = Array(JobExecuteRequestInterceptor,
-    LockExecuteRequestInterceptor, ReconnectExecuteRequestInterceptor, StorePathExecuteRequestInterceptor, RuntimePropertiesExecuteRequestInterceptor)
+    LabelExecuteRequestInterceptor, ReconnectExecuteRequestInterceptor, StorePathExecuteRequestInterceptor, RuntimePropertiesExecuteRequestInterceptor)
+
+  override def setExecutorListener(engineListener: ExecutorListener): Unit = {}
 }

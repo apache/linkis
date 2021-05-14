@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -40,10 +41,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-/**
- * @author cooperyang
- * @date 2019-9-16
- */
 @Service
 public class TaskServiceImpl implements TaskService {
 
@@ -65,6 +62,7 @@ public class TaskServiceImpl implements TaskService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskServiceImpl.class);
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResourceTask createUploadTask(FormDataMultiPart form, String user,
         Map<String, Object> properties) throws Exception {
         //创建上传任务记录
@@ -89,11 +87,12 @@ public class TaskServiceImpl implements TaskService {
           LOGGER.error("上传资源失败.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue(), e);
           throw e;
         }
-        //创建上传任务线程
       return resourceTask;
     }
 
+
   @Override
+  @Transactional(rollbackFor = Exception.class)
   public ResourceTask createUpdateTask(String resourceId, String user,
       FormDataMultiPart formDataMultiPart, Map<String, Object> properties) throws Exception{
       final String resourceIdLock = resourceId.intern();
@@ -102,7 +101,7 @@ public class TaskServiceImpl implements TaskService {
       实现方案是:linkis_resources_task.resource_id和version设置唯一索引
       同一台服务器实例对同一资源更新,上传资源前，需要对resourceId这个字符串的intern进行加锁，这样所有需要更新该资源的用户都会同步
        */
-      synchronized (resourceIdLock){
+      //synchronized (resourceIdLock.intern()){
         String system = resourceDao.getResource(resourceId).getSystem();
         //生成新的version
         String lastVersion = getResourceLastVersion(resourceId);
@@ -130,7 +129,7 @@ public class TaskServiceImpl implements TaskService {
         }
         //创建上传任务线程
         return resourceTask;
-      }
+      //}
   }
 
   @Override

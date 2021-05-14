@@ -16,9 +16,9 @@
 
 package com.webank.wedatasphere.linkis.httpclient.request
 
-import scala.tools.nsc.interpreter.InputStream
-
 import java.util
+
+import scala.tools.nsc.interpreter.InputStream
 
 /**
   * Created by enjoyyin on 2019/5/20.

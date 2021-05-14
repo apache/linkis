@@ -22,17 +22,15 @@ import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.interceptor.exception.{PythonCodeCheckException, ScalaCodeCheckException}
-import com.webank.wedatasphere.linkis.protocol.query.RequestPersistTask
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  * created by enjoyyin on 2018/10/19
-  * Description:
-  */
+
 abstract class Explain extends Logging {
   /**
     * 用于检查code是否符合规范
@@ -50,17 +48,17 @@ object SparkExplain extends Explain {
   private val sy = Pattern.compile("sys\\.")
   private val scCancelAllJobs = Pattern.compile("sc\\.cancelAllJobs(\\s*)")
   private val runtime = Pattern.compile("Runtime\\.getRuntime")
+  private val LINE_BREAK = "\n"
   private val LOG:Logger = LoggerFactory.getLogger(getClass)
   override def authPass(code: String, error: StringBuilder): Boolean = {
-
+    if (EntranceConfiguration.IS_QML.getValue) {
+      return true
+    }
     if (scStop.matcher(code).find()) {
       error.append("Authentication error: sc.stop() is not allowed in IDE.")
       false
     } else if (systemExit.matcher(code).find()) {
       error.append("Authentication error: System.exit(exitCode) is not allowed in IDE.")
-      false
-    } else if (sy.matcher(code).find()) {
-      error.append("Authentication error: the package `sys` cannot be used in IDE.")
       false
     } else if (scCancelAllJobs.matcher(code).find()) {
       error.append("Authentication error: sc.cancelAllJobs() is not allowed in IDE.")
@@ -82,6 +80,7 @@ object SQLExplain extends Explain {
   val SQL_APPEND_LIMIT:String = " limit " + SQL_DEFAULT_LIMIT.getValue
   val DROP_TABLE_SQL = "\\s*drop\\s+table\\s+\\w+\\s*"
   val CREATE_DATABASE_SQL = "\\s*create\\s+database\\s+\\w+\\s*"
+  private val IDE_ALLOW_NO_LIMIT_REGEX = "--set\\s*ide.engine.no.limit.allow\\s*=\\s*true".r.unanchored
   private val LINE_BREAK = "\n"
   private val COMMENT_FLAG = "--"
   val SET_OWN_USER = "set owner user"
@@ -98,20 +97,31 @@ object SQLExplain extends Explain {
 
   /**
     * to deal with sql limit
-    * @param executionCode sql code
+    *
+    * @param executionCode      sql code
     * @param requestPersistTask use to store inited logs
     */
-  def dealSQLLimit(executionCode:String, requestPersistTask: RequestPersistTask, logAppender: java.lang.StringBuilder):Unit = {
-    val fixedCode:ArrayBuffer[String] = new ArrayBuffer[String]()
-    executionCode.split(";") foreach { singleCode =>
+  def dealSQLLimit(executionCode: String, requestPersistTask: RequestPersistTask, logAppender: java.lang.StringBuilder): Unit = {
+    val fixedCode: ArrayBuffer[String] = new ArrayBuffer[String]()
+    val tempCode = SQLCommentHelper.dealComment(executionCode)
+    val isNoLimitAllowed = Utils.tryCatch {
+      IDE_ALLOW_NO_LIMIT_REGEX.findFirstIn(executionCode).isDefined
+    } {
+      case e: Exception => logger.warn("sql limit check error happens")
+        executionCode.contains(IDE_ALLOW_NO_LIMIT)
+    }
+    if (isNoLimitAllowed) logAppender.append(LogUtils.generateWarn("请注意,SQL全量导出模式打开\n"))
+    tempCode.split(";") foreach { singleCode =>
       if (isSelectCmd(singleCode)){
         val trimCode = singleCode.trim
-        if (isSelectCmdNoLimit(trimCode) && !executionCode.contains(IDE_ALLOW_NO_LIMIT)){
-          logAppender.append(LogUtils.generateWarn(s"You submitted a sql $trimCode without limit, program will add limit 5000 to your sql") + "\n")
-          fixedCode += (trimCode + SQL_APPEND_LIMIT)
-        }else if (isSelectOverLimit(singleCode) && !executionCode.contains(IDE_ALLOW_NO_LIMIT)){
+        if (isSelectCmdNoLimit(trimCode) && !isNoLimitAllowed){
+          logAppender.append(LogUtils.generateWarn(s"You submitted a sql without limit, DSS will add limit 5000 to your sql") + "\n")
+          //将注释先干掉,然后再进行添加limit
+          val realCode = cleanComment(trimCode)
+          fixedCode += (realCode + SQL_APPEND_LIMIT)
+        }else if (isSelectOverLimit(singleCode) && !isNoLimitAllowed){
           val trimCode = singleCode.trim
-          logAppender.append(LogUtils.generateWarn(s"You submitted a sql $trimCode with limit exceeding 5000, it is not allowed. Program will change your limit to 5000") + "\n")
+          logAppender.append(LogUtils.generateWarn(s"You submitted a sql with limit exceeding 5000, it is not allowed. DSS will change your limit to 5000") + "\n")
           fixedCode += repairSelectOverLimit(trimCode)
         }else{
           fixedCode += singleCode.trim
@@ -236,6 +246,9 @@ object PythonExplain extends Explain{
     */
   private val SC_STOP = """sc\.stop""".r.unanchored
   override def authPass(code: String, error: StringBuilder): Boolean = {
+    if (EntranceConfiguration.IS_QML.getValue) {
+      return true
+    }
     code.split(System.lineSeparator()) foreach {code =>
       if (IMPORT_SYS_MOUDLE.findAllIn(code).nonEmpty || FROM_SYS_IMPORT.findAllIn(code).nonEmpty)
         throw PythonCodeCheckException(20070, "can not use sys module")
@@ -257,6 +270,9 @@ object ScalaExplain extends Explain{
   private val runtime = """Runtime.getRunTime""".r.unanchored
   private val LOG:Logger = LoggerFactory.getLogger(getClass)
   override def authPass(code: String, error: StringBuilder): Boolean = {
+    if (EntranceConfiguration.IS_QML.getValue) {
+      return true
+    }
     code match {
       case systemExit() => LOG.error("scala code can not use System.exit")
         throw ScalaCodeCheckException(20074, "scala code can not use System.exit")

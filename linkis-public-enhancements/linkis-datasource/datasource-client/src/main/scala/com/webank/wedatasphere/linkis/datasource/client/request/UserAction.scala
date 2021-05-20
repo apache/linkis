@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.metadata.hive.config;
 
-import java.lang.annotation.*;
+package com.webank.wedatasphere.linkis.datasource.client.request
 
+trait UserAction extends com.webank.wedatasphere.linkis.httpclient.request.UserAction {
+  private var user: String = _
 
-@Inherited
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-public @interface DataSource {
-    String name() default "";
+  override def setUser(user: String): Unit = this.user = user
+
+  override def getUser: String = user
 }

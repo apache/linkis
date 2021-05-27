@@ -26,10 +26,14 @@ public enum EntranceErrorCode {
     /**
      *
      */
-    CACHE_NOT_READY(200, "shared cache not ready"),
-    ENTRANCE_CAST_FAIL(20002, "class cast failed"),
+    CACHE_NOT_READY(200, "shared cache not ready "),
+    ENTRANCE_CAST_FAIL(20002, "class cast failed "),
     PARAM_CANNOT_EMPTY(20008, "params cannot be empty "),
-    LABEL_PARAMS_INVALID(20009, "Label params invalid. ")
+    LABEL_PARAMS_INVALID(20009, "Label params invalid "),
+    EXECUTE_REQUEST_INVALID(20010, "EntranceExecuteRequest invalid "),
+    SUBMIT_JOB_ERROR(20011, "Submit job error "),
+    INIT_JOB_ERROR(20012, "Init job error "),
+    RESULT_NOT_PERSISTED_ERROR(20013, "Result not persisted error ")
 
     ;
     private int errCode;

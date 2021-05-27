@@ -21,7 +21,9 @@ import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteRequest, JobExe
 
 import scala.collection.JavaConversions
 
-
+/**
+  * Created by enjoyyin on 2018/9/17.
+  */
 trait ExecuteRequestInterceptor {
 
   def apply(requestTask: RequestTask, executeRequest: ExecuteRequest): RequestTask

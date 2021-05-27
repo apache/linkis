@@ -17,8 +17,8 @@
 package com.webank.wedatasphere.linkis.entrance.persistence
 
 import java.io.{Closeable, Flushable}
-
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import com.webank.wedatasphere.linkis.governance.common.entity.job.{JobRequest, SubJobDetail, SubJobInfo}
 import com.webank.wedatasphere.linkis.protocol.task.Task
 
 /**
@@ -26,8 +26,16 @@ import com.webank.wedatasphere.linkis.protocol.task.Task
   */
 trait PersistenceEngine extends Closeable with Flushable {
 
+  /**
+   * 持久化JobRequest
+   * @param jobReq
+   * @throws
+   */
   @throws[ErrorException]
-  def persist(task: Task): Unit
+  def persist(jobReq: JobRequest): Unit
+
+  @throws[ErrorException]
+  def persist(subjobInfo: SubJobInfo): Unit
 
   /**
     * If a task's progress, status, logs, and result set are updated, this method is updated <br>
@@ -35,7 +43,10 @@ trait PersistenceEngine extends Closeable with Flushable {
     * @param task
     */
   @throws[ErrorException]
-  def updateIfNeeded(task: Task): Unit
+  def updateIfNeeded(jobReq: JobRequest): Unit
+
+  @throws[ErrorException]
+  def updateIfNeeded(subJobInfo: SubJobInfo): Unit
 
   /**
     * Used to hang up a unified import task through this method, and continue to do the processing.
@@ -53,6 +64,9 @@ trait PersistenceEngine extends Closeable with Flushable {
     * @return
     */
   @throws[ErrorException]
-  def retrieve(taskID: java.lang.Long):Task
+  def retrieveJobReq(jobGroupId: java.lang.Long): JobRequest
+
+  @throws[ErrorException]
+  def retrieveJobDetailReq(jobDetailId: java.lang.Long): SubJobDetail
 
 }

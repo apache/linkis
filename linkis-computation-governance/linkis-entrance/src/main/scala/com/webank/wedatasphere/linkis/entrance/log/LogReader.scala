@@ -26,7 +26,9 @@ import org.apache.commons.lang.StringUtils
 
 import scala.util.matching.Regex
 
-
+/**
+  * Created by enjoyyin on 2018/9/4.
+  */
 abstract class LogReader(charset: String) extends Closeable with Logging{
   import LogReader._
 

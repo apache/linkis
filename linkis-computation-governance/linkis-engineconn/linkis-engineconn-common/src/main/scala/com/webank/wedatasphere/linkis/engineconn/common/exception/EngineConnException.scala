@@ -18,6 +18,12 @@ package com.webank.wedatasphere.linkis.engineconn.common.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
+/**
+ * @author alexyang
+ * @date 2020/12/4
+ * @description
+ */
+case class EngineConnException(errorCode: Int, msg: String) extends ErrorException(errorCode, msg)
 
 case class EngineTypeVersionNotMatchException(msg: String) extends ErrorException(40010, msg)
 

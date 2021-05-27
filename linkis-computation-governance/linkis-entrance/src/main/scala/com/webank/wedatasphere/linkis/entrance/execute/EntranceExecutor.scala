@@ -16,35 +16,35 @@
 
 package com.webank.wedatasphere.linkis.entrance.execute
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.entrance.job.EntranceExecuteRequest
 import com.webank.wedatasphere.linkis.governance.common.entity.ExecutionNodeStatus._
 import com.webank.wedatasphere.linkis.governance.common.protocol.task.{RequestTask, ResponseTaskStatus}
-import com.webank.wedatasphere.linkis.orchestrator.ecm.entity.Mark
-import com.webank.wedatasphere.linkis.orchestrator.ecm.service.EngineConnExecutor
+import com.webank.wedatasphere.linkis.orchestrator.Orchestration
+import com.webank.wedatasphere.linkis.orchestrator.computation.operation.log.LogProcessor
+import com.webank.wedatasphere.linkis.orchestrator.computation.operation.progress.ProgressProcessor
+import com.webank.wedatasphere.linkis.orchestrator.core.OrchestrationFuture
 import com.webank.wedatasphere.linkis.protocol.UserWithCreator
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorState.ExecutorState
 import com.webank.wedatasphere.linkis.scheduler.executer._
+import org.apache.hadoop.fs.Options.CreateOpts.Progress
 
 import scala.collection.mutable.ArrayBuffer
 
-
-abstract class EntranceExecutor(val id: Long, val mark: Mark) extends Executor with Logging {
-
+/**
+  * Created by enjoyyin on 2018/9/10.
+  */
+abstract class EntranceExecutor(val id: Long, val mark: MarkReq) extends Executor with Logging {
 
   private implicit var userWithCreator: UserWithCreator = _
-
-  private var engineConnExecutor: EngineConnExecutor = _
 
   protected val engineReturns = ArrayBuffer[EngineExecuteAsynReturn]()
 
   protected var interceptors: Array[ExecuteRequestInterceptor] = Array(LabelExecuteRequestInterceptor, JobExecuteRequestInterceptor)
 
-
   def setInterceptors(interceptors: Array[ExecuteRequestInterceptor]) = if (interceptors != null && interceptors.nonEmpty) {
     this.interceptors = interceptors
   }
-
 
   def setUser(user: String): Unit = userWithCreator = if (userWithCreator != null) UserWithCreator(user, userWithCreator.creator)
   else UserWithCreator(user, null)
@@ -56,47 +56,46 @@ abstract class EntranceExecutor(val id: Long, val mark: Mark) extends Executor w
 
   def getCreator = if (userWithCreator != null) userWithCreator.creator else null
 
-
-  def getEngineConnExecutor(): EngineConnExecutor = this.engineConnExecutor
-
-  def setEngineConnExecutor(engineConnExecutor: EngineConnExecutor): Unit = {
-    this.engineConnExecutor = engineConnExecutor
-  }
-
-  def getInstance: ServiceInstance = getEngineConnExecutor().getServiceInstance
+//  def getInstance: ServiceInstance = getEngineConnExecutor().getServiceInstance
 
   private[execute] def getEngineReturns = engineReturns.toArray
 
   override def execute(executeRequest: ExecuteRequest): ExecuteResponse = {
     var request: RequestTask = null
     interceptors.foreach(in => request = in.apply(request, executeRequest))
-    if (request.getProperties != null &&
+    /*if (request.getProperties != null &&
       request.getProperties.containsKey(ReconnectExecuteRequestInterceptor.PROPERTY_EXEC_ID)) {
       val execId = ReconnectExecuteRequestInterceptor.PROPERTY_EXEC_ID.toString
       Utils.tryCatch {
-        getEngineConnExecutor().status(execId)
-        val engineReturn = new EngineExecuteAsynReturn(request, getInstance.getInstance, execId, _ => callback())
+        val engineReturn = new EngineExecuteAsynReturn(request, null, execId, _ => callback())
         engineReturns synchronized engineReturns += engineReturn
         return engineReturn
       } { t: Throwable =>
         error(s"Failed to get execId $execId status", t)
       }
-    }
-    val engineReturn = callExecute(request)
+    }*/
+    val engineReturn = callExecute(executeRequest)
     engineReturns synchronized engineReturns += engineReturn
     engineReturn
   }
 
   protected def callback(): Unit = {}
 
-  protected def callExecute(request: RequestTask): EngineExecuteAsynReturn
+  protected def callExecute(request: ExecuteRequest): EngineExecuteAsynReturn
 
-  override def toString: String = s"${getInstance.getApplicationName}Engine($getId, $getUser, $getCreator, ${getInstance.getInstance})"
+//  override def toString: String = s"${getInstance.getApplicationName}Engine($getId, $getUser, $getCreator, ${getInstance.getInstance})"
+  override def toString: String = s"string"
 
-  protected def killExecId(execId: String): Boolean = {
-    info(s"begin to send killExecId, execID: $execId")
-    Utils.tryAndError(getEngineConnExecutor().killTask(execId))
-    true
+  protected def killExecId(asynReturn: EngineExecuteAsynReturn, subJobId: String): Boolean = {
+    info(s"begin to send killExecId, execID: $subJobId")
+    Utils.tryCatch {
+      asynReturn.orchestrationFuture.cancel(s"Job ${subJobId} was cancelled by user.")
+      true
+    }{
+      case t : Throwable =>
+        error(s"Kill subjob with id : ${subJobId} failed, ${t.getMessage}")
+        false
+    }
   }
 
   override def getId: Long = this.id
@@ -111,29 +110,38 @@ abstract class EntranceExecutor(val id: Long, val mark: Mark) extends Executor w
 
   override def equals(other: Any): Boolean = other match {
     case that: EntranceExecutor =>
-      (that canEqual this) &&
-        getEngineConnExecutor().equals(that.getEngineConnExecutor())
+      (that canEqual this) && that.getId == this.getId
     case _ => false
   }
 
   def getExecId(jobId: String): String = {
     val erOption = engineReturns.find(_.getJobId.contains(jobId))
     if ( erOption.isDefined ) {
-      erOption.get.execId
+      erOption.get.subJobId
     } else {
       null
     }
   }
 
   override def hashCode(): Int = {
-    getEngineConnExecutor().hashCode()
+//    getOrchestratorSession().hashCode()
+    // todo
+    super.hashCode()
+  }
+
+  def getRunningOrchestrationFuture: Option[OrchestrationFuture] = {
+    if (null != engineReturns && engineReturns.nonEmpty ) {
+      Some(engineReturns.last.orchestrationFuture)
+    } else {
+      None
+    }
   }
 }
 
-class EngineExecuteAsynReturn(request: RequestTask, val instance: String,
-                              val execId: String, callback: EngineExecuteAsynReturn => Unit) extends AsynReturnExecuteResponse with Logging {
-  getJobId.foreach(id => info("Job " + id + " received a execId " + execId + " from engine " + instance))
-
+class EngineExecuteAsynReturn(val request: ExecuteRequest, val orchestrationFuture: OrchestrationFuture,
+                              val subJobId: String, logProcessor: LogProcessor, progressProcessor: ProgressProcessor = null,
+                              callback: EngineExecuteAsynReturn => Unit) extends AsynReturnExecuteResponse with Logging {
+  getJobId.foreach(id => info("Job " + id + " received a subjobId " + subJobId + " from orchestrator"))
   private var notifyJob: ExecuteResponse => Unit = _
 
   private var error: Throwable = _
@@ -152,10 +160,37 @@ class EngineExecuteAsynReturn(request: RequestTask, val instance: String,
       case _ => None
     }
     response.foreach { r =>
-      getJobId.foreach(id => info("Job " + id + " with execId-" + execId + " from engine " + instance + " completed with state " + r))
-      callback(this)
-      if (notifyJob == null) this synchronized (while (notifyJob == null) this.wait(1000))
-      notifyJob(r)
+      getJobId.foreach(id => {
+        var subJobId: Long = 0l
+        request match {
+          case entranceExecuteRequest: EntranceExecuteRequest =>
+            subJobId = entranceExecuteRequest.getSubJobInfo.getSubJobDetail.getId
+            val msg = "Job with execId-" + id + " and subJobId : " + subJobId  + " from orchestrator" + " completed with state " + r
+            entranceExecuteRequest.getJob.getLogListener.foreach(_.onLogUpdate(entranceExecuteRequest.getJob, msg))
+          case _ =>
+        }
+
+        val msgInfo = "Job with execId-" + id + " and subJobId : " + subJobId  + " from orchestrator" + " completed with state " + r
+        info(msgInfo)
+        request
+      })
+      if (null != logProcessor) {
+        logProcessor.close()
+      }
+      if (null != progressProcessor){
+        progressProcessor.close()
+      }
+      Utils.tryAndWarn(if(null != callback) {
+        callback(this)
+      })
+      if (null != notifyJob) {
+        notifyJob
+      }
+      else {
+        info("NotifyJob is null.")
+      }
+//      if (notifyJob == null) this synchronized (while (notifyJob == null) this.wait(1000))
+//      if (null != notifyJob) notifyJob(r)
     }
   }
 
@@ -175,7 +210,13 @@ class EngineExecuteAsynReturn(request: RequestTask, val instance: String,
   }
 
   private[execute] def getJobId: Option[String] = {
-    val jobId = request.getProperties.get(JobExecuteRequestInterceptor.PROPERTY_JOB_ID)
+//    val jobId = request.getProperties.get(JobExecuteRequestInterceptor.PROPERTY_JOB_ID)
+    val jobId = request match {
+      case entranceExecutorRequest: EntranceExecuteRequest =>
+        entranceExecutorRequest.getJob.getId
+      case _ =>
+        null
+    }
     jobId match {
       case j: String => Option(j)
       case _ => None
@@ -184,6 +225,6 @@ class EngineExecuteAsynReturn(request: RequestTask, val instance: String,
 
   override def notify(rs: ExecuteResponse => Unit): Unit = {
     notifyJob = rs
-    this synchronized notify()
+//    this synchronized notify()
   }
 }

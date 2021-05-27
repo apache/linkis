@@ -25,6 +25,7 @@ import com.webank.wedatasphere.linkis.scheduler.listener.{JobListener, ProgressL
 abstract class PersistenceManager extends JobListener with ResultSetListener with ProgressListener {
 
   def getEntranceContext: EntranceContext
+
   def setEntranceContext(entranceContext: EntranceContext): Unit
 
   def createPersistenceEngine(): PersistenceEngine

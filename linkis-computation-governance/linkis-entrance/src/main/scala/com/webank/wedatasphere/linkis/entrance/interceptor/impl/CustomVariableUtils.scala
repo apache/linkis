@@ -17,11 +17,11 @@ import java.text.SimpleDateFormat
 import java.util
 import java.util.{Calendar, Date}
 
+import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.interceptor.exception.VarSubstitutionException
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
-import com.webank.wedatasphere.linkis.protocol.task.Task
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
+import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
 import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
 import com.webank.wedatasphere.linkis.protocol.variable.{RequestQueryAppVariable, ResponseQueryVariable}
 import com.webank.wedatasphere.linkis.rpc.Sender
@@ -33,7 +33,9 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.util.control.Exception._
 
-
+/**
+  * Created by enjoyyin on 11/14/17.
+  */
 object CustomVariableUtils extends Logging {
   //hql sql jdbc to sql python to py
   val SQL_TYPE = "sql"
@@ -61,12 +63,12 @@ object CustomVariableUtils extends Logging {
     * 3. 如果2没有做，从CS中得到用户定义的变量，进行替换
     *3. 如果3没有做，从控制台中得到用户定义的变量，进行替换
     *
-    * @param task : requestPersistTask
+    * @param jobRequest : requestPersistTask
     * @return
     */
-  def replaceCustomVar(task: Task, runType: String): (Boolean, String) = {
-    val code: String = task.asInstanceOf[RequestPersistTask].getExecutionCode
-    val umUser: String = task.asInstanceOf[RequestPersistTask].getUmUser
+  def replaceCustomVar(jobRequest: JobRequest, runType: String): (Boolean, String) = {
+    val code: String = jobRequest.getExecutionCode
+    val umUser: String = jobRequest.getSubmitUser
     var codeType = SQL_TYPE
     runType match {
       case "hql" | "sql" | "jdbc" | "hive" => codeType = SQL_TYPE
@@ -104,8 +106,8 @@ object CustomVariableUtils extends Logging {
     //第一步来自code的变量替换
     putNameAndType(nameAndValue)
 
-    task match {
-      case requestPersistTask: RequestPersistTask =>
+    jobRequest match {
+      case requestPersistTask: JobRequest =>
         /* Perform the second step to replace the parameters passed in args*/
         /* 进行第二步，对args传进的参数进行替换*/
         val variableMap = TaskUtils.getVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
@@ -115,13 +117,14 @@ object CustomVariableUtils extends Logging {
     }
     /* Go to the four step and take the user's parameters to the linkis-ps-publicservice module.*/
     /*进行第四步，向linkis-ps-publicservice模块去拿用户的参数*/
-    val sender = Sender.getSender(EntranceConfiguration.CLOUD_CONSOLE_VARIABLE_SPRING_APPLICATION_NAME.getValue)
-    task match {
-      case requestPersistTask: RequestPersistTask =>
-        val umUser: String = requestPersistTask.getUmUser
-        val creator: String = requestPersistTask.getRequestApplicationName
-        val runType: String = requestPersistTask.getRunType
-        val requestQueryAppVariable: RequestQueryAppVariable = RequestQueryAppVariable(umUser, creator, runType)
+    val sender = Sender.getSender(Configuration.CLOUD_CONSOLE_VARIABLE_SPRING_APPLICATION_NAME.getValue)
+    jobRequest match {
+      case requestPersistTask: JobRequest =>
+        val umUser: String = requestPersistTask.getSubmitUser
+        val codeType = LabelUtil.getCodeType(requestPersistTask.getLabels)
+        val userCreator = LabelUtil.getUserCreator(requestPersistTask.getLabels)
+        val creator: String = if (null != userCreator) userCreator._2 else null
+        val requestQueryAppVariable: RequestQueryAppVariable = RequestQueryAppVariable(umUser, creator, codeType)
         val response: ResponseQueryVariable = sender.ask(requestQueryAppVariable).asInstanceOf[ResponseQueryVariable]
         val keyAndValue = response.getKeyAndValue
         val keyAndValueScala: mutable.Map[String, String] = keyAndValue
@@ -140,7 +143,7 @@ object CustomVariableUtils extends Logging {
     nameAndType("run_month_end") = MonthType(new CustomMonthType(run_date.toString, false, true))
     nameAndType("run_month_end_std") = MonthType(new CustomMonthType(run_date.toString, true, true))
     if (nameAndType.get("user").isEmpty){
-      nameAndType("user") = StringType(task.asInstanceOf[RequestPersistTask].getUmUser)
+      nameAndType("user") = StringType(jobRequest.getSubmitUser)
     }
     (true, parserVar(code, nameAndType))
   }
@@ -375,7 +378,7 @@ object CustomVariableUtils extends Logging {
 
   def main(args: Array[String]): Unit = {
     val code = "--@set a=1\n--@set b=2\nselect ${a +2},${a   + 1},${a},${a },${b},${b}"
-    val task = new RequestPersistTask
+    val task = new JobRequest
     val args: java.util.Map[String, Object] = new util.HashMap[String, Object]()
     args.put(RUN_DATE, "20181030")
     task.setExecutionCode(code)

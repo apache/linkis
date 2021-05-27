@@ -1,19 +1,3 @@
-/*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.webank.wedatasphere.linkis.manager.persistence.impl;
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
@@ -37,6 +21,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @Author: chaogefeng
+ * @Date: 2020/7/8
+ */
 public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -95,7 +83,9 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
         persistenceLabel.setUpdateTime(new Date());
         labelManagerMapper.updateLabel(id, persistenceLabel);
         labelManagerMapper.deleteLabelKeyVaules(id);
-        labelManagerMapper.registerLabelKeyValues(persistenceLabel.getValue(),id);
+        if(!persistenceLabel.getValue().isEmpty()){
+            labelManagerMapper.registerLabelKeyValues(persistenceLabel.getValue(),id);
+        }
     }
 
     @Override
@@ -106,7 +96,7 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
     @Override
     public List<PersistenceLabel> getLabelByServiceInstance(ServiceInstance serviceInstance) {
         List<PersistenceLabel> persistenceLabelList = labelManagerMapper.getLabelByServiceInstance(serviceInstance.getInstance());
-        persistenceLabelList.forEach(l -> l.setValue(LabelUtils.Jackson.fromJson(l.getStringValue(), Map.class)));
+        persistenceLabelList.forEach(PersistenceUtils::setValue);
         return persistenceLabelList;
     }
 
@@ -118,7 +108,9 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
 
     @Override
     public void addLabelToNode(ServiceInstance serviceInstance, List<Integer> labelIds) {
-        labelManagerMapper.addLabelServiceInstance(serviceInstance.getInstance(), labelIds);
+        if(!CollectionUtils.isEmpty(labelIds)){
+            labelManagerMapper.addLabelServiceInstance(serviceInstance.getInstance(), labelIds);
+        }
     }
 
     @Override

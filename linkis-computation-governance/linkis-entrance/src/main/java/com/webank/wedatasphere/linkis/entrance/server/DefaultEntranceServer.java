@@ -16,18 +16,24 @@
 
 package com.webank.wedatasphere.linkis.entrance.server;
 
+import com.webank.wedatasphere.linkis.common.listener.Event;
 import com.webank.wedatasphere.linkis.entrance.EntranceContext;
 import com.webank.wedatasphere.linkis.entrance.EntranceServer;
 import com.webank.wedatasphere.linkis.entrance.annotation.EntranceContextBeanAnnotation;
 import com.webank.wedatasphere.linkis.entrance.annotation.EntranceServerBeanAnnotation;
+import com.webank.wedatasphere.linkis.entrance.event.EntranceLogEvent;
+import com.webank.wedatasphere.linkis.entrance.event.EntranceLogListener;
 import com.webank.wedatasphere.linkis.entrance.log.LogReader;
 import com.webank.wedatasphere.linkis.rpc.Sender;
 
 import javax.annotation.PostConstruct;
 
-
+/**
+ * created by enjoyyin on 2018/10/12
+ * Description:
+ */
 @EntranceServerBeanAnnotation
-public class DefaultEntranceServer extends EntranceServer {
+public class DefaultEntranceServer extends EntranceServer{
 
     @EntranceContextBeanAnnotation.EntranceContextAutowiredAnnotation
     private EntranceContext entranceContext;
@@ -64,4 +70,5 @@ public class DefaultEntranceServer extends EntranceServer {
     private void addRunningJobEngineStatusMonitor() {
 
     }
+
 }

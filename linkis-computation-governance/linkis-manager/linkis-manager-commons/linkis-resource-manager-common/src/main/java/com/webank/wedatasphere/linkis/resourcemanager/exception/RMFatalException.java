@@ -18,7 +18,9 @@ package com.webank.wedatasphere.linkis.resourcemanager.exception;
 
 import com.webank.wedatasphere.linkis.common.exception.FatalException;
 
-
+/**
+ * Created by shanhuang on 9/13/18.
+ */
 public class RMFatalException extends FatalException {
 
     public RMFatalException(int errCode, String desc) {

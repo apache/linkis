@@ -14,10 +14,13 @@
 package com.webank.wedatasphere.linkis.entrance.interceptor
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
+import com.webank.wedatasphere.linkis.governance.common.protocol.job.JobReq
 import com.webank.wedatasphere.linkis.protocol.task.Task
 
-
-
+/**
+  * Created by enjoyyin on 2018/9/4.
+  */
 trait EntranceInterceptor {
 
   /**
@@ -31,7 +34,7 @@ trait EntranceInterceptor {
     * @return
     */
   @throws[ErrorException]
-  def apply(task: Task, logAppender: java.lang.StringBuilder): Task
+  def apply(task: JobRequest, logAppender: java.lang.StringBuilder): JobRequest
 
 }
 

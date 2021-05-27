@@ -24,7 +24,9 @@ import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResourc
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 
 
-
+/**
+  * Created by shanhuang on 9/11/18.
+  */
 case class RequestResource(labels: util.List[Label[_]], resource: NodeResource)
 
 case class RequestResourceAndWait(labels: util.List[Label[_]], resource: NodeResource, waitTime: Long)

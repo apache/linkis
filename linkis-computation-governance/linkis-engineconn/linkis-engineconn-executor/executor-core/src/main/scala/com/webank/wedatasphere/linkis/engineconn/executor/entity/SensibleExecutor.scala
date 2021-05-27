@@ -18,36 +18,37 @@ package com.webank.wedatasphere.linkis.engineconn.executor.entity
 
 import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
 
-import scala.beans.BeanProperty
-
 trait SensibleExecutor extends Executor {
 
   protected var status: NodeStatus = NodeStatus.Starting
 
-  @BeanProperty
-  var lastActivityTime = System.currentTimeMillis
+  private var lastActivityTime = System.currentTimeMillis
+
+  def getLastActivityTime: Long = lastActivityTime
+
+  def updateLastActivityTime(): Unit = lastActivityTime = System.currentTimeMillis
 
   def getStatus: NodeStatus = status
 
   protected def onStatusChanged(fromStatus: NodeStatus, toStatus: NodeStatus): Unit
 
-  def transition(toStatus: NodeStatus) = this synchronized {
+  def transition(toStatus: NodeStatus): Unit = this synchronized {
     lastActivityTime = System.currentTimeMillis
     this.status match {
       case NodeStatus.Failed | NodeStatus.Success =>
         warn(s"$toString attempt to change status ${this.status} => $toStatus, ignore it.")
+        return
       case NodeStatus.ShuttingDown =>
         toStatus match {
           case NodeStatus.Failed | NodeStatus.Success =>
-            val oldState = status
-            this.status = toStatus
-            onStatusChanged(oldState, toStatus)
-          case _ => warn(s"$toString attempt to change a Executor.ShuttingDown session to $toStatus, ignore it.")
+          case _ =>
+            warn(s"$toString attempt to change a Executor from ShuttingDown to $toStatus, ignore it.")
+            return
         }
       case _ =>
 
     }
-    info(s"$toString change status ${status} => $toStatus.")
+    info(s"$toString changed status $status => $toStatus.")
     val oldState = status
     this.status = toStatus
     onStatusChanged(oldState, toStatus)
@@ -62,7 +63,7 @@ object SensibleExecutor {
 
     override protected def onStatusChanged(fromStatus: NodeStatus, toStatus: NodeStatus): Unit = {}
 
-    override def getId(): String = "0"
+    override def getId: String = "0"
 
     override def init(): Unit = {}
 
@@ -73,8 +74,10 @@ object SensibleExecutor {
     override def tryFailed(): Boolean = true
 
     override def isClosed(): Boolean = true
+
+    override def trySucceed(): Boolean = false
   }
 
-  def getDefaultErrorSensibleExecutor(): SensibleExecutor = defaultErrorSensibleExecutor
+  def getDefaultErrorSensibleExecutor: SensibleExecutor = defaultErrorSensibleExecutor
 
 }

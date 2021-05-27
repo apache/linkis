@@ -27,7 +27,9 @@ import org.json4s.{CustomSerializer, DefaultFormats, Extraction}
 
 import scala.collection.JavaConversions
 
-
+/**
+  * Created by shanhuang on 9/11/18.
+  */
 abstract class Resource {
   def add(r: Resource): Resource
 

@@ -16,11 +16,7 @@ package com.webank.wedatasphere.linkis.entrance.conf;
 import com.webank.wedatasphere.linkis.entrance.EntranceParser;
 import com.webank.wedatasphere.linkis.entrance.EntranceServer;
 import com.webank.wedatasphere.linkis.entrance.annotation.*;
-import com.webank.wedatasphere.linkis.entrance.background.BackGroundService;
-import com.webank.wedatasphere.linkis.entrance.event.EntranceEvent;
-import com.webank.wedatasphere.linkis.entrance.event.EntranceEventListener;
-import com.webank.wedatasphere.linkis.entrance.event.EntranceEventListenerBus;
-import com.webank.wedatasphere.linkis.entrance.execute.EntranceExecutionService;
+import com.webank.wedatasphere.linkis.entrance.event.*;
 import com.webank.wedatasphere.linkis.entrance.execute.impl.EntranceExecutorManagerImpl;
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor;
 import com.webank.wedatasphere.linkis.entrance.interceptor.impl.*;
@@ -41,24 +37,23 @@ import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelCons
 import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Configuration;
 
 import static com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration.ENTRANCE_SCHEDULER_MAX_PARALLELISM_USERS;
 
 /**
+ * created by enjoyyin on 2018/10/16
  * Description:This configuration class is used to generate some singleton classes in the entity module.(该配置类用于生成entrance模块中的一些单例类)
  */
 @Configuration
-@AutoConfigureBefore({EntranceServer.class, EntranceExecutionService.class})
+//@AutoConfigureBefore({EntranceServer.class, EntranceExecutionService.class})
 public class EntranceSpringConfiguration {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     {
         logger.info("load the ujes-entrance spring configuration.");
     }
-
 
 
     @PersistenceEngineBeanAnnotation
@@ -86,8 +81,8 @@ public class EntranceSpringConfiguration {
 
     @EntranceParserBeanAnnotation
     @ConditionalOnMissingBean(name = {EntranceParserBeanAnnotation.BEAN_NAME})
-    public EntranceParser generateEntranceParser(){
-        return new CommonEntranceParser();
+    public EntranceParser generateEntranceParser(@PersistenceManagerBeanAnnotation.PersistenceManagerAutowiredAnnotation PersistenceManager persistenceManager){
+        return new CommonEntranceParser(persistenceManager);
     }
 
     @EntranceListenerBusBeanAnnotation
@@ -98,6 +93,14 @@ public class EntranceSpringConfiguration {
         return entranceEventListenerBus;
     }
 
+    @EntranceLogListenerBusBeanAnnotation
+    @ConditionalOnMissingBean(name = {EntranceLogListenerBusBeanAnnotation.BEAN_NAME})
+    public EntranceLogListenerBus<EntranceLogListener, EntranceLogEvent> generateEntranceLogListenerBus() {
+        EntranceLogListenerBus<EntranceLogListener, EntranceLogEvent> entranceLogListenerBus = new EntranceLogListenerBus<EntranceLogListener, EntranceLogEvent>();
+        entranceLogListenerBus.start();
+        return entranceLogListenerBus;
+    }
+
     /**
      * Update by peaceWong add CSEntranceInterceptor
      *
@@ -106,10 +109,21 @@ public class EntranceSpringConfiguration {
     @EntranceInterceptorBeanAnnotation
     @ConditionalOnMissingBean(name = {EntranceInterceptorBeanAnnotation.BEAN_NAME})
     public EntranceInterceptor[] generateEntranceInterceptors() {
-        return new EntranceInterceptor[]{new CSEntranceInterceptor(), new PythonCodeCheckInterceptor(), new DBInfoCompleteInterceptor(), new SparkCodeCheckInterceptor(),
-                new SQLCodeCheckInterceptor(), new VarSubstitutionInterceptor(), new LogPathCreateInterceptor(),
-                new StorePathEntranceInterceptor(), new ScalaCodeInterceptor(), new SQLLimitEntranceInterceptor(), new CommentInterceptor(),
-               };
+        return new EntranceInterceptor[]{
+                new CSEntranceInterceptor(),
+                new ShellDangerousGrammerInterceptor(),
+                new PythonCodeCheckInterceptor(),
+                new DBInfoCompleteInterceptor(),
+                new SparkCodeCheckInterceptor(),
+                new SQLCodeCheckInterceptor(),
+                new LabelCheckInterceptor(),
+                new VarSubstitutionInterceptor(),
+                new LogPathCreateInterceptor(),
+                new StorePathEntranceInterceptor(),
+                new ScalaCodeInterceptor(),
+                new SQLLimitEntranceInterceptor(),
+                new CommentInterceptor()
+                };
     }
 
     @ErrorCodeListenerBeanAnnotation
@@ -125,7 +139,12 @@ public class EntranceSpringConfiguration {
     @ErrorCodeManagerBeanAnnotation
     @ConditionalOnMissingBean(name = {ErrorCodeManagerBeanAnnotation.BEAN_NAME})
     public ErrorCodeManager generateErrorCodeManager() {
-        return FixedErrorCodeManager$.MODULE$;
+        try {
+            Class.forName("com.webank.wedatasphere.linkis.errorcode.client.handler.LinkisErrorCodeHandler");
+        } catch (final Exception e) {
+            logger.error("failed to init linkis error code handler", e);
+        }
+        return FlexibleErrorCodeManager$.MODULE$;
     }
 
     @LogManagerBeanAnnotation
@@ -148,7 +167,7 @@ public class EntranceSpringConfiguration {
     @ConsumerManagerBeanAnnotation
     @ConditionalOnMissingBean(name = {ConsumerManagerBeanAnnotation.BEAN_NAME})
     public ConsumerManager generateConsumerManager(){
-        return new ParallelConsumerManager(ENTRANCE_SCHEDULER_MAX_PARALLELISM_USERS().getValue());
+        return new ParallelConsumerManager(ENTRANCE_SCHEDULER_MAX_PARALLELISM_USERS().getValue(), "EntranceJobScheduler");
     }
 
     @SchedulerContextBeanAnnotation
@@ -209,11 +228,7 @@ public class EntranceSpringConfiguration {
     }
 
 
-    @BackGroundServiceBeanAnnotation
-    @ConditionalOnMissingBean(name = {BackGroundServiceBeanAnnotation.BEAN_NAME})
-    public BackGroundService[] generateBackGroundService() {
-        return new BackGroundService[]{};
-    }
+
 
   /*  @NewEngineBroadcastListenerBeanAnnotation
     @ConditionalOnMissingBean(name = {NewEngineBroadcastListenerBeanAnnotation.BEAN_NAME})

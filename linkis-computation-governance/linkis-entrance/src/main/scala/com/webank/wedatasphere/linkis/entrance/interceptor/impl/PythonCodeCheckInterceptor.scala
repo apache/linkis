@@ -16,34 +16,44 @@
 
 package com.webank.wedatasphere.linkis.entrance.interceptor.impl
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
 import com.webank.wedatasphere.linkis.entrance.interceptor.exception.PythonCodeCheckException
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
-import com.webank.wedatasphere.linkis.protocol.task.Task
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
+import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
 import org.apache.commons.lang.exception.ExceptionUtils
 
 /**
+  * created by enjoyyin on 2018/10/22
   * Description: Check for python code, prohibiting the use of sys, os, and creating processes(用于python代码的检查，禁止使用sys、os以及创建进程等行为)
   */
-class PythonCodeCheckInterceptor extends EntranceInterceptor {
-  override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = task match {
-    case requestPersistTask: RequestPersistTask =>
-      val error = new StringBuilder
-      requestPersistTask.getRunType match {
+class PythonCodeCheckInterceptor extends EntranceInterceptor with Logging {
+  override def apply(jobRequest: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
+    val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
+    val errorBuilder = new StringBuilder
+    codeType match {
         case "python" | "pyspark" | "py" =>
-          Utils.tryThrow(PythonExplain.authPass(requestPersistTask.getExecutionCode, error)) {
+        Utils.tryThrow{
+          if (PythonExplain.authPass(jobRequest.getExecutionCode, errorBuilder)) {
+            jobRequest
+          } else {
+            val msg = s"check python auth failed. ${errorBuilder.toString()}"
+            error(msg)
+            jobRequest.setErrorCode(20073)
+            jobRequest.setErrorDesc(msg)
+            throw PythonCodeCheckException(20073, msg)
+          }
+        } {
             case PythonCodeCheckException(errCode, errDesc) =>
-              requestPersistTask.setErrCode(errCode)
-              requestPersistTask.setErrDesc(errDesc)
+            jobRequest.setErrorCode(errCode)
+            jobRequest.setErrorDesc(errDesc)
               PythonCodeCheckException(errCode, errDesc)
             case t: Throwable =>
               val exception = PythonCodeCheckException(20073, "Checking python code failed!(检查python代码失败！)" + ExceptionUtils.getRootCauseMessage(t))
               exception.initCause(t)
               exception
           }
-        case _ =>
+      case _ => jobRequest
       }
-      requestPersistTask
   }
 }

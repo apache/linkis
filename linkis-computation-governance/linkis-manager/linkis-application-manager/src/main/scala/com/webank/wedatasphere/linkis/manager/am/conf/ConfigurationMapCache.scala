@@ -18,17 +18,20 @@ package com.webank.wedatasphere.linkis.manager.am.conf
 
 import java.util
 
+import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, RequestQueryGlobalConfig, ResponseQueryConfig}
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import com.webank.wedatasphere.linkis.protocol.CacheableProtocol
 import com.webank.wedatasphere.linkis.rpc.RPCMapCache
 
 
-
+/**
+  * Created by johnnwang on 2018/11/4.
+  */
 object ConfigurationMapCache {
 
   val globalMapCache = new RPCMapCache[UserCreatorLabel, String, String](
-    AMConfiguration.CONSOLE_CONFIG_SPRING_APPLICATION_NAME.getValue) {
+    Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue) {
     override protected def createRequest(userCreatorLabel: UserCreatorLabel): CacheableProtocol = RequestQueryGlobalConfig(userCreatorLabel.getUser)
 
     override protected def createMap(any: Any): util.Map[String, String] = any match {
@@ -37,7 +40,7 @@ object ConfigurationMapCache {
   }
 
   val engineMapCache = new RPCMapCache[(UserCreatorLabel, EngineTypeLabel), String, String](
-    AMConfiguration.CONSOLE_CONFIG_SPRING_APPLICATION_NAME.getValue) {
+    Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue) {
     override protected def createRequest(labelTuple: (UserCreatorLabel, EngineTypeLabel)): CacheableProtocol =
       RequestQueryEngineConfig(labelTuple._1, labelTuple._2)
 

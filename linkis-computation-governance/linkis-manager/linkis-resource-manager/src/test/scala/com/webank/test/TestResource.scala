@@ -25,6 +25,9 @@ import org.json4s.jackson.Serialization.write
 
 import scala.collection.mutable
 
+/**
+  * Created by johnnwang on 2018/12/29.
+  */
 object TestResource {
 
   implicit val formats = DefaultFormats + ResourceSerializer + NodeResourceSerializer

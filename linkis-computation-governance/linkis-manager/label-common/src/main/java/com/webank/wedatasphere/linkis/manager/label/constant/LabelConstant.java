@@ -21,4 +21,6 @@ public class LabelConstant {
 
     public static final int LABEL_BUILDER_ERROR_CODE = 40001;
 
+    public static final int LABEL_UTIL_CONVERT_ERROR_CODE = 40002;
+
 }

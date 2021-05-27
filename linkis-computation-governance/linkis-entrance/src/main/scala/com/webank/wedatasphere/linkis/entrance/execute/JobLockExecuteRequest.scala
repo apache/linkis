@@ -18,7 +18,9 @@ package com.webank.wedatasphere.linkis.entrance.execute
 
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 
-
+/**
+  * Created by enjoyyin on 2018/9/15.
+  */
 trait ReconnectExecuteRequest {
   val execId: String
 }
@@ -33,4 +35,9 @@ trait StorePathExecuteRequest {
 
 trait RuntimePropertiesExecuteRequest {
   val properties: java.util.Map[String, Object]
+}
+
+trait UserExecuteRequest {
+  val submitUser: String
+  val executeUser: String
 }

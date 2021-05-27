@@ -18,19 +18,21 @@ package com.webank.wedatasphere.linkis.entrance.cache
 
 import java.util
 
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
+import com.webank.wedatasphere.linkis.common.conf.Configuration
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
 import com.webank.wedatasphere.linkis.governance.common.protocol.conf.{RequestQueryGlobalConfig, ResponseQueryConfig}
 import com.webank.wedatasphere.linkis.protocol.CacheableProtocol
 import com.webank.wedatasphere.linkis.rpc.RPCMapCache
 
 
-
+/**
+  * Created by enjoyyin on 2018/11/4.
+  */
 object GlobalConfigurationKeyValueCache extends
-  RPCMapCache[RequestPersistTask, String, String](EntranceConfiguration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue) {
+  RPCMapCache[JobRequest, String, String](Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue) {
 
-  override protected def createRequest(task: RequestPersistTask): CacheableProtocol =
-    RequestQueryGlobalConfig(task.getUmUser)
+  override protected def createRequest(jobReq: JobRequest): CacheableProtocol =
+    RequestQueryGlobalConfig(jobReq.getSubmitUser)
 
   override protected def createMap(any: Any): util.Map[String, String] = any match {
     case response: ResponseQueryConfig => response.getKeyAndValue

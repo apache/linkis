@@ -20,7 +20,9 @@ import org.json4s.JsonAST.JObject
 import org.json4s.JsonDSL._
 import org.json4s.{CustomSerializer, Extraction}
 
-
+/**
+  * Created by shanhuang on 9/11/18.
+  */
 trait ResultResource
 
 case class NotEnoughResource(val reason: String = null) extends ResultResource

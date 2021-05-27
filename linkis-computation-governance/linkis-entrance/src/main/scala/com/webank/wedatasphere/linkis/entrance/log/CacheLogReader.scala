@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-
+/**
+  * author: enjoyyin
+  * date: 2018/9/5
+  * time: 11:14
+  * Description:
+  */
 package com.webank.wedatasphere.linkis.entrance.log
 
 import java.io.{IOException, InputStream}

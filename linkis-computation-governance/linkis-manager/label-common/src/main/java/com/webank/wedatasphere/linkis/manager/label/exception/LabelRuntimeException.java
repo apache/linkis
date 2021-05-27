@@ -16,10 +16,10 @@
 
 package com.webank.wedatasphere.linkis.manager.label.exception;
 
-import com.webank.wedatasphere.linkis.common.exception.DWCRuntimeException;
 import com.webank.wedatasphere.linkis.common.exception.ExceptionLevel;
+import com.webank.wedatasphere.linkis.common.exception.LinkisRuntimeException;
 
-public class LabelRuntimeException extends DWCRuntimeException {
+public class LabelRuntimeException extends LinkisRuntimeException {
 
     public LabelRuntimeException(int errCode, String desc, String ip, int port, String serviceKind) {
         super(errCode, desc, ip, port, serviceKind);

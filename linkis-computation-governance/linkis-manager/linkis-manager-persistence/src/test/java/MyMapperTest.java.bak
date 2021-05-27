@@ -1,0 +1,489 @@
+/**
+ * @Author: chaogefeng
+ * @Date: 2020/8/4
+ */
+
+import com.webank.wedatasphere.linkis.manager.dao.LabelManagerMapper;
+import com.webank.wedatasphere.linkis.manager.dao.NodeManagerMapper;
+import com.webank.wedatasphere.linkis.manager.dao.NodeMetricManagerMapper;
+import com.webank.wedatasphere.linkis.manager.dao.ResourceManagerMapper;
+import org.apache.commons.collections.map.HashedMap;
+import org.apache.ibatis.session.SqlSession;
+import org.junit.Test;
+import org.springframework.test.annotation.Rollback;
+
+import java.util.Map;
+import java.util.Set;
+@Rollback(false)
+public class MyMapperTest extends MyBatisUtil {
+    @Test
+    @Rollback(false)
+    public void  testAddNode(){
+        SqlSession sqlSession=getSqlSession();
+        try {
+            NodeManagerMapper nodeManagerMapper = sqlSession.getMapper(NodeManagerMapper.class);
+            NodeMetricManagerMapper nodeMetricManagerMapper = sqlSession.getMapper(NodeMetricManagerMapper.class);
+            ResourceManagerMapper resourceManagerMapper = sqlSession.getMapper(ResourceManagerMapper.class);
+            LabelManagerMapper labelManagerMapper = sqlSession.getMapper(LabelManagerMapper.class);
+
+//************************************************************************************************************************************************************
+//************************************************************************************************************************************************************
+//*****************************************************node***************************************************************************************************
+//************************************************************************************************************************************************************
+//************************************************************************************************************************************************************
+//            PersistenceNode persistenceNode = new PersistenceNode();
+//            persistenceNode.setInstance("127.0.0.1:50023");
+//            persistenceNode.setName("hiveEngine");
+//            persistenceNode.setOwner("cooperyang");
+//            persistenceNode.setMark("hive");
+//            persistenceNode.setCreateTime(new Date());
+//            persistenceNode.setUpdateTime(new Date());
+//            persistenceNode.setCreator("johnnwang");
+//            persistenceNode.setUpdator("johnnwang");
+            //添加一个node start
+//            nodeManagerMapper.addNodeInstance(persistenceNode);
+//            Object obj = nodeManagerMapper.getNodeInstance(persistenceNode.getInstance(), persistenceNode.getName());
+//            System.out.println("hello");
+//            sqlSession.commit();
+            //添加一个node end
+            //移除一个node start
+//            nodeManagerMapper.removeNodeInstance("127.0.0.1:50034","sparkEngine");
+//            sqlSession.commit();
+            //移除一个node end
+
+//            List<PersistenceNode> persistenceNodeList = nodeManagerMapper.getNodeInstancesByOwner("chaogefeng");
+//            for (PersistenceNode persistenceNode1:persistenceNodeList){
+//                System.out.println("**************************");
+//                System.out.println(persistenceNode1.getId());
+//                System.out.println(persistenceNode1.getInstance());
+//                System.out.println(persistenceNode1.getMark());
+//                System.out.println(persistenceNode1.getName());
+//                System.out.println(persistenceNode1.getOwner());
+//                System.out.println(persistenceNode1.getCreateTime());
+//                System.out.println(persistenceNode1.getUpdateTime());
+//                System.out.println(persistenceNode1.getCreator());
+//                System.out.println(persistenceNode1.getUpdator());
+//                System.out.println("**************************");
+//            }
+//            sqlSession.commit();
+
+//            List<PersistenceNode> persistenceNodeList = nodeManagerMapper.getAllNodes();
+//
+//            for (PersistenceNode persistenceNode:persistenceNodeList){
+//                System.out.println("**************************");
+//                System.out.println(persistenceNode.getId());
+//                System.out.println(persistenceNode.getInstance());
+//                System.out.println(persistenceNode.getMark());
+//                System.out.println(persistenceNode.getName());
+//                System.out.println(persistenceNode.getOwner());
+//                System.out.println(persistenceNode.getCreateTime());
+//                System.out.println(persistenceNode.getUpdateTime());
+//                System.out.println(persistenceNode.getCreator());
+//                System.out.println(persistenceNode.getUpdator());
+//                System.out.println("**************************");
+//            }
+
+
+//            PersistenceNode persistenceNode = new PersistenceNode();
+//            persistenceNode.setInstance("127.0.0.1:50023");
+//            persistenceNode.setName("hiveEngine");
+//            persistenceNode.setOwner("cooperyang");
+//            persistenceNode.setMark("apache-hive");
+//            persistenceNode.setCreateTime(new Date());
+//            persistenceNode.setUpdateTime(new Date());
+//            persistenceNode.setCreator("chaogefeng");
+//            persistenceNode.setUpdator("chaogefeng");
+//            nodeManagerMapper.updateNodeInstance(persistenceNode);
+//            sqlSession.commit();
+
+//            PersistenceNode hiveEngineNode = nodeManagerMapper.getNodeInstance("127.0.0.1:50023", "hiveEngine");
+//            System.out.println(hiveEngineNode.getId());
+//            System.out.println(hiveEngineNode.getOwner());
+//            System.out.println(hiveEngineNode.getMark());
+//            System.out.println(hiveEngineNode.getInstance());
+//            System.out.println(hiveEngineNode.getName());
+//            System.out.println(hiveEngineNode.getUpdator());
+//            System.out.println(hiveEngineNode.getCreator());
+//            System.out.println(hiveEngineNode.getUpdateTime());
+//            System.out.println(hiveEngineNode.getCreateTime());
+
+
+//            PersistenceNode hiveEngineNode = nodeManagerMapper.getNodeInstanceById(1);
+//            System.out.println(hiveEngineNode.getId());
+//            System.out.println(hiveEngineNode.getOwner());
+//            System.out.println(hiveEngineNode.getMark());
+//            System.out.println(hiveEngineNode.getInstance());
+//            System.out.println(hiveEngineNode.getName());
+//            System.out.println(hiveEngineNode.getUpdator());
+//            System.out.println(hiveEngineNode.getCreator());
+//            System.out.println(hiveEngineNode.getUpdateTime());
+//            System.out.println(hiveEngineNode.getCreateTime());
+
+//            List<Integer> engineNodeIds = new ArrayList<>();
+//            engineNodeIds.add(1);
+//            engineNodeIds.add(3);
+//            engineNodeIds.add(5);
+//            List<PersistenceNode> persistenceNodeList = nodeManagerMapper.getNodeInstances(engineNodeIds);
+//            for (PersistenceNode persistenceNode:persistenceNodeList){
+//                System.out.println("**************************");
+//                System.out.println(persistenceNode.getId());
+//                System.out.println(persistenceNode.getInstance());
+//                System.out.println(persistenceNode.getMark());
+//                System.out.println(persistenceNode.getName());
+//                System.out.println(persistenceNode.getOwner());
+//                System.out.println(persistenceNode.getCreateTime());
+//                System.out.println(persistenceNode.getUpdateTime());
+//                System.out.println(persistenceNode.getCreator());
+//                System.out.println(persistenceNode.getUpdator());
+//                System.out.println("**************************");
+//            }
+
+//            nodeManagerMapper.addEngineNode(2,1);
+//            nodeManagerMapper.addEngineNode(3,1);
+//            nodeManagerMapper.addEngineNode(5,1);
+//            nodeManagerMapper.addEngineNode(7,6);
+//            nodeManagerMapper.addEngineNode(8,6);
+//            sqlSession.commit();
+
+//            nodeManagerMapper.deleteEngineNode(3,1);
+//            sqlSession.commit();
+
+//            List<Integer> engineNodeIDsByEMId = nodeManagerMapper.getEngineNodeIDsByEMId(6);
+//            System.out.println(engineNodeIDsByEMId);
+//            sqlSession.commit();
+//            int emIdByEngineId = nodeManagerMapper.getEMIdByEngineId(2);
+//            System.out.println(emIdByEngineId);
+//            sqlSession.commit();
+//************************************************************************************************************************************************************
+//************************************************************************************************************************************************************
+//*****************************************************nodeMetrics***************************************************************************************
+//************************************************************************************************************************************************************
+//************************************************************************************************************************************************************
+//
+//            PersistenceNodeMetrics nodeMetrics = new PersistenceNodeMetrics();
+//            nodeMetrics.setServiceInstanceId(8);
+//            nodeMetrics.setStatus(1);
+//            nodeMetrics.setOverLoad("free");
+//            nodeMetrics.setHeartBeatMsg("quickly");
+//            nodeMetrics.setHealthy("healthy");
+//            nodeMetrics.setUpdateTime(new Date());
+//            nodeMetrics.setCreateTime(new Date());
+//            nodeMetricManagerMapper.addNodeMetrics(nodeMetrics);
+//            sqlSession.commit();
+
+//            int i = nodeMetricManagerMapper.checkInstanceExist(3);
+//            System.out.println(i);
+//            sqlSession.commit();
+
+//            List<Integer> serviceInstanceIds =  new ArrayList<>();
+//            serviceInstanceIds.add(1);
+//            serviceInstanceIds.add(2);
+//            serviceInstanceIds.add(6);
+//
+//            List<PersistenceNodeMetrics> persistenceNodeMetricsList = nodeMetricManagerMapper.getNodeMetricsByServiceInstanceIds(serviceInstanceIds);
+//            for (PersistenceNodeMetrics persistenceNodeMetrics:persistenceNodeMetricsList){
+//                System.out.println(persistenceNodeMetrics.getServiceInstanceId());
+//                System.out.println(persistenceNodeMetrics.getStatus());
+//                System.out.println(persistenceNodeMetrics.getOverLoad());
+//                System.out.println(persistenceNodeMetrics.getHealthy());
+//                System.out.println(persistenceNodeMetrics.getHeartBeatMsg());
+//                System.out.println(persistenceNodeMetrics.getCreateTime());
+//                System.out.println(persistenceNodeMetrics.getUpdateTime());
+//                System.out.println("************************************");
+//            }
+//            sqlSession.commit();
+//            PersistenceNodeMetrics hiveEM = nodeMetricManagerMapper.getNodeMetricsByServiceInstance("127.0.0.1:50021", "hiveEM");
+//            System.out.println(hiveEM.getServiceInstanceId());
+//            System.out.println(hiveEM.getStatus());
+//            System.out.println(hiveEM.getOverLoad());
+//            System.out.println(hiveEM.getHealthy());
+//            System.out.println(hiveEM.getHeartBeatMsg());
+//            System.out.println(hiveEM.getCreateTime());
+//            System.out.println(hiveEM.getUpdateTime());
+//            PersistenceNodeMetrics persistenceNodeMetrics = new PersistenceNodeMetrics();
+//            persistenceNodeMetrics.setStatus(1);
+//            persistenceNodeMetrics.setOverLoad("free");
+//            persistenceNodeMetrics.setHeartBeatMsg("slowly");
+//            persistenceNodeMetrics.setHealthy("unhealthy");
+//            persistenceNodeMetrics.setCreateTime(new Date());
+//            persistenceNodeMetrics.setUpdateTime(new Date());
+//            nodeMetricManagerMapper.updateNodeMetrics(persistenceNodeMetrics,1);
+//            sqlSession.commit();
+
+//            nodeMetricManagerMapper.deleteNodeMetrics("127.0.0.1:50022","hiveEngine");
+////            sqlSession.commit();
+
+//            nodeMetricManagerMapper.deleteNodeMetricsById(2);
+//            sqlSession.commit();
+
+//************************************************************************************************************************************************************
+//************************************************************************************************************************************************************
+//*****************************************************Resource***************************************************************************************************
+//************************************************************************************************************************************************************
+//************************************************************************************************************************************************************
+//            PersistenceResource persistenceResource = new PersistenceResource();
+//            persistenceResource.setMaxResource("2552335");
+//            persistenceResource.setMinResource("885422");
+//            persistenceResource.setUsedReource("1566221");
+//            persistenceResource.setLeftResource("14444141");
+//            persistenceResource.setExpectedResource("852202");
+//            persistenceResource.setLockedResource("225624");
+//            persistenceResource.setResourceType("sparkEngine");
+//            persistenceResource.setCreateTime(new Date());
+//            persistenceResource.setUpdateTime(new Date());
+//            persistenceResource.setCreator("daivhua");
+//            persistenceResource.setUpdator("daivhua");
+//            resourceManagerMapper.registerResource(persistenceResource);
+//            System.out.println(persistenceResource.getId());
+//            sqlSession.commit();
+
+
+//            PersistenceResource persistenceResource = new PersistenceResource();
+//            persistenceResource.setMaxResource("902145");
+//            persistenceResource.setMinResource("85416");
+//            persistenceResource.setUsedReource("74512");
+//            persistenceResource.setLeftResource("4412");
+//            persistenceResource.setExpectedResource("541235");
+//            persistenceResource.setLockedResource("74512");
+//            persistenceResource.setResourceType("sarkEngine");
+//            persistenceResource.setCreateTime(new Date());
+//            persistenceResource.setUpdateTime(new Date());
+//            persistenceResource.setCreator("chaogefeng");
+//            persistenceResource.setUpdator("chaogefeng");
+//            resourceManagerMapper.nodeResourceUpdate("mb-bc-ed-hg-da-gs",persistenceResource);
+//            sqlSession.commit();
+
+//            PersistenceResource persistenceResource = new PersistenceResource();
+//            persistenceResource.setMaxResource("338090");
+//            persistenceResource.setMinResource("487625");
+//            persistenceResource.setUsedReource("155222");
+//            persistenceResource.setLeftResource("45214");
+//            persistenceResource.setExpectedResource("55221");
+//            persistenceResource.setLockedResource("20548");
+//            persistenceResource.setResourceType("sarkEngine");
+//            persistenceResource.setCreateTime(new Date());
+//            persistenceResource.setUpdateTime(new Date());
+//            persistenceResource.setCreator("jianfuzhang");
+//            persistenceResource.setUpdator("jianfuzhang");
+//            resourceManagerMapper.nodeResourceUpdateByResourceId(1,persistenceResource);
+//            sqlSession.commit();
+
+
+//            int nodeResourceUpdateResourceId = resourceManagerMapper.getNodeResourceUpdateResourceId(1);
+//            System.out.println(nodeResourceUpdateResourceId);
+//            sqlSession.commit();
+
+
+//************************************************************************************************************************************************************
+//************************************************************************************************************************************************************
+//*****************************************************label***************************************************************************************************
+//************************************************************************************************************************************************************
+//************************************************************************************************************************************************************
+
+//            PersistenceLabel persistenceLabel = new PersistenceLabel();
+//            persistenceLabel.setLabelKey("ccccType");
+//            persistenceLabel.setFeature(Feature.valueOf("CORE"));
+//            persistenceLabel.setLabelValueSize(5);
+//            Map<String ,String > labelKeyValue = new HashedMap();
+//            labelKeyValue.put("A","1111");
+//            persistenceLabel.setValue(labelKeyValue);
+//            persistenceLabel.setCreateTime(new Date());
+//            persistenceLabel.setUpdateTime(new Date());
+//            persistenceLabel.setUpdator("nnnnn");
+//            persistenceLabel.setCreator("nnnnn");
+//            labelManagerMapper.registerNodeLabel(persistenceLabel);
+//            System.out.println("===========:"+persistenceLabel.getId());
+//            System.out.println("===========:"+persistenceLabel.getStringValue());
+//            sqlSession.commit();
+
+//            int labelId = 2;
+//            Map<String ,String > labelValueKeyAndContent = new HashedMap();
+//            labelValueKeyAndContent.put("A","111");
+//            labelValueKeyAndContent.put("B","222");
+//            labelValueKeyAndContent.put("C","333");
+//            labelManagerMapper.registerNodeLabelKeyValues(labelValueKeyAndContent,labelId);
+//            sqlSession.commit();
+
+
+//            PersistenceLabel nodeLabel = labelManagerMapper.getNodeLabel(1);
+//            System.out.println(nodeLabel.getId());
+//            System.out.println(nodeLabel.getLabelKey());
+//            System.out.println(nodeLabel.getStringValue());
+//            System.out.println(nodeLabel.getFeature());
+//            sqlSession.commit();
+
+//            labelManagerMapper.deleteNodeLabel(2);
+//            labelManagerMapper.deleteNodeLabel(3);
+//            labelManagerMapper.deleteNodeLabel(4);
+//            sqlSession.commit();
+
+
+//            labelManagerMapper.deleteNodeLabelKeyVaules(1);
+//            sqlSession.commit();
+
+
+//            PersistenceLabel persistenceLabel = new PersistenceLabel();
+//            persistenceLabel.setLabelKey("labels");
+//            persistenceLabel.setFeature(Feature.valueOf("OPTIONAL"));
+//            persistenceLabel.setLabelValueSize(2);
+//            Map<String ,String > labelKeyValue = new HashedMap();
+//            labelKeyValue.put("A","1111");
+//            labelKeyValue.put("B","2222");
+//            persistenceLabel.setValue(labelKeyValue);
+//            persistenceLabel.setCreateTime(new Date());
+//            persistenceLabel.setUpdateTime(new Date());
+//            persistenceLabel.setUpdator("chaogefeng");
+//            persistenceLabel.setCreator("chaogefeng");
+//
+//            labelManagerMapper.updateNodeLabel(1,persistenceLabel);
+//            sqlSession.commit();
+
+//            List<Integer> lableIds = new ArrayList<>();
+//            lableIds.add(1);
+//            labelManagerMapper.addLabelServiceInstance(2,lableIds);
+//            sqlSession.commit();
+
+//            ServiceInstance serviceInstance = new ServiceInstance();
+//            serviceInstance.setInstance("127.0.0.1:50031");
+//            serviceInstance.setApplicationName("sparkEM");
+//            List<PersistenceLabel> labelList = labelManagerMapper.getLabelByServiceInstance(serviceInstance.getInstance());
+//            for (PersistenceLabel persistenceLabel:labelList){
+//                System.out.println(persistenceLabel.getId());
+//                System.out.println(persistenceLabel.getLabelKey());
+//                System.out.println(persistenceLabel.getStringValue());
+//                System.out.println(persistenceLabel.getFeature());
+//            }
+//            sqlSession.commit();
+
+            Map<String ,String> labelKeyValues = new HashedMap();
+            labelKeyValues.put("A","111");
+            labelKeyValues.put("S","000");
+            Set<Map.Entry<String, String>> entryseSet=labelKeyValues.entrySet();
+            for (Map.Entry<String, String> entry:entryseSet) {
+                System.out.println(entry.getKey() + "," + entry.getValue());
+            }
+           /* List<Integer> labelIds = labelManagerMapper.getNodeLabelByLabelKeyValues(labelKeyValues);
+            for (int labelId:labelIds){
+                System.out.println(labelId);
+            }*/
+
+//            List<Integer> labelIds = new ArrayList<>();
+//            labelIds.add(1);
+//            labelIds.add(2);
+//            List<PersistenceLabel> persistenceLabelList = labelManagerMapper.getNodeLabelsByLabelIds(labelIds);
+//
+//            for (PersistenceLabel persistenceLabel:persistenceLabelList){
+//                System.out.println(persistenceLabel.getId());
+//                System.out.println(persistenceLabel.getLabelKey());
+//                System.out.println(persistenceLabel.getStringValue());
+//                System.out.println(persistenceLabel.getFeature());
+//            }
+//            sqlSession.commit();
+
+//            List<Integer> labelIds = new ArrayList<>();
+//            labelIds.add(2);
+//            labelIds.add(3);
+//            labelIds.add(4);
+//            labelManagerMapper.addLabelsAndResource(2,labelIds);
+//            sqlSession.commit();
+
+//            PersistenceResource persistenceResource = new PersistenceResource();
+//            persistenceResource.setId(1);
+//            List<PersistenceLabel> persistenceLabelList = labelManagerMapper.getLabelByResource(persistenceResource);
+//            for (PersistenceLabel persistenceLabel:persistenceLabelList){
+//                System.out.println(persistenceLabel.getId());
+//                System.out.println(persistenceLabel.getLabelKey());
+//                System.out.println(persistenceLabel.getStringValue());
+//                System.out.println(persistenceLabel.getFeature());
+//            }
+//            sqlSession.commit();
+
+//            List<PersistenceResource> persistenceResourceList = labelManagerMapper.getResourcesByLabel("clusterType", "asddsdsadsadsa");
+//            for (PersistenceResource persistenceResource:persistenceResourceList){
+//                System.out.println(persistenceResource.getId());
+//                System.out.println(persistenceResource.getMaxResource());
+//                System.out.println(persistenceResource.getMinResource());
+//                System.out.println(persistenceResource.getUsedReource());
+//                System.out.println(persistenceResource.getExpectedResource());
+//                System.out.println(persistenceResource.getResourceType());
+//                System.out.println(persistenceResource.getLeftResource());
+//                System.out.println(persistenceResource.getLockedResource());
+//                System.out.println(persistenceResource.getTicketId());
+//                System.out.println(persistenceResource.getUpdateTime());
+//                System.out.println(persistenceResource.getCreateTime());
+//                System.out.println(persistenceResource.getUpdator());
+//                System.out.println(persistenceResource.getCreator());
+//            }
+
+//            List<Integer> labelIds = labelManagerMapper.getLabelIdsByInstanceId(1);
+//            for (int i:labelIds){
+//                System.out.println(i);
+//            }
+
+            //List<PersistenceNode> persistenceNodeList = labelManagerMapper.getInstanceByLabelId(1);
+//            List<Integer> labelIds = new ArrayList<>();
+//            labelIds.add(4);
+//            List<Integer> instanceIds = labelManagerMapper.getInstanceIdsByLabelIds(labelIds);
+//            for (int id:instanceIds){
+//                System.out.println(id);
+//            }
+
+//            List<Integer> labelIds = new ArrayList<>();
+//            labelIds.add(1);
+//            labelIds.add(2);
+//            List<PersistenceLabel> persistenceLabelList = labelManagerMapper.getNodeLabelsByLabelIds(labelIds);
+//            for (PersistenceLabel persistenceLabel:persistenceLabelList){
+//                System.out.println(persistenceLabel.getId());
+//                System.out.println(persistenceLabel.getLabelKey());
+//                System.out.println(persistenceLabel.getStringValue());
+//                System.out.println(persistenceLabel.getFeature());
+//            }
+//            sqlSession.commit();
+
+//            List<Integer> labelIds = new ArrayList<>();
+//            labelIds.add(3);
+//            labelIds.add(6);
+//            labelManagerMapper.addLabelsByUser("cooperyang",labelIds);
+//            sqlSession.commit();
+
+//            List<String> userNames = labelManagerMapper.getUserNameByLabelId(3);
+//            for (String username:userNames) {
+//                System.out.println(username);
+//            }
+//            List<Integer> labelIds = new ArrayList<>();
+//            labelIds.add(1);
+//            labelIds.add(3);
+//            List<String> userNames = labelManagerMapper.getUserNamesByLabelIds(labelIds);
+//            for (String username:userNames) {
+//                System.out.println(username);
+//            }
+
+//            List<PersistenceLabel> persistenceLabelList = labelManagerMapper.getLabelsByUser("chaogefeng");
+//                for (PersistenceLabel persistenceLabel:persistenceLabelList){
+//                System.out.println(persistenceLabel.getId());
+//                System.out.println(persistenceLabel.getLabelKey());
+//                System.out.println(persistenceLabel.getStringValue());
+//                System.out.println(persistenceLabel.getFeature());
+//            }
+//            sqlSession.commit();
+
+            //labelManagerMapper.deleteLabelResourceByByTicketId("mb-bc-ed-hg-da-gs");
+
+//            List<Integer> labelIds = new ArrayList<>();
+//            labelIds.add(4);
+//            labelIds.add(7);
+//            labelManagerMapper.deleteLabelIdsAndInstanceId(2,labelIds);
+//            sqlSession.commit();
+
+//            labelManagerMapper.deleteLabelIdsByUser("chaogefeng",labelIds);
+//            sqlSession.commit();
+
+//            labelManagerMapper.deleteUserById(2);
+
+
+        } finally {
+            // TODO: handle finally clause
+            sqlSession.close();
+        }
+    }
+}

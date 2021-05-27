@@ -18,7 +18,10 @@ package com.webank.wedatasphere.linkis.entrance.interceptor.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-
+/**
+  * created by enjoyyin on 2018/10/20
+  * Description:
+  */
 case class LabelCheckException(errCode: Int,
                                errDesc: String) extends ErrorException(errCode, errDesc) {
 

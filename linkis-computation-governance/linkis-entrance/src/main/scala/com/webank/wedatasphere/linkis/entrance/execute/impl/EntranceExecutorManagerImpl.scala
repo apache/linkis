@@ -25,7 +25,7 @@ import com.webank.wedatasphere.linkis.scheduler.queue.GroupFactory
   * Created by enjoyyin on 2018/9/26.
   */
 class EntranceExecutorManagerImpl(groupFactory: GroupFactory,
-                                  engineConnManager: EngineConnManager) extends EntranceExecutorManager(groupFactory, engineConnManager) {
+                                  engineConnManager: EngineConnManager) extends EntranceExecutorManager(groupFactory) {
 
 
   override def getOrCreateInterceptors(): Array[ExecuteRequestInterceptor] = Array(JobExecuteRequestInterceptor,

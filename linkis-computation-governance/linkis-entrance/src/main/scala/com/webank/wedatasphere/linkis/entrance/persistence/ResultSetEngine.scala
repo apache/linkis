@@ -16,14 +16,14 @@
 
 package com.webank.wedatasphere.linkis.entrance.persistence
 
+import com.webank.wedatasphere.linkis.entrance.job.EntranceExecuteRequest
 import com.webank.wedatasphere.linkis.scheduler.executer.OutputExecuteResponse
-import com.webank.wedatasphere.linkis.scheduler.queue.Job
 
 /**
   * Created by enjoyyin on 2018/9/4.
   */
 abstract class ResultSetEngine {
 
-  def persistResultSet(job: Job, executeCompleted: OutputExecuteResponse): String
+  def persistResultSet(entranceExe: EntranceExecuteRequest, executeCompleted: OutputExecuteResponse): String
 
 }

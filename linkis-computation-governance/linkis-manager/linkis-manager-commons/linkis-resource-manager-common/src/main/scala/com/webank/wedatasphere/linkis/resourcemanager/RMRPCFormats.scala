@@ -20,7 +20,9 @@ import com.webank.wedatasphere.linkis.manager.common.entity.resource.ResourceSer
 import com.webank.wedatasphere.linkis.rpc.transform.RPCFormats
 import org.json4s.Serializer
 
-
+/**
+  * Created by shanhuang on 9/11/18.
+  */
 
 //@Component
 class RMRPCFormats extends RPCFormats {

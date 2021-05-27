@@ -19,7 +19,9 @@ package com.webank.wedatasphere.linkis.resourcemanager.utils
 import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars, TimeType}
 
 
-
+/**
+  * Created by shanhuang on 9/11/18.
+  */
 object RMConfiguration {
 
   val RM_APPLICATION_NAME = CommonVars("wds.linkis.rm.application.name", "ResourceManager")
@@ -51,7 +53,6 @@ object RMConfiguration {
   val RM_ENGINE_RELEASE_THRESHOLD = CommonVars("wds.linkis.rm.engine.release.threshold", 120000L)
 
   //configuration
-  val CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.rm.conf.application.name", "linkis-ps-publicservice")
 
   val ALERT_SUB_SYSTEM_ID = CommonVars("wds.linkis.rm.alert.system.id", "5136")
   val ALERT_DEFAULT_UM = CommonVars("wds.linkis.rm.alert.default.um", "enjoyyin,johnnwang,shanhuang")
@@ -62,10 +63,10 @@ object RMConfiguration {
   val ALERT_ENABLED = CommonVars("wds.linkis.rm.alert.enabled", false)
 
   //publics service
-  val PUBLIC_SERVICE_APPLICATION_NAME = CommonVars("wds.linkis.rm.publicservice.name", "linkis-ps-publicservice")
   val HIVE_ENGINE_MAINTAIN_TIME_STR = CommonVars("wds.linkis.hive.maintain.time.key", "wds.linkis.hive.maintain.time")
 
   val DEFAULT_YARN_CLUSTER_NAME = CommonVars("wds.linkis.rm.default.yarn.cluster.name", "sit")
-
   val DEFAULT_YARN_TYPE = CommonVars("wds.linkis.rm.default.yarn.cluster.type", "Yarn")
+  val EXTERNAL_RETRY_NUM = CommonVars("wds.linkis.rm.external.retry.num", 3)
+
 }

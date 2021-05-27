@@ -18,7 +18,9 @@ package com.webank.wedatasphere.linkis.resourcemanager.exception;
 
 import com.webank.wedatasphere.linkis.common.exception.WarnException;
 
-
+/**
+ * Created by shanhuang on 9/11/18.
+ */
 public class RMWarnException extends WarnException {
 
     public RMWarnException(int errCode, String desc) {

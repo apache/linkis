@@ -18,7 +18,9 @@ package com.webank.wedatasphere.linkis.resourcemanager.exception;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 
-
+/**
+ * Created by shanhuang on 9/13/18.
+ */
 public class RMErrorException extends ErrorException {
 
     public RMErrorException(int errCode, String desc) {

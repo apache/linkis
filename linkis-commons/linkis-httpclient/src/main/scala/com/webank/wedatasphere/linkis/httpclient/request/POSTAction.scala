@@ -22,9 +22,7 @@ package com.webank.wedatasphere.linkis.httpclient.request
 
 import java.util
 
-/**
-  * Created by enjoyyin on 2019/5/22.
-  */
+
 abstract class POSTAction extends GetAction {
   private val formParams: util.Map[String, String] = new util.HashMap[String, String]
   private val payload: util.Map[String, Any] = new util.HashMap[String, Any]

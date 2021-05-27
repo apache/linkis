@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.common.io.{MetaData, Record}
 import com.webank.wedatasphere.linkis.storage.domain.Dolphin
 import org.apache.commons.codec.binary.Base64
 
-/**
-  * Created by johnnwang on 2018/10/30.
-  */
+
 class IOResultSerializer extends ResultSerializer{
 
   override def metaDataToBytes(metaData: MetaData): Array[Byte] = {

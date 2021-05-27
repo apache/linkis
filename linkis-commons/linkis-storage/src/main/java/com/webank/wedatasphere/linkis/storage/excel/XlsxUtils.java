@@ -28,9 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Created by johnnwang on 7/12/18.
- */
+
 public class XlsxUtils {
 
     public static List<List<String>> getBasicInfo(InputStream inputStream, File file) throws Exception{

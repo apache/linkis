@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.rpc
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 trait ReceiverSenderBuilder {
 
   val order: Int

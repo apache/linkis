@@ -18,7 +18,6 @@ package com.webank.wedatasphere.linkis.storage.source
 
 import java.io.{Closeable, InputStream}
 import java.util
-
 import com.webank.wedatasphere.linkis.common.io._
 import com.webank.wedatasphere.linkis.storage.exception.StorageErrorException
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetReader}
@@ -52,7 +51,7 @@ trait FileSource extends Closeable {
 
 object FileSource {
 
-  private val fileType = Array("dolphin", "sql", "scala", "py", "hql", "python", "out", "log", "text", "sh", "jdbc")
+  private val fileType = Array("dolphin", "sql", "scala", "py", "hql", "python", "out", "log", "text", "sh", "jdbc", "ngql", "psql")
 
   private val suffixPredicate = (path: String, suffix: String) => path.endsWith(s".$suffix")
 

@@ -23,12 +23,13 @@ import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 
-/**
- * @date 2020/7/14
- */
+
 public class MessageSchedulerConf {
 
-    public final static String SERVICE_SCAN_PACKAGE = CommonVars.apply("wds.linkis.ms.service.scan.package", "com.webank.wedatasphere").getValue();
+    public static final String SERVICE_SCAN_PACKAGE = CommonVars.apply("wds.linkis.ms.service.scan.package", "com.webank.wedatasphere").getValue();
+    public static final Integer MAX_PARALLELISM_CONSUMERS = CommonVars.apply("wds.linkis.ms.parallelism.consumer.max", 10).getValue();
+    public static final Integer MAX_RUNNING_JOB = CommonVars.apply("wds.linkis.ms.running.jobs.max", 5 * MAX_PARALLELISM_CONSUMERS).getValue();
+    public static final Integer MAX_QUEUE_CAPACITY = CommonVars.apply("wds.linkis.ms.queue.capacity.max", MAX_RUNNING_JOB * 100).getValue();
 
     public final static Reflections REFLECTIONS = new Reflections(SERVICE_SCAN_PACKAGE, new MethodAnnotationsScanner(), new TypeAnnotationsScanner(), new SubTypesScanner());
 

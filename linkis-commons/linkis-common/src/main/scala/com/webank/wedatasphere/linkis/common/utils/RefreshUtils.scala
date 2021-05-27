@@ -22,9 +22,7 @@ import java.util.concurrent.TimeUnit
 import com.webank.wedatasphere.linkis.common.conf.Configuration
 import org.apache.commons.io.FileUtils
 
-/**
-  * Created by enjoyyin on 2018/2/6.
-  */
+
 object RefreshUtils {
 
   def registerFileRefresh(period: Long, file: String, deal: java.util.List[String] => Unit): Unit = {

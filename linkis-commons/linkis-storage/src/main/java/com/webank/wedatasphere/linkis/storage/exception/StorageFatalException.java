@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.storage.exception;
 
 import com.webank.wedatasphere.linkis.common.exception.FatalException;
 
-/**
- * Created by johnnwang on 10/15/18.
- */
+
 public class StorageFatalException extends FatalException {
 
     public StorageFatalException(int errCode, String desc){

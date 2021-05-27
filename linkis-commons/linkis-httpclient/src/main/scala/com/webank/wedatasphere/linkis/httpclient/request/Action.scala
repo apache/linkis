@@ -20,9 +20,7 @@
 
 package com.webank.wedatasphere.linkis.httpclient.request
 
-/**
-  * Created by enjoyyin on 2019/5/16.
-  */
+
 trait Action {
 
   def getRequestBody: String

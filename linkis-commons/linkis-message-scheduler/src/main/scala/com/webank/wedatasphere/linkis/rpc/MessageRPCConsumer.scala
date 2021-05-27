@@ -27,10 +27,7 @@ import com.webank.wedatasphere.linkis.server.{EXCEPTION_MSG, JMap, Message}
 
 import scala.runtime.BoxedUnit
 
-/**
- * @date 2020/8/6
- *
- */
+
 
 class MessageRPCConsumer {
 

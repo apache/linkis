@@ -18,7 +18,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>1.0.0-RC1</version>
+        <version>1.0.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -64,6 +64,11 @@
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper</artifactId>
             <version>5.1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.webank.bsp</groupId>
+            <artifactId>encrypt</artifactId>
+            <version>1.0.2</version>
         </dependency>
     </dependencies>
     <build>

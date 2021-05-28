@@ -22,6 +22,7 @@
     <id>linkis-engineplugin-io_file</id>
     <formats>
         <format>dir</format>
+        <format>zip</format>
     </formats>
     <includeBaseDirectory>true</includeBaseDirectory>
     <baseDirectory>io_file</baseDirectory>

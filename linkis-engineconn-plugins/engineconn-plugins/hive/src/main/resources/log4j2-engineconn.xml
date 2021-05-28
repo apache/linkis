@@ -20,19 +20,12 @@
             <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M - %msg%xEx%n"/>
         </Console>
-        <RollingFile name="RollingFile" fileName="logs/linkis.log"
-                     filePattern="logs/$${date:yyyy-MM}/linkis-log-%d{yyyy-MM-dd}-%i.log">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
-            <SizeBasedTriggeringPolicy size="100MB"/>
-            <DefaultRolloverStrategy max="20"/>
-        </RollingFile>
         <Send name="Send" >
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M - %msg%xEx%n"/>
         </Send>
     </appenders>
     <loggers>
       <root level="INFO">
-            <!--<appender-ref ref="RollingFile"/>-->
             <appender-ref ref="Console"/>
             <appender-ref ref="Send"/>
         </root>
@@ -54,6 +47,18 @@
         <logger name="org.apache.hadoop.hdfs.KeyProviderCache" level="fatal" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
- 
+        <logger name="org.spark_project.jetty" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.eclipse.jetty" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.springframework" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.reflections.Reflections" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+
    </loggers>
 </configuration>

@@ -30,7 +30,6 @@ import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteResponse
 
 import scala.collection.JavaConversions.mapAsScalaMap
-import scala.collection.JavaConverters._
 
 class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with Logging {
 
@@ -42,23 +41,19 @@ class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with L
 
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]()
 
+
+
+
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
     index += 1
     var failedTasks = 0
     var succeedTasks = 1
     val newOptions = engineExecutorContext.getProperties
-    newOptions.foreach({case (k, v) => info(s"key is $k, value is ${v.toString}")})
-    PipelineEngineConnExecutor.listPipelineExecutors.foreach(e => e.init(newOptions.map({case (k,v) => (k, v.toString)}).asJava))
+    newOptions.foreach({ case (k, v) => info(s"key is $k, value is $v") })
     val regex = "(?i)\\s*from\\s+(\\S+)\\s+to\\s+(\\S+)\\s?".r
     try {
       code match {
-        case regex(sourcePath, destPath) => {
-          if (destPath.contains(".")) {
-            PipelineEngineConnExecutor.listPipelineExecutors.find(f => "cp".equals(f.Kind)).get.execute(sourcePath, destPath,engineExecutorContext)
-          } else {
-            PipelineEngineConnExecutor.listPipelineExecutors.find(f => newOptions.get("pipeline.output.mold").toString.equalsIgnoreCase(f.Kind)).map(_.execute(sourcePath, destPath,engineExecutorContext)).get
-          }
-        }
+        case regex(sourcePath, destPath) => PipelineExecutorSelector.select(sourcePath,destPath,newOptions.asInstanceOf[util.Map[String, String]]).execute(sourcePath,destPath,engineExecutorContext)
         case _ => throw new PipeLineErrorException(70007, "非法的out脚本语句（Illegal out script statement）")
       }
     } catch {

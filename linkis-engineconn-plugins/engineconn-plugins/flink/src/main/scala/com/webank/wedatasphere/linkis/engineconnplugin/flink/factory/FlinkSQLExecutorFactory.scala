@@ -1,0 +1,63 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.webank.wedatasphere.linkis.engineconnplugin.flink.factory
+
+import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
+import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationExecutorFactory
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.ComputationExecutor
+import com.webank.wedatasphere.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
+import com.webank.wedatasphere.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
+import com.webank.wedatasphere.linkis.engineconnplugin.flink.executor.FlinkSQLJobExecutor
+import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import com.webank.wedatasphere.linkis.manager.label.entity.cluster.EnvLabel
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType.RunType
+
+import scala.collection.JavaConversions._
+
+/**
+  *
+  */
+class FlinkSQLExecutorFactory extends ComputationExecutorFactory {
+
+  override protected def newExecutor(id: Int,
+                           engineCreationContext: EngineCreationContext,
+                           engineConn: EngineConn,
+                           labels: Array[Label[_]]): ComputationExecutor = engineConn.getEngineConnSession match {
+    case context: FlinkEngineConnContext =>
+      val executor = new FlinkSQLJobExecutor(id, context)
+      if(!labels.exists(_.isInstanceOf[EnvLabel])) {
+        executor.getExecutorLabels().add(getEnvLabel(engineCreationContext))
+      }
+      if(executor.getEnvLabel.getEnvType == EnvLabel.DEV) {
+        context.getEnvironmentContext.getDefaultEnv
+          .setExecution(Map("max-table-result-rows" -> FlinkEnvConfiguration.FLINK_SQL_DEV_SELECT_MAX_LINES.getValue.asInstanceOf[Object]))
+      }
+      executor
+  }
+
+  protected def getEnvLabel(engineCreationContext: EngineCreationContext): EnvLabel = {
+    val envType = FlinkEnvConfiguration.FLINK_ENV_TYPE.getValue(engineCreationContext.getOptions)
+    val envLabel = new EnvLabel
+    envLabel.setEnvType(envType)
+    envLabel
+  }
+
+  override protected def getRunType: RunType = RunType.SQL
+}

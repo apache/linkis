@@ -30,39 +30,6 @@ import com.webank.wedatasphere.linkis.orchestrator.strategy.{GatherStrategyJobEx
  *
  */
 abstract class ComputePhysicalTransform extends PhysicalTransform {
-  /**
-   * Transform 'JobTask;StageTask;CodeLogicalUnitTask;CommandTask'
-   * @return scala func
-   */
-  //TODO rebuild needed.
- /* override def doTransform(): Task => ExecTask = {
-    case jobTask: JobTask =>
-      val jobExecTask = new GatherStrategyJobExecTask(Array[ExecTask](), Array[ExecTask]())
-      jobExecTask.setTaskDesc(jobTask.getTaskDesc)
-      jobExecTask
-    case stageTask: StageTask =>
-      val stageExecTask = new GatherStrategyStageInfoExecTask(Array[ExecTask](), Array[ExecTask]())
-      stageExecTask.setTaskDesc(stageTask.getTaskDesc)
-      stageExecTask
-    case codeUnitTask: CodeLogicalUnitTask =>
-      val codeUnitExecTask  = new CodeLogicalUnitExecTask(Array[ExecTask](), Array[ExecTask]())
-      //set code unit
-      codeUnitExecTask.setCodeLogicalUnit(codeUnitTask.getCodeLogicalUnit)
-      codeUnitExecTask.setTaskDesc(codeUnitTask.getTaskDesc)
-      codeUnitExecTask
-    case cacheTask: CacheTask  =>
-      val cacheExecTask = new CacheExecTask(Array[ExecTask](), Array[ExecTask]())
-      val realExecTask = new CodeLogicalUnitExecTask(Array[ExecTask](), Array[ExecTask]())
-      realExecTask.setCodeLogicalUnit(cacheTask.getRealTask().getCodeLogicalUnit)
-      realExecTask.setTaskDesc(cacheTask.getRealTask().getTaskDesc)
-      cacheExecTask.setRealExecTask(realExecTask)
-      cacheExecTask.setTaskDesc(cacheTask.getTaskDesc)
-      cacheExecTask
-    case command: CommandTask =>
-      warn(s"Unsupported command task [" + command.verboseString + "]")
-      null
-    case _ => null
-  }*/
 
   override def getName: String = getClass.getName
 }

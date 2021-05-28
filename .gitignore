@@ -18,7 +18,10 @@ linkis-commons/linkis-rpc/target/
 linkis-commons/linkis-scheduler/target/
 linkis-commons/linkis-storage/target/
 
-linkis-computation-governance/linkis-computation-client/target/
+linkis-computation-governance/linkis-client/linkis-cli/linkis-cli-application/target/
+linkis-computation-governance/linkis-client/linkis-cli/linkis-cli-core/target/
+linkis-computation-governance/linkis-client/linkis-cli/linkis-cli-common/target/
+linkis-computation-governance/linkis-client/linkis-computation-client/target/
 linkis-computation-governance/linkis-computation-governance-common/target/
 linkis-computation-governance/linkis-engineconn-manager/linkis-engineconn-linux-launch/target/
 linkis-computation-governance/linkis-engineconn-manager/linkis-engineconn-manager-core/target/
@@ -47,7 +50,7 @@ linkis-computation-governance/linkis-manager/linkis-resource-manager/target/
 
 linkis-public-enhancements/linkis-bml/linkis-bml-client/target/
 linkis-public-enhancements/linkis-bml/linkis-bml-common/target/
-linkis-public-enhancements/linkis-bml/linkis-bml-server/target/
+linkis-public-enhancements/linkis-bml/linkis-bml-server/ctarget/
 linkis-public-enhancements/linkis-bml/linkis-bml-engine-hook/target/
 linkis-public-enhancements/linkis-context-service/linkis-cs-cache/target/
 linkis-public-enhancements/linkis-context-service/linkis-cs-client/target/

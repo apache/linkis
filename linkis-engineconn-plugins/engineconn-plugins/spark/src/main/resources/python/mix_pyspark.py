@@ -1,5 +1,6 @@
 import sys, getopt, traceback, json, re
 import os
+from py4j.protocol import Py4JJavaError, Py4JNetworkError
 os.environ['PYSPARK_ALLOW_INSECURE_GATEWAY']='1'
 import matplotlib
 import os
@@ -11,7 +12,6 @@ for i in range(len(paths)):
     sys.path.insert(0, paths[i])
 
 from py4j.java_gateway import java_import, JavaGateway, GatewayClient
-from py4j.protocol import Py4JJavaError
 from pyspark.conf import SparkConf
 from pyspark.context import SparkContext
 from pyspark.sql.session import SparkSession
@@ -109,6 +109,12 @@ def show(obj):
         intp.showDF(jobGroup, obj._jdf)
     else:
         print((str(obj)))
+def printlog(obj):
+    try:
+        intp.printLog(obj)
+    except Exception as e:
+        print("send log failed")
+
 
 def showAlias(obj,alias):
     from pyspark.sql import DataFrame
@@ -216,6 +222,10 @@ while True :
         if innerErrorStart > -1:
             excInnerError = excInnerError[innerErrorStart:]
         intp.setStatementsFinished(excInnerError + str(sys.exc_info()), True)
+    except Py4JNetworkError:
+         # lost connection from gateway server. exit
+         intp.setStatementsFinished(msg, True)
+         sys.exit(1)
     except:
         msg = traceback.format_exc()
         intp.setStatementsFinished(msg, True)

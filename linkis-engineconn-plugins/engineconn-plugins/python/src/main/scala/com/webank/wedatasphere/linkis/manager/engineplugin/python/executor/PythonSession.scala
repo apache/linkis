@@ -22,6 +22,7 @@ import java.util.{List => JList}
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.rs.RsOutputStream
+import com.webank.wedatasphere.linkis.engineconn.launch.EngineConnServer
 import com.webank.wedatasphere.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
 import com.webank.wedatasphere.linkis.manager.engineplugin.python.exception.{ExecuteException, PythonExecuteError}
 import com.webank.wedatasphere.linkis.manager.engineplugin.python.utils.Kind
@@ -53,6 +54,8 @@ class PythonSession extends Logging {
   private var code: String = _
   private var pid: Option[String] = None
   private var gatewayInited = false
+  private val pythonDefaultVersion: String = EngineConnServer.getEngineCreationContext.getOptions.getOrDefault("python.version", "python")
+
 
   def init(): Unit = {
     initGateway
@@ -67,7 +70,7 @@ class PythonSession extends Logging {
   }
 
   private def initGateway = {
-    val userDefinePythonVersion = System.getProperties.getProperty("python.version")
+    val userDefinePythonVersion = Some(pythonDefaultVersion).getOrElse("python")
     info(s"System userDefinePythonVersion => ${userDefinePythonVersion}")
     val pythonExec = if ("python3".equalsIgnoreCase(userDefinePythonVersion)) PythonEngineConfiguration.PYTHON_VERSION.getValue else "python"
     info(s"pythonExec => ${pythonExec}")

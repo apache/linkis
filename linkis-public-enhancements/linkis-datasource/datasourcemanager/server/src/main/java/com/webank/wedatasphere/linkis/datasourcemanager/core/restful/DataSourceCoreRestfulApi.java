@@ -417,6 +417,8 @@ public class DataSourceCoreRestfulApi {
             String operator = SecurityFilter.getLoginUsername(req);
             DataSource dataSource = dataSourceInfoService.getDataSourceInfoForConnect(dataSourceId);
             Map<String, Object> connectParams = dataSource.getConnectParams();
+            RestfulApiHelper.decryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId())
+                    , connectParams);
             return Message.ok().data("connectParams", connectParams);
 
         }, "/data_source/" + dataSourceId  + "/connect_params", "Fail to connect data source[连接数据源失败]");

@@ -15,6 +15,7 @@
  */
 package com.webank.wedatasphere.linkis.bml.protocol
 
+
 trait BmlServerProtocol
 
 case class BmlDownloadElementProtocol(path:String,

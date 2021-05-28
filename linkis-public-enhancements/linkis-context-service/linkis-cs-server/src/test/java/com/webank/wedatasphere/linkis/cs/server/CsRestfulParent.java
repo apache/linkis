@@ -40,7 +40,7 @@ public interface CsRestfulParent {
         protocol.setUsername(SecurityFilter.getLoginUsername(req));
         protocol.setServiceMethod(method);
         protocol.setRequestObjects(objects);
-        getScheduler().sumbit(job);
+        getScheduler().submit(job);
         return job;
     }
 

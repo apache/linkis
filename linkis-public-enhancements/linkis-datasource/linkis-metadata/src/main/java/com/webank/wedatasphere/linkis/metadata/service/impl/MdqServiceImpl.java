@@ -103,7 +103,8 @@ public class MdqServiceImpl implements MdqService {
         return table.getId();
     }
 
-    private void checkIfNeedDeleteTable(MdqTableBO mdqTableBO) {
+    @DataSource(name = DSEnum.SECONDE_DATA_SOURCE)
+    public void checkIfNeedDeleteTable(MdqTableBO mdqTableBO) {
         String database = mdqTableBO.getTableBaseInfo().getBase().getDatabase();
         String tableName = mdqTableBO.getTableBaseInfo().getBase().getName();
         MdqTable oldTable = mdqDao.selectTableForUpdate(database, tableName);
@@ -129,6 +130,7 @@ public class MdqServiceImpl implements MdqService {
         }
     }
 
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public MdqTableStatisticInfoVO getTableStatisticInfo(String database, String tableName, String user) throws IOException {
         MdqTableStatisticInfoVO mdqTableStatisticInfoVO = getTableStatisticInfoFromHive(database, tableName, user);
@@ -159,6 +161,7 @@ public class MdqServiceImpl implements MdqService {
         return DomainCoversionUtils.mdqTableToMdqTableBaseInfoVO(table);
     }
 
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public MdqTableBaseInfoVO getTableBaseInfoFromHive(String database, String tableName, String user) {
         Map<String, String> map = Maps.newHashMap();
@@ -185,6 +188,7 @@ public class MdqServiceImpl implements MdqService {
         return DomainCoversionUtils.mdqFieldListToMdqTableFieldsInfoVOList(mdqFieldList);
     }
 
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public List<MdqTableFieldsInfoVO> getTableFieldsInfoFromHive(String database, String tableName, String user) {
         Map<String, String> param = Maps.newHashMap();
@@ -198,6 +202,7 @@ public class MdqServiceImpl implements MdqService {
         return normalColumns;
     }
 
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public MdqTableStatisticInfoVO getTableStatisticInfoFromHive(String database, String tableName, String user) throws IOException {
         Map<String, String> map = Maps.newHashMap();
@@ -223,6 +228,7 @@ public class MdqServiceImpl implements MdqService {
         return mdqTableStatisticInfoVO;
     }
 
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public MdqTablePartitionStatisticInfoVO getPartitionStatisticInfo(String database, String tableName, String userName,
                                                                       String partitionPath) throws IOException {
@@ -329,7 +335,8 @@ public class MdqServiceImpl implements MdqService {
         return partitionsNum;
     }
 
-    private String getTableLocation(String database, String tableName) {
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
+    public String getTableLocation(String database, String tableName) {
         Map<String, String> param = Maps.newHashMap();
         param.put("dbName", database);
         param.put("tableName", tableName);

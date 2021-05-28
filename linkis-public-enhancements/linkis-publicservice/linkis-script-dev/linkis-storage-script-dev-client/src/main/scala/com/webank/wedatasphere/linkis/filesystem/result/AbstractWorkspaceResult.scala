@@ -17,9 +17,6 @@ package com.webank.wedatasphere.linkis.filesystem.result
 
 import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 
-/**
-  * Created by patinousward
-  */
 abstract class AbstractWorkspaceResult extends DWSResult{
 
 }

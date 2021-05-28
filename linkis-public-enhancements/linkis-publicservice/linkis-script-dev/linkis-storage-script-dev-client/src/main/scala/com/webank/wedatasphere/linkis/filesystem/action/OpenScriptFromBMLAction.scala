@@ -19,9 +19,6 @@ import com.webank.wedatasphere.linkis.filesystem.conf.WorkspaceClientConf
 import com.webank.wedatasphere.linkis.httpclient.request.UserAction
 
 
-/**
-  * Created by patinousward
-  */
 class OpenScriptFromBMLAction extends WorkspaceGETAction with UserAction{
 
   private var user:String = _

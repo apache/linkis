@@ -16,9 +16,6 @@
 
 package com.webank.wedatasphere.linkis.variable.entity;
 
-/**
- * Created by cooperyang on 2019/4/10.
- */
 
 public class VarKeyValueVO {
     private Long keyID;

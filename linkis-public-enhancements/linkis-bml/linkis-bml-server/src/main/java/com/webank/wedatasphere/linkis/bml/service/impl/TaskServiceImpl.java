@@ -18,7 +18,6 @@ package com.webank.wedatasphere.linkis.bml.service.impl;
 import com.webank.wedatasphere.linkis.bml.Entity.ResourceTask;
 import com.webank.wedatasphere.linkis.bml.Entity.Version;
 import com.webank.wedatasphere.linkis.bml.common.Constant;
-import com.webank.wedatasphere.linkis.bml.common.UpdateResourceException;
 import com.webank.wedatasphere.linkis.bml.dao.ResourceDao;
 import com.webank.wedatasphere.linkis.bml.dao.TaskDao;
 import com.webank.wedatasphere.linkis.bml.dao.VersionDao;
@@ -26,6 +25,7 @@ import com.webank.wedatasphere.linkis.bml.service.ResourceService;
 import com.webank.wedatasphere.linkis.bml.service.TaskService;
 import com.webank.wedatasphere.linkis.bml.service.VersionService;
 import com.webank.wedatasphere.linkis.bml.threading.TaskState;
+import com.webank.wedatasphere.linkis.bml.common.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -98,7 +98,7 @@ public class TaskServiceImpl implements TaskService {
       final String resourceIdLock = resourceId.intern();
       /*
       多个BML服务器实例对同一资源resourceId同时更新,规定只能有一个实例能更新成功,
-      实现方案是:linkis_resources_task.resource_id和version设置唯一索引
+      实现方案是:linkis_ps_bml_resources_task.resource_id和version设置唯一索引
       同一台服务器实例对同一资源更新,上传资源前，需要对resourceId这个字符串的intern进行加锁，这样所有需要更新该资源的用户都会同步
        */
       //synchronized (resourceIdLock.intern()){

@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.filesystem.entity
 import com.webank.wedatasphere.linkis.storage.fs.FileSystem
 import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration
 
-/**
-  * Created by johnnwang on 2019/2/11.
-  */
+
 class FSInfo(val id: String, val fs: FileSystem, var lastAccessTime: Long = System.currentTimeMillis()) {
   def timeout = System.currentTimeMillis() - lastAccessTime > (StorageConfiguration.IO_FS_EXPIRE_TIME.getValue - 120 * 1000)
 }

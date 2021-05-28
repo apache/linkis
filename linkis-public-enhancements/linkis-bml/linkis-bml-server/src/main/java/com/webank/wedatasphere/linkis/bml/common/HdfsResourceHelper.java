@@ -20,6 +20,7 @@ import com.webank.wedatasphere.linkis.common.io.Fs;
 import com.webank.wedatasphere.linkis.common.io.FsPath;
 import com.webank.wedatasphere.linkis.storage.FSFactory;
 import com.webank.wedatasphere.linkis.storage.utils.FileSystemUtils;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
@@ -100,8 +101,8 @@ public class HdfsResourceHelper implements ResourceHelper {
             IOUtils.closeQuietly(outputStream);
             if (fileSystem != null){
                 try {
-                    fileSystem.close();
-                } catch (IOException e) {
+                fileSystem.close();
+            } catch (Exception e) {
                     logger.error("close filesystem failed", e);
                 }
             }
@@ -129,6 +130,11 @@ public class HdfsResourceHelper implements ResourceHelper {
         return SCHEMA;
     }
 
+    /**
+     * Motivation to modify this path：
+     * 这个路径在hdfs上/apps-data/hadoop/user下，和结果集文件混杂在一起，在2021年4月份集群时，
+     * 并不能单独同步bml文件，在用户验证工作流时，每次都需要同步全量个人全量hdfs数据，十分不便。
+     * */
     @Override
     public String generatePath(String user, String fileName, Map<String, Object> properties) {
         String resourceHeader = (String) properties.get("resourceHeader");
@@ -136,9 +142,9 @@ public class HdfsResourceHelper implements ResourceHelper {
         String dateStr = format.format(new Date());
         if (StringUtils.isNotEmpty(resourceHeader)) {
             return getSchema() + BmlServerConfiguration.BML_HDFS_PREFIX().getValue()
-                    + "/" + user + "/" + dateStr + "/" + resourceHeader + "/" + fileName;
+                    + "/" + user + "/bml" + "/" + dateStr + "/" + resourceHeader + "/" + fileName;
         } else {
-            return getSchema() + BmlServerConfiguration.BML_HDFS_PREFIX().getValue() + "/" + user + "/" + dateStr + "/" + fileName;
+            return getSchema() + BmlServerConfiguration.BML_HDFS_PREFIX().getValue() + "/" + user + "/bml" + "/" + dateStr + "/" + fileName;
         }
     }
 

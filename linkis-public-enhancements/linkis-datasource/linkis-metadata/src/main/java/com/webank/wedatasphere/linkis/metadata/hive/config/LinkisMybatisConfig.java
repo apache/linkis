@@ -16,29 +16,18 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf;
 import com.webank.wedatasphere.linkis.metadata.util.DWSConfig;
 import com.webank.wedatasphere.linkis.metadata.util.HiveUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 @Configuration
 @EnableTransactionManagement(order = 2)
@@ -62,8 +51,10 @@ public class LinkisMybatisConfig {
         String url =  DWSConfig.HIVE_META_URL.getValue();
         String username =  DWSConfig.HIVE_META_USER.getValue();
         String password = DWSConfig.HIVE_META_PASSWORD.getValue();
+
+        org.apache.hadoop.conf.Configuration hiveConf = null;
         if(StringUtils.isBlank(url) || StringUtils.isBlank(username)  || StringUtils.isBlank(password)) {
-            org.apache.hadoop.conf.Configuration hiveConf = HiveUtils.getDefaultConf(HadoopConf.HADOOP_ROOT_USER().getValue());
+             hiveConf = HiveUtils.getDefaultConf(HadoopConf.HADOOP_ROOT_USER().getValue());
             logger.info("从配置文件中读取hive数据库连接地址");
             url = hiveConf.get("javax.jdo.option.ConnectionURL");
             username = hiveConf.get("javax.jdo.option.ConnectionUserName");
@@ -74,6 +65,7 @@ public class LinkisMybatisConfig {
             }
 
         }
+
         logger.info("数据库连接地址信息=" + url);
         datasource.setUrl(url);
         datasource.setUsername(username);
@@ -145,64 +137,12 @@ public class LinkisMybatisConfig {
         hashMap.put(DSEnum.FIRST_DATA_SOURCE, hiveDataSource);
         hashMap.put(DSEnum.SECONDE_DATA_SOURCE, mysqlDataSource);
         dynamicDataSource.setTargetDataSources(hashMap);
-        dynamicDataSource.setDefaultTargetDataSource(hiveDataSource);
+        dynamicDataSource.setDefaultTargetDataSource(mysqlDataSource);
         return dynamicDataSource;
-    }
-
-    @Bean(name = "sqlSessionFactory")
-    @Primary
-    public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DynamicDataSource dataSource) throws Exception {
-        String typeAliasesPackage = DWSConfig.BDP_SERVER_MYBATIS_TYPEALIASESPACKAGE.getValue();
-        //Configure the mapper scan to find all mapper.xml mapping files(配置mapper的扫描，找到所有的mapper.xml映射文件)
-        String mapperLocations = DWSConfig.BDP_SERVER_MYBATIS_MAPPER_LOCATIONS.getValue();
-        //Load the global configuration file(加载全局的配置文件)
-        String configLocation = DWSConfig.BDP_SERVER_MYBATIS_CONFIGLOCATION.getValue();
-        try {
-            SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
-            sessionFactoryBean.setDataSource(dataSource);
-
-            logger.info("Mybatis typeAliasesPackage=" + typeAliasesPackage);
-            logger.info("Mybatis mapperLocations=" + mapperLocations);
-            logger.info("Mybatis configLocation=" + configLocation);
-            // Read configuration(读取配置)
-            sessionFactoryBean.setTypeAliasesPackage(typeAliasesPackage);
-
-            //Set the location of the mapper.xml file(设置mapper.xml文件所在位置)
-            if(StringUtils.isNotBlank(mapperLocations)) {
-                String[] mapperArray = mapperLocations.split(",");
-                List<Resource> resources = new ArrayList<>();
-                for(String mapperLocation : mapperArray){
-                    CollectionUtils.addAll(resources,new PathMatchingResourcePatternResolver().getResources(mapperLocation));
-                }
-                sessionFactoryBean.setMapperLocations(resources.toArray(new Resource[0]));
-            }
-           /* Resource[] resources = new PathMatchingResourcePatternResolver().getResources(mapperLocations);
-            sessionFactoryBean.setMapperLocations(resources);*/
-//            Set the location of the mybatis-config.xml configuration file(设置mybatis-config.xml配置文件位置)
-            sessionFactoryBean.setConfigLocation(new DefaultResourceLoader().getResource(configLocation));
-
-            return sessionFactoryBean.getObject();
-        } catch (IOException e) {
-            logger.error("mybatis resolver mapper*xml is error",e);
-            return null;
-        } catch (Exception e) {
-            logger.error("mybatis sqlSessionFactoryBean create error",e);
-            return null;
-        }
     }
 
     @Primary
     public PlatformTransactionManager annotationDrivenTransactionManager(@Qualifier("dataSource") DynamicDataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
-    }
-
-    @Bean
-    public MapperScannerConfigurer mapperScannerConfigurer(@Qualifier("sqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
-        MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
-        mapperScannerConfigurer.setSqlSessionFactory(sqlSessionFactory);
-        //Each table corresponds to the XXMapper.java interface type Java file
-        //每张表对应的XXMapper.java interface类型的Java文件
-        mapperScannerConfigurer.setBasePackage(DWSConfig.BDP_SERVER_MYBATIS_BASEPACKAGE.getValue());
-        return mapperScannerConfigurer;
     }
 }

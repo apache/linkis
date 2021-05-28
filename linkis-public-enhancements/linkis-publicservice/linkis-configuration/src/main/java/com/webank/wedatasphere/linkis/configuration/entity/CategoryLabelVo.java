@@ -24,6 +24,8 @@ public class CategoryLabelVo {
 
     private Integer categoryId;
 
+    private Integer labelId;
+
     private String categoryName;
 
     private List<CategoryLabelVo> childCategory = new ArrayList<>();
@@ -39,6 +41,14 @@ public class CategoryLabelVo {
     private Integer level;
 
     private String fatherCategoryName;
+
+    public Integer getLabelId() {
+        return labelId;
+    }
+
+    public void setLabelId(Integer labelId) {
+        this.labelId = labelId;
+    }
 
     public String getFatherCategoryName() {
         return fatherCategoryName;

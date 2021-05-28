@@ -22,9 +22,9 @@ import com.webank.wedatasphere.linkis.cs.common.entity.source.HAContextID;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
 import com.webank.wedatasphere.linkis.cs.common.utils.CSHighAvailableUtils;
 import com.webank.wedatasphere.linkis.cs.highavailable.conf.ContextHighAvailableConf;
-import com.webank.wedatasphere.linkis.cs.highavailable.exception.ErrorCode;
+import com.webank.wedatasphere.linkis.cs.highavailable.exception.CSErrorCode;
 import com.webank.wedatasphere.linkis.cs.highavailable.ha.ContextHAChecker;
-import com.webank.wedatasphere.linkis.rpc.instancealias.impl.InstanceAliasManagerImpl;
+import com.webank.wedatasphere.linkis.cs.highavailable.ha.instancealias.impl.InstanceAliasManagerImpl;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +91,7 @@ public class ContextHACheckerImpl implements ContextHAChecker {
         if (null == haContextID || StringUtils.isBlank(haContextID.getInstance())
                 || StringUtils.isBlank(haContextID.getBackupInstance())
                 || StringUtils.isBlank(haContextID.getContextId())) {
-            throw new CSErrorException(ErrorCode.INVALID_HAID, "Incomplete HAID Object cannot be encoded. mainInstance : "
+            throw new CSErrorException(CSErrorCode.INVALID_HAID, "Incomplete HAID Object cannot be encoded. mainInstance : "
                     + haContextID.getInstance() + ", backupInstance : " + haContextID.getBackupInstance() + ", contextID : " + haContextID.getContextId());
         }
         if (StringUtils.isNumeric(haContextID.getContextId())) {
@@ -100,7 +100,7 @@ public class ContextHACheckerImpl implements ContextHAChecker {
             return haContextID.getContextId();
         } else {
             logger.error("ConvertHAIDToHAKey error, invald HAID : " + haContextID.getContextId());
-            throw new CSErrorException(ErrorCode.INVALID_HAID, "ConvertHAIDToHAKey error, invald HAID : " + haContextID.getContextId());
+            throw new CSErrorException(CSErrorCode.INVALID_HAID, "ConvertHAIDToHAKey error, invald HAID : " + haContextID.getContextId());
         }
     }
 
@@ -143,7 +143,7 @@ public class ContextHACheckerImpl implements ContextHAChecker {
         HAContextID haContextID = null;
         if (StringUtils.isBlank(haIDKey) || !CSHighAvailableUtils.checkHAIDBasicFormat(haIDKey)) {
             logger.error("Invalid haIDKey : " + haIDKey);
-            throw new CSErrorException(ErrorCode.INVALID_HAID, "Invalid haIDKey : " + haIDKey);
+            throw new CSErrorException(CSErrorCode.INVALID_HAID, "Invalid haIDKey : " + haIDKey);
         }
         return CSHighAvailableUtils.decodeHAID(haIDKey);
     }

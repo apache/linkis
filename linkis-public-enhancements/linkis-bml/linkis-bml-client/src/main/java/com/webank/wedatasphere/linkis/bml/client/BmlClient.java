@@ -17,10 +17,12 @@ package com.webank.wedatasphere.linkis.bml.client;
 
 import com.webank.wedatasphere.linkis.bml.protocol.*;
 
+import java.io.Closeable;
 import java.io.InputStream;
 import java.util.List;
 
-public interface BmlClient {
+
+public interface BmlClient extends Closeable {
     /**
      * 传入resourceID bmlclient会resource的输入流,如果不传入version,默认返回最新的版本
      * @param resourceID resourceID

@@ -21,6 +21,7 @@
         <result property="option" column="option"/>
         <result property="classifier" column="classifier"/>
         <result property="icon" column="icon"/>
+        <result property="layers" column="layers"/>
     </resultMap>
 
     <select id="getAllTypes" resultMap="dataSourceTypeMap">

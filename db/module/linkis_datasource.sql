@@ -8,19 +8,19 @@ CREATE TABLE `linkis_datasource`
 (
     `id`                   int(11)                       NOT NULL AUTO_INCREMENT,
     `datasource_name`      varchar(255) COLLATE utf8_bin NOT NULL,
-    `datasource_desc`      varchar(255) COLLATE utf8_bin          DEFAULT NULL,
+    `datasource_desc`      varchar(255) COLLATE utf8_bin      DEFAULT NULL,
     `datasource_type_id`   int(11)                       NOT NULL,
-    `create_identify`      varchar(255) COLLATE utf8_bin          DEFAULT NULL,
-    `create_system`        varchar(255) COLLATE utf8_bin          DEFAULT NULL,
+    `create_identify`      varchar(255) COLLATE utf8_bin      DEFAULT NULL,
+    `create_system`        varchar(255) COLLATE utf8_bin      DEFAULT NULL,
     `parameter`            varchar(255) COLLATE utf8_bin NULL DEFAULT NULL,
     `create_time`          datetime                      NULL DEFAULT CURRENT_TIMESTAMP,
     `modify_time`          datetime                      NULL DEFAULT CURRENT_TIMESTAMP,
-    `create_user`          varchar(255) COLLATE utf8_bin          DEFAULT NULL,
-    `modify_user`          varchar(255) COLLATE utf8_bin          DEFAULT NULL,
-    `labels`               varchar(255) COLLATE utf8_bin          DEFAULT NULL,
-    `version_id`           int(11)                                DEFAULT NULL COMMENT 'current version id',
-    `expire`               tinyint(1)                    DEFAULT 0,
-    `published_version_id` int(11)                                DEFAULT NULL,
+    `create_user`          varchar(255) COLLATE utf8_bin      DEFAULT NULL,
+    `modify_user`          varchar(255) COLLATE utf8_bin      DEFAULT NULL,
+    `labels`               varchar(255) COLLATE utf8_bin      DEFAULT NULL,
+    `version_id`           int(11)                            DEFAULT NULL COMMENT 'current version id',
+    `expire`               tinyint(1)                         DEFAULT 0,
+    `published_version_id` int(11)                            DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   CHARACTER SET = utf8
@@ -53,12 +53,13 @@ CREATE TABLE `linkis_datasource_env`
 DROP TABLE IF EXISTS `linkis_datasource_type`;
 CREATE TABLE `linkis_datasource_type`
 (
-    `id`          int(11)                       NOT NULL AUTO_INCREMENT,
-    `name`        varchar(32) COLLATE utf8_bin  NOT NULL,
+    `id`          int(11)                      NOT NULL AUTO_INCREMENT,
+    `name`        varchar(32) COLLATE utf8_bin NOT NULL,
     `description` varchar(255) COLLATE utf8_bin DEFAULT NULL,
     `option`      varchar(32) COLLATE utf8_bin  DEFAULT NULL,
-    `classifier`  varchar(32) COLLATE utf8_bin  NOT NULL,
+    `classifier`  varchar(32) COLLATE utf8_bin NOT NULL,
     `icon`        varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `layers`      int(3)                       NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   CHARACTER SET = utf8
@@ -70,21 +71,21 @@ CREATE TABLE `linkis_datasource_type`
 DROP TABLE IF EXISTS `linkis_datasource_type_key`;
 CREATE TABLE `linkis_datasource_type_key`
 (
-    `id`                  int(11)                     NOT NULL AUTO_INCREMENT,
-    `data_source_type_id` int(11)                     NOT NULL,
+    `id`                  int(11)                       NOT NULL AUTO_INCREMENT,
+    `data_source_type_id` int(11)                       NOT NULL,
     `key`                 varchar(32) COLLATE utf8_bin  NOT NULL,
     `name`                varchar(32) COLLATE utf8_bin  NOT NULL,
     `default_value`       varchar(50) COLLATE utf8_bin  NULL     DEFAULT NULL,
     `value_type`          varchar(50) COLLATE utf8_bin  NOT NULL,
     `scope`               varchar(50) COLLATE utf8_bin  NULL     DEFAULT NULL,
-    `require`             tinyint(1)                     NULL     DEFAULT 0,
+    `require`             tinyint(1)                    NULL     DEFAULT 0,
     `description`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
     `value_regex`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
-    `ref_id`              bigint(20)                     NULL     DEFAULT NULL,
+    `ref_id`              bigint(20)                    NULL     DEFAULT NULL,
     `ref_value`           varchar(50) COLLATE utf8_bin  NULL     DEFAULT NULL,
     `data_source`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
-    `update_time`         datetime                   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `create_time`         datetime                  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   CHARACTER SET = utf8

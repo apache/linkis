@@ -16,62 +16,14 @@
 
 package com.webank.wedatasphere.linkis.manager.engineplugin.common.creation
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
 import com.webank.wedatasphere.linkis.engineconn.executor.entity.Executor
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.{EngineConnPluginErrorCode, EngineConnPluginErrorException}
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineRunTypeLabel
-import com.webank.wedatasphere.linkis.protocol.UserWithCreator
 
+/**
+  */
+trait ExecutorFactory {
 
-trait ExecutorFactory extends Logging {
+  def createExecutor(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Executor
 
-  /**
-   * Order of executors, the smallest one is the default
-   * @return
-   */
-  def getOrder: Int
-
-  def canCreate(labels: Array[Label[_]]): Boolean = {
-    val runTypeLabel = getDefaultEngineRunTypeLabel()
-    if (null == runTypeLabel) {
-      error("DefaultEngineRunTypeLabel must not be null!")
-      throw new EngineConnPluginErrorException(EngineConnPluginErrorCode.INVALID_RUNTYPE, "DefaultEngineRunTypeLabel cannot be null.")
-    }
-      labels.find(_.isInstanceOf[EngineRunTypeLabel]).foreach {
-        case label: EngineRunTypeLabel =>
-          info(s"executor runType is ${runTypeLabel.getRunType} input runType is ${label.getRunType}")
-          if (runTypeLabel.getRunType.equalsIgnoreCase(label.getRunType)) {
-            return true
-          }
-        case _ =>
-          error(s"runType label not exists")
-      }
-    false
-  }
-
-  /**
-   *
-   * @param engineCreationContext
-   * @param engineConn
-   * @param labels
-   * @return
-   */
-  def createExecutor(engineCreationContext: EngineCreationContext, engineConn: EngineConn, labels: Array[Label[_]]): Executor
-
-  def getDefaultEngineRunTypeLabel(): EngineRunTypeLabel
-}
-
-object ExecutorFactory extends Logging {
-
-  def parseUserWithCreator(labels: Array[Label[_]]): UserWithCreator = {
-    labels.foreach(l => l match {
-      case label: UserWithCreator =>
-        return UserWithCreator(label.user, label.creator)
-      case _ =>
-    })
-    null
-  }
 }

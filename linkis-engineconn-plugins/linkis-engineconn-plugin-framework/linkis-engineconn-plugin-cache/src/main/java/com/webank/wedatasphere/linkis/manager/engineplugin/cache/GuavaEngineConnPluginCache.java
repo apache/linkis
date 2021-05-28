@@ -25,7 +25,7 @@ import com.webank.wedatasphere.linkis.manager.engineplugin.cache.config.EngineCo
 import com.webank.wedatasphere.linkis.manager.engineplugin.cache.refresh.*;
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInfo;
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInstance;
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel;
+import com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.exception.EngineConnPluginNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.concurrent.*;
@@ -113,6 +113,9 @@ public class GuavaEngineConnPluginCache implements RefreshableEngineConnPluginCa
                     try {
                         //Use the getter method of plugin
                         return caller.call(info);
+                    } catch( EngineConnPluginNotFoundException ne) {
+                        LOG.trace("Not need to refresh the cache of plugin: [" + info.toString() + "], because the resource is not found");
+                        return null;
                     } catch (Exception e) {
                         LOG.error("Refresh cache of plugin: [" + info.toString() + "] failed, message: [" + e.getMessage() + "]", e);
                         return null;

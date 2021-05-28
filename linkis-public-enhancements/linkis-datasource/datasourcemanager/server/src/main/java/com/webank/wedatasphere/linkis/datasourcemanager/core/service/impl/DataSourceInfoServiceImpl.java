@@ -107,6 +107,32 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     }
 
     /**
+     * get datasource info for connect for published version, if there is a dependency environment,
+     * merge datasource parameter and environment parameter.
+     *
+     * @param dataSourceId
+     * @return
+     */
+    @Override
+    public DataSource getDataSourceInfoForConnect(Long dataSourceId) {
+        DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
+        String parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, dataSource.getPublishedVersionId());
+        return mergeParams(dataSource, parameter);
+    }
+
+    private DataSource mergeParams(DataSource dataSource, String parameter) {
+        dataSource.setParameter(parameter);
+        Map<String, String> connectParams = Objects.requireNonNull(Json.fromJson(parameter, Map.class));
+        if(connectParams.containsKey("envId")) {
+            Long envId = Long.valueOf(connectParams.get("envId"));
+            // remove envId for connect
+            dataSource.getConnectParams().remove("envId");
+            addEnvParamsToDataSource(envId, dataSource);
+        }
+        return dataSource;
+    }
+
+    /**
      * get datasource info for connect, if there is a dependency environment,
      * merge datasource parameter and environment parameter.
      *
@@ -118,15 +144,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     public DataSource getDataSourceInfoForConnect(Long dataSourceId, Long version) {
         DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
         String parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, version);
-        dataSource.setParameter(parameter);
-        Map<String, String> connectParams = Objects.requireNonNull(Json.fromJson(parameter, Map.class));
-        if(connectParams.containsKey("envId")) {
-            Long envId = Long.valueOf(connectParams.get("envId"));
-            // remove envId for connect
-            dataSource.getConnectParams().remove("envId");
-            addEnvParamsToDataSource(envId, dataSource);
-        }
-        return dataSource;
+        return mergeParams(dataSource, parameter);
     }
 
     @Override

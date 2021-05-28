@@ -363,6 +363,24 @@ public class DataSourceCoreRestfulApi {
         }, "/data_source/info/" + dataSourceId + "/expire", "Fail to expire data source[数据源过期失败]");
     }
 
+    /**
+     * get datasource connect params for current version
+     * @param dataSourceId
+     * @param req
+     * @return
+     */
+    @GET
+    @Path("/{data_source_id}/connect_params")
+    public Response getConnectParams(@PathParam("data_source_id") Long dataSourceId,
+                                      @Context HttpServletRequest req) {
+        return RestfulApiHelper.doAndResponse(() -> {
+            String operator = SecurityFilter.getLoginUsername(req);
+            DataSource dataSource = dataSourceInfoService.getDataSourceInfoForConnect(dataSourceId);
+            Map<String, Object> connectParams = dataSource.getConnectParams();
+            return Message.ok().data("connectParams", connectParams);
+
+        }, "/data_source/" + dataSourceId  + "/connect_params", "Fail to connect data source[连接数据源失败]");
+    }
 
     @PUT
     @Path("/{data_source_id}/{version}/op/connect")
@@ -381,7 +399,7 @@ public class DataSourceCoreRestfulApi {
             metadataOperateService.doRemoteConnect(mdRemoteServiceName, operator, dataSource.getConnectParams());
             ;
             return Message.ok().data("ok", true);
-        }, "/data_source/info/" + dataSourceId + "/" + version + "/op/connect", "Fail to connect data source[连接数据源失败]");
+        }, "/data_source/" + dataSourceId + "/" + version + "/op/connect", "Fail to connect data source[连接数据源失败]");
     }
 /*
     @PUT

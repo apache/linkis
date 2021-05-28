@@ -376,33 +376,6 @@ object CustomVariableUtils extends Logging {
       dateFormat.format(cal.getTime)
     }
   }
-//
-//  def main(args: Array[String]): Unit = {
-//    val code = "--@set a=1\n--@set b=2\nselect ${a +2},${a   + 1},${a},${a },${b},${b}"
-//    val task = new RequestPersistTask
-//    val args:java.util.Map[String, Object] = new util.HashMap[String, Object]()
-//    args.put(RUN_DATE, "20181030")
-//    task.setExecutionCode(code)
-//    task.setParams(args)
-//    val str = replaceCustomVar(task, "sql")
-//    println(str)
-//
-//    println("************code**************")
-//    var preSQL = ""
-//    var endSQL = ""
-//    var sql = "select * from (select * from utf_8_test limit 20) t ;"
-//    if (sql.contains("limit")) {
-//      preSQL = sql.substring(0, sql.lastIndexOf("limit")).trim
-//      endSQL = sql.substring(sql.lastIndexOf("limit")).trim
-//    } else if (sql.contains("LIMIT")) {
-//      preSQL = sql.substring(0, sql.lastIndexOf("limit")).trim
-//      endSQL = sql.substring(sql.lastIndexOf("limit")).trim
-//    }
-//    println(preSQL)
-//    println(endSQL)
-//    /* val yestd = new CustomDateType("2017-11-11",false)
-//     println(yestd)*/
-//  }
 
 }
 

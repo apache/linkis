@@ -50,7 +50,7 @@ linkis-computation-governance/linkis-manager/linkis-resource-manager/target/
 
 linkis-public-enhancements/linkis-bml/linkis-bml-client/target/
 linkis-public-enhancements/linkis-bml/linkis-bml-common/target/
-linkis-public-enhancements/linkis-bml/linkis-bml-server/ctarget/
+linkis-public-enhancements/linkis-bml/linkis-bml-server/target/
 linkis-public-enhancements/linkis-bml/linkis-bml-engine-hook/target/
 linkis-public-enhancements/linkis-context-service/linkis-cs-cache/target/
 linkis-public-enhancements/linkis-context-service/linkis-cs-client/target/

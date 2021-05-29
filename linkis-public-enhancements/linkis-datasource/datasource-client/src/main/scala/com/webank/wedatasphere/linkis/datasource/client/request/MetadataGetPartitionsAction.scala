@@ -9,6 +9,12 @@ class MetadataGetPartitionsAction extends GetAction with DataSourceAction {
   private var table: String = _
 
   override def suffixURLs: Array[String] = Array("metadata", "partitions", dataSourceId, "db", database, "table", table)
+
+  private var user:String = _
+
+  override def setUser(user: String): Unit = this.user = user
+
+  override def getUser: String = this.user
 }
 
 
@@ -20,6 +26,12 @@ object MetadataGetPartitionsAction {
     private var database: String = _
     private var table: String = _
     private var system:String = _
+    private var user: String = _
+
+    def setUser(user: String): Builder = {
+      this.user = user
+      this
+    }
 
     def setDataSourceId(dataSourceId: String): Builder = {
       this.dataSourceId = dataSourceId
@@ -52,6 +64,7 @@ object MetadataGetPartitionsAction {
       metadataGetPartitionsAction.database = this.database
       metadataGetPartitionsAction.table = this.table
       metadataGetPartitionsAction.setParameter("system", system)
+      metadataGetPartitionsAction.setUser(user)
       metadataGetPartitionsAction
     }
   }

@@ -7,6 +7,12 @@ class MetadataGetDatabasesAction extends GetAction with DataSourceAction {
   private var dataSourceId: Long = _
 
   override def suffixURLs: Array[String] = Array("metadata", "dbs", dataSourceId.toString)
+
+  private var user:String = _
+
+  override def setUser(user: String): Unit = this.user = user
+
+  override def getUser: String = this.user
 }
 
 object MetadataGetDatabasesAction {

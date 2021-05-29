@@ -1,6 +1,6 @@
 package com.webank.wedatasphere.linkis.datasource.client
 
-import com.webank.wedatasphere.linkis.datasource.client.impl.LinkisMetaDataRemoteClient
+import com.webank.wedatasphere.linkis.datasource.client.impl.LinkisDataSourceRemoteClient
 import com.webank.wedatasphere.linkis.datasource.client.request._
 import com.webank.wedatasphere.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy
 import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfigBuilder
@@ -24,51 +24,55 @@ object TestDataSourceClient {
       .setDWSVersion("v1")
       .build()
 
-//    val dataSourceClient = new LinkisDataSourceRemoteClient(clientConfig)
-//
-//    val getAllDataSourceTypesResult = dataSourceClient.getAllDataSourceTypes(GetAllDataSourceTypesAction.builder().setUser("hadoop").build()).getAllDataSourceType
-//
-//    val queryDataSourceEnvResult = dataSourceClient.queryDataSourceEnv(
-//                                        QueryDataSourceEnvAction.builder()
-//                                        .setName("mysql")
-//                                        .setTypeId(2)
-//                                        .setCurrentPage(1)
-//                                        .setPageSize(1)
-//                                        .setUser("hadoop")
-//                                        .build() ).getDataSourceEnv
-//
-//    val getInfoByDataSourceIdResult = dataSourceClient.getInfoByDataSourceId(
-//        GetInfoByDataSourceIdAction.builder().setDataSourceId(1).setSystem("xx").setUser("hadoop").build()
-//    ).getDataSource
-//
-//    val queryDataSourceResult = dataSourceClient.queryDataSource(QueryDataSourceAction.builder()
-//                                      .setSystem("")
-//                                      .setName("mysql")
-//                                      .setTypeId(1)
-//                                      .setIdentifies("")
-//                                      .setCurrentPage(1)
-//                                      .setPageSize(10)
-//                                      .setUser("hadoop")
-//                                      .build()
-//                                ).getAllDataSource
+    val dataSourceClient = new LinkisDataSourceRemoteClient(clientConfig)
+
+    val getAllDataSourceTypesResult = dataSourceClient.getAllDataSourceTypes(GetAllDataSourceTypesAction.builder().setUser("hadoop").build()).getAllDataSourceType
+
+    val queryDataSourceEnvResult = dataSourceClient.queryDataSourceEnv(
+                                        QueryDataSourceEnvAction.builder()
+                                        .setName("mysql")
+                                        .setTypeId(2)
+                                        .setCurrentPage(1)
+                                        .setPageSize(1)
+                                        .setUser("hadoop")
+                                        .build() ).getDataSourceEnv
+
+    val getInfoByDataSourceIdResult = dataSourceClient.getInfoByDataSourceId(
+        GetInfoByDataSourceIdAction.builder().setDataSourceId(1).setSystem("xx").setUser("hadoop").build()
+    ).getDataSource
+
+    val queryDataSourceResult = dataSourceClient.queryDataSource(QueryDataSourceAction.builder()
+                                      .setSystem("")
+                                      .setName("mysql")
+                                      .setTypeId(1)
+                                      .setIdentifies("")
+                                      .setCurrentPage(1)
+                                      .setPageSize(10)
+                                      .setUser("hadoop")
+                                      .build()
+                                ).getAllDataSource
+
+    val getConnectParamsByDataSourceIdResult = dataSourceClient.getConnectParams(
+      GetConnectParamsByDataSourceIdAction.builder().setDataSourceId(1).setSystem("xx").setUser("hadoop").build()
+    )
 
 
-    val metadataClient = new LinkisMetaDataRemoteClient(clientConfig)
-    val metadataGetDatabasesResult = metadataClient.getDatabases(
-                                          MetadataGetDatabasesAction.builder()
-                                            .setSystem("xx")
-                                            .setDataSourceId(1)
-                                            .setUser("hadoop")
-                                            .build()
-                                     )
-    val metadataGetTablesResult = metadataClient.getTables(
-                                          MetadataGetTablesAction.builder()
-                                            .setSystem("xx")
-                                            .setDataSourceId(1)
-                                            .setDatabase("dss_test")
-                                            .setUser("hadoop").build()
-                                     )
-
+//    val metadataClient = new LinkisMetaDataRemoteClient(clientConfig)
+//    val metadataGetDatabasesResult = metadataClient.getDatabases(
+//                                          MetadataGetDatabasesAction.builder()
+//                                            .setSystem("xx")
+//                                            .setDataSourceId(1)
+//                                            .setUser("hadoop")
+//                                            .build()
+//                                     )
+//    val metadataGetTablesResult = metadataClient.getTables(
+//                                          MetadataGetTablesAction.builder()
+//                                            .setSystem("xx")
+//                                            .setDataSourceId(1)
+//                                            .setDatabase("dss_test")
+//                                            .setUser("hadoop").build()
+//                                     )
+//
 //    val metadataGetTablePropsResult = metadataClient.getTableProps(
 //                                          MetadataGetTablePropsAction.builder()
 //                                            .setDataSourceId(3)
@@ -78,25 +82,25 @@ object TestDataSourceClient {
 //                                            .setUser("hadoop")
 //                                            .build()
 //                                      )
+////
+////    val metadataGetPartitionsResult = metadataClient.getPartitions(
+////                                          MetadataGetPartitionsAction.builder()
+////                                            .setDataSourceId("")
+////                                            .setDatabase("")
+////                                            .setTable("")
+////                                            .setSystem("")
+////                                            .build()
+////                                      )
 //
-//    val metadataGetPartitionsResult = metadataClient.getPartitions(
-//                                          MetadataGetPartitionsAction.builder()
-//                                            .setDataSourceId("")
-//                                            .setDatabase("")
-//                                            .setTable("")
-//                                            .setSystem("")
+//    val metadataGetColumnsResult = metadataClient.getColumns(
+//                                          MetadataGetColumnsAction.builder()
+//                                            .setDataSourceId(1)
+//                                            .setDatabase("dss_test")
+//                                            .setTable("dss_appconn")
+//                                            .setSystem("xx")
+//                                            .setUser("hadoop")
 //                                            .build()
-//                                      )
-
-    val metadataGetColumnsResult = metadataClient.getColumns(
-                                          MetadataGetColumnsAction.builder()
-                                            .setDataSourceId(1)
-                                            .setDatabase("dss_test")
-                                            .setTable("dss_appconn")
-                                            .setSystem("xx")
-                                            .setUser("hadoop")
-                                            .build()
-                                      ).getAllColumns
+//                                      ).getAllColumns
 
     println("ss")
 

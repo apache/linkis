@@ -18,4 +18,4 @@ package com.webank.wedatasphere.linkis.datasource.client.request
 
 import com.webank.wedatasphere.linkis.httpclient.dws.request.DWSHttpAction
 
-trait DataSourceAction extends DWSHttpAction with UserAction
+trait DataSourceAction extends DWSHttpAction with com.webank.wedatasphere.linkis.httpclient.request.UserAction

@@ -5,6 +5,12 @@ import com.webank.wedatasphere.linkis.httpclient.request.GetAction
 
 class QueryDataSourceAction extends GetAction with DataSourceAction{
   override def suffixURLs: Array[String] = Array("datasource", "info")
+
+  private var user:String = _
+
+  override def setUser(user: String): Unit = this.user = user
+
+  override def getUser: String = this.user
 }
 
 object QueryDataSourceAction {

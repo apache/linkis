@@ -67,12 +67,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveDataSourceInfo(DataSource dataSource) throws ErrorException {
-//        storeConnectParams(dataSource.getCreateUser(), dataSource.getKeyDefinitions(),
-//                dataSource.getConnectParams(), parameter -> {
-//                    dataSource.setParameter(parameter);
-//                    //Save information into database
-//                    dataSourceDao.insertOne(dataSource);
-//                });
         dataSourceDao.insertOne(dataSource);
     }
 
@@ -162,24 +156,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
             if (affect > 0) {
                 // delete parameter version
                 int versionNum = dataSourceVersionDao.removeFromDataSourceId(dataSourceId);
-
-                // todo: Remove resource
-//                Map<String, Object> connectParams = dataSource.getConnectParams();
-//                List<DataSourceParamKeyDefinition> keyDefinitions = dataSourceParamKeyDao
-//                        .listByDataSourceType(dataSource.getDataSourceTypeId());
-//                keyDefinitions.forEach(keyDefinition -> {
-//                    if (keyDefinition.getValueType() == DataSourceParamKeyDefinition.ValueType.FILE
-//                            && keyDefinition.getScope() != DataSourceParamKeyDefinition.Scope.ENV
-//                            && connectParams.containsKey(keyDefinition.getKey())) {
-//                        try {
-//                            //Proxy creator to delete resource
-//                            bmlAppService.clientRemoveResource(dataSource.getCreateUser(), String
-//                                    .valueOf(connectParams.get(keyDefinition.getKey())));
-//                        } catch (Exception e) {
-//                            //Ignore remove error
-//                        }
-//                    }
-//                });
                 return dataSourceId;
             }
         }
@@ -189,13 +165,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateDataSourceInfo(DataSource updatedOne) {
-//        updateConnectParams(updatedOne.getCreateUser(), updatedOne.getKeyDefinitions(),
-//                updatedOne.getConnectParams(), storedOne.getConnectParams(),
-//                parameter -> {
-//                    updatedOne.setParameter(parameter);
-//                    //Save information into database
-//                    dataSourceDao.updateOne(updatedOne);
-//                });
         dataSourceDao.updateOne(updatedOne);
     }
 
@@ -363,12 +332,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
         // 4. update version id for dataSourceDao
         dataSourceDao.updateVersionId(datasourceId, newVersionId);
-//        storeConnectParams(username, keyDefinitionList, connectParams, params -> {
-//            datasourceVersion.setParameter(params);
-//            dataSourceVersionDao.insertOne(datasourceVersion);
-//            // update version id
-//            dataSourceDao.updateVersionId(datasourceId, newVersionId);
-//        });
 
         return newVersionId;
     }

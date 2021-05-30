@@ -33,7 +33,7 @@ import javax.annotation.Resource
 
 
 /**
- * Description: 如果id为HAID，则解析出对应的instance
+ * Description: If id is correct format of ContextHAId, will parse it to get the instance and backup instances.
  */
 @Component
 class ContextIdParserImpl extends ContextIDParser with Logging {

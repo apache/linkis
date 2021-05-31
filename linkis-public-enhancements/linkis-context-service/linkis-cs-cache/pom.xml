@@ -73,7 +73,7 @@
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-cs-listener</artifactId>
-            <version>1.0.0</version>
+            <version>${linkis.version}</version>
         </dependency>
 
     </dependencies>

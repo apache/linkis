@@ -25,13 +25,6 @@ import java.util.List;
 
 public class Test {
     public static void main(String[] args) throws IOException {
-//        LinkisErrorCodeHandler linkisErrorCodeHandler = LinkisErrorCodeHandler.getInstance();
-//        List<ErrorCode> ret = linkisErrorCodeHandler.handle("queue root is not exists in YARN");
-//        System.out.println(ret);
-//        linkisErrorCodeHandler.handle("E:\\data\\dss.log", 0);
-//        LinkisErrorCodeClient errorCodeClient = new ErrorCodeClientBuilder().setVersion("v1").build();
-//        List<LinkisErrorCode> errorCodes = errorCodeClient.getErrorCodesFromServer();
-//        System.out.println(errorCodes);
         try{
             Class.forName("com.webank.wedatasphere.linkis.errorcode.client.handler.LinkisErrorCodeHandler");
         }catch(ClassNotFoundException e){

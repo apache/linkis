@@ -27,7 +27,7 @@ import com.webank.wedatasphere.linkis.jobhistory.entity.JobHistory
 import com.webank.wedatasphere.linkis.message.annotation.Receiver
 
 import scala.collection.JavaConverters.asScalaBufferConverter
-//import com.webank.wedatasphere.linkis.jobhistory.cache.QueryCacheService
+
 import java.util
 import java.util.Date
 

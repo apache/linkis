@@ -93,7 +93,6 @@ public class UjesClientDriver implements LinkisClientDriver {
                                 .setAuthTokenValue(ujesContext.getTokenValue())))
                                 .setDWSVersion(ujesContext.getDwsVersion()).build();
 
-
                 client = new UJESClientImpl(config);
             } catch (Exception e) {
                 throw new ExecutorException(JobStatus.UNSUBMITTED, "EXE0010", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "Cannot init UjesClientDriver", e);
@@ -204,7 +203,7 @@ public class UjesClientDriver implements LinkisClientDriver {
                     if (jobInfoResult == null) {
                         reason = "JobInfoResult is null";
                     } else {
-                        reason = "server returns status-code: 0";
+                        reason = "server returns non-zero status-code";
                     }
                     String msg = MessageFormat.format("Get job info failed. retry time : {0}/{1}. taskID={0}, Reason: {1}", retryTime, MAX_RETRY_TIME, taskID, reason);
 
@@ -229,7 +228,7 @@ public class UjesClientDriver implements LinkisClientDriver {
             if (jobInfoResult == null) {
                 reason = "JobInfoResult is null";
             } else {
-                reason = "server returns status-code: 0";
+                reason = "server returns non-zero status-code";
             }
             String msg = MessageFormat.format("Get info failed. Retry exhausted. taskID={0}, Reason: {1}", taskID, reason);
             throw new ExecutorException("EXE0013", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
@@ -260,7 +259,7 @@ public class UjesClientDriver implements LinkisClientDriver {
                     if (logResult == null) {
                         reason = "JobLogResult is null";
                     } else {
-                        reason = "server returns status-code: 0";
+                        reason = "server returns non-zero status-code";
                     }
                     String msg = MessageFormat.format("Get log failed. retry time : {0}/{1}. taskID={2}. Reason: {3}", retryTime, MAX_RETRY_TIME, taskID, reason);
                     logger.warn("", new ExecutorException("EXE0015", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg));
@@ -281,7 +280,7 @@ public class UjesClientDriver implements LinkisClientDriver {
             if (logResult == null) {
                 reason = "JobLogResult is null";
             } else {
-                reason = "server returns status-code: 0";
+                reason = "server returns non-zero status-code";
             }
             String msg = MessageFormat.format("Get log failed. Retry exhausted. taskID={0}, Reason: {1}", taskID, reason);
 //            logger.warn("", new ExecutorException("EXE0016", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg));
@@ -311,7 +310,7 @@ public class UjesClientDriver implements LinkisClientDriver {
                     if (openLogResult == null) {
                         reason = "OpenLogResult is null";
                     } else if (0 != openLogResult.getStatus())  {
-                        reason = "server returns non-zero non-zero status-code";
+                        reason = "server returns non-zero status-code";
                     } else {
                         reason = "server returns empty log";
                     }
@@ -372,7 +371,7 @@ public class UjesClientDriver implements LinkisClientDriver {
                     if (jobProgressResult == null) {
                         reason = "JobProgressResult is null";
                     } else {
-                        reason = "server returns status-code: 0";
+                        reason = "server returns non-zero status-code";
                     }
                     String msg = MessageFormat.format("Get progress failed. retry time : {0}/{1}. taskID={2}. Reason: {3}", retryTime, MAX_RETRY_TIME, taskID, reason);
                     logger.warn(msg);
@@ -397,7 +396,7 @@ public class UjesClientDriver implements LinkisClientDriver {
             if (jobProgressResult == null) {
                 reason = "JobProgressResult is null";
             } else {
-                reason = "server returns status-code: 0";
+                reason = "server returns non-zero status-code";
             }
             String msg = MessageFormat.format("Get progress failed. Retry exhausted. taskID={0}, Reason: {1}", taskID, reason);
             throw new ExecutorException("EXE0020", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
@@ -507,7 +506,7 @@ public class UjesClientDriver implements LinkisClientDriver {
                     if (result == null) {
                         reason = "array is null";
                     } else {
-                        reason = "server returns status-code: 0";
+                        reason = "server returns non-zero status-code";
                     }
                     String msg = MessageFormat.format("Get resultSet failed. retry time : {0}/{1}. path={2}, Reason: {3}", retryTime, MAX_RETRY_TIME, resultSetPath, reason);
                     logger.warn(msg);
@@ -531,7 +530,7 @@ public class UjesClientDriver implements LinkisClientDriver {
             if (result == null) {
                 reason = "ResultSetResult is null";
             } else {
-                reason = "server returns status-code: 0";
+                reason = "server returns non-zero status-code";
             }
             String msg = MessageFormat.format("Get resultSet failed. Retry exhausted. Path={0}, Reason: {1}", resultSetPath, reason);
             throw new ExecutorException("EXE0024", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
@@ -561,7 +560,7 @@ public class UjesClientDriver implements LinkisClientDriver {
                     if (result == null) {
                         reason = "result is null";
                     } else {
-                        reason = "server returns status-code: 0";
+                        reason = "server returns non-zero status-code";
                     }
                     String msg = MessageFormat.format("Kill job failed. retry time : {0}/{1}. taskId={2}, Reason: {3}", retryTime, MAX_RETRY_TIME, taskId, reason);
                     logger.warn(msg);
@@ -585,7 +584,7 @@ public class UjesClientDriver implements LinkisClientDriver {
             if (result == null) {
                 reason = "result is null";
             } else {
-                reason = "server returns status-code: 0";
+                reason = "server returns non-zero status-code";
             }
             String msg = MessageFormat.format("Kill job failed. Retry exhausted. taskId={0}, Reason: {1}", taskId, reason);
             throw new ExecutorException("EXE0025", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);

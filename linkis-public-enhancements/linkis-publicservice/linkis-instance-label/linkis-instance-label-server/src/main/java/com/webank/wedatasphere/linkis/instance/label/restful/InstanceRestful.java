@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.instance.label.restful;
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
@@ -89,7 +90,7 @@ public class InstanceRestful {
         List<Label<? extends Label<?>>> labels = new ArrayList<>();
         Set<String> keyList = LabelUtils.listAllUserModifiableLabel();
         Set<String> labelKeySet = new HashSet<>();
-        //遍历所有labelKey，拿出labelValue
+        //Traverse all labelKeys and take out labelValue.
         while(labelKeyIterator.hasNext()){
             JsonNode label = labelKeyIterator.next();
             String labelKey = label.get("labelKey").asText();

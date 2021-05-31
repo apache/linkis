@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.errorcode.client.handler;
 
 import com.webank.wedatasphere.linkis.errorcode.common.ErrorCode;
@@ -22,9 +23,10 @@ import java.util.List;
 
 public interface LogFileErrorCodeHandler extends ErrorCodeHandler{
     /**
-     * 通过传入一个日志的路径，然后根据日志的路径去读取文件同时匹配错误码，然后进行匹配错误码
-     * @param logFilePath 日志文件地址
-     * @param type 辅助参数
+     * Pass in a log path, and then read the file according to the log path and match the error code at the same time,
+     * and then match the error code
+     * @param logFilePath Log file path
+     * @param type Auxiliary parameters
      * @return
      */
     void handle(String logFilePath, int type);
@@ -34,9 +36,9 @@ public interface LogFileErrorCodeHandler extends ErrorCodeHandler{
 
     /**
      *
-     * @param logFilePath 文件地址
-     * @param line 行数，如果不传 默认1000
-     * @return 错误码信息
+     * @param logFilePath File path
+     * @param line Number of rows, if not passed, the default value is 1000
+     * @return Error code information
      */
     List<ErrorCode> handleFileLines(String logFilePath, int line);
 

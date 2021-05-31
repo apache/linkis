@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.errorcode.client.handler;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -69,13 +70,13 @@ public class LinkisErrorCodeHandler implements LogErrorCodeHandler, LogFileError
 
 
     static {
-        //通过getInstance方法将我们的定时线程和其他的线程池都初始化起来
+        //Initialize our timing thread and other thread pools through the getInstance method.
         getInstance();
     }
 
     @Override
     public List<ErrorCode> handle(String log) {
-        //也是启动一个线程，如果超过2秒，就直接报超时，然后返回空List
+        //It also starts a thread, if it exceeds 2 seconds, it will directly report the timeout, and then return an empty List.
         //List<ErrorCode> list = new ArrayList<>();
         Set<ErrorCode> errorCodeSet = new HashSet<>();
         Runnable runnable = () -> {
@@ -109,16 +110,16 @@ public class LinkisErrorCodeHandler implements LogErrorCodeHandler, LogFileError
     public void handle(String logFilePath, int type) {
 
         LOGGER.info("begin to handle logFilePath {}", logFilePath);
-        //文件最后写入 "正在为您生成错误码信息"
+        //At the end of the file, write "error code information is being generated for you".
         try{
             writeToFile(logFilePath, ERROR_CODE_PRE);
         }catch(Exception e){
-            //如果出现了写入异常，直接跳过此次的问题
+            //If there is a write exception, skip this question directly.
             LOGGER.error("Failed to append error code to log file {}", logFilePath, e);
             return;
         }
         Runnable runnable = () -> {
-            //传入文件地址,然后开始进行解析
+            //Pass in the file address, and then start parsing.
             Set<LinkisErrorCode> errorCodeSet = new HashSet<>();
             LOGGER.info("start to parse error codes for {}", logFilePath);
             try(BufferedReader bufferedReader = new BufferedReader(new FileReader(logFilePath))){
@@ -159,8 +160,8 @@ public class LinkisErrorCodeHandler implements LogErrorCodeHandler, LogFileError
 
 
     /**
-     * 读取文件最后几行 <br>
-     * 相当于Linux系统中的tail命令 读取大小限制是2GB
+     * Read the last few lines of the file <br>
+     * Equivalent to the tail command in the Linux system, the read size limit is 2GB.
      *
      * @param filename 文件名
      * @param charset  文件编码格式,传null默认使用defaultCharset
@@ -214,7 +215,7 @@ public class LinkisErrorCodeHandler implements LogErrorCodeHandler, LogFileError
 
 
     /**
-     * 此类因为是单例，除了本地测试，严禁调用此方法
+     * Because this class is a singleton, it is strictly forbidden to call this method except for local testing.
      * @throws IOException
      */
     @Override

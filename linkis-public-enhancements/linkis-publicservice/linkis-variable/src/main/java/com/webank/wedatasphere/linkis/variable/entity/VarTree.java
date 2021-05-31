@@ -19,9 +19,6 @@ package com.webank.wedatasphere.linkis.variable.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by cooperyang on 2018/10/18.
- */
 
 public class VarTree {
     private Long id;

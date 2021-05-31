@@ -25,5 +25,5 @@ public interface CsScheduler {
 
     Service[] getServices();
 
-    void sumbit(HttpJob job) throws InterruptedException;
+    void submit(HttpJob job) throws InterruptedException;
 }

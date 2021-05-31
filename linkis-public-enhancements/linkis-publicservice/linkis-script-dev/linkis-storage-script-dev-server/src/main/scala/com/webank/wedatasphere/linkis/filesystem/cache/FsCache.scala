@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.filesystem.entity.FSInfo
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  * Created by johnnwang on 2019/2/11.
-  */
+
 object FsCache {
   val fsInfo = new util.HashMap[String, ArrayBuffer[FSInfo]]()
 }

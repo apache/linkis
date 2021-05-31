@@ -25,6 +25,7 @@ import com.webank.wedatasphere.linkis.bml.http.HttpConf
 import com.webank.wedatasphere.linkis.bml.protocol._
 import com.webank.wedatasphere.linkis.bml.request._
 import com.webank.wedatasphere.linkis.bml.response.{BmlCreateBmlProjectResult, _}
+import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.httpclient.authentication.AuthenticationStrategy
 import com.webank.wedatasphere.linkis.httpclient.config.{ClientConfig, ClientConfigBuilder}
@@ -51,7 +52,7 @@ class HttpBmlClient extends AbstractBmlClient{
     .setAuthenticationStrategy(authenticationStrategy).setAuthTokenKey(BmlConfiguration.AUTH_TOKEN_KEY.getValue)
     .setAuthTokenValue(BmlConfiguration.AUTH_TOKEN_VALUE.getValue).build()
   val dwsClientConfig:DWSClientConfig = new DWSClientConfig(clientConfig)
-  dwsClientConfig.setDWSVersion(BmlConfiguration.DWS_VERSION.getValue)
+  dwsClientConfig.setDWSVersion(Configuration.LINKIS_WEB_VERSION.getValue)
   val dwsClientName:String = "BML-Client"
   val dwsClient:DWSHttpClient = new DWSHttpClient(dwsClientConfig, dwsClientName)
 
@@ -451,4 +452,6 @@ class HttpBmlClient extends AbstractBmlClient{
       case _ =>  throw POSTResultNotMatchException()
     }
   }
+
+  override def close(): Unit = dwsClient.close()
 }

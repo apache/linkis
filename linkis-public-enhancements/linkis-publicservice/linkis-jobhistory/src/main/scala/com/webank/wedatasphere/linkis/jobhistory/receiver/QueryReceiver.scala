@@ -1,4 +1,5 @@
 /*
+/*
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,21 +17,21 @@
 
 package com.webank.wedatasphere.linkis.jobhistory.receiver
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.governance.common.entity.task.{RequestInsertTask, RequestOneTask, RequestQueryTask, RequestUpdateTask}
-import com.webank.wedatasphere.linkis.jobhistory.cache.QueryCacheService
-import com.webank.wedatasphere.linkis.jobhistory.service.QueryService
-import com.webank.wedatasphere.linkis.protocol.query.cache._
-import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
+//import com.webank.wedatasphere.linkis.common.utils.Utils
+//import com.webank.wedatasphere.linkis.governance.common.entity.task.{RequestInsertTask, RequestOneTask, RequestQueryTask, RequestUpdateTask}
+//import com.webank.wedatasphere.linkis.jobhistory.cache.QueryCacheService
+//import com.webank.wedatasphere.linkis.jobhistory.service.JobHistoryQueryService
+//import com.webank.wedatasphere.linkis.protocol.query.cache._
+//import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
 
 import scala.concurrent.duration.Duration
 
 class QueryReceiver extends Receiver {
 
-  private var queryService: QueryService = _
+  private var queryService: JobHistoryQueryService = _
   private var queryCacheService: QueryCacheService = _
 
-  def this(queryService: QueryService, queryCacheService: QueryCacheService) = {
+  def this(queryService: JobHistoryQueryService, queryCacheService: QueryCacheService) = {
     this()
     this.queryService = queryService
     this.queryCacheService = queryCacheService
@@ -61,3 +62,4 @@ class QueryReceiver extends Receiver {
 
   override def receiveAndReply(message: Any, duration: Duration, sender: Sender): Any = {}
 }
+*/

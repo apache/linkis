@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.filesystem.result
 
 import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
 import scala.beans.BeanProperty
 
-/**
-  * Created by patinousward
-  */
 @DWSHttpMessageResult("/api/rest_j/v\\d+/filesystem/openScriptFromBML")
 class ScriptFromBMLResult extends AbstractWorkspaceResult{
 

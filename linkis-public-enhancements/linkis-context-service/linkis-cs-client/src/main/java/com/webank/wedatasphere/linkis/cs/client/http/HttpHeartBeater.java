@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.cs.client.http;
 
+import com.webank.wedatasphere.linkis.common.conf.Configuration;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.common.listener.Event;
 import com.webank.wedatasphere.linkis.common.utils.Utils;
@@ -25,7 +26,6 @@ import com.webank.wedatasphere.linkis.cs.client.listener.ContextClientListener;
 import com.webank.wedatasphere.linkis.cs.client.listener.ContextClientListenerBus;
 import com.webank.wedatasphere.linkis.cs.client.listener.ContextClientListenerManager;
 import com.webank.wedatasphere.linkis.cs.client.listener.HeartBeater;
-import com.webank.wedatasphere.linkis.cs.client.utils.ContextClientConf;
 import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.CommonContextKeyValue;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
@@ -73,7 +73,7 @@ public class HttpHeartBeater implements HeartBeater {
             HttpContextClientConfig httpContextClientConfig = (HttpContextClientConfig)contextClientConfig;
             ClientConfig clientConfig = httpContextClientConfig.getClientConfig();
             DWSClientConfig dwsClientConfig = new DWSClientConfig(clientConfig);
-            dwsClientConfig.setDWSVersion(ContextClientConf.LINKIS_WEB_VERSION().getValue());
+            dwsClientConfig.setDWSVersion(Configuration.LINKIS_WEB_VERSION().getValue());
             dwsHttpClient = new DWSHttpClient(dwsClientConfig, name);
         }
     }

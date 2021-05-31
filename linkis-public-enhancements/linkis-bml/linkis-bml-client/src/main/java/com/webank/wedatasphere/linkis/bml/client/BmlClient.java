@@ -17,12 +17,16 @@ package com.webank.wedatasphere.linkis.bml.client;
 
 import com.webank.wedatasphere.linkis.bml.protocol.*;
 
+import java.io.Closeable;
 import java.io.InputStream;
 import java.util.List;
 
-public interface BmlClient {
+
+public interface BmlClient extends Closeable {
     /**
      * 传入resourceID bmlclient会resource的输入流,如果不传入version,默认返回最新的版本
+     * Pass in the resourceID bmlclient will resource the input stream. If you do not pass
+     * in the version, the latest version will be returned by default.
      * @param resourceID resourceID
      * @return InputStream
      */

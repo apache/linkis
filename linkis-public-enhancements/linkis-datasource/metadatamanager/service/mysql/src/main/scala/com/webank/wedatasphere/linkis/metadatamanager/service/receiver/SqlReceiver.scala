@@ -16,8 +16,9 @@ package com.webank.wedatasphere.linkis.metadatamanager.service.receiver
 import com.webank.wedatasphere.linkis.DataWorkCloudApplication
 import com.webank.wedatasphere.linkis.metadatamanager.common.receiver.BaseMetaReceiver
 import com.webank.wedatasphere.linkis.metadatamanager.common.service.MetadataService
-import javax.annotation.PostConstruct
 import org.springframework.stereotype.Component
+
+import javax.annotation.PostConstruct
 
 @Component
 class SqlReceiver extends BaseMetaReceiver{

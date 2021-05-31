@@ -21,7 +21,6 @@ public interface BaseMetadataService {
 
     /**
      * Get connection
-     *
      * @param params connect params
      * @return
      */

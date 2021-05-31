@@ -27,20 +27,20 @@
 
     <insert id="createIDListener" useGeneratedKeys="true" keyProperty="id"
             parameterType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextIDListener">
-        INSERT INTO linkis_cs_context_listener(<include refid="context_id_listener"/>)
+        INSERT INTO linkis_ps_cs_context_listener(<include refid="context_id_listener"/>)
         VALUES (#{listener.id},#{listener.source},#{listener.contextId})
     </insert>
 
     <delete id="remove">
-        DELETE FROM linkis_cs_context_listener where context_id = #{listener.contextId} AND listener_source = #{listener.source}
+        DELETE FROM linkis_ps_cs_context_listener where context_id = #{listener.contextId} AND listener_source = #{listener.source}
     </delete>
 
     <delete id="removeAll">
-        DELETE FROM linkis_cs_context_listener where context_id = #{contextID.contextId}
+        DELETE FROM linkis_ps_cs_context_listener where context_id = #{contextID.contextId}
     </delete>
 
     <select id="getAll" resultType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextIDListener">
-        SELECT * FROM linkis_cs_context_listener where context_id = #{contextID.contextId}
+        SELECT * FROM linkis_ps_cs_context_listener where context_id = #{contextID.contextId}
     </select>
 
 

@@ -56,7 +56,7 @@ public class VersionServiceImpl implements VersionService {
 
 
     /**
-     * 版本更新的时候,OVER_WRITE一律为false
+     * When the version is updated, OVER_WRITE is always false
      */
     private static final boolean OVER_WRITE = false;
 
@@ -134,9 +134,9 @@ public class VersionServiceImpl implements VersionService {
     @Override
     public boolean downloadResource(String user, String resourceId, String version, OutputStream outputStream,
                                     Map<String, Object> properties) throws IOException {
-        //1获取resourceId 和 version对应的资源所在的路径
-        //2获取的startByte和EndByte
-        //3使用storage获取输入流
+        //1.Get the path of the resource corresponding to resourceId and version
+        //2.Get startByte and EndByte
+        //3.Use storage to get input stream
         ResourceVersion resourceVersion = versionDao.findResourceVersion(resourceId, version);
         long startByte = resourceVersion.getStartByte();
         long endByte = resourceVersion.getEndByte();

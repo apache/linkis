@@ -167,9 +167,9 @@ class CategoryService extends Logging{
       configMapper.insertCategory(categoryLabel)
       info(s"success to create category: ${combinedLabel.getStringValue} --category id: ${categoryLabel.getCategoryId} " +
         s"--category level: 2")
-      //1.此处将引擎和对应的引擎默认配置关联初始化，需要提前在数据库中录入引擎对应版本的相关配置
-      //2.现在所有获取的默认配置都是获取引擎级别的默认配置，暂时没有应用级别的默认配置。
-      // 如需考虑，需要将此处生成label的creator改成对应的应用，并且需要修改getFullTree用于获取defaultConfig的label，同样将它的creator替换成应用的creator
+      //1.Here, the engine and the corresponding engine default configuration are associated and initialized, and the relevant configuration of the corresponding version of the engine needs to be entered in the database in advance
+      //2.Now all the default configurations obtained are the default configuration of the engine level, and there is no default configuration of the application level for the time being.
+      // If you need to consider, you need to change the creator of the label generated here to the corresponding application, and you need to modify the getFullTree to obtain the label of the defaultConfig, and also replace its creator with the creator of the application.
       val linkedEngineTypeLabel = configurationService.generateCombinedLabel(engineType,version,null, null)
       associateConfigKey(parsedLabel.getId, linkedEngineTypeLabel.getStringValue)
     }

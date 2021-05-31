@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.filesystem.response
 
 case class ScriptFromBMLResponse(scriptContent:String,metadata:java.util.Map[String,java.util.Map[String,Object]]) extends WorkspaceResponse

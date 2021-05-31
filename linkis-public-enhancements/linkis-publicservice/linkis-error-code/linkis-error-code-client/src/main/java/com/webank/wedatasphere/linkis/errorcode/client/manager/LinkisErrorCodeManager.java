@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.errorcode.client.manager;
 
 import com.webank.wedatasphere.linkis.errorcode.client.synchronizer.LinkisErrorCodeSynchronizer;

@@ -132,8 +132,9 @@ public class HdfsResourceHelper implements ResourceHelper {
 
     /**
      * Motivation to modify this path：
-     * 这个路径在hdfs上/apps-data/hadoop/user下，和结果集文件混杂在一起，在2021年4月份集群时，
-     * 并不能单独同步bml文件，在用户验证工作流时，每次都需要同步全量个人全量hdfs数据，十分不便。
+     * This path is under /apps-data/hadoop/user on hdfs, which is mixed with the result set file.
+     * Bml files cannot be synchronized separately. When the user verifies the workflow,
+     * it is necessary to synchronize the full amount of personal and full hdfs data each time, which is very inconvenient.
      * */
     @Override
     public String generatePath(String user, String fileName, Map<String, Object> properties) {

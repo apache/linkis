@@ -65,7 +65,7 @@ public class TaskServiceImpl implements TaskService {
     @Transactional(rollbackFor = Exception.class)
     public ResourceTask createUploadTask(FormDataMultiPart form, String user,
         Map<String, Object> properties) throws Exception {
-        //创建上传任务记录
+        //Create upload task record.
         String resourceId = UUID.randomUUID().toString();
         ResourceTask resourceTask = ResourceTask.createUploadTask(resourceId, user, properties);
         taskDao.insert(resourceTask);
@@ -143,7 +143,7 @@ public class TaskServiceImpl implements TaskService {
   }
 
   /**
-   * 更新任务状态
+   * Update task status
    *
    * @param taskId 任务ID
    * @param state 执行状态
@@ -155,7 +155,7 @@ public class TaskServiceImpl implements TaskService {
   }
 
   /**
-   * 更新任务状态为失败
+   * Update task status to failed
    *
    * @param taskId 任务ID
    * @param state 执行状态
@@ -217,8 +217,9 @@ public class TaskServiceImpl implements TaskService {
   }
 
   /**
-   * 先查看linkis_resources_task有没有最新版本号,如果有则以此为主+1返回
-   * 如果没有则以linkis_resources_version最新版本号+1返回
+   *
+   * First check if linkis_resources_task has the latest version number, if there is, then this shall prevail +1 and return
+   * If not, return with the latest version number of linkis_resources_version+1
    * @param resourceId 资源ID
    * @return 下一个版本号
    */

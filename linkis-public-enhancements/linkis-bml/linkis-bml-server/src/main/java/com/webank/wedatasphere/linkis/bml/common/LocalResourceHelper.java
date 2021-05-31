@@ -64,7 +64,8 @@ public class LocalResourceHelper implements ResourceHelper{
             if (stringBuilder != null) {
                 stringBuilder.append(Hex.encodeHexString(md5Digest.digest()));
             }
-            //通过文件名获取的文件所有的字节，这样就避免了错误更新后的更新都是错的
+
+            //Get all the bytes of the file by the file name. In this way, the wrong updated is avoided.
             long afterSize = -1;
             is1 = fileSystem.read(fsPath);
             int ch1 = 0;

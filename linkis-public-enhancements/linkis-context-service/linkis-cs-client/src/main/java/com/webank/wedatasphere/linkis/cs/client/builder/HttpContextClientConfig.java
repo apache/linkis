@@ -13,6 +13,7 @@
 
 package com.webank.wedatasphere.linkis.cs.client.builder;
 
+import com.webank.wedatasphere.linkis.common.conf.CommonVars;
 import com.webank.wedatasphere.linkis.common.conf.Configuration;
 import com.webank.wedatasphere.linkis.cs.client.utils.ContextClientConf;
 import com.webank.wedatasphere.linkis.httpclient.authentication.AuthenticationStrategy;
@@ -25,20 +26,19 @@ import com.webank.wedatasphere.linkis.httpclient.dws.authentication.TokenAuthent
  */
 public class HttpContextClientConfig extends ContextClientConfig{
 
-
     private ClientConfig clientConfig;
 
+    private static final int CS_CONNECTION_TIMEOUT = CommonVars.apply("wds.linkis.cs.connection.timeout", 3 * 60 * 1000).getValue();
+    private static final int CS_READ_TIMEOUT = CommonVars.apply("wds.linkis.cs.read.timeout", 3 * 60 * 1000).getValue();
+    private static final int CS_MAX_CONNECTION = CommonVars.apply("wds.linkis.cs.max.connection", 50).getValue();
 
     public HttpContextClientConfig(){
         //初始化clientConfig
         String gatewayUrl = Configuration.getGateWayURL();
         AuthenticationStrategy authenticationStrategy = new TokenAuthenticationStrategy();
-        int maxConnection = 10;
-        int connectionTimeout = 3000;
-        int readTimeout = 10000;
         clientConfig = ClientConfigBuilder.newBuilder().addServerUrl(gatewayUrl).
-                connectionTimeout(connectionTimeout).discoveryEnabled(false).loadbalancerEnabled(false).
-                maxConnectionSize(maxConnection).retryEnabled(false).readTimeout(readTimeout)
+                connectionTimeout(CS_CONNECTION_TIMEOUT).discoveryEnabled(false).loadbalancerEnabled(false).
+                maxConnectionSize(CS_MAX_CONNECTION).retryEnabled(false).readTimeout(CS_READ_TIMEOUT)
                 .setAuthenticationStrategy(authenticationStrategy).setAuthTokenKey(ContextClientConf.CONTEXT_CLIENT_AUTH_KEY().getValue())
                 .setAuthTokenValue(ContextClientConf.CONTEXT_CLIENT_AUTH_VALUE().getValue()).build();
 

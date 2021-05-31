@@ -16,11 +16,12 @@
 
 package com.webank.wedatasphere.linkis.jobhistory.entity;
 
-import java.util.Date;
 
-/**
- * Created by johnnwang on 2019/2/25.
- */
+import com.webank.wedatasphere.linkis.governance.common.entity.job.SubJobDetail;
+
+import java.util.Date;
+import java.util.List;
+
 public class QueryTaskVO {
     private Long taskID;
     private String instance;
@@ -28,7 +29,7 @@ public class QueryTaskVO {
     private String umUser;
     private String engineInstance;
     private String executionCode;
-    private Float progress;
+    private String progress;
     private String logPath;
     private String resultLocation;
     private String status;
@@ -50,6 +51,18 @@ public class QueryTaskVO {
     private String sourceTailor;
 
     private Date engineStartTime;
+
+    private List<String> labels;
+
+    public List<SubJobDetail> getSubJobs() {
+        return subJobs;
+    }
+
+    public void setSubJobs(List<SubJobDetail> subJobs) {
+        this.subJobs = subJobs;
+    }
+
+    private List<SubJobDetail> subJobs;
 
     public Date getEngineStartTime() {
         return engineStartTime;
@@ -123,11 +136,11 @@ public class QueryTaskVO {
         this.executionCode = executionCode;
     }
 
-    public Float getProgress() {
+    public String getProgress() {
         return progress;
     }
 
-    public void setProgress(Float progress) {
+    public void setProgress(String progress) {
         this.progress = progress;
     }
 
@@ -241,5 +254,13 @@ public class QueryTaskVO {
 
     public void setStrongerExecId(String strongerExecId) {
         this.strongerExecId = strongerExecId;
+    }
+
+    public List<String> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(List<String> labels) {
+        this.labels = labels;
     }
 }

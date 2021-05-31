@@ -16,11 +16,12 @@
 package com.webank.wedatasphere.linkis.bml.dao;
 
 import com.webank.wedatasphere.linkis.bml.Entity.DownloadModel;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface DownloadDao {
 
-    void insertDownloadModel(@Param("downloadModel")DownloadModel downloadModel);
+    void insertDownloadModel(@Param("downloadModel") DownloadModel downloadModel);
 
 
 }

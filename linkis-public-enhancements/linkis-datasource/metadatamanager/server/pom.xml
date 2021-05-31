@@ -18,7 +18,7 @@
   <parent>
     <artifactId>linkis</artifactId>
     <groupId>com.webank.wedatasphere.linkis</groupId>
-    <version>1.0.0-RC1</version>
+    <version>1.0.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>linkis-metadatamanager-server</artifactId>
@@ -83,19 +83,7 @@
     </plugins>
     <resources>
       <resource>
-        <directory>src/main/java</directory>
-        <includes>
-          <include>**/*.xml</include>
-        </includes>
-      </resource>
-      <resource>
         <directory>src/main/resources</directory>
-        <excludes>
-          <exclude>**/*.properties</exclude>
-          <exclude>**/application.yml</exclude>
-          <exclude>**/bootstrap.yml</exclude>
-          <exclude>**/log4j2.xml</exclude>
-        </excludes>
       </resource>
     </resources>
     <finalName>${project.artifactId}-${project.version}</finalName>

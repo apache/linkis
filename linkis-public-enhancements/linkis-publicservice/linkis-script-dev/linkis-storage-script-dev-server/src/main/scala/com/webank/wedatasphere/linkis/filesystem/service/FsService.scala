@@ -30,9 +30,7 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent._
 
-/**
-  * Created by johnnwang on 2019/2/11.
-  */
+
 @Service
 class FsService extends Logging {
 
@@ -95,7 +93,8 @@ class FsService extends Logging {
   def produceFSInfo(user: String, fsPath: FsPath): FSInfo = {
     try {
       //todo to compatible proxy user(后续将兼容代理用户权限)
-      val fs = FSFactory.getFs(fsPath).asInstanceOf[FileSystem]
+      val fs = FSFactory.getFsByProxyUser(fsPath,user).asInstanceOf[FileSystem]
+      //val fs = FSFactory.getFs(fsPath).asInstanceOf[FileSystem]
       fs.init(null)
       new FSInfo(user, fs, System.currentTimeMillis())
     } catch {

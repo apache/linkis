@@ -27,34 +27,34 @@
             bdvku.id AS 'value_id',
             bdvku.`value`
         FROM
-            `linkis_var_key` bdvk
-        LEFT JOIN `linkis_var_key_user` bdvku ON bdvk.id = bdvku.key_id
+            `linkis_ps_variable_key` bdvk
+        LEFT JOIN `linkis_ps_variable_key_user` bdvku ON bdvk.id = bdvku.key_id
         WHERE
             bdvku.user_name = #{userName}
     </select>
 
     <select id="getValueByKeyID" resultType="com.webank.wedatasphere.linkis.variable.entity.VarKeyUser">
-        select * from `linkis_var_key_user` bdvku where bdvku.key_id = #{keyID}
+        select * from `linkis_ps_variable_key_user` bdvku where bdvku.key_id = #{keyID}
     </select>
 
     <delete id="removeKey">
-      DELETE FROM  `linkis_var_key`  WHERE id = #{keyID}
+      DELETE FROM  `linkis_ps_variable_key`  WHERE id = #{keyID}
     </delete>
 
     <delete id="removeValue">
-      DELETE FROM  `linkis_var_key_user`  WHERE id = #{valueID}
+      DELETE FROM  `linkis_ps_variable_key_user`  WHERE id = #{valueID}
     </delete>
 
     <insert id="insertKey" parameterType="com.webank.wedatasphere.linkis.variable.entity.VarKey" useGeneratedKeys="true" keyProperty="id">
-      INSERT into `linkis_var_key`(`key`,`application_id`)VALUES (#{key},#{applicationID})
+      INSERT into `linkis_ps_variable_key`(`key`,`application_id`)VALUES (#{key},#{applicationID})
     </insert>
 
     <insert id="insertValue" parameterType="com.webank.wedatasphere.linkis.variable.entity.VarKeyUser" useGeneratedKeys="true" keyProperty="id">
-        INSERT into `linkis_var_key_user`(`application_id`,`key_id`,`user_name`,`value`)VALUES (#{applicationID},#{keyID},#{userName},#{value})
+        INSERT into `linkis_ps_variable_key_user`(`application_id`,`key_id`,`user_name`,`value`)VALUES (#{applicationID},#{keyID},#{userName},#{value})
     </insert>
 
     <update id="updateValue">
-        update `linkis_var_key_user` set value = #{value} where id = #{valueID}
+        update `linkis_ps_variable_key_user` set value = #{value} where id = #{valueID}
     </update>
 
 </mapper>

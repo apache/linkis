@@ -27,31 +27,31 @@
 
     <insert id="createHistory" useGeneratedKeys="true" keyProperty="id"
             parameterType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextHistory">
-        INSERT INTO linkis_cs_context_history(<include refid="context_history"/>)
+        INSERT INTO linkis_ps_cs_context_history(<include refid="context_history"/>)
         VALUES (#{id},#{contextId},#{source},#{contextType},#{historyJson},#{keyword})
     </insert>
 
 
     <select id="getHistory" resultType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextHistory">
-        SELECT * FROM linkis_cs_context_history WHERE id = #{id} AND  context_id = #{contextID.contextId}
+        SELECT * FROM linkis_ps_cs_context_history WHERE id = #{id} AND  context_id = #{contextID.contextId}
     </select>
 
     <select id="getHistoryBySource"
             resultType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextHistory">
-        SELECT * FROM linkis_cs_context_history WHERE source = #{source} AND  context_id = #{contextID.contextId}
+        SELECT * FROM linkis_ps_cs_context_history WHERE source = #{source} AND  context_id = #{contextID.contextId}
     </select>
 
     <select id="getHistoriesByContextID"
             resultType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextHistory">
-        SELECT * FROM linkis_cs_context_history WHERE context_id = #{contextID.contextId}
+        SELECT * FROM linkis_ps_cs_context_history WHERE context_id = #{contextID.contextId}
     </select>
 
     <delete id="removeHistory">
-        DELETE FROM linkis_cs_context_history WHERE context_id = #{contextID.contextId} AND source = #{source}
+        DELETE FROM linkis_ps_cs_context_history WHERE context_id = #{contextID.contextId} AND source = #{source}
     </delete>
 
     <update id="updateHistory">
-        UPDATE linkis_cs_context_history
+        UPDATE linkis_ps_cs_context_history
         <trim prefix="set" suffixOverrides=",">
             <if test="pHistory.source != null">`source` = #{pHistory.source},</if>
             <if test="pHistory.contextType != null">`context_type` = #{pHistory.contextType},</if>
@@ -61,14 +61,14 @@
     </update>
 
     <select id="searchByKeywords" resultType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextHistory">
-        SELECT * FROM linkis_cs_context_history WHERE context_id = #{contextID.contextId} AND keyword IN
+        SELECT * FROM linkis_ps_cs_context_history WHERE context_id = #{contextID.contextId} AND keyword IN
         <foreach collection="keywords" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
     </select>
 
     <select id="searchByKeywordsAndType" resultType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextHistory">
-        SELECT * FROM linkis_cs_context_history WHERE context_type = #{contextType} AND keyword IN
+        SELECT * FROM linkis_ps_cs_context_history WHERE context_type = #{contextType} AND keyword IN
         <foreach collection="keywords" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.filesystem
 
 import com.webank.wedatasphere.linkis.filesystem.action.OpenScriptFromBMLAction
@@ -28,9 +29,6 @@ import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig
 import com.webank.wedatasphere.linkis.httpclient.response.Result
 
 
-/**
-  * Created by patinousward
-  */
 class WorkspaceClientImpl extends WorkspaceClient with WorkspaceHttpConf {
 
   def this(user: String, token: String,gatewayAddress:String) {

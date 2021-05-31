@@ -16,11 +16,38 @@
 
 package com.webank.wedatasphere.linkis.configuration.entity;
 
+import java.util.Date;
+
+
 public class ConfigValue {
+
     private Long id;
+
     private Long configKeyId;
+
     private String configValue;
+
     private Integer configLabelId;
+
+    private Date createTime;
+
+    private Date updateTime;
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
     public Long getId() {
         return id;

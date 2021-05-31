@@ -82,15 +82,16 @@ public class UjesClientDriver implements LinkisClientDriver {
 
                 DWSClientConfigBuilder builder = DWSClientConfigBuilder.newBuilder();
                 DWSClientConfig config = ((DWSClientConfigBuilder) (
-                        builder.addServerUrl(ujesContext.getGatewayUrl())  //指定ServerUrl，linkis服务器端网关的地址,如http://{ip}:{port}
-                                .connectionTimeout(30000)   //connectionTimeOut 客户端连接超时时间
-                                .discoveryEnabled(false).discoveryFrequency(1, TimeUnit.MINUTES)  //是否启用注册发现，如果启用，会自动发现新启动的Gateway
-                                .loadbalancerEnabled(true)  // 是否启用负载均衡，如果不启用注册发现，则负载均衡没有意义
-                                .maxConnectionSize(5)   //指定最大连接数，即最大并发数
-                                .retryEnabled(false).readTimeout(ujesContext.getReadTimeoutMills())   //执行失败，是否允许重试
-                                .setAuthenticationStrategy(authenticationStrategy)   //AuthenticationStrategy Linkis认证方式
-                                .setAuthTokenKey(ujesContext.getTokenKey()).setAuthTokenValue(ujesContext.getTokenValue())))  //认证key，一般为用户名;  认证value，一般为用户名对应的密码
-                        .setDWSVersion(ujesContext.getDwsVersion()).build();  //linkis后台协议的版本，当前版本为v1
+                        builder.addServerUrl(ujesContext.getGatewayUrl())
+                                .connectionTimeout(30000)
+                                .discoveryEnabled(false).discoveryFrequency(1, TimeUnit.MINUTES)
+                                .loadbalancerEnabled(true)
+                                .maxConnectionSize(5)
+                                .retryEnabled(false).readTimeout(ujesContext.getReadTimeoutMills())
+                                .setAuthenticationStrategy(authenticationStrategy)  //token/static
+                                .setAuthTokenKey(ujesContext.getTokenKey())         //static authentication -> submitUser must be the same as tokenKey
+                                .setAuthTokenValue(ujesContext.getTokenValue())))
+                                .setDWSVersion(ujesContext.getDwsVersion()).build();
 
 
                 client = new UJESClientImpl(config);
@@ -303,12 +304,16 @@ public class UjesClientDriver implements LinkisClientDriver {
             try {
                 openLogResult = client.openLog(OpenLogAction.newBuilder().setLogPath(logPath).setProxyUser(user).build());
                 logger.debug("persisted-log-result:" + Utils.GSON.toJson(openLogResult));
-                if (openLogResult == null || 0 != openLogResult.getStatus()) {
+                if (openLogResult == null ||
+                        0 != openLogResult.getStatus() ||
+                        StringUtils.isBlank(openLogResult.getLog()[UjesClientDriverConstants.IDX_FOR_LOG_TYPE_ALL])) {
                     String reason;
                     if (openLogResult == null) {
                         reason = "OpenLogResult is null";
+                    } else if (0 != openLogResult.getStatus())  {
+                        reason = "server returns non-zero non-zero status-code";
                     } else {
-                        reason = "server returns status-code: 0";
+                        reason = "server returns empty log";
                     }
                     String msg = MessageFormat.format("Get log from openLog failed. retry time : {0}/{1}. taskID={2}. Reason: {3}", retryCnt, MAX_RETRY_TIMES, taskID, reason);
                     logger.warn(msg);

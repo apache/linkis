@@ -5,7 +5,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>1.0.0-RC1</version>
+        <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,6 +13,9 @@
 
     <packaging>pom</packaging>
     <modules>
+        <module>linkis-orchestrator-core</module>
+        <module>linkis-code-orchestrator</module>
+        <module>linkis-computation-orchestrator</module>
         <module>plugin/linkis-orchestrator-ecm-plugin</module>
     </modules>
 

@@ -19,12 +19,17 @@ package com.webank.wedatasphere.linkis.configuration.dao;
 import com.webank.wedatasphere.linkis.configuration.entity.ConfigLabel;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface LabelMapper {
 
     ConfigLabel getLabelByKeyValue(@Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
 
-
     void insertLabel(ConfigLabel label);
+
+    void deleteLabel(@Param("ids") List<Integer> ids);
+
+    ConfigLabel getLabelById(@Param("id") Integer id);
 
 
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.metadata.domain.mdq.bo;
 
 import java.util.Map;
@@ -20,8 +21,8 @@ import java.util.Map;
 
 public class MdqTableImportInfoBO {
     private Integer importType;
+
     private Map<String,String> args;
-    // destination和source还没定义
 
     private String destination;
 

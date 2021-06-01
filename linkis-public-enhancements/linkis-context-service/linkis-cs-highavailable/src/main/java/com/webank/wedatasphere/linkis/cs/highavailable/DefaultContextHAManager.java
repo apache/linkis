@@ -19,7 +19,7 @@ package com.webank.wedatasphere.linkis.cs.highavailable;
 import com.google.gson.Gson;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.HAContextID;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.highavailable.exception.ErrorCode;
+import com.webank.wedatasphere.linkis.cs.highavailable.exception.CSErrorCode;
 import com.webank.wedatasphere.linkis.cs.highavailable.ha.BackupInstanceGenerator;
 import com.webank.wedatasphere.linkis.cs.highavailable.ha.ContextHAChecker;
 import com.webank.wedatasphere.linkis.cs.highavailable.ha.ContextHAIDGenerator;
@@ -67,7 +67,7 @@ public class DefaultContextHAManager extends AbstractContextHAManager {
 
         if (null == haContextID) {
             logger.error("HaContextID cannot be null.");
-            throw new CSErrorException(ErrorCode.INVALID_HAID, "HaContextID cannot be null.");
+            throw new CSErrorException(CSErrorCode.INVALID_HAID, "HaContextID cannot be null.");
         }
         if (StringUtils.isBlank(haContextID.getContextId())) {
             // generate new haid
@@ -85,7 +85,7 @@ public class DefaultContextHAManager extends AbstractContextHAManager {
                 String contextID = contextHAChecker.parseHAIDFromKey(haContextID.getContextId()).getContextId();
                 haContextID.setContextId(contextID);
             } else {
-                throw new CSErrorException(ErrorCode.INVALID_HAID, "Invalid contextID in haContextID : " + gson.toJson(haContextID));
+                throw new CSErrorException(CSErrorCode.INVALID_HAID, "Invalid contextID in haContextID : " + gson.toJson(haContextID));
             }
             return haContextID;
         } else {
@@ -100,7 +100,7 @@ public class DefaultContextHAManager extends AbstractContextHAManager {
                 haContextID.setInstance(tmpHAID.getInstance());
                 haContextID.setBackupInstance(tmpHAID.getBackupInstance());
             } else {
-                throw new CSErrorException(ErrorCode.INVALID_HAID, "Invalid contextID in haContextID : " + gson.toJson(haContextID));
+                throw new CSErrorException(CSErrorCode.INVALID_HAID, "Invalid contextID in haContextID : " + gson.toJson(haContextID));
             }
             // todo debug
             if (contextHAChecker.isHAContextIDValid(haContextID)) {

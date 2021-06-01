@@ -17,6 +17,7 @@
 package com.webank.wedatasphere.linkis.instance.label.service.impl;
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
+import com.webank.wedatasphere.linkis.instance.label.entity.InstanceInfo;
 import com.webank.wedatasphere.linkis.instance.label.service.InsLabelAccessService;
 import com.webank.wedatasphere.linkis.instance.label.service.annotation.AdapterMode;
 import com.webank.wedatasphere.linkis.manager.label.entity.Label;
@@ -77,4 +78,10 @@ public class EurekaInsLabelService implements InsLabelAccessService {
     public void removeLabelsIfNotRelation(List<? extends Label<?>> labels) {
 
     }
+
+    @Override
+    public List<InstanceInfo> listAllInstanceWithLabel() {
+        return null;
+    }
+
 }

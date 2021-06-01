@@ -42,11 +42,12 @@ class HaContextGatewayRouter extends AbstractGatewayRouter{
 
   @Autowired
   private var contextIDParser: ContextIDParser = _
-  private val serializationHelper = ContextSerializationHelper.getInstance();
+  private val serializationHelper = ContextSerializationHelper.getInstance()
 
   override def route(gatewayContext: GatewayContext): ServiceInstance = {
 
-    if (gatewayContext.getGatewayRoute.getRequestURI.contains("contextservice")){
+    if (gatewayContext.getGatewayRoute.getRequestURI.contains(HaContextGatewayRouter.CONTEXT_SERVICE_STR) ||
+        gatewayContext.getGatewayRoute.getRequestURI.contains(HaContextGatewayRouter.OLD_CONTEXT_SERVICE_PREFIX)){
       val params: util.HashMap[String, String] = gatewayContext.getGatewayRoute.getParams
       if (!gatewayContext.getRequest.getQueryParams.isEmpty) {
         for ((k, vArr) <- gatewayContext.getRequest.getQueryParams) {
@@ -134,6 +135,8 @@ class HaContextGatewayRouter extends AbstractGatewayRouter{
 
 object HaContextGatewayRouter{
   val CONTEXT_ID_STR:String = "contextId"
-  val CONTEXT_SERVICE_STR:String = "contextservice"
+  val CONTEXT_SERVICE_STR:String = "ps-cs"
+  @Deprecated
+  val OLD_CONTEXT_SERVICE_PREFIX = "contextservice"
   val CONTEXT_REGEX: Regex = (normalPath(API_URL_PREFIX) + "rest_[a-zA-Z][a-zA-Z_0-9]*/(v\\d+)/contextservice/" + ".+").r
 }

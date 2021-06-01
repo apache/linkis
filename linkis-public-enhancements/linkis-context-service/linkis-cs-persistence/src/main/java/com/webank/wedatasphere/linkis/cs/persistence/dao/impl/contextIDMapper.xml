@@ -27,12 +27,12 @@
 
     <insert id="createContextID" useGeneratedKeys="true" keyProperty="contextId"
             parameterType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextID">
-        INSERT INTO linkis_cs_context_id(<include refid="context_id"/>)
+        INSERT INTO linkis_ps_cs_context_id(<include refid="context_id"/>)
         VALUES (#{contextId},#{user},#{application},#{source},#{expireType},#{expireTime},#{instance},#{backupInstance})
     </insert>
 
     <delete id="deleteContextID">
-        DELETE FROM linkis_cs_context_id where id = #{contextId}
+        DELETE FROM linkis_ps_cs_context_id where id = #{contextId}
     </delete>
 
     <resultMap id="PersistenceContextID"
@@ -41,12 +41,12 @@
     </resultMap>
 
     <select id="getContextID" resultMap="PersistenceContextID">
-        SELECT * FROM linkis_cs_context_id where id = #{contextId}
+        SELECT * FROM linkis_ps_cs_context_id where id = #{contextId}
     </select>
 
     <update id="updateContextID"
             parameterType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextID">
-        UPDATE linkis_cs_context_id
+        UPDATE linkis_ps_cs_context_id
         <trim prefix="set" suffixOverrides=",">
             <if test="user != null">`user` = #{user},</if>
             <if test="application != null">`application` = #{application},</if>

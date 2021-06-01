@@ -25,10 +25,10 @@ import com.webank.wedatasphere.linkis.manager.engineplugin.cache.config.EngineCo
 import com.webank.wedatasphere.linkis.manager.engineplugin.cache.refresh.*;
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInfo;
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInstance;
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.concurrent.*;
+
+import java.util.concurrent.TimeUnit;
 
 
 public class GuavaEngineConnPluginCache implements RefreshableEngineConnPluginCache {

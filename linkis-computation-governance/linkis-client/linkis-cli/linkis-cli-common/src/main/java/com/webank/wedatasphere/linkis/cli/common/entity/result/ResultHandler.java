@@ -15,9 +15,6 @@ package com.webank.wedatasphere.linkis.cli.common.entity.result;
 
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.ExecutionResult;
 
-/**
- * Created by shangda on 2021/5/14.
- */
 public interface ResultHandler {
     void process(ExecutionResult executionResult);
 }

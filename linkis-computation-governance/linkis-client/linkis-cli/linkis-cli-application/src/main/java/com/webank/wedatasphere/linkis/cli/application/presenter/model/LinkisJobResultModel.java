@@ -19,7 +19,6 @@ import com.webank.wedatasphere.linkis.cli.core.presenter.model.JobExecModel;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/11 16:54
  */
 public class LinkisJobResultModel extends JobExecModel {

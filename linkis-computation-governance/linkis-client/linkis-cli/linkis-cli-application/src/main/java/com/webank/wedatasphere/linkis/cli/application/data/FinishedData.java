@@ -19,7 +19,6 @@ import com.webank.wedatasphere.linkis.cli.common.entity.result.ResultHandler;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/12 19:59
  */
 public class FinishedData {

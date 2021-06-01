@@ -31,7 +31,6 @@ import java.util.List;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/02/25 15:05
  */
 public class PropsFilesScanner {

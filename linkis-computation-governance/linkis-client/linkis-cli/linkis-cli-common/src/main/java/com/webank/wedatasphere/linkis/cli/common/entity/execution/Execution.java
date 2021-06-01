@@ -16,9 +16,10 @@ package com.webank.wedatasphere.linkis.cli.common.entity.execution;
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.executor.Executor;
 import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
 
-/**
- * Created by shangda on 2021/5/14.
- */
+
 public interface Execution {
-    ExecutionResult execute(Executor executor, Job job);
+    ExecutionResult execute(Executor executor, Job job); //start execution
+
+    boolean terminate(Executor executor, Job job);                                 //terminate execution(often used in shutdown hook)
 }
+

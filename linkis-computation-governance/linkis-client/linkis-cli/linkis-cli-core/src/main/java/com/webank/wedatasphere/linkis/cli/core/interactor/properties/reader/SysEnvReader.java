@@ -22,7 +22,6 @@ import java.util.Properties;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/02/25 15:42
  */
 public class SysEnvReader implements PropertiesReader {

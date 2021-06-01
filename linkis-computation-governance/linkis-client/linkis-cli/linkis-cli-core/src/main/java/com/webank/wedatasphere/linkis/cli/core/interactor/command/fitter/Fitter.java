@@ -20,7 +20,6 @@ import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeEx
  * @program: linkis-cli
  * @description: interface for parsing command arguments and fill them into instance of {@link CmdTemplate},
  * note that implementation of this interface should make a deep copy of {@link CmdTemplate} instance
- * @author: shangda
  * @create: 2020/10/29 18:41
  */
 public interface Fitter {

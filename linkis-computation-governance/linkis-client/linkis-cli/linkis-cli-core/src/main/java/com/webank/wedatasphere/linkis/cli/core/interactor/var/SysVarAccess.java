@@ -26,7 +26,6 @@ import java.util.List;
 /**
  * @program: linkis-cli
  * @description: visit sys_prop and sys_env
- * @author: shangda
  * @create: 2021/03/01 17:05
  */
 public class SysVarAccess implements VarAccess {

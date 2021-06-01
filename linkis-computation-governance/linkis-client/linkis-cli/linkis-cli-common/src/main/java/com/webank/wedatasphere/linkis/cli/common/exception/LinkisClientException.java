@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.cli.common.exception;
 /**
  * @program: linkis-cli
  * @description: Exception for BdpLinkisClient
- * @author: shangda
  * @create: 2020/10/30 18:53
  */
 public abstract class LinkisClientException extends Exception {

@@ -13,9 +13,7 @@
 
 package com.webank.wedatasphere.linkis.cli.common.constants;
 
-/**
- * Created by shangda on 2020/9/29.
- */
+
 public class CommonConstants {
     public static final String DUMMY_IDENTIFIER = "dummy";
     public static final String ARRAY_SEQ = "@#@";

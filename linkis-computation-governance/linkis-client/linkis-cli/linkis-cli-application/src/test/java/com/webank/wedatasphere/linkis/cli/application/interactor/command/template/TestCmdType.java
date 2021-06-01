@@ -19,7 +19,6 @@ import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdType;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2020/11/11 17:36
  */
 public enum TestCmdType implements CmdType {

@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.cli.common.utils;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2020/11/12 21:06
  */
 

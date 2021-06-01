@@ -18,7 +18,6 @@ import java.util.HashMap;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/02/24 19:12
  */
 public class ClientProperties extends HashMap<Object, Object> {

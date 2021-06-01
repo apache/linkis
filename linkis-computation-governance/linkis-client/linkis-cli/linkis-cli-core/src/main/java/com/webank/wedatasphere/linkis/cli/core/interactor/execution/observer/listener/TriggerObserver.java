@@ -20,7 +20,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/17 19:55
  */
 public class TriggerObserver implements LinkisClientObserver {

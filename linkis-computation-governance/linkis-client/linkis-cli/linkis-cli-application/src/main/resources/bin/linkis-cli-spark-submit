@@ -63,7 +63,9 @@ declare -A help_opts=(\
 
 declare -A help_msg=(\
         ['--name']="A name of your application." \
-        ['--proxy-user']="User to impersonate when submitting the application." \
+        ['--jars']="Comma-separated list of jars to include on the driver and executor classpaths." \
+        ['--py-files']="Comma-separated list of .zip, .egg, or .py files to place on the PYTHONPATH for Python apps." \
+        #['--proxy-user']="User to impersonate when submitting the application." \
         ['--kill']="If given, kills the linkis job specified" \
         ['--status']="If given, requests the status of the linkis job" \
         ['--driver-memory']="Memory for driver, unit: G (e.g. 2) " \
@@ -101,9 +103,9 @@ function print_help() {
                 else
                     printf " %-30s%-30s\n" "" "${msg: i}"
                 fi
-                
+
             done
-            
+
         fi
     done
 }

@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2020/11/12 21:53
  */
 public class Utils {

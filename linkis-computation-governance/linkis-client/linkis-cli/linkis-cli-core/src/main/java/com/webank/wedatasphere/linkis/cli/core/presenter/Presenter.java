@@ -19,7 +19,6 @@ import com.webank.wedatasphere.linkis.cli.core.presenter.model.PresenterModel;
 /**
  * @program: linkis-cli
  * @description: accept a model and present it to user
- * @author: shangda
  * @create: 2021/02/22 14:49
  */
 public interface Presenter {

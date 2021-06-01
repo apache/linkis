@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.cli.core.presenter.display;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/10 10:15
  */
 public interface DisplayDriver {

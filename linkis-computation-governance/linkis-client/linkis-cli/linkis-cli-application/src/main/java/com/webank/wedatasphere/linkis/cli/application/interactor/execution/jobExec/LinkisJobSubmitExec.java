@@ -21,7 +21,6 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobS
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/03 10:47
  */
 public class LinkisJobSubmitExec extends JobSubmitExec {

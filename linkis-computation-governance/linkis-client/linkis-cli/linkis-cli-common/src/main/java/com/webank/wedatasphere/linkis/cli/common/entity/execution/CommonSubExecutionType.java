@@ -13,9 +13,7 @@
 
 package com.webank.wedatasphere.linkis.cli.common.entity.execution;
 
-/**
- * Created by shangda on 2021/5/17.
- */
+
 public enum CommonSubExecutionType implements SubExecutionType {
     NONE("none");
 

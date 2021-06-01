@@ -18,7 +18,6 @@ import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeEx
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/15 16:48
  */
 public interface Validator {

@@ -38,8 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by shangda on 2021/5/14.
- * <p>
  * Execute job synchronously
  * TODO: put exception during execution in ExecutionResult and do not interrupt execution
  */
@@ -141,7 +139,7 @@ public class SyncSubmission implements Execution {
 //    }
         if (execData.isJobSuccess()) {
             executionStatus = ExecutionStatus.SUCCEED;
-        } else if (execData.isJobFailure()) {
+        } else {
             executionStatus = ExecutionStatus.FAILED;
         }
 
@@ -149,7 +147,19 @@ public class SyncSubmission implements Execution {
     /*
       Output message: success/fail
      */
-        result = executor.doGetFinalResult(execData);
+        try {
+            result = executor.doGetFinalResult(execData);
+        } catch (Exception e) {
+            logger.warn("Exception thrown when trying to query final result. Status will change to FAILED", e);
+            // job state may change after submission
+            try {
+                result = executor.updateJobStatus(execData);
+            } catch (Exception e2) {
+                logger.warn("", e);
+                // shouldn't go here
+                result.setJobStatus(JobStatus.UNKNOWN);
+            }
+        }
     /*
       Inform observer to start handling result
       will automatically clone data to avoid potential race condition
@@ -174,9 +184,14 @@ public class SyncSubmission implements Execution {
             }
             CommonUtils.doSleepQuietly(Constants.JOB_QUERY_SLEEP_MILLS);
         }
-        String msg = "Job is completed but client keep querying inclog for " + (MAX_RETRY * Constants.JOB_QUERY_SLEEP_MILLS / 1000) +  "seconds. Execution ends forcefully. Next will try handle execution result.";
+        String msg = "Job is completed but client keep querying inclog for " + (MAX_RETRY * Constants.JOB_QUERY_SLEEP_MILLS / 1000) + "seconds. Execution ends forcefully. Next will try handle execution result.";
         logger.warn(msg);
         LogUtils.getInformationLogger().warn(msg);
+    }
+
+    @Override
+    public boolean terminate(Executor executor, Job job) {
+        return executor.terminate(job);
     }
 
 }

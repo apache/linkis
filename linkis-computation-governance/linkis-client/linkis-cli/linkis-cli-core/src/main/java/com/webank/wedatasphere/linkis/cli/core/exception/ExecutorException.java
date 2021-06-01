@@ -21,7 +21,6 @@ import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorMsg;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2020/12/24 11:29
  */
 public class ExecutorException extends LinkisClientRuntimeException {

@@ -13,9 +13,7 @@
 
 package com.webank.wedatasphere.linkis.cli.common.entity.command;
 
-/**
- * Created by shangda on 2021/5/13.
- */
+
 public interface CmdOption<T> extends Cloneable {
     String getParamName();
 

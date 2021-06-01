@@ -22,9 +22,6 @@ import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
 import com.webank.wedatasphere.linkis.cli.core.presenter.HelpInfoPresenter;
 import com.webank.wedatasphere.linkis.cli.core.presenter.model.HelpInfoModel;
 
-/**
- * Created by shangda on 2021/5/19.
- */
 public class HelpExecution implements Execution {
     CmdTemplate template;
 
@@ -36,5 +33,10 @@ public class HelpExecution implements Execution {
     public ExecutionResult execute(Executor executor, Job job) {
         new HelpInfoPresenter().present(new HelpInfoModel(template));
         return new ExecutionResultImpl(null, ExecutionStatus.SUCCEED, null);
+    }
+
+    @Override
+    public boolean terminate(Executor executor, Job job) {
+        return true;
     }
 }

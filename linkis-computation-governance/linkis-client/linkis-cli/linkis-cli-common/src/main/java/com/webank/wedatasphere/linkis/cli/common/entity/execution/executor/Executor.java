@@ -14,11 +14,13 @@
 package com.webank.wedatasphere.linkis.cli.common.entity.execution.executor;
 
 
+import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
+
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/02/26 15:54
  */
 public interface Executor {
+    boolean terminate(Job job);
 }

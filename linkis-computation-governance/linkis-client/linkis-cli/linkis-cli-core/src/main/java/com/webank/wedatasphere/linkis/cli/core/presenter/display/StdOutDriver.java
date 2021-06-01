@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 /**
  * @program: linkis-cli
  * @description: present output t stdout
- * @author: shangda
  * @create: 2021/02/22 19:37
  */
 public class StdOutDriver implements DisplayDriver {

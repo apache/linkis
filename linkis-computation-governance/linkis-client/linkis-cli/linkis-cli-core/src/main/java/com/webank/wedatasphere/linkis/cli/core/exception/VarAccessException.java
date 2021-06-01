@@ -20,7 +20,6 @@ import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorMsg;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/24 12:25
  */
 public class VarAccessException extends LinkisClientRuntimeException {

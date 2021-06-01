@@ -20,8 +20,6 @@ import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
 
 
 /**
- * Created by shangda on 2021/5/14.
- * <p>
  * Execute job asynchronously
  * TODO: put exception during execution in ExecutionResult and do not interrupt execution
  */
@@ -33,4 +31,8 @@ public class AsyncSubmission implements Execution {
         return null;
     }
 
+    @Override
+    public boolean terminate(Executor executor, Job job) {
+        return true;
+    }
 }

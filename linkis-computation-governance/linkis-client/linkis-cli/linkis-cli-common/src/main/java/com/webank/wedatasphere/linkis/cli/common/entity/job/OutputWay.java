@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.cli.common.entity.job;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/19 18:09
  */
 public enum OutputWay {

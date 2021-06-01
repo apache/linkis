@@ -18,7 +18,6 @@ import com.webank.wedatasphere.linkis.cli.common.entity.execution.executor.Execu
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/11 10:52
  */
 public interface LogRetrievable extends Executor {

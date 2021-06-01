@@ -16,9 +16,7 @@ package com.webank.wedatasphere.linkis.cli.application.presenter.model;
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobStatus;
 import com.webank.wedatasphere.linkis.cli.core.presenter.model.PresenterModel;
 
-/**
- * Created by shangda on 2021/5/17.
- */
+
 public class LinkisJobKillResultModel implements PresenterModel {
 
     private String cid;

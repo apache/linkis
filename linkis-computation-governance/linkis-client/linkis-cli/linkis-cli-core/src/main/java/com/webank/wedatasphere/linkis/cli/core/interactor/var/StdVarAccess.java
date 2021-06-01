@@ -32,7 +32,6 @@ import java.util.*;
  * @program: linkis-cli
  * @description: Retrieve value from input command/config/sys_prop/sys_env etc.
  * order should be: command option > k-v in map-type option > user config > default config > default
- * @author: shangda
  * @create: 2020/11/25 15:33
  */
 public class StdVarAccess implements VarAccess {
@@ -88,7 +87,7 @@ public class StdVarAccess implements VarAccess {
     private void putSubMapCache(Map<String, String> subMapCache, Params param) {
         for (ParamItem item : param.getParamItemMap().values()) {
             //scan through all map type value and try get value for key
-            if (    item.getValue() != null &&
+            if (item.getValue() != null &&
                     item.hasVal() &&
                     item.getValue() instanceof Map &&
                     !(item.getValue() instanceof SpecialMap)) {
@@ -98,7 +97,7 @@ public class StdVarAccess implements VarAccess {
                         if (subMapCache.containsKey(item.getKey())) {
                             logger.warn("Value of duplicated key \"{}\" in subMap \"{}\" will be ignored.", item.getKey(), item.getKey());
                         } else if (StringUtils.isNotBlank(entry.getKey()) &&
-                                    StringUtils.isNotBlank(entry.getValue())) {
+                                StringUtils.isNotBlank(entry.getValue())) {
                             subMapCache.put(entry.getKey(), entry.getValue());
                         }
                     }

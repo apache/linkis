@@ -22,7 +22,6 @@ import com.webank.wedatasphere.linkis.cli.core.utils.LogUtils;
 import static java.lang.System.exit;
 
 /**
- * Created by shangda on 2021/5/17.
  * exit -1 when failure and exit 0 when success
  */
 public class DefaultResultHandler implements ResultHandler {

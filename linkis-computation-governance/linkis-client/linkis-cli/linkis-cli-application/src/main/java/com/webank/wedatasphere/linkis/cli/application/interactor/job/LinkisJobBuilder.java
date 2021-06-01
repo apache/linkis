@@ -35,7 +35,6 @@ import java.util.Set;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/03 16:54
  */
 public class LinkisJobBuilder extends JobBuilder {

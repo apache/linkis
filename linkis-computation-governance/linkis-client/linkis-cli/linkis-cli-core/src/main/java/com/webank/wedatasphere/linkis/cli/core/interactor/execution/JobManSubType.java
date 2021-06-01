@@ -15,9 +15,7 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.execution;
 
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.SubExecutionType;
 
-/**
- * Created by shangda on 2021/5/16.
- */
+
 public enum JobManSubType implements SubExecutionType {
 
     KILL("kill"),

@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.cli.application.constants;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/03 17:51
  */
 public class LinkisClientKeys {

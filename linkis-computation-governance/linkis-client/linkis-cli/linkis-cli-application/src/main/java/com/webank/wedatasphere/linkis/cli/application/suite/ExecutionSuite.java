@@ -18,9 +18,7 @@ import com.webank.wedatasphere.linkis.cli.common.entity.result.ResultHandler;
 import com.webank.wedatasphere.linkis.cli.core.interactor.execution.executor.ExecutorBuilder;
 import com.webank.wedatasphere.linkis.cli.core.interactor.job.JobBuilder;
 
-/**
- * Created by shangda on 2021/5/16.
- */
+
 public class ExecutionSuite {
     Execution execution;
     JobBuilder jobBuilder;

@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.command.template.opti
 import com.webank.wedatasphere.linkis.cli.core.utils.SpecialMap;
 
 /**
- * Created by shangda on 2021/5/19.
  * kv-pairs in SpecialMapOption will be excluded by varAccess
  */
 public class SpecialMapOption extends MapOption implements Cloneable {

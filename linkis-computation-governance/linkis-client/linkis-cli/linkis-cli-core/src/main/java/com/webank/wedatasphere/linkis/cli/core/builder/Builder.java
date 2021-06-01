@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.cli.core.builder;
 /**
  * @program: linkis-cli
  * @description: Generate Instances
- * @author: shangda
  * @create: 2021/03/12 14:35
  */
 public interface Builder<T> {

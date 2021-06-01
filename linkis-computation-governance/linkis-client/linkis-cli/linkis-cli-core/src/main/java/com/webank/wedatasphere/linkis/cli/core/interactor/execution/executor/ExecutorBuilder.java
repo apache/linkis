@@ -19,7 +19,6 @@ import com.webank.wedatasphere.linkis.cli.core.builder.BuildableByVarAccess;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/12 15:12
  */
 public abstract class ExecutorBuilder extends BuildableByVarAccess<Executor> {

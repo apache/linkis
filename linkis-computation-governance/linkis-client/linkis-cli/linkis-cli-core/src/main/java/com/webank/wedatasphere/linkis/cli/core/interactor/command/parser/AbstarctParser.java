@@ -38,7 +38,6 @@ import java.util.Map;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/02/25 17:05
  */
 public abstract class AbstarctParser implements Parser {
@@ -119,7 +118,7 @@ public abstract class AbstarctParser implements Parser {
                 logger.warn("Failed to get subMap for option: " + option.getKey() + ".", e);
                 return null;
             }
-            if(mapper != null) {
+            if (mapper != null) {
                 subMap = mapper.getMappedMapping(subMap);
             }
             val = addPrefixToSubMapKey(subMap, keyPrefix);

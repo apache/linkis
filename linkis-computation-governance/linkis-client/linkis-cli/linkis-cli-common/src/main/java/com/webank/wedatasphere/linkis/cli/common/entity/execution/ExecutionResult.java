@@ -15,9 +15,7 @@ package com.webank.wedatasphere.linkis.cli.common.entity.execution;
 
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.ExecutionStatus;
 
-/**
- * Created by shangda on 2021/5/17.
- */
+
 public interface ExecutionResult {
     Object getData();
 

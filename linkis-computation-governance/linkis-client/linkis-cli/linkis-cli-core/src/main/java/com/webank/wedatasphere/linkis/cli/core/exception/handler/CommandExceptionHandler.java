@@ -25,7 +25,6 @@ import java.util.Map;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/24 21:10
  */
 public class CommandExceptionHandler implements ExceptionHandler {

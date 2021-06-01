@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.validate;
 /**
  * @program: linkis-cli
  * @description: TODO: not going to use context
- * @author: shangda
  * @create: 2021/03/01 20:59
  */
 public class ContextValidator {

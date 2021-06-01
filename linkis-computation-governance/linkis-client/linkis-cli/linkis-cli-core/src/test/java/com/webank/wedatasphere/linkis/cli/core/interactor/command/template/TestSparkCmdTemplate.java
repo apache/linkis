@@ -28,7 +28,6 @@ import java.util.Map;
 /**
  * @program: linkis-cli
  * @description: subCommandTemplate for Spark Jobs
- * @author: shangda
  * @create: 2020/11/04 17:45
  */
 public class TestSparkCmdTemplate extends AbstractCmdTemplate {

@@ -23,7 +23,6 @@ import java.util.Properties;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/02/24 19:37
  */
 public class SysPropsReader implements PropertiesReader {

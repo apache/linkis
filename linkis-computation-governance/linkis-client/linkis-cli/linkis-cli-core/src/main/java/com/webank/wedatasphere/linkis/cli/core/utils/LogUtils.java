@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/19 19:54
  */
 public class LogUtils {
@@ -29,6 +28,7 @@ public class LogUtils {
     public static Logger getPlaintTextLogger() {
         return PlainTextLogger;
     }
+
     public static Logger getInformationLogger() {
         return InformationLogger;
     }

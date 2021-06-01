@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/12 21:14
  */
 public class UjesClientDriverBuilder extends BuildableByVarAccess<UjesClientDriver> {

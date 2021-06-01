@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.cli.core.presenter;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/13 09:41
  */
 public enum DisplayTypeEnum {

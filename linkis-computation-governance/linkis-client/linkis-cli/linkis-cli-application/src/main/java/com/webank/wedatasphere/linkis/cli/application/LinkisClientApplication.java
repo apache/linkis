@@ -86,7 +86,6 @@ import java.util.Map;
 /**
  * @program: linkis-cli
  * @description: Main Enterance
- * @author: shangda
  * @create: 2020/10/29 20:31
  */
 public class LinkisClientApplication {
@@ -211,8 +210,8 @@ public class LinkisClientApplication {
         for (ClientProperties properties : loaderResult) {
             if (StringUtils.equals(properties.getPropsId(), LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG)) {
                 for (Map.Entry prop : properties.entrySet()) {
-                    if (StringUtils.startsWith((String)prop.getKey(), LinkisClientKeys.LINKIS_CLIENT_NONCUSTOMIZABLE)) {
-                        throw new PropsException("PRP0007", ErrorLevel.ERROR, CommonErrMsg.PropsLoaderErr, "User cannot specify non-customizable configuration: " +prop.getKey());
+                    if (StringUtils.startsWith((String) prop.getKey(), LinkisClientKeys.LINKIS_CLIENT_NONCUSTOMIZABLE)) {
+                        throw new PropsException("PRP0007", ErrorLevel.ERROR, CommonErrMsg.PropsLoaderErr, "User cannot specify non-customizable configuration: " + prop.getKey());
                     }
                 }
 
@@ -343,6 +342,11 @@ public class LinkisClientApplication {
     /*
     execute
      */
+        final Executor executorKill = executor;
+        final Job jobKill = job;
+        if (executorKill != null && jobKill != null) {
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> execution.terminate(executorKill, jobKill)));
+        }
         ExecutionResult result = execution.execute(executor, job);
 
         return new FinishedData(result, resultHandlers);

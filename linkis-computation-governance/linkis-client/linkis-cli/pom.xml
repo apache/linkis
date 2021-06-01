@@ -23,7 +23,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>1.0.0</version>
+        <version>1.0.0-RC1</version>
     </parent>
     <artifactId>linkis-cli</artifactId>
     <packaging>pom</packaging>

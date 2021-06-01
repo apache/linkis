@@ -19,7 +19,6 @@ import com.webank.wedatasphere.linkis.cli.common.entity.command.Params;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/02/25 21:38
  */
 public class ParseResult {

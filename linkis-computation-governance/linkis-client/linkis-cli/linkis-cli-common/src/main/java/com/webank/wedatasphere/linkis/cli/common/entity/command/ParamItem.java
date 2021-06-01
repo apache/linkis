@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.cli.common.entity.command;
 /**
  * @program: linkis-cli
  * @description: param value and default value
- * @author: shangda
  * @create: 2021/02/23 10:54
  */
 public class ParamItem {

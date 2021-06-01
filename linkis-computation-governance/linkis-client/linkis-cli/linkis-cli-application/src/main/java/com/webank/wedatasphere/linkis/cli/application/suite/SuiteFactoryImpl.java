@@ -40,9 +40,7 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.job.JobBuilder;
 import com.webank.wedatasphere.linkis.cli.core.interactor.result.DefaultResultHandler;
 import com.webank.wedatasphere.linkis.cli.core.interactor.var.VarAccess;
 
-/**
- * Created by shangda on 2021/5/16.
- */
+
 public class SuiteFactoryImpl implements ExecutionSuiteFactory {
     @Override
     public ExecutionSuite getSuite(CmdType cmdType, VarAccess varAccess) {

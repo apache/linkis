@@ -19,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * @program: linkis-cli
  * @description: Data Structure for command CmdOption.
- * @author: shangda
  * @create: 2020/9/28 18:22
  */
 public class StdOption<T> extends BaseOption<T> {

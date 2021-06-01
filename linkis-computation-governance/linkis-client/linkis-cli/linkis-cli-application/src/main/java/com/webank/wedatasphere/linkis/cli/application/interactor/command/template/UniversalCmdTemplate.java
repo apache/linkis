@@ -24,12 +24,10 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.optio
 import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option.MapOption;
 import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option.SpecialMapOption;
 import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option.StdOption;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/15 18:30
  */
 public class UniversalCmdTemplate extends AbstractCmdTemplate {

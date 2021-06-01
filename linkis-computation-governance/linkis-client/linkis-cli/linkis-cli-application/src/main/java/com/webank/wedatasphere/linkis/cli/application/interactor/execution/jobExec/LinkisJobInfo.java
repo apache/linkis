@@ -18,9 +18,7 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobM
 
 import java.util.Date;
 
-/**
- * Created by shangda on 2021/4/26.
- */
+
 public class LinkisJobInfo extends JobManExec {
     private String taskID;
     private String instance;

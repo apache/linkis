@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.cli.core.presenter.Presenter;
 import com.webank.wedatasphere.linkis.cli.core.presenter.model.ModelConverter;
 import com.webank.wedatasphere.linkis.cli.core.presenter.model.PresenterModel;
 
-/**
- * Created by shangda on 2021/5/17.
- */
+
 public class PresentResultHandler implements ResultHandler {
     Presenter presenter;
     ModelConverter converter;

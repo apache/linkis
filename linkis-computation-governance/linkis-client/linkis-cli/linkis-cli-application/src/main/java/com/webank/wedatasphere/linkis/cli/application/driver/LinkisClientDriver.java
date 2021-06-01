@@ -21,7 +21,6 @@ import com.webank.wedatasphere.linkis.ujes.client.response.*;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/04 15:59
  */
 public interface LinkisClientDriver {

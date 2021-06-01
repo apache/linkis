@@ -76,7 +76,7 @@ Linkis services could be divided into three categories: computation governance s
 Below is the Linkis architecture diagram. You can find more detailed architecture docs in [Linkis-Doc/Architecture](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/zh_CN/Architecture_Documents).
 ![architecture](images/Linkis_1.0_architecture.png)
 
-Based on Linkis the computation middleware, we've built a lot of applications and tools on top of it in the big data platform suite [WeDataSphere](https://github.com/WeBankFinTech/WeDataSphere). Below are the currently available open-source projects.
+Based on Linkis the computation middleware, we've built a lot of applications and tools on top of it in the big data platform suite [WeDataSphere](https://github.com/WeBankFinTech/WeDataSphere). Below are the currently available open-source projects. More projects upcoming, please stay tuned.
 
 ![wedatasphere_stack_Linkis](images/wedatasphere_stack_Linkis.png)
 

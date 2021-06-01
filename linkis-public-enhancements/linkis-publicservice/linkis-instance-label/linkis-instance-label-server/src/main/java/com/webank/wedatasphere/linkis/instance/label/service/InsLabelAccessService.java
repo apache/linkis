@@ -17,6 +17,7 @@
 package com.webank.wedatasphere.linkis.instance.label.service;
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
+import com.webank.wedatasphere.linkis.instance.label.entity.InstanceInfo;
 import com.webank.wedatasphere.linkis.manager.label.entity.Label;
 
 import java.util.List;
@@ -76,5 +77,12 @@ public interface InsLabelAccessService {
      * @param labels
      */
     void removeLabelsIfNotRelation(List<? extends Label<?>> labels);
+
+    /**
+     * Search instances that are related with other labels
+     * @return
+     */
+    List<InstanceInfo> listAllInstanceWithLabel();
+
 
 }

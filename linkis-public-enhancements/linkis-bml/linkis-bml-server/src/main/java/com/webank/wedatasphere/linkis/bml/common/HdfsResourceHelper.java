@@ -20,6 +20,7 @@ import com.webank.wedatasphere.linkis.common.io.Fs;
 import com.webank.wedatasphere.linkis.common.io.FsPath;
 import com.webank.wedatasphere.linkis.storage.FSFactory;
 import com.webank.wedatasphere.linkis.storage.utils.FileSystemUtils;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
@@ -100,8 +101,8 @@ public class HdfsResourceHelper implements ResourceHelper {
             IOUtils.closeQuietly(outputStream);
             if (fileSystem != null){
                 try {
-                    fileSystem.close();
-                } catch (IOException e) {
+                fileSystem.close();
+            } catch (Exception e) {
                     logger.error("close filesystem failed", e);
                 }
             }
@@ -129,6 +130,12 @@ public class HdfsResourceHelper implements ResourceHelper {
         return SCHEMA;
     }
 
+    /**
+     * Motivation to modify this path：
+     * This path is under /apps-data/hadoop/user on hdfs, which is mixed with the result set file.
+     * Bml files cannot be synchronized separately. When the user verifies the workflow,
+     * it is necessary to synchronize the full amount of personal and full hdfs data each time, which is very inconvenient.
+     * */
     @Override
     public String generatePath(String user, String fileName, Map<String, Object> properties) {
         String resourceHeader = (String) properties.get("resourceHeader");
@@ -136,9 +143,9 @@ public class HdfsResourceHelper implements ResourceHelper {
         String dateStr = format.format(new Date());
         if (StringUtils.isNotEmpty(resourceHeader)) {
             return getSchema() + BmlServerConfiguration.BML_HDFS_PREFIX().getValue()
-                    + "/" + user + "/" + dateStr + "/" + resourceHeader + "/" + fileName;
+                    + "/" + user + "/bml" + "/" + dateStr + "/" + resourceHeader + "/" + fileName;
         } else {
-            return getSchema() + BmlServerConfiguration.BML_HDFS_PREFIX().getValue() + "/" + user + "/" + dateStr + "/" + fileName;
+            return getSchema() + BmlServerConfiguration.BML_HDFS_PREFIX().getValue() + "/" + user + "/bml" + "/" + dateStr + "/" + fileName;
         }
     }
 

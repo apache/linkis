@@ -22,4 +22,7 @@ public class ContextHighAvailableConf {
 
     public static CommonVars<Boolean> ENABLE_STRICT_HAID_CHECK = CommonVars.apply("wds.linkis.cs.haid.strict_check.enable", false);
 
+    public static CommonVars<Long> CS_ALIAS_CACHE_EXPIRE_TIMEMILLS = CommonVars.apply("wds.linkis.cs.alias.cache.expire.mills", 2000L * 3600);
+
+    public static CommonVars<String> CONTEXTSERVICE_PREFIX = CommonVars.apply("wds.linkis.cs.ha.route_label.prefix", "cs_");
 }

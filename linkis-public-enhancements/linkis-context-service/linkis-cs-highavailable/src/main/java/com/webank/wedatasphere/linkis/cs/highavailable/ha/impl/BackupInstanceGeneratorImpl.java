@@ -18,10 +18,10 @@ package com.webank.wedatasphere.linkis.cs.highavailable.ha.impl;
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.highavailable.exception.ErrorCode;
+import com.webank.wedatasphere.linkis.cs.highavailable.exception.CSErrorCode;
 import com.webank.wedatasphere.linkis.cs.highavailable.ha.BackupInstanceGenerator;
 import com.webank.wedatasphere.linkis.cs.highavailable.ha.ContextHAChecker;
-import com.webank.wedatasphere.linkis.rpc.instancealias.InstanceAliasManager;
+import com.webank.wedatasphere.linkis.cs.highavailable.ha.instancealias.InstanceAliasManager;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ public class BackupInstanceGeneratorImpl implements BackupInstanceGenerator {
         if (StringUtils.isNotBlank(haIDKey) && contextHAChecker.isHAIDValid(haIDKey)) {
             alias = contextHAChecker.parseHAIDFromKey(haIDKey).getBackupInstance();
         } else {
-            throw new CSErrorException(ErrorCode.INVALID_HAID, "Invalid HAID :" + haIDKey);
+            throw new CSErrorException(CSErrorCode.INVALID_HAID, "Invalid HAID :" + haIDKey);
         }
         return alias;
     }
@@ -61,7 +61,7 @@ public class BackupInstanceGeneratorImpl implements BackupInstanceGenerator {
             mainInstance = instanceAliasManager.getInstanceByAlias(mainInstanceAlias);
         } catch (Exception e) {
             logger.error("Get Instance error, alias : {}, message : {}", mainInstanceAlias, e.getMessage());
-            throw new CSErrorException(ErrorCode.INVALID_INSTANCE_ALIAS, e.getMessage() + ", alias : " + mainInstanceAlias);
+            throw new CSErrorException(CSErrorCode.INVALID_INSTANCE_ALIAS, e.getMessage() + ", alias : " + mainInstanceAlias);
         }
         List<ServiceInstance> allInstanceList = instanceAliasManager.getAllInstanceList();
         List<ServiceInstance> remainInstanceList = new ArrayList<>();

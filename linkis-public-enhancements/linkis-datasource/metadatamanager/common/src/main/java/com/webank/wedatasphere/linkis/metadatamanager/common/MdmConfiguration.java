@@ -18,8 +18,8 @@ import com.webank.wedatasphere.linkis.common.conf.CommonVars;
 public class MdmConfiguration {
 
     public static CommonVars<String> METADATA_SERVICE_APPLICATION =
-            CommonVars.apply("wds.linkis.server.mdm.service.app.name", "mdm-service");
+            CommonVars.apply("wds.linkis.server.mdm.service.app.name", "linkis-ps-metadatamanagerservice");
 
     public static CommonVars<String> DATA_SOURCE_SERVICE_APPLICATION =
-            CommonVars.apply("wds.linkis.server.dsm.app.name", "dsm-server");
+            CommonVars.apply("wds.linkis.server.dsm.app.name", "linkis-ps-datasourcemanager");
 }

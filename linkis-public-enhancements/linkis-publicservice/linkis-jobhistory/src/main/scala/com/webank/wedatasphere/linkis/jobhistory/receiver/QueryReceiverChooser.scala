@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.receiver
+//package com.webank.wedatasphere.linkis.jobhistory.receiver
 
-import com.webank.wedatasphere.linkis.jobhistory.cache.QueryCacheService
-import com.webank.wedatasphere.linkis.jobhistory.service.QueryService
+/*import com.webank.wedatasphere.linkis.jobhistory.cache.QueryCacheService
+import com.webank.wedatasphere.linkis.jobhistory.service.JobHistoryQueryService
 import com.webank.wedatasphere.linkis.protocol.query.QueryProtocol
 import com.webank.wedatasphere.linkis.rpc.{RPCMessageEvent, Receiver, ReceiverChooser}
+
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Component*/
+
+/**
 
 @Component
 class QueryReceiverChooser extends ReceiverChooser {
 
   @Autowired
-  private var queryService: QueryService = _
+  private var queryService: JobHistoryQueryService = _
   @Autowired
   private var queryCacheService: QueryCacheService = _
   private var receiver: Option[QueryReceiver] = _
@@ -41,3 +44,4 @@ class QueryReceiverChooser extends ReceiverChooser {
     case _ => None
   }
 }
+*/

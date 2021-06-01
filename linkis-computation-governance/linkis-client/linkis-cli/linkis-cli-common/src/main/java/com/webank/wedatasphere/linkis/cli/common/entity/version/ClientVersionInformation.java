@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.cli.common.entity.version;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/02/22 17:12
  */
 public abstract class ClientVersionInformation {

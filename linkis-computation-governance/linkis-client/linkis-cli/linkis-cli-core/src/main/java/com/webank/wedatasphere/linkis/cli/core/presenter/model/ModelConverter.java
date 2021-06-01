@@ -13,9 +13,7 @@
 
 package com.webank.wedatasphere.linkis.cli.core.presenter.model;
 
-/**
- * Created by shangda on 2021/5/16.
- */
+
 public interface ModelConverter {
     PresenterModel convertToModel(Object data);
 }

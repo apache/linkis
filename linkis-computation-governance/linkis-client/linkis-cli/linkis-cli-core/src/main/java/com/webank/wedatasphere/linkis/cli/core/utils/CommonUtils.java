@@ -23,7 +23,6 @@ import java.util.Map;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/02/26 18:15
  */
 public class CommonUtils {

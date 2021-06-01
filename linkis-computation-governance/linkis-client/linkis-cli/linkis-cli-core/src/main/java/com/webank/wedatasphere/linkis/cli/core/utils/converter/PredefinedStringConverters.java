@@ -28,7 +28,6 @@ import java.util.Map;
 /**
  * @program: linkis-cli
  * @description: Predefined converter
- * @author: shangda
  * @create: 2020/9/28 18:19
  */
 public class PredefinedStringConverters {

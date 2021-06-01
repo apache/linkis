@@ -25,7 +25,6 @@ import com.webank.wedatasphere.linkis.cli.core.presenter.model.PresenterModel;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/10 20:42
  */
 public class LinkisLogModelConverter implements ModelConverter {

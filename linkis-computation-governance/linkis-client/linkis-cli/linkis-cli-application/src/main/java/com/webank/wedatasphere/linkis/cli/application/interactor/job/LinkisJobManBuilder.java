@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.execution.JobManSubTyp
 import com.webank.wedatasphere.linkis.cli.core.interactor.job.JobBuilder;
 import com.webank.wedatasphere.linkis.cli.core.interactor.var.VarAccess;
 
-/**
- * Created by shangda on 2021/4/25.
- */
+
 public class LinkisJobManBuilder extends JobBuilder {
 
 

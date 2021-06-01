@@ -20,7 +20,6 @@ import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorMsg;
 /**
  * @program: linkis-cli
  * @description: Exception for Config
- * @author: shangda
  * @create: 2020/10/30 15:39
  */
 public class PropsException extends LinkisClientRuntimeException {

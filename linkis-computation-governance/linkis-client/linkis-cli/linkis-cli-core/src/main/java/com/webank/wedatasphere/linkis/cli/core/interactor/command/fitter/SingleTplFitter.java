@@ -27,7 +27,6 @@ import java.util.List;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/02/24 14:42
  */
 public class SingleTplFitter extends AbstractFitter {

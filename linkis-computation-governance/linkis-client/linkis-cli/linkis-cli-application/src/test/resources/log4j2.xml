@@ -32,7 +32,7 @@
             <PatternLayout pattern="[%level] %m%n"/>
         </console>
         <!--&lt;!&ndash;文件会打印出所有信息，这个log每次运行程序会自动清空，由append属性决定，这个也挺有用的，适合临时测试用&ndash;&gt;-->
-        <console name="fixedTimeFileAppender" target="SYSTEM_OUT" >
+        <console name="fixedTimeFileAppender" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss,SSS} %p %c{1}(%L) - %m%n"/>
         </console>
 

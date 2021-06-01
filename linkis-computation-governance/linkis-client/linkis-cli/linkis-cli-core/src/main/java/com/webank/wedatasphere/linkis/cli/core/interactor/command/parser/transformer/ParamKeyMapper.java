@@ -37,7 +37,6 @@ import java.util.Map;
  * 才能进行下一步varAccess中的按优先级取值
  * 注意此处不需要穷举所有spark参数，只需要将sparkTemplate option中存在的key值map
  * 成linkis-client格式
- * @author: shangda
  * @create: 2020/11/24 16:01
  */
 public abstract class ParamKeyMapper {

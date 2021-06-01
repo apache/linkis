@@ -16,9 +16,7 @@ package com.webank.wedatasphere.linkis.cli.application.suite;
 import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdType;
 import com.webank.wedatasphere.linkis.cli.core.interactor.var.VarAccess;
 
-/**
- * Created by shangda on 2021/5/16.
- */
+
 public interface ExecutionSuiteFactory {
     ExecutionSuite getSuite(CmdType cmdType, VarAccess varAccess);
 }

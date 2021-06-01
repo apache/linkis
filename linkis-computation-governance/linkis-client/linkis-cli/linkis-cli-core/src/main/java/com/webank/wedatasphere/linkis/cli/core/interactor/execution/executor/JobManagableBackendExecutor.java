@@ -18,9 +18,6 @@ import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
 import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
 import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobManExec;
 
-/**
- * Created by shangda on 2021/4/23.
- */
 public interface JobManagableBackendExecutor extends Executor {
     JobManExec queryJobInfo(Job job) throws LinkisClientRuntimeException;
 

@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.cli.core.presenter.model.ModelConverter;
 import com.webank.wedatasphere.linkis.cli.core.presenter.model.PresenterModel;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
-/**
- * Created by shangda on 2021/5/17.
- */
+
 public class LinkisJobKillModelConverter implements ModelConverter {
     @Override
     public PresenterModel convertToModel(Object data) {

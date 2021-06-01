@@ -15,9 +15,7 @@ package com.webank.wedatasphere.linkis.cli.application.interactor.job;
 
 import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
 
-/**
- * Created by shangda on 2021/4/25.
- */
+
 public class LinkisJobMan extends Job {
     private String jobId;
 

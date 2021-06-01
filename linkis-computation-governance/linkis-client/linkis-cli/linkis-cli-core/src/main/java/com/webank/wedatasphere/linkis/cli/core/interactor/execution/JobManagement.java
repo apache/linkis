@@ -27,7 +27,6 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.execution.executor.Job
 import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobManExec;
 
 /**
- * Created by shangda on 2021/5/14.
  * TODO: put exception during execution in ExecutionResult and do not interrupt execution
  */
 public class JobManagement implements Execution {
@@ -87,6 +86,11 @@ public class JobManagement implements Execution {
                 throw new ExecutorException(JobStatus.UNSUBMITTED, "EXE0002", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "SubExecutionType + \"" + job.getSubExecutionType() + "\" is not supported");
         }
         return new ExecutionResultImpl(resultData, executionStatus, exception);
+    }
+
+    @Override
+    public boolean terminate(Executor executor, Job job) {
+        return true;
     }
 
 

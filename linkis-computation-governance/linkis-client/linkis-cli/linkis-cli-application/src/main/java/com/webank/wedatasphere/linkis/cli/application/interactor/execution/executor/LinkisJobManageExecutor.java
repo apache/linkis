@@ -35,8 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 
-/**
- * Created by shangda on 2021/4/25.
+/*
  * TODO: combine this with LinkisSubmitExecutor into LinkisExecutor
  */
 public class LinkisJobManageExecutor implements JobManagableBackendExecutor {
@@ -197,5 +196,10 @@ public class LinkisJobManageExecutor implements JobManagableBackendExecutor {
             throw new ExecutorException("EXE0032", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "Failed to convert DWSResult into JobManExec");
         }
         return (JobManExec) data;
+    }
+
+    @Override
+    public boolean terminate(Job job) {
+        return true;
     }
 }

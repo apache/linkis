@@ -13,9 +13,7 @@
 
 package com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec;
 
-/**
- * Created by shangda on 2021/5/16.
- */
+
 public enum ExecutionStatus {
     UNDEFINED("Inited", 1),
     SUCCEED("Succeed", 2),

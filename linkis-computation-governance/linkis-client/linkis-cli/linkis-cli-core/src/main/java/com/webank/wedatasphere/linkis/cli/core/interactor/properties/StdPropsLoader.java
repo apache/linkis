@@ -25,7 +25,6 @@ import java.util.*;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/02/25 10:52
  */
 public class StdPropsLoader implements PropertiesLoader {

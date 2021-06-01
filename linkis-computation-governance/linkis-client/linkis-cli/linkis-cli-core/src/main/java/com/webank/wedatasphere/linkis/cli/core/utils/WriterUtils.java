@@ -25,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @program: linkis-cli
  * @description: write output to file
- * @author: shangda
  * @create: 2021/01/05 21:08
  */
 public class WriterUtils {

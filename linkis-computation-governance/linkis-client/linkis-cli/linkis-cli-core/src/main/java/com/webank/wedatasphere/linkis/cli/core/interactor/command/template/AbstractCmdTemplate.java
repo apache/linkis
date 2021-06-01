@@ -36,7 +36,6 @@ import java.util.*;
  * User should input both name and value e.g. --cmd "whoami".
  * Flag: a special type of CmdOption. Only boolean value allowed
  * Parameter: User only input Parameter.value
- * @author: shangda
  * @create: 2020/10/29 18:41
  */
 public abstract class AbstractCmdTemplate implements CmdTemplate {

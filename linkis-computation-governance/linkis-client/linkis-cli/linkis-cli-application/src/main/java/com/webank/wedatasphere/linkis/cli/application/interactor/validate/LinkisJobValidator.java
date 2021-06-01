@@ -28,7 +28,6 @@ import java.util.Map;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/25 11:39
  */
 public class LinkisJobValidator implements Validator {

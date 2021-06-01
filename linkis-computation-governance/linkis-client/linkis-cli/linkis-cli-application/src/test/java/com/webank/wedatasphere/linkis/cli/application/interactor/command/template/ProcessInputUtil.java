@@ -48,7 +48,6 @@ import java.util.Map;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/16 14:42
  */
 public class ProcessInputUtil {

@@ -43,7 +43,6 @@ import java.util.List;
 /**
  * @program: linkis-cli
  * @description: convert data in order to fit with {@link UjesClientDriver}
- * @author: shangda
  * @create: 2021/02/19 16:41
  */
 public class UjesClientDriverTransformer implements DriverTransformer {

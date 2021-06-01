@@ -19,7 +19,6 @@ import java.util.Map;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/02/26 18:42
  */
 public interface CmdTemplate extends Cloneable {

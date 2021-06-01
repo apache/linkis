@@ -19,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * @program: linkis-cli
  * @description: Data Structure for command Parameter. Command String does not contain the name of Parameter.
- * @author: shangda
  * @create: 2020/9/28 18:37
  */
 public class Parameter<T> extends BaseOption<T> implements Cloneable {

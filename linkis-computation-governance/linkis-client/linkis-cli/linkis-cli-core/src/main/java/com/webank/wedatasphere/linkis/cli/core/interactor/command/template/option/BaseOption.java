@@ -23,7 +23,6 @@ import java.text.MessageFormat;
  * @program: linkis-cli
  * @description: Abstract StdOption for CommandTemplate.
  * key:unique id key for an option. defaultValue takes no effect other than displaying default value
- * @author: shangda
  * @create: 2020/9/28 18:19
  */
 public abstract class BaseOption<T> implements CmdOption<T>, Cloneable {

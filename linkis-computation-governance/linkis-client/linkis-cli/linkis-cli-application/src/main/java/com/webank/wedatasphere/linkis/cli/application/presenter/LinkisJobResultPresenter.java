@@ -37,7 +37,6 @@ import java.util.*;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/10 21:09
  */
 public class LinkisJobResultPresenter extends QueryBasedPresenter {
@@ -57,6 +56,7 @@ public class LinkisJobResultPresenter extends QueryBasedPresenter {
         new StdOutDriver().doOutput(formatResultIndicator((LinkisJobResultModel) model));
 
         if (!((LinkisJobResultModel) model).isJobSuccess()) {
+            logger.info("Job status is not success but \'" + ((LinkisJobResultModel) model).getJobStatus() + "\'. Will not try to retrieve any Result");
             return;
         }
 
@@ -65,6 +65,9 @@ public class LinkisJobResultPresenter extends QueryBasedPresenter {
         String outputPath = resultModel.getOutputPath();
         String[] resultSetPaths = resultModel.getResultSetPaths();
         StringBuilder resultSb = new StringBuilder();
+        if (resultSetPaths == null) {
+            throw new PresenterException("PST0012", ErrorLevel.ERROR, CommonErrMsg.PresenterErr, "ResultPresenter got null as ResultSet");
+        }
 
         for (int i = 0; i < resultSetPaths.length; i++) {
             String resultSetPath = resultSetPaths[i];
@@ -82,14 +85,19 @@ public class LinkisJobResultPresenter extends QueryBasedPresenter {
                 }
                 resultModel = (LinkisJobResultModel) transformer.convertAndUpdateModel(resultModel, result);
                 if (curPage == 1) {
-                    metaData = transformer.convertResultMeta(resultModel.getResultMetaData());
-                    resultSb.append(formatResultMeta(metaData)).append(System.lineSeparator());
+                    try {
+                        metaData = transformer.convertResultMeta(resultModel.getResultMetaData());
+                        resultSb.append(formatResultMeta(metaData)).append(System.lineSeparator());
+                    } catch (Exception e) {
+                        logger.warn("Cannot convert ResultSet-Meta-Data. ResultSet-Meta-Data:" + Utils.GSON.toJson(resultModel.getResultMetaData()), e);
+                        continue;
+                    }
                 }
                 List<List<String>> contentData;
                 try {
                     contentData = transformer.convertResultContent(resultModel.getResultContent());
                 } catch (Exception e) {
-                    logger.warn("Cannot convert ResultSetResult into resultSetContent. ResultSetResult:" + Utils.GSON.toJson(resultModel.getResultContent()), e);
+                    logger.warn("Cannot convert ResultSet-Content. ResultSet-Content:" + Utils.GSON.toJson(resultModel.getResultContent()), e);
                     continue;
                 }
                 int idx = i + 1;

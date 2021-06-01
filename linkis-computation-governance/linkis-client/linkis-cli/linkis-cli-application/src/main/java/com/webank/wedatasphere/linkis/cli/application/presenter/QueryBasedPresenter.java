@@ -23,7 +23,6 @@ import com.webank.wedatasphere.linkis.cli.core.presenter.Presenter;
 /**
  * @program: linkis-cli
  * @description: Presenter that needs to make furthur query to linkis
- * @author: shangda
  * @create: 2021/03/10 17:27
  */
 public abstract class QueryBasedPresenter implements Presenter {

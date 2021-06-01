@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/03 16:54
  */
 public class LinkisSubmitExecutorBuilder extends ExecutorBuilder {

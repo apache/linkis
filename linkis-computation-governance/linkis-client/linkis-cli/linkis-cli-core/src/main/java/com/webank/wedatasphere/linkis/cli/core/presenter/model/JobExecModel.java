@@ -22,7 +22,6 @@ import java.util.Map;
 /**
  * @program: linkis-cli
  * @description: formulate data for presenter
- * @author: shangda
  * @create: 2021/02/22 19:37
  */
 public abstract class JobExecModel implements PresenterModel {

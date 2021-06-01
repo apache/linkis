@@ -34,7 +34,6 @@ import java.util.List;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/24 19:16
  */
 public class HelpInfoPresenter implements Presenter {
@@ -95,7 +94,7 @@ public class HelpInfoPresenter implements Presenter {
         }
 
         sb.append(options.size() > 0 ? "\nOptions:\n" : "\n");
-        for (CmdOption<?> o : options) {
+        for (CmdOption<?> o : stdOptions) {
             sb.append(o.toString()).append("\n");
         }
 

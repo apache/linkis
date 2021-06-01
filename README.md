@@ -80,20 +80,6 @@ Based on Linkis the computation middleware, we've built a lot of applications an
 
 ![wedatasphere_stack_Linkis](images/wedatasphere_stack_Linkis.png)
 
-- [**DataSphere Studio** - Data Application Integration& Development Framework](https://github.com/WeBankFinTech/DataSphereStudio)
-
-- [**Scriptis** - Data Development IDE Tool](https://github.com/WeBankFinTech/Scriptis)
-
-- [**Visualis** - Data Visualization Tool](https://github.com/WeBankFinTech/Visualis)
-
-- [**Schedulis** - Workflow Task Scheduling Tool](https://github.com/WeBankFinTech/Schedulis)
-
-- [**Qualitis** - Data Quality Tool](https://github.com/WeBankFinTech/Qualitis)
-
-- [**MLLabis** - Machine Learning Notebook IDE](https://github.com/WeBankFinTech/prophecis)
-
-More projects upcoming, please stay tuned.
-
 # Contributing
 
 Contributions are always welcomed, we need more contributors to build Linkis together. either code, or doc, or other supports that could help the community.  

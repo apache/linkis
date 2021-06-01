@@ -18,7 +18,5 @@ package com.webank.wedatasphere.linkis.rpc.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-/**
-  * Created by enjoyyin on 2018/9/12.
-  */
+
 private[rpc] class DWCURIException(errCode: Int, desc: String) extends ErrorException(errCode, desc)

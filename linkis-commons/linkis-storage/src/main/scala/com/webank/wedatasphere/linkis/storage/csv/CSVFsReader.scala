@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.storage.csv
 
 import com.webank.wedatasphere.linkis.common.io.FsReader
 
-/**
-  * Created by johnnwang on 2018/11/12.
-  */
+
 abstract class CSVFsReader extends FsReader{
 
 }

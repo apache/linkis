@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.filesystem.exception;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 
-/**
- * Created by johnnwang on 2018/10/30.
- */
+
 public class WorkSpaceException extends ErrorException {
 
     public WorkSpaceException(int errCode, String desc) {

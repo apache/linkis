@@ -19,9 +19,7 @@ import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageRe
 
 import scala.beans.BeanProperty
 
-/**
-  * Created by patinousward
-  */
+
 @DWSHttpMessageResult("/api/rest_j/v\\d+/filesystem/saveScriptToBML")
 class ScriptToBMLResult extends AbstractWorkspaceResult {
 

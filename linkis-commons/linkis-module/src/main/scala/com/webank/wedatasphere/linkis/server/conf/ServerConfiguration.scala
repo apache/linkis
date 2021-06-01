@@ -25,9 +25,7 @@ import com.webank.wedatasphere.linkis.server.exception.BDPInitServerException
 import org.apache.commons.lang.StringUtils
 import sun.misc.BASE64Encoder
 
-/**
-  * Created by enjoyyin on 2018/1/9.
-  */
+
 object ServerConfiguration {
   val BDP_SERVER_EXCLUDE_PACKAGES = CommonVars("wds.linkis.server.component.exclude.packages", "")
   val BDP_SERVER_EXCLUDE_CLASSES = CommonVars("wds.linkis.server.component.exclude.classes", "")

@@ -37,9 +37,6 @@ import org.springframework.stereotype.Service
 
 import scala.collection.JavaConversions._
 
-/**
-  * @date 2020/7/4 15:50
-  */
 @Service
 class DefaultEngineNodeManager extends EngineNodeManager with Logging {
 

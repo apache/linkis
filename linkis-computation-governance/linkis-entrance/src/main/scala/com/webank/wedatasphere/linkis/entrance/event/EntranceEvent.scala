@@ -22,7 +22,6 @@ import com.webank.wedatasphere.linkis.scheduler.executer.Executor
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
 
 /**
-  * Created by enjoyyin on 2018/10/12.
   * desctiption: entrance The type of event in the event bus in the module(模块中的事件总线中的事件类型)
   */
 trait EntranceEvent extends Event{

@@ -28,9 +28,7 @@ import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 import org.springframework.beans.BeanUtils
 import org.springframework.util.StringUtils
 
-/**
-  * Created by johnnwang on 2019/2/25.
-  */
+
 object TaskConversions extends Logging {
 
   @Deprecated

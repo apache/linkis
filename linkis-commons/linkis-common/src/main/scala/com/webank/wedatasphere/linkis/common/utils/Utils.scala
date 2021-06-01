@@ -30,9 +30,8 @@ import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService}
 import scala.util.control.ControlThrowable
-/**
-  * Created by enjoyyin on 2018/1/10.
-  */
+
+
 object Utils extends Logging {
 
   def tryQuietly[T](tryOp: => T): T = try tryOp catch {

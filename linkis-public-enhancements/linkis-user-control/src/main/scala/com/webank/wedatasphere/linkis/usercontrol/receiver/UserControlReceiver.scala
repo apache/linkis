@@ -6,9 +6,7 @@ import com.webank.wedatasphere.linkis.usercontrol.service.UserControlService
 
 import scala.concurrent.duration.Duration
 
-/**
-  * Created by alexyang
-  */
+
 class UserControlReceiver extends Receiver {
 
   private var userControlService: UserControlService = _

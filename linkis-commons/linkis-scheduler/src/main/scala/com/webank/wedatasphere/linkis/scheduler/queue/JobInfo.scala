@@ -17,7 +17,6 @@
 package com.webank.wedatasphere.linkis.scheduler.queue
 
 /**
-  * Created by enjoyyin on 2018/9/4.
   * JobInfo Is the job information that the server sends to the front end.（是服务端传给前端的job信息）
   * id: Job execution id（job执行id）
   * output: Result set（结果集）

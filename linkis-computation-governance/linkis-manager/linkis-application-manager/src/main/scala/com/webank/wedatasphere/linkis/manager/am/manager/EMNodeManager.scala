@@ -21,9 +21,6 @@ import com.webank.wedatasphere.linkis.manager.common.entity.node.{EMNode, Engine
 import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineStopRequest
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 
-/**
-  * @date 2020/6/12 15:46
-  */
 trait EMNodeManager {
 
   def emRegister(emNode: EMNode): Unit

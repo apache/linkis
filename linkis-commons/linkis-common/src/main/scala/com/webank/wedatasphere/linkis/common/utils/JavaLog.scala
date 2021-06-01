@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.common.utils
 
 import org.slf4j.LoggerFactory
 
-/**
-  * Created by enjoyyin on 2018/1/9.
-  */
+
 class JavaLog {
 //  if(!JavaLog.initialized) {
 //    JavaLog.initLock synchronized {

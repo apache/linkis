@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.scheduler.exception.SchedulerErrorExceptio
 import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEvent
 import org.apache.commons.lang.StringUtils
 
-/**
-  * Created by enjoyyin on 2018/10/28.
-  */
+
 abstract class AbstractScheduler extends Scheduler {
   override def init(): Unit = {}
 

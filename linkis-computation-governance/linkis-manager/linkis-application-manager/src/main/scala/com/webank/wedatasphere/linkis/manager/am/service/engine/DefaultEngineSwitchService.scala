@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineSwitc
 import com.webank.wedatasphere.linkis.message.annotation.Receiver
 import org.springframework.stereotype.Service
 
-/**
-  * @date 2020/7/13 21:04
-  */
+
 @Service
 class DefaultEngineSwitchService extends EngineSwitchService {
 

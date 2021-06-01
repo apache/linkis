@@ -18,7 +18,5 @@ package com.webank.wedatasphere.linkis.entrance.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-/**
-  * Created by enjoyyin on 2018/9/14.
-  */
+
 class EntranceErrorException(errorCode: Int, desc: String) extends ErrorException(errorCode, desc)

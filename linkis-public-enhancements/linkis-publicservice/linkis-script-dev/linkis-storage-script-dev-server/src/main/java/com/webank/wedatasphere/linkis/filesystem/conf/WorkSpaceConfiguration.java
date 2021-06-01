@@ -24,9 +24,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by johnnwang on 2018/11/9.
- */
+
 public class WorkSpaceConfiguration {
     public static final CommonVars<String> LOCAL_USER_ROOT_PATH = CommonVars$.MODULE$.apply("wds.linkis.filesystem.root.path", "file:///tmp/linkis/");
     public static final CommonVars<String> HDFS_USER_ROOT_PATH_PREFIX = CommonVars$.MODULE$.apply("wds.linkis.filesystem.hdfs.root.path", "hdfs:///tmp/");

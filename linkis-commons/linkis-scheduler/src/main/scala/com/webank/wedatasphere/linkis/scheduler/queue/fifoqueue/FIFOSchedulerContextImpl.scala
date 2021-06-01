@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
 
-/**
-  * Created by enjoyyin on 2018/9/26.
-  */
+
 class FIFOSchedulerContextImpl(val maxParallelismUsers: Int) extends  SchedulerContext with Logging{
   private var consumerManager: FIFOConsumerManager = _
   private var groupFactory: FIFOGroupFactory = _

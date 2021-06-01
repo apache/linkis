@@ -22,9 +22,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by johnnwang on 2018/10/10.
- */
+
 public interface TaskMapper {
 
     List<QueryTask> selectTask(QueryTask queryTask);

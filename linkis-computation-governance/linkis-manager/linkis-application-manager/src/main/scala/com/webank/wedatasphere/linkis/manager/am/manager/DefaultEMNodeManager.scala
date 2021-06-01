@@ -32,9 +32,6 @@ import org.springframework.stereotype.Component
 
 import scala.collection.JavaConversions._
 
-/**
-  * @date 2020/7/18 16:59
-  */
 @Component
 class DefaultEMNodeManager extends EMNodeManager with Logging {
 

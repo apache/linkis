@@ -59,9 +59,7 @@ import javax.servlet.DispatcherType;
 import javax.ws.rs.ext.RuntimeDelegate;
 import java.util.EnumSet;
 
-/**
- * Created by enjoyyin on 2018/8/6.
- */
+
 @SpringBootApplication
 @EnableDiscoveryClient
 @RefreshScope

@@ -33,9 +33,7 @@ import feign.{Feign, Retryer}
 import scala.concurrent.duration.Duration
 import scala.runtime.BoxedUnit
 
-/**
-  * Created by enjoyyin on 2018/8/29.
-  */
+
 private[rpc] class BaseRPCSender extends Sender with Logging {
   private var name: String = _
   private var rpc: RPCReceiveRemote = _

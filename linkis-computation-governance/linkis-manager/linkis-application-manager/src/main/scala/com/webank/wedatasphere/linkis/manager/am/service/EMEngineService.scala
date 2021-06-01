@@ -23,9 +23,7 @@ import com.webank.wedatasphere.linkis.manager.common.protocol.em._
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 
-/**
-  * @date 2020/6/12 15:26
-  */
+
 trait EMEngineService {
 
 

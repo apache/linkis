@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.entrance.background
 
-/**
-  * Created by enjoyyin on 2018/12/4.
-  */
+
 abstract class AbstractBackGroundService extends BackGroundService{
 
 }

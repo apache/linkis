@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.jobhistory.transitional;
 
-/**
- * Created by johnnwang on 2019/6/6.
- */
+
 public enum TaskStatus {
     Inited, WaitForRetry, Scheduled, Running, Succeed, Failed, Cancelled, Timeout
 }

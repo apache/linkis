@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 object SchedulerEventState extends Enumeration {
   type SchedulerEventState = Value
   val Inited, WaitForRetry, Scheduled, Running, Succeed, Failed, Cancelled, Timeout = Value

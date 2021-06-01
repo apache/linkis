@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.variable.service.VariableService
 
 import scala.concurrent.duration.Duration
 
-/**
-  * Created by cooperyang on 2018/10/18.
-  */
+
 class VariableReceiver extends Receiver{
 
   private var variableService : VariableService = _

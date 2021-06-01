@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue
 import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEvent
 import com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue.FIFOGroup
 
-/**
-  * Created by enjoyyin on 2018/9/12.
-  */
+
 class ParallelGroup(groupName: String, initCapacity: Int, maxCapacity: Int) extends FIFOGroup(groupName, initCapacity, maxCapacity) {
   override def belongTo(event: SchedulerEvent): Boolean = {
      val eventId = event.id.split("_")

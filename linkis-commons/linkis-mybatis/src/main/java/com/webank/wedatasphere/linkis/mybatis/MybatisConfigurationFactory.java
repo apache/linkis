@@ -44,9 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * Created by enjoyyin on 2018/8/6.
- */
+
 @Configuration
 @ConfigurationProperties
 @AutoConfigureAfter(DataSourceConfig.class)

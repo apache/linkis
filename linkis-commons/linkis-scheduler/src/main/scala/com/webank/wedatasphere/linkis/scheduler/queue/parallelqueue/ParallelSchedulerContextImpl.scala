@@ -23,9 +23,6 @@ import com.webank.wedatasphere.linkis.scheduler.event.{ScheduleEvent, SchedulerE
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorManager
 
 
-/**
-  * Created by enjoyyin on 2018/9/26.
-  */
 class ParallelSchedulerContextImpl(val maxParallelismUsers: Int) extends  SchedulerContext with Logging {
   private var consumerManager: ParallelConsumerManager = _
   private var groupFactory: ParallelGroupFactory = _

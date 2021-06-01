@@ -20,9 +20,6 @@ import com.webank.wedatasphere.linkis.manager.common.entity.node.{EMNode, Engine
 import com.webank.wedatasphere.linkis.manager.service.common.pointer.{EMNodPointer, EngineNodePointer, NodePointerBuilder}
 import org.springframework.stereotype.Component
 
-/**
-  * @date 2020/7/13 20:09
-  */
 @Component
 class DefaultNodePointerBuilder extends NodePointerBuilder {
 

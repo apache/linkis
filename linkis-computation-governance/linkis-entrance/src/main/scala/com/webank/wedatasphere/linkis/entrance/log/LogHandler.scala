@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-/**
-  * author: enjoyyin
-  * date: 2018/9/18
-  * time: 10:22
-  * Description:
-  */
 package com.webank.wedatasphere.linkis.entrance.log
 
 trait LogHandler {

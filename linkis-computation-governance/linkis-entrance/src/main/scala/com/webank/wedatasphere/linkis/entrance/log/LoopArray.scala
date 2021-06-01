@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-/**
-  * author: enjoyyin
-  * date: 2018/9/5
-  * time: 11:38
-  * Description:
-  */
 package com.webank.wedatasphere.linkis.entrance.log
 
 class LoopArray[T](maxCapacity: Int) {

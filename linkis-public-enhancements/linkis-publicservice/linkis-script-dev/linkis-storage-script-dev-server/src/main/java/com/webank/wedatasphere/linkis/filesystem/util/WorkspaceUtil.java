@@ -30,9 +30,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-/**
- * Created by johnnwang on 2018/11/5.
- */
+
 public class WorkspaceUtil {
 
     public static String infoReg = "((19|20)[0-9]{2})-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) "

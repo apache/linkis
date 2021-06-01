@@ -7,9 +7,7 @@ import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-/**
-  * Created by alexyang
-  */
+
 @Component
 class UserControlReceiverChooser extends ReceiverChooser{
 

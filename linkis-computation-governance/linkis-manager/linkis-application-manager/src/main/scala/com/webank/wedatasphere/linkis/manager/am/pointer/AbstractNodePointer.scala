@@ -24,9 +24,6 @@ import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.manager.service.common.pointer.NodePointer
 import com.webank.wedatasphere.linkis.rpc.Sender
 
-/**
-  * @date 2020/7/16 20:19
-  */
 abstract class AbstractNodePointer extends NodePointer with Logging {
 
 

@@ -24,9 +24,6 @@ import com.webank.wedatasphere.linkis.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-/**
-  * @date 2020/7/16 21:05
-  */
 @Component
 class DefaultEngineNodeLocker extends EngineNodeLocker with Logging {
 

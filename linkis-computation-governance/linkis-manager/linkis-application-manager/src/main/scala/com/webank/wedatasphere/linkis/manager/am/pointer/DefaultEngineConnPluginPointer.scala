@@ -24,9 +24,6 @@ import com.webank.wedatasphere.linkis.manager.engineplugin.common.resource.Engin
 import com.webank.wedatasphere.linkis.rpc.Sender
 import org.springframework.stereotype.Component
 
-/**
-  * @date 2020/9/17 20:17
-  */
 @Component
 class DefaultEngineConnPluginPointer extends EngineConnPluginPointer {
 

@@ -15,9 +15,7 @@ package com.webank.wedatasphere.linkis.common.conf
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
 
-/**
-  * Created by enjoyyin on 2018/4/18.
-  */
+
 object Configuration extends Logging {
 
   val BDP_ENCODING = CommonVars("wds.linkis.encoding", "utf-8")

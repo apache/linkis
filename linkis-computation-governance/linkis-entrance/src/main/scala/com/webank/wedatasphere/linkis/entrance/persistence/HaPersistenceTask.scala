@@ -17,9 +17,8 @@
 package com.webank.wedatasphere.linkis.entrance.persistence
 
 import com.webank.wedatasphere.linkis.protocol.task.Task
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
+
 case class HaPersistenceTask(task: Task) extends Task {
   override def getInstance: String = task.getInstance
 

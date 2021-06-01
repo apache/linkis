@@ -26,9 +26,7 @@ import org.springframework.context.annotation.Primary;
 
 import javax.sql.DataSource;
 
-/**
- * Created by enjoyyin on 2018/8/6.
- */
+
 @Configuration
 @ConfigurationProperties
 public class DataSourceConfig extends JavaLog {

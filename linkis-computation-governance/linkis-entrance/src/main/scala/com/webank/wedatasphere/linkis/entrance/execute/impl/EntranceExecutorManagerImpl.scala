@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.orchestrator.ecm.EngineConnManager
 import com.webank.wedatasphere.linkis.scheduler.listener.ExecutorListener
 import com.webank.wedatasphere.linkis.scheduler.queue.GroupFactory
 
-/**
-  * Created by enjoyyin on 2018/9/26.
-  */
+
 class EntranceExecutorManagerImpl(groupFactory: GroupFactory,
                                   engineConnManager: EngineConnManager) extends EntranceExecutorManager(groupFactory, engineConnManager) {
 

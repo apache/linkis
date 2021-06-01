@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.manager.common.protocol.engine.{EngineConn
 import com.webank.wedatasphere.linkis.message.annotation.Receiver
 import org.springframework.stereotype.Service
 
-/**
-  * @date 2020/8/4 21:39
-  */
+
 @Service
 class DefaultEngineKillService extends AbstractEngineService with EngineKillService with Logging {
 

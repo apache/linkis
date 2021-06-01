@@ -25,9 +25,7 @@ import com.webank.wedatasphere.linkis.rpc.interceptor.{RPCInterceptor, RPCLoadBa
 
 import scala.collection.JavaConversions.mapAsScalaMap
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 private[rpc] object RPCSpringBeanCache extends Logging {
   import DataWorkCloudApplication.getApplicationContext
   private var beanNameToReceivers: util.Map[String, Receiver] = _

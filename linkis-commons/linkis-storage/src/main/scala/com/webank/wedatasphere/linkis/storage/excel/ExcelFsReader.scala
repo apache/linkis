@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.storage.excel
 
 import com.webank.wedatasphere.linkis.common.io.FsReader
 
-/**
-  * Created by johnnwang on 2018/11/12.
-  */
+
 abstract class ExcelFsReader extends FsReader{
 
 }

@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.entrance.background
 
 import com.webank.wedatasphere.linkis.server.socket.controller.ServerEvent
 
-/**
-  * Created by enjoyyin on 2018/12/4.
-  */
+
 trait BackGroundService {
   val serviceType:String
   def operation(serverEvent: ServerEvent):ServerEvent

@@ -28,9 +28,6 @@ import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
 import scala.collection.mutable.ArrayBuffer
 
 
-/**
-  * Created by johnnwang on 10/17/18.
-  */
 class StorageResultSetReader[K <: MetaData, V <: Record](resultSet: ResultSet[K, V], inputStream: InputStream) extends ResultSetReader[K, V](resultSet, inputStream) with Logging{
 
   private val deserializer = resultSet.createResultSetDeserializer

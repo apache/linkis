@@ -26,9 +26,6 @@ import org.springframework.stereotype.Component
 
 import scala.collection.JavaConversions._
 
-/**
- * @date 2020/8/9 21:17
- */
 @Component
 class AMLabelFilter extends LabelFilter {
 

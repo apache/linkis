@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.variable.exception;
 
-/**
- * Created by cooperyang on 2019/4/12.
- */
+
 public class VariableException extends Exception {
 
     public VariableException(String msg){

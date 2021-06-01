@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.common.exception.ErrorException
 import com.webank.wedatasphere.linkis.protocol.task.Task
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 abstract class EntranceParser {
 
   def getEntranceContext: EntranceContext

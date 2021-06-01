@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.entrance.persistence
 import com.webank.wedatasphere.linkis.entrance.EntranceContext
 import com.webank.wedatasphere.linkis.scheduler.listener.{JobListener, ProgressListener}
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 abstract class PersistenceManager extends JobListener with ResultSetListener with ProgressListener {
 
   def getEntranceContext: EntranceContext

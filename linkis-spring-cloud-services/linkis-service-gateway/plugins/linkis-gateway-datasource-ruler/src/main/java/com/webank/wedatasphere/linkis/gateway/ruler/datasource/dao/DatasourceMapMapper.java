@@ -22,10 +22,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author wang_zh
- * @date 2020/5/22
- */
 @Repository
 public interface DatasourceMapMapper {
 

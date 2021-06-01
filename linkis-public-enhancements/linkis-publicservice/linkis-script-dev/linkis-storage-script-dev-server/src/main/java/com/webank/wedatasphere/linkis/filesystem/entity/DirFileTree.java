@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.filesystem.entity;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by johnnwang on 2018/10/26.
- */
+
 public class DirFileTree {
 
     private String name;

@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.scheduler.event.{ScheduleEvent, SchedulerE
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorManager
 import com.webank.wedatasphere.linkis.scheduler.queue.{ConsumerManager, GroupFactory}
 
-/**
-  * Created by enjoyyin on 2019/1/22.
-  */
+
 class EntranceSchedulerContext extends SchedulerContext {
   private var groupFactory: GroupFactory = _
   private var consumerManager: ConsumerManager = _

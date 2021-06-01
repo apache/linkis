@@ -26,9 +26,6 @@ import org.springframework.stereotype.Component
 
 import scala.collection.JavaConverters._
 
-/**
-  * @date 2021/1/13 10:46
-  */
 @Component
 class MultiUserEngineReuseLabelChooser extends EngineReuseLabelChooser with Logging {
 

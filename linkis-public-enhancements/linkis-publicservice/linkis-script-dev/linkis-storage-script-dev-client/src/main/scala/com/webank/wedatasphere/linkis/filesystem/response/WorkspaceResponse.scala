@@ -15,9 +15,7 @@
  */
 package com.webank.wedatasphere.linkis.filesystem.response
 
-/**
-  * Created by patinousward
-  */
+
 trait WorkspaceResponse {
 
 }

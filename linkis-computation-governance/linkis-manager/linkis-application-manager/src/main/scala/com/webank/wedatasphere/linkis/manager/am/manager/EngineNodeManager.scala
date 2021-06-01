@@ -20,9 +20,6 @@ import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
 import com.webank.wedatasphere.linkis.manager.common.entity.node.{EngineNode, ScoreServiceInstance}
 
-/**
-  * @date 2020/6/12 15:44
-  */
 trait EngineNodeManager {
 
 

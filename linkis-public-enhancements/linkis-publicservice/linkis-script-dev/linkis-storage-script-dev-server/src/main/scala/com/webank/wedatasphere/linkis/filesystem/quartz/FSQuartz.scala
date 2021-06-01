@@ -19,9 +19,8 @@ import org.quartz.JobExecutionContext
 import org.springframework.scheduling.quartz.QuartzJobBean
 
 import scala.collection.JavaConversions._
-/**
-  * Created by johnnwang on 2019/2/11.
-  */
+
+
 class FSQuartz extends QuartzJobBean with Logging{
   override def executeInternal(jobExecutionContext: JobExecutionContext): Unit = {
     info("closing fs...")

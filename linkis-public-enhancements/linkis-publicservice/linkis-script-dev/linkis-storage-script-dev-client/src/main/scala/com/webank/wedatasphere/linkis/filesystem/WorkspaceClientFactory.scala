@@ -17,9 +17,7 @@ package com.webank.wedatasphere.linkis.filesystem
 
 import com.webank.wedatasphere.linkis.filesystem.request.WorkspaceClient
 
-/**
-  * Created by patinousward
-  */
+
 object WorkspaceClientFactory {
 
   def getClient(user: String, token: String,gatewayAddress:String): WorkspaceClient = {

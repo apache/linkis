@@ -20,9 +20,6 @@ import com.webank.wedatasphere.linkis.manager.common.entity.node.Node
 import com.webank.wedatasphere.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock, ResponseEngineLock}
 import com.webank.wedatasphere.linkis.manager.service.common.pointer.EngineNodePointer
 
-/**
-  * @date 2020/7/13 20:12
-  */
 class DefaultEngineNodPointer(val node: Node) extends AbstractNodePointer with EngineNodePointer {
 
 

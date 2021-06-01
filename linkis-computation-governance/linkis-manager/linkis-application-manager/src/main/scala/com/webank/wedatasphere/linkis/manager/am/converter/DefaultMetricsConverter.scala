@@ -25,9 +25,6 @@ import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 import org.apache.commons.lang.StringUtils
 import org.springframework.stereotype.Component
 
-/**
-  * @date 2020/7/9 15:31
-  */
 @Component
 class DefaultMetricsConverter extends MetricsConverter with Logging {
 

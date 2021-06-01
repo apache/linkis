@@ -18,9 +18,6 @@ package com.webank.wedatasphere.linkis.manager.am.conf
 
 import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
 
-/**
-  * @date 2020/7/3 21:17
-  */
 object AMConfiguration {
 
   val ENGINE_START_MAX_TIME = CommonVars("wds.linkis.manager.am.engine.start.max.time", new TimeType("10m"))

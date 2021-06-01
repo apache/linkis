@@ -17,7 +17,6 @@
 package com.webank.wedatasphere.linkis.storage.script.parser
 
 /**
-  * Created by johnnwang on 2018/10/23.
   * .py script parser(.py脚本的解析器)
   */
 class PYScriptParser private extends CommonScriptParser {

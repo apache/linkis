@@ -19,9 +19,6 @@ package com.webank.wedatasphere.linkis.common.io.resultset
 import com.webank.wedatasphere.linkis.common.io.{MetaData, Record}
 
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
 abstract class ResultDeserializer[K <: MetaData, V <: Record] {
   def createMetaData(bytes: Array[Byte]): K
   def createRecord(bytes: Array[Byte]): V

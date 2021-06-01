@@ -25,9 +25,7 @@ import com.webank.wedatasphere.linkis.rpc.sender.SpringMVCRPCSender
 
 import scala.concurrent.duration.Duration
 
-/**
-  * Created by enjoyyin on 2018/8/28.
-  */
+
 abstract class Sender {
   /**
     *Ask is a synchronous method that requests the target microservice in real time and requires the target microservice to return a non-null return value.

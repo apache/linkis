@@ -30,9 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-/**
-  * Created by cooperyang on 2019/4/10.
-  */
+
 @Service
 class VariableServiceImpl extends VariableService with Logging {
 

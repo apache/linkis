@@ -33,9 +33,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-/**
- * @date 2020/7/21
- */
+
 public abstract class AbstractMessageExecutor extends JavaLog implements MessageExecutor {
 
     private Throwable t;

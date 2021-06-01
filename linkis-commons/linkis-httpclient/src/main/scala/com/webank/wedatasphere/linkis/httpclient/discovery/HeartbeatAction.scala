@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-/*
- * Created by ${USER} on ${DATE}.
- */
-
 package com.webank.wedatasphere.linkis.httpclient.discovery
 
 import com.webank.wedatasphere.linkis.httpclient.request.{Action, ServerUrlAction}
 import com.webank.wedatasphere.linkis.httpclient.response.Result
 
-/**
-  * Created by enjoyyin on 2019/5/21.
-  */
+
 trait HeartbeatAction extends Action with ServerUrlAction
 
 trait HeartbeatResult extends Result {

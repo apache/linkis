@@ -16,9 +16,6 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue
 
-/**
-  * Created by enjoyyin on 2018/9/5.
- */
 
 class LoopArrayQueue(var group: Group) extends ConsumeQueue{
   private val eventQueue: Array[Any] = new Array[Any](group.getMaximumCapacity)

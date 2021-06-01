@@ -17,9 +17,7 @@ package com.webank.wedatasphere.linkis.filesystem.request
 
 import com.webank.wedatasphere.linkis.filesystem.response.ScriptFromBMLResponse
 
-/**
-  * Created by patinousward
-  */
+
 trait WorkspaceClient {
 
   def requestOpenScriptFromBML(resourceId:String,version:String,fileName:String):ScriptFromBMLResponse

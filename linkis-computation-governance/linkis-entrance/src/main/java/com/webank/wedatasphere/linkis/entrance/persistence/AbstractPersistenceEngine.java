@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-/**
- * author: enjoyyin
- * date: 2018/9/27
- * time: 10:10
- * Description:
- */
 package com.webank.wedatasphere.linkis.entrance.persistence;
 
 public abstract class AbstractPersistenceEngine implements PersistenceEngine{

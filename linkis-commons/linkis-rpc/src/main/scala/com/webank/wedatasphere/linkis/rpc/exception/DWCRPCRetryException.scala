@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.rpc.exception
 
 import com.webank.wedatasphere.linkis.common.exception.DWCRetryException
 
-/**
-  * Created by enjoyyin on 2018/12/13.
-  */
+
 class DWCRPCRetryException(desc: String) extends DWCRetryException(DWCRPCRetryException.RPC_RETRY_ERROR_CODE, desc)
 object DWCRPCRetryException {
   val RPC_RETRY_ERROR_CODE = 15555

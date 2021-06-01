@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.common.exception;
 
-/**
- * Created by enjoyyin on 2018/8/29.
- */
+
 public class DWCRetryException extends DWCException  {
     DWCRetryException(int errCode, String desc, String ip, int port, String serviceKind) {
         super(errCode, desc, ip, port, serviceKind);

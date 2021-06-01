@@ -11,18 +11,11 @@
  * limitations under the License.
  */
 
-/*
- * Created by ${USER} on ${DATE}.
- */
-
 package com.webank.wedatasphere.linkis.httpclient.authentication
 
 import org.apache.http.cookie.Cookie
 
 
-/**
-  * Created by enjoyyin on 2019/5/16.
-  */
 trait HttpAuthentication extends Authentication {
 
   def authToCookies: Array[Cookie]

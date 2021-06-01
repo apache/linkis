@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-/**
- * author: enjoyyin
- * date: 2018/9/30
- * time: 17:39
- * Description:
- */
 package com.webank.wedatasphere.linkis.entrance.context;
 
 import com.webank.wedatasphere.linkis.entrance.EntranceContext;

@@ -21,9 +21,8 @@ import java.util.concurrent.TimeUnit
 import com.webank.wedatasphere.linkis.scheduler.queue.{AbstractGroup, SchedulerEvent}
 
 import scala.concurrent.duration.Duration
-/**
-  * Created by enjoyyin on 2018/9/11.
-  */
+
+
 class FIFOGroup(groupName: String, initCapacity: Int, maxCapacity: Int) extends AbstractGroup{
 
   private var maxAskInterval = 30000l

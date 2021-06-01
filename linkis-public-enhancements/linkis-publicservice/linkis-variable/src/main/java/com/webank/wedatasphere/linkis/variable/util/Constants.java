@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.variable.util;
 
-/**
- * Created by cooperyang on 2018/10/18.
- */
+
 public class Constants {
     public static final String GOLBAL_CONFIG_NAME = "全局变量";
 }

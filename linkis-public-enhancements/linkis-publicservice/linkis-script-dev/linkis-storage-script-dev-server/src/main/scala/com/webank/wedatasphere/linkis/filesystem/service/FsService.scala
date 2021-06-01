@@ -30,9 +30,7 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent._
 
-/**
-  * Created by johnnwang on 2019/2/11.
-  */
+
 @Service
 class FsService extends Logging {
 

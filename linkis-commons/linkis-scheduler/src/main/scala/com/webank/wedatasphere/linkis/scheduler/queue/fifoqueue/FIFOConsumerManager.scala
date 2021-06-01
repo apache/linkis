@@ -25,9 +25,7 @@ import com.webank.wedatasphere.linkis.scheduler.exception.SchedulerErrorExceptio
 import com.webank.wedatasphere.linkis.scheduler.listener.ConsumerListener
 import com.webank.wedatasphere.linkis.scheduler.queue.{Consumer, ConsumerManager, Group, LoopArrayQueue}
 
-/**
-  * Created by enjoyyin on 2018/9/11.
-  */
+
 class FIFOConsumerManager(groupName: String) extends ConsumerManager {
 
   def this() = this("FIFO_GROUP")

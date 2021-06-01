@@ -21,9 +21,7 @@ import java.io.{Closeable, Flushable}
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 import com.webank.wedatasphere.linkis.protocol.task.Task
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 trait PersistenceEngine extends Closeable with Flushable {
 
   @throws[ErrorException]

@@ -18,9 +18,6 @@ package com.webank.wedatasphere.linkis.filesystem.conf
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 
 
-/**
-  * Created by patinousward
-  */
 object WorkspaceClientConf {
 
   val gateway: String =

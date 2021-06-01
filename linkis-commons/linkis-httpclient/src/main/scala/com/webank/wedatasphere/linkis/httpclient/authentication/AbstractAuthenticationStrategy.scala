@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.httpclient.request.{Action, UserAction}
 import org.apache.commons.lang.StringUtils
 import org.apache.http.HttpResponse
 
-/**
-  * Created by enjoyyin on 2019/5/22.
-  */
+
 abstract class AbstractAuthenticationStrategy extends AuthenticationStrategy {
   private var client: Client = _
   private val userNameToAuthentications = new ConcurrentHashMap[String, Authentication]()

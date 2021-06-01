@@ -46,9 +46,6 @@ import scala.collection.JavaConversions._
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService}
 
 
-/**
- * Created by enjoyyin on 2019/5/20.
- */
 abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String) extends Client {
 
   protected implicit val formats: Formats = DefaultFormats

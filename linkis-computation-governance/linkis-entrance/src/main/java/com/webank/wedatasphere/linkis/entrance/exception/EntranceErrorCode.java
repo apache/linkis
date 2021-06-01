@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-/**
- * author: enjoyyin
- * date: 2018/9/17
- * time: 12:15
- * Description:
- */
 package com.webank.wedatasphere.linkis.entrance.exception;
 
 public enum EntranceErrorCode {

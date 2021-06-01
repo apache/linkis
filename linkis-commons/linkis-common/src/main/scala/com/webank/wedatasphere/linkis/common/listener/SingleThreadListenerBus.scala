@@ -15,8 +15,7 @@
  */
 
 package com.webank.wedatasphere.linkis.common.listener
-/**
-  * Created by enjoyyin on 2018/1/9.
-  */
+
+
 abstract class SingleThreadListenerBus[L <: EventListener, E <: Event](eventQueueCapacity: Int, name: String)
   extends ListenerEventBus[L, E](eventQueueCapacity, name)(1, -1)

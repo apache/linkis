@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-/**
-  * author: enjoyyin
-  * date: 2018/9/5
-  * time: 14:24
-  * Description:
-  */
 package com.webank.wedatasphere.linkis.entrance.log
 
 class Cache(maxCapacity: Int){

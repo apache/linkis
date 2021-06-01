@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.common.exception;
 
-/**
- * Created by enjoyyin on 2019/1/29.
- */
+
 public class DwcCommonErrorException extends ErrorException{
     public DwcCommonErrorException(int errCode, String desc) {
         super(errCode, desc);

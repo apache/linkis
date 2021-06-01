@@ -23,9 +23,6 @@ import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import org.apache.commons.lang.StringUtils
 
 
-/**
-  * Created by enjoyyin on 8/30/17.
-  */
 object LDAPUtils extends Logging {
 
   val url =  CommonVars("wds.linkis.ldap.proxy.url", "").getValue

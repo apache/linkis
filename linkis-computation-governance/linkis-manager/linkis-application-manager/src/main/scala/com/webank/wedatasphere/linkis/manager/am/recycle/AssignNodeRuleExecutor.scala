@@ -20,9 +20,6 @@ import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.manager.common.entity.recycle.{AssignNodeRule, RecyclingRule}
 import org.springframework.stereotype.Component
 
-/**
-  * @date 2020/7/12 17:48
-  */
 @Component
 class AssignNodeRuleExecutor extends RecyclingRuleExecutor {
 

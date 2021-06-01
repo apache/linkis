@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Created by ${USER} on ${DATE}.
- */
 
 package com.webank.wedatasphere.linkis.httpclient.request
 
@@ -27,9 +24,7 @@ import com.webank.wedatasphere.linkis.common.conf.Configuration
 
 import scala.collection.JavaConversions
 
-/**
-  * Created by enjoyyin on 2019/5/22.
-  */
+
 abstract class GetAction extends HttpAction {
   private val queryParams: util.Map[String, Any] = new util.HashMap[String, Any]
   def setParameter(key: String, value: Any): Unit = this.queryParams.put(key, value)

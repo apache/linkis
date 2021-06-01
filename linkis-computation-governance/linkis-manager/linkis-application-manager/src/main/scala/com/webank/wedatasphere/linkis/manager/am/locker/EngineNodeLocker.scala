@@ -18,9 +18,6 @@ package com.webank.wedatasphere.linkis.manager.am.locker
 
 import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode
 
-/**
-  * @date 2020/7/4 22:05
-  */
 trait EngineNodeLocker {
 
 

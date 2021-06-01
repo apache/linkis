@@ -26,9 +26,6 @@ import com.webank.wedatasphere.linkis.manager.common.protocol.engine.{EngineStop
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 import com.webank.wedatasphere.linkis.manager.service.common.pointer.EMNodPointer
 
-/**
-  * @date 2020/7/13 20:12
-  */
 class DefaultEMNodPointer(val node: Node) extends AbstractNodePointer with EMNodPointer {
 
 

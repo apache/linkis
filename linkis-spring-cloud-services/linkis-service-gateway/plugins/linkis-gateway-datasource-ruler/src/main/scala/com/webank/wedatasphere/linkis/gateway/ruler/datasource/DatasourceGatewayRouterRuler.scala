@@ -30,11 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import scala.collection.JavaConversions._
-/**
- *
- * @author wang_zh
- * @date 2020/5/22
- */
+
 @Component
 class DatasourceGatewayRouterRuler extends EntranceGatewayRouterRuler with Logging {
 

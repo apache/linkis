@@ -31,10 +31,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author wang_zh
- * @date 2020/5/22
- */
 @Component
 public class DatasourceMapCache {
 

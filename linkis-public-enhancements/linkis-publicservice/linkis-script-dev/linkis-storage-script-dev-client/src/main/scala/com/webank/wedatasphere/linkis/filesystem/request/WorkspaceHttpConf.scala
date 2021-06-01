@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
 import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig
 import org.slf4j.{Logger, LoggerFactory}
 
-/**
-  * Created by patinousward
-  */
+
 trait WorkspaceHttpConf {
 
   protected var user: String

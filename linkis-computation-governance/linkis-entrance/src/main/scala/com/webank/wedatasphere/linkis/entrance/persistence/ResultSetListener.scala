@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.scheduler.executer.OutputExecuteResponse
 import com.webank.wedatasphere.linkis.scheduler.listener.SchedulerListener
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 trait ResultSetListener extends SchedulerListener {
   def onResultSetCreated(job: Job, response: OutputExecuteResponse): Unit
   def onResultSizeCreated(job: Job, resultSize: Int): Unit

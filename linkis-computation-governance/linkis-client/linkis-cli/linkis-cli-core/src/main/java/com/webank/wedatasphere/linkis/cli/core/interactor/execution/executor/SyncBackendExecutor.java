@@ -21,7 +21,6 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobS
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/03 14:51
  */
 public interface SyncBackendExecutor extends Executor {

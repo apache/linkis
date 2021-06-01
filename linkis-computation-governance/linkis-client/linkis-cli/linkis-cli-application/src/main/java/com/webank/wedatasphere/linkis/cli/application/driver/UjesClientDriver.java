@@ -48,7 +48,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * @program: linkis-cli
  * @description: UjesClientDriver communicates with UjesClient directly, calling apis to submit job/ query info etc, and translating UjesClient's exception.
- * @author: shangda
  * @create: 2021/02/22 21:25
  */
 public class UjesClientDriver implements LinkisClientDriver {
@@ -91,7 +90,7 @@ public class UjesClientDriver implements LinkisClientDriver {
                                 .setAuthenticationStrategy(authenticationStrategy)  //token/static
                                 .setAuthTokenKey(ujesContext.getTokenKey())         //static authentication -> submitUser must be the same as tokenKey
                                 .setAuthTokenValue(ujesContext.getTokenValue())))
-                                .setDWSVersion(ujesContext.getDwsVersion()).build();
+                        .setDWSVersion(ujesContext.getDwsVersion()).build();
 
                 client = new UJESClientImpl(config);
             } catch (Exception e) {
@@ -146,7 +145,7 @@ public class UjesClientDriver implements LinkisClientDriver {
                     .build();
             logger.info("Request info to Linkis: \n{}", Utils.GSON.toJson(jobSubmitAction));
 
-      /* Old API */
+            /* Old API */
 //      JobExecuteAction jobExecuteAction = JobExecuteAction.builder()
 //          .setCreator((String) linkisJob.getLabelMap().get(LinkisKeys.KEY_USER_CREATOR))
 //          .setUser(linkisJob.getSubmitUser())
@@ -309,7 +308,7 @@ public class UjesClientDriver implements LinkisClientDriver {
                     String reason;
                     if (openLogResult == null) {
                         reason = "OpenLogResult is null";
-                    } else if (0 != openLogResult.getStatus())  {
+                    } else if (0 != openLogResult.getStatus()) {
                         reason = "server returns non-zero status-code";
                     } else {
                         reason = "server returns empty log";
@@ -321,9 +320,9 @@ public class UjesClientDriver implements LinkisClientDriver {
                             msg = MessageFormat.format("Get log from openLog failed. Retry exhausted. taskID={0}, Reason: {1}", taskID, reason);
                             throw new ExecutorException("EXE0017", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
                         } else {
-                                backCnt++;
-                                retryCnt = 0;
-                                Utils.doSleepQuietly(10000l);//wait 10s and try again
+                            backCnt++;
+                            retryCnt = 0;
+                            Utils.doSleepQuietly(10000l);//wait 10s and try again
                         }
                     }
                 } else {
@@ -427,8 +426,8 @@ public class UjesClientDriver implements LinkisClientDriver {
 
         }
         if (!jobInfoResult.isSucceed()) {
-            logger.info("job Status is not \"Succeed\", so will not get result.");
-            return null;
+            String msg = "Get ResultSet Failed: job Status is not \"Succeed\", .";
+            throw new ExecutorException(JobStatus.UNKNOWN, "EXE0021", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
         }
 
         if (StringUtils.isBlank(jobInfoResult.getRequestPersistTask().getResultLocation())) {
@@ -447,7 +446,7 @@ public class UjesClientDriver implements LinkisClientDriver {
 
         while (retryTime++ < MAX_RETRY_TIME) {
             try {
-                resultSetArray = jobInfoResult.getResultSetList(client); //this makes call to server
+                resultSetArrasy = jobInfoResult.getResultSetList(client); //this makes call to server
                 if (resultSetArray == null || 0 == resultSetArray.length) {
                     String reason;
                     if (resultSetArray == null) {

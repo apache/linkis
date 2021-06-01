@@ -18,7 +18,6 @@ import java.util.Properties;
 /**
  * @program: linkis-client
  * @description: read properties. one instance of this class corresponds to one source (file/sys_prop/sys_env etc)
- * @author: shangda
  * @create: 2021/3/4 21:36
  */
 public interface PropertiesReader {

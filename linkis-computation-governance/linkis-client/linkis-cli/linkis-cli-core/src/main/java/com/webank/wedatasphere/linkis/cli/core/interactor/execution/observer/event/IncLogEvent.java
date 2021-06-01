@@ -21,7 +21,6 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobS
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/10 16:10
  */
 public class IncLogEvent extends SingleObserverEvent {

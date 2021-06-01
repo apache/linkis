@@ -21,7 +21,6 @@ import java.text.MessageFormat;
 /**
  * @program: linkis-cli
  * @description: RuntimeException for BdpLinkisClient
- * @author: shangda
  * @create: 2020/10/30 18:53
  */
 public class LinkisClientRuntimeException extends RuntimeException {

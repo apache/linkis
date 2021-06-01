@@ -23,7 +23,6 @@ import java.lang.reflect.ParameterizedType;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/10 17:58
  */
 public abstract class BuildableByVarAccess<T> extends AbstractBuilder<T> {

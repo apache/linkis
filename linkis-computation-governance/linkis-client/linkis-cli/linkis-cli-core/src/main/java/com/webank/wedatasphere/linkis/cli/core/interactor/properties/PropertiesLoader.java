@@ -19,7 +19,6 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.properties.reader.Prop
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/02/24 20:12
  */
 public interface PropertiesLoader {

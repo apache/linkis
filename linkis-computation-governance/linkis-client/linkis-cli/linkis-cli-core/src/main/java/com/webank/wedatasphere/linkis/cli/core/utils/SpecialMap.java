@@ -18,7 +18,6 @@ import java.util.HashMap;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/18 23:07
  */
 public class SpecialMap<K, V> extends HashMap<K, V> {

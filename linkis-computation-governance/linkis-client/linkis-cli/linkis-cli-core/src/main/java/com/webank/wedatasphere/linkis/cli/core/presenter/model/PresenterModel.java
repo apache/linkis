@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.cli.core.presenter.model;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/10 20:50
  */
 public interface PresenterModel {

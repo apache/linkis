@@ -19,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * @program: linkis-cli
  * @description: Flag is a special type of {@link StdOption}. Its only accepts boolean value.
- * @author: shangda
  * @create: 2020/9/28 18:20
  */
 public class Flag extends StdOption<Boolean> implements Cloneable {

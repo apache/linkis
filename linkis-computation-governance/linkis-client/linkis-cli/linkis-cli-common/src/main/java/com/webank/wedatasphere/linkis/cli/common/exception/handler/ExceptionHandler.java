@@ -17,7 +17,6 @@ package com.webank.wedatasphere.linkis.cli.common.exception.handler;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2020/11/09 20:28
  */
 public interface ExceptionHandler {

@@ -19,7 +19,6 @@ import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeEx
 /**
  * @program: linkis-cli
  * @description: TODO
- * @author: shangda
  * @create: 2021/02/25 14:53
  */
 public class PropsValidator implements Validator {

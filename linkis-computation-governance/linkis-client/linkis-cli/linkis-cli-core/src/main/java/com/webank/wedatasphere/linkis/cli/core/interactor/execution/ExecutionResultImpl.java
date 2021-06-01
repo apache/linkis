@@ -17,9 +17,7 @@ import com.webank.wedatasphere.linkis.cli.common.entity.execution.ExecutionResul
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.ExecutionStatus;
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobExec;
 
-/**
- * Created by shangda on 2021/5/17.
- */
+
 public class ExecutionResultImpl implements ExecutionResult {
     JobExec execData;
     ExecutionStatus executionStatus;

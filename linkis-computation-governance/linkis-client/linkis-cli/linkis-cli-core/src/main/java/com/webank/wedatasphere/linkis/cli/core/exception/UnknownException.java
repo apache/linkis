@@ -20,7 +20,6 @@ import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorMsg;
 /**
  * @program: linkis-cli
  * @description: unknown exception
- * @author: shangda
  * @create: 2020/11/09 17:06
  */
 public class UnknownException extends LinkisClientRuntimeException {

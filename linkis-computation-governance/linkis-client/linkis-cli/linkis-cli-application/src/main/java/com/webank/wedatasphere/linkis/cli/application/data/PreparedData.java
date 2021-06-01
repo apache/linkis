@@ -21,7 +21,6 @@ import java.util.Map;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/12 19:58
  */
 public class PreparedData {

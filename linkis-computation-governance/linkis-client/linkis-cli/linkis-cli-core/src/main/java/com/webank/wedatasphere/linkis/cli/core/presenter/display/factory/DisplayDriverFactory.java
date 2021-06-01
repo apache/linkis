@@ -24,7 +24,6 @@ import com.webank.wedatasphere.linkis.cli.core.presenter.display.StdOutDriver;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/19 20:04
  */
 public class DisplayDriverFactory {

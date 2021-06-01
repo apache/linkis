@@ -19,9 +19,7 @@ import com.webank.wedatasphere.linkis.cli.core.presenter.display.StdOutDriver;
 import com.webank.wedatasphere.linkis.cli.core.presenter.model.PresenterModel;
 import com.webank.wedatasphere.linkis.cli.core.utils.CommonUtils;
 
-/**
- * Created by shangda on 2021/4/26.
- */
+
 public class DefaultStdOutPresenter implements Presenter {
     DisplayDriver driver = new StdOutDriver();
 

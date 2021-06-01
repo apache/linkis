@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.cli.common.utils.converter;
 /**
  * @program: bdp-linnkis-client
  * @description: Converting user params to different type
- * @author: shangda
  * @create: 2020/9/28 18:18
  */
 public interface Converter<FROM, TO> {

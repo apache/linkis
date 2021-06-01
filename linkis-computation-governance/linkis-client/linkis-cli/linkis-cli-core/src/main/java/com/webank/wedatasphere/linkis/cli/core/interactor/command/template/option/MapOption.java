@@ -22,9 +22,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by shangda on 2021/5/13.
- */
+
 public class MapOption extends BaseOption<Map<String, String>> implements Cloneable {
     final String[] paramNames;
 

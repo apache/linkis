@@ -16,8 +16,10 @@ package com.webank.wedatasphere.linkis.cli.application.interactor.execution.exec
 import com.webank.wedatasphere.linkis.cli.application.constants.AppConstants;
 import com.webank.wedatasphere.linkis.cli.application.driver.LinkisClientDriver;
 import com.webank.wedatasphere.linkis.cli.application.driver.transformer.DriverTransformer;
+import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobExec.LinkisJobKill;
 import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobExec.LinkisJobSubmitExec;
 import com.webank.wedatasphere.linkis.cli.application.interactor.job.LinkisJob;
+import com.webank.wedatasphere.linkis.cli.application.interactor.job.LinkisJobMan;
 import com.webank.wedatasphere.linkis.cli.application.utils.Utils;
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobExec;
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobStatus;
@@ -32,6 +34,7 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobS
 import com.webank.wedatasphere.linkis.cli.core.utils.LogUtils;
 import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +42,6 @@ import org.slf4j.LoggerFactory;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/04 10:56
  */
 public class LinkisSubmitExecutor implements AsyncBackendExecutor, LogRetrievable {
@@ -47,6 +49,8 @@ public class LinkisSubmitExecutor implements AsyncBackendExecutor, LogRetrievabl
 
     LinkisClientDriver driver;
     DriverTransformer driverTransformer; // currently just use this. consider modify to interface later
+
+    private String taskIdCache;
 
     public void setDriver(LinkisClientDriver driver) {
         this.driver = driver;
@@ -71,6 +75,7 @@ public class LinkisSubmitExecutor implements AsyncBackendExecutor, LogRetrievabl
         execData = updateExecDataByDwsResult(execData, jobSubmitResult);
         infoBuilder.setLength(0);
         infoBuilder.append("JobId:").append(execData.getJobID());
+        taskIdCache = execData.getJobID();
         LogUtils.getPlaintTextLogger().info(infoBuilder.toString());
         return execData;
     }
@@ -86,6 +91,9 @@ public class LinkisSubmitExecutor implements AsyncBackendExecutor, LogRetrievabl
                 ((LinkisJobSubmitExec) execData).getTaskID()
         );
         execData = updateExecDataByDwsResult(execData, jobInfoResult);
+        if (StringUtils.isBlank(taskIdCache)) {
+            taskIdCache = execData.getJobID();
+        }
 
         String log2 = "\n---------------------------------------------------\n" +
                 "\ttask " + ((LinkisJobSubmitExec) execData).getTaskID() +
@@ -191,5 +199,33 @@ public class LinkisSubmitExecutor implements AsyncBackendExecutor, LogRetrievabl
         return (LinkisJobSubmitExec) data;
     }
 
+
+    @Override
+    public boolean terminate(Job job) {
+        //kill job if job is submitted
+        if (StringUtils.isNotBlank(taskIdCache)) {
+            System.out.println("\nKilling job: " + taskIdCache);
+            LinkisJobManageExecutor jobManageExecutor = new LinkisJobManageExecutor();
+            jobManageExecutor.setDriver(this.driver);
+            jobManageExecutor.setDriverTransformer(this.driverTransformer);
+            LinkisJobMan linkisJobMan = new LinkisJobMan();
+            linkisJobMan.setJobId(taskIdCache);
+            linkisJobMan.setSubmitUser(job.getSubmitUser());
+            linkisJobMan.setProxyUser(job.getProxyUser());
+            try {
+                LinkisJobKill result = (LinkisJobKill) jobManageExecutor.killJob(linkisJobMan);
+                if (result.isSuccess()) {
+                    System.out.println("Successfully killed job: " + taskIdCache + " on exit");
+                } else {
+                    System.out.println("Failed to kill job: " + taskIdCache + " on exit. Current job status: " + result.getJobStatus().name());
+                }
+            } catch (Exception e) {
+                System.out.println("Failed to kill job: " + taskIdCache + " on exit");
+                System.out.println(ExceptionUtils.getStackTrace(e));
+                return false;
+            }
+        }
+        return true;
+    }
 
 }

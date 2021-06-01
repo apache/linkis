@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/25 11:40
  */
 public class UjesContextValidator implements Validator {

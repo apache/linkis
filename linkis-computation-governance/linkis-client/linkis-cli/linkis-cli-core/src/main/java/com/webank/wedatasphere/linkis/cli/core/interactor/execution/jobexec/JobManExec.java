@@ -15,9 +15,6 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec;
 
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobExec;
 
-/**
- * Created by shangda on 2021/5/19.
- */
 public abstract class JobManExec implements JobExec, Cloneable {
     Exception exception;
     /**

@@ -25,7 +25,6 @@ import java.util.List;
 /**
  * @program: linkis-cli
  * @description: transform data to be compatible with driver
- * @author: shangda
  * @create: 2021/03/10 17:50
  */
 public interface DriverTransformer {

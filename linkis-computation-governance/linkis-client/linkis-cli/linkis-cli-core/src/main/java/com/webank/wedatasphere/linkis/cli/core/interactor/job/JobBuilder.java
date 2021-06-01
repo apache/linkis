@@ -19,7 +19,6 @@ import com.webank.wedatasphere.linkis.cli.core.builder.BuildableByVarAccess;
 /**
  * @program: linkis-computation-governance
  * @description:
- * @author: shangda
  * @create: 2021/04/02 17:32
  */
 public abstract class JobBuilder extends BuildableByVarAccess<Job> {

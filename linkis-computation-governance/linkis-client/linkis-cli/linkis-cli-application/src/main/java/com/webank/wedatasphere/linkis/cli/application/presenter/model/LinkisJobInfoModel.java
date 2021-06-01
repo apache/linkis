@@ -19,9 +19,7 @@ import com.webank.wedatasphere.linkis.cli.core.presenter.model.PresenterModel;
 
 import java.util.Date;
 
-/**
- * Created by shangda on 2021/4/26.
- */
+
 public class LinkisJobInfoModel implements PresenterModel {
 
     private String cid;

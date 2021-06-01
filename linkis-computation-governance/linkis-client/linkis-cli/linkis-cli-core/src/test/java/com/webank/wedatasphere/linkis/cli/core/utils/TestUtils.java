@@ -23,7 +23,6 @@ import java.util.Map;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2020/11/13 10:56
  */
 public class TestUtils {

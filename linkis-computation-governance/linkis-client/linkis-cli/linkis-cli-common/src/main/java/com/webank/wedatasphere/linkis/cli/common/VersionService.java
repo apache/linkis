@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.cli.common;
 /**
  * @program: linkis-cli
  * @description: Service that automatically load version information from pom.xml
- * @author: shangda
  * @create: 2020/10/29 20:12
  */
 public class VersionService {

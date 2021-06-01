@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.cli.common.exception.error;
 /**
  * @program: linkis-cli
  * @description: Error Code
- * @author: shangda
  * @create: 2020/10/30 18:56
  */
 public interface ErrorMsg {

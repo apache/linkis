@@ -18,7 +18,6 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.execution.observer.lis
 /**
  * @program: linkis-cli
  * @description: simplified version of LinkisClientObserver pattern (currently we don't need a full version)
- * @author: shangda
  * @create: 2021/03/10 14:07
  */
 public abstract class SingleObserverEvent implements LinkisClientEvent {

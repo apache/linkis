@@ -20,7 +20,6 @@ import com.webank.wedatasphere.linkis.cli.common.entity.job.OutputWay;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/10 11:12
  */
 public abstract class JobSubmitExec implements JobExec, Cloneable {

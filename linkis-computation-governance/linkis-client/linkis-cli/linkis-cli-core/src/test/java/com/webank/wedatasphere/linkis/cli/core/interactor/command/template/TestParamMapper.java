@@ -19,7 +19,6 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.command.parser.transfo
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2020/11/27 20:49
  */
 public class TestParamMapper extends ParamKeyMapper {

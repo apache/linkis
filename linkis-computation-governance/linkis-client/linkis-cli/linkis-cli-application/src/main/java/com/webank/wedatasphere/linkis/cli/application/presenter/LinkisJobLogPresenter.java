@@ -25,18 +25,15 @@ import com.webank.wedatasphere.linkis.cli.core.presenter.display.StdOutDriver;
 import com.webank.wedatasphere.linkis.cli.core.presenter.model.JobExecModel;
 import com.webank.wedatasphere.linkis.cli.core.presenter.model.PresenterModel;
 import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult;
-import com.webank.wedatasphere.linkis.ujes.client.response.JobLogResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
-import java.util.StringTokenizer;
 
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/10 10:17
  */
 public class LinkisJobLogPresenter extends QueryBasedPresenter {
@@ -65,46 +62,46 @@ public class LinkisJobLogPresenter extends QueryBasedPresenter {
             LinkisJobIncLogModel incLogModel = finalModel;
             DisplayDriver outDriver = finalDriver;
 
-                Integer oldLogIdx = 0;
-                Integer newLogIdx = 0;
-                while (!(incLogModel.isJobCompleted() && oldLogIdx == newLogIdx)) {
-                    DWSResult jobInfoResult = clientDriver.queryJobInfo(incLogModel.getUser(), incLogModel.getTaskID());
-                    incLogModel = updateModelByDwsResult(incLogModel, jobInfoResult);
+            Integer oldLogIdx = 0;
+            Integer newLogIdx = 0;
+            while (!(incLogModel.isJobCompleted() && oldLogIdx == newLogIdx)) {
+                DWSResult jobInfoResult = clientDriver.queryJobInfo(incLogModel.getUser(), incLogModel.getTaskID());
+                incLogModel = updateModelByDwsResult(incLogModel, jobInfoResult);
 
-                    oldLogIdx = incLogModel.getFromLine();
-                    try {
-                        incLogModel = retrieveRuntimeIncLog(incLogModel);
-                    } catch (Exception e) {
-                        logger.error("Cannot get runtime-log:", e);
-                        incLogModel.readAndClearIncLog();
-                        incLogModel.setFromLine(oldLogIdx);
-                        if (incLogModel.isJobCompleted()) {
-                            break;
-                        } else {
-                            continue;
-                        }
-                    }
-                    newLogIdx = incLogModel.getFromLine();
-                    if (oldLogIdx == newLogIdx) {
-                        String msg = MessageFormat.format("Job is still running, status={0}, progress={1}",
-                                incLogModel.getJobStatus(),
-                                String.valueOf(incLogModel.getJobProgress() * 100) + "%");
-                        logger.info(msg);
-                    } else {
-                        String incLog = incLogModel.readAndClearIncLog();
-                        outDriver.doOutput(incLog);
-                    }
-                    Utils.doSleepQuietly(AppConstants.JOB_QUERY_SLEEP_MILLS);
-                }
+                oldLogIdx = incLogModel.getFromLine();
                 try {
-                    incLogModel = retrievePersistedIncLog(incLogModel);
+                    incLogModel = retrieveRuntimeIncLog(incLogModel);
+                } catch (Exception e) {
+                    logger.error("Cannot get runtime-log:", e);
+                    incLogModel.readAndClearIncLog();
+                    incLogModel.setFromLine(oldLogIdx);
+                    if (incLogModel.isJobCompleted()) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
+                newLogIdx = incLogModel.getFromLine();
+                if (oldLogIdx == newLogIdx) {
+                    String msg = MessageFormat.format("Job is still running, status={0}, progress={1}",
+                            incLogModel.getJobStatus(),
+                            String.valueOf(incLogModel.getJobProgress() * 100) + "%");
+                    logger.info(msg);
+                } else {
                     String incLog = incLogModel.readAndClearIncLog();
                     outDriver.doOutput(incLog);
-                } catch (Exception e) {
-                    logger.error("Cannot get persisted-log: ", e);
                 }
+                Utils.doSleepQuietly(AppConstants.JOB_QUERY_SLEEP_MILLS);
+            }
+            try {
+                incLogModel = retrievePersistedIncLog(incLogModel);
+                String incLog = incLogModel.readAndClearIncLog();
+                outDriver.doOutput(incLog);
+            } catch (Exception e) {
+                logger.error("Cannot get persisted-log: ", e);
+            }
 
-                logFinEvent.notifyObserver(logFinEvent, "");
+            logFinEvent.notifyObserver(logFinEvent, "");
 
         }, "Inc-Log-Presenter");
 
@@ -179,19 +176,20 @@ public class LinkisJobLogPresenter extends QueryBasedPresenter {
         }
         int lines = 1;
         int len = str.length();
-        for( int pos = 0; pos < len; pos++) {
+        for (int pos = 0; pos < len; pos++) {
             char c = str.charAt(pos);
-            if( c == '\r' ) {
+            if (c == '\r') {
                 lines++;
                 if (pos + 1 < len && str.charAt(pos + 1) == '\n') {
                     pos++;
                 }
-            }else if( c == '\n' ) {
+            } else if (c == '\n') {
                 lines++;
             }
         }
         return lines;
     }
+
     private int getFirstIndexSkippingLines(String str, Integer lines) {
         if (str == null || str.length() == 0 || lines < 0) {
             return -1;
@@ -202,21 +200,21 @@ public class LinkisJobLogPresenter extends QueryBasedPresenter {
 
         int curLineIdx = 0;
         int len = str.length();
-        for(int pos = 0; pos < len; pos++) {
+        for (int pos = 0; pos < len; pos++) {
             char c = str.charAt(pos);
-            if( c == '\r' ) {
+            if (c == '\r') {
                 curLineIdx++;
-                if ( pos+1 < len && str.charAt(pos+1) == '\n' ) {
+                if (pos + 1 < len && str.charAt(pos + 1) == '\n') {
                     pos++;
                 }
-            } else if( c == '\n' ) {
+            } else if (c == '\n') {
                 curLineIdx++;
             } else {
                 continue;
             }
 
             if (curLineIdx >= lines) {
-                return pos+1;
+                return pos + 1;
             }
         }
         return -1;

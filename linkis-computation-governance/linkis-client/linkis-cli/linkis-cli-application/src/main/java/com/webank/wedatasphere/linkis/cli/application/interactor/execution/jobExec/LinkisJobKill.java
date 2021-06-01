@@ -16,9 +16,7 @@ package com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobE
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobStatus;
 import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobManExec;
 
-/**
- * Created by shangda on 2021/5/18.
- */
+
 public class LinkisJobKill extends JobManExec {
 
     private String taskID;

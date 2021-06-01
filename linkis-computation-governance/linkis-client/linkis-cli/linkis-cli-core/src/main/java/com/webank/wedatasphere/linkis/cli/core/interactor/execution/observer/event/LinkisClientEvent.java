@@ -18,7 +18,6 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.execution.observer.lis
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/10 14:50
  */
 public interface LinkisClientEvent {

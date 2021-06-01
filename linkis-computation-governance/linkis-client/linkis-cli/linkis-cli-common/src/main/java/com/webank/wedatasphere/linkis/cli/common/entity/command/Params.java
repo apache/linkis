@@ -18,7 +18,6 @@ import java.util.Map;
 /**
  * @program: linkis-cli
  * @description: data structure that stores params parsed from command arguments
- * @author: shangda
  * @create: 2021/02/23 11:00
  */
 public class Params {

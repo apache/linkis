@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.cli.application.driver.context;
 /**
  * @program: linkis-cli
  * @description:
- * @author: shangda
  * @create: 2021/03/10 16:50
  */
 public class UjesClientDriverContext implements LinkisClientDriverContext {

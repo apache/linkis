@@ -34,7 +34,8 @@ class GatherStrategyJobExecTask(parents: Array[ExecTask],
   with ReheatableExecTask with ResultSetExecTask with Logging{
 
   /**
-    * Job End Task 汇总结果响应
+    * Job End Task
+   *  Aggregate the results of response(汇总结果响应)
     *
     * @return
     */

@@ -27,7 +27,7 @@ import scala.collection.JavaConverters._
 
 
 /**
-  *
+  * Code logical unit, use to judge the script type, such as: sql, py, etc.
   * 代码存储单位，并通过CodeLanguageLabel判断是为sql or py等
   */
 class CodeLogicalUnit(val codes: java.util.List[String], codeLogicalLabel: CodeLanguageLabel, separator: String) extends LogicalUnit[CodeLogicalUnit] {

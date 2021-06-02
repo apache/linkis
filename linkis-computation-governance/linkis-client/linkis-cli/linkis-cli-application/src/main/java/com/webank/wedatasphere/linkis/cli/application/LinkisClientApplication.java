@@ -344,11 +344,12 @@ public class LinkisClientApplication {
      */
         final Executor executorKill = executor;
         final Job jobKill = job;
+        Thread hook = new Thread(() -> execution.terminate(executorKill, jobKill)); //add ShutdownHook so that job can be killed if ctrl + c
         if (executorKill != null && jobKill != null) {
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> execution.terminate(executorKill, jobKill)));
+            Runtime.getRuntime().addShutdownHook(hook);
         }
         ExecutionResult result = execution.execute(executor, job);
-
+        Runtime.getRuntime().removeShutdownHook(hook); //execution complete, no need ShutdownHook anymore
         return new FinishedData(result, resultHandlers);
     }
 

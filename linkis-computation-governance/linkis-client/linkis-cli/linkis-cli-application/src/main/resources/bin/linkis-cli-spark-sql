@@ -124,4 +124,4 @@ if (( NUM_ARGS == 0 )); then
 else
     parse
 fi
-source ${WORK_DIR}/bin/linkis-cli-spark-submit "${PARSED_CMD[@]}"
+exec ${WORK_DIR}/bin/linkis-cli-spark-submit "${PARSED_CMD[@]}"

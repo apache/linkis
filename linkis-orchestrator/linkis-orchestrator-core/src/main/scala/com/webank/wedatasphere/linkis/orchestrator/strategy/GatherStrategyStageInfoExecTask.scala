@@ -36,11 +36,14 @@ class GatherStrategyStageInfoExecTask(parents: Array[ExecTask],
 
 
   /**
-    * 1. 判断子task是否执行成功，如果执行失败，则调用context标记ExecutionTask为失败
-    * 2. 如果Task执行成功，则结果集汇总
-    *
-    * @return
-    */
+   *
+   * 1. Determine whether the subtask is executed successfully, if the execution fails, call the context to mark ExecutionTask as a failure
+   * 2. If the task is executed successfully, the result set is summarized
+   * 1. 判断子task是否执行成功，如果执行失败，则调用context标记ExecutionTask为失败
+   * 2. 如果Task执行成功，则结果集汇总
+   *
+   * @return
+   */
   override def execute(): TaskResponse = {
     val statusInfos = getChildrenExecTaskStatusInfo()
     if (null != statusInfos) {

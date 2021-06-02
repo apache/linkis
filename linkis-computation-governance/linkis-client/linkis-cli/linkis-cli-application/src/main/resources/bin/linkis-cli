@@ -75,10 +75,7 @@ function call_linkis_client() {
 
 
 
-        ${JAVA} ${LINKIS_CLIENT_HEAP_OPTS} ${LINKIS_CLIENT_GC_OPTS} ${LINKIS_CLIENT_OPTS} -classpath ${LINKIS_CLIENT_CLASSPATH} -Dconf.root=${LINKIS_CLIENT_CONF_DIR} -Dconf.file=${LINKIS_CLIENT_CONF_FILE} ${LINKIS_CLIENT_LOG_OPTS}  ${LINKIS_CLIENT} "${input_args[@]}"
-        exitCode=$?
-
-        exit ${exitCode}
+        exec ${JAVA} ${LINKIS_CLIENT_HEAP_OPTS} ${LINKIS_CLIENT_GC_OPTS} ${LINKIS_CLIENT_OPTS} -classpath ${LINKIS_CLIENT_CLASSPATH} -Dconf.root=${LINKIS_CLIENT_CONF_DIR} -Dconf.file=${LINKIS_CLIENT_CONF_FILE} ${LINKIS_CLIENT_LOG_OPTS}  ${LINKIS_CLIENT} "${input_args[@]}"
 }
 
 

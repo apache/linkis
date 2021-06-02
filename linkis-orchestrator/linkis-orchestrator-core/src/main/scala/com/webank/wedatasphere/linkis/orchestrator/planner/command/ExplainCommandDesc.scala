@@ -23,5 +23,5 @@ import com.webank.wedatasphere.linkis.orchestrator.plans.logical.CommandDesc
   *
   */
 case class ExplainCommandDesc(orchestration: Orchestration, allPlans: Boolean) extends CommandDesc {
-  override def copy(): ExplainCommandDesc.this.type = ???
+  override def copy(): ExplainCommandDesc = ExplainCommandDesc(orchestration, allPlans)
 }

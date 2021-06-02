@@ -29,9 +29,10 @@ trait ResultSetExecTask extends ExecTask{
 
 
   /**
-    *  该方法由ExecTaskRunner进行调用，ExecTask不能直接调用，会导致重复放置结果响应
-    * @param resultSetTaskResponse
-    */
+   * This method is called by ExecTaskRunner, ExecTask cannot be called directly, which will cause repeated placement of execution results
+   * 该方法由ExecTaskRunner进行调用，ExecTask不能直接调用，会导致重复放置执行结果
+   * @param resultSetTaskResponse
+   */
    def addResultSet(resultSetTaskResponse: ArrayResultSetTaskResponse): Unit = {
     val resultMap = if(null != getPhysicalContext.get(ResultSetExecTask.RESULT_MAP_KEY)) {
       getPhysicalContext.get(ResultSetExecTask.RESULT_MAP_KEY).asInstanceOf[mutable.Map[String, ArrayResultSetTaskResponse]]

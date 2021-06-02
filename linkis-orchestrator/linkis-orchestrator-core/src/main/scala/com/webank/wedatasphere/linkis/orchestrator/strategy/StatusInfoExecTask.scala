@@ -26,9 +26,10 @@ import scala.collection.mutable
 trait  StatusInfoExecTask extends ExecTask {
 
   /**
-    * 该方法由ExecTaskRunner进行调用，ExecTask不能直接调用，会导致重复放置状态信息
-    * @param execTaskStatusInfo
-    */
+   * This method is called by ExecTaskRunner, ExecTask cannot be called directly, which will cause repeated placement of status information
+   * 该方法由ExecTaskRunner进行调用，ExecTask不能直接调用，会导致重复放置状态信息
+   * @param execTaskStatusInfo
+   */
    def addExecTaskStatusInfo(execTaskStatusInfo: ExecTaskStatusInfo): Unit = {
     val statusInfoMap = if(null != getPhysicalContext.get(StatusInfoExecTask.STATUS_INFO_MAP_KEY)) {
       getPhysicalContext.get(StatusInfoExecTask.STATUS_INFO_MAP_KEY).asInstanceOf[mutable.Map[String, ExecTaskStatusInfo]]

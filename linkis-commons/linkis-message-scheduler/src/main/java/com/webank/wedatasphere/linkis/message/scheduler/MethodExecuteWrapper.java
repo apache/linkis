@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.message.parser.ServiceMethod;
 
 import java.lang.reflect.Method;
 
-/**
- * @date 2020/7/21
- */
+
 public class MethodExecuteWrapper {
 
     public MethodExecuteWrapper(ServiceMethod serviceMethod) {

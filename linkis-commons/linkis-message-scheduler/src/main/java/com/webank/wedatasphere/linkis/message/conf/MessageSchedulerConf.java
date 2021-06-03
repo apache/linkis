@@ -23,9 +23,7 @@ import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 
-/**
- * @date 2020/7/14
- */
+
 public class MessageSchedulerConf {
 
     public final static String SERVICE_SCAN_PACKAGE = CommonVars.apply("wds.linkis.ms.service.scan.package", "com.webank.wedatasphere").getValue();

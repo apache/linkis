@@ -34,9 +34,7 @@ import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-/**
-  * @date 2020/8/4 20:14
-  */
+
 @Service
 class DefaultEMRegisterService extends EMRegisterService with Logging {
 

@@ -25,9 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @date 2020/7/28
- */
+
 public class DefaultImplicitParser implements ImplicitParser {
     @Override
     public Map<String, List<ImplicitMethod>> parse(Object implicitObject) {

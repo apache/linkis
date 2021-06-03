@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.message.parser;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @date 2020/7/15
- */
+
 public interface ServiceParser {
 
     Map<String, List<ServiceMethod>> parse(Object service);

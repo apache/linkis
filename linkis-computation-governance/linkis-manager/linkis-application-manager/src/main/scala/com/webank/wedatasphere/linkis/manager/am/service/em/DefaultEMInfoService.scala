@@ -29,9 +29,6 @@ import org.springframework.stereotype.Service
 
 import scala.collection.JavaConversions._
 
-/**
- * @date 2020/8/4 21:17
- */
 
 @Service
 class DefaultEMInfoService extends EMInfoService with Logging {

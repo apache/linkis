@@ -29,9 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @date 2020/7/15
- */
+
 public abstract class AbstractServiceRegistry extends JavaLog implements ServiceRegistry {
 
     @SuppressWarnings("all")

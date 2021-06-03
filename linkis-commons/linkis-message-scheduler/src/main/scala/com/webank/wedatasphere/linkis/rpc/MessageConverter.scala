@@ -29,10 +29,7 @@ import com.webank.wedatasphere.linkis.server.{BDPJettyServerHelper, Message}
 
 import scala.collection.JavaConversions._
 
-/**
- * @date 2020/8/6
- *
- */
+
 class MessageConverter {
 
   private val protocolNameCache = new util.HashMap[String, String]

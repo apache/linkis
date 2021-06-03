@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.manager.am.exception;
 
 import com.webank.wedatasphere.linkis.common.exception.DWCRetryException;
 
-/**
- * @date 2020/7/2 21:29
- */
+
 public class AMRetryException extends DWCRetryException {
 
     public AMRetryException(int errCode, String desc) {

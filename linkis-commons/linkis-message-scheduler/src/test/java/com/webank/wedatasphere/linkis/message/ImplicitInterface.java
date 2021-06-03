@@ -17,8 +17,5 @@
 package com.webank.wedatasphere.linkis.message;
 
 
-/**
- * @date 2020/7/22
- */
 public interface ImplicitInterface {
 }

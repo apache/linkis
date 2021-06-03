@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component
 /**
   * require node state are idle or busy
   *
-  * @date 2020/7/4 22:54
   */
 @Component
 @Order(2)

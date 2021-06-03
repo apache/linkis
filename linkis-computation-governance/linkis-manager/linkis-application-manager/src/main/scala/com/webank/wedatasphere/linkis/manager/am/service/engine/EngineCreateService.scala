@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode
 import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineCreateRequest
 import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
 
-/**
-  * @date 2020/6/12 15:52
-  */
+
 trait EngineCreateService {
 
   @throws[DWCRetryException]

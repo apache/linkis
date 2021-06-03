@@ -24,9 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 
-/**
- * @date 2020/7/14
- */
 public interface MessageJob extends Runnable, Future<Object> {
 
     RequestProtocol getRequestProtocol();

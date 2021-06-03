@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.message.scheduler;
 
 import com.webank.wedatasphere.linkis.message.builder.MessageJob;
 
-/**
- * @date 2020/7/14
- */
+
 public interface MessageScheduler {
 
     void submit(MessageJob messageJob);

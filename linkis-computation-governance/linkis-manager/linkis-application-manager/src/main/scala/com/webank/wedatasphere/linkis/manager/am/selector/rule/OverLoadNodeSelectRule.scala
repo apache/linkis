@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.manager.common.entity.node.{AMNode, Node}
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
-/**
-  * @date 2020/7/15 16:51
-  */
+
 @Component
 @Order(3)
 class OverLoadNodeSelectRule extends NodeSelectRule with Logging {

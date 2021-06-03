@@ -23,9 +23,7 @@ import scala.concurrent.duration.Duration;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * @date 2020/7/14
- */
+
 public interface ServiceMethodContext {
 
     void putAttribute(String key, Object value);

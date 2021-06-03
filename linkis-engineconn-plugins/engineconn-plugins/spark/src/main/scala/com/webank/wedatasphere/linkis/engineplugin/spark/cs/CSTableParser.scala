@@ -27,10 +27,7 @@ import org.apache.spark.sql.execution.datasources.csv.DolphinToSpark
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  *
-  * @date 2020/3/6 9:57
-  */
+
 class CSTableParser extends Logging {
 
   private val pb: Pattern = Pattern.compile(CSCommonUtils.CS_TMP_TABLE_PREFIX + "[^\\s\";'()]+[$\\s]{0,1}", Pattern.CASE_INSENSITIVE)

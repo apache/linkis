@@ -20,10 +20,6 @@ import java.util
 
 import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
 
-/**
- * @date 2020/8/3
- *
- */
 
 class MessageReceiverChooser(receiver: Option[Receiver]) extends ReceiverChooser {
 

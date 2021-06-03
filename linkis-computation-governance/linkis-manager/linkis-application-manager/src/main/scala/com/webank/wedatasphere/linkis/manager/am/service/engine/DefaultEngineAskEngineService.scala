@@ -32,9 +32,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.util.{Failure, Success}
 
-/**
-  * @date 2020/6/14 18:21
-  */
+
 @Service
 class DefaultEngineAskEngineService extends AbstractEngineService with EngineAskEngineService with Logging {
 

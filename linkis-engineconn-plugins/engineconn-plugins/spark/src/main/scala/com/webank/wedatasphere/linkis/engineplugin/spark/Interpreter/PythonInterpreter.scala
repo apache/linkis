@@ -61,8 +61,6 @@ object PythonInterpreter {
     env.put("PYSPARK_GATEWAY_PORT", "" + gatewayServer.getListeningPort)
     env.put("SPARK_HOME", SparkConfiguration.SPARK_HOME.getValue)
 
-    //    builder.redirectError(Redirect.INHERIT)
-
     val process = builder.start()
 
     new PythonInterpreter(process, gatewayServer)
@@ -70,8 +68,6 @@ object PythonInterpreter {
 
   def pythonPath = {
     val pythonPath = new ArrayBuffer[String]
-    //    sys.env.get("SPARK_HOME").foreach { sparkHome =>
-    //    }
     val pythonHomePath = new File(SparkConfiguration.SPARK_HOME.getValue, "python").getPath
     val pythonParentPath = new File(pythonHomePath, "lib")
     pythonPath += pythonHomePath
@@ -229,15 +225,8 @@ private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
 
 object SQLSession extends Logging {
 
-//  def create = new SQLSession
-
-  //  val maxResult = QueryConf.getInt("wds.linkis.query.maxResult", 1000) + 1
-
   def showDF(sc: SparkContext, jobGroup: String, df: Any, maxResult: Int = Int.MaxValue): String = {
-    //    var rows: Array[AnyRef] = null
-    //    var take: Method = null
     val startTime = System.currentTimeMillis()
-    //    sc.setJobGroup(jobGroup, "Get IDE-SQL Results.", false)
 
     val iterator = Utils.tryThrow(df.asInstanceOf[DataFrame].toLocalIterator)(t => {
       sc.clearJobGroup()
@@ -278,7 +267,6 @@ object SQLSession extends Logging {
       logger.info(schema.toString.trim)
       schema.toString.trim
     }
-    // val msg = new HDFSByteArrayOutputStream(sc.hadoopConfiguration)
     val msg = FSFactory.getFs("").write(new FsPath(""), true)
     msg.write(trim.getBytes("utf-8"))
 

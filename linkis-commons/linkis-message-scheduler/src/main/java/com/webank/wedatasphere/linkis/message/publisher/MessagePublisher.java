@@ -21,9 +21,6 @@ import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext;
 import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
 
 
-/**
- * @date 2020/7/14
- */
 public interface MessagePublisher {
 
     MessageJob publish(RequestProtocol requestProtocol);

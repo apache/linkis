@@ -37,10 +37,7 @@ import org.slf4j.LoggerFactory
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  *
-  * @date 2020/11/3
-  */
+
 abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends ComputationExecutor {
 
   private val LOG = LoggerFactory.getLogger(getClass)

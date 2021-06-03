@@ -27,10 +27,7 @@ import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.Execu
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineRunTypeLabel, RunType}
 
-/**
-  *
-  * @date 2020/11/2
-  */
+
 class SparkSqlExecutorFactory extends ExecutorFactory {
   /**
    * Order of executors, the smallest one is the default

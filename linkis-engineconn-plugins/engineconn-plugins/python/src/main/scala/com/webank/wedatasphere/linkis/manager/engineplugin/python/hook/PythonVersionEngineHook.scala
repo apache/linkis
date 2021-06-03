@@ -20,10 +20,8 @@ import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
 import com.webank.wedatasphere.linkis.engineconn.common.hook.EngineConnHook
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.Executor
 import com.webank.wedatasphere.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
 import com.webank.wedatasphere.linkis.manager.engineplugin.python.executor.PythonSession
-import com.webank.wedatasphere.linkis.server.JMap
 
 
 class PythonVersionEngineHook  extends EngineConnHook with Logging{

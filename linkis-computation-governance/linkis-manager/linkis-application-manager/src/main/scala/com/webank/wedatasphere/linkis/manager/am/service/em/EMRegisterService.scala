@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.manager.am.service.em
 
 import com.webank.wedatasphere.linkis.manager.common.protocol.em.RegisterEMRequest
 
-/**
-  * @date 2020/8/4 19:52
-  */
+
 trait EMRegisterService {
 
 

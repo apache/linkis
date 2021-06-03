@@ -23,7 +23,6 @@ import com.webank.wedatasphere.linkis.httpclient.request.POSTAction
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
 import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
 import com.webank.wedatasphere.linkis.ujes.client.exception.UJESClientBuilderException
-import com.webank.wedatasphere.linkis.ujes.client.request.JobExecuteAction.{Builder, RunType}
 
 class JobSubmitAction private() extends POSTAction with UJESJobAction {
   override def suffixURLs: Array[String] = Array("entrance", "submit")

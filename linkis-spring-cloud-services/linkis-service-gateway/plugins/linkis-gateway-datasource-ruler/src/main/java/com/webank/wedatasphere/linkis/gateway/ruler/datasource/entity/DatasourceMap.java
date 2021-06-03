@@ -17,10 +17,7 @@ package com.webank.wedatasphere.linkis.gateway.ruler.datasource.entity;
 
 import java.util.Objects;
 
-/**
- * @author wang_zh
- * @date 2020/5/22
- */
+
 public class DatasourceMap {
 
     public DatasourceMap() {}

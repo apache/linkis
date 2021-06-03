@@ -20,9 +20,6 @@ import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * @date 2020/7/7 16:22
- */
 
 public class LinkisManagerApplication {
 

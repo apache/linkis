@@ -26,9 +26,7 @@ import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEvent;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
-/**
- * @date 2020/7/29
- */
+
 public class DefaultMessageExecutor extends AbstractMessageExecutor implements Executor {
 
     private final ExecutorService executorService;

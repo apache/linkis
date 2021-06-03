@@ -32,9 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.text.MessageFormat;
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/10 10:17
+ * @description: Display Log while submitting Job. Triggered by {@link TriggerEvent}
  */
 public class LinkisJobLogPresenter extends QueryBasedPresenter {
     private static Logger logger = LoggerFactory.getLogger(LinkisJobLogPresenter.class);

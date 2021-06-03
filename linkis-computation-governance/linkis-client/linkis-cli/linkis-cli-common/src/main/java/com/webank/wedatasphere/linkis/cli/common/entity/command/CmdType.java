@@ -14,9 +14,6 @@
 package com.webank.wedatasphere.linkis.cli.common.entity.command;
 
 
-/**
- * Created by shangda on 2020/10/28.
- */
 public interface CmdType extends Cloneable {
 
     int getId();

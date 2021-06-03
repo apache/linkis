@@ -17,9 +17,9 @@ import com.webank.wedatasphere.linkis.cli.application.constants.AppConstants;
 import com.webank.wedatasphere.linkis.cli.application.constants.LinkisKeys;
 import com.webank.wedatasphere.linkis.cli.application.constants.UjesClientDriverConstants;
 import com.webank.wedatasphere.linkis.cli.application.driver.UjesClientDriver;
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobExec.LinkisJobInfo;
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobExec.LinkisJobKill;
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobExec.LinkisJobSubmitExec;
+import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec.LinkisJobInfo;
+import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec.LinkisJobKill;
+import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec.LinkisJobSubmitExec;
 import com.webank.wedatasphere.linkis.cli.application.presenter.model.LinkisJobIncLogModel;
 import com.webank.wedatasphere.linkis.cli.application.presenter.model.LinkisJobResultModel;
 import com.webank.wedatasphere.linkis.cli.application.utils.Utils;
@@ -41,9 +41,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * @program: linkis-cli
- * @description: convert data in order to fit with {@link UjesClientDriver}
- * @create: 2021/02/19 16:41
+ * @description: convert data in order to fit response of {@link UjesClientDriver} into a form that acceptable by linkis-cli
  */
 public class UjesClientDriverTransformer implements DriverTransformer {
     private Logger logger = LoggerFactory.getLogger(UjesClientDriverTransformer.class);

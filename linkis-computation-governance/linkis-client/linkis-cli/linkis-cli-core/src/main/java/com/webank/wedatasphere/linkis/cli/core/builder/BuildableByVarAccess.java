@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.var.VarAccess;
 import java.lang.reflect.ParameterizedType;
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/10 17:58
+ * @description: Builders that need to access user input or configuration
  */
 public abstract class BuildableByVarAccess<T> extends AbstractBuilder<T> {
     protected VarAccess stdVarAccess;

@@ -26,9 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @program: linkis-cli
- * @description: Predefined converter
- * @create: 2020/9/28 18:19
+ * @description: Predefined string-converter
  */
 public class PredefinedStringConverters {
 

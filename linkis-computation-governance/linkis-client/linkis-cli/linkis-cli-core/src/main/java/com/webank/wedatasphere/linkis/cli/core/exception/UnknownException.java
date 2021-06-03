@@ -17,11 +17,7 @@ import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeEx
 import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
 import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorMsg;
 
-/**
- * @program: linkis-cli
- * @description: unknown exception
- * @create: 2020/11/09 17:06
- */
+
 public class UnknownException extends LinkisClientRuntimeException {
     private static final long serialVersionUID = 974159L;
 

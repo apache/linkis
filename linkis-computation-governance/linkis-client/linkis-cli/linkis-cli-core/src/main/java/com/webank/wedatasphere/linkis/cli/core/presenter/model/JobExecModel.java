@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.cli.common.entity.job.OutputWay;
 import java.util.Map;
 
 /**
- * @program: linkis-cli
  * @description: formulate data for presenter
- * @create: 2021/02/22 19:37
  */
 public abstract class JobExecModel implements PresenterModel {
     Map<String, String> extraMsg = null;

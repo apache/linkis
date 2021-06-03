@@ -28,11 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/12 21:14
- */
 public class UjesClientDriverBuilder extends BuildableByVarAccess<UjesClientDriver> {
     private static Logger logger = LoggerFactory.getLogger(UjesClientDriverBuilder.class);
 

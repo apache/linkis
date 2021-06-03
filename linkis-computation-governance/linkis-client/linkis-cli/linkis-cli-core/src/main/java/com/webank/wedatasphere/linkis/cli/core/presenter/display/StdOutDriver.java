@@ -18,9 +18,7 @@ import com.webank.wedatasphere.linkis.cli.core.utils.LogUtils;
 import org.slf4j.Logger;
 
 /**
- * @program: linkis-cli
  * @description: present output t stdout
- * @create: 2021/02/22 19:37
  */
 public class StdOutDriver implements DisplayDriver {
     @Override

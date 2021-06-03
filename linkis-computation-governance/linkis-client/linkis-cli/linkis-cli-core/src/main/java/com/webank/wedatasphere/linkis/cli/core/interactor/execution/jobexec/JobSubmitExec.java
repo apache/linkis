@@ -18,9 +18,7 @@ import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobSta
 import com.webank.wedatasphere.linkis.cli.common.entity.job.OutputWay;
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/10 11:12
+ * @description: Intermediate data during submission
  */
 public abstract class JobSubmitExec implements JobExec, Cloneable {
 

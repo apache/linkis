@@ -13,11 +13,6 @@
 
 package com.webank.wedatasphere.linkis.cli.common.exception.error;
 
-/**
- * @program: linkis-cli
- * @description: Error Code
- * @create: 2020/10/30 18:56
- */
 public interface ErrorMsg {
 
     String getMsgTemplate();

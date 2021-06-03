@@ -17,11 +17,7 @@ import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdType;
 import com.webank.wedatasphere.linkis.cli.core.constants.Constants;
 
 /**
- * @program: linkis-cli
  * @description: Implements {@link CmdType}.
- * LINKIS_PRIMARY : linkis-cli command
- * SUBCOMMAND: sub-command such as 'shell', 'hql' etc.
- * @create: 2020/11/09 15:02
  */
 public enum LinkisCmdType implements CmdType {
 

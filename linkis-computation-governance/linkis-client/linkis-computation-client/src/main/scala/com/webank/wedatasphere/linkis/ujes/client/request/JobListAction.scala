@@ -5,11 +5,7 @@ import org.apache.commons.lang.StringUtils
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
- * @author alexyang
- * @date 2020/11/24
- * @description
- */
+
 class JobListAction extends GetAction with UJESJobAction {
 
   override def suffixURLs: Array[String] = Array("jobhistory", "list")

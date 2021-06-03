@@ -15,9 +15,7 @@ package com.webank.wedatasphere.linkis.cli.core.builder;
 
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/12 16:54
+ * @description: Builder design-pattern
  */
 public abstract class AbstractBuilder<T> implements Builder<T> {
     protected T targetObj;

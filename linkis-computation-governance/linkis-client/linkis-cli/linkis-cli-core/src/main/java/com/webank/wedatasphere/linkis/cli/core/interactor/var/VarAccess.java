@@ -14,10 +14,8 @@
 package com.webank.wedatasphere.linkis.cli.core.interactor.var;
 
 /**
- * @program: linkis-cli
  * @description: Retrieve value from input command/config/sys_prop/sys_env etc.
  * order should be: command > user config > default config > default
- * @create: 2020/11/27 21:50
  */
 public interface VarAccess {
 

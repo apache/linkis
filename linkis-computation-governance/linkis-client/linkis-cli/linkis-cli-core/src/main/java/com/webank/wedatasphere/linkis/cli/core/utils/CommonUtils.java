@@ -20,11 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/02/26 18:15
- */
+
 public class CommonUtils {
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();

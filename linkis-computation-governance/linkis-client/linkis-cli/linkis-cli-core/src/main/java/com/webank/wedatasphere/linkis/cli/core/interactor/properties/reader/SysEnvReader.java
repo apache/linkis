@@ -19,11 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/02/25 15:42
- */
+
 public class SysEnvReader implements PropertiesReader {
     private static final Logger logger = LoggerFactory.getLogger(SysEnvReader.class);
     private String propsId = CommonConstants.SYSTEM_ENV_IDENTIFIER;

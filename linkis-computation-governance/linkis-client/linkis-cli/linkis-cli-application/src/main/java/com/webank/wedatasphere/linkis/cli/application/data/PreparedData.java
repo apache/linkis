@@ -18,11 +18,6 @@ import com.webank.wedatasphere.linkis.cli.common.entity.properties.ClientPropert
 
 import java.util.Map;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/12 19:58
- */
 public class PreparedData {
     Map<String, CmdTemplate> templateMap;
     Map<String, ClientProperties> propertiesMap;

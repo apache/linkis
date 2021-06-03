@@ -13,11 +13,7 @@
 
 package com.webank.wedatasphere.linkis.cli.core.constants;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2020/11/03 20:47
- */
+
 public class CommonKeys {
 
 

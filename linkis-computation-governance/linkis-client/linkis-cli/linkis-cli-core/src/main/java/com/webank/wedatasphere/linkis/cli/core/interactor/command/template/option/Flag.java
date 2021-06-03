@@ -17,9 +17,7 @@ import com.webank.wedatasphere.linkis.cli.core.utils.converter.PredefinedStringC
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @program: linkis-cli
  * @description: Flag is a special type of {@link StdOption}. Its only accepts boolean value.
- * @create: 2020/9/28 18:20
  */
 public class Flag extends StdOption<Boolean> implements Cloneable {
     public Flag(final String keyPrefix, final String key, final String[] paramNames, final String description, final boolean isOptional, final boolean defaultValue) {

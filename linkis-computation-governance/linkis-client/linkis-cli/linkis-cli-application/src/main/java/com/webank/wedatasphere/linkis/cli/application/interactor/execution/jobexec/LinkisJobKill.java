@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobExec;
+package com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec;
 
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobStatus;
 import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobManExec;

@@ -15,8 +15,8 @@ package com.webank.wedatasphere.linkis.cli.application.interactor.execution.exec
 
 import com.webank.wedatasphere.linkis.cli.application.driver.LinkisClientDriver;
 import com.webank.wedatasphere.linkis.cli.application.driver.transformer.DriverTransformer;
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobExec.LinkisJobInfo;
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobExec.LinkisJobKill;
+import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec.LinkisJobInfo;
+import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec.LinkisJobKill;
 import com.webank.wedatasphere.linkis.cli.application.interactor.job.LinkisJobMan;
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobExec;
 import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;

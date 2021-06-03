@@ -13,26 +13,21 @@
 
 package com.webank.wedatasphere.linkis.cli.application.driver.context;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/10 16:50
- */
 public class UjesClientDriverContext implements LinkisClientDriverContext {
-    private String gatewayUrl;   // linkis gateway url, ip:port
-    private Long connectionTimeout; // 客户端连接超时时间
-    private Boolean discoveryEnabled; // 是否启用注册发现。建议不启用，且配置gatewayurl
-    private Boolean loadbalancerEnabled; // 负载均衡（启用注册发现时有效）
-    private Long readTimeoutMills; // 重试超时时间。重试开关已关闭
+    private String gatewayUrl;
+    private Long connectionTimeout;
+    private Boolean discoveryEnabled;
+    private Boolean loadbalancerEnabled;
+    private Long readTimeoutMills;
 
-    private String tokenKey; // 用户名
-    private String tokenValue; // 密码
+    private String tokenKey;
+    private String tokenValue;
 
-    private String authenticationStrategyStr;// 策略，默认静态策略，通过用户名+密码验证
-    private Long discoveryFrequencyMills; // 注册发现超时时间
-    private Integer maxConnectionSize; // 最大并发数
-    private Boolean retryEnabled; // 默认不启用，而是通过上层显式重试
-    private String dwsVersion; // linkis api协议版本，当前为 v1
+    private String authenticationStrategyStr;
+    private Long discoveryFrequencyMills;
+    private Integer maxConnectionSize;
+    private Boolean retryEnabled;
+    private String dwsVersion;
 
     public UjesClientDriverContext() {
     }

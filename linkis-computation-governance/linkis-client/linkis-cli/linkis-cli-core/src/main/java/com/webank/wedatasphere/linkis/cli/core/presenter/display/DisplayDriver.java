@@ -14,9 +14,8 @@
 package com.webank.wedatasphere.linkis.cli.core.presenter.display;
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/10 10:15
+ * @description: Display output to User
+ * e.g. stdout, write a file
  */
 public interface DisplayDriver {
     void doOutput(Object data);

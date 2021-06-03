@@ -14,9 +14,6 @@
 package com.webank.wedatasphere.linkis.cli.core.interactor.command.fitter;
 
 
-/**
- * @author polarischen
- */
 public class FitterUtils {
 
     public static boolean isOption(final String arg) {

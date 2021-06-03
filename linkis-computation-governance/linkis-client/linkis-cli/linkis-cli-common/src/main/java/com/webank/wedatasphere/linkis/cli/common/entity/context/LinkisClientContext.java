@@ -25,10 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @program: linkis-cli
  * @description: storing intermediate data-structure, all get methods should return null if not exist
  * Probably not going to use this
- * @create: 2021/02/23 11:47
  */
 public interface LinkisClientContext {
 

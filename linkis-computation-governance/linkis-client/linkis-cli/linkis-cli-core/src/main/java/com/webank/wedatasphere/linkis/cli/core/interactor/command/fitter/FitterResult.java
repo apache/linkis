@@ -15,11 +15,7 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.command.fitter;
 
 import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/02/25 17:56
- */
+
 public class FitterResult {
     String[] remains;
     CmdTemplate parsedTemplateCopy;

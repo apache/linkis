@@ -27,13 +27,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * SingleCmdParser Tester.
- *
- * @author <Authors name>
- * @version 1.0
- * @since <pre>三月 14, 2021</pre>
- */
+
 public class SingleCmdParserTest {
     String[] cmdStr;
     Map<String, CmdTemplate> templateMap;

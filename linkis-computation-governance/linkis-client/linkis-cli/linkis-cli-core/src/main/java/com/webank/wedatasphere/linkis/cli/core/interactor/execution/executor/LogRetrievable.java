@@ -15,11 +15,7 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.execution.executor;
 
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.executor.Executor;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/11 10:52
- */
+
 public interface LogRetrievable extends Executor {
 
 }

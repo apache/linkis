@@ -13,11 +13,7 @@
 
 package com.webank.wedatasphere.linkis.cli.common.entity.job;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/19 18:09
- */
+
 public enum OutputWay {
     STANDARD("standard", 0),
     TEXT_FILE("text_file", 0);

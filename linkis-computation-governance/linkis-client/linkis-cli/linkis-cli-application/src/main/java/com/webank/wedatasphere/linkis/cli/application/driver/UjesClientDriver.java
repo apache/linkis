@@ -46,9 +46,7 @@ import java.text.MessageFormat;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @program: linkis-cli
- * @description: UjesClientDriver communicates with UjesClient directly, calling apis to submit job/ query info etc, and translating UjesClient's exception.
- * @create: 2021/02/22 21:25
+ * @description: UjesClientDriver encapsulates UjesClient directly, calling apis to submit job/ query info etc, and translating UjesClient's exception.
  */
 public class UjesClientDriver implements LinkisClientDriver {
     private Logger logger = LoggerFactory.getLogger(UjesClientDriver.class);

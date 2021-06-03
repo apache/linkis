@@ -34,9 +34,8 @@ import java.util.Map;
 
 
 /**
- * @program: linkis-cli
- * @description: fit command arguments and fill them into {@link com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate}. Stores all that cannot be parsed.
- * @create: 2020/9/28 18:39
+ * @description: fit command arguments and fill them into {@link com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate}.
+ * Stores all that cannot be parsed.
  */
 public abstract class AbstractFitter implements Fitter {
 

@@ -13,17 +13,11 @@
 
 package com.webank.wedatasphere.linkis.cli.application.constants;
 
-/**
- * @author alexyang
- * @date 2020/11/23
- * @description
- */
+
 public class UjesClientDriverConstants {
 
-    /* 超过此分页数后，会进行结果集异常检测 */
     public static final int EXCEPTION_CHECK_AFTER_PAGE = 10000;
 
-    /*  查询相关参数 */
     public static final String QUERY_PAGE_SIZE_NAME = "pageSize";
     public static final int QUERY_PAGE_SIZE_DEFAULT_VALUE = 100;
 
@@ -43,7 +37,6 @@ public class UjesClientDriverConstants {
     public static final Integer MAX_LOG_SIZE = -1;
     public static final Integer IDX_FOR_LOG_TYPE_ALL = 3;// 0: Error 1: WARN 2:INFO 3: ALL
 
-    /*  执行相关参数*/
     public static final int DEFAULT_PAGE_SIZE = 500;
 
     public static final String DEFAULT_SPARK_ENGINE = "spark-2.4.3";

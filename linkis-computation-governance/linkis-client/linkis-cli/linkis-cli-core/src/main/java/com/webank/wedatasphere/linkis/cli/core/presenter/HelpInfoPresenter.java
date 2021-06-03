@@ -32,9 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/24 19:16
+ * @description: Display help-info
  */
 public class HelpInfoPresenter implements Presenter {
     private static Logger logger = LoggerFactory.getLogger(HelpInfoPresenter.class);

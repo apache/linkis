@@ -13,11 +13,7 @@
 
 package com.webank.wedatasphere.linkis.cli.application.constants;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/14 14:53
- */
+
 public class TestConstants {
 
     //for command name

@@ -17,10 +17,8 @@ import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
 import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
 
 /**
- * @program: linkis-cli
  * @description: interface for parsing command arguments and fill them into instance of {@link CmdTemplate},
  * note that implementation of this interface should make a deep copy of {@link CmdTemplate} instance
- * @create: 2020/10/29 18:41
  */
 public interface Fitter {
     FitterResult fit(String[] input, CmdTemplate templateCopy) throws LinkisClientRuntimeException;

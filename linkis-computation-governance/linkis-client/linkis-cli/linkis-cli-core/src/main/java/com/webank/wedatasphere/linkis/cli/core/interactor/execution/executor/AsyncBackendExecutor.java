@@ -19,9 +19,7 @@ import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeEx
 import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobSubmitExec;
 
 /**
- * @author alexyang
- * @date 2020/11/17
- * @description
+ * @description executor that interact with backend that supports async-submission
  */
 public interface AsyncBackendExecutor extends Executor {
 

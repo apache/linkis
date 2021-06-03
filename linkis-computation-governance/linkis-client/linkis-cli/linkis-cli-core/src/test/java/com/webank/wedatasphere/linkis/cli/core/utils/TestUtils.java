@@ -20,11 +20,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2020/11/13 10:56
- */
+
 public class TestUtils {
     private static String replaceParas(String context, Map<String, String> m) {
         if (context == null) {

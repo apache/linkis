@@ -15,11 +15,7 @@ package com.webank.wedatasphere.linkis.cli.application.presenter.model;
 
 import com.webank.wedatasphere.linkis.cli.core.presenter.model.JobExecModel;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/10 19:34
- */
+
 public class LinkisJobIncLogModel extends JobExecModel {
 
     private final StringBuilder incLogBuilder = new StringBuilder();

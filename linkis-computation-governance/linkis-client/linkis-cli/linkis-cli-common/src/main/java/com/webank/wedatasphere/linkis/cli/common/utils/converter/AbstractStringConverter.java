@@ -14,9 +14,7 @@
 package com.webank.wedatasphere.linkis.cli.common.utils.converter;
 
 /**
- * @program: linkis-cli
  * @description: convert string to any other types
- * @create: 2020/10/29 18:17
  */
 public abstract class AbstractStringConverter<T> implements Converter<String, T> {
 }

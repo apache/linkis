@@ -13,11 +13,7 @@
 
 package com.webank.wedatasphere.linkis.cli.core.constants;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/04 10:51
- */
+
 public class Constants {
 
 

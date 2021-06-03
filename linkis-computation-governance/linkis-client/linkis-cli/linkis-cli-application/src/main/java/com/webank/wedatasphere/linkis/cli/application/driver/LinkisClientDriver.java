@@ -19,9 +19,7 @@ import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeEx
 import com.webank.wedatasphere.linkis.ujes.client.response.*;
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/04 15:59
+ * @description: Driver should encapsulate all the methods we need to interact with Linkis
  */
 public interface LinkisClientDriver {
 

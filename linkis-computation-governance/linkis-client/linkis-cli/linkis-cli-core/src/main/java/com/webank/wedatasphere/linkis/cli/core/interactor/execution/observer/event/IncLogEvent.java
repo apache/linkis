@@ -18,11 +18,7 @@ import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
 import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
 import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobSubmitExec;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/10 16:10
- */
+
 public class IncLogEvent extends SingleObserverEvent {
     @Override
     public final void notifyObserver(LinkisClientEvent event, Object message) {

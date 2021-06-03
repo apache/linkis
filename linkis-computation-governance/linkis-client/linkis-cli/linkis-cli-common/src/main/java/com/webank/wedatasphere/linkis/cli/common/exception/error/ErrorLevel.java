@@ -14,9 +14,7 @@
 package com.webank.wedatasphere.linkis.cli.common.exception.error;
 
 /**
- * @program: linkis-cli
- * @description: Info/warn/error/fatal
- * @create: 2020/10/30 19:52
+ * @description: Error level: Info/warn/error/fatal
  */
 public enum ErrorLevel {
     /**

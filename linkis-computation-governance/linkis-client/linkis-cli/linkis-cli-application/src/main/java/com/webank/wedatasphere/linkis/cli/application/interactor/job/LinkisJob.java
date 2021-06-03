@@ -17,11 +17,7 @@ import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
 
 import java.util.Map;
 
-/**
- * @author alexyang
- * @date 2020/11/2
- * @description
- */
+
 public class LinkisJob extends Job {
 
     private Map<String, Object> executionMap;

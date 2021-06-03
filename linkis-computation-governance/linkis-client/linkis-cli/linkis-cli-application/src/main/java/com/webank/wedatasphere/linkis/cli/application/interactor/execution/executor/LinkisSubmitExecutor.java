@@ -16,8 +16,8 @@ package com.webank.wedatasphere.linkis.cli.application.interactor.execution.exec
 import com.webank.wedatasphere.linkis.cli.application.constants.AppConstants;
 import com.webank.wedatasphere.linkis.cli.application.driver.LinkisClientDriver;
 import com.webank.wedatasphere.linkis.cli.application.driver.transformer.DriverTransformer;
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobExec.LinkisJobKill;
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobExec.LinkisJobSubmitExec;
+import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec.LinkisJobKill;
+import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec.LinkisJobSubmitExec;
 import com.webank.wedatasphere.linkis.cli.application.interactor.job.LinkisJob;
 import com.webank.wedatasphere.linkis.cli.application.interactor.job.LinkisJobMan;
 import com.webank.wedatasphere.linkis.cli.application.utils.Utils;
@@ -40,9 +40,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/04 10:56
+ * @description: Executor that encapsulates methods needed to submit task Linkis
  */
 public class LinkisSubmitExecutor implements AsyncBackendExecutor, LogRetrievable {
     private final static Logger logger = LoggerFactory.getLogger(LinkisSubmitExecutor.class);

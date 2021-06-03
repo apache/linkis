@@ -16,9 +16,7 @@ package com.webank.wedatasphere.linkis.cli.common.entity.command;
 import java.util.Map;
 
 /**
- * @program: linkis-cli
  * @description: data structure that stores params parsed from command arguments
- * @create: 2021/02/23 11:00
  */
 public class Params {
     /**

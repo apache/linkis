@@ -16,10 +16,6 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.execution.executor;
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.executor.Executor;
 import com.webank.wedatasphere.linkis.cli.core.builder.BuildableByVarAccess;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/12 15:12
- */
+
 public abstract class ExecutorBuilder extends BuildableByVarAccess<Executor> {
 }

@@ -11,18 +11,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobExec;
+package com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec;
 
 import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
 import com.webank.wedatasphere.linkis.cli.core.exception.ExecutorException;
 import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
 import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobSubmitExec;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/03 10:47
- */
+
 public class LinkisJobSubmitExec extends JobSubmitExec {
 
     private String taskID;

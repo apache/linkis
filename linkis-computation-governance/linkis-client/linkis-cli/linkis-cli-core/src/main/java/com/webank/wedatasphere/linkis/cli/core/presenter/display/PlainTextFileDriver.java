@@ -24,9 +24,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 
 /**
- * @program: linkis-cli
  * @description: write data into file
- * @create: 2021/02/22 21:13
  */
 public class PlainTextFileDriver implements DisplayDriver {
     @Override

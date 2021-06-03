@@ -17,9 +17,7 @@ import com.webank.wedatasphere.linkis.cli.common.entity.execution.CommonSubExecu
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.SubExecutionType;
 
 /**
- * @author alexyang
- * @date 2020/11/2
- * @description Job Interface
+ * @description Job should encapsulate all data needed for an execution(submit/job-management)
  */
 public abstract class Job {
     /**

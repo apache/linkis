@@ -1,3 +1,0 @@
---set ide.engine.no.limit.allow=true;
-use ai_caixin_ads_ods_mask;
-select * from caixin_click_from_mysql limit 60000;

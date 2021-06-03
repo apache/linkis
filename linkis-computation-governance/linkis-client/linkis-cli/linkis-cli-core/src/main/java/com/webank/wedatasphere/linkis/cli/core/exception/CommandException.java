@@ -18,11 +18,7 @@ import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeEx
 import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
 import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorMsg;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2020/11/10 20:01
- */
+
 public class CommandException extends LinkisClientRuntimeException {
     private static final long serialVersionUID = 745261661L;
     private CmdType cmdType = null;

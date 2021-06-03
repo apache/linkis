@@ -39,13 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * StdVarAccess Tester.
- *
- * @author <Authors name>
- * @version 1.0
- * @since <pre>三月 14, 2021</pre>
- */
+
 public class StdVarAccessTest {
     String[] cmdStr;
     VarAccess stdVarAccess;

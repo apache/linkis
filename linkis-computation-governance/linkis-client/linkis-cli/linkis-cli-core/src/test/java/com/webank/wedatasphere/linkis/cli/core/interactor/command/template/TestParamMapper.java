@@ -16,11 +16,7 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.command.template;
 import com.webank.wedatasphere.linkis.cli.core.constants.TestConstants;
 import com.webank.wedatasphere.linkis.cli.core.interactor.command.parser.transformer.ParamKeyMapper;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2020/11/27 20:49
- */
+
 public class TestParamMapper extends ParamKeyMapper {
 
     @Override

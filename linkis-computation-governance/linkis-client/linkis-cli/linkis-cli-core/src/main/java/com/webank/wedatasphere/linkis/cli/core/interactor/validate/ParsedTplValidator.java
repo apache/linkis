@@ -27,10 +27,8 @@ import java.util.List;
 
 
 /**
- * @program: linkis-cli
  * @description: 1. Check if there is missing or unknown option.
  * 2. Call checkParam method for command-specific validation.
- * @create: 2020/11/02 14:33
  */
 public class ParsedTplValidator implements Validator {
     private static final Logger logger = LoggerFactory.getLogger(ParsedTplValidator.class);

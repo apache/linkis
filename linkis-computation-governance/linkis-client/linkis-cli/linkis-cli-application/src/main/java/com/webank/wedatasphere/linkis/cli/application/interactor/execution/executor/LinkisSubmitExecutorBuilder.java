@@ -21,11 +21,7 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.execution.executor.Exe
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/03 16:54
- */
+
 public class LinkisSubmitExecutorBuilder extends ExecutorBuilder {
     private static Logger logger = LoggerFactory.getLogger(LinkisSubmitExecutorBuilder.class);
 

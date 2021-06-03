@@ -32,11 +32,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/03 16:54
- */
+
 public class LinkisJobBuilder extends JobBuilder {
 
     @Override

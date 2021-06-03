@@ -20,13 +20,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * SingleTplFitter Tester.
- *
- * @author <Authors name>
- * @version 1.0
- * @since <pre>���� 14, 2021</pre>
- */
+
 public class SingleTplFitterTest {
     Fitter fitter;
     CmdTemplate template;

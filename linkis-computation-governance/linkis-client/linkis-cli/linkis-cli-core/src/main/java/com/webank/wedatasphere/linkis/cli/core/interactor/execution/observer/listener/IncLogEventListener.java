@@ -22,11 +22,7 @@ import com.webank.wedatasphere.linkis.cli.core.presenter.Presenter;
 import com.webank.wedatasphere.linkis.cli.core.presenter.model.ModelConverter;
 import com.webank.wedatasphere.linkis.cli.core.presenter.model.PresenterModel;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/10 19:38
- */
+
 public class IncLogEventListener implements LinkisClientObserver {
     private Presenter presenter;
     private ModelConverter converter;

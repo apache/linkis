@@ -16,11 +16,7 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.validate;
 import com.webank.wedatasphere.linkis.cli.common.entity.command.Params;
 import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
 
-/**
- * @program: linkis-cli
- * @description: TODO
- * @create: 2021/02/25 14:53
- */
+//TODO
 public class ParamValidator implements Validator {
     @Override
     public void doValidation(Object input) throws LinkisClientRuntimeException {

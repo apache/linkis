@@ -13,11 +13,6 @@
 
 package com.webank.wedatasphere.linkis.cli.application.constants;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/16 21:08
- */
 public class LinkisConstants {
     public static final String JOB_CREATOR_DEFAULT = "BDP_CLIENT_EMPTY_CREATOR";
     public static final String AUTH_STRATEGY_TOKEN = "token";

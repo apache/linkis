@@ -14,9 +14,7 @@
 package com.webank.wedatasphere.linkis.cli.application.constants;
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/03 17:51
+ * @description: Keys used by client. Usually in the form of prefix + LinkisKey
  */
 public class LinkisClientKeys {
 

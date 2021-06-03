@@ -36,11 +36,6 @@ import org.apache.spark.sql.types.{StructField, StructType}
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
- *
- * @date 2020/11/4
- * @description
- */
 
 object SQLSession extends Logging {
   val nf = NumberFormat.getInstance()

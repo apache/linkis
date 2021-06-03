@@ -16,10 +16,7 @@
 
 package com.webank.wedatasphere.linkis.engineplugin.spark.executor
 
-/**
-  *
-  * @date 2020/11/2
-  */
+
 object SparkExecutorOrder extends Enumeration {
 
   type SparkExecutorOrder = Value

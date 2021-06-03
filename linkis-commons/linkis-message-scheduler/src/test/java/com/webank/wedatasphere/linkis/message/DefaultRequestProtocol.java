@@ -19,8 +19,6 @@ package com.webank.wedatasphere.linkis.message;
 
 import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
 
-/**
- * @date 2020/7/14
- */
+
 public class DefaultRequestProtocol implements RequestProtocol {
 }

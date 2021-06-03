@@ -27,9 +27,7 @@ import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelGrou
 import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelScheduler;
 import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelSchedulerContextImpl;
 
-/**
- * @date 2020/7/17
- */
+
 public class DefaultMessageScheduler implements MessageScheduler {
 
     // TODO: 2020/7/22 configuration

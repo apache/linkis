@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.message.registry;
 
-/**
- * @date 2020/7/14
- */
+
 public interface ServiceRegistry {
 
     void register(Object service);

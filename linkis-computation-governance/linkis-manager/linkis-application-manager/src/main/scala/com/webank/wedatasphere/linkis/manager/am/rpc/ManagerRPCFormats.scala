@@ -23,9 +23,7 @@ import com.webank.wedatasphere.linkis.rpc.transform.RPCFormats
 import org.json4s.Serializer
 import org.springframework.stereotype.Component
 
-/**
-  * @date 2020/8/27 17:29
-  */
+
 @Component
 class ManagerRPCFormats extends RPCFormats {
 

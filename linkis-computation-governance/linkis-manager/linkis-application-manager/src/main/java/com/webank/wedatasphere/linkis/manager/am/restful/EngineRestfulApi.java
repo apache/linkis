@@ -62,4 +62,18 @@ public class EngineRestfulApi {
         return Message.messageToResponse(Message.ok().data("engines", engineNodes));
     }
 
+    @POST
+    @Path("/createEngines")
+    public Response createEngines(@Context HttpServletRequest req, JsonNode jsonNode) throws IOException {
+
+    }
+
+
+    public Response infoEngine(@Context HttpServletRequest req, JsonNode jsonNode){
+
+    }
+
+
+
+
 }

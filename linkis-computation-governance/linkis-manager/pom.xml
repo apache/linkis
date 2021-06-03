@@ -38,6 +38,7 @@
         <module>linkis-manager-monitor</module>
         <module>linkis-resource-manager</module>
         <module>linkis-application-manager</module>
+        <module>linkis-manager-client</module>
     </modules>
 
     <build>

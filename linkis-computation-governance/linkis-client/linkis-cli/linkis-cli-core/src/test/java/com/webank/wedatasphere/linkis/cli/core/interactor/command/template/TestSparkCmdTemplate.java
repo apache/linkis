@@ -52,13 +52,6 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
     private StdOption<String> helpOp = option(null, TestConstants.PARAM_HELP, new String[]{"-h", "--help"},
             "help info", true, "");
 
-    private StdOption<String> realNameOp = option(null, TestConstants.PARAM_REAL_NAME, new String[]{"-rn", "--real-name"},
-            "企业微信名",
-            true, "");
-    private StdOption<String> pinTokenOp = option(null, TestConstants.PARAM_PIN_TOKEN, new String[]{"-pt", "--pin-token"},
-            "PIN+TOKEN",
-            true, "");
-
     private StdOption<String> filePara = option(null, TestConstants.PARAM_COMMON_FILE, new String[]{"--file", "-f"},
             "Spark SQL File to Execute!", true, "");
 

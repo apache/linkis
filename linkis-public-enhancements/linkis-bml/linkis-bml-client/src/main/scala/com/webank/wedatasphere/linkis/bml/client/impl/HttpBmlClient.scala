@@ -37,11 +37,10 @@ import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
-class HttpBmlClient extends AbstractBmlClient{
+class HttpBmlClient(serverUrl: String) extends AbstractBmlClient{
 
   private val logger:Logger = LoggerFactory.getLogger(classOf[HttpBmlClient])
 
-  val serverUrl:String = HttpConf.gatewayInstance
   val maxConnection:Int = 10
   val readTimeout:Int = 10 * 60 * 1000
   val authenticationStrategy:AuthenticationStrategy = new TokenAuthenticationStrategy()

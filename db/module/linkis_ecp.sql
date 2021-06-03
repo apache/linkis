@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS `linkis_engine_conn_plugin_bml_resources`;
-CREATE TABLE `linkis_engine_conn_plugin_bml_resources` (
+DROP TABLE IF EXISTS `linkis_cg_engine_conn_plugin_bml_resources`;
+CREATE TABLE `linkis_cg_engine_conn_plugin_bml_resources` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `engine_conn_type` varchar(100) NOT NULL COMMENT '引擎类型',
   `version` varchar(100) COMMENT '版本',

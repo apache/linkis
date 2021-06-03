@@ -1,0 +1,134 @@
+#！/bin/bash
+# set -x
+declare -A map_opts=(\
+    ['-confMap']="" \
+    ['-varMap']="" \
+    ['-labelMap']="" \
+    ['-execMap']="" \
+    ['-sourceMap']="" \
+)
+
+declare -A lks_opts=(\
+    ['-submitUser']=`whoami` \
+    ['-proxyUser']=`whoami` \
+)
+
+LINKIS_CLIENT='com.webank.wedatasphere.linkis.cli.application.LinkisClientApplication'
+
+
+declare -a FINAL_CMD
+i=0
+for arg in "$@"
+do
+    FINAL_CMD[i]=${arg}
+    ((i++))
+done
+NUM_ARGS=$i
+
+function prepare() {
+    ((j=$NUM_ARGS))
+    for((i=0;i<NUM_ARGS;i++));
+    do
+        key=${FINAL_CMD[$i]}
+        if [ -n "$lks_opts[$key]" ]; then
+            lks_opts[${FINAL_CMD[$i]}]=""
+        fi
+    done
+    for key in $(echo ${!lks_opts[*]})
+    do
+        if [ -n "${lks_opts[${key}]}" ]; then
+            FINAL_CMD[$j]=$key
+            FINAL_CMD[$j+1]=${lks_opts[$key]}
+            ((j=j+2))
+        fi
+    done
+}
+
+#===============================================
+# find java_home
+#===============================================
+locate_java_home() {
+  local JAVA8_HOME_CANDIDATES='\
+    /usr/java/jdk1.8* \
+    /nemo/jdk1.8*'
+
+  JAVA_HOME_CANDIDATES="$JAVA8_HOME_CANDIDATES"
+
+  # attempt to find java 8
+  flag=""
+  for candidate_regex in $JAVA_HOME_CANDIDATES ; do
+      for candidate in `ls -rd $candidate_regex 2>/dev/null`; do
+        if [ -e $candidate/bin/java ]; then
+          export JAVA_HOME=$candidate
+          flag="true"
+          break 2
+        fi
+      done
+  done
+
+  if [ -z "$flag" ]; then
+    echo -e "\033[0;31;40mNo JDK 8 found. linkis-client requires Java 1.8\033[0m" 1>&2
+    exit 1
+  fi
+
+  verify_java_home
+}
+
+# Verify that JAVA_HOME set - does not verify that it's set to a meaningful
+# value.
+verify_java_home() {
+  if [ -z "$JAVA_HOME" ]; then
+    cat 1>&2 <<EOF
++======================================================================+
+|      Error: JAVA_HOME is not set and Java could not be found         |
++----------------------------------------------------------------------+
+EOF
+    exit 1
+  fi
+}
+
+
+function call_linkis_client() {
+
+
+        LINKIS_CLIENT_CLASSPATH=${WORK_DIR}/conf:${WORK_DIR}/lib/*:${CLASSPATH}
+
+
+        LINKIS_CLIENT_LOG_DIR=${LINKIS_CLIENT_LOG_DIR:-"${WORK_DIR}/logs"}
+        LINKIS_CLIENT_CONF_DIR=${LINKIS_CLIENT_CONF_DIR:-"${WORK_DIR}/conf"}
+        LINKIS_CLIENT_CONF_FILES=${LINKIS_CLIENT_CONF_FILES:-"linkis-cli.properties"}
+
+        LINKIS_CLIENT_HEAP_OPTS="-server -Xms32m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${LINKIS_CLIENT_LOG_DIR} -XX:ErrorFile=${LINKIS_CLIENT_LOG_DIR}/ps_err_pid%p.log"
+        LINKIS_CLIENT_GC_OPTS="-XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+DisableExplicitGC"
+        LINKIS_CLIENT_LOG_OPTS="-Dlog.path=${LINKIS_CLIENT_LOG_DIR} -Dlog.file=linkis-client.${USER}.log.`date '+%Y%m%d%H%M%S%N'`"
+        #DEBUG_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
+        LINKIS_CLIENT_OPTS=${LINKIS_CLIENT_OPTS:-" ${DEBUG_OPTS} "}
+
+
+
+        ${JAVA} ${LINKIS_CLIENT_HEAP_OPTS} ${LINKIS_CLIENT_GC_OPTS} ${LINKIS_CLIENT_OPTS} -classpath ${LINKIS_CLIENT_CLASSPATH} -Dconf.root=${LINKIS_CLIENT_CONF_DIR} ${LINKIS_CLIENT_LOG_OPTS}  ${LINKIS_CLIENT} "${FINAL_CMD[@]}"
+        exitCode=$?
+
+        exit ${exitCode}
+}
+
+current_dir=`pwd`
+if [ -n $WORK_DIR ]; then
+    work_dir=`dirname "$0"`/../
+    export WORK_DIR=`cd ${work_dir};pwd`
+fi
+cd ${current_dir}/
+locate_java_home
+JAVA=${JAVA_HOME}/bin/java
+if (( NUM_ARGS == 0 )); then
+    PARSED_CMD[$j]='--help'
+    print_help
+else
+    prepare
+fi
+call_linkis_client
+
+
+
+
+

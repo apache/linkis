@@ -1,4 +1,4 @@
-CREATE TABLE `linkis_resources` (
+CREATE TABLE `linkis_ps_bml_resources` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `resource_id` varchar(50) NOT NULL COMMENT '资源id，资源的uuid',
   `is_private` TINYINT(1) DEFAULT 0 COMMENT '资源是否私有，0表示私有，1表示公开',
@@ -18,13 +18,13 @@ CREATE TABLE `linkis_resources` (
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 --修改expire_type的默认值为NULL
-alter table linkis_resources alter column expire_type set default null;
+alter table linkis_ps_bml_resources alter column expire_type set default null;
 
 --修改expire_time的默认值为NULL
-alter table linkis_resources alter column expire_time set default null;
+alter table linkis_ps_bml_resources alter column expire_time set default null;
 
 
-CREATE TABLE `linkis_resources_version` (
+CREATE TABLE `linkis_ps_bml_resources_version` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `resource_id` varchar(50) NOT NULL COMMENT '资源id，资源的uuid',
   `file_md5` varchar(32) NOT NULL COMMENT '文件的md5摘要',
@@ -41,18 +41,18 @@ CREATE TABLE `linkis_resources_version` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --添加start_byte 和 end_byte 字段
-ALTER TABLE `linkis_resources_version` ADD COLUMN `start_byte` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 AFTER `size`;
+ALTER TABLE `linkis_ps_bml_resources_version` ADD COLUMN `start_byte` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 AFTER `size`;
 
-ALTER TABLE `linkis_resources_version` ADD COLUMN `end_byte` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 AFTER `start_byte`;
+ALTER TABLE `linkis_ps_bml_resources_version` ADD COLUMN `end_byte` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 AFTER `start_byte`;
 
 --version字段修改
-alter table `linkis_resources_version` modify column `version` varchar(20) not null;
+alter table `linkis_ps_bml_resources_version` modify column `version` varchar(20) not null;
 
 --给resource_id 和 version 加上联合唯一约束
-alter table `linkis_resources_version` add unique key `resource_id_version`(`resource_id`, `version`);
+alter table `linkis_ps_bml_resources_version` add unique key `resource_id_version`(`resource_id`, `version`);
 
 
-CREATE TABLE `linkis_resources_permission` (
+CREATE TABLE `linkis_ps_bml_resources_permission` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `resource_id` varchar(50) NOT NULL COMMENT '资源id，资源的uuid',
   `permission` varchar(10) NOT NULL COMMENT '权限代码',
@@ -63,7 +63,7 @@ CREATE TABLE `linkis_resources_permission` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `linkis_resources_download_history` (
+CREATE TABLE `linkis_ps_resources_download_history` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
 	`start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '开始时间',
 	`end_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '结束时间',
@@ -76,13 +76,13 @@ CREATE TABLE `linkis_resources_download_history` (
 
 
 --删除resources_version_id 字段
-alter table `linkis_resources_download_history` drop column `resources_version_id`;
+alter table `linkis_ps_resources_download_history` drop column `resources_version_id`;
 
 --添加resource_id 字段
-alter table `linkis_resources_download_history` add column `resource_id` varchar(50) not null after `state`;
+alter table `linkis_ps_resources_download_history` add column `resource_id` varchar(50) not null after `state`;
 
 --添加version字段
-alter table `linkis_resources_download_history` add column `version` varchar(20) not null after `resource_id`;
+alter table `linkis_ps_resources_download_history` add column `version` varchar(20) not null after `resource_id`;
 
 create table dws_bml_resources_contentType (
 	`id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -94,7 +94,7 @@ create table dws_bml_resources_contentType (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --创建资源任务表,包括上传,更新,下载
-CREATE TABLE `linkis_resources_task` (
+CREATE TABLE `linkis_ps_bml_resources_task` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `resource_id` varchar(50) DEFAULT NULL COMMENT '资源id，资源的uuid',
   `version` varchar(20) DEFAULT NULL COMMENT '当前操作的资源版本号',

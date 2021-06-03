@@ -39,7 +39,6 @@ public class LinkisJobLogPresenter extends QueryBasedPresenter {
 
     private TriggerEvent logFinEvent;
 
-//    private Integer cntRealLogLines = 0;//for test
 
     public void setLogFinEvent(TriggerEvent logFinEvent) {
         this.logFinEvent = logFinEvent;
@@ -53,7 +52,6 @@ public class LinkisJobLogPresenter extends QueryBasedPresenter {
 
         }
         final LinkisJobIncLogModel finalModel = (LinkisJobIncLogModel) model;
-//    final DisplayDriver finalDriver = DisplayDriverFactory.getDisplayDriver(finalModel.getOutputWay()); //currently we don't allow printing log to file here
         final DisplayDriver finalDriver = new StdOutDriver();
 
         Thread incLogPresenterThread = new Thread(() -> {
@@ -112,14 +110,6 @@ public class LinkisJobLogPresenter extends QueryBasedPresenter {
         //get inclog
         try {
             DWSResult result = clientDriver.queryRunTimeLogFromLine(model.getUser(), model.getTaskID(), model.getExecID(), model.getFromLine());
-//            System.out.println("================");
-//            System.out.println("previous fromline: " + model.getFromLine());
-//            System.out.println("current fromline: " + ((JobLogResult)result).getFromLine());
-//            cntRealLogLines += getNumOfLines(((JobLogResult)result).getLog().get(3));
-//            System.out.println("actual number of total Log lines: " + cntRealLogLines);
-//            System.out.println("number of incLog lines indicated by server: " + (((JobLogResult)result).getFromLine()-model.getFromLine()));
-//            System.out.println("actual number of incLog lines: " + getNumOfLines(((JobLogResult)result).getLog().get(3)));
-//            System.out.println("................");
             model = updateModelByDwsResult(model, result);
         } catch (Exception e) {
             // job is finished while we start query log(but request is not send).
@@ -138,11 +128,6 @@ public class LinkisJobLogPresenter extends QueryBasedPresenter {
         String allLog = model.readAndClearIncLog();
 
         int fromLine = model.getFromLine();
-//        System.out.println("================");
-//        System.out.println("number of persisted log lines server: " + getNumOfLines(allLog));
-//        System.out.println("fromLine: " + fromLine);
-//        System.out.println("actual number of all runtimeLogs:" + cntRealLogLines);
-//        System.out.println("................");
         int idx = getFirstIndexSkippingLines(allLog, fromLine);
         if (idx != -1) {
             String incLog = StringUtils.substring(allLog, idx);
@@ -155,9 +140,6 @@ public class LinkisJobLogPresenter extends QueryBasedPresenter {
         return model;
     }
 
-    protected void doOutput() {
-
-    }
 
     private LinkisJobIncLogModel updateModelByDwsResult(LinkisJobIncLogModel model, DWSResult result) {
         JobExecModel data = transformer.convertAndUpdateModel(model, result);

@@ -36,9 +36,7 @@ import java.util.Map;
 
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/02/25 17:05
+ * @description: Given {@link CmdTemplate}, Parse user input arguements into {@link Params}
  */
 public abstract class AbstarctParser implements Parser {
     private static final Logger logger = LoggerFactory.getLogger(AbstarctParser.class);

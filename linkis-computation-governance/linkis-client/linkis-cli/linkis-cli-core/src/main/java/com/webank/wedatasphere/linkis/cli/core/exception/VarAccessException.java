@@ -17,11 +17,7 @@ import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeEx
 import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
 import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorMsg;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/24 12:25
- */
+
 public class VarAccessException extends LinkisClientRuntimeException {
     private static final long serialVersionUID = 125344127L;
 

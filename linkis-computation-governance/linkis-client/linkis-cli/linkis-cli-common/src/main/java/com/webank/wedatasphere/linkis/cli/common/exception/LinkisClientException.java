@@ -14,9 +14,7 @@
 package com.webank.wedatasphere.linkis.cli.common.exception;
 
 /**
- * @program: linkis-cli
  * @description: Exception for BdpLinkisClient
- * @create: 2020/10/30 18:53
  */
 public abstract class LinkisClientException extends Exception {
     private static final long serialVersionUID = 42563456489L;

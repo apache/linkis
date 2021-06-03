@@ -45,11 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/16 14:42
- */
+
 public class ProcessInputUtil {
     private static Logger logger = LoggerFactory.getLogger(ProcessInputUtil.class);
 

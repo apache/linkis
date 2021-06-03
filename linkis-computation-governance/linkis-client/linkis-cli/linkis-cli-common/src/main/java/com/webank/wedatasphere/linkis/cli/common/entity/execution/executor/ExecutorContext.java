@@ -13,11 +13,7 @@
 
 package com.webank.wedatasphere.linkis.cli.common.entity.execution.executor;
 
-/**
- * @author alexyang
- * @date 2020/11/16
- * @description
- */
+
 public interface ExecutorContext {
 
 }

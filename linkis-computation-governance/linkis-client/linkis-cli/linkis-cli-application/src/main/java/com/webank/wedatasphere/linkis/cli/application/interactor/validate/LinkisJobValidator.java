@@ -25,11 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/25 11:39
- */
+
 public class LinkisJobValidator implements Validator {
     @Override
     public void doValidation(Object input) throws LinkisClientRuntimeException {

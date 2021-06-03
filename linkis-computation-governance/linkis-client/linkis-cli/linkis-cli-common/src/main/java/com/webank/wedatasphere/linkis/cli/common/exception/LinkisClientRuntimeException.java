@@ -19,24 +19,22 @@ import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorMsg;
 import java.text.MessageFormat;
 
 /**
- * @program: linkis-cli
  * @description: RuntimeException for BdpLinkisClient
- * @create: 2020/10/30 18:53
  */
 public class LinkisClientRuntimeException extends RuntimeException {
     private static final long serialVersionUID = 342134234324357L;
 
     /**
-     * 异常错误码
+     * ErrorCode
      **/
     private String code;
 
     /**
-     * 异常描述
+     * Description
      **/
     private String msg;
     /**
-     * 扩展异常描述（包括msg）
+     * extra message
      **/
     private String extMsg;
 

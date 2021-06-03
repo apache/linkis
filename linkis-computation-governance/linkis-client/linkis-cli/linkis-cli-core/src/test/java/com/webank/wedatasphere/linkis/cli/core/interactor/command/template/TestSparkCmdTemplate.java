@@ -25,11 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @program: linkis-cli
- * @description: subCommandTemplate for Spark Jobs
- * @create: 2020/11/04 17:45
- */
+
 public class TestSparkCmdTemplate extends AbstractCmdTemplate {
     protected StdOption<String> databaseOp = option(null, TestConstants.PARAM_DB, new String[]{"-d", "--database"},
             "specify database",

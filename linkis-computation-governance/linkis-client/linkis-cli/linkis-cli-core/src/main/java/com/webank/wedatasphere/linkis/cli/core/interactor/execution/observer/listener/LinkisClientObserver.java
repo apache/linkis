@@ -15,11 +15,7 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.execution.observer.li
 
 import com.webank.wedatasphere.linkis.cli.core.interactor.execution.observer.event.LinkisClientEvent;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/10 14:07
- */
+
 public interface LinkisClientObserver {
     void update(LinkisClientEvent event, Object msg);
 }

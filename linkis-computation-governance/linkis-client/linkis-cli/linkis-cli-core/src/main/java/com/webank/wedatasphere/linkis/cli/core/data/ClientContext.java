@@ -19,9 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @program: linkis-cli
  * @description: store some state information
- * @create: 2021/03/14 18:25
  */
 public class ClientContext {
     private static final Map<String, CmdTemplate> generatedTemplateMap = new HashMap<>();

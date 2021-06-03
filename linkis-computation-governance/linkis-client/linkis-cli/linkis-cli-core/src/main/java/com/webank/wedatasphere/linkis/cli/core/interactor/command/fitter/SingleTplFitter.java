@@ -24,11 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/02/24 14:42
- */
+
 public class SingleTplFitter extends AbstractFitter {
     private static final Logger logger = LoggerFactory.getLogger(SingleTplFitter.class);
 

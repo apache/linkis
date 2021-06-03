@@ -13,11 +13,7 @@
 
 package com.webank.wedatasphere.linkis.cli.core.constants;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/14 14:53
- */
+
 public class TestConstants {
 
     public static final String PRIMARY = "test.primary";

@@ -7,11 +7,7 @@ import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 
 import scala.beans.BeanProperty
 
-/**
- * @author alexyang
- * @date 2020/11/24
- * @description
- */
+
 @DWSHttpMessageResult("/api/rest_j/v\\d+/jobhistory/list")
 class JobListResult extends DWSResult {
 

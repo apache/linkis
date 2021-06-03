@@ -22,11 +22,7 @@ import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
 import com.webank.wedatasphere.linkis.cli.core.interactor.validate.Validator;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/25 11:40
- */
+
 public class UjesContextValidator implements Validator {
     @Override
     public void doValidation(Object input) throws LinkisClientRuntimeException {

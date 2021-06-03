@@ -19,11 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2020/11/12 21:53
- */
+
 public class Utils {
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();

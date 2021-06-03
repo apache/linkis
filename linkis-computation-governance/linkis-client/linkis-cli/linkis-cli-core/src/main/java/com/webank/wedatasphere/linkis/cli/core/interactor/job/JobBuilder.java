@@ -16,10 +16,6 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.job;
 import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
 import com.webank.wedatasphere.linkis.cli.core.builder.BuildableByVarAccess;
 
-/**
- * @program: linkis-computation-governance
- * @description:
- * @create: 2021/04/02 17:32
- */
+
 public abstract class JobBuilder extends BuildableByVarAccess<Job> {
 }

@@ -21,9 +21,7 @@ import java.util.Properties;
 
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/02/24 19:37
+ * @description: Load sys-env & sys-prop
  */
 public class SysPropsReader implements PropertiesReader {
     private static final Logger logger = LoggerFactory.getLogger(SysPropsReader.class);

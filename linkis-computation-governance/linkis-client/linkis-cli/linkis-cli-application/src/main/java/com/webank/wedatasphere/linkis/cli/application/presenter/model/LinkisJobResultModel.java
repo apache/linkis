@@ -16,11 +16,7 @@ package com.webank.wedatasphere.linkis.cli.application.presenter.model;
 
 import com.webank.wedatasphere.linkis.cli.core.presenter.model.JobExecModel;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/11 16:54
- */
+
 public class LinkisJobResultModel extends JobExecModel {
     private String taskID;
     private String execID;

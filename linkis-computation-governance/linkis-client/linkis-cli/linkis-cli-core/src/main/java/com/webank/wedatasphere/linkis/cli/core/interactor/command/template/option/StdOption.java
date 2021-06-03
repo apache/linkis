@@ -17,9 +17,7 @@ import com.webank.wedatasphere.linkis.cli.common.utils.converter.AbstractStringC
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @program: linkis-cli
  * @description: Data Structure for command CmdOption.
- * @create: 2020/9/28 18:22
  */
 public class StdOption<T> extends BaseOption<T> {
     final String[] paramNames;

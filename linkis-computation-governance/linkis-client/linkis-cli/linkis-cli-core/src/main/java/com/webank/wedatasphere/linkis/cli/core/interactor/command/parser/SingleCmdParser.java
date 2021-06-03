@@ -27,11 +27,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 
 
-/**
- * @program: linkis-cli
- * @description: parse command that contains only one sub-command
- * @create: 2021/02/25 16:40
- */
 public class SingleCmdParser extends AbstarctParser {
     private static final Logger logger = LoggerFactory.getLogger(SingleCmdParser.class);
 

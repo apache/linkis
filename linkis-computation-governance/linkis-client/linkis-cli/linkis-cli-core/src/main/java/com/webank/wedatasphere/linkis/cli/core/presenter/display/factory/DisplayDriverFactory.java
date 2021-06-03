@@ -21,11 +21,6 @@ import com.webank.wedatasphere.linkis.cli.core.presenter.display.DisplayDriver;
 import com.webank.wedatasphere.linkis.cli.core.presenter.display.PlainTextFileDriver;
 import com.webank.wedatasphere.linkis.cli.core.presenter.display.StdOutDriver;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/19 20:04
- */
 public class DisplayDriverFactory {
     public static DisplayDriver getDisplayDriver(OutputWay outputWay) {
         if (outputWay == OutputWay.STANDARD) {

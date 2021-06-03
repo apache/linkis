@@ -15,10 +15,6 @@ package com.webank.wedatasphere.linkis.cli.core.utils;
 
 import java.util.HashMap;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/18 23:07
- */
+
 public class SpecialMap<K, V> extends HashMap<K, V> {
 }

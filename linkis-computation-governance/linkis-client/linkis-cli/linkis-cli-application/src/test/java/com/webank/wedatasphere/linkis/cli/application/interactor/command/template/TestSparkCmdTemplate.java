@@ -53,13 +53,6 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
     private StdOption<String> helpOp = option(null, TestConstants.PARAM_HELP, new String[]{"-h", "--help"},
             "help info", true, "");
 
-    private StdOption<String> tokenOP = option(null, LinkisClientKeys.LINKIS_COMMON_TOKEN_KEY, new String[]{"-tk", "--real-name"},
-            "企业微信名",
-            true, "");
-    private StdOption<String> tokenValOp = option(null, LinkisClientKeys.LINKIS_COMMON_TOKEN_VALUE, new String[]{"-tv", "--pin-token"},
-            "PIN+TOKEN",
-            true, "");
-
     private StdOption<Map<String, String>> confMap = option(null, LinkisClientKeys.JOB_PARAM_CONF, new String[]{"-confMap"}, "confMap", true, new HashMap<>());
 
     private StdOption<String> filePara = option(null, TestConstants.PARAM_COMMON_FILE, new String[]{"--file", "-f"},

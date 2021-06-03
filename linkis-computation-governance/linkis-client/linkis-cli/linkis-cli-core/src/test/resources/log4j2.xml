@@ -12,21 +12,35 @@
   ~ limitations under the License.
   -->
 
-<configuration status="DEBUG" monitorInterval="30">
+<configuration status="INFO" monitorInterval="30">
+    <properties>
+        <property name="LOG_PATH">${sys:log.path}</property>
+        <property name="LOG_FILE">${sys:log.file}</property>
+    </properties>
     <appenders>
-        <console name="Console" target="SYSTEM_OUT">
+        <console name="Console-Plain" target="SYSTEM_OUT">
             <PatternLayout pattern="%m%n"/>
         </console>
+        <console name="Console-Information" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%level] %m%n"/>
+        </console>
+        <console name="Console-Debug" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss,SSS} %p %c{1}(%L) - %m%n"/>
+        </console>
+
     </appenders>
     <loggers>
         <root level="OFF">
-            <!--<appender-ref ref="Console"/>-->
+            <!--<appender-ref ref="fixedTimeFileAppender"/>-->
         </root>
-        <logger name="com.webank.wedatasphere" level="DEBUG" additivity="false">
-            <appender-ref ref="Console"/>
+        <logger name="PlaintTextLogger" level="INFO" additivity="false">
+            <appender-ref ref="Console-Plain"/>
         </logger>
-        <logger name="StdoutLogger" level="INFO">
-            <appender-ref ref="Console"/>
+        <logger name="InformationLogger" level="INFO" additivity="false">
+            <appender-ref ref="Console-Information"/>
+        </logger>
+        <logger name="com.webank.wedatasphere" level="DEBUG" additivity="false">
+            <appender-ref ref="Console-Debug"/>
         </logger>
     </loggers>
 </configuration>

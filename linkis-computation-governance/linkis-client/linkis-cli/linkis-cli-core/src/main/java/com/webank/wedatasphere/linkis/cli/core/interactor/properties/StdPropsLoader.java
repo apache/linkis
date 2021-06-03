@@ -22,11 +22,7 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.properties.reader.Prop
 
 import java.util.*;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/02/25 10:52
- */
+
 public class StdPropsLoader implements PropertiesLoader {
     Map<String, PropertiesReader> readersMap;
 

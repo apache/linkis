@@ -21,9 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @program: linkis-cli
  * @description: write log to stdout、stderr and log file
- * @create: 2020/11/11 11:39
  */
 public class DefaultExceptionHandler implements ExceptionHandler {
     private static Logger logger = LoggerFactory.getLogger(DefaultExceptionHandler.class);

@@ -16,11 +16,7 @@ package com.webank.wedatasphere.linkis.cli.core.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/19 19:54
- */
+
 public class LogUtils {
     private static final Logger PlainTextLogger = LoggerFactory.getLogger("PlaintTextLogger");
     private static final Logger InformationLogger = LoggerFactory.getLogger("InformationLogger");

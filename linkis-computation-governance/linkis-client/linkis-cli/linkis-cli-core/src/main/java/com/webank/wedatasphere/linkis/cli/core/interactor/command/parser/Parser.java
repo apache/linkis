@@ -13,16 +13,10 @@
 
 package com.webank.wedatasphere.linkis.cli.core.interactor.command.parser;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.command.Params;
 import com.webank.wedatasphere.linkis.cli.core.interactor.command.parser.result.ParseResult;
 
 /**
- * @program: linkis-cli
- * @description: 1. parse cmd arguments and fill into template
- * 2. generate unique identifier for sub command
- * 3. transform parsed template into instance of {@link Params}
- * 4. return parsed copy of template for further validation, and commandParam for submitting to backend
- * @create: 2021/02/25 16:01
+ * @description: Parse user input arguments
  */
 public interface Parser {
     ParseResult parse(String[] input);

@@ -17,13 +17,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * LinkisSubmitExecutor Tester.
- *
- * @author <Authors name>
- * @version 1.0
- * @since <pre>三月 15, 2021</pre>
- */
+
 public class LinkisExecutorTest {
 
     @Before

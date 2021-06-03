@@ -17,9 +17,7 @@ package com.webank.wedatasphere.linkis.cli.common.entity.execution.executor;
 import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/02/26 15:54
+ * @description: Executor should encapsulate methods that linkis-cli need to complete an {@link com.webank.wedatasphere.linkis.cli.common.entity.execution.Execution}
  */
 public interface Executor {
     boolean terminate(Job job);

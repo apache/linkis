@@ -16,11 +16,7 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.command;
 import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdType;
 import com.webank.wedatasphere.linkis.cli.core.constants.TestConstants;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2020/11/11 17:36
- */
+
 public enum TestCmdType implements CmdType {
     PRIMARY(TestConstants.PRIMARY, 0, TestConstants.PRIMARY_DESC),
     SPARK(TestConstants.SPARK, 1, TestConstants.SPARK_DESC);

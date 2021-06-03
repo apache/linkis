@@ -15,9 +15,7 @@ package com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec;
 
 
 /**
- * @author alexyang
- * @date 2020/11/3
- * @description
+ * @description: Jobstatus used by linkis-cli
  */
 public enum JobStatus {
     UNSUBMITTED("Unsubmitted", 0),

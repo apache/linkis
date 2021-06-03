@@ -26,9 +26,7 @@ import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.optio
 import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option.StdOption;
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/15 18:30
+ * @description: A command that is compatible with any types of Linkis' Job.
  */
 public class UniversalCmdTemplate extends AbstractCmdTemplate {
 

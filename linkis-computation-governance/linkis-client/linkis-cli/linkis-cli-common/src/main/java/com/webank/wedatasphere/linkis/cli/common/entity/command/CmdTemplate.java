@@ -17,9 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/02/26 18:42
+ * @description: A CmdTemplate defines what a Command should look like.
  */
 public interface CmdTemplate extends Cloneable {
     CmdType getCmdType();

@@ -26,9 +26,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
-/**
- * @author polarischen
- */
+
 public class PropsFileReader implements PropertiesReader {
     private static final Logger logger = LoggerFactory.getLogger(PropsFileReader.class);
     private String propsId;

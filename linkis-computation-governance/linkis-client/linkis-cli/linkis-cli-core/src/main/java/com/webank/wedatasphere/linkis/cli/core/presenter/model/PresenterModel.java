@@ -14,9 +14,7 @@
 package com.webank.wedatasphere.linkis.cli.core.presenter.model;
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/10 20:50
+ * @description: Stores data needed by {@link com.webank.wedatasphere.linkis.cli.core.presenter.Presenter}
  */
 public interface PresenterModel {
 }

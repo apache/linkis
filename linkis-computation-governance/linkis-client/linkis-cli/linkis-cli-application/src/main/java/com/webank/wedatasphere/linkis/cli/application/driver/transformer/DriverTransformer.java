@@ -23,9 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * @program: linkis-cli
- * @description: transform data to be compatible with driver
- * @create: 2021/03/10 17:50
+ * @description: transform data to be compatible with {@link JobExec}
  */
 public interface DriverTransformer {
     String convertJobID(String taskID);

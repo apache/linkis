@@ -16,11 +16,6 @@ package com.webank.wedatasphere.linkis.cli.core.presenter.model;
 import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
 
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/24 19:17
- */
 public class HelpInfoModel implements PresenterModel {
     CmdTemplate template;
 

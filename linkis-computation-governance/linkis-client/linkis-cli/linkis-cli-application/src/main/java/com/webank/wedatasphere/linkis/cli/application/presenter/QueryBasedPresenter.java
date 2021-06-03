@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
 import com.webank.wedatasphere.linkis.cli.core.presenter.Presenter;
 
 /**
- * @program: linkis-cli
- * @description: Presenter that needs to make furthur query to linkis
- * @create: 2021/03/10 17:27
+ * @description: QueryBasedPresenter makes further queries to linkis in order to display some results
  */
 public abstract class QueryBasedPresenter implements Presenter {
     protected LinkisClientDriver clientDriver;

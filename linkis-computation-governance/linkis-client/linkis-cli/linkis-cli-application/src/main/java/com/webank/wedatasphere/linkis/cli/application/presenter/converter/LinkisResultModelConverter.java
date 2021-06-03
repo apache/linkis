@@ -13,7 +13,7 @@
 
 package com.webank.wedatasphere.linkis.cli.application.presenter.converter;
 
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobExec.LinkisJobSubmitExec;
+import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec.LinkisJobSubmitExec;
 import com.webank.wedatasphere.linkis.cli.application.presenter.model.LinkisJobResultModel;
 import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
 import com.webank.wedatasphere.linkis.cli.core.exception.TransformerException;
@@ -21,11 +21,6 @@ import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
 import com.webank.wedatasphere.linkis.cli.core.presenter.model.ModelConverter;
 import com.webank.wedatasphere.linkis.cli.core.presenter.model.PresenterModel;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/11 17:51
- */
 public class LinkisResultModelConverter implements ModelConverter {
     public PresenterModel convertToModel(Object data) {
         if (!(data instanceof LinkisJobSubmitExec)) {

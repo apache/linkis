@@ -16,9 +16,7 @@ package com.webank.wedatasphere.linkis.cli.common.entity.properties;
 import java.util.HashMap;
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/02/24 19:12
+ * @description: configurations/system variables in the form of kv-pairs
  */
 public class ClientProperties extends HashMap<Object, Object> {
     /**

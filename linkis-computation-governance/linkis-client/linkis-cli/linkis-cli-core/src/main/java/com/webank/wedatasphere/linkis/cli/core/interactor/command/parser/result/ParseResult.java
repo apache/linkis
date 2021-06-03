@@ -16,11 +16,7 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.command.parser.result
 import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
 import com.webank.wedatasphere.linkis.cli.common.entity.command.Params;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/02/25 21:38
- */
+
 public class ParseResult {
     CmdTemplate parsedTemplateCopy;
     Params params;

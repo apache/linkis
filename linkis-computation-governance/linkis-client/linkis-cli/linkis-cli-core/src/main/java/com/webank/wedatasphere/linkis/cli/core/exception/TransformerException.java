@@ -17,11 +17,7 @@ import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeEx
 import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
 import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorMsg;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/24 14:27
- */
+
 public class TransformerException extends LinkisClientRuntimeException {
     private static final long serialVersionUID = 5454234257L;
 

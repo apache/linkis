@@ -17,11 +17,7 @@ import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeEx
 import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
 import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorMsg;
 
-/**
- * @program: linkis-cli
- * @description: Exception for Config
- * @create: 2020/10/30 15:39
- */
+
 public class PropsException extends LinkisClientRuntimeException {
     private static final long serialVersionUID = 182747823415933L;
 

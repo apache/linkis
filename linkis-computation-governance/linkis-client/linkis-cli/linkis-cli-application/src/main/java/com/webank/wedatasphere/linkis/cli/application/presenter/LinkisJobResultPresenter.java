@@ -35,9 +35,7 @@ import java.util.*;
 
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/10 21:09
+ * @description: Display Result of Linkis task
  */
 public class LinkisJobResultPresenter extends QueryBasedPresenter {
     private static Logger logger = LoggerFactory.getLogger(LinkisJobResultPresenter.class);
@@ -66,7 +64,9 @@ public class LinkisJobResultPresenter extends QueryBasedPresenter {
         String[] resultSetPaths = resultModel.getResultSetPaths();
         StringBuilder resultSb = new StringBuilder();
         if (resultSetPaths == null) {
-            throw new PresenterException("PST0012", ErrorLevel.ERROR, CommonErrMsg.PresenterErr, "ResultPresenter got null as ResultSet");
+            Exception e = new PresenterException("PST0012", ErrorLevel.ERROR, CommonErrMsg.PresenterErr, "ResultPresenter got null as ResultSet");
+            logger.warn("", e);
+            return;
         }
 
         for (int i = 0; i < resultSetPaths.length; i++) {

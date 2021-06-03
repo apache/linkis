@@ -19,13 +19,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * LinkisClientApplication Tester.
- *
- * @author <Authors name>
- * @version 1.0
- * @since <pre>���� 16, 2021</pre>
- */
+
 public class LinkisClientApplicationTest {
     private static Logger logger = LoggerFactory.getLogger(LinkisClientApplicationTest.class);
 
@@ -85,10 +79,6 @@ public class LinkisClientApplicationTest {
                 "-engineType", "spark-2.4.3",
                 "-codeType", "sql",
                 "-code", "show tables;show tables;show tables",
-//        "-codePath", "src/test/resources/test2",
-//        "-engineType", "shell-1",
-//        "-codeType", "shell",
-//        "-code", "echo \"1111\"",
 
 //
 //        "-engineType", "hive-1.2.1",
@@ -103,9 +93,6 @@ public class LinkisClientApplicationTest {
 //        "-codeType", "scala",
 //        "-codePath", "src/test/resources/testScala.scala",
 
-//        "-engineType", "spark-2.4.3",
-//        "-codeType", "sql",
-//        "-codePath", "src/test/resources/testBigResult.txt",
 
 /**
  * Failed
@@ -117,7 +104,6 @@ public class LinkisClientApplicationTest {
 //        "-engineType", "python-python2",
 //        "-codeType", "python",
 ////        "-code", "print(\'hello\')\nprint(\'hello\')\nprint(\'hello\') ",
-//        "-codePath", "src/test/resources/test2",
         };
 
     }

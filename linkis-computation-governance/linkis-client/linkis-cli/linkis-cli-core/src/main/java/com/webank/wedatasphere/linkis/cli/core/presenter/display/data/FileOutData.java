@@ -14,11 +14,6 @@
 package com.webank.wedatasphere.linkis.cli.core.presenter.display.data;
 
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/19 19:23
- */
 public class FileOutData {
     private String pathName;
     private String fileName;

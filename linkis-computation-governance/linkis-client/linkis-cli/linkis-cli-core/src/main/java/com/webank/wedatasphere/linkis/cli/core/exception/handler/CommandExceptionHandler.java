@@ -23,9 +23,7 @@ import com.webank.wedatasphere.linkis.cli.core.presenter.model.HelpInfoModel;
 import java.util.Map;
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/24 21:10
+ * @description: Display help-info if required
  */
 public class CommandExceptionHandler implements ExceptionHandler {
     //TODO:move to application

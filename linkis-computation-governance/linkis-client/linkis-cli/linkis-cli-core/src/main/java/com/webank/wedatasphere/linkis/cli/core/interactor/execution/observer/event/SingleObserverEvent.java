@@ -16,9 +16,7 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.execution.observer.ev
 import com.webank.wedatasphere.linkis.cli.core.interactor.execution.observer.listener.LinkisClientObserver;
 
 /**
- * @program: linkis-cli
- * @description: simplified version of LinkisClientObserver pattern (currently we don't need a full version)
- * @create: 2021/03/10 14:07
+ * @description: simplified version of Observer pattern (currently we don't need a full version)
  */
 public abstract class SingleObserverEvent implements LinkisClientEvent {
     private LinkisClientObserver observer;

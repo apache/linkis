@@ -29,9 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/02/25 15:05
+ * @description: Scanning '.properties' files given root path
  */
 public class PropsFilesScanner {
     private static final Logger logger = LoggerFactory.getLogger(PropsFilesScanner.class);

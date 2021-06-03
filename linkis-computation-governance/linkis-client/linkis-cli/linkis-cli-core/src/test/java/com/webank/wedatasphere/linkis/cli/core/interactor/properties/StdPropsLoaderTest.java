@@ -22,13 +22,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-/**
- * StdPropsLoader Tester.
- *
- * @author <Authors name>
- * @version 1.0
- * @since <pre>三月 14, 2021</pre>
- */
+
 public class StdPropsLoaderTest {
     PropertiesLoader loader;
 

@@ -19,9 +19,7 @@ import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeEx
 import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobSubmitExec;
 
 /**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/03 14:51
+ * @description: Submit tasks to backends that do not support async-submission
  */
 public interface SyncBackendExecutor extends Executor {
     JobSubmitExec submitAndGetResult(Job job) throws LinkisClientRuntimeException;

@@ -16,11 +16,7 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.properties;
 import com.webank.wedatasphere.linkis.cli.common.entity.properties.ClientProperties;
 import com.webank.wedatasphere.linkis.cli.core.interactor.properties.reader.PropertiesReader;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/02/24 20:12
- */
+
 public interface PropertiesLoader {
     PropertiesLoader setPropertiesReaders(PropertiesReader[] readers);
 

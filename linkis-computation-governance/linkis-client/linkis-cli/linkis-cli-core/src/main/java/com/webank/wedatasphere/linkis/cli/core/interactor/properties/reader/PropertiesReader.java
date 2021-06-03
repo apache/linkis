@@ -16,9 +16,9 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.properties.reader;
 import java.util.Properties;
 
 /**
- * @program: linkis-client
- * @description: read properties. one instance of this class corresponds to one source (file/sys_prop/sys_env etc)
- * @create: 2021/3/4 21:36
+ * ent
+ *
+ * @description: read properties. one instance of PropertiesReader corresponds to one source (file/sys_prop/sys_env etc)
  */
 public interface PropertiesReader {
 

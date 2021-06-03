@@ -17,9 +17,7 @@ import com.webank.wedatasphere.linkis.cli.common.entity.properties.ClientPropert
 import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
 
 /**
- * @program: linkis-cli
- * @description: TODO
- * @create: 2021/02/25 14:53
+ * TODO
  */
 public class PropsValidator implements Validator {
     @Override

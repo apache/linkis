@@ -16,11 +16,6 @@ package com.webank.wedatasphere.linkis.cli.application.data;
 import com.webank.wedatasphere.linkis.cli.common.entity.execution.ExecutionResult;
 import com.webank.wedatasphere.linkis.cli.common.entity.result.ResultHandler;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/12 19:59
- */
 public class FinishedData {
     ExecutionResult executionResult;
     ResultHandler[] resultHandlers;

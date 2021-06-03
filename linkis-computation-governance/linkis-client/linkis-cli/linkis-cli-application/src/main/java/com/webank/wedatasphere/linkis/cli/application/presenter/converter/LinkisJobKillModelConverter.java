@@ -13,7 +13,7 @@
 
 package com.webank.wedatasphere.linkis.cli.application.presenter.converter;
 
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobExec.LinkisJobKill;
+import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec.LinkisJobKill;
 import com.webank.wedatasphere.linkis.cli.application.presenter.model.LinkisJobKillResultModel;
 import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
 import com.webank.wedatasphere.linkis.cli.core.exception.TransformerException;

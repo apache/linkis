@@ -29,10 +29,8 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * @program: linkis-cli
  * @description: Retrieve value from input command/config/sys_prop/sys_env etc.
  * order should be: command option > k-v in map-type option > user config > default config > default
- * @create: 2020/11/25 15:33
  */
 public class StdVarAccess implements VarAccess {
     private static Logger logger = LoggerFactory.getLogger(StdVarAccess.class);

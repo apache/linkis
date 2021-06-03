@@ -15,11 +15,7 @@ package com.webank.wedatasphere.linkis.cli.core.interactor.validate;
 
 import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
 
-/**
- * @program: linkis-cli
- * @description:
- * @create: 2021/03/15 16:48
- */
+
 public interface Validator {
     void doValidation(Object input) throws LinkisClientRuntimeException;
 }

@@ -84,9 +84,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @program: linkis-cli
  * @description: Main Enterance
- * @create: 2020/10/29 20:31
  */
 public class LinkisClientApplication {
     private static Logger logger = LoggerFactory.getLogger(LinkisClientApplication.class);

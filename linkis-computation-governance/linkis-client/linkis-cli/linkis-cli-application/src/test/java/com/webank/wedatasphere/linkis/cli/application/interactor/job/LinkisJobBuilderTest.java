@@ -20,13 +20,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * LinkisJobBuilder Tester.
- *
- * @author <Authors name>
- * @version 1.0
- * @since <pre>三月 15, 2021</pre>
- */
+
 public class LinkisJobBuilderTest {
     LinkisJobBuilder builder;
 

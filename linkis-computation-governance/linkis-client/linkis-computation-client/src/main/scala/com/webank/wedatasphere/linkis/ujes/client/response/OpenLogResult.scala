@@ -5,11 +5,7 @@ import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 
 import scala.beans.BeanProperty
 
-/**
- * @author alexyang
- * @date 2020/12/21
- * @description
- */
+
 @DWSHttpMessageResult("/api/rest_j/v\\d+/filesystem/openLog")
 class OpenLogResult extends DWSResult {
 

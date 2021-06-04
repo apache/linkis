@@ -40,6 +40,7 @@ public class BmlClientFactory {
         AbstractBmlClient bmlClient = new HttpBmlClient(serverUrl);
         bmlClient.setUser(user);
         bmlClient.setProperties(properties);
+        bmlClient.init();
         return bmlClient;
     }
 

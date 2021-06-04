@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @description: write log to stdout、stderr and log file
+ * @description: write log to stdout, stderr and log file
  */
 public class DefaultExceptionHandler implements ExceptionHandler {
     private static Logger logger = LoggerFactory.getLogger(DefaultExceptionHandler.class);

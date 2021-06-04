@@ -60,23 +60,27 @@ public class LinkisJobLogPresenter extends QueryBasedPresenter {
 
             Integer oldLogIdx = 0;
             Integer newLogIdx = 0;
+            int retryCnt = 0;
+            final int MAX_RETRY = 30; // continues fails for 300s, then exit thread
             while (!(incLogModel.isJobCompleted() && oldLogIdx == newLogIdx)) {
-                DWSResult jobInfoResult = clientDriver.queryJobInfo(incLogModel.getUser(), incLogModel.getTaskID());
-                incLogModel = updateModelByDwsResult(incLogModel, jobInfoResult);
-
-                oldLogIdx = incLogModel.getFromLine();
                 try {
+                    DWSResult jobInfoResult = clientDriver.queryJobInfo(incLogModel.getUser(), incLogModel.getTaskID());
+                    incLogModel = updateModelByDwsResult(incLogModel, jobInfoResult);
+                    oldLogIdx = incLogModel.getFromLine();
                     incLogModel = retrieveRuntimeIncLog(incLogModel);
                 } catch (Exception e) {
                     logger.error("Cannot get runtime-log:", e);
                     incLogModel.readAndClearIncLog();
                     incLogModel.setFromLine(oldLogIdx);
-                    if (incLogModel.isJobCompleted()) {
-                        break;
-                    } else {
-                        continue;
+                    retryCnt++;
+                    if (retryCnt >= MAX_RETRY) {
+                        logger.error("Continuously failing to query inc-log for " + MAX_RETRY * 5 * AppConstants.JOB_QUERY_SLEEP_MILLS + "s. Will no longer try to query log", e);
+                        return;
                     }
+                    Utils.doSleepQuietly(5 * AppConstants.JOB_QUERY_SLEEP_MILLS); //maybe server problem. sleep longer
+                    continue;
                 }
+                retryCnt = 0;//reset counter
                 newLogIdx = incLogModel.getFromLine();
                 if (oldLogIdx == newLogIdx) {
                     String msg = MessageFormat.format("Job is still running, status={0}, progress={1}",

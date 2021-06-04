@@ -16,7 +16,7 @@ package com.webank.wedatasphere.linkis.cli.core.exception.error;
 import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorMsg;
 
 /**
- * @description: Default Exception code for parsing、reading config etc.
+ * @description: Default Exception code for parsing, reading config etc.
  */
 public enum CommonErrMsg implements ErrorMsg {
 

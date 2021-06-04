@@ -28,6 +28,7 @@ import com.webank.wedatasphere.linkis.message.scheduler.MethodExecuteWrapper;
 import com.webank.wedatasphere.linkis.message.utils.MessageUtils;
 import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
 
+import com.webank.wedatasphere.linkis.rpc.MessageErrorConstants;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -135,7 +136,9 @@ public abstract class AbstractMessagePublisher extends JavaLog implements Messag
             for (List<ServiceMethod> value : serviceMatchs.values()) {
                 Integer repeatOrder = MessageUtils.repeatOrder(value);
                 if (repeatOrder != null && !MessageUtils.orderIsLast(repeatOrder, value)) {
-                    throw new MessageWarnException(10000, String.format("repeat order : %s for request %s", repeatOrder, protocolName));
+                    throw new MessageWarnException(MessageErrorConstants.MESSAGE_ERROR(),
+                            String.format("repeat "
+                            + "order : %s for request %s", repeatOrder, protocolName));
                 }
             }
             this.protocolServiceMethodCache.put(protocolName, serviceMatchs);

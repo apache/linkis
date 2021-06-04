@@ -62,8 +62,8 @@ public class PlainTextFileDriver implements DisplayDriver {
         BufferedWriter bufferedWriter = null;
         try {
             fos = new FileOutputStream(file, !overWrite);
-            osWritter = new OutputStreamWriter(fos, "UTF-8");//设置字符编码
-            bufferedWriter = new BufferedWriter(osWritter, 1024);//设置缓冲区大小
+            osWritter = new OutputStreamWriter(fos, "UTF-8");
+            bufferedWriter = new BufferedWriter(osWritter, 1024);
             bufferedWriter.write(content + "\n");
         } catch (Exception e) {
             throw new PresenterException("PST0007", ErrorLevel.ERROR, CommonErrMsg.PresentDriverErr, "Cannot write: " + file.getAbsolutePath(), e);

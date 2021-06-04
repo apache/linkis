@@ -115,12 +115,11 @@ public class SyncSubmission implements Execution {
         }
 
         int retryCnt = 0;
-        final int MAX_RETRY = 10;
+        final int MAX_RETRY = 30;
         while (!execData.isJobCompleted()) {
             //query progress
             try {
                 execData = executor.updateJobStatus(execData);
-                retryCnt = 0; //if exception then will not go here
             } catch (Exception e) {
                 logger.warn("", e);
                 retryCnt++;
@@ -128,7 +127,9 @@ public class SyncSubmission implements Execution {
                     throw new ExecutorException("EXE0013", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "Cannot get jobStatus from server continuously for {0} seconds. Client aborted! Error message: \n", MAX_RETRY * 5 * Constants.JOB_QUERY_SLEEP_MILLS, e);
                 }
                 CommonUtils.doSleepQuietly(5 * Constants.JOB_QUERY_SLEEP_MILLS); //maybe server problem. sleep longer
+                continue;
             }
+            retryCnt++;
             checkJobAvailability(execData);
 //      execData = asyncBackendExecutorExecutor.doIncLog(execData);
             CommonUtils.doSleepQuietly(Constants.JOB_QUERY_SLEEP_MILLS);

@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.scheduler.exception.SchedulerErrorExceptio
 import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEvent
 import org.apache.commons.lang.StringUtils
 
-/**
-  * Created by enjoyyin on 2018/10/28.
-  */
+
 abstract class AbstractScheduler extends Scheduler {
   override def init(): Unit = {}
 
@@ -38,10 +36,10 @@ abstract class AbstractScheduler extends Scheduler {
     (eventId.substring(index + 1).toInt, eventId.substring(0, index))
   }
   override def submit(event: SchedulerEvent): Unit = {
-    val groupName = getSchedulerContext.getOrCreateGroupFactory.getGroupNameByEvent(event)
-    val consumer = getSchedulerContext.getOrCreateConsumerManager.getOrCreateConsumer(groupName)
+    val group = getSchedulerContext.getOrCreateGroupFactory.getOrCreateGroup(event)
+    val consumer = getSchedulerContext.getOrCreateConsumerManager.getOrCreateConsumer(group.getGroupName)
     val index = consumer.getConsumeQueue.offer(event)
-    index.map(getEventId(_, groupName)).foreach(event.setId)
+    index.map(getEventId(_, group.getGroupName)).foreach(event.setId)
     if(index.isEmpty) throw  new SchedulerErrorException(12001,"The submission job failed and the queue is full!(提交作业失败，队列已满！)")
   }
 

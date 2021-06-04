@@ -34,9 +34,7 @@ import org.springframework.stereotype.Component
 import scala.concurrent.duration.Duration
 import scala.runtime.BoxedUnit
 
-/**
-  * Created by enjoyyin on 2018/8/28.
-  */
+
 @Component
 @Path("/rpc")
 @Produces(Array(MediaType.APPLICATION_JSON))

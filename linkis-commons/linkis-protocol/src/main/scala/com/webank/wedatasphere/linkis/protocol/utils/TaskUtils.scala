@@ -24,7 +24,7 @@ import scala.collection.JavaConversions._
 
 object TaskUtils {
 
-  private def getMap(params: util.Map[String, Any], key: String): util.Map[String, Any] =
+  def getMap(params: util.Map[String, Any], key: String): util.Map[String, Any] =
     if(params != null && params.containsKey(key))
       params.get(key) match {
         case map: util.Map[String, Any] => map

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 
+
 public interface MessageJob extends Runnable, Future<Object> {
 
     RequestProtocol getRequestProtocol();

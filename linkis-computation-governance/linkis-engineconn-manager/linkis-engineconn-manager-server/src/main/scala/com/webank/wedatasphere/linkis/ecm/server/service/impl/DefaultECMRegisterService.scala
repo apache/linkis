@@ -50,10 +50,6 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
     // TODO: magic
     labels += LabelKeyConstant.SERVER_ALIAS_KEY -> Collections.singletonMap("alias", ENGINE_CONN_MANAGER_SPRING_NAME)
     // TODO: group  by key
-    /*    params.foreach {
-          case labelRegex(key, valueKey, valueContent) => labels += key -> (valueKey, valueContent)
-          case _ =>
-        }*/
     labels
   }
 

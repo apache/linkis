@@ -444,7 +444,7 @@ public class UjesClientDriver implements LinkisClientDriver {
 
         while (retryTime++ < MAX_RETRY_TIME) {
             try {
-                resultSetArrasy = jobInfoResult.getResultSetList(client); //this makes call to server
+                resultSetArray = jobInfoResult.getResultSetList(client); //this makes call to server
                 if (resultSetArray == null || 0 == resultSetArray.length) {
                     String reason;
                     if (resultSetArray == null) {

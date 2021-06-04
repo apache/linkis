@@ -249,9 +249,7 @@ object CustomVariableUtils extends Logging {
             else
               throw  VarSubstitutionException(20040, "please use correct date format,example:run_date=20170101")
           }
-          case _ => /*if ((allCatch opt value.toLong).isDefined) {
-            nameAndType(name) = LongType(value.toLong)
-          } else*/ if ((allCatch opt value.toDouble).isDefined) {
+          case _ => if ((allCatch opt value.toDouble).isDefined) {
             nameAndType(name) = DoubleValue(value.toDouble)
           } else {
             nameAndType(name) = StringType(value)
@@ -396,8 +394,6 @@ object CustomVariableUtils extends Logging {
     }
     println(preSQL)
     println(endSQL)
-    /* val yestd = new CustomDateType("2017-11-11",false)
-     println(yestd)*/
   }
 
 }

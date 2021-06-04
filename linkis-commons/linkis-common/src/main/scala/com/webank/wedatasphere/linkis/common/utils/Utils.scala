@@ -46,7 +46,9 @@ object Utils extends Logging {
         error("Fatal error, system exit...", e)
         System.exit(-1)
         throw e
-      case error: Error => throw error
+      case er: Error =>
+        error("Throw error", er.getCause)
+        throw er
       case t => catchOp(t)
     }
   }

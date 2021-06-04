@@ -24,9 +24,7 @@ import java.util
 
 import com.webank.wedatasphere.linkis.httpclient.discovery.DiscoveryListener
 
-/**
-  * Created by enjoyyin on 2019/5/22.
-  */
+
 abstract class AbstractLoadBalancer extends LoadBalancer with DiscoveryListener {
 
   private val serverUrls = new util.HashSet[String]

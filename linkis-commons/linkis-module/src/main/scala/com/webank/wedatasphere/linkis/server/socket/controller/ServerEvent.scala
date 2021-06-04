@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.common.listener.Event
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 import com.webank.wedatasphere.linkis.server.socket.ServerSocket
 
-/**
-  * Created by enjoyyin on 2018/1/11.
-  */
+
 class ServerEvent() extends Event {
   private var id: Int = _
   private var method: String = _

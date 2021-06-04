@@ -20,9 +20,7 @@ import com.netflix.loadbalancer.ILoadBalancer
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.protocol.Protocol
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 trait RPCLoadBalancer {
 
   val order: Int

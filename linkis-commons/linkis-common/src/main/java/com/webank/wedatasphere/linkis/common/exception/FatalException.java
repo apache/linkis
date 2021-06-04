@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
+
 package com.webank.wedatasphere.linkis.common.exception;
 
-public class FatalException extends DWCException{
+public class FatalException extends LinkisException {
     private ExceptionLevel level = ExceptionLevel.FATAL;
     public FatalException(int errCode, String desc){
         super(errCode, desc);

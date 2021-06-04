@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.httpclient.authentication
 import com.webank.wedatasphere.linkis.httpclient.request.{Action, ServerUrlAction, UserPwdAction}
 import com.webank.wedatasphere.linkis.httpclient.response.Result
 
-/**
-  * Created by enjoyyin on 2019/5/22.
-  */
+
 trait AuthenticationAction extends UserPwdAction with ServerUrlAction with Action
 
 trait AuthenticationResult extends Result {

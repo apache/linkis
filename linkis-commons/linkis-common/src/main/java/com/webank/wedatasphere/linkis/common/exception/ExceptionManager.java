@@ -48,7 +48,7 @@ public final class ExceptionManager {
         } else if(FATAL.getLevel() == level) {
             retException = new FatalException(errCode, desc, ip, port, serviceKind);
         } else if(RETRY.getLevel() == level) {
-            retException = new DWCRetryException(errCode, desc, ip, port, serviceKind);
+            retException = new LinkisRetryException(errCode, desc, ip, port, serviceKind);
         }
         return retException != null ? retException : new ErrorException(10000, "Exception Map that cannot be parsed:(不能解析的异常Map：)" + map);
     }
@@ -58,9 +58,9 @@ public final class ExceptionManager {
         retMap.put("level", ERROR.getLevel());
         retMap.put("errCode", 0);
         retMap.put("desc", errorMsg);
-        retMap.put("ip", DWCException.hostname);
-        retMap.put("port", DWCException.hostPort);
-        retMap.put("serviceKind", DWCException.applicationName);
+        retMap.put("ip", LinkisException.hostname);
+        retMap.put("port", LinkisException.hostPort);
+        retMap.put("serviceKind", LinkisException.applicationName);
         return retMap;
     }
 }

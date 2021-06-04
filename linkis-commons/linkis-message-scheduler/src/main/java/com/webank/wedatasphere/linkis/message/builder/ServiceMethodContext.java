@@ -56,12 +56,6 @@ public interface ServiceMethodContext {
 
     <T> T getResult();
 
-    /**
-     * interrupted 状态
-     * messageJob执行失败，messageJob 被cancel，并且mayInterruptIfRunning 为true的情况
-     *
-     * @return
-     */
     boolean isInterrupted();
 
     boolean isCancel();

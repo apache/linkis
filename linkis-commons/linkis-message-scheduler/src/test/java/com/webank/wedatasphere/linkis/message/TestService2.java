@@ -16,7 +16,9 @@
 
 package com.webank.wedatasphere.linkis.message;
 
-
+/**
+ * @date 2020/7/29
+ */
 public class TestService2 {
 
 /*    @Receiver

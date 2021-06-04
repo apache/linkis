@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.protocol.query.cache;
 
-public class FailedToDeleteCache {
+public class FailedToDeleteCache implements ResponseDeleteCache {
     private String errorMessage;
 
     public FailedToDeleteCache(String errorMessage) {

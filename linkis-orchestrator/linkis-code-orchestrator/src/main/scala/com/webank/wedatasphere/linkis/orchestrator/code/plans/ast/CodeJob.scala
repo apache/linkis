@@ -108,6 +108,8 @@ class CodeJob(private var parents: Array[Job],
     job.setParams(this.getParams)
     job.setPriority(this.getPriority)
     job
+    val a = Array(1,2,3)
+    var c = 1
   }
 
   override def toString = s"CodeJob($name, $submitUser, $codeLogicalUnit)"

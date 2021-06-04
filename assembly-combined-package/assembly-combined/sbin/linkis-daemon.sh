@@ -3,8 +3,6 @@
 # description:  Starts and stops Server
 #
 # @name:        linkis-demo
-# @author:      peacewong
-# @created:     01.16.2021
 #
 # Modified for Linkis 1.0.0
 

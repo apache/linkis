@@ -17,10 +17,6 @@
 
 # description:  Stop all Server
 #
-# @name:        stop-all
-# @author:      peacewong
-# @created:     01.16.2021
-#
 # Modified for Linkis 1.0.0
 #Actively load user env
 source /etc/profile

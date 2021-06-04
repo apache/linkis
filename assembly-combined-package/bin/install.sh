@@ -132,7 +132,6 @@ echo ""
 
 MYSQL_INSTALL_MODE=1
 
-#使用read参数[-p]后，允许在[-p]后面跟一字符串，在字符串后面跟n个shell变量。n个shell变量用来接收从shell界面输入的字符串
 read -p "Please input the choice:"  idx
 if [[ '2' = "$idx" ]];then
   MYSQL_INSTALL_MODE=2

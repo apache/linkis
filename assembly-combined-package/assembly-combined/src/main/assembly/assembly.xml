@@ -55,6 +55,19 @@
           <lineEnding>unix</lineEnding>
       </fileSet>
 
+      <fileSet>
+          <directory>
+              bin/
+          </directory>
+          <outputDirectory>bin</outputDirectory>
+          <includes>
+              <include>**/*</include>
+          </includes>
+          <fileMode>0777</fileMode>
+          <directoryMode>0755</directoryMode>
+          <lineEnding>unix</lineEnding>
+      </fileSet>
+
     <fileSet>
       <directory>
         ../../db/

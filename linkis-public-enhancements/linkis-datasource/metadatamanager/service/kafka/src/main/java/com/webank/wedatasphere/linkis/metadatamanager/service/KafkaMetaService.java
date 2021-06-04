@@ -70,22 +70,15 @@ public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
 
     @Override
     public List<String> queryDatabases(KafkaConnection connection){
+        return Arrays.asList("default");
+    }
+
+    @Override
+    public List<String> queryTables(KafkaConnection connection, String database){
         try {
             return connection.getClient().listTopics().names().get().stream().collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException("Fail to get Kafka topics(获取topic列表失败)", e);
-        }
-    }
-
-    @Override
-    public List<String> queryTables(KafkaConnection connection, String topic){
-        try {
-            DescribeTopicsResult describeTopicsResult = connection.getClient().describeTopics(Arrays.asList(topic));
-            Map<String, TopicDescription> topicPartitions = describeTopicsResult.all().get();
-            return topicPartitions.get(topic).partitions().stream()
-                    .map(TopicPartitionInfo::partition).map(Object::toString).collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new RuntimeException("Fail to get Kafka partitions(获取Kafka partitions失败)", e);
         }
     }
 

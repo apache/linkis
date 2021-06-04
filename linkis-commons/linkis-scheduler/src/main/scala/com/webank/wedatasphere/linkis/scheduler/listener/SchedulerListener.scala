@@ -16,7 +16,5 @@
 
 package com.webank.wedatasphere.linkis.scheduler.listener
 
-/**
-  * Created by enjoyyin on 2018/9/3.
-  */
+
 trait SchedulerListener

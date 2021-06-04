@@ -23,6 +23,7 @@ import com.webank.wedatasphere.linkis.message.context.AbstractMessageSchedulerCo
 import com.webank.wedatasphere.linkis.message.exception.MessageWarnException;
 import com.webank.wedatasphere.linkis.message.parser.ServiceMethod;
 import com.webank.wedatasphere.linkis.message.parser.ServiceParser;
+import org.springframework.aop.support.AopUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,10 @@ public abstract class AbstractServiceRegistry extends JavaLog implements Service
     @Override
     public void register(Object service) {
         //防止不同方式注册时候的并发，比如spring和手动注册,同时防止不同包名下类名一样的service
-        String serviceName = service.getClass().getName();
+        // 默认用getName，则会拿到spring代理过的类，没有方法的注解，比如 com.webank.wedatasphere.linkis.jobhistory.service.impl.JobHistoryQueryServiceImpl$$EnhancerBySpringCGLIB$$5fa1dd59
+//        String serviceName = service.getClass().getName();
+        // 下面会拿到原始的class，包含方法注解信息
+        String serviceName = AopUtils.getTargetClass(service).getName();
         synchronized (this.lock.intern(serviceName)) {
             //1.是否注册过
             Object o = this.registedServieMap.get(serviceName);

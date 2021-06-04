@@ -18,7 +18,6 @@ package com.webank.wedatasphere.linkis.storage.utils
 
 import java.io.IOException
 import java.util
-
 import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.storage.FSFactory

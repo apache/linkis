@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.scheduler.executer
 
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
 
-/**
-  * Created by enjoyyin on 2018/10/30.
-  */
+
 trait ConcurrentTaskInfoSupport {
 
   def progress(jobId: String): Float

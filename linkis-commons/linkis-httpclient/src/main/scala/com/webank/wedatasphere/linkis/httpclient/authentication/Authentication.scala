@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.httpclient.authentication
 
-/**
-  * Created by enjoyyin on 2019/5/16.
-  */
+
 trait Authentication {
 
   def authToMap: java.util.Map[String, String]

@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.common.io
 
 import java.io.{Closeable, Flushable, IOException}
 
-/**
-  * Created by enjoyyin on 2018/8/15.
-  */
+
 abstract class FsWriter[K <: MetaData, V <: Record] extends Closeable with Flushable {
   @throws[IOException]
   def addMetaData(metaData: MetaData): Unit

@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.common.io.resultset
 
 import com.webank.wedatasphere.linkis.common.io.{MetaData, Record}
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 abstract class ResultSerializer {
   def metaDataToBytes(metaData: MetaData): Array[Byte]
   def recordToBytes(record: Record): Array[Byte]

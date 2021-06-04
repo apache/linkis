@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.storage.resultset.io
 import com.webank.wedatasphere.linkis.common.io.Record
 import com.webank.wedatasphere.linkis.storage.resultset.ResultRecord
 
-/**
-  * Created by johnnwang on 2018/10/30.
-  */
+
 class IORecord(val value:Array[Byte]) extends ResultRecord{
   override def cloneRecord(): Record = new IORecord(value)
 }

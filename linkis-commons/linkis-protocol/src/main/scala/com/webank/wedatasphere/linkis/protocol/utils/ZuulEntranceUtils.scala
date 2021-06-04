@@ -93,7 +93,7 @@ object ZuulEntranceUtils {
   }
 
   def main(args: Array[String]): Unit = {
-    val str = generateExecID("spark_test_01", "linkis-cg-entrance", Array[String]("172.0.0.1:8080"))
+    val str = generateExecID("spark_test_01", "linkis-cg-entrance", Array[String]("127.0.0.1:8080"))
     val array = parseServiceInstanceByExecID(str)
     println(array(3))
   }

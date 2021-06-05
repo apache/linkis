@@ -28,7 +28,13 @@ object GovernanceCommonConf {
 
   val PYTHON_ENGINE_VERSION = CommonVars("wds.linkis.python.engine.version", "python2")
 
+  val PYTHON_CODE_PARSER_SWITCH = CommonVars("wds.linkis.python.code_parser.enabled", false)
+
+  val SCALA_CODE_PARSER_SWITCH = CommonVars("wds.linkis.scala.code_parser.enabled", false)
+
   val ENGINE_CONN_SPRING_NAME = CommonVars("wds.linkis.engineconn.name", "EngineConn")
+
+  val ENGINE_CONN_PLUGIN_SPRING_NAME = CommonVars("wds.linkis.engineconn.plugin.spring.name", "linkis-cg-engineplugin")
 
   val ENGINE_CONN_MANAGER_SPRING_NAME = CommonVars("wds.linkis.engineconn.manager.name", "linkis-cg-engineconnmanager")
 
@@ -36,5 +42,7 @@ object GovernanceCommonConf {
 
   val ENTRANCE_SPRING_NAME = CommonVars("wds.linkis.entrance.name", "linkis-cg-entrance")
 
+  val ENGINE_DEFAULT_LIMIT = CommonVars("wds.linkis.engine.default.limit", 5000)
 
+  val RESULT_SET_STORE_PATH = CommonVars("wds.linkis.resultSet.store.path", CommonVars[String]("wds.linkis.filesystem.hdfs.root.path", "hdfs:///tmp/linkis/").getValue)
 }

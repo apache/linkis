@@ -24,15 +24,14 @@ trait EngineConnManager {
 
   def createEngineConn(engineCreationContext: EngineCreationContext): EngineConn
 
-  def getEngineConn(): EngineConn
-
+  def getEngineConn: EngineConn
 
 }
 
 object EngineConnManager {
-  val engineConnManager: EngineConnManager = new DefaultEngineConnManager
+  private val engineConnManager: EngineConnManager = new DefaultEngineConnManager
 
-  def getEngineConnManager = engineConnManager
+  def getEngineConnManager: EngineConnManager = engineConnManager
 }
 
 class DefaultEngineConnManager extends EngineConnManager {
@@ -40,11 +39,12 @@ class DefaultEngineConnManager extends EngineConnManager {
   private var engineConn: EngineConn = _
 
   override def createEngineConn(engineCreationContext: EngineCreationContext): EngineConn = {
+    if(engineConn != null) return engineConn
     this.engineConn = EngineConnObject.getEngineConnPlugin.getEngineConnFactory.createEngineConn(engineCreationContext)
     this.engineConn
   }
 
-  override def getEngineConn(): EngineConn = this.engineConn
+  override def getEngineConn: EngineConn = this.engineConn
 
 }
 

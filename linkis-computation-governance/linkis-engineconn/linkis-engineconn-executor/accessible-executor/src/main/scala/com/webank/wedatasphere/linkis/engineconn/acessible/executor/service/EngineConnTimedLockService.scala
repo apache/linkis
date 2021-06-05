@@ -34,8 +34,8 @@ import org.apache.commons.lang.StringUtils
 
 class EngineConnTimedLockService extends LockService with Logging {
 
-  private var engineConnLock: EngineConnTimedLock = null
-  private var lockString: String = null
+  private var engineConnLock: EngineConnTimedLock = _
+  private var lockString: String = _
   private var lockType: EngineLockType = EngineLockType.Timed
 
 
@@ -87,12 +87,13 @@ class EngineConnTimedLockService extends LockService with Logging {
   private def timedLock(timeout: Long): Option[String] = {
 
     // Lock is binded to engineconn, so choose default executor
-    ExecutorManager.getInstance().getDefaultExecutor match {
+    ExecutorManager.getInstance.getReportExecutor match {
       case accessibleExecutor: AccessibleExecutor =>
         debug("try to lock for executor state is " + accessibleExecutor.getStatus)
         debug("try to lock for executor id is " + accessibleExecutor.getId)
         if (null == engineConnLock) {
           engineConnLock = new EngineConnTimedLock(timeout)
+          ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus.addListener(engineConnLock)
           debug("try to lock for executor get new lock " + engineConnLock)
         }
         if (engineConnLock.tryAcquire(accessibleExecutor)) {
@@ -117,16 +118,16 @@ class EngineConnTimedLockService extends LockService with Logging {
   override def unlock(lock: String): Boolean = synchronized {
     info("try to unlock for lockEntity is " + engineConnLock.toString + ",and lock is " + lock + ",acquired is " + engineConnLock.isAcquired().toString)
     if (isLockExist(lock)) {
-      info(s"try to unlock lockEntity : lockString=${lockString},lockedBy=${engineConnLock.lockedBy.getId()}")
+      info(s"try to unlock lockEntity : lockString=$lockString,lockedBy=${engineConnLock.lockedBy.getId}")
       engineConnLock.release()
       this.lockString = null
-    ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus.post(ExecutorUnLockEvent(null, lock))
-    ExecutorManager.getInstance().getDefaultExecutor match {
-      case accessibleExecutor: AccessibleExecutor =>
-        accessibleExecutor.transition(NodeStatus.Unlock)
-      case _ =>
-        val msg = s"Invalid executor or not instance of SensibleEngine."
-        error(msg)
+      ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus.post(ExecutorUnLockEvent(null, lock))
+      ExecutorManager.getInstance.getReportExecutor match {
+        case accessibleExecutor: AccessibleExecutor =>
+          accessibleExecutor.transition(NodeStatus.Unlock)
+        case _ =>
+          val msg = s"Invalid executor or not instance of SensibleEngine."
+          error(msg)
       }
       true
     } else {

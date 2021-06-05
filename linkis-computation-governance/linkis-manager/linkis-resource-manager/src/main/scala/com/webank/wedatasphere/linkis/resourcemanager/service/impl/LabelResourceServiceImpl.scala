@@ -47,12 +47,14 @@ class LabelResourceServiceImpl extends LabelResourceService with Logging {
 
   private val labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
-  override def getLabelResource(label: Label[_]): NodeResource = label match {
+  override def getLabelResource(label: Label[_]): NodeResource = {
+    label match {
 //      case combinedLabel: CombinedLabel =>
 //        val persistenceLabel = labelManagerPersistence.getLabelByKeyValue(combinedLabel.getLabelKey, combinedLabel.getStringValue)
 //        resourceLabelService.getResourceByLabel(persistenceLabel)
-    case _ =>
-      resourceLabelService.getResourceByLabel(label)
+      case _ =>
+        return resourceLabelService.getResourceByLabel(label)
+    }
   }
 
   override def setLabelResource(label: Label[_], nodeResource: NodeResource): Unit = {
@@ -65,9 +67,13 @@ class LabelResourceServiceImpl extends LabelResourceService with Logging {
     }
   }
 
-  override def getResourcesByUser(user: String): Array[NodeResource] = resourceManagerPersistence.getResourceByUser(user).map(ResourceUtils.fromPersistenceResource).toArray
+  override def getResourcesByUser(user: String): Array[NodeResource] = {
+    resourceManagerPersistence.getResourceByUser(user).map(ResourceUtils.fromPersistenceResource).toArray
+  }
 
-  override def enrichLabels(labelContainer: RMLabelContainer) = new RMLabelContainer(LabelUtils.distinctLabel(resourceLabelService.getResourceLabels(labelContainer.getLabels), labelContainer.getLabels))
+  override def enrichLabels(labelContainer: RMLabelContainer): RMLabelContainer = {
+    return new RMLabelContainer(LabelUtils.distinctLabel(resourceLabelService.getResourceLabels(labelContainer.getLabels), labelContainer.getLabels))
+  }
 
   override def removeResourceByLabel(label: Label[_]): Unit = {
     resourceLabelService.removeResourceByLabel(label)
@@ -81,7 +87,9 @@ class LabelResourceServiceImpl extends LabelResourceService with Logging {
    */
   override def setEngineConnLabelResource(label: Label[_], nodeResource: NodeResource): Unit = resourceLabelService.setEngineConnResourceToLabel(label, nodeResource)
 
-  override def getLabelsByResource(resource: PersistenceResource): Array[Label[_]] = labelManagerPersistence.getLabelByResource(resource).map{ label =>
-    labelFactory.createLabel(label.getLabelKey, label.getValue)
-  }.toArray
+  override def getLabelsByResource(resource: PersistenceResource): Array[Label[_]] = {
+    labelManagerPersistence.getLabelByResource(resource).map{ label =>
+      labelFactory.createLabel(label.getLabelKey, label.getValue)
+    }.toArray
+  }
 }

@@ -14,7 +14,6 @@
 package com.webank.wedatasphere.linkis.entrance.cs
 
 import java.util
-
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.cs.client.service.{CSNodeServiceImpl, CSVariableService, LinkisJobDataServiceImpl}
 import com.webank.wedatasphere.linkis.cs.client.utils.{ContextServiceUtils, SerializeHelper}
@@ -25,13 +24,17 @@ import com.webank.wedatasphere.linkis.cs.common.entity.source.{CommonContextKey,
 import com.webank.wedatasphere.linkis.cs.common.utils.CSCommonUtils
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
+import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.UserCreatorLabel
+import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
 import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions._
+
 
 object CSEntranceHelper extends Logging {
 
@@ -79,12 +82,12 @@ object CSEntranceHelper extends Logging {
         contextKey.setContextScope(ContextScope.PUBLIC)
         contextKey.setContextType(ContextType.DATA)
         contextKey.setKey(CSCommonUtils.NODE_PREFIX + nodeNameStr + CSCommonUtils.JOB_ID)
-        entranceJob.getTask match {
-          case requestPersistTask: RequestPersistTask =>
+        entranceJob.getJobRequest match {
+          case jobRequest: JobRequest =>
             val data = new LinkisJobData
-            data.setJobID(requestPersistTask.getTaskID)
+            data.setJobID(jobRequest.getId)
             LinkisJobDataServiceImpl.getInstance().putLinkisJobData(contextIDValueStr, SerializeHelper.serializeContextKey(contextKey), data)
-            info(s"(${contextKey.getKey} put ${requestPersistTask.getTaskID} of taskID  to cs)")
+            info(s"(${contextKey.getKey} put ${jobRequest.getId} of jobId to cs)")
           case _ =>
         }
         info(s"registerCSRSData end: nodeName:$nodeNameStr")
@@ -99,7 +102,7 @@ object CSEntranceHelper extends Logging {
     * @param requestPersistTask
     * @return
     */
-  def initNodeCSInfo(requestPersistTask: RequestPersistTask): Unit = {
+  def initNodeCSInfo(requestPersistTask: JobRequest): Unit = {
 
     val (contextIDValueStr, nodeNameStr) = getContextInfo(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
 
@@ -118,22 +121,27 @@ object CSEntranceHelper extends Logging {
     *
     * @param requestPersistTask
     */
-  def resetCreator(requestPersistTask: RequestPersistTask): Unit = {
+  def resetCreator(requestPersistTask: JobRequest): Unit = {
 
     val (contextIDValueStr, nodeNameStr) = getContextInfo(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
 
     if (StringUtils.isNotBlank(contextIDValueStr) && StringUtils.isNotBlank(nodeNameStr)) {
+      val userCreatorLabel = LabelUtil.getUserCreatorLabel(requestPersistTask.getLabels)
+      val newLabels = new util.ArrayList[Label[_]]
+      requestPersistTask.getLabels.filterNot(_.isInstanceOf[UserCreatorLabel]).foreach(newLabels.add)
       SerializeHelper.deserializeContextID(contextIDValueStr) match {
         case contextID: LinkisWorkflowContextID =>
           if (CSCommonUtils.CONTEXT_ENV_PROD.equalsIgnoreCase(contextID.getEnv)) {
-            info(s"reset creator from ${requestPersistTask.getRequestApplicationName} to " + EntranceConfiguration.SCHEDULER_CREATOR.getValue)
-            requestPersistTask.setRequestApplicationName(EntranceConfiguration.SCHEDULER_CREATOR.getValue)
+            info(s"reset creator from ${userCreatorLabel.getCreator} to " + EntranceConfiguration.SCHEDULER_CREATOR.getValue)
+            userCreatorLabel.setCreator(EntranceConfiguration.SCHEDULER_CREATOR.getValue)
           } else {
-            info(s"reset creator from ${requestPersistTask.getRequestApplicationName} to " + EntranceConfiguration.FLOW_EXECUTION_CREATOR.getValue)
-            requestPersistTask.setRequestApplicationName(EntranceConfiguration.FLOW_EXECUTION_CREATOR.getValue)
+            info(s"reset creator from ${userCreatorLabel.getCreator} to " + EntranceConfiguration.FLOW_EXECUTION_CREATOR.getValue)
+            userCreatorLabel.setCreator(EntranceConfiguration.FLOW_EXECUTION_CREATOR.getValue)
           }
         case _ =>
       }
+      newLabels.add(userCreatorLabel)
+      requestPersistTask.setLabels(newLabels)
     }
   }
 
@@ -144,7 +152,7 @@ object CSEntranceHelper extends Logging {
     * @param requestPersistTask
     * @return
     */
-  def addCSVariable(requestPersistTask: RequestPersistTask): Unit = {
+  def addCSVariable(requestPersistTask: JobRequest): Unit = {
     val variableMap = new util.HashMap[String, Any]()
     val (contextIDValueStr, nodeNameStr) = getContextInfo(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
 
@@ -159,6 +167,7 @@ object CSEntranceHelper extends Logging {
       if(variableMap.nonEmpty){
         TaskUtils.addVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]], variableMap)
       }
+
       info(s"parse variable end nodeName:$nodeNameStr")
     }
   }

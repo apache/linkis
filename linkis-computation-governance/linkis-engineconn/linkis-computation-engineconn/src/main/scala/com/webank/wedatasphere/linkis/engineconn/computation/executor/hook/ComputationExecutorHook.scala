@@ -30,7 +30,6 @@ trait ComputationExecutorHook {
 
   def beforeExecutorExecute(engineExecutionContext: EngineExecutionContext, engineCreationContext: EngineCreationContext, codeBeforeHook: String): String = codeBeforeHook
 
-//  def afterExecutorExecute(engineExecutionContext: EngineExecutionContext, code: String): Unit
 }
 
 object ComputationExecutorHook extends Logging {

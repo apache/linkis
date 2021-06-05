@@ -22,6 +22,7 @@ import java.util.function
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.gateway.exception.GatewayErrorException
+import com.webank.wedatasphere.linkis.gateway.springcloud.errorcode.GatewayErrorConstants
 import com.webank.wedatasphere.linkis.gateway.springcloud.websocket.SpringCloudGatewayWebsocketUtils._
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import io.netty.handler.codec.http.websocketx.WebSocketFrame
@@ -41,7 +42,9 @@ class GatewayWebSocketSessionConnection(val webSocketSession: ReactorNettyWebSoc
   def add(serviceInstance: ServiceInstance, proxySession: WebSocketSession): Unit = synchronized {
     if(proxySessions.exists(session => session.serviceInstance.getApplicationName == serviceInstance.getApplicationName && session.isAlive)) {
       proxySession.close(CloseStatus.SERVER_ERROR)
-      throw new GatewayErrorException(10032, s"Create a WebSocket connection for ${serviceInstance.getApplicationName} repeatedly!(重复地为${serviceInstance.getApplicationName}创建WebSocket连接！)")
+      throw new GatewayErrorException(GatewayErrorConstants.WEBSOCKET_CONNECT_ERROR, s"Create a " +
+        s"WebSocket connection for" +
+        s" ${serviceInstance.getApplicationName} repeatedly!(重复地为${serviceInstance.getApplicationName}创建WebSocket连接！)")
     }
     proxySession match {
       case reactorSession: ReactorNettyWebSocketSession =>

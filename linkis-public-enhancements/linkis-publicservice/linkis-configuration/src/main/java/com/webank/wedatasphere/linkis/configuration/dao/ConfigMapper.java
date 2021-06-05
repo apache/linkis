@@ -37,16 +37,33 @@ public interface ConfigMapper {
 
     void insertValue(ConfigValue configValue);
 
+    ConfigValue getConfigValueById(@Param("id") Long id);
+
+    void insertValueList(@Param("configValues") List<ConfigValue> configValues);
+
     void updateUserValue(@Param("value") String value, @Param("id") Long id);
+
+    void updateUserValueList(List<ConfigValue> configValueList);
 
     ConfigKey selectKeyByKeyID(@Param("id") Long keyID);
 
-    List<ConfigKey> listKeyByEngineType(@Param("engineType") String engineType);
+    ConfigKey seleteKeyByKeyName(@Param("keyName") String keyName);
+
+    List<ConfigKey> listKeyByStringValue(@Param("stringValue") String stringValue);
 
     void insertCreator(String creator);
 
     List<CategoryLabel> getCategory();
 
+    CategoryLabel getCategoryById(@Param("id") Integer id);
+
+    void insertCategory(CategoryLabel categoryLabel);
+
+    void deleteCategory(@Param("ids") List<Integer> ids);
+
+    void updateCategory(CategoryLabel categoryLabel);
+
     void insertKey(ConfigKey key);
+
 
 }

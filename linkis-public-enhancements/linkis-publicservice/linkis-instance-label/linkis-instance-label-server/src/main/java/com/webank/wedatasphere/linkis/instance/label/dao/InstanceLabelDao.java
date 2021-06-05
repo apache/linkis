@@ -23,7 +23,9 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-
+/**
+ * Operate label of instance
+ */
 public interface InstanceLabelDao {
 
     /**
@@ -39,7 +41,7 @@ public interface InstanceLabelDao {
      * @param labelValue label value
      * @return
      */
-    InsPersistenceLabel searchForUpdate(@Param("labelKey")String labelKey, @Param("labelValue")String labelValue);
+    InsPersistenceLabel searchForUpdate(@Param("labelKey") String labelKey, @Param("labelValue") String labelValue);
 
     /**
      * Insert label entities

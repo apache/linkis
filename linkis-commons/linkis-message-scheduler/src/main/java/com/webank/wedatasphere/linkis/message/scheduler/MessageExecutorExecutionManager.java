@@ -27,9 +27,7 @@ import scala.concurrent.duration.Duration;
 
 import java.util.concurrent.ExecutorService;
 
-/**
- * @date 2020/7/17
- */
+
 public class MessageExecutorExecutionManager extends ExecutorManager {
 
     private final ExecutorService executorService = Utils.newCachedThreadPool(

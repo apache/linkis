@@ -30,9 +30,6 @@ import org.springframework.stereotype.Service
 import scala.collection.JavaConversions._
 
 
-/**
-  * @date 2020/7/10 15:59
-  */
 @Service
 class DefaultEngineRecycleService extends AbstractEngineService with EngineRecycleService with Logging {
 

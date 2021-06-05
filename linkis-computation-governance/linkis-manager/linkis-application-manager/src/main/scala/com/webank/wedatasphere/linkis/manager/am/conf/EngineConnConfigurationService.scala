@@ -27,9 +27,6 @@ import org.springframework.context.annotation.{Bean, Configuration}
 
 import scala.collection.JavaConversions._
 
-/**
-  * @date 2020/9/15 20:46
-  */
 trait EngineConnConfigurationService {
 
   def getConsoleConfiguration(label: util.List[Label[_]]): util.Map[String, String]

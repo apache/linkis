@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.manager.common.protocol.engine.{EngineStop
 import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
 import com.webank.wedatasphere.linkis.rpc.Sender
 
-/**
-  * @date 2020/8/4 17:41
-  */
+
 trait EngineStopService {
 
 

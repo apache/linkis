@@ -35,10 +35,7 @@ import org.springframework.web.context.request.{RequestContextHolder, ServletReq
 import scala.concurrent.duration.Duration
 import scala.runtime.BoxedUnit
 
-/**
- * @date 2020/8/3
- *
- */
+
 @Component
 @Path("/rpc")
 @Produces(Array(MediaType.APPLICATION_JSON))

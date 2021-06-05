@@ -23,9 +23,7 @@ import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @date 2020/7/14
- */
+
 public class TestService {
     @Receiver
     @Order(1)

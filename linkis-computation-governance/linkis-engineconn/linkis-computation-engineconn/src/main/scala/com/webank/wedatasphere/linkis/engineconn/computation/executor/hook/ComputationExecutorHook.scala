@@ -19,7 +19,6 @@ package com.webank.wedatasphere.linkis.engineconn.computation.executor.hook
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.ExecutorFactory
 import org.reflections.Reflections
 
 import scala.collection.JavaConverters.asScalaSetConverter
@@ -32,7 +31,6 @@ trait ComputationExecutorHook {
 
   def beforeExecutorExecute(engineExecutionContext: EngineExecutionContext, engineCreationContext: EngineCreationContext, codeBeforeHook: String): String = codeBeforeHook
 
-//  def afterExecutorExecute(engineExecutionContext: EngineExecutionContext, code: String): Unit
 }
 
 object ComputationExecutorHook extends Logging {

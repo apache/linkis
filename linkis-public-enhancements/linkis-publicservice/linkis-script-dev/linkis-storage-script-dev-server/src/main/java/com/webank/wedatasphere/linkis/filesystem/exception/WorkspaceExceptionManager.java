@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.webank.wedatasphere.linkis.filesystem.exception;
 
 import java.util.HashMap;
@@ -9,7 +25,7 @@ public class WorkspaceExceptionManager {
     private static Map<String, String> desc = new HashMap<String, String>(32) {
         {
             put("80001", "Requesting IO-Engine to initialize fileSystem failed!(请求IO-Engine初始化fileSystem失败！)");
-            put("80002", "The user has obtained the filesystem for more than %ds. Please contact the administrator.（用户获取filesystem的时间超过%ds，请联系管理员）");
+            put("80002", "The user has obtained the filesystem for more than %d ms. Please contact the administrator.（用户获取filesystem的时间超过%d ms，请联系管理员）");
             put("80003", "User local root directory does not exist, please contact administrator to add（用户本地根目录不存在,请联系管理员添加)");
             put("80004", "path:(路径：)%sIs empty!(为空！)");
             put("80005", "The created folder name is duplicated!(创建的文件夹名重复!)");

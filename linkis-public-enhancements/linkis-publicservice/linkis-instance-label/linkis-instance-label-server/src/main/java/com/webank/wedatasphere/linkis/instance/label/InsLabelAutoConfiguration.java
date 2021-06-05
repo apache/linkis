@@ -42,6 +42,7 @@ public class InsLabelAutoConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(InsLabelAutoConfiguration.class);
 
     @ConditionalOnClass({DataSourceConfig.class})
+    @ConditionalOnMissingBean({DefaultInsLabelService.class})
     @Bean
     @Scope("prototype")
     public InsLabelAccessService defaultInsLabelService(){

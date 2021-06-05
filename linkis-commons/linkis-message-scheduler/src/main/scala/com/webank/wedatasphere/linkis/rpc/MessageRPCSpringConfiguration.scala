@@ -20,10 +20,7 @@ import com.webank.wedatasphere.linkis.message.context.{MessageSchedulerContext, 
 import com.webank.wedatasphere.linkis.message.publisher.{AbstractMessagePublisher, DefaultMessagePublisher, MessagePublisher}
 import org.springframework.context.annotation.Bean
 
-/**
- * @date 2020/8/4
- *
- */
+
 class MessageRPCSpringConfiguration {
 
   @Bean

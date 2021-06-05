@@ -29,10 +29,12 @@ class DriverAndYarnReqResourceService(labelResourceService: LabelResourceService
 
   implicit val formats = DefaultFormats + ResourceSerializer
 
-  override val resourceType = DriverAndYarn
+  override val resourceType: ResourceType = DriverAndYarn
 
   override def canRequest(labelContainer: RMLabelContainer, resource: NodeResource): Boolean = {
-    if(! super.canRequest(labelContainer, resource)) return false
+    if(! super.canRequest(labelContainer, resource)) {
+      return false
+    }
     val requestedDriverAndYarnResource = resource.getMaxResource.asInstanceOf[DriverAndYarnResource]
     val requestedYarnResource = requestedDriverAndYarnResource.yarnResource
     val yarnIdentifier = new YarnResourceIdentifier(requestedYarnResource.queueName)

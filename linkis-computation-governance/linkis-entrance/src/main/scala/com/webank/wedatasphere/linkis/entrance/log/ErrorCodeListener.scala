@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.entrance.log
 
 import com.webank.wedatasphere.linkis.entrance.EntranceParser
 import com.webank.wedatasphere.linkis.entrance.persistence.PersistenceManager
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
 import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
@@ -52,15 +53,12 @@ class PersistenceErrorCodeListener extends ErrorCodeListener{
     * @param detailErrorMsg wrong description（错误描述）
     */
   override def onErrorCodeCreated(job: Job, errorCode: String, detailErrorMsg: String): Unit = {
-    val task:Task = this.entranceParser.parseToTask(job)
-    task match{
-      case requestPersistTask:RequestPersistTask => if (StringUtils.isEmpty(requestPersistTask.getErrDesc) || "50032".equals(errorCode)){
-        requestPersistTask.setErrCode(Integer.parseInt(errorCode))
-        val realErrorMsg = if (detailErrorMsg.length <= 255) detailErrorMsg else detailErrorMsg.substring(0, 255)
-        requestPersistTask.setErrDesc(realErrorMsg)
-        persistenceManager.createPersistenceEngine().updateIfNeeded(task)
-      }
-      case _ => logger.warn("task {} is not a instance of RequestPersistTask", task.getExecId)
+    val jobRequest: JobRequest = this.entranceParser.parseToJob(job)
+    if (StringUtils.isEmpty(jobRequest.getErrorDesc) || "50032".equals(errorCode)) {
+      jobRequest.setErrorCode(Integer.parseInt(errorCode))
+      val realErrorMsg = if (detailErrorMsg.length <= 255) detailErrorMsg else detailErrorMsg.substring(0, 255)
+      jobRequest.setErrorDesc(realErrorMsg)
+      persistenceManager.createPersistenceEngine().updateIfNeeded(jobRequest)
     }
   }
 }

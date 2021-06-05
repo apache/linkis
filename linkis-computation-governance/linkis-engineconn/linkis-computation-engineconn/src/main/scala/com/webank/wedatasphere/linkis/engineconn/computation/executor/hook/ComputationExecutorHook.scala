@@ -16,10 +16,9 @@
 
 package com.webank.wedatasphere.linkis.engineconn.computation.executor.hook
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.common.utils.{ClassUtils, Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import org.reflections.Reflections
 
 import scala.collection.JavaConverters.asScalaSetConverter
 import scala.collection.mutable.ArrayBuffer
@@ -41,9 +40,9 @@ object ComputationExecutorHook extends Logging {
   private def initComputationExecutorHook: Array[ComputationExecutorHook] = {
     val hooks = new ArrayBuffer[ComputationExecutorHook]
     Utils.tryCatch {
-      val reflections = new Reflections("com.webank.wedatasphere.linkis.engineconn.computation", classOf[ComputationExecutorHook])
+      val reflections = ClassUtils.reflections
       val allSubClass = reflections.getSubTypesOf(classOf[ComputationExecutorHook])
-      allSubClass.asScala.foreach(l => {
+      allSubClass.asScala.filter(!ClassUtils.isInterfaceOrAbstract(_)).foreach(l => {
         hooks += l.newInstance
       })
     } {

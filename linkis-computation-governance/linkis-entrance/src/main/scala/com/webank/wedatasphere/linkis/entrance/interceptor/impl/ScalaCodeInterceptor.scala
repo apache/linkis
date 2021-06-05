@@ -16,25 +16,29 @@
 
 package com.webank.wedatasphere.linkis.entrance.interceptor.impl
 
-import java.lang
-
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
 import com.webank.wedatasphere.linkis.entrance.interceptor.exception.ScalaCodeCheckException
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
-import com.webank.wedatasphere.linkis.protocol.task.Task
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
+import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
 
+import java.lang
 
+/**
+  * created by enjoyyin on 2019/2/25
+  * Description:
+  */
 class ScalaCodeInterceptor extends EntranceInterceptor {
 
   private val SCALA_TYPE = "scala"
 
-  override def apply(task: Task, logAppender: lang.StringBuilder): Task = task match {
-    case requestPersistTask: RequestPersistTask => val error = new StringBuilder
-      requestPersistTask.getRunType match {
-        case SCALA_TYPE => Utils.tryThrow(ScalaExplain.authPass(requestPersistTask.getExecutionCode, error)) {
-          case ScalaCodeCheckException(errorCode, errDesc) => requestPersistTask.setErrCode(errorCode)
-            requestPersistTask.setErrDesc(errDesc)
+  override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
+    val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
+    val errorBuilder = new StringBuilder("")
+    codeType match {
+      case SCALA_TYPE => Utils.tryThrow(ScalaExplain.authPass(jobRequest.getExecutionCode, errorBuilder)) {
+        case ScalaCodeCheckException(errorCode, errDesc) => jobRequest.setErrorCode(errorCode)
+          jobRequest.setErrorDesc(errDesc)
             ScalaCodeCheckException(errorCode, errDesc)
           case t: Throwable => val exception = ScalaCodeCheckException(20074, "Scala code check failed(scala代码检查失败)")
             exception.initCause(t)
@@ -42,6 +46,6 @@ class ScalaCodeInterceptor extends EntranceInterceptor {
         }
         case _ =>
       }
-      requestPersistTask
+    jobRequest
   }
 }

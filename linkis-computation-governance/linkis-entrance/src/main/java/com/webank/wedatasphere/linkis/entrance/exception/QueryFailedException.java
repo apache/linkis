@@ -19,7 +19,6 @@ package com.webank.wedatasphere.linkis.entrance.exception;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 
 /**
- * created by enjoyyin on 2018/10/10
  * Description: entrance module to query submit database query possible exceptions
  * Description: entrance 模块向 query 提交数据库查询可能出现的异常
  */

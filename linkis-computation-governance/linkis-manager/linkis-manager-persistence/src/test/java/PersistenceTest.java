@@ -1,19 +1,3 @@
-/*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
 import com.webank.wedatasphere.linkis.manager.common.entity.label.LabelKeyValue;
 import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel;
@@ -31,6 +15,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * created by v_wbjftang on 2020/8/25
+ */
 public class PersistenceTest {
 
     AnnotationConfigApplicationContext context = null;
@@ -105,7 +92,7 @@ public class PersistenceTest {
     @Test
     public void testListResourceLabelByValueList() throws InvocationTargetException, IllegalAccessException {
         /*SELECT l.*,lvr.*
-                FROM linkis_manager_label l ,linkis_manager_label_resource lr ,linkis_manager_label_value_relation lvr
+                FROM linkis_cg_manager_label l ,linkis_cg_manager_label_resource lr ,linkis_cg_manager_label_value_relation lvr
         WHERE l.id = lr.label_id AND l.id = lvr.label_id
         AND (lvr.label_value_key,lvr.label_value_content) IN (('alias','em'),('key2','value2'),("instance","localhost:9000"),("serviceName","sparkEngine"))
         GROUP BY l.id HAVING COUNT(1) = l.label_value_size;*/

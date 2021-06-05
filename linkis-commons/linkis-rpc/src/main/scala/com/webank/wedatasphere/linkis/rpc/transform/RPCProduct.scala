@@ -22,6 +22,7 @@ import java.util
 import com.webank.wedatasphere.linkis.DataWorkCloudApplication
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
+import com.webank.wedatasphere.linkis.rpc.errorcode.RPCErrorConstants
 import com.webank.wedatasphere.linkis.rpc.exception.DWCURIException
 import com.webank.wedatasphere.linkis.rpc.serializer.ProtostuffSerializeUtil
 import com.webank.wedatasphere.linkis.server.{EXCEPTION_MSG, Message}
@@ -77,7 +78,8 @@ private[linkis] object RPCProduct extends Logging {
     override def notFound(): Message = {
       val message = Message.error("RPC Message.")
       message.setMethod("/rpc/message")
-      message.data(EXCEPTION_MSG, new DWCURIException(10000, "The service does not exist for the available Receiver.(服务不存在可用的Receiver.)").toMap)
+      message.data(EXCEPTION_MSG, new DWCURIException(RPCErrorConstants.URL_ERROR, "The service does not " +
+        "exist for the available Receiver.(服务不存在可用的Receiver.)").toMap)
     }
 
     override def ok(): Message = {

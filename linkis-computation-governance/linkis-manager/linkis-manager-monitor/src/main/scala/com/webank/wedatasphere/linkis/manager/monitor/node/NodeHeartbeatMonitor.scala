@@ -133,21 +133,21 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
           sender = Sender.getSender(nodeMetric.getServiceInstance)
         } catch {
           case n: NoInstanceExistsException =>
-            updateMetricHealthy(nodeMetric, NodeHealthy.UnHealthy, "找不到对应的服务：NoInstanceExistsException")
+            updateMetricHealthy(nodeMetric, NodeHealthy.UnHealthy, "The corresponding service could not be found(找不到对应的服务：NoInstanceExistsException)")
         }
         if (sender == null) {
-          updateMetricHealthy(nodeMetric, NodeHealthy.UnHealthy, "找不到对应的服务，获取的sender为空")
+          updateMetricHealthy(nodeMetric, NodeHealthy.UnHealthy, "The corresponding service could not be found ,the sender is null(找不到对应的服务，获取的sender为空)")
         }
 
         sender.ask(new NodeHeartbeatRequest) match {
           case m: NodeHeartbeatMsg =>
             if (!NodeHealthy.isAvailable(m.getHealthyInfo.getNodeHealthy) && managerLabelService.isEngine(nodeMetric.getServiceInstance)) {
-              updateMetricHealthy(nodeMetric, NodeHealthy.UnHealthy, "该engine为不可用状态，标识该engine为Unhealthy")
+              updateMetricHealthy(nodeMetric, NodeHealthy.UnHealthy, "the engine is in down state  mark the enginge Unhealthy(该engine为不可用状态，标识该engine为Unhealthy)")
             } else {
               messagePublisher.publish(m)
             }
           case _ =>
-            updateMetricHealthy(nodeMetric, NodeHealthy.UnHealthy, "找不到对应的服务，获取的sender为空")
+            updateMetricHealthy(nodeMetric, NodeHealthy.UnHealthy, "The corresponding service could not be found ,the sender is null(找不到对应的服务，获取的sender为空)")
         }
       }
     }
@@ -195,7 +195,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
   private def dealStockAvailableList(stockAvailableList: util.List[NodeMetrics]): Unit = Utils.tryAndWarn {
     if (null == stockAvailableList) return
     stockAvailableList.foreach { nodeMetric =>
-      updateMetricHealthy(nodeMetric, NodeHealthy.StockUnavailable, "Manager认为该EM已经处于StockUnAvailable 状态")
+      updateMetricHealthy(nodeMetric, NodeHealthy.StockUnavailable, " manager think the EM is in StockUnAvailable state (Manager认为该EM已经处于StockUnAvailable 状态)")
     }
   }
 
@@ -213,7 +213,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
       if (managerLabelService.isEM(nodeMetric.getServiceInstance)) {
         val nodes = nodeManagerPersistence.getEngineNodeByEM(nodeMetric.getServiceInstance)
         if (null == nodes || nodes.isEmpty) {
-          updateMetricHealthy(nodeMetric, NodeHealthy.UnHealthy, "Manager认为该EM已经处UnHealthy状态")
+          updateMetricHealthy(nodeMetric, NodeHealthy.UnHealthy, "manager think the EM is in UnHealthy state (Manager认为该EM已经处UnHealthy状态)")
         } else {
           fixedThreadPoll.submit {
             new Runnable {
@@ -325,7 +325,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
   private def updateMetricHealthy(nodeMetrics: NodeMetrics, nodeHealthy: NodeHealthy, reason: String): Unit = {
     warn(s"update instance ${nodeMetrics.getServiceInstance} from ${nodeMetrics.getHealthy} to ${nodeHealthy}")
     val nodeHealthyInfo = new NodeHealthyInfo
-    nodeHealthyInfo.setMsg(s"Manager-Monitor 认为该节点为UnHealthy状态，原因：$reason")
+    nodeHealthyInfo.setMsg(s"Manager-Monitor think the node is in UnHealthy state reason ：$reason  (Manager-Monitor 认为该节点为UnHealthy状态，原因：$reason)")
     nodeHealthyInfo.setNodeHealthy(nodeHealthy)
     nodeMetrics.setHealthy(metricsConverter.convertHealthyInfo(nodeHealthyInfo))
     nodeMetricManagerPersistence.addOrupdateNodeMetrics(nodeMetrics)

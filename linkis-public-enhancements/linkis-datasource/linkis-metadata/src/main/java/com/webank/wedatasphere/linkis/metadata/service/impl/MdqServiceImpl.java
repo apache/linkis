@@ -120,11 +120,11 @@ public class MdqServiceImpl implements MdqService {
                 String destination = mdqTableBO.getImportInfo().getArgs().get("destination");
                 HashMap hashMap = new Gson().fromJson(destination, HashMap.class);
                 if (Boolean.valueOf(hashMap.get("importData").toString())) {
-                    logger.info("只是单纯增加分区列，不删除掉原来的表");
+                    logger.info("Simply add a partition column without dropping the original table(只是单纯增加分区列，不删除掉原来的表)");
                     return;
                 }
             }
-            logger.info("将覆盖掉原来通过向导建立的表:" + oldTable);
+            logger.info("This will overwrite the tables originally created through the wizard(将覆盖掉原来通过向导建立的表):" + oldTable);
             mdqDao.deleteTableBaseInfo(oldTable.getId());
         }
     }

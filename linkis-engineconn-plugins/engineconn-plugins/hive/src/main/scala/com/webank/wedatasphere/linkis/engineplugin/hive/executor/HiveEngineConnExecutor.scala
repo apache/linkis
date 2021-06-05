@@ -171,8 +171,8 @@ class HiveEngineConnExecutor(id: Int,
                     val arr:Array[String] = s.split("\t")
                     val arrAny:ArrayBuffer[Any] = new ArrayBuffer[Any]()
                     if (arr.length > columns.length){
-                      logger.error(s"""hive code ${realCode} 查询的结果中有\t制表符，hive不能进行切割,请使用spark执行""")
-                      throw new ErrorException(60078, """您查询的结果中有\t制表符，hive不能进行切割,请使用spark执行""")
+                      logger.error(s"Tab characters are present in the results of your query Hive cannot cut, use Spark to do so (hive code ${realCode} 查询的结果中有\t制表符，hive不能进行切割,请使用spark执行)")
+                      throw new ErrorException(60078, "Tab characters are present in the results of your query Hive cannot cut, use Spark to do so(您查询的结果中有\t制表符，hive不能进行切割,请使用spark执行)")
                     }
                     if (arr.length == columns.length) arr foreach arrAny.add
                     else if(arr.length == 0) for(i <-1 to columns.length) arrAny add ""

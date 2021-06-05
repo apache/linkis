@@ -85,7 +85,7 @@ class QueryServiceImpl extends QueryService with Logging {
       if (requestUpdateTask.getStatus != null) {
         val oldStatus: String = taskMapper.selectTaskStatusForUpdate(requestUpdateTask.getTaskID)
         if (oldStatus != null && !shouldUpdate(oldStatus, requestUpdateTask.getStatus))
-          throw new QueryException(s"${requestUpdateTask.getTaskID}数据库中的task状态为：${oldStatus}更新的task状态为：${requestUpdateTask.getStatus}更新失败！")
+          throw new QueryException(s"${requestUpdateTask.getTaskID}Task status in the database is (数据库中的task状态)：${oldStatus} the updated task status is (更新的task状态为)：${requestUpdateTask.getStatus} update failed(更新失败)！")
       }
       taskMapper.updateTask(requestPersistTaskTask2QueryTask(requestUpdateTask))
 

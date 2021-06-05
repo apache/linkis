@@ -110,7 +110,7 @@ object SQLExplain extends Explain {
       case e: Exception => logger.warn("sql limit check error happens")
         executionCode.contains(IDE_ALLOW_NO_LIMIT)
     }
-    if (isNoLimitAllowed) logAppender.append(LogUtils.generateWarn("请注意,SQL全量导出模式打开\n"))
+    if (isNoLimitAllowed) logAppender.append(LogUtils.generateWarn("please attention ,SQL full export mode opens(请注意,SQL全量导出模式打开)\n"))
     tempCode.split(";") foreach { singleCode =>
       if (isSelectCmd(singleCode)){
         val trimCode = singleCode.trim

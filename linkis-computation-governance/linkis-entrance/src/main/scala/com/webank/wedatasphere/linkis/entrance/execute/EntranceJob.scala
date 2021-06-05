@@ -189,7 +189,7 @@ abstract class EntranceJob extends Job {
     this.getExecutor match {
       case entranceExecutor: EntranceExecutor =>
         operate(entranceExecutor)
-      case _ => throw new EntranceErrorException(10000, "不支持的操作")
+      case _ => throw new EntranceErrorException(10000, "Unsupported operation (不支持的操作)")
     }
 
   }

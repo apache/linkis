@@ -400,7 +400,7 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
     val creator = job.asInstanceOf[EntranceJob].getTask.asInstanceOf[RequestPersistTask].getRequestApplicationName
     job.asInstanceOf[EntranceJob].setProgressInfo(progressInfo)
     val execID: String = ZuulEntranceUtils.generateExecID(job.getId, executeApplicationName, Sender.getThisInstance, creator)
-    val message = Message.ok("返回进度信息!")
+    val message = Message.ok("return the schedule information (返回进度信息!)")
     message.setMethod(restfulURI + "entrance/" + execID + "/progress")
     val taskID = job.asInstanceOf[EntranceJob].getTask.asInstanceOf[RequestPersistTask].getTaskID
     sendMsg(job, message.data("progress", progress).data("progressInfo", progressInfoMap).data("execID",

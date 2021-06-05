@@ -80,7 +80,7 @@ public class BmlProjectRestful {
         }
         bmlProjectService.createBmlProject(projectName, username, editUsers, accessUsers);
 
-        return Message.messageToResponse(Message.ok("创建工程ok"));
+        return Message.messageToResponse(Message.ok("success to create project(创建工程ok)"));
     }
 
     @POST
@@ -96,10 +96,10 @@ public class BmlProjectRestful {
         String username = SecurityFilter.getLoginUsername(request);
         Message message;
         try{
-            LOGGER.info("用户 {} 开始上传共享资源,会被代理成hadoop用户进行上传", username);
+            LOGGER.info("User {} starts uploading shared resources and is proxied as a Hadoop user for uploading(用户 {} 开始上传共享资源,会被代理成hadoop用户进行上传)", username,username);
             if (!bmlProjectService.checkEditPriv(projectName, username)){
-                LOGGER.error("{} 对工程 {} 没有编辑权限, 上传资源失败", username, projectName);
-                throw new BmlProjectNoEditException(username + " 对工程 { " + projectName + " }没有编辑权限,上传资源失败");
+                LOGGER.error("{} does not have edit permission on project {}. Upload resource failed ({} 对工程 {} 没有编辑权限, 上传资源失败)", username, projectName, username, projectName);
+                throw new BmlProjectNoEditException(username + "does not have edit permission on project " + projectName + ". Upload resource failed"+username + " 对工程 { " + projectName + " }没有编辑权限,上传资源失败");
             }
             Map<String, Object> properties = new HashMap<>();
             properties.put("system", system);
@@ -112,14 +112,14 @@ public class BmlProjectRestful {
             properties.put("clientIp", clientIp);
             ResourceTask resourceTask = taskService.createUploadTask(form, DEFAULT_PROXY_USER, properties);
             bmlProjectService.addProjectResource(resourceTask.getResourceId(), projectName);
-            message = Message.ok("提交上传资源任务成功");
+            message = Message.ok("The task of submitting and uploading resources was successful(提交上传资源任务成功)");
             message.data("resourceId", resourceTask.getResourceId());
             message.data("version", resourceTask.getVersion());
             message.data("taskId", resourceTask.getId());
-            LOGGER.info("用户 {} 提交上传资源任务成功, resourceId is {}", username, resourceTask.getResourceId());
+            LOGGER.info("The task of submitting and uploading resources was successful (用户 {} 提交上传资源任务成功), resourceId is {}", username, resourceTask.getResourceId());
         } catch(final Exception e){
             LOGGER.error("upload resource for user : {} failed, reason:", username, e);
-            ErrorException exception = new ErrorException(50073, "提交上传资源任务失败:" + e.getMessage());
+            ErrorException exception = new ErrorException(50073, "The commit upload resource task failed: (提交上传资源任务失败)" + e.getMessage());
             exception.initCause(e);
             throw exception;
         }
@@ -137,21 +137,21 @@ public class BmlProjectRestful {
                                         FormDataMultiPart form)throws ErrorException{
         String username = SecurityFilter.getLoginUsername(request);
         if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
-            LOGGER.error("错误的resourceId  is {} ", resourceId);
-            throw new BmlServerParaErrorException("resourceId: " + resourceId + " 为空,非法或者已被删除!");
+            LOGGER.error("the error resourceId  is {} ", resourceId);
+            throw new BmlServerParaErrorException("the resourceId: " + resourceId + "is Null, illegal, or deleted (resourceId: " + resourceId + " 为空,非法或者已被删除!)");
         }
         if (StringUtils.isEmpty(versionService.getNewestVersion(resourceId))) {
-            LOGGER.error("resourceId:{} 之前未上传物料,或物料已被删除,请先调用上传接口.", resourceId);
-            throw new BmlServerParaErrorException("resourceId: " + resourceId + " 之前未上传物料,或物料已被删除,请先调用上传接口.!");
+            LOGGER.error("If the material has not been uploaded or has been deleted, please call the upload interface first(resourceId:{} 之前未上传物料,或物料已被删除,请先调用上传接口.)", resourceId);
+            throw new BmlServerParaErrorException("If the material has not been uploaded or has been deleted, please call the upload interface first (resourceId: " + resourceId + " 之前未上传物料,或物料已被删除,请先调用上传接口.!)");
         }
         Message message;
         try{
             String projectName = bmlProjectService.getProjectNameByResourceId(resourceId);
             if (!bmlProjectService.checkEditPriv(projectName, username)){
-                LOGGER.error("{} 对工程 {} 没有编辑权限, 上传资源失败", username, projectName);
-                throw new BmlProjectNoEditException(username + " 对工程 { " + projectName + " }没有编辑权限,上传资源失败");
+                LOGGER.error("{} does not have edit permission on project {}. Upload resource failed ({} 对工程 {} 没有编辑权限, 上传资源失败)", username, projectName, username, projectName);
+                throw new BmlProjectNoEditException(username +"does not have edit permission on project: "+projectName+". Upload resource failed ("+username + " 对工程 { " + projectName + " }没有编辑权限,上传资源失败");
             }
-            LOGGER.info("用户 {} 开始更新资源 {},使用代理用户hadoop", username, resourceId);
+            LOGGER.info("User {} starts updating resources {}, using proxy user Hadoop (用户 {} 开始更新资源 {},使用代理用户hadoop)", username, resourceId,username, resourceId);
             String clientIp = HttpRequestHelper.getIp(request);
             Map<String, Object> properties = new HashMap<>();
             properties.put("clientIp", clientIp);
@@ -159,18 +159,18 @@ public class BmlProjectRestful {
             synchronized (resourceId.intern()){
                 resourceTask = taskService.createUpdateTask(resourceId, DEFAULT_PROXY_USER, form, properties);
             }
-            message = Message.ok("提交更新资源任务成功");
+            message = Message.ok("The update resource task was submitted successfully(提交更新资源任务成功)");
             message.data("resourceId",resourceId).data("version", resourceTask.getVersion()).data("taskId", resourceTask.getId());
         }catch(final ErrorException e){
             LOGGER.error("{} update resource failed, resourceId is {}, reason:", username, resourceId, e);
             throw e;
         } catch(final Exception e){
             LOGGER.error("{} update resource failed, resourceId is {}, reason:", username, resourceId, e);
-            ErrorException exception = new ErrorException(50073, "提交上传资源任务失败:" + e.getMessage());
+            ErrorException exception = new ErrorException(50073, "The commit upload resource task failed(提交上传资源任务失败):" + e.getMessage());
             exception.initCause(e);
             throw exception;
         }
-        LOGGER.info("用户 {} 结束更新资源 {} ", username, resourceId);
+        LOGGER.info("User {} ends updating resources {} (用户 {} 结束更新资源 {} )", username, resourceId, username, resourceId);
         return Message.messageToResponse(message);
     }
 
@@ -189,43 +189,43 @@ public class BmlProjectRestful {
         try{
             String projectName = bmlProjectService.getProjectNameByResourceId(resourceId);
             if (!bmlProjectService.checkAccessPriv(projectName, user)){
-                LOGGER.error("{} 对工程 {} 没有查看权限, 下载资源失败", user, projectName);
-                throw new BmlProjectNoEditException(user + " 对工程 { " + projectName + " }没有编辑权限,上传资源失败");
+                LOGGER.error("{} does not have view privileges on project {}. Download resource failed({} 对工程 {} 没有查看权限, 下载资源失败)", user, projectName, user, projectName);
+                throw new BmlProjectNoEditException(user+" does not have view privileges on project "+projectName+". Download resource failed"+ user + " 对工程 { " + projectName + " }没有编辑权限,上传资源失败");
             }
-            LOGGER.info("用户 {} 开始下载资源 resourceId is {}, version is {} ,ip is {}, 并代理成hadoop ", user, resourceId, version, ip);
+            LOGGER.info("user {} begin to downLoad resource resourceId is {}, version is {} ,ip is {}, 并代理成hadoop ", user, resourceId, version, ip);
             Map<String, Object> properties = new HashMap<>();
             boolean downloadResult = versionService.downloadResource(DEFAULT_PROXY_USER, resourceId, version, resp.getOutputStream(), properties);
             downloadModel.setEndTime(new Date(System.currentTimeMillis()));
             downloadModel.setState(0);
             if (downloadResult){
-                message = Message.ok("下载资源成功");
+                message = Message.ok("Download resource successfully(下载资源成功)");
                 message.setStatus(0);
                 message.setMethod(URL_PREFIX + "download");
             }else{
-                LOGGER.warn("用户 {} 下载资源 resourceId: {}, version:{} 出现问题,复制的size小于0", user, resourceId, version);
+                LOGGER.warn("ResourceId :{}, version:{} has a problem when user {} downloads the resource. The copied size is less than 0 (用户 {} 下载资源 resourceId: {}, version:{} 出现问题,复制的size小于0)", user, resourceId, version,user, resourceId, version);
                 downloadModel.setState(1);
-                message = Message.error("下载资源失败");
+                message = Message.error("Failed to download the resource(下载资源失败)");
                 message.setStatus(1);
                 message.setMethod(URL_PREFIX + "download");
             }
             downloadService.addDownloadRecord(downloadModel);
-            LOGGER.info("用户 {} 结束下载资源 {} ", user, resourceId);
+            LOGGER.info("User {} ends downloading the resource {} (用户 {} 结束下载资源 {}) ", user, resourceId, user, resourceId);
         }catch(IOException e){
-            LOGGER.error("用户 {} 下载资源 resourceId: {}, version:{} 出现IO异常", user, resourceId, version, e);
+            LOGGER.error("IO Exception: ResourceId :{}, version:{} (用户 {} 下载资源 resourceId: {}, version:{} 出现IO异常)",  resourceId, version,user, resourceId, version, e);
             downloadModel.setEndTime(new Date());
             downloadModel.setState(1);
             downloadService.addDownloadRecord(downloadModel);
-            throw new ErrorException(73562, "抱歉,后台IO错误造成您本次下载资源失败");
+            throw new ErrorException(73562, "Sorry, the background IO error caused you to download the resources failed(抱歉,后台IO错误造成您本次下载资源失败)");
         }catch(final Throwable t){
-            LOGGER.error("用户 {} 下载资源 resourceId: {}, version:{} 出现异常", user, resourceId, version, t);
+            LOGGER.error("ResourceId :{}, version:{} abnormal when user {} downloads resource (用户 {} 下载资源 resourceId: {}, version:{} 出现异常)",  resourceId, version,user,user, resourceId, version );
             downloadModel.setEndTime(new Date());
             downloadModel.setState(1);
             downloadService.addDownloadRecord(downloadModel);
-            throw new ErrorException(73561, "抱歉，后台服务出错导致您本次下载资源失败");
+            throw new ErrorException(73561, "Sorry, the background service error caused you to download the resources failed (抱歉，后台服务出错导致您本次下载资源失败)");
         }finally{
             IOUtils.closeQuietly(resp.getOutputStream());
         }
-        LOGGER.info("{} 下载资源 {} 成功", user, resourceId);
+        LOGGER.info("{} Download resource {} successfully ({} 下载资源 {} 成功)", user, resourceId, user, resourceId);
         return Message.messageToResponse(message);
     }
 
@@ -234,7 +234,7 @@ public class BmlProjectRestful {
     @GET
     @Path("getProjectInfo")
     public Response getProjectInfo(@Context HttpServletRequest request, @QueryParam("projectName") String projectName){
-        return Message.messageToResponse(Message.ok("获取工程信息成功"));
+        return Message.messageToResponse(Message.ok("Obtain project information successfully (获取工程信息成功)"));
     }
 
 
@@ -266,7 +266,7 @@ public class BmlProjectRestful {
             accessUsersNode.forEach(node -> accessUsers.add(node.getTextValue()));
         }
         bmlProjectService.updateProjectUsers(username, projectName, editUsers, accessUsers);
-        return Message.messageToResponse(Message.ok("更新工程的相关用户成功"));
+        return Message.messageToResponse(Message.ok("Updated project related user success(更新工程的相关用户成功)"));
     }
 
 

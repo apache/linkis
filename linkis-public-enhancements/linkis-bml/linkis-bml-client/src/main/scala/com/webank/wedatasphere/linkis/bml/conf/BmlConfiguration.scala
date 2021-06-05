@@ -20,19 +20,19 @@ object BmlConfiguration {
   val DWS_VERSION:CommonVars[String] = CommonVars[String]("wds.linkis.bml.dws.version", "v1")
 
   val URL_PREFIX:CommonVars[String] =
-    CommonVars[String]("wds.linkis.bml.url.prefix", "/api/rest_j/v1/bml", "bml服务的url前缀")
+    CommonVars[String]("wds.linkis.bml.url.prefix", "/api/rest_j/v1/bml", " url prefix of the bml service (bml服务的url前缀)")
 
   val UPLOAD_URL:CommonVars[String] = CommonVars[String]("wds.linkis.bml.upload.url","upload")
 
-  val UPDATE_VERSION_URL:CommonVars[String] = CommonVars[String]("wds.linkis.bml.updateVersion.url", "updateVersion","更新版本的url")
+  val UPDATE_VERSION_URL:CommonVars[String] = CommonVars[String]("wds.linkis.bml.updateVersion.url", "updateVersion","Update the URL of the version(更新版本的url)")
 
-  val UPDATE_BASIC_URL:CommonVars[String] = CommonVars[String]("wds.linkis.bml.updateBasic.url", "updateBasic","更新基本信息的url")
+  val UPDATE_BASIC_URL:CommonVars[String] = CommonVars[String]("wds.linkis.bml.updateBasic.url", "updateBasic","Update the URL of the basic information(更新基本信息的url)")
 
-  val RELATE_HDFS:CommonVars[String] = CommonVars[String]("wds.linkis.bml.relateHdfs.url", "relateHdfs", "关联hdfs资源的url")
+  val RELATE_HDFS:CommonVars[String] = CommonVars[String]("wds.linkis.bml.relateHdfs.url", "relateHdfs", "The URL associated with the HDFS resource(关联hdfs资源的url)")
 
-  val RELATE_STORAGE:CommonVars[String] = CommonVars[String]("wds.linkis.bml.relateStorage.url", "relateStorage", "关联共享存储的url")
+  val RELATE_STORAGE:CommonVars[String] = CommonVars[String]("wds.linkis.bml.relateStorage.url", "relateStorage", "Associating the URL of the shared store(关联共享存储的url)")
 
-  val GET_RESOURCES:CommonVars[String] = CommonVars[String]("wds.linkis.bml.getResourceMsg.url","getResourceMsg", "获取资源的信息")
+  val GET_RESOURCES:CommonVars[String] = CommonVars[String]("wds.linkis.bml.getResourceMsg.url","getResourceMsg", "Get information about the resource(获取资源的信息)")
 
   val DOWNLOAD_URL:CommonVars[String] = CommonVars[String]("wds.linkis.bml.download.url", "download")
 

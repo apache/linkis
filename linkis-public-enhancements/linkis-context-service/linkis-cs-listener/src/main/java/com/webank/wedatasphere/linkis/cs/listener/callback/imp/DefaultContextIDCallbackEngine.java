@@ -108,7 +108,7 @@ public class DefaultContextIDCallbackEngine implements CSIDListener, ContextIDCa
                 case DELETE:
                     break;
                 default:
-                    logger.info("检查defaultContextIDEvent event操作类型");
+                    logger.info("check defaultContextIDEvent event operate type(检查defaultContextIDEvent event操作类型)");
             }
 
         }

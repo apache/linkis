@@ -27,8 +27,7 @@ import java.util.Map;
 public abstract class AbstractSerializer<T> implements ContextSerializer<T> {
 
 
-
-
+    private static final String TYPE = "type";
 
     public String getJsonValue(T t) throws CSErrorException {
         if (null != t) {
@@ -44,7 +43,7 @@ public abstract class AbstractSerializer<T> implements ContextSerializer<T> {
     public boolean accepts(String json) {
         if (StringUtils.isNotBlank(json)) {
             Map<String, String> value = CSCommonUtils.gson.fromJson(json, new HashMap<String, String>().getClass());
-            if (getType().equals(value.get("type"))) {
+            if (getType().equals(value.get(TYPE))) {
                 return true;
             }
         }
@@ -58,7 +57,7 @@ public abstract class AbstractSerializer<T> implements ContextSerializer<T> {
 
         if (accepts(t)) {
             Map<String, String> map = new HashMap<>();
-            map.put("type", getType());
+            map.put(TYPE, getType());
             map.put("value", getJsonValue(t));
             return  CSCommonUtils.gson.toJson(map);
         }

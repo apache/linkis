@@ -62,18 +62,6 @@ class RMMessageService extends Logging {
       resourceManager.resourceReport(labels, nodeHeartbeatMsg.getNodeResource)
     }
     info(s"Finished to deal with nodeHeartbeatMsg resource info $nodeHeartbeatMsg")
-    /* info(s"Start to deal with resourceUsedProtocol $nodeHeartbeatMsg")
-     val labels = nodeLabelService.getNodeLabels(nodeHeartbeatMsg.getServiceInstance)
-     resourceManager.resourceUsed(labels, nodeHeartbeatMsg.getNodeResource)
-     if(managerLabelService.isEM(nodeHeartbeatMsg.getServiceInstance)){
-       //resourceManager.register(nodeHeartbeatMsg.getServiceInstance, nodeHeartbeatMsg.getNodeResource)
-     } else if(managerLabelService.isEngine(nodeHeartbeatMsg.getServiceInstance)){
-       info(s"Start to deal with resourceUsedProtocol $nodeHeartbeatMsg")
-
-
-     } else {
-       info(s"${nodeHeartbeatMsg.getServiceInstance} is neither EM nor Engine")
-     }*/
   }
 
 

@@ -57,22 +57,6 @@ object LogHelper extends Logging {
       }
     }
     logger.info("end to push all remain logs")
-    // }
-    //    if (sendAppender == null){
-    //      logger.error("SendAppender has not been initialized")
-    //    }else{
-    //      val logCache = sendAppender.getLogCache
-    //      val logListener = SendAppender.getLogListener
-    //      logCache.synchronized{
-    //        val logs: util.List[String] = logCache.getRemain
-    //        if (logs.size > 0) {
-    //          val sb: StringBuilder = new StringBuilder
-    //          import scala.collection.JavaConversions._
-    //          logs map (log => log + "\n") foreach sb.append
-    //          logListener.onLogUpdate(null, sb.toString)
-    //        }
-    //      }
-    //    }
   }
 
   def dropAllRemainLogs(): Unit = {

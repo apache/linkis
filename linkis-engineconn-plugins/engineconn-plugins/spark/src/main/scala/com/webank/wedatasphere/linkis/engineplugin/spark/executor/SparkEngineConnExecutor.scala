@@ -181,12 +181,6 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
 
   protected def runCode(executor: SparkEngineConnExecutor, code: String, context: EngineExecutionContext, jobGroup: String): ExecuteResponse
 
-  /*final def getEngineTypeLabel: EngineTypeLabel = {
-    val engineTypeLabel = new EngineTypeLabel
-    engineTypeLabel.setEngineType(EngineType.SPARK.toString)
-    engineTypeLabel
-  }*/
-
   override def killTask(taskID: String): Unit = {
     if (!sc.isStopped) {
       sc.cancelAllJobs

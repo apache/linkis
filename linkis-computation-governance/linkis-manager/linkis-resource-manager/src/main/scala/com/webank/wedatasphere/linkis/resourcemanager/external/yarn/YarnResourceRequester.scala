@@ -62,7 +62,23 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
       val metrics = getResponseByUrl( "metrics", rmWebAddress)
       val totalResouceInfoResponse = ((metrics \ "clusterMetrics" \ "totalMB").asInstanceOf[JInt].values.toLong, (metrics \ "clusterMetrics" \ "totalVirtualCores").asInstanceOf[JInt].values.toLong)
       queueValue.map(r => {
-        val effectiveResource = (r \ "absoluteCapacity").asInstanceOf[JDouble].values - (r \ "absoluteUsedCapacity").asInstanceOf[JDouble].values
+        val absoluteCapacity = r \ "absoluteCapacity" match {
+          case jDecimal: JDecimal =>
+            jDecimal.values.toDouble
+          case jDouble: JDouble =>
+            jDouble.values
+          case _ =>
+            0d
+        }
+        val absoluteUsedCapacity =  r \ "absoluteUsedCapacity" match {
+          case jDecimal: JDecimal =>
+            jDecimal.values.toDouble
+          case jDouble: JDouble =>
+            jDouble.values
+          case _ =>
+            0d
+        }
+        val effectiveResource = absoluteCapacity - absoluteUsedCapacity
         new YarnResource(math.floor(effectiveResource * totalResouceInfoResponse._1 * 1024l * 1024l/100).toLong, math.floor(effectiveResource * totalResouceInfoResponse._2/100).toInt, 0, queueName)
       })
     }

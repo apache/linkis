@@ -29,4 +29,6 @@ object GovernanceConstant {
   val TASK_RESOURCE_FILE_NAME_STR = "fileName"
 
   val REQUEST_ENGINE_STATUS_BATCH_LIMIT = 500
+
+  def RESULTSET_INDEX = "resultsetIndex"
 }

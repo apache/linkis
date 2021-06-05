@@ -91,7 +91,11 @@ class DefaultEngineConn extends EngineConn {
 
   override def setPid(pid: String): Unit = this.pid = pid
 
-  override def getEngineConnManagerEnv: EngineConnManagerEnv = ecmEnv
+  override def getEngineConnManagerEnv: EngineConnManagerEnv = if ( null == this.ecmEnv ){
+    getEngineConnLaunchRunner.getEngineConnLaunch.getEngineConnManagerEnv()
+  } else {
+    this.ecmEnv
+  }
 
   override def setEngineConnManagerEnv(env: EngineConnManagerEnv): Unit = this.ecmEnv = env
 

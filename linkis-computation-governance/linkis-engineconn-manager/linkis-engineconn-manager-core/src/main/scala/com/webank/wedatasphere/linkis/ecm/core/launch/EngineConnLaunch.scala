@@ -26,6 +26,8 @@ trait EngineConnLaunch {
 
   def setEngineConnManagerEnv(engineConnManagerEnv: EngineConnManagerEnv): Unit
 
+  def getEngineConnManagerEnv(): EngineConnManagerEnv
+
   def launch(): Unit
 
   def kill(): Unit

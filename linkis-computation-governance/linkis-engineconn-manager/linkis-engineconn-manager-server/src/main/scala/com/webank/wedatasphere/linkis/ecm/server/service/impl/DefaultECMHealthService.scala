@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.ecm.core.listener.{ECMEvent, ECMEventListener}
 import com.webank.wedatasphere.linkis.ecm.core.report.ECMHealthReport
-import com.webank.wedatasphere.linkis.ecm.server.ECMApplication
+import com.webank.wedatasphere.linkis.ecm.server.LinkisECMApplication
 import com.webank.wedatasphere.linkis.ecm.server.conf.ECMConfiguration._
 import com.webank.wedatasphere.linkis.ecm.server.listener.{ECMClosedEvent, ECMReadyEvent}
 import com.webank.wedatasphere.linkis.ecm.server.report.DefaultECMHealthReport
@@ -44,7 +44,7 @@ class DefaultECMHealthService extends ECMHealthService with ECMEventListener {
 
   private val future = Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
     override def run(): Unit = {
-      if (ECMApplication.isReady) {
+      if (LinkisECMApplication.isReady) {
         reportHealth(getLastEMHealthReport)
       }
     }
@@ -55,13 +55,14 @@ class DefaultECMHealthService extends ECMHealthService with ECMEventListener {
 
   override def getLastEMHealthReport: ECMHealthReport = {
     val report = new DefaultECMHealthReport
-    report.setNodeId(ECMApplication.getECMServiceInstance.toString)
+    report.setNodeId(LinkisECMApplication.getECMServiceInstance.toString)
     report.setNodeStatus(NodeStatus.Running)
+    //todo report right metrics
     report.setTotalResource(maxResource)
     report.setProtectedResource(minResource)
     report.setUsedResource(engineConnListService.getUsedResources)
     report.setReportTime(new Date().getTime)
-    report.setRunningEngineConns(ECMApplication.getContext.getECMMetrics.getRunningEngineConns)
+    report.setRunningEngineConns(LinkisECMApplication.getContext.getECMMetrics.getRunningEngineConns)
     val info = new NodeOverLoadInfo
     info.setMaxMemory(runtime.maxMemory())
     info.setUsedMemory(runtime.totalMemory() - runtime.freeMemory())
@@ -81,11 +82,12 @@ class DefaultECMHealthService extends ECMHealthService with ECMEventListener {
     val heartbeat = new NodeHeartbeatMsg
     heartbeat.setOverLoadInfo(report.getOverload)
     heartbeat.setStatus(report.getNodeStatus)
-    heartbeat.setServiceInstance(ECMApplication.getECMServiceInstance)
+    heartbeat.setServiceInstance(LinkisECMApplication.getECMServiceInstance)
     val resource = new CommonNodeResource
+    // todo report latest engineconn metrics
     resource.setMaxResource(maxResource)
     resource.setMinResource(minResource)
-    resource.setUsedResource(resource.getUsedResource)
+    resource.setUsedResource(report.getUsedResource)
     heartbeat.setNodeResource(resource)
     heartbeat.setHeartBeatMsg("")
     val nodeHealthyInfo = new NodeHealthyInfo

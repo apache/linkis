@@ -22,20 +22,22 @@ import com.webank.wedatasphere.linkis.entrance.cache.GlobalConfigurationKeyValue
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
 import com.webank.wedatasphere.linkis.entrance.interceptor.exception.LogPathCreateException
 import com.webank.wedatasphere.linkis.entrance.parser.ParserUtils
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
 import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 
 /**
+  * created by enjoyyin on 2018/10/23
   * Description:Log path generation interceptor, used to set the path log of the task(日志路径生成拦截器, 用于设置task的路径日志)
   */
 class LogPathCreateInterceptor extends EntranceInterceptor with Logging {
 
   @throws[ErrorException]
-  override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = {
-    task match {
-      case requestPersistTask: RequestPersistTask => Utils.tryThrow {
-        ParserUtils.generateLogPath(requestPersistTask, Utils.tryAndWarn(GlobalConfigurationKeyValueCache.getCacheMap(requestPersistTask)))
-        requestPersistTask
+  override def apply(jobRequest: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
+    jobRequest match {
+      case jobReq: JobRequest => Utils.tryThrow {
+        ParserUtils.generateLogPath(jobReq, Utils.tryAndWarn(GlobalConfigurationKeyValueCache.getCacheMap(jobReq)))
+        jobReq
       } {
         case e: ErrorException =>
           val exception: LogPathCreateException = LogPathCreateException(20075, "Failed to get logPath(获取logPath失败)，reason: " + e.getMessage)
@@ -46,7 +48,7 @@ class LogPathCreateInterceptor extends EntranceInterceptor with Logging {
           exception.initCause(t)
           exception
       }
-      case _ => task
+      case _ => jobRequest
     }
   }
 }

@@ -16,59 +16,22 @@
 
 package com.webank.wedatasphere.linkis.engineconn.computation.executor.hook
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication
-import com.webank.wedatasphere.linkis.common.conf.DWCArgumentsParser
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engineconn.callback.service.{EngineConnAfterStartCallback, EngineConnPidCallback}
+import com.webank.wedatasphere.linkis.engineconn.callback.hook.CallbackEngineConnHook
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.common.hook.EngineConnHook
-import com.webank.wedatasphere.linkis.engineconn.core.hook.ShutdownHook
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationExecutorManager
 import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineConnStatusCallback
-import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
 
 
-class ComputationEngineConnHook extends EngineConnHook with Logging {
+class ComputationEngineConnHook extends CallbackEngineConnHook {
 
-  override def beforeCreateEngineConn(engineCreationContext: EngineCreationContext): Unit = {
-    info("<----------Start Spring app---------->")
-    val parser = DWCArgumentsParser.parse(engineCreationContext.getArgs)
-    DWCArgumentsParser.setDWCOptionMap(parser.getDWCConfMap)
-    val existsExcludePackages = ServerConfiguration.BDP_SERVER_EXCLUDE_PACKAGES.getValue
-    if (!StringUtils.isEmpty(existsExcludePackages))
-      DataWorkCloudApplication.setProperty(ServerConfiguration.BDP_SERVER_EXCLUDE_PACKAGES.key, existsExcludePackages)
-    // 加载spring类
-    DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(parser.getSpringConfMap))
+  override protected def getNodeStatusOfStartSuccess(engineCreationContext: EngineCreationContext,
+                                                     engineConn: EngineConn): NodeStatus = NodeStatus.Unlock
 
-    val engineConnPidCallBack = new EngineConnPidCallback(engineCreationContext.getEMInstance)
-    Utils.tryAndError(engineConnPidCallBack.callback())
-    info("<----------Spring app init success---------->")
-  }
-
-
-  override def beforeExecutionExecute(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit = {}
-
-  override def afterExecutionExecute(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit = {}
-
-  override def afterEngineServerStartFailed(engineCreationContext: EngineCreationContext, throwable: Throwable): Unit = {
-
-    val engineConnAfterStartCallback = new EngineConnAfterStartCallback(engineCreationContext.getEMInstance)
-    engineConnAfterStartCallback.callback(EngineConnStatusCallback(Sender.getThisServiceInstance,
-      engineCreationContext.getTicketId, NodeStatus.ShuttingDown, ExceptionUtils.getRootCauseMessage(throwable)))
-    error("init engineConn failed! now exit", throwable)
-    ShutdownHook.getShutdownHook.notifyError(throwable)
-  }
-
-  override def afterEngineServerStartSuccess(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit = {
-    val engineConnAfterStartCallback = new EngineConnAfterStartCallback(engineCreationContext.getEMInstance)
-    engineConnAfterStartCallback.callback(EngineConnStatusCallback(Sender.getThisServiceInstance,
-      engineCreationContext.getTicketId, NodeStatus.Unlock, "success"))
-    warn("init engineConn success!")
-  }
-
-
+  override def afterEngineServerStartSuccess(engineCreationContext: EngineCreationContext,
+                                             engineConn: EngineConn): Unit =
+    {
+      super.afterEngineServerStartSuccess(engineCreationContext, engineConn)
+      ComputationExecutorManager.getInstance.getReportExecutor.tryReady()
+    }
 }

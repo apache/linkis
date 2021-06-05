@@ -42,6 +42,8 @@ trait NodeLabelService {
    */
   def updateLabelToNode(instance: ServiceInstance, label: Label[_]): Unit
 
+  def updateLabelsToNode(instance: ServiceInstance, label: util.List[Label[_]]): Unit
+
   /**
    * Remove the labels related by node instance
    *

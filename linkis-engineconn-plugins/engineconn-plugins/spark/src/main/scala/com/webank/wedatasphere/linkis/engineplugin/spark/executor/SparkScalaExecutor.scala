@@ -38,10 +38,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 import _root_.scala.tools.nsc.GenericRunnerSettings
 import scala.tools.nsc.interpreter.{IMain, JPrintWriter, NamedParam, Results, SimpleReader, StdReplTags, isReplPower, replProps}
 
-/**
-  *
-  * @date 2020/11/9
-  */
+
 class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) extends SparkEngineConnExecutor(sparkEngineSession.sparkContext, id) {
 
   private val sparkContext: SparkContext = sparkEngineSession.sparkContext

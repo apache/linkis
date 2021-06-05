@@ -30,10 +30,7 @@ import javax.servlet.http.HttpServletRequest
 import scala.concurrent.duration.Duration
 import scala.language.implicitConversions
 
-/**
- * @date 2020/8/3
- *
- */
+
 class MessageReceiver(mesagePublisher: MessagePublisher) extends Receiver {
 
   private val syncMaxTimeout: Duration = Duration(CommonVars("wds.linkis.ms.rpc.sync.timeout", 60 * 1000 * 5L).getValue, TimeUnit.MILLISECONDS)

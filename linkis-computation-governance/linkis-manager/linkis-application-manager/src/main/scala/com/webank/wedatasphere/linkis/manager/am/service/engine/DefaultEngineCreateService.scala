@@ -57,9 +57,6 @@ import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
 
 
-/**
-  * @date 2020/6/30 22:40
-  */
 @Service
 class DefaultEngineCreateService extends AbstractEngineService with EngineCreateService with Logging {
 

@@ -27,10 +27,7 @@ import com.webank.wedatasphere.linkis.manager.engineplugin.common.resource.Engin
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
 
-/**
-  *
-  * @date 2020/10/22
-  */
+
 class SparkEngineConnPlugin extends EngineConnPlugin {
 
   private val defaultLabels = new util.ArrayList[Label[_]]()

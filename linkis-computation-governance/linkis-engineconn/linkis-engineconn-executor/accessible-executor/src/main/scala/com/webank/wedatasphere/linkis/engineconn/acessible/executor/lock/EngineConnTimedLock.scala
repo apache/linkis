@@ -56,7 +56,6 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
   override def release(): Unit = {
     debug("try to release for lock," + lockedBy + ",current thread " + Thread.currentThread().getName)
     if (lockedBy != null) {
-      //&& lockedBy == Thread.currentThread()   Inconsistent thread(线程不一致)
       debug("try to release for lockedBy and thread ")
       if (releaseTask != null) {
         releaseTask.cancel(true)

@@ -26,9 +26,7 @@ import org.springframework.stereotype.Service
 
 import scala.collection.JavaConversions._
 
-/**
-  * @date 2020/7/2 14:42
-  */
+
 @Service
 class DefaultNodeSelector extends NodeSelector with Logging {
 

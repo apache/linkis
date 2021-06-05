@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.filesystem
 
 import com.webank.wedatasphere.linkis.filesystem.request.WorkspaceClient
 
-/**
-  * Created by patinousward
-  */
+
 object WorkspaceClientFactory {
 
   def getClient(user: String, token: String,gatewayAddress:String): WorkspaceClient = {

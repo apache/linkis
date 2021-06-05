@@ -37,10 +37,7 @@ import org.slf4j.LoggerFactory
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  *
-  * @date 2020/11/3
-  */
+
 abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends ComputationExecutor {
 
   private val LOG = LoggerFactory.getLogger(getClass)
@@ -183,12 +180,6 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
   protected def getKind: Kind
 
   protected def runCode(executor: SparkEngineConnExecutor, code: String, context: EngineExecutionContext, jobGroup: String): ExecuteResponse
-
-  /*final def getEngineTypeLabel: EngineTypeLabel = {
-    val engineTypeLabel = new EngineTypeLabel
-    engineTypeLabel.setEngineType(EngineType.SPARK.toString)
-    engineTypeLabel
-  }*/
 
   override def killTask(taskID: String): Unit = {
     if (!sc.isStopped) {

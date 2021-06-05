@@ -28,9 +28,7 @@ import com.webank.wedatasphere.linkis.protocol.label.NodeLabelRemoveRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-/**
-  * @date 2020/8/4 17:33
-  */
+
 @Service
 class DefaultEngineStopService extends AbstractEngineService with EngineStopService with Logging {
 

@@ -17,6 +17,8 @@
 package com.webank.wedatasphere.linkis.instance.label.service.impl;
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
+import com.webank.wedatasphere.linkis.common.utils.ClassUtils;
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.instance.label.async.AsyncConsumerQueue;
 import com.webank.wedatasphere.linkis.instance.label.async.GenericAsyncConsumerQueue;
 import com.webank.wedatasphere.linkis.instance.label.conf.InsLabelConf;
@@ -31,41 +33,48 @@ import com.webank.wedatasphere.linkis.instance.label.service.annotation.AdapterM
 import com.webank.wedatasphere.linkis.instance.label.vo.InsPersistenceLabelSearchVo;
 import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
+import com.webank.wedatasphere.linkis.manager.label.builder.factory.StdLabelBuilderFactory;
 import com.webank.wedatasphere.linkis.manager.label.entity.Label;
+import com.webank.wedatasphere.linkis.manager.label.entity.UserModifiable;
 import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang.math.NumberUtils.isNumber;
 
 @AdapterMode
+@Service
 public class DefaultInsLabelService implements InsLabelAccessService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultInsLabelService.class);
-
-    @Resource
+    private static Set<String> modifiableLabelKeyList;
+    @Autowired
     private InstanceLabelDao instanceLabelDao;
-
-    @Resource
+    @Autowired
     private InstanceInfoDao instanceDao;
-
-    @Resource
+    @Autowired
     private InsLabelRelationDao insLabelRelationDao;
-
     private AsyncConsumerQueue<InsPersistenceLabel> asyncRemoveLabelQueue;
-
     private InsLabelAccessService selfService;
-
     private AtomicBoolean asyncQueueInit = new AtomicBoolean(false);
+    private LabelBuilderFactory labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory();
+
     /**
      * init method
      */
@@ -120,7 +129,7 @@ public class DefaultInsLabelService implements InsLabelAccessService {
         //Attach labels to instance
         attachLabelsToInstance(insLabels, serviceInstance);
         // Async to delete labels that have no relationship
-        if(!labelsCandidateRemoved.isEmpty()){
+   /*     if(!labelsCandidateRemoved.isEmpty()){
             if(!asyncQueueInit.get()) {
                 initQueue();
             }
@@ -129,7 +138,7 @@ public class DefaultInsLabelService implements InsLabelAccessService {
                     LOG.warn("Async queue for removing labels maybe full. current size: [" + asyncRemoveLabelQueue.size() + "]");
                 }
             });
-        }
+        }*/
     }
 
     @Override
@@ -223,17 +232,79 @@ public class DefaultInsLabelService implements InsLabelAccessService {
         });
     }
 
+    @Override
+    public List<InstanceInfo> listAllInstanceWithLabel() {
+        List<InstanceInfo> instances = insLabelRelationDao.listAllInstanceWithLabel();
+        return instances;
+    }
+
+    public String getEurekaURL() throws Exception {
+        String eurekaURL = InsLabelConf.EUREKA_IPADDRESS.getValue();
+        String realURL = eurekaURL;
+        if(eurekaURL.isEmpty()) {
+            String defaultZone = InsLabelConf.EUREKA_URL.getValue();
+            String tmpURL = urlPreDeal(defaultZone);
+            realURL = replaceEurekaURL(tmpURL);
+        }
+        return realURL;
+    }
+
+    private String urlPreDeal(String defaultZone) {
+        if(defaultZone.contains(",")){
+            defaultZone = defaultZone.split(",")[0];
+        }
+        String url = defaultZone;
+        if (defaultZone.matches("https?://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]")) {
+            if (defaultZone.toLowerCase().contains("eureka")) {
+                url = defaultZone.split("eureka", 2)[0];
+            }
+        }
+        return url;
+    }
+
+    private String replaceEurekaURL(String tmpURL) throws URISyntaxException, UnknownHostException {
+        URI uri = new URI(tmpURL);
+        if(isIPAddress(uri.getHost())){
+            if(uri.getHost().equals("127.0.0.1")){
+                String ip = Utils.getLocalHostname();
+                return tmpURL.replace("127.0.0.1", ip);
+            }else{
+                return tmpURL;
+            }
+        }else{
+            String hostname = uri.getHost();
+            InetAddress address = InetAddress.getByName(hostname);
+            String realAddress = address.getHostAddress();
+            return tmpURL.replace(hostname, realAddress);
+        }
+    }
+
+    private boolean isIPAddress(String tmpURL) {
+        String[] urlArray = tmpURL.split(".");
+        if(urlArray.length == 4) {
+            if (isNumber(urlArray[0]) && isNumber(urlArray[1]) && isNumber(urlArray[2]) && isNumber(urlArray[3])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Filter labels
      * @param insLabels labels
      * @return
      */
     private List<InsPersistenceLabel> filterLabelNeededInsert(List<InsPersistenceLabel> insLabels, boolean needLock){
-        List<InsPersistenceLabel> storedLabels = instanceLabelDao.search(insLabels.stream().map(InsPersistenceLabelSearchVo :: new).collect(Collectors.toList()));
+        List<InsPersistenceLabelSearchVo> labelSearchVos = insLabels.stream().map(InsPersistenceLabelSearchVo :: new).collect(Collectors.toList());
+        List<InsPersistenceLabel> storedLabels = new ArrayList<>();
+        if(!labelSearchVos.isEmpty()){
+            storedLabels = instanceLabelDao.search(labelSearchVos);
+        }
         if(!storedLabels.isEmpty()){
             List<InsPersistenceLabel> labelsNeedInsert = new ArrayList<>(insLabels);
+            List<InsPersistenceLabel> finalStoredLabels = storedLabels;
             labelsNeedInsert.removeIf(labelNeedInsert -> {
-                for(InsPersistenceLabel storedLabel : storedLabels){
+                for(InsPersistenceLabel storedLabel : finalStoredLabels){
                     if(labelNeedInsert.equals(storedLabel)){
                         Integer labelId = storedLabel.getId();
                         labelNeedInsert.setId(labelId);
@@ -274,7 +345,11 @@ public class DefaultInsLabelService implements InsLabelAccessService {
      */
     private void doInsertInstance(ServiceInstance serviceInstance){
         //ON DUPLICATE KEY
-        instanceDao.insertOne(new InstanceInfo(serviceInstance));
+        try{
+            instanceDao.insertOne(new InstanceInfo(serviceInstance));
+        }catch (Exception e){
+
+        }
     }
 
     /**
@@ -309,4 +384,20 @@ public class DefaultInsLabelService implements InsLabelAccessService {
             }
         }
     }
+
+    public void markInstanceLabel(List<InstanceInfo> instances) {
+        Set<String> keyList = LabelUtils.listAllUserModifiableLabel();
+        for(InstanceInfo instance: instances){
+            List<InsPersistenceLabel> labels = instance.getLabels();
+            if(!CollectionUtils.isEmpty(labels)){
+                for(InsPersistenceLabel label: labels){
+                    if(keyList.contains(label.getLabelKey())){
+                        label.setModifiable(true);
+                    }
+                }
+            }
+        }
+    }
+
+
 }

@@ -18,7 +18,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.webank.wedatasphere.linkis.instance.label.dao.InstanceInfoDao">
     <insert id="insertOne" parameterType="InstanceInfo">
-        <![CDATA[INSERT INTO `linkis_instance_info`(`instance`, `name`)
+        <![CDATA[INSERT INTO `linkis_ps_instance_info`(`instance`, `name`)
         VALUES(#{instance}, #{applicationName})]]>
     </insert>
+
 </mapper>

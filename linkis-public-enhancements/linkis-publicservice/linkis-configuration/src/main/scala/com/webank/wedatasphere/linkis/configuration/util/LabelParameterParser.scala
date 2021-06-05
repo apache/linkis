@@ -56,8 +56,8 @@ object LabelParameterParser {
       labelList.asScala.foreach(label => {
         if (label.isInstanceOf[UserCreatorLabel]) {
           val newLabel = labelBuilderFactory.createLabel(classOf[UserCreatorLabel])
-          newLabel.setCreator("*")
           newLabel.setUser("*")
+          newLabel.setCreator("*")
           newList.addLast(newLabel)
         } else {
           newList.addLast(label)

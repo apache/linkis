@@ -23,10 +23,10 @@ import com.webank.wedatasphere.linkis.cs.common.entity.source.CommonHAContextID;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.HAContextID;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.highavailable.exception.ErrorCode;
+import com.webank.wedatasphere.linkis.cs.highavailable.exception.CSErrorCode;
 import com.webank.wedatasphere.linkis.cs.highavailable.ha.BackupInstanceGenerator;
 import com.webank.wedatasphere.linkis.cs.highavailable.ha.ContextHAIDGenerator;
-import com.webank.wedatasphere.linkis.rpc.instancealias.InstanceAliasConverter;
+import com.webank.wedatasphere.linkis.cs.highavailable.ha.instancealias.InstanceAliasConverter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,15 +52,15 @@ public class ContextHAIDGeneratorImpl implements ContextHAIDGenerator {
         }
 
         ServiceInstance mainInstance = DataWorkCloudApplication.getServiceInstance();
-        if (null == mainInstance || StringUtils.isBlank(mainInstance.getInstance())) {
-            logger.error("MainInstance cannot be null.");
-            throw new CSErrorException(ErrorCode.INVALID_INSTANCE, "MainInstance backupInstance cannot be null.");
-        }
         String mainInstanceAlias = instanceAliasConverter.instanceToAlias(mainInstance.getInstance());
+        if (StringUtils.isBlank(mainInstanceAlias)) {
+            logger.error("MainInstance cannot be null.");
+            throw new CSErrorException(CSErrorCode.INVALID_INSTANCE, "MainInstance alias cannot be null.");
+        }
         String backupInstance = backupInstanceGenerator.chooseBackupInstance(mainInstanceAlias);
         if (StringUtils.isBlank(backupInstance)) {
             logger.error("Generate backupInstance cannot be null.");
-            throw new CSErrorException(ErrorCode.GENERATE_BACKUP_INSTANCE_ERROR, "Generate backupInstance cannot be null.");
+            throw new CSErrorException(CSErrorCode.GENERATE_BACKUP_INSTANCE_ERROR, "Generate backupInstance cannot be null.");
         }
         HAContextID haContextID = new CommonHAContextID(mainInstanceAlias, backupInstance, contextIDKey);
         logger.info("Generate a haContextID : {}" + new Gson().toJson(haContextID));

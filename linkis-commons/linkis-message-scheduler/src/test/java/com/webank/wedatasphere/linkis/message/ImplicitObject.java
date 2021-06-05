@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.message;
 
 import com.webank.wedatasphere.linkis.message.annotation.Implicit;
 
-/**
- * @date 2020/7/29
- */
+
 public class ImplicitObject {
 
     @Implicit

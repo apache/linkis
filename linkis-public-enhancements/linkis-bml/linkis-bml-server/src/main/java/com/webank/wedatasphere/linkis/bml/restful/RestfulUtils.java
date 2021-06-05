@@ -20,7 +20,6 @@ import com.webank.wedatasphere.linkis.bml.common.Constant;
 import com.webank.wedatasphere.linkis.bml.service.ResourceService;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 
-import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

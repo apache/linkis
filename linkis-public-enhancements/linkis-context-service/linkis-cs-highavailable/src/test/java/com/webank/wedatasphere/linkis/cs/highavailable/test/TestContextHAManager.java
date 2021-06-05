@@ -21,7 +21,7 @@ import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
 import com.webank.wedatasphere.linkis.common.conf.BDPConfiguration;
 import com.webank.wedatasphere.linkis.common.conf.Configuration;
-import com.webank.wedatasphere.linkis.common.exception.DWCException;
+import com.webank.wedatasphere.linkis.common.exception.LinkisException;
 import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.HAContextID;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
@@ -113,9 +113,9 @@ public class TestContextHAManager extends SpringBootServletInitializer {
         serviceInstance = new ServiceInstance();
         serviceInstance.setApplicationName(applicationContext.getEnvironment().getProperty("spring.application.name"));
         serviceInstance.setInstance(Utils.getComputerName() + ":" + applicationContext.getEnvironment().getProperty("server.port"));
-        DWCException.setApplicationName(serviceInstance.getApplicationName());
-        DWCException.setHostname(Utils.getComputerName());
-        DWCException.setHostPort(Integer.parseInt(applicationContext.getEnvironment().getProperty("server.port")));
+        LinkisException.setApplicationName(serviceInstance.getApplicationName());
+        LinkisException.setHostname(Utils.getComputerName());
+        LinkisException.setHostPort(Integer.parseInt(applicationContext.getEnvironment().getProperty("server.port")));
     }
 
     public static void updateRemoteConfig() {

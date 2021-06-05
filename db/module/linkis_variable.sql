@@ -1,10 +1,10 @@
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for linkis_var_key_user
+-- Table structure for linkis_ps_variable_key_user
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_var_key_user`;
-CREATE TABLE `linkis_var_key_user` (
+DROP TABLE IF EXISTS `linkis_ps_variable_key_user`;
+CREATE TABLE `linkis_ps_variable_key_user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `application_id` bigint(20) DEFAULT NULL COMMENT 'Reserved word',
   `key_id` bigint(20) DEFAULT NULL,
@@ -18,10 +18,10 @@ CREATE TABLE `linkis_var_key_user` (
 
 
 -- ----------------------------
--- Table structure for linkis_var_key
+-- Table structure for linkis_ps_variable_key
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_var_key`;
-CREATE TABLE `linkis_var_key` (
+DROP TABLE IF EXISTS `linkis_ps_variable_key`;
+CREATE TABLE `linkis_ps_variable_key` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `key` varchar(50) DEFAULT NULL COMMENT 'Key of the global variable',
   `description` varchar(200) DEFAULT NULL COMMENT 'Reserved word',

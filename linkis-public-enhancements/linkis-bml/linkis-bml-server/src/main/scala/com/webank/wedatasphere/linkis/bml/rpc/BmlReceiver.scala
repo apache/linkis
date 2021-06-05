@@ -19,6 +19,7 @@ import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
 
 import scala.concurrent.duration.Duration
 
+
 class BmlReceiver extends Receiver{
 
 

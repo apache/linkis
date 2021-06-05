@@ -20,8 +20,7 @@ import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.governance.common.entity.ExecutionNodeStatus
 import com.webank.wedatasphere.linkis.governance.common.protocol.task.{RequestTask, ResponseTaskStatus}
 import com.webank.wedatasphere.linkis.orchestrator.ecm.entity.Mark
-import com.webank.wedatasphere.linkis.scheduler.executer.{ConcurrentTaskOperateSupport, ErrorExecuteResponse, ExecutorState, SubmitResponse}
-
+import com.webank.wedatasphere.linkis.scheduler.executer.{ConcurrentTaskOperateSupport, ErrorExecuteResponse, SubmitResponse}
 
 
 class DefaultEntranceExecutor(id: Long, mark: Mark) extends EntranceExecutor(id, mark) with ConcurrentTaskOperateSupport {

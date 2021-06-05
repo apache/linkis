@@ -23,21 +23,19 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-/**
- * Created by cooperyang on 2018/10/18
- */
+
 public interface VarMapper {
 
-    List<VarKeyValueVO> listGlobalVariable(@Param("userName") String userName);
+    List<VarKeyValueVO> listGlobalVariable(@Param("userName")String userName);
 
-    VarKeyUser getValueByKeyID(@Param("keyID") Long keyID);
+    VarKeyUser getValueByKeyID(@Param("keyID")Long keyID);
 
-    void removeKey(@Param("keyID") Long keyID);
+    void removeKey(@Param("keyID")Long keyID);
 
-    void removeValue(@Param("valueID") Long valueID);
+    void removeValue(@Param("valueID")Long valueID);
 
     void insertKey(VarKey varKey);
     void insertValue(VarKeyUser varKeyUser);
-    void updateValue(@Param("valueID") Long valueID, @Param("value") String value);
+    void updateValue(@Param("valueID")Long valueID,@Param("value")String value);
 
 }

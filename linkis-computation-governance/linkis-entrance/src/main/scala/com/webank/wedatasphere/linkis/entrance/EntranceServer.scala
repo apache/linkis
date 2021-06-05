@@ -57,10 +57,10 @@ abstract class EntranceServer extends Logging {
     Utils.tryThrow(getEntranceContext.getOrCreateEntranceInterceptors().foreach(int => task = int.apply(task, logAppender))) { t =>
       val error = t match {
         case error: ErrorException => error
-        case t1:Throwable => val exception = new EntranceErrorException(20039, "解析task失败！原因：" + ExceptionUtils.getRootCauseMessage(t1))
+        case t1:Throwable => val exception = new EntranceErrorException(20039, "failed to analysis task ! the reason is :"+ExceptionUtils.getRootCauseMessage(t1)+"(解析task失败！原因：" + ExceptionUtils.getRootCauseMessage(t1))
           exception.initCause(t1)
           exception
-        case _ => new EntranceErrorException(20039, "解析task失败！原因：" + ExceptionUtils.getRootCauseMessage(t))
+        case _ => new EntranceErrorException(20039, "failed to analysis task ! the reason is :"+ExceptionUtils.getRootCauseMessage(t)+"(解析task失败！原因：" + ExceptionUtils.getRootCauseMessage(t))
       }
       task match {
         case t: RequestPersistTask =>

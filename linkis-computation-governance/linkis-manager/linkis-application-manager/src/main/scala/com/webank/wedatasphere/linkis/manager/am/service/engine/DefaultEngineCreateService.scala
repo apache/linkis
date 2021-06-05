@@ -182,7 +182,7 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
       case AvailableResource(ticketId) =>
         (ticketId, resource)
       case NotEnoughResource(reason) =>
-        throw new DWCRetryException(AMConstant.EM_ERROR_CODE, s"用户资源不足，请重试: $reason")
+        throw new DWCRetryException(AMConstant.EM_ERROR_CODE, s"Insufficient user resources please retry( 用户资源不足，请重试: $reason)")
     }
   }
 
@@ -198,7 +198,7 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     if (NodeStatus.isCompleted(engineNodeInfo.getNodeStatus)) {
       val metrics = nodeMetricManagerPersistence.getNodeMetrics(engineNodeInfo)
       val reason = getStartErrorInfo(metrics.getHeartBeatMsg)
-      throw new AMErrorException(AMConstant.EM_ERROR_CODE, s"初始化引擎失败,原因: ${reason}")
+      throw new AMErrorException(AMConstant.EM_ERROR_CODE, s" failed to init engine .reason:${reason} (初始化引擎失败,原因: ${reason})")
     }
     NodeStatus.isAvailable(engineNodeInfo.getNodeStatus)
   }

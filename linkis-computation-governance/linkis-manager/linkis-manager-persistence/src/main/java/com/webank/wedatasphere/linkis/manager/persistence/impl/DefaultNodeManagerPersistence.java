@@ -72,7 +72,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
         try {
             nodeManagerMapper.addNodeInstance(persistenceNode);
         } catch (DuplicateKeyException e) {
-            NodeInstanceDuplicateException nodeInstanceDuplicateException = new NodeInstanceDuplicateException(41001, "Node实例已存在");
+            NodeInstanceDuplicateException nodeInstanceDuplicateException = new NodeInstanceDuplicateException(41001, "the node instance is exist (Node实例已存在)");
             nodeInstanceDuplicateException.initCause(e);
             throw nodeInstanceDuplicateException;
         }
@@ -94,7 +94,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
             nodeManagerMapper.updateNodeRelation(serviceInstance.getInstance(),node.getServiceInstance().getInstance());
             nodeManagerMapper.updateNodeLabelRelation(serviceInstance.getInstance(),node.getServiceInstance().getInstance());
         } catch (Exception e) {
-            NodeInstanceNotFoundException nodeInstanceNotFoundException = new NodeInstanceNotFoundException(41002, "Node实例不存在");
+            NodeInstanceNotFoundException nodeInstanceNotFoundException = new NodeInstanceNotFoundException(41002, "the node instance is not  exist (Node实例不存在)");
             nodeInstanceNotFoundException.initCause(e);
             throw nodeInstanceNotFoundException;
         }
@@ -106,7 +106,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
         try {
             nodeManagerMapper.removeNodeInstance(instance);
         } catch (Exception e) {
-            NodeInstanceNotFoundException nodeInstanceNotFoundException = new NodeInstanceNotFoundException(41002, "Node实例不存在");
+            NodeInstanceNotFoundException nodeInstanceNotFoundException = new NodeInstanceNotFoundException(41002, "the node instance is not  exist (Node实例不存在)");
             nodeInstanceNotFoundException.initCause(e);
             throw nodeInstanceNotFoundException;
         }

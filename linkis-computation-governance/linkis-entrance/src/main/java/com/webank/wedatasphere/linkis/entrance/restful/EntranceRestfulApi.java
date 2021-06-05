@@ -144,7 +144,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         try {
             job = entranceServer.getJob(realId);
         } catch (Exception e) {
-            logger.warn("获取任务 {} 状态时出现错误", realId, e);
+            logger.warn("error occurred while getting task {} status (获取任务 {} 状态时出现错误)",realId, realId, e);
             //如果获取错误了,证明在内存中已经没有了,去jobhistory找寻一下taskID代表的任务的状态，然后返回
             long realTaskID = Long.parseLong(taskID);
             String status = JobHistoryHelper.getStatusByTaskID(realTaskID);
@@ -224,7 +224,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             return Message.messageToResponse(message);
         }
         if (job.isDefined()) {
-            logger.debug("开始获取 {} 的日志", job.get().getId());
+            logger.debug("begin to get log for {}(开始获取 {} 的日志)", job.get().getId(),job.get().getId());
             LogReader logReader = entranceServer.getEntranceContext().getOrCreateLogManager().getLogReader(realId);
             int fromLine = 0;
             int size = 100;
@@ -257,18 +257,18 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                     retLog = sb.toString();
                 }
             } catch (IllegalStateException e) {
-                logger.error("为 {} 获取日志失败 原因：{}", job.get().getId(), e.getMessage());
+                logger.error("Failed to get log information for :{}(为 {} 获取日志失败)", job.get().getId(), job.get().getId(), e.getMessage());
                 message = Message.ok();
                 message.setMethod("/api/entrance/" + id + "/log");
                 message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
             } catch (final IllegalArgumentException e) {
-                logger.error("为 {} 获取日志失败", job.get().getId());
+                logger.error("Failed to get log information for :{}(为 {} 获取日志失败)", job.get().getId(), job.get().getId());
                 message = Message.ok();
                 message.setMethod("/api/entrance/" + id + "/log");
                 message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
                 return Message.messageToResponse(message);
             } catch (final Exception e1) {
-                logger.error("为 {} 获取日志失败", job.get().getId(), e1);
+                logger.error("Failed to get log information for :{}(为 {} 获取日志失败)", job.get().getId(), job.get().getId(),e1);
                 message = Message.error("Failed to get log information(获取日志信息失败)");
                 message.setMethod("/api/entrance/" + id + "/log");
                 message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
@@ -277,7 +277,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             message = Message.ok();
             message.setMethod("/api/entrance/" + id + "/log");
             message.data("log", retLog).data("execID", id).data("fromLine", retFromLine + fromLine);
-            logger.debug("获取 {} 日志成功", job.get().getId());
+            logger.debug("success to get log for {} (获取 {} 日志成功)", job.get().getId(),job.get().getId());
         } else {
             message = Message.error("Can't find execID(不能找到execID): " + id + "Corresponding job, can not get the corresponding log(对应的job，不能获得对应的日志)");
             message.setMethod("/api/entrance/" + id + "/log");
@@ -299,7 +299,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             logger.warn("can not find a job in entranceServer, will force to kill it", e);
             //如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
             JobHistoryHelper.forceKill(taskID);
-            Message message = Message.ok("强制杀死任务");
+            Message message = Message.ok("Forced Kill task (强制杀死任务)");
             message.setMethod("/api/entrance/" + id + "/kill");
             message.setStatus(0);
             return Message.messageToResponse(message);
@@ -343,7 +343,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         Option<Job> job = entranceServer.getJob(realId);
         Message message = null;
         if (job.isEmpty()) {
-            message = Message.error("不能找到execID: " + id + "对应的job，不能进行pause");
+            message = Message.error("can not find the job of exexID :" + id +" can not to pause it (不能找到execID: " + id + "对应的job，不能进行pause)");
             message.setMethod("/api/entrance/" + id + "/pause");
             message.setStatus(1);
         } else {

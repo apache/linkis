@@ -46,7 +46,7 @@ class CSVExecutor extends PipeLineExecutor {
     destFs.init(null)
     val fileSource = FileSource.create(sourceFsPath, sourceFs)
     if (!FileSource.isTableResultSet(fileSource)) {
-      throw new PipeLineErrorException(70002, "只有table类型的结果集才能转为csv")
+      throw new PipeLineErrorException(70002, "Only result sets of type TABLE can be converted to CSV(只有table类型的结果集才能转为csv)")
     }
     var nullValue = options.getOrDefault(PIPELINE_OUTPUT_SHUFFLE_NULL_TYPE, "NULL")
     if (BLANK.equalsIgnoreCase(nullValue)) nullValue = ""

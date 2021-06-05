@@ -102,11 +102,11 @@ class HttpBmlClient extends AbstractBmlClient{
       try{
         IOUtils.copy(inputStream, outputStream)
       }catch{
-        case e:IOException => logger.error("inputStream和outputStream流copy失败", e)
-          val exception = BmlClientFailException("inputStream和outputStream流copy失败")
+        case e:IOException => logger.error("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)", e)
+          val exception = BmlClientFailException("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)")
           exception.initCause(e)
           throw e
-        case t:Throwable => logger.error("流复制失败",t)
+        case t:Throwable => logger.error("failed to copy stream (流复制失败)",t)
           throw t
       }finally{
         IOUtils.closeQuietly(inputStream)
@@ -138,11 +138,11 @@ class HttpBmlClient extends AbstractBmlClient{
       try{
         IOUtils.copy(inputStream, outputStream)
       }catch{
-        case e:IOException => logger.error("inputStream和outputStream流copy失败", e)
-          val exception = BmlClientFailException("inputStream和outputStream流copy失败")
+        case e:IOException => logger.error("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)", e)
+          val exception = BmlClientFailException("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)")
           exception.initCause(e)
           throw e
-        case t:Throwable => logger.error("流复制失败",t)
+        case t:Throwable => logger.error("failed to copy stream (流复制失败)",t)
           throw t
       }finally{
         IOUtils.closeQuietly(inputStream)

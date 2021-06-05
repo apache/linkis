@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.rpc
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.listener.{Event, EventListener, ListenerEventBus}
+import com.webank.wedatasphere.linkis.rpc.errorcode.RPCErrorConstants
 import com.webank.wedatasphere.linkis.rpc.exception.{DWCRPCRetryException, RPCInitFailedException}
 
 /**
@@ -35,7 +36,7 @@ class AsynRPCMessageBus(capacity: Int, busName: String)
 
   override protected val dropEvent: DropEvent = new DropEvent {
     override def onDropEvent(event: RPCMessageEvent): Unit = throw new DWCRPCRetryException("Asyn RPC Consumer Queue is full, please retry after some times.")
-    override def onBusStopped(event: RPCMessageEvent): Unit = throw new RPCInitFailedException(10054, "Asyn RPC Consumer Thread has stopped!")
+    override def onBusStopped(event: RPCMessageEvent): Unit = throw new RPCInitFailedException(RPCErrorConstants.RPC_INIT_ERROR, "Asyn RPC Consumer Thread has stopped!")
   }
 }
 

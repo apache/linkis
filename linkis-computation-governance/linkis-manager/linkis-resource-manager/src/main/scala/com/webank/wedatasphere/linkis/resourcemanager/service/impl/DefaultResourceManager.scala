@@ -34,6 +34,7 @@ import com.webank.wedatasphere.linkis.manager.label.service.NodeLabelService
 import com.webank.wedatasphere.linkis.manager.persistence.{NodeManagerPersistence, ResourceManagerPersistence}
 import com.webank.wedatasphere.linkis.resourcemanager._
 import com.webank.wedatasphere.linkis.resourcemanager.domain.RMLabelContainer
+import com.webank.wedatasphere.linkis.resourcemanager.errorcode.RMErrorConstants
 import com.webank.wedatasphere.linkis.resourcemanager.exception.{RMErrorException, RMWarnException}
 import com.webank.wedatasphere.linkis.resourcemanager.external.service.ExternalResourceService
 import com.webank.wedatasphere.linkis.resourcemanager.protocol.{TimeoutEMEngineRequest, TimeoutEMEngineResponse}
@@ -268,7 +269,9 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
         error(s"EngineInstanceLabel [${labelContainer.getEngineInstanceLabel}] cause NullPointerException")
         throw e
     }
-    if (lockedResource == null) throw new RMErrorException(110021, s"No locked resource found by engine ${labelContainer.getEngineInstanceLabel}")
+    if (lockedResource == null) throw new RMErrorException(RMErrorConstants.RM_ERROR, s"No " +
+      s"locked " +
+      s"resource found by engine ${labelContainer.getEngineInstanceLabel}")
     if (!lockedResource.getLockedResource.equalsTo(usedResource.getUsedResource)) throw new RMErrorException(110022, s"Locked ${lockedResource.getLockedResource}, but want to use ${usedResource.getUsedResource}")
 
     Utils.tryFinally {
@@ -310,7 +313,9 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
   override def resourceReleased(labels: util.List[Label[_]]): Unit = {
     val labelContainer = labelResourceService.enrichLabels(new RMLabelContainer(labels))
     val usedResource = labelResourceService.getLabelResource(labelContainer.getEngineInstanceLabel)
-    if(usedResource == null) throw new RMErrorException(110021, s"No used resource found by engine ${labelContainer.getEngineInstanceLabel}")
+    if(usedResource == null) throw new RMErrorException(RMErrorConstants.RM_ERROR, s"No used resource " +
+      s"found by engine " +
+      s"${labelContainer.getEngineInstanceLabel}")
 
     Utils.tryFinally {
       // lock labels
@@ -430,7 +435,9 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
   override def resourceReport(labels: util.List[Label[_]], reportResource: NodeResource): Unit = {
     val labelContainer = labelResourceService.enrichLabels(new RMLabelContainer(labels))
     val oldResource = labelResourceService.getLabelResource(labelContainer.getEngineInstanceLabel)
-    if (oldResource == null) throw new RMErrorException(110021, s"No old resource found by engine ${labelContainer.getEngineInstanceLabel}")
+    if (oldResource == null) throw new RMErrorException(RMErrorConstants.RM_ERROR, s"No old resource " +
+      s"found by engine " +
+      s"${labelContainer.getEngineInstanceLabel}")
     if(null == oldResource.getUsedResource){
       info(s"Labels:$labels resourceReport before resourceUsed, ignore")
       return

@@ -20,6 +20,7 @@ import com.webank.wedatasphere.linkis.message.builder.MessageJob;
 import com.webank.wedatasphere.linkis.message.exception.MessageWarnException;
 import com.webank.wedatasphere.linkis.message.tx.TransactionManager;
 import com.webank.wedatasphere.linkis.protocol.engine.EngineState;
+import com.webank.wedatasphere.linkis.rpc.MessageErrorConstants;
 import com.webank.wedatasphere.linkis.scheduler.executer.*;
 import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEvent;
 
@@ -77,7 +78,9 @@ public class DefaultMessageExecutor extends AbstractMessageExecutor implements E
                 return new ErrorExecuteResponse("unexpected error", t);
             }
         }
-        MessageWarnException eventNotMatchError = new MessageWarnException(10000, "event is not instance of MessageJob");
+        MessageWarnException eventNotMatchError = new MessageWarnException(MessageErrorConstants.MESSAGE_ERROR()
+                , "event is "
+                + "not instance of MessageJob");
         return new ErrorExecuteResponse("event is not instance of MessageJob", eventNotMatchError);
 
     }

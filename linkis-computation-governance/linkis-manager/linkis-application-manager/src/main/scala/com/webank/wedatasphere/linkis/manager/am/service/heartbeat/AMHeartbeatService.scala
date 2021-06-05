@@ -31,9 +31,7 @@ import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-/**
-  * @date 2020/7/18 22:59
-  */
+
 @Service
 class AMHeartbeatService extends HeartbeatService with Logging {
 

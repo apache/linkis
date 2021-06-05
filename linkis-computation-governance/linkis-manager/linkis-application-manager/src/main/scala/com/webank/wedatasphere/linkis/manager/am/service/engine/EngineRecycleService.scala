@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.exception.DWCRetryException
 import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineRecyclingRequest
 
-/**
-  * @date 2020/6/12 16:07
-  */
+
 trait EngineRecycleService {
 
   @throws[DWCRetryException]

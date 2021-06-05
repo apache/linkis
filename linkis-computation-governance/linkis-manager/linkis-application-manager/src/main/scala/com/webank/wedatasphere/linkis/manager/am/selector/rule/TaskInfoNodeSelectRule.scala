@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.manager.common.entity.node.{AMNode, Node}
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
-/**
-  * @date 2020/7/4 22:54
-  */
+
 @Component
 @Order(4)
 class TaskInfoNodeSelectRule extends NodeSelectRule with Logging {

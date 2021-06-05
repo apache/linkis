@@ -18,10 +18,7 @@ import com.webank.wedatasphere.linkis.cs.common.utils.CSCommonUtils
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.spark.SparkContext
 
-/**
-  *
-  * @date 2020/4/19 16:39
-  */
+
 object CSSparkHelper {
 
   def setContextIDInfoToSparkConf(engineExecutorContext: EngineExecutionContext, sparkContext: SparkContext): Unit = {

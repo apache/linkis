@@ -20,7 +20,11 @@ import java.util.concurrent.TimeUnit
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 
 object BmlServerConfiguration {
-  val BML_HDFS_PREFIX = CommonVars("wds.linkis.bml.hdfs.prefix", "/tmp/linkis")
+  val BML_HDFS_PREFIX = CommonVars("wds.linkis.bml.hdfs.prefix", "/apps-data")
+
+  val BML_LOCAL_PREFIX = CommonVars("wds.linkis.bml.local.prefix", "/data/dss/bml")
+
+  val BML_IS_HDFS:CommonVars[Boolean] = CommonVars[Boolean]("wds.linkis.bml.is.hdfs", true)
 
   val BML_CLEAN_EXPIRED_TIME:CommonVars[Int] = CommonVars[Int]("wds.linkis.bml.cleanExpired.time", 100)
 

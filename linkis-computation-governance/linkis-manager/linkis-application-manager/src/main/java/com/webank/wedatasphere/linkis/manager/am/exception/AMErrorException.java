@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.manager.am.exception;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 
-/**
- * @date 2020/7/6 17:26
- */
+
 public class AMErrorException extends ErrorException {
 
     public AMErrorException(int errCode, String desc) {

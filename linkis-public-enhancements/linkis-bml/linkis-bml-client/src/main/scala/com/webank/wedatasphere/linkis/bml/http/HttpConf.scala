@@ -22,18 +22,18 @@ object HttpConf {
     BmlConfiguration.URL_PREFIX.getValue.substring(0, BmlConfiguration.URL_PREFIX.getValue.length - 1)
   } else BmlConfiguration.URL_PREFIX.getValue
 
-  val uploadURL: String = urlPrefix + "/" + BmlConfiguration.UPLOAD_URL.getValue
-  val downloadURL: String = urlPrefix + "/" + BmlConfiguration.DOWNLOAD_URL.getValue
+  val uploadURL: String = urlPrefix + "/upload"
+  val downloadURL: String = urlPrefix + "/download"
   val downloadShareURL: String = urlPrefix + "/" + "downloadShareResource"
   val updateProjectUrl: String = urlPrefix + "/" + "updateProjectUsers"
-  val deleteURL: String = urlPrefix + "/" + BmlConfiguration.DELETE_URL
-  val updateVersionURL: String = urlPrefix + "/" + BmlConfiguration.UPDATE_VERSION_URL.getValue
-  val relateHdfsURL:String = gatewayInstance + urlPrefix + "/" + BmlConfiguration.RELATE_HDFS.getValue
-  val relateStorageURL:String = gatewayInstance + urlPrefix + "/" + BmlConfiguration.RELATE_STORAGE.getValue
-  val getResourcesUrl:String = gatewayInstance + urlPrefix + "/" + BmlConfiguration.GET_RESOURCES.getValue
-  val updateBasicUrl:String = gatewayInstance + urlPrefix + "/" + BmlConfiguration.UPDATE_BASIC_URL.getValue
-  val getVersionsUrl:String = gatewayInstance + urlPrefix + "/" + BmlConfiguration.GET_VERSIONS_URL.getValue
-  val getBasicUrl:String = gatewayInstance + urlPrefix + "/" + BmlConfiguration.GET_BASIC_URL.getValue
+  val deleteURL: String = urlPrefix + "/delete"
+  val updateVersionURL: String = urlPrefix + "/updateVersion"
+  val relateHdfsURL:String = gatewayInstance + urlPrefix + "/relateHdfs"
+  val relateStorageURL:String = gatewayInstance + urlPrefix + "/relateStorage"
+  val getResourcesUrl:String = gatewayInstance + urlPrefix + "/getResourceMsg"
+  val updateBasicUrl:String = gatewayInstance + urlPrefix + "/updateBasic"
+  val getVersionsUrl:String = gatewayInstance + urlPrefix + "/getVersions"
+  val getBasicUrl:String = gatewayInstance + urlPrefix + "/getBasic"
   val createProjectUrl:String = urlPrefix + "/" + "createBmlProject"
   val uploadShareResourceUrl:String = urlPrefix + "/" + "uploadShareResource"
   val updateShareResourceUrl:String = urlPrefix + "/" + "updateShareResource"

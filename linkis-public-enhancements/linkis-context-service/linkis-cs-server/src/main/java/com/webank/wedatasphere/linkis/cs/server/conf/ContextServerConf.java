@@ -17,8 +17,12 @@
 package com.webank.wedatasphere.linkis.cs.server.conf;
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars;
+import com.webank.wedatasphere.linkis.common.conf.TimeType;
 
 public class ContextServerConf {
 
     public final static String KEYWORD_SCAN_PACKAGE = CommonVars.apply("wds.linkis.cs.keyword.scan.package","com.webank.wedatasphere.linkis.cs").getValue();
+
+    public final static int CS_SCHEDULER_MAX_RUNNING_JOBS = CommonVars.apply("wds.linkis.cs.running.jobs.max",100).getValue();
+    public final static long CS_SCHEDULER_MAX_ASK_EXECUTOR_TIMES = CommonVars.apply("wds.linkis.cs.ask.executor.times.max",new TimeType("1s")).getValue().toLong();
 }

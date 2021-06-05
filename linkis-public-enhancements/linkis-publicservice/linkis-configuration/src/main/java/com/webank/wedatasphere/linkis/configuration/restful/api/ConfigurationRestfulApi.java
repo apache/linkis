@@ -16,21 +16,22 @@
 
 package com.webank.wedatasphere.linkis.configuration.restful.api;
 
-import com.webank.wedatasphere.linkis.configuration.entity.CategoryLabelVo;
-import com.webank.wedatasphere.linkis.configuration.entity.ConfigKey;
-import com.webank.wedatasphere.linkis.configuration.entity.ConfigKeyValue;
-import com.webank.wedatasphere.linkis.configuration.entity.ConfigTree;
+import com.netflix.discovery.converters.Auto;
+import com.webank.wedatasphere.linkis.configuration.entity.*;
 import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationException;
+import com.webank.wedatasphere.linkis.configuration.service.CategoryService;
 import com.webank.wedatasphere.linkis.configuration.service.ConfigurationService;
 import com.webank.wedatasphere.linkis.configuration.util.ConfigurationConfiguration;
 import com.webank.wedatasphere.linkis.configuration.util.LabelEntityParser;
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.UserCreatorLabel;
+import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils;
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json4s.jackson.Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -51,7 +52,10 @@ import java.util.List;
 public class ConfigurationRestfulApi {
 
     @Autowired
-    ConfigurationService configurationService;
+    private ConfigurationService configurationService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -154,27 +158,103 @@ public class ConfigurationRestfulApi {
     @Path("/getCategory")
     public Response getCategory(@Context HttpServletRequest req){
         String username = SecurityFilter.getLoginUsername(req);
-        List<CategoryLabelVo> categoryLabelList = configurationService.getCategory();
+        List<CategoryLabelVo> categoryLabelList = categoryService.getAllCategory();
         return Message.messageToResponse(Message.ok().data("Category", categoryLabelList));
     }
 
-    /*TODO add restfule interface about createCategory and deleteCategory*/
+    @POST
+    @Path("/createFirstCategory")
+    public Response createFirstCategory(@Context HttpServletRequest request, JsonNode jsonNode) throws ConfigurationException {
+        String username = SecurityFilter.getLoginUsername(request);
+        String categoryName = jsonNode.get("categoryName").asText();
+        String description = jsonNode.get("description").asText();
+        if(StringUtils.isEmpty(categoryName) || categoryName.equals("null")){
+            throw new ConfigurationException("categoryName is null, cannot be added");
+        }
+        categoryService.createFirstCategory(categoryName, description);
+        return Message.messageToResponse(Message.ok());
+    }
+
+    @POST
+    @Path("/deleteCategory")
+    public Response deleteCategory(@Context HttpServletRequest request, JsonNode jsonNode){
+        String username = SecurityFilter.getLoginUsername(request);
+        Integer categoryId = jsonNode.get("categoryId").asInt();
+        categoryService.deleteCategory(categoryId);
+        return Message.messageToResponse(Message.ok());
+    }
+
+
+    @POST
+    @Path("/createSecondCategory")
+    public Response createSecondCategory(@Context HttpServletRequest request, JsonNode jsonNode) throws ConfigurationException {
+        String username = SecurityFilter.getLoginUsername(request);
+        Integer categoryId = jsonNode.get("categoryId").asInt();
+        String engineType = jsonNode.get("engineType").asText();
+        String version = jsonNode.get("version").asText();
+        String description = jsonNode.get("description").asText();
+        if(StringUtils.isEmpty(categoryId) || categoryId <= 0){
+            throw new ConfigurationException("creator is null, cannot be added");
+        }
+        if(StringUtils.isEmpty(engineType) || engineType.toLowerCase().equals("null")){
+            throw new ConfigurationException("engine type is null, cannot be added");
+        }
+        if(StringUtils.isEmpty(version) || version.toLowerCase().equals("null")){
+            version = LabelUtils.COMMON_VALUE;
+        }
+        categoryService.createSecondCategory(categoryId, engineType, version, description);
+        return Message.messageToResponse(Message.ok());
+    }
+
 
     @POST
     @Path("/saveFullTree")
     public Response saveFullTree(@Context HttpServletRequest req, JsonNode json) throws IOException {
         List fullTrees = mapper.readValue(json.get("fullTree"), List.class);
+        String creator = json.get("creator").asText();
+        if(creator != null && (creator.equals("通用设置") || creator.equals("全局设置"))){
+            creator = "*";
+        }
         String username = SecurityFilter.getLoginUsername(req);
+        ArrayList<ConfigValue> createList = new ArrayList<>();
+        ArrayList<ConfigValue> updateList = new ArrayList<>();
         for (Object o : fullTrees) {
             String s = BDPJettyServerHelper.gson().toJson(o);
             ConfigTree fullTree = BDPJettyServerHelper.gson().fromJson(s, ConfigTree.class);
             List<ConfigKeyValue> settings = fullTree.getSettings();
+            Integer userLabelId = configurationService.checkAndCreateUserLabel(settings, username, creator);
             for (ConfigKeyValue setting : settings) {
-                configurationService.updateUserValue(setting);
+                configurationService.updateUserValue(setting, userLabelId, createList, updateList);
             }
         }
+        configurationService.updateUserValue(createList, updateList);
         Message message = Message.ok();
         return Message.messageToResponse(message);
+    }
+
+    @GET
+    @Path("/engineType")
+    public Response listAllEngineType(@Context HttpServletRequest request){
+        String[] engineType = configurationService.listAllEngineType();
+        return Message.messageToResponse(Message.ok().data("engineType",engineType));
+    }
+
+    @POST
+    @Path("/updateCategoryInfo")
+    public Response updateCategoryInfo(@Context HttpServletRequest request, JsonNode jsonNode) throws ConfigurationException {
+        String username = SecurityFilter.getLoginUsername(request);
+        String description = null;
+        Integer categoryId = null;
+        try {
+            description = jsonNode.get("description").asText();
+            categoryId = jsonNode.get("categoryId").asInt();
+        }catch (Exception e){
+            throw new ConfigurationException("请求参数不完整，请重新确认");
+        }
+        if(description != null){
+            categoryService.updateCategory(categoryId, description);
+        }
+        return Message.messageToResponse(Message.ok());
     }
 
     @GET

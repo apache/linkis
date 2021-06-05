@@ -28,7 +28,6 @@ import com.webank.wedatasphere.linkis.server.Message
 import com.webank.wedatasphere.linkis.server.exception.NoApplicationExistsException
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
-import scala.collection.JavaConversions._
 
 trait GatewayRouter {
 

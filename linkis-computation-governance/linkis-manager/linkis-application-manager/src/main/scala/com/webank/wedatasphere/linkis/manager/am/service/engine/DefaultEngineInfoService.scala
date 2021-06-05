@@ -17,14 +17,14 @@
 package com.webank.wedatasphere.linkis.manager.am.service.engine
 
 
+import java.util
+
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.governance.common.entity.NodeExistStatus
 import com.webank.wedatasphere.linkis.governance.common.protocol.engineconn.{RequestEngineStatusBatch, ResponseEngineStatusBatch}
 import com.webank.wedatasphere.linkis.governance.common.utils.GovernanceConstant
 import com.webank.wedatasphere.linkis.manager.am.manager.{EMNodeManager, EngineNodeManager}
-import com.webank.wedatasphere.linkis.manager.am.utils.AMUtils
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
 import com.webank.wedatasphere.linkis.manager.common.entity.node.{EMNode, EngineNode}
 import com.webank.wedatasphere.linkis.manager.label.service.NodeLabelService
 import com.webank.wedatasphere.linkis.message.annotation.Receiver
@@ -34,7 +34,6 @@ import org.springframework.stereotype.Service
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters.asScalaBufferConverter
-import java.util
 
 /**
  *

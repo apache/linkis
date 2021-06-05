@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2019 WeBank
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.webank.wedatasphere.linkis.bml.dao.TaskDao">
 
@@ -25,26 +40,26 @@
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
             parameterType="com.webank.wedatasphere.linkis.bml.Entity.ResourceTask">
-        INSERT INTO linkis_resources_task(<include refid="resource_task_columns"/>)
+        INSERT INTO linkis_ps_bml_resources_task(<include refid="resource_task_columns"/>)
         VALUES (#{resourceId}, #{version}, #{operation}, #{state}, #{submitUser}, #{system}, #{instance},
         #{clientIp}, #{errMsg}, #{startTime}, #{endTime}, #{lastUpdateTime}, #{extraParams})
     </insert>
 
     <update id="updateState">
-        UPDATE linkis_resources_task SET
+        UPDATE linkis_ps_bml_resources_task SET
           state = #{state} , end_time = #{updateTime}, last_update_time = #{updateTime}
         WHERE id = #{taskId}
     </update>
 
     <update id="updateState2Failed">
-        UPDATE linkis_resources_task SET
+        UPDATE linkis_ps_bml_resources_task SET
           state = #{state} , end_time = #{updateTime}, last_update_time = #{updateTime}, err_msg = #{errMsg}
         WHERE id = #{taskId}
     </update>
 
     <select id="getNewestVersion" parameterType="java.lang.String" resultType="java.lang.String">
         SELECT max(version)
-        FROM linkis_resources_task
+        FROM linkis_ps_bml_resources_task
         WHERE resource_id = #{resourceId}
     </select>
 </mapper>

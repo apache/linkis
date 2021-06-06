@@ -47,11 +47,9 @@ object ServerConfiguration extends Logging{
   }
   def getUsernameByTicket(ticketId: Any): Option[String] = if(ticketId == null) None else getUsernameByTicket(ticketId.toString)
   def getTicketByUsername(userName: String): String = {
-    //add by cooperyang 数据操作间xx用户要被代理成 xx_c
     if ("true".equals(ModuleConfiguration.DATA_OPERATE.getValue)){
       val username = userName.split(",")(0)
       val time = userName.split(",")(1)
-      logger.info(s"$username 在数据操作间中被代理成 ${username}_c")
       DESUtil.encrypt(ticketHeader + username + "_c" + "," + time, ServerConfiguration.cryptKey)
     } else{
       DESUtil.encrypt(ticketHeader + userName, ServerConfiguration.cryptKey)

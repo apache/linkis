@@ -20,6 +20,7 @@ import com.webank.wedatasphere.linkis.bml.common.Constant;
 import com.webank.wedatasphere.linkis.bml.service.ResourceService;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -32,7 +33,7 @@ public class RestfulUtils {
     private static final Long DAY = 24 * HOUR;
     private static final Long MONTH = 30 * DAY;
     private static final Long YEAR = 365 * DAY;
-    private static final String DATE = "date";
+
 
     public static String getUserName(HttpServletRequest request)throws BmlAuthorityException{
         String user;
@@ -64,7 +65,7 @@ public class RestfulUtils {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constant.TIME_FORMAT);
         String retTime = null;
 
-        if (DATE.equals(expireType)){
+        if ("date".equals(expireType)){
             return expireTime;
         }else{
             int num = Integer.parseInt(expireTime.substring(0, expireTime.length() - 1));

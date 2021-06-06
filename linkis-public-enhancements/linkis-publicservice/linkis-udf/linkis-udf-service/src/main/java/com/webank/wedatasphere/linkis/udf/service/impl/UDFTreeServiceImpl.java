@@ -37,6 +37,8 @@ public class UDFTreeServiceImpl implements UDFTreeService {
 
     private static final Logger logger = Logger.getLogger(UDFTreeServiceImpl.class);
 
+    private static final int THREE = 3;
+
     @Autowired
     private UDFTreeDao udfTreeDao;
 
@@ -68,7 +70,7 @@ public class UDFTreeServiceImpl implements UDFTreeService {
     @Override
     public UDFTree initTree(String userName, String category) throws UDFException {
         List<UDFTree>  childrens = new ArrayList<>();
-        if(firstFloor.get(category) == null || firstFloor.get(category).size() != 3){
+        if(firstFloor.get(category) == null || firstFloor.get(category).size() != THREE){
 
             List<UDFTree> root = new ArrayList<>();
             //sys
@@ -81,7 +83,7 @@ public class UDFTreeServiceImpl implements UDFTreeService {
             firstFloor.put(category, root);
 
         }
-        for(int i = 0 ; i < 3; i++){
+        for(int i = 0; i < THREE; i++){
             childrens.add(firstFloor.get(category).get(i));
         }
         childrens.add(getFirstFloor(userName, category));

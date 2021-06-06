@@ -46,6 +46,9 @@ public class MethodInterceptorImpl implements MethodInterceptor {
     private Object object;
     private final Map<Integer, String> contextIDCacheMap = new HashMap<Integer, String>();
 
+    private static final String CONTEXTID = "contextid";
+    private static final String GETCONTEXTID = "getcontextid";
+
     public MethodInterceptorImpl(AbstractContextHAManager contextHAManager, Object object) {
         this.contextHAManager = contextHAManager;
         this.object = object;
@@ -69,7 +72,7 @@ public class MethodInterceptorImpl implements MethodInterceptor {
         }
 
         // ③方法名含有ContextID，并且有String类型参数，取第一个转换
-        if (method.getName().toLowerCase().contains("contextid")) {
+        if (method.getName().toLowerCase().contains(CONTEXTID)) {
             for (int j = 0; j < args.length; j++) {
                 if (String.class.isInstance(args[j])) {
                     String pStr = (String)args[j];
@@ -172,7 +175,7 @@ public class MethodInterceptorImpl implements MethodInterceptor {
 
     private void convertGetContextIDBeforeInvoke(Object object) throws CSErrorException {
         for (Method innerMethod : object.getClass().getMethods()) {
-            if (innerMethod.getName().toLowerCase().contains("getcontextid")) {
+            if (innerMethod.getName().toLowerCase().contains(GETCONTEXTID)) {
                 try {
                     Object result = innerMethod.invoke(object);
                     if (null != object && ContextID.class.isInstance(result)) {
@@ -194,7 +197,7 @@ public class MethodInterceptorImpl implements MethodInterceptor {
     }
 
     private void convertGetContextIDAfterInvokeMethod(Method method) throws CSErrorException {
-        if (method.getName().toLowerCase().contains("getcontextid")) {
+        if (method.getName().toLowerCase().contains(GETCONTEXTID)) {
             Object result = null;
             try {
                 result = method.invoke(object);

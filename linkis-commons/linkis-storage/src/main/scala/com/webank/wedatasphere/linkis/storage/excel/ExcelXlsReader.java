@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.storage.excel;
 
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import org.apache.poi.hssf.eventusermodel.EventWorkbookBuilder.SheetRecordCollectingListener;
 import org.apache.poi.hssf.eventusermodel.*;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.LastCellOfRowDummyRecord;
@@ -24,6 +25,8 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.AbstractFunction1;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -265,14 +268,18 @@ public class ExcelXlsReader implements HSSFListener {
     }
 
     public void close() {
-        try {
+        Utils.tryCatch(Utils.JFunction0(()->{
             if (fs != null)
                 fs.close();
             if (inputStream != null)
                 inputStream.close();
-        } catch (Exception e) {
-
-        }
+            return null;
+        }), new AbstractFunction1<Throwable, Object>() {
+            @Override
+            public Object apply(Throwable v1) {
+                return null;
+            }
+        });
     }
 
     public static void main(String[] args) {
@@ -346,24 +353,32 @@ class RowToCsvDeal implements IExcelRowDeal {
         this.outputStream = outputStream;
     }
 
+    @Override
     public void dealRow(BoundSheetRecord[] orderedBSRs, int sheetIndex, int curRow, List<String> rowlist) {
         String sheetName = orderedBSRs[sheetIndex].getSheetname();
         if (sheetNames == null || sheetNames.isEmpty() || sheetNames.contains(sheetName)) {
             if (! (curRow == 0 && hasHeader)) {
-                try {
-                    if(fisrtRow){
+                RuntimeException runtimeException = Utils.tryCatch(Utils.JFunction0(() -> {
+                    if (fisrtRow) {
                         fisrtRow = false;
-                    } else{
+                    } else {
                         outputStream.write("\n".getBytes());
                     }
                     int len = rowlist.size();
-                    for (int i =  0; i < len; i ++) {
+                    for (int i = 0; i < len; i++) {
                         outputStream.write(rowlist.get(i).replaceAll("\n|\t", " ").getBytes("utf-8"));
-                        if(i < len -1)
+                        if (i < len - 1)
                             outputStream.write("\t".getBytes());
                     }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    return null;
+                }), new AbstractFunction1<Throwable, RuntimeException>() {
+                    @Override
+                    public RuntimeException apply(Throwable v1) {
+                        return new RuntimeException(v1);
+                    }
+                });
+                if(runtimeException != null){
+                    throw runtimeException;
                 }
             }
         }

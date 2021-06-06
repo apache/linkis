@@ -17,6 +17,7 @@
 package com.webank.wedatasphere.linkis.manager.persistence.impl;
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.manager.common.entity.node.AMEMNode;
 import com.webank.wedatasphere.linkis.manager.common.entity.node.AMEngineNode;
 import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode;
@@ -30,6 +31,7 @@ import com.webank.wedatasphere.linkis.manager.exception.NodeInstanceNotFoundExce
 import com.webank.wedatasphere.linkis.manager.exception.PersistenceErrorException;
 import com.webank.wedatasphere.linkis.manager.persistence.NodeManagerPersistence;
 import org.springframework.dao.DuplicateKeyException;
+import scala.runtime.AbstractFunction0;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -69,13 +71,17 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
         persistenceNode.setCreator(node.getOwner());
         persistenceNode.setUpdator(node.getOwner());
 
-        try {
-            nodeManagerMapper.addNodeInstance(persistenceNode);
-        } catch (DuplicateKeyException e) {
+        Utils.tryCatch(new AbstractFunction0<Object>() {
+            @Override
+            public Object apply() {
+                nodeManagerMapper.addNodeInstance(persistenceNode);
+                return null;
+            }
+        },Utils.JFunction1(v1->{
             NodeInstanceDuplicateException nodeInstanceDuplicateException = new NodeInstanceDuplicateException(41001, "Node实例已存在");
-            nodeInstanceDuplicateException.initCause(e);
+            nodeInstanceDuplicateException.initCause(v1);
             throw nodeInstanceDuplicateException;
-        }
+        }));
 
     }
 
@@ -89,27 +95,35 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
         persistenceNode.setUpdateTime(new Date());
         persistenceNode.setCreator(node.getOwner());//rm中插入记录的时候并未给出creator，所以需要set这个值
         persistenceNode.setUpdator(node.getOwner());
-        try {
-            nodeManagerMapper.updateNodeInstance(serviceInstance.getInstance(), persistenceNode);
-            nodeManagerMapper.updateNodeRelation(serviceInstance.getInstance(),node.getServiceInstance().getInstance());
-            nodeManagerMapper.updateNodeLabelRelation(serviceInstance.getInstance(),node.getServiceInstance().getInstance());
-        } catch (Exception e) {
+        Utils.tryCatch(new AbstractFunction0<Object>() {
+            @Override
+            public Object apply() {
+                nodeManagerMapper.updateNodeInstance(serviceInstance.getInstance(), persistenceNode);
+                nodeManagerMapper.updateNodeRelation(serviceInstance.getInstance(),node.getServiceInstance().getInstance());
+                nodeManagerMapper.updateNodeLabelRelation(serviceInstance.getInstance(),node.getServiceInstance().getInstance());
+                return null;
+            }
+        },Utils.JFunction1(v1->{
             NodeInstanceNotFoundException nodeInstanceNotFoundException = new NodeInstanceNotFoundException(41002, "Node实例不存在");
-            nodeInstanceNotFoundException.initCause(e);
+            nodeInstanceNotFoundException.initCause(v1);
             throw nodeInstanceNotFoundException;
-        }
+        }));
     }
 
     @Override
     public void removeNodeInstance(Node node) throws PersistenceErrorException {
         String instance = node.getServiceInstance().getInstance();
-        try {
-            nodeManagerMapper.removeNodeInstance(instance);
-        } catch (Exception e) {
+        Utils.tryCatch(new AbstractFunction0<Object>() {
+            @Override
+            public Object apply() {
+                nodeManagerMapper.removeNodeInstance(instance);
+                return null;
+            }
+        },Utils.JFunction1(v1->{
             NodeInstanceNotFoundException nodeInstanceNotFoundException = new NodeInstanceNotFoundException(41002, "Node实例不存在");
-            nodeInstanceNotFoundException.initCause(e);
+            nodeInstanceNotFoundException.initCause(v1);
             throw nodeInstanceNotFoundException;
-        }
+        }));
 
     }
 

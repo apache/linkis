@@ -15,8 +15,11 @@
  */
 package com.webank.wedatasphere.linkis.bml.util;
 
+import com.webank.wedatasphere.linkis.common.utils.Utils$;
+import org.apache.hadoop.record.meta.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.runtime.AbstractFunction1;
 
 import java.security.MessageDigest;
 
@@ -27,7 +30,7 @@ public class MD5Utils {
     private static final Logger logger = LoggerFactory.getLogger(MD5Utils.class);
 
     public static String getMD5(String s) {
-        try {
+       return Utils$.MODULE$.tryCatch(Utils$.MODULE$.JFunction0(() -> {
             byte[] btInput = s.getBytes("utf-8");
             MessageDigest mdInst = MessageDigest.getInstance("MD5");
             mdInst.update(btInput);
@@ -41,14 +44,18 @@ public class MD5Utils {
                 str[k++] = HEX_DIGITS[byte0 & 0xf];
             }
             return new String(str);
-        } catch (Exception e) {
-            logger.error("create MD5 for failed, reason:", e);
-            return null;
-        }
+        }), new AbstractFunction1<Throwable, String>() {
+            @Override
+            public String apply(Throwable v1) {
+                logger.error("create MD5 for failed, reason:", v1);
+                return null;
+            }
+        });
+
     }
 
     public static String getMD5(byte[] btInput) {
-        try {
+        return Utils$.MODULE$.tryCatch(Utils$.MODULE$.JFunction0(() -> {
             MessageDigest mdInst = MessageDigest.getInstance("MD5");
             mdInst.update(btInput);
             byte[] md = mdInst.digest();
@@ -61,10 +68,14 @@ public class MD5Utils {
                 str[k++] = HEX_DIGITS[byte0 & 0xf];
             }
             return new String(str);
-        } catch (Exception e) {
-            logger.error("create MD5 for failed, reason:", e);
-            return null;
-        }
+        }),new AbstractFunction1<Throwable, String>() {
+
+            @Override
+            public String apply(Throwable v1) {
+                logger.error("create MD5 for failed, reason:", v1);
+                return null;
+            }
+        });
     }
 
 

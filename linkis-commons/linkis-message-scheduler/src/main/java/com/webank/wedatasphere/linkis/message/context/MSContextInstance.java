@@ -16,9 +16,12 @@
 
 package com.webank.wedatasphere.linkis.message.context;
 
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.message.utils.MessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.AbstractFunction1;
 
 /**
  * @date 2020/9/17
@@ -33,16 +36,25 @@ public class MSContextInstance {
         if (context == null) {
             synchronized (MSContextInstance.class) {
                 if (context != null) {
-                    try {
-                        MessageSchedulerContext bean = MessageUtils.getBean(MessageSchedulerContext.class);
-                        if (bean != null)
+
+                    context = Utils.tryCatch(new AbstractFunction0<MessageSchedulerContext>() {
+                       @Override
+                       public MessageSchedulerContext apply() {
+                           MessageSchedulerContext bean = MessageUtils.getBean(MessageSchedulerContext.class);
+                           if (bean != null)
                             context = bean;
-                        else
+                           else
                             context = new DefaultMessageSchedulerContext();
-                    } catch (Throwable e) {
-                        LOGGER.warn("can not load message context from ioc container");
-                        context = new DefaultMessageSchedulerContext();
-                    }
+                           return context;
+                       }
+                   }, new AbstractFunction1<Throwable, MessageSchedulerContext>() {
+                       @Override
+                       public MessageSchedulerContext apply(Throwable v1) {
+                           LOGGER.warn("can not load message context from ioc container");
+                           context = new DefaultMessageSchedulerContext();
+                           return context;
+                       }
+                   });
                 }
 
             }

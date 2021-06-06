@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.manager.label.builder.factory;
 
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.manager.label.builder.LabelBuilder;
 import com.webank.wedatasphere.linkis.manager.label.conf.LabelCommonConfig;
 import com.webank.wedatasphere.linkis.manager.label.entity.Label;
@@ -45,11 +46,12 @@ public class LabelBuilderFactoryContext {
                 if (labelBuilderFactory == null) {
                     String className = LabelCommonConfig.LABEL_FACTORY_CLASS.acquireNew();
                     if (clazz == StdLabelBuilderFactory.class && StringUtils.isNotBlank(className)) {
-                        try {
+                        Utils.tryCatch(Utils.JFunction0(()->{
                             clazz = ClassUtils.getClass(className);
-                        } catch (ClassNotFoundException e) {
+                            return null;
+                        }),Utils.JFunction1(e->{
                             throw new RuntimeException("find class + " + className + " failed!", e);
-                        }
+                        }));
                     }
                     try {
                         labelBuilderFactory = clazz.newInstance();

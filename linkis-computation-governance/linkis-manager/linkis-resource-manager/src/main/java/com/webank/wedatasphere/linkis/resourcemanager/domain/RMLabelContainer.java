@@ -17,6 +17,7 @@
 package com.webank.wedatasphere.linkis.resourcemanager.domain;
 
 import com.google.common.collect.Lists;
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf;
 import com.webank.wedatasphere.linkis.manager.label.builder.CombinedLabelBuilder;
 import com.webank.wedatasphere.linkis.manager.label.entity.CombinedLabel;
@@ -48,14 +49,16 @@ public class RMLabelContainer {
     public RMLabelContainer(List<Label> labels) {
         this.labels = labels;
         this.lockedLabels = Lists.newArrayList();
-        try{
+        Utils.tryCatch(Utils.JFunction0(()->{
             if(getUserCreatorLabel() != null && getEngineTypeLabel() != null){
                 this.combinedUserCreatorEngineTypeLabel = (CombinedLabel) combinedLabelBuilder.build("", Lists.newArrayList(getUserCreatorLabel(), getEngineTypeLabel()));
                 labels.add(combinedUserCreatorEngineTypeLabel);
             }
-        }catch (Exception e){
+            return null;
+        }),Utils.JFunction1(e->{
             logger.warn("failed to get combinedUserCreatorEngineTypeLabel", e);
-        }
+            return null;
+        }));
 
     }
 

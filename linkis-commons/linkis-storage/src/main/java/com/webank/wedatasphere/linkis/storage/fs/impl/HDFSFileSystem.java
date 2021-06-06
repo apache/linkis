@@ -14,6 +14,7 @@
 package com.webank.wedatasphere.linkis.storage.fs.impl;
 
 import com.webank.wedatasphere.linkis.common.io.FsPath;
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils;
 import com.webank.wedatasphere.linkis.storage.domain.FsPathListWithError;
 import com.webank.wedatasphere.linkis.storage.fs.FileSystem;
@@ -38,6 +39,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 
 public class HDFSFileSystem extends FileSystem {
@@ -310,16 +312,19 @@ public class HDFSFileSystem extends FileSystem {
         fsPath.setOwner(fileStatus.getOwner());
         fsPath.setGroup(fileStatus.getGroup());
         fsPath.setIsdir(fileStatus.isDirectory());
-        try {
+        Utils.tryCatch(Utils.JFunction0(()->{
             if (fsPath.isdir()) {
                 fsPath.setLength(fs.getContentSummary(fileStatus.getPath()).getLength());
             } else {
                 fsPath.setLength(fileStatus.getLen());
             }
             fsPath.setPermissionString(fileStatus.getPermission().toString());
-        } catch (Throwable e) {
+            return fsPath;
+        }),Utils.JFunction1(e->{
             logger.error("Failed to fill storage file：" + fileStatus.getPath(), e);
-        }
+            return null;
+        }));
+
         return fsPath;
     }
 
@@ -333,15 +338,16 @@ public class HDFSFileSystem extends FileSystem {
         FsPermission permission = f.getPermission();
         UserGroupInformation ugi = HDFSUtils.getUserGroupInformation(user);
         String[] groupNames;
-        try {
-            groupNames = ugi.getGroupNames();
-        } catch (NullPointerException e) {
+        groupNames = Utils.tryCatch(Utils.JFunction0(()->{
+            return ugi.getGroupNames();
+        }),Utils.JFunction1(e->{
             if ((Boolean) com.webank.wedatasphere.linkis.common.conf.Configuration.IS_TEST_MODE().getValue()) {
-                groupNames = new String[]{"hadoop"};
+                return new String[]{"hadoop"};
             } else {
                 throw e;
             }
-        }
+        }));
+
         if (user.equals(f.getOwner()) || user.equals(rootUserName())) {
             if (permission.getUserAction().implies(access)) {
                 return true;
@@ -367,7 +373,7 @@ public class HDFSFileSystem extends FileSystem {
     }
 
     private String checkHDFSPath(String path) {
-        try {
+        return Utils.tryCatch(Utils.JFunction0(()->{
             boolean checkHdfsPath = (boolean) StorageConfiguration.HDFS_PATH_PREFIX_CHECK_ON().getValue();
             if (checkHdfsPath) {
                 boolean rmHdfsPrefix = (boolean) StorageConfiguration.HDFS_PATH_PREFIX_REMOVE().getValue();
@@ -398,9 +404,10 @@ public class HDFSFileSystem extends FileSystem {
                     }
                 }
             }
-        } catch (Exception e) {
+            return null;
+        }),Utils.JFunction1(e->{
             logger.error("checkHDFSPath error. msg : " + e.getMessage() + " ", e);
-        }
-        return path;
+            return null;
+        }));
     }
 }

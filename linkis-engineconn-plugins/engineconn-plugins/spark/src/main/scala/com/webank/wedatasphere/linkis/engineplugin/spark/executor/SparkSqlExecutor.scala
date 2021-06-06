@@ -57,14 +57,13 @@ class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long) extends
         SparkConfiguration.SQL_EXTENSION_TIMEOUT.getValue, sqlStartTime)))
       SQLSession.showDF(sparkEngineSession.sparkContext, jobGroup, df, null, SparkConfiguration.SHOW_DF_MAX_RES.getValue, engineExecutionContext)
       SuccessExecuteResponse()
-    } catch {
+    }catch {
       case e: InvocationTargetException =>
         var cause = ExceptionUtils.getCause(e)
         if (cause == null) cause = e
         //error("execute sparkSQL failed!", cause)
         ErrorExecuteResponse(ExceptionUtils.getRootCauseMessage(e), cause)
       case ite: Exception =>
-        // error("execute sparkSQL failed!", ite)
         ErrorExecuteResponse(ExceptionUtils.getRootCauseMessage(ite), ite)
     }
   }

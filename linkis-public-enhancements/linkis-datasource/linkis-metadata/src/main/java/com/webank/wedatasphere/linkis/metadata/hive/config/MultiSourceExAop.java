@@ -15,6 +15,8 @@
  */
 package com.webank.wedatasphere.linkis.metadata.hive.config;
 
+
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
@@ -25,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.BoxedUnit;
 
 import java.lang.reflect.Method;
 
@@ -61,12 +65,14 @@ public class MultiSourceExAop implements Ordered {
             DataSourceContextHolder.setDataSourceType(DSEnum.FIRST_DATA_SOURCE);
             log.debug("设置数据源为：hiveDataSource");
         }
-        try {
-            return point.proceed();
-        } finally {
-            log.debug("清空数据源信息！");
-            DataSourceContextHolder.clearDataSourceType();
-        }
+        return Utils.tryFinally(Utils.JFunction0(point::proceed), new AbstractFunction0<BoxedUnit>() {
+            @Override
+            public BoxedUnit apply() {
+                log.debug("清空数据源信息！");
+                DataSourceContextHolder.clearDataSourceType();
+                return null;
+            }
+        });
     }
 
     @Override

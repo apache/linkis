@@ -17,6 +17,8 @@
 package com.webank.wedatasphere.linkis.manager.label.entity;
 
 
+import com.webank.wedatasphere.linkis.common.utils.Utils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,12 +33,8 @@ public class GenericLabel extends InheritableLabel<Map<String, String>> {
         Feature feature = super.getFeature();
         if (null == feature) {
             //Get feature from label value;
-            try {
-                return Feature.valueOf(super.getValue()
-                        .getOrDefault(getFeatureKey(), Feature.OPTIONAL.name()));
-            } catch (IllegalArgumentException e) {
-                //Ignore
-            }
+            return Utils.tryCatch(Utils.JFunction0(()-> Feature.valueOf(super.getValue()
+                    .getOrDefault(getFeatureKey(), Feature.OPTIONAL.name()))),Utils.JFunction1(e-> null));
         }
         return feature;
     }

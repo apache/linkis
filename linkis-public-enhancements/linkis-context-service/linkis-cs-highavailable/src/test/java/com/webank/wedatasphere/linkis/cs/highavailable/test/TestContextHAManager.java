@@ -54,6 +54,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.AbstractFunction1;
 
 import javax.servlet.DispatcherType;
 import java.util.EnumSet;
@@ -95,17 +97,22 @@ public class TestContextHAManager extends SpringBootServletInitializer {
         }
         applicationContext = application.run(args);
 
-        try {
-//            Thread.sleep(3000l);
+        Utils.tryCatch(Utils.JFunction0(()->{
+            //            Thread.sleep(3000l);
             AbstractContextHAManager haManager = (AbstractContextHAManager) applicationContext.getBean(AbstractContextHAManager.class);
             if (null == haManager) {
                 System.err.println("Null haManager!");
-                return ;
+                return null;
             }
             testHAManager(haManager);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            return null;
+        }), new AbstractFunction1<Throwable, Object>() {
+            @Override
+            public Object apply(Throwable v1) {
+                v1.printStackTrace();
+                return null;
+            }
+        });
 
     }
 
@@ -184,14 +191,20 @@ public class TestContextHAManager extends SpringBootServletInitializer {
     private static void testHAManager(AbstractContextHAManager contextHAManager) {
         // 1 test create
         TestHAID haid = new TestHAID();
-        try {
+
+        Utils.tryCatch(Utils.JFunction0(() -> {
             TestPersistence testPersistence = contextHAManager.getContextHAProxy(new TestPersistence());
-            HAContextID  haContextID = testPersistence.createHAID(haid);
+            HAContextID haContextID = testPersistence.createHAID(haid);
             testPersistence.passHAID(haContextID);
             testPersistence.setContextId(haContextID.getContextId());
-        } catch (CSErrorException e) {
-            e.printStackTrace();
-        }
+            return null;
+        }), new AbstractFunction1<Throwable, Object>() {
+            @Override
+            public Object apply(Throwable v1) {
+                v1.printStackTrace();
+                return null;
+            }
+        });
         System.out.println("Test HaManager End.");
     }
 

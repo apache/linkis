@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.instance.label.async;
 
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,16 +99,18 @@ public class GenericAsyncConsumerQueue<T> implements AsyncConsumerQueue<T>{
                             consumeLock.unlock();
                         }
                     }
-                    try {
+                    Utils.tryCatch(Utils.JFunction0(()->{
                         List<T> elementsWaitForDeal = new ArrayList<>();
                         //Do not block
                         innerQueue.drainTo(elementsWaitForDeal, innerQueue.size());
                         if (!elementsWaitForDeal.isEmpty()) {
                             consumer.accept(elementsWaitForDeal);
                         }
-                    }catch(Throwable e){
+                        return null;
+                    }),Utils.JFunction1(e->{
                         LOG.error("Exception in consuming queue, message: [" + e.getMessage() +"]", e);
-                    }
+                        return  null;
+                    }));
                 }
                 triggerTime = System.currentTimeMillis() + intervalInMillis;
             }

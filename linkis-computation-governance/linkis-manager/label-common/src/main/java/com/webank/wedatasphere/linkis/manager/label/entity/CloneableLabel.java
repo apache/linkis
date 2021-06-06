@@ -16,8 +16,10 @@
 
 package com.webank.wedatasphere.linkis.manager.label.entity;
 
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.runtime.AbstractFunction1;
 
 public class CloneableLabel implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(CloneableLabel.class);

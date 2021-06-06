@@ -20,7 +20,6 @@ import java.io.{BufferedReader, InputStreamReader}
 import java.net.InetAddress
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.{ScheduledThreadPoolExecutor, _}
-
 import com.webank.wedatasphere.linkis.common.exception.{DwcCommonErrorException, ErrorException, FatalException, WarnException}
 import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
@@ -29,11 +28,24 @@ import scala.annotation.tailrec
 import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService}
+import scala.language.implicitConversions
 import scala.util.control.ControlThrowable
 /**
   * Created by enjoyyin on 2018/1/10.
   */
 object Utils extends Logging {
+
+  implicit def JFunction0[T](tryOp:JFunction0[T]): scala.Function0[T] = new scala.Function0[T] {
+    override def apply(): T = {
+      tryOp.apply()
+    }
+  }
+
+  implicit def JFunction1[T1, R](catchOp:JFunction1[T1,R]):scala.Function1[T1,R] = new scala.Function1[T1,R] {
+    override def apply(v1: T1): R = {
+      catchOp.apply(v1)
+    }
+  }
 
   def tryQuietly[T](tryOp: => T): T = try tryOp catch {
     case c: ControlThrowable => throw c

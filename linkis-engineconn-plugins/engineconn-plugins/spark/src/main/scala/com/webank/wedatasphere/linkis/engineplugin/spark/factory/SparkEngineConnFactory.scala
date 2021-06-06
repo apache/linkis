@@ -129,14 +129,13 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     if (SparkConfiguration.LINKIS_SPARK_USEHIVECONTEXT.getValue(options)) {
       val name = "org.apache.spark.sql.hive.HiveContext"
       var hc: Constructor[_] = null
-      try {
+      Utils.tryCatch{
         hc = getClass.getClassLoader.loadClass(name).getConstructor(classOf[SparkContext])
         sqlc = hc.newInstance(sc).asInstanceOf[SQLContext]
-      } catch {
-        case e: Throwable => {
-          logger.warn("Can't create HiveContext. Fallback to SQLContext", e)
+      }{
+         t: Throwable =>
+          logger.warn("Can't create HiveContext. Fallback to SQLContext", t)
           sqlc = sparkSession.sqlContext
-        }
       }
     }
     else sqlc = sparkSession.sqlContext

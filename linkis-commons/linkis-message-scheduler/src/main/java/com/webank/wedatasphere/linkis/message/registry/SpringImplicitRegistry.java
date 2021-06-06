@@ -17,9 +17,13 @@
 package com.webank.wedatasphere.linkis.message.registry;
 
 
+import com.webank.wedatasphere.linkis.common.utils.JFunction0;
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.message.annotation.Implicit;
 import com.webank.wedatasphere.linkis.message.context.AbstractMessageSchedulerContext;
 import com.webank.wedatasphere.linkis.message.utils.MessageUtils;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.AbstractFunction1;
 
 import java.lang.reflect.Method;
 import java.util.Set;
@@ -40,11 +44,13 @@ public class SpringImplicitRegistry extends AbstractImplicitRegistry {
         for (Class<?> implicitClass : implicitClasses) {
             Object bean = MessageUtils.getBean(implicitClass);
             if (bean == null) {
-                try {
-                    bean = implicitClass.newInstance();
-                } catch (Throwable t) {
-                    logger().warn(String.format("reflection failed to create object %s", implicitClass.getName()));
-                }
+                bean = Utils.tryCatch(Utils.JFunction0(implicitClass::newInstance), new AbstractFunction1<Throwable, Object>() {
+                    @Override
+                    public Object apply(Throwable v1) {
+                        logger().warn(String.format("reflection failed to create object %s", implicitClass.getName()));
+                        return null;
+                    }
+                });
             }
             if (bean != null) this.register(bean);
         }

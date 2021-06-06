@@ -17,6 +17,7 @@
 package com.webank.wedatasphere.linkis.manager.label.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -105,13 +106,13 @@ public abstract class SerializableLabel<T> implements Label<T> {
             }
             for (int i = 0; i < orderedValueNames.size(); i++) {
                 String valueName = orderedValueNames.get(i);
-                try {
+                int finalIndex = i;
+                Utils.tryCatch(Utils.JFunction0(()->{
                     Method method = this.getClass().getMethod(SET_VALUE_METHOD_PREFIX + valueName.substring(0, 1).toUpperCase()
                             + valueName.substring(1), String.class);
-                    method.invoke(this, stringValueArray[i]);
-                } catch (Exception e) {
-                    //Ignore
-                }
+                    method.invoke(this, stringValueArray[finalIndex]);
+                    return null;
+                }),Utils.JFunction1(e-> null));
             }
         }
     }

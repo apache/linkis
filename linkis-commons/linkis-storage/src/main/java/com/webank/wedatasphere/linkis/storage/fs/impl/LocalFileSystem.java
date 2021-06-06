@@ -151,19 +151,20 @@ public class LocalFileSystem extends FileSystem {
             throw new IOException("you have on permission to create file " + dest);
         }
         FileUtils.copyFile(new File(origin), file);
-        try {
+        Utils.tryCatch(Utils.JFunction0(()->{
             setPermission(new FsPath(dest), "rwxr-----");
             if(!user.equals(getOwner(dest))) {
                 setOwner(new FsPath(dest), user, null);
             }
-        } catch (Throwable e) {
+            return null;
+        }),Utils.JFunction1(e->{
             file.delete();
             if(e instanceof IOException) {
                 throw (IOException) e;
             } else {
                 throw new IOException(e);
             }
-        }
+        }));
         return true;
     }
 
@@ -185,12 +186,14 @@ public class LocalFileSystem extends FileSystem {
             List<FsPath> rtn = new ArrayList();
             String message = "";
             for (File f : files) {
-                try {
+                Utils.tryCatch(Utils.JFunction0(()->{
                     rtn.add(get(f.getPath()));
-                }catch (Throwable e){
+                    return null;
+                }),Utils.JFunction1(e->{
                     LOG.error("Failed to list path:",e);
-                    message = "The file name is garbled. Please go to the shared storage to delete it.(文件名存在乱码，请手动去共享存储进行删除):" + e.getMessage();
-                }
+                    return  "The file name is garbled. Please go to the shared storage to delete it.(文件名存在乱码，请手动去共享存储进行删除):" + e.getMessage();
+                }));
+
             }
             return new FsPathListWithError(rtn, message);
         }
@@ -215,13 +218,13 @@ public class LocalFileSystem extends FileSystem {
             this.properties = new HashMap<String, String>();
         }
         if(StringUtils.isEmpty(group)) {
-            String groupInfo;
-            try {
-                groupInfo = Utils.exec(new String[]{"id", user});
-            } catch (RuntimeException e) {
+            String groupInfo = Utils.tryCatch(Utils.JFunction0(()->{
+              return Utils.exec(new String[]{"id", user});
+            }),Utils.JFunction1(e->{
                 group = user;
-                return;
-            }
+                return null;
+            }));
+
             String groups = groupInfo.substring(groupInfo.indexOf("groups=") + 7);
             group = groups.replaceAll("\\d+", "").replaceAll("\\(", "").replaceAll("\\)", "");
         }
@@ -246,12 +249,14 @@ public class LocalFileSystem extends FileSystem {
         }
 
         PosixFileAttributes attr = null;
-        try {
-            attr  = Files.readAttributes(Paths.get(fsPath.getPath()), PosixFileAttributes.class);
-        }catch (NoSuchFileException e){
+        FsPath finalFsPath = fsPath;
+        attr = Utils.tryCatch(Utils.JFunction0(()->{
+            return Files.readAttributes(Paths.get(finalFsPath.getPath()), PosixFileAttributes.class);
+        }),Utils.JFunction1(e->{
             LOG.error("File or folder does not exist or file name is garbled(文件或者文件夹不存在或者文件名乱码)",e);
             throw new StorageWarnException(51001,e.getMessage());
-        }
+        }));
+
 
         fsPath.setIsdir(attr.isDirectory());
         fsPath.setModification_time(attr.lastModifiedTime().toMillis());
@@ -291,19 +296,21 @@ public class LocalFileSystem extends FileSystem {
             throw new IOException("you have on permission to create file " + dest);
         }
         file.createNewFile();
-        try {
+        Utils.tryCatch(Utils.JFunction0(()->{
             setPermission(new FsPath(dest), "rwxr-----");
             if(!user.equals(getOwner(dest))) {
                 setOwner(new FsPath(dest), user, null);
             }
-        } catch (Throwable e) {
+            return null;
+        }),Utils.JFunction1(e->{
             file.delete();
             if(e instanceof IOException) {
                 throw (IOException) e;
             } else {
                 throw new IOException(e);
             }
-        }
+        }));
+
         return true;
     }
 

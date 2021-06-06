@@ -74,11 +74,11 @@ public class DatasourceMapCache {
         @Override
         public void run() {
             Set<DatasourceMap> datasourceMaps = new HashSet<>(DATASOURCE_MAP_CACHE.values());
-            try {
+            Utils.tryCatch(Utils.JFunction0(()->{
                 EurekaClientRefreshUtils.apply().refreshEurekaClient();
-            } catch (Throwable t) {
+            }),Utils.JFunction1(e->{
                 logger.warn("DatasourceMapCache clean runner refresh eureka client error, {}", t);
-            }
+            }));
 
             Set<String> badInstances = new HashSet<>();
             datasourceMaps.forEach(datasourceMap -> {

@@ -17,12 +17,15 @@
 package com.webank.wedatasphere.linkis.message.utils;
 
 import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.message.parser.ServiceMethod;
 import com.webank.wedatasphere.linkis.message.scheduler.MethodExecuteWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.AbstractFunction1;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,22 +42,30 @@ public class MessageUtils {
         T t = null;
         ApplicationContext applicationContext = DataWorkCloudApplication.getApplicationContext();
         if (applicationContext != null) {
-            try {
-                t = applicationContext.getBean(tClass);
-            } catch (NoSuchBeanDefinitionException e) {
-                LOGGER.warn(String.format("can not get bean from spring ioc:%s", tClass.getName()));
-            }
+            t = Utils.tryCatch(new AbstractFunction0<T>() {
+                @Override
+                public T apply() {
+                    return applicationContext.getBean(tClass);
+                }
+            }, new AbstractFunction1<Throwable, T>() {
+                @Override
+                public T apply(Throwable v1) {
+                    LOGGER.warn(String.format("can not get bean from spring ioc:%s", tClass.getName()));
+                    return null;
+                }
+            });
         }
         return t;
     }
 
     public static boolean isAssignableFrom(String supperClassName, String className) {
-        try {
-            return Class.forName(supperClassName).isAssignableFrom(Class.forName(className));
-        } catch (ClassNotFoundException e) {
-            LOGGER.error("class not found", e);
-            return false;
-        }
+        return Utils.tryCatch(Utils.JFunction0(() -> Class.forName(supperClassName).isAssignableFrom(Class.forName(className))), new AbstractFunction1<Throwable, Boolean>() {
+            @Override
+            public Boolean apply(Throwable v1) {
+                LOGGER.error("class not found", v1);
+                return false;
+            }
+        });
     }
 
     public static boolean orderIsMin(MethodExecuteWrapper methodExecuteWrapper, List<MethodExecuteWrapper> methodExecuteWrappers) {

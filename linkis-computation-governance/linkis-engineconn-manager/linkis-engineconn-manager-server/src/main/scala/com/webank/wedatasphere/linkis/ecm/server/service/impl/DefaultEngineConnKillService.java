@@ -29,6 +29,8 @@ import com.webank.wedatasphere.linkis.rpc.Sender;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.AbstractFunction1;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,13 +66,23 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
         }
         if (!response.getStopStatus()) {
             EngineSuicideRequest request = new EngineSuicideRequest(engineStopRequest.getServiceInstance(), engineStopRequest.getUser());
-            try {
-                Sender.getSender(engineStopRequest.getServiceInstance()).send(request);
-                response.setStopStatus(true);
-                response.setMsg(response.getMsg() + " Now send suicide request to engine.");
-            } catch (Exception e) {
-                response.setMsg(response.getMsg() + " Sended suicide request to engine error, " + e.getMessage());
-            }
+            response = Utils.tryCatch(new AbstractFunction0<EngineStopResponse>() {
+                @Override
+                public EngineStopResponse apply() {
+                    EngineStopResponse response = new EngineStopResponse();
+                    Sender.getSender(engineStopRequest.getServiceInstance()).send(request);
+                    response.setStopStatus(true);
+                    response.setMsg(response.getMsg() + " Now send suicide request to engine.");
+                    return response;
+                }
+            }, new AbstractFunction1<Throwable, EngineStopResponse>() {
+                @Override
+                public EngineStopResponse apply(Throwable v1) {
+                    EngineStopResponse response = new EngineStopResponse();
+                    response.setMsg(response.getMsg() + " Sended suicide request to engine error, " + v1.getMessage());
+                    return response;
+                }
+            });
         }
         return response;
     }
@@ -93,8 +105,8 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
         if (StringUtils.isNotBlank(engineConn.getPid())) {
             String k15cmd = "sudo kill " + engineConn.getPid();
             String k9cmd = "sudo kill -9 " + engineConn.getPid();
-            int tryNum = 1;
-            try {
+            Utils.tryCatch(Utils.JFunction0(()->{
+                int tryNum = 1;
                 while (isProcessAlive(engineConn.getPid()) && tryNum <= 3) {
                     logger.info("{} still alive with pid({}), use shell command to kill it. try {}++", engineConn.getServiceInstance().toString(), engineConn.getPid(), tryNum++);
                     if (tryNum < 3) {
@@ -104,9 +116,12 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
                     }
                     Thread.sleep(3000);
                 }
-            } catch (InterruptedException e) {
+                return null;
+            }),Utils.JFunction1(e->{
                 logger.error("Interrupted while killing engine {} with pid({})." + engineConn.getServiceInstance().toString(), engineConn.getPid());
-            }
+                return null;
+            }));
+
             if (isProcessAlive(engineConn.getPid())) {
                 return false;
             } else {
@@ -126,14 +141,15 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
         cmdList.add("bash");
         cmdList.add("-c");
         cmdList.add(findCmd);
-        try {
+        return Utils.tryCatch(Utils.JFunction0(()->{
             // todo
             String rs = Utils.exec(cmdList.toArray(new String[0]), 5000L);
             return null != rs && rs.contains("exists_" + pid);
-        } catch (Exception e) {
+        }),Utils.JFunction1(e->{
             logger.error("Method isProcessAlive failed, " + e.getMessage());
-        }
-        return true;
+            return true;
+        }));
+
     }
 
 }

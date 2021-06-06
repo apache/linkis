@@ -24,6 +24,7 @@ import com.webank.wedatasphere.linkis.bml.vo.ResourceBasicVO;
 import com.webank.wedatasphere.linkis.bml.vo.ResourceVO;
 import com.webank.wedatasphere.linkis.bml.vo.ResourceVersionsVO;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.server.Message;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -95,11 +96,13 @@ public class BmlRestfulApi {
         }
 
 
-        Message message = null;
-
-        try{
+        Message reMessage = null;
+        Integer finalCurrent = current;
+        Integer finalSize = size;
+        reMessage = Utils.tryCatch(Utils.JFunction0(()->{
             logger.info("用户 {} 开始获取 {} 的所有版本信息", user, resourceId);
-            List<Version> versionList = versionService.selectVersionByPage(current, size, resourceId);
+            List<Version> versionList = versionService.selectVersionByPage(finalCurrent, finalSize, resourceId);
+            Message message = null;
             if (versionList.size() > 0){
                 message = Message.ok("成功获取版本信息");
                 message.setMethod(URL_PREFIX + "getVersions");
@@ -116,12 +119,14 @@ public class BmlRestfulApi {
                 message.setStatus(2);
             }
             logger.info("用户 {} 结束获取 {} 的所有版本信息", user, resourceId);
-        }catch(final Exception e){
+            return message;
+        }),Utils.JFunction1(e->{
             logger.error("user {} 获取resourceId {} 资源的版本信息失败", user, resourceId, e);
             throw new BmlQueryFailException("抱歉，查询版本信息失败");
-        }
+        }));
 
-        return Message.messageToResponse(message);
+
+        return Message.messageToResponse(reMessage);
     }
 
     @GET
@@ -152,13 +157,17 @@ public class BmlRestfulApi {
             size = Integer.valueOf(pageSize);
         }
         Message message = null;
-        try{
-            logger.info("用户 {} 开始获取系统 {} 的所有资源", user, system);
-            List<ResourceVersion> resourceVersionPageInfoList  = versionService.selectResourcesViaSystemByPage(current, size, system, user);
+        String finalSystem = system;
+        Integer finalCurrent = current;
+        Integer finalSize = size;
+        message = Utils.tryCatch(Utils.JFunction0(()->{
+            logger.info("用户 {} 开始获取系统 {} 的所有资源", user, finalSystem);
+            Message tmpMessage = null;
+            List<ResourceVersion> resourceVersionPageInfoList  = versionService.selectResourcesViaSystemByPage(finalCurrent, finalSize, finalSystem, user);
             if (resourceVersionPageInfoList.size() > 0){
-                message = Message.ok("获取您在系统" + system + "中所有资源成功");
-                message.setStatus(0);
-                message.setMethod(URL_PREFIX + "getResources");
+                tmpMessage = Message.ok("获取您在系统" + finalSystem + "中所有资源成功");
+                tmpMessage.setStatus(0);
+                tmpMessage.setMethod(URL_PREFIX + "getResources");
                 List<ResourceVO> resourceVOList = new ArrayList<>();
                 for(ResourceVersion resourceVersion : resourceVersionPageInfoList){
                     ResourceVO resourceVO = new ResourceVO();
@@ -168,18 +177,19 @@ public class BmlRestfulApi {
                     resourceVO.setVersion(resourceVersion.getVersion());
                     resourceVOList.add(resourceVO);
                 }
-                message.data("Resources", resourceVOList);
+                tmpMessage.data("Resources", resourceVOList);
             }else{
-                logger.warn("用户 {} 获取系统 {} 资源的size为0", user, system);
-                message = Message.error("未能成功获取到所有资源信息");
-                message.setStatus(2);
-                message.setMethod(URL_PREFIX + "getResources");
+                logger.warn("用户 {} 获取系统 {} 资源的size为0", user, finalSystem);
+                tmpMessage = Message.error("未能成功获取到所有资源信息");
+                tmpMessage.setStatus(2);
+                tmpMessage.setMethod(URL_PREFIX + "getResources");
             }
-            logger.info("用户 {} 结束获取系统 {} 的所有资源", user, system);
-        }catch(final Exception e){
-            logger.error("用户 {} 获取系统 {} 所有资源失败.",user, system, e);
+            logger.info("用户 {} 结束获取系统 {} 的所有资源", user, finalSystem);
+            return tmpMessage;
+        }),Utils.JFunction1(e->{
+            logger.error("用户 {} 获取系统 {} 所有资源失败.",user, finalSystem, e);
             throw new BmlQueryFailException("获取系统所有资源信息失败");
-        }
+        }));
 
         return Message.messageToResponse(message);
     }
@@ -210,24 +220,26 @@ public class BmlRestfulApi {
                 || !versionService.canAccess(resourceId, version)){
             throw new BmlServerParaErrorException("传入的resourceId或version非法,或已删除");
         }
-        Message message = null;
+        Message reMessage = null;
         ResourceTask resourceTask = taskService.createDeleteVersionTask(resourceId, version, user, HttpRequestHelper.getIp(request));
-        try{
+        reMessage = Utils.tryCatch(Utils.JFunction0(()->{
             logger.info("用户 {} 开始删除 resourceId: {} version: {} 的资源", resourceId, version);
             versionService.deleteResourceVersion(resourceId, version);
-            message = Message.ok("删除版本成功");
+            Message message = Message.ok("删除版本成功");
             message.setMethod(URL_PREFIX + "deleteVersion");
             message.setStatus(0);
             logger.info("用户 {} 结束删除 resourceId: {} version: {} 的资源", resourceId, version);
             taskService.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
             logger.info("删除版本成功.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.SUCCESS.getValue());
-        }catch(final Exception e){
+            return message;
+        }),Utils.JFunction1(e->{
             logger.error("用户{}删除resource {}, version {} 失败", user, resourceId, version, e);
             taskService.updateState2Failed(resourceTask.getId(), TaskState.FAILED.getValue(), new Date(), e.getMessage());
             logger.info("删除版本失败.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue());
             throw new BmlQueryFailException("删除资源版本失败");
-        }
-        return Message.messageToResponse(message);
+        }));
+
+        return Message.messageToResponse(reMessage);
     }
 
     @POST
@@ -250,25 +262,27 @@ public class BmlRestfulApi {
             throw new BmlServerParaErrorException("resourceId:"+resourceId+"为空,非法或者已被删除!");
         }
 
-        Message message = null;
+        Message rsMessage = null;
         ResourceTask resourceTask = taskService.createDeleteResourceTask(resourceId, user, HttpRequestHelper.getIp(request));
-        try{
+        rsMessage = Utils.tryCatch(Utils.JFunction0(()->{
             logger.info("用户 {}  开始删除 resourceId: {} 对应的所有资源", user, resourceId);
             resourceService.deleteResource(resourceId);
-            message = Message.ok("删除资源成功");
+            Message message = Message.ok("删除资源成功");
             message.setMethod(URL_PREFIX + "deleteResource");
             message.setStatus(0);
             logger.info("用户 {}  结束删除 resourceId: {} 对应的所有资源", user, resourceId);
             taskService.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
             logger.info("删除资源成功.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.SUCCESS.getValue());
-        }catch(final Exception e){
+            return message;
+        }),Utils.JFunction1(e->{
             logger.error("用户 {} 删除资源 {} 失败", user, resourceId);
             taskService.updateState2Failed(resourceTask.getId(), TaskState.FAILED.getValue(), new Date(), e.getMessage());
             logger.info("删除资源失败.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue());
             throw new BmlQueryFailException("删除资源操作失败");
-        }
+        }));
 
-        return Message.messageToResponse(message);
+
+        return Message.messageToResponse(rsMessage);
 
     }
 
@@ -302,23 +316,25 @@ public class BmlRestfulApi {
         }
 
         ResourceTask resourceTask = taskService.createDeleteResourcesTask(resourceIds, user, HttpRequestHelper.getIp(request));
-        Message message = null;
-        try{
+        Message rsMessage = null;
+        rsMessage = Utils.tryCatch(Utils.JFunction0(()->{
             logger.info("用户 {} 开始批删除资源", user);
             resourceService.batchDeleteResources(resourceIds);
-            message = Message.ok("批量删除资源成功");
+            Message message = Message.ok("批量删除资源成功");
             message.setMethod(URL_PREFIX + "deleteResources");
             message.setStatus(0);
             logger.info("用户 {} 结束批量删除资源", user);
             taskService.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
             logger.info("批量删除资源成功.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.SUCCESS.getValue());
-        }catch(final Exception e){
+            return message;
+        }),Utils.JFunction1(e->{
             logger.error("用户 {} 批量删除资源失败", user, e);
             taskService.updateState2Failed(resourceTask.getId(), TaskState.FAILED.getValue(), new Date(), e.getMessage());
             logger.info("批量删除资源失败.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue());
             throw new BmlQueryFailException("批量删除资源操作失败");
-        }
-        return Message.messageToResponse(message);
+        }));
+
+        return Message.messageToResponse(rsMessage);
     }
 
     /**
@@ -419,8 +435,8 @@ public class BmlRestfulApi {
                                    @FormDataParam("maxVersion") int maxVersion,
                                    FormDataMultiPart form) throws ErrorException {
         String user = RestfulUtils.getUserName(req);
-        Message message;
-        try{
+        Message rsMessage;
+        rsMessage = Utils.tryCatch(Utils.JFunction0(()->{
             logger.info("用户 {} 开始上传资源", user);
             Map<String, Object> properties = new HashMap<>();
             properties.put("system", system);
@@ -432,20 +448,22 @@ public class BmlRestfulApi {
             String clientIp = HttpRequestHelper.getIp(req);
             properties.put("clientIp", clientIp);
             ResourceTask resourceTask = taskService.createUploadTask(form, user, properties);
-            message = Message.ok("提交上传资源任务成功");
+            Message message = Message.ok("提交上传资源任务成功");
             message.setMethod(URL_PREFIX + "upload");
             message.setStatus(0);
             message.data("resourceId", resourceTask.getResourceId());
             message.data("version", resourceTask.getVersion());
             message.data("taskId", resourceTask.getId());
             logger.info("用户 {} 提交上传资源任务成功, resourceId is {}", user, resourceTask.getResourceId());
-        } catch(final Exception e){
+            return message;
+        }),Utils.JFunction1(e->{
             logger.error("upload resource for user : {} failed, reason:", user, e);
             ErrorException exception = new ErrorException(50073, "提交上传资源任务失败:" + e.getMessage());
             exception.initCause(e);
             throw exception;
-        }
-        return Message.messageToResponse(message);
+        }));
+
+        return Message.messageToResponse(rsMessage);
     }
 
     /**
@@ -505,10 +523,11 @@ public class BmlRestfulApi {
             throw new BmlServerParaErrorException("获取资源基本信息未传入resourceId参数或参数非法");
         }
 
-        Message message = null;
-        try{
+        Message rsMessage = null;
+        rsMessage = Utils.tryCatch(Utils.JFunction0(()->{
             Resource resource = resourceService.getResource(resourceId);
             //int numberOfVersions = versionService.getNumOfVersions(resourceId);
+            Message message = null;
             if (!resource.isEnableFlag()){
                 logger.warn("用户 {} 想要查询的资源 {} 已经被删除", user, resourceId);
                 message = Message.error("资源已经被删除");
@@ -532,12 +551,13 @@ public class BmlRestfulApi {
                 message.data("basic", basic);
                 logger.info("用户 {} 结束获取 {} 的基本信息", user, resourceId);
             }
-        }catch(final Exception e){
+            return message;
+        }),Utils.JFunction1(e->{
             logger.error("用户 {} 获取 {} 资源信息失败", user, resourceId, e);
             throw new BmlQueryFailException("获取资源基本信息失败");
-        }
+        }));
 
-        return Message.messageToResponse(message);
+        return Message.messageToResponse(rsMessage);
     }
 
 

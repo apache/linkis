@@ -124,10 +124,9 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
       this.engineExecutionContextFactory.setEngineExecutionContext(engineExecutionContext)
     }
     var res: ExecuteResponse = null
-
-    try {
+    Utils.tryCatch{
       res = executeLine(code,engineExecutionContext)
-    } catch {
+    }{
       case e: Exception =>
         sparkContext.clearJobGroup()
         error("Interpreter exception", e)

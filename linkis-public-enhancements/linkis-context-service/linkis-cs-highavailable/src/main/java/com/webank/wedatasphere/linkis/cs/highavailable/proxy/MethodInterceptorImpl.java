@@ -17,6 +17,7 @@
 package com.webank.wedatasphere.linkis.cs.highavailable.proxy;
 
 import com.google.gson.Gson;
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.HAContextID;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
@@ -173,16 +174,18 @@ public class MethodInterceptorImpl implements MethodInterceptor {
     private void convertGetContextIDBeforeInvoke(Object object) throws CSErrorException {
         for (Method innerMethod : object.getClass().getMethods()) {
             if (innerMethod.getName().toLowerCase().contains("getcontextid")) {
-                try {
+                Utils.tryCatch(Utils.JFunction0(()->{
                     Object result = innerMethod.invoke(object);
                     if (null != object && ContextID.class.isInstance(result)) {
                         convertContextIDBeforeInvoke((ContextID)result, -1);
                     } else {
                         logger.warn("Method {} returns non-contextid object : {}", innerMethod.getName(), gson.toJson(object));
                     }
-                } catch (Exception e) {
+                    return  null;
+                }),Utils.JFunction1(e->{
                     logger.error("call method : {} error, ", innerMethod.getName(), e);
-                }
+                    return null;
+                }));
             }
         }
     }
@@ -196,11 +199,12 @@ public class MethodInterceptorImpl implements MethodInterceptor {
     private void convertGetContextIDAfterInvokeMethod(Method method) throws CSErrorException {
         if (method.getName().toLowerCase().contains("getcontextid")) {
             Object result = null;
-            try {
-                result = method.invoke(object);
-            } catch (Exception e) {
+            result = Utils.tryCatch(Utils.JFunction0(()->{
+                return method.invoke(object);
+            }),Utils.JFunction1(e->{
                 logger.warn("Invoke method : {} error. ", method.getName(), e);
-            }
+                return null;
+            }));
             if (null != result && HAContextID.class.isInstance(result)) {
                 HAContextID haContextID = (HAContextID)result;
                 if (StringUtils.isNumeric(haContextID.getContextId())

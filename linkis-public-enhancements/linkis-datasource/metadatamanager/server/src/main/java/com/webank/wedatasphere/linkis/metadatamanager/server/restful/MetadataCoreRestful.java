@@ -40,16 +40,17 @@ public class MetadataCoreRestful {
     @Path("/dbs/{data_source_id}")
     public Response getDatabases(@PathParam("data_source_id")String dataSourceId,
                                  @QueryParam("system")String system){
-        try{
+        return Utils.tryCatch(Utils.JFunction0(()->{
             if(StringUtils.isBlank(system)){
                 return Message.messageToResponse(Message.error("'system' is missing[缺少系统名]"));
             }
             List<String> databases = metadataAppService.getDatabasesByDsId(dataSourceId, system);
             return Message.messageToResponse(Message.ok().data("dbs", databases));
-        }catch(Exception e){
+        }),Utils.JFunction1(e->{
             return Message.messageToResponse(
-                    Message.error("Fail to get database list[获取库信息失败], id:[" + dataSourceId +"], system:[" + system + "]", e));
-        }
+                    Message.error("Fail to get table list[获取表信息失败], id:[" + dataSourceId +"]" +
+                            ", system:[" + system + "], database:[" +database +"]", e));
+        }));
     }
 
     @GET
@@ -57,17 +58,17 @@ public class MetadataCoreRestful {
     public Response getTables(@PathParam("data_source_id")String dataSourceId,
                               @PathParam("database")String database,
                               @QueryParam("system")String system){
-        try{
+        return Utils.tryCatch(Utils.JFunction0(()->{
             if(StringUtils.isBlank(system)){
                 return Message.messageToResponse(Message.error("'system' is missing[缺少系统名]"));
             }
             List<String> tables = metadataAppService.getTablesByDsId(dataSourceId, database, system);
             return Message.messageToResponse(Message.ok().data("tables", tables));
-        }catch(Exception e){
+        }),Utils.JFunction1(e->{
             return Message.messageToResponse(
                     Message.error("Fail to get table list[获取表信息失败], id:[" + dataSourceId +"]" +
                             ", system:[" + system + "], database:[" +database +"]", e));
-        }
+        }));
     }
 
     @GET
@@ -76,17 +77,17 @@ public class MetadataCoreRestful {
                                   @PathParam("database")String database,
                                   @PathParam("table") String table,
                                   @QueryParam("system")String system){
-        try{
+        return Utils.tryCatch(Utils.JFunction0(()->{
             if(StringUtils.isBlank(system)){
                 return Message.messageToResponse(Message.error("'system' is missing[缺少系统名]"));
             }
             Map<String, String> tableProps = metadataAppService.getTablePropsByDsId(dataSourceId, database, table, system);
             return Message.messageToResponse(Message.ok().data("props", tableProps));
-        }catch(Exception e){
+        }),Utils.JFunction1(e->{
             return Message.messageToResponse(
                     Message.error("Fail to get table properties[获取表参数信息失败], id:[" + dataSourceId +"]" +
                             ", system:[" + system + "], database:[" +database +"], table:[" + table +"]", e));
-        }
+        }));
     }
 
     @GET
@@ -95,17 +96,17 @@ public class MetadataCoreRestful {
                                   @PathParam("database")String database,
                                   @PathParam("table") String table,
                                   @QueryParam("system")String system){
-        try{
+        return Utils.tryCatch(Utils.JFunction0(()->{
             if(StringUtils.isBlank(system)){
                 return Message.messageToResponse(Message.error("'system' is missing[缺少系统名]"));
             }
             MetaPartitionInfo partitionInfo = metadataAppService.getPartitionsByDsId(dataSourceId, database, table, system);
             return Message.messageToResponse(Message.ok().data("props", partitionInfo));
-        }catch(Exception e){
+        }),Utils.JFunction1(e->{
             return Message.messageToResponse(
                     Message.error("Fail to get partitions[获取表分区信息失败], id:[" + dataSourceId +"]" +
                             ", system:[" + system + "], database:[" +database +"], table:[" + table +"]"));
-        }
+        }));
     }
 
     @GET
@@ -114,17 +115,17 @@ public class MetadataCoreRestful {
                                @PathParam("database")String database,
                                @PathParam("table") String table,
                                @QueryParam("system")String system){
-        try{
+        return Utils.tryCatch(Utils.JFunction0(()->{
             if(StringUtils.isBlank(system)){
                 return Message.messageToResponse(Message.error("'system' is missing[缺少系统名]"));
             }
             List<MetaColumnInfo> columns = metadataAppService.getColumns(dataSourceId, database, table, system);
             return Message.messageToResponse(Message.ok().data("columns", columns));
-        }catch(Exception e){
+        }),Utils.JFunction1(e->{
             return Message.messageToResponse(
                     Message.error("Fail to get column list[获取表字段信息失败], id:[" + dataSourceId +"]" +
                             ", system:[" + system + "], database:[" +database +"], table:[" + table +"]", e));
-        }
+        }));
     }
 
 }

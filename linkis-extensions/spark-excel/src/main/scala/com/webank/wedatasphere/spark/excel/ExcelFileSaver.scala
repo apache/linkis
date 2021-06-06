@@ -57,7 +57,7 @@ class ExcelFileSaver(fs: FileSystem) {
       excelWriter.writerRow(line,exportNullValue)
     }
     // if failed try to refresh nfs cache
-    val out: OutputStream =
+    val out: OutputStream = {
     try{
       fs.create(location)
     } catch {
@@ -67,6 +67,7 @@ class ExcelFileSaver(fs: FileSystem) {
       case _ =>
         fs.listFiles(location.getParent, false)
         fs.create(location)
+    }
     }
     excelWriter.close(new BufferedOutputStream(out))
   }

@@ -20,6 +20,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.webank.wedatasphere.linkis.common.listener.Event;
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
 import com.webank.wedatasphere.linkis.cs.contextcache.cache.csid.ContextIDValue;
@@ -76,7 +77,7 @@ public class DefaultContextCache implements ContextCache , CSIDListener {
         if(null == contextID || StringUtils.isBlank(contextID.getContextId())) {
             return null;
         }
-        try {
+        return Utils.tryCatch(Utils.JFunction0(()->{
             ContextIDValue contextIDValue = cache.getIfPresent(contextID.getContextId());
             if (contextIDValue == null){
                 contextIDValue = contextIDValueGenerator.createContextIDValue(contextID);
@@ -91,11 +92,12 @@ public class DefaultContextCache implements ContextCache , CSIDListener {
             defaultContextIDEvent.setOperateType(ACCESS);
             listenerBus.post(defaultContextIDEvent);
             return contextIDValue;
-        } catch (Exception e){
+        }),Utils.JFunction1(e->{
             String errorMsg = String.format("Failed to get contextIDValue of ContextID(%s)", contextID.getContextId());
             logger.error(errorMsg);
             throw new CSErrorException(97001, errorMsg, e);
-        }
+        }));
+
     }
 
     @Override
@@ -150,16 +152,18 @@ public class DefaultContextCache implements ContextCache , CSIDListener {
     @Override
     public void onCSIDAccess(ContextIDEvent contextIDEvent) {
         ContextID contextID = contextIDEvent.getContextID();
-        try {
+        Utils.tryCatch(Utils.JFunction0(()->{
             ContextIDValue contextIDValue = getContextIDValue(contextID);
             ContextIDMetric contextIDMetric = contextIDValue.getContextIDMetric();
 
             contextIDMetric.setLastAccessTime(System.currentTimeMillis());
             contextIDMetric.addCount();
             getContextCacheMetric().addCount();
-        } catch (CSErrorException e) {
+            return null;
+        }),Utils.JFunction1(e->{
             logger.error("Failed to deal CSIDAccess event csid is {}", contextID.getContextId());
-        }
+            return null;
+        }));
     }
 
     @Override

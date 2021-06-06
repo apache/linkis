@@ -17,6 +17,7 @@
 package com.webank.wedatasphere.linkis.message.scheduler;
 
 import com.webank.wedatasphere.linkis.common.utils.JavaLog;
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.message.builder.DefaultServiceMethodContext;
 import com.webank.wedatasphere.linkis.message.builder.MessageJob;
 import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext;
@@ -25,6 +26,8 @@ import com.webank.wedatasphere.linkis.message.parser.ImplicitMethod;
 import com.webank.wedatasphere.linkis.message.utils.MessageUtils;
 import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
 import com.webank.wedatasphere.linkis.scheduler.queue.Job;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.BoxedUnit;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -91,7 +94,7 @@ public abstract class AbstractMessageExecutor extends JavaLog implements Message
         CopyOnWriteArrayList<Future<?>> methodFutures = new CopyOnWriteArrayList<>();
         CountDownLatch countDownLatch = new CountDownLatch(count);
         getMinOrderMethodWrapper(methodWrappers).forEach(queue::offer);
-        try {
+        Utils.tryCatch(Utils.JFunction0(()->{
             while (!Thread.interrupted()) {
                 if (shouldBreak(methodWrappers)) {
                     break;
@@ -146,10 +149,11 @@ public abstract class AbstractMessageExecutor extends JavaLog implements Message
                 methodFutures.add(methodFuture);
             }
             countDownLatch.await();
-        } catch (InterruptedException ie) {
+            return null;
+        }),Utils.JFunction1(v1->{
             methodFutures.forEach(f -> f.cancel(true));
-            throw ie;
-        }
+            throw (InterruptedException)v1;
+        }));
         if (this.t != null) {
             throw new MessageWarnException(10000, "method call failed", t);
         }

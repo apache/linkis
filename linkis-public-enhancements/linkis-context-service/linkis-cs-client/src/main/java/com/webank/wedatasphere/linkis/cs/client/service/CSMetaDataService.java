@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.cs.client.service;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.common.io.MetaData;
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
@@ -55,12 +56,13 @@ public class CSMetaDataService implements MetaDataService {
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
             return null;
         }
-        try {
+        return Utils.tryCatch(Utils.JFunction0(()->{
             ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
             return DefaultSearchService.getInstance().searchUpstreamContextMap(contextID, nodeName, Integer.MAX_VALUE, MetaData.class);
-        } catch (ErrorException e) {
+        }),Utils.JFunction1(e->{
             logger.error("Deserialize contextid error. contextID : " + contextIDStr + ", e ", e);
-            throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize contextid error. contextID : " + contextIDStr + ", e " + e.getDesc());
-        }
+            throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize contextid error. contextID : " + contextIDStr + ", e " + e.getMessage());
+        }));
+
     }
 }

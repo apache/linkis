@@ -23,6 +23,8 @@
 package com.webank.wedatasphere.linkis.entrance.persistence;
 
 import com.google.gson.Gson;
+import com.webank.wedatasphere.linkis.common.utils.JFunction1;
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration$;
 import com.webank.wedatasphere.linkis.entrance.exception.EntranceIllegalParamException;
 import com.webank.wedatasphere.linkis.entrance.exception.EntranceRPCException;
@@ -31,9 +33,12 @@ import com.webank.wedatasphere.linkis.governance.common.entity.task.*;
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant;
 import com.webank.wedatasphere.linkis.protocol.task.Task;
 import com.webank.wedatasphere.linkis.rpc.Sender;
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.AbstractFunction1;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,12 +69,16 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine{
         if(task instanceof RequestPersistTask){
             RequestPersistTask requestPersistTask = (RequestPersistTask)task;
             BeanUtils.copyProperties(requestPersistTask, requestInsertTask);
-            ResponsePersist responsePersist = null;
-            try{
-                responsePersist = (ResponsePersist) sender.ask(requestInsertTask);
-            }catch(Exception e){
-                throw new EntranceRPCException(20020, "sender rpc failed", e);
-            }
+            ResponsePersist responsePersist = Utils.tryCatch(new AbstractFunction0<ResponsePersist>() {
+                @Override
+                public ResponsePersist apply() {
+                    return null;
+                }
+            },Utils.JFunction1(v1 -> {
+                Exception v11 = (Exception) v1;
+                throw new EntranceRPCException(20020, "sender rpc failed", v11);
+            }));
+
 
             if (responsePersist != null){
                 int status = responsePersist.getStatus();
@@ -101,13 +110,16 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine{
 
         RequestQueryTask requestQueryTask = new RequestQueryTask();
         requestQueryTask.setTaskID(taskID);
-        ResponsePersist responsePersist = null;
-        try {
-            responsePersist = (ResponsePersist) sender.ask(requestQueryTask);
-        }catch(Exception e){
-            logger.error("Requesting the corresponding task failed with taskID: {}(通过taskID: {} 请求相应的task失败)", taskID, e);
-            throw new EntranceRPCException(20020, "sender rpc failed", e);
-        }
+        ResponsePersist responsePersist = Utils.tryCatch(new AbstractFunction0<ResponsePersist>() {
+            @Override
+            public ResponsePersist apply() {
+                return  (ResponsePersist) sender.ask(requestQueryTask);
+            }
+        }, Utils.JFunction1(v1->{
+            Exception v11 = (Exception) v1;
+            logger.error("Requesting the corresponding task failed with taskID: {}(通过taskID: {} 请求相应的task失败)", taskID, v11);
+            throw new EntranceRPCException(20020, "sender rpc failed",v11);
+        }));
         int status = responsePersist.getStatus();
         //todo I want to discuss it again.(要再讨论下)
         String message = responsePersist.getMsg();
@@ -141,12 +153,17 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine{
             RequestUpdateTask requestUpdateTask = new RequestUpdateTask();
             RequestPersistTask requestPersistTask = (RequestPersistTask)task;
             BeanUtils.copyProperties(requestPersistTask, requestUpdateTask);
-            try{
-                sender.ask(requestUpdateTask);
-            }catch(Exception e){
-                logger.error("Request to update task with taskID {} failed, possibly due to RPC failure(请求更新taskID为 {} 的任务失败，原因可能是RPC失败)", requestUpdateTask.getTaskID(), e);
-                throw new EntranceRPCException(20020, "sender rpc failed ", e);
-            }
+            Utils.tryCatch(new AbstractFunction0<Object>() {
+                @Override
+                public Object apply() {
+                    sender.ask(requestUpdateTask);
+                    return null;
+                }
+            },Utils.JFunction1(v1->{
+                Exception v11 = (Exception) v1;
+                logger.error("Request to update task with taskID {} failed, possibly due to RPC failure(请求更新taskID为 {} 的任务失败，原因可能是RPC失败)", requestUpdateTask.getTaskID(), v11);
+                throw new EntranceRPCException(20020, "sender rpc failed ", v11);
+            }));
         }
     }
     @Override
@@ -159,12 +176,14 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine{
         }
 
         RequestReadAllTask requestReadAllTask = new RequestReadAllTask(instance);
-        ResponsePersist responsePersist = null;
-        try{
-            responsePersist = (ResponsePersist)sender.ask(requestReadAllTask);
-        }catch(Exception e){
-            throw new EntranceRPCException(20020, "sender rpc failed ", e);
-        }
+        ResponsePersist responsePersist = Utils.tryCatch(new AbstractFunction0<ResponsePersist>() {
+            @Override
+            public ResponsePersist apply() {
+                return (ResponsePersist)sender.ask(requestReadAllTask);
+            }
+        },Utils.JFunction1(v1 -> {
+            throw new EntranceRPCException(20020, "sender rpc failed ", (Exception) v1);
+        }));
         if (responsePersist != null){
             int status = responsePersist.getStatus();
             String message = responsePersist.getMsg();

@@ -17,6 +17,8 @@
 package com.webank.wedatasphere.linkis.common.utils;
 
 import com.google.common.collect.ImmutableMap;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.AbstractFunction1;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,12 +48,15 @@ public class ByteTimeUtils {
     if (file.isDirectory() && !isSymlink(file)) {
       IOException savedIOException = null;
       for (File child : listFilesSafely(file)) {
-        try {
-          deleteRecursively(child);
-        } catch (IOException e) {
-          // In case of multiple exceptions, only last one will be thrown
-          savedIOException = e;
-        }
+        savedIOException = Utils.tryCatch(Utils.JFunction0(() -> {
+            deleteRecursively(child);
+            return null;
+        }), new AbstractFunction1<Throwable, IOException>() {
+            @Override
+            public IOException apply(Throwable v1) {
+                return (IOException) v1;
+            }
+        });
       }
       if (savedIOException != null) {
         throw savedIOException;
@@ -119,30 +124,29 @@ public class ByteTimeUtils {
    */
   private static long parseTimeString(String str, TimeUnit unit) {
     String lower = str.toLowerCase().trim();
+    return Utils.tryCatch(Utils.JFunction0(()->{
+        Matcher m = Pattern.compile("(-?[0-9]+)([a-z]+)?").matcher(lower);
+        if (!m.matches()) {
+            throw new NumberFormatException("Failed to parse time string: " + str);
+        }
 
-    try {
-      Matcher m = Pattern.compile("(-?[0-9]+)([a-z]+)?").matcher(lower);
-      if (!m.matches()) {
-        throw new NumberFormatException("Failed to parse time string: " + str);
-      }
+        long val = Long.parseLong(m.group(1));
+        String suffix = m.group(2);
 
-      long val = Long.parseLong(m.group(1));
-      String suffix = m.group(2);
+        // Check for invalid suffixes
+        if (suffix != null && !timeSuffixes.containsKey(suffix)) {
+            throw new NumberFormatException("Invalid suffix: \"" + suffix + "\"");
+        }
 
-      // Check for invalid suffixes
-      if (suffix != null && !timeSuffixes.containsKey(suffix)) {
-        throw new NumberFormatException("Invalid suffix: \"" + suffix + "\"");
-      }
+        // If suffix is valid use that, otherwise none was provided and use the default passed
+        return unit.convert(val, suffix != null ? timeSuffixes.get(suffix) : unit);
+    }),Utils.JFunction1(e->{
+        String timeError = "Time " + str +" must be specified as seconds (s), " +
+                "milliseconds (ms), microseconds (us), minutes (m or min), hour (h), or day (d). " +
+                "E.g. 50s, 100ms, or 250us.";
 
-      // If suffix is valid use that, otherwise none was provided and use the default passed
-      return unit.convert(val, suffix != null ? timeSuffixes.get(suffix) : unit);
-    } catch (NumberFormatException e) {
-      String timeError = "Time " + str +" must be specified as seconds (s), " +
-              "milliseconds (ms), microseconds (us), minutes (m or min), hour (h), or day (d). " +
-              "E.g. 50s, 100ms, or 250us.";
-
-      throw new NumberFormatException(timeError + "\n" + e.getMessage());
-    }
+        throw new NumberFormatException(timeError + "\n" + e.getMessage());
+    }));
   }
 
   /**
@@ -187,41 +191,39 @@ public class ByteTimeUtils {
    */
   private static long parseByteString(String str, ByteUnit unit) {
     String lower = str.toLowerCase().trim();
-
-    try {
-      Matcher m = Pattern.compile("([0-9]+)\\s?([a-zA-Z]+)?").matcher(lower);
+    return Utils.tryCatch(Utils.JFunction0(()->{
+        Matcher m = Pattern.compile("([0-9]+)\\s?([a-zA-Z]+)?").matcher(lower);
 //      Matcher fractionMatcher = Pattern.compile("([0-9]+\\.[0-9]+)\\s?([a-z]+)?").matcher(lower);
-    	Matcher fractionMatcher = Pattern.compile("([0-9]+\\.[0-9]+)\\s?([a-zA-Z]{1,2})?").matcher(lower);
+        Matcher fractionMatcher = Pattern.compile("([0-9]+\\.[0-9]+)\\s?([a-zA-Z]{1,2})?").matcher(lower);
 
-    	long size = 0;
-    	int sub = 1;
-    	String suffix;
-      if (fractionMatcher.matches()) {
-        double val = Double.parseDouble(fractionMatcher.group(1));
-        size = (long) (val * 100);
-        suffix = fractionMatcher.group(2);
-        sub = 100;
-      } else if (m.matches()) {
-    	  size = Long.parseLong(m.group(1));
-    	  suffix = m.group(2);
-      } else {
-        throw new NumberFormatException("Failed to parse byte string: " + str);
-      }
-      suffix = suffix.toLowerCase();
-      // Check for invalid suffixes
-      if (suffix != null && !byteSuffixes.containsKey(suffix)) {
-        throw new NumberFormatException("Invalid suffix: \"" + suffix + "\"");
-      }
-      // If suffix is valid use that, otherwise none was provided and use the default passed
-      return unit.convertFrom(size, suffix != null ? byteSuffixes.get(suffix) : unit)/sub;
+        long size = 0;
+        int sub = 1;
+        String suffix;
+        if (fractionMatcher.matches()) {
+            double val = Double.parseDouble(fractionMatcher.group(1));
+            size = (long) (val * 100);
+            suffix = fractionMatcher.group(2);
+            sub = 100;
+        } else if (m.matches()) {
+            size = Long.parseLong(m.group(1));
+            suffix = m.group(2);
+        } else {
+            throw new NumberFormatException("Failed to parse byte string: " + str);
+        }
+        suffix = suffix.toLowerCase();
+        // Check for invalid suffixes
+        if (suffix != null && !byteSuffixes.containsKey(suffix)) {
+            throw new NumberFormatException("Invalid suffix: \"" + suffix + "\"");
+        }
+        // If suffix is valid use that, otherwise none was provided and use the default passed
+        return unit.convertFrom(size, suffix != null ? byteSuffixes.get(suffix) : unit)/sub;
+    }),Utils.JFunction1(e->{
+        String timeError = "Error size string " + str +". Size must be specified as bytes (b), " +
+                "kibibytes (k), mebibytes (m), gibibytes (g), tebibytes (t), or pebibytes(p). " +
+                "E.g. 50b, 100k, or 250m.";
 
-    } catch (NumberFormatException e) {
-      String timeError = "Error size string " + str +". Size must be specified as bytes (b), " +
-        "kibibytes (k), mebibytes (m), gibibytes (g), tebibytes (t), or pebibytes(p). " +
-        "E.g. 50b, 100k, or 250m.";
-
-      throw new IllegalArgumentException(timeError, e);
-    }
+        throw new IllegalArgumentException(timeError, e);
+    }));
   }
 
     /**

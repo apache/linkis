@@ -105,11 +105,11 @@ public class MetadataAppServiceImpl implements MetadataAppService {
      */
     public DsInfoResponse reqToGetDataSourceInfo(String dataSourceId, String system) throws ErrorException{
         Object rpcResult = null;
-        try {
-            rpcResult = dataSourceRpcSender.ask(new DsInfoQueryRequest(dataSourceId, system));
-        }catch(Exception e){
+        rpcResult = Utils.tryCatch(Utils.JFunction0(()->{
+           return dataSourceRpcSender.ask(new DsInfoQueryRequest(dataSourceId, system));
+        }),Utils.JFunction1(e->{
             throw new ErrorException(-1, "Remote Service Error[远端服务出错, 联系运维处理]");
-        }
+        }));
         if(rpcResult instanceof DsInfoResponse){
             DsInfoResponse response = (DsInfoResponse)rpcResult;
             if(!response.status()){
@@ -130,11 +130,11 @@ public class MetadataAppServiceImpl implements MetadataAppService {
     public MetadataResponse doAndGetMetaInfo(String dataSourceType, MetadataQueryProtocol request) throws ErrorException {
         Sender sender = Sender.getSender(MdmConfiguration.METADATA_SERVICE_APPLICATION.getValue() + "-" + dataSourceType.toLowerCase());
         Object rpcResult = null;
-        try{
+        Utils.tryCatch(Utils.JFunction0(()->{
             rpcResult = sender.ask(request);
-        }catch(Exception e){
+        }),Utils.JFunction1(e->{
             throw new ErrorException(-1, "Remote Service Error[远端服务出错, 联系运维处理]");
-        }
+        }));
         if(rpcResult instanceof MetadataResponse){
             MetadataResponse response = (MetadataResponse)rpcResult;
             if(!response.status()){

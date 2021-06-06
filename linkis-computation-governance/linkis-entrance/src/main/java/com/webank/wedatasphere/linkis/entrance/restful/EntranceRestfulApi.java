@@ -19,6 +19,7 @@ package com.webank.wedatasphere.linkis.entrance.restful;
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 import com.webank.wedatasphere.linkis.common.log.LogUtils;
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.entrance.EntranceServer;
 import com.webank.wedatasphere.linkis.entrance.annotation.EntranceServerBeanAnnotation;
 import com.webank.wedatasphere.linkis.entrance.background.BackGroundService;
@@ -41,6 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import scala.Option;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.AbstractFunction1;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -140,26 +143,36 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     public Response status(@PathParam("id") String id, @QueryParam("taskID") String taskID) {
         Message message = null;
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
-        Option<Job> job = Option.apply(null);
-        try {
-            job = entranceServer.getJob(realId);
-        } catch (Exception e) {
-            logger.warn("获取任务 {} 状态时出现错误", realId, e);
-            //如果获取错误了,证明在内存中已经没有了,去jobhistory找寻一下taskID代表的任务的状态，然后返回
-            long realTaskID = Long.parseLong(taskID);
-            String status = JobHistoryHelper.getStatusByTaskID(realTaskID);
-            message = Message.ok();
-            message.setMethod("/api/entrance/" + id + "/status");
-            message.data("status", status).data("execID", id);
-            return Message.messageToResponse(message);
-        }
-        if (job.isDefined()) {
-            message = Message.ok();
-            message.setMethod("/api/entrance/" + id + "/status");
-            message.data("status", job.get().getState().toString()).data("execID", id);
-        } else {
-            message = Message.error("ID The corresponding job is empty and cannot obtain the corresponding task status.(ID 对应的job为空，不能获取相应的任务状态)");
-        }
+
+        message = Utils.tryCatch(new AbstractFunction0<Message>() {
+            @Override
+            public Message apply() {
+                Option<Job> job = entranceServer.getJob(realId);
+                Message message = null;
+                if (job.isDefined()) {
+                    message = Message.ok();
+                    message.setMethod("/api/entrance/" + id + "/status");
+                    message.data("status", job.get().getState().toString()).data("execID", id);
+                } else {
+                    message = Message.error("ID The corresponding job is empty and cannot obtain the corresponding task status.(ID 对应的job为空，不能获取相应的任务状态)");
+                }
+                return message;
+            }
+        }, new AbstractFunction1<Throwable, Message>() {
+            @Override
+            public Message apply(Throwable v1) {
+                logger.warn("获取任务 {} 状态时出现错误", realId, v1);
+                //如果获取错误了,证明在内存中已经没有了,去jobhistory找寻一下taskID代表的任务的状态，然后返回
+                long realTaskID = Long.parseLong(taskID);
+                String status = JobHistoryHelper.getStatusByTaskID(realTaskID);
+                Message message = Message.ok();
+                message.setMethod("/api/entrance/" + id + "/status");
+                message.data("status", status).data("execID", id);
+                return message;
+            }
+        });
+
+
         return Message.messageToResponse(message);
     }
 

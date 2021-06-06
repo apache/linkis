@@ -19,10 +19,14 @@ package com.webank.wedatasphere.linkis.manager.label.utils;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
+import com.webank.wedatasphere.linkis.common.utils.JFunction0;
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.manager.label.entity.Label;
 import com.webank.wedatasphere.linkis.manager.label.entity.annon.ValueSerialNum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.AbstractFunction1;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -49,11 +53,12 @@ public class LabelUtils {
      * @return
      */
     private static boolean isWrapClass(Class<?> clz){
-        try{
-            return ((Class<?>)clz.getField("TYPE").get(null)).isPrimitive();
-        }catch(Exception e){
-            return false;
-        }
+        return Utils.tryCatch(Utils.JFunction0(()-> ((Class<?>)clz.getField("TYPE").get(null)).isPrimitive()), new AbstractFunction1<Throwable, Boolean>() {
+            @Override
+            public Boolean apply(Throwable v1) {
+                return false;
+            }
+        });
     }
 
     /**
@@ -148,17 +153,18 @@ public class LabelUtils {
          * @return string
          */
         public static String toJson(Object simpleObj, Class<?> viewModel) {
-            ObjectWriter writer = mapper.writer();
             if (null != simpleObj) {
-                try {
+                return Utils.tryCatch(Utils.JFunction0(()->{
+                    ObjectWriter tmpWriter = mapper.writer();
                     if (null != viewModel) {
-                        writer = writer.withView(viewModel);
+                        tmpWriter = tmpWriter.withView(viewModel);
                     }
-                    return writer.writeValueAsString(simpleObj);
-                } catch (JsonProcessingException e) {
+                    return tmpWriter.writeValueAsString(simpleObj);
+                }),Utils.JFunction1(e->{
                     throw new RuntimeException("Fail to process method 'toJson(" + simpleObj + ": " + simpleObj.getClass() +
                             ", " + (viewModel != null ? viewModel.getSimpleName() : null) + ")'", e);
-                }
+                }));
+
             }
             return null;
         }
@@ -166,29 +172,33 @@ public class LabelUtils {
         @SuppressWarnings("unchecked")
         public static <T> T fromJson(String json, Class<?> tClass, Class<?>... parameters) {
             if (StringUtils.isNotBlank(json)) {
-                try {
+               return Utils.tryCatch(Utils.JFunction0(()->{
                     if (parameters.length > 0) {
                         return (T) mapper.readValue(json, mapper.getTypeFactory().constructParametricType(tClass, parameters));
                     }
                     return (T) mapper.readValue(json, tClass);
-                } catch (Exception e) {
+                }),Utils.JFunction1(e->{
                     throw new RuntimeException("Fail to process method 'fromJson(" +
                             (json.length() > 5 ? json.substring(0, 5) + "..." : json) + ": " + json.getClass() +
                             ", " + tClass.getSimpleName() + ": "+ Class.class + ", ...: " + Class.class + ")", e);
-                }
+                }));
             }
             return null;
         }
 
         public static <T> T fromJson(String json, JavaType javaType) {
             if(StringUtils.isNotBlank(json)){
-                try{
-                    return mapper.readValue(json, javaType);
-                }catch (Exception e){
+               return Utils.tryCatch(Utils.JFunction0(new JFunction0<T>() {
+                    @Override
+                    public T apply() throws Throwable {
+                        return  mapper.readValue(json, javaType);
+                    }
+                }),Utils.JFunction1(e->{
                     throw new RuntimeException("Fail to process method 'fromJson(" +
                             (json.length() > 5 ? json.substring(0, 5) + "..." : json) + ": " + json.getClass() +
                             ", " + javaType.getTypeName() + ": "+ JavaType.class + ")", e);
-                }
+                }));
+
             }
             return null;
         }
@@ -202,24 +212,22 @@ public class LabelUtils {
          */
         @SuppressWarnings("unchecked")
         public static <T> T convert(Object simpleObj, Class<?> tClass, Class<?>... parameters) {
-            try {
+            return Utils.tryCatch(Utils.JFunction0(()->{
                 if (parameters.length > 0) {
                     return mapper.convertValue(simpleObj, mapper.getTypeFactory().constructParametricType(tClass, parameters));
                 }
                 return (T) mapper.convertValue(simpleObj, tClass);
-            } catch (Exception e) {
+            }),Utils.JFunction1(e->{
                 throw new RuntimeException("Fail to process method 'convert(" + simpleObj + ": " + simpleObj.getClass().getSimpleName() +
                         ", " + tClass.getSimpleName() + ": "+ Class.class + ", ...: " + Class.class + ")", e);
-            }
+            }));
         }
 
         public static <T> T convert(Object simpleObj, JavaType javaType){
-            try {
-                return mapper.convertValue(simpleObj, javaType);
-            } catch (Exception e) {
+            return Utils.tryCatch(Utils.JFunction0(()-> mapper.convertValue(simpleObj, javaType)),Utils.JFunction1(v1->{
                 throw new RuntimeException("Fail to process method 'convert(" + simpleObj + ": " + simpleObj.getClass().getSimpleName() +
-                        ", " + javaType.getTypeName() + ": "+ JavaType.class + ")", e);
-            }
+                        ", " + javaType.getTypeName() + ": "+ JavaType.class + ")", v1);
+            }));
         }
     }
 

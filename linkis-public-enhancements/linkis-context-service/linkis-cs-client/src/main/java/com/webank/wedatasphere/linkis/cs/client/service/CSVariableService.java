@@ -14,6 +14,7 @@
 package com.webank.wedatasphere.linkis.cs.client.service;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.cs.client.ContextClient;
 import com.webank.wedatasphere.linkis.cs.client.builder.ContextClientFactory;
 import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
@@ -27,6 +28,7 @@ import com.webank.wedatasphere.linkis.cs.common.exception.ErrorCode;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.runtime.AbstractFunction1;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,32 +51,39 @@ public class CSVariableService  implements VariableService{
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
             return rsList;
         }
-        try {
+
+        rsList = Utils.tryCatch(Utils.JFunction0(() -> {
             ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
+            List<LinkisVariable> tmpRsList = new ArrayList<>();
             if (null != contextID) {
-                rsList = searchService.searchUpstreamContext(contextID, nodeName, Integer.MAX_VALUE, LinkisVariable.class);
+                tmpRsList = searchService.searchUpstreamContext(contextID, nodeName, Integer.MAX_VALUE, LinkisVariable.class);
             }
-            return rsList;
-        } catch (Throwable e) {
-            logger.error("Failed to get variable : " + contextIDStr, e);
-           // throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Failed to get variable : " + contextIDStr + "e : " + e.getMessage());
-        }
+            return tmpRsList;
+        }), new AbstractFunction1<Throwable, List<LinkisVariable>>() {
+            @Override
+            public List<LinkisVariable> apply(Throwable v1) {
+                logger.error("Failed to get variable : " + contextIDStr, v1);
+                return new ArrayList<>();
+            }
+        });
+
         return rsList;
     }
 
     @Override
     public void putVariable(String contextIDStr, String contextKeyStr, LinkisVariable linkisVariable) throws CSErrorException {
         ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
-        try {
+        Utils.tryCatch(Utils.JFunction0(()->{
             ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
             ContextKey contextKey = SerializeHelper.deserializeContextKey(contextKeyStr);
             ContextValue contextValue = new CommonContextValue();
             contextValue.setValue(linkisVariable);
             contextClient.update(contextID, contextKey, contextValue);
-        } catch (ErrorException e) {
+            return null;
+        }),Utils.JFunction1(e->{
             logger.error("Deserialize error. e ");
             throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize error. e : ", e);
-        }
+        }));
     }
 
     public static CSVariableService getInstance() {

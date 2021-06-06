@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.manager.label.builder;
 
+import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.manager.label.conf.LabelCommonConfig;
 import com.webank.wedatasphere.linkis.manager.label.constant.LabelConstant;
 import com.webank.wedatasphere.linkis.manager.label.entity.InheritableLabel;
@@ -28,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.runtime.AbstractFunction1;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -120,21 +122,21 @@ public class DefaultGlobalLabelBuilder extends AbstractGenericLabelBuilder{
 
     @Override
     public <T extends Label<?>> T build(String labelKey, InputStream valueInput, Class<?> labelClass, Type... valueTypes) throws LabelErrorException {
-        try {
+        return Utils.tryCatch(Utils.JFunction0(()->{
             return build(labelKey, null == valueInput ? "" : IOUtils.toString(valueInput), labelClass, valueTypes);
-        }catch(IOException e){
+        }),Utils.JFunction1(e->{
             throw new LabelErrorException(LabelConstant.LABEL_BUILDER_ERROR_CODE, "Fail to read value input stream", e);
-        }
+        }));
     }
 
 
     @Override
     public <T extends Label<?>> T build(String labelKey, InputStream valueInput, Class<T> labelClass) throws LabelErrorException {
-        try{
+        return Utils.tryCatch(Utils.JFunction0(()->{
             return build(labelKey, null == valueInput ? "" : IOUtils.toString(valueInput), (Class<?>) labelClass);
-        }catch(IOException e){
+        }),Utils.JFunction1(e->{
             throw new LabelErrorException(LabelConstant.LABEL_BUILDER_ERROR_CODE, "Fail to read value input stream", e);
-        }
+        }));
     }
 
     @Override
@@ -205,7 +207,7 @@ public class DefaultGlobalLabelBuilder extends AbstractGenericLabelBuilder{
     }
 
     private Label<?> newInstance(Class<? extends Label> labelType,String labelKey, Type labelValueType, Object labelValue) throws LabelErrorException {
-        try {
+        return Utils.tryCatch(Utils.JFunction0(()->{
             Label newLabel = labelType.newInstance();
             if(newLabel instanceof InheritableLabel){
                 InheritableLabel inheritableNewLabel = (InheritableLabel)newLabel;
@@ -217,37 +219,44 @@ public class DefaultGlobalLabelBuilder extends AbstractGenericLabelBuilder{
                 boolean setString = false;
                 if(null != labelValue && labelValue.getClass().equals(String.class)){
                     String SET_STRING_VALUE_METHOD = "setStringValue";
-                    try {
+                    setString = Utils.tryCatch(Utils.JFunction0(()->{
                         Method method;
-                        try {
-                            method = SerializableLabel.class.getDeclaredMethod(SET_STRING_VALUE_METHOD, String.class);
-                        }catch(NoSuchMethodException e){
-                            method = labelType.getDeclaredMethod(SET_STRING_VALUE_METHOD, String.class);
-                        }
+                        method = Utils.tryCatch(Utils.JFunction0(()->{
+                           return SerializableLabel.class.getDeclaredMethod(SET_STRING_VALUE_METHOD, String.class);
+                        }), Utils.JFunction1(e->{
+                            return labelType.getDeclaredMethod(SET_STRING_VALUE_METHOD, String.class);
+                        }));
                         method.setAccessible(true);
                         method.invoke(newLabel, String.valueOf(labelValue));
-                        setString = true;
-                    } catch (NoSuchMethodException noe) {
-                        //Ignore
-                    }
+                        return true;
+                     }), new AbstractFunction1<Throwable,Boolean>() {
+                        @Override
+                        public Boolean apply(Throwable v1) {
+                            return false;
+                        }
+                    });
                 }
                 Class<?> labelValueClass = (Class<?>)labelValueType;
                 if(null != labelValue && labelValueClass.isAssignableFrom(labelValue.getClass())
-                    && (!setString || null == newLabel.getValue())) {
+                        && (!setString || null == newLabel.getValue())) {
                     String SET_VALUE_METHOD = "setValue";
-                    try {
+                    Utils.tryCatch(Utils.JFunction0(()->{
                         Method method = InheritableLabel.class.getDeclaredMethod(SET_VALUE_METHOD, Object.class);
                         method.setAccessible(true);
                         method.invoke(newLabel, labelValue);
-                    } catch (NoSuchMethodException noe) {
-                        //Ignore
-                    }
+                        return null;
+                    }), new AbstractFunction1<Throwable, Object>() {
+                        @Override
+                        public Object apply(Throwable v1) {
+                            return null;
+                        }
+                    });
                 }
             }
             return newLabel;
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-           throw new LabelErrorException(LabelConstant.LABEL_BUILDER_ERROR_CODE, "Fail to construct a label instance of ["
-                   + labelType.getSimpleName() + "]", e);
-        }
+        }),Utils.JFunction1(e->{
+            throw new LabelErrorException(LabelConstant.LABEL_BUILDER_ERROR_CODE, "Fail to construct a label instance of ["
+                    + labelType.getSimpleName() + "]", e);
+        }));
     }
 }

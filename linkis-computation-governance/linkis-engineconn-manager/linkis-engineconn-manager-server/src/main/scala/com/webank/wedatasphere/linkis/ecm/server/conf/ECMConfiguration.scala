@@ -66,6 +66,7 @@ object ECMConfiguration {
 
   /**
     * engineconn创建时间，如果为0，则使用ms中默认的
+    * engineconn created time
     */
   val ENGINECONN_CREATE_DURATION: Duration = Duration(CommonVars("wds.linkis.ecm.engineconn.create.duration", 1000*60*10).getValue, TimeUnit.MILLISECONDS)
 

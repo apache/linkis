@@ -5,6 +5,7 @@ public enum NodeHealthy {
 
     /**
      * 节点监控状态信息
+     *  to monitor node status info
      * Healthy：状态正常
      * UnHealthy： EM自己标识自己为UnHealthy 或者 manager把他标识为UnHealthy 处理引擎状态不正常，manager主动要求所有的engine强制退出（engine自杀）
      * WARN： 引擎处于告警状态，但是可以接受任务

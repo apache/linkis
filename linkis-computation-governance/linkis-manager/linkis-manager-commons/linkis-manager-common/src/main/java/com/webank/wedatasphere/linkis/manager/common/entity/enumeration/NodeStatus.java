@@ -6,6 +6,7 @@ public enum NodeStatus {
 
     /**
      * em 中管理的engineConn状态: Starting running Failed, Success
+     * to manage engineconn status
      * <p>
      * manager中管理的engineConn状态：Starting ShuttingDown Unlock Idle Busy
      */

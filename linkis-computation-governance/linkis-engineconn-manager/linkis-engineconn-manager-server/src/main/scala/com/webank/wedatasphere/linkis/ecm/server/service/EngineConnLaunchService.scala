@@ -24,7 +24,7 @@ import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.
 trait EngineConnLaunchService {
   /**
     * launchEngine启动一个引擎的方法
-    *
+    * to start an engineconn
     * @param engineConnBuildRequest 封装了引擎启动的参数
     */
   def launchEngineConn(engineConnBuildRequest: EngineConnBuildRequest): EngineNode

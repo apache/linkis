@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.engineconn.core.execution.AbstractEngineCo
 import com.webank.wedatasphere.linkis.engineconn.executor.entity.Executor
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineConnMode._
 
-/**
-  *
-  */
+
 class ComputationEngineConnExecution extends AbstractEngineConnExecution {
 
   override protected def getSupportedEngineConnModes: Array[EngineConnMode] =

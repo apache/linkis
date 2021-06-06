@@ -293,21 +293,10 @@ public interface LabelManagerMapper {
      */
     List<Map<String, Object>> dimListNodeRelationsByKeyValueMap(@Param("keyValueMap") Map<String, Map<String, String>> labelKeyAndValuesMap, @Param("valueRelation") String name);
 
-    /**
-     * 通过instance信息，同时返回instance信息和label信息
-     *
-     * @param serviceInstances
-     * @return
-     */
+
     List<Map<String, Object>> listLabelRelationByServiceInstance(@Param("nodes") List<ServiceInstance> serviceInstances);
 
-    /**
-     * 通过labelkey 和StringValue找到唯一的label
-     *
-     * @param labelKey
-     * @param stringValue
-     * @return
-     */
+
     PersistenceLabel getLabelByKeyValue(@Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
 
     List<ServiceInstance> getNodeByLabelKeyValue(@Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
@@ -320,7 +309,7 @@ public interface LabelManagerMapper {
 
     /**
      * 通过labelId获取到resource
-     *
+     *  get resource via labelId
      * @param labelId
      * @return
      */
@@ -328,6 +317,7 @@ public interface LabelManagerMapper {
 
     /**
      * 通过label的keyvalues再找到resource
+     * find resource via keyvalues of label
      * 和{@link LabelManagerMapper#dimListLabelByKeyValueMap(Map, String)} 区别只是多了关联和资源表,并且返回是resource
      *
      * @param keyValueMap

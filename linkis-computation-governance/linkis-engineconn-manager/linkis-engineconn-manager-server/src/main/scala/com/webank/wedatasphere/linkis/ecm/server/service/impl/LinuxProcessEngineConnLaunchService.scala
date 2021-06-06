@@ -31,11 +31,7 @@ import scala.concurrent.duration.Duration
 
 class LinuxProcessEngineConnLaunchService extends ProcessEngineConnLaunchService {
 
-  /**
-   * launchEngine启动一个引擎的方法
-   *
-   * @param engineConnBuildRequest 封装了引擎启动的参数
-   */
+
   @Receiver
   def launchEngineConn(engineConnBuildRequest: EngineConnBuildRequest, smc: ServiceMethodContext): EngineNode = {
     Sender.getSender(ENGINECONN_PLUGIN_SPRING_NAME).ask(engineConnBuildRequest) match {

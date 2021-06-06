@@ -15,9 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * created by v_wbjftang on 2020/8/25
- */
+
 public class PersistenceTest {
 
     AnnotationConfigApplicationContext context = null;

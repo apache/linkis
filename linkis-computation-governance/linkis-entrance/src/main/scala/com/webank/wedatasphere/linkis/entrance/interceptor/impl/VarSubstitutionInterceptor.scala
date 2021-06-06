@@ -26,7 +26,6 @@ import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
 import org.apache.commons.lang.exception.ExceptionUtils
 
 /**
-  * created by enjoyyin on 2018/10/19
   * Description: For variable substitution(用于变量替换)
   */
 class VarSubstitutionInterceptor extends EntranceInterceptor {

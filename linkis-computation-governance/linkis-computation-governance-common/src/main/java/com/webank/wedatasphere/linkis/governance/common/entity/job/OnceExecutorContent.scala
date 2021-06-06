@@ -2,9 +2,7 @@ package com.webank.wedatasphere.linkis.governance.common.entity.job
 
 import java.util
 
-/**
-  * Created by enjoyyin on 2021/5/21.
-  */
+
 class OnceExecutorContent {
 
   private var variableMap: util.Map[String, Object] = _

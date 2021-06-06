@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service
 
 import scala.collection.JavaConversions._
 
-/**
-  * @author peacewong
-  * @date 2020/8/5 14:46
-  */
+
 @Service
 class DefaultManagerLabelService extends ManagerLabelService with Logging {
 

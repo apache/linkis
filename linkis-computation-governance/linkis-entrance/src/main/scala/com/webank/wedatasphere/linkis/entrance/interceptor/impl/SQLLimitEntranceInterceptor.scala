@@ -20,10 +20,7 @@ import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
 import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
 import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
 
-/**
-  * created by enjoyyin on 2018/10/19
-  * Description: LimitEntranceInterceptor Interceptors are used to set certain restrictions(拦截器用于对某些限制的设定)
-  */
+
 class SQLLimitEntranceInterceptor extends EntranceInterceptor {
   override def apply(task: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
     val codeType = {

@@ -9,10 +9,7 @@ import com.webank.wedatasphere.linkis.manager.label.entity.annon.ValueSerialNum;
 import com.webank.wedatasphere.linkis.manager.label.exception.LabelErrorException;
 import org.apache.commons.lang.StringUtils;
 
-/**
- * @author davidhua
- * 2020/12/29
- */
+
 public class RouteLabel extends InheritableLabel<String> implements UserModifiable {
 
 

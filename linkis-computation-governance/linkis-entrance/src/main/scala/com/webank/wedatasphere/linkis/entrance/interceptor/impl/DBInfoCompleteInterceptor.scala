@@ -19,10 +19,7 @@ package com.webank.wedatasphere.linkis.entrance.interceptor.impl
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
 import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
 
-/**
-  * created by enjoyyin on 2018/10/19
-  * Description: For database information completion(用于数据库信息补全)
-  */
+
 class DBInfoCompleteInterceptor extends EntranceInterceptor {
   override def apply(task: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
     //todo Database information completion(数据库信息补全)

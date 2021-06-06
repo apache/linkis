@@ -28,9 +28,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-/**
- * Created by shanhuang on 9/13/18.
- */
+
 @Component
 public class RMAnnotationParser extends JavaLog {
 

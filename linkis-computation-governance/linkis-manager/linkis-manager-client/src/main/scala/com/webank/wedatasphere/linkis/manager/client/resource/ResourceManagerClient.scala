@@ -33,9 +33,7 @@ import org.springframework.stereotype.Component
 
 import scala.collection.JavaConversions._
 
-/**
-  * Created by shanhuang on 9/13/18.
-  */
+
 
 @Component
 class ResourceManagerClient(private var serviceInstance: ServiceInstance) extends Logging {

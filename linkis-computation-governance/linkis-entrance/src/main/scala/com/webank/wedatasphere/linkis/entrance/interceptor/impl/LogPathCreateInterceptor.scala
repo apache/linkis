@@ -27,7 +27,6 @@ import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersi
 import com.webank.wedatasphere.linkis.protocol.task.Task
 
 /**
-  * created by enjoyyin on 2018/10/23
   * Description:Log path generation interceptor, used to set the path log of the task(日志路径生成拦截器, 用于设置task的路径日志)
   */
 class LogPathCreateInterceptor extends EntranceInterceptor with Logging {

@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-/**
- * author: enjoyyin
- * date: 2018/9/27
- * time: 10:26
- * Description:
- */
+
 package com.webank.wedatasphere.linkis.entrance.persistence;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;

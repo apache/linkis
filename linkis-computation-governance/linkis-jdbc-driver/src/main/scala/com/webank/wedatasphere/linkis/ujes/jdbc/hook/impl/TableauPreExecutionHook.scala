@@ -2,10 +2,7 @@ package com.webank.wedatasphere.linkis.ujes.jdbc.hook.impl
 
 import com.webank.wedatasphere.linkis.ujes.jdbc.hook.JDBCDriverPreExecutionHook
 
-/**
-  * @author peacewong
-  * @date 2020/5/29 17:56
-  */
+
 class TableauPreExecutionHook extends JDBCDriverPreExecutionHook{
   override def callPreExecutionHook(sql: String): String = {
     if (sql.contains("LOCAL TEMPORARY")){

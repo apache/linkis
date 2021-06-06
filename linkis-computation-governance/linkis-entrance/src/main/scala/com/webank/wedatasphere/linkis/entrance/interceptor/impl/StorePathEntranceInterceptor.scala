@@ -30,9 +30,7 @@ import org.apache.commons.lang.time.DateFormatUtils
 import java.util
 import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
 
-/**
-  * Created by enjoyyin on 2018/11/3.
-  */
+
 class StorePathEntranceInterceptor extends EntranceInterceptor with Logging {
   /**
     * The apply function is to supplement the information of the incoming parameter task, making the content of this task more complete.

@@ -21,10 +21,7 @@ import com.webank.wedatasphere.linkis.entrance.interceptor.exception.CodeCheckEx
 import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
 import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
 
-/**
-  * created by enjoyyin on 2018/10/22
-  * Description:
-  */
+
 class SQLCodeCheckInterceptor extends EntranceInterceptor {
 
   override def apply(jobRequest: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {

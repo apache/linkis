@@ -7,10 +7,7 @@ import com.webank.wedatasphere.linkis.manager.label.entity.Label;
 import com.webank.wedatasphere.linkis.manager.label.entity.node.AliasServiceInstanceLabel;
 import com.webank.wedatasphere.linkis.manager.label.exception.LabelErrorException;
 
-/**
- * @author peacewong
- * @date 2020/8/21 21:03
- */
+
 public class TestLabelBuilder {
 
     public static void main(String[] args) throws LabelErrorException {

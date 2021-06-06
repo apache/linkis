@@ -36,9 +36,7 @@ import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions._
 
-/**
-  * Created by enjoyyin on 2019/1/22.
-  */
+
 class EntranceGroupFactory extends GroupFactory with Logging {
 
   private val groupNameToGroups = new JMap[String, Group]

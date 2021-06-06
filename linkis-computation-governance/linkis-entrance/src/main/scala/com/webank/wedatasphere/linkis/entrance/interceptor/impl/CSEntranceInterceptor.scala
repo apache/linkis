@@ -21,10 +21,7 @@ import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
 import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 
-/**
-  * @author peacewong
-  * @date 2020/3/24 18:28
-  */
+
 class CSEntranceInterceptor extends EntranceInterceptor with Logging {
 
   override def apply(task: JobRequest, logAppender: lang.StringBuilder): JobRequest = {

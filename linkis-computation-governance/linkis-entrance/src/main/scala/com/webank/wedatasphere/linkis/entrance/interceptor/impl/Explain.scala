@@ -29,10 +29,7 @@ import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  * created by enjoyyin on 2018/10/19
-  * Description:
-  */
+
 abstract class Explain extends Logging {
   /**
     * 用于检查code是否符合规范

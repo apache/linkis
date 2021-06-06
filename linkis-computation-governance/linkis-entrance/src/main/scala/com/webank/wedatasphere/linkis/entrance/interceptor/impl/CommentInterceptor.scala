@@ -25,10 +25,7 @@ import java.lang
 import java.util.regex.Pattern
 import scala.util.matching.Regex
 
-/**
-  * created by enjoyyin on 2019/2/28
-  * Description:
-  */
+
 class CommentInterceptor extends EntranceInterceptor {
   /**
    * The apply function is to supplement the information of the incoming parameter task, making the content of this task more complete.

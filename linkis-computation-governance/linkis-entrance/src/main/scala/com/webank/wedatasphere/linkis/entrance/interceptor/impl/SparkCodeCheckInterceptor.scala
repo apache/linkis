@@ -21,13 +21,7 @@ import com.webank.wedatasphere.linkis.entrance.interceptor.exception.CodeCheckEx
 import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
 import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
 
-/**
-  * created by enjoyyin on 2018/10/22
-  * Description:
-  * Yòng yú jiǎnchá spark dàimǎ
-  * 11/5000
-  * Used to check the spark code(用于检查spark代码)
-  */
+
 class SparkCodeCheckInterceptor extends EntranceInterceptor {
 
   override def apply(jobRequest: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {

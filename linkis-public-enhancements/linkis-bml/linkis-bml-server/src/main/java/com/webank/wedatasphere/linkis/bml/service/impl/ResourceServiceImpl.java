@@ -23,8 +23,6 @@ import com.webank.wedatasphere.linkis.bml.common.ResourceHelperFactory;
 import com.webank.wedatasphere.linkis.bml.dao.ResourceDao;
 import com.webank.wedatasphere.linkis.bml.dao.VersionDao;
 import com.webank.wedatasphere.linkis.bml.service.ResourceService;
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -35,13 +33,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
 
 @Service
 public class ResourceServiceImpl implements ResourceService {
@@ -84,7 +80,7 @@ public class ResourceServiceImpl implements ResourceService {
             String resourceId = (String) properties.get("resourceId");
             InputStream inputStream = p.getValueAs(InputStream.class);
             FormDataContentDisposition fileDetail = p.getFormDataContentDisposition();
-            String fileName = new String(fileDetail.getFileName().getBytes("ISO8859-1"), "UTF-8");
+            String fileName = new String(fileDetail.getFileName().getBytes(Constant.ISO_ENCODE), Constant.UTF8_ENCODE);
             fileName = resourceId;
             String path = resourceHelper.generatePath(user, fileName, properties);
             StringBuilder sb = new StringBuilder();

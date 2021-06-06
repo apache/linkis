@@ -24,7 +24,6 @@ import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
 import org.apache.commons.lang.exception.ExceptionUtils
 
 /**
-  * created by enjoyyin on 2018/10/22
   * Description: Check for python code, prohibiting the use of sys, os, and creating processes(用于python代码的检查，禁止使用sys、os以及创建进程等行为)
   */
 class PythonCodeCheckInterceptor extends EntranceInterceptor with Logging {

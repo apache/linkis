@@ -12,10 +12,7 @@ import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions._
 
-/**
-  * @author peacewong
-  * @date 2020/12/1 21:07
-  */
+
 class LabelCheckInterceptor extends EntranceInterceptor {
 
   /**

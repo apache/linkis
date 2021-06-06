@@ -24,10 +24,7 @@ import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
 
 import java.lang
 
-/**
-  * created by enjoyyin on 2019/2/25
-  * Description:
-  */
+
 class ScalaCodeInterceptor extends EntranceInterceptor {
 
   private val SCALA_TYPE = "scala"

@@ -229,6 +229,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             int fromLine = 0;
             int size = 100;
             boolean distinctLevel = true;
+            boolean allLog = false;
             if (req != null) {
                 String fromLineStr = req.getParameter("fromLine");
                 String sizeStr = req.getParameter("size");
@@ -242,6 +243,10 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 if ("false".equals(distinctLevelStr)) {
                     distinctLevel = false;
                 }
+                String allLogStr = req.getParameter("allLog");
+                if ("true".equals(allLogStr)) {
+                    allLog = true;
+                }
             }
 
             Object retLog = null;
@@ -249,11 +254,19 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             try {
                 if (distinctLevel) {
                     String[] logs = new String[4];
-                    retFromLine = logReader.readArray(logs, fromLine, size);
+                    if(!allLog) {
+                        retFromLine = logReader.readArray(logs, fromLine, size);
+                    }else {
+                        retFromLine = logReader.readArray(logs);
+                    }
                     retLog = new ArrayList<String>(Arrays.asList(logs));
                 } else {
                     StringBuilder sb = new StringBuilder();
-                    retFromLine = logReader.read(sb, fromLine, size);
+                    if(!allLog) {
+                        retFromLine = logReader.read(sb, fromLine, size);
+                    } else {
+                        retFromLine = logReader.read(sb);
+                    }
                     retLog = sb.toString();
                 }
             } catch (IllegalStateException e) {

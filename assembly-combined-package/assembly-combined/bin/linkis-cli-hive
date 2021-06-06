@@ -1,0 +1,187 @@
+#!/bin/bash
+#
+# Copyright 2019 WeBank
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# set -x
+export LANG=en_US.utf-8
+declare -A ord_opts=(\
+        #cli options
+        ['-e']='-code' \
+        ['-f']='-codePath' \
+        # ['-i']=true \ #not supported
+        # ['-S']=true \ #not supported
+        # ['--silent']=true \ #not supported
+        # ['-v']=true \ #not supported
+        # ['--verbose']=true \ #not supported
+        ['--hiveconf']='-confMap' \
+        ['-d']='-varMap' \
+        ['--hivevar']='-varMap' \
+        #linkis opts
+        ['--kill']='--kill' \
+        ['--status']='--status' \
+)
+
+#options that should be put in confMap(startupMap)
+declare -A confMap_opts=(\
+        #cli options
+        # ['--database']='k_db' \
+)
+
+#options that should be put in varMap(for variable substitution)
+declare -A kv_var_opts=(\
+        ['-d']=true \
+        ['--hivevar']=true \
+)
+
+#k-v pairs style options
+declare -A kv_conf_opts=(\
+        ['--hiveconf']=true \
+)
+
+# for help
+declare -A help_opts=(\
+        ['-H']='--help' \
+        ['--help']='--help' \
+)
+
+declare -A help_msg=(\
+        ['-d']="Variable subsitution to apply to hive commands. e.g. -d A=B or --define A=B"
+        #['--database']="Specify the database to use" \
+        ['-e']="SQL from command line" \
+        ['-f']="SQL from files" \
+        ['-H,--help']="Print help information" \
+        ['--hiveconf']="Use value for given property" \
+        ['--hivevar']="Variable subsitution to apply to hive commands. e.g. --hivevar A=B" \
+        ['--kill']="--kill" \
+        ['--status']="--status" \
+)
+
+function print_help() {
+    printf "Usage:\n"
+    for key in $(echo ${!help_msg[*]})
+    do
+        if [ -n "${help_msg[${key}]}" ]; then
+            msg=${help_msg[${key}]}
+            len=${#msg}
+            printf " %-30s%-30s\n" "$key" "${msg: 0:50}"
+            for ((i=50;i<len;i+=50))
+            do
+                if (( i+50<len )); then
+                    printf " %-30s%-30s\n" "" "${msg: i:50}"
+                else
+                    printf " %-30s%-30s\n" "" "${msg: i}"
+                fi
+                
+            done
+            
+        fi
+    done
+}
+
+
+
+i=0
+for arg in "$@"
+do
+        ARGS[i]=${arg}
+        ((i++))
+done
+NUM_ARGS=$i
+
+CONFMAP_OPTS=""
+VARMAP_OPTS=""
+LABELMAP_OPTS=""
+REMAINS_STR=""
+declare -a PARSED_CMD
+j=0
+
+function parse() {
+    for((i=0;i<NUM_ARGS;i++));
+    do
+        arg=${ARGS[${i}]}
+        if [ -n "${help_opts[${arg}]}" ]; then
+            print_help
+            PARSED_CMD[$j]=${help_opts[${arg}]}
+            break
+        fi
+        if [ $((${i}+1)) -lt ${NUM_ARGS} ]; then
+                val=${ARGS[${i}+1]}
+                if [ -n "${ord_opts[${arg}]}" ]; then
+                        lks_opt=${ord_opts[${arg}]}
+                        PARSED_CMD[$j]=$lks_opt
+                        PARSED_CMD[$j+1]=$val
+                        ((j=j+2))
+                elif [ -n "${kv_conf_opts[${arg}]}" ]; then
+                        kv_str=$val
+                        if [ -n "${CONFMAP_OPT}" ]; then
+                            CONFMAP_OPT=$CONFMAP_OPT","$kv_str
+                        else
+                            CONFMAP_OPT=$kv_str
+                        fi
+                elif [ -n "${kv_var_opts[${arg}]}" ]; then
+                        kv_str=$val
+                        if [ -n "${VARMAP_OPTS}" ]; then
+                            VARMAP_OPTS=$VARMAP_OPTS","$kv_str
+                        else
+                            VARMAP_OPTS=$kv_str
+                        fi
+                elif [ -n "${confMap_opts[${arg}]}" ]; then
+                        key=${confMap_opts[${arg}]}
+                        kv_str=$key"="$val
+                        if [ -n "${CONFMAP_OPT}" ]; then
+                            CONFMAP_OPT=$CONFMAP_OPT","$kv_str
+                        else
+                            CONFMAP_OPT=$kv_str   
+                        fi
+                else
+                        PARSED_CMD[$j]=$arg
+                        PARSED_CMD[$j+1]=$val
+                        ((j=j+2))
+                fi
+                ((i++))
+        else
+                PARSED_CMD[$j]=$arg
+                ((j++))
+        fi
+    done
+    if [ -n "${CONFMAP_OPT}" ]; then
+        PARSED_CMD[$j]="-confMap"
+        PARSED_CMD[$j+1]=$CONFMAP_OPT
+        ((j=j+2))
+    fi
+    if [ -n "${VARMAP_OPTS}" ]; then
+        PARSED_CMD[$j]="-varMap"
+        PARSED_CMD[$j+1]=$VARMAP_OPTS
+        ((j=j+2))
+    fi
+}
+
+
+current_dir=`pwd`
+if [ -n $WORK_DIR ]; then
+    work_dir=`dirname "$0"`/../
+    export WORK_DIR=`cd ${work_dir};pwd`
+fi
+cd ${current_dir}/
+if (( NUM_ARGS == 0 )); then
+    PARSED_CMD[$j]='--help'
+    print_help
+else
+    parse
+fi
+exec ${WORK_DIR}/bin/linkis-cli-start -engineType hive-1.2.1 -codeType hql  "${PARSED_CMD[@]}"
+
+

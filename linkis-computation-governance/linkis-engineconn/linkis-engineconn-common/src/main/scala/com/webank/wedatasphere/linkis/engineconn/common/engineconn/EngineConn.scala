@@ -23,18 +23,14 @@ trait EngineConn {
 
   /**
     * 底层engine的类型比如：Spark、hive
-    *
+    * engine conn type : spark , hive
     * @return
     */
   def getEngineConnType: String
 
   def setEngineConnType(engineConnType: String): Unit
 
-  /**
-    * 底层计算存储Engine的具体连接信息，比如SparkSession,hive的sessionState
-    *
-    * @return
-    */
+
   def getEngineConnSession: Any
 
   def setEngineConnSession(engineConnSession: Any): Unit
@@ -60,11 +56,7 @@ class DefaultEngineConn(engineCreationContext: EngineCreationContext) extends En
 
   override def setEngineConnType(engineConnType: String): Unit = this.engineConnType = engineConnType
 
-  /**
-    * 底层计算存储Engine的具体连接信息，比如SparkSession,hive的sessionState
-    *
-    * @return
-    */
+
   override def getEngineConnSession: Any = engineConnSession
 
   override def setEngineConnSession(engineConnSession: Any): Unit = this.engineConnSession = engineConnSession

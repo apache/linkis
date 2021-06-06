@@ -32,6 +32,18 @@
 
     <fileSet>
       <directory>
+        bin/
+      </directory>
+      <outputDirectory>bin</outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+      <fileMode>0755</fileMode>
+      <lineEnding>unix</lineEnding>
+    </fileSet>
+
+    <fileSet>
+      <directory>
         conf/
       </directory>
       <outputDirectory>conf</outputDirectory>
@@ -296,7 +308,7 @@
               ../../linkis-computation-governance/linkis-client/linkis-cli/linkis-cli-application/target/out/conf
           </directory>
           <outputDirectory>
-              conf/linkis-computation-governance/linkis-client/linkis-cli
+              conf/linkis-cli
           </outputDirectory>
           <includes>
               <include>*</include>

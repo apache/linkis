@@ -78,8 +78,6 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       new DefaultReqResourceService(labelResourceService),
       new DriverAndYarnReqResourceService(labelResourceService, externalResourceService)
     )
-    // submit NodeHeartbeatMonitor job
-    //Utils.defaultScheduler.scheduleAtFixedRate(nodeHeartbeatMonitor, RMConfiguration.NODE_HEARTBEAT_INTERVAL.getValue.toLong, RMConfiguration.NODE_HEARTBEAT_INTERVAL.getValue.toLong, TimeUnit.MILLISECONDS)
   }
 
   /**

@@ -21,6 +21,7 @@ import java.util
 import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.QueryParam
 import javax.ws.rs.core.{Context, Response}
+import org.codehaus.jackson.JsonNode
 import org.springframework.web.bind.annotation.{PathVariable, RequestBody, RequestMapping, RequestMethod}
 
 
@@ -49,14 +50,15 @@ trait EntranceRestfulRemote {
   @RequestMapping(value = Array("/entrance/{id}/log"), method = Array(RequestMethod.POST))
   def log(@Context req: HttpServletRequest, @PathVariable("id") id: String): Response
 
+  @RequestMapping(value = Array("/entrance/killJobs"), method = Array(RequestMethod.POST))
+  def killJobs(@Context req: HttpServletRequest, jsonNode: JsonNode): Response
+
   @RequestMapping(value = Array("/entrance/{id}/kill"), method = Array(RequestMethod.POST))
   def kill(@PathVariable("id") id: String, @QueryParam("taskID") taskID:Long): Response
 
   @RequestMapping(value = Array("/entrance/{id}/pause"), method = Array(RequestMethod.POST))
   def pause(@PathVariable("id") id: String): Response
 
-  @RequestMapping(value = Array("/entrance/backgroundservice"), method = Array(RequestMethod.POST))
-  def backgroundservice(@Context req: HttpServletRequest, @RequestBody json: util.Map[String, Any]): Response
 
 
 }

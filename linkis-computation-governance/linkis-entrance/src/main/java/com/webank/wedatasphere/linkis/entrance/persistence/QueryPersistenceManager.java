@@ -19,11 +19,13 @@ import com.webank.wedatasphere.linkis.common.io.FsPath;
 import com.webank.wedatasphere.linkis.entrance.EntranceContext;
 import com.webank.wedatasphere.linkis.entrance.cs.CSEntranceHelper;
 import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob;
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask;
+import com.webank.wedatasphere.linkis.entrance.job.EntranceExecuteRequest;
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest;
+import com.webank.wedatasphere.linkis.governance.common.entity.job.SubJobInfo;
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo;
-import com.webank.wedatasphere.linkis.protocol.task.Task;
 import com.webank.wedatasphere.linkis.scheduler.executer.OutputExecuteResponse;
 import com.webank.wedatasphere.linkis.scheduler.queue.Job;
+import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -68,66 +70,66 @@ public class QueryPersistenceManager extends PersistenceManager{
     public ResultSetEngine createResultSetEngine() {
         return resultSetEngine;
     }
+
     @Override
-    public void onResultSetCreated(Job job, OutputExecuteResponse response) {
+    public void onResultSetCreated(EntranceExecuteRequest request, OutputExecuteResponse response) {
         String path;
-        boolean isEntranceJob = job instanceof EntranceJob;
         try {
-            path = createResultSetEngine().persistResultSet(job, response);
+            path = createResultSetEngine().persistResultSet(request, response);
         } catch (Throwable e) {
-            job.onFailure("persist resultSet failed!", e);
-            if (isEntranceJob) ((EntranceJob) job).incrementResultSetPersisted();
+            EntranceJob job = (EntranceJob) getEntranceContext().getOrCreateExecutorManager().getEntranceJobByExecId(request.getJob().getId()).getOrElse(null);
+            String msg = "Persist resultSet failed for subJob : " + request.getSubJobInfo().getSubJobDetail().getId() + ", response : " + BDPJettyServerHelper.gson().toJson(response);
+            logger.error(msg);
+            if (null != job) {
+                job.onFailure("persist resultSet failed!", e);
+            } else {
+                logger.error("Cannot find job : {} in cache of ExecutorManager.", request.getJob().getJobRequest().getId());
+            }
             return;
         }
         if(StringUtils.isNotBlank(path)) {
-            Task task = null;
+            EntranceJob job = null;
             try {
-                task = this.entranceContext.getOrCreateEntranceParser().parseToTask(job);
+                job = (EntranceJob) getEntranceContext().getOrCreateExecutorManager().getEntranceJobByExecId(request.getJob().getId()).getOrElse(null);
             } catch (Throwable e) {
                 try {
                     entranceContext.getOrCreateLogManager().onLogUpdate(job, "store resultSet failed! reason: " + ExceptionUtils.getRootCauseMessage(e));
                     logger.error("store resultSet failed! reason:", e);
                 } catch (Throwable e1){
                     logger.error("job {} onLogUpdate error, reason:", job.getId(), e1);
-                } //ignore it
-                if(isEntranceJob) {
-                    ((EntranceJob) job).incrementResultSetPersisted();
                 }
                 return;
             }
-            if(task instanceof RequestPersistTask) {
-                RequestPersistTask requestPersistTask = (RequestPersistTask) task;
-                if(StringUtils.isEmpty(requestPersistTask.getResultLocation())) synchronized (task) {
-                    if(StringUtils.isNotEmpty(requestPersistTask.getResultLocation())) {
-                        if(isEntranceJob) {
-                            ((EntranceJob) job).incrementResultSetPersisted();
-                        }
+            SubJobInfo subJobInfo = request.getJob().getRunningSubJob();
+            String resultLocation = request.getJob().getRunningSubJob().getSubJobDetail().getResultLocation();
+            if (StringUtils.isEmpty(resultLocation)) {
+                synchronized (subJobInfo.getSubJobDetail()) {
+                    // todo check
+                    if(StringUtils.isNotEmpty(subJobInfo.getSubJobDetail().getResultLocation())) {
                         return;
                     }
                     try {
-                        requestPersistTask.setResultLocation(new FsPath(path).getParent().getSchemaPath());
-                        createPersistenceEngine().updateIfNeeded(task);
+                        subJobInfo.getSubJobDetail().setResultLocation(new FsPath(path).getSchemaPath());
+                        createPersistenceEngine().updateIfNeeded(subJobInfo);
                     } catch (Throwable e) {
                         entranceContext.getOrCreateLogManager().onLogUpdate(job, e.toString());
                     }
                 }
             }
         }
-        if(isEntranceJob) {
-            ((EntranceJob) job).incrementResultSetPersisted();
-        }
-    }
-
-    @Override
-    public void onResultSizeCreated(Job job, int resultSize) {
-        if (job instanceof EntranceJob) {
-            ((EntranceJob) job).setResultSize(resultSize);
-        }
     }
 
     @Override
     public void onProgressUpdate(Job job, float progress, JobProgressInfo[] progressInfo) {
-        job.setProgress(progress);
+        float updatedProgress = progress;
+        if (progress < 0) {
+            logger.error("Got negitive progress : " + progress + ", job : " + ((EntranceJob) job).getJobRequest().getId());
+            // todo check
+            updatedProgress = -1 * progress;
+        }
+        job.setProgress(updatedProgress);
+        EntranceJob entranceJob = (EntranceJob) job;
+        entranceJob.getJobRequest().setProgress(String.valueOf(updatedProgress));
         updateJobStatus(job);
     }
 
@@ -163,27 +165,31 @@ public class QueryPersistenceManager extends PersistenceManager{
     }
 
     private void updateJobStatus(Job job){
-        Task task = null;
+        JobRequest jobRequest = null;
         if(job.isCompleted()) {
             job.setProgress(1);
         }
         try{
-           task = this.entranceContext.getOrCreateEntranceParser().parseToTask(job);
+            jobRequest = ((EntranceJob) job).getJobRequest();
             if (job.isSucceed()){
                 //如果是job是成功的，那么需要将task的错误描述等都要设置为null
-                ((RequestPersistTask)task).setErrCode(null);
-                ((RequestPersistTask)task).setErrDesc(null);
+                jobRequest.setErrorCode(0);
+                jobRequest.setErrorDesc(null);
             }
-        }catch(ErrorException e){
+        } catch(Exception e){
             entranceContext.getOrCreateLogManager().onLogUpdate(job, e.getMessage());
             logger.error("update job status failed, reason:", e);
         }
         try {
-            createPersistenceEngine().updateIfNeeded(task);
+            createPersistenceEngine().updateIfNeeded(jobRequest);
         } catch (ErrorException e) {
             entranceContext.getOrCreateLogManager().onLogUpdate(job, e.getMessage());
             logger.error("update job status failed, reason: ", e);
         }
     }
 
+    @Override
+    public void onResultSizeCreated(EntranceExecuteRequest entranceExecuteRequest, int resultSize) {
+        entranceExecuteRequest.getSubJobInfo().getSubJobDetail().setResultSize(resultSize);
+    }
 }

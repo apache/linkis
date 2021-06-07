@@ -32,9 +32,7 @@ trait AccessibleService extends ExecutorStatusListener {
   def dealEngineStopRequest(engineSuicideRequest: EngineSuicideRequest, smc: ServiceMethodContext): Unit
 
 
-  /**
-    * service 需要加定时任务判断Executor是否空闲很久，然后调用该方法进行释放
-    */
+
   def requestManagerReleaseExecutor(msg: String): Unit
 
 

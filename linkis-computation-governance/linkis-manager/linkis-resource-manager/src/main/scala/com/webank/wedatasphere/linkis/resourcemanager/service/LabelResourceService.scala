@@ -29,6 +29,7 @@ abstract class LabelResourceService {
 
   /**
    * 方法同 setLabelResource 只适用于启动引擎申请资源后设置engineConn资源
+   * this function is the same to setLabelResource
    * @param label
    * @param nodeResource
    */

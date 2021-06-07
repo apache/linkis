@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit
 import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
+import com.webank.wedatasphere.linkis.errorcode.client.handler.LinkisErrorCodeHandler
 import com.webank.wedatasphere.linkis.entrance.errorcode.EntranceErrorConstants
 import com.webank.wedatasphere.linkis.storage.FSFactory
 import javax.annotation.PostConstruct
@@ -251,6 +252,26 @@ object FixedErrorCodeManager extends FileErrorCodeManager {
 
   override def getErrorCodes: Array[ErrorCode] = getCommonErrorCodes
 }
+
+/**
+ * this error code is from errorcode server
+ */
+object FlexibleErrorCodeManager extends ErrorCodeManager{
+
+  private val errorCodeHandler = LinkisErrorCodeHandler.getInstance()
+
+  override def getErrorCodes: Array[ErrorCode] = Array.empty
+
+  override def errorMatch(log: String): Option[(String, String)] = {
+    val errorCodes = errorCodeHandler.handle(log)
+    if (errorCodes != null && errorCodes.size() > 0){
+      Some(errorCodes.get(0).getErrorCode, errorCodes.get(0).getErrorDesc)
+    } else{
+      None
+    }
+  }
+}
+
 
 
 object Main{

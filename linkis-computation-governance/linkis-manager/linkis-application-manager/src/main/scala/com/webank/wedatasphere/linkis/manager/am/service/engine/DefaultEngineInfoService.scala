@@ -1,19 +1,3 @@
-/*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.webank.wedatasphere.linkis.manager.am.service.engine
 
 
@@ -25,6 +9,7 @@ import com.webank.wedatasphere.linkis.governance.common.entity.NodeExistStatus
 import com.webank.wedatasphere.linkis.governance.common.protocol.engineconn.{RequestEngineStatusBatch, ResponseEngineStatusBatch}
 import com.webank.wedatasphere.linkis.governance.common.utils.GovernanceConstant
 import com.webank.wedatasphere.linkis.manager.am.manager.{EMNodeManager, EngineNodeManager}
+import com.webank.wedatasphere.linkis.manager.am.vo.AMEngineNodeVo
 import com.webank.wedatasphere.linkis.manager.common.entity.node.{EMNode, EngineNode}
 import com.webank.wedatasphere.linkis.manager.label.service.NodeLabelService
 import com.webank.wedatasphere.linkis.message.annotation.Receiver
@@ -33,11 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConversions._
-import scala.collection.JavaConverters.asScalaBufferConverter
+import com.webank.wedatasphere.linkis.manager.label.builder.factory.{LabelBuilderFactoryContext, StdLabelBuilderFactory}
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
 
-/**
- *
- */
+import scala.collection.JavaConverters._
+
+
 @Service
 class DefaultEngineInfoService extends AbstractEngineService with EngineInfoService with Logging {
 
@@ -52,6 +38,8 @@ class DefaultEngineInfoService extends AbstractEngineService with EngineInfoServ
 
   @Autowired
   private var labelService: NodeLabelService = _
+
+  private val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
   /**
    * 通过user获取EngineNode 的基本信息，含metric,resourceInfo
@@ -113,4 +101,13 @@ class DefaultEngineInfoService extends AbstractEngineService with EngineInfoServ
     })
     ResponseEngineStatusBatch(map, null)
   }
+
+  override def modifyEngineLabel(instance: ServiceInstance, labelKeyValue: java.util.Map[String,String]): Unit = {
+    labelKeyValue.asScala.foreach(keyValue => {
+      val label = labelBuilderFactory.createLabel(keyValue._1, keyValue._2)
+      labelService.updateLabelToNode(instance, label)
+      info(s"instance:${instance} success to update label, labelKey:${keyValue._1} labelValue:${keyValue._2}")
+    })
+  }
+
 }

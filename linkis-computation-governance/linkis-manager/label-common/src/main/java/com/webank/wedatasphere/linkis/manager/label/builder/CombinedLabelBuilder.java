@@ -16,6 +16,8 @@
 
 package com.webank.wedatasphere.linkis.manager.label.builder;
 
+import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactory;
+import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
 import com.webank.wedatasphere.linkis.manager.label.constant.LabelConstant;
 import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant;
 import com.webank.wedatasphere.linkis.manager.label.entity.CombinedLabelImpl;
@@ -23,10 +25,12 @@ import com.webank.wedatasphere.linkis.manager.label.entity.Label;
 import com.webank.wedatasphere.linkis.manager.label.exception.LabelErrorException;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CombinedLabelBuilder implements LabelBuilder {
 
+    private static LabelBuilderFactory labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory();
 
     @Override
     public boolean canBuild(String labelKey) {
@@ -47,5 +51,17 @@ public class CombinedLabelBuilder implements LabelBuilder {
             }
         }
         return null;
+    }
+
+    public Label<?> buildFromStringValue(String labelKey, String stringValue) throws LabelErrorException {
+        String[] keyList = labelKey.replace(LabelKeyConstant.COMBINED_LABEL_KEY_PREFIX,"").split("_");
+        String[] valueList = stringValue.split(",");
+        ArrayList<Label> labels = new ArrayList<>();
+        for(int i = 0; i < keyList.length; i++){
+            Label label = labelFactory.createLabel(keyList[i], valueList[i]);
+            labels.add(label);
+        }
+        Label newLabel = build(labelKey, labels);
+        return newLabel;
     }
 }

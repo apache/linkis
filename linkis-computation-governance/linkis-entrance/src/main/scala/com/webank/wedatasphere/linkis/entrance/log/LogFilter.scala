@@ -17,7 +17,6 @@
 package com.webank.wedatasphere.linkis.entrance.log
 
 /**
-  * created by enjoyyin on 2019/2/18
   * Description:Used for logging(用来进行日志的)
   */
 trait LogFilter {

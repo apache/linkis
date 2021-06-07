@@ -16,10 +16,7 @@
 
 package com.webank.wedatasphere.linkis.engineconn.acessible.executor.log;
 
-import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration;
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event.TaskLogUpdateEvent;
-import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject;
 import com.webank.wedatasphere.linkis.engineconn.executor.listener.EngineConnSyncListenerBus;
 import com.webank.wedatasphere.linkis.engineconn.executor.listener.ExecutorListenerBusContext;
 import org.apache.logging.log4j.Level;
@@ -36,8 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Plugin(name = "Send", category = "Core", elementType = "appender", printObject = true)
 public class SendAppender extends AbstractAppender {
@@ -60,40 +55,14 @@ public class SendAppender extends AbstractAppender {
 
     private static final String[] PASS_WORDS_ARR = PASS_WORDS.split(",");
 
-
-    class SendThread implements Runnable {
-        @Override
-        public void run() {
-            if (engineConnSyncListenerBus == null) {
-                //ignore
-            } else {
-                if (logCache == null) {
-                    logger.warn("logCache is null");
-                    return;
-                }
-                List<String> logs = logCache.getRemain();
-                if (logs.size() > 0) {
-                    StringBuilder sb = new StringBuilder();
-                    for (String log : logs) {
-                        sb.append(log).append("\n");
-                    }
-                    if (EngineConnObject.isReady()) {
-                        engineConnSyncListenerBus.postToAll(new TaskLogUpdateEvent(null, sb.toString()));
-                    }
-                }
-            }
-        }
-    }
-
-
     public SendAppender(final String name, final Filter filter, final Layout<? extends Serializable> layout,
                         final boolean ignoreExceptions) {
         super(name, filter, layout, ignoreExceptions);
         this.logCache = LogHelper.logCache();
-        SendThread thread = new SendThread();
-        Utils.defaultScheduler().scheduleAtFixedRate(thread, 10, (Integer) AccessibleExecutorConfiguration.ENGINECONN_LOG_SEND_TIME_INTERVAL().getValue(), TimeUnit.MILLISECONDS);
+        //SendThread thread = new SendThread();
+        logger.info("SendAppender init success");
+        //TIMER.schedule(thread, 2000, (Integer) AccessibleExecutorConfiguration.ENGINECONN_LOG_SEND_TIME_INTERVAL().getValue());
     }
-
 
 
     @Override

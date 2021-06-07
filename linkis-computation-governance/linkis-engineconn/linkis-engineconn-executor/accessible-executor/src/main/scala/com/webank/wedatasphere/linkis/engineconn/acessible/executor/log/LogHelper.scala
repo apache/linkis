@@ -17,24 +17,33 @@
 package com.webank.wedatasphere.linkis.engineconn.acessible.executor.log
 
 import java.util
+import java.util.concurrent.TimeUnit
 
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.LogListener
 import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event.TaskLogUpdateEvent
-import org.slf4j.LoggerFactory
+import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
+import scala.collection.JavaConversions._
 
-object LogHelper {
-  private val logger = LoggerFactory.getLogger(getClass)
+object LogHelper extends Logging {
+
+
   val logCache = new MountLogCache(AccessibleExecutorConfiguration.ENGINECONN_LOG_CACHE_NUM.getValue)
 
   private var logListener: LogListener = _
 
+  private val CACHE_SIZE = AccessibleExecutorConfiguration.ENGINECONN_LOG_SEND_SIZE.getValue
+
   def setLogListener(logListener: LogListener): Unit = this.logListener = logListener
 
   def pushAllRemainLogs(): Unit = {
+    //    logger.info(s"start to push all remain logs")
     Thread.sleep(30)
+    //logCache.synchronized{
     if (logListener == null) {
-      logger.warn("logListener is null, can not push remain logs")
+      warn("logListener is null, can not push remain logs")
+      //return
     } else {
       var logs: util.List[String] = null
       logCache.synchronized {
@@ -44,11 +53,43 @@ object LogHelper {
         val sb: StringBuilder = new StringBuilder
         import scala.collection.JavaConversions._
         logs map (log => log + "\n") foreach sb.append
-        logger.info(s"remain logs is ${sb.toString()}")
         logListener.onLogUpdate(TaskLogUpdateEvent(null, sb.toString))
       }
     }
     logger.info("end to push all remain logs")
   }
+
+  def dropAllRemainLogs(): Unit = {
+    var logs: util.List[String] = null
+    logCache.synchronized {
+      logs = logCache.getRemain
+    }
+    if (null != logs && logs.size() > 0) {
+      logger.info(s"Dropped ${logs.size()} remained logs.")
+    }
+  }
+
+  Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
+    override def run(): Unit = Utils.tryAndWarn {
+
+      if (logListener == null || logCache == null) {
+        info("logCache or logListener is null")
+        return
+      } else {
+        if (logCache.size > CACHE_SIZE) {
+          val logs = logCache.getRemain
+          val sb = new StringBuilder
+
+          for (log <- logs) {
+            sb.append(log).append("\n")
+          }
+          if (EngineConnObject.isReady) {
+            logListener.onLogUpdate(TaskLogUpdateEvent(null, sb.toString))
+          }
+        }
+      }
+    }
+  }, 60 * 1000, AccessibleExecutorConfiguration.ENGINECONN_LOG_SEND_TIME_INTERVAL.getValue, TimeUnit.MILLISECONDS)
+
 
 }

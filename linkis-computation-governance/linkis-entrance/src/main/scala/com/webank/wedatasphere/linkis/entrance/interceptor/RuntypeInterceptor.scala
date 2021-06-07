@@ -16,32 +16,34 @@
 
 package com.webank.wedatasphere.linkis.entrance.interceptor
 
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
-import com.webank.wedatasphere.linkis.protocol.task.Task
+import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
+import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
 
 /**
   * Description: this interceptor is used to complete code with run type for
   * further use in engine
   */
-class RuntypeInterceptor extends EntranceInterceptor {
+class RuntypeInterceptor extends EntranceInterceptor with Logging {
 
-  override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = task match {
-    case requestPersistTask: RequestPersistTask =>
-      requestPersistTask.getRunType.toLowerCase() match {
-        case "python" | "py" | "pyspark" => val code = requestPersistTask.getExecutionCode
-          requestPersistTask.setExecutionCode("%python\n" + code)
-          requestPersistTask
-        case "sql" | "hql" =>
-          val code = requestPersistTask.getExecutionCode
-          requestPersistTask.setExecutionCode("%sql\n" + code)
-          requestPersistTask
-        case "scala" =>
-          val code = requestPersistTask.getExecutionCode
-          requestPersistTask.setExecutionCode("%scala\n" + code)
-          requestPersistTask
-        case _ => requestPersistTask
-      }
-    case _ => task
+  override def apply(task: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
+    val codeType = LabelUtil.getCodeType(task.getLabels)
+    codeType match {
+      case "python" | "py" | "pyspark" => val code = task.getExecutionCode
+        task.setExecutionCode("%python\n" + code)
+        task
+      case "sql" | "hql" =>
+        val code = task.getExecutionCode
+        task.setExecutionCode("%sql\n" + code)
+        task
+      case "scala" =>
+        val code = task.getExecutionCode
+        task.setExecutionCode("%scala\n" + code)
+        task
+      case _ =>
+        error(s"Invalid codeType ${codeType}")
+        task
+    }
   }
 
 }

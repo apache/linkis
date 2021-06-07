@@ -18,7 +18,6 @@ package com.webank.wedatasphere.linkis.manager.label.builder.factory;
 
 import com.webank.wedatasphere.linkis.manager.label.builder.LabelBuilder;
 import com.webank.wedatasphere.linkis.manager.label.conf.LabelCommonConfig;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.reflections.Reflections;
@@ -69,7 +68,7 @@ public class LabelBuilderFactoryContext {
      * @param labelBuilderFactory
      */
     private static void labelBuilderInitRegister(LabelBuilderFactory labelBuilderFactory) {
-        Reflections reflections = new Reflections(Label.class.getPackage().getName(), LabelBuilderFactoryContext.class.getClassLoader());
+        Reflections reflections = com.webank.wedatasphere.linkis.common.utils.ClassUtils.reflections();
 
         Set<Class<? extends LabelBuilder>> allLabelBuilderClass = reflections.getSubTypesOf(LabelBuilder.class);
         if (null != allLabelBuilderClass) {

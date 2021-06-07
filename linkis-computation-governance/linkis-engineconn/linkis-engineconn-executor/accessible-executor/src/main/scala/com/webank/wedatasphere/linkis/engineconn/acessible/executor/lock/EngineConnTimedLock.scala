@@ -17,14 +17,15 @@
 package com.webank.wedatasphere.linkis.engineconn.acessible.executor.lock
 
 import java.util.concurrent.{ScheduledFuture, ScheduledThreadPoolExecutor, Semaphore, TimeUnit}
-
 import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import com.webank.wedatasphere.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event.ExecutorUnLockEvent
+import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.ExecutorStatusListener
+import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event.{ExecutorCompletedEvent, ExecutorCreateEvent, ExecutorStatusChangedEvent, ExecutorUnLockEvent}
 import com.webank.wedatasphere.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
 
-class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logging {
+class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logging with ExecutorStatusListener {
 
   var lock = new Semaphore(1)
   val releaseScheduler = new ScheduledThreadPoolExecutor(1)
@@ -60,7 +61,6 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
       if (releaseTask != null) {
         releaseTask.cancel(true)
         releaseTask = null
-        releaseScheduler.purge()
       }
       debug("try to release for lock release success")
       lockedBy = null
@@ -89,11 +89,10 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
   private def scheduleTimeout: Unit = {
     synchronized {
       if (null == releaseTask || releaseTask.isDone) {
-        releaseTask = releaseScheduler.schedule(new Runnable {
+        releaseTask = releaseScheduler.scheduleWithFixedDelay(new Runnable {
           override def run(): Unit = {
             synchronized {
-              if (isExpired()) {
-                lock.release()
+              if (isAcquired() && isExpired()) {
                 // unlockCallback depends on lockedBy, so lockedBy cannot be set null before unlockCallback
                 unlockCallback(lock.toString)
                 info(s"Lock : [${lock.toString} was released due to timeout." )
@@ -101,7 +100,8 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
               }
             }
           }
-        }, timeout, TimeUnit.MILLISECONDS)
+        }, 3000, AccessibleExecutorConfiguration.ENGINECONN_LOCK_CHECK_INTERVAL.getValue.toLong, TimeUnit.MILLISECONDS)
+        info("Add scheduled timeout task.")
       }
     }
   }
@@ -112,6 +112,7 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
 
   override def isExpired(): Boolean = {
     if (lastLockTime == 0) return false
+    if (timeout <= 0) return false
     System.currentTimeMillis() - lastLockTime > timeout
   }
 
@@ -152,5 +153,19 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
     }
     ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus.post(ExecutorUnLockEvent(null, lockStr.toString))
   }
+
+  override def onExecutorCreated(executorCreateEvent: ExecutorCreateEvent): Unit = {}
+
+  override def onExecutorCompleted(executorCompletedEvent: ExecutorCompletedEvent): Unit = {}
+
+  override def onExecutorStatusChanged(executorStatusChangedEvent: ExecutorStatusChangedEvent): Unit = {
+    val toStatus = executorStatusChangedEvent.toStatus
+    if (NodeStatus.Busy == toStatus || NodeStatus.Idle == toStatus) {
+      info(s"Status changed to ${toStatus.name()}, update lastUpdatedTime for lock.")
+      lastLockTime = System.currentTimeMillis()
+      scheduleTimeout
+    }
+  }
+
 
 }

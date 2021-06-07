@@ -1,19 +1,3 @@
-/*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.webank.wedatasphere.linkis.manager.am.selector.rule
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
@@ -43,9 +27,18 @@ class ResourceNodeSelectRule extends NodeSelectRule with Logging {
   private def sortByResource(nodeA: Node, nodeB: Node): Boolean = {
     nodeA match {
       case node: RMNode if nodeB.isInstanceOf[RMNode] =>
-        Utils.tryCatch(node.getNodeResource.getLeftResource > nodeB.asInstanceOf[RMNode].getNodeResource.getLeftResource) {
+        Utils.tryCatch {
+          val nodeBRM = nodeB.asInstanceOf[RMNode]
+          if (null == node.getNodeResource || null == node.getNodeResource.getLeftResource) {
+            false
+          } else if (null == nodeBRM.getNodeResource || null == nodeBRM.getNodeResource.getLeftResource) {
+            true
+          } else {
+            node.getNodeResource.getLeftResource > nodeBRM.getNodeResource.getLeftResource
+          }
+        } {
           t: Throwable =>
-            warn("Failed to Compare resource ", t)
+            warn(s"Failed to Compare resource ${t.getMessage}")
             true
         }
       case _ => false

@@ -20,10 +20,8 @@ package com.webank.wedatasphere.linkis.entrance.context;
 import com.webank.wedatasphere.linkis.entrance.EntranceContext;
 import com.webank.wedatasphere.linkis.entrance.EntranceParser;
 import com.webank.wedatasphere.linkis.entrance.annotation.*;
-import com.webank.wedatasphere.linkis.entrance.background.BackGroundService;
-import com.webank.wedatasphere.linkis.entrance.event.EntranceEvent;
-import com.webank.wedatasphere.linkis.entrance.event.EntranceEventListener;
-import com.webank.wedatasphere.linkis.entrance.event.EntranceEventListenerBus;
+import com.webank.wedatasphere.linkis.entrance.event.*;
+import com.webank.wedatasphere.linkis.entrance.execute.EntranceExecutorManager;
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor;
 import com.webank.wedatasphere.linkis.entrance.log.LogManager;
 import com.webank.wedatasphere.linkis.entrance.persistence.PersistenceManager;
@@ -55,19 +53,21 @@ public class DefaultEntranceContext extends EntranceContext {
     @EntranceListenerBusBeanAnnotation.EntranceListenerBusAutowiredAnnotation
     private EntranceEventListenerBus<EntranceEventListener, EntranceEvent> listenerBus;
 
-    @BackGroundServiceBeanAnnotation.BackGroundServiceAutowiredAnnotation
-    private BackGroundService[] backGroundServices;
+    @EntranceLogListenerBusBeanAnnotation.EntranceLogListenerBusAutowiredAnnotation
+    private EntranceLogListenerBus<EntranceLogListener, EntranceLogEvent> logListenerBus;
+
+
 
     public DefaultEntranceContext(EntranceParser entranceParser, PersistenceManager persistenceManager, LogManager logManager,
                                   Scheduler scheduler, EntranceInterceptor[] interceptors, EntranceEventListenerBus<EntranceEventListener, EntranceEvent> listenerBus,
-                                  BackGroundService[] backGroundServices) {
+                                  EntranceLogListenerBus<EntranceLogListener, EntranceLogEvent> logListenerBus) {
         this.entranceParser = entranceParser;
         this.persistenceManager = persistenceManager;
         this.logManager = logManager;
         this.scheduler = scheduler;
         this.interceptors = interceptors;
         this.listenerBus = listenerBus;
-        this.backGroundServices = backGroundServices;
+        this.logListenerBus = logListenerBus;
     }
 
     public DefaultEntranceContext() {
@@ -79,6 +79,7 @@ public class DefaultEntranceContext extends EntranceContext {
         logger.info("Finished init entranceParser from postConstruct end!");
         persistenceManager.setEntranceContext(this);
         logManager.setEntranceContext(this);
+        logListenerBus.addListener(logManager);
        /* if(scheduler.getSchedulerContext().getOrCreateExecutorManager() instanceof EntranceExecutorManager) {
             listenerBus.addListener(((EntranceExecutorManager) scheduler.getSchedulerContext().getOrCreateExecutorManager()).getOrCreateEngineManager());
         }*/
@@ -115,8 +116,14 @@ public class DefaultEntranceContext extends EntranceContext {
     }
 
     @Override
-    public BackGroundService[] getOrCreateBackGroundService() {
-        return this.backGroundServices;
+    public EntranceLogListenerBus<EntranceLogListener, EntranceLogEvent> getOrCreateLogListenerBus() {
+        return this.logListenerBus;
+    }
+
+
+    @Override
+    public EntranceExecutorManager getOrCreateExecutorManager() {
+        return (EntranceExecutorManager) getOrCreateScheduler().getSchedulerContext().getOrCreateExecutorManager();
     }
 
 }

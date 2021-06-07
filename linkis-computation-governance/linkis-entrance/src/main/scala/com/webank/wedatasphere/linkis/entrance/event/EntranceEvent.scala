@@ -22,7 +22,6 @@ import com.webank.wedatasphere.linkis.scheduler.executer.Executor
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
 
 /**
-  * Created by enjoyyin on 2018/10/12.
   * desctiption: entrance The type of event in the event bus in the module(模块中的事件总线中的事件类型)
   */
 trait EntranceEvent extends Event{
@@ -31,16 +30,6 @@ trait EntranceEvent extends Event{
 
 //TODO Subsequent optimization, temporarily use this(后续优化，暂时这么用)
 case class EntranceJobEvent(jobId: String) extends EntranceEvent
-
-/**
-  * EntranceLogEvent is used when we have a log to send, we will post this event, eventListener will perform the corresponding operation.
- * For example, the log will be pushed to the front end through websocket
-  * EntranceLogEvent 用在当有日志需要发送的时候，我们将这个事件进行post，eventListener会进行相应的操作。
-  * 比如会通过websocket方式将日志推送到前端
-  * @param job
-  * @param log
-  */
-case class EntranceLogEvent(job: Job, log: String) extends EntranceEvent
 
 case class EntranceProgressEvent(job: Job, progress: Float, progressInfo: Array[JobProgressInfo]) extends EntranceEvent
 

@@ -69,4 +69,13 @@ public class EMInstanceLabel extends GenericLabel implements NodeInstanceLabel, 
     public ServiceInstance getServiceInstance(){
         return ServiceInstance.apply(getServiceName(), getInstance());
     }
+
+    @Override
+    protected void setStringValue(String stringValue){
+        String instance = stringValue.substring(stringValue.lastIndexOf('-') + 1, stringValue.length());
+        String serviceName = stringValue.substring(0, stringValue.lastIndexOf('-'));
+        setInstance(instance);
+        setServiceName(serviceName);
+    }
+
 }

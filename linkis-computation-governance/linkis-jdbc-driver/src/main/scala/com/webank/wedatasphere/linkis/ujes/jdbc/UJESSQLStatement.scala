@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.webank.wedatasphere.linkis.ujes.jdbc
 
 import java.sql.{Connection, ResultSet, SQLWarning, Statement}
@@ -29,6 +28,7 @@ import com.webank.wedatasphere.linkis.ujes.jdbc.hook.JDBCDriverPreExecutionHook
 import scala.collection.JavaConversions
 import scala.concurrent.TimeoutException
 import scala.concurrent.duration.Duration
+
 
 class UJESSQLStatement(private[jdbc] val ujesSQLConnection: UJESSQLConnection) extends Statement with Logging{
 
@@ -100,7 +100,7 @@ class UJESSQLStatement(private[jdbc] val ujesSQLConnection: UJESSQLConnection) e
       preExecution =>
         parsedSQL = preExecution.callPreExecutionHook(parsedSQL)
     }
-    val action = JobExecuteAction.builder().setEngineType(EngineType.SPARK).addExecuteCode(parsedSQL)
+    val action = JobExecuteAction.builder().setEngineType(ujesSQLConnection.getEngineType).addExecuteCode(parsedSQL)
       .setCreator(ujesSQLConnection.creator).setUser(ujesSQLConnection.user)
 
     if(ujesSQLConnection.variableMap.nonEmpty) action.setVariableMap(JavaConversions.mapAsJavaMap(ujesSQLConnection.variableMap))

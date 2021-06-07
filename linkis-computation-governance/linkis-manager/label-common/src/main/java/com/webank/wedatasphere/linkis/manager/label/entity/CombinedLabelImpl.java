@@ -20,6 +20,8 @@ import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +36,8 @@ public class CombinedLabelImpl implements CombinedLabel {
     }
 
     public CombinedLabelImpl(List<Label<?>> value) {
+        value.sort(Comparator.comparing(Label::getLabelKey));
+        Collections.reverse(value);
         this.value = value;
     }
 
@@ -42,7 +46,7 @@ public class CombinedLabelImpl implements CombinedLabel {
         if (isEmpty()) {
             return LabelKeyConstant.COMBINED_LABEL_KEY_PREFIX;
         }
-        List<String> keyList = getValue().stream().map(Label::getLabelKey).sorted(String::compareTo).collect(Collectors.toList());
+        List<String> keyList = getValue().stream().map(Label::getLabelKey).collect(Collectors.toList());
 
         String labelKey = LabelKeyConstant.COMBINED_LABEL_KEY_PREFIX + StringUtils.join(keyList, "_");
         return labelKey;

@@ -16,12 +16,13 @@
 
 package com.webank.wedatasphere.linkis.resourcemanager.service
 
+import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.manager.common.entity.resource._
 import com.webank.wedatasphere.linkis.resourcemanager.domain.RMLabelContainer
 import com.webank.wedatasphere.linkis.resourcemanager.exception.RMWarnException
 import com.webank.wedatasphere.linkis.resourcemanager.utils.RMUtils.aggregateResource
-import com.webank.wedatasphere.linkis.resourcemanager.utils.UserConfiguration
+import com.webank.wedatasphere.linkis.resourcemanager.utils.{AlertUtils, RMConfiguration, UserConfiguration}
 
 abstract class RequestResourceService(labelResourceService: LabelResourceService) extends Logging{
 
@@ -56,6 +57,25 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     }
     warn(s"No resource available found for label ${labelContainer.getCurrentLabel}")
     return true
+  }
+
+  def sendAlert(moduleInstance: ServiceInstance, user: String, creator:String,  requestResource: Resource, availableResource: Resource, moduleLeftResource: Resource) = {
+    if(RMConfiguration.ALERT_ENABLED.getValue){
+      info("start sending alert")
+      val title = s"user ${user} failed to request resource on EM(${moduleInstance.getApplicationName},${moduleInstance.getInstance})"
+      val queueContact = requestResource match {
+        case d: DriverAndYarnResource => AlertUtils.getContactByQueue(d.yarnResource.queueName)
+        case y: YarnResource => AlertUtils.getContactByQueue(y.queueName)
+        case _ => RMConfiguration.ALERT_DEFAULT_CONTACT.getValue
+      }
+      val detail =
+        s"请联系用户[${user}]或相关人员[${queueContact}]\n" +
+          s"user request resource: ${requestResource}\n " +
+          s"user available resource: ${availableResource}\n " +
+          s"EM left resource: ${moduleLeftResource}\n "
+      AlertUtils.sendAlertAsync(title, detail);
+      info("finished sending alert")
+    }
   }
 
   def generateNotEnoughMessage(requestResource: Resource, availableResource: Resource) : (Int, String) = {

@@ -34,7 +34,7 @@ trait RequestTask {
 }
 object RequestTask {
   private val header = "#rt_"
-  val RESULT_SET_STORE_PATH = header + "rs_store_path"
+  val RESULT_SET_STORE_PATH: String = header + "rs_store_path"
 }
 class RequestTaskExecute extends RequestTask with RequestProtocol {
   private var code: String = _
@@ -60,11 +60,19 @@ class RequestTaskExecute extends RequestTask with RequestProtocol {
     properties.put(key, value)
   }
 
-
-
   override def getLabels: util.List[Label[_]] = labels
 
   override def setLabels(labels: util.List[Label[_]]): Unit = this.labels = labels
+
+  private def getCodeByLimit(num: Int = 50) : String = {
+    if (code.size > num) {
+      code.substring(0, num)
+    } else {
+      code
+    }
+  }
+
+  override def toString = s"RequestTaskExecute(code=${getCodeByLimit()}, lock=$lock, properties=$properties, labels=$labels)"
 }
 
 trait TaskState extends RequestProtocol {}

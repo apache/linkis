@@ -18,11 +18,12 @@ package com.webank.wedatasphere.linkis.governance.common.protocol.conf
 
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
 import com.webank.wedatasphere.linkis.protocol.{CacheableProtocol, RetryableProtocol}
 
 trait ConfigProtocol
 
-case class RequestQueryGlobalConfig(username: String) extends CacheableProtocol with RetryableProtocol with ConfigProtocol
+case class RequestQueryGlobalConfig(username: String) extends CacheableProtocol with RetryableProtocol with ConfigProtocol with RequestProtocol
 
 case class RequestQueryEngineConfig(userCreatorLabel: UserCreatorLabel, engineTypeLabel: EngineTypeLabel, filter: String = null) extends CacheableProtocol with RetryableProtocol with ConfigProtocol
 

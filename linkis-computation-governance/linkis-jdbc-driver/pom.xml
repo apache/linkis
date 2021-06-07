@@ -20,7 +20,8 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>1.0.0-RC1</version>
+        <version>1.0.0</version>
+<!--        <relativePath>../../pom.xml</relativePath>-->
     </parent>
     <artifactId>linkis-jdbc-driver</artifactId>
 
@@ -68,6 +69,29 @@
                         <exclude>**/log4j2.xml</exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <!--这里指定要运行的main类-->
+                            <mainClass>com.webank.wedatasphere.linkis.ujes.jdbc.UJESSQLDriverMain</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- 此处指定继承合并 -->
+                        <phase>package</phase> <!-- 绑定到打包阶段 -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <resources>

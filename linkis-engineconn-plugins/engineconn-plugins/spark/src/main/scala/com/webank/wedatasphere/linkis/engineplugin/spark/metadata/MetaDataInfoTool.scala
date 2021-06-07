@@ -22,8 +22,6 @@ import org.apache.spark.sql.{DataFrame, Dataset, SQLContext, SparkLogicalPlanHel
 /**
   *
   * Description:
-  * 1.先执行sql,获取dataframe
-  * 2.通过dataframe的queryExecution对logicPlan进行分析
   */
 class MetaDataInfoTool extends Logging{
   def getMetaDataInfo(sqlContext:SQLContext, sql:String, dataFrame:DataFrame):String = {

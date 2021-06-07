@@ -21,7 +21,6 @@ import com.webank.wedatasphere.linkis.cs.common.entity.metadata.CSColumn
 import org.apache.hadoop.hive.ql.security.authorization.plugin.HivePrivilegeObject
 
 /**
- * created by cooperyang on 2020/8/26
  * Description:
  */
 case class SparkHiveObject(objectType: HivePrivilegeObject.HivePrivilegeObjectType, dbName: String, objectName: String,

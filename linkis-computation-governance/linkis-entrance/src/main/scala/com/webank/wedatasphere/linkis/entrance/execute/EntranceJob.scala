@@ -27,7 +27,6 @@ import com.webank.wedatasphere.linkis.entrance.event._
 import com.webank.wedatasphere.linkis.entrance.exception.EntranceErrorException
 import com.webank.wedatasphere.linkis.entrance.persistence.HaPersistenceTask
 import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
-import com.webank.wedatasphere.linkis.orchestrator.ecm.service.EngineConnExecutor
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
 import com.webank.wedatasphere.linkis.protocol.task.Task
 import com.webank.wedatasphere.linkis.rpc.utils.RPCUtils

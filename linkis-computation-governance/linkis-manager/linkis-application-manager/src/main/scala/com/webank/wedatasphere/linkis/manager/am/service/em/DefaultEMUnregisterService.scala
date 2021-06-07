@@ -29,9 +29,7 @@ import com.webank.wedatasphere.linkis.rpc.utils.RPCUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-/**
-  * @date 2020/8/4 20:27
-  */
+
 @Service
 class DefaultEMUnregisterService extends EMUnregisterService with Logging {
 

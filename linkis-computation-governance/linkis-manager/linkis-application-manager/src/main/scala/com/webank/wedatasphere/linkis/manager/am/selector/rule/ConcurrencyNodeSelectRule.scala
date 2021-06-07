@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.manager.common.entity.node.Node
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
-/**
-  * @date 2020/7/4 22:54
-  */
+
 @Component
 @Order(1)
 class ConcurrencyNodeSelectRule extends NodeSelectRule {

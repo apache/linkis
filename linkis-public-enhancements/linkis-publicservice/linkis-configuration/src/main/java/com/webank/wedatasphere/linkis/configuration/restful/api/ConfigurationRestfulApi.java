@@ -59,6 +59,8 @@ public class ConfigurationRestfulApi {
 
     ObjectMapper mapper = new ObjectMapper();
 
+    private static final String NULL = "null";
+
     @GET
     @Path("/addKeyForEngine")
     public Response addKeyForEngine(@Context HttpServletRequest req,
@@ -168,7 +170,7 @@ public class ConfigurationRestfulApi {
         String username = SecurityFilter.getLoginUsername(request);
         String categoryName = jsonNode.get("categoryName").asText();
         String description = jsonNode.get("description").asText();
-        if(StringUtils.isEmpty(categoryName) || categoryName.equals("null")){
+        if(StringUtils.isEmpty(categoryName) || categoryName.equals(NULL)){
             throw new ConfigurationException("categoryName is null, cannot be added");
         }
         categoryService.createFirstCategory(categoryName, description);
@@ -196,10 +198,10 @@ public class ConfigurationRestfulApi {
         if(StringUtils.isEmpty(categoryId) || categoryId <= 0){
             throw new ConfigurationException("creator is null, cannot be added");
         }
-        if(StringUtils.isEmpty(engineType) || engineType.toLowerCase().equals("null")){
+        if(StringUtils.isEmpty(engineType) || engineType.toLowerCase().equals(NULL)){
             throw new ConfigurationException("engine type is null, cannot be added");
         }
-        if(StringUtils.isEmpty(version) || version.toLowerCase().equals("null")){
+        if(StringUtils.isEmpty(version) || version.toLowerCase().equals(NULL)){
             version = LabelUtils.COMMON_VALUE;
         }
         categoryService.createSecondCategory(categoryId, engineType, version, description);

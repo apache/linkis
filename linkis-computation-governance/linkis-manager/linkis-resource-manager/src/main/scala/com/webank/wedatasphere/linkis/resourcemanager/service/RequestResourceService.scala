@@ -16,13 +16,12 @@
 
 package com.webank.wedatasphere.linkis.resourcemanager.service
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.manager.common.entity.resource._
 import com.webank.wedatasphere.linkis.resourcemanager.domain.RMLabelContainer
 import com.webank.wedatasphere.linkis.resourcemanager.exception.RMWarnException
 import com.webank.wedatasphere.linkis.resourcemanager.utils.RMUtils.aggregateResource
-import com.webank.wedatasphere.linkis.resourcemanager.utils.{ RMConfiguration, UserConfiguration}
+import com.webank.wedatasphere.linkis.resourcemanager.utils.UserConfiguration
 
 abstract class RequestResourceService(labelResourceService: LabelResourceService) extends Logging{
 

@@ -23,6 +23,7 @@ import com.webank.wedatasphere.linkis.ecm.core.engineconn.EngineConn
 import com.webank.wedatasphere.linkis.ecm.core.launch.ProcessEngineConnLaunch
 import com.webank.wedatasphere.linkis.ecm.server.ECMApplication
 import com.webank.wedatasphere.linkis.ecm.server.conf.ECMConfiguration.MANAGER_SPRING_NAME
+import com.webank.wedatasphere.linkis.ecm.server.errorcode.ECMErrorConstants
 import com.webank.wedatasphere.linkis.ecm.server.exception.ECMErrorException
 import com.webank.wedatasphere.linkis.ecm.server.listener.EngineConnStatusChangeEvent
 import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
@@ -71,15 +72,15 @@ abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchSe
     }
     Utils.tryThrow(Utils.waitUntil(() => engineConn.getStatus != Starting, Duration(timeout, TimeUnit.MILLISECONDS))) {
       case e: TimeoutException =>
-        throw new ECMErrorException(10000, s"wait for $engineConn initial timeout.")
+        throw new ECMErrorException(ECMErrorConstants.ECM_ERROR, s"wait for $engineConn initial timeout.")
       case e: InterruptedException => //比如被ms cancel
-        throw new ECMErrorException(10000, s"wait for $engineConn initial interrupted.")
+        throw new ECMErrorException(ECMErrorConstants.ECM_ERROR, s"wait for $engineConn initial interrupted.")
       case t: Throwable =>
         error(s"unexpected error, now shutdown it.")
         throw t
     }
     if (engineConn.getStatus == ShuttingDown) {
-      throw new ECMErrorException(10000, s"Failed to init $engineConn, status shutting down")
+      throw new ECMErrorException(ECMErrorConstants.ECM_ERROR, s"Failed to init $engineConn, status shutting down")
     }
   }
 

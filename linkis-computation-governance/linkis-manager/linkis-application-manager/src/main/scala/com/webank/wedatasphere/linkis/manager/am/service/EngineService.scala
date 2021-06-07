@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.manager.am.service
 
 import com.webank.wedatasphere.linkis.manager.am.manager.EngineNodeManager
 
-/**
-  * @date 2020/6/12 15:26
-  */
+
 trait EngineService {
 
 

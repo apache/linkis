@@ -32,8 +32,6 @@ import com.webank.wedatasphere.linkis.scheduler.queue.Job
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions._
-import scala.collection.mutable
-
 
 object CSEntranceHelper extends Logging {
 

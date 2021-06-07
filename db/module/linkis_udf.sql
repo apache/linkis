@@ -1,10 +1,10 @@
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for linkis_udf_manager
+-- Table structure for linkis_ps_udf_manager
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_udf_manager`;
-CREATE TABLE `linkis_udf_manager` (
+DROP TABLE IF EXISTS `linkis_ps_udf_manager`;
+CREATE TABLE `linkis_ps_udf_manager` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `user_name` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -12,11 +12,11 @@ CREATE TABLE `linkis_udf_manager` (
 
 
 -- ----------------------------
--- Table structure for linkis_udf_shared_group
+-- Table structure for linkis_ps_udf_shared_group
 -- An entry would be added when a user share a function to other user group
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_udf_shared_group`;
-CREATE TABLE `linkis_udf_shared_group` (
+DROP TABLE IF EXISTS `linkis_ps_udf_shared_group`;
+CREATE TABLE `linkis_ps_udf_shared_group` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `udf_id` bigint(20) NOT NULL,
   `shared_group` varchar(50) NOT NULL,
@@ -25,11 +25,11 @@ CREATE TABLE `linkis_udf_shared_group` (
 
 
 -- ----------------------------
--- Table structure for linkis_udf_shared_user
+-- Table structure for linkis_ps_udf_shared_group
 -- An entry would be added when a user share a function to another user
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_udf_shared_user`;
-CREATE TABLE `linkis_udf_shared_user` (
+DROP TABLE IF EXISTS `linkis_ps_udf_shared_group`;
+CREATE TABLE `linkis_ps_udf_shared_group` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `udf_id` bigint(20) NOT NULL,
   `user_name` varchar(50) NOT NULL,
@@ -38,10 +38,10 @@ CREATE TABLE `linkis_udf_shared_user` (
 
 
 -- ----------------------------
--- Table structure for linkis_udf_tree
+-- Table structure for linkis_ps_udf_tree
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_udf_tree`;
-CREATE TABLE `linkis_udf_tree` (
+DROP TABLE IF EXISTS `linkis_ps_udf_tree`;
+CREATE TABLE `linkis_ps_udf_tree` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `parent` bigint(20) NOT NULL,
   `name` varchar(100) DEFAULT NULL COMMENT 'Category name of the function. IT would be displayed in the front-end',
@@ -55,21 +55,21 @@ CREATE TABLE `linkis_udf_tree` (
 
 
 -- ----------------------------
--- Table structure for linkis_udf_user_load_info
+-- Table structure for linkis_ps_udf_user_load_info
 -- Used to store the function a user selects in the front-end
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_udf_user_load_info`;
-CREATE TABLE `linkis_udf_user_load_info` (
+DROP TABLE IF EXISTS `linkis_ps_udf_user_load_info`;
+CREATE TABLE `linkis_ps_udf_user_load_info` (
   `udf_id` int(11) NOT NULL,
   `user_name` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- ----------------------------
--- Table structure for linkis_udf
+-- Table structure for linkis_ps_udf
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_udf`;
-CREATE TABLE `linkis_udf` (
+DROP TABLE IF EXISTS `linkis_ps_udf`;
+CREATE TABLE `linkis_ps_udf` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `create_user` varchar(50) NOT NULL,
   `udf_name` varchar(255) NOT NULL,

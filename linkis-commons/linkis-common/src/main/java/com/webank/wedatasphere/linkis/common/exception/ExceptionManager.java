@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-/**
- * author: enjoyyin
- * date: 2018/9/13
- * time: 17:32
- * Description:
- */
+
 package com.webank.wedatasphere.linkis.common.exception;
 
+import com.webank.wedatasphere.linkis.common.errorcode.CommonErrorConstants;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +34,8 @@ public final class ExceptionManager {
     public static Exception generateException(Map<String, Object> map){
         Exception retException = null;
         if (null == map || map.get(LEVEL) == null){
-            return new ErrorException(10000, "The map cannot be parsed normally, the map is empty or the LEVEL value is missing:(map不能被正常的解析，map为空或者缺少LEVEL值: )" + map);
+            return new ErrorException(CommonErrorConstants.COMMON_ERROR(), "The map cannot be parsed normally, "
+                    + "the map is empty or the LEVEL value is missing:(map不能被正常的解析，map为空或者缺少LEVEL值: )" + map);
         }
         int level = Integer.parseInt(map.get(LEVEL).toString());
         int errCode = Integer.parseInt(map.get(ERRCODE).toString());
@@ -55,7 +52,7 @@ public final class ExceptionManager {
         } else if(RETRY.getLevel() == level) {
             retException = new DWCRetryException(errCode, desc, ip, port, serviceKind);
         }
-        return retException != null ? retException : new ErrorException(10000, "Exception Map that cannot be parsed:(不能解析的异常Map：)" + map);
+        return retException != null ? retException : new ErrorException(CommonErrorConstants.COMMON_ERROR(), "Exception Map that cannot be parsed:(不能解析的异常Map：)" + map);
     }
 
     public static Map<String, Object> unknownException(String errorMsg) {

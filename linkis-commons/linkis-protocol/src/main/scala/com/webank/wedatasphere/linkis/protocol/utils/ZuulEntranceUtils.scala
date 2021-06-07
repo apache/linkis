@@ -49,12 +49,6 @@ object ZuulEntranceUtils {
       val shortExecID = longExecID.substring(6 + creatorLength + executeLength + instanceLength, longExecID.length)
       Array(creator, executeApplicationName, instance, shortExecID)
     }
-    /*val executeLength = Integer.parseInt(longExecID.substring(0,2))
-    val instanceLength = Integer.parseInt(longExecID.substring(2,4))
-    val executeApplicationName:String = longExecID.substring(4, 4 + executeLength)
-    val instance:String = longExecID.substring(4 + executeLength, 4 + executeLength + instanceLength)
-    val shortExecID:String = longExecID.substring(4 + executeLength + instanceLength, longExecID.length)
-    Array[String](executeApplicationName, instance, shortExecID)*/
   }
 
   @Deprecated
@@ -133,12 +127,6 @@ object ZuulEntranceUtils {
     val instanceStrLength = getStrFixedLen(instanceStr, SPLIT_LEN)
     EXEC_ID + applicationNameLength + instanceStrLength + applicationName + instanceStr + shortExecID
   }
-
-
-  /*private def getLengthStr(string:String):String = {
-    val length = string.length
-    if (length >= 10) String.valueOf(length) else "0" + String.valueOf(length)
-  }*/
 
   private def getStrFixedLen(string: String, len: Int): String = {
     val str = String.valueOf(string.length)

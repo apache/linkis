@@ -29,10 +29,7 @@ import com.webank.wedatasphere.linkis.engineplugin.spark.utils.EngineUtils
 import com.webank.wedatasphere.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.commons.lang.exception.ExceptionUtils
 
-/**
-  *
-  * @date 2020/11/4
-  */
+
 class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long) extends SparkEngineConnExecutor(sparkEngineSession.sparkContext, id) {
 
 

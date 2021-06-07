@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.manager.am.utils
 
 import com.google.gson.Gson
 
-/**
-  * @date 2020/7/14 21:42
-  */
+
 object AMUtils {
 
   lazy val GSON = new Gson()

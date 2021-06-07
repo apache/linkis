@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.message.publisher;
 
 import com.webank.wedatasphere.linkis.message.context.AbstractMessageSchedulerContext;
 
-/**
- * @date 2020/7/15
- */
+
 public class DefaultMessagePublisher extends AbstractMessagePublisher {
 
     public DefaultMessagePublisher(AbstractMessageSchedulerContext context) {

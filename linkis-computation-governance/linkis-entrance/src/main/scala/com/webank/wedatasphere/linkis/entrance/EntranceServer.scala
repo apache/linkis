@@ -37,10 +37,10 @@ abstract class EntranceServer extends Logging {
 
 
   /**
-    * Execute a task and return an execId(执行一个task，返回一个execId)
-    * @param params
-    * @return
-    */
+   * Execute a task and return an execId(执行一个task，返回一个execId)
+   * @param params
+   * @return
+   */
   def execute(params: java.util.Map[String, Any]): String = {
     if(!params.containsKey(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)) info("received a request: " + params)
     else params.remove(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)
@@ -57,10 +57,10 @@ abstract class EntranceServer extends Logging {
     Utils.tryThrow(getEntranceContext.getOrCreateEntranceInterceptors().foreach(int => task = int.apply(task, logAppender))) { t =>
       val error = t match {
         case error: ErrorException => error
-        case t1:Throwable => val exception = new EntranceErrorException(20039, "解析task失败！原因：" + ExceptionUtils.getRootCauseMessage(t1))
+        case t1:Throwable => val exception = new EntranceErrorException(20039, "failed to analysis task ! the reason is :"+ExceptionUtils.getRootCauseMessage(t1)+"(解析task失败！原因：" + ExceptionUtils.getRootCauseMessage(t1))
           exception.initCause(t1)
           exception
-        case _ => new EntranceErrorException(20039, "解析task失败！原因：" + ExceptionUtils.getRootCauseMessage(t))
+        case _ => new EntranceErrorException(20039, "failed to analysis task ! the reason is :"+ExceptionUtils.getRootCauseMessage(t)+"(解析task失败！原因：" + ExceptionUtils.getRootCauseMessage(t))
       }
       task match {
         case t: RequestPersistTask =>

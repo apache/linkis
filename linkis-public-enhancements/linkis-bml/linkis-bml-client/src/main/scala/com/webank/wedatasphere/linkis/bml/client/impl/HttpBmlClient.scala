@@ -20,7 +20,8 @@ import java.util
 
 import com.webank.wedatasphere.linkis.bml.client.AbstractBmlClient
 import com.webank.wedatasphere.linkis.bml.common._
-import com.webank.wedatasphere.linkis.bml.conf.BmlConfiguration._
+import com.webank.wedatasphere.linkis.bml.conf.BmlConfiguration
+import com.webank.wedatasphere.linkis.bml.http.HttpConf
 import com.webank.wedatasphere.linkis.bml.protocol._
 import com.webank.wedatasphere.linkis.bml.request._
 import com.webank.wedatasphere.linkis.bml.response.{BmlCreateBmlProjectResult, _}
@@ -36,47 +37,28 @@ import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
-class HttpBmlClient(serverUrl: String) extends AbstractBmlClient {
+class HttpBmlClient extends AbstractBmlClient{
 
   private val logger:Logger = LoggerFactory.getLogger(classOf[HttpBmlClient])
 
-  val DEFAULT_CLIENT_NAME:String = "BML-Client"
-  var dwsClientConfig:DWSClientConfig = null
-  var dwsClient:DWSHttpClient = null
+  val serverUrl:String = HttpConf.gatewayInstance
+  val maxConnection:Int = 10
+  val readTimeout:Int = 10 * 60 * 1000
+  val authenticationStrategy:AuthenticationStrategy = new TokenAuthenticationStrategy()
+  val clientConfig:ClientConfig = ClientConfigBuilder.newBuilder().addServerUrl(serverUrl)
+    .connectionTimeout(5 * 60 * 1000).discoveryEnabled(false)
+    .loadbalancerEnabled(false).maxConnectionSize(maxConnection)
+    .retryEnabled(false).readTimeout(readTimeout)
+    .setAuthenticationStrategy(authenticationStrategy).setAuthTokenKey(BmlConfiguration.AUTH_TOKEN_KEY.getValue)
+    .setAuthTokenValue(BmlConfiguration.AUTH_TOKEN_VALUE.getValue).build()
+  val dwsClientConfig:DWSClientConfig = new DWSClientConfig(clientConfig)
+  dwsClientConfig.setDWSVersion(Configuration.LINKIS_WEB_VERSION.getValue)
+  val dwsClientName:String = "BML-Client"
+  val dwsClient:DWSHttpClient = new DWSHttpClient(dwsClientConfig, dwsClientName)
+
   val FIRST_VERSION:String = "v000001"
 
-  override def init(): Unit = {
-    val config = if (this.properties == null) {
-      new util.HashMap[String, Object]()
-    } else {
-      this.properties
-    }
 
-    val maxConnection:Int = config.getOrDefault(CONNECTION_MAX_SIZE_SHORT_NAME, CONNECTION_MAX_SIZE.getValue).asInstanceOf[Int]
-    val connectTimeout:Int = config.getOrDefault(CONNECTION_TIMEOUT_SHORT_NAME, CONNECTION_TIMEOUT.getValue).asInstanceOf[Int]
-    val readTimeout:Int = config.getOrDefault(CONNECTION_READ_TIMEOUT_SHORT_NAME, CONNECTION_READ_TIMEOUT.getValue).asInstanceOf[Int]
-    val tokenKey = config.getOrDefault(AUTH_TOKEN_KEY_SHORT_NAME, AUTH_TOKEN_KEY.getValue).asInstanceOf[String]
-    val tokenValue = config.getOrDefault(AUTH_TOKEN_VALUE_SHORT_NAME, AUTH_TOKEN_VALUE.getValue).asInstanceOf[String]
-    val clientName = config.getOrDefault(CLIENT_NAME_SHORT_NAME, DEFAULT_CLIENT_NAME).asInstanceOf[String]
-
-    val authenticationStrategy:AuthenticationStrategy = new TokenAuthenticationStrategy()
-    val clientConfig:ClientConfig = ClientConfigBuilder.newBuilder()
-      .addServerUrl(serverUrl)
-      .connectionTimeout(connectTimeout)
-      .discoveryEnabled(false)
-      .loadbalancerEnabled(false)
-      .maxConnectionSize(maxConnection)
-      .retryEnabled(false)
-      .readTimeout(readTimeout)
-      .setAuthenticationStrategy(authenticationStrategy)
-      .setAuthTokenKey(tokenKey)
-      .setAuthTokenValue(tokenValue)
-      .build()
-
-    dwsClientConfig = new DWSClientConfig(clientConfig)
-    dwsClientConfig.setDWSVersion(Configuration.LINKIS_WEB_VERSION.getValue)
-    dwsClient = new DWSHttpClient(dwsClientConfig, clientName)
-  }
 
   override def downloadResource(user:String, resourceID: String): BmlDownloadResponse = {
     downloadResource(user, resourceID, "")
@@ -94,14 +76,14 @@ class HttpBmlClient(serverUrl: String) extends AbstractBmlClient {
   }
 
   /**
-    * 下载资源到指定的path中
-    * @param user 用户名
-    * @param resourceId 资源ID
-    * @param version 版本信息
-    * @param path 指定的目录,前面要加schema share:// local:// 等
-    * @param overwrite 是否是追加
-    * @return 返回的inputStream已经被全部读完，所以返回一个null,另外的fullFileName是整个文件的名字
-    */
+   * 下载资源到指定的path中
+   * @param user 用户名
+   * @param resourceId 资源ID
+   * @param version 版本信息
+   * @param path 指定的目录,前面要加schema share:// local:// 等
+   * @param overwrite 是否是追加
+   * @return 返回的inputStream已经被全部读完，所以返回一个null,另外的fullFileName是整个文件的名字
+   */
   override def downloadResource(user: String, resourceId: String, version: String, path: String, overwrite:Boolean = false): BmlDownloadResponse = {
     val fsPath = new FsPath(path)
     val fileSystem = FSFactory.getFsByProxyUser(fsPath, user)
@@ -120,11 +102,11 @@ class HttpBmlClient(serverUrl: String) extends AbstractBmlClient {
       try{
         IOUtils.copy(inputStream, outputStream)
       }catch{
-        case e:IOException => logger.error("inputStream和outputStream流copy失败", e)
-          val exception = BmlClientFailException("inputStream和outputStream流copy失败")
+        case e:IOException => logger.error("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)", e)
+          val exception = BmlClientFailException("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)")
           exception.initCause(e)
           throw e
-        case t:Throwable => logger.error("流复制失败",t)
+        case t:Throwable => logger.error("failed to copy stream (流复制失败)",t)
           throw t
       }finally{
         IOUtils.closeQuietly(inputStream)
@@ -156,11 +138,11 @@ class HttpBmlClient(serverUrl: String) extends AbstractBmlClient {
       try{
         IOUtils.copy(inputStream, outputStream)
       }catch{
-        case e:IOException => logger.error("inputStream和outputStream流copy失败", e)
-          val exception = BmlClientFailException("inputStream和outputStream流copy失败")
+        case e:IOException => logger.error("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)", e)
+          val exception = BmlClientFailException("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)")
           exception.initCause(e)
           throw e
-        case t:Throwable => logger.error("流复制失败",t)
+        case t:Throwable => logger.error("failed to copy stream (流复制失败)",t)
           throw t
       }finally{
         IOUtils.closeQuietly(inputStream)
@@ -175,12 +157,12 @@ class HttpBmlClient(serverUrl: String) extends AbstractBmlClient {
 
 
   /**
-    * 更新资源信息
-    *
-    * @param resourceID 资源id
-    * @param filePath   目标文件路径
-    * @return resourceId 新的版本信息
-    */
+   * 更新资源信息
+   *
+   * @param resourceID 资源id
+   * @param filePath   目标文件路径
+   * @return resourceId 新的版本信息
+   */
   override def updateResource(user:String, resourceID: String, filePath: String): BmlUpdateResponse = {
     val inputStream:InputStream = getInputStream(filePath)
     updateResource(user, resourceID, filePath, inputStream)
@@ -211,13 +193,13 @@ class HttpBmlClient(serverUrl: String) extends AbstractBmlClient {
   }
 
   /**
-    * relateResource方法将targetFilePath路径的文件关联到resourceID下面
-    * targetFilePath需要包括schema，如果不包含schema，默认是hdfs
-    *
-    * @param resourceID     resourceID
-    * @param targetFilePath 指定文件目录
-    * @return BmlRelateResult  包含resourceId和新的version
-    */
+   * relateResource方法将targetFilePath路径的文件关联到resourceID下面
+   * targetFilePath需要包括schema，如果不包含schema，默认是hdfs
+   *
+   * @param resourceID     resourceID
+   * @param targetFilePath 指定文件目录
+   * @return BmlRelateResult  包含resourceId和新的version
+   */
   override def relateResource(resourceID: String, targetFilePath: String): BmlRelateResponse = {
     null
   }
@@ -226,11 +208,11 @@ class HttpBmlClient(serverUrl: String) extends AbstractBmlClient {
 
 
   /**
-    * 获取resourceid 对应资源的所有版本
-    * @param user       用户名
-    * @param resourceId 资源Id
-    * @return resourceId对应下的所有版本信息
-    */
+   * 获取resourceid 对应资源的所有版本
+   * @param user       用户名
+   * @param resourceId 资源Id
+   * @return resourceId对应下的所有版本信息
+   */
   override def getVersions(user: String, resourceId: String): BmlResourceVersionsResponse = {
     val getVersionsAction = BmlGetVersionsAction(user, resourceId)
     val result = dwsClient.execute(getVersionsAction)
@@ -254,11 +236,11 @@ class HttpBmlClient(serverUrl: String) extends AbstractBmlClient {
 
 
   /**
-    * 上传文件，用户指定文件路径，客户端自动获取输入流
-    * @param user     用户名
-    * @param filePath 文件路径
-    * @return 包含resourceId和version
-    */
+   * 上传文件，用户指定文件路径，客户端自动获取输入流
+   * @param user     用户名
+   * @param filePath 文件路径
+   * @return 包含resourceId和version
+   */
   override def uploadResource(user: String, filePath: String): BmlUploadResponse = {
     val inputStream:InputStream = getInputStream(filePath)
     uploadResource(user, filePath, inputStream)
@@ -269,13 +251,13 @@ class HttpBmlClient(serverUrl: String) extends AbstractBmlClient {
 
 
   /**
-    * 上传资源
-    *
-    * @param user        用户名
-    * @param filePath    上传的资源的路径
-    * @param inputStream 上传资源的输入流
-    * @return
-    */
+   * 上传资源
+   *
+   * @param user        用户名
+   * @param filePath    上传的资源的路径
+   * @param inputStream 上传资源的输入流
+   * @return
+   */
   override def uploadResource(user: String, filePath: String, inputStream: InputStream): BmlUploadResponse = {
     val _inputStreams = new util.HashMap[String, InputStream]()
     _inputStreams.put("file", inputStream)

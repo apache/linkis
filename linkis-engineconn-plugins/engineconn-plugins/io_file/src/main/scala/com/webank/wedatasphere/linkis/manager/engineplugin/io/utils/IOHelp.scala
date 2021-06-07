@@ -30,14 +30,14 @@ object IOHelp {
   private val maxPageSize = StorageConfiguration.IO_PROXY_READ_FETCH_SIZE.getValue.toLong
 
   /**
-    * 读出内容后，通过将bytes数组转换为base64加密的字符串
-    * 现在ujes之前不能直接传输bytes，所以通过base64保真
-    * @param fs
-    * @param method
-    * @return
-    */
+   * 读出内容后，通过将bytes数组转换为base64加密的字符串
+   * 现在ujes之前不能直接传输bytes，所以通过base64保真
+   * @param fs
+   * @param method
+   * @return
+   */
   def read(fs: Fs, method: MethodEntity): String = {
-    if (method.params == null || method.params.isEmpty) throw new StorageErrorException(53002,"read方法参数不能为空")
+    if (method.params == null || method.params.isEmpty) throw new StorageErrorException(53002,"The read method parameter cannot be empty(read方法参数不能为空)")
     val dest = MethodEntitySerializer.deserializerToJavaObject(method.params(0).asInstanceOf[String],classOf[FsPath])
     val inputStream = fs.read(dest)
     val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.IO_TYPE)
@@ -61,17 +61,17 @@ object IOHelp {
         writer.addMetaData(ioMetaData)
         writer.addRecord(ioRecord)
         writer.toString()
-      } else throw new StorageErrorException(53003, "不支持的参数调用")
+      } else throw new StorageErrorException(53003, "Unsupported parameter call(不支持的参数调用)")
     }(IOUtils.closeQuietly(inputStream))
   }
 
   /**
-    * 将穿过来的base64加密的内容转换为bytes数组写入文件
-    * @param fs
-    * @param method
-    */
+   * 将穿过来的base64加密的内容转换为bytes数组写入文件
+   * @param fs
+   * @param method
+   */
   def write(fs: Fs, method: MethodEntity): Unit = {
-    if (method.params == null || method.params.isEmpty) throw new StorageErrorException(53003, "不支持的参数调用")
+    if (method.params == null || method.params.isEmpty) throw new StorageErrorException(53003, "Unsupported parameter call(不支持的参数调用)")
     val dest = MethodEntitySerializer.deserializerToJavaObject(method.params(0).asInstanceOf[String],classOf[FsPath])
     val overwrite = method.params(1).asInstanceOf[Boolean]
     val outputStream = fs.write(dest, overwrite)

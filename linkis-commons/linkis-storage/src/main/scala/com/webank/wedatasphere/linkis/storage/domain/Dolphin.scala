@@ -23,8 +23,8 @@ import com.webank.wedatasphere.linkis.storage.exception.StorageWarnException
 import com.webank.wedatasphere.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 
 /**
-  * Created by johnnwang on 10/17/18.
-  */
+ * Created by johnnwang on 10/17/18.
+ */
 object Dolphin extends Logging{
 
   val CHAR_SET = StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue
@@ -51,33 +51,32 @@ object Dolphin extends Logging{
   }
 
   /**
-    * Convert a bytes array to a String content
-    * 将bytes数组转换为String内容
-    * @param bytes
-    * @param start
-    * @param len
-    * @return
-    */
+   * Convert a bytes array to a String content
+   * 将bytes数组转换为String内容
+   * @param bytes
+   * @param start
+   * @param len
+   * @return
+   */
   def getString(bytes: Array[Byte], start:Int, len: Int)= new String(bytes, start, len, Dolphin.CHAR_SET)
 
   /**
-    * Read an integer value that converts the array to a byte of length 10 bytes
-    * 读取整数值，该值为将数组转换为10字节长度的byte
-    * @param inputStream
-    * @return
-    */
+   * Read an integer value that converts the array to a byte of length 10 bytes
+   * 读取整数值，该值为将数组转换为10字节长度的byte
+   * @param inputStream
+   * @return
+   */
   def readInt(inputStream: InputStream): Int = {
     val bytes =  new Array[Byte](INT_LEN + 1)
-    if(StorageUtils.readBytes(inputStream, bytes, INT_LEN) != INT_LEN) throw new StorageWarnException(51000, "读取整数失败")
+    if(StorageUtils.readBytes(inputStream, bytes, INT_LEN) != INT_LEN) throw new StorageWarnException(51000, " failed to read integer(读取整数失败)")
     getString(bytes, 0, INT_LEN).toInt
   }
 
-
   /**
-    * Print integers at a fixed length(将整数按固定长度打印)
-    * @param value
-    * @return
-    */
+   * Print integers at a fixed length(将整数按固定长度打印)
+   * @param value
+   * @return
+   */
   def getIntBytes(value: Int): Array[Byte] = {
     val str = value.toString
     val res = "0" * (INT_LEN - str.length) + str

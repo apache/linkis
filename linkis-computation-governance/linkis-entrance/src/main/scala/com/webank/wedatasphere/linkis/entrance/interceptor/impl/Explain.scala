@@ -33,11 +33,11 @@ import scala.collection.mutable.ArrayBuffer
 
 abstract class Explain extends Logging {
   /**
-    * 用于检查code是否符合规范
-    * @param code
-    * @param error
-    * @return
-    */
+   * 用于检查code是否符合规范
+   * @param code
+   * @param error
+   * @return
+   */
   @throws[ErrorException]
   def authPass(code: String, error: StringBuilder): Boolean
 }
@@ -96,11 +96,11 @@ object SQLExplain extends Explain {
   }
 
   /**
-    * to deal with sql limit
-    *
-    * @param executionCode      sql code
-    * @param requestPersistTask use to store inited logs
-    */
+   * to deal with sql limit
+   *
+   * @param executionCode      sql code
+   * @param requestPersistTask use to store inited logs
+   */
   def dealSQLLimit(executionCode: String, requestPersistTask: RequestPersistTask, logAppender: java.lang.StringBuilder): Unit = {
     val fixedCode: ArrayBuffer[String] = new ArrayBuffer[String]()
     val tempCode = SQLCommentHelper.dealComment(executionCode)
@@ -110,7 +110,7 @@ object SQLExplain extends Explain {
       case e: Exception => logger.warn("sql limit check error happens")
         executionCode.contains(IDE_ALLOW_NO_LIMIT)
     }
-    if (isNoLimitAllowed) logAppender.append(LogUtils.generateWarn("请注意,SQL全量导出模式打开\n"))
+    if (isNoLimitAllowed) logAppender.append(LogUtils.generateWarn("please attention ,SQL full export mode opens(请注意,SQL全量导出模式打开)\n"))
     tempCode.split(";") foreach { singleCode =>
       if (isSelectCmd(singleCode)){
         val trimCode = singleCode.trim
@@ -200,10 +200,10 @@ object SQLExplain extends Explain {
   }
 
   /**
-    * 修改正确
-    * @param cmd code
-    * @return String
-    */
+   * 修改正确
+   * @param cmd code
+   * @return String
+   */
   def repairSelectOverLimit(cmd: String): String = {
     var code = cmd.trim
     var preCode=""
@@ -225,25 +225,25 @@ object SQLExplain extends Explain {
 
 object PythonExplain extends Explain{
   /**
-    * User is not allowed to import sys module(不允许用户导入sys模块)
-    */
+   * User is not allowed to import sys module(不允许用户导入sys模块)
+   */
   private val IMPORT_SYS_MOUDLE = """import\s+sys""".r.unanchored
   private val FROM_SYS_IMPORT = """from\s+sys\s+import\s+.*""".r.unanchored
   /**
-    * User is not allowed to import os module(不允许用户导入os模块)
-    */
+   * User is not allowed to import os module(不允许用户导入os模块)
+   */
   private val IMPORT_OS_MOUDLE = """import\s+os""".r.unanchored
   private val FROM_OS_IMPORT = """from\s+os\s+import\s+.*""".r.unanchored
   /**
-    * Do not allow users to open the process privately(不允许用户私自开启进程)
-    */
+   * Do not allow users to open the process privately(不允许用户私自开启进程)
+   */
   private val IMPORT_PROCESS_MODULE = """import\s+multiprocessing""".r.unanchored
   private val FROM_MULTIPROCESS_IMPORT = """from\s+multiprocessing\s+import\s+.*""".r.unanchored
   private val IMPORT_SUBPORCESS_MODULE = """import\s+subprocess""".r.unanchored
   private val FROM_SUBPROCESS_IMPORT = """from\s+subprocess\s+import\s+.*""".r.unanchored
   /**
-    * Forbidden user stop sparkContext(禁止用户stop sparkContext)
-    */
+   * Forbidden user stop sparkContext(禁止用户stop sparkContext)
+   */
   private val SC_STOP = """sc\.stop""".r.unanchored
   override def authPass(code: String, error: StringBuilder): Boolean = {
     if (EntranceConfiguration.IS_QML.getValue) {

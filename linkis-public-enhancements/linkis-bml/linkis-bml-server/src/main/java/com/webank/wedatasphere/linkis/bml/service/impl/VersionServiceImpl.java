@@ -50,11 +50,10 @@ import java.util.Map;
 public class VersionServiceImpl implements VersionService {
 
     private static final Logger logger = LoggerFactory.getLogger(VersionServiceImpl.class);
-
-
     /**
-     * 版本更新的时候,OVER_WRITE一律为false
+     * When the version is updated, OVER_WRITE is always false
      */
+
     private static final boolean OVER_WRITE = false;
 
     @Autowired
@@ -97,25 +96,24 @@ public class VersionServiceImpl implements VersionService {
         InputStream inputStream = file.getValueAs(InputStream.class);
         final String resourceIdLock = resourceId.intern();
         FormDataContentDisposition fileDetail = file.getFormDataContentDisposition();
-        String fileName = new String(fileDetail.getFileName().getBytes(Constant.ISO_ENCODE), Constant.UTF8_ENCODE);
+        String fileName = new String(fileDetail.getFileName().getBytes("ISO8859-1"), "UTF-8");
         //获取资源的path
-        String path = versionDao.getResourcePath(resourceId);
-        String newVersion;
+        String newVersion = params.get("newVersion").toString();
+        String path = versionDao.getResourcePath(resourceId) + "_" + newVersion;
         //上传资源前，需要对resourceId这个字符串的intern进行加锁，这样所有需要更新该资源的用户都会同步
         //synchronized (resourceIdLock.intern()){
-            //资源上传到hdfs
-            StringBuilder stringBuilder = new StringBuilder();
-            long size = resourceHelper.upload(path, user, inputStream, stringBuilder, OVER_WRITE);
-            String md5String = stringBuilder.toString();
-            String clientIp = params.get("clientIp").toString();
-            //生成新的version
-            String lastVersion = versionDao.getNewestVersion(resourceId);
-            newVersion = params.get("newVersion").toString();
-            long startByte = versionDao.getEndByte(resourceId, lastVersion) + 1;
-            //更新resource_version表
-            ResourceVersion resourceVersion = ResourceVersion.createNewResourceVersion(resourceId, path,
-                    md5String, clientIp, size, newVersion, startByte);
-            versionDao.insertNewVersion(resourceVersion);
+        //资源上传到hdfs
+        StringBuilder stringBuilder = new StringBuilder();
+        long size = resourceHelper.upload(path, user, inputStream, stringBuilder, OVER_WRITE);
+        String md5String = stringBuilder.toString();
+        String clientIp = params.get("clientIp").toString();
+        //生成新的version
+        //String lastVersion = versionDao.getNewestVersion(resourceId);
+        long startByte = 0L;
+        //更新resource_version表
+        ResourceVersion resourceVersion = ResourceVersion.createNewResourceVersion(resourceId, path,
+                md5String, clientIp, size, newVersion, startByte);
+        versionDao.insertNewVersion(resourceVersion);
         //}
         return newVersion;
     }
@@ -133,9 +131,9 @@ public class VersionServiceImpl implements VersionService {
     @Override
     public boolean downloadResource(String user, String resourceId, String version, OutputStream outputStream,
                                     Map<String, Object> properties)throws IOException {
-        //1获取resourceId 和 version对应的资源所在的路径
-        //2获取的startByte和EndByte
-        //3使用storage获取输入流
+        //1.Get the path of the resource corresponding to resourceId and version
+        //2.Get startByte and EndByte
+        //3.Use storage to get input stream
         ResourceVersion resourceVersion = versionDao.findResourceVersion(resourceId, version);
         long startByte = resourceVersion.getStartByte();
         long endByte = resourceVersion.getEndByte();
@@ -149,25 +147,25 @@ public class VersionServiceImpl implements VersionService {
         long size = endByte - startByte + 1;
         int left = (int) size;
         try {
-            while(left > 0) {
+            while (left > 0) {
                 int readed = inputStream.read(buffer);
                 int useful = Math.min(readed, left);
-                if(useful < 0){
+                if (useful < 0) {
                     break;
                 }
                 left -= useful;
                 byte[] bytes = new byte[useful];
-                for (int i = 0; i <useful ; i++) {
+                for (int i = 0; i < useful; i++) {
                     bytes[i] = buffer[i];
                 }
                 outputStream.write(bytes);
             }
-        }finally {
+        } finally {
             //int size = IOUtils.copy(inputStream, outputStream);
             IOUtils.closeQuietly(inputStream);
             fileSystem.close();
         }
-        return size >= 0 ;
+        return size >= 0;
     }
 
     @Override

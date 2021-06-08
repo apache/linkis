@@ -289,19 +289,6 @@ public class MdqServiceImpl implements MdqService {
         }
     }
 
-/*    @Deprecated
-    private List<MdqTablePartitionStatisticInfoVO> getMdqTablePartitionStatisticInfoVO(List<String> partitions, String tableLocation) throws IOException {
-        //partitions.sort((a,b)-> -a.compareTo(b));
-        //partitions
-        //partitions.stream().forEach();
-        List<MdqTablePartitionStatisticInfoVO> list = new ArrayList<>();
-        FileStatus tableFile = getRootHdfs().getFileStatus(new Path(tableLocation));
-        FileStatus[] fileStatuses = getRootHdfs().listStatus(tableFile.getPath());
-        for (FileStatus fileStatuse : fileStatuses) {
-            list.add(create(fileStatuse.getPath().toString()));
-        }
-        return list;
-    }*/
 
     private MdqTablePartitionStatisticInfoVO create(String path) throws IOException {
         MdqTablePartitionStatisticInfoVO mdqTablePartitionStatisticInfoVO = new MdqTablePartitionStatisticInfoVO();

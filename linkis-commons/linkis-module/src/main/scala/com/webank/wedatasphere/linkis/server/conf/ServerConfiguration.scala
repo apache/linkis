@@ -47,13 +47,7 @@ object ServerConfiguration extends Logging{
   }
   def getUsernameByTicket(ticketId: Any): Option[String] = if(ticketId == null) None else getUsernameByTicket(ticketId.toString)
   def getTicketByUsername(userName: String): String = {
-    if ("true".equals(ModuleConfiguration.DATA_OPERATE.getValue)){
-      val username = userName.split(",")(0)
-      val time = userName.split(",")(1)
-      DESUtil.encrypt(ticketHeader + username + "_c" + "," + time, ServerConfiguration.cryptKey)
-    } else{
       DESUtil.encrypt(ticketHeader + userName, ServerConfiguration.cryptKey)
-    }
   }
 
   val BDP_TEST_USER = CommonVars("wds.linkis.test.user", "")

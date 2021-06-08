@@ -16,10 +16,9 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue
 
-/**
-  * Created by enjoyyin on 2018/9/12.
-  */
+
 case class UserJob() extends Job{
+
   override def init() = {}
 
   override protected def jobToExecuteRequest = null

@@ -28,6 +28,7 @@ import com.webank.wedatasphere.linkis.server.{EXCEPTION_MSG, JMap, Message}
 import scala.runtime.BoxedUnit
 
 
+
 class MessageRPCConsumer {
 
   private val messageConverter: MessageConverter = new MessageConverter

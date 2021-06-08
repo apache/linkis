@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorManager
 import com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue.FIFOSchedulerContextImpl
 import com.webank.wedatasphere.linkis.scheduler.queue.{ConsumerManager, GroupFactory}
 
-/**
-  * Created by enjoyyin on 2018/9/1.
-  */
+
 trait SchedulerContext {
 
   def getOrCreateGroupFactory: GroupFactory

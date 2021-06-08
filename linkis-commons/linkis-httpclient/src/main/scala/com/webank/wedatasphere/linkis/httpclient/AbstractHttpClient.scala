@@ -41,9 +41,7 @@ import org.apache.http.{HttpResponse, _}
 import scala.collection.JavaConversions._
 
 
-/**
- * Created by enjoyyin on 2019/5/20.
- */
+
 abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String) extends Client {
 
   protected val CONNECT_TIME_OUT = 50000

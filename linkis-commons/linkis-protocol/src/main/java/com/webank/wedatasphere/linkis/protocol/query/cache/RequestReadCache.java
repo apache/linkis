@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,29 +14,28 @@
  * limitations under the License.
  */
 
+
 package com.webank.wedatasphere.linkis.protocol.query.cache;
 
 import com.webank.wedatasphere.linkis.protocol.query.QueryProtocol;
 
+import java.util.List;
+
 public class RequestReadCache implements QueryProtocol {
-    private String executionCode;
-    private String engineType;
+    private String executionContent;
     private String user;
     private Long readCacheBefore;
+    private List<String> labelsStr;
 
-    public RequestReadCache(String executionCode, String engineType, String user, Long readCacheBefore) {
-        this.executionCode = executionCode;
-        this.engineType = engineType;
+    public RequestReadCache(String executionContent, String user, List<String> labelsStr, Long readCacheBefore) {
+        this.executionContent = executionContent;
         this.user = user;
+        this.labelsStr = labelsStr;
         this.readCacheBefore = readCacheBefore;
     }
 
-    public String getExecutionCode() {
-        return executionCode;
-    }
-
-    public String getEngineType() {
-        return engineType;
+    public String getExecutionContent() {
+        return executionContent;
     }
 
     public String getUser() {
@@ -46,4 +45,9 @@ public class RequestReadCache implements QueryProtocol {
     public Long getReadCacheBefore() {
         return readCacheBefore;
     }
+
+    public List<String> getLabelsStr() {
+        return labelsStr;
+    }
+
 }

@@ -25,9 +25,7 @@ import com.webank.wedatasphere.linkis.rpc.sender.SpringCloudFeignConfigurationCa
 import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 trait RPCServerLoader {
 
   @throws[NoInstanceExistsException]

@@ -20,9 +20,7 @@ import java.util
 
 import scala.tools.nsc.interpreter.InputStream
 
-/**
-  * Created by enjoyyin on 2019/5/20.
-  */
+
 trait UploadAction extends UserAction {
 
   /**

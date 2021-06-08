@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.common.io.{MetaData, Record}
 import com.webank.wedatasphere.linkis.storage.domain.Dolphin
 import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
 
-/**
-  * Created by johnnwang on 10/20/18.
-  */
+
 class TextResultSerializer extends ResultSerializer{
 
   override def metaDataToBytes(metaData: MetaData): Array[Byte] = {

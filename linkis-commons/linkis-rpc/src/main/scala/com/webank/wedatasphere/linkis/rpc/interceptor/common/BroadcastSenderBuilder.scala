@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.rpc.interceptor.common
 
 import com.webank.wedatasphere.linkis.rpc.Sender
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 trait BroadcastSenderBuilder {
 
   val order: Int

@@ -1,0 +1,133 @@
+/*!
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+@import '@/common/style/variables.scss';
+
+.layout-header{
+    position: $fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 20px;
+    background-color: #000;
+    color: $dark-color;
+    box-shadow: $shadow-down;
+    z-index: $zindex-affix;
+    user-select: none;
+    clear: both;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    .layout-header-menu-icon {
+        display: flex;
+        cursor: pointer;
+        margin-right: 10px;
+        height: 40px;
+        &:hover {
+            color: $primary-color ;
+        }
+    }
+    .logo{
+        margin-left: 10px;
+        display: inline-block;
+        vertical-align: top;
+        font-size: 20px;
+        color: $body-background ;
+        margin-top: 2px;
+        position: relative;
+        .logo-img {
+            height: 36px;
+        }
+        .version {
+            position: absolute;
+            right: 14px;
+            bottom: 15px;
+            font-size: 12px;
+            height: 15px;
+        }
+    }
+    .menu{
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        vertical-align: top;
+        margin-left: 60px;
+        .menu-item{
+            position: $relative;
+            float: left;
+            padding: 0 20px;
+            font-size: $font-size-base;
+            text-align: center;
+            text-indent: 0;
+            border-right: none;
+            white-space: nowrap;
+            cursor: pointer;
+            &:hover, &.selected{
+                color: $body-background ;
+                background: $dark-bg-dark
+            }
+            .menu-item-beat {
+                position: $absolute;
+                top: 0;
+                right: 0;
+            }
+        }
+    }
+    .icon-group {
+        float: right;
+        cursor: pointer;
+        text-align: center;
+        padding: 0 6px;
+        line-height: 40px;
+        height: 40px;
+        font-size: 14px;
+        i {
+            font-size: 20px;
+            margin-right: 10px;
+            &:hover {
+                color: #fff;
+            }
+        }
+    }
+    .user{
+        height: 40px;
+        cursor: pointer;
+        position: absolute;
+        right: 5px;
+        top: 0px;
+        span {
+            display: inline-block;
+            line-height: 40px;
+            font-size: $font-size-base;
+            padding: 0 7px 0 10px;
+        }
+        .user-icon {
+            padding-right: 10px;
+        }
+        &:hover, &.selected {
+            background: $menu-dark-active-bg;
+        }
+        .user-image{
+            border-radius: 50%;
+            width: 40px;
+            height: auto;
+        }
+    }
+}

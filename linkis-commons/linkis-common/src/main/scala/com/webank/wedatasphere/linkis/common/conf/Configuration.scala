@@ -15,9 +15,7 @@ package com.webank.wedatasphere.linkis.common.conf
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
 
-/**
-  * Created by enjoyyin on 2018/4/18.
-  */
+
 object Configuration extends Logging {
 
   val BDP_ENCODING = CommonVars("wds.linkis.encoding", "utf-8")
@@ -28,9 +26,18 @@ object Configuration extends Logging {
 
   val IS_TEST_MODE = CommonVars("wds.linkis.test.mode", false)
 
-  val LINKIS_HOME = CommonVars("wds.linkis.home", CommonVars("LINKIS_HOME", "/appcom/Install/LinkisInstall"))
+  val LINKIS_HOME = CommonVars("wds.linkis.home", CommonVars("LINKIS_HOME", "/tmp").getValue)
 
   val GATEWAY_URL: CommonVars[String] = CommonVars[String]("wds.linkis.gateway.url", "http://127.0.0.1:9001/")
+
+  val LINKIS_WEB_VERSION:CommonVars[String] = CommonVars[String]("wds.linkis.web.version", "v1")
+
+  val REFLECT_SCAN_PACKAGE = CommonVars.apply("wds.linkis.reflect.scan.package", "com.webank.wedatasphere")
+
+  val CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.console.configuration.application.name", "linkis-ps-publicservice")
+
+  val CLOUD_CONSOLE_VARIABLE_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.console.variable.application.name", "linkis-ps-publicservice")
+
 
   def getGateWayURL(): String = {
     val url = GATEWAY_URL.getValue.trim
@@ -41,6 +48,17 @@ object Configuration extends Logging {
     }
     info(s"gatewayUrl is $gatewayUr")
     gatewayUr
+  }
+
+  def getLinkisHome(): String = {
+    val home = LINKIS_HOME.getValue.trim
+    val linkisHome = if (home.endsWith("/")) {
+      home.substring(0, home.length - 1)
+    } else {
+      home
+    }
+    info(s"linkisHome is $linkisHome")
+    linkisHome
   }
 
 }

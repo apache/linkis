@@ -25,9 +25,7 @@ import com.webank.wedatasphere.linkis.rpc.sender.SpringMVCRPCSender
 
 import scala.concurrent.duration.Duration
 
-/**
-  * Created by enjoyyin on 2018/8/28.
-  */
+
 abstract class Sender {
   /**
     *Ask is a synchronous method that requests the target microservice in real time and requires the target microservice to return a non-null return value.
@@ -67,6 +65,9 @@ abstract class Sender {
 object Sender {
   //TODO needs to consider whether the sender will be a singleton, will there be communication problems?
   //TODO 需要考虑将sender做成单例后，会不会出现通信问题
+
+  private val senderFactory: SenderFactory = SenderFactory.getFactory
+
   private val serviceInstanceToSenders = new util.HashMap[ServiceInstance, Sender]
   def getSender(applicationName: String): Sender = getSender(ServiceInstance(applicationName, null))
   def getSender(serviceInstance: ServiceInstance): Sender = {
@@ -74,7 +75,7 @@ object Sender {
       serviceInstance.setApplicationName(RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue)
     if(!serviceInstanceToSenders.containsKey(serviceInstance)) serviceInstanceToSenders synchronized {
       if(!serviceInstanceToSenders.containsKey(serviceInstance))
-        serviceInstanceToSenders.put(serviceInstance, new SpringMVCRPCSender(serviceInstance))
+        serviceInstanceToSenders.put(serviceInstance, senderFactory.createSender(serviceInstance))
     }
     serviceInstanceToSenders.get(serviceInstance)
   }

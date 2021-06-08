@@ -18,7 +18,5 @@ package com.webank.wedatasphere.linkis.rpc.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 class NoInstanceExistsException(errorCode: Int, errorMsg: String) extends ErrorException(errorCode, errorMsg)

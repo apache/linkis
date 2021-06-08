@@ -89,8 +89,10 @@ class MessageRPCReceiveRestful extends RPCReceiveRestful {
       RPCProduct.getRPCProduct.toMessage(obj)
   }
 
-  private implicit def getReq: HttpServletRequest = {
+  private implicit def getReq: HttpServletRequest = if (null != RequestContextHolder.getRequestAttributes ) {
     RequestContextHolder.getRequestAttributes.asInstanceOf[ServletRequestAttributes].getRequest
+  }else {
+    null
   }
 
   @Path("receive")

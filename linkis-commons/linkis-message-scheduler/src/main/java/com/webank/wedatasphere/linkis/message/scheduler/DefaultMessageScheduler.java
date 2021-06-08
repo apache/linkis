@@ -16,59 +16,65 @@
 
 package com.webank.wedatasphere.linkis.message.scheduler;
 
+import static com.webank.wedatasphere.linkis.message.conf.MessageSchedulerConf.MAX_PARALLELISM_CONSUMERS;
+import static com.webank.wedatasphere.linkis.message.conf.MessageSchedulerConf.MAX_QUEUE_CAPACITY;
+import static com.webank.wedatasphere.linkis.message.conf.MessageSchedulerConf.MAX_RUNNING_JOB;
+
 import com.webank.wedatasphere.linkis.message.builder.MessageJob;
 import com.webank.wedatasphere.linkis.message.builder.MessageJobListener;
 import com.webank.wedatasphere.linkis.scheduler.Scheduler;
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorManager;
-import com.webank.wedatasphere.linkis.scheduler.queue.Group;
 import com.webank.wedatasphere.linkis.scheduler.queue.GroupFactory;
 import com.webank.wedatasphere.linkis.scheduler.queue.Job;
-import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelGroup;
+import com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue.FIFOGroupFactory;
+import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelConsumerManager;
 import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelScheduler;
 import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelSchedulerContextImpl;
 
 
 public class DefaultMessageScheduler implements MessageScheduler {
 
-    // TODO: 2020/7/22 configuration
-    private static final int MAX_RUNING_JOB = Runtime.getRuntime().availableProcessors() * 2;
-
-    private static final int MAX_PARALLELISM_USERS = Runtime.getRuntime().availableProcessors();
-
     private static final int MAX_ASK_EXECUTOR_TIMES = 1000;
-
-    private static final String GROUP_NAME = "message-scheduler";
 
     private final Scheduler linkisScheduler;
 
-    {
-        MessageExecutorExecutionManager messageExecutorManager = new MessageExecutorExecutionManager();
-        linkisScheduler = new ParallelScheduler(
-                new ParallelSchedulerContextImpl(MAX_PARALLELISM_USERS) {
-                    @Override
-                    public ExecutorManager getOrCreateExecutorManager() {
-                        return messageExecutorManager;
-                    }
-                });
-        linkisScheduler.init();
-        GroupFactory groupFactory = linkisScheduler.getSchedulerContext().getOrCreateGroupFactory();
-        //one consumer group is enough
-        Group group = groupFactory.getOrCreateGroup(GROUP_NAME);
-        if (group instanceof ParallelGroup) {
-            ParallelGroup parallelGroup = (ParallelGroup) group;
-            if (parallelGroup.getMaxRunningJobs() == 0) {
-                parallelGroup.setMaxRunningJobs(MAX_RUNING_JOB);
-            }
-            if (parallelGroup.getMaxAskExecutorTimes() == 0) {
-                parallelGroup.setMaxAskExecutorTimes(MAX_ASK_EXECUTOR_TIMES);
+    private static final String GROUP_NAME = "message-scheduler";
+
+    public Scheduler getLinkisScheduler() {
+        return linkisScheduler;
+    }
+
+    public DefaultMessageScheduler() {
+        this(null);
+    }
+
+    public DefaultMessageScheduler(GroupFactory groupFactory){
+        ParallelSchedulerContextImpl schedulerContext = new ParallelSchedulerContextImpl(MAX_PARALLELISM_CONSUMERS);
+        schedulerContext.setConsumerManager(new ParallelConsumerManager(MAX_PARALLELISM_CONSUMERS, "RpcMessageScheduler"));
+        schedulerContext.setExecutorManager(new MessageExecutorExecutionManager());
+        if(groupFactory != null) {
+            schedulerContext.setGroupFactory(groupFactory);
+        } else {
+            groupFactory = schedulerContext.getOrCreateGroupFactory();
+            if(groupFactory instanceof FIFOGroupFactory) {
+                FIFOGroupFactory fifoGroupFactory = (FIFOGroupFactory) groupFactory;
+                fifoGroupFactory.setDefaultMaxRunningJobs(MAX_RUNNING_JOB);
+                fifoGroupFactory.setDefaultMaxAskExecutorTimes(MAX_ASK_EXECUTOR_TIMES);
+                fifoGroupFactory.setDefaultMaxCapacity(MAX_QUEUE_CAPACITY);
             }
         }
+        linkisScheduler = new ParallelScheduler(schedulerContext);
+        linkisScheduler.init();
     }
 
     @Override
     public void submit(MessageJob messageJob) {
         if (messageJob instanceof Job) {
-            ((Job) messageJob).setId(GROUP_NAME);
+            if (null == messageJob.getMethodContext().getSender()) {
+                ((Job) messageJob).setId(GROUP_NAME);
+            } else {
+                ((Job) messageJob).setId(messageJob.getMethodContext().getSender().toString());
+            }
+
             ((Job) messageJob).setJobListener(new MessageJobListener());
             linkisScheduler.submit((Job) messageJob);
         }

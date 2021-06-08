@@ -41,12 +41,15 @@ object StorageConfiguration {
 
   val IS_SHARE_NODE = CommonVars("wds.linkis.storage.is.share.node", true)
 
+
+  val ENABLE_IO_PROXY = CommonVars("wds.linkis.storage.enable.io.proxy", false)
+
   val IO_USER = CommonVars("wds.linkis.storage.io.user", "root")
   val IO_FS_EXPIRE_TIME = CommonVars("wds.linkis.storage.io.fs.num", 1000*60*10)
   val IO_PROXY_READ_FETCH_SIZE = CommonVars("wds.linkis.storage.io.read.fetch.size", new ByteType("100k"))
   val IO_PROXY_WRITE_CACHE_SIZE = CommonVars("wds.linkis.storage.io.write.cache.size", new ByteType("64k"))
 
-  val IO_DEFAULT_CREATOR = CommonVars("wds.linkis.storage.io.default.creator", "ujes")
+  val IO_DEFAULT_CREATOR = CommonVars("wds.linkis.storage.io.default.creator", "IDE")
   val IO_FS_RE_INIT = CommonVars("wds.linkis.storage.io.fs.re.init", "re-init")
 
   val IO_INIT_RETRY_LIMIT = CommonVars("wds.linkis.storage.io.init.retry.limit", 10)

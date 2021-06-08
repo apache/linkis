@@ -20,9 +20,7 @@ import java.io.{ByteArrayInputStream, InputStream}
 
 import com.webank.wedatasphere.linkis.common.io.{FsReader, MetaData, Record}
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 abstract class ResultSetReader[K <: MetaData, V <: Record](resultSet: ResultSet[K, V],
                                                            inputStream: InputStream) extends FsReader {
   def this(resultSet: ResultSet[K, V], data: String) = this(resultSet,

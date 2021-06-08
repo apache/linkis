@@ -21,6 +21,7 @@ import java.util
 import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
 
 
+
 class MessageReceiverChooser(receiver: Option[Receiver]) extends ReceiverChooser {
 
   override def chooseReceiver(event: RPCMessageEvent): Option[Receiver] = event.message match {

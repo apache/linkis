@@ -38,9 +38,7 @@ import org.glassfish.jersey.servlet.ServletContainer
 
 import scala.collection.mutable
 
-/**
-  * Created by enjoyyin on 2018/8/6.
-  */
+
 private[linkis] object BDPJettyServerHelper extends Logging {
 
   private var serverListenerEventBus: ServerListenerEventBus = _

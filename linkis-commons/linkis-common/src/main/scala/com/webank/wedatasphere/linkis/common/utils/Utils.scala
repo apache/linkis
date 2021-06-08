@@ -21,7 +21,7 @@ import java.net.InetAddress
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.{ScheduledThreadPoolExecutor, _}
 
-import com.webank.wedatasphere.linkis.common.exception.{DwcCommonErrorException, ErrorException, FatalException, WarnException}
+import com.webank.wedatasphere.linkis.common.exception.{ErrorException, FatalException, LinkisCommonErrorException, WarnException}
 import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
 
@@ -30,28 +30,26 @@ import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService}
 import scala.util.control.ControlThrowable
-/**
-  * Created by enjoyyin on 2018/1/10.
-  */
+
 object Utils extends Logging {
 
-  def tryQuietly[T](tryOp: => T): T = try tryOp catch {
-    case c: ControlThrowable => throw c
-    case fatal: FatalException =>
-      error("Fatal Error, system exit...", fatal)
-      System.exit(fatal.getErrCode)
-      null.asInstanceOf[T]
-    case _ => null.asInstanceOf[T]
-  }
+  def tryQuietly[T](tryOp: => T): T = tryQuietly(tryOp, _ => ())
 
   def tryCatch[T](tryOp: => T)(catchOp: Throwable => T): T = {
     try tryOp catch {
       case t: ControlThrowable => throw t
       case fatal: FatalException =>
-        error("Fatal Error, system exit...", fatal)
+        error("Fatal error, system exit...", fatal)
         System.exit(fatal.getErrCode)
         null.asInstanceOf[T]
-      case t: Throwable => catchOp(t)
+      case e: VirtualMachineError =>
+        error("Fatal error, system exit...", e)
+        System.exit(-1)
+        throw e
+      case er: Error =>
+        error("Throw error", er.getCause)
+        throw er
+      case t => catchOp(t)
     }
   }
 
@@ -62,11 +60,7 @@ object Utils extends Logging {
   def tryFinally[T](tryOp: => T)(finallyOp: => Unit): T = try tryOp finally finallyOp
 
   def tryQuietly[T](tryOp: => T, catchOp: Throwable => Unit): T = tryCatch(tryOp){
-    case fatal: FatalException =>
-      error("Fatal Error, system exit...", fatal)
-      System.exit(fatal.getErrCode)
-      null.asInstanceOf[T]
-    case t: Throwable =>
+    t =>
       catchOp(t)
       null.asInstanceOf[T]
   }
@@ -87,8 +81,8 @@ object Utils extends Logging {
 
   def tryAndWarnMsg[T](tryOp: => T)(message: String)(implicit log: Logger): T = tryCatch(tryOp){
     case error: ErrorException =>
-      log.error(s"error code（错误码）: ${error.getErrCode}, Error message（错误信息）: ${error.getDesc}.")
-      log.error(message, error)
+      log.warn(s"error code（错误码）: ${error.getErrCode}, Error message（错误信息）: ${error.getDesc}.")
+      log.warn(message, error)
       null.asInstanceOf[T]
     case warn: WarnException =>
       log.warn(s"Warning code（警告码）: ${warn.getErrCode}, Warning message（警告信息）: ${warn.getDesc}.")
@@ -141,7 +135,7 @@ object Utils extends Logging {
     }
   }
 
-  def newCachedThreadPool(threadNum: Int, threadName: String, isDaemon: Boolean = true) = {
+  def newCachedThreadPool(threadNum: Int, threadName: String, isDaemon: Boolean = true): ThreadPoolExecutor = {
     val threadPool = new ThreadPoolExecutor(threadNum, threadNum, 120L, TimeUnit.SECONDS,
       new LinkedBlockingQueue[Runnable](10 * threadNum),
       threadFactory(threadName, isDaemon))
@@ -149,7 +143,7 @@ object Utils extends Logging {
     threadPool
   }
 
-  def newCachedExecutionContext(threadNum: Int, threadName: String, isDaemon: Boolean = true) =
+  def newCachedExecutionContext(threadNum: Int, threadName: String, isDaemon: Boolean = true): ExecutionContextExecutorService =
     ExecutionContext.fromExecutorService(newCachedThreadPool(threadNum, threadName, isDaemon))
 
   def newFixedThreadPool(threadNum: Int, threadName: String, isDaemon: Boolean = true): ExecutorService = {
@@ -160,25 +154,25 @@ object Utils extends Logging {
     ExecutionContext.fromExecutorService(newFixedThreadPool(threadNum, threadName, isDaemon))
   }
 
-  val defaultScheduler = {
+  val defaultScheduler: ScheduledThreadPoolExecutor = {
     val scheduler = new ScheduledThreadPoolExecutor(20, threadFactory("BDP-Default-Scheduler-Thread-", true))
     scheduler.setMaximumPoolSize(20)
     scheduler.setKeepAliveTime(5, TimeUnit.MINUTES)
     scheduler
   }
 
-  def getLocalHostname = InetAddress.getLocalHost.getHostAddress
+  def getLocalHostname: String = InetAddress.getLocalHost.getHostAddress
 
-  def getComputerName = Utils.tryCatch(InetAddress.getLocalHost.getCanonicalHostName)(t => sys.env("COMPUTERNAME"))
+  def getComputerName: String = Utils.tryCatch(InetAddress.getLocalHost.getCanonicalHostName)(t => sys.env("COMPUTERNAME"))
 
   /**
     * Checks if event has occurred during some time period. This performs an exponential backoff
     * to limit the poll calls.
     *
-    * @param checkForEvent
-    * @param atMost
-    * @throws java.util.concurrent.TimeoutException
-    * @throws java.lang.InterruptedException
+    * @param checkForEvent event to check, until it is true
+    * @param atMost most wait time
+    * @throws java.util.concurrent.TimeoutException throws this exception when it is timeout
+    * @throws java.lang.InterruptedException throws this exception when it is interrupted
     * @return
     */
   @throws(classOf[TimeoutException])
@@ -253,7 +247,7 @@ object Utils extends Logging {
     val lines = log.lines().toArray
     IOUtils.closeQuietly(log)
     if (exitCode != 0) {
-      throw new DwcCommonErrorException(0, s"exec failed with exit code: $exitCode, ${lines.mkString(". ")}")
+      throw new LinkisCommonErrorException(0, s"exec failed with exit code: $exitCode, ${lines.mkString(". ")}")
     }
    lines.mkString("\n")
   }
@@ -262,7 +256,7 @@ object Utils extends Logging {
 
   def getClassInstance[T](className: String): T ={
     Utils.tryThrow(
-      (Thread.currentThread.getContextClassLoader.loadClass(className).asInstanceOf[Class[T]].newInstance())) (t =>{
+      Thread.currentThread.getContextClassLoader.loadClass(className).asInstanceOf[Class[T]].newInstance()) (t =>{
       error(s"Failed to instance: $className ", t)
       throw t
     })

@@ -29,9 +29,7 @@ import org.springframework.stereotype.Component
 
 import scala.concurrent.Future
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 @Component
 class BroadcastRPCInterceptor extends RPCInterceptor with Logging {
   override val order: Int = 0

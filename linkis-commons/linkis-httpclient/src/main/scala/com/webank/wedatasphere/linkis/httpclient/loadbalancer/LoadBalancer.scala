@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.httpclient.loadbalancer
 
-/**
-  * Created by enjoyyin on 2019/5/16.
-  */
+
 trait LoadBalancer {
 
   def chooseServerUrl(requestBody: String): String

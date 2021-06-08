@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.storage.resultset
 
 import com.webank.wedatasphere.linkis.common.io.MetaData
 
-/**
-  * Created by johnnwang on 10/16/18.
-  */
+
 abstract class ResultMetaData extends MetaData{
 
 }

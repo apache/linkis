@@ -19,7 +19,7 @@ package com.webank.wedatasphere.linkis.rpc.interceptor.common
 import java.net.ConnectException
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.exception.DWCRetryException
+import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
 import com.webank.wedatasphere.linkis.common.utils.RetryHandler
 import com.webank.wedatasphere.linkis.protocol.RetryableProtocol
 import com.webank.wedatasphere.linkis.rpc.exception.DWCRPCRetryException
@@ -72,7 +72,7 @@ class RetryableRPCInterceptor extends RPCInterceptor {
 
     override def exceptionCanRetry(t: Throwable): Boolean = t match {
       case _: DWCRPCRetryException => true
-      case r: DWCRetryException => r.getErrCode == DWCRPCRetryException.RPC_RETRY_ERROR_CODE
+      case r: LinkisRetryException => r.getErrCode == DWCRPCRetryException.RPC_RETRY_ERROR_CODE
       case _ => (serviceInstance.exists(s => StringUtils.isBlank(s.getInstance)) && isNoServiceException(t)) || super.exceptionCanRetry(t)
     }
   }

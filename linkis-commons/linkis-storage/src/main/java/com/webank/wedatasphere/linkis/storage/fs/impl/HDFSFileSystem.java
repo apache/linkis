@@ -206,7 +206,8 @@ public class HDFSFileSystem extends FileSystem {
 
     @Override
     public FsPath get(String dest) throws IOException {
-        return fillStorageFile(new FsPath(dest), fs.getFileStatus(new Path(dest)));
+        String realPath = checkHDFSPath(dest);
+        return fillStorageFile(new FsPath(realPath), fs.getFileStatus(new Path(realPath)));
     }
 
     @Override
@@ -296,7 +297,11 @@ public class HDFSFileSystem extends FileSystem {
 
     @Override
     public void close() throws IOException {
-        fs.close();
+        if (null != fs) {
+            fs.close();
+        } else {
+            logger.warn("FS was null, cannot close.");
+        }
     }
 
 

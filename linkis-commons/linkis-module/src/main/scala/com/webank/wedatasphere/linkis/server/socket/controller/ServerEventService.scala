@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.common.listener.{Event, EventListener}
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.server.{BDPJettyServerHelper, Message, catchIt}
 
-/**
-  * Created by enjoyyin on 2018/1/11.
-  */
+
 abstract class ServerEventService extends EventListener with Logging {
 
   protected val gson: Gson = BDPJettyServerHelper.gson

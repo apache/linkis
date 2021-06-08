@@ -16,7 +16,5 @@
 
 package com.webank.wedatasphere.linkis.server.exception
 
-/**
-  * Created by enjoyyin on 2018/8/6.
-  */
+
 class NonLoginException(message: String) extends BDPServerErrorException(11002, message)

@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue
 import com.webank.wedatasphere.linkis.scheduler.queue.{ConsumerManager, GroupFactory}
 import com.webank.wedatasphere.linkis.scheduler.{AbstractScheduler, SchedulerContext}
 
-/**
-  * Created by enjoyyin on 2018/9/13.
-  */
+
 class ParallelScheduler(val schedulerContext: SchedulerContext) extends AbstractScheduler{
 
   private var consumerManager: ConsumerManager = _

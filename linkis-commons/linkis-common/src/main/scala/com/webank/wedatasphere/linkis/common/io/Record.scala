@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.common.io
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 trait Record {
 
   def cloneRecord(): Record

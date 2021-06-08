@@ -24,6 +24,7 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, RSAUtils, Utils}
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import com.webank.wedatasphere.linkis.server.exception.{IllegalUserTicketException, LoginExpireException, NonLoginException}
 import javax.servlet.http.Cookie
+import org.apache.commons.lang.time.DateFormatUtils
 
 import scala.collection.JavaConversions
 
@@ -41,7 +42,7 @@ object SSOUtils extends Logging {
     override def run(): Unit = JavaConversions.mapAsScalaMap(userTicketIdToLastAccessTime).filter(System.currentTimeMillis - _._2 > sessionTimeout).foreach {
       case (k, v) => if(userTicketIdToLastAccessTime.containsKey(k)) userTicketIdToLastAccessTime synchronized {
         if(userTicketIdToLastAccessTime.containsKey(k) && System.currentTimeMillis - userTicketIdToLastAccessTime.get(k) > sessionTimeout) {
-          info(s"remove timeout userTicket $k, since the last access time is $v.")
+          info(s"remove timeout userTicket $k, since the last access time is ${DateFormatUtils.format(v, "yyyy-MM-dd HH:mm:ss")}.")
           userTicketIdToLastAccessTime.remove(k)
         }
       }
@@ -65,7 +66,7 @@ object SSOUtils extends Logging {
   def setLoginUser(addCookie: Cookie => Unit, username: String): Unit = {
     info(s"add login userTicketCookie for user $username.")
     val userTicketId = getUserTicketId(username)
-    userTicketIdToLastAccessTime.put(userTicketId, System.currentTimeMillis())
+    userTicketIdToLastAccessTime synchronized userTicketIdToLastAccessTime.put(userTicketId, System.currentTimeMillis())
     val cookie = new Cookie(USER_TICKET_ID_STRING, userTicketId)
     cookie.setMaxAge(-1)
     if(sslEnable) cookie.setSecure(true)
@@ -76,7 +77,7 @@ object SSOUtils extends Logging {
   def setLoginUser(addUserTicketKV: (String, String) => Unit, username: String): Unit = {
     info(s"add login userTicket for user $username.")
     val userTicketId = getUserTicketKV(username)
-    userTicketIdToLastAccessTime.put(userTicketId._2, System.currentTimeMillis())
+    userTicketIdToLastAccessTime synchronized userTicketIdToLastAccessTime.put(userTicketId._2, System.currentTimeMillis())
     addUserTicketKV(userTicketId._1, userTicketId._2)
   }
 
@@ -137,7 +138,7 @@ object SSOUtils extends Logging {
         userTicketIdToLastAccessTime.remove(userTicketId)
         throw new LoginExpireException("Login has expired, please log in again!(登录已过期，请重新登录！)")
       }
-    } else if(System.currentTimeMillis - lastAccessTime >= sessionTimeout * 0.5) {
+    } else if(System.currentTimeMillis - lastAccessTime >= sessionTimeout * 0.5) userTicketIdToLastAccessTime synchronized {
       userTicketIdToLastAccessTime.put(userTicketId, System.currentTimeMillis)
     }
   }

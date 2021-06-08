@@ -22,9 +22,7 @@ package com.webank.wedatasphere.linkis.httpclient
 
 import com.webank.wedatasphere.linkis.httpclient.response.Result
 
-/**
-  * Created by enjoyyin on 2019/5/20.
-  */
+
 trait ResultListener {
 
   def onSuccess(result: Result): Unit

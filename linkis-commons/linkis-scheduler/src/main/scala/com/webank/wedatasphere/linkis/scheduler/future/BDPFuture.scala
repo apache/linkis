@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.scheduler.future
 
-/**
-  * Created by enjoyyin on 2019/6/18.
-  */
+
 trait BDPFuture {
     def cancel():Unit
 }

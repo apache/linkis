@@ -24,9 +24,7 @@ import com.webank.wedatasphere.linkis.protocol.CacheableProtocol
 import com.webank.wedatasphere.linkis.rpc.errorcode.RPCErrorConstants
 import com.webank.wedatasphere.linkis.server.exception.FetchMapCacheFailedException
 
-/**
-  * Created by enjoyyin on 2018/11/4.
-  */
+
 abstract class RPCMapCache[M, K, V](applicationName: String) {
 
   protected def createRequest(key: M): CacheableProtocol

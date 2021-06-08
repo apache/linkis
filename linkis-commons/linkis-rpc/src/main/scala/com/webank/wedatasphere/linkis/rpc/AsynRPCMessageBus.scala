@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.common.listener.{Event, EventListener, Lis
 import com.webank.wedatasphere.linkis.rpc.errorcode.RPCErrorConstants
 import com.webank.wedatasphere.linkis.rpc.exception.{DWCRPCRetryException, RPCInitFailedException}
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 class AsynRPCMessageBus(capacity: Int, busName: String)
                        (consumerThreadSize: Int, threadMaxFreeTime: Long) extends
   ListenerEventBus[RPCMessageEventListener, RPCMessageEvent](capacity, busName)(consumerThreadSize, threadMaxFreeTime) {

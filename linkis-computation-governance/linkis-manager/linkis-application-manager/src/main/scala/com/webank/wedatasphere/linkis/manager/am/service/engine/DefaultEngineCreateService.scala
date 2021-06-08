@@ -152,11 +152,11 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     engineConnAliasLabel.setAlias("EngineConn")
     labelList.add(engineConnAliasLabel)
     nodeLabelService.addLabelsToNode(engineNode.getServiceInstance, LabelUtils.distinctLabel(labelList, fromEMGetEngineLabels(emNode.getLabels)))
-    try {
+    Utils.tryCatch{
       info(s"Start to wait idle status of engineConn($engineNode) ")
       //9 获取启动的引擎信息，并等待引擎的状态变为IDLE，如果等待超时则返回给用户，并抛出异常
       Utils.waitUntil(() => ensuresIdle(engineNode), Duration(timeout, TimeUnit.MILLISECONDS))
-    } catch {
+    }{
       case e: TimeoutException =>
         info(s"Waiting for $engineNode initialization failure , now stop it")
         val stopEngineRequest = new EngineStopRequest(engineNode.getServiceInstance, ManagerUtils.getAdminUser)

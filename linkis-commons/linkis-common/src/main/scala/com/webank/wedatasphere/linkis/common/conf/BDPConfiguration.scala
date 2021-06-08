@@ -18,8 +18,7 @@ package com.webank.wedatasphere.linkis.common.conf
 
 import java.io.{File, FileInputStream, IOException, InputStream}
 import java.util.Properties
-
-import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 
@@ -66,9 +65,9 @@ private[conf] object BDPConfiguration extends Logging {
 
   }
 
-  try {
+  Utils.tryCatch{
     init
-  } catch {
+  }{
     case e: Throwable =>
       warn("Failed to init conf", e)
   }

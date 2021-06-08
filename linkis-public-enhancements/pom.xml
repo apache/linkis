@@ -36,6 +36,7 @@
         <module>linkis-datasource/datasourcemanager/server</module>
         <module>linkis-datasource/metadatamanager/common</module>
         <module>linkis-datasource/metadatamanager/server</module>
+        <module>linkis-datasource/metadatamanager/service/elasticsearch</module>
         <module>linkis-datasource/metadatamanager/service/mysql</module>
         <module>linkis-datasource/metadatamanager/service/hive</module>
         <module>linkis-datasource/metadatamanager/service/kafka</module>

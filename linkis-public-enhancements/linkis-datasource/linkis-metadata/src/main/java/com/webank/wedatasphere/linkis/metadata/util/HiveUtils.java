@@ -20,7 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
-import sun.misc.BASE64Decoder;
+import org.apache.commons.codec.binary.Base64;
 
 import java.io.File;
 
@@ -41,10 +41,9 @@ public class HiveUtils {
     }
 
     public static String decode(String str) {
-        BASE64Decoder decoder = new BASE64Decoder();
         String res = str;
         try {
-            res = new String(decoder.decodeBuffer(str));
+            res = new String(org.apache.commons.codec.binary.Base64.decodeBase64(str));
         } catch (Throwable e) {
             logger.error(str + " decode failed", e);
         }

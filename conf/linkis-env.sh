@@ -109,6 +109,30 @@ BML_PORT=9107
 #CS_INSTALL_IP=127.0.0.1
 CS_PORT=9108
 
+### datasourcemanager
+#DATASOURCEMANAGER_INSTALL_IP=127.0.0.1
+DATASOURCEMANAGER_PORT=9109
+
+### metadatamanager
+#METADATAMANAGER_INSTALL_IP=127.0.0.1
+METADATAMANAGER_PORT=9110
+
+### metadatamanager-es
+#METADATAMANAGER_ES_INSTALL_IP=127.0.0.1
+METADATAMANAGER_ES_PORT=9111
+
+### metadatamanager-hive
+#METADATAMANAGER_HIVE_INSTALL_IP=127.0.0.1
+METADATAMANAGER_HIVE_PORT=9112
+
+### metadatamanager-kafka
+#METADATAMANAGER_KAFKA_INSTALL_IP=127.0.0.1
+METADATAMANAGER_KAFKA_PORT=9113
+
+### metadatamanager-mysql
+#METADATAMANAGER_MYSQL_INSTALL_IP=127.0.0.1
+METADATAMANAGER_MYSQL_PORT=9114
+
 ########################################################################################
 
 ## LDAP is for enterprise authorization, if you just want to have a try, ignore it.

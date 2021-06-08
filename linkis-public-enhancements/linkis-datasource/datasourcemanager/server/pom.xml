@@ -135,7 +135,7 @@
         </executions>
         <configuration>
           <skipAssembly>false</skipAssembly>
-          <finalName>linkis-dsm-server</finalName>
+          <finalName>out</finalName>
           <appendAssemblyId>false</appendAssemblyId>
           <attach>false</attach>
           <descriptors>

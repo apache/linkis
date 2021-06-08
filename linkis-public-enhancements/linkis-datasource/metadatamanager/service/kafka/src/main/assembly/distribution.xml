@@ -21,8 +21,9 @@
     <id>linkis-mdm-service-kafka</id>
     <formats>
         <format>zip</format>
+        <format>dir</format>
     </formats>
-    <includeBaseDirectory>true</includeBaseDirectory>
+    <includeBaseDirectory>false</includeBaseDirectory>
     <baseDirectory>linkis-mdm-service-kafka</baseDirectory>
 
     <dependencySets>
@@ -41,29 +42,13 @@
 
     <fileSets>
         <fileSet>
-            <directory>${basedir}/conf</directory>
+            <directory>${basedir}/src/main/resources</directory>
             <includes>
                 <include>*</include>
             </includes>
             <fileMode>0777</fileMode>
             <outputDirectory>conf</outputDirectory>
             <lineEnding>unix</lineEnding>
-        </fileSet>
-        <fileSet>
-            <directory>${basedir}/bin</directory>
-            <includes>
-                <include>*</include>
-            </includes>
-            <fileMode>0777</fileMode>
-            <outputDirectory>bin</outputDirectory>
-            <lineEnding>unix</lineEnding>
-        </fileSet>
-        <fileSet>
-            <directory>.</directory>
-            <excludes>
-                <exclude>*/**</exclude>
-            </excludes>
-            <outputDirectory>logs</outputDirectory>
         </fileSet>
     </fileSets>
 

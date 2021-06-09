@@ -16,8 +16,6 @@
 package com.webank.wedatasphere.linkis.engineplugin.spark.configuration
 
 import com.webank.wedatasphere.linkis.engineconn.common.hook.EngineConnHook
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.parser.CodeParser
-import com.webank.wedatasphere.linkis.engineplugin.spark.executor.parser.SparkCombinedCodeParser
 import com.webank.wedatasphere.linkis.engineplugin.spark.hook.{SparkPythonVersionEngineHook, UserDataBaseHook}
 import org.springframework.context.annotation.{Bean, Configuration}
 
@@ -26,9 +24,6 @@ import org.springframework.context.annotation.{Bean, Configuration}
   */
 @Configuration
 class SparkEngineServerSpringConfiguration {
-  @Bean(Array("codeParser"))
-  def createCodeParser(): CodeParser = new SparkCombinedCodeParser()
-
 
   @Bean(Array("engineHooks"))
 //  def createEngineHooks(): Array[EngineConnHook] = Array(new ReleaseEngineHook, new MaxExecuteNumEngineHook,new SparkPythonVersionEngineHook, new JarUdfEngineHook, new PyUdfEngineHook, new ScalaUdfEngineHook, new PyFunctionEngineHook, new ScalaFunctionEngineHook,new UserDataBaseHook)

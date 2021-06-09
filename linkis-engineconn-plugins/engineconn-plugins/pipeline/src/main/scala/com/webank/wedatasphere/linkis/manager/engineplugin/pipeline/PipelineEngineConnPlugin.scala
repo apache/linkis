@@ -16,6 +16,8 @@
 
 package com.webank.wedatasphere.linkis.manager.engineplugin.pipeline
 
+import java.util
+
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.EngineConnPlugin
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.EngineConnFactory
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
@@ -23,8 +25,6 @@ import com.webank.wedatasphere.linkis.manager.engineplugin.common.resource.{Engi
 import com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.builder.PipelineEngineConnLaunchBuilder
 import com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.factory.PipelineEngineConnFactory
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
-
-import java.util
 
 class PipelineEngineConnPlugin extends EngineConnPlugin {
 

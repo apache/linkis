@@ -16,6 +16,7 @@ package com.webank.wedatasphere.linkis.engineplugin.spark.imexport
 import java.io.{BufferedInputStream, File, FileInputStream}
 
 import com.webank.wedatasphere.linkis.common.utils.Utils
+import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
 import com.webank.wedatasphere.linkis.engineplugin.spark.imexport.util.{BackGroundServiceUtils, ImExportUtils}
 import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf
 import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils
@@ -90,7 +91,7 @@ object LoadData  {
         path = XlsUtils.excelToCsv(fs.open(new Path(path)), fs, hasHeader, sheetNames)
         hasHeader = false
       } else {
-        path = "hdfs://" + path
+        path = if (SparkConfiguration.IS_VIEWFS_ENV.getValue) path else "hdfs://" + path
       }
     } else {
       if (".xlsx".equalsIgnoreCase(suffix)) {
@@ -121,7 +122,7 @@ object LoadData  {
         .schema(StructType(getFields(columns)))
         .load(path)
     } else {
-     CsvRelation.csvToDF(spark, StructType(getFields(columns)), hasHeader, path, source,columns)
+      CsvRelation.csvToDF(spark, StructType(getFields(columns)), hasHeader, path, source,columns)
     }
     // warn(s"Fetched ${df.columns.length} col(s) : ${df.count()} row(s).")
     df.createOrReplaceTempView("tempTable")
@@ -188,7 +189,7 @@ object LoadData  {
       case JNothing => default
       case value: JValue =>
         if("JString()".equals(value.toString)) default
-      else try value.extract[T] catch { case t: Throwable => default}
+        else try value.extract[T] catch { case t: Throwable => default}
     }
   }
 

@@ -30,12 +30,10 @@ import org.apache.commons.lang.StringUtils
 abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResourceGenerator {
 
   if(!new File(getEngineConnsHome).exists)
-    throw new EngineConnPluginErrorException(20001, "Cannot find the home path of engineConn.")
+    throw new EngineConnPluginErrorException(20001, s"Cannot find the home path(${getEngineConnsHome}) of engineConn.")
 
   protected def getEngineConnsHome: String = {
-    if(StringUtils.isBlank(ENGINE_CONN_HOME.getValue))
-      Paths.get(ServerConfiguration.BDP_SERVER_HOME.getValue, "engineconns").toFile.getPath
-    else ENGINE_CONN_HOME.getValue
+    ENGINE_CONN_HOME.getValue
   }
 
   protected def getEngineConnDistHome(engineConnTypeLabel: EngineTypeLabel): String =

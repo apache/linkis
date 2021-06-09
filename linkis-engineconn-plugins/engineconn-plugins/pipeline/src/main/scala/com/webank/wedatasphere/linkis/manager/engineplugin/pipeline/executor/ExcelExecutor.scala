@@ -44,7 +44,7 @@ class ExcelExecutor extends PipeLineExecutor {
       //sourcePaht 是文件形式
       // TODO: fs 加目录判断
       if (!FileSource.isResultSet(sourcePath)) {
-        throw new PipeLineErrorException(70003, "不是结果集文件")
+        throw new PipeLineErrorException(70003, "Not a result set file(不是结果集文件)")
       }
       fileSource = FileSource.create(sourceFsPath, sourceFs)
       excelFsWriter = ExcelFsWriter.getExcelFsWriter(DEFAULTC_HARSET, DEFAULT_SHEETNAME, DEFAULT_DATEFORMATE, outputStream)
@@ -58,7 +58,7 @@ class ExcelExecutor extends PipeLineExecutor {
       fileSource = FileSource.create(fsPathListWithError.getFsPaths.toArray(Array[FsPath]()), sourceFs)
     }
     if (!FileSource.isTableResultSet(fileSource)) {
-      throw new PipeLineErrorException(70004, "只有table类型的结果集才能转为excel")
+      throw new PipeLineErrorException(70004, "Only result sets of type Table can be converted to Excel(只有table类型的结果集才能转为excel)")
     }
     var nullValue = options.getOrDefault(PIPELINE_OUTPUT_SHUFFLE_NULL_TYPE, "NULL")
     if (BLANK.equalsIgnoreCase(nullValue)) nullValue = ""

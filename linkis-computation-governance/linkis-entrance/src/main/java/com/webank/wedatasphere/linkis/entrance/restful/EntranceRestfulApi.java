@@ -141,7 +141,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         try {
             job = entranceServer.getJob(realId);
         } catch (Exception e) {
-            logger.warn("获取任务 {} 状态时出现错误", realId, e);
+            logger.warn("error occurred while getting task {} status (获取任务 {} 状态时出现错误)",realId, realId, e);
             //如果获取错误了,证明在内存中已经没有了,去jobhistory找寻一下taskID代表的任务的状态，然后返回
             long realTaskID = Long.parseLong(taskID);
             String status = JobHistoryHelper.getStatusByTaskID(realTaskID);
@@ -222,7 +222,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             return Message.messageToResponse(message);
         }
         if (job.isDefined()) {
-            logger.debug("开始获取 {} 的日志", job.get().getId());
+            logger.debug("begin to get log for {}(开始获取 {} 的日志)", job.get().getId(),job.get().getId());
             LogReader logReader = entranceServer.getEntranceContext().getOrCreateLogManager().getLogReader(realId);
             int fromLine = 0;
             int size = 100;
@@ -255,18 +255,18 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                     retLog = sb.toString();
                 }
             } catch (IllegalStateException e) {
-                logger.debug("为 {} 获取日志失败 原因：{}", job.get().getId(), e.getMessage());
-                message = Message.ok();
+                logger.error("Failed to get log information for :{}(为 {} 获取日志失败)", job.get().getId(), job.get().getId(),e);
+                message = Message.error("Failed to get log information(获取日志信息失败)");
                 message.setMethod("/api/entrance/" + id + "/log");
                 message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
             } catch (final IllegalArgumentException e) {
-                logger.debug("为 {} 获取日志失败", job.get().getId());
-                message = Message.ok();
+                logger.error("Failed to get log information for :{}(为 {} 获取日志失败)", job.get().getId(), job.get().getId(),e);
+                message = Message.error("Failed to get log information(获取日志信息失败)");
                 message.setMethod("/api/entrance/" + id + "/log");
                 message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
                 return Message.messageToResponse(message);
             } catch (final Exception e1) {
-                logger.debug("为 {} 获取日志失败", job.get().getId(), e1);
+                logger.error("Failed to get log information for :{}(为 {} 获取日志失败)", job.get().getId(), job.get().getId(),e1);
                 message = Message.error("Failed to get log information(获取日志信息失败)");
                 message.setMethod("/api/entrance/" + id + "/log");
                 message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
@@ -275,7 +275,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             message = Message.ok();
             message.setMethod("/api/entrance/" + id + "/log");
             message.data("log", retLog).data("execID", id).data("fromLine", retFromLine + fromLine);
-            logger.debug("获取 {} 日志成功", job.get().getId());
+            logger.debug("success to get log for {} (获取 {} 日志成功)", job.get().getId(),job.get().getId());
         } else {
             message = Message.error("Can't find execID(不能找到execID): " + id + "Corresponding job, can not get the corresponding log(对应的job，不能获得对应的日志)");
             message.setMethod("/api/entrance/" + id + "/log");
@@ -290,10 +290,10 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         JsonNode idNode = jsonNode.get("idList");
         JsonNode taskIDNode = jsonNode.get("taskIDList");
         if(idNode.size() != taskIDNode.size()){
-            return Message.messageToResponse(Message.error("id列表的长度与taskId列表的长度不一致"));
+            return Message.messageToResponse(Message.error("he length of the ID list does not match the length of the TASKID list(id列表的长度与taskId列表的长度不一致)"));
         }
         if(!idNode.isArray() || !taskIDNode.isArray()){
-            return Message.messageToResponse(Message.error("请求参数错误，请使用数组"));
+            return Message.messageToResponse(Message.error("Request parameter error, please use array(请求参数错误，请使用数组)"));
         }
         ArrayList<Message> messages = new ArrayList<>();
         for(int i = 0; i < idNode.size(); i++){
@@ -308,7 +308,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 logger.warn("can not find a job in entranceServer, will force to kill it", e);
                 //如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
                 JobHistoryHelper.forceKill(taskID);
-                Message message = Message.ok("强制杀死任务");
+                Message message = Message.ok("Forced Kill task (强制杀死任务)");
                 message.setMethod("/api/entrance/" + id + "/kill");
                 message.setStatus(0);
                 messages.add(message);
@@ -318,7 +318,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             if (job.isEmpty()) {
                 logger.warn("can not find a job in entranceServer, will force to kill it");
                 JobHistoryHelper.forceKill(taskID);
-                message = Message.ok("强制杀死任务");
+                message = Message.ok("Forced Kill task (强制杀死任务)");
                 message.setMethod("/api/entrance/" + id + "/killJobs");
                 message.setStatus(0);
                 messages.add(message);
@@ -354,52 +354,52 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     @GET
     @Path("/{id}/kill")
     public Response kill(@PathParam("id") String id, @QueryParam("taskID") long taskID) {
-            String realId = ZuulEntranceUtils.parseExecID(id)[3];
-            //通过jobid获取job,可能会由于job找不到而导致有looparray的报错,一旦报错的话，就可以将该任务直接置为Cancenlled
-            Option<Job> job = Option.apply(null);
+        String realId = ZuulEntranceUtils.parseExecID(id)[3];
+        //通过jobid获取job,可能会由于job找不到而导致有looparray的报错,一旦报错的话，就可以将该任务直接置为Cancenlled
+        Option<Job> job = Option.apply(null);
+        try {
+            job = entranceServer.getJob(realId);
+        } catch (Exception e) {
+            logger.warn("can not find a job in entranceServer, will force to kill it", e);
+            //如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
+            JobHistoryHelper.forceKill(taskID);
+            Message message = Message.ok("Forced Kill task (强制杀死任务)");
+            message.setMethod("/api/entrance/" + id + "/kill");
+            message.setStatus(0);
+            return Message.messageToResponse(message);
+        }
+        Message message = null;
+        if (job.isEmpty()) {
+            logger.warn("can not find a job in entranceServer, will force to kill it");
+            //如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
+            JobHistoryHelper.forceKill(taskID);
+            message = Message.ok("Forced Kill task (强制杀死任务)");
+            message.setMethod("/api/entrance/" + id + "/kill");
+            message.setStatus(0);
+            return Message.messageToResponse(message);
+        } else {
             try {
-                job = entranceServer.getJob(realId);
-            } catch (Exception e) {
-                logger.warn("can not find a job in entranceServer, will force to kill it", e);
-                //如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
-                JobHistoryHelper.forceKill(taskID);
-                Message message = Message.ok("强制杀死任务");
+                logger.info("begin to kill job {} ", job.get().getId());
+                job.get().kill();
+                message = Message.ok("Successfully killed the job(成功kill了job)");
                 message.setMethod("/api/entrance/" + id + "/kill");
                 message.setStatus(0);
-                return Message.messageToResponse(message);
-            }
-            Message message = null;
-            if (job.isEmpty()) {
-                logger.warn("can not find a job in entranceServer, will force to kill it");
-                //如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
-                JobHistoryHelper.forceKill(taskID);
-                message = Message.ok("强制杀死任务");
-                message.setMethod("/api/entrance/" + id + "/kill");
-                message.setStatus(0);
-                return Message.messageToResponse(message);
-            } else {
-                try {
-                    logger.info("begin to kill job {} ", job.get().getId());
-                    job.get().kill();
-                    message = Message.ok("Successfully killed the job(成功kill了job)");
-                    message.setMethod("/api/entrance/" + id + "/kill");
-                    message.setStatus(0);
-                    message.data("execID", id);
-                    //ensure the job's state is cancelled in database
-                    if (job.get() instanceof EntranceJob) {
-                        EntranceJob entranceJob = (EntranceJob) job.get();
-                        JobRequest jobReq = entranceJob.getJobRequest();
-                        jobReq.setStatus(SchedulerEventState.Cancelled().toString());
-                        this.entranceServer.getEntranceContext().getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(jobReq);
-                    }
-                    logger.info("end to kill job {} ", job.get().getId());
-                } catch (Throwable t) {
-                    logger.error("kill job {} failed ", job.get().getId(), t);
-                    message = Message.error("An exception occurred while killing the job, kill failed(kill job的时候出现了异常，kill失败)");
-                    message.setMethod("/api/entrance/" + id + "/kill");
-                    message.setStatus(1);
+                message.data("execID", id);
+                //ensure the job's state is cancelled in database
+                if (job.get() instanceof EntranceJob) {
+                    EntranceJob entranceJob = (EntranceJob) job.get();
+                    JobRequest jobReq = entranceJob.getJobRequest();
+                    jobReq.setStatus(SchedulerEventState.Cancelled().toString());
+                    this.entranceServer.getEntranceContext().getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(jobReq);
                 }
+                logger.info("end to kill job {} ", job.get().getId());
+            } catch (Throwable t) {
+                logger.error("kill job {} failed ", job.get().getId(), t);
+                message = Message.error("An exception occurred while killing the job, kill failed(kill job的时候出现了异常，kill失败)");
+                message.setMethod("/api/entrance/" + id + "/kill");
+                message.setStatus(1);
             }
+        }
         return Message.messageToResponse(message);
     }
 
@@ -411,7 +411,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         Option<Job> job = entranceServer.getJob(realId);
         Message message = null;
         if (job.isEmpty()) {
-            message = Message.error("不能找到execID: " + id + "对应的job，不能进行pause");
+            message = Message.error("can not find the job of exexID :" + id +" can not to pause it (不能找到execID: " + id + "对应的job，不能进行pause)");
             message.setMethod("/api/entrance/" + id + "/pause");
             message.setStatus(1);
         } else {
@@ -419,7 +419,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 //todo job pause 接口还未实现和给出
                 //job.pause();
                 logger.info("begin to pause job {} ", job.get().getId());
-                message = Message.ok("成功pause了job");
+                message = Message.ok("success to pause job (成功pause了job)");
                 message.setStatus(0);
                 message.data("execID", id);
                 message.setMethod("/api/entrance/" + id + "/pause");

@@ -27,9 +27,9 @@ object EnvConfiguration {
 
   val HADOOP_CONF_DIR = CommonVars[String]("hadoop.config.dir", CommonVars[String]("HADOOP_CONF_DIR", "/appcom/config/hadoop-config").getValue)
 
-  val ENGINE_CONN_JARS = CommonVars("wds.linkis.engineConn.jars", "", "engineConn额外的Jars")
+  val ENGINE_CONN_JARS = CommonVars("wds.linkis.engineConn.jars", "", "extra jars for engineConn (engineConn额外的Jars)")
 
-  val ENGINE_CONN_CLASSPATH_FILES = CommonVars("wds.linkis.engineConn.files", "", "engineConn额外的配置文件")
+  val ENGINE_CONN_CLASSPATH_FILES = CommonVars("wds.linkis.engineConn.files", "", "extra configuration for engineConn (engineConn额外的配置文件)")
 
   val ENGINE_CONN_DEFAULT_JAVA_OPTS = CommonVars[String]("wds.linkis.engineConn.javaOpts.default", s"-XX:+UseG1GC -XX:MaxPermSize=250m -XX:PermSize=128m " +
     s"-Xloggc:%s -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Dwds.linkis.configuration=linkis-engineconn.properties -Dwds.linkis.gateway.url=${Configuration.getGateWayURL()}")

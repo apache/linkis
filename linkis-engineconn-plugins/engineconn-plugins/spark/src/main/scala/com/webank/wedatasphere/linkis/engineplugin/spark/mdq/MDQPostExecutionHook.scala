@@ -50,9 +50,9 @@ class MDQPostExecutionHook extends SparkPostExecutionHook with Logging{
       case SuccessExecuteResponse() =>
         sender.ask(DDLExecuteResponse(true, code, StorageUtils.getJvmUser)) match {
           case DDLCompleteResponse(status) => if (! status)
-            warn(s"执行建表失败:$code")
+            warn(s"failed to execute create table :$code (执行建表失败):$code")
         }
-      case _=> warn(s"执行建表失败:$code")
+      case _=> warn(s"failed to execute create table:$code (执行建表失败:$code)")
     }
   }
 }

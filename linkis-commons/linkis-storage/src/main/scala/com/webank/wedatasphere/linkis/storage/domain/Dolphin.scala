@@ -66,7 +66,7 @@ object Dolphin extends Logging{
     */
   def readInt(inputStream: InputStream): Int = {
     val bytes =  new Array[Byte](INT_LEN + 1)
-    if(StorageUtils.readBytes(inputStream, bytes, INT_LEN) != INT_LEN) throw new StorageWarnException(51000, "读取整数失败")
+    if(StorageUtils.readBytes(inputStream, bytes, INT_LEN) != INT_LEN) throw new StorageWarnException(51000, "failed to read integer(读取整数失败)")
     getString(bytes, 0, INT_LEN).toInt
   }
 

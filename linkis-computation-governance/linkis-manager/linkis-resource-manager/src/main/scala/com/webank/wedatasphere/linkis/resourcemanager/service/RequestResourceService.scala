@@ -81,35 +81,35 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
   def generateNotEnoughMessage(requestResource: Resource, availableResource: Resource) : (Int, String) = {
     requestResource match {
       case m: MemoryResource =>
-        (11011, s"远程服务器内存资源不足。")
+        (11011, s"The remote server is out of memory resources(远程服务器内存资源不足。)")
       case c: CPUResource =>
-        (11012, s"远程服务器CPU资源不足。")
+        (11012, s"Insufficient CPU resources on remote server (远程服务器CPU资源不足。)")
       case i: InstanceResource =>
-        (11013, s"远程服务器资源不足。")
+        (11013, s"The remote server is out of resources (远程服务器资源不足。)")
       case l: LoadResource =>
         val loadAvailable = availableResource.asInstanceOf[LoadResource]
         if(l.cores > loadAvailable.cores){
-          (11012, s"远程服务器CPU资源不足。")
+          (11012, s"Insufficient CPU resources on remote server (远程服务器CPU资源不足。)")
         } else {
-          (11011, s"远程服务器内存资源不足。")
+          (11011, s"The remote server is out of memory resources(远程服务器内存资源不足。)")
         }
       case li: LoadInstanceResource =>
         val loadInstanceAvailable = availableResource.asInstanceOf[LoadInstanceResource]
         if(li.cores > loadInstanceAvailable.cores){
-          (11012, s"远程服务器CPU资源不足。")
+          (11012, s"Insufficient CPU resources on remote server (远程服务器CPU资源不足。)")
         } else if (li.memory > loadInstanceAvailable.memory) {
-          (11011, s"远程服务器内存资源不足。")
+          (11011, s"The remote server is out of memory resources(远程服务器内存资源不足。)")
         } else {
-          (11013, s"远程服务器资源不足。")
+          (11013, s"The remote server is out of resources (远程服务器资源不足。)")
         }
       case yarn: YarnResource =>
         val yarnAvailable = availableResource.asInstanceOf[YarnResource]
         if(yarn.queueCores > yarnAvailable.queueCores){
-          (11014, s"队列CPU资源不足，建议调小执行器个数。")
+          (11014, s"The queue CPU resources are insufficient, it is recommended to reduce the number of executors(队列CPU资源不足，建议调小执行器个数。)")
         } else if (yarn.queueMemory > yarnAvailable.queueMemory){
-          (11015, s"队列内存资源不足，建议调小执行器内存。")
+          (11015, s"Insufficient queue memory resources, it is recommended to reduce the actuator memory (队列内存资源不足，建议调小执行器内存。)")
         } else {
-          (11016, s"队列实例数超过限制。")
+          (11016, s"Number of queue instances exceeds limit (队列实例数超过限制。)")
         }
       case dy: DriverAndYarnResource =>
         val dyAvailable = availableResource.asInstanceOf[DriverAndYarnResource]
@@ -117,10 +117,10 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
           dy.loadInstanceResource.cores > dyAvailable.loadInstanceResource.cores ||
           dy.loadInstanceResource.instances > dyAvailable.loadInstanceResource.instances){
           val detail = generateNotEnoughMessage(dy.loadInstanceResource, dyAvailable.loadInstanceResource)
-          (detail._1, s"请求服务器资源时，${detail._2}")
+          (detail._1, s"Request a server resource, ${detail._2} 请求服务器资源时，${detail._2}")
         } else {
           val detail = generateNotEnoughMessage(dy.yarnResource, dyAvailable.yarnResource)
-          (detail._1, s"请求队列资源时，${detail._2}")
+          (detail._1, s"Request a server resource, ${detail._2} 请求队列资源时，${detail._2}")
         }
       case s: SpecialResource => throw new RMWarnException(11003,"not supported resource type " + s.getClass)
       case r: Resource => throw new RMWarnException(11003,"not supported resource type " + r.getClass)

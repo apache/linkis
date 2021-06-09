@@ -23,7 +23,7 @@ import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.En
 import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
 import com.webank.wedatasphere.linkis.engineplugin.spark.exception.SparkEngineException
 import com.webank.wedatasphere.linkis.engineplugin.spark.utils.EngineUtils
-import com.webank.wedatasphere.linkis.governance.common.exception.DWCJobRetryException
+import com.webank.wedatasphere.linkis.governance.common.exception.LinkisJobRetryException
 import com.webank.wedatasphere.linkis.storage.domain.{Column, DataType}
 import com.webank.wedatasphere.linkis.storage.resultset.ResultSetFactory
 import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
@@ -46,7 +46,7 @@ object SQLSession extends Logging {
     //
     if (sc.isStopped) {
       log.error("Spark application has already stopped in showDF, please restart it.")
-      throw new DWCJobRetryException("Spark application sc has already stopped, please restart it.")
+      throw new LinkisJobRetryException("Spark application sc has already stopped, please restart it.")
     }
     val startTime = System.currentTimeMillis()
     //    sc.setJobGroup(jobGroup, "Get IDE-SQL Results.", false)

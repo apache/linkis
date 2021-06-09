@@ -43,7 +43,7 @@ import org.json4s.DefaultFormats
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
-class IoEngineConnExecutor(val id: Int, val outputLimit: Int) extends ConcurrentComputationExecutor(outputLimit) with Logging {
+class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10) extends ConcurrentComputationExecutor(outputLimit) with Logging {
 
   implicit val formats = DefaultFormats
 
@@ -62,12 +62,9 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int) extends Concurrent
   private val namePrefix: String = "IoEngineConnExecutor_"
 
   override def init(): Unit = {
-    if (!initialized) {
-      super.init
-      info("Ready to start IoEngine!")
-      cleanupThread.start()
-      initialized = true
-    }
+    super.init
+    info("Ready to start IoEngine!")
+    cleanupThread.start()
   }
 
   /*
@@ -88,7 +85,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int) extends Concurrent
               clearCount = clearCount + 1
           }
         }
-        info(s"Finished to clear userFs, clear count: $clearCount")
+        debug(s"Finished to clear userFs, clear count: $clearCount")
         Utils.tryQuietly(Thread.sleep(IOEngineConnConfiguration.IO_FS_CLEAR_TIME.getValue))
       }
     }

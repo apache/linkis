@@ -24,11 +24,11 @@ import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.{C
 import com.webank.wedatasphere.linkis.engineplugin.spark.common.Kind
 import com.webank.wedatasphere.linkis.engineplugin.spark.extension.{SparkPostExecutionHook, SparkPreExecutionHook}
 import com.webank.wedatasphere.linkis.engineplugin.spark.utils.JobProgressUtil
-import com.webank.wedatasphere.linkis.governance.common.exception.DWCJobRetryException
+import com.webank.wedatasphere.linkis.governance.common.exception.LinkisJobRetryException
 import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
 import com.webank.wedatasphere.linkis.manager.common.entity.resource._
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineRunTypeLabel
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.CodeLanguageLabel
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteResponse
 import org.apache.spark.SparkContext
@@ -70,7 +70,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
     if (sc.isStopped) {
       error("Spark application has already stopped, please restart it.")
       transition(NodeStatus.Failed)
-      throw new DWCJobRetryException("Spark application sc has already stopped, please restart it.")
+      throw new LinkisJobRetryException("Spark application sc has already stopped, please restart it.")
     }
     this.engineExecutionContext = engineExecutorContext
     oldprogress = 0f
@@ -150,8 +150,8 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
       //      if(driverMemList.size > 0) {
       //          driverMem = driverMemList.reduce((x, y) => x + y)
       //      }
-      val sparkExecutorCores = sc.getConf.get("spark.executor.cores").toInt * executorNum
-      val sparkDriverCores = sc.getConf.get("spark.driver.cores").toInt
+      val sparkExecutorCores = sc.getConf.get("spark.executor.cores", "2").toInt * executorNum
+      val sparkDriverCores = sc.getConf.get("spark.driver.cores", "1").toInt
       val queue = sc.getConf.get("spark.yarn.queue")
       info("Current actual used resources is driverMem:" + driverMem + ",driverCores:" + sparkDriverCores + ",executorMem:" + executorMem + ",executorCores:" + sparkExecutorCores + ",queue:" + queue)
       val uesdResource = new DriverAndYarnResource(
@@ -192,8 +192,8 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
   protected def killRunningTask(): Unit = {
     var runType : String = ""
     getExecutorLabels().asScala.foreach {l => l match {
-        case label: EngineRunTypeLabel =>
-          runType = label.getRunType
+        case label: CodeLanguageLabel =>
+          runType = label.getCodeType
         case _ =>
       }
     }

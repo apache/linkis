@@ -18,54 +18,32 @@ package com.webank.wedatasphere.linkis.engineplugin.spark.factory
 
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.Executor
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationExecutorFactory
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.ComputationExecutor
+import com.webank.wedatasphere.linkis.engineplugin.spark.common.SparkKind
 import com.webank.wedatasphere.linkis.engineplugin.spark.entity.SparkEngineSession
-import com.webank.wedatasphere.linkis.engineplugin.spark.executor.{SparkExecutorOrder, SparkScalaExecutor}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.ExecutorFactory
+import com.webank.wedatasphere.linkis.engineplugin.spark.executor.SparkScalaExecutor
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineRunTypeLabel, RunType}
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType.RunType
 
+/**
+  *
+  */
+class SparkScalaExecutorFactory extends ComputationExecutorFactory {
 
-class SparkScalaExecutorFactory extends ExecutorFactory {
-  /**
-   * Order of executors, the smallest one is the default
-   *
-   * @return
-   */
-  override def getOrder: Int = SparkExecutorOrder.SCALA.id
+  override protected def getSupportRunTypes: Array[String] = Array(RunType.SCALA.toString,
+    SparkKind.FUNCTION_MDQ_TYPE)
 
-  override def canCreate(labels: Array[Label[_]]): Boolean = {
-    labels.foreach(l => l match {
-      case label: EngineRunTypeLabel =>
-        if (RunType.SCALA.toString.equalsIgnoreCase(label.getRunType)) {
-          return true
-        }
-      case _ =>
-    })
-    false
-  }
-
-  /**
-   *
-   * @param engineCreationContext
-   * @param engineConn
-   * @param labels
-   * @return
-   */
-  override def createExecutor(engineCreationContext: EngineCreationContext, engineConn: EngineConn, labels: Array[Label[_]]): Executor = {
-    engineConn.getEngine match {
+  override protected def newExecutor(id: Int,
+                              engineCreationContext: EngineCreationContext,
+                              engineConn: EngineConn,
+                              labels: Array[Label[_]]): ComputationExecutor = {
+    engineConn.getEngineConnSession match {
       case sparkEngineSession: SparkEngineSession =>
-        val id = ExecutorManager.getInstance().generateId()
-        val executor = new SparkScalaExecutor(sparkEngineSession, id)
-        executor.getExecutorLabels().add(getDefaultEngineRunTypeLabel())
-        executor
+        new SparkScalaExecutor(sparkEngineSession, id)
     }
   }
 
-  override def getDefaultEngineRunTypeLabel(): EngineRunTypeLabel = {
-    val runTypeLabel = new EngineRunTypeLabel
-    runTypeLabel.setRunType(RunType.SCALA.toString)
-    runTypeLabel
-  }
+  override protected def getRunType: RunType = RunType.SCALA
 }

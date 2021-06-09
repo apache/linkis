@@ -21,11 +21,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.parser.SQLCodeParser
 import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
 import com.webank.wedatasphere.linkis.engineplugin.hive.cs.CSHiveHelper
 import com.webank.wedatasphere.linkis.engineplugin.hive.exception.HiveQueryFailedException
 import com.webank.wedatasphere.linkis.engineplugin.hive.progress.HiveProgressHelper
+import com.webank.wedatasphere.linkis.governance.common.paser.SQLCodeParser
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.{CommonNodeResource, LoadInstanceResource, NodeResource}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
@@ -260,7 +260,7 @@ class HiveEngineConnExecutor(id: Int,
       singleSqlProgressMap foreach {
         case (jobId, progress) => arrayBuffer += JobProgressInfo(jobId, 200, 0, 0, 200)
       }
-      engineExecutorContext.sendProgress(1.0f, arrayBuffer.toArray[JobProgressInfo])
+      engineExecutorContext.pushProgress(1.0f, arrayBuffer.toArray[JobProgressInfo])
     }
   }
 

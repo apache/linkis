@@ -33,9 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.webank.wedatasphere.linkis.message.conf.MessageSchedulerConf.*;
 
-/**
- * @date 2020/7/14
- */
+
 public class DefaultServiceMethodContext implements ServiceMethodContext {
 
     private final Map<String, Object> attributes = new ConcurrentHashMap<>();

@@ -20,9 +20,7 @@ import java.io.OutputStream
 
 import com.webank.wedatasphere.linkis.common.io.FsWriter
 
-/**
-  * Created by johnnwang on 2018/11/12.
-  */
+
 abstract class ExcelFsWriter extends FsWriter {
   val charset: String
   val sheetName: String

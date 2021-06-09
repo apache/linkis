@@ -18,12 +18,16 @@ package com.webank.wedatasphere.linkis.jobhistory.restful.api;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.webank.wedatasphere.linkis.governance.common.constant.job.JobRequestConstants;
+import com.webank.wedatasphere.linkis.governance.common.entity.job.SubJobDetail;
 import com.webank.wedatasphere.linkis.jobhistory.conf.JobhistoryConfiguration;
-import com.webank.wedatasphere.linkis.jobhistory.entity.QueryTask;
-import com.webank.wedatasphere.linkis.jobhistory.entity.QueryTaskVO;
+import com.webank.wedatasphere.linkis.jobhistory.conversions.TaskConversions;
+import com.webank.wedatasphere.linkis.jobhistory.dao.JobDetailMapper;
+import com.webank.wedatasphere.linkis.jobhistory.entity.*;
 import com.webank.wedatasphere.linkis.jobhistory.exception.QueryException;
-import com.webank.wedatasphere.linkis.jobhistory.service.QueryService;
+import com.webank.wedatasphere.linkis.jobhistory.service.JobHistoryQueryService;
 import com.webank.wedatasphere.linkis.jobhistory.util.QueryUtils;
+import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.slf4j.Logger;
@@ -38,15 +42,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.sql.Date;
 
-/**
- * johnnwang
- * 018/10/19
- */
 @Component
 @Path("/jobhistory")
 @Produces(MediaType.APPLICATION_JSON)
@@ -56,25 +57,37 @@ public class QueryRestfulApi {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private QueryService queryService;
+    private JobHistoryQueryService jobHistoryQueryService;
+    @Autowired
+    private JobDetailMapper jobDetailMapper;
 
     @GET
-    @Path("/isJobhistorAdmin")
-    public Response isJobhistorAdmin(@Context HttpServletRequest req) {
+    @Path("/governanceStationAdmin")
+    public Response governanceStationAdmin(@Context HttpServletRequest req) {
         String username = SecurityFilter.getLoginUsername(req);
-        String[] split = JobhistoryConfiguration.JOB_HISTORY_ADMIN().getValue().split(",");
+        String[] split = JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
         boolean match = Arrays.stream(split).anyMatch(username::equalsIgnoreCase);
-        return Message.messageToResponse(Message.ok().data("isJobhistorAdmin", match));
+        return Message.messageToResponse(Message.ok().data("admin", match));
     }
 
     @GET
     @Path("/{id}/get")
-    public Response getTaskByID(@Context HttpServletRequest req, @PathParam("id") Long taskID) {
+    public Response getTaskByID(@Context HttpServletRequest req, @PathParam("id") Long jobId) {
         String username = SecurityFilter.getLoginUsername(req);
-        if (QueryUtils.isJobHistoryAdmin(username) || !JobhistoryConfiguration.JOB_HISTORY_SAFE_TRIGGER())
+        if (QueryUtils.isJobHistoryAdmin(username) || !JobhistoryConfiguration.JOB_HISTORY_SAFE_TRIGGER()) {
             username = null;
-        QueryTaskVO vo = queryService.getTaskByID(taskID, username);
-        return Message.messageToResponse(Message.ok().data("task", vo));
+        }
+        JobHistory jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(jobId, username);
+        List<SubJobDetail> subJobDetails = TaskConversions.jobdetails2SubjobDetail(jobDetailMapper.selectJobDetailByJobHistoryId(jobId));
+        QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, subJobDetails);
+        // todo check
+        for (SubJobDetail subjob : subJobDetails) {
+            if (!StringUtils.isEmpty(subjob.getResultLocation())) {
+                taskVO.setResultLocation(subjob.getResultLocation());
+                break;
+            }
+        }
+        return Message.messageToResponse(Message.ok().data(TaskConstant.TASK, taskVO));
     }
 
     @GET
@@ -104,7 +117,7 @@ public class QueryRestfulApi {
             Calendar instance = Calendar.getInstance();
             instance.setTimeInMillis(endDate);
             instance.add(Calendar.DAY_OF_MONTH, 1);
-            eDate = instance.getTime();
+            eDate = new Date(instance.getTime().getTime()); // todo check
         }
         if (proxyUser != null && QueryUtils.isJobHistoryAdmin(username)) {
             if (!StringUtils.isEmpty(proxyUser)) {
@@ -113,18 +126,31 @@ public class QueryRestfulApi {
                 username = null;
             }
         }
-        List<QueryTask> queryTasks = null;
+        List<JobHistory> queryTasks = null;
         PageHelper.startPage(pageNow, pageSize);
         try {
-            queryTasks = queryService.search(taskID, username, status, sDate, eDate, executeApplicationName);
+            queryTasks = jobHistoryQueryService.search(taskID, username, status, sDate, eDate, executeApplicationName);
         } finally {
             PageHelper.clearPage();
         }
 
-        PageInfo<QueryTask> pageInfo = new PageInfo<>(queryTasks);
-        List<QueryTask> list = pageInfo.getList();
+        PageInfo<JobHistory> pageInfo = new PageInfo<>(queryTasks);
+        List<JobHistory> list = pageInfo.getList();
         long total = pageInfo.getTotal();
-        List<QueryTaskVO> vos = queryService.getQueryVOList(list);
-        return Message.messageToResponse(Message.ok().data("tasks", vos).data("totalPage", total));
+        List<QueryTaskVO> vos = new ArrayList<>();
+        for (JobHistory jobHistory : list) {
+            List<JobDetail> jobDetails = jobDetailMapper.selectJobDetailByJobHistoryId(jobHistory.getId());
+            QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, TaskConversions.jobdetails2SubjobDetail(jobDetails));
+            vos.add(taskVO);
+            // todo add first resultLocation to taskVO
+            for (JobDetail subjob : jobDetails) {
+                if (!StringUtils.isEmpty(subjob.getResult_location())) {
+                    taskVO.setResultLocation(subjob.getResult_location());
+                }
+                break;
+            }
+        }
+        return Message.messageToResponse(Message.ok().data(TaskConstant.TASKS, vos)
+                .data(JobRequestConstants.TOTAL_PAGE(), total));
     }
 }

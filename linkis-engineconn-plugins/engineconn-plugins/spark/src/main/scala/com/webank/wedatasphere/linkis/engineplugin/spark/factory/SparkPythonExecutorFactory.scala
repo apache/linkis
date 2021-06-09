@@ -27,11 +27,14 @@ import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType.RunType
 
-/**
-  *
-  * @date 2020/11/2
-  */
-class SparkPythonExecutorFactory extends ComputationExecutorFactory {
+
+class SparkPythonExecutorFactory extends ExecutorFactory {
+  /**
+   * Order of executors, the smallest one is the default
+   *
+   * @return
+   */
+  override def getOrder: Int = SparkExecutorOrder.PYSPARK.id
 
   override protected def newExecutor(id: Int,
                                      engineCreationContext: EngineCreationContext,

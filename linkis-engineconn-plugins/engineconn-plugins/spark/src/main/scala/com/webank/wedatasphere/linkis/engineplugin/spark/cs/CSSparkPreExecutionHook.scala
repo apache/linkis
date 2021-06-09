@@ -20,10 +20,7 @@ import com.webank.wedatasphere.linkis.engineplugin.spark.extension.SparkPreExecu
 import javax.annotation.PostConstruct
 import org.springframework.stereotype.Component
 
-/**
-  *
-  * @date 2020/3/6 0:06
-  */
+
 @Component
 class CSSparkPreExecutionHook extends SparkPreExecutionHook with Logging{
 

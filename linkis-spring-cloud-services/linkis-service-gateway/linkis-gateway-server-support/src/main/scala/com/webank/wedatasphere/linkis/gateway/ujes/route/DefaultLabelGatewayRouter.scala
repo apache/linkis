@@ -25,7 +25,6 @@ import com.webank.wedatasphere.linkis.manager.label.entity.route.RouteLabel
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions._
-import scala.tools.scalap.scalax.util.StringUtil
 import scala.util.Random
 
 class DefaultLabelGatewayRouter(var routeLabelParsers: util.List[RouteLabelParser]) extends AbstractLabelGatewayRouter {

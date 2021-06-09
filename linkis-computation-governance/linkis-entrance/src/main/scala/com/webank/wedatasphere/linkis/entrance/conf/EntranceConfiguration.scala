@@ -25,8 +25,6 @@ object EntranceConfiguration {
 
   val MULTI_ENTRANCE_CONDITION = CommonVars("wds.linkis.entrance.multi.entrance.flag", true)
 
-  val RESULT_SET_STORE_PATH = CommonVars("wds.linkis.resultSet.store.path", CommonVars[String]("wds.linkis.filesystem.hdfs.root.path").getValue)
-
   /**
     * QUERY_PERSISTENCE_SPRING_APPLICATION_NAME is the name of the application that represents the query module in springcloud
     * QUERY_PERSISTENCE_SPRING_APPLICATION_NAME 是表示query模块在springcloud中的应用名称
@@ -47,12 +45,7 @@ object EntranceConfiguration {
     * Default_Log_CharSet 是用来指定日志存储的编码方式
     */
   val DEFAULT_LOG_CHARSET = CommonVars("wds.linkis.entrance.log.defaultCharSet", "utf-8")
-  /**
-    * The application name of the console module in spring-cloud
-    * console 模块在spring-cloud中的应用名称
-    */
-  val CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.console.configuration.application.name", "linkis-ps-publicservice")
-  val CLOUD_CONSOLE_VARIABLE_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.console.variable.application.name", "linkis-ps-publicservice")
+
   /**
     * The logPath in the console module returns the key in the map.
     * console 模块中logPath在返回map中的key
@@ -68,7 +61,7 @@ object EntranceConfiguration {
     */
   val DEFAULT_RUN_TYPE = CommonVars("wds.linkis.default.runType", "sql")
 
-  val DEFAULT_CREATE_SERVICE = CommonVars("wds.linkis.default.create.service", "dss")
+  val DEFAULT_CREATE_SERVICE = CommonVars("wds.linkis.default.create.service", "default_create_service")
 
   val LOG_WARN_EXCLUDE = CommonVars("wds.linkis.warn.log.exclude", "org.apache,hive.ql,hive.metastore,com.netflix,com.webank.wedatasphere")
 
@@ -116,30 +109,19 @@ object EntranceConfiguration {
 
   val HIVE_PRINT_INFO_LOG = CommonVars("wds.linkis.hive.printinfo.log", "printInfo -")
 
-  val DATAMAP_APPID = CommonVars("wds.linkis.entrance.datawmap.appid", "75116e6f690e6d222fb55f2dd6f9cb5a")
-
-  val DATAMAP_APPTOKEN = CommonVars("wds.linkis.entrance.datamap.apptoken",
-    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiJjb29wZXJ5YW5nIiwiYXBwa2V5IjoiNzUxMTZlNmY2OTBlNmQyMjJmYjU1ZjJkZDZmOWNiNWEiLCJpYXQiOjE1NzE4MTQxOTYzNDZ9.JfjvsiNMWSc1RnQh1k7vsNjwp4YRquT_XXbYmlEgBgc")
-
-
-  val DATA_MAP_IP = CommonVars("wds.linkis.entrance.datamap.ip", "")
-
-  //val DATA_MAP_PORT = CommonVars("wds.linkis.entrance.datamap.port", "8122")
-  val DATA_MAP_PORT = CommonVars("wds.linkis.entrance.datamap.port", "9001")
-
   val IS_BDP_ENV = CommonVars("wds.linkis.entrance.bdp.env", "true")
 
 
-  val SHELL_DANGER_CHECK_SWITCH = CommonVars("wds.linkis.entrance.shell.danger.check.enabled", false)
-  val SHELL_DANGER_USAGE = CommonVars("wds.linkis.shell.danger.usage", "rm,sh,find,kill,python,for,source,hdfs,hadoop,spark-sql,spark-submit,pyspark,spark-shell,hive,yarn")
-  val SHELL_WHITE_USAGE = CommonVars("wds.linkis.shell.white.usage", "cd,ls")
+  val SHELL_DANGER_CHECK_SWITCH = CommonVars("wds.linkis.entrance.shell.danger.check.enabled", true)
+  val SHELL_DANGER_USAGE = CommonVars("wds.linkis.shell.danger.usage", "rm,sh,find,kill,python,for,source,hdfs,hadoop,spark-sql,spark-submit,pyspark,spark-shell,hive,yarn,df,dd")
+  val SHELL_WHITE_USAGE = CommonVars("wds.linkis.shell.white.usage", "cd,ls,echo")
 
   val FLOW_EXECUTION_CREATOR = CommonVars("wds.linkis.entrance.flow.creator", "nodeexecution")
 
   val SCHEDULER_CREATOR = CommonVars("wds.linkis.entrance.scheduler.creator", "scheduler")
 
 
-  val IS_QML = CommonVars("wds.linkis.entrance.is.qml", false)
+  val SKIP_AUTH = CommonVars("wds.linkis.entrance.skip.auth", false)
 
   val PROGRESS_PUSH = CommonVars[String]("wds.linkis.entrance.push.progress", "false")
 
@@ -154,4 +136,13 @@ object EntranceConfiguration {
   val ENTRANCE_ENGINE_LASTUPDATE_TIMEOUT = CommonVars("wds.linkis.entrance.engine.lastupdate.timeout", new TimeType("5s"))
   val ENTRANCE_ENGINE_ACTIVITY_TIMEOUT = CommonVars("wds.linkis.entrance.engine.timeout", new TimeType("10s"))
   val ENTRANCE_ENGINE_ACTIVITY_MONITOR_INTERVAL = CommonVars("wds.linkis.entrance.engine.activity_monitor.interval", new TimeType("3s"))
+
+  // Whether to turn on timeout detection
+  val ENABLE_JOB_TIMEOUT_CHECK = CommonVars("wds.linkis.enable.job.timeout.check", true)
+
+  // unit is seconds
+  val TIMEOUT_SCAN_INTERVAL = CommonVars("wds.linkis.timeout.thread.scan.interval", 120)
+
+  //unit is MINUTES
+  val USER_PARALLEL_REFLESH_TIME  = CommonVars("wds.linkis.user.parallel.reflesh.time", 30)
 }

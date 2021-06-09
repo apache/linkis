@@ -19,8 +19,11 @@ package com.webank.wedatasphere.linkis.configuration.entity;
 import java.util.ArrayList;
 
 public class ConfigTree {
+
     private String name;
+
     private String description;
+
     private ArrayList<ConfigKeyValue> settings = new ArrayList();
 
     public String getName() {

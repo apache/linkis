@@ -20,9 +20,7 @@
 
 package com.webank.wedatasphere.linkis.httpclient.response
 
-/**
-  * Created by enjoyyin on 2019/5/21.
-  */
+
 class ListResult(override val getResponseBody: String, results: Array[Result]) extends Result {
 
   def getResults: Array[Result] = results

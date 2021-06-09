@@ -27,9 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @date 2020/7/28
- */
+
 public abstract class AbstractImplicitRegistry extends JavaLog implements ImplicitRegistry {
 
     private final AbstractMessageSchedulerContext context;

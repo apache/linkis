@@ -33,6 +33,8 @@ public class RestfulUtils {
     private static final Long DAY = 24 * HOUR;
     private static final Long MONTH = 30 * DAY;
     private static final Long YEAR = 365 * DAY;
+
+
     public static String getUserName(HttpServletRequest request)throws BmlAuthorityException{
         String user;
         try{

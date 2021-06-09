@@ -24,9 +24,7 @@ import com.webank.wedatasphere.linkis.server.security.SecurityFilter
 import javax.servlet.http.HttpServletRequest
 import org.eclipse.jetty.websocket.api.{Session, WebSocketAdapter}
 
-/**
-  * Created by enjoyyin on 2018/1/9.
-  */
+
 case class ServerSocket(request: HttpServletRequest, socketListener: SocketListener, protocol: String = "")
   extends WebSocketAdapter {
   private var session: Session = _

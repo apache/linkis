@@ -21,9 +21,7 @@ import org.apache.commons.lang.{ClassUtils => CommonClassUtils}
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  * Created by enjoyyin on 2018/11/3.
-  */
+
 trait RetryHandler extends Logging {
 
   private var retryNum = 2

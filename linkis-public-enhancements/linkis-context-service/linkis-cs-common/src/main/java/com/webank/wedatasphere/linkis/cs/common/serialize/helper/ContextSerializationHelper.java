@@ -13,6 +13,9 @@
 
 package com.webank.wedatasphere.linkis.cs.common.serialize.helper;
 
+import com.webank.wedatasphere.linkis.common.utils.ClassUtils;
+import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
+import com.webank.wedatasphere.linkis.cs.common.exception.ErrorCode;
 import com.webank.wedatasphere.linkis.cs.common.serialize.ContextSerializer;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -32,32 +35,33 @@ public class ContextSerializationHelper extends AbstractSerializationHelper {
     private Map<String, ContextSerializer> contextSerializerMap = new HashMap<>(16);
 
 
-    private void init()  {
-        Reflections reflections = new Reflections("com.webank.wedatasphere.linkis", ContextSerializationHelper.class.getClassLoader());
+    private void init() throws CSErrorException {
+        Reflections reflections = ClassUtils.reflections();
         Set<Class<? extends ContextSerializer>> allSubClass = reflections.getSubTypesOf(ContextSerializer.class);
 
-        if ( null != allSubClass){
+        if (null != allSubClass) {
             Iterator<Class<? extends ContextSerializer>> iterator = allSubClass.iterator();
-            while (iterator.hasNext()){
+            while (iterator.hasNext()) {
                 Class<? extends ContextSerializer> next = iterator.next();
-                ContextSerializer contextSerializer = null;
-                try {
-                    contextSerializer = next.newInstance();
-                } catch (InstantiationException e) {
-                    logger.info("Failed to Instantiation  " + next.getName());
-                    continue;
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Failed to construct contextSerializer", e);
-                }
+                if (! ClassUtils.isInterfaceOrAbstract(next)) {
+                    ContextSerializer contextSerializer = null;
+                    try {
+                        contextSerializer = next.newInstance();
+                    } catch (InstantiationException e) {
+                        logger.info("Failed to Instantiation  " + next.getName());
+                        continue;
+                    } catch (IllegalAccessException e) {
+                        throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR,"Failed to construct contextSerializer", e);
+                    }
 
-                if (contextSerializerMap.containsKey(contextSerializer.getType())){
-                    throw new RuntimeException("contextSerializer Type cannot be duplicated ");
+                    if (contextSerializerMap.containsKey(contextSerializer.getType())) {
+                        throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR,"contextSerializer Type cannot be duplicated ");
+                    }
+                    contextSerializerMap.put(contextSerializer.getType(), contextSerializer);
                 }
-                contextSerializerMap.put(contextSerializer.getType(), contextSerializer);
             }
         }
     }
-
 
 
     private static ContextSerializationHelper contextSerializationHelper = null;
@@ -67,7 +71,12 @@ public class ContextSerializationHelper extends AbstractSerializationHelper {
             synchronized (ContextSerializationHelper.class) {
                 if (contextSerializationHelper == null) {
                     contextSerializationHelper = new ContextSerializationHelper();
-                    contextSerializationHelper.init();
+                    try {
+                        contextSerializationHelper.init();
+                    } catch (CSErrorException e) {
+                        logger.error("Failed init ContextSerializationHelper, now exit process", e);
+                        System.exit(1);
+                    }
                 }
             }
         }

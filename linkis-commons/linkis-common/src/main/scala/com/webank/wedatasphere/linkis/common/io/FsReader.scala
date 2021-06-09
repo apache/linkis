@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.common.io
 
 import java.io.{Closeable, IOException}
 
-/**
-  * Created by enjoyyin on 2018/8/15.
-  */
+
 abstract class FsReader[K <: MetaData, V <: Record] extends Closeable {
   @throws[IOException]
   def getRecord: Record

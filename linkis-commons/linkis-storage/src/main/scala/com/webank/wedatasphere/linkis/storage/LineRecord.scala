@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.storage
 import com.webank.wedatasphere.linkis.common.io.Record
 import com.webank.wedatasphere.linkis.storage.resultset.ResultRecord
 
-/**
-  * Created by johnnwang on 10/20/18.
-  */
+
 class LineRecord(private var  line: String) extends ResultRecord{
 
   def getLine = line

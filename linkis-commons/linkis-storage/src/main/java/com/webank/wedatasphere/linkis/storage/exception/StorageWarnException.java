@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.storage.exception;
 
 import com.webank.wedatasphere.linkis.common.exception.WarnException;
 
-/**
- * Created by johnnwang on 10/15/18.
- */
+
 public class StorageWarnException extends WarnException {
 
     public StorageWarnException(int errCode, String desc){

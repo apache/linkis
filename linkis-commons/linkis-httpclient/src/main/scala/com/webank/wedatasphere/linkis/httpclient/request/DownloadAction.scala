@@ -22,9 +22,7 @@ package com.webank.wedatasphere.linkis.httpclient.request
 
 import scala.tools.nsc.interpreter.InputStream
 
-/**
-  * Created by enjoyyin on 2019/5/20.
-  */
+
 trait DownloadAction {
 
   def write(inputStream: InputStream): Unit

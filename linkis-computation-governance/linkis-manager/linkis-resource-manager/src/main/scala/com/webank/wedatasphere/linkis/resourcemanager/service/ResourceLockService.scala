@@ -20,8 +20,10 @@ import java.util.Date
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLock
+import com.webank.wedatasphere.linkis.manager.label.entity.EngineNodeLabel
 import com.webank.wedatasphere.linkis.manager.persistence.LockManagerPersistence
 import com.webank.wedatasphere.linkis.resourcemanager.domain.RMLabelContainer
+import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -35,6 +37,11 @@ class ResourceLockService extends Logging {
   def tryLock(labelContainer: RMLabelContainer): Boolean = tryLock(labelContainer, Long.MaxValue)
 
   def tryLock(labelContainer: RMLabelContainer, timeout: Long): Boolean = {
+    if(StringUtils.isBlank(labelContainer.getCurrentLabel.getStringValue)
+      || !labelContainer.getCurrentLabel.isInstanceOf[EngineNodeLabel]
+      || labelContainer.getLockedLabels.contains(labelContainer.getCurrentLabel)){
+      return true
+    }
     val lockedBy = if(labelContainer.getUserCreatorLabel == null) DEFAULT_LOCKED_BY else labelContainer.getUserCreatorLabel.getUser
     val persistenceLock = new PersistenceLock
     persistenceLock.setLockObject(labelContainer.getCurrentLabel.getStringValue)
@@ -43,30 +50,36 @@ class ResourceLockService extends Logging {
     persistenceLock.setUpdateTime(new Date)
     persistenceLock.setUpdator(lockedBy)
     try {
-      lockManagerPersistence.lock(persistenceLock, timeout)
+      val isLocked: Boolean = lockManagerPersistence.lock(persistenceLock, timeout)
+      if(isLocked){
+        info(labelContainer.getLabels + " successfully locked label" + persistenceLock.getLockObject)
+        labelContainer.getLockedLabels.add(labelContainer.getCurrentLabel)
+      }
+      isLocked
     } catch {
       case t: Throwable =>
         error(s"failed to lock label [${persistenceLock.getLockObject}]", t)
-        return false
+        false
     }
-    labelContainer.getLockedLabels.add(labelContainer.getCurrentLabel)
-    return true
   }
 
   def unLock(labelContainer: RMLabelContainer): Unit = {
     val labelIterator = labelContainer.getLockedLabels.iterator
     while(labelIterator.hasNext){
       val label = labelIterator.next
-      val persistenceLock = new PersistenceLock
-      persistenceLock.setLockObject(label.getStringValue)
-      try {
-        lockManagerPersistence.unlock(persistenceLock)
-      }catch {
-        case t: Throwable =>
-          error(s"failed to unlock label [${persistenceLock.getLockObject}]", t)
-          throw t
+      if(!StringUtils.isBlank(label.getStringValue)){
+        val persistenceLock = new PersistenceLock
+        persistenceLock.setLockObject(label.getStringValue)
+        try {
+          lockManagerPersistence.unlock(persistenceLock)
+          info("unlocked " + persistenceLock.getLockObject)
+        }catch {
+          case t: Throwable =>
+            error(s"failed to unlock label [${persistenceLock.getLockObject}]", t)
+            throw t
+        }
+        labelIterator.remove
       }
-      labelIterator.remove
     }
   }
 

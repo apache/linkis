@@ -28,9 +28,7 @@ import org.apache.poi.xssf.streaming.{SXSSFSheet, SXSSFWorkbook}
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  * Created by johnnwang on 2018/11/12.
-  */
+
 class StorageExcelWriter(val charset: String, val sheetName: String, val dateFormat: String, val outputStream: OutputStream) extends ExcelFsWriter {
 
   protected var workBook: SXSSFWorkbook = _

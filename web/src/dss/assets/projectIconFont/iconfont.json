@@ -1,0 +1,191 @@
+{
+  "id": "1993415",
+  "name": "DSS",
+  "font_family": "iconfont",
+  "css_prefix_text": "fi-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "521023",
+      "name": "管理视图",
+      "font_class": "guanlishitu",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
+      "icon_id": "6405728",
+      "name": "JDBC",
+      "font_class": "JDBC",
+      "unicode": "e75e",
+      "unicode_decimal": 59230
+    },
+    {
+      "icon_id": "6817793",
+      "name": "scala",
+      "font_class": "scala",
+      "unicode": "e727",
+      "unicode_decimal": 59175
+    },
+    {
+      "icon_id": "7474095",
+      "name": "hive",
+      "font_class": "hive",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "7560094",
+      "name": "pyspark",
+      "font_class": "spark-python",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "11083906",
+      "name": "send-mail",
+      "font_class": "mail",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "11839305",
+      "name": "python",
+      "font_class": "python-o",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
+      "icon_id": "431682",
+      "name": "data",
+      "font_class": "data",
+      "unicode": "e6ab",
+      "unicode_decimal": 59051
+    },
+    {
+      "icon_id": "683269",
+      "name": "笔记本",
+      "font_class": "log",
+      "unicode": "e650",
+      "unicode_decimal": 58960
+    },
+    {
+      "icon_id": "924545",
+      "name": "table",
+      "font_class": "table",
+      "unicode": "e955",
+      "unicode_decimal": 59733
+    },
+    {
+      "icon_id": "1302618",
+      "name": "field-manage",
+      "font_class": "field",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
+      "icon_id": "1361524",
+      "name": "存储",
+      "font_class": "storage",
+      "unicode": "e68f",
+      "unicode_decimal": 59023
+    },
+    {
+      "icon_id": "1433733",
+      "name": "file-txt",
+      "font_class": "txt",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    },
+    {
+      "icon_id": "1471612",
+      "name": "quality",
+      "font_class": "quality",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    },
+    {
+      "icon_id": "1695297",
+      "name": "988菜单_数据库",
+      "font_class": "hivedb-open",
+      "unicode": "e6b3",
+      "unicode_decimal": 59059
+    },
+    {
+      "icon_id": "5477164",
+      "name": "文件",
+      "font_class": "folder-o",
+      "unicode": "e631",
+      "unicode_decimal": 58929
+    },
+    {
+      "icon_id": "5634810",
+      "name": "python",
+      "font_class": "python",
+      "unicode": "f216",
+      "unicode_decimal": 61974
+    },
+    {
+      "icon_id": "5916409",
+      "name": "JAR",
+      "font_class": "jar",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    },
+    {
+      "icon_id": "7274108",
+      "name": "文件夹",
+      "font_class": "folder",
+      "unicode": "e622",
+      "unicode_decimal": 58914
+    },
+    {
+      "icon_id": "10135193",
+      "name": "csv",
+      "font_class": "csv",
+      "unicode": "e8aa",
+      "unicode_decimal": 59562
+    },
+    {
+      "icon_id": "10135327",
+      "name": "xls",
+      "font_class": "xls",
+      "unicode": "e8c4",
+      "unicode_decimal": 59588
+    },
+    {
+      "icon_id": "10135328",
+      "name": "xlsx",
+      "font_class": "xlsx",
+      "unicode": "e8c5",
+      "unicode_decimal": 59589
+    },
+    {
+      "icon_id": "10594609",
+      "name": "数据库_jurassic",
+      "font_class": "hivedb",
+      "unicode": "e6a9",
+      "unicode_decimal": 59049
+    },
+    {
+      "icon_id": "11398888",
+      "name": "file",
+      "font_class": "file",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "12692993",
+      "name": "file",
+      "font_class": "file-o",
+      "unicode": "e81b",
+      "unicode_decimal": 59419
+    },
+    {
+      "icon_id": "15431091",
+      "name": "apachespark",
+      "font_class": "spark",
+      "unicode": "ed2e",
+      "unicode_decimal": 60718
+    }
+  ]
+}

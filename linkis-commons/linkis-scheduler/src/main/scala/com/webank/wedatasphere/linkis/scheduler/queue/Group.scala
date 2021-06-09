@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue
 
-/**
-  * Created by enjoyyin on 2018/9/1.
-  */
+
 trait Group {
 
   def getGroupName: String

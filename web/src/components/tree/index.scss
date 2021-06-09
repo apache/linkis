@@ -1,0 +1,224 @@
+/*!
+ / Copyright 2019 WeBank
+ /
+ / Licensed under the Apache License, Version 2.0 (the "License");
+ /  you may not use this file except in compliance with the License.
+ / You may obtain a copy of the License at
+ /
+ / http://www.apache.org/licenses/LICENSE-2.0
+ /
+ / Unless required by applicable law or agreed to in writing, software
+ / distributed under the License is distributed on an "AS IS" BASIS,
+ / WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ / See the License for the specific language governing permissions and
+ / limitations under the License.
+ /
+ */
+
+@import '~@/common/style/variables.scss';
+
+.we-tree {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  text-overflow: ellipsis;
+}
+
+.we-tree-node {
+  background-color: transparent;
+  .we-tree-node__content {
+    color: $text-origin-color;
+    outline: none;
+    user-select: none;
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'font-dws-icon' !important;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    position: relative;
+
+    span {
+      display: flex;
+      height: 25px;
+      line-height: 25px;
+      align-items: center;
+    }
+
+    .we-tree-node__expand-icon:before {
+      content: '\e925';
+    }
+
+    .we-tree-node__icon {
+      margin-left: 5px;
+      width: 10px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .we-tree-node__icon.is-leaf {
+      padding-left: 10px;
+      width: 24px;
+    }
+
+    .we-tree-node__icon.is-checkbox {
+      padding-left: 12px;
+    }
+    .we-tree-node__icon.is-checkbox:before {
+      content: normal !important;
+    }
+
+    .we-tree-node__label {
+      padding-left: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .we-tree-node__folder {
+      .we-tree-node__view {
+        width: 25px;
+        height: 25px;
+        background: #fff;
+        float: right;
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          color: #0a9fec;
+        }
+      }
+    }
+
+
+    .we-tree-node__checkbox {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      overflow: hidden;
+
+      span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .expired {
+        text-decoration: line-through;
+      }
+
+      .we-tree-node__view {
+        width: 25px;
+        height: 25px;
+        background: #fff;
+        float: right;
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          color: #0a9fec;
+        }
+      }
+
+
+      span {
+        margin-left: 10px;
+      }
+    }
+
+
+    .we-tree-node__edit {
+      flex: 1;
+      position: relative;
+      height: 25px;
+      line-height: 25px;
+      padding-left: 10px;
+
+      input {
+        width: 96%;
+        height: 20px;
+        border: 1px solid $line-color;
+        outline: none;
+        box-sizing: border-box;
+      }
+
+      input:focus {
+        width: 96%;
+        height: 20px;
+        border: 1px solid $line-color;
+        outline: none;
+        box-sizing: border-box;
+      }
+    }
+
+
+    .we-tree-node__edit.is-error {
+      input:focus {
+        border: 1px solid #BE1100;
+        outline: none;
+      }
+
+      .we-tree-node__error {
+
+        font-size: 10px;
+        line-height: 18px;
+        width: 92%;
+        box-sizing: border-box;
+        display: block;
+        position: absolute;
+        top: 23px;
+        left: 10px;
+        padding: 2px 5px;
+        border: 1px solid #BE1100;
+        background-color: #AA0505;
+        color: whitesmoke;
+        z-index: 999;
+      }
+    }
+
+  }
+
+}
+
+.we-tree-node.is-expanded {
+  >.we-tree-node__content {
+    .we-tree-node__expand-icon:before {
+      content: '\e924';
+    }
+    .we-tree-node__icon:before {
+      content: '\e927';
+    }
+    .we-tree-node__icon.is-leaf:before {
+      content: '\e929';
+    }
+  }
+
+}
+
+.we-tree-node.is-current {
+  >.we-tree-node__content {
+    background-color:  $grey-bg-color;
+  }
+}
+
+.we-tree-node.is-actived {
+  >.we-tree-node__content {
+    /*background-color:  #e3f6f9*/
+    color: #0a9fec;
+  }
+
+}

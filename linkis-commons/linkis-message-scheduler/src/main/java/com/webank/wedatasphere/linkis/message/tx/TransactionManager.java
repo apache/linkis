@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.message.tx;
 
-/**
- * @date 2020/7/23
- */
+
 public interface TransactionManager {
 
     default Object begin() {

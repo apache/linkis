@@ -1,10 +1,10 @@
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for linkis_mdq_access
+-- Table structure for linkis_ps_datasource_access
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_mdq_access`;
-CREATE TABLE `linkis_mdq_access` (
+DROP TABLE IF EXISTS `linkis_ps_datasource_access`;
+CREATE TABLE `linkis_ps_datasource_access` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `table_id` bigint(20) NOT NULL,
   `visitor` varchar(16) COLLATE utf8_bin NOT NULL,
@@ -15,10 +15,10 @@ CREATE TABLE `linkis_mdq_access` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
--- Table structure for linkis_mdq_field
+-- Table structure for linkis_ps_datasource_field
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_mdq_field`;
-CREATE TABLE `linkis_mdq_field` (
+DROP TABLE IF EXISTS `linkis_ps_datasource_field`;
+CREATE TABLE `linkis_ps_datasource_field` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `table_id` bigint(20) NOT NULL,
   `name` varchar(64) COLLATE utf8_bin NOT NULL,
@@ -34,10 +34,10 @@ CREATE TABLE `linkis_mdq_field` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
--- Table structure for linkis_mdq_import
+-- Table structure for linkis_ps_datasource_import
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_mdq_import`;
-CREATE TABLE `linkis_mdq_import` (
+DROP TABLE IF EXISTS `linkis_ps_datasource_import`;
+CREATE TABLE `linkis_ps_datasource_import` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `table_id` bigint(20) NOT NULL,
   `import_type` int(4) NOT NULL,
@@ -46,10 +46,10 @@ CREATE TABLE `linkis_mdq_import` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
--- Table structure for linkis_mdq_lineage
+-- Table structure for linkis_ps_datasource_lineage
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_mdq_lineage`;
-CREATE TABLE `linkis_mdq_lineage` (
+DROP TABLE IF EXISTS `linkis_ps_datasource_lineage`;
+CREATE TABLE `linkis_ps_datasource_lineage` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `table_id` bigint(20) DEFAULT NULL,
   `source_table` varchar(64) COLLATE utf8_bin DEFAULT NULL,
@@ -58,10 +58,10 @@ CREATE TABLE `linkis_mdq_lineage` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
--- Table structure for linkis_mdq_table
+-- Table structure for linkis_ps_datasource_table
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_mdq_table`;
-CREATE TABLE `linkis_mdq_table` (
+DROP TABLE IF EXISTS `linkis_ps_datasource_table`;
+CREATE TABLE `linkis_ps_datasource_table` (
   `id` bigint(255) NOT NULL AUTO_INCREMENT,
   `database` varchar(64) COLLATE utf8_bin NOT NULL,
   `name` varchar(64) COLLATE utf8_bin NOT NULL,
@@ -84,10 +84,10 @@ CREATE TABLE `linkis_mdq_table` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
--- Table structure for linkis_mdq_table_info
+-- Table structure for linkis_ps_datasource_table_info
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_mdq_table_info`;
-CREATE TABLE `linkis_mdq_table_info` (
+DROP TABLE IF EXISTS `linkis_ps_datasource_table_info`;
+CREATE TABLE `linkis_ps_datasource_table_info` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `table_id` bigint(20) NOT NULL,
   `table_last_update_time` datetime NOT NULL,

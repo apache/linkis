@@ -46,7 +46,9 @@ object EngineConnExecutorConfiguration {
   val ENGINE_SERVER_LISTENER_ASYNC_CONSUMER_THREAD_FREE_TIME_MAX = CommonVars("wds.linkis.engine.listener.async.consumer.freetime.max", new TimeType("5000ms"))
 
   // todo better to rename
-  val EXECUTOR_MANAGER_SERVICE_CLAZZ = CommonVars("wds.linkis.engineconn.executor.manager.service.clazz", "com.webank.wedatasphere.linkis.engineconn.acessible.executor.service.DefaultManagerService")
+  val EXECUTOR_MANAGER_SERVICE_CLAZZ = CommonVars("wds.linkis.engineconn.executor.manager.service.class", "com.webank.wedatasphere.linkis.engineconn.acessible.executor.service.DefaultManagerService")
+
+  val EXECUTOR_MANAGER_CLASS = CommonVars("wds.linkis.engineconn.executor.manager.class", "com.webank.wedatasphere.linkis.engineconn.core.executor.LabelExecutorManagerImpl")
 
   /*val EXECUTOR_MANAGER_CLAZZ = CommonVars("wds.linkis.engineconn.executor.manager.claazz", "")*/
 

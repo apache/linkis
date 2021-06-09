@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.storage.exception.StorageWarnException
 import com.webank.wedatasphere.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 
-/**
-  * Created by johnnwang on 10/17/18.
-  */
+
 object Dolphin extends Logging{
 
   val CHAR_SET = StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue

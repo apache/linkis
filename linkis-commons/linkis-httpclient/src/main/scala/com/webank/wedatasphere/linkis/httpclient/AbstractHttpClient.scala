@@ -15,13 +15,12 @@ package com.webank.wedatasphere.linkis.httpclient
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration}
+import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
-import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.httpclient.authentication.{AbstractAuthenticationStrategy, AuthenticationAction, HttpAuthentication}
 import com.webank.wedatasphere.linkis.httpclient.config.ClientConfig
 import com.webank.wedatasphere.linkis.httpclient.discovery.{AbstractDiscovery, Discovery, HeartbeatAction}
-import com.webank.wedatasphere.linkis.httpclient.exception.{HttpClientResultException, HttpMessageParseException}
+import com.webank.wedatasphere.linkis.httpclient.exception.{HttpClientResultException, HttpMessageParseException, HttpMethodNotSupportException}
 import com.webank.wedatasphere.linkis.httpclient.loadbalancer.{AbstractLoadBalancer, DefaultLoadbalancerStrategy, LoadBalancer}
 import com.webank.wedatasphere.linkis.httpclient.request._
 import com.webank.wedatasphere.linkis.httpclient.response._
@@ -34,29 +33,21 @@ import org.apache.http.client.methods._
 import org.apache.http.client.utils.URIBuilder
 import org.apache.http.entity.mime.MultipartEntityBuilder
 import org.apache.http.entity.{ContentType, StringEntity}
-import org.apache.http.impl.client.{BasicCookieStore, HttpClients}
+import org.apache.http.impl.client.{BasicCookieStore, CloseableHttpClient, HttpClients}
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
-import org.apache.http.{HttpException, HttpResponse, _}
-import org.json4s.jackson.Serialization.read
-import org.json4s.{DefaultFormats, Formats}
+import org.apache.http.{HttpResponse, _}
 
-import scala.collection.Iterable
 import scala.collection.JavaConversions._
-import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService}
 
 
-/**
- * Created by enjoyyin on 2019/5/20.
- */
+
 abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String) extends Client {
 
-  protected implicit val formats: Formats = DefaultFormats
-  protected implicit val executors: ExecutionContext = Utils.newCachedExecutionContext(clientConfig.getMaxConnection, clientName, false)
+  protected val CONNECT_TIME_OUT = 50000
 
-  protected val CONNECT_TIME_OUT = CommonVars("wds.linkis.httpclient.default.connect.timeOut", 50000).getValue
-
-  protected val httpClient = HttpClients.createDefault()
+  protected val cookieStore = new BasicCookieStore
+  protected val httpClient: CloseableHttpClient = HttpClients.custom().setDefaultCookieStore(cookieStore).build
 
   if (clientConfig.getAuthenticationStrategy != null) clientConfig.getAuthenticationStrategy match {
     case auth: AbstractAuthenticationStrategy => auth.setClient(this)
@@ -98,11 +89,11 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
     val startTime = System.currentTimeMillis
     val req = prepareReq(action)
     val prepareReqTime = System.currentTimeMillis - startTime
-    val cookieStore = prepareCookie(action)
+    prepareCookie(action)
     val attempts = new util.ArrayList[Long]()
     def addAttempt(): CloseableHttpResponse = {
       val startTime = System.currentTimeMillis
-      val response = executeRequest(req, Some(waitTime).filter(_ > 0), cookieStore)
+      val response = executeRequest(req, Some(waitTime).filter(_ > 0))
       attempts.add(System.currentTimeMillis - startTime)
       response
     }
@@ -123,15 +114,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
 
 
   override def execute(requestAction: Action, resultListener: ResultListener): Unit = {
-    if (!requestAction.isInstanceOf[HttpAction]) {
-      throw new UnsupportedOperationException("only HttpAction supported, but the fact is " + requestAction.getClass)
-    }
-    val action = prepareAction(requestAction.asInstanceOf[HttpAction])
-    val req = prepareReq(action)
-    val cookieStore = prepareCookie(action)
-    val response: CloseableHttpResponse = executeAsyncRequest(req)
-    //response.onSuccess{case r => resultListener.onSuccess(responseToResult(r, action))}
-    //response.onFailure{case t => resultListener.onFailure(t)}
+    throw new HttpMethodNotSupportException("Not supported client method!")
   }
 
   protected def getRequestUrl(suffixUrl: String, requestBody: String): String = {
@@ -149,10 +132,8 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
 
   protected def prepareAction(requestAction: HttpAction): HttpAction = requestAction
 
-  protected def prepareCookie(requestAction:HttpAction):CookieStore = {
-    val cookieStore = new BasicCookieStore()
-    if (requestAction.getCookies.nonEmpty) requestAction.getCookies.foreach(cookieStore.addCookie)
-    cookieStore
+  protected def prepareCookie(requestAction:HttpAction): Unit = if(requestAction.getCookies.nonEmpty) {
+    requestAction.getCookies.foreach(cookieStore.addCookie)
   }
 
 
@@ -170,8 +151,8 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
         val cookies = authAction.authToCookies
         if (cookies != null && cookies.nonEmpty) cookies.foreach(requestAction.addCookie)
         val headers = authAction.authToHeaders
-        if (headers != null && !headers.isEmpty()) {
-          headers.foreach { case (k, v) => requestAction.addHeader(k.toString(), v.toString()) }
+        if (headers != null && !headers.isEmpty) {
+          headers.foreach { case (k, v) => if(k != null && v != null) requestAction.addHeader(k.toString, v.toString) }
         }
       case _ =>
     }
@@ -180,24 +161,24 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
       case delete: DeleteAction =>
         val builder = new URIBuilder(realURL)
         if (!delete.getParameters.isEmpty) {
-          delete.getParameters.foreach { case (k, v) => builder.addParameter(k.toString(), v.toString()) }
+          delete.getParameters.foreach { case (k, v) => if(k != null && v != null) builder.addParameter(k.toString, v.toString) }
         }
         val httpDelete = new HttpDelete(builder.build())
         if (requestAction.getHeaders.nonEmpty) {
-          requestAction.getHeaders.foreach { case (k, v) => httpDelete.addHeader(k.toString(), v.toString()) }
+          requestAction.getHeaders.foreach { case (k, v) => if(k != null && v != null) httpDelete.addHeader(k.toString, v.toString) }
         }
         httpDelete
       case put: PutAction =>
         val httpPut = new HttpPut(realURL)
         if (put.getParameters.nonEmpty || put.getFormParams.nonEmpty) {
-          val nvps = new util.ArrayList[NameValuePair]
+          val nameValuePairs = new util.ArrayList[NameValuePair]
           if (put.getParameters.nonEmpty) {
-            put.getParameters.foreach { case (k, v) => nvps.add(new BasicNameValuePair(k, v.toString())) }
+            put.getParameters.foreach { case (k, v) => if(v != null) nameValuePairs.add(new BasicNameValuePair(k, v.toString)) }
           }
           if (put.getFormParams.nonEmpty) {
-            put.getFormParams.foreach { case (k, v) => nvps.add(new BasicNameValuePair(k, v.toString())) }
+            put.getFormParams.foreach { case (k, v) => if(v != null) nameValuePairs.add(new BasicNameValuePair(k, v.toString)) }
           }
-          httpPut.setEntity(new UrlEncodedFormEntity(nvps))
+          httpPut.setEntity(new UrlEncodedFormEntity(nameValuePairs))
         }
 
         if (StringUtils.isNotBlank(put.getRequestPayload)) {
@@ -208,7 +189,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
         }
 
         if (requestAction.getHeaders.nonEmpty) {
-          requestAction.getHeaders.foreach { case (k, v) => httpPut.addHeader(k.toString(), v.toString()) }
+          requestAction.getHeaders.foreach { case (k, v) => if(k != null && v != null) httpPut.addHeader(k.toString, v.toString) }
         }
         httpPut
       case upload: UploadAction =>
@@ -221,13 +202,13 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
         upload match {
           case get: GetAction => get.getParameters.
             retain((k, v) => v != null && k != null).
-            foreach { case (k, v) => builder.addTextBody(k.toString, v.toString) }
+            foreach { case (k, v) => if(k != null && v != null) builder.addTextBody(k.toString, v.toString) }
           case _ =>
         }
         upload match {
           case get: GetAction => get.getHeaders.
             retain((k, v) => v != null && k != null).
-            foreach { case (k, v) => httpPost.addHeader(k.toString, v.toString) }
+            foreach { case (k, v) => if(k != null && v != null) httpPost.addHeader(k.toString, v.toString) }
           case _ =>
         }
         val httpEntity = builder.build()
@@ -238,10 +219,10 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
         if (post.getParameters.nonEmpty || post.getFormParams.nonEmpty) {
           val nvps = new util.ArrayList[NameValuePair]
           if (post.getParameters.nonEmpty) {
-            post.getParameters.foreach { case (k, v) => nvps.add(new BasicNameValuePair(k, v.toString())) }
+            post.getParameters.foreach { case (k, v) => if(v != null) nvps.add(new BasicNameValuePair(k, v.toString)) }
           }
           if (post.getFormParams.nonEmpty) {
-            post.getFormParams.foreach { case (k, v) => nvps.add(new BasicNameValuePair(k, v.toString())) }
+            post.getFormParams.foreach { case (k, v) => if(v != null) nvps.add(new BasicNameValuePair(k, v.toString)) }
           }
           httpPost.setEntity(new UrlEncodedFormEntity(nvps))
         }
@@ -254,17 +235,17 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
         }
 
         if (requestAction.getHeaders.nonEmpty) {
-          requestAction.getHeaders.foreach { case (k, v) => httpPost.addHeader(k.toString(), v.toString()) }
+          requestAction.getHeaders.foreach { case (k, v) => if(k != null && v != null) httpPost.addHeader(k.toString, v.toString) }
         }
         httpPost
       case get: GetAction =>
         val builder = new URIBuilder(realURL)
         if (!get.getParameters.isEmpty) {
-          get.getParameters.foreach { case (k, v) => builder.addParameter(k.toString(), v.toString()) }
+          get.getParameters.foreach { case (k, v) => if(k != null && v != null) builder.addParameter(k.toString, v.toString) }
         }
         val httpGet = new HttpGet(builder.build())
         if (requestAction.getHeaders.nonEmpty) {
-          requestAction.getHeaders.foreach { case (k, v) => httpGet.addHeader(k.toString(), v.toString()) }
+          requestAction.getHeaders.foreach { case (k, v) => if(k != null && v != null) httpGet.addHeader(k.toString, v.toString) }
         }
         httpGet
       case _ =>
@@ -274,7 +255,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
         stringEntity.setContentType("application/json")
         httpost.setEntity(stringEntity)
         if (requestAction.getHeaders.nonEmpty) {
-          requestAction.getHeaders.foreach { case (k, v) => httpost.addHeader(k.toString(), v.toString()) }
+          requestAction.getHeaders.foreach { case (k, v) => if(k != null && v != null) httpost.addHeader(k.toString, v.toString) }
         }
         httpost
     }
@@ -292,7 +273,6 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
       .setConnectionRequestTimeout(connectTimeOut.toInt)
       .setSocketTimeout(readTimeOut.toInt).build
     req.setConfig(requestConfig)
-//    httpClient = HttpClients.createDefault() // todo check
     val response = httpClient.execute(req)
     response
   }
@@ -305,14 +285,6 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
       .setConnectionRequestTimeout(connectTimeOut.toInt)
       .setSocketTimeout(readTimeOut.toInt).build
     req.setConfig(requestConfig)
-    val response = httpClient.execute(req)
-    response
-  }
-
-
-
-  //TODO 20200618 Modify to asynchronous request
-  protected def executeAsyncRequest(req: HttpRequestBase): CloseableHttpResponse = {
     val response = httpClient.execute(req)
     response
   }
@@ -366,27 +338,11 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
 
   protected def httpResponseToResult(response: HttpResponse, requestAction: HttpAction, responseBody: String): Option[Result]
 
-  protected def deserializeResponseBody(response: HttpResponse): Iterable[_] = {
-    var entity = response.getEntity
-    var responseBody: String = null
-    if (entity != null) {
-      responseBody = EntityUtils.toString(entity, "UTF-8")
-    }
-    if (responseBody.startsWith("{") && responseBody.endsWith("}"))
-      read[Map[String, Object]](responseBody)
-    else if (responseBody.startsWith("[") && responseBody.endsWith("}"))
-      read[List[Map[String, Object]]](responseBody)
-    else if (StringUtils.isEmpty(responseBody)) Map.empty[String, Object]
-    else if (responseBody.length > 200) throw new HttpException(responseBody.substring(0, 200))
-    else throw new HttpException(responseBody)
-  }
-
   override def close(): Unit = {
     discovery.foreach {
       case d: AbstractDiscovery => IOUtils.closeQuietly(d)
       case _ =>
     }
     httpClient.close()
-    executors.asInstanceOf[ExecutionContextExecutorService].shutdown()
   }
 }

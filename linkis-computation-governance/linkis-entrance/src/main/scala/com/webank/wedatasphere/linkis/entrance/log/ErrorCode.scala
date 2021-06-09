@@ -18,8 +18,6 @@ package com.webank.wedatasphere.linkis.entrance.log
 
 import scala.util.matching.Regex
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 case class ErrorCode(regex: Regex, code: String, message: String)
 

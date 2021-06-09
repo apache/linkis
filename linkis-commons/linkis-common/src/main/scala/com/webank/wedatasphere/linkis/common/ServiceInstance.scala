@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.common
 
-/**
-  * Created by enjoyyin on 2019/1/9.
-  */
+
 class ServiceInstance {
   private var applicationName: String = _
   private var instance: String = _

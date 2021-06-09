@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.jobhistory.entity;
 
 import java.util.Date;
 
-/**
- * Created by johnnwang on 2019/2/25.
- */
+
 public class QueryTask {
     private Long taskID;
     private String instance;

@@ -16,18 +16,14 @@
 
 package com.webank.wedatasphere.linkis.entrance;
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.webank.wedatasphere.linkis.LinkisBaseServerApp;
 
 
 
 public class LinkisEntranceApplication {
 
-    private static final Log logger = LogFactory.getLog(DataWorkCloudApplication.class);
 
     public static void main(String[] args) throws ReflectiveOperationException {
-        logger.info("Start to running LinkisManagerApplication");
-        DataWorkCloudApplication.main(args);
+        LinkisBaseServerApp.main(args);
     }
 }

@@ -29,9 +29,7 @@ import org.slf4j.Logger
 
 import scala.collection.{JavaConversions, mutable}
 
-/**
-  * Created by enjoyyin on 2018/5/2.
-  */
+
 package object server {
 
   val EXCEPTION_MSG = "errorMsg"

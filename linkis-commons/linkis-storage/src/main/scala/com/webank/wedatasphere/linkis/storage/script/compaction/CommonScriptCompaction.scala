@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.storage.script.compaction
 
 import com.webank.wedatasphere.linkis.storage.script.{Compaction, Variable}
 
-/**
-  * Created by johnnwang on 2018/10/23.
-  */
+
 abstract class CommonScriptCompaction extends Compaction {
 
   override def compact(variable: Variable): String = {

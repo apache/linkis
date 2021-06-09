@@ -23,9 +23,7 @@ import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @date 2020/7/17
- */
+
 public interface MessageJobBuilder {
 
     MessageJobBuilder of();

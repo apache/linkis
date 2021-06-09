@@ -25,7 +25,9 @@ class DefaultReqResourceService(labelResourceService: LabelResourceService) exte
 
   implicit val formats = DefaultFormats + ResourceSerializer
 
-  override val resourceType = ResourceType.Default
+  override val resourceType: ResourceType = ResourceType.Default
 
-  override def canRequest(labelContainer: RMLabelContainer, resource: NodeResource): Boolean = super.canRequest(labelContainer, resource)
+  override def canRequest(labelContainer: RMLabelContainer, resource: NodeResource): Boolean = {
+    super.canRequest(labelContainer, resource)
+  }
 }

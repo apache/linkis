@@ -23,6 +23,7 @@ public class CryptoUtils {
     private CryptoUtils(){
     }
     /**
+     * 序列化对象为String字符
      *
      * @param o Object
      * @return String
@@ -43,6 +44,7 @@ public class CryptoUtils {
     }
 
     /**
+     * 反序列化字符串为对象
      *
      * @param str String
      * @return Object

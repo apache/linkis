@@ -16,42 +16,22 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue
 
-import com.webank.wedatasphere.linkis.common.listener.ListenerEventBus
 import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
-import com.webank.wedatasphere.linkis.scheduler.event.{ScheduleEvent, SchedulerEventListener}
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorManager
+import com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue.FIFOSchedulerContextImpl
+import com.webank.wedatasphere.linkis.scheduler.queue.{ConsumerManager, GroupFactory}
 
 
-/**
-  * Created by enjoyyin on 2018/9/26.
-  */
-class ParallelSchedulerContextImpl(val maxParallelismUsers: Int) extends  SchedulerContext with Logging {
-  private var consumerManager: ParallelConsumerManager = _
-  private var groupFactory: ParallelGroupFactory = _
-  private val UJES_CONTEXT_CONSTRUCTOR_LOCK = new Object()
 
-  override def getOrCreateGroupFactory = {
-    UJES_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-      if (groupFactory == null) {
-        groupFactory = new ParallelGroupFactory()
-      }
-      groupFactory
-    }
+class ParallelSchedulerContextImpl(override val maxParallelismUsers: Int)
+  extends FIFOSchedulerContextImpl(maxParallelismUsers) with Logging {
+
+  override protected def createGroupFactory(): GroupFactory = {
+    val groupFactory = new ParallelGroupFactory
+    groupFactory.setParallelism(maxParallelismUsers)
+    groupFactory
   }
 
+  override protected def createConsumerManager(): ConsumerManager =
+    new ParallelConsumerManager(maxParallelismUsers)
 
-  override def getOrCreateConsumerManager = {
-    UJES_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-      if (consumerManager == null) {
-        consumerManager = new ParallelConsumerManager(maxParallelismUsers)
-        consumerManager.setSchedulerContext(this)
-      }
-      consumerManager
-    }
-  }
-
-  override def getOrCreateExecutorManager: ExecutorManager = null
-
-  override def getOrCreateSchedulerListenerBus: ListenerEventBus[_<: SchedulerEventListener, _<: ScheduleEvent] = null
 }

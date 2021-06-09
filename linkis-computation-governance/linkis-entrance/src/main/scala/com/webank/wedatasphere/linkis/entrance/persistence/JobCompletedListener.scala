@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.entrance.persistence
 
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
 
-/**
-  * Created by enjoyyin on 2018/9/14.
-  */
+
 @Deprecated
 trait JobCompletedListener {
 

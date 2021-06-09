@@ -17,7 +17,9 @@
 package com.webank.wedatasphere.linkis.engineconn.acessible.executor.info
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeHealthy
+import com.webank.wedatasphere.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
+import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
+import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
 import com.webank.wedatasphere.linkis.manager.common.entity.metrics.NodeHealthyInfo
 import org.springframework.stereotype.Component
 
@@ -25,17 +27,17 @@ trait NodeHealthyInfoManager {
 
   def getNodeHealthyInfo(): NodeHealthyInfo
 
-
 }
 
 
 @Component
 class DefaultNodeHealthyInfoManager extends NodeHealthyInfoManager with Logging {
 
+
   override def getNodeHealthyInfo(): NodeHealthyInfo = {
     val nodeHealthyInfo = new NodeHealthyInfo
     nodeHealthyInfo.setMsg("")
-    nodeHealthyInfo.setNodeHealthy(NodeHealthy.Healthy)
+    nodeHealthyInfo.setNodeHealthy(NodeStatus.isEngineNodeHealthy(ExecutorManager.getInstance.getReportExecutor.asInstanceOf[AccessibleExecutor].getStatus))
     nodeHealthyInfo
   }
 

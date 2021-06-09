@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.httpclient.authentication
 
 import com.webank.wedatasphere.linkis.httpclient.request.Action
 
-/**
-  * Created by enjoyyin on 2019/5/20.
-  */
+
 trait AuthenticationStrategy {
 
   def login(requestAction: Action, serverUrl: String): Authentication

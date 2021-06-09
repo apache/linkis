@@ -26,7 +26,6 @@ trait NodeOverLoadInfoManager {
 
 }
 
-//@ConditionalOnMissingBean(name=Array("nodeOverLoadInfoManager"))
 @Component
 class DefaultNodeOverLoadInfoManager extends NodeOverLoadInfoManager with Logging {
 

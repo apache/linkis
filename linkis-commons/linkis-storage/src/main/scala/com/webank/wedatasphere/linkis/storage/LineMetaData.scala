@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.storage
 import com.webank.wedatasphere.linkis.common.io.MetaData
 import com.webank.wedatasphere.linkis.storage.resultset.ResultMetaData
 
-/**
-  * Created by johnnwang on 10/20/18.
-  */
+
 class LineMetaData(private var metaData: String = null) extends ResultMetaData{
 
   def getMetaData = metaData

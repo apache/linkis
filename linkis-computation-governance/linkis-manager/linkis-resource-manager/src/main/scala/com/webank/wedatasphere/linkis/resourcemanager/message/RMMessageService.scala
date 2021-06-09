@@ -17,6 +17,7 @@
 package com.webank.wedatasphere.linkis.resourcemanager.message
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
 import com.webank.wedatasphere.linkis.manager.common.protocol.em.{EMInfoClearRequest, RegisterEMRequest, StopEMRequest}
 import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineInfoClearRequest
 import com.webank.wedatasphere.linkis.manager.common.protocol.node.NodeHeartbeatMsg
@@ -57,20 +58,10 @@ class RMMessageService extends Logging {
   def dealWithNodeHeartbeatMsg(nodeHeartbeatMsg: NodeHeartbeatMsg, smc: ServiceMethodContext): Unit = {
     info(s"Start to deal with nodeHeartbeatMsg resource info $nodeHeartbeatMsg")
     val labels = nodeLabelService.getNodeLabels(nodeHeartbeatMsg.getServiceInstance)
-    if (managerLabelService.isEngine(labels)) resourceManager.resourceReport(labels, nodeHeartbeatMsg.getNodeResource)
+    if (managerLabelService.isEngine(labels) && !nodeHeartbeatMsg.getStatus.equals(NodeStatus.ShuttingDown)) {
+      resourceManager.resourceReport(labels, nodeHeartbeatMsg.getNodeResource)
+    }
     info(s"Finished to deal with nodeHeartbeatMsg resource info $nodeHeartbeatMsg")
-    /* info(s"Start to deal with resourceUsedProtocol $nodeHeartbeatMsg")
-     val labels = nodeLabelService.getNodeLabels(nodeHeartbeatMsg.getServiceInstance)
-     resourceManager.resourceUsed(labels, nodeHeartbeatMsg.getNodeResource)
-     if(managerLabelService.isEM(nodeHeartbeatMsg.getServiceInstance)){
-       //resourceManager.register(nodeHeartbeatMsg.getServiceInstance, nodeHeartbeatMsg.getNodeResource)
-     } else if(managerLabelService.isEngine(nodeHeartbeatMsg.getServiceInstance)){
-       info(s"Start to deal with resourceUsedProtocol $nodeHeartbeatMsg")
-
-
-     } else {
-       info(s"${nodeHeartbeatMsg.getServiceInstance} is neither EM nor Engine")
-     }*/
   }
 
 

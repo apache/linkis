@@ -27,9 +27,7 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-/**
- * Created by enjoyyin on 2017/3/13.
- */
+
 public class FsPath {
 
 

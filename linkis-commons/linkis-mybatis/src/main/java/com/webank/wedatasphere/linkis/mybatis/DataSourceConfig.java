@@ -19,22 +19,24 @@ package com.webank.wedatasphere.linkis.mybatis;
 import com.webank.wedatasphere.linkis.common.utils.JavaLog;
 import com.webank.wedatasphere.linkis.mybatis.conf.MybatisConfiguration;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
 import javax.sql.DataSource;
 
-/**
- * Created by enjoyyin on 2018/8/6.
- */
+
 @Configuration
 @ConfigurationProperties
 public class DataSourceConfig extends JavaLog {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceConfig.class);
+
     @Bean(name="dataSource", destroyMethod = "close")
-    @Primary //Don't miss this, indicating that you don't use the default(不要漏了这,表明不使用默认的)
+    @ConditionalOnMissingBean
     public DataSource dataSource(){
         String dbUrl = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_URL.getValue();
         String username = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_USERNAME.getValue();

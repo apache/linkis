@@ -16,20 +16,12 @@
 
 package com.webank.wedatasphere.linkis.message.builder;
 
-/**
- * @date 2020/7/27
- */
+
 public enum MessageJobTimeoutPolicy {
-    /**
-     * 取消，但是不打断
-     */
+
     CANCEL,
-    /**
-     * 打断
-     */
+
     INTERRUPT,
-    /**
-     * 部分返回
-     */
+
     PARTIAL
 }

@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.common.io.resultset.{ResultDeserializer, R
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, StorageResultSet}
 import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
 
-/**
-  * Created by johnnwang on 10/20/18.
-  */
+
 class TextResultSet extends  StorageResultSet[LineMetaData, LineRecord] with Serializable{
 
   override def resultSetType(): String = ResultSetFactory.TEXT_TYPE

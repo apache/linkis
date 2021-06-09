@@ -22,153 +22,149 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
+import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
 import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
 import com.webank.wedatasphere.linkis.engineconn.core.engineconn.EngineConnManager
 import com.webank.wedatasphere.linkis.engineconn.core.util.EngineConnUtils
 import com.webank.wedatasphere.linkis.engineconn.executor.conf.EngineConnExecutorConfiguration
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.{Executor, LabelExecutor}
+import com.webank.wedatasphere.linkis.engineconn.executor.entity.{Executor, LabelExecutor, SensibleExecutor}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.EngineConnPlugin
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.{MultiExecutorEngineConnFactory, SingleExecutorEngineConnFactory}
+import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.{CodeLanguageLabelExecutorFactory, ExecutorFactory, LabelExecutorFactory, MultiExecutorEngineConnFactory, SingleExecutorEngineConnFactory, SingleLabelExecutorEngineConnFactory}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.{EngineConnPluginErrorCode, EngineConnPluginErrorException}
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineRunTypeLabel
 
 import scala.collection.JavaConverters._
 
 trait ExecutorManager {
 
-  def getDefaultExecutor: Executor
+  def getExecutor(id: String): Executor
 
-  def getExecutorByLabels(labels: Array[Label[_]]): Executor
+  def removeExecutor(id: String): Executor
 
-  def createExecutor(engineCreationContext: EngineCreationContext, labels: Array[Label[_]]): Executor
+  def getExecutors: Array[Executor]
 
-  def getAllExecutorsMap(): util.Map[String, Executor]
+  def generateExecutorId(): Int
 
-  def generateId(): Int
+  def getReportExecutor: Executor
 
 }
 
-class ExecutorManagerImpl extends ExecutorManager with Logging {
+trait LabelExecutorManager extends ExecutorManager {
 
-  private val executors: util.Map[String, Executor] = new ConcurrentHashMap[String, Executor](2)
-  private val GSON = EngineConnUtils.GSON
-  private var defaultExecutor: Executor = _
+  def getExecutorByLabels(labels: Array[Label[_]]): LabelExecutor
 
+  def removeExecutor(labels: Array[Label[_]]): LabelExecutor
+
+}
+
+class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
+
+  private lazy val executors: util.Map[String, LabelExecutor] = new ConcurrentHashMap[String, LabelExecutor](2)
+  protected val GSON = EngineConnUtils.GSON
   private val idCreator = new AtomicInteger()
 
-  override def getDefaultExecutor: Executor = {
-    if (null == defaultExecutor || defaultExecutor.isClosed()) {
-      val engineConn = EngineConnManager.getEngineConnManager.getEngineConn()
-      if (null == engineConn) {
-        error("Create default executor failed., engineConn not ready")
-        return null
-      }
-      Utils.tryCatch {
-        createExecutor(engineConn.getEngineCreationContext, null)
-      } {
-        case t: Throwable =>
-          error("Create default executor failed. Now will try again once.", t)
-          createExecutor(engineConn.getEngineCreationContext, null)
-      }
-    }
-    defaultExecutor
+  protected lazy val engineConn: EngineConn = EngineConnManager.getEngineConnManager.getEngineConn
+  protected val engineConnPlugin: EngineConnPlugin = EngineConnObject.getEngineConnPlugin
+
+  protected val (factories, defaultFactory): (Array[ExecutorFactory], ExecutorFactory) = engineConnPlugin.getEngineConnFactory match {
+    case engineConnFactory: SingleExecutorEngineConnFactory =>
+      (Array.empty, engineConnFactory)
+    case engineConnFactory: SingleLabelExecutorEngineConnFactory =>
+      (Array(engineConnFactory), engineConnFactory)
+    case engineConnFactory: MultiExecutorEngineConnFactory =>
+      (engineConnFactory.getExecutorFactories, engineConnFactory.getDefaultExecutorFactory)
+    case engineConnFactory =>
+      val errorMsg = "Not supported ExecutorFactory " + engineConnFactory.getClass.getSimpleName
+      error(errorMsg)
+      throw new EngineConnPluginErrorException(20011, errorMsg)
   }
 
-  override def createExecutor(engineCreationContext: EngineCreationContext, labels: Array[Label[_]]): Executor = {
-    val engineConn = EngineConnManager.getEngineConnManager.getEngineConn()
-    val enginePlugin: EngineConnPlugin = EngineConnObject.getEngineConnPlugin
-    val isDefault: Boolean = if (null == labels || labels.isEmpty || null == defaultExecutor || defaultExecutor.isClosed()) true else false
-    var runType: String = null
-    if (!isDefault) {
-      runType = getRunTypeFromLables(labels)
-      if (null == runType) {
-        val msg = "Invalid RunType label. labels : " + GSON.toJson(labels)
-        error(msg)
-        throw new EngineConnPluginErrorException(EngineConnPluginErrorCode.INVALID_LABELS, msg)
-      }
-    }
-    val executor: Executor = {
-      enginePlugin.getEngineConnFactory match {
-        case engineConnFactory: SingleExecutorEngineConnFactory =>
-          engineConnFactory.createExecutor(engineCreationContext, engineConn)
-        case engineConnFactory: MultiExecutorEngineConnFactory =>
-          val executorFactories = engineConnFactory.getExecutorFactories
-          val chooseExecutorFactory = if (isDefault) {
-            info("use default executor")
-            Some(engineConnFactory.getDefaultExecutorFactory)
-          } else {
-            executorFactories.find(e => e.canCreate(labels))
-          }
-          if (chooseExecutorFactory.isEmpty) {
-            val msg = if (null == labels) {
-              "Cannot get default executorFactory. EngineCreation labels: " + GSON.toJson(engineCreationContext.getLabels())
-            } else {
-              "Cannot get valid executorFactory. EngineCreation labels: " + GSON.toJson(labels)
-            }
-            error(msg)
-            throw new EngineConnPluginErrorException(EngineConnPluginErrorCode.INVALID_LABELS, msg)
-          } else {
-            chooseExecutorFactory.get.createExecutor(engineCreationContext, engineConn, labels)
-          }
-        case o =>
-          error("Invalid ExecutorFactory " + GSON.toJson(o))
-          null
-      }
-    }
-    info(s"Finished create executor ${executor.getId()}")
-    executor.init()
-    info(s"Finished init executor ${executor.getId()}")
-    executor match {
-      case labelExecutor: LabelExecutor =>
-        runType = getRunTypeFromLables(labelExecutor.getExecutorLabels().asScala.toArray)
+  protected def tryCreateExecutor(engineCreationContext: EngineCreationContext,
+                                  labels: Array[Label[_]]): LabelExecutor = {
+    val labelExecutor = Option(labels).flatMap(_ => factories.find {
+      case labelExecutorFactory: LabelExecutorFactory => labelExecutorFactory.canCreate(labels)
+      case _ => false
+    }.map {
+      case labelExecutorFactory: LabelExecutorFactory => labelExecutorFactory.createExecutor(engineCreationContext, engineConn, labels)
+    }).getOrElse(defaultFactory.createExecutor(engineCreationContext, engineConn).asInstanceOf[LabelExecutor])
+    info(s"Finished create executor ${labelExecutor.getId}.")
+    labelExecutor.init()
+    info(s"Finished init executor ${labelExecutor.getId}.")
+    labelExecutor
+  }
+
+  protected def createExecutor(engineCreationContext: EngineCreationContext): LabelExecutor = {
+    defaultFactory match {
+      case labelExecutorFactory: CodeLanguageLabelExecutorFactory =>
+        createExecutor(engineCreationContext, Array[Label[_]](labelExecutorFactory.getDefaultCodeLanguageLabel))
       case _ =>
+        val executor = tryCreateExecutor(engineCreationContext, null)
+        executors.put(executor.getId, executor)
+        executor
     }
-    executors.put(runType, executor)
-    if (isDefault) {
-      defaultExecutor = executor
+
+  }
+
+  protected def getLabelKey(labels: Array[Label[_]]): String = labels.map(_.getStringValue).mkString("&")
+
+  protected def createExecutor(engineCreationContext: EngineCreationContext,
+                              labels: Array[Label[_]]): LabelExecutor = {
+    if(null == labels || labels.isEmpty) return createExecutor(engineCreationContext)
+    val labelKey = getLabelKey(labels)
+    if (null == labelKey) {
+      val msg = "Cannot get label key. labels : " + GSON.toJson(labels)
+      throw new EngineConnPluginErrorException(EngineConnPluginErrorCode.INVALID_LABELS, msg)
     }
+    val executor = tryCreateExecutor(engineCreationContext, labels)
+    executors.put(labelKey, executor)
     executor
   }
 
-  override def generateId(): Int = idCreator.getAndIncrement()
+  override def generateExecutorId(): Int = idCreator.getAndIncrement()
 
-  override def getExecutorByLabels(labels: Array[Label[_]]): Executor = {
-    var runType: String = null
-    labels.foreach(l => l match {
-      case label: EngineRunTypeLabel =>
-        runType = label.getRunType
-      case _ =>
-    })
-    if (null == runType) {
-      error("Invalid RunType Label. labels: " + GSON.toJson(labels))
-      return null
-    }
-    if (!executors.containsKey(runType)) {
-      val engineConn = EngineConnManager.getEngineConnManager.getEngineConn()
+  override def getExecutorByLabels(labels: Array[Label[_]]): LabelExecutor = {
+    val labelKey = getLabelKey(labels)
+    if (null == labelKey) return null
+    if (!executors.containsKey(labelKey)) {
       createExecutor(engineConn.getEngineCreationContext, labels)
     }
-    executors.get(runType)
+    executors.get(labelKey)
   }
 
-  override def getAllExecutorsMap(): util.Map[String, Executor] = executors
+  override def getExecutor(id: String): Executor = executors.values().asScala.find(_.getId == id).orNull
 
-  private def getRunTypeFromLables(labels: Array[Label[_]]): String = {
+  override def getExecutors: Array[Executor] = executors.values().asScala.toArray
 
-    labels.foreach {
-      case label: EngineRunTypeLabel =>
-        return label.getRunType
-      case _ =>
-    }
-    null
+  override def removeExecutor(labels: Array[Label[_]]): LabelExecutor = {
+    val labelKey = getLabelKey(labels)
+    if (labelKey != null && executors.containsKey(labelKey)) executors.remove(labelKey)
+    else null
+  }
+
+  override def removeExecutor(id: String): Executor = executors.asScala.find(_._2.getId == id).map{
+    case (k, _) => executors.remove(k)
+  }.orNull
+
+  override def getReportExecutor: Executor = if(getExecutors.isEmpty) createExecutor(engineConn.getEngineCreationContext)
+  else getExecutors.maxBy {
+    case executor: SensibleExecutor => executor.getLastActivityTime
+    case executor: Executor => executor.getId.hashCode
   }
 }
 
 object ExecutorManager {
 
-  private val executorManager: ExecutorManager = new ExecutorManagerImpl
-  Utils.getClassInstance[ExecutorManager](EngineConnExecutorConfiguration.EXECUTOR_MANAGER_SERVICE_CLAZZ.getValue)
+  private var executorManager: ExecutorManager = _
 
-  def getInstance(): ExecutorManager = executorManager
+  private def init(): Unit = {
+    executorManager = Utils.getClassInstance[ExecutorManager](EngineConnExecutorConfiguration.EXECUTOR_MANAGER_CLASS.acquireNew)
+  }
+
+  def getInstance: ExecutorManager = {
+    if(executorManager == null) synchronized {
+      if(executorManager == null) init()
+    }
+    executorManager
+  }
 
 }

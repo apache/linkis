@@ -18,7 +18,7 @@ package com.webank.wedatasphere.linkis.ecm.server.service.impl
 
 import com.webank.wedatasphere.linkis.ecm.core.launch.{DiscoveryMsgGenerator, EngineConnLaunch, EurekaDiscoveryMsgGenerator}
 import com.webank.wedatasphere.linkis.ecm.linux.launch.LinuxProcessEngineConnLaunch
-import com.webank.wedatasphere.linkis.ecm.server.conf.ECMConfiguration.{ENGINECONN_SPRING_NAME, _}
+import com.webank.wedatasphere.linkis.ecm.server.conf.ECMConfiguration._
 import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.{EngineConnBuildRequest, EngineConnLaunchRequest}
 import com.webank.wedatasphere.linkis.message.annotation.Receiver
@@ -31,14 +31,10 @@ import scala.concurrent.duration.Duration
 
 class LinuxProcessEngineConnLaunchService extends ProcessEngineConnLaunchService {
 
-  /**
-   * launchEngine启动一个引擎的方法
-   *
-   * @param engineConnBuildRequest 封装了引擎启动的参数
-   */
+
   @Receiver
   def launchEngineConn(engineConnBuildRequest: EngineConnBuildRequest, smc: ServiceMethodContext): EngineNode = {
-    Sender.getSender(ENGINECONN_SPRING_NAME).ask(engineConnBuildRequest) match {
+    Sender.getSender(ENGINECONN_PLUGIN_SPRING_NAME).ask(engineConnBuildRequest) match {
       case request: EngineConnLaunchRequest if ENGINECONN_CREATE_DURATION._1 != 0L =>
         launchEngineConn(request, ENGINECONN_CREATE_DURATION._1)
       case request: EngineConnLaunchRequest =>
@@ -47,7 +43,7 @@ class LinuxProcessEngineConnLaunchService extends ProcessEngineConnLaunchService
   }
 
   override def launchEngineConn(engineConnBuildRequest: EngineConnBuildRequest): EngineNode = {
-    Sender.getSender(ENGINECONN_SPRING_NAME).ask(engineConnBuildRequest) match {
+    Sender.getSender(ENGINECONN_PLUGIN_SPRING_NAME).ask(engineConnBuildRequest) match {
       case request: EngineConnLaunchRequest =>
         launchEngineConn(request, ENGINECONN_CREATE_DURATION._1)
     }

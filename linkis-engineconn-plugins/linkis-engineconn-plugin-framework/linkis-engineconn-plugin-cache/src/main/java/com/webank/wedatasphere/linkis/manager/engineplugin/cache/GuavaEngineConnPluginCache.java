@@ -28,7 +28,8 @@ import com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.entity.
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.exception.EngineConnPluginNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.concurrent.*;
+
+import java.util.concurrent.TimeUnit;
 
 
 public class GuavaEngineConnPluginCache implements RefreshableEngineConnPluginCache {

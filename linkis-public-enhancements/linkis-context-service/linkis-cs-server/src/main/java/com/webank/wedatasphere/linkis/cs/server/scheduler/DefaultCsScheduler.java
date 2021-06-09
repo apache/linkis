@@ -16,14 +16,14 @@
 
 package com.webank.wedatasphere.linkis.cs.server.scheduler;
 
-import com.webank.wedatasphere.linkis.cs.server.scheduler.linkisImpl.CsJobListener;
-import com.webank.wedatasphere.linkis.cs.server.scheduler.linkisImpl.CsSchedulerJob;
+import com.webank.wedatasphere.linkis.cs.server.scheduler.impl.CsJobListener;
+import com.webank.wedatasphere.linkis.cs.server.scheduler.impl.CsSchedulerJob;
 import com.webank.wedatasphere.linkis.cs.server.service.Service;
 import com.webank.wedatasphere.linkis.scheduler.Scheduler;
-import com.webank.wedatasphere.linkis.scheduler.queue.Group;
-import com.webank.wedatasphere.linkis.scheduler.queue.GroupFactory;
 import com.webank.wedatasphere.linkis.scheduler.queue.Job;
-import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelGroup;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,19 +56,7 @@ public class DefaultCsScheduler implements CsScheduler {
     }
 
     @Override
-    public void sumbit(HttpJob job) throws InterruptedException {
-        // TODO: 2020/3/3 参数配置化 
-        GroupFactory groupFactory = scheduler.getSchedulerContext().getOrCreateGroupFactory();
-        Group group = groupFactory.getOrCreateGroup(job.getRequestProtocol().getUsername());
-        if (group instanceof ParallelGroup) {
-            ParallelGroup parallelGroup = (ParallelGroup) group;
-            if (parallelGroup.getMaxRunningJobs() == 0) {
-                parallelGroup.setMaxRunningJobs(100);
-            }
-            if (parallelGroup.getMaxAskExecutorTimes() == 0) {
-                parallelGroup.setMaxAskExecutorTimes(1000);
-            }
-        }
+    public void submit(HttpJob job) throws InterruptedException {
         //create csJob
         Job csJob = buildJob(job);
         //注册listener

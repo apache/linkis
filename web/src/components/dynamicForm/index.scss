@@ -1,0 +1,48 @@
+/*!
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+.dynamic-form {
+    padding: 10px 10px 2px;;
+    margin: 10px;
+    background: rgba(255,255,255,.7);
+    border-radius: 4px;
+    .dynamic-form-header-wrap {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 30px;
+        padding-right: 7px;
+        .dynamic-form-header-title {
+            display: inline-block;
+        }
+        .icon-add {
+            cursor: pointer;
+        }
+    }
+    .dynamic-form-content {
+        .ivu-form-item {
+            margin-bottom: 16px;
+        }
+        .dynamic-form-close {
+            font-size: 32px;
+            cursor: pointer;
+        }
+        .tc {
+            text-align: center;
+        }
+    }
+}

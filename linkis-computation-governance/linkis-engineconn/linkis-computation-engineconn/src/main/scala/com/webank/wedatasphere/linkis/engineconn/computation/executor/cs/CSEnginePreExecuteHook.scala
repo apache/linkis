@@ -19,7 +19,6 @@ import com.webank.wedatasphere.linkis.cs.common.utils.CSCommonUtils
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteRequest
 
 
 class CSEnginePreExecuteHook extends ComputationExecutorHook with Logging {

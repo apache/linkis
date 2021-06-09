@@ -14,26 +14,22 @@
 package com.webank.wedatasphere.linkis.entrance.interceptor.impl
 
 import java.lang
-
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.entrance.cs.CSEntranceHelper
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
 import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.task.Task
 
 
 class CSEntranceInterceptor extends EntranceInterceptor with Logging {
 
-  override def apply(task: Task, logAppender: lang.StringBuilder): Task = {
-    task match {
-      case requestPersistTask: RequestPersistTask =>
-        logger.info("Start to execute CSEntranceInterceptor")
-        Utils.tryAndWarn(CSEntranceHelper.addCSVariable(requestPersistTask))
-        Utils.tryAndWarn(CSEntranceHelper.resetCreator(requestPersistTask))
-        Utils.tryAndWarn(CSEntranceHelper.initNodeCSInfo(requestPersistTask))
-        logger.info("Finished to execute CSEntranceInterceptor")
-      case _ =>
-    }
+  override def apply(task: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
+    logger.info("Start to execute CSEntranceInterceptor")
+    Utils.tryAndWarn(CSEntranceHelper.addCSVariable(task))
+    Utils.tryAndWarn(CSEntranceHelper.resetCreator(task))
+    Utils.tryAndWarn(CSEntranceHelper.initNodeCSInfo(task))
+    logger.info("Finished to execute CSEntranceInterceptor")
     task
   }
 }

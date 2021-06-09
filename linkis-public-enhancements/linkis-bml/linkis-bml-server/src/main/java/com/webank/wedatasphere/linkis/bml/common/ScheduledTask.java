@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class ScheduledTask {
 
+    private static final Long SIZWE = 365 * DAY;
 
     @Autowired
     private ResourceService resourceService;

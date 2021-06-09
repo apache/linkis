@@ -50,5 +50,7 @@ public class DWSConfig {
     public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_TESTONRETURN = CommonVars.apply("wds.linkis.server.mybatis.datasource.testOnReturn", new Boolean(false));
     public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_POOLPREPAREDSTATEMENTS = CommonVars.apply("wds.linkis.server.mybatis.datasource.poolPreparedStatements", new Boolean(true));
 
+    // wds.linkis.metadata.hive.encode.enable配置HIVE BASE64加解密
     public static final CommonVars<Boolean> HIVE_PASS_ENCODE_ENABLED = CommonVars.apply("wds.linkis.metadata.hive.encode.enabled", new Boolean(false));
+
 }

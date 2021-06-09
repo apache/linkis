@@ -17,7 +17,6 @@
 package com.webank.wedatasphere.linkis.storage.io
 
 import java.util.UUID
-
 import com.webank.wedatasphere.linkis.storage.domain.MethodEntity
 import com.webank.wedatasphere.linkis.storage.exception.StorageErrorException
 

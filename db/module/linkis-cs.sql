@@ -1,10 +1,10 @@
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for linkis_cs_context_map
+-- Table structure for linkis_ps_cs_context_map
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_cs_context_map`;
-CREATE TABLE `linkis_cs_context_map` (
+DROP TABLE IF EXISTS `linkis_ps_cs_context_map`;
+CREATE TABLE `linkis_ps_cs_context_map` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `key` varchar(128) DEFAULT NULL,
   `context_scope` varchar(32) DEFAULT NULL,
@@ -19,10 +19,10 @@ CREATE TABLE `linkis_cs_context_map` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
--- Table structure for linkis_cs_context_map_listener
+-- Table structure for linkis_ps_cs_context_map_listener
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_cs_context_map_listener`;
-CREATE TABLE `linkis_cs_context_map_listener` (
+DROP TABLE IF EXISTS `linkis_ps_cs_context_map_listener`;
+CREATE TABLE `linkis_ps_cs_context_map_listener` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `listener_source` varchar(255) DEFAULT NULL,
   `key_id` int(11) DEFAULT NULL,
@@ -30,10 +30,10 @@ CREATE TABLE `linkis_cs_context_map_listener` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
--- Table structure for linkis_cs_context_history
+-- Table structure for linkis_ps_cs_context_history
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_cs_context_history`;
-CREATE TABLE `linkis_cs_context_history` (
+DROP TABLE IF EXISTS `linkis_ps_cs_context_history`;
+CREATE TABLE `linkis_ps_cs_context_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `context_id` int(11) DEFAULT NULL,
   `source` text,
@@ -45,10 +45,10 @@ CREATE TABLE `linkis_cs_context_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
--- Table structure for linkis_cs_context_id
+-- Table structure for linkis_ps_cs_context_id
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_cs_context_id`;
-CREATE TABLE `linkis_cs_context_id` (
+DROP TABLE IF EXISTS `linkis_ps_cs_context_id`;
+CREATE TABLE `linkis_ps_cs_context_id` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user` varchar(32) DEFAULT NULL,
   `application` varchar(32) DEFAULT NULL,
@@ -64,10 +64,10 @@ CREATE TABLE `linkis_cs_context_id` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
--- Table structure for linkis_cs_context_listener
+-- Table structure for linkis_ps_cs_context_listener
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_cs_context_listener`;
-CREATE TABLE `linkis_cs_context_listener` (
+DROP TABLE IF EXISTS `linkis_ps_cs_context_listener`;
+CREATE TABLE `linkis_ps_cs_context_listener` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `listener_source` varchar(255) DEFAULT NULL,
   `context_id` int(11) DEFAULT NULL,

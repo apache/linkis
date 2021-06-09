@@ -1,0 +1,384 @@
+<template>
+  <div
+    class="we-toolbar-wrap">
+    <ul
+      ref="toolbar"
+      class="we-toolbar">
+      <li
+        v-if="(script.runType === 'sql' || script.runType === 'hql' ||(script.runType === 'py' && script.resultList[script.resultSet].result.type === '2')) && this.$route.name === 'Home' && script.resultList !== null">
+        <Poptip
+          :transfer="true"
+          :width="220"
+          v-model="popup.visualis"
+          placement="right"
+          popper-class="we-poptip">
+          <div @click.stop="showResultAction">
+            <Icon v-if="visualShow=='table'" type="md-analytics" :size="20"/>
+            <Icon v-if="visualShow=='visual' || visualShow=='dataWrangler'" type="ios-grid" :size="iconSize"/>
+            <span v-if="isIconLabelShow" :title="$t('message.common.toolbar.analysis')" class="v-toolbar-icon">{{ analysistext.text }}</span>
+          </div>
+          <div slot="content">
+            <div>
+              <Row>
+                {{$t('message.common.toolbar.model')}}
+              </Row>
+              <Row>
+                <RadioGroup v-model="resultsShowType">
+                  <Col span="10">
+                    <Radio label="1">{{$t('message.common.toolbar.graphAnalysis')}}</Radio>
+                  </Col>
+                  <Col
+                    span="10"
+                    offset="4">
+                    <Radio label="2">{{$t('message.common.toolbar.excelAnalysis')}}</Radio>
+                  </Col>
+                </RadioGroup>
+              </Row>
+            </div>
+            <Row class="confirm">
+              <Col span="10">
+                <Button @click="cancelPopup('visualis')">{{$t('message.common.cancel')}}</Button>
+              </Col>
+              <Col
+                span="10"
+                offset="4">
+                <Button
+                  type="primary"
+                  @click="confirm('visualis')">{{ $t('message.common.submit') }}</Button>
+              </Col>
+            </Row>
+          </div>
+        </Poptip>
+      </li>
+      <li v-if="analysistext.flag !== 2 && rsDownload" :style="{cursor: rsDownload ? 'pointer': 'not-allowed'}">
+        <div v-if="!rsDownload">
+          <Icon type="ios-cloud-download-outline"  :size="iconSize" />
+          <span v-if="isIconLabelShow" :title="$t('message.common.download')" class="v-toolbar-icon">{{ $t('message.common.download') }}</span>
+        </div>
+        <Poptip
+          v-else
+          :transfer="true"
+          :width="200"
+          v-model="popup.download"
+          placement="right"
+          popper-class="we-poptip">
+          <div @click.stop="openPopup('download')">
+            <SvgIcon :style="{ 'font-size': '20px' }" icon-class="downLoad" color="#515a6e" />
+            <span v-if="isIconLabelShow" :title="$t('message.common.download')" class="v-toolbar-icon">{{ $t('message.common.download') }}</span>
+          </div>
+          <div slot="content">
+            <div>
+              <Row>
+                {{ $t('message.common.toolbar.format') }}
+              </Row>
+              <Row>
+                <RadioGroup v-model="download.format">
+                  <Col span="10">
+                    <Radio label="1">CSV</Radio>
+                  </Col>
+                  <Col
+                    span="10"
+                    offset="4">
+                    <Radio label="2">Excel</Radio>
+                  </Col>
+                </RadioGroup>
+              </Row>
+            </div>
+            <div>
+              <Row>
+                {{ $t('message.common.toolbar.coding') }}
+              </Row>
+              <Row>
+                <RadioGroup v-model="download.coding">
+                  <Col span="10">
+                    <Radio label="1">UTF-8</Radio>
+                  </Col>
+                  <Col
+                    span="10"
+                    offset="4">
+                    <Radio label="2">GBK</Radio>
+                  </Col>
+                </RadioGroup>
+              </Row>
+            </div>
+            <div>
+              <Row>
+                {{$t('message.common.toolbar.replace')}}
+              </Row>
+              <Row>
+                <RadioGroup v-model="download.nullValue">
+                  <Col span="10">
+                    <Radio label="1">NULL</Radio>
+                  </Col>
+                  <Col
+                    span="10"
+                    offset="4">
+                    <Radio label="2">{{$t('message.common.toolbar.emptyString')}}</Radio>
+                  </Col>
+                </RadioGroup>
+              </Row>
+            </div>
+            <div v-if="isAll">
+              <Row>
+                {{$t('message.common.toolbar.downloadMode')}}
+              </Row>
+              <Row>
+                <Checkbox v-model="allDownload">{{$t('message.common.toolbar.all')}}</Checkbox>
+              </Row>
+            </div>
+            <Row class="confirm">
+              <Col span="10">
+                <Button @click="cancelPopup('download')">{{$t('message.common.cancel')}}</Button>
+              </Col>
+              <Col
+                span="10"
+                offset="4">
+                <Button
+                  type="primary"
+                  @click="confirm('download')">{{ $t('message.common.submit') }}</Button>
+              </Col>
+            </Row>
+          </div>
+        </Poptip>
+      </li>
+      <li
+        @click="openPopup('export')"
+        v-if="$route.name === 'Home' && analysistext.flag !== 2">
+        <SvgIcon :style="{ 'font-size': '20px' }" icon-class="export" color="#515a6e"/>
+        <span
+          class="v-toolbar-icon"
+          v-if="isIconLabelShow">{{ $t('message.common.toolbar.export') }}</span>
+      </li>
+      <li
+        @click="openPopup('rowView')"
+        v-if="row"
+        :title="$t('message.common.toolbar.rowToColumnTitle')">
+        <SvgIcon :style="{ 'font-size': '20px' }" icon-class="transform" color="#515a6e"/>
+        <span v-if="isIconLabelShow" class="v-toolbar-icon">{{$t('message.common.toolbar.rowToColumn')}}</span>
+      </li>
+      <li
+        @click="openPopup('filter')"
+        :title="$t('message.common.toolbar.resultGroupLineFilter')"
+        v-if="showFilter">
+        <SvgIcon :style="{ 'font-size': '20px' }" icon-class="export" color="#515a6e"/>
+        <span
+          class="v-toolbar-icon"
+          v-if="isIconLabelShow">{{$t('message.common.toolbar.lineFilter')}}</span>
+      </li>
+    </ul>
+    <results-export
+      ref="exportToShare"
+      :script="script"
+      :dispatch="dispatch"
+      :current-path="currentPath">
+    </results-export>
+    <table-row
+      ref="tableRow"
+      :row="row">
+    </table-row>
+  </div>
+</template>
+<script>
+import moment from 'moment';
+import elementResizeEvent from '@/common/helper/elementResizeEvent';
+import resultsExport from './resultsExport.vue';
+import tableRow from './tableRow.vue';
+import mixin from '@/common/service/mixin';
+import api from '@/common/service/api';
+export default {
+  components: {
+    resultsExport,
+    tableRow,
+  },
+  mixins: [mixin],
+  props: {
+    visualShow: String,
+    currentPath: {
+      type: String,
+      default: '',
+    },
+    showFilter: {
+      type: Boolean,
+      default: false
+    },
+    script: [Object],
+    row: {
+      type: Array,
+      default: () => [],
+    },
+    dispatch: {
+      type: Function,
+      required: true
+    },
+    getResultUrl: {
+      type: String,
+      defalut: `filesystem`
+    },
+    comData: {
+      type: Object
+    }
+  },
+  data() {
+    const rsDownload = this.getProjectJsonResult('rsDownload')
+    return {
+      rsDownload,
+      popup: {
+        download: false,
+        export: false,
+        visual: false,
+        rowView: false,
+        visualis: false
+      },
+      download: {
+        format: '1',
+        coding: '1',
+        nullValue: '1',
+      },
+      isIconLabelShow: true,
+      iconSize: 14,
+      allDownload: false, // 是否下载全部结果集
+      resultsShowType: '2'
+    };
+  },
+  computed: {
+    analysistext: function(){
+      let describe = '';
+      this.visualShow === "table"? describe = {
+        flag: 1,
+        text: this.$t('message.common.toolbar.deepAnalysis')
+      } : describe = {
+        flag: 2,
+        text: this.$t('message.common.toolbar.resultGroup')
+      };
+      return describe
+    },
+    isAll() {
+      return ['hql', 'sql'].includes(this.script.runType) && this.download.format === '2';
+    }
+  },
+  mounted() {
+    elementResizeEvent.bind(this.$el, this.resize);
+  },
+  methods: {
+    openPopup(type) {
+      if (type === 'export') {
+        this.$refs.exportToShare.open();
+      } else if (type === 'rowView') {
+        this.$refs.tableRow.open();
+      } else if (type === 'filter') {
+        this.$emit('on-filter');
+      } else {
+        this.popup[type] = true;
+      }
+    },
+    cancelPopup(type) {
+      this.popup[type] = false;
+    },
+    confirm(type) {
+      this[`${type}Confirm`]();
+      this.cancelPopup(type);
+    },
+    showResultAction() {
+      // 当切换结果集可视化按钮时
+      if (this.visualShow=='table') {
+        this.popup.visualis = true;
+      } else {
+        this.$emit('on-analysis', 'table');
+      }
+    },
+    visualisConfirm() {
+      const resultType = this.resultsShowType === '1' ? 'visual' : 'dataWrangler';
+      this.$emit('on-analysis', resultType);
+    },
+    async downloadConfirm() {
+      const splitor = this.download.format === '1' ? 'csv' : 'xlsx';
+      const charset = this.download.coding === '1' ? 'utf-8' : 'gbk';
+      const nullValue = this.download.nullValue === '1' ? 'NULL' : 'BLANK';
+      const timestamp = moment.unix(moment().unix()).format('MMDDHHmm');
+      const filename = `Result_${this.script.fileName || this.script.title}_${timestamp}`;
+      let temPath = this.currentPath;
+      // api执行下载的结果集路径不一样
+      let apiPath = `${this.getResultUrl}/resultsetToExcel`;
+      if (this.isAll && this.allDownload) {
+        temPath = temPath.substring(0, temPath.lastIndexOf('/'));
+        apiPath = `${this.getResultUrl}/resultsetsToExcel`
+      }
+      let url = `http://${window.location.host}/api/rest_j/v1/` + apiPath +'?path=' + temPath + '&charset=' + charset + '&outputFileType=' + splitor + '&nullValue=' + nullValue + '&outputFileName=' + filename;
+      // 如果是api执行页获取结果集，需要带上taskId
+      if(this.getResultUrl !== 'filesystem') {
+        url += `&taskId=${this.comData.taskID}`
+      }
+
+      // 下载之前条用心跳接口确认是否登录
+      await api.fetch('/user/heartbeat', 'get');
+
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', '');
+      const evObj = document.createEvent('MouseEvents');
+      evObj.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null);
+      const flag = link.dispatchEvent(evObj);
+      this.$nextTick(() => {
+        if (flag) {
+          this.$Message.success(this.$t('message.common.toolbar.success.download'));
+        }
+      });
+    },
+    // analysis() {
+    //   this.$emit('on-analysis');
+    // },
+    resize() {
+      const height = window.getComputedStyle(this.$refs.toolbar).height;
+      if (parseInt(height) <= 190) {
+        this.isIconLabelShow = false;
+        this.iconSize = 20;
+      } else {
+        this.isIconLabelShow = true;
+        this.iconSize = 14;
+      }
+    }
+  },
+  beforeDestroy() {
+    elementResizeEvent.unbind(this.$el, this.resize);
+  },
+};
+</script>
+<style lang="scss" scoped>
+@import '@/common/style/variables.scss';
+  .we-toolbar-wrap {
+    width: $toolbarWidth;
+    height: 100%;
+    word-break: break-all;
+    position: $absolute;
+    left: 40px;
+    margin-left: -$toolbarWidth;
+    background: $body-background;
+    .we-poptip {
+      padding: 12px;
+      line-height: 28px;
+      .confirm {
+        margin-top: 10px;
+      }
+      .title {
+        margin: 10px 0;
+        text-align: center;
+      }
+    }
+    .we-toolbar {
+      width: 100%;
+      height: 100%;
+      border-right: 1px solid #dcdee2;
+      padding-top: 10px;
+      li {
+        padding-bottom: 20px;
+        text-align: center;
+        cursor: pointer;
+      }
+      span {
+        display: block;
+        line-height: 24px
+      }
+    }
+  }
+</style>
+

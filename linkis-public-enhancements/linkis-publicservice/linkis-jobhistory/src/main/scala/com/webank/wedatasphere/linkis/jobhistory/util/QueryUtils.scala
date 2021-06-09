@@ -18,11 +18,12 @@ package com.webank.wedatasphere.linkis.jobhistory.util
 
 import java.io.{InputStream, OutputStream}
 import java.util.Date
-
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.governance.common.entity.job.{SubJobDetail, SubJobInfo}
 import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestInsertTask
+import com.webank.wedatasphere.linkis.governance.common.protocol.job.JobReqInsert
 import com.webank.wedatasphere.linkis.jobhistory.conf.JobhistoryConfiguration
 import com.webank.wedatasphere.linkis.jobhistory.entity.QueryTask
 import com.webank.wedatasphere.linkis.storage.FSFactory
@@ -33,22 +34,27 @@ import org.apache.commons.lang.time.DateFormatUtils
 
 object QueryUtils extends Logging {
 
-  private val CODE_STORE_PREFIX = CommonVars("bdp.dataworkcloud.query.store.prefix", "hdfs:///tmp/bdp-ide/")
-  private val CODE_STORE_SUFFIX = CommonVars("bdp.dataworkcloud.query.store.suffix", "")
+  private val CODE_STORE_PREFIX = CommonVars("wds.linkis.query.store.prefix", "hdfs:///apps-data/bdp-ide/")
+  private val CODE_STORE_PREFIX_VIEW_FS = CommonVars("wds.linkis.query.store.prefix.viewfs", "hdfs:///apps-data/")
+  private val IS_VIEW_FS_ENV = CommonVars("wds.linkis.env.is.viewfs", true)
+  private val CODE_STORE_SUFFIX = CommonVars("wds.linkis.query.store.suffix", "")
+  private val CODE_STORE_LENGTH = CommonVars("wds.linkis.query.code.store.length", 50000)
   private val CHARSET = "utf-8"
   private val CODE_SPLIT = ";"
   private val LENGTH_SPLIT = "#"
 
-  def storeExecutionCode(requestInsertTask: RequestInsertTask): Unit = {
-    if (requestInsertTask.getExecutionCode.length < 60000) return
-    val user: String = requestInsertTask.getUmUser
+  def storeExecutionCode(jobReqInsert: SubJobInfo): Unit = {
+    val jobReq = jobReqInsert.getJobReq
+    val jobDetail = jobReqInsert.getSubJobDetail
+    if (jobDetail.getExecutionContent.getBytes().length < CODE_STORE_LENGTH.getValue) return
+    val user: String = jobReq.getSubmitUser
     val path: String = getCodeStorePath(user)
     val fsPath: FsPath = new FsPath(path)
     val fileSystem = FSFactory.getFsByProxyUser(fsPath, user).asInstanceOf[FileSystem]
     fileSystem.init(null)
     var os: OutputStream = null
     var position = 0L
-    val codeBytes = requestInsertTask.getExecutionCode.getBytes(CHARSET)
+    val codeBytes = jobDetail.getExecutionContent.getBytes(CHARSET)
     path.intern() synchronized {
       Utils.tryFinally {
         if (!fileSystem.exists(fsPath)) FileSystemUtils.createNewFile(fsPath, user, true)
@@ -61,7 +67,7 @@ object QueryUtils extends Logging {
       }
     }
     val length = codeBytes.length
-    requestInsertTask.setExecutionCode(path + CODE_SPLIT + position + LENGTH_SPLIT + length)
+    jobDetail.setExecutionContent(path + CODE_SPLIT + position + LENGTH_SPLIT + length)
   }
 
   def exchangeExecutionCode(queryTask: QueryTask): Unit = {
@@ -101,14 +107,18 @@ object QueryUtils extends Logging {
 
   private def getCodeStorePath(user: String): String = {
     val date: String = DateFormatUtils.format(new Date, "yyyyMMdd")
-    s"${CODE_STORE_PREFIX.getValue}${user}${CODE_STORE_SUFFIX.getValue}/executionCode/${date}/_scripts"
+    if (IS_VIEW_FS_ENV.getValue) {
+      s"${CODE_STORE_PREFIX_VIEW_FS.getValue}${user}${CODE_STORE_SUFFIX.getValue}/executionCode/${date}/_scripts"
+    }else{
+      s"${CODE_STORE_PREFIX.getValue}${user}${CODE_STORE_SUFFIX.getValue}/executionCode/${date}/_scripts"
+    }
   }
 
   def isJobHistoryAdmin(username: String): Boolean = {
-    JobhistoryConfiguration.JOB_HISTORY_ADMIN.getValue.split(",").exists(username.equalsIgnoreCase)
+    JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN.getValue.split(",").exists(username.equalsIgnoreCase)
   }
 
   def getJobHistoryAdmin(): Array[String] = {
-    JobhistoryConfiguration.JOB_HISTORY_ADMIN.getValue.split(",")
+    JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN.getValue.split(",")
   }
 }

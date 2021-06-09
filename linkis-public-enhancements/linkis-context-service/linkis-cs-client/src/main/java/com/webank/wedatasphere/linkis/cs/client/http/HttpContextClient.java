@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.cs.client.http;
 
+import com.webank.wedatasphere.linkis.common.conf.Configuration;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.cs.client.AbstractContextClient;
 import com.webank.wedatasphere.linkis.cs.client.Context;
@@ -62,7 +63,7 @@ public class HttpContextClient extends AbstractContextClient {
 
     private DWSHttpClient dwsHttpClient;
     private ContextClientConfig contextClientConfig;
-    private final String linkis_version = ContextClientConf.LINKIS_WEB_VERSION().getValue();
+    private final String linkis_version = Configuration.LINKIS_WEB_VERSION().getValue();
 
     private final String name = "HttpContextClient";
 

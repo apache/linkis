@@ -36,9 +36,6 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Created by cooperyang on 2018/10/17.
- */
 
 @Component
 @Path("/variable")

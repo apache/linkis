@@ -17,8 +17,7 @@
 package com.webank.wedatasphere.linkis.manager.am;
 
 import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.webank.wedatasphere.linkis.LinkisBaseServerApp;
 
 /**
  * @date 2020/7/7 16:22
@@ -26,10 +25,9 @@ import org.apache.commons.logging.LogFactory;
 
 public class LinkisManagerApplication {
 
-    private static final Log logger = LogFactory.getLog(LinkisManagerApplication.class);
 
     public static void main(String[] args) throws ReflectiveOperationException {
-        logger.info("Start to running LinkisManagerApplication");
-        DataWorkCloudApplication.main(args);
+        LinkisBaseServerApp.main(args);
+        //DataWorkCloudApplication.main(args);
     }
 }

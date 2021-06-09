@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.server.exception
 
 import com.webank.wedatasphere.linkis.common.exception.{ErrorException, FatalException, WarnException}
 
-/**
-  * Created by enjoyyin on 2018/8/6.
-  */
+
 private[server] class BDPServerWarnException(errorCode: Int, errorMsg: String) extends WarnException(errorCode, errorMsg)
 private[server] class BDPServerErrorException(errorCode: Int, errorMsg: String) extends ErrorException(errorCode, errorMsg)
 private[server] class BDPInitServerException(errorCode: Int, errorMsg: String) extends FatalException(errorCode, errorMsg)

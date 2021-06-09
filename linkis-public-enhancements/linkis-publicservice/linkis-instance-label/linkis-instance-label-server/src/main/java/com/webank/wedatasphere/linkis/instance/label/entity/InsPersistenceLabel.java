@@ -20,14 +20,25 @@ import com.webank.wedatasphere.linkis.manager.label.entity.GenericLabel;
 
 import java.util.Date;
 
-
+/**
+ * like: PersistenceLabel in label-manager-common
+ */
 public class InsPersistenceLabel extends GenericLabel {
     private Integer id;
     private int labelValueSize = -1;
     private String stringValue;
+    private Boolean modifiable = false;
 
     private Date updateTime;
     private Date createTime;
+
+    public Boolean getModifiable() {
+        return modifiable;
+    }
+
+    public void setModifiable(Boolean modifiable) {
+        this.modifiable = modifiable;
+    }
 
     public Integer getId() {
         return id;

@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.common.io.resultset
 
 import com.webank.wedatasphere.linkis.common.io.{FsPath, MetaData, Record}
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 trait ResultSet[K <: MetaData, V <: Record] {
   val charset: String
 

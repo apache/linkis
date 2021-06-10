@@ -145,7 +145,8 @@ object SQLExplain extends Explain {
     }
     //如果一段sql是 --xxx回车select * from default.users，那么他也是select语句
     val realCode = cleanComment(code)
-    realCode.trim.split("\\s+")(0).equalsIgnoreCase("select")
+    val tmpRealCode = realCode.trim.split("\\s+")(0)
+    tmpRealCode.equalsIgnoreCase("select") || tmpRealCode.equalsIgnoreCase("select*")
   }
 
   def continueWhenError = false

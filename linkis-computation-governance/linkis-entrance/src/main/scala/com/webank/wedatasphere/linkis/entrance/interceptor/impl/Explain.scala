@@ -180,8 +180,8 @@ object SQLExplain extends Explain {
     }
     //如果一段sql是 --xxx回车select * from default.users，那么他也是select语句
     val realCode = cleanComment(code)
-    // 以前，在判断，对于select* from xxx这样的SQL时会出现问题的，但是这种语法hive是支持的
-    realCode.trim.split("\\s+")(0).toLowerCase.contains("select")
+    val tmpRealCode = realCode.trim.split("\\s+")(0)
+    tmpRealCode.equalsIgnoreCase("select") || tmpRealCode.equalsIgnoreCase("select*")
   }
 
   def continueWhenError = false

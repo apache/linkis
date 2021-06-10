@@ -18,7 +18,5 @@ package com.webank.wedatasphere.linkis.rpc.exception
 
 import com.webank.wedatasphere.linkis.common.exception.FatalException
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 private[rpc] class RPCInitFailedException(errorCode: Int, errorMsg: String) extends FatalException(errorCode, errorMsg)

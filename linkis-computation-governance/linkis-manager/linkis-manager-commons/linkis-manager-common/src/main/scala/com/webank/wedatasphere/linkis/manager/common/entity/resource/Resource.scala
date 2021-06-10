@@ -109,16 +109,6 @@ object Resource extends Logging {
     case s: SpecialResource => new SpecialResource(new java.util.HashMap[String, AnyVal]())
     case r: Resource => throw new ResourceWarnException(11003, "not supported resource type " + r.getClass)
   }
-
-  /* implicit def toYarnResource(r: Resource): YarnResource = r match {
-    case t: YarnResource => t
-    case _ => new YarnResource(0, 0, 0, "default")
-  }
-
-   implicit def toLoadInstanceResource(r: Resource): LoadInstanceResource = r match {
-    case t: LoadInstanceResource => t
-    case _ => new LoadInstanceResource(0, 0, 0)
-  }*/
 }
 
 case class UserAvailableResource(moduleName: String, resource: Resource)
@@ -315,20 +305,14 @@ class YarnResource(val queueMemory: Long, val queueCores: Int, val queueInstance
   }
 
   def add(r: Resource): YarnResource = {
-    //    if (!queueName.equals(r.queueName))
-    //      throw new ResourceWarnException(111001,s"This queue queueName(${this.queueName}) is different: ${r.queueName} ")
     new YarnResource(queueMemory + r.queueMemory, queueCores + r.queueCores, queueInstances + r.queueInstances, r.queueName)
   }
 
   def minus(r: Resource): YarnResource = {
-    //    if (!queueName.equals(r.queueName))
-    //      throw new ResourceWarnException(111001,s"This queue queueName(${this.queueName}) is different: ${r.queueName} ")
     new YarnResource(queueMemory - r.queueMemory, queueCores - r.queueCores, queueInstances - r.queueInstances, r.queueName)
   }
 
   def multiplied(r: Resource): YarnResource = {
-    //    if (!queueName.equals(r.queueName))
-    //      throw new ResourceWarnException(111001,s"This queue queueName(${this.queueName}) is different: ${r.queueName} ")
     new YarnResource(queueMemory * r.queueMemory, queueCores * r.queueCores, queueInstances * r.queueInstances, r.queueName)
   }
 
@@ -336,8 +320,6 @@ class YarnResource(val queueMemory: Long, val queueCores: Int, val queueInstance
     new YarnResource((queueMemory * rate).toInt, (queueCores * rate).toInt, (queueInstances * rate).toInt, queueName)
 
   def divide(r: Resource): YarnResource = {
-    //    if (!queueName.equals(r.queueName))
-    //      throw new ResourceWarnException(111001,s"This queue queueName(${this.queueName}) is different: ${r.queueName} ")
     new YarnResource(queueMemory / r.queueMemory, queueCores / r.queueCores, queueInstances / r.queueInstances, r.queueName)
   }
 
@@ -345,14 +327,10 @@ class YarnResource(val queueMemory: Long, val queueCores: Int, val queueInstance
     new YarnResource(queueMemory / rate, queueCores / rate, queueInstances / rate, queueName)
 
   def moreThan(r: Resource): Boolean = {
-    //    if (!queueName.equals(r.queueName))
-    //      throw new ResourceWarnException(111001,s"This queue queueName(${this.queueName}) is different: ${r.queueName} ")
     queueMemory > r.queueMemory && queueCores > r.queueCores && queueInstances >= r.queueInstances
   }
 
   def caseMore(r: Resource): Boolean = {
-    //    if (!queueName.equals(r.queueName))
-    //      throw new ResourceWarnException(111001,s"This queue queueName(${this.queueName}) is different: ${r.queueName} ")
     queueMemory > r.queueMemory || queueCores > r.queueCores || queueInstances >= r.queueInstances
   }
 

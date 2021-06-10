@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.rpc.transform
 
 import org.json4s.Serializer
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 trait RPCFormats {
 
   def getSerializers: Array[Serializer[_]]

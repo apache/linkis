@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.ecm.server.service.impl
 
-import com.webank.wedatasphere.linkis.ecm.server.ECMApplication
+import com.webank.wedatasphere.linkis.ecm.server.LinkisECMApplication
 import com.webank.wedatasphere.linkis.ecm.server.listener.{YarnAppIdCallbackEvent, YarnInfoCallbackEvent}
 import com.webank.wedatasphere.linkis.ecm.server.service.YarnCallbackService
 import com.webank.wedatasphere.linkis.message.annotation.Receiver
@@ -27,11 +27,11 @@ class DefaultYarnCallbackService extends YarnCallbackService {
 
   @Receiver
   override def dealApplicationId(protocol: YarnAPPIdCallbackProtocol): Unit = {
-    ECMApplication.getContext.getECMSyncListenerBus.postToAll(YarnAppIdCallbackEvent(protocol))
+    LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(YarnAppIdCallbackEvent(protocol))
   }
 
   @Receiver
   override def dealApplicationURI(protocol: YarnInfoCallbackProtocol): Unit = {
-    ECMApplication.getContext.getECMSyncListenerBus.postToAll(YarnInfoCallbackEvent(protocol))
+    LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(YarnInfoCallbackEvent(protocol))
   }
 }

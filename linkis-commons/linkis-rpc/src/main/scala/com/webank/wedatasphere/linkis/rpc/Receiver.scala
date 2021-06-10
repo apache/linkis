@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.rpc
 
 import scala.concurrent.duration.Duration
 
-/**
-  * Created by enjoyyin on 2018/8/28.
-  */
+
 trait Receiver {
 
   def receive(message: Any, sender: Sender): Unit

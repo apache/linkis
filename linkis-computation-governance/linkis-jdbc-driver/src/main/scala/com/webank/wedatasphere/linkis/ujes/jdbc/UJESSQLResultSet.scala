@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.webank.wedatasphere.linkis.ujes.jdbc
 
 import java.io.{InputStream, Reader}
@@ -26,6 +25,9 @@ import java.{sql, util}
 import com.webank.wedatasphere.linkis.ujes.client.request.ResultSetAction
 import com.webank.wedatasphere.linkis.ujes.client.response.ResultSetResult
 import org.apache.commons.lang.StringUtils
+
+
+
 
 class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLStatement, maxRows: Int, fetchSize: Int) extends ResultSet {
 

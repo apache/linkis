@@ -23,9 +23,6 @@ import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-/**
-  * created by cooperyang on 2019/7/13.
-  */
 @Component
 class VariableReceiverChooser extends ReceiverChooser {
 

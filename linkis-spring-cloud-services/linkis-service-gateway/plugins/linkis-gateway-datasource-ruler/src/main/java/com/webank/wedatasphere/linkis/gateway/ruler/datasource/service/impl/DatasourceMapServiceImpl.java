@@ -27,10 +27,7 @@ import javax.annotation.PostConstruct;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author wang_zh
- * @date 2020/5/22
- */
+
 @Service
 public class DatasourceMapServiceImpl implements DatasourceMapService {
 

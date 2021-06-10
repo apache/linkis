@@ -22,9 +22,7 @@ import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
 import org.reflections.ReflectionUtils
 
-/**
-  * Created by enjoyyin on 2018/1/10.
-  */
+
 @XmlRootElement(name = "message")
 class Message(private var method: String,
               private var status: Int = 0,          //-1 no login, 0 success, 1 error, 2 validate failed, 3 auth failed, 4 warning

@@ -19,19 +19,16 @@ package com.webank.wedatasphere.linkis.engineplugin.spark.executor
 import java.lang.reflect.InvocationTargetException
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.parser.SQLCodeParser
 import com.webank.wedatasphere.linkis.engineplugin.spark.common.{Kind, SparkSQL}
 import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
 import com.webank.wedatasphere.linkis.engineplugin.spark.entity.SparkEngineSession
 import com.webank.wedatasphere.linkis.engineplugin.spark.extension.SparkSqlExtension
 import com.webank.wedatasphere.linkis.engineplugin.spark.utils.EngineUtils
 import com.webank.wedatasphere.linkis.scheduler.executer.{CompletedExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
+import com.webank.wedatasphere.linkis.governance.common.paser.SQLCodeParser
 import org.apache.commons.lang.exception.ExceptionUtils
 
-/**
-  *
-  * @date 2020/11/4
-  */
+
 class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long) extends SparkEngineConnExecutor(sparkEngineSession.sparkContext, id) {
 
 

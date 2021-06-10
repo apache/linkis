@@ -68,12 +68,13 @@ class UnixProcessEngineCommandBuilder extends ShellProcessEngineCommandBuilder {
     newLine("linkis_engineconn_errorcode=$?")
     newLine("if [ $linkis_engineconn_errorcode -ne 0 ]")
     newLine("then")
+    newLine("  cat ${LOG_DIRS}/stderr")
     newLine("  exit $linkis_engineconn_errorcode")
     newLine("fi")
   }
 
   override def setCommand(command: Array[String]): Unit = {
-    newLine(Array(s"exec /bin/bash -c ${"\""}${command.mkString(" ")}${"\""}"))
+    newLine(Array(command.mkString(" ")))
     addErrorCheck()
   }
 

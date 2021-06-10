@@ -22,6 +22,8 @@ import java.net.ServerSocket
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.ecm.core.conf.ECMErrorCode
+import com.webank.wedatasphere.linkis.ecm.core.exception.ECMCoreException
 import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
 import com.webank.wedatasphere.linkis.governance.common.utils.{EngineConnArgumentsBuilder, EngineConnArgumentsParser}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration
@@ -43,6 +45,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
   private var processBuilder: ProcessEngineCommandBuilder = _
   private var preparedExecFile: String = _
   private var process: Process = _
+  private var randomPortNum = 1
 
   private var engineConnPort: String = _
 
@@ -58,6 +61,8 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
   }
 
   override def setEngineConnManagerEnv(engineConnManagerEnv: EngineConnManagerEnv): Unit = this.engineConnManagerEnv = engineConnManagerEnv
+
+  override def getEngineConnManagerEnv(): EngineConnManagerEnv = this.engineConnManagerEnv
 
   def setDiscoveryMsgGenerator(discoveryMsgGenerator: DiscoveryMsgGenerator): Unit = this.discoveryMsgGenerator = discoveryMsgGenerator
 
@@ -91,14 +96,13 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     Utils.tryFinally(socket.getLocalPort)(IOUtils.closeQuietly(socket))
   }
 
-  private def addAvailPort(value: String): String = {
-    var existsRandomPort = value.contains(CLASS_PATH_SEPARATOR)
-    var newValue = value
-    while(existsRandomPort) {
-      newValue = value.replaceFirst(CLASS_PATH_SEPARATOR, findAvailPort().toString)
-      existsRandomPort = value.contains(CLASS_PATH_SEPARATOR)
+  private def setMoreAvailPort(value: String): Unit = {
+    val key = RANDOM_PORT.toString + randomPortNum
+    // TODO just replace it by sorted RANDOM_PORT, since only one RANDOM_PORT is used now.
+    if(value.contains(key)) {
+      processBuilder.setEnv(key, findAvailPort().toString)
+      randomPortNum += 1
     }
-    newValue
   }
 
   override def launch(): Unit = {
@@ -137,21 +141,36 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     EngineConnArgumentsParser.getEngineConnArgumentsParser.parseToArgs(arguments.build())
   }
 
-  override def kill(): Unit = process.destroy()
+  override def kill(): Unit = {
+    if(process != null){
+      process.destroy()
+    }
+  }
 
-  override def isAlive: Boolean = process.isAlive
+  override def isAlive: Boolean = {
+    if(process != null){
+      process.isAlive
+    }else{
+      false
+    }
+  }
 
   protected def prepareCommand(): Unit = {
     processBuilder = newProcessEngineConnCommandBuilder()
-    engineConnManagerEnv.linkDirs.foreach{case (k, v) => processBuilder.link(k, v)}
     initializeEnv()
+    //TODO env需要考虑顺序问题
+    val classPath = request.environment.remove(CLASSPATH.toString)
     request.environment.foreach{ case (k, v) =>
-      var value = v.replaceAll(CLASS_PATH_SEPARATOR, File.pathSeparator)
-      value = addAvailPort(value)
+      val value = v.replaceAll(CLASS_PATH_SEPARATOR, File.pathSeparator)
+      setMoreAvailPort(value)
       processBuilder.setEnv(k, processBuilder.replaceExpansionMarker(value))
     }
-    val execCommand = request.commands.map(processBuilder.replaceExpansionMarker(_)).map(addAvailPort) ++ getCommandArgs
+    processBuilder.setEnv(CLASSPATH.toString, processBuilder.replaceExpansionMarker(classPath.replaceAll(CLASS_PATH_SEPARATOR, File.pathSeparator)))
+
+    engineConnManagerEnv.linkDirs.foreach{case (k, v) => processBuilder.link(k, v)}
+    val execCommand = request.commands.map(processBuilder.replaceExpansionMarker(_)) ++ getCommandArgs
     //execCommand = sudoCommand(request.user, execCommand.mkString(" "))
+    execCommand.foreach(setMoreAvailPort)
     processBuilder.setCommand(execCommand)
     preparedExecFile = new File(engineConnManagerEnv.engineConnWorkDir, "engineConnExec.sh").getPath
     val output = getFileOutputStream
@@ -164,8 +183,20 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
 
   protected def getPreparedExecFile: String = preparedExecFile
 
-  def getProcessInputStream:InputStream = process.getInputStream
+  def getProcessInputStream: InputStream = {
+    if(process != null){
+      process.getInputStream
+    }else{
+      throw new ECMCoreException(ECMErrorCode.PROCESS_WAITFOR_ERROR, "process is not be launch, can not get InputStream!")
+    }
+  }
 
-  def processWaitFor:Int =process.waitFor
+  def processWaitFor:Int = {
+    if(process != null){
+      process.waitFor
+    }else{
+      throw new ECMCoreException(ECMErrorCode.PROCESS_WAITFOR_ERROR, "process is not be launch, can not get terminated code by wait!")
+    }
+  }
 
 }

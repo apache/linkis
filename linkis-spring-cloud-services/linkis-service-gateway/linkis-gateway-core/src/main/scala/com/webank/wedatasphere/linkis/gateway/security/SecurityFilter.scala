@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit
 import java.util.{Date, Locale}
 
 import com.webank.wedatasphere.linkis.common.conf.Configuration
-import com.webank.wedatasphere.linkis.common.exception.DWCException
+import com.webank.wedatasphere.linkis.common.exception.LinkisException
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
 import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration._
@@ -88,7 +88,7 @@ object SecurityFilter extends Logging {
     if(gatewayContext.getRequest.getRequestURI.startsWith(ServerConfiguration.BDP_SERVER_USER_URI.getValue)) {
       Utils.tryCatch(userRestful.doUserRequest(gatewayContext)){ t =>
         val message = t match {
-          case dwc: DWCException => dwc.getMessage
+          case dwc: LinkisException => dwc.getMessage
           case _ => "login failed! reason: " + ExceptionUtils.getRootCauseMessage(t)
         }
         GatewaySSOUtils.error("login failed!", t)

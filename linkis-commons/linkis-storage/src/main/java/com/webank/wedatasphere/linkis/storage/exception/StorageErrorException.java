@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.storage.exception;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 
-/**
- * Created by johnnwang on 10/15/18.
- */
+
 public class StorageErrorException  extends ErrorException {
 
     public StorageErrorException(int errCode, String desc) {

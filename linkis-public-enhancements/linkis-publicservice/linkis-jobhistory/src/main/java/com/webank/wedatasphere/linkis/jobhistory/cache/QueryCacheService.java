@@ -16,16 +16,18 @@
 
 package com.webank.wedatasphere.linkis.jobhistory.cache;
 
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest;
 import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask;
+import com.webank.wedatasphere.linkis.governance.common.protocol.job.JobReq;
 import com.webank.wedatasphere.linkis.jobhistory.cache.domain.TaskResult;
 import com.webank.wedatasphere.linkis.protocol.query.cache.RequestDeleteCache;
 import com.webank.wedatasphere.linkis.protocol.query.cache.RequestReadCache;
 
 public interface QueryCacheService {
 
-    Boolean needCache(RequestPersistTask requestPersistTask);
+    Boolean needCache(JobRequest jobRequest);
 
-    void writeCache(RequestPersistTask requestPersistTask);
+    void writeCache(JobRequest jobRequest);
 
     TaskResult readCache(RequestReadCache requestReadCache);
 

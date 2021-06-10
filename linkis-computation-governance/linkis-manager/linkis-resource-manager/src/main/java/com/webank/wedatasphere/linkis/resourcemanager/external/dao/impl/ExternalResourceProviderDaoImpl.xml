@@ -37,12 +37,12 @@
     <select id="selectByResourceType" resultMap="ExternalResourceProviderMap">
         select
         <include refid="ExternalResourceProvider_Column_List"/>
-        from linkis_external_resource_provider where resource_type=#{resourceType}
+        from linkis_cg_rm_external_resource_provider where resource_type=#{resourceType}
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
             parameterType="com.webank.wedatasphere.linkis.resourcemanager.external.domain.ExternalResourceProvider">
-        INSERT INTO linkis_external_resource_provider (
+        INSERT INTO linkis_cg_rm_external_resource_provider (
         <include refid="ExternalResourceProvider_Column_List_Insert"/>
         ) VALUES (
         #{resourceType},#{name},#{labels},#{config}
@@ -50,7 +50,7 @@
     </insert>
 
     <update id="update">
-        UPDATE linkis_external_resource_provider
+        UPDATE linkis_cg_rm_external_resource_provider
         <set>
             <if test="name != null">name=#{name},</if>
             <if test="labels != null">labels=#{labels},</if>
@@ -60,7 +60,7 @@
     </update>
 
     <delete id="deleteById">
-        DELETE FROM linkis_external_resource_provider WHERE id=#{id}
+        DELETE FROM linkis_cg_rm_external_resource_provider WHERE id=#{id}
     </delete>
 
 </mapper>

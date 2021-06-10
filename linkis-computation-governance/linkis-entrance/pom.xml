@@ -20,7 +20,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>1.0.0-RC1</version>
+        <version>1.0.0</version>
     </parent>
     <artifactId>linkis-entrance</artifactId>
 
@@ -35,11 +35,26 @@
                     <artifactId>linkis-common</artifactId>
                 </exclusion>
             </exclusions>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-protocol</artifactId>
+            <version>${linkis.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-rpc</artifactId>
+            <version>${linkis.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-message-scheduler</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -57,11 +72,18 @@
             <version>${linkis.version}</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-error-code-client</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${httpclient.version}</version>
-            <scope>provided</scope>
+<!--            <scope>provided</scope>-->
         </dependency>
 
         <dependency>
@@ -78,9 +100,21 @@
         </dependency>
 
 
-        <dependency>
+        <!--<dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-orchestrator-ecm-plugin</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-computation-orchestrator</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-io_file-client</artifactId>
             <version>${linkis.version}</version>
         </dependency>
 

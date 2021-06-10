@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.message.publisher.MessagePublisher;
 import com.webank.wedatasphere.linkis.message.registry.ImplicitRegistry;
 import com.webank.wedatasphere.linkis.message.registry.ServiceRegistry;
 
-/**
- * @date 2020/7/14
- */
+
 public interface MessageSchedulerContext {
 
     MessagePublisher getPublisher();

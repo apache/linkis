@@ -29,4 +29,6 @@ object EngineConnPluginConf {
 
   val ENGINECONN_TYPE_NAME = CommonVars[String]("wds.linkis.engineconn.type.name", "python")
 
+  val ENGINECONN_MAIN_CLASS = CommonVars[String]("wds.linkis.engineconn.main.class", "com.webank.wedatasphere.linkis.engineconn.launch.EngineConnServer")
+
 }

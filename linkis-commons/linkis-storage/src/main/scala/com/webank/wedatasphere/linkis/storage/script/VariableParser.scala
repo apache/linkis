@@ -20,9 +20,6 @@ import java.util
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  *
-  */
 object VariableParser {
 
   val CONFIGURATION: String = "configuration"

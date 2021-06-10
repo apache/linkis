@@ -27,23 +27,23 @@
 
     <insert id="createKeyListener" useGeneratedKeys="true" keyProperty="id"
             parameterType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextKeyListener">
-        INSERT INTO linkis_cs_context_map_listener(<include refid="context_key_listener"/>)
+        INSERT INTO linkis_ps_cs_context_map_listener(<include refid="context_key_listener"/>)
         VALUES (#{listener.id},#{listener.source},#{listener.keyId})
     </insert>
 
     <delete id="remove">
-        DELETE FROM linkis_cs_context_map_listener WHERE listener_source = #{listener.source} AND key_id = #{keyId}
+        DELETE FROM linkis_ps_cs_context_map_listener WHERE listener_source = #{listener.source} AND key_id = #{keyId}
     </delete>
 
     <delete id="removeAll">
-        DELETE FROM linkis_cs_context_map_listener WHERE
+        DELETE FROM linkis_ps_cs_context_map_listener WHERE
         <foreach collection="keyIds" index="index" item="item" separator="," open="key_id in (" close=")">
             #{item}
         </foreach>
     </delete>
 
     <select id="getAll" resultType="com.webank.wedatasphere.linkis.cs.persistence.persistence.ContextKeyListenerPersistence">
-        SELECT * FROM linkis_cs_context_map_listener WHERE
+        SELECT * FROM linkis_ps_cs_context_map_listener WHERE
         <foreach collection="keyIds" item="keyid" index="i" open="key_id in (" close=")" separator=",">
             #{keyid}
         </foreach>

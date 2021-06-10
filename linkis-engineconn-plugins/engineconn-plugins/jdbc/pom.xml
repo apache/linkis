@@ -148,6 +148,7 @@
                 </includes>
             </resource>
         </resources>
+        <finalName>${project.artifactId}-${project.version}</finalName>
     </build>
 
 </project>

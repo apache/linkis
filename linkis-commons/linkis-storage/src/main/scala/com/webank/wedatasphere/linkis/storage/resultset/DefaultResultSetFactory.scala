@@ -27,9 +27,7 @@ import com.webank.wedatasphere.linkis.storage.exception.{StorageErrorException, 
 import com.webank.wedatasphere.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 import org.apache.commons.lang.StringUtils
 
-/**
-  * Created by johnnwang on 10/16/18.
-  */
+
 class DefaultResultSetFactory extends ResultSetFactory with Logging{
 
   private val resultClasses: Map[String, Class[ResultSet[ResultMetaData, ResultRecord]]] = StorageUtils.loadClasses(

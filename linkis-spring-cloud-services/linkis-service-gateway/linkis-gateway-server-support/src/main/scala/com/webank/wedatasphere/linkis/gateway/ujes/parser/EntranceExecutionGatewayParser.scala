@@ -78,5 +78,5 @@ class EntranceExecutionGatewayParser extends AbstractGatewayParser {
 
 object EntranceExecutionGatewayParser {
   val ENTRANCE_HEADER = normalPath(API_URL_PREFIX) + "rest_[a-zA-Z][a-zA-Z_0-9]*/(v\\d+)/entrance/"
-  val ENTRANCE_EXECUTION_REGEX = (ENTRANCE_HEADER + "(execute|backgroundservice|submit)").r
+  val ENTRANCE_EXECUTION_REGEX = (ENTRANCE_HEADER + "(execute|backgroundservice|submit|killJobs)").r
 }

@@ -16,13 +16,11 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue
 
-/**
-  * Created by enjoyyin on 2018/9/3.
-  */
+
 abstract class GroupFactory {
 
-  def getOrCreateGroup(groupName: String): Group
+  def getOrCreateGroup(event: SchedulerEvent): Group
 
-  def getGroupNameByEvent(event: SchedulerEvent): String
+  def getGroup(groupName: String): Group
 
 }

@@ -23,10 +23,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * TODO 统一 StoreageReader and writer
- * Created by johnnwang on 6/16/18.
- */
+
 public class ExcelStorageReader {
 
     public static List<List<String>> getExcelTitle(InputStream in, File file, Boolean hasHeader, String suffix) throws Exception {

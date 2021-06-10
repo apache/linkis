@@ -4,17 +4,21 @@ import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.common.creation.{DefaultEngineCreationContext, EngineCreationContext}
-import com.webank.wedatasphere.linkis.engineconn.common.execution.EngineExecution
+import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
+import com.webank.wedatasphere.linkis.engineconn.common.execution.EngineConnExecution
 import com.webank.wedatasphere.linkis.engineconn.common.hook.EngineConnHook
 import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
 import com.webank.wedatasphere.linkis.engineconn.core.engineconn.EngineConnManager
-import com.webank.wedatasphere.linkis.engineconn.core.util.EngineConnUtils
+import com.webank.wedatasphere.linkis.engineconn.core.execution.{AbstractEngineConnExecution, EngineConnExecution}
 import com.webank.wedatasphere.linkis.engineconn.core.hook.ShutdownHook
+import com.webank.wedatasphere.linkis.engineconn.core.util.EngineConnUtils
 import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
+import com.webank.wedatasphere.linkis.governance.common.exception.engineconn.{EngineConnExecutorErrorCode, EngineConnExecutorErrorException}
 import com.webank.wedatasphere.linkis.governance.common.utils.EngineConnArgumentsParser
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.Environment
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.{LabelBuilderFactory, StdLabelBuilderFactory}
+import com.webank.wedatasphere.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext, StdLabelBuilderFactory}
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.commons.lang.exception.ExceptionUtils
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
@@ -24,9 +28,8 @@ object EngineConnServer extends Logging {
 
 
   private val engineCreationContext: EngineCreationContext = new DefaultEngineCreationContext
-  private val labelBuilderFactory: LabelBuilderFactory = new StdLabelBuilderFactory
+  private val labelBuilderFactory: LabelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
-  var isReady = false
 
   def main(args: Array[String]): Unit = {
     info("<<---------------------EngineConnServer Start --------------------->>")
@@ -34,23 +37,28 @@ object EngineConnServer extends Logging {
     Utils.tryCatch {
       // 1. 封装EngineCreationContext
       init(args)
-      info("Finished to create EngineCreationContext")
+      info("Finished to create EngineCreationContext, EngineCreationContext content: " + EngineConnUtils.GSON.toJson(engineCreationContext))
       EngineConnHook.getEngineConnHooks.foreach(_.beforeCreateEngineConn(getEngineCreationContext))
-      info("Finished to execute hook of beforeCreateEngineConn")
+      info("Finished to execute hook of beforeCreateEngineConn.")
       //2. 创建EngineConn
       val engineConn = getEngineConnManager.createEngineConn(getEngineCreationContext)
-      info(s"Finished to create engineConn that type is ${engineConn.getEngineType()}")
+      info(s"Finished to create ${engineConn.getEngineConnType}EngineConn.")
       EngineConnHook.getEngineConnHooks.foreach(_.beforeExecutionExecute(getEngineCreationContext, engineConn))
-      info("Finished to execute hook of beforeExecutionExecute")
+      info("Finished to execute all hooks of beforeExecutionExecute.")
       //3. 注册的executions 执行
-      getEngineExecutions.foreach(_.execute(getEngineCreationContext, engineConn))
-      EngineConnObject.setReady
-      info("Finished to execute executions")
+      Utils.tryThrow(executeEngineConn(engineConn)){ t =>
+        error(s"Init executors error. Reason: ${ExceptionUtils.getRootCauseMessage(t)}", t)
+        throw new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INIT_EXECUTOR_FAILED, "Init executors failed. ", t)
+      }
+      EngineConnObject.setReady()
+      info("Finished to execute executions.")
       EngineConnHook.getEngineConnHooks.foreach(_.afterExecutionExecute(getEngineCreationContext, engineConn))
       info("Finished to execute hook of afterExecutionExecute")
       EngineConnHook.getEngineConnHooks.foreach(_.afterEngineServerStartSuccess(getEngineCreationContext, engineConn))
     } { t =>
       EngineConnHook.getEngineConnHooks.foreach(_.afterEngineServerStartFailed(getEngineCreationContext, t))
+      error("EngineConnServer Start Failed", t)
+      System.exit(1)
     }
 
     //4. 等待Executions执行完毕
@@ -61,7 +69,7 @@ object EngineConnServer extends Logging {
 
   /**
     *
-    * @param args
+    * @param args main函数入参
     */
   private def init(args: Array[String]): Unit = {
     val arguments = EngineConnArgumentsParser.getEngineConnArgumentsParser.parseToObj(args)
@@ -87,12 +95,19 @@ object EngineConnServer extends Logging {
     info("Finished to init engineCreationContext" + EngineConnUtils.GSON.toJson(engineCreationContext))
   }
 
+  private def executeEngineConn(engineConn: EngineConn): Unit = {
+    EngineConnExecution.getEngineConnExecutions.foreach{
+      case execution: AbstractEngineConnExecution =>
+        info(s"Ready to execute ${execution.getClass.getSimpleName}.")
+        execution.execute(getEngineCreationContext, engineConn)
+        if(execution.returnAfterMeExecuted(getEngineCreationContext, engineConn)) return
+      case execution =>
+        info(s"Ready to execute ${execution.getClass.getSimpleName}.")
+        execution.execute(getEngineCreationContext, engineConn)}
+  }
+
   def getEngineCreationContext: EngineCreationContext = this.engineCreationContext
 
   private def getEngineConnManager: EngineConnManager = EngineConnManager.getEngineConnManager
-
-  private def getEngineExecutions: Array[EngineExecution] = EngineExecution.getEngineExecutions
-
-  private def getShutdownHook: ShutdownHook = ShutdownHook.getShutdownHook
 
 }

@@ -40,6 +40,10 @@ object GatewayConfiguration {
 
   val USERCONTROL_SWITCH_ON = CommonVars("wds.linkis.gateway.usercontrol_switch_on", false)
 
+  val REDIRECT_SWITCH_ON = CommonVars("wds.linkis.gateway.redirect_switch_on", false)
+
+  val REDIRECT_GATEWAY_URL = CommonVars("wds.linkis.gateway.redirect.url", "http://127.0.0.1:8088/")
+
   val PROXY_USER_LIST = CommonVars("wds.linkis.gateway.conf.proxy.user.list", "").getValue.split(",")
 
   val USERCONTROL_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.usercontrol.application.name", "cloud-usercontrol")
@@ -51,4 +55,10 @@ object GatewayConfiguration {
   val ENABLE_GATEWAY_AUTH = CommonVars("wds.linkis.enable.gateway.auth", false)
 
   val AUTH_IP_FILE = CommonVars("wds.linkis.gateway.auth.file", "auth.txt")
+  val DEFAULT_GATEWAY_ACCESS_TOKEN = CommonVars("wds.linkis.gateway.access.token", "WS-AUTH")
+
+  val CONTROL_WORKSPACE_ID_LIST = CommonVars("wds.linkis.gateway.control.workspace.ids", "224")
+
+  val DSS_QUERY_WORKSPACE_SERVICE_NAME = CommonVars("wds.dss.query.workspace.service", "dss-framework-project-server")
+  val USER_WORKSPACE_REFLESH_TIME  = CommonVars("wds.linkis.user.workspace.reflesh.time", 10)
 }

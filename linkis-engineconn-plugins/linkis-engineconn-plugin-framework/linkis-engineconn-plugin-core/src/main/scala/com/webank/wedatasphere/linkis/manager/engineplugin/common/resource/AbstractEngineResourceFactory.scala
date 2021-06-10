@@ -18,20 +18,28 @@ package com.webank.wedatasphere.linkis.manager.engineplugin.common.resource
 
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.{NodeResource, Resource}
 import com.webank.wedatasphere.linkis.manager.common.utils.ResourceUtils
+import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 
 
 trait AbstractEngineResourceFactory extends EngineResourceFactory {
 
   protected def getRequestResource(properties: java.util.Map[String, String]): Resource
 
+  protected def getMinRequestResource(engineResourceRequest: EngineResourceRequest): Resource = getRequestResource(engineResourceRequest.properties)
+
+  protected def getMaxRequestResource(engineResourceRequest: EngineResourceRequest): Resource = getRequestResource(engineResourceRequest.properties)
+
   override def createEngineResource(engineResourceRequest: EngineResourceRequest): NodeResource = {
     val user = engineResourceRequest.user
     val engineResource = new UserNodeResource
-    val resource = getRequestResource(engineResourceRequest.properties)
+    val minResource = getMinRequestResource(engineResourceRequest)
+    val maxResource = getMaxRequestResource(engineResourceRequest)
+    if(minResource.getClass != maxResource.getClass) throw new EngineConnPluginErrorException(70103,
+      s"The minResource ${minResource.getClass.getSimpleName} is not the same with the maxResource${maxResource.getClass.getSimpleName}.")
     engineResource.setUser(user)
-    engineResource.setMinResource(resource)
-    engineResource.setResourceType(ResourceUtils.getResourceTypeByResource(resource))
-    engineResource.setMaxResource(engineResource.getMinResource)
+    engineResource.setMinResource(minResource)
+    engineResource.setResourceType(ResourceUtils.getResourceTypeByResource(minResource))
+    engineResource.setMaxResource(maxResource)
     engineResource
   }
 }

@@ -20,9 +20,10 @@ package com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.proces
 import java.io.File
 import java.nio.file.Paths
 import java.util
+
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.manager.common.protocol.bml.BmlResource
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration
+import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.{EngineConnPluginConf, EnvConfiguration}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration.LINKIS_PUBLIC_MODULE_PATH
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.EngineConnBuildFailedException
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.{EngineConnBuildRequest, RicherEngineConnBuildRequest}
@@ -43,10 +44,9 @@ abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunc
   def setEngineConnResourceGenerator(engineConnResourceGenerator: EngineConnResourceGenerator): Unit =
     this.engineConnResourceGenerator = engineConnResourceGenerator
 
-  protected def getGcLogDir(engineConnBuildRequest: EngineConnBuildRequest): String = variable(LOG_DIRS) + "/" +
-    engineConnBuildRequest.ticketId + "/gc.log" + DateFormatUtils.format(System.currentTimeMillis, "yyyyMMdd-HH_mm")
+  protected def getGcLogDir(engineConnBuildRequest: EngineConnBuildRequest): String = variable(LOG_DIRS) + "/gc.log"
 
-  protected def getLogDir(engineConnBuildRequest: EngineConnBuildRequest): String = s" -Dlogging.file=${EnvConfiguration.LOG4J2_XML_FILE.getValue} -D$LOG_DIRS_KEY=${variable(LOG_DIRS)}" +
+  protected def getLogDir(engineConnBuildRequest: EngineConnBuildRequest): String = s" -Dlogging.file=${EnvConfiguration.LOG4J2_XML_FILE.getValue} " +
     s" -D$TICKET_ID_KEY=${engineConnBuildRequest.ticketId}"
 
   override protected def getCommands(implicit engineConnBuildRequest: EngineConnBuildRequest): Array[String] = {
@@ -72,7 +72,7 @@ abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunc
     commandLine.toArray
   }
 
-  protected def getMainClass: String = "com.webank.wedatasphere.linkis.engineconn.launch.EngineConnServer"
+  protected def getMainClass: String = EngineConnPluginConf.ENGINECONN_MAIN_CLASS.getValue
 
   override protected def getEnvironment(implicit engineConnBuildRequest: EngineConnBuildRequest): util.Map[String, String] = {
     info("Setting up the launch environment for engineconn.")

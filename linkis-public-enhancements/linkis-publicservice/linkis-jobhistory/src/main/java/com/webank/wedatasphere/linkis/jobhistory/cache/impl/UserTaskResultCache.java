@@ -33,6 +33,8 @@ public class UserTaskResultCache {
     Cache<String, TaskResult> resultCache;
     Long lastCleaned;
 
+    private static final int ONE_THOUSAND = 1000;
+
     public UserTaskResultCache() {
         resultCache = CacheBuilder.newBuilder()
                 .expireAfterWrite((Long) QueryConfig.CACHE_MAX_EXPIRE_HOUR().getValue(), TimeUnit.DAYS)
@@ -78,7 +80,7 @@ public class UserTaskResultCache {
             resultCache.invalidate(md5);
             return null;
         }
-        if (taskResult.getCreatedAt() < System.currentTimeMillis() - readCacheBefore * 1000) {
+        if (taskResult.getCreatedAt() < System.currentTimeMillis() - readCacheBefore * ONE_THOUSAND) {
             return null;
         }
         return taskResult;

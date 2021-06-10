@@ -1,0 +1,52 @@
+/*!
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+@import '@/common/style/variables.scss';
+.layout-footer {
+    position: $fixed;
+    right: 10px;
+    bottom: 10px;
+    width: 100px;
+    height: 50px;
+    line-height: 40px;
+    background: transparent;
+    overflow: hidden;
+    padding: 5px;
+    z-index: 9999;
+}
+
+.footer-channel {
+    border: $border-width-base $border-style-base $border-color-base;
+    border-radius: $border-radius-small;
+    box-shadow: $shadow-base;
+    background-image: linear-gradient(39deg, $background-color-select-hover 0%, $background-color-base 100%);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    cursor: move;
+    .footer-channel-job {
+        color: $success-color;
+        font-weight: 900;
+        margin-right: 5px;
+    }
+    .footer-channel-job-num {
+        font-size: $font-size-small;
+        color: $text-color;
+    }
+}

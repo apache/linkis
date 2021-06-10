@@ -20,9 +20,7 @@ import java.util.concurrent.{Future, FutureTask}
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 
-/**
-  * Created by enjoyyin on 2019/6/18.
-  */
+
 class BDPFutureTask(future: Future[_]) extends BDPFuture with Logging {
   override def cancel(): Unit = Utils.tryAndErrorMsg {
     future match {

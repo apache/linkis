@@ -16,11 +16,11 @@
 
 package com.webank.wedatasphere.linkis.governance.common.protocol.engineconn
 
+import java.util
+
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.governance.common.entity.NodeExistStatus
 import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
-
-import java.util
 
 case class RequestEngineStatusBatch(engineList: util.List[ServiceInstance]) extends RequestProtocol
 

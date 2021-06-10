@@ -40,19 +40,19 @@
     <select id="selectForUpdate" parameterType="Integer">
         <![CDATA[SELECT ]]>
         <include refid="label_search_columns" />
-        <![CDATA[ FROM `linkis_instance_label` WHERE `id` = #{labelId} FOR UPDATE;]]>
+        <![CDATA[ FROM `linkis_ps_instance_label` WHERE `id` = #{labelId} FOR UPDATE;]]>
     </select>
 
     <select id="searchForUpdate">
         <![CDATA[SELECT ]]>
         <include refid="label_search_columns"/>
-        <![CDATA[ FROM `linkis_instance_label` WHERE `label_key` = #{labelKey}
+        <![CDATA[ FROM `linkis_ps_instance_label` WHERE `label_key` = #{labelKey}
         AND `label_value` = #{stringValue} FOR UPDATE;]]>
     </select>
 
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
         <foreach collection="list" item="item" separator="" open="" close="">
-            <![CDATA[INSERT INTO `linkis_instance_label`(]]>
+            <![CDATA[INSERT INTO `linkis_ps_instance_label`(]]>
             <include refid="label_insert_columns"/>
             <![CDATA[) VALUES(#{item.labelKey}, #{item.stringValue},
              #{item.feature}, #{item.labelValueSize});]]>
@@ -60,18 +60,18 @@
     </insert>
 
     <insert id="insert">
-        <![CDATA[INSERT INTO `linkis_instance_label`(]]>
+        <![CDATA[INSERT INTO `linkis_ps_instance_label`(]]>
         <include refid="label_insert_columns"/>
         <![CDATA[) VALUES(#{item.labelKey}, #{item.stringValue},
              #{item.feature}, #{item.labelValueSize});]]>
     </insert>
 
     <update id="updateForLock">
-        <![CDATA[UPDATE `linkis_instance_label` SET `update_time` = CURRENT_TIMESTAMP WHERE `id` = #{labelId};]]>
+        <![CDATA[UPDATE `linkis_ps_instance_label` SET `update_time` = CURRENT_TIMESTAMP WHERE `id` = #{labelId};]]>
     </update>
 
     <select id="search" resultMap="insPersistenceLabelMap">
-        <![CDATA[SELECT * FROM `linkis_instance_label` ]]>
+        <![CDATA[SELECT * FROM `linkis_ps_instance_label` ]]>
         <where>
             <![CDATA[(`label_key`, `label_value`) IN ]]>
             <foreach collection="list" item="item" open="(" close=")" separator=",">
@@ -83,31 +83,31 @@
     <delete id="remove">
         <choose>
             <when test="id != null and id != ''">
-                <![CDATA[DELETE FROM `linkis_instance_label` WHERE `id` = #{id}]]>
+                <![CDATA[DELETE FROM `linkis_ps_instance_label` WHERE `id` = #{id}]]>
             </when>
             <otherwise>
-                <![CDATA[DELETE FROM `linkis_instance_label` WHERE `label_key` = #{labelKey}
+                <![CDATA[DELETE FROM `linkis_ps_instance_label` WHERE `label_key` = #{labelKey}
         AND `label_value` = #{stringValue}]]>
             </otherwise>
         </choose>
     </delete>
 
     <insert id="doInsertKeyValues">
-        <foreach collection="list" item="item" open="" close="">
-            <![CDATA[INSERT INTO `linkis_instance_label_value_relation`
-            (`label_value_key`, `label_value_content`, `label_id`)
-             VALUES(#{valueKey}, #{valueContent}, #{labelId});
-            ]]>
+        INSERT INTO `linkis_ps_instance_label_value_relation`
+        (`label_value_key`, `label_value_content`, `label_id`)
+        VALUES
+        <foreach collection="list" item="item" open="" close="" separator=",">
+             (#{item.valueKey}, #{item.valueContent}, #{item.labelId})
         </foreach>
     </insert>
 
     <delete id="doRemoveKeyValues">
-        <![CDATA[DELETE FROM `linkis_instance_label_value_relation` WHERE `label_id` = #{labelId}]]>
+        <![CDATA[DELETE FROM `linkis_ps_instance_label_value_relation` WHERE `label_id` = #{labelId}]]>
     </delete>
 
     <delete id="doRemoveKeyValuesBatch">
         <foreach collection="list" item="item" open="" close="">
-            <![CDATA[DELETE FROM `linkis_instance_label_value_relation` WHERE `label_id` = #{item}]]>
+            <![CDATA[DELETE FROM `linkis_ps_instance_label_value_relation` WHERE `label_id` = #{item}]]>
         </foreach>
     </delete>
 </mapper>

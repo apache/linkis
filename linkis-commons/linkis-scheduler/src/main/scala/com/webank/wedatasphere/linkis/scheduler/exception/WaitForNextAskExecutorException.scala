@@ -18,7 +18,5 @@ package com.webank.wedatasphere.linkis.scheduler.exception
 
 import com.webank.wedatasphere.linkis.common.exception.WarnException
 
-/**
-  * Created by enjoyyin on 2018/9/17.
-  */
+
 class WaitForNextAskExecutorException(desc: String) extends WarnException(12111, desc)

@@ -13,17 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.metadata.ddl
 
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util
+import java.util.Date
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.common.io.FsPath
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.metadata.conf.MdqConfiguration
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.{MdqTableBO, MdqTableFieldsInfoBO}
 import com.webank.wedatasphere.linkis.metadata.exception.MdqIllegalParamException
+import com.webank.wedatasphere.linkis.storage.FSFactory
+import com.webank.wedatasphere.linkis.storage.fs.FileSystem
+import com.webank.wedatasphere.linkis.storage.utils.FileSystemUtils
+import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang.time.DateFormatUtils
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
@@ -35,9 +44,9 @@ object ImportDDLCreator extends DDLCreator {
   override def createDDL(mdqTableInfo:MdqTableBO, user:String): String = {
     val importType = mdqTableInfo.getImportInfo.getImportType
     importType.intValue() match {
-      case 0 => HiveImportDDLHelper.generateCode(mdqTableInfo)
-      case 1 => FileImportDDLHelper.generateCode(mdqTableInfo)
-      case 2 => FileImportDDLHelper.generateCode(mdqTableInfo)
+      case 0 => HiveImportDDLHelper.generateCode(mdqTableInfo, user)
+      case 1 => FileImportDDLHelper.generateCode(mdqTableInfo, user)
+      case 2 => FileImportDDLHelper.generateCode(mdqTableInfo, user)
       case x:Int => throw MdqIllegalParamException(s"unrecognized import type $x")
     }
   }
@@ -45,11 +54,19 @@ object ImportDDLCreator extends DDLCreator {
 
 
 trait ImportHelper{
-  def generateCode(mdqTableVO: MdqTableBO):String
+  def generateCode(mdqTableVO: MdqTableBO, user:String):String
 }
 
 object FileImportDDLHelper extends ImportHelper with Logging {
-  override def generateCode(mdqTableBO: MdqTableBO): String = {
+
+
+  private val CODE_STORE_PREFIX = CommonVars("wds.linkis.mdq.store.prefix", "hdfs:///apps-data/")
+  private val CODE_STORE_SUFFIX = CommonVars("wds.linkis.mdq.store.suffix", "")
+  private val CHARSET = "utf-8"
+  private val CODE_SPLIT = ";"
+  private val LENGTH_SPLIT = "#"
+
+  override def generateCode(mdqTableBO: MdqTableBO, user:String): String = {
     logger.info(s"begin to generate code for ${mdqTableBO.getTableBaseInfo.getBase.getName} using File way")
     var createTableCode = new StringBuilder
     val importInfo = mdqTableBO.getImportInfo
@@ -59,19 +76,57 @@ object FileImportDDLHelper extends ImportHelper with Logging {
     val _destination = if (StringUtils.isEmpty(importInfo.getDestination)) throw MdqIllegalParamException("import hive source is null")
     else importInfo.getDestination
     val source = "val source = \"\"\"" + _source + "\"\"\"\n"
-    var destination = "val destination = \"\"\"" + _destination +  "\"\"\"\n"
     createTableCode.append(source)
-    createTableCode.append(destination)
-    createTableCode.append("com.webank.wedatasphere.linkis.engine.imexport.LoadData.loadDataToTable(spark,source,destination)")
+    val storePath = storeExecutionCode(_destination, user)
+    if (null == storePath){
+      val destination = "val destination = \"\"\"" + _destination +  "\"\"\"\n"
+      createTableCode.append(destination)
+//      createTableCode.append("com.webank.wedatasphere.linkis.engine.imexport.LoadData.loadDataToTable(spark,source,destination)")
+      createTableCode.append(MdqConfiguration.SPARK_MDQ_IMPORT_CLAZZ.getValue + ".loadDataToTable(spark,source,destination)")
+    }else{
+      val destination = "val destination = \"\"\"" + storePath +  "\"\"\"\n"
+      createTableCode.append(destination)
+      createTableCode.append(MdqConfiguration.SPARK_MDQ_IMPORT_CLAZZ.getValue + ".loadDataToTableByFile(spark,destination,source)")
+    }
     val resultCode = createTableCode.toString()
     logger.info(s"end to generate code for ${mdqTableBO.getTableBaseInfo.getBase.getName} code is $resultCode")
     resultCode
-//    if(storePath == null){
-//      newExecutionCode += "com.webank.wedatasphere.linkis.engine.imexport.LoadData.loadDataToTable(spark,source,destination)"
-//    }else{
-//      newExecutionCode += "com.webank.wedatasphere.linkis.engine.imexport.LoadData.loadDataToTableByFile(spark,destination,source)"
-//    }
+    //    if(storePath == null){
+    //      newExecutionCode += "com.webank.wedatasphere.linkis.engine.imexport.LoadData.loadDataToTable(spark,source,destination)"
+    //    }else{
+    //      newExecutionCode += "com.webank.wedatasphere.linkis.engine.imexport.LoadData.loadDataToTableByFile(spark,destination,source)"
+    //    }
   }
+
+  def storeExecutionCode(destination: String,user:String): String = {
+    if (destination.length < 60000) return null
+    val path: String = getCodeStorePath(user)
+    val fsPath: FsPath = new FsPath(path)
+    val fileSystem = FSFactory.getFsByProxyUser(fsPath, user).asInstanceOf[FileSystem]
+    fileSystem.init(null)
+    var os: OutputStream = null
+    var position = 0L
+    val codeBytes = destination.getBytes(CHARSET)
+    Utils.tryFinally {
+      path.intern() synchronized {
+        if (!fileSystem.exists(fsPath)) FileSystemUtils.createNewFile(fsPath, user, true)
+        os = fileSystem.write(fsPath, false)
+        position = fileSystem.get(path).getLength
+        IOUtils.write(codeBytes, os)
+      }
+    } {
+      if (fileSystem != null) fileSystem.close()
+      IOUtils.closeQuietly(os)
+    }
+    val length = codeBytes.length
+    path + CODE_SPLIT + position + LENGTH_SPLIT + length
+  }
+
+  private def getCodeStorePath(user: String): String = {
+    val date: String = DateFormatUtils.format(new Date, "yyyyMMdd")
+    s"${CODE_STORE_PREFIX.getValue}${user}${CODE_STORE_SUFFIX.getValue}/executionCode/${date}/_bgservice"
+  }
+
 }
 
 /**
@@ -96,7 +151,7 @@ object HiveImportDDLHelper extends ImportHelper with SQLConst with Logging{
   val INSERT_OVERWRITE:String = "insert overwrite table" + SPACE
   val DYNAMIC_MODE:String = """spark.sql("set hive.exec.dynamic.partition.mode=nonstrict")"""
   val DYNAMIC_PAR:String = """spark.sql("set hive.exec.dynamic.partition=true")"""
-  override def generateCode(mdqTableBO: MdqTableBO): String = {
+  override def generateCode(mdqTableBO: MdqTableBO, user:String): String = {
     logger.info(s"begin to generate code for ${mdqTableBO.getTableBaseInfo.getBase.getName} using Hive way")
     val executeCode = new StringBuilder
     val args = mdqTableBO.getImportInfo.getArgs

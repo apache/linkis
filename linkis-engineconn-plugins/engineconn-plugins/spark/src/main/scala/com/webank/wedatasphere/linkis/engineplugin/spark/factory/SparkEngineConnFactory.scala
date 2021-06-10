@@ -23,12 +23,12 @@ import java.util
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.{DefaultEngineConn, EngineConn}
 import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
 import com.webank.wedatasphere.linkis.engineplugin.spark.entity.SparkEngineSession
 import com.webank.wedatasphere.linkis.engineplugin.spark.exception.{SparkCreateFileException, SparkSessionNullException}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.MultiExecutorEngineConnFactory
+import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineType
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineType.EngineType
 import com.webank.wedatasphere.linkis.server.JMap
 import org.apache.commons.lang.StringUtils
 import org.apache.spark.sql.{SQLContext, SparkSession}
@@ -37,12 +37,10 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 /**
   *
-  * @Date 2020/10/23
  */
 class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging {
 
-
-  override def createEngineConn(engineCreationContext: EngineCreationContext): EngineConn = {
+  override protected def createEngineConnSession(engineCreationContext: EngineCreationContext): Any = {
     val options = engineCreationContext.getOptions
     val useSparkSubmit = true
     val sparkConf: SparkConf = new SparkConf(true).setAppName(options.getOrDefault("spark.app.name", "EngineConn-Spark"))
@@ -83,11 +81,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     sc.hadoopConfiguration.set("mapred.output.compress", SparkConfiguration.MAPRED_OUTPUT_COMPRESS.getValue(options))
     sc.hadoopConfiguration.set("mapred.output.compression.codec", SparkConfiguration.MAPRED_OUTPUT_COMPRESSION_CODEC.getValue(options))
     println("Application report for " + sc.applicationId)
-    val sparkEngineSession = SparkEngineSession(sc, sqlContext, sparkSession, outputDir)
-    val engineConn = new DefaultEngineConn(engineCreationContext)
-    engineConn.setEngineType(EngineType.SPARK.toString)
-    engineConn.setEngine(sparkEngineSession)
-    engineConn
+    SparkEngineSession(sc, sqlContext, sparkSession, outputDir)
   }
 
   def createSparkSession(outputDir: File, conf: SparkConf, addPythonSupport: Boolean = false): SparkSession = {
@@ -124,7 +118,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     builder.enableHiveSupport().getOrCreate()
   }
 
-  def createSQLContext(sc: SparkContext,options: JMap[String, String], sparkSession: SparkSession) = {
+  def createSQLContext(sc: SparkContext,options: JMap[String, String], sparkSession: SparkSession): SQLContext = {
     var sqlc : SQLContext = null
     if (SparkConfiguration.LINKIS_SPARK_USEHIVECONTEXT.getValue(options)) {
       val name = "org.apache.spark.sql.hive.HiveContext"
@@ -133,10 +127,9 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
         hc = getClass.getClassLoader.loadClass(name).getConstructor(classOf[SparkContext])
         sqlc = hc.newInstance(sc).asInstanceOf[SQLContext]
       } catch {
-        case e: Throwable => {
+        case e: Throwable =>
           logger.warn("Can't create HiveContext. Fallback to SQLContext", e)
           sqlc = sparkSession.sqlContext
-        }
       }
     }
     else sqlc = sparkSession.sqlContext
@@ -158,4 +151,14 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     })
   }
 
+  override protected def getDefaultExecutorFactoryClass: Class[_ <: ExecutorFactory] =
+    classOf[SparkSqlExecutorFactory]
+
+  override protected def getEngineConnType: EngineType = EngineType.SPARK
+
+  private val executorFactoryArray =  Array[ExecutorFactory](new SparkSqlExecutorFactory, new SparkPythonExecutorFactory, new SparkScalaExecutorFactory)
+
+  override def getExecutorFactories: Array[ExecutorFactory] = {
+    executorFactoryArray
+  }
 }

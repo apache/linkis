@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.io.utils
+package com.webank.wedatasphere.linkis.manager.engineplugin.common.resource
 
-import java.lang.reflect.{Method}
 
-object ReflectionUtils {
 
-  @throws[Throwable]
-  def invoke(any: Any, method: Method, args: Array[AnyRef]): Unit = {
-    try {
-      method.invoke(any, args)
-    } catch {
-      case t: Throwable =>
-        throw t.getCause
-    }
-  }
+/*
+/**
+  */
+class UserTimeoutNodeResource extends UserNodeResource with TimeoutNodeResource {
+  private var timeout: Long = _
 
-}
+  override def getTimeout: Long = timeout
+
+  override def setTimeout(timeout: Long): Unit = this.timeout = timeout
+}*/

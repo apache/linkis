@@ -17,20 +17,20 @@
 package com.webank.wedatasphere.linkis.configuration.validate
 
 import com.google.gson.GsonBuilder
-import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationException
 
 class NumericalValidator extends Validator with Logging {
 
   override def validate(value: String, range: String): Boolean = {
-    try {
+    Utils.tryCatch{
       val rangArray = new GsonBuilder().create().fromJson(range, classOf[Array[Int]])
       val valueInt = Integer.parseInt(value)
       if (rangArray.size != 2) {
         throw new ConfigurationException("error validator range！")
       }
       valueInt >= rangArray.sorted.apply(0) && valueInt <= rangArray.sorted.apply(1)
-    } catch {
+    }{
       case e: NumberFormatException => info(s"${value} cannot be converted to int, validation failed(${value}不能转换为int，校验失败)"); return false
       //If there is a problem with range, then an exception is thrown.(如果range出问题，那么还是抛出异常)
       /*case e:JsonSyntaxException =>info(s"${range}Cannot convert to int, check failed(不能转换为int，校验失败)"); return false*/

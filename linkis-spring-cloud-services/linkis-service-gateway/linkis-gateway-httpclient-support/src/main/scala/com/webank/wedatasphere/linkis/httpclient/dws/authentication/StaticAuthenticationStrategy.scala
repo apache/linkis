@@ -25,6 +25,16 @@ import org.apache.http.HttpResponse
 class StaticAuthenticationStrategy(override protected val sessionMaxAliveTime: Long) extends AbstractAuthenticationStrategy {
    def this() = this(ByteTimeUtils.timeStringAsMs("2h"))
 
+  override protected def getUser(requestAction: Action): String = requestAction match {
+    case _: AuthenticationAction => null
+    case authAction: UserAction =>
+      // If UserAction not contains user, then use the authTokenKey by default.
+      if(StringUtils.isBlank(authAction.getUser)) getClientConfig.getAuthTokenKey
+      else authAction.getUser
+    case _ if StringUtils.isNotBlank(getClientConfig.getAuthTokenKey) => getClientConfig.getAuthTokenKey
+    case _ => null
+  }
+
   override protected def getAuthenticationAction(requestAction: Action, serverUrl: String): AuthenticationAction = {
     val action = new DWSAuthenticationAction(serverUrl)
     def pwd: String = if(StringUtils.isNotBlank(getClientConfig.getAuthTokenValue)) getClientConfig.getAuthTokenValue

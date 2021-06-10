@@ -52,7 +52,7 @@ trait FileSource extends Closeable {
 
 object FileSource {
 
-  private val fileType = Array("dolphin", "sql", "scala", "py", "hql", "python", "out", "log", "text", "sh", "jdbc")
+  private val fileType = Array("dolphin", "sql", "scala", "py", "hql", "python", "out", "log", "text", "sh", "jdbc", "ngql", "psql")
 
   private val suffixPredicate = (path: String, suffix: String) => path.endsWith(s".$suffix")
 
@@ -89,7 +89,7 @@ object FileSource {
   }
 
   def create(fsPath: FsPath, is: InputStream): FileSource = {
-    if (!canRead(fsPath.getPath)) throw new StorageErrorException(54001, "不支持打开的文件类型")
+    if (!canRead(fsPath.getPath)) throw new StorageErrorException(54001, "Unsupported open file type(不支持打开的文件类型)")
     if (isResultSet(fsPath)) {
       new ResultsetFileSource(Array(createResultSetFileSplit(fsPath, is)))
     } else {

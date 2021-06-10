@@ -49,12 +49,6 @@ object ZuulEntranceUtils {
       val shortExecID = longExecID.substring(6 + creatorLength + executeLength + instanceLength, longExecID.length)
       Array(creator, executeApplicationName, instance, shortExecID)
     }
-    /*val executeLength = Integer.parseInt(longExecID.substring(0,2))
-    val instanceLength = Integer.parseInt(longExecID.substring(2,4))
-    val executeApplicationName:String = longExecID.substring(4, 4 + executeLength)
-    val instance:String = longExecID.substring(4 + executeLength, 4 + executeLength + instanceLength)
-    val shortExecID:String = longExecID.substring(4 + executeLength + instanceLength, longExecID.length)
-    Array[String](executeApplicationName, instance, shortExecID)*/
   }
 
   @Deprecated
@@ -93,7 +87,7 @@ object ZuulEntranceUtils {
   }
 
   def main(args: Array[String]): Unit = {
-    val str = generateExecID("spark_test_01", "linkis-cg-entrance", Array[String]("172.0.0.1:8080"))
+    val str = generateExecID("spark_test_01", "linkis-cg-entrance", Array[String]("127.0.0.1:8080"))
     val array = parseServiceInstanceByExecID(str)
     println(array(3))
   }
@@ -126,19 +120,13 @@ object ZuulEntranceUtils {
 
   def generateExecID(shortExecID: String, applicationName: String, instances: Array[String]): String = {
     if (null == instances || instances.isEmpty) {
-      throw new RuntimeException("生成ExecID失败，传入的Instance不能为空")
+      throw new RuntimeException("failed to generate ExecID ,the parameters instance is not null (生成ExecID失败，传入的Instance不能为空)")
     }
     val applicationNameLength = getStrFixedLen(applicationName, SPLIT_LEN)
     val instanceStr = instances.mkString(INSTANCE_SPLIT_TOKEN)
     val instanceStrLength = getStrFixedLen(instanceStr, SPLIT_LEN)
     EXEC_ID + applicationNameLength + instanceStrLength + applicationName + instanceStr + shortExecID
   }
-
-
-  /*private def getLengthStr(string:String):String = {
-    val length = string.length
-    if (length >= 10) String.valueOf(length) else "0" + String.valueOf(length)
-  }*/
 
   private def getStrFixedLen(string: String, len: Int): String = {
     val str = String.valueOf(string.length)

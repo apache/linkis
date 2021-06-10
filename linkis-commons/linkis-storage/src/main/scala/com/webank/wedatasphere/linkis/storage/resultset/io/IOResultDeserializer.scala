@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.common.io.resultset.ResultDeserializer
 import com.webank.wedatasphere.linkis.storage.domain.Dolphin
 import org.apache.commons.codec.binary.Base64
 
-/**
-  * Created by johnnwang on 2018/10/30.
-  */
+
 class IOResultDeserializer extends ResultDeserializer[IOMetaData, IORecord]{
   override def createMetaData(bytes: Array[Byte]): IOMetaData = {
     val values = Dolphin.getString(bytes, 0, bytes.length).split(Dolphin.COL_SPLIT)

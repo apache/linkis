@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.rpc.interceptor
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 trait RPCInterceptor {
 
   val order: Int

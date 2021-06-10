@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.message.utils.MessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @date 2020/9/17
- */
+
 public class MSContextInstance {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MSContextInstance.class);

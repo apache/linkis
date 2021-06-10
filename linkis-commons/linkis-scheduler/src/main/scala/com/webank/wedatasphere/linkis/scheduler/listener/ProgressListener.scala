@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.scheduler.listener
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
 
-/**
-  * Created by enjoyyin on 2018/9/3.
-  */
+
 trait ProgressListener extends SchedulerListener {
 
   def onProgressUpdate(job: Job, progress: Float, progressInfo: Array[JobProgressInfo]): Unit

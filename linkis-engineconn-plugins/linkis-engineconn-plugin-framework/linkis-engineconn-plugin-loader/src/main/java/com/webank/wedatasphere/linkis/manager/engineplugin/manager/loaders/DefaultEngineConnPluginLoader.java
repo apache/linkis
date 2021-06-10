@@ -91,7 +91,7 @@ public class DefaultEngineConnPluginLoader extends CacheablesEngineConnPluginLoa
         if (!savePath.endsWith(String.valueOf(IOUtils.DIR_SEPARATOR))) {
             savePath += IOUtils.DIR_SEPARATOR;
         }
-        savePath += IOUtils.DIR_SEPARATOR + typeLabel.getEngineType() + IOUtils.DIR_SEPARATOR + PLUGIN_DIR + IOUtils.DIR_SEPARATOR;
+        savePath += typeLabel.getEngineType() + IOUtils.DIR_SEPARATOR + PLUGIN_DIR + IOUtils.DIR_SEPARATOR;
         if (StringUtils.isNoneBlank(typeLabel.getVersion())) {
             savePath += typeLabel.getVersion() + IOUtils.DIR_SEPARATOR;
         }
@@ -138,7 +138,7 @@ public class DefaultEngineConnPluginLoader extends CacheablesEngineConnPluginLoa
                 return new EngineConnPluginInstance(newPluginInfo, enginePlugin);
             }
          }
-        throw new EngineConnPluginNotFoundException("No plugin found, please check your configuration", null);
+        throw new EngineConnPluginNotFoundException("No plugin found" + enginePluginInfo.typeLabel().getStringValue() + "please check your configuration", null);
     }
 
     /**

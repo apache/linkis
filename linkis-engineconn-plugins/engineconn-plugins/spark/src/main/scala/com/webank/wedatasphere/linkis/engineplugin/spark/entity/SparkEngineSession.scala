@@ -21,10 +21,7 @@ import java.io.File
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.{SQLContext, SparkSession}
 
-/**
-  *
-  * @date 2020/11/2
- */
+
 case class SparkEngineSession(sparkContext: SparkContext,
                               sqlContext: SQLContext,
                               sparkSession: SparkSession,

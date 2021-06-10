@@ -28,7 +28,9 @@ public interface TaskConstant {
     String TASKTYPE = "taskType";
     String STORAGETYPE = "storageType";
     String EXECUTIONCODE = "executionCode";
+    String JOB_CONTENT = "jobContent";
     String TASK = "task";
+    String TASKS = "tasks";
     String TASKID = "taskID";
     String PARAMS = "params";
     String FORMATCODE = "formatCode";
@@ -47,6 +49,15 @@ public interface TaskConstant {
     String PARAMS_CONFIGURATION_STARTUP = "startup";
     String PARAMS_CONFIGURATION_RUNTIME = "runtime";
     String PARAMS_CONFIGURATION_SPECIAL = "special";
+
+    String ENTRANCEJOB_SUBMIT_TIME = "submitTime";
+    String ENTRANCEJOB_SCHEDULE_TIME = "scheduleTime";
+    String ENTRANCEJOB_TO_ORCHESTRATOR = "timeToOrchestrator";
+    String ENTRANCEJOB_COMPLETE_TIME = "completeTime";
+
+    String PARAMS_DATA_SOURCE = "dataSources";
+
+    String PARAMS_CONTEXT = "context";
 
     String LABELS = "labels";
     String EXECUTION_CONTENT = "executionContent";

@@ -16,36 +16,80 @@
 
 package com.webank.wedatasphere.linkis.gateway.security
 
+import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import java.util.Random
+import java.security.KeyFactory
+import java.security.spec.X509EncodedKeySpec
+import java.util
+import java.util.concurrent.TimeUnit
+import java.util.{List, Random}
 
+import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
 import com.google.gson.Gson
+import com.webank.wedatasphere.linkis.common.conf.Configuration
+import com.webank.wedatasphere.linkis.common.utils.RSAUtils.keyPair
 import com.webank.wedatasphere.linkis.common.utils.{Logging, RSAUtils, Utils}
 import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
+import com.webank.wedatasphere.linkis.gateway.exception.GatewayErrorException
 import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
 import com.webank.wedatasphere.linkis.gateway.security.sso.SSOInterceptor
-import com.webank.wedatasphere.linkis.protocol.usercontrol.{RequestLogin, RequestRegister, ResponseLogin, ResponseRegister}
+import com.webank.wedatasphere.linkis.protocol.usercontrol.{RequestLogin, RequestRegister, RequestUserListFromWorkspace, RequestUserWorkspace, ResponseLogin, ResponseRegister, ResponseUserWorkspace, ResponseWorkspaceUserList}
 import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import com.webank.wedatasphere.linkis.server.security.SSOUtils
 import com.webank.wedatasphere.linkis.server.{Message, _}
-import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang.StringUtils
+import org.apache.commons.net.util.Base64
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+import org.json4s.JsonAST.JString
+import org.json4s.jackson.JsonMethods.parse
+import scala.collection.JavaConversions._
+
 
 trait UserRestful {
 
   def doUserRequest(gatewayContext: GatewayContext): Unit
 
 }
-abstract class AbstractUserRestful extends UserRestful with Logging{
+
+abstract class AbstractUserRestful extends UserRestful with Logging {
 
   private var securityHooks: Array[SecurityHook] = Array.empty
+
+  val dssProjectSender: Sender = Sender.getSender(GatewayConfiguration.DSS_QUERY_WORKSPACE_SERVICE_NAME.getValue)
+
+  val configCache: LoadingCache[String, util.List[String]] = CacheBuilder.newBuilder().maximumSize(1000)
+    .expireAfterAccess(1, TimeUnit.HOURS)
+    .refreshAfterWrite(GatewayConfiguration.USER_WORKSPACE_REFLESH_TIME.getValue, TimeUnit.MINUTES)
+    .build(new CacheLoader[String, util.List[String]]() {
+      override def load(key: String): util.List[String] = {
+        var userList: util.List[String] = new util.ArrayList[String]()
+        if (GatewayConfiguration.REDIRECT_SWITCH_ON.getValue) {
+          Utils.tryCatch {
+            val controlIdStr = GatewayConfiguration.CONTROL_WORKSPACE_ID_LIST.getValue
+            val controlIds = controlIdStr.split(",").toList.map(x => Integer.valueOf(x))
+
+            userList = dssProjectSender.ask(new RequestUserListFromWorkspace(controlIds)).asInstanceOf[ResponseWorkspaceUserList].getUserNames
+            info("Get user list from dss: "+ userList.toString)
+          } {
+            case e: Exception =>
+              error(s"Call dss workspace rpc failed, ${e.getMessage}", e)
+              throw new GatewayErrorException(40010, s"向DSS工程服务请求工作空间ID失败, ${e.getMessage}")
+          }
+
+        }
+        userList
+      }
+    })
+
 
   def setSecurityHooks(securityHooks: Array[SecurityHook]): Unit = this.securityHooks = securityHooks
 
   private val userRegex = {
     var userURI = ServerConfiguration.BDP_SERVER_USER_URI.getValue
-    if(!userURI.endsWith("/")) userURI += "/"
+    if (!userURI.endsWith("/")) userURI += "/"
     userURI
   }
 
@@ -71,11 +115,11 @@ abstract class AbstractUserRestful extends UserRestful with Logging{
     gatewayContext.getResponse.sendResponse()
   }
 
-  def proxy(gatewayContext: GatewayContext) : Message = {
+  def proxy(gatewayContext: GatewayContext): Message = {
     val proxyUser = gatewayContext.getRequest.getQueryParams.get("proxyUser")(0)
     val validationCode = gatewayContext.getRequest.getQueryParams.get("validationCode")(0)
     // validate
-    if(ProxyUserUtils.validate(proxyUser, validationCode)){
+    if (ProxyUserUtils.validate(proxyUser, validationCode)) {
       val lowerCaseUserName = proxyUser.toString.toLowerCase
       GatewaySSOUtils.setLoginUser(gatewayContext, lowerCaseUserName)
       "代理成功".data("proxyUser", proxyUser)
@@ -86,7 +130,7 @@ abstract class AbstractUserRestful extends UserRestful with Logging{
 
   def login(gatewayContext: GatewayContext): Message = {
     val message = tryLogin(gatewayContext)
-    if(securityHooks != null) securityHooks.foreach(_.postLogin(gatewayContext))
+    if (securityHooks != null) securityHooks.foreach(_.postLogin(gatewayContext))
     message
   }
 
@@ -99,8 +143,8 @@ abstract class AbstractUserRestful extends UserRestful with Logging{
 
   def logout(gatewayContext: GatewayContext): Message = {
     GatewaySSOUtils.removeLoginUser(gatewayContext)
-    if(GatewayConfiguration.ENABLE_SSO_LOGIN.getValue) SSOInterceptor.getSSOInterceptor.logout(gatewayContext)
-    if(securityHooks != null) securityHooks.foreach(_.preLogout(gatewayContext))
+    if (GatewayConfiguration.ENABLE_SSO_LOGIN.getValue) SSOInterceptor.getSSOInterceptor.logout(gatewayContext)
+    if (securityHooks != null) securityHooks.foreach(_.preLogout(gatewayContext))
     "Logout successful(退出登录成功)！"
   }
 
@@ -131,6 +175,7 @@ abstract class AbstractUserRestful extends UserRestful with Logging{
 
   protected def tryRegister(context: GatewayContext): Message
 }
+
 abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Logging {
 
   private val sender: Sender = Sender.getSender(GatewayConfiguration.USERCONTROL_SPRING_APPLICATION_NAME.getValue)
@@ -138,6 +183,7 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
   private val USERNAME_STR = "userName"
   private val PASSWD_STR = "password"
   private val PASSWD_ENCRYPT_STR = "passwdEncrypt"
+  private val httpClient = HttpClients.createDefault()
 
   override protected def tryLogin(gatewayContext: GatewayContext): Message = {
     val userNameArray = gatewayContext.getRequest.getQueryParams.get(USERNAME_STR)
@@ -158,14 +204,14 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
       }
       (tmpUsername, tmpPasswd)
     } else (null, null)
-    if(userName == null || StringUtils.isBlank(userName.toString)) {
+    if (userName == null || StringUtils.isBlank(userName.toString)) {
       Message.error("Username can not be empty(用户名不能为空)！")
-    } else if(passwordEncrypt == null || StringUtils.isBlank(passwordEncrypt.toString)) {
+    } else if (passwordEncrypt == null || StringUtils.isBlank(passwordEncrypt.toString)) {
       Message.error("Password can not be blank(密码不能为空)！")
     } else {
       //warn: For easy to useing linkis,Admin skip login
 
-      var password : String = null
+      var password: String = null
       password = passwordEncrypt.asInstanceOf[String]
 
       if (GatewayConfiguration.LOGIN_ENCRYPT_ENABLE.getValue) {
@@ -181,7 +227,7 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
       }
       //      info("\npasswdOri :" + password)
 
-      if(GatewayConfiguration.ADMIN_USER.getValue.equals(userName.toString) && userName.toString.equals(password.toString)) {
+      if (GatewayConfiguration.ADMIN_USER.getValue.equals(userName.toString) && userName.toString.equals(password.toString)) {
         GatewaySSOUtils.setLoginUser(gatewayContext, userName.toString)
         "login successful(登录成功)！".data("userName", userName)
           .data("isAdmin", true)
@@ -193,9 +239,33 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
         } else {
           // standard login
           val lowerCaseUserName = userName.toString.toLowerCase
-          message = login(lowerCaseUserName, password.toString)
-          //fakeLogin(lowerCaseUserName, password.toString)
-          if(message.getStatus == 0) GatewaySSOUtils.setLoginUser(gatewayContext, lowerCaseUserName)
+          if (GatewayConfiguration.REDIRECT_SWITCH_ON.getValue) {
+            if (belongToOldUserFromDSS(userName.toString)) {
+              val dataBytes: Array[Byte] = password.toString.getBytes(StandardCharsets.UTF_8)
+
+              val decoded = Base64.decodeBase64(getPublicKeyFromOtherLinkis())
+              val pubKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(decoded))
+
+              var passwdEncrypt = java.util.Base64.getEncoder().encodeToString(RSAUtils.encrypt(dataBytes, pubKey))
+              logger.info("source passwdEncrypt: " + passwdEncrypt)
+              passwdEncrypt = URLEncoder.encode(passwdEncrypt, Configuration.BDP_ENCODING.getValue)
+              logger.info("Url encode passwdEncrypt: " + passwdEncrypt)
+              val redirctUrl = GatewayConfiguration.REDIRECT_GATEWAY_URL.getValue + "api/rest_j/v1/user/relogin?userName=" + lowerCaseUserName + "&passwdEncrypt=" + passwdEncrypt
+              message.data("redirectLinkisUrl", redirctUrl)
+            } else {
+              message = login(lowerCaseUserName, password.toString)
+              //fakeLogin(lowerCaseUserName, password.toString)
+              if (message.getStatus == 0) {
+                GatewaySSOUtils.setLoginUser(gatewayContext, lowerCaseUserName)
+              }
+            }
+          } else {
+            message = login(lowerCaseUserName, password.toString)
+            //fakeLogin(lowerCaseUserName, password.toString)
+            if (message.getStatus == 0) {
+              GatewaySSOUtils.setLoginUser(gatewayContext, lowerCaseUserName)
+            }
+          }
         }
         if (message.getData.containsKey("errmsg")) {
           message.setMessage(message.getMessage + LINE_DELIMITER + message.getData.get("errmsg").toString)
@@ -204,6 +274,54 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
       }
     }
   }
+
+  private def belongToOldUserFromDSS(userName: String): Boolean = {
+    if (configCache.get("userList").contains(userName)) {
+        logger.info("Belong to new dss user:" + userName)
+        false
+      } else {
+        logger.info("Belong to old dss user:" + userName)
+        true
+      }
+
+  }
+
+
+  private def getPublicKeyFromOtherLinkis(): String = {
+    val url = GatewayConfiguration.REDIRECT_GATEWAY_URL.getValue + "/api/rest_j/v1/user/publicKey";
+    val httpGet = new HttpGet(url)
+    httpGet.addHeader("Accept", "application/json")
+
+    val response = httpClient.execute(httpGet)
+    val resp = parse(EntityUtils.toString(response.getEntity()))
+    logger.info("Get publickey resp is " + resp + ";url is " + url)
+
+    val publicKey = (resp \ "data" \ "publicKey").asInstanceOf[JString].values
+
+    logger.info("Get publickey  is " + publicKey)
+    publicKey
+  }
+
+//  private def getWorkspaceIdFromDSS(userName: String): util.List[Integer] = {
+//    val sender: Sender = Sender.getSender(GatewayConfiguration.DSS_QUERY_WORKSPACE_SERVICE_NAME.getValue)
+//    val requestUserWorkspace: RequestUserWorkspace = new RequestUserWorkspace(userName)
+//    var resp: Any = null
+//    var workspaceId: util.List[Integer] = null
+//    Utils.tryCatch {
+//      resp = sender.ask(requestUserWorkspace)
+//    } {
+//      case e: Exception =>
+//        error(s"Call dss workspace rpc failed, ${e.getMessage}", e)
+//        throw new GatewayErrorException(40010, s"向DSS工程服务请求工作空间ID失败, ${e.getMessage}")
+//    }
+//    resp match {
+//      case s: ResponseUserWorkspace => workspaceId = s.getUserWorkspaceIds
+//      case _ =>
+//        throw new GatewayErrorException(40012, s"向DSS工程服务请求工作空间ID返回值失败,")
+//    }
+//    logger.info("Get userWorkspaceIds  is " + workspaceId + ",and user is " + userName)
+//    workspaceId
+//  }
 
   protected def login(userName: String, password: String): Message
 
@@ -270,10 +388,11 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
   }
 
   /**
-    * userControl register(用户控制模块登录)
-    * @param gatewayContext
-    * @return
-    */
+   * userControl register(用户控制模块登录)
+   *
+   * @param gatewayContext
+   * @return
+   */
   private def userControlRegister(gatewayContext: GatewayContext): Message = {
     val message = Message.ok()
     val gson = new Gson

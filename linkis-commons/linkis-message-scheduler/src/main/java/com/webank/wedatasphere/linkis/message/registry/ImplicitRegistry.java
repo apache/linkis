@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.message.registry;
 
-/**
- * @date 2020/7/28
- */
+
 public interface ImplicitRegistry {
 
     void register(Object implicitObject);

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.webank.wedatasphere.linkis.ujes.jdbc
 
 import java.sql.{Connection, DatabaseMetaData, ResultSet, RowIdLifetime}
@@ -25,6 +24,8 @@ import com.webank.wedatasphere.linkis.ujes.jdbc.utils.JDBCUtils
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions._
+
+
 
 class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends DatabaseMetaData {
   override def allProceduresAreCallable(): Boolean = false

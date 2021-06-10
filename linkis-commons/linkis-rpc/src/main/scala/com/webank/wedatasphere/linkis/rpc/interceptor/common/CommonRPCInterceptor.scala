@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.rpc.interceptor.common
 import com.webank.wedatasphere.linkis.rpc.interceptor.{RPCInterceptor, RPCInterceptorChain, RPCInterceptorExchange}
 import org.springframework.stereotype.Component
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 @Component
 class CommonRPCInterceptor extends RPCInterceptor {
   override val order: Int = Int.MaxValue

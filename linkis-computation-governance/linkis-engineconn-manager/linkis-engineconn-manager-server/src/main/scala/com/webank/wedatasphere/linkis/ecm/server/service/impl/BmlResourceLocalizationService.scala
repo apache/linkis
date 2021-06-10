@@ -88,7 +88,7 @@ class BmlResourceLocalizationService extends ResourceLocalizationService {
     val fsPath = new FsPath(schema + noSchemaPath)
     if (!fs.exists(fsPath)) {
       FileSystemUtils.mkdirs(fs, fsPath, Utils.getJvmUser)
-      fs.setPermission(fsPath, "rwxrwx---")
+      fs.setPermission(fsPath, "rwxrwxrwx")
     }
     noSchemaPath
   }

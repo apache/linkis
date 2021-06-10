@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.cs.client.http;
 
+import com.webank.wedatasphere.linkis.common.conf.Configuration;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.cs.client.AbstractContextClient;
 import com.webank.wedatasphere.linkis.cs.client.Context;
@@ -62,7 +63,7 @@ public class HttpContextClient extends AbstractContextClient {
 
     private DWSHttpClient dwsHttpClient;
     private ContextClientConfig contextClientConfig;
-    private final String linkis_version = ContextClientConf.LINKIS_WEB_VERSION().getValue();
+    private final String linkis_version = Configuration.LINKIS_WEB_VERSION().getValue();
 
     private final String name = "HttpContextClient";
 
@@ -260,7 +261,7 @@ public class HttpContextClient extends AbstractContextClient {
             int status = contextSetKeyValueResult.getStatus();
             if (status != 0){
                 String errMsg = contextSetKeyValueResult.getMessage();
-                LOGGER.error("调用客户端去更新contextId {} 失败, 返回的错误信息是 {} ", contextIdStr, errMsg);
+                LOGGER.error("Calling client to update ContextId {} failed with error message {} returned (调用客户端去更新contextId {} 失败, 返回的错误信息是 {}) ", contextIdStr, errMsg, contextIdStr, errMsg);
             }
         }else if (result != null){
             LOGGER.error("result is not a correct type, result type is {}", result.getClass().getSimpleName());
@@ -291,7 +292,7 @@ public class HttpContextClient extends AbstractContextClient {
             int status = contextResetResult.getStatus();
             if (status != 0){
                 String errMsg = contextResetResult.getMessage();
-                LOGGER.error("调用客户端去reset contextId {}, contextKey {} 失败, 返回的错误信息是 {} ", contextIdStr, contextKeyStr,errMsg);
+                LOGGER.error("ContextKey {} fails to reset the ContextId {} with error message {} (调用客户端去reset contextId {}, contextKey {} 失败, 返回的错误信息是 {} )", contextKeyStr,contextIdStr,errMsg,contextIdStr, contextKeyStr,errMsg);
                 throw new ErrorException(80015, "reset contextID failed");
             }
         }else if (result != null){
@@ -321,7 +322,7 @@ public class HttpContextClient extends AbstractContextClient {
             int status = contextResetResult.getStatus();
             if (status != 0){
                 String errMsg = contextResetResult.getMessage();
-                LOGGER.error("调用客户端去reset contextId {} 失败, 返回的错误信息是 {} ", contextIdStr,errMsg);
+                LOGGER.error("The call to the client to reset ContextId {} failed with error message {} returned(调用客户端去reset contextId {} 失败, 返回的错误信息是 {} )", contextIdStr,errMsg, contextIdStr,errMsg);
                 throw new ErrorException(80015, "reset contextID failed");
             }
         }else if (result != null){

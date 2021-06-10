@@ -30,9 +30,7 @@ import org.apache.http.HttpResponse
 import scala.collection.JavaConversions._
 import scala.concurrent.duration.TimeUnit
 
-/**
-  * Created by enjoyyin on 2019/5/21.
-  */
+
 abstract class AbstractDiscovery extends Discovery with Closeable with Logging {
 
   private var serverUrl: String = _

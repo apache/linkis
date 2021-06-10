@@ -18,7 +18,5 @@ package com.webank.wedatasphere.linkis.scheduler.executer
 
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorState.ExecutorState
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 case class ExecutorInfo(id: Long, state: ExecutorState)

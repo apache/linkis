@@ -23,10 +23,7 @@ import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkResourceCon
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.{DriverAndYarnResource, LoadInstanceResource, Resource, YarnResource}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.resource.AbstractEngineResourceFactory
 
-/**
-  *
-  * @date 2020/12/17 16:44
-  */
+
 class SparkEngineConnResourceFactory extends AbstractEngineResourceFactory with Logging {
 
   override protected def getRequestResource(properties: util.Map[String, String]): Resource = {

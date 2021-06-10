@@ -19,13 +19,13 @@ package com.webank.wedatasphere.linkis.scheduler.queue
 import java.io.Closeable
 import java.util.concurrent.Future
 
-import com.webank.wedatasphere.linkis.common.exception.{DWCRetryException, ErrorException}
+import com.webank.wedatasphere.linkis.common.exception.{ErrorException, LinkisRetryException}
 import com.webank.wedatasphere.linkis.common.listener.ListenerEventBus
 import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
 import com.webank.wedatasphere.linkis.scheduler.event._
-import com.webank.wedatasphere.linkis.scheduler.exception.DWCJobRetryException
+import com.webank.wedatasphere.linkis.scheduler.exception.LinkisJobRetryException
 import com.webank.wedatasphere.linkis.scheduler.executer._
 import com.webank.wedatasphere.linkis.scheduler.future.BDPFuture
 import com.webank.wedatasphere.linkis.scheduler.listener._
@@ -68,6 +68,8 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   }
 
   override def cancel() = kill()
+
+  override def getId(): String = super.getId
 
   override def pause(): Unit = if(executor != null) executor match {
     case s: SingleTaskOperateSupport => s.pause()
@@ -149,8 +151,10 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
 
   def setProgress(progress: Float) = this.progress = progress
 
+  @throws[Exception]
   def init(): Unit
 
+  @throws[Exception]
   protected def jobToExecuteRequest: ExecuteRequest
 
   def getName: String
@@ -177,19 +181,19 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
     //TODO Add event（加事件）
     case Scheduled =>
       jobListener.foreach(_.onJobScheduled(this))
-    // logListener.foreach(_.onLogUpdate(this, "job is scheduled."))
+     logListener.foreach(_.onLogUpdate(this, "job is scheduled."))
     //TODO Add event（加事件）
     case Running =>
       jobListener.foreach(_.onJobRunning(this))
-      //logListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo( "job is running.")))
+      logListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo( "job is running.")))
       //TODO job start event
     case WaitForRetry =>
       jobListener.foreach(_.onJobWaitForRetry(this))
     case _ =>
       jobDaemon.foreach(_.kill())
       jobListener.foreach(_.onJobCompleted(this))
-     // if(getJobInfo != null) logListener.foreach(_.onLogUpdate(this, getJobInfo.getMetric))
-      //logListener.foreach(_.onLogUpdate(this,  LogUtils.generateInfo( "job is completed.")))
+//      if(getJobInfo != null) logListener.foreach(_.onLogUpdate(this, getJobInfo.getMetric))
+      logListener.foreach(_.onLogUpdate(this,  LogUtils.generateInfo( "job is completed.")))
     //TODO job end event
   }
 
@@ -223,9 +227,9 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   protected def getMaxRetryNum: Int = 2
   protected def isJobShouldRetry(errorExecuteResponse: ErrorExecuteResponse): Boolean =
     isJobSupportRetry && errorExecuteResponse != null && (errorExecuteResponse.t match {
-      case t: DWCRetryException =>
+      case t: LinkisRetryException =>
         warn(s"Job $toString is desired to retry.", t)
-        t.getErrCode == DWCJobRetryException.JOB_RETRY_ERROR_CODE
+        t.getErrCode == LinkisJobRetryException.JOB_RETRY_ERROR_CODE
       case _ => false
     })
   final def isJobCanRetry: Boolean = if(!isJobSupportRetry || getState != WaitForRetry) false else synchronized {

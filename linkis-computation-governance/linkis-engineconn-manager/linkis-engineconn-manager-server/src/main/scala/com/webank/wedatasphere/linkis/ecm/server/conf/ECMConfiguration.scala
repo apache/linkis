@@ -48,11 +48,11 @@ object ECMConfiguration {
 
   val ENGINE_CONN_MANAGER_SPRING_NAME: String = GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue
 
-  val ECM_HEALTH_REPORT_PERIOD: Long = CommonVars("wds.linkis.ecm.health.report.period", 5).getValue
+  val ECM_HEALTH_REPORT_PERIOD: Long = CommonVars("wds.linkis.ecm.health.report.period", 30).getValue
 
   val ECM_HEALTH_REPORT_DELAY: Long = CommonVars("wds.linkis.ecm.health.report.delay", 10).getValue
 
-  val ENGINECONN_SPRING_NAME: String = CommonVars("wds.linkis.engineconn.spring.name", "linkis-cg-engineplugin").getValue
+  val ENGINECONN_PLUGIN_SPRING_NAME: String = GovernanceCommonConf.ENGINE_CONN_PLUGIN_SPRING_NAME.getValue
 
   val ECM_HOME_DIR: String = CommonVars("wds.linkis.ecm.home.dir", this.getClass.getResource("/").getPath).getValue
 
@@ -66,10 +66,13 @@ object ECMConfiguration {
 
   /**
     * engineconn创建时间，如果为0，则使用ms中默认的
+    * engineconn created time
     */
-  val ENGINECONN_CREATE_DURATION: Duration = Duration(CommonVars("wds.linkis.ecm.engineconn.create.duration", 0).getValue, TimeUnit.MILLISECONDS)
+  val ENGINECONN_CREATE_DURATION: Duration = Duration(CommonVars("wds.linkis.ecm.engineconn.create.duration", 1000*60*10).getValue, TimeUnit.MILLISECONDS)
 
   val WAIT_ENGINECONN_PID = CommonVars("wds.linkis.engineconn.wait.callback.pid", new TimeType("3s"))
+
+  val ENGINE_START_ERROR_MSG_MAX_LEN = CommonVars("wds.linkis.ecm.engine.start.error.msg.max.len", 500)
 
 
 }

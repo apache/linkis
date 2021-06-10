@@ -17,15 +17,17 @@
 package com.webank.wedatasphere.linkis.manager.engineplugin.common.creation
 
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.Executor
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineRunTypeLabel
-import org.reflections.Reflections
+import java.util
 
-import scala.collection.mutable.ArrayBuffer
-import scala.collection.JavaConverters._
+import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
+import com.webank.wedatasphere.linkis.engineconn.common.engineconn.{DefaultEngineConn, EngineConn}
+import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.EngineConnBuildFailedException
+import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineConnModeLabel
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineType.EngineType
+
+import scala.collection.JavaConversions.asScalaBuffer
 
 
 trait EngineConnFactory {
@@ -34,46 +36,43 @@ trait EngineConnFactory {
 
 }
 
+trait AbstractEngineConnFactory extends EngineConnFactory {
+
+  protected def getEngineConnType: EngineType
+
+  protected def createEngineConnSession(engineCreationContext: EngineCreationContext): Any
+
+  override def createEngineConn(engineCreationContext: EngineCreationContext): EngineConn = {
+    val engineConn = new DefaultEngineConn(engineCreationContext)
+    val engineConnSession = createEngineConnSession(engineCreationContext)
+    engineConn.setEngineConnType(getEngineConnType.toString)
+    engineConn.setEngineConnSession(engineConnSession)
+    engineConn
+  }
+}
+
 /**
   * For only one kind of executor, like hive, python ...
   */
-trait SingleExecutorEngineConnFactory extends EngineConnFactory {
+trait SingleExecutorEngineConnFactory extends AbstractEngineConnFactory with ExecutorFactory
 
-  def createExecutor(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Executor
-
-  def getDefaultEngineRunTypeLabel(): EngineRunTypeLabel
-}
+trait SingleLabelExecutorEngineConnFactory extends SingleExecutorEngineConnFactory with LabelExecutorFactory
 
 /**
   * For many kinds of executor, such as spark with spark-sql and spark-shell and pyspark
   */
-trait MultiExecutorEngineConnFactory extends EngineConnFactory with Logging {
+trait MultiExecutorEngineConnFactory extends AbstractEngineConnFactory with Logging {
 
-  def getExecutorFactories: Array[ExecutorFactory] = {
-    val executorFactories = new ArrayBuffer[ExecutorFactory]
-    Utils.tryCatch {
-      val reflections = new Reflections("com.webank.wedatasphere.linkis", classOf[ExecutorFactory])
-      val allSubClass = reflections.getSubTypesOf(classOf[ExecutorFactory])
-      allSubClass.asScala.foreach(l => {
-        executorFactories += l.newInstance
-      })
-    } {
-      t: Throwable =>
-        error(t.getMessage)
-    }
-    executorFactories.toArray
-  }
 
-  def getDefaultExecutorFactory: ExecutorFactory = {
-    var defaultExecutorFactory: ExecutorFactory = null
-    getExecutorFactories.foreach(f => {
-      if (null == defaultExecutorFactory) {
-        defaultExecutorFactory = f
-      } else if (f.getOrder < defaultExecutorFactory.getOrder) {
-          defaultExecutorFactory = f
-        }
-    })
-    defaultExecutorFactory
-  }
+  def getExecutorFactories: Array[ExecutorFactory]
+
+  def getDefaultExecutorFactory: ExecutorFactory =
+    getExecutorFactories.find(_.getClass == getDefaultExecutorFactoryClass)
+      .getOrElse(throw new EngineConnBuildFailedException(20000, "Cannot find default ExecutorFactory."))
+
+  protected def getDefaultExecutorFactoryClass: Class[_ <: ExecutorFactory]
+
+  protected def getEngineConnModeLabel(labels: util.List[Label[_]]): EngineConnModeLabel =
+    labels.find(_.isInstanceOf[EngineConnModeLabel]).map(_.asInstanceOf[EngineConnModeLabel]).orNull
 
 }

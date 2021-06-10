@@ -35,10 +35,7 @@ import org.springframework.web.context.request.{RequestContextHolder, ServletReq
 import scala.concurrent.duration.Duration
 import scala.runtime.BoxedUnit
 
-/**
- * @date 2020/8/3
- *
- */
+
 @Component
 @Path("/rpc")
 @Produces(Array(MediaType.APPLICATION_JSON))
@@ -92,8 +89,10 @@ class MessageRPCReceiveRestful extends RPCReceiveRestful {
       RPCProduct.getRPCProduct.toMessage(obj)
   }
 
-  private implicit def getReq: HttpServletRequest = {
+  private implicit def getReq: HttpServletRequest = if (null != RequestContextHolder.getRequestAttributes ) {
     RequestContextHolder.getRequestAttributes.asInstanceOf[ServletRequestAttributes].getRequest
+  }else {
+    null
   }
 
   @Path("receive")

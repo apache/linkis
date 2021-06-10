@@ -19,7 +19,6 @@ package com.webank.wedatasphere.linkis.entrance.exception;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 
 /**
- * created by enjoyyin on 2018/10/11
  * Description: When the entity submits a request for a database query to the query module, the sender's send and ask operations are abnormal, and the exception is thrown.
  * Description: 当entrance 向 query 模块提交数据库查询的请求，sender的send和ask操作出现异常，就抛出该异常
  */

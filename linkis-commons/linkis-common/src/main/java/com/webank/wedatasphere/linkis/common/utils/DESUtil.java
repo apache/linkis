@@ -28,6 +28,7 @@ import java.security.SecureRandom;
 
 public class DESUtil {
     private final static String DES = "DES";
+    private final static String XBYTE = "X";
 
     /**
      * Description Encryption based on key values(Description 根据键值进行加密)
@@ -40,7 +41,7 @@ public class DESUtil {
         if(StringUtils.isNotBlank(key) && key.length() < 8){
             int i = key.length();
             while((8-i) > 0){
-                key += "X";
+                key += XBYTE;
                 i++;
             }
         }
@@ -63,7 +64,7 @@ public class DESUtil {
         if(StringUtils.isNotBlank(key) && key.length() < 8){
             int i = key.length();
             while((8-i) > 0){
-                key += "X";
+                key += XBYTE;
                 i++;
             }
         }

@@ -20,9 +20,11 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
 import com.webank.wedatasphere.linkis.engineconn.common.hook.EngineConnHook
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationExecutorManager
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
 import com.webank.wedatasphere.linkis.engineplugin.hive.executor.HiveEngineConnExecutor
+import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.{CodeLanguageLabel, RunType}
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions._
@@ -45,13 +47,17 @@ class HiveAddJarsEngineHook extends EngineConnHook with Logging {
         jars = value
       }
     }
+    val codeLanguageLabel = new CodeLanguageLabel
+    codeLanguageLabel.setCodeType(RunType.HIVE.toString)
+    val labels = Array[Label[_]](codeLanguageLabel)
+
     if (StringUtils.isNotBlank(jars)) {
       jars.split(",") foreach {
         jar =>
           try {
             val sql = addSql + jar
             logger.info("begin to run hive sql {}", sql)
-            ExecutorManager.getInstance().getDefaultExecutor match {
+            ComputationExecutorManager.getInstance.getExecutorByLabels(labels) match {
               case executor: HiveEngineConnExecutor =>
                 executor.executeLine(new EngineExecutionContext(executor), sql)
               case _ =>

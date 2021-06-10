@@ -1,0 +1,62 @@
+#!/bin/bash
+#
+# description:  gateway start cmd
+#
+# Modified for Linkis 1.0.0
+
+# get log directory
+
+source $LINKIS_CONF_DIR/linkis-env.sh
+SERVER_SUFFIX="linkis-spring-cloud-services/linkis-mg-gateway"
+
+#export DEBUG_PORT=
+
+if [ "$LINKIS_LOG_DIR" = "" ]; then
+  export LINKIS_LOG_DIR="$LINKIS_HOME/logs"
+fi
+if [ ! -w "$LINKIS_LOG_DIR" ] ; then
+  mkdir -p "$LINKIS_LOG_DIR"
+fi
+
+if test -z "$SERVER_HEAP_SIZE"
+then
+  export SERVER_HEAP_SIZE="512M"
+fi
+
+if [ "$DEBUG_PORT" ];
+then
+   export DEBUG_CMD="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=$DEBUG_PORT"
+fi
+
+if test -z "$SERVER_JAVA_OPTS"
+then
+  export SERVER_JAVA_OPTS=" -DserviceName=$SERVER_NAME -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$LINKIS_LOG_DIR/${SERVER_NAME}-gc.log $DEBUG_CMD"
+fi
+
+
+export SERVER_CLASS=com.webank.wedatasphere.linkis.gateway.springcloud.LinkisGatewayApplication
+
+## conf dir
+export SERVER_CONF_PATH=$LINKIS_CONF_DIR
+
+## server lib
+export SERVER_LIB=$LINKIS_HOME/lib/$SERVER_SUFFIX
+if [ ! -r "$SERVER_LIB" ] ; then
+    echo "server lib not exists $SERVER_LIB"
+    exit 1
+fi
+
+## set class path
+export SERVER_CLASS_PATH=$SERVER_CONF_PATH:$SERVER_LIB/*
+
+nohup java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS 2>&1 >  $LINKIS_LOG_DIR/${SERVER_NAME}.out &
+
+pid=$!
+sleep 2
+if [[ -z "${pid}" ]]; then
+    echo "server $SERVER_NAME start failed!"
+    exit 1
+else
+    echo "server $SERVER_NAME start succeeded!"
+    echo $pid > $SERVER_PID
+fi

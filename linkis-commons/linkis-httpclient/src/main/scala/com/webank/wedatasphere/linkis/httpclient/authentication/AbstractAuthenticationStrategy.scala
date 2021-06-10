@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.httpclient.request.{Action, UserAction}
 import org.apache.commons.lang.StringUtils
 import org.apache.http.HttpResponse
 
-/**
-  * Created by enjoyyin on 2019/5/22.
-  */
+
 abstract class AbstractAuthenticationStrategy extends AuthenticationStrategy {
   private var client: Client = _
   private val userNameToAuthentications = new ConcurrentHashMap[String, Authentication]()
@@ -35,13 +33,17 @@ abstract class AbstractAuthenticationStrategy extends AuthenticationStrategy {
 
   protected def getKeyByUserAndURL(user: String, serverUrl: String): String = user + "@" + serverUrl
 
-  protected def getKey(requestAction: Action, serverUrl: String): String = requestAction match {
+  protected def getUser(requestAction: Action): String = requestAction match {
     case _: AuthenticationAction => null
-    case authAction: UserAction =>
-      getKeyByUserAndURL(authAction.getUser, serverUrl)
-    case _ if StringUtils.isNotBlank(clientConfig.getAuthTokenKey) =>
-      getKeyByUserAndURL(clientConfig.getAuthTokenKey, serverUrl)
+    case authAction: UserAction => authAction.getUser
+    case _ if StringUtils.isNotBlank(clientConfig.getAuthTokenKey) => clientConfig.getAuthTokenKey
     case _ => null
+  }
+
+  protected def getKey(requestAction: Action, serverUrl: String): String = {
+    val user = getUser(requestAction)
+    if(user == null) return null
+    getKeyByUserAndURL(user, serverUrl)
   }
 
   def setClientConfig(clientConfig: ClientConfig): Unit = this.clientConfig = clientConfig

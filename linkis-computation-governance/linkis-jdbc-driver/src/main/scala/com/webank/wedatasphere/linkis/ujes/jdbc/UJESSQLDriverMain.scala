@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.webank.wedatasphere.linkis.ujes.jdbc
 
 import java.sql.{Connection, Driver, DriverManager, DriverPropertyInfo, SQLFeatureNotSupportedException}
@@ -25,6 +24,7 @@ import com.webank.wedatasphere.linkis.ujes.jdbc.UJESSQLDriverMain._
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions
+
 
 class UJESSQLDriverMain extends Driver with Logging{
 

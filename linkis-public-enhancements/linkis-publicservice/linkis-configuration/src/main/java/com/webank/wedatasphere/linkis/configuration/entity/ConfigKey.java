@@ -17,20 +17,30 @@
 package com.webank.wedatasphere.linkis.configuration.entity;
 
 public class ConfigKey {
+
     private Long id;
+
     private String key;
+
     private String description;
+
     private String name;
+
     private String engineType;
+
     private String defaultValue;
+
     private String validateType;
+
     private String validateRange;
+
     private Boolean isAdvanced;
+
     private Boolean isHidden;
+
     private Integer level;
+
     private String treeName;
-
-
 
     public String getEngineType() {
         return engineType;

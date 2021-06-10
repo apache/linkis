@@ -29,10 +29,14 @@ object AccessibleExecutorConfiguration {
 
   val ENGINECONN_LOG_NUM_SEND_ONCE = CommonVars("wds.linkis.engineconn.log.send.once", 100)
 
-  val ENGINECONN_LOG_SEND_TIME_INTERVAL = CommonVars("wds.linkis.engineconn.log.send.time.interval", 3)
+  val ENGINECONN_LOG_SEND_TIME_INTERVAL = CommonVars("wds.linkis.engineconn.log.send.time.interval", 30)
+
+  val ENGINECONN_LOG_SEND_SIZE = CommonVars[Int]("wds.linkis.engineconn.log.send.cache.size", 5)
 
 
   val ENGINECONN_MAX_FREE_TIME = CommonVars("wds.linkis.engineconn.max.free.time", new TimeType("1h"))
+
+  val ENGINECONN_LOCK_CHECK_INTERVAL = CommonVars("wds.linkis.engineconn.lock.free.interval", new TimeType("3m"))
 
 
   val ENGINECONN_SUPPORT_PARALLELISM = CommonVars("wds.linkis.engineconn.support.parallelism", false)

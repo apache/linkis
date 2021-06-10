@@ -21,6 +21,7 @@ import com.webank.wedatasphere.linkis.message.annotation.NotImplicit;
 import com.webank.wedatasphere.linkis.message.annotation.Order;
 import com.webank.wedatasphere.linkis.message.annotation.Receiver;
 import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext;
+import org.springframework.aop.support.AopUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -29,15 +30,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @date 2020/7/15
- */
+
 public class DefaultServiceParser implements ServiceParser {
 
     @Override
     public Map<String, List<ServiceMethod>> parse(Object service) {
         // TODO: 2020/7/15 more analysis
-        Method[] methods = service.getClass().getMethods();
+//        Method[] methods = service.getClass().getMethods();
+        Method[] methods = AopUtils.getTargetClass(service).getMethods();
         return Arrays.stream(methods)
                 .filter(this::methodFilterPredicate)
                 .map(m -> getServiceMethod(m, service))

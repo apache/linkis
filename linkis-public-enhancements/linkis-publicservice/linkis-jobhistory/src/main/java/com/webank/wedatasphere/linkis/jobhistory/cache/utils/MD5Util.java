@@ -23,6 +23,9 @@ import java.security.MessageDigest;
 
 public class MD5Util {
 
+    private static final int SIXTY_FOUR = 64;
+    private static final int SIXTEEN = 16;
+
     /**
      * MD5加密
      *
@@ -36,7 +39,7 @@ public class MD5Util {
         try {
             // 创建加密对象
             MessageDigest md = MessageDigest.getInstance("md5");
-            if (bit == 64) {
+            if (bit == SIXTY_FOUR) {
                 BASE64Encoder bw = new BASE64Encoder();
                 String bsB64 = bw.encode(md.digest(src.getBytes(StandardCharsets.UTF_8)));
                 md5 = bsB64;
@@ -55,7 +58,7 @@ public class MD5Util {
                     sb.append(Integer.toHexString(i));
                 }
                 md5 = sb.toString();
-                if (bit == 16) {
+                if (bit == SIXTEEN) {
                     //截取32位md5为16位
                     String md16 = md5.substring(8, 24);
                     md5 = md16;

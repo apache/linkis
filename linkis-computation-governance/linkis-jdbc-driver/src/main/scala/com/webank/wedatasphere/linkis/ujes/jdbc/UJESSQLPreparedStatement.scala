@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.webank.wedatasphere.linkis.ujes.jdbc
 
 import java.io.{InputStream, Reader}
@@ -21,6 +20,8 @@ import java.net.URL
 import java.sql.{Blob, Clob, Date, NClob, ParameterMetaData, PreparedStatement, Ref, ResultSetMetaData, RowId, SQLXML, Time, Timestamp}
 import java.util
 import java.util.Calendar
+
+
 
 class UJESSQLPreparedStatement(ujesSQLConnection: UJESSQLConnection, sql: String) extends UJESSQLStatement(ujesSQLConnection) with PreparedStatement {
 

@@ -16,9 +16,6 @@
 
 package com.webank.wedatasphere.linkis.variable.entity;
 
-/**
- * Created by cooperyang on 2018/10/18.
- */
 
 public class VarKeyUser {
     private Long id;

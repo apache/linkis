@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.rpc
 
 import com.webank.wedatasphere.linkis.protocol.BroadcastProtocol
 
-/**
-  * Created by enjoyyin on 2018/9/11.
-  */
+
 trait BroadcastListener {
 
   def onBroadcastEvent(protocol: BroadcastProtocol, sender: Sender): Unit

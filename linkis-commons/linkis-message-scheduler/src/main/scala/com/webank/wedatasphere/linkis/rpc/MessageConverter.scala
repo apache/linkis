@@ -29,10 +29,7 @@ import com.webank.wedatasphere.linkis.server.{BDPJettyServerHelper, Message}
 
 import scala.collection.JavaConversions._
 
-/**
- * @date 2020/8/6
- *
- */
+
 class MessageConverter {
 
   private val protocolNameCache = new util.HashMap[String, String]
@@ -57,7 +54,10 @@ class MessageConverter {
   def convert(message: Message): util.Map[String, Object] = {
     val methodUrl = message.getMethod
     val protocolStr = protocolNameCache.get(methodUrl)
-    if (protocolStr == null) throw new MessageErrorException(10000, s"no suitable protocol was found for method:${methodUrl}")
+    if (protocolStr == null) throw new MessageErrorException(MessageErrorConstants.MESSAGE_ERROR, s"no " +
+      s"suitable " +
+      s"protocol was found" +
+      s" for method:${methodUrl}")
     val returnType = new util.HashMap[String, Object]()
     val data = message.getData
     returnType += REQUEST_KEY -> data.remove(REQUEST_KEY)

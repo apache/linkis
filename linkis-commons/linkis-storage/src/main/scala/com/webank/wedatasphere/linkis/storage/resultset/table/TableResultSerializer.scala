@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.storage.domain.Dolphin
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  * Created by johnnwang on 10/16/18.
-  */
+
 class TableResultSerializer  extends ResultSerializer{
 
 

@@ -37,6 +37,8 @@ public class CSHighAvailableUtils {
     private final static int HAID_PARTS_NUM = 2;
     private final static Gson gson = new Gson();
 
+    private static final int TWO = 2;
+
     public static boolean checkHAIDBasicFormat(String haid) {
         if (StringUtils.isBlank(haid)) {
             return false;
@@ -45,7 +47,7 @@ public class CSHighAvailableUtils {
         if (null != arr && arr.length == HAID_PARTS_NUM) {
             int insLen = 0;
             String [] lenArr = arr[0].split(HAID_INS_LEN_DELEMETER);
-            if (null == lenArr || lenArr.length < 2) {
+            if (null == lenArr || lenArr.length < TWO) {
                 return false;
             }
             try {

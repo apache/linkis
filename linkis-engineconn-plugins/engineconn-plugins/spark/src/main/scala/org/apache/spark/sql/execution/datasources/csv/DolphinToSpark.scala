@@ -59,7 +59,6 @@ object DolphinToSpark {
 
   def toSparkType(dataType:wds.DataType):DataType = dataType match {
     case wds.NullType => NullType
-    //case wds.StringType | wds.CharType | wds.VarcharType | wds.StructType | wds.ListType | wds.ArrayType | wds.MapType => StringType
     case wds.BooleanType =>  BooleanType
     case wds.ShortIntType => ShortType
     case wds.IntType => IntegerType
@@ -69,7 +68,6 @@ object DolphinToSpark {
     case wds.DoubleType  => DoubleType
     case wds.DecimalType => DecimalType(bigDecimalPrecision,bigDecimalScale)
     case wds.DateType => DateType
-    //case wds.TimestampType => TimestampType
     case wds.BinaryType => BinaryType
     case _ => StringType
   }

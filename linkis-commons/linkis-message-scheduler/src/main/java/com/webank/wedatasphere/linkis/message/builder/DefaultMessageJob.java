@@ -32,9 +32,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.LockSupport;
 
-/**
- * @date 2020/7/17
- */
+
 public class DefaultMessageJob extends Job implements MessageJob {
 
     private RequestProtocol requestProtocol;

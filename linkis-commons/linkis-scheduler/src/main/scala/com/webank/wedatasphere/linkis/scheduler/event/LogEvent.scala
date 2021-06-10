@@ -25,10 +25,7 @@ package com.webank.wedatasphere.linkis.scheduler.event
 import com.webank.wedatasphere.linkis.common.listener.Event
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
 
-/**
-  * this is log event
-  * @param source
-  */
+
 class LogEvent(source:Job,
                t:Int) extends Event{
   def getT:Int = t

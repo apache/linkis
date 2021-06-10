@@ -18,14 +18,19 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
+
 <mapper namespace="com.webank.wedatasphere.linkis.manager.dao.NodeManagerMapper">
 
     <update id="updateNodeRelation">
-        update linkis_manager_engine_em set engine_instance = #{instance} where engine_instance = #{tickedId}
+        update linkis_cg_manager_engine_em set engine_instance = #{instance} where engine_instance = #{tickedId}
     </update>
 
+
     <update id="updateNodeLabelRelation">
-        update linkis_manager_label_service_instance set service_instance = #{instance} where service_instance = #{tickedId}
+        update linkis_cg_manager_label_service_instance set service_instance = #{instance} where service_instance = #{tickedId}
     </update>
+
+
+
 
 </mapper>

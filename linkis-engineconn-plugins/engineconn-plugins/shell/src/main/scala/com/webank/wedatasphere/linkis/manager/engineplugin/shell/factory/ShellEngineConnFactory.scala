@@ -17,33 +17,22 @@
 package com.webank.wedatasphere.linkis.manager.engineplugin.shell.factory
 
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.{DefaultEngineConn, EngineConn}
-import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.Executor
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.SingleExecutorEngineConnFactory
+import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationSingleExecutorEngineConnFactory
+import com.webank.wedatasphere.linkis.engineconn.executor.entity.LabelExecutor
 import com.webank.wedatasphere.linkis.manager.engineplugin.shell.executor.ShellEngineConnExecutor
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineRunTypeLabel, EngineType, RunType}
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineType.EngineType
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType.RunType
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineType, RunType}
 
-class ShellEngineConnFactory extends SingleExecutorEngineConnFactory {
+class ShellEngineConnFactory extends ComputationSingleExecutorEngineConnFactory {
 
+  override protected def newExecutor(id: Int,
+                                     engineCreationContext: EngineCreationContext,
+                                     engineConn: EngineConn): LabelExecutor =
+    new ShellEngineConnExecutor(id)
 
-  override def createExecutor(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Executor = {
-    val id = ExecutorManager.getInstance().generateId()
-    val executor = new ShellEngineConnExecutor(id)
-    val runTypeLabel = getDefaultEngineRunTypeLabel()
-    executor.getExecutorLabels().add(runTypeLabel)
-    executor
-  }
+  override protected def getEngineConnType: EngineType = EngineType.SHELL
 
-  override def createEngineConn(engineCreationContext: EngineCreationContext): EngineConn = {
-    val engineConn = new DefaultEngineConn(engineCreationContext)
-    engineConn.setEngineType(EngineType.SHELL.toString)
-    engineConn
-  }
-
-  override def getDefaultEngineRunTypeLabel(): EngineRunTypeLabel = {
-    val runTypeLabel = new EngineRunTypeLabel
-    runTypeLabel.setRunType(RunType.SHELL.toString)
-    runTypeLabel
-  }
+  override protected def getRunType: RunType = RunType.SHELL
 }

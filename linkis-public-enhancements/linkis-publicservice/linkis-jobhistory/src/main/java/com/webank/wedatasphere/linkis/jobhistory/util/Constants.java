@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.jobhistory.util;
 
-/**
- * Created by johnnwang on 2018/10/18.
- */
+
 public class Constants {
     public static final String APPLICATION_NAME = "linkis-ps-publicservice";
 }

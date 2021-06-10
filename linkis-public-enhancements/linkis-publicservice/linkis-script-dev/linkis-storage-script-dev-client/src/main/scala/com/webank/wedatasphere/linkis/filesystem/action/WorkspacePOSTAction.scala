@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.filesystem.action
 
 import com.webank.wedatasphere.linkis.httpclient.request.{GetAction, POSTAction}
 
-/**
-  * Created by patinousward
-  */
+
 abstract class WorkspacePOSTAction extends POSTAction
 
 abstract class WorkspaceGETAction extends GetAction

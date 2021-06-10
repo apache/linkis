@@ -18,7 +18,5 @@ package com.webank.wedatasphere.linkis.server.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-/**
-  * Created by enjoyyin on 2019/1/9.
-  */
+
 class IllegalUserTicketException(message: String) extends ErrorException(11003, message)

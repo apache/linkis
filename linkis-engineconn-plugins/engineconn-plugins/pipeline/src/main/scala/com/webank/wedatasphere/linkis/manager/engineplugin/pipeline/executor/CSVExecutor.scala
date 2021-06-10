@@ -17,6 +17,7 @@
 package com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.executor
 
 import java.io.OutputStream
+
 import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfiguration.{PIPELINE_FIELD_SPLIT_STR, PIPELINE_OUTPUT_CHARSET_STR, PIPELINE_OUTPUT_ISOVERWRITE_SWITCH}
@@ -39,14 +40,14 @@ class CSVExecutor extends PipeLineExecutor {
       throw new PipeLineErrorException(70001, "Not a result set file（不是结果集文件）")
     }
     val sourceFsPath = new FsPath(sourcePath)
-    val destFsPath = new FsPath(s"$destPath.$Kind")
+    val destFsPath = new FsPath(destPath)
     val sourceFs = FSFactory.getFs(sourceFsPath)
     sourceFs.init(null)
     val destFs = FSFactory.getFs(destFsPath)
     destFs.init(null)
     val fileSource = FileSource.create(sourceFsPath, sourceFs)
     if (!FileSource.isTableResultSet(fileSource)) {
-      throw new PipeLineErrorException(70002, "只有table类型的结果集才能转为csv")
+      throw new PipeLineErrorException(70002, "Only result sets of type TABLE can be converted to CSV(只有table类型的结果集才能转为csv)")
     }
     var nullValue = options.getOrDefault(PIPELINE_OUTPUT_SHUFFLE_NULL_TYPE, "NULL")
     if (BLANK.equalsIgnoreCase(nullValue)) nullValue = ""

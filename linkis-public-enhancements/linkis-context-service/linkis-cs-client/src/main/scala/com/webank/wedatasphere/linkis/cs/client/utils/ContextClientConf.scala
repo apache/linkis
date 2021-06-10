@@ -16,28 +16,19 @@ package com.webank.wedatasphere.linkis.cs.client.utils
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 
 object ContextClientConf {
-  val LINKIS_WEB_VERSION:CommonVars[String] = CommonVars[String]("wds.linkis.web.version", "v1")
+
 
 
   val CONTEXT_CLIENT_AUTH_KEY:CommonVars[String] = CommonVars[String]("wds.linkis.context.client.auth.key", "Token-Code")
 
   val CONTEXT_CLIENT_AUTH_VALUE:CommonVars[String] = CommonVars[String]("wds.linkis.context.client.auth.value", "BML-AUTH")
 
-
   val URL_PREFIX:CommonVars[String] = CommonVars[String]("wds.linkis.cs.url.prefix", "/api/rest_j/v1/contextservice", "cs服务的url前缀")
 
-  val CREATE_CONTEXT_URL:CommonVars[String] = CommonVars[String]("wds.linkis.cs.createcontext.url", "createContextID")
-
-  val SET_VALUE_BY_KEY_URL:CommonVars[String] = CommonVars[String]("wds.linkis.cs.setvaluebykey.url", "setValueByKey")
-
-  val SET_KEYVALUE_URL:CommonVars[String] = CommonVars[String]("wds.linkis.cs.setkeyvalue.url", "setValue")
-
-  val RESET_KEYVALUE_URL:CommonVars[String] = CommonVars[String]("wds.linkis.cs.resetkeyvalue.url", "resetValue")
-
-  val REMOVE_VALUE_URL:CommonVars[String] = CommonVars[String]("wds.linkis.cs.removeValue.url", "removeValue")
-
-  val RESET_CONTEXT_ID_URL:CommonVars[String] = CommonVars[String]("wds.linkis.cs.reset.contextid.url", "removeAllValue")
-
   val HEART_BEAT_ENABLED:CommonVars[String] = CommonVars[String]("wds.linkis.cs.heartbeat.enabled", "true")
+
+  val CS_CONNECTION_TIMEOUT:CommonVars[Int]  = CommonVars[Int]("wds.linkis.cs.connection.timeout", 3 * 60 * 1000)
+
+  val CS_READ_TIMEOUT:CommonVars[Int] = CommonVars[Int]("wds.linkis.cs.read.timeout", 3 * 60 * 1000)
 
 }

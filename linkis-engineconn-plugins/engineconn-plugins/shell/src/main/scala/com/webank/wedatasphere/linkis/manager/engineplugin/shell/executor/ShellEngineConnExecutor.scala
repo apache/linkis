@@ -57,7 +57,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
 
     if (engineExecutionContext != this.engineExecutionContext) {
       this.engineExecutionContext = engineExecutionContext
-      info("Python executor reset new engineExecutionContext!")
+      info("Shell executor reset new engineExecutionContext!")
     }
 
     var bufferedReader: BufferedReader = null
@@ -82,7 +82,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       if (StringUtils.isNotEmpty(errorLog) || exitCode != 0) {
         error(s"exitCode is $exitCode")
         error(errorLog)
-        engineExecutionContext.appendStdout("shell执行失败")
+        engineExecutionContext.appendStdout("failed to execute shell (shell执行失败)")
         engineExecutionContext.appendStdout(errorLog)
         ErrorExecuteResponse("run shell failed", ShellCodeErrorException())
       } else SuccessExecuteResponse()
@@ -91,7 +91,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
         error("Execute shell code failed, reason:", e)
         ErrorExecuteResponse("run shell failed", e)
       }
-      case t: Throwable => ErrorExecuteResponse("执行shell进程内部错误", t)
+      case t: Throwable => ErrorExecuteResponse("Internal error executing shell process(执行shell进程内部错误)", t)
     } finally {
 
       IOUtils.closeQuietly(bufferedReader)

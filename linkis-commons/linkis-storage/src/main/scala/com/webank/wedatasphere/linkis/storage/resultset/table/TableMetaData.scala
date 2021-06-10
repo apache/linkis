@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.common.io.MetaData
 import com.webank.wedatasphere.linkis.storage.domain.Column
 import com.webank.wedatasphere.linkis.storage.resultset.ResultMetaData
 
-/**
-  * Created by johnnwang on 10/16/18.
-  */
+
 class TableMetaData(val columns: Array[Column]) extends ResultMetaData{
 
   override def cloneMeta(): MetaData = {

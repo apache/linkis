@@ -20,25 +20,30 @@ import java.util
 import java.util.concurrent.ConcurrentHashMap
 
 import com.google.common.collect.Interners
+import com.webank.wedatasphere.linkis.DataWorkCloudApplication
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.ecm.core.engineconn.{EngineConn, YarnEngineConn}
 import com.webank.wedatasphere.linkis.ecm.core.launch.EngineConnLaunchRunner
 import com.webank.wedatasphere.linkis.ecm.core.listener.{ECMEvent, ECMEventListener}
-import com.webank.wedatasphere.linkis.ecm.server.ECMApplication
+import com.webank.wedatasphere.linkis.ecm.server.LinkisECMApplication
 import com.webank.wedatasphere.linkis.ecm.server.converter.ECMEngineConverter
 import com.webank.wedatasphere.linkis.ecm.server.listener._
 import com.webank.wedatasphere.linkis.ecm.server.service.EngineConnListService
 import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.{Resource, ResourceType}
+import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineStopRequest
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.{Component, Service}
 
 import scala.collection.JavaConversions._
-
 
 class DefaultEngineConnListService extends EngineConnListService with ECMEventListener with Logging {
   /**
    * key:tickedId,value :engineConn
    */
   private val engineConnMap = new ConcurrentHashMap[String, EngineConn]
+
+  private var engineConnKillService: DefaultEngineConnKillService = _
 
   val lock = Interners.newWeakInterner[String]
 
@@ -49,7 +54,7 @@ class DefaultEngineConnListService extends EngineConnListService with ECMEventLi
   override def getEngineConns: util.List[EngineConn] = engineConnMap.values().toList
 
   override def addEngineConn(engineConn: EngineConn): Unit = {
-    if (ECMApplication.isReady)
+    if (LinkisECMApplication.isReady)
       engineConnMap.put(engineConn.getTickedId, engineConn)
   }
 
@@ -85,6 +90,7 @@ class DefaultEngineConnListService extends EngineConnListService with ECMEventLi
     lock.intern(nodeId) synchronized {
       engineConnMap.get(nodeId) match {
         case e: EngineConn => updateFunction(e)
+        case _ =>
       }
     }
   }
@@ -102,6 +108,10 @@ class DefaultEngineConnListService extends EngineConnListService with ECMEventLi
 
   def updateEngineConnStatus(tickedId: String, updateStatus: NodeStatus): Unit = {
     updateEngineConn(x => x.setStatus(updateStatus), tickedId)
+    if (NodeStatus.isCompleted(updateStatus)) {
+      info(s" from engineConnMap to remove engineconn ticketId ${tickedId}")
+      killEngineConn(tickedId)
+    }
   }
 
   override def onEvent(event: ECMEvent): Unit = {
@@ -117,8 +127,23 @@ class DefaultEngineConnListService extends EngineConnListService with ECMEventLi
     }
   }
 
+  private def getEngineConnKillService(): DefaultEngineConnKillService = {
+    if(engineConnKillService == null){
+      val applicationContext = DataWorkCloudApplication.getApplicationContext
+      engineConnKillService = applicationContext.getBean(classOf[DefaultEngineConnKillService])
+    }
+    engineConnKillService
+  }
+
   private def shutdownEngineConns(event: ECMClosedEvent): Unit = {
-    engineConnMap.keys().foreach(killEngineConn)
+    info("start to kill all engines belonging the ecm")
+    engineConnMap.values().foreach(engineconn => {
+      info(s"start to kill engine, pid:${engineconn.getPid}")
+      val engineStopRequest = new EngineStopRequest()
+      engineStopRequest.setServiceInstance(engineconn.getServiceInstance)
+      getEngineConnKillService.dealEngineConnStop(engineStopRequest)
+    })
+    info("Done! success to kill all engines belonging the ecm")
   }
 
 }

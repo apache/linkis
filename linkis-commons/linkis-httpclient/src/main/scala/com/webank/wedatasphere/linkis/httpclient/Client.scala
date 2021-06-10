@@ -21,9 +21,7 @@ import java.io.Closeable
 import com.webank.wedatasphere.linkis.httpclient.request.Action
 import com.webank.wedatasphere.linkis.httpclient.response.Result
 
-/**
-  * Created by enjoyyin on 2019/5/20.
-  */
+
 trait Client extends Closeable {
 
   def execute(requestAction: Action): Result

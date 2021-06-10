@@ -51,21 +51,20 @@ object RMConfiguration {
   val RM_ENGINE_RELEASE_THRESHOLD = CommonVars("wds.linkis.rm.engine.release.threshold", 120000L)
 
   //configuration
-  val CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.rm.conf.application.name", "linkis-ps-publicservice")
 
   val ALERT_SUB_SYSTEM_ID = CommonVars("wds.linkis.rm.alert.system.id", "5136")
-  val ALERT_DEFAULT_UM = CommonVars("wds.linkis.rm.alert.default.um", "enjoyyin,johnnwang,shanhuang")
+  val ALERT_DEFAULT_UM = CommonVars("wds.linkis.rm.alert.default.um", "hadoop")
   val ALERT_IMS_URL = CommonVars("wds.linkis.rm.alert.ims.url", "127.0.0.1")
   val ALERT_DUPLICATION_INTERVAL = CommonVars("wds.linkis.rm.alert.duplication.interval", 1200L)
-  val ALERT_CONTACT_GROUP = CommonVars("wds.linkis.rm.alert.contact.group", "q01/cooperyang johnnwang,q02/shanhuang")
-  val ALERT_DEFAULT_CONTACT = CommonVars("wds.linkis.rm.alert.default.contact", "shanhuang")
+  val ALERT_CONTACT_GROUP = CommonVars("wds.linkis.rm.alert.contact.group", "q01/hadoop,q02/hadoop")
+  val ALERT_DEFAULT_CONTACT = CommonVars("wds.linkis.rm.alert.default.contact", "hadoop")
   val ALERT_ENABLED = CommonVars("wds.linkis.rm.alert.enabled", false)
 
   //publics service
-  val PUBLIC_SERVICE_APPLICATION_NAME = CommonVars("wds.linkis.rm.publicservice.name", "linkis-ps-publicservice")
   val HIVE_ENGINE_MAINTAIN_TIME_STR = CommonVars("wds.linkis.hive.maintain.time.key", "wds.linkis.hive.maintain.time")
 
   val DEFAULT_YARN_CLUSTER_NAME = CommonVars("wds.linkis.rm.default.yarn.cluster.name", "sit")
-
   val DEFAULT_YARN_TYPE = CommonVars("wds.linkis.rm.default.yarn.cluster.type", "Yarn")
+  val EXTERNAL_RETRY_NUM = CommonVars("wds.linkis.rm.external.retry.num", 3)
+
 }

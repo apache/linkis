@@ -29,9 +29,7 @@ import org.apache.commons.math3.util.Pair
 
 import scala.collection.JavaConversions._
 
-/**
- * 文件分片..按文件数进行
- */
+
 class FileSplit(var fsReader: FsReader[_ <: MetaData, _ <: Record], var `type`: String = "script/text") extends Closeable {
 
   var start: Int = 0

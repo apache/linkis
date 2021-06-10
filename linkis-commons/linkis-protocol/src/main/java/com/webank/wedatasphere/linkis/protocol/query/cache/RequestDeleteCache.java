@@ -2,7 +2,7 @@
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -18,27 +18,29 @@ package com.webank.wedatasphere.linkis.protocol.query.cache;
 
 import com.webank.wedatasphere.linkis.protocol.query.QueryProtocol;
 
+import java.util.List;
+
 public class RequestDeleteCache implements QueryProtocol {
 
-    private String executionCode;
-    private String engineType;
+    private String executionContent;
     private String user;
+    private List<String> labelsStr;
 
-    public RequestDeleteCache(String executionCode, String engineType, String user) {
-        this.executionCode = executionCode;
-        this.engineType = engineType;
+    public RequestDeleteCache(String executionContent, String user, List<String> labelsStr) {
+        this.executionContent = executionContent;
         this.user = user;
+        this.labelsStr = labelsStr;
     }
 
-    public String getExecutionCode() {
-        return executionCode;
-    }
-
-    public String getEngineType() {
-        return engineType;
+    public String getExecutionContent() {
+        return executionContent;
     }
 
     public String getUser() {
         return user;
+    }
+
+    public List<String> getLabelsStr() {
+        return labelsStr;
     }
 }

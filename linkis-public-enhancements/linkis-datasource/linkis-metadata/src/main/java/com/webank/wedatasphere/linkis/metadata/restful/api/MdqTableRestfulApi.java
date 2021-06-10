@@ -54,6 +54,8 @@ public class MdqTableRestfulApi {
 
     private static final Logger logger = LoggerFactory.getLogger(MdqTableRestfulApi.class);
 
+    private static final String ASC = "asc";
+
     @Autowired
     private MdqService mdqService;
     ObjectMapper mapper = new ObjectMapper();
@@ -100,12 +102,13 @@ public class MdqTableRestfulApi {
         List<MdqTablePartitionStatisticInfoVO> partitions = tableStatisticInfo.getPartitions();
         if (partitions != null && !partitions.isEmpty()) {
             //排序
-            if ("asc".equals(partitionSort))
+            if (ASC.equals(partitionSort)) {
                 partitions = partitions.stream().sorted(Comparator.comparing(MdqTablePartitionStatisticInfoVO::getName))
                         .collect(Collectors.toList());
-            else
+            } else {
                 partitions = partitions.stream().sorted(Comparator.comparing(MdqTablePartitionStatisticInfoVO::getName)
                         .reversed()).collect(Collectors.toList());
+            }
             if (pageNow <= 0 || pageSize <= 0) {
                 pageNow = 1;
                 pageSize = 1000;

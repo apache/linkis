@@ -24,13 +24,15 @@ import com.webank.wedatasphere.linkis.manager.common.entity.node.ScoreServiceIns
 import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel
 import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import com.webank.wedatasphere.linkis.manager.label.entity.Label.ValueRelation
-import com.webank.wedatasphere.linkis.manager.label.entity.{Feature, Label}
+import com.webank.wedatasphere.linkis.manager.label.entity.{Feature, Label, UserModifiable}
 import com.webank.wedatasphere.linkis.manager.label.score.NodeLabelScorer
 import com.webank.wedatasphere.linkis.manager.label.service.NodeLabelService
+import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils
 import com.webank.wedatasphere.linkis.manager.persistence.LabelManagerPersistence
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.util.CollectionUtils
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
@@ -95,7 +97,49 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
       }
     })
     if (needUpdate) {
-      this.labelManagerPersistence.addLabelToNode(instance, util.Arrays.asList())
+      val labelId = new util.ArrayList[Integer]()
+      labelId.add(dbLabel.getId)
+      this.labelManagerPersistence.addLabelToNode(instance, labelId)
+    }
+  }
+
+  override def updateLabelsToNode(instance: ServiceInstance, labels: util.List[Label[_]]): Unit = {
+    val newKeyList = labels.map(label => label.getLabelKey)
+    val nodeLabels = labelManagerPersistence.getLabelByServiceInstance(instance)
+    val oldKeyList = nodeLabels.map(label => label.getLabelKey)
+    val willBeDelete = oldKeyList.diff(newKeyList)
+    val willBeAdd = newKeyList.diff(oldKeyList)
+    val willBeUpdate = oldKeyList.diff(willBeDelete)
+    val modifiableKeyList = LabelUtils.listAllUserModifiableLabel()
+    if(!CollectionUtils.isEmpty(willBeDelete)){
+      nodeLabels.foreach(nodeLabel =>  {
+        if(modifiableKeyList.contains(nodeLabel.getLabelKey) && willBeDelete.contains(nodeLabel.getLabelKey)){
+          labelManagerPersistence.removeLabel(nodeLabel.getId)
+        }
+      })
+    }
+    if(!CollectionUtils.isEmpty(willBeUpdate)){
+      labels.foreach(label => {
+        if(modifiableKeyList.contains(label.getLabelKey) && willBeUpdate.contains(label.getLabelKey)){
+          nodeLabels.filter(_.getLabelKey.equals(label.getLabelKey)).foreach(oldLabel => {
+            val persistenceLabel = labelFactory.convertLabel(label, classOf[PersistenceLabel])
+            persistenceLabel.setId(oldLabel.getId)
+            labelManagerPersistence.updateLabel(persistenceLabel.getId, persistenceLabel)
+          })
+        }
+      })
+    }
+    if(!CollectionUtils.isEmpty(willBeAdd)) {
+      labels.filter(label => willBeAdd.contains(label.getLabelKey)).foreach(label => {
+         if(modifiableKeyList.contains(label.getLabelKey)){
+          val persistenceLabel = labelFactory.convertLabel(label, classOf[PersistenceLabel])
+          tryToAddLabel(persistenceLabel)
+          val dbLabel = labelManagerPersistence.getLabelByKeyValue(persistenceLabel.getLabelKey, persistenceLabel.getStringValue)
+          val labelId = new util.ArrayList[Integer]()
+          labelId.add(dbLabel.getId)
+          labelManagerPersistence.addLabelToNode(instance, labelId)
+        }
+      })
     }
   }
   /**
@@ -127,12 +171,13 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
   }
 
   override def getNodesByLabel(label: Label[_]): util.List[ServiceInstance] = {
-    labelManagerPersistence.getNodeByLabelKeyValue(label.getLabelKey,label.getStringValue).distinct
+    val persistenceLabel = labelFactory.convertLabel(label, classOf[PersistenceLabel])
+    labelManagerPersistence.getNodeByLabelKeyValue(persistenceLabel.getLabelKey,persistenceLabel.getStringValue).distinct
   }
 
   override def getNodeLabels(instance: ServiceInstance): util.List[Label[_]] = {
     labelManagerPersistence.getLabelByServiceInstance(instance).map { label =>
-      val realyLabel:Label[_] = labelFactory.createLabel(label.getLabelKey, label.getValue)
+      val realyLabel:Label[_] = labelFactory.createLabel(label.getLabelKey, if(!CollectionUtils.isEmpty(label.getValue)) label.getValue else label.getStringValue)
       realyLabel
     }
   }
@@ -220,7 +265,7 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
     //1.插入linkis_manager_label 表，这里表应该有唯一约束，key和valueStr　调用Persistence的addLabel即可，忽略duplicateKey异常
     persistenceLabel.setLabelValueSize(persistenceLabel.getValue.size())
     Utils.tryCatch(labelManagerPersistence.addLabel(persistenceLabel)) { t: Throwable =>
-      warn(s"Failed to add label ${t.getMessage}")
+      warn(s"Failed to add label ${t.getClass}")
     }
   }
 }

@@ -23,9 +23,7 @@ import com.webank.wedatasphere.linkis.common.utils.ByteTimeUtils
 
 import scala.concurrent.duration.Duration
 
-/**
-  * Created by enjoyyin on 2018/1/9.
-  */
+
 class TimeType(timeStr: String) {
   def this(ms: Long) = this(ByteTimeUtils.msDurationToString(ms))
   val toLong = ByteTimeUtils.timeStringAsMs(timeStr)

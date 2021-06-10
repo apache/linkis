@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.message.builder.MessageJob;
 
 import java.util.concurrent.ExecutorService;
 
-/**
- * @date 2020/7/20
- */
+
 public interface MessageExecutor {
 
     void run(MessageJob job) throws InterruptedException;

@@ -27,7 +27,7 @@
 
     <insert id="createMap"
             parameterType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextKeyValue">
-        INSERT INTO linkis_cs_context_map(<include refid="context_map"/>)
+        INSERT INTO linkis_ps_cs_context_map(<include refid="context_map"/>)
         VALUES (#{id},#{contextKey.key},#{contextKey.contextScope},#{contextKey.contextType},
         #{props},#{contextValue.valueStr},#{contextId},#{contextValue.keywords})
     </insert>
@@ -51,7 +51,7 @@
     </resultMap>
 
     <select id="getContextMap" resultMap="PersistenceContextKeyValue">
-        SELECT * FROM linkis_cs_context_map
+        SELECT * FROM linkis_ps_cs_context_map
         <where>
             <if test="contextID.contextId != null">context_id = #{contextID.contextId}</if>
             <if test="contextKey.key != null">AND `key` = #{contextKey.key}</if>
@@ -59,24 +59,24 @@
     </select>
 
     <select id="getAllContextMapByKey" resultMap="PersistenceContextKeyValue">
-        SELECT * FROM linkis_cs_context_map WHERE context_id = #{contextID.contextId} AND `key` LIKE "%"#{key}"%"
+        SELECT * FROM linkis_ps_cs_context_map WHERE context_id = #{contextID.contextId} AND `key` LIKE "%"#{key}"%"
     </select>
 
 
     <select id="getAllContextMapByContextID" resultMap="PersistenceContextKeyValue">
-        SELECT * FROM linkis_cs_context_map WHERE context_id = #{contextID.contextId}
+        SELECT * FROM linkis_ps_cs_context_map WHERE context_id = #{contextID.contextId}
     </select>
 
     <select id="getAllContextMapByScope" resultMap="PersistenceContextKeyValue">
-        SELECT * FROM linkis_cs_context_map WHERE context_id = #{contextID.contextId} AND context_scope = #{contextScope}
+        SELECT * FROM linkis_ps_cs_context_map WHERE context_id = #{contextID.contextId} AND context_scope = #{contextScope}
     </select>
 
     <select id="getAllContextMapByType" resultMap="PersistenceContextKeyValue">
-        SELECT * FROM linkis_cs_context_map WHERE context_id = #{contextID.contextId} AND context_type = #{contextType}
+        SELECT * FROM linkis_ps_cs_context_map WHERE context_id = #{contextID.contextId} AND context_type = #{contextType}
     </select>
 
     <delete id="removeContextMap">
-        DELETE FROM linkis_cs_context_map
+        DELETE FROM linkis_ps_cs_context_map
         <where>
             <if test="contextID.contextId != null">context_id = #{contextID.contextId}</if>
             <if test="contextKey.key != null">AND `key` = #{contextKey.key}</if>
@@ -84,20 +84,20 @@
     </delete>
 
     <delete id="removeAllContextMapByContextID">
-        DELETE FROM linkis_cs_context_map WHERE context_id = #{contextID.contextId}
+        DELETE FROM linkis_ps_cs_context_map WHERE context_id = #{contextID.contextId}
     </delete>
 
     <delete id="removeAllContextMapByType">
-        DELETE FROM linkis_cs_context_map WHERE context_id = #{contextID.contextId} AND context_type = #{contextType}
+        DELETE FROM linkis_ps_cs_context_map WHERE context_id = #{contextID.contextId} AND context_type = #{contextType}
     </delete>
 
     <delete id="removeAllContextMapByScope">
-        DELETE FROM linkis_cs_context_map WHERE context_id = #{contextID.contextId} AND context_scope = #{contextScope}
+        DELETE FROM linkis_ps_cs_context_map WHERE context_id = #{contextID.contextId} AND context_scope = #{contextScope}
     </delete>
 
     <update id="updateMap"
             parameterType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextKeyValue">
-        UPDATE linkis_cs_context_map
+        UPDATE linkis_ps_cs_context_map
         <trim prefix="set" suffixOverrides=",">
             <if test="contextKey.contextScope != null">`context_scope` = #{contextKey.contextScope},</if>
             <if test="contextKey.contextType != null">`context_type` = #{contextKey.contextType},</if>
@@ -108,7 +108,7 @@
     </update>
 
     <delete id="removeByKeyPrefix">
-        delete from linkis_cs_context_map
+        delete from linkis_ps_cs_context_map
         <where>
             <if test="#{contextID.contextId} !=null">context_id = #{contextID.contextId} and </if>
             <!--<if test="#{contextType} !=null">context_type = #{contextType} and </if>-->
@@ -117,7 +117,7 @@
     </delete>
     <!--todo 和上面的合并sql-->
     <delete id="removeByKeyPrefixAndContextType">
-        delete from linkis_cs_context_map
+        delete from linkis_ps_cs_context_map
         <where>
             <if test="#{contextID.contextId} !=null">context_id = #{contextID.contextId} and </if>
             <if test="#{contextType} !=null">context_type = #{contextType} and </if>

@@ -21,11 +21,10 @@ import java.util
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.protocol.CacheableProtocol
+import com.webank.wedatasphere.linkis.rpc.errorcode.RPCErrorConstants
 import com.webank.wedatasphere.linkis.server.exception.FetchMapCacheFailedException
 
-/**
-  * Created by enjoyyin on 2018/11/4.
-  */
+
 abstract class RPCMapCache[M, K, V](applicationName: String) {
 
   protected def createRequest(key: M): CacheableProtocol
@@ -37,7 +36,9 @@ abstract class RPCMapCache[M, K, V](applicationName: String) {
     val result = Utils.tryThrow(sender.ask(createRequest(key))) {
       case error: ErrorException => error
       case t: Throwable =>
-        new FetchMapCacheFailedException(10021, "Failed to get user parameters! Reason: RPC request(获取用户参数失败！原因：RPC请求)" + applicationName + "Service failed!(服务失败！)", t)
+        new FetchMapCacheFailedException(RPCErrorConstants.FETCH_MAPCACHE_ERROR, "Failed to get " +
+          "user " +
+          "parameters! Reason: RPC request(获取用户参数失败！原因：RPC请求)" + applicationName + "Service failed!(服务失败！)", t)
     }
     createMap(result)
   }

@@ -29,9 +29,7 @@ import javax.servlet._
 import javax.servlet.http.{Cookie, HttpServletRequest, HttpServletResponse}
 import org.apache.commons.lang.StringUtils
 
-/**
-  * Created by enjoyyin on 2018/1/9.
-  */
+
 class SecurityFilter extends Filter {
 
   private val refererValidate = ServerConfiguration.BDP_SERVER_SECURITY_REFERER_VALIDATE.getValue

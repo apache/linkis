@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.manager.label.builder;
 
-import com.webank.wedatasphere.linkis.manager.label.conf.LabelCommonConfig;
+import com.webank.wedatasphere.linkis.common.utils.ClassUtils;
 import com.webank.wedatasphere.linkis.manager.label.constant.LabelConstant;
 import com.webank.wedatasphere.linkis.manager.label.entity.InheritableLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.Label;
@@ -25,7 +25,6 @@ import com.webank.wedatasphere.linkis.manager.label.entity.annon.KeyMethod;
 import com.webank.wedatasphere.linkis.manager.label.exception.LabelErrorException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +34,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -46,20 +47,13 @@ public class DefaultGlobalLabelBuilder extends AbstractGenericLabelBuilder{
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultGlobalLabelBuilder.class);
 
-    private static final Reflections LABEL_ENTITY_REFLECTS;
 
     private static final Function<String, Object> DEFAULT_STRING_DESERIALIZER = stringValue -> stringValue;
 
     private static final Map<String, Class<? extends Label<?>>> LABEL_KEY_TYPE_MAP = new HashMap<>();
 
     static{
-        List<String> packagesPath = new ArrayList<>();
-        packagesPath.add(Label.class.getPackage().getName());
-        String definedEntityPackages = LabelCommonConfig.LABEL_ENTITY_PACKAGES.getValue();
-        if(StringUtils.isNotBlank(definedEntityPackages)){
-            packagesPath.addAll(Arrays.asList(definedEntityPackages.split(",")));
-        }
-        LABEL_ENTITY_REFLECTS = new Reflections(packagesPath.toArray());
+
         //Lazy load all label keys of label entities
         //Scan methods in Label to find annotation @LabelKey
         Method[] methods = Label.class.getMethods();
@@ -71,7 +65,7 @@ public class DefaultGlobalLabelBuilder extends AbstractGenericLabelBuilder{
         }
         if(null != getKeyMethod) {
             @SuppressWarnings("rawtypes")
-            Set<Class<? extends Label>> labelEntities = LABEL_ENTITY_REFLECTS.getSubTypesOf(Label.class);
+            Set<Class<? extends Label>> labelEntities = ClassUtils.reflections().getSubTypesOf(Label.class);
             Method finalGetKeyMethod = getKeyMethod;
             labelEntities.forEach((labelEntity) -> {
                 //New instance and then invoke get_key method
@@ -173,7 +167,7 @@ public class DefaultGlobalLabelBuilder extends AbstractGenericLabelBuilder{
                     return InheritableLabel.class;
                 }
                 //Random to choose a subclass for other sub interfaces of label
-                Set<Class<?>> setLabel = LABEL_ENTITY_REFLECTS.getSubTypesOf((Class<Object>) labelClass);
+                Set<Class<?>> setLabel = ClassUtils.reflections().getSubTypesOf((Class<Object>) labelClass);
                 for (Class<?> suitableFound : setLabel) {
                     if (!Modifier.isInterface(suitableFound.getModifiers())) {
                         return (Class<? extends Label>) suitableFound;

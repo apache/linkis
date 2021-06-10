@@ -25,12 +25,10 @@ import com.webank.wedatasphere.linkis.message.registry.SpringServiceRegistry;
 import com.webank.wedatasphere.linkis.message.scheduler.DefaultMessageScheduler;
 import com.webank.wedatasphere.linkis.message.tx.SpringTransactionManager;
 
-/**
- * @date 2020/9/11
- */
+
 public class SpringMessageSchedulerContext extends AbstractMessageSchedulerContext {
 
-    {
+    public SpringMessageSchedulerContext(){
         setImplicitParser(new DefaultImplicitParser());
         setImplicitRegistry(new SpringImplicitRegistry(this));
         setserviceParser(new DefaultServiceParser());

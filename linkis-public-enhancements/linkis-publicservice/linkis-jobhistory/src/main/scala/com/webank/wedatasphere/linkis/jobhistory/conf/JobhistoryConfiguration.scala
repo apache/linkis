@@ -19,6 +19,10 @@ package com.webank.wedatasphere.linkis.jobhistory.conf
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 
 object JobhistoryConfiguration {
-  val JOB_HISTORY_ADMIN = CommonVars("wds.linkis.jobhistory.admin", "hadoop")
+  val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
   val JOB_HISTORY_SAFE_TRIGGER = CommonVars("wds.linkis.jobhistory.safe.trigger", true).getValue
+
+  val ENTRANCE_SPRING_NAME = CommonVars("wds.linkis.entrance.spring.name", "linkis-cg-entrance")
+  val ENTRANCE_INSTANCE_DELEMITER = CommonVars("wds.linkis.jobhistory.instance.delemiter", ";")
+
 }

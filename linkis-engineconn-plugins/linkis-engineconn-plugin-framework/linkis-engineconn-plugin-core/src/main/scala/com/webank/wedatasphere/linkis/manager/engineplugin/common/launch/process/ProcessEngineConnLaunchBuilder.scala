@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.proces
 
 import java.util
 
+import com.webank.wedatasphere.linkis.engineconn.common.conf.EngineConnConf
 import com.webank.wedatasphere.linkis.manager.common.protocol.bml.BmlResource
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.EngineConnBuildFailedException

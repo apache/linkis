@@ -19,8 +19,9 @@ package com.webank.wedatasphere.linkis.manager.engineplugin.python.executor
 import java.util
 
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.parser.PythonCodeParser
 import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
+import com.webank.wedatasphere.linkis.engineconn.launch.EngineConnServer
+import com.webank.wedatasphere.linkis.governance.common.paser.PythonCodeParser
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.{CommonNodeResource, LoadInstanceResource, NodeResource}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
@@ -44,9 +45,12 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
     super.init
   }
 
+  private val pythonDefaultVersion: String = EngineConnServer.getEngineCreationContext.getOptions.getOrDefault("python.version", "python")
+
   override def executeLine(engineExecutionContext: EngineExecutionContext, code: String): ExecuteResponse = {
-    info(s" EngineExecutionContext user python.version = > ${engineExecutionContext.getProperties.getOrDefault("python.version", "python").toString.toLowerCase()}")
-    System.getProperties.put("python.version", engineExecutionContext.getProperties.getOrDefault("python.version", "python").toString.toLowerCase())
+    val pythonVersion = engineExecutionContext.getProperties.getOrDefault("python.version", pythonDefaultVersion).toString.toLowerCase()
+    info(s" EngineExecutionContext user python.version = > ${pythonVersion}")
+    System.getProperties.put("python.version", pythonVersion)
     info(s" System getProperties python.version = > ${System.getProperties.getProperty("python.version")}")
     System.getProperties.put("python.application.pyFiles", engineExecutionContext.getProperties.getOrDefault("python.application.pyFiles", "file:///mnt/bdap/test/test/test.zip").toString)
     if(engineExecutionContext != this.engineExecutionContext){

@@ -40,7 +40,7 @@ object ECMUtils {
     } else {
       response = client.downloadShareResource(userName, resource.getResourceId, resource.getVersion)
     }
-    if (!response.isSuccess) throw new ECMErrorException(911115, "下载失败")
+    if (!response.isSuccess) throw new ECMErrorException(911115, "failed to downLoad(下载失败)")
     val map = new util.HashMap[String, Object]
     map += "path" -> response.fullFilePath
     map += "is" -> response.inputStream

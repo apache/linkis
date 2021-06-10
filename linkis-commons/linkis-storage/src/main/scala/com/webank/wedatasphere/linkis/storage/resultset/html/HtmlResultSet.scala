@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.storage.resultset.txt.{TextResultDeseriali
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, StorageResultSet}
 import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
 
-/**
-  * Created by johnnwang on 2018/12/10.
-  */
+
 class HtmlResultSet extends StorageResultSet[LineMetaData, LineRecord] with Serializable{
 
   override def resultSetType(): String = ResultSetFactory.HTML_TYPE

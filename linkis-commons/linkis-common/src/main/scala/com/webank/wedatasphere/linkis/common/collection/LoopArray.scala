@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.common.collection
 
-/**
-  * Created by enjoyyin on 2016/11/23.
-  */
+
 class LoopArray[T](maxCapacity: Int) {
 
   private val eventQueue: Array[Any] = new Array[Any](maxCapacity)

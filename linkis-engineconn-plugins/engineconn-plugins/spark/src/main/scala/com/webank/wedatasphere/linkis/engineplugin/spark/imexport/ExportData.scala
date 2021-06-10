@@ -17,10 +17,11 @@
 package com.webank.wedatasphere.linkis.engineplugin.spark.imexport
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
 import com.webank.wedatasphere.linkis.engineplugin.spark.imexport.util.BackGroundServiceUtils
 import org.apache.spark.sql.SparkSession
-import org.json4s.{DefaultFormats, _}
 import org.json4s.jackson.JsonMethods._
+import org.json4s.{DefaultFormats, _}
 
 
 /**
@@ -47,8 +48,8 @@ object ExportData extends Logging {
     val pathType = LoadData.getMapValue[String](dest, "pathType", "share")
     val path = if ("share".equals(pathType))
       "file://" + LoadData.getMapValue[String](dest, "path")
-    else
-      "hdfs://" + LoadData.getMapValue[String](dest, "path")
+    else if (SparkConfiguration.IS_VIEWFS_ENV.getValue) LoadData.getMapValue[String](dest, "path")
+    else "hdfs://" + LoadData.getMapValue[String](dest, "path")
 
     val hasHeader = LoadData.getMapValue[Boolean](dest, "hasHeader", false)
     val isCsv = LoadData.getMapValue[Boolean](dest, "isCsv", true)

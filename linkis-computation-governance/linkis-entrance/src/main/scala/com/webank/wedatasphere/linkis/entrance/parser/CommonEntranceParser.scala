@@ -16,127 +16,156 @@
 
 package com.webank.wedatasphere.linkis.entrance.parser
 
-import java.util
-import java.util.Date
-
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalParamException}
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
+import com.webank.wedatasphere.linkis.entrance.persistence.PersistenceManager
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
 import com.webank.wedatasphere.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext, StdLabelBuilderFactory}
 import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineRunTypeLabel, EngineTypeLabel, UserCreatorLabel}
-import com.webank.wedatasphere.linkis.manager.label.utils.{EngineTypeLabelCreator, LabelUtils}
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.{CodeLanguageLabel, UserCreatorLabel}
+import com.webank.wedatasphere.linkis.manager.label.utils.EngineTypeLabelCreator
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
-import com.webank.wedatasphere.linkis.protocol.task.Task
-import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
-import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 import org.apache.commons.lang.StringUtils
+import java.util
+import java.util.Date
+
+import com.webank.wedatasphere.linkis.entrance.timeout.JobTimeoutManager
 
 import scala.collection.JavaConversions.mapAsScalaMap
 import scala.collection.JavaConverters._
 
 
-class CommonEntranceParser extends AbstractEntranceParser with Logging {
+class CommonEntranceParser(val persistenceManager: PersistenceManager) extends AbstractEntranceParser with Logging {
 
-  private val labelBuilderFactory: LabelBuilderFactory = new StdLabelBuilderFactory
+  private val labelBuilderFactory: LabelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
+
+  override protected def getPersistenceManager(): PersistenceManager = persistenceManager
 
   /**
     * parse params to be a task
     * params json data from frontend
     *
     */
-  override def parseToTask(params: util.Map[String, Any]): Task = {
+  override def parseToTask(params: util.Map[String, Any]): JobRequest = {
     if (!params.containsKey(TaskConstant.EXECUTION_CONTENT)) {
       return parseToOldTask(params)
     }
 
-    val task = new RequestPersistTask
-    task.setCreatedTime(new Date(System.currentTimeMillis))
-    task.setInstance(Sender.getThisInstance)
-    val umUser = params.get(TaskConstant.EXECUTE_USER).asInstanceOf[String]
+    //1. set User
+    val jobRequest = new JobRequest
+    jobRequest.setCreatedTime(new Date(System.currentTimeMillis))
+    val executeUser = params.get(TaskConstant.EXECUTE_USER).asInstanceOf[String]
     val submitUser = params.get(TaskConstant.SUBMIT_USER).asInstanceOf[String]
-    task.setSubmitUser(submitUser)
-    if (StringUtils.isBlank(umUser)) task.setUmUser(submitUser)
-    task.setUmUser(umUser)
-    val executionContent = params.getOrDefault(TaskConstant.EXECUTION_CONTENT, null).asInstanceOf[util.Map[String, Object]]
-    val configMap = params.getOrDefault(TaskConstant.PARAMS, null).asInstanceOf[util.Map[String, Object]]
-    val labelMap = params.getOrDefault(TaskConstant.LABELS, null).asInstanceOf[util.Map[String, Object]]
-    val source = params.getOrDefault(TaskConstant.SOURCE, new util.HashMap[String, String]()).asInstanceOf[util.Map[String, String]]
-    val sourcePath = source.getOrDefault(TaskConstant.SCRIPTPATH, null)
-    if (null == sourcePath || null == labelMap) {
-      throw new EntranceIllegalParamException(EntranceErrorCode.PARAM_CANNOT_EMPTY.getErrCode, EntranceErrorCode.PARAM_CANNOT_EMPTY.getDesc + s", source : ${sourcePath}, labels : ${BDPJettyServerHelper.gson.toJson(labelMap)}")
+    jobRequest.setSubmitUser(submitUser)
+    if (StringUtils.isBlank(executeUser)) {
+      jobRequest.setExecuteUser(submitUser)
+    } else {
+      jobRequest.setExecuteUser(executeUser)
     }
-
+    //2. parse params
+    val executionContent = params.getOrDefault(TaskConstant.EXECUTION_CONTENT, new util.HashMap[String, String]()).asInstanceOf[util.Map[String, Object]]
+    val configMap = params.getOrDefault(TaskConstant.PARAMS, new util.HashMap[String, Object]()).asInstanceOf[util.Map[String, Object]]
+    val labelMap = params.getOrDefault(TaskConstant.LABELS, new util.HashMap[String, String]()).asInstanceOf[util.Map[String, Object]]
+    val source = params.getOrDefault(TaskConstant.SOURCE, new util.HashMap[String, String]()).asInstanceOf[util.Map[String, String]]
+    if (labelMap.isEmpty) {
+      throw new EntranceIllegalParamException(EntranceErrorCode.PARAM_CANNOT_EMPTY.getErrCode, EntranceErrorCode.PARAM_CANNOT_EMPTY.getDesc + s",  labels is null")
+    }
+    //3. set Code
     var code: String = null
     var runType: String = null
     if (executionContent.containsKey(TaskConstant.CODE)) {
       code = executionContent.get(TaskConstant.CODE).asInstanceOf[String]
       runType = executionContent.get(TaskConstant.RUNTYPE).asInstanceOf[String]
       if (StringUtils.isEmpty(code))
-        throw new EntranceIllegalParamException(20007, "param executionCode and scriptPath can not be empty at the same time")
+        throw new EntranceIllegalParamException(20007, "param executionCode can not be empty ")
     } else {
       // todo check
       throw new EntranceIllegalParamException(20010, "Only code with runtype supported !")
     }
     val formatCode = params.get(TaskConstant.FORMATCODE).asInstanceOf[Boolean]
     if (formatCode) code = format(code)
-    task.setExecutionCode(code)
-    var labels: util.Map[String, Label[_]] = buildLabel(labelMap)
-    val engineTypeLabel = labels.getOrElse(LabelKeyConstant.ENGINE_TYPE_KEY, null).asInstanceOf[EngineTypeLabel]
+    jobRequest.setExecutionCode(code)
+    //4. parse label
+    val labels: util.Map[String, Label[_]] = buildLabel(labelMap)
+    JobTimeoutManager.checkTimeoutLabel(labels)
+    checkEngineTypeLabel(labels)
+    generateAndVerifyCodeLanguageLabel(runType, labels)
+    generateAndVerifyUserCreatorLabel(executeUser, labels)
+
+    jobRequest.setLabels(new util.ArrayList[Label[_]](labels.values()))
+    jobRequest.setSource(source)
+    jobRequest.setStatus(SchedulerEventState.Inited.toString)
+    //Entrance指标：任务提交时间
+    jobRequest.setMetrics(new util.HashMap[String, Object]())
+    jobRequest.getMetrics.put(TaskConstant.ENTRANCEJOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
+    jobRequest.setParams(configMap)
+    jobRequest
+  }
+
+  private def checkEngineTypeLabel(labels: util.Map[String, Label[_]]): Unit = {
+    val engineTypeLabel = labels.getOrElse(LabelKeyConstant.ENGINE_TYPE_KEY, null)
     if (null == engineTypeLabel) {
-      val msg = s"Cannot create engineTypeLabel, labelMap : ${BDPJettyServerHelper.gson.toJson(labelMap)}"
-      error(msg)
+      val msg = s"You need to specify engineTypeLabel in labels, such as spark-2.4.3"
+      throw new EntranceIllegalParamException(EntranceErrorCode.LABEL_PARAMS_INVALID.getErrCode, EntranceErrorCode.LABEL_PARAMS_INVALID.getDesc + msg)
+    }
+  }
+
+  /**
+    * Generate and verify CodeLanguageLabel
+    *
+    * @param runType
+    * @param labels
+    */
+  private def generateAndVerifyCodeLanguageLabel(runType: String, labels: util.Map[String, Label[_]]): Unit = {
+    val engineRunTypeLabel = labels.getOrElse(LabelKeyConstant.CODE_TYPE_KEY, null)
+    if (StringUtils.isBlank(runType) && null == engineRunTypeLabel) {
+      val msg = s"You need to specify runType in execution content, such as spark-2.4.3"
+      warn(msg)
       throw new EntranceIllegalParamException(EntranceErrorCode.LABEL_PARAMS_INVALID.getErrCode,
         EntranceErrorCode.LABEL_PARAMS_INVALID.getDesc + msg)
-    } else {
-      task.setEngineType(engineTypeLabel.getEngineType)
+    } else if (StringUtils.isNotBlank(runType)) {
+      val codeLanguageLabel = labelBuilderFactory.createLabel[CodeLanguageLabel](LabelKeyConstant.CODE_TYPE_KEY)
+      codeLanguageLabel.setCodeType(runType)
+      labels.put(LabelKeyConstant.CODE_TYPE_KEY, codeLanguageLabel)
     }
-    val engineRunTypeLabel = labels.getOrElse(LabelKeyConstant.ENGINE_RUN_TYPE_KEY, null).asInstanceOf[EngineRunTypeLabel]
-    if (null != engineRunTypeLabel) {
-      task.setRunType(engineRunTypeLabel.getRunType)
-    } else {
-      warn(s"RunType not set. EngineType : ${engineTypeLabel.getEngineType}")
-    }
-    var userCreatorLabel = labels.getOrElse(LabelKeyConstant.USER_CREATOR_TYPE_KEY, null).asInstanceOf[UserCreatorLabel]
+  }
 
+  /**
+    * Generate and verify UserCreatorLabel
+    *
+    * @param executeUser
+    * @param labels
+    */
+  private def generateAndVerifyUserCreatorLabel(executeUser: String, labels: util.Map[String, Label[_]]): Unit = {
+    var userCreatorLabel = labels.getOrElse(LabelKeyConstant.USER_CREATOR_TYPE_KEY, null).asInstanceOf[UserCreatorLabel]
     if (null == userCreatorLabel) {
       userCreatorLabel = labelBuilderFactory.createLabel(classOf[UserCreatorLabel])
       val creator = EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue
-      userCreatorLabel.setUser(umUser)
+      userCreatorLabel.setUser(executeUser)
       userCreatorLabel.setCreator(creator)
       labels.put(userCreatorLabel.getLabelKey, userCreatorLabel)
     }
-    labels += (LabelKeyConstant.ENGINE_TYPE_KEY -> engineTypeLabel)
-    labels += (LabelKeyConstant.ENGINE_RUN_TYPE_KEY -> engineRunTypeLabel)
-    labels += (LabelKeyConstant.USER_CREATOR_TYPE_KEY -> userCreatorLabel)
-    task.setLabels(new util.ArrayList[Label[_]](labels.values()))
-    task.setSource(source)
-    task.setExecuteApplicationName(engineTypeLabel.getEngineType)
-    task.setRequestApplicationName(userCreatorLabel.getCreator)
-    task.setStatus(SchedulerEventState.Inited.toString)
-    task.setCreateService(EntranceConfiguration.DEFAULT_CREATE_SERVICE.getValue)
-    task.setParams(configMap)
-    task
   }
 
-  private def parseToOldTask(params: util.Map[String, Any]): Task = {
+  private def parseToOldTask(params: util.Map[String, Any]): JobRequest = {
 
-    val task = new RequestPersistTask
-    task.setCreatedTime(new Date(System.currentTimeMillis))
-    task.setInstance(Sender.getThisInstance)
+    val jobReq = new JobRequest
+    jobReq.setCreatedTime(new Date(System.currentTimeMillis))
     val umUser = params.get(TaskConstant.UMUSER).asInstanceOf[String]
     val submitUser = params.get(TaskConstant.SUBMIT_USER).asInstanceOf[String]
-    task.setSubmitUser(submitUser)
+    jobReq.setSubmitUser(submitUser)
+    if (StringUtils.isBlank(submitUser)) {
+      jobReq.setSubmitUser(umUser)
+    }
     if (umUser == null) throw new EntranceIllegalParamException(20005, "umUser can not be null")
-    task.setUmUser(umUser)
+    jobReq.setExecuteUser(umUser)
     var executionCode = params.get(TaskConstant.EXECUTIONCODE).asInstanceOf[String]
     val _params = params.get(TaskConstant.PARAMS)
     _params match {
-      case mapParams: java.util.Map[String, Object] => task.setParams(mapParams)
+      case mapParams: java.util.Map[String, Object] => jobReq.setParams(mapParams)
       case _ =>
     }
     val formatCode = params.get(TaskConstant.FORMATCODE).asInstanceOf[Boolean]
@@ -156,48 +185,32 @@ class CommonEntranceParser extends AbstractEntranceParser with Logging {
       if (StringUtils.isEmpty(runType)) runType = EntranceConfiguration.DEFAULT_RUN_TYPE.getValue
       //If formatCode is not empty, we need to format it(如果formatCode 不为空的话，我们需要将其进行格式化)
       if (formatCode) executionCode = format(executionCode)
-      task.setExecutionCode(executionCode)
+      jobReq.setExecutionCode(executionCode)
     }
-    task.setSource(source)
-    task.setEngineType(runType)
+    val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(executeApplicationName)
+    val runTypeLabel = labelBuilderFactory.createLabel[Label[_]](LabelKeyConstant.CODE_TYPE_KEY, runType)
+    val userCreatorLabel = labelBuilderFactory.createLabel[Label[_]](LabelKeyConstant.USER_CREATOR_TYPE_KEY, umUser + "-" + creator)
+
+    val labelList = new util.ArrayList[Label[_]](3)
+    labelList.add(engineTypeLabel)
+    labelList.add(runTypeLabel)
+    labelList.add(userCreatorLabel)
+    if (jobReq.getParams != null ) {
+      val labelMap = jobReq.getParams.getOrDefault(TaskConstant.LABELS, new util.HashMap[String, String]()).asInstanceOf[util.Map[String, Object]]
+      if (null != labelMap && !labelMap.isEmpty) {
+        val list: util.List[Label[_]] = labelBuilderFactory.getLabels(labelMap.asInstanceOf[util.Map[String, AnyRef]])
+        labelList.addAll(list)
+      }
+    }
+    jobReq.setProgress("0.0")
+    jobReq.setSource(source)
     //为了兼容代码，让engineType和runType都有同一个属性
-    task.setRunType(runType)
-    task.setExecuteApplicationName(executeApplicationName)
-    task.setRequestApplicationName(creator)
-    task.setStatus(SchedulerEventState.Inited.toString)
-    task.setCreateService(EntranceConfiguration.DEFAULT_CREATE_SERVICE.getValue)
+    jobReq.setStatus(SchedulerEventState.Inited.toString)
     //封装Labels
-    task.setLabels(buildLabel(task))
-    task
-  }
-
-  private def buildLabel(task: RequestPersistTask): util.List[Label[_]] = {
-    val labelsList = new util.ArrayList[Label[_]]()
-    val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
-    if (StringUtils.isNotBlank(task.getUmUser) && StringUtils.isNotBlank(task.getRequestApplicationName)) {
-      val userCreatorLabel = labelBuilderFactory.createLabel(classOf[UserCreatorLabel])
-      userCreatorLabel.setCreator(task.getRequestApplicationName)
-      userCreatorLabel.setUser(task.getUmUser)
-      labelsList.add(userCreatorLabel)
-    }
-
-    if (StringUtils.isNotBlank(task.getExecuteApplicationName)) {
-      val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(task.getExecuteApplicationName)
-      labelsList.add(engineTypeLabel)
-    }
-
-    if (StringUtils.isNotBlank(task.getRunType)) {
-      val runTypeLabel = labelBuilderFactory.createLabel(classOf[EngineRunTypeLabel])
-      runTypeLabel.setRunType(task.getRunType)
-      labelsList.add(runTypeLabel)
-    }
-
-    val labels = TaskUtils.getLabelsMap(task.getParams.asInstanceOf[util.Map[String, Any]])
-    if (null != labels) {
-      LabelUtils.distinctLabel(labelBuilderFactory.getLabels(labels.asInstanceOf[util.Map[String, AnyRef]]), labelsList)
-    } else {
-      labelsList
-    }
+    jobReq.setLabels(labelList)
+    jobReq.setMetrics(new util.HashMap[String, Object]())
+    jobReq.getMetrics.put(TaskConstant.ENTRANCEJOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
+    jobReq
   }
 
   private def buildLabel(labelMap: util.Map[String, Object]): util.Map[String, Label[_]] = {
@@ -205,7 +218,7 @@ class CommonEntranceParser extends AbstractEntranceParser with Logging {
     if (null != labelMap && !labelMap.isEmpty) {
       val list: util.List[Label[_]] = labelBuilderFactory.getLabels(labelMap.asInstanceOf[util.Map[String, AnyRef]])
       if (null != list) {
-        list.asScala.foreach {
+        list.asScala.filter(_ != null).foreach {
           label => labelKeyValueMap.put(label.getLabelKey, label)
         }
       }

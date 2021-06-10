@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.common.io.FsWriter;
 
 import java.util.Map;
 
-/**
- * Created by johnnwang on 2019/1/1.
- */
+
 public abstract class PipelineWriter extends FsWriter {
 
 

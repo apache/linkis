@@ -51,5 +51,13 @@ public class AliasServiceInstanceLabel extends GenericLabel implements NodeLabel
         getValue().put("alias", alias);
     }
 
+    @Override
+    public String getStringValue() {
+        return getAlias();
+    }
 
+    @Override
+    protected void setStringValue(String stringValue) {
+        setAlias(stringValue);
+    }
 }

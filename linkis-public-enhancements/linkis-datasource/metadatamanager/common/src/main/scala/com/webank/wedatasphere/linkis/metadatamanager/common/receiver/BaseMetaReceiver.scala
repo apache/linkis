@@ -15,7 +15,7 @@ package com.webank.wedatasphere.linkis.metadatamanager.common.receiver
 
 import com.webank.wedatasphere.linkis.common.exception.WarnException
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.metadatamanager.common.protocol._
+import com.webank.wedatasphere.linkis.metadatamanager.common.protocol.{MetaGetColumns, MetaGetDatabases, MetaGetPartitions, MetaGetTableProps, MetaGetTables, MetadataConnect, MetadataResponse}
 import com.webank.wedatasphere.linkis.metadatamanager.common.service.MetadataService
 import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper

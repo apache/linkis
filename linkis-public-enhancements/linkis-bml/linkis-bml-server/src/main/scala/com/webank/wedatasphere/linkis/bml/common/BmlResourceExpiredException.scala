@@ -17,4 +17,4 @@ package com.webank.wedatasphere.linkis.bml.common
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-case class BmlResourceExpiredException(resourceId:String) extends ErrorException(78531, resourceId + "已经过期,不能下载")
+case class BmlResourceExpiredException(resourceId:String) extends ErrorException(78531, resourceId + " has expired and cannot be downloaded(已经过期,不能下载)")

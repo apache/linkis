@@ -67,8 +67,7 @@ class MDQPreExecutionHook extends SparkPreExecutionHook with Logging {
     }
     resp match {
       case DDLResponse(postCode) => postCode
-      case _ =>
-        throw new MDQErrorException(40010, s"向MDQ服务请求解析为可以执行的sql时失败")
+      case _ => throw new MDQErrorException(40010, "The request to the MDQ service failed to resolve into executable SQL(向MDQ服务请求解析为可以执行的sql时失败)")
     }
   }
 }

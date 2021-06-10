@@ -35,6 +35,7 @@
         <module>linkis-engineconn-executor/accessible-executor</module>
         <module>linkis-engineconn-executor/resource-executor</module>
         <module>linkis-engineconn-executor/callback-service</module>
+        <module>linkis-clustered-engineconn/linkis-once-engineconn</module>
         <module>linkis-computation-engineconn</module>
     </modules>
 

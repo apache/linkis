@@ -30,9 +30,7 @@ import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
 import com.webank.wedatasphere.linkis.entrance.job.EntranceExecutionJob
 import com.webank.wedatasphere.linkis.entrance.log.LogReader
 import com.webank.wedatasphere.linkis.entrance.restful.EntranceRestfulApi
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
+import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
 import com.webank.wedatasphere.linkis.protocol.utils.ZuulEntranceUtils
@@ -44,14 +42,14 @@ import com.webank.wedatasphere.linkis.server.socket.controller.{ServerEvent, Ser
 import org.apache.commons.lang.StringUtils
 
 
-class EntranceWebSocketService extends ServerEventService with EntranceEventListener with EntranceLogListener {
+class EntranceWebSocketService extends ServerEventService with EntranceEventListener {
 
   private val jobIdToEventId = new util.HashMap[String, Integer]
   private var entranceServer: EntranceServer = _
   private var entranceRestfulApi:EntranceRestfulApi = _
   private val websocketTagJobID = new util.HashMap[String, String]()
   private val restfulURI = if(ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue.endsWith("/")) ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue
-    else ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue + "/"
+  else ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue + "/"
   private val executePattern = restfulURI + "entrance/execute"
   private val logUrlPattern = (restfulURI + """entrance/(.+)/log""").r
   private val statusUrlPattern = (restfulURI + """entrance/(.+)/status""").r
@@ -415,7 +413,7 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
     val executeApplicationName = engineType
     job.asInstanceOf[EntranceJob].setProgressInfo(progressInfo)
     val execID: String = ZuulEntranceUtils.generateExecID(job.getId, executeApplicationName, Sender.getThisInstance, creator)
-    val message = Message.ok("返回进度信息!")
+    val message = Message.ok("return the schedule information (返回进度信息!)")
     message.setMethod(restfulURI + "entrance/" + execID + "/progress")
     val taskID = jobRequest.getId
     sendMsg(job, message.data("progress", progress).data("progressInfo", progressInfoMap).data("execID",

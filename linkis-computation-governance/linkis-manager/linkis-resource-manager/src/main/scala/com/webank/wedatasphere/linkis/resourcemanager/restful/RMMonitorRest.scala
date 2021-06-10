@@ -249,7 +249,7 @@ class RMMonitorRest extends Logging {
       Utils.tryAndWarn(job.get(RMUtils.MANAGER_KILL_ENGINE_EAIT.getValue.toLong, TimeUnit.MILLISECONDS))
       info(s"Finished to kill engine ")
     }
-    Message.ok("成功提交kill引擎请求。")
+    Message.ok("success to submit the request of kill engine (成功提交kill引擎请求)。")
   }
 
 
@@ -275,7 +275,7 @@ class RMMonitorRest extends Logging {
         usedCPUPercentage = usedResource.queueCores.asInstanceOf[Double] / maxResource.queueCores.asInstanceOf[Double]
         queueInfo.put("usedPercentage", Map("memory" -> usedMemoryPercentage, "cores" -> usedCPUPercentage))
         appendMessageData(message, "queueInfo", queueInfo)
-      case _ => Message.error("获取队列资源失败")
+      case _ => Message.error("failed to get queue resource (获取队列资源失败)")
     }
 
     val userResourceRecords = new ArrayBuffer[mutable.HashMap[String, Any]]()

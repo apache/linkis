@@ -20,7 +20,7 @@ object BmlConfiguration {
   val LINKIS_API_VERSION:CommonVars[String] = CommonVars[String]("wds.linkis.bml.api.version", "v1")
 
   val URL_PREFIX:CommonVars[String] =
-    CommonVars[String]("wds.linkis.bml.url.prefix", "/api/rest_j/v1/bml", "bml服务的url前缀")
+    CommonVars[String]("wds.linkis.bml.url.prefix", "/api/rest_j/v1/bml", "url prefix of the bml service (bml服务的url前缀)")
 
   val AUTH_TOKEN_KEY:CommonVars[String] = CommonVars[String]("wds.linkis.bml.auth.token.key", "Validation-Code")
 

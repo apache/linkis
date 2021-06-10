@@ -120,7 +120,7 @@ object ZuulEntranceUtils {
 
   def generateExecID(shortExecID: String, applicationName: String, instances: Array[String]): String = {
     if (null == instances || instances.isEmpty) {
-      throw new RuntimeException("生成ExecID失败，传入的Instance不能为空")
+      throw new RuntimeException("failed to generate ExecID ,the parameters instance is not null (生成ExecID失败，传入的Instance不能为空)")
     }
     val applicationNameLength = getStrFixedLen(applicationName, SPLIT_LEN)
     val instanceStr = instances.mkString(INSTANCE_SPLIT_TOKEN)

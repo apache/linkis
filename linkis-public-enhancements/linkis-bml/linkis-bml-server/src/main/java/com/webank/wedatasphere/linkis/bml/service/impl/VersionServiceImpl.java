@@ -142,7 +142,7 @@ public class VersionServiceImpl implements VersionService {
         fileSystem.init(new HashMap<String, String>());
         InputStream inputStream = fileSystem.read(new FsPath(path));
         inputStream.skip(startByte - 1);
-        logger.info("{} 下载资源 {} inputStream skipped {} bytes", user, resourceId, (startByte - 1));
+        logger.info("{} downLoad source {} inputStream skipped {} bytes", user, resourceId, (startByte - 1));
         byte[] buffer = new byte[1024];
         long size = endByte - startByte + 1;
         int left = (int) size;
@@ -182,7 +182,7 @@ public class VersionServiceImpl implements VersionService {
         List<Version> rvList = null;
         if(StringUtils.isNotEmpty(resourceId)){
             PageHelper.startPage(currentPage, pageSize);
-            rvList =versionDao.selectVersionByPage(resourceId);
+            rvList = versionDao.selectVersionByPage(resourceId);
         } else {
             rvList = new ArrayList<Version>();
         }

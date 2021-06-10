@@ -7,7 +7,7 @@ Linkis
 
 # Introduction
 
-Linkis builds a layer of computation middleware between upper applications and underlying engines. By using standard interfaces such as REST/WS/JDBC provided by Linkis, the upper applications can easily access the underlying engines such as MySQL/Spark/Hive/Presto/Flink, etc., and achieve the intercommunication of user resources like unified variables, scripts, UDFs, functions and resource files at the same time.
+ Linkis builds a layer of computation middleware between upper applications and underlying engines. By using standard interfaces such as REST/WS/JDBC provided by Linkis, the upper applications can easily access the underlying engines such as MySQL/Spark/Hive/Presto/Flink, etc., and achieve the intercommunication of user resources like unified variables, scripts, UDFs, functions and resource files at the same time.
 
 As a computation middleware, Linkis provides powerful connectivity, reuse, orchestration, expansion, and governance capabilities. By decoupling the application layer and the engine layer, it simplifies the complex network call relationship, and thus reduces the overall complexity and saves the development and maintenance costs as well.
 
@@ -21,11 +21,11 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 # Features
 
 - **Support for diverse underlying computation storage engines**.  
-  Currently supported computation/storage engines: Spark, Hive, Python, Presto, ElasticSearch, MLSQL, TiSpark, JDBC, Shell, etc;      
-  Computation/storage engines to be supported: Flink, Impala, etc;      
-  Supported scripting languages: SparkSQL, HiveQL, Python, Shell, Pyspark, R, Scala and JDBC, etc.
-
-- **Powerful task/request governance capabilities**. With services such as Orchestrator, Label Manager and customized Spring Cloud Gateway, Linkis is able to provide multi-level labels based, cross-cluster/cross-IDC fine-grained routing, load balance, multi-tenancy, traffic control, resource control, and orchestration strategies like dual-active, active-standby, etc.
+    Currently supported computation/storage engines: Spark, Hive, Python, Presto, ElasticSearch, MLSQL, TiSpark, JDBC, Shell, etc;      
+    Computation/storage engines to be supported: Flink, Impala, etc;      
+    Supported scripting languages: SparkSQL, HiveQL, Python, Shell, Pyspark, R, Scala and JDBC, etc.  
+  
+- **Powerful task/request governance capabilities**. With services such as Orchestrator, Label Manager and customized Spring Cloud Gateway, Linkis is able to provide multi-level labels based, cross-cluster/cross-IDC fine-grained routing, load balance, multi-tenancy, traffic control, resource control, and orchestration strategies like dual-active, active-standby, etc.  
 
 - **Support full stack computation/storage engine**. As a computation middleware, it will receive, execute and manage tasks and requests for various computation storage engines, including batch tasks, interactive query tasks, real-time streaming tasks and storage tasks;
 
@@ -58,7 +58,7 @@ Please go to the [Linkis releases page](https://github.com/WeBankFinTech/Linkis/
 
 # Compile and deploy
 Please follow [Compile Guide](https://github.com/WeBankFinTech/Linkis-Doc/blob/master/zh_CN/Development_Documents/Linkis%E7%BC%96%E8%AF%91%E6%96%87%E6%A1%A3.md) to compile Linkis from source code.  
-Please refer to [Deployment_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/zh_CN/Deployment_Documents) to do the deployment.
+Please refer to [Deployment_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/zh_CN/Deployment_Documents) to do the deployment. 
 
 # Examples and Guidance
 You can find examples and guidance for how to use and manage Linkis in [User_Manual](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/zh_CN/User_Manual), [Engine_Usage_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/zh_CN/Engine_Usage_Documentations) and [API_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/zh_CN/API_Documentations).
@@ -68,31 +68,17 @@ You can find examples and guidance for how to use and manage Linkis in [User_Man
 The documentation of linkis is in [Linkis-Doc](https://github.com/WeBankFinTech/Linkis-Doc) or in the [wiki](https://github.com/WeBankFinTech/Linkis/wiki).
 
 # Architecture
-Linkis services could be divided into three categories: computation governance services, public enhancement services and microservice governance services.
-- The computation governance services, support the 3 major stages of processing a task/request: submission -> preparation -> execution;
-- The public enhancement services, including the material library service, context service, and data source service;
+Linkis services could be divided into three categories: computation governance services, public enhancement services and microservice governance services.  
+- The computation governance services, support the 3 major stages of processing a task/request: submission -> preparation -> execution;  
+- The public enhancement services, including the material library service, context service, and data source service;  
 - The microservice governance services, including Spring Cloud Gateway, Eureka and Open Feign.
 
 Below is the Linkis architecture diagram. You can find more detailed architecture docs in [Linkis-Doc/Architecture](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/zh_CN/Architecture_Documents).
 ![architecture](images/Linkis_1.0_architecture.png)
 
-Based on Linkis the computation middleware, we've built a lot of applications and tools on top of it in the big data platform suite [WeDataSphere](https://github.com/WeBankFinTech/WeDataSphere). Below are the currently available open-source projects.
+Based on Linkis the computation middleware, we've built a lot of applications and tools on top of it in the big data platform suite [WeDataSphere](https://github.com/WeBankFinTech/WeDataSphere). Below are the currently available open-source projects. More projects upcoming, please stay tuned.
 
 ![wedatasphere_stack_Linkis](images/wedatasphere_stack_Linkis.png)
-
-- [**DataSphere Studio** - Data Application Integration& Development Framework](https://github.com/WeBankFinTech/DataSphereStudio)
-
-- [**Scriptis** - Data Development IDE Tool](https://github.com/WeBankFinTech/Scriptis)
-
-- [**Visualis** - Data Visualization Tool](https://github.com/WeBankFinTech/Visualis)
-
-- [**Schedulis** - Workflow Task Scheduling Tool](https://github.com/WeBankFinTech/Schedulis)
-
-- [**Qualitis** - Data Quality Tool](https://github.com/WeBankFinTech/Qualitis)
-
-- [**MLLabis** - Machine Learning Notebook IDE](https://github.com/WeBankFinTech/prophecis)
-
-More projects upcoming, please stay tuned.
 
 # Contributing
 

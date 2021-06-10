@@ -20,9 +20,11 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
 import com.webank.wedatasphere.linkis.engineconn.common.hook.EngineConnHook
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationExecutorManager
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
 import com.webank.wedatasphere.linkis.engineplugin.hive.executor.HiveEngineConnExecutor
+import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.{CodeLanguageLabel, RunType}
 import org.apache.commons.lang.StringUtils
 
 class UseDatabaseEngineHook extends EngineConnHook with Logging {
@@ -45,7 +47,10 @@ class UseDatabaseEngineHook extends EngineConnHook with Logging {
     }
     val useDataBaseSql = "use " + database
     info(s"hive client begin to run init_code $useDataBaseSql")
-    ExecutorManager.getInstance().getDefaultExecutor match {
+    val codeLanguageLabel = new CodeLanguageLabel
+    codeLanguageLabel.setCodeType(RunType.HIVE.toString)
+    val labels = Array[Label[_]](codeLanguageLabel)
+    ComputationExecutorManager.getInstance.getExecutorByLabels(labels) match {
       case executor: HiveEngineConnExecutor =>
         executor.executeLine(new EngineExecutionContext(executor), useDataBaseSql)
       case _ =>

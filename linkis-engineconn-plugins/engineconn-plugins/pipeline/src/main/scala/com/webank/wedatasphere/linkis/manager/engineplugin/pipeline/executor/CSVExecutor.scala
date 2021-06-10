@@ -17,6 +17,7 @@
 package com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.executor
 
 import java.io.OutputStream
+
 import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfiguration.{PIPELINE_FIELD_SPLIT_STR, PIPELINE_OUTPUT_CHARSET_STR, PIPELINE_OUTPUT_ISOVERWRITE_SWITCH}
@@ -39,7 +40,7 @@ class CSVExecutor extends PipeLineExecutor {
       throw new PipeLineErrorException(70001, "Not a result set file（不是结果集文件）")
     }
     val sourceFsPath = new FsPath(sourcePath)
-    val destFsPath = new FsPath(s"$destPath.$Kind")
+    val destFsPath = new FsPath(destPath)
     val sourceFs = FSFactory.getFs(sourceFsPath)
     sourceFs.init(null)
     val destFs = FSFactory.getFs(destFsPath)

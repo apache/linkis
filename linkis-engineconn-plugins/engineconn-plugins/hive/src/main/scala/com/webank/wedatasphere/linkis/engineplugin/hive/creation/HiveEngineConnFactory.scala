@@ -21,43 +21,39 @@ import java.security.PrivilegedExceptionAction
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.{DefaultEngineConn, EngineConn}
-import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.Executor
+import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationSingleExecutorEngineConnFactory
+import com.webank.wedatasphere.linkis.engineconn.executor.entity.LabelExecutor
 import com.webank.wedatasphere.linkis.engineplugin.hive.common.HiveUtils
+import com.webank.wedatasphere.linkis.engineplugin.hive.conf.HiveEngineConfiguration
 import com.webank.wedatasphere.linkis.engineplugin.hive.entity.HiveSession
 import com.webank.wedatasphere.linkis.engineplugin.hive.exception.HiveSessionStartFailedException
 import com.webank.wedatasphere.linkis.engineplugin.hive.executor.HiveEngineConnExecutor
 import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.SingleExecutorEngineConnFactory
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineRunTypeLabel, EngineType, RunType}
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineType.EngineType
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType.RunType
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineType, RunType}
 import org.apache.hadoop.hive.conf.HiveConf
 import org.apache.hadoop.hive.ql.Driver
 import org.apache.hadoop.hive.ql.session.SessionState
 
 import scala.collection.JavaConversions._
 
-class HiveEngineConnFactory extends SingleExecutorEngineConnFactory with Logging {
+class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory with Logging {
 
   private val HIVE_QUEUE_NAME: String = "mapreduce.job.queuename"
   private val BDP_QUEUE_NAME: String = "wds.linkis.rm.yarnqueue"
-  private var engineCreationContext: EngineCreationContext = _
 
-  override def createExecutor(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Executor = {
-    engineConn.getEngine() match {
+  override protected def newExecutor(id: Int, engineCreationContext: EngineCreationContext, engineConn: EngineConn): LabelExecutor = {
+    engineConn.getEngineConnSession match {
       case hiveSession: HiveSession =>
-        this.engineCreationContext = engineCreationContext
-        val id = ExecutorManager.getInstance().generateId()
-        val executor = new HiveEngineConnExecutor(id, hiveSession.sessionState, hiveSession.ugi, hiveSession.hiveConf, hiveSession.baos)
-        executor.getExecutorLabels().add(getDefaultEngineRunTypeLabel())
-        executor
+        new HiveEngineConnExecutor(id, hiveSession.sessionState, hiveSession.ugi, hiveSession.hiveConf, hiveSession.baos)
       case _ =>
         throw HiveSessionStartFailedException(40012, "Failed to create hive executor")
     }
   }
 
-
-  override def createEngineConn(engineCreationContext: EngineCreationContext): EngineConn = {
+  override protected def createEngineConnSession(engineCreationContext: EngineCreationContext): HiveSession = {
     val options = engineCreationContext.getOptions
     val hiveConf: HiveConf = HiveUtils.getHiveConf
     hiveConf.setVar(HiveConf.ConfVars.HIVEJAR, HiveUtils.jarOfClass(classOf[Driver])
@@ -67,7 +63,17 @@ class HiveEngineConnFactory extends SingleExecutorEngineConnFactory with Logging
       info(s"key is $k, value is $v")
       if (BDP_QUEUE_NAME.equals(k)) hiveConf.set(HIVE_QUEUE_NAME, v) else hiveConf.set(k, v)
     }
-
+    hiveConf.setVar(HiveConf.ConfVars.HIVE_HADOOP_CLASSPATH, HiveEngineConfiguration.HIVE_LIB_HOME.getValue + "/*")
+    /* //Update by peaceWong add hook to HiveDriver
+     if (StringUtils.isNotBlank(EnvConfiguration.LINKIS_HIVE_POST_HOOKS)) {
+       val hooks = if (StringUtils.isNotBlank(hiveConf.get("hive.exec.post.hooks"))) {
+         hiveConf.get("hive.exec.post.hooks") + "," + EnvConfiguration.LINKIS_HIVE_POST_HOOKS
+       } else {
+         EnvConfiguration.LINKIS_HIVE_POST_HOOKS
+       }
+       hiveConf.set("hive.exec.post.hooks", hooks)
+     }*/
+    //Update by peaceWong enable hive.stats.collect.scancols
     hiveConf.setBoolean("hive.stats.collect.scancols", true)
     val ugi = HDFSUtils.getUserGroupInformation(Utils.getJvmUser)
     val sessionState: SessionState = ugi.doAs(new PrivilegedExceptionAction[SessionState] {
@@ -79,18 +85,11 @@ class HiveEngineConnFactory extends SingleExecutorEngineConnFactory with Logging
     sessionState.err = new PrintStream(System.out, true, "utf-8")
     SessionState.start(sessionState)
 
-    val hiveSession = HiveSession(sessionState, ugi, hiveConf, baos)
-    val engineConn = new DefaultEngineConn(engineCreationContext)
-    engineConn.setEngineType(EngineType.HIVE.toString)
-    engineConn.setEngine(hiveSession)
-    engineConn
+    HiveSession(sessionState, ugi, hiveConf, baos)
   }
 
-  def getEngineCreationContext: EngineCreationContext = engineCreationContext
+  override protected def getEngineConnType: EngineType = EngineType.HIVE
 
-  override def getDefaultEngineRunTypeLabel(): EngineRunTypeLabel = {
-    val runTypeLabel = new EngineRunTypeLabel
-    runTypeLabel.setRunType(RunType.HIVE.toString)
-    runTypeLabel
-  }
+  override protected def getRunType: RunType = RunType.HIVE
+
 }

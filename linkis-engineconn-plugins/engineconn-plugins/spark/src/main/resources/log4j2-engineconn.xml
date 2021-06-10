@@ -20,13 +20,11 @@
             <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M - %msg%xEx%n"/>
         </Console>
-        <RollingFile name="RollingFile" fileName="logs/linkis.log"
-                     filePattern="logs/$${date:yyyy-MM}/linkis-log-%d{yyyy-MM-dd}-%i.log">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
-            <SizeBasedTriggeringPolicy size="100MB"/>
-            <DefaultRolloverStrategy max="20"/>
-        </RollingFile>
+
         <Send name="Send" >
+            <Filters>
+                <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY" />
+            </Filters>
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M - %msg%xEx%n"/>
         </Send>
     </appenders>
@@ -48,12 +46,25 @@
         <logger name="com.webank.wedatasphere.linkis.server.security" level="warn" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
-        <logger name="org.apache.hadoop.hive.ql.exec.mr.ExecDriver" level="fatal" additivity="true">
+        <logger name="org.apache.hadoop.hive.ql.exec.mr.ExecDriver" level="warn" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
         <logger name="org.apache.hadoop.hdfs.KeyProviderCache" level="fatal" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
- 
-   </loggers>
+        <logger name="org.spark_project.jetty" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.eclipse.jetty" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.springframework" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.reflections.Reflections" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+
+
+    </loggers>
 </configuration>

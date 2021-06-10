@@ -20,7 +20,7 @@ import com.webank.wedatasphere.linkis.common.utils.Logging
 
 trait Executor extends Logging {
 
-  def getId(): String
+  def getId: String
 
   def init(): Unit
 
@@ -30,15 +30,17 @@ trait Executor extends Logging {
 
   def tryFailed(): Boolean
 
+  def trySucceed(): Boolean
+
   /**
     * 仅用于Kill Executor
     * EngineConn kill 在AccessibleService
     */
   def close(): Unit = {
-    warn(s"executor ${getId()} exit by close")
+    warn(s"Executor($getId) exit by close.")
   }
 
-  def isClosed(): Boolean
+  def isClosed: Boolean
 
 }
 

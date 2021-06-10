@@ -27,9 +27,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Created by enjoyyin on 2019/2/14.
- */
+
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Bean(value = ErrorCodeManagerBeanAnnotation.BEAN_NAME)

@@ -19,7 +19,6 @@ package com.webank.wedatasphere.linkis.entrance.log
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 
 /**
-  * created by enjoyyin on 2018/10/18
   * Description: 用于websocket方式向前推送日志的
   */
 class WebSocketCacheLogReader(logPath:String ,

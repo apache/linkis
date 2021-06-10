@@ -17,6 +17,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.webank.wedatasphere.linkis.common.utils.ByteTimeUtils;
 import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils;
+import com.webank.wedatasphere.linkis.metadata.hive.config.DSEnum;
+import com.webank.wedatasphere.linkis.metadata.hive.config.DataSource;
 import com.webank.wedatasphere.linkis.metadata.hive.dao.HiveMetaDao;
 import com.webank.wedatasphere.linkis.metadata.service.DataSourceService;
 import org.apache.commons.collections.CollectionUtils;
@@ -51,7 +53,7 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     ObjectMapper jsonMapper = new ObjectMapper();
 
-
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public JsonNode getDbs(String userName) throws Exception {
         List<String> dbs = hiveMetaDao.getDbsByUser(userName);
@@ -64,6 +66,7 @@ public class DataSourceServiceImpl implements DataSourceService {
         return dbsNode;
     }
 
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public JsonNode getDbsWithTables(String userName) throws Exception {
         ArrayNode dbNodes = jsonMapper.createArrayNode();
@@ -77,6 +80,7 @@ public class DataSourceServiceImpl implements DataSourceService {
         return dbNodes;
     }
 
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public JsonNode queryTables(String database, String userName) {
         List<Map<String, Object>> listTables = Lists.newArrayList();
@@ -104,6 +108,7 @@ public class DataSourceServiceImpl implements DataSourceService {
         return tables;
     }
 
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public JsonNode queryTableMeta(String dbName, String tableName, String userName) {
         logger.info("getTable:" + userName);
@@ -132,7 +137,8 @@ public class DataSourceServiceImpl implements DataSourceService {
         return columnsNode;
     }
 
-    private String getTableLocation(String database, String tableName) {
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
+    public String getTableLocation(String database, String tableName) {
         Map<String, String> param = Maps.newHashMap();
         param.put("dbName", database);
         param.put("tableName", tableName);
@@ -164,6 +170,7 @@ public class DataSourceServiceImpl implements DataSourceService {
         return sizeJson;
     }
 
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public JsonNode getPartitionSize(String dbName, String tableName, String partitionName, String userName) {
         Map<String, String> map = Maps.newHashMap();
@@ -182,6 +189,7 @@ public class DataSourceServiceImpl implements DataSourceService {
         return sizeJson;
     }
 
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public JsonNode getPartitions(String dbName, String tableName, String userName) {
         Map<String, String> map = Maps.newHashMap();

@@ -16,27 +16,24 @@
 
 package com.webank.wedatasphere.linkis.entrance.restful;
 
-import com.google.gson.Gson;
-import com.google.gson.internal.LinkedTreeMap;
 import com.webank.wedatasphere.linkis.common.log.LogUtils;
 import com.webank.wedatasphere.linkis.entrance.EntranceServer;
 import com.webank.wedatasphere.linkis.entrance.annotation.EntranceServerBeanAnnotation;
-import com.webank.wedatasphere.linkis.entrance.background.BackGroundService;
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration;
 import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob;
 import com.webank.wedatasphere.linkis.entrance.log.LogReader;
 import com.webank.wedatasphere.linkis.entrance.utils.JobHistoryHelper;
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask;
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest;
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant;
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo;
-import com.webank.wedatasphere.linkis.protocol.task.Task;
 import com.webank.wedatasphere.linkis.protocol.utils.ZuulEntranceUtils;
 import com.webank.wedatasphere.linkis.rpc.Sender;
 import com.webank.wedatasphere.linkis.scheduler.queue.Job;
+import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
-import com.webank.wedatasphere.linkis.server.socket.controller.ServerEvent;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -83,11 +80,11 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         json.put(TaskConstant.UMUSER, SecurityFilter.getLoginUsername(req));
         String execID = entranceServer.execute(json);
         Job job = entranceServer.getJob(execID).get();
-        Task task = ((EntranceJob) job).getTask();
-        Long taskID = ((RequestPersistTask) task).getTaskID();
+        JobRequest jobReq = ((EntranceJob) job).getJobRequest();
+        Long taskID = jobReq.getId();
         pushLog(LogUtils.generateInfo("You have submitted a new job, script code (after variable substitution) is"), job);
         pushLog("************************************SCRIPT CODE************************************", job);
-        pushLog(((RequestPersistTask) task).getCode(), job);
+        pushLog(jobReq.getExecutionCode(), job);
         pushLog("************************************SCRIPT CODE************************************", job);
         pushLog(LogUtils.generateInfo("Your job is accepted,  jobID is " + execID + " and taskID is " + taskID + ". Please wait it to be scheduled"), job);
         execID = ZuulEntranceUtils.generateExecID(execID, Sender.getThisServiceInstance().getApplicationName(), new String[]{Sender.getThisInstance()});
@@ -114,11 +111,11 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         json.put(TaskConstant.SUBMIT_USER, SecurityFilter.getLoginUsername(req));
         String execID = entranceServer.execute(json);
         Job job = entranceServer.getJob(execID).get();
-        Task task = ((EntranceJob) job).getTask();
-        Long taskID = ((RequestPersistTask) task).getTaskID();
+        JobRequest jobRequest = ((EntranceJob) job).getJobRequest();
+        Long taskID = jobRequest.getId();
         pushLog(LogUtils.generateInfo("You have submitted a new job, script code (after variable substitution) is"), job);
         pushLog("************************************SCRIPT CODE************************************", job);
-        pushLog(((RequestPersistTask) task).getCode(), job);
+        pushLog(jobRequest.getExecutionCode(), job);
         pushLog("************************************SCRIPT CODE************************************", job);
         pushLog(LogUtils.generateInfo("Your job is accepted,  jobID is " + execID + " and taskID is " + taskID + ". Please wait it to be scheduled"), job);
         execID = ZuulEntranceUtils.generateExecID(execID, Sender.getThisServiceInstance().getApplicationName(), new String[]{Sender.getThisInstance()});
@@ -144,7 +141,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         try {
             job = entranceServer.getJob(realId);
         } catch (Exception e) {
-            logger.warn("获取任务 {} 状态时出现错误", realId, e);
+            logger.warn("error occurred while getting task {} status (获取任务 {} 状态时出现错误)",realId, realId, e);
             //如果获取错误了,证明在内存中已经没有了,去jobhistory找寻一下taskID代表的任务的状态，然后返回
             long realTaskID = Long.parseLong(taskID);
             String status = JobHistoryHelper.getStatusByTaskID(realTaskID);
@@ -201,7 +198,8 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 }
                 message = Message.ok();
                 message.setMethod("/api/entrance/" + id + "/progress");
-                message.data("progress", job.get().getProgress()).data("execID", id).data("progressInfo", list);
+                //TODO 去掉绝对值判断
+                message.data("progress", Math.abs(job.get().getProgress())).data("execID", id).data("progressInfo", list);
             }
         } else {
             message = Message.error("The job corresponding to the ID is empty, and the corresponding task progress cannot be obtained.(ID 对应的job为空，不能获取相应的任务进度)");
@@ -224,7 +222,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             return Message.messageToResponse(message);
         }
         if (job.isDefined()) {
-            logger.debug("开始获取 {} 的日志", job.get().getId());
+            logger.debug("begin to get log for {}(开始获取 {} 的日志)", job.get().getId(),job.get().getId());
             LogReader logReader = entranceServer.getEntranceContext().getOrCreateLogManager().getLogReader(realId);
             int fromLine = 0;
             int size = 100;
@@ -257,18 +255,18 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                     retLog = sb.toString();
                 }
             } catch (IllegalStateException e) {
-                logger.error("为 {} 获取日志失败 原因：{}", job.get().getId(), e.getMessage());
-                message = Message.ok();
+                logger.error("Failed to get log information for :{}(为 {} 获取日志失败)", job.get().getId(), job.get().getId(),e);
+                message = Message.error("Failed to get log information(获取日志信息失败)");
                 message.setMethod("/api/entrance/" + id + "/log");
                 message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
             } catch (final IllegalArgumentException e) {
-                logger.error("为 {} 获取日志失败", job.get().getId());
-                message = Message.ok();
+                logger.error("Failed to get log information for :{}(为 {} 获取日志失败)", job.get().getId(), job.get().getId(),e);
+                message = Message.error("Failed to get log information(获取日志信息失败)");
                 message.setMethod("/api/entrance/" + id + "/log");
                 message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
                 return Message.messageToResponse(message);
             } catch (final Exception e1) {
-                logger.error("为 {} 获取日志失败", job.get().getId(), e1);
+                logger.error("Failed to get log information for :{}(为 {} 获取日志失败)", job.get().getId(), job.get().getId(),e1);
                 message = Message.error("Failed to get log information(获取日志信息失败)");
                 message.setMethod("/api/entrance/" + id + "/log");
                 message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
@@ -277,7 +275,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             message = Message.ok();
             message.setMethod("/api/entrance/" + id + "/log");
             message.data("log", retLog).data("execID", id).data("fromLine", retFromLine + fromLine);
-            logger.debug("获取 {} 日志成功", job.get().getId());
+            logger.debug("success to get log for {} (获取 {} 日志成功)", job.get().getId(),job.get().getId());
         } else {
             message = Message.error("Can't find execID(不能找到execID): " + id + "Corresponding job, can not get the corresponding log(对应的job，不能获得对应的日志)");
             message.setMethod("/api/entrance/" + id + "/log");
@@ -285,6 +283,72 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return Message.messageToResponse(message);
     }
 
+    @Override
+    @POST
+    @Path("/killJobs")
+    public Response killJobs(@Context HttpServletRequest req, JsonNode jsonNode) {
+        JsonNode idNode = jsonNode.get("idList");
+        JsonNode taskIDNode = jsonNode.get("taskIDList");
+        if(idNode.size() != taskIDNode.size()){
+            return Message.messageToResponse(Message.error("he length of the ID list does not match the length of the TASKID list(id列表的长度与taskId列表的长度不一致)"));
+        }
+        if(!idNode.isArray() || !taskIDNode.isArray()){
+            return Message.messageToResponse(Message.error("Request parameter error, please use array(请求参数错误，请使用数组)"));
+        }
+        ArrayList<Message> messages = new ArrayList<>();
+        for(int i = 0; i < idNode.size(); i++){
+            String id = idNode.get(i).asText();
+            Long taskID = taskIDNode.get(i).asLong();
+            String realId = ZuulEntranceUtils.parseExecID(id)[3];
+            //通过jobid获取job,可能会由于job找不到而导致有looparray的报错,一旦报错的话，就可以将该任务直接置为Cancenlled
+            Option<Job> job = Option.apply(null);
+            try {
+                job = entranceServer.getJob(realId);
+            } catch (Exception e) {
+                logger.warn("can not find a job in entranceServer, will force to kill it", e);
+                //如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
+                JobHistoryHelper.forceKill(taskID);
+                Message message = Message.ok("Forced Kill task (强制杀死任务)");
+                message.setMethod("/api/entrance/" + id + "/kill");
+                message.setStatus(0);
+                messages.add(message);
+                continue;
+            }
+            Message message = null;
+            if (job.isEmpty()) {
+                logger.warn("can not find a job in entranceServer, will force to kill it");
+                JobHistoryHelper.forceKill(taskID);
+                message = Message.ok("Forced Kill task (强制杀死任务)");
+                message.setMethod("/api/entrance/" + id + "/killJobs");
+                message.setStatus(0);
+                messages.add(message);
+            } else {
+                try {
+                    logger.info("begin to kill job {} ", job.get().getId());
+                    job.get().kill();
+                    message = Message.ok("Successfully killed the job(成功kill了job)");
+                    message.setMethod("/api/entrance/" + id + "/kill");
+                    message.setStatus(0);
+                    message.data("execID", id);
+                    //ensure the job's state is cancelled in database
+                    if (job.get() instanceof EntranceJob) {
+                        EntranceJob entranceJob = (EntranceJob) job.get();
+                        JobRequest jobReq = entranceJob.getJobRequest();
+                        jobReq.setStatus(SchedulerEventState.Cancelled().toString());
+                        this.entranceServer.getEntranceContext().getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(jobReq);
+                    }
+                    logger.info("end to kill job {} ", job.get().getId());
+                } catch (Throwable t) {
+                    logger.error("kill job {} failed ", job.get().getId(), t);
+                    message = Message.error("An exception occurred while killing the job, kill failed(kill job的时候出现了异常，kill失败)");
+                    message.setMethod("/api/entrance/" + id + "/kill");
+                    message.setStatus(1);
+                }
+            }
+            messages.add(message);
+        }
+        return Message.messageToResponse(Message.ok("停止任务成功").data("messages", messages));
+    }
 
     @Override
     @GET
@@ -299,16 +363,20 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             logger.warn("can not find a job in entranceServer, will force to kill it", e);
             //如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
             JobHistoryHelper.forceKill(taskID);
-            Message message = Message.ok("强制杀死任务");
+            Message message = Message.ok("Forced Kill task (强制杀死任务)");
             message.setMethod("/api/entrance/" + id + "/kill");
             message.setStatus(0);
             return Message.messageToResponse(message);
         }
         Message message = null;
         if (job.isEmpty()) {
-            message = Message.error("Can't find execID(不能找到execID): " + id + "Corresponding job, can't kill(对应的job，不能进行kill)");
+            logger.warn("can not find a job in entranceServer, will force to kill it");
+            //如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
+            JobHistoryHelper.forceKill(taskID);
+            message = Message.ok("Forced Kill task (强制杀死任务)");
             message.setMethod("/api/entrance/" + id + "/kill");
-            message.setStatus(1);
+            message.setStatus(0);
+            return Message.messageToResponse(message);
         } else {
             try {
                 logger.info("begin to kill job {} ", job.get().getId());
@@ -320,9 +388,9 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 //ensure the job's state is cancelled in database
                 if (job.get() instanceof EntranceJob) {
                     EntranceJob entranceJob = (EntranceJob) job.get();
-                    Task task = entranceJob.getTask();
-                    ((RequestPersistTask) task).setStatus("Cancelled");
-                    this.entranceServer.getEntranceContext().getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(task);
+                    JobRequest jobReq = entranceJob.getJobRequest();
+                    jobReq.setStatus(SchedulerEventState.Cancelled().toString());
+                    this.entranceServer.getEntranceContext().getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(jobReq);
                 }
                 logger.info("end to kill job {} ", job.get().getId());
             } catch (Throwable t) {
@@ -343,7 +411,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         Option<Job> job = entranceServer.getJob(realId);
         Message message = null;
         if (job.isEmpty()) {
-            message = Message.error("不能找到execID: " + id + "对应的job，不能进行pause");
+            message = Message.error("can not find the job of exexID :" + id +" can not to pause it (不能找到execID: " + id + "对应的job，不能进行pause)");
             message.setMethod("/api/entrance/" + id + "/pause");
             message.setStatus(1);
         } else {
@@ -351,7 +419,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 //todo job pause 接口还未实现和给出
                 //job.pause();
                 logger.info("begin to pause job {} ", job.get().getId());
-                message = Message.ok("成功pause了job");
+                message = Message.ok("success to pause job (成功pause了job)");
                 message.setStatus(0);
                 message.data("execID", id);
                 message.setMethod("/api/entrance/" + id + "/pause");
@@ -363,43 +431,8 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 message.setStatus(1);
             }
         }
+
         return Message.messageToResponse(message);
     }
 
-    @Override
-    @POST
-    @Path("/backgroundservice")
-    public Response backgroundservice(@Context HttpServletRequest req, Map<String, Object> json) {
-        Message message = null;
-        logger.info("Begin to get an execID");
-        String backgroundType = (String) json.get("background");
-        BackGroundService[] bgServices = entranceServer.getEntranceContext().getOrCreateBackGroundService();
-        BackGroundService bgService = null;
-        for (BackGroundService backGroundService : bgServices) {
-            if (backgroundType.equals(backGroundService.serviceType())) {
-                bgService = backGroundService;
-                break;
-            }
-        }
-        Gson gson = new Gson();
-        Map<String, Object> executionCode = (Map<String, Object>) json.get("executionCode");
-        executionCode = gson.fromJson(gson.toJson(executionCode), LinkedTreeMap.class);
-        json.put("executionCode", executionCode);
-        json.put(TaskConstant.UMUSER, SecurityFilter.getLoginUsername(req));
-        ServerEvent serverEvent = new ServerEvent();
-        serverEvent.setData(json);
-        serverEvent.setUser(SecurityFilter.getLoginUsername(req));
-        ServerEvent operation = bgService.operation(serverEvent);
-        String execID = entranceServer.execute(operation.getData());
-        Task task = ((EntranceJob) entranceServer.getJob(execID).get()).getTask();
-        Long taskID = ((RequestPersistTask) task).getTaskID();
-        execID = ZuulEntranceUtils.generateExecID(execID, Sender.getThisServiceInstance().getApplicationName(), new String[]{Sender.getThisInstance()});
-        message = Message.ok();
-        message.setMethod("/api/entrance/backgroundservice");
-        message.data("execID", execID);
-        message.data("taskID", taskID);
-        logger.info("End to get an an execID: {}, taskID: {}", execID, taskID);
-        return Message.messageToResponse(message);
-
-    }
 }

@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.httpclient.loadbalancer.LoadBalancerStrate
 
 import scala.concurrent.duration.TimeUnit
 
-/**
-  * Created by enjoyyin on 2019/5/20.
-  */
+
 class ClientConfigBuilder protected() {
 
   protected var serverUrl: String = _

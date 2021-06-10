@@ -1,0 +1,104 @@
+#!/bin/bash
+#
+# Copyright 2019 WeBank
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#set -x
+export LANG=en_US.utf-8
+LINKIS_CLIENT='com.webank.wedatasphere.linkis.cli.application.LinkisClientApplication'
+
+i=0
+for arg in "$@"
+do
+        args[i]=${arg}
+        input_args[i]=${arg}
+        ((i++))
+done
+
+
+#===============================================
+# finf java_home
+#===============================================
+locate_java_home() {
+  local JAVA8_HOME_CANDIDATES='\
+    /usr/java/jdk1.8* \
+    /nemo/jdk1.8*'
+
+  JAVA_HOME_CANDIDATES="$JAVA8_HOME_CANDIDATES"
+
+  # attempt to find java 8
+  flag=""
+  for candidate_regex in $JAVA_HOME_CANDIDATES ; do
+      for candidate in `ls -rd $candidate_regex 2>/dev/null`; do
+        if [ -e $candidate/bin/java ]; then
+          export JAVA_HOME=$candidate
+          flag="true"
+          break 2
+        fi
+      done
+  done
+
+  if [ -z "$flag" ]; then
+    echo -e "\033[0;31;40mNo JDK 8 found. linkis-client requires Java 1.8\033[0m" 1>&2
+    exit 1
+  fi
+
+  verify_java_home
+}
+
+# Verify that JAVA_HOME set - does not verify that it's set to a meaningful
+# value.
+verify_java_home() {
+  if [ -z "$JAVA_HOME" ]; then
+    cat 1>&2 <<EOF
++======================================================================+
+|      Error: JAVA_HOME is not set and Java could not be found         |
++----------------------------------------------------------------------+
+EOF
+    exit 1
+  fi
+}
+
+
+function call_linkis_client() {
+        current_dir=`pwd`
+        workdir=`dirname "$0"`/../
+        workdir=`cd ${workdir};pwd`
+        cd ${current_dir}
+
+        LINKIS_DEPLOY_LIB_DIR='lib/linkis-computation-governance/linkis-client/linkis-cli/'
+        LINKIS_DEPLOY_CONF_DIR='conf/linkis-cli/'
+        LINKIS_DEPLOY_LOG_DIR='logs/linkis-cli/'
+        LINKIS_CLIENT_CLASSPATH=${workdir}/${LINKIS_DEPLOY_CONF_DIR}:${workdir}/${LINKIS_DEPLOY_LIB_DIR}*:${CLASSPATH}
+        LINKIS_CLIENT_LOG_DIR=${LINKIS_CLIENT_LOG_DIR:-"${workdir}/${LINKIS_DEPLOY_LOG_DIR}"}
+        LINKIS_CLIENT_CONF_DIR=${LINKIS_CLIENT_CONF_DIR:-"${workdir}/${LINKIS_DEPLOY_CONF_DIR}"}
+        LINKIS_CLIENT_CONF_FILE=${LINKIS_CLIENT_CONF_FILE:-"linkis-cli.properties"}
+
+        LINKIS_CLIENT_HEAP_OPTS="-server -Xms32m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${LINKIS_CLIENT_LOG_DIR} -XX:ErrorFile=${LINKIS_CLIENT_LOG_DIR}/ps_err_pid%p.log"
+        LINKIS_CLIENT_GC_OPTS="-XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+DisableExplicitGC"
+        LINKIS_CLIENT_LOG_OPTS="-Dlog.path=${LINKIS_CLIENT_LOG_DIR} -Dlog.file=linkis-client.${USER}.log.`date '+%Y%m%d%H%M%S%N'`"
+        #DEBUG_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
+        LINKIS_CLIENT_OPTS=${LINKIS_CLIENT_OPTS:-" ${DEBUG_OPTS} "}
+
+
+
+        exec ${JAVA} ${LINKIS_CLIENT_HEAP_OPTS} ${LINKIS_CLIENT_GC_OPTS} ${LINKIS_CLIENT_OPTS} -classpath ${LINKIS_CLIENT_CLASSPATH} -Dconf.root=${LINKIS_CLIENT_CONF_DIR} -Dconf.file=${LINKIS_CLIENT_CONF_FILE} ${LINKIS_CLIENT_LOG_OPTS}  ${LINKIS_CLIENT} "${input_args[@]}"
+}
+
+
+locate_java_home
+JAVA=${JAVA_HOME}/bin/java
+
+call_linkis_client

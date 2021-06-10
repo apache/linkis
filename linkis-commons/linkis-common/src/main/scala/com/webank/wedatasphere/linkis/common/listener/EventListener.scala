@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.common.listener
 
-/**
-  * Created by enjoyyin on 2018/1/10.
-  */
+
 trait EventListener {
   def onEventError(event: Event, t: Throwable): Unit
 }

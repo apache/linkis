@@ -1,0 +1,42 @@
+@import '@/common/style/variables.scss';
+.user-menu {
+  background: $menu-dark-active-bg;
+  width: 130px;
+  border: none;
+  position: $absolute;
+  top: 62px;
+  left: 50%;
+  margin-left: -75px;
+  border-radius: $border-radius-small;
+  .user-menu-arrow {
+      width: 0;
+      height: 0;
+      border: 8px solid $body-background;
+      border-color: transparent transparent $menu-dark-active-bg transparent;
+      border-top: 0;
+      list-style: none;
+      position: $absolute;
+      top: -8px;
+      left: 50%;
+      margin-left: -4px;
+  }
+  .user-menu-item {
+      list-style: none;
+      padding-left: 20px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      font-size: $font-size-base;
+      &:hover {
+          color: $body-background;
+          background: $dark-bg-dark;
+          border-top: none;
+          border-radius: $border-radius-small;
+      }
+      .user-menu-item-icon {
+          font-size: $font-size-large;
+          font-weight: bold;
+      }
+  }
+}

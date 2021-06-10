@@ -6,7 +6,7 @@
 -- 5.启动/停止脚本 传参提供类名即可
 
 -- 针对 entrance 作为EM的情况,instance可以插入多条记录,unique key 一定是 instance，ip和端口 ,name 作为类型
-CREATE TABLE `linkis_manager_service_instance`(
+CREATE TABLE `linkis_cg_manager_service_instance`(
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `instance` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `name` varchar(255) COLLATE utf8_bin DEFAULT NULL,
@@ -20,12 +20,12 @@ CREATE TABLE `linkis_manager_service_instance`(
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
--- select * from linkis_manager_service_instance_metrics where service_instance_id in (select id from linkis_manager_service_instance where instance={instance} and name=#{name})
+-- select * from linkis_cg_manager_service_instance_metrics where service_instance_id in (select id from linkis_cg_manager_service_instance where instance={instance} and name=#{name})
 
--- select * from linkis_manager_service_instance_metrics where service_instance_id in  (select id from linkis_manager_service_instance where instance=#{} )
+-- select * from linkis_cg_manager_service_instance_metrics where service_instance_id in  (select id from linkis_cg_manager_service_instance where instance=#{} )
 
 -- metric表 service_instance_metrics: service_instance_id status{运行状态，负载情况}  
-CREATE TABLE `linkis_manager_service_instance_metrics` (
+CREATE TABLE `linkis_cg_manager_service_instance_metrics` (
   `instance` varchar(16) NOT NULL,
   `instance_status` int(11) DEFAULT NULL,
   `overload` varchar(255) COLLATE utf8_bin DEFAULT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE `linkis_manager_service_instance_metrics` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
-CREATE TABLE `linkis_manager_metrics_history` (
+CREATE TABLE `linkis_cg_manager_metrics_history` (
   `instance_status` int(20) DEFAULT NULL,
   `overload` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `heartbeat_msg` varchar(255) COLLATE utf8_bin DEFAULT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE `linkis_manager_metrics_history` (
 -- 一个 EM可能有多个 engine 
 
 -- 引擎与EM关系表
-CREATE TABLE `linkis_manager_engine_em` (
+CREATE TABLE `linkis_cg_manager_engine_em` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `engine_instance` varchar(16) DEFAULT NULL,
   `em_instance` varchar(16) DEFAULT NULL,
@@ -62,7 +62,7 @@ CREATE TABLE `linkis_manager_engine_em` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- 标签表：
-CREATE TABLE `linkis_manager_label` (
+CREATE TABLE `linkis_cg_manager_label` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `label_key` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `label_value` varchar(255) COLLATE utf8_bin DEFAULT NULL,
@@ -84,7 +84,7 @@ BMap---list<int> 交集labelIDs
 CMap---list<int> 交集labelIDs
 */
 -- 标签值-关系表
-CREATE TABLE `linkis_manager_label_value_relation` (
+CREATE TABLE `linkis_cg_manager_label_value_relation` (
   `label_value_key` varchar(255) COLLATE utf8_bin  NOT NULL, 
   `label_value_content` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `label_id` int(20) DEFAULT NULL,
@@ -104,7 +104,7 @@ CREATE TABLE `linkis_manager_lable_user` (
 
 
 -- 标签/实例关系表
-CREATE TABLE `linkis_manager_label_service_instance` (
+CREATE TABLE `linkis_cg_manager_label_service_instance` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `label_id` int(20) DEFAULT NULL,
   `service_instance` varchar(16) DEFAULT NULL,
@@ -113,18 +113,18 @@ CREATE TABLE `linkis_manager_label_service_instance` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
--- select * from linkis_manager_linkis_resources where id in (select resource_id from linkis_manager_label_resource A join linkis_manager_lable_user B on A.label_id=B.label_id AND B.username=#{userName})
--- select * from linkis_manager_linkis_resources where resourceType=#{resourceType} and id in (select resource_id from linkis_manager_label_resource A join linkis_manager_label_service_instance B on A.label_id = B.label_id and B.service_instance_id=#{instanceId})
+-- select * from linkis_cg_manager_linkis_resources where id in (select resource_id from linkis_cg_manager_label_resource A join linkis_manager_lable_user B on A.label_id=B.label_id AND B.username=#{userName})
+-- select * from linkis_cg_manager_linkis_resources where resourceType=#{resourceType} and id in (select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id = B.label_id and B.service_instance_id=#{instanceId})
 
--- select * from linkis_manager_linkis_resources where id in (select resource_id from linkis_manager_label_resource A join linkis_manager_label_service_instance B join on A.label_id = B.label_id and B.service_instance_id=#{instanceId})
+-- select * from linkis_cg_manager_linkis_resources where id in (select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B join on A.label_id = B.label_id and B.service_instance_id=#{instanceId})
 
--- delete from linkis_manager_label_resource where label_id in (select label_id from linkis_manager_label_service_instance where service_instance_id = #{instanceId})
+-- delete from linkis_cg_manager_label_resource where label_id in (select label_id from linkis_cg_manager_label_service_instance where service_instance_id = #{instanceId})
 
--- delete from linkis_manager_linkis_resources where id in (select resource_id from linkis_manager_label_resource A join linkis_manager_label_service_instance B on A.label_id=B.label_id and B.service_instance_id==#{instanceId} )
+-- delete from linkis_cg_manager_linkis_resources where id in (select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id=B.label_id and B.service_instance_id==#{instanceId} )
 
 -- 标签资源表
 -- label_resource:
-CREATE TABLE `linkis_manager_label_resource` (
+CREATE TABLE `linkis_cg_manager_label_resource` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `label_id` int(20) DEFAULT NULL,
   `resource_id` int(20) DEFAULT NULL,
@@ -133,10 +133,10 @@ CREATE TABLE `linkis_manager_label_resource` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
--- delete from linkis_manager_label_resource where resource_id in (select id from linkis_manager_linkis_resources where ticketId=#{ticketId})
--- select id from linkis_manager_linkis_resources where ticketId is null and id in ( select resource_id from linkis_manager_label_resource A join linkis_manager_label_service_instance B on A.label_id=B.label_id and B.service_instance_id=#{instanceId})
+-- delete from linkis_cg_manager_label_resource where resource_id in (select id from linkis_cg_manager_linkis_resources where ticketId=#{ticketId})
+-- select id from linkis_cg_manager_linkis_resources where ticketId is null and id in ( select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id=B.label_id and B.service_instance_id=#{instanceId})
 -- 资源表
-CREATE TABLE `linkis_manager_linkis_resources` (
+CREATE TABLE `linkis_cg_manager_linkis_resources` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `max_resource` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `min_resource` varchar(255) COLLATE utf8_bin DEFAULT NULL,
@@ -154,7 +154,7 @@ CREATE TABLE `linkis_manager_linkis_resources` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --  锁表 lock
-CREATE TABLE `linkis_manager_lock` (
+CREATE TABLE `linkis_cg_manager_lock` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `lock_object` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `time_out`  longtext     DEFAULT NULL,

@@ -21,11 +21,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.parser.SQLCodeParser
 import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
 import com.webank.wedatasphere.linkis.engineplugin.hive.cs.CSHiveHelper
 import com.webank.wedatasphere.linkis.engineplugin.hive.exception.HiveQueryFailedException
 import com.webank.wedatasphere.linkis.engineplugin.hive.progress.HiveProgressHelper
+import com.webank.wedatasphere.linkis.governance.common.paser.SQLCodeParser
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.{CommonNodeResource, LoadInstanceResource, NodeResource}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
@@ -171,8 +171,8 @@ class HiveEngineConnExecutor(id: Int,
                     val arr:Array[String] = s.split("\t")
                     val arrAny:ArrayBuffer[Any] = new ArrayBuffer[Any]()
                     if (arr.length > columns.length){
-                      logger.error(s"""hive code ${realCode} 查询的结果中有\t制表符，hive不能进行切割,请使用spark执行""")
-                      throw new ErrorException(60078, """您查询的结果中有\t制表符，hive不能进行切割,请使用spark执行""")
+                      logger.error(s"Tab characters are present in the results of your query Hive cannot cut, use Spark to do so (hive code ${realCode} 查询的结果中有\t制表符，hive不能进行切割,请使用spark执行)")
+                      throw new ErrorException(60078, "Tab characters are present in the results of your query Hive cannot cut, use Spark to do so(您查询的结果中有\t制表符，hive不能进行切割,请使用spark执行)")
                     }
                     if (arr.length == columns.length) arr foreach arrAny.add
                     else if(arr.length == 0) for(i <-1 to columns.length) arrAny add ""
@@ -260,7 +260,7 @@ class HiveEngineConnExecutor(id: Int,
       singleSqlProgressMap foreach {
         case (jobId, progress) => arrayBuffer += JobProgressInfo(jobId, 200, 0, 0, 200)
       }
-      engineExecutorContext.sendProgress(1.0f, arrayBuffer.toArray[JobProgressInfo])
+      engineExecutorContext.pushProgress(1.0f, arrayBuffer.toArray[JobProgressInfo])
     }
   }
 

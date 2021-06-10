@@ -25,6 +25,8 @@ import com.webank.wedatasphere.linkis.manager.label.entity.em.EMInstanceLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineInstanceLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.UserCreatorLabel;
+import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil;
+import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils;
 import com.webank.wedatasphere.linkis.resourcemanager.exception.RMErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +38,8 @@ public class RMLabelContainer {
     private static final Logger logger = LoggerFactory.getLogger(RMLabelContainer.class);
     private static CombinedLabelBuilder combinedLabelBuilder = new CombinedLabelBuilder();
 
-    List<Label> labels;
-    List<Label> lockedLabels;
+    List<Label<?>> labels;
+    List<Label<?>> lockedLabels;
     private EMInstanceLabel EMInstanceLabel;
     private EngineTypeLabel engineTypeLabel;
     private UserCreatorLabel userCreatorLabel;
@@ -45,21 +47,21 @@ public class RMLabelContainer {
     private CombinedLabel combinedUserCreatorEngineTypeLabel;
     private Label currentLabel;
 
-    public RMLabelContainer(List<Label> labels) {
+    public RMLabelContainer(List<Label<?>> labels) {
         this.labels = labels;
         this.lockedLabels = Lists.newArrayList();
         try{
             if(getUserCreatorLabel() != null && getEngineTypeLabel() != null){
                 this.combinedUserCreatorEngineTypeLabel = (CombinedLabel) combinedLabelBuilder.build("", Lists.newArrayList(getUserCreatorLabel(), getEngineTypeLabel()));
-                labels.add(combinedUserCreatorEngineTypeLabel);
+                this.labels.add(combinedUserCreatorEngineTypeLabel);
             }
         }catch (Exception e){
             logger.warn("failed to get combinedUserCreatorEngineTypeLabel", e);
         }
-
+        this.labels = LabelUtils.distinctLabel(this.labels, this.labels);
     }
 
-    public List<Label> getLabels() {
+    public List<Label<?>> getLabels() {
         return labels;
     }
 
@@ -139,7 +141,7 @@ public class RMLabelContainer {
         this.currentLabel = currentLabel;
     }
 
-    public List<Label> getLockedLabels() {
+    public List<Label<?>> getLockedLabels() {
         return lockedLabels;
     }
 

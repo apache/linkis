@@ -17,7 +17,6 @@
 package com.webank.wedatasphere.linkis.storage.resultset
 
 import java.io.InputStream
-
 import com.webank.wedatasphere.linkis.common.io.resultset.{ResultSet, ResultSetReader}
 import com.webank.wedatasphere.linkis.common.io.{FsPath, MetaData, Record}
 import com.webank.wedatasphere.linkis.storage.FSFactory

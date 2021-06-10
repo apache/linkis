@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.scheduler.event
 
 import com.webank.wedatasphere.linkis.common.listener.EventListener
 
-/**
-  * Created by enjoyyin on 2018/8/31.
-  */
+
 trait SchedulerEventListener extends EventListener {
   def onEvent(scheduleEvent: ScheduleEvent): Unit
 }

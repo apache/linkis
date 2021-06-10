@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.storage.resultset.io
 import com.webank.wedatasphere.linkis.common.io.resultset.{ResultDeserializer, ResultSerializer}
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, StorageResultSet}
 
-/**
-  * Created by johnnwang on 2018/10/30.
-  */
+
 class IOResultSet extends StorageResultSet[IOMetaData, IORecord] with Serializable{
 
   override def resultSetType(): String = ResultSetFactory.IO_TYPE

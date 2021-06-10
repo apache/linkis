@@ -16,26 +16,33 @@
 
 package com.webank.wedatasphere.linkis.instance.label.service.rpc
 
-import java.util
-
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.instance.label.dao.InsLabelRelationDao
 import com.webank.wedatasphere.linkis.instance.label.service.{InsLabelRpcService, InsLabelServiceAdapter}
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import com.webank.wedatasphere.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils
 import com.webank.wedatasphere.linkis.message.annotation.Receiver
 import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
-import com.webank.wedatasphere.linkis.protocol.label.{InsLabelAttachRequest, InsLabelRefreshRequest, InsLabelRemoveRequest}
-import javax.annotation.{PostConstruct, Resource}
+import com.webank.wedatasphere.linkis.protocol.label._
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+import java.util
+import javax.annotation.{PostConstruct, Resource}
 import scala.collection.JavaConversions._
+import scala.collection.JavaConverters.asScalaBufferConverter
 
 @Service
 class DefaultInsLabelRpcService extends InsLabelRpcService with Logging {
   @Resource
   private var insLabelService: InsLabelServiceAdapter = _
 
+  @Autowired
+  private var inslabelRelationDao: InsLabelRelationDao = _
+
+  private val labelBuilderFactory: LabelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
   @PostConstruct
   def init(): Unit = {
@@ -54,14 +61,6 @@ class DefaultInsLabelRpcService extends InsLabelRpcService with Logging {
     info(s"Success to attach labels[$labels] to instance[$instance]")
   }
 
-  private def getLabels(labelMap: Option[util.Map[String, Object]]): util.List[Label[_]] = {
-    if(labelMap.isDefined) {
-      LabelBuilderFactoryContext.getLabelBuilderFactory.getLabels(labelMap.get)
-    }else{
-      new util.ArrayList[Label[_]]
-    }
-  }
-
   @Receiver
   override def refreshLabelsToInstance(context: ServiceMethodContext, insLabelRefreshRequest: InsLabelRefreshRequest): Unit = {
     val labelMap = Option(insLabelRefreshRequest.getLabels)
@@ -74,6 +73,14 @@ class DefaultInsLabelRpcService extends InsLabelRpcService with Logging {
     info(s"Success to refresh labels[$labels] to instance[$instance]")
   }
 
+  private def getLabels(labelMap: Option[util.Map[String, Object]]): util.List[Label[_]] = {
+    if(labelMap.isDefined) {
+      LabelBuilderFactoryContext.getLabelBuilderFactory.getLabels(labelMap.get)
+    }else{
+      new util.ArrayList[Label[_]]
+    }
+  }
+
   @Receiver
   override def removeLabelsFromInstance(context: ServiceMethodContext, insLabelRemoveRequest: InsLabelRemoveRequest): Unit = {
     val instance = Option(insLabelRemoveRequest.getServiceInstance).getOrElse(
@@ -82,5 +89,23 @@ class DefaultInsLabelRpcService extends InsLabelRpcService with Logging {
     info(s"Start to remove labels from instance[$instance]")
     insLabelService.removeLabelsFromInstance(instance)
     info(s"Success to remove labels from instance[$instance]")
+  }
+
+  @Receiver
+  override def queryLabelsFromInstance(context: ServiceMethodContext, insLabelQueryRequest: InsLabelQueryRequest): InsLabelQueryResponse = {
+    Utils.tryAndError {
+      val labels = new util.ArrayList[Label[_]]()
+      inslabelRelationDao.searchLabelsByInstance(insLabelQueryRequest.getServiceInstance.getInstance).asScala.map(insLabel => labelBuilderFactory.createLabel[Label[_]](insLabel.getLabelKey, insLabel.getStringValue))
+        .foreach(l => labels.add(l))
+      new InsLabelQueryResponse(LabelUtils.labelsToPairList(labels))
+    }
+  }
+
+  @Receiver
+  override def queryInstanceFromLabels(context: ServiceMethodContext, labelInsQueryRequest: LabelInsQueryRequest): LabelInsQueryResponse = {
+    Utils.tryAndError {
+      val labels = LabelBuilderFactoryContext.getLabelBuilderFactory.getLabels(labelInsQueryRequest.getLabels)
+      new LabelInsQueryResponse(insLabelService.searchInstancesByLabels(labels))
+    }
   }
 }

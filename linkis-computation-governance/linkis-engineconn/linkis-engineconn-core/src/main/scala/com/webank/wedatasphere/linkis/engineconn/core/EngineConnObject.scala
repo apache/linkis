@@ -18,30 +18,30 @@ package com.webank.wedatasphere.linkis.engineconn.core
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.common.conf.EngineConnConf
-import com.webank.wedatasphere.linkis.engineconn.common.creation.{DefaultEngineCreationContext, EngineCreationContext}
+import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.EngineConnPlugin
 
 object EngineConnObject extends Logging {
 
   private val engineConnPlugin: EngineConnPlugin = Utils.tryCatch {
-    Utils.getClassInstance[EngineConnPlugin](EngineConnConf.ENGINECONN_PLUGIN_CLAZZ.getValue)
-  } { case t: Throwable =>
-    error("Failed to create engineConnPlugin: " + EngineConnConf.ENGINECONN_PLUGIN_CLAZZ.getValue, t)
+    Utils.getClassInstance[EngineConnPlugin](EngineConnConf.ENGINE_CONN_PLUGIN_CLAZZ.getValue)
+  } { t =>
+    error("Failed to create engineConnPlugin: " + EngineConnConf.ENGINE_CONN_PLUGIN_CLAZZ.getValue, t)
     System.exit(1)
     null
   }
   private var engineCreationContext: EngineCreationContext = _
   private var  ready = false
 
-  def isReady: Boolean = isReady
+  def isReady: Boolean = this.ready
 
-  def setReady: Unit = this.ready = true
+  def setReady(): Unit = this.ready = true
 
   def getEngineConnPlugin: EngineConnPlugin = engineConnPlugin
 
   def getEngineCreationContext: EngineCreationContext = this.engineCreationContext
 
-  def setEngineCreationContext( engineCreationContext: EngineCreationContext): Unit = this.engineCreationContext = engineCreationContext
+  def setEngineCreationContext(engineCreationContext: EngineCreationContext): Unit = this.engineCreationContext = engineCreationContext
 
 
 }

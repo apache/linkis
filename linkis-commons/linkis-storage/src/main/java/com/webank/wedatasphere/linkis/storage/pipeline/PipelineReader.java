@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.common.io.FsReader;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * Created by johnnwang on 2019/1/1.
- */
+
 abstract public class PipelineReader extends FsReader {
 
 

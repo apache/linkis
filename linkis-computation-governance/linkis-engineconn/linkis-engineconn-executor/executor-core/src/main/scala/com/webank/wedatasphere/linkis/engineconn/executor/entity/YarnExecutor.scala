@@ -16,21 +16,15 @@
 
 package com.webank.wedatasphere.linkis.engineconn.executor.entity
 
-import scala.beans.BeanProperty
-
 trait YarnExecutor extends Executor {
 
-  @BeanProperty
-  var applicationId: String
+  def getApplicationId: String
 
-  @BeanProperty
-  var applicationURL: String
+  def getApplicationURL: String
 
-  @BeanProperty
-  var yarnMode: String
+  def getYarnMode: String
 
-  @BeanProperty
-  var queue: String
+  def getQueue: String
 
 
 }

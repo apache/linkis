@@ -16,6 +16,7 @@
 package com.webank.wedatasphere.linkis.bml.dao;
 
 import com.webank.wedatasphere.linkis.bml.Entity.Resource;
+
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -33,11 +34,11 @@ public interface ResourceDao {
     long uploadResource(Resource resource);
 
 
-    @Select("select exists(select * from `linkis_resources` where resource_id = #{resourceId}  and enable_flag = 1 )")
+    @Select("select exists(select * from `linkis_ps_bml_resources` where resource_id = #{resourceId}  and enable_flag = 1 )")
     int checkExists(@Param("resourceId") String resourceId);
 
     Resource getResource(@Param("resourceId") String resourceId);
 
-    @Select("select owner from `linkis_resources` where resource_id = #{resourceId} ")
+    @Select("select owner from `linkis_ps_bml_resources` where resource_id = #{resourceId} ")
     String getUserByResourceId(@Param("resourceId") String resourceId);
 }

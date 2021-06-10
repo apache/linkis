@@ -27,10 +27,7 @@ import com.webank.wedatasphere.linkis.server.{EXCEPTION_MSG, JMap, Message}
 
 import scala.runtime.BoxedUnit
 
-/**
- * @date 2020/8/6
- *
- */
+
 
 class MessageRPCConsumer {
 
@@ -53,14 +50,7 @@ class MessageRPCConsumer {
               exception
             case t: Throwable => t
           }
-//          if (null != data.get(IS_REQUEST_PROTOCOL_CLASS) && data.get(IS_REQUEST_PROTOCOL_CLASS).toString.toBoolean) {
-            ProtostuffSerializeUtil.deserialize(objectStr, clazz)
-//          } else if (data.get(IS_SCALA_CLASS).toString.toBoolean) {
-//            val realClass = getSerializableScalaClass(clazz)
-//            Serialization.read(objectStr)(formats, ManifestFactory.classType(realClass))
-//          } else {
-//            BDPJettyServerHelper.gson.fromJson(objectStr, clazz)
-//          }
+          ProtostuffSerializeUtil.deserialize(objectStr, clazz)
         } else {
           messageConverter.convert(message)
         }

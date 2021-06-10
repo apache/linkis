@@ -1,0 +1,150 @@
+
+.tableBody {
+  width: 100%;
+}
+.top-td {
+  border-right: 1px solid #e8eaec;
+  height: 40px;
+  white-space: nowrap;
+  overflow: hidden;
+  background-color: #2d8cf0;
+  box-sizing: border-box;
+  text-align: center;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  font-weight: 600;
+  border-bottom: 1px solid #e8eaec;
+  color: #fff;
+  font-size: 12px;
+  overflow: hidden;
+}
+.top-td .sort-icon {
+  display: inline-block;
+  width: 14px;
+  height: 12px;
+  margin-top: -1px;
+  vertical-align: middle;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+}
+.sort-icon  i {
+  display: block;
+  height: 6px;
+  line-height: 6px;
+  overflow: hidden;
+  position: absolute;
+  color: #c5c8ce;
+  transition: color 0.2s ease-in-out;
+  font-size: 16px;
+  font-family: Ionicons;
+  font-style: normal;
+  font-weight: 400;
+  font-variant: normal;
+  text-transform: none;
+  text-rendering: auto;
+}
+.sort-icon i:first-child {
+  top: 0;
+}
+.sort-icon i:last-child {
+  bottom: 0;
+}
+.sort-icon i:hover {
+  color: #FFF;
+}
+.sort-icon i.on {
+  color: #FFF;
+}
+.sort-icon-arrow-down:before {
+  content: "\F33D";
+}
+.sort-icon-arrow-up:before {
+  content: "\F33D";
+}
+.table-bottom {
+  position: absolute;
+  top: 41px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+}
+.table-top {
+  position: absolute;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
+
+.table-bottom-load {
+  position: absolute;
+  z-index: 99;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.15);
+  opacity: 0.3;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+.table-bottom-load .icon {
+  font-size: 30px;
+  animation: ani-demo-spin 2s linear infinite;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+.table-bottom-load .msg {
+  margin-top: 10px;
+  color: #000;
+  line-height: 30px;
+}
+@keyframes ani-demo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.table-div {
+  width: inherit;
+  max-width: 100%;
+  color: #495060;
+  font-size: 12px;
+  background-color: #fff;
+  box-sizing: border-box;
+  position: relative;
+  margin: auto;
+  border: 1px solid #e8eaec;
+  overflow: auto;
+}
+.bottom-td {
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+  text-align: center;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  border-bottom: 1px solid #e8eaec;
+  border-right: 1px solid #e8eaec;
+  transition: background-color 0.2s ease-in-out;
+}
+.trselect td {
+  background-color: #ebf7ff;
+}
+.trhover:hover td {
+  background-color: #ebf7ff;
+}
+.no-data-tip {
+  height: 100%;
+  padding-left: 100px;
+  display: flex;
+  align-items: center;
+}

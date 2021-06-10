@@ -23,9 +23,7 @@ import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.commons.io.IOUtils
 
-/**
-  * Created by johnnwang on 2018/11/12.
-  */
+
 class StorageCSVWriter(val charset: String, val separator: String, val outputStream: OutputStream) extends CSVFsWriter with Logging {
 
   private val delimiter = separator match {

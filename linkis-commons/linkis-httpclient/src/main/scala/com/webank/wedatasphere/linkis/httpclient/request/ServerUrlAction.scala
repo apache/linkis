@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.httpclient.request
 
-/**
-  * Created by enjoyyin on 2019/5/22.
-  */
+
 trait ServerUrlAction {
   val serverUrl: String
 }

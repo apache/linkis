@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.rpc.interceptor
 
 import com.webank.wedatasphere.linkis.protocol.Protocol
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 trait RPCInterceptorExchange {
 
   def invoke(): Any

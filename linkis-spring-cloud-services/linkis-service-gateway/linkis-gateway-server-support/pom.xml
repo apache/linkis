@@ -20,7 +20,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>1.0.0-RC1</version>
+        <version>1.0.0</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
 
@@ -81,7 +81,7 @@
         <!-- instance label -->
         <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-instance-label</artifactId>
+            <artifactId>linkis-instance-label-server</artifactId>
             <version>${linkis.version}</version>
         </dependency>
 

@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.engineplugin.server.service
 
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engineplugin.server.loader.EngineConnPluginsLoader
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
@@ -28,7 +29,7 @@ import scala.collection.JavaConversions._
 
 
 @Component
-class DefaultEngineConnResourceFactoryService extends EngineConnResourceFactoryService {
+class DefaultEngineConnResourceFactoryService extends EngineConnResourceFactoryService with Logging {
 
   override def getResourceFactoryBy(engineType: EngineTypeLabel): EngineResourceFactory = {
     val engineConnPluginInstance = EngineConnPluginsLoader.getEngineConnPluginsLoader().getEngineConnPlugin(engineType)
@@ -37,6 +38,7 @@ class DefaultEngineConnResourceFactoryService extends EngineConnResourceFactoryS
 
   @Receiver
   override def createEngineResource(engineResourceRequest: EngineResourceRequest): NodeResource = {
+    info(s"To invoke createEngineResource $engineResourceRequest")
     val engineTypeOption = engineResourceRequest.labels.find(_.isInstanceOf[EngineTypeLabel])
 
     if (engineTypeOption.isDefined) {

@@ -33,15 +33,21 @@ import com.webank.wedatasphere.linkis.resourcemanager.external.request.ExternalR
 import com.webank.wedatasphere.linkis.resourcemanager.external.service.ExternalResourceService;
 import com.webank.wedatasphere.linkis.resourcemanager.external.yarn.YarnResourceRequester;
 import com.webank.wedatasphere.linkis.resourcemanager.utils.RMConfiguration;
+import com.webank.wedatasphere.linkis.resourcemanager.utils.RMUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 @Component
 public class ExternalResourceServiceImpl implements ExternalResourceService, InitializingBean {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     ExternalResourceProviderDao providerDao;
@@ -70,7 +76,9 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
     @Override
     public NodeResource getResource(ResourceType resourceType, RMLabelContainer labelContainer, ExternalResourceIdentifier identifier) throws RMErrorException {
         ExternalResourceProvider provider = chooseProvider(resourceType, labelContainer);
-        return getRequester(resourceType).requestResourceInfo(identifier, provider);
+        ExternalResourceRequester externalResourceRequester = getRequester(resourceType);
+        NodeResource resource  = (NodeResource) retry((Integer) RMConfiguration.EXTERNAL_RETRY_NUM().getValue(), (i)-> externalResourceRequester.requestResourceInfo(identifier, provider));
+        return resource;
     }
 
     @Override
@@ -82,7 +90,22 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
     @Override
     public List<ExternalAppInfo> getAppInfo(ResourceType resourceType, RMLabelContainer labelContainer, ExternalResourceIdentifier identifier) throws RMErrorException {
         ExternalResourceProvider provider = chooseProvider(resourceType, labelContainer);
-        return getRequester(resourceType).requestAppInfo(identifier, provider);
+        ExternalResourceRequester externalResourceRequester = getRequester(resourceType);
+        List<ExternalAppInfo> appInfos = (List<ExternalAppInfo>) retry((Integer) RMConfiguration.EXTERNAL_RETRY_NUM().getValue(), (i) -> externalResourceRequester.requestAppInfo(identifier, provider));
+        return appInfos;
+    }
+
+    private Object retry(int retryNum, Function function) throws RMErrorException {
+        int times = 0;
+        while(times < retryNum){
+            try{
+                return function.apply(null);
+            } catch (Exception e){
+                logger.warn("failed to request external resource provider", e);
+                times ++;
+            }
+        }
+        throw new RMErrorException(11006, "failed to request external resource provider");
     }
 
     private ExternalResourceProvider chooseProvider(ResourceType resourceType, RMLabelContainer labelContainer) throws RMErrorException {

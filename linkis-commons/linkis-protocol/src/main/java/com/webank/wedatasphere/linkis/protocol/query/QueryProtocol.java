@@ -16,8 +16,6 @@
 
 package com.webank.wedatasphere.linkis.protocol.query;
 
-/**
- * Created by enjoyyin on 2019/7/13.
- */
+
 public interface QueryProtocol {
 }

@@ -1,19 +1,3 @@
-/*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.webank.wedatasphere.linkis.manager.common.utils
 
 import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource
@@ -53,7 +37,7 @@ object ResourceUtils {
     if (persistenceResource.getMaxResource != null) nodeResource.setMaxResource(deserializeResource(persistenceResource.getMaxResource))
     if (persistenceResource.getMinResource != null) nodeResource.setMinResource(deserializeResource(persistenceResource.getMinResource))
     if (persistenceResource.getLockedResource != null) nodeResource.setLockedResource(deserializeResource(persistenceResource.getLockedResource))
-    if (persistenceResource.getExpectedResource != null) nodeResource.setMaxResource(deserializeResource(persistenceResource.getExpectedResource))
+    if (persistenceResource.getExpectedResource != null) nodeResource.setExpectedResource(deserializeResource(persistenceResource.getExpectedResource))
     if (persistenceResource.getLeftResource != null) nodeResource.setLeftResource(deserializeResource(persistenceResource.getLeftResource))
     if (persistenceResource.getUsedResource != null) nodeResource.setUsedResource(deserializeResource(persistenceResource.getUsedResource))
     nodeResource.setResourceType(ResourceType.valueOf(persistenceResource.getResourceType))

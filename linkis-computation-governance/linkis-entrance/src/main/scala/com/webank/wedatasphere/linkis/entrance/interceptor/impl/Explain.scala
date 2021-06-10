@@ -17,14 +17,13 @@
 package com.webank.wedatasphere.linkis.entrance.interceptor.impl
 
 import java.util.regex.Pattern
-
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.interceptor.exception.{PythonCodeCheckException, ScalaCodeCheckException}
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
 import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -51,7 +50,7 @@ object SparkExplain extends Explain {
   private val LINE_BREAK = "\n"
   private val LOG:Logger = LoggerFactory.getLogger(getClass)
   override def authPass(code: String, error: StringBuilder): Boolean = {
-    if (EntranceConfiguration.IS_QML.getValue) {
+    if (EntranceConfiguration.SKIP_AUTH.getValue) {
       return true
     }
     if (scStop.matcher(code).find()) {
@@ -98,40 +97,76 @@ object SQLExplain extends Explain {
   /**
     * to deal with sql limit
     *
-    * @param executionCode      sql code
+    * @param executionCode sql code
     * @param requestPersistTask use to store inited logs
     */
-  def dealSQLLimit(executionCode: String, requestPersistTask: RequestPersistTask, logAppender: java.lang.StringBuilder): Unit = {
-    val fixedCode: ArrayBuffer[String] = new ArrayBuffer[String]()
+  def dealSQLLimit(executionCode:String, requestPersistTask: JobRequest, logAppender: java.lang.StringBuilder):Unit = {
+    val fixedCode:ArrayBuffer[String] = new ArrayBuffer[String]()
     val tempCode = SQLCommentHelper.dealComment(executionCode)
-    val isNoLimitAllowed = Utils.tryCatch {
+    val isNoLimitAllowed = Utils.tryCatch{
       IDE_ALLOW_NO_LIMIT_REGEX.findFirstIn(executionCode).isDefined
-    } {
-      case e: Exception => logger.warn("sql limit check error happens")
+    }{
+      case e:Exception => logger.warn("sql limit check error happens")
         executionCode.contains(IDE_ALLOW_NO_LIMIT)
     }
     if (isNoLimitAllowed) logAppender.append(LogUtils.generateWarn("请注意,SQL全量导出模式打开\n"))
-    tempCode.split(";") foreach { singleCode =>
-      if (isSelectCmd(singleCode)){
-        val trimCode = singleCode.trim
-        if (isSelectCmdNoLimit(trimCode) && !isNoLimitAllowed){
-          logAppender.append(LogUtils.generateWarn(s"You submitted a sql without limit, DSS will add limit 5000 to your sql") + "\n")
-          //将注释先干掉,然后再进行添加limit
-          val realCode = cleanComment(trimCode)
-          fixedCode += (realCode + SQL_APPEND_LIMIT)
-        }else if (isSelectOverLimit(singleCode) && !isNoLimitAllowed){
+    if(tempCode.contains("""\;""")){
+      val semicolonIndexes = findRealSemicolonIndex(tempCode)
+      var oldIndex = 0
+      semicolonIndexes.foreach{
+        index => val singleCode = tempCode.substring(oldIndex, index)
+          oldIndex = index + 1
+          if (isSelectCmd(singleCode)){
+            val trimCode = singleCode.trim
+            if (isSelectCmdNoLimit(trimCode) && !isNoLimitAllowed){
+              logAppender.append(LogUtils.generateWarn(s"You submitted a sql without limit, DSS will add limit 5000 to your sql") + "\n")
+              //将注释先干掉,然后再进行添加limit
+              val realCode = cleanComment(trimCode)
+              fixedCode += (realCode + SQL_APPEND_LIMIT)
+            }else if (isSelectOverLimit(singleCode) && !isNoLimitAllowed){
+              val trimCode = singleCode.trim
+              logAppender.append(LogUtils.generateWarn(s"You submitted a sql with limit exceeding 5000, it is not allowed. DSS will change your limit to 5000") + "\n")
+              fixedCode += repairSelectOverLimit(trimCode)
+            }else{
+              fixedCode += singleCode.trim
+            }
+          }else{
+            fixedCode += singleCode.trim
+          }
+      }
+    }else{
+      tempCode.split(";") foreach { singleCode =>
+        if (isSelectCmd(singleCode)){
           val trimCode = singleCode.trim
-          logAppender.append(LogUtils.generateWarn(s"You submitted a sql with limit exceeding 5000, it is not allowed. DSS will change your limit to 5000") + "\n")
-          fixedCode += repairSelectOverLimit(trimCode)
+          if (isSelectCmdNoLimit(trimCode) && !isNoLimitAllowed){
+            logAppender.append(LogUtils.generateWarn(s"You submitted a sql without limit, DSS will add limit 5000 to your sql") + "\n")
+            //将注释先干掉,然后再进行添加limit
+            val realCode = cleanComment(trimCode)
+            fixedCode += (realCode + SQL_APPEND_LIMIT)
+          }else if (isSelectOverLimit(singleCode) && !isNoLimitAllowed){
+            val trimCode = singleCode.trim
+            logAppender.append(LogUtils.generateWarn(s"You submitted a sql with limit exceeding 5000, it is not allowed. DSS will change your limit to 5000") + "\n")
+            fixedCode += repairSelectOverLimit(trimCode)
+          }else{
+            fixedCode += singleCode.trim
+          }
         }else{
           fixedCode += singleCode.trim
         }
-      }else{
-        fixedCode += singleCode.trim
       }
     }
     logAppender.append(LogUtils.generateInfo("SQL code check has passed" + "\n"))
     requestPersistTask.setExecutionCode(fixedCode.mkString(";\n"))
+    info(s"after sql limit code is ${requestPersistTask.getExecutionCode}")
+  }
+
+  private def findRealSemicolonIndex(tempCode: String):Array[Int] = {
+    val realTempCode = if (!tempCode.endsWith(""";""")) tempCode + ";" else tempCode
+    val array = new ArrayBuffer[Int]()
+    for(i <- 0 until realTempCode.length - 1){
+      if ('\\' != realTempCode.charAt(i) && ';' == realTempCode.charAt(i + 1)) array += ( i + 1)
+    }
+    array.toArray
   }
 
 
@@ -242,14 +277,43 @@ object PythonExplain extends Explain{
   private val FROM_MULTIPROCESS_IMPORT = """from\s+multiprocessing\s+import\s+.*""".r.unanchored
   private val IMPORT_SUBPORCESS_MODULE = """import\s+subprocess""".r.unanchored
   private val FROM_SUBPROCESS_IMPORT = """from\s+subprocess\s+import\s+.*""".r.unanchored
+
+
+  /**
+   * Because of importing numpy package, spark engine will report an error,
+   * so we forbid this usage.
+   * */
+  private val FROM_NUMPY_IMPORT = """from\s+numpy\s+import\s+.*""".r.unanchored
+
+
+  private val CAN_PASS_CODES = "subprocess.run;subprocess.Popen;subprocess.check_output"
+
   /**
     * Forbidden user stop sparkContext(禁止用户stop sparkContext)
     */
   private val SC_STOP = """sc\.stop""".r.unanchored
   override def authPass(code: String, error: StringBuilder): Boolean = {
-    if (EntranceConfiguration.IS_QML.getValue) {
+    if (EntranceConfiguration.SKIP_AUTH.getValue) {
       return true
     }
+
+    CAN_PASS_CODES.split(";").foreach(c => {
+      if (code.contains(c)){
+        if (IMPORT_SYS_MOUDLE.findAllIn(code).nonEmpty || FROM_SYS_IMPORT.findAllIn(code).nonEmpty)
+          throw PythonCodeCheckException(20070, "can not use sys module")
+        else if (IMPORT_OS_MOUDLE.findAllIn(code).nonEmpty || FROM_OS_IMPORT.findAllIn(code).nonEmpty)
+          throw PythonCodeCheckException(20071, "can not use os module")
+        else if (IMPORT_PROCESS_MODULE.findAllIn(code).nonEmpty || FROM_MULTIPROCESS_IMPORT.findAllIn(code).nonEmpty)
+          throw PythonCodeCheckException(20072, "can not use process module")
+        else if (SC_STOP.findAllIn(code).nonEmpty)
+          throw PythonCodeCheckException(20073, "You can not stop SparkContext, It's dangerous")
+        else if (FROM_NUMPY_IMPORT.findAllIn(code).nonEmpty)
+          throw PythonCodeCheckException(20074, "Numpy packages cannot be imported in this way")
+        else if (FROM_NUMPY_IMPORT.findAllIn(code).nonEmpty)
+          throw PythonCodeCheckException(20074, "Numpy packages cannot be imported in this way")
+      }
+    })
+
     code.split(System.lineSeparator()) foreach {code =>
       if (IMPORT_SYS_MOUDLE.findAllIn(code).nonEmpty || FROM_SYS_IMPORT.findAllIn(code).nonEmpty)
         throw PythonCodeCheckException(20070, "can not use sys module")
@@ -271,7 +335,7 @@ object ScalaExplain extends Explain{
   private val runtime = """Runtime.getRunTime""".r.unanchored
   private val LOG:Logger = LoggerFactory.getLogger(getClass)
   override def authPass(code: String, error: StringBuilder): Boolean = {
-    if (EntranceConfiguration.IS_QML.getValue) {
+    if (EntranceConfiguration.SKIP_AUTH.getValue) {
       return true
     }
     code match {

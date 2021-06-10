@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.message.exception;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 
-/**
- * @date 2020/7/15
- */
+
 public class MessageErrorException extends ErrorException {
 
     public MessageErrorException(int errCode, String desc) {

@@ -64,7 +64,7 @@ public class LabelEntityParser {
         return labelList;
     }
 
-    public static ArrayList<Label> LabelDecompile(String labelKey, String stringValue){
+    public static ArrayList<Label> labelDecompile(String labelKey, String stringValue){
         //NOTICE: a simple Decompile, too bad! don't use in other places
         String[] labelKeyList = labelKey.split("_");
         String[] stringValueList = stringValue.split(",");

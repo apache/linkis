@@ -21,8 +21,8 @@ import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
 import com.webank.wedatasphere.linkis.entrance.interceptor.exception.VarSubstitutionException
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
-import com.webank.wedatasphere.linkis.protocol.task.Task
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
+import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
 import org.apache.commons.lang.exception.ExceptionUtils
 
 /**
@@ -31,15 +31,16 @@ import org.apache.commons.lang.exception.ExceptionUtils
 class VarSubstitutionInterceptor extends EntranceInterceptor {
 
   @throws[ErrorException]
-  override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = {
-    task match {
-      case requestPersistTask: RequestPersistTask =>
+  override def apply(jobRequest: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
+    jobRequest match {
+      case jobRequest: JobRequest =>
         Utils.tryThrow {
           logAppender.append(LogUtils.generateInfo("Program is substituting variables for you") + "\n")
-          val (result, code) = CustomVariableUtils.replaceCustomVar(requestPersistTask, requestPersistTask.getEngineType)
-          if (result) requestPersistTask.setExecutionCode(code)
+          val engineType = LabelUtil.getEngineType(jobRequest.getLabels)
+          val (result, code) = CustomVariableUtils.replaceCustomVar(jobRequest, engineType)
+          if (result) jobRequest.setExecutionCode(code)
           logAppender.append(LogUtils.generateInfo("Variables substitution ended successfully") + "\n")
-          requestPersistTask
+          jobRequest
         } {
           case e: VarSubstitutionException =>
             val exception = VarSubstitutionException(20050, "Variable replacement failed!(变量替换失败！)" + ExceptionUtils.getRootCauseMessage(e))
@@ -50,7 +51,7 @@ class VarSubstitutionInterceptor extends EntranceInterceptor {
             exception.initCause(t)
             exception
         }
-      case _ => task
+      case _ => jobRequest
     }
   }
 }

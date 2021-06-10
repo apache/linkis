@@ -21,14 +21,13 @@ import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars}
 
 object ComputationExecutorConf {
 
-  val ENGINECONN_RESULT_SET_STORE_PATH = CommonVars("wds.linkis.engineconn.resultSet.default.store.path", "hdfs:///tmp")
-
   val ENGINE_RESULT_SET_MAX_CACHE = CommonVars("wds.linkis.engine.resultSet.cache.max", new ByteType("0k"))
 
-  val ENGINE_DEFAULT_LIMIT = CommonVars("wds.linkis.engine.default.limit", 5000)
 
   val ENGINE_LOCK_DEFAULT_EXPIRE_TIME = CommonVars("wds.linkis.engine.lock.expire.time", 2 * 60 * 1000)
 
+  val ENGINE_MAX_TASK_EXECUTE_NUM = CommonVars("wds.linkis.engineconn.max.task.execute.num", 0)
 
 
+  val ENGINE_PROGRESS_FETCH_INTERVAL = CommonVars("wds.linkis.engineconn.progresss.fetch.interval-in-seconds", 3)
 }

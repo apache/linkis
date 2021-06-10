@@ -18,9 +18,10 @@ import java.util
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.utils.Utils
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationExecutorManager
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.parser.PythonCodeParser
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.rs.RsOutputStream
+import com.webank.wedatasphere.linkis.engineconn.launch.EngineConnServer
 import com.webank.wedatasphere.linkis.engineplugin.spark.Interpreter.PythonInterpreter._
 import com.webank.wedatasphere.linkis.engineplugin.spark.common.{Kind, PySpark}
 import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
@@ -28,6 +29,7 @@ import com.webank.wedatasphere.linkis.engineplugin.spark.entity.SparkEngineSessi
 import com.webank.wedatasphere.linkis.engineplugin.spark.exception.ExecuteError
 import com.webank.wedatasphere.linkis.engineplugin.spark.imexport.CsvRelation
 import com.webank.wedatasphere.linkis.engineplugin.spark.utils.EngineUtils
+import com.webank.wedatasphere.linkis.governance.common.paser.PythonCodeParser
 import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
 import com.webank.wedatasphere.linkis.storage.resultset.ResultSetWriter
 import org.apache.commons.exec.CommandLine
@@ -60,6 +62,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
 
   implicit var sparkSession: SparkSession = sparkEngineSession.sparkSession
   private[spark] var engineExecutionContext: EngineExecutionContext = _
+  private val engineCreationContext = EngineConnServer.getEngineCreationContext
   private val lineOutputStream = new RsOutputStream
   val sqlContext = sparkEngineSession.sqlContext
   val SUCCESS = "success"
@@ -80,6 +83,16 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     info("spark sql executor start")
   }
 
+  override def killTask(taskID: String): Unit = {
+    info(s"Start to kill python task $taskID")
+    super.killTask(taskID)
+    info(s"To close python cli task $taskID")
+    Utils.tryAndError(close)
+    info(s"To delete python executor task $taskID")
+    Utils.tryAndError(ComputationExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray))
+    info(s"Finished to kill python task $taskID")
+  }
+
   override def close = {
     if (process != null) {
       if (gatewayServer != null) {
@@ -98,8 +111,8 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
 
   private def initGateway = {
     //  如果从前端获取到用户所设置的Python版本为Python3 则取Python3的环境变量，否则默认为Python2
-    logger.info(s"spark.python.version => ${engineExecutionContext.getProperties.get("spark.python.version")}")
-    val userDefinePythonVersion = engineExecutionContext.getProperties.getOrDefault("spark.python.version","python").toString.toLowerCase()
+    logger.info(s"spark.python.version => ${engineCreationContext.getOptions.get("spark.python.version")}")
+    val userDefinePythonVersion = engineCreationContext.getOptions.get("spark.python.version").toString.toLowerCase()
     val sparkPythonVersion = if(null != userDefinePythonVersion && userDefinePythonVersion.equals("python3")) "python3" else "python"
     val pythonExec = CommonVars("PYSPARK_DRIVER_PYTHON", sparkPythonVersion).getValue
 
@@ -194,7 +207,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   }
 
   /*override protected def getInitLabels(): util.List[Label[_]] = {
-    val runTypeLabel = new EngineRunTypeLabel
+    val runTypeLabel = new CodeLanguageLabel
     runTypeLabel.setRunType(RunType.PYSPARK.toString)
     val engineTypeLabel = getEngineTypeLabel
     val labels = new util.ArrayList[Label[_]](2)
@@ -212,16 +225,16 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     }
     promise = Promise[String]()
     this.code = code
+    engineExecutionContext.appendStdout(s"${EngineUtils.getName} >> $code")
     queryLock synchronized queryLock.notify()
     Await.result(promise.future, Duration.Inf)
     lineOutputStream.flush()
-    engineExecutionContext.appendStdout(s"${EngineUtils.getName} >> $code")
     val outStr = lineOutputStream.toString()
     if(outStr.length >0) {
       val output = Utils.tryQuietly(ResultSetWriter.getRecordByRes(outStr, SparkConfiguration.SPARK_CONSOLE_OUTPUT_NUM.getValue))
       val res = if(output != null) output.map(x => x.toString).toList.mkString("\n") else ""
       if (res.length > 0) {
-        engineExecutionContext.appendStdout(res)
+        engineExecutionContext.appendStdout(s"result is $res")
       }
     }
     SuccessExecuteResponse()
@@ -235,8 +248,8 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
 
   def getStatements = {
     queryLock synchronized {while(code == null) queryLock.wait()}
-    info("Prepare to deal python code, code: " + code)
-//    lineOutputStream.reset(this.engineExecutorContext)
+    info("Prepare to deal python code, code: " + code.substring(0, if (code.indexOf("\n") > 0) code.indexOf("\n") else code.length))
+    //    lineOutputStream.reset(this.engineExecutorContext)
     val request = PythonInterpretRequest(code, jobGroup)
     code = null
     request
@@ -248,7 +261,12 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     if(! error) {
       promise.success(SUCCESS)
     } else {
-      promise.failure(new ExecuteError(40003,out))
+      if (promise.isCompleted) {
+        info("promise is completed and should start another python gateway")
+        close
+      }else{
+        promise.failure(ExecuteError(40003,out))
+      }
     }
   }
   def appendOutput(message: String) = {
@@ -264,7 +282,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
       info(message)
     } else {
       error(message)
-      engineExecutionContext.appendStdout(message)
+      engineExecutionContext.appendStdout(s"errorMessage is $message")
     }
   }
 
@@ -292,6 +310,15 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
 
   override protected def getExecutorIdPreFix: String = "SparkPythonExecutor_"
 
+  def printLog(log:Any):Unit = {
+    if(engineExecutionContext != null){
+      engineExecutionContext.appendStdout("+++++++++++++++")
+      engineExecutionContext.appendStdout(log.toString)
+      engineExecutionContext.appendStdout("+++++++++++++++")
+    }else{
+      logger.warn("engine context is null can not send log")
+    }
+  }
 
 
 }

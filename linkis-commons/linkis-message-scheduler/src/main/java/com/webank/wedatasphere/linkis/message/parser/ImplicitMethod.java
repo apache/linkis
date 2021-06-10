@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.message.parser;
 
 import java.lang.reflect.Method;
 
-/**
- * @date 2020/7/28
- */
+
 public class ImplicitMethod {
 
     private Object implicitObject;

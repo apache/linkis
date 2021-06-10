@@ -28,7 +28,7 @@
 
     <artifactId>linkis-engineplugin-io_file</artifactId>
     <properties>
-        <io_file.version>1</io_file.version>
+        <io_file.version>1.0</io_file.version>
     </properties>
 
     <dependencies>

@@ -20,15 +20,13 @@ import java.io.File
 import java.lang.Boolean
 
 import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration, TimeType}
-import com.webank.wedatasphere.linkis.common.utils.{DESUtil, Utils}
+import com.webank.wedatasphere.linkis.common.utils.{DESUtil, Logging, Utils}
 import com.webank.wedatasphere.linkis.server.exception.BDPInitServerException
 import org.apache.commons.lang.StringUtils
 import sun.misc.BASE64Encoder
 
-/**
-  * Created by enjoyyin on 2018/1/9.
-  */
-object ServerConfiguration {
+
+object ServerConfiguration extends Logging{
   val BDP_SERVER_EXCLUDE_PACKAGES = CommonVars("wds.linkis.server.component.exclude.packages", "")
   val BDP_SERVER_EXCLUDE_CLASSES = CommonVars("wds.linkis.server.component.exclude.classes", "")
   val BDP_SERVER_EXCLUDE_ANNOTATION = CommonVars("wds.linkis.server.component.exclude.annotation", "")
@@ -48,11 +46,13 @@ object ServerConfiguration {
     else None
   }
   def getUsernameByTicket(ticketId: Any): Option[String] = if(ticketId == null) None else getUsernameByTicket(ticketId.toString)
-  def getTicketByUsername(userName: String): String = DESUtil.encrypt(ticketHeader + userName, ServerConfiguration.cryptKey)
+  def getTicketByUsername(userName: String): String = {
+      DESUtil.encrypt(ticketHeader + userName, ServerConfiguration.cryptKey)
+  }
 
   val BDP_TEST_USER = CommonVars("wds.linkis.test.user", "")
 
-  val BDP_SERVER_HOME = CommonVars("wds.linkis.server.home", CommonVars("BDP_SERVER_HOME", "").getValue)
+  val BDP_SERVER_HOME = CommonVars("wds.linkis.server.home", CommonVars("LINKIS_HOME", "").getValue)
   val BDP_SERVER_DISTINCT_MODE = CommonVars("wds.linkis.server.distinct.mode", new Boolean(true))
   if(!BDP_SERVER_DISTINCT_MODE.getValue && StringUtils.isEmpty(BDP_SERVER_HOME.getValue))
     throw new BDPInitServerException(11000, "wds.linkis.server.home或BDP_SERVER_HOME haven't set!")

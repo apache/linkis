@@ -10,6 +10,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.metadata.service.impl;
 
 import com.google.common.collect.Maps;
@@ -103,7 +104,8 @@ public class MdqServiceImpl implements MdqService {
         return table.getId();
     }
 
-    private void checkIfNeedDeleteTable(MdqTableBO mdqTableBO) {
+    @DataSource(name = DSEnum.SECONDE_DATA_SOURCE)
+    public void checkIfNeedDeleteTable(MdqTableBO mdqTableBO) {
         String database = mdqTableBO.getTableBaseInfo().getBase().getDatabase();
         String tableName = mdqTableBO.getTableBaseInfo().getBase().getName();
         MdqTable oldTable = mdqDao.selectTableForUpdate(database, tableName);
@@ -129,6 +131,7 @@ public class MdqServiceImpl implements MdqService {
         }
     }
 
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public MdqTableStatisticInfoVO getTableStatisticInfo(String database, String tableName, String user) throws IOException {
         MdqTableStatisticInfoVO mdqTableStatisticInfoVO = getTableStatisticInfoFromHive(database, tableName, user);
@@ -139,7 +142,6 @@ public class MdqServiceImpl implements MdqService {
     public String displaysql(MdqTableBO mdqTableBO) {
         String dbName = mdqTableBO.getTableBaseInfo().getBase().getDatabase();
         String tableName = mdqTableBO.getTableBaseInfo().getBase().getName();
-        //StringBuilder sb = new StringBuilder();
         String displayStr = "//意书后台正在为您创建新的数据库表";
         return displayStr;
     }
@@ -159,6 +161,7 @@ public class MdqServiceImpl implements MdqService {
         return DomainCoversionUtils.mdqTableToMdqTableBaseInfoVO(table);
     }
 
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public MdqTableBaseInfoVO getTableBaseInfoFromHive(String database, String tableName, String user) {
         Map<String, String> map = Maps.newHashMap();
@@ -185,6 +188,7 @@ public class MdqServiceImpl implements MdqService {
         return DomainCoversionUtils.mdqFieldListToMdqTableFieldsInfoVOList(mdqFieldList);
     }
 
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public List<MdqTableFieldsInfoVO> getTableFieldsInfoFromHive(String database, String tableName, String user) {
         Map<String, String> param = Maps.newHashMap();
@@ -198,6 +202,7 @@ public class MdqServiceImpl implements MdqService {
         return normalColumns;
     }
 
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public MdqTableStatisticInfoVO getTableStatisticInfoFromHive(String database, String tableName, String user) throws IOException {
         Map<String, String> map = Maps.newHashMap();
@@ -223,6 +228,7 @@ public class MdqServiceImpl implements MdqService {
         return mdqTableStatisticInfoVO;
     }
 
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public MdqTablePartitionStatisticInfoVO getPartitionStatisticInfo(String database, String tableName, String userName,
                                                                       String partitionPath) throws IOException {
@@ -282,20 +288,6 @@ public class MdqServiceImpl implements MdqService {
         }
     }
 
-/*    @Deprecated
-    private List<MdqTablePartitionStatisticInfoVO> getMdqTablePartitionStatisticInfoVO(List<String> partitions, String tableLocation) throws IOException {
-        //partitions.sort((a,b)-> -a.compareTo(b));
-        //partitions
-        //partitions.stream().forEach();
-        List<MdqTablePartitionStatisticInfoVO> list = new ArrayList<>();
-        FileStatus tableFile = getRootHdfs().getFileStatus(new Path(tableLocation));
-        FileStatus[] fileStatuses = getRootHdfs().listStatus(tableFile.getPath());
-        for (FileStatus fileStatuse : fileStatuses) {
-            list.add(create(fileStatuse.getPath().toString()));
-        }
-        return list;
-    }*/
-
     private MdqTablePartitionStatisticInfoVO create(String path) throws IOException {
         MdqTablePartitionStatisticInfoVO mdqTablePartitionStatisticInfoVO = new MdqTablePartitionStatisticInfoVO();
         mdqTablePartitionStatisticInfoVO.setName(new Path(path).getName());
@@ -329,7 +321,8 @@ public class MdqServiceImpl implements MdqService {
         return partitionsNum;
     }
 
-    private String getTableLocation(String database, String tableName) {
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
+    public String getTableLocation(String database, String tableName) {
         Map<String, String> param = Maps.newHashMap();
         param.put("dbName", database);
         param.put("tableName", tableName);

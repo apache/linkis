@@ -23,9 +23,7 @@ import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 @Configuration
 class EurekaClientRefreshUtils {
 

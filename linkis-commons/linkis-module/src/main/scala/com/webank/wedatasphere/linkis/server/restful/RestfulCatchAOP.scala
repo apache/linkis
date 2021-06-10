@@ -23,9 +23,7 @@ import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.{Around, Aspect, Pointcut}
 import org.springframework.stereotype.Component
 
-/**
-  * Created by enjoyyin on 2018/8/9.
-  */
+
 @Aspect
 @Component
 class RestfulCatchAOP extends Logging {

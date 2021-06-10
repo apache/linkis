@@ -23,21 +23,17 @@ trait EngineConn {
 
   /**
     * 底层engine的类型比如：Spark、hive
-    *
+    * engine conn type : spark , hive
     * @return
     */
-  def getEngineType(): String
+  def getEngineConnType: String
 
-  def setEngineType(engineType: String): Unit
+  def setEngineConnType(engineConnType: String): Unit
 
-  /**
-    * 底层计算存储Engine的具体连接信息，比如SparkSession,hive的sessionState
-    *
-    * @return
-    */
-  def getEngine(): Any
 
-  def setEngine(engine: Any): Unit
+  def getEngineConnSession: Any
+
+  def setEngineConnSession(engineConnSession: Any): Unit
 
   def getEngineCreationContext: EngineCreationContext
 
@@ -46,9 +42,9 @@ trait EngineConn {
 
 class DefaultEngineConn(engineCreationContext: EngineCreationContext) extends EngineConn {
 
-  var engineType: String = "spark"
+  private var engineConnType: String = _
 
-  var engine: Any = null
+  private var engineConnSession: Any = _
 
 
   /**
@@ -56,18 +52,14 @@ class DefaultEngineConn(engineCreationContext: EngineCreationContext) extends En
     *
     * @return
     */
-  override def getEngineType(): String = engineType
+  override def getEngineConnType: String = engineConnType
 
-  override def setEngineType(engineType: String): Unit = this.engineType = engineType
+  override def setEngineConnType(engineConnType: String): Unit = this.engineConnType = engineConnType
 
-  /**
-    * 底层计算存储Engine的具体连接信息，比如SparkSession,hive的sessionState
-    *
-    * @return
-    */
-  override def getEngine(): Any = engine
 
-  override def setEngine(engine: Any): Unit = this.engine = engine
+  override def getEngineConnSession: Any = engineConnSession
+
+  override def setEngineConnSession(engineConnSession: Any): Unit = this.engineConnSession = engineConnSession
 
   override def getEngineCreationContext: EngineCreationContext = engineCreationContext
 

@@ -24,9 +24,7 @@ import org.apache.commons.lang.time.DateFormatUtils
 
 import scala.util.control.NonFatal
 
-/**
-  * Created by enjoyyin on 2017/6/6.
-  */
+
 private[wedatasphere] trait ListenerBus[L <: EventListener, E <: Event] extends Logging {
   val self = this
 

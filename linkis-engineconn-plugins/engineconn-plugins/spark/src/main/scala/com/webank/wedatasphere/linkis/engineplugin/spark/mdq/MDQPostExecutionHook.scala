@@ -20,10 +20,12 @@ import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.En
 import com.webank.wedatasphere.linkis.engineplugin.spark.common.SparkKind
 import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
 import com.webank.wedatasphere.linkis.engineplugin.spark.extension.SparkPostExecutionHook
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.CodeLanguageLabel
 import com.webank.wedatasphere.linkis.protocol.mdq.{DDLCompleteResponse, DDLExecuteResponse}
 import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
 import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
+
 import javax.annotation.PostConstruct
 import org.apache.commons.lang.StringUtils
 import org.springframework.stereotype.Component
@@ -40,8 +42,9 @@ class MDQPostExecutionHook extends SparkPostExecutionHook with Logging{
   override def hookName: String = "MDQPostHook"
 
   override def callPostExecutionHook(engineExecutionContext: EngineExecutionContext, executeResponse: ExecuteResponse, code: String): Unit = {
-    val runType: String = engineExecutionContext.getProperties.get("runType") match {
-      case value:String => value
+    val codeLanguageLabel = engineExecutionContext.getLabels.filter(l => null != l && l.isInstanceOf[CodeLanguageLabel]).head
+    val runType: String = codeLanguageLabel match {
+      case l: CodeLanguageLabel => l.getCodeType
       case _ => ""
     }
     if(StringUtils.isEmpty(runType) || ! SparkKind.FUNCTION_MDQ_TYPE.equalsIgnoreCase(runType)) return

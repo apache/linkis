@@ -17,7 +17,7 @@
 package com.webank.wedatasphere.linkis.engineplugin.spark.executor.parser
 
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.parser._
+import com.webank.wedatasphere.linkis.governance.common.paser.{CombinedEngineCodeParser, PythonCodeParser, SQLCodeParser, ScalaCodeParser, SingleCodeParser}
 
 /**
   *
@@ -25,8 +25,9 @@ import com.webank.wedatasphere.linkis.engineconn.computation.executor.parser._
 class SparkCombinedCodeParser extends CombinedEngineCodeParser {
   override val parsers: Array[SingleCodeParser] = Array(new PythonCodeParser, new SQLCodeParser, new ScalaCodeParser)
 
-  override def getCodeType(code: String, engineExecutionContext: EngineExecutionContext): String = {
+  override def getCodeType(code: String, ): String = {
     if (engineExecutionContext.getProperties.get("runType") != null) engineExecutionContext.getProperties.get("runType").asInstanceOf[String]
     else "sql"
   }
 }
+*/

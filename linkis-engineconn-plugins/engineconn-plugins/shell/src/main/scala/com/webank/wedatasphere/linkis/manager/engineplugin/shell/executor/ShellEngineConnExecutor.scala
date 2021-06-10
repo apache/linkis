@@ -57,7 +57,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
 
     if (engineExecutionContext != this.engineExecutionContext) {
       this.engineExecutionContext = engineExecutionContext
-      info("Python executor reset new engineExecutionContext!")
+      info("Shell executor reset new engineExecutionContext!")
     }
 
     var bufferedReader: BufferedReader = null

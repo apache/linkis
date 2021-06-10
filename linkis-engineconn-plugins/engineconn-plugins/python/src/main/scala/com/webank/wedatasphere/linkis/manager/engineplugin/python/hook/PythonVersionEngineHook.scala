@@ -40,12 +40,12 @@ class PythonVersionEngineHook  extends EngineConnHook with Logging{
 
   override def beforeExecutionExecute(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit = {
     info("use python execute print cmd hello")
-    engineConn.getEngine match {
+    engineConn.getEngineConnSession match {
       case pythonSession: PythonSession =>
         pythonSession.execute("print(1/2)")
           logger.info(s"print python version => ${PythonEngineConfiguration.PYTHON_VERSION.getValue}")
       case _ =>
-        logger.error(s"Invalid pythonSession : ${engineConn.getEngine().getClass.getName}")
+        logger.error(s"Invalid pythonSession : ${engineConn.getEngineConnSession.getClass.getName}")
     }
 
   }

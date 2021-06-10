@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.httpclient.request
 
-/**
-  * Created by enjoyyin on 2019/5/22.
-  */
+
 trait UserPwdAction extends UserAction {
   def getPassword: Option[String] = None
   def setPassword(password: String): Unit

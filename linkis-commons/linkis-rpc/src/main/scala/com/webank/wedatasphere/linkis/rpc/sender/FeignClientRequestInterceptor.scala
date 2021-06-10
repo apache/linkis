@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.server.security.{SSOUtils, SecurityFilter}
 import feign.{RequestInterceptor, RequestTemplate}
 import org.springframework.context.annotation.Configuration
 
-/**
-  * Created by enjoyyin on 2018/8/8.
-  */
+
 @Configuration
 class FeignClientRequestInterceptor extends RequestInterceptor {
   override def apply(requestTemplate: RequestTemplate): Unit = {

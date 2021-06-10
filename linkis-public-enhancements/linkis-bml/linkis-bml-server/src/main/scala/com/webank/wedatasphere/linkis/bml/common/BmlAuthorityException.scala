@@ -17,9 +17,9 @@ package com.webank.wedatasphere.linkis.bml.common
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-case class BmlAuthorityException() extends ErrorException(60036, "未登录或登录过期，无法访问物料库")
+case class BmlAuthorityException() extends ErrorException(60036, "Store cannot be accessed without login or expired login(未登录或登录过期，无法访问物料库)")
 
-case class UploadResourceException() extends ErrorException(60050, "首次上传资源失败")
+case class UploadResourceException() extends ErrorException(60050, "The first upload of the resource failed(首次上传资源失败)")
 
-case class UpdateResourceException() extends ErrorException(60051, "更新资源失败")
+case class UpdateResourceException() extends ErrorException(60051, "Failed to update resources(更新资源失败)")
 

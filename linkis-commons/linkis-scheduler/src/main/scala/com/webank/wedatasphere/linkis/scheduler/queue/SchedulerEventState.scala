@@ -16,12 +16,19 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 object SchedulerEventState extends Enumeration {
   type SchedulerEventState = Value
-  val Inited, WaitForRetry, Scheduled, Running, Succeed, Failed, Cancelled, Timeout = Value
+
+  val Inited = Value("Inited")
+  val WaitForRetry = Value("WaitForRetry")
+  val Scheduled = Value("Scheduled")
+  val Running = Value("Running")
+  val Succeed = Value("Succeed")
+  val Failed = Value("Failed")
+  val Cancelled = Value("Cancelled")
+  val Timeout = Value("Timeout")
+
 
   def isRunning(jobState: SchedulerEventState) = jobState == Running
 
@@ -34,4 +41,15 @@ object SchedulerEventState extends Enumeration {
 
   def isSucceed(jobState: SchedulerEventState) = jobState == Succeed
 
+  def isCompletedByStr(jobState: String): Boolean = jobState match {
+      case "Inited" => false
+      case "WaitForRetry" => false
+      case "Scheduled" => false
+      case "Running" => false
+      case "Succeed" => true
+      case "Failed" => true
+      case "Cancelled" => true
+      case "Timeout" => true
+      case _ => true
+  }
 }

@@ -1,0 +1,51 @@
+
+@import '@/common/style/variables.scss';
+.table-content {
+  // width: 100% !important;
+  margin-top: 15px;
+  .latestVersion {
+    padding:  0 10px;
+    background-color: #169bd5;
+    border-radius: $border-radius-small;
+    overflow: hidden;
+    display: inline-block;
+  }
+
+}
+td.table-name-column {
+  .workflow-name {
+    color: $primary-color;
+    cursor: pointer;
+  }
+}
+/deep/.table-project-column {
+  text-align: center;
+  .ivu-table-cell {
+    display: inline-block;
+    padding: 0 10px!important;
+  }
+}
+td.table-project-column {
+  color: $success-color;
+}
+.page-bar {
+  text-align: center;
+  padding: 10px 0;
+}
+
+/deep/.addTagClass {
+  position: relative;
+  z-index: 99;
+}
+.ecm, .ecmEngine {
+  /deep/ .ivu-tag {
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /deep/ .ivu-tooltip-inner {
+    max-width: 100%;
+  }
+}
+

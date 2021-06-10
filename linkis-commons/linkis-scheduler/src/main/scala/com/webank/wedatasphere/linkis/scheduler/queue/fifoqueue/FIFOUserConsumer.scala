@@ -144,8 +144,8 @@ class FIFOUserConsumer(schedulerContext: SchedulerContext,
       }{
         case _: TimeoutException =>
           warn(s"Ask executor for Job $job timeout!")
-          job.onFailure("The request engine times out and the cluster cannot provide enough resources(请求引擎超时，集群不能提供足够的资源).",
-            new SchedulerErrorException(11055, "Insufficient resources, requesting available engine timeout(资源不足，请求可用引擎超时)！"))
+          job.onFailure("The request engine times out (请求引擎超时，可能是EngineConnManager 启动EngineConn失败导致，可以去查看看EngineConnManager的linkis.out和linkis.log日志).",
+            new SchedulerErrorException(11055, "The request engine times out (请求引擎超时，可能是EngineConnManager 启动EngineConn失败导致，可以去观看EngineConnManager的linkis.out和linkis.log日志)."))
         case error: Throwable =>
           job.onFailure("请求引擎失败，可能是由于后台进程错误!请联系管理员", error)
           if(job.isWaitForRetry) {

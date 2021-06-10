@@ -21,8 +21,8 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>1.0.0-RC1</version>
-        <!--<relativePath>../pom.xml</relativePath>-->
+        <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -121,6 +121,12 @@
             <artifactId>linkis-manager-monitor</artifactId>
             <version>${linkis.version}</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.dozermapper</groupId>
+            <artifactId>dozer-core</artifactId>
+            <version>6.5.0</version>
         </dependency>
 
     </dependencies>

@@ -100,7 +100,7 @@ public abstract class SerializableLabel<T> implements Label<T> {
             }
             if (stringValueArray.length != orderedValueNames.size()) {
                 //Warn
-                LOG.info("str_value: [" + stringValue + "] doesn't match ordered_value_name: [" + StringUtils.join(orderedValueNames, ",") + "]");
+               // LOG.info("str_value: [" + stringValue + "] doesn't match ordered_value_name: [" + StringUtils.join(orderedValueNames, ",") + "]");
                 return;
             }
             for (int i = 0; i < orderedValueNames.size(); i++) {

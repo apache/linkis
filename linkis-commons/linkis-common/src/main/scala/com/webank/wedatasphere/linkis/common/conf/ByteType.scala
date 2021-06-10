@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.common.conf
 
 import com.webank.wedatasphere.linkis.common.utils.ByteTimeUtils
 
-/**
-  * Created by enjoyyin on 2018/1/9.
-  */
+
 class ByteType(byteStr: String) {
   def this(bytes: Long) = this(ByteTimeUtils.bytesToString(bytes))
   val toLong = ByteTimeUtils.byteStringAsBytes(byteStr)

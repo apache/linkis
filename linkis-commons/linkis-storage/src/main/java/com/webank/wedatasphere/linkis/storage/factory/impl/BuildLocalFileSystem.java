@@ -27,16 +27,21 @@ public class BuildLocalFileSystem implements BuildFactory {
     @Override
     public Fs getFs(String user, String proxyUser){
         FileSystem fs = null;
-        if(user.equals(proxyUser)){
-            if((Boolean) StorageConfiguration.IS_SHARE_NODE().getValue()){
-               fs = new  LocalFileSystem();
+        if ((Boolean) StorageConfiguration.ENABLE_IO_PROXY().getValue()) {
+            if(user.equals(proxyUser)){
+                if((Boolean) StorageConfiguration.IS_SHARE_NODE().getValue()){
+                    fs = new  LocalFileSystem();
+                } else {
+                    fs = getProxyFs();
+                }
             } else {
                 fs = getProxyFs();
             }
+            fs.setUser(proxyUser);
         } else {
-            fs = getProxyFs();
+            fs = new  LocalFileSystem();
+            fs.setUser(user);
         }
-        fs.setUser(proxyUser);
         return fs;
     }
 

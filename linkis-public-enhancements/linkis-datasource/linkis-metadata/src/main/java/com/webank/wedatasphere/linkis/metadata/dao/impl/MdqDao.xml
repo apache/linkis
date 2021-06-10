@@ -37,28 +37,28 @@
     </sql>
 
     <update id="activateTable">
-        update linkis_mdq_table set is_available = true where id = #{tableId}
+        update linkis_ps_datasource_table set is_available = true where id = #{tableId}
     </update>
 
     <select id="selectTableByName" resultType="com.webank.wedatasphere.linkis.metadata.domain.mdq.po.MdqTable">
-        select * from linkis_mdq_table
+        select * from linkis_ps_datasource_table
         WHERE `database` = #{database} AND `name` = #{tableName} AND creator = #{user} AND is_available = true
     </select>
 
     <select id="listMdqFieldByTableId" resultType="com.webank.wedatasphere.linkis.metadata.domain.mdq.po.MdqField">
-        select * from linkis_mdq_field
+        select * from linkis_ps_datasource_field
         WHERE table_id = #{tableId}
     </select>
 
     <insert id="insertTable" useGeneratedKeys="true" keyProperty="id" parameterType="com.webank.wedatasphere.linkis.metadata.domain.mdq.po.MdqTable">
-      INSERT INTO linkis_mdq_table(<include refid="table_List"/>) VALUES (
+      INSERT INTO linkis_ps_datasource_table(<include refid="table_List"/>) VALUES (
         #{id},#{database},#{name},#{alias},#{creator},#{comment},#{createTime},#{productName},#{projectName},#{usage},
         #{lifecycle},#{useWay},#{isImport},#{modelLevel},#{isExternalUse},#{isPartitionTable},#{isAvailable}
         )
     </insert>
 
     <insert id="insertFields" parameterType="com.webank.wedatasphere.linkis.metadata.domain.mdq.po.MdqField">
-        INSERT INTO linkis_mdq_field
+        INSERT INTO linkis_ps_datasource_field
         (<include refid="field_List"/>)
         VALUES
         <foreach collection="mdqFieldList" item="fields"  separator="," >
@@ -68,23 +68,23 @@
     </insert>
 
     <insert id="insertImport" parameterType="com.webank.wedatasphere.linkis.metadata.domain.mdq.po.MdqImport">
-        INSERT INTO linkis_mdq_import(<include refid="import_List"/>) VALUES (
+        INSERT INTO linkis_ps_datasource_import(<include refid="import_List"/>) VALUES (
         #{id},#{tableId},#{importType},#{args}
         )
     </insert>
 
     <insert id="insertLineage" parameterType="com.webank.wedatasphere.linkis.metadata.domain.mdq.po.MdqLineage">
-        INSERT INTO linkis_mdq_lineage(<include refid="lineage_List"/>) VALUES (
+        INSERT INTO linkis_ps_datasource_lineage(<include refid="lineage_List"/>) VALUES (
         #{id},#{tableId},#{sourceTable},#{updateTime}
         )
     </insert>
 
     <select id="selectTableForUpdate" resultType="com.webank.wedatasphere.linkis.metadata.domain.mdq.po.MdqTable">
-        select * from linkis_mdq_table  WHERE `database` = #{database} AND `name` = #{tableName} for UPDATE;
+        select * from linkis_ps_datasource_table  WHERE `database` = #{database} AND `name` = #{tableName} for UPDATE;
     </select>
 
     <delete id="deleteTableBaseInfo">
-        DELETE FROM linkis_mdq_table WHERE id = #{id}
+        DELETE FROM linkis_ps_datasource_table WHERE id = #{id}
     </delete>
 
 </mapper>

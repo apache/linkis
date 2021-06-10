@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.resourcemanager.utils
 
 import java.util
 
+import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
 import com.webank.wedatasphere.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, RequestQueryGlobalConfig, ResponseQueryConfig}
@@ -35,7 +36,7 @@ object UserConfiguration extends Logging {
   private val labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
   val globalMapCache = new RPCMapCache[String, String, String](
-    RMConfiguration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue) {
+    Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue) {
     override protected def createRequest(user: String): CacheableProtocol = RequestQueryGlobalConfig(user)
 
     override protected def createMap(any: Any): util.Map[String, String] = any match {
@@ -44,7 +45,7 @@ object UserConfiguration extends Logging {
   }
 
   val engineMapCache = new RPCMapCache[(UserCreatorLabel, EngineTypeLabel), String, String](
-    RMConfiguration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue) {
+    Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue) {
     override protected def createRequest(labelTuple: (UserCreatorLabel, EngineTypeLabel)): CacheableProtocol =
       RequestQueryEngineConfig(labelTuple._1, labelTuple._2, GovernanceCommonConf.CONF_FILTER_RM)
 

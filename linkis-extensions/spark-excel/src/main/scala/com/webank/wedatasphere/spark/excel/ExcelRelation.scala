@@ -274,7 +274,7 @@ case class ExcelRelation(
             case CellType.NUMERIC => cell.getNumericCellValue.toString
             case _ => dataFormatter.formatCellValue(cell)
           }
-        case CellType.ERROR =>"" //logInfo(s"解析excel遇到错误公式数据${cell.getStringCellValue},置为空值")
+        case CellType.ERROR => ""
         case _ => dataFormatter.formatCellValue(cell)
       }
     lazy val numericValue =

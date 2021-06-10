@@ -1,0 +1,54 @@
+@import '@/common/style/variables.scss';
+
+.progress-content {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  line-height: 40px;
+  margin: 2px 10px 2px 20px;
+  position: $relative;
+  cursor: pointer;
+  background: $background-color-base;
+  border: $border-width-base $border-style-base $tooltip-color ;
+  background-color: $subsidiary-color;
+  border-radius: 8px;
+  overflow: hidden;
+  color: #fff;
+
+  .item-progress {
+    display: inline-block;
+    position: $absolute;
+    top: -1px;
+    left: 0;
+    height: 40px;
+    background: $success-color;
+    border-radius: 8px;
+  }
+  .text-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    .item-icon {
+      padding-left: 10px;
+      &::before {
+          font-size: 24px;
+      }
+    }
+    .item-label {
+        font-weight: bold;
+        width: 380px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding-left: 10px;
+    }
+    .item-progress-label {
+        position: $absolute;
+        right: 40px;
+    }
+  }
+}
+.children {
+  margin-left: 35px;
+}

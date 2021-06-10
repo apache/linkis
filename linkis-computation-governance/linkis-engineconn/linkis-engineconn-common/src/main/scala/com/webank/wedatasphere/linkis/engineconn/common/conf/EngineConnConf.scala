@@ -16,7 +16,8 @@
 
 package com.webank.wedatasphere.linkis.engineconn.common.conf
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
+
 
 
 object EngineConnConf {
@@ -32,14 +33,16 @@ object EngineConnConf {
 
   val ENGINE_PUSH_LOG_TO_ENTRANCE = CommonVars("wds.linkis.engine.push.log.enable", true)
 
-  val ENGINECONN_PLUGIN_CLAZZ = CommonVars("wds.linkis.engineconn.plugin.default.clazz", "com.webank.wedatasphere.linkis.engineplugin.hive.HiveEngineConnPlugin")
-
+  val ENGINE_CONN_PLUGIN_CLAZZ = CommonVars("wds.linkis.engineconn.plugin.default.class", "com.webank.wedatasphere.linkis.engineplugin.hive.HiveEngineConnPlugin")
 
   val ENGINE_TASK_EXPIRE_TIME = CommonVars("wds.linkis.engine.task.expire.time", 1000 * 3600 * 24)
 
   val ENGINE_LOCK_REFRESH_TIME = CommonVars("wds.linkis.engine.lock.refresh.time", 1000 * 60 * 3)
 
-  val ENGINE_CONN_LOCALPATH_PWD_KEY = CommonVars("wds.linkis.engine.localpath.pwd.key", "PWD")
+  val ENGINE_CONN_LOCAL_PATH_PWD_KEY = CommonVars("wds.linkis.engine.localpath.pwd.key", "PWD")
 
   val ENGINE_CONN_LOCAL_LOG_DIRS_KEY = CommonVars("wds.linkis.engine.logs.dir.key", "LOG_DIRS")
+
+  val ENGINE_CONN_CREATION_WAIT_TIME = CommonVars("wds.linkis.engine.connector.init.time", new TimeType("3m"))
+
 }

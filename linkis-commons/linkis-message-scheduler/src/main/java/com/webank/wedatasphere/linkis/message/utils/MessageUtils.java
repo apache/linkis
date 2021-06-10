@@ -28,9 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @date 2020/7/28
- */
+
 public class MessageUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageUtils.class);

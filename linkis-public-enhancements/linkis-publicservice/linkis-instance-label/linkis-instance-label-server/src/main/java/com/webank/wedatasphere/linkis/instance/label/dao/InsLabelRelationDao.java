@@ -33,7 +33,7 @@ public interface InsLabelRelationDao {
      * @param valueContent key -> value map
      * @return
      */
-    List<InstanceInfo> searchInsDirectByValues(@Param("valueMapList") List<Map<String, String>> valueContent, @Param("relation")String relation);
+    List<InstanceInfo> searchInsDirectByValues(@Param("valueMapList") List<Map<String, String>> valueContent, @Param("relation") String relation);
 
     List<InstanceInfo> searchInsDirectByLabels(List<InsPersistenceLabel> labels);
 
@@ -62,11 +62,17 @@ public interface InsLabelRelationDao {
     List<InsPersistenceLabel> searchLabelsByInstance(String instance);
 
     /**
+     * Search Instance with label
+     * @return
+     */
+    List<InstanceInfo> listAllInstanceWithLabel();
+
+    /**
      * Drop relationships by instance and label ids
      * @param instance instance value (http:port)
      * @param labelIds label ids
      */
-    void dropRelationsByInstanceAndLabelIds(@Param("instance") String instance, @Param("labelIds")List<Integer> labelIds);
+    void dropRelationsByInstanceAndLabelIds(@Param("instance") String instance, @Param("labelIds") List<Integer> labelIds);
 
     void dropRelationsByInstance(String instance);
     /**
@@ -74,7 +80,7 @@ public interface InsLabelRelationDao {
      * @param instance instance
      * @param labelIds label ids
      */
-    void insertRelations(@Param("instance")String instance, @Param("labelIds")List<Integer> labelIds);
+    void insertRelations(@Param("instance") String instance, @Param("labelIds") List<Integer> labelIds);
 
     /**
      * If has relationship

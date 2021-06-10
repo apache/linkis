@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.server.socket
 
-/**
-  * Created by enjoyyin on 2018/1/9.
-  */
+
 trait SocketListener {
   def onClose(socket: ServerSocket, code: Int, message: String)
 

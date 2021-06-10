@@ -23,6 +23,7 @@ import com.webank.wedatasphere.linkis.engineconn.acessible.executor.conf.Accessi
 import com.webank.wedatasphere.linkis.engineconn.acessible.executor.info.{NodeHealthyInfoManager, NodeHeartbeatMsgManager, NodeOverLoadInfoManager}
 import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.NodeHealthyListener
 import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event.NodeHealthyUpdateEvent
+import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
 import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
 import com.webank.wedatasphere.linkis.engineconn.executor.entity.{Executor, ResourceExecutor, SensibleExecutor}
 import com.webank.wedatasphere.linkis.engineconn.executor.listener.ExecutorListenerBusContext
@@ -55,8 +56,10 @@ class DefaultExecutorHeartbeatService extends ExecutorHeartbeatService with Node
     val heartbeatTime = AccessibleExecutorConfiguration.ENGINECONN_HEARTBEAT_TIME.getValue.toLong
     Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
       override def run(): Unit = Utils.tryAndWarn {
-        val executor = ExecutorManager.getInstance().getDefaultExecutor
-        reportHeartBeatMsg(executor)
+        if (EngineConnObject.isReady){
+          val executor = ExecutorManager.getInstance.getReportExecutor
+          reportHeartBeatMsg(executor)
+        }
       }
     }, 3 * 60 * 1000, heartbeatTime, TimeUnit.MILLISECONDS)
   }
@@ -73,14 +76,14 @@ class DefaultExecutorHeartbeatService extends ExecutorHeartbeatService with Node
 
   @Receiver
   override def dealNodeHeartbeatRequest(nodeHeartbeatRequest: NodeHeartbeatRequest): NodeHeartbeatMsg = {
-    val executor = ExecutorManager.getInstance().getDefaultExecutor
+    val executor = ExecutorManager.getInstance.getReportExecutor
     generateHeartBeatMsg(executor)
   }
 
 
   override def onNodeHealthyUpdate(nodeHealthyUpdateEvent: NodeHealthyUpdateEvent): Unit = {
     warn(s"node healthy update, tiger heartbeatReport")
-    val executor = ExecutorManager.getInstance().getDefaultExecutor
+    val executor = ExecutorManager.getInstance.getReportExecutor
     reportHeartBeatMsg(executor)
   }
 

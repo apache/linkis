@@ -1,0 +1,63 @@
+
+@import '@/common/style/variables.scss';
+.resource-title {
+  font-size: 16px;
+  margin: 10px 0;
+  .title-text {
+    margin-right: 15px;
+  }
+  .title-icon {
+    color: $link-color;
+    cursor: pointer;
+  }
+}
+.table-content {
+  margin-top: 15px;
+  .latestVersion {
+    padding:  0 10px;
+    background-color: #169bd5;
+    border-radius: $border-radius-small;
+    overflow: hidden;
+    display: inline-block;
+  }
+}
+td.table-name-column {
+  .workflow-name {
+    color: $primary-color;
+    cursor: pointer;
+  }
+}
+/deep/.table-project-column {
+  text-align: center;
+  .ivu-table-cell {
+    display: inline-block;
+    padding: 0 10px!important;
+  }
+}
+td.table-project-column {
+  color: $success-color;
+}
+.page-bar {
+  text-align: center;
+  padding: 10px 0;
+}
+.appListTitle {
+  margin-top: 30px;
+}
+.appListTag {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .resourceList,
+  .tagName {
+    flex: none;
+    margin-right: 20px;
+  }
+  .instanceNum {
+    flex: 1
+  }
+}
+/deep/.addTagClass {
+  position: relative;
+  z-index: 99;
+}

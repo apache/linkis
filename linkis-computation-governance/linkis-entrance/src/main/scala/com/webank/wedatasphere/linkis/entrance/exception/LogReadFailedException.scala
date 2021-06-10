@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.entrance.exception
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 class LogReadFailedException(message: String, throwable: Throwable) extends RuntimeException(message, throwable) {
   def this(message: String) = this(message, null)
 }

@@ -17,9 +17,12 @@ package com.webank.wedatasphere.linkis.bml.client;
 
 import java.util.Map;
 
-public abstract class AbstractBmlClient implements BmlClient{
+
+public abstract class AbstractBmlClient implements BmlClient {
     protected String user;
-    protected Map<String, Object> properties;
+    protected java.util.Map<String, Object> properties;
+
+    public abstract void init();
 
     public String getUser() {
         return user;

@@ -80,7 +80,7 @@ public class ResourceServiceImpl implements ResourceService {
             String resourceId = (String) properties.get("resourceId");
             InputStream inputStream = p.getValueAs(InputStream.class);
             FormDataContentDisposition fileDetail = p.getFormDataContentDisposition();
-            String fileName = new String(fileDetail.getFileName().getBytes("ISO8859-1"), "UTF-8");
+            String fileName = new String(fileDetail.getFileName().getBytes(Constant.ISO_ENCODE), Constant.UTF8_ENCODE);
             fileName = resourceId;
             String path = resourceHelper.generatePath(user, fileName, properties);
             StringBuilder sb = new StringBuilder();

@@ -29,9 +29,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by johnnwang on 7/12/18.
- */
+
 public class XlsUtils {
     private final static Logger LOG = LoggerFactory
             .getLogger(XlsUtils.class);

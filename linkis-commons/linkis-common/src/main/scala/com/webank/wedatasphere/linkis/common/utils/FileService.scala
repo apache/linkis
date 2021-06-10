@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.common.utils
 
 import java.io.{InputStream, OutputStream}
 
-/**
-  * Created by enjoyyin on 2018/3/6.
-  */
+
 @Deprecated
 trait FileService {
 

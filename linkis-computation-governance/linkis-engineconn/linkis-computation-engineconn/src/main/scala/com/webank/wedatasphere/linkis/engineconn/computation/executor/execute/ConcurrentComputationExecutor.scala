@@ -25,6 +25,9 @@ import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteResponse
 abstract class ConcurrentComputationExecutor(override val outputPrintLimit: Int = 1000) extends ComputationExecutor(outputPrintLimit) with ConcurrentExecutor {
 
   override def execute(engineConnTask: EngineConnTask): ExecuteResponse = {
+    if (isBusy) {
+      error(s"Executor is busy but still got new task ! Running task num : ${getRunningTask}")
+    }
     if (getRunningTask >= getConcurrentLimit) synchronized {
       if (getRunningTask >= getConcurrentLimit) {
         info(s"running task($getRunningTask) > concurrent limit $getConcurrentLimit, now to mark engine to busy ")
@@ -44,4 +47,6 @@ abstract class ConcurrentComputationExecutor(override val outputPrintLimit: Int 
   protected override  def ensureOp[A](f: => A): A = if (!isEngineInitialized)
     f
   else ensureIdle(f, false)
+
+  override def afterExecute(engineConnTask: EngineConnTask, executeResponse: ExecuteResponse): Unit = {}
 }

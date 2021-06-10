@@ -23,10 +23,8 @@ import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.Engin
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.resource.{EngineResourceFactory, GenericEngineResourceFactory}
 import com.webank.wedatasphere.linkis.manager.engineplugin.io.builder.IoProcessEngineConnLaunchBuilder
-import com.webank.wedatasphere.linkis.manager.engineplugin.io.conf.IOEngineConnConfiguration
 import com.webank.wedatasphere.linkis.manager.engineplugin.io.factory.IoEngineConnFactory
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineRunTypeLabel, EngineType, EngineTypeLabel, RunType}
 
 class IoEngineConnPlugin extends EngineConnPlugin {
 

@@ -20,9 +20,7 @@ import sun.misc.{Signal, SignalHandler}
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  * Created by enjoyyin on 2019/2/1.
-  */
+
 object ShutdownUtils {
 
   private val shutdownRunners = ArrayBuffer[ShutdownRunner]()

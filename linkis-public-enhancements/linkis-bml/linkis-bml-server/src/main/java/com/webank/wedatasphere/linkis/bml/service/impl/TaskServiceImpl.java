@@ -18,7 +18,6 @@ package com.webank.wedatasphere.linkis.bml.service.impl;
 import com.webank.wedatasphere.linkis.bml.Entity.ResourceTask;
 import com.webank.wedatasphere.linkis.bml.Entity.Version;
 import com.webank.wedatasphere.linkis.bml.common.Constant;
-import com.webank.wedatasphere.linkis.bml.common.UpdateResourceException;
 import com.webank.wedatasphere.linkis.bml.dao.ResourceDao;
 import com.webank.wedatasphere.linkis.bml.dao.TaskDao;
 import com.webank.wedatasphere.linkis.bml.dao.VersionDao;
@@ -26,6 +25,7 @@ import com.webank.wedatasphere.linkis.bml.service.ResourceService;
 import com.webank.wedatasphere.linkis.bml.service.TaskService;
 import com.webank.wedatasphere.linkis.bml.service.VersionService;
 import com.webank.wedatasphere.linkis.bml.threading.TaskState;
+import com.webank.wedatasphere.linkis.bml.common.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -65,27 +65,27 @@ public class TaskServiceImpl implements TaskService {
     @Transactional(rollbackFor = Exception.class)
     public ResourceTask createUploadTask(FormDataMultiPart form, String user,
         Map<String, Object> properties) throws Exception {
-        //创建上传任务记录
+        //Create upload task record.
         String resourceId = UUID.randomUUID().toString();
         ResourceTask resourceTask = ResourceTask.createUploadTask(resourceId, user, properties);
         taskDao.insert(resourceTask);
-        LOGGER.info("成功保存上传任务信息.taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
+        LOGGER.info("Upload task information was successfully saved (成功保存上传任务信息).taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
         taskDao.updateState(resourceTask.getId(), TaskState.RUNNING.getValue(), new Date());
-        LOGGER.info("成功更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.RUNNING.getValue());
+        LOGGER.info("Successful update task (成功更新任务 ) taskId:{}-resourceId:{} status is  {} .", resourceTask.getId(), resourceTask.getResourceId(), TaskState.RUNNING.getValue());
         properties.put("resourceId", resourceTask.getResourceId());
         try {
-          ResourceServiceImpl.UploadResult result = resourceService.upload(form, user, properties).get(0);
-          if (result.isSuccess()){
-            taskDao.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
-            LOGGER.info("上传资源成功.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.SUCCESS.getValue());
-          } else {
-            taskDao.updateState(resourceTask.getId(), TaskState.FAILED.getValue(), new Date());
-            LOGGER.info("上传资源失败.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue());
-          }
+            ResourceServiceImpl.UploadResult result = resourceService.upload(form, user, properties).get(0);
+            if (result.isSuccess()){
+                taskDao.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
+                LOGGER.info("Upload resource successfully. Update task(上传资源成功.更新任务) taskId:{}-resourceId:{} status is   {} .", resourceTask.getId(), resourceTask.getResourceId(), TaskState.SUCCESS.getValue());
+            } else {
+                taskDao.updateState(resourceTask.getId(), TaskState.FAILED.getValue(), new Date());
+                LOGGER.info("Upload resource failed. Update task (上传资源失败.更新任务) taskId:{}-resourceId:{}  status is   {} .", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue());
+            }
         } catch (Exception e) {
-          taskDao.updateState2Failed(resourceTask.getId(), TaskState.FAILED.getValue(), new Date(), e.getMessage());
-          LOGGER.error("上传资源失败.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue(), e);
-          throw e;
+            taskDao.updateState2Failed(resourceTask.getId(), TaskState.FAILED.getValue(), new Date(), e.getMessage());
+            LOGGER.error("Upload resource successfully. Update task (上传资源失败.更新任务) taskId:{}-resourceId:{}  status is   {} .", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue(), e);
+            throw e;
         }
       return resourceTask;
     }
@@ -98,7 +98,7 @@ public class TaskServiceImpl implements TaskService {
       final String resourceIdLock = resourceId.intern();
       /*
       多个BML服务器实例对同一资源resourceId同时更新,规定只能有一个实例能更新成功,
-      实现方案是:linkis_resources_task.resource_id和version设置唯一索引
+      实现方案是:linkis_ps_bml_resources_task.resource_id和version设置唯一索引
       同一台服务器实例对同一资源更新,上传资源前，需要对resourceId这个字符串的intern进行加锁，这样所有需要更新该资源的用户都会同步
        */
       //synchronized (resourceIdLock.intern()){
@@ -114,36 +114,36 @@ public class TaskServiceImpl implements TaskService {
           updateResourceException.initCause(e);
           throw updateResourceException;
         }
-        LOGGER.info("成功保存上传任务信息.taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
+        LOGGER.info("Upload task information was successfully saved(成功保存上传任务信息).taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
         taskDao.updateState(resourceTask.getId(), TaskState.RUNNING.getValue(), new Date());
-        LOGGER.info("成功更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.RUNNING.getValue());
+        LOGGER.info("Successful update task (成功更新任务 ) taskId:{}-resourceId:{} status is  {} .", resourceTask.getId(), resourceTask.getResourceId(), TaskState.RUNNING.getValue());
         properties.put("newVersion", resourceTask.getVersion());
         try {
-          versionService.updateVersion(resourceTask.getResourceId(), user, formDataMultiPart, properties);
-          taskDao.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
-          LOGGER.info("上传更新资源成功.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.SUCCESS.getValue());
+            versionService.updateVersion(resourceTask.getResourceId(), user, formDataMultiPart, properties);
+            taskDao.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
+            LOGGER.info("Upload resource successfully. Update task (上传资源失败.更新任务) taskId:{}-resourceId:{}  status is   {}.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.SUCCESS.getValue());
         } catch (Exception e) {
-          taskDao.updateState2Failed(resourceTask.getId(), TaskState.FAILED.getValue(), new Date(), e.getMessage());
-          LOGGER.error("上传更新资源失败.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue(), e);
-          throw e;
+            taskDao.updateState2Failed(resourceTask.getId(), TaskState.FAILED.getValue(), new Date(), e.getMessage());
+            LOGGER.error("Upload resource failed . Update task (上传资源失败.更新任务) taskId:{}-resourceId:{}  status is   {}.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue(), e);
+            throw e;
         }
         //创建上传任务线程
         return resourceTask;
       //}
   }
 
-  @Override
-  public ResourceTask createDownloadTask(String resourceId, String version, String user,
-      String clientIp) {
-    String system = resourceDao.getResource(resourceId).getSystem();
-    ResourceTask resourceTask = ResourceTask.createDownloadTask(resourceId, version, user, system, clientIp);
-    taskDao.insert(resourceTask);
-    LOGGER.info("成功保存下载任务信息.taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
-    return resourceTask;
-  }
+    @Override
+    public ResourceTask createDownloadTask(String resourceId, String version, String user,
+                                           String clientIp) {
+        String system = resourceDao.getResource(resourceId).getSystem();
+        ResourceTask resourceTask = ResourceTask.createDownloadTask(resourceId, version, user, system, clientIp);
+        taskDao.insert(resourceTask);
+        LOGGER.info("The download task information was successfully saved (成功保存下载任务信息).taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
+        return resourceTask;
+    }
 
   /**
-   * 更新任务状态
+   * Update task status
    *
    * @param taskId 任务ID
    * @param state 执行状态
@@ -155,7 +155,7 @@ public class TaskServiceImpl implements TaskService {
   }
 
   /**
-   * 更新任务状态为失败
+   * Update task status to failed
    *
    * @param taskId 任务ID
    * @param state 执行状态
@@ -173,9 +173,9 @@ public class TaskServiceImpl implements TaskService {
     String system = resourceDao.getResource(resourceId).getSystem();
     ResourceTask resourceTask = ResourceTask.createDeleteVersionTask(resourceId, version, user, system, clientIp);
     taskDao.insert(resourceTask);
-    LOGGER.info("成功保存删除资源版本任务信息.taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
+    LOGGER.info("The deleted resource version task information was successfully saved (成功保存删除资源版本任务信息).taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
     return resourceTask;
-  }
+}
 
   @Override
   public ResourceTask createDeleteResourceTask(String resourceId, String user, String clientIp) {
@@ -191,7 +191,7 @@ public class TaskServiceImpl implements TaskService {
     extraParams.append(delVersions);
     ResourceTask resourceTask = ResourceTask.createDeleteResourceTask(resourceId, user, system, clientIp, extraParams.toString());
     taskDao.insert(resourceTask);
-    LOGGER.info("成功保存下载任务信息.taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
+    LOGGER.info("The download task information was successfully saved (成功保存下载任务信息).taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
     return resourceTask;
   }
 
@@ -212,13 +212,14 @@ public class TaskServiceImpl implements TaskService {
     }
     ResourceTask resourceTask = ResourceTask.createDeleteResourcesTask(user, system, clientIp, extraParams.toString());
     taskDao.insert(resourceTask);
-    LOGGER.info("成功保存下载任务信息.taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
+    LOGGER.info("The download task information was successfully saved (成功保存下载任务信息).taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
     return resourceTask;
   }
 
   /**
-   * 先查看linkis_resources_task有没有最新版本号,如果有则以此为主+1返回
-   * 如果没有则以linkis_resources_version最新版本号+1返回
+   *
+   * First check if linkis_resources_task has the latest version number, if there is, then this shall prevail +1 and return
+   * If not, return with the latest version number of linkis_resources_version+1
    * @param resourceId 资源ID
    * @return 下一个版本号
    */

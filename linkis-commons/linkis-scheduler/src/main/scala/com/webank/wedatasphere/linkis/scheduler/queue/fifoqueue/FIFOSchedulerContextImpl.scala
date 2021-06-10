@@ -16,37 +16,58 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue
 
+import com.webank.wedatasphere.linkis.common.listener.ListenerEventBus
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
+import com.webank.wedatasphere.linkis.scheduler.event.{ScheduleEvent, SchedulerEventListener}
+import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorManager
+import com.webank.wedatasphere.linkis.scheduler.queue.{ConsumerManager, GroupFactory}
 
-/**
-  * Created by enjoyyin on 2018/9/26.
-  */
-class FIFOSchedulerContextImpl(val maxParallelismUsers: Int) extends  SchedulerContext with Logging{
-  private var consumerManager: FIFOConsumerManager = _
-  private var groupFactory: FIFOGroupFactory = _
-  private val UJES_CONTEXT_CONSTRUCTOR_LOCK = new Object()
 
-  override def getOrCreateGroupFactory = {
-    UJES_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
+class FIFOSchedulerContextImpl(val maxParallelismUsers: Int) extends SchedulerContext with Logging{
+  private var consumerManager: ConsumerManager = _
+  private var groupFactory: GroupFactory = _
+  private var executorManager: ExecutorManager = _
+  private var listenerEventBus: ListenerEventBus[_<: SchedulerEventListener, _<: ScheduleEvent] = _
+  private val lock = new Object()
+
+  override def getOrCreateGroupFactory: GroupFactory = {
+    if(groupFactory != null) return groupFactory
+    lock.synchronized {
       if (groupFactory == null) {
-        groupFactory = new FIFOGroupFactory()
+        groupFactory = createGroupFactory()
       }
-      groupFactory
     }
+    groupFactory
   }
 
-  override def getOrCreateConsumerManager = {
-    UJES_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
+  def setGroupFactory(groupFactory: GroupFactory): Unit = this.groupFactory = groupFactory
+
+  protected def createGroupFactory(): GroupFactory = new FIFOGroupFactory
+
+  override def getOrCreateConsumerManager: ConsumerManager = {
+    if (consumerManager != null) return consumerManager
+    lock.synchronized {
       if (consumerManager == null) {
-        consumerManager = new FIFOConsumerManager
+        consumerManager = createConsumerManager()
         consumerManager.setSchedulerContext(this)
       }
-      consumerManager
     }
+    consumerManager
   }
 
-  override def getOrCreateExecutorManager = null
+  def setConsumerManager(consumerManager: ConsumerManager): Unit = {
+    this.consumerManager = consumerManager
+    this.consumerManager.setSchedulerContext(this)
+  }
 
-  override def getOrCreateSchedulerListenerBus = null
+  protected def createConsumerManager(): ConsumerManager = new FIFOConsumerManager
+
+  def setExecutorManager(executorManager: ExecutorManager): Unit = this.executorManager = executorManager
+  override def getOrCreateExecutorManager: ExecutorManager = executorManager
+
+  override def getOrCreateSchedulerListenerBus:
+  ListenerEventBus[_<: SchedulerEventListener, _<: ScheduleEvent] = listenerEventBus
+  def setSchedulerListenerBus(listenerEventBus: ListenerEventBus[_<: SchedulerEventListener, _<: ScheduleEvent]): Unit =
+    this.listenerEventBus = listenerEventBus
 }

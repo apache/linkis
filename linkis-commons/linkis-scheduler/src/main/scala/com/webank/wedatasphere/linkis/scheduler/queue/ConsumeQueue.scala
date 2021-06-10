@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue
 
-/**
-  * Created by enjoyyin on 2018/8/31.
-  */
+
 abstract class ConsumeQueue {
   def remove(event: SchedulerEvent): Unit
   def getWaitingEvents: Array[SchedulerEvent]

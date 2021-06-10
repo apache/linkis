@@ -34,3 +34,8 @@ trait StorePathExecuteRequest {
 trait RuntimePropertiesExecuteRequest {
   val properties: java.util.Map[String, Object]
 }
+
+trait UserExecuteRequest {
+  val submitUser: String
+  val executeUser: String
+}

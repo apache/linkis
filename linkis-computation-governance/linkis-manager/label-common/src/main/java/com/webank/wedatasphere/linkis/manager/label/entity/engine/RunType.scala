@@ -31,5 +31,7 @@ object RunType extends Enumeration {
   val IO_HDFS = Value("io_hdfs")
   val PIPELINE = Value("pipeline")
   val JDBC = Value("jdbc")
+  val JAR = Value("jar")
+  val APPCONN = Value("appconn")
 
 }

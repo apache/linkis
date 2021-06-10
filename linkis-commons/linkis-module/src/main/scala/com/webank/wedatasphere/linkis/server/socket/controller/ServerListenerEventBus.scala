@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.common.listener.ListenerEventBus
 import com.webank.wedatasphere.linkis.server.exception.BDPServerErrorException
 import org.apache.commons.lang.StringUtils
 
-/**
-  * Created by enjoyyin on 2018/1/11.
-  */
+
 class ServerListenerEventBus(eventQueueCapacity: Int, name: String,
                                listenerConsumerThreadSize: Int,
                                listenerThreadMaxFreeTime: Long)

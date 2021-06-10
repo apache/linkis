@@ -1,0 +1,239 @@
+{
+    "message": {
+        "linkis": {
+            "refresh": "刷新",
+            "placeholderZip": "请输入工作空间python包路径（只支持zip）!",
+            "emptyString": "空字符串",
+            "addAppType": "新增应用类型",
+            "editContents": "编辑目录",
+            "eurekeRegisterCenter":  "Eureke注册中心",
+            "addParameterConfig": "新增参数配置",
+            "editDescriptionEngineConfig": "编辑引擎配置",
+            "name": "名称",
+            "order": "顺序",
+            "description": "描述",
+            "noDescription": "暂无描述",
+            "addTags": "添加标签",
+            "find": "查询",
+            "initiator": "启动者",
+            "jumpPage": "请在跳转页面查看……",
+            "editedSuccess": "修改成功",
+            "errorCode": "错误码",
+            "errorDescription": "错误描述",
+            "notLog": "未获取到日志！",
+            "unfold": "展开",
+            "fold": "收起",
+            "addVariable": "新增变量",
+            "defaultValue": "默认值",
+            "noDefaultValue": "无默认值",
+            "stop": "停止",
+            "tip": "提示",
+            "serverTip": "无结果集（resultLocation:null）",
+            "stopEngineTip": "请问确认要停止当前引擎？",
+            "log": "任务日志",
+            "detail": "任务详情",
+            "result": "任务结果",
+            "startUp": "启动",
+            "tagEdit": "编辑",
+            "keyTip": "不能为空",
+            "rename": "重命名",
+            "resources": "资源",
+            "instanceNum": "实例数",
+            "instanceName": "实例名称",
+            "reset": "重置",
+            "remove": "移除",
+            "submit": "确定",
+            "search": "搜索",
+            "save": "保存",
+            "edit": "编辑",
+            "cancel": "取消",
+            "noDataText": "暂无数据",
+            "userName": "用户名",
+            "unselect": "请选择",
+            "searchName": "请输入用户名搜索",
+            "generalView": "切换普通视图",
+            "manageView": "切换管理员视图",
+            "back": "返回",
+            "warning": {
+                "api": "接口请求中，请稍候！",
+                "data": "数据请求中，请稍候！",
+                "waiting": "请等待接口返回！",
+                "biLoading": "正在和Visualis系统通讯，请稍候！",
+                "comingSoon": "尚未开源，敬请期待！"
+            },
+            "resourceManagement": {
+                "resourceUsage": "资源使用情况",
+                "applicationList": "应用列表"
+            },
+            "time": {
+                "second": "秒",
+                "minute": "分钟",
+                "hour": "小时",
+                "day": "天"
+            },
+            "tableColumns": {
+                "engineInstance": "引擎实例",
+                "engineType": "引擎类型",
+                "taskID": "任务ID",
+                "fileName": "来源",
+                "executionCode": "查询语句",
+                "status": "状态",
+                "costTime": "已耗时",
+                "label": "标签",
+                "engineVersion": "引擎版本",
+                "engineVersionCannotBeNull": "引擎版本不能为空",
+                "addEngineRules": "应用名称不能有特殊符号和空格",
+                "usedResources": "已用资源",
+                "maximumAvailableResources": "最大可用资源",
+                "minimumAvailableResources": "最小可用资源",
+                "startTime": "启动时间",
+                "executeApplicationName": "执行引擎",
+                "requestApplicationName": "创建者",
+                "user": "用户",
+                "createdTime": "创建时间",
+                "updateTime": "更新时间",
+                "failedReason": "关键信息",
+                "control": {
+                    "title": "操作",
+                    "label": "查看"
+                }
+            },
+            "logLoading": "日志请求中，请稍后",
+            "title": "Linkis计算治理台",
+            "info": "{num} 条新消息",
+            "hint": "请在跳转页面查看……",
+            "sideNavList": {
+                "news": {
+                    "name": "最新动态",
+                    "children": {
+                        "daily": "运营日报"
+                    }
+                },
+                "function": {
+                    "name": "常用功能",
+                    "children": {
+                        "globalHistory": "全局历史",
+                        "resource": "资源管理",
+                        "setting": "参数配置",
+                        "dateReport": "全局变量",
+                        "globalValiable": "常见问题",
+                        "ECMManage": "ECM管理",
+                        "microserviceManage": "微服务管理"
+                    }
+                }
+            },
+            "formItems": {
+                "id": {
+                    "placeholder": "请输入ID搜索"
+                },
+                "date": {
+                    "label": "起始时间",
+                    "placeholder": "请选择起始日期"
+                },
+                "engine": {
+                    "label": "引擎"
+                },
+                "status": {
+                    "label": "状态"
+                }
+            },
+            "columns": {
+                "taskID": "任务ID",
+                "fileName": "脚本名称",
+                "executionCode": "查询语句",
+                "status": "状态",
+                "costTime": "已耗时",
+                "executeApplicationName": "执行引擎",
+                "requestApplicationName": "创建者",
+                "progress": "进度",
+                "createdTime": "创建时间",
+                "updatedTime": "最后更新时间",
+                "control": {
+                    "title": "操作",
+                    "label": "查看"
+                },
+                "moduleName": "模块名称",
+                "totalResource": "总资源",
+                "usedResource": "已用资源",
+                "initializingResource": "初始化中资源",
+                "memory": "内存",
+                "engineInstance": "引擎实例",
+                "applicationName": "应用名称",
+                "usedTime": "开始时间",
+                "engineStatus": "状态",
+                "username": "用户名"
+            },
+            "shortcuts": {
+                "week": "最近一周",
+                "month": "最近一个月",
+                "threeMonths": "最近三个月"
+            },
+            "statusType": {
+                "all": "全部",
+                "inited": "排队中",
+                "running": "运行",
+                "succeed": "成功",
+                "cancelled": "取消",
+                "failed": "失败",
+                "scheduled": "资源申请中",
+                "timeout": "超时",
+                "retry": "重试",
+                "unknown": "未知"
+            },
+            "engineTypes": {
+                "all": "全部"
+            },
+            "header": "资源管理器",
+            "tabs": {
+                "first": "用户会话",
+                "second": "用户资源",
+                "third": "服务器资源"
+            },
+            "noLimit": "无限制",
+            "core": "核",
+            "row": {
+                "applicationName": "应用名称",
+                "usedTime": "开始时间",
+                "engineStatus": "状态",
+                "engineInstance": "引擎实例",
+                "queueName": "队列名称",
+                "user": "用户",
+                "cpu": "已用的服务器CPU资源",
+                "memory": "已用的服务器内存资源",
+                "queueCpu": "已用的Yarn队列CPU资源",
+                "queueMemory": "已用的Yarn队列内存资源"
+            },
+            "setting": {
+                "global": "全局",
+                "globalSetting": "通用设置",
+                "hide": "隐藏",
+                "show": "显示",
+                "advancedSetting": "高级设置",
+                "dataDev": "数据开发"
+            },
+            "globalValiable": "全局变量",
+            "rules": {
+                "first": {
+                    "required": "变量 {text} 的key为空",
+                    "lengthLimit": "长度应为 1 至 128 个字符",
+                    "letterTypeLimit": "仅支持以字母开头，且不得存在空格和中文",
+                    "placeholder": "请输入变量名"
+                },
+                "second": {
+                    "required": "变量 {text} 的value为空",
+                    "lengthLimit": "长度应为 1 至 128 个字符",
+                    "placeholder": "请输入变量值"
+                }
+            },
+            "addArgs": "增加参数",
+            "emptyDataText": "暂无全局变量数据",
+            "sameName": "存在同名key",
+            "error": {
+                "validate": "有验证项未通过，请检查后再试！"
+            },
+            "success": {
+                "update": "全局变量更新成功！"
+            }
+        }
+    }
+}

@@ -19,7 +19,6 @@ package com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.executor
 import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfiguration.PIPELINE_OUTPUT_ISOVERWRITE_SWITCH
-import com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.constant.PipeLineConstant.PIPELINE_OUTPUT_ISOVERWRITE
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteResponse
 import com.webank.wedatasphere.linkis.storage.FSFactory
 import org.apache.commons.io.IOUtils

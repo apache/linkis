@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.metadata.type;
 
 
 public enum UseWayType {
-    /**
-     *
-     */
+
     OnceWriteMultiRead("一次写入多次读"),
     CRUD("增删改查"),
     MultiOverwrite("多次覆盖写"),

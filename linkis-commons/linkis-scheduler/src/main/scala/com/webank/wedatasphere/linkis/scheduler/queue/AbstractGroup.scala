@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.scheduler.queue
 
 import com.webank.wedatasphere.linkis.scheduler.queue.GroupStatus.GroupStatus
 
-/**
-  * Created by enjoyyin on 2018/10/24.
-  */
+
 abstract class AbstractGroup extends Group {
 
   private var _status: GroupStatus = _

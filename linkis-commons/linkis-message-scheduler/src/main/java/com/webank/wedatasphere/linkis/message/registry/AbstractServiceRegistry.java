@@ -23,15 +23,14 @@ import com.webank.wedatasphere.linkis.message.context.AbstractMessageSchedulerCo
 import com.webank.wedatasphere.linkis.message.exception.MessageWarnException;
 import com.webank.wedatasphere.linkis.message.parser.ServiceMethod;
 import com.webank.wedatasphere.linkis.message.parser.ServiceParser;
+import org.springframework.aop.support.AopUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @date 2020/7/15
- */
+
 public abstract class AbstractServiceRegistry extends JavaLog implements ServiceRegistry {
 
     @SuppressWarnings("all")
@@ -52,8 +51,7 @@ public abstract class AbstractServiceRegistry extends JavaLog implements Service
     @SuppressWarnings("all")
     @Override
     public void register(Object service) {
-        //防止不同方式注册时候的并发，比如spring和手动注册,同时防止不同包名下类名一样的service
-        String serviceName = service.getClass().getName();
+        String serviceName = AopUtils.getTargetClass(service).getName();
         synchronized (this.lock.intern(serviceName)) {
             //1.是否注册过
             Object o = this.registedServieMap.get(serviceName);

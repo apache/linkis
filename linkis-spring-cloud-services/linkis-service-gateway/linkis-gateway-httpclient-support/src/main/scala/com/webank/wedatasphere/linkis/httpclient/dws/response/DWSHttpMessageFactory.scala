@@ -23,13 +23,12 @@ package com.webank.wedatasphere.linkis.httpclient.dws.response
 import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import com.webank.wedatasphere.linkis.httpclient.response.Result
 import org.apache.commons.lang.ClassUtils
-import org.reflections.Reflections
 
 import scala.collection.JavaConversions._
 
 object DWSHttpMessageFactory {
 
-  private val reflections = new Reflections("com.webank.wedatasphere", classOf[DWSHttpMessageResult].getClassLoader)
+  private val reflections = com.webank.wedatasphere.linkis.common.utils.ClassUtils.reflections
 
   private val methodToHttpMessageClasses = reflections.getTypesAnnotatedWith(classOf[DWSHttpMessageResult])
     .filter(ClassUtils.isAssignable(_, classOf[Result])).map { c =>

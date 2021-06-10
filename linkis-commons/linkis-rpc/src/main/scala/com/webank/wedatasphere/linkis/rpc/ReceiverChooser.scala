@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.rpc
 
 import java.util
 
-/**
-  * Created by enjoyyin on 2018/11/3.
-  */
+
 trait ReceiverChooser {
 
   def getReceivers: util.Map[String, Receiver] = RPCSpringBeanCache.getReceivers

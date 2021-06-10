@@ -31,7 +31,6 @@ case class EngineConnPluginInfo(typeLabel: EngineTypeLabel,
     }else{
       null
     }
-//    super.toString()
   }
 
   override def equals(obj: Any): Boolean = {

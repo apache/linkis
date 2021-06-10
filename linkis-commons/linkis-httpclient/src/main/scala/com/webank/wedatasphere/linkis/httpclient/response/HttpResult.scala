@@ -20,9 +20,7 @@
 
 package com.webank.wedatasphere.linkis.httpclient.response
 
-/**
-  * Created by enjoyyin on 2019/5/20.
-  */
+
 trait HttpResult extends Result {
 
   def getContentType: String

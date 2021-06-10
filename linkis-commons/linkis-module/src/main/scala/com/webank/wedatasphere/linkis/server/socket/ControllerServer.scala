@@ -33,9 +33,7 @@ import org.eclipse.jetty.websocket.servlet._
 
 import scala.collection.JavaConversions._
 
-/**
-  * Created by enjoyyin on 2018/1/9.
-  */
+
 private[server] class ControllerServer(serverListenerEventBus: ServerListenerEventBus)
   extends WebSocketServlet with SocketListener
    with Event with Logging {

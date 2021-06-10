@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.common.io.FsPath;
 
 import java.util.List;
 
-/**
- * Created by johnnwang on 2019/1/8.
- */
+
 public class FsPathListWithError {
     private List<FsPath> fsPaths;
     private String error;

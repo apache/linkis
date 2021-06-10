@@ -43,9 +43,7 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Created by patinousward
- */
+
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes({MediaType.APPLICATION_JSON})
 @Component

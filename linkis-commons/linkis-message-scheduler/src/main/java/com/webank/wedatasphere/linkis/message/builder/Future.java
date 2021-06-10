@@ -20,9 +20,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-/**
- * @date 2020/8/4
- */
+
 public interface Future<V> {
 
     boolean cancel(boolean mayInterruptIfRunning);

@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.webank.wedatasphere.linkis.ujes.jdbc.hook
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 
 import scala.collection.mutable.ArrayBuffer
+
 
 trait JDBCDriverPreExecutionHook {
 

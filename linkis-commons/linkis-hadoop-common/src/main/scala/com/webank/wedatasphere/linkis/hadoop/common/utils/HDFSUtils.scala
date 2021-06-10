@@ -24,9 +24,7 @@ import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.security.UserGroupInformation
 
-/**
-  * Created by enjoyyin on 2019/5/27.
-  */
+
 object HDFSUtils {
 
 

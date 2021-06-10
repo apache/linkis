@@ -59,7 +59,7 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
             }
         } else {
             logger.warn("Cannot find engineconn : " + engineStopRequest.getServiceInstance().toString() + " in this engineConnManager engineConn list, cannot kill.");
-            response.setStopStatus(false);
+            response.setStopStatus(true);
             response.setMsg("EngineConn " + engineStopRequest.getServiceInstance().toString() + " was not found in this engineConnManager.");
         }
         if (!response.getStopStatus()) {
@@ -81,7 +81,7 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
         }
         List<EngineConn> engineConnList = engineConnListService.getEngineConns();
         for (EngineConn engineConn : engineConnList) {
-            if (engineConn.getServiceInstance().equals(serviceInstance)) {
+            if (null != engineConn && serviceInstance.equals(engineConn.getServiceInstance())) {
                 return engineConn;
             }
         }
@@ -93,16 +93,17 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
         if (StringUtils.isNotBlank(engineConn.getPid())) {
             String k15cmd = "sudo kill " + engineConn.getPid();
             String k9cmd = "sudo kill -9 " + engineConn.getPid();
-            int tryNum = 1;
+            int tryNum = 0;
             try {
                 while (isProcessAlive(engineConn.getPid()) && tryNum <= 3) {
                     logger.info("{} still alive with pid({}), use shell command to kill it. try {}++", engineConn.getServiceInstance().toString(), engineConn.getPid(), tryNum++);
-                    if (tryNum < 3) {
+                    if (tryNum <= 3) {
                         Utils.exec(k15cmd.split(" "), 3000L);
                     } else {
+                        logger.info("{} still alive with pid({}). try {}, use shell command to kill -9 it", engineConn.getServiceInstance().toString(), engineConn.getPid(), tryNum);
                         Utils.exec(k9cmd.split(" "), 3000L);
                     }
-                    Thread.sleep(3000);
+                    Thread.sleep(5000);
                 }
             } catch (InterruptedException e) {
                 logger.error("Interrupted while killing engine {} with pid({})." + engineConn.getServiceInstance().toString(), engineConn.getPid());
@@ -119,21 +120,19 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
     }
 
     private boolean isProcessAlive(String pid) {
-        String findCmd = "\"ps -ef | grep " + pid + " | grep EngineConnServer | awk '{print \\\"exists_\\\"$2}' | grep " + pid + " \"";
+        String findCmd = "ps -ef | grep " + pid + " | grep EngineConnServer | awk '{print \"exists_\"$2}' | grep " + pid;
         List<String> cmdList = new ArrayList<>();
-        cmdList.add("sudo");
-        cmdList.add("-S");
         cmdList.add("bash");
         cmdList.add("-c");
         cmdList.add(findCmd);
         try {
-            // todo
             String rs = Utils.exec(cmdList.toArray(new String[0]), 5000L);
             return null != rs && rs.contains("exists_" + pid);
         } catch (Exception e) {
-            logger.error("Method isProcessAlive failed, " + e.getMessage());
+            // todo when thread catch exception , it should not be return false
+            logger.warn("Method isProcessAlive failed, " + e.getMessage());
+            return false;
         }
-        return true;
     }
 
 }

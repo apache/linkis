@@ -22,9 +22,7 @@ package com.webank.wedatasphere.linkis.httpclient.loadbalancer
 
 import scala.util.Random
 
-/**
-  * Created by enjoyyin on 2019/5/22.
-  */
+
 object DefaultLoadbalancerStrategy extends LoadBalancerStrategy {
   override def createLoadBalancer(): LoadBalancer = new AbstractLoadBalancer {
 

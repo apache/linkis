@@ -27,8 +27,6 @@ trait EngineConnHook {
 
   def beforeCreateEngineConn(engineCreationContext: EngineCreationContext): Unit
 
-  /*def afterCreateEngineConn(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit*/
-
   def beforeExecutionExecute(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit
 
   def afterExecutionExecute(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit

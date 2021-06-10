@@ -43,7 +43,7 @@ class JDBCEngineConnPlugin extends EngineConnPlugin {
     engineTypeLabel.setEngineType(EngineType.IO_ENGINE.toString)
     engineTypeLabel.setVersion(IOEngineConnConfiguration.DEFAULT_VERSION.getValue)
     this.defaultLabels.add(engineTypeLabel)
-    val runTypeLabel = new EngineRunTypeLabel()
+    val runTypeLabel = new CodeLanguageLabel()
     runTypeLabel.setRunType(RunType.IO.toString)*/
   }
 

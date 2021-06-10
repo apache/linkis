@@ -16,10 +16,17 @@
 
 package com.webank.wedatasphere.linkis.engineplugin.hive.launch
 
+import java.util
+
+import com.google.common.collect.Lists
+import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
 
 class HiveProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
   override protected def ifAddHiveConfigPath: Boolean = true
 
+  override protected def getEngineConnManagerHooks(implicit engineConnBuildRequest: EngineConnBuildRequest): util.List[String] = {
+    Lists.newArrayList("JarUDFLoadECMHook")
+  }
 }

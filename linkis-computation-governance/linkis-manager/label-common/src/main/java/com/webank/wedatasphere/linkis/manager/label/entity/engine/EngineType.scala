@@ -18,6 +18,8 @@ package com.webank.wedatasphere.linkis.manager.label.entity.engine
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
 
+import java.util
+
 object EngineType extends Enumeration with Logging {
 
   type EngineType = Value
@@ -56,6 +58,33 @@ object EngineType extends Enumeration with Logging {
         error(s"In method mapFsTypeToEngineType(): Invalid fsType : ${fsType}, will not convert.")
         fsType
     }
+  }
+
+  /**
+   * Please add it here when new engineType was added.
+   */
+  def mapStringToEngineType(str: String): EngineType = str match {
+    case _ if null == str || "".equals(str) => null
+    case _ if SPARK.toString.equalsIgnoreCase(str) => SPARK
+    case _ if HIVE.toString.equalsIgnoreCase(str) => HIVE
+    case _ if PYTHON.toString.equalsIgnoreCase(str) => PYTHON
+    case _ if SHELL.toString.equalsIgnoreCase(str) => SHELL
+    case _ if JDBC.toString.equalsIgnoreCase(str) => JDBC
+    case _ if IO_ENGINE_FILE.toString.equalsIgnoreCase(str) => IO_ENGINE_FILE
+    case _ if IO_ENGINE_HDFS.toString.equalsIgnoreCase(str) => IO_ENGINE_HDFS
+    case _ if PIPELINE.toString.equalsIgnoreCase(str) => PIPELINE
+    case _ if ES.toString.equalsIgnoreCase(str) => ES
+    case _ if PRESTO.toString.equalsIgnoreCase(str) => PRESTO
+    case _ if FLINK.toString.equalsIgnoreCase(str) => FLINK
+    case _ if APPCONN.toString.equals(str) => APPCONN
+    case _ => null
+
+  }
+
+  def getAllEngineTypes(): util.List[EngineType] = {
+    val list = new util.ArrayList[EngineType]()
+    EngineType.values.foreach(list.add)
+    list
   }
 
 }

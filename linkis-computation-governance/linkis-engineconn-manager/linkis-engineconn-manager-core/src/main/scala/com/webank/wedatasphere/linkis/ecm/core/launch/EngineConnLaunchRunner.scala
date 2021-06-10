@@ -19,10 +19,7 @@ package com.webank.wedatasphere.linkis.ecm.core.launch
 
 trait EngineConnLaunchRunner extends Runnable {
 
-  /**
-   *
-   * @param launch
-   */
+
   def setEngineConnLaunch(launch: EngineConnLaunch): Unit
 
   def getEngineConnLaunch: EngineConnLaunch
@@ -33,10 +30,7 @@ trait EngineConnLaunchRunner extends Runnable {
 class EngineConnLaunchRunnerImpl extends EngineConnLaunchRunner {
 
   private var launch: EngineConnLaunch = _
-  /**
-    *
-    * @param launch
-    */
+
   override def setEngineConnLaunch(launch: EngineConnLaunch): Unit = this.launch = launch
 
   override def getEngineConnLaunch: EngineConnLaunch = launch

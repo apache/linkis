@@ -16,11 +16,16 @@
 
 package com.webank.wedatasphere.linkis.gateway.config
 
+import java.util.stream.Collectors
+
 import com.webank.wedatasphere.linkis.gateway.security.{LDAPUserRestful, SecurityFilter, SecurityHook, UserRestful}
 import javax.annotation.PostConstruct
+import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters
 import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.http.converter.HttpMessageConverter
 
 @Configuration
 class GatewaySpringConfiguration {
@@ -52,4 +57,9 @@ class GatewaySpringConfiguration {
     userRestful
   }
 
+  @Bean
+  @ConditionalOnMissingBean
+  def  messageConverters(converters:ObjectProvider[HttpMessageConverter[_]] ):HttpMessageConverters= {
+   new HttpMessageConverters(converters.orderedStream().collect(Collectors.toList()));
+  }
 }

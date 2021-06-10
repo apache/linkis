@@ -1,18 +1,25 @@
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+import com.webank.wedatasphere.linkis.configuration.service.CategoryService
 
 object rpcTest {
-
   def main(args: Array[String]): Unit = {
-//    val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
-//    val userCreatorLabel = labelBuilderFactory.createLabel(classOf[UserCreatorLabel])
-//    userCreatorLabel.setUser("leebai")
-//    userCreatorLabel.setCreator("visualis")
-//    val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel("spark")
-//    val combinedLabelBuilder = new CombinedLabelBuilder
-//    val combinedLabel = combinedLabelBuilder.build("",List(userCreatorLabel,engineTypeLabel).asJava).asInstanceOf[CombinedLabelImpl]
-//    println(s"usercreator key:${userCreatorLabel.getLabelKey}   StringValue:${userCreatorLabel.getStringValue} value:${userCreatorLabel.getValue}")
-//    println(s"key:${combinedLabel.getLabelKey} StringValue:${combinedLabel.getStringValue} size:${combinedLabel.getValue.size()}")
-
+    val categoryService = new CategoryService
+    categoryService.createFirstCategory("easyide","null")
   }
 
 }

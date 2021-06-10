@@ -19,17 +19,20 @@ package com.webank.wedatasphere.linkis.engineplugin.spark.executor
 import java.io.{BufferedReader, File}
 
 import com.webank.wedatasphere.linkis.common.utils.Utils
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationExecutorManager
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.parser.ScalaCodeParser
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.rs.RsOutputStream
 import com.webank.wedatasphere.linkis.engineplugin.spark.common.{Kind, SparkScala}
 import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
 import com.webank.wedatasphere.linkis.engineplugin.spark.entity.SparkEngineSession
 import com.webank.wedatasphere.linkis.engineplugin.spark.exception.{ApplicationAlreadyStoppedException, ExecuteError, SparkSessionNullException}
 import com.webank.wedatasphere.linkis.engineplugin.spark.utils.EngineUtils
+import com.webank.wedatasphere.linkis.governance.common.paser.ScalaCodeParser
 import com.webank.wedatasphere.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, IncompleteExecuteResponse, SuccessExecuteResponse}
 import com.webank.wedatasphere.linkis.storage.resultset.ResultSetWriter
 import org.apache.commons.io.IOUtils
+import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.spark.repl.SparkILoop
 import org.apache.spark.sql.{SQLContext, SparkSession}
 import org.apache.spark.util.SparkUtils
@@ -38,10 +41,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 import _root_.scala.tools.nsc.GenericRunnerSettings
 import scala.tools.nsc.interpreter.{IMain, JPrintWriter, NamedParam, Results, SimpleReader, StdReplTags, isReplPower, replProps}
 
-/**
-  *
-  * @date 2020/11/9
-  */
+
 class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) extends SparkEngineConnExecutor(sparkEngineSession.sparkContext, id) {
 
   private val sparkContext: SparkContext = sparkEngineSession.sparkContext
@@ -150,8 +150,18 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
       throw new ApplicationAlreadyStoppedException(40004,"Spark application has already stopped, please restart it.")
     }
     executeCount += 1
+    val originalOut = System.out
     val result = scala.Console.withOut(lineOutputStream) {
-      Utils.tryCatch(sparkILoop.interpret(code)){ t => Results.Error} match {
+      Utils.tryCatch(sparkILoop.interpret(code)){ t =>
+        error("task error info:", t)
+        val msg = ExceptionUtils.getRootCauseMessage(t)
+        if (msg.contains("OutOfMemoryError")) {
+          error("engine oom now to set status to shutdown")
+          ComputationExecutorManager.getInstance.getReportExecutor.tryShutdown()
+        }
+        engineExecutionContext.appendStdout("task error info: " + msg)
+        Results.Error
+      } match {
         case Results.Success =>
           lineOutputStream.flush()
           engineExecutionContext.appendStdout("scala> " + code)
@@ -170,12 +180,19 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
         case Results.Error =>
           lineOutputStream.flush()
           val output = lineOutputStream.toString
-          val errorMsg = Utils.tryCatch(EngineUtils.getResultStrByDolphinContent(output))(t => t.getMessage)
-          error("Execute code error for "+  errorMsg)
           IOUtils.closeQuietly(lineOutputStream)
-          ErrorExecuteResponse("",new ExecuteError(40005, "execute sparkScala failed!"))
+          var errorMsg: String = null
+            if (StringUtils.isNotBlank(output)) {
+            errorMsg = Utils.tryCatch(EngineUtils.getResultStrByDolphinTextContent(output))(t => t.getMessage)
+            error("Execute code error for "+  errorMsg)
+          } else {
+            error("No error message is captured, please see the detailed log")
+          }
+          ErrorExecuteResponse(errorMsg, ExecuteError(40005, "execute sparkScala failed!"))
       }
     }
+    // reset the java stdout
+    System.setOut(originalOut)
     result
   }
 

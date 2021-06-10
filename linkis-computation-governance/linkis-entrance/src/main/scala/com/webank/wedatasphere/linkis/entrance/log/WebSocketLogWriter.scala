@@ -16,14 +16,11 @@
 
 package com.webank.wedatasphere.linkis.entrance.log
 
-import com.webank.wedatasphere.linkis.entrance.event.{EntranceEvent, EntranceEventListener, EntranceEventListenerBus, EntranceLogEvent}
+import com.webank.wedatasphere.linkis.entrance.event.{EntranceEvent, EntranceEventListener, EntranceEventListenerBus, EntranceLogEvent, EntranceLogListener, EntranceLogListenerBus, EntrancePushLogEvent}
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
 
-/**
-  * created by enjoyyin on 2018/12/13
-  * Description:
-  */
+
 class WebSocketLogWriter(job:Job,
-                         entranceEventListenerBus: EntranceEventListenerBus[EntranceEventListener, EntranceEvent]) {
-  def write(msg: String): Unit = if(entranceEventListenerBus != null) entranceEventListenerBus.post(EntranceLogEvent(job, msg))
+                         entranceLogListenerBus: EntranceLogListenerBus[EntranceLogListener, EntranceLogEvent]) {
+  def write(msg: String): Unit = if(entranceLogListenerBus != null) entranceLogListenerBus.post(EntrancePushLogEvent(job, msg))
 }

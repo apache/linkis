@@ -57,8 +57,6 @@
         <module>linkis-public-enhancements</module>
 
 
-        <module>linkis-extensions</module>
-
         <module>linkis-computation-governance</module>
 
         <module>linkis-engineconn-plugins</module>

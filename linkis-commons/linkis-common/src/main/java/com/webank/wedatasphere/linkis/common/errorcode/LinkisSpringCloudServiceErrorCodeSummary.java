@@ -3,21 +3,10 @@ package com.webank.wedatasphere.linkis.common.errorcode;
 
 public class LinkisSpringCloudServiceErrorCodeSummary {
     ;
-    /**
-     * 错误码
-     */
+
     private int errorCode;
-    /**
-     * 错误描述
-     */
     private String errorDesc;
-    /**
-     * 错误可能出现的原因
-     */
     private String comment;
-    /**
-     * 所属的linkis的模块
-     */
     private String module;
 
     LinkisSpringCloudServiceErrorCodeSummary(int errorCode, String errorDesc, String comment, String module) {

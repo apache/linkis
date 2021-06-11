@@ -81,8 +81,8 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
     //3.添加到list
     LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnAddEvent(conn))
     //4.run
-    try {
-      beforeLaunch(request, conn, duration)
+    Utils.tryCatch{
+      beforeLaunch(conn, duration)
       runner.run()
       launch match {
         case pro: ProcessEngineConnLaunch =>
@@ -103,10 +103,10 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
       }
       //超时忽略，如果状态翻转了则直接返回
       Utils.tryQuietly(Await.result(future, Duration(WAIT_ENGINECONN_PID.getValue.toLong, TimeUnit.MILLISECONDS)))
-    } catch {
+    }{
       //failed，1.被ms打断，2.超时，3.普通错误，比如process
-      case t: Throwable =>
-        error(s"init ${conn.getServiceInstance} failed, now stop and delete it. message: ${t.getMessage}", t)
+      t: Throwable =>
+        error(s"init ${conn.getServiceInstance} failed, now stop and delete it. message: ${t.getMessage}")
         conn.getEngineConnLaunchRunner.stop()
         Sender.getSender(MANAGER_SPRING_NAME).send(EngineConnStatusCallbackToAM(conn.getServiceInstance,
           NodeStatus.ShuttingDown, " wait init failed , reason " + ExceptionUtils.getRootCauseMessage(t)))

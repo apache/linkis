@@ -2,28 +2,18 @@ package com.webank.wedatasphere.linkis.common.errorcode;
 
 
 public enum LinkisFrameErrorCodeSummary {
-    /**
-     * 创建人 cooperyang
-     */
+
     VALIDATE_ERROR_CODE_FAILED
             (10000, "错误码定义有误", "错误码定义超过最大值或者小于最小值", "linkis-frame")
 
     ;
-    /**
-     * 错误码
-     */
+
     private int errorCode;
-    /**
-     * 错误描述
-     */
+
     private String errorDesc;
-    /**
-     * 错误可能出现的原因
-     */
+
     private String comment;
-    /**
-     * 所属的linkis的模块
-     */
+
     private String module;
 
     LinkisFrameErrorCodeSummary(int errorCode, String errorDesc, String comment, String module) {

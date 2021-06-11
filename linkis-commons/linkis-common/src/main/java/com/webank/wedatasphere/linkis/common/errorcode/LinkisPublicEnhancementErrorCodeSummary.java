@@ -3,21 +3,9 @@ package com.webank.wedatasphere.linkis.common.errorcode;
 
 public enum LinkisPublicEnhancementErrorCodeSummary {
     ;
-    /**
-     * 错误码
-     */
     private int errorCode;
-    /**
-     * 错误描述
-     */
     private String errorDesc;
-    /**
-     * 错误可能出现的原因
-     */
     private String comment;
-    /**
-     * 所属的linkis的模块
-     */
     private String module;
 
     LinkisPublicEnhancementErrorCodeSummary(int errorCode, String errorDesc, String comment, String module) {

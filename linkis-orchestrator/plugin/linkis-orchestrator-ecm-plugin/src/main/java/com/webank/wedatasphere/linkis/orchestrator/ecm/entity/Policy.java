@@ -16,9 +16,12 @@
 
 package com.webank.wedatasphere.linkis.orchestrator.ecm.entity;
 
-
+/**
+ *
+ *
+ */
 public enum Policy {
 
-    Process, JobGroup, Job, Task;
+    Process, Label, JobGroup, Job, Task;
 
 }

@@ -36,7 +36,7 @@ import org.apache.spark.util.SparkUtils
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
-  *
+ *
  */
 class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging {
 
@@ -123,11 +123,11 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     if (SparkConfiguration.LINKIS_SPARK_USEHIVECONTEXT.getValue(options)) {
       val name = "org.apache.spark.sql.hive.HiveContext"
       var hc: Constructor[_] = null
-      Utils.tryCatch{
+      try {
         hc = getClass.getClassLoader.loadClass(name).getConstructor(classOf[SparkContext])
         sqlc = hc.newInstance(sc).asInstanceOf[SQLContext]
-      }{
-        e: Throwable => {
+      } catch {
+        case e: Throwable =>
           logger.warn("Can't create HiveContext. Fallback to SQLContext", e)
           sqlc = sparkSession.sqlContext
       }
@@ -156,7 +156,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
 
   override protected def getEngineConnType: EngineType = EngineType.SPARK
 
-  private val executorFactoryArray =  Array[ExecutorFactory](new SparkSqlExecutorFactory, new SparkPythonExecutorFactory, new SparkScalaExecutorFactory)
+  private val executorFactoryArray =   Array[ExecutorFactory](new SparkSqlExecutorFactory, new SparkPythonExecutorFactory, new SparkScalaExecutorFactory)
 
   override def getExecutorFactories: Array[ExecutorFactory] = {
     executorFactoryArray

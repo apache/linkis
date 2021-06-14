@@ -20,7 +20,10 @@ import com.webank.wedatasphere.linkis.governance.common.protocol.task._
 import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
 
 
-
+/**
+  *
+  *
+  */
 trait TaskExecutionReceiver {
 
 
@@ -34,5 +37,5 @@ trait TaskExecutionReceiver {
 
   def taskResultSetReceiver(taskResultSet: ResponseTaskResultSet, smc: ServiceMethodContext): Unit
 
-  def taskErrorReceiver(taskTaskError: ResponseTaskError, smc: ServiceMethodContext): Unit
+  def taskErrorReceiver(responseTaskError: ResponseTaskError, smc: ServiceMethodContext): Unit
 }

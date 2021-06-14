@@ -20,10 +20,7 @@ import com.webank.wedatasphere.linkis.governance.common.protocol.task._
 import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
 
 
-/**
-  *
-  *
-  */
+
 trait TaskExecutionReceiver {
 
 

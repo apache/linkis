@@ -30,10 +30,7 @@ import scala.beans.BeanProperty
 import scala.collection.JavaConversions._
 
 
-/**
-  *
-  *
-  */
+
 trait MarkReq {
 
 
@@ -46,14 +43,12 @@ trait MarkReq {
   def registerLabelKey(labelKey: String): Unit
 
   /**
-    * 只包含StartUp参数
+    * StartUp params
     */
   @BeanProperty
   var properties: util.Map[String, String] = null
 
-  /**
-    * 启动engineConn必要Label
-    */
+
   @BeanProperty
   var labels: util.Map[String, AnyRef] = null
 
@@ -63,9 +58,7 @@ trait MarkReq {
   @BeanProperty
   var user: String = null
 
-  /**
-    * 启动的服务：如linkis-entrance
-    */
+
   @BeanProperty
   var createService: String = null
 

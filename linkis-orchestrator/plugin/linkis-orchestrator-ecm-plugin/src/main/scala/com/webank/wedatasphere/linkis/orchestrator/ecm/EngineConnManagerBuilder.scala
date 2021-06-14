@@ -18,12 +18,15 @@ package com.webank.wedatasphere.linkis.orchestrator.ecm
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.common.utils.{ClassUtils, Logging, Utils}
 import com.webank.wedatasphere.linkis.orchestrator.ecm.conf.ECMPluginConf
 import com.webank.wedatasphere.linkis.orchestrator.ecm.entity.Policy
-import org.reflections.Reflections
 
 
+/**
+  *
+  *
+  */
 trait EngineConnManagerBuilder {
 
   def setPolicy(policy: Policy): EngineConnManagerBuilder
@@ -89,7 +92,7 @@ object EngineConnManagerBuilder extends Logging {
 
   private def init(): Unit = {
 
-    val reflections = new Reflections("com.webank.wedatasphere.linkis.orchestrator", classOf[EngineConnManagerBuilder].getClassLoader);
+    val reflections = ClassUtils.reflections
 
     val allSubClass = reflections.getSubTypesOf(classOf[EngineConnManager])
 
@@ -98,11 +101,13 @@ object EngineConnManagerBuilder extends Logging {
       while (iterator.hasNext) {
         val clazz = iterator.next()
         Utils.tryCatch {
-          val manager = clazz.newInstance()
-          if (engineConnManagerClazzCache.containsKey(manager.getPolicy().name())) {
-            throw new RuntimeException(s"EngineConnManager Type cannot be duplicated ${manager.getPolicy()} ")
+          if (! ClassUtils.isInterfaceOrAbstract(clazz)) {
+            val manager = clazz.newInstance()
+            if (engineConnManagerClazzCache.containsKey(manager.getPolicy().name())) {
+              throw new RuntimeException(s"EngineConnManager Type cannot be duplicated ${manager.getPolicy()} ")
+            }
+            engineConnManagerClazzCache.put(manager.getPolicy().name(), clazz)
           }
-          engineConnManagerClazzCache.put(manager.getPolicy().name(), clazz)
         } { t: Throwable =>
           warn(s"Failed to Instantiation: ${clazz.getName}, reason ${t.getMessage}")
           null

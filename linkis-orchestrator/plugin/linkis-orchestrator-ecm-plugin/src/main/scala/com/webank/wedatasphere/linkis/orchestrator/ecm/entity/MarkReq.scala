@@ -16,15 +16,24 @@
 
 package com.webank.wedatasphere.linkis.orchestrator.ecm.entity
 
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import java.util
 
 import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineAskRequest
+import com.webank.wedatasphere.linkis.manager.label.builder.factory.{LabelBuilderFactoryContext, StdLabelBuilderFactory}
+import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant
+import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import com.webank.wedatasphere.linkis.manager.label.entity.entrance.LoadBalanceLabel
+import org.apache.commons.lang.StringUtils
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConversions._
 
 
-
+/**
+  *
+  *
+  */
 trait MarkReq {
 
 
@@ -34,6 +43,7 @@ trait MarkReq {
 
   def setPolicyObj(policy: Policy): Unit
 
+  def registerLabelKey(labelKey: String): Unit
 
   /**
     * 只包含StartUp参数
@@ -67,15 +77,18 @@ trait MarkReq {
 
 }
 
-class DefaultMarkReq extends MarkReq {
+class DefaultMarkReq extends MarkReq with Logging {
 
   private var policy: Policy = _
+  private val labelKeySet: util.Set[String] = new util.HashSet[String]()
 
   override def createEngineConnAskReq(): EngineAskRequest = {
     val engineAskRequest = new EngineAskRequest
     engineAskRequest.setCreateService(getCreateService)
     engineAskRequest.setDescription(getDescription)
-    engineAskRequest.setLabels(getLabels)
+    val labels = new util.HashMap[String, AnyRef]()
+    labels.putAll(getLabels.filterKeys(key => key != LabelKeyConstant.BIND_ENGINE_KEY && key != LabelKeyConstant.LOAD_BALANCE_KEY))
+    engineAskRequest.setLabels(labels)
     engineAskRequest.setProperties(getProperties)
     engineAskRequest.setUser(getUser)
     engineAskRequest
@@ -107,8 +120,19 @@ class DefaultMarkReq extends MarkReq {
         val iterator = other.getLabels.iterator
         while (iterator.hasNext) {
           val next = iterator.next()
-          if (null == next._2 || !next._2.equals(getLabels.get(next._1))) {
+          if (!getLabels.containsKey(next._1)) {
             return false
+          }
+          if (null != labelKeySet && labelKeySet.contains(next._1)) {
+            val cachedLabel = MarkReq.getLabelBuilderFactory.createLabel[Label[_]](next._1, getLabels.get(next._1))
+            val otherLabel = MarkReq.getLabelBuilderFactory.createLabel[Label[_]](next._1, next._2)
+            if (!cachedLabel.equals(otherLabel)) {
+              return false
+            }
+          } else {
+            if (null == next._2 || !next._2.equals(getLabels.get(next._1))) {
+              return false
+            }
           }
         }
       }
@@ -117,5 +141,59 @@ class DefaultMarkReq extends MarkReq {
     flag
   }
 
+  override def hashCode(): Int = {
+    getUser.hashCode
+  }
+
+  /**
+   * Register labelKey that override the equals method, so when compair label in new request with cached labels in markReq,
+   * the label with labelKey contained in labelKeySet, would be convert to Label object , and call it's equals method.
+   * If you didn't override the equalis method in the label class, please do not register labelKey here.
+   * @param labelKey in LabelKeyConstants
+   */
+  override def registerLabelKey(labelKey: String): Unit = {
+    if (StringUtils.isNotBlank(labelKey)) {
+      labelKeySet.add(labelKey)
+    }
+  }
+
+}
+
+class LoadBanlanceMarkReq extends DefaultMarkReq with Logging {
+
+  override def equals(obj: Any): Boolean = {
+    var flag = false
+    if (null != obj && obj.isInstanceOf[MarkReq]) {
+      val other = obj.asInstanceOf[MarkReq]
+
+      if (other.getUser != getUser) {
+        return flag
+      }
+      val loadBalancdLabel = MarkReq.getLabelBuilderFactory.createLabel[LoadBalanceLabel](LabelKeyConstant.LOAD_BALANCE_KEY, getLabels.get(LabelKeyConstant.LOAD_BALANCE_KEY))
+      val otherBalancdLabel = MarkReq.getLabelBuilderFactory.createLabel[LoadBalanceLabel](LabelKeyConstant.LOAD_BALANCE_KEY, getLabels.get(LabelKeyConstant.LOAD_BALANCE_KEY))
+      if (loadBalancdLabel.getGroupId.equals(otherBalancdLabel.getGroupId)) {
+        flag = true
+      }
+
+    }
+    true
+  }
+
+  override def hashCode(): Int = {
+    val loadBalancdLabel = MarkReq.getLabelBuilderFactory.createLabel[LoadBalanceLabel](LabelKeyConstant.LOAD_BALANCE_KEY, getLabels.get(LabelKeyConstant.LOAD_BALANCE_KEY))
+    if (StringUtils.isNotBlank(loadBalancdLabel.getGroupId)) {
+      loadBalancdLabel.getCapacity.hashCode()
+    } else {
+      getUser.hashCode
+    }
+  }
+
+}
+
+object MarkReq {
+
+  lazy val labelBuilderFactory =  LabelBuilderFactoryContext.getLabelBuilderFactory
+
+  def getLabelBuilderFactory = labelBuilderFactory
 
 }

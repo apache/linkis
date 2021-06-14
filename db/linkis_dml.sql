@@ -27,7 +27,7 @@ SET @PIPELINE_IDE=CONCAT('*-IDE,',@PIPELINE_LABEL);
 SET @JDBC_ALL=CONCAT('*-*,',@JDBC_LABEL);
 SET @JDBC_IDE=CONCAT('*-IDE,',@JDBC_LABEL);
 
-- Default Key of Configuration
+
 -- Global Settings
 insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.yarnqueue', 'yarn队列名', 'yarn队列名', 'default', 'None', NULL, '0', '0', '1', '队列资源');
 -- spark
@@ -123,10 +123,10 @@ insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `eng
 (select config.id as `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
 INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'jdbc' and label_value = @JDBC_ALL);
 
-------------------------------------------------------------------------
+
 -- If you need to customize the parameters of the new engine, the following configuration does not need to write SQL initialization
 -- Just write the SQL above, and then add applications and engines to the management console to automatically initialize the configuration
-------------------------------------------------------------------------
+
 
 -- Configuration secondary directory (creator level default configuration)
 -- IDE
@@ -184,7 +184,7 @@ insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@labe
 select @label_id := id from linkis_cg_manager_label where `label_value` = @PYTHON_NODE;
 insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
 
----- Associate label and default configuration
+-- Associate label and default configuration
 insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
 (select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
 INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = '*-*,*-*');
@@ -216,7 +216,7 @@ INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = labe
 
 
 insert  into `linkis_cg_rm_external_resource_provider`(`id`,`resource_type`,`name`,`labels`,`config`) values
-(1,'Yarn','sit',NULL,'{\r\n\"rmWebAddress\": \"@YARN_RESTFUL_URL\",\r\n\"hadoopVersion\": \"2.7.2\",\r\n\"authorEnable\":false,\r\n\"user\":\"hadoop\",\r\n\"pwd\":\"123456\"\r\n}');
+(1,'Yarn','sit',NULL,'{\r\n\"rmWebAddress\": \"@YARN_RESTFUL_URL\",\r\n\"hadoopVersion\": \"2.7.2\",\r\n\"authorEnable\":true,\r\n\"user\":\"hadoop\",\r\n\"pwd\":\"897ede66a860\"\r\n}');
 
 -- errorcode 
 insert into linkis_ps_error_code (id,error_code,error_desc,error_regex,error_type) values (1,'10001','会话创建失败，%s队列不存在，请检查队列设置是否正确','queue (\\S+) is not exists in YARN',0);

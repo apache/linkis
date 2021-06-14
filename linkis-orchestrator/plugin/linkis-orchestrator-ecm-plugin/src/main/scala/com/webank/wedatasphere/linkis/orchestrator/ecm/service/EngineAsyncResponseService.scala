@@ -19,7 +19,10 @@ package com.webank.wedatasphere.linkis.orchestrator.ecm.service
 import com.webank.wedatasphere.linkis.manager.common.protocol.engine.{EngineCreateError, EngineCreateSuccess}
 import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
 
-
+/**
+  *
+  *
+  */
 trait EngineAsyncResponseService {
 
   def onSuccess(engineCreateSuccess: EngineCreateSuccess, smc: ServiceMethodContext): Unit

@@ -48,7 +48,9 @@ trait OnceExecutor extends ExecutableExecutor[ExecuteResponse] with LabelExecuto
 
   override final def execute(engineCreationContext: EngineCreationContext): ExecuteResponse = {
     val onceExecutorExecutionContext = createOnceExecutorExecutionContext(engineCreationContext)
-    onceExecutorExecutionContext.setLabels(executorLabels.toArray[Label[_]])
+    val arrayBuffer = new ArrayBuffer[Label[_]]
+    executorLabels.foreach(l => arrayBuffer += l)
+    onceExecutorExecutionContext.setLabels(arrayBuffer.toArray)
     initOnceExecutorExecutionContext(onceExecutorExecutionContext)
     execute(onceExecutorExecutionContext)
   }
@@ -76,9 +78,11 @@ trait OnceExecutor extends ExecutableExecutor[ExecuteResponse] with LabelExecuto
       info(s"ResultSet storePath: ${onceExecutorExecutionContext.getStorePath}.")
     }
     if(onceExecutorExecutionContext.getOnceExecutorContent.getExtraLabels != null) {
-      val extraLabels = LabelBuilderFactoryContext.getLabelBuilderFactory
-        .getLabels(onceExecutorExecutionContext.getOnceExecutorContent.getExtraLabels).toArray[Label[_]]
-      onceExecutorExecutionContext.setLabels(onceExecutorExecutionContext.getLabels ++: extraLabels)
+      val extraLabelsList = LabelBuilderFactoryContext.getLabelBuilderFactory
+        .getLabels(onceExecutorExecutionContext.getOnceExecutorContent.getExtraLabels)
+      val extraLabels = new ArrayBuffer[Label[_]]()
+      extraLabelsList.foreach(executorLabels += _)
+      onceExecutorExecutionContext.setLabels(onceExecutorExecutionContext.getLabels ++: extraLabels.toArray)
     }
     onceExecutorExecutionContext.getLabels.foreach {
       case jobLabel: JobLabel =>

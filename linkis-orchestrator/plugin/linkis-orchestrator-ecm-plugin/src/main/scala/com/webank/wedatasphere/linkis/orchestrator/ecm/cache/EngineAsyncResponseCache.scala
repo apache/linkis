@@ -24,7 +24,10 @@ import org.apache.commons.lang.exception.ExceptionUtils
 
 import scala.concurrent.duration.Duration
 
-
+/**
+  *
+  *
+  */
 trait EngineAsyncResponseCache {
 
   @throws[ECMPluginCacheException]
@@ -60,7 +63,6 @@ class EngineAsyncResponseCacheMap extends EngineAsyncResponseCache {
     } catch {
       case t: Throwable =>
         put(id, EngineCreateError(id, ExceptionUtils.getRootCauseStackTrace(t).mkString("\n")))
-        throw t
     }
     cacheMap.remove(id)
   }

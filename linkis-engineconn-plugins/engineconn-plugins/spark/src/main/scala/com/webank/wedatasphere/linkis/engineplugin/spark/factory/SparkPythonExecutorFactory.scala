@@ -28,13 +28,7 @@ import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType.RunType
 
 
-class SparkPythonExecutorFactory extends ExecutorFactory {
-  /**
-   * Order of executors, the smallest one is the default
-   *
-   * @return
-   */
-  override def getOrder: Int = SparkExecutorOrder.PYSPARK.id
+class SparkPythonExecutorFactory extends ComputationExecutorFactory {
 
   override protected def newExecutor(id: Int,
                                      engineCreationContext: EngineCreationContext,

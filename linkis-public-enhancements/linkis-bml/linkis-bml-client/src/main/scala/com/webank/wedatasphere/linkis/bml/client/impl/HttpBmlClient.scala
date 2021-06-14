@@ -47,7 +47,7 @@ class HttpBmlClient(serverUrl: String) extends AbstractBmlClient {
 
   override def init(): Unit = {
     val config = if (this.properties == null) {
-      new util.HashMap[String, Object]()
+      new util.HashMap[String, Any]()
     } else {
       this.properties
     }

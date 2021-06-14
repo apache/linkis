@@ -17,10 +17,11 @@
 package com.webank.wedatasphere.linkis.orchestrator.ecm
 
 import java.util
-
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineAskRequest
+import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant
+import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
 import com.webank.wedatasphere.linkis.orchestrator.ecm.conf.ECMPluginConf
 import com.webank.wedatasphere.linkis.orchestrator.ecm.entity.{Mark, MarkReq, Policy}
 import com.webank.wedatasphere.linkis.orchestrator.ecm.exception.ECMPluginErrorException
@@ -28,13 +29,15 @@ import com.webank.wedatasphere.linkis.orchestrator.ecm.service.EngineConnExecuto
 
 import scala.collection.JavaConversions._
 
-
+/**
+  *
+  *
+  */
 trait EngineConnManager {
 
   /**
     * 申请获取一个Mark
     * 1. 如果没有对应的Mark就生成新的
-    * 2. 生成新的Mark会存在请求引擎的过程，如果请求到了则存入Map中：Mark为Key，EngineConnExecutor为Value
     * 3. 将Mark进行返回
     *
     * @param markReq
@@ -42,6 +45,11 @@ trait EngineConnManager {
     */
   def applyMark(markReq: MarkReq): Mark
 
+  /**
+   * 1. 创建一个新的Mark
+   * 2. 生成新的Mark会存在请求引擎的过程，如果请求到了则存入Map中：Mark为Key，EngineConnExecutor为Value
+   */
+  def createMark(markReq: MarkReq): Mark
 
   /**
     * 通过Mark向缓存中获取一个可用的EngineConnExecutor
@@ -94,7 +102,7 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
 
   private val markCache = new util.HashMap[Mark, util.List[ServiceInstance]]()
 
-  private val MARK_CACHE_LOCKER = new Object()
+  protected val MARK_CACHE_LOCKER = new Object()
 
   override def setEngineConnApplyAttempts(attemptNumber: Int): Unit = this.attemptNumber = attemptNumber
 
@@ -115,38 +123,60 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
   override def getAvailableEngineConnExecutor(mark: Mark): EngineConnExecutor = {
     info(s"mark ${mark.getMarkId()} start to  getAvailableEngineConnExecutor")
     if (null != mark && getMarkCache().containsKey(mark)) {
-      val instances = getInstances(mark)
-      if (null != instances) {
-        val executors = Utils.tryAndWarn {
-          instances.map(getEngineConnExecutorCache().get(_)).filter(null != _).sortBy { executor =>
-            if (null == executor.getRunningTaskCount) {
-              0
-            } else {
-              executor.getRunningTaskCount
-            }
-          }
-        }
-        if (null != executors && executors.nonEmpty) {
-          for (executor <- executors) {
-            if (executor.useEngineConn) {
-              info(s"mark ${mark.getMarkId()} Finished to   getAvailableEngineConnExecutor by reuse")
-              return executor
-            }
-          }
-        }
+      tryReuseEngineConnExecutor(mark) match {
+        case Some(engineConnExecutor) => return engineConnExecutor
+        case None =>
       }
-
       val engineConnExecutor = askEngineConnExecutor(mark.getMarkReq.createEngineConnAskReq())
       engineConnExecutor.useEngineConn
-      getEngineConnExecutorCache().put(engineConnExecutor.getServiceInstance, engineConnExecutor)
-      if (null == getInstances(mark)) {
-        addMark(mark, new util.ArrayList[ServiceInstance]())
-      }
-      getMarkCache().get(mark).add(engineConnExecutor.getServiceInstance)
+      saveToMarkCache(mark, engineConnExecutor)
       info(s"mark ${mark.getMarkId()} Finished to  getAvailableEngineConnExecutor by create")
       engineConnExecutor
     } else {
       throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE, " mark cannot null")
+    }
+  }
+
+  protected def tryReuseEngineConnExecutor(mark: Mark):Option[EngineConnExecutor] = {
+    val instances = getInstances(mark)
+    if (null != instances) {
+      val executors = Utils.tryAndWarn {
+        instances.map(getEngineConnExecutorCache().get(_)).filter(null != _).sortBy { executor =>
+          if (null == executor.getRunningTaskCount) {
+            0
+          } else {
+            executor.getRunningTaskCount
+          }
+        }
+      }
+
+      if (null != executors && executors.nonEmpty) {
+        if (mark.getMarkReq.getLabels.containsKey(LabelKeyConstant.BIND_ENGINE_KEY)) {
+          // must use the existed engine
+          return Some(executors.headOption.get)
+        }
+        for (executor <- executors) {
+          // todo check
+          if (executor.useEngineConn) {
+            info(s"mark ${mark.getMarkId()} Finished to   getAvailableEngineConnExecutor by reuse")
+            return Some(executor)
+          }
+        }
+      }
+    }
+    None
+  }
+
+  protected def saveToMarkCache(mark: Mark, engineConnExecutor: EngineConnExecutor) = {
+    getEngineConnExecutorCache().put(engineConnExecutor.getServiceInstance, engineConnExecutor)
+    if (null == getInstances(mark)) {
+      addMark(mark, new util.ArrayList[ServiceInstance]())
+    }
+    val markedInstances = getMarkCache().get(mark)
+    if (markedInstances.isEmpty) {
+      markedInstances.add(engineConnExecutor.getServiceInstance)
+    } else if (!mark.getMarkReq.getLabels.containsKey(LabelKeyConstant.BIND_ENGINE_KEY)) {
+      markedInstances.add(engineConnExecutor.getServiceInstance)
     }
   }
 

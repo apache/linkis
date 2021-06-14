@@ -16,7 +16,10 @@
 
 package com.webank.wedatasphere.linkis.orchestrator.ecm.entity
 
-
+/**
+  *
+  *
+  */
 trait Mark {
 
   def getMarkId(): String
@@ -38,4 +41,17 @@ class DefaultMark(markId: String, markReq: MarkReq) extends Mark {
     case other: Mark => other.getMarkId().equals(markId)
     case _ => false
   }
+}
+
+class LoadBalanceMark(markId: String, firstMarkReq: MarkReq) extends DefaultMark(markId, firstMarkReq) {
+
+  private var taskMarkReq: MarkReq = _
+
+  def getTaskMarkReq(): MarkReq = taskMarkReq
+
+  def setTaskMarkReq(markReq: MarkReq): LoadBalanceMark = {
+    this.taskMarkReq = markReq
+    this
+  }
+
 }

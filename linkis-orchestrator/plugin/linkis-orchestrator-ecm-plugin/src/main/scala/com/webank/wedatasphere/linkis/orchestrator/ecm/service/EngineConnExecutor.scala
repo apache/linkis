@@ -26,7 +26,10 @@ import com.webank.wedatasphere.linkis.governance.common.protocol.task.RequestTas
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteResponse
 
-
+/**
+  *
+  *
+  */
 trait EngineConnExecutor extends Closeable {
 
   //

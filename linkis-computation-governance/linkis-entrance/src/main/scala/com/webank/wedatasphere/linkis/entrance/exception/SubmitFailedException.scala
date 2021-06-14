@@ -18,7 +18,7 @@ package com.webank.wedatasphere.linkis.entrance.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-/
+
 class SubmitFailedException(errCode:Int,
                             desc:String) extends ErrorException(errCode, desc) {
 

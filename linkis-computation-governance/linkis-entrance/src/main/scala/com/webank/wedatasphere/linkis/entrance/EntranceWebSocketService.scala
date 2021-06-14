@@ -30,7 +30,9 @@ import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
 import com.webank.wedatasphere.linkis.entrance.job.EntranceExecutionJob
 import com.webank.wedatasphere.linkis.entrance.log.LogReader
 import com.webank.wedatasphere.linkis.entrance.restful.EntranceRestfulApi
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
+import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
+import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
 import com.webank.wedatasphere.linkis.protocol.utils.ZuulEntranceUtils
@@ -42,7 +44,7 @@ import com.webank.wedatasphere.linkis.server.socket.controller.{ServerEvent, Ser
 import org.apache.commons.lang.StringUtils
 
 
-class EntranceWebSocketService extends ServerEventService with EntranceEventListener {
+class EntranceWebSocketService extends ServerEventService with EntranceEventListener with EntranceLogListener {
 
   private val jobIdToEventId = new util.HashMap[String, Integer]
   private var entranceServer: EntranceServer = _
@@ -147,7 +149,7 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
       entranceServer.getEntranceContext.getOrCreateLogManager().onLogUpdate(job, subJobInfo.getCode)
     })
     entranceServer.getEntranceContext.getOrCreateLogManager().onLogUpdate(job,
-    "************************************SCRIPT CODE************************************")
+      "************************************SCRIPT CODE************************************")
     entranceServer.getEntranceContext.getOrCreateLogManager().onLogUpdate(job,
       LogUtils.generateInfo(s"Your job is accepted,  jobID is ${job.getId} and taskID is $taskID. Please wait it to be scheduled"))
     //val executeApplicationName:String = jobRequest.getExecuteApplicationName
@@ -180,7 +182,7 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
         return retMessage
       }
       case _ =>
-     }
+    }
     retMessage = Message.error(s"Failed to get the log, $id failed to find the corresponding job(获取日志失败，$id 未能找到对应的job)")
     retMessage.setStatus(1)
     retMessage.setMethod(restfulURI + "entrance/" + id + "/log")
@@ -188,8 +190,8 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
   }
 
   def dealStatus(event:ServerEvent, id:String) : Message = {
-//    val response:Response = entranceRestfulApi.status(id)
-//    Message.responseToMessage(response)
+    //    val response:Response = entranceRestfulApi.status(id)
+    //    Message.responseToMessage(response)
     var retMessage:Message = null
 
     //val realID:String = if (entranceServer.getJob(id).isDefined) id else ZuulEntranceUtils.parseExecID(id)(2)
@@ -222,8 +224,8 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
     retMessage
   }
   def dealProgress(event:ServerEvent, id:String) : Message = {
-//    val response:Response = entranceRestfulApi.progress(id)
-//    Message.responseToMessage(response)
+    //    val response:Response = entranceRestfulApi.progress(id)
+    //    Message.responseToMessage(response)
     var retMessage:Message = null
     val realID = ZuulEntranceUtils.parseExecID(id)(3)
     entranceServer.getJob(realID) foreach {
@@ -250,8 +252,8 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
     retMessage
   }
   def dealKill(event:ServerEvent, id:String) : Message = {
-//    val response:Response = entranceRestfulApi.kill(id)
-//    Message.responseToMessage(response)
+    //    val response:Response = entranceRestfulApi.kill(id)
+    //    Message.responseToMessage(response)
     var retMessage:Message = null
     val realID = ZuulEntranceUtils.parseExecID(id)(3)
     entranceServer.getJob(realID) foreach {
@@ -276,18 +278,18 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
     retMessage
   }
 
- /* def dealBackGroundService(event: ServerEvent): Message = {
-    val params = event.getData.map{case (k, v) => k -> v.asInstanceOf[Any]}
-    val backgroundType = params.get("background").get
-    //val backgroundType = "export"
-    val backgroundService =  entranceServer.getEntranceContext.getOrCreateBackGroundService.find(f =>backgroundType.equals(f.serviceType))
-    if (backgroundService.isEmpty) {
-      info("The corresponding background service was not found...(未找到相应的后台服务...)")
-      dealExecute(event)
-    }else{
-      dealExecute(backgroundService.get.operation(event))
-    }
-  }*/
+  /* def dealBackGroundService(event: ServerEvent): Message = {
+     val params = event.getData.map{case (k, v) => k -> v.asInstanceOf[Any]}
+     val backgroundType = params.get("background").get
+     //val backgroundType = "export"
+     val backgroundService =  entranceServer.getEntranceContext.getOrCreateBackGroundService.find(f =>backgroundType.equals(f.serviceType))
+     if (backgroundService.isEmpty) {
+       info("The corresponding background service was not found...(未找到相应的后台服务...)")
+       dealExecute(event)
+     }else{
+       dealExecute(backgroundService.get.operation(event))
+     }
+   }*/
 
 
   private def concatLog(length:Int, log:String, flag:StringBuilder, all:StringBuilder):Unit = {
@@ -301,10 +303,10 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
   }
 
   /**
-    * Push the log message to the front end(将日志的消息推送给前端)
-    * @param job required(需要)
-    * @param log
-    */
+   * Push the log message to the front end(将日志的消息推送给前端)
+   * @param job required(需要)
+   * @param log
+   */
   def pushLogToFrontend(job: Job, log: String): Unit = {
     import LogReader._
     if (StringUtils.isBlank(log)) return
@@ -413,7 +415,7 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
     val executeApplicationName = engineType
     job.asInstanceOf[EntranceJob].setProgressInfo(progressInfo)
     val execID: String = ZuulEntranceUtils.generateExecID(job.getId, executeApplicationName, Sender.getThisInstance, creator)
-    val message = Message.ok("return the schedule information (返回进度信息!)")
+    val message = Message.ok("返回进度信息!")
     message.setMethod(restfulURI + "entrance/" + execID + "/progress")
     val taskID = jobRequest.getId
     sendMsg(job, message.data("progress", progress).data("progressInfo", progressInfoMap).data("execID",
@@ -455,7 +457,7 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
   }
 
   override def onEventError(event: EntranceEvent, t: Throwable): Unit = event match {
-     case EntranceJobEvent(jobId) => info(s"WebSocket send the new status of Job $jobId to webClient failed!", t)
+    case EntranceJobEvent(jobId) => info(s"WebSocket send the new status of Job $jobId to webClient failed!", t)
     case EntranceProgressEvent(job, progress, _) =>
       info(s"Job $job send progress $progress by webSocket to webClient failed!", t)
     case _ => info(s"WebSocket send event $event to webClient failed!", t)

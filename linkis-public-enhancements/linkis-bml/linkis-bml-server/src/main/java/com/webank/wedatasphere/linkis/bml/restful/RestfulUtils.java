@@ -30,7 +30,7 @@ public class RestfulUtils {
     private static final Long SECOND = 1000L;
     private static final Long MINUTE = 60 * SECOND;
     private static final Long HOUR = 60 * MINUTE;
-    private static final Long DAY = 24 * HOUR;
+    public  static final Long DAY = 24 * HOUR;
     private static final Long MONTH = 30 * DAY;
     private static final Long YEAR = 365 * DAY;
 

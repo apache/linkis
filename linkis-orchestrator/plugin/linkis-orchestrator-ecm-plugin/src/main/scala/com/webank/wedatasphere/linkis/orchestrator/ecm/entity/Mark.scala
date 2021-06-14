@@ -16,10 +16,7 @@
 
 package com.webank.wedatasphere.linkis.orchestrator.ecm.entity
 
-/**
-  *
-  *
-  */
+
 trait Mark {
 
   def getMarkId(): String

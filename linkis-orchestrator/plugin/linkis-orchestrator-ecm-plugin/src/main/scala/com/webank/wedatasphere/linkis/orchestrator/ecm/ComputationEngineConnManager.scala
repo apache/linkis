@@ -51,15 +51,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
 
   override def getPolicy(): Policy = Policy.Process
 
-  /**
-    * 申请获取一个Mark
-    * 1. 如果没有对应的Mark就生成新的
-    * 2. 生成新的Mark会存在请求引擎的过程，如果请求到了则存入Map中：Mark为Key，EngineConnExecutor为Value
-    * 3. 将Mark进行返回
-    *
-    * @param markReq
-    * @return
-    */
+
   override def applyMark(markReq: MarkReq): Mark = {
     if (null == markReq) return null
      MARK_CACHE_LOCKER.synchronized {

@@ -23,10 +23,7 @@ import com.webank.wedatasphere.linkis.orchestrator.ecm.conf.ECMPluginConf
 import com.webank.wedatasphere.linkis.orchestrator.ecm.entity.Policy
 
 
-/**
-  *
-  *
-  */
+
 trait EngineConnManagerBuilder {
 
   def setPolicy(policy: Policy): EngineConnManagerBuilder

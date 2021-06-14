@@ -24,10 +24,7 @@ import org.apache.commons.lang.exception.ExceptionUtils
 
 import scala.concurrent.duration.Duration
 
-/**
-  *
-  *
-  */
+
 trait EngineAsyncResponseCache {
 
   @throws[ECMPluginCacheException]

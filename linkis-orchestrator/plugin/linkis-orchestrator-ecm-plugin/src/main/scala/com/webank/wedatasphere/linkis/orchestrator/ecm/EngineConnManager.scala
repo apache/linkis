@@ -36,9 +36,9 @@ import scala.collection.JavaConversions._
 trait EngineConnManager {
 
   /**
-    * 申请获取一个Mark
-    * 1. 如果没有对应的Mark就生成新的
-    * 3. 将Mark进行返回
+    * Apply for a Mark
+    * 1. If there is no corresponding Mark, generate a new one
+    * 2. Return Mark
     *
     * @param markReq
     * @return
@@ -46,13 +46,14 @@ trait EngineConnManager {
   def applyMark(markReq: MarkReq): Mark
 
   /**
-   * 1. 创建一个新的Mark
-   * 2. 生成新的Mark会存在请求引擎的过程，如果请求到了则存入Map中：Mark为Key，EngineConnExecutor为Value
-   */
+    * 1. Create a new Mark
+    * 2. There will be a process of requesting the engine when generating a new Mark.
+    * If the request is received, it will be stored in the Map: Mark is Key, EngineConnExecutor is Value
+    */
   def createMark(markReq: MarkReq): Mark
 
   /**
-    * 通过Mark向缓存中获取一个可用的EngineConnExecutor
+    * Obtain an available EngineConnExecutor from the cache through Mark
     *
     * @param mark
     * @return
@@ -61,8 +62,8 @@ trait EngineConnManager {
 
 
   /**
-    * 移除和该Mark相关的engineConn
-    * 释放锁等信息
+    * Remove the engineConn related to the Mark
+    * Release lock and other information
     *
     * @param mark
     */

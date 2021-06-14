@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.orchestrator.ecm.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-/**
-  *
-  */
+
 class ECMPluginErrorException(errorCode: Int, errorMsg: String) extends ErrorException(errorCode, errorMsg) {
 
   def this(errorCode: Int, errorMsg: String, t: Throwable) = {

@@ -43,15 +43,7 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
 
   private val MARK_REQ_CACHE_LOCKER = new Object()
 
-  /**
-    * 申请获取一个Mark
-    * 1. 如果没有对应的Mark就生成新的
-   *  2. 一个MarkRequest对应多个Mark，一个Mark对应一个Engine
-    * 3. 将Mark进行返回
-    *
-    * @param markReq
-    * @return
-    */
+
   override def applyMark(markReq: MarkReq): Mark = {
     if (null == markReq) return null
     val markReqCache = MARK_REQ_CACHE_LOCKER.synchronized {
@@ -131,9 +123,9 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
   }
 
   /**
-    * 1. 创建一个新的Mark
-    * 2. 生成新的Mark会存在请求引擎的过程，如果请求到了则存入Map中：Mark为Key，EngineConnExecutor为Value
-   *  3. 生成的Mark数量等于LoadBalance的并发量
+    * 1. Create a new Mark
+    * 2. There will be a process of requesting the engine when generating a new Mark. If the request is received, it will be stored in the Map: Mark is Key, EngineConnExecutor is Value
+    * 3. The number of Marks generated is equal to the concurrent amount of LoadBalance
     */
   override def createMark(markReq: MarkReq): Mark = {
     val mark = new LoadBalanceMark(nextMarkId(), markReq)

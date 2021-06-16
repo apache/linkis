@@ -29,8 +29,6 @@ import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteResponse
 
 trait EngineConnExecutor extends Closeable {
 
-  //
-
 
   def getServiceInstance: ServiceInstance
 

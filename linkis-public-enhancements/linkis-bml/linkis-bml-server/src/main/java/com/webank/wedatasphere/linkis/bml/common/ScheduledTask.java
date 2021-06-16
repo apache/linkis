@@ -16,6 +16,7 @@ package com.webank.wedatasphere.linkis.bml.common;
  */
 
 import com.webank.wedatasphere.linkis.bml.conf.BmlServerConfiguration;
+import com.webank.wedatasphere.linkis.bml.restful.RestfulUtils;
 import com.webank.wedatasphere.linkis.bml.service.ResourceService;
 import com.webank.wedatasphere.linkis.bml.service.VersionService;
 import com.webank.wedatasphere.linkis.common.utils.Utils;
@@ -30,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class ScheduledTask {
 
-    private static final Long SIZWE = 365 * DAY;
+    private static final Long SIZWE = 365 * RestfulUtils.DAY;
 
     @Autowired
     private ResourceService resourceService;

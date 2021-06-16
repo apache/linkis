@@ -34,7 +34,6 @@
         <module>linkis-engineconn-manager</module>
         <module>linkis-manager</module>
         <module>linkis-entrance</module>
-        <module>linkis-entrance-client</module>
         <module>linkis-client/linkis-computation-client</module>
         <module>linkis-client/linkis-cli</module>
         <!-- <module>linkis-jdbc-driver</module>-->

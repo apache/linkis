@@ -154,7 +154,7 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
       LogUtils.generateInfo(s"Your job is accepted,  jobID is ${job.getId} and taskID is $taskID. Please wait it to be scheduled"))
     //val executeApplicationName:String = jobRequest.getExecuteApplicationName
     //val execID = ZuulEntranceUtils.generateExecID(jobId, executeApplicationName, Sender.getThisInstance)
-    "请求执行成功！".data("execID", execID).data("taskID", taskID).data("websocketTag", websocketTagJobID.get(jobId))
+    "The request was executed successfully!".data("execID", execID).data("taskID", taskID).data("websocketTag", websocketTagJobID.get(jobId))
     //executeResponseMsg
   }
 

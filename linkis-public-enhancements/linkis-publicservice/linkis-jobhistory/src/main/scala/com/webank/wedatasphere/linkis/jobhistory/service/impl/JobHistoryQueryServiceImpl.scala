@@ -27,14 +27,19 @@ import com.webank.wedatasphere.linkis.jobhistory.entity.JobHistory
 import com.webank.wedatasphere.linkis.message.annotation.Receiver
 
 import scala.collection.JavaConverters.asScalaBufferConverter
-
 import java.util
 import java.util.Date
 
+import com.webank.wedatasphere.linkis.governance.common.constant.job.JobRequestConstants
+import com.webank.wedatasphere.linkis.governance.common.entity.job.{JobRequest, JobRequestWithDetail, SubJobDetail}
+import com.webank.wedatasphere.linkis.governance.common.protocol.job.{JobReqInsert, JobReqQuery, JobReqUpdate, JobRespProtocol}
 import com.webank.wedatasphere.linkis.jobhistory.entity.QueryJobHistory
 import com.webank.wedatasphere.linkis.jobhistory.exception.QueryException
 import com.webank.wedatasphere.linkis.jobhistory.service.JobHistoryQueryService
 import com.webank.wedatasphere.linkis.jobhistory.transitional.TaskStatus
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 
 @Service

@@ -30,7 +30,10 @@ import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.scheduler.executer._
 
 
-
+/**
+  *
+  *
+  */
 class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngineConnExecutor {
 
   private val locker: String = engineNode.getLock

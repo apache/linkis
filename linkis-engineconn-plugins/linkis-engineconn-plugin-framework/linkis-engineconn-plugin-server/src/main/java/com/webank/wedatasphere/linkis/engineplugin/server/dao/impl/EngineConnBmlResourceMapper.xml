@@ -58,7 +58,7 @@
     </update>
 
     <insert id="save" parameterType="com.webank.wedatasphere.linkis.engineplugin.server.entity.EngineConnBmlResource">
-        insert into linkis_engine_conn_plugin_bml_resources(<include refid="bml_resources"/>)
+        insert into linkis_cg_engine_conn_plugin_bml_resources(<include refid="bml_resources"/>)
         values(#{engineConnBmlResource.engineConnType}, #{engineConnBmlResource.version},
         #{engineConnBmlResource.fileName}, #{engineConnBmlResource.lastModified},
         #{engineConnBmlResource.fileSize}, #{engineConnBmlResource.bmlResourceId},

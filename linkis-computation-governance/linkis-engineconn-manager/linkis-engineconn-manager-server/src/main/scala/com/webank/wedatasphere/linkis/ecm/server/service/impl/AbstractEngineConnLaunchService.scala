@@ -82,7 +82,7 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
     LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnAddEvent(conn))
     //4.run
     Utils.tryCatch{
-      beforeLaunch(conn, duration)
+      beforeLaunch(request, conn, duration)
       runner.run()
       launch match {
         case pro: ProcessEngineConnLaunch =>

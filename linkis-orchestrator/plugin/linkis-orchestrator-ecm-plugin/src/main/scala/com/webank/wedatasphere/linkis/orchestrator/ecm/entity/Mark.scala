@@ -39,3 +39,16 @@ class DefaultMark(markId: String, markReq: MarkReq) extends Mark {
     case _ => false
   }
 }
+
+class LoadBalanceMark(markId: String, firstMarkReq: MarkReq) extends DefaultMark(markId, firstMarkReq) {
+
+  private var taskMarkReq: MarkReq = _
+
+  def getTaskMarkReq(): MarkReq = taskMarkReq
+
+  def setTaskMarkReq(markReq: MarkReq): LoadBalanceMark = {
+    this.taskMarkReq = markReq
+    this
+  }
+
+}

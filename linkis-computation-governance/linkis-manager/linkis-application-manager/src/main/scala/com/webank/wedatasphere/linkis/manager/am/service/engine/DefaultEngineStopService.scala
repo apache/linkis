@@ -3,6 +3,7 @@ package com.webank.wedatasphere.linkis.manager.am.service.engine
 import java.util.concurrent.TimeUnit
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
 import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration
 import com.webank.wedatasphere.linkis.manager.common.protocol.engine.{EngineInfoClearRequest, EngineStopRequest, EngineSuicideRequest}
 import com.webank.wedatasphere.linkis.manager.label.service.NodeLabelService
@@ -21,6 +22,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
 
   @Receiver
   override def stopEngine(engineStopRequest: EngineStopRequest, smc: ServiceMethodContext): Unit = {
+    engineStopRequest.getServiceInstance.setApplicationName(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
     info(s" user ${engineStopRequest.getUser} prepare to stop engine ${engineStopRequest.getServiceInstance}")
     val node = getEngineNodeManager.getEngineNode(engineStopRequest.getServiceInstance)
     if (null == node) {

@@ -130,7 +130,7 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     oldServiceInstance.setInstance(resourceTicketId)
     getEngineNodeManager.updateEngineNode(oldServiceInstance, engineNode)
 
-    //8. 新增 EngineConn的Label,添加engineConn的Alias
+    //8. Add EngineConn's Label, and add engineConn's AliasLabel
     val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
     engineConnAliasLabel.setAlias(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
     labelList.add(engineConnAliasLabel)

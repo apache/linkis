@@ -17,6 +17,7 @@ package com.webank.wedatasphere.linkis.bml.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.webank.wedatasphere.linkis.bml.common.Constant;
 
 import java.security.MessageDigest;
 
@@ -28,7 +29,7 @@ public class MD5Utils {
 
     public static String getMD5(String s) {
         try {
-            byte[] btInput = s.getBytes("utf-8");
+            byte[] btInput = s.getBytes(Constant.UTF8_ENCODE);
             MessageDigest mdInst = MessageDigest.getInstance("MD5");
             mdInst.update(btInput);
             byte[] md = mdInst.digest();

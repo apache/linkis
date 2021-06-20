@@ -1,0 +1,89 @@
+/*!
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+@import '@/common/style/variables.scss';
+.nav-menu {
+    position: relative;
+    background: $dark-bg;
+    box-shadow: $shadow-base;
+    position: fixed;
+    width: 100%;
+    z-index: 9999;
+    .nav-menu-left {
+        width: 270px;
+        height: 100%;
+        display: inline-block;
+        color: #fff;
+        .nav-menu-left-item {
+            position: $relative;
+            line-height: 20px;
+            padding: 12px 14px 12px 20px;
+            border-bottom: 1px solid #515a6e;
+            cursor: pointer;
+            &:hover {
+                background: #fff;
+                color: $dark-bg;
+            }
+            &.actived {
+                background: #fff;
+                color: $dark-bg;
+            }
+            &:last-child {
+                border-bottom: none
+            }
+            .nav-menu-left-main-title, .nav-menu-left-sub-title {
+                font-size: 14px;
+            }
+            .nav-menu-left-icon {
+                position: $absolute;
+                right: 10px;
+                color: #fff;
+                top: 16px
+            }
+        }
+
+    }
+    .nav-menu-right {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 270px;
+        color: $text-color;
+        padding: 10px;
+        background: #fff;
+        .nav-menu-right-item {
+            margin: 10px;
+            .nav-menu-right-item-title {
+                border-bottom: 1px solid #eee;
+                font-size: 14px;
+            }
+            .nav-menu-right-item-child {
+                cursor: pointer;
+                margin: 10px;
+                &:hover {
+                    text-decoration: underline;
+                    color: $primary-color;
+                }
+                .nav-menu-right-item-icon {
+                    margin-right: 4px;
+                    color: #2d8cf0 !important;
+                }
+            }
+        }
+    }
+}

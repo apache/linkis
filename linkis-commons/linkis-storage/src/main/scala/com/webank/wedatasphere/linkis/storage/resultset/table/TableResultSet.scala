@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.storage.resultset.table
 import com.webank.wedatasphere.linkis.common.io.resultset.{ResultDeserializer, ResultSerializer}
 import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, StorageResultSet}
 
-/**
-  * Created by johnnwang on 10/16/18.
-  */
+
 class TableResultSet extends StorageResultSet[TableMetaData, TableRecord] with Serializable{
 
   override def resultSetType(): String = ResultSetFactory.TABLE_TYPE

@@ -38,10 +38,7 @@ class CacheLogManager extends LogManager {
                entranceExecutionJob.getLogWriter.getOrElse(createLogWriter(entranceExecutionJob)).asInstanceOf[CacheLogWriter]
              val sharedCache: Cache = logWriter.getCache.
                getOrElse(throw CacheNotReadyException(EntranceErrorCode.CACHE_NOT_READY.getErrCode, EntranceErrorCode.CACHE_NOT_READY.getDesc))
-             val logPath: String = entranceExecutionJob.getTask match {
-               case requestPersistTask: RequestPersistTask => requestPersistTask.getLogPath
-               case _ => null
-             }
+             val logPath: String = entranceExecutionJob.getJobRequest.getLogPath
              new CacheLogReader(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, sharedCache, entranceExecutionJob.getUser)
            }
          })
@@ -57,14 +54,14 @@ class CacheLogManager extends LogManager {
     job match {
       case entranceExecutionJob: EntranceExecutionJob => {
         val cache: Cache = Cache(EntranceConfiguration.DEFAULT_CACHE_MAX.getValue)
-        val logPath: String = entranceExecutionJob.getTask.asInstanceOf[RequestPersistTask].getLogPath
+        val logPath: String = entranceExecutionJob.getJobRequest.getLogPath
         val cacheLogWriter: CacheLogWriter =
           new CacheLogWriter(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, cache, entranceExecutionJob.getUser)
         entranceExecutionJob.setLogWriter(cacheLogWriter)
         val webSocketCacheLogReader: WebSocketCacheLogReader =
           new WebSocketCacheLogReader(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, cache, entranceExecutionJob.getUser)
         entranceExecutionJob.setWebSocketLogReader(webSocketCacheLogReader)
-        val webSocketLogWriter: WebSocketLogWriter = new WebSocketLogWriter(entranceExecutionJob, entranceContext.getOrCreateEventListenerBus)
+        val webSocketLogWriter: WebSocketLogWriter = new WebSocketLogWriter(entranceExecutionJob, entranceContext.getOrCreateLogListenerBus)
         entranceExecutionJob.setWebSocketLogWriter(webSocketLogWriter)
         cacheLogWriter
       }

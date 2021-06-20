@@ -28,8 +28,6 @@ import com.webank.wedatasphere.linkis.bml.service.VersionService;
 import com.webank.wedatasphere.linkis.common.io.Fs;
 import com.webank.wedatasphere.linkis.common.io.FsPath;
 import com.webank.wedatasphere.linkis.storage.FSFactory;
-
-import com.webank.wedatasphere.linkis.storage.utils.FileSystemUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -39,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,11 +50,10 @@ import java.util.Map;
 public class VersionServiceImpl implements VersionService {
 
     private static final Logger logger = LoggerFactory.getLogger(VersionServiceImpl.class);
-
-
     /**
      * When the version is updated, OVER_WRITE is always false
      */
+
     private static final boolean OVER_WRITE = false;
 
     @Autowired
@@ -70,6 +66,7 @@ public class VersionServiceImpl implements VersionService {
     public Version getVersion(String resourceId, String version) {
         return versionDao.getVersion(resourceId, version);
     }
+
 
 
     @Override
@@ -121,7 +118,7 @@ public class VersionServiceImpl implements VersionService {
         return newVersion;
     }
 
-    private String generateNewVersion(String version) {
+    private String generateNewVersion(String version){
         int next = Integer.parseInt(version.substring(1, version.length())) + 1;
         return Constant.VERSION_PREFIX + String.format(Constant.VERSION_FORMAT, next);
     }
@@ -133,7 +130,7 @@ public class VersionServiceImpl implements VersionService {
 
     @Override
     public boolean downloadResource(String user, String resourceId, String version, OutputStream outputStream,
-                                    Map<String, Object> properties) throws IOException {
+                                    Map<String, Object> properties)throws IOException {
         //1.Get the path of the resource corresponding to resourceId and version
         //2.Get startByte and EndByte
         //3.Use storage to get input stream
@@ -145,7 +142,7 @@ public class VersionServiceImpl implements VersionService {
         fileSystem.init(new HashMap<String, String>());
         InputStream inputStream = fileSystem.read(new FsPath(path));
         inputStream.skip(startByte - 1);
-        logger.info("{} 下载资源 {} inputStream skipped {} bytes", user, resourceId, (startByte - 1));
+        logger.info("{} downLoad source {} inputStream skipped {} bytes", user, resourceId, (startByte - 1));
         byte[] buffer = new byte[1024];
         long size = endByte - startByte + 1;
         int left = (int) size;
@@ -181,9 +178,9 @@ public class VersionServiceImpl implements VersionService {
 //    }
 
     //分页查询
-    public List<Version> selectVersionByPage(int currentPage, int pageSize, String resourceId) {
+    public List<Version> selectVersionByPage(int currentPage, int pageSize,String resourceId){
         List<Version> rvList = null;
-        if (StringUtils.isNotEmpty(resourceId)) {
+        if(StringUtils.isNotEmpty(resourceId)){
             PageHelper.startPage(currentPage, pageSize);
             rvList = versionDao.selectVersionByPage(resourceId);
         } else {
@@ -197,11 +194,10 @@ public class VersionServiceImpl implements VersionService {
     public List<ResourceVersion> getAllResourcesViaSystem(String system, String user) {
         return versionDao.getAllResourcesViaSystem(system, user);
     }
-
     @Override
-    public List<ResourceVersion> selectResourcesViaSystemByPage(int currentPage, int pageSize, String system, String user) {
+    public List<ResourceVersion> selectResourcesViaSystemByPage(int currentPage, int pageSize,String system, String user){
         List<ResourceVersion> resourceVersions = null;
-        if (StringUtils.isNotEmpty(system) || StringUtils.isNotEmpty(user)) {
+        if(StringUtils.isNotEmpty(system) || StringUtils.isNotEmpty(user)){
             PageHelper.startPage(currentPage, pageSize);
             resourceVersions = versionDao.selectResourcesViaSystemByPage(system, user);
         } else {

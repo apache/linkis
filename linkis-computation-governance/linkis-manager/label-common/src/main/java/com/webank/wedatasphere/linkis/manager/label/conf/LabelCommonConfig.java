@@ -44,5 +44,5 @@ public class LabelCommonConfig {
 
     public final static CommonVars<String> SHELL_ENGINE_VERSION = CommonVars.apply("wds.linkis.shell.engine.version", "1");
 
-    public final static CommonVars<String> APPCONN_ENGINE_VERSION = CommonVars.apply("wds.linkis.appconn.engine.version", "1");
+    public final static CommonVars<String> APPCONN_ENGINE_VERSION = CommonVars.apply("wds.linkis.appconn.engine.version", "v1");
 }

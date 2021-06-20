@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance
+import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
 import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode
@@ -38,7 +39,10 @@ import com.webank.wedatasphere.linkis.rpc.exception.DWCRPCRetryException
 import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
 
-
+/**
+  *
+  *
+  */
 class ComputationEngineConnManager extends AbstractEngineConnManager with Logging {
 
   private val idCreator = new AtomicInteger()
@@ -47,34 +51,31 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
 
   override def getPolicy(): Policy = Policy.Process
 
-  /**
-    * 申请获取一个Mark
-    * 1. 如果没有对应的Mark就生成新的
-    * 2. 生成新的Mark会存在请求引擎的过程，如果请求到了则存入Map中：Mark为Key，EngineConnExecutor为Value
-    * 3. 将Mark进行返回
-    *
-    * @param markReq
-    * @return
-    */
+
   override def applyMark(markReq: MarkReq): Mark = {
     if (null == markReq) return null
-    val markCache = getMarkCache().keys
-    val maybeMark = markCache.find(_.getMarkReq.equals(markReq))
-    maybeMark.getOrElse {
-      val mark = new DefaultMark(nextMarkId(), markReq)
-      addMark(mark, new util.ArrayList[ServiceInstance]())
-      mark
+     MARK_CACHE_LOCKER.synchronized {
+      val markCache = getMarkCache().keys
+       val maybeMark = markCache.find(_.getMarkReq.equals(markReq))
+       maybeMark.orNull
     }
   }
 
+  override def createMark(markReq: MarkReq): Mark = {
+    val mark = new DefaultMark(nextMarkId(), markReq)
+    addMark(mark, new util.ArrayList[ServiceInstance]())
+    mark
+  }
 
-  private def nextMarkId(): String = {
+
+  protected def nextMarkId(): String = {
     "mark_" + idCreator.getAndIncrement()
   }
 
   override protected def askEngineConnExecutor(engineAskRequest: EngineAskRequest): EngineConnExecutor = {
     engineAskRequest.setTimeOut(getEngineConnApplyTime)
     var count = getEngineConnApplyAttempts()
+    var retryException: LinkisRetryException = null
     while (count >= 1) {
       count = count - 1
       val start = System.currentTimeMillis()
@@ -93,19 +94,22 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
           return engineConnExecutor
         }
       } catch {
-        case t: DWCRPCRetryException =>
-          count = count - 1
+        case t: LinkisRetryException =>
           val taken = System.currentTimeMillis() - start
           error(s"Failed to askEngineAskRequest time taken ($taken), with DWCRPCRetryException", t)
+          retryException = t
         case t: Throwable =>
-          count = count - 1
           val taken = System.currentTimeMillis() - start
           error(s"Failed to askEngineAskRequest time taken ($taken), ${t.getMessage}")
           throw t
       }
     }
-    throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE,
-      s"Failed to ask engineAskRequest $engineAskRequest by retry ${getEngineConnApplyAttempts - count}  ")
+    if(retryException != null){
+      throw retryException
+    }else{
+      throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE,
+        s"Failed to ask engineAskRequest $engineAskRequest by retry ${getEngineConnApplyAttempts - count}  ")
+    }
   }
 
   private def getEngineNodeAskManager(engineAskRequest: EngineAskRequest): EngineNode = {
@@ -114,13 +118,18 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
         info(s"Succeed to get engineNode $engineNode")
         engineNode
       case EngineAskAsyncResponse(id, serviceInstance) =>
-        cacheMap.getAndRemove(id, Duration(getEngineConnApplyTime, TimeUnit.MILLISECONDS)) match {
+        info(s"received EngineAskAsyncResponse id: ${id} serviceInstance: $serviceInstance")
+        cacheMap.getAndRemove(id, Duration(engineAskRequest.getTimeOut + 60000, TimeUnit.MILLISECONDS)) match {
           case EngineCreateSuccess(id, engineNode) =>
             info(s"id:$id success to async get EngineNode $engineNode")
             engineNode
-          case EngineCreateError(id, exception) =>
-            error(s"id:$id Failed  to async get EngineNode")
-            throw new ECMPluginErrorException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, exception)
+          case EngineCreateError(id, exception, retry) =>
+            error(s"id:$id Failed  to async get EngineNode, $exception")
+            if(retry){
+              throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, exception)
+            }else{
+              throw new ECMPluginErrorException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, exception)
+            }
         }
       case _ =>
         info(s"Failed to ask engineAskRequest $engineAskRequest, response is not engineNode")

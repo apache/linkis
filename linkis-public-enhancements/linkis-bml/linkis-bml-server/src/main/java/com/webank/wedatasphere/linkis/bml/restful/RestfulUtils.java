@@ -20,6 +20,7 @@ import com.webank.wedatasphere.linkis.bml.common.Constant;
 import com.webank.wedatasphere.linkis.bml.service.ResourceService;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -29,9 +30,11 @@ public class RestfulUtils {
     private static final Long SECOND = 1000L;
     private static final Long MINUTE = 60 * SECOND;
     private static final Long HOUR = 60 * MINUTE;
-    private static final Long DAY = 24 * HOUR;
+    public  static final Long DAY = 24 * HOUR;
     private static final Long MONTH = 30 * DAY;
     private static final Long YEAR = 365 * DAY;
+
+
     public static String getUserName(HttpServletRequest request)throws BmlAuthorityException{
         String user;
         try{

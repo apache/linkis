@@ -36,7 +36,6 @@ class RsOutputStream extends OutputStream with Logging{
       if (b == '\n') {
         val outStr = new String(line.toArray,"UTF-8")
         writer.addRecord(new LineRecord(outStr))
-        //info("output line:" + outStr)
         line.clear()
       } else line += b.toByte
     }else{
@@ -54,7 +53,6 @@ class RsOutputStream extends OutputStream with Logging{
   override def flush(): Unit = if(writer != null && line.nonEmpty) {
     val outStr = new String(line.toArray,"UTF-8")
     writer.addRecord(new LineRecord(outStr))
-    //info("flush line:" + outStr)
     line.clear()
   }
 

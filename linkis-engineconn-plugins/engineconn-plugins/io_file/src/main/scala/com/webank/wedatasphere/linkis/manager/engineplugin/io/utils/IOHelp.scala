@@ -37,7 +37,7 @@ object IOHelp {
     * @return
     */
   def read(fs: Fs, method: MethodEntity): String = {
-    if (method.params == null || method.params.isEmpty) throw new StorageErrorException(53002,"read方法参数不能为空")
+    if (method.params == null || method.params.isEmpty) throw new StorageErrorException(53002,"The read method parameter cannot be empty(read方法参数不能为空)")
     val dest = MethodEntitySerializer.deserializerToJavaObject(method.params(0).asInstanceOf[String],classOf[FsPath])
     val inputStream = fs.read(dest)
     val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.IO_TYPE)
@@ -61,7 +61,7 @@ object IOHelp {
         writer.addMetaData(ioMetaData)
         writer.addRecord(ioRecord)
         writer.toString()
-      } else throw new StorageErrorException(53003, "不支持的参数调用")
+      } else throw new StorageErrorException(53003, "Unsupported parameter call(不支持的参数调用)")
     }(IOUtils.closeQuietly(inputStream))
   }
 
@@ -71,7 +71,7 @@ object IOHelp {
     * @param method
     */
   def write(fs: Fs, method: MethodEntity): Unit = {
-    if (method.params == null || method.params.isEmpty) throw new StorageErrorException(53003, "不支持的参数调用")
+    if (method.params == null || method.params.isEmpty) throw new StorageErrorException(53003, "Unsupported parameter call(不支持的参数调用)")
     val dest = MethodEntitySerializer.deserializerToJavaObject(method.params(0).asInstanceOf[String],classOf[FsPath])
     val overwrite = method.params(1).asInstanceOf[Boolean]
     val outputStream = fs.write(dest, overwrite)

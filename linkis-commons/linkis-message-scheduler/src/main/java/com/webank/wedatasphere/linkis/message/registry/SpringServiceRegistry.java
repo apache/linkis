@@ -27,9 +27,7 @@ import java.util.stream.Collectors;
 
 import static com.webank.wedatasphere.linkis.message.conf.MessageSchedulerConf.REFLECTIONS;
 
-/**
- * @date 2020/7/15
- */
+
 public class SpringServiceRegistry extends AbstractServiceRegistry {
 
     public SpringServiceRegistry(AbstractMessageSchedulerContext context) {

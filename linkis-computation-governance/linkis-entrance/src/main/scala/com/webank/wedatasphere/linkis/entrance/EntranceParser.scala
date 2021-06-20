@@ -17,24 +17,29 @@
 package com.webank.wedatasphere.linkis.entrance
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.protocol.task.Task
+import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 abstract class EntranceParser {
 
   def getEntranceContext: EntranceContext
   def setEntranceContext(entranceContext: EntranceContext): Unit
 
   @throws[ErrorException]
-  def parseToTask(params: java.util.Map[String, Any]): Task
+  def parseToTask(params: java.util.Map[String, Any]): JobRequest
 
   @throws[ErrorException]
-  def parseToTask(job: Job): Task
+  def parseToJob(jobReq: JobRequest): Job
 
   @throws[ErrorException]
-  def parseToJob(task: Task): Job
+  def parseToJob(job: Job): JobRequest = job match {
+    case entranceJob: EntranceJob => {
+      entranceJob.getJobRequest
+    }
+    case _ =>
+      null
+  }
 
 }

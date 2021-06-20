@@ -18,12 +18,10 @@ package com.webank.wedatasphere.linkis.rpc
 
 import com.webank.wedatasphere.linkis.message.context.{MessageSchedulerContext, SpringMessageSchedulerContext}
 import com.webank.wedatasphere.linkis.message.publisher.{AbstractMessagePublisher, DefaultMessagePublisher, MessagePublisher}
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 
-/**
- * @date 2020/8/4
- *
- */
+
 class MessageRPCSpringConfiguration {
 
   @Bean
@@ -32,6 +30,7 @@ class MessageRPCSpringConfiguration {
   }
 
   @Bean
+  @ConditionalOnMissingBean
   def getMessageSchedulerContext(messagePublisher: AbstractMessagePublisher): MessageSchedulerContext = {
     val context = new SpringMessageSchedulerContext
     messagePublisher.setContext(context)

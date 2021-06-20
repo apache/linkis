@@ -16,7 +16,6 @@ package com.webank.wedatasphere.linkis.storage.utils
 import java.io.{Closeable, File, InputStream, OutputStream}
 import java.lang.reflect.Method
 import java.text.NumberFormat
-
 import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf

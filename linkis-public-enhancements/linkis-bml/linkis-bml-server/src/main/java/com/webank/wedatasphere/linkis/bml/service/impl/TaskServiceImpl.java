@@ -69,23 +69,23 @@ public class TaskServiceImpl implements TaskService {
         String resourceId = UUID.randomUUID().toString();
         ResourceTask resourceTask = ResourceTask.createUploadTask(resourceId, user, properties);
         taskDao.insert(resourceTask);
-        LOGGER.info("成功保存上传任务信息.taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
+        LOGGER.info("Upload task information was successfully saved (成功保存上传任务信息).taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
         taskDao.updateState(resourceTask.getId(), TaskState.RUNNING.getValue(), new Date());
-        LOGGER.info("成功更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.RUNNING.getValue());
+        LOGGER.info("Successful update task (成功更新任务 ) taskId:{}-resourceId:{} status is  {} .", resourceTask.getId(), resourceTask.getResourceId(), TaskState.RUNNING.getValue());
         properties.put("resourceId", resourceTask.getResourceId());
         try {
-          ResourceServiceImpl.UploadResult result = resourceService.upload(form, user, properties).get(0);
-          if (result.isSuccess()){
-            taskDao.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
-            LOGGER.info("上传资源成功.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.SUCCESS.getValue());
-          } else {
-            taskDao.updateState(resourceTask.getId(), TaskState.FAILED.getValue(), new Date());
-            LOGGER.info("上传资源失败.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue());
-          }
+            ResourceServiceImpl.UploadResult result = resourceService.upload(form, user, properties).get(0);
+            if (result.isSuccess()){
+                taskDao.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
+                LOGGER.info("Upload resource successfully. Update task(上传资源成功.更新任务) taskId:{}-resourceId:{} status is   {} .", resourceTask.getId(), resourceTask.getResourceId(), TaskState.SUCCESS.getValue());
+            } else {
+                taskDao.updateState(resourceTask.getId(), TaskState.FAILED.getValue(), new Date());
+                LOGGER.info("Upload resource failed. Update task (上传资源失败.更新任务) taskId:{}-resourceId:{}  status is   {} .", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue());
+            }
         } catch (Exception e) {
-          taskDao.updateState2Failed(resourceTask.getId(), TaskState.FAILED.getValue(), new Date(), e.getMessage());
-          LOGGER.error("上传资源失败.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue(), e);
-          throw e;
+            taskDao.updateState2Failed(resourceTask.getId(), TaskState.FAILED.getValue(), new Date(), e.getMessage());
+            LOGGER.error("Upload resource successfully. Update task (上传资源失败.更新任务) taskId:{}-resourceId:{}  status is   {} .", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue(), e);
+            throw e;
         }
       return resourceTask;
     }
@@ -114,33 +114,33 @@ public class TaskServiceImpl implements TaskService {
           updateResourceException.initCause(e);
           throw updateResourceException;
         }
-        LOGGER.info("成功保存上传任务信息.taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
+        LOGGER.info("Upload task information was successfully saved(成功保存上传任务信息).taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
         taskDao.updateState(resourceTask.getId(), TaskState.RUNNING.getValue(), new Date());
-        LOGGER.info("成功更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.RUNNING.getValue());
+        LOGGER.info("Successful update task (成功更新任务 ) taskId:{}-resourceId:{} status is  {} .", resourceTask.getId(), resourceTask.getResourceId(), TaskState.RUNNING.getValue());
         properties.put("newVersion", resourceTask.getVersion());
         try {
-          versionService.updateVersion(resourceTask.getResourceId(), user, formDataMultiPart, properties);
-          taskDao.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
-          LOGGER.info("上传更新资源成功.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.SUCCESS.getValue());
+            versionService.updateVersion(resourceTask.getResourceId(), user, formDataMultiPart, properties);
+            taskDao.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
+            LOGGER.info("Upload resource successfully. Update task (上传资源失败.更新任务) taskId:{}-resourceId:{}  status is   {}.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.SUCCESS.getValue());
         } catch (Exception e) {
-          taskDao.updateState2Failed(resourceTask.getId(), TaskState.FAILED.getValue(), new Date(), e.getMessage());
-          LOGGER.error("上传更新资源失败.更新任务 taskId:{}-resourceId:{} 为 {} 状态.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue(), e);
-          throw e;
+            taskDao.updateState2Failed(resourceTask.getId(), TaskState.FAILED.getValue(), new Date(), e.getMessage());
+            LOGGER.error("Upload resource failed . Update task (上传资源失败.更新任务) taskId:{}-resourceId:{}  status is   {}.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue(), e);
+            throw e;
         }
         //创建上传任务线程
         return resourceTask;
       //}
   }
 
-  @Override
-  public ResourceTask createDownloadTask(String resourceId, String version, String user,
-      String clientIp) {
-    String system = resourceDao.getResource(resourceId).getSystem();
-    ResourceTask resourceTask = ResourceTask.createDownloadTask(resourceId, version, user, system, clientIp);
-    taskDao.insert(resourceTask);
-    LOGGER.info("成功保存下载任务信息.taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
-    return resourceTask;
-  }
+    @Override
+    public ResourceTask createDownloadTask(String resourceId, String version, String user,
+                                           String clientIp) {
+        String system = resourceDao.getResource(resourceId).getSystem();
+        ResourceTask resourceTask = ResourceTask.createDownloadTask(resourceId, version, user, system, clientIp);
+        taskDao.insert(resourceTask);
+        LOGGER.info("The download task information was successfully saved (成功保存下载任务信息).taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
+        return resourceTask;
+    }
 
   /**
    * Update task status
@@ -173,9 +173,9 @@ public class TaskServiceImpl implements TaskService {
     String system = resourceDao.getResource(resourceId).getSystem();
     ResourceTask resourceTask = ResourceTask.createDeleteVersionTask(resourceId, version, user, system, clientIp);
     taskDao.insert(resourceTask);
-    LOGGER.info("成功保存删除资源版本任务信息.taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
+    LOGGER.info("The deleted resource version task information was successfully saved (成功保存删除资源版本任务信息).taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
     return resourceTask;
-  }
+}
 
   @Override
   public ResourceTask createDeleteResourceTask(String resourceId, String user, String clientIp) {
@@ -191,7 +191,7 @@ public class TaskServiceImpl implements TaskService {
     extraParams.append(delVersions);
     ResourceTask resourceTask = ResourceTask.createDeleteResourceTask(resourceId, user, system, clientIp, extraParams.toString());
     taskDao.insert(resourceTask);
-    LOGGER.info("成功保存下载任务信息.taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
+    LOGGER.info("The download task information was successfully saved (成功保存下载任务信息).taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
     return resourceTask;
   }
 
@@ -212,7 +212,7 @@ public class TaskServiceImpl implements TaskService {
     }
     ResourceTask resourceTask = ResourceTask.createDeleteResourcesTask(user, system, clientIp, extraParams.toString());
     taskDao.insert(resourceTask);
-    LOGGER.info("成功保存下载任务信息.taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
+    LOGGER.info("The download task information was successfully saved (成功保存下载任务信息).taskId:{},resourceTask:{}", resourceTask.getId(), resourceTask.toString());
     return resourceTask;
   }
 

@@ -18,17 +18,14 @@ package com.webank.wedatasphere.linkis.entrance.scheduler
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration}
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 import com.webank.wedatasphere.linkis.entrance.exception.EntranceErrorException
 import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
-import com.webank.wedatasphere.linkis.entrance.persistence.HaPersistenceTask
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
 import com.webank.wedatasphere.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, ResponseQueryConfig}
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.{ConcurrentEngineConnLabel, EngineTypeLabel, UserCreatorLabel}
-import com.webank.wedatasphere.linkis.manager.label.utils.EngineTypeLabelCreator
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
 import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
 import com.webank.wedatasphere.linkis.rpc.Sender
@@ -43,13 +40,19 @@ import scala.collection.JavaConversions._
 class EntranceGroupFactory extends GroupFactory with Logging {
 
   private val groupNameToGroups = new JMap[String, Group]
-  private val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
+//  private val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
-  override def getOrCreateGroup(groupName: String): Group = {
+  private val GROUP_MAX_CAPACITY = CommonVars("wds.linkis.entrance.max.capacity", 2000)
+  private val GROUP_INIT_CAPACITY = CommonVars("wds.linkis.entrance.init.capacity", 100)
+
+
+  override def getOrCreateGroup(event: SchedulerEvent): Group = {
+    val (labels, params) = event match {
+      case job: EntranceJob =>
+        (job.getJobRequest.getLabels, job.getJobRequest.getParams.asInstanceOf[util.Map[String, Any]])
+    }
+    val groupName = EntranceGroupFactory.getGroupNameByLabels(labels, params)
     if (!groupNameToGroups.containsKey(groupName)) synchronized {
-      val initCapacity = 100
-      val maxCapacity = 100
-      var maxRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue
       val maxAskExecutorTimes = EntranceConfiguration.MAX_ASK_EXECUTOR_TIME.getValue.toLong
       if (groupName.startsWith(EntranceGroupFactory.CONCURRENT)) {
         if (null == groupNameToGroups.get(groupName)) synchronized {
@@ -62,29 +65,22 @@ class EntranceGroupFactory extends GroupFactory with Logging {
           }
         }
       }
-      val groupNameSplits = groupName.split("_")
-      if (groupNameSplits.length < 3) {
-        logger.warn(s"name style of group: $groupName is not correct, we will set default value for the group")
-      } else {
-        val sender: Sender = Sender.getSender(EntranceConfiguration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
-        val creator = groupNameSplits(0)
-        val username = groupNameSplits(1)
-        val engineType = groupNameSplits(2)
-
-        logger.info(s"Getting parameters for $groupName(正在为 $groupName 获取参数) username: $username, creator:$creator, engineType: $engineType")
-        val userCreatorLabel = labelBuilderFactory.createLabel(classOf[UserCreatorLabel])
-        userCreatorLabel.setUser(username)
-        userCreatorLabel.setCreator(creator)
-        val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(engineType)
-        try {
-          val keyAndValue = sender.ask(RequestQueryEngineConfig(userCreatorLabel, engineTypeLabel)).asInstanceOf[ResponseQueryConfig].getKeyAndValue
-
-          maxRunningJobs = Integer.parseInt(keyAndValue.get(EntranceConfiguration.WDS_LINKIS_INSTANCE.key))
-        } catch {
-          case t: Throwable => logger.warn("Get maxRunningJobs from configuration server failed! Next use the default value to continue.")
-        }
+      val sender: Sender = Sender.getSender(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
+      var userCreatorLabel: UserCreatorLabel = null
+      var engineTypeLabel: EngineTypeLabel = null
+      labels.foreach {
+        case label: UserCreatorLabel => userCreatorLabel = label
+        case label: EngineTypeLabel => engineTypeLabel = label
+        case _ =>
       }
-      logger.info("groupName: {} =>  maxRunningJobs is {}", groupName, maxRunningJobs)
+      info(s"Getting user configurations for $groupName(正在为 $groupName 获取参数) userCreatorLabel: ${userCreatorLabel.getStringValue}, engineTypeLabel:${engineTypeLabel.getStringValue}.")
+      val keyAndValue = Utils.tryAndWarnMsg {
+        sender.ask(RequestQueryEngineConfig(userCreatorLabel, engineTypeLabel)).asInstanceOf[ResponseQueryConfig].getKeyAndValue
+      }("Get user configurations from configuration server failed! Next use the default value to continue.")
+      val maxRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
+      val initCapacity = GROUP_INIT_CAPACITY.getValue(keyAndValue)
+      val maxCapacity = GROUP_MAX_CAPACITY.getValue(keyAndValue)
+      info(s"Got user configurations: groupName=$groupName, maxRunningJobs=$maxRunningJobs, initCapacity=$initCapacity, maxCapacity=$maxCapacity.")
       val group = new ParallelGroup(groupName, initCapacity, maxCapacity)
       group.setMaxRunningJobs(maxRunningJobs)
       group.setMaxAskExecutorTimes(maxAskExecutorTimes)
@@ -93,19 +89,7 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     groupNameToGroups.get(groupName)
   }
 
-
-  override def getGroupNameByEvent(event: SchedulerEvent): String = event match {
-    case job: EntranceJob =>
-      job.getTask match {
-        case HaPersistenceTask(task) =>
-          "HA"
-        case requestPersistTask: RequestPersistTask => {
-          val labels = requestPersistTask.getLabels
-          EntranceGroupFactory.getGroupNameByLabels(labels, job.getParams)
-        }
-        case _ => EntranceGroupFactory.getGroupName(job.getCreator, job.getUser, job.getParams)
-      }
-  }
+  override def getGroup(groupName: String): Group = groupNameToGroups.get(groupName)
 }
 
 object EntranceGroupFactory {

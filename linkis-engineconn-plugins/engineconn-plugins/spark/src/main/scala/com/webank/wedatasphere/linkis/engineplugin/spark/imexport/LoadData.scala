@@ -16,6 +16,7 @@ package com.webank.wedatasphere.linkis.engineplugin.spark.imexport
 import java.io.{BufferedInputStream, File, FileInputStream}
 
 import com.webank.wedatasphere.linkis.common.utils.Utils
+import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
 import com.webank.wedatasphere.linkis.engineplugin.spark.imexport.util.{BackGroundServiceUtils, ImExportUtils}
 import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf
 import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils
@@ -90,7 +91,7 @@ object LoadData  {
         path = XlsUtils.excelToCsv(fs.open(new Path(path)), fs, hasHeader, sheetNames)
         hasHeader = false
       } else {
-        path = "hdfs://" + path
+        path = if (SparkConfiguration.IS_VIEWFS_ENV.getValue) path else "hdfs://" + path
       }
     } else {
       if (".xlsx".equalsIgnoreCase(suffix)) {
@@ -121,7 +122,7 @@ object LoadData  {
         .schema(StructType(getFields(columns)))
         .load(path)
     } else {
-     CsvRelation.csvToDF(spark, StructType(getFields(columns)), hasHeader, path, source,columns)
+      CsvRelation.csvToDF(spark, StructType(getFields(columns)), hasHeader, path, source,columns)
     }
     // warn(s"Fetched ${df.columns.length} col(s) : ${df.count()} row(s).")
     df.createOrReplaceTempView("tempTable")
@@ -172,7 +173,7 @@ object LoadData  {
 
   def copyFileToHdfs(path: String, fs: FileSystem): String = {
     val file = new File(path)
-    if (file.isDirectory) throw new Exception("导入的必须是文件，不能是目录")
+    if (file.isDirectory) throw new Exception("Import must be a file, not a directory(导入的必须是文件，不能是目录)")
     val in = new BufferedInputStream(new FileInputStream(file))
     val hdfsPath = "/tmp/" + System.getProperty("user.name") + "/" + System.currentTimeMillis + file.getName
     val out = fs.create(new Path(hdfsPath), true)
@@ -188,7 +189,7 @@ object LoadData  {
       case JNothing => default
       case value: JValue =>
         if("JString()".equals(value.toString)) default
-      else try value.extract[T] catch { case t: Throwable => default}
+        else try value.extract[T] catch { case t: Throwable => default}
     }
   }
 
@@ -203,7 +204,7 @@ object LoadData  {
   def getColumnSql(columns: List[Map[String, Any]]): String = {
     val sql = new StringBuilder
     columns.foreach { column =>
-      val name = if (column("name") != null) column("name").asInstanceOf[String] else throw new IllegalArgumentException("建立新表时，字段名必须定义")
+      val name = if (column("name") != null) column("name").asInstanceOf[String] else throw new IllegalArgumentException("When create a table, the field name must be defined(建立新表时，字段名必须定义)")
       sql.append("`").append(name).append("` ")
       val dataType = column.getOrElse("type", "string").asInstanceOf[String].toLowerCase
       sql.append(dataType)
@@ -226,7 +227,7 @@ object LoadData  {
 
   def getFields(columns: List[Map[String, Any]]): Array[StructField] = {
     columns.map { column =>
-      val name = if (column("name") != null) column("name").asInstanceOf[String] else throw new IllegalArgumentException("建立新表时，字段名必须定义")
+      val name = if (column("name") != null) column("name").asInstanceOf[String] else throw new IllegalArgumentException("When create a table, the field name must be defined(建立新表时，字段名必须定义)")
       val dataType = column.getOrElse("type", "string").asInstanceOf[String]
       val precision = Utils.tryCatch(column.getOrElse("precision", 20).toString.toInt){
         case e:Exception => 20

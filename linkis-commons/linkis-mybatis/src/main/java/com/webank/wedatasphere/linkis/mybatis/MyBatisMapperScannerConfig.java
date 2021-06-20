@@ -22,9 +22,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Created by enjoyyin on 2018/8/6.
- */
+
 @Configuration
 @AutoConfigureAfter(MybatisConfigurationFactory.class)
 public class MyBatisMapperScannerConfig {

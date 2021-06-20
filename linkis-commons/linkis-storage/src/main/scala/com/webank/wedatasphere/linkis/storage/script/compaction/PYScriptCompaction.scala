@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.storage.script.compaction
 
-/**
-  * Created by johnnwang on 2018/10/23.
-  */
+
 class PYScriptCompaction private extends CommonScriptCompaction {
 
   override def belongTo(suffix: String): Boolean = {

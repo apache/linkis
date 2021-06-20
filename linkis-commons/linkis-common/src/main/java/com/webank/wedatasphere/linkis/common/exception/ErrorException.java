@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-/**
- * author: enjoyyin
- * date: 2018/9/11
- * time: 20:40
- * Description:
- */
+
 package com.webank.wedatasphere.linkis.common.exception;
 
-public class ErrorException extends DWCException{
+public class ErrorException extends LinkisException {
     private ExceptionLevel level = ExceptionLevel.ERROR;
     public ErrorException(int errCode, String desc){
         super(errCode, desc);

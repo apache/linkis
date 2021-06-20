@@ -1,0 +1,94 @@
+/*!
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+@import '~@/common/style/variables.scss';
+
+.we-file-navbar {
+    position: absolute;
+    display: flex;
+    justify-content: flex-end;
+    top: 0;
+    left: 0;
+    width: 100%;
+    // z-index: 100;
+    background: #fff;
+    i{
+        flex: 0 1 auto;
+        color: #589feb;
+        font-weight: bold;
+    }
+    .navbar-cursor {
+        cursor: pointer;
+    }
+}
+.we-file-navbar-nav{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border: 1px solid #eee;
+    border-right: none;
+    border-left: none;
+}
+.we-search-wrap{
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: space-between;
+    align-items: center;
+    height: $actionbar-height;
+    border: 1px solid #eee;
+    border-right: none;
+    border-left: none;
+
+    input{
+        color: $text-color;
+        padding-left: 12px;
+        border: none;
+        flex: 1 1 auto;
+        font-size: 12px;
+        outline: none;
+        height: 100%;
+    }
+    input::-webkit-input-placeholder {
+        color: $input-placeholder-color;
+    }
+    &:focus{
+        outline: none
+    }
+    .search-btn{
+        color: $text-color;
+        width: $actionbar-height;
+        height: $actionbar-height;
+        line-height: $actionbar-height;
+        text-align: center;
+
+        &:hover{
+            color: $text-color;
+        }
+
+        &:before{
+            font-family: 'font-dws-icon' !important;
+            font-style: normal;
+            font-weight: normal;
+            font-variant: normal;
+            text-transform: none;
+            line-height: 1;
+            content: '\e903';
+        }
+    }
+
+}
+

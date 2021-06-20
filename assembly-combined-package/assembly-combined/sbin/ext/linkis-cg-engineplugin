@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# description:  ecp start cmd
+#
+# Modified for Linkis 1.0.0
+
+
+export SERVER_SUFFIX="linkis-computation-governance/linkis-cg-engineplugin"
+
+export SERVER_CLASS=com.webank.wedatasphere.linkis.engineplugin.server.LinkisEngineConnPluginServer
+
+#export DEBUG_PORT=
+
+export COMMON_START_BIN=$LINKIS_HOME/sbin/ext/linkis-common-start
+if [[ ! -f "${COMMON_START_BIN}" ]]; then
+    echo "The $COMMON_START_BIN  does not exist!"
+    exit 1
+else
+    sh $COMMON_START_BIN
+fi

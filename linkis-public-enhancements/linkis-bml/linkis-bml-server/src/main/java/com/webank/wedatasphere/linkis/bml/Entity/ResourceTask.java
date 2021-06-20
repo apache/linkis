@@ -72,6 +72,8 @@ public class ResourceTask {
     private Date lastUpdateTime;
 
     private static final String DEFAULT_SYSTEM = "dss";
+    private static final String SYSTEM = "system";
+    private static final String CLIENT_IP = "clientIp";
 
     public static ResourceTask createUploadTask(String resourceId, String user,
         Map<String, Object> properties) {
@@ -81,12 +83,12 @@ public class ResourceTask {
         resourceTask.setOperation(OperationEnum.UPLOAD.getValue());
         resourceTask.setState(TaskState.SCHEDULED.getValue());
         resourceTask.setSubmitUser(user);
-        if (null != properties.get("system")){
-            resourceTask.setSystem((String)properties.get("system"));
+        if (null != properties.get(SYSTEM)){
+            resourceTask.setSystem((String)properties.get(SYSTEM));
         }else{
             resourceTask.setSystem(DEFAULT_SYSTEM);
         }
-        resourceTask.setClientIp((String)properties.get("clientIp"));
+        resourceTask.setClientIp((String)properties.get(CLIENT_IP));
         resourceTask.setInstance(Sender.getThisInstance());
         resourceTask.setStartTime(new Date());
         resourceTask.setLastUpdateTime(new Date());
@@ -101,7 +103,7 @@ public class ResourceTask {
         resourceTask.setOperation(OperationEnum.UPDATE.getValue());
         resourceTask.setState(TaskState.SCHEDULED.getValue());
         resourceTask.setSubmitUser(user);
-        resourceTask.setClientIp((String)properties.get("clientIp"));
+        resourceTask.setClientIp((String)properties.get(CLIENT_IP));
         resourceTask.setSystem(system);
         resourceTask.setInstance(Sender.getThisInstance());
         resourceTask.setStartTime(new Date());

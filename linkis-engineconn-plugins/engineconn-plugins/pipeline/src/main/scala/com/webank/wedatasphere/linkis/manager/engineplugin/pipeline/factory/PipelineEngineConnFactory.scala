@@ -18,33 +18,23 @@ package com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.factory
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.{DefaultEngineConn, EngineConn}
-import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.Executor
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.SingleExecutorEngineConnFactory
+import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationSingleExecutorEngineConnFactory
+import com.webank.wedatasphere.linkis.engineconn.executor.entity.LabelExecutor
 import com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.executor.PipelineEngineConnExecutor
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineRunTypeLabel, EngineType, RunType}
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineType.EngineType
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType.RunType
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineType, RunType}
 
-class PipelineEngineConnFactory extends SingleExecutorEngineConnFactory with Logging {
+class PipelineEngineConnFactory extends ComputationSingleExecutorEngineConnFactory with Logging {
 
-  override def createEngineConn(engineCreationContext: EngineCreationContext): EngineConn = {
-    val engineConn = new DefaultEngineConn(engineCreationContext)
-    engineConn.setEngineType(EngineType.PIPELINE.toString)
-    engineConn
-  }
-  override def createExecutor(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Executor = {
+  override protected def getEngineConnType: EngineType = EngineType.PIPELINE
 
-    val id = ExecutorManager.getInstance().generateId()
-    val executor = new PipelineEngineConnExecutor(id)
-    val runTypeLabel = getDefaultEngineRunTypeLabel()
-    executor.getExecutorLabels().add(runTypeLabel)
-    executor
+  override def newExecutor(id: Int,
+                           engineCreationContext: EngineCreationContext,
+                           engineConn: EngineConn): LabelExecutor = {
+    new PipelineEngineConnExecutor(id)
   }
 
-  override def getDefaultEngineRunTypeLabel(): EngineRunTypeLabel = {
-    val runTypeLabel = new EngineRunTypeLabel
-    runTypeLabel.setRunType(RunType.PIPELINE.toString)
-    runTypeLabel
-  }
-
+  override protected def getRunType: RunType = RunType.PIPELINE
 }

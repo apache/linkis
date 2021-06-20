@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.webank.wedatasphere.linkis.ujes.jdbc
 
 import java.util
@@ -24,6 +23,7 @@ import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfigBuild
 import com.webank.wedatasphere.linkis.ujes.client.UJESClient
 import com.webank.wedatasphere.linkis.ujes.jdbc.UJESSQLDriverMain._
 import org.apache.commons.lang.StringUtils
+
 
 object UJESClientFactory {
 
@@ -44,7 +44,7 @@ object UJESClientFactory {
 
   private def createUJESClient(serverUrl: String, props: Properties): UJESClient = {
     val clientConfigBuilder = DWSClientConfigBuilder.newBuilder()
-    clientConfigBuilder.addUJESServerUrl(serverUrl)
+    clientConfigBuilder.addServerUrl(serverUrl)
     clientConfigBuilder.setAuthTokenKey(props.getProperty(USER))
     clientConfigBuilder.setAuthTokenValue(props.getProperty(PASSWORD))
     clientConfigBuilder.setAuthenticationStrategy(new StaticAuthenticationStrategy())

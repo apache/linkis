@@ -19,7 +19,7 @@ package com.webank.wedatasphere.linkis;
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
 import com.webank.wedatasphere.linkis.common.conf.BDPConfiguration;
 import com.webank.wedatasphere.linkis.common.conf.Configuration;
-import com.webank.wedatasphere.linkis.common.exception.DWCException;
+import com.webank.wedatasphere.linkis.common.exception.LinkisException;
 import com.webank.wedatasphere.linkis.common.utils.Utils;
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
 import com.webank.wedatasphere.linkis.server.conf.DataWorkCloudCustomExcludeFilter;
@@ -59,9 +59,7 @@ import javax.servlet.DispatcherType;
 import javax.ws.rs.ext.RuntimeDelegate;
 import java.util.EnumSet;
 
-/**
- * Created by enjoyyin on 2018/8/6.
- */
+
 @SpringBootApplication
 @EnableDiscoveryClient
 @RefreshScope
@@ -78,6 +76,7 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) throws ReflectiveOperationException {
+
         RuntimeDelegate.setInstance(new org.glassfish.jersey.internal.RuntimeDelegateImpl());
         final SpringApplication application = new SpringApplication(DataWorkCloudApplication.class);
         application.addListeners(new ApplicationListener<ApplicationPreparedEvent>(){
@@ -143,9 +142,9 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
         serviceInstance = new ServiceInstance();
         serviceInstance.setApplicationName(applicationContext.getEnvironment().getProperty("spring.application.name"));
         serviceInstance.setInstance(Utils.getComputerName() + ":" + applicationContext.getEnvironment().getProperty("server.port"));
-        DWCException.setApplicationName(serviceInstance.getApplicationName());
-        DWCException.setHostname(Utils.getComputerName());
-        DWCException.setHostPort(Integer.parseInt(applicationContext.getEnvironment().getProperty("server.port")));
+        LinkisException.setApplicationName(serviceInstance.getApplicationName());
+        LinkisException.setHostname(Utils.getComputerName());
+        LinkisException.setHostPort(Integer.parseInt(applicationContext.getEnvironment().getProperty("server.port")));
     }
 
     public static ServiceInstance getServiceInstance() {

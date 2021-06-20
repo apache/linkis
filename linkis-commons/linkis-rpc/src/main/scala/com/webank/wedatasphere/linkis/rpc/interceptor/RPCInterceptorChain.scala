@@ -20,9 +20,7 @@ import com.webank.wedatasphere.linkis.common.ServiceInstance
 
 import scala.runtime.BoxedUnit
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 trait RPCInterceptorChain {
   def getApplicationName: String
   def handle(rpcInterceptorExchange: RPCInterceptorExchange): Any

@@ -18,49 +18,29 @@ package com.webank.wedatasphere.linkis.engineplugin.spark.factory
 
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.Executor
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationExecutorFactory
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.ComputationExecutor
 import com.webank.wedatasphere.linkis.engineplugin.spark.entity.SparkEngineSession
 import com.webank.wedatasphere.linkis.engineplugin.spark.exception.NotSupportSparkPythonTypeException
-import com.webank.wedatasphere.linkis.engineplugin.spark.executor.{SparkExecutorOrder, SparkPythonExecutor}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.ExecutorFactory
+import com.webank.wedatasphere.linkis.engineplugin.spark.executor.SparkPythonExecutor
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineRunTypeLabel, RunType}
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType.RunType
 
-/**
-  *
-  * @date 2020/11/2
-  */
-class SparkPythonExecutorFactory extends ExecutorFactory {
-  /**
-   * Order of executors, the smallest one is the default
-   *
-   * @return
-   */
-  override def getOrder: Int = SparkExecutorOrder.PYSPARK.id
 
-  /**
-   *
-   * @param engineCreationContext
-   * @param engineConn
-   * @param labels
-   * @return
-   */
-  override def createExecutor(engineCreationContext: EngineCreationContext, engineConn: EngineConn, labels: Array[Label[_]]): Executor = {
-    engineConn.getEngine match {
+class SparkPythonExecutorFactory extends ComputationExecutorFactory {
+
+  override protected def newExecutor(id: Int,
+                                     engineCreationContext: EngineCreationContext,
+                                     engineConn: EngineConn,
+                                     labels: Array[Label[_]]): ComputationExecutor = {
+    engineConn.getEngineConnSession match {
       case sparkEngineSession: SparkEngineSession =>
-        val id = ExecutorManager.getInstance().generateId()
-        val executor = new SparkPythonExecutor(sparkEngineSession, id)
-        executor.getExecutorLabels().add(getDefaultEngineRunTypeLabel())
-        executor
+        new SparkPythonExecutor(sparkEngineSession, id)
       case _ =>
         throw NotSupportSparkPythonTypeException("Invalid EngineConn engine session obj, failed to create sparkPython executor")
     }
   }
 
-  override def getDefaultEngineRunTypeLabel(): EngineRunTypeLabel = {
-    val runTypeLabel = new EngineRunTypeLabel
-    runTypeLabel.setRunType(RunType.PYSPARK.toString)
-    runTypeLabel
-  }
+  override protected def getRunType: RunType = RunType.PYSPARK
 }

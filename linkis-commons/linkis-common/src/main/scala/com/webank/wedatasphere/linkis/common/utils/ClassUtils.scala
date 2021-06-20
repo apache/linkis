@@ -16,7 +16,15 @@
 
 package com.webank.wedatasphere.linkis.common.utils
 
+import java.lang.reflect.Modifier
+
+import com.webank.wedatasphere.linkis.common.conf.Configuration
+import org.reflections.Reflections
+
 object ClassUtils {
+
+  lazy val reflections = new Reflections(Configuration.REFLECT_SCAN_PACKAGE.getValue, this.getClass.getClassLoader)
+
   def jarOfClass(cls: Class[_]): Option[String] = {
     val uri = cls.getResource("/" + cls.getName.replace('.', '/') + ".class")
     if (uri != null) {
@@ -53,6 +61,10 @@ object ClassUtils {
     } {
       case t: Throwable => throw t
     }
+  }
+
+  def isInterfaceOrAbstract(clazz: Class[_]): Boolean = {
+     clazz.isInterface || Modifier.isAbstract(clazz.getModifiers)
   }
 
 

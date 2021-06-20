@@ -1,0 +1,237 @@
+/*!
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+$border-color: #e0e0e0;
+.we-table {
+    position: relative;
+    border-right: 1px solid $border-color;
+    min-width: 100%;
+    thead th {
+        background-color: rgb(94, 157, 224);
+        color: #fff;
+    }
+}
+
+.we-table-header {
+    height: 40px;
+    line-height: 40px;
+    background-color: rgb(94, 157, 224);
+    color: #fff;
+    .we-table-header-box {
+        width: calc(100% - 40px);
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .we-table-header-content {
+            display: inline-block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+}
+
+.list-header .list-view-item {
+    color: #fff;
+    border-right: 1px solid #e8eaec;
+}
+
+.we-column-item {
+    border-right: 1px solid #e8eaec;
+    &.null-text {
+        color: #ed4014;
+        font-style: italic;
+    }
+    &.active {
+        background-color: #ebf7ff;
+    }
+}
+
+.header-list::-webkit-scrollbar {
+    display: none;
+}
+
+.caret-wrapper {
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -ms-flex-align: center;
+    align-items: center;
+    height: 34px;
+    width: 24px;
+    vertical-align: middle;
+    cursor: pointer;
+    overflow: initial;
+    position: relative;
+}
+
+.we-table-outflow {
+    position: absolute;
+    top: 0;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+}
+
+.we-table-body {
+    height: calc(100% - 40px);
+}
+
+.we-table-sort-caret {
+    width: 0;
+    height: 0;
+    border: 5px solid transparent;
+    position: absolute;
+    &.asc {
+        border-bottom-color: #c0c4cc;
+        top: 5px;
+    }
+    &.desc {
+        border-top-color: #c0c4cc;
+        bottom: 7px;
+    }
+    &.we-table-sort.desc {
+        border-top-color: #fff;
+    }
+    &.we-table-sort.asc {
+        border-bottom-color: #fff;
+    }
+}
+
+.we-column {
+    text-align: center;
+    border-bottom: 1px solid $border-color;
+}
+
+.we-column-item {
+    height: 67px;
+    border-bottom: 1px solid $border-color;
+    padding: 6px;
+    word-break: break-all;
+    &.odd {
+        background: rgb(250, 250, 250)
+    }
+    &.even {
+        background: rgb(255, 255, 255)
+    }
+    &.is-null {
+        color: red;
+        font-style: italic;
+    }
+    &.selected {
+        background: #ebf7ff;
+    }
+    .we-column-item-content {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        overflow-y: auto;
+    }
+}
+
+.hidden-div {
+    .hidden-div-item {
+        padding: 12px 10px 12px 10px;
+        word-break: break-all;
+    }
+}
+
+.we-table-wrap {
+    overflow: auto;
+    display: block;
+    height: 100%;
+    .we-table {
+        border: 1px solid #dcdee2;
+        table-layout: fixed;
+        .we-table-thead {
+            background-color: #2d8cf0;
+            color: #fff;
+            .we-table-thead-cell {
+                border-right: 1px solid #dcdee2;
+                border-bottom: 1px solid #dcdee2;
+                min-width: 0;
+                height: 48px;
+                box-sizing: border-box;
+                text-align: left;
+                text-overflow: ellipsis;
+                vertical-align: middle;
+            }
+        }
+        .we-table-row {
+            height: 40px;
+            &:nth-child(2n) {
+                background-color: #f8f8f9;
+            }
+            &:hover {
+                background-color: #ebf7ff;
+            }
+            .we-table-row-cell {
+                border-right: 1px solid #dcdee2;
+                border-bottom: 1px solid #dcdee2;
+                min-width: 0;
+                height: 48px;
+                box-sizing: border-box;
+                text-align: left;
+                text-overflow: ellipsis;
+                vertical-align: middle;
+                .we-table-row-label {
+                    line-height: 20px;
+                    padding-left: 18px;
+                    padding-right: 18px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: normal;
+                    word-break: break-all;
+                    -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+                    &.ellipsis {
+                        text-align: left;
+                        word-break: keep-all;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                    .render-btn {
+                        color: #515a6e;
+                        background-color: transparent;
+                        border-color: transparent;
+                        padding: 1px 7px 2px;
+                        font-size: 12px;
+                        border-radius: 3px;
+                        display: inline-block;
+                        margin-bottom: 0;
+                        font-weight: 400;
+                        text-align: center;
+                        cursor: pointer;
+                        background-image: none;
+                        border: 1px solid transparent;
+                        white-space: nowrap;
+                        border-radius: 4px;
+                        transition: color .2s linear, background-color .2s linear, border .2s linear, box-shadow .2s linear;
+                        &:hover {
+                            color: #57a3f3;
+                            background-color: #fff;
+                            border-color: transparent;
+                            text-decoration: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

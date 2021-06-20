@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.storage.resultset.io
 import com.webank.wedatasphere.linkis.common.io.MetaData
 import com.webank.wedatasphere.linkis.storage.resultset.ResultMetaData
 
-/**
-  * Created by johnnwang on 2018/10/30.
-  */
+
 class IOMetaData(val off:Int, val len:Int)  extends ResultMetaData {
   override def cloneMeta(): MetaData = new IOMetaData(off, len)
 }

@@ -14,24 +14,24 @@ package com.webank.wedatasphere.linkis.bml.common;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import com.webank.wedatasphere.linkis.bml.conf.BmlServerConfiguration;
+import com.webank.wedatasphere.linkis.bml.restful.RestfulUtils;
 import com.webank.wedatasphere.linkis.bml.service.ResourceService;
 import com.webank.wedatasphere.linkis.bml.service.VersionService;
 import com.webank.wedatasphere.linkis.common.utils.Utils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.annotation.PostConstruct;
-
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class ScheduledTask {
 
+    private static final Long SIZWE = 365 * RestfulUtils.DAY;
 
     @Autowired
     private ResourceService resourceService;

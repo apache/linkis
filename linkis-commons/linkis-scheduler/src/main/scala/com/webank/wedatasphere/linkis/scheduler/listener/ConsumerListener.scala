@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.scheduler.listener
 
 import com.webank.wedatasphere.linkis.scheduler.queue.Consumer
 
-/**
-  * Created by enjoyyin on 2018/9/3.
-  */
+
 trait ConsumerListener extends SchedulerListener {
   def onConsumerCreated(consumer: Consumer): Unit
   def onConsumerDestroyed(consumer: Consumer): Unit

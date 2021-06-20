@@ -17,7 +17,7 @@
 package com.webank.wedatasphere.linkis.ecm.server.service.impl
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.ecm.server.ECMApplication
+import com.webank.wedatasphere.linkis.ecm.server.LinkisECMApplication
 import com.webank.wedatasphere.linkis.ecm.server.conf.ECMConfiguration.MANAGER_SPRING_NAME
 import com.webank.wedatasphere.linkis.ecm.server.listener.EngineConnStatusChangeEvent
 import com.webank.wedatasphere.linkis.ecm.server.service.EngineConnStatusCallbackService
@@ -38,12 +38,12 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
 
     if (NodeStatus.isAvailable(protocol.status)) {
 
-      ECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnStatusChangeEvent(protocol.ticketId, Running))
+      LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnStatusChangeEvent(protocol.ticketId, Running))
     } else {
 
       Sender.getSender(MANAGER_SPRING_NAME).send(EngineConnStatusCallbackToAM(protocol.serviceInstance,
         protocol.status, protocol.initErrorMsg))
-      ECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnStatusChangeEvent(protocol.ticketId, Failed))
+      LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnStatusChangeEvent(protocol.ticketId, Failed))
     }
 
     info(s"Finished to deal EngineConnStatusCallback $protocol")

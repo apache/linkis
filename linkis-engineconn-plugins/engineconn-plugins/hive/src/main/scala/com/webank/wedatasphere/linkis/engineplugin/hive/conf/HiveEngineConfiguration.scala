@@ -16,7 +16,10 @@
 
 package com.webank.wedatasphere.linkis.engineplugin.hive.conf
 
+import com.webank.wedatasphere.linkis.common.conf.CommonVars
+
 object HiveEngineConfiguration {
 
+  val HIVE_LIB_HOME = CommonVars[String]("hive.lib", CommonVars[String]("HIVE_LIB", "/appcom/Install/hive/lib").getValue)
 
 }

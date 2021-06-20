@@ -17,7 +17,7 @@
 package com.webank.wedatasphere.linkis.engineconn.acessible.executor.entity
 
 import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event.ExecutorStatusChangedEvent
+import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event.{ExecutorCompletedEvent, ExecutorStatusChangedEvent}
 import com.webank.wedatasphere.linkis.engineconn.executor.entity.SensibleExecutor
 import com.webank.wedatasphere.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
@@ -27,18 +27,18 @@ abstract class AccessibleExecutor extends SensibleExecutor {
 
     private var isExecutorClosed = false
 
-    def isIdle = NodeStatus.isIdle(getStatus)
+    def isIdle: Boolean = NodeStatus.isIdle(getStatus)
 
-    def isBusy = NodeStatus.isLocked(getStatus)
+    def isBusy: Boolean = NodeStatus.isLocked(getStatus)
 
-    def whenBusy[A](f: => A) = whenStatus(NodeStatus.Busy, f)
+    def whenBusy[A](f: => A): Unit = whenStatus(NodeStatus.Busy, f)
 
-    def whenIdle[A](f: => A) = whenStatus(NodeStatus.Idle, f)
+    def whenIdle[A](f: => A): Unit = whenStatus(NodeStatus.Idle, f)
 
-    def whenStatus[A](_status: NodeStatus, f: => A) = if (getStatus == _status) f
+    def whenStatus[A](_status: NodeStatus, f: => A): Unit = if (getStatus == _status) f
 
     def ensureBusy[A](f: => A): A = {
-        lastActivityTime = System.currentTimeMillis
+        updateLastActivityTime()
         if (isBusy) synchronized {
             if (isBusy) return f
         }
@@ -78,7 +78,13 @@ abstract class AccessibleExecutor extends SensibleExecutor {
     def supportCallBackLogs(): Boolean
 
     protected override def onStatusChanged(fromStatus: NodeStatus, toStatus: NodeStatus): Unit = {
-        ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus.post(ExecutorStatusChangedEvent(this, fromStatus, toStatus))
+        ExecutorListenerBusContext.getExecutorListenerBusContext()
+          .getEngineConnAsyncListenerBus.post(ExecutorStatusChangedEvent(this, fromStatus, toStatus))
+        toStatus match {
+            case NodeStatus.Failed | NodeStatus.Success =>
+                ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus.post(ExecutorCompletedEvent(this, ""))
+            case _ =>
+        }
     }
 
     override def close(): Unit = {
@@ -86,5 +92,5 @@ abstract class AccessibleExecutor extends SensibleExecutor {
         super.close()
     }
 
-    override def isClosed(): Boolean = isExecutorClosed
+    override def isClosed: Boolean = isExecutorClosed
 }

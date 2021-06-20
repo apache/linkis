@@ -20,10 +20,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 
-/**
-  * created by enjoyyin on 2018/11/8
-  * Description: Used to wrap the front desk log(用于对前台日志的包装)
-  */
+
 object LogUtils {
 
 

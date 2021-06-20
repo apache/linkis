@@ -122,11 +122,11 @@ public class MdqServiceImpl implements MdqService {
                 String destination = mdqTableBO.getImportInfo().getArgs().get("destination");
                 HashMap hashMap = new Gson().fromJson(destination, HashMap.class);
                 if (Boolean.valueOf(hashMap.get("importData").toString())) {
-                    logger.info("只是单纯增加分区列，不删除掉原来的表");
+                    logger.info("Simply add a partition column without dropping the original table(只是单纯增加分区列，不删除掉原来的表)");
                     return;
                 }
             }
-            logger.info("将覆盖掉原来通过向导建立的表:" + oldTable);
+            logger.info("This will overwrite the tables originally created through the wizard(将覆盖掉原来通过向导建立的表):" + oldTable);
             mdqDao.deleteTableBaseInfo(oldTable.getId());
         }
     }
@@ -142,7 +142,6 @@ public class MdqServiceImpl implements MdqService {
     public String displaysql(MdqTableBO mdqTableBO) {
         String dbName = mdqTableBO.getTableBaseInfo().getBase().getDatabase();
         String tableName = mdqTableBO.getTableBaseInfo().getBase().getName();
-        //StringBuilder sb = new StringBuilder();
         String displayStr = "//意书后台正在为您创建新的数据库表";
         return displayStr;
     }
@@ -288,20 +287,6 @@ public class MdqServiceImpl implements MdqService {
             return new Tunple<>(str.substring(0, index), str.substring(index + 1));
         }
     }
-
-/*    @Deprecated
-    private List<MdqTablePartitionStatisticInfoVO> getMdqTablePartitionStatisticInfoVO(List<String> partitions, String tableLocation) throws IOException {
-        //partitions.sort((a,b)-> -a.compareTo(b));
-        //partitions
-        //partitions.stream().forEach();
-        List<MdqTablePartitionStatisticInfoVO> list = new ArrayList<>();
-        FileStatus tableFile = getRootHdfs().getFileStatus(new Path(tableLocation));
-        FileStatus[] fileStatuses = getRootHdfs().listStatus(tableFile.getPath());
-        for (FileStatus fileStatuse : fileStatuses) {
-            list.add(create(fileStatuse.getPath().toString()));
-        }
-        return list;
-    }*/
 
     private MdqTablePartitionStatisticInfoVO create(String path) throws IOException {
         MdqTablePartitionStatisticInfoVO mdqTablePartitionStatisticInfoVO = new MdqTablePartitionStatisticInfoVO();

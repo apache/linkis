@@ -20,11 +20,25 @@ object BmlConfiguration {
   val LINKIS_API_VERSION:CommonVars[String] = CommonVars[String]("wds.linkis.bml.api.version", "v1")
 
   val URL_PREFIX:CommonVars[String] =
-    CommonVars[String]("wds.linkis.bml.url.prefix", "/api/rest_j/v1/bml", "bml服务的url前缀")
+    CommonVars[String]("wds.linkis.bml.url.prefix", "/api/rest_j/v1/bml", "url prefix of the bml service (bml服务的url前缀)")
 
   val AUTH_TOKEN_KEY:CommonVars[String] = CommonVars[String]("wds.linkis.bml.auth.token.key", "Validation-Code")
 
   val AUTH_TOKEN_VALUE:CommonVars[String] = CommonVars[String]("wds.linkis.bml.auth.token.value", "BML-AUTH")
 
+  val CONNECTION_MAX_SIZE: CommonVars[Int] = CommonVars[Int]("wds.linkis.bml.connection.max.size", 10)
+
+  val CONNECTION_TIMEOUT: CommonVars[Int] = CommonVars[Int]("wds.linkis.bml.connection.timeout", 5 * 60 * 1000)
+
+  val CONNECTION_READ_TIMEOUT: CommonVars[Int] = CommonVars[Int]("wds.linkis.bml.connection.read.timeout", 10 * 60 * 1000)
+
+  val AUTH_TOKEN_KEY_SHORT_NAME = "tokenKey"
+  val AUTH_TOKEN_VALUE_SHORT_NAME = "tokenValue"
+
+  val CONNECTION_MAX_SIZE_SHORT_NAME = "maxConnection"
+  val CONNECTION_TIMEOUT_SHORT_NAME = "connectTimeout"
+  val CONNECTION_READ_TIMEOUT_SHORT_NAME = "readTimeout"
+
+  val CLIENT_NAME_SHORT_NAME = "clientName"
 
 }

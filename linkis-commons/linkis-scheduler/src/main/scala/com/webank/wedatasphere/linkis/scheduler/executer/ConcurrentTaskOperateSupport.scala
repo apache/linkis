@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.scheduler.executer
 
-/**
-  * Created by enjoyyin on 2018/10/30.
-  */
+
 trait ConcurrentTaskOperateSupport {
 
   def kill(jobId: String): Boolean

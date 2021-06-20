@@ -32,7 +32,7 @@ object GovernanceCommonConf {
 
   val SCALA_CODE_PARSER_SWITCH = CommonVars("wds.linkis.scala.code_parser.enabled", false)
 
-  val ENGINE_CONN_SPRING_NAME = CommonVars("wds.linkis.engineconn.name", "EngineConn")
+  val ENGINE_CONN_SPRING_NAME = CommonVars("wds.linkis.engineconn.name", "linkis-cg-engineconn")
 
   val ENGINE_CONN_PLUGIN_SPRING_NAME = CommonVars("wds.linkis.engineconn.plugin.spring.name", "linkis-cg-engineplugin")
 

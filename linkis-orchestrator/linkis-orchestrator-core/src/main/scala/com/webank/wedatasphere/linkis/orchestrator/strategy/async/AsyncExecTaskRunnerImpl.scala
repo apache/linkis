@@ -164,11 +164,13 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask) extends AsyncExecTask
   override def setResultSize(resultSize: Int): Unit = {
     info(s"BaseExecTaskRunner get result size is $resultSize")
     if (this.resultSize == -1) this.resultSize = resultSize
+    resultSets.notify()
   }
 
   override def addResultSet(resultSet: ResultSet): Unit = {
     info(s"BaseExecTaskRunner get result, now size is ${resultSets.size}")
     resultSets += resultSet
+    resultSets.notify()
   }
 
   override def markFailed(errorMsg: String, cause: Throwable): Unit = {

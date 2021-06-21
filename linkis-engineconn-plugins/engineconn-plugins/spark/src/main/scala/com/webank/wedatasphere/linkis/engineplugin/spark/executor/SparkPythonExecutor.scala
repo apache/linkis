@@ -45,8 +45,8 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, ExecutionContextExecutor, Future, Promise}
 
 /**
-  *
-  */
+ *
+ */
 class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: Int) extends SparkEngineConnExecutor(sparkEngineSession.sparkContext, id) {
 
 
@@ -94,6 +94,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   }
 
   override def close = {
+    info("python executor ready to close")
     if (process != null) {
       if (gatewayServer != null) {
         Utils.tryAndError(gatewayServer.shutdown())
@@ -104,7 +105,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
       process.destroy()
       process = null
     }
-    super.close()
+    info("python executor Finished to close")
   }
 
   override def getKind: Kind = PySpark()
@@ -126,11 +127,11 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     val pythonClasspath = new StringBuilder(pythonPath)
 
     //
-     val files = sc.getConf.get("spark.files", "")
-     info("output spark files "+ sc.getConf.get("spark.files", ""))
-     if(StringUtils.isNotEmpty(files)) {
-       pythonClasspath ++= File.pathSeparator ++= files.split(",").filter(_.endsWith(".zip")).mkString(File.pathSeparator)
-     }
+    val files = sc.getConf.get("spark.files", "")
+    info("output spark files "+ sc.getConf.get("spark.files", ""))
+    if(StringUtils.isNotEmpty(files)) {
+      pythonClasspath ++= File.pathSeparator ++= files.split(",").filter(_.endsWith(".zip")).mkString(File.pathSeparator)
+    }
     //extra python package
     val pyFiles = sc.getConf.get("spark.application.pyFiles", "")
     logger.info(s"spark.application.pyFiles => ${pyFiles}")
@@ -189,7 +190,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
       this.engineExecutionContext = engineExecutionContext
       lineOutputStream.reset(engineExecutionContext)
       lineOutputStream.ready()
-//      info("Spark scala executor reset new engineExecutorContext!")
+      //      info("Spark scala executor reset new engineExecutorContext!")
     }
     lazyInitGageWay()
     this.jobGroup= jobGroup

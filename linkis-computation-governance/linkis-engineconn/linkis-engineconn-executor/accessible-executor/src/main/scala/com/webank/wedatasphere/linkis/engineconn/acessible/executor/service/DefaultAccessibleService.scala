@@ -67,24 +67,23 @@ class DefaultAccessibleService extends AccessibleService with Logging {
     }
   }
 
-
   @EventListener
   def executorShutDownHook(event: ContextClosedEvent): Unit = {
     info("executorShutDownHook  start to execute.")
     var executor: Executor = ExecutorManager.getInstance.getReportExecutor
     if (null != executor){
-      val sensibleExecutor = executor.asInstanceOf[SensibleExecutor]
-      if (NodeStatus.isAvailable(sensibleExecutor.getStatus)) {
-        warn("executorShutDownHook  start to close executor...")
-        executor.close()
-        Utils.tryAndWarn{
-          executor.tryShutdown()
-          Thread.sleep(2000)
-        }
-        warn(s"Engine : ${Sender.getThisInstance} with state has stopped successfully.")
+      Utils.tryAndWarn{
+        executor.tryShutdown()
+        Thread.sleep(2000)
       }
+      warn(s"Engine : ${Sender.getThisInstance} with state has stopped successfully.")
+
     } else {
       executor = SensibleExecutor.getDefaultErrorSensibleExecutor
+    }
+    ExecutorManager.getInstance.getExecutors.foreach{ closeExecutor =>
+      Utils.tryAndWarn(closeExecutor.close())
+      warn(s"executorShutDownHook  start to close executor... $executor")
     }
     executorHeartbeatService.reportHeartBeatMsg(executor)
     info("Reported status shuttingDown to manager.")
@@ -93,7 +92,6 @@ class DefaultAccessibleService extends AccessibleService with Logging {
   override def stopExecutor: Unit = {
     // todo
   }
-
 
   override def pauseExecutor: Unit = {
 
@@ -104,8 +102,8 @@ class DefaultAccessibleService extends AccessibleService with Logging {
   }
 
   /**
-    * Service启动后则启动定时任务 空闲释放
-    */
+   * Service启动后则启动定时任务 空闲释放
+   */
   @PostConstruct
   def init(): Unit = {
     val context = EngineConnObject.getEngineCreationContext
@@ -137,11 +135,11 @@ class DefaultAccessibleService extends AccessibleService with Logging {
                 warn(s"Now exit with code ${ShutdownHook.getShutdownHook.getExitCode()}")
                 System.exit(ShutdownHook.getShutdownHook.getExitCode())
               } { t =>
-                  error(s"Exit error : ${ExceptionUtils.getRootCauseMessage(t)}.", t)
-                  System.exit(-1)
+                error(s"Exit error : ${ExceptionUtils.getRootCauseMessage(t)}.", t)
+                System.exit(-1)
               }
             }
-          }, 3000,1000*10, TimeUnit.MILLISECONDS)
+          }, 3000, 1000*10, TimeUnit.MILLISECONDS)
         }
       }
     }, 3 * 60 * 1000, AccessibleExecutorConfiguration.ENGINECONN_HEARTBEAT_TIME.getValue.toLong, TimeUnit.MILLISECONDS)
@@ -161,8 +159,8 @@ class DefaultAccessibleService extends AccessibleService with Logging {
   }
 
   /**
-    * service 需要加定时任务判断Executor是否空闲很久，然后调用该方法进行释放
-    */
+   * service 需要加定时任务判断Executor是否空闲很久，然后调用该方法进行释放
+   */
 
   override def requestManagerReleaseExecutor(msg: String): Unit = {
     val engineReleaseRequest = new EngineConnReleaseRequest(Sender.getThisServiceInstance, Utils.getJvmUser, msg, EngineConnManager.getEngineConnManager.getEngineConn.getEngineCreationContext.getTicketId)
@@ -204,3 +202,4 @@ class DefaultAccessibleService extends AccessibleService with Logging {
   }
 
 }
+

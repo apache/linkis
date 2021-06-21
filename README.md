@@ -54,18 +54,18 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 
 # Download
 
-Please go to the [Linkis releases page](https://github.com/WeBankFinTech/Linkis/wiki/Linkis-Releases) to download a compiled distribution or a source code package of Linkis.
+Please go to the [Linkis releases page](https://github.com/WeBankFinTech/Linkis/releases) to download a compiled distribution or a source code package of Linkis.
 
 # Compile and deploy
-Please follow [Compile Guide](https://github.com/WeBankFinTech/Linkis-Doc/blob/master/zh_CN/Development_Documents/Linkis%E7%BC%96%E8%AF%91%E6%96%87%E6%A1%A3.md) to compile Linkis from source code.  
-Please refer to [Deployment_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/zh_CN/Deployment_Documents) to do the deployment. 
+Please follow [Compile Guide](https://github.com/WeBankFinTech/Linkis-Doc/blob/master/en_US/Development_Documents/Linkis_Compilation_Document.md) to compile Linkis from source code.  
+Please refer to [Deployment_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/en_US/Deployment_Documents) to do the deployment. 
 
 # Examples and Guidance
-You can find examples and guidance for how to use and manage Linkis in [User_Manual](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/zh_CN/User_Manual), [Engine_Usage_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/zh_CN/Engine_Usage_Documentations) and [API_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/zh_CN/API_Documentations).
+You can find examples and guidance for how to use and manage Linkis in [User_Manual](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/en_US/User_Manual), [Engine_Usage_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/en_US/Engine_Usage_Documentations) and [API_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/en_US/API_Documentations).
 
 # Documentation
 
-The documentation of linkis is in [Linkis-Doc](https://github.com/WeBankFinTech/Linkis-Doc) or in the [wiki](https://github.com/WeBankFinTech/Linkis/wiki).
+The documentation of linkis is in [Linkis-Doc](https://github.com/WeBankFinTech/Linkis-Doc).
 
 # Architecture
 Linkis services could be divided into three categories: computation governance services, public enhancement services and microservice governance services.  
@@ -73,7 +73,7 @@ Linkis services could be divided into three categories: computation governance s
 - The public enhancement services, including the material library service, context service, and data source service;  
 - The microservice governance services, including Spring Cloud Gateway, Eureka and Open Feign.
 
-Below is the Linkis architecture diagram. You can find more detailed architecture docs in [Linkis-Doc/Architecture](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/zh_CN/Architecture_Documents).
+Below is the Linkis architecture diagram. You can find more detailed architecture docs in [Linkis-Doc/Architecture](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/en_US/Architecture_Documents).
 ![architecture](images/Linkis_1.0_architecture.png)
 
 Based on Linkis the computation middleware, we've built a lot of applications and tools on top of it in the big data platform suite [WeDataSphere](https://github.com/WeBankFinTech/WeDataSphere). Below are the currently available open-source projects. More projects upcoming, please stay tuned.
@@ -83,7 +83,7 @@ Based on Linkis the computation middleware, we've built a lot of applications an
 # Contributing
 
 Contributions are always welcomed, we need more contributors to build Linkis together. either code, or doc, or other supports that could help the community.  
-For code and documentation contributions, please follow the [contribution guide](https://github.com/WeBankFinTech/Linkis/blob/master/Contributing_CN.md).
+For code and documentation contributions, please follow the [contribution guide](https://github.com/WeBankFinTech/Linkis-Doc/blob/master/en_US/Development_Documents/Contributing.md).
 
 # Contact Us
 

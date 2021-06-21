@@ -42,9 +42,9 @@ import com.webank.wedatasphere.linkis.orchestrator.extensions.{CatalystExtension
 import com.webank.wedatasphere.linkis.orchestrator.{Orchestrator, OrchestratorSession}
 import org.apache.commons.lang.StringUtils
 /**
-  *
-  *
-  */
+ *
+ *
+ */
 class ComputationOrchestratorSessionFactoryImpl extends ComputationOrchestratorSessionFactory with Logging{
 
   private val codeConverterTransformBuilder = new ConverterTransformBuilder() {
@@ -72,9 +72,9 @@ class ComputationOrchestratorSessionFactoryImpl extends ComputationOrchestratorS
   }
 
   //Physical builder definition
- /* private val computePhysicalTransformBuilder = new PhysicalTransformBuilder() {
-    override def apply(v1: OrchestratorSession): PhysicalTransform = new ComputePhysicalTransform()
-  }*/
+  /* private val computePhysicalTransformBuilder = new PhysicalTransformBuilder() {
+     override def apply(v1: OrchestratorSession): PhysicalTransform = new ComputePhysicalTransform()
+   }*/
 
   private val jobExecTaskTransformBuilder = new PhysicalTransformBuilder() {
     override def apply(v1: OrchestratorSession): PhysicalTransform = new JobExecTaskTransform()
@@ -100,20 +100,14 @@ class ComputationOrchestratorSessionFactoryImpl extends ComputationOrchestratorS
     override def apply(v1: CatalystExtensions): Unit = {
 
       v1.injectConverterTransform(codeConverterTransformBuilder)
-
       v1.injectParserTransform(enrichLabelParserTransformBuilder)
-
       v1.injectParserTransform(codeStageParserTransformBuilder)
-
       v1.injectPlannerTransform(taskPlannerTransformBuilder)
-
       //v1.injectOptimizerTransform(simplyOptimizerTransformBuilder)
-
       v1.injectPhysicalTransform(jobExecTaskTransformBuilder)
       v1.injectPhysicalTransform(stageExecTaskTransformBuilder)
       v1.injectPhysicalTransform(cacheExecTaskTransformBuilder)
       v1.injectPhysicalTransform(codeExecTaskTransformBuilder)
-
       v1.injectReheaterTransform(PruneTaskRetryTransformBuilder)
     }
   }
@@ -122,48 +116,6 @@ class ComputationOrchestratorSessionFactoryImpl extends ComputationOrchestratorS
   private val jobReqCheckRulerBuilder = new ConverterCheckRulerBuilder(){
     override def apply(v1: OrchestratorSession): ConverterCheckRuler = {
       new JobReqParamCheckRuler
-    }
-  }
-
-  private val pythonCodeCheckRulerBuilder = new ConverterCheckRulerBuilder(){
-    override def apply(v1: OrchestratorSession): ConverterCheckRuler = {
-      new PythonCodeConverterCheckRuler
-    }
-  }
-
-  private val scalaCodeCheckRulerBuilder = new ConverterCheckRulerBuilder(){
-    override def apply(v1: OrchestratorSession): ConverterCheckRuler = {
-      new ScalaCodeConverterCheckRuler
-    }
-  }
-
-  private val shellDangerousCodeCheckRulerBuilder = new ConverterCheckRulerBuilder(){
-    override def apply(v1: OrchestratorSession): ConverterCheckRuler = {
-      new ShellDangerousGrammarConverterCheckRuler
-    }
-  }
-
-  private val sparkCodeCheckRulerBuilder = new ConverterCheckRulerBuilder(){
-    override def apply(v1: OrchestratorSession): ConverterCheckRuler = {
-      new SparkCodeCheckConverterCheckRuler
-    }
-  }
-
-  private val sqlCodeCheckRulerBuilder = new ConverterCheckRulerBuilder(){
-    override def apply(v1: OrchestratorSession): ConverterCheckRuler = {
-      new SQLCodeCheckConverterCheckRuler
-    }
-  }
-
-  private val commentConverterCheckRuler = new ConverterCheckRulerBuilder(){
-    override def apply(v1: OrchestratorSession): ConverterCheckRuler = {
-      new CommentConverterCheckRuler
-    }
-  }
-
-  private val sqlLimitConverterCheckRuler = new ConverterCheckRulerBuilder(){
-    override def apply(v1: OrchestratorSession): ConverterCheckRuler = {
-      new SQLLimitConverterCheckRuler
     }
   }
 
@@ -183,16 +135,7 @@ class ComputationOrchestratorSessionFactoryImpl extends ComputationOrchestratorS
     override def apply(v1: CheckRulerExtensions): Unit = {
 
       v1.injectConverterCheckRuler(jobReqCheckRulerBuilder)
-      v1.injectConverterCheckRuler(pythonCodeCheckRulerBuilder)
-      v1.injectConverterCheckRuler(scalaCodeCheckRulerBuilder)
-      v1.injectConverterCheckRuler(shellDangerousCodeCheckRulerBuilder)
-      v1.injectConverterCheckRuler(shellDangerousCodeCheckRulerBuilder)
-      v1.injectConverterCheckRuler(sparkCodeCheckRulerBuilder)
-      v1.injectConverterCheckRuler(sqlCodeCheckRulerBuilder)
-      v1.injectConverterCheckRuler(commentConverterCheckRuler)
-      v1.injectConverterCheckRuler(sqlLimitConverterCheckRuler)
       v1.injectConverterCheckRuler(varSubstitutionConverterCheckRuler)
-
       v1.injectValidatorCheckRuler(labelRegularCheckRulerBuilder)
 
     }
@@ -255,3 +198,4 @@ class ComputationOrchestratorSessionFactoryImpl extends ComputationOrchestratorS
 
   override def getOrchestrator(): Orchestrator = this.orchestrator
 }
+

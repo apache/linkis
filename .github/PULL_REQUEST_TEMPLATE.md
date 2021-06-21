@@ -9,13 +9,13 @@ Related issues: #590. )
 - Define the core abstraction and interfaces of Executor Manager.
 
 ### Verifying this change
-(Please pick either of the following options)
-This change is a trivial rework / code cleanup without any test coverage.
-(or)
-This change is already covered by existing tests, such as (please describe tests).
-(or)
+(Please pick either of the following options)  
+This change is a trivial rework / code cleanup without any test coverage.  
+(or)  
+This change is already covered by existing tests, such as (please describe tests).  
+(or)  
 This change added tests and can be verified as follows:
-(example:)
+(example:)  
 - Added tests for submit and execute all kinds of jobs to go through and verify the lifecycles of different EngineConns.
 
 ### Does this pull request potentially affect one of the following parts:

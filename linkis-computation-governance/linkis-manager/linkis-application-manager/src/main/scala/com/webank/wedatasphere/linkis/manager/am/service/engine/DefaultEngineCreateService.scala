@@ -7,6 +7,7 @@ import java.util.concurrent.{TimeUnit, TimeoutException}
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
 import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME
 import com.webank.wedatasphere.linkis.manager.am.conf.{AMConfiguration, EngineConnConfigurationService}
 import com.webank.wedatasphere.linkis.manager.am.exception.AMErrorException
@@ -129,9 +130,9 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     oldServiceInstance.setInstance(resourceTicketId)
     getEngineNodeManager.updateEngineNode(oldServiceInstance, engineNode)
 
-    //8. 新增 EngineConn的Label,添加engineConn的Alias
-    val engineConnAliasLabel = new AliasServiceInstanceLabel
-    engineConnAliasLabel.setAlias("EngineConn")
+    //8. Add EngineConn's Label, and add engineConn's AliasLabel
+    val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
+    engineConnAliasLabel.setAlias(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
     labelList.add(engineConnAliasLabel)
     nodeLabelService.addLabelsToNode(engineNode.getServiceInstance, LabelUtils.distinctLabel(labelList, fromEMGetEngineLabels(emNode.getLabels)))
     Utils.tryCatch{

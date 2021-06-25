@@ -19,3 +19,5 @@ eureka:
     response-cache-update-interval-ms: 2000
     enable-self-preservation: false
     eviction-interval-timer-in-ms: 3000
+
+    tdddd: 222

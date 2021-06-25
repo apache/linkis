@@ -1,7 +1,6 @@
 spring:
   application:
     name: DataWorkCloud
-  profiles: eureka
 
 server:
   port: 20303
@@ -16,7 +15,7 @@ eureka:
       defaultZone: http://ip:port/eureka/
 #  server:
 #    enableSelfPreservation: false
-    enable-self-preservation: false
-    eviction-interval-timer-in-ms: 3000
   server:
     response-cache-update-interval-ms: 2000
+    enable-self-preservation: false
+    eviction-interval-timer-in-ms: 3000

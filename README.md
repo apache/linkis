@@ -14,9 +14,9 @@ As a computation middleware, Linkis provides powerful connectivity, reuse, orche
 Since the first release of Linkis in 2019, it has accumulated more than **700** trial companies and **1000+** sandbox trial users, which involving diverse industries, from finance, banking, tele-communication, to manufactory, internet companies and so on. Lots of companies have already used Linkis as a unified entrance for the underlying computation and storage engines of the big data platform.
 
 
-![linkis-intro-01](https://user-images.githubusercontent.com/11496700/84615498-c3030200-aefb-11ea-9b16-7e4058bf6026.png)
+![linkis-intro-01](images/linkis-intro-01.png)
 
-![linkis-intro-03](https://user-images.githubusercontent.com/11496700/84615483-bb435d80-aefb-11ea-81b5-67f62b156628.png)
+![linkis-intro-03](images/linkis-intro-03.png)
 
 # Features
 

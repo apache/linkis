@@ -1,6 +1,6 @@
 ### What is the purpose of the change
 (For example: EngineConn-Core defines the the abstractions and interfaces of the EngineConn core functions.
-The Engine Service in Linkis 0.x is refactored, EngineConn will handle the engine connection and session management. 
+The Engine Service in Linkis 0.x is refactored, EngineConn will handle the engine connection and session management.
 Related issues: #590. )
 
 ### Brief change log
@@ -14,7 +14,7 @@ This change is a trivial rework / code cleanup without any test coverage.
 (or)  
 This change is already covered by existing tests, such as (please describe tests).  
 (or)  
-This change added tests and can be verified as follows:
+This change added tests and can be verified as follows:  
 (example:)  
 - Added tests for submit and execute all kinds of jobs to go through and verify the lifecycles of different EngineConns.
 

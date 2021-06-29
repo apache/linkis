@@ -38,24 +38,32 @@
         label_value_key, label_value_content, label_id, update_time, create_time
     </sql>
 
-    <select id="getLabelById">
+    <select id="getLabelById" resultMap="LabelMap">
         select <include refid="Label_Column_List"/>
-        from linkis_manager_label
+        from linkis_cg_manager_label
         where id = #{id}
     </select>
 
     <select id="getLabelByKeyValue" resultMap="LabelMap">
         select <include refid="Label_Column_List"/>
-        from linkis_manager_label
+        from linkis_cg_manager_label
         where label_key = #{labelKey} and label_value = #{stringValue}
     </select>
 
     <insert id="insertLabel" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.webank.wedatasphere.linkis.configuration.entity.ConfigLabel">
-        INSERT INTO linkis_manager_label(
+        INSERT INTO linkis_cg_manager_label(
         label_key, label_value,label_feature, label_value_size, update_time, create_time)
         VALUES (
         #{labelKey}, #{stringValue}, #{feature}, #{labelValueSize}, now(), now())
     </insert>
+
+    <delete id="deleteLabel">
+        DELETE FROM linkis_cg_manager_label
+        WHERE id IN
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
 
 
 

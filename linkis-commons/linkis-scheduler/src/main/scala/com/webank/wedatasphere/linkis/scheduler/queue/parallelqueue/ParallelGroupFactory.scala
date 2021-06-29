@@ -16,39 +16,21 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue
 
-import com.webank.wedatasphere.linkis.scheduler.queue.{Group, GroupFactory, SchedulerEvent}
+import com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue.FIFOGroupFactory
+import com.webank.wedatasphere.linkis.scheduler.queue.{AbstractGroup, SchedulerEvent}
 
-import scala.collection.mutable
 
+class ParallelGroupFactory extends FIFOGroupFactory{
 
-class ParallelGroupFactory extends GroupFactory{
-  private val groupMap = new mutable.HashMap[String, Group]()
-  def getInitCapacity(groupName: String): Int= 100
+  private var parallel: Int = 10
 
-  def getMaxCapacity(groupName: String): Int = 1000
+  def setParallelism(parallel: Int): Unit = this.parallel = parallel
+  def getParallelism: Int = parallel
 
-  private val UJES_CONTEXT_CONSTRUCTOR_LOCK = new Object()
+  override protected def createGroup(groupName: String): AbstractGroup =
+    new ParallelGroup(groupName, getInitCapacity(groupName), getMaxCapacity(groupName))
 
-  override def getOrCreateGroup(groupName: String) = {
-    UJES_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-      if (groupMap.get(groupName).isDefined) {
-        groupMap.get(groupName).get
-      }
-      else {
-        val group = new ParallelGroup(groupName, getInitCapacity(groupName), getMaxCapacity(groupName))
-        groupMap.put(groupName, group)
-        group
-      }
-    }
-  }
-
-  override def getGroupNameByEvent(event: SchedulerEvent) = {
-    val belongList = groupMap.values.filter(x => x.belongTo(event)).map(x => x.getGroupName).toList
-    if(belongList.size > 0){
-      belongList(0)
-    }else{
-      "NULL"
-    }
-  }
+  override protected def getGroupNameByEvent(event: SchedulerEvent): String =
+    "parallelism_" + (event.getId.hashCode % parallel)
 
 }

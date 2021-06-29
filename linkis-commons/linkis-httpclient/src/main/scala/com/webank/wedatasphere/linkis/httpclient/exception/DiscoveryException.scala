@@ -18,7 +18,5 @@ package com.webank.wedatasphere.linkis.httpclient.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-/**
-  * Created by enjoyyin on 2019/5/22.
-  */
+
 class DiscoveryException(errorDesc: String) extends ErrorException(10901, errorDesc)

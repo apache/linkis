@@ -17,7 +17,7 @@
 
 package com.webank.wedatasphere.linkis.manager.engineplugin.manager.config
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration}
 
 
 object EngineConnPluginLoaderConf {
@@ -28,7 +28,8 @@ object EngineConnPluginLoaderConf {
 
   val ENGINE_PLUGIN_LOADER_DEFAULT_USER: CommonVars[String] = CommonVars("wds.linkis.engineconn.plugin.loader.defaultUser", "hadoop")
 
-  val ENGINE_PLUGIN_STORE_PATH: CommonVars[String] = CommonVars("wds.linkis.engineconn.plugin.loader.store.path", "")
+  val ENGINE_PLUGIN_STORE_PATH: CommonVars[String] = CommonVars("wds.linkis.engineconn.plugin.loader.store.path",
+    CommonVars[String]("ENGINE_CONN_HOME", Configuration.getLinkisHome() + "/lib/linkis-engineconn-plugins").getValue)
 
   val ENGINE_PLUGIN_PROPERTIES_NAME: CommonVars[String] = CommonVars("wds.linkis.engineconn.plugin.loader.properties.name", "plugins.properties")
 

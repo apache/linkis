@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package com.webank.wedatasphere.linkis.manager.am.service.engine
@@ -21,8 +23,9 @@ import java.util
 import java.util.concurrent.{TimeUnit, TimeoutException}
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.exception.DWCRetryException
+import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
 import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME
 import com.webank.wedatasphere.linkis.manager.am.conf.{AMConfiguration, EngineConnConfigurationService}
 import com.webank.wedatasphere.linkis.manager.am.exception.AMErrorException
@@ -57,9 +60,7 @@ import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
 
 
-/**
-  * @date 2020/6/30 22:40
-  */
+
 @Service
 class DefaultEngineCreateService extends AbstractEngineService with EngineCreateService with Logging {
 
@@ -96,7 +97,7 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
   private var nodeMetricManagerPersistence: NodeMetricManagerPersistence = _
 
   @Receiver
-  @throws[DWCRetryException]
+  @throws[LinkisRetryException]
   override def createEngine(engineCreateRequest: EngineCreateRequest, smc: ServiceMethodContext): EngineNode = {
 
     info(s"Start to create Engine for request: $engineCreateRequest")
@@ -123,7 +124,7 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     //3. 执行Select  比如负载过高，返回没有负载低的EM，每个规则如果返回为空就抛出异常
     val choseNode = if (null == emScoreNodeList || emScoreNodeList.isEmpty) null else nodeSelector.choseNode(emScoreNodeList.toArray)
     if (null == choseNode || choseNode.isEmpty) {
-      throw new DWCRetryException(AMConstant.EM_ERROR_CODE, s"The em of labels${engineCreateRequest.getLabels} not found")
+      throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"The em of labels${engineCreateRequest.getLabels} not found")
     }
     val emNode = choseNode.get.asInstanceOf[EMNode]
     //4. 请求资源
@@ -147,21 +148,21 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     oldServiceInstance.setInstance(resourceTicketId)
     getEngineNodeManager.updateEngineNode(oldServiceInstance, engineNode)
 
-    //8. 新增 EngineConn的Label,添加engineConn的Alias
-    val engineConnAliasLabel = new AliasServiceInstanceLabel
-    engineConnAliasLabel.setAlias("EngineConn")
+    //8. Add EngineConn's Label, and add engineConn's AliasLabel
+    val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
+    engineConnAliasLabel.setAlias(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
     labelList.add(engineConnAliasLabel)
     nodeLabelService.addLabelsToNode(engineNode.getServiceInstance, LabelUtils.distinctLabel(labelList, fromEMGetEngineLabels(emNode.getLabels)))
-    try {
+    Utils.tryCatch{
       info(s"Start to wait idle status of engineConn($engineNode) ")
       //9 获取启动的引擎信息，并等待引擎的状态变为IDLE，如果等待超时则返回给用户，并抛出异常
       Utils.waitUntil(() => ensuresIdle(engineNode), Duration(timeout, TimeUnit.MILLISECONDS))
-    } catch {
+    }{
       case e: TimeoutException =>
         info(s"Waiting for $engineNode initialization failure , now stop it")
         val stopEngineRequest = new EngineStopRequest(engineNode.getServiceInstance, ManagerUtils.getAdminUser)
         smc.publish(stopEngineRequest)
-        throw new DWCRetryException(AMConstant.ENGINE_ERROR_CODE, s"Waiting for Engine initialization failure, already waiting $timeout ms")
+        throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, s"Waiting for Engine initialization failure, already waiting $timeout ms")
     }
     info(s"Finished to create Engine for request: $engineCreateRequest and get engineNode $engineNode")
     engineNode
@@ -173,7 +174,15 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     // 4.2 TODO 如果用户资源不足，触发用户空闲的engine回收
     //读取管理台的的配置
     if(engineCreateRequest.getProperties == null) engineCreateRequest.setProperties(new util.HashMap[String,String]())
-    engineCreateRequest.getProperties.putAll(engineConnConfigurationService.getConsoleConfiguration(labelList))
+    val configProp = engineConnConfigurationService.getConsoleConfiguration(labelList)
+    val props = engineCreateRequest.getProperties
+    if (null != configProp && configProp.nonEmpty) {
+      configProp.foreach(keyValue => {
+        if (! props.containsKey(keyValue._1)) {
+          props.put(keyValue._1, keyValue._2)
+        }
+      })
+    }
     val timeoutEngineResourceRequest = TimeoutEngineResourceRequest(timeout, engineCreateRequest.getUser, labelList, engineCreateRequest.getProperties)
     val resource = engineConnPluginPointer.createEngineResource(timeoutEngineResourceRequest)
     /*  emNode.setLabels(nodeLabelService.getNodeLabels(emNode.getServiceInstance))*/
@@ -182,7 +191,8 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
       case AvailableResource(ticketId) =>
         (ticketId, resource)
       case NotEnoughResource(reason) =>
-        throw new DWCRetryException(AMConstant.EM_ERROR_CODE, s"用户资源不足，请重试: $reason")
+        warn(s"Insufficient user resources please retry( 用户资源不足，请重试: $reason)")
+        throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"Insufficient user resources please retry( 用户资源不足，请重试: $reason)")
     }
   }
 
@@ -194,11 +204,12 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
 
   private def ensuresIdle(engineNode: EngineNode): Boolean = {
     //TODO 逻辑需要修改，修改为engineConn主动上报
-    val engineNodeInfo = Utils.tryAndWarn(getEngineNodeManager.getEngineNodeInfoByDB(engineNode))
+    val engineNodeInfo = Utils.tryAndWarnMsg(getEngineNodeManager.getEngineNodeInfoByDB(engineNode))("Failed to from db get engine node info")
+    if (null == engineNodeInfo) return false
     if (NodeStatus.isCompleted(engineNodeInfo.getNodeStatus)) {
       val metrics = nodeMetricManagerPersistence.getNodeMetrics(engineNodeInfo)
       val reason = getStartErrorInfo(metrics.getHeartBeatMsg)
-      throw new AMErrorException(AMConstant.EM_ERROR_CODE, s"初始化引擎失败,原因: ${reason}")
+      throw new AMErrorException(AMConstant.EM_ERROR_CODE, s"failed to init engine .reason:${reason} (初始化引擎失败,原因: ${reason})")
     }
     NodeStatus.isAvailable(engineNodeInfo.getNodeStatus)
   }

@@ -24,6 +24,7 @@ import com.webank.wedatasphere.linkis.message.exception.MessageWarnException;
 import com.webank.wedatasphere.linkis.message.parser.ImplicitMethod;
 import com.webank.wedatasphere.linkis.message.utils.MessageUtils;
 import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
+import com.webank.wedatasphere.linkis.rpc.MessageErrorConstants;
 import com.webank.wedatasphere.linkis.scheduler.queue.Job;
 
 import java.lang.reflect.Method;
@@ -33,9 +34,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-/**
- * @date 2020/7/21
- */
+
 public abstract class AbstractMessageExecutor extends JavaLog implements MessageExecutor {
 
     private Throwable t;
@@ -151,7 +150,7 @@ public abstract class AbstractMessageExecutor extends JavaLog implements Message
             throw ie;
         }
         if (this.t != null) {
-            throw new MessageWarnException(10000, "method call failed", t);
+            throw new MessageWarnException(MessageErrorConstants.MESSAGE_ERROR(), "method call failed", t);
         }
     }
 

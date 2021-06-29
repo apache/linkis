@@ -34,5 +34,5 @@ trait TaskExecutionReceiver {
 
   def taskResultSetReceiver(taskResultSet: ResponseTaskResultSet, smc: ServiceMethodContext): Unit
 
-  def taskErrorReceiver(taskTaskError: ResponseTaskError, smc: ServiceMethodContext): Unit
+  def taskErrorReceiver(responseTaskError: ResponseTaskError, smc: ServiceMethodContext): Unit
 }

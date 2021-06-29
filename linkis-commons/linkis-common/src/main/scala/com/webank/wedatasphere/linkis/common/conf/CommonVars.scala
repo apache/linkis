@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.common.conf
 
 import scala.collection.JavaConversions._
 
-/**
-  * Created by enjoyyin on 2018/1/9.
-  */
+
 case class CommonVars[T](key: String, defaultValue: T, value: T, description: String = null) {
   val getValue: T = BDPConfiguration.getOption(this).getOrElse(defaultValue)
   def getValue(properties: java.util.Map[String, String]): T = {

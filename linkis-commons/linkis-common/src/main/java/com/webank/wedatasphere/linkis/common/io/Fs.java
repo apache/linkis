@@ -23,9 +23,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by enjoyyin on 2017/2/4.
- */
+
 public interface Fs extends Closeable {
 
     public abstract void init(Map<String, String> properties) throws IOException;

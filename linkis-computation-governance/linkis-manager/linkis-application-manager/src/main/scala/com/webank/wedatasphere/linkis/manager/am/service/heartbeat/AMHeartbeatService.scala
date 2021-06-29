@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package com.webank.wedatasphere.linkis.manager.am.service.heartbeat
@@ -31,9 +33,7 @@ import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-/**
-  * @date 2020/7/18 22:59
-  */
+
 @Service
 class AMHeartbeatService extends HeartbeatService with Logging {
 
@@ -69,7 +69,11 @@ class AMHeartbeatService extends HeartbeatService with Logging {
     nodeMetrics.setHeartBeatMsg(nodeHeartbeatMsg.getHeartBeatMsg)
     nodeMetrics.setOverLoad(metricsConverter.convertOverLoadInfo(nodeHeartbeatMsg.getOverLoadInfo))
     nodeMetrics.setServiceInstance(nodeHeartbeatMsg.getServiceInstance)
-    nodeMetrics.setStatus(metricsConverter.convertStatus(nodeHeartbeatMsg.getStatus))
+    if(nodeHeartbeatMsg.getStatus != null){
+      nodeMetrics.setStatus(metricsConverter.convertStatus(nodeHeartbeatMsg.getStatus))
+    }else{
+      nodeMetrics.setStatus(0)
+    }
     nodeMetricManagerPersistence.addOrupdateNodeMetrics(nodeMetrics)
   }
 

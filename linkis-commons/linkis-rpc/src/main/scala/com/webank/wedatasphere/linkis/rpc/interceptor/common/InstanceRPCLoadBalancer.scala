@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.protocol.{InstanceProtocol, Protocol}
 import com.webank.wedatasphere.linkis.rpc.interceptor.RPCLoadBalancer
 import org.springframework.stereotype.Component
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 @Component
 class InstanceRPCLoadBalancer extends RPCLoadBalancer {
   override val order: Int = 10

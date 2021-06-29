@@ -30,7 +30,11 @@ public class LabelKeyConstant {
 
     public static final String YARN_CLUSTER_KEY = "yarnCluster";
 
-    public static final String ENGINE_RUN_TYPE_KEY = "engineRunType";
+    public static final String ENV_TYPE_KEY = "envType";
+
+    public static final String CACHE_KEY = "cache";
+
+    public static final String CODE_TYPE_KEY = "codeType";
 
     public static final String ENGINE_BASE_INFO_KEY = "engineBaseInfo";
 
@@ -40,4 +44,17 @@ public class LabelKeyConstant {
 
     public static final String ROUTE_KEY = "route";
 
+    public static final String BIND_ENGINE_KEY = "bindEngine";
+
+
+    public static final String JOB_QUEUING_TIMEOUT_KEY = "jobQueuingTimeout";
+
+    public static final String JOB_RUNNING_TIMEOUT_KEY = "jobRunningTimeout";
+
+    public static final String EXECUTE_ONCE_KEY = "executeOnce";
+
+    public static final String LOAD_BALANCE_KEY = "loadBalance";
+
+
+    public static final String REUSE_EXCLUSION_KEY = "reuseExclusion";
 }

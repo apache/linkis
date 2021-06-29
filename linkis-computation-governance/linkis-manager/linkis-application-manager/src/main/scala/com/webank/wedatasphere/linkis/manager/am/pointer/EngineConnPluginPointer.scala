@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package com.webank.wedatasphere.linkis.manager.am.pointer
@@ -19,9 +21,7 @@ package com.webank.wedatasphere.linkis.manager.am.pointer
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.resource.EngineResourceRequest
 
-/**
-  * @date 2020/9/17 20:15
-  */
+
 trait EngineConnPluginPointer {
 
   def createEngineResource(engineResourceRequest: EngineResourceRequest): NodeResource

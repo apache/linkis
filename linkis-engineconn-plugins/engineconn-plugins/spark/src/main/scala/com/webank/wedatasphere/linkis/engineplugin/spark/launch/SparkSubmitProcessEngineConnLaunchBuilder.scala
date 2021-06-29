@@ -17,7 +17,9 @@
 package com.webank.wedatasphere.linkis.engineplugin.spark.launch
 
 import java.lang.ProcessBuilder.Redirect
+import java.util
 
+import com.google.common.collect.Lists
 import com.webank.wedatasphere.linkis.engineplugin.spark.config.{SparkConfiguration, SparkResourceConfiguration}
 import com.webank.wedatasphere.linkis.engineplugin.spark.launch.SparkSubmitProcessEngineConnLaunchBuilder.{AbsolutePath, Path, RelativePath}
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.{DriverAndYarnResource, NodeResource}
@@ -174,10 +176,10 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
       case (key, value) =>
         if (key.startsWith("spark.")) {
           // subcommand cannot be quoted by double quote, use single quote instead
-          addOpt("--conf", Some(key + "='" + value + "'"))
+          addOpt("--conf", Some(key + "=\"" + value + "\""))
         }
         else if (key.startsWith("hive.")) {
-          addOpt("--hiveconf", Some(key + "='" + value + "'"))
+          addOpt("--hiveconf", Some(key + "=\"" + value + "\""))
         }
     }
     addOpt("--driver-memory", _driverMemory)
@@ -324,7 +326,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
       driverJavaSet.append(s" -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${variable(RANDOM_PORT)}")
     }
     this.conf(SparkConfiguration.SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, driverJavaSet.toString())
-    this.conf("spark.sql.extensions", "com.webank.wedatasphere.linkis.hook.spark.extension.SparkHistoryExtension")
+    //this.conf("spark.sql.extensions", "com.webank.wedatasphere.linkis.hook.spark.extension.SparkHistoryExtension")
     this.name(properties.getOrDefault("appName", "linkis"))
     this.className(properties.getOrDefault("className", getMainClass))
     properties.getOrDefault("archives", "").toString.split(",").map(RelativePath).foreach(this.archive)
@@ -382,6 +384,10 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
       } else {
         fsRoot + "/" + p
       }
+  }
+
+  override protected def getEngineConnManagerHooks(implicit engineConnBuildRequest: EngineConnBuildRequest): util.List[String] = {
+    Lists.newArrayList("JarUDFLoadECMHook")
   }
 
 }

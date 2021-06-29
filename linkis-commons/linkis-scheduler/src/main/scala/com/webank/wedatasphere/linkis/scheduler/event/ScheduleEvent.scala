@@ -19,9 +19,7 @@ package com.webank.wedatasphere.linkis.scheduler.event
 import com.webank.wedatasphere.linkis.common.listener.Event
 import com.webank.wedatasphere.linkis.scheduler.queue.Job
 
-/**
-  * Created by enjoyyin on 2018/8/31.
-  */
+
 trait ScheduleEvent extends Event {
   val job: Job
 }

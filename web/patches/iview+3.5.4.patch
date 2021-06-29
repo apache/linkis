@@ -1,0 +1,78 @@
+diff --git a/node_modules/iview/dist/iview.js b/node_modules/iview/dist/iview.js
+index 1de5eb9..be7b8dd 100644
+--- a/node_modules/iview/dist/iview.js
++++ b/node_modules/iview/dist/iview.js
+@@ -6134,9 +6134,12 @@ var Popper = isServer ? function () {} : __webpack_require__(106);exports.defaul
+         this.$on('on-destroy-popper', this.destroy);
+     },
+     beforeDestroy: function beforeDestroy() {
++        this.$off('on-update-popper', this.update);
++        this.$off('on-destroy-popper', this.destroy);
+         if (this.popper) {
+             this.popper.destroy();
+         }
++        this.popper = null;
+     }
+ };
+
+@@ -7159,6 +7162,7 @@ function destroy() {
+   if (this.options.removeOnDestroy) {
+     this.popper.parentNode.removeChild(this.popper);
+   }
++  this.reference = null
+   return this;
+ }
+
+@@ -7210,7 +7214,7 @@ function setupEventListeners(reference, options, state, updateBound) {
+  * @memberof Popper
+  */
+ function enableEventListeners() {
+-  if (!this.state.eventsEnabled) {
++  if (this.state.eventsEnabled === true) {
+     this.state = setupEventListeners(this.reference, this.options, this.state, this.scheduleUpdate);
+   }
+ }
+@@ -7247,7 +7251,7 @@ function removeEventListeners(reference, state) {
+  */
+ function disableEventListeners() {
+   if (this.state.eventsEnabled) {
+-    cancelAnimationFrame(this.scheduleUpdate);
++    // cancelAnimationFrame(this.scheduleUpdate);
+     this.state = removeEventListeners(this.reference, this.state);
+   }
+ }
+@@ -8614,9 +8618,10 @@ var Popper = function () {
+     var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+     classCallCheck(this, Popper);
+
+-    this.scheduleUpdate = function () {
+-      return requestAnimationFrame(_this.update);
+-    };
++    // this.scheduleUpdate = function () {
++    //   return requestAnimationFrame(_this.update);
++    // };
++    this.scheduleUpdate = _this.update.bind(this)
+
+     // make update() debounced, so that it only runs at most once-per-tick
+     this.update = debounce(this.update.bind(this));
+@@ -8664,7 +8669,6 @@ var Popper = function () {
+
+     // fire the first update to position the popper in the right place
+     this.update();
+-
+     var eventsEnabled = this.options.eventsEnabled;
+     if (eventsEnabled) {
+       // setup event listeners, they will take care of update the position in specific situations
+diff --git a/node_modules/iview/src/components/select/dropdown.vue b/node_modules/iview/src/components/select/dropdown.vue
+index c36bb28..70d98c8 100644
+--- a/node_modules/iview/src/components/select/dropdown.vue
++++ b/node_modules/iview/src/components/select/dropdown.vue
+@@ -67,7 +67,7 @@
+                             },
+                             onUpdate:()=>{
+                                 this.resetTransformOrigin();
+-                            }
++                            },
+                         });
+                     });
+                 }

@@ -77,6 +77,9 @@ public interface InsLabelService {
     @Cacheable({"instance"})
     List<ServiceInstance> searchLabelRelatedInstances(ServiceInstance serviceInstance);
 
+
+
+
     @CacheEvict(cacheNames = {"instance", "label"}, allEntries = true)
     void evictCache();
 }

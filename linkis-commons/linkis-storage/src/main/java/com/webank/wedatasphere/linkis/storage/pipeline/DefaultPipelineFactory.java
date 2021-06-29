@@ -16,8 +16,6 @@
 
 package com.webank.wedatasphere.linkis.storage.pipeline;
 
-/**
- * Created by johnnwang on 2019/1/1.
- */
+
 public class DefaultPipelineFactory {
 }

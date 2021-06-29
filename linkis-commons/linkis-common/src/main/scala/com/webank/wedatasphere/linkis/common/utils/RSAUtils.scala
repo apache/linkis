@@ -23,9 +23,7 @@ import javax.crypto.Cipher
 import org.apache.commons.codec.binary.Hex
 import org.apache.commons.net.util.Base64
 
-/**
-  * Created by enjoyyin on 2018/6/29.
-  */
+
 object RSAUtils {
   private implicit val keyPair = genKeyPair(1024)
   def genKeyPair(keyLength: Int): KeyPair = {

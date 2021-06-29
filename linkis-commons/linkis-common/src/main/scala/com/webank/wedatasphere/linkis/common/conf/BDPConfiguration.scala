@@ -18,8 +18,7 @@ package com.webank.wedatasphere.linkis.common.conf
 
 import java.io.{File, FileInputStream, IOException, InputStream}
 import java.util.Properties
-
-import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 
@@ -66,22 +65,27 @@ private[conf] object BDPConfiguration extends Logging {
 
   }
 
-  try {
+  Utils.tryCatch{
     init
-  } catch {
-    case e: Throwable =>
+  }{
+    e: Throwable =>
       warn("Failed to init conf", e)
   }
 
   private def initConfig(config: Properties, filePath: String) {
     var inputStream: InputStream = null
-    try {
-      inputStream = new FileInputStream(filePath)
-      config.load(inputStream)
-    } catch {
-      case e: IOException =>
-        error("Can't load " + filePath, e)
-    } finally IOUtils.closeQuietly(inputStream)
+
+    Utils.tryFinally{
+      Utils.tryCatch{
+        inputStream = new FileInputStream(filePath)
+        config.load(inputStream)
+      }{
+        case e: IOException =>
+          error("Can't load " + filePath, e)
+      }
+    }{
+      IOUtils.closeQuietly(inputStream)
+    }
   }
 
   def getOption(key: String): Option[String] = {

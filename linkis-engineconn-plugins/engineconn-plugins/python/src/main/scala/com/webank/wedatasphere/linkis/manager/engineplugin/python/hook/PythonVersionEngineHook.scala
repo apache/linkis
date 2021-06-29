@@ -20,10 +20,8 @@ import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
 import com.webank.wedatasphere.linkis.engineconn.common.hook.EngineConnHook
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.Executor
 import com.webank.wedatasphere.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
 import com.webank.wedatasphere.linkis.manager.engineplugin.python.executor.PythonSession
-import com.webank.wedatasphere.linkis.server.JMap
 
 
 class PythonVersionEngineHook  extends EngineConnHook with Logging{
@@ -42,12 +40,12 @@ class PythonVersionEngineHook  extends EngineConnHook with Logging{
 
   override def beforeExecutionExecute(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit = {
     info("use python execute print cmd hello")
-    engineConn.getEngine match {
+    engineConn.getEngineConnSession match {
       case pythonSession: PythonSession =>
         pythonSession.execute("print(1/2)")
           logger.info(s"print python version => ${PythonEngineConfiguration.PYTHON_VERSION.getValue}")
       case _ =>
-        logger.error(s"Invalid pythonSession : ${engineConn.getEngine().getClass.getName}")
+        logger.error(s"Invalid pythonSession : ${engineConn.getEngineConnSession.getClass.getName}")
     }
 
   }

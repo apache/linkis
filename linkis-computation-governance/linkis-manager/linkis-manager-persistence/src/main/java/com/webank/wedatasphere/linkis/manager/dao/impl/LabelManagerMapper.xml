@@ -25,8 +25,8 @@
         <foreach collection="keyValueMap" index="key" item="value" separator="union all">
             SELECT l.id AS 'id',l.label_value_size AS 'labelValueSize',l.label_key AS 'labelKey',l.label_value AS
             'stringValue',si.instance,si.name AS 'applicationName'
-            FROM linkis_manager_label l, linkis_manager_label_service_instance lsi,linkis_manager_label_value_relation
-            lvr,linkis_manager_service_instance si
+            FROM linkis_cg_manager_label l, linkis_cg_manager_label_service_instance lsi,linkis_cg_manager_label_value_relation
+            lvr,linkis_cg_manager_service_instance si
             WHERE l.id = lsi.label_id AND l.id = lvr.label_id AND lsi.service_instance = si.instance AND
             (lvr.label_value_key ,lvr.label_value_content) IN
             <foreach collection="value" index="valueKey" item="valueContent" open="(" close=")"
@@ -50,10 +50,10 @@
             parameterType="com.webank.wedatasphere.linkis.common.ServiceInstance" resultType="java.util.HashMap">
         SELECT l.id AS 'id',l.label_key AS 'labelKey',l.label_value AS 'stringValue',
         l.label_value_size AS 'labelValueSize',si.instance,si.name AS 'applicationName' FROM
-        linkis_manager_label l
-        JOIN linkis_manager_label_service_instance lsi
+        linkis_cg_manager_label l
+        JOIN linkis_cg_manager_label_service_instance lsi
         ON l.id = lsi.label_id
-        JOIN linkis_manager_service_instance si
+        JOIN linkis_cg_manager_service_instance si
         ON si.instance=lsi.service_instance
         WHERE (si.instance,si.`name`) IN
         <foreach collection="nodes" item="node" separator="," open="(" close=")">
@@ -62,13 +62,13 @@
     </select>
 
     <select id="getLabelByKeyValue"
-            resultType="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel">
-        select * from linkis_manager_label where label_key = #{labelKey} and label_value = #{stringValue}
+            resultMap="persistenceLabelResultMap">
+        select * from linkis_cg_manager_label where label_key = #{labelKey} and label_value = #{stringValue}
     </select>
 
     <select id="getNodeByLabelKeyValue" resultType="com.webank.wedatasphere.linkis.common.ServiceInstance">
-        SELECT si.instance ,si.name as 'application_name' FROM linkis_manager_label l ,
-        linkis_manager_label_service_instance lsi ,linkis_manager_service_instance si
+        SELECT si.instance ,si.name as 'application_name' FROM linkis_cg_manager_label l ,
+        linkis_cg_manager_label_service_instance lsi ,linkis_cg_manager_service_instance si
         WHERE l.id = lsi.label_id AND si.instance = lsi.service_instance and
         l.label_key = #{labelKey} and l.label_value = #{stringValue}
     </select>
@@ -77,11 +77,14 @@
                type="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel">
         <result column="label_value" property="stringValue"/>
         <result column="label_feature" property="feature"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="label_value_size" property="labelValueSize"/>
     </resultMap>
 
     <select id="listResourceLabelByValues" resultMap="persistenceLabelResultMap">
         SELECT l.*
-        FROM linkis_manager_label l ,linkis_manager_label_resource lr ,linkis_manager_label_value_relation lvr
+        FROM linkis_cg_manager_label l ,linkis_cg_manager_label_resource lr ,linkis_cg_manager_label_value_relation lvr
         WHERE l.id = lr.label_id AND l.id = lvr.label_id
         AND (lvr.label_value_key,lvr.label_value_content) IN
         <foreach collection="values" item="value" open="(" close=")" separator=",">
@@ -92,7 +95,7 @@
 
     <select id="listResourceByLaBelId"
             resultType="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource">
-        SELECT r.* FROM linkis_manager_label_resource lr, linkis_manager_linkis_resources r
+        SELECT r.* FROM linkis_cg_manager_label_resource lr, linkis_cg_manager_linkis_resources r
         WHERE lr.resource_id = r.id and
         lr.label_id = #{labelId}
     </select>
@@ -102,7 +105,7 @@
 
         <foreach collection="keyValueMap" index="key" item="value" separator="union all">
             SELECT r.*,l.label_value_size
-            FROM linkis_manager_label l ,linkis_manager_label_value_relation lvr,linkis_manager_label_resource lr,linkis_manager_linkis_resources r
+            FROM linkis_cg_manager_label l ,linkis_cg_manager_label_value_relation lvr,linkis_cg_manager_label_resource lr,linkis_cg_manager_linkis_resources r
             WHERE l.id = lr.label_id AND l.id = lvr.label_id AND lr.resource_id = r.id
             AND l.label_key = #{key}
             AND (lvr.label_value_key,lvr.label_value_content) IN
@@ -123,18 +126,18 @@
     </select>
 
     <delete id="deleteResourceByLabelIdInDirect">
-        delete from linkis_manager_linkis_resources where id in (select resource_id from linkis_manager_label_resource  where label_id = #{label_id});
+        delete from linkis_cg_manager_linkis_resources where id in (select resource_id from linkis_cg_manager_label_resource  where label_id = #{label_id});
     </delete>
 
     <delete id="deleteResourceByLabelId">
-            delete from linkis_manager_label_resource where label_id = #{label_id};
+            delete from linkis_cg_manager_label_resource where label_id = #{label_id};
     </delete>
 
     <delete id="deleteResourceByLabelKeyValuesMapsInDirect">
-        delete from linkis_manager_linkis_resources where id in (select resource_id from linkis_manager_label_resource
+        delete from linkis_cg_manager_linkis_resources where id in (select resource_id from linkis_cg_manager_label_resource
         where label_id = (select tmp.id from (
         SELECT l.id,l.label_value_size
-        FROM linkis_manager_label l ,linkis_manager_label_resource lr ,linkis_manager_label_value_relation lvr
+        FROM linkis_cg_manager_label l ,linkis_cg_manager_label_resource lr ,linkis_cg_manager_label_value_relation lvr
         WHERE l.id = lr.label_id AND l.id = lvr.label_id
         AND (l.label_key,lvr.label_value_key,lvr.label_value_content) IN
         <foreach collection="labelKeyValues" index="labelKey" item="labelValues" open="(" close=")" separator=",">
@@ -147,9 +150,9 @@
         );
     </delete>
     <delete id="deleteResourceByLabelKeyValuesMaps">
-        delete from linkis_manager_label_resource where label_id = (select tmp.id from (
+        delete from linkis_cg_manager_label_resource where label_id = (select tmp.id from (
         SELECT l.id,l.label_value_size
-        FROM linkis_manager_label l ,linkis_manager_label_resource lr ,linkis_manager_label_value_relation lvr
+        FROM linkis_cg_manager_label l ,linkis_cg_manager_label_resource lr ,linkis_cg_manager_label_value_relation lvr
         WHERE l.id = lr.label_id AND l.id = lvr.label_id
         AND (l.label_key,lvr.label_value_key,lvr.label_value_content) IN
         <foreach collection="labelKeyValues" index="labelKey" item="labelValues" open="(" close=")" separator=",">
@@ -162,13 +165,13 @@
     </delete>
 
     <delete id="batchDeleteResourceByLabelId">
-        delete from linkis_manager_linkis_resources where id in (select resource_id from linkis_manager_label_resource
+        delete from linkis_cg_manager_linkis_resources where id in (select resource_id from linkis_cg_manager_label_resource
         where label_id in
         <foreach collection="labelIds" item="labelId" open="(" close=")" separator=",">
             #{labelId}
         </foreach>
         );
-        delete from linkis_manager_label_resource where label_id in
+        delete from linkis_cg_manager_label_resource where label_id in
         <foreach collection="labelIds" item="labelId" open="(" close=");" separator=",">
             #{labelId}
         </foreach>
@@ -176,11 +179,11 @@
 
     <delete id="batchDeleteResourceByLabelKeyValuesMaps">
 
-        delete from linkis_manager_linkis_resources where id in (select resource_id from linkis_manager_label_resource
+        delete from linkis_cg_manager_linkis_resources where id in (select resource_id from linkis_cg_manager_label_resource
         where label_id in (
         select tmp.id from(
         SELECT l.id,l.label_value_size
-        FROM linkis_manager_label l ,linkis_manager_label_resource lr ,linkis_manager_label_value_relation lvr
+        FROM linkis_cg_manager_label l ,linkis_cg_manager_label_resource lr ,linkis_cg_manager_label_value_relation lvr
         WHERE l.id = lr.label_id AND l.id = lvr.label_id
         AND (l.label_key,lvr.label_value_key,lvr.label_value_content) IN
         <foreach collection="labelKeyValues" index="labelKey" item="labelValues" open="(" close=")" separator=",">
@@ -192,11 +195,11 @@
         ) as tmp
         ));
 
-        delete from linkis_manager_label_resource where label_id in
+        delete from linkis_cg_manager_label_resource where label_id in
         (
         select tmp.id from(
         SELECT l.id,l.label_value_size
-        FROM linkis_manager_label l ,linkis_manager_label_resource lr ,linkis_manager_label_value_relation lvr
+        FROM linkis_cg_manager_label l ,linkis_cg_manager_label_resource lr ,linkis_cg_manager_label_value_relation lvr
         WHERE l.id = lr.label_id AND l.id = lvr.label_id
         AND (l.label_key,lvr.label_value_key,lvr.label_value_content) IN
         <foreach collection="labelKeyValues" index="labelKey" item="labelValues" open="(" close=")" separator=",">
@@ -211,7 +214,7 @@
 
     <select id="listLabelByKeyValueMap" resultMap="persistenceLabelResultMap">
         SELECT l.*
-        FROM linkis_manager_label l ,linkis_manager_label_value_relation lvr
+        FROM linkis_cg_manager_label l ,linkis_cg_manager_label_value_relation lvr
         WHERE l.id = lvr.label_id
         AND (l.label_key,lvr.label_value_key,lvr.label_value_content) IN
         <foreach collection="keyValueMap" index="key" item="value" open="(" close=")" separator=",">
@@ -225,7 +228,7 @@
     <select id="dimListLabelByValueList" resultMap="persistenceLabelResultMap">
         <foreach collection="valueList" index="i" item="value" separator="union all">
             SELECT l.*
-            FROM linkis_manager_label l ,linkis_manager_label_value_relation lvr
+            FROM linkis_cg_manager_label l ,linkis_cg_manager_label_value_relation lvr
             WHERE l.id = lvr.label_id
             AND (lvr.label_value_key,lvr.label_value_content) IN
             <foreach collection="value" index="valueKey" item="valueContent" open="(" close=")" separator=",">
@@ -247,7 +250,7 @@
     <select id="dimListLabelByKeyValueMap" resultMap="persistenceLabelResultMap">
         <foreach collection="keyValueMap" index="key" item="value" separator="union all">
             SELECT l.*
-            FROM linkis_manager_label l ,linkis_manager_label_value_relation lvr
+            FROM linkis_cg_manager_label l ,linkis_cg_manager_label_value_relation lvr
             WHERE l.id = lvr.label_id
             AND l.label_key = #{key}
             AND (lvr.label_value_key,lvr.label_value_content) IN
@@ -270,7 +273,7 @@
     <select id="dimlistResourceLabelByKeyValueMap" resultMap="persistenceLabelResultMap">
         <foreach collection="keyValueMap" index="key" item="value" separator="union all">
             SELECT l.*
-            FROM linkis_manager_label l ,linkis_manager_label_resource lr ,linkis_manager_label_value_relation lvr
+            FROM linkis_cg_manager_label l ,linkis_cg_manager_label_resource lr ,linkis_cg_manager_label_value_relation lvr
             WHERE l.id = lr.label_id AND l.id = lvr.label_id
             AND l.label_key = #{key}
             AND (lvr.label_value_key,lvr.label_value_content) IN

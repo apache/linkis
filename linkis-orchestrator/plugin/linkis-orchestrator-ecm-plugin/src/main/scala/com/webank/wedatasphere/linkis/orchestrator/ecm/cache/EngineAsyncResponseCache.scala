@@ -60,7 +60,6 @@ class EngineAsyncResponseCacheMap extends EngineAsyncResponseCache {
     } catch {
       case t: Throwable =>
         put(id, EngineCreateError(id, ExceptionUtils.getRootCauseStackTrace(t).mkString("\n")))
-        throw t
     }
     cacheMap.remove(id)
   }

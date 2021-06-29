@@ -18,14 +18,17 @@ package com.webank.wedatasphere.linkis.orchestrator.ecm.conf
 
 import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
 
-
+/**
+  *
+  *
+  */
 object ECMPluginConf {
 
   val ECM_ENGINE_PARALLELISM = CommonVars("wds.linkis.orchestrator.ecm.engine.parallelism", 1)
 
   val ECM_MARK_ATTEMPTS = CommonVars("wds.linkis.orchestrator.ecm.mark.apply.attempts", 2)
 
-  val ECM_MARK_APPLY_TIME = CommonVars("wds.linkis.orchestrator.ecm.mark.apply.time", new TimeType("5m"))
+  val ECM_MARK_APPLY_TIME = CommonVars("wds.linkis.orchestrator.ecm.mark.apply.time", new TimeType("10m"))
 
   val ECM_ERROR_CODE = 12001
 
@@ -33,5 +36,9 @@ object ECMPluginConf {
 
   val ECM_ENGNE_CREATION_ERROR_CODE = 12003
 
+  val ECM_ENGINE_CACHE_ERROR = 12004
+
+
+  val DEFAULT_LOADBALANCE_CAPACITY = CommonVars("wds.linkis.orchestrator.ecm.loadbalance.capacity.default", 3)
 
 }

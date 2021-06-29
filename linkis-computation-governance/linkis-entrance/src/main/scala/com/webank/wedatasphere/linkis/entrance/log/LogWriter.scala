@@ -61,6 +61,7 @@ abstract class LogWriter(charset: String) extends Closeable with Flushable with 
   }("Error encounters when flush log, ")
 
   def close(): Unit = {
+    info(s" $toString logWriter close")
     flush()
     if (outputStream != null) {
       Utils.tryCatch{

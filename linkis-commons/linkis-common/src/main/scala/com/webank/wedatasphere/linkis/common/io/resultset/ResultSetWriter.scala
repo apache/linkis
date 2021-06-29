@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.common.io.resultset
 
 import com.webank.wedatasphere.linkis.common.io.{FsPath, FsWriter, MetaData, Record}
 
-/**
-  * Created by enjoyyin on 2018/9/4.
-  */
+
 abstract class ResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K, V],
                                                            maxCacheSize: Long,
                                                            storePath: FsPath) extends FsWriter[K, V] {

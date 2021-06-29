@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.storage.csv
 
-/**
-  * Created by johnnwang on 2018/11/12.
-  */
+
 class StorageCSVReader {
 
 }

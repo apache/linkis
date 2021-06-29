@@ -24,9 +24,7 @@ import com.webank.wedatasphere.linkis.rpc.interceptor.RPCLoadBalancer
 import org.apache.commons.lang.StringUtils
 import org.springframework.stereotype.Component
 
-/**
-  * Created by enjoyyin on 2019/1/14.
-  */
+
 @Component
 class SingleInstanceRPCLoadBalancer extends RPCLoadBalancer with Logging {
   override val order: Int = 20

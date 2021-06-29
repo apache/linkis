@@ -1,0 +1,319 @@
+/*!
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+// Color
+$primary-color          : #2d8cf0;
+$info-color             : #2db7f5;
+$success-color          : #19be6b;
+$processing-color       : $primary-color;
+$warning-color          : #ff9900;
+$error-color            : #ed4014;
+$normal-color           : #e6ebf1;
+$link-color             : #2D8cF0;
+$link-hover-color       : mix(#ffffff, $link-color, 20%);
+$link-active-color      : mix(#000000, $link-color, 5%);
+$selected-color         : rgba($primary-color, 90%);
+$tooltip-color          : #fff;
+$subsidiary-color       : #808695;
+$rate-star-color        : #f5a623;
+$pink-color             : rgba(243, 133, 243, 0.753);
+$yellow-color           : #f4cf2a;
+
+// Base
+$body-background        : #fff;
+$font-family            : "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+$code-family            : Consolas,Menlo,Courier,monospace;
+$title-color            : #17233d;
+$text-color             : #515a6e;
+$font-size-base         : 14px;
+$font-size-small        : 12px;
+$font-size-large        : 16px;
+$line-height-base       : 1.5;
+$line-height-computed   : floor(($font-size-base * $line-height-base));
+$border-radius-base     : 6px;
+$border-radius-small    : 4px;
+$border-radius-large    : 8px;
+$cursor-disabled        : not-allowed;
+
+// Border color
+$border-color-base      : #dcdee2;  // outside
+$border-color-split     : #e8eaec;  // inside
+$border-color-bule      : #3c8dbc;
+$border-width-base      : 1px;            // width of the border for a component
+$border-style-base      : solid;          // style of a components border
+
+// Background color
+$background-color-white       : #fff;
+$background-color-base        : #f7f7f7;  // base
+$background-color-select-hover: #f3f3f3;
+$background-color-header:  #001C40;
+$tooltip-bg                   : rgba(70, 76, 91, .9);
+$head-bg                      : #f9fafc;
+$table-thead-bg               : #f8f8f9;
+$table-thead-blue-bg          : $primary-color;
+$table-td-stripe-bg           : #f8f8f9;
+$table-td-hover-bg            : #ebf7ff;
+$table-td-highlight-bg        : #ebf7ff;
+$menu-dark-title              : #515a6e;
+$menu-dark-active-bg          : #363e4f;
+$menu-dark-subsidiary-color   : rgba(255,255,255,.7);
+$menu-dark-group-title-color  : rgba(255,255,255,.36);
+$date-picker-cell-hover-bg    : #e1f0fe;
+
+// Shadow
+$shadow-color           : rgba(0, 0, 0, .2);
+$shadow-base            : -1px 0 6px $shadow-color;
+$shadow-card            : 0 1px 1px 0 rgba(0,0,0,.1);
+$shadow-up              : 0 -1px 6px $shadow-color;
+$shadow-down            : 0 1px 6px $shadow-color;
+$shadow-left            : -1px 0 6px $shadow-color;
+$shadow-right           : 1px 0 6px $shadow-color;
+$shadow-inset           : inset 0 0 5px $shadow-color;
+
+// Button
+$btn-font-weight        : normal;
+$btn-padding-base       : 5px 15px 6px;
+$btn-padding-large      : 6px 15px 6px 15px;
+$btn-padding-small      : 1px 7px 2px;
+$btn-padding-base-icon  : 5px 15px 6px;
+$btn-padding-large-icon : 6px 15px 6px 15px;
+$btn-padding-small-icon : 1px 7px 2px;
+$btn-font-size          : 12px;
+$btn-font-size-large    : 14px;
+$btn-border-radius      : 4px;
+$btn-border-radius-small: 3px;
+$btn-group-border       : shade($primary-color, 5%);
+
+$btn-disable-color      : #c5c8ce;
+$btn-disable-bg         : $background-color-base;
+$btn-disable-border     : $border-color-base;
+
+$btn-default-color      : $text-color;
+$btn-default-bg         : #fff;
+$btn-default-border     : $border-color-base;
+
+$btn-primary-color      : #fff;
+$btn-primary-bg         : $primary-color;
+
+$btn-ghost-color        : $text-color;
+$btn-ghost-bg           : #fff;
+$btn-ghost-border       : $border-color-base;
+
+$btn-circle-size        : 32px;
+$btn-circle-size-large  : 36px;
+$btn-circle-size-small  : 24px;
+
+// Layout and Grid
+$grid-columns                : 24;
+$grid-gutter-width           : 0;
+$layout-body-background      : #f5f7f9;
+$layout-header-background    : #515a6e;
+$layout-header-height        : 64px;
+$layout-header-padding       : 0 50px;
+$layout-footer-padding       : 24px 50px;
+$layout-footer-background    : $layout-body-background;
+$layout-sider-background     : $layout-header-background;
+$layout-trigger-height       : 48px;
+$layout-trigger-color        : #fff;
+$layout-zero-trigger-width   : 36px;
+$layout-zero-trigger-height  : 42px;
+
+// Legend
+$legend-color           : #999;
+
+// Input
+$input-height-base           : 32px;
+$input-height-large          : 36px;
+$input-height-small          : 24px;
+
+$input-padding-horizontal    : 7px;
+$input-padding-vertical-base : 4px;
+$input-padding-vertical-small: 1px;
+$input-padding-vertical-large: 6px;
+
+$input-placeholder-color     : $btn-disable-color;
+$input-color                 : $text-color;
+$input-border-color          : $border-color-base;
+$input-bg                    : #fff;
+$input-group-bg              : #f8f8f9;
+
+$input-hover-border-color    : $primary-color;
+$input-focus-border-color    : $primary-color;
+$input-disabled-bg           : #f3f3f3;
+
+// Tag
+$tag-font-size          : 12px;
+
+// Media queries breakpoints
+// Extra small screen / phone
+$screen-xs              : 480px;
+$screen-xs-min          : $screen-xs;
+$screen-xs-max          : ($screen-xs-min - 1);
+
+// Small screen / tablet
+$screen-sm              : 768px;
+$screen-sm-min          : $screen-sm;
+$screen-sm-max          : ($screen-sm-min - 1);
+
+// Medium screen / desktop
+$screen-md              : 992px;
+$screen-md-min          : $screen-md;
+$screen-md-max          : ($screen-md-min - 1);
+
+// Large screen / wide desktop
+$screen-lg              : 1200px;
+$screen-lg-min          : $screen-lg;
+$screen-lg-max          : ($screen-lg-min - 1);
+
+// Z-index
+$zindex-spin            : 8;
+$zindex-affix           : 10;
+$zindex-back-top        : 10;
+$zindex-select          : 900;
+$zindex-modal           : 1000;
+$zindex-drawer          : 1000;
+$zindex-message         : 1010;
+$zindex-notification    : 1010;
+$zindex-tooltip         : 1060;
+$zindex-transfer        : 1060;
+$zindex-loading-bar     : 2000;
+$zindex-spin-fullscreen : 2010;
+
+// Animation
+$animation-time         : .3s;
+$transition-time        : .2s;
+$ease-in-out            : ease-in-out;
+
+// Slider
+$slider-color              : tint($primary-color, 20%);
+$slider-height             : 4px;
+$slider-margin             : 16px 0;
+$slider-button-wrap-size   : 18px;
+$slider-button-wrap-offset : -4px;
+$slider-disabled-color     : #ccc;
+
+// Avatar
+$avatar-size-base: 32px;
+$avatar-size-lg: 40px;
+$avatar-size-sm: 24px;
+$avatar-font-size-base: 18px;
+$avatar-font-size-lg: 24px;
+$avatar-font-size-sm: 14px;
+$avatar-bg: #ccc;
+$avatar-color: #fff;
+$avatar-border-radius: $border-radius-small;
+
+// Anchor
+$anchor-border-width: 2px;
+
+
+$dark-bg: #252a2f;
+$dark-bg-light: rgb(0, 33, 64);
+$dark-bg-dark: rgb(0, 12, 23);
+$dark-color: rgba(255, 255, 255, 0.8);
+$dark-selected-bg: rgb(24, 144, 255);
+$dark-selected-color: #ffffff;
+$dark-active-color:  #2E92F7;
+// global position variables
+$fixed: fixed;
+$absolute: absolute;
+$relative: relative;
+
+// scrollbar
+$scrollbar-color: #cdcdcd;
+
+
+// 新加入的
+// global color variables
+// button color schema
+$btn-origin-color: #0a9fec;
+$btn-over-color: #54bcf2;
+$btn-click-color: #076fa5;
+
+// actionbar color schema
+$actionbar-origin-color: #898989;
+$actionbar-over-color: #b5b5b5;
+$actionbar-click-color: #0a9fec;
+$actionbar-run-color: #ff0000;
+
+// text-color
+$text-blue: #0a9fec;
+$text-origin-color: darken(#898989, 30%);
+$text-click-color: #0a9fec;
+$text-over-color: #b5b5b5;
+$text-red-color: #ff0000;
+$text-color: #515a6e;
+$input-placeholder-color: #c5c8ce;
+$text-title-color: rgba(0, 0, 0, 0.85);
+$text-desc-color: rgba(0,0,0,0.65);
+$text-tille-light-color: rgba(255,255,255,0.85);
+
+$grey-bg-color: #eff1f6;
+$darken-grey-bg: darken(#eff1f6, 5%);
+
+// line color schema
+$line-color: darken(#dcdee2, 12%);
+
+
+$line-border: 1px solid $line-color;
+$blue-line-bd: 3px solid #0a9fec;
+$black-line-bd: 3px solid #3D3D3D;
+
+
+// global dimension variables
+$header-height: 36px;
+$sidenav-width: 45px;
+$sidewin-width: 306px;
+$sidewin-min-width: 206px;
+$sidenav-item-height: 110px;
+
+$actionbar-height: 34px;
+$editor-height: 200px;
+$editor-tab-height: 35px;
+$output-tab-height: 35px;
+$common-tab-height: 35px;
+
+// global font size variables
+$text-sz-default: 12px;
+$font-size: 12px;
+$font-size-14: 14px;
+
+// global align variables
+$align-left: left;
+$align-right: right;
+$align-center: center;
+
+// global maring padding variables
+$margin: 10px;
+$padding: 10px;
+$padding-25: 25px;
+
+// global % variables
+$percent-all: 100%;
+$percent-half: 50%;
+
+// @mixin button-stress($color)
+//   color: white
+//   background-color: $color
+
+// @mixin button-normal($color)
+//   color: $color
+//   background-color: white
+
+$workspace-background: #F4F7FB;
+
+$toolbarWidth: 40px;

@@ -22,9 +22,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 
-/**
- * @date 2020/7/23
- */
+
 public class SpringTransactionManager extends JavaLog implements TransactionManager {
 
     private final PlatformTransactionManager platformTransactionManager;

@@ -23,6 +23,7 @@ import org.json4s.JsonDSL._
 import org.json4s.{CustomSerializer, DefaultFormats, Extraction}
 
 
+
 class ResultResource
 
 case class NotEnoughResource(reason: String = null) extends ResultResource

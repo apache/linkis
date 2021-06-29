@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +13,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package com.webank.wedatasphere.linkis.manager.am.service.em
 
+import com.webank.wedatasphere.linkis.common.ServiceInstance
+import com.webank.wedatasphere.linkis.manager.am.vo.EMNodeVo
 import com.webank.wedatasphere.linkis.manager.common.entity.node.EMNode
 import com.webank.wedatasphere.linkis.manager.common.protocol.em.GetEMInfoRequest
 
@@ -24,5 +28,10 @@ trait EMInfoService {
 
   def getEM(getEMInfoRequest: GetEMInfoRequest): EMNode
 
+  def getEM(serviceInstance: ServiceInstance): EMNode
+
   def getAllEM(): Array[EMNode]
+
+  def updateEMInfo(serviceInstance: ServiceInstance, healthyStatus:String)
+
 }

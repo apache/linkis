@@ -17,7 +17,7 @@
 package com.webank.wedatasphere.linkis.instance.label.service
 
 import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
-import com.webank.wedatasphere.linkis.protocol.label.{InsLabelAttachRequest, InsLabelRefreshRequest, InsLabelRemoveRequest}
+import com.webank.wedatasphere.linkis.protocol.label._
 
 
 trait InsLabelRpcService {
@@ -39,4 +39,8 @@ trait InsLabelRpcService {
    * @param insLabelRemoveRequest request
    */
   def removeLabelsFromInstance(context: ServiceMethodContext, insLabelRemoveRequest: InsLabelRemoveRequest): Unit = ???
+
+  def queryLabelsFromInstance(context: ServiceMethodContext, insLabelQueryRequest: InsLabelQueryRequest): InsLabelQueryResponse
+
+  def queryInstanceFromLabels(context: ServiceMethodContext, labelInsQueryRequest: LabelInsQueryRequest): LabelInsQueryResponse
 }

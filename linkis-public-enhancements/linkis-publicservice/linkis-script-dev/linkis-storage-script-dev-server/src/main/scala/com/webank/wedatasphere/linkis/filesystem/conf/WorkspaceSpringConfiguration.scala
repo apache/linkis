@@ -21,9 +21,7 @@ import com.webank.wedatasphere.linkis.filesystem.quartz.FSQuartz
 import org.quartz._
 import org.springframework.context.annotation.{Bean, Configuration}
 
-/**
-  * Created by johnnwang on 2019/2/11.
-  */
+
 @Configuration
 class WorkspaceSpringConfiguration extends Logging{
   @Bean

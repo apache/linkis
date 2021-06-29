@@ -30,7 +30,9 @@ import javax.validation.Validator;
 import javax.validation.groups.Default;
 import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayInputStream;
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**

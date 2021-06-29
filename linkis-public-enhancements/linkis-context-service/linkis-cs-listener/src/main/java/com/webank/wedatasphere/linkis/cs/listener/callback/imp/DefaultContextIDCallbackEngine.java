@@ -82,85 +82,85 @@ public class DefaultContextIDCallbackEngine implements CSIDListener, ContextIDCa
         }
     }
 
-        @Override
-        public void onEvent (Event event){
-            DefaultContextIDEvent defaultContextIDEvent = null;
-            if (event != null && event instanceof DefaultContextIDEvent) {
-                defaultContextIDEvent = (DefaultContextIDEvent) event;
-            }
-            if (null == defaultContextIDEvent) {
-                logger.warn("defaultContextIDEvent event 为空");
-                return;
-            }
-            switch (defaultContextIDEvent.getOperateType()) {
-                //ADD, UPDATE, DELETE, REMOVEALL, ACCESS
-                case REMOVEALL:
-                    onCSIDRemoved(defaultContextIDEvent);
-                    break;
-                case ADD:
-                    onCSIDADD(defaultContextIDEvent);
-                    break;
-                case ACCESS:
-                    onCSIDAccess(defaultContextIDEvent);
-                    break;
-                case UPDATE:
-                    break;
-                case DELETE:
-                    break;
-                default:
-                    logger.info("检查defaultContextIDEvent event操作类型");
-            }
-
+    @Override
+    public void onEvent (Event event){
+        DefaultContextIDEvent defaultContextIDEvent = null;
+        if (event != null && event instanceof DefaultContextIDEvent) {
+            defaultContextIDEvent = (DefaultContextIDEvent) event;
+        }
+        if (null == defaultContextIDEvent) {
+            logger.warn("defaultContextIDEvent event 为空");
+            return;
+        }
+        switch (defaultContextIDEvent.getOperateType()) {
+            //ADD, UPDATE, DELETE, REMOVEALL, ACCESS
+            case REMOVEALL:
+                onCSIDRemoved(defaultContextIDEvent);
+                break;
+            case ADD:
+                onCSIDADD(defaultContextIDEvent);
+                break;
+            case ACCESS:
+                onCSIDAccess(defaultContextIDEvent);
+                break;
+            case UPDATE:
+                break;
+            case DELETE:
+                break;
+            default:
+                logger.info("check defaultContextIDEvent event operate type(检查defaultContextIDEvent event操作类型)");
         }
 
-        @Override
-        public void onCSIDAccess (ContextIDEvent contextIDEvent){
+    }
 
+    @Override
+    public void onCSIDAccess (ContextIDEvent contextIDEvent){
+
+    }
+
+    @Override
+    public void onCSIDADD (ContextIDEvent contextIDEvent){
+
+    }
+
+    @Override
+    public void onCSIDRemoved (ContextIDEvent contextIDEvent){
+
+        DefaultContextIDEvent defaultContextIDEvent = null;
+        if (contextIDEvent != null && contextIDEvent instanceof DefaultContextIDEvent) {
+            defaultContextIDEvent = (DefaultContextIDEvent) contextIDEvent;
         }
-
-        @Override
-        public void onCSIDADD (ContextIDEvent contextIDEvent){
-
+        if (null == defaultContextIDEvent) {
+            return;
         }
-
-        @Override
-        public void onCSIDRemoved (ContextIDEvent contextIDEvent){
-
-            DefaultContextIDEvent defaultContextIDEvent = null;
-            if (contextIDEvent != null && contextIDEvent instanceof DefaultContextIDEvent) {
-                defaultContextIDEvent = (DefaultContextIDEvent) contextIDEvent;
-            }
-            if (null == defaultContextIDEvent) {
-                return;
-            }
-            synchronized (removedContextIDS) {
-                removedContextIDS.add(defaultContextIDEvent.getContextID());
-            }
-        }
-
-        @Override
-        public void onEventError (Event event, Throwable t){
-
-        }
-
-
-        private static DefaultContextIDCallbackEngine singleDefaultContextIDCallbackEngine = null;
-
-        private DefaultContextIDCallbackEngine() {
-
-        }
-
-        public static DefaultContextIDCallbackEngine getInstance () {
-            if (singleDefaultContextIDCallbackEngine == null) {
-                synchronized (DefaultContextIDCallbackEngine.class) {
-                    if (singleDefaultContextIDCallbackEngine == null) {
-                        singleDefaultContextIDCallbackEngine = new DefaultContextIDCallbackEngine();
-                        DefaultContextListenerManager instanceContextListenerManager = DefaultContextListenerManager.getInstance();
-                        instanceContextListenerManager.getContextAsyncListenerBus().addListener(singleDefaultContextIDCallbackEngine);
-                        logger.info("add listerner singleDefaultContextIDCallbackEngine success");
-                    }
-                }
-            }
-            return singleDefaultContextIDCallbackEngine;
+        synchronized (removedContextIDS) {
+            removedContextIDS.add(defaultContextIDEvent.getContextID());
         }
     }
+
+    @Override
+    public void onEventError (Event event, Throwable t){
+
+    }
+
+
+    private static DefaultContextIDCallbackEngine singleDefaultContextIDCallbackEngine = null;
+
+    private DefaultContextIDCallbackEngine() {
+
+    }
+
+    public static DefaultContextIDCallbackEngine getInstance () {
+        if (singleDefaultContextIDCallbackEngine == null) {
+            synchronized (DefaultContextIDCallbackEngine.class) {
+                if (singleDefaultContextIDCallbackEngine == null) {
+                    singleDefaultContextIDCallbackEngine = new DefaultContextIDCallbackEngine();
+                    DefaultContextListenerManager instanceContextListenerManager = DefaultContextListenerManager.getInstance();
+                    instanceContextListenerManager.getContextAsyncListenerBus().addListener(singleDefaultContextIDCallbackEngine);
+                    logger.info("add listerner singleDefaultContextIDCallbackEngine success");
+                }
+            }
+        }
+        return singleDefaultContextIDCallbackEngine;
+    }
+}

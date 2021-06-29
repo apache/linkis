@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package com.webank.wedatasphere.linkis.manager.am.service.engine
@@ -19,7 +21,7 @@ package com.webank.wedatasphere.linkis.manager.am.service.engine
 import java.util
 import java.util.concurrent.{TimeUnit, TimeoutException}
 
-import com.webank.wedatasphere.linkis.common.exception.DWCRetryException
+import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
 import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration
@@ -31,6 +33,7 @@ import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode
 import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineReuseRequest
 import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.ReuseExclusionLabel
 import com.webank.wedatasphere.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import com.webank.wedatasphere.linkis.manager.label.service.{NodeLabelService, UserLabelService}
 import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils
@@ -41,9 +44,7 @@ import org.springframework.stereotype.Service
 import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
 
-/**
-  * @date 2020/7/5 17:15
-  */
+
 @Service
 class DefaultEngineReuseService extends AbstractEngineService with EngineReuseService with Logging {
 
@@ -60,7 +61,7 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
   private var engineReuseLabelChoosers: util.List[EngineReuseLabelChooser] = _
 
   @Receiver
-  @throws[DWCRetryException]
+  @throws[LinkisRetryException]
   override def reuseEngine(engineReuseRequest: EngineReuseRequest): EngineNode = {
     info(s"Start to reuse Engine for request: $engineReuseRequest")
     //TODO Label Factory And builder
@@ -80,7 +81,22 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
     }
     val instances = nodeLabelService.getScoredNodeMapsByLabels(labelList)
     if (null == instances || instances.isEmpty) {
-      throw new DWCRetryException(AMConstant.ENGINE_ERROR_CODE, s"No engine can be reused")
+      throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, s"No engine can be reused")
+    }
+    labelList.find(_.isInstanceOf[ReuseExclusionLabel]) match {
+      case Some(l) =>
+        val exclusionInstances = l.asInstanceOf[ReuseExclusionLabel].getInstances
+        val instancesIterator = instances.iterator
+        while(instancesIterator.hasNext){
+          val instance = instancesIterator.next
+          if(exclusionInstances.contains(instance._1.getServiceInstance.getInstance)){
+            instancesIterator.remove
+          }
+        }
+      case None =>
+    }
+    if (null == instances || instances.isEmpty) {
+      throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, s"No engine can be reused")
     }
     var engineScoreList = getEngineNodeManager.getEngineNodes(instances.map(_._1).toSeq.toArray)
 
@@ -91,13 +107,13 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
 
     def selectEngineToReuse: Boolean = {
       if (count > reuseLimit) {
-        throw new DWCRetryException(AMConstant.ENGINE_ERROR_CODE, s"Engine reuse exceeds limit: $reuseLimit")
+        throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, s"Engine reuse exceeds limit: $reuseLimit")
       }
       //3. 执行Select 判断label分数、判断是否可用、判断负载
       val choseNode = nodeSelector.choseNode(engineScoreList.toArray)
       //4. 获取Select后排在第一的engine，修改EngineNode的Label为新标签，并调用EngineNodeManager的reuse请求
       if (choseNode.isEmpty) {
-        throw new DWCRetryException(AMConstant.ENGINE_ERROR_CODE, "No engine can be reused")
+        throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, "No engine can be reused")
       }
       //TODO 需要加上Label不匹配判断？如果
       //5. 调用EngineNodeManager 进行reuse 如果reuse失败，则去掉该engine进行重新reuse走3和4
@@ -114,7 +130,7 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
       Utils.waitUntil(() => selectEngineToReuse, Duration(timeout, TimeUnit.MILLISECONDS))
     } catch {
       case e: TimeoutException =>
-        throw new DWCRetryException(AMConstant.ENGINE_ERROR_CODE, s"Waiting for Engine initialization failure, already waiting $timeout ms")
+        throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, s"Waiting for Engine initialization failure, already waiting $timeout ms")
       case t: Throwable =>
         info(s"Failed to reuse engineConn time taken ${System.currentTimeMillis() - startTime}")
         throw t

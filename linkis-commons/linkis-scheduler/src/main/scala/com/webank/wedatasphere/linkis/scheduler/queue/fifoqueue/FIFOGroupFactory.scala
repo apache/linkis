@@ -16,33 +16,59 @@
 
 package com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue
 
-import com.webank.wedatasphere.linkis.scheduler.queue.{Group, GroupFactory, SchedulerEvent}
+import com.webank.wedatasphere.linkis.scheduler.queue.{AbstractGroup, Group, GroupFactory, SchedulerEvent}
 
 import scala.collection.mutable
 
 
 class FIFOGroupFactory extends GroupFactory {
-  private val groupMap = new mutable.HashMap[String, Group]()
 
-  private val UJES_CONTEXT_CONSTRUCTOR_LOCK = new Object()
+  private val groupMap = new mutable.HashMap[String, Group]()
+  private val lock = new Array[Byte](0)
 
   //Obtained from the database(从数据库获取)
-  def getInitCapacity(groupName: String): Int = 1000
+  private var defaultMaxRunningJobs: Int = 1
+  private var defaultMaxAskExecutorTimes: Long = 30000l
+  private var defaultInitCapacity: Int = 1000
+  private var defaultMaxCapacity: Int = 5000
 
-  def getMaxCapacity(groupName: String): Int = 10000
+  def setDefaultMaxRunningJobs(defaultMaxRunningJobs: Int): Unit =
+    this.defaultMaxRunningJobs = defaultMaxRunningJobs
+  def getDefaultMaxRunningJobs: Int = defaultMaxRunningJobs
 
-  override def getOrCreateGroup(groupName: String) = {
-    UJES_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-      if (groupMap.get(groupName).isDefined) {
-        groupMap.get(groupName).get
-      }
-      else {
-        val group = new FIFOGroup(groupName, getInitCapacity(groupName), getMaxCapacity(groupName))
-        groupMap.put(groupName, group)
+  def setDefaultMaxAskExecutorTimes(defaultMaxAskExecutorTimes: Long): Unit =
+    this.defaultMaxAskExecutorTimes = defaultMaxAskExecutorTimes
+  def getDefaultMaxAskExecutorTimes: Long = defaultMaxAskExecutorTimes
+
+  protected def getInitCapacity(groupName: String): Int = defaultInitCapacity
+  def setDefaultInitCapacity(defaultInitCapacity: Int): Unit =
+    this.defaultInitCapacity = defaultInitCapacity
+
+  protected def getMaxCapacity(groupName: String): Int = defaultMaxCapacity
+  def setDefaultMaxCapacity(defaultMaxCapacity: Int): Unit =
+    this.defaultMaxCapacity = defaultMaxCapacity
+
+  override def getOrCreateGroup(event: SchedulerEvent): Group = {
+    val groupName = getGroupNameByEvent(event)
+    if(groupMap.contains(groupName)) return groupMap(groupName)
+    lock.synchronized {
+      groupMap.getOrElseUpdate(groupName, {
+        val group = createGroup(groupName)
+        group.setMaxRunningJobs(defaultMaxRunningJobs)
+        group.setMaxAskExecutorTimes(defaultMaxAskExecutorTimes)
         group
-      }
+      })
     }
   }
 
-  override def getGroupNameByEvent(event: SchedulerEvent) = "FIFOGROUP"
+  override def getGroup(groupName: String): Group = groupMap(groupName)
+
+  protected def createGroup(groupName: String): AbstractGroup =
+    new FIFOGroup(groupName, getInitCapacity(groupName), getMaxCapacity(groupName))
+
+  protected def getGroupNameByEvent(event: SchedulerEvent): String = FIFOGroupFactory.FIFO_GROUP_NAME
+
+}
+object FIFOGroupFactory {
+  val FIFO_GROUP_NAME = "FIFO-Group"
 }

@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.engineconn.callback.service
 
-/**
-  *  常规callBack
-  */
+
 trait EngineConnTimedCallback extends EngineConnCallback {
 
 }

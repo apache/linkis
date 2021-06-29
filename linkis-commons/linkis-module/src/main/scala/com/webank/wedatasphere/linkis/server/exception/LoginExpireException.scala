@@ -16,7 +16,5 @@
 
 package com.webank.wedatasphere.linkis.server.exception
 
-/**
-  * Created by enjoyyin on 2019/1/9.
-  */
+
 class LoginExpireException(message: String) extends NonLoginException(message)

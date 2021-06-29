@@ -1,0 +1,87 @@
+/*!
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+@import '@/common/style/variables.scss';
+.login {
+    position: $absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: $body-background;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    .login-bg {
+        position: $absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: url('../images/loginbgc.svg') no-repeat;
+        background-position: 55% 40%;
+        background-color: #001C40;
+    }
+    .login-main {
+        width: 450px;
+        height: 427px;
+        background-color: $body-background;
+        margin-right: 9.5%;
+        padding: 50px;
+        border-radius: 6px;
+        box-shadow: 2px 2px 40px 0px rgba(0, 0, 0, 0.9);
+        z-index: $zindex-spin;
+        .login-title {
+            font-size: 20px;
+            font-weight: 400px;
+            display: block;
+            text-align: center;
+            color:  #044B93;
+            font-weight: 600;
+        }
+        .label {
+            font-size: 14px;
+        }
+        input {
+            border: none;
+            height: 50px;
+            border-radius: 4px;
+            padding-left: 15px;
+            color: $input-color;
+            border: 1px solid #DEE4EC;
+        }
+        button {
+            height: 45px;
+            background-color: $btn-primary-bg;
+            box-shadow: 0px 5px 10px 0px $shadow-color;
+            border-color: $btn-primary-bg;
+        }
+    }
+    .remember-user-name {
+        margin: 5px 0 0 10px;
+    }
+    .ivu-form-item {
+        margin-bottom: 20px;
+    }
+}
+.radioGroup {
+    padding-left: 20px;
+    display: block;
+    .ivu-radio-group-item {
+        width: 100%;
+    }
+}

@@ -21,14 +21,14 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>1.0.0-RC1</version>
+        <version>1.0.0</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>linkis-engineplugin-io_file</artifactId>
     <properties>
-        <io_file.version>1</io_file.version>
+        <io_file.version>1.0</io_file.version>
     </properties>
 
     <dependencies>

@@ -36,4 +36,8 @@ public interface Constant {
 
     String VERSION_PREFIX = "v";
 
+    String UTF8_ENCODE="UTF-8";
+
+    String ISO_ENCODE="ISO8859-1";
+
 }

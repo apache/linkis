@@ -18,19 +18,17 @@ package com.webank.wedatasphere.linkis.common.utils
 
 import org.slf4j.LoggerFactory
 
-/**
-  * Created by enjoyyin on 2018/1/9.
-  */
+
 class JavaLog {
-//  if(!JavaLog.initialized) {
-//    JavaLog.initLock synchronized {
-//      if(!JavaLog.initialized) {
-//        JavaLog.initializeLogging
-//        JavaLog.initialized = true
-//      }
-//    }
-//  }
-  protected implicit lazy val logger = LoggerFactory.getLogger(getClass)//LoggerFactory.getLogger(getClass)
+  //  if(!JavaLog.initialized) {
+  //    JavaLog.initLock synchronized {
+  //      if(!JavaLog.initialized) {
+  //        JavaLog.initializeLogging
+  //        JavaLog.initialized = true
+  //      }
+  //    }
+  //  }
+  protected implicit lazy val logger = LoggerFactory.getLogger(getClass)
 
   def debug(message: Object): Unit = if (logger.isDebugEnabled && message != null) logger.debug(message.toString)
 

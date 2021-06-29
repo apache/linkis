@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.metadata.hive.config;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -58,7 +59,7 @@ public class MultiSourceExAop implements Ordered {
             DataSourceContextHolder.setDataSourceType(datasource.name());
             log.debug("设置数据源为：" + datasource.name());
         } else {
-            DataSourceContextHolder.setDataSourceType(DSEnum.FIRST_DATA_SOURCE);
+            DataSourceContextHolder.setDataSourceType(DSEnum.SECONDE_DATA_SOURCE);
             log.debug("设置数据源为：hiveDataSource");
         }
         try {

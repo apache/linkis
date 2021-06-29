@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.storage.exception.StorageErrorException
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  * Created by johnnwang on 10/16/18.
-  */
+
 class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRecord]{
 
   var metaData: TableMetaData = _

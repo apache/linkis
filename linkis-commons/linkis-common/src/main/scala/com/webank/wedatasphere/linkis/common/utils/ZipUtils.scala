@@ -24,9 +24,7 @@ import org.apache.commons.io.IOUtils
 
 import scala.collection.JavaConversions._
 
-/**
-  * Created by enjoyyin on 2018/3/6.
-  */
+
 object ZipUtils {
 
   private val BUFFER_SIZE = 4096

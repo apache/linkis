@@ -17,7 +17,6 @@ import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 
 import static com.webank.wedatasphere.linkis.datasourcemanager.common.ServiceErrorCode.PARAM_VALIDATE_ERROR;
 
-
 public class ParameterValidateException extends ErrorException {
     public ParameterValidateException(String desc) {
         super(PARAM_VALIDATE_ERROR.getValue(), desc);

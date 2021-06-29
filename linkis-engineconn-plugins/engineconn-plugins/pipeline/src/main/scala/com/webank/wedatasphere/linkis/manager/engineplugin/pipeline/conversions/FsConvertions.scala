@@ -16,9 +16,9 @@
 
 package com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.conversions
 
-import com.webank.wedatasphere.linkis.common.io.Fs
-
 import java.io.Closeable
+
+import com.webank.wedatasphere.linkis.common.io.Fs
 
 object FsConvertions {
 

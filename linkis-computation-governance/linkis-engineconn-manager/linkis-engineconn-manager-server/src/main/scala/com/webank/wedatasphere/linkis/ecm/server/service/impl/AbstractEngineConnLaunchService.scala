@@ -22,9 +22,10 @@ import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.ecm.core.engineconn.{EngineConn, EngineConnInfo}
 import com.webank.wedatasphere.linkis.ecm.core.launch._
-import com.webank.wedatasphere.linkis.ecm.server.ECMApplication
+import com.webank.wedatasphere.linkis.ecm.server.LinkisECMApplication
 import com.webank.wedatasphere.linkis.ecm.server.conf.ECMConfiguration._
 import com.webank.wedatasphere.linkis.ecm.server.engineConn.DefaultEngineConn
+import com.webank.wedatasphere.linkis.ecm.server.hook.{ECMHook, JarUDFLoadECMHook}
 import com.webank.wedatasphere.linkis.ecm.server.listener.{EngineConnAddEvent, EngineConnStatusChangeEvent}
 import com.webank.wedatasphere.linkis.ecm.server.service.{EngineConnLaunchService, ResourceLocalizationService}
 import com.webank.wedatasphere.linkis.ecm.server.util.ECMUtils
@@ -52,9 +53,13 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
   def setResourceLocalizationService(service: ResourceLocalizationService): Unit = this.resourceLocalizationService = service
 
 
-  def beforeLaunch(conn: EngineConn, duration: Long): Unit = {}
+  def beforeLaunch(request: EngineConnLaunchRequest, conn: EngineConn, duration: Long): Unit = {
+    getECMHooks(request).foreach(_.beforeLaunch(request, conn))
+  }
 
-  def afterLaunch(conn: EngineConn, duration: Long): Unit = {}
+  def afterLaunch(request: EngineConnLaunchRequest, conn: EngineConn, duration: Long): Unit = {
+    getECMHooks(request).foreach(_.afterLaunch(conn))
+  }
 
   override def launchEngineConn(request: EngineConnLaunchRequest, duration: Long): EngineNode = {
     //1.创建engineConn和runner,launch 并设置基础属性
@@ -70,13 +75,14 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
     conn.setTickedId(request.ticketId)
     conn.setStatus(NodeStatus.Starting)
     conn.setEngineConnInfo(new EngineConnInfo)
+    conn.setEngineConnManagerEnv(launch.getEngineConnManagerEnv())
     //2.资源本地化，并且设置ecm的env环境信息
     getResourceLocalizationServie.handleInitEngineConnResources(request, conn)
     //3.添加到list
-    ECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnAddEvent(conn))
+    LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnAddEvent(conn))
     //4.run
-    try {
-      beforeLaunch(conn, duration)
+    Utils.tryCatch{
+      beforeLaunch(request, conn, duration)
       runner.run()
       launch match {
         case pro: ProcessEngineConnLaunch =>
@@ -86,7 +92,7 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
       }
 
       val future = Future {
-        afterLaunch(conn, duration)
+        afterLaunch(request, conn, duration)
       }
 
       future onComplete {
@@ -97,14 +103,14 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
       }
       //超时忽略，如果状态翻转了则直接返回
       Utils.tryQuietly(Await.result(future, Duration(WAIT_ENGINECONN_PID.getValue.toLong, TimeUnit.MILLISECONDS)))
-    } catch {
+    }{
       //failed，1.被ms打断，2.超时，3.普通错误，比如process
-      case t: Throwable =>
+      t: Throwable =>
         error(s"init ${conn.getServiceInstance} failed, now stop and delete it. message: ${t.getMessage}")
         conn.getEngineConnLaunchRunner.stop()
         Sender.getSender(MANAGER_SPRING_NAME).send(EngineConnStatusCallbackToAM(conn.getServiceInstance,
           NodeStatus.ShuttingDown, " wait init failed , reason " + ExceptionUtils.getRootCauseMessage(t)))
-        ECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnStatusChangeEvent(conn.getTickedId, Failed))
+        LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnStatusChangeEvent(conn.getTickedId, Failed))
         throw t
     }
     val engineNode = new AMEngineNode()
@@ -128,6 +134,14 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
   def getResourceLocalizationServie: ResourceLocalizationService = {
     // TODO: null 抛出异常
     this.resourceLocalizationService
+  }
+
+  def getECMHooks(request: EngineConnLaunchRequest): Array[ECMHook] = {
+    ECMHook.getECMHooks.filter(h => if (null != request.engineConnManagerHooks) {
+      request.engineConnManagerHooks.contains(h.getName)
+    } else {
+      false
+    })
   }
 
 }

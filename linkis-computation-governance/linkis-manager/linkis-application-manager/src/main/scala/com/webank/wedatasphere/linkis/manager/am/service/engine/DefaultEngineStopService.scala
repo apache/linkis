@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package com.webank.wedatasphere.linkis.manager.am.service.engine
@@ -19,6 +21,7 @@ package com.webank.wedatasphere.linkis.manager.am.service.engine
 import java.util.concurrent.TimeUnit
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
 import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration
 import com.webank.wedatasphere.linkis.manager.common.protocol.engine.{EngineInfoClearRequest, EngineStopRequest, EngineSuicideRequest}
 import com.webank.wedatasphere.linkis.manager.label.service.NodeLabelService
@@ -28,9 +31,7 @@ import com.webank.wedatasphere.linkis.protocol.label.NodeLabelRemoveRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-/**
-  * @date 2020/8/4 17:33
-  */
+
 @Service
 class DefaultEngineStopService extends AbstractEngineService with EngineStopService with Logging {
 
@@ -39,6 +40,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
 
   @Receiver
   override def stopEngine(engineStopRequest: EngineStopRequest, smc: ServiceMethodContext): Unit = {
+    engineStopRequest.getServiceInstance.setApplicationName(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
     info(s" user ${engineStopRequest.getUser} prepare to stop engine ${engineStopRequest.getServiceInstance}")
     val node = getEngineNodeManager.getEngineNode(engineStopRequest.getServiceInstance)
     if (null == node) {

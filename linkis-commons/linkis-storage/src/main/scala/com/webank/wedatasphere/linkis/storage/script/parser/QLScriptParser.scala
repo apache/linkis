@@ -16,9 +16,7 @@
 
 package com.webank.wedatasphere.linkis.storage.script.parser
 
-/**
-  * Parser for .sql and .hql scripts(.sql 和.hql脚本的解析器)
-  */
+
 class QLScriptParser private extends CommonScriptParser {
   override def prefix: String = "--@set"
 

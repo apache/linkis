@@ -17,23 +17,48 @@
 package com.webank.wedatasphere.linkis.configuration.entity;
 
 public class ConfigKeyValue {
+
     private Long id;
+
     private String key;
+
     private String description;
+
     private String name;
+
     private String defaultValue;
+
     private String validateType;
+
     private String validateRange;
+
     private Boolean isAdvanced;
+
     private Boolean isHidden;
+
     private Integer level;
+
     private String engineType;
+
     private String treeName;
+
     private Long valueId;
+
     private String configValue;
+
     private Integer configLabelId;
+
     private String unit;
 
+    private Boolean isUserDefined;
+
+    public Boolean getIsUserDefined() {
+        return isUserDefined;
+    }
+
+    public void setIsUserDefined(Boolean isUserDefined) {
+        this.isUserDefined = isUserDefined;
+    }
 
     public String getEngineType() {
         return engineType;

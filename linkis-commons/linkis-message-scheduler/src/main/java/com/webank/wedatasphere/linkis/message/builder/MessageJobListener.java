@@ -22,9 +22,7 @@ import com.webank.wedatasphere.linkis.scheduler.queue.Job;
 
 import java.util.concurrent.locks.LockSupport;
 
-/**
- * @date 2020/7/17
- */
+
 public class MessageJobListener extends JavaLog implements JobListener {
 
     @Override

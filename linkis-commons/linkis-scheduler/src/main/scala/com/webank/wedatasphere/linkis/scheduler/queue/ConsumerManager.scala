@@ -21,9 +21,7 @@ import java.util.concurrent.ExecutorService
 import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
 import com.webank.wedatasphere.linkis.scheduler.listener.ConsumerListener
 
-/**
-  * Created by enjoyyin on 2018/9/1.
-  */
+
 abstract class ConsumerManager {
 
   private var schedulerContext: SchedulerContext = _

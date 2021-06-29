@@ -17,11 +17,11 @@
 package com.webank.wedatasphere.linkis.entrance.interceptor.impl
 
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
-import com.webank.wedatasphere.linkis.protocol.task.Task
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
 
 
 class DBInfoCompleteInterceptor extends EntranceInterceptor {
-  override def apply(task: Task, logAppender: java.lang.StringBuilder): Task = {
+  override def apply(task: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
     //todo Database information completion(数据库信息补全)
     task
   }

@@ -20,9 +20,7 @@
 
 package com.webank.wedatasphere.linkis.httpclient.discovery
 
-/**
-  * Created by enjoyyin on 2019/5/21.
-  */
+
 trait Discovery {
 
   def setServerUrl(serverUrl: String): Unit

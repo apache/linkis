@@ -17,8 +17,8 @@
 package com.webank.wedatasphere.linkis.entrance.parser;
 
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration$;
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask;
-import com.webank.wedatasphere.linkis.protocol.task.Task;
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest;
+import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class ParserUtils {
-
 
     private static final Map<String, String> types = new HashMap<>();
 
@@ -44,7 +43,7 @@ public final class ParserUtils {
         types.put("sparksql", "sql");
     }
 
-    public static void generateLogPath(Task task, Map<String, String> responseQueryConfig){
+    public static void generateLogPath(JobRequest jobRequest, Map<String, String> responseQueryConfig){
         String logPath = null;
         String logPathPrefix = null;
         String logMid = "log";
@@ -53,7 +52,7 @@ public final class ParserUtils {
         }
         if (StringUtils.isEmpty(logPathPrefix)){
             logPathPrefix = EntranceConfiguration$.MODULE$.DEFAULT_LOGPATH_PREFIX().getValue();
-            String umUser = ((RequestPersistTask) task).getUmUser();
+            String umUser = jobRequest.getSubmitUser();
             if (logPathPrefix.endsWith("/")){
                 logPathPrefix = logPathPrefix + umUser;
             }else{
@@ -65,20 +64,17 @@ public final class ParserUtils {
         if(logPathPrefix.endsWith("/")){
             logPathPrefix = logPathPrefix.substring(0, logPathPrefix.length() - 1);
         }
-        if (task instanceof RequestPersistTask){
-            Date date = new Date(System.currentTimeMillis());
-            SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
-            String dateString = dateFormat.format(date);
-            String creator = ((RequestPersistTask) task).getRequestApplicationName();
-            logPath = logPathPrefix + "/" + "log" +
-                      "/" + creator + "/" + dateString + "/" + ((RequestPersistTask) task).getTaskID() + ".log";
-            ((RequestPersistTask) task).setLogPath(logPath);
-        }
+        Date date = new Date(System.currentTimeMillis());
+        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
+        String dateString = dateFormat.format(date);
+        String creator = LabelUtil.getUserCreator(jobRequest.getLabels())._2;
+        logPath = logPathPrefix + "/" + "log" +
+                "/" + creator + "/" + dateString + "/" + jobRequest.getId() + ".log";
+        jobRequest.setLogPath(logPath);
     }
 
     public static String getCorrespondingType(String runType){
         return types.get(runType.toLowerCase());
     }
-
 
 }

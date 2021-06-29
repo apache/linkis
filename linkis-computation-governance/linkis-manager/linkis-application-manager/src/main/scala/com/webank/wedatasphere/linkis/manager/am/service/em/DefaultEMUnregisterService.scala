@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package com.webank.wedatasphere.linkis.manager.am.service.em
@@ -29,9 +31,7 @@ import com.webank.wedatasphere.linkis.rpc.utils.RPCUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-/**
-  * @date 2020/8/4 20:27
-  */
+
 @Service
 class DefaultEMUnregisterService extends EMUnregisterService with Logging {
 
@@ -42,6 +42,7 @@ class DefaultEMUnregisterService extends EMUnregisterService with Logging {
   override def stopEM(stopEMRequest: StopEMRequest, smc: ServiceMethodContext): Unit = {
     info(s" user ${stopEMRequest.getUser} prepare to stop em ${stopEMRequest.getEm}")
     val node = emNodeManager.getEM(stopEMRequest.getEm)
+    if (null == node) return
     if (node.getOwner != stopEMRequest.getUser) {
       info(s" ${stopEMRequest.getUser}  are not owner, will not to stopEM")
     }

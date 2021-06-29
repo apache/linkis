@@ -25,9 +25,7 @@ import com.webank.wedatasphere.linkis.message.registry.AbstractServiceRegistry;
 import com.webank.wedatasphere.linkis.message.scheduler.DefaultMessageScheduler;
 import com.webank.wedatasphere.linkis.message.tx.TransactionManager;
 
-/**
- * @date 2020/7/15
- */
+
 public class DefaultMessageSchedulerContext extends AbstractMessageSchedulerContext {
 
     {

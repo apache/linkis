@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package com.webank.wedatasphere.linkis.manager.am.selector.rule
@@ -21,9 +23,7 @@ import com.webank.wedatasphere.linkis.manager.common.entity.node.{Node, RMNode}
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
-/**
-  * @date 2020/7/4 22:54
-  */
+
 @Component
 @Order(5)
 class ResourceNodeSelectRule extends NodeSelectRule with Logging {
@@ -45,9 +45,18 @@ class ResourceNodeSelectRule extends NodeSelectRule with Logging {
   private def sortByResource(nodeA: Node, nodeB: Node): Boolean = {
     nodeA match {
       case node: RMNode if nodeB.isInstanceOf[RMNode] =>
-        Utils.tryCatch(node.getNodeResource.getLeftResource > nodeB.asInstanceOf[RMNode].getNodeResource.getLeftResource) {
+        Utils.tryCatch {
+          val nodeBRM = nodeB.asInstanceOf[RMNode]
+          if (null == node.getNodeResource || null == node.getNodeResource.getLeftResource) {
+            false
+          } else if (null == nodeBRM.getNodeResource || null == nodeBRM.getNodeResource.getLeftResource) {
+            true
+          } else {
+            node.getNodeResource.getLeftResource > nodeBRM.getNodeResource.getLeftResource
+          }
+        } {
           t: Throwable =>
-            warn("Failed to Compare resource ", t)
+            warn(s"Failed to Compare resource ${t.getMessage}")
             true
         }
       case _ => false

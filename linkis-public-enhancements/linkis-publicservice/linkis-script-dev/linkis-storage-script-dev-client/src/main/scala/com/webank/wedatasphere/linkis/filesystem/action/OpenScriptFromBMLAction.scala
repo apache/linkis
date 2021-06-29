@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.webank.wedatasphere.linkis.filesystem.action
 
 import com.webank.wedatasphere.linkis.filesystem.conf.WorkspaceClientConf
 import com.webank.wedatasphere.linkis.httpclient.request.UserAction
 
 
-/**
-  * Created by patinousward
-  */
 class OpenScriptFromBMLAction extends WorkspaceGETAction with UserAction{
 
   private var user:String = _

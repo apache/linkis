@@ -21,7 +21,6 @@ import com.webank.wedatasphere.linkis.common.listener.SingleThreadListenerBus
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
 
 /**
-  * Created by enjoyyin on 2018/10/12.
   * description: It is an implementation of SingleThreadListenerBus in Entrance Module
   */
 class EntranceEventListenerBus[L <: EntranceEventListener, E <: EntranceEvent](eventQueueCapacity: Int, name: String)

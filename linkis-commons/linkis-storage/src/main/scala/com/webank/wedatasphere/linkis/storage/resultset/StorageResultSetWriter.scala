@@ -111,7 +111,11 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,
       {
         rMetaData = metaData
         init()
-        writeLine(serializer.metaDataToBytes(metaData), true)
+        if (null == metaData) {
+          writeLine(serializer.metaDataToBytes(metaData), true)
+        } else {
+          writeLine(serializer.metaDataToBytes(metaData))
+        }
       }
       moveToWriteRow = true
     }

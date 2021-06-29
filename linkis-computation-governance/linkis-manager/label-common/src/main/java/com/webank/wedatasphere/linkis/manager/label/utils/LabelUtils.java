@@ -19,10 +19,17 @@ package com.webank.wedatasphere.linkis.manager.label.utils;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
+import com.webank.wedatasphere.linkis.common.utils.ClassUtils;
+import com.webank.wedatasphere.linkis.manager.label.constant.LabelConstant;
 import com.webank.wedatasphere.linkis.manager.label.entity.Label;
+import com.webank.wedatasphere.linkis.manager.label.entity.UserModifiable;
 import com.webank.wedatasphere.linkis.manager.label.entity.annon.ValueSerialNum;
+import com.webank.wedatasphere.linkis.manager.label.exception.LabelRuntimeException;
+import com.webank.wedatasphere.linkis.protocol.util.ImmutablePair;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -30,7 +37,14 @@ import java.util.stream.Collectors;
 
 public class LabelUtils {
 
+    private static Set<String> modifiableLabelKeyList;
+
     public static final String COMMON_VALUE = "*";
+
+    public static final String UNIVERSAL_LABEL_SEPARATOR = "-";
+
+    public static Logger logger = LoggerFactory.getLogger(LabelUtils.class);
+
 
     /**
      * If is basic type
@@ -172,9 +186,10 @@ public class LabelUtils {
                     }
                     return (T) mapper.readValue(json, tClass);
                 } catch (Exception e) {
-                    throw new RuntimeException("Fail to process method 'fromJson(" +
-                            (json.length() > 5 ? json.substring(0, 5) + "..." : json) + ": " + json.getClass() +
-                            ", " + tClass.getSimpleName() + ": "+ Class.class + ", ...: " + Class.class + ")", e);
+                logger.warn("Fail to process method 'fromJson(" +
+                        (json.length() > 5 ? json.substring(0, 5) + "..." : json) + ": " + json.getClass() +
+                        ", " + tClass.getSimpleName() + ": "+ Class.class + ", ...: " + Class.class + ")");
+                return null;
                 }
             }
             return null;
@@ -236,10 +251,13 @@ public class LabelUtils {
         if (CollectionUtils.isEmpty(labelListB)) {
             return labelListA;
         }
-        List<Label<?>> resList = new ArrayList<>(labelListA);
+        List<Label<?>> resList = new ArrayList<>();
         Set<String> labelAKeys = new HashSet<>();
         for (Label label : labelListA) {
-            labelAKeys.add(label.getLabelKey());
+            if(!labelAKeys.contains(label.getLabelKey())){
+                labelAKeys.add(label.getLabelKey());
+                resList.add(label);
+            }
         }
 
         for (Label label : labelListB) {
@@ -250,15 +268,56 @@ public class LabelUtils {
         return resList;
     }
 
-    public static Map<String, Object> labelsToMap(List<Label<?>> labelList) {
+    public static Map<String, Object> labelsToMap(List<Label<?>> labelList) throws LabelRuntimeException {
         if (CollectionUtils.isEmpty(labelList)) {
             return null;
         }
         Map<String, Object> labelMap = new HashMap<>();
         for (Label<?> label : labelList) {
-            labelMap.put(label.getLabelKey(), label.getStringValue());
+            if (!labelMap.containsKey(label.getLabelKey())) {
+                labelMap.put(label.getLabelKey(), label.getStringValue());
+            } else {
+                throw new LabelRuntimeException(LabelConstant.LABEL_UTIL_CONVERT_ERROR_CODE, "Got more than one " + label.getLabelKey() + " label, some will be dropped, use labelsToPairList instead.");
+            }
         }
         return labelMap;
+    }
+
+    public static List<ImmutablePair<String, String>> labelsToPairList(List<Label<?>> labelList) {
+        if (CollectionUtils.isEmpty(labelList)) {
+            return null;
+        }
+        List<ImmutablePair<String, String>> rsList = new ArrayList<>(labelList.size());
+        for (Label<?> label : labelList) {
+            if (null != label) {
+                rsList.add(new ImmutablePair<String, String>(label.getLabelKey(), label.getStringValue()));
+            } else {
+                logger.warn("LabelList contans empty label.");
+            }
+        }
+        return rsList;
+    }
+
+    public static Set<String> listAllUserModifiableLabel(){
+        if(modifiableLabelKeyList != null){
+            return modifiableLabelKeyList;
+        }
+        Set<Class<? extends Label>> labelSet =  ClassUtils.reflections().getSubTypesOf(Label.class);
+        Set<String> result = new HashSet<>();
+        labelSet.stream().forEach(label -> {
+            try {
+                if (! ClassUtils.isInterfaceOrAbstract(label)) {
+                    Label instanceLabel = label.newInstance();
+                    if(instanceLabel instanceof UserModifiable){
+                        result.add(instanceLabel.getLabelKey());
+                    }
+                }
+            } catch (InstantiationException | IllegalAccessException e) {
+                logger.info("Failed to instantiation", e);
+            }
+        });
+        modifiableLabelKeyList = result;
+        return modifiableLabelKeyList;
     }
 
 }

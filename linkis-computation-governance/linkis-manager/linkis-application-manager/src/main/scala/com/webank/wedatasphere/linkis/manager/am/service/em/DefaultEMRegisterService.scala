@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package com.webank.wedatasphere.linkis.manager.am.service.em
@@ -24,19 +26,19 @@ import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration
 import com.webank.wedatasphere.linkis.manager.am.manager.EMNodeManager
 import com.webank.wedatasphere.linkis.manager.common.constant.AMConstant
 import com.webank.wedatasphere.linkis.manager.common.entity.node.{AMEMNode, EMNode}
-import com.webank.wedatasphere.linkis.manager.common.protocol.em.RegisterEMRequest
+import com.webank.wedatasphere.linkis.manager.common.protocol.em.{RegisterEMRequest, RegisterEMResponse}
 import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import com.webank.wedatasphere.linkis.manager.label.entity.em.EMInstanceLabel
 import com.webank.wedatasphere.linkis.message.annotation.{Order, Receiver}
+import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
 import com.webank.wedatasphere.linkis.message.publisher.MessagePublisher
 import com.webank.wedatasphere.linkis.protocol.label.NodeLabelAddRequest
 import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang.exception.ExceptionUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-/**
-  * @date 2020/8/4 20:14
-  */
+
 @Service
 class DefaultEMRegisterService extends EMRegisterService with Logging {
 
@@ -64,7 +66,7 @@ class DefaultEMRegisterService extends EMRegisterService with Logging {
     */
   @Receiver
   @Order(1)
-  override def addEMNodeInstance(emRegister: RegisterEMRequest): Unit = {
+  override def addEMNodeInstance(emRegister: RegisterEMRequest, smc: ServiceMethodContext): Unit = Utils.tryCatch{
     info(s"Start to save em{${emRegister.getServiceInstance}}  in persistence")
     emNodeManager.addEMNodeInstance(registerEMRequest2EMNode(emRegister))
     info(s"Finished to save em{${emRegister.getServiceInstance}}  in persistence")
@@ -80,6 +82,10 @@ class DefaultEMRegisterService extends EMRegisterService with Logging {
     val job = publisher.publish(instanceLabelAddRequest)
     Utils.tryAndWarn(job.get(AMConfiguration.EM_LABEL_INIT_WAIT.getValue.toLong, TimeUnit.MILLISECONDS))
     info(s"Finished to deal em{${emRegister.getServiceInstance}} label ")
+    smc.setResult(RegisterEMResponse(isSuccess = true))
+  }{ t =>
+    error(s"Failed to register ecm ${emRegister.getServiceInstance}", t)
+    smc.setResult(RegisterEMResponse(isSuccess = false, ExceptionUtils.getRootCauseMessage(t)))
   }
 
   /**

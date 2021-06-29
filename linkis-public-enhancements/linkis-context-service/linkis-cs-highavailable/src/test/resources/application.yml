@@ -2,7 +2,7 @@ server:
   port: 9010
 spring:
   application:
-    name: linkis-ps-contextservice
+    name: linkis-ps-cs
 
 eureka:
   client:

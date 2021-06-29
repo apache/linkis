@@ -92,12 +92,12 @@ public class PersistenceTuningAspect {
         }
         Signature signature = point.getSignature();
         if (!(signature instanceof MethodSignature)) {
-            throw new IllegalArgumentException("该注解只能用于方法");
+            throw new IllegalArgumentException("This annotation can only be used for methods(该注解只能用于方法)");
         }
         MethodSignature methodSignature = (MethodSignature) signature;
         Object target = point.getTarget();
         Method currentMethod = target.getClass().getMethod(methodSignature.getName(), methodSignature.getParameterTypes());
-        logger.info("调用方法：" + currentMethod.getName());
+        logger.info("call method (调用方法)：" + currentMethod.getName());
         return tuningMethod.invoke(tuningObject, point.proceed());
     }
 

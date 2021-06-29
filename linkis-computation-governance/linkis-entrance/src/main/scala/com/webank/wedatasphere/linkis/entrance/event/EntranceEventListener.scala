@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.entrance.event
 
 import com.webank.wedatasphere.linkis.common.listener.{Event, EventListener}
 
-/**
-  * Created by enjoyyin on 2018/10/12.
-  */
+
 trait EntranceEventListener extends EventListener {
   def onEvent(event: EntranceEvent): Unit
 

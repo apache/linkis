@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.common.utils
 
 import org.slf4j.LoggerFactory
 
-/**
-  * Created by enjoyyin on 2016/8/22.
-  */
+
 trait Logging {
 
   protected lazy implicit val logger = LoggerFactory.getLogger(getClass)

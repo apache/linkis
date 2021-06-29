@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2019 WeBank
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.webank.wedatasphere.linkis.bml.dao.VersionDao">
 
@@ -21,14 +36,14 @@
     </resultMap>
 
     <select id="getVersion" resultMap="Version">
-        select version, resource from linkis_resources_version
+        select version, resource from linkis_ps_bml_resources_version
         where resource_id = #{resourceId} and version = #{version} and enable_flag = 1
     </select>
 
 
     <select id="getResourcesVersions" resultMap="ResourceVersion" parameterType="java.util.Map">
-        select r.sys, r.owner, rv.resource_id, rv.version, rv.resource from linkis_resources_version rv
-        INNER JOIN linkis_resources r ON rv.resource_id = r.resource_id
+        select r.sys, r.owner, rv.resource_id, rv.version, rv.resource from linkis_ps_bml_resources_version rv
+        INNER JOIN linkis_ps_bml_resources r ON rv.resource_id = r.resource_id
         <where>
             rv.enable_flag = 1 and r.enable_flag = 1
             <if test="system != null and system != '' ">
@@ -48,19 +63,19 @@
     </select>
 
     <update id="deleteVersion">
-        UPDATE linkis_resources_version SET
+        UPDATE linkis_ps_bml_resources_version SET
           enable_flag = 0
         WHERE resource_id = #{resourceId} AND version = #{version}
     </update>
 
     <update id="deleteVersions">
-        UPDATE linkis_resources_version SET
+        UPDATE linkis_ps_bml_resources_version SET
           enable_flag = 0
         WHERE resource_id = #{resourceId}
     </update>
 
     <update id="bathDeleteVersions">
-        UPDATE linkis_resources_version SET
+        UPDATE linkis_ps_bml_resources_version SET
           enable_flag = 0
         <where>
             <if test="resourceIds != null">
@@ -89,50 +104,50 @@
 
     <insert id="insertNewVersion" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
             parameterType="com.webank.wedatasphere.linkis.bml.Entity.ResourceVersion">
-        INSERT INTO linkis_resources_version(<include refid="resource_version_columns"/>)
+        INSERT INTO linkis_ps_bml_resources_version(<include refid="resource_version_columns"/>)
         VALUES (#{resourceId}, #{fileMd5}, #{version}, #{size}, #{startByte}, #{endByte}, #{resource}, #{description},
         #{startTime}, #{endTime}, #{clientIp}, #{updator}, #{enableFlag})
     </insert>
 
     <select id="getResourcePath" parameterType="java.lang.String" resultType="java.lang.String">
         select resource
-        from linkis_resources_version
+        from linkis_ps_bml_resources_version
         WHERE resource_id = #{resourceId} limit 1
     </select>
 
     <select id="getNewestVersion" parameterType="java.lang.String" resultType="java.lang.String">
         SELECT max(version)
-        FROM linkis_resources_version
+        FROM linkis_ps_bml_resources_version
         WHERE resource_id = #{resourceId} AND enable_flag = 1
     </select>
 
     <select id="getVersions" parameterType="java.lang.String" resultMap="Version">
-        select `version`,`resource` from linkis_resources_version where `resource_id` = #{resourceId}
+        select `version`,`resource` from linkis_ps_bml_resources_version where `resource_id` = #{resourceId}
     </select>
 
 
     <select id="selectVersionByPage" parameterType="java.lang.String" resultMap="Version">
-        select `version`,`resource` from linkis_resources_version
+        select `version`,`resource` from linkis_ps_bml_resources_version
         where  `resource_id` = #{resourceId}
         order by start_time desc,version desc
     </select>
 
 
     <select id="getAllResourcesViaSystem" parameterType="java.lang.String" resultMap="ResourceVersion">
-        select * from linkis_resources_version
-        where `resource_id` in (select `resource_id` from linkis_resources where `sys`=#{system} and `owner`=#{user})
+        select * from linkis_ps_bml_resources_version
+        where `resource_id` in (select `resource_id` from linkis_ps_bml_resources where `sys`=#{system} and `owner`=#{user})
         order by start_time desc , version desc
     </select>
 
     <select id="selectResourcesViaSystemByPage" parameterType="java.lang.String" resultMap="ResourceVersion">
-        select * from linkis_resources_version
-        where `resource_id` in (select `resource_id` from linkis_resources where `sys`=#{system} and `owner`=#{user})
+        select * from linkis_ps_bml_resources_version
+        where `resource_id` in (select `resource_id` from linkis_ps_bml_resources where `sys`=#{system} and `owner`=#{user})
         order by start_time desc , version desc
     </select>
 
 
     <update id="batchDeleteResources">
-        update linkis_resources_version
+        update linkis_ps_bml_resources_version
         set enable_flag = 0
         where  enable_flag = 1 and resource_id in
         <foreach collection="resourceIds" item="resourceId" open="(" separator="," close=")">
@@ -142,7 +157,7 @@
 
 
     <select id="getResourceVersion" resultMap="ResourceVersion">
-        select * from linkis_resources_version where resource_id = #{resourceId} and version = #{version}  and enable_flag = 1
+        select * from linkis_ps_bml_resources_version where resource_id = #{resourceId} and version = #{version}  and enable_flag = 1
     </select>
 
 </mapper>

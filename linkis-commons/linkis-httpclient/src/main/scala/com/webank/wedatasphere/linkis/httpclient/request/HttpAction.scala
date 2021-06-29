@@ -22,9 +22,7 @@ import java.util
 import org.apache.http.cookie.Cookie
 
 
-/**
-  * Created by enjoyyin on 2019/5/16.
-  */
+
 trait HttpAction extends Action {
 
   private val headerParams: util.Map[String, String] = new util.HashMap[String, String]

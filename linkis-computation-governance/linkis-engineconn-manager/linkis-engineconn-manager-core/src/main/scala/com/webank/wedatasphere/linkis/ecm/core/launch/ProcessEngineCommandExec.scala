@@ -42,7 +42,7 @@ class ShellProcessEngineCommandExec(command: Array[String], baseDir: String,
 
   override def execute(): Unit = {
 
-    info(s"Invoke subProcess, base dir ${this.baseDir} cmd is: ${command.mkString}")
+    info(s"Invoke subProcess, base dir ${this.baseDir} cmd is: ${command.mkString(" ")}")
     val builder = new ProcessBuilder(command: _*)
     if (environment != null) builder.environment.putAll(this.environment)
     if (baseDir != null) builder.directory(new File(this.baseDir))

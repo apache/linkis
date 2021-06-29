@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +13,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package com.webank.wedatasphere.linkis.manager.am.service.engine
 
+import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.governance.common.protocol.engineconn.{RequestEngineStatusBatch, ResponseEngineStatusBatch}
+import com.webank.wedatasphere.linkis.manager.am.vo.AMEngineNodeVo
 import com.webank.wedatasphere.linkis.manager.common.entity.node.{EMNode, EngineNode}
 
-/**
- *
- */
+
 trait EngineInfoService {
   /**
    * 通过user获取EngineNode 的基本信息，含metric
@@ -40,4 +42,7 @@ trait EngineInfoService {
   def listEMEngines(em: EMNode): java.util.List[EngineNode]
 
   def dealBatchGetEngineStatus(request: RequestEngineStatusBatch): ResponseEngineStatusBatch = ResponseEngineStatusBatch(null, "Please implements method")
+
+  def modifyEngineLabel(instance: ServiceInstance, map: java.util.Map[String,String]):Unit
+
 }

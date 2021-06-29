@@ -25,7 +25,7 @@ import com.webank.wedatasphere.linkis.ecm.server.conf.ECMConfiguration._
 import com.webank.wedatasphere.linkis.ecm.server.listener.{ECMClosedEvent, ECMReadyEvent}
 import com.webank.wedatasphere.linkis.ecm.server.service.ECMRegisterService
 import com.webank.wedatasphere.linkis.manager.common.entity.resource._
-import com.webank.wedatasphere.linkis.manager.common.protocol.em.{RegisterEMRequest, StopEMRequest}
+import com.webank.wedatasphere.linkis.manager.common.protocol.em.{RegisterEMRequest, RegisterEMResponse, StopEMRequest}
 import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant
 import com.webank.wedatasphere.linkis.rpc.Sender
 
@@ -50,10 +50,6 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
     // TODO: magic
     labels += LabelKeyConstant.SERVER_ALIAS_KEY -> Collections.singletonMap("alias", ENGINE_CONN_MANAGER_SPRING_NAME)
     // TODO: group  by key
-    /*    params.foreach {
-          case labelRegex(key, valueKey, valueContent) => labels += key -> (valueKey, valueContent)
-          case _ =>
-        }*/
     labels
   }
 
@@ -85,9 +81,22 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
     request
   }
 
-  override def registerECM(request: RegisterEMRequest): Unit = {
+  override def registerECM(request: RegisterEMRequest): Unit = Utils.tryCatch{
     info("start register ecm")
-    Sender.getSender(MANAGER_SPRING_NAME).send(request)
+    val response = Sender.getSender(MANAGER_SPRING_NAME).ask(request)
+    response match {
+      case RegisterEMResponse(isSuccess, msg) =>
+        if (!isSuccess) {
+          error(s"Failed to register info to linkis manager, reason: $msg")
+          System.exit(1)
+        }
+      case  _ =>
+        error(s"Failed to register info to linkis manager, get response is $response")
+        System.exit(1)
+    }
+  }{ t =>
+    error(s"Failed to register info to linkis manager: ", t)
+    System.exit(1)
   }
 
   override def unRegisterECM(request: StopEMRequest): Unit = {

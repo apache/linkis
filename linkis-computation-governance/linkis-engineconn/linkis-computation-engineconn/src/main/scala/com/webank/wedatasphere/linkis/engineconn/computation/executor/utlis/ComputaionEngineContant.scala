@@ -22,4 +22,7 @@ object ComputaionEngineContant {
   def RETRYABLE_TYPE_NAME = "taskRetryable"
 
   def LOCK_TYPE_NAME = "lock"
+
+  def JOB_IN_RUNTIME_MAP_KEY = "job"
+
 }

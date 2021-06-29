@@ -18,9 +18,7 @@ package com.webank.wedatasphere.linkis.server.exception
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 
-/**
-  * Created by enjoyyin on 2018/11/4.
-  */
+
 class FetchMapCacheFailedException(errCode:Int,
                                     desc:String) extends ErrorException(errCode, desc) {
 

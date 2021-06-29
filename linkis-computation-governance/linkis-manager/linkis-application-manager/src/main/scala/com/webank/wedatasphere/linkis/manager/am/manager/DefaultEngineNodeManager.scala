@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package com.webank.wedatasphere.linkis.manager.am.manager
@@ -19,8 +21,9 @@ package com.webank.wedatasphere.linkis.manager.am.manager
 import java.util
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.exception.DWCRetryException
+import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
 import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration
 import com.webank.wedatasphere.linkis.manager.am.locker.EngineNodeLocker
 import com.webank.wedatasphere.linkis.manager.common.constant.AMConstant
 import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
@@ -37,9 +40,7 @@ import org.springframework.stereotype.Service
 
 import scala.collection.JavaConversions._
 
-/**
-  * @date 2020/7/4 15:50
-  */
+
 @Service
 class DefaultEngineNodeManager extends EngineNodeManager with Logging {
 
@@ -125,16 +126,18 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
     if (!NodeStatus.isLocked(node.getNodeStatus)) {
       val lockStr = engineLocker.lockEngine(node, timeout)
       if (lockStr.isEmpty) {
-        throw new DWCRetryException(AMConstant.ENGINE_ERROR_CODE, s"Failed to request lock from engine ${node.getServiceInstance}")
+        throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, s"Failed to request lock from engine ${node.getServiceInstance}")
       }
       node.setLock(lockStr.get)
+      node
+    } else {
+      null
     }
-    node
   }
 
 
   override def useEngine(engineNode: EngineNode): EngineNode = {
-    useEngine(engineNode, -1)
+    useEngine(engineNode, AMConfiguration.ENGINE_LOCKER_MAX_TIME.getValue)
   }
 
 

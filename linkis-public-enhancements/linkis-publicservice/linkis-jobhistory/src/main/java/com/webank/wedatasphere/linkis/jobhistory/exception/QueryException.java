@@ -17,9 +17,6 @@
 package com.webank.wedatasphere.linkis.jobhistory.exception;
 
 
-/**
- * Created by johnnwang on 2018/10/10.
- */
 public class QueryException extends Exception {
     public QueryException(String message) {
         super(message);

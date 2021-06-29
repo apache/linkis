@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package com.webank.wedatasphere.linkis.manager.am.service.engine
@@ -21,9 +23,7 @@ import com.webank.wedatasphere.linkis.manager.common.protocol.engine.{EngineConn
 import com.webank.wedatasphere.linkis.message.annotation.Receiver
 import org.springframework.stereotype.Service
 
-/**
-  * @date 2020/8/4 21:39
-  */
+
 @Service
 class DefaultEngineKillService extends AbstractEngineService with EngineKillService with Logging {
 

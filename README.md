@@ -14,9 +14,9 @@ As a computation middleware, Linkis provides powerful connectivity, reuse, orche
 Since the first release of Linkis in 2019, it has accumulated more than **700** trial companies and **1000+** sandbox trial users, which involving diverse industries, from finance, banking, tele-communication, to manufactory, internet companies and so on. Lots of companies have already used Linkis as a unified entrance for the underlying computation and storage engines of the big data platform.
 
 
-![linkis-intro-01](https://user-images.githubusercontent.com/11496700/84615498-c3030200-aefb-11ea-9b16-7e4058bf6026.png)
+![linkis-intro-01](images/linkis-intro-01.png)
 
-![linkis-intro-03](https://user-images.githubusercontent.com/11496700/84615483-bb435d80-aefb-11ea-81b5-67f62b156628.png)
+![linkis-intro-03](images/linkis-intro-03.png)
 
 # Features
 
@@ -58,7 +58,8 @@ Please go to the [Linkis releases page](https://github.com/WeBankFinTech/Linkis/
 
 # Compile and deploy
 Please follow [Compile Guide](https://github.com/WeBankFinTech/Linkis-Doc/blob/master/en_US/Development_Documents/Linkis_Compilation_Document.md) to compile Linkis from source code.  
-Please refer to [Deployment_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/en_US/Deployment_Documents) to do the deployment. 
+Please refer to [Deployment_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/en_US/Deployment_Documents) to do the deployment.
+
 
 # Examples and Guidance
 You can find examples and guidance for how to use and manage Linkis in [User_Manual](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/en_US/User_Manual), [Engine_Usage_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/en_US/Engine_Usage_Documentations) and [API_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/en_US/API_Documentations).
@@ -68,9 +69,9 @@ You can find examples and guidance for how to use and manage Linkis in [User_Man
 The documentation of linkis is in [Linkis-Doc](https://github.com/WeBankFinTech/Linkis-Doc).
 
 # Architecture
-Linkis services could be divided into three categories: computation governance services, public enhancement services and microservice governance services.  
-- The computation governance services, support the 3 major stages of processing a task/request: submission -> preparation -> execution;  
-- The public enhancement services, including the material library service, context service, and data source service;  
+Linkis services could be divided into three categories: computation governance services, public enhancement services and microservice governance services.
+- The computation governance services, support the 3 major stages of processing a task/request: submission -> preparation -> execution;
+- The public enhancement services, including the material library service, context service, and data source service;
 - The microservice governance services, including Spring Cloud Gateway, Eureka and Open Feign.
 
 Below is the Linkis architecture diagram. You can find more detailed architecture docs in [Linkis-Doc/Architecture](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/en_US/Architecture_Documents).

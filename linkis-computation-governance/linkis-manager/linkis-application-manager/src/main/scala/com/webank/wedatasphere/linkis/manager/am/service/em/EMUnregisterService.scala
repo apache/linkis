@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright 2019 WeBank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package com.webank.wedatasphere.linkis.manager.am.service.em
@@ -19,9 +21,7 @@ package com.webank.wedatasphere.linkis.manager.am.service.em
 import com.webank.wedatasphere.linkis.manager.common.protocol.em.{EMInfoClearRequest, StopEMRequest}
 import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
 
-/**
-  * @date 2020/8/4 20:04
-  */
+
 trait EMUnregisterService {
 
   def stopEM(stopEMRequest: StopEMRequest, smc: ServiceMethodContext): Unit

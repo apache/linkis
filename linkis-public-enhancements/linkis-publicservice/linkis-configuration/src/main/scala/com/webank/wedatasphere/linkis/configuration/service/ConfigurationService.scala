@@ -20,6 +20,7 @@ import java.lang.Long
 import java.util
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.configuration.conf.Configuration
 import com.webank.wedatasphere.linkis.configuration.dao.{ConfigMapper, LabelMapper}
 import com.webank.wedatasphere.linkis.configuration.entity.{ConfigKey, _}
 import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationException
@@ -28,8 +29,10 @@ import com.webank.wedatasphere.linkis.configuration.validate.ValidatorManager
 import com.webank.wedatasphere.linkis.governance.common.protocol.conf.ResponseQueryConfig
 import com.webank.wedatasphere.linkis.manager.label.builder.CombinedLabelBuilder
 import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import com.webank.wedatasphere.linkis.manager.label.constant.{LabelConstant, LabelKeyConstant}
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
-import com.webank.wedatasphere.linkis.manager.label.entity.{CombinedLabel, CombinedLabelImpl, Label}
+import com.webank.wedatasphere.linkis.manager.label.entity.{CombinedLabel, CombinedLabelImpl, Label, SerializableLabel}
+import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -49,7 +52,6 @@ class ConfigurationService extends Logging {
 
   private  val combinedLabelBuilder: CombinedLabelBuilder = new CombinedLabelBuilder
 
-  private val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
   @Transactional
   def addKeyForEngine(engineType: String, version: String, key: ConfigKey): Unit ={
@@ -88,10 +90,6 @@ class ConfigurationService extends Logging {
     if(creatorID == null) configMapper.insertCreator(creator) else warn(s"creator${creator} exists")
   }
 
-  def listKeyByEngineType(engineType: String):java.util.List[ConfigKey] ={
-    configMapper.listKeyByEngineType(engineType)
-  }
-
   @Transactional
   def copyKeyFromIDE(key:ConfigKey,creator:String, appName:String) ={
     /*val creatorID: Long = configMapper.selectAppIDByAppName(creator)
@@ -103,17 +101,99 @@ class ConfigurationService extends Logging {
   }
 
 
-  def updateUserValue(setting: ConfigKeyValue) = {
+  def checkAndCreateUserLabel(settings: util.List[ConfigKeyValue], username: String, creator: String): Integer ={
+    var labelId: Integer = null
+    if(!settings.isEmpty){
+      val setting = settings.get(0)
+      val configLabel = labelMapper.getLabelById(setting.getConfigLabelId)
+      val combinedLabel = combinedLabelBuilder.buildFromStringValue(configLabel.getLabelKey,configLabel.getStringValue).asInstanceOf[CombinedLabel]
+      combinedLabel.getValue.asScala.foreach(label => {
+        if (label.isInstanceOf[UserCreatorLabel]) {
+          if (label.asInstanceOf[UserCreatorLabel].getUser.equals(LabelUtils.COMMON_VALUE)) {
+            label.asInstanceOf[UserCreatorLabel].setUser(username)
+            label.asInstanceOf[UserCreatorLabel].setCreator(creator)
+            val parsedLabel = LabelEntityParser.parseToConfigLabel(combinedLabel)
+            val userLabel = labelMapper.getLabelByKeyValue(parsedLabel.getLabelKey, parsedLabel.getStringValue)
+            if (userLabel == null) {
+              labelMapper.insertLabel(parsedLabel)
+              labelId = parsedLabel.getId
+            }else{
+              labelId = userLabel.getId
+            }
+          }else{
+            labelId = configLabel.getId
+          }
+        }
+      })
+    }
+    if(labelId == null){
+      throw new ConfigurationException("create user label false, cannot save user configuration!(创建用户label信息失败，无法保存用户配置)")
+    }
+    labelId
+  }
+
+  def updateUserValue(createList: util.List[ConfigValue], updateList: util.List[ConfigValue]): Unit = {
+    if(!CollectionUtils.isEmpty(createList)){
+      configMapper.insertValueList(createList)
+    }
+    if(!CollectionUtils.isEmpty(updateList)){
+      configMapper.updateUserValueList(updateList)
+    }
+  }
+
+  def updateUserValue(setting: ConfigKeyValue, userLabelId: Integer,
+                      createList: util.List[ConfigValue], updateList: util.List[ConfigValue]) = {
+    paramCheck(setting)
+    if(setting.getIsUserDefined){
+      val configValue = new ConfigValue
+      if(StringUtils.isEmpty(setting.getConfigValue)){
+        configValue.setConfigValue("")
+      }else{
+        configValue.setConfigValue(setting.getConfigValue)
+      }
+      configValue.setId(setting.getValueId)
+      updateList.add(configValue)
+    }else{
+      if(!StringUtils.isEmpty(setting.getConfigValue)){
+        val configValue = new ConfigValue
+        configValue.setConfigKeyId(setting.getId)
+        configValue.setConfigLabelId(userLabelId)
+        configValue.setConfigValue(setting.getConfigValue)
+        createList.add(configValue)
+      }
+    }
+  }
+
+  def paramCheck(setting: ConfigKeyValue) = {
     if (!StringUtils.isEmpty(setting.getConfigValue)) {
-      val key = configMapper.selectKeyByKeyID(setting.getId)
-      info(s"Save parameter ${key.getKey} value ${setting.getConfigValue} is not empty, enter checksum...(保存参数${key.getKey}值${setting.getConfigValue}不为空，进入校验...)")
+      var key: ConfigKey = null
+      if(setting.getId != null){
+        key = configMapper.selectKeyByKeyID(setting.getId)
+      }else{
+        key = configMapper.seleteKeyByKeyName(setting.getKey)
+      }
+      if(key == null){
+        throw new ConfigurationException("config key is null, please check again!(配置信息为空，请重新检查key值)")
+      }
+      info(s"parameter ${key.getKey} value ${setting.getConfigValue} is not empty, enter checksum...(参数${key.getKey} 值${setting.getConfigValue}不为空，进入校验...)")
       if (!validatorManager.getOrCreateValidator(key.getValidateType).validate(setting.getConfigValue, key.getValidateRange)) {
         throw new ConfigurationException(s"Parameter verification failed(参数校验失败):${key.getKey}--${key.getValidateType}--${key.getValidateRange}--${setting.getConfigValue}")
       }
     }
-    configMapper.updateUserValue(setting.getConfigValue, setting.getValueId)
   }
 
+  def paramCheckByKeyValue(key: String, value: String) = {
+    val setting = new ConfigKeyValue
+    setting.setKey(key)
+    setting.setConfigValue(value)
+    paramCheck(setting)
+  }
+
+  def listAllEngineType(): Array[String] = {
+    val engineTypeString = Configuration.ENGINE_TYPE.getValue
+    val engineTypeList = engineTypeString.split(",")
+    engineTypeList
+  }
 
   def generateCombinedLabel(engineType: String = "*", version: String, userName: String = "*", creator: String = "*"): CombinedLabel = {
     val labelList = LabelEntityParser.generateUserCreatorEngineTypeLabelList(userName, creator, engineType, version)
@@ -122,22 +202,22 @@ class ConfigurationService extends Logging {
   }
 
   def buildTreeResult(configs: util.List[ConfigKeyValue],defaultConfigs:util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()): util.ArrayList[ConfigTree] = {
-    var resultConfigs: util.List[ConfigKeyValue] = null
+    var resultConfigs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
     if(!defaultConfigs.isEmpty){
       defaultConfigs.asScala.foreach(defaultConfig => {
+        defaultConfig.setIsUserDefined(false)
         configs.asScala.foreach(config => {
           if(config.getKey != null && config.getKey.equals(defaultConfig.getKey)){
             if(config.getConfigValue != null){
               defaultConfig.setConfigValue(config.getConfigValue)
               defaultConfig.setConfigLabelId(config.getConfigLabelId)
               defaultConfig.setValueId(config.getValueId)
+              defaultConfig.setIsUserDefined(true)
             }
           }
         })
       })
       resultConfigs = defaultConfigs
-    }else {
-      resultConfigs = configs
     }
     val treeNames = resultConfigs.asScala.map(config => config.getTreeName).distinct
     val resultConfigsTree = new util.ArrayList[ConfigTree](treeNames.length)
@@ -150,30 +230,30 @@ class ConfigurationService extends Logging {
     resultConfigsTree
   }
 
-  def getFullTree(engineType: String = "*", version: String, userName: String = "*", creator: String = "*", useDefaultConfig: Boolean = true): util.ArrayList[ConfigTree] = {
-    val combinedLabel = generateCombinedLabel(engineType, version,userName,creator)
-    info(s"start to get config by label：${combinedLabel.getStringValue}（开始通过标签获取配置信息：${combinedLabel.getStringValue}）")
-    val label = labelMapper.getLabelByKeyValue(combinedLabel.getLabelKey,combinedLabel.getStringValue)
-    var configs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
-    if(label != null && label.getId > 0){
-      configs = configMapper.getConfigKeyValueByLabelId(label.getId)
-    }
-    var defaultConfigs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
-    if(useDefaultConfig) {
-      var defaultCombinedLabel: CombinedLabel = null
-      defaultCombinedLabel = generateCombinedLabel(engineType, version)
-      val defaultLabel = labelMapper.getLabelByKeyValue(defaultCombinedLabel.getLabelKey, defaultCombinedLabel.getStringValue)
-      if(defaultLabel != null){
-        defaultConfigs = configMapper.getConfigKeyValueByLabelId(defaultLabel.getId)
-      }
-      if(CollectionUtils.isEmpty(defaultConfigs)){
-        throw new ConfigurationException(s"The default configuration is empty. Please check the default configuration information in the database table(默认配置为空,请检查数据库表中关于标签${defaultCombinedLabel.getStringValue}的默认配置信息是否完整)")
-      }
-    }
-    persisteUservalue(configs,defaultConfigs,combinedLabel,label)
-    info("finished to get config by label, start to build config tree(获取配置信息结束,开始构造配置树)")
-    buildTreeResult(configs,defaultConfigs)
-  }
+//  def getFullTree(engineType: String = "*", version: String, userName: String = "*", creator: String = "*", useDefaultConfig: Boolean = true): util.ArrayList[ConfigTree] = {
+//    val combinedLabel = generateCombinedLabel(engineType, version,userName,creator)
+//    info(s"start to get config by label：${combinedLabel.getStringValue}（开始通过标签获取配置信息：${combinedLabel.getStringValue}）")
+//    val label = labelMapper.getLabelByKeyValue(combinedLabel.getLabelKey,combinedLabel.getStringValue)
+//    var configs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
+//    if(label != null && label.getId > 0){
+//      configs = configMapper.getConfigKeyValueByLabelId(label.getId)
+//    }
+//    var defaultConfigs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
+//    if(useDefaultConfig) {
+//      var defaultCombinedLabel: CombinedLabel = null
+//      defaultCombinedLabel = generateCombinedLabel(engineType, version)
+//      val defaultLabel = labelMapper.getLabelByKeyValue(defaultCombinedLabel.getLabelKey, defaultCombinedLabel.getStringValue)
+//      if(defaultLabel != null){
+//        defaultConfigs = configMapper.getConfigKeyValueByLabelId(defaultLabel.getId)
+//      }
+//      if(CollectionUtils.isEmpty(defaultConfigs)){
+//        throw new ConfigurationException(s"The default configuration is empty. Please check the default configuration information in the database table(默认配置为空,请检查数据库表中关于标签${defaultCombinedLabel.getStringValue}的默认配置信息是否完整)")
+//      }
+//    }
+//    //persisteUservalue(configs,defaultConfigs,combinedLabel,label)
+//    info("finished to get config by label, start to build config tree(获取配置信息结束,开始构造配置树)")
+//    buildTreeResult(configs,defaultConfigs)
+//  }
 
   def labelCheck(labelList: java.util.List[Label[_]]):Boolean = {
     if(!CollectionUtils.isEmpty(labelList)){
@@ -199,8 +279,14 @@ class ConfigurationService extends Logging {
     var defaultConfigs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
     if(useDefaultConfig) {
       //todo 优先级：用户配置-->creator的默认引擎配置-->默认引擎配置,现在缺少creator级别的覆盖
+      //现在所有获取的默认配置都是获取引擎级别的默认配置，暂时没有应用级别的默认配置。
+      //如果需要增强上述特性，需要考虑：
+      //1.对于获取引擎配置：需要将此处生成label的creator改成对应的应用
+      //2.对于新增引擎配置：需要修改createSecondCategory用于获取linkedEngineTypeLabel的label，同样将它的creator替换成应用的creator
+      //3.对于数据库初始化：需要修改linkis.dml文件中--关联label和默认配置，将label.label_value = @SPARK_ALL等引擎修改成@SPARK_IDE等等每个应用
+      //notice:第二点和第三点的性质是一样的，第三点是为了添加系统自带的引擎，第二点是通过管理台配置的方式，让用户省掉第三步
       val defaultLabelList = LabelParameterParser.changeUserToDefault(labelList)
-      val defaultCombinedLabel = combinedLabelBuilder.build("",defaultLabelList).asInstanceOf[CombinedLabelImpl]
+      val defaultCombinedLabel = combinedLabelBuilder.build("", defaultLabelList).asInstanceOf[CombinedLabelImpl]
       val defaultLabel = labelMapper.getLabelByKeyValue(defaultCombinedLabel.getLabelKey, defaultCombinedLabel.getStringValue)
       if(defaultLabel != null){
         defaultConfigs = configMapper.getConfigKeyValueByLabelId(defaultLabel.getId)
@@ -209,7 +295,7 @@ class ConfigurationService extends Logging {
         warn(s"The default configuration is empty. Please check the default configuration information in the database table(默认配置为空,请检查数据库表中关于标签${defaultCombinedLabel.getStringValue}的默认配置信息是否完整)")
       }
     }
-    persisteUservalue(configs,defaultConfigs,combinedLabel,label)
+    //persisteUservalue(configs,defaultConfigs,combinedLabel,label)
     info("finished to get config by label, start to build config tree(获取配置信息成功,开始返回配置树)")
     buildTreeResult(configs,defaultConfigs)
   }
@@ -288,49 +374,5 @@ class ConfigurationService extends Logging {
     /*此处的用户配置会覆盖默认的配置*/
     map
   }
-
-  def setCategoryVo(vo: CategoryLabelVo, categoryLabel: CategoryLabel) = {
-    vo.setCategoryId(categoryLabel.getCategoryId)
-    vo.setCreateTime(categoryLabel.getCreateTime)
-    vo.setUpdateTime(categoryLabel.getUpdateTime)
-    vo.setLevel(categoryLabel.getLevel)
-    if(StringUtils.isNotEmpty(categoryLabel.getDescription)){
-      vo.setDescription(categoryLabel.getDescription)
-    }
-    if(StringUtils.isNotEmpty(categoryLabel.getTag)){
-      vo.setTag(categoryLabel.getTag)
-    }
-
-  }
-
-  def getCategory(): util.List[CategoryLabelVo] = {
-    val categoryLabelList = configMapper.getCategory()
-    val firstCategoryList = new util.ArrayList[CategoryLabelVo]()
-    val secondaryCategoryList = new util.ArrayList[CategoryLabelVo]()
-    categoryLabelList.asScala.foreach(categoryLabel => {
-      val vo = new CategoryLabelVo
-      setCategoryVo(vo, categoryLabel)
-      val labelList = LabelEntityParser.LabelDecompile(categoryLabel.getLabelKey, categoryLabel.getStringValue)
-      labelList.asScala.foreach(label => label match{
-        case u: UserCreatorLabel => if(categoryLabel.getLevel == 1) {
-          vo.setCategoryName(u.getCreator)
-          firstCategoryList.add(vo)
-        }else if(categoryLabel.getLevel == 2){
-          vo.setFatherCategoryName(u.getCreator)
-        }
-        case e: EngineTypeLabel => if(categoryLabel.getLevel == 2) {
-          vo.setCategoryName(e.getStringValue)
-          secondaryCategoryList.add(vo)
-        }
-        case _ =>
-      })
-    })
-    secondaryCategoryList.asScala.foreach(secondaryVo => {
-      //TODO use getOrElse
-      firstCategoryList.asScala.find(_.getCategoryName.equals(secondaryVo.getFatherCategoryName)).get.getChildCategory.add(secondaryVo)
-    })
-    firstCategoryList
-  }
-
 
 }

@@ -31,7 +31,9 @@ ENGINECONN_ROOT_PATH=/appcom/tmp   ## file://  required
 ENTRANCE_CONFIG_LOG_PATH=hdfs:///tmp/linkis/ ##file:// required
 
 ### Provide the DB information of Hive metadata database.
-HIVE_META_URL=
+###此处url包含特殊字符时，安装生成linkis-ps-publicservice.properties文件时
+###hive.meta是空
+HIVE_META_URL= 
 HIVE_META_USER=
 HIVE_META_PASSWORD=
 

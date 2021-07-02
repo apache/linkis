@@ -318,6 +318,7 @@ executeCMD $SERVER_IP   "sed -i ${txt}  \"s#\#hive.config.dir.*#hive.config.dir=
 #spark config
 executeCMD $SERVER_IP   "sed -i ${txt}  \"s#spark.config.dir.*#spark.config.dir=$SPARK_CONF_DIR#g\" $common_conf"
 
+#hive meta url 中包含特殊字符时，此处脚本存在bug，生成linkis-ps-publicservice.properties中hive.meta为空
 if [ "$HIVE_META_URL" != "" ]
 then
   executeCMD $SERVER_IP   "sed -i ${txt}  \"s#hive.meta.url.*#hive.meta.url=$HIVE_META_URL#g\" $common_conf"

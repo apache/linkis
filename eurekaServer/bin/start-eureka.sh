@@ -25,7 +25,7 @@ fi
 
 export EUREKA_SERVER_JAVA_OPTS=" -Xmx$EUREKA_SERVER_HEAP_SIZE -XX:+UseG1GC  -Xloggc:$HOME/logs/linkis-gc.log"
 
-java $EUREKA_SERVER_JAVA_OPTS -cp $HOME/conf:$HOME/lib/* $EUREKA_SERVER_CLASS --spring.profiles.active=$profiles  2>&1 > $EUREKA_SERVER_LOG_PATH/linkis.out &
+nohup java $EUREKA_SERVER_JAVA_OPTS -cp $HOME/conf:$HOME/lib/* $EUREKA_SERVER_CLASS --spring.profiles.active=$profiles  2>&1 > $EUREKA_SERVER_LOG_PATH/linkis.out &
 pid=$!
 sleep 2
 if [[ -z "${pid}" ]]; then

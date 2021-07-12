@@ -23,6 +23,7 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.manager.common.entity.node.ScoreServiceInstance
 import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel
 import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import com.webank.wedatasphere.linkis.manager.label.conf.LabelManagerConf
 import com.webank.wedatasphere.linkis.manager.label.entity.Label.ValueRelation
 import com.webank.wedatasphere.linkis.manager.label.entity.{Feature, Label, UserModifiable}
 import com.webank.wedatasphere.linkis.manager.label.score.NodeLabelScorer
@@ -157,7 +158,8 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
 
   @Transactional(rollbackFor = Array(classOf[Exception]))
   override def removeLabelsFromNode(instance: ServiceInstance): Unit = {
-    labelManagerPersistence.removeNodeLabels(instance, labelManagerPersistence.getLabelByServiceInstance(instance).map(_.getId))
+    val removeLabels = labelManagerPersistence.getLabelByServiceInstance(instance).filter(label => ! LabelManagerConf.LONG_LIVED_LABEL.contains( label.getLabelKey))
+    labelManagerPersistence.removeNodeLabels(instance, removeLabels.map(_.getId))
   }
 
   /**

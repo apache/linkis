@@ -237,18 +237,13 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
                 break;
             }
             case DATE: {
-                DateWritableV2 dw = ((DateObjectInspector) oi).getPrimitiveWritableObject(o);
+                DateWritable dw = ((DateObjectInspector) oi).getPrimitiveWritableObject(o);
                 binaryData = Base64.encodeBase64(String.valueOf(dw).getBytes());
                 break;
             }
             case TIMESTAMP: {
-                TimestampWritableV2 tw = ((TimestampObjectInspector) oi).getPrimitiveWritableObject(o);
+                TimestampWritable tw = ((TimestampObjectInspector) oi).getPrimitiveWritableObject(o);
                 binaryData = Base64.encodeBase64(String.valueOf(tw).getBytes());
-                break;
-            }
-            case TIMESTAMPLOCALTZ: {
-                TimestampLocalTZWritable tw2 = ((TimestampLocalTZObjectInspector) oi).getPrimitiveWritableObject(o);
-                binaryData = Base64.encodeBase64(String.valueOf(tw2).getBytes());
                 break;
             }
             case INTERVAL_YEAR_MONTH: {

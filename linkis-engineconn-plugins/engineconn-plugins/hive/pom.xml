@@ -29,7 +29,7 @@
     <artifactId>linkis-engineplugin-hive</artifactId>
 
     <properties>
-        <hive.version>3.1.2</hive.version>
+        <hive.version>1.2.1</hive.version>
     </properties>
 
     <dependencies>

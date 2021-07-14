@@ -298,7 +298,7 @@ public class HDFSFileSystem extends FileSystem {
     @Override
     public void close() throws IOException {
         if (null != fs) {
-            fs.close();
+            HDFSUtils.closeHDFSFIleSystem(fs, user);
         } else {
             logger.warn("FS was null, cannot close.");
         }

@@ -81,8 +81,7 @@ class OnceEngineConnExecution extends AbstractEngineConnExecution {
       case _ => false
     }
 
-  override protected def getSupportedEngineConnModes: Array[EngineConnMode] =
-    Array(Once, Computation_With_Once, Once_With_Cluster)
+  override protected def getSupportedEngineConnModes: Array[EngineConnMode] = OnceEngineConnExecution.getSupportedEngineConnModes
 
   override protected def getReturnEngineConnModes: Array[EngineConnMode] = Array(Once)
 
@@ -91,6 +90,11 @@ class OnceEngineConnExecution extends AbstractEngineConnExecution {
     *
     * @return
     */
-  override def getOrder: Int = 2
+  override def getOrder: Int = 100
+
+}
+object OnceEngineConnExecution {
+
+  def getSupportedEngineConnModes: Array[EngineConnMode] = Array(Once, Computation_With_Once, Once_With_Cluster)
 
 }

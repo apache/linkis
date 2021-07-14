@@ -46,5 +46,6 @@ trait TaskExecutionService {
 
   def dealRequestTaskResume(requestTaskResume: RequestTaskResume): Unit
 
+  def clearCache(taskId: String): Unit
 
 }

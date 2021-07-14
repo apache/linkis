@@ -32,7 +32,7 @@ DROP TABLE IF EXISTS `linkis_ps_configuration_config_value`;
 CREATE TABLE linkis_ps_configuration_config_value(
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `config_key_id` bigint(20),
-  `config_value` varchar(50),
+  `config_value` varchar(200),
   `config_label_id`int(20),
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -76,6 +76,7 @@ CREATE TABLE `linkis_ps_job_history_group_history` (
   `instances` varchar(250) DEFAULT NULL COMMENT 'Entrance instances',
   `metrics` text DEFAULT NULL COMMENT   'Job Metrics',
   `engine_type` varchar(32) DEFAULT NULL COMMENT 'Engine type',
+  `execution_code` text DEFAULT NULL COMMENT 'Job origin code or code path',
   PRIMARY KEY (`id`),
   KEY `created_time` (`created_time`),
   KEY `submit_user` (`submit_user`)
@@ -343,7 +344,7 @@ CREATE TABLE `linkis_ps_cs_context_map` (
   `context_scope` varchar(32) DEFAULT NULL,
   `context_type` varchar(32) DEFAULT NULL,
   `props` text,
-  `value` text,
+  `value` mediumtext,
   `context_id` int(11) DEFAULT NULL,
   `keywords` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -392,7 +393,7 @@ CREATE TABLE `linkis_ps_cs_context_id` (
   `backup_instance` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `instance` (`instance`(128)),
-  KEY `backup_instance` (`backup_instance`(128)),
+  KEY `backup_instance` (`backup_instance`(191)),
   KEY `instance_2` (`instance`(128),`backup_instance`(128))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -570,7 +571,7 @@ DROP TABLE IF EXISTS `linkis_ps_instance_label_relation`;
 CREATE TABLE `linkis_ps_instance_label_relation` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `label_id` int(20) DEFAULT NULL COMMENT 'id reference linkis_ps_instance_label -> id',
-  `service_instance` varchar(128) NOT NULL COLLATE utf8_bin COMMENT 'structure like ${host|machine}:${port}',
+  `service_instance` varchar(64) NOT NULL COLLATE utf8_bin COMMENT 'structure like ${host|machine}:${port}',
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'create unix timestamp',
   PRIMARY KEY (`id`)
@@ -658,8 +659,8 @@ CREATE TABLE `linkis_cg_rm_external_resource_provider` (
 DROP TABLE IF EXISTS `linkis_cg_manager_engine_em`;
 CREATE TABLE `linkis_cg_manager_engine_em` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
-  `engine_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
-  `em_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
+  `engine_instance` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `em_instance` varchar(64) COLLATE utf8_bin DEFAULT NULL,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
@@ -705,7 +706,7 @@ DROP TABLE IF EXISTS `linkis_cg_manager_label_service_instance`;
 CREATE TABLE `linkis_cg_manager_label_service_instance` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `label_id` int(20) DEFAULT NULL,
-  `service_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
+  `service_instance` varchar(64) COLLATE utf8_bin DEFAULT NULL,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)

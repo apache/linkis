@@ -34,7 +34,7 @@ import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
 import com.webank.wedatasphere.linkis.scheduler.executer.{AliasOutputExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import com.webank.wedatasphere.linkis.storage.FSFactory
 import com.webank.wedatasphere.linkis.storage.domain.{MethodEntity, MethodEntitySerializer}
-import com.webank.wedatasphere.linkis.storage.exception.StorageErrorException
+import com.webank.wedatasphere.linkis.storage.exception.{StorageErrorCode, StorageErrorException}
 import com.webank.wedatasphere.linkis.storage.fs.FileSystem
 import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
 import org.apache.commons.io.IOUtils
@@ -202,11 +202,11 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10) extends Concu
     val fsType = methodEntity.fsType
     val proxyUser = methodEntity.proxyUser
     if(!userFSInfos.containsKey(proxyUser)) {
-      throw new StorageErrorException(53001,s"not exist storage $fsType, please init first.")
+      throw new StorageErrorException(StorageErrorCode.FS_NOT_INIT.getCode, s"not exist storage $fsType, please init first.")
     }
     userFSInfos.get(proxyUser) synchronized {
       val userFsInfo = userFSInfos.get(proxyUser).find(fsInfo => fsInfo != null && fsInfo.id == methodEntity.id)
-        .getOrElse(throw new StorageErrorException(53001,s"not exist storage $fsType, please init first."))
+        .getOrElse(throw new StorageErrorException(StorageErrorCode.FS_NOT_INIT.getCode, s"not exist storage $fsType, please init first."))
       userFsInfo.lastAccessTime = System.currentTimeMillis()
       userFsInfo.fs
     }

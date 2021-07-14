@@ -19,6 +19,7 @@ import com.webank.wedatasphere.linkis.storage.fs.FileSystem;
 import com.webank.wedatasphere.linkis.storage.fs.impl.LocalFileSystem;
 import com.webank.wedatasphere.linkis.storage.io.IOMethodInterceptorCreator$;
 import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration;
+import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
 import net.sf.cglib.proxy.Enhancer;
 
 
@@ -27,7 +28,7 @@ public class BuildLocalFileSystem implements BuildFactory {
     @Override
     public Fs getFs(String user, String proxyUser){
         FileSystem fs = null;
-        if ((Boolean) StorageConfiguration.ENABLE_IO_PROXY().getValue()) {
+        if (StorageUtils.isIOProxy()) {
             if(user.equals(proxyUser)){
                 if((Boolean) StorageConfiguration.IS_SHARE_NODE().getValue()){
                     fs = new  LocalFileSystem();

@@ -40,6 +40,9 @@ object SparkConfiguration extends Logging {
 
   val SPARK_DEPLOY_MODE = CommonVars[String]("spark.submit.deployMode", "client")
 
+  val SPARK_APP_NAME = CommonVars[String]("spark.app.name", "Linkis-EngineConn-Spark")
+
+  val SPARK_PYTHON_VERSION = CommonVars[String]("spark.python.version", "python")
 
   val SPARK_EXTRA_JARS = CommonVars[String]("spark.jars", "", "Additional jar package, Driver and Executor take effect（额外的jar包，Driver和Executor生效）")
 
@@ -57,9 +60,9 @@ object SparkConfiguration extends Logging {
 
   val ENGINE_JAR = CommonVars[String]("wds.linkis.enginemanager.core.jar", getMainJarName)
 
-  val DEFAULT_SPARK_JAR_NAME = CommonVars[String]("wds.linkis.ecp.spark.default.jar", "linkis-engineconn-core-1.0.0.jar")
+  val DEFAULT_SPARK_JAR_NAME = CommonVars[String]("wds.linkis.ecp.spark.default.jar", "linkis-engineconn-core-1.0.1.jar")
 
-  val SPARK_DRIVER_CLASSPATH = CommonVars[String]("wds.linkis.spark.driver.extra.class.path", "")
+  val SPARK_DRIVER_CLASSPATH = CommonVars[String]("spark.driver.extraClassPath", "")
 
   val SPARK_DRIVER_EXTRA_JAVA_OPTIONS = CommonVars[String]("spark.driver.extraJavaOptions", "\"-Dwds.linkis.configuration=linkis-engine.properties " + "\"")
 

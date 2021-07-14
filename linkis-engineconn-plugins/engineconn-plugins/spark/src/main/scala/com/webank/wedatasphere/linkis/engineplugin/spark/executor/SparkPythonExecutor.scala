@@ -18,9 +18,9 @@ import java.util
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationExecutorManager
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.rs.RsOutputStream
+import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
 import com.webank.wedatasphere.linkis.engineconn.launch.EngineConnServer
 import com.webank.wedatasphere.linkis.engineplugin.spark.Interpreter.PythonInterpreter._
 import com.webank.wedatasphere.linkis.engineplugin.spark.common.{Kind, PySpark}
@@ -77,7 +77,6 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
 
 
   override def init(): Unit = {
-
     setCodeParser(new PythonCodeParser)
     super.init()
     info("spark sql executor start")
@@ -89,7 +88,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     info(s"To close python cli task $taskID")
     Utils.tryAndError(close)
     info(s"To delete python executor task $taskID")
-    Utils.tryAndError(ComputationExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray))
+    Utils.tryAndError(ExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray))
     info(s"Finished to kill python task $taskID")
   }
 
@@ -113,8 +112,8 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   private def initGateway = {
     //  如果从前端获取到用户所设置的Python版本为Python3 则取Python3的环境变量，否则默认为Python2
     logger.info(s"spark.python.version => ${engineCreationContext.getOptions.get("spark.python.version")}")
-    val userDefinePythonVersion = engineCreationContext.getOptions.get("spark.python.version").toString.toLowerCase()
-    val sparkPythonVersion = if(null != userDefinePythonVersion && userDefinePythonVersion.equals("python3")) "python3" else "python"
+    val userDefinePythonVersion = engineCreationContext.getOptions.getOrDefault("spark.python.version", "python").toString.toLowerCase()
+    val sparkPythonVersion = if(StringUtils.isNotBlank(userDefinePythonVersion)) userDefinePythonVersion else "python"
     val pythonExec = CommonVars("PYSPARK_DRIVER_PYTHON", sparkPythonVersion).getValue
 
     val pythonScriptPath = CommonVars("python.script.path", "python/mix_pyspark.py").getValue
@@ -133,8 +132,8 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
       pythonClasspath ++= File.pathSeparator ++= files.split(",").filter(_.endsWith(".zip")).mkString(File.pathSeparator)
     }
     //extra python package
-    val pyFiles = sc.getConf.get("spark.application.pyFiles", "")
-    logger.info(s"spark.application.pyFiles => ${pyFiles}")
+    val pyFiles = sc.getConf.get("spark.submit.pyFiles", "")
+    logger.info(s"spark.submit.pyFiles => ${pyFiles}")
     //add class path zip
     val classPath = CommonVars("java.class.path", "").getValue
     classPath.split(";").filter(_.endsWith(".zip")).foreach(pythonClasspath ++= File.pathSeparator ++= _)
@@ -149,8 +148,16 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     val builder = new ProcessBuilder(cmd.toStrings.toSeq.toList.asJava)
 
     val env = builder.environment()
-    if(userDefinePythonVersion.equals("python3")){
-      env.put("PYSPARK_PYTHON", pythonExec)
+    if (StringUtils.isBlank(sc.getConf.get("spark.pyspark.python", ""))) {
+      info("spark.pyspark.python is null")
+      if (sparkPythonVersion.equals("python3")) {
+        info("userDefinePythonVersion is python3 will be set to PYSPARK_PYTHON")
+        env.put("PYSPARK_PYTHON", pythonExec)
+      }
+    } else {
+      val executorPython = sc.getConf.get("spark.pyspark.python")
+      info(s"set PYSPARK_PYTHON spark.pyspark.python is $executorPython")
+      env.put("PYSPARK_PYTHON", executorPython)
     }
     env.put("PYTHONPATH", pythonClasspath.toString())
     env.put("PYTHONUNBUFFERED", "YES")

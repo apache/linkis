@@ -81,6 +81,10 @@ public class QueryRestfulApi {
         List<SubJobDetail> subJobDetails = TaskConversions.jobdetails2SubjobDetail(jobDetailMapper.selectJobDetailByJobHistoryId(jobId));
         QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, subJobDetails);
         // todo check
+        if(taskVO == null){
+            return Message.messageToResponse(Message.error("The corresponding job was not found, or there may be no permission to view the job" +
+                    "(没有找到对应的job，也可能是没有查看该job的权限)"));
+        }
         for (SubJobDetail subjob : subJobDetails) {
             if (!StringUtils.isEmpty(subjob.getResultLocation())) {
                 taskVO.setResultLocation(subjob.getResultLocation());
@@ -90,6 +94,9 @@ public class QueryRestfulApi {
         return Message.messageToResponse(Message.ok().data(TaskConstant.TASK, taskVO));
     }
 
+    /**
+     * Method list should not contain subjob, which may cause performance problems.
+     */
     @GET
     @Path("/list")
     public Response list(@Context HttpServletRequest req, @QueryParam("startDate") Long startDate,
@@ -139,16 +146,17 @@ public class QueryRestfulApi {
         long total = pageInfo.getTotal();
         List<QueryTaskVO> vos = new ArrayList<>();
         for (JobHistory jobHistory : list) {
-            List<JobDetail> jobDetails = jobDetailMapper.selectJobDetailByJobHistoryId(jobHistory.getId());
-            QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, TaskConversions.jobdetails2SubjobDetail(jobDetails));
+            QueryUtils.exchangeExecutionCode(jobHistory);
+//            List<JobDetail> jobDetails = jobDetailMapper.selectJobDetailByJobHistoryId(jobHistory.getId());
+            QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, null);
             vos.add(taskVO);
-            // todo add first resultLocation to taskVO
+            /*// todo add first resultLocation to taskVO
             for (JobDetail subjob : jobDetails) {
                 if (!StringUtils.isEmpty(subjob.getResult_location())) {
                     taskVO.setResultLocation(subjob.getResult_location());
                 }
                 break;
-            }
+            }*/
         }
         return Message.messageToResponse(Message.ok().data(TaskConstant.TASKS, vos)
                 .data(JobRequestConstants.TOTAL_PAGE(), total));

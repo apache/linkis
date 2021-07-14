@@ -24,6 +24,7 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.jobhistory.conversions.TaskConversions._
 import com.webank.wedatasphere.linkis.jobhistory.dao.{JobDetailMapper, JobHistoryMapper}
 import com.webank.wedatasphere.linkis.jobhistory.entity.JobHistory
+import com.webank.wedatasphere.linkis.jobhistory.util.QueryUtils
 import com.webank.wedatasphere.linkis.message.annotation.Receiver
 
 import scala.collection.JavaConverters.asScalaBufferConverter
@@ -32,7 +33,7 @@ import java.util.Date
 
 import com.webank.wedatasphere.linkis.governance.common.constant.job.JobRequestConstants
 import com.webank.wedatasphere.linkis.governance.common.entity.job.{JobRequest, JobRequestWithDetail, SubJobDetail}
-import com.webank.wedatasphere.linkis.governance.common.protocol.job.{JobReqInsert, JobReqQuery, JobReqUpdate, JobRespProtocol}
+import com.webank.wedatasphere.linkis.governance.common.protocol.job.{JobReqBatchUpdate, JobReqInsert, JobReqQuery, JobReqUpdate, JobRespProtocol}
 import com.webank.wedatasphere.linkis.jobhistory.entity.QueryJobHistory
 import com.webank.wedatasphere.linkis.jobhistory.exception.QueryException
 import com.webank.wedatasphere.linkis.jobhistory.service.JobHistoryQueryService
@@ -40,6 +41,7 @@ import com.webank.wedatasphere.linkis.jobhistory.transitional.TaskStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import scala.collection.JavaConversions._
 
 
 @Service
@@ -55,9 +57,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   @Receiver
   override def add(jobReqInsert: JobReqInsert): JobRespProtocol = {
     info("Insert data into the database(往数据库中插入数据)：" + jobReqInsert.toString)
-//    QueryUtils.storeExecutionCode(jobReqInsert)
     val jobResp = new JobRespProtocol
     Utils.tryCatch {
+      QueryUtils.storeExecutionCode(jobReqInsert.jobReq)
       val jobInsert = jobRequest2JobHistory(jobReqInsert.jobReq)
       jobHistoryMapper.insertJobHistory(jobInsert)
       val map = new util.HashMap[String, Object]()
@@ -78,7 +80,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   override def change(jobReqUpdate: JobReqUpdate): JobRespProtocol = {
     val jobReq = jobReqUpdate.jobReq
     jobReq.setExecutionCode(null)
-    info("Update data to the database(往数据库中更新数据)：" + jobReq.toString)
+    info("Update data to the database(往数据库中更新数据)：status:" + jobReq.toString)
     val jobResp = new JobRespProtocol
     Utils.tryCatch {
       if (jobReq.getErrorDesc != null) {
@@ -117,6 +119,57 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     }
     jobResp
   }
+
+  @Receiver
+    @Transactional
+    override def batchChange(jobReqUpdate: JobReqBatchUpdate): util.ArrayList[JobRespProtocol] = {
+      val jobReqList = jobReqUpdate.jobReq
+      val jobRespList = new util.ArrayList[JobRespProtocol]()
+      if(jobReqList != null){
+        jobReqList.foreach(jobReq =>{
+          jobReq.setExecutionCode(null)
+          info("Update data to the database(往数据库中更新数据)：status:" + jobReq.getStatus )
+          val jobResp = new JobRespProtocol
+          Utils.tryCatch {
+            if (jobReq.getErrorDesc != null) {
+              if (jobReq.getErrorDesc.length > 256) {
+                info(s"errorDesc is too long,we will cut some message")
+                jobReq.setErrorDesc(jobReq.getErrorDesc.substring(0, 256))
+                info(s"${jobReq.getErrorDesc}")
+              }
+            }
+            if (jobReq.getStatus != null) {
+              val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
+              if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus))
+                throw new QueryException(s"${jobReq.getId}数据库中的task状态为：${oldStatus}更新的task状态为：${jobReq.getStatus}更新失败！")
+            }
+            val jobUpdate = jobRequest2JobHistory(jobReq)
+            jobUpdate.setUpdated_time(new Timestamp(System.currentTimeMillis()))
+            jobHistoryMapper.updateJobHistory(jobUpdate)
+
+            // todo
+            /*//updated by shanhuang to write cache
+            if (TaskStatus.Succeed.toString.equals(jobReq.getStatus) && queryCacheService.needCache(jobReq)) {
+              info("Write cache for task: " + jobReq.getId)
+              jobReq.setExecutionCode(executionCode)
+              queryCacheService.writeCache(jobReq)
+            }*/
+
+            val map = new util.HashMap[String, Object]
+            map.put(JobRequestConstants.JOB_ID, jobReq.getId.asInstanceOf[Object])
+            jobResp.setStatus(0)
+            jobResp.setData(map)
+          } {
+            case e: Exception =>
+              error(e.getMessage)
+              jobResp.setStatus(1)
+              jobResp.setMsg(e.getMessage);
+          }
+          jobRespList.add(jobResp)
+        })
+      }
+      jobRespList
+    }
 
   @Receiver
   override def query(jobReqQuery: JobReqQuery): JobRespProtocol = {
@@ -172,8 +225,13 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     jobHistory2JobRequest(list)
   }
 
-  private def shouldUpdate(oldStatus: String, newStatus: String): Boolean = TaskStatus.valueOf(oldStatus).ordinal <= TaskStatus.valueOf(newStatus).ordinal
-
+  private def shouldUpdate(oldStatus: String, newStatus: String): Boolean =  {
+    if(TaskStatus.valueOf(oldStatus) == TaskStatus.valueOf(newStatus)){
+      true
+    }else{
+      TaskStatus.valueOf(oldStatus).ordinal <= TaskStatus.valueOf(newStatus).ordinal && !TaskStatus.isComplete(TaskStatus.valueOf(oldStatus))
+    }
+  }
    override def searchOne(jobId: lang.Long, sDate: Date, eDate: Date): JobHistory = {
     Iterables.getFirst(
       jobHistoryMapper.search(jobId, null, null, sDate, eDate, null),

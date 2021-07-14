@@ -52,8 +52,7 @@ trait FileSource extends Closeable {
 
 object FileSource {
 
-  private val fileType = Array("dolphin", "sql", "scala", "py", "hql", "python", "out", "log", "text", "sh", "jdbc", "ngql", "psql")
-
+  private val fileType = Array("dolphin", "sql", "scala", "py", "hql", "python", "out", "log", "text", "sh", "jdbc", "ngql", "psql", "fql")
   private val suffixPredicate = (path: String, suffix: String) => path.endsWith(s".$suffix")
 
   def isResultSet(path: String): Boolean = {

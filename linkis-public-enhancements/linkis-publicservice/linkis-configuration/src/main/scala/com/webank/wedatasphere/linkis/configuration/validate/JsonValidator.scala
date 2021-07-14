@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.condition
+package com.webank.wedatasphere.linkis.configuration.validate
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import org.springframework.context.annotation.{Condition, ConditionContext}
-import org.springframework.core.`type`.AnnotatedTypeMetadata
+import com.webank.wedatasphere.linkis.common.utils.Utils
+import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 
-/**
-  *
-  */
-class EngineHooksCondition extends Condition {
+class JsonValidator extends Validator{
 
-  val condition = CommonVars("wds.linkis.spark.engine.hooks.enable",true).getValue
-  override def matches(conditionContext: ConditionContext, annotatedTypeMetadata: AnnotatedTypeMetadata): Boolean = {
-    condition
+  override def validate(value: String, range: String): Boolean = {
+    Utils.tryCatch{
+      BDPJettyServerHelper.gson.fromJson(value,classOf[java.util.HashMap[String,String]])
+      true
+    }{
+      case _ => false
+    }
   }
+
+  override var kind: String = "Json"
 }

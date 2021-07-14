@@ -17,11 +17,11 @@
 package com.webank.wedatasphere.linkis.engineplugin.spark.executor
 
 import java.io.{BufferedReader, File}
-
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationExecutorManager
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.rs.RsOutputStream
+import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
 import com.webank.wedatasphere.linkis.engineplugin.spark.common.{Kind, SparkScala}
 import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
 import com.webank.wedatasphere.linkis.engineplugin.spark.entity.SparkEngineSession
@@ -157,7 +157,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
         val msg = ExceptionUtils.getRootCauseMessage(t)
         if (msg.contains("OutOfMemoryError")) {
           error("engine oom now to set status to shutdown")
-          ComputationExecutorManager.getInstance.getReportExecutor.tryShutdown()
+          ExecutorManager.getInstance.getReportExecutor.tryShutdown()
         }
         engineExecutionContext.appendStdout("task error info: " + msg)
         Results.Error
@@ -243,11 +243,6 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
     sparkILoop.in = reader
     sparkILoop.initializeSynchronous()
     SparkScalaExecutor.loopPostInit(sparkILoop)
-    warn("spark repl has been finished, now stop it.")
-    /*Future {
-      sparkILoop.process(settings)
-      warn("spark repl has been finished, now stop it.")
-    }*/
   }
 
   protected def getField(obj: Object, name: String): Object = {

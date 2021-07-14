@@ -52,7 +52,6 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
     info(s" EngineExecutionContext user python.version = > ${pythonVersion}")
     System.getProperties.put("python.version", pythonVersion)
     info(s" System getProperties python.version = > ${System.getProperties.getProperty("python.version")}")
-    System.getProperties.put("python.application.pyFiles", engineExecutionContext.getProperties.getOrDefault("python.application.pyFiles", "file:///mnt/bdap/test/test/test.zip").toString)
     if(engineExecutionContext != this.engineExecutionContext){
       this.engineExecutionContext = engineExecutionContext
       pythonSession.setEngineExecutionContext(engineExecutionContext)

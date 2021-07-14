@@ -155,7 +155,7 @@ object Utils extends Logging {
   }
 
   val defaultScheduler: ScheduledThreadPoolExecutor = {
-    val scheduler = new ScheduledThreadPoolExecutor(20, threadFactory("BDP-Default-Scheduler-Thread-", true))
+    val scheduler = new ScheduledThreadPoolExecutor(20, threadFactory("Linkis-Default-Scheduler-Thread-", true))
     scheduler.setMaximumPoolSize(20)
     scheduler.setKeepAliveTime(5, TimeUnit.MINUTES)
     scheduler

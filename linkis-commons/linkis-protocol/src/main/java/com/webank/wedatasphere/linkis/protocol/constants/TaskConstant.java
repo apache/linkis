@@ -63,5 +63,6 @@ public interface TaskConstant {
     String EXECUTION_CONTENT = "executionContent";
     String CODE = "code";
 
+    String REQUEST_IP = "requestIP";
 
 }

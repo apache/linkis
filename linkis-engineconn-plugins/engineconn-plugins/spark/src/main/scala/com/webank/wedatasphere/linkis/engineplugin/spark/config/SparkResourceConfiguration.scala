@@ -24,10 +24,10 @@ import com.webank.wedatasphere.linkis.common.conf.CommonVars
   */
 object SparkResourceConfiguration {
 
-  val LINKIS_SPARK_DRIVER_MEMORY = CommonVars[String]("spark.driver.memory", "2g") //单位为G
+  val LINKIS_SPARK_DRIVER_MEMORY = CommonVars[String]("spark.driver.memory", "2g")
   val LINKIS_SPARK_DRIVER_CORES = CommonVars[Int]("spark.driver.cores", 1)
 
-  val LINKIS_SPARK_EXECUTOR_MEMORY = CommonVars[String]("spark.executor.memory", "4g") //单位为G
+  val LINKIS_SPARK_EXECUTOR_MEMORY = CommonVars[String]("spark.executor.memory", "4g")
   val LINKIS_SPARK_EXECUTOR_CORES = CommonVars[Int]("spark.executor.cores", 2)
   val LINKIS_SPARK_EXECUTOR_INSTANCES = CommonVars[Int]("spark.executor.instances", 3)
   val LINKIS_QUEUE_NAME = CommonVars[String]("wds.linkis.rm.yarnqueue", "default")

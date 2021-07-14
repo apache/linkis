@@ -26,7 +26,7 @@ import com.webank.wedatasphere.linkis.message.annotation.Receiver
 import java.util
 
 import com.webank.wedatasphere.linkis.governance.common.constant.job.JobRequestConstants
-import com.webank.wedatasphere.linkis.governance.common.protocol.job.{JobDetailReqInsert, JobDetailReqQuery, JobDetailReqUpdate, JobRespProtocol}
+import com.webank.wedatasphere.linkis.governance.common.protocol.job.{JobDetailReqBatchUpdate, JobDetailReqInsert, JobDetailReqQuery, JobDetailReqUpdate, JobRespProtocol}
 import com.webank.wedatasphere.linkis.jobhistory.conversions.TaskConversions._
 import com.webank.wedatasphere.linkis.jobhistory.exception.QueryException
 import com.webank.wedatasphere.linkis.jobhistory.transitional.TaskStatus
@@ -34,7 +34,7 @@ import com.webank.wedatasphere.linkis.jobhistory.util.QueryUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-
+import scala.collection.JavaConversions._
 import scala.collection.JavaConverters.asScalaBufferConverter
 
 
@@ -51,9 +51,9 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
   @Receiver
   override def add(jobReqInsert: JobDetailReqInsert): JobRespProtocol = {
     info("Insert data into the database(往数据库中插入数据)：job id : " + jobReqInsert.jobInfo.getJobReq().getId.toString)
-    QueryUtils.storeExecutionCode(jobReqInsert.jobInfo)
     val jobResp = new JobRespProtocol
     Utils.tryCatch {
+      QueryUtils.storeExecutionCode(jobReqInsert.jobInfo.getSubJobDetail, jobReqInsert.jobInfo.getJobReq.getExecuteUser)
       val jobInsert = subjobDetail2JobDetail(jobReqInsert.jobInfo.getSubJobDetail)
       jobDetailMapper.insertJobDetail(jobInsert)
       val map = new util.HashMap[String, Object]()
@@ -84,6 +84,7 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
         if (oldStatus != null && !shouldUpdate(oldStatus, jobDetail.getStatus))
           throw new QueryException(s"${jobDetail.getId}数据库中的task状态为：${oldStatus}更新的task状态为：${jobDetail.getStatus}更新失败！")
       }
+      jobDetail.setExecutionContent(null)
       val jobUpdate = subjobDetail2JobDetail(jobDetail)
       jobUpdate.setUpdated_time(new Timestamp(System.currentTimeMillis()))
       jobDetailMapper.updateJobDetail(jobUpdate)
@@ -108,6 +109,53 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
     }
     jobResp
   }
+
+  @Receiver
+    @Transactional
+    override def batchChange(jobReqUpdate: JobDetailReqBatchUpdate): util.ArrayList[JobRespProtocol] = {
+      val subJobInfoList = jobReqUpdate.jobInfo
+      val jobRespList = new util.ArrayList[JobRespProtocol]()
+      if(subJobInfoList != null){
+        subJobInfoList.foreach(subJobInfo => {
+          val jobDetail = subJobInfo.getSubJobDetail()
+          if (null != jobDetail && null != jobDetail.getId) {
+            info("Update data to the database(往数据库中更新数据)：" + jobDetail.getId.toString)
+          }
+          val jobResp = new JobRespProtocol
+          Utils.tryCatch {
+            if (jobDetail.getStatus != null) {
+              val oldStatus: String = jobDetailMapper.selectJobDetailStatusForUpdateByJobDetailId(jobDetail.getId)
+              if (oldStatus != null && !shouldUpdate(oldStatus, jobDetail.getStatus))
+                throw new QueryException(s"${jobDetail.getId}数据库中的task状态为：${oldStatus}更新的task状态为：${jobDetail.getStatus}更新失败！")
+            }
+            jobDetail.setExecutionContent(null)
+            val jobUpdate = subjobDetail2JobDetail(jobDetail)
+            jobUpdate.setUpdated_time(new Timestamp(System.currentTimeMillis()))
+            jobDetailMapper.updateJobDetail(jobUpdate)
+
+            // todo
+            /*//updated by shanhuang to write cache
+            if (TaskStatus.Succeed.toString.equals(jobReq.getStatus) && queryCacheService.needCache(jobReq)) {
+              info("Write cache for task: " + jobReq.getId)
+              jobReq.setExecutionCode(executionCode)
+              queryCacheService.writeCache(jobReq)
+            }*/
+
+            val map = new util.HashMap[String, Object]
+            map.put(JobRequestConstants.JOB_ID, jobDetail.getId.asInstanceOf[Object])
+            jobResp.setStatus(0)
+            jobResp.setData(map)
+          } {
+            case e: Exception =>
+              error(e.getMessage)
+              jobResp.setStatus(1)
+              jobResp.setMsg(e.getMessage);
+          }
+          jobRespList.add(jobResp)
+        })
+      }
+      jobRespList
+    }
 
   @Receiver
   override def query(jobReqQuery: JobDetailReqQuery): JobRespProtocol = {

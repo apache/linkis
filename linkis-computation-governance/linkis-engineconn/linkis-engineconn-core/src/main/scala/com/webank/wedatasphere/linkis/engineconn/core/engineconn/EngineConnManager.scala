@@ -19,6 +19,7 @@ package com.webank.wedatasphere.linkis.engineconn.core.engineconn
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
 import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
+import com.webank.wedatasphere.linkis.engineconn.core.exception.{EngineConnErrorCode, EngineConnFatalException}
 
 trait EngineConnManager {
 
@@ -44,7 +45,12 @@ class DefaultEngineConnManager extends EngineConnManager {
     this.engineConn
   }
 
-  override def getEngineConn: EngineConn = this.engineConn
+  override def getEngineConn: EngineConn = {
+    if (null == this.engineConn) {
+      throw new EngineConnFatalException(EngineConnErrorCode.ENGINE_CONN_UN_INIT_CODE, "You need to wait for engine conn to be initialized before starting to call")
+    }
+    this.engineConn
+  }
 
 }
 

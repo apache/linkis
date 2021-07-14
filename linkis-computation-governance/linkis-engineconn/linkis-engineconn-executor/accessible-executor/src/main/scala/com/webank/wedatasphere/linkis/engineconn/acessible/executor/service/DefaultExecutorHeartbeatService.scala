@@ -28,6 +28,7 @@ import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
 import com.webank.wedatasphere.linkis.engineconn.executor.entity.{Executor, ResourceExecutor, SensibleExecutor}
 import com.webank.wedatasphere.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import com.webank.wedatasphere.linkis.engineconn.executor.service.ManagerService
+import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
 import com.webank.wedatasphere.linkis.manager.common.protocol.node.{NodeHeartbeatMsg, NodeHeartbeatRequest}
 import com.webank.wedatasphere.linkis.message.annotation.Receiver
 import com.webank.wedatasphere.linkis.rpc.Sender
@@ -69,36 +70,51 @@ class DefaultExecutorHeartbeatService extends ExecutorHeartbeatService with Node
     *
     * @param executor
     */
-  override def reportHeartBeatMsg(executor: Executor): Unit = {
+  override def reportHeartBeatMsg(executor: Executor = null): Unit = {
     ManagerService.getManagerService.heartbeatReport(generateHeartBeatMsg(executor))
   }
 
 
   @Receiver
-  override def dealNodeHeartbeatRequest(nodeHeartbeatRequest: NodeHeartbeatRequest): NodeHeartbeatMsg = {
-    val executor = ExecutorManager.getInstance.getReportExecutor
-    generateHeartBeatMsg(executor)
-  }
+  override def dealNodeHeartbeatRequest(nodeHeartbeatRequest: NodeHeartbeatRequest): NodeHeartbeatMsg = generateHeartBeatMsg(null)
+
+
 
 
   override def onNodeHealthyUpdate(nodeHealthyUpdateEvent: NodeHealthyUpdateEvent): Unit = {
     warn(s"node healthy update, tiger heartbeatReport")
-    val executor = ExecutorManager.getInstance.getReportExecutor
-    reportHeartBeatMsg(executor)
+    //val executor = ExecutorManager.getInstance.getReportExecutor
+    reportHeartBeatMsg()
   }
 
-  override def generateHeartBeatMsg(executor: Executor): NodeHeartbeatMsg = {
+  /**
+   * Generate heartbeat information through report by default
+   * If engine conn is not initialized, the default information is generated
+   * @param executor
+   * @return
+   */
+  override def generateHeartBeatMsg(executor: Executor = null): NodeHeartbeatMsg = {
+    val realExecutor = if (null == executor) {
+      if (EngineConnObject.isReady) ExecutorManager.getInstance.getReportExecutor else null
+    } else {
+      executor
+  }
+
     val nodeHeartbeatMsg = new NodeHeartbeatMsg
 
     nodeHeartbeatMsg.setServiceInstance(Sender.getThisServiceInstance)
+    if (null == realExecutor) {
+      nodeHeartbeatMsg.setStatus(NodeStatus.Starting)
+      return nodeHeartbeatMsg
+    }
     nodeHeartbeatMsg.setOverLoadInfo(nodeOverLoadInfoManager.getNodeOverLoadInfo)
     nodeHeartbeatMsg.setHealthyInfo(nodeHealthyInfoManager.getNodeHealthyInfo())
-    executor match {
+    realExecutor match {
       case sensibleExecutor: SensibleExecutor =>
         nodeHeartbeatMsg.setStatus(sensibleExecutor.getStatus)
       case _ =>
     }
-    executor match {
+    realExecutor match {
       case resourceExecutor: ResourceExecutor =>
         nodeHeartbeatMsg.setNodeResource(resourceExecutor.getCurrentNodeResource())
       case _ =>

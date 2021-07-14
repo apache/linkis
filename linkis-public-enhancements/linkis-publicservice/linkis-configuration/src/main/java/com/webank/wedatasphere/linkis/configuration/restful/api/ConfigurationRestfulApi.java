@@ -236,7 +236,7 @@ public class ConfigurationRestfulApi {
         if(engineType != null){
             String[] tmpString = engineType.split("-");
             if(tmpString.length != 2){
-                throw new ConfigurationException("保存的引擎类型参数有误，请按照固定格式传送，例如spark-2.4.3");
+                throw new ConfigurationException("The saved engine type parameter is incorrect, please send it in a fixed format, such as spark-2.4.3(保存的引擎类型参数有误，请按照固定格式传送，例如spark-2.4.3)");
             }
             engine = tmpString[0];
             version = tmpString[1];

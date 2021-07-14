@@ -13,17 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.configuration.conf
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineType
+package com.webank.wedatasphere.linkis.configuration.validate
 
-import scala.collection.JavaConverters.asScalaBufferConverter
+import com.webank.wedatasphere.linkis.common.utils.Utils
+import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 
+class JsonValidator extends Validator{
 
-object Configuration {
+  override def validate(value: String, range: String): Boolean = {
+    Utils.tryCatch{
+      BDPJettyServerHelper.gson.fromJson(value,classOf[java.util.HashMap[String,String]])
+      true
+    }{
+      case _ => false
+    }
+  }
 
-  val ENGINE_TYPE = CommonVars.apply("wds.linkis.configuration.engine.type", EngineType.getAllEngineTypes.asScala.mkString(","))
-
-  val MANAGER_SPRING_NAME = CommonVars("wds.linkis.engineconn.manager.name", "linkis-cg-linkismanager")
+  override var kind: String = "Json"
 }

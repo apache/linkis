@@ -18,8 +18,8 @@ package com.webank.wedatasphere.linkis.engineplugin.spark.executor
 
 import java.util
 import java.util.concurrent.atomic.AtomicLong
-
-import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Utils}
+import com.webank.wedatasphere.linkis.common.log.LogUtils
+import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import com.webank.wedatasphere.linkis.engineplugin.spark.common.Kind
 import com.webank.wedatasphere.linkis.engineplugin.spark.extension.{SparkPostExecutionHook, SparkPreExecutionHook}
@@ -38,12 +38,9 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
 
-abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends ComputationExecutor {
-
-  private val LOG = LoggerFactory.getLogger(getClass)
+abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends ComputationExecutor with Logging{
 
   private var initialized: Boolean = false
-
 
   private var oldprogress: Float = 0f
 
@@ -58,37 +55,37 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
   private var executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]()
 
   override def init(): Unit = {
-    LOG.info(s"Ready to change engine state!")
+    info(s"Ready to change engine state!")
 //    setCodeParser()  // todo check
     super.init()
-    initialized = true
   }
 
 
 
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = Utils.tryFinally {
+    this.engineExecutionContext = engineExecutorContext
     if (sc.isStopped) {
       error("Spark application has already stopped, please restart it.")
       transition(NodeStatus.Failed)
       throw new LinkisJobRetryException("Spark application sc has already stopped, please restart it.")
     }
-    this.engineExecutionContext = engineExecutorContext
     oldprogress = 0f
 //    val runType = engineExecutorContext.getProperties.get("runType").asInstanceOf[String]
-    var kind: Kind = getKind
+    val kind: Kind = getKind
     var preCode = code
+    engineExecutorContext.appendStdout(LogUtils.generateInfo(s"yarn application id: ${sc.applicationId}"))
     //Pre-execution hook
     Utils.tryQuietly(SparkPreExecutionHook.getSparkPreExecutionHooks().foreach(hook => preCode = hook.callPreExecutionHook(engineExecutorContext, preCode)))
     //Utils.tryAndWarn(CSSparkHelper.setContextIDInfoToSparkConf(engineExecutorContext, sc))
     val _code = Kind.getRealCode(preCode)
     info(s"Ready to run code with kind $kind.")
-    jobGroup = String.valueOf("dwc-spark-mix-code-" + queryNum.incrementAndGet())
+    jobGroup = String.valueOf("linkis-spark-mix-code-" + queryNum.incrementAndGet())
     //    val executeCount = queryNum.get().toInt - 1
     info("Set jobGroup to " + jobGroup)
     sc.setJobGroup(jobGroup, _code, true)
 
     val response = Utils.tryFinally(runCode(this, _code, engineExecutorContext, jobGroup)) {
-      this.engineExecutionContext.pushProgress(1, getProgressInfo)
+      Utils.tryAndWarn(this.engineExecutionContext.pushProgress(1, getProgressInfo))
       jobGroup = null
       sc.clearJobGroup()
     }

@@ -13,16 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.client;
 
-public abstract class AbstractBmlClient implements BmlClient {
-    protected String user;
+package com.webank.wedatasphere.linkis.configuration.validate
 
-    public String getUser() {
-        return user;
+import com.webank.wedatasphere.linkis.common.utils.Utils
+import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
+
+class JsonValidator extends Validator{
+
+  override def validate(value: String, range: String): Boolean = {
+    Utils.tryCatch{
+      BDPJettyServerHelper.gson.fromJson(value,classOf[java.util.HashMap[String,String]])
+      true
+    }{
+      case _ => false
     }
+  }
 
-    public void setUser(String user) {
-        this.user = user;
-    }
+  override var kind: String = "Json"
 }

@@ -22,6 +22,7 @@ import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationExcep
 import com.webank.wedatasphere.linkis.configuration.service.CategoryService;
 import com.webank.wedatasphere.linkis.configuration.service.ConfigurationService;
 import com.webank.wedatasphere.linkis.configuration.util.ConfigurationConfiguration;
+import com.webank.wedatasphere.linkis.configuration.util.JsonNodeUtil;
 import com.webank.wedatasphere.linkis.configuration.util.LabelEntityParser;
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.UserCreatorLabel;
@@ -211,9 +212,10 @@ public class ConfigurationRestfulApi {
 
     @POST
     @Path("/saveFullTree")
-    public Response saveFullTree(@Context HttpServletRequest req, JsonNode json) throws IOException {
+    public Response saveFullTree(@Context HttpServletRequest req, JsonNode json) throws IOException, ConfigurationException {
         List fullTrees = mapper.readValue(json.get("fullTree"), List.class);
-        String creator = json.get("creator").asText();
+        String creator = JsonNodeUtil.getStringValue(json.get("creator"));
+        String engineType = JsonNodeUtil.getStringValue(json.get("engineType"));
         if(creator != null && (creator.equals("通用设置") || creator.equals("全局设置"))){
             creator = "*";
         }
@@ -229,7 +231,18 @@ public class ConfigurationRestfulApi {
                 configurationService.updateUserValue(setting, userLabelId, createList, updateList);
             }
         }
+        String engine = null;
+        String version = null;
+        if(engineType != null){
+            String[] tmpString = engineType.split("-");
+            if(tmpString.length != 2){
+                throw new ConfigurationException("The saved engine type parameter is incorrect, please send it in a fixed format, such as spark-2.4.3(保存的引擎类型参数有误，请按照固定格式传送，例如spark-2.4.3)");
+            }
+            engine = tmpString[0];
+            version = tmpString[1];
+        }
         configurationService.updateUserValue(createList, updateList);
+        configurationService.clearAMCacheConf(username,creator,engine,version);
         Message message = Message.ok();
         return Message.messageToResponse(message);
     }

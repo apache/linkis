@@ -65,11 +65,13 @@ class FileSplit(var fsReader: FsReader[_ <: MetaData, _ <: Record], var `type`: 
   def `while`[M](m: MetaData => M, r: Record => Unit): M = {
     val metaData = fsReader.getMetaData
     val t = m(metaData)
+    if (pageTrigger) {
+          fsReader.skip(start)
+        }
+        count = start
     while (fsReader.hasNext && ifContinueRead) {
-      if (ifStartRead) {
         r(shuffler(fsReader.getRecord))
         totalLine += 1
-      }
       count += 1
     }
     t

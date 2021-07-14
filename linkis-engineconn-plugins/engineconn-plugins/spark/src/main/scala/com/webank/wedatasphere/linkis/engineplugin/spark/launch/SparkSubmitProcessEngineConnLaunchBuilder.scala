@@ -18,10 +18,11 @@ package com.webank.wedatasphere.linkis.engineplugin.spark.launch
 
 import java.lang.ProcessBuilder.Redirect
 import java.util
-
 import com.google.common.collect.Lists
+import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkResourceConfiguration.LINKIS_SPARK_DRIVER_MEMORY
 import com.webank.wedatasphere.linkis.engineplugin.spark.config.{SparkConfiguration, SparkResourceConfiguration}
-import com.webank.wedatasphere.linkis.engineplugin.spark.launch.SparkSubmitProcessEngineConnLaunchBuilder.{AbsolutePath, Path, RelativePath}
+import com.webank.wedatasphere.linkis.engineplugin.spark.launch.SparkSubmitProcessEngineConnLaunchBuilder.{AbsolutePath, Path, RelativePath, getValueAndRemove}
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.{DriverAndYarnResource, NodeResource}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
@@ -163,23 +164,32 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
     addOpt("--deploy-mode", _deployMode)
     addOpt("--name", _name)
     //addOpt("--jars",Some(ENGINEMANAGER_JAR.getValue))
-    info("No need to add jars for " + _jars.map(fromPath).exists(x => x.equals("hdfs:///")).toString())
-    addList("--jars", _jars.map(fromPath).filter(x => x.contains("hdfs:///") != true))
+//    info("No need to add jars for " + _jars.map(fromPath).exists(x => x.equals("hdfs:///")).toString())
+    _jars = _jars.filter(_.isNotBlankPath())
 
-    if (_pyFiles.map(fromPath).exists(x => x.equals("hdfs:///")) != true) {
-      addList("--py-files", _pyFiles.map(fromPath).map(_.toString))
+    if(_jars.nonEmpty) {
+      addList("--jars", _jars.map(fromPath))
     }
-    if (_files.map(fromPath).exists(x => x.equals("hdfs:///")) != true) {
+
+    _pyFiles = _pyFiles.filter(_.isNotBlankPath())
+    if(_pyFiles.nonEmpty) {
+      addList("--py-files", _pyFiles.map(fromPath))
+    }
+
+    _files = _files.filter(_.isNotBlankPath())
+    if(_files.nonEmpty) {
       addList("--files", _files.map(fromPath))
+    }
+
+    _archives = _archives.filter(_.isNotBlankPath())
+    if(_archives.nonEmpty) {
+      addList("--archives", _archives.map(fromPath))
     }
     _conf.foreach {
       case (key, value) =>
         if (key.startsWith("spark.")) {
           // subcommand cannot be quoted by double quote, use single quote instead
           addOpt("--conf", Some(key + "=\"" + value + "\""))
-        }
-        else if (key.startsWith("hive.")) {
-          addOpt("--hiveconf", Some(key + "=\"" + value + "\""))
         }
     }
     addOpt("--driver-memory", _driverMemory)
@@ -192,14 +202,14 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
 
     addOpt("--class", _className)
     addOpt("1>", Some(s"${variable(LOG_DIRS)}/stdout"))
-    addOpt("2>", Some(s"${variable(LOG_DIRS)}/stderr"))
+    addOpt("2>>", Some(s"${variable(LOG_DIRS)}/stderr"))
 
     addOpt("", Some(s" ${variable(PWD)}/lib/${SparkConfiguration.ENGINE_JAR.getValue}"))
 
-    commandLine.toArray
+    commandLine.toArray.filter(StringUtils.isNotEmpty)
   }
 
-  override def isAddSparkConfig = true
+  override def enablePublicModule = true
 
   def master(masterUrl: String): SparkSubmitProcessEngineConnLaunchBuilder = {
     _master = Some(masterUrl)
@@ -327,26 +337,34 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
     }
     this.conf(SparkConfiguration.SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, driverJavaSet.toString())
     //this.conf("spark.sql.extensions", "com.webank.wedatasphere.linkis.hook.spark.extension.SparkHistoryExtension")
-    this.name(properties.getOrDefault("appName", "linkis"))
-    this.className(properties.getOrDefault("className", getMainClass))
-    properties.getOrDefault("archives", "").toString.split(",").map(RelativePath).foreach(this.archive)
-    this.driverCores(SparkResourceConfiguration.LINKIS_SPARK_DRIVER_CORES)
-    this.driverMemory(SparkResourceConfiguration.LINKIS_SPARK_DRIVER_MEMORY.getValue(properties) + "G")
-    this.executorCores(SparkResourceConfiguration.LINKIS_SPARK_EXECUTOR_CORES.getValue(properties))
-    this.executorMemory(SparkResourceConfiguration.LINKIS_SPARK_EXECUTOR_MEMORY.getValue(properties) + "G")
-    this.numExecutors(SparkResourceConfiguration.LINKIS_SPARK_EXECUTOR_INSTANCES.getValue(properties))
-    properties.getOrDefault("files", "").split(",").map(RelativePath).foreach(file)
-    properties.getOrDefault("jars", "").split(",").map(RelativePath).foreach(jar)
-    val defaultExternalJars = if (StringUtils.isNotBlank(properties.get("spark.external.jars"))) {
-      properties.get("spark.external.jars")
+    this.className(getValueAndRemove(properties,"className", getMainClass))
+
+    getValueAndRemove(properties,"archives", "").toString.split(",").map(AbsolutePath).foreach(this.archive)
+    this.driverCores(getValueAndRemove(properties, SparkResourceConfiguration.LINKIS_SPARK_DRIVER_CORES))
+    val driverMemory = getValueAndRemove(properties, LINKIS_SPARK_DRIVER_MEMORY)
+    val driverMemoryWithUnit = if (StringUtils.isNumeric(driverMemory)) {
+      driverMemory + "g"
     } else {
-      SparkConfiguration.SPARK_DEFAULT_EXTERNAL_JARS_PATH.getValue.toString
+      driverMemory
     }
+    this.driverMemory(driverMemoryWithUnit)
+    this.executorCores(getValueAndRemove(properties, SparkResourceConfiguration.LINKIS_SPARK_EXECUTOR_CORES))
+    val executorMemory = getValueAndRemove(properties, SparkResourceConfiguration.LINKIS_SPARK_EXECUTOR_MEMORY)
+    val executorMemoryWithUnit = if (StringUtils.isNumeric(executorMemory)) {
+      executorMemory + "g"
+    } else {
+      executorMemory
+    }
+    this.executorMemory(executorMemoryWithUnit)
+    this.numExecutors(getValueAndRemove(properties, SparkResourceConfiguration.LINKIS_SPARK_EXECUTOR_INSTANCES))
+    getValueAndRemove(properties,"files", "").split(",").map(AbsolutePath).foreach(file)
+    getValueAndRemove(properties,"jars", "").split(",").map(AbsolutePath).foreach(jar)
+    val defaultExternalJars = getValueAndRemove(properties,  SparkConfiguration.SPARK_DEFAULT_EXTERNAL_JARS_PATH)
     defaultExternalJars.split(",").map(AbsolutePath).filter(x => {
       val file = new java.io.File(x.path)
       file.isFile
     }).foreach(jar)
-    proxyUser(properties.getOrDefault("proxyUser", ""))
+    proxyUser(getValueAndRemove(properties, "proxyUser", ""))
     if (null != darResource) {
       this.queue(darResource.yarnResource.queueName)
     } else {
@@ -354,7 +372,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
     }
 
 
-    this.driverClassPath(SparkConfiguration.SPARK_DRIVER_CLASSPATH.getValue)
+    this.driverClassPath(getValueAndRemove(properties, SparkConfiguration.SPARK_DRIVER_CLASSPATH))
     this.driverClassPath(variable(CLASSPATH))
     this.redirectOutput(Redirect.PIPE)
     this.redirectErrorStream(true)
@@ -369,21 +387,24 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
       }
     }
     }
-    this.env("spark.app.name", properties.getOrDefault("appName", "linkis" + this._userWithCreator.creator))
-
+    //deal spark conf and spark.hadoop.*
+    val iterator = properties.entrySet().iterator()
+    val sparkConfKeys = ArrayBuffer[String]()
+    while (iterator.hasNext) {
+      val keyValue = iterator.next()
+      if (!SparkConfiguration.SPARK_PYTHON_VERSION.key.equals(keyValue.getKey) && keyValue.getKey.startsWith("spark.") && StringUtils.isNotBlank(keyValue.getValue)) {
+        conf(keyValue.getKey, keyValue.getValue)
+        sparkConfKeys  += keyValue.getKey
+      }
+    }
+    this.name(getValueAndRemove(properties, SparkConfiguration.SPARK_APP_NAME ) + "_" +this._userWithCreator.creator)
+    sparkConfKeys.foreach(properties.remove(_))
   }
 
 
   private def fromPath(path: Path): String = path match {
     case AbsolutePath(p) => p
-    case RelativePath(p) =>
-      if (p.startsWith("hdfs://")) {
-        p
-      } else if (p.startsWith("file://")) {
-        p
-      } else {
-        fsRoot + "/" + p
-      }
+    case RelativePath(p) => p
   }
 
   override protected def getEngineConnManagerHooks(implicit engineConnBuildRequest: EngineConnBuildRequest): util.List[String] = {
@@ -398,10 +419,35 @@ object SparkSubmitProcessEngineConnLaunchBuilder {
     new SparkSubmitProcessEngineConnLaunchBuilder
   }
 
-  sealed trait Path
+  sealed trait Path {
 
-  case class AbsolutePath(path: String) extends Path
+    def isNotBlankPath(): Boolean;
 
-  case class RelativePath(path: String) extends Path
+    protected def isNotBlankPath(path: String): Boolean = {
+      StringUtils.isNotBlank(path) && !"/".equals(path.trim) && !"hdfs:///".equals(path.trim) && !"file:///".equals(path.trim)
+    }
+  }
+
+  case class AbsolutePath(path: String) extends Path {
+    override def isNotBlankPath(): Boolean = isNotBlankPath(path)
+  }
+
+  case class RelativePath(path: String) extends Path {
+    override def isNotBlankPath(): Boolean = isNotBlankPath(path)
+  }
+
+  def getValueAndRemove[T](properties: java.util.Map[String, String], commonVars: CommonVars[T]): T = {
+    val value = commonVars.getValue(properties)
+    properties.remove(commonVars.key)
+    value
+  }
+
+  def getValueAndRemove(properties: java.util.Map[String, String], key: String, defaultValue: String): String = {
+    if (properties.containsKey(key)) {
+      properties.remove(key)
+    } else {
+      defaultValue
+    }
+  }
 
 }

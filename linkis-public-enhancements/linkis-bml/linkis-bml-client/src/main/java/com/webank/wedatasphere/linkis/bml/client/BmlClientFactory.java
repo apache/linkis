@@ -16,33 +16,26 @@
 package com.webank.wedatasphere.linkis.bml.client;
 
 import com.webank.wedatasphere.linkis.bml.client.impl.HttpBmlClient;
-import com.webank.wedatasphere.linkis.bml.http.HttpConf;
+import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig;
 
 import java.util.Map;
 
 public class BmlClientFactory {
+
     public static BmlClient createBmlClient(){
-        return createBmlClient(null, null, null);
+        return new HttpBmlClient();
     }
 
-
-    public static BmlClient createBmlClient(String user){
-        return createBmlClient(user, null, null);
+    public static BmlClient createBmlClient(String serverUrl){
+        return new HttpBmlClient(serverUrl);
     }
 
-    public static BmlClient createBmlClient(String user, Map<String, Object> properties){
-        return createBmlClient(user, properties, null);
-    }
-    public static BmlClient createBmlClient(String user, Map<String, Object> properties, String serverUrl){
-        if (serverUrl == null || "".equals(serverUrl.trim())) {
-            serverUrl = HttpConf.gatewayInstance();
-        }
-        AbstractBmlClient bmlClient = new HttpBmlClient(serverUrl);
-        bmlClient.setUser(user);
-        bmlClient.setProperties(properties);
-        bmlClient.init();
-        return bmlClient;
+    public static BmlClient createBmlClient(DWSClientConfig clientConfig){
+        return new HttpBmlClient(clientConfig);
     }
 
+    public static BmlClient createBmlClient(String serverUrl, Map<String, Object> properties){
+        return new HttpBmlClient(serverUrl, properties);
+    }
 
 }

@@ -43,7 +43,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   override protected def createEngineConnSession(engineCreationContext: EngineCreationContext): Any = {
     val options = engineCreationContext.getOptions
     val useSparkSubmit = true
-    val sparkConf: SparkConf = new SparkConf(true).setAppName(options.getOrDefault("spark.app.name", "EngineConn-Spark"))
+    val sparkConf: SparkConf = new SparkConf(true)
     val master = sparkConf.getOption("spark.master").getOrElse(CommonVars("spark.master", "yarn").getValue)
     info(s"------ Create new SparkContext {$master} -------")
     val pysparkBasePath = SparkConfiguration.SPARK_HOME.getValue
@@ -51,7 +51,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val pythonLibUris = pysparkPath.listFiles().map(_.toURI.toString).filter(_.endsWith(".zip"))
     if (pythonLibUris.length == 2) {
       val sparkConfValue1 = Utils.tryQuietly(CommonVars("spark.yarn.dist.files", "").getValue)
-      val sparkConfValue2 = Utils.tryQuietly(options.get("spark.yarn.dist.files"))
+      val sparkConfValue2 = Utils.tryQuietly(sparkConf.get("spark.yarn.dist.files"))
       if(StringUtils.isEmpty(sparkConfValue1) && StringUtils.isEmpty(sparkConfValue2))
         sparkConf.set("spark.yarn.dist.files", pythonLibUris.mkString(","))
       else if(StringUtils.isEmpty(sparkConfValue1))
@@ -60,8 +60,8 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
         sparkConf.set("spark.yarn.dist.files", sparkConfValue1 + "," + pythonLibUris.mkString(","))
       else
         sparkConf.set("spark.yarn.dist.files", sparkConfValue1 + "," + sparkConfValue2 + "," + pythonLibUris.mkString(","))
-      if (!useSparkSubmit) sparkConf.set("spark.files", sparkConf.get("spark.yarn.dist.files"))
-      sparkConf.set("spark.submit.pyFiles", pythonLibUris.mkString(","))
+//      if (!useSparkSubmit) sparkConf.set("spark.files", sparkConf.get("spark.yarn.dist.files"))
+//      sparkConf.set("spark.submit.pyFiles", pythonLibUris.mkString(","))
     }
     // Distributes needed libraries to workers
     // when spark version is greater than or equal to 1.5.0

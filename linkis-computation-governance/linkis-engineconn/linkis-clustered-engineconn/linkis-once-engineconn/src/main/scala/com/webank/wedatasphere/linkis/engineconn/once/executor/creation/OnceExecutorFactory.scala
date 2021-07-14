@@ -19,10 +19,9 @@ package com.webank.wedatasphere.linkis.engineconn.once.executor.creation
 
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
 import com.webank.wedatasphere.linkis.engineconn.core.creation.AbstractCodeLanguageLabelExecutorFactory
 import com.webank.wedatasphere.linkis.engineconn.once.executor.OnceExecutor
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.{MultiExecutorEngineConnFactory, SingleExecutorEngineConnFactory}
+import com.webank.wedatasphere.linkis.engineconn.once.executor.execution.OnceEngineConnExecution
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineConnMode._
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineConnModeLabel
@@ -36,17 +35,10 @@ trait OnceExecutorFactory extends AbstractCodeLanguageLabelExecutorFactory {
                                      labels: Array[Label[_]]): OnceExecutor
 
   override def canCreate(labels: Array[Label[_]]): Boolean =
-    super.canCreate(labels) || (labels.exists {
+    super.canCreate(labels) && labels.exists {
       case engineConnModeLabel: EngineConnModeLabel =>
         val mode: EngineConnMode = engineConnModeLabel.getEngineConnMode
-        Array(Once, Computation_With_Once, Once_With_Cluster).contains(mode)
-      case _ => false
-    } && onlyOneOnceExecutorFactory())
-
-  private def onlyOneOnceExecutorFactory(): Boolean = EngineConnObject.getEngineConnPlugin.getEngineConnFactory match {
-    case _: SingleExecutorEngineConnFactory with OnceExecutorFactory => true
-    case engineConnFactory: MultiExecutorEngineConnFactory =>
-      engineConnFactory.getExecutorFactories.count(_.isInstanceOf[OnceExecutorFactory]) == 1
+        OnceEngineConnExecution.getSupportedEngineConnModes.contains(mode)
     case _ => false
   }
 

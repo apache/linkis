@@ -19,6 +19,7 @@ import com.webank.wedatasphere.linkis.cs.common.utils.CSCommonUtils
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.utlis.ComputationEngineConstant
 
 
 class CSEnginePreExecuteHook extends ComputationExecutorHook with Logging {
@@ -26,6 +27,8 @@ class CSEnginePreExecuteHook extends ComputationExecutorHook with Logging {
   private val csResourceParser: CSResourceParser = new CSResourceParser
 
   override def getHookName: String = "ContextServicePreHook"
+
+  override def getOrder(): Int = ComputationEngineConstant.CS_HOOK_ORDER
 
   override def beforeExecutorExecute(engineExecutionContext: EngineExecutionContext, engineCreationContext: EngineCreationContext, code: String): String = {
     val props = engineExecutionContext.getProperties

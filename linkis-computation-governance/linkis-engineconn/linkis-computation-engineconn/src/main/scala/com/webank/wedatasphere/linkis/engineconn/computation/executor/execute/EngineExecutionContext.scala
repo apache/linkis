@@ -43,6 +43,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
   private var defaultResultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record] = _
 
   private var resultSize = 0
+  private var enableResultsetMetaWithTableName = false
 
   private val properties: java.util.Map[String, Object] = new util.HashMap[String, Object]()
 
@@ -57,7 +58,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
 
   def setCurrentParagraph(currentParagraph: Int): Unit = this.currentParagraph = currentParagraph
 
-  def pushProgress(progress: Float, progressInfo: Array[JobProgressInfo]): Unit = {
+  def pushProgress(progress: Float, progressInfo: Array[JobProgressInfo]): Unit = if (! executor.isInternalExecute){
     val listenerBus = getEngineSyncListenerBus
     getJobId.foreach(jId => {
       listenerBus.postToAll(TaskProgressUpdateEvent(jId, progress, progressInfo))
@@ -135,7 +136,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
     //update by peaceWong 20200402 end
   }
 
-  def appendStdout(log: String): Unit = if (!executor.isEngineInitialized) {
+  def appendStdout(log: String): Unit = if (executor.isInternalExecute) {
     executor.info(log)
   } else {
     val listenerBus = getEngineSyncListenerBus
@@ -162,4 +163,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
 
   def getExecutor: Executor = executor
 
+  def getEnableResultsetMetaWithTableName = enableResultsetMetaWithTableName
+
+  def setEnableResultsetMetaWithTableName(withTableName: Boolean): Unit = this.enableResultsetMetaWithTableName = withTableName
 }

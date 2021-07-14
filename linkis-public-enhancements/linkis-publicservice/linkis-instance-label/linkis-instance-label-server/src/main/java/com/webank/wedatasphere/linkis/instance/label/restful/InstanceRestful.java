@@ -111,7 +111,7 @@ public class InstanceRestful {
         InstanceInfo instanceInfo = insLabelService.getInstanceInfoByServiceInstance(instance);
         instanceInfo.setUpdateTime(new Date());
         insLabelService.updateInstance(instanceInfo);
-        return Message.messageToResponse(Message.ok("更新Label成功").data("labels",labels));
+        return Message.messageToResponse(Message.ok("success").data("labels",labels));
     }
 
     @GET

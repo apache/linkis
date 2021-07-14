@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,6 +60,7 @@ import java.util.stream.Collectors;
 import static org.apache.commons.lang.math.NumberUtils.isNumber;
 
 @AdapterMode
+@EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
 @Service
 public class DefaultInsLabelService implements InsLabelAccessService {
 
@@ -70,6 +72,8 @@ public class DefaultInsLabelService implements InsLabelAccessService {
     private InstanceInfoDao instanceDao;
     @Autowired
     private InsLabelRelationDao insLabelRelationDao;
+    @Autowired
+    private InstanceInfoDao instanceInfoDao;
     private AsyncConsumerQueue<InsPersistenceLabel> asyncRemoveLabelQueue;
     private InsLabelAccessService selfService;
     private AtomicBoolean asyncQueueInit = new AtomicBoolean(false);
@@ -109,7 +113,7 @@ public class DefaultInsLabelService implements InsLabelAccessService {
         LOG.info("Insert/Update service instance info: [" + serviceInstance + "]");
         doInsertInstance(serviceInstance);
         List<Integer> insLabelIds = insLabels.stream().map(InsPersistenceLabel :: getId).collect(Collectors.toList());
-        LOG.trace("Build relation between labels: " +
+        LOG.info("Build relation between labels: " +
                 LabelUtils.Jackson.toJson(insLabelIds, null)
         + " and instance: [" + serviceInstance.getInstance() + "]");
         batchOperation(insLabelIds, subInsLabelIds -> insLabelRelationDao.insertRelations(serviceInstance.getInstance(), subInsLabelIds), InsLabelConf.DB_PERSIST_BATCH_SIZE.getValue());
@@ -149,16 +153,16 @@ public class DefaultInsLabelService implements InsLabelAccessService {
         LOG.info("Drop relationships related by instance: [" + serviceInstance.getInstance() + "]");
         insLabelRelationDao.dropRelationsByInstance(serviceInstance.getInstance());
         // Async to delete labels that have no relationship
-        if(!labelsCandidateRemoved.isEmpty()){
-            labelsCandidateRemoved.forEach( label -> {
-                if(!asyncQueueInit.get()) {
-                    initQueue();
-                }
-                if(!asyncRemoveLabelQueue.offer(label)){
-                    LOG.warn("Async queue for removing labels maybe full. current size: [" + asyncRemoveLabelQueue.size() + "]");
-                }
-            });
-        }
+//        if(!labelsCandidateRemoved.isEmpty()){
+//            labelsCandidateRemoved.forEach( label -> {
+//                if(!asyncQueueInit.get()) {
+//                    initQueue();
+//                }
+//                if(!asyncRemoveLabelQueue.offer(label)){
+//                    LOG.warn("Async queue for removing labels maybe full. current size: [" + asyncRemoveLabelQueue.size() + "]");
+//                }
+//            });
+//        }
     }
 
 
@@ -236,6 +240,22 @@ public class DefaultInsLabelService implements InsLabelAccessService {
     public List<InstanceInfo> listAllInstanceWithLabel() {
         List<InstanceInfo> instances = insLabelRelationDao.listAllInstanceWithLabel();
         return instances;
+    }
+
+    @Override
+    public void removeInstance(ServiceInstance serviceInstance) {
+        instanceInfoDao.removeInstance(serviceInstance);
+    }
+
+    @Override
+    public InstanceInfo getInstanceInfoByServiceInstance(ServiceInstance serviceInstance){
+        InstanceInfo instanceInfo = instanceInfoDao.getInstanceInfoByServiceInstance(serviceInstance);
+        return instanceInfo;
+    }
+
+    @Override
+    public void updateInstance(InstanceInfo instanceInfo){
+        instanceInfoDao.updateInstance(instanceInfo);
     }
 
     public String getEurekaURL() throws Exception {

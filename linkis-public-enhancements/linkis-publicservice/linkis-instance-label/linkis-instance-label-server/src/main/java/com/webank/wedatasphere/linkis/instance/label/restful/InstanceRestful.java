@@ -108,7 +108,10 @@ public class InstanceRestful {
            throw new Exception("Failed to update label, include repeat label(更新label失败，包含重复label)");
         }
         insLabelService.refreshLabelsToInstance(labels,instance);
-        return Message.messageToResponse(Message.ok("更新Label成功").data("labels",labels));
+        InstanceInfo instanceInfo = insLabelService.getInstanceInfoByServiceInstance(instance);
+        instanceInfo.setUpdateTime(new Date());
+        insLabelService.updateInstance(instanceInfo);
+        return Message.messageToResponse(Message.ok("success").data("labels",labels));
     }
 
     @GET

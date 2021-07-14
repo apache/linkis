@@ -17,12 +17,10 @@
 package com.webank.wedatasphere.linkis.jobhistory.service;
 
 import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest;
-import com.webank.wedatasphere.linkis.governance.common.protocol.job.JobReqInsert;
-import com.webank.wedatasphere.linkis.governance.common.protocol.job.JobReqQuery;
-import com.webank.wedatasphere.linkis.governance.common.protocol.job.JobReqUpdate;
-import com.webank.wedatasphere.linkis.governance.common.protocol.job.JobRespProtocol;
+import com.webank.wedatasphere.linkis.governance.common.protocol.job.*;
 import com.webank.wedatasphere.linkis.jobhistory.entity.JobHistory;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +30,8 @@ public interface JobHistoryQueryService {
     JobRespProtocol add(JobReqInsert jobReqInsert);
 
     JobRespProtocol change(JobReqUpdate jobReqUpdate);
+
+    ArrayList<JobRespProtocol> batchChange(JobReqBatchUpdate jobReqUpdate);
 
     JobRespProtocol query(JobReqQuery jobReqQuery);
 

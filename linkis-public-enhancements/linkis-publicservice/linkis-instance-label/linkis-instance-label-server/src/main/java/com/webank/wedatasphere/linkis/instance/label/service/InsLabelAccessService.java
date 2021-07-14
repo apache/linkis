@@ -84,5 +84,9 @@ public interface InsLabelAccessService {
      */
     List<InstanceInfo> listAllInstanceWithLabel();
 
+    void removeInstance(ServiceInstance serviceInstance);
 
+    void updateInstance(InstanceInfo instanceInfo);
+
+    InstanceInfo getInstanceInfoByServiceInstance(ServiceInstance serviceInstance);
 }

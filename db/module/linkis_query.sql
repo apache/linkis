@@ -20,6 +20,7 @@ CREATE TABLE `linkis_ps_job_history_group_history` (
   `updated_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Update time',
   `instances` varchar(250) DEFAULT NULL COMMENT 'Entrance instances',
   `engine_type` varchar(32) DEFAULT NULL COMMENT 'Engine type',
+  `execution_code` text DEFAULT NULL COMMENT 'Job origin code or code path',
   PRIMARY KEY (`id`),
   KEY `created_time` (`created_time`),
   KEY `submit_user` (`submit_user`)

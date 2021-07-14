@@ -10,7 +10,7 @@ CREATE TABLE `linkis_ps_cs_context_map` (
   `context_scope` varchar(32) DEFAULT NULL,
   `context_type` varchar(32) DEFAULT NULL,
   `props` text,
-  `value` text,
+  `value` mediumtext,
   `context_id` int(11) DEFAULT NULL,
   `keywords` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),

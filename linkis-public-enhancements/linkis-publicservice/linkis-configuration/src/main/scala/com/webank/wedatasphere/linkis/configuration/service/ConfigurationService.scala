@@ -27,12 +27,14 @@ import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationExcep
 import com.webank.wedatasphere.linkis.configuration.util.{LabelEntityParser, LabelParameterParser}
 import com.webank.wedatasphere.linkis.configuration.validate.ValidatorManager
 import com.webank.wedatasphere.linkis.governance.common.protocol.conf.ResponseQueryConfig
+import com.webank.wedatasphere.linkis.manager.common.protocol.conf.RemoveCacheConfRequest
 import com.webank.wedatasphere.linkis.manager.label.builder.CombinedLabelBuilder
 import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import com.webank.wedatasphere.linkis.manager.label.constant.{LabelConstant, LabelKeyConstant}
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import com.webank.wedatasphere.linkis.manager.label.entity.{CombinedLabel, CombinedLabelImpl, Label, SerializableLabel}
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils
+import com.webank.wedatasphere.linkis.manager.label.utils.{EngineTypeLabelCreator, LabelUtils}
+import com.webank.wedatasphere.linkis.rpc.Sender
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -138,6 +140,23 @@ class ConfigurationService extends Logging {
     }
     if(!CollectionUtils.isEmpty(updateList)){
       configMapper.updateUserValueList(updateList)
+    }
+  }
+
+  def clearAMCacheConf(username: String, creator: String, engine: String, version: String): Unit = {
+    val sender = Sender.getSender(Configuration.MANAGER_SPRING_NAME.getValue)
+    if(StringUtils.isNotEmpty(username)){
+      val userCreatorLabel = LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[UserCreatorLabel])
+      userCreatorLabel.setUser(username)
+      userCreatorLabel.setCreator(creator)
+      val request = new RemoveCacheConfRequest
+      request.setUserCreatorLabel(userCreatorLabel)
+      if(StringUtils.isNotEmpty(engine) && StringUtils.isNotEmpty(version)){
+        val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(engine)
+        engineTypeLabel.setVersion(version)
+        request.setEngineTypeLabel(engineTypeLabel)
+      }
+      sender.ask(request)
     }
   }
 

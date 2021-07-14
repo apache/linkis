@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.conf
+package com.webank.wedatasphere.linkis.configuration.validate
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import com.webank.wedatasphere.linkis.common.utils.Utils
+import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 
-object JobhistoryConfiguration {
-  //modify this param in linkis.properties
-  val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
-  val JOB_HISTORY_SAFE_TRIGGER = CommonVars("wds.linkis.jobhistory.safe.trigger", true).getValue
+class JsonValidator extends Validator{
 
-  val ENTRANCE_SPRING_NAME = CommonVars("wds.linkis.entrance.spring.name", "linkis-cg-entrance")
-  val ENTRANCE_INSTANCE_DELEMITER = CommonVars("wds.linkis.jobhistory.instance.delemiter", ";")
+  override def validate(value: String, range: String): Boolean = {
+    Utils.tryCatch{
+      BDPJettyServerHelper.gson.fromJson(value,classOf[java.util.HashMap[String,String]])
+      true
+    }{
+      case _ => false
+    }
+  }
 
+  override var kind: String = "Json"
 }

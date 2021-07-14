@@ -16,13 +16,17 @@
 
 package com.webank.wedatasphere.linkis.rpc.interceptor.common
 
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.{Callable, TimeUnit}
 
 import com.google.common.cache.{Cache, CacheBuilder, RemovalListener, RemovalNotification}
-import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.common.exception.WarnException
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.protocol.CacheableProtocol
 import com.webank.wedatasphere.linkis.rpc.interceptor.{RPCInterceptor, RPCInterceptorChain, RPCInterceptorExchange}
 import org.springframework.stereotype.Component
+import org.springframework.util.StringUtils
 
+import scala.tools.scalap.scalax.util.StringUtil
 
 @Component
 class CacheableRPCInterceptor extends RPCInterceptor with Logging{
@@ -38,18 +42,33 @@ class CacheableRPCInterceptor extends RPCInterceptor with Logging{
   override val order: Int = 10
 
   override def intercept(interceptorExchange: RPCInterceptorExchange, chain: RPCInterceptorChain): Any = interceptorExchange.getProtocol match {
-//    case cacheable: CacheableProtocol =>
-//      guavaCache.get(cacheable.toString, new Callable[Any] {
-//        override def call(): Any = {
-//          val returnMsg = chain.handle(interceptorExchange)
-//          returnMsg match {
-//            case warn: WarnException =>
-//              throw warn
-//            case _ =>
-//              returnMsg
-//          }
-//        }
-//      })
+    case cacheable: CacheableProtocol =>
+      guavaCache.get(cacheable.toString, new Callable[Any] {
+        override def call(): Any = {
+          val returnMsg = chain.handle(interceptorExchange)
+          returnMsg match {
+           case warn: WarnException =>
+              throw warn
+            case _ =>
+              returnMsg
+          }
+        }
+      })
     case _ => chain.handle(interceptorExchange)
   }
+
+  def removeCache(cacheKey: String): Boolean ={
+      Utils.tryCatch{
+        if(!StringUtils.isEmpty(cacheKey)){
+          guavaCache.invalidate(cacheKey)
+        }
+        true
+      }{
+        case exception: Exception => {
+          warn(s"Failed to clean RPC cache, cache key:${cacheKey}", exception)
+          false
+        }
+      }
+    }
+
 }

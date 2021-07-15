@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.orchestrator.strategy.async
 
+import com.webank.wedatasphere.linkis.orchestrator.listener.task.TaskInfoEvent
 import com.webank.wedatasphere.linkis.orchestrator.plans.physical.ExecTask
 
 /**
@@ -27,5 +28,14 @@ trait AsyncExecTask extends  ExecTask {
   def kill(): Unit
 
   def clear(isSucceed: Boolean): Unit
+
+  /**
+   * Determine whether the event can be handled by the task
+   * @param event
+   * @return
+   */
+  def canDealEvent(event: TaskInfoEvent): Boolean = {
+    getId.equals(event.execTask.getId)
+  }
 
 }

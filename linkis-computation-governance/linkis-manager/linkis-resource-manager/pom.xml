@@ -260,21 +260,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
-            <artifactId>linkis-webank-tools</artifactId>
-            <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpclient</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpmime</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
     </dependencies>
     <build>

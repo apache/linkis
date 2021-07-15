@@ -32,8 +32,9 @@ import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.server.{BDPJettyServerHelper, toJavaMap}
 
 import java.util
+import java.util.Collections
 import java.util.concurrent.TimeUnit
-import scala.collection.JavaConverters.mapAsScalaMapConverter
+import scala.collection.JavaConverters.{asScalaBufferConverter, asScalaSetConverter, mapAsScalaMapConverter}
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
@@ -46,19 +47,16 @@ object EngineConnMonitor extends Logging {
       override def run(): Unit = {
         val startTime = System.currentTimeMillis()
         val engineExecutorCache = engineConnExecutorCache
-        if (engineExecutorCache.size > 0) {
-          info(s"Entrance Executor cache num : ${engineExecutorCache.size}")
-        }
-        val unActivityEngines = new ArrayBuffer[EngineConnExecutor]()
+        val unActivityEngines = Collections.synchronizedSet(new util.HashSet[EngineConnExecutor]())
         engineExecutorCache.values.foreach(taskExecutors => taskExecutors.foreach(executor => {
           if (startTime - executor.getEngineConnExecutor.getLastUpdateTime() > ComputationOrchestratorConf.ENGINECONN_LASTUPDATE_TIMEOUT.getValue.toLong) {
-            unActivityEngines += executor.getEngineConnExecutor
+            unActivityEngines.add(executor.getEngineConnExecutor)
           }
         }))
         if (null != unActivityEngines && !unActivityEngines.isEmpty) {
           info(s"There are ${unActivityEngines.size} unActivity engines.")
           val engineList = new util.ArrayList[ServiceInstance]()
-          unActivityEngines.foreach(engine => {
+          unActivityEngines.asScala.foreach(engine => {
             engineList.add(engine.getServiceInstance)
             if (engineList.size() >= GovernanceConstant.REQUEST_ENGINE_STATUS_BATCH_LIMIT) {
               queryEngineStatusAndHandle(engineConnExecutorCache, engineList, endJobByEngineInstance)
@@ -72,7 +70,7 @@ object EngineConnMonitor extends Logging {
         }
         val endTime = System.currentTimeMillis()
         if (endTime - startTime >= ComputationOrchestratorConf.ENGINECONN_ACTIVITY_MONITOR_INTERVAL.getValue.toLong) {
-          error("Query engines status costs longer time than query task interval, you should increase interval.")
+          warn("Query engines status costs longer time than query task interval, you should increase interval.")
         }
       }
     }
@@ -91,12 +89,21 @@ object EngineConnMonitor extends Logging {
             info(s"ResponseEngineStatusBatch msg : ${response.msg}")
           }
           if (response.engineStatus.size() != requestEngineStatus.engineList.size()) {
-            error("ResponseEngineStatusBatch engines size is not euqal requet.")
+            error(s"ResponseEngineStatusBatch engines size : ${response.engineStatus.size()} is not euqal requet : ${requestEngineStatus.engineList.size()}.")
+            val unKnownEngines = new ArrayBuffer[ServiceInstance]()
+            requestEngineStatus.engineList.asScala.foreach(instance => {
+              if (!response.engineStatus.containsKey(instance)) {
+                response.engineStatus.put(instance, NodeExistStatus.Unknown)
+                unKnownEngines += instance
+              }
+            })
+            val instances = unKnownEngines.map(_.getInstance).mkString(",")
+            warn(s"These engine instances cannot be found in manager : ${instances}")
           }
           response.engineStatus.asScala.foreach(status => {
             status._2 match {
               case NodeExistStatus.UnExist =>
-                warn(s"Engine ${status._1.toString} is Failed, now go to clear its task.")
+                warn(s"Engine ${status._1} is Failed, now go to clear its task.")
                 endJobByEngineInstance(status._1)
               case NodeExistStatus.Exist | NodeExistStatus.Unknown =>
                 val engineConnExecutor = engineConnExecutorCache.getOrDefault(status._1, null)
@@ -109,7 +116,9 @@ object EngineConnMonitor extends Logging {
                         if (NodeStatus.isCompleted(rs.getNodeStatus)) {
                           endJobByEngineInstance(status._1)
                         } else {
-                          warn("Will update engineConnExecutor lastupdated time")
+                          if (logger.isDebugEnabled()) {
+                            debug(s"Will update engineConnExecutor(${status._1}) lastupdated time")
+                          }
                           updateExecutorActivityTime(status._1, engineConnExecutorCache)
                         }
                       case o: Any =>
@@ -117,7 +126,7 @@ object EngineConnMonitor extends Logging {
                     }
                   } {
                     case t: Throwable =>
-                      error(s"Failed to get status of engineConn : ${status._1.toString}, now end the job. ", t)
+                      error(s"Failed to get status of engineConn : ${status._1}, now end the job. ", t)
                       endJobByEngineInstance(status._1)
                   }
                 }

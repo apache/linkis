@@ -78,6 +78,9 @@ trait EngineConnExecutor extends Closeable {
     state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
   }
 
+  override def toString: String = {
+    "" + getServiceInstance
+  }
 
 }
 

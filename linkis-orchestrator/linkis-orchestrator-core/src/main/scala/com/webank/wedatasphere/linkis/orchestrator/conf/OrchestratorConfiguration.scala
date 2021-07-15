@@ -44,13 +44,14 @@ object OrchestratorConfiguration {
 
   val EXECUTION_TASK_MAX_PARALLELISM = CommonVars("wds.linkis.orchestrator.execution.task.max.parallelism", 5)
 
-  val TASK_RUNNER_MAX_SIZE = CommonVars("wds.linkis.orchestrator.execution.task.runner.max.size", 30)
+  val TASK_RUNNER_MAX_SIZE = CommonVars("wds.linkis.orchestrator.execution.task.runner.max.size", 200)
 
   val EXEC_RUNNER_FACTORY_CLASS = CommonVars("wds.linkis.orchestrator.exec.task.runner.factory.class", "")
 
 
   val TASK_MAX_PERSIST_WAIT_TIME = CommonVars("wds.linkis.orchestrator.task.persist.wait.max", new TimeType("5m"))
 
+  val RETRY_TASK_WAIT_TIME = CommonVars("wds.linkis.orchestrator.task.retry.wait.time", 10000)
 
   val TASK_SCHEDULER_THREAD_POOL = CommonVars("wds.linkis.orchestrator.task.scheduler.thread.pool", 200)
 

@@ -185,4 +185,17 @@ public class JobRequest {
     public void setMetrics(Map<String, Object> metrics) {
         this.metrics = metrics;
     }
+
+    @Override
+    public String toString() {
+        return "JobRequest{" +
+                "id=" + id +
+                ", reqId='" + reqId + '\'' +
+                ", submitUser='" + submitUser + '\'' +
+                ", executeUser='" + executeUser + '\'' +
+                ", labels=" + labels +
+                ", params=" + params +
+                ", status=" + status +
+                '}';
+    }
 }

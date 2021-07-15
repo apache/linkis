@@ -61,7 +61,7 @@ class UserRunningNumber {
    * Copy the current running task situation
    * @return
    */
-  def copy(): UserRunningNumber = {
+  def copy(): UserRunningNumber = synchronized {
     val newUserRunningNumber = new UserRunningNumber(runningNumber)
     newUserRunningNumber
   }

@@ -45,14 +45,7 @@ class DefaultResourceLabelService extends ResourceLabelService with Logging {
   private val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
 
-  private def convertPersistenceLabel(label: Label[_]): PersistenceLabel = {
-    label match {
-      case persistenceLabel: PersistenceLabel =>
-        persistenceLabel
-      case _ =>
-        labelBuilderFactory.convertLabel[PersistenceLabel](label, classOf[PersistenceLabel])
-    }
-  }
+
 
   /**
     * 通过传入的Labels 查找所有和Resource相关的Label

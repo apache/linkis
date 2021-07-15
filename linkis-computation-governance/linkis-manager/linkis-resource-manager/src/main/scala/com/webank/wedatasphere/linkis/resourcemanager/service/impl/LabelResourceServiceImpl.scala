@@ -60,7 +60,7 @@ class LabelResourceServiceImpl extends LabelResourceService with Logging {
   }
 
   override def enrichLabels(labelContainer: RMLabelContainer): RMLabelContainer = {
-    new RMLabelContainer(labelContainer.getLabels)
+     new RMLabelContainer(labelContainer.getLabels)
   }
 
   override def removeResourceByLabel(label: Label[_]): Unit = {

@@ -51,4 +51,3 @@ public class LabelCommonConfig {
     public final static CommonVars<String> PERMANENT_LABEL = CommonVars.apply("wds.linkis.am.permanent.label", "tenant");
 }
 
-}

@@ -48,10 +48,9 @@ ENGINECONN_ROOT_PATH=/appcom/tmp
 #RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis ##hdfs:// required
 
 ### Provide the DB information of Hive metadata database.
-### Attention! If there are special characters like "&", they need to be enclosed in quotation marks.
-HIVE_META_URL=""
-HIVE_META_USER=""
-HIVE_META_PASSWORD=""
+HIVE_META_URL=
+HIVE_META_USER=
+HIVE_META_PASSWORD=
 
 ##YARN REST URL  spark engine required
 YARN_RESTFUL_URL=http://127.0.0.1:8088

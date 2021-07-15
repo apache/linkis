@@ -59,13 +59,14 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
   @Autowired
   private var nodePointerBuilder: NodePointerBuilder = _
 
-  private val  labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
   @Autowired
   private var resourceManager: ResourceManager = _
 
   @Autowired
   private var labelManagerPersistence: LabelManagerPersistence = _
+
+  private val  labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
   override def listEngines(user: String): util.List[EngineNode] = {
     // TODO: user 应该是除了root，hadoop
@@ -218,7 +219,7 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
     */
   override def deleteEngineNode(engineNode: EngineNode): Unit = {
     nodeManagerPersistence.deleteEngineNode(engineNode)
-    nodeMetricManagerPersistence.deleteNodeMetrics(engineNode)
+
   }
 
   override def getEngineNode(serviceInstance: ServiceInstance): EngineNode = {

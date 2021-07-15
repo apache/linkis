@@ -30,13 +30,12 @@ import com.webank.wedatasphere.linkis.governance.common.utils.OnceExecutorConten
 import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
 import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import com.webank.wedatasphere.linkis.manager.label.entity.{JobLabel, Label}
-import com.webank.wedatasphere.linkis.scheduler.executer.{AsynReturnExecuteResponse, ExecuteResponse}
+import com.webank.wedatasphere.linkis.scheduler.executer.{AsynReturnExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 
-import scala.collection.mutable.ArrayBuffer
 import scala.collection.convert.wrapAsScala._
-
+import scala.collection.mutable.ArrayBuffer
 
 trait OnceExecutor extends ExecutableExecutor[ExecuteResponse] with LabelExecutor with Logging {
 
@@ -121,7 +120,7 @@ trait ManageableOnceExecutor extends AccessibleExecutor with OnceExecutor with R
 
   protected def waitToRunning(): Unit
 
-  def waitForComplete(): Unit = notifyListeners synchronized wait()
+  def waitForComplete(): Unit = this synchronized wait()
 
   def getResponse: ExecuteResponse = response
 
@@ -129,7 +128,11 @@ trait ManageableOnceExecutor extends AccessibleExecutor with OnceExecutor with R
 
   override protected def onStatusChanged(fromStatus: NodeStatus, toStatus: NodeStatus): Unit = {
     if(NodeStatus.isCompleted(toStatus)) {
-      Utils.tryFinally(notifyListeners.foreach(_(getResponse)))(notifyListeners synchronized notifyAll)
+      if(response == null) toStatus match {
+        case NodeStatus.Success => response = SuccessExecuteResponse()
+        case _ => response = ErrorExecuteResponse("Unknown reason.", null)
+      }
+      Utils.tryFinally(notifyListeners.foreach(_(getResponse)))(this synchronized notifyAll)
     }
     super.onStatusChanged(fromStatus, toStatus)
   }

@@ -23,9 +23,17 @@ import com.webank.wedatasphere.linkis.protocol.{CacheableProtocol, RetryableProt
 
 trait ConfigProtocol
 
-case class RequestQueryGlobalConfig(username: String) extends CacheableProtocol with RetryableProtocol with ConfigProtocol with RequestProtocol
+case class RequestQueryGlobalConfig(username: String) extends CacheableProtocol with RetryableProtocol with ConfigProtocol with RequestProtocol {
+  override def toString: String = {
+    RequestQueryGlobalConfig.getClass.getName + "," + username
+  }
+}
 
-case class RequestQueryEngineConfig(userCreatorLabel: UserCreatorLabel, engineTypeLabel: EngineTypeLabel, filter: String = null) extends CacheableProtocol with RetryableProtocol with ConfigProtocol
+case class RequestQueryEngineConfig(userCreatorLabel: UserCreatorLabel, engineTypeLabel: EngineTypeLabel, filter: String = null) extends CacheableProtocol with RetryableProtocol with ConfigProtocol{
+  override def toString: String = {
+    RequestQueryGlobalConfig.getClass.getName + "," + userCreatorLabel.getStringValue + "," + engineTypeLabel.getStringValue
+  }
+}
 
 case class RequestQueryEngineTypeDefault(engineTypeLabel: EngineTypeLabel) extends CacheableProtocol with RetryableProtocol with ConfigProtocol
 

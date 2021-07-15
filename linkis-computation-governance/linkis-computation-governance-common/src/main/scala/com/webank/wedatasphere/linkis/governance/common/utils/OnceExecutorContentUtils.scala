@@ -15,8 +15,9 @@ object OnceExecutorContentUtils {
 
   def resourceToValue(bmlResource: BmlResource): String = {
     val resourceId = bmlResource.getResourceId
-    if(resourceId.length > LEN) throw new GovernanceErrorException(40108, s"Invalid resourceId $resourceId, it is too length.")
-    val len = if(resourceId.length < LEN) "0" * (LEN - resourceId.length) + resourceId.length
+    val resourceIdLength = resourceId.length.toString.length
+    if(resourceIdLength > LEN) throw new GovernanceErrorException(40108, s"Invalid resourceId $resourceId, it is too length.")
+    val len = if(resourceIdLength < LEN) "0" * (LEN - resourceIdLength) + resourceId.length
     HEADER + len + resourceId + bmlResource.getVersion
   }
 

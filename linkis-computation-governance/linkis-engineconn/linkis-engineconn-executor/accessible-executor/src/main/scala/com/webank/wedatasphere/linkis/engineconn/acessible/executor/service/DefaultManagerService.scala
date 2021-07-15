@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.engineconn.acessible.executor.service
 
 import java.util
 
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engineconn.executor.service.ManagerService
 import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
 import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
@@ -26,9 +27,12 @@ import com.webank.wedatasphere.linkis.manager.common.protocol.label.LabelReportR
 import com.webank.wedatasphere.linkis.manager.common.protocol.node.{NodeHeartbeatMsg, ResponseNodeStatus}
 import com.webank.wedatasphere.linkis.manager.common.protocol.resource.ResourceUsedProtocol
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
 import com.webank.wedatasphere.linkis.rpc.Sender
 
-class DefaultManagerService extends ManagerService {
+import scala.collection.JavaConverters._
+
+class DefaultManagerService extends ManagerService with Logging{
 
 
   protected def getManagerSender: Sender = {
@@ -41,7 +45,16 @@ class DefaultManagerService extends ManagerService {
 
 
   override def labelReport(labels: util.List[Label[_]]): Unit = {
-    val labelReportRequest = LabelReportRequest(labels, Sender.getThisServiceInstance)
+    if (null == labels || labels.isEmpty) {
+      info("labels is empty, Not reported")
+      return
+    }
+    val reportLabel = labels.asScala.filter(_.isInstanceOf[EngineTypeLabel])
+    if (reportLabel.isEmpty) {
+      info("engineType labels is empty, Not reported")
+      return
+    }
+    val labelReportRequest = LabelReportRequest(reportLabel.asJava, Sender.getThisServiceInstance)
     getManagerSender.send(labelReportRequest)
   }
 
@@ -58,6 +71,7 @@ class DefaultManagerService extends ManagerService {
 
   override def heartbeatReport(nodeHeartbeatMsg: NodeHeartbeatMsg): Unit = {
     getManagerSender.send(nodeHeartbeatMsg)
+    info(s"success to send engine heartbeat report to ${Sender.getInstances(GovernanceCommonConf.MANAGER_SPRING_NAME.getValue).map(_.getInstance).mkString(",")},status:${nodeHeartbeatMsg.getStatus},msg:${nodeHeartbeatMsg.getHeartBeatMsg}")
   }
 
   override def reportUsedResource(resourceUsedProtocol: ResourceUsedProtocol): Unit = {

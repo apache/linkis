@@ -16,7 +16,10 @@
 
 package com.webank.wedatasphere.linkis.engineconn.common.conf
 
+import java.io.File
+
 import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.commons.lang.StringUtils
 
 
 
@@ -39,10 +42,17 @@ object EngineConnConf {
 
   val ENGINE_LOCK_REFRESH_TIME = CommonVars("wds.linkis.engine.lock.refresh.time", 1000 * 60 * 3)
 
-  val ENGINE_CONN_LOCAL_PATH_PWD_KEY = CommonVars("wds.linkis.engine.localpath.pwd.key", "PWD")
+  val ENGINE_CONN_LOCAL_PATH_PWD_KEY = CommonVars("wds.linkis.engine.work.home.key", "PWD")
 
   val ENGINE_CONN_LOCAL_LOG_DIRS_KEY = CommonVars("wds.linkis.engine.logs.dir.key", "LOG_DIRS")
 
-  val ENGINE_CONN_CREATION_WAIT_TIME = CommonVars("wds.linkis.engine.connector.init.time", new TimeType("3m"))
+  val ENGINE_CONN_CREATION_WAIT_TIME = CommonVars("wds.linkis.engine.connector.init.time", new TimeType("8m"))
+
+  def getWorkHome: String = System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue)
+
+  def getLogDir: String = {
+    val logDir = System.getenv(ENGINE_CONN_LOCAL_LOG_DIRS_KEY.getValue)
+    if(StringUtils.isNotEmpty(logDir)) logDir else new File(getWorkHome, "logs").getPath
+  }
 
 }

@@ -29,7 +29,7 @@ import com.webank.wedatasphere.linkis.engineconn.core.util.EngineConnUtils
 import com.webank.wedatasphere.linkis.engineconn.executor.conf.EngineConnExecutorConfiguration
 import com.webank.wedatasphere.linkis.engineconn.executor.entity.{Executor, LabelExecutor, SensibleExecutor}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.EngineConnPlugin
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.{CodeLanguageLabelExecutorFactory, ExecutorFactory, LabelExecutorFactory, MultiExecutorEngineConnFactory, SingleExecutorEngineConnFactory, SingleLabelExecutorEngineConnFactory}
+import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation._
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.{EngineConnPluginErrorCode, EngineConnPluginErrorException}
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 
@@ -81,43 +81,63 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
 
   protected def tryCreateExecutor(engineCreationContext: EngineCreationContext,
                                   labels: Array[Label[_]]): LabelExecutor = {
-    val labelExecutor = Option(labels).flatMap(_ => factories.find {
+    val labelStr = if(labels != null) labels.toList else "()"
+    info(s"Try to create a executor with labels $labelStr.")
+    val labelExecutor = if (null == labels || labels.isEmpty) {
+      defaultFactory.createExecutor(engineCreationContext, engineConn).asInstanceOf[LabelExecutor]
+    } else factories.find {
       case labelExecutorFactory: LabelExecutorFactory => labelExecutorFactory.canCreate(labels)
       case _ => false
     }.map {
-      case labelExecutorFactory: LabelExecutorFactory => labelExecutorFactory.createExecutor(engineCreationContext, engineConn, labels)
-    }).getOrElse(defaultFactory.createExecutor(engineCreationContext, engineConn).asInstanceOf[LabelExecutor])
-    info(s"Finished create executor ${labelExecutor.getId}.")
-    labelExecutor.init()
-    info(s"Finished init executor ${labelExecutor.getId}.")
-    labelExecutor
-  }
-
-  protected def createExecutor(engineCreationContext: EngineCreationContext): LabelExecutor = {
-    defaultFactory match {
-      case labelExecutorFactory: CodeLanguageLabelExecutorFactory =>
-        createExecutor(engineCreationContext, Array[Label[_]](labelExecutorFactory.getDefaultCodeLanguageLabel))
-      case _ =>
-        val executor = tryCreateExecutor(engineCreationContext, null)
-        executors.put(executor.getId, executor)
-        executor
+      case labelExecutorFactory: LabelExecutorFactory =>
+        info(s"Use ${labelExecutorFactory.getClass.getSimpleName} to create executor.")
+        labelExecutorFactory.createExecutor(engineCreationContext, engineConn, labels)
+    }.getOrElse{
+      info("No LabelExecutorFactory matched, use DefaultExecutorFactory to create executor.")
+      defaultFactory.createExecutor(engineCreationContext, engineConn).asInstanceOf[LabelExecutor]
     }
-
+    info(s"Finished to create ${labelExecutor.getClass.getSimpleName}(${labelExecutor.getId}) with labels $labelStr.")
+    labelExecutor.init()
+    info(s"Finished to init ${labelExecutor.getClass.getSimpleName}(${labelExecutor.getId}).")
+    labelExecutor
   }
 
   protected def getLabelKey(labels: Array[Label[_]]): String = labels.map(_.getStringValue).mkString("&")
 
   protected def createExecutor(engineCreationContext: EngineCreationContext,
+                               labels: Array[Label[_]] = null): LabelExecutor = {
+    if (null == labels || labels.isEmpty) {
+    defaultFactory match {
+      case labelExecutorFactory: CodeLanguageLabelExecutorFactory =>
+          val createExecutorLabels = Array[Label[_]](labelExecutorFactory.getDefaultCodeLanguageLabel)
+          createLabelExecutor(engineCreationContext, createExecutorLabels)
+      case _ =>
+        val executor = tryCreateExecutor(engineCreationContext, null)
+        executors.put(executor.getId, executor)
+        executor
+        //throw new EngineConnPluginErrorException(EngineConnPluginErrorCode.INVALID_LABELS, "no labels and defaultFactory is not CodeLanguageLabelExecutorFactory")
+    }
+    } else {
+      createLabelExecutor(engineCreationContext, labels)
+  }
+
+  }
+
+  private def createLabelExecutor(engineCreationContext: EngineCreationContext,
                               labels: Array[Label[_]]): LabelExecutor = {
-    if(null == labels || labels.isEmpty) return createExecutor(engineCreationContext)
     val labelKey = getLabelKey(labels)
     if (null == labelKey) {
       val msg = "Cannot get label key. labels : " + GSON.toJson(labels)
       throw new EngineConnPluginErrorException(EngineConnPluginErrorCode.INVALID_LABELS, msg)
     }
+
+    if (!executors.containsKey(labelKey)) executors synchronized {
+      if (!executors.containsKey(labelKey)) {
     val executor = tryCreateExecutor(engineCreationContext, labels)
     executors.put(labelKey, executor)
-    executor
+      }
+    }
+    executors.get(labelKey)
   }
 
   override def generateExecutorId(): Int = idCreator.getAndIncrement()
@@ -125,8 +145,10 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
   override def getExecutorByLabels(labels: Array[Label[_]]): LabelExecutor = {
     val labelKey = getLabelKey(labels)
     if (null == labelKey) return null
+    if (!executors.containsKey(labelKey)) executors synchronized {
     if (!executors.containsKey(labelKey)) {
       createExecutor(engineConn.getEngineCreationContext, labels)
+    }
     }
     executors.get(labelKey)
   }
@@ -145,22 +167,34 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
     case (k, _) => executors.remove(k)
   }.orNull
 
-  override def getReportExecutor: Executor = if(getExecutors.isEmpty) createExecutor(engineConn.getEngineCreationContext)
-  else getExecutors.maxBy {
-    case executor: SensibleExecutor => executor.getLastActivityTime
+  override def getReportExecutor: Executor = if (getExecutors.isEmpty) {
+    val labels = defaultFactory match {
+      case labelExecutorFactory: CodeLanguageLabelExecutorFactory =>
+        Array[Label[_]](labelExecutorFactory.getDefaultCodeLanguageLabel)
+      case _ =>
+        if (null ==  engineConn.getEngineCreationContext.getLabels()) Array.empty[Label[_]]
+        else engineConn.getEngineCreationContext.getLabels().toArray[Label[_]](Array.empty[Label[_]])
+    }
+    createExecutor(engineConn.getEngineCreationContext, labels)
+  } else  {
+    getExecutors.maxBy {
+      case executor: SensibleExecutor => executor.getStatus.ordinal()
     case executor: Executor => executor.getId.hashCode
   }
 }
+}
 
-object ExecutorManager {
+object ExecutorManager extends Logging {
 
-  private var executorManager: ExecutorManager = _
+  private var executorManager: LabelExecutorManager = _
 
   private def init(): Unit = {
-    executorManager = Utils.getClassInstance[ExecutorManager](EngineConnExecutorConfiguration.EXECUTOR_MANAGER_CLASS.acquireNew)
+    val executorManagerClass = EngineConnExecutorConfiguration.EXECUTOR_MANAGER_CLASS.acquireNew
+    info(s"Try to use $executorManagerClass to instance a ExecutorManager.")
+    executorManager = Utils.getClassInstance[LabelExecutorManager](executorManagerClass)
   }
 
-  def getInstance: ExecutorManager = {
+  def getInstance: LabelExecutorManager = {
     if(executorManager == null) synchronized {
       if(executorManager == null) init()
     }

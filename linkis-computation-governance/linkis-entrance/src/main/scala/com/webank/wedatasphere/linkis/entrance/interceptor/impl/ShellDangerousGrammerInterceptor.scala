@@ -90,6 +90,13 @@ class ShellDangerousGrammerInterceptor extends EntranceInterceptor with Logging 
     * @return
     */
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
+    val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
+    val engineType = LabelUtil.getEngineType(jobRequest.getLabels)
+    // todo check enum equals
+    if (CodeType.Shell.equals(CodeType.getType(codeType))
+      || EngineType.SHELL.equals(EngineType.mapStringToEngineType(engineType))) {
+      info(s"GET REQUEST CODE_TYPE ${codeType} and ENGINE_TYPE ${EngineType}")
     jobRequest
+    } else jobRequest
     }
   }

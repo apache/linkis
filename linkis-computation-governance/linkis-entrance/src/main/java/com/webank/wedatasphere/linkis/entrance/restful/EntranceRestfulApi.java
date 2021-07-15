@@ -28,10 +28,12 @@ import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant;
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo;
 import com.webank.wedatasphere.linkis.protocol.utils.ZuulEntranceUtils;
 import com.webank.wedatasphere.linkis.rpc.Sender;
+import com.webank.wedatasphere.linkis.scheduler.listener.LogListener;
 import com.webank.wedatasphere.linkis.scheduler.queue.Job;
 import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.slf4j.Logger;
@@ -78,6 +80,13 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
 //        try{
         logger.info("Begin to get an execID");
         json.put(TaskConstant.UMUSER, SecurityFilter.getLoginUsername(req));
+        HashMap<String, String> map = (HashMap) json.get(TaskConstant.SOURCE);
+        if(map == null){
+            map = new HashMap<>();
+            json.put(TaskConstant.SOURCE, map);
+        }
+        String ip = JobHistoryHelper.getRequestIpAddr(req);
+        map.put(TaskConstant.REQUEST_IP, ip);
         String execID = entranceServer.execute(json);
         Job job = entranceServer.getJob(execID).get();
         JobRequest jobReq = ((EntranceJob) job).getJobRequest();
@@ -86,7 +95,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         pushLog("************************************SCRIPT CODE************************************", job);
         pushLog(jobReq.getExecutionCode(), job);
         pushLog("************************************SCRIPT CODE************************************", job);
-        pushLog(LogUtils.generateInfo("Your job is accepted,  jobID is " + execID + " and taskID is " + taskID + ". Please wait it to be scheduled"), job);
+        pushLog(LogUtils.generateInfo("Your job is accepted,  jobID is " + execID + " and taskID is " + taskID + " in " + Sender.getThisServiceInstance().toString() + ". Please wait it to be scheduled"), job);
         execID = ZuulEntranceUtils.generateExecID(execID, Sender.getThisServiceInstance().getApplicationName(), new String[]{Sender.getThisInstance()});
         message = Message.ok();
         message.setMethod("/api/entrance/execute");
@@ -109,6 +118,13 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         Message message = null;
         logger.info("Begin to get an execID");
         json.put(TaskConstant.SUBMIT_USER, SecurityFilter.getLoginUsername(req));
+        HashMap<String, String> map = (HashMap) json.get(TaskConstant.SOURCE);
+        if(map == null){
+            map = new HashMap<>();
+            json.put(TaskConstant.SOURCE, map);
+        }
+        String ip = JobHistoryHelper.getRequestIpAddr(req);
+        map.put(TaskConstant.REQUEST_IP, ip);
         String execID = entranceServer.execute(json);
         Job job = entranceServer.getJob(execID).get();
         JobRequest jobRequest = ((EntranceJob) job).getJobRequest();
@@ -117,7 +133,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         pushLog("************************************SCRIPT CODE************************************", job);
         pushLog(jobRequest.getExecutionCode(), job);
         pushLog("************************************SCRIPT CODE************************************", job);
-        pushLog(LogUtils.generateInfo("Your job is accepted,  jobID is " + execID + " and taskID is " + taskID + ". Please wait it to be scheduled"), job);
+        pushLog(LogUtils.generateInfo("Your job is accepted,  jobID is " + execID + " and taskID is " + taskID + " in " + Sender.getThisServiceInstance().toString() + ". Please wait it to be scheduled"), job);
         execID = ZuulEntranceUtils.generateExecID(execID, Sender.getThisServiceInstance().getApplicationName(), new String[]{Sender.getThisInstance()});
         message = Message.ok();
         message.setMethod("/api/entrance/submit");
@@ -141,8 +157,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         try {
             job = entranceServer.getJob(realId);
         } catch (Exception e) {
-            logger.warn("error occurred while getting task {} status (获取任务 {} 状态时出现错误)",realId, realId, e);
-            //如果获取错误了,证明在内存中已经没有了,去jobhistory找寻一下taskID代表的任务的状态，然后返回
+            logger.warn("获取任务 {} 状态时出现错误", realId, e.getMessage());
             long realTaskID = Long.parseLong(taskID);
             String status = JobHistoryHelper.getStatusByTaskID(realTaskID);
             message = Message.ok();
@@ -255,22 +270,26 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                     retLog = sb.toString();
                 }
             } catch (IllegalStateException e) {
-                logger.error("Failed to get log information for :{}(为 {} 获取日志失败)", job.get().getId(), job.get().getId(),e);
-                message = Message.error("Failed to get log information(获取日志信息失败)");
+                logger.debug("Failed to get log information for :{}(为 {} 获取日志失败)", job.get().getId(), job.get().getId(),e);
+                message = Message.ok();
                 message.setMethod("/api/entrance/" + id + "/log");
                 message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
             } catch (final IllegalArgumentException e) {
-                logger.error("Failed to get log information for :{}(为 {} 获取日志失败)", job.get().getId(), job.get().getId(),e);
-                message = Message.error("Failed to get log information(获取日志信息失败)");
+                logger.debug("Failed to get log information for :{}(为 {} 获取日志失败)", job.get().getId(), job.get().getId(),e);
+                message = Message.ok();
                 message.setMethod("/api/entrance/" + id + "/log");
                 message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
                 return Message.messageToResponse(message);
             } catch (final Exception e1) {
-                logger.error("Failed to get log information for :{}(为 {} 获取日志失败)", job.get().getId(), job.get().getId(),e1);
+                logger.debug("Failed to get log information for :{}(为 {} 获取日志失败)", job.get().getId(), job.get().getId(),e1);
                 message = Message.error("Failed to get log information(获取日志信息失败)");
                 message.setMethod("/api/entrance/" + id + "/log");
                 message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
                 return Message.messageToResponse(message);
+            } finally {
+                if (null != logReader && job.get().isCompleted()) {
+                    IOUtils.closeQuietly(logReader);
+                }
             }
             message = Message.ok();
             message.setMethod("/api/entrance/" + id + "/log");
@@ -285,12 +304,13 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
 
     @Override
     @POST
-    @Path("/killJobs")
-    public Response killJobs(@Context HttpServletRequest req, JsonNode jsonNode) {
+    @Path("/{id}/killJobs")
+    public Response killJobs(@Context HttpServletRequest req, JsonNode jsonNode, @PathParam("id") String strongExecId) {
         JsonNode idNode = jsonNode.get("idList");
         JsonNode taskIDNode = jsonNode.get("taskIDList");
+        ArrayList<Long> waitToForceKill = new ArrayList<>();
         if(idNode.size() != taskIDNode.size()){
-            return Message.messageToResponse(Message.error("he length of the ID list does not match the length of the TASKID list(id列表的长度与taskId列表的长度不一致)"));
+            return Message.messageToResponse(Message.error("The length of the ID list does not match the length of the TASKID list(id列表的长度与taskId列表的长度不一致)"));
         }
         if(!idNode.isArray() || !taskIDNode.isArray()){
             return Message.messageToResponse(Message.error("Request parameter error, please use array(请求参数错误，请使用数组)"));
@@ -305,9 +325,9 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             try {
                 job = entranceServer.getJob(realId);
             } catch (Exception e) {
-                logger.warn("can not find a job in entranceServer, will force to kill it", e);
+                logger.warn("can not find a job in entranceServer, will force to kill it", e.getMessage());
                 //如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
-                JobHistoryHelper.forceKill(taskID);
+                waitToForceKill.add(taskID);
                 Message message = Message.ok("Forced Kill task (强制杀死任务)");
                 message.setMethod("/api/entrance/" + id + "/kill");
                 message.setStatus(0);
@@ -317,7 +337,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             Message message = null;
             if (job.isEmpty()) {
                 logger.warn("can not find a job in entranceServer, will force to kill it");
-                JobHistoryHelper.forceKill(taskID);
+                waitToForceKill.add(taskID);
                 message = Message.ok("Forced Kill task (强制杀死任务)");
                 message.setMethod("/api/entrance/" + id + "/killJobs");
                 message.setStatus(0);
@@ -334,7 +354,12 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                     if (job.get() instanceof EntranceJob) {
                         EntranceJob entranceJob = (EntranceJob) job.get();
                         JobRequest jobReq = entranceJob.getJobRequest();
-                        jobReq.setStatus(SchedulerEventState.Cancelled().toString());
+                        entranceJob.updateJobRequestStatus(SchedulerEventState.Cancelled().toString());
+                        jobReq.setProgress("1.0f");
+                        LogListener logListener = entranceJob.getLogListener().getOrElse(null);
+                        if (null != logListener) {
+                            logListener.onLogUpdate(entranceJob, "Job " + jobReq.getId() + " was kill by user successfully(任务" + jobReq.getId() + "已成功取消)");
+                        }
                         this.entranceServer.getEntranceContext().getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(jobReq);
                     }
                     logger.info("end to kill job {} ", job.get().getId());
@@ -346,6 +371,9 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 }
             }
             messages.add(message);
+        }
+        if(!waitToForceKill.isEmpty()){
+            JobHistoryHelper.forceBatchKill(waitToForceKill);
         }
         return Message.messageToResponse(Message.ok("停止任务成功").data("messages", messages));
     }
@@ -389,7 +417,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 if (job.get() instanceof EntranceJob) {
                     EntranceJob entranceJob = (EntranceJob) job.get();
                     JobRequest jobReq = entranceJob.getJobRequest();
-                    jobReq.setStatus(SchedulerEventState.Cancelled().toString());
+                        entranceJob.updateJobRequestStatus(SchedulerEventState.Cancelled().toString());
                     this.entranceServer.getEntranceContext().getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(jobReq);
                 }
                 logger.info("end to kill job {} ", job.get().getId());
@@ -411,7 +439,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         Option<Job> job = entranceServer.getJob(realId);
         Message message = null;
         if (job.isEmpty()) {
-            message = Message.error("can not find the job of exexID :" + id +" can not to pause it (不能找到execID: " + id + "对应的job，不能进行pause)");
+            message = Message.error("can not find the job of exexID :" + id +" can not pause (不能找到execID: " + id + "对应的job，不能进行pause)");
             message.setMethod("/api/entrance/" + id + "/pause");
             message.setStatus(1);
         } else {

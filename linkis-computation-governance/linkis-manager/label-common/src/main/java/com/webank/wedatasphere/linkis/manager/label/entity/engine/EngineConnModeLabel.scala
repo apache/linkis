@@ -1,14 +1,20 @@
 package com.webank.wedatasphere.linkis.manager.label.entity.engine
 
 import java.util
+import com.webank.wedatasphere.linkis.manager.label.entity.{EngineNodeLabel, Feature, GenericLabel}
+import com.webank.wedatasphere.linkis.manager.label.entity.annon.ValueSerialNum
+
 
 import com.webank.wedatasphere.linkis.manager.label.entity.GenericLabel
 
 
-class EngineConnModeLabel extends GenericLabel {
+class EngineConnModeLabel extends GenericLabel with EngineNodeLabel {
 
   setLabelKey("engineConnMode")
 
+  override def getFeature = Feature.CORE
+
+  @ValueSerialNum(0)
   def setEngineConnMode(engineConnMode: String): Unit = {
     if (null == getValue) setValue(new util.HashMap[String, String])
     getValue.put("engineConnMode", engineConnMode)

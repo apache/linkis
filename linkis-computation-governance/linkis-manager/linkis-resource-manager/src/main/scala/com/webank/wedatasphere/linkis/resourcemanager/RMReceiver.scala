@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component
 
 import scala.concurrent.duration.Duration
 
-@Component
 class RMReceiver extends Receiver with Logging {
 
   @Autowired

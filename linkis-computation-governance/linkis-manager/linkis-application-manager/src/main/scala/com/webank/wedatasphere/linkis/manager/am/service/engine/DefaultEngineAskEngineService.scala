@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package com.webank.wedatasphere.linkis.manager.am.service.engine
 
 import java.util.concurrent.atomic.AtomicInteger
@@ -25,6 +24,7 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration
 import com.webank.wedatasphere.linkis.manager.common.constant.AMConstant
 import com.webank.wedatasphere.linkis.manager.common.protocol.engine._
+import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant
 import com.webank.wedatasphere.linkis.message.annotation.Receiver
 import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
 import com.webank.wedatasphere.linkis.rpc.Sender
@@ -35,7 +35,6 @@ import org.springframework.stereotype.Service
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.util.{Failure, Success}
-
 
 @Service
 class DefaultEngineAskEngineService extends AbstractEngineService with EngineAskEngineService with Logging {
@@ -55,21 +54,27 @@ class DefaultEngineAskEngineService extends AbstractEngineService with EngineAsk
 
   @Receiver
   override def askEngine(engineAskRequest: EngineAskRequest, smc: ServiceMethodContext): Any = {
-
-    if(!engineAskRequest.getLabels.containsKey("executeOnce")){
+    info(s"received engineAskRequest $engineAskRequest")
+    if(! engineAskRequest.getLabels.containsKey(LabelKeyConstant.EXECUTE_ONCE_KEY)){
       val engineReuseRequest = new EngineReuseRequest()
       engineReuseRequest.setLabels(engineAskRequest.getLabels)
       engineReuseRequest.setTimeOut(engineAskRequest.getTimeOut)
       engineReuseRequest.setUser(engineAskRequest.getUser)
 
-      val reuseNode = Utils.tryAndWarn(engineReuseService.reuseEngine(engineReuseRequest))
+      val reuseNode = Utils.tryCatch(engineReuseService.reuseEngine(engineReuseRequest)) {
+        t: Throwable =>
+          warn(s"user ${engineAskRequest.getUser} reuse engine failed ${t.getMessage}")
+          null
+      }
       if (null != reuseNode) {
         info(s"Finished to ask engine for user ${engineAskRequest.getUser} by reuse node $reuseNode")
         return reuseNode
       }
     }
 
+    val engineAskAsyncId = getAsyncId
     val createNodeThread = Future {
+      info(s"Start to async($engineAskAsyncId) createEngine")
       //如果原来的labels含engineInstance ，先去掉
       engineAskRequest.getLabels.remove("engineInstance")
       val engineCreateRequest = new EngineCreateRequest
@@ -83,12 +88,12 @@ class DefaultEngineAskEngineService extends AbstractEngineService with EngineAsk
       //useEngine 需要加上超时
       val createEngineNode = getEngineNodeManager.useEngine(createNode, timeout)
       if (null == createEngineNode)
-         throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"create engine${createNode.getServiceInstance} success, but to use engine failed")
+        throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"create engine${createNode.getServiceInstance} success, but to use engine failed")
       info(s"Finished to ask engine for user ${engineAskRequest.getUser} by create node $createEngineNode")
       createEngineNode
     }
 
-    val engineAskAsyncId = getAsyncId
+
     createNodeThread.onComplete {
       case Success(engineNode) =>
         info(s"Success to async($engineAskAsyncId) createEngine $engineNode")

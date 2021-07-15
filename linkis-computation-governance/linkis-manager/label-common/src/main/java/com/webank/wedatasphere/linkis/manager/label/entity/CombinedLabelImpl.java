@@ -80,6 +80,16 @@ public class CombinedLabelImpl implements CombinedLabel {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if(obj != null && obj instanceof CombinedLabel){
+            return getStringValue().equals(((Label) obj).getStringValue());
+        }else{
+            return false;
+        }
+    }
+
+
+    @Override
     public String toString() {
         return "CombinedLabelImpl{" +
                 "key=" + getLabelKey() +

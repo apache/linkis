@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.instance.label.dao;
 
+import com.webank.wedatasphere.linkis.common.ServiceInstance;
 import com.webank.wedatasphere.linkis.instance.label.entity.InstanceInfo;
 
 
@@ -26,4 +27,10 @@ public interface InstanceInfoDao {
      * @param instanceInfo instance information
      */
     void insertOne(InstanceInfo instanceInfo);
+
+    void removeInstance(ServiceInstance instance);
+
+    void updateInstance(InstanceInfo instanceInfo);
+
+    InstanceInfo getInstanceInfoByServiceInstance(ServiceInstance serviceInstance);
 }

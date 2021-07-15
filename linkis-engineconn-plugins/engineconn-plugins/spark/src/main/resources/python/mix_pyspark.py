@@ -1,6 +1,5 @@
 import sys, getopt, traceback, json, re
 import os
-from py4j.protocol import Py4JJavaError, Py4JNetworkError
 os.environ['PYSPARK_ALLOW_INSECURE_GATEWAY']='1'
 import matplotlib
 import os
@@ -11,6 +10,7 @@ paths = zipPaths.split(':')
 for i in range(len(paths)):
     sys.path.insert(0, paths[i])
 
+from py4j.protocol import Py4JJavaError, Py4JNetworkError
 from py4j.java_gateway import java_import, JavaGateway, GatewayClient
 from pyspark.conf import SparkConf
 from pyspark.context import SparkContext

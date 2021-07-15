@@ -38,18 +38,19 @@
         <result property = "instances" column = "instances" />
         <result property = "metrics" column = "metrics" />
         <result property = "engine_type" column = "engine_type" />
+        <result property = "execution_code" column = "execution_code" />
     </resultMap>
 
 
     <sql id="job_list">
         `id`, `job_req_id`, `submit_user`, `execute_user`, `source`, `labels`, `params`,
         `progress`, `status`, `log_path`, `error_code`, `error_desc`, `created_time`, `updated_time`,
-        `instances`, `metrics`,`engine_type`
+        `instances`, `metrics`,`engine_type`, `execution_code`
     </sql>
 
     <sql id="insert_job_list">
         `job_req_id`, `submit_user`, `execute_user`, `source`, `labels`, `params`,
-        `progress`, `status`, `log_path`, `error_code`, `error_desc`, `created_time`, `updated_time`, `instances`, `metrics`,`engine_type`
+        `progress`, `status`, `log_path`, `error_code`, `error_desc`, `created_time`, `updated_time`, `instances`, `metrics`,`engine_type`, `execution_code`
     </sql>
 
     <insert id="insertJobHistory" flushCache="true" useGeneratedKeys="true" keyProperty="id" parameterType="com.webank.wedatasphere.linkis.jobhistory.entity.JobHistory">
@@ -57,7 +58,7 @@
         VALUES (#{job_req_id},#{submit_user},#{execute_user},#{source},
         #{labels},#{params},#{progress},
         #{status},#{log_path},#{error_code},#{error_desc},
-        #{created_time},#{updated_time},#{instances},#{metrics},#{engine_type})
+        #{created_time},#{updated_time},#{instances},#{metrics},#{engine_type},#{execution_code})
     </insert>
 
     <select id="selectJobHistory" useCache="false" resultMap="jobHistoryMap" parameterType="com.webank.wedatasphere.linkis.jobhistory.entity.JobHistory">
@@ -80,6 +81,7 @@
             <if test="instances != null">and instances = #{instances}</if>
 <!--            <if test="metrics != null">and metrics = #{metrics}</if>-->
             <if test="engine_type != null">and engine_type = #{engine_type}</if>
+            <!--            <if test="execution_code != null">and execution_code = #{execution_code }</if>-->
         </where>
     </select>
 
@@ -116,6 +118,7 @@
             <if test="instances != null">instances = #{instances},</if>
             <if test="metrics != null">metrics = #{metrics},</if>
             <if test="engine_type != null">engine_type = #{engine_type},</if>
+            <if test="execution_code != null">and execution_code = #{execution_code},</if>
         </trim>
         WHERE id =#{id}
     </update>

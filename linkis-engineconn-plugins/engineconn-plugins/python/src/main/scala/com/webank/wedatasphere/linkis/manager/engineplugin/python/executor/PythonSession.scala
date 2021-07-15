@@ -84,7 +84,7 @@ class PythonSession extends Logging {
     gatewayServer.start()
     info("Python executor file path is: " + getClass.getClassLoader.getResource("python/python.py").toURI)
     val pythonClasspath = new StringBuilder(PythonSession.pythonPath)
-    val pyFiles = PythonEngineConfiguration.PYTHON_PATH.getValue
+    val pyFiles = PythonEngineConfiguration.PYTHON_PATH.getValue(EngineConnServer.getEngineCreationContext.getOptions)
     info(s"pyFiles => ${pyFiles}")
     if (StringUtils.isNotEmpty(pyFiles)) {
       pythonClasspath ++= File.pathSeparator ++= pyFiles.split(",").mkString(File.pathSeparator)

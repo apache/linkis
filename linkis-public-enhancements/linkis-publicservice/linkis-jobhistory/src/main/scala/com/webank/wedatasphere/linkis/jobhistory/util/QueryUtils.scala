@@ -21,11 +21,11 @@ import java.util.Date
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
 import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.governance.common.entity.job.{SubJobDetail, SubJobInfo}
+import com.webank.wedatasphere.linkis.governance.common.entity.job.{JobRequest, SubJobDetail, SubJobInfo}
 import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestInsertTask
 import com.webank.wedatasphere.linkis.governance.common.protocol.job.JobReqInsert
 import com.webank.wedatasphere.linkis.jobhistory.conf.JobhistoryConfiguration
-import com.webank.wedatasphere.linkis.jobhistory.entity.QueryTask
+import com.webank.wedatasphere.linkis.jobhistory.entity.{JobHistory, QueryTask}
 import com.webank.wedatasphere.linkis.storage.FSFactory
 import com.webank.wedatasphere.linkis.storage.fs.FileSystem
 import com.webank.wedatasphere.linkis.storage.utils.{FileSystemUtils, StorageUtils}
@@ -43,18 +43,23 @@ object QueryUtils extends Logging {
   private val CODE_SPLIT = ";"
   private val LENGTH_SPLIT = "#"
 
-  def storeExecutionCode(jobReqInsert: SubJobInfo): Unit = {
-    val jobReq = jobReqInsert.getJobReq
-    val jobDetail = jobReqInsert.getSubJobDetail
-    if (jobDetail.getExecutionContent.getBytes().length < CODE_STORE_LENGTH.getValue) return
-    val user: String = jobReq.getSubmitUser
+  def storeExecutionCode(jobRequest: JobRequest): Unit = {
+      storeExecutionCode(jobRequest.getExecuteUser, jobRequest.getExecutionCode, path => jobRequest.setExecutionCode(path))
+    }
+
+    def storeExecutionCode(subJobDetail: SubJobDetail, user: String): Unit = {
+      storeExecutionCode(user, subJobDetail.getExecutionContent, path => subJobDetail.setExecutionContent(path))
+    }
+
+    def storeExecutionCode(user: String, code: String, pathCallback: String => Unit): Unit = {
+      if (null == code || code.getBytes().length < CODE_STORE_LENGTH.getValue) return
     val path: String = getCodeStorePath(user)
     val fsPath: FsPath = new FsPath(path)
     val fileSystem = FSFactory.getFsByProxyUser(fsPath, user).asInstanceOf[FileSystem]
     fileSystem.init(null)
     var os: OutputStream = null
     var position = 0L
-    val codeBytes = jobDetail.getExecutionContent.getBytes(CHARSET)
+    val codeBytes = code.getBytes(CHARSET)
     path.intern() synchronized {
       Utils.tryFinally {
         if (!fileSystem.exists(fsPath)) FileSystemUtils.createNewFile(fsPath, user, true)
@@ -67,13 +72,14 @@ object QueryUtils extends Logging {
       }
     }
     val length = codeBytes.length
-    jobDetail.setExecutionContent(path + CODE_SPLIT + position + LENGTH_SPLIT + length)
+    pathCallback(path + CODE_SPLIT + position + LENGTH_SPLIT + length)
   }
 
-  def exchangeExecutionCode(queryTask: QueryTask): Unit = {
+  // todo exchangeExecutionCode for subJobDetail
+  def exchangeExecutionCode(queryTask: JobHistory): Unit = {
     import scala.util.control.Breaks._
-    if (queryTask.getExecutionCode == null || !queryTask.getExecutionCode.startsWith(StorageUtils.HDFS_SCHEMA)) return
-    val codePath = queryTask.getExecutionCode
+    if (queryTask.getExecution_code == null || !queryTask.getExecution_code.startsWith(StorageUtils.HDFS_SCHEMA)) return
+    val codePath = queryTask.getExecution_code
     val path = codePath.substring(0, codePath.lastIndexOf(CODE_SPLIT))
     val codeInfo = codePath.substring(codePath.lastIndexOf(CODE_SPLIT) + 1)
     val infos: Array[String] = codeInfo.split(LENGTH_SPLIT)
@@ -82,7 +88,7 @@ object QueryUtils extends Logging {
     val tub = new Array[Byte](1024)
     val executionCode: StringBuilder = new StringBuilder
     val fsPath: FsPath = new FsPath(path)
-    val fileSystem = FSFactory.getFsByProxyUser(fsPath, queryTask.getUmUser).asInstanceOf[FileSystem]
+    val fileSystem = FSFactory.getFsByProxyUser(fsPath, queryTask.getExecute_user).asInstanceOf[FileSystem]
     fileSystem.init(null)
     var is: InputStream = null
     if (!fileSystem.exists(fsPath)) return
@@ -102,7 +108,7 @@ object QueryUtils extends Logging {
       IOUtils.closeQuietly(is)
       if (fileSystem != null) Utils.tryAndWarn(fileSystem.close())
     }
-    queryTask.setExecutionCode(executionCode.toString())
+    queryTask.setExecution_code(executionCode.toString())
   }
 
   private def getCodeStorePath(user: String): String = {

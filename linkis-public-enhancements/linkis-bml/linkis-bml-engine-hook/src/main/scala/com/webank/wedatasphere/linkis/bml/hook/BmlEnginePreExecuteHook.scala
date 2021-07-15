@@ -26,12 +26,17 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.utlis.ComputationEngineConstant
 import com.webank.wedatasphere.linkis.engineconn.core.util.EngineConnUtils
 import com.webank.wedatasphere.linkis.governance.common.utils.GovernanceConstant
 import org.apache.commons.lang.StringUtils
 
+import scala.collection.JavaConversions.asScalaBuffer
+
 class BmlEnginePreExecuteHook extends ComputationExecutorHook with Logging{
   override def getHookName: String = "BmlEnginePreExecuteHook"
+
+  override def getOrder(): Int = ComputationEngineConstant.CS_HOOK_ORDER + 1
 
   val processUser:String = System.getProperty("user.name")
 
@@ -47,11 +52,11 @@ class BmlEnginePreExecuteHook extends ComputationExecutorHook with Logging{
 
   override def beforeExecutorExecute(engineExecutionContext: EngineExecutionContext, engineCreationContext: EngineCreationContext, code: String): String = {
     val props = engineExecutionContext.getProperties
-    if (null != props && props.containsKey(GovernanceConstant.TASK_SOURCE_MAP_KEY)) {
+    if (null != props && props.containsKey(GovernanceConstant.TASK_RESOURCES_STR)) {
       val workDir = BmlHookUtils.getCurrentWorkDir
       val jobId = engineExecutionContext.getJobId
-      props.get(GovernanceConstant.TASK_SOURCE_MAP_KEY) match {
-        case resources: List[Object] =>
+      props.get(GovernanceConstant.TASK_RESOURCES_STR) match {
+        case resources: util.List[Object] =>
           resources.foreach {
             case resource: util.Map[String, Object] => val fileName = resource.get(GovernanceConstant.TASK_RESOURCE_FILE_NAME_STR).toString
               val resourceId = resource.get(GovernanceConstant.TASK_RESOURCE_ID_STR).toString

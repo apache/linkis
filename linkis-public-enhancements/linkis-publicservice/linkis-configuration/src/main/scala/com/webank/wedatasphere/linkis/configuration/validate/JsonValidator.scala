@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.resource
+package com.webank.wedatasphere.linkis.configuration.validate
 
+import com.webank.wedatasphere.linkis.common.utils.Utils
+import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 
+class JsonValidator extends Validator{
 
-/*
-/**
-  */
-class UserTimeoutNodeResource extends UserNodeResource with TimeoutNodeResource {
-  private var timeout: Long = _
+  override def validate(value: String, range: String): Boolean = {
+    Utils.tryCatch{
+      BDPJettyServerHelper.gson.fromJson(value,classOf[java.util.HashMap[String,String]])
+      true
+    }{
+      case _ => false
+    }
+  }
 
-  override def getTimeout: Long = timeout
-
-  override def setTimeout(timeout: Long): Unit = this.timeout = timeout
-}*/
+  override var kind: String = "Json"
+}

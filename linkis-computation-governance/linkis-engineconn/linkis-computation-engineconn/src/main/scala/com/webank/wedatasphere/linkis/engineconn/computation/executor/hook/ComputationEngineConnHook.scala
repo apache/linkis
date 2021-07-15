@@ -19,7 +19,7 @@ package com.webank.wedatasphere.linkis.engineconn.computation.executor.hook
 import com.webank.wedatasphere.linkis.engineconn.callback.hook.CallbackEngineConnHook
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationExecutorManager
+import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
 import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
 
 
@@ -32,6 +32,6 @@ class ComputationEngineConnHook extends CallbackEngineConnHook {
                                              engineConn: EngineConn): Unit =
     {
       super.afterEngineServerStartSuccess(engineCreationContext, engineConn)
-      ComputationExecutorManager.getInstance.getReportExecutor.tryReady()
+      ExecutorManager.getInstance.getReportExecutor.tryReady()
     }
 }

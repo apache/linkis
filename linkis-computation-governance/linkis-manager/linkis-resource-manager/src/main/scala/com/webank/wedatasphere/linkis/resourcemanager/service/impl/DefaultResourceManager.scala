@@ -93,11 +93,11 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
   }
 
   /**
-   * The registration method is mainly used to notify all RM nodes (including the node)
-   * 该注册方法，主要是用于通知所有的RM节点（包括本节点）
-   *
-   *
-   */
+    * The registration method is mainly used to notify all RM nodes (including the node)
+    * 该注册方法，主要是用于通知所有的RM节点（包括本节点）
+    *
+    *
+    */
   override def register(serviceInstance: ServiceInstance, resource: NodeResource): Unit = {
     info(s"Start processing registration of ServiceInstance: ${serviceInstance}")
     val eMInstanceLabel = LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[EMInstanceLabel])
@@ -138,9 +138,9 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
   }
 
   /**
-   * The registration method is mainly used to notify all RM nodes (including the node), and the instance is offline.
-   * 该注册方法，主要是用于通知所有的RM节点（包括本节点），下线该实例
-   */
+    * The registration method is mainly used to notify all RM nodes (including the node), and the instance is offline.
+    * 该注册方法，主要是用于通知所有的RM节点（包括本节点），下线该实例
+    */
   override def unregister(serviceInstance: ServiceInstance): Unit = {
     // TODO get ID Label
     val eMInstanceLabel = LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[EMInstanceLabel])
@@ -150,12 +150,12 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
 
     Utils.tryFinally {
       // No need to lock for ECM unregistration
-      //      labelContainer.getLabels.toArray.foreach {
-      //        case label: Label[_] =>
-      //          labelContainer.setCurrentLabel(label.asInstanceOf[Label[_]])
-      //          resourceLockService.tryLock(labelContainer)
-      //        case _ =>
-      //      }
+//      labelContainer.getLabels.toArray.foreach {
+//        case label: Label[_] =>
+//          labelContainer.setCurrentLabel(label.asInstanceOf[Label[_]])
+//          resourceLockService.tryLock(labelContainer)
+//        case _ =>
+//      }
 
       // clear EM related engine resource records
       Utils.tryCatch{
@@ -185,13 +185,13 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
   }
 
   /**
-   * Request resources, if not successful, return directly
-   * 请求资源，如果不成功，直接返回
-   *
-   * @param labels
-   * @param resource
-   * @return
-   */
+    * Request resources, if not successful, return directly
+    * 请求资源，如果不成功，直接返回
+    *
+    * @param labels
+    * @param resource
+    * @return
+    */
   override def requestResource(labels: util.List[Label[_]], resource: NodeResource): ResultResource = {
     requestResource(labels, resource, -1)
   }

@@ -20,12 +20,14 @@ import java.util.Date
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLock
-import com.webank.wedatasphere.linkis.manager.label.entity.EngineNodeLabel
+import com.webank.wedatasphere.linkis.manager.label.entity.{EngineNodeLabel, ResourceLabel}
 import com.webank.wedatasphere.linkis.manager.persistence.LockManagerPersistence
 import com.webank.wedatasphere.linkis.resourcemanager.domain.RMLabelContainer
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+
+import scala.collection.JavaConversions._
 
 @Component
 class ResourceLockService extends Logging {
@@ -38,7 +40,7 @@ class ResourceLockService extends Logging {
 
   def tryLock(labelContainer: RMLabelContainer, timeout: Long): Boolean = {
     if(StringUtils.isBlank(labelContainer.getCurrentLabel.getStringValue)
-      || !labelContainer.getCurrentLabel.isInstanceOf[EngineNodeLabel]
+      || !labelContainer.getCurrentLabel.isInstanceOf[ResourceLabel]
       || labelContainer.getLockedLabels.contains(labelContainer.getCurrentLabel)){
       return true
     }
@@ -79,6 +81,16 @@ class ResourceLockService extends Logging {
             throw t
         }
         labelIterator.remove
+      }
+    }
+  }
+
+  def clearTimeoutLock(timeout: Long) = {
+    val currentTime = System.currentTimeMillis
+    lockManagerPersistence.getAll.foreach{ lock =>
+      if(currentTime - lock.getCreateTime.getTime > timeout){
+        lockManagerPersistence.unlock(lock)
+        warn("timeout force unlock " + lock.getLockObject)
       }
     }
   }

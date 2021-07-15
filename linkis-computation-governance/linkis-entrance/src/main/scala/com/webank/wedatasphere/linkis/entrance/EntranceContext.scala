@@ -17,7 +17,6 @@
 package com.webank.wedatasphere.linkis.entrance
 
 import com.webank.wedatasphere.linkis.entrance.event._
-import com.webank.wedatasphere.linkis.entrance.execute.EntranceExecutorManager
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
 import com.webank.wedatasphere.linkis.entrance.log.LogManager
 import com.webank.wedatasphere.linkis.entrance.persistence.PersistenceManager
@@ -45,6 +44,4 @@ abstract class EntranceContext {
 
   def getOrCreateLogListenerBus: EntranceLogListenerBus[EntranceLogListener, EntranceLogEvent]
 
-
-  def getOrCreateExecutorManager: EntranceExecutorManager
 }

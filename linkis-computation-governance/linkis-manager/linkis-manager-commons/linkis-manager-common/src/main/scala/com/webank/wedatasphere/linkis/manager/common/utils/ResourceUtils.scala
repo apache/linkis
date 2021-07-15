@@ -40,6 +40,8 @@ object ResourceUtils {
     if (persistenceResource.getExpectedResource != null) nodeResource.setExpectedResource(deserializeResource(persistenceResource.getExpectedResource))
     if (persistenceResource.getLeftResource != null) nodeResource.setLeftResource(deserializeResource(persistenceResource.getLeftResource))
     if (persistenceResource.getUsedResource != null) nodeResource.setUsedResource(deserializeResource(persistenceResource.getUsedResource))
+    if (persistenceResource.getCreateTime != null) nodeResource.setCreateTime(persistenceResource.getCreateTime)
+    if (persistenceResource.getUpdateTime != null) nodeResource.setUpdateTime(persistenceResource.getUpdateTime)
     nodeResource.setResourceType(ResourceType.valueOf(persistenceResource.getResourceType))
     nodeResource
   }

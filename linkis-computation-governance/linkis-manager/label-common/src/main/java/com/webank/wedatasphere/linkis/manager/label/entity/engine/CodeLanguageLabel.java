@@ -24,7 +24,7 @@ import com.webank.wedatasphere.linkis.manager.label.entity.annon.ValueSerialNum;
 import java.util.HashMap;
 
 
-public class CodeLanguageLabel extends GenericLabel implements EngineNodeLabel {
+public class CodeLanguageLabel extends GenericLabel {
 
     public CodeLanguageLabel() {
         setLabelKey(LabelKeyConstant.CODE_TYPE_KEY);

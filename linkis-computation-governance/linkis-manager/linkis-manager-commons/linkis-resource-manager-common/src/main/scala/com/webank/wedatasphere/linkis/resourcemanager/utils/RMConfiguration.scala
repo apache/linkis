@@ -30,6 +30,8 @@ object RMConfiguration {
 
   val NODE_HEARTBEAT_INTERVAL = CommonVars("wds.linkis.manager.am.node.heartbeat", new TimeType("3m"))
   val NODE_HEARTBEAT_MAX_UPDATE_TIME = CommonVars("wds.linkis.manager.am.node.heartbeat", new TimeType("5m"))
+  val LOCK_RELEASE_TIMEOUT = CommonVars("wds.linkis.manager.rm.lock.release.timeout", new TimeType("5m"))
+  val LOCK_RELEASE_CHECK_INTERVAL = CommonVars("wds.linkis.manager.rm.lock.release.check.interval", new TimeType("5m"))
 
   //Resource parameter(资源参数)
   val USER_AVAILABLE_CPU = CommonVars("wds.linkis.rm.client.core.max", 10)

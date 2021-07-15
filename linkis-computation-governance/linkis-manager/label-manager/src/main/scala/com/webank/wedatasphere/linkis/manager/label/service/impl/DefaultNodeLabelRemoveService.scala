@@ -25,6 +25,7 @@ import com.webank.wedatasphere.linkis.manager.label.service.{NodeLabelRemoveServ
 import com.webank.wedatasphere.linkis.manager.persistence.LabelManagerPersistence
 import com.webank.wedatasphere.linkis.message.annotation.Receiver
 import com.webank.wedatasphere.linkis.protocol.label.NodeLabelRemoveRequest
+import com.webank.wedatasphere.linkis.manager.label.conf.LabelCommonConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -38,22 +39,24 @@ class DefaultNodeLabelRemoveService extends NodeLabelRemoveService with Logging 
   @Autowired
   private var labelPersistence: LabelManagerPersistence = _
 
+  private val labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
+
 
   @Receiver
   override def removeNodeLabel(nodeLabelRemoveRequest: NodeLabelRemoveRequest): Unit = {
     info(s"Start to remove labels from node ${nodeLabelRemoveRequest.getServiceInstance}")
-    nodeLabelService.removeLabelsFromNode(nodeLabelRemoveRequest.getServiceInstance)
+    val permanentLabelKey = LabelCommonConfig.PERMANENT_LABEL.getValue.split(",")
+    nodeLabelService.removeLabelsFromNodeWithoutPermanent(nodeLabelRemoveRequest.getServiceInstance,permanentLabelKey)
     val persistenceLabel = if (nodeLabelRemoveRequest.isEngine) {
-      val engineLabel = LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[EngineInstanceLabel])
+      val engineLabel = labelFactory.createLabel(classOf[EngineInstanceLabel])
       engineLabel.setInstance(nodeLabelRemoveRequest.getServiceInstance.getInstance)
       engineLabel.setServiceName(nodeLabelRemoveRequest.getServiceInstance.getApplicationName)
-      LabelBuilderFactoryContext.getLabelBuilderFactory.convertLabel(engineLabel, classOf[PersistenceLabel])
+      labelFactory.convertLabel(engineLabel, classOf[PersistenceLabel])
     } else {
-
-      val eMInstanceLabel = LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[EMInstanceLabel])
+      val eMInstanceLabel = labelFactory.createLabel(classOf[EMInstanceLabel])
       eMInstanceLabel.setServiceName(nodeLabelRemoveRequest.getServiceInstance.getApplicationName)
       eMInstanceLabel.setInstance(nodeLabelRemoveRequest.getServiceInstance.getInstance)
-      LabelBuilderFactoryContext.getLabelBuilderFactory.convertLabel(eMInstanceLabel, classOf[PersistenceLabel])
+      labelFactory.convertLabel(eMInstanceLabel, classOf[PersistenceLabel])
     }
 
     labelPersistence.removeLabel(persistenceLabel)

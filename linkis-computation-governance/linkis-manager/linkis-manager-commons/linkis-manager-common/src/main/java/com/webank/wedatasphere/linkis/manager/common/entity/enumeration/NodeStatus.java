@@ -10,10 +10,9 @@ public enum NodeStatus {
      * <p>
      * manager中管理的engineConn状态：Starting ShuttingDown Unlock Idle Busy
      */
-    Starting, ShuttingDown, Failed, Success,
-    Idle, Busy,
-    Locked, Unlock,
-    Running;
+    Starting, Unlock, Locked,
+    Idle, Busy, Running, ShuttingDown, Failed, Success;
+
 
     public static Boolean isAvailable(NodeStatus status) {
         if (Idle == status || Busy == status || Locked == status || Unlock == status || Running == status) {

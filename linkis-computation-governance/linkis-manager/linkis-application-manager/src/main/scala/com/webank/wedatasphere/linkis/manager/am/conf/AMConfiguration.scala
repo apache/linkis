@@ -27,6 +27,8 @@ object AMConfiguration {
 
   val ENGINE_START_MAX_TIME = CommonVars("wds.linkis.manager.am.engine.start.max.time", new TimeType("10m"))
 
+  val ENGINE_CONN_START_REST_MAX_WAIT_TIME = CommonVars("wds.linkis.manager.am.engine.rest.start.max.time", new TimeType("40s"))
+
   val ENGINE_REUSE_MAX_TIME = CommonVars("wds.linkis.manager.am.engine.reuse.max.time", new TimeType("5m"))
 
   val ENGINE_REUSE_COUNT_LIMIT = CommonVars("wds.linkis.manager.am.engine.reuse.count.limit", 10)
@@ -48,7 +50,11 @@ object AMConfiguration {
 
   val ENGINECONN_DEBUG_ENABLED = CommonVars("wds.linkis.engineconn.debug.mode.enable", false)
 
-  val MULTI_USER_ENGINE_TYPES = CommonVars("wds.linkis.multi.user.engine.types", "jdbc,es,presto")
+  val MULTI_USER_ENGINE_TYPES = CommonVars("wds.linkis.multi.user.engine.types", "jdbc,es,presto,io_file")
+
+  val MULTI_USER_ENGINE_USER = CommonVars("wds.linkis.multi.user.engine.user", "{jdbc:\"hadoop\", es: \"hadoop\", presto:\"hadoop\",io_file:\"root\"}")
+
+  val MONITOR_SWITCH_ON = CommonVars("wds.linkis.manager.am.monitor.switch.on", true)
 
   val ENGINE_LOCKER_MAX_TIME = CommonVars("wds.linkis.manager.am.engine.locker.max.time", 1000*60*5)
 }

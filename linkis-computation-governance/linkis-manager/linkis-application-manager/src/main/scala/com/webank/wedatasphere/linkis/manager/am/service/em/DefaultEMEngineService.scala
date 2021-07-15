@@ -67,7 +67,7 @@ class DefaultEMEngineService extends EMEngineService with Logging {
 
     info(s"EM ${emNode.getServiceInstance} start to create Engine ${engineBuildRequest}")
     val engineNode = emNodeManager.createEngine(engineBuildRequest, emNode)
-    info(s"EM ${emNode.getServiceInstance} Finished to create Engine ${engineBuildRequest}")
+    info(s"EM ${emNode.getServiceInstance} Finished to create Engine ${engineBuildRequest.ticketId}")
     engineNode.setLabels(emNode.getLabels.filter(_.isInstanceOf[EngineNodeLabel]))
     engineNode.setEMNode(emNode)
     engineNode

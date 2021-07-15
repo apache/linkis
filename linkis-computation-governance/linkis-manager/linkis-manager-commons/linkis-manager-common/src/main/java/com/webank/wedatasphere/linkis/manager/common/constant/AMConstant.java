@@ -17,4 +17,6 @@ public class AMConstant {
 
     public static final String START_REASON = "start_reason";
 
+    public static final String EC_CAN_RETRY = "ec_can_try";
+
 }

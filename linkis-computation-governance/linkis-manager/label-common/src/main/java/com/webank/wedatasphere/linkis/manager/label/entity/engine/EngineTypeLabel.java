@@ -17,10 +17,7 @@
 package com.webank.wedatasphere.linkis.manager.label.entity.engine;
 
 import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant;
-import com.webank.wedatasphere.linkis.manager.label.entity.EMNodeLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.EngineNodeLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.Feature;
-import com.webank.wedatasphere.linkis.manager.label.entity.GenericLabel;
+import com.webank.wedatasphere.linkis.manager.label.entity.*;
 import com.webank.wedatasphere.linkis.manager.label.entity.annon.ValueSerialNum;
 import org.apache.commons.lang.StringUtils;
 

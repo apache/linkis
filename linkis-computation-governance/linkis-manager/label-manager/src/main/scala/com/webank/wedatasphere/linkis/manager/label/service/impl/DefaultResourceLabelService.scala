@@ -26,6 +26,7 @@ import com.webank.wedatasphere.linkis.manager.common.utils.ResourceUtils
 import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineInstanceLabel
+import com.webank.wedatasphere.linkis.manager.label.LabelManagerUtils
 import com.webank.wedatasphere.linkis.manager.label.service.ResourceLabelService
 import com.webank.wedatasphere.linkis.manager.persistence.ResourceLabelPersistence
 import org.springframework.beans.factory.annotation.Autowired
@@ -63,7 +64,7 @@ class DefaultResourceLabelService extends ResourceLabelService with Logging {
     */
   override def getResourceLabels(labels: util.List[Label[_]]): util.List[Label[_]] = {
     val labelKeyValueList = labels.flatMap { label =>
-      val persistenceLabel = convertPersistenceLabel(label)
+      val persistenceLabel = LabelManagerUtils.convertPersistenceLabel(label)
       persistenceLabel.getValue.map { keyValue =>
         new LabelKeyValue(keyValue._1, keyValue._2)
       }
@@ -87,7 +88,7 @@ class DefaultResourceLabelService extends ResourceLabelService with Logging {
     */
   override def setResourceToLabel(label: Label[_], resource: NodeResource): Unit = {
 
-    resourceLabelPersistence.setResourceToLabel(convertPersistenceLabel(label), ResourceUtils.toPersistenceResource(resource))
+    resourceLabelPersistence.setResourceToLabel(LabelManagerUtils.convertPersistenceLabel(label), ResourceUtils.toPersistenceResource(resource))
   }
 
   /**
@@ -99,7 +100,7 @@ class DefaultResourceLabelService extends ResourceLabelService with Logging {
   override def getResourceByLabel(label: Label[_]): NodeResource = {
     val persistenceResource = label match {
       case p: PersistenceLabel => resourceLabelPersistence.getResourceByLabel(p)
-      case _ =>  resourceLabelPersistence.getResourceByLabel(convertPersistenceLabel(label))
+      case _ =>  resourceLabelPersistence.getResourceByLabel(LabelManagerUtils.convertPersistenceLabel(label))
     }
     if(persistenceResource.isEmpty){
       null
@@ -117,11 +118,11 @@ class DefaultResourceLabelService extends ResourceLabelService with Logging {
     * @param label
     */
   override def removeResourceByLabel(label: Label[_]): Unit = {
-    resourceLabelPersistence.removeResourceByLabel(convertPersistenceLabel(label))
+    resourceLabelPersistence.removeResourceByLabel(LabelManagerUtils.convertPersistenceLabel(label))
   }
 
   override def removeResourceByLabels(labels: util.List[Label[_]]): Unit = {
-    resourceLabelPersistence.removeResourceByLabels(labels.map(convertPersistenceLabel))
+    resourceLabelPersistence.removeResourceByLabels(labels.map(LabelManagerUtils.convertPersistenceLabel))
   }
 
   override def setEngineConnResourceToLabel(label: Label[_], nodeResource: NodeResource): Unit = {
@@ -129,7 +130,7 @@ class DefaultResourceLabelService extends ResourceLabelService with Logging {
       case label:EngineInstanceLabel =>
         val resource = ResourceUtils.toPersistenceResource(nodeResource)
         resource.setTicketId(label.getInstance())
-        resourceLabelPersistence.setResourceToLabel(convertPersistenceLabel(label), resource)
+        resourceLabelPersistence.setResourceToLabel(LabelManagerUtils.convertPersistenceLabel(label), resource)
       case _ =>
     }
   }

@@ -1,7 +1,22 @@
 package com.webank.wedatasphere.linkis.manager.persistence.impl;
-
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
 import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel;
+import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLock;
 import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNode;
 import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource;
 import com.webank.wedatasphere.linkis.manager.dao.LabelManagerMapper;
@@ -20,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
 
@@ -68,7 +82,20 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
     public void removeLabel(PersistenceLabel persistenceLabel) {
         String labelKey = persistenceLabel.getLabelKey();
         String labelStringValue = persistenceLabel.getStringValue();
-        labelManagerMapper.deleteByLabel(labelKey, labelStringValue);
+        int labelId = persistenceLabel.getId() ;
+        if (labelId <= 0 ) {
+            PersistenceLabel labelByKeyValue = labelManagerMapper.getLabelByKeyValue(labelKey, labelStringValue);
+            if (null == labelByKeyValue) {
+                logger.warn("Can not find label labelKey {}, label value {}", labelKey, labelStringValue);
+                return;
+            }
+            labelId = labelByKeyValue.getId();
+        }
+        if (labelId > 0) {
+            labelManagerMapper.deleteLabel(labelId);
+            labelManagerMapper.deleteLabelKeyVaules(labelId);
+        }
+
     }
 
     @Override

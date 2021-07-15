@@ -19,6 +19,7 @@
 package com.webank.wedatasphere.linkis.manager.label.entity
 
 import java.util
+import com.webank.wedatasphere.linkis.manager.label.entity.annon.ValueSerialNum
 
 
 class JobLabel extends GenericLabel {
@@ -27,6 +28,7 @@ class JobLabel extends GenericLabel {
 
   def getJobId: String = Option(getValue).map(_.get("jobId")).orNull
 
+  @ValueSerialNum(0)
   def setJobId(jobId: String): Unit = {
     if (null == getValue) setValue(new util.HashMap[String, String])
     getValue.put("jobId", jobId)

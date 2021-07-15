@@ -22,11 +22,12 @@ import com.webank.wedatasphere.linkis.manager.label.entity.EMNodeLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.EngineNodeLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.GenericLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.annon.ValueSerialNum;
+import com.webank.wedatasphere.linkis.manager.label.entity.ResourceLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.node.NodeInstanceLabel;
 
 import java.util.HashMap;
 
-public class EMInstanceLabel extends GenericLabel implements NodeInstanceLabel, EMNodeLabel, EngineNodeLabel {
+public class EMInstanceLabel extends GenericLabel implements NodeInstanceLabel, EMNodeLabel, EngineNodeLabel, ResourceLabel {
 
 
     public EMInstanceLabel() {

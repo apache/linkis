@@ -22,6 +22,7 @@
     <id>linkis-application-manager</id>
     <formats>
         <format>dir</format>
+        <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <baseDirectory>linkis-engineconn-plugin-server</baseDirectory>
@@ -42,31 +43,7 @@
     </dependencySets>
 
     <fileSets>
-        <fileSet>
-            <directory>${basedir}/src/main/resources</directory>
-            <includes>
-                <include>*</include>
-            </includes>
-            <fileMode>0777</fileMode>
-            <outputDirectory>conf</outputDirectory>
-            <lineEnding>unix</lineEnding>
-        </fileSet>
-        <!--<fileSet>
-            <directory>${basedir}/bin</directory>
-            <includes>
-                <include>*</include>
-            </includes>
-            <fileMode>0777</fileMode>
-            <outputDirectory>bin</outputDirectory>
-            <lineEnding>unix</lineEnding>
-        </fileSet>
-        <fileSet>
-            <directory>.</directory>
-            <excludes>
-                <exclude>*/**</exclude>
-            </excludes>
-            <outputDirectory>logs</outputDirectory>
-        </fileSet>  -->
+
     </fileSets>
 
 </assembly>

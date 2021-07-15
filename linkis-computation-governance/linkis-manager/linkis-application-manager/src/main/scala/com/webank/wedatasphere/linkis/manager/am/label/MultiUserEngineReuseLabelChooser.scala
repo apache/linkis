@@ -49,6 +49,7 @@ class MultiUserEngineReuseLabelChooser extends EngineReuseLabelChooser with Logg
   }
 
   /**
+   * Filter out UserCreator Label that supports multi-user engine
    * 过滤掉支持多用户引擎的UserCreator Label
    *
    * @param labelList

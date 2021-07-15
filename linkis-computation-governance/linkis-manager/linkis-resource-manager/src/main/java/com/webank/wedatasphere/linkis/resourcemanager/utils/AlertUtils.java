@@ -17,7 +17,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Maps;
 import com.webank.wedatasphere.linkis.common.utils.Utils;
-import com.webank.wedatasphere.linkis.tools.ims.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,9 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class AlertUtils {
@@ -43,7 +40,6 @@ public class AlertUtils {
 
 
     static {
-        Alert.register(RMConfiguration.ALERT_SUB_SYSTEM_ID().getValue(), RMConfiguration.ALERT_IMS_URL().getValue(), RMConfiguration.ALERT_DEFAULT_UM().getValue());
         String[] contactMappings = RMConfiguration.ALERT_CONTACT_GROUP().getValue().split(",");
         for(String contactMapping : contactMappings){
             String[] queueToGroup = contactMapping.split("/");
@@ -76,10 +72,6 @@ public class AlertUtils {
                         logger.error("failed to get local host address", e);
                     }
 
-                    Set<AlertWay> way = new HashSet<>();
-                    way.add(Email$.MODULE$);
-                    AlertAction action =  new AlertAction(RMConfiguration.ALERT_SUB_SYSTEM_ID().getValue(), parsedTitle, "DSS", parsedInfo, MINOR$.MODULE$, ip, 0, way, new HashSet<>());
-                    Alert.addAlert(action);
                     titleCache.put(parsedTitle, parsedInfo);
                 }
             }

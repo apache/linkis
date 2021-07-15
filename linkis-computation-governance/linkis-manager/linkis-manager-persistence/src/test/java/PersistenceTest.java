@@ -149,8 +149,6 @@ public class PersistenceTest {
         key1.put("alias", "em");
         key1.put("key2", "value2");
         labelKeyValues.put("serverAlias", key1);
-        labelManagerMapper.deleteResourceByLabelKeyValuesMaps(labelKeyValues);
-        labelManagerMapper.deleteResourceByLabelKeyValuesMapsInDirect(labelKeyValues);
     }
 
     @Test

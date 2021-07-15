@@ -20,7 +20,7 @@ import com.webank.wedatasphere.linkis.common.conf.CommonVars;
 
 public class LabelCommonConfig {
 
-    public final static CommonVars<String> LABEL_FACTORY_CLASS = CommonVars.apply("wds.linkis.label.label.com.webank.wedatasphere.linkis.entrance.factory.clazz", "");
+    public final static CommonVars<String> LABEL_FACTORY_CLASS = CommonVars.apply("wds.linkis.label.factory.clazz", "");
 
     public final static CommonVars<Double> LABEL_SCORER_BASE_CORE = CommonVars.apply("wds.linkis.label.scorer.base.core", 1.0d);
 

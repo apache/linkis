@@ -21,6 +21,7 @@ import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonCon
 import com.webank.wedatasphere.linkis.manager.label.builder.CombinedLabelBuilder;
 import com.webank.wedatasphere.linkis.manager.label.entity.CombinedLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.Label;
+import com.webank.wedatasphere.linkis.manager.label.entity.ResourceLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.em.EMInstanceLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineInstanceLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel;
@@ -31,7 +32,9 @@ import com.webank.wedatasphere.linkis.resourcemanager.exception.RMErrorException
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RMLabelContainer {
 
@@ -65,6 +68,13 @@ public class RMLabelContainer {
         return labels;
     }
 
+    public List<Label<?>> getResourceLabels() {
+        if (null != labels) {
+            return labels.stream().filter(label -> label instanceof ResourceLabel).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+
     public Label find(Class labelClass) {
         for (Label label : labels) {
             if (labelClass.isInstance(label)) {
@@ -91,9 +101,9 @@ public class RMLabelContainer {
     public EngineTypeLabel getEngineTypeLabel() throws RMErrorException {
         if(engineTypeLabel == null){
             for (Label label : labels) {
-             if(label instanceof EngineTypeLabel){
-                 return (EngineTypeLabel) label;
-             }
+                if(label instanceof EngineTypeLabel){
+                    return (EngineTypeLabel) label;
+                }
             }
         } else {
             return engineTypeLabel;

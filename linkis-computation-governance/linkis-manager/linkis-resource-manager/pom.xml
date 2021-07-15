@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <artifactId>linkis</artifactId>
     </parent>
@@ -259,6 +259,7 @@
             </exclusions>
             <scope>provided</scope>
         </dependency>
+
 
     </dependencies>
     <build>

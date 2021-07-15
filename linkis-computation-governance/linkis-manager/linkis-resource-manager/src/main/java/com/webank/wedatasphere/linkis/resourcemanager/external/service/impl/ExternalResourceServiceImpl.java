@@ -34,6 +34,7 @@ import com.webank.wedatasphere.linkis.resourcemanager.external.service.ExternalR
 import com.webank.wedatasphere.linkis.resourcemanager.external.yarn.YarnResourceRequester;
 import com.webank.wedatasphere.linkis.resourcemanager.utils.RMConfiguration;
 import com.webank.wedatasphere.linkis.resourcemanager.utils.RMUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -97,15 +98,17 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
 
     private Object retry(int retryNum, Function function) throws RMErrorException {
         int times = 0;
+        String errorMsg = "Failed to request external resource";
         while(times < retryNum){
             try{
                 return function.apply(null);
             } catch (Exception e){
+                errorMsg = "Failed to request external resource" + ExceptionUtils.getRootCauseMessage(e);
                 logger.warn("failed to request external resource provider", e);
                 times ++;
             }
         }
-        throw new RMErrorException(11006, "failed to request external resource provider");
+        throw new RMErrorException(11006, errorMsg);
     }
 
     private ExternalResourceProvider chooseProvider(ResourceType resourceType, RMLabelContainer labelContainer) throws RMErrorException {

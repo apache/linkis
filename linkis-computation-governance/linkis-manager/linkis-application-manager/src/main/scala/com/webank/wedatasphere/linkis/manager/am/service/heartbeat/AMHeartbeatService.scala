@@ -21,6 +21,7 @@ package com.webank.wedatasphere.linkis.manager.am.service.heartbeat
 import java.util.concurrent.TimeUnit
 
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration
 import com.webank.wedatasphere.linkis.manager.am.service.HeartbeatService
 import com.webank.wedatasphere.linkis.manager.common.entity.metrics.AMNodeMetrics
 import com.webank.wedatasphere.linkis.manager.common.monitor.ManagerMonitor
@@ -32,7 +33,6 @@ import com.webank.wedatasphere.linkis.resourcemanager.utils.RMConfiguration
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-
 
 @Service
 class AMHeartbeatService extends HeartbeatService with Logging {
@@ -53,7 +53,7 @@ class AMHeartbeatService extends HeartbeatService with Logging {
 
   @PostConstruct
   def init(): Unit = {
-    if (null != managerMonitor) {
+    if (null != managerMonitor && AMConfiguration.MONITOR_SWITCH_ON.getValue) {
       info("start init AMHeartbeatService monitor")
       Utils.defaultScheduler.scheduleAtFixedRate(managerMonitor, 1000, RMConfiguration.RM_ENGINE_SCAN_INTERVAL.getValue.toLong, TimeUnit.MILLISECONDS)
 

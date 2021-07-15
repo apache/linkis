@@ -38,6 +38,8 @@ object EngineType extends Enumeration with Logging {
 
   val IO_ENGINE_HDFS = Value("io_hdfs")
 
+  val FPS = Value("fps")
+
   val PIPELINE = Value("pipeline")
 
   val ES = Value("es")

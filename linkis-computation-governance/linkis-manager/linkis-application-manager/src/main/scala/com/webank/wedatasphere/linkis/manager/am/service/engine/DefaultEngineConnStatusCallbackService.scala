@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package com.webank.wedatasphere.linkis.manager.am.service.engine
 
 import java.util
@@ -31,7 +30,6 @@ import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-
 @Service
 class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackService with Logging {
 
@@ -46,8 +44,11 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
 
     info(s"Start to deal engineConnStatusCallbackToAM $engineConnStatusCallbackToAM")
     val nodeMetrics = new AMNodeMetrics
-    val heartBeatMsg: java.util.Map[String, String] = new util.HashMap[String, String]()
+    val heartBeatMsg: java.util.Map[String, Any] = new util.HashMap[String, Any]()
     heartBeatMsg.put(AMConstant.START_REASON, engineConnStatusCallbackToAM.initErrorMsg)
+    if (engineConnStatusCallbackToAM.canRetry) {
+      heartBeatMsg.put(AMConstant.EC_CAN_RETRY, engineConnStatusCallbackToAM.canRetry)
+    }
     nodeMetrics.setHeartBeatMsg(BDPJettyServerHelper.jacksonJson.writeValueAsString(heartBeatMsg))
     nodeMetrics.setServiceInstance(engineConnStatusCallbackToAM.serviceInstance)
     nodeMetrics.setStatus(metricsConverter.convertStatus(engineConnStatusCallbackToAM.status))

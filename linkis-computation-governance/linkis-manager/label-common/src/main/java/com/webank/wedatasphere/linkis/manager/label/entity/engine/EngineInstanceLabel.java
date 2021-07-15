@@ -25,7 +25,7 @@ import com.webank.wedatasphere.linkis.manager.label.entity.node.NodeInstanceLabe
 
 import java.util.HashMap;
 
-public class EngineInstanceLabel extends GenericLabel implements NodeInstanceLabel, EngineNodeLabel {
+public class EngineInstanceLabel extends GenericLabel implements NodeInstanceLabel, EngineNodeLabel, ResourceLabel {
 
     public EngineInstanceLabel() {
         setLabelKey(LabelKeyConstant.ENGINE_INSTANCE_KEY);

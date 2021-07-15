@@ -10,7 +10,6 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 import java.util.Map;
 
-
 @Mapper
 public interface LabelManagerMapper {
 
@@ -54,11 +53,11 @@ public interface LabelManagerMapper {
 
     @Insert({
             "<script>" +
-            "insert into linkis_cg_manager_label_service_instance(label_id, service_instance, update_time,create_time) values " +
-            "<foreach collection='labelIds' item='labelId' index='index' separator=','>" +
-            "(#{labelId}, #{instance},now(),now())" +
-            "</foreach>" +
-            "</script>"
+                    "insert into linkis_cg_manager_label_service_instance(label_id, service_instance, update_time,create_time) values " +
+                    "<foreach collection='labelIds' item='labelId' index='index' separator=','>" +
+                    "(#{labelId}, #{instance},now(),now())" +
+                    "</foreach>" +
+                    "</script>"
     })
     void addLabelServiceInstance(@Param("instance") String instance, @Param("labelIds") List<Integer> labelIds);
 
@@ -293,10 +292,21 @@ public interface LabelManagerMapper {
      */
     List<Map<String, Object>> dimListNodeRelationsByKeyValueMap(@Param("keyValueMap") Map<String, Map<String, String>> labelKeyAndValuesMap, @Param("valueRelation") String name);
 
-
+    /**
+     * 通过instance信息，同时返回instance信息和label信息
+     *
+     * @param serviceInstances
+     * @return
+     */
     List<Map<String, Object>> listLabelRelationByServiceInstance(@Param("nodes") List<ServiceInstance> serviceInstances);
 
-
+    /**
+     * 通过labelkey 和StringValue找到唯一的label
+     *
+     * @param labelKey
+     * @param stringValue
+     * @return
+     */
     PersistenceLabel getLabelByKeyValue(@Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
 
     List<ServiceInstance> getNodeByLabelKeyValue(@Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
@@ -309,7 +319,7 @@ public interface LabelManagerMapper {
 
     /**
      * 通过labelId获取到resource
-     *  get resource via labelId
+     *
      * @param labelId
      * @return
      */
@@ -317,7 +327,6 @@ public interface LabelManagerMapper {
 
     /**
      * 通过label的keyvalues再找到resource
-     * find resource via keyvalues of label
      * 和{@link LabelManagerMapper#dimListLabelByKeyValueMap(Map, String)} 区别只是多了关联和资源表,并且返回是resource
      *
      * @param keyValueMap
@@ -339,8 +348,9 @@ public interface LabelManagerMapper {
      *
      * @param singletonMap
      */
-    void deleteResourceByLabelKeyValuesMaps(@Param("labelKeyValues") Map<String, Map<String, String>> singletonMap);
-    void deleteResourceByLabelKeyValuesMapsInDirect(@Param("labelKeyValues") Map<String, Map<String, String>> singletonMap);
+    Integer selectLabelIdByLabelKeyValuesMaps(@Param("labelKeyValues") Map<String, Map<String, String>> singletonMap);
+    void deleteResourceByLabelKeyValuesMaps(Integer id);
+    void deleteResourceByLabelKeyValuesMapsInDirect(Integer id);
 
     /**
      * 批量删除 不删除label

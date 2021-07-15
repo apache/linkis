@@ -149,12 +149,12 @@ class DefaultEMNodeManager extends EMNodeManager with Logging {
   }
 
   override def deleteEM(emNode: EMNode): Unit = {
-
     nodeManagerPersistence.removeNodeInstance(emNode)
-    info("Finished to clear emNode instance info")
+    info(s"Finished to clear emNode instance(${emNode.getServiceInstance}) info ")
     nodeMetricManagerPersistence.deleteNodeMetrics(emNode)
-    info("Finished to clear emNode metrics info")
+    info(s"Finished to clear emNode(${emNode.getServiceInstance}) metrics info")
   }
+
 
   override def pauseEM(serviceInstance: ServiceInstance): Unit = {
 

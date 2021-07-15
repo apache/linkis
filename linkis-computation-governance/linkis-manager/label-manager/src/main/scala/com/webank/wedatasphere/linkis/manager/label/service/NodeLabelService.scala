@@ -64,6 +64,8 @@ trait NodeLabelService {
   def getNodesByLabels(labels: util.List[Label[_]]): util.List[ServiceInstance]
 
 
+  def removeLabelsFromNodeWithoutPermanent(instance: ServiceInstance, permanentLabel: Array[String])
+
   def getNodesByLabel(label: Label[_]): util.List[ServiceInstance]
 
 

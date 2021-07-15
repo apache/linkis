@@ -1,5 +1,19 @@
 package com.webank.wedatasphere.linkis.manager.persistence.impl;
-
+/*
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import com.google.common.collect.Iterables;
 import com.webank.wedatasphere.linkis.manager.common.entity.label.LabelKeyValue;
 import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel;
@@ -12,6 +26,7 @@ import com.webank.wedatasphere.linkis.manager.persistence.ResourceLabelPersisten
 import com.webank.wedatasphere.linkis.manager.util.PersistenceUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
 
 public class DefaultResourceLabelPersistence implements ResourceLabelPersistence {
 
@@ -66,23 +80,19 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
     }
 
     @Override
-   // @Transactional(rollbackFor = Throwable.class)
+    // @Transactional(rollbackFor = Throwable.class)
     public void setResourceToLabel(PersistenceLabel label, PersistenceResource persistenceResource) {
         if (label == null || persistenceResource == null) return;
-        //label id 不为空，则直接通过label_id 查询，否则通过 value_key and value_content 查询
-        Integer labelId = label.getId();
+
         // TODO: 2020/8/31 id 的包装类
-        if (labelId <= 0) {
-            if (MapUtils.isEmpty(label.getValue())) return;
-            List<PersistenceLabel> resourceLabels = labelManagerMapper.listLabelByKeyValueMap(Collections.singletonMap(label.getLabelKey(), label.getValue()));
-            labelId = resourceLabels.stream().findFirst().orElseGet(new Supplier<PersistenceLabel>() {
-                @Override
-                public PersistenceLabel get() {
-                    labelManagerMapper.registerLabel(label);
-                    return label;
-                }
-            }).getId();
-            label.setId(labelId);
+        if (label.getId() <= 0) {
+            if (StringUtils.isEmpty(label.getStringValue())) return;
+            PersistenceLabel resourceLabel = labelManagerMapper.getLabelByKeyValue(label.getLabelKey(), label.getStringValue());
+            if (null == resourceLabel) {
+                labelManagerMapper.registerLabel(label);
+            } else {
+                label.setId(resourceLabel.getId());
+            }
         }
 
         //插入resource和relation记录
@@ -91,7 +101,7 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
 
         //找到label对应的persistenceResourceId，不存在就插入，存在就更新
         // TODO: 2020/9/8 多resource的判断，persistenceResource 有id的话，直接update这个
-        List <PersistenceResource> resourceByLabels = labelManagerMapper.listResourceByLaBelId(labelId);
+        List <PersistenceResource> resourceByLabels = labelManagerMapper.listResourceByLaBelId(label.getId());
         if (CollectionUtils.isNotEmpty(resourceByLabels)) {
             if(resourceByLabels.size() > 1){
                 logger.warn("Label[" + label + "]has resource size > 1");
@@ -100,7 +110,7 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
             resourceManagerMapper.nodeResourceUpdateByResourceId(resourceToUpdate.getId(), persistenceResource);
         } else {
             resourceManagerMapper.registerResource(persistenceResource);
-            labelManagerMapper.addLabelsAndResource(persistenceResource.getId(), Collections.singletonList(labelId));
+            labelManagerMapper.addLabelsAndResource(persistenceResource.getId(), Collections.singletonList(label.getId()));
         }
     }
 
@@ -111,24 +121,33 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
         if (label.getId() != null && label.getId() > 0) {
             return labelManagerMapper.listResourceByLaBelId(label.getId());
         } else {
+            PersistenceLabel dbLabel = labelManagerMapper.getLabelByKeyValue(label.getLabelKey(), label.getStringValue());
+            if (null == dbLabel) {
+                return Collections.emptyList();
+            } else {
+                return labelManagerMapper.listResourceByLaBelId(dbLabel.getId());
+            }
+        }
+        /*else {
             Map<String, String> value = label.getValue();
             if (MapUtils.isEmpty(value)) return Collections.emptyList();
             String dimType = Label.ValueRelation.ALL.name();
             return labelManagerMapper.dimListResourceBykeyValueMap(Collections.singletonMap(label.getLabelKey(), value), dimType);
-        }
+        }*/
     }
 
     @Override
-   // @Transactional(rollbackFor = Throwable.class)
+    // @Transactional(rollbackFor = Throwable.class)
     public void removeResourceByLabel(PersistenceLabel label) {
         //label id 不为空，则直接通过label_id 查询，否则通过 value_key and value_content 查询
-        if (label.getId() != null) {
-            labelManagerMapper.deleteResourceByLabelId(label.getId());
-            labelManagerMapper.deleteResourceByLabelIdInDirect(label.getId());
-        } else {
-            Map<String, String> value = label.getValue();
-            labelManagerMapper.deleteResourceByLabelKeyValuesMaps(Collections.singletonMap(label.getLabelKey(), value));
-            labelManagerMapper.deleteResourceByLabelKeyValuesMapsInDirect(Collections.singletonMap(label.getLabelKey(), value));
+        int labelId = label.getId() ;
+        if (labelId <= 0 ) {
+            PersistenceLabel labelByKeyValue = labelManagerMapper.getLabelByKeyValue(label.getLabelKey(), label.getStringValue());
+            labelId = labelByKeyValue.getId();
+        }
+        if (labelId > 0) {
+            labelManagerMapper.deleteResourceByLabelIdInDirect(labelId);
+            labelManagerMapper.deleteResourceByLabelId(labelId);
         }
     }
 

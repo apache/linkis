@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package com.webank.wedatasphere.linkis.manager.am.service.engine
 
 import java.util.concurrent.TimeUnit
@@ -31,7 +30,6 @@ import com.webank.wedatasphere.linkis.protocol.label.NodeLabelRemoveRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-
 @Service
 class DefaultEngineStopService extends AbstractEngineService with EngineStopService with Logging {
 
@@ -40,6 +38,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
 
   @Receiver
   override def stopEngine(engineStopRequest: EngineStopRequest, smc: ServiceMethodContext): Unit = {
+    //TODO delete
     engineStopRequest.getServiceInstance.setApplicationName(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
     info(s" user ${engineStopRequest.getUser} prepare to stop engine ${engineStopRequest.getServiceInstance}")
     val node = getEngineNodeManager.getEngineNode(engineStopRequest.getServiceInstance)
@@ -54,13 +53,13 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     engineInfoClearRequest.setUser(engineStopRequest.getUser)
     val job = smc.publish(engineInfoClearRequest)
     Utils.tryAndWarn(job.get(AMConfiguration.STOP_ENGINE_WAIT.getValue.toLong, TimeUnit.MILLISECONDS))
-    info(s"Finished to clear RM info and stop Engine")
+    info(s"Finished to clear RM info and stop Engine $node")
     // clear Label
     val instanceLabelRemoveRequest = new NodeLabelRemoveRequest(node.getServiceInstance, true)
     val labelJob = smc.publish(instanceLabelRemoveRequest)
 
     Utils.tryAndWarn(labelJob.get(AMConfiguration.STOP_ENGINE_WAIT.getValue.toLong, TimeUnit.MILLISECONDS))
-    info(s"Finished to clear Label info")
+    info(s"Finished to clear engineNode $node Label info")
     getEngineNodeManager.deleteEngineNode(node)
     info(s" user ${engineStopRequest.getUser} finished to stop engine ${engineStopRequest.getServiceInstance}")
   }

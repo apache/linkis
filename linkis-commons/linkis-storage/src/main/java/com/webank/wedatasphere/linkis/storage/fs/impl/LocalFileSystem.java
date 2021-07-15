@@ -22,6 +22,7 @@ import com.webank.wedatasphere.linkis.storage.domain.FsPathListWithError;
 import com.webank.wedatasphere.linkis.storage.exception.StorageWarnException;
 import com.webank.wedatasphere.linkis.storage.fs.FileSystem;
 import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration;
+import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -76,6 +77,10 @@ public class LocalFileSystem extends FileSystem {
 
     @Override
     public boolean setOwner(FsPath dest, String user, String group) throws IOException {
+        if (!StorageUtils.isIOProxy()){
+            LOG.info("io not proxy, setOwner skip");
+            return true;
+        }
         if (user != null) {
             setOwner(dest, user);
         }
@@ -88,6 +93,10 @@ public class LocalFileSystem extends FileSystem {
 
     @Override
     public boolean setOwner(FsPath dest, String user) throws IOException {
+        if (!StorageUtils.isIOProxy()){
+            LOG.info("io not proxy, setOwner skip");
+            return true;
+        }
         UserPrincipalLookupService lookupService =
                 FileSystems.getDefault().getUserPrincipalLookupService();
         PosixFileAttributeView view =
@@ -100,6 +109,10 @@ public class LocalFileSystem extends FileSystem {
 
     @Override
     public boolean setGroup(FsPath dest, String group) throws IOException {
+        if (!StorageUtils.isIOProxy()){
+            LOG.info("io not proxy, setGroup skip");
+            return true;
+        }
         UserPrincipalLookupService lookupService =
                 FileSystems.getDefault().getUserPrincipalLookupService();
         PosixFileAttributeView view =
@@ -169,6 +182,10 @@ public class LocalFileSystem extends FileSystem {
 
     @Override
     public boolean setPermission(FsPath dest, String permission) throws IOException {
+        if (!StorageUtils.isIOProxy()){
+            LOG.info("io not proxy, setPermission skip");
+            return true;
+        }
         String path = dest.getPath();
         if(StringUtils.isNumeric(permission)) {
             permission = FsPath.permissionFormatted(permission);

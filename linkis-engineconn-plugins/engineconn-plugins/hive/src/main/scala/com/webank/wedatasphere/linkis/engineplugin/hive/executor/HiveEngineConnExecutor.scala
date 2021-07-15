@@ -44,6 +44,7 @@ import org.apache.hadoop.hive.ql.session.SessionState
 import org.apache.hadoop.mapred.RunningJob
 import org.apache.hadoop.security.UserGroupInformation
 import org.slf4j.LoggerFactory
+import org.apache.commons.codec.binary.Base64
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
@@ -165,28 +166,55 @@ class HiveEngineConnExecutor(id: Int,
                 val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
                 resultSetWriter.addMetaData(metaData)
                 val result = new util.ArrayList[String]()
-                while(driver.getResults(result)){
-                  val scalaResult:scala.collection.mutable.Buffer[String] = result
-                  scalaResult foreach { s =>
-                    val arr:Array[String] = s.split("\t")
-                    val arrAny:ArrayBuffer[Any] = new ArrayBuffer[Any]()
-                    if (arr.length > columns.length){
-                      logger.error(s"Tab characters are present in the results of your query Hive cannot cut, use Spark to do so (hive code ${realCode} 查询的结果中有\t制表符，hive不能进行切割,请使用spark执行)")
-                      throw new ErrorException(60078, "Tab characters are present in the results of your query Hive cannot cut, use Spark to do so(您查询的结果中有\t制表符，hive不能进行切割,请使用spark执行)")
+                while(driver.getResults(result)) {
+                  val scalaResult: scala.collection.mutable.Buffer[String] = result
+                  val enable_fetch_base64 = hiveConf.get("enable_fetch_base64", "true").toBoolean
+                  val isExplain = tokens(0).equalsIgnoreCase("explain")
+                  info("enable_fetch_base64:"+enable_fetch_base64+"isExplain:"+isExplain)
+                  if (!enable_fetch_base64 || isExplain) {
+                    scalaResult foreach { s =>
+                      val arr: Array[String] = s.split("\t")
+                      val arrAny: ArrayBuffer[Any] = new ArrayBuffer[Any]()
+                      if (arr.length > columns.length) {
+                        logger.error(s"Tab characters are present in the results of your query Hive cannot cut, use Spark to do so (hive code ${realCode} 查询的结果中有\t制表符，hive不能进行切割,请使用spark执行)")
+                        throw new ErrorException(60078, "Tab characters are present in the results of your query Hive cannot cut, use Spark to do so(您查询的结果中有\t制表符，hive不能进行切割,请使用spark执行)")
+                      }
+                      if (arr.length == columns.length) arr foreach arrAny.add
+                      else if (arr.length == 0) for (i <- 1 to columns.length) arrAny add ""
+                      else {
+                        val i = columns.length - arr.length
+                        arr foreach arrAny.add
+                        for (i <- 1 to i) arrAny add ""
+                      }
+                      resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
                     }
-                    if (arr.length == columns.length) arr foreach arrAny.add
-                    else if(arr.length == 0) for(i <-1 to columns.length) arrAny add ""
-                    else {
-                      val i = columns.length - arr.length
-                      arr foreach arrAny.add
-                      for (i <- 1 to i) arrAny add ""
+                    rows += result.size
+                    result.clear()
+                    rows += result.size
+                    result.clear()
+                  }else{
+                    scalaResult foreach { s =>
+                      val arr: Array[String] = s.split("\u0001")
+                      val arrAny: ArrayBuffer[Any] = new ArrayBuffer[Any]()
+                      if (arr.length > columns.length) {
+                        logger.error(s"Tab characters are present in the results of your query Hive cannot cut, use Spark to do so (hive code ${realCode} 您查询的结果数据存在问题，hive不能进行切割,请使用spark执行)")
+                        throw new ErrorException(60079, "Tab characters are present in the results of your query Hive cannot cut, use Spark to do so(您查询的结果数据存在问题，hive不能进行切割,请使用spark执行)")
+                      }
+
+                      if (arr.length == columns.length) arr.foreach(data=>arrAny.add(new String(Base64.decodeBase64(data))))
+                      else if (arr.length == 0) for (i <- 1 to columns.length) arrAny add ""
+                      else {
+                        val i = columns.length - arr.length
+                        arr.foreach(data=>arrAny.add(new String(Base64.decodeBase64(data))))
+                        for (i <- 1 to i) arrAny add ""
+                      }
+                      resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
                     }
-                    resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
+                    rows += result.size
+                    result.clear()
+                    rows += result.size
+                    result.clear()
                   }
-                  rows += result.size
-                  result.clear()
-                  rows += result.size
-                  result.clear()
                 }
                 columnCount = if (fieldSchemas != null) fieldSchemas.size() else 0
                 engineExecutorContext.sendResultSet(resultSetWriter)

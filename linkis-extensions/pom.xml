@@ -28,7 +28,6 @@
     <modules>
 
         <module>linkis-io-file-client</module>
-        <module>spark-excel</module>
     </modules>
 
 </project>

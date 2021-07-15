@@ -22,20 +22,30 @@ import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging}
 import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkResourceConfiguration._
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.{DriverAndYarnResource, LoadInstanceResource, Resource, YarnResource}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.resource.AbstractEngineResourceFactory
+import org.apache.commons.lang.StringUtils
 
 
 class SparkEngineConnResourceFactory extends AbstractEngineResourceFactory with Logging {
 
   override protected def getRequestResource(properties: util.Map[String, String]): Resource = {
     val executorNum = LINKIS_SPARK_EXECUTOR_INSTANCES.getValue(properties)
+    val executorMemory = LINKIS_SPARK_EXECUTOR_MEMORY.getValue(properties)
+    val executorMemoryWithUnit = if (StringUtils.isNumeric(executorMemory)) {
+      executorMemory + "g"
+    } else {
+      executorMemory
+    }
+    val driverMemory = LINKIS_SPARK_DRIVER_MEMORY.getValue(properties)
+    val driverMemoryWithUnit = if (StringUtils.isNumeric(driverMemory)) {
+      driverMemory + "g"
+    } else {
+      driverMemory
+    }
+    val driverCores = LINKIS_SPARK_DRIVER_CORES.getValue(properties)
     new DriverAndYarnResource(
-      new LoadInstanceResource(ByteTimeUtils.byteStringAsBytes(LINKIS_SPARK_DRIVER_MEMORY.getValue(properties) + "G"),
-        LINKIS_SPARK_DRIVER_CORES,
-        1),
-      new YarnResource(ByteTimeUtils.byteStringAsBytes(LINKIS_SPARK_EXECUTOR_MEMORY.getValue(properties) * executorNum + "G"),
-        LINKIS_SPARK_EXECUTOR_CORES.getValue(properties) * executorNum,
-        0,
-        LINKIS_QUEUE_NAME.getValue(properties))
+      new LoadInstanceResource(ByteTimeUtils.byteStringAsBytes(driverMemoryWithUnit), driverCores, 1),
+      new YarnResource(ByteTimeUtils.byteStringAsBytes(executorMemoryWithUnit) * executorNum,
+        LINKIS_SPARK_EXECUTOR_CORES.getValue(properties) * executorNum, 0, LINKIS_QUEUE_NAME.getValue(properties))
     )
   }
 }

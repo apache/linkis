@@ -28,4 +28,10 @@ object IOFileClientConf {
 
   val IO_LOADBALANCE_CAPACITY = CommonVars("wds.linkis.io.loadbalance.capacity", "1")
 
+  val IO_EXTRA_LABELS = CommonVars("wds.linkis.io.extra.labels", "")
+
+  val IO_EXECUTE_FAILED_CODE = 52005
+
+  val IO_EXECUTE_UNKNOWN_REASON_CODE = 52006
+
 }

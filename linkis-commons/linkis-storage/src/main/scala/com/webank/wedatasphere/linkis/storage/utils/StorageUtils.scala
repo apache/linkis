@@ -204,4 +204,8 @@ object StorageUtils extends Logging{
     }
   }
 
+ def isIOProxy(): Boolean = {
+    StorageConfiguration.ENABLE_IO_PROXY.getValue
+  }
+
 }

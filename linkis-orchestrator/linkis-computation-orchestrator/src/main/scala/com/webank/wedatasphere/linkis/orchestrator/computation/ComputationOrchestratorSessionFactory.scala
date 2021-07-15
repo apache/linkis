@@ -35,7 +35,7 @@ trait ComputationOrchestratorSessionFactory {
 
   def createSessionBuilder(id: String): OrchestratorSessionBuilder
 
-  def getOrCreateSession(orchestratorSessionBuider: OrchestratorSessionBuilder): OrchestratorSession
+  def getOrCreateSession(orchestratorSessionBuilder: OrchestratorSessionBuilder): OrchestratorSession
 }
 
 object ComputationOrchestratorSessionFactory {

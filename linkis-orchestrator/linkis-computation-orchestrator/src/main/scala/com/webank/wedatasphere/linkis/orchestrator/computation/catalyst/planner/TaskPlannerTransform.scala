@@ -33,32 +33,35 @@ import scala.collection.mutable.ArrayBuffer
  */
 class TaskPlannerTransform extends PlannerTransform with Logging {
 
-  private var startJobTask: JobTask = _
-
   def rebuildTreeNode(tmpTask: Task): Task = {
-    tmpTask.getChildren.foreach(_.withNewParents(Array(tmpTask)))
+    tmpTask.getChildren.foreach(child => {
+      val newParents = child.getParents.clone() :+ tmpTask
+      child.withNewParents(newParents)
+    })
     tmpTask
   }
 
-  def buildCodeLogicTaskTree(codeLogicalUnit: CodeLogicalUnit = null, stage: Stage): Task = {
-    val codeLogicalUnitTaskTmp = new CodeLogicalUnitTask(Array(), Array(buildStageTaskTree(StartStageTaskDesc(stage))))
-    codeLogicalUnitTaskTmp.setTaskDesc(CodeLogicalUnitTaskDesc(stage))
+  def buildCodeLogicTaskTree(codeLogicalUnit: CodeLogicalUnit = null, stage: Stage, startJobTask: Task = null): (Task, Task) = {
+    val (stageTask, newStartJobTask) = buildStageTaskTree(StartStageTaskDesc(stage), startJobTask)
+    val codeLogicalUnitTaskTmp = new CodeLogicalUnitTask(Array(), Array(stageTask))
+    codeLogicalUnitTaskTmp.setTaskDesc(CodeLogicalUnitTaskDesc(stage.getJob))
     if(codeLogicalUnit != null) codeLogicalUnitTaskTmp.setCodeLogicalUnit(codeLogicalUnit)
-    rebuildTreeNode(codeLogicalUnitTaskTmp)
+    (rebuildTreeNode(codeLogicalUnitTaskTmp), newStartJobTask)
   }
 
-  def buildStageTaskTree(taskDesc: StageTaskDesc): Task = {
+  def buildStageTaskTree(taskDesc: StageTaskDesc, startJobTask: Task = null): (Task,Task) = {
     taskDesc match {
       case endStageTask: EndStageTaskDesc => {
-        val stageTaskTmp  = new StageTask(Array(), Array(buildCodeLogicTaskTree(taskDesc.stage.getJob match{
+        val (task, newStartJobTask) = buildCodeLogicTaskTree(taskDesc.stage.getJob match{
           case codeJob: CodeJob => codeJob.getCodeLogicalUnit
           case job: Job => {
             error(s"jobId:${job.getId}-----jobType:${job.getName}, job type mismatch, only support CodeJob")
             null
           }
-        }, taskDesc.stage)))
+        }, taskDesc.stage, startJobTask)
+        val stageTaskTmp  = new StageTask(Array(), Array(task))
         stageTaskTmp.setTaskDesc(endStageTask)
-        rebuildTreeNode(stageTaskTmp)
+        (rebuildTreeNode(stageTaskTmp), newStartJobTask)
       }
       case startStageTask: StartStageTaskDesc => {
         /** when the construction node arrives at stage-task-start
@@ -66,28 +69,38 @@ class TaskPlannerTransform extends PlannerTransform with Logging {
          *  if true -> use the same way to build another stage tasks
          *  if false -> build or reuse job-task-start and points to the stage-task-start
          * */
-        if(null == taskDesc.stage.getChildren || taskDesc.stage.getChildren.isEmpty){
+        if(null == startStageTask.stage.getChildren || startStageTask.stage.getChildren.isEmpty){
+          var newStartJobTask: Task = null
           val stageTaskTmp = new StageTask(Array(),
-            if(startJobTask != null) Array(startJobTask)
-            else Array(buildJobTaskTree(StartJobTaskDesc(startStageTask.stage.getJob))))
+            if(startJobTask == null) {
+              newStartJobTask = buildJobTaskTree(StartJobTaskDesc(startStageTask.stage.getJob))
+              Array(newStartJobTask)
+            }
+            else {
+              newStartJobTask = startJobTask
+              Array(newStartJobTask)
+            })
           stageTaskTmp.setTaskDesc(startStageTask)
-          rebuildTreeNode(stageTaskTmp)
+          (rebuildTreeNode(stageTaskTmp), newStartJobTask)
         }else{
-          val stageTaskTmp = new StageTask(Array(), buildAllStageTaskTree(taskDesc.stage.getChildren))
+          val (stageTasks, newStartJobTask) = buildAllStageTaskTree(taskDesc.stage.getChildren, startJobTask)
+          val stageTaskTmp = new StageTask(Array(), stageTasks)
           stageTaskTmp.setTaskDesc(taskDesc)
-          rebuildTreeNode(stageTaskTmp)
+          (rebuildTreeNode(stageTaskTmp), newStartJobTask)
         }
       }
     }
   }
 
-  def buildAllStageTaskTree(stages: Array[Stage]): Array[Task] = {
+  def buildAllStageTaskTree(stages: Array[Stage], startJobTask: Task = null): (Array[Task], Task) = {
     val stageTasks = ArrayBuffer[Task]()
-      stages.foreach(stage => {
-        val stageTask = buildStageTaskTree(EndStageTaskDesc(stage))
-        stageTasks += stageTask
-      })
-    stageTasks.toArray
+    var reusedStartJobTask: Task = startJobTask
+    stages.foreach(stage => {
+      val (stageTask, startJobTask) = buildStageTaskTree(EndStageTaskDesc(stage), reusedStartJobTask)
+      reusedStartJobTask = startJobTask
+      stageTasks += stageTask
+    })
+    (stageTasks.toArray, reusedStartJobTask)
   }
 
   def buildJobTaskTree(taskDesc: TaskDesc): Task = {
@@ -98,11 +111,10 @@ class TaskPlannerTransform extends PlannerTransform with Logging {
           */
           val jobTask = new JobTask(Array(), Array())
           jobTask.setTaskDesc(startTask)
-          startJobTask = jobTask
           jobTask
       }
       case endTask: EndJobTaskDesc => {
-        val jobTaskTmp = new JobTask(Array(), buildAllStageTaskTree(endTask.job.getAllStages))
+        val jobTaskTmp = new JobTask(Array(), buildAllStageTaskTree(endTask.job.getAllStages)._1)
         jobTaskTmp.setTaskDesc(endTask)
         rebuildTreeNode(jobTaskTmp)
       }

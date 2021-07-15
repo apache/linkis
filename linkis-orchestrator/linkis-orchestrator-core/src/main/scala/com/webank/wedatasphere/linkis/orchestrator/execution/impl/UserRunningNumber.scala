@@ -16,41 +16,73 @@
 
 package com.webank.wedatasphere.linkis.orchestrator.execution.impl
 
-import scala.collection.mutable
+import java.util
+
+import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import scala.collection.JavaConverters._
 
 class UserRunningNumber {
 
-  private val runningNumber:  mutable.Map[String, Int] = new mutable.HashMap[String, Int]()
+  private val runningNumber:  java.util.Map[String, Int] = new java.util.HashMap[String, Int]()
 
-  def this(sourceRunningNumber:  mutable.Map[String, Int]) = {
+  private val SPLIT = ","
+
+  def this(sourceRunningNumber:  java.util.Map[String, Int]) = {
     this()
-    this.runningNumber ++= sourceRunningNumber
+    this.runningNumber.putAll(sourceRunningNumber)
   }
 
-  def addNumber(user: String, number: Int = 1): Int = synchronized {
-    val oldNumber = runningNumber.getOrElse(user, 0)
-    runningNumber.put(user, oldNumber + number)
+  def addNumber(user: String, labels: util.List[Label[_]], number: Int = 1): Int = synchronized {
+    val key = getKey(labels, user)
+    val oldNumber = runningNumber.getOrDefault(key, 0)
+    runningNumber.put(key, oldNumber + number)
     oldNumber
   }
 
-  def minusNumber(user: String, number: Int = 1): Int = synchronized {
-    val oldNumber = runningNumber.getOrElse(user, 0)
+  def minusNumber(user: String, labels: util.List[Label[_]], number: Int = 1): Int = synchronized {
+    val key = getKey(labels, user)
+    val oldNumber = runningNumber.getOrDefault(key, 0)
     val running = oldNumber - number
     if (running > 0) {
-      runningNumber.put(user, running)
+      runningNumber.put(key, running)
     } else {
-      runningNumber.remove(user)
+      runningNumber.remove(key)
     }
     oldNumber
   }
 
-  def getRunningNumber(user: String): Int = {
-    runningNumber.getOrElse(user, 0)
+  def getRunningNumber(user: String, labels: util.List[Label[_]]): Int = {
+    val key = getKey(labels, user)
+    runningNumber.getOrDefault(key, 0)
   }
 
+  /**
+   * Copy the current running task situation
+   * @return
+   */
   def copy(): UserRunningNumber = {
     val newUserRunningNumber = new UserRunningNumber(runningNumber)
     newUserRunningNumber
   }
 
+  /**
+   * TODO 统一getKey方法
+   * @param labels
+   * @return
+   */
+  def getKey(labels: util.List[Label[_]], user: String): String = {
+    var userCreatorLabel: UserCreatorLabel = null
+    var engineTypeLabel: EngineTypeLabel = null
+    labels.asScala.foreach {
+      case label: UserCreatorLabel => userCreatorLabel = label
+      case label: EngineTypeLabel => engineTypeLabel = label
+      case _ =>
+    }
+    if (null != userCreatorLabel && null != engineTypeLabel) {
+      userCreatorLabel.getStringValue + SPLIT + engineTypeLabel.getStringValue
+    } else {
+      user
+    }
+  }
 }

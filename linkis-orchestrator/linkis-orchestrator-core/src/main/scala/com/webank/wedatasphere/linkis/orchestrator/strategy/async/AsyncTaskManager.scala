@@ -49,11 +49,8 @@ class AsyncTaskManager extends DefaultTaskManager with TaskStatusListener with T
   }
 
   override def onResultSetCreate(taskResultSetEvent: TaskResultSetEvent): Unit = {
-    info(s"received taskResultSetEvent ${taskResultSetEvent.execTask.getId}")
-    val execTask = taskResultSetEvent.execTask
-    val rootExecTask = execTask.getPhysicalContext.getRootTask
-    val runners = getRunningTask(rootExecTask)
-    runners.find(_.task.getId.equals(execTask.getId)).foreach {
+    debug(s"received taskResultSetEvent ${taskResultSetEvent.execTask.getId}")
+    findDealEventTaskRunner(taskResultSetEvent).foreach {
       case asyncExecTaskRunner: AsyncExecTaskRunner =>
         asyncExecTaskRunner.addResultSet(taskResultSetEvent.resultSet)
       case _ =>
@@ -61,11 +58,8 @@ class AsyncTaskManager extends DefaultTaskManager with TaskStatusListener with T
   }
 
   override def onResultSizeCreated(taskResultSetSizeEvent: TaskResultSetSizeEvent): Unit = {
-    info(s"received taskResultSetSizeEvent $taskResultSetSizeEvent")
-    val execTask = taskResultSetSizeEvent.execTask
-    val rootExecTask = execTask.getPhysicalContext.getRootTask
-    val runners = getRunningTask(rootExecTask)
-    runners.find(_.task.getId.equals(execTask.getId)).foreach  {
+    debug(s"received taskResultSetSizeEvent $taskResultSetSizeEvent")
+    findDealEventTaskRunner(taskResultSetSizeEvent).foreach  {
       case asyncExecTaskRunner: AsyncExecTaskRunner =>
         asyncExecTaskRunner.setResultSize(taskResultSetSizeEvent.resultSize)
       case _ =>
@@ -73,30 +67,38 @@ class AsyncTaskManager extends DefaultTaskManager with TaskStatusListener with T
   }
 
   override def onTaskErrorResponseEvent(taskErrorResponseEvent: TaskErrorResponseEvent): Unit = {
-    info(s"received taskErrorResponseEvent $taskErrorResponseEvent")
-    val execTask = taskErrorResponseEvent.execTask
-    val rootExecTask = execTask.getPhysicalContext.getRootTask
-    val runners = getRunningTask(rootExecTask)
-    runners.find(_.task.getId.equals(execTask.getId)).foreach {
+
+    findDealEventTaskRunner(taskErrorResponseEvent).foreach {
       case asyncExecTaskRunner: AsyncExecTaskRunner =>
+        info(s"received taskErrorResponseEvent $taskErrorResponseEvent")
         asyncExecTaskRunner.markFailed(taskErrorResponseEvent.errorMsg, null)
       case _ =>
     }
   }
 
   override def onStatusUpdate(taskStatusEvent: TaskStatusEvent): Unit = {
-    info(s"received taskStatusEvent $taskStatusEvent")
+    debug(s"received taskStatusEvent $taskStatusEvent")
     if (ExecutionNodeStatus.isCompleted(taskStatusEvent.status)) {
-      val execTask = taskStatusEvent.execTask
-      val rootExecTask = execTask.getPhysicalContext.getRootTask
-      val runners = getRunningTask(rootExecTask)
-      runners.find(_.task.getId.equals(execTask.getId)).foreach { runner =>
-        info(s"Task(${execTask.getIDInfo}) is completed, status ${taskStatusEvent.status}")
+      findDealEventTaskRunner(taskStatusEvent).foreach { runner =>
+        info(s"Task(${taskStatusEvent.execTask.getIDInfo()}) is completed, status ${taskStatusEvent.status}")
         //To transient taskRunner status
         runner.transientStatus(taskStatusEvent.status)
         //addCompletedTask(runner)
       }
     }
+  }
+
+  private def findDealEventTaskRunner(event: TaskInfoEvent): Option[ExecTaskRunner] = {
+    val execTask = event.execTask
+    val rootExecTask = execTask.getPhysicalContext.getRootTask
+    val runners = getRunningTask(rootExecTask).filter{ taskRunner =>
+      taskRunner.task match {
+        case asyncExecTask: AsyncExecTask =>
+          asyncExecTask.canDealEvent(event)
+        case _ => false
+      }
+    }
+    runners.headOption
   }
 
 

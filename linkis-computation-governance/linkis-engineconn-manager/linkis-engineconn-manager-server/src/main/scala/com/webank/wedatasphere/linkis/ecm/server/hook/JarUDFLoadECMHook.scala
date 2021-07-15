@@ -30,7 +30,7 @@ class JarUDFLoadECMHook extends ECMHook with Logging {
     request match {
       case pel: ProcessEngineConnLaunchRequest =>
         info("start loading UDFs")
-        val udfInfos = UDFClient.getUdfInfos(request.user).filter{ info => info.getUdfType == 0 && info.getExpire == false && StringUtils.isNotBlank(info.getPath) && info.getLoad == true }
+        val udfInfos = UDFClient.getUdfInfos(request.user,"udf").filter{ info => info.getUdfType == 0 && info.getExpire == false && StringUtils.isNotBlank(info.getPath) && info.getLoad == true }
         udfInfos.foreach{ udfInfo =>
           LaunchConstants.addPathToClassPath(pel.environment, udfInfo.getPath)
         }

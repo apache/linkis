@@ -16,11 +16,18 @@
 
 package com.webank.wedatasphere.linkis.orchestrator.code.plans.logical
 
-import com.webank.wedatasphere.linkis.orchestrator.plans.ast.Stage
-import com.webank.wedatasphere.linkis.orchestrator.plans.logical.{StageTaskDesc, TaskDesc}
+import com.webank.wedatasphere.linkis.orchestrator.plans.ast.{ASTOrchestration, Job}
+import com.webank.wedatasphere.linkis.orchestrator.plans.logical.{Origin, TaskDesc}
 
-case class CodeLogicalUnitTaskDesc(override val stage: Stage) extends StageTaskDesc {
-  override val position: Int = 0
 
-  override def copy(): TaskDesc = CodeLogicalUnitTaskDesc(stage)
+case class CodeLogicalUnitTaskDesc(job: Job) extends TaskDesc {
+
+  private val position: Int = 0
+
+  override def copy(): TaskDesc = CodeLogicalUnitTaskDesc(job)
+
+  private val origin = Origin(job, position)
+
+  override def getOrigin: Origin = origin
+
 }

@@ -100,14 +100,20 @@ class ComputationOrchestratorSessionFactoryImpl extends ComputationOrchestratorS
     override def apply(v1: CatalystExtensions): Unit = {
 
       v1.injectConverterTransform(codeConverterTransformBuilder)
+
       v1.injectParserTransform(enrichLabelParserTransformBuilder)
+
       v1.injectParserTransform(codeStageParserTransformBuilder)
+
       v1.injectPlannerTransform(taskPlannerTransformBuilder)
+
       //v1.injectOptimizerTransform(simplyOptimizerTransformBuilder)
+
       v1.injectPhysicalTransform(jobExecTaskTransformBuilder)
       v1.injectPhysicalTransform(stageExecTaskTransformBuilder)
       v1.injectPhysicalTransform(cacheExecTaskTransformBuilder)
       v1.injectPhysicalTransform(codeExecTaskTransformBuilder)
+
       v1.injectReheaterTransform(PruneTaskRetryTransformBuilder)
     }
   }

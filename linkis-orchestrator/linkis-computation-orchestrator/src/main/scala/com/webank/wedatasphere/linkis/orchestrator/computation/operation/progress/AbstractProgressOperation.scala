@@ -73,7 +73,19 @@ abstract class AbstractProgressOperation(orchestratorSession: OrchestratorSessio
   }
 
   override def onEventError(event: Event, t: Throwable): Unit = {
-    info(s"Accept error event in progress operation, message: ${t.getMessage}")
+    var eventName: String = "Null Event"
+    var message: String = "NULL"
+    var cause: String = "NULL"
+    if (null != event) {
+      eventName = event.getClass.getName
+    }
+    if (null != t) {
+      message = t.getMessage
+      if (null != t.getCause) {
+        cause = t.getCause.getMessage
+      }
+    }
+    debug(s"Accept error event ${eventName} in progress operation, message: ${message}, cause : ${cause}")
   }
 }
 

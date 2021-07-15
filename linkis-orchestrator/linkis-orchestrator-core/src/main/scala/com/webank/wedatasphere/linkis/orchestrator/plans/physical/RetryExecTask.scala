@@ -13,8 +13,10 @@
 
 package com.webank.wedatasphere.linkis.orchestrator.plans.physical
 
+import com.webank.wedatasphere.linkis.orchestrator.conf.OrchestratorConfiguration
 import com.webank.wedatasphere.linkis.orchestrator.exception.{OrchestratorErrorCodeSummary, OrchestratorErrorException}
 import com.webank.wedatasphere.linkis.orchestrator.execution.TaskResponse
+import com.webank.wedatasphere.linkis.orchestrator.listener.task.TaskInfoEvent
 import com.webank.wedatasphere.linkis.orchestrator.plans.logical.TaskDesc
 import com.webank.wedatasphere.linkis.orchestrator.strategy.{ResultSetExecTask, StatusInfoExecTask}
 import com.webank.wedatasphere.linkis.orchestrator.strategy.async.AsyncExecTask
@@ -30,6 +32,8 @@ class RetryExecTask(private val originTask: ExecTask, private val age: Int = 1) 
 
   private var physicalContext: PhysicalContext = _
 
+  private val createTime = System.currentTimeMillis()
+
   def getOriginTask: ExecTask = {
     originTask
   }
@@ -39,10 +43,14 @@ class RetryExecTask(private val originTask: ExecTask, private val age: Int = 1) 
   }
 
   override def canExecute: Boolean = {
+    val takenTime = System.currentTimeMillis() - createTime
     if(originTask != null) {
-      originTask.canExecute
+      originTask.canExecute && takenTime > OrchestratorConfiguration.RETRY_TASK_WAIT_TIME.getValue
     }
-    else false
+    else {
+      throw new OrchestratorErrorException(OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE,
+        s"${getIDInfo()} originTask task cannot be null" )
+    }
   }
 
   override def execute(): TaskResponse = {
@@ -50,7 +58,7 @@ class RetryExecTask(private val originTask: ExecTask, private val age: Int = 1) 
       originTask.execute()
     }else {
       throw new OrchestratorErrorException(OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE,
-        "task cannot be execute, task will be retried maybe not exist" +
+        s"${getIDInfo()} task cannot be execute, task will be retried maybe not exist" +
           "(任务不允许被执行，被重热的任务可能不存在)")
     }
   }
@@ -107,6 +115,14 @@ class RetryExecTask(private val originTask: ExecTask, private val age: Int = 1) 
       case asyncExecTask: AsyncExecTask =>
         asyncExecTask.clear(isSucceed)
       case _ =>
+    }
+  }
+
+  override def canDealEvent(event: TaskInfoEvent): Boolean = {
+    if (null != getOriginTask ) {
+      getOriginTask.getId.equals(event.execTask.getId)
+    } else {
+      false
     }
   }
 }

@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.orchestrator.plans.physical
 import java.util
 
 import com.webank.wedatasphere.linkis.common.listener.Event
+import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.governance.common.entity.ExecutionNodeStatus
 import com.webank.wedatasphere.linkis.orchestrator.exception.OrchestratorErrorCodeSummary
 import com.webank.wedatasphere.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
@@ -55,8 +56,10 @@ class PhysicalContextImpl(private var rootTask: ExecTask,private var leafTasks: 
 
   override def markFailed(errorMsg: String, cause: Throwable): Unit = {
     this.executionNodeStatus = ExecutionNodeStatus.Failed
-    val failedResponse = new DefaultFailedTaskResponse(errorMsg,OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE, cause)
+    val failedResponse = new DefaultFailedTaskResponse(errorMsg, OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE, cause)
     this.response = failedResponse
+    val event = TaskLogEvent(getRootTask, LogUtils.generateERROR(errorMsg))
+    pushLog(event)
     syncListenerBus.postToAll(RootTaskResponseEvent(getRootTask, failedResponse))
   }
 

@@ -31,13 +31,29 @@ trait TaskInfoEvent {
   val execTask: ExecTask
 }
 
-case class TaskStatusEvent(execTask: ExecTask, status: ExecutionNodeStatus) extends TaskInfoEvent with OrchestratorSyncEvent with OrchestratorAsyncEvent
+case class TaskStatusEvent(execTask: ExecTask, status: ExecutionNodeStatus) extends TaskInfoEvent with OrchestratorSyncEvent with OrchestratorAsyncEvent {
+  override def toString: String = {
+    s"task ${execTask.getIDInfo()}, status ${status}"
+  }
+}
 
-case class TaskResultSetEvent(execTask: ExecTask, resultSet: ResultSet) extends TaskInfoEvent with OrchestratorSyncEvent
+case class TaskResultSetEvent(execTask: ExecTask, resultSet: ResultSet) extends TaskInfoEvent with OrchestratorSyncEvent {
+  override def toString: String = {
+    s"task ${execTask.getIDInfo()}"
+  }
+}
 
-case class TaskResultSetSizeEvent(execTask: ExecTask, resultSize: Int) extends TaskInfoEvent with OrchestratorSyncEvent
+case class TaskResultSetSizeEvent(execTask: ExecTask, resultSize: Int) extends TaskInfoEvent with OrchestratorSyncEvent {
+  override def toString: String = {
+    s"task ${execTask.getIDInfo()}, size ${resultSize}"
+  }
+}
 
-case class TaskErrorResponseEvent(execTask: ExecTask, errorMsg: String) extends TaskInfoEvent with OrchestratorSyncEvent
+case class TaskErrorResponseEvent(execTask: ExecTask, errorMsg: String) extends TaskInfoEvent with OrchestratorSyncEvent {
+  override def toString: String = {
+    s"task ${execTask.getIDInfo()}, errorMsg ${errorMsg}"
+  }
+}
 
 //case class TaskProgressEvent(execId: ExecTask, progress: Float, progressInfo: Array[JobProgressInfo]) extends TaskInfoEvent
 
@@ -50,6 +66,10 @@ case class KillRootExecTaskEvent(execTask: ExecTask) extends  TaskInfoEvent with
 
 case class TaskReheaterEvent(execTask: ExecTask) extends TaskInfoEvent with OrchestratorAsyncEvent
 
-case class TaskProgressEvent(execTask: ExecTask, progress: Float, progressInfo: Array[JobProgressInfo]) extends TaskInfoEvent with OrchestratorAsyncEvent
+case class TaskProgressEvent(execTask: ExecTask, progress: Float, progressInfo: Array[JobProgressInfo]) extends TaskInfoEvent with OrchestratorAsyncEvent {
+  override def toString: String = {
+    s"task ${execTask.getIDInfo()}, progress ${progress}"
+  }
+}
 
 case class TaskConsumerEvent(execTask: ExecTask) extends TaskInfoEvent with OrchestratorAsyncEvent

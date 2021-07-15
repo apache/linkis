@@ -85,7 +85,7 @@ abstract class EntranceExecutor(val id: Long, val mark: MarkReq) extends Executo
   override def toString: String = s"string"
 
   protected def killExecId(asynReturn: EngineExecuteAsynReturn, subJobId: String): Boolean = {
-    info(s"begin to send killExecId, execID: $subJobId")
+    info(s"begin to send killExecId, subJobId : $subJobId")
     Utils.tryCatch {
       asynReturn.orchestrationFuture.cancel(s"Job ${subJobId} was cancelled by user.")
       true

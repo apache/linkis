@@ -25,11 +25,11 @@ import com.webank.wedatasphere.linkis.protocol.task.Task
 class CSEntranceInterceptor extends EntranceInterceptor with Logging {
 
   override def apply(task: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
-    logger.info("Start to execute CSEntranceInterceptor")
+    logger.debug("Start to execute CSEntranceInterceptor")
     Utils.tryAndWarn(CSEntranceHelper.addCSVariable(task))
     Utils.tryAndWarn(CSEntranceHelper.resetCreator(task))
     Utils.tryAndWarn(CSEntranceHelper.initNodeCSInfo(task))
-    logger.info("Finished to execute CSEntranceInterceptor")
+    logger.debug("Finished to execute CSEntranceInterceptor")
     task
   }
 }

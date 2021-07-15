@@ -122,7 +122,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager) extends A
   private def generateAndVerifyCodeLanguageLabel(runType: String, labels: util.Map[String, Label[_]]): Unit = {
     val engineRunTypeLabel = labels.getOrElse(LabelKeyConstant.CODE_TYPE_KEY, null)
     if (StringUtils.isBlank(runType) && null == engineRunTypeLabel) {
-      val msg = s"You need to specify runType in execution content, such as spark-2.4.3"
+      val msg = s"You need to specify runType in execution content, such as sql"
       warn(msg)
       throw new EntranceIllegalParamException(EntranceErrorCode.LABEL_PARAMS_INVALID.getErrCode,
         EntranceErrorCode.LABEL_PARAMS_INVALID.getDesc + msg)
@@ -196,7 +196,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager) extends A
     labelList.add(runTypeLabel)
     labelList.add(userCreatorLabel)
     if (jobReq.getParams != null ) {
-      val labelMap = jobReq.getParams.getOrDefault(TaskConstant.LABELS, new util.HashMap[String, String]()).asInstanceOf[util.Map[String, Object]]
+      val labelMap = params.getOrDefault(TaskConstant.LABELS, new util.HashMap[String, String]()).asInstanceOf[util.Map[String, Object]]
       if (null != labelMap && !labelMap.isEmpty) {
         val list: util.List[Label[_]] = labelBuilderFactory.getLabels(labelMap.asInstanceOf[util.Map[String, AnyRef]])
         labelList.addAll(list)

@@ -28,7 +28,8 @@ public enum EntranceErrorCode {
     EXECUTE_REQUEST_INVALID(20010, "EntranceExecuteRequest invalid "),
     SUBMIT_JOB_ERROR(20011, "Submit job error "),
     INIT_JOB_ERROR(20012, "Init job error "),
-    RESULT_NOT_PERSISTED_ERROR(20013, "Result not persisted error ")
+    RESULT_NOT_PERSISTED_ERROR(20013, "Result not persisted error "),
+    GROUP_NOT_FOUND(20014, "group not found")
 
     ;
     private int errCode;

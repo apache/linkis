@@ -49,7 +49,7 @@ public class MountLogCache extends AbstractLogCache {
 
         public synchronized void enqueue(String value) {
             if (count == max) {
-                logger.warn("Queue is full, log: {} needs to be dropped", value);
+                logger.debug("Queue is full, log: {} needs to be dropped", value);
             } else {
                 rear = (rear + 1) % max;
                 elements[rear] = value;

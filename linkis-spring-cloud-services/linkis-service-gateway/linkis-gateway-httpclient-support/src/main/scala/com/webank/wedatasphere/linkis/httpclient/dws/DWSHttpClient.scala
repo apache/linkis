@@ -11,16 +11,13 @@
  * limitations under the License.
  */
 
-/*
- * created by cooperyang on 2019/07/24.
- */
 
 package com.webank.wedatasphere.linkis.httpclient.dws
 
 import java.util
 
 import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
-import com.webank.wedatasphere.linkis.common.utils.JsonUtils
+import com.webank.wedatasphere.linkis.common.utils.{JsonUtils, Logging}
 import com.webank.wedatasphere.linkis.httpclient.AbstractHttpClient
 import com.webank.wedatasphere.linkis.httpclient.discovery.Discovery
 import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig
@@ -37,7 +34,7 @@ import org.apache.http.{HttpException, HttpResponse}
 import scala.collection.JavaConversions
 
 class DWSHttpClient(clientConfig: DWSClientConfig, clientName: String)
-  extends AbstractHttpClient(clientConfig, clientName) {
+  extends AbstractHttpClient(clientConfig, clientName) with  Logging{
 
   override protected def createDiscovery(): Discovery = new DWSGatewayDiscovery
 
@@ -51,9 +48,14 @@ class DWSHttpClient(clientConfig: DWSClientConfig, clientName: String)
   }
 
   override protected def httpResponseToResult(response: HttpResponse, requestAction: HttpAction, responseBody: String): Option[Result] = {
-    var entity = response.getEntity
+    val entity = response.getEntity
     val statusCode: Int = response.getStatusLine.getStatusCode
     val url: String = requestAction.getURL
+
+    if (null == entity.getContentType && statusCode == 200) {
+      info("response is null, return success Result")
+      return Some(Result())
+    }
     val contentType: String = entity.getContentType.getValue
     DWSHttpMessageFactory.getDWSHttpMessageResult(url).map { case DWSHttpMessageResultInfo(_, clazz) =>
       clazz match {

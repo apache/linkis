@@ -57,7 +57,7 @@ trait AnalyzeFactory[In <: TreeNode[In], Context <: PlanContext] extends Logging
     var lastLoopTreeNode: In = from
     var count = 0
     while (true) {
-      info(s"Try to analyze ${from.getName} count($count).")
+      debug(s"Try to analyze ${from.getName} count($count).")
       count += 1
       val newTreeNode = transforms.foldLeft(lastLoopTreeNode) { (treeNode, transform) => transform.apply(treeNode, context) }
       if (newTreeNode.theSame(lastLoopTreeNode)) return newTreeNode

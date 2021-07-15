@@ -18,7 +18,8 @@ package com.webank.wedatasphere.linkis.orchestrator.strategy
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.orchestrator.core.ResultSet
-import com.webank.wedatasphere.linkis.orchestrator.execution.impl.DefaultResultSetTaskResponse
+import com.webank.wedatasphere.linkis.orchestrator.exception.OrchestratorErrorCodeSummary
+import com.webank.wedatasphere.linkis.orchestrator.execution.impl.{DefaultFailedTaskResponse, DefaultResultSetTaskResponse}
 import com.webank.wedatasphere.linkis.orchestrator.execution.{CompletedTaskResponse, SucceedTaskResponse, TaskResponse}
 import com.webank.wedatasphere.linkis.orchestrator.plans.logical.{EndJobTaskDesc, StartJobTaskDesc}
 import com.webank.wedatasphere.linkis.orchestrator.plans.physical.{ExecTask, JobExecTask, ReheatableExecTask}
@@ -26,27 +27,35 @@ import com.webank.wedatasphere.linkis.orchestrator.plans.physical.{ExecTask, Job
 import scala.collection.mutable.ArrayBuffer
 
 /**
-  *
-  *
-  */
+ *
+ *
+ */
 class GatherStrategyJobExecTask(parents: Array[ExecTask],
                                 children: Array[ExecTask]) extends JobExecTask(parents, children)
-  with ReheatableExecTask with ResultSetExecTask with Logging{
+  with ReheatableExecTask with ResultSetExecTask with StatusInfoExecTask with Logging {
 
   /**
-    * Job End Task
-   *  Aggregate the results of response(汇总结果响应)
-    *
-    * @return
-    */
+   * Job End Task 汇总结果响应
+   *
+   * @return
+   */
   override def execute(): TaskResponse = getTaskDesc match {
     case _: StartJobTaskDesc =>
       super.execute()
     case _: EndJobTaskDesc =>
       if (getPhysicalContext.isCompleted) {
-        info(s"Job end be skip")
-        new CompletedTaskResponse() {}
+        val msg = s"PhysicalContext is completed, Job${getIDInfo()} will be mark Failed "
+        info(msg)
+        new DefaultFailedTaskResponse(msg, OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE, null) {}
       } else {
+
+        val errorExecTasks = getErrorChildrenExecTasks
+        if (errorExecTasks.isDefined) {
+          val errorReason = parseChildrenErrorInfo(errorExecTasks.get)
+          getPhysicalContext.markFailed(errorReason, null)
+          return new DefaultFailedTaskResponse(errorReason, OrchestratorErrorCodeSummary.STAGE_ERROR_CODE, null)
+        }
+
         val execIdToResponse = getChildrenResultSet()
         val response = if (null != execIdToResponse && execIdToResponse.nonEmpty) {
           val resultSets = new ArrayBuffer[ResultSet]()
@@ -58,7 +67,7 @@ class GatherStrategyJobExecTask(parents: Array[ExecTask],
         } else {
           new SucceedTaskResponse() {}
         }
-        info(s"Job end execute finished, now to mark executionTask succeed")
+        debug(s"Job${getIDInfo()} end execute finished, now to mark executionTask succeed")
         getPhysicalContext.markSucceed(response)
         response
       }
@@ -71,6 +80,6 @@ class GatherStrategyJobExecTask(parents: Array[ExecTask],
   }
 
   override def canExecute: Boolean = {
-    ! getReheating
+    !getReheating
   }
 }

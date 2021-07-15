@@ -28,7 +28,7 @@ abstract class AbstractReheater extends Reheater with Logging {
 
   override def reheat(execTask: ExecTask): Unit = execTask match {
     case reheat: ReheatableExecTask =>
-      info(s"Try to reheat ${execTask.getIDInfo()}.")
+      debug(s"Try to reheat ${execTask.getIDInfo()}.")
       reheat.setReheating()
       var changed = false
       Utils.tryCatch(Option(reheaterTransforms).foreach { transforms =>
@@ -49,7 +49,9 @@ abstract class AbstractReheater extends Reheater with Logging {
         execTask.getPhysicalContext.markFailed(s"Reheat ${execTask.getIDInfo()} failed, now mark it failed!", t)
       }
       reheat.setReheated()
-      info(s"${execTask.getIDInfo()} reheated. The physicalTree has been ${if(changed) s"changed. The new tree is ${execTask.simpleString}." else "not changed."}")
+      if(changed) {
+        info(s"${execTask.getIDInfo()} reheated. The physicalTree has been changed. The new tree is ${execTask.simpleString}." )
+      }
     case _ =>
   }
 

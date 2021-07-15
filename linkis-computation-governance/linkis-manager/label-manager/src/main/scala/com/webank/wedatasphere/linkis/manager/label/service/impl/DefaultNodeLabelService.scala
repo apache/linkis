@@ -73,7 +73,6 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
     if (labelId > 0 ) {
       val serviceRelationLabels = labelManagerPersistence.getLabelByServiceInstance(instance)
       if (!serviceRelationLabels.exists(_.getId.equals(labelId))){
-        //5.插入新的relation 需要抛出duplicateKey异常，回滚
         labelManagerPersistence.addLabelToNode(instance, util.Arrays.asList(labelId))
       }
     }

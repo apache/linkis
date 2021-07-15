@@ -4,7 +4,6 @@ import com.webank.wedatasphere.linkis.protocol.message.RequestMethod;
 
 import java.util.Map;
 
-
 public class EngineCreateRequest implements EngineRequest, RequestMethod {
 
     private Map<String, String> properties;
@@ -18,6 +17,8 @@ public class EngineCreateRequest implements EngineRequest, RequestMethod {
     private String createService;
 
     private String description;
+
+    private boolean ignoreTimeout = false;
 
     public Map<String, String> getProperties() {
         return properties;
@@ -66,6 +67,14 @@ public class EngineCreateRequest implements EngineRequest, RequestMethod {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isIgnoreTimeout() {
+        return ignoreTimeout;
+    }
+
+    public void setIgnoreTimeout(boolean ignoreTimeout) {
+        this.ignoreTimeout = ignoreTimeout;
     }
 
     @Override

@@ -95,9 +95,10 @@
 
     <select id="listResourceByLaBelId"
             resultType="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource">
-        SELECT r.* FROM linkis_cg_manager_label_resource lr, linkis_cg_manager_linkis_resources r
+        SELECT r.* FROM linkis_cg_manager_label_resource lr, linkis_cg_manager_linkis_resources r, linkis_cg_manager_label l
         WHERE lr.resource_id = r.id and
-        lr.label_id = #{labelId}
+        lr.label_id = #{labelId} and
+        l.id = #{labelId}
     </select>
 
     <select id="dimListResourceBykeyValueMap"
@@ -126,42 +127,34 @@
     </select>
 
     <delete id="deleteResourceByLabelIdInDirect">
-        delete from linkis_cg_manager_linkis_resources where id in (select resource_id from linkis_cg_manager_label_resource  where label_id = #{label_id});
+        delete from linkis_cg_manager_linkis_resources where id in (select resource_id from linkis_cg_manager_label_resource  where label_id = #{labelId});
     </delete>
 
     <delete id="deleteResourceByLabelId">
-            delete from linkis_cg_manager_label_resource where label_id = #{label_id};
+        delete from linkis_cg_manager_label_resource where label_id = #{labelId};
     </delete>
+
+    <select id="selectLabelIdByLabelKeyValuesMaps" resultType="java.lang.Integer">
+        select tmp.id from (
+        SELECT l.id,l.label_value_size
+        FROM linkis_cg_manager_label l ,linkis_cg_manager_label_resource lr ,linkis_cg_manager_label_value_relation lvr
+        WHERE l.id = lr.label_id AND l.id = lvr.label_id
+        AND (l.label_key,lvr.label_value_key,lvr.label_value_content) IN
+        <foreach collection="labelKeyValues" index="labelKey" item="labelValues" open="(" close=")" separator=",">
+            <foreach collection="labelValues" index="valueKey" item="valueContent" open="(" close=")" separator="),(">
+                #{labelKey},#{valueKey},#{valueContent}
+            </foreach>
+        </foreach>
+        GROUP BY l.id,lr.id HAVING COUNT(1) = l.label_value_size
+        ) as tmp limit 1
+    </select>
 
     <delete id="deleteResourceByLabelKeyValuesMapsInDirect">
         delete from linkis_cg_manager_linkis_resources where id in (select resource_id from linkis_cg_manager_label_resource
-        where label_id = (select tmp.id from (
-        SELECT l.id,l.label_value_size
-        FROM linkis_cg_manager_label l ,linkis_cg_manager_label_resource lr ,linkis_cg_manager_label_value_relation lvr
-        WHERE l.id = lr.label_id AND l.id = lvr.label_id
-        AND (l.label_key,lvr.label_value_key,lvr.label_value_content) IN
-        <foreach collection="labelKeyValues" index="labelKey" item="labelValues" open="(" close=")" separator=",">
-            <foreach collection="labelValues" index="valueKey" item="valueContent" open="(" close=")" separator="),(">
-                #{labelKey},#{valueKey},#{valueContent}
-            </foreach>
-        </foreach>
-        GROUP BY l.id,lr.id HAVING COUNT(1) = l.label_value_size
-        ) as tmp)
-        );
+        where label_id = #{id} );
     </delete>
     <delete id="deleteResourceByLabelKeyValuesMaps">
-        delete from linkis_cg_manager_label_resource where label_id = (select tmp.id from (
-        SELECT l.id,l.label_value_size
-        FROM linkis_cg_manager_label l ,linkis_cg_manager_label_resource lr ,linkis_cg_manager_label_value_relation lvr
-        WHERE l.id = lr.label_id AND l.id = lvr.label_id
-        AND (l.label_key,lvr.label_value_key,lvr.label_value_content) IN
-        <foreach collection="labelKeyValues" index="labelKey" item="labelValues" open="(" close=")" separator=",">
-            <foreach collection="labelValues" index="valueKey" item="valueContent" open="(" close=")" separator="),(">
-                #{labelKey},#{valueKey},#{valueContent}
-            </foreach>
-        </foreach>
-        GROUP BY l.id,lr.id HAVING COUNT(1) = l.label_value_size
-        ) as tmp);
+        delete from linkis_cg_manager_label_resource where label_id = #{id};
     </delete>
 
     <delete id="batchDeleteResourceByLabelId">

@@ -29,6 +29,7 @@ object RMUtils extends Logging {
 
   val MANAGER_KILL_ENGINE_EAIT = CommonVars("wds.linkis.manager.rm.kill.engine.wait", new TimeType("30s"))
 
+  val RM_REQUEST_ENABLE = CommonVars("wds.linkis.manager.rm.request.enable", true)
 
   def deserializeResource(plainResource: String): Resource = {
     read[Resource](plainResource)
@@ -49,16 +50,16 @@ object RMUtils extends Logging {
     persistenceResource
   }
 
-/*  def fromPersistenceResource(persistenceResource: PersistenceResource) : CommonNodeResource = {
-    val nodeResource = new CommonNodeResource
-    if(persistenceResource.getMaxResource != null) nodeResource.setMaxResource(deserializeResource(persistenceResource.getMaxResource))
-    if(persistenceResource.getMinResource != null) nodeResource.setMinResource(deserializeResource(persistenceResource.getMinResource))
-    if(persistenceResource.getLockedResource != null) nodeResource.setLockedResource(deserializeResource(persistenceResource.getLockedResource))
-    if(persistenceResource.getExpectedResource != null) nodeResource.setMaxResource(deserializeResource(persistenceResource.getExpectedResource))
-    if(persistenceResource.getLeftResource != null) nodeResource.setLeftResource(deserializeResource(persistenceResource.getLeftResource))
-    nodeResource.setResourceType(ResourceType.valueOf(persistenceResource.getResourceType))
-    nodeResource
-  }*/
+  /*  def fromPersistenceResource(persistenceResource: PersistenceResource) : CommonNodeResource = {
+      val nodeResource = new CommonNodeResource
+      if(persistenceResource.getMaxResource != null) nodeResource.setMaxResource(deserializeResource(persistenceResource.getMaxResource))
+      if(persistenceResource.getMinResource != null) nodeResource.setMinResource(deserializeResource(persistenceResource.getMinResource))
+      if(persistenceResource.getLockedResource != null) nodeResource.setLockedResource(deserializeResource(persistenceResource.getLockedResource))
+      if(persistenceResource.getExpectedResource != null) nodeResource.setMaxResource(deserializeResource(persistenceResource.getExpectedResource))
+      if(persistenceResource.getLeftResource != null) nodeResource.setLeftResource(deserializeResource(persistenceResource.getLeftResource))
+      nodeResource.setResourceType(ResourceType.valueOf(persistenceResource.getResourceType))
+      nodeResource
+    }*/
 
   def aggregateNodeResource(firstNodeResource: NodeResource, secondNodeResource: NodeResource) : CommonNodeResource = {
     if(firstNodeResource != null && secondNodeResource != null){

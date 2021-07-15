@@ -11,4 +11,6 @@ case class EngineConnStatusCallback(serviceInstance: ServiceInstance, ticketId: 
 /**
   * engineConnManager send to Manager
   */
-case class EngineConnStatusCallbackToAM(serviceInstance: ServiceInstance, status: NodeStatus, initErrorMsg: String) extends RequestProtocol with RetryableProtocol
+case class EngineConnStatusCallbackToAM(serviceInstance: ServiceInstance, status: NodeStatus, initErrorMsg: String, canRetry: Boolean = false) extends RequestProtocol with RetryableProtocol
+
+

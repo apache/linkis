@@ -3,11 +3,19 @@ package com.webank.wedatasphere.linkis.manager.common.entity.resource;
 import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
 
 import java.io.Serializable;
-
+import java.util.Date;
 
 public interface NodeResource extends Serializable, RequestProtocol {
 
     ResourceType getResourceType();
+
+    void setCreateTime(Date createTime);
+
+    Date getCreateTime();
+
+    Date getUpdateTime();
+
+    void setUpdateTime(Date updateTime);
 
     void setResourceType(ResourceType resourceType);
 

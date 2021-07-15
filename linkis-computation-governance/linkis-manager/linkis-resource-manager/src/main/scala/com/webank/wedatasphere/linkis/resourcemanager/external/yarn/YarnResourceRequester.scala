@@ -50,11 +50,6 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     info(s"rmWebAddress: $rmWebAddress")
     val queueName = identifier.asInstanceOf[YarnResourceIdentifier].getQueueName
     this.provider = provider
-    def getHadoopVersion() = if(provider.getConfigMap.get("hadoopVersion") != null) provider.getConfigMap.get("hadoopVersion").asInstanceOf[String] else {
-      val resourceManagerVersion = getResponseByUrl("info", rmWebAddress) \ "clusterInfo" \ "resourceManagerVersion"
-      info(s"Hadoop version is $resourceManagerVersion")
-      resourceManagerVersion.values.asInstanceOf[String]
-    }
 
     def getYarnResource(jValue: Option[JValue]) = jValue.map(r => new YarnResource((r \ "memory").asInstanceOf[JInt].values.toLong * 1024l * 1024l, (r \ "vCores").asInstanceOf[JInt].values.toInt, 0, queueName))
 

@@ -20,12 +20,13 @@ package com.webank.wedatasphere.linkis.engineconn.computation.executor.hook
 
 import java.io.File
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
 import com.webank.wedatasphere.linkis.engineconn.common.hook.EngineConnHook
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationExecutorManager
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
+import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.{CodeLanguageLabel, EngineTypeLabel}
 import com.webank.wedatasphere.linkis.udf.UDFClient
@@ -61,7 +62,7 @@ abstract class UDFLoadEngineConnHook extends EngineConnHook with Logging {
       case "" =>
       case c: String =>
         info("Submit udf registration to engine, code: " + c)
-        ComputationExecutorManager.getInstance.getExecutorByLabels(labels) match {
+        ExecutorManager.getInstance.getExecutorByLabels(labels) match {
           case executor: ComputationExecutor =>
 //            val task  = new CommonEngineConnTask("udf-register-" + UDFLoadEngineConnHook.taskIdGenerator.incrementAndGet(), false)
 //            task.setCode(c)
@@ -69,7 +70,16 @@ abstract class UDFLoadEngineConnHook extends EngineConnHook with Logging {
 //            task.setLabels(labels)
 //            task.setProperties(Maps.newHashMap())
 //            executor.execute(task)
-            executor.executeLine(new EngineExecutionContext(executor), c)
+            Utils.tryCatch(executor.executeLine(new EngineExecutionContext(executor), c)){
+              case t: Throwable =>
+                if (! ComputationExecutorConf.UDF_LOAD_FAILED_IGNORE.getValue) {
+                  Utils.tryQuietly(executor.close())
+                  throw t
+                }else {
+                  error("Failed to load udf", t)
+                  null
+                }
+            }
         }
         info("executed code: " + c)
     }
@@ -102,7 +112,7 @@ abstract class UDFLoadEngineConnHook extends EngineConnHook with Logging {
 
   protected def getLoadUdfCode(user: String): String = {
     info("start loading UDFs")
-    val udfInfos = UDFClient.getUdfInfos(user).filter{ info => info.getUdfType == udfType && info.getExpire == false && info.getLoad == true}
+    val udfInfos = UDFClient.getUdfInfos(user, category).filter{ info => info.getUdfType == udfType && info.getExpire == false && info.getLoad == true}
     udfInfos.map(constructCode).mkString("\n")
   }
 

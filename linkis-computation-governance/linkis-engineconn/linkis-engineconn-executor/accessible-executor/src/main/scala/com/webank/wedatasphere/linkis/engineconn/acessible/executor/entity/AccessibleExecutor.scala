@@ -27,7 +27,7 @@ abstract class AccessibleExecutor extends SensibleExecutor {
 
     private var isExecutorClosed = false
 
-    def isIdle: Boolean = NodeStatus.isIdle(getStatus)
+    def isIdle: Boolean = NodeStatus.isIdle(getStatus) || NodeStatus.Starting == getStatus
 
     def isBusy: Boolean = NodeStatus.isLocked(getStatus)
 

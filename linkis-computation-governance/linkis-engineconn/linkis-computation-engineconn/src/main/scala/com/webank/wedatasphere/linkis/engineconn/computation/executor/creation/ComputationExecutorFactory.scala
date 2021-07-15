@@ -20,9 +20,11 @@ package com.webank.wedatasphere.linkis.engineconn.computation.executor.creation
 
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.ComputationExecutor
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.{ComputationEngineConnExecution, ComputationExecutor}
 import com.webank.wedatasphere.linkis.engineconn.core.creation.AbstractCodeLanguageLabelExecutorFactory
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineConnMode.EngineConnMode
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineConnModeLabel
 
 
 trait ComputationExecutorFactory extends AbstractCodeLanguageLabelExecutorFactory {
@@ -32,4 +34,16 @@ trait ComputationExecutorFactory extends AbstractCodeLanguageLabelExecutorFactor
                                      engineConn: EngineConn,
                                      labels: Array[Label[_]]): ComputationExecutor
 
+  override def canCreate(labels: Array[Label[_]]): Boolean = {
+    val canCreateIt = super.canCreate(labels)
+    if(!canCreateIt) return false
+    val existsEngineConnMode = labels.exists(_.isInstanceOf[EngineConnModeLabel])
+    if(!existsEngineConnMode) return true
+    labels.exists {
+      case engineConnModeLabel: EngineConnModeLabel =>
+        val mode: EngineConnMode = engineConnModeLabel.getEngineConnMode
+        ComputationEngineConnExecution.getSupportedEngineConnModes.contains(mode)
+      case _ => false
+    }
+  }
 }

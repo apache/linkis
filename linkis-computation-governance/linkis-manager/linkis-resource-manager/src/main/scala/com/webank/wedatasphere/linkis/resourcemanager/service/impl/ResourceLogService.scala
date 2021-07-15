@@ -9,11 +9,6 @@ import com.webank.wedatasphere.linkis.resourcemanager.service.LabelResourceServi
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-/**
- * @author leebai
- * @date 2021/6/1 15:22
- */
-
 @Component
 case class ResourceLogService() extends Logging{
 

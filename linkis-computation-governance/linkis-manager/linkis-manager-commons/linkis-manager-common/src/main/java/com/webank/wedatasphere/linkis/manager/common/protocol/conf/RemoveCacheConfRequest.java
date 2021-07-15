@@ -22,10 +22,6 @@ import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabe
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.UserCreatorLabel;
 import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
 
-/**
- * @author leebai
- * @date 2021/6/15 21:03
- */
 public class RemoveCacheConfRequest implements RequestProtocol {
 
     private UserCreatorLabel userCreatorLabel;

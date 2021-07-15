@@ -54,6 +54,8 @@ public class JobHistory {
 
     private String engine_type;
 
+    private String execution_code;
+
     public Long getId() {
         return id;
     }
@@ -188,5 +190,13 @@ public class JobHistory {
 
     public void setEngine_type(String engine_type) {
         this.engine_type = engine_type;
+    }
+
+    public String getExecution_code() {
+        return execution_code;
+    }
+
+    public void setExecution_code(String execution_code) {
+        this.execution_code = execution_code;
     }
 }

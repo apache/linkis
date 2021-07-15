@@ -37,7 +37,7 @@ object ShutdownUtils {
 
   def addShutdownHook(shutdownRunner: ShutdownRunner): Unit =
     shutdownRunners synchronized shutdownRunners += shutdownRunner
-  private val signals = Array("TERM", "HUP", "INT").map(new Signal(_))
+   private val signals = Array("TERM", "HUP", "INT").map(signal => Utils.tryQuietly(new Signal(signal))).filter(_ != null)
   private val signalHandler = new SignalHandler {
     override def handle(signal: Signal): Unit = {
       val hooks = shutdownRunners.sortBy(_.order).toArray.map{

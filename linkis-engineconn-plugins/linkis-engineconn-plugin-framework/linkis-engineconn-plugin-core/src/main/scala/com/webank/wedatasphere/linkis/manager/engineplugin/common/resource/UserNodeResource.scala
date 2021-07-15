@@ -16,6 +16,8 @@
 
 package com.webank.wedatasphere.linkis.manager.engineplugin.common.resource
 
+import java.util.Date
+
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.{NodeResource, Resource, ResourceType}
 
 
@@ -29,6 +31,9 @@ class UserNodeResource extends NodeResource {
   private var usedResource: Resource = _
   private var lockedResource: Resource = _
   private var leftResource: Resource = _
+  private var createTime: Date = _
+  private var updateTime: Date = _
+
 
   def getUser = user
 
@@ -61,4 +66,20 @@ class UserNodeResource extends NodeResource {
   override def setLeftResource(leftResource: Resource): Unit = this.leftResource = leftResource
 
   override def getLeftResource: Resource = this.leftResource
+
+  override def setCreateTime(createTime: Date): Unit = {
+    this.createTime = createTime
+  }
+
+  override def getCreateTime: Date = {
+    createTime
+  }
+
+  override def getUpdateTime: Date = {
+    updateTime
+  }
+
+  override def setUpdateTime(updateTime: Date): Unit = {
+    this.updateTime = updateTime
+  }
 }

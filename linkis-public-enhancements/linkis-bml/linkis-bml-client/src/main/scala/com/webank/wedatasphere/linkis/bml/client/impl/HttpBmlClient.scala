@@ -21,6 +21,7 @@ import java.util
 import com.webank.wedatasphere.linkis.bml.client.AbstractBmlClient
 import com.webank.wedatasphere.linkis.bml.common._
 import com.webank.wedatasphere.linkis.bml.conf.BmlConfiguration._
+import com.webank.wedatasphere.linkis.bml.http.HttpConf
 import com.webank.wedatasphere.linkis.bml.protocol._
 import com.webank.wedatasphere.linkis.bml.request._
 import com.webank.wedatasphere.linkis.bml.response.{BmlCreateBmlProjectResult, _}

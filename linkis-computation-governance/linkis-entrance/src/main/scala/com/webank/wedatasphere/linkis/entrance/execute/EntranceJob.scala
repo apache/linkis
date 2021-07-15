@@ -37,6 +37,7 @@ import com.webank.wedatasphere.linkis.rpc.utils.RPCUtils
 import com.webank.wedatasphere.linkis.scheduler.executer.{CompletedExecuteResponse, ErrorExecuteResponse, SuccessExecuteResponse}
 import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState._
 import com.webank.wedatasphere.linkis.scheduler.queue.{Job, SchedulerEventState}
+import org.apache.commons.lang.StringUtils
 
 import scala.beans.BeanProperty
 
@@ -143,7 +144,7 @@ abstract class EntranceJob extends Job {
 
       setEngineInstance(jobRequest)
     }*/
-    getJobRequest.setStatus(toState.toString)
+    updateJobRequestStatus(toState.toString)
     super.afterStateChanged(fromState, toState)
     toState match {
       case Scheduled =>
@@ -183,10 +184,19 @@ abstract class EntranceJob extends Job {
   }
 
   override def onFailure(errorMsg: String, t: Throwable): Unit = {
-    getJobRequest.setStatus(SchedulerEventState.Failed.toString)
-    getJobRequest.setErrorDesc(errorMsg)
+    updateJobRequestStatus(SchedulerEventState.Failed.toString)
+    val generatedMsg = LogUtils.generateERROR(s"Sorry, your job executed failed with reason: $errorMsg")
     this.entranceLogListenerBus.foreach(_.post(
-      EntrancePushLogEvent(this, LogUtils.generateERROR(s"Sorry, your job executed failed with reason: $errorMsg"))))
+      EntrancePushLogEvent(this, generatedMsg)))
+   this.getLogListener.foreach(_.onLogUpdate(this, generatedMsg))
+//    transitionCompleted() // todo
+    if (StringUtils.isBlank(getJobRequest.getErrorDesc)) {
+      if (null != t) {
+        getJobRequest.setErrorDesc(errorMsg + " " + t.getMessage)
+      } else {
+        getJobRequest.setErrorDesc(errorMsg)
+      }
+    }
     super.onFailure(errorMsg, t)
   }
 
@@ -194,9 +204,9 @@ abstract class EntranceJob extends Job {
     executeCompleted match {
       case error: ErrorExecuteResponse => //  todo checkif RPCUtils.isReceiverNotExists(error.t) =>
         entranceListenerBus.foreach(_.post(MissingEngineNotifyEvent(this, error.t, getExecutor)))
-        getJobRequest.setStatus(SchedulerEventState.Failed.toString)
+        updateJobRequestStatus(SchedulerEventState.Failed.toString)
       case _ : SuccessExecuteResponse =>
-        getJobRequest.setStatus(SchedulerEventState.Succeed.toString)
+        updateJobRequestStatus(SchedulerEventState.Succeed.toString)
         getJobRequest.setErrorCode(0)
         getJobRequest.setErrorDesc(null)
       case _ =>
@@ -211,7 +221,7 @@ abstract class EntranceJob extends Job {
   }
 
   def transitionCompleted(executeCompleted: CompletedExecuteResponse, reason: String): Unit = {
-    info("Job directly completed with reason: " + reason)
+    debug("Job directly completed with reason: " + reason)
     transitionCompleted(executeCompleted)
   }
 
@@ -233,6 +243,41 @@ abstract class EntranceJob extends Job {
       case _ => throw new EntranceErrorException(10000, "Unsupported operation (不支持的操作)")
     }
 
+  }
+
+  /*
+  Update old status of internal jobRequest.
+  if old status is complete, will not update the status
+  if index of new status is bigger then old status, then update the old status to new status
+   */
+  def updateJobRequestStatus(newStatus: String): Unit = {
+    val oriStatus = {
+      if (StringUtils.isNotBlank(getJobRequest.getStatus)) {
+        SchedulerEventState.withName(getJobRequest.getStatus)
+      } else {
+        SchedulerEventState.Inited
+      }
+    }
+    if (StringUtils.isNotBlank(newStatus)) {
+      Utils.tryCatch{
+        val tmpStatus = SchedulerEventState.withName(newStatus)
+        if (SchedulerEventState.isCompleted(oriStatus) && !SchedulerEventState.Cancelled.equals(tmpStatus)) {
+          warn(s"Job ${getJobRequest.getId} status : ${getJobRequest.getStatus} is completed, will not change to : $newStatus")
+          return
+        }
+        if (tmpStatus.id > oriStatus.id) {
+          getJobRequest.setStatus(tmpStatus.toString)
+        } else {
+          warn(s"Job ${getJobRequest.getId} 's index of status : ${oriStatus.toString} is not smaller then new status : ${newStatus}, will not change status.")
+        }
+      } {
+        case e: Exception =>
+          error(s"Invalid job status : ${newStatus}, ${e.getMessage}")
+          return
+      }
+    } else {
+      error("Invalid job status : null")
+    }
   }
 }
 

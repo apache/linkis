@@ -38,18 +38,19 @@ abstract class NotifyTaskConsumer extends TaskConsumer with OrchestratorAsyncLis
 
   protected def afterLaunchTask(runnableTasks: Array[ExecTaskRunner]): Unit = {}
 
-  override def run(): Unit = Utils.tryAndErrorMsg{
-    while(!isStopped) {
-      beforeFetchLaunchTask()
-      val runnableTasks = getExecution.taskManager.getRunnableTasks
-      beforeLaunchTask(runnableTasks)
-      runnableTasks.foreach(getExecution.taskScheduler.launchTask)
-      afterLaunchTask(runnableTasks)
-      notifyLock synchronized {
-        notifyLock.wait(getWaitTime)
-      }
-    }
-  }("Consumer exit")
+  override def run(): Unit = {
+    while (!isStopped)
+      Utils.tryAndErrorMsg {
+        beforeFetchLaunchTask()
+        val runnableTasks = getExecution.taskManager.getRunnableTasks
+        beforeLaunchTask(runnableTasks)
+        runnableTasks.foreach(getExecution.taskScheduler.launchTask)
+        afterLaunchTask(runnableTasks)
+        notifyLock synchronized {
+          notifyLock.wait(getWaitTime)
+        }
+      }("Consumer error")
+  }
 
   override def onEvent(event: OrchestratorAsyncEvent): Unit = event match {
     case taskConsumerEvent: TaskConsumerEvent =>

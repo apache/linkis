@@ -28,10 +28,13 @@ import com.webank.wedatasphere.linkis.orchestrator.computation.entity.Computatio
 import com.webank.wedatasphere.linkis.orchestrator.domain.JobReq
 import com.webank.wedatasphere.linkis.orchestrator.plans.unit.CodeLogicalUnit
 import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
+import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 import com.webank.wedatasphere.linkis.storage.domain.{MethodEntity, MethodEntitySerializer}
 import com.webank.wedatasphere.linkis.storage.io.conf.IOFileClientConf
 import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration.IO_USER
 import com.webank.wedatasphere.linkis.storage.utils.{StorageConfiguration, StorageUtils}
+import org.apache.commons.lang.StringUtils
+import scala.collection.JavaConverters._
 
 object IOClientUtils {
 
@@ -59,7 +62,7 @@ object IOClientUtils {
 
   private val conCurrentLabel = {
     val label = labelBuilderFactory.createLabel(classOf[ConcurrentEngineConnLabel])
-    label.setParallelism(10)
+    label.setParallelism("10")
     label
   }
 
@@ -70,7 +73,7 @@ object IOClientUtils {
   }
 
   def generateJobGrupID(): String = {
-    "io_jobGrup_" +  jobGroupIDGenerator.getAndIncrement()
+    "io_jobGrup_" + jobGroupIDGenerator.getAndIncrement()
   }
 
 
@@ -78,6 +81,16 @@ object IOClientUtils {
 
   def getDefaultLoadBalanceLabel: LoadBalanceLabel = {
     loadBalanceLabel
+  }
+
+  def getExtraLabels(): Array[Label[_]] = {
+    val labelJson = IOFileClientConf.IO_EXTRA_LABELS.getValue
+    if (StringUtils.isNotBlank(labelJson)) {
+      val labelMap = BDPJettyServerHelper.gson.fromJson(labelJson, classOf[java.util.Map[String, Object]])
+      labelBuilderFactory.getLabels(labelMap).asScala.toArray
+    } else {
+      Array.empty[Label[_]]
+    }
   }
 
   def addLabelToParams(label: Label[_], params: util.Map[String, Any]): Unit = {
@@ -93,7 +106,7 @@ object IOClientUtils {
     labels.add(codeTypeLabel)
     labels.add(conCurrentLabel)
 
-    val rootUser = if(methodEntity.fsType == StorageUtils.HDFS) StorageConfiguration.HDFS_ROOT_USER.getValue else StorageConfiguration.LOCAL_ROOT_USER.getValue
+    val rootUser = if (methodEntity.fsType == StorageUtils.HDFS) StorageConfiguration.HDFS_ROOT_USER.getValue else StorageConfiguration.LOCAL_ROOT_USER.getValue
     val userCreatorLabel = labelBuilderFactory.createLabel(classOf[UserCreatorLabel])
     userCreatorLabel.setCreator(creator)
     userCreatorLabel.setUser(rootUser)

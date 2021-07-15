@@ -17,12 +17,23 @@
 package com.webank.wedatasphere.linkis.storage.io.orchestrator
 
 import com.webank.wedatasphere.linkis.orchestrator.OrchestratorSession
-import com.webank.wedatasphere.linkis.orchestrator.computation.ComputationOrchestratorSessionFactory
+import com.webank.wedatasphere.linkis.orchestrator.core.AbstractOrchestratorContext
+
 
 object IOFileOrchestratorFactory {
 
-  private lazy val orchestratorSession: OrchestratorSession = ComputationOrchestratorSessionFactory.getOrCreateExecutionFactory()
-    .getOrCreateSession("io_file_cilent")
+  private val orchestratorSessionFactory = new IOComputationOrchestratorSessionFactory
+
+  private lazy val orchestratorSession: OrchestratorSession = {
+    val session = orchestratorSessionFactory.getOrCreateSession("io_file_cilent")
+
+    session.orchestrator.getOrchestratorContext match {
+      case orchestratorContext: AbstractOrchestratorContext =>
+        orchestratorContext.addGlobalPlugin(new IOUserParallelOrchestratorPlugin)
+      case _ =>
+    }
+    session
+  }
 
   def getOrchestratorSession(): OrchestratorSession = orchestratorSession
 

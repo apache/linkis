@@ -233,14 +233,19 @@ class SQLCodeParser extends SingleCodeParser {
     if (code.contains("limit")) code = code.substring(code.lastIndexOf("limit")).trim
     else if (code.contains("LIMIT")) code = code.substring(code.lastIndexOf("LIMIT")).trim.toLowerCase
     else return true
-    val hasLimit = code.matches("limit\\s+\\d+\\s*;?")
-    if (hasLimit) {
-      if (code.indexOf(";") > 0) code = code.substring(5, code.length - 1).trim
-      else code = code.substring(5).trim
-      val limitNum = code.toInt
-      if (limitNum > defaultLimit) throw new IllegalArgumentException("We at most allowed to limit " + defaultLimit + ", but your SQL has been over the max rows.")
-    }
-    !hasLimit
+    code.matches("limit\\s+\\d+\\s*;?")
+    /**
+     * com.webank.wedatasphere.linkis.entrance.interceptor.impl.Explain has convert and check the limit for code,
+     * so the check here is redundancy
+     */
+    /*    val hasLimit = code.matches("limit\\s+\\d+\\s*;?")
+        if (hasLimit) {
+          if (code.indexOf(";") > 0) code = code.substring(5, code.length - 1).trim
+          else code = code.substring(5).trim
+          val limitNum = code.toInt
+          if (limitNum > defaultLimit) throw new IllegalArgumentException("We at most allowed to limit " + defaultLimit + ", but your SQL has been over the max rows.")
+        }
+        !hasLimit*/
   }
 }
 

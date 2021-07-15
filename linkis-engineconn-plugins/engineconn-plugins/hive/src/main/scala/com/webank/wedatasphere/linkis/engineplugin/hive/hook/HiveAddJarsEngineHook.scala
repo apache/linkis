@@ -20,8 +20,8 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
 import com.webank.wedatasphere.linkis.engineconn.common.hook.EngineConnHook
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationExecutorManager
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
 import com.webank.wedatasphere.linkis.engineplugin.hive.executor.HiveEngineConnExecutor
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.{CodeLanguageLabel, RunType}
@@ -57,7 +57,7 @@ class HiveAddJarsEngineHook extends EngineConnHook with Logging {
           try {
             val sql = addSql + jar
             logger.info("begin to run hive sql {}", sql)
-            ComputationExecutorManager.getInstance.getExecutorByLabels(labels) match {
+            ExecutorManager.getInstance.getExecutorByLabels(labels) match {
               case executor: HiveEngineConnExecutor =>
                 executor.executeLine(new EngineExecutionContext(executor), sql)
               case _ =>

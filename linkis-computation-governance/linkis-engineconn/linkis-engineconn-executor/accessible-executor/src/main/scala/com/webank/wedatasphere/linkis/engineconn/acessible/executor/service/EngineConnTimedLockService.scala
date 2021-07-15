@@ -99,8 +99,18 @@ class EngineConnTimedLockService extends LockService with Logging {
         if (engineConnLock.tryAcquire(accessibleExecutor)) {
           debug("try to lock for tryAcquire is true ")
           this.lockString = engineConnLock.lock.toString
-          ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus.post(ExecutorLockEvent(accessibleExecutor, lockString))
+          val executors = ExecutorManager.getInstance.getExecutors.filter(executor => null != executor && !executor.isClosed)
+          if (null != executors && !executors.isEmpty) {
+            executors.foreach(executor => executor match {
+              case accessibleExecutor: AccessibleExecutor =>
+                accessibleExecutor.transition(NodeStatus.Idle)
+              case _ =>
+            })
+          } else {
+            error("No valid executors while adding lock.")
           accessibleExecutor.transition(NodeStatus.Idle)
+          }
+          ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus.post(ExecutorLockEvent(accessibleExecutor, lockString))
           Some(lockString)
         } else None
       case _ =>
@@ -121,14 +131,6 @@ class EngineConnTimedLockService extends LockService with Logging {
       info(s"try to unlock lockEntity : lockString=$lockString,lockedBy=${engineConnLock.lockedBy.getId}")
       engineConnLock.release()
       this.lockString = null
-      ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus.post(ExecutorUnLockEvent(null, lock))
-      ExecutorManager.getInstance.getReportExecutor match {
-        case accessibleExecutor: AccessibleExecutor =>
-          accessibleExecutor.transition(NodeStatus.Unlock)
-        case _ =>
-          val msg = s"Invalid executor or not instance of SensibleEngine."
-          error(msg)
-      }
       true
     } else {
       false

@@ -26,6 +26,8 @@ import scala.collection.mutable.ArrayBuffer
 
 trait ComputationExecutorHook {
 
+  def getOrder(): Int = 1
+
   def getHookName(): String
 
   def beforeExecutorExecute(engineExecutionContext: EngineExecutionContext, engineCreationContext: EngineCreationContext, codeBeforeHook: String): String = codeBeforeHook
@@ -48,7 +50,7 @@ object ComputationExecutorHook extends Logging {
       t: Throwable =>
         error(t.getMessage)
     }
-    hooks.toArray
+    hooks.sortWith((a, b) => a.getOrder() <= b.getOrder()).toArray
   }
 
   def getComputationExecutorHooks = computationExecutorHooks

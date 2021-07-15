@@ -17,9 +17,11 @@
 package com.webank.wedatasphere.linkis.engineconn.computation.executor.execute
 
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 
 import com.google.common.cache.{Cache, CacheBuilder}
 import com.webank.wedatasphere.linkis.DataWorkCloudApplication
+import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
 import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event.TaskStatusChangedEvent
@@ -28,6 +30,7 @@ import com.webank.wedatasphere.linkis.engineconn.computation.executor.conf.Compu
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationExecutorManager
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.entity.EngineConnTask
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
+import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
 import com.webank.wedatasphere.linkis.engineconn.core.engineconn.EngineConnManager
 import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
 import com.webank.wedatasphere.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor}
@@ -55,19 +58,23 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
 
   private var engineInitialized: Boolean = false
 
+  private var internalExecute: Boolean = false
+
   private var codeParser: Option[CodeParser] = None
 
-  private var runningTasks: Int = 0
+  private var runningTasks: Count = new Count
 
-  private var pendingTasks: Int = 0
+  private var pendingTasks: Count = new Count
 
-  private var succeedTasks: Int = 0
+  private var succeedTasks: Count = new Count
 
-  private var failedTasks: Int = 0
+  private var failedTasks: Count = new Count
 
   private var lastTask: EngineConnTask = _
 
   private val MAX_TASK_EXECUTE_NUM = ComputationExecutorConf.ENGINE_MAX_TASK_EXECUTE_NUM.getValue
+
+  protected def setInitialized(inited: Boolean = true): Unit = this.engineInitialized = inited
 
   final override def tryReady(): Boolean = {
     transition(NodeStatus.Unlock)
@@ -80,12 +87,12 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
 
 
   override def init(): Unit = {
-    info(s"Executor($getId) is inited.")
+    setInitialized()
+    info(s"Executor($getId) inited : ${isEngineInitialized}")
   }
 
   def tryShutdown(): Boolean = {
-    this.ensureAvailable(transition(NodeStatus.ShuttingDown))
-    close()
+    transition(NodeStatus.ShuttingDown)
     true
   }
 
@@ -96,15 +103,17 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
 
   override def trySucceed(): Boolean = false
 
-  def getSucceedNum: Int = succeedTasks
+  def getSucceedNum: Int = succeedTasks.getCount()
 
-  def getFailedNum: Int = failedTasks
+  def getFailedNum: Int = failedTasks.getCount()
 
-  def getRunningTask: Int = runningTasks
+  def getRunningTask: Int = runningTasks.getCount()
 
-  protected def getExecutorConcurrentInfo: EngineConcurrentInfo = EngineConcurrentInfo(runningTasks, pendingTasks, succeedTasks, failedTasks)
+  protected def getExecutorConcurrentInfo: EngineConcurrentInfo = EngineConcurrentInfo(getRunningTask, 0, getSucceedNum, getFailedNum)
 
   def isEngineInitialized: Boolean = engineInitialized
+
+  def isInternalExecute: Boolean = internalExecute
 
   protected def callback(): Unit = {}
 
@@ -119,35 +128,30 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
 
   //  override def getName: String = ComputationExecutorConf.DEFAULT_COMPUTATION_NAME
 
-  protected def ensureOp[A](f: => A): A = if (!this.engineInitialized)
+  protected def ensureOp[A](f: => A): A = if (!isEngineInitialized)
     f
   else ensureIdle(f)
 
   protected def beforeExecute(engineConnTask: EngineConnTask): Unit = {}
 
   protected def afterExecute(engineConnTask: EngineConnTask, executeResponse: ExecuteResponse): Unit = {
-    val executorNumber = succeedTasks + failedTasks
-    if (MAX_TASK_EXECUTE_NUM > 0 && runningTasks == 0 && executorNumber > MAX_TASK_EXECUTE_NUM) {
+    val executorNumber = getSucceedNum + getFailedNum
+    if (MAX_TASK_EXECUTE_NUM > 0 && runningTasks.getCount() == 0 && executorNumber > MAX_TASK_EXECUTE_NUM) {
       error(s"Task has reached max execute number $MAX_TASK_EXECUTE_NUM, now  tryShutdown. ")
-      ComputationExecutorManager.getInstance.getReportExecutor.tryShutdown()
+      ExecutorManager.getInstance.getReportExecutor.tryShutdown()
     }
   }
 
-  def execute(engineConnTask: EngineConnTask): ExecuteResponse = {
-    updateLastActivityTime()
-    beforeExecute(engineConnTask)
-    runningTasks += 1
 
-    taskCache.put(engineConnTask.getTaskId, engineConnTask)
-    lastTask = engineConnTask
-
+  def toExecuteTask(engineConnTask: EngineConnTask, internalExecute: Boolean = false): ExecuteResponse = {
+    runningTasks.increase()
+    this.internalExecute = internalExecute
+    Utils.tryFinally{
     transformTaskStatus(engineConnTask, ExecutionNodeStatus.Running)
-
-    ensureOp {
       val engineExecutionContext = createEngineExecutionContext(engineConnTask)
       var hookedCode = engineConnTask.getCode
       Utils.tryCatch {
-        val engineCreationContext = EngineConnManager.getEngineConnManager.getEngineConn.getEngineCreationContext
+        val engineCreationContext = EngineConnObject.getEngineCreationContext
         ComputationExecutorHook.getComputationExecutorHooks.foreach(hook => {
           hookedCode = hook.beforeExecutorExecute(engineExecutionContext, engineCreationContext, hookedCode)
         })
@@ -157,8 +161,8 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
       } else {
         info(s"hooked after code: $hookedCode ")
       }
-      val localPath = System.getenv(EngineConnConf.ENGINE_CONN_LOCAL_LOG_DIRS_KEY.getValue)
-      engineExecutionContext.appendStdout(s"EngineConn local log path : ${DataWorkCloudApplication.getServiceInstance.toString} $localPath")
+      val localPath = EngineConnConf.getLogDir
+      engineExecutionContext.appendStdout(LogUtils.generateInfo(s"EngineConn local log path: ${DataWorkCloudApplication.getServiceInstance.toString} $localPath"))
       var response: ExecuteResponse = null
       val incomplete = new StringBuilder
       val codes = Utils.tryCatch(getCodeParser.map(_.parse(hookedCode)).getOrElse(Array(hookedCode))) { e =>
@@ -176,11 +180,11 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
           ) {
             t => ErrorExecuteResponse(ExceptionUtils.getRootCauseMessage(t), t)
           }
-          info(s"Finished to execute task ${engineConnTask.getTaskId}")
+          //info(s"Finished to execute task ${engineConnTask.getTaskId}")
           incomplete ++= code
           response match {
             case e: ErrorExecuteResponse =>
-              failedTasks += 1
+              failedTasks.increase()
               error("execute code failed!", e.t)
               return response
             case SuccessExecuteResponse() =>
@@ -199,27 +203,45 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
       Utils.tryCatch(engineExecutionContext.close()) {
         t =>
           response = ErrorExecuteResponse("send resultSet to entrance failed!", t)
-          failedTasks += 1
+          failedTasks.increase()
       }
-      runningTasks -= 1
-      lastTask = null
+
+
       response = response match {
         case _: OutputExecuteResponse =>
-          succeedTasks += 1
+          succeedTasks.increase()
           transformTaskStatus(engineConnTask, ExecutionNodeStatus.Succeed)
           SuccessExecuteResponse()
         case s: SuccessExecuteResponse =>
-          succeedTasks += 1
+          succeedTasks.increase()
           transformTaskStatus(engineConnTask, ExecutionNodeStatus.Succeed)
           s
         case _ => response
       }
-      Utils.tryAndWarn(afterExecute(engineConnTask, response))
       response
+    }{
+      runningTasks.decrease()
+      this.internalExecute = false
+    }
+  }
+
+
+
+  def execute(engineConnTask: EngineConnTask): ExecuteResponse = {
+    info(s"start to execute task ${engineConnTask.getTaskId}")
+    updateLastActivityTime()
+    beforeExecute(engineConnTask)
+    taskCache.put(engineConnTask.getTaskId, engineConnTask)
+    lastTask = engineConnTask
+    val response = ensureOp {
+      toExecuteTask(engineConnTask)
     }
 
-
-  }
+      Utils.tryAndWarn(afterExecute(engineConnTask, response))
+    info(s"Finished to execute task ${engineConnTask.getTaskId}")
+    lastTask = null
+      response
+    }
 
   def setCodeParser(codeParser: CodeParser): Unit = this.codeParser = Some(codeParser)
 
@@ -256,7 +278,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
 
   def killTask(taskId: String): Unit = {
     Utils.tryAndWarn {
-      val task = taskCache.getIfPresent(taskId)
+      val task = getTaskById(taskId)
       if (null != task) {
         task.setStatus(ExecutionNodeStatus.Cancelled)
         transformTaskStatus(task, ExecutionNodeStatus.Cancelled)
@@ -281,7 +303,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
       case _ =>
         error(s"Task status change error. task: $task, newStatus : $newStatus.")
     }
-    if (oriStatus != newStatus) {
+    if (oriStatus != newStatus && !isInternalExecute) {
       listenerBusContext.getEngineConnSyncListenerBus.postToAll(TaskStatusChangedEvent(task.getTaskId, oriStatus, newStatus))
     }
   }
@@ -290,4 +312,23 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
     taskCache.getIfPresent(taskId)
   }
 
+  def clearTaskCache(taskId: String): Unit = {
+    taskCache.invalidate(taskId)
+  }
+}
+
+class Count{
+
+  val  count = new AtomicInteger(0)
+
+  def  getCount(): Int =  {
+    count.get()
+  }
+
+  def increase() : Unit = {
+    count.incrementAndGet()
+  }
+  def decrease(): Unit = {
+    count.decrementAndGet()
+  }
 }

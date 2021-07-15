@@ -30,11 +30,11 @@ public class ConcurrentEngineConnLabel extends GenericLabel implements EngineNod
     }
 
     @ValueSerialNum(0)
-    public void setParallelism(int parallelism) {
+    public void setParallelism(String parallelism) {
         if (null == getValue()) {
             setValue(new HashMap<>());
         }
-        getValue().put("parallelism", Integer.toString(parallelism));
+        getValue().put("parallelism", parallelism);
     }
 
     public String getParallelism() {

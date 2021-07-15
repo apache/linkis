@@ -76,7 +76,7 @@ class DefaultEMRegisterService extends EMRegisterService with Logging {
     if (null == emRegister.getLabels) {
       emRegister.setLabels(new util.HashMap[String, Object]())
     }
-    emRegister.getLabels.put(eMInstanceLabel.getLabelKey, eMInstanceLabel.getValue)
+    emRegister.getLabels.put(eMInstanceLabel.getLabelKey, eMInstanceLabel.getStringValue)
     val instanceLabelAddRequest = new NodeLabelAddRequest(emRegister.getServiceInstance, emRegister.getLabels)
     info(s"Start to publish em{${emRegister.getServiceInstance}} label request to Label ")
     val job = publisher.publish(instanceLabelAddRequest)

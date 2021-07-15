@@ -46,6 +46,7 @@ public class EngineTypeLabelCreator {
                     defaultVersion.put(EngineType.PIPELINE().toString(), LabelCommonConfig.PIPELINE_ENGINE_VERSION.getValue());
                     defaultVersion.put(EngineType.SHELL().toString(), LabelCommonConfig.SHELL_ENGINE_VERSION.getValue());
                     defaultVersion.put(EngineType.APPCONN().toString(), LabelCommonConfig.APPCONN_ENGINE_VERSION.getValue());
+                    defaultVersion.put(EngineType.FLINK().toString(), LabelCommonConfig.FLINK_ENGINE_VERSION.getValue());
                     defaultVersion.put("*", "*");
                 }
             }

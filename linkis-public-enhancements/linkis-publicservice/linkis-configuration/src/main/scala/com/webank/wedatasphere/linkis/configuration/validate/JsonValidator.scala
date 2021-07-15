@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.hive.conf
+package com.webank.wedatasphere.linkis.configuration.validate
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import com.webank.wedatasphere.linkis.common.utils.Utils
+import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 
-object HiveEngineConfiguration {
+class JsonValidator extends Validator{
 
-  val HIVE_LIB_HOME = CommonVars[String]("hive.lib", CommonVars[String]("HIVE_LIB", "/appcom/Install/hive/lib").getValue)
-  val ENABLE_FETCH_BASE64 = CommonVars[Boolean]("wds.linkis.hive.enable.fetch.base64",true).getValue
-  val BASE64_SERDE_CLASS =  CommonVars[String]("wds.linkis.hive.base64.serde.class","com.webank.wedatasphere.linkis.engineplugin.hive.serde.CustomerDelimitedJSONSerDe").getValue
+  override def validate(value: String, range: String): Boolean = {
+    Utils.tryCatch{
+      BDPJettyServerHelper.gson.fromJson(value,classOf[java.util.HashMap[String,String]])
+      true
+    }{
+      case _ => false
+    }
+  }
+
+  override var kind: String = "Json"
 }

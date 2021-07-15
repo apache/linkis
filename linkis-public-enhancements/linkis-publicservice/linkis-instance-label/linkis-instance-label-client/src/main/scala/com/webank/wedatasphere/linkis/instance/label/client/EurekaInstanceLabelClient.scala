@@ -47,12 +47,13 @@ class EurekaInstanceLabelClient extends Logging {
     }
   }
 
-  @EventListener
+  @EventListener(classes = Array(classOf[ContextClosedEvent]))
   def shutdown(contextClosedEvent: ContextClosedEvent): Unit = {
     info("To remove labels for instance")
     val insLabelRemoveRequest = new InsLabelRemoveRequest
     insLabelRemoveRequest.setServiceInstance(Sender.getThisServiceInstance)
     InstanceLabelClient.getInstance.removeLabelsFromInstance(insLabelRemoveRequest)
+    info("success to send clear label rpc request")
   }
 
 

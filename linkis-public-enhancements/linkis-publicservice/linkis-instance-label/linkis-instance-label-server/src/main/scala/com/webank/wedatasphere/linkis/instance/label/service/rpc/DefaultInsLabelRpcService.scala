@@ -88,7 +88,9 @@ class DefaultInsLabelRpcService extends InsLabelRpcService with Logging {
     )
     info(s"Start to remove labels from instance[$instance]")
     insLabelService.removeLabelsFromInstance(instance)
+    insLabelService.removeInstance(instance)
     info(s"Success to remove labels from instance[$instance]")
+    info(s"Success to remove instance[$instance]")
   }
 
   @Receiver

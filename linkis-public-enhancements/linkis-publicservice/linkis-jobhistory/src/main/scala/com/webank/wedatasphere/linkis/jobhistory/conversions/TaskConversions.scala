@@ -54,6 +54,7 @@ object TaskConversions extends Logging {
     task
   }
 
+  /*@Deprecated
   def queryTask2RequestPersistTask(queryTask: QueryTask): RequestPersistTask = {
     QueryUtils.exchangeExecutionCode(queryTask)
     val task = new RequestPersistTask
@@ -61,9 +62,9 @@ object TaskConversions extends Logging {
     task.setSource(BDPJettyServerHelper.gson.fromJson(queryTask.getSourceJson, classOf[java.util.HashMap[String, String]]))
     task.setParams(BDPJettyServerHelper.gson.fromJson(queryTask.getParamsJson, classOf[java.util.HashMap[String, Object]]))
     task
-  }
+  }*/
 
-  @Deprecated
+  /*@Deprecated
   def requestPersistTaskTask2QueryTask(requestPersistTask: RequestPersistTask): QueryTask = {
     val task: QueryTask = new QueryTask
     BeanUtils.copyProperties(requestPersistTask, task)
@@ -72,9 +73,9 @@ object TaskConversions extends Logging {
     else
       task.setParamsJson(null)
     task
-  }
+  }*/
 
-  def queryTask2QueryTaskVO(queryTask: QueryTask): QueryTaskVO = {
+  /*def queryTask2QueryTaskVO(queryTask: QueryTask): QueryTaskVO = {
     QueryUtils.exchangeExecutionCode(queryTask)
     val taskVO = new QueryTaskVO
     BeanUtils.copyProperties(queryTask, taskVO)
@@ -99,7 +100,7 @@ object TaskConversions extends Logging {
       taskVO.setCostTime(System.currentTimeMillis() - queryTask.getCreatedTime().getTime());
     }
     taskVO
-  }
+  }*/
 
   def isJobFinished(status: String): Boolean = {
     TaskStatus.Succeed.toString.equals(status) ||
@@ -137,6 +138,8 @@ object TaskConversions extends Logging {
     jobReq.setUpdatedTime(job.getUpdated_time)
     jobReq.setMetrics(BDPJettyServerHelper.gson.fromJson((job.getMetrics), classOf[util.Map[String, Object]]))
     jobReq.setInstances(job.getInstances)
+    QueryUtils.exchangeExecutionCode(job)
+    jobReq.setExecutionCode(job.getExecution_code)
     jobReq
   }
 
@@ -166,6 +169,7 @@ object TaskConversions extends Logging {
     if (null != jobReq.getMetrics) jobHistory.setMetrics(BDPJettyServerHelper.gson.toJson(jobReq.getMetrics))
     val engineType = LabelUtil.getEngineType(jobReq.getLabels)
     jobHistory.setEngine_type(engineType)
+    jobHistory.setExecution_code(jobReq.getExecutionCode)
     jobHistory
   }
 
@@ -270,10 +274,11 @@ object TaskConversions extends Logging {
     val instances = job.getInstances().split(JobhistoryConfiguration.ENTRANCE_INSTANCE_DELEMITER.getValue)
     taskVO.setStrongerExecId(ZuulEntranceUtils.generateExecID(job.getJob_req_id, entranceName, instances))
     taskVO.setSourceJson(job.getSource)
-    val code = new StringBuilder("")
-    subjobs.asScala.foreach(job => code.append(job.getExecutionContent).append(";\n"))
-    taskVO.setExecutionCode(code.toString())
-    taskVO.setSubJobs(subjobs)
+    if (StringUtils.isNotBlank(job.getExecution_code)) {
+          taskVO.setExecutionCode(job.getExecution_code)
+        }
+        // Do not attach subjobs for performance
+    //    taskVO.setSubJobs(subjobs)
     taskVO.setSourceJson(job.getSource)
     if (StringUtils.isNotBlank(job.getSource)) {
       Utils.tryCatch {

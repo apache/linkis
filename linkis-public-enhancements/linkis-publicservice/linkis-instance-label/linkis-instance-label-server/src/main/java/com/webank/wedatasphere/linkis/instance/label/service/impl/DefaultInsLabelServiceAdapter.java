@@ -115,6 +115,14 @@ public class DefaultInsLabelServiceAdapter implements InsLabelServiceAdapter {
     }
 
     @Override
+    public void removeInstance(ServiceInstance serviceInstance) {
+        execOnServiceChain("removeInstance", insLabelAccessService -> {
+            insLabelAccessService.removeInstance(serviceInstance);
+            return true;
+        }, true, true);
+    }
+
+    @Override
     public void evictCache() {
         //Empty
     }

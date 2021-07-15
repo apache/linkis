@@ -20,7 +20,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
 <!--        <relativePath>../../pom.xml</relativePath>-->
     </parent>
     <artifactId>linkis-jdbc-driver</artifactId>

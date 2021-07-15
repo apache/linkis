@@ -25,6 +25,7 @@ import com.webank.wedatasphere.linkis.manager.label.constant.LabelConstant
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.manager.label.exception.LabelErrorException
 import com.webank.wedatasphere.linkis.manager.label.service.UserLabelService
+import com.webank.wedatasphere.linkis.manager.label.LabelManagerUtils
 import com.webank.wedatasphere.linkis.manager.persistence.LabelManagerPersistence
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -48,7 +49,7 @@ class DefaultUserLabelService extends UserLabelService with Logging {
   override def addLabelToUser(user: String, label: Label[_]): Unit = {
     //instance 存在
     //1.插入linkis_manager_label 表，这里表应该有唯一约束，key和valueStr　调用Persistence的addLabel即可，忽略duplicateKey异常
-    val persistenceLabel = labelFactory.convertLabel(label, classOf[PersistenceLabel])
+    val persistenceLabel = LabelManagerUtils.convertPersistenceLabel(label)
     Utils.tryAndWarn(labelManagerPersistence.addLabel(persistenceLabel))
     //2.查询出当前label的id
     val dbLabel = labelManagerPersistence

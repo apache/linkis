@@ -1,5 +1,7 @@
 package com.webank.wedatasphere.linkis.manager.common.entity.resource;
 
+import java.util.Date;
+
 public class CommonNodeResource implements NodeResource {
 
     private ResourceType resourceType;
@@ -15,6 +17,10 @@ public class CommonNodeResource implements NodeResource {
     private Resource expectedResource;
 
     private Resource leftResource;
+
+    private Date createTime;
+
+    private Date updateTime;
 
     public static NodeResource initNodeResource(ResourceType resourceType){
         CommonNodeResource commonNodeResource = new CommonNodeResource();
@@ -33,6 +39,27 @@ public class CommonNodeResource implements NodeResource {
     public ResourceType getResourceType() {
         return resourceType;
     }
+
+    @Override
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    @Override
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    @Override
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    @Override
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
     @Override
     public void setResourceType(ResourceType resourceType) {
         this.resourceType = resourceType;
@@ -77,6 +104,8 @@ public class CommonNodeResource implements NodeResource {
     public void setLockedResource(Resource lockedResource) {
         this.lockedResource = lockedResource;
     }
+
+
 
     @Override
     public Resource getExpectedResource() {

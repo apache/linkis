@@ -46,7 +46,6 @@ public class LabelKeyConstant {
 
     public static final String BIND_ENGINE_KEY = "bindEngine";
 
-
     public static final String JOB_QUEUING_TIMEOUT_KEY = "jobQueuingTimeout";
 
     public static final String JOB_RUNNING_TIMEOUT_KEY = "jobRunningTimeout";
@@ -55,6 +54,7 @@ public class LabelKeyConstant {
 
     public static final String LOAD_BALANCE_KEY = "loadBalance";
 
-
     public static final String REUSE_EXCLUSION_KEY = "reuseExclusion";
+
+    public static final String TENANT_KEY = "tenant";
 }

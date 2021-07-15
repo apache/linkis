@@ -128,10 +128,10 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
         case Some(engineConnExecutor) => return engineConnExecutor
         case None =>
       }
-      val engineConnExecutor = askEngineConnExecutor(mark.getMarkReq.createEngineConnAskReq())
+      val engineConnExecutor = askEngineConnExecutor(mark.getMarkReq.createEngineConnAskReq(), mark)
       engineConnExecutor.useEngineConn
       saveToMarkCache(mark, engineConnExecutor)
-      info(s"mark ${mark.getMarkId()} Finished to  getAvailableEngineConnExecutor by create")
+      debug(s"mark ${mark.getMarkId()} Finished to  getAvailableEngineConnExecutor by create")
       engineConnExecutor
     } else {
       throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE, " mark cannot null")
@@ -208,11 +208,11 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
     }
   }
 
-  protected def askEngineConnExecutor(engineAskRequest: EngineAskRequest): EngineConnExecutor
+  protected def askEngineConnExecutor(engineAskRequest: EngineAskRequest, mark: Mark): EngineConnExecutor
 
   override def releaseMark(mark: Mark): Unit = {
     if (null != mark && getMarkCache().containsKey(mark)) {
-      info(s"Start to release mark ${mark.getMarkId()}")
+      debug(s"Start to release mark ${mark.getMarkId()}")
       val executors = getMarkCache().get(mark).map(getEngineConnExecutorCache().get(_))
       Utils.tryAndError(executors.foreach { executor =>
         getEngineConnExecutorCache().remove(executor.getServiceInstance)

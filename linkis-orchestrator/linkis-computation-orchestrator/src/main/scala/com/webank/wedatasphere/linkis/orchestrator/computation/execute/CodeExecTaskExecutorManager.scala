@@ -52,9 +52,12 @@ trait CodeExecTaskExecutorManager {
 
   def unLockEngineConn(execTask: CodeLogicalUnitExecTask, execTaskExecutor: CodeExecTaskExecutor): Unit
 
+  def markECFailed(execTask: CodeLogicalUnitExecTask, executor: CodeExecTaskExecutor): Unit
+
   def getAllInstanceToExecutorCache(): mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]]
 
   def getAllExecTaskToExecutorCache(): mutable.HashMap[String, CodeExecTaskExecutor]
+
 
 }
 

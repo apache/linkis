@@ -33,7 +33,7 @@ abstract class AbstractExecution extends Execution with Logging{
   val taskConsumer: TaskConsumer
 
   //TODO 容器清理
-  protected val execTaskToExecutionTasks = new util.HashMap[ExecTask, ExecutionTask]()
+  protected val execTaskToExecutionTasks = new util.concurrent.ConcurrentHashMap[ExecTask, ExecutionTask]()
 
   def getAllExecutionTasks(): Array[ExecutionTask]
 

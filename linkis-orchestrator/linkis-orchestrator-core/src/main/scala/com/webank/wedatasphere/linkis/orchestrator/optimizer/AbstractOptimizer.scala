@@ -35,13 +35,13 @@ abstract class AbstractOptimizer extends Optimizer
   override def optimize(task: Task): ExecTask = {
     val context = createLogicalContext(task)
     //优化
-    info(s"Start to optimize LogicalTree(${task.getId}).")
+    debug(s"Start to optimize LogicalTree(${task.getId}).")
     val optimizedTask = apply(task, context, optimizerTransforms.map {
       transform: Transform[Task, Task, LogicalContext] => transform
     })
-    info(s"Finished to optimize LogicalTree(${task.getId}).")
+    debug(s"Finished to optimize LogicalTree(${task.getId}).")
     //物化
-    info(s"Start to transform LogicalTree(${task.getId}) to PhysicalTree.")
+    debug(s"Start to transform LogicalTree(${task.getId}) to PhysicalTree.")
     val execTask = apply(optimizedTask, context, new mutable.HashMap[Task, ExecTask], physicalTransforms.map{
       transform: Transform[Task, ExecTask, LogicalContext] => transform
     })
@@ -49,7 +49,7 @@ abstract class AbstractOptimizer extends Optimizer
     findLeafNode(execTask, leafNodes)
     val physicalContext = createPhysicalContext(execTask, leafNodes.toArray)
     initTreePhysicalContext(execTask, physicalContext)
-    info(s"Finished to transform LogicalTree(${task.getId}) to PhysicalTree.")
+    debug(s"Finished to transform LogicalTree(${task.getId}) to PhysicalTree.")
     execTask
   }
 

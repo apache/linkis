@@ -16,6 +16,11 @@
 
 package com.webank.wedatasphere.linkis.orchestrator.strategy
 
+import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.governance.common.entity.ExecutionNodeStatus
+import com.webank.wedatasphere.linkis.orchestrator.exception.OrchestratorErrorCodeSummary
+import com.webank.wedatasphere.linkis.orchestrator.execution.FailedTaskResponse
+import com.webank.wedatasphere.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
 import com.webank.wedatasphere.linkis.orchestrator.plans.physical.ExecTask
 
 import scala.collection.mutable
@@ -23,7 +28,7 @@ import scala.collection.mutable
   *
   *
   */
-trait  StatusInfoExecTask extends ExecTask {
+trait  StatusInfoExecTask extends ExecTask with Logging{
 
   /**
    * This method is called by ExecTaskRunner, ExecTask cannot be called directly, which will cause repeated placement of status information
@@ -50,6 +55,38 @@ trait  StatusInfoExecTask extends ExecTask {
       return childrenStatus
     }
     null
+  }
+
+
+  def parseChildrenErrorInfo(errorExecTasks: Map[String, ExecTaskStatusInfo]): String = {
+     if (null != errorExecTasks && errorExecTasks.nonEmpty) {
+        val errorReason = errorExecTasks.map { entry =>
+          val execTaskId = entry._1
+          val statusInfo = entry._2
+          val errorMsg = statusInfo.taskResponse match {
+            case failedTaskResponse: FailedTaskResponse =>
+              s"Task is Failed,errorMsg: ${failedTaskResponse.getErrorMsg}"
+            case _ => s"Task($execTaskId) status not succeed,is ${statusInfo.nodeStatus}"
+          }
+          errorMsg
+        }.mkString(";")
+        error(s"There are Tasks execution failure of stage ${getIDInfo()}, now mark ExecutionTask as failed")
+        return  errorReason
+      }
+    "error info is null"
+  }
+
+  def getErrorChildrenExecTasks: Option[Map[String, ExecTaskStatusInfo]] = {
+    val statusInfos = getChildrenExecTaskStatusInfo()
+    if (null != statusInfos) {
+      val errorExecTask = statusInfos.filter { entry =>
+        !ExecutionNodeStatus.isSucceed(entry._2.nodeStatus) && ExecutionNodeStatus.isCompleted(entry._2.nodeStatus)
+      }
+      if (null != errorExecTask && errorExecTask.nonEmpty) {
+        return  Some(errorExecTask)
+      }
+    }
+    None
   }
 
 }

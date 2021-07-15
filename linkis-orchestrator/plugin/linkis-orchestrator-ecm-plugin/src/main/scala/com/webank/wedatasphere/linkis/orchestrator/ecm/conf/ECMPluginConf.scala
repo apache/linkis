@@ -38,7 +38,11 @@ object ECMPluginConf {
 
   val ECM_ENGINE_CACHE_ERROR = 12004
 
+  val ECM_MARK_CACHE_ERROR_CODE = 12005
+
 
   val DEFAULT_LOADBALANCE_CAPACITY = CommonVars("wds.linkis.orchestrator.ecm.loadbalance.capacity.default", 3)
+
+  val EC_ASYNC_RESPONSE_CLEAR_TIME = CommonVars("wds.linkis.ecp.ec.response.time", new TimeType("3m"))
 
 }

@@ -43,11 +43,11 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
   private def getEngineConnSender: Sender = Sender.getSender(getServiceInstance)
 
   override def close(): Unit = {
-    info(s"Start to release engineConn $getServiceInstance")
+    debug(s"Start to release engineConn $getServiceInstance")
     val requestManagerUnlock = RequestManagerUnlock(getServiceInstance, locker, Sender.getThisServiceInstance)
     killAll()
     getManagerSender.send(requestManagerUnlock)
-    info(s"Finished to release engineConn $getServiceInstance")
+    debug(s"Finished to release engineConn $getServiceInstance")
   }
 
   override def useEngineConn: Boolean = {
@@ -66,35 +66,35 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
   }
 
   override def execute(requestTask: RequestTask): ExecuteResponse = {
-    info(s"Start to submit task to engineConn($getServiceInstance)")
+    debug(s"Start to submit task${requestTask.getSourceID()} to engineConn($getServiceInstance)")
     requestTask.setLock(this.locker)
     getEngineConnSender.ask(requestTask) match {
       case submitResponse: SubmitResponse =>
-        info(s"Succeed to submit task to engineConn($getServiceInstance), Get asyncResponse execID is ${submitResponse}")
+        info(s"Succeed to submit task${requestTask.getSourceID()} to engineConn($getServiceInstance), Get asyncResponse execID is ${submitResponse}")
         getRunningTasks.put(submitResponse.taskId, requestTask)
         submitResponse
       case outPutResponse: OutputExecuteResponse =>
-        info(s" engineConn($getServiceInstance) Succeed to execute task, and get Res")
+        info(s" engineConn($getServiceInstance) Succeed to execute task${requestTask.getSourceID()}, and get Res")
         outPutResponse
       case errorExecuteResponse: ErrorExecuteResponse =>
-        error(s"engineConn($getServiceInstance) Failed to execute task ,error msg ${errorExecuteResponse.message}", errorExecuteResponse.t)
+        error(s"engineConn($getServiceInstance) Failed to execute task${requestTask.getSourceID()} ,error msg ${errorExecuteResponse.message}", errorExecuteResponse.t)
         errorExecuteResponse
       case successExecuteResponse: SuccessExecuteResponse =>
-        info(s" engineConn($getServiceInstance) Succeed to execute task, no res")
+        info(s" engineConn($getServiceInstance) Succeed to execute task${requestTask.getSourceID()}, no res")
         successExecuteResponse
       case _ =>
-        throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE, s"engineConn($getServiceInstance) Failed to execute task, get response error")
+        throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE, s"engineConn($getServiceInstance) Failed to execute task${requestTask.getSourceID()}, get response error")
     }
   }
 
   override def killTask(execId: String): Boolean = {
     Utils.tryCatch {
-      info(s"begin to send RequestTaskKill to engine, execID: $execId")
+      info(s"begin to send RequestTaskKill to engineConn($getServiceInstance), execID: $execId")
       getEngineConnSender.send(RequestTaskKill(execId))
-      info(s"Finished to send RequestTaskKill to engine, execID: $execId")
+      info(s"Finished to send RequestTaskKill to engineConn($getServiceInstance), execID: $execId")
       true
     } { t: Throwable =>
-      error(s"Failed to kill task $execId", t)
+      error(s"Failed to kill task $execId engineConn($getServiceInstance)", t)
       false
     }
   }
@@ -136,7 +136,7 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
       case ResponseTaskStatus(execId, status) =>
         status
       case _ =>
-        throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE, s"Failed to get engineConn status ")
+        throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE, s"Failed to get engineConn($getServiceInstance) status ")
     }
   }
 

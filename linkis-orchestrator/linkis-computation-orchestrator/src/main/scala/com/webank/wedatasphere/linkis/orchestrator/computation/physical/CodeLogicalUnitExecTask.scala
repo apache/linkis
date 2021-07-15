@@ -20,12 +20,14 @@ package com.webank.wedatasphere.linkis.orchestrator.computation.physical
 import java.util.concurrent.TimeUnit
 
 import com.webank.wedatasphere.linkis.common.exception.{ErrorException, LinkisRetryException, WarnException}
+import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.governance.common.protocol.task.{RequestTask, RequestTaskExecute}
 import com.webank.wedatasphere.linkis.governance.common.utils.GovernanceConstant
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.orchestrator.computation.conf.ComputationOrchestratorConf
 import com.webank.wedatasphere.linkis.orchestrator.computation.execute.{CodeExecTaskExecutor, CodeExecTaskExecutorManager}
+import com.webank.wedatasphere.linkis.orchestrator.ecm.conf.ECMPluginConf
 import com.webank.wedatasphere.linkis.orchestrator.exception.{OrchestratorErrorCodeSummary, OrchestratorErrorException, OrchestratorRetryException}
 import com.webank.wedatasphere.linkis.orchestrator.execution.AsyncTaskResponse.NotifyListener
 import com.webank.wedatasphere.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
@@ -58,26 +60,33 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
   private val askDuration  = Duration(ComputationOrchestratorConf.MAX_ASK_EXECUTOR_TIME.getValue.toLong, TimeUnit.MILLISECONDS)
   private var codeLogicalUnit: CodeLogicalUnit = _
 
+  private var isCanceled = false
+
   override def execute(): TaskResponse = {
     info(s"Start to execute CodeLogicalUnitExecTask(${getIDInfo()}).")
     var executor: Option[CodeExecTaskExecutor] = None
     var retryException: LinkisRetryException = null
-    executor = Utils.tryCatch(codeExecTaskExecutorManager.askExecutor(this, askDuration)) {
+    executor = Utils.tryCatch(codeExecTaskExecutorManager.askExecutor(this)) {
       case retry: LinkisRetryException =>
         retryException = retry
         None
       case e:ErrorException =>
-        //job.getLogListener.foreach(_.onLogUpdate(job, LogUtils.generateERROR(e.getMessage)))
         throw e
       case error: Throwable =>
-        //job.getLogListener.foreach(_.onLogUpdate(job, LogUtils.generateERROR(error.getMessage)))
         throw error
     }
 
-    if (executor.isDefined) {
+    if (executor.isDefined && !isCanceled) {
       val requestTask = toRequestTask
       val codeExecutor = executor.get
-      val response = codeExecutor.getEngineConnExecutor.execute(requestTask)
+      val response = Utils.tryCatch(codeExecutor.getEngineConnExecutor.execute(requestTask)){
+        t: Throwable =>
+          error(s"Failed to submit ${getIDInfo()} to ${codeExecutor.getEngineConnExecutor.getServiceInstance}", t)
+          codeExecTaskExecutorManager.getByExecTaskId(this.getId).foreach { codeEngineConnExecutor =>
+            codeExecTaskExecutorManager.markECFailed(this, codeEngineConnExecutor)
+          }
+          throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, t.getMessage)
+      }
       response match {
         case SubmitResponse(engineConnExecId) =>
           //封装engineConnExecId信息
@@ -104,7 +113,7 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
   private def toRequestTask: RequestTask ={
     val requestTask = new RequestTaskExecute
     requestTask.setCode(getCodeLogicalUnit.toStringCode)
-    getLabels.add(getCodeLogicalUnit.getLabel)
+    //getLabels.add(getCodeLogicalUnit.getLabel)
     requestTask.setLabels(getLabels)
     //Map
 //    if (null != getParams.getRuntimeParams.getDataSources ) {
@@ -127,6 +136,7 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
 //      case _ => null
 //    })
     requestTask.getProperties.putAll(getParams.getRuntimeParams.toMap)
+    requestTask.setSourceID(getIDInfo())
     requestTask
   }
 
@@ -183,6 +193,7 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
         Utils.tryAndWarn(codeExecTaskExecutorManager.unLockEngineConn(this, codeEngineConnExecutor))
       }
     }
+    isCanceled = true
   }
 
   def getCodeEngineConnExecutor: CodeExecTaskExecutor = {
@@ -206,11 +217,16 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
 
     codeExecTaskExecutorManager.getByExecTaskId(this.getId).foreach { codeEngineConnExecutor =>
       if (isSucceed) {
-        info(s"ExecTask(${getIDInfo()}) execute  success executor be delete.")
+        debug(s"ExecTask(${getIDInfo()}) execute  success executor be delete.")
         Utils.tryAndWarn(codeExecTaskExecutorManager.delete(this, codeEngineConnExecutor))
       } else {
-        info(s"ExecTask(${getIDInfo()}) execute  failed executor be unLock.")
-        Utils.tryAndWarn(codeExecTaskExecutorManager.unLockEngineConn(this, codeEngineConnExecutor))
+        if (StringUtils.isBlank(codeEngineConnExecutor.getEngineConnTaskId)) {
+          error(s"${getIDInfo()} Failed to submit running, now to remove  codeEngineConnExecutor, forceRelease")
+          codeExecTaskExecutorManager.markECFailed(this, codeEngineConnExecutor)
+        } else {
+          debug(s"ExecTask(${getIDInfo()}) execute  failed executor be unLock.")
+          Utils.tryAndWarn(codeExecTaskExecutorManager.unLockEngineConn(this, codeEngineConnExecutor))
+        }
       }
     }
   }

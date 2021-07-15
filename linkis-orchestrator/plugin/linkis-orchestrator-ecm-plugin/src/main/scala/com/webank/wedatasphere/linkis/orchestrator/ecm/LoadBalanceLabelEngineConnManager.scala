@@ -10,7 +10,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.webank.wedatasphere.linkis.orchestrator.ecm
 
 import java.util
@@ -43,90 +42,93 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
 
   private val MARK_REQ_CACHE_LOCKER = new Object()
 
-
-  override def applyMark(markReq: MarkReq): Mark = {
-    if (null == markReq) return null
-    val markReqCache = MARK_REQ_CACHE_LOCKER.synchronized {
-      getMarkReqAndMarkCache().keys
-    }
-    var mayBeMarkReq = markReqCache.find(_.equals(markReq)).orNull
-    val markNum: Int = {
-      if (markReq.getLabels.containsKey(LabelKeyConstant.LOAD_BALANCE_KEY)) {
-        val loadBalanceLabel = MarkReq.getLabelBuilderFactory.createLabel[LoadBalanceLabel](LabelKeyConstant.LOAD_BALANCE_KEY,
-          markReq.getLabels.get(LabelKeyConstant.LOAD_BALANCE_KEY))
-        if (loadBalanceLabel.getCapacity > 0) {
-          loadBalanceLabel.getCapacity
-        } else {
-          ECMPluginConf.DEFAULT_LOADBALANCE_CAPACITY.getValue
-        }
+  private def getMarkNumByMarReq(markReq: MarkReq): Int = {
+    if (markReq.getLabels.containsKey(LabelKeyConstant.LOAD_BALANCE_KEY)) {
+      val loadBalanceLabel = MarkReq.getLabelBuilderFactory.createLabel[LoadBalanceLabel](LabelKeyConstant.LOAD_BALANCE_KEY,
+        markReq.getLabels.get(LabelKeyConstant.LOAD_BALANCE_KEY))
+      if (loadBalanceLabel.getCapacity > 0) {
+        loadBalanceLabel.getCapacity
       } else {
-        error(s"There must be LoadBalanceLabel in markReq : ${BDPJettyServerHelper.gson.toJson(markReq)}")
         ECMPluginConf.DEFAULT_LOADBALANCE_CAPACITY.getValue
       }
+    } else {
+      error(s"There must be LoadBalanceLabel in markReq : ${BDPJettyServerHelper.gson.toJson(markReq)}")
+      ECMPluginConf.DEFAULT_LOADBALANCE_CAPACITY.getValue
     }
-    var count = 0
-    if (null != mayBeMarkReq && !getMarkReqAndMarkCache().get(mayBeMarkReq).isEmpty) {
-      count = getMarkReqAndMarkCache().get(mayBeMarkReq).size()
-    }
+  }
 
+  /**
+   * 申请获取一个Mark
+   * 1. 如果没有对应的Mark就生成新的
+   * 2. 一个MarkRequest对应多个Mark，一个Mark对应一个Engine
+   * 3. 如果存在bindEngineLabel则需要在jobStart的时候随机选择一个，并缓存给后续jobGroup使用，在jobEnd的时候删除缓存
+   * 4. 将Mark进行返回
+   *
+   * @param markReq
+   * @return
+   */
+  override def applyMark(markReq: MarkReq): Mark = {
+    if (null == markReq) return null
+
+    val markNum: Int = getMarkNumByMarReq(markReq)
+    /*val markReqCache = MARK_REQ_CACHE_LOCKER.synchronized {
+      getMarkReqAndMarkCache().keys
+    }
+    var mayBeMarkReq = markReqCache.find(_.equals(markReq)).orNull*/
+    var count = 0
+    if (getMarkReqAndMarkCache().containsKey(markReq)) {
+      count = getMarkReqAndMarkCache().get(markReq).size()
+    }
     // toto check if count >= markNum, will not add more mark
     while (count < markNum) {
-      count += 1
       createMark(markReq)
-    }
-    if (null == mayBeMarkReq) {
-      val markReqCache2 = MARK_REQ_CACHE_LOCKER.synchronized {
-        getMarkReqAndMarkCache().keys
-      }
-      mayBeMarkReq = markReqCache2.find(_.equals(markReq)).get
+      count = getMarkReqAndMarkCache().get(markReq).size()
     }
     // markReq is in cache, and mark list is ready
-    val markList = getMarkReqAndMarkCache().get(mayBeMarkReq)
-    var choosedMark: Mark = null
-    if (mayBeMarkReq.getLabels.containsKey(LabelKeyConstant.BIND_ENGINE_KEY)) {
+    val markList = getMarkReqAndMarkCache().get(markReq)
+    var chooseMark: Mark = null
+    if (markReq.getLabels.containsKey(LabelKeyConstant.BIND_ENGINE_KEY)) {
       val bindEngineLabel = MarkReq.getLabelBuilderFactory.createLabel[BindEngineLabel](LabelKeyConstant.BIND_ENGINE_KEY,
-        mayBeMarkReq.getLabels.get(LabelKeyConstant.BIND_ENGINE_KEY))
+        markReq.getLabels.get(LabelKeyConstant.BIND_ENGINE_KEY))
       if (bindEngineLabel.getIsJobGroupHead) {
         // getRandom mark
-        choosedMark = markList.get(new util.Random().nextInt(markList.length))
-        choosedMark.asInstanceOf[LoadBalanceMark].setTaskMarkReq(markReq)
-        getIdToMarkCache().put(bindEngineLabel.getJobGroupId, choosedMark)
-      } else {
-        // get mark from cache
-        if (getIdToMarkCache().containsKey(bindEngineLabel.getJobGroupId)) {
-          choosedMark = getIdToMarkCache().get(bindEngineLabel.getJobGroupId)
-          choosedMark.asInstanceOf[LoadBalanceMark].setTaskMarkReq(markReq)
-          val insList = getMarkCache().get(choosedMark)
-          if (null == insList || insList.size() != 1) {
-            val msg = s"Engine instance releated to choosedMark : ${BDPJettyServerHelper.gson.toJson(choosedMark)} with bindEngineLabel : ${bindEngineLabel.getStringValue} cannot be null"
-            error(msg)
-            throw new ECMPluginErrorException(ECMPluginConf.ECM_CACHE_ERROR_CODE, msg)
-          }
-        } else {
-          val msg = s"Cannot find mark related to bindEngineLabel : ${bindEngineLabel.getStringValue}"
+        chooseMark = markList.get(new util.Random().nextInt(markList.length))
+        //chooseMark.asInstanceOf[LoadBalanceMark].setTaskMarkReq(markReq)
+        getIdToMarkCache().put(bindEngineLabel.getJobGroupId, chooseMark)
+      } else if (getIdToMarkCache().containsKey(bindEngineLabel.getJobGroupId)) {
+        chooseMark = getIdToMarkCache().get(bindEngineLabel.getJobGroupId)
+        //chooseMark.asInstanceOf[LoadBalanceMark].setTaskMarkReq(markReq)
+        val insList = getMarkCache().get(chooseMark)
+        if (null == insList || insList.size() != 1) {
+          val msg = s"Engine instance releated to chooseMark : ${BDPJettyServerHelper.gson.toJson(chooseMark)} with bindEngineLabel : ${bindEngineLabel.getStringValue} cannot be null"
           error(msg)
-          throw new ECMPluginErrorException(ECMPluginConf.ECM_CACHE_ERROR_CODE, msg)
+          throw new ECMPluginErrorException(ECMPluginConf.ECM_MARK_CACHE_ERROR_CODE, msg)
         }
+      } else {
+        val msg = s"Cannot find mark${chooseMark.getMarkId()} related to bindEngineLabel : ${bindEngineLabel.getStringValue}"
+        error(msg)
+        throw new ECMPluginErrorException(ECMPluginConf.ECM_MARK_CACHE_ERROR_CODE, msg)
       }
       if (bindEngineLabel.getIsJobGroupEnd) {
         if (getIdToMarkCache().containsKey(bindEngineLabel.getJobGroupId)) {
+          info(s"Start to remove mark${chooseMark.getMarkId()} Cache ${bindEngineLabel.getStringValue}")
           getIdToMarkCache().remove(bindEngineLabel.getJobGroupId)
         } else {
-          error(s"Cannot find mark related to bindEngineLabel : ${bindEngineLabel.getStringValue}, cannot remove it.")
+          error(s"Cannot find mark${chooseMark.getMarkId()} related to bindEngineLabel : ${bindEngineLabel.getStringValue}, cannot remove it.")
         }
       }
     } else {
       // treat as isHead and isEnd
-      choosedMark = markList.get(new Random().nextInt(count))
+      chooseMark = markList.get(new Random().nextInt(count))
     }
-    choosedMark
+    chooseMark
   }
 
   /**
-    * 1. Create a new Mark
-    * 2. There will be a process of requesting the engine when generating a new Mark. If the request is received, it will be stored in the Map: Mark is Key, EngineConnExecutor is Value
-    * 3. The number of Marks generated is equal to the concurrent amount of LoadBalance
-    */
+   * 1. 创建一个新的Mark
+   * 2. 生成新的Mark会存在请求引擎的过程，如果请求到了则存入Map中：Mark为Key，EngineConnExecutor为Value
+   *  3. 生成的Mark数量等于LoadBalance的并发量
+   */
   override def createMark(markReq: MarkReq): Mark = {
     val mark = new LoadBalanceMark(nextMarkId(), markReq)
     addMark(mark, new util.ArrayList[ServiceInstance]())
@@ -135,14 +137,10 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
   }
 
   private def addMarkReqAndMark(req: MarkReq, mark: DefaultMark): Unit = {
-    if (null != req) {
-      val markReqCache = MARK_REQ_CACHE_LOCKER.synchronized {
-        getMarkReqAndMarkCache().keys
-      }
-      val maybeMarkReq = markReqCache.find(_.eq(req)).getOrElse(null)
-      if (null != maybeMarkReq) {
-        val markList = markReqAndMarkCache.get(maybeMarkReq)
-        val mayBeMark = markList.find(_.getMarkId().equals(mark.getMarkId())).getOrElse(null)
+    if (null != req)  MARK_REQ_CACHE_LOCKER.synchronized {
+      val markList = getMarkReqAndMarkCache().get(req)
+      if (null != markList) {
+        val mayBeMark = markList.find(_.getMarkId().equals(mark.getMarkId())).orNull
         if (null == mayBeMark) {
           markList.add(mark)
         } else {
@@ -157,39 +155,32 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
   }
 
   override def getAvailableEngineConnExecutor(mark: Mark): EngineConnExecutor = {
-    info(s"mark ${mark.getMarkId()} start to tryReuseEngineConnExecutor")
+
     if (null != mark && getMarkCache().containsKey(mark)) {
       tryReuseEngineConnExecutor(mark) match {
-        case Some(engineConnExecutor) => return engineConnExecutor
+        case Some(engineConnExecutor) =>
+          info(s"mark ${mark.getMarkId()} ReuseEngineConnExecutor $engineConnExecutor")
+          return engineConnExecutor
         case None =>
-      }
-    } else {
-      throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE, s"mark cannot be null")
     }
-    info(s"Start to askEngineConnExecutor for marks in MarkCache")
-    getMarkCache().keySet().foreach{ cachedMark =>
-      val serviceInstances = getMarkCache().get(cachedMark)
-      if(CollectionUtils.isEmpty(serviceInstances)){
-        info(s"mark ${cachedMark.getMarkId()} start to askEngineConnExecutor")
-        val engineConnAskReq = cachedMark.getMarkReq.createEngineConnAskReq()
+      info(s"mark ${mark.getMarkId()} start to askEngineConnExecutor")
+      val engineConnAskReq = mark.getMarkReq.createEngineConnAskReq()
+      val existInstances = getAllInstances()
+      if (null != existInstances && existInstances.nonEmpty) {
         val reuseExclusionLabel = MarkReq.getLabelBuilderFactory.createLabel(classOf[ReuseExclusionLabel])
         reuseExclusionLabel.setInstances(getAllInstances())
         engineConnAskReq.getLabels.put(LabelKeyConstant.REUSE_EXCLUSION_KEY, reuseExclusionLabel.getValue)
-        val engineConnExecutor = askEngineConnExecutor(engineConnAskReq)
-        saveToMarkCache(cachedMark, engineConnExecutor)
-        info(s"mark ${cachedMark.getMarkId()} Finished to  getAvailableEngineConnExecutor by create")
       }
-    }
-    tryReuseEngineConnExecutor(mark) match {
-      case Some(engineConnExecutor) =>
-        engineConnExecutor.useEngineConn
-        return engineConnExecutor
-      case None =>
-        throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE, s"mark ${mark.getMarkId()} failed to start engineConn")
+      val engineConnExecutor = askEngineConnExecutor(engineConnAskReq, mark)
+      saveToMarkCache(mark, engineConnExecutor)
+      debug(s"mark ${mark.getMarkId()} Finished to  getAvailableEngineConnExecutor by create")
+      engineConnExecutor
+    } else {
+      throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE, s"mark cannot be null")
     }
   }
 
-  override protected def tryReuseEngineConnExecutor(mark: Mark):Option[EngineConnExecutor] = {
+  /*override protected def tryReuseEngineConnExecutor(mark: Mark): Option[EngineConnExecutor] = {
     val instances = getInstances(mark)
     if (null == instances || instances.isEmpty) {
       return None
@@ -228,8 +219,34 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
         return None
       }
     }
-  }
+  }*/
 
+  override def releaseEngineConnExecutor(engineConnExecutor: EngineConnExecutor, mark: Mark): Unit = {
+    if (null != engineConnExecutor && null != mark && getMarkCache().containsKey(mark)) {
+      info(s"Start to release EngineConnExecutor mark id ${mark.getMarkId()} engineConnExecutor ${engineConnExecutor.getServiceInstance}")
+      getEngineConnExecutorCache().remove(engineConnExecutor.getServiceInstance)
+      engineConnExecutor.close()
+      val instances = getInstances(mark)
+      if (null != instances) {
+        instances.remove(engineConnExecutor.getServiceInstance)
+        if (instances.isEmpty) releaseMark(mark)
+      }
+    }
+    if (!getMarkCache().containsKey(mark)) MARK_REQ_CACHE_LOCKER.synchronized {
+      val marks = getMarkReqAndMarkCache().get(mark.getMarkReq)
+      if (null == marks || marks.isEmpty) {
+        getMarkReqAndMarkCache().remove(mark.getMarkReq)
+      } else {
+        val newMarks = marks.filter(!_.getMarkId().equals(mark.getMarkId()))
+        if (null == newMarks || newMarks.isEmpty) {
+          getMarkReqAndMarkCache().remove(mark.getMarkReq)
+        } else {
+          getMarkReqAndMarkCache().put(mark.getMarkReq, newMarks)
+        }
+        //getMarkReqAndMarkCache().put(mark.getMarkReq))
+      }
+    }
+  }
 
   protected def getAllInstances(): Array[String] = MARK_CACHE_LOCKER.synchronized {
     val instances = new ArrayBuffer[String]

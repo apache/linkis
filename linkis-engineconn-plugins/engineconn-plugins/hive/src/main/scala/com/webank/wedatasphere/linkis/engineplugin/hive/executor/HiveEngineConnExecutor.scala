@@ -280,8 +280,8 @@ class HiveEngineConnExecutor(id: Int,
 
 
   /**
-    * 在job完成之前，要将singleSqlProgressMap的剩余的内容全部变为成功
-    */
+   * Make the rest of the SinglesQLProgressMAP successful before the Job completes
+   */
   private def onComplete():Unit = {
     if (engineExecutorContext != null){
       val arrayBuffer:ArrayBuffer[JobProgressInfo] = new ArrayBuffer[JobProgressInfo]()

@@ -18,6 +18,8 @@ package com.webank.wedatasphere.linkis.httpclient.request
 
 import java.util
 
+import org.apache.http.entity.ContentType
+
 import scala.tools.nsc.interpreter.InputStream
 
 
@@ -27,7 +29,7 @@ trait UploadAction extends UserAction {
     * The file to be uploaded, the key is the parameter name, and the value is the file path.
     * 需要上传的文件，key为参数名，value为文件路径
     */
-  val files: util.Map[String, String]
+  @Deprecated val files: util.Map[String, String]
   /**
     * The inputStream that needs to be uploaded, the key is the parameter name, and the value is the input stream.
     * 需要上传的输入流，key为参数名，value为输入流
@@ -37,7 +39,20 @@ trait UploadAction extends UserAction {
     * The inputStream that needs to be uploaded, the key is the parameter name, and the value is the fileName of inputStream.
     * 需要上传的输入流，key为参数名，value为输入流的文件名
     */
-  def inputStreamNames: util.Map[String, String] = new util.HashMap[String, String]()
+  @Deprecated def inputStreamNames: util.Map[String, String] = new util.HashMap[String, String]()
+  def binaryBodies: util.List[BinaryBody] = new util.ArrayList[BinaryBody](0)
   def user: Option[String] = Option(getUser)
 
+}
+
+case class BinaryBody(parameterName: String, inputStream: InputStream, fileName: String, contentType: ContentType)
+object BinaryBody {
+  def apply(parameterName: String, inputStream: InputStream, fileName: String, contentType: String): BinaryBody =
+    new BinaryBody(parameterName, inputStream, fileName, ContentType.create(contentType))
+
+  def apply(parameterName: String, inputStream: InputStream): BinaryBody =
+    new BinaryBody(parameterName, inputStream, null, ContentType.DEFAULT_BINARY)
+
+  def apply(parameterName: String, inputStream: InputStream, fileName: String): BinaryBody =
+    new BinaryBody(parameterName, inputStream, fileName, ContentType.DEFAULT_BINARY)
 }

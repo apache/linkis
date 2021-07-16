@@ -33,7 +33,7 @@ object EngineConnServer extends Logging {
   def main(args: Array[String]): Unit = {
     info("<<---------------------EngineConnServer Start --------------------->>")
 
-    Utils.tryCatch {
+    try {
       // 1. 封装EngineCreationContext
       init(args)
       val isTestMode = Configuration.IS_TEST_MODE.getValue(engineCreationContext.getOptions)
@@ -59,7 +59,8 @@ object EngineConnServer extends Logging {
       EngineConnHook.getEngineConnHooks.foreach(_.afterExecutionExecute(getEngineCreationContext, engineConn))
       info("Finished to execute hook of afterExecutionExecute")
       EngineConnHook.getEngineConnHooks.foreach(_.afterEngineServerStartSuccess(getEngineCreationContext, engineConn))
-    } { t =>
+    } catch {
+      case t: Throwable =>
       EngineConnHook.getEngineConnHooks.foreach(_.afterEngineServerStartFailed(getEngineCreationContext, t))
       error("EngineConnServer Start Failed", t)
       System.exit(1)

@@ -199,6 +199,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
           upload.inputStreams.foreach { case (k, v) =>
             builder.addBinaryBody(k, v, ContentType.create("multipart/form-data"), k)
           }
+        upload.binaryBodies.foreach(binaryBody => builder.addBinaryBody(binaryBody.parameterName, binaryBody.inputStream, binaryBody.contentType, binaryBody.fileName))
         upload match {
           case get: GetAction => get.getParameters.
             retain((k, v) => v != null && k != null).

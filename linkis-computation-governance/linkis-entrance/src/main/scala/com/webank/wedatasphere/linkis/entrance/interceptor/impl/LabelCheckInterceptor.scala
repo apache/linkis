@@ -48,7 +48,7 @@ class LabelCheckInterceptor extends EntranceInterceptor {
       case requestPersistTask: JobRequest =>
         val labels = requestPersistTask.getLabels
         checkEngineTypeLabel(labels)
-        checkUserCreatorLabel(labels)
+        checkUserCreatorLabel(labels, jobRequest.getSubmitUser, jobRequest.getExecuteUser)
         jobRequest
       case _ => jobRequest
     }
@@ -66,12 +66,17 @@ class LabelCheckInterceptor extends EntranceInterceptor {
   }
 
 
-  private def checkUserCreatorLabel(labels: java.util.List[Label[_]]): Unit = {
+  private def checkUserCreatorLabel(labels: java.util.List[Label[_]], submitUser: String, executeUser: String): Unit = {
     val userCreatorLabelOption = labels.find(_.isInstanceOf[UserCreatorLabel])
     if (userCreatorLabelOption.isDefined) {
       val userCreator = userCreatorLabelOption.get.asInstanceOf[UserCreatorLabel]
       if (StringUtils.isNotBlank(userCreator.getUser)) {
+        val userInLabel = userCreator.getUser
+        if (userInLabel.equalsIgnoreCase(executeUser) && userInLabel.equalsIgnoreCase(submitUser)) {
         return
+        } else {
+          throw LabelCheckException(50080, s"SubmitUser : ${submitUser} must be the same as ExecuteUser : ${executeUser} , and user : ${userInLabel} in userCreatorLabel.")
+        }
       }
     }
     throw LabelCheckException(50079, "UserCreatorLabel must be need")

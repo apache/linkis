@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package com.webank.wedatasphere.linkis.manager.am.service.em
 
 import java.util.concurrent.TimeUnit
@@ -30,7 +29,6 @@ import com.webank.wedatasphere.linkis.protocol.label.NodeLabelRemoveRequest
 import com.webank.wedatasphere.linkis.rpc.utils.RPCUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-
 
 @Service
 class DefaultEMUnregisterService extends EMUnregisterService with Logging {
@@ -55,11 +53,12 @@ class DefaultEMUnregisterService extends EMUnregisterService with Logging {
     emClearRequest.setEm(node)
     emClearRequest.setUser(stopEMRequest.getUser)
     val job = smc.publish(emClearRequest)
+    Utils.tryAndWarn(job.get(AMConfiguration.STOP_ENGINE_WAIT.getValue.toLong, TimeUnit.MILLISECONDS))
     // clear Label
     val instanceLabelRemoveRequest = new NodeLabelRemoveRequest(node.getServiceInstance, false)
     val labelJob = smc.publish(instanceLabelRemoveRequest)
-    Utils.tryAndWarn(job.get(AMConfiguration.STOP_ENGINE_WAIT.getValue.toLong, TimeUnit.MILLISECONDS))
     Utils.tryAndWarn(labelJob.get(AMConfiguration.STOP_ENGINE_WAIT.getValue.toLong, TimeUnit.MILLISECONDS))
+    //此处需要先清理ECM再等待，避免ECM重启过快，导致ECM资源没清理干净
     clearEMInstanceInfo(emClearRequest)
     info(s" user ${stopEMRequest.getUser} finished to stop em ${stopEMRequest.getEm}")
   }

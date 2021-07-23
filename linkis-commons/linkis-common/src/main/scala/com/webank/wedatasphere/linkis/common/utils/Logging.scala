@@ -25,39 +25,39 @@ trait Logging {
 
   def trace(message: => String) = {
     if (logger.isTraceEnabled) {
-      logger.trace(message.toString)
+      logger.trace(message)
     }
   }
 
   def debug(message: => String): Unit = {
     if (logger.isDebugEnabled) {
-      logger.debug(message.toString)
+      logger.debug(message)
     }
   }
 
   def info(message: => String): Unit = {
     if (logger.isInfoEnabled) {
-      logger.info(message.toString)
+      logger.info(message)
     }
   }
 
   def info(message: => String, t: Throwable): Unit = {
-    logger.info(message.toString, t)
+    logger.info(message, t)
   }
 
   def warn(message: => String): Unit = {
-    logger.warn(message.toString)
+    logger.warn(message)
   }
 
   def warn(message: => String, t: Throwable): Unit = {
-    logger.warn(message.toString, t)
+    logger.warn(message, t)
   }
 
   def error(message: => String, t: Throwable): Unit = {
-    logger.error(message.toString, t)
+    logger.error(message, t)
   }
 
   def error(message: => String): Unit = {
-    logger.error(message.toString)
+    logger.error(message)
   }
 }

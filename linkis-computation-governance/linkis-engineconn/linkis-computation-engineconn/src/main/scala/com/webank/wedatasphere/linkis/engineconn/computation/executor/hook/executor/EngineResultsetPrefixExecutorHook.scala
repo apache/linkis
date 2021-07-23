@@ -22,7 +22,7 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.utlis.ComputaionEngineContant.JOB_IN_RUNTIME_MAP_KEY
+import com.webank.wedatasphere.linkis.engineconn.computation.executor.utlis.ComputationEngineConstant.JOB_IN_RUNTIME_MAP_KEY
 import com.webank.wedatasphere.linkis.governance.common.utils.GovernanceConstant
 import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper

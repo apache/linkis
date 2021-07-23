@@ -27,13 +27,15 @@ import scala.collection.convert.decorateAsScala._
 
 object EngineConnExecution extends Logging {
 
-  private val engineExecutions = initEngineExecutions.sortBy(_.getOrder)
+  private val engineExecutions = initEngineExecutions
+
+  info("The list of EngineConnExecution: " + engineExecutions.toList)
 
   private def initEngineExecutions: Array[EngineConnExecution] = {
     Utils.tryThrow {
       val reflections = ClassUtils.reflections
       val allSubClass = reflections.getSubTypesOf(classOf[EngineConnExecution])
-      allSubClass.asScala.filter(! ClassUtils.isInterfaceOrAbstract(_)).map(_.newInstance).toArray
+      allSubClass.asScala.filter(!ClassUtils.isInterfaceOrAbstract(_)).map(_.newInstance).toArray.sortBy(_.getOrder)
     }(t => throw new EngineConnBuildFailedException(20000, "Cannot instance EngineConnExecution.", t))
   }
 

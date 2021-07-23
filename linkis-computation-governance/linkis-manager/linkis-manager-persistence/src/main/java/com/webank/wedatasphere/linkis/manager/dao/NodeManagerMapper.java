@@ -6,7 +6,6 @@ import org.springframework.dao.DuplicateKeyException;
 
 import java.util.List;
 
-
 @Mapper
 public interface NodeManagerMapper {
 
@@ -71,7 +70,7 @@ public interface NodeManagerMapper {
     })
     PersistenceNode getNodeInstanceById(@Param("id") int id);
 
-    @Select("select * from linkis_cg_manager_service_instance where instance in (select em_instance from linkis_cg_manager_engine_em where engine_instance in (select instance from linkis_cg_manager_service_instance where instance=#{instance}))")
+    @Select("select * from linkis_cg_manager_service_instance where instance in (select em_instance from linkis_cg_manager_engine_em where engine_instance=#{instance})")
     @Results({
             @Result(property = "updateTime", column = "update_time"),
             @Result(property = "createTime", column = "create_time")
@@ -80,7 +79,7 @@ public interface NodeManagerMapper {
 
 
 
-    @Select("select * from linkis_cg_manager_service_instance where instance in ( select engine_instance from linkis_cg_manager_engine_em where em_instance in (select instance from linkis_cg_manager_service_instance where instance=#{instance}))")
+    @Select("select * from linkis_cg_manager_service_instance where instance in ( select engine_instance from linkis_cg_manager_engine_em where em_instance=#{instance})")
     @Results({
             @Result(property = "updateTime", column = "update_time"),
             @Result(property = "createTime", column = "create_time")

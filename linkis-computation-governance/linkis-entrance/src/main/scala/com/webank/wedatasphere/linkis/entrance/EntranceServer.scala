@@ -15,20 +15,14 @@ package com.webank.wedatasphere.linkis.entrance
 
 import com.webank.wedatasphere.linkis.common.exception.{ErrorException, LinkisException, LinkisRuntimeException}
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.entrance.event.{EntranceJobLogEvent, EntranceLogEvent, EntranceLogListener}
 import com.webank.wedatasphere.linkis.entrance.exception.{EntranceErrorException, SubmitFailedException}
-import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
+import com.webank.wedatasphere.linkis.entrance.execute.{EntranceExecutorManager, EntranceJob}
 import com.webank.wedatasphere.linkis.entrance.log.LogReader
 import com.webank.wedatasphere.linkis.entrance.timeout.JobTimeoutManager
-import com.webank.wedatasphere.linkis.governance.common.constant.job.JobRequestConstants
 import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
-import com.webank.wedatasphere.linkis.governance.common.protocol.job.{JobReqUpdate, JobRespProtocol}
 import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.scheduler.queue.{Job, SchedulerEvent, SchedulerEventState}
+import com.webank.wedatasphere.linkis.scheduler.queue.{Job, SchedulerEventState}
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
-import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
 
 
@@ -51,7 +45,7 @@ abstract class EntranceServer extends Logging {
     * @return
     */
   def execute(params: java.util.Map[String, Any]): String = {
-    if(!params.containsKey(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)) info("received a request: " + params)
+    if(!params.containsKey(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)) debug("received a request: " + params)
     else params.remove(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)
     var jobRequest = getEntranceContext.getOrCreateEntranceParser().parseToTask(params)
     // tod multi entrance instances
@@ -63,6 +57,8 @@ abstract class EntranceServer extends Logging {
     if (null == jobRequest.getId || jobRequest.getId <= 0) {
       throw new EntranceErrorException(20052, "Persist jobRequest error, please submit again later(存储Job异常，请稍后重新提交任务)")
     }
+    info(s"received a request,convert $jobRequest ")
+
     val logAppender = new java.lang.StringBuilder()
     Utils.tryThrow(getEntranceContext.getOrCreateEntranceInterceptors().foreach(int => jobRequest = int.apply(jobRequest, logAppender))) { t =>
       val error = t match {
@@ -84,7 +80,6 @@ abstract class EntranceServer extends Logging {
       error
     }
 
-    getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(jobRequest)
     val job = getEntranceContext.getOrCreateEntranceParser().parseToJob(jobRequest)
     Utils.tryThrow{
       job.init()
@@ -105,14 +100,21 @@ abstract class EntranceServer extends Logging {
       }
 
       getEntranceContext.getOrCreateScheduler().submit(job)
-      logger.info(s"Job with jobId : ${job.getId} and execID : ${job.getId()} submitted ")
+      val msg = s"Job with jobId : ${job.getId} and execID : ${job.getId()} submitted "
+      logger.info(msg)
       job match {
         case entranceJob: EntranceJob =>
-          getEntranceContext.getOrCreateExecutorManager.setJobExecIdAndEntranceJob(entranceJob.getId, entranceJob)
+          getEntranceContext.getOrCreateScheduler().getSchedulerContext.getOrCreateExecutorManager match {
+            case entranceExecutorManager: EntranceExecutorManager =>
+              entranceExecutorManager.setJobExecIdAndEntranceJob(entranceJob.getId, entranceJob)
+            case _ =>
+          }
           entranceJob.getJobRequest.setReqId(job.getId())
           if(jobTimeoutManager.timeoutCheck && JobTimeoutManager.hasTimeoutLabel(entranceJob)) jobTimeoutManager.add(job.getId(), entranceJob)
+          entranceJob.getLogListener.foreach(_.onLogUpdate(entranceJob, msg))
         case _ =>
       }
+      getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(jobRequest)
       job.getId()
     }{t =>
       job.onFailure("Submitting the query failed!(提交查询失败！)", t)

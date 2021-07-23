@@ -21,62 +21,74 @@ import java.util
 import com.webank.wedatasphere.linkis.bml.client.AbstractBmlClient
 import com.webank.wedatasphere.linkis.bml.common._
 import com.webank.wedatasphere.linkis.bml.conf.BmlConfiguration._
+import com.webank.wedatasphere.linkis.bml.http.HttpConf
 import com.webank.wedatasphere.linkis.bml.protocol._
 import com.webank.wedatasphere.linkis.bml.request._
 import com.webank.wedatasphere.linkis.bml.response.{BmlCreateBmlProjectResult, _}
 import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.io.FsPath
+import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.httpclient.authentication.AuthenticationStrategy
-import com.webank.wedatasphere.linkis.httpclient.config.{ClientConfig, ClientConfigBuilder}
+import com.webank.wedatasphere.linkis.httpclient.config.ClientConfigBuilder
 import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
 import com.webank.wedatasphere.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy
 import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig
 import com.webank.wedatasphere.linkis.storage.FSFactory
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
-import org.slf4j.{Logger, LoggerFactory}
 
-class HttpBmlClient(serverUrl: String) extends AbstractBmlClient {
+class HttpBmlClient(clientConfig: DWSClientConfig,
+                   serverUrl: String,
+                   properties: util.Map[String, Any]) extends AbstractBmlClient  with Logging {
 
-  private val logger:Logger = LoggerFactory.getLogger(classOf[HttpBmlClient])
+  def this(serverUrl: String) = this(null, null, null)
 
-  val DEFAULT_CLIENT_NAME:String = "BML-Client"
-  var dwsClientConfig:DWSClientConfig = null
-  var dwsClient:DWSHttpClient = null
-  val FIRST_VERSION:String = "v000001"
+  def this() = this(null, null, null)
 
-  override def init(): Unit = {
-    val config = if (this.properties == null) {
-      new util.HashMap[String, Any]()
-    } else {
-      this.properties
-    }
+  def this(clientConfig: DWSClientConfig) = this(clientConfig, null, null)
 
-    val maxConnection:Int = config.getOrDefault(CONNECTION_MAX_SIZE_SHORT_NAME, CONNECTION_MAX_SIZE.getValue).asInstanceOf[Int]
-    val connectTimeout:Int = config.getOrDefault(CONNECTION_TIMEOUT_SHORT_NAME, CONNECTION_TIMEOUT.getValue).asInstanceOf[Int]
-    val readTimeout:Int = config.getOrDefault(CONNECTION_READ_TIMEOUT_SHORT_NAME, CONNECTION_READ_TIMEOUT.getValue).asInstanceOf[Int]
-    val tokenKey = config.getOrDefault(AUTH_TOKEN_KEY_SHORT_NAME, AUTH_TOKEN_KEY.getValue).asInstanceOf[String]
-    val tokenValue = config.getOrDefault(AUTH_TOKEN_VALUE_SHORT_NAME, AUTH_TOKEN_VALUE.getValue).asInstanceOf[String]
-    val clientName = config.getOrDefault(CLIENT_NAME_SHORT_NAME, DEFAULT_CLIENT_NAME).asInstanceOf[String]
-
-    val authenticationStrategy:AuthenticationStrategy = new TokenAuthenticationStrategy()
-    val clientConfig:ClientConfig = ClientConfigBuilder.newBuilder()
-      .addServerUrl(serverUrl)
-      .connectionTimeout(connectTimeout)
-      .discoveryEnabled(false)
-      .loadbalancerEnabled(false)
-      .maxConnectionSize(maxConnection)
-      .retryEnabled(false)
-      .readTimeout(readTimeout)
-      .setAuthenticationStrategy(authenticationStrategy)
-      .setAuthTokenKey(tokenKey)
-      .setAuthTokenValue(tokenValue)
-      .build()
-
-    dwsClientConfig = new DWSClientConfig(clientConfig)
-    dwsClientConfig.setDWSVersion(Configuration.LINKIS_WEB_VERSION.getValue)
-    dwsClient = new DWSHttpClient(dwsClientConfig, clientName)
+  def this(serverUrl: String, properties: util.Map[String, Any]) = {
+    this(null, serverUrl, properties)
   }
+
+  private val clientName = if(properties == null) "BML-Client"
+      else properties.getOrDefault(CLIENT_NAME_SHORT_NAME, "BML-Client").asInstanceOf[String]
+    private val dwsClient = new DWSHttpClient(if(clientConfig != null) clientConfig else createClientConfig(), clientName)
+    val FIRST_VERSION = "v000001"
+
+  private def createClientConfig(): DWSClientConfig = {
+      val _serverUrl = if(StringUtils.isEmpty(serverUrl)) HttpConf.gatewayInstance else serverUrl
+      if(StringUtils.isEmpty(_serverUrl)) throw BmlClientFailException("serverUrl cannot be null.")
+      val config = if (properties == null) {
+        new util.HashMap[String, Object]()
+      } else {
+        properties
+      }
+
+      val maxConnection:Int = config.getOrDefault(CONNECTION_MAX_SIZE_SHORT_NAME, CONNECTION_MAX_SIZE.getValue).asInstanceOf[Int]
+      val connectTimeout:Int = config.getOrDefault(CONNECTION_TIMEOUT_SHORT_NAME, CONNECTION_TIMEOUT.getValue).asInstanceOf[Int]
+      val readTimeout:Int = config.getOrDefault(CONNECTION_READ_TIMEOUT_SHORT_NAME, CONNECTION_READ_TIMEOUT.getValue).asInstanceOf[Int]
+      val tokenKey = config.getOrDefault(AUTH_TOKEN_KEY_SHORT_NAME, AUTH_TOKEN_KEY.getValue).asInstanceOf[String]
+      val tokenValue = config.getOrDefault(AUTH_TOKEN_VALUE_SHORT_NAME, AUTH_TOKEN_VALUE.getValue).asInstanceOf[String]
+
+      val authenticationStrategy:AuthenticationStrategy = new TokenAuthenticationStrategy()
+      val clientConfig = ClientConfigBuilder.newBuilder()
+        .addServerUrl(_serverUrl)
+        .connectionTimeout(connectTimeout)
+        .discoveryEnabled(false)
+        .loadbalancerEnabled(false)
+        .maxConnectionSize(maxConnection)
+        .retryEnabled(false)
+        .readTimeout(readTimeout)
+        .setAuthenticationStrategy(authenticationStrategy)
+        .setAuthTokenKey(tokenKey)
+        .setAuthTokenValue(tokenValue)
+        .build()
+
+      val dwsClientConfig = new DWSClientConfig(clientConfig)
+      dwsClientConfig.setDWSVersion(Configuration.LINKIS_WEB_VERSION.getValue)
+      dwsClientConfig
+   }
 
   override def downloadResource(user:String, resourceID: String): BmlDownloadResponse = {
     downloadResource(user, resourceID, "")

@@ -26,12 +26,17 @@ public enum AMErrorCode {
 
     UNSUPPORT_VALUE(21002,"unsupport value(不支持的值类型)"),
 
-    PARAM_ERROR(210003,"param error(参数错误)")
+    PARAM_ERROR(210003,"param error(参数错误)"),
 
+    NOT_EXISTS_ENGINE_CONN(210003,"Not exists EngineConn(不存在的引擎)"),
+
+    AM_CONF_ERROR(210004,"AM configuration error(AM配置错误)")
     ;
 
 
     AMErrorCode(int errorCode, String message) {
+        this.code = errorCode;
+        this.message = message;
     }
 
     private int code;

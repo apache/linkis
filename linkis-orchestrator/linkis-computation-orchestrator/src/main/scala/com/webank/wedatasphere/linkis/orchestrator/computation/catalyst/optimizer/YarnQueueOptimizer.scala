@@ -28,7 +28,7 @@ import com.webank.wedatasphere.linkis.orchestrator.plans.logical.{LogicalContext
  */
 class YarnQueueOptimizer  extends OptimizerTransform with Logging {
 
-  override def apply(in: Task, context: LogicalContext): Task = ???
+  override def apply(in: Task, context: LogicalContext): Task = null
 
-  override def getName: String = ???
+  override def getName: String = "YarnQueueOptimizer"
 }

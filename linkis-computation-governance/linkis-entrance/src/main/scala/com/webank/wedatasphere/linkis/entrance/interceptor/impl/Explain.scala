@@ -109,7 +109,7 @@ object SQLExplain extends Explain {
       case e:Exception => logger.warn("sql limit check error happens")
         executionCode.contains(IDE_ALLOW_NO_LIMIT)
     }
-    if (isNoLimitAllowed) logAppender.append(LogUtils.generateWarn("please attention ,SQL full export mode opens(请注意,SQL全量导出模式打开)\n"))
+    if (isNoLimitAllowed) logAppender.append(LogUtils.generateWarn("please pay attention ,SQL full export mode opened(请注意,SQL全量导出模式打开)\n"))
     if(tempCode.contains("""\;""")){
       val semicolonIndexes = findRealSemicolonIndex(tempCode)
       var oldIndex = 0
@@ -180,8 +180,8 @@ object SQLExplain extends Explain {
     }
     //如果一段sql是 --xxx回车select * from default.users，那么他也是select语句
     val realCode = cleanComment(code)
-    val tmpRealCode = realCode.trim.split("\\s+")(0)
-    tmpRealCode.equalsIgnoreCase("select") || tmpRealCode.equalsIgnoreCase("select*")
+    // 以前，在判断，对于select* from xxx这样的SQL时会出现问题的，但是这种语法hive是支持的
+    realCode.trim.split("\\s+")(0).toLowerCase.contains("select")
   }
 
   def continueWhenError = false

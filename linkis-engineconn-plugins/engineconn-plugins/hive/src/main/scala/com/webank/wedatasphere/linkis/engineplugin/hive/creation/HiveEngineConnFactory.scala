@@ -59,11 +59,17 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
     hiveConf.setVar(HiveConf.ConfVars.HIVEJAR, HiveUtils.jarOfClass(classOf[Driver])
       .getOrElse(throw HiveSessionStartFailedException(40012, "cannot find hive-exec.jar, start session failed!")))
     options.foreach { case (k, v) => info(s"key is $k, value is $v") }
-    options.filter { case (k, v) => k.startsWith("hive.") || k.startsWith("mapreduce.") || k.startsWith("wds.linkis.") }.foreach { case (k, v) =>
+    options.filter { case (k, v) => k.startsWith("hive.") || k.startsWith("mapreduce.") || k.startsWith("mapred.reduce.") || k.startsWith("wds.linkis.") }.foreach { case (k, v) =>
       info(s"key is $k, value is $v")
       if (BDP_QUEUE_NAME.equals(k)) hiveConf.set(HIVE_QUEUE_NAME, v) else hiveConf.set(k, v)
     }
     hiveConf.setVar(HiveConf.ConfVars.HIVE_HADOOP_CLASSPATH, HiveEngineConfiguration.HIVE_LIB_HOME.getValue + "/*")
+    if(HiveEngineConfiguration.ENABLE_FETCH_BASE64){
+      hiveConf.setVar(HiveConf.ConfVars.HIVEFETCHOUTPUTSERDE,HiveEngineConfiguration.BASE64_SERDE_CLASS)
+      hiveConf.set("enable_fetch_base64","true")
+    }else{
+      hiveConf.set("enable_fetch_base64","false")
+    }
     /* //Update by peaceWong add hook to HiveDriver
      if (StringUtils.isNotBlank(EnvConfiguration.LINKIS_HIVE_POST_HOOKS)) {
        val hooks = if (StringUtils.isNotBlank(hiveConf.get("hive.exec.post.hooks"))) {

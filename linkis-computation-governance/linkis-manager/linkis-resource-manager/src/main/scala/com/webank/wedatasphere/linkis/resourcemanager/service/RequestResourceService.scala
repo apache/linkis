@@ -22,32 +22,38 @@ import com.webank.wedatasphere.linkis.manager.common.entity.resource._
 import com.webank.wedatasphere.linkis.resourcemanager.domain.RMLabelContainer
 import com.webank.wedatasphere.linkis.resourcemanager.exception.RMWarnException
 import com.webank.wedatasphere.linkis.resourcemanager.utils.RMUtils.aggregateResource
-import com.webank.wedatasphere.linkis.resourcemanager.utils.{AlertUtils, RMConfiguration, UserConfiguration}
+import com.webank.wedatasphere.linkis.resourcemanager.utils.{AlertUtils, RMConfiguration, RMUtils, UserConfiguration}
 
 abstract class RequestResourceService(labelResourceService: LabelResourceService) extends Logging{
 
   val resourceType: ResourceType = ResourceType.Default
 
+  val enableRequest = RMUtils.RM_REQUEST_ENABLE.getValue
+
   def canRequest(labelContainer: RMLabelContainer, resource: NodeResource): Boolean = {
     var labelResource = labelResourceService.getLabelResource(labelContainer.getCurrentLabel)
     // for configuration resource
-    if(labelContainer.getCurrentLabel.equals(labelContainer.getCombinedUserCreatorEngineTypeLabel)){
+    if(labelContainer.getCombinedUserCreatorEngineTypeLabel.equals(labelContainer.getCurrentLabel)){
       if(labelResource == null) {
         labelResource = new CommonNodeResource
         labelResource.setResourceType(resource.getResourceType)
         labelResource.setUsedResource(Resource.initResource(resource.getResourceType))
         labelResource.setLockedResource(Resource.initResource(resource.getResourceType))
+        info(s"ResourceInit:${labelContainer.getCurrentLabel.getStringValue}")
       }
       val configuredResource = UserConfiguration.getUserConfiguredResource(resource.getResourceType, labelContainer.getUserCreatorLabel, labelContainer.getEngineTypeLabel)
-      info(s"Get configured resource ${configuredResource} for [${labelContainer.getUserCreatorLabel}] and [${labelContainer.getEngineTypeLabel}]")
+      debug(s"Get configured resource ${configuredResource} for [${labelContainer.getUserCreatorLabel}] and [${labelContainer.getEngineTypeLabel}]")
       labelResource.setMaxResource(configuredResource)
       labelResource.setMinResource(Resource.initResource(labelResource.getResourceType))
       labelResource.setLeftResource(labelResource.getMaxResource - labelResource.getUsedResource - labelResource.getLockedResource)
+      labelResourceService.setLabelResource(labelContainer.getCurrentLabel, labelResource)
+      info(s"${labelContainer.getCurrentLabel} to request [${resource.getMinResource}]  \t labelResource: Max: ${labelResource.getMaxResource}  \t " +
+        s"use:  ${labelResource.getUsedResource}  \t locked: ${labelResource.getLockedResource}")
     }
-    info(s"Label [${labelContainer.getCurrentLabel}] has resource + [${labelResource }]")
+    debug(s"Label [${labelContainer.getCurrentLabel}] has resource + [${labelResource }]")
     if(labelResource != null){
-      val labelAvailableResource = labelResource.getLeftResource - labelResource.getMinResource
-      if(labelAvailableResource < resource.getMinResource){
+      val labelAvailableResource = labelResource.getLeftResource
+      if(labelAvailableResource < resource.getMinResource && enableRequest){
         info(s"Failed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${resource.getMinResource}] > label available resource[${labelAvailableResource}]")
         // TODO sendAlert(moduleInstance, user, creator, requestResource, moduleAvailableResource.resource, moduleLeftResource)
         val notEnoughMessage = generateNotEnoughMessage(aggregateResource(labelResource.getUsedResource, labelResource.getLockedResource), labelAvailableResource)
@@ -81,35 +87,35 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
   def generateNotEnoughMessage(requestResource: Resource, availableResource: Resource) : (Int, String) = {
     requestResource match {
       case m: MemoryResource =>
-        (11011, s"The remote server is out of memory resources(远程服务器内存资源不足。)")
+        (11011, s"Drive memory resources are insufficient, to reduce the drive memory(内存资源不足，建议调小驱动内存)")
       case c: CPUResource =>
-        (11012, s"Insufficient CPU resources on remote server (远程服务器CPU资源不足。)")
+        (11012, s"CPU resources are insufficient, to reduce the number of driver cores(CPU资源不足，建议调小驱动核数)")
       case i: InstanceResource =>
-        (11013, s"The remote server is out of resources (远程服务器资源不足。)")
+        (11013, s"Insufficient number of instances, idle engines can be killed(实例数不足，可以kill空闲的引擎)")
       case l: LoadResource =>
         val loadAvailable = availableResource.asInstanceOf[LoadResource]
         if(l.cores > loadAvailable.cores){
-          (11012, s"Insufficient CPU resources on remote server (远程服务器CPU资源不足。)")
+          (11012, s"CPU resources are insufficient, to reduce the number of driver cores(CPU资源不足，建议调小驱动核数)")
         } else {
-          (11011, s"The remote server is out of memory resources(远程服务器内存资源不足。)")
+          (11011, s"Drive memory resources are insufficient, to reduce the drive memory(内存资源不足，建议调小驱动内存)")
         }
       case li: LoadInstanceResource =>
         val loadInstanceAvailable = availableResource.asInstanceOf[LoadInstanceResource]
         if(li.cores > loadInstanceAvailable.cores){
-          (11012, s"Insufficient CPU resources on remote server (远程服务器CPU资源不足。)")
+          (11012, s"CPU resources are insufficient, to reduce the number of driver cores(CPU资源不足，建议调小驱动核数)")
         } else if (li.memory > loadInstanceAvailable.memory) {
-          (11011, s"The remote server is out of memory resources(远程服务器内存资源不足。)")
+          (11011, s"Drive memory resources are insufficient, to reduce the drive memory(内存资源不足，建议调小驱动内存)")
         } else {
-          (11013, s"The remote server is out of resources (远程服务器资源不足。)")
+          (11013, s"Insufficient number of instances, idle engines can be killed(实例数不足，可以kill空闲的引擎)")
         }
       case yarn: YarnResource =>
         val yarnAvailable = availableResource.asInstanceOf[YarnResource]
         if(yarn.queueCores > yarnAvailable.queueCores){
-          (11014, s"The queue CPU resources are insufficient, it is recommended to reduce the number of executors(队列CPU资源不足，建议调小执行器个数。)")
+          (11014, s"Queue CPU resources are insufficient, reduce the number of executors.(队列CPU资源不足，建议调小执行器个数)")
         } else if (yarn.queueMemory > yarnAvailable.queueMemory){
-          (11015, s"Insufficient queue memory resources, it is recommended to reduce the actuator memory (队列内存资源不足，建议调小执行器内存。)")
+          (11015, s"Insufficient queue memory resources, reduce the executor memory")
         } else {
-          (11016, s"Number of queue instances exceeds limit (队列实例数超过限制。)")
+          (11016, s"Insufficient number of queue instances, idle engines can be killed(队列实例数不足，可以kill空闲的引擎)")
         }
       case dy: DriverAndYarnResource =>
         val dyAvailable = availableResource.asInstanceOf[DriverAndYarnResource]
@@ -117,10 +123,10 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
           dy.loadInstanceResource.cores > dyAvailable.loadInstanceResource.cores ||
           dy.loadInstanceResource.instances > dyAvailable.loadInstanceResource.instances){
           val detail = generateNotEnoughMessage(dy.loadInstanceResource, dyAvailable.loadInstanceResource)
-          (detail._1, s"Request a server resource, ${detail._2} 请求服务器资源时，${detail._2}")
+          (detail._1, s"When requesting server resources，${detail._2}")
         } else {
           val detail = generateNotEnoughMessage(dy.yarnResource, dyAvailable.yarnResource)
-          (detail._1, s"Request a server resource, ${detail._2} 请求队列资源时，${detail._2}")
+          (detail._1, s"When requesting server resources，${detail._2}")
         }
       case s: SpecialResource => throw new RMWarnException(11003,"not supported resource type " + s.getClass)
       case r: Resource => throw new RMWarnException(11003,"not supported resource type " + r.getClass)

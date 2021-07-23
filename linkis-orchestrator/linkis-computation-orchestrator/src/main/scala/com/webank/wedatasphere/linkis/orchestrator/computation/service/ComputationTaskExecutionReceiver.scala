@@ -17,6 +17,7 @@
 
 package com.webank.wedatasphere.linkis.orchestrator.computation.service
 
+import com.webank.wedatasphere.linkis.common.log.LogUtils
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.governance.common.entity.ExecutionNodeStatus
 import com.webank.wedatasphere.linkis.governance.common.protocol.task._
@@ -58,15 +59,17 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
         val failedTaskMap = synchronized {
           taskToExecutorCache.filter(_._2.getEngineConnExecutor.getServiceInstance.equals(failedEngineServiceInstance))
         }
-        if (null != failedTaskMap && !failedTaskMap.isEmpty)  {
+        if (null != failedTaskMap && failedTaskMap.nonEmpty)  {
           failedTaskMap.foreach{
             case (taskId, executor) =>
               val execTask = executor.getExecTask
               Utils.tryAndError {
-                info(s"Will kill task ${execTask.getId} because the engine quitted unexpectedly.")
-                val logEvent = TaskLogEvent(execTask, s"Your job : ${taskId} was failed because the engine quitted unexpectedly.")
+                warn(s"Will kill task ${execTask.getIDInfo()} because the engine ${executor.getEngineConnExecutor.getServiceInstance.toString} quited unexpectedly.")
+                val errLog = LogUtils.generateERROR(s"Your job : ${execTask.getIDInfo()} was failed because the engine quitted unexpectedly(任务${execTask.getIDInfo()}失败，" +
+                  s"原因是引擎意外退出,可能是复杂任务导致引擎退出，如OOM).")
+                val logEvent = TaskLogEvent(execTask, errLog)
                 execTask.getPhysicalContext.pushLog(logEvent)
-                val errorResponseEvent = TaskErrorResponseEvent(execTask, "Engine quitted unexpectedly.")
+                val errorResponseEvent = TaskErrorResponseEvent(execTask, "task failed，Engine quitted unexpectedly(任务运行失败原因是引擎意外退出,可能是复杂任务导致引擎退出，如OOM).")
                 execTask.getPhysicalContext.broadcastSyncEvent(errorResponseEvent)
                 val statusEvent = TaskStatusEvent(execTask, ExecutionNodeStatus.Failed)
                 execTask.getPhysicalContext.broadcastSyncEvent(statusEvent)
@@ -82,6 +85,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
     codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, taskLog.execId).foreach { codeExecutor =>
       val event = TaskLogEvent(codeExecutor.getExecTask, taskLog.log)
       codeExecutor.getExecTask.getPhysicalContext.pushLog(event)
+      codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
       //asyncListenerBus.post(event)
     }
   }
@@ -92,6 +96,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
     codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, taskProgress.execId).foreach{ codeExecutor =>
       val event = TaskProgressEvent(codeExecutor.getExecTask, taskProgress.progress, taskProgress.progressInfo)
       codeExecutor.getExecTask.getPhysicalContext.pushProgress(event)
+      codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
     }
   }
 
@@ -102,6 +107,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
       val event = TaskStatusEvent(codeExecutor.getExecTask, taskStatus.status)
       info(s"From engineConn receive status info:$taskStatus, now post to listenerBus event: $event")
       codeExecutor.getExecTask.getPhysicalContext.broadcastSyncEvent(event)
+      codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
     }
   }
 
@@ -112,6 +118,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
       val event = TaskResultSetSizeEvent(codeExecutor.getExecTask, taskResultSize.resultSize)
       info(s"From engineConn receive resultSet size info$taskResultSize, now post to listenerBus event: $event")
       codeExecutor.getExecTask.getPhysicalContext.broadcastSyncEvent(event)
+      codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
     }
   }
 
@@ -122,6 +129,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
       val event = TaskResultSetEvent(codeExecutor.getExecTask, ResultSet(taskResultSet.output, taskResultSet.alias))
       info(s"From engineConn receive resultSet  info $taskResultSet , now post to listenerBus event: $event")
       codeExecutor.getExecTask.getPhysicalContext.broadcastSyncEvent(event)
+      codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
     }
   }
 
@@ -136,6 +144,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
       val event = TaskErrorResponseEvent(codeExecutor.getExecTask, responseTaskError.errorMsg)
       info(s"From engineConn receive responseTaskError  info$responseTaskError, now post to listenerBus event: $event")
       codeExecutor.getExecTask.getPhysicalContext.broadcastSyncEvent(event)
+      codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
     }
 
   }

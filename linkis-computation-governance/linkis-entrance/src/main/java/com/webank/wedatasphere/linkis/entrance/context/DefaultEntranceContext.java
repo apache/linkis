@@ -120,10 +120,4 @@ public class DefaultEntranceContext extends EntranceContext {
         return this.logListenerBus;
     }
 
-
-    @Override
-    public EntranceExecutorManager getOrCreateExecutorManager() {
-        return (EntranceExecutorManager) getOrCreateScheduler().getSchedulerContext().getOrCreateExecutorManager();
-    }
-
 }

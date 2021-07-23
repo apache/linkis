@@ -56,12 +56,24 @@ class RMMessageService extends Logging {
 
   @Receiver
   def dealWithNodeHeartbeatMsg(nodeHeartbeatMsg: NodeHeartbeatMsg, smc: ServiceMethodContext): Unit = {
-    info(s"Start to deal with nodeHeartbeatMsg resource info $nodeHeartbeatMsg")
-    val labels = nodeLabelService.getNodeLabels(nodeHeartbeatMsg.getServiceInstance)
+    debug(s"Start to deal with nodeHeartbeatMsg resource info $nodeHeartbeatMsg")
+    /*val labels = nodeLabelService.getNodeLabels(nodeHeartbeatMsg.getServiceInstance)
     if (managerLabelService.isEngine(labels) && !nodeHeartbeatMsg.getStatus.equals(NodeStatus.ShuttingDown)) {
       resourceManager.resourceReport(labels, nodeHeartbeatMsg.getNodeResource)
-    }
-    info(s"Finished to deal with nodeHeartbeatMsg resource info $nodeHeartbeatMsg")
+    }*/
+    debug(s"Finished to deal with nodeHeartbeatMsg resource info $nodeHeartbeatMsg")
+    /* info(s"Start to deal with resourceUsedProtocol $nodeHeartbeatMsg")
+     val labels = nodeLabelService.getNodeLabels(nodeHeartbeatMsg.getServiceInstance)
+     resourceManager.resourceUsed(labels, nodeHeartbeatMsg.getNodeResource)
+     if(managerLabelService.isEM(nodeHeartbeatMsg.getServiceInstance)){
+       //resourceManager.register(nodeHeartbeatMsg.getServiceInstance, nodeHeartbeatMsg.getNodeResource)
+     } else if(managerLabelService.isEngine(nodeHeartbeatMsg.getServiceInstance)){
+       info(s"Start to deal with resourceUsedProtocol $nodeHeartbeatMsg")
+
+
+     } else {
+       info(s"${nodeHeartbeatMsg.getServiceInstance} is neither EM nor Engine")
+     }*/
   }
 
 
@@ -77,7 +89,7 @@ class RMMessageService extends Logging {
     resourceManager.register(registerEMRequest.getServiceInstance, registerEMRequest.getNodeResource)
   }
 
-  @Receiver
+
   def dealWithStopEMRequest(stopEMRequest: StopEMRequest, smc: ServiceMethodContext): Unit = {
     resourceManager.unregister(stopEMRequest.getEm)
   }

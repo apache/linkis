@@ -38,6 +38,9 @@ class CacheLogReader(logPath:String ,
 
   var fileSystem:Fs = _
 
+  var closed = false
+
+
   private def createInputStream: InputStream = {
     if (fileSystem == null) this synchronized {
       if (fileSystem == null){
@@ -104,6 +107,7 @@ class CacheLogReader(logPath:String ,
       })
       fileSystem = null
     }
+    closed = true
   }
 }
 

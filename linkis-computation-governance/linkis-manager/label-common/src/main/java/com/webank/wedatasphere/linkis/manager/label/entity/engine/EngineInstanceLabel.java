@@ -20,12 +20,13 @@ import com.webank.wedatasphere.linkis.common.ServiceInstance;
 import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant;
 import com.webank.wedatasphere.linkis.manager.label.entity.EngineNodeLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.GenericLabel;
+import com.webank.wedatasphere.linkis.manager.label.entity.ResourceLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.annon.ValueSerialNum;
 import com.webank.wedatasphere.linkis.manager.label.entity.node.NodeInstanceLabel;
 
 import java.util.HashMap;
 
-public class EngineInstanceLabel extends GenericLabel implements NodeInstanceLabel, EngineNodeLabel {
+public class EngineInstanceLabel extends GenericLabel implements NodeInstanceLabel, EngineNodeLabel, ResourceLabel {
 
     public EngineInstanceLabel() {
         setLabelKey(LabelKeyConstant.ENGINE_INSTANCE_KEY);

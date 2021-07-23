@@ -29,5 +29,7 @@ object ComputationExecutorConf {
   val ENGINE_MAX_TASK_EXECUTE_NUM = CommonVars("wds.linkis.engineconn.max.task.execute.num", 0)
 
 
-  val ENGINE_PROGRESS_FETCH_INTERVAL = CommonVars("wds.linkis.engineconn.progresss.fetch.interval-in-seconds", 3)
+  val ENGINE_PROGRESS_FETCH_INTERVAL = CommonVars("wds.linkis.engineconn.progresss.fetch.interval-in-seconds", 5)
+
+  val UDF_LOAD_FAILED_IGNORE = CommonVars("wds.linkis.engineconn.udf.load.ignore", true)
 }

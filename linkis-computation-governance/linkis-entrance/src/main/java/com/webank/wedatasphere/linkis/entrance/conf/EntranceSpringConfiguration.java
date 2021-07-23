@@ -14,11 +14,11 @@
 package com.webank.wedatasphere.linkis.entrance.conf;
 
 import com.webank.wedatasphere.linkis.entrance.EntranceParser;
-import com.webank.wedatasphere.linkis.entrance.EntranceServer;
 import com.webank.wedatasphere.linkis.entrance.annotation.*;
 import com.webank.wedatasphere.linkis.entrance.event.*;
 import com.webank.wedatasphere.linkis.entrance.execute.impl.EntranceExecutorManagerImpl;
 import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor;
+import com.webank.wedatasphere.linkis.entrance.interceptor.OnceJobInterceptor;
 import com.webank.wedatasphere.linkis.entrance.interceptor.impl.*;
 import com.webank.wedatasphere.linkis.entrance.log.*;
 import com.webank.wedatasphere.linkis.entrance.parser.CommonEntranceParser;
@@ -109,6 +109,7 @@ public class EntranceSpringConfiguration {
     @ConditionalOnMissingBean(name = {EntranceInterceptorBeanAnnotation.BEAN_NAME})
     public EntranceInterceptor[] generateEntranceInterceptors() {
         return new EntranceInterceptor[]{
+                new OnceJobInterceptor(),
                 new CSEntranceInterceptor(),
                 new ShellDangerousGrammerInterceptor(),
                 new PythonCodeCheckInterceptor(),

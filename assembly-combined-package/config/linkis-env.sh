@@ -48,9 +48,10 @@ ENGINECONN_ROOT_PATH=/appcom/tmp
 #RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis ##hdfs:// required
 
 ### Provide the DB information of Hive metadata database.
-HIVE_META_URL=
-HIVE_META_USER=
-HIVE_META_PASSWORD=
+### Attention! If there are special characters like "&", they need to be enclosed in quotation marks.
+HIVE_META_URL=""
+HIVE_META_USER=""
+HIVE_META_PASSWORD=""
 
 ##YARN REST URL  spark engine required
 YARN_RESTFUL_URL=http://127.0.0.1:8088
@@ -129,7 +130,7 @@ export SERVER_HEAP_SIZE="512M"
 ##The decompression directory and the installation directory need to be inconsistent
 LINKIS_HOME=/appcom/Install/LinkisInstall
 
-LINKIS_VERSION=1.0.0
+LINKIS_VERSION=1.0.1
 
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module

@@ -82,7 +82,7 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask) extends AsyncExecTask
 
   override def transientStatus(status: ExecutionNodeStatus): Unit = {
     if (status.ordinal() < this.status.ordinal() && status != ExecutionNodeStatus.WaitForRetry) {
-      warn(s"Task status flip error! Cause: Failed to flip from ${this.status} to $status.")
+      info(s"Task${task.getIDInfo()} status flip error! Cause: Failed to flip from ${this.status} to $status.")
       return
     }
       //throw new OrchestratorErrorException(OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE, s"Task status flip error! Cause: Failed to flip from ${this.status} to $status.") //抛异常
@@ -139,7 +139,7 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask) extends AsyncExecTask
           val startWaitForPersistedTime = System.currentTimeMillis
           resultSets synchronized {
             while (( resultSize < 0 ||  resultSets.size < resultSize) && !isWaitForPersistedTimeout(startWaitForPersistedTime))
-              resultSets.wait(3000)
+              resultSets.wait(1000)
           }
           // if (isWaitForPersistedTimeout(startWaitForPersistedTime)) onFailure("persist resultSets timeout!", new EntranceErrorException(20305, "persist resultSets timeout!"))
         }
@@ -152,23 +152,23 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask) extends AsyncExecTask
 
 
   override def interrupt(): Unit = {
-    this.status = ExecutionNodeStatus.Cancelled
+    markFailed("Job be cancelled", null)
     task match {
       case asyncExecTask: AsyncExecTask =>
         asyncExecTask.kill()
       case _ =>
     }
-    markFailed("Job be cancelled", null)
+    transientStatus(ExecutionNodeStatus.Cancelled)
   }
 
   override def setResultSize(resultSize: Int): Unit = {
-    info(s"BaseExecTaskRunner get result size is $resultSize")
+    info(s"BaseExecTaskRunner ${task.getIDInfo()} get result size is $resultSize")
     if (this.resultSize == -1) this.resultSize = resultSize
     resultSets.notify()
   }
 
   override def addResultSet(resultSet: ResultSet): Unit = {
-    info(s"BaseExecTaskRunner get result, now size is ${resultSets.size}")
+    info(s"BaseExecTaskRunner ${task.getIDInfo()} get result, now size is ${resultSets.size}")
     resultSets += resultSet
     resultSets.notify()
   }

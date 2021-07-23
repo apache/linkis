@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.engineplugin.server.service
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineplugin.server.loader.EngineConnPluginsLoader
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
@@ -24,6 +24,7 @@ import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.{EngineConnResourceGenerator, JavaProcessEngineConnLaunchBuilder}
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
 import com.webank.wedatasphere.linkis.message.annotation.Receiver
+import org.apache.commons.lang.exception.ExceptionUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -51,7 +52,10 @@ class DefaultEngineConnLaunchService extends EngineConnLaunchService with Loggin
     val engineTypeOption = engineBuildRequest.labels.find(_.isInstanceOf[EngineTypeLabel])
     if (engineTypeOption.isDefined) {
       val engineTypeLabel = engineTypeOption.get.asInstanceOf[EngineTypeLabel]
-      getEngineLaunchBuilder(engineTypeLabel).buildEngineConn(engineBuildRequest)
+      Utils.tryCatch(getEngineLaunchBuilder(engineTypeLabel).buildEngineConn(engineBuildRequest)){ t =>
+        error(s"Failed to createEngineConnLaunchRequest(${engineBuildRequest.ticketId})", t)
+        throw new EngineConnPluginErrorException(10001, s"Failed to createEngineConnLaunchRequest, ${ExceptionUtils.getRootCauseMessage(t)}")
+      }
     } else {
       throw new EngineConnPluginErrorException(10001, "EngineTypeLabel are requested")
     }

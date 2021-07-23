@@ -36,7 +36,7 @@ trait AbstractConverter extends Converter with Logging{
   override def convert(jobReq: JobReq): Job = {
     val context = createASTContext(jobReq)
     converterCheckRulers.foreach(_(jobReq, context))
-    info(s"Start to convert JobReq(${jobReq.getId}) to AstJob.")
+    debug(s"Start to convert JobReq(${jobReq.getId}) to AstJob.")
     val job = converterTransforms.collectFirst { case transform => transform(jobReq, context) }
       .getOrElse(throw new OrchestratorErrorException(OrchestratorErrorCodeSummary.CONVERTER_FOR_NOT_SUPPORT_ERROR_CODE, "Cannot convert jobReq " + jobReq))
     info(s"Finished to convert JobReq(${jobReq.getId}) to AstJob(${job.getId}).")

@@ -157,25 +157,25 @@ class UnknownExecTak extends AbstractExecTask{
 
   override def canExecute: Boolean = false
 
-  override def execute(): TaskResponse = ???
+  override def execute(): TaskResponse = null
 
-  override def isLocalMode: Boolean = ???
+  override def isLocalMode: Boolean = true
 
-  override def getPhysicalContext: PhysicalContext = ???
+  override def getPhysicalContext: PhysicalContext = null
 
-  override def initialize(physicalContext: PhysicalContext): Unit = ???
+  override def initialize(physicalContext: PhysicalContext): Unit = {}
 
-  override def getParents: Array[ExecTask] = ???
+  override def getParents: Array[ExecTask] = null
 
-  override def getChildren: Array[ExecTask] = ???
+  override def getChildren: Array[ExecTask] = null
 
-  override protected def newNode(): ExecTask = ???
+  override protected def newNode(): ExecTask = null
 
-  override def verboseString: String = ???
+  override def verboseString: String = null
 
-  override def withNewChildren(children: Array[ExecTask]): Unit = ???
+  override def withNewChildren(children: Array[ExecTask]): Unit = {}
 
-  override def withNewParents(parents: Array[ExecTask]): Unit = ???
+  override def withNewParents(parents: Array[ExecTask]): Unit = {}
 
-  override def getId: String = ???
+  override def getId: String = "id"
 }

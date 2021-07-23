@@ -66,6 +66,8 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
   @Autowired
   private var labelManagerPersistence: LabelManagerPersistence = _
 
+  private val  labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
+
   override def listEngines(user: String): util.List[EngineNode] = {
     // TODO: user 应该是除了root，hadoop
     val nodes = nodeManagerPersistence.getNodes(user).map(_.getServiceInstance).map(nodeManagerPersistence.getEngineNode)
@@ -217,7 +219,7 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
     */
   override def deleteEngineNode(engineNode: EngineNode): Unit = {
     nodeManagerPersistence.deleteEngineNode(engineNode)
-    nodeMetricManagerPersistence.deleteNodeMetrics(engineNode)
+
   }
 
   override def getEngineNode(serviceInstance: ServiceInstance): EngineNode = {
@@ -230,7 +232,6 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
     //2.update serviceInstance 表，包括 instance替换，替换mark，owner，updator，creator的空值，更新updateTime
     //3.update engine_em关联表
     //4.update label ticket_id ==> instance
-    val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
     val engineLabel = labelBuilderFactory.createLabel(classOf[EngineInstanceLabel])
     engineLabel.setInstance(engineNode.getServiceInstance.getInstance)
     engineLabel.setServiceName(engineNode.getServiceInstance.getApplicationName)

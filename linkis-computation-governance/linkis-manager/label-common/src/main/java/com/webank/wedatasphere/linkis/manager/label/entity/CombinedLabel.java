@@ -18,10 +18,13 @@ package com.webank.wedatasphere.linkis.manager.label.entity;
 
 import java.util.List;
 
-public interface CombinedLabel extends Label<List<Label<?>>> {
+public interface CombinedLabel extends Label<List<Label<?>>>, ResourceLabel{
 
     default List<Label<?>> getLabels() {
         return getValue();
     }
+
+    @Override
+    boolean equals(Object obj);
 
 }

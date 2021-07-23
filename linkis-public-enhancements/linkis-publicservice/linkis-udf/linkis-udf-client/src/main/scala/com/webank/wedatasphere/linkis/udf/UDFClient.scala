@@ -28,14 +28,14 @@ import scala.collection.JavaConversions._
 
 object UDFClient {
 
-  def getUdfInfos(userName: String): mutable.ArrayBuffer[UDFInfo] = {
+  def getUdfInfos(userName: String, category: String ): mutable.ArrayBuffer[UDFInfo] = {
     val udfInfoBuilder = new mutable.ArrayBuffer[UDFInfo]
-    val udfTree = queryUdfRpc(userName)
-    if (null != udfTree) extractUdfInfos(udfInfoBuilder, udfTree, userName)
+    val udfTree = queryUdfRpc(userName,category )
+    if (null != udfTree) extractUdfInfos(udfInfoBuilder, udfTree, userName, category)
     udfInfoBuilder
   }
 
-  private def extractUdfInfos(udfInfoBuilder: mutable.ArrayBuffer[UDFInfo], udfTree: UDFTree, userName: String) : Unit = {
+  private def extractUdfInfos(udfInfoBuilder: mutable.ArrayBuffer[UDFInfo], udfTree: UDFTree, userName: String, category: String) : Unit = {
     if(CollectionUtils.isNotEmpty(udfTree.getUdfInfos)){
       udfTree.getUdfInfos.foreach{ udfInfo: UDFInfo =>
         udfInfoBuilder.append(udfInfo)
@@ -45,18 +45,18 @@ object UDFClient {
       udfTree.getChildrens.foreach{ child: UDFTree =>
         var childInfo = child
         if(ConstantVar.specialTypes.contains(child.getUserName)){
-          childInfo = queryUdfRpc(userName, child.getId, child.getUserName)
+          childInfo = queryUdfRpc(userName, category, child.getId, child.getUserName)
         } else {
-          childInfo = queryUdfRpc(userName, child.getId, ConstantVar.SELF)
+          childInfo = queryUdfRpc(userName, category, child.getId, ConstantVar.SELF)
         }
-        if (null != childInfo) extractUdfInfos(udfInfoBuilder, childInfo, userName)
+        if (null != childInfo) extractUdfInfos(udfInfoBuilder, childInfo, userName, category)
       }
     }
   }
 
-  private def queryUdfRpc(userName: String, treeId: Long = -1, treeType: String = "self"): UDFTree = {
+  private def queryUdfRpc(userName: String, category: String , treeId: Long = -1,  treeType: String = "self"): UDFTree = {
     val udfTree = Sender.getSender(UDFClientConfiguration.UDF_SERVICE_NAME.getValue)
-      .ask(RequestUdfTree(userName, treeType, treeId, "udf"))
+      .ask(RequestUdfTree(userName, treeType, treeId, category))
       .asInstanceOf[ResponseUdfTree]
       .udfTree
     //info("got udf tree:" + new ObjectMapper().writer().withDefaultPrettyPrinter().writeValueAsString(udfTree))

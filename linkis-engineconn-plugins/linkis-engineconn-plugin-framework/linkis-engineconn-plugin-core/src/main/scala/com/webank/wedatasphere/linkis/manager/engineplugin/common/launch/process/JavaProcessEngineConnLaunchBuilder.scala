@@ -53,7 +53,7 @@ abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunc
     val commandLine: ArrayBuffer[String] = ArrayBuffer[String]()
     commandLine += (variable(JAVA_HOME) + "/bin/java")
     commandLine += "-server"
-    val engineConnMemory = EnvConfiguration.ENGINE_CONN_MEMORY.getValue(engineConnBuildRequest.engineConnCreationDesc.properties).toString
+    val engineConnMemory = EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue.toString
     commandLine += ("-Xmx" + engineConnMemory)
     commandLine += ("-Xms" + engineConnMemory)
     val javaOPTS = getExtractJavaOpts
@@ -68,7 +68,7 @@ abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunc
     commandLine += "-cp"
     commandLine += variable(CLASSPATH)
     commandLine += getMainClass
-    commandLine ++= Seq("1>", s"${variable(LOG_DIRS)}/stdout", "2>", s"${variable(LOG_DIRS)}/stderr")
+    commandLine ++= Seq("1>", s"${variable(LOG_DIRS)}/stdout", "2>>", s"${variable(LOG_DIRS)}/stderr")
     commandLine.toArray
   }
 
@@ -87,7 +87,7 @@ abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunc
     // second, add engineconn libs.
     addPathToClassPath(environment, Seq(variable(PWD), ENGINE_CONN_LIB_DIR_NAME + "/*"))
     // then, add public modules.
-    if (!isAddSparkConfig) {
+    if (!enablePublicModule) {
       addPathToClassPath(environment, Seq(LINKIS_PUBLIC_MODULE_PATH.getValue + "/*"))
     }
     // finally, add the suitable properties key to classpath
@@ -124,7 +124,7 @@ abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunc
 
   protected def ifAddHiveConfigPath: Boolean = false
 
-  protected def isAddSparkConfig: Boolean = false
+  protected def enablePublicModule: Boolean = false
 
   override protected def getBmlResources(implicit engineConnBuildRequest: EngineConnBuildRequest): util.List[BmlResource] = {
     val engineType = engineConnBuildRequest.labels.find(_.isInstanceOf[EngineTypeLabel])

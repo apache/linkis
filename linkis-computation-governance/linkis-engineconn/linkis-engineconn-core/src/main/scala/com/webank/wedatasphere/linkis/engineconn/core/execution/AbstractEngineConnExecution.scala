@@ -36,6 +36,7 @@ trait AbstractEngineConnExecution extends EngineConnExecution with Logging {
     engineCreationContext.getLabels().asScala.exists {
       case engineConnModeLabel: EngineConnModeLabel =>
         val mode = toEngineConnMode(engineConnModeLabel.getEngineConnMode)
+        info(s"EngineConnMode is ${engineConnModeLabel.getEngineConnMode}.")
         getSupportedEngineConnModes.contains(mode)
       case _ => false
     }

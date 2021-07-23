@@ -21,7 +21,7 @@ import java.util
 import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration}
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.entrance.exception.EntranceErrorException
+import com.webank.wedatasphere.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
 import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
 import com.webank.wedatasphere.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, ResponseQueryConfig}
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
@@ -89,7 +89,13 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     groupNameToGroups.get(groupName)
   }
 
-  override def getGroup(groupName: String): Group = groupNameToGroups.get(groupName)
+  override def getGroup(groupName: String): Group = {
+    val group = groupNameToGroups.get(groupName)
+    if(group == null){
+      throw new EntranceErrorException(EntranceErrorCode.GROUP_NOT_FOUND.getErrCode, s"group not found: ${groupName}")
+    }
+    group
+  }
 }
 
 object EntranceGroupFactory {

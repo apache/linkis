@@ -17,7 +17,7 @@
 package com.webank.wedatasphere.linkis.resourcemanager.service.impl
 
 import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource
+import com.webank.wedatasphere.linkis.manager.common.entity.persistence.{PersistenceLabel, PersistenceResource}
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource
 import com.webank.wedatasphere.linkis.manager.common.utils.ResourceUtils
 import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
@@ -48,23 +48,11 @@ class LabelResourceServiceImpl extends LabelResourceService with Logging {
   private val labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
   override def getLabelResource(label: Label[_]): NodeResource = {
-    label match {
-//      case combinedLabel: CombinedLabel =>
-//        val persistenceLabel = labelManagerPersistence.getLabelByKeyValue(combinedLabel.getLabelKey, combinedLabel.getStringValue)
-//        resourceLabelService.getResourceByLabel(persistenceLabel)
-      case _ =>
-        return resourceLabelService.getResourceByLabel(label)
-    }
+    resourceLabelService.getResourceByLabel(label)
   }
 
   override def setLabelResource(label: Label[_], nodeResource: NodeResource): Unit = {
-    label match {
-      case combinedLabel: CombinedLabel =>
-        val persistenceLabel = labelManagerPersistence.getLabelByKeyValue(combinedLabel.getLabelKey, combinedLabel.getStringValue)
-        resourceLabelService.setResourceToLabel(persistenceLabel, nodeResource)
-      case _ =>
-        resourceLabelService.setResourceToLabel(label, nodeResource)
-    }
+    resourceLabelService.setResourceToLabel(label, nodeResource)
   }
 
   override def getResourcesByUser(user: String): Array[NodeResource] = {
@@ -72,7 +60,7 @@ class LabelResourceServiceImpl extends LabelResourceService with Logging {
   }
 
   override def enrichLabels(labelContainer: RMLabelContainer): RMLabelContainer = {
-    return new RMLabelContainer(LabelUtils.distinctLabel(resourceLabelService.getResourceLabels(labelContainer.getLabels), labelContainer.getLabels))
+     new RMLabelContainer(labelContainer.getLabels)
   }
 
   override def removeResourceByLabel(label: Label[_]): Unit = {

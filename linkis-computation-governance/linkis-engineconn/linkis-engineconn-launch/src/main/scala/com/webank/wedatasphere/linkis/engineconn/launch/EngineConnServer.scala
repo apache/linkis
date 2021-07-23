@@ -1,11 +1,10 @@
 package com.webank.wedatasphere.linkis.engineconn.launch
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration}
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.common.creation.{DefaultEngineCreationContext, EngineCreationContext}
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.common.execution.EngineConnExecution
 import com.webank.wedatasphere.linkis.engineconn.common.hook.EngineConnHook
 import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
 import com.webank.wedatasphere.linkis.engineconn.core.engineconn.EngineConnManager
@@ -16,7 +15,7 @@ import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonCon
 import com.webank.wedatasphere.linkis.governance.common.exception.engineconn.{EngineConnExecutorErrorCode, EngineConnExecutorErrorException}
 import com.webank.wedatasphere.linkis.governance.common.utils.EngineConnArgumentsParser
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.Environment
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext, StdLabelBuilderFactory}
+import com.webank.wedatasphere.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import org.apache.commons.lang.exception.ExceptionUtils
 
@@ -34,9 +33,14 @@ object EngineConnServer extends Logging {
   def main(args: Array[String]): Unit = {
     info("<<---------------------EngineConnServer Start --------------------->>")
 
-    Utils.tryCatch {
+    try {
       // 1. 封装EngineCreationContext
       init(args)
+      val isTestMode = Configuration.IS_TEST_MODE.getValue(engineCreationContext.getOptions)
+      if(isTestMode) {
+        info(s"Step into test mode, pause 30s if debug is required. If you want to disable test mode, please set ${Configuration.IS_TEST_MODE.key} = false.")
+        Utils.sleepQuietly(30000)
+      }
       info("Finished to create EngineCreationContext, EngineCreationContext content: " + EngineConnUtils.GSON.toJson(engineCreationContext))
       EngineConnHook.getEngineConnHooks.foreach(_.beforeCreateEngineConn(getEngineCreationContext))
       info("Finished to execute hook of beforeCreateEngineConn.")
@@ -55,7 +59,8 @@ object EngineConnServer extends Logging {
       EngineConnHook.getEngineConnHooks.foreach(_.afterExecutionExecute(getEngineCreationContext, engineConn))
       info("Finished to execute hook of afterExecutionExecute")
       EngineConnHook.getEngineConnHooks.foreach(_.afterEngineServerStartSuccess(getEngineCreationContext, engineConn))
-    } { t =>
+    } catch {
+      case t: Throwable =>
       EngineConnHook.getEngineConnHooks.foreach(_.afterEngineServerStartFailed(getEngineCreationContext, t))
       error("EngineConnServer Start Failed", t)
       System.exit(1)
@@ -92,7 +97,7 @@ object EngineConnServer extends Logging {
     this.engineCreationContext.setOptions(jMap)
     this.engineCreationContext.setArgs(args)
     EngineConnObject.setEngineCreationContext(this.engineCreationContext)
-    info("Finished to init engineCreationContext" + EngineConnUtils.GSON.toJson(engineCreationContext))
+    info("Finished to init engineCreationContext: " + EngineConnUtils.GSON.toJson(engineCreationContext))
   }
 
   private def executeEngineConn(engineConn: EngineConn): Unit = {

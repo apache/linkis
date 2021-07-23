@@ -22,9 +22,11 @@ import java.{lang, util}
 
 import com.google.gson.{Gson, JsonObject}
 import com.webank.wedatasphere.linkis.manager.am.vo.{AMEngineNodeVo, EMNodeVo}
+import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
 import com.webank.wedatasphere.linkis.manager.common.entity.node.{EMNode, EngineNode}
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.{DriverAndYarnResource, LoadInstanceResource, Resource, ResourceSerializer}
+import com.webank.wedatasphere.linkis.manager.common.entity.resource.{DriverAndYarnResource, LoadInstanceResource, Resource, ResourceSerializer, ResourceType}
 import com.webank.wedatasphere.linkis.manager.common.serializer.NodeResourceSerializer
+import com.webank.wedatasphere.linkis.manager.common.utils.ResourceUtils
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 import org.json4s.DefaultFormats
@@ -52,6 +54,7 @@ object AMUtils {
         if(node.getNodeResource.getMaxResource != null) EMNodeVo.setMaxResource(mapper.readValue(write(node.getNodeResource.getMaxResource), classOf[util.Map[String, Any]]))
         if(node.getNodeResource.getMinResource != null) EMNodeVo.setMinResource(mapper.readValue(write(node.getNodeResource.getMinResource), classOf[util.Map[String, Any]]))
         if(node.getNodeResource.getUsedResource != null) EMNodeVo.setUsedResource(mapper.readValue(write(node.getNodeResource.getUsedResource), classOf[util.Map[String, Any]]))
+        else EMNodeVo.setUsedResource(mapper.readValue(write(Resource.initResource(ResourceType.Default)), classOf[util.Map[String, Any]]))
         if(node.getNodeResource.getLockedResource != null) EMNodeVo.setLockedResource(mapper.readValue(write(node.getNodeResource.getLockedResource), classOf[util.Map[String, Any]]))
         if(node.getNodeResource.getExpectedResource != null) EMNodeVo.setExpectedResource(mapper.readValue(write(node.getNodeResource.getExpectedResource), classOf[util.Map[String, Any]]))
         if(node.getNodeResource.getLeftResource != null) EMNodeVo.setLeftResource(mapper.readValue(write(node.getNodeResource.getLeftResource), classOf[util.Map[String, Any]]))
@@ -94,7 +97,11 @@ object AMUtils {
           }
         }
         if(node.getStartTime != null) AMEngineNodeVo.setStartTime(node.getStartTime)
-        if(node.getNodeStatus != null) AMEngineNodeVo.setNodeStatus(node.getNodeStatus)
+        if(node.getNodeStatus != null) {
+          AMEngineNodeVo.setNodeStatus(node.getNodeStatus)
+        }else{
+          AMEngineNodeVo.setNodeStatus(NodeStatus.Starting)
+        }
         if(node.getLock != null) AMEngineNodeVo.setLock(node.getLock)
         if(node.getNodeResource != null){
           if(node.getNodeResource.getResourceType != null) AMEngineNodeVo.setResourceType(node.getNodeResource.getResourceType)
@@ -106,6 +113,8 @@ object AMUtils {
               case _ => node.getNodeResource.getUsedResource
             }
             AMEngineNodeVo.setUsedResource(mapper.readValue(write(realResource), classOf[util.Map[String, Any]]))
+          }else{
+            AMEngineNodeVo.setUsedResource(mapper.readValue(write(Resource.initResource(ResourceType.Default)), classOf[util.Map[String, Any]]))
           }
           if(node.getNodeResource.getLockedResource != null) AMEngineNodeVo.setLockedResource(mapper.readValue(write(node.getNodeResource.getLockedResource), classOf[util.Map[String, Any]]))
           if(node.getNodeResource.getExpectedResource != null) AMEngineNodeVo.setExpectedResource(mapper.readValue(write(node.getNodeResource.getExpectedResource), classOf[util.Map[String, Any]]))

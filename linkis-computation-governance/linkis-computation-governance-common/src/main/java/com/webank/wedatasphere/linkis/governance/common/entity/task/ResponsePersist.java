@@ -31,7 +31,7 @@ public class ResponsePersist implements QueryProtocol {
     private String msg;
     private Map<String, Object> data;
 
-            public Integer getStatus() {
+    public Integer getStatus() {
         return status;
     }
 

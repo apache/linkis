@@ -22,6 +22,7 @@ import com.webank.wedatasphere.linkis.DataWorkCloudApplication
 import com.webank.wedatasphere.linkis.common.conf.DWCArgumentsParser
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.callback.service.{EngineConnAfterStartCallback, EngineConnPidCallback}
+import com.webank.wedatasphere.linkis.engineconn.common.conf.EngineConnConf
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
 import com.webank.wedatasphere.linkis.engineconn.common.hook.EngineConnHook
@@ -58,8 +59,9 @@ class CallbackEngineConnHook extends EngineConnHook with Logging  {
 
   override def afterEngineServerStartFailed(engineCreationContext: EngineCreationContext, throwable: Throwable): Unit = {
     val engineConnAfterStartCallback = new EngineConnAfterStartCallback(engineCreationContext.getEMInstance)
+    val prefixMsg = Sender.getThisServiceInstance + s": log dir: ${EngineConnConf.getLogDir},"
     engineConnAfterStartCallback.callback(EngineConnStatusCallback(Sender.getThisServiceInstance,
-      engineCreationContext.getTicketId, NodeStatus.Failed, ExceptionUtils.getRootCauseMessage(throwable)))
+      engineCreationContext.getTicketId, NodeStatus.Failed, prefixMsg + ExceptionUtils.getRootCauseMessage(throwable)))
     error("EngineConnSever start failed! now exit.", throwable)
     ShutdownHook.getShutdownHook.notifyError(throwable)
   }

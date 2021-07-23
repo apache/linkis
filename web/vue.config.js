@@ -161,10 +161,10 @@ module.exports = {
             { source: './install.sh', destination: `./dist` }
           ],
           // 先删除根目录下的zip包
-          delete: [`./wedatasphere-DataSphereStudio-${getVersion()}-dist.zip`],
+          delete: [`./wedatasphere-linkis-${getVersion()}-dist.zip`],
           // 将dist文件夹下的文件进行打包
           archive: [
-            { source: './dist', destination: `./wedatasphere-DataSphereStudio-${getVersion()}-dist.zip` },
+            { source: './dist', destination: `./wedatasphere-linkis-${getVersion()}-dist.zip` },
           ]
         },
       }])

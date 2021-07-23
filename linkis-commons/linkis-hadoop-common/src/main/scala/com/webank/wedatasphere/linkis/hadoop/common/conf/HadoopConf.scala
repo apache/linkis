@@ -13,7 +13,7 @@
 
 package com.webank.wedatasphere.linkis.hadoop.common.conf
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
 
 
 object HadoopConf {
@@ -32,4 +32,9 @@ object HadoopConf {
 
   val HADOOP_EXTERNAL_CONF_DIR_PREFIX = CommonVars("wds.linkis.hadoop.external.conf.dir.prefix", "/appcom/config/external-conf/hadoop")
 
+  val HDFS_ENABLE_CACHE = CommonVars("wds.linkis.hadoop.hdfs.cache.enable", false).getValue
+
+  val HDFS_ENABLE_CACHE_IDLE_TIME = CommonVars("wds.linkis.hadoop.hdfs.cache.idle.time", 3*60*1000).getValue
+
+  val HDFS_ENABLE_CACHE_MAX_TIME = CommonVars("wds.linkis.hadoop.hdfs.cache.max.time",  new TimeType("12h")).getValue.toLong
 }

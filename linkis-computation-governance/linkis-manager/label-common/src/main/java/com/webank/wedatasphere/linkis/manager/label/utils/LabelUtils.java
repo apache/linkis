@@ -276,9 +276,10 @@ public class LabelUtils {
         for (Label<?> label : labelList) {
             if (!labelMap.containsKey(label.getLabelKey())) {
                 labelMap.put(label.getLabelKey(), label.getStringValue());
-            } else {
-                throw new LabelRuntimeException(LabelConstant.LABEL_UTIL_CONVERT_ERROR_CODE, "Got more than one " + label.getLabelKey() + " label, some will be dropped, use labelsToPairList instead.");
             }
+            /*else {
+                throw new LabelRuntimeException(LabelConstant.LABEL_UTIL_CONVERT_ERROR_CODE, "Got more than one " + label.getLabelKey() + " label, some will be dropped, use labelsToPairList instead.");
+            }*/
         }
         return labelMap;
     }

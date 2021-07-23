@@ -42,5 +42,6 @@ class CodeExecTaskExecutor(engineConnExecutor: EngineConnExecutor, execTask: Exe
 
   def getMark: Mark = mark
 
+  override def toString: String = s"engineConn $engineConnExecutor execTask ${execTask.getIDInfo()} mark ${mark.getMarkId()} engineConnTaskId $engineConnTaskId"
 
 }

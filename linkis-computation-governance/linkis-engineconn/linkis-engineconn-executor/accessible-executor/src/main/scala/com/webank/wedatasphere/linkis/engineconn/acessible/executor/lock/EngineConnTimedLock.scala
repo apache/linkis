@@ -22,7 +22,9 @@ import com.webank.wedatasphere.linkis.engineconn.acessible.executor.conf.Accessi
 import com.webank.wedatasphere.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
 import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.ExecutorStatusListener
 import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event.{ExecutorCompletedEvent, ExecutorCreateEvent, ExecutorStatusChangedEvent, ExecutorUnLockEvent}
+import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
 import com.webank.wedatasphere.linkis.engineconn.executor.listener.ExecutorListenerBusContext
+import com.webank.wedatasphere.linkis.engineconn.executor.service.ManagerService
 import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
 
 class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logging with ExecutorStatusListener {
@@ -41,7 +43,7 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
   }
 
   override def tryAcquire(executor: AccessibleExecutor): Boolean = {
-    if (null == executor) return false
+    if (null == executor || NodeStatus.Unlock != executor.getStatus) return false
     val succeed = lock.tryAcquire()
     debug("try to lock for succeed is  " + succeed.toString)
     if (succeed) {
@@ -57,6 +59,7 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
   override def release(): Unit = {
     debug("try to release for lock," + lockedBy + ",current thread " + Thread.currentThread().getName)
     if (lockedBy != null) {
+      //&& lockedBy == Thread.currentThread()   Inconsistent thread(线程不一致)
       debug("try to release for lockedBy and thread ")
       if (releaseTask != null) {
         releaseTask.cancel(true)
@@ -65,6 +68,7 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
       debug("try to release for lock release success")
       lockedBy = null
     }
+    unlockCallback(lock.toString)
     resetLock()
   }
 
@@ -88,15 +92,17 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
 
   private def scheduleTimeout: Unit = {
     synchronized {
-      if (null == releaseTask || releaseTask.isDone) {
+      if (null == releaseTask ) {
         releaseTask = releaseScheduler.scheduleWithFixedDelay(new Runnable {
           override def run(): Unit = {
             synchronized {
-              if (isAcquired() && isExpired()) {
+              if (isAcquired() && NodeStatus.Idle == lockedBy.getStatus && isExpired()) {
                 // unlockCallback depends on lockedBy, so lockedBy cannot be set null before unlockCallback
-                unlockCallback(lock.toString)
                 info(s"Lock : [${lock.toString} was released due to timeout." )
-                resetLock()
+                release()
+              } else if (isAcquired() && NodeStatus.Busy == lockedBy.getStatus) {
+                lastLockTime = System.currentTimeMillis()
+                info("Update lastLockTime because executor is busy.")
               }
             }
           }
@@ -148,8 +154,16 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
   }
 
   private def unlockCallback(lockStr: String): Unit = {
-    if (null != lockedBy) {
+    /*if (null != lockedBy) {
       lockedBy.transition(NodeStatus.Unlock)
+    }*/
+    val executors = ExecutorManager.getInstance.getExecutors.filter(executor => null != executor && !executor.isClosed)
+    if (null != executors && !executors.isEmpty) {
+      executors.foreach(executor => executor match {
+        case accessibleExecutor: AccessibleExecutor =>
+          accessibleExecutor.transition(NodeStatus.Unlock)
+        case _ =>
+      })
     }
     ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus.post(ExecutorUnLockEvent(null, lockStr.toString))
   }
@@ -160,7 +174,7 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
 
   override def onExecutorStatusChanged(executorStatusChangedEvent: ExecutorStatusChangedEvent): Unit = {
     val toStatus = executorStatusChangedEvent.toStatus
-    if (NodeStatus.Busy == toStatus || NodeStatus.Idle == toStatus) {
+    if (isAcquired() && NodeStatus.Idle == toStatus) {
       info(s"Status changed to ${toStatus.name()}, update lastUpdatedTime for lock.")
       lastLockTime = System.currentTimeMillis()
       scheduleTimeout

@@ -4,30 +4,30 @@
 workDir=$(cd `dirname $0`; pwd)
 
 
-echo "dss front-end deployment script"
+echo "linkis front-end deployment script"
 
 source $workDir/config.sh
 # 前端放置目录，默认为解压目录
-dss_basepath=$workDir
+linkis_basepath=$workDir
 
 #To be compatible with MacOS and Linux
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OSX
-    echo "dss  install not support Mac OSX operating system"
+    echo "linkis  install not support Mac OSX operating system"
     exit 1
 elif [[ "$OSTYPE" == "linux-gnu" ]]; then
     # linux
     echo "linux"
 elif [[ "$OSTYPE" == "cygwin" ]]; then
     # POSIX compatibility layer and Linux environment emulation for Windows
-    echo "dss   not support Windows operating system"
+    echo "linkis   not support Windows operating system"
     exit 1
 elif [[ "$OSTYPE" == "msys" ]]; then
     # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
-    echo "dss  not support Windows operating system"
+    echo "linkis  not support Windows operating system"
     exit 1
 elif [[ "$OSTYPE" == "win32" ]]; then
-    echo "dss  not support Windows operating system"
+    echo "linkis  not support Windows operating system"
     exit 1
 elif [[ "$OSTYPE" == "freebsd"* ]]; then
     # ...
@@ -44,18 +44,18 @@ version=`cat /etc/redhat-release|sed -r 's/.* ([0-9]+)\..*/\1/'`
 
 echo "========================================================================配置信息======================================================================="
 
-echo "前端访问端口：${dss_port}"
+echo "前端访问端口：${linkis_port}"
 echo "后端Linkis的地址：${linkis_url}"
-echo "静态文件地址：${dss_basepath}/dist"
+echo "静态文件地址：${linkis_basepath}/dist"
 echo "当前路径：${workDir}"
-echo "本机ip：${dss_ipaddr}"
+echo "本机ip：${linkis_ipaddr}"
 
 echo "========================================================================配置信息======================================================================="
 echo ""
 
 
 # 创建文件并配置nginx
-dssConf(){
+linkisConf(){
 
 	s_host='$host'
     s_remote_addr='$remote_addr'
@@ -63,16 +63,16 @@ dssConf(){
     s_http_upgrade='$http_upgrade'
     echo "
         server {
-            listen       $dss_port;# 访问端口
+            listen       $linkis_port;# 访问端口
             server_name  localhost;
             #charset koi8-r;
             #access_log  /var/log/nginx/host.access.log  main;
-            location /dss/visualis {
-            root   ${dss_basepath}/dss/visualis; # 静态文件目录
+            location /linkis/visualis {
+            root   ${linkis_basepath}/linkis/visualis; # 静态文件目录
             autoindex on;
             }
             location / {
-            root   ${dss_basepath}/dist; # 静态文件目录
+            root   ${linkis_basepath}/dist; # 静态文件目录
             index  index.html index.html;
             }
             location /ws {
@@ -105,7 +105,7 @@ dssConf(){
             root   /usr/share/nginx/html;
             }
         }
-    " > /etc/nginx/conf.d/dss.conf
+    " > /etc/nginx/conf.d/linkis.conf
 
 }
 
@@ -117,14 +117,14 @@ centos7(){
     echo "nginx 安装成功"
 
     # 配置nginx
-    dssConf
+    linkisConf
 
     # 解决 0.0.0.0:8888 问题
     yum -y install policycoreutils-python
-    semanage port -a -t http_port_t -p tcp $dss_port
+    semanage port -a -t http_port_t -p tcp $linkis_port
 
     # 开放前端访问端口
-    firewall-cmd --zone=public --add-port=$dss_port/tcp --permanent
+    firewall-cmd --zone=public --add-port=$linkis_port/tcp --permanent
 
     # 重启防火墙
     firewall-cmd --reload
@@ -156,16 +156,16 @@ centos6(){
     yum install nginx -y
 
     # 配置nginx
-    dssConf
+    linkisConf
 
     # 防火墙
-    S_iptables=`lsof -i:$dss_port | wc -l`
+    S_iptables=`lsof -i:$linkis_port | wc -l`
     if [ "$S_iptables" -gt "0" ];then
     # 已开启端口防火墙重启
     service iptables restart
     else
     # 未开启防火墙添加端口再重启
-    iptables -I INPUT 5 -i eth0 -p tcp --dport $dss_port -m state --state NEW,ESTABLISHED -j ACCEPT
+    iptables -I INPUT 5 -i eth0 -p tcp --dport $linkis_port -m state --state NEW,ESTABLISHED -j ACCEPT
     service iptables save
     service iptables restart
     fi
@@ -190,6 +190,6 @@ fi
 if [[ $version -eq 7 ]]; then
     centos7
 fi
-echo '安装visualis前端,用户自行编译DSS前端安装包，则安装时需要把visualis的前端安装包放置于此'$dss_basepath/dss/visualis'，用于自动化安装:'
-cd $dss_basepath/dss/visualis;unzip -o build.zip  > /dev/null
-echo "请浏览器访问：http://${dss_ipaddr}:${dss_port}"
+echo '安装visualis前端,用户自行编译linkis前端安装包，则安装时需要把visualis的前端安装包放置于此'$linkis_basepath/linkis/visualis'，用于自动化安装:'
+cd $linkis_basepath/linkis/visualis;unzip -o build.zip  > /dev/null
+echo "请浏览器访问：http://${linkis_ipaddr}:${linkis_port}"

@@ -17,9 +17,35 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.webank.wedatasphere.linkis.instance.label.dao.InstanceInfoDao">
+
+    <resultMap id="instanceInfoMap" type="InstanceInfo">
+        <result property="id" column="id"/>
+        <result property="instance" column="instance"/>
+        <result property="applicationName" column="name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
     <insert id="insertOne" parameterType="InstanceInfo">
         <![CDATA[INSERT INTO `linkis_ps_instance_info`(`instance`, `name`)
         VALUES(#{instance}, #{applicationName})]]>
     </insert>
+
+    <delete id="removeInstance" parameterType="com.webank.wedatasphere.linkis.common.ServiceInstance">
+        DELETE FROM linkis_ps_instance_info WHERE instance = #{instance}
+    </delete>
+
+    <update id="updateInstance" parameterType="com.webank.wedatasphere.linkis.instance.label.entity.InstanceInfo">
+        UPDATE linkis_ps_instance_info SET
+        <if test="#{applicationName} != null">name = #{applicationName},</if>
+        <if test="#{instance} != null">instance = #{instance},</if>
+        <if test="#{updateTime != null}">update_time = #{updateTime}</if>
+        WHERE id = #{id}
+    </update>
+
+    <select id="getInstanceInfoByServiceInstance" parameterType="com.webank.wedatasphere.linkis.common.ServiceInstance" resultMap="instanceInfoMap">
+        <![CDATA[SELECT * FROM linkis_ps_instance_info
+        WHERE name = #{applicationName} AND instance = #{instance}]]>
+    </select>
 
 </mapper>

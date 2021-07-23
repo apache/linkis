@@ -16,17 +16,19 @@
 
 package com.webank.wedatasphere.linkis.orchestrator.ecm
 
+import java.net.SocketTimeoutException
 import java.util
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
-import com.webank.wedatasphere.linkis.common.utils.Logging
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
 import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode
 import com.webank.wedatasphere.linkis.manager.common.protocol.engine.{EngineAskAsyncResponse, EngineAskRequest, EngineCreateError, EngineCreateSuccess}
 import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant
+import com.webank.wedatasphere.linkis.manager.label.entity.entrance.BindEngineLabel
 import com.webank.wedatasphere.linkis.orchestrator.ecm.cache.EngineAsyncResponseCache
 import com.webank.wedatasphere.linkis.orchestrator.ecm.conf.ECMPluginConf
 import com.webank.wedatasphere.linkis.orchestrator.ecm.entity.{DefaultMark, Mark, MarkReq, Policy}
@@ -35,6 +37,7 @@ import com.webank.wedatasphere.linkis.orchestrator.ecm.service.EngineConnExecuto
 import com.webank.wedatasphere.linkis.orchestrator.ecm.service.impl.{ComputationConcurrentEngineConnExecutor, ComputationEngineConnExecutor}
 import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.rpc.exception.DWCRPCRetryException
+import org.apache.commons.lang.exception.ExceptionUtils
 
 import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
@@ -54,10 +57,24 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
 
   override def applyMark(markReq: MarkReq): Mark = {
     if (null == markReq) return null
-     MARK_CACHE_LOCKER.synchronized {
+    val mark = MARK_CACHE_LOCKER.synchronized {
       val markCache = getMarkCache().keys
-       val maybeMark = markCache.find(_.getMarkReq.equals(markReq))
-       maybeMark.orNull
+      val maybeMark = markCache.find(_.getMarkReq.equals(markReq))
+      maybeMark.orNull
+    }
+    if (null == mark) {
+      if (markReq.getLabels.containsKey(LabelKeyConstant.BIND_ENGINE_KEY)) {
+        val bindEngineLabel = MarkReq.getLabelBuilderFactory.createLabel[BindEngineLabel](LabelKeyConstant.BIND_ENGINE_KEY,
+          markReq.getLabels.get(LabelKeyConstant.BIND_ENGINE_KEY))
+        if (!bindEngineLabel.getIsJobGroupHead) {
+          val msg = s"Cannot find mark related to bindEngineLabel : ${bindEngineLabel.getStringValue}"
+          error(msg)
+          throw new ECMPluginErrorException(ECMPluginConf.ECM_MARK_CACHE_ERROR_CODE, msg)
+        }
+      }
+      createMark(markReq)
+    } else {
+      mark
     }
   }
 
@@ -72,7 +89,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
     "mark_" + idCreator.getAndIncrement()
   }
 
-  override protected def askEngineConnExecutor(engineAskRequest: EngineAskRequest): EngineConnExecutor = {
+  override protected def askEngineConnExecutor(engineAskRequest: EngineAskRequest, mark: Mark): EngineConnExecutor = {
     engineAskRequest.setTimeOut(getEngineConnApplyTime)
     var count = getEngineConnApplyAttempts()
     var retryException: LinkisRetryException = null
@@ -80,7 +97,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
       count = count - 1
       val start = System.currentTimeMillis()
       try {
-        val engineNode = getEngineNodeAskManager(engineAskRequest)
+        val engineNode = getEngineNodeAskManager(engineAskRequest, mark)
         if (null != engineNode) {
           val engineConnExecutor = if (null != engineAskRequest.getLabels &&
             engineAskRequest.getLabels.containsKey(LabelKeyConstant.CONCURRENT_ENGINE_KEY)) {
@@ -96,11 +113,11 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
       } catch {
         case t: LinkisRetryException =>
           val taken = System.currentTimeMillis() - start
-          error(s"Failed to askEngineAskRequest time taken ($taken), with DWCRPCRetryException", t)
+          warn(s"${mark.getMarkId()} Failed to askEngineAskRequest time taken ($taken), ${t.getMessage}")
           retryException = t
         case t: Throwable =>
           val taken = System.currentTimeMillis() - start
-          error(s"Failed to askEngineAskRequest time taken ($taken), ${t.getMessage}")
+          warn(s"${mark.getMarkId()} Failed to askEngineAskRequest time taken ($taken)")
           throw t
       }
     }
@@ -108,31 +125,40 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
       throw retryException
     }else{
       throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE,
-        s"Failed to ask engineAskRequest $engineAskRequest by retry ${getEngineConnApplyAttempts - count}  ")
+        s"${mark.getMarkId()} Failed to ask engineAskRequest $engineAskRequest by retry ${getEngineConnApplyAttempts - count}  ")
     }
   }
 
-  private def getEngineNodeAskManager(engineAskRequest: EngineAskRequest): EngineNode = {
-    getManagerSender().ask(engineAskRequest) match {
+  private def getEngineNodeAskManager(engineAskRequest: EngineAskRequest, mark: Mark): EngineNode = {
+    val response = Utils.tryCatch(getManagerSender().ask(engineAskRequest)) { t: Throwable =>
+        ExceptionUtils.getRootCause(t) match {
+          case socketTimeoutException: SocketTimeoutException =>
+            val msg = s"mark ${mark.getMarkId()}  failed to ask linkis Manager Can be retried " + ExceptionUtils.getRootCauseMessage(t)
+            throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, msg)
+          case _ =>
+            throw t
+        }
+    }
+    response match {
       case engineNode: EngineNode =>
-        info(s"Succeed to get engineNode $engineNode")
+        debug(s"Succeed to get engineNode $engineNode mark ${mark.getMarkId()}")
         engineNode
       case EngineAskAsyncResponse(id, serviceInstance) =>
-        info(s"received EngineAskAsyncResponse id: ${id} serviceInstance: $serviceInstance")
-        cacheMap.getAndRemove(id, Duration(engineAskRequest.getTimeOut + 60000, TimeUnit.MILLISECONDS)) match {
+        info(s"${mark.getMarkId()} received EngineAskAsyncResponse id: ${id} serviceInstance: $serviceInstance ")
+        cacheMap.getAndRemove(id, Duration(engineAskRequest.getTimeOut + 100000, TimeUnit.MILLISECONDS)) match {
           case EngineCreateSuccess(id, engineNode) =>
-            info(s"id:$id success to async get EngineNode $engineNode")
+            info(s"${mark.getMarkId()} async id:$id success to async get EngineNode $engineNode")
             engineNode
           case EngineCreateError(id, exception, retry) =>
-            error(s"id:$id Failed  to async get EngineNode, $exception")
+            debug(s"${mark.getMarkId()} async id:$id Failed  to async get EngineNode, $exception")
             if(retry){
-              throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, exception)
+              throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, id + " Failed  to async get EngineNode" + exception)
             }else{
-              throw new ECMPluginErrorException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, exception)
+              throw new ECMPluginErrorException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, id + " Failed  to async get EngineNode " + exception)
             }
         }
       case _ =>
-        info(s"Failed to ask engineAskRequest $engineAskRequest, response is not engineNode")
+        info(s"${mark.getMarkId()} Failed to ask engineAskRequest $engineAskRequest, response is not engineNode")
         null
     }
   }

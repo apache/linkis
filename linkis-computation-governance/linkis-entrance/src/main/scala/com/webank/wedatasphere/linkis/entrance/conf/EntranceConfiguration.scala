@@ -77,7 +77,7 @@ object EntranceConfiguration {
     * wds.linkis.dwc.instance is a parameter used to control the number of engines each user starts.
     *wds.linkis.instance 是用来进行控制每个用户启动engine数量的参数
     */
-  val WDS_LINKIS_INSTANCE = CommonVars("wds.linkis.instance", 3)
+  val WDS_LINKIS_INSTANCE = CommonVars("wds.linkis.rm.instance", 3)
 
   val LOG_EXCLUDE_ALL = CommonVars("wds.linkis.log.exclude.all", "com.netflix")
 

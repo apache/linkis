@@ -18,11 +18,13 @@ import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.common.io.FsPath;
 import com.webank.wedatasphere.linkis.entrance.EntranceContext;
 import com.webank.wedatasphere.linkis.entrance.cs.CSEntranceHelper;
+import com.webank.wedatasphere.linkis.entrance.execute.EntranceExecutorManager;
 import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob;
 import com.webank.wedatasphere.linkis.entrance.job.EntranceExecuteRequest;
 import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest;
 import com.webank.wedatasphere.linkis.governance.common.entity.job.SubJobInfo;
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo;
+import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorManager;
 import com.webank.wedatasphere.linkis.scheduler.executer.OutputExecuteResponse;
 import com.webank.wedatasphere.linkis.scheduler.queue.Job;
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
@@ -77,7 +79,11 @@ public class QueryPersistenceManager extends PersistenceManager{
         try {
             path = createResultSetEngine().persistResultSet(request, response);
         } catch (Throwable e) {
-            EntranceJob job = (EntranceJob) getEntranceContext().getOrCreateExecutorManager().getEntranceJobByExecId(request.getJob().getId()).getOrElse(null);
+            EntranceJob job = null;
+            ExecutorManager executorManager = getEntranceContext().getOrCreateScheduler().getSchedulerContext().getOrCreateExecutorManager();
+            if (EntranceExecutorManager.class.isInstance(executorManager)) {
+                job = (EntranceJob) ((EntranceExecutorManager) executorManager).getEntranceJobByExecId(request.getJob().getId()).getOrElse(null);
+            }
             String msg = "Persist resultSet failed for subJob : " + request.getSubJobInfo().getSubJobDetail().getId() + ", response : " + BDPJettyServerHelper.gson().toJson(response);
             logger.error(msg);
             if (null != job) {
@@ -90,7 +96,10 @@ public class QueryPersistenceManager extends PersistenceManager{
         if(StringUtils.isNotBlank(path)) {
             EntranceJob job = null;
             try {
-                job = (EntranceJob) getEntranceContext().getOrCreateExecutorManager().getEntranceJobByExecId(request.getJob().getId()).getOrElse(null);
+                ExecutorManager executorManager = getEntranceContext().getOrCreateScheduler().getSchedulerContext().getOrCreateExecutorManager();
+                if (EntranceExecutorManager.class.isInstance(executorManager)) {
+                    job = (EntranceJob) ((EntranceExecutorManager) executorManager).getEntranceJobByExecId(request.getJob().getId()).getOrElse(null);
+                }
             } catch (Throwable e) {
                 try {
                     entranceContext.getOrCreateLogManager().onLogUpdate(job, "store resultSet failed! reason: " + ExceptionUtils.getRootCauseMessage(e));

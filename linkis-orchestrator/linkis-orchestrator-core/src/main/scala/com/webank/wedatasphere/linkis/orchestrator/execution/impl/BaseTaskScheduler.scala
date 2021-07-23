@@ -61,7 +61,7 @@ class BaseTaskScheduler(executeService: ExecutorService) extends TaskScheduler w
     // TODO Should support to add task to ready queue, since a complex scheduler is needed,
     //  such as: fair, priority... we should schedule them by using some algorithms.
     // TODO Here, we should also remove the futures which is completed normally in taskFutureCache and taskIdTaskCache.
-    info(s"launch task Runner ${task.task.getIDInfo()}")
+    debug(s"launch task Runner ${task.task.getIDInfo()}")
     val future = executeService.submit(task)
     if (! future.isDone) {
       taskFutureCache.put(task.task.getId, future)

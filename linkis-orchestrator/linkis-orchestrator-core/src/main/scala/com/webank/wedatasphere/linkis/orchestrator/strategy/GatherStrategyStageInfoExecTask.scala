@@ -45,27 +45,11 @@ class GatherStrategyStageInfoExecTask(parents: Array[ExecTask],
    * @return
    */
   override def execute(): TaskResponse = {
-    val statusInfos = getChildrenExecTaskStatusInfo()
-    if (null != statusInfos) {
-      val errorExecTask = statusInfos.filter { entry =>
-        !ExecutionNodeStatus.isSucceed(entry._2.nodeStatus) && ExecutionNodeStatus.isCompleted(entry._2.nodeStatus)
-      }
-      if (null != errorExecTask && errorExecTask.nonEmpty) {
-        val errorReason = errorExecTask.map { entry =>
-          val execTaskId = entry._1
-          val statusInfo = entry._2
-          val errorMsg = statusInfo.taskResponse match {
-            case failedTaskResponse: FailedTaskResponse =>
-              s"Task is Failed,errorMsg: ${failedTaskResponse.getErrorMsg}"
-            case _ => s"Task($execTaskId) status not succeed,is ${statusInfo.nodeStatus}"
-          }
-          errorMsg
-        }.mkString(";")
-        error(s"There are Tasks execution failure ($errorReason) of stage ${getIDInfo()}, now mark ExecutionTask as failed")
-
-        getPhysicalContext.markFailed(errorReason, null)
-        return new DefaultFailedTaskResponse(errorReason, OrchestratorErrorCodeSummary.STAGE_ERROR_CODE, null)
-      }
+    val errorExecTasks = getErrorChildrenExecTasks
+    if (errorExecTasks.isDefined) {
+      val errorReason = parseChildrenErrorInfo(errorExecTasks.get)
+      getPhysicalContext.markFailed(errorReason, null)
+      return new DefaultFailedTaskResponse(errorReason, OrchestratorErrorCodeSummary.STAGE_ERROR_CODE, null)
     }
     val execIdToResponse = getChildrenResultSet()
     if (null != execIdToResponse && execIdToResponse.nonEmpty) {

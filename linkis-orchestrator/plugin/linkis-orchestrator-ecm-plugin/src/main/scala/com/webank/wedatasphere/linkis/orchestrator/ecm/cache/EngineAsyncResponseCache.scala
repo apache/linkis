@@ -16,15 +16,24 @@
 
 package com.webank.wedatasphere.linkis.orchestrator.ecm.cache
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.{EngineAsyncResponse, EngineCreateError}
+import java.util.concurrent.{TimeUnit, TimeoutException}
+
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
+import com.webank.wedatasphere.linkis.manager.common.protocol.RequestManagerUnlock
+import com.webank.wedatasphere.linkis.manager.common.protocol.engine.{EngineAsyncResponse, EngineCreateError, EngineCreateSuccess}
 import com.webank.wedatasphere.linkis.orchestrator.ecm.conf.ECMPluginConf
 import com.webank.wedatasphere.linkis.orchestrator.ecm.exception.ECMPluginCacheException
+import com.webank.wedatasphere.linkis.rpc.Sender
 import org.apache.commons.lang.exception.ExceptionUtils
 
+import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration.Duration
 
-
+/**
+  *
+  *
+  */
 trait EngineAsyncResponseCache {
 
   @throws[ECMPluginCacheException]
@@ -45,23 +54,41 @@ object EngineAsyncResponseCache {
 
 }
 
-class EngineAsyncResponseCacheMap extends EngineAsyncResponseCache {
+case class  EngineAsyncResponseEntity(engineAsyncResponse: EngineAsyncResponse, createTime: Long)
 
-  private val cacheMap: java.util.Map[String, EngineAsyncResponse] = new java.util.concurrent.ConcurrentHashMap[String, EngineAsyncResponse]()
+class EngineAsyncResponseCacheMap extends EngineAsyncResponseCache with Logging {
+
+  private val cacheMap: java.util.Map[String, EngineAsyncResponseEntity] = new java.util.concurrent.ConcurrentHashMap[String, EngineAsyncResponseEntity]()
+
+  private val expireTime = ECMPluginConf.EC_ASYNC_RESPONSE_CLEAR_TIME.getValue.toLong
+
+  init()
 
   override def get(id: String, timeout: Duration): EngineAsyncResponse = {
     Utils.waitUntil(() => cacheMap.containsKey(id), timeout)
-    cacheMap.get(id)
+    val engineAsyncResponseEntity = cacheMap.get(id)
+    if (null != engineAsyncResponseEntity) {
+      engineAsyncResponseEntity.engineAsyncResponse
+    } else {
+      EngineCreateError(id, "async info null", retry = true)
+    }
   }
 
   override def getAndRemove(id: String, timeout: Duration): EngineAsyncResponse = {
-    try {
+    Utils.tryCatch {
       Utils.waitUntil(() => cacheMap.containsKey(id), timeout)
-    } catch {
+    } {
+      case t: TimeoutException =>
+        put(id, EngineCreateError(id, s"Asynchronous request engine timeout(请求引擎超时，可能是因为资源不足，您可以选择重试),async id $id", retry = true))
       case t: Throwable =>
         put(id, EngineCreateError(id, ExceptionUtils.getRootCauseStackTrace(t).mkString("\n")))
     }
-    cacheMap.remove(id)
+    val engineAsyncResponseEntity = cacheMap.remove(id)
+    if (null != engineAsyncResponseEntity) {
+      engineAsyncResponseEntity.engineAsyncResponse
+    } else {
+      EngineCreateError(id, "async info null", retry = true)
+    }
   }
 
   @throws[ECMPluginCacheException]
@@ -70,7 +97,40 @@ class EngineAsyncResponseCacheMap extends EngineAsyncResponseCache {
       cacheMap.remove(id)
       throw new ECMPluginCacheException(ECMPluginConf.ECM_CACHE_ERROR_CODE, "id duplicate")
     }
-    cacheMap.put(id, engineAsyncResponse)
+    cacheMap.put(id, EngineAsyncResponseEntity(engineAsyncResponse, System.currentTimeMillis()))
   }
+
+  def init(): Unit = {
+    info(s"Start cache map clear defaultScheduler")
+    Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
+      override def run(): Unit = try {
+
+        val iterator = cacheMap.entrySet().iterator()
+        val expireBuffer = new ArrayBuffer[String]()
+        while (iterator.hasNext) {
+          val keyValue = iterator.next()
+          val curTime = System.currentTimeMillis() - expireTime
+          if (null != keyValue.getValue && keyValue.getValue.createTime < curTime) {
+            expireBuffer += keyValue.getKey
+          }
+        }
+        expireBuffer.foreach { key =>
+          info(s" to clear engineAsyncResponseEntity key $key")
+          val engineAsyncResponseEntity =  cacheMap.remove(key)
+          if (null != engineAsyncResponseEntity && engineAsyncResponseEntity.engineAsyncResponse.isInstanceOf[EngineCreateSuccess]) {
+            val engineCreateSuccess = engineAsyncResponseEntity.engineAsyncResponse.asInstanceOf[EngineCreateSuccess]
+            info(s"clear engineCreateSuccess, to unlock $engineCreateSuccess")
+            val requestManagerUnlock = RequestManagerUnlock(engineCreateSuccess.engineNode.getServiceInstance, engineCreateSuccess.engineNode.getLock, Sender.getThisServiceInstance)
+            getManagerSender.send(requestManagerUnlock)
+          }
+        }
+      } catch {
+        case throwable: Throwable =>
+          error("Failed to clear EngineAsyncResponseCacheMap", throwable)
+      }
+    }, 60000, expireTime, TimeUnit.MILLISECONDS)
+  }
+
+  private def getManagerSender: Sender = Sender.getSender(GovernanceCommonConf.MANAGER_SPRING_NAME.getValue)
 
 }

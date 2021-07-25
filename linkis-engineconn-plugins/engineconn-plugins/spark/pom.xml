@@ -50,26 +50,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.webank.wedatasphere</groupId>
-            <artifactId>spark-excel_2.11</artifactId>
-            <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.jersey</groupId>
-                    <artifactId>jersey-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.jersey</groupId>
-                    <artifactId>jersey-client</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-computation-engineconn</artifactId>
             <version>${linkis.version}</version>

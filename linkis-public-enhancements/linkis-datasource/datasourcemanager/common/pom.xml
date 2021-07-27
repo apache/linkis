@@ -34,7 +34,7 @@
     <dependency>
       <groupId>com.webank.wedatasphere.linkis</groupId>
       <artifactId>linkis-module</artifactId>
-      <version>${linkis.version}</version>
+      <scope>provided</scope>
       <exclusions>
         <exclusion>
           <artifactId>asm</artifactId>

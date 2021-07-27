@@ -62,4 +62,6 @@ object GatewayConfiguration {
 
   val DSS_QUERY_WORKSPACE_SERVICE_NAME = CommonVars("wds.dss.query.workspace.service", "dss-framework-project-server")
   val USER_WORKSPACE_REFLESH_TIME  = CommonVars("wds.linkis.user.workspace.reflesh.time", 10)
+
+  val ENABLE_LOGIN_CAPTCHA = CommonVars("wds.linkis.gateway.conf.enable.login.captcha", false)
 }

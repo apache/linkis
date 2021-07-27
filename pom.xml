@@ -102,6 +102,7 @@
         <commons-lang.version>2.6</commons-lang.version>
         <commons-io.version>2.4</commons-io.version>
         <assembly.package.rootpath>${basedir}</assembly.package.rootpath>
+        <captcha.version>1.6.2</captcha.version>
     </properties>
 
     <dependencyManagement>

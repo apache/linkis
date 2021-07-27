@@ -46,6 +46,11 @@ import org.apache.http.util.EntityUtils
 import org.json4s.JsonAST.JString
 import org.json4s.jackson.JsonMethods.parse
 import scala.collection.JavaConversions._
+import java.awt.Font
+import java.util
+import com.wf.captcha.SpecCaptcha
+import com.wf.captcha.base.Captcha
+
 
 
 trait UserRestful {
@@ -107,6 +112,7 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
       case "publicKey" => publicKey(gatewayContext)
       case "heartbeat" => heartbeat(gatewayContext)
       case "proxy" => proxy(gatewayContext)
+      case "captcha" => captcha(gatewayContext)
       case _ =>
         Message.error("unknown request URI " + path)
     }
@@ -138,6 +144,26 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
     val message = tryRegister(gatewayContext)
     message
   }
+
+  @throws[Exception]
+  def captcha(gatewayContext: GatewayContext): Message = {
+    if(GatewayConfiguration.ENABLE_LOGIN_CAPTCHA.getValue){
+      val response = gatewayContext.getResponse
+      val specCaptcha = new SpecCaptcha(130, 48, 5)
+      specCaptcha.setFont(new Font("Verdana", Font.PLAIN, 32))
+      specCaptcha.setCharType(Captcha.TYPE_DEFAULT)
+      GatewaySSOUtils.setCaptcha(response, specCaptcha.text().toLowerCase())
+
+      val message = Message.ok();
+      val hashMap = new util.HashMap[String, Object]
+      hashMap.put("image", specCaptcha.toBase64())
+      message.setData(hashMap)
+      return message
+    }
+    Message.error("Function not enabled ")
+  }
+
+
 
   protected def tryLogin(context: GatewayContext): Message
 
@@ -204,6 +230,28 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
       }
       (tmpUsername, tmpPasswd)
     } else (null, null)
+
+    if(GatewayConfiguration.ENABLE_LOGIN_CAPTCHA.getValue){
+      val captchaArray = gatewayContext.getRequest.getQueryParams.get("captcha")
+      val captcha = if(userNameArray != null && userNameArray.nonEmpty){
+        captchaArray.head
+      }else {
+        if(StringUtils.isNotBlank(gatewayContext.getRequest.getRequestBody)){
+          val json = BDPJettyServerHelper.gson.fromJson(gatewayContext.getRequest.getRequestBody, classOf[java.util.Map[String, Object]])
+          json.get("captcha")
+        }
+      }
+      if(captcha == null || StringUtils.isBlank(captcha.toString)){
+        return Message.error("Verification code can not be empty(验证码不能为空)！")
+      }else{
+        val code = GatewaySSOUtils.getCaptcha(gatewayContext)
+        if(code != captcha) {
+          GatewaySSOUtils.setCaptcha(gatewayContext.getResponse, "")  //清空
+          return Message.error("Verification code error(验证码错误)！")
+        }
+      }
+    }
+
     if (userName == null || StringUtils.isBlank(userName.toString)) {
       Message.error("Username can not be empty(用户名不能为空)！")
     } else if (passwordEncrypt == null || StringUtils.isBlank(passwordEncrypt.toString)) {

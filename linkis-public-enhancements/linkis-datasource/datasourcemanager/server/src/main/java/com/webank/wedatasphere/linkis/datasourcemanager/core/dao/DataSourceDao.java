@@ -34,28 +34,31 @@ public interface DataSourceDao {
     /**
      * View detail
      * @param dataSourceId data source id
-     * @param createSystem system name
+     * @param version version
      * @return data source entity
      */
     DataSource selectOneDetail(@Param("dataSourceId") Long dataSourceId,
-                               @Param("createSystem") String createSystem);
+                               @Param("version") String version);
 
     /**
      * View normal
      * @param dataSourceId data source id
-     * @param createSystem system name
      * @return data source entity
      */
-    DataSource selectOne(@Param("dataSourceId") Long dataSourceId,
-                         @Param("createSystem") String createSystem);
+    DataSource selectOne(@Param("dataSourceId") Long dataSourceId);
     /**
      * Delete One
      * @param dataSourceId data source id
-     * @param createSystem create system
      * @return affect row
      */
-    int removeOne(@Param("dataSourceId")Long dataSourceId,
-                  @Param("createSystem")String createSystem);
+    int removeOne(@Param("dataSourceId")Long dataSourceId);
+
+    /**
+     * Expire One
+     * @param dataSourceId data source id
+     * @return affect row
+     */
+    int expireOne(@Param("dataSourceId")Long dataSourceId);
 
 
     /**

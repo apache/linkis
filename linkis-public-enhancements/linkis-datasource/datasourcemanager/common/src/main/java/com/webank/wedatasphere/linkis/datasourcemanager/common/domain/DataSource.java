@@ -92,6 +92,12 @@ public class DataSource {
 
     private String createUser;
 
+    private String labels;
+
+    private String version;
+
+    private boolean expire;
+
     /**
      * Data source type entity
      */
@@ -237,5 +243,29 @@ public class DataSource {
 
     public void setKeyDefinitions(List<DataSourceParamKeyDefinition> keyDefinitions) {
         this.keyDefinitions = keyDefinitions;
+    }
+
+    public String getLabels() {
+        return labels;
+    }
+
+    public void setLabels(String labels) {
+        this.labels = labels;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public boolean isExpire() {
+        return expire;
+    }
+
+    public void setExpire(boolean expire) {
+        this.expire = expire;
     }
 }

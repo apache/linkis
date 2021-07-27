@@ -26,19 +26,26 @@ public class DataSourceType {
 
     private String id;
     /**
-     * Icon class
+     * Name
      */
-    private String icon;
-
+    private String name;
     /**
      * Description
      */
     private String description;
-
     /**
-     * Name
+     * The display name of the type
      */
-    private String name;
+    private String option;
+    /**
+     * classifier
+     */
+    private String classifier;
+    /**
+     * Icon url
+     */
+    private String icon;
+
 
     public String getId() {
         return id;
@@ -70,5 +77,21 @@ public class DataSourceType {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getOption() {
+        return option;
+    }
+
+    public void setOption(String option) {
+        this.option = option;
+    }
+
+    public String getClassifier() {
+        return classifier;
+    }
+
+    public void setClassifier(String classifier) {
+        this.classifier = classifier;
     }
 }

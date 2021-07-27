@@ -1,13 +1,13 @@
 server:
-  port: 8196
+  port: 8297
 spring:
   application:
-    name: linkis-ps-datasourcemanager
+    name: linkis-ps-metadatamanager-kafka
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://${ip}:${port}/eureka/
+      defaultZone: http://127.0.0.1:20303/eureka/
   instance:
     metadata-map:
       test: wedatasphere
@@ -19,6 +19,5 @@ management:
         include: refresh,info
 logging:
   config: classpath:log4j2.xml
-
 
 

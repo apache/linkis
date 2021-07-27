@@ -18,13 +18,13 @@
         xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/2.3"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/2.3 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-    <id>linkis-mdm-service-kafka</id>
+    <id>linkis-dsm-server</id>
     <formats>
         <format>zip</format>
         <format>dir</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-    <baseDirectory>linkis-mdm-service-kafka</baseDirectory>
+    <baseDirectory>linkis-dsm-server</baseDirectory>
 
     <dependencySets>
         <dependencySet>
@@ -36,7 +36,6 @@
             <unpack>false</unpack>
             <useStrictFiltering>true</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
-
         </dependencySet>
     </dependencySets>
 

@@ -22,7 +22,7 @@ import java.util.List;
 public interface DataSourceVersionDao {
 
     /**
-     * get latest version from datasource id
+     * get latest version from datasource id, if null return 0;
      * @param dataSourceId
      * @return
      */

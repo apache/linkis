@@ -61,15 +61,14 @@
 
     <select id="selectByPageVo" resultMap="dataSourceEnvMap">
         <![CDATA[SELECT e.`id`, e.`env_name`, e.`env_desc`, e.`parameter`, e.`create_time`,
-        e.`create_user`, e.`modify_time`, e.`modify_user`, te.`data_source_type_id`
-            FROM `linkis_datasource_env` e INNER JOIN `linkis_datasource_type_env` te
-             ON e.`id` = te.`env_id`]]>
+        e.`create_user`, e.`modify_time`, e.`modify_user`, e.`datasource_type_id`
+            FROM `linkis_datasource_env` e ]]>
         <where>
             <if test="envName != null and envName != ''">
                 <![CDATA[e.`env_name` like concat('%', #{envName}, '%')]]>
             </if>
             <if test="dataSourceTypeId != null and dataSourceTypeId > 0">
-                <![CDATA[AND te.`data_source_type_id` = #{dataSourceTypeId}]]>
+                <![CDATA[AND e.`datasource_type_id` = #{dataSourceTypeId}]]>
             </if>
         </where>
     </select>

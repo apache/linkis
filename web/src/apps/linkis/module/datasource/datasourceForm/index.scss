@@ -1,0 +1,62 @@
+@import '@/common/style/variables.scss';
+
+.search-bar {
+  .search-item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: $font-size-base;
+
+    .lable {
+      min-width: 90px;
+      // flex-basis: 130px;
+      text-align: right;
+    }
+  }
+
+  .ivu-col {
+    display: flex;
+    justify-content: center;
+  }
+
+}
+
+.table-content {
+  margin-top: 25px;
+}
+
+.datasource-type-wrap {
+  .project-header {
+    height: 32px;
+
+    .header-title {
+      font-size: $font-size-large;
+      font-weight: bold;
+      padding-left: 12px;
+      border-left: 3px solid $primary-color;
+      color: $text-title-color;
+    }
+
+    .header-tool {
+      float: right;
+      margin-right: 6%;
+      color: $primary-color;
+      cursor: pointer;
+
+      .sort-icon {
+        margin-right: 20px;
+
+        .icon {
+          margin-left: 5px;
+          color: $primary-color;
+        }
+      }
+
+      .search-input {
+        width: 200px;
+        margin-right: 30px;
+      }
+    }
+  }
+
+}

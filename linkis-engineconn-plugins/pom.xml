@@ -36,11 +36,14 @@
         <module>engineconn-plugins/hive</module>
         <module>engineconn-plugins/spark</module>
         <module>engineconn-plugins/python</module>
+        <module>engineconn-plugins/datax</module>
 
         <module>engineconn-plugins/io_file</module>
         <module>engineconn-plugins/shell</module>
         <module>engineconn-plugins/pipeline</module>
         <module>engineconn-plugins/jdbc</module>
+        <module>engineconn-plugins/sqoop</module>
+        <module>engineconn-plugins/distcp</module>
     </modules>
 
 </project>

@@ -48,6 +48,8 @@ object EngineConnConf {
 
   val ENGINE_CONN_CREATION_WAIT_TIME = CommonVars("wds.linkis.engine.connector.init.time", new TimeType("8m"))
 
+  val ENGINE_CONN_EXTRA_HOME = CommonVars("wds.linkis.engine.extra.home", "")
+
   def getWorkHome: String = System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue)
 
   def getLogDir: String = {

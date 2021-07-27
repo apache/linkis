@@ -99,6 +99,7 @@ public class DataSourceCoreRestfulApi {
                 "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
     }
 
+/*
     @GET
     @Path("/key_define/type/{type_id}/{scope}")
     public Response getKeyDefinitionsByTypeAndScope(@PathParam("type_id") Long dataSourceTypeId,
@@ -111,6 +112,7 @@ public class DataSourceCoreRestfulApi {
                 }, "/data_source/key_define/type/" + dataSourceTypeId + "/" + scopeValue,
                 "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
     }
+*/
 
     @POST
     @Path("/info/json")

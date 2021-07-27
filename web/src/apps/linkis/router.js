@@ -120,6 +120,16 @@ export default [
         title: 'microServiceManagement',
         publicPage: true,
       },
+    },
+    {
+      name: 'datasource',
+      path: 'datasource',
+      component: () =>
+        import('./module/datasource/index.vue'),
+      meta: {
+        title: 'datasourceManagement',
+        publicPage: true,
+      },
     }
     ],
   },

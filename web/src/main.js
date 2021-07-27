@@ -18,6 +18,7 @@
 import Vue from 'vue'
 import iView from 'iview'
 import VueRouter from 'vue-router'
+import formCreate from '@form-create/iview'
 import { apps } from './dynamic-apps'
 import component from './components'
 import App from './dss/view/app.vue'
@@ -49,6 +50,7 @@ Vue.use(component)
 Vue.use(iView, {
   i18n: (key, value) => i18n.t(key, value)
 })
+Vue.use(formCreate)
 
 Vue.config.productionTip = false
 Vue.prototype.$Message.config({

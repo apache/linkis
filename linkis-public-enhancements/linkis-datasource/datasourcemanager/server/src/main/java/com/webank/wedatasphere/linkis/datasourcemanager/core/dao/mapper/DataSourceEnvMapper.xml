@@ -56,7 +56,7 @@
 
     <select id="listByTypeId" resultMap="dataSourceEnvMap">
         SELECT `id`, `env_name` FROM `linkis_datasource_env`
-        WHERE `datasource_type_id` = #{id}
+        WHERE `datasource_type_id` = #{id})
     </select>
 
     <select id="selectByPageVo" resultMap="dataSourceEnvMap">

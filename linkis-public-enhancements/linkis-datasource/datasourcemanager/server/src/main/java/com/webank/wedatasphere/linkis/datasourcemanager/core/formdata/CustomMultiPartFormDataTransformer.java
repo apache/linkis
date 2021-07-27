@@ -55,7 +55,8 @@ public class CustomMultiPartFormDataTransformer implements MultiPartFormDataTran
             }
             Map<String, List<FormDataBodyPart>> formDataParts = formData.getFields();
             formDataParts.forEach((partName, bodyParts) -> {
-                List<String> stepFieldNames = Arrays.asList(StringUtils.split(partName.replace("[", ".["), "."));
+                String realPartName = partName.replace("[", ".").replace("]", "");
+                List<String> stepFieldNames = Arrays.asList(StringUtils.split(realPartName, "."));
                 String rootFieldName = stepFieldNames.get(0);
                 Field field = objectFieldMap.get(rootFieldName);
                 if (null != field) {

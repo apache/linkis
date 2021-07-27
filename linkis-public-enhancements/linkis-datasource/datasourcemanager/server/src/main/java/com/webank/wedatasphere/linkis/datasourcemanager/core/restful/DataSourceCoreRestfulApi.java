@@ -147,12 +147,12 @@ public class DataSourceCoreRestfulApi {
             String connectParams = Json.toJson(params.get("connectParams"), null);
             String comment = params.get("comment").toString();
 
-//            DataSource dataSource = dataSourceInfoService.getDataSourceInfoBrief(datasourceId);
-//            List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
-//                    .getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
-//            parameterValidator.validate(keyDefinitionList, connectParams);
-//            //Encrypt password value type
-//            RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
+            DataSource dataSource = dataSourceInfoService.getDataSourceInfoBrief(datasourceId);
+            List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
+                    .getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
+            parameterValidator.validate(keyDefinitionList, connectParams);
+            //Encrypt password value type
+            RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
 
             long versionId = dataSourceInfoService.insertDataSourceParameter(datasourceId, connectParams, comment);
             return Message.ok().data("version", versionId);
@@ -211,7 +211,7 @@ public class DataSourceCoreRestfulApi {
             DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceId, version);
             // Decrypt
             if (null != dataSource) {
-                RestfulApiHelper.encryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId())
+                RestfulApiHelper.decryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId())
                         , dataSource.getConnectParams());
             }
             return Message.ok().data("info", dataSource);
@@ -393,9 +393,9 @@ public class DataSourceCoreRestfulApi {
         List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
                 .getKeyDefinitionsByType(updatedOne.getDataSourceTypeId());
         updatedOne.setKeyDefinitions(keyDefinitionList);
-        Map<String, Object> connectParams = updatedOne.getConnectParams();
-        parameterValidator.validate(keyDefinitionList, connectParams);
-        RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
+//        Map<String, Object> connectParams = updatedOne.getConnectParams();
+//        parameterValidator.validate(keyDefinitionList, connectParams);
+//        RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
         dataSourceInfoService.updateDataSourceInfo(updatedOne, storedOne);
     }
 

@@ -25,7 +25,6 @@ import com.webank.wedatasphere.linkis.datasourcemanager.core.service.MetadataOpe
 import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceVo;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidateException;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidator;
-import com.webank.wedatasphere.linkis.metadatamanager.common.Json;
 import com.webank.wedatasphere.linkis.metadatamanager.common.MdmConfiguration;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
@@ -228,6 +227,43 @@ public class DataSourceCoreRestfulApi {
         }, "/data_source/parameter/" + datasourceId + "/json", "Fail to insert data source parameter [保存数据源参数失败]");
     }*/
 /*
+
+    /**
+     * create or update parameter, save a version of parameter,return version id.
+     * @param multiPartForm
+     * @param req
+     * @return
+     */
+    @POST
+    @Path("/parameter/{datasource_id}/form")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response insertFormParameter(
+            @PathParam("datasource_id") Long datasourceId,
+            FormDataMultiPart multiPartForm,
+//            @RequestParam("params") Map<String, Object> params,
+            @Context HttpServletRequest req) {
+        return RestfulApiHelper.doAndResponse(() -> {
+            DataSourceParameter dataSourceParameter = formDataTransformer.transformToObject(multiPartForm, DataSourceParameter.class, beanValidator);
+            Map<String, Object> connectParams = dataSourceParameter.getConnectParams();
+            String comment = dataSourceParameter.getComment();
+            String userName = SecurityFilter.getLoginUsername(req);
+
+            DataSource dataSource = dataSourceInfoService.getDataSourceInfoBrief(datasourceId);
+            if(null == dataSource) {
+                // todo DatasourceException
+                throw new ErrorException(ServiceErrorCode.DATASOURCE_NOTFOUND_ERROR.getValue(), "datasource not found " );
+            }
+            List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
+                    .getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
+            parameterValidator.validate(keyDefinitionList, connectParams);
+            //Encrypt password value type
+            RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
+
+            long versionId = dataSourceInfoService.insertDataSourceParameter(keyDefinitionList, datasourceId, connectParams, userName, comment);
+
+            return Message.ok().data("version", versionId);
+        }, "/data_source/parameter/" + datasourceId + "/json", "Fail to insert data source parameter [保存数据源参数失败]");
+    }
 
     @POST
     @Path("/info/form")

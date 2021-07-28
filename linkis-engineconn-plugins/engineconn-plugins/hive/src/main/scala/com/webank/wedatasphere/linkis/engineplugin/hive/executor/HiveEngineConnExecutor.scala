@@ -29,6 +29,7 @@ import com.webank.wedatasphere.linkis.scheduler.executer.{ErrorExecuteResponse, 
 import com.webank.wedatasphere.linkis.storage.domain.{Column, DataType}
 import com.webank.wedatasphere.linkis.storage.resultset.ResultSetFactory
 import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.IOUtils
 import org.apache.hadoop.hive.common.HiveInterruptUtils
 import org.apache.hadoop.hive.conf.HiveConf
@@ -124,7 +125,7 @@ class HiveEngineConnExecutor(id: Int,
             info(s"driver is $any")
             thread = Thread.currentThread()
             driver = new HiveDriverProxy(any)
-            executeHQL(realCode, driver)
+            executeHQL(realCode, driver,tokens(0))
           case _ => val resp = proc.run(realCode.substring(tokens(0).length).trim)
             val result = new String(baos.toByteArray)
             logger.info("RESULT => {}", result)
@@ -148,7 +149,7 @@ class HiveEngineConnExecutor(id: Int,
     })
   }
 
-  private def executeHQL(realCode: String, driver: HiveDriverProxy): ExecuteResponse = {
+  private def executeHQL(realCode: String, driver: HiveDriverProxy,execType:String): ExecuteResponse = {
     var needRetry: Boolean = true
     var tryCount: Int = 0
     var hasResult: Boolean = false
@@ -185,7 +186,7 @@ class HiveEngineConnExecutor(id: Int,
         //get column data
         val metaData: TableMetaData = getResultMetaData(fieldSchemas, engineExecutorContext.getEnableResultsetMetaWithTableName)
         //send result
-        rows = sendResultSet(engineExecutorContext, driver, metaData)
+        rows = sendResultSet(engineExecutorContext, driver, metaData,execType)
         columnCount = if (fieldSchemas != null) fieldSchemas.size() else 0
         hasResult = true
       } catch {
@@ -222,7 +223,7 @@ class HiveEngineConnExecutor(id: Int,
     SuccessExecuteResponse()
   }
 
-  private def sendResultSet(engineExecutorContext: EngineExecutionContext, driver: HiveDriverProxy, metaData: TableMetaData): Int = {
+  private def sendResultSet(engineExecutorContext: EngineExecutionContext, driver: HiveDriverProxy, metaData: TableMetaData,execType:String): Int = {
     val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
     resultSetWriter.addMetaData(metaData)
     val colLength = metaData.columns.length
@@ -230,24 +231,49 @@ class HiveEngineConnExecutor(id: Int,
     var rows = 0
     while (driver.getResults(result)) {
       val scalaResult: mutable.Buffer[String] = result
-      scalaResult foreach { s =>
-        val arr: Array[String] = s.split("\t")
-        val arrAny: ArrayBuffer[Any] = new ArrayBuffer[Any]()
-        if (arr.length > colLength) {
-          logger.error(s"""hive code 查询的结果中有\t制表符，hive不能进行切割,请使用spark执行""")
-          throw new ErrorException(60078, """您查询的结果中有\t制表符，hive不能进行切割,请使用spark执行""")
+      val enable_fetch_base64 = hiveConf.get("enable_fetch_base64", "true").toBoolean
+      val isExplain = execType.equalsIgnoreCase("explain")
+      info("enable_fetch_base64:"+enable_fetch_base64+"isExplain:"+isExplain)
+      if (!enable_fetch_base64 || isExplain) {
+        scalaResult foreach { s =>
+          val arr: Array[String] = s.split("\t")
+          val arrAny: ArrayBuffer[Any] = new ArrayBuffer[Any]()
+          if (arr.length > colLength) {
+            logger.error(s"""hive code 查询的结果中有\t制表符，hive不能进行切割,请使用spark执行""")
+            throw new ErrorException(60078, """您查询的结果中有\t制表符，hive不能进行切割,请使用spark执行""")
+          }
+          if (arr.length == colLength) arr foreach arrAny.add
+          else if (arr.length == 0) for (i <- 1 to colLength) arrAny add ""
+          else {
+            val i = colLength - arr.length
+            arr foreach arrAny.add
+            for (i <- 1 to i) arrAny add ""
+          }
+          resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
         }
-        if (arr.length == colLength) arr foreach arrAny.add
-        else if (arr.length == 0) for (i <- 1 to colLength) arrAny add ""
-        else {
-          val i = colLength - arr.length
-          arr foreach arrAny.add
-          for (i <- 1 to i) arrAny add ""
+        rows += result.size
+        result.clear()
+      }else{
+        info("use base64 package and split by 0001")
+        scalaResult foreach { s =>
+          val arr: Array[String] = s.split("\u0001")
+          val arrAny: ArrayBuffer[Any] = new ArrayBuffer[Any]()
+          if (arr.length > colLength) {
+            logger.error(s"Tab characters are present in the results of your query Hive cannot cut, use Spark to do so 您查询的结果数据存在问题，hive不能进行切割,请使用spark执行)
+            throw new ErrorException(60078, """您查询的结果中有不支持的制表符，hive不能进行切割,请使用spark执行""")
+          }
+          if (arr.length == colLength) arr.foreach(data=>arrAny.add(new String(Base64.decodeBase64(data))))
+          else if (arr.length == 0) for (i <- 1 to colLength) arrAny add ""
+          else {
+            val i = colLength - arr.length
+            arr foreach arrAny.add
+            for (i <- 1 to i) arrAny add ""
+          }
+          resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
         }
-        resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
+        rows += result.size
+        result.clear()
       }
-      rows += result.size
-      result.clear()
     }
     engineExecutorContext.sendResultSet(resultSetWriter)
     IOUtils.closeQuietly(resultSetWriter)

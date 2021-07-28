@@ -82,6 +82,8 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
     }
 
 
+
+
     public static void serialize(ByteStream.Output out, Object obj, ObjectInspector objInspector, byte[] separators, int level, Text nullSequence, boolean escaped, byte escapeChar, boolean[] needsEscape) throws IOException, SerDeException {
         if (obj == null) {
             out.write(nullSequence.getBytes(), 0, nullSequence.getLength());
@@ -167,7 +169,6 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
                         out.write(separator);
                         serialize(out, uoi.getField(obj), (ObjectInspector)ois.get(uoi.getTag(obj)), separators, level + 1, nullSequence, escaped, escapeChar, needsEscape);
                     }
-
                     return;
                 default:
                     throw new RuntimeException("Unknown category type: " + objInspector.getCategory());
@@ -215,7 +216,7 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
                 break;
             }
             case STRING: {
-                binaryData = Base64.encodeBase64(((StringObjectInspector) oi).getPrimitiveWritableObject(o).getBytes());
+                binaryData = Base64.encodeBase64((String.valueOf(o).getBytes()));
                 break;
             }
             case CHAR: {

@@ -65,16 +65,8 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
           case _ =>
             0d
         }
-        val absoluteUsedCapacity =  r \ "absoluteUsedCapacity" match {
-          case jDecimal: JDecimal =>
-            jDecimal.values.toDouble
-          case jDouble: JDouble =>
-            jDouble.values
-          case _ =>
-            0d
-        }
-        val effectiveResource = absoluteCapacity - absoluteUsedCapacity
-        new YarnResource(math.floor(effectiveResource * totalResouceInfoResponse._1 * 1024l * 1024l/100).toLong, math.floor(effectiveResource * totalResouceInfoResponse._2/100).toInt, 0, queueName)
+
+        new YarnResource(math.floor(absoluteCapacity * totalResouceInfoResponse._1 * 1024l * 1024l/100).toLong, math.floor(absoluteCapacity * totalResouceInfoResponse._2/100).toInt, 0, queueName)
       })
     }
 
@@ -141,7 +133,26 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
           debug(s"cannot find any information about queue $queueName, response: " + resp)
           throw new RMWarnException(11006, s"queue $queueName is not exists in YARN.")
         }
-        (maxEffectiveHandle(queue).get, getYarnResource(queue.map(_ \ "resourcesUsed")).get)
+        val memory = queue.map( _ \ "capacities" \ "queueCapacitiesByPartition" \ "configuredMaxResource" \ "memory") match {
+          case Some(JArray(List(JInt(x)))) => x.toLong * 1024 * 1024
+        }
+        val vCores = queue.map( _ \ "capacities" \ "queueCapacitiesByPartition" \ "configuredMaxResource" \ "vCores") match {
+          case Some(JArray(List(JInt(x)))) => x.toInt
+        }
+
+        if(memory == 0 && vCores == 0){
+          // allocate by percetage
+          (
+            maxEffectiveHandle(queue).get,
+            getYarnResource(queue.map( _ \ "resourcesUsed")).get
+          )
+        }else{
+          // allocate by absolute resource
+          (
+            new YarnResource(memory, vCores, 0, queueName),
+            getYarnResource(queue.map( _ \ "resourcesUsed")).get
+          )
+        }
       } else if ("fairScheduler".equals(schedulerType)) {
         val childQueues = getChildQueues(resp \ "scheduler" \ "schedulerInfo" \ "rootQueue")
         val queue = getQueue(childQueues)

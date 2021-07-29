@@ -1,5 +1,6 @@
 package com.webank.wedatasphere.linkis.metadatamanager.server;
 import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
+import com.webank.wedatasphere.linkis.LinkisBaseServerApp;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -10,6 +11,6 @@ public class LinkisMetadataManagerApplication {
 
     public static void main(String[] args) throws ReflectiveOperationException {
         logger.info("Start to running LinkisMetadataManagerApplication");
-        DataWorkCloudApplication.main(args);
+        LinkisBaseServerApp.main(args);
     }
 }

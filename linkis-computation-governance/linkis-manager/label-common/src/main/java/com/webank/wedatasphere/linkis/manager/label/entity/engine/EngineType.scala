@@ -50,6 +50,12 @@ object EngineType extends Enumeration with Logging {
 
   val APPCONN = Value("appconn")
 
+  val DATAX = Value("datax")
+
+  val SQOOP = Value("sqoop")
+
+  val DISTCP = Value("distcp")
+
   def mapFsTypeToEngineType(fsType: String): String = {
     fsType match {
       case "file" =>
@@ -79,6 +85,9 @@ object EngineType extends Enumeration with Logging {
     case _ if PRESTO.toString.equalsIgnoreCase(str) => PRESTO
     case _ if FLINK.toString.equalsIgnoreCase(str) => FLINK
     case _ if APPCONN.toString.equals(str) => APPCONN
+    case _ if DATAX.toString.equals(str) => DATAX
+    case _ if SQOOP.toString.equals(str) => SQOOP
+    case _ if DISTCP.toString.equals(str) => DISTCP
     case _ => null
 
   }

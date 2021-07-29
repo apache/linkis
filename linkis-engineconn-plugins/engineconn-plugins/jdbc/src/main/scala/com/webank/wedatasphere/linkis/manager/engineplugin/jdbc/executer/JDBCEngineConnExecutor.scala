@@ -15,19 +15,21 @@
  */
 package com.webank.wedatasphere.linkis.manager.engineplugin.jdbc.executer
 
-import java.sql.{Connection, Statement}
-import java.util
-
+import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.utils.{OverloadUtils, Utils}
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
 import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
+import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
+import com.webank.wedatasphere.linkis.governance.common.protocol.conf.{RequestQueryEngineTypeDefault, ResponseQueryConfig}
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import com.webank.wedatasphere.linkis.manager.engineplugin.jdbc.ConnectionManager
 import com.webank.wedatasphere.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
+import com.webank.wedatasphere.linkis.protocol.CacheableProtocol
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
-import com.webank.wedatasphere.linkis.rpc.Sender
+import com.webank.wedatasphere.linkis.rpc.{RPCMapCache, Sender}
 import com.webank.wedatasphere.linkis.scheduler.executer.{AliasOutputExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import com.webank.wedatasphere.linkis.storage.domain.{Column, DataType}
 import com.webank.wedatasphere.linkis.storage.resultset.ResultSetFactory
@@ -35,6 +37,8 @@ import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, Ta
 import org.apache.commons.io.IOUtils
 import org.springframework.util.CollectionUtils
 
+import java.sql.{Connection, Statement}
+import java.util
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
@@ -51,6 +55,15 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
     val realCode = code.trim()
     val properties = engineExecutorContext.getProperties.asInstanceOf[util.Map[String, String]]
+
+    if (properties.get("jdbc.url") == null) {
+      info(s"jdbc url is empty, adding now...")
+      val globalConfig = Utils.tryAndWarn(JDBCEngineConfig.getCacheMap(null))
+      properties.put("jdbc.url", globalConfig.get("wds.linkis.jdbc.connect.url"))
+      properties.put("jdbc.username", globalConfig.get("wds.linkis.jdbc.username"))
+      properties.put("jdbc.password", globalConfig.get("wds.linkis.jdbc.password"))
+    }
+
     info(s"jdbc client begins to run jdbc code:\n ${realCode.trim}")
     connection = connectionManager.getConnection(properties)
     statement = connection.createStatement()
@@ -177,3 +190,17 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
   }
 }
 
+
+object JDBCEngineConfig extends RPCMapCache[JobRequest, String, String](Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue) {
+
+  override protected def createRequest(jobReq: JobRequest): CacheableProtocol = {
+    val engineTypeLabel = new EngineTypeLabel()
+    engineTypeLabel.setEngineType("jdbc")
+    engineTypeLabel.setVersion("4")
+    RequestQueryEngineTypeDefault(engineTypeLabel)
+  }
+
+  override protected def createMap(any: Any): util.Map[String, String] = any match {
+    case response: ResponseQueryConfig => response.getKeyAndValue
+  }
+}

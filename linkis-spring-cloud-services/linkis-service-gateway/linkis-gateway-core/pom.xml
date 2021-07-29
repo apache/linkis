@@ -87,6 +87,13 @@
             <artifactId>linkis-label-common</artifactId>
             <version>${linkis.version}</version>
         </dependency>
+        <!--captcha -->
+        <dependency>
+            <groupId>com.github.whvcse</groupId>
+            <artifactId>easy-captcha</artifactId>
+            <version>${captcha.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

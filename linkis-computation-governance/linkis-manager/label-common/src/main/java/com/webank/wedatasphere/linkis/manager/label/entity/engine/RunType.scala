@@ -34,5 +34,8 @@ object RunType extends Enumeration {
   val JDBC = Value("jdbc")
   val JAR = Value("jar")
   val APPCONN = Value("appconn")
+  val DATAX = Value("datax")
+  val SQOOP = Value("sqoop")
+  val DISTCP = Value("distcp")
 
 }

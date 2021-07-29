@@ -97,12 +97,12 @@ abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunc
       }
     }
     getExtraClassPathFile.foreach { file: String =>
-      addPathToClassPath(environment, Seq(variable(PWD), new File(file).getName))
+      addPathToClassPath(environment, file)
     }
     engineConnBuildRequest match {
       case richer: RicherEngineConnBuildRequest =>
         def addFiles(files: String): Unit = if (StringUtils.isNotBlank(files)) {
-          files.split(",").foreach(file => addPathToClassPath(environment, Seq(variable(PWD), new File(file).getName)))
+          files.split(",").foreach(addPathToClassPath(environment, _))
         }
 
         val configs: util.Map[String, String] = richer.getStartupConfigs.filter(_._2.isInstanceOf[String]).map { case (k, v: String) => k -> v }

@@ -122,6 +122,38 @@
     </fileSet>
 
 
+      <!--datax-->
+      <fileSet>
+          <directory>
+              ../../linkis-engineconn-plugins/engineconn-plugins/datax/target/out/
+          </directory>
+          <outputDirectory>lib/linkis-engineconn-plugins/</outputDirectory>
+          <includes>
+              <include>**/*</include>
+          </includes>
+      </fileSet>
+
+      <!--distcp-->
+      <fileSet>
+          <directory>
+              ../../linkis-engineconn-plugins/engineconn-plugins/distcp/target/out/
+          </directory>
+          <outputDirectory>lib/linkis-engineconn-plugins/</outputDirectory>
+          <includes>
+              <include>**/*</include>
+          </includes>
+      </fileSet>
+
+      <!--sqoop-->
+      <fileSet>
+          <directory>
+              ../../linkis-engineconn-plugins/engineconn-plugins/sqoop/target/out/
+          </directory>
+          <outputDirectory>lib/linkis-engineconn-plugins/</outputDirectory>
+          <includes>
+              <include>**/*</include>
+          </includes>
+      </fileSet>
       <!--lib-->
         <!--linkis-spring-cloud-services-->
             <!--linkis-gateway-->

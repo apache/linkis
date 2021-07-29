@@ -53,13 +53,16 @@ public abstract class AbstractServiceRegistry extends JavaLog implements Service
     public void register(Object service) {
         String serviceName = AopUtils.getTargetClass(service).getName();
         synchronized (this.lock.intern(serviceName)) {
-            //1.是否注册过
+            // 1. is registered?
+            // 1.是否注册过
             Object o = this.registedServieMap.get(serviceName);
             if (o != null) return;
-            //2..解析
+            // 2. parse
+            // 2. 解析
             ServiceParser serviceParser = this.context.getservieParser();
             Map<String, List<ServiceMethod>> serviceMethods = serviceParser.parse(service);
-            //3.注册
+            // 3. register
+            // 3. 注册
             serviceMethods.forEach(this::register);
             this.registedServieMap.put(serviceName, service);
         }
@@ -72,9 +75,11 @@ public abstract class AbstractServiceRegistry extends JavaLog implements Service
      */
     @SuppressWarnings("all")
     private void register(String key, List<ServiceMethod> serviceMethods) {
-        //防止相同key在不同service的并发注册
+        // Prevent concurrent registration of the same key in different services
+        // 防止相同key在不同service的并发注册
         synchronized (this.lock.intern(key)) {
-            //1.添加cache
+            // 1. add cache
+            // 1.添加cache
             refreshServiceMethodCache(key, serviceMethods);
         }
     }

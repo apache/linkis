@@ -52,7 +52,8 @@ object ResultSetFactory {
   val HTML_TYPE = "5"
 
   /**
-    * TODO 修改为注册形式，并修改ResultSet的getResultType逻辑 Result set corresponding type record(结果集对应类型记录)
+    * Change to registration form, and modify the getresulttype logic of the resultset,Result set corresponding type record
+    * TODO 修改为注册形式，并修改ResultSet的getResultType逻辑 ,结果集对应类型记录
     */
   val resultSetType = mutable.LinkedHashMap[String, String](TEXT_TYPE -> "TEXT",
     TABLE_TYPE -> "TABLE" ,

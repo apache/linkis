@@ -47,7 +47,8 @@ class StorageScriptFsWriter(val path: FsPath, val charset: String, outputStream:
 
   @scala.throws[IOException]
   override def addRecord(record: Record): Unit = {
-    //转成LineRecord而不是TableRecord是为了兼容非Table类型的结果集写到本类中
+    // It is converted to LineRecord instead of TableRecord to be compatible with non Table result sets written to this class
+    // 转成LineRecord而不是TableRecord是为了兼容非Table类型的结果集写到本类中
     val scriptRecord = record.asInstanceOf[LineRecord]
     if (outputStream != null) {
       IOUtils.write(scriptRecord.getLine, outputStream, charset)

@@ -64,14 +64,15 @@ object FileSource {
   }
 
   /**
-   * 目前只支持table多结果集
+   * Currently, only table multiple result sets are supported (目前只支持table多结果集)
    *
    * @param fsPaths
    * @param fs
    * @return
    */
   def create(fsPaths: Array[FsPath], fs: Fs): FileSource = {
-    //非table结果集的过滤掉
+    // Filtering out non table result sets
+    // 非table结果集的过滤掉
     val fileSplits = fsPaths.map(createResultSetFileSplit(_, fs)).filter(isTableResultSet)
     new ResultsetFileSource(fileSplits)
   }
@@ -79,7 +80,8 @@ object FileSource {
   private def isTableResultSet(fileSplit: FileSplit): Boolean = fileSplit.`type`.equals(ResultSetFactory.TABLE_TYPE)
 
   def isTableResultSet(fileSource: FileSource): Boolean = {
-    //分片中全部为table结果集才返回true
+    // true is returned only when all the result sets in the partition are table
+    // 分片中全部为table结果集才返回true
     fileSource.getFileSplits.forall(isTableResultSet)
   }
 

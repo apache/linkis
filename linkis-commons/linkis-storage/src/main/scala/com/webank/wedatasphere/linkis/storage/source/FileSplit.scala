@@ -106,8 +106,8 @@ class FileSplit(var fsReader: FsReader[_ <: MetaData, _ <: Record], var `type`: 
   private def ColumnToMap(column: Column): java.util.Map[String, String] = {
     Map[String, String]("columnName" -> column.columnName, "comment" -> column.comment, "dataType" -> column.dataType.typeName)
   }
-
-  //如果不分页,则一直读,如果分页,则 count需要小于count
+  // If it is not paged, it is always read, if paging, count needs to be less than end
+  // 如果不分页,则一直读,如果分页,则 count需要小于end
   def ifContinueRead: Boolean = !pageTrigger || count <= end
 
   def ifStartRead: Boolean = !pageTrigger || count >= start

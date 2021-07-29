@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Created by ${USER} on ${DATE}.
- */
-
 package com.webank.wedatasphere.linkis.httpclient
 
 import com.webank.wedatasphere.linkis.httpclient.response.Result

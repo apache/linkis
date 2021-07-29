@@ -22,33 +22,33 @@ package com.webank.wedatasphere.linkis.common.errorcode;
 public enum LinkisComputationGovernanceErrorCodeSummary {
 
     ENGINE_LAUNCH_REQUEST_USER_BLANK(20000,
-            "请求引擎的参数中user为空",
-            "请求引擎的参数中user为空",
+            "user is null in the parameters of the request engine",
+            "user is null in the parameters of the request engine",
             "EngineConnManger"),
     ENGINE_LAUNCH_REQUEST_CREATOR_BLANK(20001,
-            "请求启动引擎的参数中creator为空",
-            "请求启动引擎的参数中creator为空",
+            "creator is null in the parameters of the request engine",
+            "creator is null in the parameters of the request engine",
              "EngineConnManager"),
-    ENGINE_INIT_FAILED(20002, "引擎初始化失败", "引擎初始化失败", "EngineConnManager"),
+    ENGINE_INIT_FAILED(20002, "engine initialization failed", "engine initialization failed", "EngineConnManager"),
 
-    ENGINE_REQUEST_USER_BLANK(20000, "请求引擎的参数中user为空", "请求引擎的参数中user为空", "EngineConnManger"),
+    ENGINE_REQUEST_USER_BLANK(20000, "user is null in the parameters of the request engine", "user is null in the parameters of the request engine", "EngineConnManger"),
 
 
-    AM_EM_NOT_FOUND(20100, "请求引擎的参数中user为空", "请求引擎的参数中user为空", "EngineConnManger");
+    AM_EM_NOT_FOUND(20100, "user is null in the parameters of the request engine", "user is null in the parameters of the request engine", "EngineConnManger");
     /**
-     * 错误码
+     * error code
      */
     private int errorCode;
     /**
-     * 错误描述
+     * error description
      */
     private String errorDesc;
     /**
-     * 错误可能出现的原因
+     * possible causes of errors
      */
     private String comment;
     /**
-     * 所属的linkis的模块
+     * the module of the links to which it belongs
      */
     private String module;
 

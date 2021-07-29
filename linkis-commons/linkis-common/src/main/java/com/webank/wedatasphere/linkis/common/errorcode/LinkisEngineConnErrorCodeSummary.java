@@ -24,19 +24,19 @@ public enum LinkisEngineConnErrorCodeSummary {
 
     ;
     /**
-     * 错误码
+     * error code
      */
     private int errorCode;
     /**
-     * 错误描述
+     * error description
      */
     private String errorDesc;
     /**
-     * 错误可能出现的原因
+     * possible causes of errors
      */
     private String comment;
     /**
-     * 所属的linkis的模块
+     * the module of the links to which it belongs
      */
     private String module;
 

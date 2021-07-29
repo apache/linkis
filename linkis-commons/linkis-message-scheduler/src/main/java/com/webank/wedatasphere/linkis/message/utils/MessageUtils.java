@@ -65,6 +65,7 @@ public class MessageUtils {
     }
 
     public static boolean orderIsLast(int order, List<ServiceMethod> serviceMethods) {
+        // TODO: 2020/8/5 Method is modified to duplicate , Support head
         // TODO: 2020/8/5 方法判断修改为重复的order 支持头部
         if (order == 2147483647) return true;
         for (ServiceMethod serviceMethod : serviceMethods) {

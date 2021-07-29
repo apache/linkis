@@ -51,7 +51,8 @@ public abstract class AbstractImplicitRegistry extends JavaLog implements Implic
     public void register(Object implicitObject) {
         String implicitObjectName = implicitObject.getClass().getName();
         synchronized (this.lock.intern(implicitObjectName)) {
-            //1.是否解析过
+            // 1. Has it been resolved
+            // 1.是否解析过
             Object o = this.registedImplicitObjectMap.get(implicitObjectName);
             if (o != null) return;
             Map<String, List<ImplicitMethod>> implicitMethods = this.context.getImplicitParser().parse(implicitObject);
@@ -63,7 +64,8 @@ public abstract class AbstractImplicitRegistry extends JavaLog implements Implic
     @SuppressWarnings("all")
     private void refreshImplicitMethodCache(String key, List<ImplicitMethod> implicitMethods) {
         synchronized (this.lock.intern(key)) {
-            //同一个implicitObject 下的入参，出参相同的implit,会被过滤掉
+            // Input parameters under the same implicitObject, Implit with the same parameters will be filtered out
+            // 同一个implicitObject 下的入参，出参相同的implit,会被过滤掉
             List<ImplicitMethod> implicitMethodsOld = this.implicitMethodCache.computeIfAbsent(key, k -> new ArrayList<>());
             for (ImplicitMethod implicitMethod : implicitMethods) {
                 if (isImplicitRepeat(new ArrayList<>(implicitMethodsOld), implicitMethod)) {

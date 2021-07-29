@@ -58,7 +58,7 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
   }
 
   def getWorkBook: Workbook = {
-    //自适应列宽
+    //Adaptive column width （自适应列宽）
     sheet.trackAllColumnsForAutoSizing()
     for (elem <- 0 to columnCounter) {
       sheet.autoSizeColumn(elem)
@@ -106,7 +106,7 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
 
   @scala.throws[IOException]
   override def addRecord(record: Record): Unit = {
-    // TODO: 是否需要替换null值
+    // TODO: Do you want to replace null values（是否需要替换null值）
     val tableBody = sheet.createRow(rowPoint)
     var colunmPoint = 0
     val excelRecord = record.asInstanceOf[TableRecord].row

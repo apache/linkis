@@ -71,7 +71,9 @@ class MessageConverter {
       case t: Throwable => t
     }
     returnType += "_request_protocol_" -> BDPJettyServerHelper.gson.fromJson(BDPJettyServerHelper.gson.toJson(data), protocol)
-    //设置一个restful请求的客户端
+    // Set up a client for restful requests
+    // 设置一个restful请求的客户端
+    // TODO: Get IP and address from req
     // TODO:  req中获取到ip和地址
     data.clear()
     data.put("name", "")

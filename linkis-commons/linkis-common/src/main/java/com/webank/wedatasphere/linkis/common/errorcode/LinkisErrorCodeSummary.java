@@ -31,27 +31,27 @@ public enum LinkisErrorCodeSummary {
      * 26000-29999 linkis-engineconn-plugins
      */
     EngineManagerErrorException
-            (321, "引擎启动失败", "在某种情况下启动失败", "cooperyang", "EngineConnManager")
+            (321, "engine start failed", "failed to start under certain circumstances", "cooperyang", "EngineConnManager")
     ;
     /**
-     * 错误码
+     * error code
      */
     private int errorCode;
     /**
-     * 错误描述
+     * error description
      */
     private String errorDesc;
     /**
-     * 评论
+     * possible causes of errors
      */
     private String comment;
 
     /**
-     * errorCode的创建人
+     * error code creator
      */
     private String creator;
     /**
-     * 所属的linkis的模块
+     * the module of the links to which it belongs
      */
     private String module;
 

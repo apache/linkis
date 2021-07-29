@@ -2,9 +2,6 @@ package com.webank.wedatasphere.linkis.storage.exception;
 
 public enum StorageErrorCode {
 
-    /**
-     *
-     */
     FS_NOT_INIT(53001,"please init first")
     ;
 

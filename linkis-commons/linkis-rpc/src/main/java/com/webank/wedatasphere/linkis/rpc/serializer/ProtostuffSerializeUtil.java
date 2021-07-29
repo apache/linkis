@@ -40,7 +40,7 @@ public class ProtostuffSerializeUtil {
     }
 
     /**
-     * 缓存Schema
+     * Cache (缓存) Schema
      */
     private static Map<Class<?>, Schema<?>> schemaCache = new ConcurrentHashMap<Class<?>, Schema<?>>();
 
@@ -82,10 +82,11 @@ public class ProtostuffSerializeUtil {
     }
 
     /**
+     * The hexadecimal string representation is converted to a byte array
      * 16进制的字符串表示转成字节数组
      *
-     * @param hexString 16进制格式的字符串
-     * @return 转换后的字节数组
+     * @param hexString String in hexadecimal format(16进制格式的字符串)
+     * @return Converted byte array(转换后的字节数组）
      **/
     public static byte[] toByteArray(String hexString) {
         if (null == hexString)
@@ -107,10 +108,11 @@ public class ProtostuffSerializeUtil {
     }
 
     /**
+     * The converted byte array converts the byte array into a string in hexadecimal format
      * 字节数组转成16进制表示格式的字符串
      *
-     * @param byteArray 需要转换的字节数组
-     * @return 16进制表示格式的字符串
+     * @param byteArray Byte array to be converted （需要转换的字节数组）
+     * @return String in hexadecimal format （16进制表示格式的字符串）
      **/
     public static String toHexString(byte[] byteArray) {
         if (byteArray == null)

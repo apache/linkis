@@ -28,7 +28,7 @@ import java.util.Date;
 public class SubJobDetail {
 
   /*
-  db自增id
+  DB auto increment ID (db自增id)
    */
 
    Long id;
@@ -38,23 +38,23 @@ public class SubJobDetail {
 
    Long jobGroupId;
   /*
-  结果集地址
+  Result set address(结果集地址0
    */
 
    String resultLocation;
   /*
-  结果集数量
+  Number of result sets（结果集数量）
    */
 
    Integer resultSize;
   /*
-  执行参数 json
+  Execute parameter （执行参数） json
    */
 
    String executionContent;
 
   /*
-  jobGroup信息
+  Jobgroup information （jobGroup信息）
    */
 
    String jobGroupInfo;
@@ -64,7 +64,7 @@ public class SubJobDetail {
    Date updatedTime = new Date(System.currentTimeMillis());
 
   /*
-  任务状态
+  Task status（任务状态）
    */
 
    String status;

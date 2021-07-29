@@ -21,23 +21,23 @@ package com.webank.wedatasphere.linkis.common.errorcode;
 
 public enum LinkisCommonsErrorCodeSummary {
 
-    ENGINE_FAILED_STARTED(11000, "引擎启动失败", "引擎启动失败", "hiveEngineConn")
+    ENGINE_FAILED_STARTED(11000, "engine start failed(引擎启动失败)", "engine start failed(引擎启动失败)", "hiveEngineConn")
 
     ;
     /**
-     * 错误码
+     * error code （错误编码）
      */
     private int errorCode;
     /**
-     * 错误描述
+     * error description （错误描述）
      */
     private String errorDesc;
     /**
-     * 错误可能出现的原因
+     * possible causes of errors （可能发生错误的原因）
      */
     private String comment;
     /**
-     * 所属的linkis的模块
+     * the module of the links to which it belongs （所属linkis的模块）
      */
     private String module;
 

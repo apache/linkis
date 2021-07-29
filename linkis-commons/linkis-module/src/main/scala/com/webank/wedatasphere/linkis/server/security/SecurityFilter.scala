@@ -52,7 +52,7 @@ class SecurityFilter extends Filter {
       //Security certification support, referer limited(安全认证支持，referer限定)
       val referer = request.getHeader("Referer")
       if (StringUtils.isNotEmpty(referer) && !referer.trim.contains(localAddress)) {
-        filterResponse(validateFailed("不允许的跨站请求！"))
+        filterResponse(validateFailed("Cross site request not allowed!(不允许的跨站请求！)"))
         return false
       }
       //Security certification support, solving verb tampering(安全认证支持，解决动词篡改)

@@ -29,6 +29,7 @@ public class RequestPersistTask implements Task {
 
     private Long taskID;
     /**
+     * instance refers to the instance of the unified portal where the task is located， ip + port
      * instance 是指该task所在的统一入口的实例 ip + port
      */
     private String instance;
@@ -38,6 +39,7 @@ public class RequestPersistTask implements Task {
 
 
     /**
+     * engineInstance  refers to the instance information of the engine requested by task execution，ip+port
      * engineInstance 是指task执行所请求的engine的实例信息，ip+port
      */
     private String engineInstance;
@@ -52,18 +54,25 @@ public class RequestPersistTask implements Task {
     private String errDesc;
     private String taskResource;
     /**
+     * executeApplicationName Parameters refer to the services sought by users, such as spark Python R, etc
      * executeApplicationName 参数指的是用户所寻求的服务，比如spark python R等等
      */
     private String executeApplicationName;
     /**
+     * requestApplicationName is the passed parameter name of creator, such as ide or wtss
      * requestApplicationName 是creator的传参名，例如IDE或WTSS等
      */
     private String requestApplicationName;
     /**
+     * deposit script source, scriptpath is one of the parameters. The user executes the script by passing it in,
+     * scriptpath is the storage address of the script
      * source 存放脚本来源，scriptPath是其中一个参数用户采用传入执行脚本的方式，scriptPath就是脚本的存储地址
      */
     private java.util.Map<String, String> source;
     /**
+     * runtype needs to be used in combination with executeapplicationname. If the user selects spark as the service,
+     * he also needs to indicate which execution method to use, such as pyspark rspark, etc
+     * runtype and runtype are the same attribute for compatibility with previous code
      * runType需要和executeApplicationName结合使用，如用户选择了Spark做为服务，他还需要指明使用哪种执行方式，比如pySpark RSpark等
      * runType和runType是同一个属性，为了兼容以前的代码
      */

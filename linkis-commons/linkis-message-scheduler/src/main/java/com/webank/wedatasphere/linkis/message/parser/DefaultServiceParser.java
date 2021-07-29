@@ -75,6 +75,11 @@ public class DefaultServiceParser implements ServiceParser {
      * 1个参数：非ServiceMethodContext 子类即可
      * 2个参数 其中一个需要是ServiceMethodContext 的子类 && 2个参数都非ServiceMethodContext 子类即可
      *
+     * The @ receiver annotation is marked, and the method has at least one parameter
+     * One parameter: non servicemethodcontext subclass
+     * Two parameter:  one of them needs to be a subclass of servicemethodcontext & & both
+     *    parameters are not subclasses of servicemethodcontext
+     *
      * @param method
      * @return
      */

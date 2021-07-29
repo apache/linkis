@@ -270,11 +270,11 @@ object Utils extends Logging {
       case t if t < second =>
         "%d ms".format(t)
       case t if t < minute =>
-        "%.1f 秒".format(t.toFloat / second)
+        "%.1f second".format(t.toFloat / second)
       case t if t < hour =>
-        "%.1f 分钟".format(t.toFloat / minute)
+        "%.1f minute".format(t.toFloat / minute)
       case t =>
-        "%.2f 小时".format(t.toFloat / hour)
+        "%.2f hour".format(t.toFloat / hour)
     }
   }
 

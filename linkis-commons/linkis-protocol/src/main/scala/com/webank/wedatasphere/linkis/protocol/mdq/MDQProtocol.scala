@@ -31,14 +31,17 @@ case class DDLResponse(code:String) extends MDQProtocol
 abstract class DDLExecute(code:String) extends MDQProtocol
 
 /**
+  *
+  * Sparkengine returns whether the execution is successful
   * sparkEngine返回执行是否成功
-  * @param status true is 成功， false is 失败
-  * @param code 返回的代码
+  * @param status true is success(成功)， false is fail(失败)
+  * @param code return code
   */
 case class DDLExecuteResponse(status:Boolean, code:String, user:String) extends DDLExecute(code:String)
 
 
 /**
+  * Returns whether the closing of MDQ is successful, including database insertion and other operations
   * 返回是否在MDQ收尾成功，包括数据库插入等操作
   * @param status
   */

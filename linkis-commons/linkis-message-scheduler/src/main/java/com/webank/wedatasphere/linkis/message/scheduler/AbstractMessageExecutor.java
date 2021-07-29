@@ -49,7 +49,8 @@ public abstract class AbstractMessageExecutor extends JavaLog implements Message
     }
 
     private List<MethodExecuteWrapper> getMinOrderMethodWrapper(Map<String, List<MethodExecuteWrapper>> methodWrappers) {
-        //获取所有key中order最小的
+        // Get the smallest order of all keys
+        // 获取所有key中order最小的
         List<MethodExecuteWrapper> minOrderMethodWrapper = new ArrayList<>();
         methodWrappers.forEach((k, v) -> v.forEach(m -> {
             if (MessageUtils.orderIsMin(m, v)) minOrderMethodWrapper.add(m);
@@ -58,7 +59,8 @@ public abstract class AbstractMessageExecutor extends JavaLog implements Message
     }
 
     private List<MethodExecuteWrapper> getMinOrderMethodWrapper(List<MethodExecuteWrapper> methodWrappers) {
-        //获取单个key中order最小的，一般是一个，尾链可能有多个
+        // Obtain the smallest order in a single key, usually one, and there may be multiple tail chains
+        // 获取单个key中order最小的，一般是一个，尾链可能有多个
         return methodWrappers.stream().filter(m -> MessageUtils.orderIsMin(m, methodWrappers)).collect(Collectors.toList());
     }
 
@@ -101,6 +103,7 @@ public abstract class AbstractMessageExecutor extends JavaLog implements Message
                 Future<?> methodFuture = getExecutorService().submit(() -> {
                     Object result = null;
                     try {
+                        // TODO: 2020/7/31 Judgment logic removed
                         // TODO: 2020/7/31 判断逻辑挪走
                         if (!methodWrapper.shouldSkip) {
                             //放置job状态
@@ -109,6 +112,7 @@ public abstract class AbstractMessageExecutor extends JavaLog implements Message
                             Object service = methodWrapper.getService();
                             info(String.format("message scheduler executor ===> service: %s,method: %s", service.getClass().getName(), method.getName()));
                             Object implicit;
+                            // TODO: 2020/8/4   implicit  results should be reused
                             // TODO: 2020/8/4 implicit 的结果应该复用下
                             ImplicitMethod implicitMethod = methodWrapper.getImplicitMethod();
                             if (implicitMethod != null) {
@@ -125,6 +129,7 @@ public abstract class AbstractMessageExecutor extends JavaLog implements Message
                             } else {
                                 result = method.invoke(service, implicit);
                             }
+                            // TODO: 2020/8/5 After execution, judge whether the service has active skip logic
                             // TODO: 2020/8/5  执行完成后判断service是否有主动skip的逻辑
                         }
                     } catch (Throwable t) {
@@ -135,9 +140,12 @@ public abstract class AbstractMessageExecutor extends JavaLog implements Message
                         if (result != null) {
                             methodContext.setResult(result);
                         }
-                        //末链并发的时候，小概率可能会有重复的method被offer到queue中，但是在poll前循环就break了，无影响
+                        // When the end chain is concurrent, there is a small probability that repeated methods may
+                        // be offered to the queue, but the loop breaks before the poll, which has no impact
+                        // 末链并发的时候，小概率可能会有重复的method被offer到queue中，但是在poll前循环就break了，无影响
                         getMinOrderMethodWrapper(methodWrappers.get(methodWrapper.getChainName())).forEach(queue::offer);
-                        //移除state和skips的状态
+                        // Remove the state of state and skips
+                        // 移除state和skips的状态
                         cleanMethodContextThreadLocal(methodContext);
                         countDownLatch.countDown();
                     }

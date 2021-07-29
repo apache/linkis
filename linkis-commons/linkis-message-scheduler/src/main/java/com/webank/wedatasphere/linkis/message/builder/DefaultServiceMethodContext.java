@@ -125,13 +125,13 @@ public class DefaultServiceMethodContext implements ServiceMethodContext {
 
     @Override
     public boolean isInterrupted() {
-        //linkis-shceduler 没有isInterrupted状态
+        //linkis-shceduler No isinterrupted state (没有isInterrupted状态)
         return SchedulerEventState.Cancelled() == this.job.get().getState();
     }
 
     @Override
     public boolean isCancel() {
-        //linkis-shceduler只有cancel
+        //linkis-shceduler Only cancel(只有cancel)
         return SchedulerEventState.Cancelled() == this.job.get().getState();
     }
 

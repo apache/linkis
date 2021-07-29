@@ -146,7 +146,7 @@ public class DefaultMessageJob extends Job implements MessageJob {
         if (this.isSucceed()) {
             return this.getMethodContext().getResult();
         }
-        // TODO: 2020/8/3  cancel逻辑加入
+        // TODO: 2020/8/3  cancel logic addition （cancel逻辑加入）
         throw new ExecutionException(this.getErrorResponse().t());
     }
 

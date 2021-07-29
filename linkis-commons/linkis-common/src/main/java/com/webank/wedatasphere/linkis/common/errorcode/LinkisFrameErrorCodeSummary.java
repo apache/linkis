@@ -22,7 +22,7 @@ package com.webank.wedatasphere.linkis.common.errorcode;
 public enum LinkisFrameErrorCodeSummary {
 
     VALIDATE_ERROR_CODE_FAILED
-            (10000, "错误码定义有误", "错误码定义超过最大值或者小于最小值", "linkis-frame")
+            (10000, "error code definition error", "The error code definition exceeds the maximum value or is less than the minimum value", "linkis-frame")
 
     ;
 

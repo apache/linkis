@@ -19,6 +19,7 @@ package com.webank.wedatasphere.linkis.protocol.engine;
 public enum EngineState {
 
     /**
+     * Various states of the engine
      * 引擎的各种状态
      */
     Starting, Idle, Busy, ShuttingDown, Error, Dead, Success;

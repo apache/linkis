@@ -63,7 +63,10 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
           d.setSchedule(clientConfig.getDiscoveryPeriod, clientConfig.getDiscoveryTimeUnit)
         case d => d.setServerUrl(clientConfig.getServerUrl)
       }
-      //如果discovery没有启用，那么启用loadBalancer是没有意义的
+      /**
+        * If discovery is not enabled, it is meaningless to enable loadbalancer
+        * 如果discovery没有启用，那么启用loadBalancer是没有意义的
+        */
       val loadBalancer = if (clientConfig.isLoadbalancerEnabled && this.clientConfig.getLoadbalancerStrategy != null)
         Some(this.clientConfig.getLoadbalancerStrategy.createLoadBalancer())
       else if (clientConfig.isLoadbalancerEnabled) Some(DefaultLoadbalancerStrategy.createLoadBalancer())

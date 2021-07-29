@@ -49,6 +49,11 @@ public class DefaultImplicitParser implements ImplicitParser {
      * 入参需要是RequestProtocol 的子类
      * 排除出参是入参的父类的情况
      *
+     * Annotated with @ implicit annotation
+     * Only one input parameter, and the return value is not void
+     * The input parameter needs to be a subclass of requestprotocol
+     * Exclude the case where the parameter is the parent of the incoming parameter
+     *
      * @param method
      * @return
      */
@@ -56,7 +61,9 @@ public class DefaultImplicitParser implements ImplicitParser {
         if (method.getAnnotation(Implicit.class) != null
                 && method.getParameterCount() == 1
                 && !void.class.equals(method.getReturnType())) {
-            // TODO: 2020/8/4 返回值支持集合 ，参数也可以不用是RequestProtocol的子类
+            // TODO: 2020/8/4
+            //  The return value supports collection, and the parameter may not be a subclass of requestprotocol
+            //  返回值支持集合 ，参数也可以不用是RequestProtocol的子类
             Class<?> input = method.getParameterTypes()[0];
             return RequestProtocol.class.isAssignableFrom(input) && !method.getReturnType().isAssignableFrom(input);
         }

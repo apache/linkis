@@ -34,7 +34,8 @@ public class SpringImplicitRegistry extends AbstractImplicitRegistry {
         super(context);
         Set<Method> implicitMethods = REFLECTIONS.getMethodsAnnotatedWith(Implicit.class);
         Set<? extends Class<?>> implicitClasses = implicitMethods.stream().map(Method::getDeclaringClass).collect(Collectors.toSet());
-        //区分出 bean中的方法，和其他，其他使用反射创建方法对象
+        // Distinguish between the methods in the bean and others. Others use reflection to create method objects
+        // 区分出 bean中的方法，和其他，其他使用反射创建方法对象
         for (Class<?> implicitClass : implicitClasses) {
             Object bean = MessageUtils.getBean(implicitClass);
             if (bean == null) {

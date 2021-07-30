@@ -259,7 +259,7 @@ class HiveEngineConnExecutor(id: Int,
           val arr: Array[String] = s.split("\u0001")
           val arrAny: ArrayBuffer[Any] = new ArrayBuffer[Any]()
           if (arr.length > colLength) {
-            logger.error(s"Tab characters are present in the results of your query Hive cannot cut, use Spark to do so 您查询的结果数据存在问题，hive不能进行切割,请使用spark执行)
+            logger.error(s"Tab characters are present in the results of your query Hive cannot cut, use Spark to do so 您查询的结果数据存在问题，hive不能进行切割,请使用spark执行")
             throw new ErrorException(60078, """您查询的结果中有不支持的制表符，hive不能进行切割,请使用spark执行""")
           }
           if (arr.length == colLength) arr.foreach(data=>arrAny.add(new String(Base64.decodeBase64(data))))

@@ -378,7 +378,7 @@
 
       <fileSet>
           <directory>
-              ${project.parent.basedir}/linkis-public-enhancements/linkis-datasource/datasourcemanager/server/target/out/lib
+              ../../linkis-public-enhancements/linkis-datasource/datasourcemanager/server/target/out/lib
           </directory>
           <outputDirectory>
               lib/linkis-public-enhancements/linkis-ps-datasourcemanager
@@ -390,7 +390,7 @@
 
       <fileSet>
           <directory>
-              ${project.parent.basedir}/linkis-public-enhancements/linkis-datasource/metadatamanager/server/target/out/lib
+              ../../linkis-public-enhancements/linkis-datasource/metadatamanager/server/target/out/lib
           </directory>
           <outputDirectory>
               lib/linkis-public-enhancements/linkis-ps-metadatamanager
@@ -402,7 +402,7 @@
 
       <fileSet>
           <directory>
-              ${project.parent.basedir}/linkis-public-enhancements/linkis-datasource/metadatamanager/service/mysql/target/out/lib
+              ../../linkis-public-enhancements/linkis-datasource/metadatamanager/service/mysql/target/out/lib
           </directory>
           <outputDirectory>
               lib/linkis-public-enhancements/linkis-ps-metadatamanager-mysql
@@ -414,7 +414,7 @@
 
       <fileSet>
           <directory>
-              ${project.parent.basedir}/linkis-public-enhancements/linkis-datasource/metadatamanager/service/kafka/target/out/lib
+              ../../linkis-public-enhancements/linkis-datasource/metadatamanager/service/kafka/target/out/lib
           </directory>
           <outputDirectory>
               lib/linkis-public-enhancements/linkis-ps-metadatamanager-kafka
@@ -426,7 +426,7 @@
 
       <fileSet>
           <directory>
-              ${project.parent.basedir}/linkis-public-enhancements/linkis-datasource/metadatamanager/service/hive/target/out/lib
+              ../../linkis-public-enhancements/linkis-datasource/metadatamanager/service/hive/target/out/lib
           </directory>
           <outputDirectory>
               lib/linkis-public-enhancements/linkis-ps-metadatamanager-hive
@@ -438,7 +438,7 @@
 
       <fileSet>
           <directory>
-              ${project.parent.basedir}/linkis-public-enhancements/linkis-datasource/metadatamanager/service/elasticsearch/target/out/lib
+              ../../linkis-public-enhancements/linkis-datasource/metadatamanager/service/elasticsearch/target/out/lib
           </directory>
           <outputDirectory>
               lib/linkis-public-enhancements/linkis-ps-metadatamanager-es

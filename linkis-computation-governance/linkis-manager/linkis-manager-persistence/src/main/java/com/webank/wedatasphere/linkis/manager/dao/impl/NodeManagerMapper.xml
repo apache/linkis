@@ -21,6 +21,119 @@
 
 <mapper namespace="com.webank.wedatasphere.linkis.manager.dao.NodeManagerMapper">
 
+
+    <resultMap id="BaseResultMap" type="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNode">
+        <id column="ID" property="id"/>
+        <result column="instance" property="instance"/>
+        <result column="name" property="name"/>
+        <result column="owner" property="owner"/>
+        <result column="mark" property="mark"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="updator" property="updator"/>
+        <result column="creator" property="creator"/>
+    </resultMap>
+
+
+    <insert id="addNodeInstance" useGeneratedKeys = "true" keyProperty = "id">
+        insert into linkis_cg_manager_service_instance(instance,name,owner,mark,update_time,create_time,updator,creator)
+        values(#{instance},#{name},#{owner},#{mark},#{updateTime},#{createTime},#{updator},#{creator})
+    </insert>
+
+    <update id="updateNodeInstance">
+        update linkis_cg_manager_service_instance
+        set instance = #{persistenceNode.instance},
+        owner = #{persistenceNode.owner},
+        mark = #{persistenceNode.mark},
+        name = #{persistenceNode.name},
+        update_time = #{persistenceNode.updateTime},
+        updator = #{persistenceNode.updator},
+        creator = #{persistenceNode.creator} where instance = #{instance}
+    </update>
+
+    <delete id="removeNodeInstance" >
+        delete from  linkis_cg_manager_service_instance where instance = #{instance}
+    </delete>
+
+    <select id="getNodeInstancesByOwner" resultMap="BaseResultMap">
+        select * from  linkis_cg_manager_service_instance where owner = #{owner}
+    </select>
+
+    <select id="getAllNodes" resultMap="BaseResultMap">
+        select * from  linkis_cg_manager_service_instance
+    </select>
+
+    <update id="updateNodeInstanceOverload">
+        update linkis_cg_manager_service_instance set owner = #{persistenceNode.owner},mark = #{persistenceNode.mark},name = #{persistenceNode.name},
+        update_time = #{persistenceNode.updateTime},create_time = #{persistenceNode.createTime},updator = #{persistenceNode.updator},creator = #{persistenceNode.creator} where instance = #{instance}
+    </update>
+
+    <select id="getNodeInstanceId" resultMap="BaseResultMap">
+        select id from  linkis_cg_manager_service_instance where instance = #{instance}
+    </select>
+
+    <select id="getIdByInstance"  resultMap="BaseResultMap">
+        select id from  linkis_cg_manager_service_instance where instance = #{instance}
+    </select>
+
+    <select id="getNodeInstanceIds" resultType="java.lang.Integer">
+        select id from linkis_cg_manager_service_instance where instance in(
+        <foreach collection='instances' separator=',' item='instance'>
+            #{instance}
+        </foreach>
+        )
+    </select>
+
+    <select id="getNodeInstance" resultMap="BaseResultMap">
+        select * from linkis_cg_manager_service_instance where instance = #{instance}
+    </select>
+
+    <select id="getNodeInstanceById" resultMap="BaseResultMap">
+        select * from  linkis_cg_manager_service_instance where id = #{id}
+    </select>
+
+    <select id="getEMNodeInstanceByEngineNode" resultMap="BaseResultMap">
+        select * from linkis_cg_manager_service_instance where instance in (select em_instance from linkis_cg_manager_engine_em where engine_instance=#{instance}
+    </select>
+
+    <select id="getNodeInstances" resultMap="BaseResultMap" >
+        select * from linkis_cg_manager_service_instance where instance in ( select engine_instance from linkis_cg_manager_engine_em where em_instance=#{instance})
+    </select>
+
+
+
+
+
+    <select id="getNodesByInstances" resultMap="BaseResultMap" >
+        select * from linkis_cg_manager_service_instance where instance in(
+        <foreach collection='instances' separator=',' item='instance'>
+        #{instance}
+        </foreach>
+        )
+    </select>
+
+    <insert id="addEngineNode">
+        insert into  linkis_cg_manager_engine_em (engine_instance, em_instance, update_time, create_time)
+         values(#{engineNodeInstance}, #{emNodeInstance}, now(), now())
+    </insert>
+
+    <delete id="deleteEngineNode">
+        delete from  linkis_cg_manager_engine_em where engine_instance = #{engineNodeInstance} and em_instance = #{emNodeInstance}
+    </delete>
+
+    <select id="getEngineNodeIDsByEMId" resultType="java.lang.Integer">
+        select engine_id from  linkis_cg_manager_engine_em where em_id = #{emId}
+    </select>
+
+    <select id="getEMIdByEngineId" resultType="java.lang.Integer">
+        select em_id from  linkis_cg_manager_engine_em where engine_id = #{engineNodeId}
+    </select>
+
+    <select id="getNodeInstanceIdsByOwner" resultType="java.lang.Integer">
+        select id from linkis_cg_manager_service_instance where owner = #{owner}
+    </select>
+
+
     <update id="updateNodeRelation">
         update linkis_cg_manager_engine_em set engine_instance = #{instance} where engine_instance = #{tickedId}
     </update>

@@ -20,7 +20,72 @@
 
 
 <mapper namespace="com.webank.wedatasphere.linkis.manager.dao.NodeMetricManagerMapper">
+    <resultMap id="BaseResultMap" type="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNodeMetrics">
+        <id column="instance" property="instance"/>
+        <result column="instance_status" property="status"/>
+        <result column="overload" property="overLoad"/>
+        <result column="heartbeat_msg" property="heartBeatMsg"/>
+        <result column="healthy_status" property="healthy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    <resultMap id="PersistenceNodeMetricsEntityMap" type="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNodeMetricsEntity">
+        <result column="instance" property="instance"/>
+        <result column="instance_status" property="status"/>
+        <result column="overload" property="overLoad"/>
+        <result column="heartbeat_msg" property="heartBeatMsg"/>
+        <result column="healthy_status" property="healthy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="name" property="name"/>
+    </resultMap>
 
+
+    <insert id="addNodeMetrics">
+        insert into  linkis_cg_manager_service_instance_metrics (instance, instance_status, overload, heartbeat_msg,healthy_status,update_time,create_time)
+            values(#{nodeMetrics.instance},#{nodeMetrics.status},#{nodeMetrics.overLoad},#{nodeMetrics.heartBeatMsg},#{nodeMetrics.healthy},now(),now())
+    </insert>
+
+    <select id="checkInstanceExist" resultType="java.lang.Integer">
+        select count(instance) from  linkis_cg_manager_service_instance_metrics where instance = #{instance}
+    </select>
+
+    <select id="getNodeMetricsByInstances" resultMap="BaseResultMap">
+        select * from linkis_cg_manager_service_instance_metrics where instance in(
+        <foreach collection='instances' separator=',' item='instance'>
+        #{instance}
+        </foreach>
+        )
+    </select>
+
+    <select id="getNodeMetricsByInstance" resultMap="BaseResultMap">
+        select * from linkis_cg_manager_service_instance_metrics where instance = #{instance}
+    </select>
+
+    <update id="updateNodeMetrics">
+        update linkis_cg_manager_service_instance_metrics
+        <trim prefix="set" suffixOverrides=",">
+            <if test="nodeMetrics.status != null">instance_status = #{nodeMetrics.status},</if>
+            <if test="nodeMetrics.overLoad != null"> overload = #{nodeMetrics.overLoad},</if>
+            <if test="nodeMetrics.heartBeatMsg != null">  heartbeat_msg = #{nodeMetrics.heartBeatMsg},</if>
+            <if test="nodeMetrics.healthy != null">  healthy_status=#{nodeMetrics.healthy}, </if>
+            <if test="nodeMetrics.updateTime != null">  update_time=#{nodeMetrics.updateTime},</if>
+            <if test="nodeMetrics.createTime != null">   create_time=#{nodeMetrics.createTime},</if>
+        </trim>
+        where instance = #{instance}
+    </update>
+
+    <delete id="deleteNodeMetrics">
+        delete from linkis_cg_manager_service_instance_metrics where instance in (select instance from linkis_cg_manager_service_instance where instance=#{instance})
+    </delete>
+
+    <delete id="deleteNodeMetricsByInstance">
+        delete from linkis_cg_manager_service_instance_metrics where instance = #{instance}
+    </delete>
+
+    <select id="getAllNodeMetrics" resultMap="PersistenceNodeMetricsEntityMap">
+        select A.name,B.* from linkis_cg_manager_service_instance A join linkis_cg_manager_service_instance_metrics B where A.instance =  B.instance
+    </select>
     <!-- 增 -->
 <!--    <sql id="addNodeMetrics">-->
 <!--        `service_instance_id`,`status`,`overload`,`heartbeat_msg`,`healthy`,`serviceInstance`,`update_time`,`create_time`-->

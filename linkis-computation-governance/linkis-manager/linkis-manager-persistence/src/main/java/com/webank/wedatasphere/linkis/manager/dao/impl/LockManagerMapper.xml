@@ -21,55 +21,28 @@
 
 <mapper namespace="com.webank.wedatasphere.linkis.manager.dao.LockManagerMapper">
 
-<!--    &lt;!&ndash; 增 &ndash;&gt;-->
-<!--    <sql id="instance_id">-->
-<!--        `id`,`instance`,`name`,`owner`,`mark`,`update_time`,`create_time`,`updator`,`creator`-->
-<!--    </sql>-->
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLock">
+        <id column="ID" property="id"/>
+        <result column="lock_object" property="lockObject"/>
+        <result column="time_out" property="timeOut"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="updator" property="updator"/>
+        <result column="creator" property="creator"/>
+    </resultMap>
 
-<!--    <insert id="addNodeInstance" useGeneratedKeys="true" keyProperty="id"-->
-<!--            parameterType="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNode">-->
-<!--        INSERT INTO  linkis_cg_manager_service_instance(<include refid="instance_id"/>)-->
-<!--        VALUES (#{id},#{instance},#{applicationName},#{owner},#{mark},#{updateTime},#{createTime},#{updator},#{creator})-->
-<!--    </insert>-->
+    <insert id="lock">
+        insert into linkis_cg_manager_lock (lock_object, time_out, update_time, create_time) values(#{jsonObject}, #{timeOut}, now(), now())
+    </insert>
 
-    <!-- 删除 -->
-<!--    <delete id="removeNodeInstance">-->
-<!--        DELETE FROM  linkis_cg_manager_service_instance where instance = #{instance} and name = #{name}-->
-<!--    </delete>-->
+    <delete id="unlock">
+        delete  from linkis_cg_manager_lock where lock_object = #{jsonObject}
+    </delete>
 
-
-    <!-- 获取 -->
-<!--    <resultMap id="PersistenceNodeInstance"-->
-<!--               type="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNode">-->
-<!--        <id column="owner" property="owner"/>-->
-<!--    </resultMap>-->
-
-<!--    <select id="getNodeInstances" resultType="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNode">-->
-<!--        SELECT * FROM  linkis_cg_manager_service_instance where owner = #{owner}-->
-<!--    </select>-->
-
-    <!-- 更新 -->
-<!--    <update id="updateNodeInstance"-->
-<!--            parameterType="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNode">-->
-<!--        UPDATE  linkis_cg_manager_service_instance-->
-<!--        <trim prefix="set" suffixOverrides=",">-->
-<!--            <if test="instance != null">`instance` = #{instance},</if>-->
-<!--            <if test="name != null">`name` = #{applicationName},</if>-->
-<!--            <if test="owner != null">`owner` = #{owner},</if>-->
-<!--            <if test="mark != null">`mark` = #{instance},</if>-->
-<!--            <if test="update_time != null">`update_time` = #{updateTime},</if>-->
-<!--            <if test="create_time != null">`create_time` = #{createTime},</if>-->
-<!--            <if test="updator != null">`updator` = #{updator},</if>-->
-<!--            <if test="creator != null">`creator` = #{creator},</if>-->
-<!--        </trim>-->
-<!--        WHERE instance = #{instance} and name = #{name}-->
-<!--    </update>-->
-
-
-<!--    <select id="getNodeInstanceId" resultType="int">-->
-<!--        SELECT id FROM  linkis_cg_manager_service_instance where instance = #{instance} and name = #{name}-->
-<!--    </select>-->
-
+    <select id="getAll" resultMap="BaseResultMap">
+        select * from  linkis_cg_manager_lock
+    </select>
 
 
 

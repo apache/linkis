@@ -1,0 +1,82 @@
+@import '@/common/style/variables.scss';
+.setListCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .switch {
+    flex: none;
+    font-size: 30px;
+    cursor: pointer;
+    &:hover {
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.2);
+    }
+  }
+  .container {
+    flex: 1;
+    min-width: 245px;
+    margin: 0 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    .containerUl {
+      will-change: transform;
+      transition: all 0.5s ease-in-out 0s;
+    }
+    .cardItem {
+      margin: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      display: inline-block;
+      width: 225px;
+      height: 90px;
+      padding: 10px;
+      box-sizing: border-box;
+      font-family: "PingFangSC-Medium";
+      line-height: 1;
+      letter-spacing: 0;
+      font-size: 14px;
+      position: relative;
+      vertical-align: middle;
+      cursor: pointer;
+      &.add {
+        font-size: 24px;
+        background: #F8F9FC;
+        border: 1px dashed #CFD7E1;
+        border-radius: 2px;
+        line-height: 70px;
+        text-align: center;
+      };
+      &:hover {
+        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.2);
+      }
+      .edit{
+        position: absolute;
+        top: 1px;
+        right: 25px;
+      }
+      .close {
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+      .cardItemTitle {
+        font-size: 16px;
+        font-weight: 600;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        color: rgba(0, 0, 0, 0.85);
+      }
+      .cardItemDesc {
+        margin: 10px 0;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+    .currentIndex {
+      background-color: rgba(45, 140, 240, 0.1);
+      color: #4588ff;
+      border-color: rgba(45, 140, 240, 0.2);
+    }
+  }
+}
+

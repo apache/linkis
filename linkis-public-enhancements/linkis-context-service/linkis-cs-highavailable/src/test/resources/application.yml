@@ -1,0 +1,20 @@
+server:
+  port: 9010
+spring:
+  application:
+    name: linkis-ps-cs
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:20303/eureka/
+    registry-fetch-interval-seconds: 5
+  instance:
+    metadata-map:
+      test: wedatasphere
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info

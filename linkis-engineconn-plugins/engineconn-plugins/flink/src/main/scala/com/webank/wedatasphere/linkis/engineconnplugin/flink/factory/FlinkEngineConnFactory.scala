@@ -15,7 +15,6 @@ import com.webank.wedatasphere.linkis.engineconnplugin.flink.config.FlinkEnvConf
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration._
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.context.{EnvironmentContext, FlinkEngineConnContext}
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.FlinkInitFailedException
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.reporter.IMSOptions
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
@@ -83,12 +82,6 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     flinkConfig.set(JobManagerOptions.TOTAL_PROCESS_MEMORY, MemorySize.parse(jobManagerMemory))
     flinkConfig.set(TaskManagerOptions.TOTAL_PROCESS_MEMORY, MemorySize.parse(taskManagerMemory))
     flinkConfig.setInteger(TaskManagerOptions.NUM_TASK_SLOTS, numberOfTaskSlots)
-    //reporter参数
-    flinkConfig.set(IMSOptions.METRIC_URL, IMSOptions.METRIC_URL_VALUE.getValue)
-    flinkConfig.set(IMSOptions.AUTH_KEY, IMSOptions.AUTH_KEY_VALUE.getValue)
-    flinkConfig.set(IMSOptions.CLUSTER_NAME, IMSOptions.CLUSTER_NAME_VALUE.getValue)
-    flinkConfig.set(IMSOptions.METRICS, IMSOptions.METRICS_VALUE.getValue)
-    flinkConfig.set(IMSOptions.SUB_SYSTEM_ID, IMSOptions.SUB_SYSTEM_ID_VALUE.getValue)
     flinkConfig.set(MetricOptions.REPORTER_CLASS, "com.webank.ims.reporter.IMSReporter");
     flinkConfig.set(MetricOptions.REPORTER_INTERVAL, Duration.ofSeconds(60))
     //设置 savePoint

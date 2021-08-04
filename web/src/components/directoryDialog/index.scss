@@ -1,0 +1,39 @@
+/*!
+ * Copyright 2019 WeBank
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+@import '@/common/style/variables.scss';
+.we-directory {
+    .we-directory-input {
+        .ivu-input[disabled], fieldset[disabled] .ivu-input {
+            color: #333;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+    }
+    .we-directory-tree {
+        height: 120px;
+        border: 1px solid $border-color-base;
+        border-top: 0;
+        border-radius: 0 0 5px 5px;
+        background: #fefefe;
+        box-shadow: 0px 2px 2px #dedede inset;
+        overflow: auto;
+    }
+    .is-hide {
+        display: none;
+    }
+}

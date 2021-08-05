@@ -3,9 +3,7 @@ package com.webank.wedatasphere.linkis.engineconnplugin.flink.client.deployment
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.context.ExecutionContext
 import org.apache.flink.api.common.JobID
 
-/**
-  * Created by enjoyyin on 2021/5/27.
-  */
+
 class YarnSessionClusterDescriptorAdapter(executionContext: ExecutionContext) extends YarnPerJobClusterDescriptorAdapter(executionContext) {
 
   def deployCluster(): Unit = {

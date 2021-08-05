@@ -46,7 +46,6 @@ import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.rpc.utils.RPCUtils
 import com.webank.wedatasphere.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, IncompleteExecuteResponse, SubmitResponse}
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
-
 import javax.annotation.PostConstruct
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -74,6 +73,8 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
   private val syncListenerBus = ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnSyncListenerBus
   private val taskIdCache: Cache[String, ComputationExecutor] = CacheBuilder.newBuilder().expireAfterAccess(EngineConnConf.ENGINE_TASK_EXPIRE_TIME.getValue, TimeUnit.MILLISECONDS)
     .maximumSize(EngineConnConstant.MAX_TASK_NUM).build()
+  lazy private val cachedThreadPool = Utils.newCachedThreadPool(ComputationExecutorConf.ENGINE_CONCURRENT_THREAD_NUM.getValue,
+    "ConcurrentEngineConnThreadPool")
 
   @PostConstruct
   def init(): Unit = {
@@ -84,7 +85,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
   private def sendToEntrance(task: EngineConnTask, msg: RequestProtocol): Unit = synchronized {
     Utils.tryCatch {
       var sender : Sender = null
-      if (null != task && null != task.getCallbackServiceInstance()) {
+      if (null != task && null != task.getCallbackServiceInstance() && null != msg) {
         sender = Sender.getSender(task.getCallbackServiceInstance())
         sender.send(msg)
       } else {
@@ -139,7 +140,8 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
         taskIdCache.put(task.getTaskId, computationExecutor)
         submitTask(task, computationExecutor)
       case o =>
-        val msg = "Invalid computationExecutor : " + ComputationEngineUtils.GSON.toJson(o) + ", labels : " + ComputationEngineUtils.GSON.toJson(labels) + ", requestTask : " + requestTask
+        val labelsStr = if (labels != null) labels.filter(_ != null).map(_.getStringValue).mkString(",") else ""
+        val msg = "Invalid computationExecutor : " + o.getClass.getName + ", labels : " + labelsStr + ", requestTask : " + requestTask
         error(msg)
         ErrorExecuteResponse("Invalid computationExecutor(生成无效的计算引擎，请联系管理员).",
           new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INVALID_ENGINE_TYPE, msg))
@@ -148,10 +150,10 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
   }
 
 
-//  override def taskStatus(taskID: String): ResponseTaskStatus = {
-//    val task = taskIdCache.get(taskID)
-//    ResponseTaskStatus(taskID, task.getStatus.id)
-//  }
+  //  override def taskStatus(taskID: String): ResponseTaskStatus = {
+  //    val task = taskIdCache.get(taskID)
+  //    ResponseTaskStatus(taskID, task.getStatus.id)
+  //  }
 
   private def submitTask(task: CommonEngineConnTask, computationExecutor: ComputationExecutor): ExecuteResponse = {
     info(s"Task ${task.getTaskId} was submited.")
@@ -201,24 +203,41 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
             Utils.tryCatch {
               if (! executor.isBusy && ! executor.isClosed) {
                 val task = concurrentTaskQueue.take()
-                lastTask = task
-                info(s"Start to run task ${task.getTaskId}")
-                val response = executor.execute(task)
-                response match {
-                  case ErrorExecuteResponse(message, throwable) =>
-                    sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
-                    error(message, throwable)
-                    LogHelper.pushAllRemainLogs()
-                    executor.transformTaskStatus(task, ExecutionNodeStatus.Failed)
-                  case _ => //TODO response maybe lose
+                val concurrentJob = new Runnable {
+                  override def run(): Unit = {
+                    lastTask = task
+                    Utils.tryCatch {
+                      info(s"Start to run task ${task.getTaskId}")
+                      val response = executor.execute(task)
+                      response match {
+                        case ErrorExecuteResponse(message, throwable) =>
+                          sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
+                          error(message, throwable)
+                          LogHelper.pushAllRemainLogs()
+                          executor.transformTaskStatus(task, ExecutionNodeStatus.Failed)
+                        case _ => //TODO response maybe lose
+                      }
+                      clearCache(task.getTaskId)
+                    } {
+                      case t: Throwable => {
+                        errCount += 1
+                        error(s"Execute task ${task.getTaskId} failed  :", t)
+                        if (errCount > ERR_COUNT_MAX) {
+                          error(s"Executor run failed for ${errCount} times over ERROR_COUNT_MAX : ${ERR_COUNT_MAX}, will shutdown.")
+                          executor.transition(NodeStatus.ShuttingDown)
+                        }
+                      }
+                    }
+                  }
                 }
-                clearCache(task.getTaskId)
+                cachedThreadPool.submit(concurrentJob)
               }
               Thread.sleep(20)
             } {
               case t: Throwable =>
                 errCount += 1
-                error(s"Execute task ${task.getTaskId} failed  :", t)
+                val lastTaskId = if (null == lastTask) "none" else lastTask.getTaskId
+                error(s"Execute task ${lastTaskId} failed  :", t)
                 if (errCount > ERR_COUNT_MAX) {
                   error(s"Executor run failed for ${errCount} times over ERROR_COUNT_MAX : ${ERR_COUNT_MAX}, will shutdown.")
                   executor.transition(NodeStatus.ShuttingDown)
@@ -247,9 +266,11 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     scheduler.submit(new Runnable {
       override def run(): Unit = Utils.tryAndWarn {
         val sleepInterval = ComputationExecutorConf.ENGINE_PROGRESS_FETCH_INTERVAL.getValue
-        while(null != taskFuture && !taskFuture.isDone){
-          sendToEntrance(task, taskProgress(task.getTaskId))
-          Thread.sleep(TimeUnit.MILLISECONDS.convert(sleepInterval, TimeUnit.SECONDS))
+        while (null != taskFuture && !taskFuture.isDone) {
+          if (ExecutionNodeStatus.isCompleted(task.getStatus) || ExecutionNodeStatus.isRunning(task.getStatus)) {
+            sendToEntrance(task, taskProgress(task.getTaskId))
+            Thread.sleep(TimeUnit.MILLISECONDS.convert(sleepInterval, TimeUnit.SECONDS))
+          }
         }
       }
     })
@@ -264,7 +285,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
         if (ExecutionNodeStatus.isCompleted(task.getStatus)) {
           response = ResponseTaskProgress(taskID, 1.0f, null)
         } else {
-          response = ResponseTaskProgress(taskID, executor.progress(), executor.getProgressInfo)
+          response = Utils.tryQuietly(ResponseTaskProgress(taskID, executor.progress(), executor.getProgressInfo))
         }
       } else {
         response = ResponseTaskProgress(taskID, -1, null)
@@ -280,10 +301,10 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     null
   }
 
-//  override def pauseTask(taskID: String): Unit = {
-//    val task = taskIdCache.get(taskID)
-//    // todo
-//  }
+  //  override def pauseTask(taskID: String): Unit = {
+  //    val task = taskIdCache.get(taskID)
+  //    // todo
+  //  }
 
   override def killTask(taskID: String): Unit = {
     val executor = taskIdCache.getIfPresent(taskID)

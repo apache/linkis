@@ -50,9 +50,9 @@ object AMConfiguration {
 
   val ENGINECONN_DEBUG_ENABLED = CommonVars("wds.linkis.engineconn.debug.mode.enable", false)
 
-  val MULTI_USER_ENGINE_TYPES = CommonVars("wds.linkis.multi.user.engine.types", "jdbc,es,presto,io_file")
+  val MULTI_USER_ENGINE_TYPES = CommonVars("wds.linkis.multi.user.engine.types", "jdbc,es,presto,io_file,appconn")
 
-  val MULTI_USER_ENGINE_USER = CommonVars("wds.linkis.multi.user.engine.user", "{jdbc:\"hadoop\", es: \"hadoop\", presto:\"hadoop\",io_file:\"root\"}")
+  val MULTI_USER_ENGINE_USER = CommonVars("wds.linkis.multi.user.engine.user", "{jdbc:\"hadoop\", es: \"hadoop\", presto:\"hadoop\",io_file:\"root\",appconn:\"hadoop\"}")
 
   val MONITOR_SWITCH_ON = CommonVars("wds.linkis.manager.am.monitor.switch.on", true)
 

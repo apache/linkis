@@ -31,6 +31,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.*;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableComparable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,8 +176,8 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
         }
     }
     private static void writePrimitiveUTF8(OutputStream out, Object o,
-                                          PrimitiveObjectInspector oi, boolean escaped, byte escapeChar,
-                                          boolean[] needsEscape) throws IOException {
+                                           PrimitiveObjectInspector oi, boolean escaped, byte escapeChar,
+                                           boolean[] needsEscape) throws IOException {
 
         PrimitiveObjectInspector.PrimitiveCategory category = oi.getPrimitiveCategory();
         byte[] binaryData = null;
@@ -237,12 +238,12 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
                 break;
             }
             case DATE: {
-                DateWritable dw = ((DateObjectInspector) oi).getPrimitiveWritableObject(o);
+                WritableComparable dw = ((DateObjectInspector) oi).getPrimitiveWritableObject(o);
                 binaryData = Base64.encodeBase64(String.valueOf(dw).getBytes());
                 break;
             }
             case TIMESTAMP: {
-                TimestampWritable tw = ((TimestampObjectInspector) oi).getPrimitiveWritableObject(o);
+                WritableComparable tw = ((TimestampObjectInspector) oi).getPrimitiveWritableObject(o);
                 binaryData = Base64.encodeBase64(String.valueOf(tw).getBytes());
                 break;
             }

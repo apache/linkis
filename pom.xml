@@ -71,36 +71,45 @@
     <properties>
         <linkis.version>1.0.1</linkis.version>
         <hadoop.version>2.7.2</hadoop.version>
-        <spring.eureka.version>2.2.1.RELEASE</spring.eureka.version>
-        <spring.feign.version>2.2.1.RELEASE</spring.feign.version>
-        <spring.boot.version>2.3.2.RELEASE</spring.boot.version>
+        <spring.eureka.version>2.2.4.RELEASE</spring.eureka.version>
+        <spring.feign.version>2.2.4.RELEASE</spring.feign.version>
+        <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
         <spring.cloud.version>2.2.1.RELEASE</spring.cloud.version>
-        <guava.version>25.1-jre</guava.version>
+        <guava.version>30.0-jre</guava.version>
         <gson.version>2.8.5</gson.version>
-        <fasterxml.jackson.version>2.11.3</fasterxml.jackson.version>
+        <fasterxml.jackson.version>2.11.4</fasterxml.jackson.version>
         <scala.version>2.11.12</scala.version>
         <jdk.compile.version>1.8</jdk.compile.version>
         <plugin.scala.version>2.15.2</plugin.scala.version>
         <scala.binary.version>2.11</scala.binary.version>
-        <netty.version>4.1.44.Final</netty.version>
+        <netty.version>4.1.65.Final</netty.version>
         <json4s.version>3.5.3</json4s.version>
         <jersey.version>2.16</jersey.version>
         <jersey.servlet.version>2.23.1</jersey.servlet.version>
-        <jetty.version>9.4.20.v20190813</jetty.version>
-        <httpclient.version>4.5.4</httpclient.version>
-        <httpmime.version>4.5.4</httpmime.version>
+        <jetty.version>9.4.39.v20210325</jetty.version>
+        <httpclient.version>4.5.13</httpclient.version>
+        <httpmime.version>4.5.13</httpmime.version>
         <slf4j.version>1.7.30</slf4j.version>
         <maven.version>3.3.3</maven.version>
-        <xstream.core.version>1.4.15</xstream.core.version>
-        <spring.version>5.2.12.RELEASE</spring.version>
-        <spring.security.cryto.version>5.3.6.RELEASE</spring.security.cryto.version>
+        <xstream.core.version>1.4.17</xstream.core.version>
+        <spring.version>5.2.15.RELEASE</spring.version>
+        <spring.security.cryto.version>5.3.9.RELEASE</spring.security.cryto.version>
         <reflections.version>0.9.10</reflections.version>
-        <mybatis-plus.boot.starter.version>3.4.1</mybatis-plus.boot.starter.version>
+        <mybatis-plus.boot.starter.version>3.4.3</mybatis-plus.boot.starter.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <javassist.version>3.19.0-GA</javassist.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-lang.version>2.6</commons-lang.version>
-        <commons-io.version>2.4</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
+        <spring.cloud.config.client.version>2.2.3.RELEASE</spring.cloud.config.client.version>
+        <spring.boot.actuator.autoconfigure.version>2.3.12.RELEASE</spring.boot.actuator.autoconfigure.version>
+        <commons-codec.version>1.13</commons-codec.version>
+        <bcpkix-jdk15on.version>1.68</bcpkix-jdk15on.version>
+        <bean-validator.version>2.5.0-b06</bean-validator.version>
+        <spring-cloud-netflix-ribbon.version>2.2.4.RELEASE</spring-cloud-netflix-ribbon.version>
+        <tomcat-embed.version>9.0.46</tomcat-embed.version>
+        <reactor-netty.version>0.9.20.RELEASE</reactor-netty.version>
+        <xlsx-streamer.version>2.2.0</xlsx-streamer.version>
         <assembly.package.rootpath>${basedir}</assembly.package.rootpath>
     </properties>
 

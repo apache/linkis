@@ -108,7 +108,16 @@
                     <artifactId>spring-web</artifactId>
                     <groupId>org.springframework</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-netflix-ribbon</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-netflix-ribbon</artifactId>
+            <version>${spring-cloud-netflix-ribbon.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>

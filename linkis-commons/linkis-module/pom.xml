@@ -232,7 +232,7 @@
                 </exclusion>
             </exclusions>
             <groupId>org.springframework.cloud</groupId>
-            <version>${spring.cloud.version}</version>
+            <version>${spring.cloud.config.client.version}</version>
         </dependency>
         <dependency>
             <artifactId>spring-cloud-starter</artifactId>
@@ -249,11 +249,19 @@
                     <artifactId>spring-boot-starter</artifactId>
                     <groupId>org.springframework.boot</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcpkix-jdk15on</artifactId>
+                </exclusion>
             </exclusions>
             <groupId>org.springframework.cloud</groupId>
             <version>${spring.cloud.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>${bcpkix-jdk15on.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-context</artifactId>
@@ -363,7 +371,16 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-context</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.glassfish.hk2.external</groupId>
+                    <artifactId>bean-validator</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.hk2.external</groupId>
+            <artifactId>bean-validator</artifactId>
+            <version>${bean-validator.version}</version>
         </dependency>
 
 

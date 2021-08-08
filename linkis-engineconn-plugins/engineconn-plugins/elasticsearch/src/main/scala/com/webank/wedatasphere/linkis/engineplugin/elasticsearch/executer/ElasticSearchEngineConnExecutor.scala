@@ -47,7 +47,6 @@ class ElasticSearchEngineConnExecutor(override val outputPrintLimit: Int, val id
 
 
   override def execute(engineConnTask: EngineConnTask): ExecuteResponse = {
-    val storePath = engineConnTask.getProperties.get(RequestTask.RESULT_SET_STORE_PATH).toString
     val elasticSearchExecutor = ElasticSearchExecutor(runType, engineConnTask.getProperties)
     elasticSearchExecutor.open
     elasticSearchExecutorCache.put(engineConnTask.getTaskId, elasticSearchExecutor)

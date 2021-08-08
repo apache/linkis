@@ -226,7 +226,7 @@ object JobExecuteAction {
     val PRESTO = new EngineType {
       override val toString: String = "presto"
       val PSQL = new RunType {
-        override val toString: String = "presto"
+        override val toString: String = "psql"
       }
       override def getDefaultRunType: RunType = PSQL
     }

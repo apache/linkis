@@ -33,9 +33,7 @@ import org.elasticsearch.client.Response
  */
 trait ResponseHandler extends Logging {
 
-  def handle(response: Response, storePath: String, alias: String): String
-
-  def handle(response: Response, storePath: String, alias: String, proxyUser: String): String
+  def handle(response: Response): ElasticSearchResponse
 
 }
 
@@ -44,11 +42,8 @@ object ResponseHandler {
 
   val RESPONSE_HANDLER = new ResponseHandlerImpl()
 
-  def handle(response: Response, storePath: String, alias: String): String =
-    RESPONSE_HANDLER.handle(response, storePath, alias)
-
-  def handle(response: Response, storePath: String, alias: String, proxyUser: String): String =
-    RESPONSE_HANDLER.handle(response, storePath, alias, proxyUser)
+  def handle(response: Response): ElasticSearchResponse =
+    RESPONSE_HANDLER.handle(response)
 
   val jsonMapper = new ObjectMapper()
   val yamlMapper = new YAMLMapper()

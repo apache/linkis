@@ -20,7 +20,7 @@ import java.util.concurrent.CountDownLatch
 import com.webank.wedatasphere.linkis.common.utils.Utils
 import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration
 import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.exception.EsConvertResponseException
-import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.executer.client.{ElasticSearchExecutor, EsClient, EsClientFactory, ResponseHandler}
+import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.executer.client.{ElasticSearchErrorResponse, ElasticSearchExecutor, ElasticSearchResponse, EsClient, EsClientFactory, ResponseHandler}
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
 import com.webank.wedatasphere.linkis.scheduler.executer.{AliasOutputExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import com.webank.wedatasphere.linkis.server.JMap
@@ -32,12 +32,11 @@ import org.elasticsearch.client.{Cancellable, Response, ResponseListener}
  * @author wang_zh
  * @date 2020/5/11
  */
-class ElasticSearchExecutorImpl(runType:String, storePath: String, properties: JMap[String, String]) extends ElasticSearchExecutor {
+class ElasticSearchExecutorImpl(runType:String, properties: JMap[String, String]) extends ElasticSearchExecutor {
 
   private var client: EsClient = _
   private var cancelable: Cancellable = _
   private var user: String = _
-
 
   override def open: Unit = {
     this.client = EsClientFactory.getRestClient(properties)
@@ -50,18 +49,18 @@ class ElasticSearchExecutorImpl(runType:String, storePath: String, properties: J
     }
   }
 
-  override def executeLine(code: String, alias: String): ExecuteResponse = {
+  override def executeLine(code: String): ElasticSearchResponse = {
     val realCode = code.trim()
     info(s"es client begins to run $runType code:\n ${realCode.trim}")
     val countDown = new CountDownLatch(1)
-    var executeResponse: ExecuteResponse  = SuccessExecuteResponse()
+    var executeResponse: ElasticSearchResponse = ElasticSearchErrorResponse("INCOMPLETE")
     cancelable = client.execute(realCode, properties, new ResponseListener {
       override def onSuccess(response: Response): Unit = {
-        executeResponse = convertResponse(response, storePath, alias)
+        executeResponse = convertResponse(response)
         countDown.countDown()
       }
       override def onFailure(exception: Exception): Unit = {
-        executeResponse = ErrorExecuteResponse("EsEngineExecutor execute fail. ", exception)
+        executeResponse = ElasticSearchErrorResponse("EsEngineExecutor execute fail. ", null, exception)
         countDown.countDown()
       }
     })
@@ -70,16 +69,16 @@ class ElasticSearchExecutorImpl(runType:String, storePath: String, properties: J
   }
 
   // convert response to executeResponse
-  private def convertResponse(response: Response, storePath: String, alias: String): ExecuteResponse =  Utils.tryCatch[ExecuteResponse]{
+  private def convertResponse(response: Response): ElasticSearchResponse =  Utils.tryCatch[ElasticSearchResponse]{
     val statusCode = response.getStatusLine.getStatusCode
     if (statusCode >= 200 && statusCode < 300) {
-      val output = ResponseHandler.handle(response, storePath, alias, this.user)
-      AliasOutputExecuteResponse(alias, output)
+      ResponseHandler.handle(response)
     } else {
-      throw EsConvertResponseException("EsEngineExecutor convert response fail. response code: " + response.getStatusLine.getStatusCode)
+      ElasticSearchErrorResponse("EsEngineExecutor convert response fail. response code: " + response.getStatusLine.getStatusCode)
     }
   } {
-    case t: Throwable => ErrorExecuteResponse("EsEngineExecutor execute fail.", t)
+    case t: Throwable =>
+      ElasticSearchErrorResponse("EsEngineExecutor convert response error.", null, t)
   }
 
   override def close: Unit = cancelable match {

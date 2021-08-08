@@ -2,7 +2,6 @@ package com.webank.wedatasphere.linkis.engineplugin.elasticsearch
 
 import java.util
 
-import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.ElasticSearchEngineConnPlugin._
 import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.builder.ElasticSearchProcessEngineConnLaunchBuilder
 import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration
 import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.factory.ElasticSearchEngineConnFactory
@@ -15,6 +14,14 @@ import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineType, E
 
 class ElasticSearchEngineConnPlugin extends EngineConnPlugin {
 
+  private val EP_CONTEXT_CONSTRUCTOR_LOCK = new Object()
+
+  private var engineResourceFactory: EngineResourceFactory = _
+
+  private var engineLaunchBuilder: EngineConnLaunchBuilder = _
+
+  private var engineFactory: EngineConnFactory = _
+
   private val defaultLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]()
 
   override def init(params: util.Map[String, Any]): Unit = {
@@ -24,22 +31,27 @@ class ElasticSearchEngineConnPlugin extends EngineConnPlugin {
     this.defaultLabels.add(typeLabel)
   }
 
-  override def getEngineResourceFactory: EngineResourceFactory = ENGINE_RESOURCE_FACTORY
+  override def getEngineResourceFactory: EngineResourceFactory = EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
+    if (null == engineResourceFactory) {
+      engineResourceFactory = new GenericEngineResourceFactory
+    }
+    engineResourceFactory
+  }
 
-  override def getEngineConnLaunchBuilder: EngineConnLaunchBuilder = ENGINE_LAUNCH_BUILDER
+  override def getEngineConnLaunchBuilder: EngineConnLaunchBuilder = EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
+    if (null == engineLaunchBuilder) {
+      engineLaunchBuilder = new ElasticSearchProcessEngineConnLaunchBuilder
+    }
+    engineLaunchBuilder
+  }
 
-  override def getEngineConnFactory: EngineConnFactory = ENGINE_FACTORY
+  override def getEngineConnFactory: EngineConnFactory = EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
+    if (null == engineFactory) {
+      engineFactory = new ElasticSearchEngineConnFactory
+    }
+    engineFactory
+  }
 
   override def getDefaultLabels: util.List[Label[_]] = defaultLabels
-
-}
-
-private object ElasticSearchEngineConnPlugin {
-
-  val ENGINE_LAUNCH_BUILDER = new ElasticSearchProcessEngineConnLaunchBuilder
-
-  val ENGINE_RESOURCE_FACTORY = new GenericEngineResourceFactory
-
-  val ENGINE_FACTORY = new ElasticSearchEngineConnFactory
 
 }

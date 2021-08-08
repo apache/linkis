@@ -18,18 +18,12 @@ package com.webank.wedatasphere.linkis.engineplugin.elasticsearch.executer.clien
 import java.nio.charset.Charset
 
 import com.fasterxml.jackson.databind.node.{ArrayNode, ObjectNode}
-import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration
 import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.exception.EsConvertResponseException
 import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.executer.client.ResponseHandler._
-import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.executer.client.ResponseHandler
-import com.webank.wedatasphere.linkis.storage.LineRecord
+import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.executer.client.{ElasticSearchJsonResponse, ElasticSearchResponse, ElasticSearchTableResponse, ResponseHandler}
 import com.webank.wedatasphere.linkis.storage.domain._
-import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
-import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
-import org.apache.commons.io.IOUtils
+import com.webank.wedatasphere.linkis.storage.resultset.table.TableRecord
 import org.apache.http.entity.ContentType
 import org.apache.http.util.EntityUtils
 import org.elasticsearch.client.Response
@@ -45,11 +39,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 class ResponseHandlerImpl extends ResponseHandler {
 
-  override def handle(response: Response, storePath: String, alias: String): String = {
-    handle(response, storePath, alias, StorageUtils.getJvmUser)
-  }
-
-  override def handle(response: Response, storePath: String, alias: String, proxyUser: String): String = {
+  override def handle(response: Response): ElasticSearchResponse = {
     val contentType = ContentType.get(response.getEntity).getMimeType.toLowerCase
     val charSet = ContentType.get(response.getEntity).getCharset match {
       case c: Charset => c
@@ -86,7 +76,7 @@ class ResponseHandlerImpl extends ResponseHandler {
     }
 
     if (jsonNode == null) {
-      return writeText(new String(contentBytes, charSet), storePath, alias, proxyUser)
+      ElasticSearchJsonResponse(new String(contentBytes, charSet))
     }
 
     var isTable = false
@@ -161,30 +151,30 @@ class ResponseHandlerImpl extends ResponseHandler {
 
     // write result
     if (isTable) {
-      writeTable(new TableMetaData(columns.toArray), records, storePath, alias, proxyUser)
+      ElasticSearchTableResponse(columns.toArray, records.toArray)
     } else {
-      writeText(new String(contentBytes, charSet), storePath, alias, proxyUser)
+      ElasticSearchJsonResponse(new String(contentBytes, charSet))
     }
   }
 
-  def writeText(content: String, storePath: String, alias: String, proxyUser: String): String = {
-    val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.TEXT_TYPE)
-    val resultSetPath = resultSet.getResultSetPath(new FsPath(storePath), alias)
-    val writer = ResultSetWriter.getResultSetWriter(resultSet, ElasticSearchConfiguration.ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath, proxyUser)
-    writer.addMetaData(null)
-    content.split("\\n").foreach(item => writer.addRecord(new LineRecord(item)))
-    IOUtils.closeQuietly(writer)
-    writer.toString()
-  }
-
-  def writeTable(metaData: TableMetaData, records: ArrayBuffer[TableRecord], storePath: String, alias: String, proxyUser: String): String = {
-    val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.TABLE_TYPE)
-    val resultSetPath = resultSet.getResultSetPath(new FsPath(storePath), alias)
-    val writer = ResultSetWriter.getResultSetWriter(resultSet, ElasticSearchConfiguration.ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath, proxyUser)
-    writer.addMetaData(metaData)
-    records.foreach(writer.addRecord)
-    IOUtils.closeQuietly(writer)
-    writer.toString()
-  }
+//  def writeText(content: String, storePath: String, alias: String, proxyUser: String): String = {
+//    val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.TEXT_TYPE)
+//    val resultSetPath = resultSet.getResultSetPath(new FsPath(storePath), alias)
+//    val writer = ResultSetWriter.getResultSetWriter(resultSet, ElasticSearchConfiguration.ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath, proxyUser)
+//    writer.addMetaData(null)
+//    content.split("\\n").foreach(item => writer.addRecord(new LineRecord(item)))
+//    IOUtils.closeQuietly(writer)
+//    writer.toString()
+//  }
+//
+//  def writeTable(metaData: TableMetaData, records: ArrayBuffer[TableRecord], storePath: String, alias: String, proxyUser: String): String = {
+//    val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.TABLE_TYPE)
+//    val resultSetPath = resultSet.getResultSetPath(new FsPath(storePath), alias)
+//    val writer = ResultSetWriter.getResultSetWriter(resultSet, ElasticSearchConfiguration.ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath, proxyUser)
+//    writer.addMetaData(metaData)
+//    records.foreach(writer.addRecord)
+//    IOUtils.closeQuietly(writer)
+//    writer.toString()
+//  }
 
 }

@@ -19,7 +19,7 @@ trait ElasticSearchExecutor extends Logging {
   @throws(classOf[IOException])
   def open : Unit
 
-  def executeLine(code: String, alias: String): ExecuteResponse
+  def executeLine(code: String): ElasticSearchResponse
 
   def close: Unit
 
@@ -27,14 +27,14 @@ trait ElasticSearchExecutor extends Logging {
 
 object ElasticSearchExecutor {
 
-  def apply(runType:String, storePath: String, properties: util.Map[String, Object]): ElasticSearchExecutor = {
+  def apply(runType:String, properties: util.Map[String, Object]): ElasticSearchExecutor = {
     val newProperties = new util.HashMap[String, String]()
     properties.asScala.foreach {
       case (key: String, value: Object) if value != null =>
         newProperties.put(key, String.valueOf(value))
       case _ =>
     }
-    new ElasticSearchExecutorImpl(runType, storePath, newProperties)
+    new ElasticSearchExecutorImpl(runType, newProperties)
   }
 
 }

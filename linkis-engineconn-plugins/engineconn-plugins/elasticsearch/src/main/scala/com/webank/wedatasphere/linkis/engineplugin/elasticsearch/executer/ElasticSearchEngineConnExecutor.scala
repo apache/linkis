@@ -10,7 +10,7 @@ import com.webank.wedatasphere.linkis.engineconn.computation.executor.entity.Eng
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
 import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
 import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration
-import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.executer.client.ElasticSearchExecutor
+import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.executer.client.{ElasticSearchErrorResponse, ElasticSearchExecutor, ElasticSearchJsonResponse, ElasticSearchTableResponse}
 import com.webank.wedatasphere.linkis.governance.common.entity.ExecutionNodeStatus
 import com.webank.wedatasphere.linkis.governance.common.protocol.task.RequestTask
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
@@ -18,7 +18,11 @@ import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EngineCon
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
 import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteResponse
+import com.webank.wedatasphere.linkis.scheduler.executer.{AliasOutputExecuteResponse, ErrorExecuteResponse, ExecuteResponse}
+import com.webank.wedatasphere.linkis.storage.LineRecord
+import com.webank.wedatasphere.linkis.storage.resultset.ResultSetFactory
+import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+import org.apache.commons.io.IOUtils
 import org.springframework.util.CollectionUtils
 
 import scala.collection.JavaConverters._
@@ -44,7 +48,7 @@ class ElasticSearchEngineConnExecutor(override val outputPrintLimit: Int, val id
 
   override def execute(engineConnTask: EngineConnTask): ExecuteResponse = {
     val storePath = engineConnTask.getProperties.get(RequestTask.RESULT_SET_STORE_PATH).toString
-    val elasticSearchExecutor = ElasticSearchExecutor(runType, storePath, engineConnTask.getProperties)
+    val elasticSearchExecutor = ElasticSearchExecutor(runType, engineConnTask.getProperties)
     elasticSearchExecutor.open
     elasticSearchExecutorCache.put(engineConnTask.getTaskId, elasticSearchExecutor)
     super.execute(engineConnTask)
@@ -53,7 +57,31 @@ class ElasticSearchEngineConnExecutor(override val outputPrintLimit: Int, val id
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
     val taskId = engineExecutorContext.getJobId.get
     val elasticSearchExecutor = elasticSearchExecutorCache.getIfPresent(taskId)
-    elasticSearchExecutor.executeLine(code, s"_${engineExecutorContext.getCurrentParagraph}")
+    val elasticSearchResponse = elasticSearchExecutor.executeLine(code)
+
+    elasticSearchResponse match {
+      case ElasticSearchTableResponse(columns, records) =>
+        val metaData = new TableMetaData(columns)
+        val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
+        resultSetWriter.addMetaData(metaData)
+        records.foreach(record => resultSetWriter.addRecord(record))
+        val output = resultSetWriter.toString
+        Utils.tryQuietly {
+          IOUtils.closeQuietly(resultSetWriter)
+        }
+        AliasOutputExecuteResponse(null, output)
+      case ElasticSearchJsonResponse(content) =>
+        val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TEXT_TYPE)
+        resultSetWriter.addMetaData(null)
+        content.split("\\n").foreach(item => resultSetWriter.addRecord(new LineRecord(item)))
+        val output = resultSetWriter.toString
+        Utils.tryQuietly {
+          IOUtils.closeQuietly(resultSetWriter)
+        }
+        AliasOutputExecuteResponse(null, output)
+      case ElasticSearchErrorResponse(message, body, cause) =>
+        ErrorExecuteResponse(message, cause)
+    }
   }
 
   override def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = null

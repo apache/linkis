@@ -34,6 +34,7 @@ import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process
 import org.apache.commons.io.{FileUtils, IOUtils}
 import org.apache.commons.lang.StringUtils
 
+import java.util.regex.Pattern
 import scala.collection.JavaConversions._
 
 
@@ -130,6 +131,14 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     var springConf = Map("spring.application.name" -> GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue,
       "server.port" -> engineConnPort, "spring.profiles.active" -> "engineconn",
       "logging.config" -> s"classpath:${EnvConfiguration.LOG4J2_XML_FILE.getValue}") ++: discoveryMsgGenerator.generate(engineConnManagerEnv)
+
+    //暂时通过判断engineConnManagerHost是否为IP地址来判断是否使用eureka.instance.prefer-ip-address，后续需要通过engineConnManagerEnv.properties获取相关属性
+    logger.info(s"engineConnManagerHost:" + engineConnManagerEnv.engineConnManagerHost)
+    if(Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)").matcher(engineConnManagerEnv.engineConnManagerHost).find()){
+      springConf = springConf + ("eureka.instance.prefer-ip-address" -> "true")
+      springConf = springConf + ("eureka.instance.instance-id" -> "\\${spring.cloud.client.ip-address}:\\${spring.application.name}:\\${server.port}")
+    }
+
     request.creationDesc.properties.filter(_._1.startsWith("spring.")).foreach { case (k, v) =>
       springConf = springConf += (k -> v)
     }

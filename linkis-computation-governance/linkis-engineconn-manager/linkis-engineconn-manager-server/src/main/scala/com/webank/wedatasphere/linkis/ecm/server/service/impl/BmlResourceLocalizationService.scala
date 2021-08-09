@@ -71,7 +71,13 @@ class BmlResourceLocalizationService extends ResourceLocalizationService {
           override val engineConnWorkDir: String = workDir
           override val engineConnLogDirs: String = logDirs
           override val engineConnTempDirs: String = tmpDirs
-          override val engineConnManagerHost: String = Utils.getComputerName
+
+          var hostName = Utils.getComputerName
+          val eurekaPreferIp = DataWorkCloudApplication.getApplicationContext.getEnvironment().getProperty("eureka.instance.prefer-ip-address")
+          if(eurekaPreferIp.equals("true")){
+            hostName = DataWorkCloudApplication.getApplicationContext.getEnvironment().getProperty("spring.cloud.client.ip-address")
+          }
+          override val engineConnManagerHost: String = hostName
           override val engineConnManagerPort: String = DataWorkCloudApplication.getApplicationContext.getEnvironment.getProperty("server.port")
           override val linkDirs: Map[String, String] = linkDirsP.toMap
           // TODO: 注册发现信息的配置化

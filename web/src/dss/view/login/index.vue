@@ -163,23 +163,9 @@ export default {
                 storage.set('saveUserNameAndPass', `${this.loginForm.user}&${this.loginForm.password}`, 'local');
               }
               if (rst) {
-                // 获取代理用户列表并选择代理用户
-                this.getProxyList(rst.userName, (proxy) => {
-                  // 判断代理用户是否开启或存在，如果请求错误直接按原逻辑走
-                  if(proxy && proxy.proxyEnable && proxy.proxyUsers && proxy.proxyUsers.length > 0) {
-                    this.proxyList = proxy.proxyUsers;
-                    this.userName = rst.userName;
-                    this.showProxyList = true;
-                  } else {
-                    // 登录之后需要获取当前用户的调转首页的路径
-                    this.getPageHomeUrl().then(() => {
-                      // this.$router.push({path: res});
-                      // 直接跳转管理台页面
-                      this.$router.push({path: '/console'});
-                      this.$Message.success(this.$t('message.common.login.loginSuccess'));
-                    })
-                  }
-                })
+                this.userName = rst.userName;
+                this.$router.push({path: '/console'});
+                this.$Message.success(this.$t('message.common.login.loginSuccess'));
               }
             })
             .catch((err) => {
@@ -215,19 +201,6 @@ export default {
       let params = {userName: this.userName, proxyUser: this.userName};
       this.bindProxyList(params)
       this.showProxyList = false;
-    },
-    // 获取代理用户列表
-    getProxyList(data, callback) {
-      if(data) {
-        api.fetch('/user/proxyInfo?userName=' + data, 'get').then((res) => {
-          callback(res);
-        }).catch((err) => {
-          window.console.error(err);
-          callback(false);
-        });
-      } else {
-        throw new Error('用户名无效！');
-      }
     },
     // 绑定用户代理接口
     bindProxyList(params) {

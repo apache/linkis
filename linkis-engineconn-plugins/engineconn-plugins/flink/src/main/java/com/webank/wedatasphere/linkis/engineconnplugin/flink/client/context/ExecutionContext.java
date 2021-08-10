@@ -395,7 +395,7 @@ public class ExecutionContext {
 			ModuleManager moduleManager,
 			FunctionCatalog functionCatalog) {
 
-		//流式
+		//for streaming(流式)
 		if (environment.getExecution().isStreamingPlanner()) {
 			streamExecEnv = createStreamExecutionEnvironment();
 			execEnv = null;
@@ -411,7 +411,7 @@ public class ExecutionContext {
 				functionCatalog);
 			return ;
 		}
-		//默认批
+		//default batch(默认批)
 		streamExecEnv = null;
 		execEnv = createExecutionEnvironment();
 		executor = null;

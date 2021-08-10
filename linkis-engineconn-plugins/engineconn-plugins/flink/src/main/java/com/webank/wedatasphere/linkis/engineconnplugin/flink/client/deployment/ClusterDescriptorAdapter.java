@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 集群交互适配器，适合datastream、sql方式作业
+ * Cluster Descriptor Adapter, adaptable with datastream/sql tasks(集群交互适配器，适合datastream、sql方式作业)
  */
 public abstract class ClusterDescriptorAdapter implements Closeable {
 	private static final Logger LOG = LoggerFactory.getLogger(ClusterDescriptorAdapter.class);

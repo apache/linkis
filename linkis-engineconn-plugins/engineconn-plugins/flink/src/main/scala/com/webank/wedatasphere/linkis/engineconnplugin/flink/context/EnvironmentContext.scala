@@ -48,18 +48,18 @@ class EnvironmentContext(defaultEnv: Environment,
            flinkHome: String, distJarPath: String, flinkLibRemotePath: String, providedLibDirsArray: Array[String],
            shipDirsArray: Array[String], dependencies: util.List[URL]) {
     this(defaultEnv, yarnConfDir, flinkConfDir, flinkHome, distJarPath, flinkLibRemotePath, dependencies)
-    //远程资源目录
+    //remote resource directory(远程资源目录)
     this.providedLibDirs = Lists.newArrayList(providedLibDirsArray.filter(StringUtils.isNotBlank): _*)
-    //本地资源目录
+    //local resource directory(本地资源目录)
     this.shipDirs = Lists.newArrayList(shipDirsArray.filter(StringUtils.isNotBlank): _*)
-    //加载系统级别配置
+    //load system-level properties(加载系统级别配置)
     this.flinkConfig = GlobalConfiguration.loadConfiguration(this.flinkConfDir)
     if (null != systemConfiguration) this.flinkConfig.addAll(systemConfiguration)
-    //设置 flink conf目录
+    //set flink conf-dir(设置 flink conf目录)
     this.flinkConfig.set(DeploymentOptionsInternal.CONF_DIR, this.flinkConfDir)
-    //设置 yarn conf目录
+    //set yarn conf-dir(设置 yarn conf目录)
     this.flinkConfig.set(LinkisYarnClusterClientFactory.YARN_CONFIG_DIR, this.yarnConfDir)
-    //设置 flink dist jar
+    //set flink dist-jar(设置 flink dist jar)
     this.flinkConfig.set(YarnConfigOptions.FLINK_DIST_JAR, distJarPath)
   }
 

@@ -90,9 +90,6 @@ import org.apache.flink.yarn.YarnClusterDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * 运行上下文
- */
 public class ExecutionContext {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExecutionContext.class);

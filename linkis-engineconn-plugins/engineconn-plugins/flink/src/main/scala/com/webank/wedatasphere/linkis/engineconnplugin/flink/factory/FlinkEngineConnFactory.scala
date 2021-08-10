@@ -68,7 +68,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val shipDirsArray = FLINK_SHIP_DIRECTORIES.getValue(options).split(",")
     val context = new EnvironmentContext(defaultEnv, new Configuration, hadoopConfDir, flinkConfDir, flinkHome,
       flinkDistJarPath, flinkLibRemotePath, providedLibDirsArray, shipDirsArray, null)
-    //第一步: 环境级别配置
+    //Step1: environment-level configurations(第一步: 环境级别配置)
     val jobName = options.getOrDefault("flink.app.name", "EngineConn-Flink")
     val yarnQueue = LINKIS_QUEUE_NAME.getValue(options)
     val parallelism = FLINK_APP_DEFAULT_PARALLELISM.getValue(options)
@@ -76,37 +76,37 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val taskManagerMemory = LINKIS_FLINK_TASK_MANAGER_MEMORY.getValue(options) + "G"
     val numberOfTaskSlots = LINKIS_FLINK_TASK_SLOTS.getValue(options)
     info(s"Use yarn queue $yarnQueue, and set parallelism = $parallelism, jobManagerMemory = $jobManagerMemory G, taskManagerMemory = $taskManagerMemory G, numberOfTaskSlots = $numberOfTaskSlots.")
-    //第二步: 应用级别配置
-    //构建应用配置
+    //Step2: application-level configurations(第二步: 应用级别配置)
+    //construct app-config(构建应用配置)
     val flinkConfig = context.getFlinkConfig
-    //构建依赖jar包环境
+    //construct jar-dependencies(构建依赖jar包环境)
     val flinkUserLibRemotePath = FLINK_USER_LIB_REMOTE_PATH.getValue(options).split(",")
     val providedLibDirList = Lists.newArrayList(flinkUserLibRemotePath.filter(StringUtils.isNotBlank): _*)
     val flinkUserRemotePathList = Lists.newArrayList(flinkLibRemotePath.split(",").filter(StringUtils.isNotBlank): _*)
     if (flinkUserRemotePathList != null && flinkUserRemotePathList.size() > 0) providedLibDirList.addAll(flinkUserRemotePathList)
     //if(StringUtils.isNotBlank(flinkLibRemotePath)) providedLibDirList.add(flinkLibRemotePath)
     flinkConfig.set(YarnConfigOptions.PROVIDED_LIB_DIRS, providedLibDirList)
-    //构建依赖jar包环境
+    //construct jar-dependencies(构建依赖jar包环境)
     flinkConfig.set(YarnConfigOptions.SHIP_ARCHIVES, context.getShipDirs)
-    //yarn 作业名称
+    //yarn application name(yarn 作业名称)
     flinkConfig.set(YarnConfigOptions.APPLICATION_NAME, jobName)
     //yarn queue
     flinkConfig.set(YarnConfigOptions.APPLICATION_QUEUE, yarnQueue)
-    //设置：资源/并发度
+    //Configure resource/concurrency (设置：资源/并发度)
     flinkConfig.setInteger(CoreOptions.DEFAULT_PARALLELISM, parallelism)
     flinkConfig.set(JobManagerOptions.TOTAL_PROCESS_MEMORY, MemorySize.parse(jobManagerMemory))
     flinkConfig.set(TaskManagerOptions.TOTAL_PROCESS_MEMORY, MemorySize.parse(taskManagerMemory))
     flinkConfig.setInteger(TaskManagerOptions.NUM_TASK_SLOTS, numberOfTaskSlots)
     flinkConfig.set(MetricOptions.REPORTER_CLASS, "com.webank.ims.reporter.IMSReporter");
     flinkConfig.set(MetricOptions.REPORTER_INTERVAL, Duration.ofSeconds(60))
-    //设置 savePoint
+    //set savePoint(设置 savePoint)
     val savePointPath = FLINK_SAVE_POINT_PATH.getValue(options)
     if (StringUtils.isNotBlank(savePointPath)) {
       val allowNonRestoredState = FLINK_APP_ALLOW_NON_RESTORED_STATUS.getValue(options).toBoolean
       val savepointRestoreSettings = SavepointRestoreSettings.forPath(savePointPath, allowNonRestoredState)
       SavepointRestoreSettings.toConfiguration(savepointRestoreSettings, flinkConfig)
     }
-    //设置：用户入口jar：可以远程，只能设置1个jar
+    //Configure user-entrance jar. Can be remote, but only support 1 jar(设置：用户入口jar：可以远程，只能设置1个jar)
     val flinkMainClassJar = FLINK_APPLICATION_MAIN_CLASS_JAR.getValue(options)
     if(StringUtils.isNotBlank(flinkMainClassJar)) {
       info(s"Ready to use $flinkMainClassJar as main class jar to submit application to Yarn.")

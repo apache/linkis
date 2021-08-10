@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 基于guava-retry的重试工具类
+ * A retry Util-class based on guava-retry(基于guava-retry的重试工具类)
  * Retry Tool class based on guava-retry
  */
 public class RetryUtil {
@@ -38,24 +38,24 @@ public class RetryUtil {
     private static final Logger logger = LoggerFactory.getLogger(RetryUtil.class);
 
     /**
-     * @param task             要重试执行得任务
-     * @param predicate        符合预期结果需要重试
-     * @param fixedWaitTime    本次重试与上次重试之间的固定间隔时长
-     * @param maxEachExecuTime 一次重试的最大执行的时间
-     * @param attemptNumber    重试次数
+     * @param task             task pending for retry(重试执行得任务)
+     * @param predicate        retry predication(符合预期结果需要重试)
+     * @param fixedWaitTime    time interval between retries(本次重试与上次重试之间的固定间隔时长)
+     * @param maxEachExecuTime maxium time for a retry(一次重试的最大执行的时间)
+     * @param attemptNumber    number of retry attempts(重试次数)
      */
 
     public static <T> T retry(Callable<T> task, Predicate<T> predicate, long fixedWaitTime, long maxEachExecuTime,
                               TimeUnit timeUnit, int attemptNumber) {
         Retryer<T> retryer = RetryerBuilder
                 .<T>newBuilder()
-                // 抛出runtime异常、checked异常时都会重试，但是抛出error不会重试。
+                // Will retry: runtime exception; checked exception. May not retry: error (抛出runtime异常、checked异常时都会重试，但是抛出error不会重试。)
                 .retryIfException()
-                // 对执行结果的预期。符合预期就重试
+                // if predication is met, then retry(对执行结果的预期。符合预期就重试)
                 .retryIfResult(predicate)
-                // 每次重试固定等待fixedWaitTime时间
+                // fixed waiting time for retry(每次重试固定等待fixedWaitTime时间)
                 .withWaitStrategy(WaitStrategies.fixedWait(fixedWaitTime, timeUnit))
-                // 尝试次数
+                // number of retry attempts(尝试次数)
                 .withStopStrategy(StopStrategies.stopAfterAttempt(attemptNumber))
                 .build();
         T t = null;

@@ -23,7 +23,7 @@ import org.apache.flink.configuration.DeploymentOptions;
 import org.apache.flink.yarn.configuration.YarnDeploymentTarget;
 
 /**
- * 集群交互适配器工厂
+ * Cluster Descriptor Adapter Factory(集群交互适配器工厂)
  */
 public class ClusterDescriptorAdapterFactory {
 

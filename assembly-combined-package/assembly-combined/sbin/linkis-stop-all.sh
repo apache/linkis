@@ -97,26 +97,6 @@ SERVER_NAME="ps-metadatamanager"
 SERVER_IP=$METADATAMANAGER_INSTALL_IP
 stopApp
 
-#metadatamanager-es
-SERVER_NAME="ps-metadatamanager-es"
-SERVER_IP=$METADATAMANAGER_ES_INSTALL_IP
-stopApp
-
-#metadatamanager-hive
-SERVER_NAME="ps-metadatamanager-hive"
-SERVER_IP=$METADATAMANAGER_HIVE_INSTALL_IP
-stopApp
-
-#metadatamanager-kafka
-SERVER_NAME="ps-metadatamanager-kafka"
-SERVER_IP=$METADATAMANAGER_KAFKA_INSTALL_IP
-stopApp
-
-#metadatamanager-mysql
-SERVER_NAME="ps-metadatamanager-mysql"
-SERVER_IP=$METADATAMANAGER_MYSQL_INSTALL_IP
-stopApp
-
 
 #manager
 SERVER_NAME="cg-linkismanager"

@@ -381,7 +381,7 @@
               ../../linkis-public-enhancements/linkis-datasource/datasourcemanager/server/target/out/lib
           </directory>
           <outputDirectory>
-              lib/linkis-public-enhancements/linkis-ps-datasourcemanager
+              lib/linkis-public-enhancements/linkis-ps-datasourcesmanager
           </outputDirectory>
           <includes>
               <include>*.jar</include>

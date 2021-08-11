@@ -41,7 +41,7 @@ public class MetadataOperateServiceImpl implements MetadataOperateService {
     @Autowired
     private BmlAppService bmlAppService;
     @Override
-    public void doRemoteConnect(String mdRemoteServiceName ,
+    public void doRemoteConnect(String mdRemoteServiceName , String dataSourceType,
                                 String operator, Map<String, Object> connectParams) throws WarnException {
         List<String> uploadedResources = new ArrayList<>();
         try{
@@ -72,7 +72,7 @@ public class MetadataOperateServiceImpl implements MetadataOperateService {
             //Get a sender
             Sender sender = Sender.getSender(mdRemoteServiceName);
             try {
-                Object object = sender.ask(new MetadataConnect(operator, connectParams, ""));
+                Object object = sender.ask(new MetadataConnect(dataSourceType, operator, connectParams, ""));
                 if (object instanceof MetadataResponse) {
                     MetadataResponse response = (MetadataResponse) object;
                     if (!response.status()) {

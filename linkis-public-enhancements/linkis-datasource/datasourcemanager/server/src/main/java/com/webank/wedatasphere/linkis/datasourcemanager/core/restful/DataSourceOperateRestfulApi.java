@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Path("/data_source/op/")
+@Path("/datasources/op/")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Component
@@ -86,7 +86,7 @@ public class DataSourceOperateRestfulApi {
             }
             doConnect(operator, dataSource);
             return Message.ok().data("ok", true);
-        }, "/data_source/op/connect/json","");
+        }, "/datasources/op/connect/json","");
     }
 
     @POST
@@ -98,7 +98,7 @@ public class DataSourceOperateRestfulApi {
             DataSource dataSource = formDataTransformer.transformToObject(multiPartForm, DataSource.class, beanValidator);
             doConnect(operator, dataSource);
             return Message.ok().data("ok", true);
-        }, "/data_source/op/connect/form","");
+        }, "/datasources/op/connect/form","");
     }
 
     /**
@@ -119,8 +119,7 @@ public class DataSourceOperateRestfulApi {
         Map<String,Object> connectParams = dataSource.getConnectParams();
         parameterValidator.validate(keyDefinitionList, connectParams);
         DataSourceType dataSourceType = dataSourceRelateService.getDataSourceType(dataSource.getDataSourceTypeId());
-        metadataOperateService.doRemoteConnect(MdmConfiguration.METADATA_SERVICE_APPLICATION.getValue()
-                        + (StringUtils.isNotBlank(dataSourceType.getName())?("-" +dataSourceType.getName().toLowerCase()) : ""),
+        metadataOperateService.doRemoteConnect(MdmConfiguration.METADATA_SERVICE_APPLICATION.getValue(),dataSourceType.getName().toLowerCase(),
                 operator, dataSource.getConnectParams());
     }
 }

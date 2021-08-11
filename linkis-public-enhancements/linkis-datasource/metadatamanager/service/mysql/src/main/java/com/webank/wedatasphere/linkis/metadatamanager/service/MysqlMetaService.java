@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class SqlMetaService extends AbstractMetaService<SqlConnection> {
+public class MysqlMetaService extends AbstractMetaService<SqlConnection> {
     @Override
     public MetadataConnection<SqlConnection> getConnection(String operator, Map<String, Object> params) throws Exception {
         String host = String.valueOf(params.getOrDefault(SqlParamsMapper.PARAM_SQL_HOST.getValue(), ""));

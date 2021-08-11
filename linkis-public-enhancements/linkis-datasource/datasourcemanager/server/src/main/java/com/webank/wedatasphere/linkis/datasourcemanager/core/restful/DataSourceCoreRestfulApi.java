@@ -47,7 +47,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
 
-@Path("/data_source")
+@Path("/datasources")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Component
@@ -84,7 +84,7 @@ public class DataSourceCoreRestfulApi {
         return RestfulApiHelper.doAndResponse(() -> {
             List<DataSourceType> dataSourceTypes = dataSourceRelateService.getAllDataSourceTypes();
             return Message.ok().data("type_list", dataSourceTypes);
-        }, "/data_source/type/all", "Fail to get all types of data source[获取数据源类型列表失败]");
+        }, "/datasources/type/all", "Fail to get all types of data source[获取数据源类型列表失败]");
     }
 
 
@@ -94,7 +94,7 @@ public class DataSourceCoreRestfulApi {
         return RestfulApiHelper.doAndResponse(() -> {
                     List<DataSourceParamKeyDefinition> keyDefinitions = dataSourceRelateService.getKeyDefinitionsByType(dataSourceTypeId);
                     return Message.ok().data("key_define", keyDefinitions);
-                }, "/data_source/key_define/type/" + dataSourceTypeId,
+                }, "/datasources/key_define/type/" + dataSourceTypeId,
                 "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
     }
 
@@ -112,7 +112,7 @@ public class DataSourceCoreRestfulApi {
             dataSource.setCreateUser(userName);
             insertDataSource(dataSource);
             return Message.ok().data("insert_id", dataSource.getId());
-        }, "/data_source/info/json", "Fail to insert data source[新增数据源失败]");
+        }, "/datasources/info/json", "Fail to insert data source[新增数据源失败]");
     }
 
     @PUT
@@ -136,7 +136,7 @@ public class DataSourceCoreRestfulApi {
             }
             dataSourceInfoService.updateDataSourceInfo(dataSource);
             return Message.ok().data("update_id", dataSourceId);
-        }, "/data_source/info/" + dataSourceId + "/json", "Fail to update data source[更新数据源失败]");
+        }, "/datasources/info/" + dataSourceId + "/json", "Fail to update data source[更新数据源失败]");
     }
 
     /**
@@ -170,7 +170,7 @@ public class DataSourceCoreRestfulApi {
             long versionId = dataSourceInfoService.insertDataSourceParameter(keyDefinitionList, datasourceId, connectParams, userName, comment);
 
             return Message.ok().data("version", versionId);
-        }, "/data_source/parameter/" + datasourceId + "/json", "Fail to insert data source parameter [保存数据源参数失败]");
+        }, "/datasources/parameter/" + datasourceId + "/json", "Fail to insert data source parameter [保存数据源参数失败]");
     }
 
 
@@ -193,7 +193,7 @@ public class DataSourceCoreRestfulApi {
                         , dataSource.getConnectParams());
             }
             return Message.ok().data("info", dataSource);
-        }, "/data_source/info/" + dataSourceId, "Fail to access data source[获取数据源信息失败]");
+        }, "/datasources/info/" + dataSourceId, "Fail to access data source[获取数据源信息失败]");
     }
 
     /**
@@ -215,7 +215,7 @@ public class DataSourceCoreRestfulApi {
                         , dataSource.getConnectParams());
             }
             return Message.ok().data("info", dataSource);
-        }, "/data_source/info/" + dataSourceId + "/" + version, "Fail to access data source[获取数据源信息失败]");
+        }, "/datasources/info/" + dataSourceId + "/" + version, "Fail to access data source[获取数据源信息失败]");
     }
 
     /**
@@ -240,7 +240,7 @@ public class DataSourceCoreRestfulApi {
                 });
             }
             return Message.ok().data("versions", versions);
-        }, "/data_source/" + dataSourceId + "/versions", "Fail to access data source[获取数据源信息失败]");
+        }, "/datasources/" + dataSourceId + "/versions", "Fail to access data source[获取数据源信息失败]");
     }
 
 
@@ -255,7 +255,7 @@ public class DataSourceCoreRestfulApi {
                 return Message.error("publish error");
             }
             return Message.ok();
-        }, "/data_source/publish/" + dataSourceId + "/" + versionId, "Fail to publish datasource[数据源版本发布失败]");
+        }, "/datasources/publish/" + dataSourceId + "/" + versionId, "Fail to publish datasource[数据源版本发布失败]");
     }
 
 
@@ -274,7 +274,7 @@ public class DataSourceCoreRestfulApi {
                 return Message.error("Fail to remove data source[删除数据源信息失败], [id:" + dataSourceId + "]");
             }
             return Message.ok().data("remove_id", removeId);
-        }, "/data_source/info/" + dataSourceId, "Fail to remove data source[删除数据源信息失败]");
+        }, "/datasources/info/" + dataSourceId, "Fail to remove data source[删除数据源信息失败]");
     }
 
     @PUT
@@ -286,7 +286,7 @@ public class DataSourceCoreRestfulApi {
                 return Message.error("Fail to expire data source[数据源过期失败], [id:" + dataSourceId + "]");
             }
             return Message.ok().data("expire_id", expireId);
-        }, "/data_source/info/" + dataSourceId + "/expire", "Fail to expire data source[数据源过期失败]");
+        }, "/datasources/info/" + dataSourceId + "/expire", "Fail to expire data source[数据源过期失败]");
     }
 
     /**
@@ -307,7 +307,7 @@ public class DataSourceCoreRestfulApi {
                     , connectParams);
             return Message.ok().data("connectParams", connectParams);
 
-        }, "/data_source/" + dataSourceId  + "/connect_params", "Fail to connect data source[连接数据源失败]");
+        }, "/datasources/" + dataSourceId  + "/connect_params", "Fail to connect data source[连接数据源失败]");
     }
 
     @PUT
@@ -321,13 +321,11 @@ public class DataSourceCoreRestfulApi {
 
 
             String dataSourceTypeName = dataSource.getDataSourceType().getName();
-            String mdRemoteServiceName = MdmConfiguration.METADATA_SERVICE_APPLICATION.getValue()
-                    + (StringUtils.isNotBlank(dataSourceTypeName) ? ("-" + dataSourceTypeName.toLowerCase()) : "");
+            String mdRemoteServiceName = MdmConfiguration.METADATA_SERVICE_APPLICATION.getValue();
 
-            metadataOperateService.doRemoteConnect(mdRemoteServiceName, operator, dataSource.getConnectParams());
-            ;
+            metadataOperateService.doRemoteConnect(mdRemoteServiceName, dataSourceTypeName.toLowerCase(), operator, dataSource.getConnectParams());
             return Message.ok().data("ok", true);
-        }, "/data_source/" + dataSourceId + "/" + version + "/op/connect", "Fail to connect data source[连接数据源失败]");
+        }, "/datasources/" + dataSourceId + "/" + version + "/op/connect", "Fail to connect data source[连接数据源失败]");
     }
 
     @GET
@@ -346,7 +344,7 @@ public class DataSourceCoreRestfulApi {
             PageInfo<DataSource> pageInfo = dataSourceInfoService.queryDataSourceInfoPage(dataSourceVo);
             List<DataSource> queryList = pageInfo.getList();
             return Message.ok().data("query_list", queryList).data("totalPage", pageInfo.getTotal());
-        }, "/data_source/info", "Fail to query page of data source[查询数据源失败]");
+        }, "/datasources/info", "Fail to query page of data source[查询数据源失败]");
     }
 
     /**

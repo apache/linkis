@@ -74,4 +74,4 @@ jobs:
             ${{ runner.os }}-linkis-
       - name: install environment
         run: |
-          mvn install -pl linkis-configurarion -am
+          mvn install -pl linkis-public-enhancements -am

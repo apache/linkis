@@ -39,7 +39,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
 
-@Path("/data_source")
+@Path("/datasources")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class DataSourceAdminRestfulApi {
@@ -79,7 +79,7 @@ public class DataSourceAdminRestfulApi {
             dataSourceEnv.setCreateUser(userName);
             insertDataSourceEnv(dataSourceEnv);
             return Message.ok().data("insert_id", dataSourceEnv.getId());
-        }, "/data_source/env/json","Fail to insert data source environment[新增数据源环境失败]");
+        }, "/datasources/env/json","Fail to insert data source environment[新增数据源环境失败]");
     }
 
     @POST
@@ -95,7 +95,7 @@ public class DataSourceAdminRestfulApi {
             dataSourceEnv.setCreateUser(userName);
             insertDataSourceEnv(dataSourceEnv);
             return Message.ok().data("insert_id", dataSourceEnv.getId());
-        }, "/data_source/env/form","Fail to insert data source environment[新增数据源环境失败]");
+        }, "/datasources/env/form","Fail to insert data source environment[新增数据源环境失败]");
     }
 
     @GET
@@ -104,7 +104,7 @@ public class DataSourceAdminRestfulApi {
         return RestfulApiHelper.doAndResponse(()->{
             List<DataSourceEnv> envList = dataSourceInfoService.listDataSourceEnvByType(typeId);
             return Message.ok().data("env_list", envList);
-        }, "/data_source/env_list/all/type/" + typeId,"Fail to get data source environment list[获取数据源环境清单失败]");
+        }, "/datasources/env_list/all/type/" + typeId,"Fail to get data source environment list[获取数据源环境清单失败]");
     }
 
     @GET
@@ -113,7 +113,7 @@ public class DataSourceAdminRestfulApi {
         return RestfulApiHelper.doAndResponse(() ->{
             DataSourceEnv dataSourceEnv = dataSourceInfoService.getDataSourceEnv(envId);
             return Message.ok().data("env", dataSourceEnv);
-        }, "/data_source/env/" + envId,"Fail to get data source environment[获取数据源环境信息失败]");
+        }, "/datasources/env/" + envId,"Fail to get data source environment[获取数据源环境信息失败]");
     }
 
     @DELETE
@@ -131,7 +131,7 @@ public class DataSourceAdminRestfulApi {
                         envId + "]");
             }
             return Message.ok().data("remove_id", removeId);
-        }, "/data_source/env/" + envId,"Fail to remove data source environment[删除数据源环境信息失败]");
+        }, "/datasources/env/" + envId,"Fail to remove data source environment[删除数据源环境信息失败]");
     }
 
     @PUT
@@ -160,7 +160,7 @@ public class DataSourceAdminRestfulApi {
             dataSourceEnv.setCreateUser(storedDataSourceEnv.getCreateUser());
             updateDataSourceEnv(dataSourceEnv, storedDataSourceEnv);
             return Message.ok().data("update_id", envId);
-        }, "/data_source/env/" + envId + "/json","Fail to update data source environment[更新数据源环境失败]");
+        }, "/datasources/env/" + envId + "/json","Fail to update data source environment[更新数据源环境失败]");
     }
 
     @PUT
@@ -189,7 +189,7 @@ public class DataSourceAdminRestfulApi {
                 return Message.ok().data("update_id", envId);
             }
             return Message.error("Empty request");
-        }, "/data_source/env/" + envId + "/form","Fail to update data source environment[更新数据源环境失败]");
+        }, "/datasources/env/" + envId + "/form","Fail to update data source environment[更新数据源环境失败]");
     }
 
     @GET
@@ -204,7 +204,7 @@ public class DataSourceAdminRestfulApi {
             dataSourceEnvVo.setPageSize(null != pageSize? pageSize : 10);
             List<DataSourceEnv> queryList = dataSourceInfoService.queryDataSourceEnvPage(dataSourceEnvVo);
             return Message.ok().data("query_list", queryList);
-        }, "/data_source/env","Fail to query page of data source environment[查询数据源环境失败]");
+        }, "/datasources/env","Fail to query page of data source environment[查询数据源环境失败]");
     }
 
     /**

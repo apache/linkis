@@ -5,21 +5,21 @@ import { serialize } from 'object-to-formdata';
  * 获取数据源列表
  */
 const getDataSourceList = (params)=>{
-  return api.fetch('data_source/info', params, 'get')
+  return api.fetch('datasources/info', params, 'get')
 }
 
 /**
  * 获取数据源类型列表
  */
 const getDataSourceTypeList = ()=>{
-  return api.fetch('/data_source/type/all', {}, 'get')
+  return api.fetch('/datasources/type/all', {}, 'get')
 }
 
 /**
  * 获取环境列表
  */
 const getEnvList = ()=>{
-  return api.fetch('data_source/env', {}, 'get')
+  return api.fetch('datasources/env', {}, 'get')
 }
 
 /**
@@ -27,7 +27,7 @@ const getEnvList = ()=>{
  * @returns 获取datasource key定义
  */
 const getKeyDefine = (id)=>{
-  return api.fetch(`/data_source/key_define/type/${id}`, {}, 'get')
+  return api.fetch(`/datasources/key_define/type/${id}`, {}, 'get')
 }
 
 /**
@@ -36,7 +36,7 @@ const getKeyDefine = (id)=>{
  * @returns 
  */
 const createDataSource = (realFormData)=>{
-  return api.fetch('data_source/info/json', realFormData)
+  return api.fetch('datasources/info/json', realFormData)
 }
 
 /**
@@ -45,7 +45,7 @@ const createDataSource = (realFormData)=>{
  * @returns 
  */
 const createDataSourceForm = (realFormData)=>{
-  return api.fetch('data_source/info/form', realFormData, {methed: 'post', 'Content-Type': 'text/plain'})
+  return api.fetch('datasources/info/form', realFormData, {methed: 'post', 'Content-Type': 'text/plain'})
 }
 
 /**
@@ -55,7 +55,7 @@ const createDataSourceForm = (realFormData)=>{
  * @returns 
  */
 const updateDataSource = (data, datasourceId)=>{
-  return api.fetch(`data_source/info/${datasourceId}/json`, data, 'put')
+  return api.fetch(`datasources/info/${datasourceId}/json`, data, 'put')
 }
 
 /**
@@ -65,7 +65,7 @@ const updateDataSource = (data, datasourceId)=>{
  * @returns 
  */
 const saveConnectParams = (datasourceId, data, comment)=>{
-  return api.fetch(`/data_source/parameter/${datasourceId}/json`, {connectParams: data, comment})//{connectParams: data, comment}
+  return api.fetch(`/datasources/parameter/${datasourceId}/json`, {connectParams: data, comment})//{connectParams: data, comment}
 }
 
 /**
@@ -75,7 +75,7 @@ const saveConnectParams = (datasourceId, data, comment)=>{
  */
 const saveConnectParamsForm = (datasourceId, data, comment)=>{
   const formData = serialize({connectParams: data, comment});
-  return api.fetch(`/data_source/parameter/${datasourceId}/form`, formData, {methed: 'post', 'Content-Type': 'text/plain'})
+  return api.fetch(`/datasources/parameter/${datasourceId}/form`, formData, {methed: 'post', 'Content-Type': 'text/plain'})
 }
   
 
@@ -85,7 +85,7 @@ const saveConnectParamsForm = (datasourceId, data, comment)=>{
  * @returns 数据源详情
  */
 const getDataSourceByIdAndVersion = (datasourceId, version)=>{
-  return api.fetch(`/data_source/info/${datasourceId}/${version}`, {}, 'get')
+  return api.fetch(`/datasources/info/${datasourceId}/${version}`, {}, 'get')
 }
 /**
  * 获取版本列表
@@ -93,7 +93,7 @@ const getDataSourceByIdAndVersion = (datasourceId, version)=>{
  * @returns 
  */
 const getVersionListByDatasourceId = (datasourceId)=>{
-  return api.fetch(`/data_source/${datasourceId}/versions`, {}, 'get')
+  return api.fetch(`/datasources/${datasourceId}/versions`, {}, 'get')
 }
   
 
@@ -105,7 +105,7 @@ const getVersionListByDatasourceId = (datasourceId)=>{
  * @returns 
  */
 const expire = (datasourceId)=>{
-  return api.fetch(`/data_source/info/${datasourceId}/expire`, {}, 'put')
+  return api.fetch(`/datasources/info/${datasourceId}/expire`, {}, 'put')
 }
 
 /**
@@ -115,7 +115,7 @@ const expire = (datasourceId)=>{
  * @returns 
  */
 const publish = (datasourceId, versionId)=>{
-  return api.fetch(`data_source/publish/${datasourceId}/${versionId}`, {}, 'post')
+  return api.fetch(`datasources/publish/${datasourceId}/${versionId}`, {}, 'post')
 }
 
 /**
@@ -124,7 +124,7 @@ const publish = (datasourceId, versionId)=>{
  * @returns 
  */
 const connect = (data)=> {
-  return api.fetch(`data_source/op/connect/json`, data);
+  return api.fetch(`datasources/op/connect/json`, data);
 }
 
 

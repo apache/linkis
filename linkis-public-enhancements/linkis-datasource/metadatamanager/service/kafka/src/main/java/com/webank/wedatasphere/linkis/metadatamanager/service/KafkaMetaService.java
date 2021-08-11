@@ -9,9 +9,6 @@ import com.webank.wedatasphere.linkis.metadatamanager.common.service.AbstractMet
 import com.webank.wedatasphere.linkis.metadatamanager.common.service.MetadataConnection;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.kafka.clients.admin.DescribeTopicsResult;
-import org.apache.kafka.clients.admin.TopicDescription;
-import org.apache.kafka.common.TopicPartitionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -63,6 +60,9 @@ public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
         }else{
             conn = new KafkaConnection(brokers);
         }
+
+        // because KafkaAdminClient.create does not do a real connection, we use listTopics here for testing connection
+        conn.getClient().listTopics().names().get();
 
         return new MetadataConnection<>(conn, true);
     }

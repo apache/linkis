@@ -16,11 +16,20 @@ package com.webank.wedatasphere.linkis.metadatamanager.server.service;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.metadatamanager.common.domain.MetaColumnInfo;
 import com.webank.wedatasphere.linkis.metadatamanager.common.domain.MetaPartitionInfo;
+import com.webank.wedatasphere.linkis.metadatamanager.common.service.MetadataConnection;
 
+import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
 
 public interface MetadataAppService {
+
+    /**
+     * Get connection
+     * @param params connect params
+     * @return
+     */
+    void getConnection(String dataSourceType, String operator, Map<String, Object> params) throws Exception;
 
     /**
      * @param dataSourceId data source id

@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
-public class ElasticMetaService extends AbstractMetaService<ElasticConnection> {
+public class EsMetaService extends AbstractMetaService<ElasticConnection> {
     @Override
     public MetadataConnection<ElasticConnection> getConnection(String operator, Map<String, Object> params)
     throws Exception{

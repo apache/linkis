@@ -18,10 +18,6 @@
 
 package com.webank.wedatasphere.linkis.manager.am.restful;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.netflix.discovery.converters.Auto;
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
 import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration;
 import com.webank.wedatasphere.linkis.manager.am.converter.DefaultMetricsConverter;
@@ -35,28 +31,20 @@ import com.webank.wedatasphere.linkis.manager.common.entity.metrics.NodeHealthyI
 import com.webank.wedatasphere.linkis.manager.common.entity.node.EMNode;
 import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.StdLabelBuilderFactory;
 import com.webank.wedatasphere.linkis.manager.label.entity.Label;
 import com.webank.wedatasphere.linkis.manager.label.entity.UserModifiable;
 import com.webank.wedatasphere.linkis.manager.label.exception.LabelErrorException;
 import com.webank.wedatasphere.linkis.manager.label.service.NodeLabelService;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
-import org.json4s.JsonAST;
-import org.json4s.JsonUtil;
-import org.json4s.jackson.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import scala.util.parsing.json.JSON;
-import scala.util.parsing.json.JSONObject;
-import scala.util.parsing.json.JSONObject$;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;

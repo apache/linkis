@@ -27,22 +27,22 @@ import javax.ws.rs.core.Response;
 @FeignClient(name = Constants.APPLICATION_NAME)
 public interface DataSourceRestfulRemote {
 
-    @GetMapping("/api/datasource/dbs")
+    @GetMapping("/api/datasources/dbs")
     public Response queryDatabaseInfo(HttpServletRequest req);
 
-    @GetMapping("/api/datasource/all")
+    @GetMapping("/api/datasources/all")
     public Response queryDbsWithTables(HttpServletRequest req);
 
-    @GetMapping("/api/datasource/tables")
+    @GetMapping("/api/datasources/tables")
     public Response queryTables(@RequestParam("database") String database, HttpServletRequest req);
 
-    @GetMapping("/api/datasource/columns")
+    @GetMapping("/api/datasources/columns")
     public Response queryTableMeta(@RequestParam("database") String database, @RequestParam("table") String table, HttpServletRequest req);
 
-    @GetMapping("/api/datasource/size")
+    @GetMapping("/api/datasources/size")
     public Response sizeOf(@RequestParam("database") String database, @RequestParam("table") String table, @RequestParam("partition") String partition, HttpServletRequest req);
 
-    @GetMapping("/api/datasource/partitions")
+    @GetMapping("/api/datasources/partitions")
     public Response partitions(@RequestParam("database") String database, @RequestParam("table") String table, HttpServletRequest req);
 
 }

@@ -2,6 +2,7 @@
 .idea
 .DS_Store
 
+**/target
 
 out/
 linkis.ipr

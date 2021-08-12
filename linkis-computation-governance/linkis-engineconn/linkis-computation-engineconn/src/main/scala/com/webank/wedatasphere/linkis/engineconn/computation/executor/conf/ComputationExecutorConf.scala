@@ -32,4 +32,7 @@ object ComputationExecutorConf {
   val ENGINE_PROGRESS_FETCH_INTERVAL = CommonVars("wds.linkis.engineconn.progresss.fetch.interval-in-seconds", 5)
 
   val UDF_LOAD_FAILED_IGNORE = CommonVars("wds.linkis.engineconn.udf.load.ignore", true)
+
+  val ENGINE_CONCURRENT_THREAD_NUM = CommonVars("wds.linkis.engineconn.concurrent.thread.num", 20)
+
 }

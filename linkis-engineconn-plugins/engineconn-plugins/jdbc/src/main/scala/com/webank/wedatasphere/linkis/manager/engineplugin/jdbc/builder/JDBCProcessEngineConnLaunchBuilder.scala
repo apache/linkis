@@ -22,8 +22,8 @@ import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration
 
 class JDBCProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
-  override def getEngineStartUser(label: UserCreatorLabel): String = {
-    StorageConfiguration.HDFS_ROOT_USER.getValue
-  }
+//  override def getEngineStartUser(label: UserCreatorLabel): String = {
+//    StorageConfiguration.HDFS_ROOT_USER.getValue
+//  }
 
 }

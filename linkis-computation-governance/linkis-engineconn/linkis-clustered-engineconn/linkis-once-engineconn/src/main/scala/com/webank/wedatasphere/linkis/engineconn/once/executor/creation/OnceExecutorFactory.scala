@@ -39,7 +39,7 @@ trait OnceExecutorFactory extends AbstractCodeLanguageLabelExecutorFactory {
       case engineConnModeLabel: EngineConnModeLabel =>
         val mode: EngineConnMode = engineConnModeLabel.getEngineConnMode
         OnceEngineConnExecution.getSupportedEngineConnModes.contains(mode)
-    case _ => false
-  }
+      case _ => false
+    }
 
 }

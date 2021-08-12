@@ -53,7 +53,6 @@ object AMConfiguration {
 
   val MULTI_USER_ENGINE_TYPES = CommonVars("wds.linkis.multi.user.engine.types", "jdbc,es,presto,io_file,appconn")
 
-  val DEFAULT_ENGINECONN_USER = Utils.getJvmUser
 
   val MULTI_USER_ENGINE_USER = CommonVars("wds.linkis.multi.user.engine.user", getDefaultMultiEngineUser)
   

@@ -184,7 +184,7 @@ public class MdqTableRestfulApi {
         String dbName = tableBO.getTableBaseInfo().getBase().getDatabase();
         String retStr = "意书后台正在为您生成新建库表: " + dbName + "." + tableName + "的DDL语句,请点击建表按钮进行执行";
         Message message = Message.ok(retStr);
-        message.setMethod("/api/datasources/display");
+        message.setMethod("/api/datasource/display");
         message.data("sql", retSql);
         return Message.messageToResponse(message);
     }

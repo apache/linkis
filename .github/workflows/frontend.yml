@@ -3,6 +3,10 @@
 name: frontend
 on:
   push:
+    branches:
+      - master
+      - branch-*
+    types: [opened, synchronize]
   pull_request:
     branches:
       - master

@@ -318,5 +318,5 @@ INSERT INTO `linkis_datasource_type_key` VALUES (5, 4, 'brokers', 'brokers', NUL
 -- ----------------------------
 INSERT INTO `linkis_datasource_type` VALUES (1, 'mysql', 'mysql数据库', 'mysql数据库', '关系型数据库', '', 3);
 INSERT INTO `linkis_datasource_type` VALUES (2, 'hive', 'hive数据库', 'hive', '大数据存储', '', 3);
-INSERT INTO `linkis_datasource_type` VALUES (3, 'presto', 'presto SQL', 'presto', '大数据存储', '', 3);
+INSERT INTO `linkis_datasource_type` VALUES (3, 'es', 'elastic search', 'elastic search', '大数据搜索引擎', '', 3);
 INSERT INTO `linkis_datasource_type` VALUES (4, 'kafka', 'kafka', 'kafka', '消息队列', '', 2);

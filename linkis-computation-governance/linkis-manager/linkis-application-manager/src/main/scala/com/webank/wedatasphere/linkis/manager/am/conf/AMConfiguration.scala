@@ -19,6 +19,7 @@
 package com.webank.wedatasphere.linkis.manager.am.conf
 
 import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
+import com.webank.wedatasphere.linkis.common.utils.Utils
 
 
 object AMConfiguration {
@@ -50,11 +51,18 @@ object AMConfiguration {
 
   val ENGINECONN_DEBUG_ENABLED = CommonVars("wds.linkis.engineconn.debug.mode.enable", false)
 
-  val MULTI_USER_ENGINE_TYPES = CommonVars("wds.linkis.multi.user.engine.types", "jdbc,es,presto,io_file")
+  val MULTI_USER_ENGINE_TYPES = CommonVars("wds.linkis.multi.user.engine.types", "jdbc,es,presto,io_file,appconn")
 
-  val MULTI_USER_ENGINE_USER = CommonVars("wds.linkis.multi.user.engine.user", "{jdbc:\"hadoop\", es: \"hadoop\", presto:\"hadoop\",io_file:\"root\"}")
 
+  val MULTI_USER_ENGINE_USER = CommonVars("wds.linkis.multi.user.engine.user", getDefaultMultiEngineUser)
+  
   val MONITOR_SWITCH_ON = CommonVars("wds.linkis.manager.am.monitor.switch.on", true)
 
   val ENGINE_LOCKER_MAX_TIME = CommonVars("wds.linkis.manager.am.engine.locker.max.time", 1000*60*5)
+
+  private def getDefaultMultiEngineUser(): String = {
+    val jvmUser = Utils.getJvmUser
+    s""" {jdbc:"$jvmUser", es: "$jvmUser", presto:"$jvmUser",appconn:"$jvmUser", io_file:"root"}"""
+  }
+
 }

@@ -84,7 +84,6 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
       if (defaultResultSetWriter == null) {
         defaultResultSetWriter = createDefaultResultSetWriter(ResultSetFactory.TEXT_TYPE)
         defaultResultSetWriter.addMetaData(new LineMetaData())
-        resultSetWriters += defaultResultSetWriter
       }
     }
     defaultResultSetWriter.addRecord(new LineRecord(output))

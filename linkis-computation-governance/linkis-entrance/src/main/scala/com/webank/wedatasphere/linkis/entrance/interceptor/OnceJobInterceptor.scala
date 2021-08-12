@@ -31,9 +31,7 @@ import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 import scala.collection.convert.WrapAsJava._
 import scala.collection.convert.WrapAsScala._
 
-/**
-  * Created by enjoyyin on 2021/5/27.
-  */
+
 class OnceJobInterceptor extends EntranceInterceptor {
 
   private val onceModes = Array(Once_With_Cluster.toString, Once.toString, Computation_With_Once.toString)

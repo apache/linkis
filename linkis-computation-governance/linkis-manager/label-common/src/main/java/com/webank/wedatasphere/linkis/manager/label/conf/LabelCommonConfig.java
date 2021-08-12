@@ -49,5 +49,9 @@ public class LabelCommonConfig {
     public final static CommonVars<String> FLINK_ENGINE_VERSION = CommonVars.apply("wds.linkis.flink.engine.version", "1.12.2");
 
     public final static CommonVars<String> PERMANENT_LABEL = CommonVars.apply("wds.linkis.am.permanent.label", "tenant");
+
+    public final static CommonVars<String> ENGINE_CONN_MANAGER_SPRING_NAME = CommonVars.apply("wds.linkis.engineconn.manager.name", "linkis-cg-engineconnmanager");
+
+    public final static CommonVars<String> ENGINE_CONN_SPRING_NAME = CommonVars.apply("wds.linkis.engineconn.name", "linkis-cg-engineconn");
 }
 

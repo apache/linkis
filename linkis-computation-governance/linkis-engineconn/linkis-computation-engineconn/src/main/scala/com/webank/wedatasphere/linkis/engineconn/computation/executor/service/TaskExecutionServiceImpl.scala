@@ -169,16 +169,6 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     val runTask = new Runnable {
       override def run(): Unit = Utils.tryAndWarn {
         LogHelper.dropAllRemainLogs()
-        val response = computationExecutor.execute(task)
-        response match {
-          case ErrorExecuteResponse(message, throwable) =>
-            sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
-            error(message, throwable)
-            LogHelper.pushAllRemainLogs()
-            computationExecutor.transformTaskStatus(task, ExecutionNodeStatus.Failed)
-          case _ =>
-        }
-        clearCache(task.getTaskId)
         executeTask(task, computationExecutor)
       }
     }

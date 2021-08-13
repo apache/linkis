@@ -32,6 +32,6 @@ jobs:
           distribution: 'adopt'
           java-version: 8
       - name: Check dependency license # 检查依赖许可证
-        run: .github/tools/check-LICENSE.sh
+        run: tools/dependencies/check-LICENSE.sh
       # - name: Check Rat 1
       #   run: mvn apache-rat:check -Prat -B

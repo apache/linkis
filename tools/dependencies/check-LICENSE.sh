@@ -1,8 +1,8 @@
 mkdir dist || true
 
-tar -zxf dolphinscheduler-dist/target/apache-dolphinscheduler*-bin.tar.gz --strip=1 -C dist
+tar -zxf linkis-dist/target/apache-linkis*-bin.tar.gz --strip=1 -C dist
 
-# List all modules(jars) that belong to the DolphinScheduler itself, these will be ignored when checking the dependency licenses
+# List all modules(jars) that belong to the Linkis itself, these will be ignored when checking the dependency licenses
 
 echo '=== Self modules: ' && ./mvnw --batch-mode --quiet -Dexec.executable='echo' -Dexec.args='${project.artifactId}-${project.version}.jar' exec:exec | tee self-modules.txt
 

@@ -33,7 +33,7 @@ jobs:
           java-version: 8
       - name: Check dependency license # 检查依赖许可证
         run: |
-          chmod 777 ./start.sh
+          chmod 777 tools/dependencies/check-LICENSE.sh
           tools/dependencies/check-LICENSE.sh
       # - name: Check Rat 1
       #   run: mvn apache-rat:check -Prat -B

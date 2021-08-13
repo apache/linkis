@@ -22,6 +22,8 @@ jobs:
           -Dmaven.wagon.http.pool=false
           -Dmaven.wagon.http.retryHandler.count=3
     steps:
+      - name: Check License Header # 检查许可证头
+        uses: apache/skywalking-eyes@ec88b7d850018c8983f87729ea88549e100c5c82
       - name: Checkout
         uses: actions/checkout@v2
       - name: Set up JDK 8
@@ -31,5 +33,7 @@ jobs:
           java-version: 8
       - name: Check License Lines
         uses: kt3k/license_checker@v1.0.6
+      - name: Check dependency license # 检查依赖许可证
+        run: tools/dependencies/check-LICENSE.sh
       # - name: Check Rat
       #   run: mvn apache-rat:check -Prat -B

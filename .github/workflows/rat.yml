@@ -31,8 +31,6 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: 8
-      - name: Check License Lines
-        uses: kt3k/license_checker@v1.0.6
       - name: Check dependency license # 检查依赖许可证
         run: tools/dependencies/check-LICENSE.sh
       # - name: Check Rat

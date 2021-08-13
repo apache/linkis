@@ -23,7 +23,7 @@ jobs:
           -Dmaven.wagon.http.retryHandler.count=3
     steps:
       - name: Check License Header # 检查许可证头
-        uses: apache/skywalking-eyes@ec88b7d850018c8983f87729ea88549e100c5c82
+        uses: apache/skywalking-eyes@main
       - name: Checkout
         uses: actions/checkout@v2
       - name: Set up JDK 8

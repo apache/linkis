@@ -132,8 +132,8 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       "logging.config" -> s"classpath:${EnvConfiguration.LOG4J2_XML_FILE.getValue}") ++: discoveryMsgGenerator.generate(engineConnManagerEnv)
 
     //get value through CommonVars
-    val eurekaPreferIp = CommonVars.apply("eureka.instance.prefer-ip-address", "false").getValue
-    logger.info(s"eurekaPreferIp(eureka.instance.prefer-ip-address): " + eurekaPreferIp)
+    val eurekaPreferIp = CommonVars.apply("EUREKA_PREFER_IP", "false").getValue
+    logger.info(s"EUREKA_PREFER_IP: " + eurekaPreferIp)
     if("true".equals(eurekaPreferIp)){
       springConf = springConf + ("eureka.instance.prefer-ip-address" -> "true")
       springConf = springConf + ("eureka.instance.instance-id" -> "\\${spring.cloud.client.ip-address}:\\${spring.application.name}:\\${server.port}")

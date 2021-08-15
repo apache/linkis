@@ -85,7 +85,7 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 ###  You can access it in your browser at the address below:http://${EUREKA_INSTALL_IP}:${EUREKA_PORT}
 #EUREKA_INSTALL_IP=127.0.0.1         # Microservices Service Registration Discovery Center
 EUREKA_PORT=20303
-EUREKA_PREFER_IP=true
+export EUREKA_PREFER_IP=true
 
 ###  Gateway install information
 #GATEWAY_INSTALL_IP=127.0.0.1

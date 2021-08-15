@@ -18,8 +18,8 @@ package com.webank.wedatasphere.linkis.ecm.server.service.impl
 
 import java.io.File
 import java.nio.file.Paths
-
 import com.webank.wedatasphere.linkis.DataWorkCloudApplication
+import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.common.utils.{Utils, ZipUtils}
 import com.webank.wedatasphere.linkis.ecm.core.engineconn.EngineConn
@@ -73,8 +73,8 @@ class BmlResourceLocalizationService extends ResourceLocalizationService {
           override val engineConnTempDirs: String = tmpDirs
 
           var hostName = Utils.getComputerName
-          val eurekaPreferIp = DataWorkCloudApplication.getApplicationContext.getEnvironment().getProperty("eureka.instance.prefer-ip-address")
-          if("true".equals(eurekaPreferIp)){
+          val eurekaPreferIp = Configuration.EUREKA_PREFER_IP
+          if(eurekaPreferIp){
             hostName = DataWorkCloudApplication.getApplicationContext.getEnvironment().getProperty("spring.cloud.client.ip-address")
           }
           override val engineConnManagerHost: String = hostName

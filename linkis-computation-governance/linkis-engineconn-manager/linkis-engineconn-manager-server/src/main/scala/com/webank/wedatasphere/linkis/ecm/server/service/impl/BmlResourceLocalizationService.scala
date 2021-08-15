@@ -74,7 +74,7 @@ class BmlResourceLocalizationService extends ResourceLocalizationService {
 
           var hostName = Utils.getComputerName
           val eurekaPreferIp = DataWorkCloudApplication.getApplicationContext.getEnvironment().getProperty("eureka.instance.prefer-ip-address")
-          if(eurekaPreferIp.equals("true")){
+          if("true".equals(eurekaPreferIp)){
             hostName = DataWorkCloudApplication.getApplicationContext.getEnvironment().getProperty("spring.cloud.client.ip-address")
           }
           override val engineConnManagerHost: String = hostName

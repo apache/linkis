@@ -34,7 +34,6 @@ import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process
 import org.apache.commons.io.{FileUtils, IOUtils}
 import org.apache.commons.lang.StringUtils
 
-import java.util.regex.Pattern
 import scala.collection.JavaConversions._
 
 
@@ -132,9 +131,10 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       "server.port" -> engineConnPort, "spring.profiles.active" -> "engineconn",
       "logging.config" -> s"classpath:${EnvConfiguration.LOG4J2_XML_FILE.getValue}") ++: discoveryMsgGenerator.generate(engineConnManagerEnv)
 
-    //暂时通过判断engineConnManagerHost是否为IP地址来判断是否使用eureka.instance.prefer-ip-address，后续需要通过engineConnManagerEnv.properties获取相关属性
-    logger.info(s"engineConnManagerHost:" + engineConnManagerEnv.engineConnManagerHost)
-    if(Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)").matcher(engineConnManagerEnv.engineConnManagerHost).find()){
+    //get value through CommonVars
+    val eurekaPreferIp = CommonVars.apply("eureka.instance.prefer-ip-address", "false").getValue
+    logger.info(s"eurekaPreferIp(eureka.instance.prefer-ip-address): " + eurekaPreferIp)
+    if("true".equals(eurekaPreferIp)){
       springConf = springConf + ("eureka.instance.prefer-ip-address" -> "true")
       springConf = springConf + ("eureka.instance.instance-id" -> "\\${spring.cloud.client.ip-address}:\\${spring.application.name}:\\${server.port}")
     }

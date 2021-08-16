@@ -26,7 +26,6 @@ import com.webank.wedatasphere.linkis.engineconn.once.executor.OnceExecutorExecu
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.deployment.YarnPerJobClusterDescriptorAdapter
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.FlinkInitFailedException
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.ql.GrammarFactory
 import com.webank.wedatasphere.linkis.governance.common.paser.{CodeParserFactory, CodeType}
 import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
 import com.webank.wedatasphere.linkis.scheduler.executer.ErrorExecuteResponse
@@ -63,7 +62,7 @@ class FlinkCodeOnceExecutor(override val id: Long,
     future = Utils.defaultScheduler.submit(new Runnable {
       override def run(): Unit = {
         info("Try to execute codes.")
-        Utils.tryCatch(runCode()){ t =>
+        Utils.tryCatch(CodeParserFactory.getCodeParser(CodeType.SQL).parse(codes).filter(StringUtils.isNotBlank).foreach(runCode)){ t =>
           error("Run code failed!", t)
           setResponse(ErrorExecuteResponse("Run code failed!", t))
           tryFailed()
@@ -81,30 +80,28 @@ class FlinkCodeOnceExecutor(override val id: Long,
   /**
     * Only support to execute sql in order, so it is problematic if more than one insert sql is submitted.
     */
-  private def runCode(): Unit = CodeParserFactory.getCodeParser(CodeType.SQL).parse(codes).filter(StringUtils.isNotBlank).foreach { code =>
+  protected def runCode(code: String): Unit = {
     if(isClosed) return
     val trimmedCode = StringUtils.trim(code)
     info(s"$getId >> " + trimmedCode)
     val startTime = System.currentTimeMillis
-    GrammarFactory.getGrammar(trimmedCode, flinkEngineConnContext).map(_.execute).getOrElse {
-      val tableResult = flinkEngineConnContext.getExecutionContext.wrapClassLoader(new Supplier[TableResult]{
-        override def get(): TableResult = flinkEngineConnContext.getExecutionContext.getTableEnvironment.executeSql(trimmedCode)
-      })
-      if(tableResult.getJobClient.isPresent) {
-        val jobClient = tableResult.getJobClient.get
-        jobClient match {
-          case adaptor: ClusterClientJobClientAdapter[ApplicationId] =>
-            info(s"jobId is ${jobClient.getJobID.toHexString}")
-            clusterDescriptor.deployCluster(jobClient.getJobID, FlinkCodeOnceExecutor.getClusterClient(adaptor))
-        }
-        this synchronized notify()
-        tableResult.await()
+    val tableResult = flinkEngineConnContext.getExecutionContext.wrapClassLoader(new Supplier[TableResult]{
+      override def get(): TableResult = flinkEngineConnContext.getExecutionContext.getTableEnvironment.executeSql(trimmedCode)
+    })
+    if(tableResult.getJobClient.isPresent) {
+      val jobClient = tableResult.getJobClient.get
+      jobClient match {
+        case adaptor: ClusterClientJobClientAdapter[ApplicationId] =>
+          info(s"jobId is ${jobClient.getJobID.toHexString}")
+          clusterDescriptor.deployCluster(jobClient.getJobID, FlinkCodeOnceExecutor.getClusterClient(adaptor))
       }
-      tableResult.getResultKind match {
-        case ResultKind.SUCCESS_WITH_CONTENT =>
-          tableResult.print()
-        case _ =>
-      }
+      this synchronized notify()
+      tableResult.await()
+    }
+    tableResult.getResultKind match {
+      case ResultKind.SUCCESS_WITH_CONTENT =>
+        tableResult.print()
+      case _ =>
     }
     info(s"Costs ${ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)} to complete.")
   }

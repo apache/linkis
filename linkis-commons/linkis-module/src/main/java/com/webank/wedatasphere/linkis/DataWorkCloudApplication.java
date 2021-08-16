@@ -139,11 +139,17 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
     }
 
     private static void initDWCApplication() {
+        String hostName = Utils.getComputerName();
+        boolean eurekaPreferIp = Configuration.EUREKA_PREFER_IP();
+        if(eurekaPreferIp){
+            hostName = applicationContext.getEnvironment().getProperty("spring.cloud.client.ip-address");
+            logger.info("using ip address replace hostname,beacause eureka.instance.prefer-ip-address:" + eurekaPreferIp);
+        }
         serviceInstance = new ServiceInstance();
         serviceInstance.setApplicationName(applicationContext.getEnvironment().getProperty("spring.application.name"));
-        serviceInstance.setInstance(Utils.getComputerName() + ":" + applicationContext.getEnvironment().getProperty("server.port"));
+        serviceInstance.setInstance(hostName + ":" + applicationContext.getEnvironment().getProperty("server.port"));
         LinkisException.setApplicationName(serviceInstance.getApplicationName());
-        LinkisException.setHostname(Utils.getComputerName());
+        LinkisException.setHostname(hostName);
         LinkisException.setHostPort(Integer.parseInt(applicationContext.getEnvironment().getProperty("server.port")));
     }
 

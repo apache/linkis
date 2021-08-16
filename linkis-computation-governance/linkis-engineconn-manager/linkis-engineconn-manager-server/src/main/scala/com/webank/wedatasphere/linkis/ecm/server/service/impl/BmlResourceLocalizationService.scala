@@ -18,8 +18,8 @@ package com.webank.wedatasphere.linkis.ecm.server.service.impl
 
 import java.io.File
 import java.nio.file.Paths
-
 import com.webank.wedatasphere.linkis.DataWorkCloudApplication
+import com.webank.wedatasphere.linkis.common.conf.Configuration
 import com.webank.wedatasphere.linkis.common.io.FsPath
 import com.webank.wedatasphere.linkis.common.utils.{Utils, ZipUtils}
 import com.webank.wedatasphere.linkis.ecm.core.engineconn.EngineConn
@@ -71,7 +71,13 @@ class BmlResourceLocalizationService extends ResourceLocalizationService {
           override val engineConnWorkDir: String = workDir
           override val engineConnLogDirs: String = logDirs
           override val engineConnTempDirs: String = tmpDirs
-          override val engineConnManagerHost: String = Utils.getComputerName
+
+          var hostName = Utils.getComputerName
+          val eurekaPreferIp = Configuration.EUREKA_PREFER_IP
+          if(eurekaPreferIp){
+            hostName = DataWorkCloudApplication.getApplicationContext.getEnvironment().getProperty("spring.cloud.client.ip-address")
+          }
+          override val engineConnManagerHost: String = hostName
           override val engineConnManagerPort: String = DataWorkCloudApplication.getApplicationContext.getEnvironment.getProperty("server.port")
           override val linkDirs: Map[String, String] = linkDirsP.toMap
           // TODO: 注册发现信息的配置化

@@ -21,6 +21,7 @@
         <artifactId>linkis-engineconn-plugins</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <version>1.0.2</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -437,6 +438,9 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
+                <configuration>
+                    <addScalacArgs>-target:jvm-${jdk.compile.version}</addScalacArgs>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

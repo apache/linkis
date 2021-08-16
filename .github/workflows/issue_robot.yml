@@ -15,19 +15,15 @@ jobs:
           submodules: true
 
       - name: "Translation into English in issue"
-        uses: ./.github/actions/translate-on-issue
+        uses: tomsun28/issues-translate-action@v2.5
         with:
-          translate-title: true
-          translate-body: true
+          IS_MODIFY_TITLE: false
+          # 非必须，决定是否需要修改issue标题内容   
+          # 若是true，则机器人账户@Issues-translate-bot必须拥有修改此仓库issue权限。可以通过邀请@Issues-translate-bot加入仓库协作者实现。
+          CUSTOM_BOT_NOTE: Bot detected the issue body's language is not English, translate it automatically.。
 
       - name: "Comment in issue"
-        uses: ./.github/actions/comment-on-issue
+        uses: ben-z/actions-comment-on-issue@1.0.2
         with:
           message: "Hi:\n* Thank you for your feedback, we have received your issue, Please wait patiently for a reply.\n*"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: "Add lable in issue"
-        uses: ./.github/actions/lable-on-issue
-        with:
-          add-labels: "Waiting for reply"
-          ignore-if-labeled: true

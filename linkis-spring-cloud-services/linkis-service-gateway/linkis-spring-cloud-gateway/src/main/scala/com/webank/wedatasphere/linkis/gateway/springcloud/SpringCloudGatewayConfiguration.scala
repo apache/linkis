@@ -74,10 +74,6 @@ class SpringCloudGatewayConfiguration {
       .route("ws_http", new java.util.function.Function[PredicateSpec, Route.AsyncBuilder] {
       override def apply(t: PredicateSpec): Route.AsyncBuilder = t.path(SpringCloudGatewayConfiguration.WEBSOCKET_URI + "info/**")
         .uri(ROUTE_URI_FOR_HTTP_HEADER + Sender.getThisServiceInstance.getApplicationName)
-      })
-      .route("ws", new java.util.function.Function[PredicateSpec, Route.AsyncBuilder] {
-        override def apply(t: PredicateSpec): Route.AsyncBuilder = t.path(SpringCloudGatewayConfiguration.WEBSOCKET_URI + "**")
-          .uri(ROUTE_URI_FOR_WEB_SOCKET_HEADER + Sender.getThisServiceInstance.getApplicationName)
       }).build()
 
   @Bean

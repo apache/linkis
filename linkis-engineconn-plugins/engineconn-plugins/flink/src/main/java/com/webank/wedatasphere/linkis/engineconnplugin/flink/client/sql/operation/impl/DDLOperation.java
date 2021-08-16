@@ -22,7 +22,7 @@ import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.context.Exec
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.NonJobOperation;
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.OperationUtil;
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.utils.SqlCommandParser.SqlCommand;
+import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.parser.SqlCommand;
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 import org.apache.flink.table.api.TableEnvironment;

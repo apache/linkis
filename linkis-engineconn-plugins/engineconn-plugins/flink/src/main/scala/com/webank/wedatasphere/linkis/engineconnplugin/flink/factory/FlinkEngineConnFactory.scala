@@ -32,6 +32,7 @@ import com.webank.wedatasphere.linkis.engineconnplugin.flink.config.FlinkEnvConf
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration._
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.context.{EnvironmentContext, FlinkEngineConnContext}
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.FlinkInitFailedException
+import com.webank.wedatasphere.linkis.engineconnplugin.flink.util.ClassUtil
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
@@ -97,8 +98,10 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     flinkConfig.set(JobManagerOptions.TOTAL_PROCESS_MEMORY, MemorySize.parse(jobManagerMemory))
     flinkConfig.set(TaskManagerOptions.TOTAL_PROCESS_MEMORY, MemorySize.parse(taskManagerMemory))
     flinkConfig.setInteger(TaskManagerOptions.NUM_TASK_SLOTS, numberOfTaskSlots)
-    flinkConfig.set(MetricOptions.REPORTER_CLASS, "com.webank.ims.reporter.IMSReporter");
-    flinkConfig.set(MetricOptions.REPORTER_INTERVAL, Duration.ofSeconds(60))
+    if(FLINK_REPORTER_ENABLE.getValue) {
+      flinkConfig.set(MetricOptions.REPORTER_CLASS, FLINK_REPORTER_CLASS.getValue)
+      flinkConfig.set(MetricOptions.REPORTER_INTERVAL, Duration.ofMillis(FLINK_REPORTER_INTERVAL.getValue.toLong))
+    }
     //set savePoint(设置 savePoint)
     val savePointPath = FLINK_SAVE_POINT_PATH.getValue(options)
     if (StringUtils.isNotBlank(savePointPath)) {
@@ -180,7 +183,9 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
 
   override protected def getEngineConnType: EngineType = EngineType.FLINK
 
-  private val executorFactoryArray =  Array[ExecutorFactory](new FlinkSQLExecutorFactory, new FlinkApplicationExecutorFactory, new FlinkCodeExecutorFactory)
+  private val executorFactoryArray =  Array[ExecutorFactory](ClassUtil.getInstance(classOf[FlinkSQLExecutorFactory], new FlinkSQLExecutorFactory),
+    ClassUtil.getInstance(classOf[FlinkApplicationExecutorFactory], new FlinkApplicationExecutorFactory),
+    ClassUtil.getInstance(classOf[FlinkCodeExecutorFactory], new FlinkCodeExecutorFactory))
 
   override def getExecutorFactories: Array[ExecutorFactory] = executorFactoryArray
 }

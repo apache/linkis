@@ -27,7 +27,7 @@ import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonCon
 import com.webank.wedatasphere.linkis.governance.common.utils.{EngineConnArgumentsBuilder, EngineConnArgumentsParser}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.Environment.{EUREKA_PREFER_IP, _}
+import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.Environment._
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.{Environment, ProcessEngineConnLaunchRequest}
 import org.apache.commons.io.{FileUtils, IOUtils}

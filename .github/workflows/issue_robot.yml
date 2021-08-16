@@ -1,0 +1,33 @@
+name: issue-robot
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  issueRobot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout ${{ github.ref }}"
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          submodules: true
+
+      - name: "Translation into English in issue"
+        uses: ./.github/actions/translate-on-issue
+        with:
+          translate-title: true
+          translate-body: true
+
+      - name: "Comment in issue"
+        uses: ./.github/actions/comment-on-issue
+        with:
+          message: "Hi:\n* Thank you for your feedback, we have received your issue, Please wait patiently for a reply.\n*"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Add lable in issue"
+        uses: ./.github/actions/lable-on-issue
+        with:
+          add-labels: "Waiting for reply"
+          ignore-if-labeled: true

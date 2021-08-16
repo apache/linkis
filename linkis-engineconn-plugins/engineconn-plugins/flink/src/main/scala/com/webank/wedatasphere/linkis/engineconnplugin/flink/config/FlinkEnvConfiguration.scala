@@ -52,4 +52,8 @@ object FlinkEnvConfiguration {
   val FLINK_CLIENT_REQUEST_TIMEOUT = CommonVars("flink.client.request.timeout", new TimeType("30s"))
   val FLINK_ONCE_APP_STATUS_FETCH_INTERVAL = CommonVars("flink.app.fetch.status.interval", new TimeType("5s"))
 
+  val FLINK_REPORTER_ENABLE = CommonVars("linkis.flink.reporter.enable", false)
+  val FLINK_REPORTER_CLASS = CommonVars("linkis.flink.reporter.class", "")
+  val FLINK_REPORTER_INTERVAL = CommonVars("linkis.flink.reporter.interval", new TimeType("60s"))
+
 }

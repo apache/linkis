@@ -37,7 +37,7 @@ object GatewayConfiguration {
 
   val ADMIN_USER = CommonVars("wds.linkis.admin.user", "hadoop")
 
-  val ADMIN_PASSWORD = CommonVars("wds.linkis.admin.password", "9br01wloKk9cKkuX")
+  val ADMIN_PASSWORD = CommonVars("wds.linkis.admin.password", ADMIN_USER.getValue)
 
   val USERCONTROL_SWITCH_ON = CommonVars("wds.linkis.gateway.usercontrol_switch_on", false)
 

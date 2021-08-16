@@ -27,7 +27,7 @@ import com.webank.wedatasphere.linkis.manager.label.entity.Label
 class FlinkExecutorManager extends LabelExecutorManagerImpl{
   override def getReportExecutor: Executor = if (getExecutors.isEmpty) {
     val labels = defaultFactory match {
-      case onceExecutorFactory: OnceExecutorFactory =>
+      case _: OnceExecutorFactory =>
         if (null == engineConn.getEngineCreationContext.getLabels()) Array.empty[Label[_]]
         else engineConn.getEngineCreationContext.getLabels().toArray[Label[_]](Array.empty[Label[_]])
       case labelExecutorFactory: CodeLanguageLabelExecutorFactory =>

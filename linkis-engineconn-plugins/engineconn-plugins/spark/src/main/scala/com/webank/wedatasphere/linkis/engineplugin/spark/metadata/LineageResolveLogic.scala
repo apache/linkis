@@ -115,7 +115,9 @@ object LineageResolveLogic extends Logging{
         }
 
       case plan: UnresolvedRelation =>
-        val tableInfo = TableInfo(plan.tableIdentifier.database.getOrElse(currentDB), plan.tableIdentifier.table)
+        /** Returns a `.` separated name for this relation. */
+        val tableName=plan.tableName;
+        val tableInfo = TableInfo("",tableName)
         inputTables.add(tableInfo)
 
       case plan: InsertIntoTable =>

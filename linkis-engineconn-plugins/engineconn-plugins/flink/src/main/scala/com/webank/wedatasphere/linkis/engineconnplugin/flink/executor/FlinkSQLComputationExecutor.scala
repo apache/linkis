@@ -26,13 +26,12 @@ import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.{C
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.deployment.{ClusterDescriptorAdapterFactory, YarnSessionClusterDescriptorAdapter}
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.result.ResultKind
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.{AbstractJobOperation, JobOperation, OperationFactory}
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.utils.SqlCommandParser
+import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.parser.{SqlCommand, SqlCommandParser}
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.{ExecutorInitException, SqlParseException}
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.listener.RowsType.RowsType
 import com.webank.wedatasphere.linkis.engineconnplugin.flink.listener.{FlinkStreamingResultSetListener, InteractiveFlinkStatusListener}
-import com.webank.wedatasphere.linkis.manager.label.entity.cluster.EnvLabel
 import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
 import com.webank.wedatasphere.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import com.webank.wedatasphere.linkis.storage.resultset.ResultSetFactory
@@ -68,17 +67,17 @@ class FlinkSQLComputationExecutor(id: Long,
   }
 
   override def executeLine(engineExecutionContext: EngineExecutionContext, code: String): ExecuteResponse = {
-    val callOpt = SqlCommandParser.parse(code.trim, true)
+    val callOpt = SqlCommandParser.getSqlCommandParser.parse(code.trim, true)
     val callSQL = if (!callOpt.isPresent) throw new SqlParseException("Unknown statement: " + code)
       else callOpt.get
     RelMetadataQueryBase.THREAD_PROVIDERS.set(JaninoRelMetadataProvider.of(FlinkDefaultRelMetadataProvider.INSTANCE))
-    val operation = OperationFactory.createOperation(callSQL, flinkEngineConnContext)
+    val operation = OperationFactory.getOperationFactory.createOperation(callSQL, flinkEngineConnContext)
     operation match {
       case jobOperation: JobOperation =>
         jobOperation.setClusterDescriptorAdapter(clusterDescriptor)
         this.operation = jobOperation
         jobOperation.addFlinkListener(new FlinkSQLStatusListener(jobOperation, engineExecutionContext))
-        if(callSQL.command == SqlCommandParser.SqlCommand.SELECT) {
+        if(callSQL.command == SqlCommand.SELECT) {
           jobOperation.addFlinkListener(new FlinkSQLStreamingResultSetListener(jobOperation, engineExecutionContext))
           val properties: util.Map[String, String] = engineExecutionContext.getProperties.map {
             case (k, v: String) => (k, v)
@@ -131,10 +130,6 @@ class FlinkSQLComputationExecutor(id: Long,
   }
 
   override def getProgressInfo: Array[JobProgressInfo] = Array.empty
-
-
-
-
 
   override def getId: String = "FlinkComputationSQL_"+ id
 

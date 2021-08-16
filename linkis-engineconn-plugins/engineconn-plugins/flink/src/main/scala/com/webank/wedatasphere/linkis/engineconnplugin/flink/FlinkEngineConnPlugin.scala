@@ -36,12 +36,7 @@ class FlinkEngineConnPlugin extends EngineConnPlugin {
   private val EP_CONTEXT_CONSTRUCTOR_LOCK = new Object()
 
 
-  override def init(params: java.util.Map[String, Any]): Unit = {
-    //do noting
-//    engineResourceFactory = new FlinkEngineConnResourceFactory
-//    engineConnLaunchBuilder = new FlinkEngineConnLaunchBuilder
-//    engineConnFactory = new FlinkEngineConnFactory
-  }
+  override def init(params: java.util.Map[String, Any]): Unit = {}
 
   override def getEngineResourceFactory: EngineResourceFactory = {
     EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized{

@@ -1,10 +1,9 @@
 name: core
 on:
   push:
-  	branches:
+    branches:
       - master
       - branch-*
-    types: [opened, synchronize]
   pull_request:
     branches:
       - master

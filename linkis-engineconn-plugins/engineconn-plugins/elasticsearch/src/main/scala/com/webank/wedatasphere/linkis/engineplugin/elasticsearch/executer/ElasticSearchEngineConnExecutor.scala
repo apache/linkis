@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.webank.wedatasphere.linkis.engineplugin.elasticsearch.executer
 
 import java.util
@@ -12,7 +28,6 @@ import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
 import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration
 import com.webank.wedatasphere.linkis.engineplugin.elasticsearch.executer.client.{ElasticSearchErrorResponse, ElasticSearchExecutor, ElasticSearchJsonResponse, ElasticSearchTableResponse}
 import com.webank.wedatasphere.linkis.governance.common.entity.ExecutionNodeStatus
-import com.webank.wedatasphere.linkis.governance.common.protocol.task.RequestTask
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import com.webank.wedatasphere.linkis.manager.label.entity.Label
@@ -21,7 +36,7 @@ import com.webank.wedatasphere.linkis.rpc.Sender
 import com.webank.wedatasphere.linkis.scheduler.executer.{AliasOutputExecuteResponse, ErrorExecuteResponse, ExecuteResponse}
 import com.webank.wedatasphere.linkis.storage.LineRecord
 import com.webank.wedatasphere.linkis.storage.resultset.ResultSetFactory
-import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+import com.webank.wedatasphere.linkis.storage.resultset.table.TableMetaData
 import org.apache.commons.io.IOUtils
 import org.springframework.util.CollectionUtils
 

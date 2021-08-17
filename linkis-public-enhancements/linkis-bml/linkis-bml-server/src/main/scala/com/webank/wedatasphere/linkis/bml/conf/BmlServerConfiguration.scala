@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.bml.conf
 import java.util.concurrent.TimeUnit
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import com.webank.wedatasphere.linkis.common.utils.Utils
 
 object BmlServerConfiguration {
   val BML_HDFS_PREFIX = CommonVars("wds.linkis.bml.hdfs.prefix", "/apps-data")
@@ -31,5 +32,8 @@ object BmlServerConfiguration {
   val BML_CLEAN_EXPIRED_TIME_TYPE = CommonVars("wds.linkis.bml.clean.time.type", TimeUnit.HOURS)
 
   val BML_MAX_THREAD_SIZE:CommonVars[Int] = CommonVars[Int]("wds.linkis.server.maxThreadSize", 30)
+
+
+  val BML_DEFAULT_PROXY_USER = CommonVars("wds.linkis.bml.default.proxy.user", Utils.getJvmUser)
 
 }

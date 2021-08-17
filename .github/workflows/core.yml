@@ -56,7 +56,7 @@ jobs:
           python-version: 3.7
           auto-activate-base: false      
       - name: Start mysql
-		run: sudo systemctl start mysql.service
+	run: sudo systemctl start mysql.service
       - name: install environment
         run: |
           mvn -N install

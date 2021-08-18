@@ -196,6 +196,21 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+  
+    <repositories>
+          <repository>
+              <id>maven-ali</id>
+              <url>https://maven.aliyun.com/repository/public</url>
+              <releases>
+                  <enabled>true</enabled>
+              </releases>
+              <snapshots>
+                  <enabled>true</enabled>
+                  <updatePolicy>always</updatePolicy>
+                  <checksumPolicy>fail</checksumPolicy>
+              </snapshots>
+          </repository>
+  </repositories>
 
 
 

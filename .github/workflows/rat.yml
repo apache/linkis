@@ -32,11 +32,15 @@ jobs:
           distribution: 'adopt'
           java-version: 8
       - name: Compile # 编译检查
-        run: mvn clean install 
+        run: |
+          mvn -N install
+          mvn clean install
       - name: Check dependency license # 检查依赖许可证
         run: |
          chmod 777 tools/dependencies/check-LICENSE.sh
          chmod 777 ./mvnw
          tools/dependencies/check-LICENSE.sh
+      # - name: Check Rat 1
+      #   run: mvn apache-rat:check -Prat -B
       # - name: Check Rat 1
       #   run: mvn apache-rat:check -Prat -B

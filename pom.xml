@@ -200,7 +200,7 @@
     <repositories>
           <repository>
               <id>maven-ali</id>
-              <url>https://maven.aliyun.com/repository/public</url>
+              <url>http://maven.aliyun.com/nexus/content/groups/public//</url>
               <releases>
                   <enabled>true</enabled>
               </releases>

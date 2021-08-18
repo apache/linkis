@@ -1,6 +1,6 @@
 mkdir dist || true
 
-tar -zxf linkis-dist/target/apache-linkis*-bin.tar.gz --strip=1 -C dist
+tar -zxf assembly-combined-package/assembly-combined/target/wedatasphere-linkis-*-combined-dist-bin.tar.gz --strip=1 -C dist
 
 # List all modules(jars) that belong to the Linkis itself, these will be ignored when checking the dependency licenses
 

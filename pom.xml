@@ -197,34 +197,35 @@
         </dependencies>
     </dependencyManagement>
   
-    <repositories>
-      <repository>
-        <id>public</id>
-        <name>aliyun nexus</name>
-        <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
-        <releases>
-          <enabled>true</enabled>
-        </releases>
-      </repository>
-	  </repositories>
-
-    <pluginRepositories>
-      <pluginRepository>
-        <id>public</id>
-        <name>aliyun nexus</name>
-        <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
-        <releases>
-          <enabled>true</enabled>
-        </releases>
-        <snapshots>
-          <enabled>false</enabled>
-        </snapshots>
-      </pluginRepository>
-    </pluginRepositories>
 
 
 
     <profiles>
+	 <profile>
+	    <id>pentaho</id>
+	    <repositories>
+		<repository>
+			<id>alimaven</id>
+		    <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+		    <releases>
+			<enabled>true</enabled>
+		    </releases>
+		    <snapshots>
+			<enabled>true</enabled>
+		    </snapshots>
+		</repository>
+		<repository>
+			<id>pentaho</id>
+		    <url>http://public.nexus.pentaho.org/content/groups/omni/</url>
+		    <releases>
+			<enabled>true</enabled>
+		    </releases>
+		    <snapshots>
+			<enabled>false</enabled>
+		    </snapshots>
+		</repository>
+	    </repositories>
+	</profile>
 
         <profile>
             <id>release</id>

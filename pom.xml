@@ -198,20 +198,6 @@
     </dependencyManagement>
   
 
-	<repositories>
-		<repository>
-		    <id>pentaho</id>
-		    <url>https://public.nexus.pentaho.org/content/groups/omni/</url>
-		    <releases>
-			<enabled>true</enabled>
-		    </releases>
-		    <snapshots>
-			<enabled>false</enabled>
-		    </snapshots>
-		</repository>
-	</repositories>
-
-
     <profiles>
         <profile>
             <id>release</id>

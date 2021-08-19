@@ -18,12 +18,10 @@ package com.webank.wedatasphere.linkis.engineplugin.hive.serde;
 
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.hadoop.hive.serde.serdeConstants;
 import org.apache.hadoop.hive.serde2.ByteStream;
 import org.apache.hadoop.hive.serde2.SerDeException;
-import org.apache.hadoop.hive.serde2.SerDeUtils;
-import org.apache.hadoop.hive.serde2.io.*;
-import org.apache.hadoop.hive.serde2.lazy.LazySerDeParameters;
+import org.apache.hadoop.hive.serde2.io.HiveCharWritable;
+import org.apache.hadoop.hive.serde2.io.HiveVarcharWritable;
 import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe;
 import org.apache.hadoop.hive.serde2.lazy.LazyUtils;
 import org.apache.hadoop.hive.serde2.objectinspector.*;
@@ -55,31 +53,6 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
     public Object doDeserialize(Writable field) throws SerDeException {
         LOG.error("DelimitedJSONSerDe cannot deserialize.");
         throw new SerDeException("DelimitedJSONSerDe cannot deserialize.");
-    }
-
-    @Override
-    protected void serializeField(ByteStream.Output out, Object obj, ObjectInspector objInspector,
-                                  LazySerDeParameters serdeParams) throws SerDeException {
-        if (!objInspector.getCategory().equals(ObjectInspector.Category.PRIMITIVE) || (objInspector.getTypeName().equalsIgnoreCase(serdeConstants.BINARY_TYPE_NAME))) {
-            //do this for all complex types and binary
-            try {
-                serialize(out, SerDeUtils.getJSONString(obj, objInspector, serdeParams.getNullSequence().toString()),
-                        PrimitiveObjectInspectorFactory.javaStringObjectInspector, serdeParams.getSeparators(),
-                        1, serdeParams.getNullSequence(), serdeParams.isEscaped(), serdeParams.getEscapeChar(),
-                        serdeParams.getNeedsEscape());
-
-            } catch (IOException e) {
-                throw new SerDeException(e);
-            }
-
-        } else {
-            //primitives except binary
-            try {
-                serialize(out, obj, objInspector, serdeParams.getSeparators(), 1, serdeParams.getNullSequence(), serdeParams.isEscaped(), serdeParams.getEscapeChar(), serdeParams.getNeedsEscape());
-            } catch (IOException e) {
-                throw new SerDeException(e);
-            }
-        }
     }
 
 
@@ -247,23 +220,14 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
                 binaryData = Base64.encodeBase64(String.valueOf(tw).getBytes());
                 break;
             }
-            case INTERVAL_YEAR_MONTH: {
-                HiveIntervalYearMonthWritable hw = ((HiveIntervalYearMonthObjectInspector) oi).getPrimitiveWritableObject(o);
-                binaryData = Base64.encodeBase64(String.valueOf(hw).getBytes());
-                break;
-            }
-            case INTERVAL_DAY_TIME: {
-                HiveIntervalDayTimeWritable ht = ((HiveIntervalDayTimeObjectInspector) oi).getPrimitiveWritableObject(o);
-                binaryData = Base64.encodeBase64(String.valueOf(ht).getBytes());
-                break;
-            }
             case DECIMAL: {
                 HiveDecimalObjectInspector decimalOI = (HiveDecimalObjectInspector) oi;
                 binaryData = Base64.encodeBase64(String.valueOf(decimalOI).getBytes());
                 break;
             }
             default: {
-                throw new RuntimeException("Unknown primitive type: " + category);
+                Object hw = oi.getPrimitiveWritableObject(o);
+                binaryData = Base64.encodeBase64(String.valueOf(hw).getBytes());
             }
         }
         if(binaryData == null){

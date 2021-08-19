@@ -216,7 +216,7 @@
 		</repository>
 		<repository>
 			<id>pentaho</id>
-		    <url>http://public.nexus.pentaho.org/content/groups/omni/</url>
+		    <url>https://public.nexus.pentaho.org/content/groups/omni/</url>
 		    <releases>
 			<enabled>true</enabled>
 		    </releases>

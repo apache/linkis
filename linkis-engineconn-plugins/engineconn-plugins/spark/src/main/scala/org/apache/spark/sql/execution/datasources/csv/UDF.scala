@@ -17,7 +17,6 @@
 package org.apache.spark.sql.execution.datasources.csv
 
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.catalyst.FunctionIdentifier
 
 /**
   *
@@ -28,6 +27,10 @@ object UDF extends Serializable{
     spark.sessionState.functionRegistry.listFunction().foreach(println)
 
   def existsUDF(name: String)(implicit spark: SparkSession): Boolean = {
-    spark.sessionState.functionRegistry.functionExists(FunctionIdentifier(name))
+    val list = spark.sessionState.functionRegistry.listFunction()
+    if (null != list) {
+      return list.map(_.toString).exists(name.equals(_))
+    }
+    false
   }
 }

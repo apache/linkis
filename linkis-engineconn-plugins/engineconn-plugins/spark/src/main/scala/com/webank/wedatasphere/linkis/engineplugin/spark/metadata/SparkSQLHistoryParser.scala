@@ -192,7 +192,7 @@ object SparkSQLHistoryParser {
     plan match {
 
       case c: CreateDataSourceTableAsSelectCommand =>
-        val columnList = if (null == c.table.schema || c.table.schema.isEmpty) toCSColumnsByColumnName(c.outputColumnNames) else toCSColumns(c.table.schema)
+        val columnList =  toCSColumns(c.table.schema)
         addTableOrViewLevelObjs(c.table.identifier, outputObjects, columns = columnList, actionType = TableOperationType.CREATE)
         ParseQuery(c.query, inputObjects)
 
@@ -200,7 +200,7 @@ object SparkSQLHistoryParser {
         addTableOrViewLevelObjs(c.table.identifier, outputObjects, columns = toCSColumns(c.table.schema), actionType = TableOperationType.CREATE)
 
       case c: CreateHiveTableAsSelectCommand =>
-        val columnList = if (null == c.tableDesc.schema || c.tableDesc.schema.isEmpty) toCSColumnsByColumnName(c.outputColumnNames) else toCSColumns(c.tableDesc.schema)
+        val columnList = toCSColumns(c.tableDesc.schema)
         addTableOrViewLevelObjs(c.tableDesc.identifier, outputObjects, columns = columnList, actionType = TableOperationType.CREATE)
         ParseQuery(c.query, inputObjects)
 

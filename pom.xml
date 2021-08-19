@@ -198,33 +198,33 @@
     </dependencyManagement>
   
 
+	<repositories>
+		<repository>
+		    <id>alimaven</id>
+		    <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+		    <releases>
+			<enabled>true</enabled>
+		    </releases>
+		    <snapshots>
+			<enabled>true</enabled>
+		    </snapshots>
+		</repository>
+		<repository>
+		    <id>pentaho</id>
+		    <url>https://public.nexus.pentaho.org/content/groups/omni/</url>
+		    <releases>
+			<enabled>true</enabled>
+		    </releases>
+		    <snapshots>
+			<enabled>false</enabled>
+		    </snapshots>
+		</repository>
+	</repositories>
 
 
     <profiles>
         <profile>
             <id>release</id>
-		<repositories>
-			<repository>
-			    <id>alimaven</id>
-			    <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
-			    <releases>
-				<enabled>true</enabled>
-			    </releases>
-			    <snapshots>
-				<enabled>true</enabled>
-			    </snapshots>
-			</repository>
-			<repository>
-			    <id>pentaho</id>
-			    <url>https://public.nexus.pentaho.org/content/groups/omni/</url>
-			    <releases>
-				<enabled>true</enabled>
-			    </releases>
-			    <snapshots>
-				<enabled>false</enabled>
-			    </snapshots>
-			</repository>
-		</repositories>
             <build>
                 <plugins>
                     <plugin>

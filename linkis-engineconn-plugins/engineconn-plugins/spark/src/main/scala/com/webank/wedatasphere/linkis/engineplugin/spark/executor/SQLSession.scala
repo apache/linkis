@@ -18,7 +18,7 @@ package com.webank.wedatasphere.linkis.engineplugin.spark.executor
 
 import java.text.NumberFormat
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
+import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
 import com.webank.wedatasphere.linkis.engineplugin.spark.exception.SparkEngineException
@@ -30,7 +30,6 @@ import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, Ta
 import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.commons.lang.StringUtils
 import org.apache.spark.SparkContext
-import org.apache.spark.internal.Logging
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.{StructField, StructType}
 
@@ -45,7 +44,7 @@ object SQLSession extends Logging {
   def showDF(sc: SparkContext, jobGroup: String, dataFrame: DataFrame, alias: String, maxResult: Int, engineExecutionContext: EngineExecutionContext): Unit = {
     //
     if (sc.isStopped) {
-      log.error("Spark application has already stopped in showDF, please restart it.")
+      logger.error("Spark application has already stopped in showDF, please restart it.")
       throw new LinkisJobRetryException("Spark application sc has already stopped, please restart it.")
     }
     val startTime = System.currentTimeMillis()
@@ -86,7 +85,7 @@ object SQLSession extends Logging {
     //val columnsSet = dataFrame.schema
     val columns = columnsSet.map(c =>
       Column(c.name, DataType.toDataType(c.dataType.typeName.toLowerCase), c.getComment().orNull)).toArray[Column]
-    columns.foreach(c => log.info(s"c is ${c.columnName}, comment is ${c.comment}"))
+    columns.foreach(c => logger.info(s"c is ${c.columnName}, comment is ${c.comment}"))
     if (columns == null || columns.isEmpty) return
     val metaData = new TableMetaData(columns)
     val writer = if (StringUtils.isNotBlank(alias))
@@ -112,7 +111,7 @@ object SQLSession extends Logging {
     }) { t =>
       throw new SparkEngineException(40001, s"read record  exception", t)
     }
-    log.warn(s"Time taken: ${System.currentTimeMillis() - startTime}, Fetched $index row(s).")
+    logger.warn(s"Time taken: ${System.currentTimeMillis() - startTime}, Fetched $index row(s).")
     //Update by peaceWong to register TempTable
     //Utils.tryAndErrorMsg(CSTableRegister.registerTempTable(engineExecutorContext, writer, alias, columns))("Failed to register tmp table:")
     engineExecutionContext.appendStdout(s"${EngineUtils.getName} >> Time taken: ${System.currentTimeMillis() - startTime}, Fetched $index row(s).")
@@ -125,7 +124,7 @@ object SQLSession extends Logging {
     val metaData = new LineMetaData(null)
     writer.addMetaData(metaData)
     writer.addRecord(new LineRecord(htmlContent.toString))
-    log.warn(s"Time taken: ${System.currentTimeMillis() - startTime}")
+    logger.warn(s"Time taken: ${System.currentTimeMillis() - startTime}")
 
     engineExecutionContext.sendResultSet(writer)
   }

@@ -185,12 +185,13 @@ object LinkisJobBuilder {
 
   def setDefaultAuthToken(authTokenValue: String): Unit = this.authTokenValue = authTokenValue
 
+  private[client] def justGetDefaultUJESClient: UJESClient = ujesClient
+
   def getDefaultUJESClient: UJESClient = {
     if(ujesClient == null) synchronized {
       if(clientConfig == null) buildDefaultConfig()
       if(ujesClient == null) {
         ujesClient = new UJESClientImpl(clientConfig)
-        Utils.addShutdownHook(() => ujesClient.close())
       }
     }
     ujesClient

@@ -22,6 +22,7 @@ import java.util
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.computation.client.once.action.{GetEngineConnAction, KillEngineConnAction}
+import com.webank.wedatasphere.linkis.computation.client.once.simple.SimpleOnceJob
 
 
 trait OnceJob extends AbstractLinkisJob {
@@ -58,3 +59,7 @@ trait OnceJob extends AbstractLinkisJob {
 }
 
 trait SubmittableOnceJob extends OnceJob with SubmittableLinkisJob
+
+object OnceJob {
+  val simple = SimpleOnceJob
+}

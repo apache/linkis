@@ -30,9 +30,10 @@ import org.apache.commons.io.IOUtils;
 
 import java.util.concurrent.TimeUnit;
 
-
+@Deprecated
 public class UJESClientImplTestJ{
     public static void main(String[] args){
+        // Suggest to use LinkisJobClient to submit job to Linkis.
         DWSClientConfig clientConfig = ((DWSClientConfigBuilder) (DWSClientConfigBuilder.newBuilder().addServerUrl("http://localhost:port")
                 .connectionTimeout(30000).discoveryEnabled(true)
                 .discoveryFrequency(1, TimeUnit.MINUTES)
@@ -49,6 +50,7 @@ public class UJESClientImplTestJ{
         JobStatusResult status = client.status(jobExecuteResult);
         while(!status.isCompleted()) {
             JobProgressResult progress = client.progress(jobExecuteResult);
+            System.out.println("progress: " + progress.getProgress());
             Utils.sleepQuietly(500);
             status = client.status(jobExecuteResult);
         }
@@ -58,4 +60,5 @@ public class UJESClientImplTestJ{
         System.out.println("fileContents: " + fileContents);
         IOUtils.closeQuietly(client);
     }
+
 }

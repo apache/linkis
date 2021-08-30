@@ -61,11 +61,11 @@ public class FlinkOnceJobTest {
                 + "INSERT INTO sink_table SELECT id, name, age FROM mysql_binlog";
         // TODO Thirdly, please modify the user_creator label and executeUser
         SubmittableSimpleOnceJob onceJob = LinkisJobClient.once().simple().builder().setCreateService("Flink-Test")
+                .setMaxSubmitTime(300000)
                 .addLabel(LabelKeyUtils.ENGINE_TYPE_LABEL_KEY(), "flink-1.12.2")
                 .addLabel(LabelKeyUtils.USER_CREATOR_LABEL_KEY(), "hadoop-Streamis")
                 .addLabel(LabelKeyUtils.ENGINE_CONN_MODE_LABEL_KEY(), "once")
                 .addStartupParam(Configuration.IS_TEST_MODE().key(), true)
-                .setMaxSubmitTime(300000)
                 .addExecuteUser("hadoop").addJobContent("runType", "sql").addJobContent("code", sql).addSource("jobName", "OnceJobTest")
                 .build();
         onceJob.submit();

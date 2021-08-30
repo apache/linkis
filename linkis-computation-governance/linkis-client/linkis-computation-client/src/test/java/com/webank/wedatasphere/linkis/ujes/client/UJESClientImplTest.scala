@@ -25,8 +25,10 @@ import com.webank.wedatasphere.linkis.ujes.client.request.JobExecuteAction.Engin
 import com.webank.wedatasphere.linkis.ujes.client.request.{JobExecuteAction, ResultSetAction}
 import org.apache.commons.io.IOUtils
 
+@Deprecated
 object UJESClientImplTest extends App {
 
+  // Suggest to use LinkisJobClient to submit job to Linkis.
   val clientConfig = DWSClientConfigBuilder.newBuilder().addServerUrl("http://localhost:port")
     .connectionTimeout(30000).discoveryEnabled(true)
     .discoveryFrequency(1, TimeUnit.MINUTES)

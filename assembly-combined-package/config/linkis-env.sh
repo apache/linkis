@@ -85,7 +85,7 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 ###  You can access it in your browser at the address below:http://${EUREKA_INSTALL_IP}:${EUREKA_PORT}
 #EUREKA_INSTALL_IP=127.0.0.1         # Microservices Service Registration Discovery Center
 EUREKA_PORT=20303
-EUREKA_PREFER_IP=true
+export EUREKA_PREFER_IP=false
 
 ###  Gateway install information
 #GATEWAY_INSTALL_IP=127.0.0.1
@@ -130,7 +130,7 @@ export SERVER_HEAP_SIZE="512M"
 ##The decompression directory and the installation directory need to be inconsistent
 LINKIS_HOME=/appcom/Install/LinkisInstall
 
-LINKIS_VERSION=1.0.1
+LINKIS_VERSION=1.0.2
 
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module

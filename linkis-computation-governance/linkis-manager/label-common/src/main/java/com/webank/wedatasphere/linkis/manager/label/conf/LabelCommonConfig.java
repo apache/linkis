@@ -46,7 +46,7 @@ public class LabelCommonConfig {
 
     public final static CommonVars<String> APPCONN_ENGINE_VERSION = CommonVars.apply("wds.linkis.appconn.engine.version", "1");
 
-    public final static CommonVars<String> FLINK_ENGINE_VERSION = CommonVars.apply("wds.linkis.flink.engine.version", "1.11.1");
+    public final static CommonVars<String> FLINK_ENGINE_VERSION = CommonVars.apply("wds.linkis.flink.engine.version", "1.12.2");
 
     public final static CommonVars<String> PERMANENT_LABEL = CommonVars.apply("wds.linkis.am.permanent.label", "tenant");
 
@@ -55,5 +55,9 @@ public class LabelCommonConfig {
     public final static CommonVars<String> SQOOP_ENGINE_VERSION = CommonVars.apply("wds.linkis.sqoop.engine.version", "1");
 
     public final static CommonVars<String> DISTCP_ENGINE_VERSION = CommonVars.apply("wds.linkis.distcp.engine.version", "3.2.2");
+  
+    public final static CommonVars<String> ENGINE_CONN_MANAGER_SPRING_NAME = CommonVars.apply("wds.linkis.engineconn.manager.name", "linkis-cg-engineconnmanager");
+
+    public final static CommonVars<String> ENGINE_CONN_SPRING_NAME = CommonVars.apply("wds.linkis.engineconn.name", "linkis-cg-engineconn");
 }
 

@@ -26,16 +26,15 @@ import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
 import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
 import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME
-import com.webank.wedatasphere.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, RequestQueryGlobalConfig}
-import com.webank.wedatasphere.linkis.manager.am.conf.{AMConfiguration, ConfigurationMapCache, EngineConnConfigurationService}
+import com.webank.wedatasphere.linkis.manager.am.conf.{AMConfiguration, EngineConnConfigurationService}
 import com.webank.wedatasphere.linkis.manager.am.exception.{AMErrorCode, AMErrorException}
+import com.webank.wedatasphere.linkis.manager.am.label.EngineReuseLabelChooser
 import com.webank.wedatasphere.linkis.manager.am.pointer.EngineConnPluginPointer
 import com.webank.wedatasphere.linkis.manager.am.selector.NodeSelector
 import com.webank.wedatasphere.linkis.manager.common.constant.AMConstant
 import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
 import com.webank.wedatasphere.linkis.manager.common.entity.node.{EMNode, EngineNode}
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource
-import com.webank.wedatasphere.linkis.manager.common.protocol.conf.RemoveCacheConfRequest
 import com.webank.wedatasphere.linkis.manager.common.protocol.engine.{EngineCreateRequest, EngineStopRequest}
 import com.webank.wedatasphere.linkis.manager.common.utils.ManagerUtils
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.{EngineConnBuildRequestImpl, EngineConnCreationDescImpl}
@@ -52,7 +51,6 @@ import com.webank.wedatasphere.linkis.message.annotation.Receiver
 import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
 import com.webank.wedatasphere.linkis.resourcemanager.service.ResourceManager
 import com.webank.wedatasphere.linkis.resourcemanager.{AvailableResource, NotEnoughResource}
-import com.webank.wedatasphere.linkis.rpc.interceptor.common.CacheableRPCInterceptor
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -98,6 +96,9 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
   @Autowired
   private var resourceManagerPersistence: ResourceManagerPersistence = _
 
+  @Autowired
+  private var engineReuseLabelChoosers: util.List[EngineReuseLabelChooser] = _
+
   def getEngineNode(serviceInstance: ServiceInstance): EngineNode = {
     val engineNode = getEngineNodeManager.getEngineNode(serviceInstance)
     if (engineNode.getNodeStatus == null){
@@ -126,9 +127,17 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
     val timeout = if (engineCreateRequest.getTimeOut <= 0) AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong else engineCreateRequest.getTimeOut
 
-    //1. 检查Label是否合法
-    val labelList: util.List[Label[_]] = LabelUtils.distinctLabel(labelBuilderFactory.getLabels(engineCreateRequest.getLabels),
+    // 1. 检查Label是否合法
+    var labelList: util.List[Label[_]] = LabelUtils.distinctLabel(labelBuilderFactory.getLabels(engineCreateRequest.getLabels),
       userLabelService.getUserLabels(engineCreateRequest.getUser))
+
+    //label chooser
+    if (null != engineReuseLabelChoosers) {
+      engineReuseLabelChoosers.foreach { chooser =>
+        labelList = chooser.chooseLabels(labelList)
+      }
+    }
+
 
     for (labelChecker <- labelCheckerList) {
       if (!labelChecker.checkEngineLabel(labelList)) {

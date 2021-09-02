@@ -18,8 +18,7 @@ package com.webank.wedatasphere.linkis.ecm.core.launch
 
 import java.io.{File, InputStream, OutputStream}
 import java.net.ServerSocket
-
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration}
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.ecm.core.conf.ECMErrorCode
@@ -130,6 +129,14 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     var springConf = Map("spring.application.name" -> GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue,
       "server.port" -> engineConnPort, "spring.profiles.active" -> "engineconn",
       "logging.config" -> s"classpath:${EnvConfiguration.LOG4J2_XML_FILE.getValue}") ++: discoveryMsgGenerator.generate(engineConnManagerEnv)
+
+    val eurekaPreferIp: Boolean = Configuration.EUREKA_PREFER_IP
+    logger.info(s"EUREKA_PREFER_IP: " + eurekaPreferIp)
+    if(eurekaPreferIp){
+      springConf = springConf + ("eureka.instance.prefer-ip-address" -> "true")
+      springConf = springConf + ("eureka.instance.instance-id" -> "\\${spring.cloud.client.ip-address}:\\${spring.application.name}:\\${server.port}")
+    }
+
     request.creationDesc.properties.filter(_._1.startsWith("spring.")).foreach { case (k, v) =>
       springConf = springConf += (k -> v)
     }

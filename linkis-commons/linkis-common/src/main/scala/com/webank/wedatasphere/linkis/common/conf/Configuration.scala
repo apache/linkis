@@ -38,6 +38,8 @@ object Configuration extends Logging {
 
   val CLOUD_CONSOLE_VARIABLE_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.console.variable.application.name", "linkis-ps-publicservice")
 
+  //read from env
+  val EUREKA_PREFER_IP = CommonVars("EUREKA_PREFER_IP", false).getValue
 
   def getGateWayURL(): String = {
     val url = GATEWAY_URL.getValue.trim

@@ -20,7 +20,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
     </parent>
     <artifactId>linkis-entrance</artifactId>
 
@@ -124,11 +124,11 @@
             <version>${linkis.version}</version>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>com.webank.wedatasphere.linkis</groupId>
             <artifactId>linkis-instance-label-client</artifactId>
             <version>${linkis.version}</version>
-        </dependency>
+        </dependency>-->
 
     </dependencies>
 

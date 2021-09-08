@@ -37,6 +37,6 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: python_3_with_R
-          environment-file: testing/env_python_3_with_R.yml
+          environment-file: testing/env_python_3_with_R.yml # 在 test 文化夹下加上 yml 文件，用于适配 python 版本
           python-version: 3.7
           auto-activate-base: false

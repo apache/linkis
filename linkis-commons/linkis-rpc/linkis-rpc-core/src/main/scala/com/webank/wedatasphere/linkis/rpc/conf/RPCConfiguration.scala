@@ -25,6 +25,8 @@ object RPCConfiguration {
 
   val BDP_RPC_EUREKA_SERVICE_REFRESH_INTERVAL = CommonVars("wds.linkis.rpc.eureka.client.refresh.interval", new TimeType("1s"))
   val BDP_RPC_EUREKA_SERVICE_REFRESH_MAX_WAIT_TIME = CommonVars("wds.linkis.rpc.eureka.client.refresh.wait.time.max", new TimeType("1m"))
+  val BDP_RPC_NACOS_SERVICE_REFRESH_INTERVAL = CommonVars("wds.linkis.rpc.nacos.client.refresh.interval", new TimeType("1s"))
+  val BDP_RPC_NACOS_SERVICE_REFRESH_MAX_WAIT_TIME = CommonVars("wds.linkis.rpc.nacos.client.refresh.wait.time.max", new TimeType("1m"))
   val BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_MAX = CommonVars("wds.linkis.rpc.receiver.asyn.consumer.thread.max", 400)
   val BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX = CommonVars("wds.linkis.rpc.receiver.asyn.consumer.freeTime.max", new TimeType("2m"))
   val BDP_RPC_RECEIVER_ASYN_QUEUE_CAPACITY = CommonVars("wds.linkis.rpc.receiver.asyn.queue.size.max", 5000)

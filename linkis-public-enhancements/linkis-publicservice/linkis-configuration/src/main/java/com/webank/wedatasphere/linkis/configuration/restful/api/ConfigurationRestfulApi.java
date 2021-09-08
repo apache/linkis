@@ -16,7 +16,6 @@
 
 package com.webank.wedatasphere.linkis.configuration.restful.api;
 
-import com.netflix.discovery.converters.Auto;
 import com.webank.wedatasphere.linkis.configuration.entity.*;
 import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationException;
 import com.webank.wedatasphere.linkis.configuration.service.CategoryService;
@@ -32,7 +31,6 @@ import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json4s.jackson.Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;

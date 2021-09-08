@@ -52,6 +52,40 @@
         </dependency>
     </dependencies>
 
+<!--    <profiles>-->
+<!--        <profile>-->
+<!--            <id>eureka</id>-->
+<!--            <activation>-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--                <property>-->
+<!--                    <name>!nacos</name>-->
+<!--                </property>-->
+<!--            </activation>-->
+<!--            <dependencies>-->
+<!--                <dependency>-->
+<!--                    <groupId>com.webank.wedatasphere.linkis</groupId>-->
+<!--                    <artifactId>linkis-rpc-eureka</artifactId>-->
+<!--                    <version>${linkis.version}</version>-->
+<!--                </dependency>-->
+<!--            </dependencies>-->
+<!--        </profile>-->
+
+<!--        <profile>-->
+<!--            <id>nacos</id>-->
+<!--            <activation>-->
+<!--                <property>-->
+<!--                    <name>nacos</name>-->
+<!--                </property>-->
+<!--            </activation>-->
+<!--            <dependencies>-->
+<!--                <dependency>-->
+<!--                    <groupId>com.webank.wedatasphere.linkis</groupId>-->
+<!--                    <artifactId>linkis-rpc-nacos</artifactId>-->
+<!--                    <version>${linkis.version}</version>-->
+<!--                </dependency>-->
+<!--            </dependencies>-->
+<!--        </profile>-->
+<!--    </profiles>-->
 
     <build>
         <plugins>

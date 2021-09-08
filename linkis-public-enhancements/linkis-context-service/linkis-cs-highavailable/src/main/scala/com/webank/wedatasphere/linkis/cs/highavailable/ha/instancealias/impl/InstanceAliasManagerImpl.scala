@@ -16,11 +16,13 @@
 package com.webank.wedatasphere.linkis.cs.highavailable.ha.instancealias.impl
 
 import java.util
+
+import com.webank.wedatasphere.linkis.DataWorkCloudApplication
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.rpc.conf.RPCConfiguration
 import com.webank.wedatasphere.linkis.cs.highavailable.ha.instancealias.{InstanceAliasConverter, InstanceAliasManager}
-import com.webank.wedatasphere.linkis.rpc.sender.eureka.EurekaRPCServerLoader
+import com.webank.wedatasphere.linkis.rpc.interceptor.RPCServerLoader
 import com.webank.wedatasphere.linkis.rpc.utils.RPCUtils
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,7 +33,8 @@ import scala.collection.JavaConversions._
 @Component
 class InstanceAliasManagerImpl extends InstanceAliasManager with Logging {
 
-  private val serverLoader = new EurekaRPCServerLoader()
+  import DataWorkCloudApplication.getApplicationContext
+  private val serverLoader = getApplicationContext.getBean(classOf[RPCServerLoader])
 
   @Autowired
   var instanceAliasConverter: InstanceAliasConverter = _

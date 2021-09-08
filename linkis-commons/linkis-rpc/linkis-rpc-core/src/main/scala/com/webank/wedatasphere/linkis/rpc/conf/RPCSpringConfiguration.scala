@@ -16,18 +16,14 @@
 
 package com.webank.wedatasphere.linkis.rpc.conf
 
-import com.netflix.discovery.EurekaClient
 import com.webank.wedatasphere.linkis.DataWorkCloudApplication
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.rpc.RPCReceiveRestful
-import com.webank.wedatasphere.linkis.rpc.interceptor.RPCServerLoader
-import com.webank.wedatasphere.linkis.rpc.sender.eureka.EurekaRPCServerLoader
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import org.apache.commons.lang.StringUtils
-import org.springframework.boot.autoconfigure.condition.{ConditionalOnClass, ConditionalOnMissingBean}
 import org.springframework.boot.context.event.ApplicationPreparedEvent
 import org.springframework.cloud.openfeign.EnableFeignClients
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.Configuration
 import org.springframework.context.event.EventListener
 
 
@@ -35,10 +31,10 @@ import org.springframework.context.event.EventListener
 @EnableFeignClients
 class RPCSpringConfiguration extends Logging {
 
-  @Bean(Array("rpcServerLoader"))
-  @ConditionalOnClass(Array(classOf[EurekaClient]))
-  @ConditionalOnMissingBean
-  def createRPCServerLoader(): RPCServerLoader = new EurekaRPCServerLoader
+//  @Bean(Array("rpcServerLoader"))
+//  @ConditionalOnClass(Array(classOf[EurekaClient]))
+//  @ConditionalOnMissingBean
+//  def createRPCServerLoader(): RPCServerLoader = new EurekaRPCServerLoader
 
   @EventListener
   def completeInitialize(applicationPreparedEvent: ApplicationPreparedEvent): Unit = {

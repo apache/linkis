@@ -16,19 +16,16 @@
 
 package com.webank.wedatasphere.linkis.instance.label;
 
-import com.netflix.discovery.EurekaClient;
 import com.webank.wedatasphere.linkis.instance.label.service.InsLabelAccessService;
 import com.webank.wedatasphere.linkis.instance.label.service.InsLabelServiceAdapter;
 import com.webank.wedatasphere.linkis.instance.label.service.annotation.AdapterMode;
 import com.webank.wedatasphere.linkis.instance.label.service.impl.DefaultInsLabelService;
 import com.webank.wedatasphere.linkis.instance.label.service.impl.DefaultInsLabelServiceAdapter;
-import com.webank.wedatasphere.linkis.instance.label.service.impl.EurekaInsLabelService;
 import com.webank.wedatasphere.linkis.mybatis.DataSourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.cloud.netflix.eureka.EurekaDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -67,17 +64,17 @@ public class InsLabelAutoConfiguration {
     /**
      * Configuration in eureka environment
      */
-    @Configuration
-    @ConditionalOnClass({EurekaClient.class})
-    public static class EurekaClientConfiguration{
-        @ConditionalOnMissingBean({EurekaInsLabelService.class})
-        @Bean
-        @Scope("prototype")
-        public EurekaInsLabelService eurekaInsLabelService(EurekaDiscoveryClient discoveryClient){
-            return new EurekaInsLabelService(discoveryClient);
-        }
-
-    }
+//    @Configuration
+//    @ConditionalOnClass({EurekaClient.class})
+//    public static class EurekaClientConfiguration{
+//        @ConditionalOnMissingBean({EurekaInsLabelService.class})
+//        @Bean
+//        @Scope("prototype")
+//        public EurekaInsLabelService eurekaInsLabelService(EurekaDiscoveryClient discoveryClient){
+//            return new EurekaInsLabelService(discoveryClient);
+//        }
+//
+//    }
 
     /**
      * Enable the rpc service

@@ -20,8 +20,50 @@
         <module>linkis-module</module>
         <module>linkis-mybatis</module>
         <module>linkis-rpc</module>
+        <module>linkis-rpc/linkis-rpc-core</module>
         <module>linkis-message-scheduler</module>
         <module>linkis-storage</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>eureka</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>!nacos</name>
+                </property>
+            </activation>
+            <modules>
+                <module>linkis-rpc/impl/linkis-rpc-eureka</module>
+            </modules>
+            <!--            <dependencies>-->
+            <!--                <dependency>-->
+            <!--                    <groupId>com.webank.wedatasphere.linkis</groupId>-->
+            <!--                    <artifactId>linkis-rpc-eureka</artifactId>-->
+            <!--                    <version>${linkis.version}</version>-->
+            <!--                </dependency>-->
+            <!--            </dependencies>-->
+        </profile>
+
+        <profile>
+            <id>nacos</id>
+            <activation>
+                <property>
+                    <name>nacos</name>
+                </property>
+            </activation>
+            <modules>
+                <module>linkis-rpc/impl/linkis-rpc-nacos</module>
+            </modules>
+            <!--            <dependencies>-->
+            <!--                <dependency>-->
+            <!--                    <groupId>com.webank.wedatasphere.linkis</groupId>-->
+            <!--                    <artifactId>linkis-rpc-nacos</artifactId>-->
+            <!--                    <version>${linkis.version}</version>-->
+            <!--                </dependency>-->
+            <!--            </dependencies>-->
+        </profile>
+    </profiles>
 
 </project>

@@ -57,6 +57,6 @@ jobs:
       - name: Start mysql
         run: sudo systemctl start mysql.service
       - name: install environment
-        run: |
+        run: | # 在hive引擎的pom里面的 pentaho 加下 exclusion
           mvn -N install
-          mvn install -pl linkis-public-enhancements/linkis-publicservice/linkis-configuration -am
+          mvn clean install

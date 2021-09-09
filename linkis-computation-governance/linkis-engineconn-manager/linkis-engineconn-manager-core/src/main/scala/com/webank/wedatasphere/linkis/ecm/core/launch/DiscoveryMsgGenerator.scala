@@ -32,3 +32,13 @@ class EurekaDiscoveryMsgGenerator extends DiscoveryMsgGenerator {
     engineConnManagerEnv.properties.get("eureka.client.serviceUrl.defaultZone")
       .map(v => Map("eureka.client.serviceUrl.defaultZone" -> v)).getOrElse[Map[String,String]](Map.empty)
 }
+
+class NacosDiscoveryMsgGenerator extends DiscoveryMsgGenerator {
+
+  override def generate(engineConnManagerEnv: EngineConnManagerEnv): util.Map[String, String] =
+    engineConnManagerEnv.properties.map {
+      case (k: String, v: String) if k != null && k.startsWith("spring.cloud.nacos") =>
+        (k, v)
+      case _ => null
+    }.filter(_ != null).toMap[String, String]
+}

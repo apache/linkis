@@ -16,7 +16,7 @@
 
 package com.webank.wedatasphere.linkis.ecm.server.service.impl
 
-import com.webank.wedatasphere.linkis.ecm.core.launch.{DiscoveryMsgGenerator, EngineConnLaunch, EurekaDiscoveryMsgGenerator}
+import com.webank.wedatasphere.linkis.ecm.core.launch.{DiscoveryMsgGenerator, EngineConnLaunch, EurekaDiscoveryMsgGenerator, NacosDiscoveryMsgGenerator}
 import com.webank.wedatasphere.linkis.ecm.linux.launch.LinuxProcessEngineConnLaunch
 import com.webank.wedatasphere.linkis.ecm.server.conf.ECMConfiguration._
 import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode
@@ -49,7 +49,10 @@ class LinuxProcessEngineConnLaunchService extends ProcessEngineConnLaunchService
     }
   }
 
-  def createDiscoveryMsgGenerator: DiscoveryMsgGenerator = new EurekaDiscoveryMsgGenerator
+  def createDiscoveryMsgGenerator: DiscoveryMsgGenerator = ECM_DISCOVERY_TYPE match {
+    case "eureka" => new EurekaDiscoveryMsgGenerator
+    case "nacos" => new NacosDiscoveryMsgGenerator
+  }
 
   override def createEngineConnLaunch: EngineConnLaunch = {
     val launch = new LinuxProcessEngineConnLaunch

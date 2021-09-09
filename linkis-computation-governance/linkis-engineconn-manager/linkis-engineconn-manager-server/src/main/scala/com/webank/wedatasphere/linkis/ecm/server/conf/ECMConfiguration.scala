@@ -62,7 +62,19 @@ object ECMConfiguration {
 
   val ECM_LAUNCH_MAX_THREAD_SIZE: Int = CommonVars("wds.linkis.ecm.launch.max.thread.size", 100).getValue
 
+  val ECM_DISCOVERY_TYPE: String = CommonVars("wds.linkis.discovery.type", "eureka").getValue
+
   val ECM_EUREKA_DEFAULTZONE: String = CommonVars("wds.linkis.eureka.defaultZone", "http://127.0.0.1:20303/eureka/").getValue
+
+  val ECM_EUREKA_DEFAULTZONE: String = CommonVars("wds.linkis.nacos.discovery.server-addr", "http://127.0.0.1:20303/eureka/").getValue
+
+  val ECM_NACOS_SERVERADDR: String = CommonVars("wds.linkis.nacos.serverAddr", "127.0.0.1:8848").getValue
+
+  val ECM_NACOS_USERNAME: String = CommonVars("wds.linkis.nacos.username", "").getValue
+
+  val ECM_NACOS_PASSWORD: String = CommonVars("wds.linkis.nacos.password", "").getValue
+
+  val ECM_NACOS_DISCOVERY_IP: String = CommonVars("wds.linkis.nacos.discovery.ip", "").getValue
 
   /**
     * engineconn创建时间，如果为0，则使用ms中默认的

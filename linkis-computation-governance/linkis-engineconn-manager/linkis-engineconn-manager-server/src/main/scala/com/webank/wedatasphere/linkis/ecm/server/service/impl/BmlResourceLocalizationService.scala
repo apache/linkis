@@ -33,6 +33,7 @@ import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process
 import com.webank.wedatasphere.linkis.storage.FSFactory
 import com.webank.wedatasphere.linkis.storage.fs.FileSystem
 import com.webank.wedatasphere.linkis.storage.utils.{FileSystemUtils, StorageUtils}
+import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
@@ -75,7 +76,24 @@ class BmlResourceLocalizationService extends ResourceLocalizationService {
           override val engineConnManagerPort: String = DataWorkCloudApplication.getApplicationContext.getEnvironment.getProperty("server.port")
           override val linkDirs: Map[String, String] = linkDirsP.toMap
           // TODO: 注册发现信息的配置化
-          override val properties: Map[String, String] = Map("eureka.client.serviceUrl.defaultZone" -> ECM_EUREKA_DEFAULTZONE)
+          override val properties: Map[String, String] = ECM_DISCOVERY_TYPE match {
+            case "eureka" =>
+              Map("eureka.client.serviceUrl.defaultZone" -> ECM_EUREKA_DEFAULTZONE)
+            case "nacos" =>
+              val mutableMap = mutable.Map(
+                "spring.cloud.nacos.discovery.server-addr" -> ECM_NACOS_SERVERADDR
+              )
+              if (StringUtils.isNotBlank(ECM_NACOS_USERNAME)) {
+                mutableMap += "spring.cloud.nacos.username" -> ECM_NACOS_USERNAME
+              }
+              if (StringUtils.isNotBlank(ECM_NACOS_PASSWORD)) {
+                mutableMap += "spring.cloud.nacos.password" -> ECM_NACOS_PASSWORD
+              }
+              if (StringUtils.isNotBlank(ECM_NACOS_DISCOVERY_IP)) {
+                mutableMap += "spring.cloud.nacos.discovery.ip" -> ECM_NACOS_DISCOVERY_IP
+              }
+              mutableMap.toMap
+          }
         })
       case _ =>
     }

@@ -18,10 +18,6 @@
 
 package com.webank.wedatasphere.linkis.manager.am.restful;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.netflix.discovery.converters.Auto;
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
 import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration;
 import com.webank.wedatasphere.linkis.manager.am.converter.DefaultMetricsConverter;
@@ -35,42 +31,31 @@ import com.webank.wedatasphere.linkis.manager.common.entity.metrics.NodeHealthyI
 import com.webank.wedatasphere.linkis.manager.common.entity.node.EMNode;
 import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.StdLabelBuilderFactory;
 import com.webank.wedatasphere.linkis.manager.label.entity.Label;
 import com.webank.wedatasphere.linkis.manager.label.entity.UserModifiable;
 import com.webank.wedatasphere.linkis.manager.label.exception.LabelErrorException;
 import com.webank.wedatasphere.linkis.manager.label.service.NodeLabelService;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
-import org.json4s.JsonAST;
-import org.json4s.JsonUtil;
-import org.json4s.jackson.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import scala.util.parsing.json.JSON;
-import scala.util.parsing.json.JSONObject;
-import scala.util.parsing.json.JSONObject$;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.*;
 import java.util.stream.Collectors;
 
 
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
-@Component
-@Path("/linkisManager")
+@RequestMapping(path = "/linkisManager", produces = {"application/json"})
+@RestController
 public class EMRestfulApi {
 
     @Autowired
@@ -88,12 +73,11 @@ public class EMRestfulApi {
 
 
     //todo add healthInfo
-    @GET
-    @Path("/listAllEMs")
-    public Response listAllEMs(@Context HttpServletRequest req,
-                               @QueryParam("instance") String instance,
-                               @QueryParam("nodeHealthy") String nodeHealthy,
-                               @QueryParam("owner" )String owner) throws AMErrorException {
+    @RequestMapping(path = "/listAllEMs", method = RequestMethod.GET)
+    public Message listAllEMs(HttpServletRequest req,
+                               @RequestParam(value = "instance",required = false) String instance,
+                               @RequestParam(value = "nodeHealthy",required = false) String nodeHealthy,
+                               @RequestParam(value = "owner",required = false)String owner) throws AMErrorException {
         String userName = SecurityFilter.getLoginUsername(req);
         String[] adminArray = AMConfiguration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
         if(adminArray != null && !Arrays.asList(adminArray).contains(userName)){
@@ -113,24 +97,23 @@ public class EMRestfulApi {
         if(CollectionUtils.isNotEmpty(allEMVoFilter3) && !StringUtils.isEmpty(owner)){
             allEMVoFilter3 = (ArrayList<EMNodeVo>) allEMVoFilter3.stream().filter(em ->{return em.getOwner().equalsIgnoreCase(owner);}).collect(Collectors.toList());
         }
-        return Message.messageToResponse(Message.ok().data("EMs", allEMVoFilter3));
+        return Message.ok().data("EMs", allEMVoFilter3);
     }
 
-    @GET
-    @Path("/listAllECMHealthyStatus")
-    public Response listAllNodeHealthyStatus(@Context HttpServletRequest req, @QueryParam("onlyEditable") Boolean onlyEditable){
+    @RequestMapping(path = "/listAllECMHealthyStatus", method = RequestMethod.GET)
+    public Message listAllNodeHealthyStatus( HttpServletRequest req,
+        @RequestParam(value = "onlyEditable",required = false) Boolean onlyEditable){
         NodeHealthy[] nodeHealthy = NodeHealthy.values();
         if(onlyEditable){
             nodeHealthy = new NodeHealthy[]{NodeHealthy.Healthy, NodeHealthy.UnHealthy,
                     NodeHealthy.WARN, NodeHealthy.StockAvailable, NodeHealthy.StockUnavailable};
         }
-        return Message.messageToResponse(Message.ok().data("nodeHealthy", nodeHealthy));
+        return Message.ok().data("nodeHealthy", nodeHealthy);
     }
 
-    @PUT
-    @Path("/modifyEMInfo")
+    @RequestMapping(path = "/modifyEMInfo", method = RequestMethod.PUT)
     @Transactional(rollbackFor = Exception.class)
-    public Response modifyEMInfo(@Context HttpServletRequest req, JsonNode jsonNode) throws AMErrorException, LabelErrorException {
+    public Message modifyEMInfo( HttpServletRequest req, JsonNode jsonNode) throws AMErrorException, LabelErrorException {
         String username = SecurityFilter.getLoginUsername(req);
         String[] adminArray = AMConfiguration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
         if(adminArray != null && !Arrays.asList(adminArray).contains(username)){
@@ -176,7 +159,7 @@ public class EMRestfulApi {
             nodeLabelService.updateLabelsToNode(serviceInstance, newLabelList);
             logger.info("success to update label of instance: " + serviceInstance.getInstance());
         }
-        return Message.messageToResponse(Message.ok("修改EM信息成功"));
+        return Message.ok("修改EM信息成功");
     }
 
 }

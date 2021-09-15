@@ -49,16 +49,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -68,12 +58,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
-@Component
-@Path("/linkisManager")
+@RequestMapping(path = "/linkisManager", produces = {"application/json"})
+@RestController
 public class EngineRestfulApi {
 
     @Autowired
@@ -94,9 +85,8 @@ public class EngineRestfulApi {
 
     private Logger logger = LoggerFactory.getLogger(EMRestfulApi.class);
 
-    @POST
-    @Path("createEngineConn")
-    public Response createEngineConn(@Context HttpServletRequest req, JsonNode jsonNode)
+    @RequestMapping(path = "/createEngineConn", method = RequestMethod.POST)
+    public Message createEngineConn( HttpServletRequest req, JsonNode jsonNode)
             throws IOException, InterruptedException {
         String userName = SecurityFilter.getLoginUsername(req);
         EngineCreateRequest engineCreateRequest = objectMapper.readValue(jsonNode, EngineCreateRequest.class);
@@ -115,62 +105,58 @@ public class EngineRestfulApi {
         } catch (TimeoutException e) {
             logger.error(String.format("User %s create engineConn timeout.", userName), e);
             job.cancel(true);
-            return Message.messageToResponse(Message
-                    .error("Create engineConn timeout, usually caused by the too long initialization of EngineConn(创建引擎超时，通常都是因为初始化引擎时间太长导致)."));
+            return Message
+                .error("Create engineConn timeout, usually caused by the too long initialization of EngineConn(创建引擎超时，通常都是因为初始化引擎时间太长导致).");
         } catch (ExecutionException e) {
             logger.error(String.format("User %s create engineConn failed.", userName), e);
-            return Message.messageToResponse(Message
-                    .error(String.format("Create engineConn failed, caused by %s.", ExceptionUtils.getRootCauseMessage(e))));
+            return Message
+                    .error(String.format("Create engineConn failed, caused by %s.", ExceptionUtils.getRootCauseMessage(e)));
         }
         logger.info("Finished to create a engineConn for user {}. NodeInfo is {}.", userName, engineNode);
         //to transform to a map
         Map<String, Object> retEngineNode = new HashMap<>();
         retEngineNode.put("serviceInstance", engineNode.getServiceInstance());
         retEngineNode.put("nodeStatus", engineNode.getNodeStatus().toString());
-        return Message.messageToResponse(Message.ok("create engineConn succeed.").data("engine", retEngineNode));
+        return Message.ok("create engineConn succeed.").data("engine", retEngineNode);
     }
 
 
-    @POST
-    @Path("/getEngineConn")
-    public Response getEngineConn(@Context HttpServletRequest req, JsonNode jsonNode) throws AMErrorException {
+    @RequestMapping(path = "/getEngineConn", method = RequestMethod.POST)
+    public Message getEngineConn( HttpServletRequest req, JsonNode jsonNode) throws AMErrorException {
         String userName = SecurityFilter.getLoginUsername(req);
         ServiceInstance serviceInstance = getServiceInstance(jsonNode);
         EngineNode engineNode = engineCreateService.getEngineNode(serviceInstance);
         if(!userName.equals(engineNode.getOwner()) && !isAdmin(userName)) {
-            return Message.messageToResponse(Message.error("You have no permission to access EngineConn " + serviceInstance));
+            return Message.error("You have no permission to access EngineConn " + serviceInstance);
         }
-        return Message.messageToResponse(Message.ok().data("engine", engineNode));
+        return Message.ok().data("engine", engineNode);
     }
 
-    @POST
-    @Path("killEngineConn")
-    public Response killEngineConn(@Context HttpServletRequest req, JsonNode jsonNode) throws Exception {
+    @RequestMapping(path = "/killEngineConn", method = RequestMethod.POST)
+    public Message killEngineConn( HttpServletRequest req, JsonNode jsonNode) throws Exception {
         String userName = SecurityFilter.getLoginUsername(req);
         ServiceInstance serviceInstance = getServiceInstance(jsonNode);
         logger.info("User {} try to kill engineConn {}.", userName, serviceInstance);
         EngineNode engineNode = engineCreateService.getEngineNode(serviceInstance);
         if(!userName.equals(engineNode.getOwner()) && !isAdmin(userName)) {
-            return Message.messageToResponse(Message.error("You have no permission to kill EngineConn " + serviceInstance));
+            return Message.error("You have no permission to kill EngineConn " + serviceInstance);
         }
         EngineStopRequest stopEngineRequest = new EngineStopRequest(serviceInstance, userName);
         MessageJob job = messagePublisher.publish(stopEngineRequest);
         job.get(RMUtils.MANAGER_KILL_ENGINE_EAIT().getValue().toLong(), TimeUnit.MILLISECONDS);
         logger.info("Finished to kill engineConn {}.", serviceInstance);
-        return Message.messageToResponse(Message.ok("Kill engineConn succeed."));
+        return Message.ok("Kill engineConn succeed.");
     }
 
-    @GET
-    @Path("/listUserEngines")
-    public Response listUserEngines(@Context HttpServletRequest req) {
+    @RequestMapping(path = "/listUserEngines", method = RequestMethod.GET)
+    public Message listUserEngines( HttpServletRequest req) {
         String userName = SecurityFilter.getLoginUsername(req);
         List<EngineNode> engineNodes = engineInfoService.listUserEngines(userName);
-        return Message.messageToResponse(Message.ok().data("engines", engineNodes));
+        return Message.ok().data("engines", engineNodes);
     }
 
-    @POST
-    @Path("/listEMEngines")
-    public Response listEMEngines(@Context HttpServletRequest req, JsonNode jsonNode) throws IOException, AMErrorException {
+    @RequestMapping(path = "/listEMEngines", method = RequestMethod.POST)
+    public Message listEMEngines( HttpServletRequest req, JsonNode jsonNode) throws IOException, AMErrorException {
         String username = SecurityFilter.getLoginUsername(req);
         if(!isAdmin(username)){
             throw new AMErrorException(210003,"Only admin can search engine information(只有管理员才能查询所有引擎信息).");
@@ -198,12 +184,11 @@ public class EngineRestfulApi {
         if(CollectionUtils.isNotEmpty(allEMVoFilter4) && engineType != null && !StringUtils.isEmpty(engineType.asText())){
             allEMVoFilter4 = (ArrayList<AMEngineNodeVo>) allEMVoFilter4.stream().filter(em ->{return em.getEngineType().equalsIgnoreCase(engineType.asText());}).collect(Collectors.toList());
         }
-        return Message.messageToResponse(Message.ok().data("engines", allEMVoFilter4));
+        return Message.ok().data("engines", allEMVoFilter4);
     }
 
-    @PUT
-    @Path("/modifyEngineInfo")
-    public Response modifyEngineInfo(@Context HttpServletRequest req, JsonNode jsonNode) throws AMErrorException, LabelErrorException {
+    @RequestMapping(path = "/modifyEngineInfo", method = RequestMethod.PUT)
+    public Message modifyEngineInfo( HttpServletRequest req, JsonNode jsonNode) throws AMErrorException, LabelErrorException {
         String username = SecurityFilter.getLoginUsername(req);
         if(!isAdmin(username)){
             throw new AMErrorException(210003,"Only admin can modify engineConn information(只有管理员才能修改引擎信息).");
@@ -231,14 +216,14 @@ public class EngineRestfulApi {
             nodeLabelService.updateLabelsToNode(serviceInstance, newLabelList);
             logger.info("success to update label of instance: " + serviceInstance.getInstance());
         }
-        return Message.messageToResponse(Message.ok("success to update engine information(更新引擎信息成功)"));
+        return Message.ok("success to update engine information(更新引擎信息成功)");
     }
 
-    @GET
-    @Path("/listAllNodeHealthyStatus")
-    public Response listAllNodeHealthyStatus(@Context HttpServletRequest req, @QueryParam("onlyEditable") Boolean onlyEditable){
+    @RequestMapping(path = "/listAllNodeHealthyStatus", method = RequestMethod.GET)
+    public Message listAllNodeHealthyStatus( HttpServletRequest req,
+        @RequestParam(value = "onlyEditable",required = false) Boolean onlyEditable){
         NodeStatus[] nodeStatus = NodeStatus.values();
-        return Message.messageToResponse(Message.ok().data("nodeStatus", nodeStatus));
+        return Message.ok().data("nodeStatus", nodeStatus);
     }
 
     private boolean isAdmin(String user) {

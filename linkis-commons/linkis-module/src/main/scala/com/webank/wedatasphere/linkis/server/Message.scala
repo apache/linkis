@@ -15,12 +15,15 @@ package com.webank.wedatasphere.linkis.server
 
 import java.util
 
+import com.webank.wedatasphere.linkis.server.Message.getCurrentHttpRequest
+import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.Path
 import javax.ws.rs.core.Response
 import javax.xml.bind.annotation.XmlRootElement
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
 import org.reflections.ReflectionUtils
+import org.springframework.web.context.request.{RequestContextHolder, ServletRequestAttributes}
 
 
 @XmlRootElement(name = "message")
@@ -66,17 +69,32 @@ class Message(private var method: String,
 object Message {
   def apply(method: String = null, status: Int = 0, message: String = null,
             data: util.HashMap[String, Object] = new util.HashMap[String, Object]): Message = {
-    if(StringUtils.isEmpty(method)) {
-      Thread.currentThread().getStackTrace.find(_.getClassName.toLowerCase.endsWith("restfulapi")).foreach { stack =>
-        val clazz = ReflectionUtils.forName(stack.getClassName)
-        val path = clazz.getAnnotation(classOf[Path]).value()
-        clazz.getDeclaredMethods.find(m => m.getName == stack.getMethodName && m.getAnnotation(classOf[Path]) != null)
-          .foreach { m =>
-            val path1 = m.getAnnotation(classOf[Path]).value()
-            var method = if(path.startsWith("/")) path else "/" + path
-            if(method.endsWith("/")) method = method.substring(0, method.length - 1)
-            method = if(path1.startsWith("/")) "/api" + method + path1 else "/api" + method + "/" + path1
-          return new Message(method, status, message, data)
+    if (StringUtils.isEmpty(method)) {
+      Thread.currentThread().getStackTrace.find(_.getClassName.toLowerCase.endsWith("restfulapi")).foreach {
+        stack => {
+          val clazz = ReflectionUtils.forName(stack.getClassName)
+          var annotation = clazz.getAnnotation(classOf[Path])
+          var path = ""
+          if (annotation != null) {
+            path = clazz.getAnnotation(classOf[Path]).value()
+            clazz.getDeclaredMethods.find(m => m.getName == stack.getMethodName && m.getAnnotation(classOf[Path]) != null)
+              .foreach { m =>
+                val path1 = m.getAnnotation(classOf[Path]).value()
+                var method = if (path.startsWith("/")) path else "/" + path
+                if (method.endsWith("/")) method = method.substring(0, method.length - 1)
+                method = if (path1.startsWith("/")) "/api" + method + path1 else "/api" + method + "/" + path1
+                return new Message(method, status, message, data)
+              }
+          } else {
+            val httpRequest:HttpServletRequest=getCurrentHttpRequest
+            if(httpRequest!=null){
+              val path1=httpRequest.getPathInfo;
+              var method = if (path.startsWith("/")) path else "/" + path
+              if (method.endsWith("/")) method = method.substring(0, method.length - 1)
+              method = if (path1.startsWith("/")) "/api" + method + path1 else "/api" + method + "/" + path1
+              return new Message(method, status, message, data)
+            }
+          }
         }
       }
     }
@@ -105,6 +123,15 @@ object Message {
   }
 
   implicit def response(message: Message): String = BDPJettyServerHelper.gson.toJson(message)
+
+  def getCurrentHttpRequest: HttpServletRequest = {
+    val requestAttributes = RequestContextHolder.getRequestAttributes
+    if (requestAttributes.isInstanceOf[ServletRequestAttributes]) {
+      val request = requestAttributes.asInstanceOf[ServletRequestAttributes].getRequest
+      return request
+    }
+    null
+  }
 
   def noLogin(msg: String, t: Throwable): Message = {
     val message = Message(status = -1)

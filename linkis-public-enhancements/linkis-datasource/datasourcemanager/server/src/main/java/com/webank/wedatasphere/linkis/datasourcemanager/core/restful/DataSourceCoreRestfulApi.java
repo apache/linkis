@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -45,10 +46,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
 
-@Path("/data_source")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-@Component
+import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
+
+@RestController
+@RequestMapping(value = "/data_source",produces = {"application/json"})
 public class DataSourceCoreRestfulApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataSourceCoreRestfulApi.class);
@@ -72,28 +73,21 @@ public class DataSourceCoreRestfulApi {
         this.formDataTransformer = FormDataTransformerFactory.buildCustom();
     }
 
-    @POST
-    @Path("/info/json")
-    public Response insertJsonInfo(DataSource dataSource, @Context HttpServletRequest req) {
-        return RestfulApiHelper.doAndResponse(() -> {
-            String userName = SecurityFilter.getLoginUsername(req);
-            //Bean validation
-            Set<ConstraintViolation<DataSource>> result = beanValidator.validate(dataSource, Default.class);
-            if(result.size() > 0){
-                throw new ConstraintViolationException(result);
-            }
-            dataSource.setCreateUser(userName);
-            insertDataSourceConfig(dataSource);
-            return Message.ok().data("insert_id", dataSource.getId());
-        }, "/data_source/info/json", "Fail to insert data source[新增数据源失败]");
+    @RequestMapping(value = "/info/json" ,method = RequestMethod.POST)
+    public Message insertJsonInfo(DataSource dataSource,  HttpServletRequest req) throws ErrorException {
+        String userName = SecurityFilter.getLoginUsername(req);
+        //Bean validation
+        Set<ConstraintViolation<DataSource>> result = beanValidator.validate(dataSource, Default.class);
+        if(result.size() > 0){
+            throw new ConstraintViolationException(result);
+        }
+        dataSource.setCreateUser(userName);
+        insertDataSourceConfig(dataSource);
+        return Message.ok().data("insert_id", dataSource.getId());
     }
 
-    @POST
-    @Path("/info/form")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response insertFormConfig(FormDataMultiPart multiPartForm,
-                                     @Context HttpServletRequest request){
-        return RestfulApiHelper.doAndResponse(() -> {
+    @RequestMapping(value = "/info/form",headers = MULTIPART_FORM_DATA,method = RequestMethod.POST)
+    public Message insertFormConfig(FormDataMultiPart multiPartForm, HttpServletRequest request) throws ErrorException {
             if(null != multiPartForm) {
                 String userName = SecurityFilter.getLoginUsername(request);
                 DataSource dataSource = formDataTransformer.transformToObject(multiPartForm, DataSource.class, beanValidator);
@@ -102,15 +96,12 @@ public class DataSourceCoreRestfulApi {
                 return Message.ok().data("insert_id", dataSource.getId());
             }
             return Message.error("Empty request");
-        }, "/data_source/info/form", "Fail to insert data source[新增数据源失败]");
     }
 
-    @GET
-    @Path("/info/{data_source_id}")
-    public Response getInfoByDataSourceId(@QueryParam("system")String createSystem,
-                                            @PathParam("data_source_id")Long dataSourceId,
-                                            @Context HttpServletRequest request){
-        return RestfulApiHelper.doAndResponse(() -> {
+    @RequestMapping(value = "/info/{data_source_id}",method = RequestMethod.GET)
+    public Message getInfoByDataSourceId(@RequestParam(value = "system",required = false)String createSystem,
+                                            @PathVariable("data_source_id")Long dataSourceId,
+                                            HttpServletRequest request){
             if(StringUtils.isBlank(createSystem)){
                 return Message.error("'create system' is missing[缺少系统名]");
             }
@@ -121,15 +112,12 @@ public class DataSourceCoreRestfulApi {
                         , dataSource.getConnectParams());
             }
             return Message.ok().data("info", dataSource);
-        }, "/data_source/info/" + dataSourceId, "Fail to access data source[获取数据源信息失败]");
     }
 
 
-    @DELETE
-    @Path("/info/{data_source_id}")
-    public Response removeDataSource(@QueryParam("system")String createSystem,
-                                     @PathParam("data_source_id")Long dataSourceId){
-        return RestfulApiHelper.doAndResponse(() -> {
+    @RequestMapping(value = "/info/{data_source_id}",method = RequestMethod.DELETE)
+    public Message removeDataSource(@RequestParam(value = "system",required = false)String createSystem,
+                                     @PathVariable("data_source_id")Long dataSourceId){
             if(StringUtils.isBlank(createSystem)){
                 return Message.error("'create system' is missing[缺少系统名]");
             }
@@ -138,15 +126,12 @@ public class DataSourceCoreRestfulApi {
                 return Message.error("Fail to remove data source[删除数据源信息失败], [id:" + dataSourceId +"]");
             }
             return Message.ok().data("remove_id", removeId);
-        }, "/data_source/info/" + dataSourceId,"Fail to remove data source[删除数据源信息失败]");
     }
 
-    @PUT
-    @Path("/info/{data_source_id}/json")
-    public Response updateDataSourceInJson(DataSource dataSource,
-                                           @PathParam("data_source_id")Long dataSourceId,
-                                           @Context HttpServletRequest req){
-        return RestfulApiHelper.doAndResponse(() -> {
+    @RequestMapping(value = "/info/{data_source_id}/json",method = RequestMethod.PUT)
+    public Message updateDataSourceInJson(DataSource dataSource,
+                                           @PathVariable("data_source_id")Long dataSourceId,
+                                            HttpServletRequest req) throws ErrorException {
             String userName = SecurityFilter.getLoginUsername(req);
             //Bean validation
             Set<ConstraintViolation<DataSource>> result = beanValidator.validate(dataSource, Default.class);
@@ -164,16 +149,12 @@ public class DataSourceCoreRestfulApi {
             dataSource.setCreateUser(storedDataSource.getCreateUser());
             updateDataSourceConfig(dataSource, storedDataSource);
             return Message.ok().data("update_id", dataSourceId);
-        }, "/data_source/info/"+dataSourceId+"/json","Fail to update data source[更新数据源失败]");
     }
 
-    @PUT
-    @Path("/info/{data_source_id}/form")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response updateDataSourceInForm(FormDataMultiPart multiPartForm,
-                                           @PathParam("data_source_id")Long dataSourceId,
-                                           @Context HttpServletRequest req){
-        return RestfulApiHelper.doAndResponse(() -> {
+    @RequestMapping(value = "/info/{data_source_id}/form",method = RequestMethod.PUT,headers = MediaType.MULTIPART_FORM_DATA)
+    public Message updateDataSourceInForm(FormDataMultiPart multiPartForm,
+                                           @PathVariable("data_source_id") Long dataSourceId,
+                                           HttpServletRequest req) throws ErrorException {
             String userName = SecurityFilter.getLoginUsername(req);
             DataSource dataSource = formDataTransformer.transformToObject(multiPartForm, DataSource.class, beanValidator);
             dataSource.setId(dataSourceId);
@@ -187,18 +168,15 @@ public class DataSourceCoreRestfulApi {
             dataSource.setCreateUser(storedDataSource.getCreateUser());
             updateDataSourceConfig(dataSource, storedDataSource);
             return Message.ok().data("update_id", dataSourceId);
-        }, "/data_source/info/" + dataSourceId + "/form", "Fail to update data source[更新数据源失败]");
     }
 
-    @GET
-    @Path("/info")
-    public Response queryDataSource(@QueryParam("system")String createSystem,
-                                    @QueryParam("name")String dataSourceName,
-                                    @QueryParam("typeId")Long dataSourceTypeId,
-                                    @QueryParam("identifies")String identifies,
-                                    @QueryParam("currentPage")Integer currentPage,
-                                    @QueryParam("pageSize")Integer pageSize){
-        return RestfulApiHelper.doAndResponse(() -> {
+    @RequestMapping(value = "/info",method = RequestMethod.GET)
+    public Message queryDataSource(@RequestParam(value = "system",required = false)String createSystem,
+                                    @RequestParam(value = "name",required = false)String dataSourceName,
+                                    @RequestParam(value = "typeId",required = false)Long dataSourceTypeId,
+                                    @RequestParam(value = "identifies",required = false)String identifies,
+                                    @RequestParam(value = "currentPage",required = false)Integer currentPage,
+                                    @RequestParam(value = "pageSize",required = false)Integer pageSize){
             if(StringUtils.isBlank(createSystem)){
                 return Message.error("'create system' is missing[缺少系统名]");
             }
@@ -208,45 +186,33 @@ public class DataSourceCoreRestfulApi {
             dataSourceVo.setPageSize(null != pageSize? pageSize : 10);
             List<DataSource> queryList = dataSourceInfoService.queryDataSourceInfoPage(dataSourceVo);
             return Message.ok().data("query_list", queryList);
-        }, "/data_source/info", "Fail to query page of data source[查询数据源失败]");
     }
 
-    @GET
-    @Path("/key_define/type/{type_id}")
-    public Response getKeyDefinitionsByType(@PathParam("type_id") Long dataSourceTypeId){
-        return RestfulApiHelper.doAndResponse(() -> {
+    @RequestMapping(value = "/key_define/type/{type_id}",method = RequestMethod.GET)
+    public Message getKeyDefinitionsByType(@PathVariable("type_id") Long dataSourceTypeId){
             List<DataSourceParamKeyDefinition> keyDefinitions = dataSourceRelateService.getKeyDefinitionsByType(dataSourceTypeId);
             return Message.ok().data("key_define", keyDefinitions);
-        }, "/data_source/key_define/type/" + dataSourceTypeId,
-                "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
     }
 
-    @GET
-    @Path("/key_define/type/{type_id}/{scope}")
-    public Response getKeyDefinitionsByTypeAndScope(@PathParam("type_id") Long dataSourceTypeId,
-                                                    @PathParam("scope") String scopeValue){
-        return RestfulApiHelper.doAndResponse(() -> {
+    @RequestMapping(value = "/key_define/type/{type_id}/{scope}",method = RequestMethod.GET)
+    public Message getKeyDefinitionsByTypeAndScope(@PathVariable("type_id") Long dataSourceTypeId,
+                                                    @PathVariable("scope") String scopeValue){
             DataSourceParamKeyDefinition.Scope scope = DataSourceParamKeyDefinition.Scope.valueOf(scopeValue.toUpperCase());
             List<DataSourceParamKeyDefinition> keyDefinitions = dataSourceRelateService
                     .getKeyDefinitionsByType(dataSourceTypeId, scope);
             return Message.ok().data("key_define", keyDefinitions);
-        }, "/data_source/key_define/type/" + dataSourceTypeId + "/" + scopeValue,
-                "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
     }
 
-    @GET
-    @Path("/type/all")
-    public Response getAllDataSourceTypes(){
-        return RestfulApiHelper.doAndResponse(() -> {
+    @RequestMapping(value = "/type/all",method = RequestMethod.GET)
+    public Message getAllDataSourceTypes(){
             List<DataSourceType> dataSourceTypes = dataSourceRelateService.getAllDataSourceTypes();
             return Message.ok().data("type_list", dataSourceTypes);
-        }, "/data_source/type/all", "Fail to get all types of data source[获取数据源类型列表失败]");
     }
 
     /**
      * Inner method to insert data source
      * @param dataSource data source entity
-     * @throws ParameterValidateException
+     * @throws ErrorException
      */
     private void insertDataSourceConfig(DataSource dataSource) throws ErrorException {
         if(null != dataSource.getDataSourceEnvId()){

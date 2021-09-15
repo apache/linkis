@@ -17,6 +17,7 @@
 package com.webank.wedatasphere.linkis.manager.label.entity.engine;
 
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
+import com.webank.wedatasphere.linkis.manager.label.conf.LabelCommonConfig;
 import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant;
 import com.webank.wedatasphere.linkis.manager.label.entity.EngineNodeLabel;
 import com.webank.wedatasphere.linkis.manager.label.entity.GenericLabel;
@@ -68,5 +69,13 @@ public class EngineInstanceLabel extends GenericLabel implements NodeInstanceLab
 
     public ServiceInstance getServiceInstance() {
         return ServiceInstance.apply(getServiceName(), getInstance());
+    }
+
+    @Override
+    protected void setStringValue(String stringValue){
+        String instance = stringValue.replace(LabelCommonConfig.ENGINE_CONN_SPRING_NAME.getValue() + "-", "");
+        String serviceName = LabelCommonConfig.ENGINE_CONN_SPRING_NAME.getValue();
+        setInstance(instance);
+        setServiceName(serviceName);
     }
 }

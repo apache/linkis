@@ -36,6 +36,14 @@ fi
 
 export SERVER_CLASS=com.webank.wedatasphere.linkis.gateway.springcloud.LinkisGatewayApplication
 
+
+#SPRING_ARGS
+if [ "$EUREKA_PREFER_IP" == "true" ]; then
+  SPRING_ARGS="$SPRING_ARGS --eureka.instance.prefer-ip-address=true "
+  SPRING_ARGS="$SPRING_ARGS --eureka.instance.instance-id=\${spring.cloud.client.ip-address}:\${spring.application.name}:\${server.port} "
+fi
+
+
 ## conf dir
 export SERVER_CONF_PATH=$LINKIS_CONF_DIR
 

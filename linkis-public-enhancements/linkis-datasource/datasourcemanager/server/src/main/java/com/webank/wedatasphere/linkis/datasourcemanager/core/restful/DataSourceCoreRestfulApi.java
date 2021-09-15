@@ -14,16 +14,15 @@
 package com.webank.wedatasphere.linkis.datasourcemanager.core.restful;
 
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource;
+import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceType;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.FormDataTransformerFactory;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.MultiPartFormDataTransformer;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.service.DataSourceInfoService;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.service.DataSourceRelateService;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceVo;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidateException;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidator;
+import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceVo;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.apache.commons.lang.StringUtils;
@@ -31,7 +30,7 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -40,11 +39,10 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.*;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
@@ -86,7 +84,7 @@ public class DataSourceCoreRestfulApi {
         return Message.ok().data("insert_id", dataSource.getId());
     }
 
-    @RequestMapping(value = "/info/form",headers = MULTIPART_FORM_DATA,method = RequestMethod.POST)
+    @RequestMapping(value = "/info/form",consumes = MediaType.MULTIPART_FORM_DATA_VALUE,method = RequestMethod.POST)
     public Message insertFormConfig(FormDataMultiPart multiPartForm, HttpServletRequest request) throws ErrorException {
             if(null != multiPartForm) {
                 String userName = SecurityFilter.getLoginUsername(request);
@@ -151,7 +149,7 @@ public class DataSourceCoreRestfulApi {
             return Message.ok().data("update_id", dataSourceId);
     }
 
-    @RequestMapping(value = "/info/{data_source_id}/form",method = RequestMethod.PUT,headers = MediaType.MULTIPART_FORM_DATA)
+    @RequestMapping(value = "/info/{data_source_id}/form",method = RequestMethod.PUT,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Message updateDataSourceInForm(FormDataMultiPart multiPartForm,
                                            @PathVariable("data_source_id") Long dataSourceId,
                                            HttpServletRequest req) throws ErrorException {

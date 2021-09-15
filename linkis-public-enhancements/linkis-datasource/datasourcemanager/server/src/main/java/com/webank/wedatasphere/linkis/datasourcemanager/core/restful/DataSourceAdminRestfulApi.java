@@ -26,6 +26,7 @@ import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -34,7 +35,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
-import javax.ws.rs.core.MediaType;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -144,7 +144,7 @@ public class DataSourceAdminRestfulApi {
         return Message.ok().data("update_id", envId);
     }
 
-    @RequestMapping(value = "/env/{env_id}/form",method = RequestMethod.PUT,headers = MediaType.MULTIPART_FORM_DATA)
+    @RequestMapping(value = "/env/{env_id}/form",method = RequestMethod.PUT,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public  Message updateFormEnv(FormDataMultiPart multiPartForm,
                                    @PathVariable("env_id")Long envId,
                                     HttpServletRequest request) throws ErrorException {

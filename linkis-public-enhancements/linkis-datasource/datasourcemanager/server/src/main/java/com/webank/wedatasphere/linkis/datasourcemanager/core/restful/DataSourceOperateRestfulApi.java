@@ -29,7 +29,9 @@ import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -37,18 +39,13 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Path("/data_source/op/")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-@Component
+@RestController
+@RequestMapping("/data_source/op")
 public class DataSourceOperateRestfulApi {
 
     @Autowired
@@ -73,10 +70,9 @@ public class DataSourceOperateRestfulApi {
         this.formDataTransformer = FormDataTransformerFactory.buildCustom();
     }
 
-    @POST
-    @Path("/connect/json")
+    @PostMapping(value = "/connect/json")
     public Response connect(DataSource dataSource,
-                            @Context HttpServletRequest request){
+                            HttpServletRequest request){
         return RestfulApiHelper.doAndResponse(() -> {
             String operator = SecurityFilter.getLoginUsername(request);
             //Bean validation
@@ -89,10 +85,9 @@ public class DataSourceOperateRestfulApi {
         }, "/data_source/op/connect/json","");
     }
 
-    @POST
-    @Path("/connect/form")
+    @PostMapping(value = "/connect/form")
     public Response connect(FormDataMultiPart multiPartForm,
-                            @Context HttpServletRequest request){
+                             HttpServletRequest request){
         return RestfulApiHelper.doAndResponse(() -> {
             String operator = SecurityFilter.getLoginUsername(request);
             DataSource dataSource = formDataTransformer.transformToObject(multiPartForm, DataSource.class, beanValidator);

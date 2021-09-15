@@ -35,6 +35,8 @@ import org.eclipse.jetty.server.session.SessionHandler
 import org.eclipse.jetty.servlet.{DefaultServlet, FilterHolder, ServletContextHandler, ServletHolder}
 import org.eclipse.jetty.webapp.WebAppContext
 import org.glassfish.jersey.servlet.ServletContainer
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+import org.springframework.web.servlet.DispatcherServlet
 
 import scala.collection.mutable
 
@@ -77,6 +79,28 @@ private[linkis] object BDPJettyServerHelper extends Logging {
     webApp.addFilter(filterHolder, restfulPath, EnumSet.allOf(classOf[DispatcherType]))
   }
 
+  def setupSpringRestApiContextHandler(webApp: ServletContextHandler) {
+    val context = new AnnotationConfigWebApplicationContext
+    //val CONFIG_LOCATION = "com.webank.wedatasphere.linkis.manager.am"
+    val CONFIG_LOCATION = ""
+    context.setConfigLocation(CONFIG_LOCATION);
+    val serlvet = new DispatcherServlet(context)
+    val servletHolder = new ServletHolder(serlvet)
+
+    servletHolder.setName("springrestful")
+    servletHolder.setForcedPath("springrestful")
+
+    val p = BDP_SERVER_SPRING_RESTFUL_URI.getValue
+    val restfulPath = if(p.endsWith("/*")) p
+    else if(p.endsWith("/")) p + "*"
+    else p + "/*"
+
+    webApp.addServlet(servletHolder, restfulPath)
+    val filterHolder = new FilterHolder(getSecurityFilter())
+    webApp.addFilter(filterHolder, restfulPath, EnumSet.allOf(classOf[DispatcherType]))
+    webApp.setSessionHandler(new SessionHandler)
+
+  }
   def setupControllerServer(webApp: ServletContextHandler): ControllerServer = {
     if(controllerServer != null) return controllerServer
     synchronized {

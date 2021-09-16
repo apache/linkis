@@ -44,7 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
 @RestController
 @RequestMapping(value = "/data_source",produces = {"application/json"})

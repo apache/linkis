@@ -62,7 +62,7 @@ public class LinkisJobLogPresenter extends QueryBasedPresenter {
             Integer newLogIdx = 0;
             int retryCnt = 0;
             final int MAX_RETRY = 30; // continues fails for 300s, then exit thread
-            while (!(incLogModel.isJobCompleted() && oldLogIdx == newLogIdx)) {
+            while (!(incLogModel.isJobCompleted() && oldLogIdx.equals(newLogIdx))) {
                 try {
                     DWSResult jobInfoResult = clientDriver.queryJobInfo(incLogModel.getUser(), incLogModel.getTaskID());
                     incLogModel = updateModelByDwsResult(incLogModel, jobInfoResult);
@@ -82,7 +82,7 @@ public class LinkisJobLogPresenter extends QueryBasedPresenter {
                 }
                 retryCnt = 0;//reset counter
                 newLogIdx = incLogModel.getFromLine();
-                if (oldLogIdx == newLogIdx) {
+                if (oldLogIdx.equals(newLogIdx)) {
                     String msg = MessageFormat.format("Job is still running, status={0}, progress={1}",
                             incLogModel.getJobStatus(),
                             String.valueOf(incLogModel.getJobProgress() * 100) + "%");

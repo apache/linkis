@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 WeBank
+ *
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,10 +39,10 @@ export function getClass(el) {
 
 /**
  * 判断dom节点是否有某样式
- * 
+ *
  * @param {Element} el
  * @param {String} name
- * @return {boolean} 
+ * @return {boolean}
  */
 export function hasClass(el, name) {
   if (!el) return;
@@ -117,7 +117,7 @@ export function removeClass(el, cls) {
  */
 export function contains(a, b) {
   let adown = a.nodeType === 9 ? a.documentElement : a;
-        
+
   let bup = b && b.parentNode;
   return a === bup || !!(bup && bup.nodeType === 1 && adown.contains(bup));
 }

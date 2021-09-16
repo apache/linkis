@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 WeBank
+ *
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ import util from '../util';
 class Fesx {
   /**
      * 构造器
-     * @param {*} name 
-     * @param {Object} data 
+     * @param {*} name
+     * @param {Object} data
      */
   constructor(name, data) {
     Object.defineProperty(this, 'name', {
@@ -59,7 +59,7 @@ class Fesx {
   }
   /**
      * 根据prop拿到对应的状态
-     * @param {*} prop 
+     * @param {*} prop
      * @return {*}
      */
   get(prop) {
@@ -70,8 +70,8 @@ class Fesx {
   }
   /**
      * 根据prop拿到对应的状态
-     * @param {*} prop 
-     * @param {*} value 
+     * @param {*} prop
+     * @param {*} value
      * @return {*}
      */
   set(prop, value) {

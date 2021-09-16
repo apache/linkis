@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 WeBank
+ *
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 import WeTable from './resultTable/table.vue';
 import historyTable from './historyTable/historyTable.vue';
 
-export default { 
+export default {
   WeTable,
   historyTable,
 };

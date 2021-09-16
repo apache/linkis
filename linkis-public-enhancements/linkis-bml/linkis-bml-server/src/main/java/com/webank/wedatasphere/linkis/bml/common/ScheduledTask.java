@@ -1,6 +1,6 @@
 package com.webank.wedatasphere.linkis.bml.common;
 /*
- * Copyright 2019 WeBank
+ *
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.

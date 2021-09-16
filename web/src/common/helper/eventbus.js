@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 WeBank
+ *
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,9 +27,9 @@ class Eventbus {
   }
 
   /**
-     * 
-     * @param {*} arr 
-     * @param {*} x 
+     *
+     * @param {*} arr
+     * @param {*} x
      * @return {Object}
      */
   findIndex(arr, x) {
@@ -38,8 +38,8 @@ class Eventbus {
 
   /**
      * 注册事件
-     * @param {*} name 
-     * @param {*} fn 
+     * @param {*} name
+     * @param {*} fn
      * @return {undefined}
      */
   on(name, fn) {
@@ -52,8 +52,8 @@ class Eventbus {
 
   /**
     * 删除事件
-    * @param {*} name 
-    * @param {*} fn 
+    * @param {*} name
+    * @param {*} fn
     * @return {undefined}
     */
   off(name, fn) {
@@ -65,7 +65,7 @@ class Eventbus {
 
   /**
      * 清空指定name的所有事件
-     * @param {*} name 
+     * @param {*} name
      * @return {Object}
      */
   clear(name) {
@@ -79,9 +79,9 @@ class Eventbus {
 
   /**
      * 触发事件
-     * @param {*} name 
+     * @param {*} name
      * @param {*} payload  参数
-     * @param {*} cb      回调函数 
+     * @param {*} cb      回调函数
      * @return {undefined}
      */
   emit(name, payload, cb) {

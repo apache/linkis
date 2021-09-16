@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 WeBank
+ *
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -182,7 +182,7 @@ const success = function(response) {
         console.log(response.data, '潜在性能问题大数据量', len)
       }
     }
-    
+
     return result || {};
   }
 };
@@ -250,7 +250,7 @@ const param = function(url, data, option) {
       option.data = data;
     }
   }
-  // cacheOptions接口数据缓存 {time} time为0则请求之后缓存在内存里的数据不清理 
+  // cacheOptions接口数据缓存 {time} time为0则请求之后缓存在内存里的数据不清理
   if (option.cacheOptions) {
     option.adapter = cache(option.cacheOptions)
   }

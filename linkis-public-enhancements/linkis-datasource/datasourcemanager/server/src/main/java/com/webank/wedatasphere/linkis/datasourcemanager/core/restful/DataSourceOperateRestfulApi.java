@@ -13,6 +13,7 @@
 
 package com.webank.wedatasphere.linkis.datasourcemanager.core.restful;
 
+import com.webank.wedatasphere.linkis.common.exception.ErrorException;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceType;
@@ -29,7 +30,9 @@ import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -37,18 +40,12 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Path("/data_source/op/")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-@Component
+@RestController
+@RequestMapping(value = "/data_source/op",produces = {"application/json"})
 public class DataSourceOperateRestfulApi {
 
     @Autowired
@@ -73,32 +70,26 @@ public class DataSourceOperateRestfulApi {
         this.formDataTransformer = FormDataTransformerFactory.buildCustom();
     }
 
-    @POST
-    @Path("/connect/json")
-    public Response connect(DataSource dataSource,
-                            @Context HttpServletRequest request){
-        return RestfulApiHelper.doAndResponse(() -> {
-            String operator = SecurityFilter.getLoginUsername(request);
-            //Bean validation
-            Set<ConstraintViolation<DataSource>> result = beanValidator.validate(dataSource, Default.class);
-            if(result.size() > 0){
-                throw new ConstraintViolationException(result);
-            }
-            doConnect(operator, dataSource);
-            return Message.ok().data("ok", true);
-        }, "/data_source/op/connect/json","");
+    @RequestMapping(value = "/connect/json",method = RequestMethod.POST)
+    public Message connect(DataSource dataSource,
+                            HttpServletRequest request) throws ParameterValidateException {
+        String operator = SecurityFilter.getLoginUsername(request);
+        //Bean validation
+        Set<ConstraintViolation<DataSource>> result = beanValidator.validate(dataSource, Default.class);
+        if(result.size() > 0){
+            throw new ConstraintViolationException(result);
+        }
+        doConnect(operator, dataSource);
+        return Message.ok().data("ok", true);
     }
 
-    @POST
-    @Path("/connect/form")
-    public Response connect(FormDataMultiPart multiPartForm,
-                            @Context HttpServletRequest request){
-        return RestfulApiHelper.doAndResponse(() -> {
-            String operator = SecurityFilter.getLoginUsername(request);
-            DataSource dataSource = formDataTransformer.transformToObject(multiPartForm, DataSource.class, beanValidator);
-            doConnect(operator, dataSource);
-            return Message.ok().data("ok", true);
-        }, "/data_source/op/connect/form","");
+    @RequestMapping(value = "/connect/form",method = RequestMethod.POST)
+    public Message connect(FormDataMultiPart multiPartForm,
+                             HttpServletRequest request) throws ErrorException {
+        String operator = SecurityFilter.getLoginUsername(request);
+        DataSource dataSource = formDataTransformer.transformToObject(multiPartForm, DataSource.class, beanValidator);
+        doConnect(operator, dataSource);
+        return Message.ok().data("ok", true);
     }
 
     /**

@@ -34,19 +34,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import java.util.*;
 
-
-@Path("/microservice")
-@Component
+@RestController
+@RequestMapping(path = "/microservice")
 public class InstanceRestful {
 
     private final static Log logger = LogFactory.getLog(InstanceRestful.class);
@@ -56,21 +52,19 @@ public class InstanceRestful {
     @Autowired
     private DefaultInsLabelService insLabelService;
 
-    @GET
-    @Path("/allInstance")
-    public Response listAllInstanceWithLabel(@Context HttpServletRequest req){
+    @RequestMapping(path = "/allInstance",method = RequestMethod.GET)
+    public Message listAllInstanceWithLabel( HttpServletRequest req){
         String username = SecurityFilter.getLoginUsername(req);
         logger.info("start to get all instance informations.....");
         List<InstanceInfo> instances = insLabelService.listAllInstanceWithLabel();
         insLabelService.markInstanceLabel(instances);
         List<InstanceInfoVo> instanceVos = EntityParser.parseToInstanceVo(instances);
         logger.info("Done, all instance:" + instances);
-        return Message.messageToResponse(Message.ok().data("instances",instanceVos));
+        return Message.ok().data("instances",instanceVos);
     }
 
-    @PUT
-    @Path("/instanceLabel")
-    public Response upDateInstanceLabel(@Context HttpServletRequest req, JsonNode jsonNode) throws Exception {
+    @RequestMapping(path = "/instanceLabel",method = RequestMethod.PUT)
+    public Message upDateInstanceLabel( HttpServletRequest req, JsonNode jsonNode) throws Exception {
         String username = SecurityFilter.getLoginUsername(req);
         String[] adminArray = InstanceConfigration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
         if(adminArray != null && !Arrays.asList(adminArray).contains(username)){
@@ -79,10 +73,10 @@ public class InstanceRestful {
         String instanceName = jsonNode.get("instance").asText();
         String instanceType = jsonNode.get("applicationName").asText();
         if(StringUtils.isEmpty(instanceName)){
-            return Message.messageToResponse(Message.error("instance cannot be empty(实例名不能为空"));
+            return Message.error("instance cannot be empty(实例名不能为空");
         }
         if(StringUtils.isEmpty(instanceType)){
-            return Message.messageToResponse(Message.error("instance cannot be empty(实例类型不能为空"));
+            return Message.error("instance cannot be empty(实例类型不能为空");
         }
         JsonNode labelsNode = jsonNode.get("labels");
         Iterator<JsonNode> labelKeyIterator =  labelsNode.iterator();
@@ -111,21 +105,19 @@ public class InstanceRestful {
         InstanceInfo instanceInfo = insLabelService.getInstanceInfoByServiceInstance(instance);
         instanceInfo.setUpdateTime(new Date());
         insLabelService.updateInstance(instanceInfo);
-        return Message.messageToResponse(Message.ok("success").data("labels",labels));
+        return Message.ok("success").data("labels",labels);
     }
 
-    @GET
-    @Path("/modifiableLabelKey")
-    public Response listAllModifiableLabelKey(@Context HttpServletRequest req){
+    @RequestMapping(path = "/modifiableLabelKey",method = RequestMethod.GET)
+    public Message listAllModifiableLabelKey( HttpServletRequest req){
         Set<String> keyList = LabelUtils.listAllUserModifiableLabel();
-        return Message.messageToResponse(Message.ok().data("keyList",keyList));
+        return Message.ok().data("keyList",keyList);
     }
 
-    @GET
-    @Path("/eurekaURL")
-    public Response getEurekaURL(@Context HttpServletRequest request) throws Exception {
+    @RequestMapping(path = "/eurekaURL",method = RequestMethod.GET)
+    public Message getEurekaURL( HttpServletRequest request) throws Exception {
         String eurekaURL = insLabelService.getEurekaURL();
-        return Message.messageToResponse(Message.ok().data("url", eurekaURL));
+        return Message.ok().data("url", eurekaURL);
     }
 
 }

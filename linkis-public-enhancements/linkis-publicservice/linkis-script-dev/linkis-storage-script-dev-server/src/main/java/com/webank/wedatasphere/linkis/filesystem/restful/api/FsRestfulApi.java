@@ -45,21 +45,15 @@ import org.codehaus.jackson.JsonNode;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -74,10 +68,8 @@ import static com.webank.wedatasphere.linkis.filesystem.constant.WorkSpaceConsta
  * johnnwang
  * 2018/10/25
  */
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes({MediaType.APPLICATION_JSON, MediaType.MULTIPART_FORM_DATA})
-@Component
-@Path("filesystem")
+@RestController
+@RequestMapping(path = "/filesystem")
 public class FsRestfulApi {
 
     @Autowired
@@ -85,9 +77,8 @@ public class FsRestfulApi {
 
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    @GET
-    @Path("/getUserRootPath")
-    public Response getUserRootPath(@Context HttpServletRequest req, @QueryParam("pathType") String pathType) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/getUserRootPath",method = RequestMethod.GET)
+    public Message getUserRootPath(HttpServletRequest req, @RequestParam(value="pathType",required=false) String pathType) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         String hdfsUserRootPathPrefix = WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue());
         String hdfsUserRootPathSuffix = HDFS_USER_ROOT_PATH_SUFFIX.getValue();
@@ -106,12 +97,11 @@ public class FsRestfulApi {
         if (!fileSystem.exists(fsPath)) {
             throw WorkspaceExceptionManager.createException(80003);
         }
-        return Message.messageToResponse(Message.ok().data(String.format("user%sRootPath", returnType), path));
+        return Message.ok().data(String.format("user%sRootPath", returnType), path);
     }
 
-    @POST
-    @Path("/createNewDir")
-    public Response createNewDir(@Context HttpServletRequest req, JsonNode json) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/createNewDir",method = RequestMethod.POST)
+    public Message createNewDir(HttpServletRequest req, JsonNode json) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         String path = json.get("path").getTextValue();
         if (StringUtils.isEmpty(path)) {
@@ -124,12 +114,11 @@ public class FsRestfulApi {
             throw WorkspaceExceptionManager.createException(80005);
         }
         fileSystem.mkdirs(fsPath);
-        return Message.messageToResponse(Message.ok());
+        return Message.ok();
     }
 
-    @POST
-    @Path("/createNewFile")
-    public Response createNewFile(@Context HttpServletRequest req, JsonNode json) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/createNewFile",method = RequestMethod.POST)
+    public Message createNewFile(HttpServletRequest req, JsonNode json) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         String path = json.get("path").getTextValue();
         if (StringUtils.isEmpty(path)) {
@@ -142,12 +131,11 @@ public class FsRestfulApi {
             throw WorkspaceExceptionManager.createException(80006);
         }
         fileSystem.createNewFile(fsPath);
-        return Message.messageToResponse(Message.ok());
+        return Message.ok();
     }
 
-    @POST
-    @Path("/rename")
-    public Response rename(@Context HttpServletRequest req, JsonNode json) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/rename",method = RequestMethod.POST)
+    public Message rename(HttpServletRequest req, JsonNode json) throws IOException, WorkSpaceException {
         String oldDest = json.get("oldDest").getTextValue();
         String newDest = json.get("newDest").getTextValue();
         String userName = SecurityFilter.getLoginUsername(req);
@@ -161,7 +149,7 @@ public class FsRestfulApi {
         }
         if (StringUtils.isEmpty(newDest)) {
             //No change in file name(文件名字无变化)
-            return Message.messageToResponse(Message.ok());
+            return Message.ok();
         }
         WorkspaceUtil.fileAndDirNameSpecialCharCheck(newDest);
         FsPath fsPathOld = new FsPath(oldDest);
@@ -171,13 +159,12 @@ public class FsRestfulApi {
             throw WorkspaceExceptionManager.createException(80007);
         }
         fileSystem.renameTo(fsPathOld, fsPathNew);
-        return Message.messageToResponse(Message.ok());
+        return Message.ok();
     }
 
-    @POST
-    @Path("/upload")
-    public Response upload(@Context HttpServletRequest req,
-                           @FormDataParam("path") String path,
+    @RequestMapping(path = "/upload",method = RequestMethod.POST)
+    public Message upload(HttpServletRequest req,
+                           @RequestParam("path") String path,
                            FormDataMultiPart form) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
@@ -197,12 +184,11 @@ public class FsRestfulApi {
                 IOUtils.copy(is, outputStream);
             }
         }
-        return Message.messageToResponse(Message.ok());
+        return Message.ok();
     }
 
-    @POST
-    @Path("/deleteDirOrFile")
-    public Response deleteDirOrFile(@Context HttpServletRequest req, JsonNode json) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/deleteDirOrFile",method = RequestMethod.POST)
+    public Message deleteDirOrFile(HttpServletRequest req, JsonNode json) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         String path = json.get("path").getTextValue();
         if (StringUtils.isEmpty(path)) {
@@ -217,13 +203,12 @@ public class FsRestfulApi {
             throw WorkspaceExceptionManager.createException(80009);
         }
         deleteAllFiles(fileSystem, fsPath);
-        return Message.messageToResponse(Message.ok());
+        return Message.ok();
     }
 
-    @GET
-    @Path("/getDirFileTrees")
-    public Response getDirFileTrees(@Context HttpServletRequest req,
-                                    @QueryParam("path") String path) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/getDirFileTrees",method = RequestMethod.GET)
+    public Message getDirFileTrees(HttpServletRequest req,
+                                    @RequestParam(value="path",required=false) String path) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
@@ -231,7 +216,7 @@ public class FsRestfulApi {
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         if (!fileSystem.exists(fsPath)) {
-            return Message.messageToResponse(Message.ok().data("dirFileTrees", null));
+            return Message.ok().data("dirFileTrees", null);
         }
         DirFileTree dirFileTree = new DirFileTree();
         dirFileTree.setPath(fsPath.getSchemaPath());
@@ -257,13 +242,12 @@ public class FsRestfulApi {
                 dirFileTree.getChildren().add(dirFileTreeChildren);
             }
         }
-        return Message.messageToResponse(Message.ok().data("dirFileTrees", dirFileTree));
+        return Message.ok().data("dirFileTrees", dirFileTree);
     }
 
-    @POST
-    @Path("/download")
-    public void download(@Context HttpServletRequest req,
-                         @Context HttpServletResponse response,
+    @RequestMapping(path = "/download",method = RequestMethod.POST)
+    public void download(HttpServletRequest req,
+                         HttpServletResponse response,
                          @RequestBody Map<String, String> json) throws IOException, WorkSpaceException {
         InputStream inputStream = null;
         ServletOutputStream outputStream = null;
@@ -313,26 +297,24 @@ public class FsRestfulApi {
         }
     }
 
-    @GET
-    @Path("/isExist")
-    public Response isExist(@Context HttpServletRequest req,
-                            @QueryParam("path") String path) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/isExist",method = RequestMethod.GET)
+    public Message isExist(HttpServletRequest req,
+                            @RequestParam(value="path",required=false) String path) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         FsPath fsPath = new FsPath(path);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
-        return Message.messageToResponse(Message.ok().data("isExist", fileSystem.exists(fsPath)));
+        return Message.ok().data("isExist", fileSystem.exists(fsPath));
     }
 
-    @GET
-    @Path("/openFile")
-    public Response openFile(@Context HttpServletRequest req,
-                             @QueryParam("path") String path,
-                             @DefaultValue("1") @QueryParam("page") Integer page,
-                             @DefaultValue("5000") @QueryParam("pageSize") Integer pageSize,
-                             @DefaultValue("utf-8") @QueryParam("charset") String charset) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/openFile",method = RequestMethod.GET)
+    public Message openFile(HttpServletRequest req,
+                             @RequestParam(value="path",required=false) String path,
+                             @RequestParam(value="page",defaultValue = "1") Integer page,
+                             @RequestParam(value="pageSize",defaultValue="5000") Integer pageSize,
+                             @RequestParam(value="charset",defaultValue="utf-8") String charset) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         Message message = Message.ok();
         if (StringUtils.isEmpty(path)) {
@@ -355,7 +337,7 @@ public class FsRestfulApi {
             message.data("metadata", result.getFirst()).data("fileContent", result.getSecond());
             message.data("type", fileSource.getFileSplits()[0].type());
             message.data("totalLine", fileSource.getTotalLine());
-            return Message.messageToResponse(message.data("page", page).data("totalPage", 0));
+            return message.data("page", page).data("totalPage", 0);
         } finally {
             IOUtils.closeQuietly(fileSource);
         }
@@ -368,9 +350,8 @@ public class FsRestfulApi {
      * @return
      * @throws IOException
      */
-    @POST
-    @Path("/saveScript")
-    public Response saveScript(@Context HttpServletRequest req, @RequestBody Map<String, Object> json) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/saveScript",method = RequestMethod.POST)
+    public Message saveScript(HttpServletRequest req, @RequestBody Map<String, Object> json) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         String path = (String) json.get("path");
         if (StringUtils.isEmpty(path)) {
@@ -403,22 +384,21 @@ public class FsRestfulApi {
                 }
                 scriptFsWriter.addRecord(new ScriptRecord(split[i]));
             }
-            return Message.messageToResponse(Message.ok());
+            return Message.ok();
         }
     }
 
-    @GET
-    @Path("resultsetToExcel")
+    @RequestMapping(path = "resultsetToExcel",method = RequestMethod.GET)
     public void resultsetToExcel(
-            @Context HttpServletRequest req,
-            @Context HttpServletResponse response,
-            @QueryParam("path") String path,
-            @DefaultValue("utf-8") @QueryParam("charset") String charset,
-            @DefaultValue("csv") @QueryParam("outputFileType") String outputFileType,
-            @DefaultValue(",") @QueryParam("csvSeperator") String csvSeperator,
-            @DefaultValue("downloadResultset") @QueryParam("outputFileName") String outputFileName,
-            @DefaultValue("result") @QueryParam("sheetName") String sheetName,
-            @DefaultValue("NULL") @QueryParam("nullValue") String nullValue) throws WorkSpaceException, IOException {
+            HttpServletRequest req,
+            HttpServletResponse response,
+            @RequestParam(value="path",required=false) String path,
+            @RequestParam(value="charset",defaultValue ="utf-8") String charset,
+            @RequestParam(value="outputFileType",defaultValue ="csv") String outputFileType,
+            @RequestParam(value="csvSeperator",defaultValue =",") String csvSeperator,
+            @RequestParam(value="outputFileName",defaultValue ="downloadResultset") String outputFileName,
+            @RequestParam(value="sheetName",defaultValue ="result") String sheetName,
+            @RequestParam(value="nullValue",defaultValue ="NULL") String nullValue) throws WorkSpaceException, IOException {
         ServletOutputStream outputStream = null;
         FsWriter fsWriter = null;
         PrintWriter writer = null;
@@ -485,14 +465,13 @@ public class FsRestfulApi {
         }
     }
 
-    @GET
-    @Path("resultsetsToExcel")
+    @RequestMapping(path = "resultsetsToExcel",method = RequestMethod.GET)
     public void resultsetsToExcel(
-            @Context HttpServletRequest req,
-            @Context HttpServletResponse response,
-            @QueryParam("path") String path,
-            @DefaultValue("downloadResultset") @QueryParam("outputFileName") String outputFileName,
-            @DefaultValue("NULL") @QueryParam("nullValue") String nullValue) throws WorkSpaceException, IOException {
+            HttpServletRequest req,
+            HttpServletResponse response,
+            @RequestParam(value="path",required=false) String path,
+            @RequestParam(value="outputFileName",defaultValue = "downloadResultset") String outputFileName,
+            @RequestParam(value="nullValue",defaultValue="NULL") String nullValue) throws WorkSpaceException, IOException {
         ServletOutputStream outputStream = null;
         FsWriter fsWriter = null;
         PrintWriter writer = null;
@@ -547,15 +526,14 @@ public class FsRestfulApi {
         }
     }
 
-    @GET
-    @Path("formate")
-    public Response formate(@Context HttpServletRequest req,
-                            @QueryParam("path") String path,
-                            @DefaultValue("utf-8") @QueryParam("encoding") String encoding,
-                            @DefaultValue(",") @QueryParam("fieldDelimiter") String fieldDelimiter,
-                            @DefaultValue("false") @QueryParam("hasHeader") Boolean hasHeader,
-                            @DefaultValue("\"") @QueryParam("quote") String quote,
-                            @DefaultValue("false") @QueryParam("escapeQuotes") Boolean escapeQuotes) throws Exception {
+    @RequestMapping(path = "formate",method = RequestMethod.GET)
+    public Message formate(HttpServletRequest req,
+                            @RequestParam(value="path",required=false) String path,
+                            @RequestParam(value="encoding",defaultValue="utf-8") String encoding,
+                            @RequestParam(value="fieldDelimiter",defaultValue=",") String fieldDelimiter,
+                            @RequestParam(value="hasHeader",defaultValue="false") Boolean hasHeader,
+                            @RequestParam(value="quote",defaultValue="\"") String quote,
+                            @RequestParam(value="escapeQuotes",defaultValue="false") Boolean escapeQuotes) throws Exception {
         String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
@@ -602,13 +580,12 @@ public class FsRestfulApi {
                 res.put("columnName", column[0]);
                 res.put("columnType", column[1]);
             }
-            return Message.messageToResponse(Message.ok().data("formate", res));
+            return Message.ok().data("formate", res);
         }
     }
 
-    @GET
-    @Path("/openLog")
-    public Response openLog(@Context HttpServletRequest req, @QueryParam("path") String path, @QueryParam("proxyUser") String proxyUser) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/openLog",method = RequestMethod.GET)
+    public Message openLog(HttpServletRequest req, @RequestParam(value="path",required=false) String path, @RequestParam(value="proxyUser",required=false) String proxyUser) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
@@ -627,7 +604,7 @@ public class FsRestfulApi {
             ArrayList<String[]> snd = collect.getSecond();
             LogLevel start = new LogLevel(LogLevel.Type.ALL);
             snd.stream().map(f -> f[0]).forEach(s -> WorkspaceUtil.logMatch(s, start).forEach(i -> log[i].append(s).append("\n")));
-            return Message.messageToResponse(Message.ok().data("log", Arrays.stream(log).map(StringBuilder::toString).toArray(String[]::new)));
+            return Message.ok().data("log", Arrays.stream(log).map(StringBuilder::toString).toArray(String[]::new));
         }
     }
 

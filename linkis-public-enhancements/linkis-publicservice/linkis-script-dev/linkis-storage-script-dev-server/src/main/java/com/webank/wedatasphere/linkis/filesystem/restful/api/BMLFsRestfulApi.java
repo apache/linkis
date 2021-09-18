@@ -29,38 +29,30 @@ import com.webank.wedatasphere.linkis.storage.source.FileSource$;
 import org.apache.commons.math3.util.Pair;
 import org.apache.http.Consts;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
 
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes({MediaType.APPLICATION_JSON})
-@Component
-@Path("filesystem")
+@RestController
+@RequestMapping(path = "/filesystem")
 public class BMLFsRestfulApi {
 
     @Autowired
     BMLHelper bmlHelper;
 
-    @GET
-    @Path("/openScriptFromBML")
-    public Response openScriptFromBML(@Context HttpServletRequest req,
-                                      @QueryParam("resourceId") String resourceId,
-                                      @QueryParam("version") String version,
-                                      @QueryParam("creator") String creator,
-                                      @QueryParam("projectName") String projectName,
-                                      @DefaultValue("test.sql") @QueryParam("fileName") String fileName) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/openScriptFromBML",method = RequestMethod.GET)
+    public Message openScriptFromBML(HttpServletRequest req,
+                                      @RequestParam(value="resourceId",required=false) String resourceId,
+                                      @RequestParam(value="version",required=false) String version,
+                                      @RequestParam(value="creator",required=false) String creator,
+                                      @RequestParam(value="projectName",required=false) String projectName,
+                                      @RequestParam(value="fileName",defaultValue ="test.sql" ) String fileName) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         Map<String, Object> query = bmlHelper.query(userName, resourceId, version);
         InputStream inputStream = (InputStream) query.get("stream");
@@ -71,23 +63,22 @@ public class BMLFsRestfulApi {
                 message = new Gson().fromJson(collect.getSecond().get(0)[0], Message.class);
                 if (message == null) throw WorkspaceExceptionManager.createException(80019);
             } catch (Exception e) {
-                return Message.messageToResponse(Message.ok().data("scriptContent", collect.getSecond().get(0)[0]).data("metadata", collect.getFirst()));
+                return Message.ok().data("scriptContent", collect.getSecond().get(0)[0]).data("metadata", collect.getFirst());
             }
             if (message.getStatus() != 0) {
                 throw new WorkSpaceException(80020, message.getMessage());
             }
-            return Message.messageToResponse(Message.ok().data("scriptContent", collect.getSecond().get(0)[0]).data("metadata", collect.getFirst()));
+            return Message.ok().data("scriptContent", collect.getSecond().get(0)[0]).data("metadata", collect.getFirst());
         }
     }
 
 
-    @GET
-    @Path("/product/openScriptFromBML")
-    public Response openScriptFromProductBML(@Context HttpServletRequest req,
-                                      @QueryParam("resourceId") String resourceId,
-                                      @QueryParam("version") String version,
-                                      @QueryParam("creator") String creator,
-                                      @DefaultValue("test.sql") @QueryParam("fileName") String fileName) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/product/openScriptFromBML",method = RequestMethod.GET)
+    public Message openScriptFromProductBML(HttpServletRequest req,
+                                      @RequestParam(value="resourceId",required=false) String resourceId,
+                                      @RequestParam(value="version",required=false) String version,
+                                      @RequestParam(value="creator",required=false) String creator,
+                                      @RequestParam(value="fileName",defaultValue = "test.sql") String fileName) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         if (!StringUtils.isEmpty(creator)){
             userName = creator;
@@ -103,20 +94,19 @@ public class BMLFsRestfulApi {
                     throw WorkspaceExceptionManager.createException(80019);
                 }
             } catch (Exception e) {
-                return Message.messageToResponse(Message.ok().data("scriptContent", collect.getSecond().get(0)[0]).data("metadata", collect.getFirst()));
+                return Message.ok().data("scriptContent", collect.getSecond().get(0)[0]).data("metadata", collect.getFirst());
             }
             if (message.getStatus() != 0) {
                 throw new WorkSpaceException(80020, message.getMessage());
             }
-            return Message.messageToResponse(Message.ok().data("scriptContent", collect.getSecond().get(0)[0]).data("metadata", collect.getFirst()));
+            return Message.ok().data("scriptContent", collect.getSecond().get(0)[0]).data("metadata", collect.getFirst());
         }
     }
 
 
 
-    @POST
-    @Path("/saveScriptToBML")
-    public Response saveScriptToBML(@Context HttpServletRequest req, @RequestBody Map<String, Object> json) throws IOException {
+    @RequestMapping(path = "/saveScriptToBML",method = RequestMethod.POST)
+    public Message saveScriptToBML(HttpServletRequest req, @RequestBody Map<String, Object> json) throws IOException {
         String userName = SecurityFilter.getLoginUsername(req);
         String scriptContent = (String) json.get("scriptContent");
         Map<String, Object> params = (Map<String, Object>) json.get("metadata");
@@ -147,7 +137,7 @@ public class BMLFsRestfulApi {
                 resourceId = bmlResponse.get("resourceId").toString();
                 version = bmlResponse.get("version").toString();
             }
-            return Message.messageToResponse(Message.ok().data("resourceId", resourceId).data("version", version));
+            return Message.ok().data("resourceId", resourceId).data("version", version);
         }
     }
 }

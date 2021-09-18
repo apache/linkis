@@ -20,12 +20,14 @@ import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.FormDataTr
 import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.MultiPartFormDataTransformer;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.service.DataSourceInfoService;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.service.DataSourceRelateService;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
 import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidator;
+import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -33,15 +35,13 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.*;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-@Path("/data_source")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping(value = "/data_source",produces = {"application/json"})
 public class DataSourceAdminRestfulApi {
 
     @Autowired
@@ -63,148 +63,122 @@ public class DataSourceAdminRestfulApi {
         this.formDataTransformer = FormDataTransformerFactory.buildCustom();
     }
 
-    @POST
-    @Path("/env/json")
-    public Response insertJsonEnv(DataSourceEnv dataSourceEnv, @Context HttpServletRequest req){
-        return RestfulApiHelper.doAndResponse(()->{
-            String userName = SecurityFilter.getLoginUsername(req);
-            if(!RestfulApiHelper.isAdminUser(userName)){
-                return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
-            }
-            //Bean validation
-            Set<ConstraintViolation<DataSourceEnv>> result = beanValidator.validate(dataSourceEnv, Default.class);
-            if(result.size() > 0){
-                throw new ConstraintViolationException(result);
-            }
-            dataSourceEnv.setCreateUser(userName);
-            insertDataSourceEnv(dataSourceEnv);
-            return Message.ok().data("insert_id", dataSourceEnv.getId());
-        }, "/data_source/env/json","Fail to insert data source environment[新增数据源环境失败]");
+    @RequestMapping(value = "/env/json",method = RequestMethod.POST)
+    public Message insertJsonEnv(DataSourceEnv dataSourceEnv, HttpServletRequest req) throws ErrorException {
+        String userName = SecurityFilter.getLoginUsername(req);
+        if(!RestfulApiHelper.isAdminUser(userName)){
+            return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
+        }
+        //Bean validation
+        Set<ConstraintViolation<DataSourceEnv>> result = beanValidator.validate(dataSourceEnv, Default.class);
+        if(result.size() > 0){
+            throw new ConstraintViolationException(result);
+        }
+        dataSourceEnv.setCreateUser(userName);
+        insertDataSourceEnv(dataSourceEnv);
+        return Message.ok().data("insert_id", dataSourceEnv.getId());
     }
 
-    @POST
-    @Path("/env/form")
-    public Response insertFormEnv(FormDataMultiPart multiPartForm,
-                                  @Context HttpServletRequest request){
-        return RestfulApiHelper.doAndResponse(()->{
-           String userName = SecurityFilter.getLoginUsername(request);
-            if(!RestfulApiHelper.isAdminUser(userName)){
+    @RequestMapping(value = "/env/form",method = RequestMethod.POST)
+    public Message insertFormEnv(FormDataMultiPart multiPartForm, HttpServletRequest request) throws ErrorException {
+       String userName = SecurityFilter.getLoginUsername(request);
+        if(!RestfulApiHelper.isAdminUser(userName)){
+            return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
+        }
+        DataSourceEnv dataSourceEnv = formDataTransformer.transformToObject(multiPartForm, DataSourceEnv.class, beanValidator);
+        dataSourceEnv.setCreateUser(userName);
+        insertDataSourceEnv(dataSourceEnv);
+        return Message.ok().data("insert_id", dataSourceEnv.getId());
+    }
+
+    @RequestMapping(value = "/env_list/all/type/{type_id}",method = RequestMethod.GET)
+    public Message getAllEnvListByDataSourceType(@PathVariable("type_id")Long typeId){
+        List<DataSourceEnv> envList = dataSourceInfoService.listDataSourceEnvByType(typeId);
+        return Message.ok().data("env_list", envList);
+    }
+
+    @RequestMapping (value = "/env/{env_id}",method = RequestMethod.GET)
+    public Message getEnvEntityById(@PathVariable("env_id")Long envId){
+        DataSourceEnv dataSourceEnv = dataSourceInfoService.getDataSourceEnv(envId);
+        return Message.ok().data("env", dataSourceEnv);
+    }
+
+    @RequestMapping(value = "/env/{env_id}",method = RequestMethod.DELETE)
+    public Message removeEnvEntity(@PathVariable("env_id")Long envId,
+                                    HttpServletRequest request){
+        String userName = SecurityFilter.getLoginUsername(request);
+        if(!RestfulApiHelper.isAdminUser(userName)){
+            return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
+        }
+        Long removeId = dataSourceInfoService.removeDataSourceEnv(envId);
+        if(removeId < 0){
+            return Message.error("Fail to remove data source environment[删除数据源环境信息失败], [id:" +
+                    envId + "]");
+        }
+        return Message.ok().data("remove_id", removeId);
+    }
+
+    @RequestMapping(value = "/env/{env_id}/json",method = RequestMethod.PUT)
+    public Message updateJsonEnv(DataSourceEnv dataSourceEnv,
+                                  @PathVariable("env_id")Long envId,
+                                   HttpServletRequest request) throws ErrorException {
+        String userName = SecurityFilter.getLoginUsername(request);
+        if(!RestfulApiHelper.isAdminUser(userName)){
+            return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
+        }
+        //Bean validation
+        Set<ConstraintViolation<DataSourceEnv>> result = beanValidator.validate(dataSourceEnv, Default.class);
+        if(result.size() > 0){
+            throw new ConstraintViolationException(result);
+        }
+        dataSourceEnv.setId(envId);
+        dataSourceEnv.setModifyUser(userName);
+        dataSourceEnv.setModifyTime(Calendar.getInstance().getTime());
+        DataSourceEnv storedDataSourceEnv = dataSourceInfoService.getDataSourceEnv(envId);
+        if(null == storedDataSourceEnv){
+            return Message.error("Fail to update data source environment[更新数据源环境失败], " + "[Please check the id:'"
+                    + envId + " is correct ']");
+        }
+        dataSourceEnv.setCreateUser(storedDataSourceEnv.getCreateUser());
+        updateDataSourceEnv(dataSourceEnv, storedDataSourceEnv);
+        return Message.ok().data("update_id", envId);
+    }
+
+    @RequestMapping(value = "/env/{env_id}/form",method = RequestMethod.PUT,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public  Message updateFormEnv(FormDataMultiPart multiPartForm,
+                                   @PathVariable("env_id")Long envId,
+                                    HttpServletRequest request) throws ErrorException {
+        if(null != multiPartForm) {
+            String userName = SecurityFilter.getLoginUsername(request);
+            if (!RestfulApiHelper.isAdminUser(userName)) {
                 return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
             }
             DataSourceEnv dataSourceEnv = formDataTransformer.transformToObject(multiPartForm, DataSourceEnv.class, beanValidator);
-            dataSourceEnv.setCreateUser(userName);
-            insertDataSourceEnv(dataSourceEnv);
-            return Message.ok().data("insert_id", dataSourceEnv.getId());
-        }, "/data_source/env/form","Fail to insert data source environment[新增数据源环境失败]");
-    }
-
-    @GET
-    @Path("/env_list/all/type/{type_id}")
-    public Response getAllEnvListByDataSourceType(@PathParam("type_id")Long typeId){
-        return RestfulApiHelper.doAndResponse(()->{
-            List<DataSourceEnv> envList = dataSourceInfoService.listDataSourceEnvByType(typeId);
-            return Message.ok().data("env_list", envList);
-        }, "/data_source/env_list/all/type/" + typeId,"Fail to get data source environment list[获取数据源环境清单失败]");
-    }
-
-    @GET
-    @Path("/env/{env_id}")
-    public Response getEnvEntityById(@PathParam("env_id")Long envId){
-        return RestfulApiHelper.doAndResponse(() ->{
-            DataSourceEnv dataSourceEnv = dataSourceInfoService.getDataSourceEnv(envId);
-            return Message.ok().data("env", dataSourceEnv);
-        }, "/data_source/env/" + envId,"Fail to get data source environment[获取数据源环境信息失败]");
-    }
-
-    @DELETE
-    @Path("/env/{env_id}")
-    public Response removeEnvEntity(@PathParam("env_id")Long envId,
-                                    @Context HttpServletRequest request){
-        return RestfulApiHelper.doAndResponse(() -> {
-            String userName = SecurityFilter.getLoginUsername(request);
-            if(!RestfulApiHelper.isAdminUser(userName)){
-                return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
-            }
-            Long removeId = dataSourceInfoService.removeDataSourceEnv(envId);
-            if(removeId < 0){
-                return Message.error("Fail to remove data source environment[删除数据源环境信息失败], [id:" +
-                        envId + "]");
-            }
-            return Message.ok().data("remove_id", removeId);
-        }, "/data_source/env/" + envId,"Fail to remove data source environment[删除数据源环境信息失败]");
-    }
-
-    @PUT
-    @Path("/env/{env_id}/json")
-    public Response updateJsonEnv(DataSourceEnv dataSourceEnv,
-                                  @PathParam("env_id")Long envId,
-                                  @Context HttpServletRequest request){
-        return RestfulApiHelper.doAndResponse(() -> {
-            String userName = SecurityFilter.getLoginUsername(request);
-            if(!RestfulApiHelper.isAdminUser(userName)){
-                return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
-            }
-            //Bean validation
-            Set<ConstraintViolation<DataSourceEnv>> result = beanValidator.validate(dataSourceEnv, Default.class);
-            if(result.size() > 0){
-                throw new ConstraintViolationException(result);
-            }
             dataSourceEnv.setId(envId);
             dataSourceEnv.setModifyUser(userName);
             dataSourceEnv.setModifyTime(Calendar.getInstance().getTime());
             DataSourceEnv storedDataSourceEnv = dataSourceInfoService.getDataSourceEnv(envId);
-            if(null == storedDataSourceEnv){
+            if (null == storedDataSourceEnv) {
                 return Message.error("Fail to update data source environment[更新数据源环境失败], " + "[Please check the id:'"
                         + envId + " is correct ']");
             }
             dataSourceEnv.setCreateUser(storedDataSourceEnv.getCreateUser());
             updateDataSourceEnv(dataSourceEnv, storedDataSourceEnv);
             return Message.ok().data("update_id", envId);
-        }, "/data_source/env/" + envId + "/json","Fail to update data source environment[更新数据源环境失败]");
+        }
+        return Message.error("Empty request");
     }
 
-    @PUT
-    @Path("/env/{env_id}/form")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public  Response updateFormEnv(FormDataMultiPart multiPartForm,
-                                   @PathParam("env_id")Long envId,
-                                   @Context HttpServletRequest request){
-        return RestfulApiHelper.doAndResponse(()->{
-            if(null != multiPartForm) {
-                String userName = SecurityFilter.getLoginUsername(request);
-                if (!RestfulApiHelper.isAdminUser(userName)) {
-                    return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
-                }
-                DataSourceEnv dataSourceEnv = formDataTransformer.transformToObject(multiPartForm, DataSourceEnv.class, beanValidator);
-                dataSourceEnv.setId(envId);
-                dataSourceEnv.setModifyUser(userName);
-                dataSourceEnv.setModifyTime(Calendar.getInstance().getTime());
-                DataSourceEnv storedDataSourceEnv = dataSourceInfoService.getDataSourceEnv(envId);
-                if (null == storedDataSourceEnv) {
-                    return Message.error("Fail to update data source environment[更新数据源环境失败], " + "[Please check the id:'"
-                            + envId + " is correct ']");
-                }
-                dataSourceEnv.setCreateUser(storedDataSourceEnv.getCreateUser());
-                updateDataSourceEnv(dataSourceEnv, storedDataSourceEnv);
-                return Message.ok().data("update_id", envId);
-            }
-            return Message.error("Empty request");
-        }, "/data_source/env/" + envId + "/form","Fail to update data source environment[更新数据源环境失败]");
-    }
-
-    @GET
-    @Path("/env")
-    public Response queryDataSourceEnv(@QueryParam("name")String envName,
-                                       @QueryParam("typeId")Long dataSourceTypeId,
-                                       @QueryParam("currentPage")Integer currentPage,
-                                       @QueryParam("pageSize")Integer pageSize){
-        return RestfulApiHelper.doAndResponse(() -> {
-            DataSourceEnvVo dataSourceEnvVo = new DataSourceEnvVo(envName, dataSourceTypeId);
-            dataSourceEnvVo.setCurrentPage(null != currentPage ? currentPage : 1);
-            dataSourceEnvVo.setPageSize(null != pageSize? pageSize : 10);
-            List<DataSourceEnv> queryList = dataSourceInfoService.queryDataSourceEnvPage(dataSourceEnvVo);
-            return Message.ok().data("query_list", queryList);
-        }, "/data_source/env","Fail to query page of data source environment[查询数据源环境失败]");
+    @RequestMapping(value = "/env",method = RequestMethod.GET)
+    public Message queryDataSourceEnv(@RequestParam(value = "name",required = false)String envName,
+                                       @RequestParam(value = "typeId",required = false)Long dataSourceTypeId,
+                                       @RequestParam(value = "currentPage",required = false)Integer currentPage,
+                                       @RequestParam(value = "pageSize",required = false)Integer pageSize){
+        DataSourceEnvVo dataSourceEnvVo = new DataSourceEnvVo(envName, dataSourceTypeId);
+        dataSourceEnvVo.setCurrentPage(null != currentPage ? currentPage : 1);
+        dataSourceEnvVo.setPageSize(null != pageSize? pageSize : 10);
+        List<DataSourceEnv> queryList = dataSourceInfoService.queryDataSourceEnvPage(dataSourceEnvVo);
+        return Message.ok().data("query_list", queryList);
     }
 
     /**

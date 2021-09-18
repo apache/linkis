@@ -33,23 +33,20 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Path("datasource")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-@Component
+@RestController
+@RequestMapping(path = "/datasource")
 public class MdqTableRestfulApi {
 
     private static final Logger logger = LoggerFactory.getLogger(MdqTableRestfulApi.class);
@@ -60,10 +57,9 @@ public class MdqTableRestfulApi {
     private MdqService mdqService;
     ObjectMapper mapper = new ObjectMapper();
 
-    @GET
-    @Path("getTableBaseInfo")
-    public Response getTableBaseInfo(@QueryParam("database") String database, @QueryParam("tableName") String tableName,
-                                     @Context HttpServletRequest req) {
+    @RequestMapping(path = "getTableBaseInfo",method = RequestMethod.GET)
+    public Message getTableBaseInfo(@RequestParam(value="database",required=false) String database, @RequestParam(value="tableName",required=false) String tableName,
+                                      HttpServletRequest req) {
         String userName = SecurityFilter.getLoginUsername(req);
         MdqTableBaseInfoVO tableBaseInfo;
         if (mdqService.isExistInMdq(database, tableName, userName)) {
@@ -71,13 +67,12 @@ public class MdqTableRestfulApi {
         } else {
             tableBaseInfo = mdqService.getTableBaseInfoFromHive(database, tableName, userName);
         }
-        return Message.messageToResponse(Message.ok().data("tableBaseInfo", tableBaseInfo));
+        return Message.ok().data("tableBaseInfo", tableBaseInfo);
     }
 
-    @GET
-    @Path("getTableFieldsInfo")
-    public Response getTableFieldsInfo(@QueryParam("database") String database, @QueryParam("tableName") String tableName,
-                                       @Context HttpServletRequest req) {
+    @RequestMapping(path = "getTableFieldsInfo",method = RequestMethod.GET)
+    public Message getTableFieldsInfo(@RequestParam(value="database",required=false) String database, @RequestParam(value="tableName",required=false) String tableName,
+                                        HttpServletRequest req) {
         String userName = SecurityFilter.getLoginUsername(req);
         List<MdqTableFieldsInfoVO> tableFieldsInfo;
         if (mdqService.isExistInMdq(database, tableName, userName)) {
@@ -85,16 +80,16 @@ public class MdqTableRestfulApi {
         } else {
             tableFieldsInfo = mdqService.getTableFieldsInfoFromHive(database, tableName, userName);
         }
-        return Message.messageToResponse(Message.ok().data("tableFieldsInfo", tableFieldsInfo));
+        return Message.ok().data("tableFieldsInfo", tableFieldsInfo);
     }
 
-    @GET
-    @Path("getTableStatisticInfo")
-    public Response getTableStatisticInfo(@QueryParam("database") String database, @QueryParam("tableName") String tableName,
-                                          @DefaultValue("1") @QueryParam("pageNow") int pageNow,
-                                          @DefaultValue("1000") @QueryParam("pageSize") int pageSize,
-                                          @DefaultValue("desc") @QueryParam("partitionSort") String partitionSort,
-                                          @Context HttpServletRequest req) throws IOException {
+    @RequestMapping(path = "getTableStatisticInfo",method = RequestMethod.GET)
+    public Message getTableStatisticInfo( @RequestParam(value="database",required=false) String database,
+                                          @RequestParam(value="tableName",required=false) String tableName,
+                                          @RequestParam(value="pageNow",defaultValue="1") int pageNow,
+                                          @RequestParam(value="pageSize",defaultValue="1000") int pageSize,
+                                          @RequestParam(value="partitionSort",defaultValue="desc") String partitionSort,
+                                           HttpServletRequest req) throws IOException {
         String userName = SecurityFilter.getLoginUsername(req);
         MdqTableStatisticInfoVO tableStatisticInfo = mdqService.getTableStatisticInfo(database, tableName, userName);
         int totalSize = 0;
@@ -129,39 +124,35 @@ public class MdqTableRestfulApi {
                 .data("totalSize", totalSize)
                 .data("pageNow", pageNow)
                 .data("pageSize", pageSize);
-        return Message.messageToResponse(data);
+        return data;
     }
 
-    @GET
-    @Path("getPartitionStatisticInfo")
-    public Response getPartitionStatisticInfo(@QueryParam("database") String database, @QueryParam("tableName") String tableName,
-                                              @QueryParam("partitionPath") String partitionName,
-                                              @Context HttpServletRequest req) throws IOException, MdqIllegalParamException {
+    @RequestMapping(path = "getPartitionStatisticInfo",method = RequestMethod.GET)
+    public Message getPartitionStatisticInfo(@RequestParam(value="database",required=false) String database, @RequestParam(value="tableName",required=false) String tableName,
+                                              @RequestParam(value="partitionPath",required=false) String partitionName,
+                                               HttpServletRequest req) throws IOException, MdqIllegalParamException {
         String userName = SecurityFilter.getLoginUsername(req);
         MdqTablePartitionStatisticInfoVO partition = mdqService.getPartitionStatisticInfo(database, tableName, userName, partitionName);
-        return Message.messageToResponse(Message.ok().data("partitionStatisticInfo", partition));
+        return Message.ok().data("partitionStatisticInfo", partition);
     }
 
-    @GET
-    @Path("active")
-    public Response active(@QueryParam("tableId") Long tableId, @Context HttpServletRequest req) {
+    @RequestMapping(path = "active",method = RequestMethod.GET)
+    public Message active(@RequestParam(value="tableId",required=false) Long tableId,  HttpServletRequest req) {
         mdqService.activateTable(tableId);
-        return Message.messageToResponse(Message.ok());
+        return Message.ok();
     }
 
-    @POST
-    @Path("persistTable")
-    public Response persistTable(@Context HttpServletRequest req, JsonNode json) throws IOException {
+    @RequestMapping(path = "persistTable",method = RequestMethod.POST)
+    public Message persistTable( HttpServletRequest req, JsonNode json) throws IOException {
         String userName = SecurityFilter.getLoginUsername(req);
         MdqTableBO table = mapper.readValue(json.get("table"), MdqTableBO.class);
         mdqService.persistTable(table, userName);
-        return Message.messageToResponse(Message.ok());
+        return Message.ok();
     }
 
 
-    @POST
-    @Path("displaysql")
-    public Response displaySql(@Context HttpServletRequest request, JsonNode json) {
+    @RequestMapping(path = "displaysql",method = RequestMethod.POST)
+    public Message displaySql( HttpServletRequest request, JsonNode json) {
         String userName = SecurityFilter.getLoginUsername(request);
         logger.info("display sql for user {} ", userName);
         StringBuilder sb = new StringBuilder();
@@ -178,7 +169,7 @@ public class MdqTableRestfulApi {
         } catch (Exception e) {
             logger.error("json parse to bean failed", e);
             Message message = Message.error("display ddl failed");
-            return Message.messageToResponse(message);
+            return message;
         }
         String tableName = tableBO.getTableBaseInfo().getBase().getName();
         String dbName = tableBO.getTableBaseInfo().getBase().getDatabase();
@@ -186,7 +177,7 @@ public class MdqTableRestfulApi {
         Message message = Message.ok(retStr);
         message.setMethod("/api/datasource/display");
         message.data("sql", retSql);
-        return Message.messageToResponse(message);
+        return message;
     }
 
 }

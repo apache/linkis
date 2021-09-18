@@ -17,27 +17,20 @@
 package com.webank.wedatasphere.linkis.cs.server.restful;
 
 import com.webank.wedatasphere.linkis.server.Message;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 
-@Component
-@Path("/contextservice")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping(path = "/contextservice")
 public class HelloRestfulApi {
 
-    @GET
-    @Path("hello")
-    public Response getContextID(@Context HttpServletRequest req, String id) throws InterruptedException {
-        return Message.messageToResponse(Message.ok());
+
+    @RequestMapping(path = "hello",method = RequestMethod.GET)
+    public Message getContextID(HttpServletRequest req, String id) throws InterruptedException {
+        return Message.ok();
     }
 }

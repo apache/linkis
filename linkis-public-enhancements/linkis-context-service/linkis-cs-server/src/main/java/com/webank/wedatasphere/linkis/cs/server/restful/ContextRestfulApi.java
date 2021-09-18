@@ -34,25 +34,18 @@ import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Map;
 
 
 
-@Component
-@Path("contextservice")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping(path = "/contextservice")
 public class ContextRestfulApi implements CsRestfulParent {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContextRestfulApi.class);
@@ -62,100 +55,100 @@ public class ContextRestfulApi implements CsRestfulParent {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @POST
-    @Path("getContextValue")
-    public Response getContextValue(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+
+    @RequestMapping(path = "getContextValue",method = RequestMethod.POST)
+    public Message getContextValue(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, contextID, contextKey);
         Message message = generateResponse(answerJob, "contextValue");
-        return Message.messageToResponse(message);
+        return message;
     }
 
 
-    @POST
-    @Path("searchContextValue")
-    public Response searchContextValue(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+
+    @RequestMapping(path = "searchContextValue",method = RequestMethod.POST)
+    public Message searchContextValue(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         JsonNode condition = jsonNode.get("condition");
         Map<Object, Object> conditionMap = objectMapper.convertValue(condition, new TypeReference<Map<Object, Object>>() {
         });
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SEARCH, contextID, conditionMap);
         Message message = generateResponse(answerJob, "contextKeyValue");
-        return Message.messageToResponse(message);
+        return message;
     }
 
-/*    @GET
-    @Path("searchContextValueByCondition")
-    public Response searchContextValueByCondition(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException {
+    /*
+    @RequestMapping(path = "searchContextValueByCondition",method = RequestMethod.GET)
+    public Message searchContextValueByCondition(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException {
         Condition condition = null;
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SEARCH, condition);
         return generateResponse(answerJob,"");
     }*/
 
 
-    @POST
-    @Path("setValueByKey")
-    public Response setValueByKey(@Context HttpServletRequest req, JsonNode jsonNode) throws CSErrorException, IOException, ClassNotFoundException, InterruptedException {
+
+    @RequestMapping(path = "setValueByKey",method = RequestMethod.POST)
+    public Message setValueByKey(HttpServletRequest req, JsonNode jsonNode) throws CSErrorException, IOException, ClassNotFoundException, InterruptedException {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
         ContextValue contextValue = getContextValueFromJsonNode(jsonNode);
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SET, contextID, contextKey, contextValue);
-        return Message.messageToResponse(generateResponse(answerJob, ""));
+        return generateResponse(answerJob, "");
     }
 
-    @POST
-    @Path("setValue")
-    public Response setValue(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+
+    @RequestMapping(path = "setValue",method = RequestMethod.POST)
+    public Message setValue(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         ContextKeyValue contextKeyValue = getContextKeyValueFromJsonNode(jsonNode);
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SET, contextID, contextKeyValue);
-        return Message.messageToResponse(generateResponse(answerJob, ""));
+        return generateResponse(answerJob, "");
     }
 
-    @POST
-    @Path("resetValue")
-    public Response resetValue(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+
+    @RequestMapping(path = "resetValue",method = RequestMethod.POST)
+    public Message resetValue(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.RESET, contextID, contextKey);
-        return Message.messageToResponse(generateResponse(answerJob, ""));
+        return generateResponse(answerJob, "");
     }
 
-    @POST
-    @Path("removeValue")
-    public Response removeValue(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+
+    @RequestMapping(path = "removeValue",method = RequestMethod.POST)
+    public Message removeValue(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, contextID, contextKey);
-        return Message.messageToResponse(generateResponse(answerJob, ""));
+        return generateResponse(answerJob, "");
     }
 
-    @POST
-    @Path("removeAllValue")
-    public Response removeAllValue(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+
+    @RequestMapping(path = "removeAllValue",method = RequestMethod.POST)
+    public Message removeAllValue(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVEALL, contextID);
-        return Message.messageToResponse(generateResponse(answerJob, ""));
+        return generateResponse(answerJob, "");
     }
 
-    @POST
-    @Path("removeAllValueByKeyPrefixAndContextType")
-    public Response removeAllValueByKeyPrefixAndContextType(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+
+    @RequestMapping(path = "removeAllValueByKeyPrefixAndContextType",method = RequestMethod.POST)
+    public Message removeAllValueByKeyPrefixAndContextType(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         String  contextType = jsonNode.get(ContextHTTPConstant.CONTEXT_KEY_TYPE_STR).getTextValue();
         String keyPrefix = jsonNode.get(ContextHTTPConstant.CONTEXT_KEY_PREFIX_STR).getTextValue();
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVEALL, contextID, ContextType.valueOf(contextType),keyPrefix);
-        return Message.messageToResponse(generateResponse(answerJob, ""));
+        return generateResponse(answerJob, "");
     }
 
-    @POST
-    @Path("removeAllValueByKeyPrefix")
-    public Response removeAllValueByKeyPrefix(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+
+    @RequestMapping(path = "removeAllValueByKeyPrefix",method = RequestMethod.POST)
+    public Message removeAllValueByKeyPrefix(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         String keyPrefix = jsonNode.get(ContextHTTPConstant.CONTEXT_KEY_PREFIX_STR).getTextValue();
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVEALL, contextID,keyPrefix);
-        return Message.messageToResponse(generateResponse(answerJob, ""));
+        return generateResponse(answerJob, "");
     }
 
     @Override

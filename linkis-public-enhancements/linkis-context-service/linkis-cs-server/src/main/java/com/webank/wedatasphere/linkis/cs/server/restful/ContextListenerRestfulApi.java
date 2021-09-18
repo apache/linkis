@@ -30,23 +30,16 @@ import com.webank.wedatasphere.linkis.server.Message;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 
 
-@Component
-@Path("/contextservice")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping(path = "/contextservice")
 public class ContextListenerRestfulApi implements CsRestfulParent {
 
     @Autowired
@@ -54,35 +47,35 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @POST
-    @Path("onBindIDListener")
-    public Response onBindIDListener(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+
+    @RequestMapping(path = "onBindIDListener",method = RequestMethod.POST)
+    public Message onBindIDListener(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         String source = jsonNode.get("source").getTextValue();
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         ContextIDListenerDomain listener = new CommonContextIDListenerDomain();
         listener.setSource(source);
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.BIND, contextID, listener);
-        return Message.messageToResponse(generateResponse(answerJob, ""));
+        return generateResponse(answerJob, "");
     }
 
-    @POST
-    @Path("onBindKeyListener")
-    public Response onBindKeyListener(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+
+    @RequestMapping(path = "onBindKeyListener",method = RequestMethod.POST)
+    public Message onBindKeyListener(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         String source = jsonNode.get("source").getTextValue();
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
         CommonContextKeyListenerDomain listener = new CommonContextKeyListenerDomain();
         listener.setSource(source);
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.BIND, contextID, contextKey, listener);
-        return Message.messageToResponse(generateResponse(answerJob, ""));
+        return generateResponse(answerJob, "");
     }
 
-    @POST
-    @Path("heartbeat")
-    public Response heartbeat(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, IOException, CSErrorException {
+
+    @RequestMapping(path = "heartbeat",method = RequestMethod.POST)
+    public Message heartbeat(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, IOException, CSErrorException {
         String source = jsonNode.get("source").getTextValue();
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.HEARTBEAT, source);
-        return Message.messageToResponse(generateResponse(answerJob, "ContextKeyValueBean"));
+        return generateResponse(answerJob, "ContextKeyValueBean");
     }
 
     @Override

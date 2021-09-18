@@ -18,7 +18,7 @@ package com.webank.wedatasphere.linkis.bml.service;
 import com.webank.wedatasphere.linkis.bml.Entity.ResourceVersion;
 import com.webank.wedatasphere.linkis.bml.Entity.Version;
 
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -62,12 +62,12 @@ public interface VersionService {
     * 2.将资源的二进制流append到path对应的文件末尾
     * @param resourceId resourceId
     * @param user 用户信息
-    * @param formDataMultiPart 上传的二进制流
+    * @param file 上传的二进制流文件
     * @param params 可选参数
     * @return 新的version
     * @throws Exception
     */
-   String updateVersion(String resourceId, String user, FormDataMultiPart formDataMultiPart, Map<String, Object> params)throws Exception;
+   String updateVersion(String resourceId, String user, MultipartFile file, Map<String, Object> params)throws Exception;
 
 
    String getNewestVersion(String resourceId);

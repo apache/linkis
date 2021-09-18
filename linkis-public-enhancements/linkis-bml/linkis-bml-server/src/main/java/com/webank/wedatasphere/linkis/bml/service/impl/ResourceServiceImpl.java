@@ -24,14 +24,12 @@ import com.webank.wedatasphere.linkis.bml.dao.ResourceDao;
 import com.webank.wedatasphere.linkis.bml.dao.VersionDao;
 import com.webank.wedatasphere.linkis.bml.service.ResourceService;
 import org.apache.commons.lang.StringUtils;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.io.InputStream;
@@ -72,15 +70,14 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public List<UploadResult> upload(FormDataMultiPart formDataMultiPart, String user, Map<String, Object> properties) throws Exception{
+    public List<UploadResult> upload(List<MultipartFile> files, String user, Map<String, Object> properties) throws Exception{
         ResourceHelper resourceHelper = ResourceHelperFactory.getResourceHelper();
-        List<FormDataBodyPart> files = formDataMultiPart.getFields("file");
+        //List<FormDataBodyPart> files = formDataMultiPart.getFields("file");
         List<UploadResult> results = new ArrayList<>();
-        for (FormDataBodyPart p : files) {
+        for (MultipartFile p : files) {
             String resourceId = (String) properties.get("resourceId");
-            InputStream inputStream = p.getValueAs(InputStream.class);
-            FormDataContentDisposition fileDetail = p.getFormDataContentDisposition();
-            String fileName = new String(fileDetail.getFileName().getBytes(Constant.ISO_ENCODE), Constant.UTF8_ENCODE);
+            InputStream inputStream = p.getInputStream();
+            String fileName = new String(p.getOriginalFilename().getBytes(Constant.ISO_ENCODE), Constant.UTF8_ENCODE);
             fileName = resourceId;
             String path = resourceHelper.generatePath(user, fileName, properties);
             StringBuilder sb = new StringBuilder();

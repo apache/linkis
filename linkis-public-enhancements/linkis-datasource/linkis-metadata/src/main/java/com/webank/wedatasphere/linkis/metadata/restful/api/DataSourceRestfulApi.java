@@ -23,19 +23,15 @@ import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
-
-@Path("datasource")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-@Component
+@RestController
+@RequestMapping(path = "/datasource")
 public class DataSourceRestfulApi implements DataSourceRestfulRemote {
 
     private static final Logger logger = Logger.getLogger(DataSourceRestfulApi.class);
@@ -44,62 +40,57 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     DataSourceService dataSourceService;
 
 
-    @GET
-    @Path("dbs")
-    public Response queryDatabaseInfo(@Context HttpServletRequest req) {
+    @RequestMapping(path = "dbs",method = RequestMethod.GET)
+    public Message queryDatabaseInfo(HttpServletRequest req) {
         String userName = SecurityFilter.getLoginUsername(req);
         try {
             JsonNode dbs = dataSourceService.getDbs(userName);
-            return Message.messageToResponse(Message.ok("").data("dbs", dbs));
+            return Message.ok("").data("dbs", dbs);
         } catch (Exception e) {
             logger.error("Failed to get database(获取数据库失败)", e);
-            return Message.messageToResponse(Message.error("Failed to get database(获取数据库失败)", e));
+            return Message.error("Failed to get database(获取数据库失败)", e);
         }
     }
 
-    @GET
-    @Path("all")
-    public Response queryDbsWithTables(@Context HttpServletRequest req){
+    @RequestMapping(path = "all",method = RequestMethod.GET)
+    public Message queryDbsWithTables(HttpServletRequest req){
         String userName = SecurityFilter.getLoginUsername(req);
         try {
             JsonNode dbs = dataSourceService.getDbsWithTables(userName);
-            return Message.messageToResponse(Message.ok("").data("dbs", dbs));
+            return Message.ok("").data("dbs", dbs);
         } catch (Exception e) {
             logger.error("Failed to queryDbsWithTables", e);
-            return Message.messageToResponse(Message.error("Failed to queryDbsWithTables", e));
+            return Message.error("Failed to queryDbsWithTables", e);
         }
     }
 
 
-    @GET
-    @Path("tables")
-    public Response queryTables(@QueryParam("database") String database, @Context HttpServletRequest req){
+    @RequestMapping(path = "tables",method = RequestMethod.GET)
+    public Message queryTables(@RequestParam(value="database",required=false) String database, HttpServletRequest req){
         String userName = SecurityFilter.getLoginUsername(req);
         try {
             JsonNode tables = dataSourceService.queryTables(database, userName);
-            return Message.messageToResponse(Message.ok("").data("tables", tables));
+            return Message.ok("").data("tables", tables);
         } catch (Exception e) {
             logger.error("Failed to queryTables", e);
-            return Message.messageToResponse(Message.error("Failed to queryTables", e));
+            return Message.error("Failed to queryTables", e);
         }
     }
 
-    @GET
-    @Path("columns")
-    public Response queryTableMeta(@QueryParam("database") String database,  @QueryParam("table") String table, @Context HttpServletRequest req){
+    @RequestMapping(path = "columns",method = RequestMethod.GET)
+    public Message queryTableMeta(@RequestParam(value="database",required=false) String database,  @RequestParam(value="table",required=false) String table, HttpServletRequest req){
         String userName = SecurityFilter.getLoginUsername(req);
         try {
             JsonNode columns = dataSourceService.queryTableMeta(database, table, userName);
-            return Message.messageToResponse(Message.ok("").data("columns", columns));
+            return Message.ok("").data("columns", columns);
         } catch (Exception e) {
             logger.error("Failed to get data table structure(获取数据表结构失败)", e);
-            return Message.messageToResponse(Message.error("Failed to get data table structure(获取数据表结构失败)", e));
+            return Message.error("Failed to get data table structure(获取数据表结构失败)", e);
         }
     }
 
-    @GET
-    @Path("size")
-    public Response sizeOf(@QueryParam("database") String database,  @QueryParam("table") String table, @QueryParam("partition") String partition, @Context HttpServletRequest req){
+    @RequestMapping(path = "size",method = RequestMethod.GET)
+    public Message sizeOf(@RequestParam(value="database",required=false) String database,  @RequestParam(value="table",required=false) String table, @RequestParam(value="partition",required=false) String partition, HttpServletRequest req){
         String userName = SecurityFilter.getLoginUsername(req);
         try {
             JsonNode sizeNode;
@@ -108,23 +99,22 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             } else {
                 sizeNode = dataSourceService.getPartitionSize(database, table, partition, userName);
             }
-            return Message.messageToResponse(Message.ok("").data("sizeInfo", sizeNode));
+            return Message.ok("").data("sizeInfo", sizeNode);
         } catch (Exception e) {
             logger.error("Failed to get table partition size(获取表分区大小失败)", e);
-            return Message.messageToResponse(Message.error("Failed to get table partition size(获取表分区大小失败)", e));
+            return Message.error("Failed to get table partition size(获取表分区大小失败)", e);
         }
     }
 
-    @GET
-    @Path("partitions")
-    public Response partitions(@QueryParam("database") String database,  @QueryParam("table") String table, @Context HttpServletRequest req){
+    @RequestMapping(path = "partitions",method = RequestMethod.GET)
+    public Message partitions(@RequestParam(value="database",required=false) String database,  @RequestParam(value="table",required=false) String table, HttpServletRequest req){
         String userName = SecurityFilter.getLoginUsername(req);
         try{
             JsonNode partitionNode = dataSourceService.getPartitions(database, table, userName);
-            return Message.messageToResponse(Message.ok("").data("partitionInfo", partitionNode));
+            return Message.ok("").data("partitionInfo", partitionNode);
         } catch (Exception e) {
             logger.error("Failed to get table partition(获取表分区失败)", e);
-            return Message.messageToResponse(Message.error("Failed to get table partition(获取表分区失败)", e));
+            return Message.error("Failed to get table partition(获取表分区失败)", e);
         }
     }
 }

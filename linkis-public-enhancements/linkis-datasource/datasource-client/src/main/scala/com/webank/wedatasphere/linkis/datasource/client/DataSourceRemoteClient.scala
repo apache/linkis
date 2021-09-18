@@ -1,7 +1,7 @@
 package com.webank.wedatasphere.linkis.datasource.client
 
-import com.webank.wedatasphere.linkis.datasource.client.request.{GetAllDataSourceTypesAction, GetConnectParamsByDataSourceIdAction, GetInfoByDataSourceIdAction, QueryDataSourceAction, QueryDataSourceEnvAction}
-import com.webank.wedatasphere.linkis.datasource.client.response.{GetAllDataSourceTypesResult, GetConnectParamsByDataSourceIdResult, GetInfoByDataSourceIdResult, QueryDataSourceEnvResult, QueryDataSourceResult}
+import com.webank.wedatasphere.linkis.datasource.client.request.{CreateDataSourceAction, DataSourceTestConnectAction, DeleteDataSourceAction, ExpireDataSourceAction, GetAllDataSourceTypesAction, GetConnectParamsByDataSourceIdAction, GetDataSourceVersionsAction, GetInfoByDataSourceIdAction, PublishDataSourceVersionAction, QueryDataSourceAction, QueryDataSourceEnvAction, UpdateDataSourceAction, UpdateDataSourceParameterAction}
+import com.webank.wedatasphere.linkis.datasource.client.response.{CreateDataSourceResult, DataSourceTestConnectResult, DeleteDataSourceResult, ExpireDataSourceResult, GetAllDataSourceTypesResult, GetConnectParamsByDataSourceIdResult, GetDataSourceVersionsResult, GetInfoByDataSourceIdResult, PublishDataSourceVersionResult, QueryDataSourceEnvResult, QueryDataSourceResult, UpdateDataSourceParameterResult, UpdateDataSourceResult}
 
 trait DataSourceRemoteClient extends RemoteClient {
   def getAllDataSourceTypes(action:GetAllDataSourceTypesAction): GetAllDataSourceTypesResult
@@ -9,5 +9,12 @@ trait DataSourceRemoteClient extends RemoteClient {
   def getInfoByDataSourceId(action:GetInfoByDataSourceIdAction): GetInfoByDataSourceIdResult
   def queryDataSource(action:QueryDataSourceAction): QueryDataSourceResult
   def getConnectParams(action: GetConnectParamsByDataSourceIdAction): GetConnectParamsByDataSourceIdResult
-
+  def createDataSource(action:CreateDataSourceAction):CreateDataSourceResult
+  def getDataSourceTestConnect(action:DataSourceTestConnectAction):DataSourceTestConnectResult
+  def deleteDataSource(action:DeleteDataSourceAction):DeleteDataSourceResult
+  def expireDataSource(action:ExpireDataSourceAction):ExpireDataSourceResult
+  def getDataSourceVersions(action:GetDataSourceVersionsAction):GetDataSourceVersionsResult
+  def publishDataSourceVersion(action:PublishDataSourceVersionAction):PublishDataSourceVersionResult
+  def updateDataSource(action: UpdateDataSourceAction):UpdateDataSourceResult
+  def updateDataSourceParameter(action: UpdateDataSourceParameterAction):UpdateDataSourceParameterResult
 }

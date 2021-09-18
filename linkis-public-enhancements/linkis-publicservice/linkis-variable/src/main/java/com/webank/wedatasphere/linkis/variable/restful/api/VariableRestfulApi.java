@@ -26,21 +26,17 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.List;
 
 
-@Component
-@Path("/variable")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping(path = "/variable")
 public class VariableRestfulApi {
 
     @Autowired
@@ -50,42 +46,38 @@ public class VariableRestfulApi {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /*@POST
-    @Path("addGlobalVariable")
-    public Response addGlobalVariable(@Context HttpServletRequest req, JsonNode json) throws IOException {
+    /*@RequestMapping(path = "addGlobalVariable",method = RequestMethod.POST)
+    public Message addGlobalVariable(HttpServletRequest req, JsonNode json) throws IOException {
         String userName = SecurityFilter.getLoginUsername(req);
         List globalVariables = mapper.readValue(json.get("globalVariables"), List.class);
         globalVariables.stream().forEach(f -> {
             String j = BDPJettyServerHelper.gson().toJson(f);
             variableService.addGlobalVariable(BDPJettyServerHelper.gson().fromJson(j, VarKeyValueVO.class), userName);
         });
-        return Message.messageToResponse(Message.ok());
+        return Message.ok();
     }
 
-    @POST
-    @Path("removeGlobalVariable")
-    public Response removeGlobalVariable(@Context HttpServletRequest req, JsonNode json) {
+    @RequestMapping(path = "removeGlobalVariable",method = RequestMethod.POST)
+    public Message removeGlobalVariable(HttpServletRequest req, JsonNode json) {
         String userName = SecurityFilter.getLoginUsername(req);
         Long keyID = json.get("keyID").getLongValue();
         variableService.removeGlobalVariable(keyID);
-        return Message.messageToResponse(Message.ok());
+        return Message.ok();
     }*/
 
-    @GET
-    @Path("listGlobalVariable")
-    public Response listGlobalVariable(@Context HttpServletRequest req) {
+    @RequestMapping(path = "listGlobalVariable",method = RequestMethod.GET)
+    public Message listGlobalVariable(HttpServletRequest req) {
         String userName = SecurityFilter.getLoginUsername(req);
         List<VarKeyValueVO> kvs = variableService.listGlobalVariable(userName);
-        return Message.messageToResponse(Message.ok().data("globalVariables", kvs));
+        return Message.ok().data("globalVariables", kvs);
     }
 
-    @POST
-    @Path("saveGlobalVariable")
-    public Response saveGlobalVariable(@Context HttpServletRequest req, JsonNode json) throws IOException, VariableException {
+    @RequestMapping(path = "saveGlobalVariable",method = RequestMethod.POST)
+    public Message saveGlobalVariable(HttpServletRequest req, JsonNode json) throws IOException, VariableException {
         String userName = SecurityFilter.getLoginUsername(req);
         List<VarKeyValueVO> userVariables = variableService.listGlobalVariable(userName);
         List globalVariables = mapper.readValue(json.get("globalVariables"), List.class);
         variableService.saveGlobalVaraibles(globalVariables, userVariables, userName);
-        return Message.messageToResponse(Message.ok());
+        return Message.ok();
     }
 }

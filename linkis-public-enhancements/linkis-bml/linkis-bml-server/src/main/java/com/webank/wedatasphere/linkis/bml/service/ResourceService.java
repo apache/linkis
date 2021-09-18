@@ -18,7 +18,7 @@ package com.webank.wedatasphere.linkis.bml.service;
 import com.webank.wedatasphere.linkis.bml.Entity.Resource;
 import com.webank.wedatasphere.linkis.bml.service.impl.ResourceServiceImpl;
 
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -38,11 +38,11 @@ public interface ResourceService {
     * 3.二进制流的存储方式有两种，根据资源文件的大小选择合并或者是单独存储
     * 4.生成resourceID
     * 4.更新resource 和 resource_version表
-    * @param formDataMultiPart notnull
+    * @param files notnull
     * @param user um_user
     * @param properties Map
     */
-   List<ResourceServiceImpl.UploadResult> upload(FormDataMultiPart formDataMultiPart, String user, Map<String, Object> properties)throws Exception;
+   List<ResourceServiceImpl.UploadResult> upload(List<MultipartFile> files, String user, Map<String, Object> properties)throws Exception;
 
    boolean checkResourceId(String resourceId);
 

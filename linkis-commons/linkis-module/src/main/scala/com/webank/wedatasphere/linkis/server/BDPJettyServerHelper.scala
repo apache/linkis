@@ -29,7 +29,7 @@ import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration._
 import com.webank.wedatasphere.linkis.server.restful.RestfulApplication
 import com.webank.wedatasphere.linkis.server.socket.ControllerServer
 import com.webank.wedatasphere.linkis.server.socket.controller.{ServerEventService, ServerListenerEventBus}
-import javax.servlet.{DispatcherType, Filter}
+import javax.servlet.{DispatcherType, Filter, MultipartConfigElement}
 import org.apache.commons.io.FileUtils
 import org.eclipse.jetty.server.session.SessionHandler
 import org.eclipse.jetty.servlet.{DefaultServlet, FilterHolder, ServletContextHandler, ServletHolder}
@@ -46,6 +46,9 @@ private[linkis] object BDPJettyServerHelper extends Logging {
   private var serverListenerEventBus: ServerListenerEventBus = _
   private var controllerServer: ControllerServer = _
   private val services = mutable.Buffer[ServerEventService]()
+
+  private val TMP_FOLDER = "/tmp"
+  private val MAX_UPLOAD_SIZE = 20 * 1024 * 1024
 
   private[server] def getControllerServer = controllerServer
 
@@ -89,6 +92,10 @@ private[linkis] object BDPJettyServerHelper extends Logging {
 
     servletHolder.setName("springrestful")
     servletHolder.setForcedPath("springrestful")
+
+    //todo  file size  parameter configuration
+    val multipartConfigElement = new MultipartConfigElement(TMP_FOLDER, MAX_UPLOAD_SIZE, MAX_UPLOAD_SIZE * 2, MAX_UPLOAD_SIZE / 2)
+    servletHolder.getRegistration.setMultipartConfig(multipartConfigElement)
 
     val p = BDP_SERVER_SPRING_RESTFUL_URI.getValue
     val restfulPath = if(p.endsWith("/*")) p

@@ -170,7 +170,7 @@ object SparkSQLHistoryParser {
       case l: LogicalRelation if l.catalogTable.nonEmpty => mergeProjection(l.catalogTable.get)
 
       case u: UnresolvedRelation =>
-        addTableOrViewLevelObjs(u.tableIdentifier, sparkHiveObjects)
+        addTableOrViewLevelObjs(TableIdentifier(u.tableName), sparkHiveObjects)
 
       case p =>
         for (child <- p.children) {

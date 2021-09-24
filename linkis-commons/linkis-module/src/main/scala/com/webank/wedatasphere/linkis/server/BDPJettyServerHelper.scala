@@ -67,20 +67,20 @@ private[linkis] object BDPJettyServerHelper extends Logging {
   private def getSecurityFilter(): Class[Filter] =
     Class.forName(BDP_SERVER_SECURITY_FILTER.getValue).asInstanceOf[Class[Filter]]
 
-  def setupRestApiContextHandler(webApp: ServletContextHandler) {
-    val servletHolder = new ServletHolder(classOf[ServletContainer])
-    servletHolder.setInitParameter("javax.ws.rs.Application", classOf[RestfulApplication].getName)
-    servletHolder.setName("restful")
-    servletHolder.setForcedPath("restful")
-    webApp.setSessionHandler(new SessionHandler)
-    val p = BDP_SERVER_RESTFUL_URI.getValue
-    val restfulPath = if(p.endsWith("/*")) p
-    else if(p.endsWith("/")) p + "*"
-    else p + "/*"
-    webApp.addServlet(servletHolder, restfulPath)
-    val filterHolder = new FilterHolder(getSecurityFilter())
-    webApp.addFilter(filterHolder, restfulPath, EnumSet.allOf(classOf[DispatcherType]))
-  }
+//  def setupRestApiContextHandler(webApp: ServletContextHandler) {
+//    val servletHolder = new ServletHolder(classOf[ServletContainer])
+//    servletHolder.setInitParameter("javax.ws.rs.Application", classOf[RestfulApplication].getName)
+//    servletHolder.setName("restful")
+//    servletHolder.setForcedPath("restful")
+//    webApp.setSessionHandler(new SessionHandler)
+//    val p = "/api/rest_xx/"
+//    val restfulPath = if(p.endsWith("/*")) p
+//    else if(p.endsWith("/")) p + "*"
+//    else p + "/*"
+//    webApp.addServlet(servletHolder, restfulPath)
+//    val filterHolder = new FilterHolder(getSecurityFilter())
+//    webApp.addFilter(filterHolder, restfulPath, EnumSet.allOf(classOf[DispatcherType]))
+ // }
 
   def setupSpringRestApiContextHandler(webApp: ServletContextHandler) {
     val context = new AnnotationConfigWebApplicationContext
@@ -97,7 +97,7 @@ private[linkis] object BDPJettyServerHelper extends Logging {
     val multipartConfigElement = new MultipartConfigElement(TMP_FOLDER, MAX_UPLOAD_SIZE, MAX_UPLOAD_SIZE * 2, MAX_UPLOAD_SIZE / 2)
     servletHolder.getRegistration.setMultipartConfig(multipartConfigElement)
 
-    val p = BDP_SERVER_SPRING_RESTFUL_URI.getValue
+    val p = BDP_SERVER_RESTFUL_URI.getValue
     val restfulPath = if(p.endsWith("/*")) p
     else if(p.endsWith("/")) p + "*"
     else p + "/*"

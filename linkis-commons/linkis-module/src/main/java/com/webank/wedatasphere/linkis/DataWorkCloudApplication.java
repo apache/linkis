@@ -192,7 +192,7 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
                         filterHolder.setInitParameter("encoding", Configuration.BDP_ENCODING().getValue());
                         filterHolder.setInitParameter("forceEncoding", "true");
                         webApp.addFilter(filterHolder, "/*", EnumSet.allOf(DispatcherType.class));
-                        BDPJettyServerHelper.setupRestApiContextHandler(webApp);
+                       // BDPJettyServerHelper.setupRestApiContextHandler(webApp);
 
                         //set servletHolder  for spring restful api
                         BDPJettyServerHelper.setupSpringRestApiContextHandler(webApp);

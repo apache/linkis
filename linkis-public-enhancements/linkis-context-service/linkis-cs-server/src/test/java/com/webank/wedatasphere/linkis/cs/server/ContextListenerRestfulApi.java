@@ -25,8 +25,9 @@ import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceType;
 import com.webank.wedatasphere.linkis.cs.server.scheduler.CsScheduler;
 import com.webank.wedatasphere.linkis.cs.server.scheduler.HttpAnswerJob;
 import com.webank.wedatasphere.linkis.server.Message;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,7 +43,7 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
     private CsScheduler csScheduler;
 
     @RequestMapping(path = "onBindIDListener",method = RequestMethod.POST)
-     public Message onBindIDListener(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException {
+     public Message onBindIDListener(HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException {
         //ContextIDListener listener
         ContextIDListener listener = null;
         ContextID contextID = null;
@@ -51,7 +52,7 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
     }
 
     @RequestMapping(path = "onBindKeyListener",method = RequestMethod.POST)
-     public Message onBindKeyListener( HttpServletRequest req, JsonNode jsonNode) throws InterruptedException {
+     public Message onBindKeyListener( HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException {
         ContextKeyListener listener = null;
         ContextID contextID = null;
         ContextKey contextKey = null;

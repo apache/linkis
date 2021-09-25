@@ -21,7 +21,7 @@ import com.webank.wedatasphere.linkis.metadata.service.DataSourceService;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,6 +40,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     DataSourceService dataSourceService;
 
 
+    @Override
     @RequestMapping(path = "dbs",method = RequestMethod.GET)
     public Message queryDatabaseInfo(HttpServletRequest req) {
         String userName = SecurityFilter.getLoginUsername(req);
@@ -52,6 +53,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
+    @Override
     @RequestMapping(path = "all",method = RequestMethod.GET)
     public Message queryDbsWithTables(HttpServletRequest req){
         String userName = SecurityFilter.getLoginUsername(req);
@@ -65,6 +67,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     }
 
 
+    @Override
     @RequestMapping(path = "tables",method = RequestMethod.GET)
     public Message queryTables(@RequestParam(value="database",required=false) String database, HttpServletRequest req){
         String userName = SecurityFilter.getLoginUsername(req);
@@ -77,6 +80,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
+    @Override
     @RequestMapping(path = "columns",method = RequestMethod.GET)
     public Message queryTableMeta(@RequestParam(value="database",required=false) String database,  @RequestParam(value="table",required=false) String table, HttpServletRequest req){
         String userName = SecurityFilter.getLoginUsername(req);
@@ -89,6 +93,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
+    @Override
     @RequestMapping(path = "size",method = RequestMethod.GET)
     public Message sizeOf(@RequestParam(value="database",required=false) String database,  @RequestParam(value="table",required=false) String table, @RequestParam(value="partition",required=false) String partition, HttpServletRequest req){
         String userName = SecurityFilter.getLoginUsername(req);
@@ -106,6 +111,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
+    @Override
     @RequestMapping(path = "partitions",method = RequestMethod.GET)
     public Message partitions(@RequestParam(value="database",required=false) String database,  @RequestParam(value="table",required=false) String table, HttpServletRequest req){
         String userName = SecurityFilter.getLoginUsername(req);

@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.cs.server.restful;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webank.wedatasphere.linkis.cs.common.entity.listener.CommonContextIDListenerDomain;
 import com.webank.wedatasphere.linkis.cs.common.entity.listener.CommonContextKeyListenerDomain;
 import com.webank.wedatasphere.linkis.cs.common.entity.listener.ContextIDListenerDomain;
@@ -27,9 +28,9 @@ import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceType;
 import com.webank.wedatasphere.linkis.cs.server.scheduler.CsScheduler;
 import com.webank.wedatasphere.linkis.cs.server.scheduler.HttpAnswerJob;
 import com.webank.wedatasphere.linkis.server.Message;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,8 +50,8 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
 
 
     @RequestMapping(path = "onBindIDListener",method = RequestMethod.POST)
-    public Message onBindIDListener(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
-        String source = jsonNode.get("source").getTextValue();
+    public Message onBindIDListener(HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+        String source = jsonNode.get("source").textValue();
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         ContextIDListenerDomain listener = new CommonContextIDListenerDomain();
         listener.setSource(source);
@@ -60,8 +61,8 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
 
 
     @RequestMapping(path = "onBindKeyListener",method = RequestMethod.POST)
-    public Message onBindKeyListener(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
-        String source = jsonNode.get("source").getTextValue();
+    public Message onBindKeyListener(HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+        String source = jsonNode.get("source").textValue();
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
         CommonContextKeyListenerDomain listener = new CommonContextKeyListenerDomain();
@@ -72,8 +73,8 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
 
 
     @RequestMapping(path = "heartbeat",method = RequestMethod.POST)
-    public Message heartbeat(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, IOException, CSErrorException {
-        String source = jsonNode.get("source").getTextValue();
+    public Message heartbeat(HttpServletRequest req, @RequestBody JsonNode jsonNode) throws InterruptedException, IOException, CSErrorException {
+        String source = jsonNode.get("source").textValue();
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.HEARTBEAT, source);
         return generateResponse(answerJob, "ContextKeyValueBean");
     }

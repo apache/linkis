@@ -16,16 +16,17 @@
 
 package com.webank.wedatasphere.linkis.variable.restful.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import com.webank.wedatasphere.linkis.variable.entity.VarKeyValueVO;
 import com.webank.wedatasphere.linkis.variable.exception.VariableException;
 import com.webank.wedatasphere.linkis.variable.service.VariableService;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,7 +48,7 @@ public class VariableRestfulApi {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /*@RequestMapping(path = "addGlobalVariable",method = RequestMethod.POST)
-    public Message addGlobalVariable(HttpServletRequest req, JsonNode json) throws IOException {
+    public Message addGlobalVariable(HttpServletRequest req,@RequestBody JsonNode json) throws IOException {
         String userName = SecurityFilter.getLoginUsername(req);
         List globalVariables = mapper.readValue(json.get("globalVariables"), List.class);
         globalVariables.stream().forEach(f -> {
@@ -73,10 +74,10 @@ public class VariableRestfulApi {
     }
 
     @RequestMapping(path = "saveGlobalVariable",method = RequestMethod.POST)
-    public Message saveGlobalVariable(HttpServletRequest req, JsonNode json) throws IOException, VariableException {
+    public Message saveGlobalVariable(HttpServletRequest req,@RequestBody JsonNode json) throws IOException, VariableException {
         String userName = SecurityFilter.getLoginUsername(req);
         List<VarKeyValueVO> userVariables = variableService.listGlobalVariable(userName);
-        List globalVariables = mapper.readValue(json.get("globalVariables"), List.class);
+        List globalVariables = mapper.treeToValue(json.get("globalVariables"), List.class);
         variableService.saveGlobalVaraibles(globalVariables, userVariables, userName);
         return Message.ok();
     }

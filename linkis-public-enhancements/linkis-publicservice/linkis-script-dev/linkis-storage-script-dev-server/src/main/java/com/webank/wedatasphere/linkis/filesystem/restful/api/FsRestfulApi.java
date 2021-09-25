@@ -41,7 +41,7 @@ import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.math3.util.Pair;
 import org.apache.http.Consts;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -101,9 +101,9 @@ public class FsRestfulApi {
     }
 
     @RequestMapping(path = "/createNewDir",method = RequestMethod.POST)
-    public Message createNewDir(HttpServletRequest req, JsonNode json) throws IOException, WorkSpaceException {
+    public Message createNewDir(HttpServletRequest req,@RequestBody JsonNode json) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
-        String path = json.get("path").getTextValue();
+        String path = json.get("path").textValue();
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
@@ -118,9 +118,9 @@ public class FsRestfulApi {
     }
 
     @RequestMapping(path = "/createNewFile",method = RequestMethod.POST)
-    public Message createNewFile(HttpServletRequest req, JsonNode json) throws IOException, WorkSpaceException {
+    public Message createNewFile(HttpServletRequest req,@RequestBody JsonNode json) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
-        String path = json.get("path").getTextValue();
+        String path = json.get("path").textValue();
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
@@ -135,9 +135,9 @@ public class FsRestfulApi {
     }
 
     @RequestMapping(path = "/rename",method = RequestMethod.POST)
-    public Message rename(HttpServletRequest req, JsonNode json) throws IOException, WorkSpaceException {
-        String oldDest = json.get("oldDest").getTextValue();
-        String newDest = json.get("newDest").getTextValue();
+    public Message rename(HttpServletRequest req,@RequestBody JsonNode json) throws IOException, WorkSpaceException {
+        String oldDest = json.get("oldDest").textValue();
+        String newDest = json.get("newDest").textValue();
         String userName = SecurityFilter.getLoginUsername(req);
         if (FILESYSTEM_PATH_CHECK_TRIGGER.getValue()) {
             LOGGER.info(String.format("path check trigger is open,now check the path,oldDest:%s,newDest:%s", oldDest, newDest));
@@ -188,9 +188,9 @@ public class FsRestfulApi {
     }
 
     @RequestMapping(path = "/deleteDirOrFile",method = RequestMethod.POST)
-    public Message deleteDirOrFile(HttpServletRequest req, JsonNode json) throws IOException, WorkSpaceException {
+    public Message deleteDirOrFile(HttpServletRequest req,@RequestBody JsonNode json) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
-        String path = json.get("path").getTextValue();
+        String path = json.get("path").textValue();
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }

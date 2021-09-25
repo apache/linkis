@@ -18,10 +18,10 @@
 //
 //import java.util
 //
+//import com.fasterxml.jackson.databind.JsonNode
 //import javax.servlet.http.HttpServletRequest
 //import javax.ws.rs.QueryParam
 //import javax.ws.rs.core.{Context, Response}
-//import org.codehaus.jackson.JsonNode
 //import org.springframework.web.bind.annotation.{PathVariable, RequestBody, RequestMapping, RequestMethod}
 //
 //
@@ -51,7 +51,7 @@
 //  def log(@Context req: HttpServletRequest, @PathVariable("id") id: String): Response
 //
 //  @RequestMapping(value = Array("/entrance/{id}/killJobs"), method = Array(RequestMethod.POST))
-//  def killJobs(@Context req: HttpServletRequest, jsonNode: JsonNode, @PathVariable("id") id: String): Response
+//  def killJobs(@Context req: HttpServletRequest, @RequestBody jsonNode: JsonNode, @PathVariable("id") id: String): Response
 //
 //  @RequestMapping(value = Array("/entrance/{id}/kill"), method = Array(RequestMethod.POST))
 //  def kill(@PathVariable("id") id: String, @QueryParam("taskID") taskID:Long): Response

@@ -27,10 +27,11 @@ import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -71,9 +72,9 @@ public class BmlProjectRestful {
     private DownloadService downloadService;
 
     @RequestMapping(path = "createBmlProject",method = RequestMethod.POST)
-    public Message createBmlProject(HttpServletRequest request, JsonNode jsonNode){
+    public Message createBmlProject(HttpServletRequest request,@RequestBody JsonNode jsonNode){
         String username = SecurityFilter.getLoginUsername(request);
-        String projectName = jsonNode.get(PROJECT_NAME_STR).getTextValue();
+        String projectName = jsonNode.get(PROJECT_NAME_STR).textValue();
         LOGGER.info("{} begins to create a project {} in bml", username, projectName);
         JsonNode editUserNode = jsonNode.get(EDIT_USERS_STR);
         JsonNode accessUserNode = jsonNode.get(ACCESS_USERS_STR);
@@ -81,12 +82,12 @@ public class BmlProjectRestful {
         List<String> editUsers = new ArrayList<>();
         if (editUserNode.isArray()){
             for (JsonNode node : editUserNode) {
-                editUsers.add(node.getTextValue());
+                editUsers.add(node.textValue());
             }
         }
         if (accessUserNode.isArray()){
             for (JsonNode node : accessUserNode) {
-                accessUsers.add(node.getTextValue());
+                accessUsers.add(node.textValue());
             }
         }
         bmlProjectService.createBmlProject(projectName, username, editUsers, accessUsers);
@@ -247,29 +248,29 @@ public class BmlProjectRestful {
 
 
     @RequestMapping(path = "attachResourceAndProject",method = RequestMethod.POST)
-    public Message attachResourceAndProject(HttpServletRequest request, JsonNode jsonNode) throws ErrorException{
+    public Message attachResourceAndProject(HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ErrorException{
         String username = SecurityFilter.getLoginUsername(request);
-        String projectName = jsonNode.get(PROJECT_NAME_STR).getTextValue();
-        String resourceId = jsonNode.get("resourceId").getTextValue();
+        String projectName = jsonNode.get(PROJECT_NAME_STR).textValue();
+        String resourceId = jsonNode.get("resourceId").textValue();
         LOGGER.info("begin to attach {}  and {}", projectName, username);
         bmlProjectService.attach(projectName, resourceId);
         return Message.ok("attach resource and project ok");
     }
 
     @RequestMapping(path = "updateProjectUsers",method = RequestMethod.POST)
-    public Message updateProjectUsers(HttpServletRequest request, JsonNode jsonNode) throws ErrorException{
+    public Message updateProjectUsers(HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ErrorException{
         String username = SecurityFilter.getLoginUsername(request);
-        String projectName = jsonNode.get("projectName").getTextValue();
+        String projectName = jsonNode.get("projectName").textValue();
         LOGGER.info("{} begins to update project users for {}", username, projectName);
         List<String> editUsers = new ArrayList<>();
         List<String> accessUsers = new ArrayList<>();
         JsonNode editUsersNode = jsonNode.get("editUsers");
         if (editUsersNode.isArray()){
-            editUsersNode.forEach(node -> editUsers.add(node.getTextValue()));
+            editUsersNode.forEach(node -> editUsers.add(node.textValue()));
         }
         JsonNode accessUsersNode = jsonNode.get("accessUsers");
         if (accessUsersNode.isArray()){
-            accessUsersNode.forEach(node -> accessUsers.add(node.getTextValue()));
+            accessUsersNode.forEach(node -> accessUsers.add(node.textValue()));
         }
         bmlProjectService.updateProjectUsers(username, projectName, editUsers, accessUsers);
         return Message.ok("Updated project related user success(更新工程的相关用户成功)");

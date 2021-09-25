@@ -1,6 +1,6 @@
 package com.webank.wedatasphere.linkis.configuration.util
 
-import org.codehaus.jackson.JsonNode
+import com.fasterxml.jackson.databind.JsonNode
 
 object JsonNodeUtil {
 

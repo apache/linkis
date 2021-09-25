@@ -32,8 +32,9 @@ import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,7 +65,7 @@ public class InstanceRestful {
     }
 
     @RequestMapping(path = "/instanceLabel",method = RequestMethod.PUT)
-    public Message upDateInstanceLabel( HttpServletRequest req, JsonNode jsonNode) throws Exception {
+    public Message upDateInstanceLabel( HttpServletRequest req, @RequestBody JsonNode jsonNode) throws Exception {
         String username = SecurityFilter.getLoginUsername(req);
         String[] adminArray = InstanceConfigration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
         if(adminArray != null && !Arrays.asList(adminArray).contains(username)){

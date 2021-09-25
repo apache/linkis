@@ -37,10 +37,11 @@ import com.webank.wedatasphere.linkis.bml.common.*;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -205,14 +206,14 @@ public class BmlRestfulApi {
         String user = RestfulUtils.getUserName(request);
 
         if (null == jsonNode.get("resourceId") || null == jsonNode.get("version") ||
-                StringUtils.isEmpty(jsonNode.get("resourceId").getTextValue()) || StringUtils.isEmpty(jsonNode.get("version").getTextValue())) {
+                StringUtils.isEmpty(jsonNode.get("resourceId").textValue()) || StringUtils.isEmpty(jsonNode.get("version").textValue())) {
             throw new BmlServerParaErrorException("ResourceID and version are required to delete the specified version(删除指定版本，需要指定resourceId 和 version)");
         }
 
 
 
-        String resourceId = jsonNode.get("resourceId").getTextValue();
-        String version = jsonNode.get("version").getTextValue();
+        String resourceId = jsonNode.get("resourceId").textValue();
+        String version = jsonNode.get("version").textValue();
         //检查资源和版本是否存在
         if (!resourceService.checkResourceId(resourceId) || !versionService.checkVersion(resourceId, version)
                 || !versionService.canAccess(resourceId, version)){
@@ -239,8 +240,7 @@ public class BmlRestfulApi {
     }
 
     @RequestMapping(path = "deleteResource",method = RequestMethod.POST)
-    public Message deleteResource(JsonNode jsonNode,
-                                   HttpServletRequest request) throws IOException, ErrorException{
+    public Message deleteResource(HttpServletRequest request,@RequestBody JsonNode jsonNode) throws IOException, ErrorException{
 
 
         String user = RestfulUtils.getUserName(request);
@@ -249,7 +249,7 @@ public class BmlRestfulApi {
             throw new BmlServerParaErrorException("You did not pass a valid ResourceID(您未传入有效的resourceId)");
         }
 
-        String resourceId = jsonNode.get("resourceId").getTextValue();
+        String resourceId = jsonNode.get("resourceId").textValue();
         if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
             logger.error("the error resourceId  is {} ", resourceId);
             throw new BmlServerParaErrorException("the resourceId"+resourceId+" is null ,Illegal or deleted (resourceId:"+resourceId+"为空,非法或者已被删除!)");
@@ -278,8 +278,7 @@ public class BmlRestfulApi {
     }
 
     @RequestMapping(path = "deleteResources",method = RequestMethod.POST)
-    public Message deleteResources(JsonNode jsonNode,
-                                    HttpServletRequest request) throws IOException, ErrorException{
+    public Message deleteResources(HttpServletRequest request,@RequestBody JsonNode jsonNode) throws IOException, ErrorException{
         String user = RestfulUtils.getUserName(request);
         List<String> resourceIds = new ArrayList<>();
 
@@ -287,7 +286,7 @@ public class BmlRestfulApi {
             throw new BmlServerParaErrorException("Bulk deletion of unpassed resourceIDS parameters(批量删除未传入resourceIds参数)");
         }
 
-        Iterator<JsonNode> jsonNodeIter = jsonNode.get("resourceIds").getElements();
+        Iterator<JsonNode> jsonNodeIter = jsonNode.get("resourceIds").elements();
         while (jsonNodeIter.hasNext()) {
             resourceIds.add(jsonNodeIter.next().asText());
         }

@@ -21,6 +21,7 @@ import java.util
 import java.util.concurrent.TimeUnit
 import java.util.{Comparator, TimeZone}
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.collect.Lists
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
@@ -46,7 +47,6 @@ import com.webank.wedatasphere.linkis.resourcemanager.utils.{RMConfiguration, RM
 import com.webank.wedatasphere.linkis.server.{BDPJettyServerHelper, Message}
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter
 import javax.servlet.http.HttpServletRequest
-import org.codehaus.jackson.map.ObjectMapper
 import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization.write
 import org.springframework.beans.factory.annotation.Autowired

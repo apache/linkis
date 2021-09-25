@@ -24,9 +24,10 @@ import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceType;
 import com.webank.wedatasphere.linkis.cs.server.scheduler.CsScheduler;
 import com.webank.wedatasphere.linkis.cs.server.scheduler.HttpAnswerJob;
 import com.webank.wedatasphere.linkis.server.Message;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,7 +45,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
 
 
     @RequestMapping(path = "createContextID",method = RequestMethod.POST)
-    public Message createContextID(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, ClassNotFoundException, IOException, CSErrorException {
+    public Message createContextID(HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException, ClassNotFoundException, IOException, CSErrorException {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CREATE, contextID);
         return generateResponse(answerJob, "contextId");
@@ -64,7 +65,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
 
 
     @RequestMapping(path = "updateContextID",method = RequestMethod.POST)
-    public Message updateContextID(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+    public Message updateContextID(HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         if (StringUtils.isEmpty(contextID.getContextId())) {
             throw new CSErrorException(97000, "contxtId cannot be empty");
@@ -75,11 +76,11 @@ public class ContextIDRestfulApi implements CsRestfulParent {
 
 
     @RequestMapping(path = "resetContextID",method = RequestMethod.POST)
-    public Message resetContextID(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException {
+    public Message resetContextID(HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException, CSErrorException {
         if (!jsonNode.has(ContextHTTPConstant.CONTEXT_ID_STR)) {
             throw new CSErrorException(97000, ContextHTTPConstant.CONTEXT_ID_STR + " cannot be empty");
         }
-        String id = jsonNode.get(ContextHTTPConstant.CONTEXT_ID_STR).getTextValue();
+        String id = jsonNode.get(ContextHTTPConstant.CONTEXT_ID_STR).textValue();
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.RESET, id);
         return generateResponse(answerJob, "");
     }
@@ -87,8 +88,8 @@ public class ContextIDRestfulApi implements CsRestfulParent {
 
 
     @RequestMapping(path = "removeContextID",method = RequestMethod.POST)
-    public Message removeContextID(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException {
-        String id = jsonNode.get("contextId").getTextValue();
+    public Message removeContextID(HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException, CSErrorException {
+        String id = jsonNode.get("contextId").textValue();
         if (StringUtils.isEmpty(id)) {
             throw new CSErrorException(97000, "contxtId cannot be empty");
         }

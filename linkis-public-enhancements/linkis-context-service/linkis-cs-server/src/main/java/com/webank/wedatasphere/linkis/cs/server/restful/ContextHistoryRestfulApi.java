@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.cs.server.restful;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webank.wedatasphere.linkis.cs.common.entity.history.ContextHistory;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
@@ -24,10 +25,10 @@ import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceType;
 import com.webank.wedatasphere.linkis.cs.server.scheduler.CsScheduler;
 import com.webank.wedatasphere.linkis.cs.server.scheduler.HttpAnswerJob;
 import com.webank.wedatasphere.linkis.server.Message;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,7 +47,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
 
 
     @RequestMapping(path = "createHistory",method = RequestMethod.POST)
-    public Message createHistory(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+    public Message createHistory(HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         ContextHistory history = getContextHistoryFromJsonNode(jsonNode);
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         //source and contextid cannot be empty
@@ -62,7 +63,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
 
 
     @RequestMapping(path = "removeHistory",method = RequestMethod.POST)
-    public Message removeHistory(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+    public Message removeHistory(HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         ContextHistory history = getContextHistoryFromJsonNode(jsonNode);
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         //source and contextid cannot be empty
@@ -80,7 +81,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
 
 
     @RequestMapping(path = "getHistories",method = RequestMethod.POST)
-    public Message getHistories(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+    public Message getHistories(HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         if (StringUtils.isEmpty(contextID.getContextId())) {
             throw new CSErrorException(97000, "contxtId cannot be empty");
@@ -92,9 +93,9 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
 
 
     @RequestMapping(path = "getHistory",method = RequestMethod.POST)
-    public Message getHistory(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+    public Message getHistory(HttpServletRequest req, @RequestBody JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         //ContextID contextID, String source
-        String source = jsonNode.get("source").getTextValue();
+        String source = jsonNode.get("source").textValue();
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         //source and contextid cannot be empty
         if (StringUtils.isEmpty(source)) {
@@ -110,10 +111,10 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
 
 
     @RequestMapping(path = "searchHistory",method = RequestMethod.POST)
-    public Message searchHistory(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+    public Message searchHistory(HttpServletRequest req, @RequestBody JsonNode jsonNode) throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         //ContextID contextID, String[] keywords
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
-        String[] keywords = objectMapper.readValue(jsonNode.get("keywords"), String[].class);
+        String[] keywords = objectMapper.treeToValue(jsonNode.get("keywords"), String[].class);
         if (StringUtils.isEmpty(contextID.getContextId())) {
             throw new CSErrorException(97000, "contxtId cannot be empty");
         }

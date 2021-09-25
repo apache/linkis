@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.udf.api;
 
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.webank.wedatasphere.linkis.common.io.FsPath;
@@ -31,8 +32,7 @@ import com.webank.wedatasphere.linkis.udf.service.UDFTreeService;
 import com.webank.wedatasphere.linkis.udf.utils.ConstantVar;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -140,11 +140,11 @@ public class UDFApi {
     }
 
     @RequestMapping(path = "add",method = RequestMethod.POST)
-    public Message addUDF(HttpServletRequest req,  JsonNode json) {
+    public Message addUDF(HttpServletRequest req,@RequestBody JsonNode json) {
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
-            UDFInfo udfInfo = mapper.readValue(json.get("udfInfo"), UDFInfo.class);
+            UDFInfo udfInfo = mapper.treeToValue(json.get("udfInfo"), UDFInfo.class);
             udfInfo.setCreateUser(userName);
             udfInfo.setCreateTime(new Date());
             udfInfo.setUpdateTime(new Date());
@@ -159,11 +159,11 @@ public class UDFApi {
     }
 
     @RequestMapping(path = "update",method = RequestMethod.POST)
-    public Message updateUDF(HttpServletRequest req,  JsonNode json) {
+    public Message updateUDF(HttpServletRequest req,@RequestBody JsonNode json) {
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
-            UDFInfo udfInfo = mapper.readValue(json.get("udfInfo"), UDFInfo.class);
+            UDFInfo udfInfo = mapper.treeToValue(json.get("udfInfo"), UDFInfo.class);
             udfInfo.setCreateUser(userName);
             udfInfo.setUpdateTime(new Date());
             udfService.updateUDF(udfInfo, userName);
@@ -261,7 +261,7 @@ public class UDFApi {
     }
 
     @RequestMapping(path = "/authenticate",method = RequestMethod.POST)
-    public Message Authenticate(HttpServletRequest req,  JsonNode json){
+    public Message Authenticate(HttpServletRequest req,@RequestBody JsonNode json){
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
@@ -280,18 +280,18 @@ public class UDFApi {
 
     @RequestMapping(path = "/setExpire",method = RequestMethod.POST)
     @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT,rollbackFor = Throwable.class)
-    public Message setExpire(HttpServletRequest req,  JsonNode json){
+    public Message setExpire(HttpServletRequest req,@RequestBody JsonNode json){
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
             if (StringUtils.isEmpty(userName)){
                 throw new UDFException("UserName is Empty!");
             }
-            Long udfId =json.get("udfId").getLongValue();
+            Long udfId =json.get("udfId").longValue();
             if (StringUtils.isEmpty(udfId)){
                 throw new UDFException("udfId is Empty!");
             }
-            String udfName =  json.get("udfName").getTextValue();
+            String udfName =  json.get("udfName").textValue();
             if (StringUtils.isEmpty(udfName)){
                 throw new UDFException("udfName is Empty!");
             }
@@ -317,21 +317,21 @@ public class UDFApi {
 
     @RequestMapping(path = "/shareUDF",method = RequestMethod.POST)
     @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT,rollbackFor = Throwable.class)
-    public Message shareUDF(HttpServletRequest req,  JsonNode json)throws Throwable{
+    public Message shareUDF(HttpServletRequest req,@RequestBody JsonNode json)throws Throwable{
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
             if (StringUtils.isEmpty(userName)){
                 throw new UDFException("UserName is Empty!");
             }
-            List<String> sharedUsers = mapper.readValue(json.get("sharedUsers"), List.class);
+            List<String> sharedUsers = mapper.treeToValue(json.get("sharedUsers"), List.class);
             if (CollectionUtils.isEmpty(sharedUsers)){
                 throw new UDFException("SharedUsers is Empty!");
             }
             //Verify shared user identity(校验分享的用户身份)
             udfService.checkSharedUsers(sharedUsers,userName);//Throws an exception without passing the checksum (---no deduplication--)(不通过校验则抛异常(---没有去重--))
             //Verify that the udf function has been shared(校验udf函数是否已经被分享)
-            UDFInfo udfInfo = mapper.readValue(json.get("udfInfo"), UDFInfo.class);
+            UDFInfo udfInfo = mapper.treeToValue(json.get("udfInfo"), UDFInfo.class);
             Long shareParentId = json.get("shareParentId").asLong();
 
 
@@ -368,14 +368,14 @@ public class UDFApi {
 
     @RequestMapping(path = "/getSharedUsers",method = RequestMethod.POST)
     @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT,rollbackFor = Throwable.class)
-    public Message getSharedUsers(HttpServletRequest req,  JsonNode json){
+    public Message getSharedUsers(HttpServletRequest req,@RequestBody JsonNode json){
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
             if (StringUtils.isEmpty(userName)){
                 throw new UDFException("UserName is Empty!");
             }
-            String udfName =  json.get("udfName").getTextValue();
+            String udfName =  json.get("udfName").textValue();
             if (StringUtils.isEmpty(userName)){
                 throw new UDFException("udfName is Empty!");
             }
@@ -390,11 +390,11 @@ public class UDFApi {
     }
 
     @RequestMapping(path = "/updateSharedUsers",method = RequestMethod.POST)
-    public Message updateSharedUsers(HttpServletRequest req,  JsonNode json){
+    public Message updateSharedUsers(HttpServletRequest req,@RequestBody JsonNode json){
         Message message = null;
 
         try {
-            List<String> sharedUsers = mapper.readValue(json.get("sharedUsers"), List.class);
+            List<String> sharedUsers = mapper.treeToValue(json.get("sharedUsers"), List.class);
             if (CollectionUtils.isEmpty(sharedUsers)){
                 throw new UDFException("SharedUsers is Empty!");
             }
@@ -404,7 +404,7 @@ public class UDFApi {
             }
             //Verify shared user identity(校验分享的用户身份)
             udfService.checkSharedUsers(sharedUsers,userName);//Throws an exception without passing the checksum (---no deduplication--)(不通过校验则抛异常(---没有去重--))
-            String udfName =  json.get("udfName").getTextValue();
+            String udfName =  json.get("udfName").textValue();
             if (StringUtils.isEmpty(userName)){
                 throw new UDFException("udfName is Empty!");
             }

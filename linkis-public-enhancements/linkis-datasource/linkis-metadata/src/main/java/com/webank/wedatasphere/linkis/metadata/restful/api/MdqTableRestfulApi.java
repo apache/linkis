@@ -15,7 +15,6 @@
  */
 package com.webank.wedatasphere.linkis.metadata.restful.api;
 
-
 import com.webank.wedatasphere.linkis.metadata.ddl.ImportDDLCreator;
 import com.webank.wedatasphere.linkis.metadata.ddl.ScalaDDLCreator;
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableBO;
@@ -28,11 +27,12 @@ import com.webank.wedatasphere.linkis.metadata.exception.MdqIllegalParamExceptio
 import com.webank.wedatasphere.linkis.metadata.service.MdqService;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -143,23 +143,23 @@ public class MdqTableRestfulApi {
     }
 
     @RequestMapping(path = "persistTable",method = RequestMethod.POST)
-    public Message persistTable( HttpServletRequest req, JsonNode json) throws IOException {
+    public Message persistTable( HttpServletRequest req, @RequestBody JsonNode json) throws IOException {
         String userName = SecurityFilter.getLoginUsername(req);
-        MdqTableBO table = mapper.readValue(json.get("table"), MdqTableBO.class);
+        MdqTableBO table = mapper.treeToValue(json.get("table"), MdqTableBO.class);
         mdqService.persistTable(table, userName);
         return Message.ok();
     }
 
 
     @RequestMapping(path = "displaysql",method = RequestMethod.POST)
-    public Message displaySql( HttpServletRequest request, JsonNode json) {
+    public Message displaySql( HttpServletRequest request, @RequestBody JsonNode json) {
         String userName = SecurityFilter.getLoginUsername(request);
         logger.info("display sql for user {} ", userName);
         StringBuilder sb = new StringBuilder();
         String retSql = "";
         MdqTableBO tableBO = null;
         try {
-            tableBO = mapper.readValue(json.get("table"), MdqTableBO.class);
+            tableBO = mapper.treeToValue(json.get("table"), MdqTableBO.class);
             MdqTableImportInfoBO importInfo = tableBO.getImportInfo();
             if (importInfo != null) {
                 retSql = ImportDDLCreator.createDDL(tableBO, userName);

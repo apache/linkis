@@ -35,7 +35,7 @@ import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -291,9 +291,9 @@ public class EntranceRestfulApi{
         return message;
     }
 
-  
+
     @RequestMapping(path = "/{id}/killJobs",method = RequestMethod.POST)
-    public Message killJobs(HttpServletRequest req, JsonNode jsonNode, @PathVariable("id") String strongExecId) {
+    public Message killJobs(HttpServletRequest req,@RequestBody JsonNode jsonNode, @PathVariable("id") String strongExecId) {
         JsonNode idNode = jsonNode.get("idList");
         JsonNode taskIDNode = jsonNode.get("taskIDList");
         ArrayList<Long> waitToForceKill = new ArrayList<>();

@@ -17,6 +17,7 @@
  */
 package com.webank.wedatasphere.linkis.manager.am.restful;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
 import com.webank.wedatasphere.linkis.common.utils.ByteTimeUtils;
 import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration;
@@ -53,11 +54,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -86,10 +87,10 @@ public class EngineRestfulApi {
     private Logger logger = LoggerFactory.getLogger(EMRestfulApi.class);
 
     @RequestMapping(path = "/createEngineConn", method = RequestMethod.POST)
-    public Message createEngineConn( HttpServletRequest req, JsonNode jsonNode)
+    public Message createEngineConn( HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws IOException, InterruptedException {
         String userName = SecurityFilter.getLoginUsername(req);
-        EngineCreateRequest engineCreateRequest = objectMapper.readValue(jsonNode, EngineCreateRequest.class);
+        EngineCreateRequest engineCreateRequest = objectMapper.treeToValue(jsonNode, EngineCreateRequest.class);
         engineCreateRequest.setUser(userName);
         long timeout = engineCreateRequest.getTimeOut();
         if(timeout <= 0) {
@@ -122,7 +123,7 @@ public class EngineRestfulApi {
 
 
     @RequestMapping(path = "/getEngineConn", method = RequestMethod.POST)
-    public Message getEngineConn( HttpServletRequest req, JsonNode jsonNode) throws AMErrorException {
+    public Message getEngineConn( HttpServletRequest req, @RequestBody JsonNode jsonNode) throws AMErrorException {
         String userName = SecurityFilter.getLoginUsername(req);
         ServiceInstance serviceInstance = getServiceInstance(jsonNode);
         EngineNode engineNode = engineCreateService.getEngineNode(serviceInstance);
@@ -133,7 +134,7 @@ public class EngineRestfulApi {
     }
 
     @RequestMapping(path = "/killEngineConn", method = RequestMethod.POST)
-    public Message killEngineConn( HttpServletRequest req, JsonNode jsonNode) throws Exception {
+    public Message killEngineConn( HttpServletRequest req, @RequestBody JsonNode jsonNode) throws Exception {
         String userName = SecurityFilter.getLoginUsername(req);
         ServiceInstance serviceInstance = getServiceInstance(jsonNode);
         logger.info("User {} try to kill engineConn {}.", userName, serviceInstance);
@@ -156,12 +157,12 @@ public class EngineRestfulApi {
     }
 
     @RequestMapping(path = "/listEMEngines", method = RequestMethod.POST)
-    public Message listEMEngines( HttpServletRequest req, JsonNode jsonNode) throws IOException, AMErrorException {
+    public Message listEMEngines( HttpServletRequest req, @RequestBody JsonNode jsonNode) throws IOException, AMErrorException {
         String username = SecurityFilter.getLoginUsername(req);
         if(!isAdmin(username)){
             throw new AMErrorException(210003,"Only admin can search engine information(只有管理员才能查询所有引擎信息).");
         }
-        AMEMNode amemNode = objectMapper.readValue(jsonNode.get("em"), AMEMNode.class);
+        AMEMNode amemNode = objectMapper.treeToValue(jsonNode.get("em"), AMEMNode.class);
         JsonNode emInstace = jsonNode.get("emInstance");
         JsonNode nodeStatus = jsonNode.get("nodeStatus");
         JsonNode engineType = jsonNode.get("engineType");
@@ -188,7 +189,7 @@ public class EngineRestfulApi {
     }
 
     @RequestMapping(path = "/modifyEngineInfo", method = RequestMethod.PUT)
-    public Message modifyEngineInfo( HttpServletRequest req, JsonNode jsonNode) throws AMErrorException, LabelErrorException {
+    public Message modifyEngineInfo( HttpServletRequest req, @RequestBody JsonNode jsonNode) throws AMErrorException, LabelErrorException {
         String username = SecurityFilter.getLoginUsername(req);
         if(!isAdmin(username)){
             throw new AMErrorException(210003,"Only admin can modify engineConn information(只有管理员才能修改引擎信息).");

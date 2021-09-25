@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.configuration.restful.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.discovery.converters.Auto;
 import com.webank.wedatasphere.linkis.configuration.entity.*;
 import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationException;
@@ -30,10 +31,10 @@ import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils;
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -159,7 +160,7 @@ public class ConfigurationRestfulApi {
     }
 
     @RequestMapping(path = "/createFirstCategory",method = RequestMethod.POST)
-    public Message createFirstCategory(HttpServletRequest request, JsonNode jsonNode) throws ConfigurationException {
+    public Message createFirstCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ConfigurationException {
         String username = SecurityFilter.getLoginUsername(request);
         String categoryName = jsonNode.get("categoryName").asText();
         String description = jsonNode.get("description").asText();
@@ -171,7 +172,7 @@ public class ConfigurationRestfulApi {
     }
 
     @RequestMapping(path = "/deleteCategory",method = RequestMethod.POST)
-    public Message deleteCategory(HttpServletRequest request, JsonNode jsonNode){
+    public Message deleteCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode){
         String username = SecurityFilter.getLoginUsername(request);
         Integer categoryId = jsonNode.get("categoryId").asInt();
         categoryService.deleteCategory(categoryId);
@@ -180,7 +181,7 @@ public class ConfigurationRestfulApi {
 
 
     @RequestMapping(path = "/createSecondCategory",method = RequestMethod.POST)
-    public Message createSecondCategory(HttpServletRequest request, JsonNode jsonNode) throws ConfigurationException {
+    public Message createSecondCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ConfigurationException {
         String username = SecurityFilter.getLoginUsername(request);
         Integer categoryId = jsonNode.get("categoryId").asInt();
         String engineType = jsonNode.get("engineType").asText();
@@ -201,8 +202,8 @@ public class ConfigurationRestfulApi {
 
 
     @RequestMapping(path = "/saveFullTree",method = RequestMethod.POST)
-    public Message saveFullTree(HttpServletRequest req, JsonNode json) throws IOException, ConfigurationException {
-        List fullTrees = mapper.readValue(json.get("fullTree"), List.class);
+    public Message saveFullTree(HttpServletRequest req, @RequestBody JsonNode json) throws IOException, ConfigurationException {
+        List fullTrees = mapper.treeToValue(json.get("fullTree"), List.class);
         String creator = JsonNodeUtil.getStringValue(json.get("creator"));
         String engineType = JsonNodeUtil.getStringValue(json.get("engineType"));
         if(creator != null && (creator.equals("通用设置") || creator.equals("全局设置"))){
@@ -243,7 +244,7 @@ public class ConfigurationRestfulApi {
     }
 
     @RequestMapping(path = "/updateCategoryInfo",method = RequestMethod.POST)
-    public Message updateCategoryInfo(HttpServletRequest request, JsonNode jsonNode) throws ConfigurationException {
+    public Message updateCategoryInfo(HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ConfigurationException {
         String username = SecurityFilter.getLoginUsername(request);
         String description = null;
         Integer categoryId = null;

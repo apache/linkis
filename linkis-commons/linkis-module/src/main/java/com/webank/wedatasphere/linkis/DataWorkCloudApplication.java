@@ -16,6 +16,10 @@
 
 package com.webank.wedatasphere.linkis;
 
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
 import com.webank.wedatasphere.linkis.common.conf.BDPConfiguration;
 import com.webank.wedatasphere.linkis.common.conf.Configuration;
@@ -176,6 +180,15 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
         return builder.sources(DataWorkCloudApplication.class);
+    }
+
+    //todo confirm
+    @Bean
+    public ObjectMapper get() {
+         ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
+         return  objectMapper;
     }
 
     @Bean

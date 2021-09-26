@@ -27,13 +27,15 @@ import com.webank.wedatasphere.linkis.server.{Message, catchIt}
 import javax.annotation.PostConstruct
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.{RequestMapping, RequestMethod, RestController}
+import org.springframework.stereotype.Component
+import org.springframework.web.bind.annotation.{RequestBody, RequestMapping, RequestMethod, RestController}
 
 import scala.concurrent.duration.Duration
 import scala.runtime.BoxedUnit
 
-@RestController
-@RequestMapping(path = Array("/rpc"))
+@Component
+//@RequestMapping(path = Array("/rpc"))
+//@RestController
 private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
 
   @Autowired(required = false)
@@ -112,8 +114,8 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
       RPCProduct.getRPCProduct.toMessage(obj)
   }
 
-  @RequestMapping(path = Array("receive"),method = Array(RequestMethod.POST))
-  override def receive(message: Message): Message = catchIt {
+  @RequestMapping(path = Array("/rpc/receive"),method = Array(RequestMethod.POST))
+  override def receive(@RequestBody message: Message): Message = catchIt {
     val obj = RPCConsumer.getRPCConsumer.toObject(message)
     val event = RPCMessageEvent(obj, BaseRPCSender.getInstanceInfo(message.getData))
     rpcReceiverListenerBus.post(event)
@@ -126,11 +128,11 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
     event.map(opEvent(_, obj, event)).getOrElse(RPCProduct.getRPCProduct.notFound())
   }
 
-  @RequestMapping(path = Array("receiveAndReply"),method = Array(RequestMethod.POST))
-  override def receiveAndReply(message: Message): Message = receiveAndReply(message, _.receiveAndReply(_, _))
+  @RequestMapping(path = Array("/rpc/receiveAndReply"),method = Array(RequestMethod.POST))
+  override def receiveAndReply(@RequestBody message: Message): Message = receiveAndReply(message, _.receiveAndReply(_, _))
 
-  @RequestMapping(path = Array("replyInMills"),method = Array(RequestMethod.POST))
-  override def receiveAndReplyInMills(message: Message): Message = catchIt {
+  @RequestMapping(path = Array("/rpc/replyInMills"),method = Array(RequestMethod.POST))
+  override def receiveAndReplyInMills(@RequestBody message: Message): Message = catchIt {
     val duration = message.getData.get("duration")
     if(duration == null || StringUtils.isEmpty(duration.toString)) throw new DWCURIException(10002, "The timeout period is not set!(超时时间未设置！)")
     val timeout = Duration(duration.toString.toLong, TimeUnit.MILLISECONDS)

@@ -68,7 +68,7 @@ public class EntranceRestfulApi{
      */
   
     @RequestMapping(path = "/execute",method = RequestMethod.POST)
-    public Message execute(HttpServletRequest req, Map<String, Object> json) {
+    public Message execute(HttpServletRequest req,@RequestBody  Map<String, Object> json) {
         Message message = null;
 //        try{
         logger.info("Begin to get an execID");
@@ -106,7 +106,7 @@ public class EntranceRestfulApi{
 
   
     @RequestMapping(path = "/submit",method = RequestMethod.POST)
-    public Message submit(HttpServletRequest req, Map<String, Object> json) {
+    public Message submit(HttpServletRequest req, @RequestBody  Map<String, Object> json) {
         Message message = null;
         logger.info("Begin to get an execID");
         json.put(TaskConstant.SUBMIT_USER, SecurityFilter.getLoginUsername(req));

@@ -267,6 +267,7 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
                 throw new RuntimeException("Unknown primitive type: " + category);
             }
         }
+
         if(binaryData == null){
             throw new RuntimeException("get primitive type is null: " + category);
         }

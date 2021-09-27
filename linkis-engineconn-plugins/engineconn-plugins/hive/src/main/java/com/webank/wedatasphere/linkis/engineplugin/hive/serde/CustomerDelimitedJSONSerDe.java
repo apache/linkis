@@ -181,6 +181,7 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
 
         PrimitiveObjectInspector.PrimitiveCategory category = oi.getPrimitiveCategory();
         byte[] binaryData = null;
+        WritableComparable  wc = null;
         switch (category) {
             case BOOLEAN: {
                 boolean b = ((BooleanObjectInspector) oi).get(o);
@@ -238,23 +239,23 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
                 break;
             }
             case DATE: {
-                WritableComparable dw = ((DateObjectInspector) oi).getPrimitiveWritableObject(o);
-                binaryData = Base64.encodeBase64(String.valueOf(dw).getBytes());
+                wc = ((DateObjectInspector) oi).getPrimitiveWritableObject(o);
+                binaryData = Base64.encodeBase64(String.valueOf(wc).getBytes());
                 break;
             }
             case TIMESTAMP: {
-                WritableComparable tw = ((TimestampObjectInspector) oi).getPrimitiveWritableObject(o);
-                binaryData = Base64.encodeBase64(String.valueOf(tw).getBytes());
+                wc = ((TimestampObjectInspector) oi).getPrimitiveWritableObject(o);
+                binaryData = Base64.encodeBase64(String.valueOf(wc).getBytes());
                 break;
             }
             case INTERVAL_YEAR_MONTH: {
-                HiveIntervalYearMonthWritable hw = ((HiveIntervalYearMonthObjectInspector) oi).getPrimitiveWritableObject(o);
-                binaryData = Base64.encodeBase64(String.valueOf(hw).getBytes());
+                wc = ((HiveIntervalYearMonthObjectInspector) oi).getPrimitiveWritableObject(o);
+                binaryData = Base64.encodeBase64(String.valueOf(wc).getBytes());
                 break;
             }
             case INTERVAL_DAY_TIME: {
-                HiveIntervalDayTimeWritable ht = ((HiveIntervalDayTimeObjectInspector) oi).getPrimitiveWritableObject(o);
-                binaryData = Base64.encodeBase64(String.valueOf(ht).getBytes());
+                wc = ((HiveIntervalDayTimeObjectInspector) oi).getPrimitiveWritableObject(o);
+                binaryData = Base64.encodeBase64(String.valueOf(wc).getBytes());
                 break;
             }
             case DECIMAL: {

@@ -29,7 +29,7 @@ public class LinkisClientApplicationTest {
     @Before
     public void before() throws Exception {
         System.setProperty("conf.root", "src/test/resources/conf/");
-//        System.setProperty("user.name", "notshangda");
+        System.setProperty("user.name", "hadoop");
         cmdStr2 = new String[]{
 //      "--gatewayUrl", "http://127.0.0.1:8090",
 //        "--authStg", "token",
@@ -46,7 +46,7 @@ public class LinkisClientApplicationTest {
 
         };
         cmdStr = new String[]{
-                "--gatewayUrl", "http://127.0.0.1:9001",
+                "--gatewayUrl", "http://172.21.8.149:9001",
                 "--authStg", "token",
                 "--authKey", "Validation-Code",
                 "--authVal", "BML-AUTH",
@@ -64,9 +64,9 @@ public class LinkisClientApplicationTest {
                 "-submitUser", "hadoop",
                 "-proxyUser", "hadoop",
 //                "-sourceMap", "scriptPath=1234",
-                "-outPath", "./data/bdp-job/test/",
+//               "-outPath", "./data/bdp-job/test/",
 //                "-labelMap", "codeType=sql",
-                "-confMap", "wds.linkis.yarnqueue=q02",
+//                "-confMap", "wds.linkis.yarnqueue=q02",
 //                "-confMap", "wds.linkis.yarnqueue=q02",
 //                "-confMap", "spark.num.executor=3",
 //                "-varMap", "wds.linkis.yarnqueue=q02",
@@ -76,14 +76,14 @@ public class LinkisClientApplicationTest {
  * Test different task type
 */
 
-                "-engineType", "spark-2.4.3",
-                "-codeType", "sql",
-                "-code", "show tables;show tables;show tables",
+//                "-engineType", "spark-2.4.3",
+//                "-codeType", "sql",
+//                "-code", "show tables;show tables;show tables",
 
 //
-//        "-engineType", "hive-1.2.1",
-//        "-codeType", "sql",
-//        "-code", "show tables;show tables;show tables;show tables;show tables;show tables;",
+        "-engineType", "hive-1.2.1",
+        "-codeType", "sql",
+        "-code", "show tables;show tables;show tables;show tables;show tables;show tables;",
 
 //        "-engineType", "spark-2.4.3",
 //        "-codeType", "py",
@@ -162,7 +162,7 @@ try {
      */
     @Test
     public void testExec() throws Exception {
-//        LinkisClientApplication.main(cmdStr);
+        LinkisClientApplication.main(cmdStr);
 //    LinkisClientApplication.main(cmdStr2);
 /* 
 try { 

@@ -289,4 +289,3 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
         }
     }
 }
-

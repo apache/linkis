@@ -29,7 +29,7 @@ public class LinkisClientApplicationTest {
     @Before
     public void before() throws Exception {
         System.setProperty("conf.root", "src/test/resources/conf/");
-//        System.setProperty("user.name", "notshangda");
+        System.setProperty("user.name", "hadoop");
         cmdStr2 = new String[]{
 //      "--gatewayUrl", "http://127.0.0.1:8090",
 //        "--authStg", "token",
@@ -88,7 +88,6 @@ public class LinkisClientApplicationTest {
         "-engineType", "shell-1",
         "-codeType", "shell",
         "-code", "whoami",
-
 
 //        "-engineType", "spark-2.4.3",
 //        "-codeType", "py",

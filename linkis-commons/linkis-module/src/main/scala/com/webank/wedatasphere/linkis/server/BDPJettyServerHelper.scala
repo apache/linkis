@@ -24,9 +24,9 @@ import java.util.EnumSet
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson._
+import com.webank.wedatasphere.linkis.DataWorkCloudApplication
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration._
-import com.webank.wedatasphere.linkis.server.restful.RestfulApplication
 import com.webank.wedatasphere.linkis.server.socket.ControllerServer
 import com.webank.wedatasphere.linkis.server.socket.controller.{ServerEventService, ServerListenerEventBus}
 import javax.servlet.{DispatcherType, Filter, MultipartConfigElement}
@@ -34,7 +34,6 @@ import org.apache.commons.io.FileUtils
 import org.eclipse.jetty.server.session.SessionHandler
 import org.eclipse.jetty.servlet.{DefaultServlet, FilterHolder, ServletContextHandler, ServletHolder}
 import org.eclipse.jetty.webapp.WebAppContext
-import org.glassfish.jersey.servlet.ServletContainer
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext
 import org.springframework.web.servlet.DispatcherServlet
 
@@ -47,8 +46,8 @@ private[linkis] object BDPJettyServerHelper extends Logging {
   private var controllerServer: ControllerServer = _
   private val services = mutable.Buffer[ServerEventService]()
 
-  private val TMP_FOLDER = "/tmp"
-  private val MAX_UPLOAD_SIZE = 20 * 1024 * 1024
+  private val TMP_FOLDER = ""
+  private val MAX_UPLOAD_SIZE = 200 * 1024 * 1024
 
   private[server] def getControllerServer = controllerServer
 
@@ -94,7 +93,8 @@ private[linkis] object BDPJettyServerHelper extends Logging {
     servletHolder.setForcedPath("springrestful")
 
     //todo  file size  parameter configuration
-    val multipartConfigElement = new MultipartConfigElement(TMP_FOLDER, MAX_UPLOAD_SIZE, MAX_UPLOAD_SIZE * 2, MAX_UPLOAD_SIZE / 2)
+    //val multipartConfigElement = new MultipartConfigElement(null, MAX_UPLOAD_SIZE, MAX_UPLOAD_SIZE * 2, MAX_UPLOAD_SIZE / 2)
+    val multipartConfigElement=DataWorkCloudApplication.getApplicationContext.getBean(classOf[MultipartConfigElement]);
     servletHolder.getRegistration.setMultipartConfig(multipartConfigElement)
 
     val p = BDP_SERVER_RESTFUL_URI.getValue

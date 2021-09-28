@@ -21,21 +21,25 @@ import java.util.concurrent.TimeUnit
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.protocol.BroadcastProtocol
 import com.webank.wedatasphere.linkis.rpc.conf.RPCConfiguration.{BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX, BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_MAX, BDP_RPC_RECEIVER_ASYN_QUEUE_CAPACITY}
+import com.webank.wedatasphere.linkis.rpc.conf.RPCReceiveRestfulCondition
 import com.webank.wedatasphere.linkis.rpc.exception.DWCURIException
 import com.webank.wedatasphere.linkis.rpc.transform.{RPCConsumer, RPCProduct}
 import com.webank.wedatasphere.linkis.server.{Message, catchIt}
 import javax.annotation.PostConstruct
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.context.annotation.Conditional
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.{RequestBody, RequestMapping, RequestMethod, RestController}
 
 import scala.concurrent.duration.Duration
 import scala.runtime.BoxedUnit
 
-@Component
-//@RequestMapping(path = Array("/rpc"))
-//@RestController
+//@Component
+@RestController
+//@ConditionalOnProperty(name = Array("wds.linkis.rpc.default.recevie.enable"), matchIfMissing = false)
+@Conditional(Array(classOf[RPCReceiveRestfulCondition]))
 private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
 
   @Autowired(required = false)

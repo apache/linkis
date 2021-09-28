@@ -35,7 +35,6 @@ import scala.concurrent.duration.Duration
 import scala.runtime.BoxedUnit
 
 //@Component
-//@RequestMapping(path = Array("/rpc"))
 @RestController
 @Primary
 @Import(Array(classOf[MessageRPCConsumer]))

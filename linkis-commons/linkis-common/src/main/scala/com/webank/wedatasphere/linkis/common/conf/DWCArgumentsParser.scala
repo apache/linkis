@@ -75,8 +75,12 @@ object DWCArgumentsParser {
     val options = ArrayBuffer[String]()
     springOptionMap.foreach { case (key, value) =>
       if (StringUtils.isNotEmpty(key) && StringUtils.isNotEmpty(value)) {
-        val realKey = key.substring(SPRING_STAR.length)
-        options += ("--" + realKey + "=" + value)
+        var realKey=key
+//        if(key.startsWith(SPRING_STAR+SPRING_STAR)){
+//          realKey = key.substring(SPRING_STAR.length)
+//        }
+//        options += ("--" + realKey + "=" + value)
+        options += ("--" + key + "=" + value)
       }
     }
     options.toArray

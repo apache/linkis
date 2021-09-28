@@ -33,7 +33,7 @@
                      separator=",">
                 (#{valueKey},#{valueContent})
             </foreach>
-            GROUP BY l.id,si.instance
+            GROUP BY l.id,l.label_value_size,l.label_key,l.label_value,si.instance,si.name
             <if test="valueRelation == 'ALL'">
                 HAVING COUNT(1) = l.label_value_size and count(1) = ${value.size}
             </if>

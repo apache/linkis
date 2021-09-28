@@ -46,13 +46,13 @@ public class LinkisClientApplicationTest {
 
         };
         cmdStr = new String[]{
-                "--gatewayUrl", "http://127.0.0.1:9001",
+                "--gatewayUrl", "http://172.21.8.149:9001",
                 "--authStg", "token",
                 "--authKey", "Validation-Code",
                 "--authVal", "BML-AUTH",
 //                "--help",
 //                "--kill", "8249",
-//                "--status", "123"
+//                "--status", "379",
 
 
 //                "--userConf", "src/test/resources/linkis-cli.properties",
@@ -64,9 +64,9 @@ public class LinkisClientApplicationTest {
                 "-submitUser", "hadoop",
                 "-proxyUser", "hadoop",
 //                "-sourceMap", "scriptPath=1234",
-                "-outPath", "./data/bdp-job/test/",
+//                "-outPath", "./data/bdp-job/test/",
 //                "-labelMap", "codeType=sql",
-                "-confMap", "wds.linkis.yarnqueue=q02",
+//                "-confMap", "wds.linkis.yarnqueue=q02",
 //                "-confMap", "wds.linkis.yarnqueue=q02",
 //                "-confMap", "spark.num.executor=3",
 //                "-varMap", "wds.linkis.yarnqueue=q02",
@@ -76,14 +76,19 @@ public class LinkisClientApplicationTest {
  * Test different task type
 */
 
-                "-engineType", "spark-2.4.3",
-                "-codeType", "sql",
-                "-code", "show tables;show tables;show tables",
+//                "-engineType", "spark-2.4.3",
+//                "-codeType", "sql",
+//                "-code", "show tables;show tables;show tables",
 
 //
 //        "-engineType", "hive-1.2.1",
 //        "-codeType", "sql",
-//        "-code", "show tables;show tables;show tables;show tables;show tables;show tables;",
+//        "-code", "show tables;",
+
+        "-engineType", "shell-1",
+        "-codeType", "shell",
+        "-code", "whoami",
+
 
 //        "-engineType", "spark-2.4.3",
 //        "-codeType", "py",
@@ -104,6 +109,7 @@ public class LinkisClientApplicationTest {
 //        "-engineType", "python-python2",
 //        "-codeType", "python",
 ////        "-code", "print(\'hello\')\nprint(\'hello\')\nprint(\'hello\') ",
+
         };
 
     }

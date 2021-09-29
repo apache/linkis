@@ -46,7 +46,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
     private CsScheduler csScheduler;
 
     @RequestMapping(path = "createHistory",method = RequestMethod.POST)
-     public Message createHistory(HttpServletRequest req,@RequestBody JsonNode json) throws InterruptedException, CSErrorException {
+     public Message createHistory(HttpServletRequest req) throws InterruptedException, CSErrorException {
         ContextHistory history = new PersistenceContextHistory();
         history.setSource("server1:prot1");
         history.setContextType(ContextType.METADATA);
@@ -65,7 +65,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
     }
 
     @RequestMapping(path = "removeHistory",method = RequestMethod.POST)
-     public Message removeHistory( HttpServletRequest req, @RequestBody JsonNode json) throws InterruptedException, CSErrorException {
+     public Message removeHistory( HttpServletRequest req) throws InterruptedException, CSErrorException {
         ContextHistory history = new PersistenceContextHistory();
         history.setSource("server1:prot1");
         ContextID contextID = new PersistenceContextID();
@@ -83,7 +83,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
 
 
     @RequestMapping(path = "getHistories",method = RequestMethod.GET)
-     public Message getHistories( HttpServletRequest req, @RequestBody JsonNode json) throws InterruptedException, CSErrorException {
+     public Message getHistories( HttpServletRequest req) throws InterruptedException, CSErrorException {
         ContextID contextID = new PersistenceContextID();
         contextID.setContextId("84716");
         if (StringUtils.isEmpty(contextID.getContextId())) {
@@ -94,7 +94,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
     }
 
     @RequestMapping(path = "getHistory",method = RequestMethod.GET)
-     public Message getHistory( HttpServletRequest req, @RequestBody JsonNode json) throws InterruptedException, CSErrorException {
+     public Message getHistory( HttpServletRequest req) throws InterruptedException, CSErrorException {
         //ContextID contextID, String source
         String source = "server1:prot1";
         ContextID contextID = new PersistenceContextID();
@@ -111,7 +111,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
     }
 
     @RequestMapping(path = "searchHistory",method = RequestMethod.GET)
-     public Message searchHistory( HttpServletRequest req, @RequestBody JsonNode json) throws InterruptedException, CSErrorException {
+     public Message searchHistory( HttpServletRequest req) throws InterruptedException, CSErrorException {
         //ContextID contextID, String[] keywords
         ContextID contextID = new PersistenceContextID();
         contextID.setContextId("84716");

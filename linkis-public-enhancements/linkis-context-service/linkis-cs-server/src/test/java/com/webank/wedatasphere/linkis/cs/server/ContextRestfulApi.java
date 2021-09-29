@@ -70,7 +70,7 @@ public class ContextRestfulApi implements CsRestfulParent {
 
 
     @RequestMapping(path = "getContextValue",method = RequestMethod.POST)
-     public Message getContextValue( HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException {
+     public Message getContextValue( HttpServletRequest req) throws InterruptedException {
         //ContextID contextID, ContextKey contextKey
         ContextID contextID = new PersistenceContextID();
         contextID.setContextId("84716");
@@ -117,7 +117,7 @@ public class ContextRestfulApi implements CsRestfulParent {
 
 
     @RequestMapping(path = "setValueByKey",method = RequestMethod.POST)
-     public Message setValueByKey( HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException, CSErrorException {
+     public Message setValueByKey( HttpServletRequest req) throws InterruptedException, CSErrorException {
         /*JSONSerializer jsonSerializer = new JSONSerializer();
         PersistenceContextID contextID = new PersistenceContextID();
         //// TODO: 2020/2/26 手动修改contextid
@@ -140,7 +140,7 @@ public class ContextRestfulApi implements CsRestfulParent {
     }
 
     @RequestMapping(path = "setValue",method = RequestMethod.POST)
-     public Message setValue( HttpServletRequest req, @RequestBody JsonNode jsonNode) throws InterruptedException, CSErrorException {
+     public Message setValue( HttpServletRequest req) throws InterruptedException, CSErrorException {
         /*JSONSerializer jsonSerializer = new JSONSerializer();
         PersistenceContextID contextID = new PersistenceContextID();
         //// TODO: 2020/2/26 手动修改contextid
@@ -167,7 +167,7 @@ public class ContextRestfulApi implements CsRestfulParent {
     }
 
     @RequestMapping(path = "resetValue",method = RequestMethod.POST)
-     public Message resetValue( HttpServletRequest req, @RequestBody JsonNode jsonNode) throws InterruptedException {
+     public Message resetValue( HttpServletRequest req) throws InterruptedException {
         ContextID contextID = null;
         ContextKey contextKey = null;
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.RESET, contextID, contextKey);
@@ -175,7 +175,7 @@ public class ContextRestfulApi implements CsRestfulParent {
     }
 
     @RequestMapping(path = "removeValue",method = RequestMethod.POST)
-     public Message removeValue( HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException {
+     public Message removeValue( HttpServletRequest req) throws InterruptedException {
         ContextID contextID = new PersistenceContextID();
         contextID.setContextId("84716");
         ContextKey contextKey = new PersistenceContextKey();
@@ -185,7 +185,7 @@ public class ContextRestfulApi implements CsRestfulParent {
     }
 
     @RequestMapping(path = "removeAllValue",method = RequestMethod.POST)
-     public Message removeAllValue( HttpServletRequest req, @RequestBody JsonNode jsonNode) throws InterruptedException {
+     public Message removeAllValue( HttpServletRequest req) throws InterruptedException {
         ContextID contextID = new PersistenceContextID();
         contextID.setContextId("84716");
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVEALL, contextID);

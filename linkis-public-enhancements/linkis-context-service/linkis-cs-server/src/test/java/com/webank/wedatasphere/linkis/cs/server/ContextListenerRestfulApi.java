@@ -43,7 +43,7 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
     private CsScheduler csScheduler;
 
     @RequestMapping(path = "onBindIDListener",method = RequestMethod.POST)
-     public Message onBindIDListener(HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException {
+     public Message onBindIDListener(HttpServletRequest req) throws InterruptedException {
         //ContextIDListener listener
         ContextIDListener listener = null;
         ContextID contextID = null;
@@ -52,7 +52,7 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
     }
 
     @RequestMapping(path = "onBindKeyListener",method = RequestMethod.POST)
-     public Message onBindKeyListener( HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException {
+     public Message onBindKeyListener( HttpServletRequest req) throws InterruptedException {
         ContextKeyListener listener = null;
         ContextID contextID = null;
         ContextKey contextKey = null;

@@ -113,7 +113,7 @@ class SpringPathValidator extends Logging {
       }
       Message.ok()
     }
-    if ( messageToHttpStatus(resp)!= 200) resp else proceedingJoinPoint.proceed()
+    if (Message.messageToHttpStatus(resp)!= 200) resp else proceedingJoinPoint.proceed()
   }
 
   def getCurrentHttpResponse: HttpServletResponse = {
@@ -124,15 +124,6 @@ class SpringPathValidator extends Logging {
     }
     null
   }
-  def messageToHttpStatus(message: Message): Int = message.getStatus match {
-    case -1 => 401
-    case 0 => 200
-    case 1 => 400
-    case 2 => 412
-    case 3 => 403
-    case 4 => 206
-  }
-
 }
 
 object SpringPathValidator {

@@ -292,6 +292,7 @@ public class EntranceRestfulApi{
     }
 
 
+    //todo confirm params of strongExecId?
     @RequestMapping(path = "/{id}/killJobs",method = RequestMethod.POST)
     public Message killJobs(HttpServletRequest req,@RequestBody JsonNode jsonNode, @PathVariable("id") String strongExecId) {
         JsonNode idNode = jsonNode.get("idList");

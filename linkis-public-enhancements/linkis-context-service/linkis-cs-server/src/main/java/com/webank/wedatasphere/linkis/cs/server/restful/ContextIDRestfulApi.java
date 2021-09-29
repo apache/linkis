@@ -54,7 +54,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
 
     @RequestMapping(path = "getContextID",method = RequestMethod.GET)
     public Message getContextID(HttpServletRequest req,
-    @RequestParam(value="contextId",required=false) String id) throws InterruptedException, CSErrorException {
+        @RequestParam(value="contextId",required=false) String id) throws InterruptedException, CSErrorException {
         if (StringUtils.isEmpty(id)) {
             throw new CSErrorException(97000, "contxtId cannot be empty");
         }

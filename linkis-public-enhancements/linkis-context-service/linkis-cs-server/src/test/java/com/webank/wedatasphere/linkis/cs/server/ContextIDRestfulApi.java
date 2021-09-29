@@ -45,7 +45,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     private CsScheduler csScheduler;
 
     @RequestMapping(path = "createContextID",method = RequestMethod.POST)
-     public Message createContextID(HttpServletRequest req, @RequestBody JsonNode json) throws InterruptedException {
+     public Message createContextID(HttpServletRequest req) throws InterruptedException {
         //contextID是client传过来的序列化的id
         PersistenceContextID contextID = new PersistenceContextID();
         contextID.setUser("neiljianliu");
@@ -68,7 +68,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     }
 
     @RequestMapping(path = "updateContextID",method = RequestMethod.POST)
-     public Message updateContextID( HttpServletRequest req, @RequestBody JsonNode json) throws InterruptedException, CSErrorException {
+     public Message updateContextID( HttpServletRequest req) throws InterruptedException, CSErrorException {
         PersistenceContextID contextID = new PersistenceContextID();
         contextID.setUser("johnnwang");
         contextID.setExpireType(ExpireType.NEVER);
@@ -86,7 +86,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     }
 
     @RequestMapping(path = "resetContextID",method = RequestMethod.POST)
-     public Message resetContextID( HttpServletRequest req, @RequestBody JsonNode json) throws InterruptedException, CSErrorException {
+     public Message resetContextID( HttpServletRequest req) throws InterruptedException, CSErrorException {
         String id = null;
         if (StringUtils.isEmpty(id)) {
             throw new CSErrorException(97000, "contxtId cannot be empty");

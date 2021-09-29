@@ -28,15 +28,15 @@ import org.springframework.web.context.request.{RequestContextHolder, ServletReq
 class SpringRestfulCatchAOP extends Logging {
 
   @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping) && execution(public com.webank.wedatasphere.linkis.server.Message *(..)))")
-  def restfulResponseCatch1() : Unit = {}
+  def springRestfulResponseCatch() : Unit = {}
 
-  @Around("restfulResponseCatch1()")
+  @Around("springRestfulResponseCatch()")
   def dealResponseRestful(proceedingJoinPoint: ProceedingJoinPoint): Object = {
     val resp: Message = catchIt {
       return proceedingJoinPoint.proceed()
     }
     // convert http status code
-    getCurrentHttpResponse.setStatus(messageToHttpStatus(resp))
+    getCurrentHttpResponse.setStatus(Message.messageToHttpStatus(resp))
     resp
   }
 
@@ -47,14 +47,6 @@ class SpringRestfulCatchAOP extends Logging {
       return response
     }
     null
-  }
-  def messageToHttpStatus(message: Message): Int = message.getStatus match {
-    case -1 => 401
-    case 0 => 200
-    case 1 => 400
-    case 2 => 412
-    case 3 => 403
-    case 4 => 206
   }
 
 }

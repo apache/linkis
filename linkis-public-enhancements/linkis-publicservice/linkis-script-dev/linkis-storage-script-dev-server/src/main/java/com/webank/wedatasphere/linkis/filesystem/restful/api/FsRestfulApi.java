@@ -25,7 +25,7 @@ import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException;
 import com.webank.wedatasphere.linkis.filesystem.exception.WorkspaceExceptionManager;
 import com.webank.wedatasphere.linkis.filesystem.service.FsService;
 import com.webank.wedatasphere.linkis.filesystem.util.WorkspaceUtil;
-import com.webank.wedatasphere.linkis.filesystem.validator.PathValidator$;
+import com.webank.wedatasphere.linkis.filesystem.validator.SpringPathValidator$;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import com.webank.wedatasphere.linkis.storage.csv.CSVFsWriter;
@@ -42,9 +42,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.math3.util.Pair;
 import org.apache.http.Consts;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +56,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration.*;
 import static com.webank.wedatasphere.linkis.filesystem.constant.WorkSpaceConstants.*;
@@ -141,8 +139,8 @@ public class FsRestfulApi {
         String userName = SecurityFilter.getLoginUsername(req);
         if (FILESYSTEM_PATH_CHECK_TRIGGER.getValue()) {
             LOGGER.info(String.format("path check trigger is open,now check the path,oldDest:%s,newDest:%s", oldDest, newDest));
-            PathValidator$.MODULE$.validate(oldDest, userName);
-            PathValidator$.MODULE$.validate(newDest, userName);
+            SpringPathValidator$.MODULE$.validate(oldDest, userName);
+            SpringPathValidator$.MODULE$.validate(newDest, userName);
         }
         if (StringUtils.isEmpty(oldDest)) {
             throw WorkspaceExceptionManager.createException(80004, oldDest);
@@ -164,22 +162,20 @@ public class FsRestfulApi {
 
     @RequestMapping(path = "/upload",method = RequestMethod.POST)
     public Message upload(HttpServletRequest req,
-                           @RequestParam("path") String path,
-                           FormDataMultiPart form) throws IOException, WorkSpaceException {
+        @RequestParam("path") String path,
+        @RequestParam("file") List<MultipartFile> files) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
-        List<FormDataBodyPart> files = form.getFields("file");
-        for (FormDataBodyPart p : files) {
-            FormDataContentDisposition fileDetail = p.getFormDataContentDisposition();
-            String fileName = new String(fileDetail.getFileName().getBytes(Consts.ISO_8859_1), Consts.UTF_8);
+        for (MultipartFile p : files) {
+            String fileName = new String(p.getOriginalFilename().getBytes(Consts.ISO_8859_1), Consts.UTF_8);
             FsPath fsPathNew = new FsPath(fsPath.getPath() + "/" + fileName);
             WorkspaceUtil.fileAndDirNameSpecialCharCheck(fsPathNew.getPath());
             fileSystem.createNewFile(fsPathNew);
-            try (InputStream is = p.getValueAs(InputStream.class);
+            try (InputStream is = p.getInputStream();
                  OutputStream outputStream = fileSystem.write(fsPathNew, true)) {
                 IOUtils.copy(is, outputStream);
             }
@@ -585,7 +581,9 @@ public class FsRestfulApi {
     }
 
     @RequestMapping(path = "/openLog",method = RequestMethod.GET)
-    public Message openLog(HttpServletRequest req, @RequestParam(value="path",required=false) String path, @RequestParam(value="proxyUser",required=false) String proxyUser) throws IOException, WorkSpaceException {
+    public Message openLog(HttpServletRequest req,
+        @RequestParam(value="path",required=false) String path,
+        @RequestParam(value="proxyUser",required=false) String proxyUser) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);

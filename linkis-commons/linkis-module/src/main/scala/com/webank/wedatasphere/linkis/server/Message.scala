@@ -15,14 +15,11 @@ package com.webank.wedatasphere.linkis.server
 
 import java.util
 
-import com.webank.wedatasphere.linkis.server.Message.getCurrentHttpRequest
+
 import javax.servlet.http.HttpServletRequest
-import javax.ws.rs.Path
-import javax.ws.rs.core.Response
 import javax.xml.bind.annotation.XmlRootElement
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
-import org.reflections.ReflectionUtils
 import org.springframework.web.context.request.{RequestContextHolder, ServletRequestAttributes}
 
 
@@ -72,20 +69,7 @@ object Message {
     if (StringUtils.isEmpty(method)) {
       Thread.currentThread().getStackTrace.find(_.getClassName.toLowerCase.endsWith("restfulapi")).foreach {
         stack => {
-          val clazz = ReflectionUtils.forName(stack.getClassName)
-          var annotation = clazz.getAnnotation(classOf[Path])
           var path = ""
-          if (annotation != null) {
-            path = clazz.getAnnotation(classOf[Path]).value()
-            clazz.getDeclaredMethods.find(m => m.getName == stack.getMethodName && m.getAnnotation(classOf[Path]) != null)
-              .foreach { m =>
-                val path1 = m.getAnnotation(classOf[Path]).value()
-                var method = if (path.startsWith("/")) path else "/" + path
-                if (method.endsWith("/")) method = method.substring(0, method.length - 1)
-                method = if (path1.startsWith("/")) "/api" + method + path1 else "/api" + method + "/" + path1
-                return new Message(method, status, message, data)
-              }
-          } else {
             val httpRequest:HttpServletRequest=getCurrentHttpRequest
             if(httpRequest!=null){
               val path1=httpRequest.getPathInfo;
@@ -95,7 +79,6 @@ object Message {
               return new Message(method, status, message, data)
             }
           }
-        }
       }
     }
     new Message(method, status, message, data)
@@ -140,9 +123,7 @@ object Message {
     message
   }
   def noLogin(msg: String): Message = noLogin(msg, null)
-  implicit def messageToResponse(message: Message): Response =
-    Response.status(messageToHttpStatus(message)).entity(message).build()
-  implicit def responseToMessage(response: Response): Message = response.readEntity(classOf[Message])
+
   def messageToHttpStatus(message: Message): Int = message.getStatus match {
     case -1 => 401
     case 0 => 200

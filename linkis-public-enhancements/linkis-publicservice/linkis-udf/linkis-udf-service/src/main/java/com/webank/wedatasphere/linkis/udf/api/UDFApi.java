@@ -121,7 +121,7 @@ public class UDFApi {
     }
 
     @RequestMapping(path = "list",method = RequestMethod.POST)
-    public Message listUDF(HttpServletRequest req, Map<String,Object> json){
+    public Message listUDF(HttpServletRequest req,@RequestBody Map<String,Object> json){
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
@@ -192,7 +192,8 @@ public class UDFApi {
 
     @RequestMapping(path = "isload",method = RequestMethod.GET)
     public Message isLoad(HttpServletRequest req,
-                           @RequestParam(value="udfId",required=false) Long udfId,@RequestParam(value="isLoad",required=false) Boolean isLoad){
+        @RequestParam(value="udfId",required=false) Long udfId,
+        @RequestParam(value="isLoad",required=false) Boolean isLoad){
         String userName = SecurityFilter.getLoginUsername(req);
         Message message = null;
         try {
@@ -210,7 +211,7 @@ public class UDFApi {
     }
 
     @RequestMapping(path = "/tree/add",method = RequestMethod.POST)
-    public Message addTree(HttpServletRequest req, UDFTree udfTree){
+    public Message addTree(HttpServletRequest req,@RequestBody UDFTree udfTree){
         String userName = SecurityFilter.getLoginUsername(req);
         Message message = null;
         try {
@@ -229,7 +230,7 @@ public class UDFApi {
     }
 
     @RequestMapping(path = "/tree/update",method = RequestMethod.POST)
-    public Message updateTree(HttpServletRequest req, UDFTree udfTree){
+    public Message updateTree(HttpServletRequest req,@RequestBody UDFTree udfTree){
         String userName = SecurityFilter.getLoginUsername(req);
         Message message = null;
         try {
@@ -261,7 +262,7 @@ public class UDFApi {
     }
 
     @RequestMapping(path = "/authenticate",method = RequestMethod.POST)
-    public Message Authenticate(HttpServletRequest req,@RequestBody JsonNode json){
+    public Message Authenticate(HttpServletRequest req){
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
@@ -301,7 +302,7 @@ public class UDFApi {
             }
             Long shareUDFId=udfService.getAllShareUDFInfoIdByUDFId(userName,udfName);
             if(shareUDFId != null){
-                if(shareUDFId == udfId){
+                if(shareUDFId.equals(udfId)){
                     throw new UDFException("请操作该共享函数对应的个人函数。");
                 }
                 udfService.setSharedUDFInfoExpire(shareUDFId);

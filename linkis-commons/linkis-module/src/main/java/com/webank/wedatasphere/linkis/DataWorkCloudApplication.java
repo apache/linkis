@@ -60,7 +60,6 @@ import org.springframework.core.env.StandardEnvironment;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.DispatcherType;
-import javax.ws.rs.ext.RuntimeDelegate;
 import java.util.EnumSet;
 
 
@@ -81,7 +80,7 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) throws ReflectiveOperationException {
 
-        RuntimeDelegate.setInstance(new org.glassfish.jersey.internal.RuntimeDelegateImpl());
+        //RuntimeDelegate.setInstance(new org.glassfish.jersey.internal.RuntimeDelegateImpl());
         final SpringApplication application = new SpringApplication(DataWorkCloudApplication.class);
         application.addListeners(new ApplicationListener<ApplicationPreparedEvent>(){
             public void onApplicationEvent(ApplicationPreparedEvent applicationPreparedEvent) {

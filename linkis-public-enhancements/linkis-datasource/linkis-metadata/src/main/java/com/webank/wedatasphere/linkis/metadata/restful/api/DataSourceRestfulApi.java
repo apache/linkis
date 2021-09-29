@@ -20,6 +20,7 @@ import com.webank.wedatasphere.linkis.metadata.restful.remote.DataSourceRestfulR
 import com.webank.wedatasphere.linkis.metadata.service.DataSourceService;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,7 +104,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         String userName = SecurityFilter.getLoginUsername(req);
         try {
             JsonNode sizeNode;
-            if (partition == null){
+            if (StringUtils.isBlank(partition)){
                 sizeNode = dataSourceService.getTableSize(database, table, userName);
             } else {
                 sizeNode = dataSourceService.getPartitionSize(database, table, partition, userName);

@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { merge } from 'lodash'
 import routes, { subAppRoutes } from "./dss/router"
 // 根据module参数配置要打包的应用，生成的虚拟模块
@@ -26,7 +43,6 @@ if (apps.microModule) {
   if (apps.microModule === 'workflows') {
     subRoutes.redirect =  '/process'
   }
-
 }
 if (appsRoutes) {
   appsRoutes.forEach(route => {
@@ -37,22 +53,18 @@ if (appsRoutes) {
     }
   });
 }
-
 routes.unshift(subRoutes)
-
 // 公共国际化
 const i18n = {
   'en': require('./common/i18n/en.json'),
   'zh-CN': require('./common/i18n/zh.json')
 }
-
 // 处理国际化
 if (apps.appsI18n) {
   apps.appsI18n.forEach(item => {
     merge(i18n, item)
   });
 }
-
 export {
   routes,
   i18n,

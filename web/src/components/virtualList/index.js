@@ -1,22 +1,21 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 // https://github.com/tangbc/vue-virtual-scroll-list
-
 const _debounce = (func, wait, immediate) => {
   let timeout
   return function () {
@@ -36,7 +35,6 @@ const _debounce = (func, wait, immediate) => {
     }
   }
 }
-
 export default {
   props: {
     size: {
@@ -121,7 +119,6 @@ export default {
       default () {}
     }
   },
-
   // use changeProp to identify the prop change.
   watch: {
     size () {
@@ -158,13 +155,10 @@ export default {
       }
     }
   },
-
   created () {
     const start = this.start >= this.remain ? this.start : 0
     const keeps = this.remain + (this.bench || this.remain)
-
     const delta = Object.create(null)
-
     delta.direction = '' // current scroll direction, D: down, U: up.
     delta.scrollTop = 0 // current scroll top, use to direction.
     delta.start = start // start index.
@@ -177,17 +171,14 @@ export default {
     delta.varCache = {} // object to cache variable index height and scroll offset.
     delta.varAverSize = 0 // average/estimate item height before variable be calculated.
     delta.varLastCalcIndex = 0 // last calculated variable height/offset index, always increase.
-
     this.delta = delta
   },
-
   mounted () {
     if (this.pagemode) {
       this.addScrollListener(window)
     } else if (this.scrollelement) {
       this.addScrollListener(this.scrollelement)
     }
-
     if (this.start) {
       const start = this.getZone(this.start).start
       this.setScrollTop(this.variable ? this.getVarOffset(start) : start * this.size)
@@ -195,7 +186,6 @@ export default {
       this.setScrollTop(this.offset)
     }
   },
-
   beforeDestroy () {
     if (this.pagemode) {
       this.removeScrollListener(window)
@@ -203,15 +193,12 @@ export default {
       this.removeScrollListener(this.scrollelement)
     }
   },
-
   // check if delta should update when props change.
   beforeUpdate () {
     const delta = this.delta
     delta.keeps = this.remain + (this.bench || this.remain)
-
     const calcstart = this.changeProp === 'start' ? this.start : delta.start
     const zone = this.getZone(calcstart)
-
     // if start, size or offset change, update scroll position.
     if (this.changeProp && ['start', 'size', 'offset'].includes(this.changeProp)) {
       const scrollTop = this.changeProp === 'offset'
@@ -219,10 +206,8 @@ export default {
           ? this.getVarOffset(zone.isLast ? delta.total : zone.start)
           : zone.isLast && (delta.total - calcstart <= this.remain)
             ? delta.total * this.size : calcstart * this.size
-
       this.$nextTick(this.setScrollTop.bind(this, scrollTop))
     }
-
     // if points out difference, force update once again.
     if (
       this.changeProp ||
@@ -235,19 +220,16 @@ export default {
       this.forceRender()
     }
   },
-
   methods: {
     // add pagemode/scrollelement scroll event listener
     addScrollListener (element) {
       this.scrollHandler = this.debounce ? _debounce(this.onScroll.bind(this), this.debounce) : this.onScroll
       element.addEventListener('scroll', this.scrollHandler, false)
     },
-
     // remove pagemode/scrollelement scroll event listener
     removeScrollListener (element) {
       element.removeEventListener('scroll', this.scrollHandler, false)
     },
-
     onScroll (event) {
       const delta = this.delta
       const vsl = this.$refs.vsl
@@ -262,16 +244,13 @@ export default {
       } else {
         offset = (vsl && (vsl.$el || vsl).scrollTop) || 0
       }
-
       delta.direction = offset > delta.scrollTop ? 'D' : 'U'
       delta.scrollTop = offset
-
       if (delta.total > delta.keeps) {
         this.updateZone(offset)
       } else {
         delta.end = delta.total - 1
       }
-
       const offsetAll = delta.offsetAll
       if (this.onscroll) {
         const param = Object.create(null)
@@ -281,31 +260,25 @@ export default {
         param.end = delta.end
         this.onscroll(event, param)
       }
-
       if (!offset && delta.total) {
         this.fireEvent('totop')
       }
-
       if (offset >= offsetAll) {
         this.fireEvent('tobottom')
       }
     },
-
     // update render zone by scroll offset.
     updateZone (offset) {
       const delta = this.delta
       let overs = this.variable
         ? this.getVarOvers(offset)
         : Math.floor(offset / this.size)
-
       // if scroll up, we'd better decrease it's numbers.
       if (delta.direction === 'U') {
         overs = overs - this.remain + 1
       }
-
       const zone = this.getZone(overs)
       const bench = this.bench || this.remain
-
       // for better performance, if scroll passes items within the bench, do not update.
       // and if it's close to the last item, render next zone immediately.
       const shouldRenderNextZone = Math.abs(overs - delta.start - bench) === 1
@@ -316,7 +289,6 @@ export default {
       ) {
         return
       }
-
       // make sure forceRender calls as less as possible.
       if (
         shouldRenderNextZone ||
@@ -328,18 +300,14 @@ export default {
         this.forceRender()
       }
     },
-
     // return the right zone info based on `start/index`.
     getZone (index) {
       let start, end
       const delta = this.delta
-
       index = parseInt(index, 10)
       index = Math.max(0, index)
-
       const lastStart = delta.total - delta.keeps
       const isLast = (index <= delta.total && index >= lastStart) || (index > delta.total)
-
       if (isLast) {
         start = Math.max(0, lastStart)
       } else {
@@ -349,14 +317,12 @@ export default {
       if (delta.total && end > delta.total) {
         end = delta.total - 1
       }
-
       return {
         end,
         start,
         isLast
       }
     },
-
     // public method, force render ui list if needed.
     // call this before the next rerender to get better performance.
     forceRender () {
@@ -364,14 +330,12 @@ export default {
         this.$forceUpdate()
       })
     },
-
     // force render ui if using item-mode.
     itemModeForceRender () {
       if (this.item) {
         this.forceRender()
       }
     },
-
     // return the scroll of passed items count in variable.
     getVarOvers (offset) {
       let low = 0
@@ -379,16 +343,13 @@ export default {
       let middleOffset = 0
       const delta = this.delta
       let high = delta.total
-
       while (low <= high) {
         middle = low + Math.floor((high - low) / 2)
         middleOffset = this.getVarOffset(middle)
-
         // calculate the average variable height at first binary search.
         if (!delta.varAverSize) {
           delta.varAverSize = Math.floor(middleOffset / middle)
         }
-
         if (middleOffset === offset) {
           return middle
         } else if (middleOffset < offset) {
@@ -397,19 +358,15 @@ export default {
           high = middle - 1
         }
       }
-
       return low > 0 ? --low : 0
     },
-
     // return a variable scroll offset from given index.
     getVarOffset (index, nocache) {
       const delta = this.delta
       const cache = delta.varCache[index]
-
       if (!nocache && cache) {
         return cache.offset
       }
-
       let offset = 0
       for (let i = 0; i < index; i++) {
         const size = this.getVarSize(i, nocache)
@@ -419,20 +376,16 @@ export default {
         }
         offset += size
       }
-
       delta.varLastCalcIndex = Math.max(delta.varLastCalcIndex, index - 1)
       delta.varLastCalcIndex = Math.min(delta.varLastCalcIndex, delta.total - 1)
-
       return offset
     },
-
     // return a variable size (height) from given index.
     getVarSize (index, nocache) {
       const cache = this.delta.varCache[index]
       if (!nocache && cache) {
         return cache.size
       }
-
       if (typeof this.variable === 'function') {
         return this.variable(index) || 0
       } else {
@@ -441,7 +394,6 @@ export default {
         const slot = this.item
           ? (this.$children[index] ? this.$children[index].$vnode : null)
           : this.$slots.default[index]
-
         const style = slot && slot.data && slot.data.style
         if (style && style.height) {
           const shm = style.height.match(/^(.*)px$/)
@@ -450,7 +402,6 @@ export default {
       }
       return 0
     },
-
     // return the variable paddingTop based on current zone.
     // @todo: if set a large `start` before variable was calculated,
     // here will also case too much offset calculate when list is very large,
@@ -458,7 +409,6 @@ export default {
     getVarPaddingTop () {
       return this.getVarOffset(this.delta.start)
     },
-
     // return the variable paddingBottom based on the current zone.
     getVarPaddingBottom () {
       const delta = this.delta
@@ -471,7 +421,6 @@ export default {
         return (delta.total - delta.end) * (delta.varAverSize || this.size)
       }
     },
-
     // return the variable all heights use to judge reach bottom.
     getVarAllHeight () {
       const delta = this.delta
@@ -481,20 +430,17 @@ export default {
         return this.getVarOffset(delta.start) + (delta.total - delta.end) * (delta.varAverSize || this.size)
       }
     },
-
     // public method, allow the parent update variable by index.
     updateVariable (index) {
       // clear/update all the offsets and heights ahead of index.
       this.getVarOffset(index, true)
     },
-
     // trigger a props event on parent.
     fireEvent (event) {
       if (this[event]) {
         this[event]()
       }
     },
-
     // set manual scroll top.
     setScrollTop (scrollTop) {
       if (this.pagemode) {
@@ -508,12 +454,10 @@ export default {
         }
       }
     },
-
     // filter the shown items based on `start` and `end`.
     filter (h) {
       const delta = this.delta
       const slots = this.$slots.default || []
-
       // item-mode should be decided from items prop.
       if (this.item || this.$scopedSlots.item) {
         delta.total = this.itemcount
@@ -526,10 +470,8 @@ export default {
         }
         delta.total = slots.length
       }
-
       let paddingTop, paddingBottom, allHeight
       const hasPadding = delta.total > delta.keeps
-
       if (this.variable) {
         allHeight = this.getVarAllHeight()
         paddingTop = hasPadding ? this.getVarPaddingTop() : 0
@@ -539,15 +481,12 @@ export default {
         paddingTop = this.size * (hasPadding ? delta.start : 0)
         paddingBottom = this.size * (hasPadding ? delta.total - delta.keeps : 0) - paddingTop
       }
-
       if (paddingBottom < this.size) {
         paddingBottom = 0
       }
-
       delta.paddingTop = paddingTop
       delta.paddingBottom = paddingBottom
       delta.offsetAll = allHeight - this.size * this.remain
-
       const renders = []
       for (let i = delta.start; i < delta.total && i <= Math.ceil(delta.end); i++) {
         let slot = null
@@ -560,16 +499,13 @@ export default {
         }
         renders.push(slot)
       }
-
       return renders
     }
   },
-
   render (h) {
     const dbc = this.debounce
     let list = this.filter(h)
     const { paddingTop, paddingBottom } = this.delta
-
     const istable = this.istable
     const wtag = istable ? 'div' : this.wtag
     const rtag = istable ? 'div' : this.rtag
@@ -587,12 +523,10 @@ export default {
         role: 'group'
       }
     }, list)
-
     // page mode just render list, no wrapper.
     if (this.pagemode || this.scrollelement) {
       return renderList
     }
-
     return h(rtag, {
       ref: 'vsl',
       style: {
@@ -609,4 +543,3 @@ export default {
     ])
   }
 }
-

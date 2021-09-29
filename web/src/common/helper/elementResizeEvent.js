@@ -1,18 +1,18 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 let requestFrame = (function() {
@@ -26,7 +26,6 @@ let requestFrame = (function() {
     return raf(func);
   };
 })();
-
 let cancelFrame = (function() {
   let cancel = window.cancelAnimationFrame ||
       window.mozCancelAnimationFrame ||
@@ -36,7 +35,6 @@ let cancelFrame = (function() {
     return cancel(id);
   };
 })();
-
 /**
  * 监听大小改变
  * @param {*} e
@@ -56,11 +54,9 @@ function resizeListener(e) {
     }
   });
 }
-
 let bind = function(element, fn) {
   let document = window.document;
   let attachEvent = document.attachEvent;
-
   /**
      *
      */
@@ -69,7 +65,6 @@ let bind = function(element, fn) {
     this.contentDocument.defaultView.addEventListener('resize', resizeListener);
     this.contentDocument.defaultView.dispatchEvent(new Event('resize'));
   }
-
   if (!element.__resizeListeners__) {
     element.__resizeListeners__ = [];
     if (attachEvent) {
@@ -94,7 +89,6 @@ let bind = function(element, fn) {
   }
   element.__resizeListeners__.push(fn);
 };
-
 let unbind = function(element, fn) {
   let attachEvent = document.attachEvent;
   let listeners = element.__resizeListeners__ || [];
@@ -124,7 +118,6 @@ let unbind = function(element, fn) {
     delete element.__resizeListeners__;
   }
 };
-
 export default {
   bind: typeof window === 'undefined' ? bind : bind.bind(window),
   unbind,

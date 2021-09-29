@@ -1,25 +1,24 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 import { partition, map, filter, isFunction } from 'lodash';
 import globalcache from '@/apps/scriptis/service/db/globalcache.js';
 import storage from '@/common/helper/storage';
 import debug_log from '@/common/util/debug';
-
 /**
  * 去indexDb中获取hive的列表和udf函数列表
  * @param {*} monaco
@@ -43,7 +42,6 @@ const getHiveList = async (monaco, lang) => {
         detail: item.meta,
         documentation: item.documentation,
       })), ['detail', 'dbname']);
-
       udfProposals = getFormatProposalsList(monaco, globalCache.fnList, lang, 'Function', true);
       variableProposals = getFormatProposalsList(monaco, globalCache.variableList, lang, 'Variable', true);
     }
@@ -55,7 +53,6 @@ const getHiveList = async (monaco, lang) => {
     variableProposals,
   };
 }
-
 /**
  *
  * @param {*} match 匹配到的文本
@@ -109,7 +106,6 @@ const getReturnList = ({ match, proposals, fieldString, attachMatch, needSplit, 
     suggestions: items,
   };
 }
-
 /**
  * 对拿到的数据格式化成completionList格式
  * @param {*} monaco 编辑器
@@ -157,7 +153,6 @@ const getFormatProposalsList = (monaco, list, lang, type, isDiy, isSnippet) => {
   });
   return formatList;
 }
-
 export {
   getHiveList,
   getReturnList,

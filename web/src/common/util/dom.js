@@ -1,18 +1,18 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 const inBrowser =
@@ -21,7 +21,6 @@ const inBrowser =
 export const UA = inBrowser && window.navigator.userAgent.toLowerCase();
 export const isIE = UA && UA.indexOf('trident') > 0;
 export const isIE9 = UA && UA.indexOf('msie 9.0') > 0;
-
 /**
  * For IE9 compat: when both class and :class are present
  * getAttribute('class') returns wrong value...
@@ -36,7 +35,6 @@ export function getClass(el) {
   }
   return classname;
 }
-
 /**
  * 判断dom节点是否有某样式
  * 
@@ -50,7 +48,6 @@ export function hasClass(el, name) {
   let classes = className.split(' ');
   return classes.indexOf(name) != -1;
 }
-
 /**
  * In IE9, setAttribute('class') will result in empty class
  * if the element also has the :class attribute; However in
@@ -68,7 +65,6 @@ export function setClass(el, cls) {
     el.setAttribute('class', cls);
   }
 }
-
 /**
  * Add class with compatibility for IE & SVG
  *
@@ -85,7 +81,6 @@ export function addClass(el, cls) {
     }
   }
 }
-
 /**
  * Remove class with compatibility for IE & SVG
  *
@@ -107,7 +102,6 @@ export function removeClass(el, cls) {
     el.removeAttribute('class');
   }
 }
-
 /**
  * 从jquery扣过来的，递归去算
  *

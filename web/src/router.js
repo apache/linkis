@@ -1,23 +1,22 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 import VueRouter from "vue-router";
 import { routes } from './dynamic-apps'
-
 // 解决重复点击路由跳转报错
 const originalPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {
@@ -26,7 +25,6 @@ VueRouter.prototype.push = function push(location) {
 const router = new VueRouter({
   routes
 });
-
 router.beforeEach((to, from, next) => {
   if (to.meta) {
     // 给路由添加参数，控制显示对应header
@@ -43,11 +41,9 @@ router.beforeEach((to, from, next) => {
     }
   }
 });
-
 router.afterEach((to) => {
   if (to.meta) {
     document.title = to.meta.title || 'DataSphere Studio';
   }
 });
-
 export default router;

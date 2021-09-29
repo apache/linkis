@@ -1,18 +1,18 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 /*eslint-disable */
@@ -43,10 +43,8 @@ export function convertLog(logs) {
     } else if (isPlainObject(logs)) {
         newMap = logs;
     }
-
     return Object.assign(logMap, newMap);
 }
-
 /**
  * 转换时间戳差值
  * @param {*} runningTime
@@ -66,7 +64,6 @@ export function convertTimestamp(runningTime) {
     }
     return `${(time / 86400).toPrecision(2)}${i18n.t('message.common.time.day')}`;
 }
-
 /**
  * 排序
  * @param {*} a 第一个参数
@@ -98,7 +95,6 @@ export function sort(a, b, type) {
         return sortString(a, b, type);
     }
 }
-
 /**
  * 转换数组为对象key:value形式
  * @param {*} arr
@@ -111,7 +107,6 @@ export function convertArrayToObject(arr) {
     });
     return obj;
 }
-
 /**
  * 转换对象为数组形式
  * @param {*} obj
@@ -126,7 +121,6 @@ export function convertObjectToArray(obj) {
     });
     return arr;
 }
-
 /**
  * 转换数组为数组[{key1:value1},{key2,value2}]形式
  * @param {*} arr
@@ -185,7 +179,6 @@ const convertList = {
       label: '一次写偶尔读',
     }],
   };
-
   /**
    * 格式化值
    * @param {*} item
@@ -214,4 +207,3 @@ const convertList = {
     }
     return formatted;
   }
-

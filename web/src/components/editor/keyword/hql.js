@@ -1,7 +1,23 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { isEmpty } from 'lodash';
 import { getHiveList, getReturnList, getFormatProposalsList } from '../util';
 import storage from '@/common/helper/storage';
-
 const kewordInfoProposals = [{
   label: 'ADD',
   documentation: 'Hive 1.2.0 Non-reserved Keywords',
@@ -2210,12 +2226,10 @@ const columnsProposals = [{
   detail: '常用表字段',
 },
 ];
-
 let dbInfoProposals = [];
 let tableInfoProposals = [];
 let udfProposals = [];
 let variableProposals = [];
-
 export default {
   keyword: kewordInfoProposals,
   register(monaco) {
@@ -2249,7 +2263,6 @@ export default {
           endLineNumber: position.lineNumber,
           endColumn: position.column,
         });
-
         const tableMatch = textUntilPosition.match(/from\s+(\w+)\.(\w+)?$/);
         const databaseMatch = textUntilPosition.match(/from\s+\w+$/);
         const functionMatch = textUntilPosition.match(/(select|where|on|having|order by|cluster by|sort by)\s+\w+$/i);

@@ -1,24 +1,23 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 import { isEmpty } from 'lodash';
 import { getHiveList, getReturnList, getFormatProposalsList } from '../util';
 import storage from '@/common/helper/storage';
-
 const pyKeywordInfoProposals = [
   {
     label: 'False',
@@ -231,7 +230,6 @@ const pyKeywordInfoProposals = [
     detail: 'Keywords',
   },
 ];
-
 // 常用语法结构
 /**
  *
@@ -268,7 +266,6 @@ const pyKeywordInfoProposals = [
      },
  ];
  */
-
 const buildInVariableProposals = [
   {
     label: 'run_date',
@@ -302,32 +299,25 @@ const buildInVariableProposals = [
     detail: '系统内嵌变量',
   },
 ];
-
 let functionProposals = [];
-
 export default {
   async register(monaco) {
     const lang = 'python';
-
     const pyProposals = getFormatProposalsList(monaco, pyKeywordInfoProposals, '', 'Keyword');
     const BIVPro = getFormatProposalsList(monaco, buildInVariableProposals, '', 'Variable');
     // const CGSPro = getFormatProposalsList(monaco, commonGrammaticalStruCture, '', 'Reference');
-
     getHiveList(monaco, lang).then((list) => {
       functionProposals = list.udfProposals;
     });
-
     monaco.languages.registerCompletionItemProvider('python', {
       triggerCharacters: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._'.split(''),
       async provideCompletionItems(model, position) {
-
         const needRefresh = storage.get('need-refresh-proposals-python')
         if (needRefresh || isEmpty(functionProposals)) {
           const list = await getHiveList(monaco, lang)
           functionProposals = list.udfProposals;
           storage.set('need-refresh-proposals-python', false)
         }
-
         const textUntilPosition = model.getValueInRange({
           startLineNumber: position.lineNumber,
           startColumn: 1,

@@ -1,23 +1,22 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 import Formatter from '../core/Formatter';
 import Tokenizer from '../core/Tokenizer';
-
 const reservedWords = [
   'ABS', 'ACTIVATE', 'ALIAS', 'ALL', 'ALLOCATE', 'ALLOW', 'ALTER', 'ANY', 'ARE', 'ARRAY', 'AS', 'ASC',
   'ASENSITIVE', 'ASSOCIATE', 'ASUTIME', 'ASYMMETRIC', 'AT', 'ATOMIC', 'ATTRIBUTES', 'AUDIT', 'AUTHORIZATION', 'AUX', 'AUXILIARY', 'AVG',
@@ -75,7 +74,6 @@ const reservedWords = [
   'XMLELEMENT', 'XMLEXISTS', 'XMLNAMESPACES',
   'YEAR', 'YEARS',
 ];
-
 const reservedToplevelWords = [
   'ADD', 'AFTER', 'ALTER COLUMN', 'ALTER TABLE',
   'DELETE FROM',
@@ -91,7 +89,6 @@ const reservedToplevelWords = [
   'VALUES',
   'WHERE',
 ];
-
 const reservedNewlineWords = [
   'AND',
   'CROSS JOIN',
@@ -101,9 +98,7 @@ const reservedNewlineWords = [
   'OR', 'OUTER JOIN',
   'RIGHT JOIN', 'RIGHT OUTER JOIN',
 ];
-
 let tokenizer;
-
 /**
  *
  */
@@ -114,7 +109,6 @@ export default class Db2Formatter {
   constructor(cfg) {
     this.cfg = cfg;
   }
-
   /**
      * Formats DB2 query to make it easier to read
      *

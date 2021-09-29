@@ -1,26 +1,24 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 import repeat from 'lodash/repeat';
 import last from 'lodash/last';
-
 const INDENT_TYPE_TOP_LEVEL = 'top-level';
 const INDENT_TYPE_BLOCK_LEVEL = 'block-level';
-
 /**
  * Manages indentation levels.
  *
@@ -37,7 +35,6 @@ export default class Indentation {
     this.indent = indent || '  ';
     this.indentTypes = [];
   }
-
   /**
      * Returns current indentation string.
      * @return {String}
@@ -45,21 +42,18 @@ export default class Indentation {
   getIndent() {
     return repeat(this.indent, this.indentTypes.length);
   }
-
   /**
      * Increases indentation by one top-level indent.
      */
   increaseToplevel() {
     this.indentTypes.push(INDENT_TYPE_TOP_LEVEL);
   }
-
   /**
      * Increases indentation by one block-level indent.
      */
   increaseBlockLevel() {
     this.indentTypes.push(INDENT_TYPE_BLOCK_LEVEL);
   }
-
   /**
      * Decreases indentation by one top-level indent.
      * Does nothing when the previous indent is not top-level.
@@ -69,7 +63,6 @@ export default class Indentation {
       this.indentTypes.pop();
     }
   }
-
   /**
      * Decreases indentation by one block-level indent.
      * If there are top-level indents within the block-level indent,

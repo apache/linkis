@@ -1,24 +1,22 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 import tokenTypes from './tokenTypes';
-
 const INLINE_MAX_LENGTH = 50;
-
 /**
  * Bookkeeper for inline blocks.
  *
@@ -33,7 +31,6 @@ export default class InlineBlock {
   constructor() {
     this.level = 0;
   }
-
   /**
      * Begins inline block when lookahead through upcoming tokens determines
      * that the block would be smaller than INLINE_MAX_LENGTH.
@@ -49,7 +46,6 @@ export default class InlineBlock {
       this.level = 0;
     }
   }
-
   /**
      * Finishes current inline block.
      * There might be several nested ones.
@@ -57,7 +53,6 @@ export default class InlineBlock {
   end() {
     this.level--;
   }
-
   /**
      * True when inside an inline block
      * @return {Boolean}
@@ -65,7 +60,6 @@ export default class InlineBlock {
   isActive() {
     return this.level > 0;
   }
-
   /**
      * Check if this should be an inline parentheses block
      * Examples are "NOW()", "COUNT(*)", "int(10)", key(`somecolumn`), DECIMAL(7,2)
@@ -76,16 +70,13 @@ export default class InlineBlock {
   isInlineBlock(tokens, index) {
     let length = 0;
     let level = 0;
-
     for (let i = index; i < tokens.length; i++) {
       const token = tokens[i];
       length += token.value.length;
-
       // Overran max length
       if (length > INLINE_MAX_LENGTH) {
         return false;
       }
-
       if (token.type === tokenTypes.OPEN_PAREN) {
         level++;
       } else if (token.type === tokenTypes.CLOSE_PAREN) {
@@ -94,14 +85,12 @@ export default class InlineBlock {
           return true;
         }
       }
-
       if (this.isForbiddenToken(token)) {
         return false;
       }
     }
     return false;
   }
-
   /**
      * Reserved words that cause newlines, comments and semicolons
      * are not allowed inside inline parentheses block

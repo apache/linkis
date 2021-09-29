@@ -1,18 +1,18 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 import trimEnd from 'lodash/trimEnd';
@@ -20,7 +20,6 @@ import tokenTypes from './tokenTypes';
 import Indentation from './Indentation';
 import InlineBlock from './InlineBlock';
 import Params from './Params';
-
 /**
  *
  */
@@ -41,7 +40,6 @@ export default class Formatter {
     this.tokens = [];
     this.index = 0;
   }
-
   /**
      * Formats whitespaces in a SQL string to make it easier to read.
      *
@@ -53,7 +51,6 @@ export default class Formatter {
     const formattedQuery = this.getFormattedQueryFromTokens();
     return formattedQuery.trim();
   }
-
   /**
      * @return {*}
      */
@@ -98,7 +95,6 @@ export default class Formatter {
     });
     return formattedQuery;
   }
-
   /**
      *
      * @param {*} token
@@ -108,7 +104,6 @@ export default class Formatter {
   formatLineComment(token, query) {
     return this.addNewline(query + token.value);
   }
-
   /**
      *
      * @param {*} token
@@ -118,7 +113,6 @@ export default class Formatter {
   formatBlockComment(token, query) {
     return this.addNewline(this.addNewline(query) + this.indentComment(token.value));
   }
-
   /**
      *
      * @param {*} comment
@@ -127,7 +121,6 @@ export default class Formatter {
   indentComment(comment) {
     return comment.replace(/\n/g, '\n' + this.indentation.getIndent());
   }
-
   /**
      *
      * @param {*} token
@@ -136,15 +129,11 @@ export default class Formatter {
      */
   formatToplevelReservedWord(token, query) {
     this.indentation.decreaseTopLevel();
-
     query = this.addNewline(query);
-
     this.indentation.increaseToplevel();
-
     query += this.equalizeWhitespace(token.value);
     return this.addNewline(query);
   }
-
   /**
      *
      * @param {*} token
@@ -154,7 +143,6 @@ export default class Formatter {
   formatNewlineReservedWord(token, query) {
     return this.addNewline(query) + this.equalizeWhitespace(token.value) + ' ';
   }
-
   /**
      * Replace any sequence of whitespace characters with single space
      * @param {*} string
@@ -163,7 +151,6 @@ export default class Formatter {
   equalizeWhitespace(string) {
     return string.replace(/\s+/g, ' ');
   }
-
   /**
      * Opening parentheses increase the block indent level and start a new line
      * @param {*} token
@@ -182,16 +169,13 @@ export default class Formatter {
       query = trimEnd(query);
     }
     query += token.value;
-
     this.inlineBlock.beginIfPossible(this.tokens, this.index);
-
     if (!this.inlineBlock.isActive()) {
       this.indentation.increaseBlockLevel();
       query = this.addNewline(query);
     }
     return query;
   }
-
   /**
      * Closing parentheses decrease the block indent level
      * @param {*} token
@@ -207,7 +191,6 @@ export default class Formatter {
       return this.formatWithSpaces(token, this.addNewline(query));
     }
   }
-
   /**
      *
      * @param {*} token
@@ -217,7 +200,6 @@ export default class Formatter {
   formatPlaceholder(token, query) {
     return query + this.params.get(token) + ' ';
   }
-
   /**
      * Commas start a new line (unless within inline parentheses or SQL "LIMIT" clause)
      * @param {*} token
@@ -226,7 +208,6 @@ export default class Formatter {
      */
   formatComma(token, query) {
     query = this.trimTrailingWhitespace(query) + token.value + ' ';
-
     if (this.inlineBlock.isActive()) {
       return query;
     } else if (/^LIMIT$/i.test(this.previousReservedWord.value)) {
@@ -235,7 +216,6 @@ export default class Formatter {
       return this.addNewline(query);
     }
   }
-
   /**
      *
      * @param {*} token
@@ -245,7 +225,6 @@ export default class Formatter {
   formatWithSpaceAfter(token, query) {
     return this.trimTrailingWhitespace(query) + token.value + ' ';
   }
-
   /**
      *
      * @param {*} token
@@ -255,7 +234,6 @@ export default class Formatter {
   formatWithoutSpaces(token, query) {
     return this.trimTrailingWhitespace(query) + token.value;
   }
-
   /**
      *
      * @param {*} token
@@ -265,7 +243,6 @@ export default class Formatter {
   formatWithSpaces(token, query) {
     return query + token.value + ' ';
   }
-
   /**
      *
      * @param {*} token
@@ -275,7 +252,6 @@ export default class Formatter {
   formatQuerySeparator(token, query) {
     return this.trimTrailingWhitespace(query) + token.value + '\n';
   }
-
   /**
      *
      * @param {*} query
@@ -284,7 +260,6 @@ export default class Formatter {
   addNewline(query) {
     return trimEnd(query) + '\n' + this.indentation.getIndent();
   }
-
   /**
      *
      * @param {*} query
@@ -297,7 +272,6 @@ export default class Formatter {
       return trimEnd(query);
     }
   }
-
   /**
      *
      * @return {*}
@@ -309,7 +283,6 @@ export default class Formatter {
     }
     return this.previousToken(n);
   }
-
   /**
      *
      * @param {*} offset

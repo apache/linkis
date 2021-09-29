@@ -1,18 +1,18 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 /**
@@ -23,7 +23,6 @@ import axios from 'axios';
 import router from '@/router';
 import { Message } from 'iview';
 import cache from './apiCache';
-
 // 什么一个数组用于存储每个请求的取消函数和标识
 let pending = [];
 let cancelConfig = null;
@@ -38,7 +37,6 @@ let removePending = (config) => {
     }
   }
 };
-
 let cutReq = (config) => {
   for (let p = 0; p < pending.length; p++) {
     const params = JSON.stringify(config.params);
@@ -47,14 +45,12 @@ let cutReq = (config) => {
     }
   }
 };
-
 const instance = axios.create({
   baseURL: process.env.VUE_APP_MN_CONFIG_PREFIX || `http://${window.location.host}/api/rest_j/v1/`,
   timeout: 600000,
   withCredentials: true,
   headers: { 'Content-Type': 'application/json;charset=UTF-8' },
 });
-
 instance.interceptors.request.use((config) => {
   // 增加国际化参数
   config.headers['Content-language'] = localStorage.getItem('locale') || 'zh-CN';
@@ -79,7 +75,6 @@ instance.interceptors.request.use((config) => {
 }, (error) => {
   Promise.reject(error);
 });
-
 instance.interceptors.response.use((response) => {
   // 在一个ajax响应成功后再执行取消操作，把已完成的请求从pending中移除
   removePending(response.config);
@@ -103,7 +98,6 @@ instance.interceptors.response.use((response) => {
     return error;
   }
 });
-
 const api = {
   instance: instance,
   error: {
@@ -122,7 +116,6 @@ const api = {
     resultPath: 'data',
   },
 };
-
 const getData = function(data) {
   let _arr = ['codePath', 'messagePath', 'resultPath'];
   let res = {};
@@ -142,7 +135,6 @@ const getData = function(data) {
   });
   return res;
 };
-
 const success = function(response) {
   if (util.isNull(api.constructionOfResponse.codePath) || util.isNull(api.constructionOfResponse.successCode) ||
         util.isNull(api.constructionOfResponse.messagePath) || util.isNull(api.constructionOfResponse.resultPath)) {
@@ -186,7 +178,6 @@ const success = function(response) {
     return result || {};
   }
 };
-
 const fail = function(error) {
   let _message = '';
   let response = error.response;
@@ -210,7 +201,6 @@ const fail = function(error) {
   error.message = _message;
   throw error;
 };
-
 const param = function(url, data, option) {
   let method = 'post';
   if (util.isNull(url)) {
@@ -255,10 +245,8 @@ const param = function(url, data, option) {
     option.adapter = cache(option.cacheOptions)
   }
   option.url = url;
-
   return instance.request(option);
 };
-
 const action = function(url, data, option) {
   return param(url, data, option)
     .then(success, fail)
@@ -270,9 +258,7 @@ const action = function(url, data, option) {
       throw error;
     });
 };
-
 api.fetch = action;
-
 api.option = function(option) {
   if (option.root) {
     instance.defaults.baseURL = option.root;
@@ -286,15 +272,12 @@ api.option = function(option) {
     });
   }
 };
-
 api.setError = function(option) {
   if (option && util.isObject(option)) {
     util.merge(api.error, option);
   }
 };
-
 api.setResponse = function(constructionOfResponse) {
   this.constructionOfResponse = constructionOfResponse;
 };
-
 export default api;

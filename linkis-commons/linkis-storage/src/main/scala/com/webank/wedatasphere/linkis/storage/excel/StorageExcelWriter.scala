@@ -115,7 +115,7 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
       val cell = tableBody.createCell(colunmPoint)
       val dataType = types.apply(colunmPoint)
       dataType match {
-        case BigIntType | TinyIntType | ShortIntType | IntType | LongType => cell.setCellValue(elem.toString.toDouble)
+        case BigIntType | TinyIntType | ShortIntType | IntType | LongType => cell.setCellValue(if (elem.toString.equals("NULL")) 0 else elem.toString.toDouble)
         case _ => cell.setCellValue(elem.toString) //read时候进行null替换等等
       }
       cell.setCellStyle(getCellStyle(dataType))

@@ -32,9 +32,11 @@ import com.webank.wedatasphere.linkis.manager.label.entity.Label
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.UserCreatorLabel
 import com.webank.wedatasphere.linkis.protocol.UserWithCreator
 import org.apache.commons.lang.StringUtils
-
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
+import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf
+
+
 /**
 
  *
@@ -159,10 +161,14 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
       }
     }
 
-
     addOpt("--master", _master)
     addOpt("--deploy-mode", _deployMode)
     addOpt("--name", _name)
+
+    if (HadoopConf.KEYTAB_PROXYUSER_ENABLED.getValue && _proxyUser.nonEmpty) {
+      addOpt("--proxy-user", _proxyUser)
+    }
+
     //addOpt("--jars",Some(ENGINEMANAGER_JAR.getValue))
 //    info("No need to add jars for " + _jars.map(fromPath).exists(x => x.equals("hdfs:///")).toString())
     _jars = _jars.filter(_.isNotBlankPath())
@@ -364,7 +370,6 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
       val file = new java.io.File(x.path)
       file.isFile
     }).foreach(jar)
-    proxyUser(getValueAndRemove(properties, "proxyUser", ""))
     if (null != darResource) {
       this.queue(darResource.yarnResource.queueName)
     } else {
@@ -387,6 +392,13 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
       }
     }
     }
+
+    if (!HadoopConf.KEYTAB_PROXYUSER_ENABLED.getValue) {
+      this.proxyUser(getValueAndRemove(properties, "proxyUser", ""))
+    } else {
+      this.proxyUser(this._userWithCreator.user)
+    }
+    
     //deal spark conf and spark.hadoop.*
     val iterator = properties.entrySet().iterator()
     val sparkConfKeys = ArrayBuffer[String]()

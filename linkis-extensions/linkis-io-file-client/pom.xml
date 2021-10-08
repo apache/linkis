@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <version>1.0.3</version>
-        <groupId>com.webank.wedatasphere.linkis</groupId>
+        <groupId>com.apache.wedatasphere.linkis</groupId>
         <artifactId>linkis</artifactId>
         <relativePath>../../pom.xml</relativePath>
     </parent>
@@ -28,21 +28,21 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>com.apache.wedatasphere.linkis</groupId>
             <artifactId>linkis-rpc</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>com.apache.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>com.apache.wedatasphere.linkis</groupId>
             <artifactId>linkis-computation-orchestrator</artifactId>
             <version>${linkis.version}</version>
         </dependency>

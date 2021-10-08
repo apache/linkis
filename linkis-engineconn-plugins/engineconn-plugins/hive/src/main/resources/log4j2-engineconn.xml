@@ -47,7 +47,7 @@
         <logger name="org.springframework" level="warn" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
-        <logger name="com.webank.wedatasphere.linkis.server.security" level="warn" additivity="true">
+        <logger name="com.apache.wedatasphere.linkis.server.security" level="warn" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
         <logger name="org.apache.hadoop.hive.ql.exec.mr.ExecDriver" level="fatal" additivity="true">

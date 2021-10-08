@@ -17,7 +17,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.webank.wedatasphere.linkis</groupId>
+    <groupId>com.apache.wedatasphere.linkis</groupId>
     <artifactId>linkis</artifactId>
     <version>1.0.3</version>
     <packaging>pom</packaging>
@@ -108,7 +108,7 @@
         <dependencies>
 
             <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
+                <groupId>com.apache.wedatasphere.linkis</groupId>
                 <artifactId>linkis-module</artifactId>
                 <exclusions>
                     <exclusion>
@@ -124,13 +124,13 @@
             </dependency>
 
             <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
+                <groupId>com.apache.wedatasphere.linkis</groupId>
                 <artifactId>linkis-common</artifactId>
                 <version>${linkis.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
+                <groupId>com.apache.wedatasphere.linkis</groupId>
                 <artifactId>linkis-mybatis</artifactId>
                 <version>${linkis.version}</version>
             </dependency>

@@ -6,7 +6,7 @@
 
 export SERVER_SUFFIX="linkis-computation-governance/linkis-cg-engineconnmanager"
 
-export SERVER_CLASS=com.webank.wedatasphere.linkis.ecm.server.LinkisECMApplication
+export SERVER_CLASS=com.apache.wedatasphere.linkis.ecm.server.LinkisECMApplication
 
 #export DEBUG_PORT=
 

@@ -19,7 +19,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>linkis</artifactId>
-        <groupId>com.webank.wedatasphere.linkis</groupId>
+        <groupId>com.apache.wedatasphere.linkis</groupId>
         <version>1.0.3</version>
         <!--<relativePath>../../pom.xml</relativePath>-->
     </parent>
@@ -32,12 +32,12 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>com.apache.wedatasphere.linkis</groupId>
             <artifactId>linkis-engineconn-plugin-core</artifactId>
             <version>${linkis.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>com.apache.wedatasphere.linkis</groupId>
             <artifactId>linkis-engineconn-plugin-cache</artifactId>
             <version>${linkis.version}</version>
         </dependency>
@@ -47,12 +47,12 @@
             <version>${commons.lang3.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>com.apache.wedatasphere.linkis</groupId>
             <artifactId>linkis-bml-client</artifactId>
             <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>com.webank.wedatasphere.linkis</groupId>
+                    <groupId>com.apache.wedatasphere.linkis</groupId>
                     <artifactId>linkis-storage</artifactId>
                 </exclusion>
             </exclusions>

@@ -108,8 +108,8 @@
                 <exclude>com.sun.xml.bind:jaxb-impl:jar</exclude>
                 <exclude>com.thoughtworks.paranamer:paranamer:jar</exclude>
                 <exclude>com.thoughtworks.xstream:xstream:jar</exclude>
-                <exclude>com.webank.wedatasphere.linkis:linkis-common:jar</exclude>
-                <exclude>com.webank.wedatasphere.linkis:linkis-module:jar</exclude>
+                <exclude>com.apache.wedatasphere.linkis:linkis-common:jar</exclude>
+                <exclude>com.apache.wedatasphere.linkis:linkis-module:jar</exclude>
                 <exclude>commons-beanutils:commons-beanutils:jar</exclude>
                 <exclude>commons-beanutils:commons-beanutils-core:jar</exclude>
                 <exclude>commons-cli:commons-cli:jar</exclude>

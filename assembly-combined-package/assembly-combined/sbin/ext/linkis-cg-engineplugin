@@ -7,7 +7,7 @@
 
 export SERVER_SUFFIX="linkis-computation-governance/linkis-cg-engineplugin"
 
-export SERVER_CLASS=com.webank.wedatasphere.linkis.engineplugin.server.LinkisEngineConnPluginServer
+export SERVER_CLASS=com.apache.wedatasphere.linkis.engineplugin.server.LinkisEngineConnPluginServer
 
 #export DEBUG_PORT=
 

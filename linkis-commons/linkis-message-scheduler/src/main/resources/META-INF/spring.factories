@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.webank.wedatasphere.linkis.rpc.MessageRPCSpringConfiguration
+com.apache.wedatasphere.linkis.rpc.MessageRPCSpringConfiguration

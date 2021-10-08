@@ -26,11 +26,11 @@
     </environments>
 
     <mappers>
-        <mapper resource="com/webank/wedatasphere/linkis/manager/dao/impl/ResourceManagerMapper.xml"/>
-        <mapper resource="com/webank/wedatasphere/linkis/manager/dao/impl/LabelManagerMapper.xml"/>
-        <mapper resource="com/webank/wedatasphere/linkis/manager/dao/impl/NodeManagerMapper.xml"/>
-        <mapper resource="com/webank/wedatasphere/linkis/manager/dao/impl/NodeMetricManagerMapper.xml"/>
-        <mapper resource="com/webank/wedatasphere/linkis/manager/dao/impl/LockManagerMapper.xml"/>
+        <mapper resource="com/apache/wedatasphere/linkis/manager/dao/impl/ResourceManagerMapper.xml"/>
+        <mapper resource="com/apache/wedatasphere/linkis/manager/dao/impl/LabelManagerMapper.xml"/>
+        <mapper resource="com/apache/wedatasphere/linkis/manager/dao/impl/NodeManagerMapper.xml"/>
+        <mapper resource="com/apache/wedatasphere/linkis/manager/dao/impl/NodeMetricManagerMapper.xml"/>
+        <mapper resource="com/apache/wedatasphere/linkis/manager/dao/impl/LockManagerMapper.xml"/>
     </mappers>
 
 </configuration>

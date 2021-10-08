@@ -39,7 +39,7 @@
         <logger name="InformationLogger" level="INFO" additivity="false">
             <appender-ref ref="Console-Information"/>
         </logger>
-        <logger name="com.webank.wedatasphere" level="DEBUG" additivity="false">
+        <logger name="com.apache.wedatasphere" level="DEBUG" additivity="false">
             <appender-ref ref="Console-Debug"/>
         </logger>
     </loggers>

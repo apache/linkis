@@ -7,7 +7,7 @@
 
 export SERVER_SUFFIX="linkis-computation-governance/linkis-cg-entrance"
 
-export SERVER_CLASS=com.webank.wedatasphere.linkis.entrance.LinkisEntranceApplication
+export SERVER_CLASS=com.apache.wedatasphere.linkis.entrance.LinkisEntranceApplication
 
 #export DEBUG_PORT=
 

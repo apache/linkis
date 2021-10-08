@@ -28,11 +28,11 @@
         <root level="INFO">
             <appender-ref ref="RollingFile"/>
         </root>
-        <logger name="com.webank.wedatasphere.linkis.message.builder.DefaultMessageJob" level="warn" additivity="true">
+        <logger name="com.apache.wedatasphere.linkis.message.builder.DefaultMessageJob" level="warn" additivity="true">
             <appender-ref ref="RollingFile"/>
         </logger>
 
-        <logger name="com.webank.wedatasphere.linkis.message.scheduler.DefaultMessageExecutor" level="warn" additivity="true">
+        <logger name="com.apache.wedatasphere.linkis.message.scheduler.DefaultMessageExecutor" level="warn" additivity="true">
             <appender-ref ref="RollingFile"/>
         </logger>
         <logger name="com.netflix.loadbalancer.DynamicServerListLoadBalancer" level="warn" additivity="true">

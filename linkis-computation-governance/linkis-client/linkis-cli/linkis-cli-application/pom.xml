@@ -21,7 +21,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.webank.wedatasphere.linkis</groupId>
+        <groupId>com.apache.wedatasphere.linkis</groupId>
         <artifactId>linkis-cli</artifactId>
         <version>1.0.3</version>
         <relativePath>../pom.xml</relativePath>
@@ -32,22 +32,22 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>com.apache.wedatasphere.linkis</groupId>
             <artifactId>linkis-cli-common</artifactId>
             <version>${linkis.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>com.apache.wedatasphere.linkis</groupId>
             <artifactId>linkis-cli-core</artifactId>
             <version>${linkis.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>com.apache.wedatasphere.linkis</groupId>
             <artifactId>linkis-computation-client</artifactId>
             <version>${linkis.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>com.apache.wedatasphere.linkis</groupId>
             <artifactId>linkis-gateway-httpclient-support</artifactId>
             <version>${linkis.version}</version>
         </dependency>

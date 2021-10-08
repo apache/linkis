@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.webank.wedatasphere.linkis</groupId>
+        <groupId>com.apache.wedatasphere.linkis</groupId>
         <artifactId>linkis</artifactId>
         <version>1.0.3</version>
     </parent>
@@ -29,13 +29,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>com.apache.wedatasphere.linkis</groupId>
             <artifactId>linkis-common</artifactId>
             <version>${linkis.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>com.apache.wedatasphere.linkis</groupId>
             <artifactId>linkis-hadoop-common</artifactId>
             <version>${linkis.version}</version>
         </dependency>

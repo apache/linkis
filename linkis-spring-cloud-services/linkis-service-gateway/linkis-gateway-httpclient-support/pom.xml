@@ -19,19 +19,19 @@
 
     <parent>
         <artifactId>linkis</artifactId>
-        <groupId>com.webank.wedatasphere.linkis</groupId>
+        <groupId>com.apache.wedatasphere.linkis</groupId>
         <version>1.0.3</version>
     </parent>
     <artifactId>linkis-gateway-httpclient-support</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>com.apache.wedatasphere.linkis</groupId>
             <artifactId>linkis-httpclient</artifactId>
             <version>${linkis.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>com.apache.wedatasphere.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>

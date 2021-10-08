@@ -18,10 +18,10 @@ package org.apache.spark.sql.execution.datasources.csv
 
 import java.util
 
-import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
-import com.webank.wedatasphere.linkis.storage.resultset.ResultSetReader
-import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
-import com.webank.wedatasphere.linkis.storage.{domain => wds}
+import com.apache.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
+import com.apache.wedatasphere.linkis.storage.resultset.ResultSetReader
+import com.apache.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+import com.apache.wedatasphere.linkis.storage.{domain => wds}
 import org.apache.spark.sql.types.{DecimalType, IntegerType, ShortType, StructField, StructType, _}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 

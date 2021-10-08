@@ -24,6 +24,7 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.ecm.core.conf.ECMErrorCode
 import com.webank.wedatasphere.linkis.ecm.core.exception.ECMCoreException
 import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
+import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf.ENGINECONN_ENVKEYS
 import com.webank.wedatasphere.linkis.governance.common.utils.{EngineConnArgumentsBuilder, EngineConnArgumentsParser}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
@@ -87,6 +88,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       case HIVE_CONF_DIR => putIfExists(HIVE_CONF_DIR)
       case RANDOM_PORT => environment.put(RANDOM_PORT.toString, findAvailPort().toString)
       case EUREKA_PREFER_IP => environment.put(EUREKA_PREFER_IP.toString, Configuration.EUREKA_PREFER_IP.toString)
+      case ENGINECONN_ENVKEYS => environment.put(ENGINECONN_ENVKEYS.toString, GovernanceCommonConf.ENGINECONN_ENVKEYS.toString)
       case _ =>
     }
   }
@@ -174,6 +176,16 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       processBuilder.setEnv(k, processBuilder.replaceExpansionMarker(value))
     }
     processBuilder.setEnv(CLASSPATH.toString, processBuilder.replaceExpansionMarker(classPath.replaceAll(CLASS_PATH_SEPARATOR, File.pathSeparator)))
+
+    val engineConnEnvKeys = request.environment.remove(ENGINECONN_ENVKEYS.toString)
+    logger.debug(s"ENGINECONN_ENVKEYS: " + engineConnEnvKeys)
+    //set other env
+    val engineConnEnvKeyArray = engineConnEnvKeys.split(",")
+    engineConnEnvKeyArray.foreach(envKey => {
+      if(null != envKey && !"".equals(envKey.trim)) {
+        processBuilder.setEnv(envKey, GovernanceCommonConf.getEngineEnvValue(envKey))
+      }
+    })
 
     engineConnManagerEnv.linkDirs.foreach{case (k, v) => processBuilder.link(k, v)}
     val execCommand = request.commands.map(processBuilder.replaceExpansionMarker(_)) ++ getCommandArgs

@@ -61,11 +61,10 @@
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
             <version>${spring.eureka.version}</version>
             <exclusions>
-<!--                linkis-module 不在主动引入 eureka需要引入-->
-<!--                <exclusion>-->
-<!--                    <artifactId>jsr311-api</artifactId>-->
-<!--                    <groupId>javax.ws.rs</groupId>-->
-<!--                </exclusion>-->
+                <exclusion>
+                    <artifactId>jsr311-api</artifactId>
+                    <groupId>javax.ws.rs</groupId>
+                </exclusion>
                 <exclusion>
                     <artifactId>spring-boot-autoconfigure</artifactId>
                     <groupId>org.springframework.boot</groupId>
@@ -308,18 +307,11 @@
             <version>5.1.49</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.glassfish.jersey.bundles</groupId>-->
-<!--            <artifactId>jaxrs-ri</artifactId>-->
-<!--            <version>2.21</version>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <version>2.0.1.Final</version>
         </dependency>
-
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
@@ -375,38 +367,42 @@
 <!--        </dependency>-->
 
 
-<!--        <dependency>-->
-<!--            <groupId>com.sun.jersey</groupId>-->
-<!--            <artifactId>jersey-server</artifactId>-->
-<!--            <version>1.19.1</version>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>jsr311-api</artifactId>-->
-<!--                    <groupId>javax.ws.rs</groupId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.sun.jersey</groupId>-->
-<!--            <artifactId>jersey-servlet</artifactId>-->
-<!--            <version>1.19.1</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.glassfish.jersey.containers</groupId>-->
-<!--            <artifactId>jersey-container-servlet</artifactId>-->
-<!--            <version>${jersey.servlet.version}</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.glassfish.jersey.containers</groupId>-->
-<!--            <artifactId>jersey-container-servlet-core</artifactId>-->
-<!--            <version>${jersey.servlet.version}</version>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>javax.ws.rs-api</artifactId>-->
-<!--                    <groupId>javax.ws.rs</groupId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>1.19.1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jsr311-api</artifactId>
+                    <groupId>javax.ws.rs</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-servlet</artifactId>
+            <version>1.19.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+            <version>${jersey.servlet.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet-core</artifactId>
+            <version>${jersey.servlet.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>javax.ws.rs-api</artifactId>
+                    <groupId>javax.ws.rs</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
 <!--        <dependency>-->
 <!--            <groupId>org.glassfish.jersey.media</groupId>-->
@@ -433,21 +429,21 @@
 <!--            <artifactId>jersey-entity-filtering</artifactId>-->
 <!--            <version>${jersey.version}</version>-->
 <!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.sun.jersey</groupId>-->
-<!--            <artifactId>jersey-json</artifactId>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>jsr311-api</artifactId>-->
-<!--                    <groupId>javax.ws.rs</groupId>-->
-<!--                </exclusion>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>jersey-core</artifactId>-->
-<!--                    <groupId>com.sun.jersey</groupId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--            <version>1.19</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jsr311-api</artifactId>
+                    <groupId>javax.ws.rs</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jersey-core</artifactId>
+                    <groupId>com.sun.jersey</groupId>
+                </exclusion>
+            </exclusions>
+            <version>1.19</version>
+        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

@@ -140,7 +140,7 @@ public class LocalFileSystem extends FileSystem {
             dirsToMake.push(parent);
             parent = parent.getParentFile();
         }
-        if(!isOwner(parent.getPath())) {
+        if(!canMkdir(new FsPath(parent.getPath()))) {
             throw new IOException("only owner can mkdir path " + path);
         }
         while (!dirsToMake.empty()) {
@@ -155,6 +155,19 @@ public class LocalFileSystem extends FileSystem {
             }
         }
         return true;
+    }
+
+    public boolean canMkdir(FsPath destParentDir) throws IOException {
+        if (!StorageUtils.isIOProxy()){
+            LOG.debug("io not proxy, not check ownerer, just check if hava write permission ");
+            return this.canWrite(destParentDir);
+        }else{
+            LOG.info("io proxy, check owner ");
+            if(!isOwner(destParentDir.getPath())) {
+                throw new IOException("current user:" + user + ", parentPath:"+ destParentDir.getPath() +", only owner can mkdir path " + destParentDir);
+            }
+        }
+        return false;
     }
 
     @Override

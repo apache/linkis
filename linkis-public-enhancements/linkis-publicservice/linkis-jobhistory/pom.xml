@@ -93,6 +93,14 @@
                     <exclude>**/log4j2.xml</exclude>
                 </excludes>
             </resource>
+<!--            <resource>-->
+<!--                <directory>D:\DataSphere\project\linkis-apache\linkis-config2</directory>-->
+<!--                <includes>-->
+<!--                    <include>**/*.properties</include>-->
+<!--                    <include>**/*.xml</include>-->
+<!--                    <include>**/*.yml</include>-->
+<!--                </includes>-->
+<!--            </resource>-->
         </resources>
     </build>
 

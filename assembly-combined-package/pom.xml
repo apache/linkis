@@ -26,7 +26,7 @@
         <module>assembly-combined</module>
     </modules>
 
-    <artifactId>wedatasphere-linkis-combined-package</artifactId>
+    <artifactId>apache-linkis-combined-package</artifactId>
     <packaging>pom</packaging>
     <build>
         <plugins>
@@ -62,7 +62,7 @@
                         </goals>
                         <configuration>
                             <skipAssembly>false</skipAssembly>
-                            <finalName>wedatasphere-linkis-${linkis.version}-combined-package-dist</finalName>
+                            <finalName>apache-linkis-${linkis.version}-combined-package-dist</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                             <attach>false</attach>
                             <descriptors>

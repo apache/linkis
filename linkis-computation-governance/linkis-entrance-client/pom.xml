@@ -19,7 +19,7 @@
 
     <parent>
         <artifactId>linkis</artifactId>
-        <groupId>com.webank.wedatasphere.linkis</groupId>
+        <groupId>org.apache.linkis</groupId>
         <version>1.0.3</version>
     </parent>
 
@@ -27,18 +27,18 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-entrance</artifactId>
             <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>com.webank.wedatasphere.linkis</groupId>
+                    <groupId>org.apache.linkis</groupId>
                     <artifactId>linkis-io-entrance</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-rpc</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>

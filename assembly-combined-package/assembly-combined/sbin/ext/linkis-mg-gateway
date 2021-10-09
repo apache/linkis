@@ -34,7 +34,7 @@ then
 fi
 
 
-export SERVER_CLASS=com.webank.wedatasphere.linkis.gateway.springcloud.LinkisGatewayApplication
+export SERVER_CLASS=org.apache.linkis.gateway.springcloud.LinkisGatewayApplication
 
 
 #SPRING_ARGS

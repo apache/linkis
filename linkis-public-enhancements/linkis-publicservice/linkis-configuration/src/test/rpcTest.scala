@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import com.webank.wedatasphere.linkis.configuration.service.CategoryService
+import org.apache.linkis.configuration.service.CategoryService
 
 object rpcTest {
   def main(args: Array[String]): Unit = {

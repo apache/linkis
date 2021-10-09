@@ -15,8 +15,8 @@
  */
 package org.apache.spark.sql
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineplugin.spark.metadata.{SparkHiveObject, SparkSQLHistoryParser}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineplugin.spark.metadata.{SparkHiveObject, SparkSQLHistoryParser}
 import org.apache.spark.sql.execution.QueryExecution
 
 /**

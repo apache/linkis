@@ -67,6 +67,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration.*;
+import static com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration.ADMIN_USER;
 import static com.webank.wedatasphere.linkis.filesystem.constant.WorkSpaceConstants.*;
 
 
@@ -84,6 +85,34 @@ public class FsRestfulApi {
     private FsService fsService;
 
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    /**
+     * check 权限
+     * @param requestPath
+     * @param userName
+     * @return
+     */
+    private boolean checkIsUsersDirectory(String requestPath,String userName){
+        String adminUser = ADMIN_USER.getValue();
+        requestPath = requestPath.toLowerCase().trim()+"/";
+        String hdfsUserRootPathPrefix = WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue());
+        String hdfsUserRootPathSuffix = HDFS_USER_ROOT_PATH_SUFFIX.getValue();
+        String localUserRootPath = WorkspaceUtil.suffixTuning(LOCAL_USER_ROOT_PATH.getValue());
+        String path;
+
+        String workspacePath = hdfsUserRootPathPrefix + userName + hdfsUserRootPathSuffix;
+        String enginconnPath = localUserRootPath + userName;
+        if(userName.equals(adminUser)){
+            workspacePath = hdfsUserRootPathPrefix;
+            enginconnPath = localUserRootPath;
+        }
+        LOGGER.debug("requestPath:" + requestPath );
+        LOGGER.debug("workspacePath:" + workspacePath );
+        LOGGER.debug("enginconnPath:" + enginconnPath );
+        LOGGER.debug("adminUser:" + adminUser );
+        return  (requestPath.indexOf(workspacePath) > -1) || (requestPath.indexOf(enginconnPath) > -1) ;
+
+    }
 
     @GET
     @Path("/getUserRootPath")
@@ -117,6 +146,9 @@ public class FsRestfulApi {
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
+        if (!checkIsUsersDirectory(path,userName)) {
+            throw WorkspaceExceptionManager.createException(80010, path);
+        }
         WorkspaceUtil.fileAndDirNameSpecialCharCheck(path);
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
@@ -134,6 +166,9 @@ public class FsRestfulApi {
         String path = json.get("path").getTextValue();
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
+        }
+        if (!checkIsUsersDirectory(path,userName)) {
+            throw WorkspaceExceptionManager.createException(80010, path);
         }
         WorkspaceUtil.fileAndDirNameSpecialCharCheck(path);
         FsPath fsPath = new FsPath(path);
@@ -155,6 +190,9 @@ public class FsRestfulApi {
             LOGGER.info(String.format("path check trigger is open,now check the path,oldDest:%s,newDest:%s", oldDest, newDest));
             PathValidator$.MODULE$.validate(oldDest, userName);
             PathValidator$.MODULE$.validate(newDest, userName);
+        }
+        if (!checkIsUsersDirectory(newDest,userName)) {
+            throw WorkspaceExceptionManager.createException(80010, newDest);
         }
         if (StringUtils.isEmpty(oldDest)) {
             throw WorkspaceExceptionManager.createException(80004, oldDest);
@@ -183,6 +221,9 @@ public class FsRestfulApi {
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
+        if (!checkIsUsersDirectory(path,userName)) {
+            throw WorkspaceExceptionManager.createException(80010, path);
+        }
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         List<FormDataBodyPart> files = form.getFields("file");
@@ -208,6 +249,9 @@ public class FsRestfulApi {
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
+        if (!checkIsUsersDirectory(path,userName)) {
+            throw WorkspaceExceptionManager.createException(80010, path);
+        }
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         if (!fileSystem.exists(fsPath)) {
@@ -227,6 +271,9 @@ public class FsRestfulApi {
         String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
+        }
+        if (!checkIsUsersDirectory(path,userName)) {
+            throw WorkspaceExceptionManager.createException(80010, path);
         }
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
@@ -278,6 +325,9 @@ public class FsRestfulApi {
             if (StringUtils.isEmpty(charset)) {
                 charset = Consts.UTF_8.toString();
             }
+            if (!checkIsUsersDirectory(path,userName)) {
+                throw WorkspaceExceptionManager.createException(80010, path);
+            }
             FsPath fsPath = new FsPath(path);
             // TODO: 2018/11/29 Judging the directory, the directory cannot be downloaded(判断目录,目录不能下载)
             FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
@@ -322,6 +372,9 @@ public class FsRestfulApi {
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
+        if (!checkIsUsersDirectory(path,userName)) {
+            throw WorkspaceExceptionManager.createException(80010, path);
+        }
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         return Message.messageToResponse(Message.ok().data("isExist", fileSystem.exists(fsPath)));
     }
@@ -337,6 +390,9 @@ public class FsRestfulApi {
         Message message = Message.ok();
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
+        }
+        if (!checkIsUsersDirectory(path,userName)) {
+            throw WorkspaceExceptionManager.createException(80010, path);
         }
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
@@ -379,6 +435,9 @@ public class FsRestfulApi {
         String charset = (String) json.get("charset");
         if (StringUtils.isEmpty(charset)) {
             charset = Consts.UTF_8.toString();
+        }
+        if (!checkIsUsersDirectory(path,userName)) {
+            throw WorkspaceExceptionManager.createException(80010, path);
         }
         String scriptContent = (String) json.get("scriptContent");
         Object params = json.get("params");
@@ -432,6 +491,9 @@ public class FsRestfulApi {
             Integer excelDownloadSize = RESULT_SET_DOWNLOAD_MAX_SIZE_EXCEL.getValue();
             if (StringUtils.isEmpty(path)) {
                 throw WorkspaceExceptionManager.createException(80004, path);
+            }
+            if (!checkIsUsersDirectory(path,userName)) {
+                throw WorkspaceExceptionManager.createException(80010, path);
             }
             response.addHeader("Content-Disposition", "attachment;filename="
                     + new String(outputFileName.getBytes("UTF-8"), "ISO8859-1") + "." + outputFileType);
@@ -504,6 +566,9 @@ public class FsRestfulApi {
             if (StringUtils.isEmpty(path)) {
                 throw WorkspaceExceptionManager.createException(80004, path);
             }
+            if (!checkIsUsersDirectory(path,userName)) {
+                throw WorkspaceExceptionManager.createException(80010, path);
+            }
             //list目录下的文件
             FsPathListWithError fsPathListWithError = fileSystem.listPathWithError(fsPath);
             if (fsPathListWithError == null) {
@@ -560,6 +625,9 @@ public class FsRestfulApi {
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
+        if (!checkIsUsersDirectory(path,userName)) {
+            throw WorkspaceExceptionManager.createException(80010, path);
+        }
         String suffix = path.substring(path.lastIndexOf("."));
         FsPath fsPath = new FsPath(path);
         Map<String, Object> res = new HashMap<String, Object>();
@@ -615,6 +683,9 @@ public class FsRestfulApi {
         }
         if (proxyUser != null && WorkspaceUtil.isLogAdmin(userName)) {
             userName = proxyUser;
+        }
+        if (!checkIsUsersDirectory(path,userName)) {
+            throw WorkspaceExceptionManager.createException(80010, path);
         }
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);

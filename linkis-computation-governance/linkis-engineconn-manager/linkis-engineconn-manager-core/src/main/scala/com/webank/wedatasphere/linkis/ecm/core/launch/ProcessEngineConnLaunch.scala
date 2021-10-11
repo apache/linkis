@@ -24,6 +24,7 @@ import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.ecm.core.conf.ECMErrorCode
 import com.webank.wedatasphere.linkis.ecm.core.exception.ECMCoreException
 import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
+import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf.ENGINECONN_ENVKEYS
 import com.webank.wedatasphere.linkis.governance.common.utils.{EngineConnArgumentsBuilder, EngineConnArgumentsParser}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest

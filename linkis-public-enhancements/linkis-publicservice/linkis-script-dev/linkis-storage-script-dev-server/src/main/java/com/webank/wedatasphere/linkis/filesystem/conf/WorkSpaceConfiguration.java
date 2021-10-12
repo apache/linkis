@@ -37,7 +37,6 @@ public class WorkSpaceConfiguration {
     public static final CommonVars<Integer> FILESYSTEM_FS_THREAD_CACHE = CommonVars$.MODULE$.apply("wds.linkis.workspace.filesystem.thread.cache", 1000);
     public static final CommonVars<Boolean> FILESYSTEM_PATH_CHECK_TRIGGER = CommonVars$.MODULE$.apply("wds.linkis.workspace.filesystem.path.check", false);
     public static final CommonVars<String> FILESYSTEM_LOG_ADMIN = CommonVars$.MODULE$.apply("wds.linkis.governance.station.admin", "hadoop");
-    public static final CommonVars<String> ADMIN_USER = CommonVars$.MODULE$.apply("wds.linkis.admin.user", "linkis");
 
     public static final CommonVars<Boolean> FILESYSTEM_PATH_CHECK_OWNER= CommonVars$.MODULE$.apply("wds.linkis.workspace.filesystem.owner.check", false);
 

@@ -18,8 +18,7 @@ package com.webank.wedatasphere.linkis.ecm.core.launch
 
 import java.io.{File, InputStream, OutputStream}
 import java.net.ServerSocket
-
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration}
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.ecm.core.conf.ECMErrorCode
@@ -87,6 +86,8 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       case HADOOP_CONF_DIR => putIfExists(HADOOP_CONF_DIR)
       case HIVE_CONF_DIR => putIfExists(HIVE_CONF_DIR)
       case RANDOM_PORT => environment.put(RANDOM_PORT.toString, findAvailPort().toString)
+      case EUREKA_PREFER_IP => environment.put(EUREKA_PREFER_IP.toString, Configuration.EUREKA_PREFER_IP.toString)
+      case ENGINECONN_ENVKEYS => environment.put(ENGINECONN_ENVKEYS.toString, GovernanceCommonConf.ENGINECONN_ENVKEYS.toString)
       case _ =>
     }
   }
@@ -130,6 +131,14 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     var springConf = Map("spring.application.name" -> GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue,
       "server.port" -> engineConnPort, "spring.profiles.active" -> "engineconn",
       "logging.config" -> s"classpath:${EnvConfiguration.LOG4J2_XML_FILE.getValue}") ++: discoveryMsgGenerator.generate(engineConnManagerEnv)
+
+    val eurekaPreferIp: Boolean = Configuration.EUREKA_PREFER_IP
+    logger.info(s"EUREKA_PREFER_IP: " + eurekaPreferIp)
+    if(eurekaPreferIp){
+      springConf = springConf + ("eureka.instance.prefer-ip-address" -> "true")
+      springConf = springConf + ("eureka.instance.instance-id" -> "\\${spring.cloud.client.ip-address}:\\${spring.application.name}:\\${server.port}")
+    }
+
     request.creationDesc.properties.filter(_._1.startsWith("spring.")).foreach { case (k, v) =>
       springConf = springConf += (k -> v)
     }
@@ -166,6 +175,16 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       processBuilder.setEnv(k, processBuilder.replaceExpansionMarker(value))
     }
     processBuilder.setEnv(CLASSPATH.toString, processBuilder.replaceExpansionMarker(classPath.replaceAll(CLASS_PATH_SEPARATOR, File.pathSeparator)))
+
+    val engineConnEnvKeys = request.environment.remove(ENGINECONN_ENVKEYS.toString)
+    logger.debug(s"ENGINECONN_ENVKEYS: " + engineConnEnvKeys)
+    //set other env
+    val engineConnEnvKeyArray = engineConnEnvKeys.split(",")
+    engineConnEnvKeyArray.foreach(envKey => {
+      if(null != envKey && !"".equals(envKey.trim)) {
+        processBuilder.setEnv(envKey, GovernanceCommonConf.getEngineEnvValue(envKey))
+      }
+    })
 
     engineConnManagerEnv.linkDirs.foreach{case (k, v) => processBuilder.link(k, v)}
     val execCommand = request.commands.map(processBuilder.replaceExpansionMarker(_)) ++ getCommandArgs

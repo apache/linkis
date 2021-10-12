@@ -63,23 +63,23 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
     else None
   }
 
-  protected def retainAllInRegistry(serviceId: String, serviceInstances: util.List[ServiceInstance]): util.List[ServiceInstance] ={
-    val instancesInRegistry = SpringCloudFeignConfigurationCache.getDiscoveryClient
-      .getInstances(serviceId).map( instance => instance.getHost + ":" + instance.getPort)
+  protected def retainAllInRegistry(serviceId: String, serviceInstances: util.List[ServiceInstance]): util.List[ServiceInstance] = {
+    val instancesInRegistry = ServiceInstanceUtils.getRPCServerLoader.getServiceInstances(serviceId)
     serviceInstances.filter(instance => {
-      instancesInRegistry.contains(instance.getInstance)
+      instancesInRegistry.contains(instance)
     })
   }
 
   protected def removeAllFromRegistry(serviceId: String, serviceInstances: util.List[ServiceInstance]): util.List[ServiceInstance] = {
-    var serviceInstancesInRegistry = SpringCloudFeignConfigurationCache.getDiscoveryClient
-      .getInstances(serviceId).map( instance =>
-      ServiceInstance(serviceId, instance.getHost + ":" + instance.getPort)
-    )
+    var serviceInstancesInRegistry = ServiceInstanceUtils.getRPCServerLoader.getServiceInstances(serviceId)
     serviceInstances.foreach(serviceInstance => {
       serviceInstancesInRegistry = serviceInstancesInRegistry.filterNot(_.equals(serviceInstance))
     })
-    serviceInstancesInRegistry
+    if (null == serviceInstancesInRegistry) {
+      new util.ArrayList[ServiceInstance]()
+    } else {
+      serviceInstancesInRegistry.toList
+    }
   }
 }
 

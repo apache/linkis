@@ -68,7 +68,6 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration.*;
-import static com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration.ADMIN_USER;
 import static com.webank.wedatasphere.linkis.filesystem.constant.WorkSpaceConstants.*;
 
 

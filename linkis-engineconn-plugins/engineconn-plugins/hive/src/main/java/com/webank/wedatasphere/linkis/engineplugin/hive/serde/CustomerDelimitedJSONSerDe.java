@@ -148,12 +148,13 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
             }
         }
     }
-    private static void writePrimitiveUTF8(OutputStream out, Object o,
+   private static void writePrimitiveUTF8(OutputStream out, Object o,
                                            PrimitiveObjectInspector oi, boolean escaped, byte escapeChar,
                                            boolean[] needsEscape) throws IOException {
 
         PrimitiveObjectInspector.PrimitiveCategory category = oi.getPrimitiveCategory();
         byte[] binaryData = null;
+        WritableComparable  wc = null;
         switch (category) {
             case BOOLEAN: {
                 boolean b = ((BooleanObjectInspector) oi).get(o);
@@ -211,13 +212,23 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
                 break;
             }
             case DATE: {
-                WritableComparable dw = ((DateObjectInspector) oi).getPrimitiveWritableObject(o);
-                binaryData = Base64.encodeBase64(String.valueOf(dw).getBytes());
+                wc = ((DateObjectInspector) oi).getPrimitiveWritableObject(o);
+                binaryData = Base64.encodeBase64(String.valueOf(wc).getBytes());
                 break;
             }
             case TIMESTAMP: {
-                WritableComparable tw = ((TimestampObjectInspector) oi).getPrimitiveWritableObject(o);
-                binaryData = Base64.encodeBase64(String.valueOf(tw).getBytes());
+                wc = ((TimestampObjectInspector) oi).getPrimitiveWritableObject(o);
+                binaryData = Base64.encodeBase64(String.valueOf(wc).getBytes());
+                break;
+            }
+            case INTERVAL_YEAR_MONTH: {
+                wc = ((HiveIntervalYearMonthObjectInspector) oi).getPrimitiveWritableObject(o);
+                binaryData = Base64.encodeBase64(String.valueOf(wc).getBytes());
+                break;
+            }
+            case INTERVAL_DAY_TIME: {
+                wc = ((HiveIntervalDayTimeObjectInspector) oi).getPrimitiveWritableObject(o);
+                binaryData = Base64.encodeBase64(String.valueOf(wc).getBytes());
                 break;
             }
             case DECIMAL: {
@@ -226,8 +237,7 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
                 break;
             }
             default: {
-                Object hw = oi.getPrimitiveWritableObject(o);
-                binaryData = Base64.encodeBase64(String.valueOf(hw).getBytes());
+                throw new RuntimeException("Unknown primitive type: " + category);
             }
         }
         if(binaryData == null){

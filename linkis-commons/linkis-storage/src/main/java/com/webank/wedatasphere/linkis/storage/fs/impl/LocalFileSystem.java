@@ -141,7 +141,7 @@ public class LocalFileSystem extends FileSystem {
             parent = parent.getParentFile();
         }
         if(!canMkdir(new FsPath(parent.getPath()))) {
-            throw new IOException("only owner can mkdir path " + path);
+            throw new IOException("no permission to  mkdir path " + path);
         }
         while (!dirsToMake.empty()) {
             File dirToMake = dirsToMake.pop();

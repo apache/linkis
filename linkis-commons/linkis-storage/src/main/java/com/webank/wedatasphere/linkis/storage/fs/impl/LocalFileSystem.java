@@ -140,7 +140,7 @@ public class LocalFileSystem extends FileSystem {
             dirsToMake.push(parent);
             parent = parent.getParentFile();
         }
-        if(!isOwner(parent.getPath())) {
+        if(!canMkdir(new FsPath(parent.getPath()))) {
             throw new IOException("only owner can mkdir path " + path);
         }
         while (!dirsToMake.empty()) {
@@ -155,6 +155,19 @@ public class LocalFileSystem extends FileSystem {
             }
         }
         return true;
+    }
+
+    public boolean canMkdir(FsPath destParentDir) throws IOException {
+        if (!StorageUtils.isIOProxy()){
+            LOG.debug("io not proxy, not check ownerer, just check if hava write permission ");
+            return this.canWrite(destParentDir);
+        }else{
+            LOG.info("io proxy, check owner ");
+            if(!isOwner(destParentDir.getPath())) {
+                throw new IOException("current user:" + user + ", parentPath:"+ destParentDir.getPath() +", only owner can mkdir path " + destParentDir);
+            }
+        }
+        return false;
     }
 
     @Override
@@ -183,8 +196,18 @@ public class LocalFileSystem extends FileSystem {
     @Override
     public boolean setPermission(FsPath dest, String permission) throws IOException {
         if (!StorageUtils.isIOProxy()){
-            LOG.info("io not proxy, setPermission skip");
+            LOG.info("io not proxy, setPermission as parent.");
+            try {
+                PosixFileAttributes attr  = Files.readAttributes(Paths.get(dest.getParent().getPath()), PosixFileAttributes.class);
+                LOG.debug("parent permissions: attr: " + attr);
+                Files.setPosixFilePermissions(Paths.get(dest.getPath()), attr.permissions());
+
+            }catch (NoSuchFileException e){
+                LOG.error("File or folder does not exist or file name is garbled(文件或者文件夹不存在或者文件名乱码)",e);
+                throw new StorageWarnException(51001,e.getMessage());
+            }
             return true;
+
         }
         String path = dest.getPath();
         if(StringUtils.isNumeric(permission)) {
@@ -192,7 +215,9 @@ public class LocalFileSystem extends FileSystem {
         }
         Files.setPosixFilePermissions(Paths.get(path), PosixFilePermissions.fromString(permission));
         return true;
+
     }
+
 
     @Override
     public FsPathListWithError listPathWithError(FsPath path) throws IOException {

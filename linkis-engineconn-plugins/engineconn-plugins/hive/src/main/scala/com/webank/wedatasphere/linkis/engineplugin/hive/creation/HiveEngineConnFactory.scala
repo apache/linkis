@@ -64,11 +64,9 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
       if (BDP_QUEUE_NAME.equals(k)) hiveConf.set(HIVE_QUEUE_NAME, v) else hiveConf.set(k, v)
     }
     hiveConf.setVar(HiveConf.ConfVars.HIVE_HADOOP_CLASSPATH, HiveEngineConfiguration.HIVE_LIB_HOME.getValue + "/*")
-    if(HiveEngineConfiguration.ENABLE_FETCH_BASE64){
-      hiveConf.setVar(HiveConf.ConfVars.HIVEFETCHOUTPUTSERDE,HiveEngineConfiguration.BASE64_SERDE_CLASS)
+    if(HiveEngineConfiguration.ENABLE_FETCH_BASE64) {
+      hiveConf.setVar(HiveConf.ConfVars.HIVEFETCHOUTPUTSERDE, HiveEngineConfiguration.BASE64_SERDE_CLASS)
       hiveConf.set("enable_fetch_base64","true")
-    }else{
-      hiveConf.set("enable_fetch_base64","false")
     }
     /* //Update by peaceWong add hook to HiveDriver
      if (StringUtils.isNotBlank(EnvConfiguration.LINKIS_HIVE_POST_HOOKS)) {

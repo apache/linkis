@@ -139,11 +139,17 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
     }
 
     private static void initDWCApplication() {
+        String hostName = Utils.getComputerName();
+        boolean eurekaPreferIp = Configuration.EUREKA_PREFER_IP();
+        if(eurekaPreferIp){
+            hostName = applicationContext.getEnvironment().getProperty("spring.cloud.client.ip-address");
+            logger.info("using ip address replace hostname,beacause eureka.instance.prefer-ip-address:" + eurekaPreferIp);
+        }
         serviceInstance = new ServiceInstance();
         serviceInstance.setApplicationName(applicationContext.getEnvironment().getProperty("spring.application.name"));
-        serviceInstance.setInstance(Utils.getComputerName() + ":" + applicationContext.getEnvironment().getProperty("server.port"));
+        serviceInstance.setInstance(hostName + ":" + applicationContext.getEnvironment().getProperty("server.port"));
         LinkisException.setApplicationName(serviceInstance.getApplicationName());
-        LinkisException.setHostname(Utils.getComputerName());
+        LinkisException.setHostname(hostName);
         LinkisException.setHostPort(Integer.parseInt(applicationContext.getEnvironment().getProperty("server.port")));
     }
 
@@ -175,8 +181,10 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
     @Bean
     public WebServerFactoryCustomizer<JettyServletWebServerFactory> jettyFactoryCustomizer() {
         return new WebServerFactoryCustomizer<JettyServletWebServerFactory>() {
+            @Override
             public void customize(JettyServletWebServerFactory jettyServletWebServerFactory) {
                 jettyServletWebServerFactory.addServerCustomizers(new JettyServerCustomizer() {
+                    @Override
                     public void customize(Server server) {
                         Handler[] childHandlersByClass = server.getChildHandlersByClass(WebAppContext.class);
                         final WebAppContext webApp = (WebAppContext) childHandlersByClass[0];
@@ -185,6 +193,9 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
                         filterHolder.setInitParameter("forceEncoding", "true");
                         webApp.addFilter(filterHolder, "/*", EnumSet.allOf(DispatcherType.class));
                         BDPJettyServerHelper.setupRestApiContextHandler(webApp);
+
+                        //set servletHolder  for spring restful api
+                        BDPJettyServerHelper.setupSpringRestApiContextHandler(webApp);
                         if(ServerConfiguration.BDP_SERVER_SOCKET_MODE().getValue()) {
                             BDPJettyServerHelper.setupControllerServer(webApp);
                         }

@@ -39,6 +39,8 @@ public class WorkSpaceConfiguration {
     public static final CommonVars<String> FILESYSTEM_LOG_ADMIN = CommonVars$.MODULE$.apply("wds.linkis.governance.station.admin", "hadoop");
     public static final CommonVars<String> ADMIN_USER = CommonVars$.MODULE$.apply("wds.linkis.admin.user", "linkis");
 
+    public static final CommonVars<Boolean> FILESYSTEM_PATH_CHECK_OWNER= CommonVars$.MODULE$.apply("wds.linkis.workspace.filesystem.owner.check", false);
+
     public static final ExecutorService executorService =
             new ThreadPoolExecutor(FILESYSTEM_FS_THREAD_NUM.getValue(), FILESYSTEM_FS_THREAD_NUM.getValue(), 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(FILESYSTEM_FS_THREAD_CACHE.getValue()));
 }

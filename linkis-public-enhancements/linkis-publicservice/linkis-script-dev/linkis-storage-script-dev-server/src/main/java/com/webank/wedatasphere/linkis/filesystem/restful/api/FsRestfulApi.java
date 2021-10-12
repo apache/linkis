@@ -19,6 +19,7 @@ package com.webank.wedatasphere.linkis.filesystem.restful.api;
 
 import com.webank.wedatasphere.linkis.common.io.FsPath;
 import com.webank.wedatasphere.linkis.common.io.FsWriter;
+import com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration;
 import com.webank.wedatasphere.linkis.filesystem.entity.DirFileTree;
 import com.webank.wedatasphere.linkis.filesystem.entity.LogLevel;
 import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException;
@@ -93,7 +94,11 @@ public class FsRestfulApi {
      * @return
      */
     private boolean checkIsUsersDirectory(String requestPath,String userName){
-        String adminUser = ADMIN_USER.getValue();
+        boolean ownerCheck = WorkSpaceConfiguration.FILESYSTEM_PATH_CHECK_OWNER.getValue();
+        if(!ownerCheck){
+            LOGGER.debug("not check filesystem owner." );
+            return true;
+        }
         requestPath = requestPath.toLowerCase().trim()+"/";
         String hdfsUserRootPathPrefix = WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue());
         String hdfsUserRootPathSuffix = HDFS_USER_ROOT_PATH_SUFFIX.getValue();
@@ -102,14 +107,14 @@ public class FsRestfulApi {
 
         String workspacePath = hdfsUserRootPathPrefix + userName + hdfsUserRootPathSuffix;
         String enginconnPath = localUserRootPath + userName;
-        if(userName.equals(adminUser)){
+        if(WorkspaceUtil.isLogAdmin(userName)){
             workspacePath = hdfsUserRootPathPrefix;
             enginconnPath = localUserRootPath;
         }
         LOGGER.debug("requestPath:" + requestPath );
         LOGGER.debug("workspacePath:" + workspacePath );
         LOGGER.debug("enginconnPath:" + enginconnPath );
-        LOGGER.debug("adminUser:" + adminUser );
+        LOGGER.debug("adminUser:" + WorkSpaceConfiguration.FILESYSTEM_LOG_ADMIN.getValue() );
         return  (requestPath.indexOf(workspacePath) > -1) || (requestPath.indexOf(enginconnPath) > -1) ;
 
     }

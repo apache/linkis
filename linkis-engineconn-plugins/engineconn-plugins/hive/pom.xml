@@ -21,7 +21,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -108,6 +108,10 @@
             <artifactId>hive-exec</artifactId>
             <version>${hive.version}</version>
             <exclusions>
+                <exclusion>
+                    <groupId>org.pentaho</groupId>
+                    <artifactId>pentaho-aggdesigner-algorithm</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.apache.hive</groupId>
                     <artifactId>hive-ant</artifactId>

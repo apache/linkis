@@ -21,6 +21,7 @@ import com.webank.wedatasphere.linkis.bml.common.BmlPermissionDeniedException;
 import com.webank.wedatasphere.linkis.bml.common.BmlProjectNoEditException;
 import com.webank.wedatasphere.linkis.bml.common.BmlResourceExpiredException;
 import com.webank.wedatasphere.linkis.bml.common.BmlServerParaErrorException;
+import com.webank.wedatasphere.linkis.bml.conf.BmlServerConfiguration;
 import com.webank.wedatasphere.linkis.bml.service.*;
 import com.webank.wedatasphere.linkis.bml.util.HttpRequestHelper;
 import com.webank.wedatasphere.linkis.common.exception.ErrorException;
@@ -58,7 +59,7 @@ public class BmlProjectRestful {
     private static final String PROJECT_NAME_STR = "projectName";
     private static final String EDIT_USERS_STR = "editUsers";
     private static final String ACCESS_USERS_STR = "accessUsers";
-    public static final String DEFAULT_PROXY_USER = "hadoop";
+    public static final String DEFAULT_PROXY_USER = BmlServerConfiguration.BML_DEFAULT_PROXY_USER().getValue();
 
     @Autowired
     private BmlProjectService bmlProjectService;

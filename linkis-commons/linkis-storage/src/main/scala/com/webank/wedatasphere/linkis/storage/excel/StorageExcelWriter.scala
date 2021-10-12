@@ -20,7 +20,7 @@ import java.io._
 import java.util
 
 import com.webank.wedatasphere.linkis.common.io.{MetaData, Record}
-import com.webank.wedatasphere.linkis.storage.domain.DataType
+import com.webank.wedatasphere.linkis.storage.domain.{BigIntType, DataType, IntType, LongType, ShortIntType, TinyIntType}
 import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.commons.io.IOUtils
 import org.apache.poi.ss.usermodel._
@@ -69,7 +69,8 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
   def createCellStyle(dataType: DataType): CellStyle = {
     val style = workBook.createCellStyle()
     format = workBook.createDataFormat()
-    dataType.toString match {
+    dataType match {
+      case BigIntType | TinyIntType | ShortIntType | IntType | LongType  => style.setDataFormat(format.getFormat("0"))
       case _ => style.setDataFormat(format.getFormat("@"))
     }
     style
@@ -113,7 +114,10 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
     for (elem <- excelRecord) {
       val cell = tableBody.createCell(colunmPoint)
       val dataType = types.apply(colunmPoint)
-      cell.setCellValue(elem.toString) //read时候进行null替换等等
+      dataType match {
+        case BigIntType | TinyIntType | ShortIntType | IntType | LongType => cell.setCellValue(if (elem.toString.equals("NULL")) 0 else elem.toString.toDouble)
+        case _ => cell.setCellValue(elem.toString) //read时候进行null替换等等
+      }
       cell.setCellStyle(getCellStyle(dataType))
       colunmPoint += 1
     }

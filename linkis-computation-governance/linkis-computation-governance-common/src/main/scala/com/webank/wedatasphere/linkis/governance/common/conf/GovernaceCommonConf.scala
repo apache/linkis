@@ -45,4 +45,10 @@ object GovernanceCommonConf {
   val ENGINE_DEFAULT_LIMIT = CommonVars("wds.linkis.engine.default.limit", 5000)
 
   val RESULT_SET_STORE_PATH = CommonVars("wds.linkis.resultSet.store.path", CommonVars[String]("wds.linkis.filesystem.hdfs.root.path", "hdfs:///tmp/linkis/").getValue)
+
+  val ENGINECONN_ENVKEYS = CommonVars("wds.linkis.engineconn.env.keys", "").getValue
+
+  def getEngineEnvValue(envKey:String): String = {
+    CommonVars(envKey, "").getValue
+  }
 }

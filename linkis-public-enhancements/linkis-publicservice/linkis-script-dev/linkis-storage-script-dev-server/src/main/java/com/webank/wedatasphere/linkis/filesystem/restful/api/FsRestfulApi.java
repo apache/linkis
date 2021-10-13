@@ -26,7 +26,7 @@ import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException;
 import com.webank.wedatasphere.linkis.filesystem.exception.WorkspaceExceptionManager;
 import com.webank.wedatasphere.linkis.filesystem.service.FsService;
 import com.webank.wedatasphere.linkis.filesystem.util.WorkspaceUtil;
-import com.webank.wedatasphere.linkis.filesystem.validator.SpringPathValidator$;
+import com.webank.wedatasphere.linkis.filesystem.validator.PathValidator$;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import com.webank.wedatasphere.linkis.storage.csv.CSVFsWriter;
@@ -178,8 +178,8 @@ public class FsRestfulApi {
         String userName = SecurityFilter.getLoginUsername(req);
         if (FILESYSTEM_PATH_CHECK_TRIGGER.getValue()) {
             LOGGER.info(String.format("path check trigger is open,now check the path,oldDest:%s,newDest:%s", oldDest, newDest));
-            SpringPathValidator$.MODULE$.validate(oldDest, userName);
-            SpringPathValidator$.MODULE$.validate(newDest, userName);
+            PathValidator$.MODULE$.validate(oldDest, userName);
+            PathValidator$.MODULE$.validate(newDest, userName);
         }
         if (!checkIsUsersDirectory(newDest,userName)) {
             throw WorkspaceExceptionManager.createException(80010, newDest);

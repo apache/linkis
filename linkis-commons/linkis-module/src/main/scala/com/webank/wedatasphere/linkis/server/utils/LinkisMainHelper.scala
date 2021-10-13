@@ -17,6 +17,8 @@
 package com.webank.wedatasphere.linkis.server.utils
 
 import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
+
 import scala.collection.JavaConverters._
 
 object LinkisMainHelper {
@@ -42,7 +44,8 @@ object LinkisMainHelper {
   }
 
   def getExtraSpringOptions(profilesName: String): Array[String] = {
-    s"--spring.profiles.active=$profilesName" +: CommonVars.properties.asScala.filter { case (k, v) => k != null && k.startsWith(SPRING_STAR)}
+   val servletPath=ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue
+    s"--spring.profiles.active=$profilesName"+:s"--spring.mvc.servlet.path=$servletPath" +: CommonVars.properties.asScala.filter { case (k, v) => k != null && k.startsWith(SPRING_STAR)}
       .map { case (k, v) =>
         val realKey = k.substring(SPRING_STAR.length)
         s"--$realKey=$v"

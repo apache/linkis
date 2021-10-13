@@ -25,7 +25,6 @@ import scala.collection.{JavaConversions, mutable}
 object DWCArgumentsParser {
   protected val DWC_CONF = "--engineconn-conf"
   protected val SPRING_CONF = "--spring-conf"
-  private val SPRING_STAR = "spring."
   private var dwcOptionMap = Map.empty[String, String]
 
   private[linkis] def setDWCOptionMap(dwcOptionMap: Map[String, String]) = this.dwcOptionMap = dwcOptionMap
@@ -75,11 +74,6 @@ object DWCArgumentsParser {
     val options = ArrayBuffer[String]()
     springOptionMap.foreach { case (key, value) =>
       if (StringUtils.isNotEmpty(key) && StringUtils.isNotEmpty(value)) {
-        var realKey=key
-//        if(key.startsWith(SPRING_STAR+SPRING_STAR)){
-//          realKey = key.substring(SPRING_STAR.length)
-//        }
-//        options += ("--" + realKey + "=" + value)
         options += ("--" + key + "=" + value)
       }
     }

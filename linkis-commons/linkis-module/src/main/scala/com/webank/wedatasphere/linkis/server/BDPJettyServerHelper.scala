@@ -66,21 +66,6 @@ private[linkis] object BDPJettyServerHelper extends Logging {
   private def getSecurityFilter(): Class[Filter] =
     Class.forName(BDP_SERVER_SECURITY_FILTER.getValue).asInstanceOf[Class[Filter]]
 
-//  def setupRestApiContextHandler(webApp: ServletContextHandler) {
-//    val servletHolder = new ServletHolder(classOf[ServletContainer])
-//    servletHolder.setInitParameter("javax.ws.rs.Application", classOf[RestfulApplication].getName)
-//    servletHolder.setName("restful")
-//    servletHolder.setForcedPath("restful")
-//    webApp.setSessionHandler(new SessionHandler)
-//    val p = "/api/rest_xx/"
-//    val restfulPath = if(p.endsWith("/*")) p
-//    else if(p.endsWith("/")) p + "*"
-//    else p + "/*"
-//    webApp.addServlet(servletHolder, restfulPath)
-//    val filterHolder = new FilterHolder(getSecurityFilter())
-//    webApp.addFilter(filterHolder, restfulPath, EnumSet.allOf(classOf[DispatcherType]))
- // }
-
   def setupSpringRestApiContextHandler(webApp: ServletContextHandler) {
     val context = new AnnotationConfigWebApplicationContext
     //val CONFIG_LOCATION = "com.webank.wedatasphere.linkis.manager.am"

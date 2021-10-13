@@ -50,7 +50,7 @@ class CallbackEngineConnHook extends EngineConnHook with Logging  {
     // 加载spring类
     val map = new mutable.HashMap[String, String]()
     val newMap = map.++(parser.getSpringConfMap)
-    newMap.put("spring.mvc.servlet.path", "/api/rest_j/v1")
+    newMap.put("spring.mvc.servlet.path", ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue)
     DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(newMap.toMap))
 
     val engineConnPidCallBack = new EngineConnPidCallback(engineCreationContext.getEMInstance)

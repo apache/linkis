@@ -49,7 +49,7 @@ import java.util.*;
  */
 @RestController
 @RequestMapping(path = "/entrance")
-public class EntranceRestfulApi{
+public class EntranceRestfulApi implements EntranceRestfulRemote {
 
     private EntranceServer entranceServer;
 
@@ -367,9 +367,10 @@ public class EntranceRestfulApi{
         return Message.ok("停止任务成功").data("messages", messages);
     }
 
-  
+
+    //todo confirm long or Long
     @RequestMapping(path = "/{id}/kill",method = RequestMethod.GET)
-    public Message kill(@PathVariable("id") String id, @RequestParam(value = "taskID",required = false) Long taskID) {
+    public Message kill(@PathVariable("id") String id, @RequestParam(value = "taskID",required = false) long taskID) {
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
         //通过jobid获取job,可能会由于job找不到而导致有looparray的报错,一旦报错的话，就可以将该任务直接置为Cancenlled
         Option<Job> job = Option.apply(null);

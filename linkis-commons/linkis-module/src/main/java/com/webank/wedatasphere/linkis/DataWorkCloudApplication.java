@@ -80,7 +80,6 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) throws ReflectiveOperationException {
 
-        //RuntimeDelegate.setInstance(new org.glassfish.jersey.internal.RuntimeDelegateImpl());
         final SpringApplication application = new SpringApplication(DataWorkCloudApplication.class);
         application.addListeners(new ApplicationListener<ApplicationPreparedEvent>(){
             public void onApplicationEvent(ApplicationPreparedEvent applicationPreparedEvent) {
@@ -183,7 +182,7 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
 
     //todo confirm
     @Bean
-    public ObjectMapper get() {
+    public ObjectMapper defaultObjectMapper() {
          ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
@@ -204,7 +203,6 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
                         filterHolder.setInitParameter("encoding", Configuration.BDP_ENCODING().getValue());
                         filterHolder.setInitParameter("forceEncoding", "true");
                         webApp.addFilter(filterHolder, "/*", EnumSet.allOf(DispatcherType.class));
-                       // BDPJettyServerHelper.setupRestApiContextHandler(webApp);
 
                         //set servletHolder  for spring restful api
                         BDPJettyServerHelper.setupSpringRestApiContextHandler(webApp);

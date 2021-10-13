@@ -21,7 +21,8 @@ import com.webank.wedatasphere.linkis.manager.common.entity.resource.{CommonNode
 import com.webank.wedatasphere.linkis.resourcemanager.exception.{RMErrorException, RMWarnException}
 import com.webank.wedatasphere.linkis.resourcemanager.external.domain.{ExternalAppInfo, ExternalResourceIdentifier, ExternalResourceProvider}
 import com.webank.wedatasphere.linkis.resourcemanager.external.request.ExternalResourceRequester
-import org.apache.http.HttpHeaders
+import com.webank.wedatasphere.linkis.resourcemanager.utils.RequestKerberosUrlUtils
+import org.apache.http.{HttpHeaders, HttpResponse}
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
@@ -212,8 +213,20 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     httpGet.addHeader("Accept", "application/json")
     if (this.provider.getConfigMap.get("authorEnable").asInstanceOf[Boolean])
       httpGet.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + getAuthorizationStr)
-    val response = YarnResourceRequester.httpClient.execute(httpGet)
-    parse(EntityUtils.toString(response.getEntity()))
+    var httpResponse: HttpResponse = null
+    if(this.provider.getConfigMap.get("kerberosEnable") != null
+      && this.provider.getConfigMap.get("kerberosEnable").asInstanceOf[Boolean]){
+      val principalName = this.provider.getConfigMap.get("principalName").asInstanceOf[String]
+      val keytabPath = this.provider.getConfigMap.get("keytabPath").asInstanceOf[String]
+      val krb5Path = this.provider.getConfigMap.get("krb5Path").asInstanceOf[String]
+      val requestKuu = new RequestKerberosUrlUtils(principalName,keytabPath,krb5Path,false)
+      val response = requestKuu.callRestUrl(rmWebAddress + "/ws/v1/cluster/" + url,principalName)
+      httpResponse = response
+    }else {
+      val response = YarnResourceRequester.httpClient.execute(httpGet)
+      httpResponse = response
+    }
+    parse(EntityUtils.toString(httpResponse.getEntity()))
   }
 }
 object YarnResourceRequester extends Logging {

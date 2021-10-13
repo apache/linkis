@@ -130,15 +130,23 @@ object HDFSUtils extends Logging {
           }
         }
 
-   def getUserGroupInformation(userName: String): UserGroupInformation = {
+  def getUserGroupInformation(userName: String): UserGroupInformation = {
       if (KERBEROS_ENABLE.getValue) {
-        val path = new File(KEYTAB_FILE.getValue, userName + ".keytab").getPath
-      val user = getKerberosUser(userName)
-      UserGroupInformation.setConfiguration(getConfiguration(userName))
-      UserGroupInformation.loginUserFromKeytabAndReturnUGI(user, path)
-    } else {
-      UserGroupInformation.createRemoteUser(userName)
-    }
+        if (!KEYTAB_PROXYUSER_ENABLED.getValue) {
+          val path = new File(KEYTAB_FILE.getValue, userName + ".keytab").getPath
+          val user = getKerberosUser(userName)
+          UserGroupInformation.setConfiguration(getConfiguration(userName))
+          UserGroupInformation.loginUserFromKeytabAndReturnUGI(user, path)
+        } else {
+          val superUser = KEYTAB_PROXYUSER_SUPERUSER.getValue
+          val path = new File(KEYTAB_FILE.getValue, superUser + ".keytab").getPath
+          val user = getKerberosUser(superUser)
+          UserGroupInformation.setConfiguration(getConfiguration(superUser))
+          UserGroupInformation.createProxyUser(userName, UserGroupInformation.loginUserFromKeytabAndReturnUGI(user, path))
+        }
+      } else {
+        UserGroupInformation.createRemoteUser(userName)
+      }
   }
 
   def getKerberosUser(userName: String): String = {

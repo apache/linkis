@@ -338,35 +338,6 @@
             <version>${jetty.version}</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.glassfish.jersey.ext</groupId>-->
-<!--            <artifactId>jersey-spring3</artifactId>-->
-<!--            <version>${jersey.servlet.version}</version>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.springframework</groupId>-->
-<!--                    <artifactId>spring</artifactId>-->
-<!--                </exclusion>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.springframework</groupId>-->
-<!--                    <artifactId>spring-core</artifactId>-->
-<!--                </exclusion>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.springframework</groupId>-->
-<!--                    <artifactId>spring-web</artifactId>-->
-<!--                </exclusion>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.springframework</groupId>-->
-<!--                    <artifactId>spring-beans</artifactId>-->
-<!--                </exclusion>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.springframework</groupId>-->
-<!--                    <artifactId>spring-context</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
-
-
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
@@ -404,31 +375,6 @@
             </exclusions>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.glassfish.jersey.media</groupId>-->
-<!--            <artifactId>jersey-media-json-jackson</artifactId>-->
-<!--            <version>${jersey.version}</version>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>jackson-core</artifactId>-->
-<!--                    <groupId>com.fasterxml.jackson.core</groupId>-->
-<!--                </exclusion>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>jackson-databind</artifactId>-->
-<!--                    <groupId>com.fasterxml.jackson.core</groupId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.glassfish.jersey.media</groupId>-->
-<!--            <artifactId>jersey-media-multipart</artifactId>-->
-<!--            <version>${jersey.version}</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.glassfish.jersey.ext</groupId>-->
-<!--            <artifactId>jersey-entity-filtering</artifactId>-->
-<!--            <version>${jersey.version}</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>

@@ -21,11 +21,6 @@ import com.webank.wedatasphere.linkis.common.conf.Configuration;
 import com.webank.wedatasphere.linkis.computation.client.once.simple.SubmittableSimpleOnceJob;
 import com.webank.wedatasphere.linkis.computation.client.utils.LabelKeyUtils;
 
-/**
- * @author enjoyyin
- * @date 2021-08-25
- * @since 0.5.0
- */
 public class FlinkOnceJobTest {
     public static void main(String[] args) {
         // TODO First, set the right gateway url.

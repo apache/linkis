@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.enumeration;
+package org.apache.linkis.cs.server.enumeration;
 
-import com.webank.wedatasphere.linkis.cs.server.protocol.*;
+import org.apache.linkis.cs.server.protocol.*;
 
 
 public enum ServiceType {

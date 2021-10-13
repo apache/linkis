@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.builder;
+package org.apache.linkis.message.builder;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;

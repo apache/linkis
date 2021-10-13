@@ -16,10 +16,10 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.service.em
+package org.apache.linkis.manager.am.service.em
 
-import com.webank.wedatasphere.linkis.manager.common.protocol.em.RegisterEMRequest
-import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.manager.common.protocol.em.RegisterEMRequest
+import org.apache.linkis.message.builder.ServiceMethodContext
 
 
 trait EMRegisterService {

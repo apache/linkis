@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.scheduler;
+package org.apache.linkis.message.scheduler;
 
-import com.webank.wedatasphere.linkis.message.parser.ImplicitMethod;
-import com.webank.wedatasphere.linkis.message.parser.ServiceMethod;
+import org.apache.linkis.message.parser.ImplicitMethod;
+import org.apache.linkis.message.parser.ServiceMethod;
 
 import java.lang.reflect.Method;
 

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.common.engineconn
+package org.apache.linkis.engineconn.common.engineconn
 
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 
 
 trait EngineConn {

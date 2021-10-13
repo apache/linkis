@@ -16,11 +16,11 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.pointer
+package org.apache.linkis.manager.am.pointer
 
-import com.webank.wedatasphere.linkis.manager.common.entity.node.Node
-import com.webank.wedatasphere.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock, ResponseEngineLock}
-import com.webank.wedatasphere.linkis.manager.service.common.pointer.EngineNodePointer
+import org.apache.linkis.manager.common.entity.node.Node
+import org.apache.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock, ResponseEngineLock}
+import org.apache.linkis.manager.service.common.pointer.EngineNodePointer
 
 
 class DefaultEngineNodPointer(val node: Node) extends AbstractNodePointer with EngineNodePointer {

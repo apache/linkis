@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.client.result;
+package org.apache.linkis.engineconnplugin.flink.client.result;
 
 
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.listener.FlinkListenerGroupImpl;
+import org.apache.linkis.engineconnplugin.flink.listener.FlinkListenerGroupImpl;
 
 public abstract class AbstractResult<C, R> extends FlinkListenerGroupImpl implements Result<C, R> {
 

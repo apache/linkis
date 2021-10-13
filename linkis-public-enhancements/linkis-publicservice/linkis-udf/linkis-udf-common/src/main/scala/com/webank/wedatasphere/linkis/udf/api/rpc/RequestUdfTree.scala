@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.udf.api.rpc
+package org.apache.linkis.udf.api.rpc
 
-import com.webank.wedatasphere.linkis.protocol.{CacheableProtocol, RetryableProtocol}
+import org.apache.linkis.protocol.{CacheableProtocol, RetryableProtocol}
 
 trait UdfProtocol
 case class RequestUdfTree(userName: String, treeType: String, treeId: Long, treeCategory: String) extends RetryableProtocol with CacheableProtocol with UdfProtocol

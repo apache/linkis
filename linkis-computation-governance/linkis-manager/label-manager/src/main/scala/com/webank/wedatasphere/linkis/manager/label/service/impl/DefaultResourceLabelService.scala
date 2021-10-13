@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.service.impl
+package org.apache.linkis.manager.label.service.impl
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.common.entity.label.LabelKeyValue
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource
-import com.webank.wedatasphere.linkis.manager.common.utils.ResourceUtils
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineInstanceLabel
-import com.webank.wedatasphere.linkis.manager.label.LabelManagerUtils
-import com.webank.wedatasphere.linkis.manager.label.service.ResourceLabelService
-import com.webank.wedatasphere.linkis.manager.persistence.ResourceLabelPersistence
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.common.entity.label.LabelKeyValue
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel
+import org.apache.linkis.manager.common.entity.resource.NodeResource
+import org.apache.linkis.manager.common.utils.ResourceUtils
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
+import org.apache.linkis.manager.label.LabelManagerUtils
+import org.apache.linkis.manager.label.service.ResourceLabelService
+import org.apache.linkis.manager.persistence.ResourceLabelPersistence
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

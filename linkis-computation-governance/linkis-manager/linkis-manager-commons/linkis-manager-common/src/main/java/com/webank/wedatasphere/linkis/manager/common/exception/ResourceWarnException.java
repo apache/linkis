@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.exception;
+package org.apache.linkis.manager.common.exception;
 
-import com.webank.wedatasphere.linkis.common.exception.WarnException;
+import org.apache.linkis.common.exception.WarnException;
 
 public class ResourceWarnException  extends WarnException {
     public ResourceWarnException(int errCode, String desc) {

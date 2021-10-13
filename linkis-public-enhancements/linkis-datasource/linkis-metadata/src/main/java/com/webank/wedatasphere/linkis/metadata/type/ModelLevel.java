@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.type;
+package org.apache.linkis.metadata.type;
 
 
 public enum ModelLevel {

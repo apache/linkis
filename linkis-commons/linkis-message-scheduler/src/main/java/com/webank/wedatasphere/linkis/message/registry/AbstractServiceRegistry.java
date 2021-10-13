@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.registry;
+package org.apache.linkis.message.registry;
 
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
-import com.webank.wedatasphere.linkis.common.utils.JavaLog;
-import com.webank.wedatasphere.linkis.message.context.AbstractMessageSchedulerContext;
-import com.webank.wedatasphere.linkis.message.exception.MessageWarnException;
-import com.webank.wedatasphere.linkis.message.parser.ServiceMethod;
-import com.webank.wedatasphere.linkis.message.parser.ServiceParser;
+import org.apache.linkis.common.utils.JavaLog;
+import org.apache.linkis.message.context.AbstractMessageSchedulerContext;
+import org.apache.linkis.message.exception.MessageWarnException;
+import org.apache.linkis.message.parser.ServiceMethod;
+import org.apache.linkis.message.parser.ServiceParser;
 import org.springframework.aop.support.AopUtils;
 
 import java.util.ArrayList;

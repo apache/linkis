@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.configuration.validate
+package org.apache.linkis.configuration.validate
 
 import com.google.gson.GsonBuilder
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.configuration.exception.ConfigurationException
 
 class NumericalValidator extends Validator with Logging {
 

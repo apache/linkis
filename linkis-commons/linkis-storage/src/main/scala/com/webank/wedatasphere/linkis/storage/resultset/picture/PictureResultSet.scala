@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.resultset.picture
+package org.apache.linkis.storage.resultset.picture
 
-import com.webank.wedatasphere.linkis.common.io.resultset.{ResultDeserializer, ResultSerializer}
-import com.webank.wedatasphere.linkis.storage.resultset.txt.{TextResultDeserializer, TextResultSerializer}
-import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, StorageResultSet}
-import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
+import org.apache.linkis.common.io.resultset.{ResultDeserializer, ResultSerializer}
+import org.apache.linkis.storage.resultset.txt.{TextResultDeserializer, TextResultSerializer}
+import org.apache.linkis.storage.resultset.{ResultSetFactory, StorageResultSet}
+import org.apache.linkis.storage.{LineMetaData, LineRecord}
 
 
 class PictureResultSet extends StorageResultSet[LineMetaData, LineRecord] with Serializable {

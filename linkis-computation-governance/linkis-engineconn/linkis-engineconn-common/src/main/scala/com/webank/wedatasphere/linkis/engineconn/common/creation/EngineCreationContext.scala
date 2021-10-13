@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.common.creation
+package org.apache.linkis.engineconn.common.creation
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.manager.label.entity.Label
 
 
 trait EngineCreationContext {

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.mybatis;
+package org.apache.linkis.mybatis;
 
-import com.webank.wedatasphere.linkis.mybatis.conf.MybatisConfiguration;
+import org.apache.linkis.mybatis.conf.MybatisConfiguration;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;

@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.presenter.model;
+package org.apache.linkis.cli.core.presenter.model;
 
 /**
- * @description: Stores data needed by {@link com.webank.wedatasphere.linkis.cli.core.presenter.Presenter}
+ * @description: Stores data needed by {@link org.apache.linkis.cli.core.presenter.Presenter}
  */
 public interface PresenterModel {
 }

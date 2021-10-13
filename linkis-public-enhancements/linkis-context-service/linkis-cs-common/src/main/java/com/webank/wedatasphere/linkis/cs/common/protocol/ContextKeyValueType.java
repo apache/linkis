@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.protocol;
+package org.apache.linkis.cs.common.protocol;
 
 
 public enum ContextKeyValueType {
@@ -22,7 +22,7 @@ public enum ContextKeyValueType {
     /**
      *
      */
-    COMMON_CONTEXT_KV_TYPE(0, "com.webank.wedatasphere.linkis.cs.common.entity.source.CommonContextID");
+    COMMON_CONTEXT_KV_TYPE(0, "org.apache.linkis.cs.common.entity.source.CommonContextID");
 
     private int index;
     private String typeName;

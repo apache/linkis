@@ -15,19 +15,19 @@
  * limitations under the License.
  *
  */
-package com.webank.wedatasphere.linkis.manager.am.service.engine
+package org.apache.linkis.manager.am.service.engine
 
 import java.util.concurrent.atomic.AtomicInteger
 
-import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration
-import com.webank.wedatasphere.linkis.manager.common.constant.AMConstant
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine._
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
-import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
-import com.webank.wedatasphere.linkis.rpc.Sender
+import org.apache.linkis.common.exception.LinkisRetryException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.am.conf.AMConfiguration
+import org.apache.linkis.manager.common.constant.AMConstant
+import org.apache.linkis.manager.common.protocol.engine._
+import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.rpc.Sender
 import org.apache.commons.lang.exception.ExceptionUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

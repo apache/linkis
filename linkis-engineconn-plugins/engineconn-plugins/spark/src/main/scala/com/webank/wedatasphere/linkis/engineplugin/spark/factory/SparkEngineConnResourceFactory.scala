@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.factory
+package org.apache.linkis.engineplugin.spark.factory
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging}
-import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkResourceConfiguration._
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.{DriverAndYarnResource, LoadInstanceResource, Resource, YarnResource}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.resource.AbstractEngineResourceFactory
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging}
+import org.apache.linkis.engineplugin.spark.config.SparkResourceConfiguration._
+import org.apache.linkis.manager.common.entity.resource.{DriverAndYarnResource, LoadInstanceResource, Resource, YarnResource}
+import org.apache.linkis.manager.engineplugin.common.resource.AbstractEngineResourceFactory
 import org.apache.commons.lang.StringUtils
 
 

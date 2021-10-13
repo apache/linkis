@@ -11,17 +11,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.storage
+package org.apache.linkis.cs.storage
 
 import java.util.Date
 
-import com.webank.wedatasphere.linkis.common.io.FsPath
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.cs.client.service.CSTableService
-import com.webank.wedatasphere.linkis.cs.common.entity.metadata.{CSColumn, CSTable}
-import com.webank.wedatasphere.linkis.storage.resultset.StorageResultSetWriter
-import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord, TableResultSet}
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
+import org.apache.linkis.common.io.FsPath
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.cs.client.service.CSTableService
+import org.apache.linkis.cs.common.entity.metadata.{CSColumn, CSTable}
+import org.apache.linkis.storage.resultset.StorageResultSetWriter
+import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord, TableResultSet}
+import org.apache.linkis.storage.utils.StorageUtils
 import org.apache.commons.lang.StringUtils
 
 class CSTableResultSetWriter(tableResult: TableResultSet, maxCacheSize: Long,

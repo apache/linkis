@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.governance.common.protocol.task
+package org.apache.linkis.governance.common.protocol.task
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.protocol.RetryableProtocol
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.protocol.RetryableProtocol
+import org.apache.linkis.protocol.message.RequestProtocol
 
 
 /**

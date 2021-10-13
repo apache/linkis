@@ -1,6 +1,6 @@
-package com.webank.wedatasphere.linkis.manager.monitor.conf
+package org.apache.linkis.manager.monitor.conf
 
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.linkis.common.conf.{CommonVars, TimeType}
 
 
 object ManagerMonitorConf {

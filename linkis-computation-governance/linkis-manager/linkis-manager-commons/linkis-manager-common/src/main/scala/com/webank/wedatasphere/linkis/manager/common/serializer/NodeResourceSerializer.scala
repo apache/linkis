@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.serializer
+package org.apache.linkis.manager.common.serializer
 
-import com.webank.wedatasphere.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.entity.resource._
 import org.json4s.JsonAST.JObject
 import org.json4s.JsonDSL._
 import org.json4s.{CustomSerializer, DefaultFormats, Extraction}

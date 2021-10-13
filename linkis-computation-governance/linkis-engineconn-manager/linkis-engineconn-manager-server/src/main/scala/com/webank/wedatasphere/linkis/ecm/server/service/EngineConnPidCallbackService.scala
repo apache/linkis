@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.service
+package org.apache.linkis.ecm.server.service
 
-import com.webank.wedatasphere.linkis.governance.common.protocol.task.ResponseEngineConnPid
+import org.apache.linkis.governance.common.protocol.task.ResponseEngineConnPid
 
 
 trait EngineConnPidCallbackService {

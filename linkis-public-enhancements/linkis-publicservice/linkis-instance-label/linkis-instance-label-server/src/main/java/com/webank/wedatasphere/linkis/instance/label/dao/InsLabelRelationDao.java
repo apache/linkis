@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.dao;
+package org.apache.linkis.instance.label.dao;
 
-import com.webank.wedatasphere.linkis.instance.label.entity.InsPersistenceLabel;
-import com.webank.wedatasphere.linkis.instance.label.entity.InstanceInfo;
+import org.apache.linkis.instance.label.entity.InsPersistenceLabel;
+import org.apache.linkis.instance.label.entity.InstanceInfo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

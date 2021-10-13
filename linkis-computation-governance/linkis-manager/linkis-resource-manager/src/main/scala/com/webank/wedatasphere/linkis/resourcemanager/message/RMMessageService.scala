@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.message
+package org.apache.linkis.resourcemanager.message
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
-import com.webank.wedatasphere.linkis.manager.common.protocol.em.{EMInfoClearRequest, RegisterEMRequest, StopEMRequest}
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineInfoClearRequest
-import com.webank.wedatasphere.linkis.manager.common.protocol.node.NodeHeartbeatMsg
-import com.webank.wedatasphere.linkis.manager.common.protocol.resource.ResourceUsedProtocol
-import com.webank.wedatasphere.linkis.manager.label.service.NodeLabelService
-import com.webank.wedatasphere.linkis.manager.service.common.label.ManagerLabelService
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
-import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
-import com.webank.wedatasphere.linkis.resourcemanager.service.ResourceManager
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.protocol.em.{EMInfoClearRequest, RegisterEMRequest, StopEMRequest}
+import org.apache.linkis.manager.common.protocol.engine.EngineInfoClearRequest
+import org.apache.linkis.manager.common.protocol.node.NodeHeartbeatMsg
+import org.apache.linkis.manager.common.protocol.resource.ResourceUsedProtocol
+import org.apache.linkis.manager.label.service.NodeLabelService
+import org.apache.linkis.manager.service.common.label.ManagerLabelService
+import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

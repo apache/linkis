@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.udf.excepiton;
+package org.apache.linkis.udf.excepiton;
 
 
 public class UDFException extends  Exception {

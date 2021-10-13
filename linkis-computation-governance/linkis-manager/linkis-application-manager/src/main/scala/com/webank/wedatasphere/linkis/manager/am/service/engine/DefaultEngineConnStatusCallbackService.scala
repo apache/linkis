@@ -15,18 +15,18 @@
  * limitations under the License.
  *
  */
-package com.webank.wedatasphere.linkis.manager.am.service.engine
+package org.apache.linkis.manager.am.service.engine
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.common.constant.AMConstant
-import com.webank.wedatasphere.linkis.manager.common.entity.metrics.AMNodeMetrics
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineConnStatusCallbackToAM
-import com.webank.wedatasphere.linkis.manager.persistence.NodeMetricManagerPersistence
-import com.webank.wedatasphere.linkis.manager.service.common.metrics.MetricsConverter
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.common.constant.AMConstant
+import org.apache.linkis.manager.common.entity.metrics.AMNodeMetrics
+import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallbackToAM
+import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
+import org.apache.linkis.manager.service.common.metrics.MetricsConverter
+import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.server.BDPJettyServerHelper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.result
+package org.apache.linkis.filesystem.result
 
-import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
 import scala.beans.BeanProperty
 

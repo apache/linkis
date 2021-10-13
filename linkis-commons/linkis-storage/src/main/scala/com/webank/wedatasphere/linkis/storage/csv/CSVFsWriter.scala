@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.csv
+package org.apache.linkis.storage.csv
 
 import java.io.OutputStream
 
-import com.webank.wedatasphere.linkis.common.io.FsWriter
+import org.apache.linkis.common.io.FsWriter
 
 
 abstract class CSVFsWriter extends FsWriter {

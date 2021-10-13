@@ -16,25 +16,25 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.service.em
+package org.apache.linkis.manager.am.service.em
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
-import com.webank.wedatasphere.linkis.manager.am.exception.{AMErrorCode, AMErrorException}
-import com.webank.wedatasphere.linkis.manager.am.manager.EMNodeManager
-import com.webank.wedatasphere.linkis.manager.am.vo.EMNodeVo
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeHealthy
-import com.webank.wedatasphere.linkis.manager.common.entity.node.{AMEMNode, EMNode}
-import com.webank.wedatasphere.linkis.manager.common.protocol.em.GetEMInfoRequest
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import com.webank.wedatasphere.linkis.manager.label.entity.node.AliasServiceInstanceLabel
-import com.webank.wedatasphere.linkis.manager.label.service.NodeLabelService
-import com.webank.wedatasphere.linkis.manager.persistence.NodeMetricManagerPersistence
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
-import com.webank.wedatasphere.linkis.resourcemanager.service.ResourceManager
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
+import org.apache.linkis.manager.am.exception.{AMErrorCode, AMErrorException}
+import org.apache.linkis.manager.am.manager.EMNodeManager
+import org.apache.linkis.manager.am.vo.EMNodeVo
+import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy
+import org.apache.linkis.manager.common.entity.node.{AMEMNode, EMNode}
+import org.apache.linkis.manager.common.protocol.em.GetEMInfoRequest
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
+import org.apache.linkis.manager.label.service.NodeLabelService
+import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
+import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

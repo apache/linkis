@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event
+package org.apache.linkis.engineconn.acessible.executor.listener.event
 
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.Executor
-import com.webank.wedatasphere.linkis.engineconn.executor.listener.event.EngineConnAsyncEvent
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
-import com.webank.wedatasphere.linkis.manager.common.entity.metrics.NodeHealthyInfo
+import org.apache.linkis.engineconn.executor.entity.Executor
+import org.apache.linkis.engineconn.executor.listener.event.EngineConnAsyncEvent
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.entity.metrics.NodeHealthyInfo
 
 trait AccessibleExecutorConnAsyncEvent extends EngineConnAsyncEvent {
 

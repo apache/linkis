@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.converter
+package org.apache.linkis.ecm.server.converter
 
-import com.webank.wedatasphere.linkis.ecm.core.engineconn.{EngineConn, YarnEngineConn}
-import com.webank.wedatasphere.linkis.ecm.server.engineConn.DefaultYarnEngineConn
+import org.apache.linkis.ecm.core.engineconn.{EngineConn, YarnEngineConn}
+import org.apache.linkis.ecm.server.engineConn.DefaultYarnEngineConn
 import org.springframework.beans.BeanUtils
 
 

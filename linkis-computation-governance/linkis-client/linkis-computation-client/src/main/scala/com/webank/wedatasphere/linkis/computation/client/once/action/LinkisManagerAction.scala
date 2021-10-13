@@ -15,9 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client.once.action
+package org.apache.linkis.computation.client.once.action
 
-import com.webank.wedatasphere.linkis.ujes.client.request.UJESJobAction
+import org.apache.linkis.ujes.client.request.UJESJobAction
 
 
 trait LinkisManagerAction extends UJESJobAction

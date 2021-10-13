@@ -15,23 +15,23 @@
  */
 
 
-package com.webank.wedatasphere.linkis.entrance.persistence;
+package org.apache.linkis.entrance.persistence;
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration$;
-import com.webank.wedatasphere.linkis.entrance.exception.EntranceIllegalParamException;
-import com.webank.wedatasphere.linkis.entrance.exception.EntranceRPCException;
-import com.webank.wedatasphere.linkis.entrance.exception.QueryFailedException;
-import com.webank.wedatasphere.linkis.governance.common.constant.job.JobRequestConstants;
-import com.webank.wedatasphere.linkis.governance.common.entity.job.SubJobDetail;
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest;
-import com.webank.wedatasphere.linkis.governance.common.entity.job.SubJobInfo;
-import com.webank.wedatasphere.linkis.governance.common.entity.task.*;
-import com.webank.wedatasphere.linkis.governance.common.protocol.job.*;
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant;
-import com.webank.wedatasphere.linkis.protocol.task.Task;
-import com.webank.wedatasphere.linkis.rpc.Sender;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.entrance.conf.EntranceConfiguration$;
+import org.apache.linkis.entrance.exception.EntranceIllegalParamException;
+import org.apache.linkis.entrance.exception.EntranceRPCException;
+import org.apache.linkis.entrance.exception.QueryFailedException;
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
+import org.apache.linkis.governance.common.entity.job.SubJobDetail;
+import org.apache.linkis.governance.common.entity.job.JobRequest;
+import org.apache.linkis.governance.common.entity.job.SubJobInfo;
+import org.apache.linkis.governance.common.entity.task.*;
+import org.apache.linkis.governance.common.protocol.job.*;
+import org.apache.linkis.protocol.constants.TaskConstant;
+import org.apache.linkis.protocol.task.Task;
+import org.apache.linkis.rpc.Sender;
+import org.apache.linkis.server.BDPJettyServerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;

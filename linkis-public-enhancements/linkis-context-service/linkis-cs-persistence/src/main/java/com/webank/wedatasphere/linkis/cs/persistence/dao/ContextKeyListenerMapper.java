@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.dao;
+package org.apache.linkis.cs.persistence.dao;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.listener.ContextKeyListenerDomain;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextKeyListener;
+import org.apache.linkis.cs.common.entity.listener.ContextKeyListenerDomain;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextKeyListener;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

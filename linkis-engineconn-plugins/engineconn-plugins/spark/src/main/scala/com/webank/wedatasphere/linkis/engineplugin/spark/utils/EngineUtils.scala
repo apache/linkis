@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.utils
+package org.apache.linkis.engineplugin.spark.utils
 
 import java.io.{IOException, InputStream, OutputStream}
 import java.net.ServerSocket
 import java.util.HashMap
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.common.io.FsPath
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.engineplugin.spark.common.LineBufferedProcess
-import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.storage.resultset.ResultSetReader
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
-import com.webank.wedatasphere.linkis.storage.{FSFactory, LineMetaData}
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.io.FsPath
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.engineplugin.spark.common.LineBufferedProcess
+import org.apache.linkis.rpc.Sender
+import org.apache.linkis.storage.resultset.ResultSetReader
+import org.apache.linkis.storage.utils.StorageUtils
+import org.apache.linkis.storage.{FSFactory, LineMetaData}
 
 /**
   *
@@ -35,7 +35,7 @@ import com.webank.wedatasphere.linkis.storage.{FSFactory, LineMetaData}
 object EngineUtils {
   private val user:String = System.getProperty("user.name")
   private var sparkVersion: String = _
-  private  var fileSystem : com.webank.wedatasphere.linkis.common.io.Fs = _
+  private  var fileSystem : org.apache.linkis.common.io.Fs = _
 
   def getName:String = Sender.getThisServiceInstance.getInstance
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.contextcache.cleaner;
+package org.apache.linkis.cs.contextcache.cleaner;
 
 public interface AUTOCleaner {
 

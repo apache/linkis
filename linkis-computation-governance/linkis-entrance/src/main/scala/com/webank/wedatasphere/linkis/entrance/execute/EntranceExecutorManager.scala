@@ -11,18 +11,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.execute
+package org.apache.linkis.entrance.execute
 
-import com.webank.wedatasphere.linkis.common.exception.WarnException
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.entrance.exception.EntranceErrorException
-import com.webank.wedatasphere.linkis.entrance.job.EntranceExecutionJob
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils
-import com.webank.wedatasphere.linkis.orchestrator.Orchestration
-import com.webank.wedatasphere.linkis.scheduler.executer.{Executor, ExecutorManager}
-import com.webank.wedatasphere.linkis.scheduler.queue.{GroupFactory, Job, SchedulerEvent}
+import org.apache.linkis.common.exception.WarnException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.exception.EntranceErrorException
+import org.apache.linkis.entrance.job.EntranceExecutionJob
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.manager.label.utils.LabelUtils
+import org.apache.linkis.orchestrator.Orchestration
+import org.apache.linkis.scheduler.executer.{Executor, ExecutorManager}
+import org.apache.linkis.scheduler.queue.{GroupFactory, Job, SchedulerEvent}
 
 import java.util
 import java.util.Date

@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.errorcode.server.restful;
+package org.apache.linkis.errorcode.server.restful;
 
-import com.webank.wedatasphere.linkis.errorcode.common.CommonConf;
-import com.webank.wedatasphere.linkis.errorcode.common.LinkisErrorCode;
-import com.webank.wedatasphere.linkis.errorcode.server.service.LinkisErrorCodeService;
-import com.webank.wedatasphere.linkis.server.Message;
+import org.apache.linkis.errorcode.common.CommonConf;
+import org.apache.linkis.errorcode.common.LinkisErrorCode;
+import org.apache.linkis.errorcode.server.service.LinkisErrorCodeService;
+import org.apache.linkis.server.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

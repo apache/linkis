@@ -1,11 +1,11 @@
-package com.webank.wedatasphere.linkis.manager.label.entity.cluster;
+package org.apache.linkis.manager.label.entity.cluster;
 
-import static com.webank.wedatasphere.linkis.manager.label.constant.LabelConstant.LABEL_BUILDER_ERROR_CODE;
-import static com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant.ENV_TYPE_KEY;
+import static org.apache.linkis.manager.label.constant.LabelConstant.LABEL_BUILDER_ERROR_CODE;
+import static org.apache.linkis.manager.label.constant.LabelKeyConstant.ENV_TYPE_KEY;
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Feature;
-import com.webank.wedatasphere.linkis.manager.label.entity.GenericLabel;
-import com.webank.wedatasphere.linkis.manager.label.exception.LabelRuntimeException;
+import org.apache.linkis.manager.label.entity.Feature;
+import org.apache.linkis.manager.label.entity.GenericLabel;
+import org.apache.linkis.manager.label.exception.LabelRuntimeException;
 import java.util.HashMap;
 
 

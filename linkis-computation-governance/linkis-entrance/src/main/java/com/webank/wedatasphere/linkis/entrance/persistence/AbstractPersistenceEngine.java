@@ -15,7 +15,7 @@
  */
 
 
-package com.webank.wedatasphere.linkis.entrance.persistence;
+package org.apache.linkis.entrance.persistence;
 
 public abstract class AbstractPersistenceEngine implements PersistenceEngine{
 

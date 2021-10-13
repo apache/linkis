@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.optimize;
+package org.apache.linkis.cs.optimize;
 
-import com.webank.wedatasphere.linkis.cs.condition.Condition;
+import org.apache.linkis.cs.condition.Condition;
 
 public interface ConditionOptimizer {
 

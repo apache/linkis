@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.engineplugin.spark.metadata
+package org.apache.linkis.engineplugin.spark.metadata
 
 import java.util.{List => JList}
 
-import com.webank.wedatasphere.linkis.cs.common.entity.history.metadata.TableOperationType
-import com.webank.wedatasphere.linkis.cs.common.entity.metadata.CSColumn
+import org.apache.linkis.cs.common.entity.history.metadata.TableOperationType
+import org.apache.linkis.cs.common.entity.metadata.CSColumn
 import org.apache.hadoop.hive.ql.security.authorization.plugin.HivePrivilegeObject.HivePrivilegeObjectType
 
 /**

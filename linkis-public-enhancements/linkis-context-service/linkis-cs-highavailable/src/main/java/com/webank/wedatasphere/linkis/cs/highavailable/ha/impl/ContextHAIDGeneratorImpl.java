@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.highavailable.ha.impl;
+package org.apache.linkis.cs.highavailable.ha.impl;
 
 import com.google.gson.Gson;
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.CommonHAContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.HAContextID;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.highavailable.exception.CSErrorCode;
-import com.webank.wedatasphere.linkis.cs.highavailable.ha.BackupInstanceGenerator;
-import com.webank.wedatasphere.linkis.cs.highavailable.ha.ContextHAIDGenerator;
-import com.webank.wedatasphere.linkis.cs.highavailable.ha.instancealias.InstanceAliasConverter;
+import org.apache.linkis.DataWorkCloudApplication;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.cs.common.entity.source.CommonHAContextID;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.source.HAContextID;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.highavailable.exception.CSErrorCode;
+import org.apache.linkis.cs.highavailable.ha.BackupInstanceGenerator;
+import org.apache.linkis.cs.highavailable.ha.ContextHAIDGenerator;
+import org.apache.linkis.cs.highavailable.ha.instancealias.InstanceAliasConverter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

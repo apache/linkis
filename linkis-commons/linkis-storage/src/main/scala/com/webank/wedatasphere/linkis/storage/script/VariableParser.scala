@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.script
+package org.apache.linkis.storage.script
 
 import java.util
 

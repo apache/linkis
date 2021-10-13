@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.presenter.model;
+package org.apache.linkis.cli.application.presenter.model;
 
-import com.webank.wedatasphere.linkis.cli.core.presenter.model.JobExecModel;
+import org.apache.linkis.cli.core.presenter.model.JobExecModel;
 
 
 public class LinkisJobIncLogModel extends JobExecModel {

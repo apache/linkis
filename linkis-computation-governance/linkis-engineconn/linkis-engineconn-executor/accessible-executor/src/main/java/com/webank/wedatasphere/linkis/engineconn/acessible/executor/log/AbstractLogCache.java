@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.acessible.executor.log;
+package org.apache.linkis.engineconn.acessible.executor.log;
 
-import com.webank.wedatasphere.linkis.common.log.LogUtils;
+import org.apache.linkis.common.log.LogUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 

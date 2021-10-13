@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.config
+package org.apache.linkis.engineplugin.spark.config
 
 import java.io.File
 
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
-import com.webank.wedatasphere.linkis.common.utils.{ClassUtils, Logging}
-import com.webank.wedatasphere.linkis.engineplugin.spark.factory.SparkEngineConnFactory
+import org.apache.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.linkis.common.utils.{ClassUtils, Logging}
+import org.apache.linkis.engineplugin.spark.factory.SparkEngineConnFactory
 
 /**
   *

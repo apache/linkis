@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.domain.mdq;
+package org.apache.linkis.metadata.domain.mdq;
 
 
 public class Tunple<K, V> {

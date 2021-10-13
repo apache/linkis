@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.listener.callback;
+package org.apache.linkis.cs.listener.callback;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.listener.ListenerDomain;
+import org.apache.linkis.cs.common.entity.listener.ListenerDomain;
 
 /**
  * ContextIDCallbackEngine 只监听ContextID ，对csKeys无感，可为空

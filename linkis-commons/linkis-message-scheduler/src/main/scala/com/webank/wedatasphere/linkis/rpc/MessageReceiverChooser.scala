@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc
+package org.apache.linkis.rpc
 
 import java.util
 
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.protocol.message.RequestProtocol
 
 
 

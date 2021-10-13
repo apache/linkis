@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc
+package org.apache.linkis.rpc
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.exception.ExceptionManager
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.rpc.exception.DWCURIException
-import com.webank.wedatasphere.linkis.rpc.serializer.ProtostuffSerializeUtil
-import com.webank.wedatasphere.linkis.rpc.transform.RPCProduct.{CLASS_VALUE, OBJECT_VALUE}
-import com.webank.wedatasphere.linkis.server.{EXCEPTION_MSG, JMap, Message}
+import org.apache.linkis.common.exception.ExceptionManager
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.rpc.exception.DWCURIException
+import org.apache.linkis.rpc.serializer.ProtostuffSerializeUtil
+import org.apache.linkis.rpc.transform.RPCProduct.{CLASS_VALUE, OBJECT_VALUE}
+import org.apache.linkis.server.{EXCEPTION_MSG, JMap, Message}
 
 import scala.runtime.BoxedUnit
 

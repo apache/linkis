@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.ujes.jdbc
+package org.apache.linkis.ujes.jdbc
 
 import java.io.{InputStream, Reader}
 import java.math.MathContext
@@ -22,8 +22,8 @@ import java.sql.{Blob, Clob, Connection, Date, NClob, Ref, ResultSet, RowId, SQL
 import java.util.Calendar
 import java.{sql, util}
 
-import com.webank.wedatasphere.linkis.ujes.client.request.ResultSetAction
-import com.webank.wedatasphere.linkis.ujes.client.response.ResultSetResult
+import org.apache.linkis.ujes.client.request.ResultSetAction
+import org.apache.linkis.ujes.client.response.ResultSetResult
 import org.apache.commons.lang.StringUtils
 
 

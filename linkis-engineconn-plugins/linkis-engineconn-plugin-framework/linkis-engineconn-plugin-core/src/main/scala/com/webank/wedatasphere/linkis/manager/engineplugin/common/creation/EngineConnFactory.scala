@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.creation
+package org.apache.linkis.manager.engineplugin.common.creation
 
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.{DefaultEngineConn, EngineConn}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.EngineConnBuildFailedException
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineConnModeLabel
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineType.EngineType
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.common.engineconn.{DefaultEngineConn, EngineConn}
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnBuildFailedException
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.EngineConnModeLabel
+import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 
 import scala.collection.JavaConversions.asScalaBuffer
 

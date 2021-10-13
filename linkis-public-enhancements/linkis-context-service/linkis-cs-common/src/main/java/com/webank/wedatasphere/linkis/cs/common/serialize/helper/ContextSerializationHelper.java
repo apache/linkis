@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.serialize.helper;
+package org.apache.linkis.cs.common.serialize.helper;
 
-import com.webank.wedatasphere.linkis.common.utils.ClassUtils;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.common.exception.ErrorCode;
-import com.webank.wedatasphere.linkis.cs.common.serialize.ContextSerializer;
+import org.apache.linkis.common.utils.ClassUtils;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.exception.ErrorCode;
+import org.apache.linkis.cs.common.serialize.ContextSerializer;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.command;
+package org.apache.linkis.cli.core.interactor.command;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdType;
-import com.webank.wedatasphere.linkis.cli.core.constants.TestConstants;
+import org.apache.linkis.cli.common.entity.command.CmdType;
+import org.apache.linkis.cli.core.constants.TestConstants;
 
 
 public enum TestCmdType implements CmdType {

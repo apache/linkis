@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.persistence
+package org.apache.linkis.entrance.persistence
 
-import com.webank.wedatasphere.linkis.entrance.job.EntranceExecuteRequest
-import com.webank.wedatasphere.linkis.scheduler.executer.OutputExecuteResponse
-import com.webank.wedatasphere.linkis.scheduler.listener.SchedulerListener
+import org.apache.linkis.entrance.job.EntranceExecuteRequest
+import org.apache.linkis.scheduler.executer.OutputExecuteResponse
+import org.apache.linkis.scheduler.listener.SchedulerListener
 
 
 trait ResultSetListener extends SchedulerListener {

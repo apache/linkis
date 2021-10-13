@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.springcloud
+package org.apache.linkis.gateway.springcloud
 
 import com.netflix.loadbalancer.Server
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.gateway.config.GatewaySpringConfiguration
-import com.webank.wedatasphere.linkis.gateway.parser.{DefaultGatewayParser, GatewayParser}
-import com.webank.wedatasphere.linkis.gateway.route.{DefaultGatewayRouter, GatewayRouter}
-import com.webank.wedatasphere.linkis.gateway.springcloud.http.GatewayAuthorizationFilter
-import com.webank.wedatasphere.linkis.gateway.springcloud.websocket.SpringCloudGatewayWebsocketFilter
-import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.gateway.config.GatewaySpringConfiguration
+import org.apache.linkis.gateway.parser.{DefaultGatewayParser, GatewayParser}
+import org.apache.linkis.gateway.route.{DefaultGatewayRouter, GatewayRouter}
+import org.apache.linkis.gateway.springcloud.http.GatewayAuthorizationFilter
+import org.apache.linkis.gateway.springcloud.websocket.SpringCloudGatewayWebsocketFilter
+import org.apache.linkis.rpc.Sender
+import org.apache.linkis.server.conf.ServerConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.cloud.client

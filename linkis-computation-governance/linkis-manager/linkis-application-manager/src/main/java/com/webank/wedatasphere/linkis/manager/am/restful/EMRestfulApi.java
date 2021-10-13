@@ -16,27 +16,27 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.restful;
+package org.apache.linkis.manager.am.restful;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration;
-import com.webank.wedatasphere.linkis.manager.am.converter.DefaultMetricsConverter;
-import com.webank.wedatasphere.linkis.manager.am.exception.AMErrorCode;
-import com.webank.wedatasphere.linkis.manager.am.exception.AMErrorException;
-import com.webank.wedatasphere.linkis.manager.am.service.em.EMInfoService;
-import com.webank.wedatasphere.linkis.manager.am.utils.AMUtils;
-import com.webank.wedatasphere.linkis.manager.am.vo.EMNodeVo;
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeHealthy;
-import com.webank.wedatasphere.linkis.manager.common.entity.metrics.NodeHealthyInfo;
-import com.webank.wedatasphere.linkis.manager.common.entity.node.EMNode;
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactory;
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.manager.label.entity.UserModifiable;
-import com.webank.wedatasphere.linkis.manager.label.exception.LabelErrorException;
-import com.webank.wedatasphere.linkis.manager.label.service.NodeLabelService;
-import com.webank.wedatasphere.linkis.server.Message;
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.am.conf.AMConfiguration;
+import org.apache.linkis.manager.am.converter.DefaultMetricsConverter;
+import org.apache.linkis.manager.am.exception.AMErrorCode;
+import org.apache.linkis.manager.am.exception.AMErrorException;
+import org.apache.linkis.manager.am.service.em.EMInfoService;
+import org.apache.linkis.manager.am.utils.AMUtils;
+import org.apache.linkis.manager.am.vo.EMNodeVo;
+import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy;
+import org.apache.linkis.manager.common.entity.metrics.NodeHealthyInfo;
+import org.apache.linkis.manager.common.entity.node.EMNode;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.UserModifiable;
+import org.apache.linkis.manager.label.exception.LabelErrorException;
+import org.apache.linkis.manager.label.service.NodeLabelService;
+import org.apache.linkis.server.Message;
+import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;

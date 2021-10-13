@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc
+package org.apache.linkis.rpc
 
 
 trait ReceiverSenderBuilder {

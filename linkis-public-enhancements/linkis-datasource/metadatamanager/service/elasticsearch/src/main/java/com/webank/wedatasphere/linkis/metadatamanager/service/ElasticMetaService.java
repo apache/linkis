@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadatamanager.service;
+package org.apache.linkis.metadatamanager.service;
 
-import com.webank.wedatasphere.linkis.metadatamanager.common.Json;
-import com.webank.wedatasphere.linkis.metadatamanager.common.domain.MetaColumnInfo;
-import com.webank.wedatasphere.linkis.metadatamanager.common.service.AbstractMetaService;
-import com.webank.wedatasphere.linkis.metadatamanager.common.service.MetadataConnection;
+import org.apache.linkis.metadatamanager.common.Json;
+import org.apache.linkis.metadatamanager.common.domain.MetaColumnInfo;
+import org.apache.linkis.metadatamanager.common.service.AbstractMetaService;
+import org.apache.linkis.metadatamanager.common.service.MetadataConnection;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

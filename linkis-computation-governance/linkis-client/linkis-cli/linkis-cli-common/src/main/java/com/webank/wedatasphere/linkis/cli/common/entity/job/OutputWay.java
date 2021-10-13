@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.common.entity.job;
+package org.apache.linkis.cli.common.entity.job;
 
 
 public enum OutputWay {

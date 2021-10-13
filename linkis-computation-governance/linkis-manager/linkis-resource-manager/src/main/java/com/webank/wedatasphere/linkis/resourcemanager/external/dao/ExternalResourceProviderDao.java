@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.external.dao;
+package org.apache.linkis.resourcemanager.external.dao;
 
-import com.webank.wedatasphere.linkis.resourcemanager.external.domain.ExternalResourceProvider;
+import org.apache.linkis.resourcemanager.external.domain.ExternalResourceProvider;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

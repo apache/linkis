@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.client.impl
+package org.apache.linkis.bml.client.impl
 
 import java.io.{File, IOException, InputStream}
 import java.util
 
-import com.webank.wedatasphere.linkis.bml.client.AbstractBmlClient
-import com.webank.wedatasphere.linkis.bml.common._
-import com.webank.wedatasphere.linkis.bml.conf.BmlConfiguration._
-import com.webank.wedatasphere.linkis.bml.http.HttpConf
-import com.webank.wedatasphere.linkis.bml.protocol._
-import com.webank.wedatasphere.linkis.bml.request._
-import com.webank.wedatasphere.linkis.bml.response.{BmlCreateBmlProjectResult, _}
-import com.webank.wedatasphere.linkis.common.conf.Configuration
-import com.webank.wedatasphere.linkis.common.io.FsPath
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.httpclient.authentication.AuthenticationStrategy
-import com.webank.wedatasphere.linkis.httpclient.config.ClientConfigBuilder
-import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
-import com.webank.wedatasphere.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy
-import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig
-import com.webank.wedatasphere.linkis.storage.FSFactory
+import org.apache.linkis.bml.client.AbstractBmlClient
+import org.apache.linkis.bml.common._
+import org.apache.linkis.bml.conf.BmlConfiguration._
+import org.apache.linkis.bml.http.HttpConf
+import org.apache.linkis.bml.protocol._
+import org.apache.linkis.bml.request._
+import org.apache.linkis.bml.response.{BmlCreateBmlProjectResult, _}
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.io.FsPath
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.httpclient.authentication.AuthenticationStrategy
+import org.apache.linkis.httpclient.config.ClientConfigBuilder
+import org.apache.linkis.httpclient.dws.DWSHttpClient
+import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy
+import org.apache.linkis.httpclient.dws.config.DWSClientConfig
+import org.apache.linkis.storage.FSFactory
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 

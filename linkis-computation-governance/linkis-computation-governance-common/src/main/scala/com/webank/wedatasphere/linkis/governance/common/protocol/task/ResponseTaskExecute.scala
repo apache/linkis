@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.governance.common.protocol.task
+package org.apache.linkis.governance.common.protocol.task
 
 import java.util
 
-import com.webank.wedatasphere.linkis.governance.common.entity.ExecutionNodeStatus
-import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
-import com.webank.wedatasphere.linkis.protocol.{BroadcastProtocol, RetryableProtocol}
+import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
+import org.apache.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.protocol.{BroadcastProtocol, RetryableProtocol}
 
 case class ResponseTaskExecute(execId: String)
 

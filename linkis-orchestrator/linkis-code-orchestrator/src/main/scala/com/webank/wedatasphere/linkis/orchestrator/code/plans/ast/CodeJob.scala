@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.code.plans.ast
+package org.apache.linkis.orchestrator.code.plans.ast
 
-import com.webank.wedatasphere.linkis.orchestrator.plans.ast.{ASTContext, AbstractJob, Job, Stage}
-import com.webank.wedatasphere.linkis.orchestrator.plans.unit.CodeLogicalUnit
+import org.apache.linkis.orchestrator.plans.ast.{ASTContext, AbstractJob, Job, Stage}
+import org.apache.linkis.orchestrator.plans.unit.CodeLogicalUnit
 
 class CodeJob(private var parents: Array[Job],
               private var children: Array[Job]) extends AbstractJob {

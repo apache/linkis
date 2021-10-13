@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.request
+package org.apache.linkis.filesystem.request
 
-import com.webank.wedatasphere.linkis.filesystem.response.ScriptFromBMLResponse
+import org.apache.linkis.filesystem.response.ScriptFromBMLResponse
 
 
 trait WorkspaceClient {

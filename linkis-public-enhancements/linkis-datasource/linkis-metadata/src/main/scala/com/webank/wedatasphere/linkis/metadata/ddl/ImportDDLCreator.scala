@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.ddl
+package org.apache.linkis.metadata.ddl
 
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util
 import java.util.Date
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.common.io.FsPath
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.metadata.conf.MdqConfiguration
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.{MdqTableBO, MdqTableFieldsInfoBO}
-import com.webank.wedatasphere.linkis.metadata.exception.MdqIllegalParamException
-import com.webank.wedatasphere.linkis.storage.FSFactory
-import com.webank.wedatasphere.linkis.storage.fs.FileSystem
-import com.webank.wedatasphere.linkis.storage.utils.FileSystemUtils
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.io.FsPath
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.metadata.conf.MdqConfiguration
+import org.apache.linkis.metadata.domain.mdq.bo.{MdqTableBO, MdqTableFieldsInfoBO}
+import org.apache.linkis.metadata.exception.MdqIllegalParamException
+import org.apache.linkis.storage.FSFactory
+import org.apache.linkis.storage.fs.FileSystem
+import org.apache.linkis.storage.utils.FileSystemUtils
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.time.DateFormatUtils
@@ -81,7 +81,7 @@ object FileImportDDLHelper extends ImportHelper with Logging {
     if (null == storePath){
       val destination = "val destination = \"\"\"" + _destination +  "\"\"\"\n"
       createTableCode.append(destination)
-//      createTableCode.append("com.webank.wedatasphere.linkis.engine.imexport.LoadData.loadDataToTable(spark,source,destination)")
+//      createTableCode.append("org.apache.linkis.engine.imexport.LoadData.loadDataToTable(spark,source,destination)")
       createTableCode.append(MdqConfiguration.SPARK_MDQ_IMPORT_CLAZZ.getValue + ".loadDataToTable(spark,source,destination)")
     }else{
       val destination = "val destination = \"\"\"" + storePath +  "\"\"\"\n"
@@ -92,9 +92,9 @@ object FileImportDDLHelper extends ImportHelper with Logging {
     logger.info(s"end to generate code for ${mdqTableBO.getTableBaseInfo.getBase.getName} code is $resultCode")
     resultCode
     //    if(storePath == null){
-    //      newExecutionCode += "com.webank.wedatasphere.linkis.engine.imexport.LoadData.loadDataToTable(spark,source,destination)"
+    //      newExecutionCode += "org.apache.linkis.engine.imexport.LoadData.loadDataToTable(spark,source,destination)"
     //    }else{
-    //      newExecutionCode += "com.webank.wedatasphere.linkis.engine.imexport.LoadData.loadDataToTableByFile(spark,destination,source)"
+    //      newExecutionCode += "org.apache.linkis.engine.imexport.LoadData.loadDataToTableByFile(spark,destination,source)"
     //    }
   }
 

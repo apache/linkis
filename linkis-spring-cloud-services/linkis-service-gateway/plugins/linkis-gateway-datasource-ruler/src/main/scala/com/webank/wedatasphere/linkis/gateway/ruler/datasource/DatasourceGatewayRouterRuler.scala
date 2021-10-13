@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.gateway.ruler.datasource
+package org.apache.linkis.gateway.ruler.datasource
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
-import com.webank.wedatasphere.linkis.gateway.ruler.datasource.service.DatasourceMapService
-import com.webank.wedatasphere.linkis.gateway.ujes.route.EntranceGatewayRouterRuler
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
-import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
-import com.webank.wedatasphere.linkis.rpc.interceptor.ServiceInstanceUtils
-import com.webank.wedatasphere.linkis.server.{BDPJettyServerHelper, JMap}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.ruler.datasource.service.DatasourceMapService
+import org.apache.linkis.gateway.ujes.route.EntranceGatewayRouterRuler
+import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.protocol.utils.TaskUtils
+import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
+import org.apache.linkis.server.{BDPJettyServerHelper, JMap}
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.exception
+package org.apache.linkis.orchestrator.exception
 
-import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
+import org.apache.linkis.common.exception.LinkisRetryException
 
 /**
   *

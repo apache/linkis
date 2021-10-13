@@ -11,20 +11,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.persistence
+package org.apache.linkis.entrance.persistence
 
-import com.webank.wedatasphere.linkis.common.io.resultset.ResultSet
-import com.webank.wedatasphere.linkis.common.io.{FsPath, MetaData, Record}
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
-import com.webank.wedatasphere.linkis.entrance.execute.StorePathExecuteRequest
-import com.webank.wedatasphere.linkis.entrance.job.{EntranceExecuteRequest, EntranceExecutionJob}
-import com.webank.wedatasphere.linkis.entrance.scheduler.cache.CacheOutputExecuteResponse
-import com.webank.wedatasphere.linkis.governance.common.entity.job.SubJobDetail
-import com.webank.wedatasphere.linkis.scheduler.executer.{AliasOutputExecuteResponse, OutputExecuteResponse}
-import com.webank.wedatasphere.linkis.scheduler.queue.Job
-import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
-import com.webank.wedatasphere.linkis.storage.utils.FileSystemUtils
+import org.apache.linkis.common.io.resultset.ResultSet
+import org.apache.linkis.common.io.{FsPath, MetaData, Record}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
+import org.apache.linkis.entrance.execute.StorePathExecuteRequest
+import org.apache.linkis.entrance.job.{EntranceExecuteRequest, EntranceExecutionJob}
+import org.apache.linkis.entrance.scheduler.cache.CacheOutputExecuteResponse
+import org.apache.linkis.governance.common.entity.job.SubJobDetail
+import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, OutputExecuteResponse}
+import org.apache.linkis.scheduler.queue.Job
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
+import org.apache.linkis.storage.utils.FileSystemUtils
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 

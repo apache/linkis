@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.protocol.callback
+package org.apache.linkis.protocol.callback
 
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.protocol.message.RequestProtocol
 
 
 // TODO: log type

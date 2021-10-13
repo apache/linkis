@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.interceptor.common
+package org.apache.linkis.rpc.interceptor.common
 
 import java.util.concurrent.{Callable, TimeUnit}
 
 import com.google.common.cache.{Cache, CacheBuilder, RemovalListener, RemovalNotification}
-import com.webank.wedatasphere.linkis.common.exception.WarnException
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.protocol.CacheableProtocol
-import com.webank.wedatasphere.linkis.rpc.interceptor.{RPCInterceptor, RPCInterceptorChain, RPCInterceptorExchange}
+import org.apache.linkis.common.exception.WarnException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.protocol.CacheableProtocol
+import org.apache.linkis.rpc.interceptor.{RPCInterceptor, RPCInterceptorChain, RPCInterceptorExchange}
 import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils
 

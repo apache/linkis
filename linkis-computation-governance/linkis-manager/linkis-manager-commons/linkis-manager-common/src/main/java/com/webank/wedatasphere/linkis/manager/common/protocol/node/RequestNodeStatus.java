@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.protocol.node;
+package org.apache.linkis.manager.common.protocol.node;
 
 
 public class RequestNodeStatus implements NodeStatusProtocol {

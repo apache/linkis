@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.executer
+package org.apache.linkis.scheduler.executer
 
-import com.webank.wedatasphere.linkis.scheduler.listener.ExecutorListener
-import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEvent
+import org.apache.linkis.scheduler.listener.ExecutorListener
+import org.apache.linkis.scheduler.queue.SchedulerEvent
 
 import scala.concurrent.duration.Duration
 

@@ -12,21 +12,21 @@
  */
 
 
-package com.webank.wedatasphere.linkis.httpclient.dws
+package org.apache.linkis.httpclient.dws
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
-import com.webank.wedatasphere.linkis.common.utils.{JsonUtils, Logging}
-import com.webank.wedatasphere.linkis.httpclient.AbstractHttpClient
-import com.webank.wedatasphere.linkis.httpclient.discovery.Discovery
-import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig
-import com.webank.wedatasphere.linkis.httpclient.dws.discovery.DWSGatewayDiscovery
-import com.webank.wedatasphere.linkis.httpclient.dws.request.DWSHttpAction
-import com.webank.wedatasphere.linkis.httpclient.dws.response.{DWSHttpMessageFactory, DWSHttpMessageResultInfo, DWSResult}
-import com.webank.wedatasphere.linkis.httpclient.request.HttpAction
-import com.webank.wedatasphere.linkis.httpclient.response.impl.DefaultHttpResult
-import com.webank.wedatasphere.linkis.httpclient.response.{HttpResult, ListResult, Result}
+import org.apache.linkis.common.io.{Fs, FsPath}
+import org.apache.linkis.common.utils.{JsonUtils, Logging}
+import org.apache.linkis.httpclient.AbstractHttpClient
+import org.apache.linkis.httpclient.discovery.Discovery
+import org.apache.linkis.httpclient.dws.config.DWSClientConfig
+import org.apache.linkis.httpclient.dws.discovery.DWSGatewayDiscovery
+import org.apache.linkis.httpclient.dws.request.DWSHttpAction
+import org.apache.linkis.httpclient.dws.response.{DWSHttpMessageFactory, DWSHttpMessageResultInfo, DWSResult}
+import org.apache.linkis.httpclient.request.HttpAction
+import org.apache.linkis.httpclient.response.impl.DefaultHttpResult
+import org.apache.linkis.httpclient.response.{HttpResult, ListResult, Result}
 import org.apache.commons.beanutils.BeanUtils
 import org.apache.commons.lang.{ClassUtils, StringUtils}
 import org.apache.http.{HttpException, HttpResponse}

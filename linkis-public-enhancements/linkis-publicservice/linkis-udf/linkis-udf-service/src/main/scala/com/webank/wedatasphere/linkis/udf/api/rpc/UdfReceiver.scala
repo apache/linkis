@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.udf.api.rpc
+package org.apache.linkis.udf.api.rpc
 
-import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
-import com.webank.wedatasphere.linkis.udf.service.UDFTreeService
+import org.apache.linkis.rpc.{Receiver, Sender}
+import org.apache.linkis.udf.service.UDFTreeService
 
 import scala.concurrent.duration.Duration
 

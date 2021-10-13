@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.entity.search;
+package org.apache.linkis.manager.label.entity.search;
 
-import com.webank.wedatasphere.linkis.manager.label.entity.GenericLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.GenericLabel;
+import org.apache.linkis.manager.label.entity.Label;
 
 /**
  * Act as a input parameter of searching/query

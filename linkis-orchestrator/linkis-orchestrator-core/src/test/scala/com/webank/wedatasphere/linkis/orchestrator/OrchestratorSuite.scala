@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator
+package org.apache.linkis.orchestrator
 
-import com.webank.wedatasphere.linkis.orchestrator.domain.AbstractJobReq
-import com.webank.wedatasphere.linkis.orchestrator.plans.unit.CodeLogicalUnit
+import org.apache.linkis.orchestrator.domain.AbstractJobReq
+import org.apache.linkis.orchestrator.plans.unit.CodeLogicalUnit
 
 /**
   *

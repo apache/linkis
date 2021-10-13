@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.conf
+package org.apache.linkis.orchestrator.conf
 
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.linkis.common.conf.{CommonVars, TimeType}
 
 /**
   *
@@ -55,7 +55,7 @@ object OrchestratorConfiguration {
 
   val TASK_SCHEDULER_THREAD_POOL = CommonVars("wds.linkis.orchestrator.task.scheduler.thread.pool", 200)
 
-  val ORCHESTRATOR_EXECUTION_FACTORY = CommonVars("wds.linkis.orchestrator.execution.factory.class", "com.webank.wedatasphere.linkis.orchestrator.code.plans.execution.CodeExecutionFactory")
+  val ORCHESTRATOR_EXECUTION_FACTORY = CommonVars("wds.linkis.orchestrator.execution.factory.class", "org.apache.linkis.orchestrator.code.plans.execution.CodeExecutionFactory")
 
   val TASK_CONSUMER_WAIT = CommonVars("wds.linkis.orchestrator.task.consumer.wait", 500)
 

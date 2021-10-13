@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.resultset.table
+package org.apache.linkis.storage.resultset.table
 
-import com.webank.wedatasphere.linkis.common.io.MetaData
-import com.webank.wedatasphere.linkis.storage.domain.Column
-import com.webank.wedatasphere.linkis.storage.resultset.ResultMetaData
+import org.apache.linkis.common.io.MetaData
+import org.apache.linkis.storage.domain.Column
+import org.apache.linkis.storage.resultset.ResultMetaData
 
 
 class TableMetaData(val columns: Array[Column]) extends ResultMetaData{

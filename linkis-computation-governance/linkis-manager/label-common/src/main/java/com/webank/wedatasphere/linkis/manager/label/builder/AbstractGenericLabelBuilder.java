@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.builder;
+package org.apache.linkis.manager.label.builder;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.webank.wedatasphere.linkis.manager.label.entity.CloneableLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.InheritableLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils;
+import org.apache.linkis.manager.label.entity.CloneableLabel;
+import org.apache.linkis.manager.label.entity.InheritableLabel;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.utils.LabelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ import java.lang.reflect.WildcardType;
 import java.util.*;
 import java.util.function.Function;
 
-import static com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils.Jackson.*;
+import static org.apache.linkis.manager.label.utils.LabelUtils.Jackson.*;
 
 @SuppressWarnings("rawtypes")
 public abstract class AbstractGenericLabelBuilder implements ExtensibleLabelBuilder {

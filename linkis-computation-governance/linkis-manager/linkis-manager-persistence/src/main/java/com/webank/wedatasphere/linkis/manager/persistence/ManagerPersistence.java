@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.manager.persistence;
+package org.apache.linkis.manager.persistence;
 
 /*
  * Copyright 2019 WeBank

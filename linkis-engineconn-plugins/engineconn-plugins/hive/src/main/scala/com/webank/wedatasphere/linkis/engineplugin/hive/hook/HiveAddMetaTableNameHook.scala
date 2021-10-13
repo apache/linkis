@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.hive.hook
+package org.apache.linkis.engineplugin.hive.hook
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
-import com.webank.wedatasphere.linkis.engineplugin.hive.exception.HiveQueryFailedException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
+import org.apache.linkis.engineplugin.hive.exception.HiveQueryFailedException
 import org.apache.commons.lang.StringUtils
 import org.apache.hadoop.hive.conf.HiveConf.ConfVars
 

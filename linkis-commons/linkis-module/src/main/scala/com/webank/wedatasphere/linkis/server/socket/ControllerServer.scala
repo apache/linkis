@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.server.socket
+package org.apache.linkis.server.socket
 
 import java.util
 import java.util.concurrent.atomic.AtomicInteger
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration.DEFAULT_DATE_PATTERN
-import com.webank.wedatasphere.linkis.common.listener.Event
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.server.Message
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration._
-import com.webank.wedatasphere.linkis.server.exception.BDPServerErrorException
-import com.webank.wedatasphere.linkis.server.socket.controller.{ServerListenerEventBus, SocketServerEvent}
+import org.apache.linkis.common.conf.Configuration.DEFAULT_DATE_PATTERN
+import org.apache.linkis.common.listener.Event
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.server.Message
+import org.apache.linkis.server.conf.ServerConfiguration._
+import org.apache.linkis.server.exception.BDPServerErrorException
+import org.apache.linkis.server.socket.controller.{ServerListenerEventBus, SocketServerEvent}
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.commons.lang.time.DateFormatUtils

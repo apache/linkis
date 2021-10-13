@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.configuration.entity;
+package org.apache.linkis.configuration.entity;
 
 import java.util.Date;
 

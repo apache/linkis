@@ -11,11 +11,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.dao;
+package org.apache.linkis.datasourcemanager.core.dao;
 
 
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceVo;
+import org.apache.linkis.datasourcemanager.common.domain.DataSource;
+import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -15,9 +15,9 @@
  */
 
 
-package com.webank.wedatasphere.linkis.server.conf
+package org.apache.linkis.server.conf
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.CommonVars
 
 
 object ModuleConfiguration {

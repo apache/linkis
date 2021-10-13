@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.configuration.validate
+package org.apache.linkis.configuration.validate
 
 import com.google.gson.GsonBuilder
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationException
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.configuration.exception.ConfigurationException
 
 class FloatValidator extends Validator with Logging{
   override def validate(value: String, range: String): Boolean = {

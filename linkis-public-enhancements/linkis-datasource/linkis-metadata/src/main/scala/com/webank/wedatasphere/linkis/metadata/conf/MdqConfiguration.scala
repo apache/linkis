@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.conf
+package org.apache.linkis.metadata.conf
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.CommonVars
 
 
 object MdqConfiguration {
   val DEFAULT_STORED_TYPE = CommonVars("bdp.dataworkcloud.datasource.store.type", "orc")
   val DEFAULT_PARTITION_NAME = CommonVars("bdp.dataworkcloud.datasource.default.par.name", "ds")
-  val SPARK_MDQ_IMPORT_CLAZZ = CommonVars("wds.linkis.spark.mdq.import.clazz", "com.webank.wedatasphere.linkis.engineplugin.spark.imexport.LoadData")
+  val SPARK_MDQ_IMPORT_CLAZZ = CommonVars("wds.linkis.spark.mdq.import.clazz", "org.apache.linkis.engineplugin.spark.imexport.LoadData")
 
 }

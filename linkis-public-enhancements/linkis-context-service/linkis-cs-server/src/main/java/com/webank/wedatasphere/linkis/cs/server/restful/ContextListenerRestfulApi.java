@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.restful;
+package org.apache.linkis.cs.server.restful;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.webank.wedatasphere.linkis.cs.common.entity.listener.CommonContextIDListenerDomain;
-import com.webank.wedatasphere.linkis.cs.common.entity.listener.CommonContextKeyListenerDomain;
-import com.webank.wedatasphere.linkis.cs.common.entity.listener.ContextIDListenerDomain;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceMethod;
-import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceType;
-import com.webank.wedatasphere.linkis.cs.server.scheduler.CsScheduler;
-import com.webank.wedatasphere.linkis.cs.server.scheduler.HttpAnswerJob;
-import com.webank.wedatasphere.linkis.server.Message;
+import org.apache.linkis.cs.common.entity.listener.CommonContextIDListenerDomain;
+import org.apache.linkis.cs.common.entity.listener.CommonContextKeyListenerDomain;
+import org.apache.linkis.cs.common.entity.listener.ContextIDListenerDomain;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.source.ContextKey;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.server.enumeration.ServiceMethod;
+import org.apache.linkis.cs.server.enumeration.ServiceType;
+import org.apache.linkis.cs.server.scheduler.CsScheduler;
+import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
+import org.apache.linkis.server.Message;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;

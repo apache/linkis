@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.exception
+package org.apache.linkis.rpc.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 /**
   * Created by enjoyyin on 2018/9/12.

@@ -11,32 +11,32 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.driver;
+package org.apache.linkis.cli.application.driver;
 
-import com.webank.wedatasphere.linkis.cli.application.constants.LinkisConstants;
-import com.webank.wedatasphere.linkis.cli.application.constants.LinkisKeys;
-import com.webank.wedatasphere.linkis.cli.application.constants.UjesClientDriverConstants;
-import com.webank.wedatasphere.linkis.cli.application.driver.context.LinkisClientDriverContext;
-import com.webank.wedatasphere.linkis.cli.application.driver.context.UjesClientDriverContext;
-import com.webank.wedatasphere.linkis.cli.application.interactor.job.LinkisJob;
-import com.webank.wedatasphere.linkis.cli.application.utils.Utils;
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobStatus;
-import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.ExecutorException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.common.exception.LinkisException;
-import com.webank.wedatasphere.linkis.httpclient.authentication.AuthenticationStrategy;
-import com.webank.wedatasphere.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy;
-import com.webank.wedatasphere.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy;
-import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig;
-import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfigBuilder;
-import com.webank.wedatasphere.linkis.ujes.client.UJESClient;
-import com.webank.wedatasphere.linkis.ujes.client.UJESClientImpl;
-import com.webank.wedatasphere.linkis.ujes.client.request.JobSubmitAction;
-import com.webank.wedatasphere.linkis.ujes.client.request.OpenLogAction;
-import com.webank.wedatasphere.linkis.ujes.client.request.ResultSetAction;
-import com.webank.wedatasphere.linkis.ujes.client.response.*;
+import org.apache.linkis.cli.application.constants.LinkisConstants;
+import org.apache.linkis.cli.application.constants.LinkisKeys;
+import org.apache.linkis.cli.application.constants.UjesClientDriverConstants;
+import org.apache.linkis.cli.application.driver.context.LinkisClientDriverContext;
+import org.apache.linkis.cli.application.driver.context.UjesClientDriverContext;
+import org.apache.linkis.cli.application.interactor.job.LinkisJob;
+import org.apache.linkis.cli.application.utils.Utils;
+import org.apache.linkis.cli.common.entity.execution.jobexec.JobStatus;
+import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.ExecutorException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.common.exception.LinkisException;
+import org.apache.linkis.httpclient.authentication.AuthenticationStrategy;
+import org.apache.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy;
+import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy;
+import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
+import org.apache.linkis.httpclient.dws.config.DWSClientConfigBuilder;
+import org.apache.linkis.ujes.client.UJESClient;
+import org.apache.linkis.ujes.client.UJESClientImpl;
+import org.apache.linkis.ujes.client.request.JobSubmitAction;
+import org.apache.linkis.ujes.client.request.OpenLogAction;
+import org.apache.linkis.ujes.client.request.ResultSetAction;
+import org.apache.linkis.ujes.client.response.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

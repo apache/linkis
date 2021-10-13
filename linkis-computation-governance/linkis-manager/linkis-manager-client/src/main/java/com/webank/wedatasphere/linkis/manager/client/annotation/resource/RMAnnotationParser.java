@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.client.annotation.resource;
+package org.apache.linkis.manager.client.annotation.resource;
 
-import com.webank.wedatasphere.linkis.common.utils.JavaLog;
-import com.webank.wedatasphere.linkis.manager.client.resource.ResourceManagerClient;
-import com.webank.wedatasphere.linkis.manager.common.entity.node.EMNode;
-import com.webank.wedatasphere.linkis.manager.common.entity.node.RMNode;
+import org.apache.linkis.common.utils.JavaLog;
+import org.apache.linkis.manager.client.resource.ResourceManagerClient;
+import org.apache.linkis.manager.common.entity.node.EMNode;
+import org.apache.linkis.manager.common.entity.node.RMNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;

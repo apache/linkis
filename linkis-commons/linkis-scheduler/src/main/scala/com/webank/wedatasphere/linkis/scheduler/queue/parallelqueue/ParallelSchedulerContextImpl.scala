@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue
+package org.apache.linkis.scheduler.queue.parallelqueue
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue.FIFOSchedulerContextImpl
-import com.webank.wedatasphere.linkis.scheduler.queue.{ConsumerManager, GroupFactory}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.scheduler.queue.fifoqueue.FIFOSchedulerContextImpl
+import org.apache.linkis.scheduler.queue.{ConsumerManager, GroupFactory}
 
 
 

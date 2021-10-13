@@ -11,22 +11,22 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.interceptor
+package org.apache.linkis.entrance.interceptor
 import java.io.ByteArrayInputStream
 import java.{lang, util}
 
-import com.webank.wedatasphere.linkis.bml.client.BmlClientFactory
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.governance.common.entity.job.{JobRequest, OnceExecutorContent}
-import com.webank.wedatasphere.linkis.governance.common.utils.OnceExecutorContentUtils
-import com.webank.wedatasphere.linkis.governance.common.utils.OnceExecutorContentUtils.BmlResource
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import com.webank.wedatasphere.linkis.manager.label.entity.JobLabel
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineConnMode._
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{CodeLanguageLabel, EngineConnModeLabel}
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
-import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
+import org.apache.linkis.bml.client.BmlClientFactory
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.governance.common.entity.job.{JobRequest, OnceExecutorContent}
+import org.apache.linkis.governance.common.utils.OnceExecutorContentUtils
+import org.apache.linkis.governance.common.utils.OnceExecutorContentUtils.BmlResource
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.entity.JobLabel
+import org.apache.linkis.manager.label.entity.engine.EngineConnMode._
+import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, EngineConnModeLabel}
+import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.protocol.utils.TaskUtils
+import org.apache.linkis.server.BDPJettyServerHelper
 
 import scala.collection.convert.WrapAsJava._
 import scala.collection.convert.WrapAsScala._

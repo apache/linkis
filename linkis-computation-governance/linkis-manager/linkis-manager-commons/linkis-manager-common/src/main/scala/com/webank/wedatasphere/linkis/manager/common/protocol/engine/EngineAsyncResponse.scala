@@ -16,11 +16,11 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.protocol.engine
+package org.apache.linkis.manager.common.protocol.engine
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.manager.common.entity.node.EngineNode
+import org.apache.linkis.protocol.message.RequestProtocol
 
 
 trait EngineAsyncResponse extends RequestProtocol {

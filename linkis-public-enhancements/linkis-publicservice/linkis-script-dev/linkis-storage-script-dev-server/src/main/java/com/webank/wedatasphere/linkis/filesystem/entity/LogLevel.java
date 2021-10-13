@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.entity;
+package org.apache.linkis.filesystem.entity;
 
-import com.webank.wedatasphere.linkis.filesystem.util.WorkspaceUtil;
+import org.apache.linkis.filesystem.util.WorkspaceUtil;
 
 public class LogLevel {
 

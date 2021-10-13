@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.protocol.engine
+package org.apache.linkis.protocol.engine
 
 
 case class EngineStateTransitionRequest(engineInstance:String, state:String)

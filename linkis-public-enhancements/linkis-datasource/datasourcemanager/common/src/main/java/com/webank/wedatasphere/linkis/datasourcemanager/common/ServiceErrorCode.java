@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.common;
+package org.apache.linkis.datasourcemanager.common;
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.conf.CommonVars;
 
 /**
  * Store error code map

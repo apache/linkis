@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.command.fitter;
+package org.apache.linkis.cli.core.interactor.command.fitter;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.TestSparkCmdTemplate;
+import org.apache.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.core.interactor.command.template.TestSparkCmdTemplate;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc
+package org.apache.linkis.rpc
 
 import java.util.concurrent.{TimeUnit, TimeoutException}
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.message.builder.{DefaultServiceMethodContext, MessageJobTimeoutPolicy, ServiceMethodContext}
-import com.webank.wedatasphere.linkis.message.conf.MessageSchedulerConf.{SENDER_KEY, _}
-import com.webank.wedatasphere.linkis.message.publisher.MessagePublisher
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.message.builder.{DefaultServiceMethodContext, MessageJobTimeoutPolicy, ServiceMethodContext}
+import org.apache.linkis.message.conf.MessageSchedulerConf.{SENDER_KEY, _}
+import org.apache.linkis.message.publisher.MessagePublisher
+import org.apache.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.server.security.SecurityFilter
 import javax.servlet.http.HttpServletRequest
 
 import scala.concurrent.duration.Duration

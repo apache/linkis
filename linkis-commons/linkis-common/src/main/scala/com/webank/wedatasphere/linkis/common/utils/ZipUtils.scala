@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.utils
+package org.apache.linkis.common.utils
 
 import java.io._
 import java.util.zip.{ZipEntry, ZipInputStream, ZipOutputStream}
 
-import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
+import org.apache.linkis.common.io.{Fs, FsPath}
 import org.apache.commons.io.IOUtils
 
 import scala.collection.JavaConversions._

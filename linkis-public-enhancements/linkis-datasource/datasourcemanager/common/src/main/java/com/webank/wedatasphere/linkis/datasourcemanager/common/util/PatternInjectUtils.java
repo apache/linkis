@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.common.util;
+package org.apache.linkis.datasourcemanager.common.util;
 
-import com.webank.wedatasphere.linkis.datasourcemanager.common.util.json.Json;
+import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 

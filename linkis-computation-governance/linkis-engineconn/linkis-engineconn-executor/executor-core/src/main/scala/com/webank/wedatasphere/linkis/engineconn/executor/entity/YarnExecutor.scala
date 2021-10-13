@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.executor.entity
+package org.apache.linkis.engineconn.executor.entity
 
 trait YarnExecutor extends Executor {
 

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.protocol;
+package org.apache.linkis.cs.server.protocol;
 
-import com.webank.wedatasphere.linkis.server.Message;
+import org.apache.linkis.server.Message;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

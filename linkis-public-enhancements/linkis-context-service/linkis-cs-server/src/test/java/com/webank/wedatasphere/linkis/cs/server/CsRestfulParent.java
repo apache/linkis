@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server;
+package org.apache.linkis.cs.server;
 
-import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceMethod;
-import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceType;
-import com.webank.wedatasphere.linkis.cs.server.protocol.HttpRequestProtocol;
-import com.webank.wedatasphere.linkis.cs.server.protocol.HttpResponseProtocol;
-import com.webank.wedatasphere.linkis.cs.server.protocol.RestResponseProtocol;
-import com.webank.wedatasphere.linkis.cs.server.scheduler.CsScheduler;
-import com.webank.wedatasphere.linkis.cs.server.scheduler.HttpAnswerJob;
-import com.webank.wedatasphere.linkis.cs.server.scheduler.RestJobBuilder;
-import com.webank.wedatasphere.linkis.server.Message;
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
+import org.apache.linkis.cs.server.enumeration.ServiceMethod;
+import org.apache.linkis.cs.server.enumeration.ServiceType;
+import org.apache.linkis.cs.server.protocol.HttpRequestProtocol;
+import org.apache.linkis.cs.server.protocol.HttpResponseProtocol;
+import org.apache.linkis.cs.server.protocol.RestResponseProtocol;
+import org.apache.linkis.cs.server.scheduler.CsScheduler;
+import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
+import org.apache.linkis.cs.server.scheduler.RestJobBuilder;
+import org.apache.linkis.server.Message;
+import org.apache.linkis.server.security.SecurityFilter;
 
 import javax.servlet.http.HttpServletRequest;
 

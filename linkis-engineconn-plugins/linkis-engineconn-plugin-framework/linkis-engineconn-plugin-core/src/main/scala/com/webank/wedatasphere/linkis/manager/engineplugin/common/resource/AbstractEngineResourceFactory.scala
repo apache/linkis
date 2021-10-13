@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.resource
+package org.apache.linkis.manager.engineplugin.common.resource
 
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.{NodeResource, Resource}
-import com.webank.wedatasphere.linkis.manager.common.utils.ResourceUtils
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
+import org.apache.linkis.manager.common.entity.resource.{NodeResource, Resource}
+import org.apache.linkis.manager.common.utils.ResourceUtils
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 
 
 trait AbstractEngineResourceFactory extends EngineResourceFactory {

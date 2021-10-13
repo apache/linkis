@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.dws.exception
+package org.apache.linkis.httpclient.dws.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 class AuthenticationFailedException(errorDesc: String) extends ErrorException(10901, errorDesc)

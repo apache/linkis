@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.source
+package org.apache.linkis.storage.source
 
 import java.util
 
-import com.webank.wedatasphere.linkis.storage.LineRecord
-import com.webank.wedatasphere.linkis.storage.script.ScriptRecord
+import org.apache.linkis.storage.LineRecord
+import org.apache.linkis.storage.script.ScriptRecord
 import org.apache.commons.math3.util.Pair
 
 import scala.collection.JavaConversions._

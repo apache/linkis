@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.persistence.impl;
+package org.apache.linkis.cs.persistence.persistence.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextScope;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextValue;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.common.serialize.helper.ContextSerializationHelper;
-import com.webank.wedatasphere.linkis.cs.common.serialize.helper.SerializationHelper;
-import com.webank.wedatasphere.linkis.cs.persistence.dao.ContextMapMapper;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.ExtraFieldClass;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextKey;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextKeyValue;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextValue;
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.ContextMapPersistence;
-import com.webank.wedatasphere.linkis.cs.persistence.util.PersistenceUtils;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
+import org.apache.linkis.cs.common.entity.enumeration.ContextScope;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.source.ContextKey;
+import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
+import org.apache.linkis.cs.common.entity.source.ContextValue;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.serialize.helper.ContextSerializationHelper;
+import org.apache.linkis.cs.common.serialize.helper.SerializationHelper;
+import org.apache.linkis.cs.persistence.dao.ContextMapMapper;
+import org.apache.linkis.cs.persistence.entity.ExtraFieldClass;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextKey;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextKeyValue;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextValue;
+import org.apache.linkis.cs.persistence.persistence.ContextMapPersistence;
+import org.apache.linkis.cs.persistence.util.PersistenceUtils;
+import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

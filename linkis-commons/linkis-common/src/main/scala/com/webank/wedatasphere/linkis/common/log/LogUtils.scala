@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.log
+package org.apache.linkis.common.log
 
 import java.text.SimpleDateFormat
 import java.util.Date

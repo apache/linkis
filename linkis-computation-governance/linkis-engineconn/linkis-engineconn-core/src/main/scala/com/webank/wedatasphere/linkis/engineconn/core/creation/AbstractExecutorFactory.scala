@@ -16,13 +16,13 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.engineconn.core.creation
+package org.apache.linkis.engineconn.core.creation
 
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.Executor
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.ExecutorFactory
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.common.engineconn.EngineConn
+import org.apache.linkis.engineconn.core.executor.ExecutorManager
+import org.apache.linkis.engineconn.executor.entity.Executor
+import org.apache.linkis.manager.engineplugin.common.creation.ExecutorFactory
 
 
 trait AbstractExecutorFactory extends ExecutorFactory {

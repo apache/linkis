@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.transform
+package org.apache.linkis.rpc.transform
 
 import java.lang.reflect.{ParameterizedType, Type}
 import java.util
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
-import com.webank.wedatasphere.linkis.rpc.errorcode.RPCErrorConstants
-import com.webank.wedatasphere.linkis.rpc.exception.DWCURIException
-import com.webank.wedatasphere.linkis.rpc.serializer.ProtostuffSerializeUtil
-import com.webank.wedatasphere.linkis.server.{EXCEPTION_MSG, Message}
+import org.apache.linkis.DataWorkCloudApplication
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.rpc.errorcode.RPCErrorConstants
+import org.apache.linkis.rpc.exception.DWCURIException
+import org.apache.linkis.rpc.serializer.ProtostuffSerializeUtil
+import org.apache.linkis.server.{EXCEPTION_MSG, Message}
 import org.apache.commons.lang.ClassUtils
 import org.json4s.{DefaultFormats, Formats, Serializer}
 

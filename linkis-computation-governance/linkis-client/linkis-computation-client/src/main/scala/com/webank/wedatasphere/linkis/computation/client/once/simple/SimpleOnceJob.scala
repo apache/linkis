@@ -15,15 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client.once.simple
+package org.apache.linkis.computation.client.once.simple
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.computation.client.LinkisJobMetrics
-import com.webank.wedatasphere.linkis.computation.client.job.AbstractSubmittableLinkisJob
-import com.webank.wedatasphere.linkis.computation.client.once.action.CreateEngineConnAction
-import com.webank.wedatasphere.linkis.computation.client.once.{LinkisManagerClient, OnceJob, SubmittableOnceJob}
-import com.webank.wedatasphere.linkis.computation.client.operator.OnceJobOperator
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.computation.client.LinkisJobMetrics
+import org.apache.linkis.computation.client.job.AbstractSubmittableLinkisJob
+import org.apache.linkis.computation.client.once.action.CreateEngineConnAction
+import org.apache.linkis.computation.client.once.{LinkisManagerClient, OnceJob, SubmittableOnceJob}
+import org.apache.linkis.computation.client.operator.OnceJobOperator
 
 import scala.concurrent.duration.Duration
 

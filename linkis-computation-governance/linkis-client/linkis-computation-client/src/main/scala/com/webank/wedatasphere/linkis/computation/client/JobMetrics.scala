@@ -15,11 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client
+package org.apache.linkis.computation.client
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging}
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging}
 
 
 trait ClientMetrics {

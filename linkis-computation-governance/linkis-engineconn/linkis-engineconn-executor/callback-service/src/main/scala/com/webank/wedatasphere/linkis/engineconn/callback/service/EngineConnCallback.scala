@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.callback.service
+package org.apache.linkis.engineconn.callback.service
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
-import com.webank.wedatasphere.linkis.rpc.Sender
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.rpc.Sender
 
 trait EngineConnCallback {
 

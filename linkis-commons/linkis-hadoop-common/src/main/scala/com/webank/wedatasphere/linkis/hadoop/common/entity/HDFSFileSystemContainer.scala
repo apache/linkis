@@ -12,9 +12,9 @@
  */
 
 
-package com.webank.wedatasphere.linkis.hadoop.common.entity
+package org.apache.linkis.hadoop.common.entity
 
-import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf
+import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.hadoop.fs.FileSystem
 
 class HDFSFileSystemContainer(fs: FileSystem, user: String) {

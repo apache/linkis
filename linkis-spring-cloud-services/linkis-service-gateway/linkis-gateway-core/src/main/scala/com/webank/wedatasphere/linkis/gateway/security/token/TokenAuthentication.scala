@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.security.token
+package org.apache.linkis.gateway.security.token
 
 import java.io.File
 import java.util.Properties
 import java.util.concurrent.TimeUnit
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration._
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
-import com.webank.wedatasphere.linkis.gateway.security.{GatewaySSOUtils, SecurityFilter}
-import com.webank.wedatasphere.linkis.server.Message
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.gateway.config.GatewayConfiguration._
+import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.security.{GatewaySSOUtils, SecurityFilter}
+import org.apache.linkis.server.Message
 import org.apache.commons.io.{FileUtils, IOUtils}
 import org.apache.commons.lang.StringUtils
 

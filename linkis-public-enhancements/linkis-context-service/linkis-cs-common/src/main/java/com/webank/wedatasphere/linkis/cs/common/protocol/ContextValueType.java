@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.protocol;
+package org.apache.linkis.cs.common.protocol;
 
 
 public enum ContextValueType {
@@ -22,7 +22,7 @@ public enum ContextValueType {
      * index表示contextValueType的int
      * typeName 表示全路径类名
      */
-    COMMON_CONTEXT_VALUE_TYPE(1, "com.webank.wedatasphere.linkis.cs.common.entity.source.CommonContextValue")
+    COMMON_CONTEXT_VALUE_TYPE(1, "org.apache.linkis.cs.common.entity.source.CommonContextValue")
     ;
 
     private int index;

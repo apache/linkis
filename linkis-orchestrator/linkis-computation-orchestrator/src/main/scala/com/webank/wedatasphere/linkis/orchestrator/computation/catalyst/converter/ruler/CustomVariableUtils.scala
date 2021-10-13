@@ -15,20 +15,20 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.catalyst.converter.ruler
+package org.apache.linkis.orchestrator.computation.catalyst.converter.ruler
 
 import java.text.SimpleDateFormat
 import java.util.{Calendar, Date}
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.UserCreatorLabel
-import com.webank.wedatasphere.linkis.orchestrator.computation.catalyst.converter.exception.VarSubstitutionException
-import com.webank.wedatasphere.linkis.orchestrator.computation.entity.ComputationJobReq
-import com.webank.wedatasphere.linkis.orchestrator.plans.unit.CodeLogicalUnit
-import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
-import com.webank.wedatasphere.linkis.protocol.variable.{RequestQueryAppVariable, RequestQueryGlobalVariable, ResponseQueryVariable}
-import com.webank.wedatasphere.linkis.rpc.Sender
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+import org.apache.linkis.orchestrator.computation.catalyst.converter.exception.VarSubstitutionException
+import org.apache.linkis.orchestrator.computation.entity.ComputationJobReq
+import org.apache.linkis.orchestrator.plans.unit.CodeLogicalUnit
+import org.apache.linkis.protocol.utils.TaskUtils
+import org.apache.linkis.protocol.variable.{RequestQueryAppVariable, RequestQueryGlobalVariable, ResponseQueryVariable}
+import org.apache.linkis.rpc.Sender
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.time.DateUtils
 

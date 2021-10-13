@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.listener.callback;
+package org.apache.linkis.cs.listener.callback;
 
 public interface AbstractCallbackEngine extends CallbackEngine {
     // 实现事件的存储和按需消费:存储这些变化的事件，并且按需消费

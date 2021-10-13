@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.execution.fetcher;
+package org.apache.linkis.cs.execution.fetcher;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
-import com.webank.wedatasphere.linkis.cs.contextcache.ContextCacheService;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
+import org.apache.linkis.cs.contextcache.ContextCacheService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

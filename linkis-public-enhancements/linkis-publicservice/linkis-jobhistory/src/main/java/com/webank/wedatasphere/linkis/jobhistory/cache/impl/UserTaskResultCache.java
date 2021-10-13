@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.cache.impl;
+package org.apache.linkis.jobhistory.cache.impl;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.webank.wedatasphere.linkis.jobhistory.cache.domain.TaskResult;
-import com.webank.wedatasphere.linkis.jobhistory.cache.utils.MD5Util;
-import com.webank.wedatasphere.linkis.jobhistory.util.QueryConfig;
+import org.apache.linkis.jobhistory.cache.domain.TaskResult;
+import org.apache.linkis.jobhistory.cache.utils.MD5Util;
+import org.apache.linkis.jobhistory.util.QueryConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

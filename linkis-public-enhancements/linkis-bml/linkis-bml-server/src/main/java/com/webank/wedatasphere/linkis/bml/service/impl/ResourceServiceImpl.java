@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.service.impl;
+package org.apache.linkis.bml.service.impl;
 
-import com.webank.wedatasphere.linkis.bml.Entity.Resource;
-import com.webank.wedatasphere.linkis.bml.Entity.ResourceVersion;
-import com.webank.wedatasphere.linkis.bml.common.Constant;
-import com.webank.wedatasphere.linkis.bml.common.ResourceHelper;
-import com.webank.wedatasphere.linkis.bml.common.ResourceHelperFactory;
-import com.webank.wedatasphere.linkis.bml.dao.ResourceDao;
-import com.webank.wedatasphere.linkis.bml.dao.VersionDao;
-import com.webank.wedatasphere.linkis.bml.service.ResourceService;
+import org.apache.linkis.bml.Entity.Resource;
+import org.apache.linkis.bml.Entity.ResourceVersion;
+import org.apache.linkis.bml.common.Constant;
+import org.apache.linkis.bml.common.ResourceHelper;
+import org.apache.linkis.bml.common.ResourceHelperFactory;
+import org.apache.linkis.bml.dao.ResourceDao;
+import org.apache.linkis.bml.dao.VersionDao;
+import org.apache.linkis.bml.service.ResourceService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.constants;
+package org.apache.linkis.protocol.constants;
 
 
 public interface TaskConstant {

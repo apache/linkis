@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.core.impl
+package org.apache.linkis.orchestrator.core.impl
 
-import com.webank.wedatasphere.linkis.orchestrator.OrchestratorContext
-import com.webank.wedatasphere.linkis.orchestrator.core.{AbstractOrchestrator, OrchestratorSessionBuilder}
+import org.apache.linkis.orchestrator.OrchestratorContext
+import org.apache.linkis.orchestrator.core.{AbstractOrchestrator, OrchestratorSessionBuilder}
 
 /**
   *

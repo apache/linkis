@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.conf
+package org.apache.linkis.manager.engineplugin.common.conf
 
-import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars}
+import org.apache.linkis.common.conf.{ByteType, CommonVars}
 
 
 object EngineConnPluginConf {
@@ -29,6 +29,6 @@ object EngineConnPluginConf {
 
   val ENGINECONN_TYPE_NAME = CommonVars[String]("wds.linkis.engineconn.type.name", "python")
 
-  val ENGINECONN_MAIN_CLASS = CommonVars[String]("wds.linkis.engineconn.main.class", "com.webank.wedatasphere.linkis.engineconn.launch.EngineConnServer")
+  val ENGINECONN_MAIN_CLASS = CommonVars[String]("wds.linkis.engineconn.main.class", "org.apache.linkis.engineconn.launch.EngineConnServer")
 
 }

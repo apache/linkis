@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.ecm.entity
+package org.apache.linkis.orchestrator.ecm.entity
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.Logging
 import java.util
 
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineAskRequest
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.{LabelBuilderFactoryContext, StdLabelBuilderFactory}
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.entrance.LoadBalanceLabel
+import org.apache.linkis.manager.common.protocol.engine.EngineAskRequest
+import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactoryContext, StdLabelBuilderFactory}
+import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.entrance.LoadBalanceLabel
 import org.apache.commons.lang.StringUtils
 
 import scala.beans.BeanProperty

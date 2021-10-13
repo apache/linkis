@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.service
+package org.apache.linkis.manager.label.service
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.manager.common.entity.node.ScoreServiceInstance
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.manager.common.entity.node.ScoreServiceInstance
+import org.apache.linkis.manager.label.entity.Label
 
 
 trait NodeLabelService {

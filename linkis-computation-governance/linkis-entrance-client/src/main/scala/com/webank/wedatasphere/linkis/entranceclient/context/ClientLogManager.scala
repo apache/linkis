@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entranceclient.context
+package org.apache.linkis.entranceclient.context
 
 import java.io.{InputStream, OutputStream}
 
-import com.webank.wedatasphere.linkis.entrance.log._
-import com.webank.wedatasphere.linkis.scheduler.queue.Job
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
+import org.apache.linkis.entrance.log._
+import org.apache.linkis.scheduler.queue.Job
+import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.commons.io.input.NullInputStream
 import org.apache.commons.io.output.NullOutputStream
 

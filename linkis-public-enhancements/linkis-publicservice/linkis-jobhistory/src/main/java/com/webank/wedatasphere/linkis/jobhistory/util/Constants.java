@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.util;
+package org.apache.linkis.jobhistory.util;
 
 
 public class Constants {

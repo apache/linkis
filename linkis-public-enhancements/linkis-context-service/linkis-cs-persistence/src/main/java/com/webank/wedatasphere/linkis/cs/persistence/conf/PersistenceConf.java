@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.conf;
+package org.apache.linkis.cs.persistence.conf;
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.conf.CommonVars;
 
 
 public class PersistenceConf {
 
-    public static final CommonVars<String> TUNING_CLASS = CommonVars.apply("wds.linkis.cs.ha.class", "com.webank.wedatasphere.linkis.cs.highavailable.DefaultContextHAManager");
-    //public static final CommonVars<String> TUNING_CLASS = CommonVars.apply("wds.linkis.cs.ha.class","com.webank.wedatasphere.linkis.cs.persistence.ProxyMethodA");
+    public static final CommonVars<String> TUNING_CLASS = CommonVars.apply("wds.linkis.cs.ha.class", "org.apache.linkis.cs.highavailable.DefaultContextHAManager");
+    //public static final CommonVars<String> TUNING_CLASS = CommonVars.apply("wds.linkis.cs.ha.class","org.apache.linkis.cs.persistence.ProxyMethodA");
 
     public static final CommonVars<String> TUNING_METHOD = CommonVars.apply("wds.linkis.cs.ha.proxymethod", "getContextHAProxy");
 }

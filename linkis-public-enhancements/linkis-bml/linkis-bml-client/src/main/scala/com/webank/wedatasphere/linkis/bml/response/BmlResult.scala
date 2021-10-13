@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.response
+package org.apache.linkis.bml.response
 
 import java.io.InputStream
 
-import com.webank.wedatasphere.linkis.bml.protocol.ResourceVersions
-import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
-import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
+import org.apache.linkis.bml.protocol.ResourceVersions
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.response.DWSResult
 
 abstract class BmlResult extends DWSResult{
   private var resourceId:String = _

@@ -16,21 +16,21 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.manager
+package org.apache.linkis.manager.am.manager
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.manager.common.entity.node._
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNodeEntity
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineStopRequest
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
-import com.webank.wedatasphere.linkis.manager.exception.NodeInstanceDuplicateException
-import com.webank.wedatasphere.linkis.manager.persistence.{NodeManagerPersistence, NodeMetricManagerPersistence}
-import com.webank.wedatasphere.linkis.manager.service.common.metrics.MetricsConverter
-import com.webank.wedatasphere.linkis.manager.service.common.pointer.NodePointerBuilder
-import com.webank.wedatasphere.linkis.resourcemanager.service.ResourceManager
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.common.entity.node._
+import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeEntity
+import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
+import org.apache.linkis.manager.exception.NodeInstanceDuplicateException
+import org.apache.linkis.manager.persistence.{NodeManagerPersistence, NodeMetricManagerPersistence}
+import org.apache.linkis.manager.service.common.metrics.MetricsConverter
+import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder
+import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

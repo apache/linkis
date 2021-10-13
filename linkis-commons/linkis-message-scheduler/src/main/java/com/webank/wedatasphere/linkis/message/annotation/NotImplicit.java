@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.annotation;
+package org.apache.linkis.message.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

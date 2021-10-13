@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.ujes.route
+package org.apache.linkis.gateway.ujes.route
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.cs.common.entity.source.{ContextID, ContextIDParser}
-import com.webank.wedatasphere.linkis.cs.common.protocol.ContextHTTPConstant
-import com.webank.wedatasphere.linkis.cs.common.serialize.helper.ContextSerializationHelper
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
-import com.webank.wedatasphere.linkis.gateway.route.AbstractGatewayRouter
-import com.webank.wedatasphere.linkis.gateway.springcloud.SpringCloudGatewayConfiguration.{API_URL_PREFIX, normalPath}
-import com.webank.wedatasphere.linkis.rpc.interceptor.ServiceInstanceUtils
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.cs.common.entity.source.{ContextID, ContextIDParser}
+import org.apache.linkis.cs.common.protocol.ContextHTTPConstant
+import org.apache.linkis.cs.common.serialize.helper.ContextSerializationHelper
+import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.route.AbstractGatewayRouter
+import org.apache.linkis.gateway.springcloud.SpringCloudGatewayConfiguration.{API_URL_PREFIX, normalPath}
+import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component

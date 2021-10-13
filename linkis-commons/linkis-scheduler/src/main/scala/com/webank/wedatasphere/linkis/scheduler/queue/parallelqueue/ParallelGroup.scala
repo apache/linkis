@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue
+package org.apache.linkis.scheduler.queue.parallelqueue
 
-import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEvent
-import com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue.FIFOGroup
+import org.apache.linkis.scheduler.queue.SchedulerEvent
+import org.apache.linkis.scheduler.queue.fifoqueue.FIFOGroup
 
 
 class ParallelGroup(groupName: String, initCapacity: Int, maxCapacity: Int) extends FIFOGroup(groupName, initCapacity, maxCapacity) {

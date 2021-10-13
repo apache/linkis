@@ -11,26 +11,26 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.cs
+package org.apache.linkis.entrance.cs
 
 import java.util
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.cs.client.service.{CSNodeServiceImpl, CSVariableService, LinkisJobDataServiceImpl}
-import com.webank.wedatasphere.linkis.cs.client.utils.{ContextServiceUtils, SerializeHelper}
-import com.webank.wedatasphere.linkis.cs.common.entity.`object`.LinkisVariable
-import com.webank.wedatasphere.linkis.cs.common.entity.data.LinkisJobData
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.{ContextScope, ContextType}
-import com.webank.wedatasphere.linkis.cs.common.entity.source.{CommonContextKey, LinkisWorkflowContextID}
-import com.webank.wedatasphere.linkis.cs.common.utils.CSCommonUtils
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.UserCreatorLabel
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
-import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
-import com.webank.wedatasphere.linkis.scheduler.queue.Job
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.cs.client.service.{CSNodeServiceImpl, CSVariableService, LinkisJobDataServiceImpl}
+import org.apache.linkis.cs.client.utils.{ContextServiceUtils, SerializeHelper}
+import org.apache.linkis.cs.common.entity.`object`.LinkisVariable
+import org.apache.linkis.cs.common.entity.data.LinkisJobData
+import org.apache.linkis.cs.common.entity.enumeration.{ContextScope, ContextType}
+import org.apache.linkis.cs.common.entity.source.{CommonContextKey, LinkisWorkflowContextID}
+import org.apache.linkis.cs.common.utils.CSCommonUtils
+import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.execute.EntranceJob
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+import org.apache.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.protocol.utils.TaskUtils
+import org.apache.linkis.scheduler.queue.Job
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions._

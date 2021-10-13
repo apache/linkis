@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.builder;
+package org.apache.linkis.message.builder;
 
-import com.webank.wedatasphere.linkis.message.context.AbstractMessageSchedulerContext;
-import com.webank.wedatasphere.linkis.message.scheduler.MethodExecuteWrapper;
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteRequest;
-import com.webank.wedatasphere.linkis.scheduler.queue.Job;
-import com.webank.wedatasphere.linkis.scheduler.queue.JobInfo;
-import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState;
+import org.apache.linkis.message.context.AbstractMessageSchedulerContext;
+import org.apache.linkis.message.scheduler.MethodExecuteWrapper;
+import org.apache.linkis.protocol.message.RequestProtocol;
+import org.apache.linkis.scheduler.executer.ExecuteRequest;
+import org.apache.linkis.scheduler.queue.Job;
+import org.apache.linkis.scheduler.queue.JobInfo;
+import org.apache.linkis.scheduler.queue.SchedulerEventState;
 
 import java.io.IOException;
 import java.util.List;

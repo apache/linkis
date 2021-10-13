@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager
+package org.apache.linkis.resourcemanager
 
 import org.json4s.JsonAST.JObject
 import org.json4s.JsonDSL._

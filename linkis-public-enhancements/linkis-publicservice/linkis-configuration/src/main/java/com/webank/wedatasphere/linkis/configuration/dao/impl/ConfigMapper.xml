@@ -18,8 +18,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 
-<mapper namespace="com.webank.wedatasphere.linkis.configuration.dao.ConfigMapper">
-    <resultMap id="ConfigKeyValueMap" type="com.webank.wedatasphere.linkis.configuration.entity.ConfigKeyValue">
+<mapper namespace="org.apache.linkis.configuration.dao.ConfigMapper">
+    <resultMap id="ConfigKeyValueMap" type="org.apache.linkis.configuration.entity.ConfigKeyValue">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="key" property="key" jdbcType="VARCHAR"/>
         <result column="description" property="description" jdbcType="VARCHAR"/>
@@ -39,7 +39,7 @@
         <result column="config_label_id" property="configLabelId" jdbcType="INTEGER"/>
     </resultMap>
 
-    <resultMap id="ConfigKeyMap" type="com.webank.wedatasphere.linkis.configuration.entity.ConfigKey">
+    <resultMap id="ConfigKeyMap" type="org.apache.linkis.configuration.entity.ConfigKey">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="key" property="key" jdbcType="VARCHAR"/>
         <result column="description" property="description" jdbcType="VARCHAR"/>
@@ -55,7 +55,7 @@
         <result column="treename" property="treeName" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <resultMap id="ConfigValueMap" type="com.webank.wedatasphere.linkis.configuration.entity.ConfigValue">
+    <resultMap id="ConfigValueMap" type="org.apache.linkis.configuration.entity.ConfigValue">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="config_key_id" property="configKeyId" jdbcType="BIGINT"/>
         <result column="config_value" property="configValue" jdbcType="VARCHAR"/>
@@ -64,7 +64,7 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <resultMap id="CategoryMap" type="com.webank.wedatasphere.linkis.configuration.entity.CategoryLabel">
+    <resultMap id="CategoryMap" type="org.apache.linkis.configuration.entity.CategoryLabel">
         <id column="category_id" property="categoryId" jdbcType="BIGINT"/>
         <result column="level" property="level" jdbcType="VARCHAR"/>
         <result column="description" property="description" jdbcType="VARCHAR"/>
@@ -102,7 +102,7 @@
         WHERE id = #{id}
     </select>
 
-    <insert id="insertKey" useGeneratedKeys="true" keyProperty="id" parameterType="com.webank.wedatasphere.linkis.configuration.entity.ConfigKey">
+    <insert id="insertKey" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.configuration.entity.ConfigKey">
         INSERT INTO linkis_ps_configuration_config_key (
         id, key, description, name, engine_conn_type, default_value, validate_type, validate_range, is_hidden, is_advanced, level, treeName)
         VALUES (
@@ -148,14 +148,14 @@
 
 
     <!--ConfigValue-->
-    <insert id="insertValue" useGeneratedKeys="true" keyProperty="id" parameterType="com.webank.wedatasphere.linkis.configuration.entity.ConfigValue">
+    <insert id="insertValue" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.configuration.entity.ConfigValue">
         INSERT INTO linkis_ps_configuration_config_value(
         id, config_key_id, config_value, config_label_id, create_time, update_time)
         VALUES (
         #{id},#{configKeyId},#{configValue}, #{configLabelId}, now(), now())
     </insert>
 
-    <insert id="insertValueList" useGeneratedKeys="true" keyProperty="id" parameterType="com.webank.wedatasphere.linkis.configuration.entity.ConfigValue">
+    <insert id="insertValueList" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.configuration.entity.ConfigValue">
         INSERT INTO linkis_ps_configuration_config_value(
         config_key_id, config_value, config_label_id, create_time, update_time)
         VALUES
@@ -170,7 +170,7 @@
         WHERE id= #{id}
     </update>
 
-    <update id="updateUserValueList" parameterType="com.webank.wedatasphere.linkis.configuration.entity.ConfigValue">
+    <update id="updateUserValueList" parameterType="org.apache.linkis.configuration.entity.ConfigValue">
         UPDATE linkis_ps_configuration_config_value SET update_time = now(), config_value =
         <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
             WHEN #{item.id} then #{item.configValue}
@@ -202,7 +202,7 @@
         where c.id = #{id}
     </select>
 
-    <insert id="insertCategory" useGeneratedKeys="true" keyProperty="id" parameterType="com.webank.wedatasphere.linkis.configuration.entity.CategoryLabel">
+    <insert id="insertCategory" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.configuration.entity.CategoryLabel">
         INSERT INTO linkis_ps_configuration_category (
         label_id, level, description, tag, update_time, create_time)
         VALUES(
@@ -217,7 +217,7 @@
         </foreach>
     </delete>
 
-    <update id="updateCategory" parameterType="com.webank.wedatasphere.linkis.configuration.entity.CategoryLabel">
+    <update id="updateCategory" parameterType="org.apache.linkis.configuration.entity.CategoryLabel">
         UPDATE linkis_ps_configuration_category
         <set>
             <if test="description != null"> description = #{description} </if>

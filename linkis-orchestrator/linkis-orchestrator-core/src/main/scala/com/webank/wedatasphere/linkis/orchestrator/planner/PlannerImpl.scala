@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.planner
+package org.apache.linkis.orchestrator.planner
 
-import com.webank.wedatasphere.linkis.orchestrator.extensions.catalyst.{AnalyzeTransform, PlannerTransform}
-import com.webank.wedatasphere.linkis.orchestrator.plans.logical.{LogicalContext, LogicalContextImpl, Task}
+import org.apache.linkis.orchestrator.extensions.catalyst.{AnalyzeTransform, PlannerTransform}
+import org.apache.linkis.orchestrator.plans.logical.{LogicalContext, LogicalContextImpl, Task}
 
 /**
   *

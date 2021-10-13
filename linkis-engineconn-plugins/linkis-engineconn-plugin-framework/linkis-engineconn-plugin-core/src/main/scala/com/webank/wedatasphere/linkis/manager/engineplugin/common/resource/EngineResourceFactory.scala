@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.resource
+package org.apache.linkis.manager.engineplugin.common.resource
 
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource
+import org.apache.linkis.manager.common.entity.resource.NodeResource
 
 
 trait EngineResourceFactory {

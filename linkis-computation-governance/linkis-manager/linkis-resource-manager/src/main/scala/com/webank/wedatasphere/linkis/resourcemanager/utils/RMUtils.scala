@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.utils
+package org.apache.linkis.resourcemanager.utils
 
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource
-import com.webank.wedatasphere.linkis.manager.common.entity.resource._
+import org.apache.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.common.entity.persistence.PersistenceResource
+import org.apache.linkis.manager.common.entity.resource._
 import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization.{read, write}
 

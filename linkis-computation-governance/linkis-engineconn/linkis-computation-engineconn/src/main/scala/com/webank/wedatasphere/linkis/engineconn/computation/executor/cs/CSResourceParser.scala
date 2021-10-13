@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.computation.executor.cs
+package org.apache.linkis.engineconn.computation.executor.cs
 
 import java.util
 import java.util.regex.Pattern
 
-import com.webank.wedatasphere.linkis.cs.client.service.CSResourceService
+import org.apache.linkis.cs.client.service.CSResourceService
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions._

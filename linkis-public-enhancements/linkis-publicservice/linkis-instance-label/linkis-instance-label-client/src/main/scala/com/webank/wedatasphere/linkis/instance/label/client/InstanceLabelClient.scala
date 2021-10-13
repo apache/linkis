@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.client
+package org.apache.linkis.instance.label.client
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils
-import com.webank.wedatasphere.linkis.protocol.label.{InsLabelAttachRequest, InsLabelQueryRequest, InsLabelQueryResponse, InsLabelRemoveRequest, LabelInsQueryRequest, LabelInsQueryResponse}
-import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.rpc.conf.RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.utils.LabelUtils
+import org.apache.linkis.protocol.label.{InsLabelAttachRequest, InsLabelQueryRequest, InsLabelQueryResponse, InsLabelRemoveRequest, LabelInsQueryRequest, LabelInsQueryResponse}
+import org.apache.linkis.rpc.Sender
+import org.apache.linkis.rpc.conf.RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME
+import org.apache.linkis.server.BDPJettyServerHelper
 
 import java.util
 import scala.collection.JavaConverters.asScalaBufferConverter

@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.udf.api;
+package org.apache.linkis.udf.api;
 
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.webank.wedatasphere.linkis.common.io.FsPath;
-import com.webank.wedatasphere.linkis.server.Message;
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
-import com.webank.wedatasphere.linkis.udf.entity.UDFInfo;
-import com.webank.wedatasphere.linkis.udf.entity.UDFTree;
-import com.webank.wedatasphere.linkis.udf.excepiton.UDFException;
-import com.webank.wedatasphere.linkis.udf.service.UDFService;
-import com.webank.wedatasphere.linkis.udf.service.UDFTreeService;
-import com.webank.wedatasphere.linkis.udf.utils.ConstantVar;
+import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.server.Message;
+import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.udf.entity.UDFInfo;
+import org.apache.linkis.udf.entity.UDFTree;
+import org.apache.linkis.udf.excepiton.UDFException;
+import org.apache.linkis.udf.service.UDFService;
+import org.apache.linkis.udf.service.UDFTreeService;
+import org.apache.linkis.udf.utils.ConstantVar;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import com.fasterxml.jackson.databind.JsonNode;

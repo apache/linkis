@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.common.entity.execution.executor;
+package org.apache.linkis.cli.common.entity.execution.executor;
 
 
 public interface ExecutorContext {

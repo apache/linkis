@@ -16,11 +16,11 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.selector.rule
+package org.apache.linkis.manager.am.selector.rule
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.manager.common.entity.metrics.NodeOverLoadInfo
-import com.webank.wedatasphere.linkis.manager.common.entity.node.{AMNode, Node}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.common.entity.metrics.NodeOverLoadInfo
+import org.apache.linkis.manager.common.entity.node.{AMNode, Node}
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 

@@ -16,12 +16,12 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.hook
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.ecm.core.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.{LaunchConstants, ProcessEngineConnLaunchRequest}
-import com.webank.wedatasphere.linkis.udf.UDFClient
+package org.apache.linkis.ecm.server.hook
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.ecm.core.engineconn.EngineConn
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
+import org.apache.linkis.manager.engineplugin.common.launch.process.{LaunchConstants, ProcessEngineConnLaunchRequest}
+import org.apache.linkis.udf.UDFClient
 import org.apache.commons.lang.StringUtils
 
 class JarUDFLoadECMHook extends ECMHook with Logging {

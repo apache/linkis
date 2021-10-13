@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.configuration.entity;
+package org.apache.linkis.configuration.entity;
 
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 
 public class ConfigLabel extends PersistenceLabel {
 

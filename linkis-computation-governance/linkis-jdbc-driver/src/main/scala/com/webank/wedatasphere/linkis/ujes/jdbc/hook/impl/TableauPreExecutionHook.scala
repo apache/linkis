@@ -1,6 +1,6 @@
-package com.webank.wedatasphere.linkis.ujes.jdbc.hook.impl
+package org.apache.linkis.ujes.jdbc.hook.impl
 
-import com.webank.wedatasphere.linkis.ujes.jdbc.hook.JDBCDriverPreExecutionHook
+import org.apache.linkis.ujes.jdbc.hook.JDBCDriverPreExecutionHook
 
 
 class TableauPreExecutionHook extends JDBCDriverPreExecutionHook{

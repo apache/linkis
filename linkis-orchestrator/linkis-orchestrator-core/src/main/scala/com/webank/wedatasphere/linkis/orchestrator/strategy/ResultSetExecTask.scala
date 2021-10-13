@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.strategy
+package org.apache.linkis.orchestrator.strategy
 
-import com.webank.wedatasphere.linkis.orchestrator.execution.ArrayResultSetTaskResponse
-import com.webank.wedatasphere.linkis.orchestrator.plans.physical.ExecTask
+import org.apache.linkis.orchestrator.execution.ArrayResultSetTaskResponse
+import org.apache.linkis.orchestrator.plans.physical.ExecTask
 
 import scala.collection.mutable
 /**

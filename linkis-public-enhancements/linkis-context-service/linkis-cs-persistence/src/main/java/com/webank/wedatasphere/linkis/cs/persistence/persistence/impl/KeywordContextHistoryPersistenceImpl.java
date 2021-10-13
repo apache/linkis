@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.persistence.impl;
+package org.apache.linkis.cs.persistence.persistence.impl;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.history.ContextHistory;
-import com.webank.wedatasphere.linkis.cs.common.entity.history.ContextHistoryIndexer;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.persistence.dao.ContextHistoryMapper;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextHistory;
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.KeywordContextHistoryPersistence;
-import com.webank.wedatasphere.linkis.cs.persistence.util.PersistenceUtils;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.history.ContextHistory;
+import org.apache.linkis.cs.common.entity.history.ContextHistoryIndexer;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.persistence.dao.ContextHistoryMapper;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextHistory;
+import org.apache.linkis.cs.persistence.persistence.KeywordContextHistoryPersistence;
+import org.apache.linkis.cs.persistence.util.PersistenceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

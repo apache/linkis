@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.python.exception
+package org.apache.linkis.manager.engineplugin.python.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 
 class PythonSessionNullException (errCode: Int, desc: String) extends ErrorException(errCode, desc)

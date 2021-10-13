@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.Interpreter
+package org.apache.linkis.engineplugin.spark.Interpreter
 
 import java.io.{BufferedReader, InputStreamReader, PrintWriter}
 import java.util.concurrent.TimeUnit
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engineplugin.spark.common._
-import com.webank.wedatasphere.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineplugin.spark.common._
+import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.commons.io.IOUtils
 import org.json4s._
 

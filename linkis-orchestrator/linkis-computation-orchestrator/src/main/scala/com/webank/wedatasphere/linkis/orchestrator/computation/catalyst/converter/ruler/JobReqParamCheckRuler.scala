@@ -15,13 +15,13 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.catalyst.converter.ruler
+package org.apache.linkis.orchestrator.computation.catalyst.converter.ruler
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.orchestrator.domain.JobReq
-import com.webank.wedatasphere.linkis.orchestrator.exception.{OrchestratorErrorCodeSummary, OrchestratorErrorException}
-import com.webank.wedatasphere.linkis.orchestrator.extensions.catalyst.ConverterCheckRuler
-import com.webank.wedatasphere.linkis.orchestrator.plans.ast.ASTContext
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.orchestrator.domain.JobReq
+import org.apache.linkis.orchestrator.exception.{OrchestratorErrorCodeSummary, OrchestratorErrorException}
+import org.apache.linkis.orchestrator.extensions.catalyst.ConverterCheckRuler
+import org.apache.linkis.orchestrator.plans.ast.ASTContext
 import org.apache.commons.lang.StringUtils
 /**
  *

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.computation.executor.execute
+package org.apache.linkis.engineconn.computation.executor.execute
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.common.execution.EngineConnExecution
-import com.webank.wedatasphere.linkis.engineconn.core.execution.AbstractEngineConnExecution
-import com.webank.wedatasphere.linkis.engineconn.executor.conf.EngineConnExecutorConfiguration
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.Executor
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineConnMode._
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineConnModeLabel
+import org.apache.linkis.DataWorkCloudApplication
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.common.engineconn.EngineConn
+import org.apache.linkis.engineconn.common.execution.EngineConnExecution
+import org.apache.linkis.engineconn.core.execution.AbstractEngineConnExecution
+import org.apache.linkis.engineconn.executor.conf.EngineConnExecutorConfiguration
+import org.apache.linkis.engineconn.executor.entity.Executor
+import org.apache.linkis.manager.label.entity.engine.EngineConnMode._
+import org.apache.linkis.manager.label.entity.engine.EngineConnModeLabel
 
 
 class ComputationEngineConnExecution extends AbstractEngineConnExecution {
@@ -63,7 +63,7 @@ class ComputationExecutorManagerEngineConnExecution extends EngineConnExecution 
       case _ => false
     }
     if(shouldSet) DataWorkCloudApplication.setProperty(EngineConnExecutorConfiguration.EXECUTOR_MANAGER_CLASS.key,
-      "com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationExecutorManagerImpl")
+      "org.apache.linkis.engineconn.computation.executor.creation.ComputationExecutorManagerImpl")
 }
 
   /**

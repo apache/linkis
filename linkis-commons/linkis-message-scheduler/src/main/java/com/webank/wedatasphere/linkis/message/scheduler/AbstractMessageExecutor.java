@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.scheduler;
+package org.apache.linkis.message.scheduler;
 
-import com.webank.wedatasphere.linkis.common.utils.JavaLog;
-import com.webank.wedatasphere.linkis.message.builder.DefaultServiceMethodContext;
-import com.webank.wedatasphere.linkis.message.builder.MessageJob;
-import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext;
-import com.webank.wedatasphere.linkis.message.exception.MessageWarnException;
-import com.webank.wedatasphere.linkis.message.parser.ImplicitMethod;
-import com.webank.wedatasphere.linkis.message.utils.MessageUtils;
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
-import com.webank.wedatasphere.linkis.rpc.MessageErrorConstants;
-import com.webank.wedatasphere.linkis.scheduler.queue.Job;
+import org.apache.linkis.common.utils.JavaLog;
+import org.apache.linkis.message.builder.DefaultServiceMethodContext;
+import org.apache.linkis.message.builder.MessageJob;
+import org.apache.linkis.message.builder.ServiceMethodContext;
+import org.apache.linkis.message.exception.MessageWarnException;
+import org.apache.linkis.message.parser.ImplicitMethod;
+import org.apache.linkis.message.utils.MessageUtils;
+import org.apache.linkis.protocol.message.RequestProtocol;
+import org.apache.linkis.rpc.MessageErrorConstants;
+import org.apache.linkis.scheduler.queue.Job;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

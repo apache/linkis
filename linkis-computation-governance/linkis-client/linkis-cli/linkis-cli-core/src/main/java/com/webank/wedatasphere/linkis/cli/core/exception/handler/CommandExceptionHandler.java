@@ -11,14 +11,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.exception.handler;
+package org.apache.linkis.cli.core.exception.handler;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
-import com.webank.wedatasphere.linkis.cli.common.exception.handler.ExceptionHandler;
-import com.webank.wedatasphere.linkis.cli.core.data.ClientContext;
-import com.webank.wedatasphere.linkis.cli.core.exception.CommandException;
-import com.webank.wedatasphere.linkis.cli.core.presenter.HelpInfoPresenter;
-import com.webank.wedatasphere.linkis.cli.core.presenter.model.HelpInfoModel;
+import org.apache.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.common.exception.handler.ExceptionHandler;
+import org.apache.linkis.cli.core.data.ClientContext;
+import org.apache.linkis.cli.core.exception.CommandException;
+import org.apache.linkis.cli.core.presenter.HelpInfoPresenter;
+import org.apache.linkis.cli.core.presenter.model.HelpInfoModel;
 
 import java.util.Map;
 

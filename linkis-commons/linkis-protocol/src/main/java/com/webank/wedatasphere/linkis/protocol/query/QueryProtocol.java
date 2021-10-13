@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.query;
+package org.apache.linkis.protocol.query;
 
 
 public interface QueryProtocol {

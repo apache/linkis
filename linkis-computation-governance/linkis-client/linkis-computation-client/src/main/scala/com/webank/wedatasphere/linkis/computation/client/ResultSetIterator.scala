@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client
+package org.apache.linkis.computation.client
 
 import java.util
 
-import com.webank.wedatasphere.linkis.ujes.client.UJESClient
-import com.webank.wedatasphere.linkis.ujes.client.exception.UJESJobException
-import com.webank.wedatasphere.linkis.ujes.client.request.ResultSetAction
-import com.webank.wedatasphere.linkis.ujes.client.response.ResultSetResult
+import org.apache.linkis.ujes.client.UJESClient
+import org.apache.linkis.ujes.client.exception.UJESJobException
+import org.apache.linkis.ujes.client.request.ResultSetAction
+import org.apache.linkis.ujes.client.response.ResultSetResult
 
 
 abstract class ResultSetIterator[M, R](resultSetIterable: ResultSetIterable, metadata: Object, records: Object)

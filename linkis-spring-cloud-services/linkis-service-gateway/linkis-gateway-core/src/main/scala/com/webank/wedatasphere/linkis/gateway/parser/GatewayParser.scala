@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.parser
+package org.apache.linkis.gateway.parser
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.gateway.http.{GatewayContext, GatewayRoute}
-import com.webank.wedatasphere.linkis.rpc.conf.RPCConfiguration
-import com.webank.wedatasphere.linkis.rpc.interceptor.ServiceInstanceUtils
-import com.webank.wedatasphere.linkis.server.Message
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
+import org.apache.linkis.DataWorkCloudApplication
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.gateway.http.{GatewayContext, GatewayRoute}
+import org.apache.linkis.rpc.conf.RPCConfiguration
+import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
+import org.apache.linkis.server.Message
+import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.commons.lang.StringUtils
 
 trait GatewayParser {

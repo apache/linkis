@@ -11,11 +11,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.interactor.command.template;
+package org.apache.linkis.cli.application.interactor.command.template;
 
-import com.webank.wedatasphere.linkis.cli.application.constants.LinkisClientKeys;
-import com.webank.wedatasphere.linkis.cli.application.constants.TestConstants;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.parser.transformer.ParamKeyMapper;
+import org.apache.linkis.cli.application.constants.LinkisClientKeys;
+import org.apache.linkis.cli.application.constants.TestConstants;
+import org.apache.linkis.cli.core.interactor.command.parser.transformer.ParamKeyMapper;
 
 
 public class TestParamMapper extends ParamKeyMapper {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.service.annotation;
+package org.apache.linkis.instance.label.service.annotation;
 
 import java.lang.annotation.*;
 

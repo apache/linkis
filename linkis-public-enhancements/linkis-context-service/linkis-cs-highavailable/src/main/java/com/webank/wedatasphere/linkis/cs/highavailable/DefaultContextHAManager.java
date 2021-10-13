@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.highavailable;
+package org.apache.linkis.cs.highavailable;
 
 import com.google.gson.Gson;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.HAContextID;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.highavailable.exception.CSErrorCode;
-import com.webank.wedatasphere.linkis.cs.highavailable.ha.BackupInstanceGenerator;
-import com.webank.wedatasphere.linkis.cs.highavailable.ha.ContextHAChecker;
-import com.webank.wedatasphere.linkis.cs.highavailable.ha.ContextHAIDGenerator;
-import com.webank.wedatasphere.linkis.cs.highavailable.proxy.MethodInterceptorImpl;
+import org.apache.linkis.cs.common.entity.source.HAContextID;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.highavailable.exception.CSErrorCode;
+import org.apache.linkis.cs.highavailable.ha.BackupInstanceGenerator;
+import org.apache.linkis.cs.highavailable.ha.ContextHAChecker;
+import org.apache.linkis.cs.highavailable.ha.ContextHAIDGenerator;
+import org.apache.linkis.cs.highavailable.proxy.MethodInterceptorImpl;
 import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.Enhancer;
 import org.apache.commons.lang.StringUtils;

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.acessible.executor.lock
+package org.apache.linkis.engineconn.acessible.executor.lock
 
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
+import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
 
 trait TimedLock {
 

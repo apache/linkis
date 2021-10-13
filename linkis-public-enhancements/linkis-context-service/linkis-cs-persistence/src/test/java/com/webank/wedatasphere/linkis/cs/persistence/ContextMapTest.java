@@ -11,17 +11,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence;
+package org.apache.linkis.cs.persistence;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextScope;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.metadata.CSTable;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.LinkisHAWorkFlowContextID;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextID;
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.ContextMapPersistence;
+import org.apache.linkis.cs.common.entity.enumeration.ContextScope;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.metadata.CSTable;
+import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
+import org.apache.linkis.cs.common.entity.source.LinkisHAWorkFlowContextID;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextID;
+import org.apache.linkis.cs.persistence.persistence.ContextMapPersistence;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.List;

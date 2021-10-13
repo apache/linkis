@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.utils
+package org.apache.linkis.storage.utils
 
 import java.io.IOException
 import java.util
-import com.webank.wedatasphere.linkis.common.io.FsPath
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.storage.FSFactory
-import com.webank.wedatasphere.linkis.storage.fs.FileSystem
-import com.webank.wedatasphere.linkis.storage.fs.impl.LocalFileSystem
+import org.apache.linkis.common.io.FsPath
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.storage.FSFactory
+import org.apache.linkis.storage.fs.FileSystem
+import org.apache.linkis.storage.fs.impl.LocalFileSystem
 
 
 object FileSystemUtils extends Logging{

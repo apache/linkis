@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.security
+package org.apache.linkis.gateway.security
 
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -26,18 +26,18 @@ import java.util.{List, Random}
 
 import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
 import com.google.gson.Gson
-import com.webank.wedatasphere.linkis.common.conf.Configuration
-import com.webank.wedatasphere.linkis.common.utils.RSAUtils.keyPair
-import com.webank.wedatasphere.linkis.common.utils.{Logging, RSAUtils, Utils}
-import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
-import com.webank.wedatasphere.linkis.gateway.exception.GatewayErrorException
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
-import com.webank.wedatasphere.linkis.gateway.security.sso.SSOInterceptor
-import com.webank.wedatasphere.linkis.protocol.usercontrol.{RequestLogin, RequestRegister, RequestUserListFromWorkspace, RequestUserWorkspace, ResponseLogin, ResponseRegister, ResponseUserWorkspace, ResponseWorkspaceUserList}
-import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
-import com.webank.wedatasphere.linkis.server.security.SSOUtils
-import com.webank.wedatasphere.linkis.server.{Message, _}
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.utils.RSAUtils.keyPair
+import org.apache.linkis.common.utils.{Logging, RSAUtils, Utils}
+import org.apache.linkis.gateway.config.GatewayConfiguration
+import org.apache.linkis.gateway.exception.GatewayErrorException
+import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.security.sso.SSOInterceptor
+import org.apache.linkis.protocol.usercontrol.{RequestLogin, RequestRegister, RequestUserListFromWorkspace, RequestUserWorkspace, ResponseLogin, ResponseRegister, ResponseUserWorkspace, ResponseWorkspaceUserList}
+import org.apache.linkis.rpc.Sender
+import org.apache.linkis.server.conf.ServerConfiguration
+import org.apache.linkis.server.security.SSOUtils
+import org.apache.linkis.server.{Message, _}
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.net.util.Base64
 import org.apache.http.client.methods.HttpGet

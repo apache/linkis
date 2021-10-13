@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadatamanager.common.protocol
+package org.apache.linkis.metadatamanager.common.protocol
 
 trait MetadataProtocol {
 

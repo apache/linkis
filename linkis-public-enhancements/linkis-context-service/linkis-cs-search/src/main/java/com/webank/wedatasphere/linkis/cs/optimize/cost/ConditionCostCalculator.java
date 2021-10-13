@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.optimize.cost;
+package org.apache.linkis.cs.optimize.cost;
 
 import com.google.common.collect.Maps;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextScope;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.condition.AtomicCondition;
-import com.webank.wedatasphere.linkis.cs.condition.Condition;
-import com.webank.wedatasphere.linkis.cs.condition.impl.ContainsCondition;
-import com.webank.wedatasphere.linkis.cs.condition.impl.ContextValueTypeCondition;
-import com.webank.wedatasphere.linkis.cs.condition.impl.RegexCondition;
+import org.apache.linkis.cs.common.entity.enumeration.ContextScope;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.condition.AtomicCondition;
+import org.apache.linkis.cs.condition.Condition;
+import org.apache.linkis.cs.condition.impl.ContainsCondition;
+import org.apache.linkis.cs.condition.impl.ContextValueTypeCondition;
+import org.apache.linkis.cs.condition.impl.RegexCondition;
 
 import java.util.Map;
 

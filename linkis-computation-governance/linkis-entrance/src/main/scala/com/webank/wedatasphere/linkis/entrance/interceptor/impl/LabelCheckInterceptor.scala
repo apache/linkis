@@ -16,16 +16,16 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.entrance.interceptor.impl
+package org.apache.linkis.entrance.interceptor.impl
 
 import java.lang
-import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
-import com.webank.wedatasphere.linkis.entrance.interceptor.exception.LabelCheckException
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
-import com.webank.wedatasphere.linkis.protocol.task.Task
+import org.apache.linkis.entrance.interceptor.EntranceInterceptor
+import org.apache.linkis.entrance.interceptor.exception.LabelCheckException
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.entity.task.RequestPersistTask
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.protocol.task.Task
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions._

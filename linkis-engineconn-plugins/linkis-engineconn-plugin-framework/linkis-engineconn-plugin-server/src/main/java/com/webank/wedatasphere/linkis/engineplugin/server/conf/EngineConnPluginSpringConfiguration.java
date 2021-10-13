@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.server.conf;
+package org.apache.linkis.engineplugin.server.conf;
 
-import com.webank.wedatasphere.linkis.engineplugin.server.localize.DefaultEngineConnBmlResourceGenerator;
-import com.webank.wedatasphere.linkis.engineplugin.server.localize.EngineConnBmlResourceGenerator;
+import org.apache.linkis.engineplugin.server.localize.DefaultEngineConnBmlResourceGenerator;
+import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGenerator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

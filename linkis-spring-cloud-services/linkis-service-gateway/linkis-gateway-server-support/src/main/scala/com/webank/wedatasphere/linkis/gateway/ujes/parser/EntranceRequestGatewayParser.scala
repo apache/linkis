@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.ujes.parser
+package org.apache.linkis.gateway.ujes.parser
 
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
-import com.webank.wedatasphere.linkis.gateway.parser.AbstractGatewayParser
-import com.webank.wedatasphere.linkis.gateway.ujes.parser.EntranceExecutionGatewayParser._
-import com.webank.wedatasphere.linkis.protocol.utils.ZuulEntranceUtils
+import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.parser.AbstractGatewayParser
+import org.apache.linkis.gateway.ujes.parser.EntranceExecutionGatewayParser._
+import org.apache.linkis.protocol.utils.ZuulEntranceUtils
 import org.springframework.stereotype.Component
 
 @Component

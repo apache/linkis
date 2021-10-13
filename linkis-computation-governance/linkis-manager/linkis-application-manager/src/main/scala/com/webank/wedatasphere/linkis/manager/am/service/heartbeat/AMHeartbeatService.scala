@@ -16,20 +16,20 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.service.heartbeat
+package org.apache.linkis.manager.am.service.heartbeat
 
 import java.util.concurrent.TimeUnit
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration
-import com.webank.wedatasphere.linkis.manager.am.service.HeartbeatService
-import com.webank.wedatasphere.linkis.manager.common.entity.metrics.AMNodeMetrics
-import com.webank.wedatasphere.linkis.manager.common.monitor.ManagerMonitor
-import com.webank.wedatasphere.linkis.manager.common.protocol.node.NodeHeartbeatMsg
-import com.webank.wedatasphere.linkis.manager.persistence.{NodeManagerPersistence, NodeMetricManagerPersistence}
-import com.webank.wedatasphere.linkis.manager.service.common.metrics.MetricsConverter
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
-import com.webank.wedatasphere.linkis.resourcemanager.utils.RMConfiguration
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.am.conf.AMConfiguration
+import org.apache.linkis.manager.am.service.HeartbeatService
+import org.apache.linkis.manager.common.entity.metrics.AMNodeMetrics
+import org.apache.linkis.manager.common.monitor.ManagerMonitor
+import org.apache.linkis.manager.common.protocol.node.NodeHeartbeatMsg
+import org.apache.linkis.manager.persistence.{NodeManagerPersistence, NodeMetricManagerPersistence}
+import org.apache.linkis.manager.service.common.metrics.MetricsConverter
+import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.resourcemanager.utils.RMConfiguration
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

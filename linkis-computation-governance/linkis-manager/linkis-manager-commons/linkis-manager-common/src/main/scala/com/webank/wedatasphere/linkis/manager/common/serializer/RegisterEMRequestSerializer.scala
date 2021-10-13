@@ -16,11 +16,11 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.serializer
+package org.apache.linkis.manager.common.serializer
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.{CommonNodeResource, ResourceSerializer}
-import com.webank.wedatasphere.linkis.manager.common.protocol.em.RegisterEMRequest
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, ResourceSerializer}
+import org.apache.linkis.manager.common.protocol.em.RegisterEMRequest
 import org.json4s.JsonAST.JObject
 import org.json4s.JsonDSL._
 import org.json4s.{CustomSerializer, DefaultFormats, Extraction}

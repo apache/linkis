@@ -15,10 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client.operator
+package org.apache.linkis.computation.client.operator
 
-import com.webank.wedatasphere.linkis.ujes.client.UJESClient
-import com.webank.wedatasphere.linkis.ujes.client.response.JobSubmitResult
+import org.apache.linkis.ujes.client.UJESClient
+import org.apache.linkis.ujes.client.response.JobSubmitResult
 
 
 trait StorableOperator[T] extends Operator[T] {

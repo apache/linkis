@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.contextcache.cache.guava;
+package org.apache.linkis.cs.contextcache.cache.guava;
 
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
-import com.webank.wedatasphere.linkis.cs.contextcache.cache.csid.ContextIDValue;
-import com.webank.wedatasphere.linkis.cs.contextcache.cache.csid.impl.ContextIDValueImpl;
-import com.webank.wedatasphere.linkis.cs.listener.ListenerBus.ContextAsyncListenerBus;
-import com.webank.wedatasphere.linkis.cs.listener.event.impl.DefaultContextIDEvent;
-import com.webank.wedatasphere.linkis.cs.listener.manager.imp.DefaultContextListenerManager;
+import org.apache.linkis.cs.contextcache.cache.csid.ContextIDValue;
+import org.apache.linkis.cs.contextcache.cache.csid.impl.ContextIDValueImpl;
+import org.apache.linkis.cs.listener.ListenerBus.ContextAsyncListenerBus;
+import org.apache.linkis.cs.listener.event.impl.DefaultContextIDEvent;
+import org.apache.linkis.cs.listener.manager.imp.DefaultContextListenerManager;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import static com.webank.wedatasphere.linkis.cs.listener.event.enumeration.OperateType.DELETE;
+import static org.apache.linkis.cs.listener.event.enumeration.OperateType.DELETE;
 
 @Component
 public class ContextIDRemoveListener implements RemovalListener<String, ContextIDValue> {

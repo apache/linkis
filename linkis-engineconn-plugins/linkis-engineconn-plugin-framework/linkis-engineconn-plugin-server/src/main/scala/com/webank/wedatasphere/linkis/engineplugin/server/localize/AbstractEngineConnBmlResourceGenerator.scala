@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.server.localize
+package org.apache.linkis.engineplugin.server.localize
 
 import java.io.File
 import java.nio.file.Paths
 
-import com.webank.wedatasphere.linkis.engineplugin.server.conf.EngineConnPluginConfiguration.ENGINE_CONN_HOME
-import com.webank.wedatasphere.linkis.engineplugin.server.localize.EngineConnBmlResourceGenerator.NO_VERSION_MARK
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
+import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration.ENGINE_CONN_HOME
+import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGenerator.NO_VERSION_MARK
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.commons.lang.StringUtils
 
 

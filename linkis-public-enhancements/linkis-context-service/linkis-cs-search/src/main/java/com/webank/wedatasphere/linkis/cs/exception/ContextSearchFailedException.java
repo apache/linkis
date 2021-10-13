@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.exception;
+package org.apache.linkis.cs.exception;
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.exception.ErrorException;
 
 public class ContextSearchFailedException extends ErrorException {
     public ContextSearchFailedException(int errCode, String desc) {

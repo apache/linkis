@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.listener;
+package org.apache.linkis.cs.listener;
 
-import com.webank.wedatasphere.linkis.cs.listener.event.ContextIDEvent;
+import org.apache.linkis.cs.listener.event.ContextIDEvent;
 
 
 public interface CSIDListener extends ContextAsyncEventListener {

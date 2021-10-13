@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.conf;
+package org.apache.linkis.message.conf;
 
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.conf.CommonVars;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.scanners.SubTypesScanner;

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.python.launch
+package org.apache.linkis.manager.engineplugin.python.launch
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
+import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
 
 
 class PythonProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {

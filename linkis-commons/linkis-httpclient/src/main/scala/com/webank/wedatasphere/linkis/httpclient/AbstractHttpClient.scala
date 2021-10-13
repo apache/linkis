@@ -11,19 +11,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient
+package org.apache.linkis.httpclient
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration
-import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
-import com.webank.wedatasphere.linkis.httpclient.authentication.{AbstractAuthenticationStrategy, AuthenticationAction, HttpAuthentication}
-import com.webank.wedatasphere.linkis.httpclient.config.ClientConfig
-import com.webank.wedatasphere.linkis.httpclient.discovery.{AbstractDiscovery, Discovery, HeartbeatAction}
-import com.webank.wedatasphere.linkis.httpclient.exception.{HttpClientResultException, HttpMessageParseException, HttpMethodNotSupportException}
-import com.webank.wedatasphere.linkis.httpclient.loadbalancer.{AbstractLoadBalancer, DefaultLoadbalancerStrategy, LoadBalancer}
-import com.webank.wedatasphere.linkis.httpclient.request._
-import com.webank.wedatasphere.linkis.httpclient.response._
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.io.{Fs, FsPath}
+import org.apache.linkis.httpclient.authentication.{AbstractAuthenticationStrategy, AuthenticationAction, HttpAuthentication}
+import org.apache.linkis.httpclient.config.ClientConfig
+import org.apache.linkis.httpclient.discovery.{AbstractDiscovery, Discovery, HeartbeatAction}
+import org.apache.linkis.httpclient.exception.{HttpClientResultException, HttpMessageParseException, HttpMethodNotSupportException}
+import org.apache.linkis.httpclient.loadbalancer.{AbstractLoadBalancer, DefaultLoadbalancerStrategy, LoadBalancer}
+import org.apache.linkis.httpclient.request._
+import org.apache.linkis.httpclient.response._
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.http.client.CookieStore

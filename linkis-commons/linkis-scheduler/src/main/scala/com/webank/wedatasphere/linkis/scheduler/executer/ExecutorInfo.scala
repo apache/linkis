@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.executer
+package org.apache.linkis.scheduler.executer
 
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorState.ExecutorState
+import org.apache.linkis.scheduler.executer.ExecutorState.ExecutorState
 
 
 case class ExecutorInfo(id: Long, state: ExecutorState)

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entranceclient
+package org.apache.linkis.entranceclient
 
-import com.webank.wedatasphere.linkis.entranceclient.conf.ClientConfiguration.{CLIENT_ENGINE_MANAGER_SPRING_APPLICATION_NAME, CLIENT_ENGINE_SPRING_APPLICATION_NAME}
+import org.apache.linkis.entranceclient.conf.ClientConfiguration.{CLIENT_ENGINE_MANAGER_SPRING_APPLICATION_NAME, CLIENT_ENGINE_SPRING_APPLICATION_NAME}
 
 trait EngineApplicationNameFactory {
   private var engineApplicationName: String = CLIENT_ENGINE_SPRING_APPLICATION_NAME.getValue

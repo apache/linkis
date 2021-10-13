@@ -11,15 +11,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.factory.impl;
+package org.apache.linkis.storage.factory.impl;
 
-import com.webank.wedatasphere.linkis.common.io.Fs;
-import com.webank.wedatasphere.linkis.storage.factory.BuildFactory;
-import com.webank.wedatasphere.linkis.storage.fs.FileSystem;
-import com.webank.wedatasphere.linkis.storage.fs.impl.LocalFileSystem;
-import com.webank.wedatasphere.linkis.storage.io.IOMethodInterceptorCreator$;
-import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration;
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
+import org.apache.linkis.common.io.Fs;
+import org.apache.linkis.storage.factory.BuildFactory;
+import org.apache.linkis.storage.fs.FileSystem;
+import org.apache.linkis.storage.fs.impl.LocalFileSystem;
+import org.apache.linkis.storage.io.IOMethodInterceptorCreator$;
+import org.apache.linkis.storage.utils.StorageConfiguration;
+import org.apache.linkis.storage.utils.StorageUtils;
 import net.sf.cglib.proxy.Enhancer;
 
 

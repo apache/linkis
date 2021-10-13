@@ -19,7 +19,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 
-<mapper namespace="com.webank.wedatasphere.linkis.manager.dao.LockManagerMapper">
+<mapper namespace="org.apache.linkis.manager.dao.LockManagerMapper">
 
 <!--    &lt;!&ndash; 增 &ndash;&gt;-->
 <!--    <sql id="instance_id">-->
@@ -27,7 +27,7 @@
 <!--    </sql>-->
 
 <!--    <insert id="addNodeInstance" useGeneratedKeys="true" keyProperty="id"-->
-<!--            parameterType="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNode">-->
+<!--            parameterType="org.apache.linkis.manager.common.entity.persistence.PersistenceNode">-->
 <!--        INSERT INTO  linkis_cg_manager_service_instance(<include refid="instance_id"/>)-->
 <!--        VALUES (#{id},#{instance},#{applicationName},#{owner},#{mark},#{updateTime},#{createTime},#{updator},#{creator})-->
 <!--    </insert>-->
@@ -40,17 +40,17 @@
 
     <!-- 获取 -->
 <!--    <resultMap id="PersistenceNodeInstance"-->
-<!--               type="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNode">-->
+<!--               type="org.apache.linkis.manager.common.entity.persistence.PersistenceNode">-->
 <!--        <id column="owner" property="owner"/>-->
 <!--    </resultMap>-->
 
-<!--    <select id="getNodeInstances" resultType="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNode">-->
+<!--    <select id="getNodeInstances" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceNode">-->
 <!--        SELECT * FROM  linkis_cg_manager_service_instance where owner = #{owner}-->
 <!--    </select>-->
 
     <!-- 更新 -->
 <!--    <update id="updateNodeInstance"-->
-<!--            parameterType="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNode">-->
+<!--            parameterType="org.apache.linkis.manager.common.entity.persistence.PersistenceNode">-->
 <!--        UPDATE  linkis_cg_manager_service_instance-->
 <!--        <trim prefix="set" suffixOverrides=",">-->
 <!--            <if test="instance != null">`instance` = #{instance},</if>-->

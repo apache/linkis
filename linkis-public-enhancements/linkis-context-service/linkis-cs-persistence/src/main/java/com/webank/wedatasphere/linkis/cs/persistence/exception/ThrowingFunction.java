@@ -15,7 +15,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.exception;
+package org.apache.linkis.cs.persistence.exception;
 
 
 @FunctionalInterface

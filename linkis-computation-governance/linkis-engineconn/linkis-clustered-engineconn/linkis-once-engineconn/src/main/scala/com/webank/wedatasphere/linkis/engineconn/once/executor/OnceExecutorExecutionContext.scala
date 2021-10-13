@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.once.executor
+package org.apache.linkis.engineconn.once.executor
 
-import com.webank.wedatasphere.linkis.common.io.resultset.{ResultSet, ResultSetWriter}
-import com.webank.wedatasphere.linkis.common.io.{FsPath, MetaData, Record}
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.executor.ExecutorExecutionContext
-import com.webank.wedatasphere.linkis.governance.common.entity.job.OnceExecutorContent
-import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
+import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetWriter}
+import org.apache.linkis.common.io.{FsPath, MetaData, Record}
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.executor.ExecutorExecutionContext
+import org.apache.linkis.governance.common.entity.job.OnceExecutorContent
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 
 
 class OnceExecutorExecutionContext(engineCreationContext: EngineCreationContext,

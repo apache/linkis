@@ -1,7 +1,7 @@
-package com.webank.wedatasphere.linkis.manager.dao;
+package org.apache.linkis.manager.dao;
 
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

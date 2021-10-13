@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.protocol.engine;
+package org.apache.linkis.manager.common.protocol.engine;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
+import org.apache.linkis.common.ServiceInstance;
 
 
 public class EngineSuicideRequest implements EngineRequest {

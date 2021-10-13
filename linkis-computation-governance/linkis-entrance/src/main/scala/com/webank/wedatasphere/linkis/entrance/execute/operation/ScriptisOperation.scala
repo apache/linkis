@@ -16,10 +16,10 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.entrance.execute.operation
+package org.apache.linkis.entrance.execute.operation
 
-import com.webank.wedatasphere.linkis.orchestrator.OrchestratorSession
-import com.webank.wedatasphere.linkis.orchestrator.computation.operation.progress.DefaultProgressOperation
+import org.apache.linkis.orchestrator.OrchestratorSession
+import org.apache.linkis.orchestrator.computation.operation.progress.DefaultProgressOperation
 
 
 /**

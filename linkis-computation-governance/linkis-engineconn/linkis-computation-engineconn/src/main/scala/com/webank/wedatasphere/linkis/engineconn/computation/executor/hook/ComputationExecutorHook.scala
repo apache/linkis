@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.computation.executor.hook
+package org.apache.linkis.engineconn.computation.executor.hook
 
-import com.webank.wedatasphere.linkis.common.utils.{ClassUtils, Logging, Utils}
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.common.utils.{ClassUtils, Logging, Utils}
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 
 import scala.collection.JavaConverters.asScalaSetConverter
 import scala.collection.mutable.ArrayBuffer

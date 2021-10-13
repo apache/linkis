@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.utils
+package org.apache.linkis.common.utils
 
 import java.io.{BufferedReader, InputStreamReader}
 import java.net.InetAddress
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.{ScheduledThreadPoolExecutor, _}
 
-import com.webank.wedatasphere.linkis.common.exception.{ErrorException, FatalException, LinkisCommonErrorException, WarnException}
+import org.apache.linkis.common.exception.{ErrorException, FatalException, LinkisCommonErrorException, WarnException}
 import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
 

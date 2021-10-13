@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.errorcode.common
+package org.apache.linkis.errorcode.common
 
 
 abstract class AbstractErrorCode extends ErrorCode {

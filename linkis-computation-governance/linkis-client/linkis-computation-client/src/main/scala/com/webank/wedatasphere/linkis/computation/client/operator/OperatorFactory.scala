@@ -15,10 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client.operator
+package org.apache.linkis.computation.client.operator
 
-import com.webank.wedatasphere.linkis.common.utils.ClassUtils
-import com.webank.wedatasphere.linkis.ujes.client.exception.UJESJobException
+import org.apache.linkis.common.utils.ClassUtils
+import org.apache.linkis.ujes.client.exception.UJESJobException
 
 
 trait OperatorFactory {

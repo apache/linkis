@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.parser;
+package org.apache.linkis.cs.server.parser;
 
 import java.lang.reflect.Method;
 

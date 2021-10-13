@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.executor
+package org.apache.linkis.manager.engineplugin.pipeline.executor
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
-import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.{CommonNodeResource, LoadInstanceResource, NodeResource}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
-import com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.exception.PipeLineErrorException
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
-import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteResponse
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.core.EngineConnObject
+import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadInstanceResource, NodeResource}
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.engineplugin.pipeline.exception.PipeLineErrorException
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.rpc.Sender
+import org.apache.linkis.scheduler.executer.ExecuteResponse
 
 import scala.collection.JavaConversions.mapAsScalaMap
 

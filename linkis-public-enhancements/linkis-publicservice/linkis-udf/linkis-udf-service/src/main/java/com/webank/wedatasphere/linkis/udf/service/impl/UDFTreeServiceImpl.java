@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.udf.service.impl;
+package org.apache.linkis.udf.service.impl;
 
 import com.google.common.collect.Iterables;
-import com.webank.wedatasphere.linkis.udf.dao.UDFTreeDao;
-import com.webank.wedatasphere.linkis.udf.entity.UDFInfo;
-import com.webank.wedatasphere.linkis.udf.entity.UDFTree;
-import com.webank.wedatasphere.linkis.udf.excepiton.UDFException;
-import com.webank.wedatasphere.linkis.udf.service.UDFService;
-import com.webank.wedatasphere.linkis.udf.service.UDFTreeService;
+import org.apache.linkis.udf.dao.UDFTreeDao;
+import org.apache.linkis.udf.entity.UDFInfo;
+import org.apache.linkis.udf.entity.UDFTree;
+import org.apache.linkis.udf.excepiton.UDFException;
+import org.apache.linkis.udf.service.UDFService;
+import org.apache.linkis.udf.service.UDFTreeService;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

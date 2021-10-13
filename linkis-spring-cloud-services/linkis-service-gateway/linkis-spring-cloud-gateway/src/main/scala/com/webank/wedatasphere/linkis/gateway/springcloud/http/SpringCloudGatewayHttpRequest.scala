@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.springcloud.http
+package org.apache.linkis.gateway.springcloud.http
 
 import java.net.{InetSocketAddress, URI}
 
-import com.webank.wedatasphere.linkis.gateway.http.GatewayHttpRequest
-import com.webank.wedatasphere.linkis.server._
+import org.apache.linkis.gateway.http.GatewayHttpRequest
+import org.apache.linkis.server._
 import javax.servlet.http.Cookie
 import org.apache.commons.lang.StringUtils
 import org.springframework.http.server.reactive.AbstractServerHttpRequest

@@ -11,24 +11,24 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.hive.executor
+package org.apache.linkis.engineplugin.hive.executor
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
-import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
-import com.webank.wedatasphere.linkis.engineplugin.hive.cs.CSHiveHelper
-import com.webank.wedatasphere.linkis.engineplugin.hive.exception.HiveQueryFailedException
-import com.webank.wedatasphere.linkis.engineplugin.hive.progress.HiveProgressHelper
-import com.webank.wedatasphere.linkis.governance.common.paser.SQLCodeParser
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.{CommonNodeResource, LoadInstanceResource, NodeResource}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
-import com.webank.wedatasphere.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
-import com.webank.wedatasphere.linkis.storage.domain.{Column, DataType}
-import com.webank.wedatasphere.linkis.storage.resultset.ResultSetFactory
-import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.core.EngineConnObject
+import org.apache.linkis.engineplugin.hive.cs.CSHiveHelper
+import org.apache.linkis.engineplugin.hive.exception.HiveQueryFailedException
+import org.apache.linkis.engineplugin.hive.progress.HiveProgressHelper
+import org.apache.linkis.governance.common.paser.SQLCodeParser
+import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadInstanceResource, NodeResource}
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
+import org.apache.linkis.storage.domain.{Column, DataType}
+import org.apache.linkis.storage.resultset.ResultSetFactory
+import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.commons.io.IOUtils
 import org.apache.hadoop.hive.common.HiveInterruptUtils
 import org.apache.hadoop.hive.conf.HiveConf
@@ -49,7 +49,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
-import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf
+import org.apache.linkis.hadoop.common.conf.HadoopConf
 
 class HiveEngineConnExecutor(id: Int,
                              sessionState: SessionState,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.entity.engine
+package org.apache.linkis.manager.label.entity.engine
 
 object RunType extends Enumeration {
 

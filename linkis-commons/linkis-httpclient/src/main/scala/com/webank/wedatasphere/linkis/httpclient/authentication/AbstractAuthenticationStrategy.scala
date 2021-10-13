@@ -11,13 +11,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.authentication
+package org.apache.linkis.httpclient.authentication
 
 import java.util.concurrent.ConcurrentHashMap
 
-import com.webank.wedatasphere.linkis.httpclient.Client
-import com.webank.wedatasphere.linkis.httpclient.config.ClientConfig
-import com.webank.wedatasphere.linkis.httpclient.request.{Action, UserAction}
+import org.apache.linkis.httpclient.Client
+import org.apache.linkis.httpclient.config.ClientConfig
+import org.apache.linkis.httpclient.request.{Action, UserAction}
 import org.apache.commons.lang.StringUtils
 import org.apache.http.HttpResponse
 

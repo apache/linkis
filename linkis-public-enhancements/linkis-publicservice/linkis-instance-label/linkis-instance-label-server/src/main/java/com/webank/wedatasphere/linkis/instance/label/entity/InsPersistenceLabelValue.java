@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.entity;
+package org.apache.linkis.instance.label.entity;
 
 
 public class InsPersistenceLabelValue {

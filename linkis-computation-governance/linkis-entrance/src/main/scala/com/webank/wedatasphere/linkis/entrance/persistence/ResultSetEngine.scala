@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.persistence
+package org.apache.linkis.entrance.persistence
 
-import com.webank.wedatasphere.linkis.entrance.job.EntranceExecuteRequest
-import com.webank.wedatasphere.linkis.scheduler.executer.OutputExecuteResponse
+import org.apache.linkis.entrance.job.EntranceExecuteRequest
+import org.apache.linkis.scheduler.executer.OutputExecuteResponse
 
 
 abstract class ResultSetEngine {

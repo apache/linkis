@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entranceclient.context
+package org.apache.linkis.entranceclient.context
 
 import java.lang
 
-import com.webank.wedatasphere.linkis.entrance.persistence.PersistenceEngine
-import com.webank.wedatasphere.linkis.protocol.task.Task
+import org.apache.linkis.entrance.persistence.PersistenceEngine
+import org.apache.linkis.protocol.task.Task
 
 class ClientPersistenceEngine extends PersistenceEngine {
   override def persist(task: Task): Unit = {}

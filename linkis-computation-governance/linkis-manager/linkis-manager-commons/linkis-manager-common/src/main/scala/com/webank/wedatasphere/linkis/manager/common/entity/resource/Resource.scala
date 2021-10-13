@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.common.entity.resource
+package org.apache.linkis.manager.common.entity.resource
 
-import com.webank.wedatasphere.linkis.common.utils.{ByteTimeUtils, Logging}
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.ResourceType._
-import com.webank.wedatasphere.linkis.manager.common.exception.ResourceWarnException
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging}
+import org.apache.linkis.manager.common.entity.resource.ResourceType._
+import org.apache.linkis.manager.common.exception.ResourceWarnException
 import org.apache.commons.lang.StringUtils
 import org.json4s.JsonAST.JObject
 import org.json4s.JsonDSL._

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.conf
+package org.apache.linkis.manager.engineplugin.pipeline.conf
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.constant.PipeLineConstant.{PIPELINE_FIELD_SPLIT, PIPELINE_OUTPUT_CHARSET, PIPELINE_OUTPUT_ISOVERWRITE}
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.manager.engineplugin.pipeline.constant.PipeLineConstant.{PIPELINE_FIELD_SPLIT, PIPELINE_OUTPUT_CHARSET, PIPELINE_OUTPUT_ISOVERWRITE}
 
 object PipelineEngineConfiguration {
 

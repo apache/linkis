@@ -15,16 +15,16 @@
  * limitations under the License.
  *
  */
-package com.webank.wedatasphere.linkis.manager.am.label
+package org.apache.linkis.manager.am.label
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration
-import com.webank.wedatasphere.linkis.manager.am.exception.{AMErrorCode, AMErrorException}
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.am.conf.AMConfiguration
+import org.apache.linkis.manager.am.exception.{AMErrorCode, AMErrorException}
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.server.BDPJettyServerHelper
 import org.apache.commons.lang.StringUtils
 import org.springframework.stereotype.Component
 

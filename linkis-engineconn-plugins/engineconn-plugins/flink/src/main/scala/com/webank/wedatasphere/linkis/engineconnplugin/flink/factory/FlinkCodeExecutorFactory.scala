@@ -15,16 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.factory
+package org.apache.linkis.engineconnplugin.flink.factory
 
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.once.executor.OnceExecutor
-import com.webank.wedatasphere.linkis.engineconn.once.executor.creation.OnceExecutorFactory
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.executor.FlinkCodeOnceExecutor
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType._
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.common.engineconn.EngineConn
+import org.apache.linkis.engineconn.once.executor.OnceExecutor
+import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorFactory
+import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
+import org.apache.linkis.engineconnplugin.flink.executor.FlinkCodeOnceExecutor
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.RunType._
 
 
 class FlinkCodeExecutorFactory extends OnceExecutorFactory {

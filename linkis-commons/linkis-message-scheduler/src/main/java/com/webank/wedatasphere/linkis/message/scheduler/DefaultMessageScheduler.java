@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.scheduler;
+package org.apache.linkis.message.scheduler;
 
-import static com.webank.wedatasphere.linkis.message.conf.MessageSchedulerConf.MAX_PARALLELISM_CONSUMERS;
-import static com.webank.wedatasphere.linkis.message.conf.MessageSchedulerConf.MAX_QUEUE_CAPACITY;
-import static com.webank.wedatasphere.linkis.message.conf.MessageSchedulerConf.MAX_RUNNING_JOB;
+import static org.apache.linkis.message.conf.MessageSchedulerConf.MAX_PARALLELISM_CONSUMERS;
+import static org.apache.linkis.message.conf.MessageSchedulerConf.MAX_QUEUE_CAPACITY;
+import static org.apache.linkis.message.conf.MessageSchedulerConf.MAX_RUNNING_JOB;
 
-import com.webank.wedatasphere.linkis.message.builder.MessageJob;
-import com.webank.wedatasphere.linkis.message.builder.MessageJobListener;
-import com.webank.wedatasphere.linkis.scheduler.Scheduler;
-import com.webank.wedatasphere.linkis.scheduler.queue.GroupFactory;
-import com.webank.wedatasphere.linkis.scheduler.queue.Job;
-import com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue.FIFOGroupFactory;
-import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelConsumerManager;
-import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelScheduler;
-import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelSchedulerContextImpl;
+import org.apache.linkis.message.builder.MessageJob;
+import org.apache.linkis.message.builder.MessageJobListener;
+import org.apache.linkis.scheduler.Scheduler;
+import org.apache.linkis.scheduler.queue.GroupFactory;
+import org.apache.linkis.scheduler.queue.Job;
+import org.apache.linkis.scheduler.queue.fifoqueue.FIFOGroupFactory;
+import org.apache.linkis.scheduler.queue.parallelqueue.ParallelConsumerManager;
+import org.apache.linkis.scheduler.queue.parallelqueue.ParallelScheduler;
+import org.apache.linkis.scheduler.queue.parallelqueue.ParallelSchedulerContextImpl;
 
 
 public class DefaultMessageScheduler implements MessageScheduler {

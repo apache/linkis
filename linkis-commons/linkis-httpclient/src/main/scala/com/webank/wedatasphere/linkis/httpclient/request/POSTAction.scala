@@ -18,7 +18,7 @@
  * Created by ${USER} on ${DATE}.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.request
+package org.apache.linkis.httpclient.request
 
 import java.util
 

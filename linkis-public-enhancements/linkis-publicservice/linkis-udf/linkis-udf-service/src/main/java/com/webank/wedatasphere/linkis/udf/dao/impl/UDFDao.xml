@@ -16,8 +16,8 @@
   -->
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.webank.wedatasphere.linkis.udf.dao.UDFDao">
-    <resultMap id="UDFResultMap" type="com.webank.wedatasphere.linkis.udf.entity.UDFInfo">
+<mapper namespace="org.apache.linkis.udf.dao.UDFDao">
+    <resultMap id="UDFResultMap" type="org.apache.linkis.udf.entity.UDFInfo">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
         <result column="udf_name" property="udfName" jdbcType="VARCHAR"/>
@@ -33,7 +33,7 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <resultMap id="UDFInfoMap" type="com.webank.wedatasphere.linkis.udf.entity.UDFInfo">
+    <resultMap id="UDFInfoMap" type="org.apache.linkis.udf.entity.UDFInfo">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
         <result column="udf_name" property="udfName" jdbcType="VARCHAR"/>
@@ -50,7 +50,7 @@
         <result column="is_load" property="isLoad" jdbcType="TINYINT"/>
     </resultMap>
 
-    <resultMap id="UDFManagerMap" type="com.webank.wedatasphere.linkis.udf.entity.UDFManager">
+    <resultMap id="UDFManagerMap" type="org.apache.linkis.udf.entity.UDFManager">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="user_name" property="userName" jdbcType="VARCHAR"/>
     </resultMap>
@@ -66,7 +66,7 @@
 
 
 
-    <insert id="addUDF" useGeneratedKeys="true" keyProperty="id" parameterType="com.webank.wedatasphere.linkis.udf.entity.UDFInfo">
+    <insert id="addUDF" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.udf.entity.UDFInfo">
         INSERT INTO linkis_ps_udf (
         <include refid="udf_Column_List"/>
         ) VALUES (
@@ -77,7 +77,7 @@
         )
     </insert>
 
-    <update id="updateUDF" parameterType="com.webank.wedatasphere.linkis.udf.entity.UDFInfo">
+    <update id="updateUDF" parameterType="org.apache.linkis.udf.entity.UDFInfo">
         UPDATE linkis_ps_udf
         SET create_user=#{createUser,jdbcType=VARCHAR},
         udf_name=#{udfName,jdbcType=VARCHAR},

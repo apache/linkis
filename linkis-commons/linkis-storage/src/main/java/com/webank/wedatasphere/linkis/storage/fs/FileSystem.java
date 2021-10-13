@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.fs;
+package org.apache.linkis.storage.fs;
 
-import com.webank.wedatasphere.linkis.common.io.Fs;
-import com.webank.wedatasphere.linkis.common.io.FsPath;
-import com.webank.wedatasphere.linkis.storage.domain.FsPathListWithError;
+import org.apache.linkis.common.io.Fs;
+import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.storage.domain.FsPathListWithError;
 
 import java.io.File;
 import java.io.IOException;

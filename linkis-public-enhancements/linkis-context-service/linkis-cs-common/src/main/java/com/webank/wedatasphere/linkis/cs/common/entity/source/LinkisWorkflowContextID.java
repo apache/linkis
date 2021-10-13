@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.entity.source;
+package org.apache.linkis.cs.common.entity.source;
 
-import com.webank.wedatasphere.linkis.cs.common.protocol.ContextIDType;
+import org.apache.linkis.cs.common.protocol.ContextIDType;
 
 
 public class LinkisWorkflowContextID implements WorkflowContextID{

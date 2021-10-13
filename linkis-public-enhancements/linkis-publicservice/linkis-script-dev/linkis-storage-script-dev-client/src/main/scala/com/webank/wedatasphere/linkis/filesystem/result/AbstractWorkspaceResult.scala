@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.result
+package org.apache.linkis.filesystem.result
 
-import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
+import org.apache.linkis.httpclient.dws.response.DWSResult
 
 abstract class AbstractWorkspaceResult extends DWSResult{
 

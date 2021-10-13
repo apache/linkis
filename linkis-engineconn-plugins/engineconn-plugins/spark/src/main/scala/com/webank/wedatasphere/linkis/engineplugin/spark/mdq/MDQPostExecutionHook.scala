@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.engineplugin.spark.mdq
+package org.apache.linkis.engineplugin.spark.mdq
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.engineplugin.spark.common.SparkKind
-import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
-import com.webank.wedatasphere.linkis.engineplugin.spark.extension.SparkPostExecutionHook
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.CodeLanguageLabel
-import com.webank.wedatasphere.linkis.protocol.mdq.{DDLCompleteResponse, DDLExecuteResponse}
-import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.engineplugin.spark.common.SparkKind
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
+import org.apache.linkis.engineplugin.spark.extension.SparkPostExecutionHook
+import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
+import org.apache.linkis.protocol.mdq.{DDLCompleteResponse, DDLExecuteResponse}
+import org.apache.linkis.rpc.Sender
+import org.apache.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
+import org.apache.linkis.storage.utils.StorageUtils
 
 import javax.annotation.PostConstruct
 import org.apache.commons.lang.StringUtils

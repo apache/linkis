@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.launch
+package org.apache.linkis.engineconnplugin.flink.launch
 
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration._
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
+import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration._
+import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration
+import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
+import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
 
 
 class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {

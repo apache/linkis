@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.scheduler;
+package org.apache.linkis.cs.server.scheduler;
 
-import com.webank.wedatasphere.linkis.cs.server.protocol.HttpRequestProtocol;
+import org.apache.linkis.cs.server.protocol.HttpRequestProtocol;
 
 
 public interface HttpJob {

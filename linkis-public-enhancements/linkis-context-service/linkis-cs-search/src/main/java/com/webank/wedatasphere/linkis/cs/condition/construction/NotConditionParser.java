@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.condition.construction;
+package org.apache.linkis.cs.condition.construction;
 
-import com.webank.wedatasphere.linkis.cs.condition.Condition;
-import com.webank.wedatasphere.linkis.cs.condition.impl.NotCondition;
+import org.apache.linkis.cs.condition.Condition;
+import org.apache.linkis.cs.condition.impl.NotCondition;
 
 import java.util.Map;
 

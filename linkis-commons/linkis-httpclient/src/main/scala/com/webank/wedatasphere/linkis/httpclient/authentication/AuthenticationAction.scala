@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.authentication
+package org.apache.linkis.httpclient.authentication
 
-import com.webank.wedatasphere.linkis.httpclient.request.{Action, ServerUrlAction, UserPwdAction}
-import com.webank.wedatasphere.linkis.httpclient.response.Result
+import org.apache.linkis.httpclient.request.{Action, ServerUrlAction, UserPwdAction}
+import org.apache.linkis.httpclient.response.Result
 
 
 trait AuthenticationAction extends UserPwdAction with ServerUrlAction with Action

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.sender.eureka
+package org.apache.linkis.rpc.sender.eureka
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.rpc.conf.RPCConfiguration
-import com.webank.wedatasphere.linkis.rpc.interceptor.AbstractRPCServerLoader
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.rpc.conf.RPCConfiguration
+import org.apache.linkis.rpc.interceptor.AbstractRPCServerLoader
 import org.springframework.cloud.netflix.eureka.EurekaDiscoveryClient.EurekaServiceInstance
 
 import scala.concurrent.duration.Duration

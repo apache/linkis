@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.tx;
+package org.apache.linkis.message.tx;
 
 
 public interface TransactionManager {

@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs;
+package org.apache.linkis.cs;
 
 import com.google.common.collect.Lists;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextScope;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
-import com.webank.wedatasphere.linkis.cs.condition.Condition;
-import com.webank.wedatasphere.linkis.cs.condition.construction.ConditionBuilder;
-import com.webank.wedatasphere.linkis.cs.contextcache.ContextCacheService;
-import com.webank.wedatasphere.linkis.cs.csid.TestContextID;
-import com.webank.wedatasphere.linkis.cs.exception.ContextSearchFailedException;
-import com.webank.wedatasphere.linkis.cs.keyword.TestContextKey;
-import com.webank.wedatasphere.linkis.cs.keyword.TestContextKeyValue;
+import org.apache.linkis.cs.common.entity.enumeration.ContextScope;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.source.ContextKey;
+import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
+import org.apache.linkis.cs.condition.Condition;
+import org.apache.linkis.cs.condition.construction.ConditionBuilder;
+import org.apache.linkis.cs.contextcache.ContextCacheService;
+import org.apache.linkis.cs.csid.TestContextID;
+import org.apache.linkis.cs.exception.ContextSearchFailedException;
+import org.apache.linkis.cs.keyword.TestContextKey;
+import org.apache.linkis.cs.keyword.TestContextKeyValue;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.highavailable.ha.instancealias
+package org.apache.linkis.cs.highavailable.ha.instancealias
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
+import org.apache.linkis.common.ServiceInstance
 import javax.annotation.Nullable
 
 trait InstanceAliasManager {

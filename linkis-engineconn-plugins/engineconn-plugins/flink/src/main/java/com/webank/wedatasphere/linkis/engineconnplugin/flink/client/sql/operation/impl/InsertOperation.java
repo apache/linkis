@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.impl;
+package org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl;
 
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.context.ExecutionContext;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.AbstractJobOperation;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.result.ColumnInfo;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.SqlExecutionException;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.listener.RowsType;
+import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
+import org.apache.linkis.engineconnplugin.flink.client.sql.operation.AbstractJobOperation;
+import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ColumnInfo;
+import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
+import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
+import org.apache.linkis.engineconnplugin.flink.listener.RowsType;
 import java.sql.Statement;
 import java.util.Collections;
 import java.util.List;

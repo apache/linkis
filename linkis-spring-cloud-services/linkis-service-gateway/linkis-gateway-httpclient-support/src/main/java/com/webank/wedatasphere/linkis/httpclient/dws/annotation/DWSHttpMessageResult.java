@@ -18,7 +18,7 @@
  * created by cooperyang on 2019/07/24.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.dws.annotation;
+package org.apache.linkis.httpclient.dws.annotation;
 
 import java.lang.annotation.*;
 
@@ -27,8 +27,8 @@ import java.lang.annotation.*;
 @Documented
 public @interface DWSHttpMessageResult {
     /**
-     * Open with [[com.webank.wedatasphere.linkis.common.Message]], specify the method of Message, support regular expressions
-     * 与[[com.webank.wedatasphere.linkis.common.Message]]打通，指定Message的method，支持正则表达式
+     * Open with [[org.apache.linkis.common.Message]], specify the method of Message, support regular expressions
+     * 与[[org.apache.linkis.common.Message]]打通，指定Message的method，支持正则表达式
      */
     String value();
 }

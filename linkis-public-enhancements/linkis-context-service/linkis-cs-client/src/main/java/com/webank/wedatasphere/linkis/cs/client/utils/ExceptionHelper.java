@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.utils;
+package org.apache.linkis.cs.client.utils;
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.exception.ErrorException;
 
 public class ExceptionHelper {
     public static void throwErrorException(int errCode, String errMsg, Throwable t)throws ErrorException {

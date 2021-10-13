@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.execution.impl
+package org.apache.linkis.orchestrator.execution.impl
 
-import com.webank.wedatasphere.linkis.orchestrator.core.ResultSet
-import com.webank.wedatasphere.linkis.orchestrator.execution.ArrayResultSetTaskResponse
+import org.apache.linkis.orchestrator.core.ResultSet
+import org.apache.linkis.orchestrator.execution.ArrayResultSetTaskResponse
 
 /**
   *

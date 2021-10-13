@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage
+package org.apache.linkis.storage
 
-import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.storage.exception.StorageFatalException
-import com.webank.wedatasphere.linkis.storage.factory.BuildFactory
-import com.webank.wedatasphere.linkis.storage.utils.{StorageConfiguration, StorageUtils}
+import org.apache.linkis.common.io.{Fs, FsPath}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.storage.exception.StorageFatalException
+import org.apache.linkis.storage.factory.BuildFactory
+import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 
 
 object FSFactory extends Logging{

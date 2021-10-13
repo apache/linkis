@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.service.rpc
+package org.apache.linkis.instance.label.service.rpc
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.instance.label.dao.InsLabelRelationDao
-import com.webank.wedatasphere.linkis.instance.label.service.{InsLabelRpcService, InsLabelServiceAdapter}
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
-import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
-import com.webank.wedatasphere.linkis.protocol.label._
+import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.instance.label.dao.InsLabelRelationDao
+import org.apache.linkis.instance.label.service.{InsLabelRpcService, InsLabelServiceAdapter}
+import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.utils.LabelUtils
+import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.protocol.label._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.utils
+package org.apache.linkis.engineplugin.spark.utils
 
 import java.text.NumberFormat
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.commons.lang.time.DateFormatUtils
 import org.apache.spark.{JobExecutionStatus, SparkContext, SparkJobInfo}
 

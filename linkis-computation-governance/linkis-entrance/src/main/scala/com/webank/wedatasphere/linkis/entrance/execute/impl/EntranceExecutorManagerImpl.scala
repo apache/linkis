@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.execute.impl
+package org.apache.linkis.entrance.execute.impl
 
-import com.webank.wedatasphere.linkis.entrance.execute._
-import com.webank.wedatasphere.linkis.orchestrator.ecm.EngineConnManager
-import com.webank.wedatasphere.linkis.scheduler.listener.ExecutorListener
-import com.webank.wedatasphere.linkis.scheduler.queue.GroupFactory
+import org.apache.linkis.entrance.execute._
+import org.apache.linkis.orchestrator.ecm.EngineConnManager
+import org.apache.linkis.scheduler.listener.ExecutorListener
+import org.apache.linkis.scheduler.queue.GroupFactory
 
 
 class EntranceExecutorManagerImpl(groupFactory: GroupFactory,

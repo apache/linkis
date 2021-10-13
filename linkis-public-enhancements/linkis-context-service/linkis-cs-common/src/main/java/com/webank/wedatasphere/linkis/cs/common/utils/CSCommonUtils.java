@@ -11,11 +11,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.utils;
+package org.apache.linkis.cs.common.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.webank.wedatasphere.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.conf.CommonVars;
 
 
 public class CSCommonUtils {

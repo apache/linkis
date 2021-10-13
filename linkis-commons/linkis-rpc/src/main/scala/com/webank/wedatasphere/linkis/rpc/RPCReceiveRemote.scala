@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc
+package org.apache.linkis.rpc
 
-import com.webank.wedatasphere.linkis.server.Message
+import org.apache.linkis.server.Message
 import org.springframework.web.bind.annotation.{RequestBody, RequestMapping, RequestMethod}
 
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage
+package org.apache.linkis.storage
 
-import com.webank.wedatasphere.linkis.common.io.MetaData
-import com.webank.wedatasphere.linkis.storage.resultset.ResultMetaData
+import org.apache.linkis.common.io.MetaData
+import org.apache.linkis.storage.resultset.ResultMetaData
 
 
 class LineMetaData(private var metaData: String = null) extends ResultMetaData{

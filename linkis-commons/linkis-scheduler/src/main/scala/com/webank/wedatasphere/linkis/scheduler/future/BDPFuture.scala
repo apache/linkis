@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.future
+package org.apache.linkis.scheduler.future
 
 
 trait BDPFuture {

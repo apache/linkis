@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.persistence.impl;
+package org.apache.linkis.cs.persistence.persistence.impl;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.listener.CommonContextIDListenerDomain;
-import com.webank.wedatasphere.linkis.cs.common.entity.listener.ContextIDListenerDomain;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.persistence.dao.ContextIDListenerMapper;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextIDListener;
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.ContextIDListenerPersistence;
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.ContextIDPersistence;
+import org.apache.linkis.cs.common.entity.listener.CommonContextIDListenerDomain;
+import org.apache.linkis.cs.common.entity.listener.ContextIDListenerDomain;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.persistence.dao.ContextIDListenerMapper;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextIDListener;
+import org.apache.linkis.cs.persistence.persistence.ContextIDListenerPersistence;
+import org.apache.linkis.cs.persistence.persistence.ContextIDPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

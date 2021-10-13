@@ -16,15 +16,15 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.pointer
+package org.apache.linkis.manager.am.pointer
 
-import com.webank.wedatasphere.linkis.common.exception.WarnException
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
-import com.webank.wedatasphere.linkis.manager.common.protocol.node._
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.service.common.pointer.NodePointer
-import com.webank.wedatasphere.linkis.rpc.Sender
+import org.apache.linkis.common.exception.WarnException
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.protocol.node._
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.service.common.pointer.NodePointer
+import org.apache.linkis.rpc.Sender
 
 
 abstract class AbstractNodePointer extends NodePointer with Logging {

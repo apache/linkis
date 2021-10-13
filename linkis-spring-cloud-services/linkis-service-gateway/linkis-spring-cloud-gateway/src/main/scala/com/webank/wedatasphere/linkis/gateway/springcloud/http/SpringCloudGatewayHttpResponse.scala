@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.springcloud.http
+package org.apache.linkis.gateway.springcloud.http
 
 import java.util.function.BiFunction
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration
-import com.webank.wedatasphere.linkis.gateway.http.GatewayHttpResponse
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.gateway.http.GatewayHttpResponse
 import javax.servlet.http.Cookie
 import org.reactivestreams.Publisher
 import org.springframework.http.server.reactive.{AbstractServerHttpResponse, ServerHttpResponse}

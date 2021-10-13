@@ -1,16 +1,16 @@
-package com.webank.wedatasphere.linkis.entrance.utils
+package org.apache.linkis.entrance.utils
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.entrance.exception.JobHistoryFailedException
-import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
-import com.webank.wedatasphere.linkis.governance.common.constant.job.JobRequestConstants
-import com.webank.wedatasphere.linkis.governance.common.entity.job.{JobRequest, SubJobDetail, SubJobInfo}
-import com.webank.wedatasphere.linkis.governance.common.protocol.job._
-import com.webank.wedatasphere.linkis.protocol.query.cache.{CacheTaskResult, RequestReadCache}
-import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState
+import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.exception.JobHistoryFailedException
+import org.apache.linkis.entrance.execute.EntranceJob
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants
+import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail, SubJobInfo}
+import org.apache.linkis.governance.common.protocol.job._
+import org.apache.linkis.protocol.query.cache.{CacheTaskResult, RequestReadCache}
+import org.apache.linkis.rpc.Sender
+import org.apache.linkis.scheduler.queue.SchedulerEventState
 import java.util
 
 import javax.servlet.http.HttpServletRequest

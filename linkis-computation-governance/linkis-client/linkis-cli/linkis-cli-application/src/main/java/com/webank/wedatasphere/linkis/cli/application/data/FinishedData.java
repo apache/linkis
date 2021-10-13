@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.data;
+package org.apache.linkis.cli.application.data;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.ExecutionResult;
-import com.webank.wedatasphere.linkis.cli.common.entity.result.ResultHandler;
+import org.apache.linkis.cli.common.entity.execution.ExecutionResult;
+import org.apache.linkis.cli.common.entity.result.ResultHandler;
 
 public class FinishedData {
     ExecutionResult executionResult;

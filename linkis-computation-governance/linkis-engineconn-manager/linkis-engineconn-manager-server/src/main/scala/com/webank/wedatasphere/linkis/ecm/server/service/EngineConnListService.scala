@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.service
+package org.apache.linkis.ecm.server.service
 
 import java.util
 
-import com.webank.wedatasphere.linkis.ecm.core.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.ecm.core.launch.EngineConnLaunchRunner
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.Resource
+import org.apache.linkis.ecm.core.engineconn.EngineConn
+import org.apache.linkis.ecm.core.launch.EngineConnLaunchRunner
+import org.apache.linkis.manager.common.entity.resource.Resource
 
 
 /**

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.utils
+package org.apache.linkis.orchestrator.utils
 
 import java.util.concurrent.atomic.AtomicInteger
 

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.external.service;
+package org.apache.linkis.resourcemanager.external.service;
 
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource;
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.ResourceType;
-import com.webank.wedatasphere.linkis.resourcemanager.domain.RMLabelContainer;
-import com.webank.wedatasphere.linkis.resourcemanager.exception.RMErrorException;
-import com.webank.wedatasphere.linkis.resourcemanager.external.domain.ExternalAppInfo;
-import com.webank.wedatasphere.linkis.resourcemanager.external.domain.ExternalResourceIdentifier;
+import org.apache.linkis.manager.common.entity.resource.NodeResource;
+import org.apache.linkis.manager.common.entity.resource.ResourceType;
+import org.apache.linkis.resourcemanager.domain.RMLabelContainer;
+import org.apache.linkis.resourcemanager.exception.RMErrorException;
+import org.apache.linkis.resourcemanager.external.domain.ExternalAppInfo;
+import org.apache.linkis.resourcemanager.external.domain.ExternalResourceIdentifier;
 
 import java.util.List;
 import java.util.Map;

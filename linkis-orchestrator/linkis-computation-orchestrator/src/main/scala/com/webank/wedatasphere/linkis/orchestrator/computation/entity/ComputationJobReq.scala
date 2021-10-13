@@ -15,12 +15,12 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.entity
+package org.apache.linkis.orchestrator.computation.entity
 
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.CodeLanguageLabel
-import com.webank.wedatasphere.linkis.orchestrator.domain.AbstractJobReq.AbstractJobReqBuilder
-import com.webank.wedatasphere.linkis.orchestrator.domain.{AbstractJobReq, JobReq}
-import com.webank.wedatasphere.linkis.orchestrator.plans.unit.CodeLogicalUnit
+import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
+import org.apache.linkis.orchestrator.domain.AbstractJobReq.AbstractJobReqBuilder
+import org.apache.linkis.orchestrator.domain.{AbstractJobReq, JobReq}
+import org.apache.linkis.orchestrator.plans.unit.CodeLogicalUnit
 
 /**
   *

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.planner
+package org.apache.linkis.orchestrator.planner
 
-import com.webank.wedatasphere.linkis.orchestrator.extensions.catalyst.{AnalyzeFactory, AnalyzeTransform, PlannerTransform, Transform, TransformFactory}
-import com.webank.wedatasphere.linkis.orchestrator.plans.ast.{ASTContext, ASTOrchestration, Job}
-import com.webank.wedatasphere.linkis.orchestrator.plans.logical.{LogicalContext, Task}
+import org.apache.linkis.orchestrator.extensions.catalyst.{AnalyzeFactory, AnalyzeTransform, PlannerTransform, Transform, TransformFactory}
+import org.apache.linkis.orchestrator.plans.ast.{ASTContext, ASTOrchestration, Job}
+import org.apache.linkis.orchestrator.plans.logical.{LogicalContext, Task}
 
 import scala.collection.mutable
 

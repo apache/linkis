@@ -11,14 +11,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.service;
+package org.apache.linkis.cs.client.service;
 
-import com.webank.wedatasphere.linkis.cs.client.ContextClient;
-import com.webank.wedatasphere.linkis.cs.client.builder.ContextClientFactory;
-import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.utils.CSCommonUtils;
+import org.apache.linkis.cs.client.ContextClient;
+import org.apache.linkis.cs.client.builder.ContextClientFactory;
+import org.apache.linkis.cs.client.utils.SerializeHelper;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.utils.CSCommonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

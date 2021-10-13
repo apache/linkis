@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.authentication
+package org.apache.linkis.httpclient.authentication
 
 
 trait Authentication {

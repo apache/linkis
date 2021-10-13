@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.bml.service;
+package org.apache.linkis.bml.service;
 
 import java.util.List;
 

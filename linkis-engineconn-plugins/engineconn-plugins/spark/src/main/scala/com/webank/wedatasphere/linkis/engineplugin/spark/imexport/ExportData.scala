@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.imexport
+package org.apache.linkis.engineplugin.spark.imexport
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
-import com.webank.wedatasphere.linkis.engineplugin.spark.imexport.util.BackGroundServiceUtils
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
+import org.apache.linkis.engineplugin.spark.imexport.util.BackGroundServiceUtils
 import org.apache.spark.sql.SparkSession
 import org.json4s.jackson.JsonMethods._
 import org.json4s.{DefaultFormats, _}

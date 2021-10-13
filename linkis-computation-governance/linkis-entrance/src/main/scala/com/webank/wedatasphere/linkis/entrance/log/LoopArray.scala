@@ -15,7 +15,7 @@
  */
 
 
-package com.webank.wedatasphere.linkis.entrance.log
+package org.apache.linkis.entrance.log
 
 class LoopArray[T](maxCapacity: Int) {
 

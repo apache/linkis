@@ -11,11 +11,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label
+package org.apache.linkis.manager.label
 
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.entity.Label
 
 object LabelManagerUtils {
 

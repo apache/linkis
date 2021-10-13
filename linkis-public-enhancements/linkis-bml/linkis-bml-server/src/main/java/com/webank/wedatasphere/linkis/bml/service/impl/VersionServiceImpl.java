@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.service.impl;
+package org.apache.linkis.bml.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.webank.wedatasphere.linkis.bml.Entity.ResourceVersion;
-import com.webank.wedatasphere.linkis.bml.Entity.Version;
-import com.webank.wedatasphere.linkis.bml.common.Constant;
-import com.webank.wedatasphere.linkis.bml.common.ResourceHelper;
-import com.webank.wedatasphere.linkis.bml.common.ResourceHelperFactory;
-import com.webank.wedatasphere.linkis.bml.dao.VersionDao;
-import com.webank.wedatasphere.linkis.bml.service.ResourceService;
-import com.webank.wedatasphere.linkis.bml.service.VersionService;
-import com.webank.wedatasphere.linkis.common.io.Fs;
-import com.webank.wedatasphere.linkis.common.io.FsPath;
-import com.webank.wedatasphere.linkis.storage.FSFactory;
+import org.apache.linkis.bml.Entity.ResourceVersion;
+import org.apache.linkis.bml.Entity.Version;
+import org.apache.linkis.bml.common.Constant;
+import org.apache.linkis.bml.common.ResourceHelper;
+import org.apache.linkis.bml.common.ResourceHelperFactory;
+import org.apache.linkis.bml.dao.VersionDao;
+import org.apache.linkis.bml.service.ResourceService;
+import org.apache.linkis.bml.service.VersionService;
+import org.apache.linkis.common.io.Fs;
+import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.storage.FSFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

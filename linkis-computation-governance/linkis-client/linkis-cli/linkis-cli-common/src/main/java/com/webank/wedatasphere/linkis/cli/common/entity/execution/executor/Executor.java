@@ -11,13 +11,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.common.entity.execution.executor;
+package org.apache.linkis.cli.common.entity.execution.executor;
 
 
-import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
+import org.apache.linkis.cli.common.entity.job.Job;
 
 /**
- * @description: Executor should encapsulate methods that linkis-cli need to complete an {@link com.webank.wedatasphere.linkis.cli.common.entity.execution.Execution}
+ * @description: Executor should encapsulate methods that linkis-cli need to complete an {@link org.apache.linkis.cli.common.entity.execution.Execution}
  */
 public interface Executor {
     boolean terminate(Job job);

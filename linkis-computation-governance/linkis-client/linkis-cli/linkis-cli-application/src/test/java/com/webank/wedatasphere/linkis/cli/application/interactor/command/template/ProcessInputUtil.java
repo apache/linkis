@@ -11,32 +11,32 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.interactor.command.template;
+package org.apache.linkis.cli.application.interactor.command.template;
 
-import com.webank.wedatasphere.linkis.cli.application.constants.AppConstants;
-import com.webank.wedatasphere.linkis.cli.application.constants.LinkisClientKeys;
-import com.webank.wedatasphere.linkis.cli.application.data.ProcessedData;
-import com.webank.wedatasphere.linkis.cli.application.utils.Utils;
-import com.webank.wedatasphere.linkis.cli.common.constants.CommonConstants;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.Params;
-import com.webank.wedatasphere.linkis.cli.common.entity.properties.ClientProperties;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.fitter.SingleTplFitter;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.parser.Parser;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.parser.SingleCmdParser;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.parser.result.ParseResult;
-import com.webank.wedatasphere.linkis.cli.core.interactor.properties.PropertiesLoader;
-import com.webank.wedatasphere.linkis.cli.core.interactor.properties.PropsFilesScanner;
-import com.webank.wedatasphere.linkis.cli.core.interactor.properties.StdPropsLoader;
-import com.webank.wedatasphere.linkis.cli.core.interactor.properties.reader.PropertiesReader;
-import com.webank.wedatasphere.linkis.cli.core.interactor.properties.reader.PropsFileReader;
-import com.webank.wedatasphere.linkis.cli.core.interactor.properties.reader.SysEnvReader;
-import com.webank.wedatasphere.linkis.cli.core.interactor.properties.reader.SysPropsReader;
-import com.webank.wedatasphere.linkis.cli.core.interactor.validate.ParsedTplValidator;
-import com.webank.wedatasphere.linkis.cli.core.interactor.var.StdVarAccess;
-import com.webank.wedatasphere.linkis.cli.core.interactor.var.SysVarAccess;
-import com.webank.wedatasphere.linkis.cli.core.interactor.var.VarAccess;
-import com.webank.wedatasphere.linkis.cli.core.utils.LogUtils;
+import org.apache.linkis.cli.application.constants.AppConstants;
+import org.apache.linkis.cli.application.constants.LinkisClientKeys;
+import org.apache.linkis.cli.application.data.ProcessedData;
+import org.apache.linkis.cli.application.utils.Utils;
+import org.apache.linkis.cli.common.constants.CommonConstants;
+import org.apache.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.common.entity.command.Params;
+import org.apache.linkis.cli.common.entity.properties.ClientProperties;
+import org.apache.linkis.cli.core.interactor.command.fitter.SingleTplFitter;
+import org.apache.linkis.cli.core.interactor.command.parser.Parser;
+import org.apache.linkis.cli.core.interactor.command.parser.SingleCmdParser;
+import org.apache.linkis.cli.core.interactor.command.parser.result.ParseResult;
+import org.apache.linkis.cli.core.interactor.properties.PropertiesLoader;
+import org.apache.linkis.cli.core.interactor.properties.PropsFilesScanner;
+import org.apache.linkis.cli.core.interactor.properties.StdPropsLoader;
+import org.apache.linkis.cli.core.interactor.properties.reader.PropertiesReader;
+import org.apache.linkis.cli.core.interactor.properties.reader.PropsFileReader;
+import org.apache.linkis.cli.core.interactor.properties.reader.SysEnvReader;
+import org.apache.linkis.cli.core.interactor.properties.reader.SysPropsReader;
+import org.apache.linkis.cli.core.interactor.validate.ParsedTplValidator;
+import org.apache.linkis.cli.core.interactor.var.StdVarAccess;
+import org.apache.linkis.cli.core.interactor.var.SysVarAccess;
+import org.apache.linkis.cli.core.interactor.var.VarAccess;
+import org.apache.linkis.cli.core.utils.LogUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

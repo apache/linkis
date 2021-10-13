@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.resultset
+package org.apache.linkis.storage.resultset
 
-import com.webank.wedatasphere.linkis.common.io.resultset.{ResultSet, ResultSetWriter}
-import com.webank.wedatasphere.linkis.common.io.{FsPath, MetaData, Record}
+import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetWriter}
+import org.apache.linkis.common.io.{FsPath, MetaData, Record}
 
 import scala.collection.mutable.ArrayBuffer
 

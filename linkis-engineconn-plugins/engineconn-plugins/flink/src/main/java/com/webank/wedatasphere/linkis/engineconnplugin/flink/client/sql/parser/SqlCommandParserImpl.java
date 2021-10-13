@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.parser;
+package org.apache.linkis.engineconnplugin.flink.client.sql.parser;
 
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.OperationFactory;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.SqlParseException;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.util.ClassUtil;
+import org.apache.linkis.engineconnplugin.flink.client.sql.operation.OperationFactory;
+import org.apache.linkis.engineconnplugin.flink.exception.SqlParseException;
+import org.apache.linkis.engineconnplugin.flink.util.ClassUtil;
 import org.apache.calcite.config.Lex;
 import org.apache.calcite.sql.*;
 import org.apache.calcite.sql.parser.SqlParser;

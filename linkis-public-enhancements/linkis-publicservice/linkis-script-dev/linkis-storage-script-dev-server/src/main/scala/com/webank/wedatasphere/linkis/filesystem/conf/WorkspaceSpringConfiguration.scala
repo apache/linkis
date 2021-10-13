@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.conf
+package org.apache.linkis.filesystem.conf
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.filesystem.quartz.FSQuartz
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.filesystem.quartz.FSQuartz
 import org.quartz._
 import org.springframework.context.annotation.{Bean, Configuration}
 

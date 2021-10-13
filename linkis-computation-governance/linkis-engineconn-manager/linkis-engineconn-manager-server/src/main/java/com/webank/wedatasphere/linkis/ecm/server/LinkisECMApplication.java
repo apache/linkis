@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server;
+package org.apache.linkis.ecm.server;
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
-import com.webank.wedatasphere.linkis.LinkisBaseServerApp;
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.ecm.core.listener.ECMAsyncListenerBus;
-import com.webank.wedatasphere.linkis.ecm.core.listener.ECMSyncListenerBus;
-import com.webank.wedatasphere.linkis.ecm.server.context.ECMContext;
-import com.webank.wedatasphere.linkis.ecm.server.listener.ECMClosedEvent;
-import com.webank.wedatasphere.linkis.ecm.server.listener.ECMReadyEvent;
+import org.apache.linkis.DataWorkCloudApplication;
+import org.apache.linkis.LinkisBaseServerApp;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.ecm.core.listener.ECMAsyncListenerBus;
+import org.apache.linkis.ecm.core.listener.ECMSyncListenerBus;
+import org.apache.linkis.ecm.server.context.ECMContext;
+import org.apache.linkis.ecm.server.listener.ECMClosedEvent;
+import org.apache.linkis.ecm.server.listener.ECMReadyEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
 
-import static com.webank.wedatasphere.linkis.ecm.server.conf.ECMConfiguration.ECM_ASYNC_BUS_WAITTOEMPTY_TIME;
+import static org.apache.linkis.ecm.server.conf.ECMConfiguration.ECM_ASYNC_BUS_WAITTOEMPTY_TIME;
 
 
 public class LinkisECMApplication extends DataWorkCloudApplication {

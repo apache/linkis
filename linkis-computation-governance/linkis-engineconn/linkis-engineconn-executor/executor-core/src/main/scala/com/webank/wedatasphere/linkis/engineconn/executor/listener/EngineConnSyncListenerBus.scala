@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.executor.listener
+package org.apache.linkis.engineconn.executor.listener
 
-import com.webank.wedatasphere.linkis.common.listener.ListenerBus
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
+import org.apache.linkis.common.listener.ListenerBus
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
 
 class EngineConnSyncListenerBus extends ListenerBus[EngineConnSyncListener, EngineConnSyncEvent] with Logging {
 

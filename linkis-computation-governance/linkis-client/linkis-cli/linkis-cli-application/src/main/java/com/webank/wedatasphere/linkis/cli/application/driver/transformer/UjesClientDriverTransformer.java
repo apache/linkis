@@ -11,28 +11,28 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.driver.transformer;
+package org.apache.linkis.cli.application.driver.transformer;
 
-import com.webank.wedatasphere.linkis.cli.application.constants.AppConstants;
-import com.webank.wedatasphere.linkis.cli.application.constants.LinkisKeys;
-import com.webank.wedatasphere.linkis.cli.application.constants.UjesClientDriverConstants;
-import com.webank.wedatasphere.linkis.cli.application.driver.UjesClientDriver;
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec.LinkisJobInfo;
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec.LinkisJobKill;
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec.LinkisJobSubmitExec;
-import com.webank.wedatasphere.linkis.cli.application.presenter.model.LinkisJobIncLogModel;
-import com.webank.wedatasphere.linkis.cli.application.presenter.model.LinkisJobResultModel;
-import com.webank.wedatasphere.linkis.cli.application.utils.Utils;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdType;
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobExec;
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobStatus;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.TransformerException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobSubmitExec;
-import com.webank.wedatasphere.linkis.cli.core.presenter.model.JobExecModel;
-import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult;
-import com.webank.wedatasphere.linkis.ujes.client.response.*;
+import org.apache.linkis.cli.application.constants.AppConstants;
+import org.apache.linkis.cli.application.constants.LinkisKeys;
+import org.apache.linkis.cli.application.constants.UjesClientDriverConstants;
+import org.apache.linkis.cli.application.driver.UjesClientDriver;
+import org.apache.linkis.cli.application.interactor.execution.jobexec.LinkisJobInfo;
+import org.apache.linkis.cli.application.interactor.execution.jobexec.LinkisJobKill;
+import org.apache.linkis.cli.application.interactor.execution.jobexec.LinkisJobSubmitExec;
+import org.apache.linkis.cli.application.presenter.model.LinkisJobIncLogModel;
+import org.apache.linkis.cli.application.presenter.model.LinkisJobResultModel;
+import org.apache.linkis.cli.application.utils.Utils;
+import org.apache.linkis.cli.common.entity.command.CmdType;
+import org.apache.linkis.cli.common.entity.execution.jobexec.JobExec;
+import org.apache.linkis.cli.common.entity.execution.jobexec.JobStatus;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.TransformerException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.execution.jobexec.JobSubmitExec;
+import org.apache.linkis.cli.core.presenter.model.JobExecModel;
+import org.apache.linkis.httpclient.dws.response.DWSResult;
+import org.apache.linkis.ujes.client.response.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

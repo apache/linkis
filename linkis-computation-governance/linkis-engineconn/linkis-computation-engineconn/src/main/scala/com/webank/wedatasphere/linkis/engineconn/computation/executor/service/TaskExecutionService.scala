@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.computation.executor.service
+package org.apache.linkis.engineconn.computation.executor.service
 
-import com.webank.wedatasphere.linkis.governance.common.protocol.task._
-import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteResponse
+import org.apache.linkis.governance.common.protocol.task._
+import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.scheduler.executer.ExecuteResponse
 
 
 trait TaskExecutionService {

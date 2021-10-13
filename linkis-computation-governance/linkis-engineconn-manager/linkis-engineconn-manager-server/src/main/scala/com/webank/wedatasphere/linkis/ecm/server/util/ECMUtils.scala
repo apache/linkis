@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.util
+package org.apache.linkis.ecm.server.util
 
 import java.io.{File, InputStream}
 import java.util
 
-import com.webank.wedatasphere.linkis.bml.client.{BmlClient, BmlClientFactory}
-import com.webank.wedatasphere.linkis.bml.protocol.BmlDownloadResponse
-import com.webank.wedatasphere.linkis.ecm.server.exception.ECMErrorException
-import com.webank.wedatasphere.linkis.manager.common.protocol.bml.BmlResource
-import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.storage.fs.FileSystem
+import org.apache.linkis.bml.client.{BmlClient, BmlClientFactory}
+import org.apache.linkis.bml.protocol.BmlDownloadResponse
+import org.apache.linkis.ecm.server.exception.ECMErrorException
+import org.apache.linkis.manager.common.protocol.bml.BmlResource
+import org.apache.linkis.rpc.Sender
+import org.apache.linkis.storage.fs.FileSystem
 import org.apache.commons.io.{FileUtils, IOUtils}
 
 import scala.collection.JavaConversions._

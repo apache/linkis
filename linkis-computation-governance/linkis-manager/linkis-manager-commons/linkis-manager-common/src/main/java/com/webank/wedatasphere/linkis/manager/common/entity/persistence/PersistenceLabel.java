@@ -16,10 +16,10 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.entity.persistence;
+package org.apache.linkis.manager.common.entity.persistence;
 
-import com.webank.wedatasphere.linkis.manager.label.entity.GenericLabel;
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils;
+import org.apache.linkis.manager.label.entity.GenericLabel;
+import org.apache.linkis.manager.label.utils.LabelUtils;
 
 import java.util.Date;
 

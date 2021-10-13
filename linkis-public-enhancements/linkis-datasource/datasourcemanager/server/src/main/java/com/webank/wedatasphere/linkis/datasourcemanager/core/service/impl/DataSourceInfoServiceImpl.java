@@ -11,24 +11,24 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.service.impl;
+package org.apache.linkis.datasourcemanager.core.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.dao.DataSourceParamKeyDao;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.dao.DataSourceTypeEnvDao;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.FormStreamContent;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.util.json.Json;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.dao.DataSourceDao;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.dao.DataSourceEnvDao;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceEnv;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.service.BmlAppService;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.service.DataSourceInfoService;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceVo;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceParamKeyDao;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceTypeEnvDao;
+import org.apache.linkis.datasourcemanager.core.formdata.FormStreamContent;
+import org.apache.linkis.datasourcemanager.common.util.json.Json;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceDao;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceEnvDao;
+import org.apache.linkis.datasourcemanager.common.domain.DataSource;
+import org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv;
+import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
+import org.apache.linkis.datasourcemanager.core.service.BmlAppService;
+import org.apache.linkis.datasourcemanager.core.service.DataSourceInfoService;
+import org.apache.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
+import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

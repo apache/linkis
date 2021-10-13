@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.manager.engineplugin.jdbc;
+package org.apache.linkis.manager.engineplugin.jdbc;
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration;
+import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.commons.lang.StringUtils;

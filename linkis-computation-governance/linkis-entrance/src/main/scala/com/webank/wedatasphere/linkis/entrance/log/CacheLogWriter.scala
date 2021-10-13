@@ -15,7 +15,7 @@
  */
 
 
-package com.webank.wedatasphere.linkis.entrance.log
+package org.apache.linkis.entrance.log
 
 import org.apache.commons.lang.StringUtils
 

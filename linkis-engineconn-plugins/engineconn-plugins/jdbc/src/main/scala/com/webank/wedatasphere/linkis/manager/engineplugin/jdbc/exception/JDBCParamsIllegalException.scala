@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.manager.engineplugin.jdbc.exception
+package org.apache.linkis.manager.engineplugin.jdbc.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 case class JDBCParamsIllegalException(errorMsg: String) extends ErrorException(70012, errorMsg)
 

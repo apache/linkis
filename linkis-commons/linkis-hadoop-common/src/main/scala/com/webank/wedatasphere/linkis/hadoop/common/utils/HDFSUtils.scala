@@ -11,17 +11,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.hadoop.common.utils
+package org.apache.linkis.hadoop.common.utils
 
 import java.io.File
 import java.nio.file.Paths
 import java.security.PrivilegedExceptionAction
 import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf
-import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf.{hadoopConfDir, _}
-import com.webank.wedatasphere.linkis.hadoop.common.entity.HDFSFileSystemContainer
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.hadoop.common.conf.HadoopConf
+import org.apache.linkis.hadoop.common.conf.HadoopConf.{hadoopConfDir, _}
+import org.apache.linkis.hadoop.common.entity.HDFSFileSystemContainer
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.hadoop.conf.Configuration

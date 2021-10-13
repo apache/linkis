@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.acessible.executor.service
+package org.apache.linkis.engineconn.acessible.executor.service
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event.{ExecutorLockEvent, ExecutorUnLockEvent}
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.lock.EngineConnTimedLock
-import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
-import com.webank.wedatasphere.linkis.engineconn.executor.listener.ExecutorListenerBusContext
-import com.webank.wedatasphere.linkis.governance.common.exception.engineconn.{EngineConnExecutorErrorCode, EngineConnExecutorErrorException}
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineLockType
-import com.webank.wedatasphere.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock, ResponseEngineLock, ResponseEngineUnlock}
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
+import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
+import org.apache.linkis.engineconn.acessible.executor.listener.event.{ExecutorLockEvent, ExecutorUnLockEvent}
+import org.apache.linkis.engineconn.acessible.executor.lock.EngineConnTimedLock
+import org.apache.linkis.engineconn.core.executor.ExecutorManager
+import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
+import org.apache.linkis.governance.common.exception.engineconn.{EngineConnExecutorErrorCode, EngineConnExecutorErrorException}
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.protocol.engine.EngineLockType
+import org.apache.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock, ResponseEngineLock, ResponseEngineUnlock}
+import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.server.BDPJettyServerHelper
 import org.apache.commons.lang.StringUtils
 
 

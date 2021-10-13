@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.exception.error;
+package org.apache.linkis.cli.core.exception.error;
 
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorMsg;
+import org.apache.linkis.cli.common.exception.error.ErrorMsg;
 
 /**
  * @description: Default Exception code for parsing, reading config etc.

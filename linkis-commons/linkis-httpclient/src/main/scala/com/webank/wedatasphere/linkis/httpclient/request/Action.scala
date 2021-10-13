@@ -16,7 +16,7 @@
 
 
 
-package com.webank.wedatasphere.linkis.httpclient.request
+package org.apache.linkis.httpclient.request
 
 
 trait Action {

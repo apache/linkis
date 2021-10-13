@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.interceptor.common
+package org.apache.linkis.rpc.interceptor.common
 
 import java.net.ConnectException
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
-import com.webank.wedatasphere.linkis.common.utils.RetryHandler
-import com.webank.wedatasphere.linkis.protocol.RetryableProtocol
-import com.webank.wedatasphere.linkis.rpc.exception.DWCRPCRetryException
-import com.webank.wedatasphere.linkis.rpc.interceptor.{RPCInterceptor, RPCInterceptorChain, RPCInterceptorExchange, ServiceInstanceRPCInterceptorChain}
-import com.webank.wedatasphere.linkis.rpc.utils.RPCUtils
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.exception.LinkisRetryException
+import org.apache.linkis.common.utils.RetryHandler
+import org.apache.linkis.protocol.RetryableProtocol
+import org.apache.linkis.rpc.exception.DWCRPCRetryException
+import org.apache.linkis.rpc.interceptor.{RPCInterceptor, RPCInterceptorChain, RPCInterceptorExchange, ServiceInstanceRPCInterceptorChain}
+import org.apache.linkis.rpc.utils.RPCUtils
 import feign.RetryableException
 import org.apache.commons.lang.StringUtils
 import org.springframework.stereotype.Component

@@ -11,20 +11,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.interceptor.impl
+package org.apache.linkis.entrance.interceptor.impl
 
 import java.text.SimpleDateFormat
 import java.util
 import java.util.{Calendar, Date}
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.entrance.interceptor.exception.VarSubstitutionException
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
-import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
-import com.webank.wedatasphere.linkis.protocol.variable.{RequestQueryAppVariable, ResponseQueryVariable}
-import com.webank.wedatasphere.linkis.rpc.Sender
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.entrance.interceptor.exception.VarSubstitutionException
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.protocol.utils.TaskUtils
+import org.apache.linkis.protocol.variable.{RequestQueryAppVariable, ResponseQueryVariable}
+import org.apache.linkis.rpc.Sender
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.time.DateUtils
 

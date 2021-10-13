@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.service
+package org.apache.linkis.manager.label.service
 
-import com.webank.wedatasphere.linkis.manager.common.protocol.label.LabelReportRequest
-import com.webank.wedatasphere.linkis.protocol.label.NodeLabelAddRequest
+import org.apache.linkis.manager.common.protocol.label.LabelReportRequest
+import org.apache.linkis.protocol.label.NodeLabelAddRequest
 
 
 trait NodeLabelAddService {

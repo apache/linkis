@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.highavailable;
+package org.apache.linkis.cs.highavailable;
 
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.exception.CSErrorException;
 
 /**
  * 动态代理实现持久层HAIDKey和contextID的动态转换

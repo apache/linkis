@@ -19,14 +19,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 
-<mapper namespace="com.webank.wedatasphere.linkis.cs.persistence.dao.ContextIDMapper">
+<mapper namespace="org.apache.linkis.cs.persistence.dao.ContextIDMapper">
 
     <sql id="context_id">
         `id`,`user`,`application`,`source`,`expire_type`,`expire_time`,`instance`,`backup_instance`
     </sql>
 
     <insert id="createContextID" useGeneratedKeys="true" keyProperty="contextId"
-            parameterType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextID">
+            parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextID">
         INSERT INTO linkis_ps_cs_context_id(<include refid="context_id"/>)
         VALUES (#{contextId},#{user},#{application},#{source},#{expireType},#{expireTime},#{instance},#{backupInstance})
     </insert>
@@ -36,7 +36,7 @@
     </delete>
 
     <resultMap id="PersistenceContextID"
-               type="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextID">
+               type="org.apache.linkis.cs.persistence.entity.PersistenceContextID">
         <id column="id" property="contextId"/>
     </resultMap>
 
@@ -45,7 +45,7 @@
     </select>
 
     <update id="updateContextID"
-            parameterType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextID">
+            parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextID">
         UPDATE linkis_ps_cs_context_id
         <trim prefix="set" suffixOverrides=",">
             <if test="user != null">`user` = #{user},</if>

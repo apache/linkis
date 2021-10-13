@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.entity.metrics;
+package org.apache.linkis.manager.common.entity.metrics;
 
 
 public class NodeOverLoadInfo {

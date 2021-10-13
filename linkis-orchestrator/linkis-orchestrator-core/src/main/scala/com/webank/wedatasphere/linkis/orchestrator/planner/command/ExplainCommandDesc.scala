@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.planner.command
+package org.apache.linkis.orchestrator.planner.command
 
-import com.webank.wedatasphere.linkis.orchestrator.Orchestration
-import com.webank.wedatasphere.linkis.orchestrator.plans.logical.CommandDesc
+import org.apache.linkis.orchestrator.Orchestration
+import org.apache.linkis.orchestrator.plans.logical.CommandDesc
 
 /**
   *

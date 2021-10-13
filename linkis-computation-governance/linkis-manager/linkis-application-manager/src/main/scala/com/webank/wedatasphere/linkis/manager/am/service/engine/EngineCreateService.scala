@@ -15,13 +15,13 @@
  * limitations under the License.
  *
  */
-package com.webank.wedatasphere.linkis.manager.am.service.engine
+package org.apache.linkis.manager.am.service.engine
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
-import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineCreateRequest
-import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.exception.LinkisRetryException
+import org.apache.linkis.manager.common.entity.node.EngineNode
+import org.apache.linkis.manager.common.protocol.engine.EngineCreateRequest
+import org.apache.linkis.message.builder.ServiceMethodContext
 
 trait EngineCreateService {
 

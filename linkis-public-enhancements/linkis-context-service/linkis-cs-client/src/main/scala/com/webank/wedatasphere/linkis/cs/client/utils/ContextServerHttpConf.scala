@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.utils
+package org.apache.linkis.cs.client.utils
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration
+import org.apache.linkis.common.conf.Configuration
 
 object ContextServerHttpConf {
   val gatewayInstance: String = Configuration.getGateWayURL()

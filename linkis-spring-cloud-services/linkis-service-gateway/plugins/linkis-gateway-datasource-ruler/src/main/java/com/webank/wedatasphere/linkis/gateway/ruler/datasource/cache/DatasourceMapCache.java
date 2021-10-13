@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.gateway.ruler.datasource.cache;
+package org.apache.linkis.gateway.ruler.datasource.cache;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.common.utils.Utils;
-import com.webank.wedatasphere.linkis.gateway.ruler.datasource.dao.DatasourceMapMapper;
-import com.webank.wedatasphere.linkis.gateway.ruler.datasource.entity.DatasourceMap;
-import com.webank.wedatasphere.linkis.rpc.interceptor.ServiceInstanceUtils;
-import com.webank.wedatasphere.linkis.rpc.sender.eureka.EurekaClientRefreshUtils;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.utils.Utils;
+import org.apache.linkis.gateway.ruler.datasource.dao.DatasourceMapMapper;
+import org.apache.linkis.gateway.ruler.datasource.entity.DatasourceMap;
+import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils;
+import org.apache.linkis.rpc.sender.eureka.EurekaClientRefreshUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

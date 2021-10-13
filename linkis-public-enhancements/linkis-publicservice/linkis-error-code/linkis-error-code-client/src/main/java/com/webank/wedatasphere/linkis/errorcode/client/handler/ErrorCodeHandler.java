@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.errorcode.client.handler;
+package org.apache.linkis.errorcode.client.handler;
 
 import java.io.Closeable;
 

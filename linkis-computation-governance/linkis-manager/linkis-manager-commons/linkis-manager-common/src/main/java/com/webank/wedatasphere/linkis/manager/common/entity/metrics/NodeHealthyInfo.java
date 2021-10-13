@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.entity.metrics;
+package org.apache.linkis.manager.common.entity.metrics;
 
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeHealthy;
+import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy;
 
 
 public class NodeHealthyInfo {

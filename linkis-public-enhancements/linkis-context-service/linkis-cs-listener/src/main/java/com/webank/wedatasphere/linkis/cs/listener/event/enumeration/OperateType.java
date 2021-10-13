@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.listener.event.enumeration;
+package org.apache.linkis.cs.listener.event.enumeration;
 
 
 public enum OperateType {

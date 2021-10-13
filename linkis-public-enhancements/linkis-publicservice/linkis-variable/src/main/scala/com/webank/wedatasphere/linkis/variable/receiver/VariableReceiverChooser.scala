@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.variable.receiver
+package org.apache.linkis.variable.receiver
 
-import com.webank.wedatasphere.linkis.protocol.variable.VariableProtocol
-import com.webank.wedatasphere.linkis.rpc.{RPCMessageEvent, Receiver, ReceiverChooser}
-import com.webank.wedatasphere.linkis.variable.service.VariableService
+import org.apache.linkis.protocol.variable.VariableProtocol
+import org.apache.linkis.rpc.{RPCMessageEvent, Receiver, ReceiverChooser}
+import org.apache.linkis.variable.service.VariableService
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component

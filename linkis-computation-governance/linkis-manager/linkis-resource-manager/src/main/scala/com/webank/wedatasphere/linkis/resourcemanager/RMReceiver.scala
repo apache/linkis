@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager
+package org.apache.linkis.resourcemanager
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.common.entity.node.EMNode
-import com.webank.wedatasphere.linkis.resourcemanager.service.ResourceManager
-import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.common.entity.node.EMNode
+import org.apache.linkis.resourcemanager.service.ResourceManager
+import org.apache.linkis.rpc.{Receiver, Sender}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

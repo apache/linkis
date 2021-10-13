@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.governance.common.exception
+package org.apache.linkis.governance.common.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 
 class GovernanceErrorException(errorCode: Int, errorMsg: String)

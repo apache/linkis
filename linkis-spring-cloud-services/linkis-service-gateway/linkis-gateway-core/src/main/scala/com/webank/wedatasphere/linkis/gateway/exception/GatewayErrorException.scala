@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.exception
+package org.apache.linkis.gateway.exception
 
-import com.webank.wedatasphere.linkis.common.exception.{ErrorException, WarnException}
+import org.apache.linkis.common.exception.{ErrorException, WarnException}
 
 class GatewayErrorException(errorCode: Int, message: String) extends ErrorException(errorCode, message)
 

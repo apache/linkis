@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.utils
+package org.apache.linkis.storage.utils
 
-import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars}
+import org.apache.linkis.common.conf.{ByteType, CommonVars}
 
 
 object StorageConfiguration {
@@ -34,10 +34,10 @@ object StorageConfiguration {
 
   val ResultTypes = List( "%TEXT","%TABLE", "%HTML", "%IMG", "%ANGULAR", "%SVG")
 
-  val STORAGE_RESULT_SET_PACKAGE = CommonVars("wds.linkis.storage.result.set.package", "com.webank.wedatasphere.linkis.storage.resultset")
+  val STORAGE_RESULT_SET_PACKAGE = CommonVars("wds.linkis.storage.result.set.package", "org.apache.linkis.storage.resultset")
   val STORAGE_RESULT_SET_CLASSES = CommonVars("wds.linkis.storage.result.set.classes", "txt.TextResultSet,table.TableResultSet,io.IOResultSet,html.HtmlResultSet,picture.PictureResultSet")
 
-  val STORAGE_BUILD_FS_CLASSES = CommonVars("wds.linkis.storage.build.fs.classes", "com.webank.wedatasphere.linkis.storage.factory.impl.BuildHDFSFileSystem,com.webank.wedatasphere.linkis.storage.factory.impl.BuildLocalFileSystem")
+  val STORAGE_BUILD_FS_CLASSES = CommonVars("wds.linkis.storage.build.fs.classes", "org.apache.linkis.storage.factory.impl.BuildHDFSFileSystem,org.apache.linkis.storage.factory.impl.BuildLocalFileSystem")
 
   val IS_SHARE_NODE = CommonVars("wds.linkis.storage.is.share.node", true)
 

@@ -38,7 +38,7 @@
         <logger name="InformationLogger" level="INFO" additivity="false">
             <appender-ref ref="Console-Information"/>
         </logger>
-        <logger name="com.webank.wedatasphere" level="INFO" additivity="false">
+        <logger name="org.apache.linkis" level="INFO" additivity="false">
             <appender-ref ref="fixedTimeFileAppender"/>
         </logger>
     </loggers>

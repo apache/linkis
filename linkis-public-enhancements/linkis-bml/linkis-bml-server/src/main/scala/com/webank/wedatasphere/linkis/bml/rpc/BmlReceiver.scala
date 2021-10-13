@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.rpc
+package org.apache.linkis.bml.rpc
 
-import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
+import org.apache.linkis.rpc.{Receiver, Sender}
 
 import scala.concurrent.duration.Duration
 

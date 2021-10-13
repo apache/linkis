@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.builder;
+package org.apache.linkis.message.builder;
 
 
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
-import com.webank.wedatasphere.linkis.rpc.Sender;
+import org.apache.linkis.protocol.message.RequestProtocol;
+import org.apache.linkis.rpc.Sender;
 import scala.concurrent.duration.Duration;
 
 import javax.servlet.http.HttpServletRequest;

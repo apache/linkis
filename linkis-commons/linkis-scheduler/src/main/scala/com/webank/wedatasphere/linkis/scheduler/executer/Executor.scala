@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.executer
+package org.apache.linkis.scheduler.executer
 
 import java.io.Closeable
 
-import com.webank.wedatasphere.linkis.protocol.engine.EngineState
+import org.apache.linkis.protocol.engine.EngineState
 
 
 trait Executor extends Closeable {

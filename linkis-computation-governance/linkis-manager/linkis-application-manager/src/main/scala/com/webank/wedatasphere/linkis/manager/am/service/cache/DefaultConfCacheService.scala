@@ -15,13 +15,13 @@
  * limitations under the License.
  *
  */
-package com.webank.wedatasphere.linkis.manager.am.service.cache
+package org.apache.linkis.manager.am.service.cache
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, RequestQueryGlobalConfig}
-import com.webank.wedatasphere.linkis.manager.common.protocol.conf.RemoveCacheConfRequest
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
-import com.webank.wedatasphere.linkis.rpc.interceptor.common.CacheableRPCInterceptor
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, RequestQueryGlobalConfig}
+import org.apache.linkis.manager.common.protocol.conf.RemoveCacheConfRequest
+import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.rpc.interceptor.common.CacheableRPCInterceptor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

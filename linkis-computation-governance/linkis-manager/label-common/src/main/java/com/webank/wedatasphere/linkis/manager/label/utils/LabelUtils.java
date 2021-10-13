@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.utils;
+package org.apache.linkis.manager.label.utils;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
-import com.webank.wedatasphere.linkis.common.utils.ClassUtils;
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelConstant;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.manager.label.entity.UserModifiable;
-import com.webank.wedatasphere.linkis.manager.label.entity.annon.ValueSerialNum;
-import com.webank.wedatasphere.linkis.manager.label.exception.LabelRuntimeException;
-import com.webank.wedatasphere.linkis.protocol.util.ImmutablePair;
+import org.apache.linkis.common.utils.ClassUtils;
+import org.apache.linkis.manager.label.constant.LabelConstant;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.UserModifiable;
+import org.apache.linkis.manager.label.entity.annon.ValueSerialNum;
+import org.apache.linkis.manager.label.exception.LabelRuntimeException;
+import org.apache.linkis.protocol.util.ImmutablePair;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

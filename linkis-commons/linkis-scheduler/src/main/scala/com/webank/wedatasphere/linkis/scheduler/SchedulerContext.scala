@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler
+package org.apache.linkis.scheduler
 
-import com.webank.wedatasphere.linkis.common.listener.ListenerEventBus
-import com.webank.wedatasphere.linkis.scheduler.event.{ScheduleEvent, SchedulerEventListener}
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorManager
-import com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue.FIFOSchedulerContextImpl
-import com.webank.wedatasphere.linkis.scheduler.queue.{ConsumerManager, GroupFactory}
+import org.apache.linkis.common.listener.ListenerEventBus
+import org.apache.linkis.scheduler.event.{ScheduleEvent, SchedulerEventListener}
+import org.apache.linkis.scheduler.executer.ExecutorManager
+import org.apache.linkis.scheduler.queue.fifoqueue.FIFOSchedulerContextImpl
+import org.apache.linkis.scheduler.queue.{ConsumerManager, GroupFactory}
 
 
 trait SchedulerContext {

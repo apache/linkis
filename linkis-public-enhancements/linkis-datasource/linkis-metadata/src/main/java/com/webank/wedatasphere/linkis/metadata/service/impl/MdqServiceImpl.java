@@ -11,32 +11,32 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.service.impl;
+package org.apache.linkis.metadata.service.impl;
 
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
-import com.webank.wedatasphere.linkis.common.utils.ByteTimeUtils;
-import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils;
-import com.webank.wedatasphere.linkis.metadata.dao.MdqDao;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.DomainCoversionUtils;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.Tunple;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableBO;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableBaseInfoBO;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableFieldsInfoBO;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableImportInfoBO;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.po.MdqField;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.po.MdqImport;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.po.MdqLineage;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.po.MdqTable;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.MdqTableBaseInfoVO;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.MdqTableFieldsInfoVO;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
-import com.webank.wedatasphere.linkis.metadata.hive.config.DSEnum;
-import com.webank.wedatasphere.linkis.metadata.hive.config.DataSource;
-import com.webank.wedatasphere.linkis.metadata.hive.dao.HiveMetaDao;
-import com.webank.wedatasphere.linkis.metadata.service.MdqService;
-import com.webank.wedatasphere.linkis.metadata.type.MdqImportType;
+import org.apache.linkis.common.utils.ByteTimeUtils;
+import org.apache.linkis.hadoop.common.utils.HDFSUtils;
+import org.apache.linkis.metadata.dao.MdqDao;
+import org.apache.linkis.metadata.domain.mdq.DomainCoversionUtils;
+import org.apache.linkis.metadata.domain.mdq.Tunple;
+import org.apache.linkis.metadata.domain.mdq.bo.MdqTableBO;
+import org.apache.linkis.metadata.domain.mdq.bo.MdqTableBaseInfoBO;
+import org.apache.linkis.metadata.domain.mdq.bo.MdqTableFieldsInfoBO;
+import org.apache.linkis.metadata.domain.mdq.bo.MdqTableImportInfoBO;
+import org.apache.linkis.metadata.domain.mdq.po.MdqField;
+import org.apache.linkis.metadata.domain.mdq.po.MdqImport;
+import org.apache.linkis.metadata.domain.mdq.po.MdqLineage;
+import org.apache.linkis.metadata.domain.mdq.po.MdqTable;
+import org.apache.linkis.metadata.domain.mdq.vo.MdqTableBaseInfoVO;
+import org.apache.linkis.metadata.domain.mdq.vo.MdqTableFieldsInfoVO;
+import org.apache.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO;
+import org.apache.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
+import org.apache.linkis.metadata.hive.config.DSEnum;
+import org.apache.linkis.metadata.hive.config.DataSource;
+import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
+import org.apache.linkis.metadata.service.MdqService;
+import org.apache.linkis.metadata.type.MdqImportType;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;

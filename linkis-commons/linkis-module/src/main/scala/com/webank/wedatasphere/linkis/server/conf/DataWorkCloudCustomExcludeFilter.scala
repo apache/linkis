@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.server.conf
+package org.apache.linkis.server.conf
 
 import org.apache.commons.lang.StringUtils
 import org.springframework.core.`type`.classreading.{MetadataReader, MetadataReaderFactory}

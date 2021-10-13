@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.service.impl
+package org.apache.linkis.ecm.server.service.impl
 
 import java.util
 import java.util.Collections
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.ecm.core.listener.{ECMEvent, ECMEventListener}
-import com.webank.wedatasphere.linkis.ecm.server.conf.ECMConfiguration._
-import com.webank.wedatasphere.linkis.ecm.server.listener.{ECMClosedEvent, ECMReadyEvent}
-import com.webank.wedatasphere.linkis.ecm.server.service.ECMRegisterService
-import com.webank.wedatasphere.linkis.manager.common.entity.resource._
-import com.webank.wedatasphere.linkis.manager.common.protocol.em.{RegisterEMRequest, RegisterEMResponse, StopEMRequest}
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant
-import com.webank.wedatasphere.linkis.rpc.Sender
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.ecm.core.listener.{ECMEvent, ECMEventListener}
+import org.apache.linkis.ecm.server.conf.ECMConfiguration._
+import org.apache.linkis.ecm.server.listener.{ECMClosedEvent, ECMReadyEvent}
+import org.apache.linkis.ecm.server.service.ECMRegisterService
+import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.protocol.em.{RegisterEMRequest, RegisterEMResponse, StopEMRequest}
+import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.rpc.Sender
 
 
 class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener with Logging {

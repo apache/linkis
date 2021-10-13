@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.governance.common.paser
+package org.apache.linkis.governance.common.paser
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
-import com.webank.wedatasphere.linkis.governance.common.paser.CodeType.CodeType
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
+import org.apache.linkis.governance.common.paser.CodeType.CodeType
 import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -235,7 +235,7 @@ class SQLCodeParser extends SingleCodeParser {
     else return true
     code.matches("limit\\s+\\d+\\s*;?")
     /**
-     * com.webank.wedatasphere.linkis.entrance.interceptor.impl.Explain has convert and check the limit for code,
+     * org.apache.linkis.entrance.interceptor.impl.Explain has convert and check the limit for code,
      * so the check here is redundancy
      */
     /*    val hasLimit = code.matches("limit\\s+\\d+\\s*;?")

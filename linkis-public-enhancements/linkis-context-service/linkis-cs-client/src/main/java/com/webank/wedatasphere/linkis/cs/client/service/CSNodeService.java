@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.service;
+package org.apache.linkis.cs.client.service;
 
 
 public interface CSNodeService {

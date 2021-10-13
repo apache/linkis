@@ -18,9 +18,9 @@
  * Created by ${USER} on ${DATE}.
  */
 
-package com.webank.wedatasphere.linkis.httpclient
+package org.apache.linkis.httpclient
 
-import com.webank.wedatasphere.linkis.httpclient.response.Result
+import org.apache.linkis.httpclient.response.Result
 
 
 trait ResultListener {

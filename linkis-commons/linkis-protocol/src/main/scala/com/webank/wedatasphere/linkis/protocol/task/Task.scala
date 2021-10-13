@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.task
+package org.apache.linkis.protocol.task
 
 
 trait Task {

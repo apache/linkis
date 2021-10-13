@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.transform
+package org.apache.linkis.rpc.transform
 
 import org.json4s.Serializer
 

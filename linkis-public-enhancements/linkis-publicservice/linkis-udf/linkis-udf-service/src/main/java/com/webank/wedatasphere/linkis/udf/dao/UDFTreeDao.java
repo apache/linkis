@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.udf.dao;
+package org.apache.linkis.udf.dao;
 
-import com.webank.wedatasphere.linkis.udf.entity.UDFTree;
+import org.apache.linkis.udf.entity.UDFTree;
 
 import java.util.List;
 import java.util.Map;

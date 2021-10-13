@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.command.parser;
+package org.apache.linkis.cli.core.interactor.command.parser;
 
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.parser.result.ParseResult;
+import org.apache.linkis.cli.core.interactor.command.parser.result.ParseResult;
 
 /**
  * @description: Parse user input arguments

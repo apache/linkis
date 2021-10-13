@@ -15,16 +15,16 @@
  * Created by ${USER} on ${DATE}.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.discovery
+package org.apache.linkis.httpclient.discovery
 
 import java.io.Closeable
 import java.net.ConnectException
 import java.util
 import java.util.concurrent.ScheduledFuture
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.httpclient.Client
-import com.webank.wedatasphere.linkis.httpclient.exception.DiscoveryException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.httpclient.Client
+import org.apache.linkis.httpclient.exception.DiscoveryException
 import org.apache.http.HttpResponse
 
 import scala.collection.JavaConversions._

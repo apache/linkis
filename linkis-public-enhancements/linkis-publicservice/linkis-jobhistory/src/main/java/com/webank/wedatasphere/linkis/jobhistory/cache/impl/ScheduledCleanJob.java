@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.cache.impl;
+package org.apache.linkis.jobhistory.cache.impl;
 
-import com.webank.wedatasphere.linkis.jobhistory.cache.QueryCacheManager;
+import org.apache.linkis.jobhistory.cache.QueryCacheManager;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;

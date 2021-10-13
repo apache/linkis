@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.cs.server.scheduler.impl
+package org.apache.linkis.cs.server.scheduler.impl
 
 import java.io.IOException
 
-import com.webank.wedatasphere.linkis.scheduler.executer._
+import org.apache.linkis.scheduler.executer._
 
 
 

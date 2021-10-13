@@ -15,28 +15,28 @@
  * limitations under the License.
  *
  */
-package com.webank.wedatasphere.linkis.manager.am.service.engine
+package org.apache.linkis.manager.am.service.engine
 
 import java.util
 import java.util.concurrent.{TimeUnit, TimeoutException}
 
-import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
-import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration
-import com.webank.wedatasphere.linkis.manager.am.label.EngineReuseLabelChooser
-import com.webank.wedatasphere.linkis.manager.am.selector.NodeSelector
-import com.webank.wedatasphere.linkis.manager.am.utils.AMUtils
-import com.webank.wedatasphere.linkis.manager.common.constant.AMConstant
-import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineReuseRequest
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import com.webank.wedatasphere.linkis.manager.label.entity.{EngineNodeLabel, Label}
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.ReuseExclusionLabel
-import com.webank.wedatasphere.linkis.manager.label.entity.node.AliasServiceInstanceLabel
-import com.webank.wedatasphere.linkis.manager.label.service.{NodeLabelService, UserLabelService}
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
+import org.apache.linkis.common.exception.LinkisRetryException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
+import org.apache.linkis.manager.am.conf.AMConfiguration
+import org.apache.linkis.manager.am.label.EngineReuseLabelChooser
+import org.apache.linkis.manager.am.selector.NodeSelector
+import org.apache.linkis.manager.am.utils.AMUtils
+import org.apache.linkis.manager.common.constant.AMConstant
+import org.apache.linkis.manager.common.entity.node.EngineNode
+import org.apache.linkis.manager.common.protocol.engine.EngineReuseRequest
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
+import org.apache.linkis.manager.label.entity.engine.ReuseExclusionLabel
+import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
+import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
+import org.apache.linkis.manager.label.utils.LabelUtils
+import org.apache.linkis.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

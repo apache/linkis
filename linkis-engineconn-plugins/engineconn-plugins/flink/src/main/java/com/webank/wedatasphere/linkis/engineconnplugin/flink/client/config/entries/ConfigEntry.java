@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.client.config.entries;
+package org.apache.linkis.engineconnplugin.flink.client.config.entries;
 
 
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.FlinkInitFailedException;
+import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException;
 import java.util.Map;
 import java.util.Objects;
 import org.apache.flink.table.api.ValidationException;

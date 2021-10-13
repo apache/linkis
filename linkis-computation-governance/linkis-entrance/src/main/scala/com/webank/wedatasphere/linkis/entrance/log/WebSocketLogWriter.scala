@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.log
+package org.apache.linkis.entrance.log
 
-import com.webank.wedatasphere.linkis.entrance.event.{EntranceEvent, EntranceEventListener, EntranceEventListenerBus, EntranceLogEvent, EntranceLogListener, EntranceLogListenerBus, EntrancePushLogEvent}
-import com.webank.wedatasphere.linkis.scheduler.queue.Job
+import org.apache.linkis.entrance.event.{EntranceEvent, EntranceEventListener, EntranceEventListenerBus, EntranceLogEvent, EntranceLogListener, EntranceLogListenerBus, EntrancePushLogEvent}
+import org.apache.linkis.scheduler.queue.Job
 
 
 class WebSocketLogWriter(job:Job,

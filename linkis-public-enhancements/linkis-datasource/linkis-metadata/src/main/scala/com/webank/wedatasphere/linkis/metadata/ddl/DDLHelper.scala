@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.ddl
+package org.apache.linkis.metadata.ddl
 
 import java.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.metadata.ddl.ScalaDDLCreator.{CODE, USER}
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableBO
+import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.metadata.ddl.ScalaDDLCreator.{CODE, USER}
+import org.apache.linkis.metadata.domain.mdq.bo.MdqTableBO
 
 object DDLHelper extends Logging {
   def createDDL(params:util.Map[String, Object]):String = {

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.conf
+package org.apache.linkis.ecm.server.conf
 
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
-import com.webank.wedatasphere.linkis.common.utils.ByteTimeUtils
-import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
+import org.apache.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.linkis.common.utils.ByteTimeUtils
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 
 import scala.concurrent.duration.Duration
 

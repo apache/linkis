@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option;
+package org.apache.linkis.cli.core.interactor.command.template.option;
 
-import com.webank.wedatasphere.linkis.cli.core.utils.SpecialMap;
+import org.apache.linkis.cli.core.utils.SpecialMap;
 
 /**
  * kv-pairs in SpecialMapOption will be excluded by varAccess

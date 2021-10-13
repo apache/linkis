@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.service.impl;
+package org.apache.linkis.bml.service.impl;
 
-import com.webank.wedatasphere.linkis.bml.Entity.DownloadModel;
-import com.webank.wedatasphere.linkis.bml.dao.DownloadDao;
-import com.webank.wedatasphere.linkis.bml.service.DownloadService;
+import org.apache.linkis.bml.Entity.DownloadModel;
+import org.apache.linkis.bml.dao.DownloadDao;
+import org.apache.linkis.bml.service.DownloadService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.server.service
+package org.apache.linkis.engineplugin.server.service
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineplugin.server.loader.EngineConnPluginsLoader
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.resource.{EngineResourceFactory, EngineResourceRequest}
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineplugin.server.loader.EngineConnPluginsLoader
+import org.apache.linkis.manager.common.entity.resource.NodeResource
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
+import org.apache.linkis.manager.engineplugin.common.resource.{EngineResourceFactory, EngineResourceRequest}
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.message.annotation.Receiver
 import org.springframework.stereotype.Component
 
 import scala.collection.JavaConversions._

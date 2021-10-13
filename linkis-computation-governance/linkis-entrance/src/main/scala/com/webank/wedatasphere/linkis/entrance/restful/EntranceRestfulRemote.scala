@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.restful
+package org.apache.linkis.entrance.restful
 
 import java.util
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.webank.wedatasphere.linkis.server.Message
+import org.apache.linkis.server.Message
 import javax.servlet.http.HttpServletRequest
 import org.springframework.web.bind.annotation.{PathVariable, RequestBody, RequestMapping, RequestMethod, RequestParam}
 

@@ -15,15 +15,15 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.catalyst.converter.ruler
+package org.apache.linkis.orchestrator.computation.catalyst.converter.ruler
 
 import java.util.regex.Pattern
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.common.log.LogUtils
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.orchestrator.computation.catalyst.converter.exception.{PythonCodeCheckException, ScalaCodeCheckException}
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.common.log.LogUtils
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.orchestrator.computation.catalyst.converter.exception.{PythonCodeCheckException, ScalaCodeCheckException}
 import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 

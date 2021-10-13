@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.eureka.conf;
+package org.apache.linkis.eureka.conf;
 
 //import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 //import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;

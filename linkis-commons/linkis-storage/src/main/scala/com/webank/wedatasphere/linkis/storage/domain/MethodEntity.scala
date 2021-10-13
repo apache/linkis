@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.domain
+package org.apache.linkis.storage.domain
 
 import java.lang.reflect.Type
 

@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.hive.creation
+package org.apache.linkis.engineplugin.hive.creation
 
 import java.io.{ByteArrayOutputStream, PrintStream}
 import java.security.PrivilegedExceptionAction
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationSingleExecutorEngineConnFactory
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.LabelExecutor
-import com.webank.wedatasphere.linkis.engineplugin.hive.common.HiveUtils
-import com.webank.wedatasphere.linkis.engineplugin.hive.conf.HiveEngineConfiguration
-import com.webank.wedatasphere.linkis.engineplugin.hive.entity.HiveSession
-import com.webank.wedatasphere.linkis.engineplugin.hive.exception.HiveSessionStartFailedException
-import com.webank.wedatasphere.linkis.engineplugin.hive.executor.HiveEngineConnExecutor
-import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineType.EngineType
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType.RunType
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineType, RunType}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.common.engineconn.EngineConn
+import org.apache.linkis.engineconn.computation.executor.creation.ComputationSingleExecutorEngineConnFactory
+import org.apache.linkis.engineconn.executor.entity.LabelExecutor
+import org.apache.linkis.engineplugin.hive.common.HiveUtils
+import org.apache.linkis.engineplugin.hive.conf.HiveEngineConfiguration
+import org.apache.linkis.engineplugin.hive.entity.HiveSession
+import org.apache.linkis.engineplugin.hive.exception.HiveSessionStartFailedException
+import org.apache.linkis.engineplugin.hive.executor.HiveEngineConnExecutor
+import org.apache.linkis.hadoop.common.utils.HDFSUtils
+import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
+import org.apache.linkis.manager.label.entity.engine.RunType.RunType
+import org.apache.linkis.manager.label.entity.engine.{EngineType, RunType}
 import org.apache.hadoop.hive.conf.HiveConf
 import org.apache.hadoop.hive.ql.Driver
 import org.apache.hadoop.hive.ql.session.SessionState

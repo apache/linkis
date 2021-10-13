@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.presenter.display;
+package org.apache.linkis.cli.core.presenter.display;
 
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.PresenterException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.presenter.display.data.FileOutData;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.PresenterException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.presenter.display.data.FileOutData;
 
 import java.io.BufferedWriter;
 import java.io.File;

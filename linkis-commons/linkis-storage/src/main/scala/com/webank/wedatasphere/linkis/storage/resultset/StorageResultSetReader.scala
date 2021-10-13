@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.resultset
+package org.apache.linkis.storage.resultset
 
 import java.io.{ByteArrayInputStream, IOException, InputStream}
 
-import com.webank.wedatasphere.linkis.common.io.resultset.{ResultSet, ResultSetReader}
-import com.webank.wedatasphere.linkis.common.io.{MetaData, Record}
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.storage.domain.Dolphin
-import com.webank.wedatasphere.linkis.storage.exception.StorageWarnException
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
+import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetReader}
+import org.apache.linkis.common.io.{MetaData, Record}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.storage.domain.Dolphin
+import org.apache.linkis.storage.exception.StorageWarnException
+import org.apache.linkis.storage.utils.StorageUtils
 
 import scala.collection.mutable.ArrayBuffer
 

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.entity;
+package org.apache.linkis.cs.persistence.entity;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ExpireType;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.HAContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.UserContextID;
-import com.webank.wedatasphere.linkis.cs.persistence.annotation.Ignore;
+import org.apache.linkis.cs.common.entity.enumeration.ExpireType;
+import org.apache.linkis.cs.common.entity.source.HAContextID;
+import org.apache.linkis.cs.common.entity.source.UserContextID;
+import org.apache.linkis.cs.persistence.annotation.Ignore;
 
 import java.util.Date;
 

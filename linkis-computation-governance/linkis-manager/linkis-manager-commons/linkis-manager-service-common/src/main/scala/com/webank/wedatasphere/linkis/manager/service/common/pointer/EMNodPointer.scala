@@ -16,11 +16,11 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.service.common.pointer
+package org.apache.linkis.manager.service.common.pointer
 
-import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineStopRequest
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
+import org.apache.linkis.manager.common.entity.node.EngineNode
+import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 
 
 trait EMNodPointer extends NodePointer {

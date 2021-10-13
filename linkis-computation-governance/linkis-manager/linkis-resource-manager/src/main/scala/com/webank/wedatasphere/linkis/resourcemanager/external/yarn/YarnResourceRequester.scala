@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.external.yarn
+package org.apache.linkis.resourcemanager.external.yarn
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.{CommonNodeResource, NodeResource, ResourceType, YarnResource}
-import com.webank.wedatasphere.linkis.resourcemanager.exception.{RMErrorException, RMWarnException}
-import com.webank.wedatasphere.linkis.resourcemanager.external.domain.{ExternalAppInfo, ExternalResourceIdentifier, ExternalResourceProvider}
-import com.webank.wedatasphere.linkis.resourcemanager.external.request.ExternalResourceRequester
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, NodeResource, ResourceType, YarnResource}
+import org.apache.linkis.resourcemanager.exception.{RMErrorException, RMWarnException}
+import org.apache.linkis.resourcemanager.external.domain.{ExternalAppInfo, ExternalResourceIdentifier, ExternalResourceProvider}
+import org.apache.linkis.resourcemanager.external.request.ExternalResourceRequester
 import org.apache.http.HttpHeaders
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients

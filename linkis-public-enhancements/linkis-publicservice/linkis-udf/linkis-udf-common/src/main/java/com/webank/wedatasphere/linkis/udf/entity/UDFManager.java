@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.udf.entity;
+package org.apache.linkis.udf.entity;
 
 
 public class UDFManager {

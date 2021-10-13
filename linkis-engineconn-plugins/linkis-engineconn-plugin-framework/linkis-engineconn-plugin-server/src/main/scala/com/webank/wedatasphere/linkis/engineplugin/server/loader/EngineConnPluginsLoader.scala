@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.server.loader
+package org.apache.linkis.engineplugin.server.loader
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.manager.loaders.{DefaultEngineConnPluginLoader, EngineConnPluginsLoader}
+import org.apache.linkis.manager.engineplugin.manager.loaders.{DefaultEngineConnPluginLoader, EngineConnPluginsLoader}
 
 
 object EngineConnPluginsLoader {

@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem
+package org.apache.linkis.filesystem
 
-import com.webank.wedatasphere.linkis.filesystem.action.OpenScriptFromBMLAction
-import com.webank.wedatasphere.linkis.filesystem.conf.WorkspaceClientConf
-import com.webank.wedatasphere.linkis.filesystem.request.{WorkspaceClient, WorkspaceHttpConf}
-import com.webank.wedatasphere.linkis.filesystem.response.ScriptFromBMLResponse
-import com.webank.wedatasphere.linkis.filesystem.result.ScriptFromBMLResult
-import com.webank.wedatasphere.linkis.httpclient.authentication.AuthenticationStrategy
-import com.webank.wedatasphere.linkis.httpclient.config.{ClientConfig, ClientConfigBuilder}
-import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
-import com.webank.wedatasphere.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy
-import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig
-import com.webank.wedatasphere.linkis.httpclient.response.Result
+import org.apache.linkis.filesystem.action.OpenScriptFromBMLAction
+import org.apache.linkis.filesystem.conf.WorkspaceClientConf
+import org.apache.linkis.filesystem.request.{WorkspaceClient, WorkspaceHttpConf}
+import org.apache.linkis.filesystem.response.ScriptFromBMLResponse
+import org.apache.linkis.filesystem.result.ScriptFromBMLResult
+import org.apache.linkis.httpclient.authentication.AuthenticationStrategy
+import org.apache.linkis.httpclient.config.{ClientConfig, ClientConfigBuilder}
+import org.apache.linkis.httpclient.dws.DWSHttpClient
+import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy
+import org.apache.linkis.httpclient.dws.config.DWSClientConfig
+import org.apache.linkis.httpclient.response.Result
 
 
 class WorkspaceClientImpl extends WorkspaceClient with WorkspaceHttpConf {

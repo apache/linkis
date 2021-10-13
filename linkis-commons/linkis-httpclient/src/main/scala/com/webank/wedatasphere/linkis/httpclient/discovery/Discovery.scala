@@ -18,7 +18,7 @@
  * Created by ${USER} on ${DATE}.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.discovery
+package org.apache.linkis.httpclient.discovery
 
 
 trait Discovery {

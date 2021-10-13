@@ -19,30 +19,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 
-<mapper namespace="com.webank.wedatasphere.linkis.cs.persistence.dao.ContextHistoryMapper">
+<mapper namespace="org.apache.linkis.cs.persistence.dao.ContextHistoryMapper">
 
     <sql id="context_history">
         `id`,`context_id`,`source`,`context_type`,`history_json`,`keyword`
     </sql>
 
     <insert id="createHistory" useGeneratedKeys="true" keyProperty="id"
-            parameterType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextHistory">
+            parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
         INSERT INTO linkis_ps_cs_context_history(<include refid="context_history"/>)
         VALUES (#{id},#{contextId},#{source},#{contextType},#{historyJson},#{keyword})
     </insert>
 
 
-    <select id="getHistory" resultType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextHistory">
+    <select id="getHistory" resultType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
         SELECT * FROM linkis_ps_cs_context_history WHERE id = #{id} AND  context_id = #{contextID.contextId}
     </select>
 
     <select id="getHistoryBySource"
-            resultType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextHistory">
+            resultType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
         SELECT * FROM linkis_ps_cs_context_history WHERE source = #{source} AND  context_id = #{contextID.contextId}
     </select>
 
     <select id="getHistoriesByContextID"
-            resultType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextHistory">
+            resultType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
         SELECT * FROM linkis_ps_cs_context_history WHERE context_id = #{contextID.contextId}
     </select>
 
@@ -60,14 +60,14 @@
         WHERE id = #{pHistory.id}
     </update>
 
-    <select id="searchByKeywords" resultType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextHistory">
+    <select id="searchByKeywords" resultType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
         SELECT * FROM linkis_ps_cs_context_history WHERE context_id = #{contextID.contextId} AND keyword IN
         <foreach collection="keywords" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
     </select>
 
-    <select id="searchByKeywordsAndType" resultType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextHistory">
+    <select id="searchByKeywordsAndType" resultType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
         SELECT * FROM linkis_ps_cs_context_history WHERE context_type = #{contextType} AND keyword IN
         <foreach collection="keywords" index="index" item="item" open="(" separator="," close=")">
             #{item}

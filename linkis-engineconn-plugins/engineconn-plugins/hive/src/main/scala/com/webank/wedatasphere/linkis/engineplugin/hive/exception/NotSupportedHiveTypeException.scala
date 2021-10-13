@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.hive.exception
+package org.apache.linkis.engineplugin.hive.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 case class NotSupportedHiveTypeException(errCode: Int,
                                          desc: String) extends ErrorException(errCode, desc) {

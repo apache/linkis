@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.ujes.route.label
+package org.apache.linkis.gateway.ujes.route.label
 
 import java.util
 
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.route.RouteLabel
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
+import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.route.RouteLabel
+import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.server.BDPJettyServerHelper
 
 import scala.collection.JavaConversions._
 

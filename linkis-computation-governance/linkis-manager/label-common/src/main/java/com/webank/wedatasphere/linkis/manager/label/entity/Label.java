@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.entity;
+package org.apache.linkis.manager.label.entity;
 
-import com.webank.wedatasphere.linkis.manager.label.entity.annon.KeyMethod;
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
+import org.apache.linkis.manager.label.entity.annon.KeyMethod;
+import org.apache.linkis.protocol.message.RequestProtocol;
 
 import java.io.Serializable;
 

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.execution.matcher;
+package org.apache.linkis.cs.execution.matcher;
 
-import com.webank.wedatasphere.linkis.cs.condition.Condition;
+import org.apache.linkis.cs.condition.Condition;
 
 public abstract class AbstractContextSearchMatcher implements ContextSearchMatcher{
 

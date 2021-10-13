@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec;
+package org.apache.linkis.cli.core.interactor.execution.jobexec;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobExec;
+import org.apache.linkis.cli.common.entity.execution.jobexec.JobExec;
 
 public abstract class JobManExec implements JobExec, Cloneable {
     Exception exception;

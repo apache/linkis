@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis
+package org.apache.linkis
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.exception.{ErrorException, ExceptionManager, FatalException, WarnException}
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.server.exception.{BDPServerErrorException, NonLoginException}
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter
+import org.apache.linkis.common.exception.{ErrorException, ExceptionManager, FatalException, WarnException}
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.server.exception.{BDPServerErrorException, NonLoginException}
+import org.apache.linkis.server.security.SecurityFilter
 import javax.servlet.http.HttpServletRequest
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils

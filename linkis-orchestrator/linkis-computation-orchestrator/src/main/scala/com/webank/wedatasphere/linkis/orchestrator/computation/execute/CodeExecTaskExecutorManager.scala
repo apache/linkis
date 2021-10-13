@@ -15,12 +15,12 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.execute
+package org.apache.linkis.orchestrator.computation.execute
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.{ClassUtils, Logging}
-import com.webank.wedatasphere.linkis.orchestrator.computation.conf.ComputationOrchestratorConf
-import com.webank.wedatasphere.linkis.orchestrator.computation.physical.CodeLogicalUnitExecTask
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.{ClassUtils, Logging}
+import org.apache.linkis.orchestrator.computation.conf.ComputationOrchestratorConf
+import org.apache.linkis.orchestrator.computation.physical.CodeLogicalUnitExecTask
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.mutable

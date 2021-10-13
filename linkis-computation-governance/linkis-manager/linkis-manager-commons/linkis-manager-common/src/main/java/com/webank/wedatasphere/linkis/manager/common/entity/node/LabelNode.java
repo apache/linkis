@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.entity.node;
+package org.apache.linkis.manager.common.entity.node;
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.Label;
 
 import java.util.List;
 

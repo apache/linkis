@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.ujes.client.request
+package org.apache.linkis.ujes.client.request
 
-import com.webank.wedatasphere.linkis.httpclient.request.GetAction
+import org.apache.linkis.httpclient.request.GetAction
 
 
 

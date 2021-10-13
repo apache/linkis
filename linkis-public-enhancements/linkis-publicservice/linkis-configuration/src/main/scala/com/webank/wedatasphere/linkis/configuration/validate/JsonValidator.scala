@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.configuration.validate
+package org.apache.linkis.configuration.validate
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.server.BDPJettyServerHelper
 
 class JsonValidator extends Validator{
 

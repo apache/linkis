@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.service
+package org.apache.linkis.manager.am.service
 
-import com.webank.wedatasphere.linkis.manager.common.protocol.node.NodeHeartbeatMsg
+import org.apache.linkis.manager.common.protocol.node.NodeHeartbeatMsg
 
 
 trait HeartbeatService {

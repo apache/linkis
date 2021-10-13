@@ -15,7 +15,7 @@
  */
 
 
-package com.webank.wedatasphere.linkis.common.exception;
+package org.apache.linkis.common.exception;
 
 public class WarnException extends LinkisRuntimeException {
     private ExceptionLevel level = ExceptionLevel.WARN;

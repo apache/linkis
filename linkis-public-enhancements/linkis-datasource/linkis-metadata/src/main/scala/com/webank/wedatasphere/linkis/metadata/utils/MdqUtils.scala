@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.utils
+package org.apache.linkis.metadata.utils
 
 import java.lang.reflect.Type
 import java.util.Date

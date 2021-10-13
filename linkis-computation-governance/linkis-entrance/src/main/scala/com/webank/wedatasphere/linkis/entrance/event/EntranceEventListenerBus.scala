@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.event
+package org.apache.linkis.entrance.event
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication
-import com.webank.wedatasphere.linkis.common.listener.SingleThreadListenerBus
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.DataWorkCloudApplication
+import org.apache.linkis.common.listener.SingleThreadListenerBus
+import org.apache.linkis.entrance.conf.EntranceConfiguration
 
 /**
   * description: It is an implementation of SingleThreadListenerBus in Entrance Module

@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.protocol.node;
+package org.apache.linkis.manager.common.protocol.node;
 
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus;
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 
 
 public class ResponseNodeStatus implements NodeStatusProtocol {

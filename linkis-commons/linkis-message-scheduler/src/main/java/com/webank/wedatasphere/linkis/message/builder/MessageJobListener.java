@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.builder;
+package org.apache.linkis.message.builder;
 
-import com.webank.wedatasphere.linkis.common.utils.JavaLog;
-import com.webank.wedatasphere.linkis.scheduler.listener.JobListener;
-import com.webank.wedatasphere.linkis.scheduler.queue.Job;
+import org.apache.linkis.common.utils.JavaLog;
+import org.apache.linkis.scheduler.listener.JobListener;
+import org.apache.linkis.scheduler.queue.Job;
 
 import java.util.concurrent.locks.LockSupport;
 

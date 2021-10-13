@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.script.parser
+package org.apache.linkis.storage.script.parser
 
 
 class QLScriptParser private extends CommonScriptParser {

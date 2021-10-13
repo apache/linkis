@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.core.impl
+package org.apache.linkis.orchestrator.core.impl
 
-import com.webank.wedatasphere.linkis.orchestrator.OrchestratorSession
-import com.webank.wedatasphere.linkis.orchestrator.core.PlanBuilder
-import com.webank.wedatasphere.linkis.orchestrator.plans.ast.ASTOrchestration
-import com.webank.wedatasphere.linkis.orchestrator.plans.logical.Task
-import com.webank.wedatasphere.linkis.orchestrator.plans.physical.ExecTask
+import org.apache.linkis.orchestrator.OrchestratorSession
+import org.apache.linkis.orchestrator.core.PlanBuilder
+import org.apache.linkis.orchestrator.plans.ast.ASTOrchestration
+import org.apache.linkis.orchestrator.plans.logical.Task
+import org.apache.linkis.orchestrator.plans.physical.ExecTask
 
 /**
   *

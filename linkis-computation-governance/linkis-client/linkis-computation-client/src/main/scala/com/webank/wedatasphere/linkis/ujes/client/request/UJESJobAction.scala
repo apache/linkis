@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.client.request
+package org.apache.linkis.ujes.client.request
 
-import com.webank.wedatasphere.linkis.httpclient.dws.request.DWSHttpAction
+import org.apache.linkis.httpclient.dws.request.DWSHttpAction
 
 trait UJESJobAction extends DWSHttpAction with UserAction

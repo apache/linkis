@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server;
+package org.apache.linkis.cs.server;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 

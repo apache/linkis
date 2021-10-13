@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.test.restful;
+package org.apache.linkis.cs.client.test.restful;
 
 public class ListenerTest {
 }

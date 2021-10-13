@@ -11,11 +11,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.dws.response
+package org.apache.linkis.httpclient.dws.response
 
 import java.util
 
-import com.webank.wedatasphere.linkis.httpclient.discovery.HeartbeatResult
+import org.apache.linkis.httpclient.discovery.HeartbeatResult
 import org.apache.http.HttpResponse
 import org.apache.http.util.EntityUtils
 

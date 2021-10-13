@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.util;
+package org.apache.linkis.filesystem.util;
 
 
-import com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration;
-import com.webank.wedatasphere.linkis.filesystem.entity.LogLevel;
-import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException;
-import com.webank.wedatasphere.linkis.filesystem.exception.WorkspaceExceptionManager;
+import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
+import org.apache.linkis.filesystem.entity.LogLevel;
+import org.apache.linkis.filesystem.exception.WorkSpaceException;
+import org.apache.linkis.filesystem.exception.WorkspaceExceptionManager;
 
 import java.io.File;
 import java.util.ArrayList;

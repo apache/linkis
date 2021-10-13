@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.interceptor
+package org.apache.linkis.rpc.interceptor
 
 import com.netflix.loadbalancer.{DynamicServerListLoadBalancer, ILoadBalancer, Server}
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.rpc.exception.NoInstanceExistsException
-import com.webank.wedatasphere.linkis.rpc.sender.SpringCloudFeignConfigurationCache
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.rpc.exception.NoInstanceExistsException
+import org.apache.linkis.rpc.sender.SpringCloudFeignConfigurationCache
 
 import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration

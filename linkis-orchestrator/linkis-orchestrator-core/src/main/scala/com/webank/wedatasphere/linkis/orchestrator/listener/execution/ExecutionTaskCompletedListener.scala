@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.listener.execution
+package org.apache.linkis.orchestrator.listener.execution
 
-import com.webank.wedatasphere.linkis.orchestrator.listener.OrchestratorSyncListener
+import org.apache.linkis.orchestrator.listener.OrchestratorSyncListener
 
 /**
   *

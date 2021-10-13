@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.optimize.impl;
+package org.apache.linkis.cs.optimize.impl;
 
-import com.webank.wedatasphere.linkis.cs.condition.Condition;
-import com.webank.wedatasphere.linkis.cs.optimize.ConditionOptimizer;
-import com.webank.wedatasphere.linkis.cs.optimize.OptimizedCondition;
-import com.webank.wedatasphere.linkis.cs.optimize.cost.ConditionCostCalculator;
-import com.webank.wedatasphere.linkis.cs.optimize.dfs.MinCostBinaryTree;
+import org.apache.linkis.cs.condition.Condition;
+import org.apache.linkis.cs.optimize.ConditionOptimizer;
+import org.apache.linkis.cs.optimize.OptimizedCondition;
+import org.apache.linkis.cs.optimize.cost.ConditionCostCalculator;
+import org.apache.linkis.cs.optimize.dfs.MinCostBinaryTree;
 
 public class CostBasedConditionOptimizer implements ConditionOptimizer {
 

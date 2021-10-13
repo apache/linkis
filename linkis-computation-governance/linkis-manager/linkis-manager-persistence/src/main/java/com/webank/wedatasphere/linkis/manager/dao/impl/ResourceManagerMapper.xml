@@ -19,12 +19,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 
-<mapper namespace="com.webank.wedatasphere.linkis.manager.dao.ResourceManagerMapper">
+<mapper namespace="org.apache.linkis.manager.dao.ResourceManagerMapper">
 <!--    <sql id="resource">-->
 <!--        `id`,`max_resource`,`min_resource`,`used_resource`,`left_resource`,`expected_resource`,`locked_resource`,`resourceType`,`ticketId`,`update_time`,`create_time`,`updator`,`creator`-->
 <!--    </sql>-->
 <!--    <insert id="registerResource" useGeneratedKeys="true" keyProperty="id"-->
-<!--            parameterType="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource">-->
+<!--            parameterType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">-->
 <!--        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">-->
 <!--            SELECT LAST_INSERT_ID() AS id-->
 <!--        </selectKey>-->

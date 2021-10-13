@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.highavailable.ha.instancealias.impl
+package org.apache.linkis.cs.highavailable.ha.instancealias.impl
 
 import com.google.common.cache.CacheBuilder
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException
-import com.webank.wedatasphere.linkis.cs.highavailable.conf.ContextHighAvailableConf
-import com.webank.wedatasphere.linkis.cs.highavailable.exception.CSErrorCode
-import com.webank.wedatasphere.linkis.cs.highavailable.ha.instancealias.InstanceAliasConverter
-import com.webank.wedatasphere.linkis.instance.label.client.InstanceLabelClient
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.route.RouteLabel
-import com.webank.wedatasphere.linkis.rpc.Sender
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.cs.common.exception.CSErrorException
+import org.apache.linkis.cs.highavailable.conf.ContextHighAvailableConf
+import org.apache.linkis.cs.highavailable.exception.CSErrorCode
+import org.apache.linkis.cs.highavailable.ha.instancealias.InstanceAliasConverter
+import org.apache.linkis.instance.label.client.InstanceLabelClient
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.route.RouteLabel
+import org.apache.linkis.rpc.Sender
 import org.apache.commons.lang.StringUtils
 import org.springframework.stereotype.Component
 

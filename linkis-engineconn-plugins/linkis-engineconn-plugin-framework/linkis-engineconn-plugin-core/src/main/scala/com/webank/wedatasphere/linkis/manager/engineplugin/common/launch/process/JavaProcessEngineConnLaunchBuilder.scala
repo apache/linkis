@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process
+package org.apache.linkis.manager.engineplugin.common.launch.process
 
 
 import java.io.File
 import java.nio.file.Paths
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.common.protocol.bml.BmlResource
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.{EngineConnPluginConf, EnvConfiguration}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration.LINKIS_PUBLIC_MODULE_PATH
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.EngineConnBuildFailedException
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.{EngineConnBuildRequest, RicherEngineConnBuildRequest}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.Environment.{variable, _}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.common.protocol.bml.BmlResource
+import org.apache.linkis.manager.engineplugin.common.conf.{EngineConnPluginConf, EnvConfiguration}
+import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration.LINKIS_PUBLIC_MODULE_PATH
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnBuildFailedException
+import org.apache.linkis.manager.engineplugin.common.launch.entity.{EngineConnBuildRequest, RicherEngineConnBuildRequest}
+import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{variable, _}
+import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.time.DateFormatUtils
 

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.entity.resource;
+package org.apache.linkis.cs.common.entity.resource;
 
-import com.webank.wedatasphere.linkis.cs.common.annotation.KeywordMethod;
+import org.apache.linkis.cs.common.annotation.KeywordMethod;
 
 import java.util.Date;
 

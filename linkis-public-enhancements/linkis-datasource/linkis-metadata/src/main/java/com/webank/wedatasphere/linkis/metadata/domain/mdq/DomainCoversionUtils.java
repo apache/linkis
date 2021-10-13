@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.domain.mdq;
+package org.apache.linkis.metadata.domain.mdq;
 
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.*;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.po.MdqField;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.po.MdqImport;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.po.MdqLineage;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.po.MdqTable;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.*;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
+import org.apache.linkis.metadata.domain.mdq.bo.*;
+import org.apache.linkis.metadata.domain.mdq.po.MdqField;
+import org.apache.linkis.metadata.domain.mdq.po.MdqImport;
+import org.apache.linkis.metadata.domain.mdq.po.MdqLineage;
+import org.apache.linkis.metadata.domain.mdq.po.MdqTable;
+import org.apache.linkis.metadata.domain.mdq.vo.*;
+import org.apache.linkis.server.BDPJettyServerHelper;
 import org.springframework.beans.BeanUtils;
 
 import java.util.Date;

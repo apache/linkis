@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.service;
+package org.apache.linkis.cs.server.service;
 
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSWarnException;
-import com.webank.wedatasphere.linkis.cs.server.protocol.HttpRequestProtocol;
-import com.webank.wedatasphere.linkis.cs.server.protocol.HttpResponseProtocol;
-import com.webank.wedatasphere.linkis.cs.server.protocol.RestResponseProtocol;
-import com.webank.wedatasphere.linkis.cs.server.scheduler.HttpAnswerJob;
-import com.webank.wedatasphere.linkis.cs.server.scheduler.HttpJob;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.exception.CSWarnException;
+import org.apache.linkis.cs.server.protocol.HttpRequestProtocol;
+import org.apache.linkis.cs.server.protocol.HttpResponseProtocol;
+import org.apache.linkis.cs.server.protocol.RestResponseProtocol;
+import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
+import org.apache.linkis.cs.server.scheduler.HttpJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

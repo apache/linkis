@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc
+package org.apache.linkis.rpc
 
 import java.util
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.rpc.interceptor.common.BroadcastSenderBuilder
-import com.webank.wedatasphere.linkis.rpc.interceptor.{RPCInterceptor, RPCLoadBalancer, RPCServerLoader}
+import org.apache.linkis.DataWorkCloudApplication
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.rpc.interceptor.common.BroadcastSenderBuilder
+import org.apache.linkis.rpc.interceptor.{RPCInterceptor, RPCLoadBalancer, RPCServerLoader}
 
 import scala.collection.JavaConversions.mapAsScalaMap
 

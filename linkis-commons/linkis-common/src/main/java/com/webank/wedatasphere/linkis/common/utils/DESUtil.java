@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.utils;
+package org.apache.linkis.common.utils;
 
 import org.apache.commons.lang.StringUtils;
 import sun.misc.BASE64Decoder;

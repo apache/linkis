@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.udf
+package org.apache.linkis.udf
 
 
-import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.udf.api.rpc.{RequestUdfTree, ResponseUdfTree}
-import com.webank.wedatasphere.linkis.udf.entity.{UDFInfo, UDFTree}
-import com.webank.wedatasphere.linkis.udf.utils.ConstantVar
+import org.apache.linkis.rpc.Sender
+import org.apache.linkis.udf.api.rpc.{RequestUdfTree, ResponseUdfTree}
+import org.apache.linkis.udf.entity.{UDFInfo, UDFTree}
+import org.apache.linkis.udf.utils.ConstantVar
 import org.apache.commons.collections.CollectionUtils
 
 import scala.collection.mutable

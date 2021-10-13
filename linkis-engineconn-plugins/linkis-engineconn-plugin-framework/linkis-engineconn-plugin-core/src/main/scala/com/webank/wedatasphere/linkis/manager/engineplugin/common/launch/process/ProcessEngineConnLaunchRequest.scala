@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process
+package org.apache.linkis.manager.engineplugin.common.launch.process
 
 import java.util
 
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource
-import com.webank.wedatasphere.linkis.manager.common.protocol.bml.BmlResource
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.{EngineConnCreationDesc, EngineConnLaunchRequest}
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.common.entity.resource.NodeResource
+import org.apache.linkis.manager.common.protocol.bml.BmlResource
+import org.apache.linkis.manager.engineplugin.common.launch.entity.{EngineConnCreationDesc, EngineConnLaunchRequest}
+import org.apache.linkis.manager.label.entity.Label
 
 
 trait ProcessEngineConnLaunchRequest extends EngineConnLaunchRequest {

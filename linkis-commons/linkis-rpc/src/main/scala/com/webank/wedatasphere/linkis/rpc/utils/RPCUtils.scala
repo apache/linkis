@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.utils
+package org.apache.linkis.rpc.utils
 
 import java.lang.reflect.UndeclaredThrowableException
 import java.net.ConnectException
 
 import com.netflix.client.ClientException
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.rpc.exception.NoInstanceExistsException
-import com.webank.wedatasphere.linkis.rpc.sender.{SpringCloudFeignConfigurationCache, SpringMVCRPCSender}
-import com.webank.wedatasphere.linkis.rpc.{BaseRPCSender, Sender}
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.rpc.exception.NoInstanceExistsException
+import org.apache.linkis.rpc.sender.{SpringCloudFeignConfigurationCache, SpringMVCRPCSender}
+import org.apache.linkis.rpc.{BaseRPCSender, Sender}
 import feign.RetryableException
 import org.apache.commons.lang.StringUtils
 

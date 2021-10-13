@@ -15,10 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.context
+package org.apache.linkis.engineconnplugin.flink.context
 
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.config.Environment
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.context.ExecutionContext
+import org.apache.linkis.engineconnplugin.flink.client.config.Environment
+import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext
 
 
 class FlinkEngineConnContext(environmentContext: EnvironmentContext) {

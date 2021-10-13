@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.result;
+package org.apache.linkis.engineconnplugin.flink.client.sql.operation.result;
 
-import static com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet.FIELD_NAME_CHANGE_FLAGS;
-import static com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet.FIELD_NAME_COLUMNS;
-import static com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet.FIELD_NAME_DATA;
-import static com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet.FIELD_NAME_RESULT_KIND;
+import static org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet.FIELD_NAME_CHANGE_FLAGS;
+import static org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet.FIELD_NAME_COLUMNS;
+import static org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet.FIELD_NAME_DATA;
+import static org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet.FIELD_NAME_RESULT_KIND;
 
 import java.io.IOException;
 import java.time.LocalDate;

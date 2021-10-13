@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.gateway.ruler.datasource.dao;
+package org.apache.linkis.gateway.ruler.datasource.dao;
 
-import com.webank.wedatasphere.linkis.gateway.ruler.datasource.entity.DatasourceMap;
+import org.apache.linkis.gateway.ruler.datasource.entity.DatasourceMap;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

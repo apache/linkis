@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.resource
+package org.apache.linkis.manager.engineplugin.common.resource
 
 import java.util
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.protocol.message.RequestProtocol
 
 
 trait EngineResourceRequest extends RequestProtocol {

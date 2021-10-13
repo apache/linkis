@@ -11,14 +11,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.presenter;
+package org.apache.linkis.cli.application.presenter;
 
-import com.webank.wedatasphere.linkis.cli.application.driver.LinkisClientDriver;
-import com.webank.wedatasphere.linkis.cli.application.driver.transformer.DriverTransformer;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.PresenterException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.presenter.Presenter;
+import org.apache.linkis.cli.application.driver.LinkisClientDriver;
+import org.apache.linkis.cli.application.driver.transformer.DriverTransformer;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.PresenterException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.presenter.Presenter;
 
 /**
  * @description: QueryBasedPresenter makes further queries to linkis in order to display some results

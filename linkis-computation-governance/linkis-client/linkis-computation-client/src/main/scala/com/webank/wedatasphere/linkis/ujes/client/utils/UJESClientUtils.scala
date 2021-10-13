@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.client.utils
+package org.apache.linkis.ujes.client.utils
 
-import com.webank.wedatasphere.linkis.ujes.client.request.JobExecuteAction.{EngineType, RunType}
+import org.apache.linkis.ujes.client.request.JobExecuteAction.{EngineType, RunType}
 
 object UJESClientUtils {
   def toEngineType(engineType: String): EngineType = engineType match {

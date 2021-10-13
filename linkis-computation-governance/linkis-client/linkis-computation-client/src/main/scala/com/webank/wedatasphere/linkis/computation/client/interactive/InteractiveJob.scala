@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client.interactive
+package org.apache.linkis.computation.client.interactive
 
-import com.webank.wedatasphere.linkis.computation.client.{LinkisJobBuilder, ResultSetIterable}
-import com.webank.wedatasphere.linkis.computation.client.job.{StorableExistingLinkisJob, StorableLinkisJob, StorableSubmittableLinkisJob}
-import com.webank.wedatasphere.linkis.ujes.client.UJESClient
-import com.webank.wedatasphere.linkis.ujes.client.request.JobSubmitAction
-import com.webank.wedatasphere.linkis.ujes.client.response.{JobInfoResult, JobLogResult, JobProgressResult}
+import org.apache.linkis.computation.client.{LinkisJobBuilder, ResultSetIterable}
+import org.apache.linkis.computation.client.job.{StorableExistingLinkisJob, StorableLinkisJob, StorableSubmittableLinkisJob}
+import org.apache.linkis.ujes.client.UJESClient
+import org.apache.linkis.ujes.client.request.JobSubmitAction
+import org.apache.linkis.ujes.client.response.{JobInfoResult, JobLogResult, JobProgressResult}
 
 import scala.collection.mutable.ArrayBuffer
 

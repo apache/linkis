@@ -16,28 +16,28 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.service.engine
+package org.apache.linkis.manager.am.service.engine
 
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.governance.common.entity.NodeExistStatus
-import com.webank.wedatasphere.linkis.governance.common.protocol.engineconn.{RequestEngineStatusBatch, ResponseEngineStatusBatch}
-import com.webank.wedatasphere.linkis.governance.common.utils.GovernanceConstant
-import com.webank.wedatasphere.linkis.manager.am.manager.{EMNodeManager, EngineNodeManager}
-import com.webank.wedatasphere.linkis.manager.am.vo.AMEngineNodeVo
-import com.webank.wedatasphere.linkis.manager.common.entity.node.{EMNode, EngineNode}
-import com.webank.wedatasphere.linkis.manager.label.service.NodeLabelService
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
-import com.webank.wedatasphere.linkis.resourcemanager.service.ResourceManager
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.governance.common.entity.NodeExistStatus
+import org.apache.linkis.governance.common.protocol.engineconn.{RequestEngineStatusBatch, ResponseEngineStatusBatch}
+import org.apache.linkis.governance.common.utils.GovernanceConstant
+import org.apache.linkis.manager.am.manager.{EMNodeManager, EngineNodeManager}
+import org.apache.linkis.manager.am.vo.AMEngineNodeVo
+import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
+import org.apache.linkis.manager.label.service.NodeLabelService
+import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConversions._
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.{LabelBuilderFactoryContext, StdLabelBuilderFactory}
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactoryContext, StdLabelBuilderFactory}
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 
 import scala.collection.JavaConverters._
 

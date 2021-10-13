@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.service
+package org.apache.linkis.manager.label.service
 
-import com.webank.wedatasphere.linkis.protocol.label.NodeLabelRemoveRequest
+import org.apache.linkis.protocol.label.NodeLabelRemoveRequest
 
 
 trait NodeLabelRemoveService {

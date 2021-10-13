@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.log
+package org.apache.linkis.entrance.log
 
 import java.io.{Closeable, IOException, InputStream}
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.entrance.exception.LogReadFailedException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.exception.LogReadFailedException
 import org.apache.commons.io.{IOUtils, LineIterator}
 import org.apache.commons.lang.StringUtils
 

@@ -16,8 +16,8 @@
   -->
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.webank.wedatasphere.linkis.resourcemanager.external.dao.ExternalResourceProviderDao">
-    <resultMap id="ExternalResourceProviderMap" type="com.webank.wedatasphere.linkis.resourcemanager.external.domain.ExternalResourceProvider">
+<mapper namespace="org.apache.linkis.resourcemanager.external.dao.ExternalResourceProviderDao">
+    <resultMap id="ExternalResourceProviderMap" type="org.apache.linkis.resourcemanager.external.domain.ExternalResourceProvider">
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="resource_type" property="resourceType" jdbcType="VARCHAR"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
@@ -41,7 +41,7 @@
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
-            parameterType="com.webank.wedatasphere.linkis.resourcemanager.external.domain.ExternalResourceProvider">
+            parameterType="org.apache.linkis.resourcemanager.external.domain.ExternalResourceProvider">
         INSERT INTO linkis_cg_rm_external_resource_provider (
         <include refid="ExternalResourceProvider_Column_List_Insert"/>
         ) VALUES (

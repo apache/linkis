@@ -11,15 +11,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.presenter.display.factory;
+package org.apache.linkis.cli.core.presenter.display.factory;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.job.OutputWay;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.PresenterException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.presenter.display.DisplayDriver;
-import com.webank.wedatasphere.linkis.cli.core.presenter.display.PlainTextFileDriver;
-import com.webank.wedatasphere.linkis.cli.core.presenter.display.StdOutDriver;
+import org.apache.linkis.cli.common.entity.job.OutputWay;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.PresenterException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.presenter.display.DisplayDriver;
+import org.apache.linkis.cli.core.presenter.display.PlainTextFileDriver;
+import org.apache.linkis.cli.core.presenter.display.StdOutDriver;
 
 public class DisplayDriverFactory {
     public static DisplayDriver getDisplayDriver(OutputWay outputWay) {

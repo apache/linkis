@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.ecm.exception
+package org.apache.linkis.orchestrator.ecm.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 
 class ECMPluginErrorException(errorCode: Int, errorMsg: String) extends ErrorException(errorCode, errorMsg) {

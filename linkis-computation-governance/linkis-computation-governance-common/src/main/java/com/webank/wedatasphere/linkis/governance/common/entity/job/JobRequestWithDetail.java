@@ -17,7 +17,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.governance.common.entity.job;
+package org.apache.linkis.governance.common.entity.job;
 
 import java.util.List;
 

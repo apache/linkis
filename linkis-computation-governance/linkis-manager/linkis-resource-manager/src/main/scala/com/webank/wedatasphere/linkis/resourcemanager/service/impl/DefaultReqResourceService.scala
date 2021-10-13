@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.service.impl
+package org.apache.linkis.resourcemanager.service.impl
 
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.{NodeResource, ResourceSerializer, ResourceType}
-import com.webank.wedatasphere.linkis.resourcemanager.domain.RMLabelContainer
-import com.webank.wedatasphere.linkis.resourcemanager.service.{LabelResourceService, RequestResourceService}
+import org.apache.linkis.manager.common.entity.resource.{NodeResource, ResourceSerializer, ResourceType}
+import org.apache.linkis.resourcemanager.domain.RMLabelContainer
+import org.apache.linkis.resourcemanager.service.{LabelResourceService, RequestResourceService}
 import org.json4s.DefaultFormats
 
 class DefaultReqResourceService(labelResourceService: LabelResourceService) extends RequestResourceService(labelResourceService){

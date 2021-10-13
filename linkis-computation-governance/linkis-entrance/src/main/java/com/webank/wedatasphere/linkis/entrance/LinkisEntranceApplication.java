@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance;
+package org.apache.linkis.entrance;
 
-import com.webank.wedatasphere.linkis.LinkisBaseServerApp;
+import org.apache.linkis.LinkisBaseServerApp;
 
 
 

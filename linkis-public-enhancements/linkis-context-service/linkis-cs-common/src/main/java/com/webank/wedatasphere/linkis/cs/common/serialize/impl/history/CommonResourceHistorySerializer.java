@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.serialize.impl.history;
+package org.apache.linkis.cs.common.serialize.impl.history;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.history.CommonResourceHistory;
-import com.webank.wedatasphere.linkis.cs.common.entity.resource.Resource;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.common.serialize.AbstractSerializer;
-import com.webank.wedatasphere.linkis.cs.common.serialize.helper.ContextSerializationHelper;
-import com.webank.wedatasphere.linkis.cs.common.utils.CSCommonUtils;
+import org.apache.linkis.cs.common.entity.history.CommonResourceHistory;
+import org.apache.linkis.cs.common.entity.resource.Resource;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.serialize.AbstractSerializer;
+import org.apache.linkis.cs.common.serialize.helper.ContextSerializationHelper;
+import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 import java.util.Map;
 

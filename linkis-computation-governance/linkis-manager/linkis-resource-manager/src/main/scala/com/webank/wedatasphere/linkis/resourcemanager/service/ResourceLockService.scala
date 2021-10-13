@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.service
+package org.apache.linkis.resourcemanager.service
 
 import java.util.Date
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLock
-import com.webank.wedatasphere.linkis.manager.label.entity.{EngineNodeLabel, ResourceLabel}
-import com.webank.wedatasphere.linkis.manager.persistence.LockManagerPersistence
-import com.webank.wedatasphere.linkis.resourcemanager.domain.RMLabelContainer
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLock
+import org.apache.linkis.manager.label.entity.{EngineNodeLabel, ResourceLabel}
+import org.apache.linkis.manager.persistence.LockManagerPersistence
+import org.apache.linkis.resourcemanager.domain.RMLabelContainer
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component

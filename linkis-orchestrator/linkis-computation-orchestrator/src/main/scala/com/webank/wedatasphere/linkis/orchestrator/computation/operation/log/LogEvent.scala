@@ -15,9 +15,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.operation.log
+package org.apache.linkis.orchestrator.computation.operation.log
 
-import com.webank.wedatasphere.linkis.orchestrator.Orchestration
+import org.apache.linkis.orchestrator.Orchestration
 
 /**
   *

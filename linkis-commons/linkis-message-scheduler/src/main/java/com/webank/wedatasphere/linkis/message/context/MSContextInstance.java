@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.context;
+package org.apache.linkis.message.context;
 
-import com.webank.wedatasphere.linkis.message.utils.MessageUtils;
+import org.apache.linkis.message.utils.MessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

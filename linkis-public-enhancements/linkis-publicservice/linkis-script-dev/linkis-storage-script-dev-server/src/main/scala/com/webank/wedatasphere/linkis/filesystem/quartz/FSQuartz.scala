@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.quartz
+package org.apache.linkis.filesystem.quartz
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.filesystem.cache.FsCache
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.filesystem.cache.FsCache
 import org.quartz.JobExecutionContext
 import org.springframework.scheduling.quartz.QuartzJobBean
 

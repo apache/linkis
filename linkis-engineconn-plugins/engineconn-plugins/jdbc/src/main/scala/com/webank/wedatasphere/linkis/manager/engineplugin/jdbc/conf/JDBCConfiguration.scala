@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.manager.engineplugin.jdbc.conf
+package org.apache.linkis.manager.engineplugin.jdbc.conf
 
-import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars}
+import org.apache.linkis.common.conf.{ByteType, CommonVars}
 
 object JDBCConfiguration {
 

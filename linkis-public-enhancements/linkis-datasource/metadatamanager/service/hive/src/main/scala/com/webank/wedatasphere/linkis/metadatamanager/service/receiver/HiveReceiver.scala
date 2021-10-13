@@ -11,11 +11,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadatamanager.service.receiver
+package org.apache.linkis.metadatamanager.service.receiver
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication
-import com.webank.wedatasphere.linkis.metadatamanager.common.receiver.BaseMetaReceiver
-import com.webank.wedatasphere.linkis.metadatamanager.common.service.MetadataService
+import org.apache.linkis.DataWorkCloudApplication
+import org.apache.linkis.metadatamanager.common.receiver.BaseMetaReceiver
+import org.apache.linkis.metadatamanager.common.service.MetadataService
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct

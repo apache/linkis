@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.utils;
+package org.apache.linkis.resourcemanager.utils;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Maps;
-import com.webank.wedatasphere.linkis.common.utils.Utils;
+import org.apache.linkis.common.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

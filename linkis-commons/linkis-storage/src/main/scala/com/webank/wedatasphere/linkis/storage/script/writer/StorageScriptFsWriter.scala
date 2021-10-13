@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.script.writer
+package org.apache.linkis.storage.script.writer
 
 import java.io.{ByteArrayInputStream, IOException, InputStream, OutputStream}
 import java.util
 
-import com.webank.wedatasphere.linkis.common.io.{FsPath, MetaData, Record}
-import com.webank.wedatasphere.linkis.storage.LineRecord
-import com.webank.wedatasphere.linkis.storage.script.{Compaction, ScriptFsWriter, ScriptMetaData}
-import com.webank.wedatasphere.linkis.storage.utils.{StorageConfiguration, StorageUtils}
+import org.apache.linkis.common.io.{FsPath, MetaData, Record}
+import org.apache.linkis.storage.LineRecord
+import org.apache.linkis.storage.script.{Compaction, ScriptFsWriter, ScriptMetaData}
+import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 import org.apache.commons.io.IOUtils
 
 

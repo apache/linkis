@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.client;
+package org.apache.linkis.bml.client;
 
 public abstract class AbstractBmlClient implements BmlClient {
     protected String user;

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.executor.entity
+package org.apache.linkis.engineconn.executor.entity
 
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource
+import org.apache.linkis.manager.common.entity.resource.NodeResource
 
 trait ResourceExecutor extends Executor {
 

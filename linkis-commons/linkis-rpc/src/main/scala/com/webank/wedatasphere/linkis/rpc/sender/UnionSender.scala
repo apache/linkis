@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.sender
+package org.apache.linkis.rpc.sender
 
 import java.util
 
-import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
+import org.apache.linkis.rpc.{Receiver, Sender}
 
 import scala.concurrent.duration.Duration
 

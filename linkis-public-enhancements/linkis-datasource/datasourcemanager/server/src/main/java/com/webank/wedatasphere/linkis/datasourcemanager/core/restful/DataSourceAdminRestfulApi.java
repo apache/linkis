@@ -11,19 +11,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.restful;
+package org.apache.linkis.datasourcemanager.core.restful;
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceEnv;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.FormDataTransformerFactory;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.MultiPartFormDataTransformer;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.service.DataSourceInfoService;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.service.DataSourceRelateService;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidator;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
-import com.webank.wedatasphere.linkis.server.Message;
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv;
+import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
+import org.apache.linkis.datasourcemanager.core.formdata.FormDataTransformerFactory;
+import org.apache.linkis.datasourcemanager.core.formdata.MultiPartFormDataTransformer;
+import org.apache.linkis.datasourcemanager.core.service.DataSourceInfoService;
+import org.apache.linkis.datasourcemanager.core.service.DataSourceRelateService;
+import org.apache.linkis.datasourcemanager.core.validate.ParameterValidator;
+import org.apache.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
+import org.apache.linkis.server.Message;
+import org.apache.linkis.server.security.SecurityFilter;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

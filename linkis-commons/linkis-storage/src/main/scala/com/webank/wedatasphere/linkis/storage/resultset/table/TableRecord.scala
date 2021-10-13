@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.resultset.table
+package org.apache.linkis.storage.resultset.table
 
-import com.webank.wedatasphere.linkis.common.io.Record
-import com.webank.wedatasphere.linkis.storage.resultset.ResultRecord
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
+import org.apache.linkis.common.io.Record
+import org.apache.linkis.storage.resultset.ResultRecord
+import org.apache.linkis.storage.utils.StorageUtils
 
 
 class TableRecord(val row:Array[Any]) extends ResultRecord{

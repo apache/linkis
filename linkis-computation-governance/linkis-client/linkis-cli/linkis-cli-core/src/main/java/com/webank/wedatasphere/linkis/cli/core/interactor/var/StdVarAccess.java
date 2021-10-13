@@ -11,17 +11,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.var;
+package org.apache.linkis.cli.core.interactor.var;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.command.ParamItem;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.Params;
-import com.webank.wedatasphere.linkis.cli.common.entity.properties.ClientProperties;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.common.utils.converter.AbstractStringConverter;
-import com.webank.wedatasphere.linkis.cli.core.exception.VarAccessException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.utils.SpecialMap;
-import com.webank.wedatasphere.linkis.cli.core.utils.converter.PredefinedStringConverters;
+import org.apache.linkis.cli.common.entity.command.ParamItem;
+import org.apache.linkis.cli.common.entity.command.Params;
+import org.apache.linkis.cli.common.entity.properties.ClientProperties;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.common.utils.converter.AbstractStringConverter;
+import org.apache.linkis.cli.core.exception.VarAccessException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.utils.SpecialMap;
+import org.apache.linkis.cli.core.utils.converter.PredefinedStringConverters;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

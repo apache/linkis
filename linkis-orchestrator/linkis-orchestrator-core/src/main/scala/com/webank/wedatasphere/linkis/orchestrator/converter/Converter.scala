@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.converter
+package org.apache.linkis.orchestrator.converter
 
-import com.webank.wedatasphere.linkis.orchestrator.domain.JobReq
-import com.webank.wedatasphere.linkis.orchestrator.plans.ast.Job
+import org.apache.linkis.orchestrator.domain.JobReq
+import org.apache.linkis.orchestrator.plans.ast.Job
 
 /**
   *

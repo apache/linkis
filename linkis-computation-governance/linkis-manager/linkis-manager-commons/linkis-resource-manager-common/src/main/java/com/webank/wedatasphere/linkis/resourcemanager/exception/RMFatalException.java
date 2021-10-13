@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.exception;
+package org.apache.linkis.resourcemanager.exception;
 
-import com.webank.wedatasphere.linkis.common.exception.FatalException;
+import org.apache.linkis.common.exception.FatalException;
 
 
 public class RMFatalException extends FatalException {

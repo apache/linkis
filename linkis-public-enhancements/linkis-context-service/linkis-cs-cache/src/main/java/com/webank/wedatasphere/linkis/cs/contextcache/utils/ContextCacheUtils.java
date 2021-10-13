@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.contextcache.utils;
+package org.apache.linkis.cs.contextcache.utils;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.jdbc;
+package org.apache.linkis.ujes.jdbc;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

@@ -1,10 +1,10 @@
-package com.webank.wedatasphere.linkis.manager.label.entity.entrance;
+package org.apache.linkis.manager.label.entity.entrance;
 
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant;
-import com.webank.wedatasphere.linkis.manager.label.entity.Feature;
-import com.webank.wedatasphere.linkis.manager.label.entity.GenericLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.SerializableLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.annon.ValueSerialNum;
+import org.apache.linkis.manager.label.constant.LabelKeyConstant;
+import org.apache.linkis.manager.label.entity.Feature;
+import org.apache.linkis.manager.label.entity.GenericLabel;
+import org.apache.linkis.manager.label.entity.SerializableLabel;
+import org.apache.linkis.manager.label.entity.annon.ValueSerialNum;
 
 import java.util.HashMap;
 

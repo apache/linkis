@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.interceptor
+package org.apache.linkis.entrance.interceptor
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.governance.common.protocol.job.JobReq
-import com.webank.wedatasphere.linkis.protocol.task.Task
+import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.protocol.job.JobReq
+import org.apache.linkis.protocol.task.Task
 
 
 

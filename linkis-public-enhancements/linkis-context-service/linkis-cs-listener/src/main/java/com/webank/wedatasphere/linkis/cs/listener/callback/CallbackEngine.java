@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.listener.callback;
+package org.apache.linkis.cs.listener.callback;
 
-import com.webank.wedatasphere.linkis.cs.listener.callback.imp.ContextKeyValueBean;
+import org.apache.linkis.cs.listener.callback.imp.ContextKeyValueBean;
 
 import java.util.ArrayList;
 

@@ -11,25 +11,25 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.interactor.execution.executor;
+package org.apache.linkis.cli.application.interactor.execution.executor;
 
-import com.webank.wedatasphere.linkis.cli.application.driver.LinkisClientDriver;
-import com.webank.wedatasphere.linkis.cli.application.driver.transformer.DriverTransformer;
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec.LinkisJobInfo;
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec.LinkisJobKill;
-import com.webank.wedatasphere.linkis.cli.application.interactor.job.LinkisJobMan;
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobExec;
-import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
-import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.constants.Constants;
-import com.webank.wedatasphere.linkis.cli.core.exception.ExecutorException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.interactor.execution.executor.JobManagableBackendExecutor;
-import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobManExec;
-import com.webank.wedatasphere.linkis.cli.core.utils.CommonUtils;
-import com.webank.wedatasphere.linkis.cli.core.utils.LogUtils;
-import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult;
+import org.apache.linkis.cli.application.driver.LinkisClientDriver;
+import org.apache.linkis.cli.application.driver.transformer.DriverTransformer;
+import org.apache.linkis.cli.application.interactor.execution.jobexec.LinkisJobInfo;
+import org.apache.linkis.cli.application.interactor.execution.jobexec.LinkisJobKill;
+import org.apache.linkis.cli.application.interactor.job.LinkisJobMan;
+import org.apache.linkis.cli.common.entity.execution.jobexec.JobExec;
+import org.apache.linkis.cli.common.entity.job.Job;
+import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.constants.Constants;
+import org.apache.linkis.cli.core.exception.ExecutorException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.execution.executor.JobManagableBackendExecutor;
+import org.apache.linkis.cli.core.interactor.execution.jobexec.JobManExec;
+import org.apache.linkis.cli.core.utils.CommonUtils;
+import org.apache.linkis.cli.core.utils.LogUtils;
+import org.apache.linkis.httpclient.dws.response.DWSResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

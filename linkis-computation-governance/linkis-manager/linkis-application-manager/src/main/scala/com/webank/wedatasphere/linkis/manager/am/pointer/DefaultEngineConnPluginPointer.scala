@@ -16,14 +16,14 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.pointer
+package org.apache.linkis.manager.am.pointer
 
-import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration
-import com.webank.wedatasphere.linkis.manager.am.exception.AMErrorException
-import com.webank.wedatasphere.linkis.manager.common.constant.AMConstant
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.resource.EngineResourceRequest
-import com.webank.wedatasphere.linkis.rpc.Sender
+import org.apache.linkis.manager.am.conf.AMConfiguration
+import org.apache.linkis.manager.am.exception.AMErrorException
+import org.apache.linkis.manager.common.constant.AMConstant
+import org.apache.linkis.manager.common.entity.resource.NodeResource
+import org.apache.linkis.manager.engineplugin.common.resource.EngineResourceRequest
+import org.apache.linkis.rpc.Sender
 import org.springframework.stereotype.Component
 
 

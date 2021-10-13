@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.entity
+package org.apache.linkis.engineplugin.spark.entity
 
 import java.io.File
 

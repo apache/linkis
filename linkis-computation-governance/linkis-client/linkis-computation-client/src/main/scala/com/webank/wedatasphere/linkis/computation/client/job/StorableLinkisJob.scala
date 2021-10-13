@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client.job
+package org.apache.linkis.computation.client.job
 
-import com.webank.wedatasphere.linkis.computation.client.LinkisJobMetrics
-import com.webank.wedatasphere.linkis.computation.client.operator.StorableOperator
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
-import com.webank.wedatasphere.linkis.ujes.client.UJESClient
-import com.webank.wedatasphere.linkis.ujes.client.request.{JobSubmitAction, OpenLogAction}
-import com.webank.wedatasphere.linkis.ujes.client.response.{JobInfoResult, JobSubmitResult}
+import org.apache.linkis.computation.client.LinkisJobMetrics
+import org.apache.linkis.computation.client.operator.StorableOperator
+import org.apache.linkis.governance.common.entity.task.RequestPersistTask
+import org.apache.linkis.ujes.client.UJESClient
+import org.apache.linkis.ujes.client.request.{JobSubmitAction, OpenLogAction}
+import org.apache.linkis.ujes.client.response.{JobInfoResult, JobSubmitResult}
 
 
 trait StorableLinkisJob extends AbstractLinkisJob {

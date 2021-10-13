@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.utils
+package org.apache.linkis.common.utils
 
 import java.lang.reflect.Modifier
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration
+import org.apache.linkis.common.conf.Configuration
 import org.reflections.Reflections
 
 object ClassUtils {

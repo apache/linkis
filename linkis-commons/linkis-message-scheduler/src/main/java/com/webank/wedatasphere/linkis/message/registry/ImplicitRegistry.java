@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.registry;
+package org.apache.linkis.message.registry;
 
 
 public interface ImplicitRegistry {

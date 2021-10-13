@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.io.utils;
+package org.apache.linkis.manager.engineplugin.io.utils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

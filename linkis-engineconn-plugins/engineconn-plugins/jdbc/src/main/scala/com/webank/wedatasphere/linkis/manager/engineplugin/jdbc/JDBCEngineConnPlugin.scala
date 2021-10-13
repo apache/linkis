@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.jdbc
+package org.apache.linkis.manager.engineplugin.jdbc
 
 import java.util
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.EngineConnPlugin
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.EngineConnFactory
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.resource.{EngineResourceFactory, GenericEngineResourceFactory}
-import com.webank.wedatasphere.linkis.manager.engineplugin.jdbc.builder.JDBCProcessEngineConnLaunchBuilder
-import com.webank.wedatasphere.linkis.manager.engineplugin.jdbc.factory.JDBCEngineConnFactory
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.engineplugin.common.EngineConnPlugin
+import org.apache.linkis.manager.engineplugin.common.creation.EngineConnFactory
+import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
+import org.apache.linkis.manager.engineplugin.common.resource.{EngineResourceFactory, GenericEngineResourceFactory}
+import org.apache.linkis.manager.engineplugin.jdbc.builder.JDBCProcessEngineConnLaunchBuilder
+import org.apache.linkis.manager.engineplugin.jdbc.factory.JDBCEngineConnFactory
+import org.apache.linkis.manager.label.entity.Label
 
 class JDBCEngineConnPlugin extends EngineConnPlugin {
 

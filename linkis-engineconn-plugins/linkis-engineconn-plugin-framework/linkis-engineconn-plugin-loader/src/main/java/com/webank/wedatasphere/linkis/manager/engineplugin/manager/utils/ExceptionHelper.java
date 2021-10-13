@@ -15,9 +15,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.manager.utils;
+package org.apache.linkis.manager.engineplugin.manager.utils;
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.exception.ErrorException;
 
 
 public class ExceptionHelper {

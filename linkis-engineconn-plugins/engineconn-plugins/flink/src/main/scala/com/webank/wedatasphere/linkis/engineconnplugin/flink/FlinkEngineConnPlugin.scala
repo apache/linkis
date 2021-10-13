@@ -15,16 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.engineconnplugin.flink
+package org.apache.linkis.engineconnplugin.flink
 
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.factory.FlinkEngineConnFactory
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.launch.FlinkEngineConnLaunchBuilder
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.resource.FlinkEngineConnResourceFactory
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.EngineConnPlugin
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.EngineConnFactory
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.resource.EngineResourceFactory
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.engineconnplugin.flink.factory.FlinkEngineConnFactory
+import org.apache.linkis.engineconnplugin.flink.launch.FlinkEngineConnLaunchBuilder
+import org.apache.linkis.engineconnplugin.flink.resource.FlinkEngineConnResourceFactory
+import org.apache.linkis.manager.engineplugin.common.EngineConnPlugin
+import org.apache.linkis.manager.engineplugin.common.creation.EngineConnFactory
+import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
+import org.apache.linkis.manager.engineplugin.common.resource.EngineResourceFactory
+import org.apache.linkis.manager.label.entity.Label
 
 
 class FlinkEngineConnPlugin extends EngineConnPlugin {

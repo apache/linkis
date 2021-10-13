@@ -15,12 +15,12 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.catalyst.optimizer
+package org.apache.linkis.orchestrator.computation.catalyst.optimizer
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.orchestrator.code.plans.logical.{CacheTask, CodeLogicalUnitTask}
-import com.webank.wedatasphere.linkis.orchestrator.extensions.catalyst.OptimizerTransform
-import com.webank.wedatasphere.linkis.orchestrator.plans.logical.{LogicalContext, Task}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.orchestrator.code.plans.logical.{CacheTask, CodeLogicalUnitTask}
+import org.apache.linkis.orchestrator.extensions.catalyst.OptimizerTransform
+import org.apache.linkis.orchestrator.plans.logical.{LogicalContext, Task}
 
 /**
  *

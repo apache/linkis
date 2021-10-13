@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.hive.config;
+package org.apache.linkis.metadata.hive.config;
 
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.annotation;
+package org.apache.linkis.cs.common.annotation;
 
 import java.lang.annotation.*;
 

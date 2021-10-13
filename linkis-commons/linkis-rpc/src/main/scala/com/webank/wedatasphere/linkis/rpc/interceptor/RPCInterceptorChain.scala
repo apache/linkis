@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.interceptor
+package org.apache.linkis.rpc.interceptor
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
+import org.apache.linkis.common.ServiceInstance
 
 import scala.runtime.BoxedUnit
 

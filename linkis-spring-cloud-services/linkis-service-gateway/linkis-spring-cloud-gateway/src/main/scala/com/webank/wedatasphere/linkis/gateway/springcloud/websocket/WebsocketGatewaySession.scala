@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.springcloud.websocket
+package org.apache.linkis.gateway.springcloud.websocket
 
 import java.net.InetSocketAddress
 import java.util.function
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.gateway.exception.GatewayErrorException
-import com.webank.wedatasphere.linkis.gateway.springcloud.errorcode.GatewayErrorConstants
-import com.webank.wedatasphere.linkis.gateway.springcloud.websocket.SpringCloudGatewayWebsocketUtils._
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.gateway.exception.GatewayErrorException
+import org.apache.linkis.gateway.springcloud.errorcode.GatewayErrorConstants
+import org.apache.linkis.gateway.springcloud.websocket.SpringCloudGatewayWebsocketUtils._
+import org.apache.linkis.server.conf.ServerConfiguration
 import io.netty.handler.codec.http.websocketx.WebSocketFrame
 import org.springframework.core.io.buffer.NettyDataBufferFactory
 import org.springframework.web.reactive.socket.adapter.ReactorNettyWebSocketSession
@@ -102,7 +102,7 @@ case class ProxyGatewayWebSocketSession(webSocketSession: ReactorNettyWebSocketS
   }
   def heartbeat(): Unit = heartbeat(new WebSocketMessage(WebSocketMessage.Type.PING, webSocketSession.bufferFactory().wrap("".getBytes())))
 }
-import com.webank.wedatasphere.linkis.gateway.springcloud.websocket.GatewayWebSocketSession.getWebSocketConnection
+import org.apache.linkis.gateway.springcloud.websocket.GatewayWebSocketSession.getWebSocketConnection
 class GatewayWebSocketSession private(inbound: WebsocketInbound,
                                                outbound: WebsocketOutbound,
                                                info: HandshakeInfo,

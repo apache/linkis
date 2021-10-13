@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entranceclient
+package org.apache.linkis.entranceclient
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.entrance.context.DefaultEntranceContext
-import com.webank.wedatasphere.linkis.entrance.exception.EntranceErrorException
-import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
-import com.webank.wedatasphere.linkis.entrance.scheduler.EntranceSchedulerContext
-import com.webank.wedatasphere.linkis.entrance.server.DefaultEntranceServer
-import com.webank.wedatasphere.linkis.entrance.{EntranceContext, EntranceServer}
-import com.webank.wedatasphere.linkis.entranceclient.execute._
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
-import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelScheduler
-import com.webank.wedatasphere.linkis.server.JMap
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.entrance.context.DefaultEntranceContext
+import org.apache.linkis.entrance.exception.EntranceErrorException
+import org.apache.linkis.entrance.interceptor.EntranceInterceptor
+import org.apache.linkis.entrance.scheduler.EntranceSchedulerContext
+import org.apache.linkis.entrance.server.DefaultEntranceServer
+import org.apache.linkis.entrance.{EntranceContext, EntranceServer}
+import org.apache.linkis.entranceclient.execute._
+import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.scheduler.queue.parallelqueue.ParallelScheduler
+import org.apache.linkis.server.JMap
 import org.apache.commons.lang.StringUtils
 
 class EntranceClientImpl private() extends EntranceClient with EngineApplicationNameFactory

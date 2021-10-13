@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.exception
+package org.apache.linkis.scheduler.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 
 class SchedulerErrorException(errCode: Int, desc: String) extends ErrorException(errCode,desc){

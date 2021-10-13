@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.domain.req
+package org.apache.linkis.orchestrator.domain.req
 
-import com.webank.wedatasphere.linkis.orchestrator.domain.JobReq
+import org.apache.linkis.orchestrator.domain.JobReq
 
 /**
   *

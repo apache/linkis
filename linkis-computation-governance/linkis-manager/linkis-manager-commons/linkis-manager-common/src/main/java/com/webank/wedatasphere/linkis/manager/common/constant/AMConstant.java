@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.constant;
+package org.apache.linkis.manager.common.constant;
 
 
 public class AMConstant {

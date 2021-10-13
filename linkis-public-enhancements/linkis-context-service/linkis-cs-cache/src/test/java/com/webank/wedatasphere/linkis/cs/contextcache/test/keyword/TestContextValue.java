@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.contextcache.test.keyword;
+package org.apache.linkis.cs.contextcache.test.keyword;
 
-import com.webank.wedatasphere.linkis.cs.common.annotation.KeywordMethod;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextValue;
+import org.apache.linkis.cs.common.annotation.KeywordMethod;
+import org.apache.linkis.cs.common.entity.source.ContextValue;
 
 public class TestContextValue  implements ContextValue {
 

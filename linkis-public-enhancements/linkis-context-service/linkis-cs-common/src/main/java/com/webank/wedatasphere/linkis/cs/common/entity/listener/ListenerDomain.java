@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.entity.listener;
+package org.apache.linkis.cs.common.entity.listener;
 
 
 public interface ListenerDomain {

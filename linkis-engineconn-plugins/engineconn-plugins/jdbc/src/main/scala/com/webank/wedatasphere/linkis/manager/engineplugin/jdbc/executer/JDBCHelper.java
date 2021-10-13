@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.manager.engineplugin.jdbc.executer;
+package org.apache.linkis.manager.engineplugin.jdbc.executer;
 
-import com.webank.wedatasphere.linkis.storage.domain.*;
+import org.apache.linkis.storage.domain.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

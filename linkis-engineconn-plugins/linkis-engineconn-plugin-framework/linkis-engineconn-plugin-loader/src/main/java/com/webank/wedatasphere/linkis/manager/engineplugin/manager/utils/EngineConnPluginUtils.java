@@ -15,9 +15,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.manager.utils;
+package org.apache.linkis.manager.engineplugin.manager.utils;
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.EngineConnPlugin;
+import org.apache.linkis.manager.engineplugin.common.EngineConnPlugin;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

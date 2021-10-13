@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc
+package org.apache.linkis.rpc
 
 import java.lang.reflect.ParameterizedType
 import java.util
 
-import com.webank.wedatasphere.linkis.rpc.transform.{JavaCollectionSerializer, JavaMapSerializer}
+import org.apache.linkis.rpc.transform.{JavaCollectionSerializer, JavaMapSerializer}
 import org.apache.commons.lang.ClassUtils
 import org.json4s.JsonAST.JObject
 import org.json4s.JsonDSL._

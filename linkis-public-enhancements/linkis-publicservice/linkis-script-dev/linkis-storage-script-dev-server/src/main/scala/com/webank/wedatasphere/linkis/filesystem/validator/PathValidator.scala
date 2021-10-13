@@ -11,19 +11,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.validator
+package org.apache.linkis.filesystem.validator
 
 import java.io.File
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration._
-import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException
-import com.webank.wedatasphere.linkis.filesystem.util.WorkspaceUtil
-import com.webank.wedatasphere.linkis.server
-import com.webank.wedatasphere.linkis.server.{Message, catchIt}
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration._
+import org.apache.linkis.filesystem.exception.WorkSpaceException
+import org.apache.linkis.filesystem.util.WorkspaceUtil
+import org.apache.linkis.server
+import org.apache.linkis.server.{Message, catchIt}
+import org.apache.linkis.server.security.SecurityFilter
+import org.apache.linkis.storage.utils.StorageUtils
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.{Around, Aspect, Pointcut}
@@ -36,7 +36,7 @@ import org.springframework.web.context.request.{RequestContextHolder, ServletReq
 @Component
 class PathValidator extends Logging {
 
-  @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping) && within(com.webank.wedatasphere.linkis.filesystem.restful.api.*)")
+  @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping) && within(org.apache.linkis.filesystem.restful.api.*)")
   def restfulResponseCatch1(): Unit = {}
 
   def getPath(args: Array[Object], paramNames: Array[String]): String = {

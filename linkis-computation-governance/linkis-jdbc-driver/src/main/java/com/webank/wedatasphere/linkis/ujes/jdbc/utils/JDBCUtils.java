@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.jdbc.utils;
+package org.apache.linkis.ujes.jdbc.utils;
 
 public class JDBCUtils {
 

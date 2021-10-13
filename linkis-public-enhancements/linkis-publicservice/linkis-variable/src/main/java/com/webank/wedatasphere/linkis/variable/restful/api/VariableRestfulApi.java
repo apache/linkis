@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.variable.restful.api;
+package org.apache.linkis.variable.restful.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.webank.wedatasphere.linkis.server.Message;
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
-import com.webank.wedatasphere.linkis.variable.entity.VarKeyValueVO;
-import com.webank.wedatasphere.linkis.variable.exception.VariableException;
-import com.webank.wedatasphere.linkis.variable.service.VariableService;
+import org.apache.linkis.server.Message;
+import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.variable.entity.VarKeyValueVO;
+import org.apache.linkis.variable.exception.VariableException;
+import org.apache.linkis.variable.service.VariableService;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

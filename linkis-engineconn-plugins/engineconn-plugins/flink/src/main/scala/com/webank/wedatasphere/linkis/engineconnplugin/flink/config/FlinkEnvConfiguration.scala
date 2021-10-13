@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.config
+package org.apache.linkis.engineconnplugin.flink.config
 
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.config.entries.ExecutionEntry
+import org.apache.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.linkis.engineconnplugin.flink.client.config.entries.ExecutionEntry
 
 
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.serializer;
+package org.apache.linkis.rpc.serializer;
 
 import io.protostuff.*;
 import io.protostuff.runtime.Delegate;

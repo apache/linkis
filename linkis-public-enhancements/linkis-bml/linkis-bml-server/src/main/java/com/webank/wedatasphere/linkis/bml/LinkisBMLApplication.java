@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.bml;
+package org.apache.linkis.bml;
 
-import com.webank.wedatasphere.linkis.LinkisBaseServerApp;
+import org.apache.linkis.LinkisBaseServerApp;
 
 public class LinkisBMLApplication {
 

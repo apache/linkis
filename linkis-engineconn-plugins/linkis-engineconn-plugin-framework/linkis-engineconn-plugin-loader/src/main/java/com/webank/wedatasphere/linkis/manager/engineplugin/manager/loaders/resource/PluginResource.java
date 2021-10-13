@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.manager.loaders.resource;
+package org.apache.linkis.manager.engineplugin.manager.loaders.resource;
 
 import org.apache.commons.lang.StringUtils;
 

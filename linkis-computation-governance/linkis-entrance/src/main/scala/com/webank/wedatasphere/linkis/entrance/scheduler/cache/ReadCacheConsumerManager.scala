@@ -1,9 +1,9 @@
-package com.webank.wedatasphere.linkis.entrance.scheduler.cache
+package org.apache.linkis.entrance.scheduler.cache
 
-import com.webank.wedatasphere.linkis.entrance.persistence.PersistenceManager
-import com.webank.wedatasphere.linkis.entrance.scheduler.EntranceGroupFactory
-import com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue.FIFOUserConsumer
-import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelConsumerManager
+import org.apache.linkis.entrance.persistence.PersistenceManager
+import org.apache.linkis.entrance.scheduler.EntranceGroupFactory
+import org.apache.linkis.scheduler.queue.fifoqueue.FIFOUserConsumer
+import org.apache.linkis.scheduler.queue.parallelqueue.ParallelConsumerManager
 
 class ReadCacheConsumerManager(maxParallelismUsers: Int, persistenceManager: PersistenceManager) extends ParallelConsumerManager(maxParallelismUsers){
 

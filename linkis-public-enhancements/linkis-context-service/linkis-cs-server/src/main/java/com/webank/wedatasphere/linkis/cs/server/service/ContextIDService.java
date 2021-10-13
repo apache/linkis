@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.service;
+package org.apache.linkis.cs.server.service;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.exception.CSErrorException;
 
 
 public abstract class ContextIDService extends AbstractService {

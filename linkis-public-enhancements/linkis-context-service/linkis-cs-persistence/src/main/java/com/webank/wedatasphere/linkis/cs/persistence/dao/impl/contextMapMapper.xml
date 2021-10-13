@@ -19,33 +19,33 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 
-<mapper namespace="com.webank.wedatasphere.linkis.cs.persistence.dao.ContextMapMapper">
+<mapper namespace="org.apache.linkis.cs.persistence.dao.ContextMapMapper">
 
     <sql id="context_map">
         `id`,`key`,`context_scope`,`context_type`,`props`,`value`,`context_id`,`keywords`
     </sql>
 
     <insert id="createMap"
-            parameterType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextKeyValue">
+            parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextKeyValue">
         INSERT INTO linkis_ps_cs_context_map(<include refid="context_map"/>)
         VALUES (#{id},#{contextKey.key},#{contextKey.contextScope},#{contextKey.contextType},
         #{props},#{contextValue.valueStr},#{contextId},#{contextValue.keywords})
     </insert>
 
     <resultMap id="PersistenceContextKeyValue"
-               type="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextKeyValue">
+               type="org.apache.linkis.cs.persistence.entity.PersistenceContextKeyValue">
         <id column="id" property="id"></id>
         <result column="context_id" property="contextId"></result>
         <result column="props" property="props"></result>
         <association property="contextKey"
-                     javaType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextKey">
+                     javaType="org.apache.linkis.cs.persistence.entity.PersistenceContextKey">
             <result column="key" property="key"></result>
             <result column="context_scope" property="contextScope"></result>
             <result column="context_type" property="contextType"></result>
             <result column="keywords" property="keywords"></result>
         </association>
         <association property="contextValue"
-                     javaType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextValue">
+                     javaType="org.apache.linkis.cs.persistence.entity.PersistenceContextValue">
             <result column="value" property="valueStr"></result>
         </association>
     </resultMap>
@@ -96,7 +96,7 @@
     </delete>
 
     <update id="updateMap"
-            parameterType="com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextKeyValue">
+            parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextKeyValue">
         UPDATE linkis_ps_cs_context_map
         <trim prefix="set" suffixOverrides=",">
             <if test="contextKey.contextScope != null">`context_scope` = #{contextKey.contextScope},</if>

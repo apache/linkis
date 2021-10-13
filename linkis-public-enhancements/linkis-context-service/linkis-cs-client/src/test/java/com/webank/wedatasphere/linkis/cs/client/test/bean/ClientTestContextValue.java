@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.test.bean;
+package org.apache.linkis.cs.client.test.bean;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextValue;
+import org.apache.linkis.cs.common.entity.source.ContextValue;
 
 
 public class ClientTestContextValue implements ContextValue {

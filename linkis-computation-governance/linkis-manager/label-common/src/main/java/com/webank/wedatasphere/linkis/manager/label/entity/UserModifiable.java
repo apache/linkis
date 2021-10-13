@@ -1,6 +1,6 @@
-package com.webank.wedatasphere.linkis.manager.label.entity;
+package org.apache.linkis.manager.label.entity;
 
-import com.webank.wedatasphere.linkis.manager.label.exception.LabelErrorException;
+import org.apache.linkis.manager.label.exception.LabelErrorException;
 
 public interface UserModifiable {
 

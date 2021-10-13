@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.exception;
+package org.apache.linkis.jobhistory.exception;
 
 
 public class QueryException extends Exception {

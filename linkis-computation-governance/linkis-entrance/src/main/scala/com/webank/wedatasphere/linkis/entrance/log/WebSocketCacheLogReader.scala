@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.log
+package org.apache.linkis.entrance.log
 
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.conf.EntranceConfiguration
 
 /**
   * Description: 用于websocket方式向前推送日志的

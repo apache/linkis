@@ -11,16 +11,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadatamanager.common.service;
+package org.apache.linkis.metadatamanager.common.service;
 
 import com.google.common.cache.Cache;
-import com.webank.wedatasphere.linkis.common.exception.WarnException;
-import com.webank.wedatasphere.linkis.metadatamanager.common.Json;
-import com.webank.wedatasphere.linkis.metadatamanager.common.cache.CacheManager;
-import com.webank.wedatasphere.linkis.metadatamanager.common.cache.ConnCacheManager;
-import com.webank.wedatasphere.linkis.metadatamanager.common.domain.MetaColumnInfo;
-import com.webank.wedatasphere.linkis.metadatamanager.common.domain.MetaPartitionInfo;
-import com.webank.wedatasphere.linkis.metadatamanager.common.exception.MetaRuntimeException;
+import org.apache.linkis.common.exception.WarnException;
+import org.apache.linkis.metadatamanager.common.Json;
+import org.apache.linkis.metadatamanager.common.cache.CacheManager;
+import org.apache.linkis.metadatamanager.common.cache.ConnCacheManager;
+import org.apache.linkis.metadatamanager.common.domain.MetaColumnInfo;
+import org.apache.linkis.metadatamanager.common.domain.MetaPartitionInfo;
+import org.apache.linkis.metadatamanager.common.exception.MetaRuntimeException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

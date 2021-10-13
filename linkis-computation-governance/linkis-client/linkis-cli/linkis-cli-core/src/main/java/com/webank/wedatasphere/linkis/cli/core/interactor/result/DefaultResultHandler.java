@@ -11,13 +11,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.result;
+package org.apache.linkis.cli.core.interactor.result;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.ExecutionResult;
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.ExecutionStatus;
-import com.webank.wedatasphere.linkis.cli.common.entity.result.ResultHandler;
-import com.webank.wedatasphere.linkis.cli.core.constants.Constants;
-import com.webank.wedatasphere.linkis.cli.core.utils.LogUtils;
+import org.apache.linkis.cli.common.entity.execution.ExecutionResult;
+import org.apache.linkis.cli.common.entity.execution.jobexec.ExecutionStatus;
+import org.apache.linkis.cli.common.entity.result.ResultHandler;
+import org.apache.linkis.cli.core.constants.Constants;
+import org.apache.linkis.cli.core.utils.LogUtils;
 
 import static java.lang.System.exit;
 

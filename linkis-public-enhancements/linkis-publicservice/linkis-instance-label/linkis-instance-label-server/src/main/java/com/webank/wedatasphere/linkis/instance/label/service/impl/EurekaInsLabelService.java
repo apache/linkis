@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.service.impl;
+package org.apache.linkis.instance.label.service.impl;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.instance.label.entity.InstanceInfo;
-import com.webank.wedatasphere.linkis.instance.label.service.InsLabelAccessService;
-import com.webank.wedatasphere.linkis.instance.label.service.annotation.AdapterMode;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.instance.label.entity.InstanceInfo;
+import org.apache.linkis.instance.label.service.InsLabelAccessService;
+import org.apache.linkis.instance.label.service.annotation.AdapterMode;
+import org.apache.linkis.manager.label.entity.Label;
 import org.springframework.cloud.netflix.eureka.EurekaDiscoveryClient;
 
 import java.util.List;

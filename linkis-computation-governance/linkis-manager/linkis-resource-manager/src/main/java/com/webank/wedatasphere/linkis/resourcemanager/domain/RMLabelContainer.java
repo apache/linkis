@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.domain;
+package org.apache.linkis.resourcemanager.domain;
 
 import com.google.common.collect.Lists;
-import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf;
-import com.webank.wedatasphere.linkis.manager.label.builder.CombinedLabelBuilder;
-import com.webank.wedatasphere.linkis.manager.label.entity.CombinedLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.manager.label.entity.ResourceLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.em.EMInstanceLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineInstanceLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.UserCreatorLabel;
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil;
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils;
-import com.webank.wedatasphere.linkis.resourcemanager.exception.RMErrorException;
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
+import org.apache.linkis.manager.label.builder.CombinedLabelBuilder;
+import org.apache.linkis.manager.label.entity.CombinedLabel;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.ResourceLabel;
+import org.apache.linkis.manager.label.entity.em.EMInstanceLabel;
+import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel;
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
+import org.apache.linkis.manager.label.utils.LabelUtil;
+import org.apache.linkis.manager.label.utils.LabelUtils;
+import org.apache.linkis.resourcemanager.exception.RMErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

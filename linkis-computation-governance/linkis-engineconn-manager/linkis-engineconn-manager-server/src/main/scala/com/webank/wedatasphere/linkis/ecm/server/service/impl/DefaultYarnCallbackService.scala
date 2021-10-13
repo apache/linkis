@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.service.impl
+package org.apache.linkis.ecm.server.service.impl
 
-import com.webank.wedatasphere.linkis.ecm.server.LinkisECMApplication
-import com.webank.wedatasphere.linkis.ecm.server.listener.{YarnAppIdCallbackEvent, YarnInfoCallbackEvent}
-import com.webank.wedatasphere.linkis.ecm.server.service.YarnCallbackService
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
-import com.webank.wedatasphere.linkis.protocol.callback.{YarnAPPIdCallbackProtocol, YarnInfoCallbackProtocol}
+import org.apache.linkis.ecm.server.LinkisECMApplication
+import org.apache.linkis.ecm.server.listener.{YarnAppIdCallbackEvent, YarnInfoCallbackEvent}
+import org.apache.linkis.ecm.server.service.YarnCallbackService
+import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.protocol.callback.{YarnAPPIdCallbackProtocol, YarnInfoCallbackProtocol}
 
 
 class DefaultYarnCallbackService extends YarnCallbackService {

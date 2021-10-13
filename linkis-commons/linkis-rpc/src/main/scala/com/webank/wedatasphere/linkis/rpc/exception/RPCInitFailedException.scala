@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.exception
+package org.apache.linkis.rpc.exception
 
-import com.webank.wedatasphere.linkis.common.exception.FatalException
+import org.apache.linkis.common.exception.FatalException
 
 
 private[rpc] class RPCInitFailedException(errorCode: Int, errorMsg: String) extends FatalException(errorCode, errorMsg)

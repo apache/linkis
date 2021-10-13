@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.service;
+package org.apache.linkis.cs.client.service;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.resource.BMLResource;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.entity.resource.BMLResource;
+import org.apache.linkis.cs.common.entity.source.ContextKey;
+import org.apache.linkis.cs.common.exception.CSErrorException;
 
 import java.util.List;
 import java.util.Map;

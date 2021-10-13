@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.client.response
+package org.apache.linkis.ujes.client.response
 
 import java.util.{List, Map}
 
-import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
-import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.json4s._
 import org.json4s.jackson.Serialization._
 

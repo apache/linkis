@@ -11,19 +11,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.interactor.job;
+package org.apache.linkis.cli.application.interactor.job;
 
-import com.webank.wedatasphere.linkis.cli.application.constants.LinkisClientKeys;
-import com.webank.wedatasphere.linkis.cli.application.constants.LinkisConstants;
-import com.webank.wedatasphere.linkis.cli.application.constants.LinkisKeys;
-import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
-import com.webank.wedatasphere.linkis.cli.common.entity.job.OutputWay;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.BuilderException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.interactor.job.JobBuilder;
-import com.webank.wedatasphere.linkis.cli.core.interactor.var.VarAccess;
-import com.webank.wedatasphere.linkis.cli.core.utils.LogUtils;
+import org.apache.linkis.cli.application.constants.LinkisClientKeys;
+import org.apache.linkis.cli.application.constants.LinkisConstants;
+import org.apache.linkis.cli.application.constants.LinkisKeys;
+import org.apache.linkis.cli.common.entity.job.Job;
+import org.apache.linkis.cli.common.entity.job.OutputWay;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.BuilderException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.job.JobBuilder;
+import org.apache.linkis.cli.core.interactor.var.VarAccess;
+import org.apache.linkis.cli.core.utils.LogUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;

@@ -1,10 +1,10 @@
-package com.webank.wedatasphere.linkis.governance.common.utils
+package org.apache.linkis.governance.common.utils
 
-import com.webank.wedatasphere.linkis.governance.common.entity.job.OnceExecutorContent
-import com.webank.wedatasphere.linkis.governance.common.exception.GovernanceErrorException
+import org.apache.linkis.governance.common.entity.job.OnceExecutorContent
+import org.apache.linkis.governance.common.exception.GovernanceErrorException
 import java.util
 
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.protocol.constants.TaskConstant
 
 
 object OnceExecutorContentUtils {

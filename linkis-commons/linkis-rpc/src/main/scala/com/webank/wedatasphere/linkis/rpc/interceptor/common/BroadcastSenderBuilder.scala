@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.interceptor.common
+package org.apache.linkis.rpc.interceptor.common
 
-import com.webank.wedatasphere.linkis.rpc.Sender
+import org.apache.linkis.rpc.Sender
 
 
 trait BroadcastSenderBuilder {

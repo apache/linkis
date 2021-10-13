@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.interceptor.impl
+package org.apache.linkis.entrance.interceptor.impl
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.cache.GlobalConfigurationKeyValueCache
-import com.webank.wedatasphere.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
-import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
-import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
-import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.cache.GlobalConfigurationKeyValueCache
+import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
+import org.apache.linkis.entrance.interceptor.EntranceInterceptor
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.protocol.utils.TaskUtils
+import org.apache.linkis.server.BDPJettyServerHelper
 import org.apache.commons.lang.time.DateFormatUtils
 
 import java.util

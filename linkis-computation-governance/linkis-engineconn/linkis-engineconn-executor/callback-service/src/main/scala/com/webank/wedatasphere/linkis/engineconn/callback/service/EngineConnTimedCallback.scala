@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.callback.service
+package org.apache.linkis.engineconn.callback.service
 
 
 trait EngineConnTimedCallback extends EngineConnCallback {

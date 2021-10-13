@@ -18,10 +18,10 @@
  * Created by ${USER} on ${DATE}.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.discovery
+package org.apache.linkis.httpclient.discovery
 
-import com.webank.wedatasphere.linkis.httpclient.request.{Action, ServerUrlAction}
-import com.webank.wedatasphere.linkis.httpclient.response.Result
+import org.apache.linkis.httpclient.request.{Action, ServerUrlAction}
+import org.apache.linkis.httpclient.response.Result
 
 
 trait HeartbeatAction extends Action with ServerUrlAction

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.strategy
+package org.apache.linkis.orchestrator.strategy
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.governance.common.entity.ExecutionNodeStatus
-import com.webank.wedatasphere.linkis.orchestrator.exception.OrchestratorErrorCodeSummary
-import com.webank.wedatasphere.linkis.orchestrator.execution.FailedTaskResponse
-import com.webank.wedatasphere.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
-import com.webank.wedatasphere.linkis.orchestrator.plans.physical.ExecTask
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
+import org.apache.linkis.orchestrator.exception.OrchestratorErrorCodeSummary
+import org.apache.linkis.orchestrator.execution.FailedTaskResponse
+import org.apache.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
+import org.apache.linkis.orchestrator.plans.physical.ExecTask
 
 import scala.collection.mutable
 /**

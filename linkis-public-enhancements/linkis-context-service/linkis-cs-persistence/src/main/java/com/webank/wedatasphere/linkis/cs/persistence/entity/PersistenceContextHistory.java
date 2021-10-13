@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.entity;
+package org.apache.linkis.cs.persistence.entity;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.history.ContextHistory;
-import com.webank.wedatasphere.linkis.cs.persistence.annotation.Ignore;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.history.ContextHistory;
+import org.apache.linkis.cs.persistence.annotation.Ignore;
 
 
 @Ignore

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.acessible.executor.conf
+package org.apache.linkis.engineconn.acessible.executor.conf
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.info.{DefaultNodeOverLoadInfoManager, NodeOverLoadInfoManager}
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.service.{EngineConnConcurrentLockService, EngineConnTimedLockService, LockService}
-import com.webank.wedatasphere.linkis.engineconn.executor.listener.ExecutorListenerBusContext
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.acessible.executor.info.{DefaultNodeOverLoadInfoManager, NodeOverLoadInfoManager}
+import org.apache.linkis.engineconn.acessible.executor.service.{EngineConnConcurrentLockService, EngineConnTimedLockService, LockService}
+import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.{Bean, Configuration}
 

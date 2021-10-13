@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.execution.observer.event;
+package org.apache.linkis.cli.core.interactor.execution.observer.event;
 
 
 public class TriggerEvent extends SingleObserverEvent {

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process
+package org.apache.linkis.manager.engineplugin.common.launch.process
 
 import java.util
 
-import com.webank.wedatasphere.linkis.engineconn.common.conf.EngineConnConf
-import com.webank.wedatasphere.linkis.manager.common.protocol.bml.BmlResource
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.EngineConnBuildFailedException
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity._
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.UserCreatorLabel
+import org.apache.linkis.engineconn.common.conf.EngineConnConf
+import org.apache.linkis.manager.common.protocol.bml.BmlResource
+import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnBuildFailedException
+import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
+import org.apache.linkis.manager.engineplugin.common.launch.entity._
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
 
 import scala.collection.JavaConversions._
 

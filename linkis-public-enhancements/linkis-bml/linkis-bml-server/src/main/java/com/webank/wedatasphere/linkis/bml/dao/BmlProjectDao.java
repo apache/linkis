@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.dao;
+package org.apache.linkis.bml.dao;
 
-import com.webank.wedatasphere.linkis.bml.Entity.BmlProject;
+import org.apache.linkis.bml.Entity.BmlProject;
 import org.apache.ibatis.annotations.*;
 
 import java.util.Date;

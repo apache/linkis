@@ -11,17 +11,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.command.fitter;
+package org.apache.linkis.cli.core.interactor.command.fitter;
 
-import com.webank.wedatasphere.linkis.cli.common.constants.CommonConstants;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdOption;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
-import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.CommandException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option.Flag;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option.Parameter;
+import org.apache.linkis.cli.common.constants.CommonConstants;
+import org.apache.linkis.cli.common.entity.command.CmdOption;
+import org.apache.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.CommandException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.command.template.option.Flag;
+import org.apache.linkis.cli.core.interactor.command.template.option.Parameter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ import java.util.Map;
 
 
 /**
- * @description: fit command arguments and fill them into {@link com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate}.
+ * @description: fit command arguments and fill them into {@link org.apache.linkis.cli.common.entity.command.CmdTemplate}.
  * Stores all that cannot be parsed.
  */
 public abstract class AbstractFitter implements Fitter {

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue
+package org.apache.linkis.scheduler.queue.fifoqueue
 
-import com.webank.wedatasphere.linkis.scheduler.queue.{AbstractGroup, Group, GroupFactory, SchedulerEvent}
+import org.apache.linkis.scheduler.queue.{AbstractGroup, Group, GroupFactory, SchedulerEvent}
 
 import scala.collection.mutable
 

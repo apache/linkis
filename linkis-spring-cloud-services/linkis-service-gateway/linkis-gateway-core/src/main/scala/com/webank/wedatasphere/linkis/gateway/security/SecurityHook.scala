@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.security
+package org.apache.linkis.gateway.security
 
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.http.GatewayContext
 
 trait SecurityHook {
 

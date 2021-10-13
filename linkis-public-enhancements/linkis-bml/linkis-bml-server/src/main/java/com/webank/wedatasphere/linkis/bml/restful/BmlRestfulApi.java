@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.restful;
+package org.apache.linkis.bml.restful;
 
-import com.webank.wedatasphere.linkis.bml.Entity.DownloadModel;
-import com.webank.wedatasphere.linkis.bml.Entity.Resource;
-import com.webank.wedatasphere.linkis.bml.Entity.ResourceTask;
-import com.webank.wedatasphere.linkis.bml.Entity.ResourceVersion;
-import com.webank.wedatasphere.linkis.bml.Entity.Version;
-import com.webank.wedatasphere.linkis.bml.common.Constant;
-import com.webank.wedatasphere.linkis.bml.service.BmlService;
-import com.webank.wedatasphere.linkis.bml.service.DownloadService;
-import com.webank.wedatasphere.linkis.bml.service.ResourceService;
-import com.webank.wedatasphere.linkis.bml.service.TaskService;
-import com.webank.wedatasphere.linkis.bml.service.VersionService;
-import com.webank.wedatasphere.linkis.bml.threading.TaskState;
-import com.webank.wedatasphere.linkis.bml.util.HttpRequestHelper;
-import com.webank.wedatasphere.linkis.bml.vo.ResourceBasicVO;
-import com.webank.wedatasphere.linkis.bml.vo.ResourceVO;
-import com.webank.wedatasphere.linkis.bml.vo.ResourceVersionsVO;
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.server.Message;
-import com.webank.wedatasphere.linkis.bml.common.*;
+import org.apache.linkis.bml.Entity.DownloadModel;
+import org.apache.linkis.bml.Entity.Resource;
+import org.apache.linkis.bml.Entity.ResourceTask;
+import org.apache.linkis.bml.Entity.ResourceVersion;
+import org.apache.linkis.bml.Entity.Version;
+import org.apache.linkis.bml.common.Constant;
+import org.apache.linkis.bml.service.BmlService;
+import org.apache.linkis.bml.service.DownloadService;
+import org.apache.linkis.bml.service.ResourceService;
+import org.apache.linkis.bml.service.TaskService;
+import org.apache.linkis.bml.service.VersionService;
+import org.apache.linkis.bml.threading.TaskState;
+import org.apache.linkis.bml.util.HttpRequestHelper;
+import org.apache.linkis.bml.vo.ResourceBasicVO;
+import org.apache.linkis.bml.vo.ResourceVO;
+import org.apache.linkis.bml.vo.ResourceVersionsVO;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.server.Message;
+import org.apache.linkis.bml.common.*;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;

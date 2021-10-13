@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.service;
+package org.apache.linkis.datasourcemanager.core.service;
 
 public interface DataSourceOpService {
 }

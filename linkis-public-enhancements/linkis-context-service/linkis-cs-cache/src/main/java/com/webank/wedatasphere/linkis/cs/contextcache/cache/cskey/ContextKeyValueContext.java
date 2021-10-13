@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.contextcache.cache.cskey;
+package org.apache.linkis.cs.contextcache.cache.cskey;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSWarnException;
-import com.webank.wedatasphere.linkis.cs.contextcache.index.ContextInvertedIndexSet;
-import com.webank.wedatasphere.linkis.cs.contextcache.parser.ContextKeyValueParser;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.source.ContextKey;
+import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
+import org.apache.linkis.cs.common.exception.CSWarnException;
+import org.apache.linkis.cs.contextcache.index.ContextInvertedIndexSet;
+import org.apache.linkis.cs.contextcache.parser.ContextKeyValueParser;
 
 import java.util.List;
 import java.util.Map;

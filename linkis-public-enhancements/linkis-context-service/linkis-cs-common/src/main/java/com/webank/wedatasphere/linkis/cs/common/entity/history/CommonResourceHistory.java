@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.entity.history;
+package org.apache.linkis.cs.common.entity.history;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.resource.Resource;
+import org.apache.linkis.cs.common.entity.resource.Resource;
 
 public class CommonResourceHistory extends AbstractContextHistory implements ResourceContextHistory {
 

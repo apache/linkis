@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.exception
+package org.apache.linkis.httpclient.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 
 class DiscoveryException(errorDesc: String) extends ErrorException(10901, errorDesc)

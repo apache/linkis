@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.scheduler
+package org.apache.linkis.entrance.scheduler
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration}
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
-import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
-import com.webank.wedatasphere.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, ResponseQueryConfig}
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{ConcurrentEngineConnLabel, EngineTypeLabel, UserCreatorLabel}
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
-import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
-import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelGroup
-import com.webank.wedatasphere.linkis.scheduler.queue.{Group, GroupFactory, SchedulerEvent}
-import com.webank.wedatasphere.linkis.server.JMap
+import org.apache.linkis.common.conf.{CommonVars, Configuration}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
+import org.apache.linkis.entrance.execute.EntranceJob
+import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, ResponseQueryConfig}
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.{ConcurrentEngineConnLabel, EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.protocol.utils.TaskUtils
+import org.apache.linkis.rpc.Sender
+import org.apache.linkis.scheduler.queue.parallelqueue.ParallelGroup
+import org.apache.linkis.scheduler.queue.{Group, GroupFactory, SchedulerEvent}
+import org.apache.linkis.server.JMap
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions._

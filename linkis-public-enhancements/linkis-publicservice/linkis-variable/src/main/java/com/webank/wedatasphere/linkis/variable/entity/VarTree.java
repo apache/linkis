@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.variable.entity;
+package org.apache.linkis.variable.entity;
 
 import java.util.ArrayList;
 import java.util.List;

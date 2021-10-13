@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.service.impl;
+package org.apache.linkis.cs.server.service.impl;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.history.ContextHistory;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.persistence.ContextPersistenceManager;
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.ContextHistoryPersistence;
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.KeywordContextHistoryPersistence;
-import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceType;
-import com.webank.wedatasphere.linkis.cs.server.service.ContextHistoryService;
+import org.apache.linkis.cs.common.entity.history.ContextHistory;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.persistence.ContextPersistenceManager;
+import org.apache.linkis.cs.persistence.persistence.ContextHistoryPersistence;
+import org.apache.linkis.cs.persistence.persistence.KeywordContextHistoryPersistence;
+import org.apache.linkis.cs.server.enumeration.ServiceType;
+import org.apache.linkis.cs.server.service.ContextHistoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

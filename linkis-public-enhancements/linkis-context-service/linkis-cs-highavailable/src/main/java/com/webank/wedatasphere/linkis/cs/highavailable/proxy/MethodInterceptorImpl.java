@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.highavailable.proxy;
+package org.apache.linkis.cs.highavailable.proxy;
 
 import com.google.gson.Gson;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.HAContextID;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.highavailable.AbstractContextHAManager;
-import com.webank.wedatasphere.linkis.cs.highavailable.exception.CSErrorCode;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.source.HAContextID;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.highavailable.AbstractContextHAManager;
+import org.apache.linkis.cs.highavailable.exception.CSErrorCode;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import org.apache.commons.lang.StringUtils;

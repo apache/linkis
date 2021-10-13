@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.highavailable.exception;
+package org.apache.linkis.cs.highavailable.exception;
 
 
 public class CSErrorCode {

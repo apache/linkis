@@ -15,11 +15,11 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.utils
+package org.apache.linkis.orchestrator.computation.utils
 
 
 
-import com.webank.wedatasphere.linkis.orchestrator.plans.physical.{AbstractExecTask, ExecTask, PhysicalContext}
+import org.apache.linkis.orchestrator.plans.physical.{AbstractExecTask, ExecTask, PhysicalContext}
 
 import java.util
 

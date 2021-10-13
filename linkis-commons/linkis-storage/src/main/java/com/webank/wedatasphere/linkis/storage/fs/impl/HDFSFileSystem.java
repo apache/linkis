@@ -11,14 +11,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.fs.impl;
+package org.apache.linkis.storage.fs.impl;
 
-import com.webank.wedatasphere.linkis.common.io.FsPath;
-import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils;
-import com.webank.wedatasphere.linkis.storage.domain.FsPathListWithError;
-import com.webank.wedatasphere.linkis.storage.fs.FileSystem;
-import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration;
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
+import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.hadoop.common.utils.HDFSUtils;
+import org.apache.linkis.storage.domain.FsPathListWithError;
+import org.apache.linkis.storage.fs.FileSystem;
+import org.apache.linkis.storage.utils.StorageConfiguration;
+import org.apache.linkis.storage.utils.StorageUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -341,7 +341,7 @@ public class HDFSFileSystem extends FileSystem {
         try {
             groupNames = ugi.getGroupNames();
         } catch (NullPointerException e) {
-            if ((Boolean) com.webank.wedatasphere.linkis.common.conf.Configuration.IS_TEST_MODE().getValue()) {
+            if ((Boolean) org.apache.linkis.common.conf.Configuration.IS_TEST_MODE().getValue()) {
                 groupNames = new String[]{"hadoop"};
             } else {
                 throw e;

@@ -11,18 +11,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadatamanager.server.service.impl;
+package org.apache.linkis.metadatamanager.server.service.impl;
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.util.json.Json;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.protocol.DsInfoQueryRequest;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.protocol.DsInfoResponse;
-import com.webank.wedatasphere.linkis.metadatamanager.common.MdmConfiguration;
-import com.webank.wedatasphere.linkis.metadatamanager.common.domain.MetaColumnInfo;
-import com.webank.wedatasphere.linkis.metadatamanager.common.domain.MetaPartitionInfo;
-import com.webank.wedatasphere.linkis.metadatamanager.server.service.MetadataAppService;
-import com.webank.wedatasphere.linkis.metadatamanager.common.protocol.*;
-import com.webank.wedatasphere.linkis.rpc.Sender;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.datasourcemanager.common.util.json.Json;
+import org.apache.linkis.datasourcemanager.common.protocol.DsInfoQueryRequest;
+import org.apache.linkis.datasourcemanager.common.protocol.DsInfoResponse;
+import org.apache.linkis.metadatamanager.common.MdmConfiguration;
+import org.apache.linkis.metadatamanager.common.domain.MetaColumnInfo;
+import org.apache.linkis.metadatamanager.common.domain.MetaPartitionInfo;
+import org.apache.linkis.metadatamanager.server.service.MetadataAppService;
+import org.apache.linkis.metadatamanager.common.protocol.*;
+import org.apache.linkis.rpc.Sender;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 

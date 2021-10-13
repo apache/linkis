@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.security.sso
+package org.apache.linkis.gateway.security.sso
 
 import java.net.URI
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication
-import com.webank.wedatasphere.linkis.common.utils.ClassUtils
-import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
+import org.apache.linkis.DataWorkCloudApplication
+import org.apache.linkis.common.utils.ClassUtils
+import org.apache.linkis.gateway.config.GatewayConfiguration
+import org.apache.linkis.gateway.http.GatewayContext
 
 trait SSOInterceptor {
 

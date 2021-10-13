@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entranceclient.conf
+package org.apache.linkis.entranceclient.conf
 
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.entranceclient
+import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entranceclient
 import org.springframework.context.annotation.{Condition, ConditionContext}
 import org.springframework.core.`type`.AnnotatedTypeMetadata
 

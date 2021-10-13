@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.udf.service;
+package org.apache.linkis.udf.service;
 
-import com.webank.wedatasphere.linkis.udf.entity.UDFTree;
-import com.webank.wedatasphere.linkis.udf.excepiton.UDFException;
+import org.apache.linkis.udf.entity.UDFTree;
+import org.apache.linkis.udf.excepiton.UDFException;
 
 
 public interface UDFTreeService {

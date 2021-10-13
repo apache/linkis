@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.entity.persistence;
+package org.apache.linkis.manager.common.entity.persistence;
 
 import java.util.Date;
 

@@ -11,15 +11,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.command.parser;
+package org.apache.linkis.cli.core.interactor.command.parser;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.TestCmdType;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.fitter.SingleTplFitter;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.parser.result.ParseResult;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.TestParamMapper;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.TestSparkCmdTemplate;
-import com.webank.wedatasphere.linkis.cli.core.utils.CommonUtils;
+import org.apache.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.core.interactor.command.TestCmdType;
+import org.apache.linkis.cli.core.interactor.command.fitter.SingleTplFitter;
+import org.apache.linkis.cli.core.interactor.command.parser.result.ParseResult;
+import org.apache.linkis.cli.core.interactor.command.template.TestParamMapper;
+import org.apache.linkis.cli.core.interactor.command.template.TestSparkCmdTemplate;
+import org.apache.linkis.cli.core.utils.CommonUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.acessible.executor.service
+package org.apache.linkis.engineconn.acessible.executor.service
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.ExecutorLockListener
-import com.webank.wedatasphere.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock, ResponseEngineLock, ResponseEngineUnlock}
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.acessible.executor.listener.ExecutorLockListener
+import org.apache.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock, ResponseEngineLock, ResponseEngineUnlock}
+import org.apache.linkis.server.BDPJettyServerHelper
 import org.apache.commons.lang.StringUtils
 
 trait LockService extends ExecutorLockListener with Logging {

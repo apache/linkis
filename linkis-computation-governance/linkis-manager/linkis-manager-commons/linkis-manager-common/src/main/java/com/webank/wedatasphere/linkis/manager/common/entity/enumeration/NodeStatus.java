@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.entity.enumeration;
+package org.apache.linkis.manager.common.entity.enumeration;
 
 
 

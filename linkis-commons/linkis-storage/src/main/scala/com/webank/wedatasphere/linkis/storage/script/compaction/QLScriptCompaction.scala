@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.script.compaction
+package org.apache.linkis.storage.script.compaction
 
 
 class QLScriptCompaction private extends CommonScriptCompaction{

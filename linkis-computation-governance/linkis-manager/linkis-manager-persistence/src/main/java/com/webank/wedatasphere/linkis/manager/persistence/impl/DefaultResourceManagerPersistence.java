@@ -1,14 +1,14 @@
-package com.webank.wedatasphere.linkis.manager.persistence.impl;
+package org.apache.linkis.manager.persistence.impl;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource;
-import com.webank.wedatasphere.linkis.manager.dao.LabelManagerMapper;
-import com.webank.wedatasphere.linkis.manager.dao.NodeManagerMapper;
-import com.webank.wedatasphere.linkis.manager.dao.ResourceManagerMapper;
-import com.webank.wedatasphere.linkis.manager.exception.PersistenceErrorException;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.manager.persistence.ResourceManagerPersistence;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
+import org.apache.linkis.manager.dao.LabelManagerMapper;
+import org.apache.linkis.manager.dao.NodeManagerMapper;
+import org.apache.linkis.manager.dao.ResourceManagerMapper;
+import org.apache.linkis.manager.exception.PersistenceErrorException;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.persistence.ResourceManagerPersistence;
 
 import java.util.List;
 

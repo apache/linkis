@@ -15,7 +15,7 @@
  */
 
 
-package com.webank.wedatasphere.linkis.entrance.exception;
+package org.apache.linkis.entrance.exception;
 
 public enum EntranceErrorCode {
     /**

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.plans.physical
+package org.apache.linkis.orchestrator.plans.physical
 
-import com.webank.wedatasphere.linkis.orchestrator.plans.logical.TaskDesc
+import org.apache.linkis.orchestrator.plans.logical.TaskDesc
 
 /**
   *

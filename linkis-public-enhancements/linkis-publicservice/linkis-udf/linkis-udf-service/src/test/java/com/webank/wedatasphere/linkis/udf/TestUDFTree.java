@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.udf;
+package org.apache.linkis.udf;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -31,7 +31,7 @@ public class TestUDFTree {
         File jar = new File("E:\\tm_client_1.6.jar");
         URL[] url = {new URL("file:" + jar.getAbsolutePath()), new URL("file:" + hiveDependency.getAbsolutePath())};
         URLClassLoader loader = URLClassLoader.newInstance(url);
-        Class clazz = loader.loadClass("com.webank.wedatasphere.linkis.mask.udf.BdpAddressFirstEightMask");
+        Class clazz = loader.loadClass("org.apache.linkis.mask.udf.BdpAddressFirstEightMask");
         Constructor constructor = clazz.getConstructor(new Class[0]);
         Modifier.isPublic(constructor.getModifiers());
     }

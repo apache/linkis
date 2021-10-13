@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.manager.exception;
+package org.apache.linkis.manager.exception;
 
 
 public class NodeInstanceDuplicateException  extends PersistenceErrorException {

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.persistence.impl;
+package org.apache.linkis.cs.persistence.persistence.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.webank.wedatasphere.linkis.cs.common.entity.history.ContextHistory;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.persistence.dao.ContextHistoryMapper;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.ExtraFieldClass;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextHistory;
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.ContextHistoryPersistence;
-import com.webank.wedatasphere.linkis.cs.persistence.util.PersistenceUtils;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
+import org.apache.linkis.cs.common.entity.history.ContextHistory;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.persistence.dao.ContextHistoryMapper;
+import org.apache.linkis.cs.persistence.entity.ExtraFieldClass;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextHistory;
+import org.apache.linkis.cs.persistence.persistence.ContextHistoryPersistence;
+import org.apache.linkis.cs.persistence.util.PersistenceUtils;
+import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

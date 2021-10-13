@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.engineplugin.spark.metadata
+package org.apache.linkis.engineplugin.spark.metadata
 
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.Logging
 import org.apache.spark.sql.{DataFrame, Dataset, SQLContext, SparkLogicalPlanHelper}
 
 /**

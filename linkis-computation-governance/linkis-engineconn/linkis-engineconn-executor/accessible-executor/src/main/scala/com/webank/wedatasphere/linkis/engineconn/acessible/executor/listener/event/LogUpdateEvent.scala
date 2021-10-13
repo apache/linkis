@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event
+package org.apache.linkis.engineconn.acessible.executor.listener.event
 
-import com.webank.wedatasphere.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
+import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
 
 case class LogUpdateEvent(taskId: String, log: String) extends EngineConnSyncEvent

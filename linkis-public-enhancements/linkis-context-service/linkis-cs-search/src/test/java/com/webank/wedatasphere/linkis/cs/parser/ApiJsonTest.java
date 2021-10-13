@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.parser;
+package org.apache.linkis.cs.parser;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.webank.wedatasphere.linkis.cs.condition.Condition;
-import com.webank.wedatasphere.linkis.cs.condition.ConditionType;
-import com.webank.wedatasphere.linkis.cs.condition.construction.ConditionParser;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
+import org.apache.linkis.cs.condition.Condition;
+import org.apache.linkis.cs.condition.ConditionType;
+import org.apache.linkis.cs.condition.construction.ConditionParser;
+import org.apache.linkis.server.BDPJettyServerHelper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Assert;
 import org.junit.Test;

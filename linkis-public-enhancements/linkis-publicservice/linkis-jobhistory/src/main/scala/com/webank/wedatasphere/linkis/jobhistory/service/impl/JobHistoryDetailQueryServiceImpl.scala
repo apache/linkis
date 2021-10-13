@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.service.impl
+package org.apache.linkis.jobhistory.service.impl
 
 import java.sql.Timestamp
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.jobhistory.dao.{JobDetailMapper, JobHistoryMapper}
-import com.webank.wedatasphere.linkis.jobhistory.entity.JobDetail
-import com.webank.wedatasphere.linkis.jobhistory.service.JobHistoryDetailQueryService
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.jobhistory.dao.{JobDetailMapper, JobHistoryMapper}
+import org.apache.linkis.jobhistory.entity.JobDetail
+import org.apache.linkis.jobhistory.service.JobHistoryDetailQueryService
+import org.apache.linkis.message.annotation.Receiver
 import java.util
 
-import com.webank.wedatasphere.linkis.governance.common.constant.job.JobRequestConstants
-import com.webank.wedatasphere.linkis.governance.common.protocol.job.{JobDetailReqBatchUpdate, JobDetailReqInsert, JobDetailReqQuery, JobDetailReqUpdate, JobRespProtocol}
-import com.webank.wedatasphere.linkis.jobhistory.conversions.TaskConversions._
-import com.webank.wedatasphere.linkis.jobhistory.exception.QueryException
-import com.webank.wedatasphere.linkis.jobhistory.transitional.TaskStatus
-import com.webank.wedatasphere.linkis.jobhistory.util.QueryUtils
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants
+import org.apache.linkis.governance.common.protocol.job.{JobDetailReqBatchUpdate, JobDetailReqInsert, JobDetailReqQuery, JobDetailReqUpdate, JobRespProtocol}
+import org.apache.linkis.jobhistory.conversions.TaskConversions._
+import org.apache.linkis.jobhistory.exception.QueryException
+import org.apache.linkis.jobhistory.transitional.TaskStatus
+import org.apache.linkis.jobhistory.util.QueryUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -182,7 +182,7 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
   /*private def queryTaskList2RequestPersistTaskList(queryTask: java.util.List[QueryTask]): java.util.List[RequestPersistTask] = {
     import scala.collection.JavaConversions._
     val tasks = new util.ArrayList[RequestPersistTask]
-    import com.webank.wedatasphere.linkis.jobhistory.conversions.TaskConversions.queryTask2RequestPersistTask
+    import org.apache.linkis.jobhistory.conversions.TaskConversions.queryTask2RequestPersistTask
     queryTask.foreach(f => tasks.add(f))
     tasks
   }*/

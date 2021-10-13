@@ -20,7 +20,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>linkis</artifactId>
-        <groupId>com.webank.wedatasphere.linkis</groupId>
+        <groupId>org.apache.linkis</groupId>
         <version>1.0.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -30,14 +30,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-message-scheduler</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-label-common</artifactId>
             <version>${linkis.version}</version>
         </dependency>

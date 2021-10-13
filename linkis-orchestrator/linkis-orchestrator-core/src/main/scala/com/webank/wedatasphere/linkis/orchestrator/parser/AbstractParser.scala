@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.parser
+package org.apache.linkis.orchestrator.parser
 
-import com.webank.wedatasphere.linkis.orchestrator.extensions.catalyst.{AnalyzeFactory, ParserTransform, Transform}
-import com.webank.wedatasphere.linkis.orchestrator.plans.ast.{ASTContext, ASTOrchestration, Job}
+import org.apache.linkis.orchestrator.extensions.catalyst.{AnalyzeFactory, ParserTransform, Transform}
+import org.apache.linkis.orchestrator.plans.ast.{ASTContext, ASTOrchestration, Job}
 
 /**
   *

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.hive.log;
+package org.apache.linkis.engineplugin.hive.log;
 
 public class HiveProgress {
     private int stage;

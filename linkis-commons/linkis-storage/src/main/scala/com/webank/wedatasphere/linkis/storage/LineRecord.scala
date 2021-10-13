@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage
+package org.apache.linkis.storage
 
-import com.webank.wedatasphere.linkis.common.io.Record
-import com.webank.wedatasphere.linkis.storage.resultset.ResultRecord
+import org.apache.linkis.common.io.Record
+import org.apache.linkis.storage.resultset.ResultRecord
 
 
 class LineRecord(private var  line: String) extends ResultRecord{

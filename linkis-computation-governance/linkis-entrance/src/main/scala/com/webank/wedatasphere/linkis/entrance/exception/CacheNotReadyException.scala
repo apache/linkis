@@ -15,9 +15,9 @@
  */
 
 
-package com.webank.wedatasphere.linkis.entrance.exception
+package org.apache.linkis.entrance.exception
 
-import com.webank.wedatasphere.linkis.common.exception.{ErrorException, ExceptionLevel}
+import org.apache.linkis.common.exception.{ErrorException, ExceptionLevel}
 
 case class CacheNotReadyException(errCode:Int,
                                   desc:String) extends ErrorException(errCode, desc){

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.client;
+package org.apache.linkis.ujes.client;
 
-import com.webank.wedatasphere.linkis.common.utils.Utils;
-import com.webank.wedatasphere.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy;
-import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig;
-import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfigBuilder;
-import com.webank.wedatasphere.linkis.ujes.client.request.JobExecuteAction;
-import com.webank.wedatasphere.linkis.ujes.client.request.ResultSetAction;
-import com.webank.wedatasphere.linkis.ujes.client.response.JobExecuteResult;
-import com.webank.wedatasphere.linkis.ujes.client.response.JobInfoResult;
-import com.webank.wedatasphere.linkis.ujes.client.response.JobProgressResult;
-import com.webank.wedatasphere.linkis.ujes.client.response.JobStatusResult;
+import org.apache.linkis.common.utils.Utils;
+import org.apache.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy;
+import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
+import org.apache.linkis.httpclient.dws.config.DWSClientConfigBuilder;
+import org.apache.linkis.ujes.client.request.JobExecuteAction;
+import org.apache.linkis.ujes.client.request.ResultSetAction;
+import org.apache.linkis.ujes.client.response.JobExecuteResult;
+import org.apache.linkis.ujes.client.response.JobInfoResult;
+import org.apache.linkis.ujes.client.response.JobProgressResult;
+import org.apache.linkis.ujes.client.response.JobStatusResult;
 import org.apache.commons.io.IOUtils;
 
 import java.util.concurrent.TimeUnit;

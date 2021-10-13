@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.io
+package org.apache.linkis.storage.io
 
-import com.webank.wedatasphere.linkis.storage.exception.StorageErrorException
+import org.apache.linkis.storage.exception.StorageErrorException
 import net.sf.cglib.proxy.MethodInterceptor
 
 

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.exception;
+package org.apache.linkis.resourcemanager.exception;
 
-import com.webank.wedatasphere.linkis.common.exception.WarnException;
+import org.apache.linkis.common.exception.WarnException;
 
 
 public class RMWarnException extends WarnException {

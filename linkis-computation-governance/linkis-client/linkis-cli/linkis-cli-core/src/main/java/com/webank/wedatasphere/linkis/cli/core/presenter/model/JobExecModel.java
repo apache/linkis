@@ -11,11 +11,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.presenter.model;
+package org.apache.linkis.cli.core.presenter.model;
 
 
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobStatus;
-import com.webank.wedatasphere.linkis.cli.common.entity.job.OutputWay;
+import org.apache.linkis.cli.common.entity.execution.jobexec.JobStatus;
+import org.apache.linkis.cli.common.entity.job.OutputWay;
 
 import java.util.Map;
 

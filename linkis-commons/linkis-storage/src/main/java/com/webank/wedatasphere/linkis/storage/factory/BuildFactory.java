@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.factory;
+package org.apache.linkis.storage.factory;
 
-import com.webank.wedatasphere.linkis.common.io.Fs;
+import org.apache.linkis.common.io.Fs;
 
 
 public interface BuildFactory {

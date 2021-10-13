@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.configuration.validate
+package org.apache.linkis.configuration.validate
 
 import com.google.gson.GsonBuilder
 

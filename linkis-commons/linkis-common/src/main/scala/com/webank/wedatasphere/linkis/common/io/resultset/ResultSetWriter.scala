@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.io.resultset
+package org.apache.linkis.common.io.resultset
 
-import com.webank.wedatasphere.linkis.common.io.{FsPath, FsWriter, MetaData, Record}
+import org.apache.linkis.common.io.{FsPath, FsWriter, MetaData, Record}
 
 
 abstract class ResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K, V],

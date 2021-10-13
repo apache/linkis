@@ -16,12 +16,12 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.manager
+package org.apache.linkis.manager.am.manager
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.manager.common.entity.node.{EMNode, EngineNode, Node, ScoreServiceInstance}
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineStopRequest
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode, Node, ScoreServiceInstance}
+import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 
 
 trait EMNodeManager {

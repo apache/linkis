@@ -16,7 +16,7 @@
   -->
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.webank.wedatasphere.linkis.instance.label.dao.InstanceInfoDao">
+<mapper namespace="org.apache.linkis.instance.label.dao.InstanceInfoDao">
 
     <resultMap id="instanceInfoMap" type="InstanceInfo">
         <result property="id" column="id"/>
@@ -31,11 +31,11 @@
         VALUES(#{instance}, #{applicationName})]]>
     </insert>
 
-    <delete id="removeInstance" parameterType="com.webank.wedatasphere.linkis.common.ServiceInstance">
+    <delete id="removeInstance" parameterType="org.apache.linkis.common.ServiceInstance">
         DELETE FROM linkis_ps_instance_info WHERE instance = #{instance}
     </delete>
 
-    <update id="updateInstance" parameterType="com.webank.wedatasphere.linkis.instance.label.entity.InstanceInfo">
+    <update id="updateInstance" parameterType="org.apache.linkis.instance.label.entity.InstanceInfo">
         UPDATE linkis_ps_instance_info SET
         <if test="#{applicationName} != null">name = #{applicationName},</if>
         <if test="#{instance} != null">instance = #{instance},</if>
@@ -43,7 +43,7 @@
         WHERE id = #{id}
     </update>
 
-    <select id="getInstanceInfoByServiceInstance" parameterType="com.webank.wedatasphere.linkis.common.ServiceInstance" resultMap="instanceInfoMap">
+    <select id="getInstanceInfoByServiceInstance" parameterType="org.apache.linkis.common.ServiceInstance" resultMap="instanceInfoMap">
         <![CDATA[SELECT * FROM linkis_ps_instance_info
         WHERE name = #{applicationName} AND instance = #{instance}]]>
     </select>

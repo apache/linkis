@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.python.hook
+package org.apache.linkis.manager.engineplugin.python.hook
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.common.hook.EngineConnHook
-import com.webank.wedatasphere.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
-import com.webank.wedatasphere.linkis.manager.engineplugin.python.executor.PythonSession
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.common.engineconn.EngineConn
+import org.apache.linkis.engineconn.common.hook.EngineConnHook
+import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
+import org.apache.linkis.manager.engineplugin.python.executor.PythonSession
 
 
 class PythonVersionEngineHook  extends EngineConnHook with Logging{
@@ -50,7 +50,7 @@ class PythonVersionEngineHook  extends EngineConnHook with Logging{
 
   }
 
-  override def afterExecutionExecute(engineCreationContext:  _root_.com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext, engineConn:  _root_.com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn): Unit = {
+  override def afterExecutionExecute(engineCreationContext:  _root_.org.apache.linkis.engineconn.common.creation.EngineCreationContext, engineConn:  _root_.org.apache.linkis.engineconn.common.engineconn.EngineConn): Unit = {
 
   }
 }

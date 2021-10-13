@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.serialize;
+package org.apache.linkis.cs.common.serialize;
 
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.common.utils.CSCommonUtils;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.utils.CSCommonUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;

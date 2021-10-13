@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.exception
+package org.apache.linkis.manager.engineplugin.common.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 
 class EngineConnBuildFailedException(errCode: Int, desc: String) extends ErrorException(errCode, desc) {

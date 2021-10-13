@@ -18,12 +18,12 @@
  * Created by ${USER} on ${DATE}.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.request
+package org.apache.linkis.httpclient.request
 
 import java.net.URLEncoder
 import java.util
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration
+import org.apache.linkis.common.conf.Configuration
 
 import scala.collection.JavaConversions
 

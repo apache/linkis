@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.governance.common.entity;
+package org.apache.linkis.governance.common.entity;
 
 public enum ExecutionNodeStatus {
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.udf.api.rpc
+package org.apache.linkis.udf.api.rpc
 
-import com.webank.wedatasphere.linkis.rpc.{RPCMessageEvent, Receiver, ReceiverChooser}
-import com.webank.wedatasphere.linkis.udf.service.UDFTreeService
+import org.apache.linkis.rpc.{RPCMessageEvent, Receiver, ReceiverChooser}
+import org.apache.linkis.udf.service.UDFTreeService
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component

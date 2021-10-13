@@ -11,16 +11,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.serialize.impl.history.metadata;
+package org.apache.linkis.cs.common.serialize.impl.history.metadata;
 
 import com.google.gson.reflect.TypeToken;
-import com.webank.wedatasphere.linkis.cs.common.entity.history.metadata.CSTableLineageHistory;
-import com.webank.wedatasphere.linkis.cs.common.entity.metadata.CSTable;
-import com.webank.wedatasphere.linkis.cs.common.entity.metadata.Table;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.common.serialize.AbstractSerializer;
-import com.webank.wedatasphere.linkis.cs.common.serialize.impl.history.CommonHistorySerializer;
-import com.webank.wedatasphere.linkis.cs.common.utils.CSCommonUtils;
+import org.apache.linkis.cs.common.entity.history.metadata.CSTableLineageHistory;
+import org.apache.linkis.cs.common.entity.metadata.CSTable;
+import org.apache.linkis.cs.common.entity.metadata.Table;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.serialize.AbstractSerializer;
+import org.apache.linkis.cs.common.serialize.impl.history.CommonHistorySerializer;
+import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 import java.util.List;
 import java.util.Map;

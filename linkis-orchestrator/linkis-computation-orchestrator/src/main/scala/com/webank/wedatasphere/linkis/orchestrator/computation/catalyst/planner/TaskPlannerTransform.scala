@@ -15,15 +15,15 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.catalyst.planner
+package org.apache.linkis.orchestrator.computation.catalyst.planner
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.orchestrator.code.plans.ast.{CodeJob, CodeStage}
-import com.webank.wedatasphere.linkis.orchestrator.code.plans.logical.{CodeLogicalUnitTask, CodeLogicalUnitTaskDesc}
-import com.webank.wedatasphere.linkis.orchestrator.extensions.catalyst.PlannerTransform
-import com.webank.wedatasphere.linkis.orchestrator.plans.ast.{ASTContext, Job, Stage}
-import com.webank.wedatasphere.linkis.orchestrator.plans.logical._
-import com.webank.wedatasphere.linkis.orchestrator.plans.unit.CodeLogicalUnit
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.orchestrator.code.plans.ast.{CodeJob, CodeStage}
+import org.apache.linkis.orchestrator.code.plans.logical.{CodeLogicalUnitTask, CodeLogicalUnitTaskDesc}
+import org.apache.linkis.orchestrator.extensions.catalyst.PlannerTransform
+import org.apache.linkis.orchestrator.plans.ast.{ASTContext, Job, Stage}
+import org.apache.linkis.orchestrator.plans.logical._
+import org.apache.linkis.orchestrator.plans.unit.CodeLogicalUnit
 
 import scala.collection.mutable.ArrayBuffer
 

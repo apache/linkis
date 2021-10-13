@@ -16,8 +16,8 @@
   -->
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.webank.wedatasphere.linkis.udf.dao.UDFTreeDao">
-    <resultMap id="UDFTreeResultMap" type="com.webank.wedatasphere.linkis.udf.entity.UDFTree">
+<mapper namespace="org.apache.linkis.udf.dao.UDFTreeDao">
+    <resultMap id="UDFTreeResultMap" type="org.apache.linkis.udf.entity.UDFTree">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="parent" property="parent" jdbcType="BIGINT"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
@@ -32,7 +32,7 @@
         id, `parent`, `name`, `user_name`, `description`, `create_time`,`update_time`, `category`
     </sql>
 
-    <insert id="addTree" useGeneratedKeys="true" keyProperty="id" parameterType="com.webank.wedatasphere.linkis.udf.entity.UDFTree">
+    <insert id="addTree" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.udf.entity.UDFTree">
         INSERT INTO linkis_ps_udf_tree (
         <include refid="udf_Tree_List"/>
         ) VALUES (
@@ -42,7 +42,7 @@
         )
     </insert>
 
-    <update id="updateTree" parameterType="com.webank.wedatasphere.linkis.udf.entity.UDFTree">
+    <update id="updateTree" parameterType="org.apache.linkis.udf.entity.UDFTree">
         UPDATE linkis_ps_udf_tree
         SET parent = #{parent,jdbcType=BIGINT},
         `name` = #{name,jdbcType=VARCHAR},

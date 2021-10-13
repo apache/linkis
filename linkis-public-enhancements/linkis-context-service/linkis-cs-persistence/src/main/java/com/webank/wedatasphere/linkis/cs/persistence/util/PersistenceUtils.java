@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.util;
+package org.apache.linkis.cs.persistence.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSWarnException;
-import com.webank.wedatasphere.linkis.cs.common.serialize.helper.ContextSerializationHelper;
-import com.webank.wedatasphere.linkis.cs.common.serialize.helper.SerializationHelper;
-import com.webank.wedatasphere.linkis.cs.persistence.annotation.Ignore;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.ExtraFieldClass;
-import com.webank.wedatasphere.linkis.cs.persistence.exception.ThrowingFunction;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.exception.CSWarnException;
+import org.apache.linkis.cs.common.serialize.helper.ContextSerializationHelper;
+import org.apache.linkis.cs.common.serialize.helper.SerializationHelper;
+import org.apache.linkis.cs.persistence.annotation.Ignore;
+import org.apache.linkis.cs.persistence.entity.ExtraFieldClass;
+import org.apache.linkis.cs.persistence.exception.ThrowingFunction;
+import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

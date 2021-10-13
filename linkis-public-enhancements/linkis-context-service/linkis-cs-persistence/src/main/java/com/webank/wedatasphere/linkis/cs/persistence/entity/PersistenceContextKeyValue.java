@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.entity;
+package org.apache.linkis.cs.persistence.entity;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextValue;
-import com.webank.wedatasphere.linkis.cs.persistence.annotation.Ignore;
+import org.apache.linkis.cs.common.entity.source.ContextKey;
+import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
+import org.apache.linkis.cs.common.entity.source.ContextValue;
+import org.apache.linkis.cs.persistence.annotation.Ignore;
 
 @Ignore
 public class PersistenceContextKeyValue implements ContextKeyValue {

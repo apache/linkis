@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.service.impl
+package org.apache.linkis.ecm.server.service.impl
 
-import com.webank.wedatasphere.linkis.ecm.core.launch.{DiscoveryMsgGenerator, EngineConnLaunch, EurekaDiscoveryMsgGenerator}
-import com.webank.wedatasphere.linkis.ecm.linux.launch.LinuxProcessEngineConnLaunch
-import com.webank.wedatasphere.linkis.ecm.server.conf.ECMConfiguration._
-import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.{EngineConnBuildRequest, EngineConnLaunchRequest}
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
-import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
-import com.webank.wedatasphere.linkis.message.conf.MessageSchedulerConf._
-import com.webank.wedatasphere.linkis.rpc.Sender
+import org.apache.linkis.ecm.core.launch.{DiscoveryMsgGenerator, EngineConnLaunch, EurekaDiscoveryMsgGenerator}
+import org.apache.linkis.ecm.linux.launch.LinuxProcessEngineConnLaunch
+import org.apache.linkis.ecm.server.conf.ECMConfiguration._
+import org.apache.linkis.manager.common.entity.node.EngineNode
+import org.apache.linkis.manager.engineplugin.common.launch.entity.{EngineConnBuildRequest, EngineConnLaunchRequest}
+import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.message.conf.MessageSchedulerConf._
+import org.apache.linkis.rpc.Sender
 
 import scala.concurrent.duration.Duration
 

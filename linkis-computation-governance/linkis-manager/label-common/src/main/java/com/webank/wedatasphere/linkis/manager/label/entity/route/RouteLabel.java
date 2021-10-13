@@ -1,12 +1,12 @@
-package com.webank.wedatasphere.linkis.manager.label.entity.route;
+package org.apache.linkis.manager.label.entity.route;
 
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelConstant;
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant;
-import com.webank.wedatasphere.linkis.manager.label.entity.InheritableLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.SerializableLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.UserModifiable;
-import com.webank.wedatasphere.linkis.manager.label.entity.annon.ValueSerialNum;
-import com.webank.wedatasphere.linkis.manager.label.exception.LabelErrorException;
+import org.apache.linkis.manager.label.constant.LabelConstant;
+import org.apache.linkis.manager.label.constant.LabelKeyConstant;
+import org.apache.linkis.manager.label.entity.InheritableLabel;
+import org.apache.linkis.manager.label.entity.SerializableLabel;
+import org.apache.linkis.manager.label.entity.UserModifiable;
+import org.apache.linkis.manager.label.entity.annon.ValueSerialNum;
+import org.apache.linkis.manager.label.exception.LabelErrorException;
 import org.apache.commons.lang.StringUtils;
 
 

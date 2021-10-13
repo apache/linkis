@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.external.yarn
+package org.apache.linkis.resourcemanager.external.yarn
 
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.YarnResource
-import com.webank.wedatasphere.linkis.resourcemanager.external.domain.ExternalAppInfo
+import org.apache.linkis.manager.common.entity.resource.YarnResource
+import org.apache.linkis.resourcemanager.external.domain.ExternalAppInfo
 
 
 case class YarnAppInfo(id: String, user: String, status: String, applicationType: String, usedResource: YarnResource) extends ExternalAppInfo

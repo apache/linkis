@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.data;
+package org.apache.linkis.cli.application.data;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdType;
-import com.webank.wedatasphere.linkis.cli.core.interactor.var.VarAccess;
+import org.apache.linkis.cli.common.entity.command.CmdType;
+import org.apache.linkis.cli.core.interactor.var.VarAccess;
 
 
 public class ProcessedData {

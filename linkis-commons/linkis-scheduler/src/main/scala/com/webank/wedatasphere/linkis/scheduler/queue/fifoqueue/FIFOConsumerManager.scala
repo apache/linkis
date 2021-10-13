@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue
+package org.apache.linkis.scheduler.queue.fifoqueue
 
 
 import java.util.concurrent.{ExecutorService, ThreadPoolExecutor}
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
-import com.webank.wedatasphere.linkis.scheduler.exception.SchedulerErrorException
-import com.webank.wedatasphere.linkis.scheduler.listener.ConsumerListener
-import com.webank.wedatasphere.linkis.scheduler.queue.{Consumer, ConsumerManager, Group, LoopArrayQueue}
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.scheduler.SchedulerContext
+import org.apache.linkis.scheduler.exception.SchedulerErrorException
+import org.apache.linkis.scheduler.listener.ConsumerListener
+import org.apache.linkis.scheduler.queue.{Consumer, ConsumerManager, Group, LoopArrayQueue}
 
 
 class FIFOConsumerManager(groupName: String) extends ConsumerManager {

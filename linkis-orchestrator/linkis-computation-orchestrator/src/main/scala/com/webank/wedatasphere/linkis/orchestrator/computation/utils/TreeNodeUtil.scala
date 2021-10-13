@@ -15,15 +15,15 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.utils
+package org.apache.linkis.orchestrator.computation.utils
 
-import com.webank.wedatasphere.linkis.manager.common.entity.node.Node
-import com.webank.wedatasphere.linkis.orchestrator.conf.OrchestratorConfiguration
-import com.webank.wedatasphere.linkis.orchestrator.domain.TreeNode
-import com.webank.wedatasphere.linkis.orchestrator.exception.{OrchestratorErrorCodeSummary, OrchestratorErrorException}
-import com.webank.wedatasphere.linkis.orchestrator.execution.{AsyncTaskResponse, FailedTaskResponse, TaskResponse}
-import com.webank.wedatasphere.linkis.orchestrator.plans.physical.ExecTask
-import com.webank.wedatasphere.linkis.orchestrator.strategy.{ExecTaskStatusInfo, StatusInfoExecTask}
+import org.apache.linkis.manager.common.entity.node.Node
+import org.apache.linkis.orchestrator.conf.OrchestratorConfiguration
+import org.apache.linkis.orchestrator.domain.TreeNode
+import org.apache.linkis.orchestrator.exception.{OrchestratorErrorCodeSummary, OrchestratorErrorException}
+import org.apache.linkis.orchestrator.execution.{AsyncTaskResponse, FailedTaskResponse, TaskResponse}
+import org.apache.linkis.orchestrator.plans.physical.ExecTask
+import org.apache.linkis.orchestrator.strategy.{ExecTaskStatusInfo, StatusInfoExecTask}
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.log
+package org.apache.linkis.entrance.log
 
 import java.io.{BufferedReader, InputStreamReader}
 import java.util
 import java.util.concurrent.TimeUnit
 
-import com.webank.wedatasphere.linkis.common.io.FsPath
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.errorcode.client.handler.LinkisErrorCodeHandler
-import com.webank.wedatasphere.linkis.entrance.errorcode.EntranceErrorConstants
-import com.webank.wedatasphere.linkis.storage.FSFactory
+import org.apache.linkis.common.io.FsPath
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.errorcode.client.handler.LinkisErrorCodeHandler
+import org.apache.linkis.entrance.errorcode.EntranceErrorConstants
+import org.apache.linkis.storage.FSFactory
 import javax.annotation.PostConstruct
 
 import scala.collection.mutable.ArrayBuffer

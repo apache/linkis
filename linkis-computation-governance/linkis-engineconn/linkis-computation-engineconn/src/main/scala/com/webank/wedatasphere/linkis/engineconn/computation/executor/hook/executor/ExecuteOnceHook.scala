@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.computation.executor.hook.executor
+package org.apache.linkis.engineconn.computation.executor.hook.executor
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.ExecutorLockListener
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event.{ExecutorLockEvent, ExecutorUnLockEvent}
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
-import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
-import com.webank.wedatasphere.linkis.engineconn.executor.listener.ExecutorListenerBusContext
-import com.webank.wedatasphere.linkis.manager.label.entity.entrance.ExecuteOnceLabel
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.acessible.executor.listener.ExecutorLockListener
+import org.apache.linkis.engineconn.acessible.executor.listener.event.{ExecutorLockEvent, ExecutorUnLockEvent}
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
+import org.apache.linkis.engineconn.core.executor.ExecutorManager
+import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
+import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 
 class ExecuteOnceHook extends ComputationExecutorHook with ExecutorLockListener with Logging{
 

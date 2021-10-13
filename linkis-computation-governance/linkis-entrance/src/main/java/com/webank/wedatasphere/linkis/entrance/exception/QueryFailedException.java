@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.exception;
+package org.apache.linkis.entrance.exception;
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.exception.ErrorException;
 
 /**
  * Description: entrance module to query submit database query possible exceptions

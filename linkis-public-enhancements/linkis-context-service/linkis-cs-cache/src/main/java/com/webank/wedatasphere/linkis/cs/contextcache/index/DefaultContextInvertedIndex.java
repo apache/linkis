@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.contextcache.index;
+package org.apache.linkis.cs.contextcache.index;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;

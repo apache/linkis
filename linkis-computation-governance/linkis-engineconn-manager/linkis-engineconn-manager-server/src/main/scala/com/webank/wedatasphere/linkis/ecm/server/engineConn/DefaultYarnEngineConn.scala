@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.engineConn
+package org.apache.linkis.ecm.server.engineConn
 
-import com.webank.wedatasphere.linkis.ecm.core.engineconn.YarnEngineConn
+import org.apache.linkis.ecm.core.engineconn.YarnEngineConn
 
 
 class DefaultYarnEngineConn extends DefaultEngineConn with YarnEngineConn {

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.plugin
+package org.apache.linkis.orchestrator.plugin
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.orchestrator.core.OrchestratorPlugin
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.orchestrator.core.OrchestratorPlugin
 
 trait UserParallelOrchestratorPlugin extends OrchestratorPlugin {
 

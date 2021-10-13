@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.entity.resource;
+package org.apache.linkis.manager.common.entity.resource;
 
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
+import org.apache.linkis.protocol.message.RequestProtocol;
 
 import java.io.Serializable;
 import java.util.Date;

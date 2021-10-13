@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.orchestrator.plugin
+package org.apache.linkis.entrance.orchestrator.plugin
 
 import java.util
 import java.util.concurrent.TimeUnit
 
 import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
-import com.webank.wedatasphere.linkis.common.conf.Configuration
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, ResponseQueryConfig}
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
-import com.webank.wedatasphere.linkis.orchestrator.plugin.UserParallelOrchestratorPlugin
-import com.webank.wedatasphere.linkis.rpc.Sender
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, ResponseQueryConfig}
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.orchestrator.plugin.UserParallelOrchestratorPlugin
+import org.apache.linkis.rpc.Sender
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConverters._

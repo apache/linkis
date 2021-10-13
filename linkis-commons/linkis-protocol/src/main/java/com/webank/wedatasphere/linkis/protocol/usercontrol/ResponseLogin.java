@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.usercontrol;
+package org.apache.linkis.protocol.usercontrol;
 
 import java.util.Date;
 

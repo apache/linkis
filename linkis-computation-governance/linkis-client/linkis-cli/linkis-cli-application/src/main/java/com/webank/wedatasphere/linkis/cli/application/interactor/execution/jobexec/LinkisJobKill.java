@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec;
+package org.apache.linkis.cli.application.interactor.execution.jobexec;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobStatus;
-import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobManExec;
+import org.apache.linkis.cli.common.entity.execution.jobexec.JobStatus;
+import org.apache.linkis.cli.core.interactor.execution.jobexec.JobManExec;
 
 
 public class LinkisJobKill extends JobManExec {

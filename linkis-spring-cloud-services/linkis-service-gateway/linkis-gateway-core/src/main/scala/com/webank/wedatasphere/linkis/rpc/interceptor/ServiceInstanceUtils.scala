@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.interceptor
+package org.apache.linkis.rpc.interceptor
 
 import java.util.concurrent.TimeUnit
 
-import com.webank.wedatasphere.linkis.rpc.RPCSpringBeanCache
+import org.apache.linkis.rpc.RPCSpringBeanCache
 
 import scala.concurrent.duration.Duration
 

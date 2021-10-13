@@ -16,25 +16,25 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.manager
+package org.apache.linkis.manager.am.manager
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration
-import com.webank.wedatasphere.linkis.manager.am.locker.EngineNodeLocker
-import com.webank.wedatasphere.linkis.manager.common.constant.AMConstant
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
-import com.webank.wedatasphere.linkis.manager.common.entity.node.{AMEngineNode, EngineNode, ScoreServiceInstance}
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineInstanceLabel
-import com.webank.wedatasphere.linkis.manager.persistence.{LabelManagerPersistence, NodeManagerPersistence, NodeMetricManagerPersistence}
-import com.webank.wedatasphere.linkis.manager.service.common.metrics.MetricsConverter
-import com.webank.wedatasphere.linkis.manager.service.common.pointer.NodePointerBuilder
-import com.webank.wedatasphere.linkis.resourcemanager.service.ResourceManager
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.exception.LinkisRetryException
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.am.conf.AMConfiguration
+import org.apache.linkis.manager.am.locker.EngineNodeLocker
+import org.apache.linkis.manager.common.constant.AMConstant
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.entity.node.{AMEngineNode, EngineNode, ScoreServiceInstance}
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
+import org.apache.linkis.manager.persistence.{LabelManagerPersistence, NodeManagerPersistence, NodeMetricManagerPersistence}
+import org.apache.linkis.manager.service.common.metrics.MetricsConverter
+import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder
+import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

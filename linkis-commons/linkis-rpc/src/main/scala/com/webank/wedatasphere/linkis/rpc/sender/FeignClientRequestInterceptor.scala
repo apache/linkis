@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.sender
+package org.apache.linkis.rpc.sender
 
-import com.webank.wedatasphere.linkis.server.security.{SSOUtils, SecurityFilter}
+import org.apache.linkis.server.security.{SSOUtils, SecurityFilter}
 import feign.{RequestInterceptor, RequestTemplate}
 import org.springframework.context.annotation.Configuration
 

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.executor.service
+package org.apache.linkis.engineconn.executor.service
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.engineconn.executor.conf.EngineConnExecutorConfiguration
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineConnReleaseRequest
-import com.webank.wedatasphere.linkis.manager.common.protocol.node.NodeHeartbeatMsg
-import com.webank.wedatasphere.linkis.manager.common.protocol.resource.ResourceUsedProtocol
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.engineconn.executor.conf.EngineConnExecutorConfiguration
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.protocol.engine.EngineConnReleaseRequest
+import org.apache.linkis.manager.common.protocol.node.NodeHeartbeatMsg
+import org.apache.linkis.manager.common.protocol.resource.ResourceUsedProtocol
+import org.apache.linkis.manager.label.entity.Label
 
 trait ManagerService {
 

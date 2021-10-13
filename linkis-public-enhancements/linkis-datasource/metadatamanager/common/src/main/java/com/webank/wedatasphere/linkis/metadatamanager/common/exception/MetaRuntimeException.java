@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadatamanager.common.exception;
+package org.apache.linkis.metadatamanager.common.exception;
 
-import com.webank.wedatasphere.linkis.common.exception.WarnException;
+import org.apache.linkis.common.exception.WarnException;
 
 public class MetaRuntimeException extends WarnException {
     private static final int ERROR_CODE = 99900;

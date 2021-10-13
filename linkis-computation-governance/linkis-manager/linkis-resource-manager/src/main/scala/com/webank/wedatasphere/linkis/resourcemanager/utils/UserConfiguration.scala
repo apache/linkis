@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.utils
+package org.apache.linkis.resourcemanager.utils
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
-import com.webank.wedatasphere.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, RequestQueryGlobalConfig, ResponseQueryConfig}
-import com.webank.wedatasphere.linkis.manager.common.entity.resource._
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
-import com.webank.wedatasphere.linkis.manager.label.utils.{EngineTypeLabelCreator, LabelUtils}
-import com.webank.wedatasphere.linkis.protocol.CacheableProtocol
-import com.webank.wedatasphere.linkis.resourcemanager.exception.RMWarnException
-import com.webank.wedatasphere.linkis.resourcemanager.utils.RMConfiguration._
-import com.webank.wedatasphere.linkis.rpc.RPCMapCache
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
+import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, RequestQueryGlobalConfig, ResponseQueryConfig}
+import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.manager.label.utils.{EngineTypeLabelCreator, LabelUtils}
+import org.apache.linkis.protocol.CacheableProtocol
+import org.apache.linkis.resourcemanager.exception.RMWarnException
+import org.apache.linkis.resourcemanager.utils.RMConfiguration._
+import org.apache.linkis.rpc.RPCMapCache
 
 object UserConfiguration extends Logging {
 

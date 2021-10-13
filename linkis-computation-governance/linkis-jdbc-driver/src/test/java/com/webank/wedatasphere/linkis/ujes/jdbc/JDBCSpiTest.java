@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.ujes.jdbc;
+package org.apache.linkis.ujes.jdbc;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,7 +30,7 @@ import java.sql.SQLException;
 public class JDBCSpiTest {
     private static UJESSQLConnection conn;
     public static UJESSQLConnection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("com.webank.wedatasphere.linkis.ujes.jdbc.UJESSQLDriver");
+        Class.forName("org.apache.linkis.ujes.jdbc.UJESSQLDriver");
         conn = (UJESSQLConnection) DriverManager.getConnection("jdbc:linkis://127.0.0.1:9001", "shanhuang", "Abcd1234@");
         return conn;
     }

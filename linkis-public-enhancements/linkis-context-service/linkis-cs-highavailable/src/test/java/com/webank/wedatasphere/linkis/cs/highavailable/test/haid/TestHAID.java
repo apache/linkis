@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.highavailable.test.haid;
+package org.apache.linkis.cs.highavailable.test.haid;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.source.HAContextID;
+import org.apache.linkis.cs.common.entity.source.HAContextID;
 
 public class TestHAID implements HAContextID {
 

@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.util
+package org.apache.linkis.engineconnplugin.flink.util
 
-import com.webank.wedatasphere.linkis.common.utils.{ClassUtils, Utils}
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.JobExecutionException
+import org.apache.linkis.common.utils.{ClassUtils, Utils}
+import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
 
 import scala.collection.convert.wrapAsScala._
 

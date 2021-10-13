@@ -15,7 +15,7 @@
  * Created by ${USER} on ${DATE}.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.authentication
+package org.apache.linkis.httpclient.authentication
 
 import org.apache.http.cookie.Cookie
 

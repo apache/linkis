@@ -16,13 +16,13 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.protocol.em
+package org.apache.linkis.manager.common.protocol.em
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.manager.common.entity.resource.NodeResource
+import org.apache.linkis.protocol.message.RequestProtocol
 
 
 class RegisterEMRequest extends EMRequest with RequestProtocol with Serializable {

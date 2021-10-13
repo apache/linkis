@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.listener
+package org.apache.linkis.scheduler.listener
 
-import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
-import com.webank.wedatasphere.linkis.scheduler.queue.Job
+import org.apache.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.scheduler.queue.Job
 
 
 trait ProgressListener extends SchedulerListener {

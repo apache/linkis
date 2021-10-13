@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.var;
+package org.apache.linkis.cli.core.interactor.var;
 
 /**
  * @description: Retrieve value from input command/config/sys_prop/sys_env etc.

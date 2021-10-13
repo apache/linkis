@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.service;
+package org.apache.linkis.metadata.service;
 
 
 
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableBO;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.MdqTableBaseInfoVO;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.MdqTableFieldsInfoVO;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
-import com.webank.wedatasphere.linkis.metadata.exception.MdqIllegalParamException;
+import org.apache.linkis.metadata.domain.mdq.bo.MdqTableBO;
+import org.apache.linkis.metadata.domain.mdq.vo.MdqTableBaseInfoVO;
+import org.apache.linkis.metadata.domain.mdq.vo.MdqTableFieldsInfoVO;
+import org.apache.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO;
+import org.apache.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
+import org.apache.linkis.metadata.exception.MdqIllegalParamException;
 
 import java.io.IOException;
 import java.util.List;

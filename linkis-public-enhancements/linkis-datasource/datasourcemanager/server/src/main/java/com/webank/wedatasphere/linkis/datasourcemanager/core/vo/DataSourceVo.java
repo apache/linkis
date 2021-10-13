@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.vo;
+package org.apache.linkis.datasourcemanager.core.vo;
 
 
 import org.apache.commons.lang.StringUtils;

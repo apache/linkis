@@ -11,14 +11,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.validate;
+package org.apache.linkis.cli.core.interactor.validate;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdOption;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.CommandException;
-import com.webank.wedatasphere.linkis.cli.core.exception.ValidateException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.common.entity.command.CmdOption;
+import org.apache.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.CommandException;
+import org.apache.linkis.cli.core.exception.ValidateException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

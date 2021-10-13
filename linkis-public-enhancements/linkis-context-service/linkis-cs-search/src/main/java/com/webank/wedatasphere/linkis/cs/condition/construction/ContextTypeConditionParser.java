@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.condition.construction;
+package org.apache.linkis.cs.condition.construction;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.condition.Condition;
-import com.webank.wedatasphere.linkis.cs.condition.impl.ContextTypeCondition;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.condition.Condition;
+import org.apache.linkis.cs.condition.impl.ContextTypeCondition;
 
 import java.util.Map;
 

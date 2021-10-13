@@ -15,17 +15,17 @@
  */
 
 
-package com.webank.wedatasphere.linkis.entrance.context;
+package org.apache.linkis.entrance.context;
 
-import com.webank.wedatasphere.linkis.entrance.EntranceContext;
-import com.webank.wedatasphere.linkis.entrance.EntranceParser;
-import com.webank.wedatasphere.linkis.entrance.annotation.*;
-import com.webank.wedatasphere.linkis.entrance.event.*;
-import com.webank.wedatasphere.linkis.entrance.execute.EntranceExecutorManager;
-import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor;
-import com.webank.wedatasphere.linkis.entrance.log.LogManager;
-import com.webank.wedatasphere.linkis.entrance.persistence.PersistenceManager;
-import com.webank.wedatasphere.linkis.scheduler.Scheduler;
+import org.apache.linkis.entrance.EntranceContext;
+import org.apache.linkis.entrance.EntranceParser;
+import org.apache.linkis.entrance.annotation.*;
+import org.apache.linkis.entrance.event.*;
+import org.apache.linkis.entrance.execute.EntranceExecutorManager;
+import org.apache.linkis.entrance.interceptor.EntranceInterceptor;
+import org.apache.linkis.entrance.log.LogManager;
+import org.apache.linkis.entrance.persistence.PersistenceManager;
+import org.apache.linkis.scheduler.Scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

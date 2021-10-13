@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.contextcache.cache.csid;
+package org.apache.linkis.cs.contextcache.cache.csid;
 
-import com.webank.wedatasphere.linkis.cs.contextcache.cache.cskey.ContextKeyValueContext;
-import com.webank.wedatasphere.linkis.cs.contextcache.metric.ContextIDMetric;
+import org.apache.linkis.cs.contextcache.cache.cskey.ContextKeyValueContext;
+import org.apache.linkis.cs.contextcache.metric.ContextIDMetric;
 
 public interface ContextIDValue {
 

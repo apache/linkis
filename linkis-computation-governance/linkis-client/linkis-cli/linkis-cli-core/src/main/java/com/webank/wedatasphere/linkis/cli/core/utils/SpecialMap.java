@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.utils;
+package org.apache.linkis.cli.core.utils;
 
 import java.util.HashMap;
 

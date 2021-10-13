@@ -16,11 +16,11 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.selector.rule
+package org.apache.linkis.manager.am.selector.rule
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
-import com.webank.wedatasphere.linkis.manager.common.entity.node.{AMNode, Node}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.entity.node.{AMNode, Node}
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 

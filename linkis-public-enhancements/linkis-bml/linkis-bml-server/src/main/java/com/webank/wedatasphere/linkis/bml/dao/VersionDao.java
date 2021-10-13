@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.dao;
+package org.apache.linkis.bml.dao;
 
-import com.webank.wedatasphere.linkis.bml.Entity.ResourceVersion;
-import com.webank.wedatasphere.linkis.bml.Entity.Version;
+import org.apache.linkis.bml.Entity.ResourceVersion;
+import org.apache.linkis.bml.Entity.Version;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

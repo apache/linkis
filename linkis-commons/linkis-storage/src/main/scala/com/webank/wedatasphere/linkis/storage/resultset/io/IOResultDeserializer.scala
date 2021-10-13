@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.resultset.io
+package org.apache.linkis.storage.resultset.io
 
-import com.webank.wedatasphere.linkis.common.io.resultset.ResultDeserializer
-import com.webank.wedatasphere.linkis.storage.domain.Dolphin
+import org.apache.linkis.common.io.resultset.ResultDeserializer
+import org.apache.linkis.storage.domain.Dolphin
 import org.apache.commons.codec.binary.Base64
 
 

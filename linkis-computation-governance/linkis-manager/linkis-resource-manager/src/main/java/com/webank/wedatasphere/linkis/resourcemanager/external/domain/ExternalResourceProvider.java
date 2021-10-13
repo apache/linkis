@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.external.domain;
+package org.apache.linkis.resourcemanager.external.domain;
 
 import com.google.gson.reflect.TypeToken;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
+import org.apache.linkis.server.BDPJettyServerHelper;
 
 import java.util.Map;
 

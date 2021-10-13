@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entranceclient.execute
+package org.apache.linkis.entranceclient.execute
 
-import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
-import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteRequest, JobExecuteRequest}
-import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState.SchedulerEventState
-import com.webank.wedatasphere.linkis.scheduler.queue.{JobInfo, SchedulerEventState}
+import org.apache.linkis.entrance.execute.EntranceJob
+import org.apache.linkis.governance.common.entity.task.RequestPersistTask
+import org.apache.linkis.scheduler.executer.{ExecuteRequest, JobExecuteRequest}
+import org.apache.linkis.scheduler.queue.SchedulerEventState.SchedulerEventState
+import org.apache.linkis.scheduler.queue.{JobInfo, SchedulerEventState}
 
 import scala.collection.mutable.ArrayBuffer
 

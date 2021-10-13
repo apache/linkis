@@ -11,13 +11,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.dws.authentication
+package org.apache.linkis.httpclient.dws.authentication
 
 import java.util
 
-import com.webank.wedatasphere.linkis.httpclient.authentication._
-import com.webank.wedatasphere.linkis.httpclient.dws.exception.AuthenticationFailedException
-import com.webank.wedatasphere.linkis.httpclient.request.{Action, UserAction}
+import org.apache.linkis.httpclient.authentication._
+import org.apache.linkis.httpclient.dws.exception.AuthenticationFailedException
+import org.apache.linkis.httpclient.request.{Action, UserAction}
 import org.apache.http.HttpResponse
 import org.apache.http.cookie.Cookie
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.acessible.executor.info
+package org.apache.linkis.engineconn.acessible.executor.info
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, OverloadUtils}
-import com.webank.wedatasphere.linkis.manager.common.entity.metrics.NodeOverLoadInfo
+import org.apache.linkis.common.utils.{Logging, OverloadUtils}
+import org.apache.linkis.manager.common.entity.metrics.NodeOverLoadInfo
 import org.springframework.stereotype.Component
 
 trait NodeOverLoadInfoManager {

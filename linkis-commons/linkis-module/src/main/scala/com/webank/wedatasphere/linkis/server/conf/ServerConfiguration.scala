@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.server.conf
+package org.apache.linkis.server.conf
 
 import java.io.File
 import java.lang.Boolean
 
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration, TimeType}
-import com.webank.wedatasphere.linkis.common.utils.{DESUtil, Logging, Utils}
-import com.webank.wedatasphere.linkis.server.exception.BDPInitServerException
+import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
+import org.apache.linkis.common.utils.{DESUtil, Logging, Utils}
+import org.apache.linkis.server.exception.BDPInitServerException
 import org.apache.commons.lang.StringUtils
 import sun.misc.BASE64Encoder
 
@@ -61,7 +61,7 @@ object ServerConfiguration extends Logging{
   val BDP_SERVER_SERVER_JETTY_NAME = CommonVars("wds.linkis.server.jetty.name", "")
   val BDP_SERVER_ADDRESS = CommonVars("wds.linkis.server.address", Utils.getLocalHostname)
   val BDP_SERVER_PORT = CommonVars("wds.linkis.server.port", 20303)
-  val BDP_SERVER_SECURITY_FILTER = CommonVars("wds.linkis.server.security.filter", "com.webank.wedatasphere.linkis.server.security.SecurityFilter")
+  val BDP_SERVER_SECURITY_FILTER = CommonVars("wds.linkis.server.security.filter", "org.apache.linkis.server.security.SecurityFilter")
   val BDP_SERVER_SECURITY_REFERER_VALIDATE = CommonVars("wds.linkis.server.security.referer.validate", false)
   val BDP_SERVER_SECURITY_SSL = CommonVars("wds.linkis.server.security.ssl", false)
   val BDP_SERVER_SECURITY_SSL_EXCLUDE_PROTOCOLS = CommonVars("wds.linkis.server.security.ssl.excludeProtocols", "SSLv2,SSLv3")

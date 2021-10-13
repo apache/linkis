@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.vo;
+package org.apache.linkis.instance.label.vo;
 
-import com.webank.wedatasphere.linkis.instance.label.entity.InsPersistenceLabel;
+import org.apache.linkis.instance.label.entity.InsPersistenceLabel;
 
 
 public class InsPersistenceLabelSearchVo {

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.core
+package org.apache.linkis.orchestrator.core
 
 import java.util.concurrent.atomic.AtomicReference
 
-import com.webank.wedatasphere.linkis.orchestrator.conf.OrchestratorConfiguration
-import com.webank.wedatasphere.linkis.orchestrator.{Orchestrator, OrchestratorContext, OrchestratorSession}
+import org.apache.linkis.orchestrator.conf.OrchestratorConfiguration
+import org.apache.linkis.orchestrator.{Orchestrator, OrchestratorContext, OrchestratorSession}
 
 import scala.collection.JavaConversions.mapAsScalaMap
 

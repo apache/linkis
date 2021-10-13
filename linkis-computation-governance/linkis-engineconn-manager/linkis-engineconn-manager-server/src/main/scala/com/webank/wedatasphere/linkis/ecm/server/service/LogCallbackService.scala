@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.service
+package org.apache.linkis.ecm.server.service
 
-import com.webank.wedatasphere.linkis.protocol.callback.LogCallbackProtocol
+import org.apache.linkis.protocol.callback.LogCallbackProtocol
 
 
 

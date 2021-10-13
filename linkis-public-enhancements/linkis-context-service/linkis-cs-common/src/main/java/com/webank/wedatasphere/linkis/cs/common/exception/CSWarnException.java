@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.exception;
+package org.apache.linkis.cs.common.exception;
 
-import com.webank.wedatasphere.linkis.common.exception.WarnException;
+import org.apache.linkis.common.exception.WarnException;
 
 public class CSWarnException extends WarnException {
 

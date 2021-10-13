@@ -11,20 +11,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.presenter;
+package org.apache.linkis.cli.core.presenter;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdOption;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.PresenterException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option.MapOption;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option.Parameter;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option.StdOption;
-import com.webank.wedatasphere.linkis.cli.core.presenter.display.DisplayDriver;
-import com.webank.wedatasphere.linkis.cli.core.presenter.display.StdOutDriver;
-import com.webank.wedatasphere.linkis.cli.core.presenter.model.HelpInfoModel;
-import com.webank.wedatasphere.linkis.cli.core.presenter.model.PresenterModel;
+import org.apache.linkis.cli.common.entity.command.CmdOption;
+import org.apache.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.PresenterException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.command.template.option.MapOption;
+import org.apache.linkis.cli.core.interactor.command.template.option.Parameter;
+import org.apache.linkis.cli.core.interactor.command.template.option.StdOption;
+import org.apache.linkis.cli.core.presenter.display.DisplayDriver;
+import org.apache.linkis.cli.core.presenter.display.StdOutDriver;
+import org.apache.linkis.cli.core.presenter.model.HelpInfoModel;
+import org.apache.linkis.cli.core.presenter.model.PresenterModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

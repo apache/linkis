@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.highavailable.ha;
+package org.apache.linkis.cs.highavailable.ha;
 
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.exception.CSErrorException;
 
 public interface BackupInstanceGenerator {
 

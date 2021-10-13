@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.errorcode.common
-import com.webank.wedatasphere.linkis.common.utils.Logging
+package org.apache.linkis.errorcode.common
+import org.apache.linkis.common.utils.Logging
 
 import scala.util.matching.Regex
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc
+package org.apache.linkis.rpc
 
-import com.webank.wedatasphere.linkis.message.context.{MessageSchedulerContext, SpringMessageSchedulerContext}
-import com.webank.wedatasphere.linkis.message.publisher.{AbstractMessagePublisher, DefaultMessagePublisher, MessagePublisher}
+import org.apache.linkis.message.context.{MessageSchedulerContext, SpringMessageSchedulerContext}
+import org.apache.linkis.message.publisher.{AbstractMessagePublisher, DefaultMessagePublisher, MessagePublisher}
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 

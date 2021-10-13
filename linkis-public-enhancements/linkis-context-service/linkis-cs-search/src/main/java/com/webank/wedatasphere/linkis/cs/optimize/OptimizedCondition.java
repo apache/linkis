@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.optimize;
+package org.apache.linkis.cs.optimize;
 
-import com.webank.wedatasphere.linkis.cs.condition.BinaryLogicCondition;
-import com.webank.wedatasphere.linkis.cs.condition.Condition;
-import com.webank.wedatasphere.linkis.cs.condition.UnaryLogicCondition;
-import com.webank.wedatasphere.linkis.cs.optimize.cost.ConditionCostCalculator;
-import com.webank.wedatasphere.linkis.cs.optimize.dfs.Node;
+import org.apache.linkis.cs.condition.BinaryLogicCondition;
+import org.apache.linkis.cs.condition.Condition;
+import org.apache.linkis.cs.condition.UnaryLogicCondition;
+import org.apache.linkis.cs.optimize.cost.ConditionCostCalculator;
+import org.apache.linkis.cs.optimize.dfs.Node;
 
 public class OptimizedCondition implements Node {
 

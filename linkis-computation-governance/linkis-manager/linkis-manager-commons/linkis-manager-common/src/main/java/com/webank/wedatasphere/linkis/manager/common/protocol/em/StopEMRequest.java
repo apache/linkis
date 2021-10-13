@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.protocol.em;
+package org.apache.linkis.manager.common.protocol.em;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
+import org.apache.linkis.common.ServiceInstance;
 
 
 public class StopEMRequest implements EMRequest {

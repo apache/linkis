@@ -19,7 +19,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>linkis-engineconn-plugins</artifactId>
-        <groupId>com.webank.wedatasphere.linkis</groupId>
+        <groupId>org.apache.linkis</groupId>
         <version>1.0.3</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
@@ -195,13 +195,13 @@
         <!-- flink end-->
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-engineconn-plugin-core</artifactId>
             <version>${linkis.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-computation-engineconn</artifactId>
             <version>${linkis.version}</version>
             <exclusions>
@@ -214,13 +214,13 @@
 
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-message-scheduler</artifactId>
             <version>${linkis.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-once-engineconn</artifactId>
             <version>${linkis.version}</version>
             <exclusions>
@@ -233,7 +233,7 @@
 
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-hadoop-common</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>
@@ -308,7 +308,7 @@
 
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
             <version>${linkis.version}</version>
             <exclusions>
@@ -410,7 +410,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-bml-engine-hook</artifactId>
             <version>${linkis.version}</version>
             <exclusions>

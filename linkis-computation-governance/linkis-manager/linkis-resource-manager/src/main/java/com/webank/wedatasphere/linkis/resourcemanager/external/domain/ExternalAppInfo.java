@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.external.domain;
+package org.apache.linkis.resourcemanager.external.domain;
 
 public interface ExternalAppInfo {
 }

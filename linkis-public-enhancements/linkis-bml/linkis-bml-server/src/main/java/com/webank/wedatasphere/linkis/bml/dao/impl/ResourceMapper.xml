@@ -15,9 +15,9 @@
   ~ limitations under the License.
   -->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.webank.wedatasphere.linkis.bml.dao.ResourceDao">
+<mapper namespace="org.apache.linkis.bml.dao.ResourceDao">
 
-    <resultMap id="Resource" type="com.webank.wedatasphere.linkis.bml.Entity.Resource">
+    <resultMap id="Resource" type="org.apache.linkis.bml.Entity.Resource">
         <result property="resourceId" column="resource_id"/>
         <result property="user" column="owner"/>
         <result property="resourceHeader" column="resource_header"/>
@@ -82,7 +82,7 @@
         </where>
     </update>
 
-    <insert id="uploadResource" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.webank.wedatasphere.linkis.bml.Entity.Resource">
+    <insert id="uploadResource" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="org.apache.linkis.bml.Entity.Resource">
       INSERT INTO linkis_ps_bml_resources(<include refid="resource_columns"/>)
           VALUES (#{resourceId},#{isPrivate},#{resourceHeader},#{downloadedFileName},#{system},
                     #{createTime},#{user},#{isExpire},#{expireTime},#{maxVersion},#{updateTime},

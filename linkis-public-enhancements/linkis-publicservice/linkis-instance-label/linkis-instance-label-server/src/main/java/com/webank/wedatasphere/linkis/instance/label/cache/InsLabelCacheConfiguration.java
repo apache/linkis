@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.cache;
+package org.apache.linkis.instance.label.cache;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.webank.wedatasphere.linkis.instance.label.conf.InsLabelConf;
+import org.apache.linkis.instance.label.conf.InsLabelConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

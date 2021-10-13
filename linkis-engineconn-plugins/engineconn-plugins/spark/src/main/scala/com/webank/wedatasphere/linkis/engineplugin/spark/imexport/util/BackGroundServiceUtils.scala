@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.imexport.util
+package org.apache.linkis.engineplugin.spark.imexport.util
 
 import java.io.{InputStream, OutputStream}
 import java.util.Date
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.common.io.FsPath
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.storage.FSFactory
-import com.webank.wedatasphere.linkis.storage.fs.FileSystem
-import com.webank.wedatasphere.linkis.storage.utils.FileSystemUtils
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.io.FsPath
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.storage.FSFactory
+import org.apache.linkis.storage.fs.FileSystem
+import org.apache.linkis.storage.utils.FileSystemUtils
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.time.DateFormatUtils
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager
+package org.apache.linkis.resourcemanager
 
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.ResourceSerializer
-import com.webank.wedatasphere.linkis.rpc.transform.RPCFormats
+import org.apache.linkis.manager.common.entity.resource.ResourceSerializer
+import org.apache.linkis.rpc.transform.RPCFormats
 import org.json4s.Serializer
 
 

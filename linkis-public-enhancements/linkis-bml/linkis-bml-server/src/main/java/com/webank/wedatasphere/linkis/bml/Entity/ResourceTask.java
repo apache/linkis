@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.Entity;
+package org.apache.linkis.bml.Entity;
 
-import com.webank.wedatasphere.linkis.bml.common.Constant;
-import com.webank.wedatasphere.linkis.bml.common.OperationEnum;
-import com.webank.wedatasphere.linkis.bml.threading.TaskState;
-import com.webank.wedatasphere.linkis.rpc.Sender;
+import org.apache.linkis.bml.common.Constant;
+import org.apache.linkis.bml.common.OperationEnum;
+import org.apache.linkis.bml.threading.TaskState;
+import org.apache.linkis.rpc.Sender;
 
 import java.util.Date;
 import java.util.Map;

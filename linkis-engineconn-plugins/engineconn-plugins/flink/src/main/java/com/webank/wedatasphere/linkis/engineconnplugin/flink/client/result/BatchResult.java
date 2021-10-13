@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.client.result;
+package org.apache.linkis.engineconnplugin.flink.client.result;
 
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.JobExecutionException;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.SqlExecutionException;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.listener.RowsType;
+import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
+import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
+import org.apache.linkis.engineconnplugin.flink.listener.RowsType;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

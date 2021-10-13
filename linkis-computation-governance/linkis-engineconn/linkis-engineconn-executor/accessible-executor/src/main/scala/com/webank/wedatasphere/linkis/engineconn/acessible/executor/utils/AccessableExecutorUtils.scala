@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.acessible.executor.utils
+package org.apache.linkis.engineconn.acessible.executor.utils
 
 object AccessibleExecutorUtils {
 

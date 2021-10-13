@@ -17,9 +17,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.governance.common.entity.job;
+package org.apache.linkis.governance.common.entity.job;
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.Label;
 
 import java.util.Date;
 import java.util.HashMap;

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.variable.service;
+package org.apache.linkis.variable.service;
 
-import com.webank.wedatasphere.linkis.protocol.variable.ResponseQueryVariable;
-import com.webank.wedatasphere.linkis.variable.entity.VarKeyValueVO;
+import org.apache.linkis.protocol.variable.ResponseQueryVariable;
+import org.apache.linkis.variable.entity.VarKeyValueVO;
 
 import java.util.List;
 

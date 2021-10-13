@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.errorcode.client.utils;
+package org.apache.linkis.errorcode.client.utils;
 
-import com.webank.wedatasphere.linkis.errorcode.client.handler.LinkisErrorCodeHandler;
-import com.webank.wedatasphere.linkis.errorcode.common.ErrorCode;
+import org.apache.linkis.errorcode.client.handler.LinkisErrorCodeHandler;
+import org.apache.linkis.errorcode.common.ErrorCode;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.List;
 public class Test {
     public static void main(String[] args) throws IOException {
         try{
-            Class.forName("com.webank.wedatasphere.linkis.errorcode.client.handler.LinkisErrorCodeHandler");
+            Class.forName("org.apache.linkis.errorcode.client.handler.LinkisErrorCodeHandler");
         }catch(ClassNotFoundException e){
             e.printStackTrace();
         }

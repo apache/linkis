@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.security
+package org.apache.linkis.gateway.security
 
 import java.io.File
 import java.text.DateFormat
@@ -22,17 +22,17 @@ import java.util
 import java.util.concurrent.TimeUnit
 import java.util.{Date, Locale}
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration
-import com.webank.wedatasphere.linkis.common.exception.LinkisException
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
-import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration._
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
-import com.webank.wedatasphere.linkis.gateway.security.sso.SSOInterceptor
-import com.webank.wedatasphere.linkis.gateway.security.token.TokenAuthentication
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
-import com.webank.wedatasphere.linkis.server.exception.{LoginExpireException, NonLoginException}
-import com.webank.wedatasphere.linkis.server.{Message, validateFailed}
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.exception.LinkisException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.gateway.config.GatewayConfiguration
+import org.apache.linkis.gateway.config.GatewayConfiguration._
+import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.security.sso.SSOInterceptor
+import org.apache.linkis.gateway.security.token.TokenAuthentication
+import org.apache.linkis.server.conf.ServerConfiguration
+import org.apache.linkis.server.exception.{LoginExpireException, NonLoginException}
+import org.apache.linkis.server.{Message, validateFailed}
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
 

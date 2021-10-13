@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.manager.persistence.impl;
+package org.apache.linkis.manager.persistence.impl;
 /*
  * Copyright 2019 WeBank
  *
@@ -14,19 +14,19 @@ package com.webank.wedatasphere.linkis.manager.persistence.impl;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLock;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNode;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource;
-import com.webank.wedatasphere.linkis.manager.dao.LabelManagerMapper;
-import com.webank.wedatasphere.linkis.manager.dao.NodeManagerMapper;
-import com.webank.wedatasphere.linkis.manager.entity.Tunple;
-import com.webank.wedatasphere.linkis.manager.exception.PersistenceWarnException;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils;
-import com.webank.wedatasphere.linkis.manager.persistence.LabelManagerPersistence;
-import com.webank.wedatasphere.linkis.manager.util.PersistenceUtils;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLock;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceNode;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
+import org.apache.linkis.manager.dao.LabelManagerMapper;
+import org.apache.linkis.manager.dao.NodeManagerMapper;
+import org.apache.linkis.manager.entity.Tunple;
+import org.apache.linkis.manager.exception.PersistenceWarnException;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.utils.LabelUtils;
+import org.apache.linkis.manager.persistence.LabelManagerPersistence;
+import org.apache.linkis.manager.util.PersistenceUtils;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;

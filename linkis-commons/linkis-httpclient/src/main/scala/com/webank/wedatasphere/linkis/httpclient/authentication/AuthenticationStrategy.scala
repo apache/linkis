@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.authentication
+package org.apache.linkis.httpclient.authentication
 
-import com.webank.wedatasphere.linkis.httpclient.request.Action
+import org.apache.linkis.httpclient.request.Action
 
 
 trait AuthenticationStrategy {

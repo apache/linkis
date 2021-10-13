@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.collection
+package org.apache.linkis.common.collection
 
 
 class LoopArray[T](maxCapacity: Int) {

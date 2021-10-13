@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.instance.label.utils;
+package org.apache.linkis.instance.label.utils;
 
-import com.webank.wedatasphere.linkis.instance.label.entity.InstanceInfo;
-import com.webank.wedatasphere.linkis.instance.label.vo.InstanceInfoVo;
+import org.apache.linkis.instance.label.entity.InstanceInfo;
+import org.apache.linkis.instance.label.vo.InstanceInfoVo;
 import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;

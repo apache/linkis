@@ -16,22 +16,22 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.engineconn.computation.executor.hook
+package org.apache.linkis.engineconn.computation.executor.hook
 
 import java.io.File
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.common.hook.EngineConnHook
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
-import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{CodeLanguageLabel, EngineTypeLabel}
-import com.webank.wedatasphere.linkis.udf.UDFClient
-import com.webank.wedatasphere.linkis.udf.entity.UDFInfo
-import com.webank.wedatasphere.linkis.udf.utils.ConstantVar
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.common.engineconn.EngineConn
+import org.apache.linkis.engineconn.common.hook.EngineConnHook
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
+import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.core.executor.ExecutorManager
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, EngineTypeLabel}
+import org.apache.linkis.udf.UDFClient
+import org.apache.linkis.udf.entity.UDFInfo
+import org.apache.linkis.udf.utils.ConstantVar
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
 

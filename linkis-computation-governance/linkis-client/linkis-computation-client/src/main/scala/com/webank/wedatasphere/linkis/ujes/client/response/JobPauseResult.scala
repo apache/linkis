@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.client.response
+package org.apache.linkis.ujes.client.response
 
-import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/entrance/(\\S+)/pause")
 class JobPauseResult extends UJESJobResult

@@ -15,14 +15,14 @@
  */
 
 
-package com.webank.wedatasphere.linkis.entrance.log
+package org.apache.linkis.entrance.log
 
 import java.io.{IOException, InputStream}
 import java.util
 
-import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.storage.FSFactory
+import org.apache.linkis.common.io.{Fs, FsPath}
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.storage.FSFactory
 
 class CacheLogReader(logPath:String ,
                               charset:String,

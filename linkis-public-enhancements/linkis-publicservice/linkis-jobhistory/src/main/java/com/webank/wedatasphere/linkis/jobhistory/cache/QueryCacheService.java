@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.cache;
+package org.apache.linkis.jobhistory.cache;
 
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest;
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask;
-import com.webank.wedatasphere.linkis.governance.common.protocol.job.JobReq;
-import com.webank.wedatasphere.linkis.jobhistory.cache.domain.TaskResult;
-import com.webank.wedatasphere.linkis.protocol.query.cache.RequestDeleteCache;
-import com.webank.wedatasphere.linkis.protocol.query.cache.RequestReadCache;
+import org.apache.linkis.governance.common.entity.job.JobRequest;
+import org.apache.linkis.governance.common.entity.task.RequestPersistTask;
+import org.apache.linkis.governance.common.protocol.job.JobReq;
+import org.apache.linkis.jobhistory.cache.domain.TaskResult;
+import org.apache.linkis.protocol.query.cache.RequestDeleteCache;
+import org.apache.linkis.protocol.query.cache.RequestReadCache;
 
 public interface QueryCacheService {
 

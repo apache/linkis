@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.errorcode.client;
+package org.apache.linkis.errorcode.client;
 
-import com.webank.wedatasphere.linkis.httpclient.authentication.AuthenticationStrategy;
-import com.webank.wedatasphere.linkis.httpclient.config.ClientConfig;
-import com.webank.wedatasphere.linkis.httpclient.config.ClientConfigBuilder;
-import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient;
-import com.webank.wedatasphere.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy;
-import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig;
+import org.apache.linkis.httpclient.authentication.AuthenticationStrategy;
+import org.apache.linkis.httpclient.config.ClientConfig;
+import org.apache.linkis.httpclient.config.ClientConfigBuilder;
+import org.apache.linkis.httpclient.dws.DWSHttpClient;
+import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy;
+import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
 
 
 public class ErrorCodeClientBuilder {

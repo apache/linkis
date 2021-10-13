@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.executor.entity
+package org.apache.linkis.engineconn.executor.entity
 
 import java.util
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.Label
 
 trait LabelExecutor extends Executor {
 

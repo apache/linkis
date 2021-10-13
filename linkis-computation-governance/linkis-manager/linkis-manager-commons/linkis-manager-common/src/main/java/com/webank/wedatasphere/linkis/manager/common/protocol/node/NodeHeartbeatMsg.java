@@ -16,14 +16,14 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.protocol.node;
+package org.apache.linkis.manager.common.protocol.node;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus;
-import com.webank.wedatasphere.linkis.manager.common.entity.metrics.NodeHealthyInfo;
-import com.webank.wedatasphere.linkis.manager.common.entity.metrics.NodeOverLoadInfo;
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource;
-import com.webank.wedatasphere.linkis.protocol.AbstractRetryableProtocol;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
+import org.apache.linkis.manager.common.entity.metrics.NodeHealthyInfo;
+import org.apache.linkis.manager.common.entity.metrics.NodeOverLoadInfo;
+import org.apache.linkis.manager.common.entity.resource.NodeResource;
+import org.apache.linkis.protocol.AbstractRetryableProtocol;
 
 
 public class NodeHeartbeatMsg extends AbstractRetryableProtocol implements HeartbeatProtocol {

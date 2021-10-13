@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.http
+package org.apache.linkis.gateway.http
 
 import java.util
 
-import com.webank.wedatasphere.linkis.server.JMap
+import org.apache.linkis.server.JMap
 
 trait GatewayContext {
 

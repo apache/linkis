@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.io.service
+package org.apache.linkis.manager.engineplugin.io.service
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.storage.utils.{StorageConfiguration, StorageUtils}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 
 class FsProxyService extends Logging{
 

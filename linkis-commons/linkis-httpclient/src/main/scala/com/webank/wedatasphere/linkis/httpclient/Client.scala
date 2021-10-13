@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient
+package org.apache.linkis.httpclient
 
 import java.io.Closeable
 
-import com.webank.wedatasphere.linkis.httpclient.request.Action
-import com.webank.wedatasphere.linkis.httpclient.response.Result
+import org.apache.linkis.httpclient.request.Action
+import org.apache.linkis.httpclient.response.Result
 
 
 trait Client extends Closeable {

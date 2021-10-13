@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.script.compaction
+package org.apache.linkis.storage.script.compaction
 
-import com.webank.wedatasphere.linkis.storage.script.{Compaction, Variable}
+import org.apache.linkis.storage.script.{Compaction, Variable}
 
 
 abstract class CommonScriptCompaction extends Compaction {

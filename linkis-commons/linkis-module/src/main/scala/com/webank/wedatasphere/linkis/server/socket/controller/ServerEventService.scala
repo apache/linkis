@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.server.socket.controller
+package org.apache.linkis.server.socket.controller
 
 import com.google.gson.Gson
-import com.webank.wedatasphere.linkis.common.listener.{Event, EventListener}
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.server.{BDPJettyServerHelper, Message, catchIt}
+import org.apache.linkis.common.listener.{Event, EventListener}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.server.{BDPJettyServerHelper, Message, catchIt}
 
 
 abstract class ServerEventService extends EventListener with Logging {

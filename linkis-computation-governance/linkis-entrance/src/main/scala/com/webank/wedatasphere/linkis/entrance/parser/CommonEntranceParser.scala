@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.parser
+package org.apache.linkis.entrance.parser
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalParamException}
-import com.webank.wedatasphere.linkis.entrance.persistence.PersistenceManager
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext, StdLabelBuilderFactory}
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{CodeLanguageLabel, UserCreatorLabel}
-import com.webank.wedatasphere.linkis.manager.label.utils.EngineTypeLabelCreator
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
-import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalParamException}
+import org.apache.linkis.entrance.persistence.PersistenceManager
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext, StdLabelBuilderFactory}
+import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, UserCreatorLabel}
+import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
+import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.scheduler.queue.SchedulerEventState
 import org.apache.commons.lang.StringUtils
 import java.util
 import java.util.Date
 
-import com.webank.wedatasphere.linkis.entrance.timeout.JobTimeoutManager
+import org.apache.linkis.entrance.timeout.JobTimeoutManager
 
 import scala.collection.JavaConversions.mapAsScalaMap
 import scala.collection.JavaConverters._

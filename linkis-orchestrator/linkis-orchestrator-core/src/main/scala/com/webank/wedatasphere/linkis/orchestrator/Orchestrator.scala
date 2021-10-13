@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator
+package org.apache.linkis.orchestrator
 
 import java.io.Closeable
 
-import com.webank.wedatasphere.linkis.common.utils.{ClassUtils, Logging}
-import com.webank.wedatasphere.linkis.orchestrator.conf.OrchestratorConfiguration.ORCHESTRATOR_BUILDER_CLASS
-import com.webank.wedatasphere.linkis.orchestrator.core.OrchestratorSessionBuilder
-import com.webank.wedatasphere.linkis.orchestrator.core.impl.OrchestratorImpl
+import org.apache.linkis.common.utils.{ClassUtils, Logging}
+import org.apache.linkis.orchestrator.conf.OrchestratorConfiguration.ORCHESTRATOR_BUILDER_CLASS
+import org.apache.linkis.orchestrator.core.OrchestratorSessionBuilder
+import org.apache.linkis.orchestrator.core.impl.OrchestratorImpl
 import org.apache.commons.lang.StringUtils
 
 /**

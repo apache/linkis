@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.constants;
+package org.apache.linkis.cli.application.constants;
 
 public class LinkisConstants {
     public static final String JOB_CREATOR_DEFAULT = "BDP_CLIENT_EMPTY_CREATOR";

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.io.domain
+package org.apache.linkis.manager.engineplugin.io.domain
 
-import com.webank.wedatasphere.linkis.common.io.Fs
-import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration
+import org.apache.linkis.common.io.Fs
+import org.apache.linkis.storage.utils.StorageConfiguration
 
 /**
   * FS信息记录，包括Entrance的ID信息

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.engine
+package org.apache.linkis.protocol.engine
 
-import com.webank.wedatasphere.linkis.protocol.RetryableProtocol
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.protocol.RetryableProtocol
+import org.apache.linkis.protocol.message.RequestProtocol
 
 
 case class RequestEngineStatus(messageType: Int) extends RetryableProtocol with RequestProtocol

@@ -16,10 +16,10 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.entity.persistence;
+package org.apache.linkis.manager.common.entity.persistence;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.manager.common.entity.metrics.NodeMetrics;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.common.entity.metrics.NodeMetrics;
 
 import java.util.Date;
 

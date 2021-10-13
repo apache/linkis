@@ -15,9 +15,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.utils
+package org.apache.linkis.orchestrator.computation.utils
 
-import com.webank.wedatasphere.linkis.orchestrator.computation.conf.ComputationOrchestratorConf
+import org.apache.linkis.orchestrator.computation.conf.ComputationOrchestratorConf
 
 object ComputationOrchestratorUtils {
 

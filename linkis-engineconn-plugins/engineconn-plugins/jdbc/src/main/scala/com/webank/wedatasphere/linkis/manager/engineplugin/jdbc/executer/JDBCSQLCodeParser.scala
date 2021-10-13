@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.manager.engineplugin.jdbc.executer
+package org.apache.linkis.manager.engineplugin.jdbc.executer
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
+import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.mutable.ArrayBuffer

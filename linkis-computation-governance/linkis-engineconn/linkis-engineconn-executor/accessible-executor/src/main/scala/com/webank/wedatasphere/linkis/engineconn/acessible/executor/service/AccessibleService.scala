@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.acessible.executor.service
+package org.apache.linkis.engineconn.acessible.executor.service
 
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.ExecutorStatusListener
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineSuicideRequest
-import com.webank.wedatasphere.linkis.manager.common.protocol.node.{RequestNodeStatus, ResponseNodeStatus}
-import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.engineconn.acessible.executor.listener.ExecutorStatusListener
+import org.apache.linkis.manager.common.protocol.engine.EngineSuicideRequest
+import org.apache.linkis.manager.common.protocol.node.{RequestNodeStatus, ResponseNodeStatus}
+import org.apache.linkis.message.builder.ServiceMethodContext
 
 trait AccessibleService extends ExecutorStatusListener {
 

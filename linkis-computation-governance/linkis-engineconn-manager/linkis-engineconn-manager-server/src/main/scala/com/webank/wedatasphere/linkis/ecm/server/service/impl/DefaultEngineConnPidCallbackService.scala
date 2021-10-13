@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.service.impl
+package org.apache.linkis.ecm.server.service.impl
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.ecm.server.LinkisECMApplication
-import com.webank.wedatasphere.linkis.ecm.server.listener.EngineConnPidCallbackEvent
-import com.webank.wedatasphere.linkis.ecm.server.service.EngineConnPidCallbackService
-import com.webank.wedatasphere.linkis.governance.common.protocol.task.ResponseEngineConnPid
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.ecm.server.LinkisECMApplication
+import org.apache.linkis.ecm.server.listener.EngineConnPidCallbackEvent
+import org.apache.linkis.ecm.server.service.EngineConnPidCallbackService
+import org.apache.linkis.governance.common.protocol.task.ResponseEngineConnPid
+import org.apache.linkis.message.annotation.Receiver
 
 
 class DefaultEngineConnPidCallbackService extends EngineConnPidCallbackService with Logging {

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event
+package org.apache.linkis.engineconn.acessible.executor.listener.event
 
-import com.webank.wedatasphere.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
-import com.webank.wedatasphere.linkis.governance.common.entity.ExecutionNodeStatus
-import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
+import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
+import org.apache.linkis.protocol.engine.JobProgressInfo
 
 trait TaskEvent extends EngineConnSyncEvent {
 

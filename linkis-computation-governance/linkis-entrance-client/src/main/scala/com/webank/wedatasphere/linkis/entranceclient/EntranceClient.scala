@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entranceclient
+package org.apache.linkis.entranceclient
 
-import com.webank.wedatasphere.linkis.entranceclient.execute.ClientJob
+import org.apache.linkis.entranceclient.execute.ClientJob
 
 trait EntranceClient {
 

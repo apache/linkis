@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.response.impl
+package org.apache.linkis.httpclient.response.impl
 
-import com.webank.wedatasphere.linkis.httpclient.response.HttpResult
+import org.apache.linkis.httpclient.response.HttpResult
 
 class DefaultHttpResult extends HttpResult {
 

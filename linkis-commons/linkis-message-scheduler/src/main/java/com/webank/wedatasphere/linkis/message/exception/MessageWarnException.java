@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.exception;
+package org.apache.linkis.message.exception;
 
-import com.webank.wedatasphere.linkis.common.exception.WarnException;
+import org.apache.linkis.common.exception.WarnException;
 
 
 public class MessageWarnException extends WarnException {

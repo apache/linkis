@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.hive.conf
+package org.apache.linkis.engineplugin.hive.conf
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.CommonVars
 
 object HiveEngineConfiguration {
 
   val HIVE_LIB_HOME = CommonVars[String]("hive.lib", CommonVars[String]("HIVE_LIB", "/appcom/Install/hive/lib").getValue)
   val ENABLE_FETCH_BASE64 = CommonVars[Boolean]("wds.linkis.hive.enable.fetch.base64",false).getValue
-  val BASE64_SERDE_CLASS =  CommonVars[String]("wds.linkis.hive.base64.serde.class","com.webank.wedatasphere.linkis.engineplugin.hive.serde.CustomerDelimitedJSONSerDe").getValue
+  val BASE64_SERDE_CLASS =  CommonVars[String]("wds.linkis.hive.base64.serde.class","org.apache.linkis.engineplugin.hive.serde.CustomerDelimitedJSONSerDe").getValue
 }

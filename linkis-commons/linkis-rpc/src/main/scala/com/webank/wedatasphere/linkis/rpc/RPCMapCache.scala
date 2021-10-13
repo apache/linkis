@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc
+package org.apache.linkis.rpc
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.protocol.CacheableProtocol
-import com.webank.wedatasphere.linkis.rpc.errorcode.RPCErrorConstants
-import com.webank.wedatasphere.linkis.server.exception.FetchMapCacheFailedException
+import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.protocol.CacheableProtocol
+import org.apache.linkis.rpc.errorcode.RPCErrorConstants
+import org.apache.linkis.server.exception.FetchMapCacheFailedException
 
 
 abstract class RPCMapCache[M, K, V](applicationName: String) {

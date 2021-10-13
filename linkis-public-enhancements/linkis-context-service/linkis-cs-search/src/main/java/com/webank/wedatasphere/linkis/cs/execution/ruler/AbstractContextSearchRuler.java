@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.execution.ruler;
+package org.apache.linkis.cs.execution.ruler;
 
-import com.webank.wedatasphere.linkis.cs.execution.matcher.ContextSearchMatcher;
+import org.apache.linkis.cs.execution.matcher.ContextSearchMatcher;
 
 public abstract class AbstractContextSearchRuler implements ContextSearchRuler{
 

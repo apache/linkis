@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.parser;
+package org.apache.linkis.message.parser;
 
-import com.webank.wedatasphere.linkis.message.annotation.Chain;
-import com.webank.wedatasphere.linkis.message.annotation.NotImplicit;
-import com.webank.wedatasphere.linkis.message.annotation.Order;
-import com.webank.wedatasphere.linkis.message.annotation.Receiver;
-import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext;
+import org.apache.linkis.message.annotation.Chain;
+import org.apache.linkis.message.annotation.NotImplicit;
+import org.apache.linkis.message.annotation.Order;
+import org.apache.linkis.message.annotation.Receiver;
+import org.apache.linkis.message.builder.ServiceMethodContext;
 import org.springframework.aop.support.AopUtils;
 
 import java.lang.reflect.Method;

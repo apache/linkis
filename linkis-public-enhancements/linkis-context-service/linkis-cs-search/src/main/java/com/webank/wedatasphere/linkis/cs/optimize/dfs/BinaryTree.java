@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.optimize.dfs;
+package org.apache.linkis.cs.optimize.dfs;
 
 public interface BinaryTree {
     BinaryTree getLeft();

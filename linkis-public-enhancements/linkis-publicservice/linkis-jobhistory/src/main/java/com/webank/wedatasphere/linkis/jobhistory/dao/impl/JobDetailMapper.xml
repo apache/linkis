@@ -18,9 +18,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 
-<mapper namespace="com.webank.wedatasphere.linkis.jobhistory.dao.JobDetailMapper">
+<mapper namespace="org.apache.linkis.jobhistory.dao.JobDetailMapper">
 
-    <resultMap id="jobDetailMap" type="com.webank.wedatasphere.linkis.jobhistory.entity.JobDetail" autoMapping="false" >
+    <resultMap id="jobDetailMap" type="org.apache.linkis.jobhistory.entity.JobDetail" autoMapping="false" >
         <id property = "id" column = "id" />
         <result property = "job_history_id" column = "job_history_id" />
         <result property = "result_location" column = "result_location" />
@@ -41,7 +41,7 @@
         `job_history_id`, `result_location`, `result_array_size`, `execution_content`, `job_group_info`, `created_time`, `updated_time`, `status`, `priority`
     </sql>
 
-    <insert id="insertJobDetail" flushCache="true" useGeneratedKeys="true" keyProperty="id" parameterType="com.webank.wedatasphere.linkis.jobhistory.entity.JobDetail">
+    <insert id="insertJobDetail" flushCache="true" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.jobhistory.entity.JobDetail">
         INSERT INTO linkis_ps_job_history_detail(<include refid="insert_job_list"/>)
         VALUES (#{job_history_id},#{result_location},#{result_array_size},#{execution_content},#{job_group_info},
         #{created_time},#{updated_time},#{status},#{priority})
@@ -58,7 +58,7 @@
         ORDER BY `created_time` ASC
     </select>
 
-    <!--<select id="selectTask" resultMap="jobHistoryMapper" parameterType="com.webank.wedatasphere.linkis.jobhistory.entity.QueryJobDetail">
+    <!--<select id="selectTask" resultMap="jobHistoryMapper" parameterType="org.apache.linkis.jobhistory.entity.QueryJobDetail">
         SELECT * FROM linkis_ps_job_history_detail
         <where>
             <if test="id != null">id = #{id}</if>
@@ -93,7 +93,7 @@
     </select>-->
 
 
-    <update id="updateJobDetail" flushCache="true" parameterType="com.webank.wedatasphere.linkis.jobhistory.entity.JobDetail">
+    <update id="updateJobDetail" flushCache="true" parameterType="org.apache.linkis.jobhistory.entity.JobDetail">
         UPDATE linkis_ps_job_history_detail
         <trim prefix="set" suffixOverrides=",">
             <if test="updated_time != null">updated_time = #{updated_time},</if>

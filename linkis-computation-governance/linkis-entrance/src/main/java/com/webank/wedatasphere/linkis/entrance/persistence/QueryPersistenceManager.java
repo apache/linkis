@@ -12,22 +12,22 @@
  */
 
 
-package com.webank.wedatasphere.linkis.entrance.persistence;
+package org.apache.linkis.entrance.persistence;
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.common.io.FsPath;
-import com.webank.wedatasphere.linkis.entrance.EntranceContext;
-import com.webank.wedatasphere.linkis.entrance.cs.CSEntranceHelper;
-import com.webank.wedatasphere.linkis.entrance.execute.EntranceExecutorManager;
-import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob;
-import com.webank.wedatasphere.linkis.entrance.job.EntranceExecuteRequest;
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest;
-import com.webank.wedatasphere.linkis.governance.common.entity.job.SubJobInfo;
-import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo;
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorManager;
-import com.webank.wedatasphere.linkis.scheduler.executer.OutputExecuteResponse;
-import com.webank.wedatasphere.linkis.scheduler.queue.Job;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.entrance.EntranceContext;
+import org.apache.linkis.entrance.cs.CSEntranceHelper;
+import org.apache.linkis.entrance.execute.EntranceExecutorManager;
+import org.apache.linkis.entrance.execute.EntranceJob;
+import org.apache.linkis.entrance.job.EntranceExecuteRequest;
+import org.apache.linkis.governance.common.entity.job.JobRequest;
+import org.apache.linkis.governance.common.entity.job.SubJobInfo;
+import org.apache.linkis.protocol.engine.JobProgressInfo;
+import org.apache.linkis.scheduler.executer.ExecutorManager;
+import org.apache.linkis.scheduler.executer.OutputExecuteResponse;
+import org.apache.linkis.scheduler.queue.Job;
+import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;

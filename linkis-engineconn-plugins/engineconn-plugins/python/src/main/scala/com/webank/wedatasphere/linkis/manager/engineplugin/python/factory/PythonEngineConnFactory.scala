@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.python.factory
+package org.apache.linkis.manager.engineplugin.python.factory
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.{DefaultEngineConn, EngineConn}
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationSingleExecutorEngineConnFactory
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.LabelExecutor
-import com.webank.wedatasphere.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
-import com.webank.wedatasphere.linkis.manager.engineplugin.python.exception.PythonSessionStartFailedExeception
-import com.webank.wedatasphere.linkis.manager.engineplugin.python.executor.{PythonEngineConnExecutor, PythonSession}
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineType.EngineType
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType.RunType
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineType, RunType}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.common.engineconn.{DefaultEngineConn, EngineConn}
+import org.apache.linkis.engineconn.computation.executor.creation.ComputationSingleExecutorEngineConnFactory
+import org.apache.linkis.engineconn.executor.entity.LabelExecutor
+import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
+import org.apache.linkis.manager.engineplugin.python.exception.PythonSessionStartFailedExeception
+import org.apache.linkis.manager.engineplugin.python.executor.{PythonEngineConnExecutor, PythonSession}
+import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
+import org.apache.linkis.manager.label.entity.engine.RunType.RunType
+import org.apache.linkis.manager.label.entity.engine.{EngineType, RunType}
 
 
 class PythonEngineConnFactory extends ComputationSingleExecutorEngineConnFactory with Logging {

@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.manager.persistence;
+package org.apache.linkis.manager.persistence;
 /*
  * Copyright 2019 WeBank
  *
@@ -14,10 +14,10 @@ package com.webank.wedatasphere.linkis.manager.persistence;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.webank.wedatasphere.linkis.manager.common.entity.label.LabelKeyValue;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.common.entity.label.LabelKeyValue;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
+import org.apache.linkis.manager.label.entity.Label;
 
 import java.util.List;
 import java.util.Map;

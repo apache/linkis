@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.governance.common.protocol.conf
+package org.apache.linkis.governance.common.protocol.conf
 
 import java.util
 

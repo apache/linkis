@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.client
+package org.apache.linkis.ujes.client
 
 import java.util.concurrent.TimeUnit
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy
-import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfigBuilder
-import com.webank.wedatasphere.linkis.ujes.client.request.JobExecuteAction.EngineType
-import com.webank.wedatasphere.linkis.ujes.client.request.{JobExecuteAction, ResultSetAction}
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy
+import org.apache.linkis.httpclient.dws.config.DWSClientConfigBuilder
+import org.apache.linkis.ujes.client.request.JobExecuteAction.EngineType
+import org.apache.linkis.ujes.client.request.{JobExecuteAction, ResultSetAction}
 import org.apache.commons.io.IOUtils
 
 @Deprecated

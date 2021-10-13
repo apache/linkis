@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.computation.executor.utlis
+package org.apache.linkis.engineconn.computation.executor.utlis
 
 import com.google.gson.{Gson, GsonBuilder}
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
+import org.apache.linkis.server.BDPJettyServerHelper
 
 
 object ComputationEngineUtils {

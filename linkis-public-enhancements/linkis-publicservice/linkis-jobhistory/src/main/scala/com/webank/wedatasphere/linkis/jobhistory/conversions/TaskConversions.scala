@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.conversions
+package org.apache.linkis.jobhistory.conversions
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.governance.common.entity.job.{JobRequest, SubJobDetail}
-import com.webank.wedatasphere.linkis.governance.common.entity.task.{RequestPersistTask, RequestQueryTask}
-import com.webank.wedatasphere.linkis.jobhistory.conf.JobhistoryConfiguration
-import com.webank.wedatasphere.linkis.jobhistory.entity.{JobDetail, JobHistory, QueryTask, QueryTaskVO}
-import com.webank.wedatasphere.linkis.jobhistory.transitional.TaskStatus
-import com.webank.wedatasphere.linkis.jobhistory.util.QueryUtils
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
-import com.webank.wedatasphere.linkis.protocol.utils.ZuulEntranceUtils
-import com.webank.wedatasphere.linkis.server.{BDPJettyServerHelper, toScalaBuffer, toScalaMap}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail}
+import org.apache.linkis.governance.common.entity.task.{RequestPersistTask, RequestQueryTask}
+import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
+import org.apache.linkis.jobhistory.entity.{JobDetail, JobHistory, QueryTask, QueryTaskVO}
+import org.apache.linkis.jobhistory.transitional.TaskStatus
+import org.apache.linkis.jobhistory.util.QueryUtils
+import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.protocol.utils.ZuulEntranceUtils
+import org.apache.linkis.server.{BDPJettyServerHelper, toScalaBuffer, toScalaMap}
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.BeanUtils
 import java.util
 import java.util.Date
 import java.text.SimpleDateFormat
 
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.protocol.constants.TaskConstant
 
 import scala.collection.JavaConverters.{asJavaIterableConverter, asScalaBufferConverter, mapAsScalaMapConverter}
 

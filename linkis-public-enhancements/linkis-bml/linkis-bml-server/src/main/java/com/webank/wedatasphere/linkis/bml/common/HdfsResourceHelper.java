@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.common;
+package org.apache.linkis.bml.common;
 
-import com.webank.wedatasphere.linkis.bml.conf.BmlServerConfiguration;
-import com.webank.wedatasphere.linkis.common.io.Fs;
-import com.webank.wedatasphere.linkis.common.io.FsPath;
-import com.webank.wedatasphere.linkis.storage.FSFactory;
-import com.webank.wedatasphere.linkis.storage.utils.FileSystemUtils;
+import org.apache.linkis.bml.conf.BmlServerConfiguration;
+import org.apache.linkis.common.io.Fs;
+import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.storage.FSFactory;
+import org.apache.linkis.storage.utils.FileSystemUtils;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;

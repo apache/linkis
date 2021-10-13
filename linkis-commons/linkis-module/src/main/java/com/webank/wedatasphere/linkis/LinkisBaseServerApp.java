@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis;
+package org.apache.linkis;
 
-import com.webank.wedatasphere.linkis.common.utils.Utils;
-import com.webank.wedatasphere.linkis.server.utils.LinkisMainHelper;
+import org.apache.linkis.common.utils.Utils;
+import org.apache.linkis.server.utils.LinkisMainHelper;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;

@@ -15,7 +15,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.catalyst.validator
+package org.apache.linkis.orchestrator.computation.catalyst.validator
 
 /**
  *

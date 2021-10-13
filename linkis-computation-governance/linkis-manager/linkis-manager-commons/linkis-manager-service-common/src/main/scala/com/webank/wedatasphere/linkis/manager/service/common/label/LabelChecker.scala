@@ -16,11 +16,11 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.service.common.label
+package org.apache.linkis.manager.service.common.label
 
 import java.util
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.Label
 
 
 trait LabelChecker {

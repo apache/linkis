@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.action
+package org.apache.linkis.filesystem.action
 
-import com.webank.wedatasphere.linkis.httpclient.request.{GetAction, POSTAction}
+import org.apache.linkis.httpclient.request.{GetAction, POSTAction}
 
 
 abstract class WorkspacePOSTAction extends POSTAction

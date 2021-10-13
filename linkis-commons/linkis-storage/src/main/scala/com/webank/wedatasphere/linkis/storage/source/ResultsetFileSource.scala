@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.source
+package org.apache.linkis.storage.source
 
-import com.webank.wedatasphere.linkis.storage.resultset.table.TableRecord
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
+import org.apache.linkis.storage.resultset.table.TableRecord
+import org.apache.linkis.storage.utils.StorageUtils
 
 
 class ResultsetFileSource(fileSplits: Array[FileSplit]) extends AbstractFileSource(fileSplits) {

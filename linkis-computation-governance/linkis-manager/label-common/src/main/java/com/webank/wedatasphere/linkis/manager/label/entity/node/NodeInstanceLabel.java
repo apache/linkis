@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.entity.node;
+package org.apache.linkis.manager.label.entity.node;
 
-import com.webank.wedatasphere.linkis.manager.label.entity.NodeLabel;
+import org.apache.linkis.manager.label.entity.NodeLabel;
 
 public interface NodeInstanceLabel extends NodeLabel {
 

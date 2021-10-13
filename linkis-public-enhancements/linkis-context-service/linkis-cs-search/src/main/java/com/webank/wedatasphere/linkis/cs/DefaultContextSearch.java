@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs;
+package org.apache.linkis.cs;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
-import com.webank.wedatasphere.linkis.cs.condition.Condition;
-import com.webank.wedatasphere.linkis.cs.condition.construction.ConditionParser;
-import com.webank.wedatasphere.linkis.cs.condition.impl.*;
-import com.webank.wedatasphere.linkis.cs.contextcache.ContextCacheService;
-import com.webank.wedatasphere.linkis.cs.exception.ContextSearchFailedException;
-import com.webank.wedatasphere.linkis.cs.execution.ConditionExecution;
-import com.webank.wedatasphere.linkis.cs.execution.impl.*;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
+import org.apache.linkis.cs.condition.Condition;
+import org.apache.linkis.cs.condition.construction.ConditionParser;
+import org.apache.linkis.cs.condition.impl.*;
+import org.apache.linkis.cs.contextcache.ContextCacheService;
+import org.apache.linkis.cs.exception.ContextSearchFailedException;
+import org.apache.linkis.cs.execution.ConditionExecution;
+import org.apache.linkis.cs.execution.impl.*;
+import org.apache.linkis.server.BDPJettyServerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

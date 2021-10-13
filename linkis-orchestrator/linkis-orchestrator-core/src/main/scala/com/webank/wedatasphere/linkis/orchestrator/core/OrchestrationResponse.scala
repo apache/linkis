@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.core
+package org.apache.linkis.orchestrator.core
 
-import com.webank.wedatasphere.linkis.common.io.FsPath
+import org.apache.linkis.common.io.FsPath
 
 /**
   *

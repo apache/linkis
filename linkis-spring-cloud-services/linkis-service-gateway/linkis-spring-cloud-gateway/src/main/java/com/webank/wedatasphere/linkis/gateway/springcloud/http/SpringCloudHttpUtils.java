@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.springcloud.http;
+package org.apache.linkis.gateway.springcloud.http;
 
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
@@ -43,7 +43,7 @@ public class SpringCloudHttpUtils {
     }
 
     public static void addIgnoreTimeoutSignal(HttpHeaders httpHeaders) {
-        Cookie cookie = com.webank.wedatasphere.linkis.server.security.SecurityFilter.ignoreTimeoutSignal();
+        Cookie cookie = org.apache.linkis.server.security.SecurityFilter.ignoreTimeoutSignal();
         Map<String, Cookie[]> cookies = new HashMap<>();
         cookies.put(cookie.getName(), new Cookie[]{cookie});
         addCookies(httpHeaders, cookies);

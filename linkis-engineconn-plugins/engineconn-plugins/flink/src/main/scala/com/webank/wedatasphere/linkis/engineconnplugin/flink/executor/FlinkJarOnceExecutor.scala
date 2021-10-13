@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.executor
+package org.apache.linkis.engineconnplugin.flink.executor
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.engineconn.once.executor.OnceExecutorExecutionContext
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.deployment.YarnApplicationClusterDescriptorAdapter
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration._
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.engineconn.once.executor.OnceExecutorExecutionContext
+import org.apache.linkis.engineconnplugin.flink.client.deployment.YarnApplicationClusterDescriptorAdapter
+import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration._
+import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
 import org.apache.commons.lang.StringUtils
 
 import scala.concurrent.duration.Duration

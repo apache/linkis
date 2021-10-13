@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.variable
+package org.apache.linkis.protocol.variable
 
 import java.util
 

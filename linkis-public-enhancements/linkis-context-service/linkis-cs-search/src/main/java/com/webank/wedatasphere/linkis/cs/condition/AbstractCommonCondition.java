@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.condition;
+package org.apache.linkis.cs.condition;
 
-import com.webank.wedatasphere.linkis.cs.condition.impl.AndCondition;
-import com.webank.wedatasphere.linkis.cs.condition.impl.NotCondition;
-import com.webank.wedatasphere.linkis.cs.condition.impl.OrCondition;
+import org.apache.linkis.cs.condition.impl.AndCondition;
+import org.apache.linkis.cs.condition.impl.NotCondition;
+import org.apache.linkis.cs.condition.impl.OrCondition;
 
 public abstract class AbstractCommonCondition implements Condition{
 

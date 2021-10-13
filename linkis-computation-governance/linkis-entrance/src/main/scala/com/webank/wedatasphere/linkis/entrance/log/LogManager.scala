@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.log
+package org.apache.linkis.entrance.log
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.EntranceContext
-import com.webank.wedatasphere.linkis.entrance.event.{EntranceJobLogEvent, EntranceLogEvent, EntranceLogListener}
-import com.webank.wedatasphere.linkis.entrance.job.EntranceExecutionJob
-import com.webank.wedatasphere.linkis.scheduler.listener.LogListener
-import com.webank.wedatasphere.linkis.scheduler.queue.Job
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.EntranceContext
+import org.apache.linkis.entrance.event.{EntranceJobLogEvent, EntranceLogEvent, EntranceLogListener}
+import org.apache.linkis.entrance.job.EntranceExecutionJob
+import org.apache.linkis.scheduler.listener.LogListener
+import org.apache.linkis.scheduler.queue.Job
 
 
 abstract class LogManager extends LogListener with Logging with EntranceLogListener{

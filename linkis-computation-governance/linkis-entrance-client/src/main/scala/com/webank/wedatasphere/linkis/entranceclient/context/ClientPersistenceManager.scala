@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entranceclient.context
+package org.apache.linkis.entranceclient.context
 
-import com.webank.wedatasphere.linkis.entrance.EntranceContext
-import com.webank.wedatasphere.linkis.entrance.persistence.{PersistenceEngine, PersistenceManager, ResultSetEngine}
-import com.webank.wedatasphere.linkis.entranceclient.execute
-import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
-import com.webank.wedatasphere.linkis.scheduler.executer.OutputExecuteResponse
-import com.webank.wedatasphere.linkis.scheduler.queue.Job
+import org.apache.linkis.entrance.EntranceContext
+import org.apache.linkis.entrance.persistence.{PersistenceEngine, PersistenceManager, ResultSetEngine}
+import org.apache.linkis.entranceclient.execute
+import org.apache.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.scheduler.executer.OutputExecuteResponse
+import org.apache.linkis.scheduler.queue.Job
 
 class ClientPersistenceManager extends PersistenceManager {
   private val persistenceEngine = new ClientPersistenceEngine

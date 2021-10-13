@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.core.exception
+package org.apache.linkis.ecm.core.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 
 class ECMCoreException(errorCode: Int, desc: String) extends ErrorException(errorCode, desc) {

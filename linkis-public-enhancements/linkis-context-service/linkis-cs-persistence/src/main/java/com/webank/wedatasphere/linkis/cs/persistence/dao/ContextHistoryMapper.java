@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.dao;
+package org.apache.linkis.cs.persistence.dao;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextHistory;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextHistory;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

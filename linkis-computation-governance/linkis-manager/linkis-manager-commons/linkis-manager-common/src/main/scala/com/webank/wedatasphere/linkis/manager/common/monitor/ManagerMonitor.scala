@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.monitor
+package org.apache.linkis.manager.common.monitor
 
 
 trait ManagerMonitor extends Runnable {

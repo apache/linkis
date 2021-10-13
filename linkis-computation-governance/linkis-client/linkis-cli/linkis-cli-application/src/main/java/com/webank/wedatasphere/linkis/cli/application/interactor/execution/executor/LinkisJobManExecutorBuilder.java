@@ -11,13 +11,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.interactor.execution.executor;
+package org.apache.linkis.cli.application.interactor.execution.executor;
 
-import com.webank.wedatasphere.linkis.cli.application.driver.LinkisClientDriver;
-import com.webank.wedatasphere.linkis.cli.application.driver.UjesClientDriverBuilder;
-import com.webank.wedatasphere.linkis.cli.application.driver.transformer.UjesClientDriverTransformer;
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.executor.Executor;
-import com.webank.wedatasphere.linkis.cli.core.interactor.execution.executor.ExecutorBuilder;
+import org.apache.linkis.cli.application.driver.LinkisClientDriver;
+import org.apache.linkis.cli.application.driver.UjesClientDriverBuilder;
+import org.apache.linkis.cli.application.driver.transformer.UjesClientDriverTransformer;
+import org.apache.linkis.cli.common.entity.execution.executor.Executor;
+import org.apache.linkis.cli.core.interactor.execution.executor.ExecutorBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

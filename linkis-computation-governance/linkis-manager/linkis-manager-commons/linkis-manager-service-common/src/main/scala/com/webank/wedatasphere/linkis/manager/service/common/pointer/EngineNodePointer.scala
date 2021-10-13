@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.service.common.pointer
+package org.apache.linkis.manager.service.common.pointer
 
-import com.webank.wedatasphere.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock}
+import org.apache.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock}
 
 
 trait EngineNodePointer extends NodePointer {

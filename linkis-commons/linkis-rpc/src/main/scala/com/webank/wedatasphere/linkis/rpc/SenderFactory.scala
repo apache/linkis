@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc
+package org.apache.linkis.rpc
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.rpc.conf.RPCConfiguration
-import com.webank.wedatasphere.linkis.rpc.sender.{LocalMessageSender, SpringMVCRPCSender}
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.rpc.conf.RPCConfiguration
+import org.apache.linkis.rpc.sender.{LocalMessageSender, SpringMVCRPCSender}
 
 trait SenderFactory {
 

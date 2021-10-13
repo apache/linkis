@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.service;
+package org.apache.linkis.instance.label.service;
 
 
 public interface InsLabelServiceAdapter extends InsLabelService {

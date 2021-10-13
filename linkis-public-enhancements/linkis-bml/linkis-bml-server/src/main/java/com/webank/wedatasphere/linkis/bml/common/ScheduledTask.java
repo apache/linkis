@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.bml.common;
+package org.apache.linkis.bml.common;
 /*
  * Copyright 2019 WeBank
  *
@@ -15,11 +15,11 @@ package com.webank.wedatasphere.linkis.bml.common;
  * limitations under the License.
  */
 
-import com.webank.wedatasphere.linkis.bml.conf.BmlServerConfiguration;
-import com.webank.wedatasphere.linkis.bml.restful.RestfulUtils;
-import com.webank.wedatasphere.linkis.bml.service.ResourceService;
-import com.webank.wedatasphere.linkis.bml.service.VersionService;
-import com.webank.wedatasphere.linkis.common.utils.Utils;
+import org.apache.linkis.bml.conf.BmlServerConfiguration;
+import org.apache.linkis.bml.restful.RestfulUtils;
+import org.apache.linkis.bml.service.ResourceService;
+import org.apache.linkis.bml.service.VersionService;
+import org.apache.linkis.common.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

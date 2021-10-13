@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.config
+package org.apache.linkis.engineplugin.spark.config
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.CommonVars
 
 
 /**

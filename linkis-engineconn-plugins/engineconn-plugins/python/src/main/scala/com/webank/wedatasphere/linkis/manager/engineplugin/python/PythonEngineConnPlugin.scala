@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.python
+package org.apache.linkis.manager.engineplugin.python
 
 import java.util
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.EngineConnPlugin
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.EngineConnFactory
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.resource.{EngineResourceFactory, GenericEngineResourceFactory}
-import com.webank.wedatasphere.linkis.manager.engineplugin.python.factory.PythonEngineConnFactory
-import com.webank.wedatasphere.linkis.manager.engineplugin.python.launch.PythonProcessEngineConnLaunchBuilder
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.manager.engineplugin.common.EngineConnPlugin
+import org.apache.linkis.manager.engineplugin.common.creation.EngineConnFactory
+import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
+import org.apache.linkis.manager.engineplugin.common.resource.{EngineResourceFactory, GenericEngineResourceFactory}
+import org.apache.linkis.manager.engineplugin.python.factory.PythonEngineConnFactory
+import org.apache.linkis.manager.engineplugin.python.launch.PythonProcessEngineConnLaunchBuilder
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 
 
 class PythonEngineConnPlugin extends EngineConnPlugin {

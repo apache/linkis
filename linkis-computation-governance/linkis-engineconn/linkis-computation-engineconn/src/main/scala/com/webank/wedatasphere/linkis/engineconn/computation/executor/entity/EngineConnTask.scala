@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.computation.executor.entity
+package org.apache.linkis.engineconn.computation.executor.entity
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.governance.common.entity.ExecutionNodeStatus
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
+import org.apache.linkis.manager.label.entity.Label
 
 
 trait EngineConnTask {

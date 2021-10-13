@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.dao;
+package org.apache.linkis.instance.label.dao;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.instance.label.entity.InstanceInfo;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.instance.label.entity.InstanceInfo;
 
 
 public interface InstanceInfoDao {

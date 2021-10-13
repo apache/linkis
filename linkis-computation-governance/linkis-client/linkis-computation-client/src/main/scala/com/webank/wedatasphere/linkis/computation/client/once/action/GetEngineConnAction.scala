@@ -15,10 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client.once.action
+package org.apache.linkis.computation.client.once.action
 
-import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
-import com.webank.wedatasphere.linkis.httpclient.request.POSTAction
+import org.apache.linkis.httpclient.dws.DWSHttpClient
+import org.apache.linkis.httpclient.request.POSTAction
 
 
 class GetEngineConnAction extends POSTAction with LinkisManagerAction {

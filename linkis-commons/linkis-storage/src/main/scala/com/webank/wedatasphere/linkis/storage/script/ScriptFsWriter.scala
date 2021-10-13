@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.script
+package org.apache.linkis.storage.script
 
 import java.io.{InputStream, OutputStream}
 
-import com.webank.wedatasphere.linkis.common.io.{FsPath, FsWriter, MetaData}
-import com.webank.wedatasphere.linkis.storage.LineRecord
-import com.webank.wedatasphere.linkis.storage.script.compaction.{PYScriptCompaction, QLScriptCompaction, ScalaScriptCompaction, ShellScriptCompaction}
-import com.webank.wedatasphere.linkis.storage.script.parser.{PYScriptParser, QLScriptParser, ScalaScriptParser}
-import com.webank.wedatasphere.linkis.storage.script.writer.StorageScriptFsWriter
+import org.apache.linkis.common.io.{FsPath, FsWriter, MetaData}
+import org.apache.linkis.storage.LineRecord
+import org.apache.linkis.storage.script.compaction.{PYScriptCompaction, QLScriptCompaction, ScalaScriptCompaction, ShellScriptCompaction}
+import org.apache.linkis.storage.script.parser.{PYScriptParser, QLScriptParser, ScalaScriptParser}
+import org.apache.linkis.storage.script.writer.StorageScriptFsWriter
 
 abstract class ScriptFsWriter extends FsWriter {
 

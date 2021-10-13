@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.computation.executor.hook
+package org.apache.linkis.engineconn.computation.executor.hook
 
-import com.webank.wedatasphere.linkis.engineconn.callback.hook.CallbackEngineConnHook
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.engineconn.callback.hook.CallbackEngineConnHook
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.common.engineconn.EngineConn
+import org.apache.linkis.engineconn.core.executor.ExecutorManager
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 
 
 class ComputationEngineConnHook extends CallbackEngineConnHook {

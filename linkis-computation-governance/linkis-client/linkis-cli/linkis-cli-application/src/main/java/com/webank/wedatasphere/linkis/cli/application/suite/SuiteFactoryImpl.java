@@ -11,34 +11,34 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.suite;
+package org.apache.linkis.cli.application.suite;
 
-import com.webank.wedatasphere.linkis.cli.application.constants.LinkisClientKeys;
-import com.webank.wedatasphere.linkis.cli.application.interactor.command.LinkisCmdType;
-import com.webank.wedatasphere.linkis.cli.application.interactor.command.template.UniversalCmdTemplate;
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.executor.LinkisJobManExecutorBuilder;
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.executor.LinkisSubmitExecutorBuilder;
-import com.webank.wedatasphere.linkis.cli.application.interactor.job.LinkisJobBuilder;
-import com.webank.wedatasphere.linkis.cli.application.interactor.job.LinkisJobManBuilder;
-import com.webank.wedatasphere.linkis.cli.application.interactor.result.PresentResultHandler;
-import com.webank.wedatasphere.linkis.cli.application.presenter.DefaultStdOutPresenter;
-import com.webank.wedatasphere.linkis.cli.application.presenter.LinkisJobResultPresenter;
-import com.webank.wedatasphere.linkis.cli.application.presenter.converter.LinkisJobInfoModelConverter;
-import com.webank.wedatasphere.linkis.cli.application.presenter.converter.LinkisJobKillModelConverter;
-import com.webank.wedatasphere.linkis.cli.application.presenter.converter.LinkisResultModelConverter;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdType;
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.Execution;
-import com.webank.wedatasphere.linkis.cli.common.entity.result.ResultHandler;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.ExecutorException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.interactor.execution.HelpExecution;
-import com.webank.wedatasphere.linkis.cli.core.interactor.execution.JobManagement;
-import com.webank.wedatasphere.linkis.cli.core.interactor.execution.SyncSubmission;
-import com.webank.wedatasphere.linkis.cli.core.interactor.execution.executor.ExecutorBuilder;
-import com.webank.wedatasphere.linkis.cli.core.interactor.job.JobBuilder;
-import com.webank.wedatasphere.linkis.cli.core.interactor.result.DefaultResultHandler;
-import com.webank.wedatasphere.linkis.cli.core.interactor.var.VarAccess;
+import org.apache.linkis.cli.application.constants.LinkisClientKeys;
+import org.apache.linkis.cli.application.interactor.command.LinkisCmdType;
+import org.apache.linkis.cli.application.interactor.command.template.UniversalCmdTemplate;
+import org.apache.linkis.cli.application.interactor.execution.executor.LinkisJobManExecutorBuilder;
+import org.apache.linkis.cli.application.interactor.execution.executor.LinkisSubmitExecutorBuilder;
+import org.apache.linkis.cli.application.interactor.job.LinkisJobBuilder;
+import org.apache.linkis.cli.application.interactor.job.LinkisJobManBuilder;
+import org.apache.linkis.cli.application.interactor.result.PresentResultHandler;
+import org.apache.linkis.cli.application.presenter.DefaultStdOutPresenter;
+import org.apache.linkis.cli.application.presenter.LinkisJobResultPresenter;
+import org.apache.linkis.cli.application.presenter.converter.LinkisJobInfoModelConverter;
+import org.apache.linkis.cli.application.presenter.converter.LinkisJobKillModelConverter;
+import org.apache.linkis.cli.application.presenter.converter.LinkisResultModelConverter;
+import org.apache.linkis.cli.common.entity.command.CmdType;
+import org.apache.linkis.cli.common.entity.execution.Execution;
+import org.apache.linkis.cli.common.entity.result.ResultHandler;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.ExecutorException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.execution.HelpExecution;
+import org.apache.linkis.cli.core.interactor.execution.JobManagement;
+import org.apache.linkis.cli.core.interactor.execution.SyncSubmission;
+import org.apache.linkis.cli.core.interactor.execution.executor.ExecutorBuilder;
+import org.apache.linkis.cli.core.interactor.job.JobBuilder;
+import org.apache.linkis.cli.core.interactor.result.DefaultResultHandler;
+import org.apache.linkis.cli.core.interactor.var.VarAccess;
 
 
 public class SuiteFactoryImpl implements ExecutionSuiteFactory {

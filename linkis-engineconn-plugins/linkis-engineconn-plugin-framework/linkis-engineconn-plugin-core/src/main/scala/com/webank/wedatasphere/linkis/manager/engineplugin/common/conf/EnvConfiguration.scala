@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.conf
+package org.apache.linkis.manager.engineplugin.common.conf
 
-import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars, Configuration}
+import org.apache.linkis.common.conf.{ByteType, CommonVars, Configuration}
 
 
 object EnvConfiguration {

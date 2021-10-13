@@ -1,6 +1,6 @@
-package com.webank.wedatasphere.linkis.manager.dao;
+package org.apache.linkis.manager.dao;
 
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNode;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceNode;
 import org.apache.ibatis.annotations.*;
 import org.springframework.dao.DuplicateKeyException;
 

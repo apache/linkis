@@ -16,16 +16,16 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.engineconn.core.execution
+package org.apache.linkis.engineconn.core.execution
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.common.execution.EngineConnExecution
-import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.Executor
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineConnMode._
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineConnModeLabel
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.common.engineconn.EngineConn
+import org.apache.linkis.engineconn.common.execution.EngineConnExecution
+import org.apache.linkis.engineconn.core.executor.ExecutorManager
+import org.apache.linkis.engineconn.executor.entity.Executor
+import org.apache.linkis.manager.label.entity.engine.EngineConnMode._
+import org.apache.linkis.manager.label.entity.engine.EngineConnModeLabel
 
 import scala.collection.convert.decorateAsScala._
 

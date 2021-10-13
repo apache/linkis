@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.dws.config
+package org.apache.linkis.httpclient.dws.config
 
-import com.webank.wedatasphere.linkis.httpclient.config.ClientConfigBuilder
-import com.webank.wedatasphere.linkis.httpclient.dws.exception.UnknownVersionException
+import org.apache.linkis.httpclient.config.ClientConfigBuilder
+import org.apache.linkis.httpclient.dws.exception.UnknownVersionException
 import org.apache.commons.lang.StringUtils
 
 class DWSClientConfigBuilder private() extends ClientConfigBuilder {

@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.client.result;
+package org.apache.linkis.engineconnplugin.flink.client.result;
 
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.JobExecutionException;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.SqlExecutionException;
+import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
+import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 import java.util.List;
 import org.apache.flink.core.execution.JobClient;
 import org.apache.flink.table.sinks.TableSink;

@@ -16,10 +16,10 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.service.engine
+package org.apache.linkis.manager.am.service.engine
 
-import com.webank.wedatasphere.linkis.manager.am.manager.EngineNodeManager
-import com.webank.wedatasphere.linkis.manager.am.service.{EMEngineService, EngineService}
+import org.apache.linkis.manager.am.manager.EngineNodeManager
+import org.apache.linkis.manager.am.service.{EMEngineService, EngineService}
 import org.springframework.beans.factory.annotation.Autowired
 
 

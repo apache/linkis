@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.io.builder
+package org.apache.linkis.manager.engineplugin.io.builder
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
-import com.webank.wedatasphere.linkis.manager.engineplugin.io.conf.IOEngineConnConfiguration
+import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
+import org.apache.linkis.manager.engineplugin.io.conf.IOEngineConnConfiguration
 
 class IoProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 

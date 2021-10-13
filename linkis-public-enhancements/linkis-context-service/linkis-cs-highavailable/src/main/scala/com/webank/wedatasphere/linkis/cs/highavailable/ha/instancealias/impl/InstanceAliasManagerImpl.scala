@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.cs.highavailable.ha.instancealias.impl
+package org.apache.linkis.cs.highavailable.ha.instancealias.impl
 
 import java.util
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.rpc.conf.RPCConfiguration
-import com.webank.wedatasphere.linkis.cs.highavailable.ha.instancealias.{InstanceAliasConverter, InstanceAliasManager}
-import com.webank.wedatasphere.linkis.rpc.sender.eureka.EurekaRPCServerLoader
-import com.webank.wedatasphere.linkis.rpc.utils.RPCUtils
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.rpc.conf.RPCConfiguration
+import org.apache.linkis.cs.highavailable.ha.instancealias.{InstanceAliasConverter, InstanceAliasManager}
+import org.apache.linkis.rpc.sender.eureka.EurekaRPCServerLoader
+import org.apache.linkis.rpc.utils.RPCUtils
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component

@@ -11,13 +11,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.interactor.command.template;
+package org.apache.linkis.cli.application.interactor.command.template;
 
-import com.webank.wedatasphere.linkis.cli.application.constants.LinkisClientKeys;
-import com.webank.wedatasphere.linkis.cli.application.constants.TestConstants;
-import com.webank.wedatasphere.linkis.cli.core.exception.CommandException;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.AbstractCmdTemplate;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option.StdOption;
+import org.apache.linkis.cli.application.constants.LinkisClientKeys;
+import org.apache.linkis.cli.application.constants.TestConstants;
+import org.apache.linkis.cli.core.exception.CommandException;
+import org.apache.linkis.cli.core.interactor.command.template.AbstractCmdTemplate;
+import org.apache.linkis.cli.core.interactor.command.template.option.StdOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

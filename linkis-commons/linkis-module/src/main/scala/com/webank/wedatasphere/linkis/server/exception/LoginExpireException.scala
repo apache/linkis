@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.server.exception
+package org.apache.linkis.server.exception
 
 
 class LoginExpireException(message: String) extends NonLoginException(message)

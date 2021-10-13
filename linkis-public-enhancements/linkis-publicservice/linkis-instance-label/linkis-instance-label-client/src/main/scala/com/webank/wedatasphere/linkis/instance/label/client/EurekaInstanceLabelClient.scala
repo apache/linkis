@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.client
+package org.apache.linkis.instance.label.client
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.protocol.label.{InsLabelAttachRequest, InsLabelRemoveRequest}
-import com.webank.wedatasphere.linkis.rpc.Sender
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.protocol.label.{InsLabelAttachRequest, InsLabelRemoveRequest}
+import org.apache.linkis.rpc.Sender
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.client.serviceregistry.Registration

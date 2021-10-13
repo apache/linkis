@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.computation.executor.conf
+package org.apache.linkis.engineconn.computation.executor.conf
 
-import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars}
+import org.apache.linkis.common.conf.{ByteType, CommonVars}
 
 
 object ComputationExecutorConf {

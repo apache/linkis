@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.script.reader
+package org.apache.linkis.storage.script.reader
 
 import java.io._
 
-import com.webank.wedatasphere.linkis.common.io.{FsPath, MetaData, Record}
-import com.webank.wedatasphere.linkis.storage.script._
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
+import org.apache.linkis.common.io.{FsPath, MetaData, Record}
+import org.apache.linkis.storage.script._
+import org.apache.linkis.storage.utils.StorageUtils
 import org.apache.commons.io.IOUtils
 
 import scala.collection.mutable.ArrayBuffer

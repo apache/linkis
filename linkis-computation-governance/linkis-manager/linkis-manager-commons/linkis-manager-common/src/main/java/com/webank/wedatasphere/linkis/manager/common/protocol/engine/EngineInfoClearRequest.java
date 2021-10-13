@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.protocol.engine;
+package org.apache.linkis.manager.common.protocol.engine;
 
-import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode;
+import org.apache.linkis.manager.common.entity.node.EngineNode;
 
 
 public class EngineInfoClearRequest implements EngineRequest {

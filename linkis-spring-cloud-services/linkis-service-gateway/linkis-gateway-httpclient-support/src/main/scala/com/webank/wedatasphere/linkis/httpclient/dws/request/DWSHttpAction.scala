@@ -18,9 +18,9 @@
  * created by cooperyang on 2019/07/24.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.dws.request
+package org.apache.linkis.httpclient.dws.request
 
-import com.webank.wedatasphere.linkis.httpclient.dws.request.RestType.RestType
+import org.apache.linkis.httpclient.dws.request.RestType.RestType
 
 trait DWSHttpAction {
 

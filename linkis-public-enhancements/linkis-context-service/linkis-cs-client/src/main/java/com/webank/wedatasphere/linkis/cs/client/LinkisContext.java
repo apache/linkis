@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client;
+package org.apache.linkis.cs.client;
 
 
 public abstract class LinkisContext implements Context{

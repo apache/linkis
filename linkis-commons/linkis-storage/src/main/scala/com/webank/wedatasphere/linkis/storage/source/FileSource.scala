@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.source
+package org.apache.linkis.storage.source
 
 import java.io.{Closeable, InputStream}
 import java.util
 
-import com.webank.wedatasphere.linkis.common.io._
-import com.webank.wedatasphere.linkis.storage.exception.StorageErrorException
-import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetReader}
-import com.webank.wedatasphere.linkis.storage.script.ScriptFsReader
-import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration
+import org.apache.linkis.common.io._
+import org.apache.linkis.storage.exception.StorageErrorException
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader}
+import org.apache.linkis.storage.script.ScriptFsReader
+import org.apache.linkis.storage.utils.StorageConfiguration
 import org.apache.commons.math3.util.Pair
 
 

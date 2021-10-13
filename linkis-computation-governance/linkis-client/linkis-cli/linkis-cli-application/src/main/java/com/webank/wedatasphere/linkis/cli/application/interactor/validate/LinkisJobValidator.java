@@ -11,16 +11,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.interactor.validate;
+package org.apache.linkis.cli.application.interactor.validate;
 
-import com.webank.wedatasphere.linkis.cli.application.constants.LinkisKeys;
-import com.webank.wedatasphere.linkis.cli.application.interactor.job.LinkisJob;
-import com.webank.wedatasphere.linkis.cli.application.interactor.job.LinkisJobMan;
-import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.ValidateException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.interactor.validate.Validator;
+import org.apache.linkis.cli.application.constants.LinkisKeys;
+import org.apache.linkis.cli.application.interactor.job.LinkisJob;
+import org.apache.linkis.cli.application.interactor.job.LinkisJobMan;
+import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.ValidateException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.validate.Validator;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;

@@ -78,7 +78,7 @@
                 <exclude>com.sun.jersey:jersey-core:jar</exclude>
                 <exclude>com.sun.jersey:jersey-server:jar</exclude>
                 <exclude>com.sun.xml.bind:jaxb-impl:jar</exclude>
-                <exclude>com.webank.wedatasphere.linkis:linkis-common:jar</exclude>
+                <exclude>org.apache.linkis:linkis-common:jar</exclude>
                 <exclude>commons-beanutils:commons-beanutils:jar</exclude>
                 <exclude>commons-beanutils:commons-beanutils-core:jar</exclude>
                 <exclude>commons-cli:commons-cli:jar</exclude>

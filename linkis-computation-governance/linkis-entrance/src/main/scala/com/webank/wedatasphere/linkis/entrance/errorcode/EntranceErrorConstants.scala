@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.entrance.errorcode
+package org.apache.linkis.entrance.errorcode
 
 object EntranceErrorConstants {
     val QUEUE_NOT_EXIST="10001"

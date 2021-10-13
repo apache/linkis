@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence;
+package org.apache.linkis.cs.persistence;
 
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.*;
+import org.apache.linkis.cs.persistence.persistence.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.properties;
+package org.apache.linkis.cli.core.interactor.properties;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.properties.ClientProperties;
-import com.webank.wedatasphere.linkis.cli.core.interactor.properties.reader.PropertiesReader;
+import org.apache.linkis.cli.common.entity.properties.ClientProperties;
+import org.apache.linkis.cli.core.interactor.properties.reader.PropertiesReader;
 
 
 public interface PropertiesLoader {

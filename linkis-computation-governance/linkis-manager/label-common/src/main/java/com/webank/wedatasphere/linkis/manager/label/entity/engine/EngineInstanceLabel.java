@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.entity.engine;
+package org.apache.linkis.manager.label.entity.engine;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.manager.label.conf.LabelCommonConfig;
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant;
-import com.webank.wedatasphere.linkis.manager.label.entity.EngineNodeLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.GenericLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.ResourceLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.annon.ValueSerialNum;
-import com.webank.wedatasphere.linkis.manager.label.entity.node.NodeInstanceLabel;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.label.conf.LabelCommonConfig;
+import org.apache.linkis.manager.label.constant.LabelKeyConstant;
+import org.apache.linkis.manager.label.entity.EngineNodeLabel;
+import org.apache.linkis.manager.label.entity.GenericLabel;
+import org.apache.linkis.manager.label.entity.ResourceLabel;
+import org.apache.linkis.manager.label.entity.annon.ValueSerialNum;
+import org.apache.linkis.manager.label.entity.node.NodeInstanceLabel;
 
 import java.util.HashMap;
 

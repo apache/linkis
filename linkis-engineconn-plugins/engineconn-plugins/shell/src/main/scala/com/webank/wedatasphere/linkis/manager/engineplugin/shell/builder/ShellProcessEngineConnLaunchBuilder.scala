@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.shell.builder
+package org.apache.linkis.manager.engineplugin.shell.builder
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
+import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
 
 class ShellProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder{
 

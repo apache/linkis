@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence;
+package org.apache.linkis.cs.persistence;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 

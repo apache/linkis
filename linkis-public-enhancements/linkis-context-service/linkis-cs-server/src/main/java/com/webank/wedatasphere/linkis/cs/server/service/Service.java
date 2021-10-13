@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.service;
+package org.apache.linkis.cs.server.service;
 
-import com.webank.wedatasphere.linkis.cs.common.exception.CSWarnException;
-import com.webank.wedatasphere.linkis.cs.server.scheduler.HttpJob;
+import org.apache.linkis.cs.common.exception.CSWarnException;
+import org.apache.linkis.cs.server.scheduler.HttpJob;
 
 import java.io.Closeable;
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.aop;
+package org.apache.linkis.cs.persistence.aop;
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
-import com.webank.wedatasphere.linkis.cs.persistence.conf.PersistenceConf;
+import org.apache.linkis.DataWorkCloudApplication;
+import org.apache.linkis.cs.persistence.conf.PersistenceConf;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
@@ -77,7 +77,7 @@ public class PersistenceTuningAspect {
         }
     }
 
-    @Pointcut(value = "@annotation(com.webank.wedatasphere.linkis.cs.persistence.annotation.Tuning)")
+    @Pointcut(value = "@annotation(org.apache.linkis.cs.persistence.annotation.Tuning)")
     private void cut() {
     }
 

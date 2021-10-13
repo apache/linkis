@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.restful;
+package org.apache.linkis.bml.restful;
 
-import com.webank.wedatasphere.linkis.bml.Entity.DownloadModel;
-import com.webank.wedatasphere.linkis.bml.Entity.ResourceTask;
-import com.webank.wedatasphere.linkis.bml.common.BmlProjectNoEditException;
-import com.webank.wedatasphere.linkis.bml.common.BmlServerParaErrorException;
-import com.webank.wedatasphere.linkis.bml.conf.BmlServerConfiguration;
-import com.webank.wedatasphere.linkis.bml.service.*;
-import com.webank.wedatasphere.linkis.bml.util.HttpRequestHelper;
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.server.Message;
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
+import org.apache.linkis.bml.Entity.DownloadModel;
+import org.apache.linkis.bml.Entity.ResourceTask;
+import org.apache.linkis.bml.common.BmlProjectNoEditException;
+import org.apache.linkis.bml.common.BmlServerParaErrorException;
+import org.apache.linkis.bml.conf.BmlServerConfiguration;
+import org.apache.linkis.bml.service.*;
+import org.apache.linkis.bml.util.HttpRequestHelper;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.server.Message;
+import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -43,7 +43,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
-import static com.webank.wedatasphere.linkis.bml.restful.BmlRestfulApi.URL_PREFIX;
+import static org.apache.linkis.bml.restful.BmlRestfulApi.URL_PREFIX;
 
 @RequestMapping(path = "/bml")
 @RestController

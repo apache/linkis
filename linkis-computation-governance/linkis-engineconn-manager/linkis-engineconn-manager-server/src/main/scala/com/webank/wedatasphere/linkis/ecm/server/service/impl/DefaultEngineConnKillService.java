@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.service.impl;
+package org.apache.linkis.ecm.server.service.impl;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.common.utils.Utils;
-import com.webank.wedatasphere.linkis.ecm.core.engineconn.EngineConn;
-import com.webank.wedatasphere.linkis.ecm.server.service.EngineConnKillService;
-import com.webank.wedatasphere.linkis.ecm.server.service.EngineConnListService;
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineStopRequest;
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineStopResponse;
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineSuicideRequest;
-import com.webank.wedatasphere.linkis.message.annotation.Receiver;
-import com.webank.wedatasphere.linkis.rpc.Sender;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.utils.Utils;
+import org.apache.linkis.ecm.core.engineconn.EngineConn;
+import org.apache.linkis.ecm.server.service.EngineConnKillService;
+import org.apache.linkis.ecm.server.service.EngineConnListService;
+import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest;
+import org.apache.linkis.manager.common.protocol.engine.EngineStopResponse;
+import org.apache.linkis.manager.common.protocol.engine.EngineSuicideRequest;
+import org.apache.linkis.message.annotation.Receiver;
+import org.apache.linkis.rpc.Sender;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

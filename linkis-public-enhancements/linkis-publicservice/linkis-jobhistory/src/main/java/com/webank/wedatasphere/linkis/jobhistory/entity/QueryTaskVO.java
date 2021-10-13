@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.entity;
+package org.apache.linkis.jobhistory.entity;
 
 
-import com.webank.wedatasphere.linkis.governance.common.entity.job.SubJobDetail;
+import org.apache.linkis.governance.common.entity.job.SubJobDetail;
 
 import java.util.Date;
 import java.util.List;

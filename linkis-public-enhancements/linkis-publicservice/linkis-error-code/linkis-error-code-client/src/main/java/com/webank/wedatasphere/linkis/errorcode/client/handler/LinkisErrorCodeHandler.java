@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.errorcode.client.handler;
+package org.apache.linkis.errorcode.client.handler;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.webank.wedatasphere.linkis.errorcode.client.ClientConfiguration;
-import com.webank.wedatasphere.linkis.errorcode.client.manager.LinkisErrorCodeManager;
-import com.webank.wedatasphere.linkis.errorcode.client.utils.ErrorCodeMatcher;
-import com.webank.wedatasphere.linkis.errorcode.common.ErrorCode;
-import com.webank.wedatasphere.linkis.errorcode.common.LinkisErrorCode;
+import org.apache.linkis.errorcode.client.ClientConfiguration;
+import org.apache.linkis.errorcode.client.manager.LinkisErrorCodeManager;
+import org.apache.linkis.errorcode.client.utils.ErrorCodeMatcher;
+import org.apache.linkis.errorcode.common.ErrorCode;
+import org.apache.linkis.errorcode.common.LinkisErrorCode;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

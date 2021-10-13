@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message;
+package org.apache.linkis.message;
 
 
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
+import org.apache.linkis.protocol.message.RequestProtocol;
 
 /**
  * @date 2020/7/14

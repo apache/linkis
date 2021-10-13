@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client.job
+package org.apache.linkis.computation.client.job
 
 import java.util.concurrent.{Future, TimeUnit, TimeoutException}
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.computation.client.operator.{Operator, OperatorFactory}
-import com.webank.wedatasphere.linkis.computation.client.{JobListener, LinkisJob, LinkisJobBuilder}
-import com.webank.wedatasphere.linkis.ujes.client.exception.UJESJobException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.computation.client.operator.{Operator, OperatorFactory}
+import org.apache.linkis.computation.client.{JobListener, LinkisJob, LinkisJobBuilder}
+import org.apache.linkis.ujes.client.exception.UJESJobException
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration.Duration

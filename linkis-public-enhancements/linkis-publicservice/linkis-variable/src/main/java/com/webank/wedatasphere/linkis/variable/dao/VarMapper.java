@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.variable.dao;
+package org.apache.linkis.variable.dao;
 
-import com.webank.wedatasphere.linkis.variable.entity.VarKey;
-import com.webank.wedatasphere.linkis.variable.entity.VarKeyUser;
-import com.webank.wedatasphere.linkis.variable.entity.VarKeyValueVO;
+import org.apache.linkis.variable.entity.VarKey;
+import org.apache.linkis.variable.entity.VarKeyUser;
+import org.apache.linkis.variable.entity.VarKeyValueVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

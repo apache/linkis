@@ -16,16 +16,16 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.entrance.interceptor.impl
+package org.apache.linkis.entrance.interceptor.impl
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.entrance.exception.{DangerousGramsCheckException, SensitiveTablesCheckException}
-import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.governance.common.paser.CodeType
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineType
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.exception.{DangerousGramsCheckException, SensitiveTablesCheckException}
+import org.apache.linkis.entrance.interceptor.EntranceInterceptor
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.paser.CodeType
+import org.apache.linkis.manager.label.entity.engine.EngineType
+import org.apache.linkis.manager.label.utils.LabelUtil
 
 import java.lang
 

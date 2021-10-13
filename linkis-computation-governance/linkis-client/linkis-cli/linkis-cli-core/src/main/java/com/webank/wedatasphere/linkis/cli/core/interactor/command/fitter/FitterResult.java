@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.command.fitter;
+package org.apache.linkis.cli.core.interactor.command.fitter;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 
 
 public class FitterResult {

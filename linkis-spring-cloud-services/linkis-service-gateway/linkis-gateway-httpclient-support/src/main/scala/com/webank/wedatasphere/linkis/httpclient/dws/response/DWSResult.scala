@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.dws.response
+package org.apache.linkis.httpclient.dws.response
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
-import com.webank.wedatasphere.linkis.httpclient.exception.HttpClientResultException
-import com.webank.wedatasphere.linkis.httpclient.response.HttpResult
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.httpclient.dws.DWSHttpClient
+import org.apache.linkis.httpclient.exception.HttpClientResultException
+import org.apache.linkis.httpclient.response.HttpResult
 
 trait DWSResult extends Logging with HttpResult {
 

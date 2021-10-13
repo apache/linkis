@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.errorcode.client.result
+package org.apache.linkis.errorcode.client.result
 
 import java.util
 
-import com.webank.wedatasphere.linkis.errorcode.common.{CommonConf, LinkisErrorCode}
-import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
-import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
+import org.apache.linkis.errorcode.common.{CommonConf, LinkisErrorCode}
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.response.DWSResult
 
 
 abstract class ErrorCodeResult extends DWSResult

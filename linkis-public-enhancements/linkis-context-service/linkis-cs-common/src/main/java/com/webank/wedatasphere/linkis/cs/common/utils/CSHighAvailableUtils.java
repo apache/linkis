@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.utils;
+package org.apache.linkis.cs.common.utils;
 
 import com.google.gson.Gson;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.CommonHAContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.HAContextID;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.common.exception.ErrorCode;
+import org.apache.linkis.cs.common.entity.source.CommonHAContextID;
+import org.apache.linkis.cs.common.entity.source.HAContextID;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.exception.ErrorCode;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

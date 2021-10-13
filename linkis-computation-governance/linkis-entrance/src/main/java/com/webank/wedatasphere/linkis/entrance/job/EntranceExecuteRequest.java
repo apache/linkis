@@ -16,16 +16,16 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.entrance.job;
+package org.apache.linkis.entrance.job;
 
-import com.webank.wedatasphere.linkis.entrance.execute.LabelExecuteRequest;
-import com.webank.wedatasphere.linkis.entrance.execute.RuntimePropertiesExecuteRequest;
-import com.webank.wedatasphere.linkis.entrance.execute.UserExecuteRequest;
-import com.webank.wedatasphere.linkis.governance.common.entity.job.SubJobInfo;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteRequest;
-import com.webank.wedatasphere.linkis.scheduler.executer.JobExecuteRequest;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
+import org.apache.linkis.entrance.execute.LabelExecuteRequest;
+import org.apache.linkis.entrance.execute.RuntimePropertiesExecuteRequest;
+import org.apache.linkis.entrance.execute.UserExecuteRequest;
+import org.apache.linkis.governance.common.entity.job.SubJobInfo;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.scheduler.executer.ExecuteRequest;
+import org.apache.linkis.scheduler.executer.JobExecuteRequest;
+import org.apache.linkis.server.BDPJettyServerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

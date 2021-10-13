@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.protocol;
+package org.apache.linkis.resourcemanager.protocol;
 
-import com.webank.wedatasphere.linkis.manager.common.protocol.em.EMRequest;
+import org.apache.linkis.manager.common.protocol.em.EMRequest;
 
 public class TimeoutEMEngineRequest implements EMRequest {
 

@@ -15,9 +15,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.catalyst.validator
+package org.apache.linkis.orchestrator.computation.catalyst.validator
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.Label
 
 /**
  *

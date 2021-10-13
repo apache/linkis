@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.errorcode.client;
+package org.apache.linkis.errorcode.client;
 
-import com.webank.wedatasphere.linkis.errorcode.client.action.ErrorCodeGetAllAction;
-import com.webank.wedatasphere.linkis.errorcode.client.result.ErrorCodeGetAllResult;
-import com.webank.wedatasphere.linkis.errorcode.common.LinkisErrorCode;
-import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient;
-import com.webank.wedatasphere.linkis.httpclient.response.Result;
+import org.apache.linkis.errorcode.client.action.ErrorCodeGetAllAction;
+import org.apache.linkis.errorcode.client.result.ErrorCodeGetAllResult;
+import org.apache.linkis.errorcode.common.LinkisErrorCode;
+import org.apache.linkis.httpclient.dws.DWSHttpClient;
+import org.apache.linkis.httpclient.response.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

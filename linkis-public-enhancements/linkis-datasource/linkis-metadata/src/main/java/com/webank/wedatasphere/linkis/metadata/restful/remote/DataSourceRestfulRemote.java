@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.restful.remote;
+package org.apache.linkis.metadata.restful.remote;
 
-import com.webank.wedatasphere.linkis.metadata.util.Constants;
-import com.webank.wedatasphere.linkis.server.Message;
+import org.apache.linkis.metadata.util.Constants;
+import org.apache.linkis.server.Message;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

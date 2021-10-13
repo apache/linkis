@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.server.socket
+package org.apache.linkis.server.socket
 
 
 trait SocketListener {

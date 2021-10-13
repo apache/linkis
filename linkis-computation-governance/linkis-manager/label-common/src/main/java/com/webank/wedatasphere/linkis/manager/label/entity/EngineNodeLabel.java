@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.entity;
+package org.apache.linkis.manager.label.entity;
 
 public interface EngineNodeLabel extends NodeLabel {
 }

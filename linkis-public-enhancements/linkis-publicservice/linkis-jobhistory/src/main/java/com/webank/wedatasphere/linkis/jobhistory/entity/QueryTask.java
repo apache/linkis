@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.entity;
+package org.apache.linkis.jobhistory.entity;
 
 import java.util.Date;
 

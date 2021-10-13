@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.request
+package org.apache.linkis.bml.request
 
 import java.io.{File, InputStream}
 import java.lang.reflect.Type
 import java.{lang, util}
 
 import com.google.gson._
-import com.webank.wedatasphere.linkis.bml.http.HttpConf
-import com.webank.wedatasphere.linkis.httpclient.request._
+import org.apache.linkis.bml.http.HttpConf
+import org.apache.linkis.httpclient.request._
 
 trait BmlAction extends UserAction{
 

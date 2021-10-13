@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.builder;
+package org.apache.linkis.manager.label.builder;
 
-import com.webank.wedatasphere.linkis.common.utils.ClassUtils;
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelConstant;
-import com.webank.wedatasphere.linkis.manager.label.entity.InheritableLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.manager.label.entity.SerializableLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.annon.KeyMethod;
-import com.webank.wedatasphere.linkis.manager.label.exception.LabelErrorException;
+import org.apache.linkis.common.utils.ClassUtils;
+import org.apache.linkis.manager.label.constant.LabelConstant;
+import org.apache.linkis.manager.label.entity.InheritableLabel;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.SerializableLabel;
+import org.apache.linkis.manager.label.entity.annon.KeyMethod;
+import org.apache.linkis.manager.label.exception.LabelErrorException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

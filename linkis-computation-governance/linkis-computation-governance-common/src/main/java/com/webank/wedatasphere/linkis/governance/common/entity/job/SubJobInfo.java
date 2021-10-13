@@ -17,10 +17,10 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.governance.common.entity.job;
+package org.apache.linkis.governance.common.entity.job;
 
 
-import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo;
+import org.apache.linkis.protocol.engine.JobProgressInfo;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

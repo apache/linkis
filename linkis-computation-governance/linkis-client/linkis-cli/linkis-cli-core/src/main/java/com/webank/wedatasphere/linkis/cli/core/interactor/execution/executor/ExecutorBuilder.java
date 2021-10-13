@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.execution.executor;
+package org.apache.linkis.cli.core.interactor.execution.executor;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.executor.Executor;
-import com.webank.wedatasphere.linkis.cli.core.builder.BuildableByVarAccess;
+import org.apache.linkis.cli.common.entity.execution.executor.Executor;
+import org.apache.linkis.cli.core.builder.BuildableByVarAccess;
 
 
 public abstract class ExecutorBuilder extends BuildableByVarAccess<Executor> {

@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis;
+package org.apache.linkis;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.common.conf.BDPConfiguration;
-import com.webank.wedatasphere.linkis.common.conf.Configuration;
-import com.webank.wedatasphere.linkis.common.exception.LinkisException;
-import com.webank.wedatasphere.linkis.common.utils.Utils;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
-import com.webank.wedatasphere.linkis.server.conf.DataWorkCloudCustomExcludeFilter;
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.conf.BDPConfiguration;
+import org.apache.linkis.common.conf.Configuration;
+import org.apache.linkis.common.exception.LinkisException;
+import org.apache.linkis.common.utils.Utils;
+import org.apache.linkis.server.BDPJettyServerHelper;
+import org.apache.linkis.server.conf.DataWorkCloudCustomExcludeFilter;
+import org.apache.linkis.server.conf.ServerConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

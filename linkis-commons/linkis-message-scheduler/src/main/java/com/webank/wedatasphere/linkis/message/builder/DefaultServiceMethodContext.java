@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.builder;
+package org.apache.linkis.message.builder;
 
-import com.webank.wedatasphere.linkis.message.context.MessageSchedulerContext;
-import com.webank.wedatasphere.linkis.message.exception.MessageWarnException;
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
-import com.webank.wedatasphere.linkis.rpc.Sender;
-import com.webank.wedatasphere.linkis.scheduler.queue.Job;
-import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState;
+import org.apache.linkis.message.context.MessageSchedulerContext;
+import org.apache.linkis.message.exception.MessageWarnException;
+import org.apache.linkis.protocol.message.RequestProtocol;
+import org.apache.linkis.rpc.Sender;
+import org.apache.linkis.scheduler.queue.Job;
+import org.apache.linkis.scheduler.queue.SchedulerEventState;
 import scala.concurrent.duration.Duration;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.webank.wedatasphere.linkis.message.conf.MessageSchedulerConf.*;
+import static org.apache.linkis.message.conf.MessageSchedulerConf.*;
 
 
 public class DefaultServiceMethodContext implements ServiceMethodContext {

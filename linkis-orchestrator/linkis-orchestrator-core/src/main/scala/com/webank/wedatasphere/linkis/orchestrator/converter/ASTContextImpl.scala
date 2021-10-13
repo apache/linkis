@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.converter
+package org.apache.linkis.orchestrator.converter
 
 import java.util
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.orchestrator.domain.JobReq
-import com.webank.wedatasphere.linkis.orchestrator.plans.SimplifyPlanContext
-import com.webank.wedatasphere.linkis.orchestrator.plans.ast.{ASTContext, QueryParams, QueryParamsImpl}
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.orchestrator.domain.JobReq
+import org.apache.linkis.orchestrator.plans.SimplifyPlanContext
+import org.apache.linkis.orchestrator.plans.ast.{ASTContext, QueryParams, QueryParamsImpl}
 
 /**
   *

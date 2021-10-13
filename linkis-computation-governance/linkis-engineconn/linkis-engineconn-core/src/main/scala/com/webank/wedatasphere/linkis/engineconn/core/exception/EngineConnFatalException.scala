@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.core.exception
+package org.apache.linkis.engineconn.core.exception
 
-import com.webank.wedatasphere.linkis.common.exception.FatalException
+import org.apache.linkis.common.exception.FatalException
 
 class EngineConnFatalException(errorCode: Int, msg: String) extends FatalException(errorCode, msg){
 

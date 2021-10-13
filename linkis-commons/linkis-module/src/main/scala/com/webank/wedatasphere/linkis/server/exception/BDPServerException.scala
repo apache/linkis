@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.server.exception
+package org.apache.linkis.server.exception
 
-import com.webank.wedatasphere.linkis.common.exception.{ErrorException, FatalException, WarnException}
+import org.apache.linkis.common.exception.{ErrorException, FatalException, WarnException}
 
 
 private[server] class BDPServerWarnException(errorCode: Int, errorMsg: String) extends WarnException(errorCode, errorMsg)

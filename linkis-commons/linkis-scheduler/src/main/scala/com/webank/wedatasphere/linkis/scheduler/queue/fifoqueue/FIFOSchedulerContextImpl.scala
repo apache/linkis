@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue
+package org.apache.linkis.scheduler.queue.fifoqueue
 
-import com.webank.wedatasphere.linkis.common.listener.ListenerEventBus
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
-import com.webank.wedatasphere.linkis.scheduler.event.{ScheduleEvent, SchedulerEventListener}
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorManager
-import com.webank.wedatasphere.linkis.scheduler.queue.{ConsumerManager, GroupFactory}
+import org.apache.linkis.common.listener.ListenerEventBus
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.scheduler.SchedulerContext
+import org.apache.linkis.scheduler.event.{ScheduleEvent, SchedulerEventListener}
+import org.apache.linkis.scheduler.executer.ExecutorManager
+import org.apache.linkis.scheduler.queue.{ConsumerManager, GroupFactory}
 
 
 class FIFOSchedulerContextImpl(val maxParallelismUsers: Int) extends SchedulerContext with Logging{

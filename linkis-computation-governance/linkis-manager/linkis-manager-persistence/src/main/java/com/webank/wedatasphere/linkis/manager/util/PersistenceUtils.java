@@ -1,11 +1,11 @@
-package com.webank.wedatasphere.linkis.manager.util;
+package org.apache.linkis.manager.util;
 
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel;
-import com.webank.wedatasphere.linkis.manager.entity.Tunple;
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactory;
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
+import org.apache.linkis.manager.entity.Tunple;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.utils.LabelUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 

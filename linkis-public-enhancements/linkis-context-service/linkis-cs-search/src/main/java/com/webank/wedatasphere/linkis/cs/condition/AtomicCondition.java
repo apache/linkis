@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.condition;
+package org.apache.linkis.cs.condition;
 
 public abstract class AtomicCondition extends AbstractCommonCondition {
 }

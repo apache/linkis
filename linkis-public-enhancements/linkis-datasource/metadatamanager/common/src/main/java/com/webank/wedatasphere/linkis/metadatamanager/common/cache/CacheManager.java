@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadatamanager.common.cache;
+package org.apache.linkis.metadatamanager.common.cache;
 
 
 import com.google.common.cache.Cache;

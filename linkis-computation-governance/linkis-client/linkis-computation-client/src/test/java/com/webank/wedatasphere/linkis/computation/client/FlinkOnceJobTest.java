@@ -15,11 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client;
+package org.apache.linkis.computation.client;
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration;
-import com.webank.wedatasphere.linkis.computation.client.once.simple.SubmittableSimpleOnceJob;
-import com.webank.wedatasphere.linkis.computation.client.utils.LabelKeyUtils;
+import org.apache.linkis.common.conf.Configuration;
+import org.apache.linkis.computation.client.once.simple.SubmittableSimpleOnceJob;
+import org.apache.linkis.computation.client.utils.LabelKeyUtils;
 
 public class FlinkOnceJobTest {
     public static void main(String[] args) {

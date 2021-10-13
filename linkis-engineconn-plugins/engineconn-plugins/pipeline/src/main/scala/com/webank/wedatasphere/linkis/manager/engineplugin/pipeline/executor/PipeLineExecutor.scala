@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.executor
+package org.apache.linkis.manager.engineplugin.pipeline.executor
 
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
+import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
 
 trait PipeLineExecutor {
   var options: java.util.Map[String, String] = _

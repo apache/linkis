@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.server.service
+package org.apache.linkis.engineplugin.server.service
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.{EngineConnResource, EngineConnResourceGenerator}
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
-import com.webank.wedatasphere.linkis.protocol.message.{RequestMethod, RequestProtocol}
+import org.apache.linkis.manager.engineplugin.common.launch.process.{EngineConnResource, EngineConnResourceGenerator}
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.protocol.message.{RequestMethod, RequestProtocol}
 
 
 abstract class EngineConnResourceService extends EngineConnResourceGenerator {

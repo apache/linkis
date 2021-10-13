@@ -16,17 +16,17 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.entrance.timeout
+package org.apache.linkis.entrance.timeout
 
 import java.util
 import java.util.concurrent.{ConcurrentHashMap, ConcurrentMap, TimeUnit}
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalParamException}
-import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalParamException}
+import org.apache.linkis.entrance.execute.EntranceJob
+import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.manager.label.entity.Label
 
 import scala.collection.JavaConversions._
 

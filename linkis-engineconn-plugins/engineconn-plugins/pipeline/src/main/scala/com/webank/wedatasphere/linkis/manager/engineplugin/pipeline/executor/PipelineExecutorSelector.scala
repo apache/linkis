@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.executor
+package org.apache.linkis.manager.engineplugin.pipeline.executor
 
 import java.io.File
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.exception.PipeLineErrorException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.engineplugin.pipeline.exception.PipeLineErrorException
 
 /**
   */

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.optimizer
+package org.apache.linkis.orchestrator.optimizer
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.orchestrator.extensions.catalyst.{AnalyzeFactory, OptimizerTransform, PhysicalTransform, Transform, TransformFactory}
-import com.webank.wedatasphere.linkis.orchestrator.plans.logical.{LogicalContext, Task}
-import com.webank.wedatasphere.linkis.orchestrator.plans.physical.{ExecTask, PhysicalContext, PhysicalContextImpl}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.orchestrator.extensions.catalyst.{AnalyzeFactory, OptimizerTransform, PhysicalTransform, Transform, TransformFactory}
+import org.apache.linkis.orchestrator.plans.logical.{LogicalContext, Task}
+import org.apache.linkis.orchestrator.plans.physical.{ExecTask, PhysicalContext, PhysicalContextImpl}
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer

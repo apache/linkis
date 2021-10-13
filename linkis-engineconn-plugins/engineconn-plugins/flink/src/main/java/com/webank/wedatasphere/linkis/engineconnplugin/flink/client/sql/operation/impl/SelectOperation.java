@@ -16,19 +16,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.impl;
+package org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl;
 
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.context.ExecutionContext;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.result.AbstractResult;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.result.BatchResult;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.result.ChangelogResult;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.result.ResultUtil;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.result.TypedResult;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.AbstractJobOperation;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.result.ColumnInfo;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.JobExecutionException;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.SqlExecutionException;
+import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
+import org.apache.linkis.engineconnplugin.flink.client.result.AbstractResult;
+import org.apache.linkis.engineconnplugin.flink.client.result.BatchResult;
+import org.apache.linkis.engineconnplugin.flink.client.result.ChangelogResult;
+import org.apache.linkis.engineconnplugin.flink.client.result.ResultUtil;
+import org.apache.linkis.engineconnplugin.flink.client.result.TypedResult;
+import org.apache.linkis.engineconnplugin.flink.client.sql.operation.AbstractJobOperation;
+import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ColumnInfo;
+import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
+import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
+import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

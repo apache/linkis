@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.service.impl;
+package org.apache.linkis.cs.server.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.webank.wedatasphere.linkis.cs.ContextSearch;
-import com.webank.wedatasphere.linkis.cs.DefaultContextSearch;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextValue;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.contextcache.ContextCacheService;
-import com.webank.wedatasphere.linkis.cs.exception.ContextSearchFailedException;
-import com.webank.wedatasphere.linkis.cs.persistence.ContextPersistenceManager;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextKeyValue;
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.ContextMapPersistence;
-import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceType;
-import com.webank.wedatasphere.linkis.cs.server.parser.KeywordParser;
-import com.webank.wedatasphere.linkis.cs.server.service.ContextService;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
+import org.apache.linkis.cs.ContextSearch;
+import org.apache.linkis.cs.DefaultContextSearch;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.source.ContextKey;
+import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
+import org.apache.linkis.cs.common.entity.source.ContextValue;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.contextcache.ContextCacheService;
+import org.apache.linkis.cs.exception.ContextSearchFailedException;
+import org.apache.linkis.cs.persistence.ContextPersistenceManager;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextKeyValue;
+import org.apache.linkis.cs.persistence.persistence.ContextMapPersistence;
+import org.apache.linkis.cs.server.enumeration.ServiceType;
+import org.apache.linkis.cs.server.parser.KeywordParser;
+import org.apache.linkis.cs.server.service.ContextService;
+import org.apache.linkis.server.BDPJettyServerHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

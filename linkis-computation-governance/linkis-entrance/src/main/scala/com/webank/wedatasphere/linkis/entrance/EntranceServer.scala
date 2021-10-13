@@ -11,18 +11,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance
+package org.apache.linkis.entrance
 
-import com.webank.wedatasphere.linkis.common.exception.{ErrorException, LinkisException, LinkisRuntimeException}
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.exception.{EntranceErrorException, SubmitFailedException}
-import com.webank.wedatasphere.linkis.entrance.execute.{EntranceExecutorManager, EntranceJob}
-import com.webank.wedatasphere.linkis.entrance.log.LogReader
-import com.webank.wedatasphere.linkis.entrance.timeout.JobTimeoutManager
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.scheduler.queue.{Job, SchedulerEventState}
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
+import org.apache.linkis.common.exception.{ErrorException, LinkisException, LinkisRuntimeException}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.exception.{EntranceErrorException, SubmitFailedException}
+import org.apache.linkis.entrance.execute.{EntranceExecutorManager, EntranceJob}
+import org.apache.linkis.entrance.log.LogReader
+import org.apache.linkis.entrance.timeout.JobTimeoutManager
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.rpc.Sender
+import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
+import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.commons.lang.exception.ExceptionUtils
 
 

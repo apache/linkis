@@ -49,6 +49,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
+import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf
 
 class HiveEngineConnExecutor(id: Int,
                              sessionState: SessionState,
@@ -90,6 +91,9 @@ class HiveEngineConnExecutor(id: Int,
 
   override def init(): Unit = {
     LOG.info(s"Ready to change engine state!")
+    if (HadoopConf.KEYTAB_PROXYUSER_ENABLED.getValue) {
+      System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
+    }
     setCodeParser(new SQLCodeParser)
     super.init()
   }

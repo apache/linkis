@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.restful;
+package org.apache.linkis.bml.restful;
 
-import com.webank.wedatasphere.linkis.bml.common.BmlAuthorityException;
-import com.webank.wedatasphere.linkis.bml.common.Constant;
-import com.webank.wedatasphere.linkis.bml.service.ResourceService;
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
+import org.apache.linkis.bml.common.BmlAuthorityException;
+import org.apache.linkis.bml.common.Constant;
+import org.apache.linkis.bml.service.ResourceService;
+import org.apache.linkis.server.security.SecurityFilter;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;

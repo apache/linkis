@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message;
+package org.apache.linkis.message;
 
-import com.webank.wedatasphere.linkis.message.annotation.Implicit;
+import org.apache.linkis.message.annotation.Implicit;
 
 /**
  * @date 2020/7/29

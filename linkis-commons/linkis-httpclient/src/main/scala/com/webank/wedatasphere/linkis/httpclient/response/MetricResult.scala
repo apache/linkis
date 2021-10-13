@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.response
+package org.apache.linkis.httpclient.response
 
 import java.util
 

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.computation.executor.rs
+package org.apache.linkis.engineconn.computation.executor.rs
 
 import java.io.OutputStream
 
-import com.webank.wedatasphere.linkis.common.io.resultset.ResultSetWriter
-import com.webank.wedatasphere.linkis.common.io.{MetaData, Record}
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.storage.LineRecord
+import org.apache.linkis.common.io.resultset.ResultSetWriter
+import org.apache.linkis.common.io.{MetaData, Record}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.storage.LineRecord
 
 import scala.collection.mutable.ArrayBuffer
 

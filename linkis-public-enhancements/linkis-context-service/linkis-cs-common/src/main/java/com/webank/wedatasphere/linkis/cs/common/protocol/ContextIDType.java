@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.protocol;
+package org.apache.linkis.cs.common.protocol;
 
 
 public enum ContextIDType {
@@ -22,8 +22,8 @@ public enum ContextIDType {
      * index表示contextValueType的int
      * typeName 表示全路径类名
      */
-    COMMON_CONTEXT_ID_TYPE(0, "com.webank.wedatasphere.linkis.cs.common.entity.source.CommonContextID"),
-    LINKIS_WORKFLOW_CONTEXT_ID_TYPE(1, "com.webank.wedatasphere.linkis.cs.common.entity.source.LinkisWorkflowContextID")
+    COMMON_CONTEXT_ID_TYPE(0, "org.apache.linkis.cs.common.entity.source.CommonContextID"),
+    LINKIS_WORKFLOW_CONTEXT_ID_TYPE(1, "org.apache.linkis.cs.common.entity.source.LinkisWorkflowContextID")
     ;
 
     private int index;

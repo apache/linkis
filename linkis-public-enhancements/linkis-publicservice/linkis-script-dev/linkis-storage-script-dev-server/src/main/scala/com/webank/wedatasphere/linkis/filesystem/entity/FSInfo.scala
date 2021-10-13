@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.entity
+package org.apache.linkis.filesystem.entity
 
-import com.webank.wedatasphere.linkis.storage.fs.FileSystem
-import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration
+import org.apache.linkis.storage.fs.FileSystem
+import org.apache.linkis.storage.utils.StorageConfiguration
 
 
 class FSInfo(val id: String, val fs: FileSystem, var lastAccessTime: Long = System.currentTimeMillis()) {

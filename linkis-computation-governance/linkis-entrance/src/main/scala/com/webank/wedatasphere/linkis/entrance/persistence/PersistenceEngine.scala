@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.persistence
+package org.apache.linkis.entrance.persistence
 
 import java.io.{Closeable, Flushable}
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.governance.common.entity.job.{JobRequest, SubJobDetail, SubJobInfo}
-import com.webank.wedatasphere.linkis.protocol.task.Task
+import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail, SubJobInfo}
+import org.apache.linkis.protocol.task.Task
 
 
 trait PersistenceEngine extends Closeable with Flushable {

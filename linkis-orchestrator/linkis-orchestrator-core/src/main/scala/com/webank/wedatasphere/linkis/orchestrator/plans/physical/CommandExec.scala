@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.plans.physical
-import com.webank.wedatasphere.linkis.orchestrator.utils.OrchestratorIDCreator
+package org.apache.linkis.orchestrator.plans.physical
+import org.apache.linkis.orchestrator.utils.OrchestratorIDCreator
 
 /**
   *

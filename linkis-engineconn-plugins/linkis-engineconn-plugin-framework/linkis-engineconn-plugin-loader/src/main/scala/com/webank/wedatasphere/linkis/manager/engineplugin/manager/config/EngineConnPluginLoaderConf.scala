@@ -15,9 +15,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.manager.config
+package org.apache.linkis.manager.engineplugin.manager.config
 
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration}
+import org.apache.linkis.common.conf.{CommonVars, Configuration}
 
 
 object EngineConnPluginLoaderConf {

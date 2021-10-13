@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.scheduler.impl;
+package org.apache.linkis.cs.server.scheduler.impl;
 
-import com.webank.wedatasphere.linkis.cs.server.protocol.HttpResponseProtocol;
-import com.webank.wedatasphere.linkis.cs.server.protocol.RestResponseProtocol;
-import com.webank.wedatasphere.linkis.cs.server.scheduler.HttpAnswerJob;
-import com.webank.wedatasphere.linkis.cs.server.scheduler.HttpJob;
-import com.webank.wedatasphere.linkis.scheduler.executer.ErrorExecuteResponse;
-import com.webank.wedatasphere.linkis.scheduler.listener.JobListener;
-import com.webank.wedatasphere.linkis.scheduler.queue.Job;
+import org.apache.linkis.cs.server.protocol.HttpResponseProtocol;
+import org.apache.linkis.cs.server.protocol.RestResponseProtocol;
+import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
+import org.apache.linkis.cs.server.scheduler.HttpJob;
+import org.apache.linkis.scheduler.executer.ErrorExecuteResponse;
+import org.apache.linkis.scheduler.listener.JobListener;
+import org.apache.linkis.scheduler.queue.Job;
 
 
 public class CsJobListener implements JobListener {

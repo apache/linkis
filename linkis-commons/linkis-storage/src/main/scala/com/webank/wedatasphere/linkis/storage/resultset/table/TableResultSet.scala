@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.resultset.table
+package org.apache.linkis.storage.resultset.table
 
-import com.webank.wedatasphere.linkis.common.io.resultset.{ResultDeserializer, ResultSerializer}
-import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, StorageResultSet}
+import org.apache.linkis.common.io.resultset.{ResultDeserializer, ResultSerializer}
+import org.apache.linkis.storage.resultset.{ResultSetFactory, StorageResultSet}
 
 
 class TableResultSet extends StorageResultSet[TableMetaData, TableRecord] with Serializable{

@@ -16,10 +16,10 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.pointer
+package org.apache.linkis.manager.am.pointer
 
-import com.webank.wedatasphere.linkis.manager.common.entity.node.{EMNode, EngineNode}
-import com.webank.wedatasphere.linkis.manager.service.common.pointer.{EMNodPointer, EngineNodePointer, NodePointerBuilder}
+import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
+import org.apache.linkis.manager.service.common.pointer.{EMNodPointer, EngineNodePointer, NodePointerBuilder}
 import org.springframework.stereotype.Component
 
 

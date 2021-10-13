@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem
+package org.apache.linkis.filesystem
 
-import com.webank.wedatasphere.linkis.filesystem.request.WorkspaceClient
+import org.apache.linkis.filesystem.request.WorkspaceClient
 
 
 object WorkspaceClientFactory {

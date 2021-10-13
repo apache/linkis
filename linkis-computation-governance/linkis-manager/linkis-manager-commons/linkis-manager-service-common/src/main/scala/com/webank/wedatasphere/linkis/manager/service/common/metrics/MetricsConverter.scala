@@ -16,12 +16,12 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.service.common.metrics
+package org.apache.linkis.manager.service.common.metrics
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeStatus}
-import com.webank.wedatasphere.linkis.manager.common.entity.metrics._
-import com.webank.wedatasphere.linkis.manager.common.entity.node.AMNode
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeStatus}
+import org.apache.linkis.manager.common.entity.metrics._
+import org.apache.linkis.manager.common.entity.node.AMNode
 
 
 trait MetricsConverter {

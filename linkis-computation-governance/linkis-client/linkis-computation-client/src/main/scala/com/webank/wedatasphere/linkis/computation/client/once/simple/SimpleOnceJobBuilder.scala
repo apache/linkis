@@ -15,25 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client.once.simple
+package org.apache.linkis.computation.client.once.simple
 
 import java.io.ByteArrayInputStream
 import java.util
 
-import com.webank.wedatasphere.linkis.bml.client.{BmlClient, BmlClientFactory}
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.computation.client.LinkisJobBuilder
-import com.webank.wedatasphere.linkis.computation.client.once.LinkisManagerClient
-import com.webank.wedatasphere.linkis.computation.client.once.action.CreateEngineConnAction
-import com.webank.wedatasphere.linkis.computation.client.once.simple.SimpleOnceJobBuilder._
-import com.webank.wedatasphere.linkis.computation.client.utils.LabelKeyUtils
-import com.webank.wedatasphere.linkis.governance.common.entity.job.OnceExecutorContent
-import com.webank.wedatasphere.linkis.governance.common.utils.OnceExecutorContentUtils
-import com.webank.wedatasphere.linkis.governance.common.utils.OnceExecutorContentUtils.BmlResource
-import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant
-import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
-import com.webank.wedatasphere.linkis.ujes.client.exception.UJESJobException
+import org.apache.linkis.bml.client.{BmlClient, BmlClientFactory}
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.computation.client.LinkisJobBuilder
+import org.apache.linkis.computation.client.once.LinkisManagerClient
+import org.apache.linkis.computation.client.once.action.CreateEngineConnAction
+import org.apache.linkis.computation.client.once.simple.SimpleOnceJobBuilder._
+import org.apache.linkis.computation.client.utils.LabelKeyUtils
+import org.apache.linkis.governance.common.entity.job.OnceExecutorContent
+import org.apache.linkis.governance.common.utils.OnceExecutorContentUtils
+import org.apache.linkis.governance.common.utils.OnceExecutorContentUtils.BmlResource
+import org.apache.linkis.httpclient.dws.DWSHttpClient
+import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.protocol.utils.TaskUtils
+import org.apache.linkis.ujes.client.exception.UJESJobException
 
 import scala.collection.convert.WrapAsJava._
 import scala.collection.convert.WrapAsScala._

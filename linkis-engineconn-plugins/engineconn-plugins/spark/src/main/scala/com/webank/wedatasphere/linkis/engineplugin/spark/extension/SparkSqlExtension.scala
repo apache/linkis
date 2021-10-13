@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.extension
+package org.apache.linkis.engineplugin.spark.extension
 
 import java.util.concurrent._
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.spark.sql.execution.QueryExecution
 import org.apache.spark.sql.{DataFrame, SQLContext}
 

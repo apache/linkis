@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.springcloud.websocket;
+package org.apache.linkis.gateway.springcloud.websocket;
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars;
-import com.webank.wedatasphere.linkis.common.conf.CommonVars$;
+import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.conf.CommonVars$;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;

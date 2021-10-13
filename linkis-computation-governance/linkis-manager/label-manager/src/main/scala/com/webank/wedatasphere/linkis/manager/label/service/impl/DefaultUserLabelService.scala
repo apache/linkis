@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.service.impl
+package org.apache.linkis.manager.label.service.impl
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelConstant
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.exception.LabelErrorException
-import com.webank.wedatasphere.linkis.manager.label.service.UserLabelService
-import com.webank.wedatasphere.linkis.manager.label.LabelManagerUtils
-import com.webank.wedatasphere.linkis.manager.persistence.LabelManagerPersistence
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.constant.LabelConstant
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.exception.LabelErrorException
+import org.apache.linkis.manager.label.service.UserLabelService
+import org.apache.linkis.manager.label.LabelManagerUtils
+import org.apache.linkis.manager.persistence.LabelManagerPersistence
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

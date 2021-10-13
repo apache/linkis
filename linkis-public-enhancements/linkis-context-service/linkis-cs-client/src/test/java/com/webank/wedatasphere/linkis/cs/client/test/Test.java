@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.test;
+package org.apache.linkis.cs.client.test;
 
-import com.webank.wedatasphere.linkis.cs.client.Context;
-import com.webank.wedatasphere.linkis.cs.client.ContextClient;
-import com.webank.wedatasphere.linkis.cs.client.builder.ContextClientFactory;
-import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextScope;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.object.CSFlowInfos;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.*;
-import com.webank.wedatasphere.linkis.cs.common.serialize.helper.ContextSerializationHelper;
+import org.apache.linkis.cs.client.Context;
+import org.apache.linkis.cs.client.ContextClient;
+import org.apache.linkis.cs.client.builder.ContextClientFactory;
+import org.apache.linkis.cs.client.utils.SerializeHelper;
+import org.apache.linkis.cs.common.entity.enumeration.ContextScope;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.object.CSFlowInfos;
+import org.apache.linkis.cs.common.entity.source.*;
+import org.apache.linkis.cs.common.serialize.helper.ContextSerializationHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;

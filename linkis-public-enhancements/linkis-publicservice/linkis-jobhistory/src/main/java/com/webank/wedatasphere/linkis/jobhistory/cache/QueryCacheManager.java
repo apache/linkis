@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.cache;
+package org.apache.linkis.jobhistory.cache;
 
-import com.webank.wedatasphere.linkis.jobhistory.cache.impl.UserTaskResultCache;
+import org.apache.linkis.jobhistory.cache.impl.UserTaskResultCache;
 
 public interface QueryCacheManager {
 

@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.gateway.ruler.datasource.service.impl;
+package org.apache.linkis.gateway.ruler.datasource.service.impl;
 
-import com.webank.wedatasphere.linkis.gateway.ruler.datasource.cache.DatasourceMapCache;
-import com.webank.wedatasphere.linkis.gateway.ruler.datasource.dao.DatasourceMapMapper;
-import com.webank.wedatasphere.linkis.gateway.ruler.datasource.entity.DatasourceMap;
-import com.webank.wedatasphere.linkis.gateway.ruler.datasource.service.DatasourceMapService;
+import org.apache.linkis.gateway.ruler.datasource.cache.DatasourceMapCache;
+import org.apache.linkis.gateway.ruler.datasource.dao.DatasourceMapMapper;
+import org.apache.linkis.gateway.ruler.datasource.entity.DatasourceMap;
+import org.apache.linkis.gateway.ruler.datasource.service.DatasourceMapService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;

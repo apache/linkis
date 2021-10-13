@@ -11,16 +11,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.service.impl;
+package org.apache.linkis.datasourcemanager.core.service.impl;
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.common.exception.WarnException;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.FormStreamContent;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.service.BmlAppService;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.service.MetadataOperateService;
-import com.webank.wedatasphere.linkis.metadatamanager.common.protocol.MetadataConnect;
-import com.webank.wedatasphere.linkis.metadatamanager.common.protocol.MetadataResponse;
-import com.webank.wedatasphere.linkis.rpc.Sender;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.exception.WarnException;
+import org.apache.linkis.datasourcemanager.core.formdata.FormStreamContent;
+import org.apache.linkis.datasourcemanager.core.service.BmlAppService;
+import org.apache.linkis.datasourcemanager.core.service.MetadataOperateService;
+import org.apache.linkis.metadatamanager.common.protocol.MetadataConnect;
+import org.apache.linkis.metadatamanager.common.protocol.MetadataResponse;
+import org.apache.linkis.rpc.Sender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.webank.wedatasphere.linkis.datasourcemanager.common.ServiceErrorCode.BML_SERVICE_ERROR;
-import static com.webank.wedatasphere.linkis.datasourcemanager.common.ServiceErrorCode.REMOTE_METADATA_SERVICE_ERROR;
+import static org.apache.linkis.datasourcemanager.common.ServiceErrorCode.BML_SERVICE_ERROR;
+import static org.apache.linkis.datasourcemanager.common.ServiceErrorCode.REMOTE_METADATA_SERVICE_ERROR;
 
 @Service
 public class MetadataOperateServiceImpl implements MetadataOperateService {

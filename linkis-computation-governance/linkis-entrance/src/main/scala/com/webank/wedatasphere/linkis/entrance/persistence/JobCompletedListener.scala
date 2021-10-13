@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.persistence
+package org.apache.linkis.entrance.persistence
 
-import com.webank.wedatasphere.linkis.scheduler.queue.Job
+import org.apache.linkis.scheduler.queue.Job
 
 
 @Deprecated

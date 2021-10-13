@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common
+package org.apache.linkis.manager.engineplugin.common
 
 import java.util
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.EngineConnFactory
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.resource.EngineResourceFactory
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.engineplugin.common.creation.EngineConnFactory
+import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
+import org.apache.linkis.manager.engineplugin.common.resource.EngineResourceFactory
+import org.apache.linkis.manager.label.entity.Label
 
 
 trait EngineConnPlugin {

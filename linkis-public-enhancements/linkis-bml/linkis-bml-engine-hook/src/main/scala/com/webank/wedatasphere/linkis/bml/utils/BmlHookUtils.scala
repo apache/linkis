@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.bml.utils
+package org.apache.linkis.bml.utils
 
 object BmlHookUtils {
   val WORK_DIR_STR = "user.dir"

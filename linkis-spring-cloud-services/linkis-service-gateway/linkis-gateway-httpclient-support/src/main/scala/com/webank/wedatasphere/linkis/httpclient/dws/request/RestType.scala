@@ -18,7 +18,7 @@
  * created by cooperyang on 2019/07/24.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.dws.request
+package org.apache.linkis.httpclient.dws.request
 
 object RestType extends Enumeration {
   type RestType = Value

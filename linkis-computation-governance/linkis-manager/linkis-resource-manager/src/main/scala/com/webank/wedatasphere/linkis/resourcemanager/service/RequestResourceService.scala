@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.service
+package org.apache.linkis.resourcemanager.service
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.common.entity.resource._
-import com.webank.wedatasphere.linkis.resourcemanager.domain.RMLabelContainer
-import com.webank.wedatasphere.linkis.resourcemanager.exception.RMWarnException
-import com.webank.wedatasphere.linkis.resourcemanager.utils.RMUtils.aggregateResource
-import com.webank.wedatasphere.linkis.resourcemanager.utils.{AlertUtils, RMConfiguration, RMUtils, UserConfiguration}
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.resourcemanager.domain.RMLabelContainer
+import org.apache.linkis.resourcemanager.exception.RMWarnException
+import org.apache.linkis.resourcemanager.utils.RMUtils.aggregateResource
+import org.apache.linkis.resourcemanager.utils.{AlertUtils, RMConfiguration, RMUtils, UserConfiguration}
 
 abstract class RequestResourceService(labelResourceService: LabelResourceService) extends Logging{
 

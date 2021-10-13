@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.response
+package org.apache.linkis.httpclient.response
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.JsonUtils
-import com.webank.wedatasphere.linkis.httpclient.exception.HttpClientResultException
+import org.apache.linkis.common.utils.JsonUtils
+import org.apache.linkis.httpclient.exception.HttpClientResultException
 
 
 class HashMapHttpResult extends HttpResult {

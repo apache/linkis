@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.cache
+package org.apache.linkis.filesystem.cache
 
 import java.util
 
-import com.webank.wedatasphere.linkis.filesystem.entity.FSInfo
+import org.apache.linkis.filesystem.entity.FSInfo
 
 import scala.collection.mutable.ArrayBuffer
 

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.cache
+package org.apache.linkis.entrance.cache
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.governance.common.protocol.conf.{RequestQueryGlobalConfig, ResponseQueryConfig}
-import com.webank.wedatasphere.linkis.protocol.CacheableProtocol
-import com.webank.wedatasphere.linkis.rpc.RPCMapCache
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.protocol.conf.{RequestQueryGlobalConfig, ResponseQueryConfig}
+import org.apache.linkis.protocol.CacheableProtocol
+import org.apache.linkis.rpc.RPCMapCache
 
 
 

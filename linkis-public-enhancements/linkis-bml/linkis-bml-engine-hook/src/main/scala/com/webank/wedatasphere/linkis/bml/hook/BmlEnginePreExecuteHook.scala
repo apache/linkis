@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.bml.hook
+package org.apache.linkis.bml.hook
 
 import java.io.File
 import java.util
-import com.webank.wedatasphere.linkis.bml.client.{BmlClient, BmlClientFactory}
-import com.webank.wedatasphere.linkis.bml.exception.BmlHookDownloadException
-import com.webank.wedatasphere.linkis.bml.utils.BmlHookUtils
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.utlis.ComputationEngineConstant
-import com.webank.wedatasphere.linkis.engineconn.core.util.EngineConnUtils
-import com.webank.wedatasphere.linkis.governance.common.utils.GovernanceConstant
+import org.apache.linkis.bml.client.{BmlClient, BmlClientFactory}
+import org.apache.linkis.bml.exception.BmlHookDownloadException
+import org.apache.linkis.bml.utils.BmlHookUtils
+import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
+import org.apache.linkis.engineconn.computation.executor.utlis.ComputationEngineConstant
+import org.apache.linkis.engineconn.core.util.EngineConnUtils
+import org.apache.linkis.governance.common.utils.GovernanceConstant
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions.asScalaBuffer

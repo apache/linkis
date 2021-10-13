@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.service.impl
+package org.apache.linkis.jobhistory.service.impl
 
 import java.lang
 import java.sql.Timestamp
 
 import com.google.common.collect.Iterables
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.jobhistory.conversions.TaskConversions._
-import com.webank.wedatasphere.linkis.jobhistory.dao.{JobDetailMapper, JobHistoryMapper}
-import com.webank.wedatasphere.linkis.jobhistory.entity.JobHistory
-import com.webank.wedatasphere.linkis.jobhistory.util.QueryUtils
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.jobhistory.conversions.TaskConversions._
+import org.apache.linkis.jobhistory.dao.{JobDetailMapper, JobHistoryMapper}
+import org.apache.linkis.jobhistory.entity.JobHistory
+import org.apache.linkis.jobhistory.util.QueryUtils
+import org.apache.linkis.message.annotation.Receiver
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 import java.util
 import java.util.Date
 
-import com.webank.wedatasphere.linkis.governance.common.constant.job.JobRequestConstants
-import com.webank.wedatasphere.linkis.governance.common.entity.job.{JobRequest, JobRequestWithDetail, SubJobDetail}
-import com.webank.wedatasphere.linkis.governance.common.protocol.job.{JobReqBatchUpdate, JobReqInsert, JobReqQuery, JobReqUpdate, JobRespProtocol}
-import com.webank.wedatasphere.linkis.jobhistory.entity.QueryJobHistory
-import com.webank.wedatasphere.linkis.jobhistory.exception.QueryException
-import com.webank.wedatasphere.linkis.jobhistory.service.JobHistoryQueryService
-import com.webank.wedatasphere.linkis.jobhistory.transitional.TaskStatus
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants
+import org.apache.linkis.governance.common.entity.job.{JobRequest, JobRequestWithDetail, SubJobDetail}
+import org.apache.linkis.governance.common.protocol.job.{JobReqBatchUpdate, JobReqInsert, JobReqQuery, JobReqUpdate, JobRespProtocol}
+import org.apache.linkis.jobhistory.entity.QueryJobHistory
+import org.apache.linkis.jobhistory.exception.QueryException
+import org.apache.linkis.jobhistory.service.JobHistoryQueryService
+import org.apache.linkis.jobhistory.transitional.TaskStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -200,7 +200,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   /*private def queryTaskList2RequestPersistTaskList(queryTask: java.util.List[QueryTask]): java.util.List[RequestPersistTask] = {
     import scala.collection.JavaConversions._
     val tasks = new util.ArrayList[RequestPersistTask]
-    import com.webank.wedatasphere.linkis.jobhistory.conversions.TaskConversions.queryTask2RequestPersistTask
+    import org.apache.linkis.jobhistory.conversions.TaskConversions.queryTask2RequestPersistTask
     queryTask.foreach(f => tasks.add(f))
     tasks
   }*/

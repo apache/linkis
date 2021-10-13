@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.common
+package org.apache.linkis.bml.common
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 case class BmlPermissionDeniedException(errorMsg:String) extends ErrorException(75569, errorMsg)
 

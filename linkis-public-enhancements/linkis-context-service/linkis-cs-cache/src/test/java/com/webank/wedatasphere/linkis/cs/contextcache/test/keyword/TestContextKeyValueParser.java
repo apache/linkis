@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.contextcache.test.keyword;
+package org.apache.linkis.cs.contextcache.test.keyword;
 
 public class TestContextKeyValueParser {
 
    /* @Test
     public void testParser() {
 
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("com.webank.wedatasphere.linkis.cs");
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("org.apache.linkis.cs");
         System.out.println("ioc容器加载完成");
         ContextKeyValueParser contextKeyValueParser = context.getBean(ContextKeyValueParser.class);
         ContextKey contextKey1 = new TestContextKey();

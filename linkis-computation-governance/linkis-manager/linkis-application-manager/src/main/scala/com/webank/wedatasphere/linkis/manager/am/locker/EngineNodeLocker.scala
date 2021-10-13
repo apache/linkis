@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.locker
+package org.apache.linkis.manager.am.locker
 
-import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode
+import org.apache.linkis.manager.common.entity.node.EngineNode
 
 
 trait EngineNodeLocker {

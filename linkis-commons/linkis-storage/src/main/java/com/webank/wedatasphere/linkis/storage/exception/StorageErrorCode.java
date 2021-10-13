@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.storage.exception;
+package org.apache.linkis.storage.exception;
 
 public enum StorageErrorCode {
 

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.context;
+package org.apache.linkis.message.context;
 
-import com.webank.wedatasphere.linkis.message.publisher.MessagePublisher;
-import com.webank.wedatasphere.linkis.message.registry.ImplicitRegistry;
-import com.webank.wedatasphere.linkis.message.registry.ServiceRegistry;
+import org.apache.linkis.message.publisher.MessagePublisher;
+import org.apache.linkis.message.registry.ImplicitRegistry;
+import org.apache.linkis.message.registry.ServiceRegistry;
 
 
 public interface MessageSchedulerContext {

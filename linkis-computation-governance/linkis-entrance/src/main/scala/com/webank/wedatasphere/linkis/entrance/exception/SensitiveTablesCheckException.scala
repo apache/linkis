@@ -1,6 +1,6 @@
-package com.webank.wedatasphere.linkis.entrance.exception
+package org.apache.linkis.entrance.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 
 case class SensitiveTablesCheckException(errorMsg:String) extends ErrorException(50079, errorMsg)

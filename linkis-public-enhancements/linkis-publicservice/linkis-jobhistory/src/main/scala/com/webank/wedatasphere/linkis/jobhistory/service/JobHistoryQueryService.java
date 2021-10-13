@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.service;
+package org.apache.linkis.jobhistory.service;
 
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest;
-import com.webank.wedatasphere.linkis.governance.common.protocol.job.*;
-import com.webank.wedatasphere.linkis.jobhistory.entity.JobHistory;
+import org.apache.linkis.governance.common.entity.job.JobRequest;
+import org.apache.linkis.governance.common.protocol.job.*;
+import org.apache.linkis.jobhistory.entity.JobHistory;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.core.exception
+package org.apache.linkis.engineconn.core.exception
 
 object EngineConnErrorCode {
 

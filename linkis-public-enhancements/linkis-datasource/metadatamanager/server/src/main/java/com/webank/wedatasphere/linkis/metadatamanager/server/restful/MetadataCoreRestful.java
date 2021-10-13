@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadatamanager.server.restful;
+package org.apache.linkis.metadatamanager.server.restful;
 
-import com.webank.wedatasphere.linkis.metadatamanager.common.domain.MetaColumnInfo;
-import com.webank.wedatasphere.linkis.metadatamanager.common.domain.MetaPartitionInfo;
-import com.webank.wedatasphere.linkis.metadatamanager.server.service.MetadataAppService;
-import com.webank.wedatasphere.linkis.server.Message;
+import org.apache.linkis.metadatamanager.common.domain.MetaColumnInfo;
+import org.apache.linkis.metadatamanager.common.domain.MetaPartitionInfo;
+import org.apache.linkis.metadatamanager.server.service.MetadataAppService;
+import org.apache.linkis.server.Message;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

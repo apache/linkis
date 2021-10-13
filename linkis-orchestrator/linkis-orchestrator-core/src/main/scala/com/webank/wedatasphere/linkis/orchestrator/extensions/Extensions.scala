@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.extensions
+package org.apache.linkis.orchestrator.extensions
 
-import com.webank.wedatasphere.linkis.orchestrator.OrchestratorSession
+import org.apache.linkis.orchestrator.OrchestratorSession
 
 /**
   *

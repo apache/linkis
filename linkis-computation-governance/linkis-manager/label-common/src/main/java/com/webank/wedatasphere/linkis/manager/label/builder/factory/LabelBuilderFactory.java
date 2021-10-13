@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.builder.factory;
+package org.apache.linkis.manager.label.builder.factory;
 
-import com.webank.wedatasphere.linkis.manager.label.builder.LabelBuilder;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.builder.LabelBuilder;
+import org.apache.linkis.manager.label.entity.Label;
 
 import java.io.InputStream;
 import java.lang.reflect.Type;

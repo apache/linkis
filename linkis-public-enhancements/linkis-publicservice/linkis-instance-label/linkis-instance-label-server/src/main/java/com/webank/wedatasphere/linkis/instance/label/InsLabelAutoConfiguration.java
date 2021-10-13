@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label;
+package org.apache.linkis.instance.label;
 
 import com.netflix.discovery.EurekaClient;
-import com.webank.wedatasphere.linkis.instance.label.service.InsLabelAccessService;
-import com.webank.wedatasphere.linkis.instance.label.service.InsLabelServiceAdapter;
-import com.webank.wedatasphere.linkis.instance.label.service.annotation.AdapterMode;
-import com.webank.wedatasphere.linkis.instance.label.service.impl.DefaultInsLabelService;
-import com.webank.wedatasphere.linkis.instance.label.service.impl.DefaultInsLabelServiceAdapter;
-import com.webank.wedatasphere.linkis.instance.label.service.impl.EurekaInsLabelService;
-import com.webank.wedatasphere.linkis.mybatis.DataSourceConfig;
+import org.apache.linkis.instance.label.service.InsLabelAccessService;
+import org.apache.linkis.instance.label.service.InsLabelServiceAdapter;
+import org.apache.linkis.instance.label.service.annotation.AdapterMode;
+import org.apache.linkis.instance.label.service.impl.DefaultInsLabelService;
+import org.apache.linkis.instance.label.service.impl.DefaultInsLabelServiceAdapter;
+import org.apache.linkis.instance.label.service.impl.EurekaInsLabelService;
+import org.apache.linkis.mybatis.DataSourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

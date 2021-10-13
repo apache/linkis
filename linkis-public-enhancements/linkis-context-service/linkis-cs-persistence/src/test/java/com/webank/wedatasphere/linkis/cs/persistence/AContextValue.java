@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence;
+package org.apache.linkis.cs.persistence;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextValue;
+import org.apache.linkis.cs.common.entity.source.ContextValue;
 
 
 public class AContextValue implements ContextValue {

@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.manager.persistence.impl;
+package org.apache.linkis.manager.persistence.impl;
 /*
  * Copyright 2019 WeBank
  *
@@ -14,7 +14,7 @@ package com.webank.wedatasphere.linkis.manager.persistence.impl;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.webank.wedatasphere.linkis.manager.persistence.*;
+import org.apache.linkis.manager.persistence.*;
 
 
 public class DefaultManagerPersistence implements ManagerPersistence {

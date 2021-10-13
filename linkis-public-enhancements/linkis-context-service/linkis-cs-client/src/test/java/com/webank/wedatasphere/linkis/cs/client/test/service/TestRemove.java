@@ -11,22 +11,22 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.test.service;
+package org.apache.linkis.cs.client.test.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.cs.client.Context;
-import com.webank.wedatasphere.linkis.cs.client.ContextClient;
-import com.webank.wedatasphere.linkis.cs.client.builder.ContextClientFactory;
-import com.webank.wedatasphere.linkis.cs.client.service.CSWorkService;
-import com.webank.wedatasphere.linkis.cs.client.service.CSWorkServiceImpl;
-import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextScope;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.WorkType;
-import com.webank.wedatasphere.linkis.cs.common.entity.resource.LinkisBMLResource;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.*;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.cs.client.Context;
+import org.apache.linkis.cs.client.ContextClient;
+import org.apache.linkis.cs.client.builder.ContextClientFactory;
+import org.apache.linkis.cs.client.service.CSWorkService;
+import org.apache.linkis.cs.client.service.CSWorkServiceImpl;
+import org.apache.linkis.cs.client.utils.SerializeHelper;
+import org.apache.linkis.cs.common.entity.enumeration.ContextScope;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.enumeration.WorkType;
+import org.apache.linkis.cs.common.entity.resource.LinkisBMLResource;
+import org.apache.linkis.cs.common.entity.source.*;
 
 import static org.junit.Assert.assertEquals;
 

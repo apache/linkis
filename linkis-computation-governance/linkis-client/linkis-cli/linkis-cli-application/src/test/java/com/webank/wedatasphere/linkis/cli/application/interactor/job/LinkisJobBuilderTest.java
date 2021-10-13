@@ -11,11 +11,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.interactor.job;
+package org.apache.linkis.cli.application.interactor.job;
 
-import com.webank.wedatasphere.linkis.cli.application.data.ProcessedData;
-import com.webank.wedatasphere.linkis.cli.application.interactor.command.template.ProcessInputUtil;
-import com.webank.wedatasphere.linkis.cli.application.interactor.command.template.TestSparkCmdTemplate;
+import org.apache.linkis.cli.application.data.ProcessedData;
+import org.apache.linkis.cli.application.interactor.command.template.ProcessInputUtil;
+import org.apache.linkis.cli.application.interactor.command.template.TestSparkCmdTemplate;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

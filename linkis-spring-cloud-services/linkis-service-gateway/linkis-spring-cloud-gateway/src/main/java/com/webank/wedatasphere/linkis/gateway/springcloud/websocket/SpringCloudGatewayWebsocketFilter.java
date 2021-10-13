@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.springcloud.websocket;
+package org.apache.linkis.gateway.springcloud.websocket;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext;
-import com.webank.wedatasphere.linkis.gateway.parser.GatewayParser;
-import com.webank.wedatasphere.linkis.gateway.route.GatewayRouter;
-import com.webank.wedatasphere.linkis.gateway.security.GatewaySSOUtils;
-import com.webank.wedatasphere.linkis.gateway.springcloud.http.SpringCloudGatewayHttpRequest;
-import com.webank.wedatasphere.linkis.gateway.springcloud.http.SpringCloudHttpUtils;
-import com.webank.wedatasphere.linkis.server.Message;
-import com.webank.wedatasphere.linkis.server.socket.controller.ServerEvent;
-import com.webank.wedatasphere.linkis.server.socket.controller.SocketServerEvent;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.gateway.http.GatewayContext;
+import org.apache.linkis.gateway.parser.GatewayParser;
+import org.apache.linkis.gateway.route.GatewayRouter;
+import org.apache.linkis.gateway.security.GatewaySSOUtils;
+import org.apache.linkis.gateway.springcloud.http.SpringCloudGatewayHttpRequest;
+import org.apache.linkis.gateway.springcloud.http.SpringCloudHttpUtils;
+import org.apache.linkis.server.Message;
+import org.apache.linkis.server.socket.controller.ServerEvent;
+import org.apache.linkis.server.socket.controller.SocketServerEvent;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -51,7 +51,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.webank.wedatasphere.linkis.gateway.springcloud.websocket.SpringCloudGatewayWebsocketUtils.*;
+import static org.apache.linkis.gateway.springcloud.websocket.SpringCloudGatewayWebsocketUtils.*;
 
 public class SpringCloudGatewayWebsocketFilter implements GlobalFilter, Ordered {
     private WebsocketRoutingFilter websocketRoutingFilter;

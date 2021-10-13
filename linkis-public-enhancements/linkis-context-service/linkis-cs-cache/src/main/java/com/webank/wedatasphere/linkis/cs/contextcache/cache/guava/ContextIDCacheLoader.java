@@ -1,9 +1,9 @@
 /*
-package com.webank.wedatasphere.linkis.cs.contextcache.cache.guava;
+package org.apache.linkis.cs.contextcache.cache.guava;
 
 import com.google.common.cache.CacheLoader;
-import com.webank.wedatasphere.linkis.cs.contextcache.cache.csid.ContextIDValue;
-import com.webank.wedatasphere.linkis.cs.contextcache.cache.csid.ContextIDValueGenerator;
+import org.apache.linkis.cs.contextcache.cache.csid.ContextIDValue;
+import org.apache.linkis.cs.contextcache.cache.csid.ContextIDValueGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

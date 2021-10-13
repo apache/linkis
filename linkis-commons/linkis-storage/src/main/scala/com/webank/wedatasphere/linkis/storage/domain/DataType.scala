@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.domain
+package org.apache.linkis.storage.domain
 
 import java.sql.{Date, Timestamp}
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{Logging, Utils}
 
 
 object DataType extends Logging{

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc
+package org.apache.linkis.rpc
 
 import java.lang.reflect.Modifier
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.message.annotation.Method
-import com.webank.wedatasphere.linkis.message.conf.MessageSchedulerConf.{REFLECTIONS, _}
-import com.webank.wedatasphere.linkis.message.exception.MessageErrorException
-import com.webank.wedatasphere.linkis.protocol.message.RequestMethod
-import com.webank.wedatasphere.linkis.rpc.exception.DWCURIException
-import com.webank.wedatasphere.linkis.server.{BDPJettyServerHelper, Message}
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.message.annotation.Method
+import org.apache.linkis.message.conf.MessageSchedulerConf.{REFLECTIONS, _}
+import org.apache.linkis.message.exception.MessageErrorException
+import org.apache.linkis.protocol.message.RequestMethod
+import org.apache.linkis.rpc.exception.DWCURIException
+import org.apache.linkis.server.{BDPJettyServerHelper, Message}
 
 import scala.collection.JavaConversions._
 

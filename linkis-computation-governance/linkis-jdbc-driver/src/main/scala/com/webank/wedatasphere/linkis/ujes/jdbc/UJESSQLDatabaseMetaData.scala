@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.ujes.jdbc
+package org.apache.linkis.ujes.jdbc
 
 import java.sql.{Connection, DatabaseMetaData, ResultSet, RowIdLifetime}
 import java.util
 
-import com.webank.wedatasphere.linkis.ujes.client.request.{GetColumnsAction, GetDBSAction, GetTablesAction}
-import com.webank.wedatasphere.linkis.ujes.jdbc.entity.JdbcColumn
-import com.webank.wedatasphere.linkis.ujes.jdbc.utils.JDBCUtils
+import org.apache.linkis.ujes.client.request.{GetColumnsAction, GetDBSAction, GetTablesAction}
+import org.apache.linkis.ujes.jdbc.entity.JdbcColumn
+import org.apache.linkis.ujes.jdbc.utils.JDBCUtils
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions._

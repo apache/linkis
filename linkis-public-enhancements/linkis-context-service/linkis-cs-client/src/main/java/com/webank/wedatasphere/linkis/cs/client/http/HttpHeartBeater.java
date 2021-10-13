@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.http;
+package org.apache.linkis.cs.client.http;
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration;
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.common.listener.Event;
-import com.webank.wedatasphere.linkis.common.utils.Utils;
-import com.webank.wedatasphere.linkis.cs.client.builder.ContextClientConfig;
-import com.webank.wedatasphere.linkis.cs.client.builder.HttpContextClientConfig;
-import com.webank.wedatasphere.linkis.cs.client.listener.ContextClientListener;
-import com.webank.wedatasphere.linkis.cs.client.listener.ContextClientListenerBus;
-import com.webank.wedatasphere.linkis.cs.client.listener.ContextClientListenerManager;
-import com.webank.wedatasphere.linkis.cs.client.listener.HeartBeater;
-import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.CommonContextKeyValue;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
-import com.webank.wedatasphere.linkis.cs.listener.callback.imp.ContextKeyValueBean;
-import com.webank.wedatasphere.linkis.cs.listener.event.enumeration.OperateType;
-import com.webank.wedatasphere.linkis.cs.listener.event.impl.DefaultContextKeyEvent;
-import com.webank.wedatasphere.linkis.httpclient.config.ClientConfig;
-import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient;
-import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig;
-import com.webank.wedatasphere.linkis.httpclient.response.Result;
+import org.apache.linkis.common.conf.Configuration;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.listener.Event;
+import org.apache.linkis.common.utils.Utils;
+import org.apache.linkis.cs.client.builder.ContextClientConfig;
+import org.apache.linkis.cs.client.builder.HttpContextClientConfig;
+import org.apache.linkis.cs.client.listener.ContextClientListener;
+import org.apache.linkis.cs.client.listener.ContextClientListenerBus;
+import org.apache.linkis.cs.client.listener.ContextClientListenerManager;
+import org.apache.linkis.cs.client.listener.HeartBeater;
+import org.apache.linkis.cs.client.utils.SerializeHelper;
+import org.apache.linkis.cs.common.entity.source.CommonContextKeyValue;
+import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
+import org.apache.linkis.cs.listener.callback.imp.ContextKeyValueBean;
+import org.apache.linkis.cs.listener.event.enumeration.OperateType;
+import org.apache.linkis.cs.listener.event.impl.DefaultContextKeyEvent;
+import org.apache.linkis.httpclient.config.ClientConfig;
+import org.apache.linkis.httpclient.dws.DWSHttpClient;
+import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
+import org.apache.linkis.httpclient.response.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

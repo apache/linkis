@@ -11,13 +11,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.service;
+package org.apache.linkis.datasourcemanager.core.service;
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceEnv;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceVo;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.datasourcemanager.common.domain.DataSource;
+import org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv;
+import org.apache.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
+import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 
 import java.util.List;
 

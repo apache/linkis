@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.configuration.dao;
+package org.apache.linkis.configuration.dao;
 
-import com.webank.wedatasphere.linkis.configuration.entity.ConfigLabel;
+import org.apache.linkis.configuration.entity.ConfigLabel;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

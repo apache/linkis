@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.jdbc;
+package org.apache.linkis.ujes.jdbc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

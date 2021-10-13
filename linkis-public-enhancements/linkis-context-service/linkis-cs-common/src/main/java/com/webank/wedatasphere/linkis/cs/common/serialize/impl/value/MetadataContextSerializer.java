@@ -12,12 +12,12 @@
  *//*
 
 
-package com.webank.wedatasphere.linkis.cs.common.serialize.impl.value;
+package org.apache.linkis.cs.common.serialize.impl.value;
 
-import com.webank.wedatasphere.linkis.common.io.MetaData;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.common.serialize.AbstractSerializer;
-import com.webank.wedatasphere.linkis.cs.common.serialize.ContextSerializer;
+import org.apache.linkis.common.io.MetaData;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.serialize.AbstractSerializer;
+import org.apache.linkis.cs.common.serialize.ContextSerializer;
 
 
 public class MetadataContextSerializer implements ContextSerializer<MetaData> {

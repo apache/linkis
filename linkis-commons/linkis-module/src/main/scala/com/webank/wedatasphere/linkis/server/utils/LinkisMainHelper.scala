@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.server.utils
+package org.apache.linkis.server.utils
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.server.conf.ServerConfiguration
 
 import scala.collection.JavaConverters._
 

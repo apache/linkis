@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.dao;
+package org.apache.linkis.cs.persistence.dao;
 
-import com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextID;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextID;
 
 
 public interface ContextIDMapper {

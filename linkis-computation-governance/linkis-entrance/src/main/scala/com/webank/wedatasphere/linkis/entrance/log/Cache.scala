@@ -15,7 +15,7 @@
  */
 
 
-package com.webank.wedatasphere.linkis.entrance.log
+package org.apache.linkis.entrance.log
 
 class Cache(maxCapacity: Int){
   val cachedLogs:LoopArray[String] = LoopArray[String](maxCapacity)

@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.core.launch
+package org.apache.linkis.ecm.core.launch
 
 import java.io.{File, InputStream, OutputStream}
 import java.net.ServerSocket
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration}
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.ecm.core.conf.ECMErrorCode
-import com.webank.wedatasphere.linkis.ecm.core.exception.ECMCoreException
-import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
-import com.webank.wedatasphere.linkis.governance.common.utils.{EngineConnArgumentsBuilder, EngineConnArgumentsParser}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.Environment._
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.{Environment, ProcessEngineConnLaunchRequest}
+import org.apache.linkis.common.conf.{CommonVars, Configuration}
+import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.ecm.core.conf.ECMErrorCode
+import org.apache.linkis.ecm.core.exception.ECMCoreException
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
+import org.apache.linkis.governance.common.utils.{EngineConnArgumentsBuilder, EngineConnArgumentsParser}
+import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
+import org.apache.linkis.manager.engineplugin.common.launch.process.Environment._
+import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
+import org.apache.linkis.manager.engineplugin.common.launch.process.{Environment, ProcessEngineConnLaunchRequest}
 import org.apache.commons.io.{FileUtils, IOUtils}
 import org.apache.commons.lang.StringUtils
 

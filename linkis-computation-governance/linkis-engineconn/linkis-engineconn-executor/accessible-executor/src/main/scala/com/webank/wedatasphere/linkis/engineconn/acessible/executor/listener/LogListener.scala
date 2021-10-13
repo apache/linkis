@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener
+package org.apache.linkis.engineconn.acessible.executor.listener
 
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event.TaskLogUpdateEvent
-import com.webank.wedatasphere.linkis.engineconn.executor.listener.EngineConnSyncListener
+import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskLogUpdateEvent
+import org.apache.linkis.engineconn.executor.listener.EngineConnSyncListener
 
 trait LogListener extends EngineConnSyncListener {
 

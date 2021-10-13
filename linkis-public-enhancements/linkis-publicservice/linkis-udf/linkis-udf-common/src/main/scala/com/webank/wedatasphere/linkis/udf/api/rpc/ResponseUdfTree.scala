@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.udf.api.rpc
+package org.apache.linkis.udf.api.rpc
 
-import com.webank.wedatasphere.linkis.udf.entity.UDFTree
+import org.apache.linkis.udf.entity.UDFTree
 
 class ResponseUdfTree(val udfTree: UDFTree) extends UdfProtocol

@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.configuration.service
+package org.apache.linkis.configuration.service
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.configuration.dao.{ConfigMapper, LabelMapper}
-import com.webank.wedatasphere.linkis.configuration.entity.{CategoryLabel, CategoryLabelVo, ConfigValue}
-import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationException
-import com.webank.wedatasphere.linkis.configuration.util.LabelEntityParser
-import com.webank.wedatasphere.linkis.manager.label.builder.CombinedLabelBuilder
-import com.webank.wedatasphere.linkis.manager.label.entity.CombinedLabel
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.configuration.dao.{ConfigMapper, LabelMapper}
+import org.apache.linkis.configuration.entity.{CategoryLabel, CategoryLabelVo, ConfigValue}
+import org.apache.linkis.configuration.exception.ConfigurationException
+import org.apache.linkis.configuration.util.LabelEntityParser
+import org.apache.linkis.manager.label.builder.CombinedLabelBuilder
+import org.apache.linkis.manager.label.entity.CombinedLabel
+import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

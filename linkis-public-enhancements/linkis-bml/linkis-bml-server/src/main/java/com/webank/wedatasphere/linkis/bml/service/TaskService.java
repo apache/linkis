@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.service;
+package org.apache.linkis.bml.service;
 
-import com.webank.wedatasphere.linkis.bml.Entity.ResourceTask;
+import org.apache.linkis.bml.Entity.ResourceTask;
 
 import org.springframework.web.multipart.MultipartFile;
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.optimizer
+package org.apache.linkis.orchestrator.optimizer
 
-import com.webank.wedatasphere.linkis.orchestrator.plans.logical.Task
-import com.webank.wedatasphere.linkis.orchestrator.plans.physical.ExecTask
+import org.apache.linkis.orchestrator.plans.logical.Task
+import org.apache.linkis.orchestrator.plans.physical.ExecTask
 
 /**
   *

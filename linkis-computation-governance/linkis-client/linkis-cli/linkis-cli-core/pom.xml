@@ -21,7 +21,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.webank.wedatasphere.linkis</groupId>
+        <groupId>org.apache.linkis</groupId>
         <artifactId>linkis-cli</artifactId>
         <version>1.0.3</version>
         <relativePath>../pom.xml</relativePath>
@@ -32,7 +32,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-cli-common</artifactId>
             <version>${linkis.version}</version>
         </dependency>

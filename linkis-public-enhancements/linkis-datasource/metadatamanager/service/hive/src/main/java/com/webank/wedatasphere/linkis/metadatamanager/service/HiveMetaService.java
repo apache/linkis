@@ -11,17 +11,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadatamanager.service;
+package org.apache.linkis.metadatamanager.service;
 
-import com.webank.wedatasphere.linkis.bml.client.BmlClient;
-import com.webank.wedatasphere.linkis.bml.client.BmlClientFactory;
-import com.webank.wedatasphere.linkis.bml.protocol.BmlDownloadResponse;
-import com.webank.wedatasphere.linkis.common.conf.CommonVars;
-import com.webank.wedatasphere.linkis.metadatamanager.common.domain.MetaColumnInfo;
-import com.webank.wedatasphere.linkis.metadatamanager.common.domain.MetaPartitionInfo;
-import com.webank.wedatasphere.linkis.metadatamanager.common.exception.MetaRuntimeException;
-import com.webank.wedatasphere.linkis.metadatamanager.common.service.AbstractMetaService;
-import com.webank.wedatasphere.linkis.metadatamanager.common.service.MetadataConnection;
+import org.apache.linkis.bml.client.BmlClient;
+import org.apache.linkis.bml.client.BmlClientFactory;
+import org.apache.linkis.bml.protocol.BmlDownloadResponse;
+import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.metadatamanager.common.domain.MetaColumnInfo;
+import org.apache.linkis.metadatamanager.common.domain.MetaPartitionInfo;
+import org.apache.linkis.metadatamanager.common.exception.MetaRuntimeException;
+import org.apache.linkis.metadatamanager.common.service.AbstractMetaService;
+import org.apache.linkis.metadatamanager.common.service.MetadataConnection;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;

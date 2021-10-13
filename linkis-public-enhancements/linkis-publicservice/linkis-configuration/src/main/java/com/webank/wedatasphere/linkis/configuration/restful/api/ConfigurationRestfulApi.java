@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.configuration.restful.api;
+package org.apache.linkis.configuration.restful.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.discovery.converters.Auto;
-import com.webank.wedatasphere.linkis.configuration.entity.*;
-import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationException;
-import com.webank.wedatasphere.linkis.configuration.service.CategoryService;
-import com.webank.wedatasphere.linkis.configuration.service.ConfigurationService;
-import com.webank.wedatasphere.linkis.configuration.util.ConfigurationConfiguration;
-import com.webank.wedatasphere.linkis.configuration.util.JsonNodeUtil;
-import com.webank.wedatasphere.linkis.configuration.util.LabelEntityParser;
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.UserCreatorLabel;
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
-import com.webank.wedatasphere.linkis.server.Message;
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
+import org.apache.linkis.configuration.entity.*;
+import org.apache.linkis.configuration.exception.ConfigurationException;
+import org.apache.linkis.configuration.service.CategoryService;
+import org.apache.linkis.configuration.service.ConfigurationService;
+import org.apache.linkis.configuration.util.ConfigurationConfiguration;
+import org.apache.linkis.configuration.util.JsonNodeUtil;
+import org.apache.linkis.configuration.util.LabelEntityParser;
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
+import org.apache.linkis.manager.label.utils.LabelUtils;
+import org.apache.linkis.server.BDPJettyServerHelper;
+import org.apache.linkis.server.Message;
+import org.apache.linkis.server.security.SecurityFilter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;

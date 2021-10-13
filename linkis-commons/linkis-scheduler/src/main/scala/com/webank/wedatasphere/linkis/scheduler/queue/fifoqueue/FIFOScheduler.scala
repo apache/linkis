@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue
+package org.apache.linkis.scheduler.queue.fifoqueue
 
 
-import com.webank.wedatasphere.linkis.scheduler.queue._
-import com.webank.wedatasphere.linkis.scheduler.{AbstractScheduler, SchedulerContext}
+import org.apache.linkis.scheduler.queue._
+import org.apache.linkis.scheduler.{AbstractScheduler, SchedulerContext}
 
 
 class FIFOScheduler(val schedulerContext: SchedulerContext) extends AbstractScheduler {

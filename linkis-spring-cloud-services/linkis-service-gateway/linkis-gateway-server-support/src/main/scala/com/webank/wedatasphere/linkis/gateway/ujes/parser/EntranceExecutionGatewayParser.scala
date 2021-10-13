@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.ujes.parser
+package org.apache.linkis.gateway.ujes.parser
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
-import com.webank.wedatasphere.linkis.gateway.parser.AbstractGatewayParser
-import com.webank.wedatasphere.linkis.gateway.springcloud.SpringCloudGatewayConfiguration._
-import com.webank.wedatasphere.linkis.gateway.ujes.route.label.RouteLabelParser
-import com.webank.wedatasphere.linkis.instance.label.service.InsLabelService
-import com.webank.wedatasphere.linkis.manager.label.entity.route.RouteLabel
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.gateway.config.GatewayConfiguration
+import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.parser.AbstractGatewayParser
+import org.apache.linkis.gateway.springcloud.SpringCloudGatewayConfiguration._
+import org.apache.linkis.gateway.ujes.route.label.RouteLabelParser
+import org.apache.linkis.instance.label.service.InsLabelService
+import org.apache.linkis.manager.label.entity.route.RouteLabel
 import javax.annotation.Resource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component

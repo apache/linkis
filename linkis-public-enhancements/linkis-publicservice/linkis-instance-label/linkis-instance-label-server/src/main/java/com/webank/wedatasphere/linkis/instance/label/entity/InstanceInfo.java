@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.entity;
+package org.apache.linkis.instance.label.entity;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
+import org.apache.linkis.common.ServiceInstance;
 
 import java.util.ArrayList;
 import java.util.Date;

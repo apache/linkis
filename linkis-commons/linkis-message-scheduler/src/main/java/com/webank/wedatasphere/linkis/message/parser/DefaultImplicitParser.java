@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.parser;
+package org.apache.linkis.message.parser;
 
-import com.webank.wedatasphere.linkis.message.annotation.Implicit;
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
+import org.apache.linkis.message.annotation.Implicit;
+import org.apache.linkis.protocol.message.RequestProtocol;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

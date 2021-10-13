@@ -15,20 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client
+package org.apache.linkis.computation.client
 
 import java.util
 import java.util.concurrent.{ScheduledThreadPoolExecutor, TimeUnit}
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration
-import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
-import com.webank.wedatasphere.linkis.common.utils.{RetryHandler, Utils}
-import com.webank.wedatasphere.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy
-import com.webank.wedatasphere.linkis.httpclient.dws.config.{DWSClientConfig, DWSClientConfigBuilder}
-import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
-import com.webank.wedatasphere.linkis.ujes.client.exception.{UJESClientBuilderException, UJESJobException}
-import com.webank.wedatasphere.linkis.ujes.client.{UJESClient, UJESClientImpl}
-import com.webank.wedatasphere.linkis.ujes.client.request.JobSubmitAction
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.exception.LinkisRetryException
+import org.apache.linkis.common.utils.{RetryHandler, Utils}
+import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy
+import org.apache.linkis.httpclient.dws.config.{DWSClientConfig, DWSClientConfigBuilder}
+import org.apache.linkis.protocol.utils.TaskUtils
+import org.apache.linkis.ujes.client.exception.{UJESClientBuilderException, UJESJobException}
+import org.apache.linkis.ujes.client.{UJESClient, UJESClientImpl}
+import org.apache.linkis.ujes.client.request.JobSubmitAction
 import org.apache.commons.lang.StringUtils
 
 

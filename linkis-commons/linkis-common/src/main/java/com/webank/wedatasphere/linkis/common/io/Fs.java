@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.io;
+package org.apache.linkis.common.io;
 
 import java.io.Closeable;
 import java.io.IOException;

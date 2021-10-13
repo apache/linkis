@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.validator
+package org.apache.linkis.orchestrator.validator
 
-import com.webank.wedatasphere.linkis.orchestrator.plans.ast.ASTOrchestration
+import org.apache.linkis.orchestrator.plans.ast.ASTOrchestration
 
 /**
   *

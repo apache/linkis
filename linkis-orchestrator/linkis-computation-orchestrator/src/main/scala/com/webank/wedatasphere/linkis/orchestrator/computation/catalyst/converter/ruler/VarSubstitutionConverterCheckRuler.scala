@@ -15,16 +15,16 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.catalyst.converter.ruler
+package org.apache.linkis.orchestrator.computation.catalyst.converter.ruler
 
-import com.webank.wedatasphere.linkis.common.log.LogUtils
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.orchestrator.computation.catalyst.converter.exception.VarSubstitutionException
-import com.webank.wedatasphere.linkis.orchestrator.computation.entity.ComputationJobReq
-import com.webank.wedatasphere.linkis.orchestrator.domain.JobReq
-import com.webank.wedatasphere.linkis.orchestrator.extensions.catalyst.ConverterCheckRuler
-import com.webank.wedatasphere.linkis.orchestrator.log.LogManager
-import com.webank.wedatasphere.linkis.orchestrator.plans.ast.ASTContext
+import org.apache.linkis.common.log.LogUtils
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.orchestrator.computation.catalyst.converter.exception.VarSubstitutionException
+import org.apache.linkis.orchestrator.computation.entity.ComputationJobReq
+import org.apache.linkis.orchestrator.domain.JobReq
+import org.apache.linkis.orchestrator.extensions.catalyst.ConverterCheckRuler
+import org.apache.linkis.orchestrator.log.LogManager
+import org.apache.linkis.orchestrator.plans.ast.ASTContext
 import org.apache.commons.lang.exception.ExceptionUtils
 
 class VarSubstitutionConverterCheckRuler extends ConverterCheckRuler {

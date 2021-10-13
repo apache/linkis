@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.contextcache.parser;
+package org.apache.linkis.cs.contextcache.parser;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
+import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
 
 import java.util.Set;
 

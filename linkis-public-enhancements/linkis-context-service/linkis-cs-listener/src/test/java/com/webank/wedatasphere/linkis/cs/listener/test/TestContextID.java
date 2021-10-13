@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.listener.test;
+package org.apache.linkis.cs.listener.test;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.source.ContextID;
 
 
 public class TestContextID implements ContextID {

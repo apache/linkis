@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.errorcode.client.manager;
+package org.apache.linkis.errorcode.client.manager;
 
-import com.webank.wedatasphere.linkis.errorcode.client.synchronizer.LinkisErrorCodeSynchronizer;
-import com.webank.wedatasphere.linkis.errorcode.common.LinkisErrorCode;
+import org.apache.linkis.errorcode.client.synchronizer.LinkisErrorCodeSynchronizer;
+import org.apache.linkis.errorcode.common.LinkisErrorCode;
 
 import java.util.List;
 

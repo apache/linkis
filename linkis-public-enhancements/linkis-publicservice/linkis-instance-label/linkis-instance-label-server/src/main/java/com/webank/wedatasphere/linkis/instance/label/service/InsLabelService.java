@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.service;
+package org.apache.linkis.instance.label.service;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.label.entity.Label;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.persistence
+package org.apache.linkis.entrance.persistence
 
-import com.webank.wedatasphere.linkis.entrance.EntranceContext
-import com.webank.wedatasphere.linkis.scheduler.listener.{JobListener, ProgressListener}
+import org.apache.linkis.entrance.EntranceContext
+import org.apache.linkis.scheduler.listener.{JobListener, ProgressListener}
 
 
 abstract class PersistenceManager extends JobListener with ResultSetListener with ProgressListener {

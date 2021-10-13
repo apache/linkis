@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.excel;
+package org.apache.linkis.storage.excel;
 
 
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
+import org.apache.linkis.storage.utils.StorageUtils;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;

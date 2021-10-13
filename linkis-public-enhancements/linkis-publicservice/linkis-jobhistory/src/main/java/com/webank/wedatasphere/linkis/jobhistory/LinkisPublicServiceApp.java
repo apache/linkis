@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory;
+package org.apache.linkis.jobhistory;
 
-import com.webank.wedatasphere.linkis.LinkisBaseServerApp;
+import org.apache.linkis.LinkisBaseServerApp;
 
 public class LinkisPublicServiceApp {
 

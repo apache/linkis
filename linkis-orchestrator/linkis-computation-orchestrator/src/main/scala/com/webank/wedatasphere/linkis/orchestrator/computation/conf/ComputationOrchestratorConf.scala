@@ -15,9 +15,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.conf
+package org.apache.linkis.orchestrator.computation.conf
 
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.linkis.common.conf.{CommonVars, TimeType}
 
 /**
   *

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message;
+package org.apache.linkis.message;
 
-import com.webank.wedatasphere.linkis.message.annotation.*;
-import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext;
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
+import org.apache.linkis.message.annotation.*;
+import org.apache.linkis.message.builder.ServiceMethodContext;
+import org.apache.linkis.protocol.message.RequestProtocol;
 
 import java.util.ArrayList;
 import java.util.List;

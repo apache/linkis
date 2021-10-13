@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.entity;
+package org.apache.linkis.manager.label.entity;
 
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant;
+import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 

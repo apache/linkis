@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.governance.common.entity.task;
+package org.apache.linkis.governance.common.entity.task;
 
 
-import com.webank.wedatasphere.linkis.protocol.query.QueryProtocol;
+import org.apache.linkis.protocol.query.QueryProtocol;
 
 /**
  * Need to inherit the relationship, to fill in the rest of the query module restful code

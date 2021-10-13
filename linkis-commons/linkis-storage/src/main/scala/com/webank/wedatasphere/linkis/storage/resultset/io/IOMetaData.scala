@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.resultset.io
+package org.apache.linkis.storage.resultset.io
 
-import com.webank.wedatasphere.linkis.common.io.MetaData
-import com.webank.wedatasphere.linkis.storage.resultset.ResultMetaData
+import org.apache.linkis.common.io.MetaData
+import org.apache.linkis.storage.resultset.ResultMetaData
 
 
 class IOMetaData(val off:Int, val len:Int)  extends ResultMetaData {

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.queue
+package org.apache.linkis.scheduler.queue
 
 import java.util.concurrent.ExecutorService
 
-import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
-import com.webank.wedatasphere.linkis.scheduler.listener.ConsumerListener
+import org.apache.linkis.scheduler.SchedulerContext
+import org.apache.linkis.scheduler.listener.ConsumerListener
 
 
 abstract class ConsumerManager {

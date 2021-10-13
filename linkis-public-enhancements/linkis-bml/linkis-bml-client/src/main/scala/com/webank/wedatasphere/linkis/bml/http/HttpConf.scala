@@ -10,10 +10,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.http
+package org.apache.linkis.bml.http
 
-import com.webank.wedatasphere.linkis.bml.conf.BmlConfiguration
-import com.webank.wedatasphere.linkis.common.conf.Configuration
+import org.apache.linkis.bml.conf.BmlConfiguration
+import org.apache.linkis.common.conf.Configuration
 
 object HttpConf {
 

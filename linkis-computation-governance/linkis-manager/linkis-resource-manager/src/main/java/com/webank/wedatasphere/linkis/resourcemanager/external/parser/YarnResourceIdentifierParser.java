@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.external.parser;
+package org.apache.linkis.resourcemanager.external.parser;
 
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.ResourceType;
-import com.webank.wedatasphere.linkis.resourcemanager.external.domain.ExternalResourceIdentifier;
-import com.webank.wedatasphere.linkis.resourcemanager.external.yarn.YarnResourceIdentifier;
+import org.apache.linkis.manager.common.entity.resource.ResourceType;
+import org.apache.linkis.resourcemanager.external.domain.ExternalResourceIdentifier;
+import org.apache.linkis.resourcemanager.external.yarn.YarnResourceIdentifier;
 
 import java.util.Map;
 

@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.once.executor.execution
+package org.apache.linkis.engineconn.once.executor.execution
 
-import com.webank.wedatasphere.linkis.common.exception.LinkisException
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.core.execution.AbstractEngineConnExecution
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.Executor
-import com.webank.wedatasphere.linkis.engineconn.once.executor.exception.OnceEngineConnErrorException
-import com.webank.wedatasphere.linkis.engineconn.once.executor.{ManageableOnceExecutor, OnceExecutor}
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineConnMode._
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{CodeLanguageLabel, RunType}
-import com.webank.wedatasphere.linkis.scheduler.executer.{AsynReturnExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
+import org.apache.linkis.common.exception.LinkisException
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.common.engineconn.EngineConn
+import org.apache.linkis.engineconn.core.execution.AbstractEngineConnExecution
+import org.apache.linkis.engineconn.executor.entity.Executor
+import org.apache.linkis.engineconn.once.executor.exception.OnceEngineConnErrorException
+import org.apache.linkis.engineconn.once.executor.{ManageableOnceExecutor, OnceExecutor}
+import org.apache.linkis.manager.label.entity.engine.EngineConnMode._
+import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, RunType}
+import org.apache.linkis.scheduler.executer.{AsynReturnExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 
 import scala.collection.convert.decorateAsScala._
 

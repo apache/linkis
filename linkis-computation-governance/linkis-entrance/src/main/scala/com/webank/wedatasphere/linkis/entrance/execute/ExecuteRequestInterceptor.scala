@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.execute
+package org.apache.linkis.entrance.execute
 
-import com.webank.wedatasphere.linkis.governance.common.protocol.task.{RequestTask, RequestTaskExecute}
-import com.webank.wedatasphere.linkis.scheduler.executer.{ExecuteRequest, JobExecuteRequest}
+import org.apache.linkis.governance.common.protocol.task.{RequestTask, RequestTaskExecute}
+import org.apache.linkis.scheduler.executer.{ExecuteRequest, JobExecuteRequest}
 
 import scala.collection.JavaConversions
 

@@ -15,7 +15,7 @@
  */
 
 
-package com.webank.wedatasphere.linkis.common.exception;
+package org.apache.linkis.common.exception;
 
 public class ErrorException extends LinkisException {
     private ExceptionLevel level = ExceptionLevel.ERROR;

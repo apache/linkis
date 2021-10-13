@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.interceptor.impl
+package org.apache.linkis.entrance.interceptor.impl
 
-import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
-import com.webank.wedatasphere.linkis.entrance.interceptor.exception.CodeCheckException
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.entrance.interceptor.EntranceInterceptor
+import org.apache.linkis.entrance.interceptor.exception.CodeCheckException
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.manager.label.utils.LabelUtil
 
 
 class SQLCodeCheckInterceptor extends EntranceInterceptor {

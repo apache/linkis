@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.queue
+package org.apache.linkis.scheduler.queue
 
-import com.webank.wedatasphere.linkis.scheduler.queue.GroupStatus.GroupStatus
+import org.apache.linkis.scheduler.queue.GroupStatus.GroupStatus
 
 
 abstract class AbstractGroup extends Group {

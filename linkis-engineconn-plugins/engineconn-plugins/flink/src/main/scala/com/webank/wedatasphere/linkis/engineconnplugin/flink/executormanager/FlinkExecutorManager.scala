@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.executormanager
+package org.apache.linkis.engineconnplugin.flink.executormanager
 
-import com.webank.wedatasphere.linkis.engineconn.core.executor.LabelExecutorManagerImpl
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.{Executor, SensibleExecutor}
-import com.webank.wedatasphere.linkis.engineconn.once.executor.creation.OnceExecutorFactory
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.CodeLanguageLabelExecutorFactory
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.engineconn.core.executor.LabelExecutorManagerImpl
+import org.apache.linkis.engineconn.executor.entity.{Executor, SensibleExecutor}
+import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorFactory
+import org.apache.linkis.manager.engineplugin.common.creation.CodeLanguageLabelExecutorFactory
+import org.apache.linkis.manager.label.entity.Label
 
 
 class FlinkExecutorManager extends LabelExecutorManagerImpl{

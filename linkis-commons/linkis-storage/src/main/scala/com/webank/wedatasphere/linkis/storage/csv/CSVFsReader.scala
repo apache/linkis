@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.csv
+package org.apache.linkis.storage.csv
 
-import com.webank.wedatasphere.linkis.common.io.FsReader
+import org.apache.linkis.common.io.FsReader
 
 abstract class CSVFsReader extends FsReader{
 

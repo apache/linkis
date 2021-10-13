@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.entity.object;
+package org.apache.linkis.cs.common.entity.object;
 
 public class LinkisVariable extends CommonProperty {
 

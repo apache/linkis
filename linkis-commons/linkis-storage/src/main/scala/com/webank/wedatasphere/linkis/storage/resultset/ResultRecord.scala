@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.resultset
+package org.apache.linkis.storage.resultset
 
-import com.webank.wedatasphere.linkis.common.io.Record
+import org.apache.linkis.common.io.Record
 
 
 abstract class ResultRecord extends Record{

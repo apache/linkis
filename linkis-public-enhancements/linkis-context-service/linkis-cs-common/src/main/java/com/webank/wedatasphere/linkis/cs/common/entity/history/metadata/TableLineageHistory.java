@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.entity.history.metadata;
+package org.apache.linkis.cs.common.entity.history.metadata;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.metadata.Table;
+import org.apache.linkis.cs.common.entity.metadata.Table;
 
 import java.util.List;
 

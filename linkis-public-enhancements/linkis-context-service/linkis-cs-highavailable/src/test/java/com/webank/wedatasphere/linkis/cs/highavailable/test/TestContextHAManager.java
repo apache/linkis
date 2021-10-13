@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.highavailable.test;
+package org.apache.linkis.cs.highavailable.test;
 
 import com.google.gson.Gson;
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.common.conf.BDPConfiguration;
-import com.webank.wedatasphere.linkis.common.conf.Configuration;
-import com.webank.wedatasphere.linkis.common.exception.LinkisException;
-import com.webank.wedatasphere.linkis.common.utils.Utils;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.HAContextID;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.highavailable.AbstractContextHAManager;
-import com.webank.wedatasphere.linkis.cs.highavailable.test.haid.TestHAID;
-import com.webank.wedatasphere.linkis.cs.highavailable.test.persist.TestPersistence;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration;
+import org.apache.linkis.DataWorkCloudApplication;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.conf.BDPConfiguration;
+import org.apache.linkis.common.conf.Configuration;
+import org.apache.linkis.common.exception.LinkisException;
+import org.apache.linkis.common.utils.Utils;
+import org.apache.linkis.cs.common.entity.source.HAContextID;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.highavailable.AbstractContextHAManager;
+import org.apache.linkis.cs.highavailable.test.haid.TestHAID;
+import org.apache.linkis.cs.highavailable.test.persist.TestPersistence;
+import org.apache.linkis.server.BDPJettyServerHelper;
+import org.apache.linkis.server.conf.ServerConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -60,7 +60,7 @@ import java.util.EnumSet;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@ComponentScan(basePackages = "com.webank.wedatasphere.linkis")
+@ComponentScan(basePackages = "org.apache.linkis")
 public class TestContextHAManager extends SpringBootServletInitializer {
 
     private static ConfigurableApplicationContext applicationContext;

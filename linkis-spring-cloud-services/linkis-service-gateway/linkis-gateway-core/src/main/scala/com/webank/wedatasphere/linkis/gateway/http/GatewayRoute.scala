@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.http
+package org.apache.linkis.gateway.http
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.server.JMap
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.server.JMap
 
 /**
   * created by cooperyang on 2019/1/9.

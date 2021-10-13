@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.conf
+package org.apache.linkis.rpc.conf
 
 import com.netflix.discovery.EurekaClient
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.rpc.RPCReceiveRestful
-import com.webank.wedatasphere.linkis.rpc.interceptor.RPCServerLoader
-import com.webank.wedatasphere.linkis.rpc.sender.eureka.EurekaRPCServerLoader
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
+import org.apache.linkis.DataWorkCloudApplication
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.rpc.RPCReceiveRestful
+import org.apache.linkis.rpc.interceptor.RPCServerLoader
+import org.apache.linkis.rpc.sender.eureka.EurekaRPCServerLoader
+import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.commons.lang.StringUtils
 import org.springframework.boot.autoconfigure.condition.{ConditionalOnClass, ConditionalOnMissingBean}
 import org.springframework.boot.context.event.ApplicationPreparedEvent

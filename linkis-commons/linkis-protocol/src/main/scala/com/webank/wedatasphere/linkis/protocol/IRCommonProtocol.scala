@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol
+package org.apache.linkis.protocol
 
 
 trait IRCommonProtocol extends IRProtocol {

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.entity.history;
+package org.apache.linkis.cs.common.entity.history;
 
 
-import com.webank.wedatasphere.linkis.cs.common.entity.object.CSProperty;
+import org.apache.linkis.cs.common.entity.object.CSProperty;
 
 
 public interface GlobalPropertyContextHistory extends  ContextHistory{

@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.service.impl;
+package org.apache.linkis.bml.service.impl;
 
-import com.webank.wedatasphere.linkis.bml.Entity.ResourceTask;
-import com.webank.wedatasphere.linkis.bml.Entity.Version;
-import com.webank.wedatasphere.linkis.bml.common.Constant;
-import com.webank.wedatasphere.linkis.bml.dao.ResourceDao;
-import com.webank.wedatasphere.linkis.bml.dao.TaskDao;
-import com.webank.wedatasphere.linkis.bml.dao.VersionDao;
-import com.webank.wedatasphere.linkis.bml.service.ResourceService;
-import com.webank.wedatasphere.linkis.bml.service.TaskService;
-import com.webank.wedatasphere.linkis.bml.service.VersionService;
-import com.webank.wedatasphere.linkis.bml.threading.TaskState;
-import com.webank.wedatasphere.linkis.bml.common.*;
+import org.apache.linkis.bml.Entity.ResourceTask;
+import org.apache.linkis.bml.Entity.Version;
+import org.apache.linkis.bml.common.Constant;
+import org.apache.linkis.bml.dao.ResourceDao;
+import org.apache.linkis.bml.dao.TaskDao;
+import org.apache.linkis.bml.dao.VersionDao;
+import org.apache.linkis.bml.service.ResourceService;
+import org.apache.linkis.bml.service.TaskService;
+import org.apache.linkis.bml.service.VersionService;
+import org.apache.linkis.bml.threading.TaskState;
+import org.apache.linkis.bml.common.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

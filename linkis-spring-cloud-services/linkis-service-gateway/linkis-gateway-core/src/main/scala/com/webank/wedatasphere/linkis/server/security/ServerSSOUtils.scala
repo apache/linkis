@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.server.security
+package org.apache.linkis.server.security
 
 object ServerSSOUtils {
 

@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.interactor.execution;
+package org.apache.linkis.cli.application.interactor.execution;
 
 import org.junit.After;
 import org.junit.Before;

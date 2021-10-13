@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.util
+package org.apache.linkis.jobhistory.util
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.CommonVars
 
 object QueryConfig {
   val CACHE_MAX_EXPIRE_HOUR = CommonVars[Long]("wds.linkis.query.cache.max.expire.hour", 1L)

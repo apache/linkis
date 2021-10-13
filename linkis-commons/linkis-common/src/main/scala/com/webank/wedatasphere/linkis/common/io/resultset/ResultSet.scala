@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.io.resultset
+package org.apache.linkis.common.io.resultset
 
-import com.webank.wedatasphere.linkis.common.io.{FsPath, MetaData, Record}
+import org.apache.linkis.common.io.{FsPath, MetaData, Record}
 
 
 trait ResultSet[K <: MetaData, V <: Record] {

@@ -11,14 +11,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadatamanager.common.receiver
+package org.apache.linkis.metadatamanager.common.receiver
 
-import com.webank.wedatasphere.linkis.common.exception.WarnException
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.metadatamanager.common.protocol.{MetaGetColumns, MetaGetDatabases, MetaGetPartitions, MetaGetTableProps, MetaGetTables, MetadataConnect, MetadataResponse}
-import com.webank.wedatasphere.linkis.metadatamanager.common.service.MetadataService
-import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
+import org.apache.linkis.common.exception.WarnException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.metadatamanager.common.protocol.{MetaGetColumns, MetaGetDatabases, MetaGetPartitions, MetaGetTableProps, MetaGetTables, MetadataConnect, MetadataResponse}
+import org.apache.linkis.metadatamanager.common.service.MetadataService
+import org.apache.linkis.rpc.{Receiver, Sender}
+import org.apache.linkis.server.BDPJettyServerHelper
 
 import scala.concurrent.duration.Duration
 

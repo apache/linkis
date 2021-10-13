@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.server.service
+package org.apache.linkis.engineplugin.server.service
 
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.resource.{EngineResourceFactory, EngineResourceRequest}
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.manager.common.entity.resource.NodeResource
+import org.apache.linkis.manager.engineplugin.common.resource.{EngineResourceFactory, EngineResourceRequest}
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 
 
 trait EngineConnResourceFactoryService {

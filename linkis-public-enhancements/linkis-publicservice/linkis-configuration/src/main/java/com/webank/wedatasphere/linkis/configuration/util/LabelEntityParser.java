@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.configuration.util;
+package org.apache.linkis.configuration.util;
 
-import com.webank.wedatasphere.linkis.configuration.entity.ConfigLabel;
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactory;
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
-import com.webank.wedatasphere.linkis.manager.label.entity.CombinedLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.UserCreatorLabel;
-import com.webank.wedatasphere.linkis.manager.label.utils.EngineTypeLabelCreator;
+import org.apache.linkis.configuration.entity.ConfigLabel;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
+import org.apache.linkis.manager.label.entity.CombinedLabel;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
+import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;

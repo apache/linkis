@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.entity.recycle
+package org.apache.linkis.manager.common.entity.recycle
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
+import org.apache.linkis.common.ServiceInstance
 
 
 trait RecyclingRule {

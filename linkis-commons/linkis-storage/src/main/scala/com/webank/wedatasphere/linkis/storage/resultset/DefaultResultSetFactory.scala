@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.resultset
+package org.apache.linkis.storage.resultset
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.io.resultset.ResultSet
-import com.webank.wedatasphere.linkis.common.io.{FsPath, MetaData, Record}
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.storage.FSFactory
-import com.webank.wedatasphere.linkis.storage.domain.Dolphin
-import com.webank.wedatasphere.linkis.storage.exception.{StorageErrorException, StorageWarnException}
-import com.webank.wedatasphere.linkis.storage.utils.{StorageConfiguration, StorageUtils}
+import org.apache.linkis.common.io.resultset.ResultSet
+import org.apache.linkis.common.io.{FsPath, MetaData, Record}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.storage.FSFactory
+import org.apache.linkis.storage.domain.Dolphin
+import org.apache.linkis.storage.exception.{StorageErrorException, StorageWarnException}
+import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 import org.apache.commons.lang.StringUtils
 
 

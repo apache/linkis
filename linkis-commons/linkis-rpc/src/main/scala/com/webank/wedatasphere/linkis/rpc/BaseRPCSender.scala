@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc
+package org.apache.linkis.rpc
 
 import java.util
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.exception.WarnException
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.protocol.Protocol
-import com.webank.wedatasphere.linkis.rpc.conf.RPCConfiguration.{BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX, BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_MAX, BDP_RPC_SENDER_ASYN_QUEUE_CAPACITY}
-import com.webank.wedatasphere.linkis.rpc.interceptor._
-import com.webank.wedatasphere.linkis.rpc.transform.{RPCConsumer, RPCProduct}
-import com.webank.wedatasphere.linkis.server.Message
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
+import org.apache.linkis.DataWorkCloudApplication
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.exception.WarnException
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.protocol.Protocol
+import org.apache.linkis.rpc.conf.RPCConfiguration.{BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX, BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_MAX, BDP_RPC_SENDER_ASYN_QUEUE_CAPACITY}
+import org.apache.linkis.rpc.interceptor._
+import org.apache.linkis.rpc.transform.{RPCConsumer, RPCProduct}
+import org.apache.linkis.server.Message
+import org.apache.linkis.server.conf.ServerConfiguration
 import feign.slf4j.Slf4jLogger
 import feign.{Feign, Retryer}
 

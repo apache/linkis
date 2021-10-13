@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.governance.common.protocol.task
+package org.apache.linkis.governance.common.protocol.task
 
 import java.util
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.protocol.message.RequestProtocol
 
 trait RequestTask {
   def getCode: String

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.ecm
+package org.apache.linkis.orchestrator.ecm
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.{ClassUtils, Logging, Utils}
-import com.webank.wedatasphere.linkis.orchestrator.ecm.conf.ECMPluginConf
-import com.webank.wedatasphere.linkis.orchestrator.ecm.entity.Policy
+import org.apache.linkis.common.utils.{ClassUtils, Logging, Utils}
+import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
+import org.apache.linkis.orchestrator.ecm.entity.Policy
 
 
 /**

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.http
+package org.apache.linkis.gateway.http
 
 import javax.servlet.http.Cookie
 

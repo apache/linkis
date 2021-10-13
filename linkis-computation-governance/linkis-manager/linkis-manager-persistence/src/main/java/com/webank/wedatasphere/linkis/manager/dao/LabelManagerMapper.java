@@ -1,10 +1,10 @@
-package com.webank.wedatasphere.linkis.manager.dao;
+package org.apache.linkis.manager.dao;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.manager.common.entity.label.LabelKeyValue;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNode;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.common.entity.label.LabelKeyValue;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceNode;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

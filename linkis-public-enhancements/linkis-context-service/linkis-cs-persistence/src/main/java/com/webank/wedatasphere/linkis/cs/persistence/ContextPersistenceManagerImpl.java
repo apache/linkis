@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence;
+package org.apache.linkis.cs.persistence;
 
-import com.webank.wedatasphere.linkis.cs.persistence.annotation.Tuning;
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.*;
+import org.apache.linkis.cs.persistence.annotation.Tuning;
+import org.apache.linkis.cs.persistence.persistence.*;
 
 public class ContextPersistenceManagerImpl implements ContextPersistenceManager {
 

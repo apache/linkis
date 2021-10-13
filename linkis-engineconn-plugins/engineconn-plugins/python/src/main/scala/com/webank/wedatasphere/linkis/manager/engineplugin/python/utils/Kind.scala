@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.python.utils
+package org.apache.linkis.manager.engineplugin.python.utils
 
 import org.apache.commons.lang.StringUtils
 

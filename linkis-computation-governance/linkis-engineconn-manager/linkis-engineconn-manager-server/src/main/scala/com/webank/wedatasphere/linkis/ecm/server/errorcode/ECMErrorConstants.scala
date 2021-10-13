@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.errorcode
+package org.apache.linkis.ecm.server.errorcode
 
 object ECMErrorConstants {
    val ECM_ERROR=10000

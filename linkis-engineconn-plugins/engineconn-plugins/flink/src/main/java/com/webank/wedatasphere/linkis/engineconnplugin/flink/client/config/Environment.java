@@ -15,9 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.client.config;
+package org.apache.linkis.engineconnplugin.flink.client.config;
 
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.FlinkInitFailedException;
+import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;

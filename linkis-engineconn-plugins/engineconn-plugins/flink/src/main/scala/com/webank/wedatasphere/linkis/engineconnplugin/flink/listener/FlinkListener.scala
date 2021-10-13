@@ -15,11 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.listener
+package org.apache.linkis.engineconnplugin.flink.listener
 
-import com.webank.wedatasphere.linkis.common.listener.{Event, EventListener}
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.listener.RowsType.RowsType
+import org.apache.linkis.common.listener.{Event, EventListener}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconnplugin.flink.listener.RowsType.RowsType
 
 
 trait FlinkListener extends EventListener {

@@ -11,20 +11,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.serialize.test;
+package org.apache.linkis.cs.common.serialize.test;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextScope;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.history.CommonResourceHistory;
-import com.webank.wedatasphere.linkis.cs.common.entity.history.metadata.CSTableLineageHistory;
-import com.webank.wedatasphere.linkis.cs.common.entity.history.metadata.CSTableMetadataContextHistory;
-import com.webank.wedatasphere.linkis.cs.common.entity.history.metadata.TableOperationType;
-import com.webank.wedatasphere.linkis.cs.common.entity.metadata.CSTable;
-import com.webank.wedatasphere.linkis.cs.common.entity.metadata.Table;
-import com.webank.wedatasphere.linkis.cs.common.entity.object.CSFlowInfos;
-import com.webank.wedatasphere.linkis.cs.common.entity.resource.LinkisBMLResource;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.*;
-import com.webank.wedatasphere.linkis.cs.common.serialize.helper.ContextSerializationHelper;
+import org.apache.linkis.cs.common.entity.enumeration.ContextScope;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.history.CommonResourceHistory;
+import org.apache.linkis.cs.common.entity.history.metadata.CSTableLineageHistory;
+import org.apache.linkis.cs.common.entity.history.metadata.CSTableMetadataContextHistory;
+import org.apache.linkis.cs.common.entity.history.metadata.TableOperationType;
+import org.apache.linkis.cs.common.entity.metadata.CSTable;
+import org.apache.linkis.cs.common.entity.metadata.Table;
+import org.apache.linkis.cs.common.entity.object.CSFlowInfos;
+import org.apache.linkis.cs.common.entity.resource.LinkisBMLResource;
+import org.apache.linkis.cs.common.entity.source.*;
+import org.apache.linkis.cs.common.serialize.helper.ContextSerializationHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;

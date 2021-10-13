@@ -16,12 +16,12 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.service.common.pointer
+package org.apache.linkis.manager.service.common.pointer
 
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
-import com.webank.wedatasphere.linkis.manager.common.entity.node.Node
-import com.webank.wedatasphere.linkis.manager.common.protocol.node.NodeHeartbeatMsg
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.entity.node.Node
+import org.apache.linkis.manager.common.protocol.node.NodeHeartbeatMsg
+import org.apache.linkis.manager.label.entity.Label
 
 
 trait NodePointer {

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.plans.physical
+package org.apache.linkis.orchestrator.plans.physical
 
-import com.webank.wedatasphere.linkis.orchestrator.execution.{SucceedTaskResponse, TaskResponse}
-import com.webank.wedatasphere.linkis.orchestrator.utils.OrchestratorIDCreator
+import org.apache.linkis.orchestrator.execution.{SucceedTaskResponse, TaskResponse}
+import org.apache.linkis.orchestrator.utils.OrchestratorIDCreator
 
 /**
   *

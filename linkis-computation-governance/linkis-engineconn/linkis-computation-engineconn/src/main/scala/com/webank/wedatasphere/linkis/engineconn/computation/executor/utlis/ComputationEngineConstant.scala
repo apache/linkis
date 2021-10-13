@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.computation.executor.utlis
+package org.apache.linkis.engineconn.computation.executor.utlis
 
 
 object ComputationEngineConstant {

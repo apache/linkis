@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.interceptor.impl
+package org.apache.linkis.entrance.interceptor.impl
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.cache.GlobalConfigurationKeyValueCache
-import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
-import com.webank.wedatasphere.linkis.entrance.interceptor.exception.LogPathCreateException
-import com.webank.wedatasphere.linkis.entrance.parser.ParserUtils
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
-import com.webank.wedatasphere.linkis.protocol.task.Task
+import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.cache.GlobalConfigurationKeyValueCache
+import org.apache.linkis.entrance.interceptor.EntranceInterceptor
+import org.apache.linkis.entrance.interceptor.exception.LogPathCreateException
+import org.apache.linkis.entrance.parser.ParserUtils
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.entity.task.RequestPersistTask
+import org.apache.linkis.protocol.task.Task
 
 /**
   * Description:Log path generation interceptor, used to set the path log of the task(日志路径生成拦截器, 用于设置task的路径日志)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.cache.utils;
+package org.apache.linkis.jobhistory.cache.utils;
 
 import sun.misc.BASE64Encoder;
 

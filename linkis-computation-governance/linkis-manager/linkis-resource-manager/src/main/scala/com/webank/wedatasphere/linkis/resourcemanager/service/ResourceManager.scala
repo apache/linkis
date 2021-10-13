@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.service
+package org.apache.linkis.resourcemanager.service
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.resourcemanager.{ResourceInfo, ResultResource}
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.manager.common.entity.resource.NodeResource
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.resourcemanager.{ResourceInfo, ResultResource}
 
 abstract class ResourceManager {
 

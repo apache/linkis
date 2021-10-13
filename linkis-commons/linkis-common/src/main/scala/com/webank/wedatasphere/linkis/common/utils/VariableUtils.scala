@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.common.utils
+package org.apache.linkis.common.utils
 
 import java.text.SimpleDateFormat
 import java.util
 import java.util.{Calendar, Date}
 
-import com.webank.wedatasphere.linkis.common.exception.LinkisCommonErrorException
+import org.apache.linkis.common.exception.LinkisCommonErrorException
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.time.DateUtils
 

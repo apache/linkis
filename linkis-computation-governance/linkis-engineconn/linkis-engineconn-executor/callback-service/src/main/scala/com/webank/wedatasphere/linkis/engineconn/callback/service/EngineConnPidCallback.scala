@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.callback.service
+package org.apache.linkis.engineconn.callback.service
 
 import java.lang.management.ManagementFactory
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
-import com.webank.wedatasphere.linkis.governance.common.protocol.task.ResponseEngineConnPid
-import com.webank.wedatasphere.linkis.rpc.Sender
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.engineconn.core.EngineConnObject
+import org.apache.linkis.governance.common.protocol.task.ResponseEngineConnPid
+import org.apache.linkis.rpc.Sender
 
 
 class EngineConnPidCallback(emInstance: ServiceInstance) extends AbstractEngineConnStartUpCallback(emInstance) {

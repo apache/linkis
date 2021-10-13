@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.query.cache;
+package org.apache.linkis.protocol.query.cache;
 
 public class FailedToDeleteCache implements ResponseDeleteCache {
     private String errorMessage;

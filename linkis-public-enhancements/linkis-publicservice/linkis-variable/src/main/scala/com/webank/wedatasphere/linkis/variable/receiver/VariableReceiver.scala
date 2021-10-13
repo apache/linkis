@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.variable.receiver
+package org.apache.linkis.variable.receiver
 
-import com.webank.wedatasphere.linkis.protocol.variable.{RequestQueryAppVariable, RequestQueryGlobalVariable}
-import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
-import com.webank.wedatasphere.linkis.variable.service.VariableService
+import org.apache.linkis.protocol.variable.{RequestQueryAppVariable, RequestQueryGlobalVariable}
+import org.apache.linkis.rpc.{Receiver, Sender}
+import org.apache.linkis.variable.service.VariableService
 
 import scala.concurrent.duration.Duration
 

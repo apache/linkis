@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.parser;
+package org.apache.linkis.cs.server.parser;
 
-import com.webank.wedatasphere.linkis.cs.common.annotation.KeywordMethod;
-import com.webank.wedatasphere.linkis.cs.server.conf.ContextServerConf;
+import org.apache.linkis.cs.common.annotation.KeywordMethod;
+import org.apache.linkis.cs.server.conf.ContextServerConf;
 import org.apache.commons.lang.StringUtils;
 import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;

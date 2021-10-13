@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.springcloud.websocket
+package org.apache.linkis.gateway.springcloud.websocket
 
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
-import com.webank.wedatasphere.linkis.gateway.security.SecurityHook
+import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.security.SecurityHook
 import org.springframework.stereotype.Component
 
 @Component

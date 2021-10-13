@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.server.security
+package org.apache.linkis.server.security
 
 import java.util
 import java.util.concurrent.TimeUnit
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration
-import com.webank.wedatasphere.linkis.common.utils.{Logging, RSAUtils, Utils}
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
-import com.webank.wedatasphere.linkis.server.exception.{IllegalUserTicketException, LoginExpireException, NonLoginException}
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.utils.{Logging, RSAUtils, Utils}
+import org.apache.linkis.server.conf.ServerConfiguration
+import org.apache.linkis.server.exception.{IllegalUserTicketException, LoginExpireException, NonLoginException}
 import javax.servlet.http.Cookie
 import org.apache.commons.lang.time.DateFormatUtils
 

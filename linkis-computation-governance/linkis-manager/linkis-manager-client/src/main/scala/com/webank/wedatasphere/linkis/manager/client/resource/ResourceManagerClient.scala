@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.client.resource
+package org.apache.linkis.manager.client.resource
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.common.entity.node.EMNode
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineInstanceLabel
-import com.webank.wedatasphere.linkis.resourcemanager._
-import com.webank.wedatasphere.linkis.resourcemanager.exception.RMErrorException
-import com.webank.wedatasphere.linkis.resourcemanager.utils.RMConfiguration
-import com.webank.wedatasphere.linkis.rpc.Sender
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.common.entity.node.EMNode
+import org.apache.linkis.manager.common.entity.resource.NodeResource
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
+import org.apache.linkis.resourcemanager._
+import org.apache.linkis.resourcemanager.exception.RMErrorException
+import org.apache.linkis.resourcemanager.utils.RMConfiguration
+import org.apache.linkis.rpc.Sender
 import javax.annotation.PostConstruct
 import org.springframework.stereotype.Component
 

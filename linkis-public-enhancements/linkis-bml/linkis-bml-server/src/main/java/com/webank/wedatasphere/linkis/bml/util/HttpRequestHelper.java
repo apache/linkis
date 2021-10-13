@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.util;
+package org.apache.linkis.bml.util;
 
 import org.apache.commons.lang.StringUtils;
 

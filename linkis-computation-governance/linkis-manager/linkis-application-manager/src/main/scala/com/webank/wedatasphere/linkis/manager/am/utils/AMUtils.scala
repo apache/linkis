@@ -16,19 +16,19 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.utils
+package org.apache.linkis.manager.am.utils
 
 import java.{lang, util}
 
 import com.google.gson.{Gson, JsonObject}
-import com.webank.wedatasphere.linkis.manager.am.vo.{AMEngineNodeVo, EMNodeVo}
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
-import com.webank.wedatasphere.linkis.manager.common.entity.node.{EMNode, EngineNode}
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.{DriverAndYarnResource, LoadInstanceResource, Resource, ResourceSerializer, ResourceType}
-import com.webank.wedatasphere.linkis.manager.common.serializer.NodeResourceSerializer
-import com.webank.wedatasphere.linkis.manager.common.utils.ResourceUtils
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
+import org.apache.linkis.manager.am.vo.{AMEngineNodeVo, EMNodeVo}
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
+import org.apache.linkis.manager.common.entity.resource.{DriverAndYarnResource, LoadInstanceResource, Resource, ResourceSerializer, ResourceType}
+import org.apache.linkis.manager.common.serializer.NodeResourceSerializer
+import org.apache.linkis.manager.common.utils.ResourceUtils
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.server.BDPJettyServerHelper
 import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization.write
 

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.exception
+package org.apache.linkis.scheduler.exception
 
-import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
+import org.apache.linkis.common.exception.LinkisRetryException
 
 class LinkisJobRetryException(desc: String) extends LinkisRetryException(LinkisJobRetryException.JOB_RETRY_ERROR_CODE, desc)
 object LinkisJobRetryException {

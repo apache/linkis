@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.udf.dao;
+package org.apache.linkis.udf.dao;
 
-import com.webank.wedatasphere.linkis.udf.entity.UDFInfo;
-import com.webank.wedatasphere.linkis.udf.entity.UDFManager;
+import org.apache.linkis.udf.entity.UDFInfo;
+import org.apache.linkis.udf.entity.UDFManager;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Collection;

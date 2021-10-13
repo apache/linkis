@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.contextcache.metric;
+package org.apache.linkis.cs.contextcache.metric;
 
 public interface Metrtic {
 }

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.report
+package org.apache.linkis.ecm.server.report
 
-import com.webank.wedatasphere.linkis.ecm.core.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.ecm.core.report.ECMHealthReport
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
-import com.webank.wedatasphere.linkis.manager.common.entity.metrics.NodeOverLoadInfo
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.Resource
+import org.apache.linkis.ecm.core.engineconn.EngineConn
+import org.apache.linkis.ecm.core.report.ECMHealthReport
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.entity.metrics.NodeOverLoadInfo
+import org.apache.linkis.manager.common.entity.resource.Resource
 
 
 class DefaultECMHealthReport extends ECMHealthReport {

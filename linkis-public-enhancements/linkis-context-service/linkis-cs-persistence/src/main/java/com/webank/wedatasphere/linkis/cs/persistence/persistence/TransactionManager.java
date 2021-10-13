@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.persistence;
+package org.apache.linkis.cs.persistence.persistence;
 
 
 public interface TransactionManager {

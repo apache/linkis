@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.entity;
+package org.apache.linkis.cs.persistence.entity;
 
 import java.util.ArrayList;
 import java.util.List;

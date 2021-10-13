@@ -19,7 +19,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 
-<mapper namespace="com.webank.wedatasphere.linkis.manager.dao.NodeMetricManagerMapper">
+<mapper namespace="org.apache.linkis.manager.dao.NodeMetricManagerMapper">
 
     <!-- 增 -->
 <!--    <sql id="addNodeMetrics">-->
@@ -27,7 +27,7 @@
 <!--    </sql>-->
 
 <!--    <insert id="addNodeMetrics" useGeneratedKeys="true" keyProperty="id"-->
-<!--            parameterType="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNodeMetrics">-->
+<!--            parameterType="org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetrics">-->
 <!--        INSERT INTO  linkis_cg_manager_service_instance_metrics(<include refid="addNodeMetrics"/>)-->
 <!--        VALUES (#{serviceInstanceId},#{status},#{overload},#{heartBeatMsg},#{healthy},#{serviceInstance},#{updateTime},#{createTime})-->
 <!--    </insert>-->
@@ -40,7 +40,7 @@
 
     <!-- 获取 -->
 <!--    <resultMap id="PersistenceNodeMetrics"-->
-<!--               type="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNodeMetrics">-->
+<!--               type="org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetrics">-->
 <!--        <id column="service_instance_id" property="serviceInstanceId"/>-->
 <!--        <id column="status" property="status"/>-->
 <!--        <id column="overLoad" property="overLoad"/>-->
@@ -59,7 +59,7 @@
 
     <!-- 更新 -->
 <!--    <update id="updateNodeMetrics"-->
-<!--            parameterType="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNodeMetrics">-->
+<!--            parameterType="org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetrics">-->
 <!--        UPDATE  linkis_cg_manager_service_instance_metrics-->
 <!--        <trim prefix="set" suffixOverrides=",">-->
 <!--            <if test="service_instance_id != null">`service_instance_id` = #{serviceInstanceId},</if>-->

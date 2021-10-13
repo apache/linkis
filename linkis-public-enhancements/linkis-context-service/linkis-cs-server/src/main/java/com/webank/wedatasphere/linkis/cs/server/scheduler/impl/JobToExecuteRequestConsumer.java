@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.scheduler.impl;
+package org.apache.linkis.cs.server.scheduler.impl;
 
 import java.util.function.Consumer;
 

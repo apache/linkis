@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.cs
+package org.apache.linkis.engineplugin.spark.cs
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.cs.client.utils.ContextServiceUtils
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.engineplugin.spark.extension.SparkPreExecutionHook
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.cs.client.utils.ContextServiceUtils
+import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.engineplugin.spark.extension.SparkPreExecutionHook
 import javax.annotation.PostConstruct
 import org.springframework.stereotype.Component
 

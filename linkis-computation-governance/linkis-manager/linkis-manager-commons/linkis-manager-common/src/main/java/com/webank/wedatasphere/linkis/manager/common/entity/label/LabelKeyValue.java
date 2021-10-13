@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.entity.label;
+package org.apache.linkis.manager.common.entity.label;
 
 
 public class LabelKeyValue {

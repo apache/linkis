@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.cs.contextcache.cache.csid.impl;
+package org.apache.linkis.cs.contextcache.cache.csid.impl;
 
-import com.webank.wedatasphere.linkis.common.listener.Event;
-import com.webank.wedatasphere.linkis.cs.contextcache.cache.csid.ContextIDValue;
-import com.webank.wedatasphere.linkis.cs.contextcache.cache.cskey.ContextKeyValueContext;
-import com.webank.wedatasphere.linkis.cs.contextcache.metric.ContextIDMetric;
-import com.webank.wedatasphere.linkis.cs.contextcache.metric.DefaultContextIDMetric;
-import com.webank.wedatasphere.linkis.cs.contextcache.metric.SizeEstimator;
-import com.webank.wedatasphere.linkis.cs.listener.CSKeyListener;
-import com.webank.wedatasphere.linkis.cs.listener.event.ContextKeyEvent;
-import com.webank.wedatasphere.linkis.cs.listener.event.impl.DefaultContextKeyEvent;
+import org.apache.linkis.common.listener.Event;
+import org.apache.linkis.cs.contextcache.cache.csid.ContextIDValue;
+import org.apache.linkis.cs.contextcache.cache.cskey.ContextKeyValueContext;
+import org.apache.linkis.cs.contextcache.metric.ContextIDMetric;
+import org.apache.linkis.cs.contextcache.metric.DefaultContextIDMetric;
+import org.apache.linkis.cs.contextcache.metric.SizeEstimator;
+import org.apache.linkis.cs.listener.CSKeyListener;
+import org.apache.linkis.cs.listener.event.ContextKeyEvent;
+import org.apache.linkis.cs.listener.event.impl.DefaultContextKeyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.webank.wedatasphere.linkis.cs.listener.event.enumeration.OperateType.*;
+import static org.apache.linkis.cs.listener.event.enumeration.OperateType.*;
 
 
 public class ContextIDValueImpl implements ContextIDValue, CSKeyListener {

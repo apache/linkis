@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.listener.manager;
+package org.apache.linkis.cs.listener.manager;
 
-import com.webank.wedatasphere.linkis.cs.listener.ListenerBus.ContextAsyncListenerBus;
-import com.webank.wedatasphere.linkis.cs.listener.callback.imp.DefaultContextIDCallbackEngine;
-import com.webank.wedatasphere.linkis.cs.listener.callback.imp.DefaultContextKeyCallbackEngine;
+import org.apache.linkis.cs.listener.ListenerBus.ContextAsyncListenerBus;
+import org.apache.linkis.cs.listener.callback.imp.DefaultContextIDCallbackEngine;
+import org.apache.linkis.cs.listener.callback.imp.DefaultContextKeyCallbackEngine;
 
 
 public interface ListenerManager {

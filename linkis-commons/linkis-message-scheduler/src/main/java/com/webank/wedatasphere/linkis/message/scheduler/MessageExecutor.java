@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.scheduler;
+package org.apache.linkis.message.scheduler;
 
-import com.webank.wedatasphere.linkis.message.builder.MessageJob;
+import org.apache.linkis.message.builder.MessageJob;
 
 import java.util.concurrent.ExecutorService;
 

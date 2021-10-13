@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.bml.hook
+package org.apache.linkis.bml.hook
 
 case class ResourceVersion(resourceId:String, version:String)
 

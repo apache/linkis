@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.hive.config;
+package org.apache.linkis.metadata.hive.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf;
-import com.webank.wedatasphere.linkis.metadata.util.DWSConfig;
-import com.webank.wedatasphere.linkis.metadata.util.HiveUtils;
+import org.apache.linkis.hadoop.common.conf.HadoopConf;
+import org.apache.linkis.metadata.util.DWSConfig;
+import org.apache.linkis.metadata.util.HiveUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

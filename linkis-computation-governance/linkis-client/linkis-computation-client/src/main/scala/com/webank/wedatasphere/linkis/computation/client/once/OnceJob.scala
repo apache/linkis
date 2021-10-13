@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client.once
+package org.apache.linkis.computation.client.once
 
-import com.webank.wedatasphere.linkis.computation.client.job.{AbstractLinkisJob, SubmittableLinkisJob}
+import org.apache.linkis.computation.client.job.{AbstractLinkisJob, SubmittableLinkisJob}
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.computation.client.once.action.{GetEngineConnAction, KillEngineConnAction}
-import com.webank.wedatasphere.linkis.computation.client.once.simple.SimpleOnceJob
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.computation.client.once.action.{GetEngineConnAction, KillEngineConnAction}
+import org.apache.linkis.computation.client.once.simple.SimpleOnceJob
 
 
 trait OnceJob extends AbstractLinkisJob {

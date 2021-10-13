@@ -15,7 +15,7 @@
  */
 
 
-package com.webank.wedatasphere.linkis.protocol.message;
+package org.apache.linkis.protocol.message;
 
 
 public interface RequestMethod {

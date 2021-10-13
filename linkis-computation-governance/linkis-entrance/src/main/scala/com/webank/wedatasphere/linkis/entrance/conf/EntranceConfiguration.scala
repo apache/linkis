@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.conf
+package org.apache.linkis.entrance.conf
 
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.linkis.common.conf.{CommonVars, TimeType}
 
 
 object EntranceConfiguration {
@@ -98,10 +98,10 @@ object EntranceConfiguration {
 
   val HIVE_STAGE_NAME = CommonVars("wds.linkis.hive.stage.name", "Stage-")
 
-  val SPARK_SPECIAL_LOG_INCLUDE = CommonVars("wds.linkis.spark.special.log.include", "com.webank.wedatasphere.linkis.engine.spark.utils.JobProgressUtil")
+  val SPARK_SPECIAL_LOG_INCLUDE = CommonVars("wds.linkis.spark.special.log.include", "org.apache.linkis.engine.spark.utils.JobProgressUtil")
 
 
-  val SPARK_PROGRESS_NAME = CommonVars("wds.linkis.spark.progress.name", "com.webank.wedatasphere.linkis.engine.spark.utils.JobProgressUtil$")
+  val SPARK_PROGRESS_NAME = CommonVars("wds.linkis.spark.progress.name", "org.apache.linkis.engine.spark.utils.JobProgressUtil$")
 
   val END_FLAG = CommonVars("bdp.dataworkcloud.entrance.end.flag", "info -")
 

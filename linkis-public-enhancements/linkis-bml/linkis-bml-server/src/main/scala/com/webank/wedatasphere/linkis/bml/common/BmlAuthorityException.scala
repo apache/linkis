@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.common
+package org.apache.linkis.bml.common
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 case class BmlAuthorityException() extends ErrorException(60036, "Store cannot be accessed without login or expired login(未登录或登录过期，无法访问物料库)")
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.builder;
+package org.apache.linkis.cs.client.builder;
 
-import com.webank.wedatasphere.linkis.cs.client.ContextClient;
-import com.webank.wedatasphere.linkis.cs.client.http.HttpContextClient;
+import org.apache.linkis.cs.client.ContextClient;
+import org.apache.linkis.cs.client.http.HttpContextClient;
 
 public class ContextClientFactory {
 

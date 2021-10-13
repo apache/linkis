@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence;
+package org.apache.linkis.cs.persistence;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.ExtraFieldClass;
+import org.apache.linkis.cs.persistence.entity.ExtraFieldClass;
 
 import java.util.List;
 

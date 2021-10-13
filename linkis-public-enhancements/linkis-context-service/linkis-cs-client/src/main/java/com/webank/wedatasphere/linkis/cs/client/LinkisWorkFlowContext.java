@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client;
+package org.apache.linkis.cs.client;
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.cs.client.listener.ContextIDListener;
-import com.webank.wedatasphere.linkis.cs.client.listener.ContextKeyListener;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextScope;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.*;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.cs.client.listener.ContextIDListener;
+import org.apache.linkis.cs.client.listener.ContextKeyListener;
+import org.apache.linkis.cs.common.entity.enumeration.ContextScope;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.source.*;
 
 import java.util.List;
 import java.util.Map;

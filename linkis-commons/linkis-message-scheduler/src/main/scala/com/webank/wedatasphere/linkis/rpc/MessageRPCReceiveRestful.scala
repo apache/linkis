@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc
+package org.apache.linkis.rpc
 
 import java.util.concurrent.TimeUnit
 
-import com.webank.wedatasphere.linkis.message.conf.MessageSchedulerConf._
-import com.webank.wedatasphere.linkis.rpc.exception.DWCURIException
-import com.webank.wedatasphere.linkis.rpc.transform.{RPCConsumer, RPCProduct}
-import com.webank.wedatasphere.linkis.server.{Message, catchIt}
+import org.apache.linkis.message.conf.MessageSchedulerConf._
+import org.apache.linkis.rpc.exception.DWCURIException
+import org.apache.linkis.rpc.transform.{RPCConsumer, RPCProduct}
+import org.apache.linkis.server.{Message, catchIt}
 import javax.annotation.PostConstruct
 import javax.servlet.http.HttpServletRequest
 import org.apache.commons.lang.StringUtils

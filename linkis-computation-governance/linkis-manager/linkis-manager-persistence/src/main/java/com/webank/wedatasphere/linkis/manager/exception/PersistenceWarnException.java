@@ -1,6 +1,6 @@
-package com.webank.wedatasphere.linkis.manager.exception;
+package org.apache.linkis.manager.exception;
 
-import com.webank.wedatasphere.linkis.common.exception.WarnException;
+import org.apache.linkis.common.exception.WarnException;
 
 
 public class PersistenceWarnException extends WarnException {

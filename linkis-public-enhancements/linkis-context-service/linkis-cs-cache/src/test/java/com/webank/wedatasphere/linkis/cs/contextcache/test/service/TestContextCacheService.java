@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.contextcache.test.service;
+package org.apache.linkis.cs.contextcache.test.service;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextValue;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.contextcache.ContextCacheService;
-import com.webank.wedatasphere.linkis.cs.contextcache.test.csid.TestContextID;
-import com.webank.wedatasphere.linkis.cs.contextcache.test.keyword.TestContextKey;
-import com.webank.wedatasphere.linkis.cs.contextcache.test.keyword.TestContextKeyValue;
-import com.webank.wedatasphere.linkis.cs.contextcache.test.keyword.TestContextValue;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.source.ContextKey;
+import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
+import org.apache.linkis.cs.common.entity.source.ContextValue;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.contextcache.ContextCacheService;
+import org.apache.linkis.cs.contextcache.test.csid.TestContextID;
+import org.apache.linkis.cs.contextcache.test.keyword.TestContextKey;
+import org.apache.linkis.cs.contextcache.test.keyword.TestContextKeyValue;
+import org.apache.linkis.cs.contextcache.test.keyword.TestContextValue;
 import org.junit.Before;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -42,7 +42,7 @@ public class TestContextCacheService {
 
     @Before
     public void generateData() throws CSErrorException {
-        context = new AnnotationConfigApplicationContext("com.webank.wedatasphere.linkis.cs","com.webank.wedatasphere.linkis.mybatis");
+        context = new AnnotationConfigApplicationContext("org.apache.linkis.cs","org.apache.linkis.mybatis");
         System.out.println("ioc容器加载完成");
         contextCacheService = context.getBean(ContextCacheService.class);
        /* ContextPersistenceManager persistenceManager = context.getBean(ContextPersistenceManager.class);

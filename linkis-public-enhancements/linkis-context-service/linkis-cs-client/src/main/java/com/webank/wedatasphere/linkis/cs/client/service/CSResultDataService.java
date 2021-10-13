@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.service;
+package org.apache.linkis.cs.client.service;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.data.CSResultData;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.entity.data.CSResultData;
+import org.apache.linkis.cs.common.exception.CSErrorException;
 
 import java.util.List;
 

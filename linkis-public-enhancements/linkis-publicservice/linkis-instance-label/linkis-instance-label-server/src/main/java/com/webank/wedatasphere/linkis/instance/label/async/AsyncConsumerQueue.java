@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.async;
+package org.apache.linkis.instance.label.async;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;

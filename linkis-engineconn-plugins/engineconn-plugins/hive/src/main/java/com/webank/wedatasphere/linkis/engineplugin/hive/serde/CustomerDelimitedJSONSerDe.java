@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.hive.serde;
+package org.apache.linkis.engineplugin.hive.serde;
 
 
 import org.apache.commons.codec.binary.Base64;

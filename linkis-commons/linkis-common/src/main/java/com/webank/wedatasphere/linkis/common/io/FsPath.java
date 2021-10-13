@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.io;
+package org.apache.linkis.common.io;
 
 import org.apache.commons.lang.StringUtils;
 

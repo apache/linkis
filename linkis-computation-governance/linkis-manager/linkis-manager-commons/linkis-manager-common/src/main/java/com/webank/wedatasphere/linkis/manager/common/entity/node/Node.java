@@ -16,11 +16,11 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.entity.node;
+package org.apache.linkis.manager.common.entity.node;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus;
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
+import org.apache.linkis.protocol.message.RequestProtocol;
 
 
 public interface Node extends RequestProtocol {

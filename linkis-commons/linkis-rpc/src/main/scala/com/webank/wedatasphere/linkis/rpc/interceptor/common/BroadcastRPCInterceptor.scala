@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.interceptor.common
+package org.apache.linkis.rpc.interceptor.common
 
 import java.util.concurrent.atomic.AtomicInteger
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.protocol.BroadcastProtocol
-import com.webank.wedatasphere.linkis.rpc.conf.RPCConfiguration
-import com.webank.wedatasphere.linkis.rpc.interceptor.{RPCInterceptor, RPCInterceptorChain, RPCInterceptorExchange}
-import com.webank.wedatasphere.linkis.rpc.sender.SpringMVCRPCSender
-import com.webank.wedatasphere.linkis.rpc.{BaseRPCSender, RPCSpringBeanCache, Sender}
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.protocol.BroadcastProtocol
+import org.apache.linkis.rpc.conf.RPCConfiguration
+import org.apache.linkis.rpc.interceptor.{RPCInterceptor, RPCInterceptorChain, RPCInterceptorExchange}
+import org.apache.linkis.rpc.sender.SpringMVCRPCSender
+import org.apache.linkis.rpc.{BaseRPCSender, RPCSpringBeanCache, Sender}
 import org.springframework.stereotype.Component
 
 import scala.concurrent.Future

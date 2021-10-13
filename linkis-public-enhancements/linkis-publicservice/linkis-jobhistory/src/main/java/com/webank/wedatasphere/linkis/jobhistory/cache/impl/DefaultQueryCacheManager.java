@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.cache.impl;
+package org.apache.linkis.jobhistory.cache.impl;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Maps;
-import com.webank.wedatasphere.linkis.jobhistory.cache.QueryCacheManager;
-import com.webank.wedatasphere.linkis.jobhistory.util.QueryConfig;
+import org.apache.linkis.jobhistory.cache.QueryCacheManager;
+import org.apache.linkis.jobhistory.util.QueryConfig;
 import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

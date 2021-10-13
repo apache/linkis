@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.callback.service
+package org.apache.linkis.engineconn.callback.service
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
+import org.apache.linkis.common.ServiceInstance
 
 class EngineConnAfterStartCallback(emInstance: ServiceInstance) extends AbstractEngineConnStartUpCallback(emInstance) {
 

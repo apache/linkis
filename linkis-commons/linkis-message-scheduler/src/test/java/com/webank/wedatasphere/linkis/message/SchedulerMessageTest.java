@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message;
+package org.apache.linkis.message;
 
-import com.webank.wedatasphere.linkis.message.annotation.Receiver;
-import com.webank.wedatasphere.linkis.message.builder.MessageJob;
-import com.webank.wedatasphere.linkis.message.conf.MessageSchedulerConf;
-import com.webank.wedatasphere.linkis.message.context.AbstractMessageSchedulerContext;
-import com.webank.wedatasphere.linkis.message.context.DefaultMessageSchedulerContext;
-import com.webank.wedatasphere.linkis.message.parser.ImplicitMethod;
-import com.webank.wedatasphere.linkis.message.parser.ServiceMethod;
-import com.webank.wedatasphere.linkis.message.registry.AbstractImplicitRegistry;
-import com.webank.wedatasphere.linkis.message.registry.AbstractServiceRegistry;
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
+import org.apache.linkis.message.annotation.Receiver;
+import org.apache.linkis.message.builder.MessageJob;
+import org.apache.linkis.message.conf.MessageSchedulerConf;
+import org.apache.linkis.message.context.AbstractMessageSchedulerContext;
+import org.apache.linkis.message.context.DefaultMessageSchedulerContext;
+import org.apache.linkis.message.parser.ImplicitMethod;
+import org.apache.linkis.message.parser.ServiceMethod;
+import org.apache.linkis.message.registry.AbstractImplicitRegistry;
+import org.apache.linkis.message.registry.AbstractServiceRegistry;
+import org.apache.linkis.protocol.message.RequestProtocol;
 import org.junit.Before;
 import org.junit.Test;
 import org.reflections.Reflections;

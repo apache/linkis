@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.protocol.engine;
+package org.apache.linkis.manager.common.protocol.engine;
 
 
 public enum EngineLockType {

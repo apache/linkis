@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.utils
+package org.apache.linkis.resourcemanager.utils
 
-import com.webank.wedatasphere.linkis.common.conf.{ByteType, CommonVars, TimeType}
+import org.apache.linkis.common.conf.{ByteType, CommonVars, TimeType}
 
 
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.entity;
+package org.apache.linkis.manager.label.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils;
+import org.apache.linkis.manager.label.utils.LabelUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

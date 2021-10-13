@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.engine
+package org.apache.linkis.protocol.engine
 
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.protocol.message.RequestProtocol
 
 case class RequestUserEngineKill(ticketId: String, creator: String, user: String, properties: Map[String, String]) extends RequestProtocol
 case class ResponseUserEngineKill(ticketId: String, status: String, message: String)

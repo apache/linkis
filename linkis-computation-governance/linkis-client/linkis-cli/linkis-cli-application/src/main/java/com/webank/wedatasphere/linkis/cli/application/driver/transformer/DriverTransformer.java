@@ -11,13 +11,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.driver.transformer;
+package org.apache.linkis.cli.application.driver.transformer;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobExec;
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobStatus;
-import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
-import com.webank.wedatasphere.linkis.cli.core.presenter.model.JobExecModel;
-import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult;
+import org.apache.linkis.cli.common.entity.execution.jobexec.JobExec;
+import org.apache.linkis.cli.common.entity.execution.jobexec.JobStatus;
+import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
+import org.apache.linkis.cli.core.presenter.model.JobExecModel;
+import org.apache.linkis.httpclient.dws.response.DWSResult;
 
 import java.util.LinkedHashMap;
 import java.util.List;

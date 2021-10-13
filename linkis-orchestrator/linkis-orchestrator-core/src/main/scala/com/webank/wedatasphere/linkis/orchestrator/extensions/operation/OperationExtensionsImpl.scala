@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.extensions.operation
+package org.apache.linkis.orchestrator.extensions.operation
 
-import com.webank.wedatasphere.linkis.orchestrator.OrchestratorSession
-import com.webank.wedatasphere.linkis.orchestrator.extensions.OperationExtensions
-import com.webank.wedatasphere.linkis.orchestrator.extensions.operation.Operation.OperationBuilder
+import org.apache.linkis.orchestrator.OrchestratorSession
+import org.apache.linkis.orchestrator.extensions.OperationExtensions
+import org.apache.linkis.orchestrator.extensions.operation.Operation.OperationBuilder
 
 import scala.collection.mutable.ArrayBuffer
 

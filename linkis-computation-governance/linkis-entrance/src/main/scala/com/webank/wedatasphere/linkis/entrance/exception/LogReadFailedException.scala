@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.exception
+package org.apache.linkis.entrance.exception
 
 
 class LogReadFailedException(message: String, throwable: Throwable) extends RuntimeException(message, throwable) {

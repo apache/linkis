@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.entity
+package org.apache.linkis.manager.engineplugin.common.loader.entity
 
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 
 
 case class EngineConnPluginInfo(typeLabel: EngineTypeLabel,

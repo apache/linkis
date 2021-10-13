@@ -15,11 +15,11 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.operation.log
+package org.apache.linkis.orchestrator.computation.operation.log
 
 import java.io.Closeable
 
-import com.webank.wedatasphere.linkis.orchestrator.Orchestration
+import org.apache.linkis.orchestrator.Orchestration
 
 import scala.collection.mutable.ArrayBuffer
 

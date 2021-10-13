@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.exception;
+package org.apache.linkis.manager.am.exception;
 
 
 

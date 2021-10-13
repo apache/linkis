@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.configuration.receiver
+package org.apache.linkis.configuration.receiver
 
-import com.webank.wedatasphere.linkis.configuration.service.ConfigurationService
-import com.webank.wedatasphere.linkis.governance.common.protocol.conf.{RequestConfigByLabel, RequestQueryEngineConfig, RequestQueryEngineTypeDefault, RequestQueryGlobalConfig}
-import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
+import org.apache.linkis.configuration.service.ConfigurationService
+import org.apache.linkis.governance.common.protocol.conf.{RequestConfigByLabel, RequestQueryEngineConfig, RequestQueryEngineTypeDefault, RequestQueryGlobalConfig}
+import org.apache.linkis.rpc.{Receiver, Sender}
 
 import scala.concurrent.duration.Duration
 

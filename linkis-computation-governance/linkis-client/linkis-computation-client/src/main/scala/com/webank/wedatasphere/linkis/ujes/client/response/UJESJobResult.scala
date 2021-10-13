@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.client.response
+package org.apache.linkis.ujes.client.response
 
-import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
-import com.webank.wedatasphere.linkis.ujes.client.request.UserAction
+import org.apache.linkis.httpclient.dws.response.DWSResult
+import org.apache.linkis.ujes.client.request.UserAction
 
 trait UJESJobResult extends DWSResult with UserAction {
 

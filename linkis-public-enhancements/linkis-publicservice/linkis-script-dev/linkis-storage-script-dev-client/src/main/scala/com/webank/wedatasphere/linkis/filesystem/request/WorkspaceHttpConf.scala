@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.request
+package org.apache.linkis.filesystem.request
 
-import com.webank.wedatasphere.linkis.httpclient.authentication.AuthenticationStrategy
-import com.webank.wedatasphere.linkis.httpclient.config.ClientConfig
-import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
-import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig
+import org.apache.linkis.httpclient.authentication.AuthenticationStrategy
+import org.apache.linkis.httpclient.config.ClientConfig
+import org.apache.linkis.httpclient.dws.DWSHttpClient
+import org.apache.linkis.httpclient.dws.config.DWSClientConfig
 import org.slf4j.{Logger, LoggerFactory}
 
 trait WorkspaceHttpConf {

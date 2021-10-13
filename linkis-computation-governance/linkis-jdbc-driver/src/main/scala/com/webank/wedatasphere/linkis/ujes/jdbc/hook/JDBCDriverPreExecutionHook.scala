@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.ujes.jdbc.hook
+package org.apache.linkis.ujes.jdbc.hook
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.utils.{Logging, Utils}
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -31,7 +31,7 @@ object JDBCDriverPreExecutionHook extends Logging{
 
   private val preExecutionHooks:Array[JDBCDriverPreExecutionHook] = {
     val hooks = new ArrayBuffer[JDBCDriverPreExecutionHook]()
-    CommonVars("wds.linkis.jdbc.pre.hook.class", "com.webank.wedatasphere.linkis.ujes.jdbc.hook.impl.TableauPreExecutionHook").getValue.split(",") foreach {
+    CommonVars("wds.linkis.jdbc.pre.hook.class", "org.apache.linkis.ujes.jdbc.hook.impl.TableauPreExecutionHook").getValue.split(",") foreach {
       hookStr => Utils.tryCatch{
         val clazz = Class.forName(hookStr.trim)
         val obj = clazz.newInstance()

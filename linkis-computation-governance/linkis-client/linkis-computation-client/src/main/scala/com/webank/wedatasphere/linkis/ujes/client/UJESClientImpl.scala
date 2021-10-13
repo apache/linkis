@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.client
-import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
-import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig
-import com.webank.wedatasphere.linkis.httpclient.request.Action
-import com.webank.wedatasphere.linkis.httpclient.response.Result
-import com.webank.wedatasphere.linkis.ujes.client.request.UJESJobAction
+package org.apache.linkis.ujes.client
+import org.apache.linkis.httpclient.dws.DWSHttpClient
+import org.apache.linkis.httpclient.dws.config.DWSClientConfig
+import org.apache.linkis.httpclient.request.Action
+import org.apache.linkis.httpclient.response.Result
+import org.apache.linkis.ujes.client.request.UJESJobAction
 
 class UJESClientImpl(clientConfig: DWSClientConfig) extends UJESClient {
   private val dwsHttpClient = new DWSHttpClient(clientConfig, "UJES-Job-Execution-Thread")

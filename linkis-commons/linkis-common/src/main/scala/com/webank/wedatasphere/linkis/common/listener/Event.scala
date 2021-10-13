@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.listener
+package org.apache.linkis.common.listener
 
 
 trait Event

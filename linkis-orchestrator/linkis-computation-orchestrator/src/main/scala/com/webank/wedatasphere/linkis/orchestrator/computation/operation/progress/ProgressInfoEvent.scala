@@ -15,10 +15,10 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.operation.progress
+package org.apache.linkis.orchestrator.computation.operation.progress
 
-import com.webank.wedatasphere.linkis.orchestrator.Orchestration
-import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.orchestrator.Orchestration
+import org.apache.linkis.protocol.engine.JobProgressInfo
 
 
 case class ProgressInfoEvent(orchestration: Orchestration,

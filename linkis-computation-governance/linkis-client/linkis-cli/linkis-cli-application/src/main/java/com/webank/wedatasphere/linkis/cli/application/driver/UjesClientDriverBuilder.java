@@ -11,19 +11,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.driver;
+package org.apache.linkis.cli.application.driver;
 
-import com.webank.wedatasphere.linkis.cli.application.constants.LinkisClientKeys;
-import com.webank.wedatasphere.linkis.cli.application.constants.LinkisConstants;
-import com.webank.wedatasphere.linkis.cli.application.driver.context.UjesClientDriverContext;
-import com.webank.wedatasphere.linkis.cli.application.interactor.validate.UjesContextValidator;
-import com.webank.wedatasphere.linkis.cli.application.utils.Utils;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.builder.BuildableByVarAccess;
-import com.webank.wedatasphere.linkis.cli.core.exception.BuilderException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.interactor.validate.Validator;
-import com.webank.wedatasphere.linkis.cli.core.interactor.var.VarAccess;
+import org.apache.linkis.cli.application.constants.LinkisClientKeys;
+import org.apache.linkis.cli.application.constants.LinkisConstants;
+import org.apache.linkis.cli.application.driver.context.UjesClientDriverContext;
+import org.apache.linkis.cli.application.interactor.validate.UjesContextValidator;
+import org.apache.linkis.cli.application.utils.Utils;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.builder.BuildableByVarAccess;
+import org.apache.linkis.cli.core.exception.BuilderException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.validate.Validator;
+import org.apache.linkis.cli.core.interactor.var.VarAccess;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

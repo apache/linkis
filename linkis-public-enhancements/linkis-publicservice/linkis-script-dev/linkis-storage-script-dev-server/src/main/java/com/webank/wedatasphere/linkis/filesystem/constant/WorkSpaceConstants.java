@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.constant;
+package org.apache.linkis.filesystem.constant;
 
 public class WorkSpaceConstants {
     public static final String XLSX_RESPONSE_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";

@@ -15,10 +15,10 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.catalyst.parser.label
+package org.apache.linkis.orchestrator.computation.catalyst.parser.label
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.orchestrator.plans.ast.{ASTContext, ASTOrchestration}
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.orchestrator.plans.ast.{ASTContext, ASTOrchestration}
 
 trait ParserLabelFiller {
 

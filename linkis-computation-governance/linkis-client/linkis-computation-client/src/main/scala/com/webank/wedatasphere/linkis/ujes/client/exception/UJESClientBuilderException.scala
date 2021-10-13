@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.client.exception
+package org.apache.linkis.ujes.client.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 class UJESClientBuilderException(errorDesc: String) extends ErrorException(47000, errorDesc)
 class UJESJobException(errorCode: Int, errorDesc: String) extends ErrorException(errorCode, errorDesc) {

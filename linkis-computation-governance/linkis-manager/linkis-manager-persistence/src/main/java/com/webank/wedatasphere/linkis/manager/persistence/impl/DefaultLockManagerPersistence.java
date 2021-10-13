@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.manager.persistence.impl;
+package org.apache.linkis.manager.persistence.impl;
 /*
  * Copyright 2019 WeBank
  *
@@ -14,9 +14,9 @@ package com.webank.wedatasphere.linkis.manager.persistence.impl;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLock;
-import com.webank.wedatasphere.linkis.manager.dao.LockManagerMapper;
-import com.webank.wedatasphere.linkis.manager.persistence.LockManagerPersistence;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLock;
+import org.apache.linkis.manager.dao.LockManagerMapper;
+import org.apache.linkis.manager.persistence.LockManagerPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;

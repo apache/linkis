@@ -11,15 +11,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.common.entity.context;
+package org.apache.linkis.cli.common.entity.context;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdType;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.Params;
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.executor.Executor;
-import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
-import com.webank.wedatasphere.linkis.cli.common.entity.properties.ClientProperties;
-import com.webank.wedatasphere.linkis.cli.common.entity.version.ClientVersionInformation;
+import org.apache.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.common.entity.command.CmdType;
+import org.apache.linkis.cli.common.entity.command.Params;
+import org.apache.linkis.cli.common.entity.execution.executor.Executor;
+import org.apache.linkis.cli.common.entity.job.Job;
+import org.apache.linkis.cli.common.entity.properties.ClientProperties;
+import org.apache.linkis.cli.common.entity.version.ClientVersionInformation;
 
 import java.util.List;
 import java.util.Map;

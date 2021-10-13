@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.protocol;
+package org.apache.linkis.resourcemanager.protocol;
 
 public class TimeoutEMEngineResponse {
     private String ticketId;

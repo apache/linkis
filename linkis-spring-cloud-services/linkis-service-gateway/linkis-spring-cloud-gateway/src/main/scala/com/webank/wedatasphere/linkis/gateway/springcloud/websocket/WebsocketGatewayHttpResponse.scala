@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.springcloud.websocket
+package org.apache.linkis.gateway.springcloud.websocket
 
-import com.webank.wedatasphere.linkis.gateway.http.GatewayHttpResponse
+import org.apache.linkis.gateway.http.GatewayHttpResponse
 import javax.servlet.http.Cookie
 
 class WebsocketGatewayHttpResponse extends GatewayHttpResponse {

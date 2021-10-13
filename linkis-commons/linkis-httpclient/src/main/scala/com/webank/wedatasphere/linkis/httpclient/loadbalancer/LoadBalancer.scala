@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.loadbalancer
+package org.apache.linkis.httpclient.loadbalancer
 
 
 trait LoadBalancer {

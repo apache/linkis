@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.springcloud.websocket
+package org.apache.linkis.gateway.springcloud.websocket
 
 import java.net.InetSocketAddress
 import java.util
 import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, Configuration, TimeType}
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.gateway.http.BaseGatewayContext
-import com.webank.wedatasphere.linkis.gateway.springcloud.http.SpringCloudGatewayHttpRequest
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.gateway.http.BaseGatewayContext
+import org.apache.linkis.gateway.springcloud.http.SpringCloudGatewayHttpRequest
 import org.springframework.cloud.gateway.filter.WebsocketRoutingFilter
 import org.springframework.cloud.gateway.filter.headers.HttpHeadersFilter
 import org.springframework.core.io.buffer.DataBufferFactory

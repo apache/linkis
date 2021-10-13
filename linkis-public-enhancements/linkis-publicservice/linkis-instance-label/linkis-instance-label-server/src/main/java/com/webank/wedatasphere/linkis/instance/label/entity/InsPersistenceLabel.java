@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.entity;
+package org.apache.linkis.instance.label.entity;
 
-import com.webank.wedatasphere.linkis.manager.label.entity.GenericLabel;
+import org.apache.linkis.manager.label.entity.GenericLabel;
 
 import java.util.Date;
 

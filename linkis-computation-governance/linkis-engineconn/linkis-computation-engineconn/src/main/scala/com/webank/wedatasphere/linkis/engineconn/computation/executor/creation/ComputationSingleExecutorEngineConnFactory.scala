@@ -16,14 +16,14 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.engineconn.computation.executor.creation
+package org.apache.linkis.engineconn.computation.executor.creation
 
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.ComputationExecutor
-import com.webank.wedatasphere.linkis.engineconn.core.creation.{AbstractCodeLanguageLabelExecutorFactory, AbstractExecutorFactory}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.SingleLabelExecutorEngineConnFactory
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.common.engineconn.EngineConn
+import org.apache.linkis.engineconn.computation.executor.execute.ComputationExecutor
+import org.apache.linkis.engineconn.core.creation.{AbstractCodeLanguageLabelExecutorFactory, AbstractExecutorFactory}
+import org.apache.linkis.manager.engineplugin.common.creation.SingleLabelExecutorEngineConnFactory
+import org.apache.linkis.manager.label.entity.Label
 
 
 trait ComputationSingleExecutorEngineConnFactory

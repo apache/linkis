@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.cache.domain;
+package org.apache.linkis.jobhistory.cache.domain;
 
 public class TaskResult {
 

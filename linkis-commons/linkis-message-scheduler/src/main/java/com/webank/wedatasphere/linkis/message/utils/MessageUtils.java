@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.utils;
+package org.apache.linkis.message.utils;
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
-import com.webank.wedatasphere.linkis.message.parser.ServiceMethod;
-import com.webank.wedatasphere.linkis.message.scheduler.MethodExecuteWrapper;
+import org.apache.linkis.DataWorkCloudApplication;
+import org.apache.linkis.message.parser.ServiceMethod;
+import org.apache.linkis.message.scheduler.MethodExecuteWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;

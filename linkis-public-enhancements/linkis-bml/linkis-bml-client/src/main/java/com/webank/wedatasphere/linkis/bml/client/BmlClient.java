@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.client;
+package org.apache.linkis.bml.client;
 
-import com.webank.wedatasphere.linkis.bml.protocol.*;
+import org.apache.linkis.bml.protocol.*;
 
 import java.io.Closeable;
 import java.io.InputStream;

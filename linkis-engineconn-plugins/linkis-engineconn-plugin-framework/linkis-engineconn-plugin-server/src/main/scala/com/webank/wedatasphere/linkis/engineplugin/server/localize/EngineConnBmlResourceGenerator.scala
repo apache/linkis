@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.server.localize
+package org.apache.linkis.engineplugin.server.localize
 
 import java.io.InputStream
 

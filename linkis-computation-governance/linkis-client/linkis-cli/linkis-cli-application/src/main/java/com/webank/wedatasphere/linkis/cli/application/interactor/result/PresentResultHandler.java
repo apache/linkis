@@ -11,16 +11,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.interactor.result;
+package org.apache.linkis.cli.application.interactor.result;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.ExecutionResult;
-import com.webank.wedatasphere.linkis.cli.common.entity.result.ResultHandler;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.ExecutorException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.presenter.Presenter;
-import com.webank.wedatasphere.linkis.cli.core.presenter.model.ModelConverter;
-import com.webank.wedatasphere.linkis.cli.core.presenter.model.PresenterModel;
+import org.apache.linkis.cli.common.entity.execution.ExecutionResult;
+import org.apache.linkis.cli.common.entity.result.ResultHandler;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.ExecutorException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.presenter.Presenter;
+import org.apache.linkis.cli.core.presenter.model.ModelConverter;
+import org.apache.linkis.cli.core.presenter.model.PresenterModel;
 
 
 public class PresentResultHandler implements ResultHandler {

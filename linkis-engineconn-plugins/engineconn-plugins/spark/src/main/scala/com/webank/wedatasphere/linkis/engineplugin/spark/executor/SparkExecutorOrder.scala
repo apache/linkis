@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.executor
+package org.apache.linkis.engineplugin.spark.executor
 
 
 object SparkExecutorOrder extends Enumeration {

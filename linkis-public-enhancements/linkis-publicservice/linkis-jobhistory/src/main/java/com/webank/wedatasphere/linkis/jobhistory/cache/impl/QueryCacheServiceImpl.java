@@ -1,14 +1,14 @@
-package com.webank.wedatasphere.linkis.jobhistory.cache.impl; /**
-package com.webank.wedatasphere.linkis.jobhistory.cache.impl;
+package org.apache.linkis.jobhistory.cache.impl; /**
+package org.apache.linkis.jobhistory.cache.impl;
 
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask;
-import com.webank.wedatasphere.linkis.jobhistory.cache.QueryCacheManager;
-import com.webank.wedatasphere.linkis.jobhistory.cache.QueryCacheService;
-import com.webank.wedatasphere.linkis.jobhistory.cache.domain.TaskResult;
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant;
-import com.webank.wedatasphere.linkis.protocol.query.cache.RequestDeleteCache;
-import com.webank.wedatasphere.linkis.protocol.query.cache.RequestReadCache;
-import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils;
+import org.apache.linkis.governance.common.entity.task.RequestPersistTask;
+import org.apache.linkis.jobhistory.cache.QueryCacheManager;
+import org.apache.linkis.jobhistory.cache.QueryCacheService;
+import org.apache.linkis.jobhistory.cache.domain.TaskResult;
+import org.apache.linkis.protocol.constants.TaskConstant;
+import org.apache.linkis.protocol.query.cache.RequestDeleteCache;
+import org.apache.linkis.protocol.query.cache.RequestReadCache;
+import org.apache.linkis.protocol.utils.TaskUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

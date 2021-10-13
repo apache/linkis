@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.ddl
+package org.apache.linkis.metadata.ddl
 
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableBO
+import org.apache.linkis.metadata.domain.mdq.bo.MdqTableBO
 
 
 trait SQLConst{

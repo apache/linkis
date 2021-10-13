@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.security
+package org.apache.linkis.gateway.security
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.gateway.http.GatewayContext
 
 trait LinkisPreFilter {
 

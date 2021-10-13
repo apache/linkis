@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.execution.fetcher;
+package org.apache.linkis.cs.execution.fetcher;
 
-import com.webank.wedatasphere.linkis.cs.contextcache.ContextCacheService;
+import org.apache.linkis.cs.contextcache.ContextCacheService;
 
 public abstract class AbstractContextCacheFetcher implements ContextCacheFetcher{
 

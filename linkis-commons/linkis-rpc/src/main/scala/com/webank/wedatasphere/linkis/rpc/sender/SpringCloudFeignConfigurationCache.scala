@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.sender
+package org.apache.linkis.rpc.sender
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication
-import com.webank.wedatasphere.linkis.rpc.{RPCReceiveRestful, Receiver}
+import org.apache.linkis.DataWorkCloudApplication
+import org.apache.linkis.rpc.{RPCReceiveRestful, Receiver}
 import feign.codec.{Decoder, Encoder}
 import feign.{Client, Contract}
 import javax.annotation.PostConstruct

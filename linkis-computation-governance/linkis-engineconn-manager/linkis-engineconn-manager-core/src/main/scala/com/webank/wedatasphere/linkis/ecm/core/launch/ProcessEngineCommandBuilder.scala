@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.core.launch
+package org.apache.linkis.ecm.core.launch
 
 import java.io.OutputStream
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.LaunchConstants
+import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants
 import org.apache.commons.io.IOUtils
 
 

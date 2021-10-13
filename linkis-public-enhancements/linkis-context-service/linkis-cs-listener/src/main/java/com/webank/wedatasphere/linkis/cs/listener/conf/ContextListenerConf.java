@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.listener.conf;
+package org.apache.linkis.cs.listener.conf;
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.conf.CommonVars;
 
 public class ContextListenerConf {
     public final static Integer WDS_CS_LISTENER_ASYN_CONSUMER_THREAD_MAX = Integer.parseInt(CommonVars.apply("wds.linkis.cs.listener.asyn.consumer.thread.max","5").getValue());

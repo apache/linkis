@@ -16,12 +16,12 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.common.errorcode;
+package org.apache.linkis.common.errorcode;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.webank.wedatasphere.linkis.common.errorcode.LinkisFrameErrorCodeSummary.VALIDATE_ERROR_CODE_FAILED;
+import static org.apache.linkis.common.errorcode.LinkisFrameErrorCodeSummary.VALIDATE_ERROR_CODE_FAILED;
 
 
 public class ErrorCodeUtils {

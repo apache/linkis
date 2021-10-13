@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler
+package org.apache.linkis.scheduler
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEvent
-import com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue.FIFOScheduler
-import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelScheduler
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.scheduler.queue.SchedulerEvent
+import org.apache.linkis.scheduler.queue.fifoqueue.FIFOScheduler
+import org.apache.linkis.scheduler.queue.parallelqueue.ParallelScheduler
 
 
 abstract class Scheduler {

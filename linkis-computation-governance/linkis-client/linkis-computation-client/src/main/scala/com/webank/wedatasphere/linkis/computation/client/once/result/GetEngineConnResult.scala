@@ -15,11 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client.once.result
+package org.apache.linkis.computation.client.once.result
 
 import java.util
 
-import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/linkisManager/getEngineConn")

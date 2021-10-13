@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.entity.node;
+package org.apache.linkis.manager.common.entity.node;
 
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource;
+import org.apache.linkis.manager.common.entity.resource.NodeResource;
 
 
 public interface RMNode extends Node {

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.spring
+package org.apache.linkis.ecm.server.spring
 
-import com.webank.wedatasphere.linkis.ecm.core.listener.ECMEventListener
-import com.webank.wedatasphere.linkis.ecm.server.context.{DefaultECMContext, ECMContext}
-import com.webank.wedatasphere.linkis.ecm.server.service._
-import com.webank.wedatasphere.linkis.ecm.server.service.impl._
+import org.apache.linkis.ecm.core.listener.ECMEventListener
+import org.apache.linkis.ecm.server.context.{DefaultECMContext, ECMContext}
+import org.apache.linkis.ecm.server.service._
+import org.apache.linkis.ecm.server.service.impl._
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.{Bean, Configuration}
 

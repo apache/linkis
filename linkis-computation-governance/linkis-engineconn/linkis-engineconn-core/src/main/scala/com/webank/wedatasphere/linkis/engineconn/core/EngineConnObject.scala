@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.core
+package org.apache.linkis.engineconn.core
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engineconn.common.conf.EngineConnConf
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.EngineConnPlugin
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.common.conf.EngineConnConf
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.manager.engineplugin.common.EngineConnPlugin
 
 object EngineConnObject extends Logging {
 

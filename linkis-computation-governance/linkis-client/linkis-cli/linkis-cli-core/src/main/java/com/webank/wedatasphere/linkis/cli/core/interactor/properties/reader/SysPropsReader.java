@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.properties.reader;
+package org.apache.linkis.cli.core.interactor.properties.reader;
 
-import com.webank.wedatasphere.linkis.cli.common.constants.CommonConstants;
+import org.apache.linkis.cli.common.constants.CommonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

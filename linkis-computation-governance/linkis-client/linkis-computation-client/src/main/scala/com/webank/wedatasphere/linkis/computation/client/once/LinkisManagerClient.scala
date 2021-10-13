@@ -15,15 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client.once
+package org.apache.linkis.computation.client.once
 
 import java.io.Closeable
 
-import com.webank.wedatasphere.linkis.computation.client.once.action.{CreateEngineConnAction, GetEngineConnAction, KillEngineConnAction, LinkisManagerAction}
-import com.webank.wedatasphere.linkis.computation.client.once.result.{CreateEngineConnResult, GetEngineConnResult, KillEngineConnResult, LinkisManagerResult}
-import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
-import com.webank.wedatasphere.linkis.httpclient.request.Action
-import com.webank.wedatasphere.linkis.ujes.client.{UJESClient, UJESClientImpl}
+import org.apache.linkis.computation.client.once.action.{CreateEngineConnAction, GetEngineConnAction, KillEngineConnAction, LinkisManagerAction}
+import org.apache.linkis.computation.client.once.result.{CreateEngineConnResult, GetEngineConnResult, KillEngineConnResult, LinkisManagerResult}
+import org.apache.linkis.httpclient.dws.DWSHttpClient
+import org.apache.linkis.httpclient.request.Action
+import org.apache.linkis.ujes.client.{UJESClient, UJESClientImpl}
 
 
 trait LinkisManagerClient extends Closeable {

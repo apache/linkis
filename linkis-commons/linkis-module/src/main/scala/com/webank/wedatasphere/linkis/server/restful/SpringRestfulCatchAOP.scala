@@ -12,10 +12,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.server.restful
+package org.apache.linkis.server.restful
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.server.{Message, catchIt}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.server.{Message, catchIt}
 import javax.servlet.http.HttpServletResponse
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.{Around, Aspect, Pointcut}
@@ -27,7 +27,7 @@ import org.springframework.web.context.request.{RequestContextHolder, ServletReq
 @Component
 class SpringRestfulCatchAOP extends Logging {
 
-  @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping) && execution(public com.webank.wedatasphere.linkis.server.Message *(..)))")
+  @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping) && execution(public org.apache.linkis.server.Message *(..)))")
   def springRestfulResponseCatch() : Unit = {}
 
   @Around("springRestfulResponseCatch()")

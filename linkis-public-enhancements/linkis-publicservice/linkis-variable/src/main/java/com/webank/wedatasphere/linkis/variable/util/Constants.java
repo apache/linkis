@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.variable.util;
+package org.apache.linkis.variable.util;
 
 public class Constants {
     public static final String GOLBAL_CONFIG_NAME = "全局变量";

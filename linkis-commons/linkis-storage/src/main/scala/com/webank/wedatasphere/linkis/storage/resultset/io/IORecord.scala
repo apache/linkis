@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.resultset.io
+package org.apache.linkis.storage.resultset.io
 
-import com.webank.wedatasphere.linkis.common.io.Record
-import com.webank.wedatasphere.linkis.storage.resultset.ResultRecord
+import org.apache.linkis.common.io.Record
+import org.apache.linkis.storage.resultset.ResultRecord
 
 
 class IORecord(val value:Array[Byte]) extends ResultRecord{

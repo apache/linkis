@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.rpc.errorcode
+package org.apache.linkis.rpc.errorcode
 
 object RPCErrorConstants {
    val FETCH_MAPCACHE_ERROR = 10021

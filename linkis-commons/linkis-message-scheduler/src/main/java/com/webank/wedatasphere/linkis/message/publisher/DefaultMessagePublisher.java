@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.publisher;
+package org.apache.linkis.message.publisher;
 
-import com.webank.wedatasphere.linkis.message.context.AbstractMessageSchedulerContext;
+import org.apache.linkis.message.context.AbstractMessageSchedulerContext;
 
 
 public class DefaultMessagePublisher extends AbstractMessagePublisher {

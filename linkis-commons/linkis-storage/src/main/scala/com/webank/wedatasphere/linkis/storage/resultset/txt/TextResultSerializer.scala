@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.resultset.txt
+package org.apache.linkis.storage.resultset.txt
 
-import com.webank.wedatasphere.linkis.common.io.resultset.ResultSerializer
-import com.webank.wedatasphere.linkis.common.io.{MetaData, Record}
-import com.webank.wedatasphere.linkis.storage.domain.Dolphin
-import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
+import org.apache.linkis.common.io.resultset.ResultSerializer
+import org.apache.linkis.common.io.{MetaData, Record}
+import org.apache.linkis.storage.domain.Dolphin
+import org.apache.linkis.storage.{LineMetaData, LineRecord}
 
 
 class TextResultSerializer extends ResultSerializer{

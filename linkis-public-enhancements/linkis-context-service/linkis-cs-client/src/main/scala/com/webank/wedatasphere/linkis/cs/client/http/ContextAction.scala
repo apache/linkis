@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.http
+package org.apache.linkis.cs.client.http
 
-import com.webank.wedatasphere.linkis.cs.client.utils.{ContextClientUtils, ContextServerHttpConf}
-import com.webank.wedatasphere.linkis.httpclient.request.{GetAction, POSTAction, UserAction}
+import org.apache.linkis.cs.client.utils.{ContextClientUtils, ContextServerHttpConf}
+import org.apache.linkis.httpclient.request.{GetAction, POSTAction, UserAction}
 
 trait ContextAction extends UserAction{
 

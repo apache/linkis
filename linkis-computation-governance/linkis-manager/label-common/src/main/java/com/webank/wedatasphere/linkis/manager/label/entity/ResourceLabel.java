@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.manager.label.entity;
+package org.apache.linkis.manager.label.entity;
 
 public interface ResourceLabel {
 }

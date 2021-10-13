@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.conf;
+package org.apache.linkis.filesystem.conf;
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars;
-import com.webank.wedatasphere.linkis.common.conf.CommonVars$;
+import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.conf.CommonVars$;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;

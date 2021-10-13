@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.service.impl;
+package org.apache.linkis.bml.service.impl;
 
-import com.webank.wedatasphere.linkis.bml.Entity.BmlProject;
-import com.webank.wedatasphere.linkis.bml.dao.BmlProjectDao;
-import com.webank.wedatasphere.linkis.bml.service.BmlProjectService;
+import org.apache.linkis.bml.Entity.BmlProject;
+import org.apache.linkis.bml.dao.BmlProjectDao;
+import org.apache.linkis.bml.service.BmlProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.service.impl;
+package org.apache.linkis.instance.label.service.impl;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.common.utils.ClassUtils;
-import com.webank.wedatasphere.linkis.common.utils.Utils;
-import com.webank.wedatasphere.linkis.instance.label.async.AsyncConsumerQueue;
-import com.webank.wedatasphere.linkis.instance.label.async.GenericAsyncConsumerQueue;
-import com.webank.wedatasphere.linkis.instance.label.conf.InsLabelConf;
-import com.webank.wedatasphere.linkis.instance.label.dao.InsLabelRelationDao;
-import com.webank.wedatasphere.linkis.instance.label.dao.InstanceInfoDao;
-import com.webank.wedatasphere.linkis.instance.label.dao.InstanceLabelDao;
-import com.webank.wedatasphere.linkis.instance.label.entity.InsPersistenceLabel;
-import com.webank.wedatasphere.linkis.instance.label.entity.InsPersistenceLabelValue;
-import com.webank.wedatasphere.linkis.instance.label.entity.InstanceInfo;
-import com.webank.wedatasphere.linkis.instance.label.service.InsLabelAccessService;
-import com.webank.wedatasphere.linkis.instance.label.service.annotation.AdapterMode;
-import com.webank.wedatasphere.linkis.instance.label.vo.InsPersistenceLabelSearchVo;
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactory;
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.StdLabelBuilderFactory;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.manager.label.entity.UserModifiable;
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.utils.ClassUtils;
+import org.apache.linkis.common.utils.Utils;
+import org.apache.linkis.instance.label.async.AsyncConsumerQueue;
+import org.apache.linkis.instance.label.async.GenericAsyncConsumerQueue;
+import org.apache.linkis.instance.label.conf.InsLabelConf;
+import org.apache.linkis.instance.label.dao.InsLabelRelationDao;
+import org.apache.linkis.instance.label.dao.InstanceInfoDao;
+import org.apache.linkis.instance.label.dao.InstanceLabelDao;
+import org.apache.linkis.instance.label.entity.InsPersistenceLabel;
+import org.apache.linkis.instance.label.entity.InsPersistenceLabelValue;
+import org.apache.linkis.instance.label.entity.InstanceInfo;
+import org.apache.linkis.instance.label.service.InsLabelAccessService;
+import org.apache.linkis.instance.label.service.annotation.AdapterMode;
+import org.apache.linkis.instance.label.vo.InsPersistenceLabelSearchVo;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
+import org.apache.linkis.manager.label.builder.factory.StdLabelBuilderFactory;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.UserModifiable;
+import org.apache.linkis.manager.label.utils.LabelUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.common.exception
+package org.apache.linkis.engineconn.common.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 
 case class EngineConnException(errorCode: Int, msg: String) extends ErrorException(errorCode, msg)

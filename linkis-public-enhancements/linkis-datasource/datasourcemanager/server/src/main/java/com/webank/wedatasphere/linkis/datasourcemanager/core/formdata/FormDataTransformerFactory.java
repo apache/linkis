@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.formdata;
+package org.apache.linkis.datasourcemanager.core.formdata;
 
 import java.util.concurrent.ConcurrentHashMap;
 

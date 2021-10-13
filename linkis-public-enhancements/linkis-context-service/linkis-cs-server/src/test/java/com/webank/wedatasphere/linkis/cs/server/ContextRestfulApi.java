@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server;
+package org.apache.linkis.cs.server;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextID;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextKey;
-import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceMethod;
-import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceType;
-import com.webank.wedatasphere.linkis.cs.server.scheduler.CsScheduler;
-import com.webank.wedatasphere.linkis.cs.server.scheduler.HttpAnswerJob;
-import com.webank.wedatasphere.linkis.server.Message;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.source.ContextKey;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextID;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextKey;
+import org.apache.linkis.cs.server.enumeration.ServiceMethod;
+import org.apache.linkis.cs.server.enumeration.ServiceType;
+import org.apache.linkis.cs.server.scheduler.CsScheduler;
+import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
+import org.apache.linkis.server.Message;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.configuration.util
+package org.apache.linkis.configuration.util
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationException
-import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineType, UserCreatorLabel}
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.configuration.exception.ConfigurationException
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.{EngineType, UserCreatorLabel}
 
 import scala.collection.JavaConverters._
 

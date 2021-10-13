@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence;
+package org.apache.linkis.cs.persistence;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.listener.ContextIDListenerDomain;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.listener.ContextIDListenerDomain;
+import org.apache.linkis.cs.common.entity.source.ContextID;
 
 
 public class AContextIDListener implements ContextIDListenerDomain {

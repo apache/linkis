@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.common.errorcode;
+package org.apache.linkis.common.errorcode;
 
 
 public enum LinkisExtensionErrorCodeSummary {

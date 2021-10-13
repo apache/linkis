@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.suite;
+package org.apache.linkis.cli.application.suite;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.Execution;
-import com.webank.wedatasphere.linkis.cli.common.entity.result.ResultHandler;
-import com.webank.wedatasphere.linkis.cli.core.interactor.execution.executor.ExecutorBuilder;
-import com.webank.wedatasphere.linkis.cli.core.interactor.job.JobBuilder;
+import org.apache.linkis.cli.common.entity.execution.Execution;
+import org.apache.linkis.cli.common.entity.result.ResultHandler;
+import org.apache.linkis.cli.core.interactor.execution.executor.ExecutorBuilder;
+import org.apache.linkis.cli.core.interactor.job.JobBuilder;
 
 
 public class ExecutionSuite {

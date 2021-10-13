@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.response
+package org.apache.linkis.filesystem.response
 
 case class ScriptFromBMLResponse(scriptContent:String,metadata:java.util.Map[String,java.util.Map[String,Object]]) extends WorkspaceResponse

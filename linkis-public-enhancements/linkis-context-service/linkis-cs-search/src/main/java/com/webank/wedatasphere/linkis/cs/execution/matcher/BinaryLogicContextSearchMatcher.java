@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.execution.matcher;
+package org.apache.linkis.cs.execution.matcher;
 
-import com.webank.wedatasphere.linkis.cs.condition.BinaryLogicCondition;
+import org.apache.linkis.cs.condition.BinaryLogicCondition;
 
 public abstract class BinaryLogicContextSearchMatcher extends AbstractContextSearchMatcher{
 

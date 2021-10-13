@@ -16,11 +16,11 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.engineconn.core.execution
+package org.apache.linkis.engineconn.core.execution
 
-import com.webank.wedatasphere.linkis.common.utils.{ClassUtils, Logging, Utils}
-import com.webank.wedatasphere.linkis.engineconn.common.execution.EngineConnExecution
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.EngineConnBuildFailedException
+import org.apache.linkis.common.utils.{ClassUtils, Logging, Utils}
+import org.apache.linkis.engineconn.common.execution.EngineConnExecution
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnBuildFailedException
 
 import scala.collection.convert.decorateAsScala._
 

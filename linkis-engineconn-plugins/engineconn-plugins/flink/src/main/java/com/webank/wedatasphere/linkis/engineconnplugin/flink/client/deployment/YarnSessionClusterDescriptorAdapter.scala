@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.client.deployment
+package org.apache.linkis.engineconnplugin.flink.client.deployment
 
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.context.ExecutionContext
+import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext
 import org.apache.flink.api.common.JobID
 
 

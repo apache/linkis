@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process
+package org.apache.linkis.manager.engineplugin.common.launch.process
 
-import com.webank.wedatasphere.linkis.manager.common.protocol.bml.BmlResource
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.manager.common.protocol.bml.BmlResource
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 
 
 trait EngineConnResourceGenerator {

@@ -11,16 +11,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.service.impl;
+package org.apache.linkis.datasourcemanager.core.service.impl;
 
-import com.webank.wedatasphere.linkis.bml.client.BmlClient;
-import com.webank.wedatasphere.linkis.bml.client.BmlClientFactory;
-import com.webank.wedatasphere.linkis.bml.protocol.BmlDeleteResponse;
-import com.webank.wedatasphere.linkis.bml.protocol.BmlUpdateResponse;
-import com.webank.wedatasphere.linkis.bml.protocol.BmlUploadResponse;
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.ServiceErrorCode;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.service.BmlAppService;
+import org.apache.linkis.bml.client.BmlClient;
+import org.apache.linkis.bml.client.BmlClientFactory;
+import org.apache.linkis.bml.protocol.BmlDeleteResponse;
+import org.apache.linkis.bml.protocol.BmlUpdateResponse;
+import org.apache.linkis.bml.protocol.BmlUploadResponse;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.datasourcemanager.common.ServiceErrorCode;
+import org.apache.linkis.datasourcemanager.core.service.BmlAppService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.context.config.annotation.RefreshScope;

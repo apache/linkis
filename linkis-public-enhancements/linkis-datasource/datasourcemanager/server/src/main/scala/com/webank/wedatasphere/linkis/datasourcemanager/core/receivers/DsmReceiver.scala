@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.receivers
+package org.apache.linkis.datasourcemanager.core.receivers
 
 import java.util
 

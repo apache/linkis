@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.parser;
+package org.apache.linkis.entrance.parser;
 
-import com.webank.wedatasphere.linkis.entrance.EntranceContext;
-import com.webank.wedatasphere.linkis.entrance.EntranceParser;
-import com.webank.wedatasphere.linkis.entrance.exception.EntranceErrorCode;
-import com.webank.wedatasphere.linkis.entrance.exception.EntranceIllegalParamException;
-import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob;
-import com.webank.wedatasphere.linkis.entrance.job.EntranceExecutionJob;
-import com.webank.wedatasphere.linkis.entrance.persistence.PersistenceManager;
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest;
-import com.webank.wedatasphere.linkis.governance.common.paser.CodeParser;
-import com.webank.wedatasphere.linkis.governance.common.paser.CodeParserFactory;
-import com.webank.wedatasphere.linkis.governance.common.paser.CodeType;
-import com.webank.wedatasphere.linkis.governance.common.paser.EmptyCodeParser;
-import com.webank.wedatasphere.linkis.governance.common.utils.GovernanceConstant;
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils;
-import com.webank.wedatasphere.linkis.scheduler.queue.Job;
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
+import org.apache.linkis.entrance.EntranceContext;
+import org.apache.linkis.entrance.EntranceParser;
+import org.apache.linkis.entrance.exception.EntranceErrorCode;
+import org.apache.linkis.entrance.exception.EntranceIllegalParamException;
+import org.apache.linkis.entrance.execute.EntranceJob;
+import org.apache.linkis.entrance.job.EntranceExecutionJob;
+import org.apache.linkis.entrance.persistence.PersistenceManager;
+import org.apache.linkis.governance.common.entity.job.JobRequest;
+import org.apache.linkis.governance.common.paser.CodeParser;
+import org.apache.linkis.governance.common.paser.CodeParserFactory;
+import org.apache.linkis.governance.common.paser.CodeType;
+import org.apache.linkis.governance.common.paser.EmptyCodeParser;
+import org.apache.linkis.governance.common.utils.GovernanceConstant;
+import org.apache.linkis.manager.label.constant.LabelKeyConstant;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.protocol.utils.TaskUtils;
+import org.apache.linkis.scheduler.queue.Job;
+import org.apache.linkis.server.BDPJettyServerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

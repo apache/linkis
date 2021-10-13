@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.configuration.util
+package org.apache.linkis.configuration.util
 
 import com.fasterxml.jackson.databind.JsonNode
 

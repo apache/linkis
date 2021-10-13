@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.common
+package org.apache.linkis.engineplugin.spark.common
 
 import java.io.InputStream
 import java.util.concurrent.locks.ReentrantLock
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.commons.io.IOUtils
 
 import scala.concurrent.duration.Duration

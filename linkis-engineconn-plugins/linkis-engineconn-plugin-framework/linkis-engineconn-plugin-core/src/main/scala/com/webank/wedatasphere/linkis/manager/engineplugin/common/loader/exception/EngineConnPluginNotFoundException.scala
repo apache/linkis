@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.exception
+package org.apache.linkis.manager.engineplugin.common.loader.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.conf.PluginLoaderConstant
+import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.manager.engineplugin.common.loader.conf.PluginLoaderConstant
 
 
 class EngineConnPluginNotFoundException(desc: String, t: Throwable) extends ErrorException(PluginLoaderConstant.PLUGIN_NOT_FOUND, desc) {

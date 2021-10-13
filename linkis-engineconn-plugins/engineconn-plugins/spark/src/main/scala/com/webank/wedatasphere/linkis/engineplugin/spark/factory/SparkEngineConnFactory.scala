@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.factory
+package org.apache.linkis.engineplugin.spark.factory
 
 import java.io.File
 import java.lang.reflect.Constructor
 import java.util
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
-import com.webank.wedatasphere.linkis.engineplugin.spark.entity.SparkEngineSession
-import com.webank.wedatasphere.linkis.engineplugin.spark.exception.{SparkCreateFileException, SparkSessionNullException}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineType
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineType.EngineType
-import com.webank.wedatasphere.linkis.server.JMap
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
+import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
+import org.apache.linkis.engineplugin.spark.exception.{SparkCreateFileException, SparkSessionNullException}
+import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
+import org.apache.linkis.manager.label.entity.engine.EngineType
+import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
+import org.apache.linkis.server.JMap
 import org.apache.commons.lang.StringUtils
 import org.apache.spark.sql.{SQLContext, SparkSession}
 import org.apache.spark.util.SparkUtils

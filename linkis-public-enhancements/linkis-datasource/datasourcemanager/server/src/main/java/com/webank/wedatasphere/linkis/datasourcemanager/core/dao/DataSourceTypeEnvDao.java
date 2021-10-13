@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.dao;
+package org.apache.linkis.datasourcemanager.core.dao;
 
 import org.apache.ibatis.annotations.Param;
 

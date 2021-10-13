@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.fs.impl;
+package org.apache.linkis.storage.fs.impl;
 
-import com.webank.wedatasphere.linkis.common.io.FsPath;
-import com.webank.wedatasphere.linkis.common.utils.Utils;
-import com.webank.wedatasphere.linkis.storage.domain.FsPathListWithError;
-import com.webank.wedatasphere.linkis.storage.exception.StorageWarnException;
-import com.webank.wedatasphere.linkis.storage.fs.FileSystem;
-import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration;
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils;
+import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.common.utils.Utils;
+import org.apache.linkis.storage.domain.FsPathListWithError;
+import org.apache.linkis.storage.exception.StorageWarnException;
+import org.apache.linkis.storage.fs.FileSystem;
+import org.apache.linkis.storage.utils.StorageConfiguration;
+import org.apache.linkis.storage.utils.StorageUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;

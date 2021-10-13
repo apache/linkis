@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.jdbc.builder
+package org.apache.linkis.manager.engineplugin.jdbc.builder
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.UserCreatorLabel
-import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration
+import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+import org.apache.linkis.storage.utils.StorageConfiguration
 
 class JDBCProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 

@@ -16,10 +16,10 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.hook
+package org.apache.linkis.ecm.server.hook
 
-import com.webank.wedatasphere.linkis.ecm.core.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
+import org.apache.linkis.ecm.core.engineconn.EngineConn
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
 
 trait ECMHook {
 

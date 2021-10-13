@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.server;
+package org.apache.linkis.entrance.server;
 
-import com.webank.wedatasphere.linkis.common.listener.Event;
-import com.webank.wedatasphere.linkis.entrance.EntranceContext;
-import com.webank.wedatasphere.linkis.entrance.EntranceServer;
-import com.webank.wedatasphere.linkis.entrance.annotation.EntranceContextBeanAnnotation;
-import com.webank.wedatasphere.linkis.entrance.annotation.EntranceServerBeanAnnotation;
-import com.webank.wedatasphere.linkis.entrance.event.EntranceLogEvent;
-import com.webank.wedatasphere.linkis.entrance.event.EntranceLogListener;
-import com.webank.wedatasphere.linkis.entrance.log.LogReader;
-import com.webank.wedatasphere.linkis.rpc.Sender;
+import org.apache.linkis.common.listener.Event;
+import org.apache.linkis.entrance.EntranceContext;
+import org.apache.linkis.entrance.EntranceServer;
+import org.apache.linkis.entrance.annotation.EntranceContextBeanAnnotation;
+import org.apache.linkis.entrance.annotation.EntranceServerBeanAnnotation;
+import org.apache.linkis.entrance.event.EntranceLogEvent;
+import org.apache.linkis.entrance.event.EntranceLogListener;
+import org.apache.linkis.entrance.log.LogReader;
+import org.apache.linkis.rpc.Sender;
 
 import javax.annotation.PostConstruct;
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.code.plans.ast
+package org.apache.linkis.orchestrator.code.plans.ast
 
-import com.webank.wedatasphere.linkis.orchestrator.plans.ast.{AbstractStage, Job, Stage}
-import com.webank.wedatasphere.linkis.orchestrator.plans.unit.CodeLogicalUnit
+import org.apache.linkis.orchestrator.plans.ast.{AbstractStage, Job, Stage}
+import org.apache.linkis.orchestrator.plans.unit.CodeLogicalUnit
 
 class CodeStage(job: Job, private var parents: Array[Stage], private var children: Array[Stage]) extends AbstractStage {
 

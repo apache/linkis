@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.core.engineconn
+package org.apache.linkis.engineconn.core.engineconn
 
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
-import com.webank.wedatasphere.linkis.engineconn.core.exception.{EngineConnErrorCode, EngineConnFatalException}
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.common.engineconn.EngineConn
+import org.apache.linkis.engineconn.core.EngineConnObject
+import org.apache.linkis.engineconn.core.exception.{EngineConnErrorCode, EngineConnFatalException}
 
 trait EngineConnManager {
 

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.client
+package org.apache.linkis.ujes.client
 
 import java.io.Closeable
 import java.util.concurrent.TimeUnit
 
-import com.webank.wedatasphere.linkis.httpclient.authentication.AuthenticationStrategy
-import com.webank.wedatasphere.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy
-import com.webank.wedatasphere.linkis.httpclient.dws.config.{DWSClientConfig, DWSClientConfigBuilder}
-import com.webank.wedatasphere.linkis.httpclient.response.Result
-import com.webank.wedatasphere.linkis.ujes.client.request.JobExecIdAction.JobServiceType
-import com.webank.wedatasphere.linkis.ujes.client.request._
-import com.webank.wedatasphere.linkis.ujes.client.response._
+import org.apache.linkis.httpclient.authentication.AuthenticationStrategy
+import org.apache.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy
+import org.apache.linkis.httpclient.dws.config.{DWSClientConfig, DWSClientConfigBuilder}
+import org.apache.linkis.httpclient.response.Result
+import org.apache.linkis.ujes.client.request.JobExecIdAction.JobServiceType
+import org.apache.linkis.ujes.client.request._
+import org.apache.linkis.ujes.client.response._
 
 abstract class UJESClient extends Closeable {
 

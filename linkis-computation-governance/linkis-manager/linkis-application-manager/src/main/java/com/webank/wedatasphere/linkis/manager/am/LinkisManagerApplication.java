@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.am;
+package org.apache.linkis.manager.am;
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
-import com.webank.wedatasphere.linkis.LinkisBaseServerApp;
+import org.apache.linkis.DataWorkCloudApplication;
+import org.apache.linkis.LinkisBaseServerApp;
 
 /**
  * @date 2020/7/7 16:22

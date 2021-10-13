@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.errorcode.server.dao;
+package org.apache.linkis.errorcode.server.dao;
 
-import com.webank.wedatasphere.linkis.errorcode.common.LinkisErrorCode;
+import org.apache.linkis.errorcode.common.LinkisErrorCode;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;

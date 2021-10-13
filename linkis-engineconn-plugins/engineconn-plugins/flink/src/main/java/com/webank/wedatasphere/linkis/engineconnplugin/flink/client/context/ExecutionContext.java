@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.client.context;
+package org.apache.linkis.engineconnplugin.flink.client.context;
 
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.config.Environment;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.factory.LinkisYarnClusterClientFactory;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.SqlExecutionException;
+import org.apache.linkis.engineconnplugin.flink.client.config.Environment;
+import org.apache.linkis.engineconnplugin.flink.client.factory.LinkisYarnClusterClientFactory;
+import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Collections;

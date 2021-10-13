@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.log
+package org.apache.linkis.entrance.log
 
-import com.webank.wedatasphere.linkis.entrance.EntranceParser
-import com.webank.wedatasphere.linkis.entrance.persistence.PersistenceManager
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
-import com.webank.wedatasphere.linkis.protocol.task.Task
-import com.webank.wedatasphere.linkis.scheduler.queue.Job
+import org.apache.linkis.entrance.EntranceParser
+import org.apache.linkis.entrance.persistence.PersistenceManager
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.entity.task.RequestPersistTask
+import org.apache.linkis.protocol.task.Task
+import org.apache.linkis.scheduler.queue.Job
 import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 

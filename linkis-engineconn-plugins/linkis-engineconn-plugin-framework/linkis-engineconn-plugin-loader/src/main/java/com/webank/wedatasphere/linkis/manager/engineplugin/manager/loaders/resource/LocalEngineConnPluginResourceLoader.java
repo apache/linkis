@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.manager.loaders.resource;
+package org.apache.linkis.manager.engineplugin.manager.loaders.resource;
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInfo;
-import com.webank.wedatasphere.linkis.manager.engineplugin.manager.loaders.EngineConnPluginsResourceLoader;
-import com.webank.wedatasphere.linkis.manager.engineplugin.manager.utils.EngineConnPluginUtils;
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel;
+import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInfo;
+import org.apache.linkis.manager.engineplugin.manager.loaders.EngineConnPluginsResourceLoader;
+import org.apache.linkis.manager.engineplugin.manager.utils.EngineConnPluginUtils;
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

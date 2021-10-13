@@ -16,16 +16,16 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.service.engine
+package org.apache.linkis.manager.am.service.engine
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.am.recycle.RecyclingRuleExecutor
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.{EngineRecyclingRequest, EngineStopRequest}
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
-import com.webank.wedatasphere.linkis.message.publisher.MessagePublisher
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.am.recycle.RecyclingRuleExecutor
+import org.apache.linkis.manager.common.protocol.engine.{EngineRecyclingRequest, EngineStopRequest}
+import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.message.publisher.MessagePublisher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

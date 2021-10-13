@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.governance.common.constant.job
+package org.apache.linkis.governance.common.constant.job
 
 /**
  * @date 2021/3/17

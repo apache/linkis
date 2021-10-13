@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.interceptor.impl
+package org.apache.linkis.entrance.interceptor.impl
 
-import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.entrance.interceptor.EntranceInterceptor
+import org.apache.linkis.governance.common.entity.job.JobRequest
 
 
 class DBInfoCompleteInterceptor extends EntranceInterceptor {

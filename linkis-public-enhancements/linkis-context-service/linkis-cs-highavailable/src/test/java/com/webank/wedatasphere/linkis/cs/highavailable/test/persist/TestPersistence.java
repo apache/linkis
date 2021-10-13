@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.highavailable.test.persist;
+package org.apache.linkis.cs.highavailable.test.persist;
 
 import com.google.gson.Gson;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.HAContextID;
+import org.apache.linkis.cs.common.entity.source.HAContextID;
 
 public class TestPersistence {
 

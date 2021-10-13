@@ -11,21 +11,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.test.service;
+package org.apache.linkis.cs.client.test.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.webank.wedatasphere.linkis.cs.client.Context;
-import com.webank.wedatasphere.linkis.cs.client.ContextClient;
-import com.webank.wedatasphere.linkis.cs.client.builder.ContextClientFactory;
-import com.webank.wedatasphere.linkis.cs.client.service.DefaultSearchService;
-import com.webank.wedatasphere.linkis.cs.client.service.SearchService;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextScope;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.object.CSFlowInfos;
-import com.webank.wedatasphere.linkis.cs.common.entity.resource.BMLResource;
-import com.webank.wedatasphere.linkis.cs.common.entity.resource.LinkisBMLResource;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.*;
+import org.apache.linkis.cs.client.Context;
+import org.apache.linkis.cs.client.ContextClient;
+import org.apache.linkis.cs.client.builder.ContextClientFactory;
+import org.apache.linkis.cs.client.service.DefaultSearchService;
+import org.apache.linkis.cs.client.service.SearchService;
+import org.apache.linkis.cs.common.entity.enumeration.ContextScope;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.object.CSFlowInfos;
+import org.apache.linkis.cs.common.entity.resource.BMLResource;
+import org.apache.linkis.cs.common.entity.resource.LinkisBMLResource;
+import org.apache.linkis.cs.common.entity.source.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.governance.common.exception.engineconn;
+package org.apache.linkis.governance.common.exception.engineconn;
 
 /**
  * ErrorCode of Engine start with 40000

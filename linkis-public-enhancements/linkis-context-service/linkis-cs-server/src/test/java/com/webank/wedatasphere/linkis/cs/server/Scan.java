@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server;
+package org.apache.linkis.cs.server;
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
+import org.apache.linkis.DataWorkCloudApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;

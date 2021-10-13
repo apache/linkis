@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.jdbc.entity;
+package org.apache.linkis.ujes.jdbc.entity;
 
-import com.webank.wedatasphere.linkis.ujes.jdbc.UJESSQLTypeParser;
+import org.apache.linkis.ujes.jdbc.UJESSQLTypeParser;
 
 import java.sql.SQLException;
 import java.sql.Types;

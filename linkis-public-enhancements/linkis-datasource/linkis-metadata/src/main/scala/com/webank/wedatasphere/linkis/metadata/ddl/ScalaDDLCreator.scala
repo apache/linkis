@@ -11,13 +11,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.ddl
+package org.apache.linkis.metadata.ddl
 
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.metadata.conf.MdqConfiguration
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.{MdqTableBO, MdqTableFieldsInfoBO}
-import com.webank.wedatasphere.linkis.metadata.exception.MdqIllegalParamException
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.metadata.conf.MdqConfiguration
+import org.apache.linkis.metadata.domain.mdq.bo.{MdqTableBO, MdqTableFieldsInfoBO}
+import org.apache.linkis.metadata.exception.MdqIllegalParamException
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.JavaConversions._

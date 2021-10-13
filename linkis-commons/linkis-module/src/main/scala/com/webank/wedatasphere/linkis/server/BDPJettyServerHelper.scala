@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.server
+package org.apache.linkis.server
 
 import java.io.File
 import java.lang
@@ -24,11 +24,11 @@ import java.util.EnumSet
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson._
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration._
-import com.webank.wedatasphere.linkis.server.socket.ControllerServer
-import com.webank.wedatasphere.linkis.server.socket.controller.{ServerEventService, ServerListenerEventBus}
+import org.apache.linkis.DataWorkCloudApplication
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.server.conf.ServerConfiguration._
+import org.apache.linkis.server.socket.ControllerServer
+import org.apache.linkis.server.socket.controller.{ServerEventService, ServerListenerEventBus}
 import javax.servlet.{DispatcherType, Filter, MultipartConfigElement}
 import org.apache.commons.io.FileUtils
 import org.eclipse.jetty.server.session.SessionHandler
@@ -68,7 +68,7 @@ private[linkis] object BDPJettyServerHelper extends Logging {
 
   def setupSpringRestApiContextHandler(webApp: ServletContextHandler) {
     val context = new AnnotationConfigWebApplicationContext
-    //val CONFIG_LOCATION = "com.webank.wedatasphere.linkis.manager.am"
+    //val CONFIG_LOCATION = "org.apache.linkis.manager.am"
     val CONFIG_LOCATION = ""
     context.setConfigLocation(CONFIG_LOCATION);
     val serlvet = new DispatcherServlet(context)

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.ujes.route
+package org.apache.linkis.gateway.ujes.route
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.gateway.springcloud.SpringCloudGatewayConfiguration
-import com.webank.wedatasphere.linkis.gateway.ujes.route.label.{GenericRoueLabelParser, RouteLabelParser}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.gateway.springcloud.SpringCloudGatewayConfiguration
+import org.apache.linkis.gateway.ujes.route.label.{GenericRoueLabelParser, RouteLabelParser}
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.{Bean, Configuration, Scope}

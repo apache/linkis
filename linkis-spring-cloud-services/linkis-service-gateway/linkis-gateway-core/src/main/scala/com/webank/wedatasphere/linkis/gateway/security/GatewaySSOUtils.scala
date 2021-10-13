@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.security
+package org.apache.linkis.gateway.security
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.gateway.http.{GatewayContext, GatewayHttpRequest}
-import com.webank.wedatasphere.linkis.server.exception.LoginExpireException
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter._
-import com.webank.wedatasphere.linkis.server.security.{SSOUtils, ServerSSOUtils}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.gateway.http.{GatewayContext, GatewayHttpRequest}
+import org.apache.linkis.server.exception.LoginExpireException
+import org.apache.linkis.server.security.SecurityFilter._
+import org.apache.linkis.server.security.{SSOUtils, ServerSSOUtils}
 import javax.servlet.http.Cookie
 
 import scala.collection.JavaConversions._

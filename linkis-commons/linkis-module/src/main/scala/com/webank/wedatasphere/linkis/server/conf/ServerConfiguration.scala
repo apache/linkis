@@ -75,7 +75,6 @@ object ServerConfiguration extends Logging{
 
   val BDP_SERVER_SERVER_CONTEXT_PATH = CommonVars("wds.linkis.server.context.path", "/")
   val BDP_SERVER_RESTFUL_URI = CommonVars("wds.linkis.server.restful.uri", "/api/rest_j/" + BDP_SERVER_VERSION)
-  val BDP_SERVER_SPRING_RESTFUL_URI = CommonVars("wds.linkis.server.restful.uri", "/api/rest_s/" + BDP_SERVER_VERSION)
   val BDP_SERVER_USER_URI = CommonVars("wds.linkis.server.user.restful.uri", "/api/rest_j/" + BDP_SERVER_VERSION + "/user")
   val BDP_SERVER_RESTFUL_LOGIN_URI = CommonVars("wds.linkis.server.user.restful.login.uri", new File(BDP_SERVER_USER_URI.getValue, "login").getPath)
   val BDP_SERVER_SECURITY_SSL_URI = CommonVars("wds.linkis.server.user.security.ssl.uri", new File(BDP_SERVER_USER_URI.getValue, "publicKey").getPath)

@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.udf.api;
 
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.webank.wedatasphere.linkis.common.io.FsPath;
@@ -29,29 +30,21 @@ import com.webank.wedatasphere.linkis.udf.excepiton.UDFException;
 import com.webank.wedatasphere.linkis.udf.service.UDFService;
 import com.webank.wedatasphere.linkis.udf.service.UDFTreeService;
 import com.webank.wedatasphere.linkis.udf.utils.ConstantVar;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.BeanUtilsBean;
-import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import java.util.*;
 
-
-@Path("udf")
-@Component
+@RestController
+@RequestMapping(path = "udf")
 public class UDFApi {
 
     private static final Logger logger = Logger.getLogger(UDFApi.class);
@@ -65,9 +58,8 @@ public class UDFApi {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    @POST
-    @Path("all")
-    public Response allUDF(@Context HttpServletRequest req, String jsonString){
+    @RequestMapping(path = "all",method = RequestMethod.POST)
+    public Message allUDF(HttpServletRequest req, String jsonString){
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
@@ -104,7 +96,7 @@ public class UDFApi {
             logger.error("Failed to list Tree: ", e);
             message = Message.error(e.getMessage());
         }
-        return  Message.messageToResponse(message);
+        return message;
     }
 
     private void fetchUdfInfoRecursively(List<UDFInfo> allInfo, UDFTree udfTree, String realUser) throws Throwable{
@@ -128,9 +120,8 @@ public class UDFApi {
         }
     }
 
-    @POST
-    @Path("list")
-    public Response listUDF(@Context HttpServletRequest req, Map<String,Object> json){
+    @RequestMapping(path = "list",method = RequestMethod.POST)
+    public Message listUDF(HttpServletRequest req,@RequestBody Map<String,Object> json){
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
@@ -145,16 +136,15 @@ public class UDFApi {
             message = Message.error(e.getMessage());
         }
 
-        return  Message.messageToResponse(message);
+        return message;
     }
 
-    @POST
-    @Path("add")
-    public Response addUDF(@Context HttpServletRequest req,  JsonNode json) {
+    @RequestMapping(path = "add",method = RequestMethod.POST)
+    public Message addUDF(HttpServletRequest req,@RequestBody JsonNode json) {
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
-            UDFInfo udfInfo = mapper.readValue(json.get("udfInfo"), UDFInfo.class);
+            UDFInfo udfInfo = mapper.treeToValue(json.get("udfInfo"), UDFInfo.class);
             udfInfo.setCreateUser(userName);
             udfInfo.setCreateTime(new Date());
             udfInfo.setUpdateTime(new Date());
@@ -165,16 +155,15 @@ public class UDFApi {
             logger.error("Failed to add UDF: ", e);
             message = Message.error(e.getMessage());
         }
-        return  Message.messageToResponse(message);
+        return message;
     }
 
-    @POST
-    @Path("update")
-    public Response updateUDF(@Context HttpServletRequest req,  JsonNode json) {
+    @RequestMapping(path = "update",method = RequestMethod.POST)
+    public Message updateUDF(HttpServletRequest req,@RequestBody JsonNode json) {
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
-            UDFInfo udfInfo = mapper.readValue(json.get("udfInfo"), UDFInfo.class);
+            UDFInfo udfInfo = mapper.treeToValue(json.get("udfInfo"), UDFInfo.class);
             udfInfo.setCreateUser(userName);
             udfInfo.setUpdateTime(new Date());
             udfService.updateUDF(udfInfo, userName);
@@ -184,12 +173,11 @@ public class UDFApi {
             logger.error("Failed to update UDF: ", e);
             message = Message.error(e.getMessage());
         }
-        return  Message.messageToResponse(message);
+        return message;
     }
 
-    @GET
-    @Path("delete/{id}")
-    public Response deleteUDF(@Context HttpServletRequest req,@PathParam("id") Long id){
+    @RequestMapping(path = "delete/{id}",method = RequestMethod.GET)
+    public Message deleteUDF(HttpServletRequest req,@PathVariable("id") Long id){
         String userName = SecurityFilter.getLoginUsername(req);
         Message message = null;
         try {
@@ -199,13 +187,13 @@ public class UDFApi {
             logger.error("Failed to delete UDF: ", e);
             message = Message.error(e.getMessage());
         }
-        return  Message.messageToResponse(message);
+        return message;
     }
 
-    @GET
-    @Path("isload")
-    public Response isLoad(@Context HttpServletRequest req,
-                           @QueryParam("udfId") Long udfId,@QueryParam("isLoad") Boolean isLoad){
+    @RequestMapping(path = "isload",method = RequestMethod.GET)
+    public Message isLoad(HttpServletRequest req,
+        @RequestParam(value="udfId",required=false) Long udfId,
+        @RequestParam(value="isLoad",required=false) Boolean isLoad){
         String userName = SecurityFilter.getLoginUsername(req);
         Message message = null;
         try {
@@ -219,12 +207,11 @@ public class UDFApi {
             logger.error("Failed to isLoad UDF: ", e);
             message = Message.error(e.getMessage());
         }
-        return  Message.messageToResponse(message);
+        return message;
     }
 
-    @POST
-    @Path("/tree/add")
-    public Response addTree(@Context HttpServletRequest req, UDFTree udfTree){
+    @RequestMapping(path = "/tree/add",method = RequestMethod.POST)
+    public Message addTree(HttpServletRequest req,@RequestBody UDFTree udfTree){
         String userName = SecurityFilter.getLoginUsername(req);
         Message message = null;
         try {
@@ -239,12 +226,11 @@ public class UDFApi {
             message = Message.error(e.getMessage());
         }
 
-        return  Message.messageToResponse(message);
+        return message;
     }
 
-    @POST
-    @Path("/tree/update")
-    public Response updateTree(@Context HttpServletRequest req, UDFTree udfTree){
+    @RequestMapping(path = "/tree/update",method = RequestMethod.POST)
+    public Message updateTree(HttpServletRequest req,@RequestBody UDFTree udfTree){
         String userName = SecurityFilter.getLoginUsername(req);
         Message message = null;
         try {
@@ -258,12 +244,11 @@ public class UDFApi {
             message = Message.error(e.getMessage());
         }
 
-        return  Message.messageToResponse(message);
+        return message;
     }
 
-    @GET
-    @Path("/tree/delete/{id}")
-    public Response deleteTree(@Context HttpServletRequest req,@PathParam("id") Long id){
+    @RequestMapping(path = "/tree/delete/{id}",method = RequestMethod.GET)
+    public Message deleteTree(HttpServletRequest req,@PathVariable("id") Long id){
         String userName = SecurityFilter.getLoginUsername(req);
         Message message = null;
         try {
@@ -273,12 +258,11 @@ public class UDFApi {
             logger.error("Failed to delete Tree: ", e);
             message = Message.error(e.getMessage());
         }
-        return  Message.messageToResponse(message);
+        return message;
     }
 
-    @POST
-    @Path("/authenticate")
-    public Response Authenticate(@Context HttpServletRequest req,  JsonNode json){
+    @RequestMapping(path = "/authenticate",method = RequestMethod.POST)
+    public Message Authenticate(HttpServletRequest req){
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
@@ -292,24 +276,23 @@ public class UDFApi {
             logger.error("Failed to authenticate identification: ", e);
             message = Message.error(e.getMessage());
         }
-        return Message.messageToResponse(message);
+        return message;
     }
 
-    @POST
-    @Path("/setExpire")
+    @RequestMapping(path = "/setExpire",method = RequestMethod.POST)
     @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT,rollbackFor = Throwable.class)
-    public Response setExpire(@Context HttpServletRequest req,  JsonNode json){
+    public Message setExpire(HttpServletRequest req,@RequestBody JsonNode json){
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
             if (StringUtils.isEmpty(userName)){
                 throw new UDFException("UserName is Empty!");
             }
-            Long udfId =json.get("udfId").getLongValue();
+            Long udfId =json.get("udfId").longValue();
             if (StringUtils.isEmpty(udfId)){
                 throw new UDFException("udfId is Empty!");
             }
-            String udfName =  json.get("udfName").getTextValue();
+            String udfName =  json.get("udfName").textValue();
             if (StringUtils.isEmpty(udfName)){
                 throw new UDFException("udfName is Empty!");
             }
@@ -319,7 +302,7 @@ public class UDFApi {
             }
             Long shareUDFId=udfService.getAllShareUDFInfoIdByUDFId(userName,udfName);
             if(shareUDFId != null){
-                if(shareUDFId == udfId){
+                if(shareUDFId.equals(udfId)){
                     throw new UDFException("请操作该共享函数对应的个人函数。");
                 }
                 udfService.setSharedUDFInfoExpire(shareUDFId);
@@ -330,27 +313,26 @@ public class UDFApi {
             logger.error("Failed to setExpire: ", e);
             message = Message.error(e.getMessage());
         }
-        return Message.messageToResponse(message);
+        return message;
     }
 
-    @POST
-    @Path("/shareUDF")
+    @RequestMapping(path = "/shareUDF",method = RequestMethod.POST)
     @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT,rollbackFor = Throwable.class)
-    public Response shareUDF(@Context HttpServletRequest req,  JsonNode json)throws Throwable{
+    public Message shareUDF(HttpServletRequest req,@RequestBody JsonNode json)throws Throwable{
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
             if (StringUtils.isEmpty(userName)){
                 throw new UDFException("UserName is Empty!");
             }
-            List<String> sharedUsers = mapper.readValue(json.get("sharedUsers"), List.class);
+            List<String> sharedUsers = mapper.treeToValue(json.get("sharedUsers"), List.class);
             if (CollectionUtils.isEmpty(sharedUsers)){
                 throw new UDFException("SharedUsers is Empty!");
             }
             //Verify shared user identity(校验分享的用户身份)
             udfService.checkSharedUsers(sharedUsers,userName);//Throws an exception without passing the checksum (---no deduplication--)(不通过校验则抛异常(---没有去重--))
             //Verify that the udf function has been shared(校验udf函数是否已经被分享)
-            UDFInfo udfInfo = mapper.readValue(json.get("udfInfo"), UDFInfo.class);
+            UDFInfo udfInfo = mapper.treeToValue(json.get("udfInfo"), UDFInfo.class);
             Long shareParentId = json.get("shareParentId").asLong();
 
 
@@ -382,20 +364,19 @@ public class UDFApi {
             logger.error("Failed to share: ", e);
             message = Message.error(e.toString());
         }
-        return Message.messageToResponse(message);
+        return message;
     }
 
-    @POST
-    @Path("/getSharedUsers")
+    @RequestMapping(path = "/getSharedUsers",method = RequestMethod.POST)
     @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT,rollbackFor = Throwable.class)
-    public Response getSharedUsers(@Context HttpServletRequest req,  JsonNode json){
+    public Message getSharedUsers(HttpServletRequest req,@RequestBody JsonNode json){
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
             if (StringUtils.isEmpty(userName)){
                 throw new UDFException("UserName is Empty!");
             }
-            String udfName =  json.get("udfName").getTextValue();
+            String udfName =  json.get("udfName").textValue();
             if (StringUtils.isEmpty(userName)){
                 throw new UDFException("udfName is Empty!");
             }
@@ -406,16 +387,15 @@ public class UDFApi {
             logger.error("Failed to setExpire: ", e);
             message = Message.error(e.getMessage());
         }
-        return Message.messageToResponse(message);
+        return message;
     }
 
-    @POST
-    @Path("/updateSharedUsers")
-    public Response updateSharedUsers(@Context HttpServletRequest req,  JsonNode json){
+    @RequestMapping(path = "/updateSharedUsers",method = RequestMethod.POST)
+    public Message updateSharedUsers(HttpServletRequest req,@RequestBody JsonNode json){
         Message message = null;
 
         try {
-            List<String> sharedUsers = mapper.readValue(json.get("sharedUsers"), List.class);
+            List<String> sharedUsers = mapper.treeToValue(json.get("sharedUsers"), List.class);
             if (CollectionUtils.isEmpty(sharedUsers)){
                 throw new UDFException("SharedUsers is Empty!");
             }
@@ -425,7 +405,7 @@ public class UDFApi {
             }
             //Verify shared user identity(校验分享的用户身份)
             udfService.checkSharedUsers(sharedUsers,userName);//Throws an exception without passing the checksum (---no deduplication--)(不通过校验则抛异常(---没有去重--))
-            String udfName =  json.get("udfName").getTextValue();
+            String udfName =  json.get("udfName").textValue();
             if (StringUtils.isEmpty(userName)){
                 throw new UDFException("udfName is Empty!");
             }
@@ -448,6 +428,6 @@ public class UDFApi {
             logger.error("Failed to updateSharedUsers: ", e);
             message = Message.error(e.getMessage());
         }
-        return Message.messageToResponse(message);
+        return message;
     }
 }

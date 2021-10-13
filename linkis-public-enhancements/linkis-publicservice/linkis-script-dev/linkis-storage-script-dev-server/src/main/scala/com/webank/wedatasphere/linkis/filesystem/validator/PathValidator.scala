@@ -15,29 +15,29 @@ package com.webank.wedatasphere.linkis.filesystem.validator
 
 import java.io.File
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration._
 import com.webank.wedatasphere.linkis.filesystem.exception.WorkSpaceException
 import com.webank.wedatasphere.linkis.filesystem.util.WorkspaceUtil
 import com.webank.wedatasphere.linkis.server
-import com.webank.wedatasphere.linkis.server.Message
+import com.webank.wedatasphere.linkis.server.{Message, catchIt}
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter
 import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
-import javax.servlet.http.HttpServletRequest
-import javax.ws.rs.core.Response
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.{Around, Aspect, Pointcut}
 import org.aspectj.lang.reflect.MethodSignature
-import org.codehaus.jackson.JsonNode
 import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils
+import org.springframework.web.context.request.{RequestContextHolder, ServletRequestAttributes}
 
 @Aspect
 @Component
 class PathValidator extends Logging {
 
-  @Pointcut("@annotation(javax.ws.rs.Path) && within(com.webank.wedatasphere.linkis.filesystem.restful.api.*)")
-  def restfulResponseCatch(): Unit = {}
+  @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping) && within(com.webank.wedatasphere.linkis.filesystem.restful.api.*)")
+  def restfulResponseCatch1(): Unit = {}
 
   def getPath(args: Array[Object], paramNames: Array[String]): String = {
     var path: String = null
@@ -48,7 +48,7 @@ class PathValidator extends Logging {
       index = paramNames.indexOf("json")
       if (index != -1) {
         args(index) match {
-          case j: JsonNode if j.get("path") != null => path = j.get("path").getTextValue
+          case j: JsonNode if j.get("path") != null => path = j.get("path").textValue()
           case m: java.util.Map[String, Object] if m.get("path") != null => path = m.get("path").asInstanceOf[String]
           case _ =>
         }
@@ -102,9 +102,9 @@ class PathValidator extends Logging {
     }
   }
 
-  @Around("restfulResponseCatch()")
+  @Around("restfulResponseCatch1()")
   def dealResponseRestful(proceedingJoinPoint: ProceedingJoinPoint): Object = {
-    val response: Response = server.catchIt {
+    val resp: Message = server.catchIt {
       val signature = proceedingJoinPoint.getSignature.asInstanceOf[MethodSignature]
       logger.info("enter the path validator,the method is {}", signature.getName)
       if (FILESYSTEM_PATH_CHECK_TRIGGER.getValue) {
@@ -113,7 +113,16 @@ class PathValidator extends Logging {
       }
       Message.ok()
     }
-    if (response.getStatus != 200) response else proceedingJoinPoint.proceed()
+    if (Message.messageToHttpStatus(resp)!= 200) resp else proceedingJoinPoint.proceed()
+  }
+
+  def getCurrentHttpResponse: HttpServletResponse = {
+    val requestAttributes = RequestContextHolder.getRequestAttributes
+    if (requestAttributes.isInstanceOf[ServletRequestAttributes]) {
+      val response = requestAttributes.asInstanceOf[ServletRequestAttributes].getResponse
+      return response
+    }
+    null
   }
 }
 
@@ -124,3 +133,5 @@ object PathValidator {
     validator.checkPath(path, username)
   }
 }
+
+

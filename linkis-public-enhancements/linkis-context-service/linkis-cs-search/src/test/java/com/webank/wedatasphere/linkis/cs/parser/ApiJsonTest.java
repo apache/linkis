@@ -16,6 +16,8 @@
 
 package com.webank.wedatasphere.linkis.cs.parser;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -23,9 +25,7 @@ import com.webank.wedatasphere.linkis.cs.condition.Condition;
 import com.webank.wedatasphere.linkis.cs.condition.ConditionType;
 import com.webank.wedatasphere.linkis.cs.condition.construction.ConditionParser;
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Assert;
 import org.junit.Test;
 

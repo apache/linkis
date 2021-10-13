@@ -16,6 +16,10 @@
 
 package com.webank.wedatasphere.linkis;
 
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.webank.wedatasphere.linkis.common.ServiceInstance;
 import com.webank.wedatasphere.linkis.common.conf.BDPConfiguration;
 import com.webank.wedatasphere.linkis.common.conf.Configuration;
@@ -56,7 +60,6 @@ import org.springframework.core.env.StandardEnvironment;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.DispatcherType;
-import javax.ws.rs.ext.RuntimeDelegate;
 import java.util.EnumSet;
 
 
@@ -77,7 +80,6 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) throws ReflectiveOperationException {
 
-        RuntimeDelegate.setInstance(new org.glassfish.jersey.internal.RuntimeDelegateImpl());
         final SpringApplication application = new SpringApplication(DataWorkCloudApplication.class);
         application.addListeners(new ApplicationListener<ApplicationPreparedEvent>(){
             public void onApplicationEvent(ApplicationPreparedEvent applicationPreparedEvent) {
@@ -178,6 +180,15 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
         return builder.sources(DataWorkCloudApplication.class);
     }
 
+    //todo confirm
+    @Bean
+    public ObjectMapper defaultObjectMapper() {
+         ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
+         return  objectMapper;
+    }
+
     @Bean
     public WebServerFactoryCustomizer<JettyServletWebServerFactory> jettyFactoryCustomizer() {
         return new WebServerFactoryCustomizer<JettyServletWebServerFactory>() {
@@ -192,7 +203,6 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
                         filterHolder.setInitParameter("encoding", Configuration.BDP_ENCODING().getValue());
                         filterHolder.setInitParameter("forceEncoding", "true");
                         webApp.addFilter(filterHolder, "/*", EnumSet.allOf(DispatcherType.class));
-                        BDPJettyServerHelper.setupRestApiContextHandler(webApp);
 
                         //set servletHolder  for spring restful api
                         BDPJettyServerHelper.setupSpringRestApiContextHandler(webApp);

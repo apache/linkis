@@ -19,7 +19,7 @@
 
     <groupId>com.webank.wedatasphere.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <packaging>pom</packaging>
 
     <name>Linkis Project Parent POM</name>
@@ -69,7 +69,7 @@
     </modules>
 
     <properties>
-        <linkis.version>1.0.2</linkis.version>
+        <linkis.version>1.0.3</linkis.version>
         <hadoop.version>2.7.2</hadoop.version>
         <spring.eureka.version>2.2.1.RELEASE</spring.eureka.version>
         <spring.feign.version>2.2.1.RELEASE</spring.feign.version>

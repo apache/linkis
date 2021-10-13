@@ -28,7 +28,6 @@ import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 
 public interface CsRestfulParent {
 
@@ -44,25 +43,25 @@ public interface CsRestfulParent {
         return job;
     }
 
-    default Response generateResponse(HttpAnswerJob job, String responseKey) {
+    default Message generateResponse(HttpAnswerJob job, String responseKey) {
         HttpResponseProtocol responseProtocol = job.getResponseProtocol();
         if (responseProtocol instanceof RestResponseProtocol) {
             Message message = ((RestResponseProtocol) responseProtocol).get();
             if (message == null) {
-                return Message.messageToResponse(Message.error("job execute timeout"));
+                return Message.error("job execute timeout");
             }
             int status = ((RestResponseProtocol) responseProtocol).get().getStatus();
             if (status == 1) {
                 //failed
-                return Message.messageToResponse(((RestResponseProtocol) responseProtocol).get());
+                return ((RestResponseProtocol) responseProtocol).get();
             } else if (status == 0) {
                 Object data = job.getResponseProtocol().getResponseData();
-                return Message.messageToResponse(Message.ok().data(responseKey, data));
+                return Message.ok().data(responseKey, data);
             } else {
 
             }
         }
-        return Message.messageToResponse(Message.ok());
+        return Message.ok();
     }
 
     ServiceType getServiceType();

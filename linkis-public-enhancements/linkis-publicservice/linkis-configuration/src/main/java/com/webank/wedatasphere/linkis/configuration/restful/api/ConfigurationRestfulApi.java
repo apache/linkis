@@ -16,6 +16,7 @@
 
 package com.webank.wedatasphere.linkis.configuration.restful.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.discovery.converters.Auto;
 import com.webank.wedatasphere.linkis.configuration.entity.*;
 import com.webank.wedatasphere.linkis.configuration.exception.ConfigurationException;
@@ -30,26 +31,22 @@ import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils;
 import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.json4s.jackson.Json;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-@Path("/configuration")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping(path = "/configuration")
 public class ConfigurationRestfulApi {
 
     @Autowired
@@ -62,13 +59,12 @@ public class ConfigurationRestfulApi {
 
     private static final String NULL = "null";
 
-    @GET
-    @Path("/addKeyForEngine")
-    public Response addKeyForEngine(@Context HttpServletRequest req,
-                                   @QueryParam("engineType") String engineType,
-                                   @QueryParam("version") String version,
-                                   @QueryParam("token") String token,
-                                   @QueryParam("keyJson") String keyJson) throws ConfigurationException {
+    @RequestMapping(path = "/addKeyForEngine",method = RequestMethod.GET)
+    public Message addKeyForEngine(HttpServletRequest req,
+                                   @RequestParam(value="engineType",required=false) String engineType,
+                                   @RequestParam(value="version",required=false) String version,
+                                   @RequestParam(value="token",required=false) String token,
+                                   @RequestParam(value="keyJson",required=false) String keyJson) throws ConfigurationException {
         String username = SecurityFilter.getLoginUsername(req);
         if(StringUtils.isEmpty(engineType) || StringUtils.isEmpty(version) || StringUtils.isEmpty(token)){
             throw new ConfigurationException("params cannot be empty!");
@@ -80,7 +76,7 @@ public class ConfigurationRestfulApi {
         ConfigKey configKey = BDPJettyServerHelper.gson().fromJson(keyJson, ConfigKey.class);
         configurationService.addKeyForEngine(engineType,version,configKey);
         // TODO: 2019/12/30  configKey参数校验
-        return Message.messageToResponse(Message.ok());
+        return Message.ok();
     }
 
 
@@ -88,11 +84,11 @@ public class ConfigurationRestfulApi {
 
 //    @GET
 //    @Path("/addKeyForCreator")
-//    public Response addKeyForCreator(@Context HttpServletRequest req,
-//                                    @QueryParam("engineType") String engineType,
-//                                    @QueryParam("creator") String creator,
-//                                    @QueryParam("token") String token,
-//                                    @QueryParam("keyJson") String keyJson) throws ConfigurationException {
+//    public Message addKeyForCreator(HttpServletRequest req,
+//                                    @RequestParam(value="engineType",required=false) String engineType,
+//                                    @RequestParam(value="creator",required=false) String creator,
+//                                    @RequestParam(value="token",required=false) String token,
+//                                    @RequestParam(value="keyJson",required=false) String keyJson) throws ConfigurationException {
 //        String username = SecurityFilter.getLoginUsername(req);
 //        if(StringUtils.isEmpty(engineType) || StringUtils.isEmpty(creator) || StringUtils.isEmpty(token)){
 //            throw new ConfigurationException("params cannot be empty!");
@@ -109,7 +105,7 @@ public class ConfigurationRestfulApi {
 //        ConfigKey configKey = BDPJettyServerHelper.gson().fromJson(keyJson, ConfigKey.class);
 //        // TODO: 2019/12/30  configKey参数校验
 //        configurationService.addKey(creator,engineType,configKey);
-//        return Message.messageToResponse(Message.ok());
+//        return Message.ok();
 //    }
 
 
@@ -118,10 +114,10 @@ public class ConfigurationRestfulApi {
 
 //    @GET
 //    @Path("/copyKeyFromIDE")
-//    public Response copyKeyFromIDE(@Context HttpServletRequest req,
-//                                  @QueryParam("appName") String appName,
-//                                  @QueryParam("creator") String creator,
-//                                  @QueryParam("token") String token) throws ConfigurationException {
+//    public Message copyKeyFromIDE(HttpServletRequest req,
+//                                  @RequestParam(value="appName",required=false) String appName,
+//                                  @RequestParam(value="creator",required=false) String creator,
+//                                  @RequestParam(value="token",required=false) String token) throws ConfigurationException {
 //        String username = SecurityFilter.getLoginUsername(req);
 //        if(StringUtils.isEmpty(appName) || StringUtils.isEmpty(creator) || StringUtils.isEmpty(token)){
 //            throw new ConfigurationException("params cannot be empty!");
@@ -140,12 +136,11 @@ public class ConfigurationRestfulApi {
 //            throw new ConfigurationException("IDE:"+ appName + ",cannot find any key to copy");
 //        }
 //        IDEkeys.forEach(k ->configurationService.copyKeyFromIDE(k,creator,appName));
-//        return Message.messageToResponse(Message.ok());
+//        return Message.ok();
 //    }
 
-    @GET
-    @Path("/getFullTreesByAppName")
-    public Response getFullTreesByAppName(@Context HttpServletRequest req, @QueryParam("engineType") String engineType, @QueryParam("version") String version, @QueryParam("creator") String creator) throws ConfigurationException {
+    @RequestMapping(path = "/getFullTreesByAppName",method = RequestMethod.GET)
+    public Message getFullTreesByAppName(HttpServletRequest req, @RequestParam(value="engineType",required=false) String engineType, @RequestParam(value="version",required=false) String version, @RequestParam(value="creator",required=false) String creator) throws ConfigurationException {
         String username = SecurityFilter.getLoginUsername(req);
         if(creator != null && (creator.equals("通用设置") || creator.equals("全局设置"))){
             engineType = "*";
@@ -154,20 +149,18 @@ public class ConfigurationRestfulApi {
         }
         List labelList = LabelEntityParser.generateUserCreatorEngineTypeLabelList(username, creator, engineType, version);
         ArrayList<ConfigTree> configTrees = configurationService.getFullTreeByLabelList(labelList,true);
-        return Message.messageToResponse(Message.ok().data("fullTree", configTrees));
+        return Message.ok().data("fullTree", configTrees);
     }
 
-    @GET
-    @Path("/getCategory")
-    public Response getCategory(@Context HttpServletRequest req){
+    @RequestMapping(path = "/getCategory",method = RequestMethod.GET)
+    public Message getCategory(HttpServletRequest req){
         String username = SecurityFilter.getLoginUsername(req);
         List<CategoryLabelVo> categoryLabelList = categoryService.getAllCategory();
-        return Message.messageToResponse(Message.ok().data("Category", categoryLabelList));
+        return Message.ok().data("Category", categoryLabelList);
     }
 
-    @POST
-    @Path("/createFirstCategory")
-    public Response createFirstCategory(@Context HttpServletRequest request, JsonNode jsonNode) throws ConfigurationException {
+    @RequestMapping(path = "/createFirstCategory",method = RequestMethod.POST)
+    public Message createFirstCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ConfigurationException {
         String username = SecurityFilter.getLoginUsername(request);
         String categoryName = jsonNode.get("categoryName").asText();
         String description = jsonNode.get("description").asText();
@@ -175,22 +168,20 @@ public class ConfigurationRestfulApi {
             throw new ConfigurationException("categoryName is null, cannot be added");
         }
         categoryService.createFirstCategory(categoryName, description);
-        return Message.messageToResponse(Message.ok());
+        return Message.ok();
     }
 
-    @POST
-    @Path("/deleteCategory")
-    public Response deleteCategory(@Context HttpServletRequest request, JsonNode jsonNode){
+    @RequestMapping(path = "/deleteCategory",method = RequestMethod.POST)
+    public Message deleteCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode){
         String username = SecurityFilter.getLoginUsername(request);
         Integer categoryId = jsonNode.get("categoryId").asInt();
         categoryService.deleteCategory(categoryId);
-        return Message.messageToResponse(Message.ok());
+        return Message.ok();
     }
 
 
-    @POST
-    @Path("/createSecondCategory")
-    public Response createSecondCategory(@Context HttpServletRequest request, JsonNode jsonNode) throws ConfigurationException {
+    @RequestMapping(path = "/createSecondCategory",method = RequestMethod.POST)
+    public Message createSecondCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ConfigurationException {
         String username = SecurityFilter.getLoginUsername(request);
         Integer categoryId = jsonNode.get("categoryId").asInt();
         String engineType = jsonNode.get("engineType").asText();
@@ -206,14 +197,13 @@ public class ConfigurationRestfulApi {
             version = LabelUtils.COMMON_VALUE;
         }
         categoryService.createSecondCategory(categoryId, engineType, version, description);
-        return Message.messageToResponse(Message.ok());
+        return Message.ok();
     }
 
 
-    @POST
-    @Path("/saveFullTree")
-    public Response saveFullTree(@Context HttpServletRequest req, JsonNode json) throws IOException, ConfigurationException {
-        List fullTrees = mapper.readValue(json.get("fullTree"), List.class);
+    @RequestMapping(path = "/saveFullTree",method = RequestMethod.POST)
+    public Message saveFullTree(HttpServletRequest req, @RequestBody JsonNode json) throws IOException, ConfigurationException {
+        List fullTrees = mapper.treeToValue(json.get("fullTree"), List.class);
         String creator = JsonNodeUtil.getStringValue(json.get("creator"));
         String engineType = JsonNodeUtil.getStringValue(json.get("engineType"));
         if(creator != null && (creator.equals("通用设置") || creator.equals("全局设置"))){
@@ -244,19 +234,17 @@ public class ConfigurationRestfulApi {
         configurationService.updateUserValue(createList, updateList);
         configurationService.clearAMCacheConf(username,creator,engine,version);
         Message message = Message.ok();
-        return Message.messageToResponse(message);
+        return message;
     }
 
-    @GET
-    @Path("/engineType")
-    public Response listAllEngineType(@Context HttpServletRequest request){
+    @RequestMapping(path = "/engineType",method = RequestMethod.GET)
+    public Message listAllEngineType(HttpServletRequest request){
         String[] engineType = configurationService.listAllEngineType();
-        return Message.messageToResponse(Message.ok().data("engineType",engineType));
+        return Message.ok().data("engineType",engineType);
     }
 
-    @POST
-    @Path("/updateCategoryInfo")
-    public Response updateCategoryInfo(@Context HttpServletRequest request, JsonNode jsonNode) throws ConfigurationException {
+    @RequestMapping(path = "/updateCategoryInfo",method = RequestMethod.POST)
+    public Message updateCategoryInfo(HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ConfigurationException {
         String username = SecurityFilter.getLoginUsername(request);
         String description = null;
         Integer categoryId = null;
@@ -269,12 +257,11 @@ public class ConfigurationRestfulApi {
         if(description != null){
             categoryService.updateCategory(categoryId, description);
         }
-        return Message.messageToResponse(Message.ok());
+        return Message.ok();
     }
 
-    @GET
-    @Path("/rpcTest")
-    public Response rpcTest(@QueryParam("username") String username, @QueryParam("creator") String creator, @QueryParam("engineType") String engineType,@QueryParam("version") String version){
+    @RequestMapping(path = "/rpcTest",method = RequestMethod.GET)
+    public Message rpcTest(@RequestParam(value="username",required=false) String username, @RequestParam(value="creator",required=false) String creator, @RequestParam(value="engineType",required=false) String engineType,@RequestParam(value="version",required=false) String version){
         configurationService.queryGlobalConfig(username);
         EngineTypeLabel engineTypeLabel = new EngineTypeLabel();
         engineTypeLabel.setVersion(version);
@@ -285,7 +272,7 @@ public class ConfigurationRestfulApi {
         userCreatorLabel.setUser(username);
         configurationService.queryConfig(userCreatorLabel,engineTypeLabel,"wds.linkis.rm");
         Message message = Message.ok();
-        return Message.messageToResponse(message);
+        return message;
     }
 
 }

@@ -11,20 +11,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.execution;
+package org.apache.linkis.cli.core.interactor.execution;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.Execution;
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.ExecutionResult;
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.SubExecutionType;
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.executor.Executor;
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.ExecutionStatus;
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.JobStatus;
-import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.ExecutorException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.interactor.execution.executor.JobManagableBackendExecutor;
-import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobManExec;
+import org.apache.linkis.cli.common.entity.execution.Execution;
+import org.apache.linkis.cli.common.entity.execution.ExecutionResult;
+import org.apache.linkis.cli.common.entity.execution.SubExecutionType;
+import org.apache.linkis.cli.common.entity.execution.executor.Executor;
+import org.apache.linkis.cli.common.entity.execution.jobexec.ExecutionStatus;
+import org.apache.linkis.cli.common.entity.execution.jobexec.JobStatus;
+import org.apache.linkis.cli.common.entity.job.Job;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.ExecutorException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.execution.executor.JobManagableBackendExecutor;
+import org.apache.linkis.cli.core.interactor.execution.jobexec.JobManExec;
 
 /**
  * TODO: put exception during execution in ExecutionResult and do not interrupt execution

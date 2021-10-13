@@ -18,7 +18,7 @@
  * Created by ${USER} on ${DATE}.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.response
+package org.apache.linkis.httpclient.response
 
 
 class ListResult(override val getResponseBody: String, results: Array[Result]) extends Result {

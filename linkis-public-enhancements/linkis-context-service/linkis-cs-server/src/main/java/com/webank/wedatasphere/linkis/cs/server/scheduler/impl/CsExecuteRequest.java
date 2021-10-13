@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.scheduler.impl;
+package org.apache.linkis.cs.server.scheduler.impl;
 
-import com.webank.wedatasphere.linkis.cs.server.scheduler.HttpJob;
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteRequest;
+import org.apache.linkis.cs.server.scheduler.HttpJob;
+import org.apache.linkis.scheduler.executer.ExecuteRequest;
 
 import java.util.function.Consumer;
 

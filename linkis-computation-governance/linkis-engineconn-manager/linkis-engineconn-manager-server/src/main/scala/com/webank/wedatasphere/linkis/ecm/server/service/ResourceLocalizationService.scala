@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.service
+package org.apache.linkis.ecm.server.service
 
-import com.webank.wedatasphere.linkis.ecm.core.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
+import org.apache.linkis.ecm.core.engineconn.EngineConn
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
 
 
 trait ResourceLocalizationService {

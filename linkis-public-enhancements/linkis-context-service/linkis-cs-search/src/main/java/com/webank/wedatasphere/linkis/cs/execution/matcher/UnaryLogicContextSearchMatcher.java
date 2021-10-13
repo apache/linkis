@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.execution.matcher;
+package org.apache.linkis.cs.execution.matcher;
 
-import com.webank.wedatasphere.linkis.cs.condition.UnaryLogicCondition;
+import org.apache.linkis.cs.condition.UnaryLogicCondition;
 
 public abstract class UnaryLogicContextSearchMatcher extends AbstractContextSearchMatcher{
 

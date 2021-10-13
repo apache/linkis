@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.io.client
+package org.apache.linkis.storage.io.client
 
-import com.webank.wedatasphere.linkis.storage.io.utils.IOClientUtils
-import com.webank.wedatasphere.linkis.manager.label.entity.entrance.{BindEngineLabel, LoadBalanceLabel}
-import com.webank.wedatasphere.linkis.storage.domain.MethodEntity
-import com.webank.wedatasphere.linkis.storage.io.utils.IOClientUtils
-import com.webank.wedatasphere.linkis.storage.utils.StorageConfiguration
+import org.apache.linkis.storage.io.utils.IOClientUtils
+import org.apache.linkis.manager.label.entity.entrance.{BindEngineLabel, LoadBalanceLabel}
+import org.apache.linkis.storage.domain.MethodEntity
+import org.apache.linkis.storage.io.utils.IOClientUtils
+import org.apache.linkis.storage.utils.StorageConfiguration
 
 /**
   * IOClient is used to execute the proxy as the ujes code execution entry in io and get the return result.

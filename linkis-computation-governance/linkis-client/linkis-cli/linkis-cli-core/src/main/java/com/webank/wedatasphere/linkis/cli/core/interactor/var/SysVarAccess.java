@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.var;
+package org.apache.linkis.cli.core.interactor.var;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.properties.ClientProperties;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.VarAccessException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.common.entity.properties.ClientProperties;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.VarAccessException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

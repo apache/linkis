@@ -16,13 +16,13 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.selector
+package org.apache.linkis.manager.am.selector
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.manager.am.selector.rule.NodeSelectRule
-import com.webank.wedatasphere.linkis.manager.common.entity.node.Node
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.am.selector.rule.NodeSelectRule
+import org.apache.linkis.manager.common.entity.node.Node
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

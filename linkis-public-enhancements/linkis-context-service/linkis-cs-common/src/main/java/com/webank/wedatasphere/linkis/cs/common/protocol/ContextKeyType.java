@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.protocol;
+package org.apache.linkis.cs.common.protocol;
 
 
 public enum ContextKeyType {
@@ -23,7 +23,7 @@ public enum ContextKeyType {
      * index表示type的int
      * typeName 表示全路径类名
      */
-    YML_CONTEXT_KEY(1, "com.webank.wedatasphere.linkis.cs.common.entity.source.CommonContextKey")
+    YML_CONTEXT_KEY(1, "org.apache.linkis.cs.common.entity.source.CommonContextKey")
     ;
 
     private int index;

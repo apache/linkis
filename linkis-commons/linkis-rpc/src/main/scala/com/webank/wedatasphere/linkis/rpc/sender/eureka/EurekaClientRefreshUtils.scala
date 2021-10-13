@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.sender.eureka
+package org.apache.linkis.rpc.sender.eureka
 
 import com.netflix.discovery.{EurekaClient, DiscoveryClient => NetflixDiscoveryClient}
-import com.webank.wedatasphere.linkis.rpc.conf.RPCConfiguration
-import com.webank.wedatasphere.linkis.server.utils.AopTargetUtils
+import org.apache.linkis.rpc.conf.RPCConfiguration
+import org.apache.linkis.server.utils.AopTargetUtils
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration

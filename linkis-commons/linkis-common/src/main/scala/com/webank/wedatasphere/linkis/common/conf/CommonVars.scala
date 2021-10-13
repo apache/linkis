@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.conf
+package org.apache.linkis.common.conf
 
 import scala.collection.JavaConversions._
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.core.util
+package org.apache.linkis.engineconn.core.util
 
 import com.google.gson.Gson
 

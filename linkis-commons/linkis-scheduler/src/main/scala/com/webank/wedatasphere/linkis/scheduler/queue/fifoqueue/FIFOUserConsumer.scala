@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue
+package org.apache.linkis.scheduler.queue.fifoqueue
 
 
 
 import java.util.concurrent.{ExecutorService, Future}
 
-import com.webank.wedatasphere.linkis.common.exception.{ErrorException, WarnException}
-import com.webank.wedatasphere.linkis.common.log.LogUtils
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
-import com.webank.wedatasphere.linkis.scheduler.exception.SchedulerErrorException
-import com.webank.wedatasphere.linkis.scheduler.executer.Executor
-import com.webank.wedatasphere.linkis.scheduler.future.{BDPFuture, BDPFutureTask}
-import com.webank.wedatasphere.linkis.scheduler.queue._
+import org.apache.linkis.common.exception.{ErrorException, WarnException}
+import org.apache.linkis.common.log.LogUtils
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.scheduler.SchedulerContext
+import org.apache.linkis.scheduler.exception.SchedulerErrorException
+import org.apache.linkis.scheduler.executer.Executor
+import org.apache.linkis.scheduler.future.{BDPFuture, BDPFutureTask}
+import org.apache.linkis.scheduler.queue._
 
 import scala.beans.BeanProperty
 import scala.collection.mutable.ArrayBuffer

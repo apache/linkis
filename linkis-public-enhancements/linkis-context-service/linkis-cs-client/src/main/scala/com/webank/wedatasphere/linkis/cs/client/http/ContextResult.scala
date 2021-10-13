@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.http
+package org.apache.linkis.cs.client.http
 
-import com.webank.wedatasphere.linkis.cs.listener.callback.imp.ContextKeyValueBean
-import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
-import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
+import org.apache.linkis.cs.listener.callback.imp.ContextKeyValueBean
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.response.DWSResult
 
 
 abstract class ContextResult extends DWSResult

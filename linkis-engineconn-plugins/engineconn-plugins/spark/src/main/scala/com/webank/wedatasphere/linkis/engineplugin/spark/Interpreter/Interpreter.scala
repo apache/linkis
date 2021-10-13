@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.Interpreter
+package org.apache.linkis.engineplugin.spark.Interpreter
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.engineplugin.spark.common.State
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteResponse
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.engineplugin.spark.common.State
+import org.apache.linkis.scheduler.executer.ExecuteResponse
 
 import scala.concurrent.TimeoutException
 import scala.concurrent.duration.Duration

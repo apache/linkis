@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.source
+package org.apache.linkis.storage.source
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.io.{FsWriter, MetaData, Record}
+import org.apache.linkis.common.io.{FsWriter, MetaData, Record}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.math3.util.Pair
 

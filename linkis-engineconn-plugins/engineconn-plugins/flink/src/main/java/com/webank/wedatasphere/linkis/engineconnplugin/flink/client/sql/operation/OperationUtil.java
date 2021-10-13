@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation;
+package org.apache.linkis.engineconnplugin.flink.client.sql.operation;
 
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.result.ColumnInfo;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.result.ConstantNames;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.result.ResultKind;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet;
+import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ColumnInfo;
+import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ConstantNames;
+import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultKind;
+import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.flink.table.types.logical.VarCharType;

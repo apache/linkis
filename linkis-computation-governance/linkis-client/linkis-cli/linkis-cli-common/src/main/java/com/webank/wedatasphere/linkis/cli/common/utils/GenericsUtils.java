@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.common.utils;
+package org.apache.linkis.cli.common.utils;
 
 /**
  * Probably not going to use this

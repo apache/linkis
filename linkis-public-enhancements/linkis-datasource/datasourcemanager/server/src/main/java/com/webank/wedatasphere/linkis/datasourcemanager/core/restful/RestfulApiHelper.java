@@ -11,15 +11,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.restful;
+package org.apache.linkis.datasourcemanager.core.restful;
 
-import com.webank.wedatasphere.linkis.common.exception.WarnException;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.DsmConfiguration;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.util.CryptoUtils;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.restful.exception.BeanValidationExceptionMapper;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidateException;
-import com.webank.wedatasphere.linkis.server.Message;
+import org.apache.linkis.common.exception.WarnException;
+import org.apache.linkis.datasourcemanager.common.DsmConfiguration;
+import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
+import org.apache.linkis.datasourcemanager.common.util.CryptoUtils;
+import org.apache.linkis.datasourcemanager.core.restful.exception.BeanValidationExceptionMapper;
+import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateException;
+import org.apache.linkis.server.Message;
 
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;

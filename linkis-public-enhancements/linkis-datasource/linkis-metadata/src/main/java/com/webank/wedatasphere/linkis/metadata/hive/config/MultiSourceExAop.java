@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.hive.config;
+package org.apache.linkis.metadata.hive.config;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -36,7 +36,7 @@ public class MultiSourceExAop implements Ordered {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @Pointcut(value = "@annotation(com.webank.wedatasphere.linkis.metadata.hive.config.DataSource)")
+    @Pointcut(value = "@annotation(org.apache.linkis.metadata.hive.config.DataSource)")
     private void cut() {
 
     }

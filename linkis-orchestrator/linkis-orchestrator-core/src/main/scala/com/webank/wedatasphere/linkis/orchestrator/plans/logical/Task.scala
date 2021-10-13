@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.plans.logical
+package org.apache.linkis.orchestrator.plans.logical
 
 /**
   *

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.service
+package org.apache.linkis.ecm.server.service
 
-import com.webank.wedatasphere.linkis.ecm.core.report.ECMHealthReport
-import com.webank.wedatasphere.linkis.manager.common.protocol.node.{NodeHeartbeatMsg, NodeHeartbeatRequest}
+import org.apache.linkis.ecm.core.report.ECMHealthReport
+import org.apache.linkis.manager.common.protocol.node.{NodeHeartbeatMsg, NodeHeartbeatRequest}
 
 
 trait ECMHealthService{

@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.server.service
+package org.apache.linkis.engineplugin.server.service
 
 import java.util.Date
 
-import com.webank.wedatasphere.linkis.bml.client.BmlClientFactory
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engineplugin.server.conf.EngineConnPluginConfiguration
-import com.webank.wedatasphere.linkis.engineplugin.server.dao.EngineConnBmlResourceDao
-import com.webank.wedatasphere.linkis.engineplugin.server.entity.EngineConnBmlResource
-import com.webank.wedatasphere.linkis.engineplugin.server.localize.{EngineConnBmlResourceGenerator, EngineConnLocalizeResource}
-import com.webank.wedatasphere.linkis.manager.common.protocol.bml.BmlResource
-import com.webank.wedatasphere.linkis.manager.common.protocol.bml.BmlResource.BmlResourceVisibility
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.{EngineConnResource, LaunchConstants}
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
+import org.apache.linkis.bml.client.BmlClientFactory
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration
+import org.apache.linkis.engineplugin.server.dao.EngineConnBmlResourceDao
+import org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource
+import org.apache.linkis.engineplugin.server.localize.{EngineConnBmlResourceGenerator, EngineConnLocalizeResource}
+import org.apache.linkis.manager.common.protocol.bml.BmlResource
+import org.apache.linkis.manager.common.protocol.bml.BmlResource.BmlResourceVisibility
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
+import org.apache.linkis.manager.engineplugin.common.launch.process.{EngineConnResource, LaunchConstants}
+import org.apache.linkis.message.annotation.Receiver
 import javax.annotation.PostConstruct
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired

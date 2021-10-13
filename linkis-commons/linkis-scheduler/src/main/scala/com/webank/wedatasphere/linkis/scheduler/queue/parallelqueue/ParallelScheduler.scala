@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue
+package org.apache.linkis.scheduler.queue.parallelqueue
 
-import com.webank.wedatasphere.linkis.scheduler.queue.{ConsumerManager, GroupFactory}
-import com.webank.wedatasphere.linkis.scheduler.{AbstractScheduler, SchedulerContext}
+import org.apache.linkis.scheduler.queue.{ConsumerManager, GroupFactory}
+import org.apache.linkis.scheduler.{AbstractScheduler, SchedulerContext}
 
 
 class ParallelScheduler(val schedulerContext: SchedulerContext) extends AbstractScheduler{

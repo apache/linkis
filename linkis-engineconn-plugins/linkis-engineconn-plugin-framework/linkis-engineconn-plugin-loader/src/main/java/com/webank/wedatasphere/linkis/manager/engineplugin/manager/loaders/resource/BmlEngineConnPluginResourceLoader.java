@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.manager.loaders.resource;
+package org.apache.linkis.manager.engineplugin.manager.loaders.resource;
 
-import com.webank.wedatasphere.linkis.bml.client.BmlClient;
-import com.webank.wedatasphere.linkis.bml.client.BmlClientFactory;
-import com.webank.wedatasphere.linkis.bml.protocol.BmlDownloadResponse;
-import com.webank.wedatasphere.linkis.bml.protocol.Version;
-import com.webank.wedatasphere.linkis.common.io.FsPath;
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInfo;
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.exception.EngineConnPluginLoadResourceException;
-import com.webank.wedatasphere.linkis.manager.engineplugin.manager.config.EngineConnPluginLoaderConf;
-import com.webank.wedatasphere.linkis.manager.engineplugin.manager.loaders.EngineConnPluginsResourceLoader;
-import com.webank.wedatasphere.linkis.manager.engineplugin.manager.utils.EngineConnPluginUtils;
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel;
+import org.apache.linkis.bml.client.BmlClient;
+import org.apache.linkis.bml.client.BmlClientFactory;
+import org.apache.linkis.bml.protocol.BmlDownloadResponse;
+import org.apache.linkis.bml.protocol.Version;
+import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInfo;
+import org.apache.linkis.manager.engineplugin.common.loader.exception.EngineConnPluginLoadResourceException;
+import org.apache.linkis.manager.engineplugin.manager.config.EngineConnPluginLoaderConf;
+import org.apache.linkis.manager.engineplugin.manager.loaders.EngineConnPluginsResourceLoader;
+import org.apache.linkis.manager.engineplugin.manager.utils.EngineConnPluginUtils;
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;

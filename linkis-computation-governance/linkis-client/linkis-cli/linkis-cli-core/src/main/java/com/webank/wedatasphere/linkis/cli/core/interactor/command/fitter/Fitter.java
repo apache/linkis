@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.command.fitter;
+package org.apache.linkis.cli.core.interactor.command.fitter;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
-import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
+import org.apache.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 
 /**
  * @description: interface for parsing command arguments and fill them into instance of {@link CmdTemplate},

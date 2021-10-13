@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.serialize.impl.value.metadata;
+package org.apache.linkis.cs.common.serialize.impl.value.metadata;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.metadata.CSTable;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.common.serialize.AbstractSerializer;
-import com.webank.wedatasphere.linkis.cs.common.utils.CSCommonUtils;
+import org.apache.linkis.cs.common.entity.metadata.CSTable;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.serialize.AbstractSerializer;
+import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 
 public class CSTableSerializer extends AbstractSerializer<CSTable> {

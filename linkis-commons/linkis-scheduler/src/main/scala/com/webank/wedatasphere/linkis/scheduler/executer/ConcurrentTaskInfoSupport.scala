@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.executer
+package org.apache.linkis.scheduler.executer
 
-import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.protocol.engine.JobProgressInfo
 
 
 trait ConcurrentTaskInfoSupport {

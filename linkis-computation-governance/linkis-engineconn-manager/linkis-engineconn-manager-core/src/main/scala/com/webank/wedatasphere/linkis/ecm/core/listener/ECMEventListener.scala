@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.core.listener
+package org.apache.linkis.ecm.core.listener
 
-import com.webank.wedatasphere.linkis.common.listener.{Event, EventListener}
-import com.webank.wedatasphere.linkis.common.utils.Logging
+import org.apache.linkis.common.listener.{Event, EventListener}
+import org.apache.linkis.common.utils.Logging
 
 
 trait ECMEventListener extends EventListener with Logging {

@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.publisher;
+package org.apache.linkis.message.publisher;
 
-import com.webank.wedatasphere.linkis.common.utils.JavaLog;
-import com.webank.wedatasphere.linkis.message.builder.DefaultServiceMethodContext;
-import com.webank.wedatasphere.linkis.message.builder.MessageJob;
-import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext;
-import com.webank.wedatasphere.linkis.message.context.AbstractMessageSchedulerContext;
-import com.webank.wedatasphere.linkis.message.exception.MessageWarnException;
-import com.webank.wedatasphere.linkis.message.parser.ImplicitMethod;
-import com.webank.wedatasphere.linkis.message.parser.ServiceMethod;
-import com.webank.wedatasphere.linkis.message.scheduler.MethodExecuteWrapper;
-import com.webank.wedatasphere.linkis.message.utils.MessageUtils;
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol;
+import org.apache.linkis.common.utils.JavaLog;
+import org.apache.linkis.message.builder.DefaultServiceMethodContext;
+import org.apache.linkis.message.builder.MessageJob;
+import org.apache.linkis.message.builder.ServiceMethodContext;
+import org.apache.linkis.message.context.AbstractMessageSchedulerContext;
+import org.apache.linkis.message.exception.MessageWarnException;
+import org.apache.linkis.message.parser.ImplicitMethod;
+import org.apache.linkis.message.parser.ServiceMethod;
+import org.apache.linkis.message.scheduler.MethodExecuteWrapper;
+import org.apache.linkis.message.utils.MessageUtils;
+import org.apache.linkis.protocol.message.RequestProtocol;
 
-import com.webank.wedatasphere.linkis.rpc.MessageErrorConstants;
+import org.apache.linkis.rpc.MessageErrorConstants;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import static com.webank.wedatasphere.linkis.message.conf.MessageSchedulerConf.CONTEXT_KEY;
+import static org.apache.linkis.message.conf.MessageSchedulerConf.CONTEXT_KEY;
 
 
 public abstract class AbstractMessagePublisher extends JavaLog implements MessagePublisher {

@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.springcloud.http;
+package org.apache.linkis.gateway.springcloud.http;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.common.conf.CommonVars;
-import com.webank.wedatasphere.linkis.common.utils.JavaLog;
-import com.webank.wedatasphere.linkis.gateway.exception.GatewayWarnException;
-import com.webank.wedatasphere.linkis.gateway.http.BaseGatewayContext;
-import com.webank.wedatasphere.linkis.gateway.parser.GatewayParser;
-import com.webank.wedatasphere.linkis.gateway.route.GatewayRouter;
-import com.webank.wedatasphere.linkis.gateway.security.LinkisPreFilter;
-import com.webank.wedatasphere.linkis.gateway.security.LinkisPreFilter$;
-import com.webank.wedatasphere.linkis.gateway.security.SecurityFilter;
-import com.webank.wedatasphere.linkis.gateway.springcloud.SpringCloudGatewayConfiguration;
-import com.webank.wedatasphere.linkis.server.Message;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.utils.JavaLog;
+import org.apache.linkis.gateway.exception.GatewayWarnException;
+import org.apache.linkis.gateway.http.BaseGatewayContext;
+import org.apache.linkis.gateway.parser.GatewayParser;
+import org.apache.linkis.gateway.route.GatewayRouter;
+import org.apache.linkis.gateway.security.LinkisPreFilter;
+import org.apache.linkis.gateway.security.LinkisPreFilter$;
+import org.apache.linkis.gateway.security.SecurityFilter;
+import org.apache.linkis.gateway.springcloud.SpringCloudGatewayConfiguration;
+import org.apache.linkis.server.Message;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.cloud.gateway.config.GatewayProperties;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;

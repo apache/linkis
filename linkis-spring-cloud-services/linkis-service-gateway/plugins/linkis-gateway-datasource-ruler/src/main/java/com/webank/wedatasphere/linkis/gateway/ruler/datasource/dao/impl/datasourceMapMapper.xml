@@ -18,9 +18,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 
-<mapper namespace="com.webank.wedatasphere.linkis.gateway.ruler.datasource.dao.DatasourceMapMapper">
+<mapper namespace="org.apache.linkis.gateway.ruler.datasource.dao.DatasourceMapMapper">
 
-    <select id="listAll" resultType="com.webank.wedatasphere.linkis.gateway.ruler.datasource.entity.DatasourceMap">
+    <select id="listAll" resultType="org.apache.linkis.gateway.ruler.datasource.entity.DatasourceMap">
         SELECT * from linkis_datasource_map
     </select>
 
@@ -33,7 +33,7 @@
         )
     </update>
 
-    <insert id="insert" parameterType="com.webank.wedatasphere.linkis.gateway.ruler.datasource.entity.DatasourceMap">
+    <insert id="insert" parameterType="org.apache.linkis.gateway.ruler.datasource.entity.DatasourceMap">
         insert into linkis_datasource_map(datasource_name, instance, service_id) values (#{datasourceName}, #{instance}, #{serviceId})
     </insert>
 
@@ -41,7 +41,7 @@
         select count(*) from linkis_datasource_map where instance = #{instance}
     </select>
 
-    <select id="getByDatasource" parameterType="String" resultType="com.webank.wedatasphere.linkis.gateway.ruler.datasource.entity.DatasourceMap">
+    <select id="getByDatasource" parameterType="String" resultType="org.apache.linkis.gateway.ruler.datasource.entity.DatasourceMap">
         select * from linkis_datasource_map where datasource_name = #{datasourceName}
     </select>
 

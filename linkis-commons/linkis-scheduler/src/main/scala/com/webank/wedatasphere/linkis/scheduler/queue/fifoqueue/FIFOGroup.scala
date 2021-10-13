@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue
+package org.apache.linkis.scheduler.queue.fifoqueue
 
 import java.util.concurrent.TimeUnit
 
-import com.webank.wedatasphere.linkis.scheduler.queue.{AbstractGroup, SchedulerEvent}
+import org.apache.linkis.scheduler.queue.{AbstractGroup, SchedulerEvent}
 
 import scala.concurrent.duration.Duration
 

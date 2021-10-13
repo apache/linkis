@@ -11,15 +11,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence;
+package org.apache.linkis.cs.persistence;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.history.ContextHistory;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.persistence.entity.PersistenceContextID;
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.ContextHistoryPersistence;
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.KeywordContextHistoryPersistence;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.history.ContextHistory;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextID;
+import org.apache.linkis.cs.persistence.persistence.ContextHistoryPersistence;
+import org.apache.linkis.cs.persistence.persistence.KeywordContextHistoryPersistence;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.List;

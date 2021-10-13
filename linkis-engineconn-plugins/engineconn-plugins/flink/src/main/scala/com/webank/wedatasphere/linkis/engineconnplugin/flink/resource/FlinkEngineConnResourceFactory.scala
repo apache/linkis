@@ -15,12 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.resource
+package org.apache.linkis.engineconnplugin.flink.resource
 
-import com.webank.wedatasphere.linkis.common.utils.ByteTimeUtils
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration._
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.{DriverAndYarnResource, LoadInstanceResource, Resource, YarnResource}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.resource.AbstractEngineResourceFactory
+import org.apache.linkis.common.utils.ByteTimeUtils
+import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration._
+import org.apache.linkis.manager.common.entity.resource.{DriverAndYarnResource, LoadInstanceResource, Resource, YarnResource}
+import org.apache.linkis.manager.engineplugin.common.resource.AbstractEngineResourceFactory
 
 
 class FlinkEngineConnResourceFactory extends AbstractEngineResourceFactory {

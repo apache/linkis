@@ -1,11 +1,11 @@
-package com.webank.wedatasphere.linkis.manager.label;
+package org.apache.linkis.manager.label;
 
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactory;
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.StdLabelBuilderFactory;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.manager.label.entity.node.AliasServiceInstanceLabel;
-import com.webank.wedatasphere.linkis.manager.label.exception.LabelErrorException;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
+import org.apache.linkis.manager.label.builder.factory.StdLabelBuilderFactory;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel;
+import org.apache.linkis.manager.label.exception.LabelErrorException;
 
 
 public class TestLabelBuilder {

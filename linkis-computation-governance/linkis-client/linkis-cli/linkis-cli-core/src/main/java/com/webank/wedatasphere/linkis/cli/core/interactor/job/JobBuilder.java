@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.job;
+package org.apache.linkis.cli.core.interactor.job;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
-import com.webank.wedatasphere.linkis.cli.core.builder.BuildableByVarAccess;
+import org.apache.linkis.cli.common.entity.job.Job;
+import org.apache.linkis.cli.core.builder.BuildableByVarAccess;
 
 
 public abstract class JobBuilder extends BuildableByVarAccess<Job> {

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.client.request
+package org.apache.linkis.ujes.client.request
 
-trait UserAction extends com.webank.wedatasphere.linkis.httpclient.request.UserAction {
+trait UserAction extends org.apache.linkis.httpclient.request.UserAction {
   private var user: String = _
 
   override def setUser(user: String): Unit = this.user = user

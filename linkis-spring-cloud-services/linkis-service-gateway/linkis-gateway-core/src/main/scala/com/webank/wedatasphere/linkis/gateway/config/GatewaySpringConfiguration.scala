@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.config
+package org.apache.linkis.gateway.config
 
 import java.util.stream.Collectors
 
-import com.webank.wedatasphere.linkis.gateway.security.{LDAPUserRestful, SecurityFilter, SecurityHook, UserRestful}
+import org.apache.linkis.gateway.security.{LDAPUserRestful, SecurityFilter, SecurityHook, UserRestful}
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Autowired

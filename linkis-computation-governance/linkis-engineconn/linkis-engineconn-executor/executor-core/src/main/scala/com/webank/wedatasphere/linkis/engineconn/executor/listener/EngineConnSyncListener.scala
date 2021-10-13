@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.executor.listener
+package org.apache.linkis.engineconn.executor.listener
 
-import com.webank.wedatasphere.linkis.common.listener.EventListener
-import com.webank.wedatasphere.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
+import org.apache.linkis.common.listener.EventListener
+import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
 
 trait EngineConnSyncListener extends EventListener {
 

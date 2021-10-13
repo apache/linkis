@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.domain;
+package org.apache.linkis.metadata.domain;
 
 import java.util.Date;
 

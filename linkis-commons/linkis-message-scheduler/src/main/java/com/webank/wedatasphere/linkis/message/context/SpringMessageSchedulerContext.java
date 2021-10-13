@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.context;
+package org.apache.linkis.message.context;
 
-import com.webank.wedatasphere.linkis.message.builder.DefaultMessageJobBuilder;
-import com.webank.wedatasphere.linkis.message.parser.DefaultImplicitParser;
-import com.webank.wedatasphere.linkis.message.parser.DefaultServiceParser;
-import com.webank.wedatasphere.linkis.message.publisher.DefaultMessagePublisher;
-import com.webank.wedatasphere.linkis.message.registry.SpringImplicitRegistry;
-import com.webank.wedatasphere.linkis.message.registry.SpringServiceRegistry;
-import com.webank.wedatasphere.linkis.message.scheduler.DefaultMessageScheduler;
-import com.webank.wedatasphere.linkis.message.tx.SpringTransactionManager;
+import org.apache.linkis.message.builder.DefaultMessageJobBuilder;
+import org.apache.linkis.message.parser.DefaultImplicitParser;
+import org.apache.linkis.message.parser.DefaultServiceParser;
+import org.apache.linkis.message.publisher.DefaultMessagePublisher;
+import org.apache.linkis.message.registry.SpringImplicitRegistry;
+import org.apache.linkis.message.registry.SpringServiceRegistry;
+import org.apache.linkis.message.scheduler.DefaultMessageScheduler;
+import org.apache.linkis.message.tx.SpringTransactionManager;
 
 
 public class SpringMessageSchedulerContext extends AbstractMessageSchedulerContext {

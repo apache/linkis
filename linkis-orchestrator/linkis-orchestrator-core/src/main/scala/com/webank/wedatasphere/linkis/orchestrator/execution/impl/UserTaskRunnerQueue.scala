@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.execution.impl
+package org.apache.linkis.orchestrator.execution.impl
 
-import com.webank.wedatasphere.linkis.orchestrator.Orchestrator
-import com.webank.wedatasphere.linkis.orchestrator.conf.OrchestratorConfiguration
-import com.webank.wedatasphere.linkis.orchestrator.execution.ExecTaskRunner
-import com.webank.wedatasphere.linkis.orchestrator.plugin.UserParallelOrchestratorPlugin
+import org.apache.linkis.orchestrator.Orchestrator
+import org.apache.linkis.orchestrator.conf.OrchestratorConfiguration
+import org.apache.linkis.orchestrator.execution.ExecTaskRunner
+import org.apache.linkis.orchestrator.plugin.UserParallelOrchestratorPlugin
 
 import scala.collection.mutable
 

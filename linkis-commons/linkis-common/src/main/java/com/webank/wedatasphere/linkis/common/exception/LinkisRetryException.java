@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.exception;
+package org.apache.linkis.common.exception;
 
 
 public class LinkisRetryException extends LinkisException {

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.exception
+package org.apache.linkis.scheduler.exception
 
-import com.webank.wedatasphere.linkis.common.exception.WarnException
+import org.apache.linkis.common.exception.WarnException
 
 
 class WaitForNextAskExecutorException(desc: String) extends WarnException(12111, desc)

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.execution.impl
+package org.apache.linkis.orchestrator.execution.impl
 
-import com.webank.wedatasphere.linkis.orchestrator.execution.FailedTaskResponse
+import org.apache.linkis.orchestrator.execution.FailedTaskResponse
 
 /**
   *

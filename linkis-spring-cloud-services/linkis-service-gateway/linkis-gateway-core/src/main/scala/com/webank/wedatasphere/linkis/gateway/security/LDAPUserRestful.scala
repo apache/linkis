@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.security
+package org.apache.linkis.gateway.security
 
-import com.webank.wedatasphere.linkis.common.utils.{LDAPUtils, Logging, Utils}
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
-import com.webank.wedatasphere.linkis.server._
+import org.apache.linkis.common.utils.{LDAPUtils, Logging, Utils}
+import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.server._
 
 class LDAPUserRestful extends UserPwdAbstractUserRestful with Logging {
 

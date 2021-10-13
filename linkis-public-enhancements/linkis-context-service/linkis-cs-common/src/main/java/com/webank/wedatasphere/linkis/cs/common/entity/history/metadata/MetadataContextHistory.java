@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.entity.history.metadata;
+package org.apache.linkis.cs.common.entity.history.metadata;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.history.AbstractContextHistory;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.history.AbstractContextHistory;
 
 
 public abstract class MetadataContextHistory extends AbstractContextHistory {

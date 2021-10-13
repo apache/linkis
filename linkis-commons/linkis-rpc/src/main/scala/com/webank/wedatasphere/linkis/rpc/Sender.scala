@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc
+package org.apache.linkis.rpc
 
 import java.util
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.rpc.conf.RPCConfiguration
-import com.webank.wedatasphere.linkis.rpc.sender.SpringMVCRPCSender
+import org.apache.linkis.DataWorkCloudApplication
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.rpc.conf.RPCConfiguration
+import org.apache.linkis.rpc.sender.SpringMVCRPCSender
 
 import scala.concurrent.duration.Duration
 

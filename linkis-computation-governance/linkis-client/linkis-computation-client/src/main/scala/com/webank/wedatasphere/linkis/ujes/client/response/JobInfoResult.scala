@@ -12,18 +12,18 @@
  */
 
 
-package com.webank.wedatasphere.linkis.ujes.client.response
+package org.apache.linkis.ujes.client.response
 
 import java.util
 import java.util.Date
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
-import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
-import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
-import com.webank.wedatasphere.linkis.ujes.client.UJESClient
-import com.webank.wedatasphere.linkis.ujes.client.exception.UJESJobException
-import com.webank.wedatasphere.linkis.ujes.client.request.{ResultSetListAction, UserAction}
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.governance.common.entity.task.RequestPersistTask
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.response.DWSResult
+import org.apache.linkis.ujes.client.UJESClient
+import org.apache.linkis.ujes.client.exception.UJESJobException
+import org.apache.linkis.ujes.client.request.{ResultSetListAction, UserAction}
 import org.apache.commons.beanutils.BeanUtils
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/jobhistory/\\S+/get")

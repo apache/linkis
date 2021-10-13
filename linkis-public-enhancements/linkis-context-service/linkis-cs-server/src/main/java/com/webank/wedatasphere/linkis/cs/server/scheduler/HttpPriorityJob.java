@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.scheduler;
+package org.apache.linkis.cs.server.scheduler;
 
 
 public interface HttpPriorityJob extends HttpJob {

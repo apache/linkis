@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.constant
+package org.apache.linkis.manager.engineplugin.pipeline.constant
 
 object PipeLineConstant {
   val DEFAULTC_HARSET = "utf-8"

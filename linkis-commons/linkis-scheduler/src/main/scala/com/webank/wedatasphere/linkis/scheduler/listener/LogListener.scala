@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.listener
+package org.apache.linkis.scheduler.listener
 
-import com.webank.wedatasphere.linkis.scheduler.queue.Job
+import org.apache.linkis.scheduler.queue.Job
 
 
 trait LogListener extends SchedulerListener {

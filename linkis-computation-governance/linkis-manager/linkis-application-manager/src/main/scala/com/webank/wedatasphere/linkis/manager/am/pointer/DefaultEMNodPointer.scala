@@ -16,17 +16,17 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.pointer
+package org.apache.linkis.manager.am.pointer
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.manager.am.exception.AMErrorException
-import com.webank.wedatasphere.linkis.manager.am.service.engine.EngineStopService
-import com.webank.wedatasphere.linkis.manager.am.utils.AMUtils
-import com.webank.wedatasphere.linkis.manager.common.constant.AMConstant
-import com.webank.wedatasphere.linkis.manager.common.entity.node.{EngineNode, Node}
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.{EngineStopRequest, EngineStopResponse, EngineSuicideRequest}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
-import com.webank.wedatasphere.linkis.manager.service.common.pointer.EMNodPointer
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.manager.am.exception.AMErrorException
+import org.apache.linkis.manager.am.service.engine.EngineStopService
+import org.apache.linkis.manager.am.utils.AMUtils
+import org.apache.linkis.manager.common.constant.AMConstant
+import org.apache.linkis.manager.common.entity.node.{EngineNode, Node}
+import org.apache.linkis.manager.common.protocol.engine.{EngineStopRequest, EngineStopResponse, EngineSuicideRequest}
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
+import org.apache.linkis.manager.service.common.pointer.EMNodPointer
 
 
 class DefaultEMNodPointer(val node: Node) extends AbstractNodePointer with EMNodPointer {

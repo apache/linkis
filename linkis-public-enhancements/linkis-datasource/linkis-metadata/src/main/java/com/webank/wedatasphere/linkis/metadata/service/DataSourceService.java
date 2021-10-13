@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.service;
+package org.apache.linkis.metadata.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

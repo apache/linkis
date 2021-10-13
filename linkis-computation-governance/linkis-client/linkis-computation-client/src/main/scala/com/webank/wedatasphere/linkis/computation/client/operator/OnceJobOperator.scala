@@ -15,10 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client.operator
+package org.apache.linkis.computation.client.operator
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.computation.client.once.LinkisManagerClient
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.computation.client.once.LinkisManagerClient
 
 
 trait OnceJobOperator[T] extends Operator[T] {

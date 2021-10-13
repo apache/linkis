@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.resource
+package org.apache.linkis.manager.engineplugin.common.resource
 
 import java.util.Date
 
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.{NodeResource, Resource, ResourceType}
+import org.apache.linkis.manager.common.entity.resource.{NodeResource, Resource, ResourceType}
 
 
 class UserNodeResource extends NodeResource {

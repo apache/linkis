@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.manager.loaders;
+package org.apache.linkis.manager.engineplugin.manager.loaders;
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.cache.GuavaEngineConnPluginCache;
-import com.webank.wedatasphere.linkis.manager.engineplugin.cache.EngineConnPluginCache;
-import com.webank.wedatasphere.linkis.manager.engineplugin.cache.refresh.PluginCacheRefresher;
-import com.webank.wedatasphere.linkis.manager.engineplugin.cache.refresh.RefreshableEngineConnPluginCache;
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInfo;
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInstance;
-import com.webank.wedatasphere.linkis.manager.engineplugin.manager.config.EngineConnPluginLoaderConf;
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel;
+import org.apache.linkis.manager.engineplugin.cache.GuavaEngineConnPluginCache;
+import org.apache.linkis.manager.engineplugin.cache.EngineConnPluginCache;
+import org.apache.linkis.manager.engineplugin.cache.refresh.PluginCacheRefresher;
+import org.apache.linkis.manager.engineplugin.cache.refresh.RefreshableEngineConnPluginCache;
+import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInfo;
+import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInstance;
+import org.apache.linkis.manager.engineplugin.manager.config.EngineConnPluginLoaderConf;
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.entity.annon;
+package org.apache.linkis.manager.label.entity.annon;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

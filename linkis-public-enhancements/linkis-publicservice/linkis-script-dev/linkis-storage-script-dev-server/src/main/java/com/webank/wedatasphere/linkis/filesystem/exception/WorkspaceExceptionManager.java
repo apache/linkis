@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.exception;
+package org.apache.linkis.filesystem.exception;
 
 import java.util.HashMap;
 import java.util.Map;

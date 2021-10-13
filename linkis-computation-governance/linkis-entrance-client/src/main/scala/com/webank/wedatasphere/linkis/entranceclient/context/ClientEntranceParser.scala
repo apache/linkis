@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entranceclient.context
+package org.apache.linkis.entranceclient.context
 
 import java.util
 
-import com.webank.wedatasphere.linkis.entrance.parser.CommonEntranceParser
-import com.webank.wedatasphere.linkis.entranceclient.execute
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
-import com.webank.wedatasphere.linkis.protocol.task.Task
-import com.webank.wedatasphere.linkis.scheduler.queue.Job
+import org.apache.linkis.entrance.parser.CommonEntranceParser
+import org.apache.linkis.entranceclient.execute
+import org.apache.linkis.governance.common.entity.task.RequestPersistTask
+import org.apache.linkis.protocol.task.Task
+import org.apache.linkis.scheduler.queue.Job
 
 class ClientEntranceParser extends CommonEntranceParser {
 

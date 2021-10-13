@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.contextcache.conf;
+package org.apache.linkis.cs.contextcache.conf;
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.conf.CommonVars;
 
 public class ContextCacheConf {
 
-    public final static String KEYWORD_SCAN_PACKAGE = CommonVars.apply("wds.linkis.cs.keyword.scan.package","com.webank.wedatasphere.linkis.cs").getValue();
+    public final static String KEYWORD_SCAN_PACKAGE = CommonVars.apply("wds.linkis.cs.keyword.scan.package","org.apache.linkis.cs").getValue();
     public final static String KEYWORD_SPLIT = CommonVars.apply("wds.linkis.cs.keyword.split",",").getValue();
 
 }

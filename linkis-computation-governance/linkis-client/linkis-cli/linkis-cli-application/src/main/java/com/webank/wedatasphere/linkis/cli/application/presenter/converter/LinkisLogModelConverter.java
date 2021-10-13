@@ -11,16 +11,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.presenter.converter;
+package org.apache.linkis.cli.application.presenter.converter;
 
-import com.webank.wedatasphere.linkis.cli.application.interactor.execution.jobexec.LinkisJobSubmitExec;
-import com.webank.wedatasphere.linkis.cli.application.presenter.model.LinkisJobIncLogModel;
-import com.webank.wedatasphere.linkis.cli.common.entity.job.OutputWay;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.TransformerException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.presenter.model.ModelConverter;
-import com.webank.wedatasphere.linkis.cli.core.presenter.model.PresenterModel;
+import org.apache.linkis.cli.application.interactor.execution.jobexec.LinkisJobSubmitExec;
+import org.apache.linkis.cli.application.presenter.model.LinkisJobIncLogModel;
+import org.apache.linkis.cli.common.entity.job.OutputWay;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.TransformerException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.presenter.model.ModelConverter;
+import org.apache.linkis.cli.core.presenter.model.PresenterModel;
 
 
 public class LinkisLogModelConverter implements ModelConverter {

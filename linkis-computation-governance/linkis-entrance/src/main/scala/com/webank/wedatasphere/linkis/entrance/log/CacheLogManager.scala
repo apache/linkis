@@ -15,13 +15,13 @@
  */
 
 
-package com.webank.wedatasphere.linkis.entrance.log
+package org.apache.linkis.entrance.log
 
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.entrance.exception.{CacheNotReadyException, EntranceErrorCode}
-import com.webank.wedatasphere.linkis.entrance.job.EntranceExecutionJob
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
-import com.webank.wedatasphere.linkis.scheduler.queue.Job
+import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.exception.{CacheNotReadyException, EntranceErrorCode}
+import org.apache.linkis.entrance.job.EntranceExecutionJob
+import org.apache.linkis.governance.common.entity.task.RequestPersistTask
+import org.apache.linkis.scheduler.queue.Job
 /**
   * LogManager implementation, using a singleton class
   * LogManager 的实现, 采用单例类进行

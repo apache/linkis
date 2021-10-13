@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.governance.common.protocol.job
+package org.apache.linkis.governance.common.protocol.job
 
 import org.apache.commons.lang.builder.{EqualsBuilder, HashCodeBuilder}
 

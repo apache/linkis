@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entranceclient.conf
+package org.apache.linkis.entranceclient.conf
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-//import com.webank.wedatasphere.linkis.entrance.annotation.EntranceServerBeanAnnotation.EntranceServerAutowiredAnnotation
-//import com.webank.wedatasphere.linkis.entrance.annotation._
-//import com.webank.wedatasphere.linkis.entrance.conf.EntranceSpringConfiguration
-//import com.webank.wedatasphere.linkis.entrance.execute._
-//import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
-//import com.webank.wedatasphere.linkis.entrance.log.LogManager
-//import com.webank.wedatasphere.linkis.entrance.persistence.PersistenceManager
-//import com.webank.wedatasphere.linkis.entrance.{EntranceParser, EntranceServer}
-//import com.webank.wedatasphere.linkis.entranceclient.annotation.ClientEngineSelectorBeanAnnotation.ClientEngineSelectorAutowiredAnnotation
-//import com.webank.wedatasphere.linkis.entranceclient.annotation.ClientEntranceParserBeanAnnotation.ClientEntranceParserAutowiredAnnotation
-//import com.webank.wedatasphere.linkis.entranceclient.annotation.ClientInterceptorsBeanAnnotation.ClientInterceptorsAutowiredAnnotation
-//import com.webank.wedatasphere.linkis.entranceclient.annotation.DefaultEntranceClientBeanAnnotation
-//import com.webank.wedatasphere.linkis.entranceclient.{EntranceClient, EntranceClientImpl, _}
-//import com.webank.wedatasphere.linkis.rpc.{RPCMessageEvent, Receiver, ReceiverChooser}
+import org.apache.linkis.common.utils.Logging
+//import org.apache.linkis.entrance.annotation.EntranceServerBeanAnnotation.EntranceServerAutowiredAnnotation
+//import org.apache.linkis.entrance.annotation._
+//import org.apache.linkis.entrance.conf.EntranceSpringConfiguration
+//import org.apache.linkis.entrance.execute._
+//import org.apache.linkis.entrance.interceptor.EntranceInterceptor
+//import org.apache.linkis.entrance.log.LogManager
+//import org.apache.linkis.entrance.persistence.PersistenceManager
+//import org.apache.linkis.entrance.{EntranceParser, EntranceServer}
+//import org.apache.linkis.entranceclient.annotation.ClientEngineSelectorBeanAnnotation.ClientEngineSelectorAutowiredAnnotation
+//import org.apache.linkis.entranceclient.annotation.ClientEntranceParserBeanAnnotation.ClientEntranceParserAutowiredAnnotation
+//import org.apache.linkis.entranceclient.annotation.ClientInterceptorsBeanAnnotation.ClientInterceptorsAutowiredAnnotation
+//import org.apache.linkis.entranceclient.annotation.DefaultEntranceClientBeanAnnotation
+//import org.apache.linkis.entranceclient.{EntranceClient, EntranceClientImpl, _}
+//import org.apache.linkis.rpc.{RPCMessageEvent, Receiver, ReceiverChooser}
 //import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 //import org.springframework.boot.autoconfigure.{AutoConfigureAfter, AutoConfigureBefore}
 //import org.springframework.context.annotation.{Conditional, Configuration}

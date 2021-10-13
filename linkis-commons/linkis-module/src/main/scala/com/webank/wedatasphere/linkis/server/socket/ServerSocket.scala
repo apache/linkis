@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.server.socket
+package org.apache.linkis.server.socket
 
 import java.util.concurrent.TimeUnit
 
-import com.webank.wedatasphere.linkis.common.collection.BlockingLoopArray
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter
+import org.apache.linkis.common.collection.BlockingLoopArray
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.server.security.SecurityFilter
 import javax.servlet.http.HttpServletRequest
 import org.eclipse.jetty.websocket.api.{Session, WebSocketAdapter}
 

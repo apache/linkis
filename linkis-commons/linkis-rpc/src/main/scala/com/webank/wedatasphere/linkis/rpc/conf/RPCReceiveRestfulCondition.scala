@@ -1,6 +1,6 @@
-package com.webank.wedatasphere.linkis.rpc.conf
+package org.apache.linkis.rpc.conf
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.CommonVars
 import org.springframework.context.annotation.{Condition, ConditionContext}
 import org.springframework.core.`type`.AnnotatedTypeMetadata
 

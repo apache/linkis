@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.resourcemanager.restful.vo;
+package org.apache.linkis.resourcemanager.restful.vo;
 
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource;
+import org.apache.linkis.manager.common.entity.resource.NodeResource;
 
 import java.util.Date;
 

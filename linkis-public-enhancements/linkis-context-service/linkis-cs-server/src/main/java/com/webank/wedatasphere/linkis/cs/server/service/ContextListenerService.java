@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.service;
+package org.apache.linkis.cs.server.service;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.listener.ContextIDListenerDomain;
-import com.webank.wedatasphere.linkis.cs.common.entity.listener.ContextKeyListenerDomain;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.listener.callback.imp.ContextKeyValueBean;
+import org.apache.linkis.cs.common.entity.listener.ContextIDListenerDomain;
+import org.apache.linkis.cs.common.entity.listener.ContextKeyListenerDomain;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.source.ContextKey;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.listener.callback.imp.ContextKeyValueBean;
 
 import java.util.List;
 

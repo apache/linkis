@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.udf.service;
+package org.apache.linkis.udf.service;
 
-import com.webank.wedatasphere.linkis.common.io.FsPath;
-import com.webank.wedatasphere.linkis.udf.entity.UDFInfo;
-import com.webank.wedatasphere.linkis.udf.excepiton.UDFException;
+import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.udf.entity.UDFInfo;
+import org.apache.linkis.udf.excepiton.UDFException;
 
 import java.io.IOException;
 import java.util.Iterator;

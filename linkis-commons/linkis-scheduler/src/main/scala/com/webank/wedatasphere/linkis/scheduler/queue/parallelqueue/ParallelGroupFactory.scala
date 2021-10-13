@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue
+package org.apache.linkis.scheduler.queue.parallelqueue
 
-import com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue.FIFOGroupFactory
-import com.webank.wedatasphere.linkis.scheduler.queue.{AbstractGroup, SchedulerEvent}
+import org.apache.linkis.scheduler.queue.fifoqueue.FIFOGroupFactory
+import org.apache.linkis.scheduler.queue.{AbstractGroup, SchedulerEvent}
 
 
 class ParallelGroupFactory extends FIFOGroupFactory{

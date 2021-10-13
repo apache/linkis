@@ -16,10 +16,10 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.engineconn.executor.entity
+package org.apache.linkis.engineconn.executor.entity
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 
 
 trait ExecutableExecutor[R] extends Executor with Logging {

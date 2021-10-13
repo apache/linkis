@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.exception
+package org.apache.linkis.metadata.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 
 case class MdqIllegalParamException(errMsg:String) extends ErrorException(57895, errMsg)

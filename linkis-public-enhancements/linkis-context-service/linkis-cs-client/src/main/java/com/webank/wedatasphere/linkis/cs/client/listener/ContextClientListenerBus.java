@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.listener;
+package org.apache.linkis.cs.client.listener;
 
-import com.webank.wedatasphere.linkis.common.listener.Event;
-import com.webank.wedatasphere.linkis.common.listener.ListenerEventBus;
+import org.apache.linkis.common.listener.Event;
+import org.apache.linkis.common.listener.ListenerEventBus;
 
 public class ContextClientListenerBus<L extends ContextClientListener, E extends Event> extends ListenerEventBus<L, E> {
 

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.entity.config;
+package org.apache.linkis.manager.label.entity.config;
 
-import com.webank.wedatasphere.linkis.manager.label.entity.FunctionLabel;
+import org.apache.linkis.manager.label.entity.FunctionLabel;
 
 public interface ConfigurationLabel extends FunctionLabel {
 }

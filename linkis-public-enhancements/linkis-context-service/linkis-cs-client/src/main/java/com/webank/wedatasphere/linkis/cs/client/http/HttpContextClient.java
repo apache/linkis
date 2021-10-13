@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.http;
+package org.apache.linkis.cs.client.http;
 
-import com.webank.wedatasphere.linkis.common.conf.Configuration;
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.cs.client.AbstractContextClient;
-import com.webank.wedatasphere.linkis.cs.client.Context;
-import com.webank.wedatasphere.linkis.cs.client.LinkisWorkFlowContext;
-import com.webank.wedatasphere.linkis.cs.client.builder.ContextClientConfig;
-import com.webank.wedatasphere.linkis.cs.client.builder.HttpContextClientConfig;
-import com.webank.wedatasphere.linkis.cs.client.listener.ContextIDListener;
-import com.webank.wedatasphere.linkis.cs.client.listener.ContextKeyListener;
-import com.webank.wedatasphere.linkis.cs.client.listener.HeartBeater;
-import com.webank.wedatasphere.linkis.cs.client.utils.ContextClientConf;
-import com.webank.wedatasphere.linkis.cs.client.utils.ContextServerHttpConf;
-import com.webank.wedatasphere.linkis.cs.client.utils.ExceptionHelper;
-import com.webank.wedatasphere.linkis.cs.client.utils.SerializeHelper;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextScope;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.history.ContextHistory;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.*;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.common.protocol.ContextHTTPConstant;
-import com.webank.wedatasphere.linkis.cs.common.search.ContextSearchConditionMapBuilder;
-import com.webank.wedatasphere.linkis.httpclient.config.ClientConfig;
-import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient;
-import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig;
-import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult;
-import com.webank.wedatasphere.linkis.httpclient.request.Action;
-import com.webank.wedatasphere.linkis.httpclient.response.Result;
+import org.apache.linkis.common.conf.Configuration;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.cs.client.AbstractContextClient;
+import org.apache.linkis.cs.client.Context;
+import org.apache.linkis.cs.client.LinkisWorkFlowContext;
+import org.apache.linkis.cs.client.builder.ContextClientConfig;
+import org.apache.linkis.cs.client.builder.HttpContextClientConfig;
+import org.apache.linkis.cs.client.listener.ContextIDListener;
+import org.apache.linkis.cs.client.listener.ContextKeyListener;
+import org.apache.linkis.cs.client.listener.HeartBeater;
+import org.apache.linkis.cs.client.utils.ContextClientConf;
+import org.apache.linkis.cs.client.utils.ContextServerHttpConf;
+import org.apache.linkis.cs.client.utils.ExceptionHelper;
+import org.apache.linkis.cs.client.utils.SerializeHelper;
+import org.apache.linkis.cs.common.entity.enumeration.ContextScope;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.history.ContextHistory;
+import org.apache.linkis.cs.common.entity.source.*;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.protocol.ContextHTTPConstant;
+import org.apache.linkis.cs.common.search.ContextSearchConditionMapBuilder;
+import org.apache.linkis.httpclient.config.ClientConfig;
+import org.apache.linkis.httpclient.dws.DWSHttpClient;
+import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
+import org.apache.linkis.httpclient.dws.response.DWSResult;
+import org.apache.linkis.httpclient.request.Action;
+import org.apache.linkis.httpclient.response.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.storage.script.compaction
+package org.apache.linkis.storage.script.compaction
 
 
 class ScalaScriptCompaction private extends CommonScriptCompaction{

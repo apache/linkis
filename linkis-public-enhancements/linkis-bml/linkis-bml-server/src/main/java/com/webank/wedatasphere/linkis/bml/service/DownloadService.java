@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.service;
+package org.apache.linkis.bml.service;
 
-import com.webank.wedatasphere.linkis.bml.Entity.DownloadModel;
+import org.apache.linkis.bml.Entity.DownloadModel;
 
 public interface DownloadService {
     public void addDownloadRecord(DownloadModel downloadModel);

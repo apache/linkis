@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.ujes.jdbc
+package org.apache.linkis.ujes.jdbc
 
 import java.util
 import java.util.Properties
 
-import com.webank.wedatasphere.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy
-import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfigBuilder
-import com.webank.wedatasphere.linkis.ujes.client.UJESClient
-import com.webank.wedatasphere.linkis.ujes.jdbc.UJESSQLDriverMain._
+import org.apache.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy
+import org.apache.linkis.httpclient.dws.config.DWSClientConfigBuilder
+import org.apache.linkis.ujes.client.UJESClient
+import org.apache.linkis.ujes.jdbc.UJESSQLDriverMain._
 import org.apache.commons.lang.StringUtils
 
 

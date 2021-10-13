@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.exception;
+package org.apache.linkis.common.exception;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.webank.wedatasphere.linkis.common.exception.LinkisException.*;
+import static org.apache.linkis.common.exception.LinkisException.*;
 
 public abstract class LinkisRuntimeException extends RuntimeException{
 

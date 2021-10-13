@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.configuration.exception;
+package org.apache.linkis.configuration.exception;
 
 public class ConfigurationException extends Exception {
     public ConfigurationException(String message){

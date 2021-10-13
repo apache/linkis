@@ -11,16 +11,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.interactor.job;
+package org.apache.linkis.cli.application.interactor.job;
 
-import com.webank.wedatasphere.linkis.cli.application.constants.LinkisClientKeys;
-import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.BuilderException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.interactor.execution.JobManSubType;
-import com.webank.wedatasphere.linkis.cli.core.interactor.job.JobBuilder;
-import com.webank.wedatasphere.linkis.cli.core.interactor.var.VarAccess;
+import org.apache.linkis.cli.application.constants.LinkisClientKeys;
+import org.apache.linkis.cli.common.entity.job.Job;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.BuilderException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.execution.JobManSubType;
+import org.apache.linkis.cli.core.interactor.job.JobBuilder;
+import org.apache.linkis.cli.core.interactor.var.VarAccess;
 
 
 public class LinkisJobManBuilder extends JobBuilder {

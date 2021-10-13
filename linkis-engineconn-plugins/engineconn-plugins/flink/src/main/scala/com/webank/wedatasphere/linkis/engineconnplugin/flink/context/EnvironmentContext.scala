@@ -15,15 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.context
+package org.apache.linkis.engineconnplugin.flink.context
 
 import java.net.URL
 import java.util
 import java.util.Objects
 
 import com.google.common.collect.Lists
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.config.Environment
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.factory.LinkisYarnClusterClientFactory
+import org.apache.linkis.engineconnplugin.flink.client.config.Environment
+import org.apache.linkis.engineconnplugin.flink.client.factory.LinkisYarnClusterClientFactory
 import org.apache.commons.lang.StringUtils
 import org.apache.flink.configuration.{Configuration, DeploymentOptionsInternal, GlobalConfiguration}
 import org.apache.flink.yarn.configuration.{YarnConfigOptions, YarnDeploymentTarget}

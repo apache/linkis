@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.manager.classloader.EngineConnPluginClassLoader;
-import com.webank.wedatasphere.linkis.manager.engineplugin.manager.utils.EngineConnPluginUtils;
+import org.apache.linkis.manager.engineplugin.manager.classloader.EngineConnPluginClassLoader;
+import org.apache.linkis.manager.engineplugin.manager.utils.EngineConnPluginUtils;
 
 import java.io.File;
 import java.net.URL;

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.test.listener;
+package org.apache.linkis.cs.client.test.listener;
 
-import com.webank.wedatasphere.linkis.common.listener.Event;
-import com.webank.wedatasphere.linkis.cs.client.listener.ContextKeyListener;
+import org.apache.linkis.common.listener.Event;
+import org.apache.linkis.cs.client.listener.ContextKeyListener;
 
 
 public class CommonContextKeyListener extends ContextKeyListener {

@@ -18,17 +18,17 @@
  * created by cooperyang on 2019/07/24.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.dws.response
+package org.apache.linkis.httpclient.dws.response
 
-import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
-import com.webank.wedatasphere.linkis.httpclient.response.Result
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.response.Result
 import org.apache.commons.lang.ClassUtils
 
 import scala.collection.JavaConversions._
 
 object DWSHttpMessageFactory {
 
-  private val reflections = com.webank.wedatasphere.linkis.common.utils.ClassUtils.reflections
+  private val reflections = org.apache.linkis.common.utils.ClassUtils.reflections
 
   private val methodToHttpMessageClasses = reflections.getTypesAnnotatedWith(classOf[DWSHttpMessageResult])
     .filter(ClassUtils.isAssignable(_, classOf[Result])).map { c =>

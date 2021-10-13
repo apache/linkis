@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.io.resultset
+package org.apache.linkis.common.io.resultset
 
 import java.io.{ByteArrayInputStream, InputStream}
 
-import com.webank.wedatasphere.linkis.common.io.{FsReader, MetaData, Record}
+import org.apache.linkis.common.io.{FsReader, MetaData, Record}
 
 
 abstract class ResultSetReader[K <: MetaData, V <: Record](resultSet: ResultSet[K, V],

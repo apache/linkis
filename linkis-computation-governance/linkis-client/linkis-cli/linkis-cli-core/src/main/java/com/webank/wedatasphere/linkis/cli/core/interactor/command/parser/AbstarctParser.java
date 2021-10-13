@@ -11,20 +11,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.command.parser;
+package org.apache.linkis.cli.core.interactor.command.parser;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdOption;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.ParamItem;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.Params;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.CommandException;
-import com.webank.wedatasphere.linkis.cli.core.exception.TransformerException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.fitter.Fitter;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.parser.result.ParseResult;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.parser.transformer.ParamKeyMapper;
-import com.webank.wedatasphere.linkis.cli.core.utils.SpecialMap;
+import org.apache.linkis.cli.common.entity.command.CmdOption;
+import org.apache.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.common.entity.command.ParamItem;
+import org.apache.linkis.cli.common.entity.command.Params;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.CommandException;
+import org.apache.linkis.cli.core.exception.TransformerException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.command.fitter.Fitter;
+import org.apache.linkis.cli.core.interactor.command.parser.result.ParseResult;
+import org.apache.linkis.cli.core.interactor.command.parser.transformer.ParamKeyMapper;
+import org.apache.linkis.cli.core.utils.SpecialMap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

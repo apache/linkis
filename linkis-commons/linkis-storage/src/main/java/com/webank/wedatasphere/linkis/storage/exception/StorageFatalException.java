@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.exception;
+package org.apache.linkis.storage.exception;
 
-import com.webank.wedatasphere.linkis.common.exception.FatalException;
+import org.apache.linkis.common.exception.FatalException;
 
 
 public class StorageFatalException extends FatalException {

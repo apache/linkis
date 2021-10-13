@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.scheduler;
+package org.apache.linkis.cs.server.scheduler;
 
-import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceType;
-import com.webank.wedatasphere.linkis.cs.server.protocol.HttpRequestProtocol;
-import com.webank.wedatasphere.linkis.cs.server.protocol.HttpResponseProtocol;
+import org.apache.linkis.cs.server.enumeration.ServiceType;
+import org.apache.linkis.cs.server.protocol.HttpRequestProtocol;
+import org.apache.linkis.cs.server.protocol.HttpResponseProtocol;
 
 public abstract class HttpAnswerJobBuilder extends HttpJobBuilder {
 

@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.service.impl;
+package org.apache.linkis.cs.server.service.impl;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.listener.CommonContextKeyListenerDomain;
-import com.webank.wedatasphere.linkis.cs.common.entity.listener.ContextIDListenerDomain;
-import com.webank.wedatasphere.linkis.cs.common.entity.listener.ContextKeyListenerDomain;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.listener.callback.imp.ContextKeyValueBean;
-import com.webank.wedatasphere.linkis.cs.listener.manager.imp.DefaultContextListenerManager;
-import com.webank.wedatasphere.linkis.cs.persistence.ContextPersistenceManager;
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.ContextIDListenerPersistence;
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.ContextKeyListenerPersistence;
-import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceType;
-import com.webank.wedatasphere.linkis.cs.server.service.ContextListenerService;
+import org.apache.linkis.cs.common.entity.listener.CommonContextKeyListenerDomain;
+import org.apache.linkis.cs.common.entity.listener.ContextIDListenerDomain;
+import org.apache.linkis.cs.common.entity.listener.ContextKeyListenerDomain;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.source.ContextKey;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.listener.callback.imp.ContextKeyValueBean;
+import org.apache.linkis.cs.listener.manager.imp.DefaultContextListenerManager;
+import org.apache.linkis.cs.persistence.ContextPersistenceManager;
+import org.apache.linkis.cs.persistence.persistence.ContextIDListenerPersistence;
+import org.apache.linkis.cs.persistence.persistence.ContextKeyListenerPersistence;
+import org.apache.linkis.cs.server.enumeration.ServiceType;
+import org.apache.linkis.cs.server.service.ContextListenerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

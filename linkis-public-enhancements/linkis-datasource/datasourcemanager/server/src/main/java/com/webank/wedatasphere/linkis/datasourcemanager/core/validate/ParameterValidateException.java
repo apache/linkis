@@ -11,11 +11,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.validate;
+package org.apache.linkis.datasourcemanager.core.validate;
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.exception.ErrorException;
 
-import static com.webank.wedatasphere.linkis.datasourcemanager.common.ServiceErrorCode.PARAM_VALIDATE_ERROR;
+import static org.apache.linkis.datasourcemanager.common.ServiceErrorCode.PARAM_VALIDATE_ERROR;
 
 public class ParameterValidateException extends ErrorException {
     public ParameterValidateException(String desc) {

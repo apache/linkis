@@ -16,11 +16,11 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.service.engine
+package org.apache.linkis.manager.am.service.engine
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.EngineRecyclingRequest
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.exception.LinkisRetryException
+import org.apache.linkis.manager.common.protocol.engine.EngineRecyclingRequest
 
 
 trait EngineRecycleService {

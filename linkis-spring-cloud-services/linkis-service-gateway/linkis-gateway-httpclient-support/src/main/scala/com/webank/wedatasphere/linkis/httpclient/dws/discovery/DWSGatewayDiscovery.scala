@@ -15,11 +15,11 @@
  * created by cooperyang on 2019/07/24.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.dws.discovery
+package org.apache.linkis.httpclient.dws.discovery
 
-import com.webank.wedatasphere.linkis.httpclient.discovery.{AbstractDiscovery, HeartbeatAction, HeartbeatResult}
-import com.webank.wedatasphere.linkis.httpclient.dws.request.DWSHeartbeatAction
-import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSHeartbeatResult
+import org.apache.linkis.httpclient.discovery.{AbstractDiscovery, HeartbeatAction, HeartbeatResult}
+import org.apache.linkis.httpclient.dws.request.DWSHeartbeatAction
+import org.apache.linkis.httpclient.dws.response.DWSHeartbeatResult
 import org.apache.http.HttpResponse
 
 import scala.util.Random

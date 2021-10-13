@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.server
+package org.apache.linkis.server
 
 import java.util
 

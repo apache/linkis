@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation;
+package org.apache.linkis.engineconnplugin.flink.client.sql.operation;
 
 
 public interface NonJobOperation extends Operation {

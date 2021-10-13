@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.common.entity.job;
+package org.apache.linkis.cli.common.entity.job;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.CommonSubExecutionType;
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.SubExecutionType;
+import org.apache.linkis.cli.common.entity.execution.CommonSubExecutionType;
+import org.apache.linkis.cli.common.entity.execution.SubExecutionType;
 
 /**
  * @description Job should encapsulate all data needed for an execution(submit/job-management)

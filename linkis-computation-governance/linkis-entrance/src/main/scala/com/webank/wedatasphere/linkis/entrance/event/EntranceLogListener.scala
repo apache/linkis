@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.event
+package org.apache.linkis.entrance.event
 
-import com.webank.wedatasphere.linkis.common.listener.{Event, EventListener}
+import org.apache.linkis.common.listener.{Event, EventListener}
 
 
 trait EntranceLogListener extends EventListener {

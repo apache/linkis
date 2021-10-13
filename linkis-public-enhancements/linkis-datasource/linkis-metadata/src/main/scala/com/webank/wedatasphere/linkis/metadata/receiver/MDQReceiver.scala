@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.receiver
+package org.apache.linkis.metadata.receiver
 
 import java.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.metadata.ddl.DDLHelper
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableBO
-import com.webank.wedatasphere.linkis.metadata.service.MdqService
-import com.webank.wedatasphere.linkis.metadata.utils.MdqUtils
-import com.webank.wedatasphere.linkis.protocol.mdq.{DDLCompleteResponse, DDLExecuteResponse, DDLRequest, DDLResponse}
-import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.metadata.ddl.DDLHelper
+import org.apache.linkis.metadata.domain.mdq.bo.MdqTableBO
+import org.apache.linkis.metadata.service.MdqService
+import org.apache.linkis.metadata.utils.MdqUtils
+import org.apache.linkis.protocol.mdq.{DDLCompleteResponse, DDLExecuteResponse, DDLRequest, DDLResponse}
+import org.apache.linkis.rpc.{Receiver, Sender}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

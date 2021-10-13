@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.strategy
+package org.apache.linkis.orchestrator.strategy
 
-import com.webank.wedatasphere.linkis.governance.common.entity.ExecutionNodeStatus
-import com.webank.wedatasphere.linkis.orchestrator.execution.TaskResponse
+import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
+import org.apache.linkis.orchestrator.execution.TaskResponse
 
 /**
   *

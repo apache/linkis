@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.computation.executor.execute
+package org.apache.linkis.engineconn.computation.executor.execute
 
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.entity.EngineConnTask
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.ConcurrentExecutor
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecuteResponse
+import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
+import org.apache.linkis.engineconn.executor.entity.ConcurrentExecutor
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.scheduler.executer.ExecuteResponse
 
 
 abstract class ConcurrentComputationExecutor(override val outputPrintLimit: Int = 1000) extends ComputationExecutor(outputPrintLimit) with ConcurrentExecutor {

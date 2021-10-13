@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.sender
+package org.apache.linkis.rpc.sender
 
 import java.lang.reflect.Field
 
 import com.netflix.client.ClientRequest
 import com.netflix.client.config.IClientConfig
 import com.netflix.loadbalancer.reactive.LoadBalancerCommand
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.conf.{Configuration => DWCConfiguration}
-import com.webank.wedatasphere.linkis.protocol.Protocol
-import com.webank.wedatasphere.linkis.rpc.interceptor.{RPCInterceptor, RPCLoadBalancer, ServiceInstanceRPCInterceptorChain}
-import com.webank.wedatasphere.linkis.rpc.transform.RPCConsumer
-import com.webank.wedatasphere.linkis.rpc.{BaseRPCSender, RPCMessageEvent, RPCSpringBeanCache}
-import com.webank.wedatasphere.linkis.server.{BDPJettyServerHelper, Message}
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.conf.{Configuration => DWCConfiguration}
+import org.apache.linkis.protocol.Protocol
+import org.apache.linkis.rpc.interceptor.{RPCInterceptor, RPCLoadBalancer, ServiceInstanceRPCInterceptorChain}
+import org.apache.linkis.rpc.transform.RPCConsumer
+import org.apache.linkis.rpc.{BaseRPCSender, RPCMessageEvent, RPCSpringBeanCache}
+import org.apache.linkis.server.{BDPJettyServerHelper, Message}
 import feign._
 import org.apache.commons.lang.StringUtils
 import org.springframework.cloud.netflix.ribbon.ServerIntrospector

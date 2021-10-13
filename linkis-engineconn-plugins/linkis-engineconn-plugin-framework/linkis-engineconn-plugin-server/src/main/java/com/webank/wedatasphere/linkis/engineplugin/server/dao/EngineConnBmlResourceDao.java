@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.server.dao;
+package org.apache.linkis.engineplugin.server.dao;
 
-import com.webank.wedatasphere.linkis.engineplugin.server.entity.EngineConnBmlResource;
+import org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

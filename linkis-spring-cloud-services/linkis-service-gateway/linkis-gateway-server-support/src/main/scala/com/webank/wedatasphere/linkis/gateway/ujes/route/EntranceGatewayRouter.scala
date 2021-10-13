@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.ujes.route
+package org.apache.linkis.gateway.ujes.route
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.gateway.config.GatewayConfiguration
-import com.webank.wedatasphere.linkis.gateway.exception.TooManyServiceException
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
-import com.webank.wedatasphere.linkis.gateway.route.AbstractGatewayRouter
-import com.webank.wedatasphere.linkis.gateway.ujes.parser.EntranceExecutionGatewayParser
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.gateway.config.GatewayConfiguration
+import org.apache.linkis.gateway.exception.TooManyServiceException
+import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.route.AbstractGatewayRouter
+import org.apache.linkis.gateway.ujes.parser.EntranceExecutionGatewayParser
+import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.commons.lang.StringUtils
 
 class EntranceGatewayRouter extends AbstractGatewayRouter {

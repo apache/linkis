@@ -11,19 +11,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.service.impl;
+package org.apache.linkis.metadata.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.webank.wedatasphere.linkis.common.utils.ByteTimeUtils;
-import com.webank.wedatasphere.linkis.hadoop.common.utils.HDFSUtils;
-import com.webank.wedatasphere.linkis.metadata.hive.config.DSEnum;
-import com.webank.wedatasphere.linkis.metadata.hive.config.DataSource;
-import com.webank.wedatasphere.linkis.metadata.hive.dao.HiveMetaDao;
-import com.webank.wedatasphere.linkis.metadata.service.DataSourceService;
+import org.apache.linkis.common.utils.ByteTimeUtils;
+import org.apache.linkis.hadoop.common.utils.HDFSUtils;
+import org.apache.linkis.metadata.hive.config.DSEnum;
+import org.apache.linkis.metadata.hive.config.DataSource;
+import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
+import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.fs.FileStatus;

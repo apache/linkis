@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.common.entity.execution;
+package org.apache.linkis.cli.common.entity.execution;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.jobexec.ExecutionStatus;
+import org.apache.linkis.cli.common.entity.execution.jobexec.ExecutionStatus;
 
 
 public interface ExecutionResult {

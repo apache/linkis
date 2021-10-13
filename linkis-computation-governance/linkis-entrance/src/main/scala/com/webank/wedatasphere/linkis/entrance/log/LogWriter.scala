@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.log
+package org.apache.linkis.entrance.log
 
 import java.io.{Closeable, Flushable, OutputStream}
 import java.util
 
-import com.webank.wedatasphere.linkis.common.io.FsPath
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.exception.EntranceErrorException
-import com.webank.wedatasphere.linkis.storage.FSFactory
-import com.webank.wedatasphere.linkis.storage.utils.FileSystemUtils
+import org.apache.linkis.common.io.FsPath
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.exception.EntranceErrorException
+import org.apache.linkis.storage.FSFactory
+import org.apache.linkis.storage.utils.FileSystemUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.hadoop.hdfs.client.HdfsDataOutputStream
 

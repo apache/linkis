@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.executor.listener
+package org.apache.linkis.engineconn.executor.listener
 
-import com.webank.wedatasphere.linkis.engineconn.executor.conf.EngineConnExecutorConfiguration
+import org.apache.linkis.engineconn.executor.conf.EngineConnExecutorConfiguration
 
 class ExecutorListenerBusContext {
 

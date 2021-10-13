@@ -16,11 +16,11 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.service.engine
+package org.apache.linkis.manager.am.service.engine
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.common.protocol.engine.{EngineConnReleaseRequest, EngineInfoClearRequest}
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.common.protocol.engine.{EngineConnReleaseRequest, EngineInfoClearRequest}
+import org.apache.linkis.message.annotation.Receiver
 import org.springframework.stereotype.Service
 
 

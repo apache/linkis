@@ -1,8 +1,8 @@
-package com.webank.wedatasphere.linkis.manager;
+package org.apache.linkis.manager;
 
-import com.webank.wedatasphere.linkis.manager.dao.*;
-import com.webank.wedatasphere.linkis.manager.persistence.*;
-import com.webank.wedatasphere.linkis.manager.persistence.impl.*;
+import org.apache.linkis.manager.dao.*;
+import org.apache.linkis.manager.persistence.*;
+import org.apache.linkis.manager.persistence.impl.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

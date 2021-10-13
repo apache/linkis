@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.common.protocol.em
+package org.apache.linkis.manager.common.protocol.em
 
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.protocol.message.RequestProtocol
 
 case class RegisterEMResponse(isSuccess:Boolean, msg: String = "success") extends RequestProtocol

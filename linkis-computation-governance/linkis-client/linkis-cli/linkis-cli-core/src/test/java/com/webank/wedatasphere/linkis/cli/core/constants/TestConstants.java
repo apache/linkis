@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.constants;
+package org.apache.linkis.cli.core.constants;
 
 
 public class TestConstants {

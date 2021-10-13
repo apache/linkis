@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.response
+package org.apache.linkis.filesystem.response
 
 trait WorkspaceResponse {
 

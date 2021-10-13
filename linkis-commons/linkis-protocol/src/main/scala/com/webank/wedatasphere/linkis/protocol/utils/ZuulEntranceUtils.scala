@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.utils
+package org.apache.linkis.protocol.utils
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
+import org.apache.linkis.common.ServiceInstance
 
 
 object ZuulEntranceUtils {

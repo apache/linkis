@@ -11,11 +11,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.exception.handler;
+package org.apache.linkis.cli.core.exception.handler;
 
-import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
-import com.webank.wedatasphere.linkis.cli.common.exception.handler.ExceptionHandler;
-import com.webank.wedatasphere.linkis.cli.core.utils.LogUtils;
+import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
+import org.apache.linkis.cli.common.exception.handler.ExceptionHandler;
+import org.apache.linkis.cli.core.utils.LogUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

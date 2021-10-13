@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.acessible.executor.entity
+package org.apache.linkis.engineconn.acessible.executor.entity
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event.{ExecutorCompletedEvent, ExecutorStatusChangedEvent}
-import com.webank.wedatasphere.linkis.engineconn.executor.entity.SensibleExecutor
-import com.webank.wedatasphere.linkis.engineconn.executor.listener.ExecutorListenerBusContext
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
-import com.webank.wedatasphere.linkis.scheduler.exception.SchedulerErrorException
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.engineconn.acessible.executor.listener.event.{ExecutorCompletedEvent, ExecutorStatusChangedEvent}
+import org.apache.linkis.engineconn.executor.entity.SensibleExecutor
+import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.scheduler.exception.SchedulerErrorException
 
 abstract class AccessibleExecutor extends SensibleExecutor {
 

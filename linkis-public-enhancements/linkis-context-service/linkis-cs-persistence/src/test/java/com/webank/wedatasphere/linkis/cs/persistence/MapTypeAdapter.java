@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence;
+package org.apache.linkis.cs.persistence;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.internal.LinkedTreeMap;

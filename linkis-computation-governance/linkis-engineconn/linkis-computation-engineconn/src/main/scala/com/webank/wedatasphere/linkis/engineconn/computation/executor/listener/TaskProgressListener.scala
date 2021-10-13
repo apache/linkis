@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.computation.executor.listener
+package org.apache.linkis.engineconn.computation.executor.listener
 
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event.TaskProgressUpdateEvent
-import com.webank.wedatasphere.linkis.engineconn.executor.listener.EngineConnSyncListener
+import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskProgressUpdateEvent
+import org.apache.linkis.engineconn.executor.listener.EngineConnSyncListener
 
 
 trait TaskProgressListener extends EngineConnSyncListener {

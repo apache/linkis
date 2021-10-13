@@ -19,7 +19,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 
-<mapper namespace="com.webank.wedatasphere.linkis.engineplugin.server.dao.EngineConnBmlResourceDao">
+<mapper namespace="org.apache.linkis.engineplugin.server.dao.EngineConnBmlResourceDao">
 
 
     <sql id="bml_resources">
@@ -27,19 +27,19 @@
     </sql>
 
     <select id="getAllEngineConnBmlResource"
-            resultType="com.webank.wedatasphere.linkis.engineplugin.server.entity.EngineConnBmlResource">
+            resultType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
         SELECT * FROM linkis_cg_engine_conn_plugin_bml_resources
         WHERE engine_conn_type=#{engineConnType} and `version`=#{version}
     </select>
 
-    <delete id="delete" parameterType="com.webank.wedatasphere.linkis.engineplugin.server.entity.EngineConnBmlResource">
+    <delete id="delete" parameterType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
         delete from linkis_cg_engine_conn_plugin_bml_resources where
         engine_conn_type=#{engineConnBmlResource.engineConnType} and
         `version`=#{engineConnBmlResource.version}
         and file_name=#{engineConnBmlResource.fileName}
     </delete>
 
-    <update id="update" parameterType="com.webank.wedatasphere.linkis.engineplugin.server.entity.EngineConnBmlResource">
+    <update id="update" parameterType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
         update linkis_cg_engine_conn_plugin_bml_resources
         <trim prefix="set" suffixOverrides=",">
             <if test="engineConnBmlResource.lastModified != null">`last_modified` =
@@ -57,7 +57,7 @@
         and file_name=#{engineConnBmlResource.fileName}
     </update>
 
-    <insert id="save" parameterType="com.webank.wedatasphere.linkis.engineplugin.server.entity.EngineConnBmlResource">
+    <insert id="save" parameterType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
         insert into linkis_cg_engine_conn_plugin_bml_resources(<include refid="bml_resources"/>)
         values(#{engineConnBmlResource.engineConnType}, #{engineConnBmlResource.version},
         #{engineConnBmlResource.fileName}, #{engineConnBmlResource.lastModified},

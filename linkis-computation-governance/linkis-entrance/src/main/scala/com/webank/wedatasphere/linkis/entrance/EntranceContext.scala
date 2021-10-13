@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance
+package org.apache.linkis.entrance
 
-import com.webank.wedatasphere.linkis.entrance.event._
-import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
-import com.webank.wedatasphere.linkis.entrance.log.LogManager
-import com.webank.wedatasphere.linkis.entrance.persistence.PersistenceManager
-import com.webank.wedatasphere.linkis.scheduler.Scheduler
+import org.apache.linkis.entrance.event._
+import org.apache.linkis.entrance.interceptor.EntranceInterceptor
+import org.apache.linkis.entrance.log.LogManager
+import org.apache.linkis.entrance.persistence.PersistenceManager
+import org.apache.linkis.scheduler.Scheduler
 
 
 abstract class EntranceContext {

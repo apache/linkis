@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.future
+package org.apache.linkis.scheduler.future
 
 import java.util.concurrent.{Future, FutureTask}
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{Logging, Utils}
 
 
 class BDPFutureTask(future: Future[_]) extends BDPFuture with Logging {

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.transform
+package org.apache.linkis.rpc.transform
 
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
+import org.apache.linkis.server.BDPJettyServerHelper
 import org.json4s.jackson.JsonMethods.parse
 import org.json4s.jackson.Serialization.write
 import org.json4s.{CustomSerializer, JArray, JObject}

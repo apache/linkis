@@ -16,14 +16,14 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.label
+package org.apache.linkis.manager.am.label
 
 import java.util
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.em.EMInstanceLabel
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
-import com.webank.wedatasphere.linkis.manager.service.common.label.LabelChecker
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
+import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.manager.service.common.label.LabelChecker
 import org.springframework.stereotype.Component
 
 import scala.collection.JavaConversions._

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.extensions
+package org.apache.linkis.orchestrator.extensions
 
-import com.webank.wedatasphere.linkis.orchestrator.extensions.catalyst.CheckRuler
-import com.webank.wedatasphere.linkis.orchestrator.extensions.catalyst.CheckRuler.{ConverterCheckRulerBuilder, ValidatorCheckRulerBuilder}
+import org.apache.linkis.orchestrator.extensions.catalyst.CheckRuler
+import org.apache.linkis.orchestrator.extensions.catalyst.CheckRuler.{ConverterCheckRulerBuilder, ValidatorCheckRulerBuilder}
 
 /**
   *

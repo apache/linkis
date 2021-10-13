@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.dws.config
+package org.apache.linkis.httpclient.dws.config
 
-import com.webank.wedatasphere.linkis.common.utils.RetryHandler
-import com.webank.wedatasphere.linkis.httpclient.authentication.AuthenticationStrategy
-import com.webank.wedatasphere.linkis.httpclient.config.ClientConfig
-import com.webank.wedatasphere.linkis.httpclient.loadbalancer.LoadBalancerStrategy
+import org.apache.linkis.common.utils.RetryHandler
+import org.apache.linkis.httpclient.authentication.AuthenticationStrategy
+import org.apache.linkis.httpclient.config.ClientConfig
+import org.apache.linkis.httpclient.loadbalancer.LoadBalancerStrategy
 
 import scala.concurrent.duration.TimeUnit
 

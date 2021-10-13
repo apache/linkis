@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.validate;
+package org.apache.linkis.cli.core.interactor.validate;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.command.Params;
-import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
+import org.apache.linkis.cli.common.entity.command.Params;
+import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 
 //TODO
 public class ParamValidator implements Validator {

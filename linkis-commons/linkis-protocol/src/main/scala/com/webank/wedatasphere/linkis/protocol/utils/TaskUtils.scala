@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.utils
+package org.apache.linkis.protocol.utils
 
 import java.util
 
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.protocol.constants.TaskConstant
 
 import scala.collection.JavaConversions._
 

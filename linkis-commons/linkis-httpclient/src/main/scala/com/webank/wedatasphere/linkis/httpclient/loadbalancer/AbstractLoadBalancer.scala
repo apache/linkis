@@ -18,11 +18,11 @@
  * Created by ${USER} on ${DATE}.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.loadbalancer
+package org.apache.linkis.httpclient.loadbalancer
 
 import java.util
 
-import com.webank.wedatasphere.linkis.httpclient.discovery.DiscoveryListener
+import org.apache.linkis.httpclient.discovery.DiscoveryListener
 
 
 abstract class AbstractLoadBalancer extends LoadBalancer with DiscoveryListener {

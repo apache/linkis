@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.strategy
+package org.apache.linkis.orchestrator.strategy
 
-import com.webank.wedatasphere.linkis.orchestrator.execution.{ExecTaskRunner, ExecTaskRunnerFactory}
-import com.webank.wedatasphere.linkis.orchestrator.plans.physical.ExecTask
-import com.webank.wedatasphere.linkis.orchestrator.strategy.async.AsyncExecTaskRunnerImpl
+import org.apache.linkis.orchestrator.execution.{ExecTaskRunner, ExecTaskRunnerFactory}
+import org.apache.linkis.orchestrator.plans.physical.ExecTask
+import org.apache.linkis.orchestrator.strategy.async.AsyncExecTaskRunnerImpl
 
 /**
   *

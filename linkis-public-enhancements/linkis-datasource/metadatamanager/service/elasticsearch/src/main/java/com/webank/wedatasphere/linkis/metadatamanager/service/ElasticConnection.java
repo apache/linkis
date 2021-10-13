@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadatamanager.service;
+package org.apache.linkis.metadatamanager.service;
 
-import com.webank.wedatasphere.linkis.metadatamanager.common.Json;
+import org.apache.linkis.metadatamanager.common.Json;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;

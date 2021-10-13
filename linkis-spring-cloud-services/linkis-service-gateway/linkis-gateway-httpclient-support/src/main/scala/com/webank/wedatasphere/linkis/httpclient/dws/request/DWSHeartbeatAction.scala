@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.dws.request
+package org.apache.linkis.httpclient.dws.request
 
-import com.webank.wedatasphere.linkis.httpclient.discovery.HeartbeatAction
-import com.webank.wedatasphere.linkis.httpclient.request.GetAction
+import org.apache.linkis.httpclient.discovery.HeartbeatAction
+import org.apache.linkis.httpclient.request.GetAction
 
 class DWSHeartbeatAction(override val serverUrl: String) extends GetAction with DWSHttpAction with HeartbeatAction {
   override def getRequestBody: String = ""

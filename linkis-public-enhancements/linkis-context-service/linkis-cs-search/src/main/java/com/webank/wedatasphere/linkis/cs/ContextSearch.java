@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs;
+package org.apache.linkis.cs;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKeyValue;
-import com.webank.wedatasphere.linkis.cs.condition.Condition;
-import com.webank.wedatasphere.linkis.cs.contextcache.ContextCacheService;
-import com.webank.wedatasphere.linkis.cs.exception.ContextSearchFailedException;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
+import org.apache.linkis.cs.condition.Condition;
+import org.apache.linkis.cs.contextcache.ContextCacheService;
+import org.apache.linkis.cs.exception.ContextSearchFailedException;
 
 import java.util.List;
 import java.util.Map;

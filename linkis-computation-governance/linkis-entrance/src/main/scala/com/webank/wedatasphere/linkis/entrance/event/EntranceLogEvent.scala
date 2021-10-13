@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.event
+package org.apache.linkis.entrance.event
 
-import com.webank.wedatasphere.linkis.common.listener.Event
-import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
-import com.webank.wedatasphere.linkis.scheduler.executer.Executor
-import com.webank.wedatasphere.linkis.scheduler.queue.Job
+import org.apache.linkis.common.listener.Event
+import org.apache.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.scheduler.executer.Executor
+import org.apache.linkis.scheduler.queue.Job
 
 /**
   * desctiption: entrance The type of event in the event bus in the module(模块中的事件总线中的事件类型)

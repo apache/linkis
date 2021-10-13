@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.protocol;
+package org.apache.linkis.cs.common.protocol;
 
 
 public enum  ContextHistoryType {
     /**
      *
      */
-    COMMON_CONTEXT_HISTORY_TYPE(0, "com.webank.wedatasphere.linkis.cs.common.entity.source.CommonContextID");
+    COMMON_CONTEXT_HISTORY_TYPE(0, "org.apache.linkis.cs.common.entity.source.CommonContextID");
 
     private int index;
     private String typeName;

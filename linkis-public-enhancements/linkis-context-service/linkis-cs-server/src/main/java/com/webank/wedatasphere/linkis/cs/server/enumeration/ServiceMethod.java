@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.enumeration;
+package org.apache.linkis.cs.server.enumeration;
 
 
 public enum ServiceMethod {

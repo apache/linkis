@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.udf.service.impl;
+package org.apache.linkis.udf.service.impl;
 
 import com.google.common.collect.Lists;
-import com.webank.wedatasphere.linkis.common.io.Fs;
-import com.webank.wedatasphere.linkis.common.io.FsPath;
-import com.webank.wedatasphere.linkis.storage.FSFactory;
-import com.webank.wedatasphere.linkis.storage.fs.FileSystem;
-import com.webank.wedatasphere.linkis.udf.dao.UDFDao;
-import com.webank.wedatasphere.linkis.udf.entity.UDFInfo;
-import com.webank.wedatasphere.linkis.udf.entity.UDFManager;
-import com.webank.wedatasphere.linkis.udf.excepiton.UDFException;
-import com.webank.wedatasphere.linkis.udf.service.UDFService;
-import com.webank.wedatasphere.linkis.udf.utils.ConstantVar;
-import com.webank.wedatasphere.linkis.udf.utils.UdfConfiguration;
+import org.apache.linkis.common.io.Fs;
+import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.storage.FSFactory;
+import org.apache.linkis.storage.fs.FileSystem;
+import org.apache.linkis.udf.dao.UDFDao;
+import org.apache.linkis.udf.entity.UDFInfo;
+import org.apache.linkis.udf.entity.UDFManager;
+import org.apache.linkis.udf.excepiton.UDFException;
+import org.apache.linkis.udf.service.UDFService;
+import org.apache.linkis.udf.utils.ConstantVar;
+import org.apache.linkis.udf.utils.UdfConfiguration;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.converters.DateConverter;
@@ -52,7 +52,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 
-import static com.webank.wedatasphere.linkis.udf.utils.ConstantVar.UDF_JAR;
+import static org.apache.linkis.udf.utils.ConstantVar.UDF_JAR;
 
 
 @Service

@@ -15,9 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client;
+package org.apache.linkis.computation.client;
 
-import com.webank.wedatasphere.linkis.computation.client.interactive.SubmittableInteractiveJob;
+import org.apache.linkis.computation.client.interactive.SubmittableInteractiveJob;
 
 /**
  * A test class for submit a sql to hive engineConn.

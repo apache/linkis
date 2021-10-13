@@ -1,9 +1,9 @@
-package com.webank.wedatasphere.linkis.governance.common.protocol.job
+package org.apache.linkis.governance.common.protocol.job
 
 import java.util
 
-import com.webank.wedatasphere.linkis.governance.common.entity.job.{SubJobDetail, SubJobInfo}
-import com.webank.wedatasphere.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.governance.common.entity.job.{SubJobDetail, SubJobInfo}
+import org.apache.linkis.protocol.message.RequestProtocol
 import java.util.Date
 
 import scala.beans.BeanProperty

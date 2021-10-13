@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.common;
+package org.apache.linkis.bml.common;
 
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import com.webank.wedatasphere.linkis.bml.conf.BmlServerConfiguration;
+import org.apache.linkis.bml.conf.BmlServerConfiguration;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;

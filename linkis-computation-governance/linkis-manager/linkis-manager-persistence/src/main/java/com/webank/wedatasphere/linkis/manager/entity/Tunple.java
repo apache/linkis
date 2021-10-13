@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.manager.entity;
+package org.apache.linkis.manager.entity;
 
 
 public class Tunple<K, V> {

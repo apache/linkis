@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.protocol.em;
+package org.apache.linkis.manager.common.protocol.em;
 
-import com.webank.wedatasphere.linkis.manager.common.entity.node.EMNode;
+import org.apache.linkis.manager.common.entity.node.EMNode;
 
 
 public class EMInfoClearRequest implements EMRequest {

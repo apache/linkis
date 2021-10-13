@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance
+package org.apache.linkis.entrance
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.entrance.execute.EntranceJob
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.scheduler.queue.Job
+import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.entrance.execute.EntranceJob
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.scheduler.queue.Job
 
 
 abstract class EntranceParser {

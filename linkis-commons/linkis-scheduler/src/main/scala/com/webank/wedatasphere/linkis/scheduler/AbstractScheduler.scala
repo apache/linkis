@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler
+package org.apache.linkis.scheduler
 
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.scheduler.exception.SchedulerErrorException
-import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEvent
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.scheduler.exception.SchedulerErrorException
+import org.apache.linkis.scheduler.queue.SchedulerEvent
 import org.apache.commons.lang.StringUtils
 
 

@@ -11,13 +11,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.service.impl;
+package org.apache.linkis.datasourcemanager.core.service.impl;
 
-import com.webank.wedatasphere.linkis.datasourcemanager.core.dao.DataSourceTypeDao;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.dao.DataSourceParamKeyDao;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceType;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.service.DataSourceRelateService;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceTypeDao;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceParamKeyDao;
+import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
+import org.apache.linkis.datasourcemanager.common.domain.DataSourceType;
+import org.apache.linkis.datasourcemanager.core.service.DataSourceRelateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

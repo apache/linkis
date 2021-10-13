@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.presenter.display.data;
+package org.apache.linkis.cli.core.presenter.display.data;
 
 
 public class FileOutData {

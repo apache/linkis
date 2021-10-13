@@ -15,13 +15,13 @@
  */
 
 
-package com.webank.wedatasphere.linkis.common.exception;
+package org.apache.linkis.common.exception;
 
-import com.webank.wedatasphere.linkis.common.errorcode.CommonErrorConstants;
+import org.apache.linkis.common.errorcode.CommonErrorConstants;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.webank.wedatasphere.linkis.common.exception.ExceptionLevel.*;
+import static org.apache.linkis.common.exception.ExceptionLevel.*;
 
 public final class ExceptionManager {
     private static final String LEVEL = "level";

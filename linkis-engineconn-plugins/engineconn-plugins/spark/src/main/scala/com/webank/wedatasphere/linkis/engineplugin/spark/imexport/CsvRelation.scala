@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.imexport
+package org.apache.linkis.engineplugin.spark.imexport
 
 import java.io.{BufferedOutputStream, FileOutputStream}
 import java.math.BigDecimal
@@ -19,7 +19,7 @@ import java.sql.{Date, Timestamp}
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-import com.webank.wedatasphere.linkis.engineplugin.spark.imexport.util.ImExportUtils
+import org.apache.linkis.engineplugin.spark.imexport.util.ImExportUtils
 import javax.xml.bind.DatatypeConverter
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.io.{IOUtils, LongWritable, Text}

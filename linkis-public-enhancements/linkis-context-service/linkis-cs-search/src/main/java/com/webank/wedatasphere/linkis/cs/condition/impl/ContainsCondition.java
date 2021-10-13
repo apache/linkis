@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.condition.impl;
+package org.apache.linkis.cs.condition.impl;
 
-import com.webank.wedatasphere.linkis.cs.condition.AtomicCondition;
-import com.webank.wedatasphere.linkis.cs.condition.ConditionType;
+import org.apache.linkis.cs.condition.AtomicCondition;
+import org.apache.linkis.cs.condition.ConditionType;
 
 public class ContainsCondition extends AtomicCondition {
    String value;

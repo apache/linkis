@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.execution.impl;
+package org.apache.linkis.cs.execution.impl;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.condition.impl.AndCondition;
-import com.webank.wedatasphere.linkis.cs.contextcache.ContextCacheService;
-import com.webank.wedatasphere.linkis.cs.execution.fetcher.IterateContextCacheFetcher;
-import com.webank.wedatasphere.linkis.cs.execution.matcher.AndLogicContextSearchMatcher;
-import com.webank.wedatasphere.linkis.cs.execution.ruler.CommonListContextSearchRuler;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.condition.impl.AndCondition;
+import org.apache.linkis.cs.contextcache.ContextCacheService;
+import org.apache.linkis.cs.execution.fetcher.IterateContextCacheFetcher;
+import org.apache.linkis.cs.execution.matcher.AndLogicContextSearchMatcher;
+import org.apache.linkis.cs.execution.ruler.CommonListContextSearchRuler;
 
 public class AndConditionExecution extends BinaryLogicConditionExecution {
 

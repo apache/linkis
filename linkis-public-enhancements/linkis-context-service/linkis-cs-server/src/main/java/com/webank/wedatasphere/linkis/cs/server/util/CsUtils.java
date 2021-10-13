@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.util;
+package org.apache.linkis.cs.server.util;
 
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.common.serialize.helper.ContextSerializationHelper;
-import com.webank.wedatasphere.linkis.cs.common.serialize.helper.SerializationHelper;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.serialize.helper.ContextSerializationHelper;
+import org.apache.linkis.cs.common.serialize.helper.SerializationHelper;
 
 public class CsUtils {
 

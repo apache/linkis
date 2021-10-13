@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.execution.observer.listener;
+package org.apache.linkis.cli.core.interactor.execution.observer.listener;
 
-import com.webank.wedatasphere.linkis.cli.core.interactor.execution.observer.event.LinkisClientEvent;
+import org.apache.linkis.cli.core.interactor.execution.observer.event.LinkisClientEvent;
 
 
 public interface LinkisClientObserver {

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.service;
+package org.apache.linkis.jobhistory.service;
 
-import com.webank.wedatasphere.linkis.governance.common.protocol.job.*;
+import org.apache.linkis.governance.common.protocol.job.*;
 import java.util.ArrayList;
 
 public interface JobHistoryDetailQueryService {

@@ -16,10 +16,10 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.utils
+package org.apache.linkis.manager.common.utils
 
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource
-import com.webank.wedatasphere.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.entity.persistence.PersistenceResource
+import org.apache.linkis.manager.common.entity.resource._
 import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization.{read, write}
 

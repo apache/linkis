@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.utils
+package org.apache.linkis.common.utils
 
-import com.webank.wedatasphere.linkis.common.exception.FatalException
+import org.apache.linkis.common.exception.FatalException
 import org.apache.commons.lang.{ClassUtils => CommonClassUtils}
 
 import scala.collection.mutable.ArrayBuffer

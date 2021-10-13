@@ -11,20 +11,20 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.command.template;
+package org.apache.linkis.cli.core.interactor.command.template;
 
-import com.webank.wedatasphere.linkis.cli.common.constants.CommonConstants;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdOption;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdType;
-import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.common.utils.converter.AbstractStringConverter;
-import com.webank.wedatasphere.linkis.cli.core.exception.CommandException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option.*;
-import com.webank.wedatasphere.linkis.cli.core.utils.SpecialMap;
-import com.webank.wedatasphere.linkis.cli.core.utils.converter.PredefinedStringConverters;
+import org.apache.linkis.cli.common.constants.CommonConstants;
+import org.apache.linkis.cli.common.entity.command.CmdOption;
+import org.apache.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.common.entity.command.CmdType;
+import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.common.utils.converter.AbstractStringConverter;
+import org.apache.linkis.cli.core.exception.CommandException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.command.template.option.*;
+import org.apache.linkis.cli.core.utils.SpecialMap;
+import org.apache.linkis.cli.core.utils.converter.PredefinedStringConverters;
 
 import java.lang.reflect.Field;
 import java.util.*;

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.action
+package org.apache.linkis.filesystem.action
 
-import com.webank.wedatasphere.linkis.filesystem.conf.WorkspaceClientConf
-import com.webank.wedatasphere.linkis.httpclient.request.UserAction
+import org.apache.linkis.filesystem.conf.WorkspaceClientConf
+import org.apache.linkis.httpclient.request.UserAction
 
 
 class OpenScriptFromBMLAction extends WorkspaceGETAction with UserAction{

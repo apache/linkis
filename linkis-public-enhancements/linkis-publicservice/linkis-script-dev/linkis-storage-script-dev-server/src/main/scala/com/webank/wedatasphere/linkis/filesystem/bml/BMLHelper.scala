@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.bml
+package org.apache.linkis.filesystem.bml
 
 import java.io.{ByteArrayInputStream, InputStream}
 import java.util
 import java.util.UUID
 
-import com.webank.wedatasphere.linkis.bml.client.{BmlClient, BmlClientFactory}
-import com.webank.wedatasphere.linkis.bml.protocol.{BmlDownloadResponse, BmlUpdateResponse, BmlUploadResponse}
-import com.webank.wedatasphere.linkis.filesystem.exception.WorkspaceExceptionManager
+import org.apache.linkis.bml.client.{BmlClient, BmlClientFactory}
+import org.apache.linkis.bml.protocol.{BmlDownloadResponse, BmlUpdateResponse, BmlUploadResponse}
+import org.apache.linkis.filesystem.exception.WorkspaceExceptionManager
 import org.springframework.stereotype.Component
 
 import scala.collection.JavaConversions._

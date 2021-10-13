@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation;
+package org.apache.linkis.engineconnplugin.flink.client.sql.operation;
 
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.JobExecutionException;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.SqlExecutionException;
+import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet;
+import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
+import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 
 public interface Operation {
 

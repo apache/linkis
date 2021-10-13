@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.restful.api;
+package org.apache.linkis.metadata.restful.api;
 
-import com.webank.wedatasphere.linkis.metadata.restful.remote.DataSourceRestfulRemote;
-import com.webank.wedatasphere.linkis.metadata.service.DataSourceService;
-import com.webank.wedatasphere.linkis.server.Message;
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
+import org.apache.linkis.metadata.restful.remote.DataSourceRestfulRemote;
+import org.apache.linkis.metadata.service.DataSourceService;
+import org.apache.linkis.server.Message;
+import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import com.fasterxml.jackson.databind.JsonNode;

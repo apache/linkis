@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.parser;
+package org.apache.linkis.message.parser;
 
 import java.util.List;
 import java.util.Map;

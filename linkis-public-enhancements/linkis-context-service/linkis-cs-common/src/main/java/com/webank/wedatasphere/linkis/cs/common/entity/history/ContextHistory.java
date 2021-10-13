@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.entity.history;
+package org.apache.linkis.cs.common.entity.history;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
 
 public interface ContextHistory {
 

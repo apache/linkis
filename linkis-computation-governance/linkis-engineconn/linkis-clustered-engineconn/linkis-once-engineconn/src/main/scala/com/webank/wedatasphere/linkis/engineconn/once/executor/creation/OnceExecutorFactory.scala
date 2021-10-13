@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.once.executor.creation
+package org.apache.linkis.engineconn.once.executor.creation
 
 
-import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
-import com.webank.wedatasphere.linkis.engineconn.core.creation.AbstractCodeLanguageLabelExecutorFactory
-import com.webank.wedatasphere.linkis.engineconn.once.executor.OnceExecutor
-import com.webank.wedatasphere.linkis.engineconn.once.executor.execution.OnceEngineConnExecution
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineConnMode._
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineConnModeLabel
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.common.engineconn.EngineConn
+import org.apache.linkis.engineconn.core.creation.AbstractCodeLanguageLabelExecutorFactory
+import org.apache.linkis.engineconn.once.executor.OnceExecutor
+import org.apache.linkis.engineconn.once.executor.execution.OnceEngineConnExecution
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.EngineConnMode._
+import org.apache.linkis.manager.label.entity.engine.EngineConnModeLabel
 
 
 trait OnceExecutorFactory extends AbstractCodeLanguageLabelExecutorFactory {

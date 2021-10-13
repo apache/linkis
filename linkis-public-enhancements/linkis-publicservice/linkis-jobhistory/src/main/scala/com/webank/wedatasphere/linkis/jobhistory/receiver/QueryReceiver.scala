@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.receiver
+package org.apache.linkis.jobhistory.receiver
 
-//import com.webank.wedatasphere.linkis.common.utils.Utils
-//import com.webank.wedatasphere.linkis.governance.common.entity.task.{RequestInsertTask, RequestOneTask, RequestQueryTask, RequestUpdateTask}
-//import com.webank.wedatasphere.linkis.jobhistory.cache.QueryCacheService
-//import com.webank.wedatasphere.linkis.jobhistory.service.JobHistoryQueryService
-//import com.webank.wedatasphere.linkis.protocol.query.cache._
-//import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
+//import org.apache.linkis.common.utils.Utils
+//import org.apache.linkis.governance.common.entity.task.{RequestInsertTask, RequestOneTask, RequestQueryTask, RequestUpdateTask}
+//import org.apache.linkis.jobhistory.cache.QueryCacheService
+//import org.apache.linkis.jobhistory.service.JobHistoryQueryService
+//import org.apache.linkis.protocol.query.cache._
+//import org.apache.linkis.rpc.{Receiver, Sender}
 
 import scala.concurrent.duration.Duration
 

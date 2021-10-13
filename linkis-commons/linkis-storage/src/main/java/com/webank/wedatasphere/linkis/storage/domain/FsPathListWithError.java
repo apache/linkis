@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.domain;
+package org.apache.linkis.storage.domain;
 
-import com.webank.wedatasphere.linkis.common.io.FsPath;
+import org.apache.linkis.common.io.FsPath;
 
 import java.util.List;
 

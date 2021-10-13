@@ -16,13 +16,13 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.locker
+package org.apache.linkis.manager.am.locker
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.common.entity.node.{AMEngineNode, EngineNode}
-import com.webank.wedatasphere.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock, RequestManagerUnlock}
-import com.webank.wedatasphere.linkis.manager.service.common.pointer.NodePointerBuilder
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.common.entity.node.{AMEngineNode, EngineNode}
+import org.apache.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock, RequestManagerUnlock}
+import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder
+import org.apache.linkis.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

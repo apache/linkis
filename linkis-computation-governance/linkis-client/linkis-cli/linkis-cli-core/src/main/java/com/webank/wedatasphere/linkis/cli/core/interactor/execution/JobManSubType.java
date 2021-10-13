@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.execution;
+package org.apache.linkis.cli.core.interactor.execution;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.SubExecutionType;
+import org.apache.linkis.cli.common.entity.execution.SubExecutionType;
 
 
 public enum JobManSubType implements SubExecutionType {

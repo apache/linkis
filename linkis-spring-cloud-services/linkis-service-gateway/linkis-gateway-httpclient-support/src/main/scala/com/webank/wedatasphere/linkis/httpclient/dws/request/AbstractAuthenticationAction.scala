@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.dws.request
+package org.apache.linkis.httpclient.dws.request
 
-import com.webank.wedatasphere.linkis.httpclient.authentication.AuthenticationAction
-import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
-import com.webank.wedatasphere.linkis.httpclient.request.POSTAction
+import org.apache.linkis.httpclient.authentication.AuthenticationAction
+import org.apache.linkis.httpclient.dws.DWSHttpClient
+import org.apache.linkis.httpclient.request.POSTAction
 
 abstract class AbstractAuthenticationAction(override val serverUrl: String) extends POSTAction with AuthenticationAction {
   private var user: String = _

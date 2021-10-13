@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.plans.ast
+package org.apache.linkis.orchestrator.plans.ast
 import java.util
-import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
-import com.webank.wedatasphere.linkis.protocol.utils.TaskUtils
+import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.protocol.utils.TaskUtils
 
 import scala.collection.JavaConverters.mapAsScalaMapConverter
 

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.highavailable.ha.instancealias.impl
+package org.apache.linkis.cs.highavailable.ha.instancealias.impl
 
 import java.util.Base64
 import java.util.regex.Pattern
 
-import com.webank.wedatasphere.linkis.cs.highavailable.ha.instancealias.InstanceAliasConverter
+import org.apache.linkis.cs.highavailable.ha.instancealias.InstanceAliasConverter
 import org.apache.commons.lang.StringUtils
 import org.springframework.stereotype.Component
 

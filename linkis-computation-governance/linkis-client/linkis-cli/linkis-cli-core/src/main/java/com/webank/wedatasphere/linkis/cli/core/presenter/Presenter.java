@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.presenter;
+package org.apache.linkis.cli.core.presenter;
 
 
-import com.webank.wedatasphere.linkis.cli.core.presenter.model.PresenterModel;
+import org.apache.linkis.cli.core.presenter.model.PresenterModel;
 
 /**
  * @description: accept a model and present(display) it to user

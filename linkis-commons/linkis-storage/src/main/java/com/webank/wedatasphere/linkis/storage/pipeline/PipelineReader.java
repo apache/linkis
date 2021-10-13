@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.pipeline;
+package org.apache.linkis.storage.pipeline;
 
-import com.webank.wedatasphere.linkis.common.io.FsReader;
+import org.apache.linkis.common.io.FsReader;
 
 import java.util.Iterator;
 import java.util.Map;

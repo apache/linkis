@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.serialize.impl.value.object;
+package org.apache.linkis.cs.common.serialize.impl.value.object;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.object.LinkisVariable;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.common.serialize.AbstractSerializer;
-import com.webank.wedatasphere.linkis.cs.common.utils.CSCommonUtils;
+import org.apache.linkis.cs.common.entity.object.LinkisVariable;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.serialize.AbstractSerializer;
+import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 public class LinkisVariableSerializer extends AbstractSerializer<LinkisVariable> {
     @Override

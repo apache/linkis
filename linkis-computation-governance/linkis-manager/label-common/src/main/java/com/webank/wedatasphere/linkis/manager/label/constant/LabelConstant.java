@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.constant;
+package org.apache.linkis.manager.label.constant;
 
 public class LabelConstant {
 

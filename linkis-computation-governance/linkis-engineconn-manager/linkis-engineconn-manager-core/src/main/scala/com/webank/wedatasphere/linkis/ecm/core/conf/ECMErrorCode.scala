@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.ecm.core.conf
+package org.apache.linkis.ecm.core.conf
 
 
 object ECMErrorCode {

@@ -11,19 +11,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.utils;
+package org.apache.linkis.cs.client.utils;
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.cs.client.service.DefaultSearchService;
-import com.webank.wedatasphere.linkis.cs.client.service.SearchService;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextScope;
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.ContextType;
-import com.webank.wedatasphere.linkis.cs.common.entity.object.CSFlowInfos;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.CombinedNodeIDContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.CommonContextKey;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
-import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
-import com.webank.wedatasphere.linkis.cs.common.utils.CSCommonUtils;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.cs.client.service.DefaultSearchService;
+import org.apache.linkis.cs.client.service.SearchService;
+import org.apache.linkis.cs.common.entity.enumeration.ContextScope;
+import org.apache.linkis.cs.common.entity.enumeration.ContextType;
+import org.apache.linkis.cs.common.entity.object.CSFlowInfos;
+import org.apache.linkis.cs.common.entity.source.CombinedNodeIDContextID;
+import org.apache.linkis.cs.common.entity.source.CommonContextKey;
+import org.apache.linkis.cs.common.entity.source.ContextID;
+import org.apache.linkis.cs.common.entity.source.ContextKey;
+import org.apache.linkis.cs.common.utils.CSCommonUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -11,11 +11,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.utils
+package org.apache.linkis.storage.utils
 
-import com.webank.wedatasphere.linkis.storage.FSFactory
-import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
-import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetReader}
+import org.apache.linkis.storage.FSFactory
+import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader}
 
 
 object StorageHelper {

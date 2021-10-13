@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.queue
+package org.apache.linkis.scheduler.queue
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.scheduler.exception.SchedulerErrorException
-import com.webank.wedatasphere.linkis.scheduler.queue.SchedulerEventState._
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.scheduler.exception.SchedulerErrorException
+import org.apache.linkis.scheduler.queue.SchedulerEventState._
 
 
 trait SchedulerEvent extends Logging {

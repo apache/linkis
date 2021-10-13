@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.manager.persistence;
+package org.apache.linkis.manager.persistence;
 /*
  * Copyright 2019 WeBank
  *
@@ -14,10 +14,10 @@ package com.webank.wedatasphere.linkis.manager.persistence;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode;
-import com.webank.wedatasphere.linkis.manager.common.entity.node.Node;
-import com.webank.wedatasphere.linkis.manager.exception.PersistenceErrorException;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.common.entity.node.EngineNode;
+import org.apache.linkis.manager.common.entity.node.Node;
+import org.apache.linkis.manager.exception.PersistenceErrorException;
 
 import java.util.List;
 

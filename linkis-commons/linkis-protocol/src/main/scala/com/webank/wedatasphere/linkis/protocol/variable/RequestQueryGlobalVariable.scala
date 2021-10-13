@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.protocol.variable
+package org.apache.linkis.protocol.variable
 
-import com.webank.wedatasphere.linkis.protocol.{CacheableProtocol, RetryableProtocol}
+import org.apache.linkis.protocol.{CacheableProtocol, RetryableProtocol}
 
 
 trait VariableProtocol

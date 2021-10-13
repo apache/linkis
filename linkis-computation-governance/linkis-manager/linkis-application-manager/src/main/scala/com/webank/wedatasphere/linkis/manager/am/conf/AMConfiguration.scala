@@ -16,10 +16,10 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.conf
+package org.apache.linkis.manager.am.conf
 
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
-import com.webank.wedatasphere.linkis.common.utils.Utils
+import org.apache.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.linkis.common.utils.Utils
 
 
 object AMConfiguration {

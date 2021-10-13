@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.computation.client.interactive
+package org.apache.linkis.computation.client.interactive
 
-import com.webank.wedatasphere.linkis.computation.client.AbstractLinkisJobBuilder
-import com.webank.wedatasphere.linkis.computation.client.utils.LabelKeyUtils
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.RunType.RunType
-import com.webank.wedatasphere.linkis.ujes.client.UJESClient
-import com.webank.wedatasphere.linkis.ujes.client.request.JobSubmitAction
+import org.apache.linkis.computation.client.AbstractLinkisJobBuilder
+import org.apache.linkis.computation.client.utils.LabelKeyUtils
+import org.apache.linkis.manager.label.entity.engine.RunType.RunType
+import org.apache.linkis.ujes.client.UJESClient
+import org.apache.linkis.ujes.client.request.JobSubmitAction
 import org.apache.commons.lang.StringUtils
 
 

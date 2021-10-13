@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.exception
+package org.apache.linkis.rpc.exception
 
-import com.webank.wedatasphere.linkis.common.exception.LinkisRetryException
+import org.apache.linkis.common.exception.LinkisRetryException
 
 
 class DWCRPCRetryException(desc: String) extends LinkisRetryException(DWCRPCRetryException.RPC_RETRY_ERROR_CODE, desc)

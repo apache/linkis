@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.client;
+package org.apache.linkis.bml.client;
 
-import com.webank.wedatasphere.linkis.bml.client.impl.HttpBmlClient;
-import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig;
+import org.apache.linkis.bml.client.impl.HttpBmlClient;
+import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
 
 import java.util.Map;
 

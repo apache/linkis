@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.interceptor
+package org.apache.linkis.entrance.interceptor
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.manager.label.utils.LabelUtil
 
 /**
   * Description: this interceptor is used to complete code with run type for

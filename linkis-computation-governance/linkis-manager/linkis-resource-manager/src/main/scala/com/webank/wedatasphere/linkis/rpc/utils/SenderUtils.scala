@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.rpc.utils
+package org.apache.linkis.rpc.utils
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.rpc.sender.SpringMVCRPCSender
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.rpc.Sender
+import org.apache.linkis.rpc.sender.SpringMVCRPCSender
 
 object SenderUtils {
 

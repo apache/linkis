@@ -1,9 +1,9 @@
-package com.webank.wedatasphere.linkis.manager.label.entity.engine;
+package org.apache.linkis.manager.label.entity.engine;
 
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant;
-import com.webank.wedatasphere.linkis.manager.label.entity.Feature;
-import com.webank.wedatasphere.linkis.manager.label.entity.GenericLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.annon.ValueSerialNum;
+import org.apache.linkis.manager.label.constant.LabelKeyConstant;
+import org.apache.linkis.manager.label.entity.Feature;
+import org.apache.linkis.manager.label.entity.GenericLabel;
+import org.apache.linkis.manager.label.entity.annon.ValueSerialNum;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;

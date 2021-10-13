@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata;
+package org.apache.linkis.metadata;
 
-import com.webank.wedatasphere.linkis.LinkisBaseServerApp;
+import org.apache.linkis.LinkisBaseServerApp;
 
 
 public class LinkisDataSourceApplication {

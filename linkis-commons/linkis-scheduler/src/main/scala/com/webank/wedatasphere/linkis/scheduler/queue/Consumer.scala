@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.queue
+package org.apache.linkis.scheduler.queue
 
 import java.util.concurrent.ExecutorService
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.scheduler.SchedulerContext
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.scheduler.SchedulerContext
 
 
 abstract class Consumer(schedulerContext: SchedulerContext,

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.governance.common.entity.task;
+package org.apache.linkis.governance.common.entity.task;
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.protocol.task.Task;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.protocol.task.Task;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 

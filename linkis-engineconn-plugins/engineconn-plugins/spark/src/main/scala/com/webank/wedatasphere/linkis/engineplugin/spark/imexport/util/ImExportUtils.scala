@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.imexport.util
+package org.apache.linkis.engineplugin.spark.imexport.util
 
 /**
   *

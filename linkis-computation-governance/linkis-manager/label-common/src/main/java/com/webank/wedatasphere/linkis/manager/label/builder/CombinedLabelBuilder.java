@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.builder;
+package org.apache.linkis.manager.label.builder;
 
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactory;
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelConstant;
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant;
-import com.webank.wedatasphere.linkis.manager.label.entity.CombinedLabelImpl;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.manager.label.exception.LabelErrorException;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
+import org.apache.linkis.manager.label.constant.LabelConstant;
+import org.apache.linkis.manager.label.constant.LabelKeyConstant;
+import org.apache.linkis.manager.label.entity.CombinedLabelImpl;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.exception.LabelErrorException;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

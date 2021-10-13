@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.resultset.table
+package org.apache.linkis.storage.resultset.table
 
-import com.webank.wedatasphere.linkis.common.io.resultset.ResultSerializer
-import com.webank.wedatasphere.linkis.common.io.{MetaData, Record}
-import com.webank.wedatasphere.linkis.storage.domain.Dolphin
+import org.apache.linkis.common.io.resultset.ResultSerializer
+import org.apache.linkis.common.io.{MetaData, Record}
+import org.apache.linkis.storage.domain.Dolphin
 
 import scala.collection.mutable.ArrayBuffer
 

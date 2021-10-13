@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entranceclient.conf;
+package org.apache.linkis.entranceclient.conf;
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
-import com.webank.wedatasphere.linkis.common.conf.CommonVars;
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceSpringConfiguration;
-import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor;
-import com.webank.wedatasphere.linkis.entrance.scheduler.EntranceSchedulerContext;
-import com.webank.wedatasphere.linkis.entranceclient.EntranceClient;
-import com.webank.wedatasphere.linkis.entranceclient.EntranceClientImpl;
-import com.webank.wedatasphere.linkis.entranceclient.annotation.ClientEntranceParserBeanAnnotation;
-import com.webank.wedatasphere.linkis.entranceclient.annotation.ClientInterceptorsBeanAnnotation;
-import com.webank.wedatasphere.linkis.entranceclient.annotation.DefaultEntranceClientBeanAnnotation;
-import com.webank.wedatasphere.linkis.entranceclient.context.ClientEntranceParser;
-import com.webank.wedatasphere.linkis.rpc.RPCReceiveRestful;
-import com.webank.wedatasphere.linkis.rpc.conf.RPCConfiguration;
+import org.apache.linkis.DataWorkCloudApplication;
+import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.entrance.conf.EntranceSpringConfiguration;
+import org.apache.linkis.entrance.interceptor.EntranceInterceptor;
+import org.apache.linkis.entrance.scheduler.EntranceSchedulerContext;
+import org.apache.linkis.entranceclient.EntranceClient;
+import org.apache.linkis.entranceclient.EntranceClientImpl;
+import org.apache.linkis.entranceclient.annotation.ClientEntranceParserBeanAnnotation;
+import org.apache.linkis.entranceclient.annotation.ClientInterceptorsBeanAnnotation;
+import org.apache.linkis.entranceclient.annotation.DefaultEntranceClientBeanAnnotation;
+import org.apache.linkis.entranceclient.context.ClientEntranceParser;
+import org.apache.linkis.rpc.RPCReceiveRestful;
+import org.apache.linkis.rpc.conf.RPCConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

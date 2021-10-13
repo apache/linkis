@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-//package com.webank.wedatasphere.linkis.jobhistory.receiver
+//package org.apache.linkis.jobhistory.receiver
 
-/*import com.webank.wedatasphere.linkis.jobhistory.cache.QueryCacheService
-import com.webank.wedatasphere.linkis.jobhistory.service.JobHistoryQueryService
-import com.webank.wedatasphere.linkis.protocol.query.QueryProtocol
-import com.webank.wedatasphere.linkis.rpc.{RPCMessageEvent, Receiver, ReceiverChooser}
+/*import org.apache.linkis.jobhistory.cache.QueryCacheService
+import org.apache.linkis.jobhistory.service.JobHistoryQueryService
+import org.apache.linkis.protocol.query.QueryProtocol
+import org.apache.linkis.rpc.{RPCMessageEvent, Receiver, ReceiverChooser}
 
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired

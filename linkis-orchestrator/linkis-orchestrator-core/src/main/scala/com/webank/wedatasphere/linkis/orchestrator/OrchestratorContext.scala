@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator
+package org.apache.linkis.orchestrator
 
 import java.io.Closeable
 
-import com.webank.wedatasphere.linkis.orchestrator.core.{GlobalState, OrchestratorPlugin}
-import com.webank.wedatasphere.linkis.orchestrator.extensions.Extensions
+import org.apache.linkis.orchestrator.core.{GlobalState, OrchestratorPlugin}
+import org.apache.linkis.orchestrator.extensions.Extensions
 
 /**
   *

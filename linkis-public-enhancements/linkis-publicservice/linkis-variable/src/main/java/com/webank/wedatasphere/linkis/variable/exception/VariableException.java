@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.variable.exception;
+package org.apache.linkis.variable.exception;
 
 public class VariableException extends Exception {
 

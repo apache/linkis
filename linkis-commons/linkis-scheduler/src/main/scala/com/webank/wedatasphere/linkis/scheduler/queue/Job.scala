@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.queue
+package org.apache.linkis.scheduler.queue
 
 import java.io.Closeable
 import java.util.concurrent.Future
 
-import com.webank.wedatasphere.linkis.common.exception.{ErrorException, LinkisRetryException}
-import com.webank.wedatasphere.linkis.common.listener.ListenerEventBus
-import com.webank.wedatasphere.linkis.common.log.LogUtils
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
-import com.webank.wedatasphere.linkis.scheduler.event._
-import com.webank.wedatasphere.linkis.scheduler.exception.LinkisJobRetryException
-import com.webank.wedatasphere.linkis.scheduler.executer._
-import com.webank.wedatasphere.linkis.scheduler.future.BDPFuture
-import com.webank.wedatasphere.linkis.scheduler.listener._
+import org.apache.linkis.common.exception.{ErrorException, LinkisRetryException}
+import org.apache.linkis.common.listener.ListenerEventBus
+import org.apache.linkis.common.log.LogUtils
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.scheduler.event._
+import org.apache.linkis.scheduler.exception.LinkisJobRetryException
+import org.apache.linkis.scheduler.executer._
+import org.apache.linkis.scheduler.future.BDPFuture
+import org.apache.linkis.scheduler.listener._
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils

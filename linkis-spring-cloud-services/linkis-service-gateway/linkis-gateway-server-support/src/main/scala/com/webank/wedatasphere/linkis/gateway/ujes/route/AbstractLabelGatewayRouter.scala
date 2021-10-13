@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.ujes.route
+package org.apache.linkis.gateway.ujes.route
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.gateway.exception.GatewayErrorException
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
-import com.webank.wedatasphere.linkis.gateway.route.AbstractGatewayRouter
-import com.webank.wedatasphere.linkis.instance.label.service.InsLabelService
-import com.webank.wedatasphere.linkis.manager.label.entity.route.RouteLabel
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.gateway.exception.GatewayErrorException
+import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.route.AbstractGatewayRouter
+import org.apache.linkis.instance.label.service.InsLabelService
+import org.apache.linkis.manager.label.entity.route.RouteLabel
 import javax.annotation.Resource
 import org.apache.commons.lang.StringUtils
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.code.plans.logical
+package org.apache.linkis.orchestrator.code.plans.logical
 
-import com.webank.wedatasphere.linkis.orchestrator.plans.ast.{ASTOrchestration, Job}
-import com.webank.wedatasphere.linkis.orchestrator.plans.logical.{Origin, TaskDesc}
+import org.apache.linkis.orchestrator.plans.ast.{ASTOrchestration, Job}
+import org.apache.linkis.orchestrator.plans.logical.{Origin, TaskDesc}
 
 
 case class CodeLogicalUnitTaskDesc(job: Job) extends TaskDesc {

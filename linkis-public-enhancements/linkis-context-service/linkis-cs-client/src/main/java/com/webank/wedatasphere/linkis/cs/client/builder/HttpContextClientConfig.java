@@ -11,15 +11,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.client.builder;
+package org.apache.linkis.cs.client.builder;
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars;
-import com.webank.wedatasphere.linkis.common.conf.Configuration;
-import com.webank.wedatasphere.linkis.cs.client.utils.ContextClientConf;
-import com.webank.wedatasphere.linkis.httpclient.authentication.AuthenticationStrategy;
-import com.webank.wedatasphere.linkis.httpclient.config.ClientConfig;
-import com.webank.wedatasphere.linkis.httpclient.config.ClientConfigBuilder;
-import com.webank.wedatasphere.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy;
+import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.conf.Configuration;
+import org.apache.linkis.cs.client.utils.ContextClientConf;
+import org.apache.linkis.httpclient.authentication.AuthenticationStrategy;
+import org.apache.linkis.httpclient.config.ClientConfig;
+import org.apache.linkis.httpclient.config.ClientConfigBuilder;
+import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy;
 
 /**
  * Description: 以http的方式和cs-server进行交互的配置,包括http的诸多配置

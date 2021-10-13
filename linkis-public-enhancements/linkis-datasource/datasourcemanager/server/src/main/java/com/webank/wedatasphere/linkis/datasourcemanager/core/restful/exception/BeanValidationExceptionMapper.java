@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.restful.exception;
+package org.apache.linkis.datasourcemanager.core.restful.exception;
 
-import com.webank.wedatasphere.linkis.server.Message;
+import org.apache.linkis.server.Message;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;

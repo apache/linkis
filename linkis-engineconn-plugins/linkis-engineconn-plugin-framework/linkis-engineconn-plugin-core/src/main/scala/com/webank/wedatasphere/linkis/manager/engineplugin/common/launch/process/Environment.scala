@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process
+package org.apache.linkis.manager.engineplugin.common.launch.process
 
 
 object Environment extends Enumeration {

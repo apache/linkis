@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.execution.impl
+package org.apache.linkis.orchestrator.execution.impl
 
 import java.util.Comparator
 
-import com.webank.wedatasphere.linkis.orchestrator.execution.ExecTaskRunner
-import com.webank.wedatasphere.linkis.orchestrator.plans.logical.{EndJobTaskDesc, EndStageTaskDesc}
+import org.apache.linkis.orchestrator.execution.ExecTaskRunner
+import org.apache.linkis.orchestrator.plans.logical.{EndJobTaskDesc, EndStageTaskDesc}
 
 case class UserTaskRunner(user: String, maxRunningNumber: Int, runningNumber: Int, taskRunner: ExecTaskRunner) {
 

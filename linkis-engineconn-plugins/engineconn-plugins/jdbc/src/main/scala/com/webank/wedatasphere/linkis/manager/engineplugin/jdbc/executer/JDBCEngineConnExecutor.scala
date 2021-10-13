@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.manager.engineplugin.jdbc.executer
+package org.apache.linkis.manager.engineplugin.jdbc.executer
 
 import java.sql.{Connection, Statement}
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.{OverloadUtils, Utils}
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
-import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
-import com.webank.wedatasphere.linkis.manager.engineplugin.jdbc.ConnectionManager
-import com.webank.wedatasphere.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.protocol.engine.JobProgressInfo
-import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.scheduler.executer.{AliasOutputExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
-import com.webank.wedatasphere.linkis.storage.domain.{Column, DataType}
-import com.webank.wedatasphere.linkis.storage.resultset.ResultSetFactory
-import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+import org.apache.linkis.common.utils.{OverloadUtils, Utils}
+import org.apache.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.core.EngineConnObject
+import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.engineplugin.jdbc.ConnectionManager
+import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.rpc.Sender
+import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
+import org.apache.linkis.storage.domain.{Column, DataType}
+import org.apache.linkis.storage.resultset.ResultSetFactory
+import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.commons.io.IOUtils
 import org.springframework.util.CollectionUtils
 

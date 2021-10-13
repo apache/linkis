@@ -16,9 +16,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.selector.rule
+package org.apache.linkis.manager.am.selector.rule
 
-import com.webank.wedatasphere.linkis.manager.common.entity.node.Node
+import org.apache.linkis.manager.common.entity.node.Node
 
 
 trait NodeSelectRule {

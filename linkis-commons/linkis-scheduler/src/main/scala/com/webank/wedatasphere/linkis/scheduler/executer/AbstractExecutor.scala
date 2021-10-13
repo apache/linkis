@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.executer
+package org.apache.linkis.scheduler.executer
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.scheduler.exception.SchedulerErrorException
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorState._
-import com.webank.wedatasphere.linkis.scheduler.listener.ExecutorListener
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.scheduler.exception.SchedulerErrorException
+import org.apache.linkis.scheduler.executer.ExecutorState._
+import org.apache.linkis.scheduler.listener.ExecutorListener
 
 
 abstract class AbstractExecutor(id: Long) extends Executor with Logging {

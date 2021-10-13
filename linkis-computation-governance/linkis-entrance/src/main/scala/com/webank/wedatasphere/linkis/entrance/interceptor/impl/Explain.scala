@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.interceptor.impl
+package org.apache.linkis.entrance.interceptor.impl
 
 import java.util.regex.Pattern
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
-import com.webank.wedatasphere.linkis.common.log.LogUtils
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration
-import com.webank.wedatasphere.linkis.entrance.interceptor.exception.{PythonCodeCheckException, ScalaCodeCheckException}
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.common.log.LogUtils
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.interceptor.exception.{PythonCodeCheckException, ScalaCodeCheckException}
+import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 

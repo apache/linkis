@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.python.executor
+package org.apache.linkis.manager.engineplugin.python.executor
 
 
 import java.io.{File, FileFilter, FileOutputStream, InputStream}
@@ -19,17 +19,17 @@ import java.net.ServerSocket
 import java.nio.file.Files
 import java.util.{List => JList}
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.rs.RsOutputStream
-import com.webank.wedatasphere.linkis.engineconn.launch.EngineConnServer
-import com.webank.wedatasphere.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
-import com.webank.wedatasphere.linkis.manager.engineplugin.python.exception.{ExecuteException, PythonExecuteError}
-import com.webank.wedatasphere.linkis.manager.engineplugin.python.utils.Kind
-import com.webank.wedatasphere.linkis.storage.domain._
-import com.webank.wedatasphere.linkis.storage.resultset.table.{TableMetaData, TableRecord}
-import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
-import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
+import org.apache.linkis.engineconn.launch.EngineConnServer
+import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
+import org.apache.linkis.manager.engineplugin.python.exception.{ExecuteException, PythonExecuteError}
+import org.apache.linkis.manager.engineplugin.python.utils.Kind
+import org.apache.linkis.storage.domain._
+import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
+import org.apache.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils

@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadatamanager.common.service;
+package org.apache.linkis.metadatamanager.common.service;
 
 import java.util.concurrent.locks.ReentrantLock;
 

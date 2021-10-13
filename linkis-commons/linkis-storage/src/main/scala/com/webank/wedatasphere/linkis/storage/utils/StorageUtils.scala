@@ -11,17 +11,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.utils
+package org.apache.linkis.storage.utils
 
 import java.io.{Closeable, File, InputStream, OutputStream}
 import java.lang.reflect.Method
 import java.text.NumberFormat
-import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf
-import com.webank.wedatasphere.linkis.storage.exception.StorageFatalException
-import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, ResultSetWriter}
-import com.webank.wedatasphere.linkis.storage.{LineMetaData, LineRecord}
+import org.apache.linkis.common.io.{Fs, FsPath}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.hadoop.common.conf.HadoopConf
+import org.apache.linkis.storage.exception.StorageFatalException
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, ResultSetWriter}
+import org.apache.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.commons.lang.StringUtils
 
 import scala.collection.mutable

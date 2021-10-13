@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.core.engineconn
+package org.apache.linkis.ecm.core.engineconn
 
 
 class EngineConnInfo {

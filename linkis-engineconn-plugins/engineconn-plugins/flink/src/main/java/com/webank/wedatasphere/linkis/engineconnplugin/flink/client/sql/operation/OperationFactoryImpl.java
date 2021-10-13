@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation;
+package org.apache.linkis.engineconnplugin.flink.client.sql.operation;
 
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.operation.impl.*;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.client.sql.parser.SqlCommandCall;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.exception.SqlParseException;
-import com.webank.wedatasphere.linkis.engineconnplugin.flink.util.ClassUtil;
+import org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl.*;
+import org.apache.linkis.engineconnplugin.flink.client.sql.parser.SqlCommandCall;
+import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
+import org.apache.linkis.engineconnplugin.flink.exception.SqlParseException;
+import org.apache.linkis.engineconnplugin.flink.util.ClassUtil;
 
 
 public class OperationFactoryImpl implements OperationFactory {

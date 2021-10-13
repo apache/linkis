@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.util
+package org.apache.linkis.jobhistory.util
 
 import java.io.{InputStream, OutputStream}
 import java.util.Date
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.common.io.FsPath
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.governance.common.entity.job.{JobRequest, SubJobDetail, SubJobInfo}
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestInsertTask
-import com.webank.wedatasphere.linkis.governance.common.protocol.job.JobReqInsert
-import com.webank.wedatasphere.linkis.jobhistory.conf.JobhistoryConfiguration
-import com.webank.wedatasphere.linkis.jobhistory.entity.{JobHistory, QueryTask}
-import com.webank.wedatasphere.linkis.storage.FSFactory
-import com.webank.wedatasphere.linkis.storage.fs.FileSystem
-import com.webank.wedatasphere.linkis.storage.utils.{FileSystemUtils, StorageUtils}
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.io.FsPath
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail, SubJobInfo}
+import org.apache.linkis.governance.common.entity.task.RequestInsertTask
+import org.apache.linkis.governance.common.protocol.job.JobReqInsert
+import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
+import org.apache.linkis.jobhistory.entity.{JobHistory, QueryTask}
+import org.apache.linkis.storage.FSFactory
+import org.apache.linkis.storage.fs.FileSystem
+import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.time.DateFormatUtils
 

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.message.registry;
+package org.apache.linkis.message.registry;
 
-import com.webank.wedatasphere.linkis.message.annotation.Receiver;
-import com.webank.wedatasphere.linkis.message.context.AbstractMessageSchedulerContext;
-import com.webank.wedatasphere.linkis.message.utils.MessageUtils;
+import org.apache.linkis.message.annotation.Receiver;
+import org.apache.linkis.message.context.AbstractMessageSchedulerContext;
+import org.apache.linkis.message.utils.MessageUtils;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.webank.wedatasphere.linkis.message.conf.MessageSchedulerConf.REFLECTIONS;
+import static org.apache.linkis.message.conf.MessageSchedulerConf.REFLECTIONS;
 
 
 public class SpringServiceRegistry extends AbstractServiceRegistry {

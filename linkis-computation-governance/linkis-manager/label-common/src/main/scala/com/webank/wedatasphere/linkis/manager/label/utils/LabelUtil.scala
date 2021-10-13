@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.manager.label.utils
+package org.apache.linkis.manager.label.utils
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.{CodeLanguageLabel, EngineTypeLabel, UserCreatorLabel}
-import com.webank.wedatasphere.linkis.manager.label.entity.entrance.{BindEngineLabel, ExecuteOnceLabel, LoadBalanceLabel}
-import com.webank.wedatasphere.linkis.manager.label.entity.route.RouteLabel
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.manager.label.entity.entrance.{BindEngineLabel, ExecuteOnceLabel, LoadBalanceLabel}
+import org.apache.linkis.manager.label.entity.route.RouteLabel
 
 import java.util
 import scala.collection.JavaConverters.asScalaBufferConverter

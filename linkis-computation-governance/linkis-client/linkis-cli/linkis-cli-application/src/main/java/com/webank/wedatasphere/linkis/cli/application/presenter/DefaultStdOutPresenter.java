@@ -11,13 +11,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.presenter;
+package org.apache.linkis.cli.application.presenter;
 
-import com.webank.wedatasphere.linkis.cli.core.presenter.Presenter;
-import com.webank.wedatasphere.linkis.cli.core.presenter.display.DisplayDriver;
-import com.webank.wedatasphere.linkis.cli.core.presenter.display.StdOutDriver;
-import com.webank.wedatasphere.linkis.cli.core.presenter.model.PresenterModel;
-import com.webank.wedatasphere.linkis.cli.core.utils.CommonUtils;
+import org.apache.linkis.cli.core.presenter.Presenter;
+import org.apache.linkis.cli.core.presenter.display.DisplayDriver;
+import org.apache.linkis.cli.core.presenter.display.StdOutDriver;
+import org.apache.linkis.cli.core.presenter.model.PresenterModel;
+import org.apache.linkis.cli.core.utils.CommonUtils;
 
 
 public class DefaultStdOutPresenter implements Presenter {

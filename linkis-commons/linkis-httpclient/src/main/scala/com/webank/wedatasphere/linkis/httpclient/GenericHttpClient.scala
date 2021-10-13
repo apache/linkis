@@ -15,14 +15,14 @@
  */
 
 
-package com.webank.wedatasphere.linkis.httpclient
+package org.apache.linkis.httpclient
 
-import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
-import com.webank.wedatasphere.linkis.httpclient.config.ClientConfig
-import com.webank.wedatasphere.linkis.httpclient.discovery.Discovery
-import com.webank.wedatasphere.linkis.httpclient.exception.HttpMethodNotSupportException
-import com.webank.wedatasphere.linkis.httpclient.request.HttpAction
-import com.webank.wedatasphere.linkis.httpclient.response.{HashMapHttpResult, Result}
+import org.apache.linkis.common.io.{Fs, FsPath}
+import org.apache.linkis.httpclient.config.ClientConfig
+import org.apache.linkis.httpclient.discovery.Discovery
+import org.apache.linkis.httpclient.exception.HttpMethodNotSupportException
+import org.apache.linkis.httpclient.request.HttpAction
+import org.apache.linkis.httpclient.response.{HashMapHttpResult, Result}
 import org.apache.http.HttpResponse
 
 

@@ -16,12 +16,12 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.vo;
+package org.apache.linkis.manager.am.vo;
 
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeHealthy;
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.Resource;
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.ResourceType;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy;
+import org.apache.linkis.manager.common.entity.resource.Resource;
+import org.apache.linkis.manager.common.entity.resource.ResourceType;
+import org.apache.linkis.manager.label.entity.Label;
 
 import java.util.Date;
 import java.util.List;

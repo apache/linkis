@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.listener
+package org.apache.linkis.common.listener
 
 abstract class SingleThreadListenerBus[L <: EventListener, E <: Event](eventQueueCapacity: Int, name: String)
   extends ListenerEventBus[L, E](eventQueueCapacity, name)(1, -1)

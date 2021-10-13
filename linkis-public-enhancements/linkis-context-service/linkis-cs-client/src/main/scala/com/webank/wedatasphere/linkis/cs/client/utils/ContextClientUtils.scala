@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.cs.client.utils
+package org.apache.linkis.cs.client.utils
 
 import java.lang
 import java.lang.reflect.Type

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.domain
+package org.apache.linkis.orchestrator.domain
 
-import com.webank.wedatasphere.linkis.common.utils.ArrayUtils.{copyArray, newArray}
+import org.apache.linkis.common.utils.ArrayUtils.{copyArray, newArray}
 
 /**
   *

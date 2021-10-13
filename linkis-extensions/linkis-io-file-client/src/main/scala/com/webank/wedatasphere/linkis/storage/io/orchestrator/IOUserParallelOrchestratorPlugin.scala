@@ -11,13 +11,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.io.orchestrator
+package org.apache.linkis.storage.io.orchestrator
 
 import java.util
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.orchestrator.conf.OrchestratorConfiguration
-import com.webank.wedatasphere.linkis.orchestrator.plugin.UserParallelOrchestratorPlugin
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.orchestrator.conf.OrchestratorConfiguration
+import org.apache.linkis.orchestrator.plugin.UserParallelOrchestratorPlugin
 
 class IOUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlugin{
 

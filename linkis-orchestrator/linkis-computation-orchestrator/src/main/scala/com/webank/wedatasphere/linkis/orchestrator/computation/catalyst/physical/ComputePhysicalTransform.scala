@@ -15,15 +15,15 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.catalyst.physical
+package org.apache.linkis.orchestrator.computation.catalyst.physical
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.orchestrator.code.plans.logical.{CacheTask, CodeLogicalUnitTask}
-import com.webank.wedatasphere.linkis.orchestrator.computation.physical.{CacheExecTask, CodeLogicalUnitExecTask}
-import com.webank.wedatasphere.linkis.orchestrator.extensions.catalyst.PhysicalTransform
-import com.webank.wedatasphere.linkis.orchestrator.plans.logical.{CommandTask, JobTask, LogicalContext, StageTask, StartJobTaskDesc, Task}
-import com.webank.wedatasphere.linkis.orchestrator.plans.physical.{ExecTask, JobExecTask, StageExecTask}
-import com.webank.wedatasphere.linkis.orchestrator.strategy.{GatherStrategyJobExecTask, GatherStrategyStageInfoExecTask}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.orchestrator.code.plans.logical.{CacheTask, CodeLogicalUnitTask}
+import org.apache.linkis.orchestrator.computation.physical.{CacheExecTask, CodeLogicalUnitExecTask}
+import org.apache.linkis.orchestrator.extensions.catalyst.PhysicalTransform
+import org.apache.linkis.orchestrator.plans.logical.{CommandTask, JobTask, LogicalContext, StageTask, StartJobTaskDesc, Task}
+import org.apache.linkis.orchestrator.plans.physical.{ExecTask, JobExecTask, StageExecTask}
+import org.apache.linkis.orchestrator.strategy.{GatherStrategyJobExecTask, GatherStrategyStageInfoExecTask}
 
 /**
  * In compute condition

@@ -15,18 +15,18 @@
  * limitations under the License.
  *
  */
-package com.webank.wedatasphere.linkis.manager.am.service.em
+package org.apache.linkis.manager.am.service.em
 
 import java.util.concurrent.TimeUnit
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.manager.am.conf.AMConfiguration
-import com.webank.wedatasphere.linkis.manager.am.manager.EMNodeManager
-import com.webank.wedatasphere.linkis.manager.common.protocol.em.{EMInfoClearRequest, StopEMRequest}
-import com.webank.wedatasphere.linkis.message.annotation.Receiver
-import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
-import com.webank.wedatasphere.linkis.protocol.label.NodeLabelRemoveRequest
-import com.webank.wedatasphere.linkis.rpc.utils.RPCUtils
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.am.conf.AMConfiguration
+import org.apache.linkis.manager.am.manager.EMNodeManager
+import org.apache.linkis.manager.common.protocol.em.{EMInfoClearRequest, StopEMRequest}
+import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.protocol.label.NodeLabelRemoveRequest
+import org.apache.linkis.rpc.utils.RPCUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

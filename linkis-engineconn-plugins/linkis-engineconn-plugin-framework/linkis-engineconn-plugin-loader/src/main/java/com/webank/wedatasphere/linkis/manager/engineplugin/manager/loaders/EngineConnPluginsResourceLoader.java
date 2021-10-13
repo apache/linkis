@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.manager.loaders;
+package org.apache.linkis.manager.engineplugin.manager.loaders;
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInfo;
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.loader.exception.EngineConnPluginLoadResourceException;
-import com.webank.wedatasphere.linkis.manager.engineplugin.manager.loaders.resource.PluginResource;
+import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInfo;
+import org.apache.linkis.manager.engineplugin.common.loader.exception.EngineConnPluginLoadResourceException;
+import org.apache.linkis.manager.engineplugin.manager.loaders.resource.PluginResource;
 
 
 public interface EngineConnPluginsResourceLoader {

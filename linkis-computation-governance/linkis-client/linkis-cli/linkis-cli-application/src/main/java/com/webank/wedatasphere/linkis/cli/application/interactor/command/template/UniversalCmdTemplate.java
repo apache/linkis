@@ -11,19 +11,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.interactor.command.template;
+package org.apache.linkis.cli.application.interactor.command.template;
 
-import com.webank.wedatasphere.linkis.cli.application.constants.LinkisClientKeys;
-import com.webank.wedatasphere.linkis.cli.application.interactor.command.LinkisCmdType;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.CommandException;
-import com.webank.wedatasphere.linkis.cli.core.exception.ValidateException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.AbstractCmdTemplate;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option.Flag;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option.MapOption;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option.SpecialMapOption;
-import com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option.StdOption;
+import org.apache.linkis.cli.application.constants.LinkisClientKeys;
+import org.apache.linkis.cli.application.interactor.command.LinkisCmdType;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.CommandException;
+import org.apache.linkis.cli.core.exception.ValidateException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.command.template.AbstractCmdTemplate;
+import org.apache.linkis.cli.core.interactor.command.template.option.Flag;
+import org.apache.linkis.cli.core.interactor.command.template.option.MapOption;
+import org.apache.linkis.cli.core.interactor.command.template.option.SpecialMapOption;
+import org.apache.linkis.cli.core.interactor.command.template.option.StdOption;
 
 /**
  * @description: A command that is compatible with any types of Linkis' Job.

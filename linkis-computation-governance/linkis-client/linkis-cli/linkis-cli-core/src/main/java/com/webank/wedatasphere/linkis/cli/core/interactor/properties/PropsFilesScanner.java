@@ -11,14 +11,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.properties;
+package org.apache.linkis.cli.core.interactor.properties;
 
-import com.webank.wedatasphere.linkis.cli.common.constants.CommonConstants;
-import com.webank.wedatasphere.linkis.cli.common.exception.error.ErrorLevel;
-import com.webank.wedatasphere.linkis.cli.core.exception.PropsException;
-import com.webank.wedatasphere.linkis.cli.core.exception.error.CommonErrMsg;
-import com.webank.wedatasphere.linkis.cli.core.interactor.properties.reader.PropertiesReader;
-import com.webank.wedatasphere.linkis.cli.core.interactor.properties.reader.PropsFileReader;
+import org.apache.linkis.cli.common.constants.CommonConstants;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.exception.PropsException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.properties.reader.PropertiesReader;
+import org.apache.linkis.cli.core.interactor.properties.reader.PropsFileReader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

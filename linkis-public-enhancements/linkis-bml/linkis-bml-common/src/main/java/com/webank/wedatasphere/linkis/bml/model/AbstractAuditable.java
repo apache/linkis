@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.bml.model;
+package org.apache.linkis.bml.model;
 
 import java.util.Date;
 

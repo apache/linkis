@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.restful;
+package org.apache.linkis.instance.label.restful;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.instance.label.entity.InstanceInfo;
-import com.webank.wedatasphere.linkis.instance.label.service.conf.InstanceConfigration;
-import com.webank.wedatasphere.linkis.instance.label.service.impl.DefaultInsLabelService;
-import com.webank.wedatasphere.linkis.instance.label.utils.EntityParser;
-import com.webank.wedatasphere.linkis.instance.label.vo.InstanceInfoVo;
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactory;
-import com.webank.wedatasphere.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.manager.label.entity.UserModifiable;
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtils;
-import com.webank.wedatasphere.linkis.server.Message;
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.instance.label.entity.InstanceInfo;
+import org.apache.linkis.instance.label.service.conf.InstanceConfigration;
+import org.apache.linkis.instance.label.service.impl.DefaultInsLabelService;
+import org.apache.linkis.instance.label.utils.EntityParser;
+import org.apache.linkis.instance.label.vo.InstanceInfoVo;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.UserModifiable;
+import org.apache.linkis.manager.label.utils.LabelUtils;
+import org.apache.linkis.server.Message;
+import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

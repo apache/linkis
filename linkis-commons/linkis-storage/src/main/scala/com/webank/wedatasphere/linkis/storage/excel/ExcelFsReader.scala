@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.excel
+package org.apache.linkis.storage.excel
 
-import com.webank.wedatasphere.linkis.common.io.FsReader
+import org.apache.linkis.common.io.FsReader
 
 abstract class ExcelFsReader extends FsReader{
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.governance.common.utils
+package org.apache.linkis.governance.common.utils
 
 import org.apache.commons.lang.StringUtils
 

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.core.launch
+package org.apache.linkis.ecm.core.launch
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
 
 
 

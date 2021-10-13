@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.presenter.model;
+package org.apache.linkis.cli.core.presenter.model;
 
 
 public interface ModelConverter {

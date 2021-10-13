@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.reheater
+package org.apache.linkis.orchestrator.reheater
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.orchestrator.extensions.catalyst.ReheaterTransform
-import com.webank.wedatasphere.linkis.orchestrator.plans.physical.{ExecTask, ReheatableExecTask}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.orchestrator.extensions.catalyst.ReheaterTransform
+import org.apache.linkis.orchestrator.plans.physical.{ExecTask, ReheatableExecTask}
 
 /**
   *

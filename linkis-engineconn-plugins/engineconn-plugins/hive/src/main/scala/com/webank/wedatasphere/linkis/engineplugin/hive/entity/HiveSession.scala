@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.hive.entity
+package org.apache.linkis.engineplugin.hive.entity
 
 import java.io.ByteArrayOutputStream
 

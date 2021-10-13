@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.common.serialize.impl.value;
+package org.apache.linkis.cs.common.serialize.impl.value;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.resource.LinkisBMLResource;
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.common.serialize.AbstractSerializer;
-import com.webank.wedatasphere.linkis.cs.common.utils.CSCommonUtils;
+import org.apache.linkis.cs.common.entity.resource.LinkisBMLResource;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.common.serialize.AbstractSerializer;
+import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 public class LinkisBMLResourceSerializer extends AbstractSerializer<LinkisBMLResource> {
     @Override

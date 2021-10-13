@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.mybatis;
+package org.apache.linkis.mybatis;
 
-import com.webank.wedatasphere.linkis.common.utils.JavaLog;
-import com.webank.wedatasphere.linkis.mybatis.conf.MybatisConfiguration;
+import org.apache.linkis.common.utils.JavaLog;
+import org.apache.linkis.mybatis.conf.MybatisConfiguration;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

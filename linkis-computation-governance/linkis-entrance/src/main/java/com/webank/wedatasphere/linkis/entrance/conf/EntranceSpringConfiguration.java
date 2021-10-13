@@ -11,36 +11,36 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.conf;
+package org.apache.linkis.entrance.conf;
 
-import com.webank.wedatasphere.linkis.entrance.EntranceParser;
-import com.webank.wedatasphere.linkis.entrance.annotation.*;
-import com.webank.wedatasphere.linkis.entrance.event.*;
-import com.webank.wedatasphere.linkis.entrance.execute.impl.EntranceExecutorManagerImpl;
-import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor;
-import com.webank.wedatasphere.linkis.entrance.interceptor.OnceJobInterceptor;
-import com.webank.wedatasphere.linkis.entrance.interceptor.impl.*;
-import com.webank.wedatasphere.linkis.entrance.log.*;
-import com.webank.wedatasphere.linkis.entrance.parser.CommonEntranceParser;
-import com.webank.wedatasphere.linkis.entrance.persistence.*;
-import com.webank.wedatasphere.linkis.entrance.scheduler.EntranceGroupFactory;
-import com.webank.wedatasphere.linkis.entrance.scheduler.EntranceSchedulerContext;
-import com.webank.wedatasphere.linkis.orchestrator.ecm.EngineConnManagerBuilder;
-import com.webank.wedatasphere.linkis.orchestrator.ecm.EngineConnManagerBuilder$;
-import com.webank.wedatasphere.linkis.orchestrator.ecm.entity.Policy;
-import com.webank.wedatasphere.linkis.scheduler.Scheduler;
-import com.webank.wedatasphere.linkis.scheduler.SchedulerContext;
-import com.webank.wedatasphere.linkis.scheduler.executer.ExecutorManager;
-import com.webank.wedatasphere.linkis.scheduler.queue.ConsumerManager;
-import com.webank.wedatasphere.linkis.scheduler.queue.GroupFactory;
-import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelConsumerManager;
-import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelScheduler;
+import org.apache.linkis.entrance.EntranceParser;
+import org.apache.linkis.entrance.annotation.*;
+import org.apache.linkis.entrance.event.*;
+import org.apache.linkis.entrance.execute.impl.EntranceExecutorManagerImpl;
+import org.apache.linkis.entrance.interceptor.EntranceInterceptor;
+import org.apache.linkis.entrance.interceptor.OnceJobInterceptor;
+import org.apache.linkis.entrance.interceptor.impl.*;
+import org.apache.linkis.entrance.log.*;
+import org.apache.linkis.entrance.parser.CommonEntranceParser;
+import org.apache.linkis.entrance.persistence.*;
+import org.apache.linkis.entrance.scheduler.EntranceGroupFactory;
+import org.apache.linkis.entrance.scheduler.EntranceSchedulerContext;
+import org.apache.linkis.orchestrator.ecm.EngineConnManagerBuilder;
+import org.apache.linkis.orchestrator.ecm.EngineConnManagerBuilder$;
+import org.apache.linkis.orchestrator.ecm.entity.Policy;
+import org.apache.linkis.scheduler.Scheduler;
+import org.apache.linkis.scheduler.SchedulerContext;
+import org.apache.linkis.scheduler.executer.ExecutorManager;
+import org.apache.linkis.scheduler.queue.ConsumerManager;
+import org.apache.linkis.scheduler.queue.GroupFactory;
+import org.apache.linkis.scheduler.queue.parallelqueue.ParallelConsumerManager;
+import org.apache.linkis.scheduler.queue.parallelqueue.ParallelScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Configuration;
 
-import static com.webank.wedatasphere.linkis.entrance.conf.EntranceConfiguration.ENTRANCE_SCHEDULER_MAX_PARALLELISM_USERS;
+import static org.apache.linkis.entrance.conf.EntranceConfiguration.ENTRANCE_SCHEDULER_MAX_PARALLELISM_USERS;
 
 /**
  * Description:This configuration class is used to generate some singleton classes in the entity module.(该配置类用于生成entrance模块中的一些单例类)
@@ -140,7 +140,7 @@ public class EntranceSpringConfiguration {
     @ConditionalOnMissingBean(name = {ErrorCodeManagerBeanAnnotation.BEAN_NAME})
     public ErrorCodeManager generateErrorCodeManager() {
         try {
-            Class.forName("com.webank.wedatasphere.linkis.errorcode.client.handler.LinkisErrorCodeHandler");
+            Class.forName("org.apache.linkis.errorcode.client.handler.LinkisErrorCodeHandler");
         } catch (final Exception e) {
             logger.error("failed to init linkis error code handler", e);
         }

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.cs.common.entity.metadata;
+package org.apache.linkis.cs.common.entity.metadata;
 
-import com.webank.wedatasphere.linkis.cs.common.entity.enumeration.DBType;
+import org.apache.linkis.cs.common.entity.enumeration.DBType;
 
 public interface DB {
 

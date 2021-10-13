@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.exception;
+package org.apache.linkis.manager.label.exception;
 
-import com.webank.wedatasphere.linkis.common.exception.ExceptionLevel;
-import com.webank.wedatasphere.linkis.common.exception.LinkisRuntimeException;
+import org.apache.linkis.common.exception.ExceptionLevel;
+import org.apache.linkis.common.exception.LinkisRuntimeException;
 
 public class LabelRuntimeException extends LinkisRuntimeException {
 

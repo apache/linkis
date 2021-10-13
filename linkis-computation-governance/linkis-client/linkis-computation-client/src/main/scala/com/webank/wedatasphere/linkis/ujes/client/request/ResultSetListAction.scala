@@ -15,11 +15,11 @@
  */
 
 
-package com.webank.wedatasphere.linkis.ujes.client.request
+package org.apache.linkis.ujes.client.request
 
-import com.webank.wedatasphere.linkis.httpclient.request.GetAction
-import com.webank.wedatasphere.linkis.ujes.client.exception.UJESClientBuilderException
-import com.webank.wedatasphere.linkis.ujes.client.response.JobInfoResult
+import org.apache.linkis.httpclient.request.GetAction
+import org.apache.linkis.ujes.client.exception.UJESClientBuilderException
+import org.apache.linkis.ujes.client.response.JobInfoResult
 
 class ResultSetListAction extends GetAction with UJESJobAction {
   override def suffixURLs: Array[String] = Array("filesystem", "getDirFileTrees")

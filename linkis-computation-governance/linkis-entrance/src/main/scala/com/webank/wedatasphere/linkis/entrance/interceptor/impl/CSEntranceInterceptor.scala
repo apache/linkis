@@ -11,15 +11,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.entrance.interceptor.impl
+package org.apache.linkis.entrance.interceptor.impl
 
 import java.lang
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.entrance.cs.CSEntranceHelper
-import com.webank.wedatasphere.linkis.entrance.interceptor.EntranceInterceptor
-import com.webank.wedatasphere.linkis.governance.common.entity.job.JobRequest
-import com.webank.wedatasphere.linkis.governance.common.entity.task.RequestPersistTask
-import com.webank.wedatasphere.linkis.protocol.task.Task
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.cs.CSEntranceHelper
+import org.apache.linkis.entrance.interceptor.EntranceInterceptor
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.entity.task.RequestPersistTask
+import org.apache.linkis.protocol.task.Task
 
 
 class CSEntranceInterceptor extends EntranceInterceptor with Logging {

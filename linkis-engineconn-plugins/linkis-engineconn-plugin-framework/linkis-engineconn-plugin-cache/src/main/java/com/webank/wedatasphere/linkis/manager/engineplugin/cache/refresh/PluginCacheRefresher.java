@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.cache.refresh;
+package org.apache.linkis.manager.engineplugin.cache.refresh;
 
 import java.util.concurrent.TimeUnit;
 

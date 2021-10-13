@@ -16,11 +16,11 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.label
+package org.apache.linkis.manager.am.label
 
 import java.util
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.Label
 
 
 trait EngineReuseLabelChooser {

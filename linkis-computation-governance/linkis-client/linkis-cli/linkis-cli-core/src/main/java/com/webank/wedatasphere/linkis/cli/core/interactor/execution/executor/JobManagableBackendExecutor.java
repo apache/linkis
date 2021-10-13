@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.execution.executor;
+package org.apache.linkis.cli.core.interactor.execution.executor;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.executor.Executor;
-import com.webank.wedatasphere.linkis.cli.common.entity.job.Job;
-import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
-import com.webank.wedatasphere.linkis.cli.core.interactor.execution.jobexec.JobManExec;
+import org.apache.linkis.cli.common.entity.execution.executor.Executor;
+import org.apache.linkis.cli.common.entity.job.Job;
+import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
+import org.apache.linkis.cli.core.interactor.execution.jobexec.JobManExec;
 
 public interface JobManagableBackendExecutor extends Executor {
     JobManExec queryJobInfo(Job job) throws LinkisClientRuntimeException;

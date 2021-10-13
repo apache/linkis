@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.exception.handler;
+package org.apache.linkis.cli.core.exception.handler;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdTemplate;
-import com.webank.wedatasphere.linkis.cli.core.exception.CommandException;
+import org.apache.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.core.exception.CommandException;
 import org.junit.Before;
 import org.junit.Test;
 

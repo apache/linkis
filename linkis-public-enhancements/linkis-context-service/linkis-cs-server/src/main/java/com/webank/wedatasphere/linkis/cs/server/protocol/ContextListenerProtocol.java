@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.protocol;
+package org.apache.linkis.cs.server.protocol;
 
-import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceType;
+import org.apache.linkis.cs.server.enumeration.ServiceType;
 
 
 public class ContextListenerProtocol extends AbstractHttpRequestProtocol {

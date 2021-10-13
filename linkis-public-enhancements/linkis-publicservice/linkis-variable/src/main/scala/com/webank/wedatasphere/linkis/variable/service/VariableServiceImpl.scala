@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.variable.service
+package org.apache.linkis.variable.service
 
 import java.lang.Long
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.protocol.variable.ResponseQueryVariable
-import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper
-import com.webank.wedatasphere.linkis.variable.dao.VarMapper
-import com.webank.wedatasphere.linkis.variable.entity.{VarKey, VarKeyUser, VarKeyValueVO}
-import com.webank.wedatasphere.linkis.variable.exception.VariableException
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.protocol.variable.ResponseQueryVariable
+import org.apache.linkis.server.BDPJettyServerHelper
+import org.apache.linkis.variable.dao.VarMapper
+import org.apache.linkis.variable.entity.{VarKey, VarKeyUser, VarKeyValueVO}
+import org.apache.linkis.variable.exception.VariableException
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

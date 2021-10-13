@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.instance.label.vo;
+package org.apache.linkis.instance.label.vo;
 
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.Label;
 
 import java.io.Serializable;
 import java.util.Date;

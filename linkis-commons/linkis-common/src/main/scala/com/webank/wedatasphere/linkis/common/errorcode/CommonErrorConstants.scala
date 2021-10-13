@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.errorcode
+package org.apache.linkis.common.errorcode
 
 object CommonErrorConstants {
    val COMMON_ERROR = 10000

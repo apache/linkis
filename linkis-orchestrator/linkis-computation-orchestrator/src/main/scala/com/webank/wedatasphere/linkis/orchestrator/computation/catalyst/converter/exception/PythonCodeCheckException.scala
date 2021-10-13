@@ -15,9 +15,9 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.catalyst.converter.exception
+package org.apache.linkis.orchestrator.computation.catalyst.converter.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 /**
   *

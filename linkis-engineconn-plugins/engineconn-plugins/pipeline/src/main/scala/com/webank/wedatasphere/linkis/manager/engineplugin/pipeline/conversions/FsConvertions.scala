@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.pipeline.conversions
+package org.apache.linkis.manager.engineplugin.pipeline.conversions
 
 import java.io.Closeable
 
-import com.webank.wedatasphere.linkis.common.io.Fs
+import org.apache.linkis.common.io.Fs
 
 object FsConvertions {
 

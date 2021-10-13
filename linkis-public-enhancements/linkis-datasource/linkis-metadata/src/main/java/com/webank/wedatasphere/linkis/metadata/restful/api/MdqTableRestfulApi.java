@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.metadata.restful.api;
+package org.apache.linkis.metadata.restful.api;
 
-import com.webank.wedatasphere.linkis.metadata.ddl.ImportDDLCreator;
-import com.webank.wedatasphere.linkis.metadata.ddl.ScalaDDLCreator;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableBO;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableImportInfoBO;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.MdqTableBaseInfoVO;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.MdqTableFieldsInfoVO;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO;
-import com.webank.wedatasphere.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
-import com.webank.wedatasphere.linkis.metadata.exception.MdqIllegalParamException;
-import com.webank.wedatasphere.linkis.metadata.service.MdqService;
-import com.webank.wedatasphere.linkis.server.Message;
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
+import org.apache.linkis.metadata.ddl.ImportDDLCreator;
+import org.apache.linkis.metadata.ddl.ScalaDDLCreator;
+import org.apache.linkis.metadata.domain.mdq.bo.MdqTableBO;
+import org.apache.linkis.metadata.domain.mdq.bo.MdqTableImportInfoBO;
+import org.apache.linkis.metadata.domain.mdq.vo.MdqTableBaseInfoVO;
+import org.apache.linkis.metadata.domain.mdq.vo.MdqTableFieldsInfoVO;
+import org.apache.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO;
+import org.apache.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
+import org.apache.linkis.metadata.exception.MdqIllegalParamException;
+import org.apache.linkis.metadata.service.MdqService;
+import org.apache.linkis.server.Message;
+import org.apache.linkis.server.security.SecurityFilter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

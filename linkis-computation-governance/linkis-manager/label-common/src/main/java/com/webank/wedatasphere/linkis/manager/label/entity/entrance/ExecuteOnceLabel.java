@@ -1,8 +1,8 @@
-package com.webank.wedatasphere.linkis.manager.label.entity.entrance;
+package org.apache.linkis.manager.label.entity.entrance;
 
-import com.webank.wedatasphere.linkis.manager.label.constant.LabelKeyConstant;
-import com.webank.wedatasphere.linkis.manager.label.entity.Feature;
-import com.webank.wedatasphere.linkis.manager.label.entity.GenericLabel;
+import org.apache.linkis.manager.label.constant.LabelKeyConstant;
+import org.apache.linkis.manager.label.entity.Feature;
+import org.apache.linkis.manager.label.entity.GenericLabel;
 
 public class ExecuteOnceLabel extends GenericLabel {
 

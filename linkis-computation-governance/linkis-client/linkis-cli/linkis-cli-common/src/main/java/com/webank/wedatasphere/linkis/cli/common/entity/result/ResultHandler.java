@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.common.entity.result;
+package org.apache.linkis.cli.common.entity.result;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.ExecutionResult;
+import org.apache.linkis.cli.common.entity.execution.ExecutionResult;
 
 public interface ResultHandler {
     void process(ExecutionResult executionResult);

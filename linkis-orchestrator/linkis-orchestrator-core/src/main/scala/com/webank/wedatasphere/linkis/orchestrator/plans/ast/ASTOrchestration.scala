@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.plans.ast
+package org.apache.linkis.orchestrator.plans.ast
 
-import com.webank.wedatasphere.linkis.orchestrator.domain.TreeNode
+import org.apache.linkis.orchestrator.domain.TreeNode
 
 /**
   *

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.listener;
+package org.apache.linkis.cs.listener;
 
-import com.webank.wedatasphere.linkis.common.listener.Event;
-import com.webank.wedatasphere.linkis.cs.listener.event.ContextKeyEvent;
+import org.apache.linkis.common.listener.Event;
+import org.apache.linkis.cs.listener.event.ContextKeyEvent;
 
 
 public interface CSKeyListener extends ContextAsyncEventListener {

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.governance.common.exception.engineconn;
+package org.apache.linkis.governance.common.exception.engineconn;
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.exception.ErrorException;
 
 public class EngineConnExecutorErrorException extends ErrorException {
 

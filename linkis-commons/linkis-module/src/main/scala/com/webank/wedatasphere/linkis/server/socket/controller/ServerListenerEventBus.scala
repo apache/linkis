@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.server.socket.controller
+package org.apache.linkis.server.socket.controller
 
-import com.webank.wedatasphere.linkis.common.listener.ListenerEventBus
-import com.webank.wedatasphere.linkis.server.exception.BDPServerErrorException
+import org.apache.linkis.common.listener.ListenerEventBus
+import org.apache.linkis.server.exception.BDPServerErrorException
 import org.apache.commons.lang.StringUtils
 
 

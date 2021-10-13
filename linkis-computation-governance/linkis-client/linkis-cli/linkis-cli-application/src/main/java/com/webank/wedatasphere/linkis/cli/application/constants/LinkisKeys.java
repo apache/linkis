@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.constants;
+package org.apache.linkis.cli.application.constants;
 
 /**
  * @description: keys that corresponds directly to linkis

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.label.service
+package org.apache.linkis.manager.label.service
 
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.NodeResource
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.common.entity.resource.NodeResource
+import org.apache.linkis.manager.label.entity.Label
 
 
 trait ResourceLabelService {

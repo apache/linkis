@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.io.utils
+package org.apache.linkis.manager.engineplugin.io.utils
 
-import com.webank.wedatasphere.linkis.common.io.{Fs, FsPath}
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.storage.domain.{MethodEntity, MethodEntitySerializer}
-import com.webank.wedatasphere.linkis.storage.exception.StorageErrorException
-import com.webank.wedatasphere.linkis.storage.resultset.io.{IOMetaData, IORecord}
-import com.webank.wedatasphere.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, ResultSetWriter}
-import com.webank.wedatasphere.linkis.storage.utils.{StorageConfiguration, StorageUtils}
+import org.apache.linkis.common.io.{Fs, FsPath}
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.storage.domain.{MethodEntity, MethodEntitySerializer}
+import org.apache.linkis.storage.exception.StorageErrorException
+import org.apache.linkis.storage.resultset.io.{IOMetaData, IORecord}
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, ResultSetWriter}
+import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 import org.apache.commons.io.IOUtils
 
 object IOHelp {

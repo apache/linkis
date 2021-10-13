@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.log
+package org.apache.linkis.orchestrator.log
 
 import java.util
 import java.util.concurrent.ConcurrentHashMap

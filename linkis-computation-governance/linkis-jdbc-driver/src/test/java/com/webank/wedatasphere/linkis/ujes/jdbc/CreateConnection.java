@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.ujes.jdbc;
+package org.apache.linkis.ujes.jdbc;
 
 
 
@@ -30,7 +30,7 @@ public class CreateConnection {
     private static UJESSQLConnection conn;
 
     public static UJESSQLConnection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("com.webank.wedatasphere.linkis.ujes.jdbc.UJESSQLDriver");
+        Class.forName("org.apache.linkis.ujes.jdbc.UJESSQLDriver");
         conn = (UJESSQLConnection) DriverManager.getConnection("jdbc:linkis://hostname:port","username","password");
         return conn;
     }

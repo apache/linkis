@@ -16,7 +16,7 @@
   -->
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.webank.wedatasphere.linkis.metadata.hive.dao.HiveMetaDao">
+<mapper namespace="org.apache.linkis.metadata.hive.dao.HiveMetaDao">
 
     <select id="getLocationByDbAndTable" resultType="java.lang.String" parameterType="map">
         select LOCATION from SDS where SD_ID in (

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.server.service.impl
+package org.apache.linkis.ecm.server.service.impl
 
 import java.io.File
 import java.nio.file.Paths
 
-import com.webank.wedatasphere.linkis.common.io.FsPath
-import com.webank.wedatasphere.linkis.ecm.server.conf.ECMConfiguration._
-import com.webank.wedatasphere.linkis.ecm.server.service.LocalDirsHandleService
+import org.apache.linkis.common.io.FsPath
+import org.apache.linkis.ecm.server.conf.ECMConfiguration._
+import org.apache.linkis.ecm.server.service.LocalDirsHandleService
 
 
 class DefaultLocalDirsHandleService extends LocalDirsHandleService {

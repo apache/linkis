@@ -16,10 +16,10 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.selector
+package org.apache.linkis.manager.am.selector
 
-import com.webank.wedatasphere.linkis.manager.am.selector.rule.NodeSelectRule
-import com.webank.wedatasphere.linkis.manager.common.entity.node.Node
+import org.apache.linkis.manager.am.selector.rule.NodeSelectRule
+import org.apache.linkis.manager.common.entity.node.Node
 
 
 trait NodeSelector {

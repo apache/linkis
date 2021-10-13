@@ -19,7 +19,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 
-<mapper namespace="com.webank.wedatasphere.linkis.manager.dao.LabelManagerMapper">
+<mapper namespace="org.apache.linkis.manager.dao.LabelManagerMapper">
 
     <select id="dimListNodeRelationsByKeyValueMap" resultType="java.util.HashMap">
         <foreach collection="keyValueMap" index="key" item="value" separator="union all">
@@ -47,7 +47,7 @@
     </select>
 
     <select id="listLabelRelationByServiceInstance"
-            parameterType="com.webank.wedatasphere.linkis.common.ServiceInstance" resultType="java.util.HashMap">
+            parameterType="org.apache.linkis.common.ServiceInstance" resultType="java.util.HashMap">
         SELECT l.id AS 'id',l.label_key AS 'labelKey',l.label_value AS 'stringValue',
         l.label_value_size AS 'labelValueSize',si.instance,si.name AS 'applicationName' FROM
         linkis_cg_manager_label l
@@ -66,7 +66,7 @@
         select * from linkis_cg_manager_label where label_key = #{labelKey} and label_value = #{stringValue}
     </select>
 
-    <select id="getNodeByLabelKeyValue" resultType="com.webank.wedatasphere.linkis.common.ServiceInstance">
+    <select id="getNodeByLabelKeyValue" resultType="org.apache.linkis.common.ServiceInstance">
         SELECT si.instance ,si.name as 'application_name' FROM linkis_cg_manager_label l ,
         linkis_cg_manager_label_service_instance lsi ,linkis_cg_manager_service_instance si
         WHERE l.id = lsi.label_id AND si.instance = lsi.service_instance and
@@ -74,7 +74,7 @@
     </select>
 
     <resultMap id="persistenceLabelResultMap"
-               type="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel">
+               type="org.apache.linkis.manager.common.entity.persistence.PersistenceLabel">
         <result column="label_value" property="stringValue"/>
         <result column="label_feature" property="feature"/>
         <result column="create_time" property="createTime"/>
@@ -94,7 +94,7 @@
     </select>
 
     <select id="listResourceByLaBelId"
-            resultType="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource">
+            resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
         SELECT r.* FROM linkis_cg_manager_label_resource lr, linkis_cg_manager_linkis_resources r, linkis_cg_manager_label l
         WHERE lr.resource_id = r.id and
         lr.label_id = #{labelId} and
@@ -102,7 +102,7 @@
     </select>
 
     <select id="dimListResourceBykeyValueMap"
-            resultType="com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource">
+            resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
 
         <foreach collection="keyValueMap" index="key" item="value" separator="union all">
             SELECT r.*,l.label_value_size

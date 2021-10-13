@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.acessible.executor.log
+package org.apache.linkis.engineconn.acessible.executor.log
 
 import java.util
 import java.util.concurrent.TimeUnit
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.LogListener
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.listener.event.TaskLogUpdateEvent
-import com.webank.wedatasphere.linkis.engineconn.core.EngineConnObject
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
+import org.apache.linkis.engineconn.acessible.executor.listener.LogListener
+import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskLogUpdateEvent
+import org.apache.linkis.engineconn.core.EngineConnObject
 import scala.collection.JavaConversions._
 
 object LogHelper extends Logging {

@@ -18,7 +18,7 @@
  * Created by ${USER} on ${DATE}.
  */
 
-package com.webank.wedatasphere.linkis.httpclient.loadbalancer
+package org.apache.linkis.httpclient.loadbalancer
 
 import scala.util.Random
 

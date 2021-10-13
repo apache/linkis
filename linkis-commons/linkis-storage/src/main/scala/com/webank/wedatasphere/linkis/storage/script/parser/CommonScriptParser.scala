@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.storage.script.parser
+package org.apache.linkis.storage.script.parser
 
-import com.webank.wedatasphere.linkis.storage.exception.StorageErrorException
-import com.webank.wedatasphere.linkis.storage.script.{Parser, Variable, VariableParser}
+import org.apache.linkis.storage.exception.StorageErrorException
+import org.apache.linkis.storage.script.{Parser, Variable, VariableParser}
 
 
 

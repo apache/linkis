@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.shell.exception
+package org.apache.linkis.manager.engineplugin.shell.exception
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 case class NoCorrectUserException() extends ErrorException(50036, "No illegal user holds this process")
 

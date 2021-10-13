@@ -18,9 +18,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 
-<mapper namespace="com.webank.wedatasphere.linkis.configuration.dao.LabelMapper">
+<mapper namespace="org.apache.linkis.configuration.dao.LabelMapper">
 
-    <resultMap id="LabelMap" type="com.webank.wedatasphere.linkis.configuration.entity.ConfigLabel">
+    <resultMap id="LabelMap" type="org.apache.linkis.configuration.entity.ConfigLabel">
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="label_key" property="labelKey" jdbcType="VARCHAR"/>
         <result column="label_value" property="stringValue" jdbcType="VARCHAR"/>
@@ -50,7 +50,7 @@
         where label_key = #{labelKey} and label_value = #{stringValue}
     </select>
 
-    <insert id="insertLabel" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.webank.wedatasphere.linkis.configuration.entity.ConfigLabel">
+    <insert id="insertLabel" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="org.apache.linkis.configuration.entity.ConfigLabel">
         INSERT INTO linkis_cg_manager_label(
         label_key, label_value,label_feature, label_value_size, update_time, create_time)
         VALUES (

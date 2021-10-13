@@ -11,19 +11,19 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.service
+package org.apache.linkis.filesystem.service
 
 import java.lang.Long
 import java.util.concurrent.{Callable, FutureTask, TimeUnit}
 
-import com.webank.wedatasphere.linkis.common.io.FsPath
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.filesystem.cache.FsCache
-import com.webank.wedatasphere.linkis.filesystem.conf.WorkSpaceConfiguration
-import com.webank.wedatasphere.linkis.filesystem.entity.FSInfo
-import com.webank.wedatasphere.linkis.filesystem.exception.WorkspaceExceptionManager
-import com.webank.wedatasphere.linkis.storage.FSFactory
-import com.webank.wedatasphere.linkis.storage.fs.FileSystem
+import org.apache.linkis.common.io.FsPath
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.filesystem.cache.FsCache
+import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration
+import org.apache.linkis.filesystem.entity.FSInfo
+import org.apache.linkis.filesystem.exception.WorkspaceExceptionManager
+import org.apache.linkis.storage.FSFactory
+import org.apache.linkis.storage.fs.FileSystem
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConversions._

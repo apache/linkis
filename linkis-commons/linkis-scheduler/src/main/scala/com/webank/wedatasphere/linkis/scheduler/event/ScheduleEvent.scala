@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.event
+package org.apache.linkis.scheduler.event
 
-import com.webank.wedatasphere.linkis.common.listener.Event
-import com.webank.wedatasphere.linkis.scheduler.queue.Job
+import org.apache.linkis.common.listener.Event
+import org.apache.linkis.scheduler.queue.Job
 
 
 trait ScheduleEvent extends Event {

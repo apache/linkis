@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.filesystem.entity;
+package org.apache.linkis.filesystem.entity;
 
 import java.util.HashMap;
 import java.util.List;

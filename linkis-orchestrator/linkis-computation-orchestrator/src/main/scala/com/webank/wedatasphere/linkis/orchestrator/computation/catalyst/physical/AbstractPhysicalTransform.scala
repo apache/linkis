@@ -15,13 +15,13 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.computation.catalyst.physical
+package org.apache.linkis.orchestrator.computation.catalyst.physical
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.orchestrator.execution.TaskResponse
-import com.webank.wedatasphere.linkis.orchestrator.extensions.catalyst.PhysicalTransform
-import com.webank.wedatasphere.linkis.orchestrator.plans.logical.{LogicalContext, Task}
-import com.webank.wedatasphere.linkis.orchestrator.plans.physical._
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.orchestrator.execution.TaskResponse
+import org.apache.linkis.orchestrator.extensions.catalyst.PhysicalTransform
+import org.apache.linkis.orchestrator.plans.logical.{LogicalContext, Task}
+import org.apache.linkis.orchestrator.plans.physical._
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer

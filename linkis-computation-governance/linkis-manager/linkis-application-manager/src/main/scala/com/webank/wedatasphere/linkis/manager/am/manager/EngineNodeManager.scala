@@ -16,11 +16,11 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.manager
+package org.apache.linkis.manager.am.manager
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
-import com.webank.wedatasphere.linkis.manager.common.entity.node.{EngineNode, ScoreServiceInstance}
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.entity.node.{EngineNode, ScoreServiceInstance}
 
 
 trait EngineNodeManager {

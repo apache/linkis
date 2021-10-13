@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.launch
+package org.apache.linkis.engineplugin.spark.launch
 
 import java.lang.ProcessBuilder.Redirect
 import java.util
 import com.google.common.collect.Lists
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
-import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkResourceConfiguration.LINKIS_SPARK_DRIVER_MEMORY
-import com.webank.wedatasphere.linkis.engineplugin.spark.config.{SparkConfiguration, SparkResourceConfiguration}
-import com.webank.wedatasphere.linkis.engineplugin.spark.launch.SparkSubmitProcessEngineConnLaunchBuilder.{AbsolutePath, Path, RelativePath, getValueAndRemove}
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.{DriverAndYarnResource, NodeResource}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.Environment._
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.UserCreatorLabel
-import com.webank.wedatasphere.linkis.protocol.UserWithCreator
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.engineplugin.spark.config.SparkResourceConfiguration.LINKIS_SPARK_DRIVER_MEMORY
+import org.apache.linkis.engineplugin.spark.config.{SparkConfiguration, SparkResourceConfiguration}
+import org.apache.linkis.engineplugin.spark.launch.SparkSubmitProcessEngineConnLaunchBuilder.{AbsolutePath, Path, RelativePath, getValueAndRemove}
+import org.apache.linkis.manager.common.entity.resource.{DriverAndYarnResource, NodeResource}
+import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
+import org.apache.linkis.manager.engineplugin.common.launch.process.Environment._
+import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+import org.apache.linkis.protocol.UserWithCreator
 import org.apache.commons.lang.StringUtils
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
-import com.webank.wedatasphere.linkis.hadoop.common.conf.HadoopConf
+import org.apache.linkis.hadoop.common.conf.HadoopConf
 
 
 /**
@@ -342,7 +342,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
       driverJavaSet.append(s" -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${variable(RANDOM_PORT)}")
     }
     this.conf(SparkConfiguration.SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, driverJavaSet.toString())
-    //this.conf("spark.sql.extensions", "com.webank.wedatasphere.linkis.hook.spark.extension.SparkHistoryExtension")
+    //this.conf("spark.sql.extensions", "org.apache.linkis.hook.spark.extension.SparkHistoryExtension")
     this.className(getValueAndRemove(properties,"className", getMainClass))
 
     getValueAndRemove(properties,"archives", "").toString.split(",").map(AbsolutePath).foreach(this.archive)

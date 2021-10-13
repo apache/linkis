@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.hive.progress
+package org.apache.linkis.engineplugin.hive.progress
 
 import java.util.concurrent.LinkedBlockingQueue
 
-import com.webank.wedatasphere.linkis.engineplugin.hive.log.HiveProgress
+import org.apache.linkis.engineplugin.hive.log.HiveProgress
 import org.slf4j.{Logger, LoggerFactory}
 
 object HiveProgressHelper {

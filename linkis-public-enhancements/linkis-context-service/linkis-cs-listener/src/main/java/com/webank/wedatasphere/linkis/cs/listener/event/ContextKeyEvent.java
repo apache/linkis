@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.listener.event;
+package org.apache.linkis.cs.listener.event;
 
-import com.webank.wedatasphere.linkis.common.listener.Event;
+import org.apache.linkis.common.listener.Event;
 
 
 public interface ContextKeyEvent extends Event {

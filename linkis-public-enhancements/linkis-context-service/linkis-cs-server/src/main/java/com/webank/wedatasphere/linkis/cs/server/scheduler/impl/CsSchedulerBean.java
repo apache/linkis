@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.server.scheduler.impl;
+package org.apache.linkis.cs.server.scheduler.impl;
 
-import com.webank.wedatasphere.linkis.cs.server.conf.ContextServerConf;
-import com.webank.wedatasphere.linkis.scheduler.Scheduler;
-import com.webank.wedatasphere.linkis.scheduler.SchedulerContext;
-import com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue.FIFOGroupFactory;
-import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelScheduler;
-import com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue.ParallelSchedulerContextImpl;
+import org.apache.linkis.cs.server.conf.ContextServerConf;
+import org.apache.linkis.scheduler.Scheduler;
+import org.apache.linkis.scheduler.SchedulerContext;
+import org.apache.linkis.scheduler.queue.fifoqueue.FIFOGroupFactory;
+import org.apache.linkis.scheduler.queue.parallelqueue.ParallelScheduler;
+import org.apache.linkis.scheduler.queue.parallelqueue.ParallelSchedulerContextImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;

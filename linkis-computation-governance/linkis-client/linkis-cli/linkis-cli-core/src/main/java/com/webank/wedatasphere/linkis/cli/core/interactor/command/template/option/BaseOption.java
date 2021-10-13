@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.command.template.option;
+package org.apache.linkis.cli.core.interactor.command.template.option;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.command.CmdOption;
-import com.webank.wedatasphere.linkis.cli.common.utils.converter.AbstractStringConverter;
+import org.apache.linkis.cli.common.entity.command.CmdOption;
+import org.apache.linkis.cli.common.utils.converter.AbstractStringConverter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.MessageFormat;

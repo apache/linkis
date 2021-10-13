@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.common.utils
+package org.apache.linkis.common.utils
 
 import java.util.Hashtable
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.CommonVars
 import javax.naming.Context
 import javax.naming.ldap.InitialLdapContext
 import org.apache.commons.lang.StringUtils

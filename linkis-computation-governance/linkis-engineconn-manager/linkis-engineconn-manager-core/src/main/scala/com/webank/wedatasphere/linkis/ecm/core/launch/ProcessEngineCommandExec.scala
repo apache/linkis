@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.core.launch
+package org.apache.linkis.ecm.core.launch
 
 import java.io.File
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.Logging
 
 
 trait ProcessEngineCommandExec {

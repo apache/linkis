@@ -11,12 +11,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.application.driver;
+package org.apache.linkis.cli.application.driver;
 
-import com.webank.wedatasphere.linkis.cli.application.driver.context.LinkisClientDriverContext;
-import com.webank.wedatasphere.linkis.cli.application.interactor.job.LinkisJob;
-import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
-import com.webank.wedatasphere.linkis.ujes.client.response.*;
+import org.apache.linkis.cli.application.driver.context.LinkisClientDriverContext;
+import org.apache.linkis.cli.application.interactor.job.LinkisJob;
+import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
+import org.apache.linkis.ujes.client.response.*;
 
 /**
  * @description: Driver should encapsulate all the methods we need to interact with Linkis

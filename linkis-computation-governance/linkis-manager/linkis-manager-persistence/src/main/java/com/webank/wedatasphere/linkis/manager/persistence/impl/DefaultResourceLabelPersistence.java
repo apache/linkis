@@ -1,4 +1,4 @@
-package com.webank.wedatasphere.linkis.manager.persistence.impl;
+package org.apache.linkis.manager.persistence.impl;
 /*
  * Copyright 2019 WeBank
  *
@@ -15,15 +15,15 @@ package com.webank.wedatasphere.linkis.manager.persistence.impl;
  * limitations under the License.
  */
 import com.google.common.collect.Iterables;
-import com.webank.wedatasphere.linkis.manager.common.entity.label.LabelKeyValue;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource;
-import com.webank.wedatasphere.linkis.manager.dao.LabelManagerMapper;
-import com.webank.wedatasphere.linkis.manager.dao.ResourceManagerMapper;
-import com.webank.wedatasphere.linkis.manager.entity.Tunple;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.manager.persistence.ResourceLabelPersistence;
-import com.webank.wedatasphere.linkis.manager.util.PersistenceUtils;
+import org.apache.linkis.manager.common.entity.label.LabelKeyValue;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
+import org.apache.linkis.manager.dao.LabelManagerMapper;
+import org.apache.linkis.manager.dao.ResourceManagerMapper;
+import org.apache.linkis.manager.entity.Tunple;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.persistence.ResourceLabelPersistence;
+import org.apache.linkis.manager.util.PersistenceUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;

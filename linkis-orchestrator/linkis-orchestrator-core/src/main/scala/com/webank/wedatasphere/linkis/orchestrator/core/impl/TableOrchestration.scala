@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.orchestrator.core.impl
+package org.apache.linkis.orchestrator.core.impl
 
-import com.webank.wedatasphere.linkis.common.io.{MetaData, Record}
-import com.webank.wedatasphere.linkis.orchestrator.Orchestration
-import com.webank.wedatasphere.linkis.orchestrator.core.{CacheStrategy, GlobalState}
+import org.apache.linkis.common.io.{MetaData, Record}
+import org.apache.linkis.orchestrator.Orchestration
+import org.apache.linkis.orchestrator.core.{CacheStrategy, GlobalState}
 
 /**
   *

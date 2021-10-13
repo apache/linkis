@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence;
+package org.apache.linkis.cs.persistence;
 
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
+import org.apache.linkis.DataWorkCloudApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;

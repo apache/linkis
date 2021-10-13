@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.condition.construction;
+package org.apache.linkis.cs.condition.construction;
 
-import com.webank.wedatasphere.linkis.cs.condition.Condition;
-import com.webank.wedatasphere.linkis.cs.condition.impl.ContextValueTypeCondition;
+import org.apache.linkis.cs.condition.Condition;
+import org.apache.linkis.cs.condition.impl.ContextValueTypeCondition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

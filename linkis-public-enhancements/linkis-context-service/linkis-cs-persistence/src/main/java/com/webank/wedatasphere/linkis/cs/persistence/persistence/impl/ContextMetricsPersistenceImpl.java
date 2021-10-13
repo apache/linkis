@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.persistence.persistence.impl;
+package org.apache.linkis.cs.persistence.persistence.impl;
 
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.ContextMetricsPersistence;
+import org.apache.linkis.cs.persistence.persistence.ContextMetricsPersistence;
 import org.springframework.stereotype.Component;
 
 

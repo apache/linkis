@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ecm.core.listener;
+package org.apache.linkis.ecm.core.listener;
 
-import com.webank.wedatasphere.linkis.common.listener.Event;
+import org.apache.linkis.common.listener.Event;
 
 
 public interface ECMEvent extends Event {

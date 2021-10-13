@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.formdata;
+package org.apache.linkis.datasourcemanager.core.formdata;
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.exception.ErrorException;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import javax.validation.ValidationException;

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.scheduler.queue.parallelqueue
+package org.apache.linkis.scheduler.queue.parallelqueue
 
 import java.util.concurrent.{ExecutorService, TimeUnit}
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.scheduler.conf.SchedulerConfiguration
-import com.webank.wedatasphere.linkis.scheduler.listener.ConsumerListener
-import com.webank.wedatasphere.linkis.scheduler.queue._
-import com.webank.wedatasphere.linkis.scheduler.queue.fifoqueue.FIFOUserConsumer
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.scheduler.conf.SchedulerConfiguration
+import org.apache.linkis.scheduler.listener.ConsumerListener
+import org.apache.linkis.scheduler.queue._
+import org.apache.linkis.scheduler.queue.fifoqueue.FIFOUserConsumer
 
 import scala.collection.mutable
 

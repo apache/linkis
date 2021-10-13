@@ -11,18 +11,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.validate.strategy;
+package org.apache.linkis.datasourcemanager.core.validate.strategy;
 
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.FormStreamContent;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidateException;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidateStrategy;
-import com.webank.wedatasphere.linkis.metadatamanager.common.Json;
+import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
+import org.apache.linkis.datasourcemanager.core.formdata.FormStreamContent;
+import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateException;
+import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateStrategy;
+import org.apache.linkis.metadatamanager.common.Json;
 
 import java.util.List;
 import java.util.Map;
 
-import static com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.CustomMultiPartFormDataTransformer.*;
+import static org.apache.linkis.datasourcemanager.core.formdata.CustomMultiPartFormDataTransformer.*;
 
 /**
  * Type validate strategy

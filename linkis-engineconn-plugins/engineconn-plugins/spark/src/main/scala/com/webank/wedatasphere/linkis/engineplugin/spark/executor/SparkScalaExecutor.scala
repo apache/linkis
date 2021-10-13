@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.spark.executor
+package org.apache.linkis.engineplugin.spark.executor
 
 import java.io.{BufferedReader, File}
-import com.webank.wedatasphere.linkis.common.utils.Utils
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.creation.ComputationExecutorManager
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.rs.RsOutputStream
-import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
-import com.webank.wedatasphere.linkis.engineplugin.spark.common.{Kind, SparkScala}
-import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
-import com.webank.wedatasphere.linkis.engineplugin.spark.entity.SparkEngineSession
-import com.webank.wedatasphere.linkis.engineplugin.spark.exception.{ApplicationAlreadyStoppedException, ExecuteError, SparkSessionNullException}
-import com.webank.wedatasphere.linkis.engineplugin.spark.utils.EngineUtils
-import com.webank.wedatasphere.linkis.governance.common.paser.ScalaCodeParser
-import com.webank.wedatasphere.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, IncompleteExecuteResponse, SuccessExecuteResponse}
-import com.webank.wedatasphere.linkis.storage.resultset.ResultSetWriter
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.engineconn.computation.executor.creation.ComputationExecutorManager
+import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
+import org.apache.linkis.engineconn.core.executor.ExecutorManager
+import org.apache.linkis.engineplugin.spark.common.{Kind, SparkScala}
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
+import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
+import org.apache.linkis.engineplugin.spark.exception.{ApplicationAlreadyStoppedException, ExecuteError, SparkSessionNullException}
+import org.apache.linkis.engineplugin.spark.utils.EngineUtils
+import org.apache.linkis.governance.common.paser.ScalaCodeParser
+import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, IncompleteExecuteResponse, SuccessExecuteResponse}
+import org.apache.linkis.storage.resultset.ResultSetWriter
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
@@ -264,7 +264,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
       sparkILoop.bind("sc", "org.apache.spark.SparkContext", sparkContext, List("""@transient"""))
       sparkILoop.bind("spark", "org.apache.spark.sql.SparkSession", sparkSession, List("""@transient"""))
       sparkILoop.bind("sqlContext", "org.apache.spark.sql.SQLContext", _sqlContext, List("""@transient"""))
-      sparkILoop.bind("engineExecutionContextFactory", "com.webank.wedatasphere.linkis.engineplugin.spark.executor.EngineExecutionContextFactory", engineExecutionContextFactory)
+      sparkILoop.bind("engineExecutionContextFactory", "org.apache.linkis.engineplugin.spark.executor.EngineExecutionContextFactory", engineExecutionContextFactory)
       sparkILoop.bind("jobGroup", "java.lang.StringBuilder", jobGroup)
 
       sparkILoop.interpret("import org.apache.spark.SparkContext")
@@ -272,14 +272,14 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
       sparkILoop.interpret("import org.apache.spark.sql.SparkSession")
       sparkILoop.interpret("import org.apache.spark.sql.SQLContext")
       sparkILoop.interpret("import org.apache.spark.sql.DataFrame")
-      sparkILoop.interpret("import com.webank.wedatasphere.linkis.engineplugin.spark.executor.SQLSession.showDF")
-      sparkILoop.interpret("import com.webank.wedatasphere.linkis.engineplugin.spark.executor.SQLSession.showHTML")
+      sparkILoop.interpret("import org.apache.linkis.engineplugin.spark.executor.SQLSession.showDF")
+      sparkILoop.interpret("import org.apache.linkis.engineplugin.spark.executor.SQLSession.showHTML")
       sparkILoop.interpret("import sqlContext.sql")
       sparkILoop.interpret("import sqlContext._")
       sparkILoop.interpret("import spark.implicits._")
       sparkILoop.interpret("import spark.sql")
       sparkILoop.interpret("import org.apache.spark.sql.functions._")
-      sparkILoop.interpret("import com.webank.wedatasphere.linkis.engineplugin.spark.executor.EngineExecutionContextFactory")
+      sparkILoop.interpret("import org.apache.linkis.engineplugin.spark.executor.EngineExecutionContextFactory")
       sparkILoop.interpret("def showAlias(df: DataFrame, alias:String): Unit = showDF(sparkContext, jobGroup.toString, df, alias,10000, engineExecutionContextFactory.getEngineExecutionContext)")
       sparkILoop.interpret("def show(df: DataFrame): Unit = showDF(sparkContext, jobGroup.toString, df,\"\",10000, engineExecutionContextFactory.getEngineExecutionContext)")
       sparkILoop.interpret("def showHtml(content: Any): Unit = showHTML(sparkContext, jobGroup.toString, content, engineExecutionContextFactory.getEngineExecutionContext)")

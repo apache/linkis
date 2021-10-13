@@ -16,7 +16,7 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.common.entity.node;
+package org.apache.linkis.manager.common.entity.node;
 
 
 public interface EngineNode extends AMNode, RMNode, LabelNode {

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.engineplugin.spark.extension
+package org.apache.linkis.engineplugin.spark.extension
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 
 import scala.collection.mutable.ArrayBuffer
 

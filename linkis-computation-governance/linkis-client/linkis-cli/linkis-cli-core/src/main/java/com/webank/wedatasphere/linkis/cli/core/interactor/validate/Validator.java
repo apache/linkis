@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.validate;
+package org.apache.linkis.cli.core.interactor.validate;
 
-import com.webank.wedatasphere.linkis.cli.common.exception.LinkisClientRuntimeException;
+import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 
 
 public interface Validator {

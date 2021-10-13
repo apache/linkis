@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.jobhistory.dao;
+package org.apache.linkis.jobhistory.dao;
 
-import com.webank.wedatasphere.linkis.jobhistory.entity.JobHistory;
+import org.apache.linkis.jobhistory.entity.JobHistory;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;

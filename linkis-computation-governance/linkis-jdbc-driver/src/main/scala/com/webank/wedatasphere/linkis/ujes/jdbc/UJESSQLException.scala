@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.ujes.jdbc
+package org.apache.linkis.ujes.jdbc
 
-import com.webank.wedatasphere.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException
 
 
 class UJESSQLException (errorCode: UJESSQLErrorCode) extends ErrorException(errorCode.getCode,errorCode.getMsg) {

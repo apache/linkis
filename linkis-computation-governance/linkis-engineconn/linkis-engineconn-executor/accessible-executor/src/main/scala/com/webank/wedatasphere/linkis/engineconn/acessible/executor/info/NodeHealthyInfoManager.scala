@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.acessible.executor.info
+package org.apache.linkis.engineconn.acessible.executor.info
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
-import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
-import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
-import com.webank.wedatasphere.linkis.manager.common.entity.metrics.NodeHealthyInfo
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
+import org.apache.linkis.engineconn.core.executor.ExecutorManager
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.entity.metrics.NodeHealthyInfo
 import org.springframework.stereotype.Component
 
 trait NodeHealthyInfoManager {

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.configuration.util;
+package org.apache.linkis.configuration.util;
 
-import com.webank.wedatasphere.linkis.common.conf.CommonVars$;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel;
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.UserCreatorLabel;
+import org.apache.linkis.common.conf.CommonVars$;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 
 import java.util.ArrayList;
 

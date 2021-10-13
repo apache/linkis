@@ -1,9 +1,9 @@
-package com.webank.wedatasphere.linkis.manager.persistence;
+package org.apache.linkis.manager.persistence;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceLabel;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceResource;
-import com.webank.wedatasphere.linkis.manager.label.entity.Label;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
+import org.apache.linkis.manager.label.entity.Label;
 
 import java.util.List;
 import java.util.Map;

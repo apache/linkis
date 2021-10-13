@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.gateway.route
+package org.apache.linkis.gateway.route
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.gateway.exception.TooManyServiceException
-import com.webank.wedatasphere.linkis.gateway.http.GatewayContext
-import com.webank.wedatasphere.linkis.rpc.interceptor.ServiceInstanceUtils
-import com.webank.wedatasphere.linkis.rpc.sender.SpringCloudFeignConfigurationCache
-import com.webank.wedatasphere.linkis.server.Message
-import com.webank.wedatasphere.linkis.server.exception.NoApplicationExistsException
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.gateway.exception.TooManyServiceException
+import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
+import org.apache.linkis.rpc.sender.SpringCloudFeignConfigurationCache
+import org.apache.linkis.server.Message
+import org.apache.linkis.server.exception.NoApplicationExistsException
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
 

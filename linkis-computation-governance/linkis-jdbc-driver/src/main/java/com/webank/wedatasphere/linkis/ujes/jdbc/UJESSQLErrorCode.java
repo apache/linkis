@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.ujes.jdbc;
+package org.apache.linkis.ujes.jdbc;
 
 public enum UJESSQLErrorCode {
     BAD_URL(80000,"bad url"),

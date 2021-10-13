@@ -16,17 +16,17 @@
  *
  */
 
-package com.webank.wedatasphere.linkis.manager.am.label
+package org.apache.linkis.manager.am.label
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.label.entity.Label
-import com.webank.wedatasphere.linkis.manager.label.entity.em.EMInstanceLabel
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineInstanceLabel
-import com.webank.wedatasphere.linkis.manager.label.service.NodeLabelService
-import com.webank.wedatasphere.linkis.manager.service.common.label.ManagerLabelService
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
+import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
+import org.apache.linkis.manager.label.service.NodeLabelService
+import org.apache.linkis.manager.service.common.label.ManagerLabelService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

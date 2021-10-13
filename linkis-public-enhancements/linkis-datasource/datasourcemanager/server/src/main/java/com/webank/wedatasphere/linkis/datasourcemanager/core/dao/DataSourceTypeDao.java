@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.dao;
+package org.apache.linkis.datasourcemanager.core.dao;
 
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceType;
+import org.apache.linkis.datasourcemanager.common.domain.DataSourceType;
 
 import java.util.List;
 

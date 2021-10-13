@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cs.highavailable.pluggable;
+package org.apache.linkis.cs.highavailable.pluggable;
 
-import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
-import com.webank.wedatasphere.linkis.cs.highavailable.AbstractContextHAManager;
-import com.webank.wedatasphere.linkis.cs.persistence.ContextPersistenceManager;
-import com.webank.wedatasphere.linkis.cs.persistence.persistence.*;
+import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.highavailable.AbstractContextHAManager;
+import org.apache.linkis.cs.persistence.ContextPersistenceManager;
+import org.apache.linkis.cs.persistence.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

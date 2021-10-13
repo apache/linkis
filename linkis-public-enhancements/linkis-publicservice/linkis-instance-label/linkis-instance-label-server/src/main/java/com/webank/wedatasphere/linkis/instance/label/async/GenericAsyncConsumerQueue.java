@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.async;
+package org.apache.linkis.instance.label.async;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

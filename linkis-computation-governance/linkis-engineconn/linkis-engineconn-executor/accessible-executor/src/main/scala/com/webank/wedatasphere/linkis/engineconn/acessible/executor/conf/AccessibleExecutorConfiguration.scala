@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineconn.acessible.executor.conf
+package org.apache.linkis.engineconn.acessible.executor.conf
 
-import com.webank.wedatasphere.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.linkis.common.conf.{CommonVars, TimeType}
 
 object AccessibleExecutorConfiguration {
 

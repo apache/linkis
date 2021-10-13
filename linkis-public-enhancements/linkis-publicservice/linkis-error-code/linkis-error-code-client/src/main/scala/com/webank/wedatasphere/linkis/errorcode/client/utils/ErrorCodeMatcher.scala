@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.errorcode.client.utils
+package org.apache.linkis.errorcode.client.utils
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.errorcode.common.LinkisErrorCode
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.errorcode.common.LinkisErrorCode
 
 
 object ErrorCodeMatcher extends Logging{

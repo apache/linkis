@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.persistence.impl;
+package org.apache.linkis.manager.persistence.impl;
 
-import com.webank.wedatasphere.linkis.common.ServiceInstance;
-import com.webank.wedatasphere.linkis.manager.common.entity.node.AMEMNode;
-import com.webank.wedatasphere.linkis.manager.common.entity.node.AMEngineNode;
-import com.webank.wedatasphere.linkis.manager.common.entity.node.EngineNode;
-import com.webank.wedatasphere.linkis.manager.common.entity.node.Node;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNode;
-import com.webank.wedatasphere.linkis.manager.common.entity.persistence.PersistenceNodeEntity;
-import com.webank.wedatasphere.linkis.manager.dao.NodeManagerMapper;
-import com.webank.wedatasphere.linkis.manager.dao.NodeMetricManagerMapper;
-import com.webank.wedatasphere.linkis.manager.exception.NodeInstanceDuplicateException;
-import com.webank.wedatasphere.linkis.manager.exception.NodeInstanceNotFoundException;
-import com.webank.wedatasphere.linkis.manager.exception.PersistenceErrorException;
-import com.webank.wedatasphere.linkis.manager.persistence.NodeManagerPersistence;
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.common.entity.node.AMEMNode;
+import org.apache.linkis.manager.common.entity.node.AMEngineNode;
+import org.apache.linkis.manager.common.entity.node.EngineNode;
+import org.apache.linkis.manager.common.entity.node.Node;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceNode;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeEntity;
+import org.apache.linkis.manager.dao.NodeManagerMapper;
+import org.apache.linkis.manager.dao.NodeMetricManagerMapper;
+import org.apache.linkis.manager.exception.NodeInstanceDuplicateException;
+import org.apache.linkis.manager.exception.NodeInstanceNotFoundException;
+import org.apache.linkis.manager.exception.PersistenceErrorException;
+import org.apache.linkis.manager.persistence.NodeManagerPersistence;
 import org.springframework.dao.DuplicateKeyException;
 
 import java.util.ArrayList;

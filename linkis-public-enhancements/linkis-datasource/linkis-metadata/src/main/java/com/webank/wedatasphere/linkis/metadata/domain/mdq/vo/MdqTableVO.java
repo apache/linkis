@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.metadata.domain.mdq.vo;
+package org.apache.linkis.metadata.domain.mdq.vo;
 
 import java.util.List;
 

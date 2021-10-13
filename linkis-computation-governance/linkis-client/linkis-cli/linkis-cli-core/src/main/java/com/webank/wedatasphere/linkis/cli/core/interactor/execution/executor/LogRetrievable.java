@@ -11,9 +11,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.cli.core.interactor.execution.executor;
+package org.apache.linkis.cli.core.interactor.execution.executor;
 
-import com.webank.wedatasphere.linkis.cli.common.entity.execution.executor.Executor;
+import org.apache.linkis.cli.common.entity.execution.executor.Executor;
 
 
 public interface LogRetrievable extends Executor {

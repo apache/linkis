@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.webank.wedatasphere.linkis.engineplugin.spark.mdq
+package org.apache.linkis.engineplugin.spark.mdq
 
 import java.util
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import com.webank.wedatasphere.linkis.engineplugin.spark.common.SparkKind
-import com.webank.wedatasphere.linkis.engineplugin.spark.config.SparkConfiguration
-import com.webank.wedatasphere.linkis.engineplugin.spark.exception.MDQErrorException
-import com.webank.wedatasphere.linkis.engineplugin.spark.extension.SparkPreExecutionHook
-import com.webank.wedatasphere.linkis.manager.label.entity.engine.CodeLanguageLabel
-import com.webank.wedatasphere.linkis.manager.label.utils.LabelUtil
-import com.webank.wedatasphere.linkis.protocol.mdq.{DDLRequest, DDLResponse}
-import com.webank.wedatasphere.linkis.rpc.Sender
-import com.webank.wedatasphere.linkis.storage.utils.StorageUtils
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.engineplugin.spark.common.SparkKind
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
+import org.apache.linkis.engineplugin.spark.exception.MDQErrorException
+import org.apache.linkis.engineplugin.spark.extension.SparkPreExecutionHook
+import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
+import org.apache.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.protocol.mdq.{DDLRequest, DDLResponse}
+import org.apache.linkis.rpc.Sender
+import org.apache.linkis.storage.utils.StorageUtils
 
 import javax.annotation.PostConstruct
 import org.springframework.stereotype.Component

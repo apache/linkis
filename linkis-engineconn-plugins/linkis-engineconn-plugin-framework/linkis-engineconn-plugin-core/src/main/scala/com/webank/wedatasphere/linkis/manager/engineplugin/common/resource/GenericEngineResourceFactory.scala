@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.manager.engineplugin.common.resource
+package org.apache.linkis.manager.engineplugin.common.resource
 
 import java.util
 
-import com.webank.wedatasphere.linkis.common.utils.Logging
-import com.webank.wedatasphere.linkis.manager.common.entity.resource.{LoadInstanceResource, Resource}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.common.entity.resource.{LoadInstanceResource, Resource}
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 
 
 class GenericEngineResourceFactory extends AbstractEngineResourceFactory with Logging {

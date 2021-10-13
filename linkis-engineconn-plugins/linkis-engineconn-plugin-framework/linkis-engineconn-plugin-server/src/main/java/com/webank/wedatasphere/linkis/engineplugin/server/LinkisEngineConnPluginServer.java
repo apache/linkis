@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.engineplugin.server;
+package org.apache.linkis.engineplugin.server;
 
-import com.webank.wedatasphere.linkis.LinkisBaseServerApp;
+import org.apache.linkis.LinkisBaseServerApp;
 
 
 public class LinkisEngineConnPluginServer {

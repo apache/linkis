@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.instance.label.service
+package org.apache.linkis.instance.label.service
 
-import com.webank.wedatasphere.linkis.message.builder.ServiceMethodContext
-import com.webank.wedatasphere.linkis.protocol.label._
+import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.protocol.label._
 
 
 trait InsLabelRpcService {

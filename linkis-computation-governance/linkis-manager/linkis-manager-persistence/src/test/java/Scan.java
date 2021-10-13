@@ -6,7 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 
 
-@ComponentScan(value = "com.webank.wedatasphere", excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,value = DataWorkCloudApplication.class))
+@ComponentScan(value = "org.apache.linkis", excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,value = DataWorkCloudApplication.class))
 @Configuration
 @EnableAspectJAutoProxy
 public class Scan {

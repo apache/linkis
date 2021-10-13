@@ -212,7 +212,7 @@ echo "create dir LINKIS_HOME: $LINKIS_HOME"
 sudo mkdir -p $LINKIS_HOME;sudo chown -R $deployUser:$deployUser $LINKIS_HOME
 isSuccess "Create the dir of  $LINKIS_HOME"
 
-LINKIS_PACKAGE=${workDir}/wedatasphere-linkis-${LINKIS_VERSION}-combined-dist.tar.gz
+LINKIS_PACKAGE=${workDir}/apache-linkis-${LINKIS_VERSION}-combined-dist.tar.gz
 
 if ! test -e ${LINKIS_PACKAGE}; then
     echo "**********Error: please put ${LINKIS_PACKAGE} in $workDir! "

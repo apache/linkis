@@ -25,7 +25,7 @@ import org.apache.commons.lang.time.DateFormatUtils
 import scala.util.control.NonFatal
 
 
-private[wedatasphere] trait ListenerBus[L <: EventListener, E <: Event] extends Logging {
+private[linkis] trait ListenerBus[L <: EventListener, E <: Event] extends Logging {
   val self = this
 
   private val listeners = new CopyOnWriteArrayList[L]
@@ -74,7 +74,7 @@ private[wedatasphere] trait ListenerBus[L <: EventListener, E <: Event] extends 
   protected def doPostEvent(listener: L, event: E): Unit
 
 }
-private[wedatasphere] abstract class ListenerEventBus[L <: EventListener, E <: Event]
+private[linkis] abstract class ListenerEventBus[L <: EventListener, E <: Event]
       (val eventQueueCapacity: Int, name: String)
       (listenerConsumerThreadSize: Int = 5, listenerThreadMaxFreeTime: Long = ByteTimeUtils.timeStringAsMs("2m"))
   extends ListenerBus[L, E] with Logging {

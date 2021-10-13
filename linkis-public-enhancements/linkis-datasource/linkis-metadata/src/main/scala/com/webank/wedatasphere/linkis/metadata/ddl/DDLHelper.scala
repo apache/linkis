@@ -18,11 +18,11 @@ package com.webank.wedatasphere.linkis.metadata.ddl
 
 import java.util
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.webank.wedatasphere.linkis.common.exception.ErrorException
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.metadata.ddl.ScalaDDLCreator.{CODE, USER}
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableBO
-import org.codehaus.jackson.map.ObjectMapper
 
 object DDLHelper extends Logging {
   def createDDL(params:util.Map[String, Object]):String = {
@@ -34,7 +34,7 @@ object DDLHelper extends Logging {
     //val mdqTableVO = MdqUtils.gson.fromJson(code, classOf[MdqTableVO])
     val mapper = new ObjectMapper
     val jsonNode = mapper.readTree(code)
-    val mdqTableBO = mapper.readValue(jsonNode, classOf[MdqTableBO])
+    val mdqTableBO = mapper.treeToValue(jsonNode, classOf[MdqTableBO])
     val importInfo = mdqTableBO.getImportInfo
     if (importInfo != null){
       //如果importInfo 不是空的话，就走的导入hive流程

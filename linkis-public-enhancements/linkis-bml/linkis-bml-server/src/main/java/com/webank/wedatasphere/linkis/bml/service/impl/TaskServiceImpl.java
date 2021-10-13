@@ -28,12 +28,12 @@ import com.webank.wedatasphere.linkis.bml.threading.TaskState;
 import com.webank.wedatasphere.linkis.bml.common.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
@@ -63,8 +63,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResourceTask createUploadTask(FormDataMultiPart form, String user,
-        Map<String, Object> properties) throws Exception {
+    public ResourceTask createUploadTask(List<MultipartFile> files, String user,
+                                         Map<String, Object> properties) throws Exception {
         //Create upload task record.
         String resourceId = UUID.randomUUID().toString();
         ResourceTask resourceTask = ResourceTask.createUploadTask(resourceId, user, properties);
@@ -74,7 +74,7 @@ public class TaskServiceImpl implements TaskService {
         LOGGER.info("Successful update task (成功更新任务 ) taskId:{}-resourceId:{} status is  {} .", resourceTask.getId(), resourceTask.getResourceId(), TaskState.RUNNING.getValue());
         properties.put("resourceId", resourceTask.getResourceId());
         try {
-            ResourceServiceImpl.UploadResult result = resourceService.upload(form, user, properties).get(0);
+            ResourceServiceImpl.UploadResult result = resourceService.upload(files, user, properties).get(0);
             if (result.isSuccess()){
                 taskDao.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
                 LOGGER.info("Upload resource successfully. Update task(上传资源成功.更新任务) taskId:{}-resourceId:{} status is   {} .", resourceTask.getId(), resourceTask.getResourceId(), TaskState.SUCCESS.getValue());
@@ -94,7 +94,7 @@ public class TaskServiceImpl implements TaskService {
   @Override
   @Transactional(rollbackFor = Exception.class)
   public ResourceTask createUpdateTask(String resourceId, String user,
-      FormDataMultiPart formDataMultiPart, Map<String, Object> properties) throws Exception{
+                                       MultipartFile file, Map<String, Object> properties) throws Exception{
       final String resourceIdLock = resourceId.intern();
       /*
       多个BML服务器实例对同一资源resourceId同时更新,规定只能有一个实例能更新成功,
@@ -119,7 +119,7 @@ public class TaskServiceImpl implements TaskService {
         LOGGER.info("Successful update task (成功更新任务 ) taskId:{}-resourceId:{} status is  {} .", resourceTask.getId(), resourceTask.getResourceId(), TaskState.RUNNING.getValue());
         properties.put("newVersion", resourceTask.getVersion());
         try {
-            versionService.updateVersion(resourceTask.getResourceId(), user, formDataMultiPart, properties);
+            versionService.updateVersion(resourceTask.getResourceId(), user, file, properties);
             taskDao.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
             LOGGER.info("Upload resource successfully. Update task (上传资源失败.更新任务) taskId:{}-resourceId:{}  status is   {}.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.SUCCESS.getValue());
         } catch (Exception e) {

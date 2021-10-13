@@ -30,13 +30,11 @@ import com.webank.wedatasphere.linkis.common.io.FsPath;
 import com.webank.wedatasphere.linkis.storage.FSFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -89,14 +87,12 @@ public class VersionServiceImpl implements VersionService {
     }
 
     @Override
-    public String updateVersion(String resourceId, String user, FormDataMultiPart formDataMultiPart,
+    public String updateVersion(String resourceId, String user, MultipartFile file,
                                 Map<String, Object> params) throws Exception {
         ResourceHelper resourceHelper = ResourceHelperFactory.getResourceHelper();
-        FormDataBodyPart file = formDataMultiPart.getField("file");
-        InputStream inputStream = file.getValueAs(InputStream.class);
+        InputStream inputStream = file.getInputStream();
         final String resourceIdLock = resourceId.intern();
-        FormDataContentDisposition fileDetail = file.getFormDataContentDisposition();
-        String fileName = new String(fileDetail.getFileName().getBytes("ISO8859-1"), "UTF-8");
+        String fileName = new String(file.getOriginalFilename().getBytes("ISO8859-1"), "UTF-8");
         //获取资源的path
         String newVersion = params.get("newVersion").toString();
         String path = versionDao.getResourcePath(resourceId) + "_" + newVersion;

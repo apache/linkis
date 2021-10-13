@@ -23,31 +23,29 @@ import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceMethod;
 import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceType;
 import com.webank.wedatasphere.linkis.cs.server.scheduler.CsScheduler;
 import com.webank.wedatasphere.linkis.cs.server.scheduler.HttpAnswerJob;
-import org.codehaus.jackson.JsonNode;
+import com.webank.wedatasphere.linkis.server.Message;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.Date;
 
 
-@Component
-@Path("/contextservice")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping(path = "/contextservice")
 public class ContextIDRestfulApi implements CsRestfulParent {
 
     @Autowired
     private CsScheduler csScheduler;
 
-    @POST
-    @Path("createContextID")
-    public Response createContextID(@Context HttpServletRequest req, JsonNode json) throws InterruptedException {
+    @RequestMapping(path = "createContextID",method = RequestMethod.POST)
+     public Message createContextID(HttpServletRequest req) throws InterruptedException {
         //contextID是client传过来的序列化的id
         PersistenceContextID contextID = new PersistenceContextID();
         contextID.setUser("neiljianliu");
@@ -60,9 +58,8 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "contextId");
     }
 
-    @GET
-    @Path("getContextID")
-    public Response getContextID(@Context HttpServletRequest req, @QueryParam("contextId") String id) throws InterruptedException, CSErrorException {
+     @RequestMapping(path = "getContextID",method = RequestMethod.GET)
+     public Message getContextID( HttpServletRequest req, @RequestParam(value="contextId",required=false) String id) throws InterruptedException, CSErrorException {
         if (StringUtils.isEmpty(id)) {
             throw new CSErrorException(97000, "contxtId cannot be empty");
         }
@@ -70,9 +67,8 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @POST
-    @Path("updateContextID")
-    public Response updateContextID(@Context HttpServletRequest req, JsonNode json) throws InterruptedException, CSErrorException {
+    @RequestMapping(path = "updateContextID",method = RequestMethod.POST)
+     public Message updateContextID( HttpServletRequest req) throws InterruptedException, CSErrorException {
         PersistenceContextID contextID = new PersistenceContextID();
         contextID.setUser("johnnwang");
         contextID.setExpireType(ExpireType.NEVER);
@@ -89,9 +85,8 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @POST
-    @Path("resetContextID")
-    public Response resetContextID(@Context HttpServletRequest req, JsonNode json) throws InterruptedException, CSErrorException {
+    @RequestMapping(path = "resetContextID",method = RequestMethod.POST)
+     public Message resetContextID( HttpServletRequest req) throws InterruptedException, CSErrorException {
         String id = null;
         if (StringUtils.isEmpty(id)) {
             throw new CSErrorException(97000, "contxtId cannot be empty");
@@ -101,10 +96,9 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     }
 
 
-    @POST
-    @Path("removeContextID")
-    public Response removeContextID(@Context HttpServletRequest req, JsonNode json) throws InterruptedException, CSErrorException {
-        String id = json.get("contextId").getTextValue();
+    @RequestMapping(path = "removeContextID",method = RequestMethod.POST)
+     public Message removeContextID( HttpServletRequest req, @RequestBody JsonNode json) throws InterruptedException, CSErrorException {
+        String id = json.get("contextId").textValue();
         if (StringUtils.isEmpty(id)) {
             throw new CSErrorException(97000, "contxtId cannot be empty");
         }

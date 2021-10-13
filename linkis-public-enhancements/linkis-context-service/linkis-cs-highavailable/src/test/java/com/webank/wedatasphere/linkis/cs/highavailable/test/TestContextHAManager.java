@@ -165,7 +165,8 @@ public class TestContextHAManager extends SpringBootServletInitializer {
                         filterHolder.setInitParameter("encoding", Configuration.BDP_ENCODING().getValue());
                         filterHolder.setInitParameter("forceEncoding", "true");
                         webApp.addFilter(filterHolder, "/*", EnumSet.allOf(DispatcherType.class));
-                        BDPJettyServerHelper.setupRestApiContextHandler(webApp);
+                        //BDPJettyServerHelper.setupRestApiContextHandler(webApp);
+                        BDPJettyServerHelper.setupSpringRestApiContextHandler(webApp);
                         if(ServerConfiguration.BDP_SERVER_SOCKET_MODE().getValue()) {
                             BDPJettyServerHelper.setupControllerServer(webApp);
                         }

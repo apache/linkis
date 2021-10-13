@@ -24,17 +24,16 @@ import java.util.EnumSet
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson._
+import com.webank.wedatasphere.linkis.DataWorkCloudApplication
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration._
-import com.webank.wedatasphere.linkis.server.restful.RestfulApplication
 import com.webank.wedatasphere.linkis.server.socket.ControllerServer
 import com.webank.wedatasphere.linkis.server.socket.controller.{ServerEventService, ServerListenerEventBus}
-import javax.servlet.{DispatcherType, Filter}
+import javax.servlet.{DispatcherType, Filter, MultipartConfigElement}
 import org.apache.commons.io.FileUtils
 import org.eclipse.jetty.server.session.SessionHandler
 import org.eclipse.jetty.servlet.{DefaultServlet, FilterHolder, ServletContextHandler, ServletHolder}
 import org.eclipse.jetty.webapp.WebAppContext
-import org.glassfish.jersey.servlet.ServletContainer
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext
 import org.springframework.web.servlet.DispatcherServlet
 
@@ -46,6 +45,9 @@ private[linkis] object BDPJettyServerHelper extends Logging {
   private var serverListenerEventBus: ServerListenerEventBus = _
   private var controllerServer: ControllerServer = _
   private val services = mutable.Buffer[ServerEventService]()
+
+  private val TMP_FOLDER = ""
+  private val MAX_UPLOAD_SIZE = 200 * 1024 * 1024
 
   private[server] def getControllerServer = controllerServer
 
@@ -64,21 +66,6 @@ private[linkis] object BDPJettyServerHelper extends Logging {
   private def getSecurityFilter(): Class[Filter] =
     Class.forName(BDP_SERVER_SECURITY_FILTER.getValue).asInstanceOf[Class[Filter]]
 
-  def setupRestApiContextHandler(webApp: ServletContextHandler) {
-    val servletHolder = new ServletHolder(classOf[ServletContainer])
-    servletHolder.setInitParameter("javax.ws.rs.Application", classOf[RestfulApplication].getName)
-    servletHolder.setName("restful")
-    servletHolder.setForcedPath("restful")
-    webApp.setSessionHandler(new SessionHandler)
-    val p = BDP_SERVER_RESTFUL_URI.getValue
-    val restfulPath = if(p.endsWith("/*")) p
-    else if(p.endsWith("/")) p + "*"
-    else p + "/*"
-    webApp.addServlet(servletHolder, restfulPath)
-    val filterHolder = new FilterHolder(getSecurityFilter())
-    webApp.addFilter(filterHolder, restfulPath, EnumSet.allOf(classOf[DispatcherType]))
-  }
-
   def setupSpringRestApiContextHandler(webApp: ServletContextHandler) {
     val context = new AnnotationConfigWebApplicationContext
     //val CONFIG_LOCATION = "com.webank.wedatasphere.linkis.manager.am"
@@ -90,7 +77,12 @@ private[linkis] object BDPJettyServerHelper extends Logging {
     servletHolder.setName("springrestful")
     servletHolder.setForcedPath("springrestful")
 
-    val p = BDP_SERVER_SPRING_RESTFUL_URI.getValue
+    //todo  file size  parameter configuration
+    //val multipartConfigElement = new MultipartConfigElement(null, MAX_UPLOAD_SIZE, MAX_UPLOAD_SIZE * 2, MAX_UPLOAD_SIZE / 2)
+    val multipartConfigElement=DataWorkCloudApplication.getApplicationContext.getBean(classOf[MultipartConfigElement]);
+    servletHolder.getRegistration.setMultipartConfig(multipartConfigElement)
+
+    val p = BDP_SERVER_RESTFUL_URI.getValue
     val restfulPath = if(p.endsWith("/*")) p
     else if(p.endsWith("/")) p + "*"
     else p + "/*"

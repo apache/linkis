@@ -46,7 +46,7 @@ public class LinkisClientApplicationTest {
 
         };
         cmdStr = new String[]{
-                "--gatewayUrl", "http://172.21.8.149:9001",
+                "--gatewayUrl", "http://127.0.0.1:9001",
                 "--authStg", "token",
                 "--authKey", "Validation-Code",
                 "--authVal", "BML-AUTH",

@@ -28,6 +28,7 @@ import com.webank.wedatasphere.linkis.rpc.interceptor._
 import com.webank.wedatasphere.linkis.rpc.transform.{RPCConsumer, RPCProduct}
 import com.webank.wedatasphere.linkis.server.Message
 import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
+import feign.slf4j.Slf4jLogger
 import feign.{Feign, Retryer}
 
 import scala.concurrent.duration.Duration
@@ -63,7 +64,7 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
     builder.retryer(Retryer.NEVER_RETRY)
 
   protected def newRPC: RPCReceiveRemote = {
-    val builder = Feign.builder
+    val builder = Feign.builder.logger(new Slf4jLogger()).logLevel(feign.Logger.Level.FULL)
     doBuilder(builder)
     var url = if(name.startsWith("http://")) name else "http://" + name
     if(url.endsWith("/")) url = url.substring(0, url.length - 1)

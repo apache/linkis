@@ -17,8 +17,7 @@ package com.webank.wedatasphere.linkis.bml.service;
 
 import com.webank.wedatasphere.linkis.bml.Entity.ResourceTask;
 
-import org.apache.ibatis.annotations.Param;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
@@ -26,10 +25,10 @@ import java.util.Map;
 
 public interface TaskService {
 
-  ResourceTask createUploadTask(FormDataMultiPart form, String user, Map<String, Object> properties)
+  ResourceTask createUploadTask(List<MultipartFile> files, String user, Map<String, Object> properties)
       throws Exception;
 
-  ResourceTask createUpdateTask(String resourceId, String user, FormDataMultiPart formDataMultiPart, Map<String, Object> properties)
+  ResourceTask createUpdateTask(String resourceId, String user, MultipartFile file, Map<String, Object> properties)
       throws Exception;
 
   ResourceTask createDownloadTask(String resourceId, String version, String user, String clientIp);

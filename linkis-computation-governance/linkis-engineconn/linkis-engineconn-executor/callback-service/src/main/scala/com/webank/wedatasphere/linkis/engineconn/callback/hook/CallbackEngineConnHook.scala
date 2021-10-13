@@ -34,6 +34,8 @@ import com.webank.wedatasphere.linkis.server.conf.ServerConfiguration
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
 
+import scala.collection.mutable
+
 
 class CallbackEngineConnHook extends EngineConnHook with Logging  {
 
@@ -46,7 +48,10 @@ class CallbackEngineConnHook extends EngineConnHook with Logging  {
     if (!StringUtils.isEmpty(existsExcludePackages))
       DataWorkCloudApplication.setProperty(ServerConfiguration.BDP_SERVER_EXCLUDE_PACKAGES.key, existsExcludePackages)
     // 加载spring类
-    DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(parser.getSpringConfMap))
+    val map = new mutable.HashMap[String, String]()
+    val newMap = map.++(parser.getSpringConfMap)
+    newMap.put("spring.mvc.servlet.path", ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue)
+    DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(newMap.toMap))
 
     val engineConnPidCallBack = new EngineConnPidCallback(engineCreationContext.getEMInstance)
     Utils.tryAndError(engineConnPidCallBack.callback())

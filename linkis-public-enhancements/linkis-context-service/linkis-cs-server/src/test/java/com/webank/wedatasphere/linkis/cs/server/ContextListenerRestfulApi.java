@@ -24,31 +24,26 @@ import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceMethod;
 import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceType;
 import com.webank.wedatasphere.linkis.cs.server.scheduler.CsScheduler;
 import com.webank.wedatasphere.linkis.cs.server.scheduler.HttpAnswerJob;
-import org.codehaus.jackson.JsonNode;
+import com.webank.wedatasphere.linkis.server.Message;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
-@Component
-@Path("/contextservice")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+
+@RestController
+@RequestMapping(path = "/contextservice")
 public class ContextListenerRestfulApi implements CsRestfulParent {
 
     @Autowired
     private CsScheduler csScheduler;
 
-    @POST
-    @Path("onBindIDListener")
-    public Response onBindIDListener(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException {
+    @RequestMapping(path = "onBindIDListener",method = RequestMethod.POST)
+     public Message onBindIDListener(HttpServletRequest req) throws InterruptedException {
         //ContextIDListener listener
         ContextIDListener listener = null;
         ContextID contextID = null;
@@ -56,9 +51,8 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @POST
-    @Path("onBindKeyListener")
-    public Response onBindKeyListener(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException {
+    @RequestMapping(path = "onBindKeyListener",method = RequestMethod.POST)
+     public Message onBindKeyListener( HttpServletRequest req) throws InterruptedException {
         ContextKeyListener listener = null;
         ContextID contextID = null;
         ContextKey contextKey = null;
@@ -66,9 +60,8 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @POST
-    @Path("heartbeat")
-    public Response heartbeat(@Context HttpServletRequest req) throws InterruptedException {
+    @RequestMapping(path = "heartbeat",method = RequestMethod.POST)
+     public Message heartbeat( HttpServletRequest req) throws InterruptedException {
         String source = null;
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.HEARTBEAT, source);
         return generateResponse(answerJob, "");

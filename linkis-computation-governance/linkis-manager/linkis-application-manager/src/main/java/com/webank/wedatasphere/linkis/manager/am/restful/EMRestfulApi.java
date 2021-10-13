@@ -39,11 +39,12 @@ import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -113,7 +114,7 @@ public class EMRestfulApi {
 
     @RequestMapping(path = "/modifyEMInfo", method = RequestMethod.PUT)
     @Transactional(rollbackFor = Exception.class)
-    public Message modifyEMInfo( HttpServletRequest req, JsonNode jsonNode) throws AMErrorException, LabelErrorException {
+    public Message modifyEMInfo( HttpServletRequest req, @RequestBody JsonNode jsonNode) throws AMErrorException, LabelErrorException {
         String username = SecurityFilter.getLoginUsername(req);
         String[] adminArray = AMConfiguration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
         if(adminArray != null && !Arrays.asList(adminArray).contains(username)){

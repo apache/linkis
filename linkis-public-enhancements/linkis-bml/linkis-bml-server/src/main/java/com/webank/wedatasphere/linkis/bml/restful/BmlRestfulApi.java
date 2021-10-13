@@ -37,14 +37,16 @@ import com.webank.wedatasphere.linkis.bml.common.*;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonNode;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.FormDataParam;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,22 +55,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
-
-@Path("bml")
-@Component
+@RequestMapping(path = "/bml")
+@RestController
 public class BmlRestfulApi {
 
     @Autowired
@@ -90,12 +81,11 @@ public class BmlRestfulApi {
 
     public static final String URL_PREFIX = "/bml/";
 
-    @GET
-    @Path("getVersions")
-    public Response getVersions(@QueryParam("resourceId") String resourceId,
-                                @QueryParam("currentPage") String  currentPage,
-                                @QueryParam("pageSize") String pageSize,
-                                @Context HttpServletRequest request)throws ErrorException{
+    @RequestMapping(path = "getVersions",method = RequestMethod.GET)
+    public Message getVersions(@RequestParam(value="resourceId",required=false)  String resourceId,
+                                @RequestParam(value="currentPage",required=false)  String  currentPage,
+                                @RequestParam(value="pageSize",required=false)  String pageSize,
+                                HttpServletRequest request)throws ErrorException{
 
         String user = RestfulUtils.getUserName(request);
         if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)){
@@ -144,16 +134,15 @@ public class BmlRestfulApi {
             throw new BmlQueryFailException("Sorry, the query for version information failed(抱歉，查询版本信息失败)");
         }
 
-        return Message.messageToResponse(message);
+        return message;
     }
 
-    @GET
-    @Path("getResources")
-    public Response getResources(@QueryParam("system") String system,
-                                 @QueryParam("currentPage") String  currentPage,
-                                 @QueryParam("pageSize") String pageSize,
-                                 @Context HttpServletRequest request,
-                                 @Context HttpServletResponse response)throws ErrorException {
+    @RequestMapping(path = "getResources",method = RequestMethod.GET)
+    public Message getResources(@RequestParam(value="system",required=false)  String system,
+                                 @RequestParam(value="currentPage",required=false)  String  currentPage,
+                                 @RequestParam(value="pageSize",required=false)  String pageSize,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)throws ErrorException {
 
         String user = RestfulUtils.getUserName(request);
 
@@ -204,30 +193,27 @@ public class BmlRestfulApi {
             throw new BmlQueryFailException("Failed to get all system resource information(获取系统所有资源信息失败)");
         }
 
-        return Message.messageToResponse(message);
+        return message;
     }
 
 
 
-    @POST
-    @Path("deleteVersion")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteVersion(JsonNode jsonNode,
-                                  @Context HttpServletRequest request) throws IOException, ErrorException{
+    @RequestMapping(path = "deleteVersion",method = RequestMethod.POST)
+    public Message deleteVersion(JsonNode jsonNode,
+                                  HttpServletRequest request) throws IOException, ErrorException{
 
 
         String user = RestfulUtils.getUserName(request);
 
         if (null == jsonNode.get("resourceId") || null == jsonNode.get("version") ||
-                StringUtils.isEmpty(jsonNode.get("resourceId").getTextValue()) || StringUtils.isEmpty(jsonNode.get("version").getTextValue())) {
+                StringUtils.isEmpty(jsonNode.get("resourceId").textValue()) || StringUtils.isEmpty(jsonNode.get("version").textValue())) {
             throw new BmlServerParaErrorException("ResourceID and version are required to delete the specified version(删除指定版本，需要指定resourceId 和 version)");
         }
 
 
 
-        String resourceId = jsonNode.get("resourceId").getTextValue();
-        String version = jsonNode.get("version").getTextValue();
+        String resourceId = jsonNode.get("resourceId").textValue();
+        String version = jsonNode.get("version").textValue();
         //检查资源和版本是否存在
         if (!resourceService.checkResourceId(resourceId) || !versionService.checkVersion(resourceId, version)
                 || !versionService.canAccess(resourceId, version)){
@@ -250,15 +236,11 @@ public class BmlRestfulApi {
             logger.info("Update task tasKid :{} -ResourceId :{} with {} state（删除版本成功.更新任务 taskId:{}-resourceId:{} 为 {} 状态）.", resourceTask.getId(), resourceTask.getResourceId(), TaskState.SUCCESS.getValue(),resourceTask.getId(), resourceTask.getResourceId(), TaskState.SUCCESS.getValue());
             throw new BmlQueryFailException("Failed to delete the resource version(删除资源版本失败)");
         }
-        return Message.messageToResponse(message);
+        return message;
     }
 
-    @POST
-    @Path("deleteResource")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteResource(JsonNode jsonNode,
-                                   @Context HttpServletRequest request) throws IOException, ErrorException{
+    @RequestMapping(path = "deleteResource",method = RequestMethod.POST)
+    public Message deleteResource(HttpServletRequest request,@RequestBody JsonNode jsonNode) throws IOException, ErrorException{
 
 
         String user = RestfulUtils.getUserName(request);
@@ -267,7 +249,7 @@ public class BmlRestfulApi {
             throw new BmlServerParaErrorException("You did not pass a valid ResourceID(您未传入有效的resourceId)");
         }
 
-        String resourceId = jsonNode.get("resourceId").getTextValue();
+        String resourceId = jsonNode.get("resourceId").textValue();
         if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
             logger.error("the error resourceId  is {} ", resourceId);
             throw new BmlServerParaErrorException("the resourceId"+resourceId+" is null ,Illegal or deleted (resourceId:"+resourceId+"为空,非法或者已被删除!)");
@@ -291,14 +273,12 @@ public class BmlRestfulApi {
             throw new BmlQueryFailException("Delete resource operation failed(删除资源操作失败)");
         }
 
-        return Message.messageToResponse(message);
+        return message;
 
     }
 
-    @POST
-    @Path("deleteResources")
-    public Response deleteResources(JsonNode jsonNode,
-                                    @Context HttpServletRequest request) throws IOException, ErrorException{
+    @RequestMapping(path = "deleteResources",method = RequestMethod.POST)
+    public Message deleteResources(HttpServletRequest request,@RequestBody JsonNode jsonNode) throws IOException, ErrorException{
         String user = RestfulUtils.getUserName(request);
         List<String> resourceIds = new ArrayList<>();
 
@@ -306,7 +286,7 @@ public class BmlRestfulApi {
             throw new BmlServerParaErrorException("Bulk deletion of unpassed resourceIDS parameters(批量删除未传入resourceIds参数)");
         }
 
-        Iterator<JsonNode> jsonNodeIter = jsonNode.get("resourceIds").getElements();
+        Iterator<JsonNode> jsonNodeIter = jsonNode.get("resourceIds").elements();
         while (jsonNodeIter.hasNext()) {
             resourceIds.add(jsonNodeIter.next().asText());
         }
@@ -319,7 +299,7 @@ public class BmlRestfulApi {
                     Message message = Message.error("ResourceID :"+ resourceId +" is empty, illegal or has been deleted(resourceId:"+resourceId+"为空,非法或已被删除)");
                     message.setMethod(URL_PREFIX + "deleteResources");
                     message.setStatus(1);
-                    return Message.messageToResponse(message);
+                    return message;
                 }
             }
         }
@@ -341,7 +321,7 @@ public class BmlRestfulApi {
             logger.info("Failed to delete resources in bulk. Update task tasKid :{} -ResourceId :{} is in the {} state (批量删除资源失败.更新任务 taskId:{}-resourceId:{} 为 {} 状态.)", resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue(),resourceTask.getId(), resourceTask.getResourceId(), TaskState.FAILED.getValue());
             throw new BmlQueryFailException("The bulk delete resource operation failed(批量删除资源操作失败)");
         }
-        return Message.messageToResponse(message);
+        return message;
     }
 
     /**
@@ -350,23 +330,22 @@ public class BmlRestfulApi {
      * @param version 资源版本，如果不指定，默认为最新
      * @param resp httpServletResponse
      * @param request httpServletRequest
-     * @return Response
+     * @return Message
      * @throws IOException
      * @throws ErrorException
      */
-    @GET
-    @Path("download")
-    public Response download(@QueryParam("resourceId") String resourceId,
-                             @QueryParam("version") String version,
-                             @Context HttpServletResponse resp,
-                             @Context HttpServletRequest request) throws IOException, ErrorException {
+    @RequestMapping(path = "download",method = RequestMethod.GET)
+    public Message download(@RequestParam(value="resourceId",required=false)  String resourceId,
+                             @RequestParam(value="version",required=false)  String version,
+                             HttpServletResponse resp,
+                             HttpServletRequest request) throws IOException, ErrorException {
         String user = RestfulUtils.getUserName(request);
 
         if (StringUtils.isBlank(resourceId) || !resourceService.checkResourceId(resourceId)) {
             Message message = Message.error("ResourceID :"+ resourceId +" is empty, illegal or has been deleted (resourceId:"+resourceId+"为空,非法或者已被删除!)");
             message.setMethod(URL_PREFIX + "download");
             message.setStatus(1);
-            return Message.messageToResponse(message);
+            return message;
         }
 
         if (!resourceService.checkAuthority(user, resourceId)){
@@ -381,7 +360,7 @@ public class BmlRestfulApi {
             Message message = Message.error("version:"+version+"is empty, illegal or has been deleted");
             message.setMethod(URL_PREFIX + "download");
             message.setStatus(1);
-            return Message.messageToResponse(message);
+            return message;
         }
         //判resourceId和version是否过期
         if (!resourceService.checkExpire(resourceId, version)){
@@ -428,19 +407,18 @@ public class BmlRestfulApi {
             IOUtils.closeQuietly(resp.getOutputStream());
         }
         logger.info("{} Download resource {} successfully {} 下载资源 {} 成功", user, resourceId, user, resourceId);
-        return Message.messageToResponse(message);
+        return message;
     }
 
-    @POST
-    @Path("upload")
-    public Response uploadResource(@Context HttpServletRequest req,
-                                   @FormDataParam("system") String system,
-                                   @FormDataParam("resourceHeader") String resourceHeader,
-                                   @FormDataParam("isExpire") String isExpire,
-                                   @FormDataParam("expireType") String expireType,
-                                   @FormDataParam("expireTime") String expireTime,
-                                   @FormDataParam("maxVersion") int maxVersion,
-                                   FormDataMultiPart form) throws ErrorException {
+    @RequestMapping(path = "upload",method = RequestMethod.POST)
+    public Message uploadResource(HttpServletRequest req,
+                                   @RequestParam("system") String system,
+                                   @RequestParam("resourceHeader") String resourceHeader,
+                                   @RequestParam("isExpire") String isExpire,
+                                   @RequestParam("expireType") String expireType,
+                                   @RequestParam("expireTime") String expireTime,
+                                   @RequestParam("maxVersion") int maxVersion,
+                                   @RequestParam("file") List<MultipartFile> files) throws ErrorException {
         String user = RestfulUtils.getUserName(req);
         Message message;
         try{
@@ -454,7 +432,7 @@ public class BmlRestfulApi {
             properties.put("maxVersion", maxVersion);
             String clientIp = HttpRequestHelper.getIp(req);
             properties.put("clientIp", clientIp);
-            ResourceTask resourceTask = taskService.createUploadTask(form, user, properties);
+            ResourceTask resourceTask = taskService.createUploadTask(files, user, properties);
             message = Message.ok("The task of submitting and uploading resources was successful(提交上传资源任务成功)");
             message.setMethod(URL_PREFIX + "upload");
             message.setStatus(0);
@@ -468,21 +446,20 @@ public class BmlRestfulApi {
             exception.initCause(e);
             throw exception;
         }
-        return Message.messageToResponse(message);
+        return message;
     }
 
     /**
      * 用户通过http的方式更新资源文件
      * @param request httpServletRequest
      * @param resourceId 用户希望更新资源的resourceId
-     * @param formDataMultiPart form表单内容
+     * @param file file文件
      * @return resourceId 以及 新的版本号
      */
-    @POST
-    @Path("updateVersion")
-    public Response updateVersion(@Context HttpServletRequest request,
-                                  @FormDataParam("resourceId") String resourceId,
-                                  FormDataMultiPart formDataMultiPart)throws Exception{
+    @RequestMapping(path = "updateVersion",method = RequestMethod.POST)
+    public Message updateVersion(HttpServletRequest request,
+                                  @RequestParam("resourceId") String resourceId,
+                                  @RequestParam("file") MultipartFile file)throws Exception{
         String user = RestfulUtils.getUserName(request);
         if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
             logger.error("error resourceId  is {} ", resourceId);
@@ -500,7 +477,7 @@ public class BmlRestfulApi {
             properties.put("clientIp", clientIp);
             ResourceTask resourceTask = null;
             synchronized (resourceId.intern()){
-                resourceTask = taskService.createUpdateTask(resourceId, user, formDataMultiPart, properties);
+                resourceTask = taskService.createUpdateTask(resourceId, user, file, properties);
             }
             message = Message.ok("The update resource task was submitted successfully(提交更新资源任务成功)");
             message.data("resourceId",resourceId).data("version", resourceTask.getVersion()).data("taskId", resourceTask.getId());
@@ -514,14 +491,13 @@ public class BmlRestfulApi {
             throw exception;
         }
         logger.info("User {} ends updating resources {}(用户 {} 结束更新资源 {}) ", user, resourceId, user, resourceId);
-        return Message.messageToResponse(message);
+        return message;
     }
 
 
-    @GET
-    @Path("getBasic")
-    public Response getBasic(@QueryParam("resourceId") String resourceId,
-                             @Context HttpServletRequest request)throws ErrorException{
+    @RequestMapping(path = "getBasic",method = RequestMethod.GET)
+    public Message getBasic(@RequestParam(value="resourceId",required=false)  String resourceId,
+                             HttpServletRequest request)throws ErrorException{
         String user = RestfulUtils.getUserName(request);
 
         if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)){
@@ -560,14 +536,13 @@ public class BmlRestfulApi {
             throw new BmlQueryFailException("Failed to obtain resource basic information (获取资源基本信息失败)");
         }
 
-        return Message.messageToResponse(message);
+        return message;
     }
 
 
-    @GET
-    @Path("getResourceInfo")
-    public Response getResourceInfo(@Context HttpServletRequest request, @QueryParam("resourceId") String resourceId){
-        return Message.messageToResponse(Message.ok("Obtained information successfully(获取信息成功)"));
+    @RequestMapping(path = "getResourceInfo",method = RequestMethod.GET)
+    public Message getResourceInfo(HttpServletRequest request, @RequestParam(value="resourceId",required=false)  String resourceId){
+        return Message.ok("Obtained information successfully(获取信息成功)");
     }
 
 

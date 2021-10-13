@@ -18,46 +18,44 @@ package com.webank.wedatasphere.linkis.entrance.restful
 
 import java.util
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.webank.wedatasphere.linkis.server.Message
 import javax.servlet.http.HttpServletRequest
-import javax.ws.rs.QueryParam
-import javax.ws.rs.core.{Context, Response}
-import org.codehaus.jackson.JsonNode
-import org.springframework.web.bind.annotation.{PathVariable, RequestBody, RequestMapping, RequestMethod}
+import org.springframework.web.bind.annotation.{PathVariable, RequestBody, RequestMapping, RequestMethod, RequestParam}
 
 
 trait EntranceRestfulRemote {
 
   @RequestMapping(value = Array("/entrance/execute"), method = Array(RequestMethod.POST))
-  def execute(@Context req: HttpServletRequest, @RequestBody json: util.Map[String, Any]): Response
+  def execute(req: HttpServletRequest, @RequestBody json: util.Map[String, Any]): Message
 
   @RequestMapping(value = Array("/entrance/submit"), method = Array(RequestMethod.POST))
-  def submit(@Context req: HttpServletRequest, @RequestBody json: util.Map[String, Any]): Response
+  def submit(req: HttpServletRequest, @RequestBody json: util.Map[String, Any]): Message
 
   //  @RequestMapping(value = Array("/api/entrance/{id}"), method = Array(RequestMethod.GET))
 //  def get(@PathVariable("id") id: String): Response
 
   @RequestMapping(value = Array("/entrance/{id}/status"), method = Array(RequestMethod.GET))
-  def status(@PathVariable("id") id: String, @QueryParam("taskID") taskID:String): Response
-
+  def status(@PathVariable("id") id: String, @RequestParam(value="taskID",required = false) taskID:String): Message
 
   @RequestMapping(value = Array("/entrance/{id}/progress"), method = Array(RequestMethod.POST))
-  def progress(@PathVariable("id") id: String): Response
+  def progress(@PathVariable("id") id: String): Message
 
   //TODO The resultSet interface is provided here, you need to think about it again, temporarily remove it.(resultSet这个接口是否在这里提供，还需再思考一下，先暂时去掉)
 //  @RequestMapping(value = Array("/api/entrance/{id}/resultSet"), method = Array(RequestMethod.POST))
-//  def resultSet(@PathVariable("id") id: String): Response
+//  def resultSet(@PathVariable("id") id: String): Message
 
   @RequestMapping(value = Array("/entrance/{id}/log"), method = Array(RequestMethod.POST))
-  def log(@Context req: HttpServletRequest, @PathVariable("id") id: String): Response
+  def log(req: HttpServletRequest, @PathVariable("id") id: String): Message
 
   @RequestMapping(value = Array("/entrance/{id}/killJobs"), method = Array(RequestMethod.POST))
-  def killJobs(@Context req: HttpServletRequest, jsonNode: JsonNode, @PathVariable("id") id: String): Response
+  def killJobs(req: HttpServletRequest, @RequestBody jsonNode: JsonNode, @PathVariable("id") id: String): Message
 
   @RequestMapping(value = Array("/entrance/{id}/kill"), method = Array(RequestMethod.POST))
-  def kill(@PathVariable("id") id: String, @QueryParam("taskID") taskID:Long): Response
+  def kill(@PathVariable("id") id: String, @RequestParam("taskID") taskID:scala.Long): Message
 
   @RequestMapping(value = Array("/entrance/{id}/pause"), method = Array(RequestMethod.POST))
-  def pause(@PathVariable("id") id: String): Response
+  def pause(@PathVariable("id") id: String): Message
 
 
 

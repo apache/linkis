@@ -20,7 +20,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
     <artifactId>linkis-spring-cloud-gateway</artifactId>
@@ -54,10 +54,10 @@
             <artifactId>spring-cloud-starter-gateway</artifactId>
             <version>${spring.cloud.version}</version>
             <exclusions>
-                <exclusion>
-                    <artifactId>hibernate-validator</artifactId>
-                    <groupId>org.hibernate.validator</groupId>
-                </exclusion>
+<!--                <exclusion>-->
+<!--                    <artifactId>hibernate-validator</artifactId>-->
+<!--                    <groupId>org.hibernate.validator</groupId>-->
+<!--                </exclusion>-->
                 <exclusion>
                     <artifactId>spring-boot-starter-logging</artifactId>
                     <groupId>org.springframework.boot</groupId>

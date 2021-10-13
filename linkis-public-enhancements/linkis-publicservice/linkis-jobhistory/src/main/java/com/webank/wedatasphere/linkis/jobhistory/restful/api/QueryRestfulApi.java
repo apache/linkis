@@ -33,14 +33,10 @@ import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,10 +44,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.sql.Date;
 
-@Component
-@Path("/jobhistory")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping(path = "/jobhistory")
 public class QueryRestfulApi {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -61,18 +55,16 @@ public class QueryRestfulApi {
     @Autowired
     private JobDetailMapper jobDetailMapper;
 
-    @GET
-    @Path("/governanceStationAdmin")
-    public Response governanceStationAdmin(@Context HttpServletRequest req) {
+    @RequestMapping(path = "/governanceStationAdmin",method = RequestMethod.GET)
+    public Message governanceStationAdmin(HttpServletRequest req) {
         String username = SecurityFilter.getLoginUsername(req);
         String[] split = JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
         boolean match = Arrays.stream(split).anyMatch(username::equalsIgnoreCase);
-        return Message.messageToResponse(Message.ok().data("admin", match));
+        return Message.ok().data("admin", match);
     }
 
-    @GET
-    @Path("/{id}/get")
-    public Response getTaskByID(@Context HttpServletRequest req, @PathParam("id") Long jobId) {
+    @RequestMapping(path = "/{id}/get",method = RequestMethod.GET)
+    public Message getTaskByID(HttpServletRequest req, @PathVariable("id") Long jobId) {
         String username = SecurityFilter.getLoginUsername(req);
         if (QueryUtils.isJobHistoryAdmin(username) || !JobhistoryConfiguration.JOB_HISTORY_SAFE_TRIGGER()) {
             username = null;
@@ -82,8 +74,8 @@ public class QueryRestfulApi {
         QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, subJobDetails);
         // todo check
         if(taskVO == null){
-            return Message.messageToResponse(Message.error("The corresponding job was not found, or there may be no permission to view the job" +
-                    "(没有找到对应的job，也可能是没有查看该job的权限)"));
+            return Message.error("The corresponding job was not found, or there may be no permission to view the job" +
+                    "(没有找到对应的job，也可能是没有查看该job的权限)");
         }
         for (SubJobDetail subjob : subJobDetails) {
             if (!StringUtils.isEmpty(subjob.getResultLocation())) {
@@ -91,19 +83,18 @@ public class QueryRestfulApi {
                 break;
             }
         }
-        return Message.messageToResponse(Message.ok().data(TaskConstant.TASK, taskVO));
+        return Message.ok().data(TaskConstant.TASK, taskVO);
     }
 
     /**
      * Method list should not contain subjob, which may cause performance problems.
      */
-    @GET
-    @Path("/list")
-    public Response list(@Context HttpServletRequest req, @QueryParam("startDate") Long startDate,
-                         @QueryParam("endDate") Long endDate, @QueryParam("status") String status,
-                         @QueryParam("pageNow") Integer pageNow, @QueryParam("pageSize") Integer pageSize,
-                         @QueryParam("taskID") Long taskID, @QueryParam("executeApplicationName") String executeApplicationName,
-                         @QueryParam("proxyUser") String proxyUser) throws IOException, QueryException {
+    @RequestMapping(path = "/list",method = RequestMethod.GET)
+    public Message list(HttpServletRequest req, @RequestParam(value="startDate",required=false) Long startDate,
+                         @RequestParam(value="endDate",required=false) Long endDate, @RequestParam(value="status",required=false) String status,
+                         @RequestParam(value="pageNow",required=false) Integer pageNow, @RequestParam(value="pageSize",required=false) Integer pageSize,
+                         @RequestParam(value="taskID",required=false) Long taskID, @RequestParam(value="executeApplicationName",required=false) String executeApplicationName,
+                         @RequestParam(value="proxyUser",required=false) String proxyUser) throws IOException, QueryException {
         String username = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(pageNow)) {
             pageNow = 1;
@@ -158,7 +149,7 @@ public class QueryRestfulApi {
                 break;
             }*/
         }
-        return Message.messageToResponse(Message.ok().data(TaskConstant.TASKS, vos)
-                .data(JobRequestConstants.TOTAL_PAGE(), total));
+        return Message.ok().data(TaskConstant.TASKS, vos)
+                .data(JobRequestConstants.TOTAL_PAGE(), total);
     }
 }

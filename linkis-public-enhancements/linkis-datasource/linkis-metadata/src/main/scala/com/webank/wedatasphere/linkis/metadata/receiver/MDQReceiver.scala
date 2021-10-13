@@ -18,6 +18,7 @@ package com.webank.wedatasphere.linkis.metadata.receiver
 
 import java.util
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.metadata.ddl.DDLHelper
 import com.webank.wedatasphere.linkis.metadata.domain.mdq.bo.MdqTableBO
@@ -25,7 +26,6 @@ import com.webank.wedatasphere.linkis.metadata.service.MdqService
 import com.webank.wedatasphere.linkis.metadata.utils.MdqUtils
 import com.webank.wedatasphere.linkis.protocol.mdq.{DDLCompleteResponse, DDLExecuteResponse, DDLRequest, DDLResponse}
 import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
-import org.codehaus.jackson.map.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -55,7 +55,7 @@ class MDQReceiver extends Receiver with Logging{
        // val mdqTableBO = MdqUtils.gson.fromJson(code, classOf[MdqTableBO])
         val mapper = new ObjectMapper
         val jsonNode = mapper.readTree(code)
-        val mdqTableBO = mapper.readValue(jsonNode, classOf[MdqTableBO])
+        val mdqTableBO = mapper.treeToValue(jsonNode, classOf[MdqTableBO])
         val tableName = mdqTableBO.getTableBaseInfo.getBase.getName
         val dbName = mdqTableBO.getTableBaseInfo.getBase.getDatabase
         logger.info(s"begin to persist table $dbName $tableName")
@@ -85,7 +85,7 @@ class MDQReceiver extends Receiver with Logging{
         //存储数据
         val mapper = new ObjectMapper
         val jsonNode = mapper.readTree(code)
-        val mdqTableBO = mapper.readValue(jsonNode, classOf[MdqTableBO])
+        val mdqTableBO = mapper.treeToValue(jsonNode, classOf[MdqTableBO])
         val tableName = mdqTableBO.getTableBaseInfo.getBase.getName
         val dbName = mdqTableBO.getTableBaseInfo.getBase.getDatabase
         logger.info(s"begin to persist table $dbName $tableName")

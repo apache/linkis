@@ -33,7 +33,7 @@ import com.webank.wedatasphere.linkis.cs.server.scheduler.RestJobBuilder;
 import com.webank.wedatasphere.linkis.cs.server.util.CsUtils;
 import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -98,7 +98,7 @@ public interface CsRestfulParent {
     }
 
     default <T> T deserialize(JsonNode jsonNode, String key) throws CSErrorException {
-        String str = jsonNode.get(key).getTextValue();
+        String str = jsonNode.get(key).textValue();
         return (T) CsUtils.SERIALIZE.deserialize(str);
     }
 

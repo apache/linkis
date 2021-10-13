@@ -35,26 +35,20 @@ import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.*;
 import scala.Option;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.*;
 
 /**
  * Description: an implementation class of EntranceRestfulRemote
  */
-@Path("/entrance")
-@Component
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping(path = "/entrance")
 public class EntranceRestfulApi implements EntranceRestfulRemote {
 
     private EntranceServer entranceServer;
@@ -72,10 +66,9 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
      * json Incoming key-value pair(传入的键值对)
      * Repsonse
      */
-    @Override
-    @POST
-    @Path("/execute")
-    public Response execute(@Context HttpServletRequest req, Map<String, Object> json) {
+  
+    @RequestMapping(path = "/execute",method = RequestMethod.POST)
+    public Message execute(HttpServletRequest req,@RequestBody  Map<String, Object> json) {
         Message message = null;
 //        try{
         logger.info("Begin to get an execID");
@@ -107,14 +100,13 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
 //            message.setStatus(1);
 //            message.setMethod("/api/entrance/execute");
 //        }
-        return Message.messageToResponse(message);
+        return message;
 
     }
 
-    @Override
-    @POST
-    @Path("/submit")
-    public Response submit(@Context HttpServletRequest req, Map<String, Object> json) {
+  
+    @RequestMapping(path = "/submit",method = RequestMethod.POST)
+    public Message submit(HttpServletRequest req, @RequestBody  Map<String, Object> json) {
         Message message = null;
         logger.info("Begin to get an execID");
         json.put(TaskConstant.SUBMIT_USER, SecurityFilter.getLoginUsername(req));
@@ -140,17 +132,16 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         message.data("execID", execID);
         message.data("taskID", taskID);
         logger.info("End to get an an execID: {}, taskID: {}", execID, taskID);
-        return Message.messageToResponse(message);
+        return message;
     }
 
     private void pushLog(String log, Job job) {
         entranceServer.getEntranceContext().getOrCreateLogManager().onLogUpdate(job, log);
     }
 
-    @Override
-    @GET
-    @Path("/{id}/status")
-    public Response status(@PathParam("id") String id, @QueryParam("taskID") String taskID) {
+  
+    @RequestMapping(path = "/{id}/status",method = RequestMethod.GET)
+    public Message status(@PathVariable("id") String id, @RequestParam(value = "taskID",required = false) String taskID) {
         Message message = null;
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
         Option<Job> job = Option.apply(null);
@@ -163,7 +154,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             message = Message.ok();
             message.setMethod("/api/entrance/" + id + "/status");
             message.data("status", status).data("execID", id);
-            return Message.messageToResponse(message);
+            return message;
         }
         if (job.isDefined()) {
             message = Message.ok();
@@ -172,16 +163,15 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         } else {
             message = Message.error("ID The corresponding job is empty and cannot obtain the corresponding task status.(ID 对应的job为空，不能获取相应的任务状态)");
         }
-        return Message.messageToResponse(message);
+        return message;
     }
 
 
 
 
-    @Override
-    @GET
-    @Path("/{id}/progress")
-    public Response progress(@PathParam("id") String id) {
+  
+    @RequestMapping(path = "/{id}/progress",method = RequestMethod.GET)
+    public Message progress(@PathVariable("id") String id) {
         Message message = null;
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
         Option<Job> job = entranceServer.getJob(realId);
@@ -219,13 +209,12 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         } else {
             message = Message.error("The job corresponding to the ID is empty, and the corresponding task progress cannot be obtained.(ID 对应的job为空，不能获取相应的任务进度)");
         }
-        return Message.messageToResponse(message);
+        return message;
     }
 
-    @Override
-    @GET
-    @Path("/{id}/log")
-    public Response log(@Context HttpServletRequest req, @PathParam("id") String id) {
+  
+    @RequestMapping(path = "/{id}/log",method = RequestMethod.GET)
+    public Message log(HttpServletRequest req, @PathVariable("id") String id) {
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
         Option<Job> job = Option.apply(null);
         Message message = null;
@@ -234,7 +223,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         } catch (final Throwable t) {
             message = Message.error("The job you just executed has ended. This interface no longer provides a query. It is recommended that you download the log file for viewing.(您刚刚执行的job已经结束，本接口不再提供查询，建议您下载日志文件进行查看)");
             message.setMethod("/api/entrance/" + id + "/log");
-            return Message.messageToResponse(message);
+            return message;
         }
         if (job.isDefined()) {
             logger.debug("begin to get log for {}(开始获取 {} 的日志)", job.get().getId(),job.get().getId());
@@ -279,13 +268,13 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 message = Message.ok();
                 message.setMethod("/api/entrance/" + id + "/log");
                 message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
-                return Message.messageToResponse(message);
+                return message;
             } catch (final Exception e1) {
                 logger.debug("Failed to get log information for :{}(为 {} 获取日志失败)", job.get().getId(), job.get().getId(),e1);
                 message = Message.error("Failed to get log information(获取日志信息失败)");
                 message.setMethod("/api/entrance/" + id + "/log");
                 message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
-                return Message.messageToResponse(message);
+                return message;
             } finally {
                 if (null != logReader && job.get().isCompleted()) {
                     IOUtils.closeQuietly(logReader);
@@ -299,21 +288,21 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             message = Message.error("Can't find execID(不能找到execID): " + id + "Corresponding job, can not get the corresponding log(对应的job，不能获得对应的日志)");
             message.setMethod("/api/entrance/" + id + "/log");
         }
-        return Message.messageToResponse(message);
+        return message;
     }
 
-    @Override
-    @POST
-    @Path("/{id}/killJobs")
-    public Response killJobs(@Context HttpServletRequest req, JsonNode jsonNode, @PathParam("id") String strongExecId) {
+
+    //todo confirm params of strongExecId?
+    @RequestMapping(path = "/{id}/killJobs",method = RequestMethod.POST)
+    public Message killJobs(HttpServletRequest req,@RequestBody JsonNode jsonNode, @PathVariable("id") String strongExecId) {
         JsonNode idNode = jsonNode.get("idList");
         JsonNode taskIDNode = jsonNode.get("taskIDList");
         ArrayList<Long> waitToForceKill = new ArrayList<>();
         if(idNode.size() != taskIDNode.size()){
-            return Message.messageToResponse(Message.error("The length of the ID list does not match the length of the TASKID list(id列表的长度与taskId列表的长度不一致)"));
+            return Message.error("The length of the ID list does not match the length of the TASKID list(id列表的长度与taskId列表的长度不一致)");
         }
         if(!idNode.isArray() || !taskIDNode.isArray()){
-            return Message.messageToResponse(Message.error("Request parameter error, please use array(请求参数错误，请使用数组)"));
+            return Message.error("Request parameter error, please use array(请求参数错误，请使用数组)");
         }
         ArrayList<Message> messages = new ArrayList<>();
         for(int i = 0; i < idNode.size(); i++){
@@ -375,13 +364,13 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         if(!waitToForceKill.isEmpty()){
             JobHistoryHelper.forceBatchKill(waitToForceKill);
         }
-        return Message.messageToResponse(Message.ok("停止任务成功").data("messages", messages));
+        return Message.ok("停止任务成功").data("messages", messages);
     }
 
-    @Override
-    @GET
-    @Path("/{id}/kill")
-    public Response kill(@PathParam("id") String id, @QueryParam("taskID") long taskID) {
+
+    //todo confirm long or Long
+    @RequestMapping(path = "/{id}/kill",method = RequestMethod.GET)
+    public Message kill(@PathVariable("id") String id, @RequestParam(value = "taskID",required = false) long taskID) {
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
         //通过jobid获取job,可能会由于job找不到而导致有looparray的报错,一旦报错的话，就可以将该任务直接置为Cancenlled
         Option<Job> job = Option.apply(null);
@@ -394,7 +383,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             Message message = Message.ok("Forced Kill task (强制杀死任务)");
             message.setMethod("/api/entrance/" + id + "/kill");
             message.setStatus(0);
-            return Message.messageToResponse(message);
+            return message;
         }
         Message message = null;
         if (job.isEmpty()) {
@@ -404,7 +393,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             message = Message.ok("Forced Kill task (强制杀死任务)");
             message.setMethod("/api/entrance/" + id + "/kill");
             message.setStatus(0);
-            return Message.messageToResponse(message);
+            return message;
         } else {
             try {
                 logger.info("begin to kill job {} ", job.get().getId());
@@ -428,13 +417,12 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 message.setStatus(1);
             }
         }
-        return Message.messageToResponse(message);
+        return message;
     }
 
-    @Override
-    @GET
-    @Path("/{id}/pause")
-    public Response pause(@PathParam("id") String id) {
+  
+    @RequestMapping(path = "/{id}/pause",method = RequestMethod.GET)
+    public Message pause(@PathVariable("id") String id) {
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
         Option<Job> job = entranceServer.getJob(realId);
         Message message = null;
@@ -460,7 +448,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             }
         }
 
-        return Message.messageToResponse(message);
+        return message;
     }
 
 }

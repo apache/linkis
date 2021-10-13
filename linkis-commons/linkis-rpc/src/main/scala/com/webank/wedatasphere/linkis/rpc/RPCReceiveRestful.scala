@@ -21,24 +21,25 @@ import java.util.concurrent.TimeUnit
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.protocol.BroadcastProtocol
 import com.webank.wedatasphere.linkis.rpc.conf.RPCConfiguration.{BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX, BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_MAX, BDP_RPC_RECEIVER_ASYN_QUEUE_CAPACITY}
+import com.webank.wedatasphere.linkis.rpc.conf.RPCReceiveRestfulCondition
 import com.webank.wedatasphere.linkis.rpc.exception.DWCURIException
 import com.webank.wedatasphere.linkis.rpc.transform.{RPCConsumer, RPCProduct}
 import com.webank.wedatasphere.linkis.server.{Message, catchIt}
 import javax.annotation.PostConstruct
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.{Consumes, POST, Path, Produces}
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.context.annotation.Conditional
 import org.springframework.stereotype.Component
+import org.springframework.web.bind.annotation.{RequestBody, RequestMapping, RequestMethod, RestController}
 
 import scala.concurrent.duration.Duration
 import scala.runtime.BoxedUnit
 
-
-@Component
-@Path("/rpc")
-@Produces(Array(MediaType.APPLICATION_JSON))
-@Consumes(Array(MediaType.APPLICATION_JSON))
+//@Component
+@RestController
+//@ConditionalOnProperty(name = Array("wds.linkis.rpc.default.recevie.enable"), matchIfMissing = false)
+@Conditional(Array(classOf[RPCReceiveRestfulCondition]))
 private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
 
   @Autowired(required = false)
@@ -117,9 +118,8 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
       RPCProduct.getRPCProduct.toMessage(obj)
   }
 
-  @Path("receive")
-  @POST
-  override def receive(message: Message): Message = catchIt {
+  @RequestMapping(path = Array("/rpc/receive"),method = Array(RequestMethod.POST))
+  override def receive(@RequestBody message: Message): Message = catchIt {
     val obj = RPCConsumer.getRPCConsumer.toObject(message)
     val event = RPCMessageEvent(obj, BaseRPCSender.getInstanceInfo(message.getData))
     rpcReceiverListenerBus.post(event)
@@ -132,13 +132,11 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
     event.map(opEvent(_, obj, event)).getOrElse(RPCProduct.getRPCProduct.notFound())
   }
 
-  @Path("receiveAndReply")
-  @POST
-  override def receiveAndReply(message: Message): Message = receiveAndReply(message, _.receiveAndReply(_, _))
+  @RequestMapping(path = Array("/rpc/receiveAndReply"),method = Array(RequestMethod.POST))
+  override def receiveAndReply(@RequestBody message: Message): Message = receiveAndReply(message, _.receiveAndReply(_, _))
 
-  @Path("replyInMills")
-  @POST
-  override def receiveAndReplyInMills(message: Message): Message = catchIt {
+  @RequestMapping(path = Array("/rpc/replyInMills"),method = Array(RequestMethod.POST))
+  override def receiveAndReplyInMills(@RequestBody message: Message): Message = catchIt {
     val duration = message.getData.get("duration")
     if(duration == null || StringUtils.isEmpty(duration.toString)) throw new DWCURIException(10002, "The timeout period is not set!(超时时间未设置！)")
     val timeout = Duration(duration.toString.toLong, TimeUnit.MILLISECONDS)

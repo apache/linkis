@@ -16,10 +16,10 @@
 
 package com.webank.test
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.webank.wedatasphere.linkis.manager.common.entity.resource.{Resource, ResourceSerializer, ResourceType}
 import com.webank.wedatasphere.linkis.manager.common.serializer.NodeResourceSerializer
 import com.webank.wedatasphere.linkis.server.Message
-import org.codehaus.jackson.map.ObjectMapper
 import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization.write
 

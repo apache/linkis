@@ -16,6 +16,8 @@
 
 package com.webank.wedatasphere.linkis.cs.server;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextID;
 import com.webank.wedatasphere.linkis.cs.common.entity.source.ContextKey;
 import com.webank.wedatasphere.linkis.cs.common.exception.CSErrorException;
@@ -25,28 +27,22 @@ import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceMethod;
 import com.webank.wedatasphere.linkis.cs.server.enumeration.ServiceType;
 import com.webank.wedatasphere.linkis.cs.server.scheduler.CsScheduler;
 import com.webank.wedatasphere.linkis.cs.server.scheduler.HttpAnswerJob;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.webank.wedatasphere.linkis.server.Message;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.Map;
 
 
-@Component
-@Path("contextservice")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping(path = "/contextservice")
 public class ContextRestfulApi implements CsRestfulParent {
 
 
@@ -56,9 +52,8 @@ public class ContextRestfulApi implements CsRestfulParent {
     private CsScheduler csScheduler;
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @POST
-    @Path("createContext")
-    public Response createContext(@Context HttpServletRequest request) throws Exception{
+    @RequestMapping(path = "createContext",method = RequestMethod.POST)
+     public Message createContext(HttpServletRequest request) throws Exception{
 
         //request.getAuthType()
 //        if (null == jsonNode.get(ContextHTTPConstant.PROJECT_NAME_STR) || null == jsonNode.get(ContextHTTPConstant.FLOW_NAME_STR)){
@@ -74,9 +69,8 @@ public class ContextRestfulApi implements CsRestfulParent {
     }
 
 
-    @POST
-    @Path("getContextValue")
-    public Response getContextValue(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException {
+    @RequestMapping(path = "getContextValue",method = RequestMethod.POST)
+     public Message getContextValue( HttpServletRequest req) throws InterruptedException {
         //ContextID contextID, ContextKey contextKey
         ContextID contextID = new PersistenceContextID();
         contextID.setContextId("84716");
@@ -105,28 +99,25 @@ public class ContextRestfulApi implements CsRestfulParent {
         }
     }
     }*/
-    @POST
-    @Path("searchContextValue")
-    public Response searchContextValue(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException {
+    @RequestMapping(path = "searchContextValue",method = RequestMethod.POST)
+     public Message searchContextValue( HttpServletRequest req,@RequestBody JsonNode jsonNode) throws InterruptedException {
         ContextID contextID = objectMapper.convertValue(jsonNode.get("contextID"), PersistenceContextID.class);
-        Map<Object, Object> conditionMap = objectMapper.convertValue(jsonNode.get("condition"), new org.codehaus.jackson.type.TypeReference<Map<Object, Object>>() {
+        Map<Object, Object> conditionMap = objectMapper.convertValue(jsonNode.get("condition"), new TypeReference<Map<Object, Object>>() {
         });
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SEARCH, contextID, conditionMap);
         return generateResponse(answerJob, "");
     }
 
-/*    @GET
-    @Path("searchContextValueByCondition")
-    public Response searchContextValueByCondition(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException {
+/*    @RequestMapping(path = "searchContextValueByCondition",method = RequestMethod.GET)
+     public Message searchContextValueByCondition( HttpServletRequest req, @RequestBody JsonNode jsonNode) throws InterruptedException {
         Condition condition = null;
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SEARCH, condition);
         return generateResponse(answerJob,"");
     }*/
 
 
-    @POST
-    @Path("setValueByKey")
-    public Response setValueByKey(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException {
+    @RequestMapping(path = "setValueByKey",method = RequestMethod.POST)
+     public Message setValueByKey( HttpServletRequest req) throws InterruptedException, CSErrorException {
         /*JSONSerializer jsonSerializer = new JSONSerializer();
         PersistenceContextID contextID = new PersistenceContextID();
         //// TODO: 2020/2/26 手动修改contextid
@@ -148,9 +139,8 @@ public class ContextRestfulApi implements CsRestfulParent {
         return null;
     }
 
-    @POST
-    @Path("setValue")
-    public Response setValue(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException, CSErrorException {
+    @RequestMapping(path = "setValue",method = RequestMethod.POST)
+     public Message setValue( HttpServletRequest req) throws InterruptedException, CSErrorException {
         /*JSONSerializer jsonSerializer = new JSONSerializer();
         PersistenceContextID contextID = new PersistenceContextID();
         //// TODO: 2020/2/26 手动修改contextid
@@ -176,18 +166,16 @@ public class ContextRestfulApi implements CsRestfulParent {
         return null;
     }
 
-    @POST
-    @Path("resetValue")
-    public Response resetValue(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException {
+    @RequestMapping(path = "resetValue",method = RequestMethod.POST)
+     public Message resetValue( HttpServletRequest req) throws InterruptedException {
         ContextID contextID = null;
         ContextKey contextKey = null;
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.RESET, contextID, contextKey);
         return generateResponse(answerJob,"");
     }
 
-    @POST
-    @Path("removeValue")
-    public Response removeValue(@Context HttpServletRequest req,JsonNode jsonNode) throws InterruptedException {
+    @RequestMapping(path = "removeValue",method = RequestMethod.POST)
+     public Message removeValue( HttpServletRequest req) throws InterruptedException {
         ContextID contextID = new PersistenceContextID();
         contextID.setContextId("84716");
         ContextKey contextKey = new PersistenceContextKey();
@@ -196,9 +184,8 @@ public class ContextRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob,"");
     }
 
-    @POST
-    @Path("removeAllValue")
-    public Response removeAllValue(@Context HttpServletRequest req, JsonNode jsonNode) throws InterruptedException {
+    @RequestMapping(path = "removeAllValue",method = RequestMethod.POST)
+     public Message removeAllValue( HttpServletRequest req) throws InterruptedException {
         ContextID contextID = new PersistenceContextID();
         contextID.setContextId("84716");
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVEALL, contextID);

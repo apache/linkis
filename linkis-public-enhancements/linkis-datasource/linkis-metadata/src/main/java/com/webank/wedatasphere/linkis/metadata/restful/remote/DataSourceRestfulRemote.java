@@ -17,32 +17,32 @@
 package com.webank.wedatasphere.linkis.metadata.restful.remote;
 
 import com.webank.wedatasphere.linkis.metadata.util.Constants;
+import com.webank.wedatasphere.linkis.server.Message;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 
 @FeignClient(name = Constants.APPLICATION_NAME)
 public interface DataSourceRestfulRemote {
 
     @GetMapping("/api/datasource/dbs")
-    public Response queryDatabaseInfo(HttpServletRequest req);
+    public Message queryDatabaseInfo(HttpServletRequest req);
 
     @GetMapping("/api/datasource/all")
-    public Response queryDbsWithTables(HttpServletRequest req);
+    public Message queryDbsWithTables(HttpServletRequest req);
 
     @GetMapping("/api/datasource/tables")
-    public Response queryTables(@RequestParam("database") String database, HttpServletRequest req);
+    public Message queryTables(@RequestParam("database") String database, HttpServletRequest req);
 
     @GetMapping("/api/datasource/columns")
-    public Response queryTableMeta(@RequestParam("database") String database, @RequestParam("table") String table, HttpServletRequest req);
+    public Message queryTableMeta(@RequestParam("database") String database, @RequestParam("table") String table, HttpServletRequest req);
 
     @GetMapping("/api/datasource/size")
-    public Response sizeOf(@RequestParam("database") String database, @RequestParam("table") String table, @RequestParam("partition") String partition, HttpServletRequest req);
+    public Message sizeOf(@RequestParam("database") String database, @RequestParam("table") String table, @RequestParam("partition") String partition, HttpServletRequest req);
 
     @GetMapping("/api/datasource/partitions")
-    public Response partitions(@RequestParam("database") String database, @RequestParam("table") String table, HttpServletRequest req);
+    public Message partitions(@RequestParam("database") String database, @RequestParam("table") String table, HttpServletRequest req);
 
 }

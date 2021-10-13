@@ -17,9 +17,7 @@ package com.webank.wedatasphere.linkis.bml.restful;
 
 import com.webank.wedatasphere.linkis.bml.Entity.DownloadModel;
 import com.webank.wedatasphere.linkis.bml.Entity.ResourceTask;
-import com.webank.wedatasphere.linkis.bml.common.BmlPermissionDeniedException;
 import com.webank.wedatasphere.linkis.bml.common.BmlProjectNoEditException;
-import com.webank.wedatasphere.linkis.bml.common.BmlResourceExpiredException;
 import com.webank.wedatasphere.linkis.bml.common.BmlServerParaErrorException;
 import com.webank.wedatasphere.linkis.bml.conf.BmlServerConfiguration;
 import com.webank.wedatasphere.linkis.bml.service.*;
@@ -29,29 +27,26 @@ import com.webank.wedatasphere.linkis.server.Message;
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonNode;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.FormDataParam;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.*;
 
 import static com.webank.wedatasphere.linkis.bml.restful.BmlRestfulApi.URL_PREFIX;
 
-@Path("bml")
-@Component
+@RequestMapping(path = "/bml")
+@RestController
 public class BmlProjectRestful {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BmlProjectRestful.class);
@@ -76,11 +71,10 @@ public class BmlProjectRestful {
     @Autowired
     private DownloadService downloadService;
 
-    @POST
-    @Path("createBmlProject")
-    public Response createBmlProject(@Context HttpServletRequest request, JsonNode jsonNode){
+    @RequestMapping(path = "createBmlProject",method = RequestMethod.POST)
+    public Message createBmlProject(HttpServletRequest request,@RequestBody JsonNode jsonNode){
         String username = SecurityFilter.getLoginUsername(request);
-        String projectName = jsonNode.get(PROJECT_NAME_STR).getTextValue();
+        String projectName = jsonNode.get(PROJECT_NAME_STR).textValue();
         LOGGER.info("{} begins to create a project {} in bml", username, projectName);
         JsonNode editUserNode = jsonNode.get(EDIT_USERS_STR);
         JsonNode accessUserNode = jsonNode.get(ACCESS_USERS_STR);
@@ -88,29 +82,29 @@ public class BmlProjectRestful {
         List<String> editUsers = new ArrayList<>();
         if (editUserNode.isArray()){
             for (JsonNode node : editUserNode) {
-                editUsers.add(node.getTextValue());
+                editUsers.add(node.textValue());
             }
         }
         if (accessUserNode.isArray()){
             for (JsonNode node : accessUserNode) {
-                accessUsers.add(node.getTextValue());
+                accessUsers.add(node.textValue());
             }
         }
         bmlProjectService.createBmlProject(projectName, username, editUsers, accessUsers);
 
-        return Message.messageToResponse(Message.ok("success to create project(创建工程ok)"));
+        return Message.ok("success to create project(创建工程ok)");
     }
 
-    @POST
-    @Path("uploadShareResource")
-    public Response uploadShareResource(@Context HttpServletRequest request, @FormDataParam("system") String system,
-                                        @FormDataParam("resourceHeader") String resourceHeader,
-                                        @FormDataParam("isExpire") String isExpire,
-                                        @FormDataParam("expireType") String expireType,
-                                        @FormDataParam("expireTime") String expireTime,
-                                        @FormDataParam("maxVersion") int maxVersion,
-                                        @FormDataParam("projectName") String projectName,
-                                        FormDataMultiPart form) throws ErrorException{
+    @RequestMapping(path = "uploadShareResource",method = RequestMethod.POST)
+    public Message uploadShareResource(HttpServletRequest request, 
+                                        @RequestParam("system") String system,
+                                        @RequestParam("resourceHeader") String resourceHeader,
+                                        @RequestParam("isExpire") String isExpire,
+                                        @RequestParam("expireType") String expireType,
+                                        @RequestParam("expireTime") String expireTime,
+                                        @RequestParam("maxVersion") int maxVersion,
+                                        @RequestParam("projectName") String projectName,
+                                        @RequestParam("file") List<MultipartFile> files) throws ErrorException{
         String username = SecurityFilter.getLoginUsername(request);
         Message message;
         try{
@@ -128,7 +122,7 @@ public class BmlProjectRestful {
             properties.put("maxVersion", maxVersion);
             String clientIp = HttpRequestHelper.getIp(request);
             properties.put("clientIp", clientIp);
-            ResourceTask resourceTask = taskService.createUploadTask(form, DEFAULT_PROXY_USER, properties);
+            ResourceTask resourceTask = taskService.createUploadTask(files, DEFAULT_PROXY_USER, properties);
             bmlProjectService.addProjectResource(resourceTask.getResourceId(), projectName);
             message = Message.ok("The task of submitting and uploading resources was successful(提交上传资源任务成功)");
             message.data("resourceId", resourceTask.getResourceId());
@@ -141,18 +135,17 @@ public class BmlProjectRestful {
             exception.initCause(e);
             throw exception;
         }
-        return Message.messageToResponse(message);
+        return message;
 
     }
 
 
 
 
-    @POST
-    @Path("updateShareResource")
-    public Response updateShareResource(@Context HttpServletRequest request,
-                                        @FormDataParam("resourceId") String resourceId,
-                                        FormDataMultiPart form)throws ErrorException{
+    @RequestMapping(path = "updateShareResource",method = RequestMethod.POST)
+    public Message updateShareResource(HttpServletRequest request,
+                                        @RequestParam("resourceId") String resourceId,
+                                        @RequestParam("file") MultipartFile file)throws ErrorException{
         String username = SecurityFilter.getLoginUsername(request);
         if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
             LOGGER.error("the error resourceId  is {} ", resourceId);
@@ -175,7 +168,7 @@ public class BmlProjectRestful {
             properties.put("clientIp", clientIp);
             ResourceTask resourceTask = null;
             synchronized (resourceId.intern()){
-                resourceTask = taskService.createUpdateTask(resourceId, DEFAULT_PROXY_USER, form, properties);
+                resourceTask = taskService.createUpdateTask(resourceId, DEFAULT_PROXY_USER, file, properties);
             }
             message = Message.ok("The update resource task was submitted successfully(提交更新资源任务成功)");
             message.data("resourceId",resourceId).data("version", resourceTask.getVersion()).data("taskId", resourceTask.getId());
@@ -189,15 +182,14 @@ public class BmlProjectRestful {
             throw exception;
         }
         LOGGER.info("User {} ends updating resources {} (用户 {} 结束更新资源 {} )", username, resourceId, username, resourceId);
-        return Message.messageToResponse(message);
+        return message;
     }
 
-    @GET
-    @Path("downloadShareResource")
-    public Response downloadShareResource(@QueryParam("resourceId") String resourceId,
-                             @QueryParam("version") String version,
-                             @Context HttpServletResponse resp,
-                             @Context HttpServletRequest request) throws IOException, ErrorException {
+    @RequestMapping(path = "downloadShareResource",method = RequestMethod.GET)
+    public Message downloadShareResource(@RequestParam(value="resourceId",required=false)  String resourceId,
+                             @RequestParam(value="version",required=false)  String version,
+                             HttpServletResponse resp,
+                             HttpServletRequest request) throws IOException, ErrorException {
         String user = RestfulUtils.getUserName(request);
         Message message = null;
         resp.setContentType("application/x-msdownload");
@@ -244,47 +236,44 @@ public class BmlProjectRestful {
             IOUtils.closeQuietly(resp.getOutputStream());
         }
         LOGGER.info("{} Download resource {} successfully ({} 下载资源 {} 成功)", user, resourceId, user, resourceId);
-        return Message.messageToResponse(message);
+        return message;
     }
 
 
 
-    @GET
-    @Path("getProjectInfo")
-    public Response getProjectInfo(@Context HttpServletRequest request, @QueryParam("projectName") String projectName){
-        return Message.messageToResponse(Message.ok("Obtain project information successfully (获取工程信息成功)"));
+    @RequestMapping(path = "getProjectInfo",method = RequestMethod.GET)
+    public Message getProjectInfo(HttpServletRequest request, @RequestParam(value="projectName",required=false)  String projectName){
+        return Message.ok("Obtain project information successfully (获取工程信息成功)");
     }
 
 
-    @POST
-    @Path("attachResourceAndProject")
-    public Response attachResourceAndProject(@Context HttpServletRequest request, JsonNode jsonNode) throws ErrorException{
+    @RequestMapping(path = "attachResourceAndProject",method = RequestMethod.POST)
+    public Message attachResourceAndProject(HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ErrorException{
         String username = SecurityFilter.getLoginUsername(request);
-        String projectName = jsonNode.get(PROJECT_NAME_STR).getTextValue();
-        String resourceId = jsonNode.get("resourceId").getTextValue();
+        String projectName = jsonNode.get(PROJECT_NAME_STR).textValue();
+        String resourceId = jsonNode.get("resourceId").textValue();
         LOGGER.info("begin to attach {}  and {}", projectName, username);
         bmlProjectService.attach(projectName, resourceId);
-        return Message.messageToResponse(Message.ok("attach resource and project ok"));
+        return Message.ok("attach resource and project ok");
     }
 
-    @POST
-    @Path("updateProjectUsers")
-    public Response updateProjectUsers(@Context HttpServletRequest request, JsonNode jsonNode) throws ErrorException{
+    @RequestMapping(path = "updateProjectUsers",method = RequestMethod.POST)
+    public Message updateProjectUsers(HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ErrorException{
         String username = SecurityFilter.getLoginUsername(request);
-        String projectName = jsonNode.get("projectName").getTextValue();
+        String projectName = jsonNode.get("projectName").textValue();
         LOGGER.info("{} begins to update project users for {}", username, projectName);
         List<String> editUsers = new ArrayList<>();
         List<String> accessUsers = new ArrayList<>();
         JsonNode editUsersNode = jsonNode.get("editUsers");
         if (editUsersNode.isArray()){
-            editUsersNode.forEach(node -> editUsers.add(node.getTextValue()));
+            editUsersNode.forEach(node -> editUsers.add(node.textValue()));
         }
         JsonNode accessUsersNode = jsonNode.get("accessUsers");
         if (accessUsersNode.isArray()){
-            accessUsersNode.forEach(node -> accessUsers.add(node.getTextValue()));
+            accessUsersNode.forEach(node -> accessUsers.add(node.textValue()));
         }
         bmlProjectService.updateProjectUsers(username, projectName, editUsers, accessUsers);
-        return Message.messageToResponse(Message.ok("Updated project related user success(更新工程的相关用户成功)"));
+        return Message.ok("Updated project related user success(更新工程的相关用户成功)");
     }
 
 

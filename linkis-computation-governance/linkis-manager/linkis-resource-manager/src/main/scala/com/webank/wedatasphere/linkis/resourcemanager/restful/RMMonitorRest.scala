@@ -21,6 +21,7 @@ import java.util
 import java.util.concurrent.TimeUnit
 import java.util.{Comparator, TimeZone}
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.collect.Lists
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
@@ -43,24 +44,21 @@ import com.webank.wedatasphere.linkis.resourcemanager.external.service.ExternalR
 import com.webank.wedatasphere.linkis.resourcemanager.external.yarn.{YarnAppInfo, YarnResourceIdentifier}
 import com.webank.wedatasphere.linkis.resourcemanager.service.LabelResourceService
 import com.webank.wedatasphere.linkis.resourcemanager.utils.{RMConfiguration, RMUtils, UserConfiguration}
-import com.webank.wedatasphere.linkis.server.{BDPJettyServerHelper, Message}
+import com.webank.wedatasphere.linkis.server.Message
 import com.webank.wedatasphere.linkis.server.security.SecurityFilter
 import javax.servlet.http.HttpServletRequest
-import javax.ws.rs.core.{Context, Response}
-import javax.ws.rs.{POST, Path}
-import org.codehaus.jackson.map.ObjectMapper
 import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization.write
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
+import org.springframework.web.bind.annotation.{RequestBody, RequestMapping, RequestMethod, RestController}
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 
-@Path("/linkisManager/rm")
-@Component
+@RestController
+@RequestMapping(path = Array("/linkisManager/rm"))
 class RMMonitorRest extends Logging {
 
   implicit val formats = DefaultFormats + ResourceSerializer + NodeResourceSerializer
@@ -96,9 +94,8 @@ class RMMonitorRest extends Logging {
 
   def appendMessageData(message: Message, key: String, value: AnyRef) = message.data(key, mapper.readTree(write(value)))
 
-  @POST
-  @Path("applicationlist")
-  def getApplicationList(@Context request: HttpServletRequest, param: util.Map[String, AnyRef]): Response = {
+  @RequestMapping(path =Array("applicationlist"),method = Array(RequestMethod.POST))
+  def getApplicationList(request: HttpServletRequest,@RequestBody param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
     val userName = SecurityFilter.getLoginUsername(request)
     val userCreator = param.get("userCreator").asInstanceOf[String]
@@ -149,9 +146,8 @@ class RMMonitorRest extends Logging {
     message
   }
 
-  @POST
-  @Path("userresources")
-  def getUserResource(@Context request: HttpServletRequest, param: util.Map[String, AnyRef]): Response = {
+  @RequestMapping(path = Array("userresources"),method =Array( RequestMethod.POST))
+  def getUserResource(request: HttpServletRequest,@RequestBody(required=false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
     val userName = SecurityFilter.getLoginUsername(request)
     var nodes = getEngineNodes(userName, true)
@@ -205,9 +201,8 @@ class RMMonitorRest extends Logging {
     "(" + engineTypeLabel.getEngineType + "," + engineTypeLabel.getVersion + ")"
   }
 
-  @POST
-  @Path("engines")
-  def getEngines(@Context request: HttpServletRequest, param: util.Map[String, AnyRef]): Response = {
+  @RequestMapping(path = Array("engines"),method = Array(RequestMethod.POST))
+  def getEngines(request: HttpServletRequest, @RequestBody(required=false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
     val userName = SecurityFilter.getLoginUsername(request)
     val nodes = getEngineNodes(userName, true)
@@ -243,9 +238,8 @@ class RMMonitorRest extends Logging {
    * @param param
    * @return
    */
-  @POST
-  @Path("enginekill")
-  def killEngine(@Context request: HttpServletRequest, param: util.ArrayList[util.Map[String, AnyRef]]): Response = {
+  @RequestMapping(path = Array("enginekill"),method = Array(RequestMethod.POST))
+  def killEngine(request: HttpServletRequest, @RequestBody param: util.ArrayList[util.Map[String, AnyRef]]): Message = {
     val userName = SecurityFilter.getLoginUsername(request)
     for (engineParam <- param) {
       val moduleName = engineParam.get("applicationName").asInstanceOf[String]
@@ -259,9 +253,8 @@ class RMMonitorRest extends Logging {
   }
 
 
-  @POST
-  @Path("queueresources")
-  def getQueueResource(@Context request: HttpServletRequest, param: util.Map[String, AnyRef]): Response = {
+  @RequestMapping(path = Array("queueresources"),method = Array(RequestMethod.POST))
+  def getQueueResource(request: HttpServletRequest, @RequestBody param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
     val yarnIdentifier = new YarnResourceIdentifier(param.get("queuename").asInstanceOf[String])
     val clusterLabel = labelFactory.createLabel(classOf[ClusterLabel])
@@ -375,9 +368,8 @@ class RMMonitorRest extends Logging {
     }.filter(_ != null).toArray
   }
 
-  @POST
-  @Path("queues")
-  def getQueues(@Context request: HttpServletRequest, param: util.Map[String, AnyRef]): Response = {
+  @RequestMapping(path = Array("queues"),method =Array(RequestMethod.POST))
+  def getQueues(request: HttpServletRequest,@RequestBody(required=false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok()
     val userName = SecurityFilter.getLoginUsername(request)
     val clusters = new mutable.ArrayBuffer[Any]()

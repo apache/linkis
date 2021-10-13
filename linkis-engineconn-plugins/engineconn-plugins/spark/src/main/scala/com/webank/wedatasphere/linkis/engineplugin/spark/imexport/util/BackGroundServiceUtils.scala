@@ -35,8 +35,8 @@ import scala.util.control._
   */
 object BackGroundServiceUtils extends Logging {
 
-  private val CODE_STORE_PREFIX = CommonVars("wedatasphere.linkis.bgservice.store.prefix", "hdfs:///tmp/bdp-ide/")
-  private val CODE_STORE_SUFFIX = CommonVars("wedatasphere.linkis.bgservice.store.suffix", "")
+  private val CODE_STORE_PREFIX = CommonVars("linkis.bgservice.store.prefix", "hdfs:///tmp/bdp-ide/")
+  private val CODE_STORE_SUFFIX = CommonVars("linkis.bgservice.store.suffix", "")
   private val CHARSET = "utf-8"
   private val CODE_SPLIT = ";"
   private val LENGTH_SPLIT = "#"

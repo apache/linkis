@@ -63,7 +63,7 @@ object EntranceConfiguration {
 
   val DEFAULT_CREATE_SERVICE = CommonVars("wds.linkis.default.create.service", "default_create_service")
 
-  val LOG_WARN_EXCLUDE = CommonVars("wds.linkis.warn.log.exclude", "org.apache,hive.ql,hive.metastore,com.netflix,com.webank.wedatasphere")
+  val LOG_WARN_EXCLUDE = CommonVars("wds.linkis.warn.log.exclude", "org.apache,hive.ql,hive.metastore,com.netflix,org.apache.linkis")
 
   val CLEAR_LOG = CommonVars("wds.linkis.log.clear", false)
 
@@ -71,7 +71,7 @@ object EntranceConfiguration {
     * LOG_EXCLUDE is used to remove the log of the framework log, such as hive spark spring, so that it is not pushed to the front end through websocket.
     * LOG_EXCLUDE 是用来进行把框架日志，比如hive spark spring等日志进行剔除，不让其通过websocket进行推送到前端
     */
-  val LOG_EXCLUDE = CommonVars("wds.linkis.log.exclude", "org.apache,hive.ql,hive.metastore,com.netflix,com.webank.wedatasphere,com.webank")
+  val LOG_EXCLUDE = CommonVars("wds.linkis.log.exclude", "org.apache,hive.ql,hive.metastore,com.netflix,org.apache.linkis,com.webank")
 
   /**
     * wds.linkis.dwc.instance is a parameter used to control the number of engines each user starts.

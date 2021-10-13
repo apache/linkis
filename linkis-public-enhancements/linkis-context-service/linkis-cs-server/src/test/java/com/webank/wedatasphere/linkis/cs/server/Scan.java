@@ -21,7 +21,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 
-@ComponentScan(value = "com.webank.wedatasphere", excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = DataWorkCloudApplication.class))
+@ComponentScan(value = "org.apache.linkis", excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = DataWorkCloudApplication.class))
 @Configuration
 public class Scan {
 

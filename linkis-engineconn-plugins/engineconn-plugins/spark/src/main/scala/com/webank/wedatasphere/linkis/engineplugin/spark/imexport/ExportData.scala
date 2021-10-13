@@ -61,7 +61,7 @@ object ExportData extends Logging {
     if (isCsv) {
       CsvRelation.saveDFToCsv(spark, df, path, hasHeader, isOverwrite,option = Map("fieldDelimiter" -> fieldDelimiter,"exportNullValue" ->nullValue))
     } else {
-      df.write.format("com.webank.wedatasphere.spark.excel")
+      df.write.format("org.apache.linkis.spark.excel")
         .option("sheetName", sheetName)
         .option("useHeader", hasHeader)
         .option("exportNullValue",nullValue)

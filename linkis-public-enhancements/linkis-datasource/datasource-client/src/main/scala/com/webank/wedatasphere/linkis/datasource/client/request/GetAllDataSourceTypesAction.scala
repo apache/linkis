@@ -3,7 +3,7 @@ package com.webank.wedatasphere.linkis.datasource.client.request
 import com.webank.wedatasphere.linkis.httpclient.request.GetAction
 
 class GetAllDataSourceTypesAction extends GetAction with DataSourceAction {
-  override def suffixURLs: Array[String] = Array("datasource", "type", "all")
+  override def suffixURLs: Array[String] = Array("datasources", "type", "all")
 
   private var user:String = _
 

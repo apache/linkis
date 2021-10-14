@@ -21,7 +21,6 @@
         <artifactId>linkis-public-enhancements</artifactId>
         <groupId>com.webank.wedatasphere.linkis</groupId>
         <version>1.0.2</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>linkis-datasource-client</artifactId>

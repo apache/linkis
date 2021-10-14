@@ -6,7 +6,7 @@ import com.webank.wedatasphere.linkis.httpclient.request.GetAction
 class GetInfoByDataSourceIdAction extends GetAction with DataSourceAction {
   private var dataSourceId: Long = _
 
-  override def suffixURLs: Array[String] = Array("datasource", "info", dataSourceId.toString)
+  override def suffixURLs: Array[String] = Array("datasourcemanager", "info", dataSourceId.toString)
 
   private var user:String = _
 

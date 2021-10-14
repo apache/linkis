@@ -5,7 +5,7 @@ import com.webank.wedatasphere.linkis.datasource.client.exception.DataSourceClie
 import com.webank.wedatasphere.linkis.httpclient.request.PutAction
 
 class ExpireDataSourceAction extends PutAction with DataSourceAction {
-  override def getRequestPayload: String = _
+  override def getRequestPayload: String = ""
 
   private var user: String = _
 
@@ -15,7 +15,7 @@ class ExpireDataSourceAction extends PutAction with DataSourceAction {
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array("datasource", "info",dataSourceId, "expire")
+  override def suffixURLs: Array[String] = Array("datasourcemanager", "info",dataSourceId, "expire")
 }
 object ExpireDataSourceAction{
   def builder(): Builder = new Builder

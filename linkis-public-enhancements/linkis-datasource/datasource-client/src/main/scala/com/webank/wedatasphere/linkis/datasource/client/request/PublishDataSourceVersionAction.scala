@@ -14,7 +14,7 @@ class PublishDataSourceVersionAction extends POSTAction with DataSourceAction{
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array("datasource", "publish", dataSourceId, versionId)
+  override def suffixURLs: Array[String] = Array("datasourcemanager", "publish", dataSourceId, versionId)
 }
 object PublishDataSourceVersionAction {
   def builder(): Builder = new Builder

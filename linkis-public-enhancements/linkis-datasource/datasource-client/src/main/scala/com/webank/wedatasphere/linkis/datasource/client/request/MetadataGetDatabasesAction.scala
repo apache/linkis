@@ -6,7 +6,7 @@ import com.webank.wedatasphere.linkis.httpclient.request.GetAction
 class MetadataGetDatabasesAction extends GetAction with DataSourceAction {
   private var dataSourceId: Long = _
 
-  override def suffixURLs: Array[String] = Array("metadata", "dbs", dataSourceId.toString)
+  override def suffixURLs: Array[String] = Array("metadatamanager", "dbs", dataSourceId.toString)
 
   private var user:String = _
 

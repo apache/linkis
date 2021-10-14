@@ -8,7 +8,7 @@ class MetadataGetTablePropsAction extends GetAction with DataSourceAction {
   private var database: String = _
   private var table: String = _
 
-  override def suffixURLs: Array[String] = Array("metadata", "props", dataSourceId.toString, "db", database, "table", table)
+  override def suffixURLs: Array[String] = Array("metadatamanager", "props", dataSourceId.toString, "db", database, "table", table)
 
   private var user:String = _
 

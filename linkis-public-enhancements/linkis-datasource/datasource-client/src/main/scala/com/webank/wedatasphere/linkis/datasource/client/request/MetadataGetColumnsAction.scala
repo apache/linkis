@@ -8,7 +8,7 @@ class MetadataGetColumnsAction extends GetAction with DataSourceAction {
   private var database: String = _
   private var table: String = _
 
-  override def suffixURLs: Array[String] = Array("metadata", "columns", dataSourceId.toString, "db", database, "table", table)
+  override def suffixURLs: Array[String] = Array("metadatamanager", "columns", dataSourceId.toString, "db", database, "table", table)
 
   private var user:String = _
 

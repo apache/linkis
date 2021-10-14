@@ -15,7 +15,7 @@ class CreateDataSourceAction extends POSTAction with DataSourceAction{
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array("datasource", "info", "json")
+  override def suffixURLs: Array[String] = Array("datasourcemanager", "info", "json")
 }
 object CreateDataSourceAction {
   def builder(): Builder = new Builder

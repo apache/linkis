@@ -112,7 +112,7 @@ object LoadData  {
 
     val df = if (".xlsx".equalsIgnoreCase(suffix)) {
      // info(dateFormatsJson.toString()+ "----------")
-      spark.read.format("org.apache.linkis.spark.excel")
+      spark.read.format("com.webank.wedatasphere.spark.excel")
         .option("useHeader", hasHeader)
         .option("maxRowsInMemory", 100)
         .option("sheetName", sheetName)

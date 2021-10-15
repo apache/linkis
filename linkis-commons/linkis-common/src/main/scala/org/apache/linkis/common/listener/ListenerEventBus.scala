@@ -25,7 +25,7 @@ import org.apache.commons.lang.time.DateFormatUtils
 import scala.util.control.NonFatal
 
 
-private[linkis] trait ListenerBus[L <: EventListener, E <: Event] extends Logging {
+trait ListenerBus[L <: EventListener, E <: Event] extends Logging {
   val self = this
 
   private val listeners = new CopyOnWriteArrayList[L]

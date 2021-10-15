@@ -10,32 +10,32 @@ Thank you very much for contributing to the Linkis project! Before participating
 
 ## 1. Contribution category
 
-### 1.1 Bug feedback and repair
+### 1.1 Bug feedback and fixes
 
-We recommend that whether it is a bug feedback or a fix, an issue is first created to describe the bug's status in detail, so that the community can find and review the problem and code through the issue record. Bug feedback Issues usually need to include **complete description of the bug information** and **reproducible scenarios** so that the community can quickly locate the cause of the bug and fix it. All open issues that contain the `#bug` tag need to be fixed.
+We recommend that whether it is a bug feedback or a fix, an issue is first created to describe the bug in detail, so that the community can find and review the problem and code through the issue record. Bug feedback Issues usually need to include **complete description of the bug information** and **reproducible scenarios** so that the community can quickly locate the cause of the bug and fix it. All open issues that contain the `#bug` tag need to be fixed.
 
 ### 1.2 Functional communication, implementation, refactoring
 
-In the communication process, a detailed description of the details, mechanisms and usage scenarios of the new function (or refactoring) can promote it to be implemented better and faster (including test cases and codes, and CI/CD related work). **If you plan to implement a major feature (or refactoring), be sure to communicate with the core development team through Issue or other means** so that everyone can promote it in the most efficient way. Issues opened with the label of `#feature` are all new features that need to be implemented, and issues opened with the label of `#enhancement` are all features that need to be improved and refactored.
+In the communication process, a detailed description, mechanisms and usage scenarios of the new function (or refactoring) can promote it to be implemented better and faster (including test cases and codes, and CI/CD related work). **If you plan to implement a major feature (or refactoring), be sure to communicate with the core development team through Issue or other means** so that everyone can promote it in the most efficient way. Issues opened with the label of `#feature` are all new features that need to be implemented, and issues opened with the label of `#enhancement` are all features that need to be improved and refactored.
 
 ### 1.3 Issue Q&A
 
-Helping to answer the usage questions in the Issue is a very valuable way to contribute to the Linkis community; there will always be new users in the community that will keep coming in. While helping new users, you can also show your expertise.
+Helping answering the questions in the Linkis community is a very valuable way to contribute; there will always be new users in the community that will keep coming in. While helping new users, you can also show your expertise.
 
-### 1.4 Documentation improvements
+### 1.4 Documentation Refinements
 
-The Linkis document is located at [Linkis-Doc](https://github.com/WeBankFinTech/Linkis-Doc), and the supplement of the document is also crucial to the development of Linkis.
+You can find linkis documentations at [Linkis-Doc](https://github.com/WeBankFinTech/Linkis-Doc), and the supplement of the document is also crucial to the development of Linkis.
 
 ### 1.5 Other
 Including participating in and helping to organize community exchanges, community operation activities, etc., and other activities that can help the Linkis project and the community.
 
 ---
 
-## 2. Contribution process
+## 2. How to Contribution
 
 ### 2.1 Branch structure
 
-The Linkis source code may produce some temporary branches, but the only ones that are really meaningful are the following three branches:
+There are many branches,including temporary branches,in Linkis repository,but only three of them matter:
 
 - master: The source code of the last stable release, and occasionally hotfix submissions;
 - release-*: stable release version;*
@@ -102,8 +102,8 @@ The user configuration is in the project root directory /config/, the project st
 
 ##### 2.2.1.5 Packaging
 
-1. To open a complete release package, you need to modify the relevant version information in /assembly/src/main/assembly/assembly.xml in the root directory, and then execute: `mvn clean package` in the root directory;
-2. Open the package of each module and execute `mvn clean package` directly in the module directory.
+1. To obtain a complete release package, you need to modify the relevant version information in /assembly/src/main/assembly/assembly.xml in the root directory, and then execute: `mvn clean package` in the root directory;
+2. To obtain the package of each module, simple execute `mvn clean package` in the module directory.
 
 ### 2.3 Issue submission guidelines
 - If you still don’t know how to initiate a PR to an open source project, please refer to [About issues](https://docs.github.com/en/github/managing-your-work-on-github/about-issues)
@@ -151,15 +151,15 @@ Before contributing code, you can find out what kind of submissions are popular 
 
 ---
 
-## Three, advanced contribution
+##3, Outstanding Contributor
 
 ### 3.1 About Committers (Collaborators)
 
 #### 3.1.1 How to become Committer
 
-If you have submitted a valuable PR to Linkis and have been merged, or contributed continuously for more than half a year, and have led the release of at least one version, you can find a PMC of the Linkis project through the official WeChat group, if he is willing to nominate you as a committer , And are willing to state your contribution to all PMC and Committer, then a vote will be initiated next; PMC and other Committers will vote together to decide whether to allow you to join, if you get enough votes, you will become Committer of the Linkis project .
+If you have submitted a valuable PR to Linkis and have been merged, or contributed continuously for more than half a year, and have led the release of at least one version, you can find a PMC of the Linkis project through the official WeChat group, if he is willing to nominate you as a committer , And are willing to state your contribution to all PMC and Committer, then a vote will be initiated; PMC and other Committers will vote together to decide whether to allow you to join, if you get enough votes, you will become Committer of the Linkis project .
 
-#### 3.1.2 Committer rights
+#### 3.1.2 Committer's
 
 - You can join the official developer WeChat group to participate in discussions and formulate Linkis development plans
 - Can manage Issues, including closing and adding tags
@@ -171,7 +171,7 @@ If you have submitted a valuable PR to Linkis and have been merged, or contribut
 
 #### 3.2.1 How to become a Committee member
 
-If you are the Committer of the Linkis project, and all your contributions have been approved by other Committee members, you can apply to become a member of the Linkis Committee, and other Committee members will vote together to decide whether to allow you to join. If you pass unanimously, you will Become a member of the Linkis Committee.
+If you are the Committer of the Linkis project, and all your contributions have been recognized by other Committee members, you can apply to become a member of the Linkis Committee, and other Committee members will vote together to decide whether to allow you to join. If you pass unanimously, you will become a member of the Linkis Committee.
 
 #### 3.2.2 Rights of Committee members
 

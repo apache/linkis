@@ -8,7 +8,7 @@ import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 import java.util
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/datasourcemanager/(\\S+)/versions")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/datasourcesmanager/(\\S+)/versions")
 class GetDataSourceVersionsResult extends DWSResult{
   @BeanProperty var versions: util.List[java.util.Map[String, Any]] = _
 

@@ -5,7 +5,7 @@ import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/datasourcemanager/(\\S+)/connect_params")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/datasourcesmanager/(\\S+)/connect_params")
 class GetConnectParamsByDataSourceIdResult extends DWSResult{
   @BeanProperty var connectParams: java.util.Map[String, Any] = _
 }

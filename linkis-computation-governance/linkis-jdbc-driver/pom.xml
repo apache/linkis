@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>linkis</artifactId>
-        <groupId>com.webank.wedatasphere.linkis</groupId>
+        <groupId>org.apache.linkis</groupId>
         <version>1.0.3</version>
 <!--        <relativePath>../../pom.xml</relativePath>-->
     </parent>
@@ -27,7 +27,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-computation-client</artifactId>
             <version>${linkis.version}</version>
         </dependency>
@@ -76,7 +76,7 @@
                     <archive>
                         <manifest>
                             <!--这里指定要运行的main类-->
-                            <mainClass>com.webank.wedatasphere.linkis.ujes.jdbc.UJESSQLDriverMain</mainClass>
+                            <mainClass>org.apache.linkis.ujes.jdbc.UJESSQLDriverMain</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

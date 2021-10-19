@@ -11,7 +11,7 @@ eureka:
       defaultZone: http://127.0.0.1:20303/eureka/
   instance:
     metadata-map:
-      test: wedatasphere
+      test: linkis
 
 management:
   endpoints:

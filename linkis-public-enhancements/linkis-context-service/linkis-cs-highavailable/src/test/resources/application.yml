@@ -11,7 +11,7 @@ eureka:
     registry-fetch-interval-seconds: 5
   instance:
     metadata-map:
-      test: wedatasphere
+      test: apache
 
 management:
   endpoints:

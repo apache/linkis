@@ -116,28 +116,9 @@ class PythonContext(object):
     # If we don't have matplotlib installed don't bother continuing
     try:
       import matplotlib
+      matplotlib.use('Agg')
     except ImportError:
       return
-    # Make sure custom backends are available in the PYTHONPATH
-    rootdir = os.environ.get('ZEPPELIN_HOME', os.getcwd())
-    mpl_path = os.path.join(rootdir, 'interpreter', 'lib', 'python')
-    if mpl_path not in sys.path:
-      sys.path.append(mpl_path)
-
-    # Finally check if backend exists, and if so configure as appropriate
-    try:
-      matplotlib.use('module://backend_zinline')
-      import backend_zinline
-
-      # Everything looks good so make config assuming that we are using
-      # an inline backend
-      self.configure_mpl(width=600, height=400, dpi=72,
-                         fontsize=10, interactive=True, format='png')
-    except ImportError:
-      # Fall back to Agg if no custom backend installed
-      matplotlib.use('Agg')
-      warnings.warn("Unable to load inline matplotlib backend, "
-                    "falling back to Agg")
 
 
 def handler_stop_signals(sig, frame):

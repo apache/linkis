@@ -19,7 +19,7 @@
 
     <parent>
         <artifactId>linkis</artifactId>
-        <groupId>com.webank.wedatasphere.linkis</groupId>
+        <groupId>org.apache.linkis</groupId>
         <version>1.0.3</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
@@ -28,7 +28,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-spring-cloud-gateway</artifactId>
             <version>${linkis.version}</version>
             <exclusions>
@@ -73,14 +73,14 @@
         </dependency>
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-cs-common</artifactId>
             <version>${linkis.version}</version>
         </dependency>
 
         <!-- instance label -->
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-instance-label-server</artifactId>
             <version>${linkis.version}</version>
         </dependency>

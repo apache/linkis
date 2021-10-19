@@ -5,7 +5,7 @@ import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/datasourcesmanager/(\\S+)/(\\S+)/op/connect")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/datasourcemanager/(\\S+)/(\\S+)/op/connect")
 class DataSourceTestConnectResult extends DWSResult{
   @BeanProperty var ok: Boolean = _
 }

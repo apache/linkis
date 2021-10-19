@@ -11,7 +11,7 @@ class GetDataSourceVersionsAction extends GetAction with DataSourceAction {
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array("datasourcesmanager", resourceId, "versions")
+  override def suffixURLs: Array[String] = Array("datasourcemanager", resourceId, "versions")
 }
 object GetDataSourceVersionsAction {
   def builder(): Builder = new Builder

@@ -12,7 +12,7 @@ class DeleteDataSourceAction extends DeleteAction with DataSourceAction  {
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array("datasourcesmanager", "info", resourceId)
+  override def suffixURLs: Array[String] = Array("datasourcemanager", "info", resourceId)
 }
 object DeleteDataSourceAction{
   def builder(): Builder = new Builder

@@ -6,7 +6,7 @@ import com.webank.wedatasphere.linkis.httpclient.request.GetAction
 class GetConnectParamsByDataSourceIdAction extends GetAction with DataSourceAction {
   private var dataSourceId: Long = _
 
-  override def suffixURLs: Array[String] = Array("datasourcesmanager", dataSourceId.toString, "connect_params")
+  override def suffixURLs: Array[String] = Array("datasourcemanager", dataSourceId.toString, "connect_params")
 
   private var user:String = _
 

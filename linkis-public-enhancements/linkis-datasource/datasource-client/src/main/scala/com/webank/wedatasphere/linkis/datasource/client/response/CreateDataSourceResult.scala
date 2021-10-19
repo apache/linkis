@@ -5,7 +5,7 @@ import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/datasourcesmanager/info/json")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/datasourcemanager/info/json")
 class CreateDataSourceResult extends DWSResult{
   @BeanProperty var insert_id: Long = _
 }

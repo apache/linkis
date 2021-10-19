@@ -17,7 +17,7 @@ class UpdateDataSourceAction extends PutAction with DataSourceAction{
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array("datasourcesmanager", "info", dataSourceId, "json")
+  override def suffixURLs: Array[String] = Array("datasourcemanager", "info", dataSourceId, "json")
 }
 object UpdateDataSourceAction {
   def builder(): Builder = new Builder

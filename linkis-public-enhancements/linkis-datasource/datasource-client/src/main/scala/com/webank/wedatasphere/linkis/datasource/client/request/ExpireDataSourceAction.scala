@@ -15,7 +15,7 @@ class ExpireDataSourceAction extends PutAction with DataSourceAction {
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array("datasourcesmanager", "info",dataSourceId, "expire")
+  override def suffixURLs: Array[String] = Array("datasourcemanager", "info",dataSourceId, "expire")
 }
 object ExpireDataSourceAction{
   def builder(): Builder = new Builder

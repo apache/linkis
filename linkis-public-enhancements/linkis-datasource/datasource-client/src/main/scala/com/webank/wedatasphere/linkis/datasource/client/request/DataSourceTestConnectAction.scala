@@ -15,7 +15,7 @@ class DataSourceTestConnectAction private() extends PutAction with DataSourceAct
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array("datasourcesmanager", dataSourceId, version, "op", "connect")
+  override def suffixURLs: Array[String] = Array("datasourcemanager", dataSourceId, version, "op", "connect")
 
   override def getRequestPayload: String = DWSHttpClient.jacksonJson.writeValueAsString(getRequestPayloads)
 }

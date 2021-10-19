@@ -16,7 +16,7 @@ class UpdateDataSourceParameterAction extends POSTAction with DataSourceAction {
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array("datasourcesmanager", "parameter", dataSourceId, "json")
+  override def suffixURLs: Array[String] = Array("datasourcemanager", "parameter", dataSourceId, "json")
 }
 object UpdateDataSourceParameterAction {
   def builder(): Builder = new Builder

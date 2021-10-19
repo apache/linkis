@@ -5,7 +5,7 @@ import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/datasourcesmanager/info/(\\S+)")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/datasourcemanager/info/(\\S+)")
 class DeleteDataSourceResult extends DWSResult{
   @BeanProperty var remove_id: Long = _
 }

@@ -8,5 +8,6 @@ dist/
 
 package-lock.json
 wedatasphere-*.zip
+apache-linkis-*.zip
 ./cn.json
 .env.*

@@ -11,8 +11,8 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>linkis-engineplugin-distcp</artifactId>
     <properties>
-        <hive.version>3.1.2</hive.version>
-        <hadoop.version>3.2.2</hadoop.version>
+        <hive.version>2.3.3</hive.version>
+        <hadoop.version>2.7.2</hadoop.version>
         <mysql.version>5.1.34</mysql.version>
         <distcp.version>${hadoop.version}</distcp.version>
     </properties>

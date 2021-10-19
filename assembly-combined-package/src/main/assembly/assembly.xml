@@ -50,7 +50,7 @@
           </directory>
           <outputDirectory></outputDirectory>
           <includes>
-              <include>wedatasphere-linkis-${linkis.version}-combined-dist.tar.gz</include>
+              <include>apache-linkis-${linkis.version}-combined-dist.tar.gz</include>
           </includes>
           <fileMode>0777</fileMode>
       </fileSet>

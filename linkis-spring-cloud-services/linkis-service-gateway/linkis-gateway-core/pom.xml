@@ -18,14 +18,14 @@
 
     <parent>
         <artifactId>linkis</artifactId>
-        <groupId>com.webank.wedatasphere.linkis</groupId>
+        <groupId>org.apache.linkis</groupId>
         <version>1.0.3</version>
     </parent>
     <artifactId>linkis-gateway-core</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-message-scheduler</artifactId>
             <version>${linkis.version}</version>
             <exclusions>
@@ -83,7 +83,7 @@
 
         <!--linkis-label-common -->
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-label-common</artifactId>
             <version>${linkis.version}</version>
         </dependency>

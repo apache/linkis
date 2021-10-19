@@ -10,7 +10,7 @@ eureka:
       defaultZone: http://${ip}:${port}/eureka/
   instance:
     metadata-map:
-      test: wedatasphere
+      test: linkis
 
 management:
   endpoints:

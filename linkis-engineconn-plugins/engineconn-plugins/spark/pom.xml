@@ -20,7 +20,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>linkis</artifactId>
-        <groupId>com.webank.wedatasphere.linkis</groupId>
+        <groupId>org.apache.linkis</groupId>
         <version>1.0.3</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
@@ -34,7 +34,7 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-engineconn-plugin-core</artifactId>
             <version>${linkis.version}</version>
             <exclusions>
@@ -50,7 +50,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-computation-engineconn</artifactId>
             <version>${linkis.version}</version>
             <exclusions>
@@ -67,7 +67,7 @@
 
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
             <version>${linkis.version}</version>
             <exclusions>
@@ -180,7 +180,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-bml-engine-hook</artifactId>
             <version>${linkis.version}</version>
             <exclusions>

@@ -17,6 +17,7 @@
  */
 package org.apache.linkis.computation.client.operator.impl
 
+import org.apache.linkis.computation.client.once.action.EngineOperateAction
 import org.apache.linkis.computation.client.operator.OnceJobOperator
 
 
@@ -25,8 +26,20 @@ class ApplicationInfoOperator extends OnceJobOperator[ApplicationInfo] {
   override def getName: String = ApplicationInfoOperator.OPERATOR_NAME
 
   override def apply(): ApplicationInfo = {
-    //TODO
-    ApplicationInfo("", "", "")
+
+    val engineOperateAction = EngineOperateAction.newBuilder()
+      .operatorName(getName)
+      .setUser(getUser)
+      .setApplicationName(getServiceInstance.getApplicationName)
+      .setInstance(getServiceInstance.getInstance)
+      .build()
+
+    val result = getLinkisManagerClient.executeEngineOperation(engineOperateAction)
+    ApplicationInfo(
+      result.getAs("applicationId").getOrElse(""),
+      result.getAs("applicationUrl").getOrElse(""),
+      result.getAs("queue").getOrElse("")
+    )
   }
 
 }

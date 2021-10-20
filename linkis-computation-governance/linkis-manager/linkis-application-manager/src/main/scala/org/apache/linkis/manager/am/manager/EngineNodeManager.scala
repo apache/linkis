@@ -21,6 +21,7 @@ package org.apache.linkis.manager.am.manager
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.{EngineNode, ScoreServiceInstance}
+import org.apache.linkis.manager.common.protocol.engine.{EngineOperateRequest, EngineOperateResponse}
 
 
 trait EngineNodeManager {
@@ -69,5 +70,7 @@ trait EngineNodeManager {
   def useEngine(engineNode: EngineNode): EngineNode
 
   def useEngine(engineNode: EngineNode, timeout: Long): EngineNode
+
+  def executeOperation(engineNode: EngineNode, request: EngineOperateRequest): EngineOperateResponse
 
 }

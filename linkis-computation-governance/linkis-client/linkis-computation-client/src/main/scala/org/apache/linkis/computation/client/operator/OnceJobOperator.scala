@@ -23,11 +23,18 @@ import org.apache.linkis.computation.client.once.LinkisManagerClient
 
 trait OnceJobOperator[T] extends Operator[T] {
 
+  private var user: String = _
   private var serviceInstance: ServiceInstance = _
   private var linkisManagerClient: LinkisManagerClient = _
 
+  protected def getUser: String = user
   protected def getServiceInstance: ServiceInstance = serviceInstance
   protected def getLinkisManagerClient: LinkisManagerClient = linkisManagerClient
+
+  def setUser(user: String): this.type = {
+    this.user = user
+    this
+  }
 
   def setServiceInstance(serviceInstance: ServiceInstance): this.type = {
     this.serviceInstance = serviceInstance

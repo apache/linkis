@@ -1,24 +1,23 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-
+ 
 import isEmpty from 'lodash/isEmpty';
 import escapeRegExp from 'lodash/escapeRegExp';
 import tokenTypes from './tokenTypes';
-
 /**
  *
  */
@@ -40,21 +39,16 @@ export default class Tokenizer {
     this.WHITESPACE_REGEX = /^(\s+)/;
     this.NUMBER_REGEX = /^((-\s*)?[0-9]+(\.[0-9]+)?|0x[0-9a-fA-F]+|0b[01]+)\b/;
     this.OPERATOR_REGEX = /^(!=|<>|==|<=|>=|!<|!>|\|\||::|->>|->|~~\*|~~|!~~\*|!~~|~\*|!~\*|!~|.)/;
-
     this.BLOCK_COMMENT_REGEX = /^(\/\*[^]*?(?:\*\/|$))/;
     this.PARAMS_REGEX = cfg.paramsPattern;
     this.LINE_COMMENT_REGEX = this.createLineCommentRegex(cfg.lineCommentTypes);
-
     this.RESERVED_TOPLEVEL_REGEX = this.createReservedWordRegex(cfg.reservedToplevelWords);
     this.RESERVED_NEWLINE_REGEX = this.createReservedWordRegex(cfg.reservedNewlineWords);
     this.RESERVED_PLAIN_REGEX = this.createReservedWordRegex(cfg.reservedWords);
-
     this.WORD_REGEX = this.createWordRegex(cfg.specialWordChars);
     this.STRING_REGEX = this.createStringRegex(cfg.stringTypes);
-
     this.OPEN_PAREN_REGEX = this.createParenRegex(cfg.openParens);
     this.CLOSE_PAREN_REGEX = this.createParenRegex(cfg.closeParens);
-
     this.INDEXED_PLACEHOLDER_REGEX = this.createPlaceholderRegex(cfg.indexedPlaceholderTypes, '[0-9]*');
     this.IDENT_NAMED_PLACEHOLDER_REGEX = this.createPlaceholderRegex(cfg.namedPlaceholderTypes, '[a-zA-Z0-9._$]+');
     this.STRING_NAMED_PLACEHOLDER_REGEX = this.createPlaceholderRegex(
@@ -62,7 +56,6 @@ export default class Tokenizer {
       this.createStringPattern(cfg.stringTypes)
     );
   }
-
   /**
    *
    * @param {*} lineCommentTypes
@@ -71,7 +64,6 @@ export default class Tokenizer {
   createLineCommentRegex(lineCommentTypes) {
     return new RegExp(`^((?:${lineCommentTypes.map((c) => escapeRegExp(c)).join('|')}).*?(?:\n|\r\n|$))`);
   }
-
   /**
    *
    * @param {*} reservedWords
@@ -81,7 +73,6 @@ export default class Tokenizer {
     const reservedWordsPattern = reservedWords.join('|').replace(/ /g, '\\s+');
     return new RegExp(`^(${reservedWordsPattern})\\b`, 'i');
   }
-
   /**
    *
    * @param {*} specialChars
@@ -90,7 +81,6 @@ export default class Tokenizer {
   createWordRegex(specialChars = []) {
     return new RegExp(`^([\\w${specialChars.join('')}]+)`);
   }
-
   /**
    *
    * @param {*} stringTypes
@@ -101,7 +91,6 @@ export default class Tokenizer {
       '^(' + this.createStringPattern(stringTypes) + ')'
     );
   }
-
   /**
    * This enables the following string patterns:
    * 1.backtick quoted string using `` to escape
@@ -120,10 +109,8 @@ export default class Tokenizer {
       '\'\'': '((\'[^\'\\\\]*(?:\\\\.[^\'\\\\]*)*(\'|$))+)',
       'N\'\'': '((N\'[^N\'\\\\]*(?:\\\\.[^N\'\\\\]*)*(\'|$))+)',
     };
-
     return stringTypes.map((t) => patterns[t]).join('|');
   }
-
   /**
    *
    * @param {*} parens
@@ -135,7 +122,6 @@ export default class Tokenizer {
       'i'
     );
   }
-
   /**
    *
    * @param {*} paren
@@ -150,7 +136,6 @@ export default class Tokenizer {
       return '\\b' + paren + '\\b';
     }
   }
-
   /**
    *
    * @param {*} types
@@ -162,10 +147,8 @@ export default class Tokenizer {
       return false;
     }
     const typesRegex = types.map(escapeRegExp).join('|');
-
     return new RegExp(`^((?:${typesRegex})(?:${pattern}))`);
   }
-
   /**
    * Takes a SQL string and breaks it into tokens.
    * Each token is an object with type and value.
@@ -178,19 +161,16 @@ export default class Tokenizer {
   tokenize(input) {
     const tokens = [];
     let token;
-
     // Keep processing the string until it is empty
     while (input.length) {
       // Get the next token and the token type
       token = this.getNextToken(input, token);
       // Advance the string
       input = input.substring(token.value.length);
-
       tokens.push(token);
     }
     return tokens;
   }
-
   /**
    *
    * @param {*} input
@@ -210,7 +190,6 @@ export default class Tokenizer {
       this.getWordToken(input) ||
       this.getOperatorToken(input);
   }
-
   /**
    *
    * @param {*} input
@@ -223,7 +202,6 @@ export default class Tokenizer {
       regex: this.WHITESPACE_REGEX,
     });
   }
-
   /**
    *
    * @param {*} input
@@ -232,7 +210,6 @@ export default class Tokenizer {
   getCommentToken(input) {
     return this.getLineCommentToken(input) || this.getBlockCommentToken(input);
   }
-
   /**
    *
    * @param {*} input
@@ -245,7 +222,6 @@ export default class Tokenizer {
       regex: this.LINE_COMMENT_REGEX,
     });
   }
-
   /**
    *
    * @param {*} input
@@ -258,7 +234,6 @@ export default class Tokenizer {
       regex: this.BLOCK_COMMENT_REGEX,
     });
   }
-
   /**
    *
    * @param {*} input
@@ -271,7 +246,6 @@ export default class Tokenizer {
       regex: this.STRING_REGEX,
     });
   }
-
   /**
    *
    * @param {*} input
@@ -284,7 +258,6 @@ export default class Tokenizer {
       regex: this.OPEN_PAREN_REGEX,
     });
   }
-
   /**
    *
    * @param {*} input
@@ -297,7 +270,6 @@ export default class Tokenizer {
       regex: this.CLOSE_PAREN_REGEX,
     });
   }
-
   getParamsToken(input) {
     return this.getTokenOnFirstMatch({
       input,
@@ -305,7 +277,6 @@ export default class Tokenizer {
       regex: this.PARAMS_REGEX,
     });
   }
-
   /**
    *
    * @param {*} input
@@ -316,7 +287,6 @@ export default class Tokenizer {
       this.getStringNamedPlaceholderToken(input) ||
       this.getIndexedPlaceholderToken(input);
   }
-
   /**
    *
    * @param {*} input
@@ -329,7 +299,6 @@ export default class Tokenizer {
       parseKey: (v) => v.slice(1),
     });
   }
-
   /**
    *
    * @param {*} input
@@ -345,7 +314,6 @@ export default class Tokenizer {
       }),
     });
   }
-
   /**
    *
    * @param {*} input
@@ -358,7 +326,6 @@ export default class Tokenizer {
       parseKey: (v) => v.slice(1),
     });
   }
-
   /**
    *
    * @param {*} param0
@@ -379,7 +346,6 @@ export default class Tokenizer {
     }
     return token;
   }
-
   /**
    *
    * @param {*} param0
@@ -391,7 +357,6 @@ export default class Tokenizer {
   }) {
     return key.replace(new RegExp(escapeRegExp('\\') + quoteChar, 'g'), quoteChar);
   }
-
   /**
    * Decimal, binary, or hex numbers
    * @param {*} input
@@ -404,7 +369,6 @@ export default class Tokenizer {
       regex: this.NUMBER_REGEX,
     });
   }
-
   /**
    * Punctuation and symbols
    * @param {*} input
@@ -417,7 +381,6 @@ export default class Tokenizer {
       regex: this.OPERATOR_REGEX,
     });
   }
-
   /**
    *
    * @param {*} input
@@ -432,7 +395,6 @@ export default class Tokenizer {
     }
     return this.getToplevelReservedToken(input) || this.getNewlineReservedToken(input) || this.getPlainReservedToken(input);
   }
-
   /**
    *
    * @param {*} input
@@ -445,7 +407,6 @@ export default class Tokenizer {
       regex: this.RESERVED_TOPLEVEL_REGEX,
     });
   }
-
   /**
    *
    * @param {*} input
@@ -458,7 +419,6 @@ export default class Tokenizer {
       regex: this.RESERVED_NEWLINE_REGEX,
     });
   }
-
   /**
    *
    * @param {*} input
@@ -471,7 +431,6 @@ export default class Tokenizer {
       regex: this.RESERVED_PLAIN_REGEX,
     });
   }
-
   /**
    *
    * @param {*} input
@@ -484,7 +443,6 @@ export default class Tokenizer {
       regex: this.WORD_REGEX,
     });
   }
-
   /**
    *
    * @param {*} param0
@@ -496,7 +454,6 @@ export default class Tokenizer {
     regex
   }) {
     const matches = input.match(regex);
-
     if (matches) {
       return {
         type,

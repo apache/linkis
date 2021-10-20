@@ -1,20 +1,20 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-
+ 
 import api from '@/common/service/api';
 import router from '@/router';
 import storage from '@/common/helper/storage';
@@ -22,7 +22,6 @@ import Vue from 'vue';
 import axios from 'axios';
 import { Message } from 'iview';
 import i18n from '@/common/i18n'
-
 /**
  * 提供脚本运行相关方法，包括执行方法，状态轮询，日志接收，获取结果等
  * * 1.默认使用socket方式通信，若socket连接失败则使用http方式
@@ -178,13 +177,11 @@ function Execute(data) {
     }
   });
 }
-
 Execute.prototype.start = function() {
   setTimeout(() => {
     this.execute();
   }, 0);
 };
-
 Execute.prototype.restore = function({ execID, taskID }) {
   this.id = execID;
   this.taskID = taskID;
@@ -192,7 +189,6 @@ Execute.prototype.restore = function({ execID, taskID }) {
   this.postType = 'http';
   this.trigger('execute:queryState');
 };
-
 Execute.prototype.halfExecute = function({ execID, taskID }) {
   this.id = execID;
   this.taskID = taskID;
@@ -200,7 +196,6 @@ Execute.prototype.halfExecute = function({ execID, taskID }) {
   this.postType = 'http';
   this.trigger('execute:queryState');
 };
-
 Execute.prototype.on = function(name, cb) {
   this.event.$on(name, cb);
 };
@@ -213,7 +208,6 @@ Execute.prototype.once = function(name, cb) {
 Execute.prototype.trigger = function(name, data) {
   this.event.$emit(name, data);
 };
-
 Execute.prototype.execute = function() {
   this.trigger('execute');
   if (this.postType === 'http') {
@@ -221,7 +215,6 @@ Execute.prototype.execute = function() {
   }
   this.trigger('WebSocket:send', this.data);
 };
-
 Execute.prototype.httpExecute = function() {
   this.trigger('execute');
   const method = this.data.method.slice(this.data.method.indexOf('entrance'), this.data.method.length);
@@ -236,7 +229,6 @@ Execute.prototype.httpExecute = function() {
       this.trigger('error', 'execute');
     });
 };
-
 Execute.prototype.outer = function(outerUrl, ret) {
   axios.put(
     outerUrl, {
@@ -247,7 +239,6 @@ Execute.prototype.outer = function(outerUrl, ret) {
     }
   );
 };
-
 Execute.prototype.queryStatus = function({ isKill }) {
   const requestStatus = (ret) => {
     if (isKill) {
@@ -267,14 +258,12 @@ Execute.prototype.queryStatus = function({ isKill }) {
       });
     });
 };
-
 Execute.prototype.queryProgress = function() {
   api.fetch(`/entrance/${this.id}/progress`, 'get')
     .then((rst) => {
       this.trigger('progress', { progress: rst.progress, progressInfo: rst.progressInfo });
     });
 };
-
 Execute.prototype.queryLog = function() {
   return api.fetch(`/entrance/${this.id}/log`, {
     fromLine: this.fromLine,
@@ -288,7 +277,6 @@ Execute.prototype.queryLog = function() {
       return Promise.resolve();
     });
 };
-
 Execute.prototype.getResultPath = function() {
   this.trigger('steps', 'ResultLoading');
   // api执行时的路径不一样
@@ -312,7 +300,6 @@ Execute.prototype.getResultPath = function() {
       logError(err, this);
     });
 };
-
 Execute.prototype.getResultList = function() {
   if (this.resultsetInfo && this.resultsetInfo.resultLocation) {
     let params = {
@@ -350,7 +337,6 @@ Execute.prototype.getResultList = function() {
     });
   }
 };
-
 Execute.prototype.getFirstResult = function() {
   if (this.resultList.length < 1 ) {
     const log = '**result tips: empty!';
@@ -390,7 +376,6 @@ Execute.prototype.getFirstResult = function() {
       });
   }
 };
-
 // 获取错误原因，并更新历史
 Execute.prototype.updateLastHistory = function(option, cb) {
   if (option) {
@@ -432,7 +417,6 @@ Execute.prototype.updateLastHistory = function(option, cb) {
       });
     });
 };
-
 /**
  * kill的时候去轮询获取cancelled状态
  * @param {*} execute
@@ -448,7 +432,6 @@ function deconstructStatusIfKill(execute, ret) {
     queryException(execute, 'warning', msg);
   }
 }
-
 /**
  * 轮询状态
  * @param {*} execute
@@ -493,7 +476,6 @@ function deconstructStatus(execute, ret) {
       break;
   }
 }
-
 /**
  * 当状态为成功时执行的逻辑
  * @param {*} execute
@@ -518,7 +500,6 @@ function whenSuccess(execute) {
   }
   execute.trigger('stop');
 }
-
 /**
  * 当状态为异常状态时执行的逻辑
  * @param {*} execute
@@ -539,7 +520,6 @@ function whenException(execute, ret) {
     clearInterval(execute.diagnosisTimeout);
   }
 }
-
 /**
  * inner helper
  * @param {*} execute
@@ -576,7 +556,6 @@ function deconstructExecute(execute, ret) {
     });
   }
 }
-
 /**
  * More than one minute does not return,then terminate the request.
  * @param {*} execute
@@ -594,7 +573,6 @@ function timeoutCheck(execute) {
     });
   }, timeout);
 }
-
 /**
  * 当websocket请求超过1分钟未返回时，发送一个status请求重新唤醒.
  * @param {*} execute
@@ -615,7 +593,6 @@ function reawakening(execute) {
     execute.trigger('WebSocket:send', data);
   }, timeout);
 }
-
 /**
  *
  * @param {*} err
@@ -632,7 +609,6 @@ function logError(err, that) {
     that.trigger('steps', 'Completed');
   }
 }
-
 /**
  * 查询异常时的操作
  * @param {*} execute 当前的对象
@@ -650,7 +626,6 @@ function queryException(execute, type, msg) {
     autoJoin: true,
   });
 }
-
 /**
  * webscoket为background模式时，在接收execute接口时调用get请求或者后台拼接的脚本内容；
  * @param {*} execute
@@ -674,5 +649,4 @@ function setModelAndGetCode(execute, method) {
     }
   });
 }
-
 export default Execute;

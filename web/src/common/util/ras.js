@@ -1,22 +1,21 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-
+ 
 /* eslint-disable */
-
 /**
  * Created by harrywan on 2016/5/11.
  */
@@ -33,17 +32,12 @@
  * SHA512 - http://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf
  * HMAC - http://www.ietf.org/rfc/rfc2104.txt
  */
-
 (function() {
     let Hashes;
-
     function utf8Encode(str) {
         let x; let y; let output = '';
-
         let i = -1;
-
         let l;
-
         if (str && str.length) {
             l = str.length;
             while ((i += 1) < l) {
@@ -74,17 +68,13 @@
         }
         return output;
     }
-
     function utf8Decode(str) {
         let i; let ac; let c1; let c2; let c3; let arr = [];
-
         let l;
         i = ac = c1 = c2 = c3 = 0;
-
         if (str && str.length) {
             l = str.length;
             str += '';
-
             while (i < l) {
                 c1 = str.charCodeAt(i);
                 ac += 1;
@@ -105,38 +95,28 @@
         }
         return arr.join('');
     }
-
     /**
      * Add integers, wrapping at 2^32. This uses 16-bit operations internally
      * to work around bugs in some JS interpreters.
      */
-
     function safe_add(x, y) {
         let lsw = (x & 0xFFFF) + (y & 0xFFFF);
-
         let msw = (x >> 16) + (y >> 16) + (lsw >> 16);
         return (msw << 16) | (lsw & 0xFFFF);
     }
-
     /**
      * Bitwise rotate a 32-bit number to the left.
      */
-
     function bit_rol(num, cnt) {
         return (num << cnt) | (num >>> (32 - cnt));
     }
-
     /**
      * Convert a raw string to a hex string
      */
-
     function rstr2hex(input, hexcase) {
         let hex_tab = hexcase ? '0123456789ABCDEF' : '0123456789abcdef';
-
         let output = '';
-
         let x; let i = 0;
-
         let l = input.length;
         for (; i < l; i += 1) {
             x = input.charCodeAt(i);
@@ -144,69 +124,54 @@
         }
         return output;
     }
-
     /**
      * Encode a string as utf-16
      */
-
     function str2rstr_utf16le(input) {
         let i; let l = input.length;
-
         let output = '';
         for (i = 0; i < l; i += 1) {
             output += String.fromCharCode(input.charCodeAt(i) & 0xFF, (input.charCodeAt(i) >>> 8) & 0xFF);
         }
         return output;
     }
-
     function str2rstr_utf16be(input) {
         let i; let l = input.length;
-
         let output = '';
         for (i = 0; i < l; i += 1) {
             output += String.fromCharCode((input.charCodeAt(i) >>> 8) & 0xFF, input.charCodeAt(i) & 0xFF);
         }
         return output;
     }
-
     /**
      * Convert an array of big-endian words to a string
      */
-
     function binb2rstr(input) {
         let i; let l = input.length * 32;
-
         let output = '';
         for (i = 0; i < l; i += 8) {
             output += String.fromCharCode((input[i >> 5] >>> (24 - i % 32)) & 0xFF);
         }
         return output;
     }
-
     /**
      * Convert an array of little-endian words to a string
      */
-
     function binl2rstr(input) {
         let i; let l = input.length * 32;
-
         let output = '';
         for (i = 0; i < l; i += 8) {
             output += String.fromCharCode((input[i >> 5] >>> (i % 32)) & 0xFF);
         }
         return output;
     }
-
     /**
      * Convert a raw string to an array of little-endian words
      * Characters >255 have their high-byte silently ignored.
      */
-
     function rstr2binl(input) {
         let i; let l = input.length * 8;
-
         let output = Array(input.length >> 2);
-
         let lo = output.length;
         for (i = 0; i < lo; i += 1) {
             output[i] = 0;
@@ -216,17 +181,13 @@
         }
         return output;
     }
-
     /**
      * Convert a raw string to an array of big-endian words
      * Characters >255 have their high-byte silently ignored.
      */
-
     function rstr2binb(input) {
         let i; let l = input.length * 8;
-
         let output = Array(input.length >> 2);
-
         let lo = output.length;
         for (i = 0; i < lo; i += 1) {
             output[i] = 0;
@@ -236,25 +197,19 @@
         }
         return output;
     }
-
     /**
      * Convert a raw string to an arbitrary string encoding
      */
-
     function rstr2any(input, encoding) {
         let divisor = encoding.length;
-
         let remainders = Array();
-
         let i; let q; let x; let ld; let quotient; let dividend; let output; let full_length;
-
         /* Convert to an array of 16-bit big-endian values, forming the dividend */
         dividend = Array(Math.ceil(input.length / 2));
         ld = dividend.length;
         for (i = 0; i < ld; i += 1) {
             dividend[i] = (input.charCodeAt(i * 2) << 8) | input.charCodeAt(i * 2 + 1);
         }
-
         /**
          * Repeatedly perform a long division. The binary array forms the dividend,
          * the length of the encoding is the divisor. Once computed, the quotient
@@ -275,13 +230,11 @@
             remainders[remainders.length] = x;
             dividend = quotient;
         }
-
         /* Convert the remainders to the output string */
         output = '';
         for (i = remainders.length - 1; i >= 0; i--) {
             output += encoding.charAt(remainders[i]);
         }
-
         /* Append leading zero equivalents */
         full_length = Math.ceil(input.length * 8 / (Math.log(encoding.length) / Math.log(2)));
         for (i = output.length; i < full_length; i += 1) {
@@ -289,18 +242,13 @@
         }
         return output;
     }
-
     /**
      * Convert a raw string to a base-64 string
      */
-
     function rstr2b64(input, b64pad) {
         let tab = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
         let output = '';
-
         let len = input.length;
-
         let i; let j; let triplet;
         b64pad = b64pad || '=';
         for (i = 0; i < len; i += 3) {
@@ -315,7 +263,6 @@
         }
         return output;
     }
-
     Hashes = {
         /**
          * @property {String} version
@@ -330,26 +277,18 @@
         Base64: function() {
             // private properties
             let tab = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
             let pad = '=';
             // default pad according with the RFC standard
-
             let url = false;
             // URL encoding support @todo
-
             let utf8 = true; // by default enable UTF-8 support encoding
-
             // public method for encoding
             this.encode = function(input) {
                 let i; let j; let triplet;
-
                 let output = '';
-
                 let len = input.length;
-
                 pad = pad || '=';
                 input = (utf8) ? utf8Encode(input) : input;
-
                 for (i = 0; i < len; i += 3) {
                     triplet = (input.charCodeAt(i) << 16) | (i + 1 < len ? input.charCodeAt(i + 1) << 8 : 0) | (i + 2 < len ? input.charCodeAt(i + 2) : 0);
                     for (j = 0; j < 4; j += 1) {
@@ -362,36 +301,28 @@
                 }
                 return output;
             };
-
             // public method for decoding
             this.decode = function(input) {
                 // var b64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
                 let i; let o1; let o2; let o3; let h1; let h2; let h3; let h4; let bits; let ac;
-
                 let dec = '';
-
                 let arr = [];
                 if (!input) {
                     return input;
                 }
-
                 i = ac = 0;
                 input = input.replace(new RegExp('\\' + pad, 'gi'), ''); // use '='
                 // input += '';
-
                 do { // unpack four hexets into three octets using index points in b64
                     h1 = tab.indexOf(input.charAt(i += 1));
                     h2 = tab.indexOf(input.charAt(i += 1));
                     h3 = tab.indexOf(input.charAt(i += 1));
                     h4 = tab.indexOf(input.charAt(i += 1));
-
                     bits = h1 << 18 | h2 << 12 | h3 << 6 | h4;
-
                     o1 = bits >> 16 & 0xff;
                     o2 = bits >> 8 & 0xff;
                     o3 = bits & 0xff;
                     ac += 1;
-
                     if (h3 === 64) {
                         arr[ac] = String.fromCharCode(o1);
                     } else if (h4 === 64) {
@@ -400,13 +331,10 @@
                         arr[ac] = String.fromCharCode(o1, o2, o3);
                     }
                 } while (i < input.length);
-
                 dec = arr.join('');
                 dec = (utf8) ? utf8Decode(dec) : dec;
-
                 return dec;
             };
-
             // set custom pad string
             this.setPad = function(str) {
                 pad = str || pad;
@@ -424,7 +352,6 @@
                 return this;
             };
         },
-
         /**
          * CRC-32 calculation
          * @member Hashes
@@ -435,14 +362,10 @@
          */
         CRC32: function(str) {
             let crc = 0;
-
             let x = 0;
-
             let y = 0;
-
             let table; let i; let iTop;
             str = utf8Encode(str);
-
             table = [
                 '00000000 77073096 EE0E612C 990951BA 076DC419 706AF48F E963A535 9E6495A3 0EDB8832 ',
                 '79DCB8A4 E0D5E91E 97D2D988 09B64C2B 7EB17CBD E7B82D07 90BF1D91 1DB71064 6AB020F2 F3B97148 ',
@@ -471,7 +394,6 @@
                 '30B5FFE9 BDBDF21C CABAC28A 53B39330 24B4A3A6 BAD03605 CDD70693 54DE5729 23D967BF B3667A2E ',
                 'C4614AB8 5D681B02 2A6F2B94 B40BBE37 C30C8EA1 5A05DF1B 2D02EF8D',
             ].join('');
-
             crc = crc ^ (-1);
             for (i = 0, iTop = str.length; i < iTop; i += 1) {
                 y = (crc ^ str.charCodeAt(i)) & 0xFF;
@@ -501,12 +423,9 @@
              */
             let hexcase = (options && typeof options.uppercase === 'boolean') ? options.uppercase : false;
             // hexadecimal output case format. false - lowercase; true - uppercase
-
             let b64pad = (options && typeof options.pad === 'string') ? options.pda : '=';
             // base-64 pad character. Defaults to '=' for strict RFC compliance
-
             let utf8 = (options && typeof options.utf8 === 'boolean') ? options.utf8 : true; // enable/disable utf8 encoding
-
             // privileged (public) methods
             this.hex = function(s) {
                 return rstr2hex(rstr(s, utf8), hexcase);
@@ -567,32 +486,25 @@
                 }
                 return this;
             };
-
             // private methods
-
             /**
              * Calculate the MD5 of a raw string
              */
-
             function rstr(s) {
                 s = (utf8) ? utf8Encode(s) : s;
                 return binl2rstr(binl(rstr2binl(s), s.length * 8));
             }
-
             /**
              * Calculate the HMAC-MD5, of a key and some data (raw strings)
              */
-
             function rstr_hmac(key, data) {
                 let bkey; let ipad; let opad; let hash; let i;
-
                 key = (utf8) ? utf8Encode(key) : key;
                 data = (utf8) ? utf8Encode(data) : data;
                 bkey = rstr2binl(key);
                 if (bkey.length > 16) {
                     bkey = binl(bkey, key.length * 8);
                 }
-
                 ipad = Array(16), opad = Array(16);
                 for (i = 0; i < 16; i += 1) {
                     ipad[i] = bkey[i] ^ 0x36363636;
@@ -601,32 +513,23 @@
                 hash = binl(ipad.concat(rstr2binl(data)), 512 + data.length * 8);
                 return binl2rstr(binl(opad.concat(hash), 512 + 128));
             }
-
             /**
              * Calculate the MD5 of an array of little-endian words, and a bit length.
              */
-
             function binl(x, len) {
                 let i; let olda; let oldb; let oldc; let oldd;
-
                 let a = 1732584193;
-
                 let b = -271733879;
-
                 let c = -1732584194;
-
                 let d = 271733878;
-
                 /* append padding */
                 x[len >> 5] |= 0x80 << ((len) % 32);
                 x[(((len + 64) >>> 9) << 4) + 14] = len;
-
                 for (i = 0; i < x.length; i += 16) {
                     olda = a;
                     oldb = b;
                     oldc = c;
                     oldd = d;
-
                     a = md5_ff(a, b, c, d, x[i + 0], 7, -680876936);
                     d = md5_ff(d, a, b, c, x[i + 1], 12, -389564586);
                     c = md5_ff(c, d, a, b, x[i + 2], 17, 606105819);
@@ -643,7 +546,6 @@
                     d = md5_ff(d, a, b, c, x[i + 13], 12, -40341101);
                     c = md5_ff(c, d, a, b, x[i + 14], 17, -1502002290);
                     b = md5_ff(b, c, d, a, x[i + 15], 22, 1236535329);
-
                     a = md5_gg(a, b, c, d, x[i + 1], 5, -165796510);
                     d = md5_gg(d, a, b, c, x[i + 6], 9, -1069501632);
                     c = md5_gg(c, d, a, b, x[i + 11], 14, 643717713);
@@ -660,7 +562,6 @@
                     d = md5_gg(d, a, b, c, x[i + 2], 9, -51403784);
                     c = md5_gg(c, d, a, b, x[i + 7], 14, 1735328473);
                     b = md5_gg(b, c, d, a, x[i + 12], 20, -1926607734);
-
                     a = md5_hh(a, b, c, d, x[i + 5], 4, -378558);
                     d = md5_hh(d, a, b, c, x[i + 8], 11, -2022574463);
                     c = md5_hh(c, d, a, b, x[i + 11], 16, 1839030562);
@@ -677,7 +578,6 @@
                     d = md5_hh(d, a, b, c, x[i + 12], 11, -421815835);
                     c = md5_hh(c, d, a, b, x[i + 15], 16, 530742520);
                     b = md5_hh(b, c, d, a, x[i + 2], 23, -995338651);
-
                     a = md5_ii(a, b, c, d, x[i + 0], 6, -198630844);
                     d = md5_ii(d, a, b, c, x[i + 7], 10, 1126891415);
                     c = md5_ii(c, d, a, b, x[i + 14], 15, -1416354905);
@@ -694,7 +594,6 @@
                     d = md5_ii(d, a, b, c, x[i + 11], 10, -1120210379);
                     c = md5_ii(c, d, a, b, x[i + 2], 15, 718787259);
                     b = md5_ii(b, c, d, a, x[i + 9], 21, -343485551);
-
                     a = safe_add(a, olda);
                     b = safe_add(b, oldb);
                     c = safe_add(c, oldc);
@@ -702,27 +601,21 @@
                 }
                 return Array(a, b, c, d);
             }
-
             /**
              * These functions implement the four basic operations the algorithm uses.
              */
-
             function md5_cmn(q, a, b, x, s, t) {
                 return safe_add(bit_rol(safe_add(safe_add(a, q), safe_add(x, t)), s), b);
             }
-
             function md5_ff(a, b, c, d, x, s, t) {
                 return md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
             }
-
             function md5_gg(a, b, c, d, x, s, t) {
                 return md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
             }
-
             function md5_hh(a, b, c, d, x, s, t) {
                 return md5_cmn(b ^ c ^ d, a, b, x, s, t);
             }
-
             function md5_ii(a, b, c, d, x, s, t) {
                 return md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
             }
@@ -746,12 +639,9 @@
              */
             let hexcase = (options && typeof options.uppercase === 'boolean') ? options.uppercase : false;
             // hexadecimal output case format. false - lowercase; true - uppercase
-
             let b64pad = (options && typeof options.pad === 'string') ? options.pda : '=';
             // base-64 pad character. Defaults to '=' for strict RFC compliance
-
             let utf8 = (options && typeof options.utf8 === 'boolean') ? options.utf8 : true; // enable/disable utf8 encoding
-
             // public methods
             this.hex = function(s) {
                 return rstr2hex(rstr(s, utf8), hexcase);
@@ -816,28 +706,22 @@
                 }
                 return this;
             };
-
             // private methods
-
             /**
              * Calculate the SHA-512 of a raw string
              */
-
             function rstr(s) {
                 s = (utf8) ? utf8Encode(s) : s;
                 return binb2rstr(binb(rstr2binb(s), s.length * 8));
             }
-
             /**
              * Calculate the HMAC-SHA1 of a key and some data (raw strings)
              */
-
             function rstr_hmac(key, data) {
                 let bkey; let ipad; let opad; let i; let hash;
                 key = (utf8) ? utf8Encode(key) : key;
                 data = (utf8) ? utf8Encode(data) : data;
                 bkey = rstr2binb(key);
-
                 if (bkey.length > 16) {
                     bkey = binb(bkey, key.length * 8);
                 }
@@ -849,37 +733,26 @@
                 hash = binb(ipad.concat(rstr2binb(data)), 512 + data.length * 8);
                 return binb2rstr(binb(opad.concat(hash), 512 + 160));
             }
-
             /**
              * Calculate the SHA-1 of an array of big-endian words, and a bit length
              */
-
             function binb(x, len) {
                 let i; let j; let t; let olda; let oldb; let oldc; let oldd; let olde;
-
                 let w = Array(80);
-
                 let a = 1732584193;
-
                 let b = -271733879;
-
                 let c = -1732584194;
-
                 let d = 271733878;
-
                 let e = -1009589776;
-
                 /* append padding */
                 x[len >> 5] |= 0x80 << (24 - len % 32);
                 x[((len + 64 >> 9) << 4) + 15] = len;
-
                 for (i = 0; i < x.length; i += 16) {
                     olda = a,
                     oldb = b;
                     oldc = c;
                     oldd = d;
                     olde = e;
-
                     for (j = 0; j < 80; j += 1) {
                         if (j < 16) {
                             w[j] = x[i + j];
@@ -894,7 +767,6 @@
                         b = a;
                         a = t;
                     }
-
                     a = safe_add(a, olda);
                     b = safe_add(b, oldb);
                     c = safe_add(c, oldc);
@@ -903,12 +775,10 @@
                 }
                 return Array(a, b, c, d, e);
             }
-
             /**
              * Perform the appropriate triplet combination function for the current
              * iteration
              */
-
             function sha1_ft(t, b, c, d) {
                 if (t < 20) {
                     return (b & c) | ((~b) & d);
@@ -921,11 +791,9 @@
                 }
                 return b ^ c ^ d;
             }
-
             /**
              * Determine the appropriate additive constant for the current iteration
              */
-
             function sha1_kt(t) {
                 return (t < 20) ? 1518500249 : (t < 40) ? 1859775393 :
                     (t < 60) ? -1894007588 : -899497514;
@@ -950,17 +818,11 @@
              */
             let hexcase = (options && typeof options.uppercase === 'boolean') ? options.uppercase : false;
             // hexadecimal output case format. false - lowercase; true - uppercase  */
-
             let b64pad = (options && typeof options.pad === 'string') ? options.pda : '=';
-
             /* base-64 pad character. Default '=' for strict RFC compliance   */
-
             let utf8 = (options && typeof options.utf8 === 'boolean') ? options.utf8 : true;
-
             /* enable/disable utf8 encoding */
-
             let sha256_K;
-
             /* privileged (public) methods */
             this.hex = function(s) {
                 return rstr2hex(rstr(s, utf8));
@@ -1025,98 +887,73 @@
                 }
                 return this;
             };
-
             // private methods
-
             /**
              * Calculate the SHA-512 of a raw string
              */
-
             function rstr(s, utf8) {
                 s = (utf8) ? utf8Encode(s) : s;
                 return binb2rstr(binb(rstr2binb(s), s.length * 8));
             }
-
             /**
              * Calculate the HMAC-sha256 of a key and some data (raw strings)
              */
-
             function rstr_hmac(key, data) {
                 key = (utf8) ? utf8Encode(key) : key;
                 data = (utf8) ? utf8Encode(data) : data;
                 let hash; let i = 0;
-
                 let bkey = rstr2binb(key);
-
                 let ipad = Array(16);
-
                 let opad = Array(16);
-
                 if (bkey.length > 16) {
                     bkey = binb(bkey, key.length * 8);
                 }
-
                 for (; i < 16; i += 1) {
                     ipad[i] = bkey[i] ^ 0x36363636;
                     opad[i] = bkey[i] ^ 0x5C5C5C5C;
                 }
-
                 hash = binb(ipad.concat(rstr2binb(data)), 512 + data.length * 8);
                 return binb2rstr(binb(opad.concat(hash), 512 + 256));
             }
-
             /*
              * Main sha256 function, with its support functions
              */
-
             function sha256_S(X, n) {
                 return (X >>> n) | (X << (32 - n));
             }
-
             function sha256_R(X, n) {
                 return (X >>> n);
             }
-
             function sha256_Ch(x, y, z) {
                 return ((x & y) ^ ((~x) & z));
             }
-
             function sha256_Maj(x, y, z) {
                 return ((x & y) ^ (x & z) ^ (y & z));
             }
-
             function sha256_Sigma0256(x) {
                 return (sha256_S(x, 2) ^ sha256_S(x, 13) ^ sha256_S(x, 22));
             }
-
             function sha256_Sigma1256(x) {
                 return (sha256_S(x, 6) ^ sha256_S(x, 11) ^ sha256_S(x, 25));
             }
-
             function sha256_Gamma0256(x) {
                 return (sha256_S(x, 7) ^ sha256_S(x, 18) ^ sha256_R(x, 3));
             }
-
             function sha256_Gamma1256(x) {
                 return (sha256_S(x, 17) ^ sha256_S(x, 19) ^ sha256_R(x, 10));
             }
-
             function sha256_Sigma0512(x) {
                 return (sha256_S(x, 28) ^ sha256_S(x, 34) ^ sha256_S(x, 39));
             }
-
             function sha256_Sigma1512(x) {
                 return (sha256_S(x, 14) ^ sha256_S(x, 18) ^ sha256_S(x, 41));
             }
-
             function sha256_Gamma0512(x) {
                 return (sha256_S(x, 1) ^ sha256_S(x, 8) ^ sha256_R(x, 7));
             }
-
             function sha256_Gamma1512(x) {
                 return (sha256_S(x, 19) ^ sha256_S(x, 61) ^ sha256_R(x, 6));
             }
-
             sha256_K = [
                 1116352408, 1899447441, -1245643825, -373957723, 961987163, 1508970993, -1841331548, -1424204075, -670586216, 310598401, 607225278, 1426881987,
                 1925078388, -2132889090, -1680079193, -1046744716, -459576895, -272742522,
@@ -1126,7 +963,6 @@
                 430227734, 506948616, 659060556, 883997877, 958139571, 1322822218,
                 1537002063, 1747873779, 1955562222, 2024104815, -2067236844, -1933114872, -1866530822, -1538233109, -1090935817, -965641998,
             ];
-
             function binb(m, l) {
                 let HASH = [1779033703, -1150833019, 1013904242, -1521486534,
                     1359893119, -1694144372, 528734635, 1541459225,
@@ -1134,11 +970,9 @@
                 let W = new Array(64);
                 let a; let b; let c; let d; let e; let f; let g; let h;
                 let i; let j; let T1; let T2;
-
                 /* append padding */
                 m[l >> 5] |= 0x80 << (24 - l % 32);
                 m[((l + 64 >> 9) << 4) + 15] = l;
-
                 for (i = 0; i < m.length; i += 16) {
                     a = HASH[0];
                     b = HASH[1];
@@ -1148,7 +982,6 @@
                     f = HASH[5];
                     g = HASH[6];
                     h = HASH[7];
-
                     for (j = 0; j < 64; j += 1) {
                         if (j < 16) {
                             W[j] = m[j + i];
@@ -1156,7 +989,6 @@
                             W[j] = safe_add(safe_add(safe_add(sha256_Gamma1256(W[j - 2]), W[j - 7]),
                                 sha256_Gamma0256(W[j - 15])), W[j - 16]);
                         }
-
                         T1 = safe_add(safe_add(safe_add(safe_add(h, sha256_Sigma1256(e)), sha256_Ch(e, f, g)),
                             sha256_K[j]), W[j]);
                         T2 = safe_add(sha256_Sigma0256(a), sha256_Maj(a, b, c));
@@ -1169,7 +1001,6 @@
                         b = a;
                         a = safe_add(T1, T2);
                     }
-
                     HASH[0] = safe_add(a, HASH[0]);
                     HASH[1] = safe_add(b, HASH[1]);
                     HASH[2] = safe_add(c, HASH[2]);
@@ -1182,7 +1013,6 @@
                 return HASH;
             }
         },
-
         /**
          * @class Hashes.SHA512
          * @param {config}
@@ -1200,19 +1030,12 @@
              * @see this.setPad() method
              */
             let hexcase = (options && typeof options.uppercase === 'boolean') ? options.uppercase : false;
-
             /* hexadecimal output case format. false - lowercase; true - uppercase  */
-
             let b64pad = (options && typeof options.pad === 'string') ? options.pda : '=';
-
             /* base-64 pad character. Default '=' for strict RFC compliance   */
-
             let utf8 = (options && typeof options.utf8 === 'boolean') ? options.utf8 : true;
-
             /* enable/disable utf8 encoding */
-
             let sha512_k;
-
             /* privileged (public) methods */
             this.hex = function(s) {
                 return rstr2hex(rstr(s));
@@ -1277,13 +1100,10 @@
                 }
                 return this;
             };
-
             /* private methods */
-
             /**
              * Calculate the SHA-512 of a raw string
              */
-
             function rstr(s) {
                 s = (utf8) ? utf8Encode(s) : s;
                 return binb2rstr(binb(rstr2binb(s), s.length * 8));
@@ -1291,45 +1111,31 @@
             /*
              * Calculate the HMAC-SHA-512 of a key and some data (raw strings)
              */
-
             function rstr_hmac(key, data) {
                 key = (utf8) ? utf8Encode(key) : key;
                 data = (utf8) ? utf8Encode(data) : data;
-
                 let hash; let i = 0;
-
                 let bkey = rstr2binb(key);
-
                 let ipad = Array(32);
-
                 let opad = Array(32);
-
                 if (bkey.length > 32) {
                     bkey = binb(bkey, key.length * 8);
                 }
-
                 for (; i < 32; i += 1) {
                     ipad[i] = bkey[i] ^ 0x36363636;
                     opad[i] = bkey[i] ^ 0x5C5C5C5C;
                 }
-
                 hash = binb(ipad.concat(rstr2binb(data)), 1024 + data.length * 8);
                 return binb2rstr(binb(opad.concat(hash), 1024 + 512));
             }
-
             /**
              * Calculate the SHA-512 of an array of big-endian dwords, and a bit length
              */
-
             function binb(x, len) {
                 let j; let i; let l;
-
                 let W = new Array(80);
-
                 let hash = new Array(16);
-
                 // Initial hash values
-
                 let H = [
                     new int64(0x6a09e667, -205731576),
                     new int64(-1150833019, -2067093701),
@@ -1340,43 +1146,24 @@
                     new int64(0x1f83d9ab, -79577749),
                     new int64(0x5be0cd19, 0x137e2179),
                 ];
-
                 let T1 = new int64(0, 0);
-
                 let T2 = new int64(0, 0);
-
                 let a = new int64(0, 0);
-
                 let b = new int64(0, 0);
-
                 let c = new int64(0, 0);
-
                 let d = new int64(0, 0);
-
                 let e = new int64(0, 0);
-
                 let f = new int64(0, 0);
-
                 let g = new int64(0, 0);
-
                 let h = new int64(0, 0);
-
                 // Temporary variables not specified by the document
-
                 let s0 = new int64(0, 0);
-
                 let s1 = new int64(0, 0);
-
                 let Ch = new int64(0, 0);
-
                 let Maj = new int64(0, 0);
-
                 let r1 = new int64(0, 0);
-
                 let r2 = new int64(0, 0);
-
                 let r3 = new int64(0, 0);
-
                 if (sha512_k === undefined) {
                     // SHA512 constants
                     sha512_k = [
@@ -1422,11 +1209,9 @@
                         new int64(0x5fcb6fab, 0x3ad6faec), new int64(0x6c44198c, 0x4a475817),
                     ];
                 }
-
                 for (i = 0; i < 80; i += 1) {
                     W[i] = new int64(0, 0);
                 }
-
                 // append padding to the source string. The format is described in the FIPS.
                 x[len >> 5] |= 0x80 << (24 - (len & 0x1f));
                 x[((len + 128 >> 10) << 5) + 31] = len;
@@ -1440,12 +1225,10 @@
                     int64copy(f, H[5]);
                     int64copy(g, H[6]);
                     int64copy(h, H[7]);
-
                     for (j = 0; j < 16; j += 1) {
                         W[j].h = x[i + 2 * j];
                         W[j].l = x[i + 2 * j + 1];
                     }
-
                     for (j = 16; j < 80; j += 1) {
                         // sigma1
                         int64rrot(r1, W[j - 2], 19);
@@ -1459,36 +1242,29 @@
                         int64shr(r3, W[j - 15], 7);
                         s0.l = r1.l ^ r2.l ^ r3.l;
                         s0.h = r1.h ^ r2.h ^ r3.h;
-
                         int64add4(W[j], s1, W[j - 7], s0, W[j - 16]);
                     }
-
                     for (j = 0; j < 80; j += 1) {
                         // Ch
                         Ch.l = (e.l & f.l) ^ (~e.l & g.l);
                         Ch.h = (e.h & f.h) ^ (~e.h & g.h);
-
                         // Sigma1
                         int64rrot(r1, e, 14);
                         int64rrot(r2, e, 18);
                         int64revrrot(r3, e, 9);
                         s1.l = r1.l ^ r2.l ^ r3.l;
                         s1.h = r1.h ^ r2.h ^ r3.h;
-
                         // Sigma0
                         int64rrot(r1, a, 28);
                         int64revrrot(r2, a, 2);
                         int64revrrot(r3, a, 7);
                         s0.l = r1.l ^ r2.l ^ r3.l;
                         s0.h = r1.h ^ r2.h ^ r3.h;
-
                         // Maj
                         Maj.l = (a.l & b.l) ^ (a.l & c.l) ^ (b.l & c.l);
                         Maj.h = (a.h & b.h) ^ (a.h & c.h) ^ (b.h & c.h);
-
                         int64add5(T1, h, s1, Ch, sha512_k[j], W[j]);
                         int64add(T2, s0, Maj);
-
                         int64copy(h, g);
                         int64copy(g, f);
                         int64copy(f, e);
@@ -1507,7 +1283,6 @@
                     int64add(H[6], H[6], g);
                     int64add(H[7], H[7], h);
                 }
-
                 // represent the hash as an array of 32-bit dwords
                 for (i = 0; i < 8; i += 1) {
                     hash[2 * i] = H[i].h;
@@ -1515,50 +1290,38 @@
                 }
                 return hash;
             }
-
             // A constructor for 64-bit numbers
-
             function int64(h, l) {
                 this.h = h;
                 this.l = l;
                 // this.toString = int64toString;
             }
-
             // Copies src into dst, assuming both are 64-bit numbers
-
             function int64copy(dst, src) {
                 dst.h = src.h;
                 dst.l = src.l;
             }
-
             // Right-rotates a 64-bit number by shift
             // Won't handle cases of shift>=32
             // The function revrrot() is for that
-
             function int64rrot(dst, x, shift) {
                 dst.l = (x.l >>> shift) | (x.h << (32 - shift));
                 dst.h = (x.h >>> shift) | (x.l << (32 - shift));
             }
-
             // Reverses the dwords of the source and then rotates right by shift.
             // This is equivalent to rotation by 32+shift
-
             function int64revrrot(dst, x, shift) {
                 dst.l = (x.h >>> shift) | (x.l << (32 - shift));
                 dst.h = (x.l >>> shift) | (x.h << (32 - shift));
             }
-
             // Bitwise-shifts right a 64-bit number by shift
             // Won't handle shift>=32, but it's never needed in SHA512
-
             function int64shr(dst, x, shift) {
                 dst.l = (x.l >>> shift) | (x.h << (32 - shift));
                 dst.h = (x.h >>> shift);
             }
-
             // Adds two 64-bit numbers
             // Like the original implementation, does not rely on 32-bit operations
-
             function int64add(dst, x, y) {
                 let w0 = (x.l & 0xffff) + (y.l & 0xffff);
                 let w1 = (x.l >>> 16) + (y.l >>> 16) + (w0 >>> 16);
@@ -1567,9 +1330,7 @@
                 dst.l = (w0 & 0xffff) | (w1 << 16);
                 dst.h = (w2 & 0xffff) | (w3 << 16);
             }
-
             // Same, except with 4 addends. Works faster than adding them one by one.
-
             function int64add4(dst, a, b, c, d) {
                 let w0 = (a.l & 0xffff) + (b.l & 0xffff) + (c.l & 0xffff) + (d.l & 0xffff);
                 let w1 = (a.l >>> 16) + (b.l >>> 16) + (c.l >>> 16) + (d.l >>> 16) + (w0 >>> 16);
@@ -1578,16 +1339,11 @@
                 dst.l = (w0 & 0xffff) | (w1 << 16);
                 dst.h = (w2 & 0xffff) | (w3 << 16);
             }
-
             // Same, except with 5 addends
-
             function int64add5(dst, a, b, c, d, e) {
                 let w0 = (a.l & 0xffff) + (b.l & 0xffff) + (c.l & 0xffff) + (d.l & 0xffff) + (e.l & 0xffff);
-
                 let w1 = (a.l >>> 16) + (b.l >>> 16) + (c.l >>> 16) + (d.l >>> 16) + (e.l >>> 16) + (w0 >>> 16);
-
                 let w2 = (a.h & 0xffff) + (b.h & 0xffff) + (c.h & 0xffff) + (d.h & 0xffff) + (e.h & 0xffff) + (w1 >>> 16);
-
                 let w3 = (a.h >>> 16) + (b.h >>> 16) + (c.h >>> 16) + (d.h >>> 16) + (e.h >>> 16) + (w2 >>> 16);
                 dst.l = (w0 & 0xffff) | (w1 << 16);
                 dst.h = (w2 & 0xffff) | (w3 << 16);
@@ -1612,17 +1368,11 @@
              * @see this.setPad() method
              */
             let hexcase = (options && typeof options.uppercase === 'boolean') ? options.uppercase : false;
-
             /* hexadecimal output case format. false - lowercase; true - uppercase  */
-
             let b64pad = (options && typeof options.pad === 'string') ? options.pda : '=';
-
             /* base-64 pad character. Default '=' for strict RFC compliance   */
-
             let utf8 = (options && typeof options.utf8 === 'boolean') ? options.utf8 : true;
-
             /* enable/disable utf8 encoding */
-
             let rmd160_r1 = [
                 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
                 7, 4, 13, 1, 10, 6, 15, 3, 12, 0, 9, 5, 2, 14, 11, 8,
@@ -1630,7 +1380,6 @@
                 1, 9, 11, 10, 0, 8, 12, 4, 13, 3, 7, 15, 14, 5, 6, 2,
                 4, 0, 5, 9, 7, 12, 2, 10, 14, 1, 3, 8, 11, 6, 15, 13,
             ];
-
             let rmd160_r2 = [
                 5, 14, 7, 0, 9, 2, 11, 4, 13, 6, 15, 8, 1, 10, 3, 12,
                 6, 11, 3, 7, 0, 13, 5, 10, 14, 15, 8, 12, 4, 9, 1, 2,
@@ -1638,7 +1387,6 @@
                 8, 6, 4, 1, 3, 11, 15, 0, 5, 12, 2, 13, 9, 7, 10, 14,
                 12, 15, 10, 4, 1, 5, 8, 7, 6, 2, 13, 14, 0, 3, 9, 11,
             ];
-
             let rmd160_s1 = [
                 11, 14, 15, 12, 5, 8, 7, 9, 11, 13, 14, 15, 6, 7, 9, 8,
                 7, 6, 8, 13, 11, 9, 7, 15, 7, 12, 15, 9, 11, 7, 13, 12,
@@ -1646,7 +1394,6 @@
                 11, 12, 14, 15, 14, 15, 9, 8, 9, 14, 5, 6, 8, 6, 5, 12,
                 9, 15, 5, 11, 6, 8, 13, 12, 5, 12, 13, 14, 11, 8, 5, 6,
             ];
-
             let rmd160_s2 = [
                 8, 9, 9, 11, 13, 15, 15, 5, 7, 7, 8, 11, 14, 14, 12, 6,
                 9, 13, 15, 7, 12, 8, 9, 11, 7, 7, 12, 7, 6, 15, 13, 11,
@@ -1654,7 +1401,6 @@
                 15, 5, 8, 11, 14, 14, 6, 14, 6, 9, 12, 9, 12, 5, 15, 8,
                 8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11,
             ];
-
             /* privileged (public) methods */
             this.hex = function(s) {
                 return rstr2hex(rstr(s, utf8));
@@ -1721,37 +1467,27 @@
                 }
                 return this;
             };
-
             /* private methods */
-
             /**
              * Calculate the rmd160 of a raw string
              */
-
             function rstr(s) {
                 s = (utf8) ? utf8Encode(s) : s;
                 return binl2rstr(binl(rstr2binl(s), s.length * 8));
             }
-
             /**
              * Calculate the HMAC-rmd160 of a key and some data (raw strings)
              */
-
             function rstr_hmac(key, data) {
                 key = (utf8) ? utf8Encode(key) : key;
                 data = (utf8) ? utf8Encode(data) : data;
                 let i; let hash;
-
                 let bkey = rstr2binl(key);
-
                 let ipad = Array(16);
-
                 let opad = Array(16);
-
                 if (bkey.length > 16) {
                     bkey = binl(bkey, key.length * 8);
                 }
-
                 for (i = 0; i < 16; i += 1) {
                     ipad[i] = bkey[i] ^ 0x36363636;
                     opad[i] = bkey[i] ^ 0x5C5C5C5C;
@@ -1759,47 +1495,33 @@
                 hash = binl(ipad.concat(rstr2binl(data)), 512 + data.length * 8);
                 return binl2rstr(binl(opad.concat(hash), 512 + 160));
             }
-
             /**
              * Convert an array of little-endian words to a string
              */
-
             function binl2rstr(input) {
                 let i; let output = '';
-
                 let l = input.length * 32;
                 for (i = 0; i < l; i += 8) {
                     output += String.fromCharCode((input[i >> 5] >>> (i % 32)) & 0xFF);
                 }
                 return output;
             }
-
             /**
              * Calculate the RIPE-MD160 of an array of little-endian words, and a bit length.
              */
-
             function binl(x, len) {
                 let T; let j; let i; let l;
-
                 let h0 = 0x67452301;
-
                 let h1 = 0xefcdab89;
-
                 let h2 = 0x98badcfe;
-
                 let h3 = 0x10325476;
-
                 let h4 = 0xc3d2e1f0;
-
                 let A1; let B1; let C1; let D1; let E1;
-
                 let A2; let B2; let C2; let D2; let E2;
-
                 /* append padding */
                 x[len >> 5] |= 0x80 << (len % 32);
                 x[(((len + 64) >>> 9) << 4) + 14] = len;
                 l = x.length;
-
                 for (i = 0; i < l; i += 16) {
                     A1 = A2 = h0;
                     B1 = B2 = h1;
@@ -1826,7 +1548,6 @@
                         C2 = B2;
                         B2 = T;
                     }
-
                     T = safe_add(h1, safe_add(C1, D2));
                     h1 = safe_add(h2, safe_add(D1, E2));
                     h2 = safe_add(h3, safe_add(E1, A2));
@@ -1836,9 +1557,7 @@
                 }
                 return [h0, h1, h2, h3, h4];
             }
-
             // specific algorithm methods
-
             function rmd160_f(j, x, y, z) {
                 return (j >= 0 && j <= 15) ? (x ^ y ^ z) :
                     (j >= 16 && j <= 31) ? (x & y) | (~x & z) :
@@ -1847,7 +1566,6 @@
                                 (j >= 64 && j <= 79) ? x ^ (y | ~z) :
                                     'rmd160_f: j out of range';
             }
-
             function rmd160_K1(j) {
                 return (j >= 0 && j <= 15) ? 0x00000000 :
                     (j >= 16 && j <= 31) ? 0x5a827999 :
@@ -1856,7 +1574,6 @@
                                 (j >= 64 && j <= 79) ? 0xa953fd4e :
                                     'rmd160_K1: j out of range';
             }
-
             function rmd160_K2(j) {
                 return (j >= 0 && j <= 15) ? 0x50a28be6 :
                     (j >= 16 && j <= 31) ? 0x5c4dd124 :
@@ -1867,7 +1584,6 @@
             }
         },
     };
-
     // exposes Hashes
     // (function(window, undefined) {
     //    var freeExports = false;
@@ -1897,32 +1613,25 @@
     //        window.Hashes = Hashes;
     //    }
     // }(this));
-
     window.Hashes = Hashes;
 })(window); // IIFE
 export var Hashes = window.Hashes;
-
 /**
  *var $pem = "-----BEGIN PUBLIC KEY-----MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMYQWDqtLgDKlQvWzacGeBMQpbicd/uoXAvgLNpFZLM7zuYFDhrYncRsl8LIHK0K3f7e1aFmUVgM4LrKU2WFIw0CAwEAAQ==-----END PUBLIC KEY-----";
  var $key = RSA.getPublicKey($pem);
  RSA.encrypt(data_field.value, $key);
  }
  */
-
 // Copyright (c) 2005  Tom Wu
 // All Rights Reserved.
 // See "LICENSE" for details.
 // Basic JavaScript BN library - subset useful for RSA encryption.
-
 // Bits per digit
 let dbits;
-
 // JavaScript engine analysis
 let canary = 0xdeadbeefcafe;
 let j_lm = ((canary & 0xffffff) == 0xefcafe);
-
 // (public) Constructor
-
 function BigInteger(a, b, c) {
     if (a != null) {
         if (typeof a == 'number') this.fromNumber(a, b, c);
@@ -1930,13 +1639,10 @@ function BigInteger(a, b, c) {
         else this.fromString(a, b);
     }
 }
-
 // return new, unset BigInteger
-
 function nbi() {
     return new BigInteger(null);
 }
-
 // am: Compute w_j += (x*this_i), propagate carries,
 // c is initial carry, returns final carry.
 // c < 3*dvalue, x < 2*dvalue, this_i < dvalue
@@ -1944,7 +1650,6 @@ function nbi() {
 // am1: use a single mult and divide to get the high bits,
 // max digit bits should be 26 because
 // max internal value = 2*dvalue^2-2*dvalue (< 2^53)
-
 function am1(i, x, w, j, c, n) {
     while (--n >= 0) {
         let v = x * this[i++] + w[j] + c;
@@ -1956,10 +1661,8 @@ function am1(i, x, w, j, c, n) {
 // am2 avoids a big mult-and-extract completely.
 // Max digit bits should be <= 30 because we do bitwise ops
 // on values up to 2*hdvalue^2-hdvalue-1 (< 2^31)
-
 function am2(i, x, w, j, c, n) {
     let xl = x & 0x7fff;
-
     let xh = x >> 15;
     while (--n >= 0) {
         let l = this[i] & 0x7fff;
@@ -1973,10 +1676,8 @@ function am2(i, x, w, j, c, n) {
 }
 // Alternately, set max digit bits to 28 since some
 // browsers slow down when dealing with 32-bit numbers.
-
 function am3(i, x, w, j, c, n) {
     let xl = x & 0x3fff;
-
     let xh = x >> 14;
     while (--n >= 0) {
         let l = this[i] & 0x3fff;
@@ -1998,16 +1699,13 @@ if (j_lm && (navigator.appName == 'Microsoft Internet Explorer')) {
     BigInteger.prototype.am = am3;
     dbits = 28;
 }
-
 BigInteger.prototype.DB = dbits;
 BigInteger.prototype.DM = ((1 << dbits) - 1);
 BigInteger.prototype.DV = (1 << dbits);
-
 let BI_FP = 52;
 BigInteger.prototype.FV = Math.pow(2, BI_FP);
 BigInteger.prototype.F1 = BI_FP - dbits;
 BigInteger.prototype.F2 = 2 * dbits - BI_FP;
-
 // Digit conversions
 let BI_RM = '0123456789abcdefghijklmnopqrstuvwxyz';
 let BI_RC = new Array();
@@ -2018,26 +1716,20 @@ rr = 'a'.charCodeAt(0);
 for (vv = 10; vv < 36; ++vv) BI_RC[rr++] = vv;
 rr = 'A'.charCodeAt(0);
 for (vv = 10; vv < 36; ++vv) BI_RC[rr++] = vv;
-
 function int2char(n) {
     return BI_RM.charAt(n);
 }
-
 function intAt(s, i) {
     let c = BI_RC[s.charCodeAt(i)];
     return (c == null) ? -1 : c;
 }
-
 // (protected) copy this to r
-
 function bnpCopyTo(r) {
     for (let i = this.t - 1; i >= 0; --i) r[i] = this[i];
     r.t = this.t;
     r.s = this.s;
 }
-
 // (protected) set from integer value x, -DV <= x < DV
-
 function bnpFromInt(x) {
     this.t = 1;
     this.s = (x < 0) ? -1 : 0;
@@ -2045,17 +1737,13 @@ function bnpFromInt(x) {
     else if (x < -1) this[0] = x + DV;
     else this.t = 0;
 }
-
 // return bigint initialized to value
-
 function nbv(i) {
     let r = nbi();
     r.fromInt(i);
     return r;
 }
-
 // (protected) set from string and radix
-
 function bnpFromString(s, b) {
     let k;
     if (b == 16) k = 4;
@@ -2071,9 +1759,7 @@ function bnpFromString(s, b) {
     this.t = 0;
     this.s = 0;
     let i = s.length;
-
     let mi = false;
-
     let sh = 0;
     while (--i >= 0) {
         let x = (k == 8) ? s[i] & 0xff : intAt(s, i);
@@ -2097,16 +1783,12 @@ function bnpFromString(s, b) {
     this.clamp();
     if (mi) BigInteger.ZERO.subTo(this, this);
 }
-
 // (protected) clamp off excess high words
-
 function bnpClamp() {
     let c = this.s & this.DM;
     while (this.t > 0 && this[this.t - 1] == c)--this.t;
 }
-
 // (public) return string representation in given radix
-
 function bnToString(b) {
     if (this.s < 0) return '-' + this.negate().toString(b);
     let k;
@@ -2118,11 +1800,8 @@ function bnToString(b) {
     else if (b == 4) k = 2;
     else return this.toRadix(b);
     let km = (1 << k) - 1;
-
     let d; let m = false;
-
     let r = '';
-
     let i = this.t;
     let p = this.DB - (i * this.DB) % k;
     if (i-- > 0) {
@@ -2147,23 +1826,17 @@ function bnToString(b) {
     }
     return m ? r : '0';
 }
-
 // (public) -this
-
 function bnNegate() {
     let r = nbi();
     BigInteger.ZERO.subTo(this, r);
     return r;
 }
-
 // (public) |this|
-
 function bnAbs() {
     return (this.s < 0) ? this.negate() : this;
 }
-
 // (public) return + if this > a, - if this < a, 0 if equal
-
 function bnCompareTo(a) {
     let r = this.s - a.s;
     if (r != 0) return r;
@@ -2173,12 +1846,9 @@ function bnCompareTo(a) {
     while (--i >= 0) if ((r = this[i] - a[i]) != 0) return r;
     return 0;
 }
-
 // returns bit length of the integer x
-
 function nbits(x) {
     let r = 1;
-
     let t;
     if ((t = x >>> 16) != 0) {
         x = t;
@@ -2202,16 +1872,12 @@ function nbits(x) {
     }
     return r;
 }
-
 // (public) return the number of bits in "this"
-
 function bnBitLength() {
     if (this.t <= 0) return 0;
     return this.DB * (this.t - 1) + nbits(this[this.t - 1] ^ (this.s & this.DM));
 }
-
 // (protected) r = this << n*DB
-
 function bnpDLShiftTo(n, r) {
     let i;
     for (i = this.t - 1; i >= 0; --i) r[i + n] = this[i];
@@ -2219,25 +1885,19 @@ function bnpDLShiftTo(n, r) {
     r.t = this.t + n;
     r.s = this.s;
 }
-
 // (protected) r = this >> n*DB
-
 function bnpDRShiftTo(n, r) {
     for (let i = n; i < this.t; ++i) r[i - n] = this[i];
     r.t = Math.max(this.t - n, 0);
     r.s = this.s;
 }
-
 // (protected) r = this << n
-
 function bnpLShiftTo(n, r) {
     let bs = n % this.DB;
     let cbs = this.DB - bs;
     let bm = (1 << cbs) - 1;
     let ds = Math.floor(n / this.DB);
-
     let c = (this.s << bs) & this.DM;
-
     let i;
     for (i = this.t - 1; i >= 0; --i) {
         r[i + ds + 1] = (this[i] >> cbs) | c;
@@ -2249,9 +1909,7 @@ function bnpLShiftTo(n, r) {
     r.s = this.s;
     r.clamp();
 }
-
 // (protected) r = this >> n
-
 function bnpRShiftTo(n, r) {
     r.s = this.s;
     let ds = Math.floor(n / this.DB);
@@ -2271,14 +1929,10 @@ function bnpRShiftTo(n, r) {
     r.t = this.t - ds;
     r.clamp();
 }
-
 // (protected) r = this - a
-
 function bnpSubTo(a, r) {
     let i = 0;
-
     let c = 0;
-
     let m = Math.min(a.t, this.t);
     while (i < m) {
         c += this[i] - a[i];
@@ -2308,13 +1962,10 @@ function bnpSubTo(a, r) {
     r.t = i;
     r.clamp();
 }
-
 // (protected) r = this * a, r != this,a (HAC 14.12)
 // "this" should be the larger one if appropriate.
-
 function bnpMultiplyTo(a, r) {
     let x = this.abs();
-
     let y = a.abs();
     let i = x.t;
     r.t = i + y.t;
@@ -2324,9 +1975,7 @@ function bnpMultiplyTo(a, r) {
     r.clamp();
     if (this.s != a.s) BigInteger.ZERO.subTo(r, r);
 }
-
 // (protected) r = this^2, r != this (HAC 14.16)
-
 function bnpSquareTo(r) {
     let x = this.abs();
     let i = r.t = 2 * x.t;
@@ -2342,10 +1991,8 @@ function bnpSquareTo(r) {
     r.s = 0;
     r.clamp();
 }
-
 // (protected) divide this by m, quotient and remainder to q, r (HAC 14.20)
 // r != q, this != m.  q or r may be null.
-
 function bnpDivRemTo(m, q, r) {
     let pm = m.abs();
     if (pm.t <= 0) return;
@@ -2357,9 +2004,7 @@ function bnpDivRemTo(m, q, r) {
     }
     if (r == null) r = nbi();
     let y = nbi();
-
     let ts = this.s;
-
     let ms = m.s;
     let nsh = this.DB - nbits(pm[pm.t - 1]); // normalize modulus
     if (nsh > 0) {
@@ -2374,14 +2019,10 @@ function bnpDivRemTo(m, q, r) {
     if (y0 == 0) return;
     let yt = y0 * (1 << this.F1) + ((ys > 1) ? y[ys - 2] >> this.F2 : 0);
     let d1 = this.FV / yt;
-
     let d2 = (1 << this.F1) / yt;
-
     let e = 1 << this.F2;
     let i = r.t;
-
     let j = i - ys;
-
     let t = (q == null) ? nbi() : q;
     y.dlShiftTo(j, t);
     if (r.compareTo(t) >= 0) {
@@ -2409,51 +2050,40 @@ function bnpDivRemTo(m, q, r) {
     if (nsh > 0) r.rShiftTo(nsh, r); // Denormalize remainder
     if (ts < 0) BigInteger.ZERO.subTo(r, r);
 }
-
 // (public) this mod a
-
 function bnMod(a) {
     let r = nbi();
     this.abs().divRemTo(a, null, r);
     if (this.s < 0 && r.compareTo(BigInteger.ZERO) > 0) a.subTo(r, r);
     return r;
 }
-
 // Modular reduction using "classic" algorithm
-
 function Classic(m) {
     this.m = m;
 }
-
 function cConvert(x) {
     if (x.s < 0 || x.compareTo(this.m) >= 0) return x.mod(this.m);
     else return x;
 }
-
 function cRevert(x) {
     return x;
 }
-
 function cReduce(x) {
     x.divRemTo(this.m, null, x);
 }
-
 function cMulTo(x, y, r) {
     x.multiplyTo(y, r);
     this.reduce(r);
 }
-
 function cSqrTo(x, r) {
     x.squareTo(r);
     this.reduce(r);
 }
-
 Classic.prototype.convert = cConvert;
 Classic.prototype.revert = cRevert;
 Classic.prototype.reduce = cReduce;
 Classic.prototype.mulTo = cMulTo;
 Classic.prototype.sqrTo = cSqrTo;
-
 // (protected) return "-1/this % 2^DB"; useful for Mont. reduction
 // justification:
 //         xy == 1 (mod m)
@@ -2464,7 +2094,6 @@ Classic.prototype.sqrTo = cSqrTo;
 // if y is 1/x mod m, then y(2-xy) is 1/x mod m^2
 // should reduce x and y(2-xy) by m^2 at each step to keep size bounded.
 // JS multiply "overflows" differently from C/C++, so care is needed here.
-
 function bnpInvDigit() {
     if (this.t < 1) return 0;
     let x = this[0];
@@ -2479,9 +2108,7 @@ function bnpInvDigit() {
     // we really want the negative inverse, and -DV < y < DV
     return (y > 0) ? this.DV - y : -y;
 }
-
 // Montgomery reduction
-
 function Montgomery(m) {
     this.m = m;
     this.mp = m.invDigit();
@@ -2490,9 +2117,7 @@ function Montgomery(m) {
     this.um = (1 << (m.DB - 15)) - 1;
     this.mt2 = 2 * m.t;
 }
-
 // xR mod m
-
 function montConvert(x) {
     let r = nbi();
     x.abs().dlShiftTo(this.m.t, r);
@@ -2500,18 +2125,14 @@ function montConvert(x) {
     if (x.s < 0 && r.compareTo(BigInteger.ZERO) > 0) this.m.subTo(r, r);
     return r;
 }
-
 // x/R mod m
-
 function montRevert(x) {
     let r = nbi();
     x.copyTo(r);
     this.reduce(r);
     return r;
 }
-
 // x = x/R mod m (HAC 14.32)
-
 function montReduce(x) {
     while (x.t <= this.mt2) // pad x so am has enough room later
     {
@@ -2534,43 +2155,31 @@ function montReduce(x) {
     x.drShiftTo(this.m.t, x);
     if (x.compareTo(this.m) >= 0) x.subTo(this.m, x);
 }
-
 // r = "x^2/R mod m"; x != r
-
 function montSqrTo(x, r) {
     x.squareTo(r);
     this.reduce(r);
 }
-
 // r = "xy/R mod m"; x,y != r
-
 function montMulTo(x, y, r) {
     x.multiplyTo(y, r);
     this.reduce(r);
 }
-
 Montgomery.prototype.convert = montConvert;
 Montgomery.prototype.revert = montRevert;
 Montgomery.prototype.reduce = montReduce;
 Montgomery.prototype.mulTo = montMulTo;
 Montgomery.prototype.sqrTo = montSqrTo;
-
 // (protected) true iff this is even
-
 function bnpIsEven() {
     return ((this.t > 0) ? (this[0] & 1) : this.s) == 0;
 }
-
 // (protected) this^e, e < 2^32, doing sqr and mul with "r" (HAC 14.79)
-
 function bnpExp(e, z) {
     if (e > 0xffffffff || e < 1) return BigInteger.ONE;
     let r = nbi();
-
     let r2 = nbi();
-
     let g = z.convert(this);
-
     let i = nbits(e) - 1;
     g.copyTo(r);
     while (--i >= 0) {
@@ -2584,16 +2193,13 @@ function bnpExp(e, z) {
     }
     return z.revert(r);
 }
-
 // (public) this^e % m, 0 <= e < 2^32
-
 function bnModPowInt(e, m) {
     let z;
     if (e < 256 || m.isEven()) z = new Classic(m);
     else z = new Montgomery(m);
     return this.exp(e, z);
 }
-
 // protected
 BigInteger.prototype.copyTo = bnpCopyTo;
 BigInteger.prototype.fromInt = bnpFromInt;
@@ -2610,7 +2216,6 @@ BigInteger.prototype.divRemTo = bnpDivRemTo;
 BigInteger.prototype.invDigit = bnpInvDigit;
 BigInteger.prototype.isEven = bnpIsEven;
 BigInteger.prototype.exp = bnpExp;
-
 // public
 BigInteger.prototype.toString = bnToString;
 BigInteger.prototype.negate = bnNegate;
@@ -2619,19 +2224,15 @@ BigInteger.prototype.compareTo = bnCompareTo;
 BigInteger.prototype.bitLength = bnBitLength;
 BigInteger.prototype.mod = bnMod;
 BigInteger.prototype.modPowInt = bnModPowInt;
-
 // "constants"
 BigInteger.ZERO = nbv(0);
 BigInteger.ONE = nbv(1);
-
 function bnClone() {
     let r = nbi();
     this.copyTo(r);
     return r;
 }
-
 // (public) return value as integer
-
 function bnIntValue() {
     if (this.s < 0) {
         if (this.t == 1) return this[0] - this.DV;
@@ -2641,46 +2242,33 @@ function bnIntValue() {
     // assumes 16 < DB < 32
     return ((this[1] & ((1 << (32 - this.DB)) - 1)) << this.DB) | this[0];
 }
-
 // (public) return value as byte
-
 function bnByteValue() {
     return (this.t == 0) ? this.s : (this[0] << 24) >> 24;
 }
-
 // (public) return value as short (assumes DB>=16)
-
 function bnShortValue() {
     return (this.t == 0) ? this.s : (this[0] << 16) >> 16;
 }
-
 // (protected) return x s.t. r^x < DV
-
 function bnpChunkSize(r) {
     return Math.floor(Math.LN2 * this.DB / Math.log(r));
 }
-
 // (public) 0 if this == 0, 1 if this > 0
-
 function bnSigNum() {
     if (this.s < 0) return -1;
     else if (this.t <= 0 || (this.t == 1 && this[0] <= 0)) return 0;
     else return 1;
 }
-
 // (protected) convert to radix string
-
 function bnpToRadix(b) {
     if (b == null) b = 10;
     if (this.signum() == 0 || b < 2 || b > 36) return '0';
     let cs = this.chunkSize(b);
     let a = Math.pow(b, cs);
     let d = nbv(a);
-
     let y = nbi();
-
     let z = nbi();
-
     let r = '';
     this.divRemTo(d, y, z);
     while (y.signum() > 0) {
@@ -2689,19 +2277,14 @@ function bnpToRadix(b) {
     }
     return z.intValue().toString(b) + r;
 }
-
 // (protected) convert from radix string
-
 function bnpFromRadix(s, b) {
     this.fromInt(0);
     if (b == null) b = 10;
     let cs = this.chunkSize(b);
     let d = Math.pow(b, cs);
-
     let mi = false;
-
     let j = 0;
-
     let w = 0;
     for (let i = 0; i < s.length; ++i) {
         let x = intAt(s, i);
@@ -2723,9 +2306,7 @@ function bnpFromRadix(s, b) {
     }
     if (mi) BigInteger.ZERO.subTo(this, this);
 }
-
 // (protected) alternate constructor
-
 function bnpFromNumber(a, b, c) {
     if (typeof b == 'number') {
         // new BigInteger(int,int,RNG)
@@ -2745,7 +2326,6 @@ function bnpFromNumber(a, b, c) {
     } else {
         // new BigInteger(int,RNG)
         let x = new Array();
-
         let t = a & 7;
         x.length = (a >> 3) + 1;
         b.nextBytes(x);
@@ -2754,16 +2334,12 @@ function bnpFromNumber(a, b, c) {
         this.fromString(x, 256);
     }
 }
-
 // (public) convert to bigendian byte array
-
 function bnToByteArray() {
     let i = this.t;
-
     let r = new Array();
     r[0] = this.s;
     let p = this.DB - (i * this.DB) % 8;
-
     let d; let k = 0;
     if (i-- > 0) {
         if (p < this.DB && (d = this[i] >> p) != (this.s & this.DM) >> p) r[k++] = d | (this.s << (this.DB - p));
@@ -2785,21 +2361,16 @@ function bnToByteArray() {
     }
     return r;
 }
-
 function bnEquals(a) {
     return (this.compareTo(a) == 0);
 }
-
 function bnMin(a) {
     return (this.compareTo(a) < 0) ? this : a;
 }
-
 function bnMax(a) {
     return (this.compareTo(a) > 0) ? this : a;
 }
-
 // (protected) r = this op a (bitwise)
-
 function bnpBitwiseTo(a, op, r) {
     let i; let f; let m = Math.min(a.t, this.t);
     for (i = 0; i < m; ++i) r[i] = op(this[i], a[i]);
@@ -2815,57 +2386,43 @@ function bnpBitwiseTo(a, op, r) {
     r.s = op(this.s, a.s);
     r.clamp();
 }
-
 // (public) this & a
-
 function op_and(x, y) {
     return x & y;
 }
-
 function bnAnd(a) {
     let r = nbi();
     this.bitwiseTo(a, op_and, r);
     return r;
 }
-
 // (public) this | a
-
 function op_or(x, y) {
     return x | y;
 }
-
 function bnOr(a) {
     let r = nbi();
     this.bitwiseTo(a, op_or, r);
     return r;
 }
-
 // (public) this ^ a
-
 function op_xor(x, y) {
     return x ^ y;
 }
-
 function bnXor(a) {
     let r = nbi();
     this.bitwiseTo(a, op_xor, r);
     return r;
 }
-
 // (public) this & ~a
-
 function op_andnot(x, y) {
     return x & ~y;
 }
-
 function bnAndNot(a) {
     let r = nbi();
     this.bitwiseTo(a, op_andnot, r);
     return r;
 }
-
 // (public) ~this
-
 function bnNot() {
     let r = nbi();
     for (let i = 0; i < this.t; ++i) r[i] = this.DM & ~this[i];
@@ -2873,27 +2430,21 @@ function bnNot() {
     r.s = ~this.s;
     return r;
 }
-
 // (public) this << n
-
 function bnShiftLeft(n) {
     let r = nbi();
     if (n < 0) this.rShiftTo(-n, r);
     else this.lShiftTo(n, r);
     return r;
 }
-
 // (public) this >> n
-
 function bnShiftRight(n) {
     let r = nbi();
     if (n < 0) this.lShiftTo(-n, r);
     else this.rShiftTo(n, r);
     return r;
 }
-
 // return index of lowest 1-bit in x, x < 2^31
-
 function lbit(x) {
     if (x == 0) return -1;
     let r = 0;
@@ -2916,9 +2467,7 @@ function lbit(x) {
     if ((x & 1) == 0)++r;
     return r;
 }
-
 // (public) returns index of lowest 1-bit (or -1 if none)
-
 function bnGetLowestSetBit() {
     for (let i = 0; i < this.t; ++i) {
         if (this[i] != 0) return i * this.DB + lbit(this[i]);
@@ -2926,9 +2475,7 @@ function bnGetLowestSetBit() {
     if (this.s < 0) return this.t * this.DB;
     return -1;
 }
-
 // return number of 1 bits in x
-
 function cbit(x) {
     let r = 0;
     while (x != 0) {
@@ -2937,58 +2484,41 @@ function cbit(x) {
     }
     return r;
 }
-
 // (public) return number of set bits
-
 function bnBitCount() {
     let r = 0;
-
     let x = this.s & this.DM;
     for (let i = 0; i < this.t; ++i) r += cbit(this[i] ^ x);
     return r;
 }
-
 // (public) true iff nth bit is set
-
 function bnTestBit(n) {
     let j = Math.floor(n / this.DB);
     if (j >= this.t) return (this.s != 0);
     return ((this[j] & (1 << (n % this.DB))) != 0);
 }
-
 // (protected) this op (1<<n)
-
 function bnpChangeBit(n, op) {
     let r = BigInteger.ONE.shiftLeft(n);
     this.bitwiseTo(r, op, r);
     return r;
 }
-
 // (public) this | (1<<n)
-
 function bnSetBit(n) {
     return this.changeBit(n, op_or);
 }
-
 // (public) this & ~(1<<n)
-
 function bnClearBit(n) {
     return this.changeBit(n, op_andnot);
 }
-
 // (public) this ^ (1<<n)
-
 function bnFlipBit(n) {
     return this.changeBit(n, op_xor);
 }
-
 // (protected) r = this + a
-
 function bnpAddTo(a, r) {
     let i = 0;
-
     let c = 0;
-
     let m = Math.min(a.t, this.t);
     while (i < m) {
         c += this[i] + a[i];
@@ -3018,75 +2548,56 @@ function bnpAddTo(a, r) {
     r.t = i;
     r.clamp();
 }
-
 // (public) this + a
-
 function bnAdd(a) {
     let r = nbi();
     this.addTo(a, r);
     return r;
 }
-
 // (public) this - a
-
 function bnSubtract(a) {
     let r = nbi();
     this.subTo(a, r);
     return r;
 }
-
 // (public) this * a
-
 function bnMultiply(a) {
     let r = nbi();
     this.multiplyTo(a, r);
     return r;
 }
-
 // (public) this^2
-
 function bnSquare() {
     let r = nbi();
     this.squareTo(r);
     return r;
 }
-
 // (public) this / a
-
 function bnDivide(a) {
     let r = nbi();
     this.divRemTo(a, r, null);
     return r;
 }
-
 // (public) this % a
-
 function bnRemainder(a) {
     let r = nbi();
     this.divRemTo(a, null, r);
     return r;
 }
-
 // (public) [this/a,this%a]
-
 function bnDivideAndRemainder(a) {
     let q = nbi();
-
     let r = nbi();
     this.divRemTo(a, q, r);
     return new Array(q, r);
 }
-
 // (protected) this *= n, this >= 0, 1 < n < DV
-
 function bnpDMultiply(n) {
     this[this.t] = this.am(0, n - 1, this, 0, 0, this.t);
     ++this.t;
     this.clamp();
 }
-
 // (protected) this += n << w words, this >= 0
-
 function bnpDAddOffset(n, w) {
     if (n == 0) return;
     while (this.t <= w) this[this.t++] = 0;
@@ -3097,37 +2608,27 @@ function bnpDAddOffset(n, w) {
         ++this[w];
     }
 }
-
 // A "null" reducer
-
 function NullExp() {}
-
 function nNop(x) {
     return x;
 }
-
 function nMulTo(x, y, r) {
     x.multiplyTo(y, r);
 }
-
 function nSqrTo(x, r) {
     x.squareTo(r);
 }
-
 NullExp.prototype.convert = nNop;
 NullExp.prototype.revert = nNop;
 NullExp.prototype.mulTo = nMulTo;
 NullExp.prototype.sqrTo = nSqrTo;
-
 // (public) this^e
-
 function bnPow(e) {
     return this.exp(e, new NullExp());
 }
-
 // (protected) r = lower n words of "this * a", a.t <= n
 // "this" should be the larger one if appropriate.
-
 function bnpMultiplyLowerTo(a, n, r) {
     let i = Math.min(this.t + a.t, n);
     r.s = 0; // assumes a,this >= 0
@@ -3138,10 +2639,8 @@ function bnpMultiplyLowerTo(a, n, r) {
     for (j = Math.min(a.t, n); i < j; ++i) this.am(0, a[i], r, i, 0, n - i);
     r.clamp();
 }
-
 // (protected) r = "this * a" without lower n words, n > 0
 // "this" should be the larger one if appropriate.
-
 function bnpMultiplyUpperTo(a, n, r) {
     --n;
     let i = r.t = this.t + a.t - n;
@@ -3153,9 +2652,7 @@ function bnpMultiplyUpperTo(a, n, r) {
     r.clamp();
     r.drShiftTo(1, r);
 }
-
 // Barrett modular reduction
-
 function Barrett(m) {
     // setup Barrett
     this.r2 = nbi();
@@ -3164,7 +2661,6 @@ function Barrett(m) {
     this.mu = this.r2.divide(m);
     this.m = m;
 }
-
 function barrettConvert(x) {
     if (x.s < 0 || x.t > 2 * this.m.t) return x.mod(this.m);
     else if (x.compareTo(this.m) < 0) return x;
@@ -3175,13 +2671,10 @@ function barrettConvert(x) {
         return r;
     }
 }
-
 function barrettRevert(x) {
     return x;
 }
-
 // x = x mod m (HAC 14.42)
-
 function barrettReduce(x) {
     x.drShiftTo(this.m.t - 1, this.r2);
     if (x.t > this.m.t + 1) {
@@ -3194,34 +2687,25 @@ function barrettReduce(x) {
     x.subTo(this.r2, x);
     while (x.compareTo(this.m) >= 0) x.subTo(this.m, x);
 }
-
 // r = x^2 mod m; x != r
-
 function barrettSqrTo(x, r) {
     x.squareTo(r);
     this.reduce(r);
 }
-
 // r = x*y mod m; x,y != r
-
 function barrettMulTo(x, y, r) {
     x.multiplyTo(y, r);
     this.reduce(r);
 }
-
 Barrett.prototype.convert = barrettConvert;
 Barrett.prototype.revert = barrettRevert;
 Barrett.prototype.reduce = barrettReduce;
 Barrett.prototype.mulTo = barrettMulTo;
 Barrett.prototype.sqrTo = barrettSqrTo;
-
 // (public) this^e % m (HAC 14.85)
-
 function bnModPow(e, m) {
     let i = e.bitLength();
-
     let k; let r = nbv(1);
-
     let z;
     if (i <= 0) return r;
     else if (i < 18) k = 1;
@@ -3232,14 +2716,10 @@ function bnModPow(e, m) {
     if (i < 8) z = new Classic(m);
     else if (m.isEven()) z = new Barrett(m);
     else z = new Montgomery(m);
-
     // precomputation
     let g = new Array();
-
     let n = 3;
-
     let k1 = k - 1;
-
     let km = (1 << k) - 1;
     g[1] = z.convert(this);
     if (k > 1) {
@@ -3251,13 +2731,9 @@ function bnModPow(e, m) {
             n += 2;
         }
     }
-
     let j = e.t - 1;
-
     let w; let is1 = true;
-
     let r2 = nbi();
-
     let t;
     i = nbits(e[j]) - 1;
     while (j >= 0) {
@@ -3266,7 +2742,6 @@ function bnModPow(e, m) {
             w = (e[j] & ((1 << (i + 1)) - 1)) << (k1 - i);
             if (j > 0) w |= e[j - 1] >> (this.DB + i - k1);
         }
-
         n = k;
         while ((w & 1) == 0) {
             w >>= 1;
@@ -3293,7 +2768,6 @@ function bnModPow(e, m) {
             }
             z.mulTo(r2, g[w], r);
         }
-
         while (j >= 0 && (e[j] & (1 << i)) == 0) {
             z.sqrTo(r, r2);
             t = r;
@@ -3307,9 +2781,7 @@ function bnModPow(e, m) {
     }
     return z.revert(r);
 }
-
 // (public) gcd(this,a) (HAC 14.54)
-
 function bnGCD(a) {
     let x = (this.s < 0) ? this.negate() : this.clone();
     let y = (a.s < 0) ? a.negate() : a.clone();
@@ -3319,7 +2791,6 @@ function bnGCD(a) {
         y = t;
     }
     let i = x.getLowestSetBit();
-
     let g = y.getLowestSetBit();
     if (g < 0) return x;
     if (i < g) g = i;
@@ -3341,13 +2812,10 @@ function bnGCD(a) {
     if (g > 0) y.lShiftTo(g, y);
     return y;
 }
-
 // (protected) this % n, n < 2^26
-
 function bnpModInt(n) {
     if (n <= 0) return 0;
     let d = this.DV % n;
-
     let r = (this.s < 0) ? n - 1 : 0;
     if (this.t > 0) {
         if (d == 0) r = this[0] % n;
@@ -3355,21 +2823,15 @@ function bnpModInt(n) {
     }
     return r;
 }
-
 // (public) 1/this % m (HAC 14.61)
-
 function bnModInverse(m) {
     let ac = m.isEven();
     if ((this.isEven() && ac) || m.signum() == 0) return BigInteger.ZERO;
     let u = m.clone();
-
     let v = this.clone();
     let a = nbv(1);
-
     let b = nbv(0);
-
     let c = nbv(0);
-
     let d = nbv(1);
     while (u.signum() != 0) {
         while (u.isEven()) {
@@ -3411,12 +2873,9 @@ function bnModInverse(m) {
     if (d.signum() < 0) return d.add(m);
     else return d;
 }
-
 let lowprimes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997];
 let lplim = (1 << 26) / lowprimes[lowprimes.length - 1];
-
 // (public) test primality with certainty >= 1-.5^t
-
 function bnIsProbablePrime(t) {
     let i; let x = this.abs();
     if (x.t == 1 && x[0] <= lowprimes[lowprimes.length - 1]) {
@@ -3429,7 +2888,6 @@ function bnIsProbablePrime(t) {
     i = 1;
     while (i < lowprimes.length) {
         let m = lowprimes[i];
-
         let j = i + 1;
         while (j < lowprimes.length && m < lplim) m *= lowprimes[j++];
         m = x.modInt(m);
@@ -3437,9 +2895,7 @@ function bnIsProbablePrime(t) {
     }
     return x.millerRabin(t);
 }
-
 // (protected) true if probably prime (HAC 4.24, Miller-Rabin)
-
 function bnpMillerRabin(t) {
     let n1 = this.subtract(BigInteger.ONE);
     let k = n1.getLowestSetBit();
@@ -3463,7 +2919,6 @@ function bnpMillerRabin(t) {
     }
     return true;
 }
-
 // protected
 BigInteger.prototype.chunkSize = bnpChunkSize;
 BigInteger.prototype.toRadix = bnpToRadix;
@@ -3478,7 +2933,6 @@ BigInteger.prototype.multiplyLowerTo = bnpMultiplyLowerTo;
 BigInteger.prototype.multiplyUpperTo = bnpMultiplyUpperTo;
 BigInteger.prototype.modInt = bnpModInt;
 BigInteger.prototype.millerRabin = bnpMillerRabin;
-
 // public
 BigInteger.prototype.clone = bnClone;
 BigInteger.prototype.intValue = bnIntValue;
@@ -3513,15 +2967,12 @@ BigInteger.prototype.modInverse = bnModInverse;
 BigInteger.prototype.pow = bnPow;
 BigInteger.prototype.gcd = bnGCD;
 BigInteger.prototype.isProbablePrime = bnIsProbablePrime;
-
 // JSBN-specific extension
 BigInteger.prototype.square = bnSquare;
-
 let RSAPublicKey = function($modulus, $encryptionExponent) {
     this.modulus = new BigInteger(Hex.encode($modulus), 16);
     this.encryptionExponent = new BigInteger(Hex.encode($encryptionExponent), 16);
 };
-
 let UTF8 = {
     encode: function($input) {
         $input = $input.replace(/\r\n/g, '\n');
@@ -3564,7 +3015,6 @@ let UTF8 = {
         return $output;
     },
 };
-
 let Base64 = {
     base64: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
     encode: function($input) {
@@ -3609,7 +3059,6 @@ let Base64 = {
         return $output; // UTF8.decode($output);
     },
 };
-
 var Hex = {
     hex: '0123456789abcdef',
     encode: function($input) {
@@ -3634,7 +3083,6 @@ var Hex = {
         return $output;
     },
 };
-
 let ASN1Data = function($data) {
     this.error = false;
     this.parse = function($data) {
@@ -3728,7 +3176,6 @@ let ASN1Data = function($data) {
     };
     this.data = this.parse($data);
 };
-
 var RSA = {
     getPublicKey: function($pem) {
         if ($pem.length < 50) return false;
@@ -3778,5 +3225,4 @@ var RSA = {
         return new BigInteger($buffer);
     },
 };
-
 export var RSA = RSA;

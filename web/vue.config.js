@@ -1,20 +1,20 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-
+ 
 // vue.config.js
 const path = require('path')
 const fs = require('fs')
@@ -23,14 +23,12 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 // const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin');
 const VirtualModulesPlugin = require('webpack-virtual-modules');
 const apps = require('./src/config.json')
-
 const getVersion = () => {
   const pkgPath = path.join(__dirname, './package.json')
   let pkg = fs.readFileSync(pkgPath);
   pkg = JSON.parse(pkg);
   return pkg.version;
 }
-
 // 指定module打包, 不指定则打包全部子应用
 // npm run serve --module=scriptis
 let modules = process.env.npm_config_module || ''
@@ -49,7 +47,6 @@ let requireComponentVue = []
 let appsRoutes = []
 let appsI18n = []
 let headers = []
-
 Object.entries(apps).forEach(item => {
   if (item[1].module) {
     requireComponent.push(`require.context('@/${item[1].module}',true,/([a-z|A-Z])+\\/index\.js$/)`)
@@ -71,10 +68,8 @@ Object.entries(apps).forEach(item => {
     }`)
   }
 })
-
 let buildDynamicModules = Object.values(apps)
 buildDynamicModules = JSON.stringify(buildDynamicModules)
-
 const virtualModules = new VirtualModulesPlugin({
   'node_modules/dynamic-modules.js': `module.exports = {
     apps: ${buildDynamicModules},
@@ -87,16 +82,13 @@ const virtualModules = new VirtualModulesPlugin({
     headers:{${headers.join(',')}}
   };`
 });
-
 const plugins = [
   virtualModules
 ]
-
 // scriptis linkis 有使用编辑器组件, 需要Monaco Editor
 if (modules.indexOf('scriptis') > -1 || modules.indexOf('linkis') > -1) {
   plugins.push(new MonacoWebpackPlugin())
 }
-
 /**
  * resolve
  * @param {*} dir
@@ -104,7 +96,6 @@ if (modules.indexOf('scriptis') > -1 || modules.indexOf('linkis') > -1) {
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
-
 // if (process.env.NODE_ENV !== 'dev') {
 //   plugins.push(new CspHtmlWebpackPlugin(
 //     {
@@ -132,7 +123,6 @@ function resolve(dir) {
 //     }
 //   ))
 // }
-
 module.exports = {
   publicPath: './',
   outputDir: 'dist/dist',

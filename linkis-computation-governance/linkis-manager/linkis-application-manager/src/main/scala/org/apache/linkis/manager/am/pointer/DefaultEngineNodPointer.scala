@@ -18,7 +18,9 @@
 
 package org.apache.linkis.manager.am.pointer
 
+import org.apache.linkis.common.exception.WarnException
 import org.apache.linkis.manager.common.entity.node.Node
+import org.apache.linkis.manager.common.protocol.engine.{EngineOperateRequest, EngineOperateResponse}
 import org.apache.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock, ResponseEngineLock}
 import org.apache.linkis.manager.service.common.pointer.EngineNodePointer
 
@@ -48,5 +50,12 @@ class DefaultEngineNodPointer(val node: Node) extends AbstractNodePointer with E
 
   override def releaseLock(requestEngineUnlock: RequestEngineUnlock): Unit = {
     getSender.send(requestEngineUnlock)
+  }
+
+  override def executeOperation(engineOperateRequest: EngineOperateRequest): EngineOperateResponse = {
+    getSender.ask(engineOperateRequest) match {
+      case response: EngineOperateResponse => response
+      case _ => throw new WarnException(-1, "Illegal response of operation.")
+    }
   }
 }

@@ -29,6 +29,7 @@ import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.{AMEngineNode, EngineNode, ScoreServiceInstance}
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel
+import org.apache.linkis.manager.common.protocol.engine.{EngineOperateRequest, EngineOperateResponse}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
 import org.apache.linkis.manager.persistence.{LabelManagerPersistence, NodeManagerPersistence, NodeMetricManagerPersistence}
@@ -245,5 +246,8 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
     labelManagerPersistence.updateLabel(label.getId, persistenceLabel)
   }
 
-
+  override def executeOperation(engineNode: EngineNode, request: EngineOperateRequest): EngineOperateResponse = {
+    val engine = nodePointerBuilder.buildEngineNodePointer(engineNode)
+    engine.executeOperation(request)
+  }
 }

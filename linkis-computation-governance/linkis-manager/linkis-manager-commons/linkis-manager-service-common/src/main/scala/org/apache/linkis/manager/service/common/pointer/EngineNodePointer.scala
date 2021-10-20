@@ -18,6 +18,7 @@
 
 package org.apache.linkis.manager.service.common.pointer
 
+import org.apache.linkis.manager.common.protocol.engine.{EngineOperateRequest, EngineOperateResponse}
 import org.apache.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock}
 
 
@@ -27,5 +28,7 @@ trait EngineNodePointer extends NodePointer {
 
 
   def releaseLock(requestEngineUnlock: RequestEngineUnlock): Unit
+
+  def executeOperation(engineOperateRequest: EngineOperateRequest): EngineOperateResponse
 
 }

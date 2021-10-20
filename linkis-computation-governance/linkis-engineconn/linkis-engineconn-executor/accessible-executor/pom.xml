@@ -33,12 +33,6 @@
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-executor-core</artifactId>
             <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>reflections</artifactId>
-                    <groupId>org.reflections</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>

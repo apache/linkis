@@ -1,5 +1,6 @@
 package com.webank.wedatasphere.linkis.datasource.client.request
 
+import com.webank.wedatasphere.linkis.datasource.client.config.DatasourceClientConfig._
 import com.webank.wedatasphere.linkis.datasource.client.exception.DataSourceClientBuilderException
 import com.webank.wedatasphere.linkis.httpclient.request.GetAction
 
@@ -11,7 +12,7 @@ class GetDataSourceVersionsAction extends GetAction with DataSourceAction {
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array("datasourcemanager", resourceId, "versions")
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, resourceId, "versions")
 }
 object GetDataSourceVersionsAction {
   def builder(): Builder = new Builder

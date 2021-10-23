@@ -1,5 +1,6 @@
 package com.webank.wedatasphere.linkis.datasource.client.response
 
+import com.webank.wedatasphere.linkis.datasource.client.config.DatasourceClientConfig._
 import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
 import com.webank.wedatasphere.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
@@ -8,7 +9,7 @@ import com.webank.wedatasphere.linkis.metadatamanager.common.domain.MetaColumnIn
 import java.util
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadatamanager/columns/(\\S+)/db/(\\S+)/table/(\\S+)")
+@DWSHttpMessageResult(s"/api/rest_j/v\\d+/${METADATA_SERVICE_MODULE.getValue}/columns/(\\S+)/db/(\\S+)/table/(\\S+)")
 class MetadataGetColumnsResult extends DWSResult{
   @BeanProperty var columns: util.List[java.util.Map[String, Any]] = _
 

@@ -1,9 +1,10 @@
 package com.webank.wedatasphere.linkis.datasource.client.request
 
+import com.webank.wedatasphere.linkis.datasource.client.config.DatasourceClientConfig._
 import com.webank.wedatasphere.linkis.httpclient.request.GetAction
 
 class GetAllDataSourceTypesAction extends GetAction with DataSourceAction {
-  override def suffixURLs: Array[String] = Array("datasourcemanager", "type", "all")
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "type", "all")
 
   private var user:String = _
 

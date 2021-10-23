@@ -1,5 +1,6 @@
 package com.webank.wedatasphere.linkis.datasource.client.request
 
+import com.webank.wedatasphere.linkis.datasource.client.config.DatasourceClientConfig._
 import com.webank.wedatasphere.linkis.datasource.client.exception.DataSourceClientBuilderException
 import com.webank.wedatasphere.linkis.httpclient.request.GetAction
 
@@ -8,7 +9,7 @@ class MetadataGetPartitionsAction extends GetAction with DataSourceAction {
   private var database: String = _
   private var table: String = _
 
-  override def suffixURLs: Array[String] = Array("metadatamanager", "partitions", dataSourceId, "db", database, "table", table)
+  override def suffixURLs: Array[String] = Array(METADATA_SERVICE_MODULE.getValue, "partitions", dataSourceId, "db", database, "table", table)
 
   private var user:String = _
 

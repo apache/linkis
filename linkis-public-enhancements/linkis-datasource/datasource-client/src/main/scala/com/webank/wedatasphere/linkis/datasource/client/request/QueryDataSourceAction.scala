@@ -1,10 +1,11 @@
 package com.webank.wedatasphere.linkis.datasource.client.request
 
+import com.webank.wedatasphere.linkis.datasource.client.config.DatasourceClientConfig._
 import com.webank.wedatasphere.linkis.datasource.client.exception.DataSourceClientBuilderException
 import com.webank.wedatasphere.linkis.httpclient.request.GetAction
 
 class QueryDataSourceAction extends GetAction with DataSourceAction{
-  override def suffixURLs: Array[String] = Array("datasourcemanager", "info")
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "info")
 
   private var user:String = _
 

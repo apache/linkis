@@ -1,5 +1,6 @@
 package com.webank.wedatasphere.linkis.datasource.client.response
 
+import com.webank.wedatasphere.linkis.datasource.client.config.DatasourceClientConfig._
 import java.util
 
 import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceType
@@ -9,7 +10,7 @@ import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/datasourcemanager/type/all")
+@DWSHttpMessageResult(s"/api/rest_j/v\\d+/${DATA_SOURCE_SERVICE_MODULE.getValue}/type/all")
 class GetAllDataSourceTypesResult extends DWSResult {
   @BeanProperty var type_list: java.util.List[java.util.Map[String, Any]] = _
 

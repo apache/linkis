@@ -1,5 +1,6 @@
 package com.webank.wedatasphere.linkis.datasource.client.request
 
+import com.webank.wedatasphere.linkis.datasource.client.config.DatasourceClientConfig._
 import com.webank.wedatasphere.linkis.datasource.client.exception.DataSourceClientBuilderException
 import com.webank.wedatasphere.linkis.httpclient.request.DeleteAction
 
@@ -12,7 +13,7 @@ class DeleteDataSourceAction extends DeleteAction with DataSourceAction  {
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array("datasourcemanager", "info", resourceId)
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "info", resourceId)
 }
 object DeleteDataSourceAction{
   def builder(): Builder = new Builder

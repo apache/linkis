@@ -48,6 +48,8 @@ object EngineType extends Enumeration with Logging {
 
   val FLINK = Value("flink")
 
+  val SQOOP = Value("sqoop")
+
   val APPCONN = Value("appconn")
 
   def mapFsTypeToEngineType(fsType: String): String = {
@@ -78,6 +80,7 @@ object EngineType extends Enumeration with Logging {
     case _ if ES.toString.equalsIgnoreCase(str) => ES
     case _ if PRESTO.toString.equalsIgnoreCase(str) => PRESTO
     case _ if FLINK.toString.equalsIgnoreCase(str) => FLINK
+    case _ if SQOOP.toString.equalsIgnoreCase(str) => SQOOP
     case _ if APPCONN.toString.equals(str) => APPCONN
     case _ => null
 

@@ -259,11 +259,13 @@ class EmptyCodeParser extends SingleCodeParser {
 
 object CodeType extends Enumeration {
   type CodeType = Value
-  val Python, SQL, Scala, Shell, Other, Remain = Value
+ // val Python, SQL, Scala, Shell, Other, Remain = Value
+  val Python, SQL, Scala, Shell, JSON, Other, Remain = Value
 
   def getType(codeType: String): CodeType = codeType.toLowerCase() match {
     case "python" | "pyspark" | "py" => Python
-    case "sql" | "hql" => SQL
+    //case "sql" | "hql" => SQL
+    case "sql" | "hql" | "psql" | "essql" => SQL
     case "scala" => Scala
     case "shell" | "sh" => Shell
     case _ => Other

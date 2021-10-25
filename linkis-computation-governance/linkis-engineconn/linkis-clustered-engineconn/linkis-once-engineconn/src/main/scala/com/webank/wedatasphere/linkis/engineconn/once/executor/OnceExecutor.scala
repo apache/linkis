@@ -145,6 +145,7 @@ trait ManageableOnceExecutor extends AccessibleExecutor with OnceExecutor with R
 
   def tryFailed(): Boolean = {
     this.whenStatus(NodeStatus.ShuttingDown, transition(NodeStatus.Failed))
+    this.whenStatus(NodeStatus.Busy,transition(NodeStatus.Failed))
     true
   }
 

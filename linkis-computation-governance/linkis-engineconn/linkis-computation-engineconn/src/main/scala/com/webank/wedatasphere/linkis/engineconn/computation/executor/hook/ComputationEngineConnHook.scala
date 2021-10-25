@@ -21,6 +21,8 @@ import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationC
 import com.webank.wedatasphere.linkis.engineconn.common.engineconn.EngineConn
 import com.webank.wedatasphere.linkis.engineconn.core.executor.ExecutorManager
 import com.webank.wedatasphere.linkis.manager.common.entity.enumeration.NodeStatus
+import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineConnModeLabel
+import scala.collection.JavaConversions._
 
 
 class ComputationEngineConnHook extends CallbackEngineConnHook {
@@ -31,6 +33,11 @@ class ComputationEngineConnHook extends CallbackEngineConnHook {
   override def afterEngineServerStartSuccess(engineCreationContext: EngineCreationContext,
                                              engineConn: EngineConn): Unit =
     {
+      for(label <- engineCreationContext.getLabels()){
+          if("engineConnMode".equals(label.getLabelKey) && "once".equals(label.getStringValue)){
+            return
+          }
+      }
       super.afterEngineServerStartSuccess(engineCreationContext, engineConn)
       ExecutorManager.getInstance.getReportExecutor.tryReady()
     }

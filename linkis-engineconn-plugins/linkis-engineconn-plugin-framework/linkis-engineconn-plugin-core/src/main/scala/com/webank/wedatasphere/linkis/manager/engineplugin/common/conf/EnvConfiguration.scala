@@ -49,4 +49,6 @@ object EnvConfiguration {
   val LOG4J2_XML_FILE = CommonVars[String]("wds.linkis.engineconn.log4j2.xml.file", "log4j2-engineconn.xml")
 
   val LINKIS_PUBLIC_MODULE_PATH = CommonVars("wds.linkis.public_module.path", Configuration.LINKIS_HOME.getValue + "/lib/linkis-commons/public-module")
+
+  val LINKIS_SPECIAL_CLASSPATH = CommonVars("wds.linkis.engineconn.special.classpath", "/usr/local/hadoop-3.2.1/share/hadoop/common/lib/*:/usr/local/hadoop-3.2.1/share/hadoop/common/*:/usr/local/hadoop-3.2.1/share/hadoop/hdfs:/usr/local/hadoop-3.2.1/share/hadoop/hdfs/lib/*:/usr/local/hadoop-3.2.1/share/hadoop/hdfs/*:/usr/local/hadoop-3.2.1/share/hadoop/mapreduce/lib/*:/usr/local/hadoop-3.2.1/share/hadoop/mapreduce/*:/usr/local/hadoop-3.2.1/share/hadoop/yarn:/usr/local/hadoop-3.2.1/share/hadoop/yarn/lib/*:/usr/local/hadoop-3.2.1/share/hadoop/yarn/*")
 }

@@ -39,12 +39,15 @@ abstract class AbstractEngineConnStartUpCallback(emInstance: ServiceInstance) ex
 
 
   def callback(protocol: RequestProtocol): Unit = {
-    if(protocol.isInstanceOf[EngineConnStatusCallback]){
-      if(protocol.asInstanceOf[EngineConnStatusCallback].status.equals(NodeStatus.Failed)){
-        error(s"protocol will send to em: ${protocol}")
-      }else{
-        info(s"protocol will send to em: ${protocol}")
+    protocol match {
+      case protocol: EngineConnStatusCallback => {
+        if(protocol.status.equals(NodeStatus.Failed)){
+          error(s"protocol will send to em: ${protocol}")
+        }else{
+          info(s"protocol will send to em: ${protocol}")
+        }
       }
+      case _=>
     }
     getEMSender.send(protocol)
   }

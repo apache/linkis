@@ -97,14 +97,14 @@ public class BmlProjectRestful {
 
     @RequestMapping(path = "uploadShareResource",method = RequestMethod.POST)
     public Message uploadShareResource(HttpServletRequest request, 
-                                        @RequestParam("system") String system,
-                                        @RequestParam("resourceHeader") String resourceHeader,
-                                        @RequestParam("isExpire") String isExpire,
-                                        @RequestParam("expireType") String expireType,
-                                        @RequestParam("expireTime") String expireTime,
-                                        @RequestParam("maxVersion") int maxVersion,
-                                        @RequestParam("projectName") String projectName,
-                                        @RequestParam("file") List<MultipartFile> files) throws ErrorException{
+                                        @RequestParam(name = "system", required = false) String system,
+                                        @RequestParam(name = "resourceHeader", required = false) String resourceHeader,
+                                        @RequestParam(name = "isExpire", required = false) String isExpire,
+                                        @RequestParam(name = "expireType", required = false) String expireType,
+                                        @RequestParam(name = "expireTime", required = false) String expireTime,
+                                        @RequestParam(name = "maxVersion", required = false) Integer maxVersion,
+                                        @RequestParam(name = "projectName") String projectName,
+                                        @RequestParam(name = "file") List<MultipartFile> files) throws ErrorException{
         String username = SecurityFilter.getLoginUsername(request);
         Message message;
         try{

@@ -193,3 +193,9 @@ remove_properties_license(){
 #find -type f -name "*.properties" |xargs sed -i "/^$/d"
 #find -type f -name "*.properties" |  xargs sed -i "1i $sh_license"
 
+#add license for sql files
+#find  -type f -name "*.sql" | xargs sed -i "1i $java_license"
+
+#add license for vue files
+find  -type f -name "*.vue" | xargs sed -i "1i $xml_license"
+find  -type f -name "*.vue" | xargs sed -i '1d'

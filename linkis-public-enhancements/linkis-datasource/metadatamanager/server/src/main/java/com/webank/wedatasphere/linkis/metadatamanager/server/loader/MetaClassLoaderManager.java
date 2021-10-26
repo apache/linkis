@@ -47,7 +47,9 @@ public class MetaClassLoaderManager {
         String className = "com.webank.wedatasphere.linkis.metadatamanager.service." + prefix + "MetaService";
         clazzes.computeIfAbsent(dsType, (x)->{
             try {
-                return classLoaders.get(dsType).loadClass(className);
+                ClassLoader classLoader = classLoaders.get(dsType);
+                Thread.currentThread().setContextClassLoader(classLoader);
+                return classLoader.loadClass(className);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;

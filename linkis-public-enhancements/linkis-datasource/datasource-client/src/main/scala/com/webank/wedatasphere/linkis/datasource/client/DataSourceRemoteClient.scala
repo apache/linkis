@@ -1,7 +1,7 @@
 package com.webank.wedatasphere.linkis.datasource.client
 
-import com.webank.wedatasphere.linkis.datasource.client.request.{CreateDataSourceAction, DataSourceTestConnectAction, DeleteDataSourceAction, ExpireDataSourceAction, GetAllDataSourceTypesAction, GetConnectParamsByDataSourceIdAction, GetDataSourceVersionsAction, GetInfoByDataSourceIdAction, PublishDataSourceVersionAction, QueryDataSourceAction, QueryDataSourceEnvAction, UpdateDataSourceAction, UpdateDataSourceParameterAction}
-import com.webank.wedatasphere.linkis.datasource.client.response.{CreateDataSourceResult, DataSourceTestConnectResult, DeleteDataSourceResult, ExpireDataSourceResult, GetAllDataSourceTypesResult, GetConnectParamsByDataSourceIdResult, GetDataSourceVersionsResult, GetInfoByDataSourceIdResult, PublishDataSourceVersionResult, QueryDataSourceEnvResult, QueryDataSourceResult, UpdateDataSourceParameterResult, UpdateDataSourceResult}
+import com.webank.wedatasphere.linkis.datasource.client.request.{CreateDataSourceAction, DataSourceTestConnectAction, DeleteDataSourceAction, ExpireDataSourceAction, GetAllDataSourceTypesAction, GetConnectParamsByDataSourceIdAction, GetDataSourceVersionsAction, GetInfoByDataSourceIdAction, GetKeyTypeDatasourceAction, PublishDataSourceVersionAction, QueryDataSourceAction, QueryDataSourceEnvAction, UpdateDataSourceAction, UpdateDataSourceParameterAction}
+import com.webank.wedatasphere.linkis.datasource.client.response.{CreateDataSourceResult, DataSourceTestConnectResult, DeleteDataSourceResult, ExpireDataSourceResult, GetAllDataSourceTypesResult, GetConnectParamsByDataSourceIdResult, GetDataSourceVersionsResult, GetInfoByDataSourceIdResult, GetKeyTypeDatasourceResult, PublishDataSourceVersionResult, QueryDataSourceEnvResult, QueryDataSourceResult, UpdateDataSourceParameterResult, UpdateDataSourceResult}
 
 trait DataSourceRemoteClient extends RemoteClient {
   def getAllDataSourceTypes(action:GetAllDataSourceTypesAction): GetAllDataSourceTypesResult
@@ -17,4 +17,5 @@ trait DataSourceRemoteClient extends RemoteClient {
   def publishDataSourceVersion(action:PublishDataSourceVersionAction):PublishDataSourceVersionResult
   def updateDataSource(action: UpdateDataSourceAction):UpdateDataSourceResult
   def updateDataSourceParameter(action: UpdateDataSourceParameterAction):UpdateDataSourceParameterResult
+  def getKeyDefinitionsByType(action:GetKeyTypeDatasourceAction):GetKeyTypeDatasourceResult
 }

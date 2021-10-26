@@ -6,7 +6,7 @@ import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult(s"/api/rest_j/v\\d+/${DATA_SOURCE_SERVICE_MODULE.getValue}/parameter/(\\S+)/json")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/datasourcemanager/parameter/(\\S+)/json")
 class UpdateDataSourceParameterResult extends DWSResult{
   @BeanProperty var version: Long = _
 }

@@ -8,7 +8,7 @@ import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult(s"/api/rest_j/v\\d+/${DATA_SOURCE_SERVICE_MODULE.getValue}/info/(\\S+)")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/datasourcemanager/info/(\\S+)")
 class GetInfoByDataSourceIdResult extends DWSResult{
   @BeanProperty var info: java.util.Map[String, Any] = _
 

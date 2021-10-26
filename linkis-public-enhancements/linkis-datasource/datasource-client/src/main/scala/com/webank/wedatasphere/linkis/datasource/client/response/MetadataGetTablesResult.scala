@@ -7,7 +7,7 @@ import com.webank.wedatasphere.linkis.httpclient.dws.response.DWSResult
 import java.util
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult(s"/api/rest_j/v\\d+/${METADATA_SERVICE_MODULE.getValue}/tables/(\\S+)/db/(\\S+)")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/metadatamanager/tables/(\\S+)/db/(\\S+)")
 class MetadataGetTablesResult extends DWSResult{
   @BeanProperty var tables: util.List[String] = _
 }

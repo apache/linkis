@@ -1,7 +1,7 @@
 package com.webank.wedatasphere.linkis.datasource.client.impl
 
-import com.webank.wedatasphere.linkis.datasource.client.request.{CreateDataSourceAction, DataSourceTestConnectAction, DeleteDataSourceAction, ExpireDataSourceAction, GetAllDataSourceTypesAction, GetConnectParamsByDataSourceIdAction, GetDataSourceVersionsAction, GetInfoByDataSourceIdAction, PublishDataSourceVersionAction, QueryDataSourceAction, QueryDataSourceEnvAction, UpdateDataSourceAction, UpdateDataSourceParameterAction}
-import com.webank.wedatasphere.linkis.datasource.client.response.{CreateDataSourceResult, DataSourceTestConnectResult, DeleteDataSourceResult, ExpireDataSourceResult, GetAllDataSourceTypesResult, GetConnectParamsByDataSourceIdResult, GetDataSourceVersionsResult, GetInfoByDataSourceIdResult, PublishDataSourceVersionResult, QueryDataSourceEnvResult, QueryDataSourceResult, UpdateDataSourceParameterResult, UpdateDataSourceResult}
+import com.webank.wedatasphere.linkis.datasource.client.request.{CreateDataSourceAction, DataSourceTestConnectAction, DeleteDataSourceAction, ExpireDataSourceAction, GetAllDataSourceTypesAction, GetConnectParamsByDataSourceIdAction, GetDataSourceVersionsAction, GetInfoByDataSourceIdAction, GetKeyTypeDatasourceAction, PublishDataSourceVersionAction, QueryDataSourceAction, QueryDataSourceEnvAction, UpdateDataSourceAction, UpdateDataSourceParameterAction}
+import com.webank.wedatasphere.linkis.datasource.client.response.{CreateDataSourceResult, DataSourceTestConnectResult, DeleteDataSourceResult, ExpireDataSourceResult, GetAllDataSourceTypesResult, GetConnectParamsByDataSourceIdResult, GetDataSourceVersionsResult, GetInfoByDataSourceIdResult, GetKeyTypeDatasourceResult, PublishDataSourceVersionResult, QueryDataSourceEnvResult, QueryDataSourceResult, UpdateDataSourceParameterResult, UpdateDataSourceResult}
 import com.webank.wedatasphere.linkis.datasource.client.{AbstractRemoteClient, DataSourceRemoteClient}
 import com.webank.wedatasphere.linkis.httpclient.dws.DWSHttpClient
 import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfig
@@ -35,6 +35,8 @@ class LinkisDataSourceRemoteClient(clientConfig: DWSClientConfig) extends Abstra
   override def updateDataSource(action: UpdateDataSourceAction): UpdateDataSourceResult = execute(action).asInstanceOf[UpdateDataSourceResult]
 
   override def updateDataSourceParameter(action: UpdateDataSourceParameterAction): UpdateDataSourceParameterResult = execute(action).asInstanceOf[UpdateDataSourceParameterResult]
+
+  override def getKeyDefinitionsByType(action: GetKeyTypeDatasourceAction): GetKeyTypeDatasourceResult = execute(action).asInstanceOf[GetKeyTypeDatasourceResult]
 }
 
 

@@ -40,7 +40,7 @@ const typesMap = {
     }
   },
   name: 'title',
-  
+
   defaultValue: 'value',
   // dataSource: 'options',
   dataSource: (data, source, self)=>{
@@ -83,9 +83,9 @@ const typesMap = {
   //     return {validate: { pattern: new RegExp(data.valueRegex), message: '不符合规则', trigger: 'blur' }}
   //   else return null
   // },
-  
+
   refId: 'refId',
-  refVaule: 'refVaule',
+  refValue: 'refValue',
   id: 'id',
 }
 export default {
@@ -141,9 +141,9 @@ export default {
   },
   created(){
     this.loading = true;
-    
+
     this.getDataSource(this.data);
-    
+
     getKeyDefine(this.data.dataSourceTypeId).then((data)=>{
       this.loading = false;
       this.transformData(data.key_define);
@@ -152,7 +152,7 @@ export default {
   watch: {
     data: {
       handler (newV) {
-        
+
         this.getDataSource(newV);
       },
       deep: true
@@ -162,7 +162,7 @@ export default {
     getDataSource(newV){
       if(this.data.id){
         getDataSourceByIdAndVersion(newV.id, newV.versionId).then(result=>{
-          
+
           const mConnect = result.info.connectParams;
           this.sourceConnectData = mConnect;
           delete result.info.connectParams;
@@ -178,25 +178,25 @@ export default {
     },
     transformData(keyDefinitions){
       const tempData = [];
-      
+
       keyDefinitions.forEach((obj)=>{
         let item = {};
         Object.keys(obj).forEach((keyName) =>{
-          
+
           switch (typeof typesMap[keyName]) {
             case 'object':
               item = merge({}, item, typesMap[keyName])
               break;
-            
+
             case 'function':
-              
+
               item = mergeWith(item, typesMap[keyName](obj, item, this), function(objValue, srcValue){
                 if(_.isArray(objValue)) {
                   return objValue.concat(srcValue);
                 }
               });
               break;
-            
+
             case 'string':
               item[typesMap[keyName]] = obj[keyName];
               break;
@@ -206,36 +206,36 @@ export default {
       });
 
       const insertParent = (id, child)=>{
-        
+
         let parent = tempData.find(item=> id==item.id);
         if(parent && child){
-          
+
           if(!parent.control || parent.control.length===0) {
             parent.control = [  //不存在新建
               {
-                value: child.refVaule,
-                rule: [{...child} ]   
-              }                                              
+                value: child.refValue,
+                rule: [{...child} ]
+              }
             ]
           }else {
-            let index = parent.control.findIndex(item=>item.value+'' === child.refVaule+'');
+            let index = parent.control.findIndex(item=>item.value+'' === child.refValue+'');
             if(index > -1){
               parent.control[index].rule.push({...child})
             }else {
               parent.control.push(
                 {
-                  value: child.refVaule,
-                  rule: [{...child} ]   
-                }  
+                  value: child.refValue,
+                  rule: [{...child} ]
+                }
               )
             }
-            
+
           }
-          
+
         }
-        
+
       }
-      
+
       for(var i =0; i<tempData.length; i++){
         let item = tempData[i];
         if(item.refId && item.refId > 0){
@@ -246,7 +246,7 @@ export default {
       }
       this.rule =  this.rule.concat(tempData);
       return tempData;
-      
+
     }
   }
 }

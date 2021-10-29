@@ -39,7 +39,7 @@ class EurekaRPCServerLoader extends AbstractRPCServerLoader {
   }
 
   private[rpc] def getInstance(applicationName: String, instanceId: String): String =
-    if (instanceId.toLowerCase.indexOf(applicationName.toLowerCase) > 0) {
+    if (instanceId.toLowerCase.indexOf(":" + applicationName.toLowerCase + ":") > 0) {
       val instanceInfos = instanceId.split(":")
       instanceInfos(0) + ":" + instanceInfos(2)
     } else instanceId

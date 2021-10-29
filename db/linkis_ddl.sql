@@ -571,7 +571,7 @@ DROP TABLE IF EXISTS `linkis_ps_instance_label_relation`;
 CREATE TABLE `linkis_ps_instance_label_relation` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `label_id` int(20) DEFAULT NULL COMMENT 'id reference linkis_ps_instance_label -> id',
-  `service_instance` varchar(64) NOT NULL COLLATE utf8_bin COMMENT 'structure like ${host|machine}:${port}',
+  `service_instance` varchar(128) NOT NULL COLLATE utf8_bin COMMENT 'structure like ${host|machine}:${port}',
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'create unix timestamp',
   PRIMARY KEY (`id`)
@@ -659,8 +659,8 @@ CREATE TABLE `linkis_cg_rm_external_resource_provider` (
 DROP TABLE IF EXISTS `linkis_cg_manager_engine_em`;
 CREATE TABLE `linkis_cg_manager_engine_em` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
-  `engine_instance` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `em_instance` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `engine_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
+  `em_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
@@ -706,7 +706,7 @@ DROP TABLE IF EXISTS `linkis_cg_manager_label_service_instance`;
 CREATE TABLE `linkis_cg_manager_label_service_instance` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `label_id` int(20) DEFAULT NULL,
-  `service_instance` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `service_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)

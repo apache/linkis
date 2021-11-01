@@ -24,9 +24,9 @@ body:
 
   - type: dropdown
     attributes:
-      label: Ray Component
+      label: Linkis Component
       description: |
-        What component are you using? Ray has many subprojects, please make sure to choose the component that
+        What component are you using? Linkis has many subprojects, please make sure to choose the component that
         you found the bug.
       multiple: true
       options:

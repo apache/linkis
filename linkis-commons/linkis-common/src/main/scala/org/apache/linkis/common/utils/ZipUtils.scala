@@ -131,23 +131,37 @@ object ZipUtils {
     Utils.tryFinally {
       val fos = new FileOutputStream(zipFile)
       zos = new ZipOutputStream(new BufferedOutputStream(fos))
-      val bufs = new Array[Byte](BUFFER_SIZE)
-      sourceFiles.foreach { f =>
-        //Create a ZIP entity and add it to the archive(创建ZIP实体，并添加进压缩包)
-        val zipEntry = new ZipEntry(f.getName)
-        zos.putNextEntry(zipEntry)
-        //Read the file to be compressed and write it into the archive(读取待压缩的文件并写进压缩包里)
-        val fis = new FileInputStream(f)
-        bis = new BufferedInputStream(fis, 1024*10)
-        Utils.tryFinally {
-          var read = bis.read(bufs, 0, 1024)
-          while(read > 0){
-            zos.write(bufs, 0, read)
-            read = bis.read(bufs, 0, 1024)
-          }
-        }(IOUtils.closeQuietly(bis))
-      }
+      write(sourceFilePath.substring(sourceFilePath.lastIndexOf(File.separator)+1), sourceFile, "", zos)
     } (IOUtils.closeQuietly(zos))
+  }
+
+  private def write(rootPath:String, file: File, parentPath: String, zos: ZipOutputStream): Unit = {
+    if (file.isDirectory) { //处理文件夹
+      val _parentPath = parentPath + file.getName + File.separator
+      val files = file.listFiles
+      if (files.length != 0) for (f <- files) {
+        write(rootPath, f, _parentPath, zos)
+      }else { //空目录则创建当前目录
+        try {
+          zos.putNextEntry(new ZipEntry(_parentPath))
+        }catch {
+          case e: IOException =>
+            e.printStackTrace()
+        }
+      }
+    }else{
+      zos.putNextEntry(new ZipEntry(parentPath.substring(rootPath.length+1)+file.getName))
+      val fis = new FileInputStream(file)
+      val bufs = new Array[Byte](BUFFER_SIZE)
+      val bis = new BufferedInputStream(fis, 1024 * 10)
+      Utils.tryFinally {
+        var read = bis.read(bufs, 0, 1024)
+        while (read > 0) {
+          zos.write(bufs, 0, read)
+          read = bis.read(bufs, 0, 1024)
+        }
+      }(IOUtils.closeQuietly(bis))
+    }
   }
 
   @Deprecated
@@ -195,14 +209,18 @@ object ZipUtils {
     Utils.tryFinally {
       val destDir = new FsPath(unzipDir)
       if (!fs.exists(destDir))
-        fs.create("mkdirs " + unzipDir)
+        //TODO never goto here
+        //fs.create("mkdirs " + unzipDir)
+        fs.mkdir(new FsPath(unzipDir))
       var entry = zipIn.getNextEntry
       while (entry != null) {
         val filePath = destDir.getPath + File.separator + entry.getName
         if (!entry.isDirectory) {
           extractFsPath(zipIn, filePath)
         } else {
-          fs.create("mkdir " + filePath)
+          //TODO never goto here
+          //fs.create("mkdir " + filePath)
+          fs.mkdir(new FsPath(filePath))
         }
         zipIn.closeEntry()
         entry = zipIn.getNextEntry
@@ -213,7 +231,8 @@ object ZipUtils {
   private def extractFsPath(zipIn: ZipInputStream, destFilePath: String)(implicit fs: Fs) {
     val destFile = new FsPath(destFilePath)
     if(!fs.exists(destFile.getParent)){
-      fs.create("mkdirs " + destFile.getParent.getPath)
+      //fs.create("mkdir " + destFile.getParent.getPath)
+      fs.mkdir(destFile.getParent)
     }
     val bos = new BufferedOutputStream(fs.write(destFile, true))
     Utils.tryFinally {

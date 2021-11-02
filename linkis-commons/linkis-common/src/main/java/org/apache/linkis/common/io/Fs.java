@@ -52,4 +52,8 @@ public interface Fs extends Closeable {
 
     public abstract boolean renameTo(FsPath oldDest, FsPath newDest) throws IOException;
 
+    public abstract boolean mkdir(FsPath dest) throws IOException;
+
+    public abstract boolean mkdirs(FsPath dest) throws IOException;
+
 }

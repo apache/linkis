@@ -46,10 +46,6 @@ public abstract class FileSystem implements Fs{
 
     public abstract boolean setGroup(FsPath dest, String group) throws IOException;
 
-    public abstract boolean mkdir(FsPath dest) throws IOException;
-
-    public abstract boolean mkdirs(FsPath dest) throws IOException;
-
     public abstract boolean copy(String origin, String dest) throws IOException;
 
     public FsPathListWithError listPathWithError(FsPath path) throws IOException {

@@ -8,7 +8,7 @@ body:
       value: |
         Thank you for reporting the problem!
         Please make sure what you are reporting is a bug with reproducible steps. To ask questions
-        or share ideas, pleae post on our [Discussion page](https://github.com/apache/incubator-linkis/issues) instead.
+        or share ideas, pleae post on our [Discussion page](https://github.com/apache/incubator-linkis/discussions) instead.
 
   - type: checkboxes
     attributes:
@@ -44,24 +44,20 @@ body:
       description: Describe 1. the bug 2. expected behavior 3. useful information (e.g., logs)
       placeholder: >
         Please provide the context in which the problem occurred and explain what happened. Further,
-
         To Reproduce Steps to reproduce the behavior: 1. Go to '...' 2. Click on '....' 3. Scroll down to '.... 4. See error
-
         please also explain why you think the behaviour is erroneous. It is extremely helpful if you can
-
         copy and paste the fragment of logs showing the exact error messages or wrong behaviour here.
 
-        **NOTE**: Expected behavior A clear and concise description of what you expected to happen.
-                  Screenshots If applicable, add screenshots to help explain your problem.
+        **NOTE**: Expected behavior A clear and concise description of what you expected to happen.Screenshots If applicable, add screenshots to help explain your problem.
     validations:
       required: true
 
   - type: textarea
     attributes:
-      label: Desktop&Smartphone(Version / Dependencies / OS / Browser)
-      description: Please specify the versions of Linkis, OS, Browser, Device and other libraries that are used.
+      label: Relevent platform
+      description: The platform where you occurred this issue
       placeholder: >
-        Please specify the versions of dependencies.
+        Please specify Desktop or Smartphone, Version / Dependencies / OS / Browser
     validations:
       required: true
 

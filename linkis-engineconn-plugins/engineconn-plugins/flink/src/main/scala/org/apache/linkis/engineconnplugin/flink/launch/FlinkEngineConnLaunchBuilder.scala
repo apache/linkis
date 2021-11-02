@@ -22,7 +22,8 @@ import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguratio
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
-
+import org.apache.linkis.hadoop.common.conf.HadoopConf
+import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{USER, variable}
 
 class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
@@ -34,6 +35,10 @@ class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
   override protected def getNecessaryEnvironment(implicit engineConnBuildRequest: EngineConnBuildRequest): Array[String] =
     Array(FLINK_HOME_ENV, FLINK_CONF_DIR_ENV) ++: super.getNecessaryEnvironment
+
+  override protected def getExtractJavaOpts: String = {
+    if (!HadoopConf.KEYTAB_PROXYUSER_ENABLED.getValue) super.getExtractJavaOpts else super.getExtractJavaOpts + s" -DHADOOP_PROXY_USER=${variable(USER)}".trim
+  }
 
   override protected def ifAddHiveConfigPath: Boolean = true
 

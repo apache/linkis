@@ -43,17 +43,23 @@ body:
       description: Describe 1. the bug 2. expected behavior 3. useful information (e.g., logs)
       placeholder: >
         Please provide the context in which the problem occurred and explain what happened. Further,
+        To Reproduce Steps to reproduce the behavior:
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
         please also explain why you think the behaviour is erroneous. It is extremely helpful if you can
         copy and paste the fragment of logs showing the exact error messages or wrong behaviour here.
 
-        **NOTE**: please copy and paste texts instead of taking screenshots of them for easy future search.
+        **NOTE**: Expected behavior A clear and concise description of what you expected to happen.
+                  Screenshots If applicable, add screenshots to help explain your problem.
     validations:
       required: true
 
   - type: textarea
     attributes:
-      label: Versions / Dependencies
-      description: Please specify the versions of Linkis, OS, and other libraries that are used.
+      label: Desktop&Smartphone(Version / Dependencies / OS / Browser)
+      description: Please specify the versions of Linkis, OS, Browser, Device and other libraries that are used.
       placeholder: >
         Please specify the versions of dependencies.
     validations:

@@ -26,12 +26,11 @@ body:
     attributes:
       label: Linkis Component
       description: |
-        What component are you using? Linkis has many subprojects, please make sure to choose the component that
+        What component are you using? Linkis has many modules, please make sure to choose the module that
         you found the bug.
       multiple: true
       options:
-        - "linkis core"
-        - "linkis tune"
+        - "core"
         - "web"
         - "service"
         - "others"

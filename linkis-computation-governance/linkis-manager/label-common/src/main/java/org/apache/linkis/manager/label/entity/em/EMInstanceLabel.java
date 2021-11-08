@@ -74,7 +74,7 @@ public class EMInstanceLabel extends GenericLabel implements NodeInstanceLabel, 
 
     @Override
     protected void setStringValue(String stringValue){
-        String instance = stringValue.replace(LabelCommonConfig.ENGINE_CONN_MANAGER_SPRING_NAME.getValue() + "-", "");
+        String instance = stringValue.replaceFirst(LabelCommonConfig.ENGINE_CONN_MANAGER_SPRING_NAME.getValue() + "-", "");
         String serviceName = LabelCommonConfig.ENGINE_CONN_MANAGER_SPRING_NAME.getValue();
         setInstance(instance);
         setServiceName(serviceName);

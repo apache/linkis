@@ -17,8 +17,11 @@
 package org.apache.linkis.engineconn.callback.service
 
 import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.protocol.message.RequestProtocol
 import org.apache.linkis.rpc.Sender
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallback
 
 trait EngineConnCallback {
 
@@ -28,7 +31,7 @@ trait EngineConnCallback {
 
 }
 
-abstract class AbstractEngineConnStartUpCallback(emInstance: ServiceInstance) extends EngineConnCallback {
+abstract class AbstractEngineConnStartUpCallback(emInstance: ServiceInstance) extends EngineConnCallback with Logging{
 
   override protected def getEMSender: Sender = {
     Sender.getSender(emInstance)
@@ -36,6 +39,16 @@ abstract class AbstractEngineConnStartUpCallback(emInstance: ServiceInstance) ex
 
 
   def callback(protocol: RequestProtocol): Unit = {
+    protocol match {
+      case protocol: EngineConnStatusCallback => {
+        if(protocol.status.equals(NodeStatus.Failed)){
+          error(s"protocol will send to em: ${protocol}")
+        }else{
+          info(s"protocol will send to em: ${protocol}")
+        }
+      }
+      case _=>
+    }
     getEMSender.send(protocol)
   }
 }

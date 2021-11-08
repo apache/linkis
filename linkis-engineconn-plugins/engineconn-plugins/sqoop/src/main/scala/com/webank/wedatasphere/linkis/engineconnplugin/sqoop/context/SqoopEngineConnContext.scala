@@ -16,12 +16,10 @@
 
 package com.webank.wedatasphere.linkis.engineconnplugin.sqoop.context
 
-import com.webank.wedatasphere.linkis.engineconnplugin.sqoop.client.config.{Environment, ExecutionContext}
+import com.webank.wedatasphere.linkis.engineconnplugin.sqoop.client.config.{ExecutionContext}
 
-class SqoopEngineConnContext (environmentContext: EnvironmentContext){
+class SqoopEngineConnContext{
   private var executionContext: ExecutionContext = _
-
-  def getEnvironmentContext: EnvironmentContext = environmentContext
 
   def getExecutionContext: ExecutionContext = executionContext
 

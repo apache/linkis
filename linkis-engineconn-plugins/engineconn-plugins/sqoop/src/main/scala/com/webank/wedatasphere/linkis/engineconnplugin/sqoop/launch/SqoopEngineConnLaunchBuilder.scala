@@ -16,17 +16,9 @@
 
 package com.webank.wedatasphere.linkis.engineconnplugin.sqoop.launch
 
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration.LINKIS_SPECIAL_CLASSPATH
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.{JavaProcessEngineConnLaunchBuilder, LaunchConstants}
 
-
 class SqoopEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder{
-  override protected def getCommands(implicit engineConnBuildRequest: EngineConnBuildRequest): Array[String] ={
-    val commands = super.getCommands(engineConnBuildRequest)
-    val index = commands.indexOf("-cp") + 1
-    commands(index) = commands(index)+":"+LINKIS_SPECIAL_CLASSPATH.getValue
-    commands
-  }
-
+  override protected def ifAddHadoopClassPath: Boolean = true
+  override protected def ifAddHbaseClassPath: Boolean = true
 }

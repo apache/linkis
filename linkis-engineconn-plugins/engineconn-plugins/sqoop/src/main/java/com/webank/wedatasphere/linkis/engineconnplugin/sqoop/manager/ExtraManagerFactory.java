@@ -21,7 +21,7 @@ import com.cloudera.sqoop.manager.ConnManager;
 import com.cloudera.sqoop.metastore.JobData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.sqoop.manager.*;
+import org.apache.sqoop.manager.com.webank.wedatasphere.SQLServerManager;
 
 
 public class ExtraManagerFactory extends com.cloudera.sqoop.manager.ManagerFactory{
@@ -44,34 +44,34 @@ public class ExtraManagerFactory extends com.cloudera.sqoop.manager.ManagerFacto
         options.setConnectString(options.getConnectString().replace("linkis:",""));
         if ("linkis:jdbc:mysql:".equals(scheme)) {
             if (options.isDirect()) {
-                return new LinkisDirectMySQLManager(options);
+                return new org.apache.sqoop.manager.com.webank.wedatasphere.DirectMySQLManager(options);
             } else {
-                return new LinkisMySQLManager(options);
+                return new org.apache.sqoop.manager.com.webank.wedatasphere.MySQLManager(options);
             }
         } else if ("linkis:jdbc:postgresql:".equals(scheme)) {
             if (options.isDirect()) {
-                return new LinkisDirectPostgresqlManager(options);
+                return new org.apache.sqoop.manager.com.webank.wedatasphere.DirectPostgresqlManager(options);
             } else {
-                return new LinkisPostgresqlManager(options);
+                return new org.apache.sqoop.manager.com.webank.wedatasphere.PostgresqlManager(options);
             }
         } else if ("linkis:jdbc:hsqldb:".equals(scheme)) {
-            return new LinkisHsqldbManager(options);
+            return new org.apache.sqoop.manager.com.webank.wedatasphere.HsqldbManager(options);
         } else if ("linkis:jdbc:oracle:".equals(scheme)) {
-            return new LinkisOracleManager(options);
+            return new org.apache.sqoop.manager.com.webank.wedatasphere.OracleManager(options);
         } else if ("linkis:jdbc:sqlserver:".equals(scheme)) {
-            return new LinkisSQLServerManager(options);
+            return new org.apache.sqoop.manager.com.webank.wedatasphere.SQLServerManager(options);
         } else if ("linkis:jdbc:jtds:sqlserver:".equals(scheme)) {
-            return new LinkisSQLServerManager(NET_SOURCEFORGE_JTDS_JDBC_DRIVER, options);
+            return new SQLServerManager(NET_SOURCEFORGE_JTDS_JDBC_DRIVER, options);
         } else if ("linkis:jdbc:db2:".equals(scheme)) {
-            return new Db2Manager(options);
+            return new org.apache.sqoop.manager.com.webank.wedatasphere.Db2Manager(options);
         } else if ("linkis:jdbc:netezza:".equals(scheme)) {
             if (options.isDirect()) {
-                return new DirectNetezzaManager(options);
+                return new org.apache.sqoop.manager.com.webank.wedatasphere.DirectNetezzaManager(options);
             } else {
-                return new NetezzaManager(options);
+                return new org.apache.sqoop.manager.com.webank.wedatasphere.NetezzaManager(options);
             }
         } else if ("linkis:jdbc:cubrid:".equals(scheme)) {
-            return new CubridManager(options);
+            return new org.apache.sqoop.manager.com.webank.wedatasphere.CubridManager(options);
         } else {
             return null;
         }

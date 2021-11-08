@@ -17,7 +17,7 @@
 package com.webank.wedatasphere.linkis.engineconnplugin.sqoop.factory
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext
-import com.webank.wedatasphere.linkis.engineconnplugin.sqoop.context.{EnvironmentContext, SqoopEngineConnContext}
+import com.webank.wedatasphere.linkis.engineconnplugin.sqoop.context.SqoopEngineConnContext
 import com.webank.wedatasphere.linkis.engineconnplugin.sqoop.util.ClassUtil
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineType
@@ -31,15 +31,11 @@ class SqoopEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   override protected def getEngineConnType: EngineType = EngineType.SQOOP
 
   override protected def createEngineConnSession(engineCreationContext: EngineCreationContext): Any = {
-    val environmentContext = createEnvironmentContext(engineCreationContext)
-    val sqoopEngineConnContext = new SqoopEngineConnContext(environmentContext)
+    //val environmentContext = createEnvironmentContext(engineCreationContext)
+    val sqoopEngineConnContext = new SqoopEngineConnContext()
     sqoopEngineConnContext
   }
 
-  protected def createEnvironmentContext(engineCreationContext: EngineCreationContext): EnvironmentContext = {
-    val context = new EnvironmentContext(null, "","","","","",null)
-    context
-  }
 
   private val executorFactoryArray =  Array[ExecutorFactory](ClassUtil.getInstance(classOf[SqoopExecutorFactory], new SqoopExecutorFactory))
 }

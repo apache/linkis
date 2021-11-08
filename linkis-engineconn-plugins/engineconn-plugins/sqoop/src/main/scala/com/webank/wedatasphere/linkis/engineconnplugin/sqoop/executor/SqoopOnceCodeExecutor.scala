@@ -27,6 +27,7 @@ import com.webank.wedatasphere.linkis.protocol.constants.TaskConstant
 import com.webank.wedatasphere.linkis.scheduler.executer.ErrorExecuteResponse
 import org.apache.commons.lang.StringUtils
 
+import java.util
 import java.util.concurrent.{Future, TimeUnit}
 
 
@@ -34,25 +35,20 @@ class SqoopOnceCodeExecutor(override val id: Long,
                             override protected val sqoopEngineConnContext: SqoopEngineConnContext) extends SqoopOnceExecutor{
 
 
-
-  private var current_code:String = _
+  private var params:util.Map[String, String] = _;
   private var future: Future[_] = _
   private var daemonThread: Future[_] = _
   override def doSubmit(onceExecutorExecutionContext: OnceExecutorExecutionContext, options: Map[String, String]): Unit = {
-    val codes: String = options(TaskConstant.CODE)
     var isFailed = false;
     future = Utils.defaultScheduler.submit(new Runnable {
       override def run(): Unit = {
-        info("Try to execute codes.")
-        val codeArray = CodeParserFactory.getCodeParser(CodeType.SQL).parse(codes).filter(StringUtils.isNotBlank)
-        for ( code <- codeArray ) {
-          if(runCode(code)!=0){
-            error("The Code:"+code+" execute fail")
+        params = onceExecutorExecutionContext.getOnceExecutorContent.getJobContent.get("sqoop-params").asInstanceOf[util.Map[String, String]]
+        info("Try to execute params."+params)
+          if(runSqoop(params) != 0) {
             isFailed = true
-            setResponse(ErrorExecuteResponse("Run code failed!",new JobExecutionException("Exec Sqoop Code Error")))
+            setResponse(ErrorExecuteResponse("Run code failed!", new JobExecutionException("Exec Sqoop Code Error")))
             tryFailed()
           }
-        }
           info("All codes completed, now stop SqoopEngineConn.")
           closeDaemon()
         if(!isFailed) {
@@ -62,9 +58,8 @@ class SqoopOnceCodeExecutor(override val id: Long,
       }
     })
   }
-  protected def runCode(code: String): Int = {
-    current_code = code
-    Sqoop.main(code.split(" "))
+  protected def runSqoop(params: util.Map[String, String]): Int = {
+    Sqoop.main(params)
   }
 
   override protected def waitToRunning(): Unit ={
@@ -88,30 +83,11 @@ class SqoopOnceCodeExecutor(override val id: Long,
     engineResource
   }
   def getNumTasks: Int ={
-    if(current_code != null){
-      val strings = current_code.toLowerCase.replaceAll("\\s+", " ").split(" ")
-      var index = -1;
-      for (i <- 0 until strings.length-1) {
-        if("--num-mappers".equals(strings(i))){
-          index = i
-        }
-      }
-      try {
-        if(index != -1) {
-          strings(index).toInt
-        }else{
-          1
-        }
-      }catch {
-        case ex:Exception => {
-          warn("Sqoop Get Parallel Exception"+ex.getMessage)
-          1
-        }
-      }
+    if(params != null) {
+      params.getOrDefault("sqoop.args.num.mappers","1").toInt
     }else{
       0
     }
-
   }
   protected def closeDaemon(): Unit = {
     if(daemonThread != null) daemonThread.cancel(true)

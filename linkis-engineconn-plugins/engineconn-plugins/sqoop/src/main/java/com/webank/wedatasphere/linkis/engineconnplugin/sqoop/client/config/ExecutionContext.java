@@ -17,16 +17,10 @@
 package com.webank.wedatasphere.linkis.engineconnplugin.sqoop.client.config;
 
 import com.webank.wedatasphere.linkis.engineconn.common.creation.EngineCreationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ExecutionContext {
-    private static final Logger LOG = LoggerFactory.getLogger(ExecutionContext.class);
     private final EngineCreationContext environmentContext;
     public ExecutionContext(EngineCreationContext environmentContext){
         this.environmentContext = environmentContext;
-    }
-    public EngineCreationContext getEnvironment() {
-        return environmentContext;
     }
 }

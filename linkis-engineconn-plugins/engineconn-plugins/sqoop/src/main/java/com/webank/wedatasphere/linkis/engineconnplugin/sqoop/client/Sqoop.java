@@ -22,9 +22,10 @@ import com.cloudera.sqoop.SqoopOptions;
 import com.cloudera.sqoop.manager.DefaultManagerFactory;
 import com.cloudera.sqoop.tool.SqoopTool;
 import com.cloudera.sqoop.util.OptionsFileUtil;
+import com.webank.wedatasphere.linkis.engineconnplugin.sqoop.client.config.ParamsMapping;
 import com.webank.wedatasphere.linkis.engineconnplugin.sqoop.context.SqoopEnvConfiguration;
 import com.webank.wedatasphere.linkis.engineconnplugin.sqoop.manager.ExtraManagerFactory;
-import com.webank.wedatasphere.linkis.engineconnplugin.sqoop.manager.LinkisSqlManager;
+import org.apache.sqoop.manager.com.webank.wedatasphere.SqlManager;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,13 +36,14 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.sqoop.manager.oracle.OraOopManagerFactory;
 import org.apache.sqoop.mapreduce.JobBase;
+import org.apache.sqoop.util.LoggingUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
-import java.util.Arrays;
+import java.util.*;
 
 import static com.cloudera.sqoop.SqoopOptions.isSqoopRethrowSystemPropertySet;
 import static org.apache.sqoop.tool.BaseSqoopTool.THROW_ON_ERROR_ARG;
@@ -55,7 +57,7 @@ public class Sqoop extends Configured implements Tool {
 
   public static final Log LOG = LogFactory.getLog(Sqoop.class.getName());
   public static Object jobBase;
-  public static LinkisSqlManager sqlManager;
+  public static SqlManager sqlManager;
   public static final String[] DEFAULT_FACTORY_CLASS_NAMES_ARR =
           { ExtraManagerFactory.class.getName(),OraOopManagerFactory.class.getName(),
                   DefaultManagerFactory.class.getName(),};
@@ -149,6 +151,9 @@ public class Sqoop extends Configured implements Tool {
       options.setConnectString("linkis:"+options.getConnectString());
       tool.appendArgs(this.childPrgmArgs);
       tool.validateOptions(options);
+      if (options.getVerbose()) {
+        LoggingUtils.setDebugLevel();
+      }
     } catch (Exception e) {
       LOG.debug(e.getMessage(), e);
       System.err.println(e.getMessage());
@@ -218,11 +223,13 @@ public class Sqoop extends Configured implements Tool {
    * Entry-point that parses the correct SqoopTool to use from the args,
    * but does not call System.exit() as main() will.
    */
-  public static int runTool(String [] args, Configuration conf) {
+  public static int runTool(Map<String,String> argsMap, Configuration conf) {
+
     // Expand the options
     String[] expandedArgs = null;
     try {
-      expandedArgs = OptionsFileUtil.expandArguments(args);
+      String[] flatArgs = convertParamsMapToAarray(argsMap);
+      expandedArgs = OptionsFileUtil.expandArguments(flatArgs);
     } catch (Exception ex) {
       LOG.error("Error while expanding arguments", ex);
       System.err.println(ex.getMessage());
@@ -244,11 +251,35 @@ public class Sqoop extends Configured implements Tool {
         Arrays.copyOfRange(expandedArgs, 1, expandedArgs.length));
   }
 
+  private static String[] convertParamsMapToAarray(Map<String,String> paramsMap) throws Exception {
+    List<String> paramsList = new ArrayList<>();
+
+    for (Map.Entry<String,String> entry:paramsMap.entrySet()) {
+      String key = entry.getKey().toLowerCase();
+      if(key.equals("sqoop.mode")){
+        paramsList.add(0,entry.getValue());
+        continue;
+      }
+      String conKey = ParamsMapping.mapping.get(key);
+      if(conKey!=null){
+        if(entry.getValue() !=null && entry.getValue().length()!=0){
+          paramsList.add(conKey);
+          paramsList.add(entry.getValue());
+        }else {
+          paramsList.add(conKey);
+        }
+      }else {
+        throw new Exception("The Key "+entry.getKey()+" Is Not Supported");
+      }
+    }
+    return paramsList.toArray(new String[ paramsList.size()]);
+  }
+
   /**
    * Entry-point that parses the correct SqoopTool to use from the args,
    * but does not call System.exit() as main() will.
    */
-  public static int runTool(String [] args) {
+  public static int runTool(Map<String,String> params) {
     Configuration conf = new Configuration();
     try {
       for (String fileName: SqoopEnvConfiguration.HADOOP_SITE_FILE().getValue().split(";")) {
@@ -259,15 +290,11 @@ public class Sqoop extends Configured implements Tool {
       e.printStackTrace();
       System.exit(1);
     }
-    return runTool(args, conf);
+    return runTool(params, conf);
   }
 
-  public static int main(String [] args) {
-    if (args.length == 0) {
-      System.err.println("Try 'sqoop help' for usage.");
-      System.exit(1);
-    }
-    return runTool(args);
+  public static int main(Map<String,String> code) {
+    return runTool(code);
   }
 
   public static void close(){

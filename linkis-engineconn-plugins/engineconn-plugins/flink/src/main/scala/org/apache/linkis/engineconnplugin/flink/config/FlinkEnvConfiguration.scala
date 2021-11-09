@@ -27,9 +27,10 @@ object FlinkEnvConfiguration {
 
   val FLINK_HOME_ENV = "FLINK_HOME"
   val FLINK_CONF_DIR_ENV = "FLINK_CONF_DIR"
+  val FLINK_VERSION = CommonVars("flink.version", "1.12.2")
   val FLINK_HOME = CommonVars("flink.home", CommonVars(FLINK_HOME_ENV, "/appcom/Install/flink").getValue)
   val FLINK_CONF_DIR = CommonVars("flink.conf.dir", CommonVars(FLINK_CONF_DIR_ENV, "/appcom/config/flink-config").getValue)
-  val FLINK_DIST_JAR_PATH = CommonVars("flink.dist.jar.path", CommonVars(FLINK_HOME_ENV, "/appcom/Install/flink").getValue + "/lib/flink-dist_2.11-1.12.2.jar")
+  val FLINK_DIST_JAR_PATH = CommonVars("flink.dist.jar.path", FLINK_HOME.getValue + s"/lib/flink-dist_2.11-${FLINK_VERSION.getValue}.jar")
   val FLINK_LIB_REMOTE_PATH = CommonVars("flink.lib.path", "")
   val FLINK_USER_LIB_REMOTE_PATH = CommonVars("flink.user.lib.path", "", "The hdfs lib path of each user in Flink EngineConn.")
   val FLINK_LIB_LOCAL_PATH = CommonVars("flink.local.lib.path", "/appcom/Install/flink/lib", "The local lib path of Flink EngineConn.")
@@ -48,6 +49,7 @@ object FlinkEnvConfiguration {
   val FLINK_APPLICATION_ARGS = CommonVars("flink.app.args", "")
   val FLINK_APPLICATION_MAIN_CLASS = CommonVars("flink.app.main.class", "")
   val FLINK_APPLICATION_MAIN_CLASS_JAR = CommonVars("flink.app.main.class.jar", "")
+  val FLINK_APPLICATION_CLASSPATH = CommonVars("flink.app.user.class.path", "")
 
   val FLINK_CLIENT_REQUEST_TIMEOUT = CommonVars("flink.client.request.timeout", new TimeType("30s"))
   val FLINK_ONCE_APP_STATUS_FETCH_INTERVAL = CommonVars("flink.app.fetch.status.interval", new TimeType("5s"))

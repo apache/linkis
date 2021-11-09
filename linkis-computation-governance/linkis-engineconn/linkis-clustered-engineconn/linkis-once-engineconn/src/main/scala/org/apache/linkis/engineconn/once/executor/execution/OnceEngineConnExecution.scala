@@ -22,8 +22,8 @@ import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.core.execution.AbstractEngineConnExecution
 import org.apache.linkis.engineconn.executor.entity.Executor
+import org.apache.linkis.engineconn.once.executor.OnceExecutor
 import org.apache.linkis.engineconn.once.executor.exception.OnceEngineConnErrorException
-import org.apache.linkis.engineconn.once.executor.{ManageableOnceExecutor, OnceExecutor}
 import org.apache.linkis.manager.label.entity.engine.EngineConnMode._
 import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, RunType}
 import org.apache.linkis.scheduler.executer.{AsynReturnExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
@@ -41,36 +41,38 @@ class OnceEngineConnExecution extends AbstractEngineConnExecution {
     case onceExecutor: OnceExecutor =>
       this.onceExecutor = onceExecutor
       val response = Utils.tryCatch(onceExecutor.execute(engineCreationContext)) { t =>
-        dealException(s"${onceExecutor.getId} execute failed!", t)
+        dealException(s"${onceExecutor.getId} execute failed!", t, true)
         return
       }
-      dealResponse(response)
-      onceExecutor match {
-        case manageableOnceExecutor: ManageableOnceExecutor =>
-          manageableOnceExecutor.waitForComplete()
-        case _ =>
-      }
+      dealResponse(response, true)
+//      onceExecutor match {
+//        case manageableOnceExecutor: ManageableOnceExecutor =>
+//          manageableOnceExecutor.waitForComplete()
+//        case _ =>
+//      }
     case _ => throw new OnceEngineConnErrorException(12560, s"${executor.getId} is not a OnceExecutor.")
   }
 
-  private def dealResponse(resp: ExecuteResponse): Unit = resp match {
+  private def dealResponse(resp: ExecuteResponse, throwsException: Boolean): Unit = resp match {
     case resp: AsynReturnExecuteResponse =>
-      resp.notify(dealResponse)
+      resp.notify(dealResponse(_, false))
     case _: SuccessExecuteResponse =>
       onceExecutor.trySucceed()
     case ErrorExecuteResponse(message, t) =>
       if(!onceExecutor.isClosed) {
-        dealException(message, t)
+        dealException(message, t, throwsException)
       }
   }
 
   @throws[LinkisException]
-  private def dealException(msg: String, t: Throwable): Unit = {
-    onceExecutor.tryShutdown()
+  private def dealException(msg: String, t: Throwable, throwsException: Boolean): Unit = {
+    error(msg, t)
     onceExecutor.tryFailed()
-    t match {
-      case t: LinkisException => throw t
-      case _ => throw new OnceEngineConnErrorException(12560, msg, t)
+    if(throwsException) {
+      t match {
+        case t: LinkisException => throw t
+        case _ => throw new OnceEngineConnErrorException(12560, msg, t)
+      }
     }
   }
 

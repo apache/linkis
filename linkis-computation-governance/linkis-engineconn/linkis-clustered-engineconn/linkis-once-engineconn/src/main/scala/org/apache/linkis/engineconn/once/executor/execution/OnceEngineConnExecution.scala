@@ -16,16 +16,19 @@
 
 package org.apache.linkis.engineconn.once.executor.execution
 
+import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.exception.LinkisException
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
+import org.apache.linkis.engineconn.common.execution.EngineConnExecution
 import org.apache.linkis.engineconn.core.execution.AbstractEngineConnExecution
+import org.apache.linkis.engineconn.executor.conf.EngineConnExecutorConfiguration
 import org.apache.linkis.engineconn.executor.entity.Executor
 import org.apache.linkis.engineconn.once.executor.OnceExecutor
 import org.apache.linkis.engineconn.once.executor.exception.OnceEngineConnErrorException
 import org.apache.linkis.manager.label.entity.engine.EngineConnMode._
-import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, RunType}
+import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, EngineConnModeLabel, RunType}
 import org.apache.linkis.scheduler.executer.{AsynReturnExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 
 import scala.collection.convert.decorateAsScala._
@@ -98,5 +101,29 @@ class OnceEngineConnExecution extends AbstractEngineConnExecution {
 object OnceEngineConnExecution {
 
   def getSupportedEngineConnModes: Array[EngineConnMode] = Array(Once, Computation_With_Once, Once_With_Cluster)
+
+}
+
+
+class OnceExecutorManagerEngineConnExecution extends EngineConnExecution {
+
+  override def execute(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit = {
+    var shouldSet = false
+    engineCreationContext.getLabels().asScala.foreach {
+      case engineConnModeLabel: EngineConnModeLabel =>
+        val mode = toEngineConnMode(engineConnModeLabel.getEngineConnMode)
+        shouldSet = OnceEngineConnExecution.getSupportedEngineConnModes.contains(mode)
+      case _ =>
+    }
+    if(shouldSet) DataWorkCloudApplication.setProperty(EngineConnExecutorConfiguration.EXECUTOR_MANAGER_CLASS.key,
+      "com.webank.wedatasphere.linkis.engineconn.once.executor.creation.OnceExecutorManagerImpl")
+  }
+
+  /**
+   * The smallest got the first execution opportunity.
+   *
+   * @return
+   */
+  override def getOrder: Int = 4
 
 }

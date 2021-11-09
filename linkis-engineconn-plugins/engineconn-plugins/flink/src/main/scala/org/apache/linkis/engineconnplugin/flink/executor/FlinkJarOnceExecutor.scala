@@ -43,6 +43,7 @@ class FlinkJarOnceExecutor(override val id: Long,
 
   override protected def waitToRunning(): Unit = {
     Utils.waitUntil(() => clusterDescriptor.initJobId(), Duration.Inf)
+    setJobID(clusterDescriptor.getJobId.toHexString)
     super.waitToRunning()
   }
 }

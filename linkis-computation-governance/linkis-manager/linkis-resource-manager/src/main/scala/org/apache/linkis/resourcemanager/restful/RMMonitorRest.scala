@@ -151,7 +151,16 @@ class RMMonitorRest extends Logging {
     val message = Message.ok("")
     val userName = SecurityFilter.getLoginUsername(request)
     var nodes = getEngineNodes(userName, true)
-    if(nodes == null) nodes = new Array[EngineNode](1)
+    if(nodes == null) {
+      nodes = new Array[EngineNode](1)
+    } else {
+      nodes = nodes.filter(node => {
+        node.getNodeResource != null &&
+          !node.getLabels.isEmpty &&
+          node.getLabels.find(_.isInstanceOf[UserCreatorLabel]).get != null &&
+          node.getLabels.find(_.isInstanceOf[EngineTypeLabel]).get != null
+      })
+    }
     val userCreatorEngineTypeResourceMap =new mutable.HashMap[String, mutable.HashMap[String, NodeResource]]
     nodes.foreach { node =>
       val userCreatorLabel = node.getLabels.find(_.isInstanceOf[UserCreatorLabel]).get.asInstanceOf[UserCreatorLabel]

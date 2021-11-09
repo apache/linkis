@@ -87,14 +87,16 @@ public class LinkisYarnClusterClientFactory extends YarnClusterClientFactory imp
     public void close() throws IOException {
         if(yarnClient != null) {
             ApplicationId applicationId = getClusterId(configuration);
-            LOG.info("Begin to kill application {}", applicationId);
-            try {
-                yarnClient.killApplication(applicationId);
-            } catch (YarnException e) {
-                LOG.error("Failed to kill application {}", applicationId, e);
+            if(applicationId != null) {
+                LOG.info("Begin to kill application {}", applicationId);
+                try {
+                    yarnClient.killApplication(applicationId);
+                } catch (YarnException e) {
+                    LOG.error("Failed to kill application {}.", applicationId, e);
+                }
             }
             yarnClient.close();
-            LOG.info("End to kill application {}", applicationId);
+            LOG.info("End to kill application {},", applicationId);
         } else{
             LOG.warn("yarnClient is null, this is not able to kill application");
         }

@@ -131,6 +131,12 @@ class FlinkSQLComputationExecutor(id: Long,
 
   override def getProgressInfo: Array[JobProgressInfo] = Array.empty
 
+  override def killTask(taskId: String): Unit = {
+    info(s"Start to kill task $taskId, the flink jobId is ${clusterDescriptor.getJobId}.")
+    if(operation != null) operation.cancelJob()
+    super.killTask(taskId)
+  }
+
   override def getId: String = "FlinkComputationSQL_"+ id
 
   override def close(): Unit = {

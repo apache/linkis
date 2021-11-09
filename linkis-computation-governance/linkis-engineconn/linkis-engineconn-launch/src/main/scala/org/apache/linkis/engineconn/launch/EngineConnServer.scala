@@ -61,9 +61,9 @@ object EngineConnServer extends Logging {
       EngineConnHook.getEngineConnHooks.foreach(_.afterEngineServerStartSuccess(getEngineCreationContext, engineConn))
     } catch {
       case t: Throwable =>
-      EngineConnHook.getEngineConnHooks.foreach(_.afterEngineServerStartFailed(getEngineCreationContext, t))
-      error("EngineConnServer Start Failed", t)
-      System.exit(1)
+        error("EngineConnServer Start Failed", t)
+        EngineConnHook.getEngineConnHooks.foreach(_.afterEngineServerStartFailed(getEngineCreationContext, t))
+        System.exit(1)
     }
 
     //4. 等待Executions执行完毕

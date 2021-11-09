@@ -23,4 +23,6 @@ object ECMErrorCode {
 
   val PROCESS_WAITFOR_ERROR = 20001
 
+  val EC_START_FAILED = 11102
+
 }

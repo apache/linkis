@@ -60,7 +60,7 @@ class ComputationExecutorManagerEngineConnExecution extends EngineConnExecution 
       case engineConnModeLabel: EngineConnModeLabel =>
         val mode = toEngineConnMode(engineConnModeLabel.getEngineConnMode)
         shouldSet = ComputationEngineConnExecution.getSupportedEngineConnModes.contains(mode)
-      case _ => false
+      case _ =>
     }
     if(shouldSet) DataWorkCloudApplication.setProperty(EngineConnExecutorConfiguration.EXECUTOR_MANAGER_CLASS.key,
       "org.apache.linkis.engineconn.computation.executor.creation.ComputationExecutorManagerImpl")

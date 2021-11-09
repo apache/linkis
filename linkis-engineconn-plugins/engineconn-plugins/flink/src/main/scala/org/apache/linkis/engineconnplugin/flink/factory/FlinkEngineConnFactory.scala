@@ -17,6 +17,7 @@
  */
 package org.apache.linkis.engineconnplugin.flink.factory
 
+import java.io.File
 import java.time.Duration
 import java.util
 import java.util.Collections
@@ -89,6 +90,12 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     flinkConfig.set(YarnConfigOptions.PROVIDED_LIB_DIRS, providedLibDirList)
     //construct jar-dependencies(构建依赖jar包环境)
     flinkConfig.set(YarnConfigOptions.SHIP_ARCHIVES, context.getShipDirs)
+    // set user classpaths
+    val classpaths = FLINK_APPLICATION_CLASSPATH.getValue(options)
+    if (StringUtils.isNotBlank(classpaths)) {
+      info(s"Add $classpaths to flink application classpath.")
+      flinkConfig.set(PipelineOptions.CLASSPATHS, util.Arrays.asList(classpaths.split(","): _*))
+    }
     //yarn application name(yarn 作业名称)
     flinkConfig.set(YarnConfigOptions.APPLICATION_NAME, jobName)
     //yarn queue
@@ -112,8 +119,10 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     //Configure user-entrance jar. Can be remote, but only support 1 jar(设置：用户入口jar：可以远程，只能设置1个jar)
     val flinkMainClassJar = FLINK_APPLICATION_MAIN_CLASS_JAR.getValue(options)
     if(StringUtils.isNotBlank(flinkMainClassJar)) {
-      info(s"Ready to use $flinkMainClassJar as main class jar to submit application to Yarn.")
-      flinkConfig.set(PipelineOptions.JARS, Collections.singletonList(flinkMainClassJar))
+      val flinkMainClassJarPath = if (new File(flinkMainClassJar).exists()) flinkMainClassJar
+        else getClass.getClassLoader.getResource(flinkMainClassJar).getPath
+      info(s"Ready to use $flinkMainClassJarPath as main class jar to submit application to Yarn.")
+      flinkConfig.set(PipelineOptions.JARS, Collections.singletonList(flinkMainClassJarPath))
       flinkConfig.set(DeploymentOptions.TARGET, YarnDeploymentTarget.APPLICATION.getName)
       context.setDeploymentTarget(YarnDeploymentTarget.APPLICATION)
       addApplicationLabels(engineCreationContext)

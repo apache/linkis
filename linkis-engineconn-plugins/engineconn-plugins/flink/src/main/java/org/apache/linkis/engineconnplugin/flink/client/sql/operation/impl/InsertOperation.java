@@ -95,16 +95,21 @@ public class InsertOperation extends AbstractJobOperation {
 
     protected void asyncNotify(TableResult tableResult) {
         CompletableFuture.completedFuture(tableResult)
-            .thenAccept(result -> {
+            .thenApply(result -> {
                 CloseableIterator<Row> iterator = result.collect();
                 int affected = 0;
                 while(iterator.hasNext()) {
                     Row row = iterator.next();
-                    affected = (int) row.getField(0);
+                    affected = Integer.parseInt(row.getField(0).toString());
                 }
-                int finalAffected = affected;
-                getFlinkStatusListeners().forEach(listener -> listener.onSuccess(finalAffected, RowsType.Affected()));
-            }).whenComplete((unused, throwable) -> getFlinkStatusListeners().forEach(listener -> listener.onFailed("Error while submitting job.", throwable, RowsType.Affected())));
+                return affected;
+            }).whenComplete((affected, throwable) -> {
+                if(throwable != null) {
+                    getFlinkStatusListeners().forEach(listener -> listener.onFailed("Error while submitting job.", throwable, RowsType.Affected()));
+                } else {
+                    getFlinkStatusListeners().forEach(listener -> listener.onSuccess(affected, RowsType.Affected()));
+                }
+            });
     }
 
 }

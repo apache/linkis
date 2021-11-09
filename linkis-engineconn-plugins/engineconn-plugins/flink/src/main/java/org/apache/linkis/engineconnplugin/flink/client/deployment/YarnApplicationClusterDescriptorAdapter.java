@@ -17,16 +17,17 @@
  */
 package org.apache.linkis.engineconnplugin.flink.client.deployment;
 
-import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
-import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-import org.apache.flink.api.common.JobID;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.flink.client.deployment.ClusterSpecification;
 import org.apache.flink.client.deployment.application.ApplicationConfiguration;
 import org.apache.flink.client.program.ClusterClientProvider;
 import org.apache.flink.yarn.YarnClusterDescriptor;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
+import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
+import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
+
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAdapter  {
 
@@ -46,7 +47,7 @@ public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAd
             super.clusterID  = clusterClient.getClusterId();
             super.webInterfaceUrl = clusterClient.getWebInterfaceURL();
         } catch (Exception e) {
-            throw new JobExecutionException(e.getMessage());
+            throw new JobExecutionException(ExceptionUtils.getRootCauseMessage(e), e);
         }
 
     }

@@ -33,6 +33,7 @@ import org.apache.linkis.manager.label.entity.{JobLabel, Label}
 import org.apache.linkis.scheduler.executer.{AsynReturnExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.engineconn.core.hook.ShutdownHook
 
 import scala.collection.convert.wrapAsScala._
 import scala.collection.mutable.ArrayBuffer
@@ -137,19 +138,22 @@ trait ManageableOnceExecutor extends AccessibleExecutor with OnceExecutor with R
     super.onStatusChanged(fromStatus, toStatus)
   }
 
-  override def tryShutdown(): Boolean = {
-    this.ensureAvailable(transition(NodeStatus.ShuttingDown))
-    close()
-    true
-  }
+  override def tryShutdown(): Boolean = tryFailed()
 
   def tryFailed(): Boolean = {
-    this.whenStatus(NodeStatus.ShuttingDown, transition(NodeStatus.Failed))
+    if(response != null) return true
+    error(s"$getId has failed with old status $getStatus, now stop it.")
+    if(!isClosed) close()
+    this.ensureAvailable(transition(NodeStatus.Failed))
+    ShutdownHook.getShutdownHook.notifyStop()
     true
   }
 
   def trySucceed(): Boolean = {
+    if(response != null) return true
+    warn(s"$getId has succeed with old status $getStatus, now stop it.")
     this.ensureAvailable(transition(NodeStatus.Success))
+    ShutdownHook.getShutdownHook.notifyStop()
     true
   }
 

@@ -63,6 +63,7 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
 
   override def launchEngineConn(request: EngineConnLaunchRequest, duration: Long): EngineNode = {
     //1.创建engineConn和runner,launch 并设置基础属性
+    info(s"Try to launch a new EngineConn with $request.")
     val conn = createEngineConn
     val runner = createEngineConnLaunchRunner
     val launch = createEngineConnLaunch

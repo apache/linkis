@@ -70,7 +70,10 @@ class SecurityFilter extends Filter {
       false
     } else if(request.getRequestURI == ServerConfiguration.BDP_SERVER_RESTFUL_LOGIN_URI.getValue) {
       true
-    } else {
+    } else if( ServerConfiguration.BDP_SERVER_RESTFUL_PASS_AUTH_REQUEST_URI.exists(request.getRequestURI.startsWith)) {
+      SecurityFilter.info("pass auth uri: " + request.getRequestURI)
+      true
+    }else {
       val userName = Utils.tryCatch(SecurityFilter.getLoginUser(request)){
         case n: NonLoginException =>
           if(Configuration.IS_TEST_MODE.getValue) None else {

@@ -91,7 +91,7 @@ class SubmittableSimpleOnceJob(protected override val linkisManagerClient: Linki
     info(s"EngineConn created with status $lastEngineConnState, the nodeInfo is $lastNodeInfo.")
     addOperatorAction {
       case onceJobOperator: OnceJobOperator[_] =>
-        onceJobOperator.setServiceInstance(serviceInstance).setLinkisManagerClient(linkisManagerClient)
+        onceJobOperator.setUser(user).setServiceInstance(serviceInstance).setLinkisManagerClient(linkisManagerClient)
       case operator => operator
     }
     if(!isCompleted(lastEngineConnState) && !isRunning) {

@@ -17,6 +17,7 @@
  */
 package org.apache.linkis.manager.am.restful;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.ByteTimeUtils;
@@ -25,12 +26,15 @@ import org.apache.linkis.manager.am.exception.AMErrorCode;
 import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.service.engine.EngineCreateService;
 import org.apache.linkis.manager.am.service.engine.EngineInfoService;
+import org.apache.linkis.manager.am.service.engine.EngineOperateService;
 import org.apache.linkis.manager.am.utils.AMUtils;
 import org.apache.linkis.manager.am.vo.AMEngineNodeVo;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.node.AMEMNode;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
 import org.apache.linkis.manager.common.protocol.engine.EngineCreateRequest;
+import org.apache.linkis.manager.common.protocol.engine.EngineOperateRequest;
+import org.apache.linkis.manager.common.protocol.engine.EngineOperateResponse;
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
@@ -64,6 +68,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import scala.Predef;
+import scala.Tuple2;
+import scala.collection.JavaConverters;
+
 @RequestMapping(path = "/linkisManager", produces = {"application/json"})
 @RestController
 public class EngineRestfulApi {
@@ -73,6 +81,9 @@ public class EngineRestfulApi {
 
     @Autowired
     private EngineCreateService engineCreateService;
+
+    @Autowired
+    private EngineOperateService engineOperateService;
 
     @Autowired
     private NodeLabelService nodeLabelService;
@@ -225,6 +236,34 @@ public class EngineRestfulApi {
                                              @RequestParam(value = "onlyEditable",required = false) Boolean onlyEditable){
         NodeStatus[] nodeStatus = NodeStatus.values();
         return Message.ok().data("nodeStatus", nodeStatus);
+    }
+
+    @RequestMapping(path = "/executeEngineOperation", method = RequestMethod.POST)
+    public Message executeEngineOperation(HttpServletRequest req, @RequestBody JsonNode jsonNode) throws Exception {
+        String userName = SecurityFilter.getLoginUsername(req);
+        ServiceInstance serviceInstance = getServiceInstance(jsonNode);
+        logger.info("User {} try to execute Engine Operation {}.", userName, serviceInstance);
+        EngineNode engineNode = engineCreateService.getEngineNode(serviceInstance);
+        if(!userName.equals(engineNode.getOwner()) && !isAdmin(userName)) {
+            return Message.error("You have no permission to execute Engine Operation " + serviceInstance);
+        }
+        Map<String, Object> properties = objectMapper.convertValue(jsonNode.get("properties")
+                , new TypeReference<Map<String, Object>>(){});
+
+        EngineOperateRequest engineOperateRequest = new EngineOperateRequest(userName
+                , JavaConverters.mapAsScalaMapConverter(properties).asScala().toMap(Predef.conforms()));
+
+        EngineOperateResponse engineOperateResponse = engineOperateService.executeOperation(engineNode, engineOperateRequest);
+
+        Map<String, Object> result = null;
+        if (engineOperateResponse != null && engineOperateResponse.result() != null) {
+            result = JavaConverters.mapAsJavaMapConverter(engineOperateResponse.result()).asJava();
+        }
+
+        return Message.ok()
+                .data("result", result)
+                .data("msg", engineOperateResponse.msg())
+                .data("status", engineOperateResponse.status());
     }
 
     private boolean isAdmin(String user) {

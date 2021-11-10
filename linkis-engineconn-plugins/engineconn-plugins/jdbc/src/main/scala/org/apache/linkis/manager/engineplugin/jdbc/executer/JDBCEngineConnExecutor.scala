@@ -27,12 +27,16 @@ import org.apache.linkis.manager.engineplugin.jdbc.ConnectionManager
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
-import org.apache.linkis.rpc.Sender
+import org.apache.linkis.rpc.{RPCMapCache, Sender}
 import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.commons.io.IOUtils
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, ResponseQueryConfig}
+import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.protocol.CacheableProtocol
 import org.springframework.util.CollectionUtils
 
 import scala.collection.JavaConversions._
@@ -51,6 +55,15 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
     val realCode = code.trim()
     val properties = engineExecutorContext.getProperties.asInstanceOf[util.Map[String, String]]
+
+    if (properties.get("jdbc.url") == null) {
+      info(s"jdbc url is empty, adding now...")
+      val globalConfig = Utils.tryAndWarn(JDBCEngineConfig.getCacheMap(engineExecutorContext.getLabels))
+      properties.put("jdbc.url", globalConfig.get("wds.linkis.jdbc.connect.url"))
+      properties.put("jdbc.username", globalConfig.get("wds.linkis.jdbc.username"))
+      properties.put("jdbc.password", globalConfig.get("wds.linkis.jdbc.password"))
+    }
+
     info(s"jdbc client begins to run jdbc code:\n ${realCode.trim}")
     connection = connectionManager.getConnection(properties)
     statement = connection.createStatement()
@@ -177,3 +190,16 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
   }
 }
 
+
+object JDBCEngineConfig extends RPCMapCache[Array[Label[_]], String, String](Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue) {
+
+  override protected def createRequest(labels: Array[Label[_]]): CacheableProtocol = {
+    val userCreatorLabel = labels.find(_.isInstanceOf[UserCreatorLabel]).get.asInstanceOf[UserCreatorLabel]
+    val engineTypeLabel = labels.find(_.isInstanceOf[EngineTypeLabel]).get.asInstanceOf[EngineTypeLabel]
+    RequestQueryEngineConfig(userCreatorLabel, engineTypeLabel)
+  }
+
+  override protected def createMap(any: Any): util.Map[String, String] = any match {
+    case response: ResponseQueryConfig => response.getKeyAndValue
+  }
+}

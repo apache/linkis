@@ -23,11 +23,11 @@ import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.YarnExecutor
 
 
-class ApplicationInfoOperator extends Operator {
+class EngineConnApplicationInfoOperator extends Operator {
 
-  override def getName: String = ApplicationInfoOperator.OPERATOR_NAME
+  override def getNames: Array[String] = Array(EngineConnApplicationInfoOperator.OPERATOR_NAME)
 
-  override def apply(parameters: Map[String, Any]): Map[String, Any] = {
+  override def apply(implicit parameters: Map[String, Any]): Map[String, Any] = {
     ExecutorManager.getInstance.getReportExecutor match {
       case yarnExecutor: YarnExecutor =>
         Map("applicationId" -> yarnExecutor.getApplicationId, "applicationUrl" -> yarnExecutor.getApplicationURL,
@@ -37,6 +37,6 @@ class ApplicationInfoOperator extends Operator {
   }
 
 }
-object ApplicationInfoOperator {
-  val OPERATOR_NAME = "application"
+object EngineConnApplicationInfoOperator {
+  val OPERATOR_NAME = "engineConnYarnApplication"
 }

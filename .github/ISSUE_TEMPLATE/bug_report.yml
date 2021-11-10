@@ -30,10 +30,18 @@ body:
         you found the bug.
       multiple: true
       options:
-        - "core"
+        - "linkis-commons"
+        - "linkis-cg-entrance"
+        - "linkis-cg-manager"
+        - "linkis-cg-engineConnplugin"
+        - "linkis-cg-engineConnManager"
+        - "linkis-cg-client"
+        - "linkis-extensions"
+        - "linkis-orchestrator"
+        - "linkis-public-enhancements"
+        - "linkis-service-gateway"
+        - "linkis-service-discovery"
         - "web"
-        - "service"
-        - "others"
     validations:
       required: true
 

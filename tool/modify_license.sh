@@ -169,32 +169,32 @@ remove_properties_license(){
 
 
 #remove_java_license
-#find  -type f -name "*.java" | xargs sed -i "1i $java_license"
+find  -type f -name "*.java" | xargs sed -i "1i $java_license"
 
 #remove_scala_license
-#find  -type f -name "*.scala" | xargs sed -i "1i $java_license"
+find  -type f -name "*.scala" | xargs sed -i "1i $java_license"
 
 
 #remove_xml_license
-#find -type f -name "*.xml" | xargs sed -i "1i $xml_license"
+find -type f -name "*.xml" | xargs sed -i "1i $xml_license"
 
 #remove_js_license
-#find -type f -name "*.js" |xargs sed -i "/^\r/d"
-#ind -type f -name "*.js" |xargs sed -i "/^$/d"
-#find -type f -name "*.js" | xargs sed -i "1i $java_license"
+find -type f -name "*.js" |xargs sed -i "/^\r/d"
+ind -type f -name "*.js" |xargs sed -i "/^$/d"
+find -type f -name "*.js" | xargs sed -i "1i $java_license"
 
 #remove_scss_license
-#find -type f -name "*.scss" |xargs sed -i "/^\r/d"
-#find -type f -name "*.scss" |xargs sed -i "/^$/d"
-#find -type f -name "*.scss" | xargs sed -i "1i $java_license"
+find -type f -name "*.scss" |xargs sed -i "/^\r/d"
+find -type f -name "*.scss" |xargs sed -i "/^$/d"
+find -type f -name "*.scss" | xargs sed -i "1i $java_license"
 
 #remove_properties_license
-#find -type f -name "*.properties" |xargs sed -i "/^\r/d"
-#find -type f -name "*.properties" |xargs sed -i "/^$/d"
-#find -type f -name "*.properties" |  xargs sed -i "1i $sh_license"
+find -type f -name "*.properties" |xargs sed -i "/^\r/d"
+find -type f -name "*.properties" |xargs sed -i "/^$/d"
+find -type f -name "*.properties" |  xargs sed -i "1i $sh_license"
 
 #add license for sql files
-#find  -type f -name "*.sql" | xargs sed -i "1i $java_license"
+find  -type f -name "*.sql" | xargs sed -i "1i $java_license"
 
 #add license for vue files
 find  -type f -name "*.vue" | xargs sed -i "1i $xml_license"

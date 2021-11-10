@@ -28,13 +28,13 @@ class DefaultOperateService extends OperateService with Logging {
 
   @Receiver
   override def executeOperation(engineOperateRequest: EngineOperateRequest): EngineOperateResponse = {
-    val operator = Utils.tryCatch(OperatorFactory().createOperatorRequest(engineOperateRequest)){t =>
+    val operator = Utils.tryCatch(OperatorFactory().getOperatorRequest(engineOperateRequest)){ t =>
       error(s"Get operator failed, parameters is ${engineOperateRequest.parameters}.", t)
       return EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
     }
-    info(s"Try to execute operate ${operator.getName} with parameters ${engineOperateRequest.parameters}.")
+    info(s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${engineOperateRequest.parameters}.")
     val result = Utils.tryCatch(operator(engineOperateRequest.parameters)) {t =>
-      error(s"Execute ${operator.getName} failed.", t)
+      error(s"Execute ${operator.getClass.getSimpleName} failed.", t)
       return EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
     }
     EngineOperateResponse(result)

@@ -130,6 +130,9 @@ public class ExecutionContext {
 		clusterClientFactory = new LinkisYarnClusterClientFactory();
 	}
 
+	public StreamExecutionEnvironment getStreamExecutionEnvironment() {
+		return streamExecEnv;
+	}
 
 	public void setString(String key, String value) {
 		this.flinkConfig.setString(key, value);

@@ -42,8 +42,8 @@ object EngineConnOperateAction {
       this
     }
 
-    def setParameters(properties: util.Map[String, Any]): this.type = {
-      this.parameters = properties
+    def setParameters(parameters: util.Map[String, Any]): this.type = {
+      this.parameters = parameters
       this
     }
 

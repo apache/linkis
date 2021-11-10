@@ -39,13 +39,9 @@ class EngineConnOperateResult extends LinkisManagerResult {
 
   def getResult: util.Map[String, Any] = if(isError) throw new UJESJobException(20301, errorMsg) else result
 
-  def getAs[T](key: String): Option[T] = {
-    if (getResult != null && result.get(key) != null) {
-      Some(result.get(key).asInstanceOf[T])
-    } else {
-      None
-    }
-  }
+  def getAsOption[T](key: String): Option[T] = Option(getAs(key))
 
+  def getAs[T](key: String): T = if(getResult != null && result.containsKey(key)) result.get(key).asInstanceOf[T]
+   else null.asInstanceOf[T]
 
 }

@@ -19,46 +19,46 @@ package org.apache.linkis.computation.client.once.action
 
 import java.util
 
-class EngineOperateAction extends GetEngineConnAction {
+class EngineConnOperateAction extends GetEngineConnAction {
 
-  override def suffixURLs: Array[String] = Array("linkisManager", "executeEngineOperation")
+  override def suffixURLs: Array[String] = Array("linkisManager", "executeEngineConnOperation")
 
 }
 
-object EngineOperateAction {
+object EngineConnOperateAction {
 
   val OPERATOR_NAME_KEY = "__operator_name__"
 
   def newBuilder(): Builder = new Builder
 
-  class Builder extends ServiceInstanceBuilder[EngineOperateAction] {
+  class Builder extends ServiceInstanceBuilder[EngineConnOperateAction] {
 
     private var operatorName = ""
 
-    private var properties: util.Map[String, Any] = new util.HashMap[String, Any]
+    private var parameters: util.Map[String, Any] = new util.HashMap[String, Any]
 
     def operatorName(operatorName: String): this.type  = {
       this.operatorName = operatorName
       this
     }
 
-    def setProperties(properties: util.Map[String, Any]): this.type = {
-      this.properties = properties
+    def setParameters(properties: util.Map[String, Any]): this.type = {
+      this.parameters = properties
       this
     }
 
-    def addProperty(key: String, value: Any): this.type = {
-      if (this.properties == null) {
-        this.properties = new util.HashMap[String, Any]
+    def addParameter(key: String, value: Any): this.type = {
+      if (this.parameters == null) {
+        this.parameters = new util.HashMap[String, Any]
       }
-      this.properties.put(key, value)
+      this.parameters.put(key, value)
       this
     }
 
-    override protected def createGetEngineConnAction(): EngineOperateAction = {
-      val action = new EngineOperateAction
-      addProperty(OPERATOR_NAME_KEY, operatorName)
-      action.addRequestPayload("properties", properties)
+    override protected def createGetEngineConnAction(): EngineConnOperateAction = {
+      val action = new EngineConnOperateAction
+      addParameter(OPERATOR_NAME_KEY, operatorName)
+      action.addRequestPayload("parameters", parameters)
       action
     }
   }

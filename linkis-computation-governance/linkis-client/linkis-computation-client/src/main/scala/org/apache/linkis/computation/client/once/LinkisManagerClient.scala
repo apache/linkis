@@ -19,8 +19,8 @@ package org.apache.linkis.computation.client.once
 
 import java.io.Closeable
 
-import org.apache.linkis.computation.client.once.action.{CreateEngineConnAction, EngineOperateAction, GetEngineConnAction, KillEngineConnAction, LinkisManagerAction}
-import org.apache.linkis.computation.client.once.result.{CreateEngineConnResult, EngineOperateResult, GetEngineConnResult, KillEngineConnResult, LinkisManagerResult}
+import org.apache.linkis.computation.client.once.action.{CreateEngineConnAction, EngineConnOperateAction, GetEngineConnAction, KillEngineConnAction, LinkisManagerAction}
+import org.apache.linkis.computation.client.once.result.{CreateEngineConnResult, EngineConnOperateResult, GetEngineConnResult, KillEngineConnResult, LinkisManagerResult}
 import org.apache.linkis.httpclient.dws.DWSHttpClient
 import org.apache.linkis.httpclient.request.Action
 import org.apache.linkis.ujes.client.{UJESClient, UJESClientImpl}
@@ -34,7 +34,7 @@ trait LinkisManagerClient extends Closeable {
 
   def killEngineConn(killEngineConnAction: KillEngineConnAction): KillEngineConnResult
 
-  def executeEngineOperation(engineOperateAction: EngineOperateAction): EngineOperateResult
+  def executeEngineConnOperation(engineOperateAction: EngineConnOperateAction): EngineConnOperateResult
 
 }
 object LinkisManagerClient {
@@ -61,7 +61,7 @@ class LinkisManagerClientImpl(ujesClient: UJESClient) extends LinkisManagerClien
 
   override def killEngineConn(killEngineConnAction: KillEngineConnAction): KillEngineConnResult = execute(killEngineConnAction)
 
-  override def executeEngineOperation(engineOperateAction: EngineOperateAction): EngineOperateResult = execute(engineOperateAction)
+  override def executeEngineConnOperation(engineOperateAction: EngineConnOperateAction): EngineConnOperateResult = execute(engineOperateAction)
 
   override def close(): Unit = ujesClient.close()
 }

@@ -20,20 +20,27 @@ package org.apache.linkis.computation.client.once.result
 import java.util
 
 import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.ujes.client.exception.UJESJobException
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/linkisManager/executeEngineOperation")
-class EngineOperateResult extends LinkisManagerResult {
+@DWSHttpMessageResult("/api/rest_j/v\\d+/linkisManager/executeEngineConnOperation")
+class EngineConnOperateResult extends LinkisManagerResult {
 
   private var result: util.Map[String, Any] = _
+  private var errorMsg: String = _
+  private var isError: Boolean = _
 
   def setResult(result: util.Map[String, Any]): Unit = {
     this.result = result
   }
 
-  def getResult: util.Map[String, Any] = result
+  def setErrorMsg(errorMsg: String): Unit = this.errorMsg = errorMsg
+
+  def setIsError(isError: Boolean): Unit = this.isError = isError
+
+  def getResult: util.Map[String, Any] = if(isError) throw new UJESJobException(20301, errorMsg) else result
 
   def getAs[T](key: String): Option[T] = {
-    if (result != null && result.get(key) != null) {
+    if (getResult != null && result.get(key) != null) {
       Some(result.get(key).asInstanceOf[T])
     } else {
       None

@@ -35,7 +35,7 @@ class EngineConnOperateResult extends LinkisManagerResult {
 
   def setErrorMsg(errorMsg: String): Unit = this.errorMsg = errorMsg
 
-  def setIsError(isError: Boolean): Unit = this.isError = isError
+  def setError(isError: Boolean): Unit = this.isError = isError
 
   def getResult: util.Map[String, Any] = if(isError) throw new UJESJobException(20301, errorMsg) else result
 

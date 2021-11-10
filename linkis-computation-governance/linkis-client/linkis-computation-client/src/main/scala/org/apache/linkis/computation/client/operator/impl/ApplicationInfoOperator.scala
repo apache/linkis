@@ -17,27 +17,21 @@
  */
 package org.apache.linkis.computation.client.operator.impl
 
-import org.apache.linkis.computation.client.once.action.EngineOperateAction
+import org.apache.linkis.computation.client.once.result.EngineConnOperateResult
 import org.apache.linkis.computation.client.operator.OnceJobOperator
+import org.apache.linkis.ujes.client.exception.UJESJobException
 
 
 class ApplicationInfoOperator extends OnceJobOperator[ApplicationInfo] {
 
   override def getName: String = ApplicationInfoOperator.OPERATOR_NAME
 
-  override def apply(): ApplicationInfo = {
-
-    val engineOperateAction = EngineOperateAction.newBuilder()
-      .operatorName(getName)
-      .setUser(getUser)
-      .setApplicationName(getServiceInstance.getApplicationName)
-      .setInstance(getServiceInstance.getInstance)
-      .build()
-
-    val result = getLinkisManagerClient.executeEngineOperation(engineOperateAction)
+  override protected def resultToObject(result: EngineConnOperateResult): ApplicationInfo = {
     ApplicationInfo(
-      result.getAs("applicationId").getOrElse(""),
-      result.getAs("applicationUrl").getOrElse(""),
+      result.getAs("applicationId")
+        .getOrElse(throw new UJESJobException(20300, s"Cannot get applicationId from EngineConn $getServiceInstance.")),
+      result.getAs("applicationUrl")
+        .getOrElse(throw new UJESJobException(20300, s"Cannot get applicationUrl from EngineConn $getServiceInstance.")),
       result.getAs("queue").getOrElse("")
     )
   }

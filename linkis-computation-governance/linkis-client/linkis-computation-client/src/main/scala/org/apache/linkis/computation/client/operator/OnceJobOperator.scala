@@ -18,10 +18,13 @@
 package org.apache.linkis.computation.client.operator
 
 import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.computation.client.once.LinkisManagerClient
+import org.apache.linkis.computation.client.once.action.EngineConnOperateAction
+import org.apache.linkis.computation.client.once.result.EngineConnOperateResult
 
 
-trait OnceJobOperator[T] extends Operator[T] {
+trait OnceJobOperator[T] extends Operator[T] with Logging {
 
   private var user: String = _
   private var serviceInstance: ServiceInstance = _
@@ -45,5 +48,23 @@ trait OnceJobOperator[T] extends Operator[T] {
     this.linkisManagerClient = linkisManagerClient
     this
   }
+
+  override def apply(): T = {
+    val builder = EngineConnOperateAction.newBuilder()
+      .operatorName(getName)
+      .setUser(getUser)
+      .setApplicationName(getServiceInstance.getApplicationName)
+      .setInstance(getServiceInstance.getInstance)
+    addParameters(builder)
+    val engineConnOperateAction = builder.build()
+    info(s"$getUser try to ask EngineConn($getServiceInstance) to execute $getName operation, parameters is ${engineConnOperateAction.getRequestPayload}.")
+    val result = getLinkisManagerClient.executeEngineConnOperation(engineConnOperateAction)
+    info(s"$getUser asked EngineConn($getServiceInstance) to execute $getName operation, results is ${result.getResult}.")
+    resultToObject(result)
+  }
+
+  protected def addParameters(builder: EngineConnOperateAction.Builder): Unit = {}
+
+  protected def resultToObject(result: EngineConnOperateResult): T
 
 }

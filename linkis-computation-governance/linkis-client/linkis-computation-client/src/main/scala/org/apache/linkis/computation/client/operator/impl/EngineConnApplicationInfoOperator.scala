@@ -22,24 +22,24 @@ import org.apache.linkis.computation.client.operator.OnceJobOperator
 import org.apache.linkis.ujes.client.exception.UJESJobException
 
 
-class ApplicationInfoOperator extends OnceJobOperator[ApplicationInfo] {
+class EngineConnApplicationInfoOperator extends OnceJobOperator[ApplicationInfo] {
 
-  override def getName: String = ApplicationInfoOperator.OPERATOR_NAME
+  override def getName: String = EngineConnApplicationInfoOperator.OPERATOR_NAME
 
   override protected def resultToObject(result: EngineConnOperateResult): ApplicationInfo = {
     ApplicationInfo(
-      result.getAs("applicationId")
+      result.getAsOption("applicationId")
         .getOrElse(throw new UJESJobException(20300, s"Cannot get applicationId from EngineConn $getServiceInstance.")),
-      result.getAs("applicationUrl")
+      result.getAsOption("applicationUrl")
         .getOrElse(throw new UJESJobException(20300, s"Cannot get applicationUrl from EngineConn $getServiceInstance.")),
-      result.getAs("queue").getOrElse("")
+      result.getAs("queue")
     )
   }
 
 }
 
-object ApplicationInfoOperator {
-  val OPERATOR_NAME = "application"
+object EngineConnApplicationInfoOperator {
+  val OPERATOR_NAME = "engineConnYarnApplication"
 }
 
 case class ApplicationInfo(applicationId: String, applicationUrl: String, queue: String)

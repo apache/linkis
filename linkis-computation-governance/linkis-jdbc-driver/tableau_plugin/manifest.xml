@@ -16,7 +16,6 @@
   ~ limitations under the License.
   -->
   
-<?xml version='1.0' encoding='utf-8' ?>
 <connector-plugin class='linkis_jdbc' superclass='jdbc' plugin-version='1.0' name='Linkis (JDBC)' version='2020.1.0'>
   <vendor-information>
     <company name="Linkis"/>

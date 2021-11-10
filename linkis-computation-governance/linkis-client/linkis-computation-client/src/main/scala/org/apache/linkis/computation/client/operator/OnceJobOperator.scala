@@ -52,14 +52,14 @@ trait OnceJobOperator[T] extends Operator[T] with Logging {
   override def apply(): T = {
     val builder = EngineConnOperateAction.newBuilder()
       .operatorName(getName)
-      .setUser(getUser)
-      .setApplicationName(getServiceInstance.getApplicationName)
-      .setInstance(getServiceInstance.getInstance)
+      .setUser(user)
+      .setApplicationName(serviceInstance.getApplicationName)
+      .setInstance(serviceInstance.getInstance)
     addParameters(builder)
     val engineConnOperateAction = builder.build()
-    info(s"$getUser try to ask EngineConn($getServiceInstance) to execute $getName operation, parameters is ${engineConnOperateAction.getRequestPayload}.")
-    val result = getLinkisManagerClient.executeEngineConnOperation(engineConnOperateAction)
-    info(s"$getUser asked EngineConn($getServiceInstance) to execute $getName operation, results is ${result.getResult}.")
+    info(s"$getUser try to ask EngineConn($serviceInstance) to execute $getName operation, parameters is ${engineConnOperateAction.getRequestPayload}.")
+    val result = linkisManagerClient.executeEngineConnOperation(engineConnOperateAction)
+    info(s"$getUser asked EngineConn($serviceInstance) to execute $getName operation, results is ${result.getResult}.")
     resultToObject(result)
   }
 

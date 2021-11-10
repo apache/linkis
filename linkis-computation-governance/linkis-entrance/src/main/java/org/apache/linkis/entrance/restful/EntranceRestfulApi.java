@@ -292,9 +292,8 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     }
 
 
-    //todo confirm params of strongExecId?
-    @RequestMapping(path = "/{id}/killJobs",method = RequestMethod.POST)
-    public Message killJobs(HttpServletRequest req,@RequestBody JsonNode jsonNode, @PathVariable("id") String strongExecId) {
+    @RequestMapping(path = "/killJobs",method = RequestMethod.POST)
+    public Message killJobs(HttpServletRequest req,@RequestBody JsonNode jsonNode) {
         JsonNode idNode = jsonNode.get("idList");
         JsonNode taskIDNode = jsonNode.get("taskIDList");
         ArrayList<Long> waitToForceKill = new ArrayList<>();

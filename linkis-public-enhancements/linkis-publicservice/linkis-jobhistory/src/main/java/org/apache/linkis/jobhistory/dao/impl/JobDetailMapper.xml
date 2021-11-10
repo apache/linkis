@@ -16,6 +16,8 @@
   ~ limitations under the License.
   -->
   
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
 <mapper namespace="org.apache.linkis.jobhistory.dao.JobDetailMapper">
 
     <resultMap id="jobDetailMap" type="org.apache.linkis.jobhistory.entity.JobDetail" autoMapping="false" >

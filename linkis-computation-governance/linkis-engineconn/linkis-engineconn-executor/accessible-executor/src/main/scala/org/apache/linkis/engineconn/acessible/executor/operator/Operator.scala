@@ -17,14 +17,10 @@
 
 package org.apache.linkis.engineconn.acessible.executor.operator
 
-import org.apache.linkis.manager.common.protocol.engine.EngineOperateResponse
-
 trait Operator {
 
   def getName: String
 
-  def init(properties: Map[String, Any])
-
-  def apply(): EngineOperateResponse
+  def apply(parameters: Map[String, Any]): Map[String, Any]
 
 }

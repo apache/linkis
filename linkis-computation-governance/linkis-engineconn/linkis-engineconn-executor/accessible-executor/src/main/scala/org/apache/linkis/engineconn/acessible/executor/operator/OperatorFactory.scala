@@ -18,12 +18,14 @@
 package org.apache.linkis.engineconn.acessible.executor.operator
 
 import org.apache.linkis.common.exception.WarnException
-import org.apache.linkis.common.utils.ClassUtils
+import org.apache.linkis.common.utils.{ClassUtils, Logging}
 import org.apache.linkis.manager.common.protocol.engine.EngineOperateRequest
 
 trait OperatorFactory {
 
-  def createOperatorRequest(request: EngineOperateRequest): Operator
+  def getOperatorName(parameters: Map[String, Any]): String
+
+  def getOperatorRequest(request: EngineOperateRequest): Operator
 
 }
 
@@ -36,21 +38,23 @@ object OperatorFactory {
 }
 
 import scala.collection.convert.WrapAsScala._
-class OperatorFactoryImpl extends OperatorFactory {
+class OperatorFactoryImpl extends OperatorFactory with Logging {
 
-  private val operatorClasses: Map[String, Class[_ <: Operator]] = ClassUtils.reflections.getSubTypesOf(classOf[Operator])
-    .filterNot(ClassUtils.isInterfaceOrAbstract).map { clazz =>
-      clazz.newInstance().getName -> clazz
+  private val operators: Map[String, _ <: Operator] = ClassUtils.reflections.getSubTypesOf(classOf[Operator])
+    .filterNot(ClassUtils.isInterfaceOrAbstract).flatMap { clazz =>
+      val operator = clazz.newInstance()
+      operator.getNames.map(name => name -> operator)
     }.toMap
+  info("Launched operators list => " + operators)
 
-  override def createOperatorRequest(request: EngineOperateRequest): Operator = {
-    request.properties.getOrElse(EngineOperateRequest.OPERATOR_NAME_KEY, null) match {
-      case operatorName: String if operatorClasses.contains(operatorName) =>
-        val operator = operatorClasses.get(operatorName).get.newInstance()
-        operator.init(request.properties)
-        operator
-      case _ => throw new WarnException(-1, s"Cannot find operator.")
-    }
+  override def getOperatorName(parameters: Map[String, Any]): String =
+    parameters.getOrElse(EngineOperateRequest.OPERATOR_NAME_KEY,
+      throw new WarnException(20031, s"${EngineOperateRequest.OPERATOR_NAME_KEY} is not exists.")).asInstanceOf[String]
+
+  override def getOperatorRequest(request: EngineOperateRequest): Operator = {
+    val operatorName = getOperatorName(request.parameters)
+    if (operators.contains(operatorName)) operators(operatorName)
+    else throw new WarnException(20030, s"Cannot find operator named $operatorName.")
   }
 
 }

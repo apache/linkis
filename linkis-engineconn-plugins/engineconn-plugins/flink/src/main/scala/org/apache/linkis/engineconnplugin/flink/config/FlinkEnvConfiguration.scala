@@ -37,7 +37,13 @@ object FlinkEnvConfiguration {
   val FLINK_SHIP_DIRECTORIES = CommonVars("flink.yarn.ship-directories", "")
 
 
+  val FLINK_CHECK_POINT_ENABLE = CommonVars("flink.app.checkpoint.enable", false)
+  val FLINK_CHECK_POINT_INTERVAL = CommonVars("flink.app.checkpoint.interval", 3000)
+  val FLINK_CHECK_POINT_MODE = CommonVars("flink.app.checkpoint.mode", "EXACTLY_ONCE")
+  val FLINK_CHECK_POINT_TIMEOUT = CommonVars("flink.app.checkpoint.timeout", 60000)
+  val FLINK_CHECK_POINT_MIN_PAUSE = CommonVars("flink.app.checkpoint.minPause", FLINK_CHECK_POINT_INTERVAL.getValue)
   val FLINK_SAVE_POINT_PATH = CommonVars("flink.app.savePointPath", "")
+
   val FLINK_APP_ALLOW_NON_RESTORED_STATUS = CommonVars("flink.app.allowNonRestoredStatus", "false")
   val FLINK_SQL_PLANNER = CommonVars("flink.sql.planner", ExecutionEntry.EXECUTION_PLANNER_VALUE_BLINK)
   val FLINK_SQL_EXECUTION_TYPE = CommonVars("flink.sql.executionType", ExecutionEntry.EXECUTION_TYPE_VALUE_STREAMING)

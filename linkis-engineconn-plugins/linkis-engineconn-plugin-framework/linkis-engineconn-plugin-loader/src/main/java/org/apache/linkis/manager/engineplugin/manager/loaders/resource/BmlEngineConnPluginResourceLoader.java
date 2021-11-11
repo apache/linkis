@@ -23,7 +23,7 @@ import org.apache.linkis.bml.protocol.BmlDownloadResponse;
 import org.apache.linkis.bml.protocol.Version;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInfo;
-import org.apache.linkis.manager.engineplugin.common.loader.exception.EngineConnPluginLoadResourceException;
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginLoadResourceException;
 import org.apache.linkis.manager.engineplugin.manager.config.EngineConnPluginLoaderConf;
 import org.apache.linkis.manager.engineplugin.manager.loaders.EngineConnPluginsResourceLoader;
 import org.apache.linkis.manager.engineplugin.manager.utils.EngineConnPluginUtils;

@@ -238,8 +238,8 @@ public class EngineRestfulApi {
         return Message.ok().data("nodeStatus", nodeStatus);
     }
 
-    @RequestMapping(path = "/executeEngineOperation", method = RequestMethod.POST)
-    public Message executeEngineOperation(HttpServletRequest req, @RequestBody JsonNode jsonNode) throws Exception {
+    @RequestMapping(path = "/executeEngineConnOperation", method = RequestMethod.POST)
+    public Message executeEngineConnOperation(HttpServletRequest req, @RequestBody JsonNode jsonNode) throws Exception {
         String userName = SecurityFilter.getLoginUsername(req);
         ServiceInstance serviceInstance = getServiceInstance(jsonNode);
         logger.info("User {} try to execute Engine Operation {}.", userName, serviceInstance);
@@ -247,23 +247,23 @@ public class EngineRestfulApi {
         if(!userName.equals(engineNode.getOwner()) && !isAdmin(userName)) {
             return Message.error("You have no permission to execute Engine Operation " + serviceInstance);
         }
-        Map<String, Object> properties = objectMapper.convertValue(jsonNode.get("properties")
+        Map<String, Object> parameters = objectMapper.convertValue(jsonNode.get("parameters")
                 , new TypeReference<Map<String, Object>>(){});
 
         EngineOperateRequest engineOperateRequest = new EngineOperateRequest(userName
-                , JavaConverters.mapAsScalaMapConverter(properties).asScala().toMap(Predef.conforms()));
+                , JavaConverters.mapAsScalaMapConverter(parameters).asScala().toMap(Predef.conforms()));
 
         EngineOperateResponse engineOperateResponse = engineOperateService.executeOperation(engineNode, engineOperateRequest);
 
-        Map<String, Object> result = null;
+        Map<String, Object> result = new HashMap<>(0);
         if (engineOperateResponse != null && engineOperateResponse.result() != null) {
             result = JavaConverters.mapAsJavaMapConverter(engineOperateResponse.result()).asJava();
         }
 
         return Message.ok()
                 .data("result", result)
-                .data("msg", engineOperateResponse.msg())
-                .data("status", engineOperateResponse.status());
+                .data("errorMsg", engineOperateResponse.errorMsg())
+                .data("isError", engineOperateResponse.isError());
     }
 
     private boolean isAdmin(String user) {

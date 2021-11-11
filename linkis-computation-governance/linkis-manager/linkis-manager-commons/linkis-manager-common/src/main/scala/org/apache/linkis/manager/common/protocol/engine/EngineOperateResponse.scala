@@ -19,4 +19,4 @@ package org.apache.linkis.manager.common.protocol.engine
 
 import org.apache.linkis.protocol.message.RequestProtocol
 
-case class EngineOperateResponse(result: Map[String, Any], status: Boolean = true, msg: String = "") extends RequestProtocol
+case class EngineOperateResponse(result: Map[String, Any], isError: Boolean = false, errorMsg: String = "") extends RequestProtocol

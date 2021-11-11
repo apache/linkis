@@ -1,19 +1,20 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.resourcemanager.restful
 
 import java.text.SimpleDateFormat
@@ -151,7 +152,16 @@ class RMMonitorRest extends Logging {
     val message = Message.ok("")
     val userName = SecurityFilter.getLoginUsername(request)
     var nodes = getEngineNodes(userName, true)
-    if(nodes == null) nodes = new Array[EngineNode](1)
+    if(nodes == null) {
+      nodes = new Array[EngineNode](1)
+    } else {
+      nodes = nodes.filter(node => {
+        node.getNodeResource != null &&
+          !node.getLabels.isEmpty &&
+          node.getLabels.find(_.isInstanceOf[UserCreatorLabel]).get != null &&
+          node.getLabels.find(_.isInstanceOf[EngineTypeLabel]).get != null
+      })
+    }
     val userCreatorEngineTypeResourceMap =new mutable.HashMap[String, mutable.HashMap[String, NodeResource]]
     nodes.foreach { node =>
       val userCreatorLabel = node.getLabels.find(_.isInstanceOf[UserCreatorLabel]).get.asInstanceOf[UserCreatorLabel]

@@ -75,7 +75,7 @@ trait ListenerBus[L <: EventListener, E <: Event] extends Logging {
   protected def doPostEvent(listener: L, event: E): Unit
 
 }
-private[linkis] abstract class ListenerEventBus[L <: EventListener, E <: Event]
+abstract class ListenerEventBus[L <: EventListener, E <: Event]
       (val eventQueueCapacity: Int, name: String)
       (listenerConsumerThreadSize: Int = 5, listenerThreadMaxFreeTime: Long = ByteTimeUtils.timeStringAsMs("2m"))
   extends ListenerBus[L, E] with Logging {

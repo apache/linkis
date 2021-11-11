@@ -18,7 +18,7 @@
 package org.apache.linkis.manager.engineplugin.manager.loaders;
 
 import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInfo;
-import org.apache.linkis.manager.engineplugin.common.loader.exception.EngineConnPluginLoadResourceException;
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginLoadResourceException;
 import org.apache.linkis.manager.engineplugin.manager.loaders.resource.PluginResource;
 
 

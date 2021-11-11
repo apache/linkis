@@ -26,7 +26,7 @@ import org.apache.linkis.manager.engineplugin.cache.config.EngineConnPluginCache
 import org.apache.linkis.manager.engineplugin.cache.refresh.*;
 import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInfo;
 import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInstance;
-import org.apache.linkis.manager.engineplugin.common.loader.exception.EngineConnPluginNotFoundException;
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

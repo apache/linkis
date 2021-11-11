@@ -21,11 +21,11 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.protocol.message.RequestProtocol
 
 case class EngineOperateRequest(user: String,
-                           properties: Map[String, Any]) extends RequestProtocol
+                                parameters: Map[String, Any]) extends RequestProtocol
 
 
 case class EngineOperateRequestWithService(user: String, serviceInstance: ServiceInstance,
-                           properties: Map[String, Any]) extends RequestProtocol
+                                           parameters: Map[String, Any]) extends RequestProtocol
 
 object EngineOperateRequest {
 

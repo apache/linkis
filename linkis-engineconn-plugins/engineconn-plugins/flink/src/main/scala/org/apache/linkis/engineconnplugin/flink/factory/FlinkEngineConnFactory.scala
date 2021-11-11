@@ -42,6 +42,7 @@ import org.apache.linkis.manager.label.entity.engine._
 import org.apache.commons.lang.StringUtils
 import org.apache.flink.configuration._
 import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings
+import org.apache.flink.streaming.api.CheckpointingMode
 import org.apache.flink.yarn.configuration.{YarnConfigOptions, YarnDeploymentTarget}
 
 import scala.collection.convert.decorateAsScala._
@@ -181,8 +182,27 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
         error(s"Not supported YarnDeploymentTarget ${t.getName}.")
         throw new FlinkInitFailedException(s"Not supported YarnDeploymentTarget ${t.getName}.")
     }
-    ExecutionContext.builder(environmentContext.getDefaultEnv, environment, environmentContext.getDependencies,
+    val executionContext = ExecutionContext.builder(environmentContext.getDefaultEnv, environment, environmentContext.getDependencies,
       environmentContext.getFlinkConfig).build()
+    if(FLINK_CHECK_POINT_ENABLE.getValue(options)) {
+      val checkpointInterval = FLINK_CHECK_POINT_INTERVAL.getValue(options)
+      val checkpointMode = FLINK_CHECK_POINT_MODE.getValue(options)
+      val checkpointTimeout = FLINK_CHECK_POINT_TIMEOUT.getValue(options)
+      val checkpointMinPause = FLINK_CHECK_POINT_MIN_PAUSE.getValue(options)
+      info(s"checkpoint is enabled, checkpointInterval is $checkpointInterval, checkpointMode is $checkpointMode, checkpointTimeout is $checkpointTimeout.")
+      executionContext.getStreamExecutionEnvironment.enableCheckpointing(checkpointInterval)
+      val checkpointConfig = executionContext.getStreamExecutionEnvironment.getCheckpointConfig
+      checkpointMode match {
+        case "EXACTLY_ONCE" =>
+          checkpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE)
+        case "AT_LEAST_ONCE" =>
+          checkpointConfig.setCheckpointingMode(CheckpointingMode.AT_LEAST_ONCE)
+        case _ => throw new FlinkInitFailedException(s"Unknown checkpoint mode $checkpointMode.")
+      }
+      checkpointConfig.setCheckpointTimeout(checkpointTimeout)
+      checkpointConfig.setMinPauseBetweenCheckpoints(checkpointMinPause)
+    }
+    executionContext
   }
 
   protected def createFlinkEngineConnContext(environmentContext: EnvironmentContext): FlinkEngineConnContext =

@@ -17,14 +17,19 @@
  
 package org.apache.linkis.engineconn.acessible.executor.operator
 
-import org.apache.linkis.manager.common.protocol.engine.EngineOperateResponse
+import org.apache.linkis.engineconn.common.exception.EngineConnException
 
 trait Operator {
 
-  def getName: String
+  def getNames: Array[String]
 
-  def init(properties: Map[String, Any])
+  def apply(implicit parameters: Map[String, Any]): Map[String, Any]
 
-  def apply(): EngineOperateResponse
+  protected def getAs[T](key: String, defaultVal: T)(implicit parameters: Map[String, Any]): T =
+    parameters.getOrElse(key, defaultVal) match {
+      case t: T => t
+      case null => null.asInstanceOf[T]
+      case v => throw EngineConnException(20305, s"Unknown $v for key $key.")
+    }
 
 }

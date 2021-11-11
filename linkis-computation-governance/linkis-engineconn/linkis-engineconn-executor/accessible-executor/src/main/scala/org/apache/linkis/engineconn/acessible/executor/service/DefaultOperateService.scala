@@ -16,17 +16,27 @@
  */
  
 package org.apache.linkis.engineconn.acessible.executor.service
+import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.operator.OperatorFactory
 import org.apache.linkis.manager.common.protocol.engine.{EngineOperateRequest, EngineOperateResponse}
 import org.apache.linkis.message.annotation.Receiver
 import org.springframework.stereotype.Service
 
 @Service
-class DefaultOperateService extends OperateService {
+class DefaultOperateService extends OperateService with Logging {
 
   @Receiver
   override def executeOperation(engineOperateRequest: EngineOperateRequest): EngineOperateResponse = {
-    val operator = OperatorFactory().createOperatorRequest(engineOperateRequest)
-    operator()
+    val operator = Utils.tryCatch(OperatorFactory().getOperatorRequest(engineOperateRequest)){ t =>
+      error(s"Get operator failed, parameters is ${engineOperateRequest.parameters}.", t)
+      return EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
+    }
+    info(s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${engineOperateRequest.parameters}.")
+    val result = Utils.tryCatch(operator(engineOperateRequest.parameters)) {t =>
+      error(s"Execute ${operator.getClass.getSimpleName} failed.", t)
+      return EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
+    }
+    EngineOperateResponse(result)
   }
 }

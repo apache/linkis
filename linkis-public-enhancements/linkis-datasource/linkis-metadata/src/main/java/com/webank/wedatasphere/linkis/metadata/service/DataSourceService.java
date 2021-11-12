@@ -18,6 +18,8 @@ package com.webank.wedatasphere.linkis.metadata.service;
 
 import org.codehaus.jackson.JsonNode;
 
+import java.util.Map;
+
 public interface DataSourceService {
 
     JsonNode getDbs(String userName) throws Exception;
@@ -33,4 +35,6 @@ public interface DataSourceService {
     JsonNode getPartitionSize(String dbName, String tableName, String partitionName, String userName);
 
     JsonNode getPartitions(String dbName, String tableName, String userName);
+
+    Map<String,Object> getAllTableSize(String dbName, String tableName, String userName);
 }

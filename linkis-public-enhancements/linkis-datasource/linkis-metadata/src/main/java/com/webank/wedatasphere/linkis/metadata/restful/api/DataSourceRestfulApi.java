@@ -30,6 +30,10 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 
 @Path("datasource")
@@ -51,6 +55,24 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         try {
             JsonNode dbs = dataSourceService.getDbs(userName);
             return Message.messageToResponse(Message.ok("").data("dbs", dbs));
+        } catch (Exception e) {
+            logger.error("Failed to get database(获取数据库失败)", e);
+            return Message.messageToResponse(Message.error("Failed to get database(获取数据库失败)", e));
+        }
+    }
+    @GET
+    @Path("all/dbs")
+    public Response queryAllDatabaseInfo(@Context HttpServletRequest req) {
+        try {
+            JsonNode dbs = dataSourceService.getDbs(null);
+            Iterator<JsonNode> elements = dbs.getElements();
+            List<String> result=new ArrayList<>();
+            while (elements.hasNext()){
+                JsonNode next = elements.next();
+                String dbNameV = next.get("dbName").asText();
+                result.add(dbNameV);
+            }
+            return Message.messageToResponse(Message.ok("").data("dbs", result));
         } catch (Exception e) {
             logger.error("Failed to get database(获取数据库失败)", e);
             return Message.messageToResponse(Message.error("Failed to get database(获取数据库失败)", e));
@@ -112,6 +134,19 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         } catch (Exception e) {
             logger.error("Failed to get table partition size(获取表分区大小失败)", e);
             return Message.messageToResponse(Message.error("Failed to get table partition size(获取表分区大小失败)", e));
+        }
+    }
+
+    @GET
+    @Path("all/size")
+    public Response allSizeOf(@QueryParam("database") String database,  @QueryParam("table") String table, @Context HttpServletRequest req){
+        String userName = SecurityFilter.getLoginUsername(req);
+        try {
+            Map<String, Object> allTableSize = dataSourceService.getAllTableSize(database, table, userName);
+            return Message.messageToResponse(Message.ok("").data("sizeInfo", allTableSize));
+        } catch (Exception e) {
+            logger.error("Failed to get table partition size(获取表/分区大小失败)", e);
+            return Message.messageToResponse(Message.error("Failed to get table partition size(获取/表分区大小失败)", e));
         }
     }
 

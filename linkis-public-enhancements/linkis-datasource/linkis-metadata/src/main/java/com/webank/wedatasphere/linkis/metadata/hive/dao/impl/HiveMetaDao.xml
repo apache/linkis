@@ -43,6 +43,10 @@
         order by NAME
     </select>
 
+    <select id="getDbs" resultType="java.lang.String" >
+        select t2.NAME  as NAME  from DBS t2  GROUP BY NAME order by NAME
+    </select>
+
     <select id="getTablesByDbNameAndUser" resultType="map"  parameterType="map">
         select t2.TBL_NAME as NAME, t2.TBL_TYPE as TYPE, t2.CREATE_TIME as CREATE_TIME, t2.LAST_ACCESS_TIME as LAST_ACCESS_TIME, t2.OWNER as OWNER
         from DB_PRIVS t1,TBLS t2, DBS t3

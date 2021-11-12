@@ -1,0 +1,9 @@
+package com.webank.wedatasphere.linkis.datasource.client
+
+import com.webank.wedatasphere.linkis.datasource.client.request.{GetMetadataSourceAllDatabasesAction, GetMetadataSourceAllSizeAction}
+import com.webank.wedatasphere.linkis.datasource.client.response.{GetMetadataSourceAllDatabasesResult, GetMetadataSourceAllSizeResult}
+
+trait MetadataSourceRemoteClient extends RemoteClient {
+  def getAllDBMetaDataSource(action:GetMetadataSourceAllDatabasesAction):GetMetadataSourceAllDatabasesResult
+  def getAllSizeMetaDataSource(action:GetMetadataSourceAllSizeAction):GetMetadataSourceAllSizeResult
+}

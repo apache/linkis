@@ -13,7 +13,7 @@
 
 package com.webank.wedatasphere.linkis.datasource.client
 
-import com.webank.wedatasphere.linkis.datasource.client.impl.LinkisDataSourceRemoteClient
+import com.webank.wedatasphere.linkis.datasource.client.impl.{LinkisDataSourceRemoteClient, LinkisMetadataSourceRemoteClient}
 import com.webank.wedatasphere.linkis.datasource.client.request._
 import com.webank.wedatasphere.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy
 import com.webank.wedatasphere.linkis.httpclient.dws.config.DWSClientConfigBuilder
@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit
 object TestDataSourceClient {
   def main(args: Array[String]): Unit = {
     val clientConfig = DWSClientConfigBuilder.newBuilder()
-      .addServerUrl("http://127.0.0.1:9001")
+      .addServerUrl("http://localhost:9001")
       .connectionTimeout(30000)
       .discoveryEnabled(false)
       .discoveryFrequency(1,TimeUnit.MINUTES)
@@ -37,6 +37,7 @@ object TestDataSourceClient {
       .setDWSVersion("v1")
       .build()
 
+    val metadataSourceClient = new LinkisMetadataSourceRemoteClient(clientConfig)
     val dataSourceClient = new LinkisDataSourceRemoteClient(clientConfig)
 
     val getAllDataSourceTypesResult = dataSourceClient.getAllDataSourceTypes(GetAllDataSourceTypesAction.builder().setUser("hadoop").build()).getAllDataSourceType
@@ -68,6 +69,13 @@ object TestDataSourceClient {
     val getConnectParamsByDataSourceIdResult = dataSourceClient.getConnectParams(
       GetConnectParamsByDataSourceIdAction.builder().setDataSourceId(1).setSystem("xx").setUser("hadoop").build()
     )
+
+    val allDb = metadataSourceClient.getAllDBMetaDataSource(GetMetadataSourceAllDatabasesAction.builder().setUser("hadoop").build()).getAllDb()
+    println(allDb)
+
+    val allSize = metadataSourceClient.getAllSizeMetaDataSource(GetMetadataSourceAllSizeAction.builder().setUser("hadoop").setDatabase("").setTable("").build()).sizeInfo
+    println(allSize)
+
 
     println("ss")
 

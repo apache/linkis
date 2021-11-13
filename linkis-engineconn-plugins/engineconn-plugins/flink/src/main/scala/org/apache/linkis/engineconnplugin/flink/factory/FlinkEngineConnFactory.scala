@@ -1,22 +1,23 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 
 package org.apache.linkis.engineconnplugin.flink.factory
 
+import java.io.File
 import java.time.Duration
 import java.util
 import java.util.Collections
@@ -41,6 +42,7 @@ import org.apache.linkis.manager.label.entity.engine._
 import org.apache.commons.lang.StringUtils
 import org.apache.flink.configuration._
 import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings
+import org.apache.flink.streaming.api.CheckpointingMode
 import org.apache.flink.yarn.configuration.{YarnConfigOptions, YarnDeploymentTarget}
 
 import scala.collection.convert.decorateAsScala._
@@ -89,6 +91,12 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     flinkConfig.set(YarnConfigOptions.PROVIDED_LIB_DIRS, providedLibDirList)
     //construct jar-dependencies(构建依赖jar包环境)
     flinkConfig.set(YarnConfigOptions.SHIP_ARCHIVES, context.getShipDirs)
+    // set user classpaths
+    val classpaths = FLINK_APPLICATION_CLASSPATH.getValue(options)
+    if (StringUtils.isNotBlank(classpaths)) {
+      info(s"Add $classpaths to flink application classpath.")
+      flinkConfig.set(PipelineOptions.CLASSPATHS, util.Arrays.asList(classpaths.split(","): _*))
+    }
     //yarn application name(yarn 作业名称)
     flinkConfig.set(YarnConfigOptions.APPLICATION_NAME, jobName)
     //yarn queue
@@ -112,8 +120,10 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     //Configure user-entrance jar. Can be remote, but only support 1 jar(设置：用户入口jar：可以远程，只能设置1个jar)
     val flinkMainClassJar = FLINK_APPLICATION_MAIN_CLASS_JAR.getValue(options)
     if(StringUtils.isNotBlank(flinkMainClassJar)) {
-      info(s"Ready to use $flinkMainClassJar as main class jar to submit application to Yarn.")
-      flinkConfig.set(PipelineOptions.JARS, Collections.singletonList(flinkMainClassJar))
+      val flinkMainClassJarPath = if (new File(flinkMainClassJar).exists()) flinkMainClassJar
+        else getClass.getClassLoader.getResource(flinkMainClassJar).getPath
+      info(s"Ready to use $flinkMainClassJarPath as main class jar to submit application to Yarn.")
+      flinkConfig.set(PipelineOptions.JARS, Collections.singletonList(flinkMainClassJarPath))
       flinkConfig.set(DeploymentOptions.TARGET, YarnDeploymentTarget.APPLICATION.getName)
       context.setDeploymentTarget(YarnDeploymentTarget.APPLICATION)
       addApplicationLabels(engineCreationContext)
@@ -172,8 +182,27 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
         error(s"Not supported YarnDeploymentTarget ${t.getName}.")
         throw new FlinkInitFailedException(s"Not supported YarnDeploymentTarget ${t.getName}.")
     }
-    ExecutionContext.builder(environmentContext.getDefaultEnv, environment, environmentContext.getDependencies,
+    val executionContext = ExecutionContext.builder(environmentContext.getDefaultEnv, environment, environmentContext.getDependencies,
       environmentContext.getFlinkConfig).build()
+    if(FLINK_CHECK_POINT_ENABLE.getValue(options)) {
+      val checkpointInterval = FLINK_CHECK_POINT_INTERVAL.getValue(options)
+      val checkpointMode = FLINK_CHECK_POINT_MODE.getValue(options)
+      val checkpointTimeout = FLINK_CHECK_POINT_TIMEOUT.getValue(options)
+      val checkpointMinPause = FLINK_CHECK_POINT_MIN_PAUSE.getValue(options)
+      info(s"checkpoint is enabled, checkpointInterval is $checkpointInterval, checkpointMode is $checkpointMode, checkpointTimeout is $checkpointTimeout.")
+      executionContext.getStreamExecutionEnvironment.enableCheckpointing(checkpointInterval)
+      val checkpointConfig = executionContext.getStreamExecutionEnvironment.getCheckpointConfig
+      checkpointMode match {
+        case "EXACTLY_ONCE" =>
+          checkpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE)
+        case "AT_LEAST_ONCE" =>
+          checkpointConfig.setCheckpointingMode(CheckpointingMode.AT_LEAST_ONCE)
+        case _ => throw new FlinkInitFailedException(s"Unknown checkpoint mode $checkpointMode.")
+      }
+      checkpointConfig.setCheckpointTimeout(checkpointTimeout)
+      checkpointConfig.setMinPauseBetweenCheckpoints(checkpointMinPause)
+    }
+    executionContext
   }
 
   protected def createFlinkEngineConnContext(environmentContext: EnvironmentContext): FlinkEngineConnContext =

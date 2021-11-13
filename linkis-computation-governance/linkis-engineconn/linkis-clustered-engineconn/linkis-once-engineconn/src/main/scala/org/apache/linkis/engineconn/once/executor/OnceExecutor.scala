@@ -1,19 +1,20 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.engineconn.once.executor
 import java.util
 
@@ -33,6 +34,7 @@ import org.apache.linkis.manager.label.entity.{JobLabel, Label}
 import org.apache.linkis.scheduler.executer.{AsynReturnExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.engineconn.core.hook.ShutdownHook
 
 import scala.collection.convert.wrapAsScala._
 import scala.collection.mutable.ArrayBuffer
@@ -137,19 +139,22 @@ trait ManageableOnceExecutor extends AccessibleExecutor with OnceExecutor with R
     super.onStatusChanged(fromStatus, toStatus)
   }
 
-  override def tryShutdown(): Boolean = {
-    this.ensureAvailable(transition(NodeStatus.ShuttingDown))
-    close()
-    true
-  }
+  override def tryShutdown(): Boolean = tryFailed()
 
   def tryFailed(): Boolean = {
-    this.whenStatus(NodeStatus.ShuttingDown, transition(NodeStatus.Failed))
+    if(response != null) return true
+    error(s"$getId has failed with old status $getStatus, now stop it.")
+    if(!isClosed) close()
+    this.ensureAvailable(transition(NodeStatus.Failed))
+    ShutdownHook.getShutdownHook.notifyStop()
     true
   }
 
   def trySucceed(): Boolean = {
+    if(response != null) return true
+    warn(s"$getId has succeed with old status $getStatus, now stop it.")
     this.ensureAvailable(transition(NodeStatus.Success))
+    ShutdownHook.getShutdownHook.notifyStop()
     true
   }
 

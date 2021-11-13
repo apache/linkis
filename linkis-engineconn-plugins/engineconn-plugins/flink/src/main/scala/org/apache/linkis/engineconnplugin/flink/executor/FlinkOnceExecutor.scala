@@ -1,20 +1,20 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 
 package org.apache.linkis.engineconnplugin.flink.executor
 
 import java.util.concurrent.{Future, TimeUnit}
@@ -50,11 +50,10 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter] extends ManageableOnceExe
     if(isCompleted) return
     if (null == clusterDescriptor.getClusterID)
       throw new ExecutorInitException("The application start failed, since yarn applicationId is null.")
-    if(clusterDescriptor.getJobId != null) setJobID(clusterDescriptor.getJobId.toHexString)
     setApplicationId(clusterDescriptor.getClusterID.toString)
     setApplicationURL(clusterDescriptor.getWebInterfaceUrl)
     info(s"Application is started, applicationId: $getApplicationId, applicationURL: $getApplicationURL.")
-    info(s"Application is started, applicationId: ${clusterDescriptor.getClusterID}, webUrl: ${clusterDescriptor.getWebInterfaceUrl}.")
+    if(clusterDescriptor.getJobId != null) setJobID(clusterDescriptor.getJobId.toHexString)
   }
 
   protected def isCompleted: Boolean = isClosed || NodeStatus.isCompleted(getStatus)
@@ -66,12 +65,12 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter] extends ManageableOnceExe
   override def getId: String = "FlinkOnceApp_"+ id
 
   protected def closeDaemon(): Unit = {
-    if(daemonThread != null) daemonThread.cancel(true)
+    if (daemonThread != null) daemonThread.cancel(true)
   }
 
   override def close(): Unit = {
     closeDaemon()
-    if(clusterDescriptor != null) {
+    if (clusterDescriptor != null) {
       clusterDescriptor.cancelJob()
       clusterDescriptor.close()
     }
@@ -81,9 +80,16 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter] extends ManageableOnceExe
 
   override protected def waitToRunning(): Unit = {
     if(!isCompleted) daemonThread = Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
+      private var lastStatus: JobStatus = JobStatus.INITIALIZING
+      private var lastPrintTime = 0l
+      private val printInterval = math.max(FLINK_ONCE_APP_STATUS_FETCH_INTERVAL.getValue.toLong, 5 * 60 * 1000)
       override def run(): Unit = {
         val jobStatus = clusterDescriptor.getJobStatus
-        info(s"The jobStatus of $getJobID is $jobStatus.")
+        if (jobStatus != lastStatus || System.currentTimeMillis -lastPrintTime >= printInterval) {
+          info(s"The jobStatus of $getJobID is $jobStatus.")
+          lastPrintTime = System.currentTimeMillis
+        }
+        lastStatus = jobStatus
         jobStatus match {
           case JobStatus.FAILED | JobStatus.CANCELED =>
             tryFailed()
@@ -93,21 +99,6 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter] extends ManageableOnceExe
         }
       }
     }, FLINK_ONCE_APP_STATUS_FETCH_INTERVAL.getValue.toLong, FLINK_ONCE_APP_STATUS_FETCH_INTERVAL.getValue.toLong, TimeUnit.MILLISECONDS)
-  }
-
-
-  override def trySucceed(): Boolean = {
-    super.trySucceed()
-    warn(s"$getId has finished with status $getStatus, now stop it.")
-    ShutdownHook.getShutdownHook.notifyStop()
-    true
-  }
-
-  override def tryFailed(): Boolean = {
-    super.tryFailed()
-    error(s"$getId has failed with status $getStatus, now stop it.")
-    ShutdownHook.getShutdownHook.notifyStop()
-    true
   }
 
   override def supportCallBackLogs(): Boolean = true

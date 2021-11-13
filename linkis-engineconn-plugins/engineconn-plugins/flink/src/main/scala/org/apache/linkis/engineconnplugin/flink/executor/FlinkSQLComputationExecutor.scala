@@ -1,32 +1,37 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 
 package org.apache.linkis.engineconnplugin.flink.executor
 
 import java.io.Closeable
 import java.util
 import java.util.concurrent.TimeUnit
 
+import org.apache.calcite.rel.metadata.{JaninoRelMetadataProvider, RelMetadataQueryBase}
+import org.apache.flink.api.common.JobStatus._
+import org.apache.flink.table.planner.plan.metadata.FlinkDefaultRelMetadataProvider
+import org.apache.flink.yarn.configuration.YarnConfigOptions
+import org.apache.hadoop.yarn.util.ConverterUtils
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconnplugin.flink.client.deployment.{ClusterDescriptorAdapterFactory, YarnSessionClusterDescriptorAdapter}
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultKind
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.{AbstractJobOperation, JobOperation, OperationFactory}
-import org.apache.linkis.engineconnplugin.flink.client.sql.parser.{SqlCommand, SqlCommandParser}
+import org.apache.linkis.engineconnplugin.flink.client.sql.parser.SqlCommandParser
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
 import org.apache.linkis.engineconnplugin.flink.exception.{ExecutorInitException, SqlParseException}
@@ -35,11 +40,6 @@ import org.apache.linkis.engineconnplugin.flink.listener.{FlinkStreamingResultSe
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.linkis.storage.resultset.ResultSetFactory
-import org.apache.calcite.rel.metadata.{JaninoRelMetadataProvider, RelMetadataQueryBase}
-import org.apache.flink.api.common.JobStatus._
-import org.apache.flink.table.planner.plan.metadata.FlinkDefaultRelMetadataProvider
-import org.apache.flink.yarn.configuration.YarnConfigOptions
-import org.apache.hadoop.yarn.util.ConverterUtils
 
 import scala.collection.JavaConversions._
 
@@ -77,15 +77,13 @@ class FlinkSQLComputationExecutor(id: Long,
         jobOperation.setClusterDescriptorAdapter(clusterDescriptor)
         this.operation = jobOperation
         jobOperation.addFlinkListener(new FlinkSQLStatusListener(jobOperation, engineExecutionContext))
-        if(callSQL.command == SqlCommand.SELECT) {
-          jobOperation.addFlinkListener(new FlinkSQLStreamingResultSetListener(jobOperation, engineExecutionContext))
-          val properties: util.Map[String, String] = engineExecutionContext.getProperties.map {
-            case (k, v: String) => (k, v)
-            case (k, v) if v != null => (k, v.toString)
-            case (k, _) => (k, null)
-          }
-          jobOperation.addFlinkListener(new DevFlinkSQLStreamingListener(jobOperation, properties))
+        jobOperation.addFlinkListener(new FlinkSQLStreamingResultSetListener(jobOperation, engineExecutionContext))
+        val properties: util.Map[String, String] = engineExecutionContext.getProperties.map {
+          case (k, v: String) => (k, v)
+          case (k, v) if v != null => (k, v.toString)
+          case (k, _) => (k, null)
         }
+        jobOperation.addFlinkListener(new DevFlinkSQLStreamingListener(jobOperation, properties))
       case _ =>
     }
     val resultSet = operation.execute
@@ -130,6 +128,12 @@ class FlinkSQLComputationExecutor(id: Long,
   }
 
   override def getProgressInfo: Array[JobProgressInfo] = Array.empty
+
+  override def killTask(taskId: String): Unit = {
+    info(s"Start to kill task $taskId, the flink jobId is ${clusterDescriptor.getJobId}.")
+    if(operation != null) operation.cancelJob()
+    super.killTask(taskId)
+  }
 
   override def getId: String = "FlinkComputationSQL_"+ id
 

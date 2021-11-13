@@ -1,18 +1,20 @@
 /*
- * Copyright 2019 WeBank
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 
 package org.apache.linkis.bml.restful;
 
 import org.apache.linkis.bml.Entity.DownloadModel;
@@ -412,13 +414,13 @@ public class BmlRestfulApi {
 
     @RequestMapping(path = "upload",method = RequestMethod.POST)
     public Message uploadResource(HttpServletRequest req,
-                                   @RequestParam("system") String system,
-                                   @RequestParam("resourceHeader") String resourceHeader,
-                                   @RequestParam("isExpire") String isExpire,
-                                   @RequestParam("expireType") String expireType,
-                                   @RequestParam("expireTime") String expireTime,
-                                   @RequestParam("maxVersion") int maxVersion,
-                                   @RequestParam("file") List<MultipartFile> files) throws ErrorException {
+                                   @RequestParam(name = "system", required = false) String system,
+                                   @RequestParam(name = "resourceHeader", required = false) String resourceHeader,
+                                   @RequestParam(name = "isExpire", required = false) String isExpire,
+                                   @RequestParam(name = "expireType", required = false) String expireType,
+                                   @RequestParam(name = "expireTime", required = false) String expireTime,
+                                   @RequestParam(name = "maxVersion", required = false) Integer maxVersion,
+                                   @RequestParam(name = "file") List<MultipartFile> files) throws ErrorException {
         String user = RestfulUtils.getUserName(req);
         Message message;
         try{

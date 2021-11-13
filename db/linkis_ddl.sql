@@ -113,18 +113,6 @@ CREATE TABLE `linkis_ps_udf_manager` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 
--- ----------------------------
--- Table structure for linkis_ps_udf_shared_group
--- An entry would be added when a user share a function to other user group
--- ----------------------------
-DROP TABLE IF EXISTS `linkis_ps_udf_shared_group`;
-CREATE TABLE `linkis_ps_udf_shared_group` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `udf_id` bigint(20) NOT NULL,
-  `shared_group` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `linkis_ps_udf_shared_user`;
 CREATE TABLE `linkis_ps_udf_shared_user`
 (

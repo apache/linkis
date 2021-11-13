@@ -134,13 +134,13 @@ public class RequestKerberosUrlUtils {
                         httpResponse = spnegoHttpClient.execute(request);
                         return httpResponse;
                     } catch (IOException ioe) {
-                        ioe.printStackTrace();
+                        logger.error("request yarn url:{} failed",url,ioe);
                     }
                     return httpResponse;
                 }
             });
         } catch (Exception le) {
-            le.printStackTrace();
+            logger.error("Krb5Login login failed",le);
         }
         return null;
     }

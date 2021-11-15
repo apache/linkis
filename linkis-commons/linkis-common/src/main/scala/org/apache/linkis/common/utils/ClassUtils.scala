@@ -23,9 +23,7 @@ import org.apache.linkis.common.conf.Configuration
 import org.reflections.Reflections
 
 object ClassUtils {
-
-  lazy val reflections = new Reflections(Configuration.REFLECT_SCAN_PACKAGE.getValue, this.getClass.getClassLoader)
-
+  lazy val reflections = new Reflections(Configuration.REFLECT_SCAN_PACKAGE, this.getClass.getClassLoader)
   def jarOfClass(cls: Class[_]): Option[String] = {
     val uri = cls.getResource("/" + cls.getName.replace('.', '/') + ".class")
     if (uri != null) {

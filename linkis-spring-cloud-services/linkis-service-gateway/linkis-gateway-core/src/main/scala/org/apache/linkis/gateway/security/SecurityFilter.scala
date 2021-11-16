@@ -85,7 +85,7 @@ object SecurityFilter extends Logging {
           return false
       }
     }
-    val isPassAuthRequest = GatewayConfiguration.PASS_AUTH_REQUEST_URI.exists(gatewayContext.getRequest.getRequestURI.startsWith)
+    val isPassAuthRequest = GatewayConfiguration.PASS_AUTH_REQUEST_URI.exists(r => !r.equals("") && gatewayContext.getRequest.getRequestURI.startsWith(r))
     if(gatewayContext.getRequest.getRequestURI.startsWith(ServerConfiguration.BDP_SERVER_USER_URI.getValue)) {
       Utils.tryCatch(userRestful.doUserRequest(gatewayContext)){ t =>
         val message = t match {

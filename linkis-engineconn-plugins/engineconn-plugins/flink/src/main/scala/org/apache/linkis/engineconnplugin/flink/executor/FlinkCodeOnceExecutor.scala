@@ -66,12 +66,12 @@ class FlinkCodeOnceExecutor(override val id: Long,
           error("Run code failed!", t)
           setResponse(ErrorExecuteResponse("Run code failed!", t))
           tryFailed()
+          close()
+          return
         }
         info("All codes completed, now stop FlinkEngineConn.")
-        closeDaemon()
         trySucceed()
-        this synchronized notify()
-        clusterDescriptor.close()
+        close()
       }
     })
     this synchronized wait()
@@ -107,7 +107,8 @@ class FlinkCodeOnceExecutor(override val id: Long,
   }
 
   override def close(): Unit = {
-    future.cancel(true)
+    this synchronized notify()
+    if(!future.isDone) future.cancel(true)
     super.close()
   }
 }

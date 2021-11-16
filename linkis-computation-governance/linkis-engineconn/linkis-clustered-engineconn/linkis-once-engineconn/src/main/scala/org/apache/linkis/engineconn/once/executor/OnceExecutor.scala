@@ -142,19 +142,16 @@ trait ManageableOnceExecutor extends AccessibleExecutor with OnceExecutor with R
   override def tryShutdown(): Boolean = tryFailed()
 
   def tryFailed(): Boolean = {
-    if(response != null) return true
-    error(s"$getId has failed with old status $getStatus, now stop it.")
     if(!isClosed) close()
-    this.ensureAvailable(transition(NodeStatus.Failed))
-    ShutdownHook.getShutdownHook.notifyStop()
+    error(s"$getId has failed with old status $getStatus, now stop it.")
+    Utils.tryFinally(this.ensureAvailable(transition(NodeStatus.Failed)))(ShutdownHook.getShutdownHook.notifyStop())
     true
   }
 
   def trySucceed(): Boolean = {
-    if(response != null) return true
+    if(!isClosed) close()
     warn(s"$getId has succeed with old status $getStatus, now stop it.")
-    this.ensureAvailable(transition(NodeStatus.Success))
-    ShutdownHook.getShutdownHook.notifyStop()
+    Utils.tryFinally(this.ensureAvailable(transition(NodeStatus.Success)))(ShutdownHook.getShutdownHook.notifyStop())
     true
   }
 

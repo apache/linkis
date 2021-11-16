@@ -196,7 +196,20 @@ public class LocalFileSystem extends FileSystem {
 
     @Override
     public boolean setPermission(FsPath dest, String permission) throws IOException {
+        if (!StorageUtils.isIOProxy()){
+            LOG.info("io not proxy, setPermission as parent.");
+            try {
+                PosixFileAttributes attr  = Files.readAttributes(Paths.get(dest.getParent().getPath()), PosixFileAttributes.class);
+                LOG.debug("parent permissions: attr: " + attr);
+                Files.setPosixFilePermissions(Paths.get(dest.getPath()), attr.permissions());
 
+            }catch (NoSuchFileException e){
+                LOG.error("File or folder does not exist or file name is garbled(文件或者文件夹不存在或者文件名乱码)",e);
+                throw new StorageWarnException(51001,e.getMessage());
+            }
+            return true;
+
+        }
         String path = dest.getPath();
         if(StringUtils.isNumeric(permission)) {
             permission = FsPath.permissionFormatted(permission);

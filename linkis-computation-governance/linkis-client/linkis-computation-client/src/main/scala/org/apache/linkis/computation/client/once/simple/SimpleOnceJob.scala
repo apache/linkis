@@ -77,6 +77,12 @@ trait SimpleOnceJob extends OnceJob {
       serviceInstance = ServiceInstance(serviceInstanceStr.substring(0, length), serviceInstanceStr.substring(length))
   }
 
+  protected def initOnceOperatorActions(): Unit = addOperatorAction {
+    case onceJobOperator: OnceJobOperator[_] =>
+      onceJobOperator.setUser(user).setServiceInstance(serviceInstance).setLinkisManagerClient(linkisManagerClient)
+    case operator => operator
+  }
+
 }
 
 class SubmittableSimpleOnceJob(protected override val linkisManagerClient: LinkisManagerClient,
@@ -89,11 +95,7 @@ class SubmittableSimpleOnceJob(protected override val linkisManagerClient: Linki
     serviceInstance = getServiceInstance(lastNodeInfo)
     lastEngineConnState = getStatus(lastNodeInfo)
     info(s"EngineConn created with status $lastEngineConnState, the nodeInfo is $lastNodeInfo.")
-    addOperatorAction {
-      case onceJobOperator: OnceJobOperator[_] =>
-        onceJobOperator.setUser(user).setServiceInstance(serviceInstance).setLinkisManagerClient(linkisManagerClient)
-      case operator => operator
-    }
+    initOnceOperatorActions()
     if(!isCompleted(lastEngineConnState) && !isRunning) {
       info(s"Wait for EngineConn $serviceInstance to be running or completed.")
       Utils.waitUntil(() => isCompleted || isRunning, Duration.Inf)
@@ -112,6 +114,7 @@ class ExistingSimpleOnceJob(protected override val linkisManagerClient: LinkisMa
                             id: String, override protected val user: String) extends SimpleOnceJob {
   engineConnId = id
   transformToServiceInstance()
+  initOnceOperatorActions()
   private val jobMetrics: LinkisJobMetrics = new LinkisJobMetrics(id)
 
   override def getJobMetrics: LinkisJobMetrics = jobMetrics

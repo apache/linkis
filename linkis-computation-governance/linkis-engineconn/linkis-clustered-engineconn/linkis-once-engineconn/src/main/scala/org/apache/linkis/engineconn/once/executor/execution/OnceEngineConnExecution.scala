@@ -117,7 +117,7 @@ class OnceExecutorManagerEngineConnExecution extends EngineConnExecution {
       case _ =>
     }
     if(shouldSet) DataWorkCloudApplication.setProperty(EngineConnExecutorConfiguration.EXECUTOR_MANAGER_CLASS.key,
-      "com.webank.wedatasphere.linkis.engineconn.once.executor.creation.OnceExecutorManagerImpl")
+      "org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManagerImpl")
   }
 
   /**

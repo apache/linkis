@@ -201,18 +201,12 @@ public class BmlRestfulApi {
 
 
     @RequestMapping(path = "deleteVersion",method = RequestMethod.POST)
-    public Message deleteVersion(JsonNode jsonNode,
-                                  HttpServletRequest request) throws IOException, ErrorException{
-
-
+    public Message deleteVersion(HttpServletRequest request,@RequestBody JsonNode jsonNode) throws IOException, ErrorException{
         String user = RestfulUtils.getUserName(request);
-
         if (null == jsonNode.get("resourceId") || null == jsonNode.get("version") ||
                 StringUtils.isEmpty(jsonNode.get("resourceId").textValue()) || StringUtils.isEmpty(jsonNode.get("version").textValue())) {
             throw new BmlServerParaErrorException("ResourceID and version are required to delete the specified version(删除指定版本，需要指定resourceId 和 version)");
         }
-
-
 
         String resourceId = jsonNode.get("resourceId").textValue();
         String version = jsonNode.get("version").textValue();

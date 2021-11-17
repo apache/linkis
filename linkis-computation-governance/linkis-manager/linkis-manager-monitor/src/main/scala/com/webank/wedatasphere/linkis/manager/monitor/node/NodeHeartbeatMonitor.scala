@@ -2,7 +2,6 @@ package com.webank.wedatasphere.linkis.manager.monitor.node
 
 import java.util
 import java.util.concurrent.{ExecutorService, TimeUnit, TimeoutException}
-
 import com.webank.wedatasphere.linkis.common.ServiceInstance
 import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
 import com.webank.wedatasphere.linkis.governance.common.conf.GovernanceCommonConf
@@ -24,6 +23,7 @@ import com.webank.wedatasphere.linkis.rpc.exception.NoInstanceExistsException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import java.lang.reflect.UndeclaredThrowableException
 import scala.collection.JavaConversions._
 
 @Component
@@ -137,13 +137,12 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
           case _ =>
             updateMetricHealthy(nodeMetric, NodeHealthy.UnHealthy, "找不到对应的服务，获取的sender为空")
         }){
-          case e: TimeoutException => {
-            warn(s"引擎发送RPC请求失败，找不到引擎实例：${nodeMetric.getServiceInstance}，开始发送请求停止该引擎!")
-            clearEngineNode(nodeMetric.getServiceInstance)
-          }
-          case exception: Exception => {
+          case e: UndeclaredThrowableException =>
+            dealMetricUpdateTimeOut(nodeMetric, e)
+
+          case exception: Exception =>
             warn(s"发送引擎心跳RPC请求失败,但不是由于超时引起的，不会强制停止该引擎，引擎实例：${nodeMetric.getServiceInstance}", exception)
-          }
+          
         }
       }
     }
@@ -326,6 +325,23 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
     nodeMetrics.setHealthy(metricsConverter.convertHealthyInfo(nodeHealthyInfo))
     nodeMetricManagerPersistence.addOrupdateNodeMetrics(nodeMetrics)
   }
+
+  /**
+   * 当找不到引擎的时候,发送消息会抛出 UndeclaredThrowableException 异常
+   * 这个时候需要强行删除
+   *
+   * @param nodeMetric
+   * @param e
+   */
+  private def dealMetricUpdateTimeOut(nodeMetric: NodeMetrics, e: UndeclaredThrowableException) = {
+    val maxInterval = ManagerMonitorConf.NODE_HEARTBEAT_MAX_UPDATE_TIME.getValue.toLong
+    val timeout = System.currentTimeMillis() - nodeMetric.getUpdateTime.getTime > maxInterval
+    if (timeout) {
+      warn(s"引擎发送RPC请求失败，找不到引擎实例：${nodeMetric.getServiceInstance}，开始发送请求停止该引擎!", e)
+      triggerEMToStopEngine(nodeMetric.getServiceInstance)
+    }
+  }
+
 
 }
 

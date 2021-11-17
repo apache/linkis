@@ -19,14 +19,13 @@ package org.apache.linkis.engineconnplugin.flink.executor
 
 import java.util.concurrent.{Future, TimeUnit}
 
+import org.apache.flink.api.common.JobStatus
 import org.apache.linkis.common.utils.Utils
-import org.apache.linkis.engineconn.core.hook.ShutdownHook
 import org.apache.linkis.engineconn.once.executor.{ManageableOnceExecutor, OnceExecutorExecutionContext}
 import org.apache.linkis.engineconnplugin.flink.client.deployment.{ClusterDescriptorAdapter, ClusterDescriptorAdapterFactory}
-import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration.FLINK_ONCE_APP_STATUS_FETCH_INTERVAL
+import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration.{FLINK_ONCE_APP_STATUS_FETCH_FAILED_MAX, FLINK_ONCE_APP_STATUS_FETCH_INTERVAL}
 import org.apache.linkis.engineconnplugin.flink.exception.ExecutorInitException
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.flink.api.common.JobStatus
 
 import scala.collection.convert.WrapAsScala._
 
@@ -69,13 +68,13 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter] extends ManageableOnceExe
   }
 
   override def close(): Unit = {
+    super.close()
     closeDaemon()
     if (clusterDescriptor != null) {
       clusterDescriptor.cancelJob()
       clusterDescriptor.close()
     }
     flinkEngineConnContext.getExecutionContext.getClusterClientFactory.close()
-    super.close()
   }
 
   override protected def waitToRunning(): Unit = {
@@ -83,8 +82,20 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter] extends ManageableOnceExe
       private var lastStatus: JobStatus = JobStatus.INITIALIZING
       private var lastPrintTime = 0l
       private val printInterval = math.max(FLINK_ONCE_APP_STATUS_FETCH_INTERVAL.getValue.toLong, 5 * 60 * 1000)
-      override def run(): Unit = {
-        val jobStatus = clusterDescriptor.getJobStatus
+      private var fetchJobStatusFailedNum = 0
+      override def run(): Unit = if(!isCompleted) {
+        val jobStatus = Utils.tryCatch(clusterDescriptor.getJobStatus){t =>
+          if(fetchJobStatusFailedNum >= FLINK_ONCE_APP_STATUS_FETCH_FAILED_MAX.getValue) {
+            error(s"Fetch job status has failed max ${FLINK_ONCE_APP_STATUS_FETCH_FAILED_MAX.getValue} times, now stop this FlinkEngineConn.", t)
+            tryFailed()
+            close()
+          } else {
+            fetchJobStatusFailedNum += 1
+            error(s"Fetch job status failed! retried ++$fetchJobStatusFailedNum...", t)
+          }
+          return
+        }
+        fetchJobStatusFailedNum = 0
         if (jobStatus != lastStatus || System.currentTimeMillis -lastPrintTime >= printInterval) {
           info(s"The jobStatus of $getJobID is $jobStatus.")
           lastPrintTime = System.currentTimeMillis

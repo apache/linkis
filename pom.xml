@@ -461,8 +461,6 @@
                             <exclude>**/*.eslintignore</exclude>
                             <exclude>**/*.jshintrc</exclude>
                             <exclude>**/*.patch</exclude>
-<!--                            <exclude>**/*.properties</exclude>-->
-<!--                            <exclude>**/*.sh</exclude>-->
                             <exclude>**/*.md</exclude>
                             <exclude>.git/</exclude>
                             <exclude>.gitignore</exclude>
@@ -470,15 +468,20 @@
                             <exclude>**/.classpath</exclude>
                             <exclude>**/.project</exclude>
                             <exclude>**/target/**</exclude>
+                            <exclude>**/out/**</exclude>
                             <exclude>**/*.log</exclude>
                             <exclude>CONTRIBUTING.md</exclude>
                             <exclude>CONTRIBUTING_CN.md</exclude>
                             <exclude>DISCLAIMER-WIP</exclude>
                             <exclude>README.md</exclude>
-                            <exclude>**/web/META-INF/**</exclude>
+                            <exclude>**/META-INF/**</exclude>
                             <exclude>.github/**</exclude>
                             <exclude>compiler/**</exclude>
                             <exclude>**/generated/**</exclude>
+                            <exclude>**/spring.factories</exclude>
+                            <exclude>**/*.tdr</exclude>
+                            <exclude>**/*.tcd</exclude>
+                            <exclude>**/*.tdd</exclude>
                         </excludes>
                     </configuration>
                 </plugin>

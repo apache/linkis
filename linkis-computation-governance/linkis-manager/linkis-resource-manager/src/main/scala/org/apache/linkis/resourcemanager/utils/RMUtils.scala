@@ -30,7 +30,7 @@ object RMUtils extends Logging {
 
   val MANAGER_KILL_ENGINE_EAIT = CommonVars("wds.linkis.manager.rm.kill.engine.wait", new TimeType("30s"))
 
-  val RM_REQUEST_ENABLE = CommonVars("wds.linkis.manager.rm.request.enable", true)
+  val RM_REQUEST_ENABLE = CommonVars("wds.linkis.manager.rm.request.enable", false)
 
   def deserializeResource(plainResource: String): Resource = {
     read[Resource](plainResource)

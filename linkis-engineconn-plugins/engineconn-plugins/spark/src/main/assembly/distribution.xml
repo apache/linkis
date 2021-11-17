@@ -49,6 +49,9 @@
             <includes>
                 <include>*</include>
             </includes>
+            <excludes>
+                <exclude>python</exclude>
+            </excludes>
             <fileMode>0777</fileMode>
             <directoryMode>0755</directoryMode>
             <outputDirectory>/dist/v${spark.version}/conf</outputDirectory>

@@ -341,6 +341,13 @@ then
   ENGINECONN_ROOT_PATH=$LINKIS_HOME/engineroot
 fi
 sed -i ${txt}  "s#wds.linkis.engineconn.root.dir.*#wds.linkis.engineconn.root.dir=$ENGINECONN_ROOT_PATH#g" $ecm_conf
+
+if [ ! -d $ENGINECONN_ROOT_PATH ] ;then
+    echo "create dir ENGINECONN_ROOT_PATH: $ENGINECONN_ROOT_PATH"
+    mkdir -p $ENGINECONN_ROOT_PATH
+fi
+sudo chmod -R 771 $ENGINECONN_ROOT_PATH
+
 if [ "$ENGINECONNMANAGER_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$ENGINECONNMANAGER_PORT#g" $ecm_conf

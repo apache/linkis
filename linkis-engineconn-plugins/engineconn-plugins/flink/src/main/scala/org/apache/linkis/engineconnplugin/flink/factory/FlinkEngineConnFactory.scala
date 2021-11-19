@@ -190,6 +190,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       val checkpointTimeout = FLINK_CHECK_POINT_TIMEOUT.getValue(options)
       val checkpointMinPause = FLINK_CHECK_POINT_MIN_PAUSE.getValue(options)
       info(s"checkpoint is enabled, checkpointInterval is $checkpointInterval, checkpointMode is $checkpointMode, checkpointTimeout is $checkpointTimeout.")
+      executionContext.getTableEnvironment  // This line is need to initialize the StreamExecutionEnvironment.
       executionContext.getStreamExecutionEnvironment.enableCheckpointing(checkpointInterval)
       val checkpointConfig = executionContext.getStreamExecutionEnvironment.getCheckpointConfig
       checkpointMode match {

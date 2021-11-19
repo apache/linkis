@@ -18,6 +18,7 @@
 package org.apache.linkis.computation.client.operator
 
 import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.computation.client.once.LinkisManagerClient
 import org.apache.linkis.computation.client.once.action.EngineConnOperateAction
@@ -57,14 +58,23 @@ trait OnceJobOperator[T] extends Operator[T] with Logging {
       .setInstance(serviceInstance.getInstance)
     addParameters(builder)
     val engineConnOperateAction = builder.build()
-    info(s"$getUser try to ask EngineConn($serviceInstance) to execute $getName operation, parameters is ${engineConnOperateAction.getRequestPayload}.")
+    if(OnceJobOperator.ONCE_JOB_OPERATOR_LOG_ENABLE.getValue)
+      info(s"$getUser try to ask EngineConn($serviceInstance) to execute $getName operation, parameters is ${engineConnOperateAction.getRequestPayload}.")
     val result = linkisManagerClient.executeEngineConnOperation(engineConnOperateAction)
-    info(s"$getUser asked EngineConn($serviceInstance) to execute $getName operation, results is ${result.getResult}.")
+    val resultStr = String.valueOf(result.getResult)
+    if(OnceJobOperator.ONCE_JOB_OPERATOR_LOG_ENABLE.getValue)
+      info(s"$getUser asked EngineConn($serviceInstance) to execute $getName operation, results is ${if(resultStr.length <= 250) resultStr else resultStr.substring(0, 250) + "..."} .")
     resultToObject(result)
   }
 
   protected def addParameters(builder: EngineConnOperateAction.Builder): Unit = {}
 
   protected def resultToObject(result: EngineConnOperateResult): T
+
+}
+
+object OnceJobOperator {
+
+  val ONCE_JOB_OPERATOR_LOG_ENABLE = CommonVars("linkis.client.operator.once.log.enable", true)
 
 }

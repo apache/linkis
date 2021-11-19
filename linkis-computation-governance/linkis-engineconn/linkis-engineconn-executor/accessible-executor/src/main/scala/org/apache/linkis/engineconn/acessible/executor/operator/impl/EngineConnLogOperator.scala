@@ -47,9 +47,9 @@ class EngineConnLogOperator extends Operator with Logging {
     val pageSize = getAs("pageSize", 100)
     val fromLine = getAs("fromLine", 1)
     val ignoreKeywords = getAs("ignoreKeywords", "")
-    val ignoreKeywordList = if(StringUtils.isNotEmpty(ignoreKeywords)) ignoreKeywords.split(",") else Array.empty
+    val ignoreKeywordList = if(StringUtils.isNotEmpty(ignoreKeywords)) ignoreKeywords.split(",") else Array.empty[String]
     val onlyKeywords = getAs("onlyKeywords", "")
-    val onlyKeywordList = if(StringUtils.isNotEmpty(onlyKeywords)) onlyKeywords.split(",") else Array.empty
+    val onlyKeywordList = if(StringUtils.isNotEmpty(onlyKeywords)) onlyKeywords.split(",") else Array.empty[String]
     val reader = new RandomAccessFile(logPath, "r")
     val logs = new util.ArrayList[String](pageSize)
     var readLine, skippedLine = 0

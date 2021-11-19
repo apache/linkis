@@ -66,12 +66,10 @@ class FlinkCodeOnceExecutor(override val id: Long,
           error("Run code failed!", t)
           setResponse(ErrorExecuteResponse("Run code failed!", t))
           tryFailed()
-          close()
           return
         }
         info("All codes completed, now stop FlinkEngineConn.")
         trySucceed()
-        close()
       }
     })
     this synchronized wait()

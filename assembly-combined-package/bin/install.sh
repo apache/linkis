@@ -318,10 +318,12 @@ sed -i ${txt}  "s#wds.linkis.filesystem.hdfs.root.path.*#wds.linkis.filesystem.h
 ##gateway
 gateway_conf=$LINKIS_HOME/conf/linkis-mg-gateway.properties
 echo "update conf $gateway_conf"
+defaultPwd=`date +%s%N | md5sum |cut -c 1-9`
 sed -i ${txt}  "s#wds.linkis.ldap.proxy.url.*#wds.linkis.ldap.proxy.url=$LDAP_URL#g" $gateway_conf
 sed -i ${txt}  "s#wds.linkis.ldap.proxy.baseDN.*#wds.linkis.ldap.proxy.baseDN=$LDAP_BASEDN#g" $gateway_conf
 sed -i ${txt}  "s#wds.linkis.ldap.proxy.userNameFormat.*#wds.linkis.ldap.proxy.userNameFormat=$LDAP_USER_NAME_FORMAT#g" $gateway_conf
 sed -i ${txt}  "s#wds.linkis.admin.user.*#wds.linkis.admin.user=$deployUser#g" $gateway_conf
+sed -i ${txt}  "s#\#wds.linkis.admin.password.*#wds.linkis.admin.password=$defaultPwd#g" $gateway_conf
 if [ "$GATEWAY_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$GATEWAY_PORT#g" $gateway_conf
@@ -400,3 +402,4 @@ fi
 
 
 echo "Congratulations! You have installed Linkis $LINKIS_VERSION successfully, please use sbin/linkis-start-all.sh to start it!"
+echo "Your default account password is$deployUser/$defaultPwd"

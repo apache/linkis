@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.manager.dao.NodeMetricManagerMapper">
+
+    <!-- 增 -->
+<!--    <sql id="addNodeMetrics">-->
+<!--        `service_instance_id`,`status`,`overload`,`heartbeat_msg`,`healthy`,`serviceInstance`,`update_time`,`create_time`-->
+<!--    </sql>-->
+
+<!--    <insert id="addNodeMetrics" useGeneratedKeys="true" keyProperty="id"-->
+<!--            parameterType="org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetrics">-->
+<!--        INSERT INTO  linkis_cg_manager_service_instance_metrics(<include refid="addNodeMetrics"/>)-->
+<!--        VALUES (#{serviceInstanceId},#{status},#{overload},#{heartBeatMsg},#{healthy},#{serviceInstance},#{updateTime},#{createTime})-->
+<!--    </insert>-->
+
+    <!-- 删除 -->
+<!--    <delete id="deleteNodeMetrics">-->
+<!--        DELETE FROM  linkis_cg_manager_service_instance_metrics where service_instance_id = #{serviceInstanceId}-->
+<!--    </delete>-->
+
+
+    <!-- 获取 -->
+<!--    <resultMap id="PersistenceNodeMetrics"-->
+<!--               type="org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetrics">-->
+<!--        <id column="service_instance_id" property="serviceInstanceId"/>-->
+<!--        <id column="status" property="status"/>-->
+<!--        <id column="overLoad" property="overLoad"/>-->
+<!--        <id column="heartbeat_msg" property="heartBeatMsg"/>-->
+<!--        <id column="healthy" property="healthy"/>-->
+<!--        <id column="serviceInstance" property="serviceInstance"/>-->
+<!--        <id column="update_time" property="updateTime"/>-->
+<!--        <id column="create_time" property="createTime"/>-->
+
+<!--    </resultMap>-->
+
+<!--    <select id="getNodeMetrics" resultMap="PersistenceNodeMetrics">-->
+<!--        SELECT * FROM  linkis_cg_manager_service_instance_metrics where service_instance_id = #{serviceInstanceId}-->
+<!--    </select>-->
+
+
+    <!-- 更新 -->
+<!--    <update id="updateNodeMetrics"-->
+<!--            parameterType="org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetrics">-->
+<!--        UPDATE  linkis_cg_manager_service_instance_metrics-->
+<!--        <trim prefix="set" suffixOverrides=",">-->
+<!--            <if test="service_instance_id != null">`service_instance_id` = #{serviceInstanceId},</if>-->
+<!--            <if test="status != null">`name` = #{status},</if>-->
+<!--            <if test="overload != null">`overload` = #{overLoad},</if>-->
+<!--            <if test="heartbeat_msg != null">`heartbeat_msg` = #{heartBeatMsg},</if>-->
+<!--            <if test="healthy != null">`healthy` = #{healthy},</if>-->
+<!--            <if test="serviceInstance != null">`healthy` = #{serviceInstance},</if>-->
+<!--            <if test="update_time != null">`update_time` = #{updateTime},</if>-->
+<!--            <if test="create_time != null">`create_time` = #{createTime},</if>-->
+<!--        </trim>-->
+<!--        WHERE service_instance_id = #{serviceInstanceId}-->
+<!--    </update>-->
+
+</mapper>

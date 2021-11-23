@@ -1,13 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 #
-# Copyright 2019 WeBank
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
 # http://www.apache.org/licenses/LICENSE-2.0
-#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -212,7 +211,7 @@ echo "create dir LINKIS_HOME: $LINKIS_HOME"
 sudo mkdir -p $LINKIS_HOME;sudo chown -R $deployUser:$deployUser $LINKIS_HOME
 isSuccess "Create the dir of  $LINKIS_HOME"
 
-LINKIS_PACKAGE=${workDir}/wedatasphere-linkis-${LINKIS_VERSION}-combined-dist.tar.gz
+LINKIS_PACKAGE=${workDir}/apache-linkis-${LINKIS_VERSION}-incubating-dist.tar.gz
 
 if ! test -e ${LINKIS_PACKAGE}; then
     echo "**********Error: please put ${LINKIS_PACKAGE} in $workDir! "
@@ -319,10 +318,12 @@ sed -i ${txt}  "s#wds.linkis.filesystem.hdfs.root.path.*#wds.linkis.filesystem.h
 ##gateway
 gateway_conf=$LINKIS_HOME/conf/linkis-mg-gateway.properties
 echo "update conf $gateway_conf"
+defaultPwd=`date +%s%N | md5sum |cut -c 1-9`
 sed -i ${txt}  "s#wds.linkis.ldap.proxy.url.*#wds.linkis.ldap.proxy.url=$LDAP_URL#g" $gateway_conf
 sed -i ${txt}  "s#wds.linkis.ldap.proxy.baseDN.*#wds.linkis.ldap.proxy.baseDN=$LDAP_BASEDN#g" $gateway_conf
 sed -i ${txt}  "s#wds.linkis.ldap.proxy.userNameFormat.*#wds.linkis.ldap.proxy.userNameFormat=$LDAP_USER_NAME_FORMAT#g" $gateway_conf
 sed -i ${txt}  "s#wds.linkis.admin.user.*#wds.linkis.admin.user=$deployUser#g" $gateway_conf
+sed -i ${txt}  "s#\#wds.linkis.admin.password.*#wds.linkis.admin.password=$defaultPwd#g" $gateway_conf
 if [ "$GATEWAY_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$GATEWAY_PORT#g" $gateway_conf
@@ -342,6 +343,13 @@ then
   ENGINECONN_ROOT_PATH=$LINKIS_HOME/engineroot
 fi
 sed -i ${txt}  "s#wds.linkis.engineconn.root.dir.*#wds.linkis.engineconn.root.dir=$ENGINECONN_ROOT_PATH#g" $ecm_conf
+
+if [ ! -d $ENGINECONN_ROOT_PATH ] ;then
+    echo "create dir ENGINECONN_ROOT_PATH: $ENGINECONN_ROOT_PATH"
+    mkdir -p $ENGINECONN_ROOT_PATH
+fi
+sudo chmod -R 771 $ENGINECONN_ROOT_PATH
+
 if [ "$ENGINECONNMANAGER_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$ENGINECONNMANAGER_PORT#g" $ecm_conf
@@ -394,3 +402,4 @@ fi
 
 
 echo "Congratulations! You have installed Linkis $LINKIS_VERSION successfully, please use sbin/linkis-start-all.sh to start it!"
+echo "Your default account password is$deployUser/$defaultPwd"

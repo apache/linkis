@@ -266,10 +266,13 @@
                         <artifactId>maven-deploy-plugin</artifactId>
                         <version>3.0.0-M1</version>
                     </plugin>
-                    <!--<plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>3.0.1</version>
+                       <configuration>
+                           <doclint>none</doclint>
+                       </configuration>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -278,7 +281,7 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>-->
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
@@ -410,13 +413,6 @@
                             <phase>process-test-resources</phase>
                             <goals>
                                 <goal>testCompile</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>attach-scaladocs</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>doc-jar</goal>
                             </goals>
                         </execution>
                     </executions>

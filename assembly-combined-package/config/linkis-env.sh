@@ -128,7 +128,7 @@ export SERVER_HEAP_SIZE="512M"
 ##The decompression directory and the installation directory need to be inconsistent
 LINKIS_HOME=/appcom/Install/LinkisInstall
 
-LINKIS_VERSION=1.0.2
+LINKIS_VERSION=1.0.3
 
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module

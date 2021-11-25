@@ -20,18 +20,16 @@ package com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.proces
 import java.io.File
 import java.nio.file.Paths
 import java.util
-
 import com.webank.wedatasphere.linkis.common.utils.Logging
 import com.webank.wedatasphere.linkis.manager.common.protocol.bml.BmlResource
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.{EngineConnPluginConf, EnvConfiguration}
-import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration.LINKIS_PUBLIC_MODULE_PATH
+import com.webank.wedatasphere.linkis.manager.engineplugin.common.conf.EnvConfiguration.{HADOOP_LIB_CLASSPATH, HBASE_LIB_CLASSPATH, LINKIS_PUBLIC_MODULE_PATH}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.exception.EngineConnBuildFailedException
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.entity.{EngineConnBuildRequest, RicherEngineConnBuildRequest}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.Environment.{variable, _}
 import com.webank.wedatasphere.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
 import com.webank.wedatasphere.linkis.manager.label.entity.engine.EngineTypeLabel
 import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.time.DateFormatUtils
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
@@ -90,14 +88,20 @@ abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunc
     if (!enablePublicModule) {
       addPathToClassPath(environment, Seq(LINKIS_PUBLIC_MODULE_PATH.getValue + "/*"))
     }
+    if(ifAddHadoopClassPath){
+      addPathToClassPath(environment,HADOOP_LIB_CLASSPATH.getValue)
+    }
+    if(ifAddHbaseClassPath){
+      addPathToClassPath(environment,HBASE_LIB_CLASSPATH.getValue)
+    }
     // finally, add the suitable properties key to classpath
     engineConnBuildRequest.engineConnCreationDesc.properties.foreach { case (key, value) =>
       if (key.startsWith("engineconn.classpath") || key.startsWith("wds.linkis.engineconn.classpath")) {
-        addPathToClassPath(environment, Seq(variable(PWD), new File(value).getName))
+        addPathToClassPath(environment, value)
       }
     }
     getExtraClassPathFile.foreach { file: String =>
-      addPathToClassPath(environment, Seq(variable(PWD), new File(file).getName))
+      addPathToClassPath(environment, file)
     }
     engineConnBuildRequest match {
       case richer: RicherEngineConnBuildRequest =>
@@ -123,6 +127,9 @@ abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunc
   protected def getExtraClassPathFile: Array[String] = EnvConfiguration.ENGINE_CONN_JAVA_EXTRA_CLASSPATH.getValue.split(",")
 
   protected def ifAddHiveConfigPath: Boolean = false
+
+  protected def ifAddHadoopClassPath: Boolean = false
+  protected def ifAddHbaseClassPath: Boolean = false
 
   protected def enablePublicModule: Boolean = false
 

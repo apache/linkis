@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.security.PrivilegedExceptionAction;
 import java.sql.*;
 import java.util.*;
 
@@ -107,12 +108,9 @@ public class ConnectionManager {
         String password = StringUtils.trim(properties.getOrDefault("jdbc.password", ""));
         int index = url.indexOf(":") + 1;
         String dbType = url.substring(index, url.indexOf(":", index));
-        logger.info(String.format("Try to Create a new %s JDBC DBCP with url(%s), username(%s), password(%s).", dbType, url, username, password));
         Properties props = new Properties();
         props.put("driverClassName", supportedDBs.get(dbType));
         props.put("url", url);
-        props.put("username", username);
-        props.put("password", password);
         props.put("maxIdle", 5);
         props.put("minIdle", 0);
         props.put("maxActive", 20);
@@ -120,6 +118,25 @@ public class ConnectionManager {
         props.put("testOnBorrow", false);
         props.put("testWhileIdle", true);
         props.put("validationQuery", "show databases;");
+
+        if (isKerberosAuthType(properties)) {
+            String user = properties.get("jdbc.user");
+            // 如果需要代理用户
+            String proxyUserProperty = properties.get("jdbc.proxy.user.property");
+            if (StringUtils.isNotBlank(proxyUserProperty)) {
+                url = url.concat(";").concat(proxyUserProperty + "=" + user);
+                props.put("url", url);
+                logger.info(String.format("Try to Create a new %s JDBC DBCP with url(%s), kerberos, proxyUser(%s).", dbType, url, user));
+            } else {
+                logger.info(String.format("Try to Create a new %s JDBC DBCP with url(%s), kerberos.", dbType, url));
+            }
+        }
+
+        if (isUsernameAuthType(properties)) {
+            logger.info(String.format("Try to Create a new %s JDBC DBCP with url(%s), username(%s), password(%s).", dbType, url, username, password));
+            props.put("username", username);
+            props.put("password", password);
+        }
         BasicDataSource dataSource;
         try {
             dataSource = (BasicDataSource) BasicDataSourceFactory.createDataSource(props);
@@ -131,6 +148,7 @@ public class ConnectionManager {
 
     public Connection getConnection(Map<String, String> properties) throws SQLException {
         String url = getJdbcUrl(properties);
+        logger.info("jdbc is {}", url);
         String jdbcAuthType = getJdbcAuthType(properties);
         Connection connection = null;
         switch (jdbcAuthType) {
@@ -139,12 +157,6 @@ public class ConnectionManager {
                 break;
             case "KERBEROS":
                 createKerberosSecureConfiguration(properties);
-                String user = properties.get("jdbc.user");
-                logger.info("The user {} has selected auth type of jdbc is kerberos.", user);
-                String proxyUserProperty = properties.get("jdbc.proxy.user.property");
-                if (StringUtils.isNotBlank(proxyUserProperty)) {
-                    url = url.concat(";").concat(proxyUserProperty + "=" + user);
-                }
                 connection = getConnection(url, properties);
                 break;
             case "USERNAME":
@@ -155,6 +167,8 @@ public class ConnectionManager {
                     throw new SQLException("jdbc.password is not empty.");
                 }
                 connection = getConnection(url, properties);
+                break;
+            default:
                 break;
         }
         return connection;
@@ -192,6 +206,14 @@ public class ConnectionManager {
         url = clearUrl(url);
         validateURL(url);
         return url.trim();
+    }
+
+    private boolean isUsernameAuthType(Map<String, String> properties) {
+        return "USERNAME".equals(getJdbcAuthType(properties));
+    }
+
+    private boolean isKerberosAuthType(Map<String, String> properties) {
+        return "KERBEROS".equals(getJdbcAuthType(properties));
     }
 
     private String getJdbcAuthType(Map<String, String> properties) {
@@ -266,7 +288,7 @@ public class ConnectionManager {
         properties.put("jdbc.auth.type", args[5]);
         properties.put("jdbc.principal", args[6]);
         properties.put("jdbc.keytab.location", args[7]);
-        properties.put("proxy.user.property", "hive.server2.proxy.user");
+        properties.put("jdbc.proxy.user.property", "hive.server2.proxy.user");
 
         for (int i = 0; i < 2; i++) {
             ConnectionManager connectionManager = ConnectionManager.getInstance();

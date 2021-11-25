@@ -54,6 +54,11 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]](2)
   private var connection: Connection = null
 
+  override def init(): Unit = {
+    super.init()
+    connectionManager.startRefreshKerberosLoginStatusThread()
+  }
+
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
     val realCode = code.trim()
     val properties = engineExecutorContext.getProperties.asInstanceOf[util.Map[String, String]]
@@ -157,6 +162,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     if (connection != null) {
       connection.close()
     }
+    connectionManager.shutdownRefreshKerberosLoginService()
   }
 
   override def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = null

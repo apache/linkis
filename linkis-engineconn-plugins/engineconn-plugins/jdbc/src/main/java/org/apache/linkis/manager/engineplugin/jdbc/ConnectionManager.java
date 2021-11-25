@@ -26,9 +26,14 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.security.PrivilegedExceptionAction;
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +51,8 @@ public class ConnectionManager {
     private final List<String> supportedDBNames = new ArrayList<String>();
 
     private volatile static ConnectionManager connectionManager;
+    private ScheduledExecutorService scheduledExecutorService;
+    private Integer kinitFailCount = 0;
 
     private ConnectionManager() {
     }
@@ -240,7 +247,93 @@ public class ConnectionManager {
             logger.error("Failed to get either keytab location or principal name in the " +
                     "jdbc executor", e);
         }
+    }
 
+    public ScheduledExecutorService startRefreshKerberosLoginStatusThread() {
+        scheduledExecutorService = Executors.newScheduledThreadPool(1);
+        scheduledExecutorService.submit(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                if (runRefreshKerberosLoginWork()) {
+                    logger.info("Ran runRefreshKerberosLogin command successfully.");
+                    kinitFailCount = 0;
+                    logger.info("Scheduling Kerberos ticket refresh thread with interval {} ms", getKerberosRefreshInterval());
+                    scheduledExecutorService.schedule(this, getKerberosRefreshInterval(), TimeUnit.MILLISECONDS);
+                } else {
+                    kinitFailCount++;
+                    logger.info("runRefreshKerberosLogin failed for {} time(s).", kinitFailCount);
+                    if (kinitFailCount >= kinitFailTimesThreshold()) {
+                        logger.error("runRefreshKerberosLogin failed for max attempts, calling close executor.");
+                        // close();
+                    } else {
+                        // wait for 1 second before calling runRefreshKerberosLogin() again
+                        scheduledExecutorService.schedule(this, 1, TimeUnit.SECONDS);
+                    }
+                }
+                return null;
+            }
+        });
+        return scheduledExecutorService;
+    }
+
+    public void shutdownRefreshKerberosLoginService() {
+        if (scheduledExecutorService != null) {
+            scheduledExecutorService.shutdown();
+        }
+    }
+
+    private boolean runRefreshKerberosLoginWork() {
+        Configuration conf = new org.apache.hadoop.conf.Configuration();
+        conf.set("hadoop.security.authentication", KERBEROS.toString());
+        UserGroupInformation.setConfiguration(conf);
+        try {
+            if (UserGroupInformation.isLoginKeytabBased()) {
+                logger.debug("Trying re-login from keytab");
+                UserGroupInformation.getLoginUser().reloginFromKeytab();
+                return true;
+            } else if (UserGroupInformation.isLoginTicketBased()) {
+                logger.debug("Trying re-login from ticket cache");
+                UserGroupInformation.getLoginUser().reloginFromTicketCache();
+                return true;
+            }
+        } catch (Exception e) {
+            logger.error("Unable to run kinit for linkis jdbc executor", e);
+        }
+        logger.debug("Neither Keytab nor ticket based login. " +
+                "runRefreshKerberosLoginWork() returning false");
+        return false;
+    }
+
+    private Long getKerberosRefreshInterval() {
+        long refreshInterval;
+        String refreshIntervalString = "86400000";
+        // defined in linkis-env.sh, if not initialized then the default value is 86400000 ms (1d).
+        if (System.getenv("LINKIS_JDBC_KERBEROS_REFRESH_INTERVAL") != null) {
+            refreshIntervalString = System.getenv("LINKIS_JDBC_KERBEROS_REFRESH_INTERVAL");
+        }
+        try {
+            refreshInterval = Long.parseLong(refreshIntervalString);
+        } catch (NumberFormatException e) {
+            logger.error("Cannot get time in MS for the given string, " + refreshIntervalString
+                    + " defaulting to 86400000 ", e);
+            refreshInterval = 86400000L;
+
+        }
+        return refreshInterval;
+    }
+
+    private Integer kinitFailTimesThreshold() {
+        Integer kinitFailThreshold = 5;
+        //defined in linkis-env.sh, if not initialized then the default value is 5.
+        if (System.getenv("LINKIS_JDBC_KERBEROS_KINIT_FAIL_THRESHOLD") != null) {
+            try {
+                kinitFailThreshold = new Integer(System.getenv("LINKIS_JDBC_KERBEROS_KINIT_FAIL_THRESHOLD"));
+            } catch (Exception e) {
+                logger.error("Cannot get integer value from the given string, " + System
+                        .getenv("LINKIS_JDBC_KERBEROS_KINIT_FAIL_THRESHOLD") + " defaulting to " + kinitFailThreshold, e);
+            }
+        }
+        return kinitFailThreshold;
     }
 
     private String clearUrl(String url) {
@@ -277,7 +370,7 @@ public class ConnectionManager {
         statement.close();
         conn.close();
         dataSource.close();*/
-
+        // export LINKIS_JDBC_KERBEROS_REFRESH_INTERVAL=10000
         System.out.println("starting ......");
         Map<String, String> properties = new HashMap<>(8);
         properties.put("driverClassName", args[0]);
@@ -289,9 +382,9 @@ public class ConnectionManager {
         properties.put("jdbc.principal", args[6]);
         properties.put("jdbc.keytab.location", args[7]);
         properties.put("jdbc.proxy.user.property", "hive.server2.proxy.user");
-
-        for (int i = 0; i < 2; i++) {
-            ConnectionManager connectionManager = ConnectionManager.getInstance();
+        ConnectionManager connectionManager = ConnectionManager.getInstance();
+        connectionManager.startRefreshKerberosLoginStatusThread();
+        for (int i = 0; i < 200000; i++) {
             Connection conn = connectionManager.getConnection(properties);
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(args[8]);
@@ -301,7 +394,9 @@ public class ConnectionManager {
             rs.close();
             statement.close();
             conn.close();
+            Thread.sleep(100000);
         }
+
 
         System.out.println("end .......");
     }

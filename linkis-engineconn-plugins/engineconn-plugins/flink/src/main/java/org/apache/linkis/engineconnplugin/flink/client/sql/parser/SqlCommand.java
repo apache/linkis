@@ -39,6 +39,8 @@ public enum SqlCommand {
 
     DROP_TABLE,
 
+    DROP_CATALOG,
+
     CREATE_VIEW,
 
     DROP_VIEW,

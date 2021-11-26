@@ -44,6 +44,7 @@ public class OperationFactoryImpl implements OperationFactory {
                 break;
             case CREATE_TABLE:
             case CREATE_CATALOG:
+            case DROP_CATALOG:
             case DROP_TABLE:
             case ALTER_TABLE:
             case CREATE_DATABASE:

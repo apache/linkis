@@ -17,29 +17,23 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.security.UserGroupInformation;
+import org.apache.linkis.hadoop.common.utils.KerberosUtils;
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.commons.lang.StringUtils;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.HADOOP_SECURITY_AUTHENTICATION;
-import static org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod.KERBEROS;
 
 public class ConnectionManager {
 
@@ -53,6 +47,9 @@ public class ConnectionManager {
     private volatile static ConnectionManager connectionManager;
     private ScheduledExecutorService scheduledExecutorService;
     private Integer kinitFailCount = 0;
+    private static final String KERBEROS_AUTH_TYPE = "KERBEROS";
+    private static final String SIMPLE_AUTH_TYPE = "SIMPLE";
+    private static final String USERNAME_AUTH_TYPE = "USERNAME";
 
     private ConnectionManager() {
     }
@@ -159,14 +156,16 @@ public class ConnectionManager {
         String jdbcAuthType = getJdbcAuthType(properties);
         Connection connection = null;
         switch (jdbcAuthType) {
-            case "SIMPLE":
+            case SIMPLE_AUTH_TYPE:
                 connection = getConnection(url, properties);
                 break;
-            case "KERBEROS":
-                createKerberosSecureConfiguration(properties);
+            case KERBEROS_AUTH_TYPE:
+                final String keytab = properties.get("jdbc.keytab.location");
+                final String principal = properties.get("jdbc.principal");
+                KerberosUtils.createKerberosSecureConfiguration(keytab, principal);
                 connection = getConnection(url, properties);
                 break;
-            case "USERNAME":
+            case USERNAME_AUTH_TYPE:
                 if (StringUtils.isEmpty(properties.get("jdbc.username"))) {
                     throw new SQLException("jdbc.username is not empty.");
                 }
@@ -216,37 +215,15 @@ public class ConnectionManager {
     }
 
     private boolean isUsernameAuthType(Map<String, String> properties) {
-        return "USERNAME".equals(getJdbcAuthType(properties));
+        return USERNAME_AUTH_TYPE.equals(getJdbcAuthType(properties));
     }
 
     private boolean isKerberosAuthType(Map<String, String> properties) {
-        return "KERBEROS".equals(getJdbcAuthType(properties));
+        return KERBEROS_AUTH_TYPE.equals(getJdbcAuthType(properties));
     }
 
     private String getJdbcAuthType(Map<String, String> properties) {
-        return properties.getOrDefault("jdbc.auth.type", "USERNAME").trim().toUpperCase();
-    }
-
-    private void createKerberosSecureConfiguration(Map<String, String> properties) {
-        Configuration conf = new Configuration();
-        conf.set(HADOOP_SECURITY_AUTHENTICATION, KERBEROS.toString());
-        UserGroupInformation.setConfiguration(conf);
-        try {
-            if (!UserGroupInformation.isSecurityEnabled()
-                    || UserGroupInformation.getCurrentUser().getAuthenticationMethod() != KERBEROS
-                    || !UserGroupInformation.isLoginKeytabBased()) {
-                String keytab = properties.get("jdbc.keytab.location");
-                String principal = properties.get("jdbc.principal");
-                UserGroupInformation.loginUserFromKeytab(principal, keytab);
-                logger.info("Login successfully with keytab: {} and principal: {}", keytab, principal);
-            } else {
-                logger.info("The user has already logged in using keytab and principal, " +
-                        "no action required");
-            }
-        } catch (IOException e) {
-            logger.error("Failed to get either keytab location or principal name in the " +
-                    "jdbc executor", e);
-        }
+        return properties.getOrDefault("jdbc.auth.type", USERNAME_AUTH_TYPE).trim().toUpperCase();
     }
 
     public ScheduledExecutorService startRefreshKerberosLoginStatusThread() {
@@ -254,15 +231,15 @@ public class ConnectionManager {
         scheduledExecutorService.submit(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
-                if (runRefreshKerberosLoginWork()) {
+                if (KerberosUtils.runRefreshKerberosLogin()) {
                     logger.info("Ran runRefreshKerberosLogin command successfully.");
                     kinitFailCount = 0;
-                    logger.info("Scheduling Kerberos ticket refresh thread with interval {} ms", getKerberosRefreshInterval());
-                    scheduledExecutorService.schedule(this, getKerberosRefreshInterval(), TimeUnit.MILLISECONDS);
+                    logger.info("Scheduling Kerberos ticket refresh thread with interval {} ms", KerberosUtils.getKerberosRefreshInterval());
+                    scheduledExecutorService.schedule(this, KerberosUtils.getKerberosRefreshInterval(), TimeUnit.MILLISECONDS);
                 } else {
                     kinitFailCount++;
                     logger.info("runRefreshKerberosLogin failed for {} time(s).", kinitFailCount);
-                    if (kinitFailCount >= kinitFailTimesThreshold()) {
+                    if (kinitFailCount >= KerberosUtils.kinitFailTimesThreshold()) {
                         logger.error("runRefreshKerberosLogin failed for max attempts, calling close executor.");
                         // close();
                     } else {
@@ -280,60 +257,6 @@ public class ConnectionManager {
         if (scheduledExecutorService != null) {
             scheduledExecutorService.shutdown();
         }
-    }
-
-    private boolean runRefreshKerberosLoginWork() {
-        Configuration conf = new org.apache.hadoop.conf.Configuration();
-        conf.set("hadoop.security.authentication", KERBEROS.toString());
-        UserGroupInformation.setConfiguration(conf);
-        try {
-            if (UserGroupInformation.isLoginKeytabBased()) {
-                logger.debug("Trying re-login from keytab");
-                UserGroupInformation.getLoginUser().reloginFromKeytab();
-                return true;
-            } else if (UserGroupInformation.isLoginTicketBased()) {
-                logger.debug("Trying re-login from ticket cache");
-                UserGroupInformation.getLoginUser().reloginFromTicketCache();
-                return true;
-            }
-        } catch (Exception e) {
-            logger.error("Unable to run kinit for linkis jdbc executor", e);
-        }
-        logger.debug("Neither Keytab nor ticket based login. " +
-                "runRefreshKerberosLoginWork() returning false");
-        return false;
-    }
-
-    private Long getKerberosRefreshInterval() {
-        long refreshInterval;
-        String refreshIntervalString = "86400000";
-        // defined in linkis-env.sh, if not initialized then the default value is 86400000 ms (1d).
-        if (System.getenv("LINKIS_JDBC_KERBEROS_REFRESH_INTERVAL") != null) {
-            refreshIntervalString = System.getenv("LINKIS_JDBC_KERBEROS_REFRESH_INTERVAL");
-        }
-        try {
-            refreshInterval = Long.parseLong(refreshIntervalString);
-        } catch (NumberFormatException e) {
-            logger.error("Cannot get time in MS for the given string, " + refreshIntervalString
-                    + " defaulting to 86400000 ", e);
-            refreshInterval = 86400000L;
-
-        }
-        return refreshInterval;
-    }
-
-    private Integer kinitFailTimesThreshold() {
-        Integer kinitFailThreshold = 5;
-        //defined in linkis-env.sh, if not initialized then the default value is 5.
-        if (System.getenv("LINKIS_JDBC_KERBEROS_KINIT_FAIL_THRESHOLD") != null) {
-            try {
-                kinitFailThreshold = new Integer(System.getenv("LINKIS_JDBC_KERBEROS_KINIT_FAIL_THRESHOLD"));
-            } catch (Exception e) {
-                logger.error("Cannot get integer value from the given string, " + System
-                        .getenv("LINKIS_JDBC_KERBEROS_KINIT_FAIL_THRESHOLD") + " defaulting to " + kinitFailThreshold, e);
-            }
-        }
-        return kinitFailThreshold;
     }
 
     private String clearUrl(String url) {

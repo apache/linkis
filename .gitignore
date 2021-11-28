@@ -18,15 +18,18 @@ linkis-commons/linkis-rpc/target/
 linkis-commons/linkis-scheduler/target/
 linkis-commons/linkis-storage/target/
 
+linkis-computation-governance/linkis-client/linkis-cli/target/
 linkis-computation-governance/linkis-client/linkis-cli/linkis-cli-application/target/
 linkis-computation-governance/linkis-client/linkis-cli/linkis-cli-core/target/
 linkis-computation-governance/linkis-client/linkis-cli/linkis-cli-common/target/
 linkis-computation-governance/linkis-client/linkis-computation-client/target/
 linkis-computation-governance/linkis-computation-governance-common/target/
+linkis-computation-governance/linkis-engineconn-manager/target/
 linkis-computation-governance/linkis-engineconn-manager/linkis-engineconn-linux-launch/target/
 linkis-computation-governance/linkis-engineconn-manager/linkis-engineconn-manager-core/target/
 linkis-computation-governance/linkis-engineconn-manager/linkis-engineconn-manager-server/target/
 
+linkis-computation-governance/linkis-engineconn/target/
 linkis-computation-governance/linkis-engineconn/linkis-computation-engineconn/target/
 linkis-computation-governance/linkis-engineconn/linkis-engineconn-common/target/
 linkis-computation-governance/linkis-engineconn/linkis-engineconn-launch/target/
@@ -40,6 +43,7 @@ linkis-computation-governance/linkis-engineconn/linkis-engineconn-core/target/
 
 linkis-computation-governance/linkis-entrance-client/target/
 linkis-computation-governance/linkis-entrance/target/
+linkis-computation-governance/linkis-manager/target/
 linkis-computation-governance/linkis-manager/label-common/target/
 linkis-computation-governance/linkis-manager/label-manager/target/
 linkis-computation-governance/linkis-manager/linkis-application-manager/target/
@@ -82,6 +86,7 @@ linkis-public-enhancements/linkis-publicService/linkis-script-dev/linkis-storage
 linkis-public-enhancements/linkis-publicService/linkis-udf/target/
 linkis-public-enhancements/linkis-publicService/linkis-variable/target/
 linkis-public-enhancements/linkis-publicService/target/
+linkis-public-enhancements/linkis-publicservice/linkis-error-code/target/
 linkis-public-enhancements/linkis-publicservice/linkis-error-code/linkis-error-code-client/target/
 linkis-public-enhancements/linkis-publicservice/linkis-error-code/linkis-error-code-common/target/
 linkis-public-enhancements/linkis-publicservice/linkis-error-code/linkis-error-code-server/target/

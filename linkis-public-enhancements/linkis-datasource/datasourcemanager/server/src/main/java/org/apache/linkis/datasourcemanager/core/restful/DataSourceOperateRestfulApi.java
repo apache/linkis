@@ -31,7 +31,7 @@ import org.apache.linkis.metadatamanager.common.MdmConfiguration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.commons.lang.StringUtils;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+//import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -93,17 +93,17 @@ public class DataSourceOperateRestfulApi {
         }, "/data_source/op/connect/json","");
     }
 
-    @POST
-    @Path("/connect/form")
-    public Response connect(FormDataMultiPart multiPartForm,
-                            @Context HttpServletRequest request){
-        return RestfulApiHelper.doAndResponse(() -> {
-            String operator = SecurityFilter.getLoginUsername(request);
-            DataSource dataSource = formDataTransformer.transformToObject(multiPartForm, DataSource.class, beanValidator);
-            doConnect(operator, dataSource);
-            return Message.ok().data("ok", true);
-        }, "/data_source/op/connect/form","");
-    }
+//    @POST
+//    @Path("/connect/form")
+//    public Response connect(FormDataMultiPart multiPartForm,
+//                            @Context HttpServletRequest request){
+//        return RestfulApiHelper.doAndResponse(() -> {
+//            String operator = SecurityFilter.getLoginUsername(request);
+//            DataSource dataSource = formDataTransformer.transformToObject(multiPartForm, DataSource.class, beanValidator);
+//            doConnect(operator, dataSource);
+//            return Message.ok().data("ok", true);
+//        }, "/data_source/op/connect/form","");
+//    }
 
     /**
      * Build a connection

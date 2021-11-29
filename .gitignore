@@ -127,3 +127,18 @@ assembly-combined-package/target/
 
 linkis-extensions/linkis-io-file-client/target/
 
+linkis-commons/target/
+linkis-computation-governance/linkis-client/linkis-cli/target/
+linkis-computation-governance/linkis-engineconn-manager/target/
+linkis-computation-governance/linkis-engineconn/target/
+linkis-computation-governance/linkis-manager/target/
+linkis-computation-governance/target/
+linkis-engineconn-plugins/target/
+linkis-extensions/target/
+linkis-orchestrator/target/
+linkis-public-enhancements/linkis-bml/target/
+linkis-public-enhancements/linkis-context-service/target/
+linkis-public-enhancements/linkis-publicservice/linkis-error-code/target/
+linkis-public-enhancements/target/
+linkis-spring-cloud-services/linkis-service-gateway/target/
+linkis-spring-cloud-services/target/

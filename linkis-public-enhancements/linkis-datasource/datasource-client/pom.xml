@@ -24,7 +24,7 @@
     <parent>
         <artifactId>linkis-public-enhancements</artifactId>
         <groupId>org.apache.linkis</groupId>
-        <version>1.0.1</version>
+        <version>1.0.3</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 

@@ -79,7 +79,7 @@ public class DataSourceOperateRestfulApi {
 
     @POST
     @Path("/connect/json")
-    public Response connect(DataSource dataSource,
+    public Message connect(DataSource dataSource,
                             @Context HttpServletRequest request){
         return RestfulApiHelper.doAndResponse(() -> {
             String operator = SecurityFilter.getLoginUsername(request);

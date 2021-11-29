@@ -84,18 +84,18 @@ public class RestfulApiHelper {
      * @param tryOperation operate function
      * @param failMessage message
      */
-    public static Response doAndResponse(TryOperation tryOperation, String method, String failMessage){
+    public static Message doAndResponse(TryOperation tryOperation, String method, String failMessage){
         try{
             Message message = tryOperation.operateAndGetMessage();
-            return Message.messageToResponse(setMethod(message, method));
+            return setMethod(message, method);
         }catch(ParameterValidateException e){
-            return Message.messageToResponse(setMethod(Message.error(e.getMessage()), method));
+            return setMethod(Message.error(e.getMessage()), method);
         }catch(ConstraintViolationException e){
             return new BeanValidationExceptionMapper().toResponse(e);
         }catch(WarnException e){
-            return Message.messageToResponse(setMethod(Message.warn(e.getMessage()), method));
+            return setMethod(Message.warn(e.getMessage()), method);
         }catch(Exception e){
-            return Message.messageToResponse(setMethod(Message.error(failMessage, e), method));
+            return setMethod(Message.error(failMessage, e), method);
         }
     }
     private static Message setMethod(Message message, String method){

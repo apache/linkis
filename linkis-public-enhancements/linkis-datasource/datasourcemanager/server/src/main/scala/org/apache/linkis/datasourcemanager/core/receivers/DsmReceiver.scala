@@ -17,21 +17,21 @@
  
 package org.apache.linkis.datasourcemanager.core.receivers
 
-import com.webank.wedatasphere.linkis.common.utils.{Logging, Utils}
-import com.webank.wedatasphere.linkis.datasourcemanager.core.service.{DataSourceInfoService, DataSourceRelateService}
-import com.webank.wedatasphere.linkis.datasourcemanager.common.protocol.DsInfoResponse
-import com.webank.wedatasphere.linkis.rpc.{Receiver, Sender}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.datasourcemanager.core.service.{DataSourceInfoService, DataSourceRelateService}
+import org.apache.linkis.datasourcemanager.common.protocol.DsInfoResponse
+import org.apache.linkis.rpc.{Receiver, Sender}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import scala.concurrent.duration.Duration
 import java.util
 
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSource
-import com.webank.wedatasphere.linkis.datasourcemanager.common.protocol.{DsInfoQueryRequest, DsInfoResponse}
-import com.webank.wedatasphere.linkis.datasourcemanager.core.restful.RestfulApiHelper
-import com.webank.wedatasphere.linkis.datasourcemanager.core.service.{DataSourceInfoService, DataSourceRelateService}
-import com.webank.wedatasphere.linkis.datasourcemanager.core.restful.RestfulApiHelper
+import org.apache.linkis.datasourcemanager.common.domain.DataSource
+import org.apache.linkis.datasourcemanager.common.protocol.{DsInfoQueryRequest, DsInfoResponse}
+import org.apache.linkis.datasourcemanager.core.restful.RestfulApiHelper
+import org.apache.linkis.datasourcemanager.core.service.{DataSourceInfoService, DataSourceRelateService}
+import org.apache.linkis.datasourcemanager.core.restful.RestfulApiHelper
 
 @Component
 class DsmReceiver extends Receiver with Logging{

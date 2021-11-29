@@ -11,23 +11,23 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.restful;
+package org.apache.linkis.datasourcemanager.core.restful;
 
 import com.github.pagehelper.PageInfo;
-import com.webank.wedatasphere.linkis.common.exception.ErrorException;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.ServiceErrorCode;
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.*;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.FormDataTransformerFactory;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.formdata.MultiPartFormDataTransformer;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.service.DataSourceInfoService;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.service.DataSourceRelateService;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.service.MetadataOperateService;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.vo.DataSourceVo;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidateException;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidator;
-import com.webank.wedatasphere.linkis.metadatamanager.common.MdmConfiguration;
-import com.webank.wedatasphere.linkis.server.Message;
-import com.webank.wedatasphere.linkis.server.security.SecurityFilter;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.datasourcemanager.common.ServiceErrorCode;
+import org.apache.linkis.datasourcemanager.common.domain.*;
+import org.apache.linkis.datasourcemanager.core.formdata.FormDataTransformerFactory;
+import org.apache.linkis.datasourcemanager.core.formdata.MultiPartFormDataTransformer;
+import org.apache.linkis.datasourcemanager.core.service.DataSourceInfoService;
+import org.apache.linkis.datasourcemanager.core.service.DataSourceRelateService;
+import org.apache.linkis.datasourcemanager.core.service.MetadataOperateService;
+import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
+import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateException;
+import org.apache.linkis.datasourcemanager.core.validate.ParameterValidator;
+import org.apache.linkis.metadatamanager.common.MdmConfiguration;
+import org.apache.linkis.server.Message;
+import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

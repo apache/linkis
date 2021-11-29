@@ -11,11 +11,11 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.core.validate.strategy;
+package org.apache.linkis.datasourcemanager.core.validate.strategy;
 
-import com.webank.wedatasphere.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidateException;
-import com.webank.wedatasphere.linkis.datasourcemanager.core.validate.ParameterValidateStrategy;
+import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
+import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateException;
+import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateStrategy;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.List;

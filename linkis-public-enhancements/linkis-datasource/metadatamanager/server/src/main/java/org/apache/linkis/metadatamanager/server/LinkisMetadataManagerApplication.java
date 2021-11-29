@@ -1,6 +1,6 @@
-package com.webank.wedatasphere.linkis.metadatamanager.server;
-import com.webank.wedatasphere.linkis.DataWorkCloudApplication;
-import com.webank.wedatasphere.linkis.LinkisBaseServerApp;
+package org.apache.linkis.metadatamanager.server;
+import org.apache.linkis.DataWorkCloudApplication;
+import org.apache.linkis.LinkisBaseServerApp;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

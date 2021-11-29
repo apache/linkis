@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.webank.wedatasphere.linkis.datasourcemanager.common.domain;
+package org.apache.linkis.datasourcemanager.common.domain;
 
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;

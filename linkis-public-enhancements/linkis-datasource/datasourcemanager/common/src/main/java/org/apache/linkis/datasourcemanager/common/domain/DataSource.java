@@ -1,23 +1,19 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * Copyright 2019 WeBank
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.datasourcemanager.common.domain;
 
-import org.apache.linkis.datasourcemanager.common.util.json.Json;
+package com.webank.wedatasphere.linkis.datasourcemanager.common.domain;
+
+import com.webank.wedatasphere.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -95,6 +91,16 @@ public class DataSource {
     private String modifyUser;
 
     private String createUser;
+
+    private String labels;
+
+    private Long versionId;
+
+    private List<DatasourceVersion> versions = new ArrayList<>();
+
+    private Long publishedVersionId;
+
+    private boolean expire;
 
     /**
      * Data source type entity
@@ -192,17 +198,6 @@ public class DataSource {
         this.modifyTime = modifyTime;
     }
 
-    public Map<String, Object> getConnectParams() {
-        if(connectParams.isEmpty() && StringUtils.isNotBlank(parameter)){
-            connectParams.putAll(Objects.requireNonNull(Json.fromJson(parameter, Map.class)));
-        }
-        return connectParams;
-    }
-
-    public void setConnectParams(Map<String, Object> connectParams) {
-        this.connectParams = connectParams;
-    }
-
     public String getCreateUser() {
         return createUser;
     }
@@ -241,5 +236,58 @@ public class DataSource {
 
     public void setKeyDefinitions(List<DataSourceParamKeyDefinition> keyDefinitions) {
         this.keyDefinitions = keyDefinitions;
+    }
+
+    public String getLabels() {
+        return labels;
+    }
+
+    public void setLabels(String labels) {
+        this.labels = labels;
+    }
+
+
+    public Map<String, Object> getConnectParams() {
+        if(connectParams.isEmpty() && StringUtils.isNotBlank(parameter)){
+            connectParams.putAll(Objects.requireNonNull(Json.fromJson(parameter, Map.class)));
+        }
+        return connectParams;
+    }
+
+    public void setConnectParams(Map<String, Object> connectParams) {
+        this.connectParams = connectParams;
+    }
+
+    public List<DatasourceVersion> getVersion() {
+        return versions;
+    }
+
+
+    public boolean isExpire() {
+        return expire;
+    }
+
+    public void setExpire(boolean expire) {
+        this.expire = expire;
+    }
+
+    public void setVersions(List<DatasourceVersion> versions) {
+        this.versions = versions;
+    }
+
+    public Long getVersionId() {
+        return versionId;
+    }
+
+    public void setVersionId(Long versionId) {
+        this.versionId = versionId;
+    }
+
+    public Long getPublishedVersionId() {
+        return publishedVersionId;
+    }
+
+    public void setPublishedVersionId(Long publishedVersionId) {
+        this.publishedVersionId = publishedVersionId;
     }
 }

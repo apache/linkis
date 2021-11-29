@@ -1,14 +1,12 @@
 #!/bin/bash
-
 #
-# Copyright 2019 WeBank
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
 # http://www.apache.org/licenses/LICENSE-2.0
-#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -85,7 +83,7 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 ###  You can access it in your browser at the address below:http://${EUREKA_INSTALL_IP}:${EUREKA_PORT}
 #EUREKA_INSTALL_IP=127.0.0.1         # Microservices Service Registration Discovery Center
 EUREKA_PORT=20303
-EUREKA_PREFER_IP=true
+export EUREKA_PREFER_IP=false
 
 ###  Gateway install information
 #GATEWAY_INSTALL_IP=127.0.0.1
@@ -154,7 +152,7 @@ export SERVER_HEAP_SIZE="512M"
 ##The decompression directory and the installation directory need to be inconsistent
 LINKIS_HOME=/appcom/Install/LinkisInstall
 
-LINKIS_VERSION=1.0.1
+LINKIS_VERSION=1.0.2
 
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module

@@ -1,30 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2019 WeBank
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~  you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
+  
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.webank.wedatasphere.linkis</groupId>
-    <artifactId>linkis</artifactId>
-    <version>1.0.1</version>
-    <packaging>pom</packaging>
+    <parent>
+        <groupId>org.apache</groupId>
+        <artifactId>apache</artifactId>
+        <version>23</version>
+    </parent>
 
+
+    <groupId>org.apache.linkis</groupId>
+    <artifactId>linkis</artifactId>
+    <version>1.0.3</version>
+    <packaging>pom</packaging>
     <name>Linkis Project Parent POM</name>
     <description>Linkis helps easily connect to various back-end computation/storage engines</description>
-    <url>https://github.com/WeBankFinTech/Linkis/wiki</url>
+    <url>https://github.com/apache/incubator-linkis</url>
 
     <licenses>
         <license>
@@ -33,43 +43,64 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-
     <scm>
-        <connection>scm:git:git@github.com:WeBankFinTech/Linkis.git</connection>
-        <developerConnection>scm:git:https://github.com/WeBankFinTech/Linkis.git</developerConnection>
-        <url>scm:git:git@github.com:WeBankFinTech/Linkis.git</url>
+        <url>https://github.com/apache/incubator-linkis</url>
+        <connection>scm:git:https://github.com/apache/incubator-linkis.git</connection>
+        <developerConnection>scm:git:https://github.com/apache/incubator-linkis.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
+    <mailingLists>
+        <mailingList>
+            <name>Development List</name>
+            <subscribe>dev-subscribe@linkis.incubator.apache.org</subscribe>
+            <unsubscribe>dev-unsubscribe@linkis.incubator.apache.org</unsubscribe>
+            <post>dev@linkis.incubator.apache.org</post>
+        </mailingList>
+        <mailingList>
+            <name>Commits List</name>
+            <subscribe>commits-subscribe@linkis.incubator.apache.org</subscribe>
+            <unsubscribe>commits-unsubscribe@linkis.incubator.apache.org</unsubscribe>
+            <post>commits@linkis.incubator.apache.org</post>
+        </mailingList>
+        <mailingList>
+            <name>Issues List</name>
+            <subscribe>issues-subscribe@linkis.incubator.apache.org</subscribe>
+            <unsubscribe>issues-unsubscribe@linkis.incubator.apache.org</unsubscribe>
+            <post>issues@linkis.incubator.apache.org</post>
+        </mailingList>
+    </mailingLists>
     <developers>
-
+        <developer>
+            <id>Apache Linkis(incubating)</id>
+            <name>The Linkis Project Contributors</name>
+            <email>dev-subscribe@linkis.incubator.apache.org</email>
+            <url>http://linkis.apache.org/</url>
+        </developer>
     </developers>
 
+    <organization>
+        <name>The Apache Software Foundation</name>
+        <url>http://www.apache.org/</url>
+    </organization>
+
+    <issueManagement>
+        <system>Github Issues</system>
+        <url>https://github.com/apache/linkis-incubator/issues</url>
+    </issueManagement>
     <modules>
-
         <module>linkis-commons</module>
-
         <module>linkis-spring-cloud-services</module>
-
         <module>linkis-orchestrator</module>
-
-
         <module>linkis-public-enhancements</module>
-
-
         <module>linkis-computation-governance</module>
-
         <module>linkis-engineconn-plugins</module>
-
         <module>linkis-extensions</module>
-
         <module>assembly-combined-package</module>
-
-
     </modules>
 
     <properties>
-        <linkis.version>1.0.1</linkis.version>
+        <linkis.version>1.0.3</linkis.version>
         <hadoop.version>2.7.2</hadoop.version>
         <spring.eureka.version>2.2.1.RELEASE</spring.eureka.version>
         <spring.feign.version>2.2.1.RELEASE</spring.feign.version>
@@ -101,14 +132,16 @@
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-io.version>2.4</commons-io.version>
+        <apache-rat-plugin.version>0.13</apache-rat-plugin.version>
         <assembly.package.rootpath>${basedir}</assembly.package.rootpath>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-
             <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
+                <groupId>org.apache.linkis</groupId>
                 <artifactId>linkis-module</artifactId>
                 <exclusions>
                     <exclusion>
@@ -124,24 +157,16 @@
             </dependency>
 
             <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
+                <groupId>org.apache.linkis</groupId>
                 <artifactId>linkis-common</artifactId>
                 <version>${linkis.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.webank.wedatasphere.linkis</groupId>
+                <groupId>org.apache.linkis</groupId>
                 <artifactId>linkis-mybatis</artifactId>
                 <version>${linkis.version}</version>
             </dependency>
-
-           <!-- <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Hoxton.SR1</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>-->
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
@@ -200,7 +225,20 @@
 
 
     <profiles>
-
+        <!-- jacoco: mvn validate -Pjacoco  -->
+        <profile>
+            <id>jacoco</id>
+            <properties>
+                <jacoco.skip>false</jacoco.skip>
+            </properties>
+        </profile>
+        <!-- check apache license: mvn validate -Prat  -->
+        <profile>
+            <id>rat</id>
+            <properties>
+                <rat.skip>false</rat.skip>
+            </properties>
+        </profile>
         <profile>
             <id>release</id>
             <build>
@@ -252,6 +290,42 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!--check dependency jar license -->
+        <profile>
+            <id>licenseCheck</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <version>2.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>license-check</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>add-third-party</goal>
+                                </goals>
+                                <configuration>
+                                    <includeOptional>false</includeOptional>
+                                    <useMissingFile>false</useMissingFile>
+                                    <failOnMissing>false</failOnMissing>
+                                    <licenseMerges>
+                                        <licenseMerge>Apache License, Version 2.0|The Apache Software License, Version
+                                            2.0|ASF 2.0|Apache 2|Apache-2.0|Apache 2.0 License|Apache 2.0|Apache License v2.0|Apache License 2.0|The Apache License, Version 2.0|The Apache Software License, Version 2.0
+                                        </licenseMerge>
+                                        <licenseMerge>The MIT License|MIT License</licenseMerge>
+                                        <licenseMerge>The 3-Clause BSD License|New BSD License|3-Clause BSD
+                                            License|BSD|3-Clause BSD License|The New BSD License
+                                        </licenseMerge>
+                                    </licenseMerges>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -356,6 +430,60 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>2.6</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.rat</groupId>
+                    <artifactId>apache-rat-plugin</artifactId>
+                    <version>${apache-rat-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>rat-validate</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <excludes>
+                            <exclude>**/*.versionsBackup</exclude>
+                            <exclude>**/.idea/</exclude>
+                            <exclude>**/*.iml</exclude>
+                            <exclude>**/*.txt</exclude>
+                            <exclude>**/*.svg</exclude>
+                            <exclude>**/*.png</exclude>
+                            <exclude>**/*.json</exclude>
+                            <exclude>**/*.patch</exclude>
+
+                            <exclude>**/*.editorconfig</exclude>
+                            <exclude>**/*.env</exclude>
+                            <exclude>**/*.eslintignore</exclude>
+                            <exclude>**/*.jshintrc</exclude>
+                            <exclude>**/*.patch</exclude>
+                            <exclude>**/*.md</exclude>
+                            <exclude>.git/</exclude>
+                            <exclude>.gitignore</exclude>
+                            <exclude>**/.settings/*</exclude>
+                            <exclude>**/.classpath</exclude>
+                            <exclude>**/.project</exclude>
+                            <exclude>**/target/**</exclude>
+                            <exclude>**/out/**</exclude>
+                            <exclude>**/*.log</exclude>
+                            <exclude>CONTRIBUTING.md</exclude>
+                            <exclude>CONTRIBUTING_CN.md</exclude>
+                            <exclude>DISCLAIMER-WIP</exclude>
+                            <exclude>README.md</exclude>
+                            <exclude>**/META-INF/**</exclude>
+                            <exclude>.github/**</exclude>
+                            <exclude>compiler/**</exclude>
+                            <exclude>**/generated/**</exclude>
+                            <exclude>**/spring.factories</exclude>
+                            <exclude>**/*.tdr</exclude>
+                            <exclude>**/*.tcd</exclude>
+                            <exclude>**/*.tdd</exclude>
+                        </excludes>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>

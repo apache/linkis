@@ -1,1 +1,1 @@
-com.webank.wedatasphere.linkis.ujes.jdbc.UJESSQLDriver
+org.apache.linkis.ujes.jdbc.UJESSQLDriver

@@ -1,3 +1,18 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 import os, sys, getopt, traceback, json, re
 import resource
 
@@ -116,28 +131,9 @@ class PythonContext(object):
     # If we don't have matplotlib installed don't bother continuing
     try:
       import matplotlib
+      matplotlib.use('Agg')
     except ImportError:
       return
-    # Make sure custom backends are available in the PYTHONPATH
-    rootdir = os.environ.get('ZEPPELIN_HOME', os.getcwd())
-    mpl_path = os.path.join(rootdir, 'interpreter', 'lib', 'python')
-    if mpl_path not in sys.path:
-      sys.path.append(mpl_path)
-
-    # Finally check if backend exists, and if so configure as appropriate
-    try:
-      matplotlib.use('module://backend_zinline')
-      import backend_zinline
-
-      # Everything looks good so make config assuming that we are using
-      # an inline backend
-      self.configure_mpl(width=600, height=400, dpi=72,
-                         fontsize=10, interactive=True, format='png')
-    except ImportError:
-      # Fall back to Agg if no custom backend installed
-      matplotlib.use('Agg')
-      warnings.warn("Unable to load inline matplotlib backend, "
-                    "falling back to Agg")
 
 
 def handler_stop_signals(sig, frame):

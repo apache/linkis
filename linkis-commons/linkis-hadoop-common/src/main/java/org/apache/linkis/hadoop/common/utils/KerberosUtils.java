@@ -17,6 +17,7 @@
 
 package org.apache.linkis.hadoop.common.utils;
 
+import org.apache.linkis.hadoop.common.conf.HadoopConf;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.slf4j.Logger;
@@ -31,11 +32,12 @@ import static org.apache.hadoop.security.UserGroupInformation.AuthenticationMeth
 public class KerberosUtils {
     private static final Logger LOG = LoggerFactory.getLogger(KerberosUtils.class);
 
+
     private KerberosUtils() {
     }
 
     private static Configuration createKerberosSecurityConfiguration() {
-        Configuration conf = new Configuration();
+        Configuration conf = HDFSUtils.getConfiguration(HadoopConf.HADOOP_ROOT_USER().getValue());
         conf.set(HADOOP_SECURITY_AUTHENTICATION, KERBEROS.toString());
         return conf;
     }

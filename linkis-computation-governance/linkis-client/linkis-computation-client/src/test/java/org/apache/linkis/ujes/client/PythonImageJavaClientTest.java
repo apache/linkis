@@ -23,7 +23,7 @@ public class PythonImageJavaClientTest {
     public static void main(String[] args) {
 
         String user = "hadoop";
-        String gatewayIp = "你的 linkis 网关地址";
+        String gatewayIp = "127.0.0.1";
         String password = "hadoop";
 
         /**

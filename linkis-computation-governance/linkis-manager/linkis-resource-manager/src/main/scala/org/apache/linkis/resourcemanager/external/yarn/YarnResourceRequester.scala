@@ -22,10 +22,11 @@ import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, Nod
 import org.apache.linkis.resourcemanager.exception.{RMErrorException, RMWarnException}
 import org.apache.linkis.resourcemanager.external.domain.{ExternalAppInfo, ExternalResourceIdentifier, ExternalResourceProvider}
 import org.apache.linkis.resourcemanager.external.request.ExternalResourceRequester
-import org.apache.http.HttpHeaders
+import org.apache.http.{HttpHeaders, HttpResponse}
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
+import org.apache.linkis.resourcemanager.utils.RequestKerberosUrlUtils
 import org.json4s.JValue
 import org.json4s.JsonAST._
 import org.json4s.jackson.JsonMethods.parse
@@ -213,8 +214,20 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     httpGet.addHeader("Accept", "application/json")
     if (this.provider.getConfigMap.get("authorEnable").asInstanceOf[Boolean])
       httpGet.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + getAuthorizationStr)
-    val response = YarnResourceRequester.httpClient.execute(httpGet)
-    parse(EntityUtils.toString(response.getEntity()))
+    var httpResponse: HttpResponse = null
+    if(this.provider.getConfigMap.get("kerberosEnable") != null
+      && this.provider.getConfigMap.get("kerberosEnable").asInstanceOf[Boolean]){
+      val principalName = this.provider.getConfigMap.get("principalName").asInstanceOf[String]
+      val keytabPath = this.provider.getConfigMap.get("keytabPath").asInstanceOf[String]
+      val krb5Path = this.provider.getConfigMap.get("krb5Path").asInstanceOf[String]
+      val requestKuu = new RequestKerberosUrlUtils(principalName,keytabPath,krb5Path,false)
+      val response = requestKuu.callRestUrl(rmWebAddress + "/ws/v1/cluster/" + url,principalName)
+      httpResponse = response
+    }else {
+      val response = YarnResourceRequester.httpClient.execute(httpGet)
+      httpResponse = response
+    }
+    parse(EntityUtils.toString(httpResponse.getEntity()))
   }
 }
 object YarnResourceRequester extends Logging {

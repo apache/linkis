@@ -229,6 +229,13 @@ if [ "$YARN_RESTFUL_URL" != "" ]
 then
   sed -i ${txt}  "s#@YARN_RESTFUL_URL#$YARN_RESTFUL_URL#g" $LINKIS_HOME/db/linkis_dml.sql
 fi
+if [ "$KERBEROS_ENABLE" != "" ]
+then
+  sed -i ${txt}  "s#@KERBEROS_ENABLE#$KERBEROS_ENABLE#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@PRINCIPAL_NAME#$PRINCIPAL_NAME#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@KEYTAB_PATH#$KEYTAB_PATH#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@KRB5_PATH#$KRB5_PATH#g" $LINKIS_HOME/db/linkis_dml.sql
+fi
 
 common_conf=$LINKIS_HOME/conf/linkis.properties
 SERVER_IP=$local_host

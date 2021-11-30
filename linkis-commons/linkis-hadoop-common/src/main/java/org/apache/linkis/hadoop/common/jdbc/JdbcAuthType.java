@@ -17,9 +17,6 @@
 
 package org.apache.linkis.hadoop.common.jdbc;
 
-/**
- * @author leojie 2021/11/30 8:48 下午
- */
 public enum JdbcAuthType {
     /**
      * the auth type of jdbc

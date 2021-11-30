@@ -23,9 +23,6 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author leojie 2021/11/30 9:03 下午
- */
 public class TestConnectionManager {
     public static void main(String[] args) throws Exception {
 //        Pattern pattern = Pattern.compile("^(jdbc:\\w+://\\S+:[0-9]+)\\s*");

@@ -17,6 +17,8 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc;
 
+import org.apache.linkis.hadoop.common.jdbc.JdbcAuthType;
+import static org.apache.linkis.hadoop.common.jdbc.JdbcAuthType.*;
 import org.apache.linkis.hadoop.common.utils.KerberosUtils;
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -35,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+
 public class ConnectionManager {
 
     Logger logger = LoggerFactory.getLogger(ConnectionManager.class);
@@ -47,9 +50,6 @@ public class ConnectionManager {
     private volatile static ConnectionManager connectionManager;
     private ScheduledExecutorService scheduledExecutorService;
     private Integer kinitFailCount = 0;
-    private static final String KERBEROS_AUTH_TYPE = "KERBEROS";
-    private static final String SIMPLE_AUTH_TYPE = "SIMPLE";
-    private static final String USERNAME_AUTH_TYPE = "USERNAME";
 
     private ConnectionManager() {
     }
@@ -153,19 +153,19 @@ public class ConnectionManager {
     public Connection getConnection(Map<String, String> properties) throws SQLException {
         String url = getJdbcUrl(properties);
         logger.info("jdbc is {}", url);
-        String jdbcAuthType = getJdbcAuthType(properties);
+        JdbcAuthType jdbcAuthType = getJdbcAuthType(properties);
         Connection connection = null;
         switch (jdbcAuthType) {
-            case SIMPLE_AUTH_TYPE:
+            case SIMPLE:
                 connection = getConnection(url, properties);
                 break;
-            case KERBEROS_AUTH_TYPE:
+            case KERBEROS:
                 final String keytab = properties.get("jdbc.keytab.location");
                 final String principal = properties.get("jdbc.principal");
                 KerberosUtils.createKerberosSecureConfiguration(keytab, principal);
                 connection = getConnection(url, properties);
                 break;
-            case USERNAME_AUTH_TYPE:
+            case USERNAME:
                 if (StringUtils.isEmpty(properties.get("jdbc.username"))) {
                     throw new SQLException("jdbc.username is not empty.");
                 }
@@ -215,15 +215,16 @@ public class ConnectionManager {
     }
 
     private boolean isUsernameAuthType(Map<String, String> properties) {
-        return USERNAME_AUTH_TYPE.equals(getJdbcAuthType(properties));
+        return USERNAME == getJdbcAuthType(properties);
     }
 
-    private boolean isKerberosAuthType(Map<String, String> properties) {
-        return KERBEROS_AUTH_TYPE.equals(getJdbcAuthType(properties));
+    public boolean isKerberosAuthType(Map<String, String> properties) {
+        return KERBEROS == getJdbcAuthType(properties);
     }
 
-    private String getJdbcAuthType(Map<String, String> properties) {
-        return properties.getOrDefault("jdbc.auth.type", USERNAME_AUTH_TYPE).trim().toUpperCase();
+    private JdbcAuthType getJdbcAuthType(Map<String, String> properties) {
+        String authType = properties.getOrDefault("jdbc.auth.type", USERNAME.getAuthType()).trim().toUpperCase();
+        return of(authType);
     }
 
     public ScheduledExecutorService startRefreshKerberosLoginStatusThread() {
@@ -265,62 +266,5 @@ public class ConnectionManager {
             return url.substring(1, url.length() - 1);
         }
         return url;
-    }
-
-    public static void main(String[] args) throws Exception {
-//        Pattern pattern = Pattern.compile("^(jdbc:\\w+://\\S+:[0-9]+)\\s*");
-      /*  String url = "jdbc:mysql://xxx.xxx.xxx.xxx:8504/xx?useUnicode=true&amp;characterEncoding=UTF-8&amp;createDatabaseIfNotExist=true";
-        Properties properties = new Properties();
-        properties.put("driverClassName", "org.apache.hive.jdbc.HiveDriver");
-        properties.put("url", "jdbc:hive2://xxx.xxx.xxx.xxx:10000/");
-        properties.put("username", "username");
-        properties.put("password", "*****");
-        properties.put("maxIdle", 20);
-        properties.put("minIdle", 0);
-        properties.put("initialSize", 1);
-        properties.put("testOnBorrow", false);
-        properties.put("testWhileIdle", true);
-        properties.put("validationQuery", "select 1");
-        properties.put("initialSize", 1);
-        BasicDataSource dataSource = (BasicDataSource) BasicDataSourceFactory.createDataSource(properties);
-        Connection conn = dataSource.getConnection();
-        Statement statement = conn.createStatement();
-        ResultSet rs = statement.executeQuery("show tables");
-        while (rs.next()) {
-            System.out.println(rs.getObject(1));
-        }
-        rs.close();
-        statement.close();
-        conn.close();
-        dataSource.close();*/
-        // export LINKIS_JDBC_KERBEROS_REFRESH_INTERVAL=10000
-        System.out.println("starting ......");
-        Map<String, String> properties = new HashMap<>(8);
-        properties.put("driverClassName", args[0]);
-        properties.put("jdbc.user", args[1]);
-        properties.put("jdbc.url", args[2]);
-        properties.put("jdbc.username", args[3]);
-        properties.put("jdbc.password", args[4]);
-        properties.put("jdbc.auth.type", args[5]);
-        properties.put("jdbc.principal", args[6]);
-        properties.put("jdbc.keytab.location", args[7]);
-        properties.put("jdbc.proxy.user.property", "hive.server2.proxy.user");
-        ConnectionManager connectionManager = ConnectionManager.getInstance();
-        connectionManager.startRefreshKerberosLoginStatusThread();
-        for (int i = 0; i < 200000; i++) {
-            Connection conn = connectionManager.getConnection(properties);
-            Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery(args[8]);
-            while (rs.next()) {
-                System.out.println(rs.getObject(1));
-            }
-            rs.close();
-            statement.close();
-            conn.close();
-            Thread.sleep(100000);
-        }
-
-
-        System.out.println("end .......");
     }
 }

@@ -122,13 +122,13 @@ public class ConnectionManager {
         props.put("validationQuery", "show databases;");
 
         if (isKerberosAuthType(properties)) {
-            String user = properties.get("jdbc.user");
-            // 如果需要代理用户
+            String jdbcProxyUser = properties.get("jdbc.proxy.user");
+            // need proxy user
             String proxyUserProperty = properties.get("jdbc.proxy.user.property");
             if (StringUtils.isNotBlank(proxyUserProperty)) {
-                url = url.concat(";").concat(proxyUserProperty + "=" + user);
+                url = url.concat(";").concat(proxyUserProperty + "=" + jdbcProxyUser);
                 props.put("url", url);
-                logger.info(String.format("Try to Create a new %s JDBC DBCP with url(%s), kerberos, proxyUser(%s).", dbType, url, user));
+                logger.info(String.format("Try to Create a new %s JDBC DBCP with url(%s), kerberos, proxyUser(%s).", dbType, url, jdbcProxyUser));
             } else {
                 logger.info(String.format("Try to Create a new %s JDBC DBCP with url(%s), kerberos.", dbType, url));
             }

@@ -20,7 +20,6 @@ package org.apache.linkis.engineconnplugin.flink.executor
 import java.io.Closeable
 import java.util
 import java.util.concurrent.TimeUnit
-
 import org.apache.calcite.rel.metadata.{JaninoRelMetadataProvider, RelMetadataQueryBase}
 import org.apache.flink.api.common.JobStatus._
 import org.apache.flink.table.planner.plan.metadata.FlinkDefaultRelMetadataProvider
@@ -29,6 +28,7 @@ import org.apache.hadoop.yarn.util.ConverterUtils
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconnplugin.flink.client.deployment.{ClusterDescriptorAdapterFactory, YarnSessionClusterDescriptorAdapter}
+import org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl.InsertOperation
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultKind
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.{AbstractJobOperation, JobOperation, OperationFactory}
 import org.apache.linkis.engineconnplugin.flink.client.sql.parser.SqlCommandParser
@@ -95,6 +95,15 @@ class FlinkSQLComputationExecutor(id: Long,
         new SuccessExecuteResponse
       case _ =>
         operation match {
+          case jobOperation: InsertOperation =>
+            val jobId = jobOperation.transformToJobInfo(resultSet)
+            setJobID(jobId.toHexString)
+            setYarnMode("client")
+            jobOperation.getFlinkStatusListeners.get(0) match {
+              case listener: FlinkSQLStatusListener =>
+                return listener.getResponse
+              case _ =>
+            }
           case jobOperation: AbstractJobOperation =>
             val jobId = jobOperation.transformToJobInfo(resultSet)
             setJobID(jobId.toHexString)

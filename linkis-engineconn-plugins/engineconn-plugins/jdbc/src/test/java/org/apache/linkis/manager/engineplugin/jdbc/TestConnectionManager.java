@@ -54,13 +54,13 @@ public class TestConnectionManager {
 
         Map<String, String> properties = new HashMap<>(8);
         properties.put("driverClassName", args[0]);
-        properties.put("jdbc.user", args[1]);
-        properties.put("jdbc.url", args[2]);
-        properties.put("jdbc.username", args[3]);
-        properties.put("jdbc.password", args[4]);
-        properties.put("jdbc.auth.type", args[5]);
-        properties.put("jdbc.principal", args[6]);
-        properties.put("jdbc.keytab.location", args[7]);
+        properties.put("jdbc.url", args[1]);
+        properties.put("jdbc.username", args[2]);
+        properties.put("jdbc.password", args[3]);
+        properties.put("jdbc.auth.type", args[4]);
+        properties.put("jdbc.principal", args[5]);
+        properties.put("jdbc.keytab.location", args[6]);
+        properties.put("jdbc.proxy.user", args[7]);
         properties.put("jdbc.proxy.user.property", "hive.server2.proxy.user");
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.startRefreshKerberosLoginStatusThread();

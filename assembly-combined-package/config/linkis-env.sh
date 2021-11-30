@@ -54,6 +54,13 @@ HIVE_META_PASSWORD=""
 ##YARN REST URL  spark engine required
 YARN_RESTFUL_URL=http://127.0.0.1:8088
 
+## request spnego enabled Yarn resource restful interface When Yarn enable kerberos
+## If your environment yarn interface can be accessed directly, ignore it
+#KERBEROS_ENABLE=true
+#PRINCIPAL_NAME=yarn
+#KEYTAB_PATH=/etc/security/keytabs/yarn.keytab
+#KRB5_PATH=/etc/krb5.conf
+
 ###HADOOP CONF DIR
 HADOOP_CONF_DIR=/appcom/config/hadoop-config
 

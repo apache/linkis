@@ -23,11 +23,11 @@ public class PythonImageJavaClientTest {
     public static void main(String[] args) {
 
         String user = "hadoop";
-        String gatewayIp = "127.0.0.1";
+        String gatewayIp = "127.0.0.1:9001";
         String password = "hadoop";
 
         /**
-         * python matplotlib 画图样例
+         * python matplotlib
          */
         String executeCode = "import numpy as np\n" +
                 "import matplotlib.pyplot as plt\n" +
@@ -49,7 +49,7 @@ public class PythonImageJavaClientTest {
                 "show.show_matplotlib(plt)";
 
         /**
-         * pyspark 代码样例
+         * pyspark
          */
         String pysparkExecuteCode = "from pyspark.sql import Row\n" +
                 "from pyspark.sql import HiveContext\n" +
@@ -75,66 +75,68 @@ public class PythonImageJavaClientTest {
 
 
 
-        // 1. 配置ClientBuilder，获取ClientConfig
+        // 1. ClientBuilder，get ClientConfig
         DWSClientConfig clientConfig = ((DWSClientConfigBuilder) (DWSClientConfigBuilder.newBuilder()
-                .addServerUrl("http://" + gatewayIp + ":9001")  //指定ServerUrl，linkis服务器端网关的地址,如http://{ip}:{port}
-                .connectionTimeout(30000)   //connectionTimeOut 客户端连接超时时间
-                .discoveryEnabled(false).discoveryFrequency(1, TimeUnit.MINUTES)  //是否启用注册发现，如果启用，会自动发现新启动的Gateway
-                .loadbalancerEnabled(true)  // 是否启用负载均衡，如果不启用注册发现，则负载均衡没有意义
-                .maxConnectionSize(5)   //指定最大连接数，即最大并发数
-                .retryEnabled(false).readTimeout(30000)   //执行失败，是否允许重试
-                .setAuthenticationStrategy(new StaticAuthenticationStrategy())   //AuthenticationStrategy Linkis认证方式
-                .setAuthTokenKey(user).setAuthTokenValue(password)))  //认证key，一般为用户名;  认证value，一般为用户名对应的密码
-                .setDWSVersion("v1").build();  //linkis后台协议的版本，当前版本为v1
+                .addServerUrl("http://" + gatewayIp)  
+                .connectionTimeout(30000)   
+                .discoveryEnabled(false).discoveryFrequency(1, TimeUnit.MINUTES)  
+                .loadbalancerEnabled(true)  
+                .maxConnectionSize(5)  
+                .retryEnabled(false).readTimeout(30000)   
+                .setAuthenticationStrategy(new StaticAuthenticationStrategy())   
+                .setAuthTokenKey(user).setAuthTokenValue(password)))  
+                .setDWSVersion("v1").build();  
 
-        // 2. 通过DWSClientConfig获取一个UJESClient
+        
         UJESClient client = new UJESClientImpl(clientConfig);
 
         try {
-            // 3. 开始执行代码
+            
             System.out.println("user : " + user + ", code : [" + executeCode + "]");
             Map<String, Object> startupMap = new HashMap<String, Object>();
-            // 在startupMap可以存放多种启动参数，参见linkis管理台配置
+            
             startupMap.put("wds.linkis.yarnqueue", "q02");
-            //指定Label
+            
             Map<String, Object> labels = new HashMap<String, Object>();
-            //添加本次执行所依赖的的标签:EngineTypeLabel/UserCreatorLabel/EngineRunTypeLabel
+            
+
             labels.put(LabelKeyConstant.ENGINE_TYPE_KEY, "python-python2");
             labels.put(LabelKeyConstant.USER_CREATOR_TYPE_KEY, user + "-IDE");
             labels.put(LabelKeyConstant.CODE_TYPE_KEY, "python");
-            //指定source
+            
+
             Map<String, Object> source = new HashMap<String, Object>();
             source.put(TaskConstant.SCRIPTPATH, "LinkisClient-test");
             JobExecuteResult jobExecuteResult = client.submit(JobSubmitAction.builder()
                     .addExecuteCode(executeCode)
                     .setStartupParams(startupMap)
-                    .setUser(user)//Job提交用户
-                    .addExecuteUser(user)//实际执行用户
+                    .setUser(user)
+                    .addExecuteUser(user)
                     .setLabels(labels)
                     .setSource(source)
                     .build()
             );
             System.out.println("execId: " + jobExecuteResult.getExecID() + ", taskId: " + jobExecuteResult.taskID());
 
-            // 4. 获取脚本的执行状态
+            
             JobInfoResult jobInfoResult = client.getJobInfo(jobExecuteResult);
             int sleepTimeMills = 1000;
             while (!jobInfoResult.isCompleted()) {
-                // 5. 获取脚本的执行进度
+                
                 JobProgressResult progress = client.progress(jobExecuteResult);
                 Utils.sleepQuietly(sleepTimeMills);
                 jobInfoResult = client.getJobInfo(jobExecuteResult);
             }
 
-            // 6. 获取脚本的Job信息
+            
             JobInfoResult jobInfo = client.getJobInfo(jobExecuteResult);
-            // 7. 获取结果集列表（如果用户一次提交多个SQL，会产生多个结果集）
+            
             String resultSet = jobInfo.getResultSetList(client)[0];
-            // 8. 通过一个结果集信息，获取具体的结果集
+            
             Object fileContents = client.resultSet(ResultSetAction.builder().setPath(resultSet).setUser(jobExecuteResult.getUser()).build()).getFileContent();
             System.out.println("fileContents: " + fileContents);
 
-            // 将 fileContents 中的图片打印出来
+            //  fileContents to image
             ShowImage.showImage(fileContents, 1000, 1000);
 
         } catch (Exception e) {

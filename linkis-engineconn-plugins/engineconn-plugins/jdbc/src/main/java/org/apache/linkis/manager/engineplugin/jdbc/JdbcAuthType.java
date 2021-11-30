@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.hadoop.common.jdbc;
+package org.apache.linkis.manager.engineplugin.jdbc;
 
 public enum JdbcAuthType {
     /**

@@ -53,11 +53,6 @@ public class TestConnectionManager {
         // export LINKIS_JDBC_KERBEROS_REFRESH_INTERVAL=10000
 
         Map<String, String> properties = new HashMap<>(8);
-        properties.put("jdbc.auth.type", "KERBEROS");
-        ConnectionManager connectionManager = ConnectionManager.getInstance();
-        System.out.println(connectionManager.isKerberosAuthType(properties));
-
-
         properties.put("driverClassName", args[0]);
         properties.put("jdbc.user", args[1]);
         properties.put("jdbc.url", args[2]);
@@ -67,6 +62,7 @@ public class TestConnectionManager {
         properties.put("jdbc.principal", args[6]);
         properties.put("jdbc.keytab.location", args[7]);
         properties.put("jdbc.proxy.user.property", "hive.server2.proxy.user");
+        ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.startRefreshKerberosLoginStatusThread();
         for (int i = 0; i < 200000; i++) {
             Connection conn = connectionManager.getConnection(properties);

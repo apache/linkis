@@ -17,8 +17,6 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc;
 
-import org.apache.linkis.hadoop.common.jdbc.JdbcAuthType;
-import static org.apache.linkis.hadoop.common.jdbc.JdbcAuthType.*;
 import org.apache.linkis.hadoop.common.utils.KerberosUtils;
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -35,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType.*;
 
 
 public class ConnectionManager {
@@ -217,7 +216,7 @@ public class ConnectionManager {
         return USERNAME == getJdbcAuthType(properties);
     }
 
-    public boolean isKerberosAuthType(Map<String, String> properties) {
+    private boolean isKerberosAuthType(Map<String, String> properties) {
         return KERBEROS == getJdbcAuthType(properties);
     }
 

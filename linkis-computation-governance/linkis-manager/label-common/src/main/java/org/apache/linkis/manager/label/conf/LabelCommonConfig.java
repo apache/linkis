@@ -54,5 +54,8 @@ public class LabelCommonConfig {
     public final static CommonVars<String> ENGINE_CONN_MANAGER_SPRING_NAME = CommonVars.apply("wds.linkis.engineconn.manager.name", "linkis-cg-engineconnmanager");
 
     public final static CommonVars<String> ENGINE_CONN_SPRING_NAME = CommonVars.apply("wds.linkis.engineconn.name", "linkis-cg-engineconn");
+
+    public final static CommonVars<String> SQOOP_ENGINE_VERSION = CommonVars.apply("wds.linkis.sqoop.engine.version", "1.4.7");
+
 }
 

@@ -21,11 +21,10 @@ package org.apache.linkis.manager.engineplugin.common.launch.process
 import java.io.File
 import java.nio.file.Paths
 import java.util
-
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.protocol.bml.BmlResource
 import org.apache.linkis.manager.engineplugin.common.conf.{EngineConnPluginConf, EnvConfiguration}
-import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration.LINKIS_PUBLIC_MODULE_PATH
+import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration.{HADOOP_LIB_CLASSPATH, HBASE_LIB_CLASSPATH, LINKIS_PUBLIC_MODULE_PATH}
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnBuildFailedException
 import org.apache.linkis.manager.engineplugin.common.launch.entity.{EngineConnBuildRequest, RicherEngineConnBuildRequest}
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{variable, _}
@@ -41,6 +40,8 @@ import scala.collection.mutable.ArrayBuffer
 abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunchBuilder with Logging {
 
   private var engineConnResourceGenerator: EngineConnResourceGenerator = _
+  protected def ifAddHadoopClassPath: Boolean = false
+  protected def ifAddHbaseClassPath: Boolean = false
 
   def setEngineConnResourceGenerator(engineConnResourceGenerator: EngineConnResourceGenerator): Unit =
     this.engineConnResourceGenerator = engineConnResourceGenerator
@@ -82,6 +83,12 @@ abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunc
       addPathToClassPath(environment, variable(HADOOP_CONF_DIR))
       addPathToClassPath(environment, variable(HIVE_CONF_DIR))
     }
+    if(ifAddHadoopClassPath){
+      addPathToClassPath(environment,HADOOP_LIB_CLASSPATH.getValue)
+    }
+    if(ifAddHbaseClassPath){
+      addPathToClassPath(environment,HBASE_LIB_CLASSPATH.getValue)
+    }
 //    addPathToClassPath(environment, variable(PWD))
     // first, add engineconn conf dirs.
     addPathToClassPath(environment, Seq(variable(PWD), ENGINE_CONN_CONF_DIR_NAME))
@@ -94,11 +101,11 @@ abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunc
     // finally, add the suitable properties key to classpath
     engineConnBuildRequest.engineConnCreationDesc.properties.foreach { case (key, value) =>
       if (key.startsWith("engineconn.classpath") || key.startsWith("wds.linkis.engineconn.classpath")) {
-        addPathToClassPath(environment, Seq(variable(PWD), new File(value).getName))
+        addPathToClassPath(environment, value)
       }
     }
     getExtraClassPathFile.foreach { file: String =>
-      addPathToClassPath(environment, Seq(variable(PWD), new File(file).getName))
+      addPathToClassPath(environment, file)
     }
     engineConnBuildRequest match {
       case richer: RicherEngineConnBuildRequest =>

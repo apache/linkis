@@ -212,20 +212,32 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
   private def getResponseByUrl(url: String, rmWebAddress: String) = {
     val httpGet = new HttpGet(rmWebAddress + "/ws/v1/cluster/" + url)
     httpGet.addHeader("Accept", "application/json")
-    if (this.provider.getConfigMap.get("authorEnable").asInstanceOf[Boolean])
-      httpGet.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + getAuthorizationStr)
+    val authorEnable=this.provider.getConfigMap.get("authorEnable");
     var httpResponse: HttpResponse = null
-    if(this.provider.getConfigMap.get("kerberosEnable") != null
-      && this.provider.getConfigMap.get("kerberosEnable").asInstanceOf[Boolean]){
-      val principalName = this.provider.getConfigMap.get("principalName").asInstanceOf[String]
-      val keytabPath = this.provider.getConfigMap.get("keytabPath").asInstanceOf[String]
-      val krb5Path = this.provider.getConfigMap.get("krb5Path").asInstanceOf[String]
-      val requestKuu = new RequestKerberosUrlUtils(principalName,keytabPath,krb5Path,false)
-      val response = requestKuu.callRestUrl(rmWebAddress + "/ws/v1/cluster/" + url,principalName)
-      httpResponse = response
-    }else {
-      val response = YarnResourceRequester.httpClient.execute(httpGet)
-      httpResponse = response
+    authorEnable match {
+      case Boolean =>
+        if(authorEnable.asInstanceOf[Boolean]){
+          httpGet.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + getAuthorizationStr)
+        }
+      case _ =>
+    }
+    val kerberosEnable =this.provider.getConfigMap.get("kerberosEnable");
+    kerberosEnable match {
+      case Boolean =>
+        if(kerberosEnable.asInstanceOf[Boolean]){
+          val principalName = this.provider.getConfigMap.get("principalName").asInstanceOf[String]
+          val keytabPath = this.provider.getConfigMap.get("keytabPath").asInstanceOf[String]
+          val krb5Path = this.provider.getConfigMap.get("krb5Path").asInstanceOf[String]
+          val requestKuu = new RequestKerberosUrlUtils(principalName,keytabPath,krb5Path,false)
+          val response = requestKuu.callRestUrl(rmWebAddress + "/ws/v1/cluster/" + url,principalName)
+          httpResponse = response;
+        }else{
+          val response = YarnResourceRequester.httpClient.execute(httpGet)
+          httpResponse = response
+        }
+      case _ =>
+        val response = YarnResourceRequester.httpClient.execute(httpGet)
+        httpResponse = response
     }
     parse(EntityUtils.toString(httpResponse.getEntity()))
   }

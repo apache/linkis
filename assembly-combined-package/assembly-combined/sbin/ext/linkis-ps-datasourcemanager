@@ -9,7 +9,7 @@ export SERVER_SUFFIX="linkis-public-enhancements/linkis-ps-datasourcemanager"
 
 #export DEBUG_PORT=
 
-export SERVER_CLASS=com.webank.wedatasphere.linkis.datasourcemanager.core.LinkisDataSourceManagerApplication
+export SERVER_CLASS=org.apache.linkis.datasourcemanager.core.LinkisDataSourceManagerApplication
 
 export COMMON_START_BIN=$LINKIS_HOME/sbin/ext/linkis-common-start
 if [[ ! -f "${COMMON_START_BIN}" ]]; then

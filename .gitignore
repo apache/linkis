@@ -2,7 +2,6 @@
 .idea
 .DS_Store
 
-
 out/
 linkis.ipr
 linkis.iws
@@ -34,6 +33,9 @@ linkis-computation-governance/linkis-engineconn/linkis-engineconn-executor/acces
 linkis-computation-governance/linkis-engineconn/linkis-engineconn-executor/callback-service/target/
 linkis-computation-governance/linkis-engineconn/linkis-engineconn-executor/executor-core/target/
 linkis-computation-governance/linkis-engineconn/linkis-engineconn-executor/resource-executor/target/
+linkis-computation-governance/linkis-engineconn/linkis-clustered-engineconn/linkis-once-engineconn/target/
+linkis-computation-governance/linkis-engineconn/linkis-engineconn-core/target/
+
 linkis-computation-governance/linkis-entrance-client/target/
 linkis-computation-governance/linkis-entrance/target/
 linkis-computation-governance/linkis-manager/label-common/target/
@@ -45,8 +47,6 @@ linkis-computation-governance/linkis-manager/linkis-manager-commons/linkis-resou
 linkis-computation-governance/linkis-manager/linkis-manager-monitor/target/
 linkis-computation-governance/linkis-manager/linkis-manager-persistence/target/
 linkis-computation-governance/linkis-manager/linkis-resource-manager/target/
-
-
 
 linkis-public-enhancements/linkis-bml/linkis-bml-client/target/
 linkis-public-enhancements/linkis-bml/linkis-bml-common/target/
@@ -78,16 +78,20 @@ linkis-public-enhancements/linkis-publicService/linkis-script-dev/linkis-storage
 linkis-public-enhancements/linkis-publicService/linkis-udf/target/
 linkis-public-enhancements/linkis-publicService/linkis-variable/target/
 linkis-public-enhancements/linkis-publicService/target/
-
+linkis-public-enhancements/linkis-publicservice/linkis-error-code/linkis-error-code-client/target/
+linkis-public-enhancements/linkis-publicservice/linkis-error-code/linkis-error-code-common/target/
+linkis-public-enhancements/linkis-publicservice/linkis-error-code/linkis-error-code-server/target/
+linkis-public-enhancements/linkis-publicservice/linkis-instance-label/linkis-instance-label-client/target/
+linkis-public-enhancements/linkis-publicservice/linkis-instance-label/linkis-instance-label-server/target/
+linkis-public-enhancements/linkis-publicservice/linkis-udf/linkis-udf-client/target/
+linkis-public-enhancements/linkis-publicservice/linkis-udf/linkis-udf-common/target/
+linkis-public-enhancements/linkis-publicservice/linkis-udf/linkis-udf-service/target/
 
 linkis-spring-cloud-services/linkis-service-discovery/linkis-eureka/target/
 linkis-spring-cloud-services/linkis-service-gateway/linkis-gateway-core/target/
 linkis-spring-cloud-services/linkis-service-gateway/linkis-gateway-httpclient-support/target/
 linkis-spring-cloud-services/linkis-service-gateway/linkis-gateway-server-support/target/
 linkis-spring-cloud-services/linkis-service-gateway/linkis-spring-cloud-gateway/target/
-
-
-
 
 linkis-engineconn-plugins/linkis-engineconn-plugin-framework/linkis-engineconn-plugin-cache/target/
 linkis-engineconn-plugins/linkis-engineconn-plugin-framework/linkis-engineconn-plugin-core/target/
@@ -100,10 +104,17 @@ linkis-engineconn-plugins/engineconn-plugins/python/target/
 linkis-engineconn-plugins/engineconn-plugins/spark/target/
 linkis-engineconn-plugins/engineconn-plugins/pipeline/target/
 linkis-engineconn-plugins/engineconn-plugins/shell/target/
+linkis-engineconn-plugins/engineconn-plugins/flink/target/
 
 linkis-orchestrator/plugin/linkis-orchestrator-ecm-plugin/target/
+linkis-orchestrator/linkis-code-orchestrator/target/
+linkis-orchestrator/linkis-computation-orchestrator/target/
+linkis-orchestrator/linkis-orchestrator-core/target/
 
 assembly/target
 assembly/public-module/target/
+assembly-combined-package/assembly-combined/public-module-combined/target/
+assembly-combined-package/assembly-combined/target/
+assembly-combined-package/target/
 
-
+linkis-extensions/linkis-io-file-client/target/

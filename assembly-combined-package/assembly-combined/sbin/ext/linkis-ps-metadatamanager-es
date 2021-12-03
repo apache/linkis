@@ -9,7 +9,7 @@ export SERVER_SUFFIX="linkis-public-enhancements/linkis-ps-metadatamanager-es"
 
 #export DEBUG_PORT=
 
-export SERVER_CLASS=com.webank.wedatasphere.linkis.metadatamanager.LinkisMetadataManagerEsApplication
+export SERVER_CLASS=org.apache.linkis.metadatamanager.LinkisMetadataManagerEsApplication
 
 export COMMON_START_BIN=$LINKIS_HOME/sbin/ext/linkis-common-start
 if [[ ! -f "${COMMON_START_BIN}" ]]; then

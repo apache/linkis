@@ -9,7 +9,7 @@ export SERVER_SUFFIX="linkis-public-enhancements/linkis-ps-metadatamanager-hive"
 
 #export DEBUG_PORT=
 
-export SERVER_CLASS=com.webank.wedatasphere.linkis.metadatamanager.LinkisMetadataManagerHiveApplication
+export SERVER_CLASS=org.apache.linkis.metadatamanager.LinkisMetadataManagerHiveApplication
 
 export COMMON_START_BIN=$LINKIS_HOME/sbin/ext/linkis-common-start
 if [[ ! -f "${COMMON_START_BIN}" ]]; then

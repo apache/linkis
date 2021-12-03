@@ -23,6 +23,7 @@ SET @HIVE_LABEL="hive-2.3.3";
 SET @PYTHON_LABEL="python-python2";
 SET @PIPELINE_LABEL="pipeline-*";
 SET @JDBC_LABEL="jdbc-4";
+set @KERBEROS_ENABLE=false;
 
 -- 衍生变量：
 SET @SPARK_ALL=CONCAT('*-*,',@SPARK_LABEL);

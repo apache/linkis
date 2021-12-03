@@ -136,7 +136,7 @@
         </executions>
         <configuration>
           <skipAssembly>false</skipAssembly>
-          <finalName>out</finalName>
+          <finalName>linkis-mdm-service-hive</finalName>
           <appendAssemblyId>false</appendAssemblyId>
           <attach>false</attach>
           <descriptors>

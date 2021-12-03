@@ -184,22 +184,8 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             } else {
                 List<Map<String, Object>> list = new ArrayList<>();
                 for (JobProgressInfo jobProgressInfo : jobProgressInfos) {
-                    if ("true".equals(EntranceConfiguration.PROGRESS_PUSH().getValue())) {
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("id", jobProgressInfo.id());
-                        map.put("succeedTasks", jobProgressInfo.succeedTasks());
-                        map.put("failedTasks", jobProgressInfo.failedTasks());
-                        map.put("runningTasks", jobProgressInfo.runningTasks());
-                        map.put("totalTasks", jobProgressInfo.totalTasks());
-                        list.add(map);
-                    } else if (jobProgressInfo.failedTasks() > 0 || jobProgressInfo.runningTasks() > 0) {
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("id", jobProgressInfo.id());
-                        map.put("succeedTasks", jobProgressInfo.succeedTasks());
-                        map.put("failedTasks", jobProgressInfo.failedTasks());
-                        map.put("runningTasks", jobProgressInfo.runningTasks());
-                        map.put("totalTasks", jobProgressInfo.totalTasks());
-                        list.add(map);
+                    if ("true".equals(EntranceConfiguration.PROGRESS_PUSH().getValue()) || jobProgressInfo.totalTasks() > 0) {
+                        setJobProgressInfos(list, jobProgressInfo);
                     }
                 }
                 message = Message.ok();
@@ -213,6 +199,15 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return message;
     }
 
+    private void setJobProgressInfos(List<Map<String, Object>> list, JobProgressInfo jobProgressInfo) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", jobProgressInfo.id());
+        map.put("succeedTasks", jobProgressInfo.succeedTasks());
+        map.put("failedTasks", jobProgressInfo.failedTasks());
+        map.put("runningTasks", jobProgressInfo.runningTasks());
+        map.put("totalTasks", jobProgressInfo.totalTasks());
+        list.add(map);
+    }
   
     @RequestMapping(path = "/{id}/log",method = RequestMethod.GET)
     public Message log(HttpServletRequest req, @PathVariable("id") String id) {

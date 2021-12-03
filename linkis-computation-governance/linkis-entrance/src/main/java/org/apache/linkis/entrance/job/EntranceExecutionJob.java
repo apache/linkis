@@ -361,11 +361,15 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
         return progress;
     }
 
+    /**
+     *  // The front end needs to obtain data
+     *  //if (EntranceJob.JOB_COMPLETED_PROGRESS() == getProgress()) {
+     *  //    return new JobProgressInfo[0];
+     *  //}
+     * @return
+     */
     @Override
     public JobProgressInfo[] getProgressInfo() {
-        if (EntranceJob.JOB_COMPLETED_PROGRESS() == getProgress()) {
-            return new JobProgressInfo[0];
-        }
         SubJobInfo[] subJobInfoArray = getJobGroups();
         if(subJobInfoArray.length > 0){
             List<JobProgressInfo> progressInfoList = new ArrayList<>();

@@ -14,16 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.datasourcemanager.core.service;
 
+import com.github.pagehelper.PageInfo;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv;
+import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
+import org.apache.linkis.datasourcemanager.common.domain.DatasourceVersion;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface DataSourceInfoService {
 
@@ -41,20 +45,25 @@ public interface DataSourceInfoService {
     void addEnvParamsToDataSource(Long dataSourceEnvId, DataSource dataSource);
 
     /**
-     * Get data source
+     * Get data source for current version
      * @param dataSourceId id
-     * @param createSystem system name
      * @return data source entity
      */
-    DataSource getDataSourceInfo(Long dataSourceId, String createSystem);
+    DataSource getDataSourceInfo(Long dataSourceId);
+
+    /**
+     * Get data source
+     * @param dataSourceId id
+     * @return data source entity
+     */
+    DataSource getDataSourceInfo(Long dataSourceId, Long version);
 
     /**
      * Get data source brief information
      * @param dataSourceId data source id
-     * @param createSystem system
      * @return
      */
-    DataSource getDataSourceInfoBrief(Long dataSourceId, String createSystem);
+    DataSource getDataSourceInfoBrief(Long dataSourceId);
     /**
      * Remove data source
      * @param dataSourceId id
@@ -66,16 +75,15 @@ public interface DataSourceInfoService {
     /**
      * Update data source
      * @param updatedOne updated data source
-     * @param storedOne stored data source
      */
-    void updateDataSourceInfo(DataSource updatedOne, DataSource storedOne) throws ErrorException;
+    void updateDataSourceInfo(DataSource updatedOne) throws ErrorException;
 
     /**
      * Page query of data source
      * @param dataSourceVo data source view entity
      * @return
      */
-    List<DataSource> queryDataSourceInfoPage(DataSourceVo dataSourceVo);
+    PageInfo<DataSource> queryDataSourceInfoPage(DataSourceVo dataSourceVo);
 
     /**
      * Save data source environment
@@ -117,4 +125,59 @@ public interface DataSourceInfoService {
      * @return
      */
     List<DataSourceEnv> queryDataSourceEnvPage(DataSourceEnvVo dataSourceEnvVo);
+
+    /**
+     * exoire data source
+     * @param dataSourceId
+     * @return
+     */
+    Long expireDataSource(Long dataSourceId);
+
+    /**
+     * publish datasource by id
+     * @param dataSourceId
+     * @Param versionId
+     * @return
+     */
+    int publishByDataSourceId(Long dataSourceId, Long versionId);
+
+    /**
+     * insert a datasource parameter, return new version
+     *
+     * @param keyDefinitionList
+     * @param datasourceId
+     * @param connectParams
+     * @param comment
+     * @Param username
+     * @return
+     */
+    long insertDataSourceParameter(List<DataSourceParamKeyDefinition> keyDefinitionList, Long datasourceId, Map<String, Object> connectParams, String username, String comment) throws ErrorException;
+
+    /**
+     * get datasource version list
+     * @param datasourceId
+     * @return
+     */
+    List<DatasourceVersion> getVersionList(Long datasourceId);
+
+    /**
+     * get datasource info for connect for published version, if there is a dependency environment,
+     * merge datasource parameter and environment parameter.
+     *
+     * @param dataSourceId
+     * @return
+     */
+    DataSource getDataSourceInfoForConnect(Long dataSourceId);
+
+    /**
+     * get datasource info for connect, if there is a dependency environment,
+     * merge datasource parameter and environment parameter.
+     *
+     * @param dataSourceId
+     * @param version
+     * @return
+     */
+    DataSource getDataSourceInfoForConnect(Long dataSourceId, Long version);
+
+
 }

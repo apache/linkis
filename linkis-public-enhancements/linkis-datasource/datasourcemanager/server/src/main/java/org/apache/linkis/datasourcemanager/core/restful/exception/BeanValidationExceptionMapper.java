@@ -21,21 +21,17 @@ import org.apache.linkis.server.Message;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 /**
  * Map bean validation exception to response
  */
 @Provider
-public class BeanValidationExceptionMapper implements ExceptionMapper<ValidationException> {
-    @Override
-    public Response toResponse(ValidationException exception) {
+public class BeanValidationExceptionMapper {
+    public Message toResponse(ValidationException exception) {
         StringBuilder stringBuilder = new StringBuilder();
         ((ConstraintViolationException)exception)
                 .getConstraintViolations().forEach(constraintViolation -> stringBuilder.append(constraintViolation.getMessage()).append(";"));
-        Message message = Message.error("Bean validation error[实例校验出错], detail:" + stringBuilder.toString());
-        return Message.messageToResponse(message);
+        return Message.error("Bean validation error[实例校验出错], detail:" + stringBuilder.toString());
     }
 }

@@ -235,7 +235,125 @@ INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = labe
 insert  into `linkis_cg_rm_external_resource_provider`(`id`,`resource_type`,`name`,`labels`,`config`) values
 (1,'Yarn','sit',NULL,'{\r\n\"rmWebAddress\": \"@YARN_RESTFUL_URL\",\r\n\"hadoopVersion\": \"2.7.2\",\r\n\"authorEnable\":false,\r\n\"user\":\"hadoop\",\r\n\"pwd\":\"123456\"\r\n}');
 
--- errorcode 
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'wds.linkis.rm.instance' AND `engine_conn_type` = 'hive';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @HIVE_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'hive.client.memory' AND `engine_conn_type` = 'hive';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @HIVE_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'hive.client.java.opts' AND `engine_conn_type` = 'hive';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @HIVE_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'mapred.reduce.tasks' AND `engine_conn_type` = 'hive';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @HIVE_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'dfs.block.size' AND `engine_conn_type` = 'hive';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @HIVE_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'hive.exec.reduce.bytes.per.reducer' AND `engine_conn_type` = 'hive';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @HIVE_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+-- python默认配置
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'wds.linkis.rm.client.memory.max' AND `engine_conn_type` = 'python';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @PYTHON_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'wds.linkis.rm.client.core.max' AND `engine_conn_type` = 'python';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` =  @PYTHON_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'wds.linkis.rm.instance' AND `engine_conn_type` = 'python';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` =  @PYTHON_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'python.java.client.memory' AND `engine_conn_type` = 'python';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` =  @PYTHON_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'python.version' AND `engine_conn_type` = 'python';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` =  @PYTHON_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+-- pipeline默认配置
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'pipeline.output.mold' AND `engine_conn_type` = 'pipeline';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` =  @PIPELINE_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'pipeline.field.split' AND `engine_conn_type` = 'pipeline';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` =  @PIPELINE_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'pipeline.output.charset' AND `engine_conn_type` = 'pipeline';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @PIPELINE_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'pipeline.output.isoverwtite' AND `engine_conn_type` = 'pipeline';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @PIPELINE_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'pipeline.engine.memory' AND `engine_conn_type` = 'pipeline';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @PIPELINE_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'pipeline.output.shuffle.null.type' AND `engine_conn_type` = 'pipeline';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @PIPELINE_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'wds.linkis.instance' AND `engine_conn_type` = 'pipeline';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @PIPELINE_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+-- jdbc默认配置
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'wds.linkis.jdbc.connect.url' AND `engine_conn_type` = 'jdbc';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @JDBC_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'wds.linkis.jdbc.version' AND `engine_conn_type` = 'jdbc';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @JDBC_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'wds.linkis.jdbc.username' AND `engine_conn_type` = 'jdbc';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @JDBC_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'wds.linkis.jdbc.password' AND `engine_conn_type` = 'jdbc';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @JDBC_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+SELECT @configkey_id := id from linkis_configuration_config_key WHERE `key` = 'wds.linkis.jdbc.connect.max' AND `engine_conn_type` = 'jdbc';
+SELECT @config_label_id := id from linkis_manager_label WHERE `label_value` = @JDBC_ALL;
+INSERT INTO `linkis_configuration_config_value` (`configkey_id`, `config_value`, `config_label_id`) VALUES (@configkey_id, '', @config_label_id);
+
+
+
+insert  into `linkis_external_resource_provider`(`id`,`resource_type`,`name`,`labels`,`config`) values
+(1,'Yarn','sit',NULL,'{\r\n\"rmWebAddress\": \"@YARN_RESTFUL_URL\",\r\n\"hadoopVersion\": \"2.7.2\",\r\n\"authorEnable\":true,\r\n\"user\":\"hadoop\",\r\n\"pwd\":\"897ede66a860\"\r\n}');
+
+-- ----------------------------
+-- Records of linkis_datasource_type_key
+-- ----------------------------
+INSERT INTO `linkis_datasource_type_key` VALUES (1, 1, 'host', 'Host', NULL, 'TEXT', NULL, 1, 'mysql Host ', NULL, NULL, NULL, NULL, '2021-04-08 03:13:36', '2021-04-08 03:13:36');
+INSERT INTO `linkis_datasource_type_key` VALUES (2, 1, 'port', '端口', NULL, 'TEXT', NULL, 1, '端口', NULL, NULL, NULL, NULL, '2021-04-17 03:10:28', '2021-04-17 03:10:28');
+INSERT INTO `linkis_datasource_type_key` VALUES (3, 1, 'username', '用户名', NULL, 'TEXT', NULL, 1, '用户名', '^[A-Za-z]+$', NULL, NULL, NULL, '2021-04-12 01:54:39', '2021-04-12 01:54:39');
+INSERT INTO `linkis_datasource_type_key` VALUES (4, 1, 'password', '密码', NULL, 'PASSWORD', NULL, 1, '密码', '^[a-zA-Z0-9]{6,16}$', NULL, NULL, NULL, '2021-04-12 01:54:39', '2021-04-12 01:54:39');
+INSERT INTO `linkis_datasource_type_key` VALUES (5, 4, 'brokers', 'brokers', NULL, 'TEXT', NULL, 1, 'brokers', NULL, NULL, NULL, NULL, '2021-05-12 03:03:34', '2021-05-12 03:03:34');
+
+-- ----------------------------
+-- Records of linkis_datasource_type
+-- ----------------------------
+INSERT INTO `linkis_datasource_type` VALUES (1, 'mysql', 'mysql数据库', 'mysql数据库', '关系型数据库', '', 3);
+INSERT INTO `linkis_datasource_type` VALUES (2, 'hive', 'hive数据库', 'hive', '大数据存储', '', 3);
+INSERT INTO `linkis_datasource_type` VALUES (3, 'presto', 'presto SQL', 'presto', '大数据存储', '', 3);
+INSERT INTO `linkis_datasource_type` VALUES (4, 'kafka', 'kafka', 'kafka', '消息队列', '', 2);
+
+
+-- errorcode
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('10001','会话创建失败，%s队列不存在，请检查队列设置是否正确','queue (\\S+) is not exists in YARN',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('10001','会话创建失败，用户%s不能提交应用到队列：%s，请联系提供队列给您的人员','User (\\S+) cannot submit applications to queue (\\S+)',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('20001','Session创建失败，当前申请资源%s，队列可用资源%s,请检查资源配置是否合理','您本次向任务队列（[a-zA-Z_0-9\\.]+）请求资源（(.+)），任务队列最大可用资源（.+），任务队列剩余可用资源（(.+)）您已占用任务队列资源（.+）',0);

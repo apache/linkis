@@ -17,7 +17,21 @@
  
 package org.apache.linkis.datasourcemanager.core.receivers
 
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.datasourcemanager.core.service.{DataSourceInfoService, DataSourceRelateService}
+import org.apache.linkis.datasourcemanager.common.protocol.DsInfoResponse
+import org.apache.linkis.rpc.{Receiver, Sender}
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+
+import scala.concurrent.duration.Duration
 import java.util
+
+import org.apache.linkis.datasourcemanager.common.domain.DataSource
+import org.apache.linkis.datasourcemanager.common.protocol.{DsInfoQueryRequest, DsInfoResponse}
+import org.apache.linkis.datasourcemanager.core.restful.RestfulApiHelper
+import org.apache.linkis.datasourcemanager.core.service.{DataSourceInfoService, DataSourceRelateService}
+import org.apache.linkis.datasourcemanager.core.restful.RestfulApiHelper
 
 @Component
 class DsmReceiver extends Receiver with Logging{
@@ -34,7 +48,7 @@ class DsmReceiver extends Receiver with Logging{
     case DsInfoQueryRequest(id, system) =>
       if ( id.toLong > 0 &&  Some(system).isDefined ) {
         Utils.tryCatch {
-          val dataSource: DataSource = dataSourceInfoService.getDataSourceInfo(id.toLong, system)
+          val dataSource: DataSource = dataSourceInfoService.getDataSourceInfo(id.toLong)
           if ( null != dataSource ) {
             RestfulApiHelper.decryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId),
               dataSource.getConnectParams)
@@ -57,7 +71,7 @@ class DsmReceiver extends Receiver with Logging{
     case DsInfoQueryRequest(id, system) =>
       if ( id.toLong > 0 &&  Some(system).isDefined ) {
         Utils.tryCatch {
-          val dataSource: DataSource = dataSourceInfoService.getDataSourceInfo(id.toLong, system)
+          val dataSource: DataSource = dataSourceInfoService.getDataSourceInfo(id.toLong)
           if ( null != dataSource ) {
             RestfulApiHelper.decryptPasswordKey(dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId),
               dataSource.getConnectParams)

@@ -142,6 +142,19 @@ public class DataSourceParamKeyDefinition {
      */
     private String refValue;
 
+    /**
+     * Form fill content
+     */
+    private String dataSource;
+
+    public String getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
+    }
+
     public Long getId() {
         return id;
     }

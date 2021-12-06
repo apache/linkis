@@ -18,7 +18,7 @@
 package org.apache.linkis.datasourcemanager.core.formdata;
 
 import org.apache.linkis.common.exception.ErrorException;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+//import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import javax.validation.ValidationException;
 import javax.validation.Validator;
@@ -37,7 +37,7 @@ public interface MultiPartFormDataTransformer {
      * @throws ValidationException
      * @throws ErrorException
      */
-    <T>T transformToObject(FormDataMultiPart formData, Class<?> clazz, Validator beanValidator)
-            throws ValidationException, ErrorException;
+//    <T>T transformToObject(FormDataMultiPart formData, Class<?> clazz, Validator beanValidator)
+//            throws ValidationException, ErrorException;
 
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.datasourcemanager.core.validate.strategy;
 
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
@@ -23,6 +23,7 @@ import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateStrate
 import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * RegExpression validate strategy
@@ -54,7 +55,8 @@ public class RegExpParameterValidateStrategy implements ParameterValidateStrateg
     }
 
     private void match(String key,  String name, String value, String valueRegex) throws ParameterValidateException {
-        boolean match = String.valueOf(value).matches(valueRegex);
+//        boolean match = String.valueOf(value).matches(valueRegex);
+        boolean match = Pattern.matches(valueRegex, value);
         if(!match){
             throw new ParameterValidateException("Param Validate Failed[参数校验出错], [the value: '"
                     + String.valueOf(value) + "' to key: '"

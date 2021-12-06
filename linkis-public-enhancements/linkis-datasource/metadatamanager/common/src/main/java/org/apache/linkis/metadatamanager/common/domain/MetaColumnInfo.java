@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.metadatamanager.common.domain;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -29,7 +29,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MetaColumnInfo implements Serializable {
     private int  index = -1;
-    private boolean isPrimaryKey;
+    private boolean primaryKey;
     private String name;
     private String type;
 
@@ -58,10 +58,10 @@ public class MetaColumnInfo implements Serializable {
     }
 
     public boolean isPrimaryKey() {
-        return isPrimaryKey;
+        return primaryKey;
     }
 
     public void setPrimaryKey(boolean primaryKey) {
-        isPrimaryKey = primaryKey;
+        this.primaryKey = primaryKey;
     }
 }

@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.datasourcemanager.core.restful;
 
-import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceType;
@@ -32,11 +31,9 @@ import org.apache.linkis.metadatamanager.common.MdmConfiguration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.commons.lang.StringUtils;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+//import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -44,12 +41,18 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@RestController
-@RequestMapping(value = "/data_source/op",produces = {"application/json"})
+@Path("/data_source/op/")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+@Component
 public class DataSourceOperateRestfulApi {
 
     @Autowired
@@ -74,37 +77,46 @@ public class DataSourceOperateRestfulApi {
         this.formDataTransformer = FormDataTransformerFactory.buildCustom();
     }
 
-    @RequestMapping(value = "/connect/json",method = RequestMethod.POST)
+    @POST
+    @Path("/connect/json")
     public Message connect(DataSource dataSource,
-                            HttpServletRequest request) throws ParameterValidateException {
-        String operator = SecurityFilter.getLoginUsername(request);
-        //Bean validation
-        Set<ConstraintViolation<DataSource>> result = beanValidator.validate(dataSource, Default.class);
-        if(result.size() > 0){
-            throw new ConstraintViolationException(result);
-        }
-        doConnect(operator, dataSource);
-        return Message.ok().data("ok", true);
+                            @Context HttpServletRequest request){
+        return RestfulApiHelper.doAndResponse(() -> {
+            String operator = SecurityFilter.getLoginUsername(request);
+            //Bean validation
+            Set<ConstraintViolation<DataSource>> result = beanValidator.validate(dataSource, Default.class);
+            if(result.size() > 0){
+                throw new ConstraintViolationException(result);
+            }
+            doConnect(operator, dataSource);
+            return Message.ok().data("ok", true);
+        }, "/data_source/op/connect/json","");
     }
 
-    @RequestMapping(value = "/connect/form",method = RequestMethod.POST)
-    public Message connect(FormDataMultiPart multiPartForm,
-                             HttpServletRequest request) throws ErrorException {
-        String operator = SecurityFilter.getLoginUsername(request);
-        DataSource dataSource = formDataTransformer.transformToObject(multiPartForm, DataSource.class, beanValidator);
-        doConnect(operator, dataSource);
-        return Message.ok().data("ok", true);
-    }
+//    @POST
+//    @Path("/connect/form")
+//    public Response connect(FormDataMultiPart multiPartForm,
+//                            @Context HttpServletRequest request){
+//        return RestfulApiHelper.doAndResponse(() -> {
+//            String operator = SecurityFilter.getLoginUsername(request);
+//            DataSource dataSource = formDataTransformer.transformToObject(multiPartForm, DataSource.class, beanValidator);
+//            doConnect(operator, dataSource);
+//            return Message.ok().data("ok", true);
+//        }, "/data_source/op/connect/form","");
+//    }
 
     /**
      * Build a connection
      * @param dataSource
      */
     protected void doConnect(String operator, DataSource dataSource) throws ParameterValidateException {
-        if(null != dataSource.getDataSourceEnvId()){
-            dataSourceInfoService.addEnvParamsToDataSource(dataSource.getDataSourceEnvId(), dataSource);
+        if(dataSource.getConnectParams().containsKey("envId")){
+            try{
+                dataSourceInfoService.addEnvParamsToDataSource(Long.parseLong((String)dataSource.getConnectParams().get("envId")), dataSource);
+            }catch (Exception e){
+                throw new ParameterValidateException("envId atypical" + e);
+            }
         }
-        //Validate connect parameters
         List<DataSourceParamKeyDefinition> keyDefinitionList = dataSourceRelateService
                 .getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
         dataSource.setKeyDefinitions(keyDefinitionList);

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.metadatamanager.common;
 
 import org.apache.linkis.common.conf.CommonVars;
@@ -22,7 +22,7 @@ import org.apache.linkis.common.conf.CommonVars;
 public class MdmConfiguration {
 
     public static CommonVars<String> METADATA_SERVICE_APPLICATION =
-            CommonVars.apply("wds.linkis.server.mdm.service.app.name", "linkis-ps-metadatamanagerservice");
+            CommonVars.apply("wds.linkis.server.mdm.service.app.name", "linkis-ps-metadatamanager");
 
     public static CommonVars<String> DATA_SOURCE_SERVICE_APPLICATION =
             CommonVars.apply("wds.linkis.server.dsm.app.name", "linkis-ps-datasourcemanager");

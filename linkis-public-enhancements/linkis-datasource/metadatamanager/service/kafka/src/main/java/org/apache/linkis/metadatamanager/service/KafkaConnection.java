@@ -28,13 +28,13 @@ import java.util.Properties;
 public class KafkaConnection implements Closeable {
     private AdminClient adminClient;
 
-    public KafkaConnection(String uris) throws Exception{
+    public KafkaConnection(String uris) {
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, uris);
         adminClient = KafkaAdminClient.create(props);
     }
 
-    public KafkaConnection(String uris, String principle, String keytabFilePath) throws Exception {
+    public KafkaConnection(String uris, String principle, String keytabFilePath) {
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, uris);
         adminClient = KafkaAdminClient.create(props);
@@ -45,7 +45,7 @@ public class KafkaConnection implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         adminClient.close();
     }
 }

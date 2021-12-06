@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 export const subAppRoutes = {
   path: '',
   name: 'layout',
@@ -75,7 +75,7 @@ export default [
         title: 'setting',
         publicPage: true,
       },
-    },{
+    }, {
       name: 'ECM',
       path: 'ECM',
       component: () =>
@@ -84,7 +84,7 @@ export default [
         title: 'ECM',
         publicPage: true,
       },
-    },{
+    }, {
       name: 'EngineConnList',
       path: 'EngineConnList',
       component: () =>
@@ -119,6 +119,16 @@ export default [
         import('./module/microServiceManagement/index.vue'),
       meta: {
         title: 'microServiceManagement',
+        publicPage: true,
+      },
+    },
+    {
+      name: 'datasource',
+      path: 'datasource',
+      component: () =>
+        import('./module/datasource/index.vue'),
+      meta: {
+        title: 'datasourceManagement',
         publicPage: true,
       },
     }

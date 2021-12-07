@@ -33,6 +33,9 @@ public final class ParamsMapping {
         mapping.put("sqoop.args.compression.codec","--compression-codec");
         mapping.put("sqoop.args.delete.target.dir","--delete-target-dir");
         mapping.put("sqoop.args.direct","--direct");
+        mapping.put("sqoop.args.export.dir","--export-dir");
+        mapping.put("sqoop.args.update.key","--update-key");
+        mapping.put("sqoop.args.update.mode","--update-mode");
         mapping.put("sqoop.args.direct.split.size","--direct-split-size");
         mapping.put("sqoop.args.query","--query");
         mapping.put("sqoop.args.fetch.size","--fetch-size");
@@ -103,6 +106,8 @@ public final class ParamsMapping {
         mapping.put("sqoop.args.input.null.non.string","--input-null-non-string");
         mapping.put("sqoop.args.input.null.string","--input-null-string");
         mapping.put("sqoop.args.jar.file","--jar-file");
+        mapping.put("sqoop.args.staging.table","--staging-table");
+        mapping.put("sqoop.args.clear.staging.table","--clear-staging-table");
         mapping.put("sqoop.args.map.column.java","--map-column-java");
         mapping.put("sqoop.args.null.non.string","--null-non-string");
         mapping.put("sqoop.args.null.string","--null-string");

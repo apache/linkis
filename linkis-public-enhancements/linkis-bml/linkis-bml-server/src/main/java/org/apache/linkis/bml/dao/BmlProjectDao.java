@@ -27,7 +27,7 @@ import java.util.List;
 public interface BmlProjectDao {
 
 
-    @Insert("insert ignore into linkis_ps_bml_project(name, system, source, description, creator, enabled, create_time) " +
+    @Insert("insert ignore into linkis_ps_bml_project(name, `system`, source, description, creator, enabled, create_time) " +
             "values(#{bmlProject.name}, #{bmlProject.system}, #{bmlProject.source}, #{bmlProject.description}, " +
             "#{bmlProject.creator}, #{bmlProject.enabled}, #{bmlProject.createTime})")
     @Options(useGeneratedKeys = true, keyProperty = "bmlProject.id", keyColumn = "id")

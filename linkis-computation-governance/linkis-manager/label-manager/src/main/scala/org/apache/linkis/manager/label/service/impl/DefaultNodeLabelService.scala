@@ -119,17 +119,29 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
     if(!CollectionUtils.isEmpty(willBeDelete)){
       nodeLabels.foreach(nodeLabel =>  {
         if(modifiableKeyList.contains(nodeLabel.getLabelKey) && willBeDelete.contains(nodeLabel.getLabelKey)){
-          labelManagerPersistence.removeLabel(nodeLabel.getId)
+          val labelIds = new util.ArrayList[Integer]()
+          labelIds.add(nodeLabel.getId)
+          labelManagerPersistence.removeNodeLabels(instance, labelIds)
         }
       })
     }
-    if(!CollectionUtils.isEmpty(willBeUpdate)){
+    /**
+      * update step:
+      * 1.delete relations of old labels
+      * 2.add new relation between new labels and instance
+      */
+    if (!CollectionUtils.isEmpty(willBeUpdate)) {
       labels.foreach(label => {
         if(modifiableKeyList.contains(label.getLabelKey) && willBeUpdate.contains(label.getLabelKey)){
           nodeLabels.filter(_.getLabelKey.equals(label.getLabelKey)).foreach(oldLabel => {
             val persistenceLabel = LabelManagerUtils.convertPersistenceLabel(label)
-            persistenceLabel.setId(oldLabel.getId)
-            labelManagerPersistence.updateLabel(persistenceLabel.getId, persistenceLabel)
+            val labelIds = new util.ArrayList[Integer]()
+            labelIds.add(oldLabel.getId)
+            labelManagerPersistence.removeNodeLabels(instance, labelIds)
+            val newLabelId = tryToAddLabel(persistenceLabel)
+            labelIds.remove(oldLabel.getId)
+            labelIds.add(newLabelId)
+            labelManagerPersistence.addLabelToNode(instance, labelIds)
           })
         }
       })

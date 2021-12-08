@@ -379,6 +379,16 @@ class ConfigurationService extends Logging {
     queryConfigByLabel(labelList, true,filter)
   }
 
+  def queryConfigWithGlobal(userCreatorLabel: UserCreatorLabel, engineTypeLabel: EngineTypeLabel, filter: String): ResponseQueryConfig ={
+    val globalConfig = queryGlobalConfig(userCreatorLabel.getUser)
+    val engineConfig = queryConfig(userCreatorLabel, engineTypeLabel, filter)
+    globalConfig.getKeyAndValue.asScala.foreach(keyAndValue => {
+      if(!engineConfig.getKeyAndValue.containsKey(keyAndValue._1)){
+        engineConfig.getKeyAndValue.put(keyAndValue._1, keyAndValue._2)
+      }
+    })
+    engineConfig
+  }
 
   private def getMap(all: util.List[ConfigTree], user: util.List[ConfigTree], filter: String = null): util.Map[String, String] = {
     val map = new util.HashMap[String, String]()

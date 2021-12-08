@@ -109,6 +109,9 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
 
   override def getProgressInfo: Array[JobProgressInfo] = {
     val jobProgressInfo = new ArrayBuffer[JobProgressInfo]()
+    if (null == this.engineExecutionContext) {
+      return jobProgressInfo.toArray
+    }
     if (0.0f == progress()) {
       jobProgressInfo += JobProgressInfo(engineExecutionContext.getJobId.getOrElse(""), 1, 1, 0, 0)
     } else {

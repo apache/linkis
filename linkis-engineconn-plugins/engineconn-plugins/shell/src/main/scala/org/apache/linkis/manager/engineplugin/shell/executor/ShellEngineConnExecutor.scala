@@ -19,7 +19,6 @@ package org.apache.linkis.manager.engineplugin.shell.executor
 
 import java.io.{BufferedReader, InputStreamReader}
 import java.util
-
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.core.EngineConnObject
@@ -32,6 +31,7 @@ import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.engineconn.acessible.executor.log.LogHelper
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -77,7 +77,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       }) {
         info(line)
         engineExecutionContext.appendTextResultSet(line)
-        engineExecutionContext.appendStdout(line)
+        LogHelper.logCache.cacheLog(line)
       }
       val errorLog = Stream.continually(errorsReader.readLine).takeWhile(_ != null).mkString("\n")
       val exitCode = process.waitFor()

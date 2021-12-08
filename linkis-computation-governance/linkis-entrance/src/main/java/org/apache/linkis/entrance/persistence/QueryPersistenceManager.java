@@ -139,6 +139,9 @@ public class QueryPersistenceManager extends PersistenceManager{
             // todo check
             updatedProgress = -1 * progress;
         }
+        if(Double.isNaN(updatedProgress)){
+            return ;
+        }
         job.setProgress(updatedProgress);
         EntranceJob entranceJob = (EntranceJob) job;
         entranceJob.getJobRequest().setProgress(String.valueOf(updatedProgress));

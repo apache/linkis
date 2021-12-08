@@ -127,6 +127,7 @@
         <spring.security.cryto.version>5.3.6.RELEASE</spring.security.cryto.version>
         <reflections.version>0.9.10</reflections.version>
         <mybatis-plus.boot.starter.version>3.4.1</mybatis-plus.boot.starter.version>
+        <mysql.connector.version>5.1.49</mysql.connector.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <javassist.version>3.19.0-GA</javassist.version>
         <commons-collections.version>3.2.2</commons-collections.version>
@@ -218,6 +219,13 @@
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
                 <version>${commons-collections.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.connector.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

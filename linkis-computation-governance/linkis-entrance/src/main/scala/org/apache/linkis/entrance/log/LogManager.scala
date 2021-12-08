@@ -45,7 +45,12 @@ abstract class LogManager extends LogListener with Logging with EntranceLogListe
       job match{
         case entranceExecutionJob: EntranceExecutionJob =>
           if (entranceExecutionJob.getLogWriter.isEmpty) entranceExecutionJob synchronized {
-            if (entranceExecutionJob.getLogWriter.isEmpty) createLogWriter(entranceExecutionJob)
+            if (entranceExecutionJob.getLogWriter.isEmpty) {
+              val logWriter = createLogWriter(entranceExecutionJob)
+              if (null == logWriter) {
+                return
+              }
+            }
           }
           entranceExecutionJob.getLogWriter.foreach(logWriter => logWriter.write(log))
           entranceExecutionJob.getWebSocketLogWriter.foreach(writer => writer.write(log))

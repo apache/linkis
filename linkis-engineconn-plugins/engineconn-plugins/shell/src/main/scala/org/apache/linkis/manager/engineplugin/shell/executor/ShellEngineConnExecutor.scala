@@ -77,6 +77,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       }) {
         info(line)
         engineExecutionContext.appendTextResultSet(line)
+        engineExecutionContext.appendStdout(line)
       }
       val errorLog = Stream.continually(errorsReader.readLine).takeWhile(_ != null).mkString("\n")
       val exitCode = process.waitFor()

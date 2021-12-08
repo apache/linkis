@@ -17,10 +17,10 @@
  
 package org.apache.linkis.entrance.log
 
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.exception.{CacheNotReadyException, EntranceErrorCode}
 import org.apache.linkis.entrance.job.EntranceExecutionJob
-import org.apache.linkis.governance.common.entity.task.RequestPersistTask
 import org.apache.linkis.scheduler.queue.Job
 /**
   * LogManager implementation, using a singleton class

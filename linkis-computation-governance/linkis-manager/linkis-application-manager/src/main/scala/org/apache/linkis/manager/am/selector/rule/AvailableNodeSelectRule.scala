@@ -18,7 +18,7 @@
 package org.apache.linkis.manager.am.selector.rule
 
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeStatus}
 import org.apache.linkis.manager.common.entity.node.{AMNode, Node}
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
@@ -34,13 +34,15 @@ class AvailableNodeSelectRule extends NodeSelectRule with Logging{
     if (null != nodes) {
       nodes.filter {
         case amNode: AMNode =>
-          if (! NodeStatus.isLocked(amNode.getNodeStatus) && NodeStatus.isAvailable(amNode.getNodeStatus) ) {
+          if (!NodeStatus.isLocked(amNode.getNodeStatus)
+            && NodeStatus.isAvailable(amNode.getNodeStatus)
+            && NodeStatus.isEngineNodeHealthy(amNode.getNodeStatus).equals(NodeHealthy.Healthy)) {
               true
-            } else {
+          } else {
             info(s"engineConn ${amNode.getServiceInstance} cannot be reuse status: ${amNode.getNodeStatus}")
             false
           }
-        case node: Node => NodeStatus.isAvailable(node.getNodeStatus)
+        case node: Node => NodeStatus.isAvailable(node.getNodeStatus) && NodeStatus.isEngineNodeHealthy(node.getNodeStatus).equals(NodeHealthy.Healthy)
       }
     } else {
       nodes

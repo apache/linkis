@@ -174,8 +174,10 @@ CREATE TABLE `linkis_ps_udf_tree` (
 -- ----------------------------
 DROP TABLE IF EXISTS `linkis_ps_udf_user_load_info`;
 CREATE TABLE `linkis_ps_udf_user_load_info` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `udf_id` int(11) NOT NULL,
-  `user_name` varchar(50) NOT NULL
+  `user_name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -530,7 +532,7 @@ create table if not exists linkis_ps_bml_project_user(
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `project_id` int(10) NOT NULL,
   `username` varchar(64) DEFAULT NULL,
-  `priv` int(10) not null default 7,
+  `priv` int(10) not null default 7, -- rwx 421 相加, 8是管理员，可以为其他用户授权
   `creator` varchar(128) not null,
   `create_time` datetime DEFAULT now(),
   `expire_time` datetime default null,
@@ -564,11 +566,13 @@ CREATE TABLE `linkis_ps_instance_label` (
 
 DROP TABLE IF EXISTS `linkis_ps_instance_label_value_relation`;
 CREATE TABLE `linkis_ps_instance_label_value_relation` (
+  `id` int(20) NOT NULL AUTO_INCREMENT,
   `label_value_key` varchar(255) COLLATE utf8_bin NOT NULL COMMENT 'value key',
   `label_value_content` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT 'value content',
   `label_id` int(20) DEFAULT NULL COMMENT 'id reference linkis_ps_instance_label -> id',
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'create unix timestamp',
+  PRIMARY KEY (`id`),
   UNIQUE KEY `label_value_key_label_id` (`label_value_key`,`label_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -688,11 +692,13 @@ CREATE TABLE `linkis_cg_manager_label` (
 DROP TABLE IF EXISTS `linkis_cg_manager_label_value_relation`;
 
 CREATE TABLE `linkis_cg_manager_label_value_relation` (
+  `id` int(20) NOT NULL AUTO_INCREMENT,
   `label_value_key` varchar(255) COLLATE utf8_bin NOT NULL,
   `label_value_content` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `label_id` int(20) DEFAULT NULL,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
   UNIQUE KEY `label_value_key_label_id` (`label_value_key`,`label_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -732,6 +738,7 @@ CREATE TABLE `linkis_cg_manager_label_user` (
 DROP TABLE IF EXISTS `linkis_cg_manager_metrics_history`;
 
 CREATE TABLE `linkis_cg_manager_metrics_history` (
+  `id` int(20) NOT NULL AUTO_INCREMENT,
   `instance_status` int(20) DEFAULT NULL,
   `overload` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `heartbeat_msg` varchar(255) COLLATE utf8_bin DEFAULT NULL,
@@ -740,7 +747,8 @@ CREATE TABLE `linkis_cg_manager_metrics_history` (
   `creator` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `ticketID` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `serviceName` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `instance` varchar(255) COLLATE utf8_bin DEFAULT NULL
+  `instance` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_manager_service_instance_metrics`;
@@ -770,7 +778,3 @@ CREATE TABLE `linkis_cg_engine_conn_plugin_bml_resources` (
   `last_update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'updated time',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
-
-
-
-

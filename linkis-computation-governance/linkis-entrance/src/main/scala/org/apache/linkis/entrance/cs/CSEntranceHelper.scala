@@ -168,8 +168,15 @@ object CSEntranceHelper extends Logging {
           variableMap.put(linkisVariable.getKey, linkisVariable.getValue)
         }
       }
-      if(variableMap.nonEmpty){
-        TaskUtils.addVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]], variableMap)
+      if(variableMap.nonEmpty) {
+        // 1.cs 优先级为低，相同的不加入
+        val varMap = TaskUtils.getVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
+        variableMap.foreach { keyAndValue =>
+          if (! varMap.containsKey(keyAndValue._1)) {
+            varMap.put(keyAndValue._1, keyAndValue._2)
+          }
+        }
+        TaskUtils.addVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]], varMap)
       }
 
       info(s"parse variable end nodeName:$nodeNameStr")

@@ -85,7 +85,9 @@ abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunc
 //    addPathToClassPath(environment, variable(PWD))
     // first, add engineconn conf dirs.
     addPathToClassPath(environment, Seq(variable(PWD), ENGINE_CONN_CONF_DIR_NAME))
-    // second, add engineconn libs.
+    // then, add LINKIS_CONF_DIR conf dirs.
+    addPathToClassPath(environment, Seq(EnvConfiguration.LINKIS_CONF_DIR.getValue))
+    // then, add engineconn libs.
     addPathToClassPath(environment, Seq(variable(PWD), ENGINE_CONN_LIB_DIR_NAME + "/*"))
     // then, add public modules.
     if (!enablePublicModule) {
@@ -115,6 +117,7 @@ abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunc
     }
     environment
   }
+
 
   override protected def getNecessaryEnvironment(implicit engineConnBuildRequest: EngineConnBuildRequest): Array[String] =
     if(!ifAddHiveConfigPath) Array.empty else Array(HADOOP_CONF_DIR.toString, HIVE_CONF_DIR.toString)

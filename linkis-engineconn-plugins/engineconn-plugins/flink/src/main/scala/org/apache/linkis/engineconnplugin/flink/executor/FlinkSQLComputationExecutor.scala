@@ -130,13 +130,13 @@ class FlinkSQLComputationExecutor(id: Long,
   }
 
   //TODO wait for completed.
-  override def progress(): Float = if(operation == null) 0 else operation.getJobStatus match {
+  override def progress(taskID: String): Float = if(operation == null) 0 else operation.getJobStatus match {
     case jobState if jobState.isGloballyTerminalState => 1
     case RUNNING => 0.5f
     case _ => 0
   }
 
-  override def getProgressInfo: Array[JobProgressInfo] = Array.empty
+  override def getProgressInfo(taskID: String): Array[JobProgressInfo] = Array.empty
 
   override def killTask(taskId: String): Unit = {
     info(s"Start to kill task $taskId, the flink jobId is ${clusterDescriptor.getJobId}.")

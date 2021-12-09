@@ -129,7 +129,7 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
   }
 
   override def renew(): Boolean = {
-    if (lockedBy != null && lockedBy == Thread.currentThread()) {
+    if (lockedBy != null) {
       if (isAcquired && releaseTask != null) {
         if (releaseTask.cancel(false)) {
           releaseScheduler.purge()
@@ -160,11 +160,11 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
     }*/
     val executors = ExecutorManager.getInstance.getExecutors.filter(executor => null != executor && !executor.isClosed)
     if (null != executors && !executors.isEmpty) {
-      executors.foreach(executor => executor match {
+      executors.foreach {
         case accessibleExecutor: AccessibleExecutor =>
           accessibleExecutor.transition(NodeStatus.Unlock)
         case _ =>
-      })
+      }
     }
     ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus.post(ExecutorUnLockEvent(null, lockStr.toString))
   }

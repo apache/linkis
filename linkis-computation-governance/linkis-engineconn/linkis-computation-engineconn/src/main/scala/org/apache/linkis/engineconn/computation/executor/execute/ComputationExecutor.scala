@@ -254,9 +254,9 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
 
   def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse
 
-  def progress(): Float
+  def progress(taskID: String): Float
 
-  def getProgressInfo: Array[JobProgressInfo]
+  def getProgressInfo(taskID: String): Array[JobProgressInfo]
 
   protected def createEngineExecutionContext(engineConnTask: EngineConnTask): EngineExecutionContext = {
     val userCreator = engineConnTask.getLables.find(_.isInstanceOf[UserCreatorLabel])

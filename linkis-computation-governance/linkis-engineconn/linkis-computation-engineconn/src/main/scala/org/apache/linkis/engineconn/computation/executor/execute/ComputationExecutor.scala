@@ -145,11 +145,6 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
 
 
   def toExecuteTask(engineConnTask: EngineConnTask, internalExecute: Boolean = false): ExecuteResponse = {
-    if (engineConnTask.getCode.trim.isEmpty) {
-      error(s"The code must not be empty!")
-      return ErrorExecuteResponse("The code must not be empty!", null)
-    }
-
     runningTasks.increase()
     this.internalExecute = internalExecute
     Utils.tryFinally{
@@ -212,6 +207,10 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
           failedTasks.increase()
       }
 
+      if (null == response && codes.isEmpty) {
+        error("This code is empty, and the task will be directly marked as successful.")
+        response = SuccessExecuteResponse()
+      }
 
       response = response match {
         case _: OutputExecuteResponse =>

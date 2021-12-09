@@ -20,10 +20,10 @@ package org.apache.linkis.entrance.log
 import java.io.{Closeable, IOException, InputStream}
 
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.exception.LogReadFailedException
 import org.apache.commons.io.{IOUtils, LineIterator}
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.entrance.utils.LogHelper
 
 import scala.util.matching.Regex
 
@@ -48,76 +48,31 @@ abstract class LogReader(charset: String) extends Closeable with Logging{
     *         3 All logs(所有的日志)
     */
   def readArray(logs: Array[String], fromLine: Int, size: Int = 100): Int = {
-    if(logs.length != 4) throw new LogReadFailedException("logs的长度必须为4！")
+    if (logs.length != 4) {
+      throw new LogReadFailedException(" logs的长度必须为4！")
+    }
     val error = new StringBuilder
     val warning = new StringBuilder
     val info = new StringBuilder
     val all = new StringBuilder
     val read = readLog(singleLog => {
-      //all ++= singleLog ++= "\n"
       val length = 1
       if (StringUtils.isNotBlank(singleLog)){
         singleLog match {
           case ERROR_HEADER1() | ERROR_HEADER2() =>
             concatLog(length, singleLog, error, all)
           case WARN_HEADER1() |  WARN_HEADER2() =>
-            val arr = EntranceConfiguration.LOG_EXCLUDE.getValue.split(",").map (word => word.trim)
-            var flag = false
-            for (keyword <- arr){
-              flag = singleLog.contains(keyword) || flag
+            if (! LogHelper.isExcludeLog(singleLog)) {
+              concatLog(length, singleLog, warning, all)
             }
-            if (!flag) concatLog(length, singleLog, warning, all)
           case INFO_HEADER1() | INFO_HEADER2() =>
-            val hiveLogSpecial:String = EntranceConfiguration.HIVE_SPECIAL_LOG_INCLUDE.getValue
-            val sparkLogSpecial:String = EntranceConfiguration.SPARK_SPECIAL_LOG_INCLUDE.getValue
-            val hiveCreateTableLog:String = EntranceConfiguration.HIVE_CREATE_TABLE_LOG.getValue
-            if (singleLog.contains(hiveLogSpecial) && singleLog.contains(hiveCreateTableLog)){
-              val threadName = EntranceConfiguration.HIVE_THREAD_NAME.getValue
-              val printInfo = EntranceConfiguration.HIVE_PRINT_INFO_LOG.getValue
-              val start = singleLog.indexOf(threadName)
-              val end = singleLog.indexOf(printInfo) + printInfo.length
-              if(start > 0 && end > 0) {
-                val realLog = singleLog.substring(0, start) + singleLog.substring(end, singleLog.length)
-                concatLog(length, realLog, info, all)
-              }
+            if (! LogHelper.isExcludeLog(singleLog)) {
+              concatLog(length, singleLog, info, all)
             }
-            if (singleLog.contains(hiveLogSpecial) && singleLog.contains("map") && singleLog.contains("reduce")){
-              val start = singleLog.indexOf(EntranceConfiguration.HIVE_THREAD_NAME.getValue)
-              val end = singleLog.indexOf(EntranceConfiguration.HIVE_STAGE_NAME.getValue)
-              if(start > 0 && end > 0) {
-                val realLog = singleLog.substring(0, start) + singleLog.substring(end, singleLog.length)
-                concatLog(length, realLog, info, all)
-              }
-            }else if (singleLog.contains(sparkLogSpecial)){
-              val className = EntranceConfiguration.SPARK_PROGRESS_NAME.getValue
-              val endFlag = EntranceConfiguration.END_FLAG.getValue
-              val start = singleLog.indexOf(className)
-              val end = singleLog.indexOf(endFlag) + endFlag.length
-              if(start > 0 && end > 0) {
-                val realLog = singleLog.substring(0, start) + singleLog.substring(end, singleLog.length)
-                concatLog(length, realLog, info, all)
-              }
-            }else{
-              val arr = EntranceConfiguration.LOG_EXCLUDE.getValue.split(",").map (word => word.trim)
-              var flag = false
-              for (keyword <- arr){
-                flag = singleLog.contains(keyword) || flag
-              }
-              if (!flag) concatLog(length, singleLog, info, all)
-            }
-//            val arr = EntranceConfiguration.LOG_EXCLUDE.getValue.split(",").map (word => word.trim)
-//            var flag = false
-//            for (keyword <- arr){
-//              flag = singleLog.contains(keyword) || flag
-//            }
-//            if (!flag) concatLog(length, singleLog, info, all)
           case _ =>
-            val arr = EntranceConfiguration.LOG_EXCLUDE.getValue.split(",").map (word => word.trim)
-            var flag = false
-            for (keyword <- arr){
-              flag = singleLog.contains(keyword) || flag
+            if (! LogHelper.isExcludeLog(singleLog)) {
+              concatLog(length, singleLog, info, all)
             }
-            if (!flag) concatLog(length, singleLog, info, all)
         }
       }
     }, fromLine, size)

@@ -121,7 +121,7 @@ public class EntranceSpringConfiguration {
                 new SparkCodeCheckInterceptor(),
                 new SQLCodeCheckInterceptor(),
                 new LabelCheckInterceptor(),
-                new VarSubstitutionInterceptor(),
+               // new VarSubstitutionInterceptor(),
                 new LogPathCreateInterceptor(),
                 new StorePathEntranceInterceptor(),
                 new ScalaCodeInterceptor(),

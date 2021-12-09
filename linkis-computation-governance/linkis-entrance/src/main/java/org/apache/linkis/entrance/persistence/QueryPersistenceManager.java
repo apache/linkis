@@ -166,7 +166,7 @@ public class QueryPersistenceManager extends PersistenceManager{
             job.setProgress(1);
         }
         try{
-            jobRequest = ((EntranceJob) job).getJobRequest();
+            jobRequest = this.entranceContext.getOrCreateEntranceParser().parseToJobRequest(job);
             if (job.isSucceed()){
                 //如果是job是成功的，那么需要将task的错误描述等都要设置为null
                 jobRequest.setErrorCode(0);

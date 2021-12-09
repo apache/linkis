@@ -17,6 +17,8 @@
  
 package org.apache.linkis.entrance.parser;
 
+import java.util.Date;
+import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.EntranceParser;
 import org.apache.linkis.entrance.exception.EntranceErrorCode;
@@ -65,6 +67,35 @@ public abstract class AbstractEntranceParser extends EntranceParser {
     protected PersistenceManager getPersistenceManager() {
         return null;
     }
+
+
+    /**
+     * Parse the executing job into a task, such as operations such as updating the task information in the database.(将正在执行的job解析为一个task，用于诸如更新数据库中task信息等操作)
+     * @param job
+     * @return
+     * @throws EntranceIllegalParamException
+     */
+    @Override
+    public JobRequest parseToJobRequest(Job job) throws EntranceIllegalParamException{
+        if (job == null){
+            throw new EntranceIllegalParamException(20002, "job can't be null");
+        }
+        JobRequest jobRequest = ((EntranceJob)job).getJobRequest();
+        if(StringUtils.isEmpty(jobRequest.getReqId())) {
+            jobRequest.setReqId(job.getId());
+        }
+
+        jobRequest.setProgress("" + job.getProgress());
+        jobRequest.setStatus(job.getState().toString());
+        jobRequest.setUpdatedTime(new Date(System.currentTimeMillis()));
+        if(job.isCompleted() && ! job.isSucceed() && job.getErrorResponse() != null
+            && StringUtils.isBlank(jobRequest.getErrorDesc())
+            && StringUtils.isNotEmpty(job.getErrorResponse().message())) {
+            jobRequest.setErrorDesc(job.getErrorResponse().message());
+        }
+        return jobRequest;
+    }
+
 
     /**
      * Parse a jobReq into an executable job(将一个task解析成一个可执行的job)

@@ -117,8 +117,7 @@ abstract class EntranceServer extends Logging {
       job.getId()
     }{t =>
       job.onFailure("Submitting the query failed!(提交查询失败！)", t)
-      var _jobRequest: JobRequest = null
-      Utils.tryAndError(_jobRequest = job.asInstanceOf[EntranceJob].getJobRequest)
+      val _jobRequest: JobRequest = getEntranceContext.getOrCreateEntranceParser().parseToJobRequest(job)
       getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(_jobRequest)
       t match {
         case e: LinkisException => e

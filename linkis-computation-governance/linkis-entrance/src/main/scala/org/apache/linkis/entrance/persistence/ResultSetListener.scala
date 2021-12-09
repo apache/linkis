@@ -17,15 +17,15 @@
  
 package org.apache.linkis.entrance.persistence
 
-import org.apache.linkis.entrance.job.EntranceExecuteRequest
 import org.apache.linkis.scheduler.executer.OutputExecuteResponse
 import org.apache.linkis.scheduler.listener.SchedulerListener
+import org.apache.linkis.scheduler.queue.Job
 
 
 trait ResultSetListener extends SchedulerListener {
 
-  def onResultSetCreated(request: EntranceExecuteRequest, response: OutputExecuteResponse): Unit
+  def onResultSetCreated(job: Job, response: OutputExecuteResponse): Unit
 
-  def onResultSizeCreated(request: EntranceExecuteRequest, resultSize: Int): Unit
+  def onResultSizeCreated(job: Job, resultSize: Int): Unit
 
 }

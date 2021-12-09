@@ -62,17 +62,6 @@ abstract class EntranceExecutor(val id: Long, val mark: MarkReq) extends Executo
   override def execute(executeRequest: ExecuteRequest): ExecuteResponse = {
     var request: RequestTask = null
     interceptors.foreach(in => request = in.apply(request, executeRequest))
-    /*if (request.getProperties != null &&
-      request.getProperties.containsKey(ReconnectExecuteRequestInterceptor.PROPERTY_EXEC_ID)) {
-      val execId = ReconnectExecuteRequestInterceptor.PROPERTY_EXEC_ID.toString
-      Utils.tryCatch {
-        val engineReturn = new EngineExecuteAsynReturn(request, null, execId, _ => callback())
-        engineReturns synchronized engineReturns += engineReturn
-        return engineReturn
-      } { t: Throwable =>
-        error(s"Failed to get execId $execId status", t)
-      }
-    }*/
     val engineReturn = callExecute(executeRequest)
     engineReturns synchronized engineReturns += engineReturn
     engineReturn
@@ -160,36 +149,33 @@ class EngineExecuteAsynReturn(val request: ExecuteRequest, val orchestrationFutu
     }
     response.foreach { r =>
       getJobId.foreach(id => {
-        var subJobId: Long = 0l
+        var subJobId: Long = 0L
         request match {
           case entranceExecuteRequest: EntranceExecuteRequest =>
             subJobId = entranceExecuteRequest.getSubJobInfo.getSubJobDetail.getId
-            val msg = "Job with execId-" + id + " and subJobId : " + subJobId  + " from orchestrator" + " completed with state " + r
+            val msg = "Job with execId-" + id + " and subJobId : " + subJobId + " from orchestrator" + " completed with state " + r
             entranceExecuteRequest.getJob.getLogListener.foreach(_.onLogUpdate(entranceExecuteRequest.getJob, msg))
           case _ =>
         }
-
-        val msgInfo = "Job with execId-" + id + " and subJobId : " + subJobId  + " from orchestrator" + " completed with state " + r
+        val msgInfo = "Job with execId-" + id + " and subJobId : " + subJobId + " from orchestrator" + " completed with state " + r
         info(msgInfo)
-        request
       })
+      Utils.tryAndWarn {
+        if (null != callback) {
+          callback(this)
+        }
+        if (notifyJob == null) this synchronized (while (notifyJob == null) this.wait(1000))
+        notifyJob(r)
+      }
+
       if (null != logProcessor) {
         logProcessor.close()
       }
-      if (null != progressProcessor){
+      if (null != progressProcessor) {
         progressProcessor.close()
       }
-      Utils.tryAndWarn(if(null != callback) {
-        callback(this)
-      })
-      if (null != notifyJob) {
-        notifyJob
-      }
-      else {
-        info("NotifyJob is null.")
-      }
-//      if (notifyJob == null) this synchronized (while (notifyJob == null) this.wait(1000))
-//      if (null != notifyJob) notifyJob(r)
+
+
     }
   }
 

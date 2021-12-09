@@ -93,7 +93,6 @@ abstract class EntranceServer extends Logging {
       job match {
         case entranceJob: EntranceJob => {
           entranceJob.setEntranceListenerBus(getEntranceContext.getOrCreateEventListenerBus)
-          entranceJob.setEntranceLogListenerBus(getEntranceContext.getOrCreateLogListenerBus)
         }
         case _ =>
       }
@@ -153,7 +152,6 @@ abstract class EntranceServer extends Logging {
         entranceWebSocketService = Some(new EntranceWebSocketService)
         entranceWebSocketService.foreach(_.setEntranceServer(this))
         entranceWebSocketService.foreach(getEntranceContext.getOrCreateEventListenerBus.addListener)
-        entranceWebSocketService.foreach(getEntranceContext.getOrCreateLogListenerBus.addListener)
       }
     }
     entranceWebSocketService

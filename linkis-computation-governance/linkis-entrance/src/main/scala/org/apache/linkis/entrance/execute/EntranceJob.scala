@@ -59,7 +59,6 @@ abstract class EntranceJob extends Job {
   var codeParser: CodeParser = _
 
   private var entranceListenerBus: Option[EntranceEventListenerBus[EntranceEventListener, EntranceEvent]] = None
-  private var entranceLogListenerBus: Option[EntranceLogListenerBus[EntranceLogListener, EntranceLogEvent]] = None
   private var progressInfo: Array[JobProgressInfo] = Array.empty
   private val persistedResultSets = new AtomicInteger(0)
 //  private var resultSize = -1
@@ -67,12 +66,6 @@ abstract class EntranceJob extends Job {
 
   def setEntranceListenerBus(entranceListenerBus: EntranceEventListenerBus[EntranceEventListener, EntranceEvent]): Unit =
     this.entranceListenerBus = Option(entranceListenerBus)
-
-  def setEntranceLogListenerBus(entranceLogListenerBus: EntranceLogListenerBus[EntranceLogListener, EntranceLogEvent]): Unit =
-    this.entranceLogListenerBus = Option(entranceLogListenerBus)
-
-
-  def getEntranceListenerBus = this.entranceListenerBus
 
   def setProgressInfo(progressInfo: Array[JobProgressInfo]): Unit = this.progressInfo = progressInfo
 
@@ -175,8 +168,7 @@ abstract class EntranceJob extends Job {
   override def onFailure(errorMsg: String, t: Throwable): Unit = {
     //updateJobRequestStatus(SchedulerEventState.Failed.toString)
     val generatedMsg = LogUtils.generateERROR(s"Sorry, your job executed failed with reason: $errorMsg")
-    this.entranceLogListenerBus.foreach(_.post(
-      EntrancePushLogEvent(this, generatedMsg)))
+    getLogListener.foreach(_.onLogUpdate(this, generatedMsg))
     super.onFailure(errorMsg, t)
   }
 

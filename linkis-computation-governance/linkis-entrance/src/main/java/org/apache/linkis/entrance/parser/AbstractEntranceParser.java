@@ -125,7 +125,7 @@ public abstract class AbstractEntranceParser extends EntranceParser {
         Map<String, Object> properties = TaskUtils.getRuntimeMap(job.getParams());
         properties.put(GovernanceConstant.TASK_SOURCE_MAP_KEY(), jobReq.getSource());
         job.setEntranceListenerBus(entranceContext.getOrCreateEventListenerBus());
-        job.setEntranceLogListenerBus(entranceContext.getOrCreateLogListenerBus());
+        //job.setEntranceLogListenerBus(entranceContext.getOrCreateLogListenerBus());
         job.setEntranceContext(entranceContext);
         job.setListenerEventBus(null);
         job.setProgress(0f);

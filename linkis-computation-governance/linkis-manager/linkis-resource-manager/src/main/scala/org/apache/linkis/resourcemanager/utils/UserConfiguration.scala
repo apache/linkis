@@ -21,8 +21,8 @@ import java.util
 
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.governance.common.conf.GovernanceCommonConf
-import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, RequestQueryGlobalConfig, ResponseQueryConfig}
+
+import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfigWithGlobalConfig, RequestQueryGlobalConfig, ResponseQueryConfig}
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
@@ -47,8 +47,9 @@ object UserConfiguration extends Logging {
 
   val engineMapCache = new RPCMapCache[(UserCreatorLabel, EngineTypeLabel), String, String](
     Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue) {
-    override protected def createRequest(labelTuple: (UserCreatorLabel, EngineTypeLabel)): CacheableProtocol =
-      RequestQueryEngineConfig(labelTuple._1, labelTuple._2, GovernanceCommonConf.CONF_FILTER_RM)
+    override protected def createRequest(labelTuple: (UserCreatorLabel, EngineTypeLabel)): CacheableProtocol = {
+      RequestQueryEngineConfigWithGlobalConfig(labelTuple._1, labelTuple._2)
+    }
 
     override protected def createMap(any: Any): util.Map[String, String] = any match {
       case response: ResponseQueryConfig => response.getKeyAndValue

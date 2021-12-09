@@ -108,11 +108,6 @@ abstract class EntranceServer extends Logging {
       logger.info(msg)
       job match {
         case entranceJob: EntranceJob =>
-          getEntranceContext.getOrCreateScheduler().getSchedulerContext.getOrCreateExecutorManager match {
-            case entranceExecutorManager: EntranceExecutorManager =>
-              entranceExecutorManager.setJobExecIdAndEntranceJob(entranceJob.getId, entranceJob)
-            case _ =>
-          }
           entranceJob.getJobRequest.setReqId(job.getId())
           if(jobTimeoutManager.timeoutCheck && JobTimeoutManager.hasTimeoutLabel(entranceJob)) jobTimeoutManager.add(job.getId(), entranceJob)
           entranceJob.getLogListener.foreach(_.onLogUpdate(entranceJob, msg))

@@ -173,7 +173,7 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
       val existInstances = getAllInstances()
       if (null != existInstances && existInstances.nonEmpty) {
         val reuseExclusionLabel = MarkReq.getLabelBuilderFactory.createLabel(classOf[ReuseExclusionLabel])
-        reuseExclusionLabel.setInstances(getAllInstances())
+        reuseExclusionLabel.setInstances(existInstances.mkString(";"))
         engineConnAskReq.getLabels.put(LabelKeyConstant.REUSE_EXCLUSION_KEY, reuseExclusionLabel.getValue)
       }
       val engineConnExecutor = askEngineConnExecutor(engineConnAskReq, mark)
@@ -185,57 +185,22 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
     }
   }
 
-  /*override protected def tryReuseEngineConnExecutor(mark: Mark): Option[EngineConnExecutor] = {
-    val instances = getInstances(mark)
-    if (null == instances || instances.isEmpty) {
-      return None
-    }
-    val taskMarkReq = mark.asInstanceOf[LoadBalanceMark].getTaskMarkReq()
-    val bindEngineLabel = {
-      if (taskMarkReq.getLabels.containsKey(LabelKeyConstant.BIND_ENGINE_KEY)) {
-        MarkReq.getLabelBuilderFactory.createLabel[BindEngineLabel](LabelKeyConstant.BIND_ENGINE_KEY,
-          taskMarkReq.getLabels.get(LabelKeyConstant.BIND_ENGINE_KEY))
-      } else {
-        null
-      }
-    }
-    if (null != bindEngineLabel) {
-      val executor = getEngineConnExecutorCache().get(instances.head)
-      if (bindEngineLabel.getIsJobGroupHead) {
-        if (null != executor) {
-          return Some(executor)
-        } else {
-          return None
-        }
-      } else {
-        if (null != executor) {
-          return Some(executor)
-        } else {
-          val msg = s"Instance : ${instances.head.getInstance} cannot found in cache, but with bindEngineLabel : ${bindEngineLabel.getStringValue}"
-          error(msg)
-          throw new ECMPluginErrorException(ECMPluginConf.ECM_ENGINE_CACHE_ERROR, msg)
-        }
-      }
-    } else {
-      val executor = getEngineConnExecutorCache().get(instances.head)
-      if (null != executor) {
-        return Some(executor)
-      } else {
-        return None
-      }
-    }
-  }*/
-
   override def releaseEngineConnExecutor(engineConnExecutor: EngineConnExecutor, mark: Mark): Unit = {
     if (null != engineConnExecutor && null != mark && getMarkCache().containsKey(mark)) {
       info(s"Start to release EngineConnExecutor mark id ${mark.getMarkId()} engineConnExecutor ${engineConnExecutor.getServiceInstance}")
       getEngineConnExecutorCache().remove(engineConnExecutor.getServiceInstance)
       engineConnExecutor.close()
-      val instances = getInstances(mark)
-      if (null != instances) {
-        instances.remove(engineConnExecutor.getServiceInstance)
-        if (instances.isEmpty) releaseMark(mark)
-      }
+      info(s" Start to release all mark relation to serviceInstance ${engineConnExecutor.getServiceInstance}")
+      getMarksByInstance(engineConnExecutor.getServiceInstance).foreach(releaseMarkAndServiceInstance(_, engineConnExecutor.getServiceInstance))
+    }
+  }
+
+  private def releaseMarkAndServiceInstance(mark: Mark, serviceInstance: ServiceInstance): Unit = {
+    info(s" Start to release mark${mark.getMarkId()} relation to serviceInstance $serviceInstance")
+    val instances = getInstances(mark)
+    if (null != instances) {
+      instances.remove(serviceInstance)
+      if (instances.isEmpty) releaseMark(mark)
     }
     if (!getMarkCache().containsKey(mark)) MARK_REQ_CACHE_LOCKER.synchronized {
       val marks = getMarkReqAndMarkCache().get(mark.getMarkReq)

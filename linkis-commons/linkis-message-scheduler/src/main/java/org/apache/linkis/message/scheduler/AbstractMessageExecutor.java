@@ -82,6 +82,16 @@ public abstract class AbstractMessageExecutor extends JavaLog implements Message
 
     @Override
     public void run(MessageJob job) throws InterruptedException {
+        Map<String, List<MethodExecuteWrapper>> methodWrappers = job.getMethodExecuteWrappers();
+        Integer count = methodWrappers.values().stream().map(List::size).reduce(0, Integer::sum);
+        if (count == 1) {
+            runOneJob(job);
+        } else {
+            runMultipleJob(job);
+        }
+    }
+
+    private void runMultipleJob(MessageJob job)  throws InterruptedException {
         RequestProtocol requestProtocol = job.getRequestProtocol();
         ServiceMethodContext methodContext = job.getMethodContext();
         // TODO: 2020/7/22 data structure optimization of variable methodWrappers
@@ -152,6 +162,53 @@ public abstract class AbstractMessageExecutor extends JavaLog implements Message
         }
         if (this.t != null) {
             throw new MessageWarnException(MessageErrorConstants.MESSAGE_ERROR(), "method call failed", t);
+        }
+    }
+
+    private void runOneJob(MessageJob job) {
+        RequestProtocol requestProtocol = job.getRequestProtocol();
+        ServiceMethodContext methodContext = job.getMethodContext();
+        Map<String, List<MethodExecuteWrapper>> methodWrappers = job.getMethodExecuteWrappers();
+        List<MethodExecuteWrapper> methodExecuteWrappers = getMinOrderMethodWrapper(methodWrappers);
+        if (methodExecuteWrappers.size() == 1) {
+            MethodExecuteWrapper methodWrapper = methodExecuteWrappers.get(0);
+            Object result = null;
+            try {
+                if (!methodWrapper.shouldSkip) {
+                    //放置job状态
+                    setMethodContextThreadLocal(methodContext, job);
+                    Method method = methodWrapper.getMethod();
+                    Object service = methodWrapper.getService();
+                    logger().info(String.format("message scheduler executor ===> service: %s,method: %s", service.getClass().getName(), method.getName()));
+                    Object implicit;
+                    ImplicitMethod implicitMethod = methodWrapper.getImplicitMethod();
+                    if (implicitMethod != null) {
+                        implicit = implicitMethod.getMethod().invoke(implicitMethod.getImplicitObject(), requestProtocol);
+                    } else {
+                        implicit = requestProtocol;
+                    }
+                    if (methodWrapper.isHasMethodContext()) {
+                        if (methodWrapper.isMethodContextOnLeft()) {
+                            result = method.invoke(service, methodContext, implicit);
+                        } else {
+                            result = method.invoke(service, implicit, methodContext);
+                        }
+                    } else {
+                        result = method.invoke(service, implicit);
+                    }
+                }
+            } catch (Throwable t) {
+                logger().error(String.format("method %s call failed", methodWrapper.getAlias()), t);
+                methodWrappers.forEach((k, v) -> v.forEach(m -> m.setShouldSkip(true)));
+                methodErrorHandle(t);
+            } finally {
+                if (result != null) {
+                    methodContext.setResult(result);
+                }
+            }
+        }
+        if (this.t != null) {
+            throw new MessageWarnException(10000, "method call failed", t);
         }
     }
 

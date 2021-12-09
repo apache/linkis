@@ -44,7 +44,7 @@ object EngineConnMonitor extends Logging {
   private[linkis] def addEngineExecutorStatusMonitor(engineConnExecutorCache: mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]],
                                                      endJobByEngineInstance: ServiceInstance => Unit): Unit = {
     val task = new Runnable {
-      override def run(): Unit = {
+      override def run(): Unit = Utils.tryAndWarn{
         val startTime = System.currentTimeMillis()
         val engineExecutorCache = engineConnExecutorCache
         val unActivityEngines = Collections.synchronizedSet(new util.HashSet[EngineConnExecutor]())

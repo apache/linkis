@@ -35,12 +35,13 @@ import org.apache.linkis.orchestrator.domain.JobReq
 import org.apache.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
 import org.apache.linkis.orchestrator.execution.{ArrayResultSetTaskResponse, FailedTaskResponse, ResultSetTaskResponse, SucceedTaskResponse}
 import org.apache.linkis.orchestrator.plans.unit.CodeLogicalUnit
-import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, ConcurrentTaskOperateSupport, ErrorExecuteResponse, ExecuteRequest, SingleTaskOperateSupport, SuccessExecuteResponse}
+import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, ConcurrentTaskOperateSupport, ErrorExecuteResponse, ExecuteRequest, ExecuteResponse, SingleTaskOperateSupport, SuccessExecuteResponse}
 import org.apache.linkis.scheduler.queue.SchedulerEventState
 import org.apache.linkis.server.BDPJettyServerHelper
 import java.util
 import java.util.Date
 
+import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.linkis.governance.common.entity.job.SubJobInfo
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.orchestrator.computation.operation.progress.{DefaultProgressOperation, ProgressProcessor}
@@ -146,22 +147,23 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
         }
         entranceExecuteRequest.getSubJobInfo.setStatus(SchedulerEventState.Succeed.toString)
         entranceExecuteRequest.getJob.getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(entranceExecuteRequest.getSubJobInfo)
-        entranceExecuteRequest.getJob.getLogListener.foreach(_.onLogUpdate(entranceExecuteRequest.getJob, s"Your subjob : ${entranceExecuteRequest.getSubJobInfo.getSubJobDetail().getId} execue with state succeed, has ${entranceExecuteRequest.getSubJobInfo.getSubJobDetail().getResultSize} resultsets."))
+        entranceExecuteRequest.getJob.getLogListener.foreach(_.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateInfo(s"Your subjob : ${entranceExecuteRequest.getSubJobInfo.getSubJobDetail().getId} execue with state succeed, has ${entranceExecuteRequest.getSubJobInfo.getSubJobDetail().getResultSize} resultsets.")))
         // submit next subJob
         val executeRequest = entranceExecuteRequest.getJob.jobToExecuteRequest()
         if (null != executeRequest) {
           // clear subjob cache
-          val jobReturn = callExecute(executeRequest)
-          engineReturns synchronized engineReturns += jobReturn
+          callExecute(executeRequest)
         } else {
-          entranceExecuteRequest.getJob.getLogListener.foreach(_.onLogUpdate(entranceExecuteRequest.getJob, s"Congratuaions! Your job : ${entranceExecuteRequest.getJob.getId} executed with status succeed and ${entranceExecuteRequest.getJob.addAndGetResultSize(0)} results."))
+          entranceExecuteRequest.getJob.getLogListener.foreach(_.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateInfo(s"Congratuaions! Your job : ${entranceExecuteRequest.getJob.getId} executed with status succeed and ${entranceExecuteRequest.getJob.addAndGetResultSize(0)} results.")))
           Utils.tryAndWarn(doOnSucceed(entranceExecuteRequest))
         }
       case failedResponse: FailedTaskResponse =>
         entranceExecuteRequest.getSubJobInfo.setStatus(SchedulerEventState.Failed.toString)
         entranceExecuteRequest.getJob.getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(entranceExecuteRequest.getSubJobInfo)
 
-        Utils.tryAndWarn {doOnFailed(entranceExecuteRequest, orchestration, failedResponse)}
+        Utils.tryAndWarn {
+          doOnFailed(entranceExecuteRequest, orchestration, failedResponse)
+        }
       case o =>
         val msg = s"Job : ${entranceExecuteRequest.getJob.getId} , subJob : ${entranceExecuteRequest.getSubJobInfo.getSubJobDetail.getId} returnd unknown response : ${BDPJettyServerHelper.gson.toJson(o)}"
         error(msg)
@@ -191,21 +193,22 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
   }
 
   override def close(): Unit = {
-    if (engineReturns.nonEmpty) engineReturns.foreach { e =>
+    getEngineExecuteAsyncReturn.foreach { e =>
       e.notifyError(s"$toString has already been completed with state $state.")
     }
   }
-  private def doOnSucceed(entranceExecuteRequest: EntranceExecuteRequest) = {
-    engineReturns.find(null != _).foreach { jobReturn =>
-      jobReturn.notifyStatus(ResponseTaskStatus(jobReturn.subJobId, ExecutionNodeStatus.Succeed))
+
+  private def doOnSucceed(entranceExecuteRequest: EntranceExecuteRequest): Unit = {
+    getEngineExecuteAsyncReturn.foreach { jobReturn =>
+      jobReturn.notifyStatus(ResponseTaskStatus(entranceExecuteRequest.getJob.getId, ExecutionNodeStatus.Succeed))
     }
   }
 
   private def doOnFailed(entranceExecuteRequest: EntranceExecuteRequest, orchestration: Orchestration, failedResponse: FailedTaskResponse) = {
     val msg = failedResponse.getErrorCode + ", " + failedResponse.getErrorMsg
-    engineReturns.find(null != _).foreach { jobReturn =>
+    getEngineExecuteAsyncReturn.foreach { jobReturn =>
       jobReturn.notifyError(msg, failedResponse.getCause)
-      jobReturn.notifyStatus(ResponseTaskStatus(jobReturn.subJobId, ExecutionNodeStatus.Failed))
+      jobReturn.notifyStatus(ResponseTaskStatus(entranceExecuteRequest.getJob.getId, ExecutionNodeStatus.Failed))
     }
   }
 
@@ -232,7 +235,7 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
   }
 
 
-  override protected def callExecute(request: ExecuteRequest): EngineExecuteAsynReturn = {
+  override protected def callExecute(request: ExecuteRequest): ExecuteResponse = {
 
 
     val entranceExecuteRequest: EntranceExecuteRequest = request match {
@@ -243,13 +246,13 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
     }
     // 1. create JobReq
     val compJobReq = requestToComputationJobReq(entranceExecuteRequest)
-    Utils.tryCatch {
+    Utils.tryCatch[ExecuteResponse] {
       // 2. orchestrate compJobReq get Orchestration
       val orchestration = EntranceOrchestrationFactory.getOrchestrationSession().orchestrate(compJobReq)
       val orchestratorFuture = orchestration.asyncExecute()
       val msg = s"Job with jobGroupId : ${entranceExecuteRequest.getJob.getJobRequest.getId} and subJobId : ${entranceExecuteRequest.getSubJobInfo.getSubJobDetail.getId} was submitted to Orchestrator."
       info(msg)
-      entranceExecuteRequest.getJob.getLogListener.foreach(_.onLogUpdate(entranceExecuteRequest.getJob, msg))
+      entranceExecuteRequest.getJob.getLogListener.foreach(_.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateInfo(msg)))
       //Entrance指标：任务提供给orchestrator时间
       if (entranceExecuteRequest.getJob.getJobRequest.getMetrics == null) {
         warn("Job Metrics has not been initialized")
@@ -265,14 +268,31 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
         dealResponse(orchestrationResponse, entranceExecuteRequest, orchestration)
       }
       )
-      val jobReturn = new EngineExecuteAsynReturn(request, orchestratorFuture,
-        compJobReq.getId, logProcessor, progressProcessor, null)
+      /**
+        * 只有第一次会new，后续都是reset
+        */
+      val jobReturn = if (getEngineExecuteAsyncReturn.isDefined) {
+        getEngineExecuteAsyncReturn.foreach(_.closeOrchestration())
+        getEngineExecuteAsyncReturn.get
+      } else {
+        logger.info(s"For job ${entranceExecuteRequest.getJob.getId} and subJob ${compJobReq.getId} to create EngineExecuteAsyncReturn")
+        new EngineExecuteAsyncReturn(request, null)
+      }
+      jobReturn.setOrchestrationObjects(orchestratorFuture, logProcessor, progressProcessor)
+      jobReturn.setSubJobId(compJobReq.getId)
+      setEngineReturn(jobReturn)
       jobReturn
-    } {
-      case t: Throwable =>
+    } { t: Throwable =>
+      if (getEngineExecuteAsyncReturn.isEmpty) {
+
+        val msg = s"task submit failed,reason, ${ExceptionUtils.getFullStackTrace(t)}"
+        entranceExecuteRequest.getJob.getLogListener.foreach(_.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateERROR(msg)))
+        ErrorExecuteResponse(msg, t)
+      } else {
         val failedResponse = new DefaultFailedTaskResponse(s"Submit subjob : ${entranceExecuteRequest.getSubJobInfo.getSubJobDetail.getId} failed.", EntranceErrorCode.SUBMIT_JOB_ERROR.getErrCode, t)
         doOnFailed(entranceExecuteRequest, null, failedResponse)
         null
+      }
     }
   }
 

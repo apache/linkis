@@ -17,6 +17,7 @@
  
 package org.apache.linkis.entrance.execute
 
+import org.apache.commons.io.IOUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.job.EntranceExecuteRequest
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus._
@@ -37,54 +38,46 @@ abstract class EntranceExecutor(val id: Long, val mark: MarkReq) extends Executo
 
   private implicit var userWithCreator: UserWithCreator = _
 
-  protected val engineReturns = ArrayBuffer[EngineExecuteAsynReturn]()
+  private var engineReturn: EngineExecuteAsyncReturn = _
 
   protected var interceptors: Array[ExecuteRequestInterceptor] = Array(LabelExecuteRequestInterceptor, JobExecuteRequestInterceptor)
 
-  def setInterceptors(interceptors: Array[ExecuteRequestInterceptor]) = if (interceptors != null && interceptors.nonEmpty) {
+  def setInterceptors(interceptors: Array[ExecuteRequestInterceptor]): Unit = if (interceptors != null && interceptors.nonEmpty) {
     this.interceptors = interceptors
   }
 
   def setUser(user: String): Unit = userWithCreator = if (userWithCreator != null) UserWithCreator(user, userWithCreator.creator)
   else UserWithCreator(user, null)
 
-  def getUser = if (userWithCreator != null) userWithCreator.user else null
+  def getUser: String  = if (userWithCreator != null) userWithCreator.user else null
 
   def setCreator(creator: String): Unit = userWithCreator = if (userWithCreator != null) UserWithCreator(userWithCreator.user, creator)
   else UserWithCreator(null, creator)
 
-  def getCreator = if (userWithCreator != null) userWithCreator.creator else null
+  def getCreator: String  = if (userWithCreator != null) userWithCreator.creator else null
 
 //  def getInstance: ServiceInstance = getEngineConnExecutor().getServiceInstance
 
-  private[execute] def getEngineReturns = engineReturns.toArray
+  def getEngineExecuteAsyncReturn: Option[EngineExecuteAsyncReturn] = {
+    Option(engineReturn)
+  }
+
+  def setEngineReturn(engineExecuteAsyncReturn: EngineExecuteAsyncReturn): Unit = {
+    this.engineReturn = engineExecuteAsyncReturn
+  }
 
   override def execute(executeRequest: ExecuteRequest): ExecuteResponse = {
     var request: RequestTask = null
     interceptors.foreach(in => request = in.apply(request, executeRequest))
-    val engineReturn = callExecute(executeRequest)
-    engineReturns synchronized engineReturns += engineReturn
-    engineReturn
+    callExecute(executeRequest)
   }
 
   protected def callback(): Unit = {}
 
-  protected def callExecute(request: ExecuteRequest): EngineExecuteAsynReturn
+  protected def callExecute(request: ExecuteRequest): ExecuteResponse
 
 //  override def toString: String = s"${getInstance.getApplicationName}Engine($getId, $getUser, $getCreator, ${getInstance.getInstance})"
-  override def toString: String = s"string"
-
-  protected def killExecId(asynReturn: EngineExecuteAsynReturn, subJobId: String): Boolean = {
-    info(s"begin to send killExecId, subJobId : $subJobId")
-    Utils.tryCatch {
-      asynReturn.orchestrationFuture.cancel(s"Job ${subJobId} was cancelled by user.")
-      true
-    }{
-      case t : Throwable =>
-        error(s"Kill subjob with id : ${subJobId} failed, ${t.getMessage}")
-        false
-    }
-  }
+  override def toString: String = "${getId}"
 
   override def getId: Long = this.id
 
@@ -103,13 +96,13 @@ abstract class EntranceExecutor(val id: Long, val mark: MarkReq) extends Executo
   }
 
   def getExecId(jobId: String): String = {
-    val erOption = engineReturns.find(_.getJobId.contains(jobId))
-    if ( erOption.isDefined ) {
-      erOption.get.subJobId
+    if (null != engineReturn && engineReturn.getJobId.contains(jobId)) {
+      jobId
     } else {
       null
     }
   }
+
 
   override def hashCode(): Int = {
 //    getOrchestratorSession().hashCode()
@@ -118,18 +111,21 @@ abstract class EntranceExecutor(val id: Long, val mark: MarkReq) extends Executo
   }
 
   def getRunningOrchestrationFuture: Option[OrchestrationFuture] = {
-    if (null != engineReturns && engineReturns.nonEmpty ) {
-      Some(engineReturns.last.orchestrationFuture)
+    if (null != engineReturn) {
+      engineReturn.getOrchestrationFuture()
     } else {
       None
     }
   }
+
 }
 
-class EngineExecuteAsynReturn(val request: ExecuteRequest, val orchestrationFuture: OrchestrationFuture,
-                              val subJobId: String, logProcessor: LogProcessor, progressProcessor: ProgressProcessor = null,
-                              callback: EngineExecuteAsynReturn => Unit) extends AsynReturnExecuteResponse with Logging {
-  getJobId.foreach(id => info("Job " + id + " received a subjobId " + subJobId + " from orchestrator"))
+class EngineExecuteAsyncReturn(val request: ExecuteRequest,
+                               callback: EngineExecuteAsyncReturn => Unit) extends AsynReturnExecuteResponse with Logging {
+
+
+  //getJobId.foreach(id => info("Job " + id + " received a subjobId " + subJobId + " from orchestrator"))
+
   private var notifyJob: ExecuteResponse => Unit = _
 
   private var error: Throwable = _
@@ -138,7 +134,42 @@ class EngineExecuteAsynReturn(val request: ExecuteRequest, val orchestrationFutu
 
   private var lastNotifyTime = System.currentTimeMillis
 
-  def getLastNotifyTime = lastNotifyTime
+  private var orchestrationFuture: OrchestrationFuture = _
+
+  private var logProcessor: LogProcessor = _
+
+  private var progressProcessor: ProgressProcessor = _
+
+  private var subJobId: String = _
+
+  def getLastNotifyTime: Long = lastNotifyTime
+
+  def setOrchestrationObjects(orchestrationFuture: OrchestrationFuture, logProcessor: LogProcessor, progressProcessor: ProgressProcessor): Unit = {
+    this.orchestrationFuture = orchestrationFuture
+    this.logProcessor = logProcessor
+    this.progressProcessor = progressProcessor
+  }
+
+  def getOrchestrationFuture(): Option[OrchestrationFuture] = {
+    Option(orchestrationFuture)
+  }
+
+  def getLogProcessor(): Option[LogProcessor] = {
+    Option(logProcessor)
+  }
+
+  def getProgressProcessor(): Option[ProgressProcessor] = {
+    Option(progressProcessor)
+  }
+
+  def closeOrchestration(): Unit = {
+    getLogProcessor().foreach(IOUtils.closeQuietly(_))
+    getProgressProcessor().foreach(IOUtils.closeQuietly(_))
+  }
+
+  def setSubJobId(subJobId: String): Unit = {
+    this.subJobId = subJobId
+  }
 
   private[execute] def notifyStatus(responseEngineStatus: ResponseTaskStatus): Unit = {
     lastNotifyTime = System.currentTimeMillis()
@@ -168,14 +199,7 @@ class EngineExecuteAsynReturn(val request: ExecuteRequest, val orchestrationFutu
         notifyJob(r)
       }
 
-      if (null != logProcessor) {
-        logProcessor.close()
-      }
-      if (null != progressProcessor) {
-        progressProcessor.close()
-      }
-
-
+      closeOrchestration()
     }
   }
 

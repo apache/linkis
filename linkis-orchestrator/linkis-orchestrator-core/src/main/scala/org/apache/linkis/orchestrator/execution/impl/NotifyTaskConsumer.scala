@@ -51,6 +51,8 @@ abstract class NotifyTaskConsumer extends TaskConsumer with OrchestratorAsyncLis
           notifyLock.wait(getWaitTime)
         }
       }("Consumer error")
+    logger.error("Consumer exit, now exit process")
+    System.exit(1)
   }
 
   override def onEvent(event: OrchestratorAsyncEvent): Unit = event match {

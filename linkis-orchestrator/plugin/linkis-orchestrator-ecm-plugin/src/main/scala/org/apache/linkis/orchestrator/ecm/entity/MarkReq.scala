@@ -18,14 +18,15 @@
 package org.apache.linkis.orchestrator.ecm.entity
 
 import org.apache.linkis.common.utils.Logging
-import java.util
 
+import java.util
 import org.apache.linkis.manager.common.protocol.engine.EngineAskRequest
 import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactoryContext, StdLabelBuilderFactory}
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.entrance.LoadBalanceLabel
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.orchestrator.ecm.utils.ECMPUtils
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConversions._
@@ -83,9 +84,7 @@ class DefaultMarkReq extends MarkReq with Logging {
     val engineAskRequest = new EngineAskRequest
     engineAskRequest.setCreateService(getCreateService)
     engineAskRequest.setDescription(getDescription)
-    val labels = new util.HashMap[String, AnyRef]()
-    labels.putAll(getLabels.filterKeys(key => key != LabelKeyConstant.BIND_ENGINE_KEY && key != LabelKeyConstant.LOAD_BALANCE_KEY))
-    engineAskRequest.setLabels(labels)
+    engineAskRequest.setLabels(ECMPUtils.filterJobStrategyLabel(getLabels))
     engineAskRequest.setProperties(getProperties)
     engineAskRequest.setUser(getUser)
     engineAskRequest
@@ -103,16 +102,6 @@ class DefaultMarkReq extends MarkReq with Logging {
       if (other.getUser != getUser) {
         return flag
       }
-
-     /* if (other.getProperties != null && getProperties != null) {
-        val iterator = other.getProperties.iterator
-        while (iterator.hasNext) {
-          val next = iterator.next()
-          if (!next._2.equalsIgnoreCase(getProperties.get(next._1))) {
-            return flag
-          }
-        }
-      }*/
       if (other.getLabels != null && getLabels != null) {
         val iterator = other.getLabels.iterator
         while (iterator.hasNext) {

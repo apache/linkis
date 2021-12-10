@@ -30,11 +30,11 @@ public class JobQueuingTimeoutLabel extends GenericLabel {
         setLabelKey(LabelKeyConstant.JOB_QUEUING_TIMEOUT_KEY);
     }
 
-    public String getQueuingTimeout() {
+    public Long getQueuingTimeout() {
         if (null == getValue()) {
-            return null;
+            return -1L;
         }
-        return getValue().get(LabelKeyConstant.JOB_QUEUING_TIMEOUT_KEY);
+        return Long.parseLong(getValue().getOrDefault(LabelKeyConstant.JOB_QUEUING_TIMEOUT_KEY, "-1"));
     }
 
     @ValueSerialNum(0)
@@ -45,11 +45,4 @@ public class JobQueuingTimeoutLabel extends GenericLabel {
         getValue().put(LabelKeyConstant.JOB_QUEUING_TIMEOUT_KEY, queuingTimeout);
     }
 
-    @Override
-    public boolean equals(Object other) {
-        if(null == other) {
-            return false;
-        }
-        return true;
-    }
 }

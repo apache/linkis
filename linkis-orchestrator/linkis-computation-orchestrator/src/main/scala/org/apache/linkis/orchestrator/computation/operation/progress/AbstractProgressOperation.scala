@@ -17,6 +17,7 @@
  
 package org.apache.linkis.orchestrator.computation.operation.progress
 
+import java.util.concurrent.ConcurrentHashMap
 import org.apache.linkis.common.listener.Event
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.orchestrator.computation.operation.progress.ProgressProcessor
@@ -37,7 +38,7 @@ abstract class AbstractProgressOperation(orchestratorSession: OrchestratorSessio
   /**
     * Store execTask Id => ProgressProcessor
     */
-  protected val execTaskToProgressProcessor = new mutable.HashMap[String, ProgressProcessor]()
+  protected val execTaskToProgressProcessor = new ConcurrentHashMap[String, ProgressProcessor]()
 
   override def apply(orchestration: Orchestration): ProgressProcessor = {
     orchestration match {
@@ -65,11 +66,12 @@ abstract class AbstractProgressOperation(orchestratorSession: OrchestratorSessio
   }
 
   override def onProgressOn(taskProgressEvent: TaskProgressEvent): Unit = {
-    val execTask = taskProgressEvent.execTask
-    execTaskToProgressProcessor.get(execTask.getPhysicalContext.getRootTask.getId).foreach( progress => {
+    /*val execTask = taskProgressEvent.execTask
+    Option(execTaskToProgressProcessor.get(execTask.getPhysicalContext.getRootTask.getId)).foreach( progress => {
       progress.onProgress(taskProgressEvent.progress,
         taskProgressEvent.progressInfo)
-    })
+    })*/
+    warn("Should not be called.")
   }
 
   override def onEventError(event: Event, t: Throwable): Unit = {

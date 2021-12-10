@@ -17,6 +17,7 @@
  
 package org.apache.linkis.entrance.persistence;
 
+import java.util.Date;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.entrance.conf.EntranceConfiguration$;
 import org.apache.linkis.entrance.exception.EntranceIllegalParamException;
@@ -99,6 +100,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine{
                 jobReqForUpdate.setErrorDesc(jobReq.getErrorDesc().substring(0, MAX_DESC_LEN));
             }
         }
+        jobReqForUpdate.setUpdatedTime(new Date());
         JobReqUpdate jobReqUpdate = new JobReqUpdate(jobReqForUpdate);
         try {
             sender.ask(jobReqUpdate);
@@ -169,6 +171,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine{
         JobDetailReqUpdate jobDetailReqUpdate = new JobDetailReqUpdate(subJobInfo);
         try{
             JobRespProtocol resp = (JobRespProtocol) sender.ask(jobDetailReqUpdate);
+            jobDetailReqUpdate.jobInfo().getSubJobDetail().setUpdatedTime(new Date(System.currentTimeMillis()));
             if (0 != resp.getStatus()) {
                 logger.error("Update jobDetail with id {} failed, msg : {}", subJobInfo.getSubJobDetail().getId(), resp.getMsg());
                 throw new EntranceRPCException(20020, "sender rpc failed to update subJob with id " + String.valueOf(subJobInfo.getSubJobDetail().getId()));

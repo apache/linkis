@@ -112,11 +112,11 @@ public class QueryRestfulApi {
             sDate = new Date(startDate);
         }
         if (endDate != null) {
-            //eDate= new Date(endDate);
-            Calendar instance = Calendar.getInstance();
-            instance.setTimeInMillis(endDate);
-            instance.add(Calendar.DAY_OF_MONTH, 1);
-            eDate = new Date(instance.getTime().getTime()); // todo check
+            eDate= new Date(endDate);
+//            Calendar instance = Calendar.getInstance();
+//            instance.setTimeInMillis(endDate);
+//            instance.add(Calendar.DAY_OF_MONTH, 1);
+//            eDate = new Date(instance.getTime().getTime()); // todo check
         }
         if (proxyUser != null && QueryUtils.isJobHistoryAdmin(username)) {
             if (!StringUtils.isEmpty(proxyUser)) {

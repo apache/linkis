@@ -59,8 +59,6 @@ class PhysicalContextImpl(private var rootTask: ExecTask,private var leafTasks: 
     this.executionNodeStatus = ExecutionNodeStatus.Failed
     val failedResponse = new DefaultFailedTaskResponse(errorMsg, OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE, cause)
     this.response = failedResponse
-    val event = TaskLogEvent(getRootTask, LogUtils.generateERROR(errorMsg))
-    pushLog(event)
     syncListenerBus.postToAll(RootTaskResponseEvent(getRootTask, failedResponse))
   }
 

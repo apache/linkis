@@ -40,7 +40,7 @@ class AvailableNodeSelectRule extends NodeSelectRule with Logging{
             info(s"engineConn ${amNode.getServiceInstance} cannot be reuse status: ${amNode.getNodeStatus}")
             false
           }
-        case node: Node => NodeStatus.isAvailable(node.getNodeStatus) && NodeStatus.isEngineNodeHealthy(node.getNodeStatus).equals(NodeHealthy.Healthy)
+        case node: Node => NodeStatus.isAvailable(node.getNodeStatus)
       }
     } else {
       nodes

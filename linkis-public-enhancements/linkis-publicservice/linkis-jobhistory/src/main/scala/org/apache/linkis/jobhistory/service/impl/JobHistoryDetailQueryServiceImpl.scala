@@ -56,6 +56,7 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
     Utils.tryCatch {
       QueryUtils.storeExecutionCode(jobReqInsert.jobInfo.getSubJobDetail, jobReqInsert.jobInfo.getJobReq.getExecuteUser)
       val jobInsert = subjobDetail2JobDetail(jobReqInsert.jobInfo.getSubJobDetail)
+      jobInsert.setUpdated_time(jobInsert.getCreated_time)
       jobDetailMapper.insertJobDetail(jobInsert)
       val map = new util.HashMap[String, Object]()
       map.put(JobRequestConstants.JOB_ID, jobInsert.getId.asInstanceOf[Object])
@@ -87,7 +88,10 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
       }
       jobDetail.setExecutionContent(null)
       val jobUpdate = subjobDetail2JobDetail(jobDetail)
-      jobUpdate.setUpdated_time(new Timestamp(System.currentTimeMillis()))
+
+      if(jobUpdate.getUpdated_time == null) {
+        throw new QueryException(s"job${jobUpdate.getId}更新job相关信息失败，请指定该请求的更新时间!")
+      }
       jobDetailMapper.updateJobDetail(jobUpdate)
 
       // todo
@@ -111,7 +115,7 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
     jobResp
   }
 
-  @Receiver
+    @Receiver
     @Transactional
     override def batchChange(jobReqUpdate: JobDetailReqBatchUpdate): util.ArrayList[JobRespProtocol] = {
       val subJobInfoList = jobReqUpdate.jobInfo
@@ -131,7 +135,9 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
             }
             jobDetail.setExecutionContent(null)
             val jobUpdate = subjobDetail2JobDetail(jobDetail)
-            jobUpdate.setUpdated_time(new Timestamp(System.currentTimeMillis()))
+            if(jobUpdate.getUpdated_time == null) {
+              throw new QueryException(s"job${jobUpdate.getId}更新job相关信息失败，请指定该请求的更新时间!")
+            }
             jobDetailMapper.updateJobDetail(jobUpdate)
 
             // todo

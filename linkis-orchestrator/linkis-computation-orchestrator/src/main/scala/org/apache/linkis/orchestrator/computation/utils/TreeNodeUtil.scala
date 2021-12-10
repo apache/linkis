@@ -162,7 +162,7 @@ object TreeNodeUtil {
     }
   }
 
-  def removeTaskResponse(task: ExecTask): Unit = {
+  def removeTaskResponse(task: ExecTask): Option[ExecTaskStatusInfo] = {
     val context = task.getPhysicalContext
     if(context != null){
       val statusInfoMap = if(null != context.get(StatusInfoExecTask.STATUS_INFO_MAP_KEY)) {
@@ -171,6 +171,8 @@ object TreeNodeUtil {
         new mutable.HashMap[String, ExecTaskStatusInfo]()
       }
       statusInfoMap.remove(task.getId)
+    } else {
+      None
     }
   }
 

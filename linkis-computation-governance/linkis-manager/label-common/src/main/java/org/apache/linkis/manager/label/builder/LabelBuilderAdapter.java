@@ -89,7 +89,7 @@ public class LabelBuilderAdapter extends AbstractGenericLabelBuilder{
     private boolean checkLabelBuilt(Label<?> labelBuilt, Class<?> labelType, Type... valueType){
         if(null == labelBuilt ||  !labelType.isAssignableFrom(labelBuilt.getClass())){
             //Means that the label built doesn't meet the demand
-            LOG.info("Label built doesn't have the same type as label type: [" + labelType.getSimpleName() + "], rebuild it");
+            LOG.debug("Label built doesn't have the same type as label type: [" + labelType.getSimpleName() + "], rebuild it");
             return false;
         }else if(valueType.length > 0 ){
             Class<?>[] actualValueTypes = findActualLabelValueClass(labelBuilt.getClass());

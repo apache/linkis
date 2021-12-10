@@ -23,7 +23,7 @@ This file is divided into 3 sections:
     <!--                               rules we enforce                                   -->
     <!-- ================================================================================ -->
 
-    <!--    每个文件头几行需要匹配文本-->
+    <!--    The first few lines of each file need to match text-->
     <check level="error" class="org.scalastyle.file.HeaderMatchesChecker" enabled="true">
         <parameters>
             <parameter name="header"><![CDATA[/*
@@ -44,15 +44,14 @@ This file is divided into 3 sections:
         </parameters>
     </check>
 
-    <!--    加号前后需要空格-->
+    <!--    You need Spaces before and after the plus sign-->
     <check level="error" class="org.scalastyle.scalariform.SpacesAfterPlusChecker" enabled="true"/>
 
     <check level="error" class="org.scalastyle.scalariform.SpacesBeforePlusChecker" enabled="true"/>
 
-    <!--    检查行尾没有空格-->
+    <!--    Check that there are no Spaces at the end of the line-->
     <check level="error" class="org.scalastyle.file.WhitespaceEndOfLineChecker" enabled="true"/>
 
-    <!--    行最大字符数，spark设的100-->
     <check level="error" class="org.scalastyle.file.FileLineLengthChecker" enabled="true">
         <parameters>
             <parameter name="maxLineLength"><![CDATA[500]]></parameter>
@@ -61,30 +60,28 @@ This file is divided into 3 sections:
         </parameters>
     </check>
 
-    <!--    检查类名是否匹配正则-->
     <check level="error" class="org.scalastyle.scalariform.ClassNamesChecker" enabled="true">
         <parameters>
             <parameter name="regex"><![CDATA[[A-Z][A-Za-z]*]]></parameter>
         </parameters>
     </check>
 
-    <!--    方法参数个数不能超过一定值-->
+    <!--    The number of method parameters cannot exceed a certain value-->
     <check customId="argcount" level="error" class="org.scalastyle.scalariform.ParameterNumberChecker" enabled="true">
         <parameters>
             <parameter name="maxParameters"><![CDATA[8]]></parameter>
         </parameters>
     </check>
 
-    <!--    不能使用finalize()-->
+    <!--    Can't use Finalize ()-->
     <check level="error" class="org.scalastyle.scalariform.NoFinalizeChecker" enabled="true"/>
 
-    <!--    检查类和对象在没有override的情况下定义了equals()-->
     <check level="error" class="org.scalastyle.scalariform.CovariantEqualsChecker" enabled="true"/>
 
-    <!--    long字面量需要后面加L-->
+    <!--    The long literal needs to be followed by L-->
     <check level="error" class="org.scalastyle.scalariform.UppercaseLChecker" enabled="true"/>
 
-    <!--    if语句需要大括号，允许单行，双行写完-->
+    <!--    'If' statements require braces to allow single or double lines to be written-->
     <check level="error" class="org.scalastyle.scalariform.IfBraceChecker" enabled="true">
         <parameters>
             <parameter name="singleLineAllowed"><![CDATA[true]]></parameter>
@@ -92,21 +89,21 @@ This file is divided into 3 sections:
         </parameters>
     </check>
 
-    <!-- 方法的圈复杂度-->
+    <!-- Cyclomatic complexity of a method-->
     <check level="error" class="org.scalastyle.scalariform.CyclomaticComplexityChecker" enabled="true">
         <parameters>
             <parameter name="maximum">20</parameter>
         </parameters>
     </check>
 
-    <!--    左括号后不能有空格，代码里有不少地方有-->
+    <!--    You can't have Spaces after the open parenthesis, there are a lot of places in the code-->
     <check enabled="true" class="org.scalastyle.scalariform.DisallowSpaceAfterTokenChecker" level="error">
         <parameters>
             <parameter name="tokens">LPAREN</parameter>
         </parameters>
     </check>
 
-    <!-- 方法不能超过最大行数 -->
+    <!-- Methods cannot exceed the maximum number of rows -->
     <check level="warning" class="org.scalastyle.scalariform.MethodLengthChecker" enabled="true">
         <parameters>
             <parameter name="maxLength">500</parameter>
@@ -114,29 +111,29 @@ This file is divided into 3 sections:
         </parameters>
     </check>
 
-    <!--    方法需要显式返回类型-->
+    <!--    Method requires an explicit return type-->
     <check level="error" class="org.scalastyle.scalariform.PublicMethodsHaveTypeChecker" enabled="true"/>
 
     <check enabled="true" class="org.scalastyle.scalariform.RedundantIfChecker" level="warning"/>
 
-    <!--    检查文件以换行符结尾-->
+    <!--    Check that file ends with a newline character-->
     <check level="error" class="org.scalastyle.file.NewLineAtEofChecker" enabled="true"/>
 
-    <!--    不能使用非ascii字符-->
+    <!--    Non-ascii characters cannot be used-->
     <check customId="nonascii" level="error" class="org.scalastyle.scalariform.NonASCIICharacterChecker"
            enabled="true"/>
 
-    <!--    注释开头需要留一个空格-->
+    <!--    Comments need to start with a space-->
     <check level="warning" class="org.scalastyle.scalariform.SpaceAfterCommentStartChecker" enabled="true"/>
 
-    <!--    检查这些标记之前必须有空格-->
+    <!--    You must have a space before checking these markers-->
     <check level="error" class="org.scalastyle.scalariform.EnsureSingleSpaceBeforeTokenChecker" enabled="true">
         <parameters>
             <parameter name="tokens">ARROW, EQUALS, ELSE, TRY, CATCH, FINALLY, LARROW, RARROW</parameter>
         </parameters>
     </check>
 
-    <!--    检查这些标记符号之后必须有空格-->
+    <!--    Check that these markers must be followed by Spaces-->
     <check level="error" class="org.scalastyle.scalariform.EnsureSingleSpaceAfterTokenChecker" enabled="true">
         <parameters>
             <parameter name="tokens">ARROW, EQUALS, COMMA, COLON, IF, ELSE, DO, WHILE, FOR, MATCH, TRY, CATCH, FINALLY,
@@ -145,7 +142,7 @@ This file is divided into 3 sections:
         </parameters>
     </check>
 
-    <!--   检查 class字段需小写开头，object字段大写开头-->
+    <!--   The class field must start with a lowercase case and the object field must start with a uppercase case-->
     <check enabled="true" class="org.scalastyle.scalariform.FieldNamesChecker" level="warning">
         <parameters>
             <parameter name="regex">^[a-z][A-Za-z0-9]*$</parameter>
@@ -153,7 +150,7 @@ This file is divided into 3 sections:
         </parameters>
     </check>
 
-    <!--    文件内同一字符串字面量不能多次出现-->
+    <!--    The same string literal cannot appear more than once in a file-->
     <check enabled="true" class="org.scalastyle.scalariform.MultipleStringLiteralsChecker" level="warning">
         <parameters>
             <parameter name="allowed">1</parameter>
@@ -161,7 +158,7 @@ This file is divided into 3 sections:
         </parameters>
     </check>
 
-    <!--    方法参数名是否正则：小写字母开头-->
+    <!--    Method parameter name is regular or not: starts with a lowercase letter-->
     <check enabled="true" class="org.scalastyle.scalariform.MethodArgumentNamesChecker" level="warning">
         <parameters>
             <parameter name="regex">^[a-z][A-Za-z0-9]*$</parameter>
@@ -169,16 +166,16 @@ This file is divided into 3 sections:
         </parameters>
     </check>
 
-    <!-- equals()和hashCode()需要同时实现 -->
+    <!-- Equals () and hashCode() need to be implemented at the same time-->
     <check level="error" class="org.scalastyle.scalariform.EqualsHashCodeChecker" enabled="true"/>
 
-    <!-- 不使用java @Override注解-->
+    <!-- Do not use the java@override annotation-->
     <check level="error" class="org.scalastyle.scalariform.OverrideJavaChecker" enabled="true"/>
 
-    <!-- 不能使用???符号 -->
+    <!-- Cannot use?? symbol -->
     <check level="error" class="org.scalastyle.scalariform.NotImplementedErrorUsage" enabled="true"/>
 
-    <!--    逗号,右括号之前不能有空格-->
+    <!--    Comma, no space before the closing parenthesis-->
     <check level="error" class="org.scalastyle.scalariform.DisallowSpaceBeforeTokenChecker" enabled="true">
         <parameters>
             <parameter name="tokens">COMMA, RPAREN</parameter>
@@ -186,7 +183,7 @@ This file is divided into 3 sections:
     </check>
 
     <!-- ================================================================================ -->
-    <!--                              自定义 checker                               -->
+    <!--                              Custom checker                               -->
     <!-- ================================================================================ -->
 
     <!-- As of SPARK-7977 all printlns need to be wrapped in '// scalastyle:off/on println' -->
@@ -200,7 +197,7 @@ This file is divided into 3 sections:
       // scalastyle:on println]]></customMessage>
     </check>
 
-    <!-- As of SPARK-9613 JavaConversions should be replaced with JavaConverters，代码中有很多处使用-->
+    <!-- As of SPARK-9613 JavaConversions should be replaced with JavaConverters-->
     <check customId="javaconversions" level="error" class="org.scalastyle.scalariform.TokenChecker" enabled="true">
         <parameters>
             <parameter name="regex">JavaConversions</parameter>
@@ -210,7 +207,6 @@ This file is divided into 3 sections:
         </customMessage>
     </check>
 
-    <!--    禁止使用sparkContext.hadoopConfiguration，代码中有两处使用-->
     <check customId="hadoopconfiguration" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
         <parameters>
             <parameter name="regex">spark(.sqlContext)?.sparkContext.hadoopConfiguration</parameter>
@@ -226,7 +222,6 @@ This file is divided into 3 sections:
     ]]></customMessage>
     </check>
 
-    <!--  禁止使用 Runtime.getRuntime.addShutdownHook ，代码中没发现使用-->
     <check customId="runtimeaddshutdownhook" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
         <parameters>
             <parameter name="regex">Runtime\.getRuntime\.addShutdownHook</parameter>
@@ -241,7 +236,6 @@ This file is divided into 3 sections:
     ]]></customMessage>
     </check>
 
-    <!--   禁止使用Await.result，代码中有5处使用 -->
     <check customId="awaitresult" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
         <parameters>
             <parameter name="regex">Await\.result</parameter>
@@ -255,7 +249,6 @@ This file is divided into 3 sections:
     ]]></customMessage>
     </check>
 
-    <!--    禁止使用Await.ready，代码中没发现使用-->
     <check customId="awaitready" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
         <parameters>
             <parameter name="regex">Await\.ready</parameter>
@@ -269,7 +262,6 @@ This file is divided into 3 sections:
     ]]></customMessage>
     </check>
 
-    <!--    禁止抛错误，应该抛异常，代码中发现一处case-->
     <check customId="throwerror" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
         <parameters>
             <parameter name="regex">throw new \w+Error\(</parameter>
@@ -283,7 +275,6 @@ This file is divided into 3 sections:
     ]]></customMessage>
     </check>
 
-    <!--    使用commons.lang3而不是commons.lang，代码中有多处使用-->
     <check customId="commonslang2" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
         <parameters>
             <parameter name="regex">org\.apache\.commons\.lang\.</parameter>
@@ -293,7 +284,6 @@ This file is divided into 3 sections:
         </customMessage>
     </check>
 
-    <!--    禁止使用FileSystem.get(Configuration conf)-->
     <check customId="FileSystemGet" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
         <parameters>
             <parameter name="regex">FileSystem.get\([a-zA-Z_$][a-zA-Z_$0-9]*\)</parameter>
@@ -310,7 +300,6 @@ This file is divided into 3 sections:
     ]]></customMessage>
     </check>
 
-    <!-- SPARK-3854: Single Space between ')' and '{'  右小括号和左大括号之间要有空格-->
     <check customId="SingleSpaceBetweenRParenAndLCurlyBrace" level="error" class="org.scalastyle.file.RegexChecker"
            enabled="true">
         <parameters>
@@ -321,7 +310,6 @@ This file is divided into 3 sections:
     ]]></customMessage>
     </check>
 
-    <!--  对多行注释使用Javadoc风格的缩进  -->
     <check customId="NoScalaDoc" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
         <parameters>
             <parameter name="regex">(?m)^(\s*)/[*][*].*$(\r|)\n^\1 [*]</parameter>
@@ -329,7 +317,6 @@ This file is divided into 3 sections:
         <customMessage>Use Javadoc style indentation for multiline comments</customMessage>
     </check>
 
-    <!--    禁止使用Objects.toStringHelper，代码中没有使用-->
     <check customId="GuavaToStringHelper" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
         <parameters>
             <parameter name="regex">Objects.toStringHelper</parameter>
@@ -356,7 +343,6 @@ This file is divided into 3 sections:
         </parameters>
     </check>
 
-    <!--    检查没有用java @Deprecated注解-->
     <check level="error" class="org.scalastyle.scalariform.DeprecatedJavaChecker" enabled="false"/>
 
     <check level="error" class="org.scalastyle.scalariform.IllegalImportsChecker" enabled="false">

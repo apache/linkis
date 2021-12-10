@@ -18,6 +18,7 @@
 package org.apache.linkis.jobhistory.entity;
 
 import java.util.Date;
+import org.apache.linkis.jobhistory.util.QueryUtils;
 
 
 public class JobHistory {
@@ -49,6 +50,8 @@ public class JobHistory {
     private Date created_time;
 
     private Date updated_time;
+
+    private String updateTimeMills;
 
     private String instances;
 
@@ -201,4 +204,9 @@ public class JobHistory {
     public void setExecution_code(String execution_code) {
         this.execution_code = execution_code;
     }
+
+    public String getUpdateTimeMills(){
+        return  QueryUtils.dateToString(getUpdated_time());
+    }
+
 }

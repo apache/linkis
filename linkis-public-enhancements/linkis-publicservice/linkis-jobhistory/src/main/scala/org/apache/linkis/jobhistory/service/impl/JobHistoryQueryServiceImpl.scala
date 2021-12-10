@@ -35,6 +35,7 @@ import java.util.Date
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.entity.job.{JobRequest, JobRequestWithDetail, SubJobDetail}
 import org.apache.linkis.governance.common.protocol.job.{JobReqBatchUpdate, JobReqInsert, JobReqQuery, JobReqUpdate, JobRespProtocol}
+import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
 import org.apache.linkis.jobhistory.entity.QueryJobHistory
 import org.apache.linkis.jobhistory.exception.QueryException
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService
@@ -42,6 +43,7 @@ import org.apache.linkis.jobhistory.transitional.TaskStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
 import scala.collection.JavaConversions._
 
 
@@ -62,6 +64,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     Utils.tryCatch {
       QueryUtils.storeExecutionCode(jobReqInsert.jobReq)
       val jobInsert = jobRequest2JobHistory(jobReqInsert.jobReq)
+      jobInsert.setUpdated_time(jobInsert.getCreated_time)
       jobHistoryMapper.insertJobHistory(jobInsert)
       val map = new util.HashMap[String, Object]()
       map.put(JobRequestConstants.JOB_ID, jobInsert.getId.asInstanceOf[Object])
@@ -77,52 +80,54 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   @Receiver
-  @Transactional
   override def change(jobReqUpdate: JobReqUpdate): JobRespProtocol = {
     val jobReq = jobReqUpdate.jobReq
     jobReq.setExecutionCode(null)
-    info("Update data to the database(往数据库中更新数据)：status:" + jobReq.toString)
+    info("Update data to the database(往数据库中更新数据)：status:" + jobReq.getStatus)
     val jobResp = new JobRespProtocol
-    Utils.tryCatch {
-      if (jobReq.getErrorDesc != null) {
-        if (jobReq.getErrorDesc.length > 256) {
-          info(s"errorDesc is too long,we will cut some message")
-          jobReq.setErrorDesc(jobReq.getErrorDesc.substring(0, 256))
-          info(s"${jobReq.getErrorDesc}")
+    jobResp.setStatus(1)
+    var retry = 0
+    if (jobResp.getStatus == 1 && retry < JobhistoryConfiguration.UPDATE_RETRY_TIMES.getValue) {
+      Utils.tryCatch {
+        if (jobReq.getErrorDesc != null) {
+          if (jobReq.getErrorDesc.length > 256) {
+            info(s"errorDesc is too long,we will cut some message")
+            jobReq.setErrorDesc(jobReq.getErrorDesc.substring(0, 256))
+            info(s"${jobReq.getErrorDesc}")
+          }
+        }
+        if (jobReq.getStatus != null) {
+          val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
+          if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus)) {
+            throw new QueryException(s"任务Id${jobReq.getId}在数据库中的task状态为：${oldStatus}更新的task状态为：${jobReq.getStatus}更新失败！")
+          }
+        }
+        val jobUpdate = jobRequest2JobHistory(jobReq)
+        if(jobUpdate.getUpdated_time == null) {
+          throw new QueryException(s"job${jobReq.getId}更新job相关信息失败，请指定该请求的更新时间!")
+        }
+        jobHistoryMapper.updateJobHistory(jobUpdate)
+        val map = new util.HashMap[String, Object]
+        map.put(JobRequestConstants.JOB_ID, jobReq.getId.asInstanceOf[Object])
+        jobResp.setStatus(0)
+        jobResp.setData(map)
+      } {
+        case e: QueryException =>
+          warn(e.getMessage)
+          jobResp.setStatus(0)
+          jobResp.setMsg(e.getMessage)
+        case exception: Exception => {
+          Utils.sleepQuietly(JobhistoryConfiguration.UPDATE_RETRY_INTERVAL.getValue)
+          retry = retry + 1
+          warn(s"更新任务状态发生了意外错误，将会重试${JobhistoryConfiguration.UPDATE_RETRY_TIMES}次，开始重试第${retry}次。" + exception.getMessage)
+          jobResp.setMsg(exception.getMessage)
         }
       }
-      if (jobReq.getStatus != null) {
-        val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
-        if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus))
-          throw new QueryException(s"${jobReq.getId}数据库中的task状态为：${oldStatus}更新的task状态为：${jobReq.getStatus}更新失败！")
-      }
-      val jobUpdate = jobRequest2JobHistory(jobReq)
-      jobUpdate.setUpdated_time(new Timestamp(System.currentTimeMillis()))
-      jobHistoryMapper.updateJobHistory(jobUpdate)
-
-      // todo
-      /*//updated by shanhuang to write cache
-      if (TaskStatus.Succeed.toString.equals(jobReq.getStatus) && queryCacheService.needCache(jobReq)) {
-        info("Write cache for task: " + jobReq.getId)
-        jobReq.setExecutionCode(executionCode)
-        queryCacheService.writeCache(jobReq)
-      }*/
-
-      val map = new util.HashMap[String, Object]
-      map.put(JobRequestConstants.JOB_ID, jobReq.getId.asInstanceOf[Object])
-      jobResp.setStatus(0)
-      jobResp.setData(map)
-    } {
-      case e: Exception =>
-        error(e.getMessage)
-        jobResp.setStatus(1)
-        jobResp.setMsg(e.getMessage);
     }
     jobResp
   }
 
-  @Receiver
-    @Transactional
+    @Receiver
     override def batchChange(jobReqUpdate: JobReqBatchUpdate): util.ArrayList[JobRespProtocol] = {
       val jobReqList = jobReqUpdate.jobReq
       val jobRespList = new util.ArrayList[JobRespProtocol]()

@@ -54,11 +54,20 @@ object OrchestratorConfiguration {
 
   val RETRY_TASK_WAIT_TIME = CommonVars("wds.linkis.orchestrator.task.retry.wait.time", 10000)
 
+  val SCHEDULER_RETRY_TASK_WAIT_TIME = CommonVars("wds.linkis.orchestrator.task.scheduler.retry.wait.time", 100000)
+
   val TASK_SCHEDULER_THREAD_POOL = CommonVars("wds.linkis.orchestrator.task.scheduler.thread.pool", 200)
 
-  val ORCHESTRATOR_EXECUTION_FACTORY = CommonVars("wds.linkis.orchestrator.execution.factory.class", "org.apache.linkis.orchestrator.code.plans.execution.CodeExecutionFactory")
+  val ORCHESTRATOR_EXECUTION_FACTORY = CommonVars("wds.linkis.orchestrator.execution.factory.class", "com.webank.wedatasphere.linkis.orchestrator.code.plans.execution.CodeExecutionFactory")
 
   val TASK_CONSUMER_WAIT = CommonVars("wds.linkis.orchestrator.task.consumer.wait", 500)
 
   val ORCHESTRATOR_USER_MAX_RUNNING = CommonVars("wds.linkis.task.user.max.running", 5)
+
+  val SCHEDULIS_CREATOR = CommonVars("wds.linkis.orchestrator.task.schedulis.creator", "schedulis")
+
+  val ORCHESTRATOR_METRIC_LOG = CommonVars("wds.linkis.orchestrator.metric.log.enable", true)
+
+  val ORCHESTRATOR_METRIC_LOG_TIME = CommonVars("wds.linkis.orchestrator.metric.log.time", new TimeType("1h"))
+
 }

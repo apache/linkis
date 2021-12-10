@@ -141,17 +141,3 @@ class TaskPlannerTransform extends PlannerTransform with Logging {
   }
 }
 
-/**
- * simple test for transform
- */
-object test {
-  def main(args: Array[String]): Unit = {
-    val codeJob = new CodeJob(Array(), Array())
-    val codeLogicalUnit = new CodeLogicalUnit(null, null, null)
-    codeJob.setCodeLogicalUnit(codeLogicalUnit)
-    val stage = new CodeStage(codeJob, Array(), Array())
-    codeJob.copyWithNewStages(Array(stage))
-    val taskPlannerTransform = new TaskPlannerTransform
-    taskPlannerTransform.apply(codeJob, codeJob.getASTContext)
-  }
-}

@@ -173,7 +173,7 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
       val existInstances = getAllInstances()
       if (null != existInstances && existInstances.nonEmpty) {
         val reuseExclusionLabel = MarkReq.getLabelBuilderFactory.createLabel(classOf[ReuseExclusionLabel])
-        reuseExclusionLabel.setInstances(getAllInstances())
+        reuseExclusionLabel.setInstances(existInstances.mkString(";"))
         engineConnAskReq.getLabels.put(LabelKeyConstant.REUSE_EXCLUSION_KEY, reuseExclusionLabel.getValue)
       }
       val engineConnExecutor = askEngineConnExecutor(engineConnAskReq, mark)

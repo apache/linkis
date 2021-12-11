@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.filesystem.restful.api;
 
 
@@ -77,7 +77,7 @@ public class FsRestfulApi {
 
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-     /**
+    /**
      * check 权限
      * @param requestPath
      * @param userName
@@ -127,6 +127,10 @@ public class FsRestfulApi {
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         if (!fileSystem.exists(fsPath)) {
+            fileSystem.mkdirs(fsPath);
+//            throw WorkspaceExceptionManager.createException(80003);
+        }
+        if(!fileSystem.exists(fsPath)){
             throw WorkspaceExceptionManager.createException(80003);
         }
         return Message.ok().data(String.format("user%sRootPath", returnType), path);
@@ -205,8 +209,8 @@ public class FsRestfulApi {
 
     @RequestMapping(path = "/upload",method = RequestMethod.POST)
     public Message upload(HttpServletRequest req,
-        @RequestParam("path") String path,
-        @RequestParam("file") List<MultipartFile> files) throws IOException, WorkSpaceException {
+                          @RequestParam("path") String path,
+                          @RequestParam("file") List<MultipartFile> files) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
@@ -253,7 +257,7 @@ public class FsRestfulApi {
 
     @RequestMapping(path = "/getDirFileTrees",method = RequestMethod.GET)
     public Message getDirFileTrees(HttpServletRequest req,
-                                    @RequestParam(value="path",required=false) String path) throws IOException, WorkSpaceException {
+                                   @RequestParam(value="path",required=false) String path) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
@@ -264,7 +268,8 @@ public class FsRestfulApi {
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         if (!fileSystem.exists(fsPath)) {
-            return Message.ok().data("dirFileTrees", null);
+            fileSystem.mkdirs(fsPath);
+//            return Message.ok().data("dirFileTrees", null);
         }
         DirFileTree dirFileTree = new DirFileTree();
         dirFileTree.setPath(fsPath.getSchemaPath());
@@ -350,7 +355,7 @@ public class FsRestfulApi {
 
     @RequestMapping(path = "/isExist",method = RequestMethod.GET)
     public Message isExist(HttpServletRequest req,
-                            @RequestParam(value="path",required=false) String path) throws IOException, WorkSpaceException {
+                           @RequestParam(value="path",required=false) String path) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         FsPath fsPath = new FsPath(path);
         if (StringUtils.isEmpty(path)) {
@@ -365,10 +370,10 @@ public class FsRestfulApi {
 
     @RequestMapping(path = "/openFile",method = RequestMethod.GET)
     public Message openFile(HttpServletRequest req,
-                             @RequestParam(value="path",required=false) String path,
-                             @RequestParam(value="page",defaultValue = "1") Integer page,
-                             @RequestParam(value="pageSize",defaultValue="5000") Integer pageSize,
-                             @RequestParam(value="charset",defaultValue="utf-8") String charset) throws IOException, WorkSpaceException {
+                            @RequestParam(value="path",required=false) String path,
+                            @RequestParam(value="page",defaultValue = "1") Integer page,
+                            @RequestParam(value="pageSize",defaultValue="5000") Integer pageSize,
+                            @RequestParam(value="charset",defaultValue="utf-8") String charset) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         Message message = Message.ok();
         if (StringUtils.isEmpty(path)) {
@@ -594,12 +599,12 @@ public class FsRestfulApi {
 
     @RequestMapping(path = "formate",method = RequestMethod.GET)
     public Message formate(HttpServletRequest req,
-                            @RequestParam(value="path",required=false) String path,
-                            @RequestParam(value="encoding",defaultValue="utf-8") String encoding,
-                            @RequestParam(value="fieldDelimiter",defaultValue=",") String fieldDelimiter,
-                            @RequestParam(value="hasHeader",defaultValue="false") Boolean hasHeader,
-                            @RequestParam(value="quote",defaultValue="\"") String quote,
-                            @RequestParam(value="escapeQuotes",defaultValue="false") Boolean escapeQuotes) throws Exception {
+                           @RequestParam(value="path",required=false) String path,
+                           @RequestParam(value="encoding",defaultValue="utf-8") String encoding,
+                           @RequestParam(value="fieldDelimiter",defaultValue=",") String fieldDelimiter,
+                           @RequestParam(value="hasHeader",defaultValue="false") Boolean hasHeader,
+                           @RequestParam(value="quote",defaultValue="\"") String quote,
+                           @RequestParam(value="escapeQuotes",defaultValue="false") Boolean escapeQuotes) throws Exception {
         String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
@@ -655,8 +660,8 @@ public class FsRestfulApi {
 
     @RequestMapping(path = "/openLog",method = RequestMethod.GET)
     public Message openLog(HttpServletRequest req,
-        @RequestParam(value="path",required=false) String path,
-        @RequestParam(value="proxyUser",required=false) String proxyUser) throws IOException, WorkSpaceException {
+                           @RequestParam(value="path",required=false) String path,
+                           @RequestParam(value="proxyUser",required=false) String proxyUser) throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);

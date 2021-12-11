@@ -127,6 +127,10 @@ public class FsRestfulApi {
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         if (!fileSystem.exists(fsPath)) {
+            fileSystem.mkdirs(fsPath);
+//            throw WorkspaceExceptionManager.createException(80003);
+        }
+        if(!fileSystem.exists(fsPath)){
             throw WorkspaceExceptionManager.createException(80003);
         }
         return Message.ok().data(String.format("user%sRootPath", returnType), path);
@@ -264,7 +268,8 @@ public class FsRestfulApi {
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         if (!fileSystem.exists(fsPath)) {
-            return Message.ok().data("dirFileTrees", null);
+            fileSystem.mkdirs(fsPath);
+            // return Message.ok().data("dirFileTrees", null);
         }
         DirFileTree dirFileTree = new DirFileTree();
         dirFileTree.setPath(fsPath.getSchemaPath());

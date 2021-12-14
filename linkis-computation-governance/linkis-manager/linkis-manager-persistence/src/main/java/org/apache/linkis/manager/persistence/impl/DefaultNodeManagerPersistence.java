@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.persistence.impl;
 
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.exception.LinkisRetryException;
 import org.apache.linkis.manager.common.entity.node.AMEMNode;
 import org.apache.linkis.manager.common.entity.node.AMEngineNode;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
@@ -81,7 +82,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
     }
 
     @Override
-    public void updateEngineNode(ServiceInstance serviceInstance, Node node) throws PersistenceErrorException {
+    public void updateEngineNode(ServiceInstance serviceInstance, Node node) throws PersistenceErrorException, LinkisRetryException {
         PersistenceNode persistenceNode = new PersistenceNode();
         persistenceNode.setInstance(node.getServiceInstance().getInstance());
         persistenceNode.setName(node.getServiceInstance().getApplicationName());
@@ -94,6 +95,8 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
             nodeManagerMapper.updateNodeInstance(serviceInstance.getInstance(), persistenceNode);
             nodeManagerMapper.updateNodeRelation(serviceInstance.getInstance(),node.getServiceInstance().getInstance());
             nodeManagerMapper.updateNodeLabelRelation(serviceInstance.getInstance(),node.getServiceInstance().getInstance());
+        } catch (DuplicateKeyException e) {
+            throw new LinkisRetryException(41003, "engine instance name is exist, request of created engine will be retry");
         } catch (Exception e) {
             NodeInstanceNotFoundException nodeInstanceNotFoundException = new NodeInstanceNotFoundException(41002, "the node instance is not  exist (Node实例不存在)");
             nodeInstanceNotFoundException.initCause(e);

@@ -58,10 +58,11 @@
         VALUES (#{job_req_id},#{submit_user},#{execute_user},#{source},
         #{labels},#{params},#{progress},
         #{status},#{log_path},#{error_code},#{error_desc},
-        #{created_time},#{updated_time},#{instances},#{metrics},#{engine_type},#{execution_code})
+        #{created_time}, #{updateTimeMills},#{instances},#{metrics},#{engine_type},#{execution_code})
     </insert>
 
-    <select id="selectJobHistory" useCache="false" resultMap="jobHistoryMap" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
+
+  <select id="selectJobHistory" useCache="false" resultMap="jobHistoryMap" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
         SELECT * FROM linkis_ps_job_history_group_history
         <where>
             <if test="id != null">id = #{id}</if>
@@ -102,7 +103,7 @@
     <update id="updateJobHistory" flushCache="true" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
         UPDATE linkis_ps_job_history_group_history
         <trim prefix="set" suffixOverrides=",">
-            <if test="updated_time != null">updated_time = #{updated_time},</if>
+            <if test="updated_time != null">updated_time = #{updateTimeMills},</if>
             <if test="job_req_id != null">job_req_id = #{job_req_id},</if>
             <if test="submit_user != null">submit_user = #{submit_user},</if>
             <if test="execute_user != null">execute_user = #{execute_user},</if>

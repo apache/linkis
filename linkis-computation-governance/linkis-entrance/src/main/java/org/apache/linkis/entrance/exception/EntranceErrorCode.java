@@ -29,9 +29,9 @@ public enum EntranceErrorCode {
     SUBMIT_JOB_ERROR(20011, "Submit job error "),
     INIT_JOB_ERROR(20012, "Init job error "),
     RESULT_NOT_PERSISTED_ERROR(20013, "Result not persisted error "),
-    GROUP_NOT_FOUND(20014, "group not found")
-
-    ;
+    GROUP_NOT_FOUND(20014, "group not found"),
+    EXECUTION_CODE_ISNULL(20015, "execute code is null, nothing will be execute!(执行代码为空，没有任何代码会被执行)"),
+    JOB_UPDATE_FAILED(20016, "job update failed");
     private int errCode;
     private String desc;
     EntranceErrorCode(int errCode, String desc){

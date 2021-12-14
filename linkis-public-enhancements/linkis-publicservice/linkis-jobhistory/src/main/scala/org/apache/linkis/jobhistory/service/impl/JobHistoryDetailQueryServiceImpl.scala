@@ -26,15 +26,19 @@ import org.apache.linkis.jobhistory.service.JobHistoryDetailQueryService
 import org.apache.linkis.message.annotation.Receiver
 import java.util
 
+import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.linkis.common.errorcode.LinkisPublicEnhancementErrorCodeSummary
+import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
+import org.apache.linkis.governance.common.entity.job.QueryException
 import org.apache.linkis.governance.common.protocol.job.{JobDetailReqBatchUpdate, JobDetailReqInsert, JobDetailReqQuery, JobDetailReqUpdate, JobRespProtocol}
 import org.apache.linkis.jobhistory.conversions.TaskConversions._
-import org.apache.linkis.jobhistory.exception.QueryException
 import org.apache.linkis.jobhistory.transitional.TaskStatus
 import org.apache.linkis.jobhistory.util.QueryUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters.asScalaBufferConverter
 
@@ -51,8 +55,9 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
 
   @Receiver
   override def add(jobReqInsert: JobDetailReqInsert): JobRespProtocol = {
-    info("Insert data into the database(往数据库中插入数据)：job id : " + jobReqInsert.jobInfo.getJobReq().getId.toString)
     val jobResp = new JobRespProtocol
+    val jobReqId = jobReqInsert.jobInfo.getJobReq.getId.toString
+    logger.info(s"Insert JobDetailReqInsert into the database(往数据库中插入数据):job id: $jobReqId" )
     Utils.tryCatch {
       QueryUtils.storeExecutionCode(jobReqInsert.jobInfo.getSubJobDetail, jobReqInsert.jobInfo.getJobReq.getExecuteUser)
       val jobInsert = subjobDetail2JobDetail(jobReqInsert.jobInfo.getSubJobDetail)
@@ -64,9 +69,9 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
       jobResp.setData(map)
     } {
       case e: Exception =>
-        error(e.getMessage)
+        logger.error(s"Failed to add JobDetailReqInsert ${jobReqId}", e)
         jobResp.setStatus(1)
-        jobResp.setMsg(e.getMessage)
+        jobResp.setMsg(ExceptionUtils.getRootCauseMessage(e))
     }
     jobResp
   }
@@ -84,13 +89,13 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
       if (jobDetail.getStatus != null) {
         val oldStatus: String = jobDetailMapper.selectJobDetailStatusForUpdateByJobDetailId(jobDetail.getId)
         if (oldStatus != null && !shouldUpdate(oldStatus, jobDetail.getStatus))
-          throw new QueryException(s"${jobDetail.getId}数据库中的task状态为：${oldStatus}更新的task状态为：${jobDetail.getStatus}更新失败！")
+          throw new QueryException(120001, s"${jobDetail.getId}数据库中的task状态为：${oldStatus}更新的task状态为：${jobDetail.getStatus}更新失败！")
       }
       jobDetail.setExecutionContent(null)
       val jobUpdate = subjobDetail2JobDetail(jobDetail)
 
       if(jobUpdate.getUpdated_time == null) {
-        throw new QueryException(s"job${jobUpdate.getId}更新job相关信息失败，请指定该请求的更新时间!")
+        throw new QueryException(120001, s"job${jobUpdate.getId}更新job相关信息失败，请指定该请求的更新时间!")
       }
       jobDetailMapper.updateJobDetail(jobUpdate)
 
@@ -107,10 +112,14 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
       jobResp.setStatus(0)
       jobResp.setData(map)
     } {
-      case e: Exception =>
-        error(e.getMessage)
+      case exception: QueryException =>
+        logger.error(s"Failed to change JobDetailReqInsert ${jobDetail.getId}", exception)
         jobResp.setStatus(1)
-        jobResp.setMsg(e.getMessage);
+        jobResp.setMsg(ExceptionUtils.getRootCauseMessage(exception))
+      case exception: Exception =>
+        logger.error(s"Failed to change JobDetailReqInsert ${jobDetail.getId}, should be retry", exception)
+        jobResp.setStatus(2)
+        jobResp.setMsg(ExceptionUtils.getRootCauseMessage(exception))
     }
     jobResp
   }
@@ -131,12 +140,12 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
             if (jobDetail.getStatus != null) {
               val oldStatus: String = jobDetailMapper.selectJobDetailStatusForUpdateByJobDetailId(jobDetail.getId)
               if (oldStatus != null && !shouldUpdate(oldStatus, jobDetail.getStatus))
-                throw new QueryException(s"${jobDetail.getId}数据库中的task状态为：${oldStatus}更新的task状态为：${jobDetail.getStatus}更新失败！")
+                throw new QueryException(120001, s"${jobDetail.getId}数据库中的task状态为：${oldStatus}更新的task状态为：${jobDetail.getStatus}更新失败！")
             }
             jobDetail.setExecutionContent(null)
             val jobUpdate = subjobDetail2JobDetail(jobDetail)
             if(jobUpdate.getUpdated_time == null) {
-              throw new QueryException(s"job${jobUpdate.getId}更新job相关信息失败，请指定该请求的更新时间!")
+              throw new QueryException(120001, s"job${jobUpdate.getId}更新job相关信息失败，请指定该请求的更新时间!")
             }
             jobDetailMapper.updateJobDetail(jobUpdate)
 
@@ -152,11 +161,10 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
             map.put(JobRequestConstants.JOB_ID, jobDetail.getId.asInstanceOf[Object])
             jobResp.setStatus(0)
             jobResp.setData(map)
-          } {
-            case e: Exception =>
-              error(e.getMessage)
-              jobResp.setStatus(1)
-              jobResp.setMsg(e.getMessage);
+          } { case e: Exception =>
+            logger.error(s"Failed to abatchChange", e)
+            jobResp.setStatus(1)
+            jobResp.setMsg(ExceptionUtils.getRootCauseMessage(e))
           }
           jobRespList.add(jobResp)
         })
@@ -179,7 +187,7 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
       jobResp.setData(map)
     } {
       case e: Exception =>
-        error(e.getMessage)
+        logger.error(s"Failed to query history task", e)
         jobResp.setStatus(1)
         jobResp.setMsg(e.getMessage);
     }

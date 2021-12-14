@@ -25,7 +25,7 @@ import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration;
 import org.apache.linkis.jobhistory.conversions.TaskConversions;
 import org.apache.linkis.jobhistory.dao.JobDetailMapper;
 import org.apache.linkis.jobhistory.entity.*;
-import org.apache.linkis.jobhistory.exception.QueryException;
+import org.apache.linkis.governance.common.entity.job.QueryException;
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService;
 import org.apache.linkis.jobhistory.util.QueryUtils;
 import org.apache.linkis.protocol.constants.TaskConstant;
@@ -41,7 +41,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.sql.Date;
 

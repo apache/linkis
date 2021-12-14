@@ -19,17 +19,21 @@ package org.apache.linkis.entrance.persistence;
 
 import java.util.Date;
 import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.conf.EntranceConfiguration$;
+import org.apache.linkis.entrance.exception.EntranceErrorCode;
 import org.apache.linkis.entrance.exception.EntranceIllegalParamException;
 import org.apache.linkis.entrance.exception.EntranceRPCException;
 import org.apache.linkis.entrance.exception.QueryFailedException;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
+import org.apache.linkis.governance.common.entity.job.QueryException;
 import org.apache.linkis.governance.common.entity.job.SubJobDetail;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
 import org.apache.linkis.governance.common.entity.job.SubJobInfo;
 import org.apache.linkis.governance.common.entity.task.*;
 import org.apache.linkis.governance.common.protocol.job.*;
 import org.apache.linkis.protocol.constants.TaskConstant;
+import org.apache.linkis.protocol.message.RequestProtocol;
 import org.apache.linkis.protocol.task.Task;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.server.BDPJettyServerHelper;
@@ -49,6 +53,8 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine{
     private static final Logger logger = LoggerFactory.getLogger(QueryPersistenceEngine.class);
     private static final int MAX_DESC_LEN = 320;
 
+    private static final int RETRY_NUMBER = EntranceConfiguration.JOBINFO_UPDATE_RETRY_MAX_TIME().getValue();
+
     public QueryPersistenceEngine(){
         /*
             Get the corresponding sender through datawork-linkis-publicservice(通过datawork-linkis-publicservice 拿到对应的sender)
@@ -58,37 +64,62 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine{
 
 
     @Override
-    public void persist(SubJobInfo subJobInfo) throws QueryFailedException, EntranceIllegalParamException, EntranceRPCException{
-        if (null == subJobInfo || null == subJobInfo.getSubJobDetail()){
+    public void persist(SubJobInfo subJobInfo) throws QueryFailedException, EntranceIllegalParamException {
+        if (null == subJobInfo || null == subJobInfo.getSubJobDetail()) {
             throw new EntranceIllegalParamException(20004, "JobDetail can not be null, unable to do persist operation");
         }
         JobDetailReqInsert jobReqInsert = new JobDetailReqInsert(subJobInfo);
-        JobRespProtocol jobRespProtocol = null;
-        try{
-            jobRespProtocol = (JobRespProtocol) sender.ask(jobReqInsert);
-        }catch(Exception e){
-            throw new EntranceRPCException(20020, "Sender rpc failed", e);
-        }
-        if (jobRespProtocol != null){
-            int status = jobRespProtocol.getStatus();
-            String message = jobRespProtocol.getMsg();
-            if (status != 0 ){
-                throw new QueryFailedException(20011, "Insert jobDetail failed, reason: " + message);
-            }
+        JobRespProtocol jobRespProtocol = sendToJobHistoryAndRetry(jobReqInsert, "subJobInfo of job" + subJobInfo.getJobReq().getId());
+        if (jobRespProtocol != null) {
             Map<String, Object> data = jobRespProtocol.getData();
             Object object = data.get(JobRequestConstants.JOB_ID());
-            if (object == null){
-                throw new QueryFailedException(20011, "Insert jobDetail failed, reason: " + message);
+            if (object == null) {
+                throw new QueryFailedException(20011, "Insert jobDetail failed, reason: " + jobRespProtocol.getMsg());
             }
             String jobIdStr = object.toString();
             Long jobId = Long.parseLong(jobIdStr);
             subJobInfo.getSubJobDetail().setId(jobId);
         }
+    }
 
+    private JobRespProtocol sendToJobHistoryAndRetry(RequestProtocol jobReq, String msg) throws QueryFailedException {
+        JobRespProtocol jobRespProtocol = null;
+        int retryTimes = 0;
+        boolean retry = true;
+        while (retry && retryTimes < RETRY_NUMBER) {
+            try {
+                retryTimes++;
+                jobRespProtocol = (JobRespProtocol) sender.ask(jobReq);
+                if (jobRespProtocol.getStatus() == 2) {
+                    logger.warn("Request jobHistory failed, joReq msg{}, retry times: {}, reason {}", msg, retryTimes, jobRespProtocol.getMsg());
+                } else {
+                    retry = false;
+                }
+            } catch (Exception e) {
+                logger.warn("Request jobHistory failed, joReq msg{}, retry times: {}, reason {}", msg, retryTimes, e);
+            }
+            if (retry) {
+                try {
+                    Thread.sleep(EntranceConfiguration.JOBINFO_UPDATE_RETRY_INTERVAL().getValue());
+                } catch (Exception ex) {
+                    logger.warn(ex.getMessage());
+                }
+            }
+        }
+        if (jobRespProtocol != null) {
+            int status = jobRespProtocol.getStatus();
+            String message = jobRespProtocol.getMsg();
+            if (status != 0) {
+                throw new QueryFailedException(20011, "Request jobHistory failed, reason: " + message);
+            }
+        } else {
+            throw new QueryFailedException(20011, "Request jobHistory failed, reason: jobRespProtocol is null ");
+        }
+        return jobRespProtocol;
     }
 
     @Override
-    public void updateIfNeeded(JobRequest jobReq) throws ErrorException {
+    public void updateIfNeeded(JobRequest jobReq) throws ErrorException, QueryFailedException {
         if (null == jobReq) {
             throw new EntranceIllegalParamException(20004, "JobReq cannot be null.");
         }
@@ -102,14 +133,8 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine{
         }
         jobReqForUpdate.setUpdatedTime(new Date());
         JobReqUpdate jobReqUpdate = new JobReqUpdate(jobReqForUpdate);
-        try {
-            sender.ask(jobReqUpdate);
-        } catch (Exception e) {
-            logger.error("Request to update jobReq : {} failed, reason : {}", BDPJettyServerHelper.gson().toJson(jobReq), e.getMessage());
-            throw new EntranceRPCException(20020, "Sender rpc failed ", e);
-        }
+        JobRespProtocol jobRespProtocol = sendToJobHistoryAndRetry(jobReqUpdate, "job:" + jobReq.getReqId() + "status:" + jobReq.getStatus());
     }
-
 
     @Override
     public SubJobDetail retrieveJobDetailReq(Long jobDetailId)throws EntranceIllegalParamException, QueryFailedException, EntranceRPCException{
@@ -139,22 +164,12 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine{
             throw new EntranceIllegalParamException(20004, "JobRequest cannot be null, unable to do persist operation");
         }
         JobReqInsert jobReqInsert = new JobReqInsert(jobReq);
-        JobRespProtocol jobRespProtocol = null;
-        try {
-            jobRespProtocol = (JobRespProtocol) sender.ask(jobReqInsert);
-        } catch (Exception e) {
-            throw new EntranceRPCException(20020, "Sender rpc failed, req : " + BDPJettyServerHelper.gson().toJson(jobReqInsert), e);
-        }
+        JobRespProtocol jobRespProtocol = sendToJobHistoryAndRetry(jobReqInsert, "Insert job");
         if (null != jobRespProtocol) {
-            int status = jobRespProtocol.getStatus();
-            String message = jobRespProtocol.getMsg();
-            if (0 != status) {
-                throw new QueryFailedException(20011, "Insert jobReq failed, reason : " + message);
-            }
             Map<String, Object> data = jobRespProtocol.getData();
             Object object = data.get(JobRequestConstants.JOB_ID());
             if (null == object) {
-                throw new QueryFailedException(20011, "Insert JobReq failed, reason : " + message);
+                throw new QueryFailedException(20011, "Insert JobReq failed, reason : " + jobRespProtocol.getMsg());
             }
             String jobIdStr = object.toString();
             Long jobId = Long.parseLong(jobIdStr);
@@ -164,30 +179,13 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine{
 
 
     @Override
-    public void updateIfNeeded(SubJobInfo subJobInfo)throws EntranceRPCException, EntranceIllegalParamException{
-        if (null == subJobInfo || null == subJobInfo.getSubJobDetail()){
+    public void updateIfNeeded(SubJobInfo subJobInfo) throws QueryFailedException, EntranceIllegalParamException{
+        if (null == subJobInfo || null == subJobInfo.getSubJobDetail()) {
             throw new EntranceIllegalParamException(20004, "task can not be null, unable to do update operation");
         }
         JobDetailReqUpdate jobDetailReqUpdate = new JobDetailReqUpdate(subJobInfo);
-        try{
-            JobRespProtocol resp = (JobRespProtocol) sender.ask(jobDetailReqUpdate);
-            jobDetailReqUpdate.jobInfo().getSubJobDetail().setUpdatedTime(new Date(System.currentTimeMillis()));
-            if (0 != resp.getStatus()) {
-                logger.error("Update jobDetail with id {} failed, msg : {}", subJobInfo.getSubJobDetail().getId(), resp.getMsg());
-                throw new EntranceRPCException(20020, "sender rpc failed to update subJob with id " + String.valueOf(subJobInfo.getSubJobDetail().getId()));
-            }
-            Object data = resp.getData().get(JobRequestConstants.JOB_ID());
-            if (null != data) {
-                Long id = Long.parseLong(data.toString());
-                if (id.longValue() != subJobInfo.getSubJobDetail().getId()) {
-                    throw new EntranceRPCException(20020, "Failed to update subJob with id " + subJobInfo.getSubJobDetail().getId() + " , responsed with different id : " + id);
-                }
-            }
-        }catch(Exception e){
-            logger.error("Request to update subJobInfo : {} failed(请求更新jobId为 {} 的任务失败)", BDPJettyServerHelper.gson().toJson(subJobInfo), subJobInfo.getSubJobDetail().getId(), e);
-            throw new EntranceRPCException(20020, "sender rpc failed ", e);
-        }
-
+        jobDetailReqUpdate.jobInfo().getSubJobDetail().setUpdatedTime(new Date(System.currentTimeMillis()));
+        JobRespProtocol jobRespProtocol = sendToJobHistoryAndRetry(jobDetailReqUpdate, "jobDetail:" + subJobInfo.getSubJobDetail().getId() + "status:" + subJobInfo.getStatus());
     }
 
     @Override

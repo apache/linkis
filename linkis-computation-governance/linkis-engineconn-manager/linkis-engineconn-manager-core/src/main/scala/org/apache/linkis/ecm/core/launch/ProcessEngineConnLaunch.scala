@@ -86,6 +86,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       case HADOOP_HOME => putIfExists(HADOOP_HOME)
       case HADOOP_CONF_DIR => putIfExists(HADOOP_CONF_DIR)
       case HIVE_CONF_DIR => putIfExists(HIVE_CONF_DIR)
+      case JAVA_HOME => putIfExists(JAVA_HOME)
       case RANDOM_PORT => environment.put(RANDOM_PORT.toString, findAvailPort().toString)
       case EUREKA_PREFER_IP => environment.put(EUREKA_PREFER_IP.toString, Configuration.EUREKA_PREFER_IP.toString)
       case ENGINECONN_ENVKEYS => environment.put(ENGINECONN_ENVKEYS.toString, GovernanceCommonConf.ENGINECONN_ENVKEYS.toString)

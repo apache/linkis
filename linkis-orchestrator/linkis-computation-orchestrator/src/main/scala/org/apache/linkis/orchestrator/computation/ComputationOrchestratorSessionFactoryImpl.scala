@@ -141,7 +141,7 @@ class ComputationOrchestratorSessionFactoryImpl extends ComputationOrchestratorS
     override def apply(v1: CheckRulerExtensions): Unit = {
 
       v1.injectConverterCheckRuler(jobReqCheckRulerBuilder)
-      v1.injectConverterCheckRuler(varSubstitutionConverterCheckRuler)
+      //v1.injectConverterCheckRuler(varSubstitutionConverterCheckRuler)
       v1.injectValidatorCheckRuler(labelRegularCheckRulerBuilder)
 
     }
@@ -183,11 +183,11 @@ class ComputationOrchestratorSessionFactoryImpl extends ComputationOrchestratorS
     orchestratorSessionMap.get(id).getOrCreate()
   }
 
-  override def getOrCreateSession(orchestratorSessionBuider: OrchestratorSessionBuilder): OrchestratorSession = {
-    val id = orchestratorSessionBuider.getId()
+  override def getOrCreateSession(orchestratorSessionBuilder: OrchestratorSessionBuilder): OrchestratorSession = {
+    val id = orchestratorSessionBuilder.getId()
     if (! orchestratorSessionMap.containsKey(id)) synchronized {
       if (! orchestratorSessionMap.containsKey(id)){
-        orchestratorSessionMap.put(id, orchestratorSessionBuider)
+        orchestratorSessionMap.put(id, orchestratorSessionBuilder)
       }
     }
     orchestratorSessionMap.get(id).getOrCreate()

@@ -22,10 +22,12 @@ import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.orchestrator.computation.conf.ComputationOrchestratorConf
 import org.apache.linkis.orchestrator.computation.utils.TreeNodeUtil
+import org.apache.linkis.orchestrator.core.FailedOrchestrationResponse
 import org.apache.linkis.orchestrator.execution.FailedTaskResponse
 import org.apache.linkis.orchestrator.extensions.catalyst.ReheaterTransform
 import org.apache.linkis.orchestrator.listener.task.TaskLogEvent
 import org.apache.linkis.orchestrator.plans.physical.{ExecTask, PhysicalContext, PhysicalOrchestration, ReheatableExecTask, RetryExecTask}
+import org.apache.linkis.orchestrator.strategy.ExecTaskStatusInfo
 
 /**
  * Transform physical tree by pruning it's nodes
@@ -36,7 +38,7 @@ class PruneTaskRetryTransform extends ReheaterTransform with Logging{
   override def apply(in: ExecTask, context: PhysicalContext): ExecTask = {
       val failedTasks = TreeNodeUtil.getAllFailedTaskNode(in)
       failedTasks.foreach(task => {
-        info(s"task:${in.getIDInfo()} has ${failedTasks.size} child tasks which execute failed, some of them may be retried")
+        logger.info(s"task:${in.getIDInfo()} has ${failedTasks.size} child tasks which execute failed, some of them may be retried")
         TreeNodeUtil.getTaskResponse(task) match {
           case response: FailedTaskResponse => {
             val exception = response.getCause
@@ -53,20 +55,17 @@ class PruneTaskRetryTransform extends ReheaterTransform with Logging{
                           val newTask = new RetryExecTask(retryExecTask.getOriginTask, retryExecTask.getAge() + 1)
                           newTask.initialize(retryExecTask.getPhysicalContext)
                           TreeNodeUtil.replaceNode(retryExecTask, newTask)
-                          TreeNodeUtil.removeTaskResponse(retryExecTask)
-                          val logEvent = TaskLogEvent(task, LogUtils.generateInfo(s"Retry---success to rebuild task node:${task.getIDInfo()}, ready to execute new retry-task:${retryExecTask.getIDInfo}, current age is ${newTask.getAge()} "))
+                          pushInfoLog(task, newTask)
+                        } else {
+                          val logEvent = TaskLogEvent(task, LogUtils.generateWarn(s"Retry task: ${retryExecTask.getIDInfo} reached maximum age:${retryExecTask.getAge()}, stop to retry it!"))
                           task.getPhysicalContext.pushLog(logEvent)
-                        }else{
-                          info(s"Retry task: ${retryExecTask.getId} reached maximum age:${retryExecTask.getAge()}, stop to retry it!")
                         }
                       }
                       case _ => {
                         val retryExecTask = new RetryExecTask(task)
                         retryExecTask.initialize(task.getPhysicalContext)
                         TreeNodeUtil.insertNode(parent, task, retryExecTask)
-                        TreeNodeUtil.removeTaskResponse(task)
-                        val logEvent = TaskLogEvent(task, LogUtils.generateInfo(s"Retry---success to rebuild task node:${task.getIDInfo}, ready to execute new retry-task:${retryExecTask.getIDInfo}, current age is ${retryExecTask.getAge()} "))
-                        task.getPhysicalContext.pushLog(logEvent)
+                        pushInfoLog(task, retryExecTask)
                       }
                     }
                   }{
@@ -74,6 +73,7 @@ class PruneTaskRetryTransform extends ReheaterTransform with Logging{
                     case e: Exception => {
                       val logEvent = TaskLogEvent(task, LogUtils.generateWarn(s"Retry task construction failed, start to restore task node, task node: ${task.getIDInfo}, " +
                         s"age: ${task match { case retryExecTask: RetryExecTask => retryExecTask.getAge() case _ => 0}}, reason: ${e.getMessage}"))
+                      logger.error(s"Failed to retry task ${task.getIDInfo()}", e)
                       task.getPhysicalContext.pushLog(logEvent)
                       parent.withNewChildren(otherChildren :+ task)
                       task.withNewParents(otherParents :+ parent)
@@ -89,6 +89,22 @@ class PruneTaskRetryTransform extends ReheaterTransform with Logging{
         }
       })
     in
+  }
+
+  private def pushInfoLog(task: ExecTask, retryExecTask: RetryExecTask): Unit = {
+    val responseOption = TreeNodeUtil.removeTaskResponse(task)
+    val stringBuilder = new StringBuilder
+    stringBuilder.append(s"This ${task.getIDInfo()} retry, new retry-task is:${retryExecTask.getIDInfo}, retryCount: ${retryExecTask.getAge()}.")
+    responseOption.foreach { execTaskStatusInfo =>
+      execTaskStatusInfo.taskResponse match {
+        case error: FailedOrchestrationResponse =>
+          stringBuilder.append("reason:").append(error.getErrorMsg)
+        case _ =>
+          stringBuilder.append("Reason is empty")
+      }
+    }
+    val logEvent = TaskLogEvent(task, LogUtils.generateInfo(stringBuilder.toString()))
+    task.getPhysicalContext.pushLog(logEvent)
   }
 
 

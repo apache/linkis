@@ -18,12 +18,11 @@
 package org.apache.linkis.orchestrator.computation.catalyst.converter.ruler
 
 import java.util.regex.Pattern
-
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.orchestrator.computation.catalyst.converter.exception.{PythonCodeCheckException, ScalaCodeCheckException}
+import org.apache.linkis.orchestrator.computation.catalyst.converter.exception.{CodeCheckException, PythonCodeCheckException, ScalaCodeCheckException}
 import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -115,23 +114,29 @@ object SQLExplain extends Explain {
         executionCode.contains(IDE_ALLOW_NO_LIMIT)
     }
     if (isNoLimitAllowed) logAppender.append(LogUtils.generateWarn("请注意,SQL全量导出模式打开\n"))
-    tempCode.split(";") foreach { singleCode =>
-      if (isSelectCmd(singleCode)) {
-        val trimCode = singleCode.trim
-        if (isSelectCmdNoLimit(trimCode) && !isNoLimitAllowed) {
-          logAppender.append(LogUtils.generateWarn(s"You submitted a sql without limit, DSS will add limit 5000 to your sql") + "\n")
-          //将注释先干掉,然后再进行添加limit
-          val realCode = cleanComment(trimCode)
-          fixedCode += (realCode + SQL_APPEND_LIMIT)
-        } else if (isSelectOverLimit(singleCode) && !isNoLimitAllowed) {
+    Utils.tryCatch{
+      tempCode.split(";") foreach { singleCode =>
+        if (isSelectCmd(singleCode)) {
           val trimCode = singleCode.trim
-          logAppender.append(LogUtils.generateWarn(s"You submitted a sql with limit exceeding 5000, it is not allowed. DSS will change your limit to 5000") + "\n")
-          fixedCode += repairSelectOverLimit(trimCode)
+          if (isSelectCmdNoLimit(trimCode) && !isNoLimitAllowed) {
+            logAppender.append(LogUtils.generateWarn(s"You submitted a sql without limit, DSS will add limit 5000 to your sql") + "\n")
+            //将注释先干掉,然后再进行添加limit
+            val realCode = cleanComment(trimCode)
+            fixedCode += (realCode + SQL_APPEND_LIMIT)
+          } else if (isSelectOverLimit(singleCode) && !isNoLimitAllowed) {
+            val trimCode = singleCode.trim
+            logAppender.append(LogUtils.generateWarn(s"You submitted a sql with limit exceeding 5000, it is not allowed. DSS will change your limit to 5000") + "\n")
+            fixedCode += repairSelectOverLimit(trimCode)
+          } else {
+            fixedCode += singleCode.trim
+          }
         } else {
           fixedCode += singleCode.trim
         }
-      } else {
-        fixedCode += singleCode.trim
+      }
+    }{
+      case exception: ArrayIndexOutOfBoundsException => {
+        throw CodeCheckException(20051, "failed to check code, please check your code grammar!")
       }
     }
     logAppender.append(LogUtils.generateInfo("SQL code check has passed" + "\n"))
@@ -168,8 +173,12 @@ object SQLExplain extends Explain {
     }
     val a = words.toArray
     val length = a.length
-    val second_last = a(length - 2)
-    !"limit".equals(second_last.toLowerCase())
+    if(a.length > 1) {
+      val second_last = a(length - 2)
+      !"limit".equals(second_last.toLowerCase())
+    } else {
+      false
+    }
   }
 
   private def cleanComment(sql: String): String = {

@@ -32,6 +32,7 @@ abstract class ReheaterNotifyTaskConsumer extends NotifyTaskConsumer {
     def compareAndSet(lastRunning: String): Unit = {
       val thisRunning = getExecution.taskManager.getCompletedTasks(execTask).map(_.task.getId).mkString(",")
       if(thisRunning != lastRunning) {
+        logger.debug(s"${execTask.getIDInfo()} Try to reheat this $thisRunning. lastRunning: $lastRunning")
         reheater.reheat(execTask)
         execTask.getPhysicalContext.set(key, thisRunning)
       }

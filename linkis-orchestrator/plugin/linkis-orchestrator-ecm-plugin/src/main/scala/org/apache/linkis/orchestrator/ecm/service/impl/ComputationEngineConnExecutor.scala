@@ -27,6 +27,7 @@ import org.apache.linkis.manager.common.protocol.RequestManagerUnlock
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
 import org.apache.linkis.orchestrator.ecm.exception.ECMPluginErrorException
 import org.apache.linkis.orchestrator.ecm.service.AbstractEngineConnExecutor
+import org.apache.linkis.orchestrator.ecm.utils.ECMPUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer._
 
@@ -44,7 +45,7 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
   private def getEngineConnSender: Sender = Sender.getSender(getServiceInstance)
 
   override def close(): Unit = {
-    debug(s"Start to release engineConn $getServiceInstance")
+    info(s"Start to release engineConn $getServiceInstance")
     val requestManagerUnlock = RequestManagerUnlock(getServiceInstance, locker, Sender.getThisServiceInstance)
     killAll()
     getManagerSender.send(requestManagerUnlock)
@@ -68,6 +69,7 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
 
   override def execute(requestTask: RequestTask): ExecuteResponse = {
     debug(s"Start to submit task${requestTask.getSourceID()} to engineConn($getServiceInstance)")
+    requestTask.setLabels(ECMPUtils.filterJobStrategyLabel(requestTask.getLabels))
     requestTask.setLock(this.locker)
     getEngineConnSender.ask(requestTask) match {
       case submitResponse: SubmitResponse =>

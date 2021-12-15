@@ -28,8 +28,8 @@ import org.apache.linkis.orchestrator.plans.logical.{LogicalContext, LogicalOrch
  */
 class ConfigurationOptimizer extends OptimizerTransform with Logging {
 
-  override def apply(in: Task, context: LogicalContext): Task = ???
+  override def apply(in: Task, context: LogicalContext): Task = null
 
-  override def getName: String = ???
+  override def getName: String = null
 
 }

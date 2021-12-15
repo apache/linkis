@@ -292,7 +292,7 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
 
     @Override
     public String getName() {
-        return String.valueOf(getJobRequest().getId());
+        return "taskID:" + String.valueOf(getJobRequest().getId()) + "execID:" + getId();
     }
 
     @Override

@@ -64,11 +64,11 @@ class CacheLogManager extends LogManager with Logging {
           new CacheLogWriter(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, cache, entranceExecutionJob.getUser)
         entranceExecutionJob.setLogWriter(cacheLogWriter)
         logger.info(s"job ${entranceExecutionJob.getJobRequest.getId} create cacheLogWriter")
-        val webSocketCacheLogReader: WebSocketCacheLogReader =
+        /*val webSocketCacheLogReader: WebSocketCacheLogReader =
           new WebSocketCacheLogReader(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, cache, entranceExecutionJob.getUser)
         entranceExecutionJob.setWebSocketLogReader(webSocketCacheLogReader)
         val webSocketLogWriter: WebSocketLogWriter = new WebSocketLogWriter(entranceExecutionJob, entranceContext.getOrCreateLogListenerBus)
-        entranceExecutionJob.setWebSocketLogWriter(webSocketLogWriter)
+        entranceExecutionJob.setWebSocketLogWriter(webSocketLogWriter)*/
         cacheLogWriter
       }
       case _ => null

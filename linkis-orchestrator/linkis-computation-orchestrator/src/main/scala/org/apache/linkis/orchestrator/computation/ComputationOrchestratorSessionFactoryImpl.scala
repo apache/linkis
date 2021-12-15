@@ -141,6 +141,10 @@ class ComputationOrchestratorSessionFactoryImpl extends ComputationOrchestratorS
     override def apply(v1: CheckRulerExtensions): Unit = {
 
       v1.injectConverterCheckRuler(jobReqCheckRulerBuilder)
+      // Commented because for SQL-type code(and may be some other type as well),
+      // Entrance will remove commented code first.
+      // Hence line "-@set xxx=xxx", will be removed and will not be passed to VarSubstitutionConverterCheckRuler.
+      // Therefore user defined variable substitution in code will become ineffective.
       //v1.injectConverterCheckRuler(varSubstitutionConverterCheckRuler)
       v1.injectValidatorCheckRuler(labelRegularCheckRulerBuilder)
 

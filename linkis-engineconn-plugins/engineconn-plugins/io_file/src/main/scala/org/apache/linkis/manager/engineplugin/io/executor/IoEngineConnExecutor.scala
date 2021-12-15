@@ -148,9 +148,9 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10) extends Concu
 
   override def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = null
 
-  override def progress(): Float = 1.0f
+  override def progress(taskID: String): Float = 1.0f
 
-  override def getProgressInfo: Array[JobProgressInfo] = null
+  override def getProgressInfo(taskID: String): Array[JobProgressInfo] = null
 
   override def supportCallBackLogs(): Boolean = false
 

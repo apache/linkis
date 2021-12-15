@@ -169,7 +169,7 @@ object CSEntranceHelper extends Logging {
         }
       }
       if(variableMap.nonEmpty) {
-        // 1.cs 优先级为低，相同的不加入
+        // 1.cs priority is low, the same ones are not added
         val varMap = TaskUtils.getVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
         variableMap.foreach { keyAndValue =>
           if (! varMap.containsKey(keyAndValue._1)) {

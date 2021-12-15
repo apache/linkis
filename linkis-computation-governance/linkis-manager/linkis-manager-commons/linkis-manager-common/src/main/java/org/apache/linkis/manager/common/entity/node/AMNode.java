@@ -38,9 +38,4 @@ public interface AMNode extends Node {
 
     void setNodeHealthyInfo(NodeHealthyInfo nodeHealthyInfo);
 
-    Date getStartTime();
-
-    void setStartTime(Date startTime);
-
-
 }

@@ -24,20 +24,12 @@ import org.apache.linkis.manager.label.entity.route.RouteLabel
 
 import java.util
 import scala.collection.JavaConverters.asScalaBufferConverter
-
+import scala.reflect.ClassTag
 
 object LabelUtil {
 
   def getEngineTypeLabel(labels: util.List[Label[_]]): EngineTypeLabel = {
-    if (null == labels) return null
-    var labelRs: EngineTypeLabel = null
-    labels.asScala.foreach(l => l match {
-      case label: EngineTypeLabel =>
-        labelRs = label
-        return label
-      case _ =>
-    })
-    labelRs
+    getLabelFromList[EngineTypeLabel](labels)
   }
 
   def getEngineType(labels: util.List[Label[_]]): String = {
@@ -51,13 +43,7 @@ object LabelUtil {
   }
 
   def getUserCreatorLabel(labels: util.List[Label[_]]): UserCreatorLabel = {
-    if (null == labels) return null
-    labels.asScala.foreach(l => l match {
-      case label: UserCreatorLabel =>
-        return label
-      case _ =>
-    })
-    null
+    getLabelFromList[UserCreatorLabel](labels)
   }
 
   def getUserCreator(labels: util.List[Label[_]]): (String, String) = {
@@ -81,87 +67,45 @@ object LabelUtil {
   }
 
   def getCodeTypeLabel(labels: util.List[Label[_]]): CodeLanguageLabel = {
-    if (null == labels) return null
-    labels.asScala.foreach(l => l match {
-      case label: CodeLanguageLabel =>
-        return label
-      case _ =>
-    })
-    null
+    getLabelFromList[CodeLanguageLabel](labels)
   }
 
   def getBindEngineLabel(labels: util.List[Label[_]]): BindEngineLabel = {
-    if (null == labels) return null
-    labels.asScala.foreach(l => l match {
-      case label: BindEngineLabel =>
-        return label
-      case _ =>
-    })
-    null
+    getLabelFromList[BindEngineLabel](labels)
   }
 
   def getRouteLabel(labels: util.List[Label[_]]): RouteLabel = {
-    if (null == labels) return null
-    labels.asScala.foreach(l => l match {
-      case label: RouteLabel =>
-        return label
-      case _ =>
-    })
-    null
+    getLabelFromList[RouteLabel](labels)
   }
 
   def getExecuteOnceLabel(labels: util.List[Label[_]]) : ExecuteOnceLabel = {
-    if (null == labels) return null
-    labels.asScala.foreach(l => l match {
-      case label: ExecuteOnceLabel =>
-        return label
-      case _ =>
-    })
-    null
+    getLabelFromList[ExecuteOnceLabel](labels)
   }
 
   def getLoadBalanceLabel(labels: util.List[Label[_]]) : LoadBalanceLabel = {
-    if (null == labels) return null
-    labels.asScala.foreach(l => l match {
-      case label: LoadBalanceLabel =>
+    getLabelFromList[LoadBalanceLabel](labels)
+  }
+
+
+  def getLabelFromList[A: ClassTag](labels: util.List[Label[_]]): A = {
+    if (null == labels) return null.asInstanceOf[A]
+    labels.asScala.foreach {
+      case label: A =>
         return label
       case _ =>
-    })
-    null
-  }
-
-
-  /*
-  // todo
-  def getLabelFromList[A](labels: util.List[Label[_]]): A = {
-    if (null == labels) return null.asInstanceOf[A]
-    labels.asScala.foreach(l => if (l.isInstanceOf[A]) return l.asInstanceOf[A])
+    }
     null.asInstanceOf[A]
-  }*/
-
-  def main(args: Array[String]): Unit = {
-    /*val labels = new util.ArrayList[Label[_]]()
-    val engineTypeLabel = new EngineTypeLabel
-    engineTypeLabel.setEngineType("1")
-    engineTypeLabel.setVersion("1")
-    labels.add(engineTypeLabel)
-    val label = getEngineTypeLabel(labels)
-    if (null == label) {
-      println("Got null EngineTypeLabel.")
-    } else {
-      println("Got engineTypeLabel : " + label.getStringValue)
-    }
-    val l1 = getBindEngineLabel(null)
-    if (null == l1) {
-      println("Got null jobGroupLabel")
-    }
-    labels.add(new BindEngineLabel().setJobGroupId("1").setIsJobGroupHead(true).setIsJobGroupEnd(true))
-    val l2 = getBindEngineLabel(labels)
-    if (null == l2) {
-      println("Got null jobGroupLabel")
-    } else {
-      println(s"Got jobGroupLabel : ${l2.getStringValue}")
-    }*/
   }
+
+  def getLabelFromArray[A: ClassTag](labels: Array[Label[_]]): A = {
+    if (null == labels) return null.asInstanceOf[A]
+    labels.foreach {
+      case label: A =>
+        return label
+      case _ =>
+    }
+    null.asInstanceOf[A]
+  }
+
 
 }

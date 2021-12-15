@@ -224,8 +224,10 @@ class RMMonitorRest extends Logging {
       val record = new mutable.HashMap[String, Any]
       record.put("applicationName", node.getServiceInstance.getApplicationName)
       record.put("engineInstance", node.getServiceInstance.getInstance)
-      record.put("moduleName", node.getEMNode.getServiceInstance.getApplicationName)
-      record.put("engineManagerInstance", node.getEMNode.getServiceInstance.getInstance)
+      if (node.getEMNode != null) {
+        record.put("moduleName", node.getEMNode.getServiceInstance.getApplicationName)
+        record.put("engineManagerInstance", node.getEMNode.getServiceInstance.getInstance)
+      }
       record.put("creator", userCreatorLabel.getCreator)
       record.put("engineType", engineTypeLabel.getEngineType)
       if(node.getNodeResource != null){

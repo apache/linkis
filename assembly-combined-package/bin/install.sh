@@ -235,6 +235,8 @@ then
   sed -i ${txt}  "s#@PRINCIPAL_NAME#$PRINCIPAL_NAME#g" $LINKIS_HOME/db/linkis_dml.sql
   sed -i ${txt}  "s#@KEYTAB_PATH#$KEYTAB_PATH#g" $LINKIS_HOME/db/linkis_dml.sql
   sed -i ${txt}  "s#@KRB5_PATH#$KRB5_PATH#g" $LINKIS_HOME/db/linkis_dml.sql
+else
+  sed -i ${txt}  "s#@KERBEROS_ENABLE#false#g" $LINKIS_HOME/db/linkis_dml.sql
 fi
 
 common_conf=$LINKIS_HOME/conf/linkis.properties
@@ -249,7 +251,7 @@ fi
 
 if [ "$HIVE_VERSION" != "" ]
 then
-  sed -i ${txt}  "s#hive-1.2.1#hive-$HIVE_VERSION#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#hive-2.3.3#hive-$HIVE_VERSION#g" $LINKIS_HOME/db/linkis_dml.sql
   sed -i ${txt}  "s#\#wds.linkis.hive.engine.version.*#wds.linkis.hive.engine.version=$HIVE_VERSION#g" $common_conf
 fi
 

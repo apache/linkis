@@ -207,6 +207,10 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
           failedTasks.increase()
       }
 
+      if (null == response && codes.isEmpty) {
+        error("This code is empty, and the task will be directly marked as successful.")
+        response = SuccessExecuteResponse()
+      }
 
       response = response match {
         case _: OutputExecuteResponse =>

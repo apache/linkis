@@ -19,6 +19,7 @@ package org.apache.linkis.engineplugin.spark.executor
 
 import java.io._
 import java.util
+import java.net.InetAddress
 
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.Utils
@@ -38,11 +39,12 @@ import org.apache.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResp
 import org.apache.linkis.storage.resultset.ResultSetWriter
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang.{RandomStringUtils, StringUtils}
 import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.sql.execution.datasources.csv.UDF
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import py4j.GatewayServer
+import py4j.GatewayServer.GatewayServerBuilder
 
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
@@ -72,6 +74,20 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   val SUCCESS = "success"
   /*@throws(classOf[IOException])
   override def open = {}*/
+  private lazy val py4jToken: String = RandomStringUtils.randomAlphanumeric(256)
+
+  private lazy val gwBuilder: GatewayServerBuilder = {
+    val builder = new GatewayServerBuilder()
+      .javaPort(0)
+      .callbackClient(0, InetAddress.getByName(GatewayServer.DEFAULT_ADDRESS))
+      .connectTimeout(GatewayServer.DEFAULT_CONNECT_TIMEOUT)
+      .readTimeout(GatewayServer.DEFAULT_READ_TIMEOUT)
+      .customCommands(null)
+
+    try builder.authToken(py4jToken) catch {
+      case err: Throwable => builder
+    }
+  }
 
   def getSparkConf = sc.getConf
 
@@ -123,7 +139,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     val pythonScriptPath = CommonVars("python.script.path", "python/mix_pyspark.py").getValue
 
     val port: Int = EngineUtils.findAvailPort
-    gatewayServer = new GatewayServer(this, port)
+    gatewayServer = gwBuilder.entryPoint(this).javaPort(port).build()
     gatewayServer.start()
 
     info("Pyspark process file path is: " + getClass.getClassLoader.getResource(pythonScriptPath).toURI)
@@ -146,6 +162,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     cmd.addArgument(createFakeShell(pythonScriptPath).getAbsolutePath, false)
     cmd.addArgument(port.toString, false)
     cmd.addArgument(EngineUtils.sparkSubmitVersion().replaceAll("\\.", ""), false)
+    cmd.addArgument(py4jToken, false)
     cmd.addArgument(pythonClasspath.toString(), false)
     cmd.addArgument(pyFiles, false)
 

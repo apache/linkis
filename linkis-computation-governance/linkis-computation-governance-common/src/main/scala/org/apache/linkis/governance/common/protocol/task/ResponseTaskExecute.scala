@@ -49,7 +49,7 @@ case class ResponseTaskError(execId: String, errorMsg: String) extends Retryable
 case class ResponseTaskStatus(execId: String, status: ExecutionNodeStatus) extends RetryableProtocol with RequestProtocol
 
 case class ResponseTaskResultSet(execId: String, output: String, alias: String) extends RetryableProtocol with RequestProtocol {
-  override def toString: String = s"execId: $execId, output: $alias"
+  override def toString: String = s"execId: $execId, alias: $alias"
 }
 
 case class ResponseTaskResultSize(execId: String, resultSize: Int) extends RetryableProtocol with RequestProtocol

@@ -532,7 +532,7 @@ create table if not exists linkis_ps_bml_project_user(
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `project_id` int(10) NOT NULL,
   `username` varchar(64) DEFAULT NULL,
-  `priv` int(10) not null default 7, -- rwx 421 相加, 8是管理员，可以为其他用户授权
+  `priv` int(10) not null default 7, -- rwx 421 The permission value is 7. 8 is the administrator, which can authorize other users
   `creator` varchar(128) not null,
   `create_time` datetime DEFAULT now(),
   `expire_time` datetime default null,

@@ -65,29 +65,29 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask) extends AsyncExecTask
       case async: AsyncTaskResponse =>
         transientStatus(ExecutionNodeStatus.Running)
       case succeed: SucceedTaskResponse =>
-        info(s"Succeed to execute ExecTask(${task.getIDInfo})")
+        logger.info(s"Succeed to execute ExecTask(${task.getIDInfo})")
         transientStatus(ExecutionNodeStatus.Succeed)
       case failedTaskResponse: FailedTaskResponse =>
-        info(s"Failed to execute ExecTask(${task.getIDInfo})")
+        logger.info(s"Failed to execute ExecTask(${task.getIDInfo})")
         transientStatus(ExecutionNodeStatus.Failed)
       case retry: RetryTaskResponse =>
-        warn(s"ExecTask(${task.getIDInfo}) need to retry")
+        logger.warn(s"ExecTask(${task.getIDInfo}) need to retry")
         transientStatus(ExecutionNodeStatus.WaitForRetry)
     }
   } catch {
     case e: Throwable =>
-      error(s"Failed to execute task ${task.getIDInfo}", e)
+      logger.error(s"Failed to execute task ${task.getIDInfo}", e)
       this.taskResponse = new DefaultFailedTaskResponse(e.getMessage, OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE, e)
       transientStatus(ExecutionNodeStatus.Failed)
   }
 
   override def transientStatus(status: ExecutionNodeStatus): Unit = {
     if (status.ordinal() < this.status.ordinal() && status != ExecutionNodeStatus.WaitForRetry) {
-      info(s"Task${task.getIDInfo()} status flip error! Cause: Failed to flip from ${this.status} to $status.")
+      logger.info(s"Task${task.getIDInfo()} status flip error! Cause: Failed to flip from ${this.status} to $status.")
       return
     }
       //throw new OrchestratorErrorException(OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE, s"Task status flip error! Cause: Failed to flip from ${this.status} to $status.") //抛异常
-    info(s"${task.getIDInfo} change status ${this.status} => $status.")
+    logger.info(s"${task.getIDInfo} change status ${this.status} => $status.")
     beforeStatusChanged(this.status, status)
     val oldStatus = this.status
     this.status = status

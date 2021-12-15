@@ -187,11 +187,11 @@ class ComputationOrchestratorSessionFactoryImpl extends ComputationOrchestratorS
     orchestratorSessionMap.get(id).getOrCreate()
   }
 
-  override def getOrCreateSession(orchestratorSessionBuider: OrchestratorSessionBuilder): OrchestratorSession = {
-    val id = orchestratorSessionBuider.getId()
+  override def getOrCreateSession(orchestratorSessionBuilder: OrchestratorSessionBuilder): OrchestratorSession = {
+    val id = orchestratorSessionBuilder.getId()
     if (! orchestratorSessionMap.containsKey(id)) synchronized {
       if (! orchestratorSessionMap.containsKey(id)){
-        orchestratorSessionMap.put(id, orchestratorSessionBuider)
+        orchestratorSessionMap.put(id, orchestratorSessionBuilder)
       }
     }
     orchestratorSessionMap.get(id).getOrCreate()

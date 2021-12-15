@@ -27,10 +27,17 @@ class JobRespProtocol {
 
   @BeanProperty
   var id: Long = _
+  /**
+   * 0 success
+   * 1 failed
+   * 2 retry
+   */
   @BeanProperty
-  var status: Int = _
+  var status: Int = 0
   @BeanProperty
   var msg: String = _
+  @BeanProperty
+  var exception : Exception = _
   @BeanProperty
   var data: util.Map[String, Object] = new util.HashMap[String, Object]()
 
@@ -44,6 +51,7 @@ class JobRespProtocol {
     new EqualsBuilder()
       .append(status, that.status)
       .append(msg, that.msg)
+      .append(exception, that.exception)
       .append(data, that.data)
       .isEquals
   }
@@ -52,6 +60,7 @@ class JobRespProtocol {
     new HashCodeBuilder(17, 37)
       .append(status)
       .append(msg)
+      .append(exception)
       .append(data)
       .toHashCode()
   }

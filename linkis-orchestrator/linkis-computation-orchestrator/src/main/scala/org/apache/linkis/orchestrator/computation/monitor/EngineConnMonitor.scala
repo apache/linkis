@@ -100,43 +100,46 @@ object EngineConnMonitor extends Logging {
             val instances = unKnownEngines.map(_.getInstance).mkString(",")
             warn(s"These engine instances cannot be found in manager : ${instances}")
           }
-          response.engineStatus.asScala.foreach(status => {
-            status._2 match {
-              case NodeExistStatus.UnExist =>
-                warn(s"Engine ${status._1} is Failed, now go to clear its task.")
-                endJobByEngineInstance(status._1)
-              case NodeExistStatus.Exist | NodeExistStatus.Unknown =>
-                val engineConnExecutor = engineConnExecutorCache.getOrDefault(status._1, null)
-                if (null != engineConnExecutor) {
-                  Utils.tryCatch {
-                    // todo check - only for engine with accessible executor
-                    val requestNodeStatus = new RequestNodeStatus
-                    Sender.getSender(status._1).ask(requestNodeStatus) match {
-                      case rs: ResponseNodeStatus =>
-                        if (NodeStatus.isCompleted(rs.getNodeStatus)) {
-                          endJobByEngineInstance(status._1)
-                        } else {
-                          if (logger.isDebugEnabled()) {
-                            debug(s"Will update engineConnExecutor(${status._1}) lastupdated time")
-                          }
-                          updateExecutorActivityTime(status._1, engineConnExecutorCache)
-                        }
-                      case o: Any =>
-                        Utils.tryAndWarn(warn(s"Unknown response : ${BDPJettyServerHelper.gson.toJson(o)} for request : ${BDPJettyServerHelper.gson.toJson(requestNodeStatus)}"))
-                    }
-                  } {
-                    case t: Throwable =>
-                      error(s"Failed to get status of engineConn : ${status._1}, now end the job. ", t)
-                      endJobByEngineInstance(status._1)
-                  }
-                }
-              case o: Any =>
-                error(s"Status of engine ${status._1.toString} is ${status._2}")
-            }
-          })
+          response.engineStatus.asScala.foreach(status => dealWithEngineStatus(status, engineConnExecutorCache, endJobByEngineInstance))
         case _ =>
           error(s"Invalid response. request : ${BDPJettyServerHelper.gson.toJson(requestEngineStatus)}")
       }
+    }
+  }
+
+  private def dealWithEngineStatus(status: (ServiceInstance, NodeExistStatus), engineConnExecutorCache: mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]],
+                                   endJobByEngineInstance: ServiceInstance => Unit): Unit = {
+      status._2 match {
+        case NodeExistStatus.UnExist =>
+          warn(s"Engine ${status._1} is Failed, now go to clear its task.")
+          endJobByEngineInstance(status._1)
+        case NodeExistStatus.Exist | NodeExistStatus.Unknown =>
+          val engineConnExecutor = engineConnExecutorCache.getOrDefault(status._1, null)
+          if (null != engineConnExecutor) {
+            Utils.tryCatch {
+              // todo check - only for engine with accessible executor
+              val requestNodeStatus = new RequestNodeStatus
+              Sender.getSender(status._1).ask(requestNodeStatus) match {
+                case rs: ResponseNodeStatus =>
+                  if (NodeStatus.isCompleted(rs.getNodeStatus)) {
+                    endJobByEngineInstance(status._1)
+                  } else {
+                    if (logger.isDebugEnabled()) {
+                      debug(s"Will update engineConnExecutor(${status._1}) lastupdated time")
+                    }
+                    updateExecutorActivityTime(status._1, engineConnExecutorCache)
+                  }
+                case o: Any =>
+                  Utils.tryAndWarn(warn(s"Unknown response : ${BDPJettyServerHelper.gson.toJson(o)} for request : ${BDPJettyServerHelper.gson.toJson(requestNodeStatus)}"))
+              }
+            } {
+              case t: Throwable =>
+                error(s"Failed to get status of engineConn : ${status._1}, now end the job. ", t)
+                endJobByEngineInstance(status._1)
+            }
+          }
+        case o: Any =>
+          error(s"Status of engine ${status._1.toString} is ${status._2}")
     }
   }
 

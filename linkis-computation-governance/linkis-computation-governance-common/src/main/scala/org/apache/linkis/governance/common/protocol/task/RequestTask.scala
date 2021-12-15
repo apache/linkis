@@ -76,7 +76,7 @@ class RequestTaskExecute extends RequestTask with RequestProtocol {
     }
   }
 
-  override def toString = s"RequestTaskExecute(code=${getCodeByLimit()}, lock=$lock, properties=$properties, labels=$labels)"
+  override def toString = s"RequestTaskExecute(code=${getCodeByLimit()}, lock=$lock, properties=$properties, labels=$labels, sourceID=${getSourceID()})"
 
   override def getSourceID(): String = sourceID
 

@@ -47,4 +47,3 @@ case class RequestQueryEngineTypeDefault(engineTypeLabel: EngineTypeLabel) exten
 
 case class RequestConfigByLabel(labels: java.util.List[Label[_]], isMerge: Boolean = true) extends CacheableProtocol with RetryableProtocol with ConfigProtocol
 
-

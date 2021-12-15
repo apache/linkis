@@ -23,11 +23,21 @@ import org.apache.linkis.protocol.RetryableProtocol
 import org.apache.linkis.protocol.message.RequestProtocol
 
 
+/**
+ * engineConn to ecm
+ *
+ * @param serviceInstance
+ * @param status starting running
+ * @param initErrorMsg
+ */
 case class EngineConnStatusCallback(serviceInstance: ServiceInstance, ticketId: String, status: NodeStatus, initErrorMsg: String) extends RequestProtocol
 
 /**
-  * engineConnManager send to Manager
-  */
-case class EngineConnStatusCallbackToAM(serviceInstance: ServiceInstance, status: NodeStatus, initErrorMsg: String, canRetry: Boolean = false) extends RequestProtocol with RetryableProtocol
-
+ * engineConnManager send to Manager
+ */
+case class EngineConnStatusCallbackToAM(serviceInstance: ServiceInstance, status: NodeStatus, initErrorMsg: String, canRetry: Boolean = false) extends RequestProtocol with RetryableProtocol {
+  override def toString: String = {
+    s"EngineConnStatusCallbackToAM($serviceInstance,status:$status, canRetry: $canRetry"
+  }
+}
 

@@ -17,8 +17,9 @@
  
 package org.apache.linkis.manager.am.service.engine
 
-import java.util.concurrent.atomic.AtomicInteger
+import feign.RetryableException
 
+import java.util.concurrent.atomic.AtomicInteger
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.am.conf.AMConfiguration
@@ -32,7 +33,7 @@ import org.apache.commons.lang.exception.ExceptionUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import java.net.SocketTimeoutException
 import scala.concurrent._
 import scala.util.{Failure, Success}
 
@@ -52,10 +53,12 @@ class DefaultEngineAskEngineService extends AbstractEngineService with EngineAsk
 
   private val idPrefix = Sender.getThisServiceInstance.getInstance
 
+  private implicit val executor: ExecutionContextExecutorService = Utils.newCachedExecutionContext(AMConfiguration.ASK_ENGINE_ASYNC_MAX_THREAD_SIZE, "AskEngineService-Thread-")
+
   @Receiver
   override def askEngine(engineAskRequest: EngineAskRequest, smc: ServiceMethodContext): Any = {
-    info(s"received engineAskRequest $engineAskRequest")
-    if(! engineAskRequest.getLabels.containsKey(LabelKeyConstant.EXECUTE_ONCE_KEY)){
+    logger.info(s"received engineAskRequest $engineAskRequest")
+    if(! engineAskRequest.getLabels.containsKey(LabelKeyConstant.EXECUTE_ONCE_KEY)) {
       val engineReuseRequest = new EngineReuseRequest()
       engineReuseRequest.setLabels(engineAskRequest.getLabels)
       engineReuseRequest.setTimeOut(engineAskRequest.getTimeOut)
@@ -63,18 +66,23 @@ class DefaultEngineAskEngineService extends AbstractEngineService with EngineAsk
 
       val reuseNode = Utils.tryCatch(engineReuseService.reuseEngine(engineReuseRequest)) {
         t: Throwable =>
-          warn(s"user ${engineAskRequest.getUser} reuse engine failed ${t.getMessage}")
+          t match {
+            case retryException: LinkisRetryException =>
+              logger.warn(s"user ${engineAskRequest.getUser} reuse engine failed ${t.getMessage}")
+            case _ =>
+              logger.warn(s"user ${engineAskRequest.getUser} reuse engine failed", t)
+          }
           null
       }
       if (null != reuseNode) {
-        info(s"Finished to ask engine for user ${engineAskRequest.getUser} by reuse node $reuseNode")
+        logger.info(s"Finished to ask engine for user ${engineAskRequest.getUser} by reuse node $reuseNode")
         return reuseNode
       }
     }
 
     val engineAskAsyncId = getAsyncId
     val createNodeThread = Future {
-      info(s"Start to async($engineAskAsyncId) createEngine")
+      logger.info(s"Start to async($engineAskAsyncId) createEngine, ${engineAskRequest.getCreateService}")
       //如果原来的labels含engineInstance ，先去掉
       engineAskRequest.getLabels.remove("engineInstance")
       val engineCreateRequest = new EngineCreateRequest
@@ -82,32 +90,38 @@ class DefaultEngineAskEngineService extends AbstractEngineService with EngineAsk
       engineCreateRequest.setTimeOut(engineAskRequest.getTimeOut)
       engineCreateRequest.setUser(engineAskRequest.getUser)
       engineCreateRequest.setProperties(engineAskRequest.getProperties)
-
+      engineCreateRequest.setCreateService(engineAskRequest.getCreateService)
       val createNode = engineCreateService.createEngine(engineCreateRequest, smc)
       val timeout = if (engineCreateRequest.getTimeOut <= 0) AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong else engineCreateRequest.getTimeOut
-      //useEngine 需要加上超时
+      // useEngine 需要加上超时
       val createEngineNode = getEngineNodeManager.useEngine(createNode, timeout)
-      if (null == createEngineNode)
+      if (null == createEngineNode) {
         throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"create engine${createNode.getServiceInstance} success, but to use engine failed")
-      info(s"Finished to ask engine for user ${engineAskRequest.getUser} by create node $createEngineNode")
+      }
+      logger.info(s"Finished to ask engine for user ${engineAskRequest.getUser} by create node $createEngineNode")
       createEngineNode
     }
 
 
     createNodeThread.onComplete {
       case Success(engineNode) =>
-        info(s"Success to async($engineAskAsyncId) createEngine $engineNode")
-        smc.getSender.send(EngineCreateSuccess(engineAskAsyncId, engineNode))
+        logger.info(s"Success to async($engineAskAsyncId) createEngine $engineNode")
+        smc.send(EngineCreateSuccess(engineAskAsyncId, engineNode))
       case Failure(exception) =>
-        info(s"Failed  to async($engineAskAsyncId) createEngine ", exception)
-        exception match {
-          case retryException: LinkisRetryException => {
-            smc.getSender.send(EngineCreateError(engineAskAsyncId, ExceptionUtils.getRootCauseMessage(exception), true))
-          }
+        val retryFlag = exception match {
+          case retryException: LinkisRetryException => true
+          case retryableException: RetryableException => true
           case _ => {
-            smc.getSender.send(EngineCreateError(engineAskAsyncId, ExceptionUtils.getRootCauseMessage(exception)))
+            ExceptionUtils.getRootCause(exception) match {
+              case socketTimeoutException: SocketTimeoutException => true
+              case timeoutException: TimeoutException => true
+              case _ =>
+                false
+            }
           }
         }
+        logger.info(s"Failed  to async($engineAskAsyncId) createEngine, can Retry $retryFlag", exception)
+        smc.send(EngineCreateError(engineAskAsyncId, ExceptionUtils.getRootCauseMessage(exception), retryFlag))
     }
 
     EngineAskAsyncResponse(engineAskAsyncId, Sender.getThisServiceInstance)

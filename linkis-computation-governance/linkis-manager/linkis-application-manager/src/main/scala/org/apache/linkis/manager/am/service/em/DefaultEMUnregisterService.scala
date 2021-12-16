@@ -18,14 +18,15 @@
 package org.apache.linkis.manager.am.service.em
 
 import java.util.concurrent.TimeUnit
-
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.manager.EMNodeManager
-import org.apache.linkis.manager.common.protocol.em.{EMInfoClearRequest, StopEMRequest}
+import org.apache.linkis.manager.common.protocol.em.{EMInfoClearRequest, EMResourceClearRequest, StopEMRequest}
+import org.apache.linkis.manager.label.service.NodeLabelRemoveService
 import org.apache.linkis.message.annotation.Receiver
 import org.apache.linkis.message.builder.ServiceMethodContext
 import org.apache.linkis.protocol.label.NodeLabelRemoveRequest
+import org.apache.linkis.resourcemanager.message.RMMessageService
 import org.apache.linkis.rpc.utils.RPCUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -36,31 +37,38 @@ class DefaultEMUnregisterService extends EMUnregisterService with Logging {
   @Autowired
   private var emNodeManager: EMNodeManager = _
 
+  @Autowired
+  private var nodeLabelRemoveService: NodeLabelRemoveService = _
+  @Autowired
+  private var rmMessageService: RMMessageService = _
+
   @Receiver
-  override def stopEM(stopEMRequest: StopEMRequest, smc: ServiceMethodContext): Unit = {
+  override def stopEM(stopEMRequest: StopEMRequest): Unit = {
     info(s" user ${stopEMRequest.getUser} prepare to stop em ${stopEMRequest.getEm}")
     val node = emNodeManager.getEM(stopEMRequest.getEm)
     if (null == node) return
     if (node.getOwner != stopEMRequest.getUser) {
       info(s" ${stopEMRequest.getUser}  are not owner, will not to stopEM")
     }
-    if (!RPCUtils.getServiceInstanceFromSender(smc.getSender).equals(stopEMRequest.getEm)) {
-      emNodeManager.stopEM(node)
-    }
-    info(s" user ${stopEMRequest.getUser} Finished to stop em process ${stopEMRequest.getEm}")
-    //clear RM info
+
+        //clear RM info
     val emClearRequest = new EMInfoClearRequest
     emClearRequest.setEm(node)
     emClearRequest.setUser(stopEMRequest.getUser)
-    val job = smc.publish(emClearRequest)
-    Utils.tryAndWarn(job.get(AMConfiguration.STOP_ENGINE_WAIT.getValue.toLong, TimeUnit.MILLISECONDS))
+    Utils.tryAndWarn(rmMessageService.dealWithStopEMRequest(stopEMRequest))
     // clear Label
     val instanceLabelRemoveRequest = new NodeLabelRemoveRequest(node.getServiceInstance, false)
-    val labelJob = smc.publish(instanceLabelRemoveRequest)
-    Utils.tryAndWarn(labelJob.get(AMConfiguration.STOP_ENGINE_WAIT.getValue.toLong, TimeUnit.MILLISECONDS))
-    //此处需要先清理ECM再等待，避免ECM重启过快，导致ECM资源没清理干净
+    Utils.tryAndWarn(nodeLabelRemoveService.removeNodeLabel(instanceLabelRemoveRequest))
+    // 此处需要先清理ECM再等待，避免ECM重启过快，导致ECM资源没清理干净
     clearEMInstanceInfo(emClearRequest)
     info(s" user ${stopEMRequest.getUser} finished to stop em ${stopEMRequest.getEm}")
+  }
+
+  implicit def stopEMRequest2EMResourceClearRequest(stopEMRequest: StopEMRequest): EMResourceClearRequest = {
+    val resourceClearRequest = new EMResourceClearRequest
+    resourceClearRequest.setEm(stopEMRequest.getEm)
+    resourceClearRequest.setUser(stopEMRequest.getUser)
+    resourceClearRequest
   }
 
   override def clearEMInstanceInfo(emClearRequest: EMInfoClearRequest): Unit = {

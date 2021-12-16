@@ -23,6 +23,7 @@ import com.webank.wedatasphere.linkis.metadatamanager.common.service.MetadataCon
 import com.webank.wedatasphere.linkis.metadatamanager.server.loader.MetaClassLoaderManager;
 import com.webank.wedatasphere.linkis.metadatamanager.server.service.MetadataAppService;
 import com.webank.wedatasphere.linkis.rpc.Sender;
+import com.webank.wedatasphere.linkis.server.BDPJettyServerHelper;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -87,7 +88,13 @@ public class MetadataAppServiceImpl implements MetadataAppService {
         DsInfoResponse dsInfoResponse = reqToGetDataSourceInfo(dataSourceId, system);
         if(StringUtils.isNotBlank(dsInfoResponse.dsType())){
             BiFunction<String, Object[], Object> invoker = metaClassLoaderManager.getInvoker(dsInfoResponse.dsType());
-            return (MetaPartitionInfo)invoker.apply("getPartitions", new Object[]{dsInfoResponse.creator(), dsInfoResponse.params(), database, table});
+            Object partitions = invoker.apply("getPartitions", new Object[]{dsInfoResponse.creator(), dsInfoResponse.params(), database, table});
+            try {
+                String partitionsJson = BDPJettyServerHelper.jacksonJson().writeValueAsString(partitions);
+                return BDPJettyServerHelper.jacksonJson().readValue(partitionsJson,MetaPartitionInfo.class);
+            }catch (Exception e){
+                throw new ErrorException(-1, "Partitions Error msg:"+e.getMessage());
+            }
         }
         return new MetaPartitionInfo();
     }

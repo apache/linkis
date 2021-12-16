@@ -18,7 +18,8 @@
 package org.apache.linkis.manager.am.selector.rule
 
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.manager.common.entity.node.{Node, RMNode}
+import org.apache.linkis.manager.common.entity.node.{EMNode, Node, RMNode}
+import org.apache.linkis.manager.common.utils.ResourceUtils
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
@@ -28,10 +29,11 @@ import org.springframework.stereotype.Component
 class ResourceNodeSelectRule extends NodeSelectRule with Logging {
 
   override def ruleFiltering(nodes: Array[Node]): Array[Node] = {
-    if (null != nodes)
-      nodes.sortWith(sortByResource)
-    else
+    if (null != nodes) {
+      nodes.sortWith(sortByResource).sortWith(sortByResourceRate)
+    } else {
       nodes
+    }
   }
 
   /**
@@ -52,6 +54,32 @@ class ResourceNodeSelectRule extends NodeSelectRule with Logging {
             true
           } else {
             node.getNodeResource.getLeftResource > nodeBRM.getNodeResource.getLeftResource
+          }
+        } {
+          t: Throwable =>
+            warn(s"Failed to Compare resource ${t.getMessage}")
+            true
+        }
+      case _ => false
+    }
+  }
+
+  private def sortByResourceRate(nodeA: Node, nodeB: Node): Boolean = {
+    if (! nodeA.isInstanceOf[EMNode]) {
+      return true
+    }
+    nodeA match {
+      case node: RMNode if nodeB.isInstanceOf[RMNode] =>
+        Utils.tryCatch {
+          val nodeBRM = nodeB.asInstanceOf[RMNode]
+          if (null == node.getNodeResource || null == node.getNodeResource.getLeftResource) {
+            false
+          } else if (null == nodeBRM.getNodeResource || null == nodeBRM.getNodeResource.getLeftResource) {
+            true
+          } else {
+            val aRate = ResourceUtils.getLoadInstanceResourceRate(node.getNodeResource.getLeftResource, node.getNodeResource.getMaxResource)
+            val bRate = ResourceUtils.getLoadInstanceResourceRate(nodeBRM.getNodeResource.getLeftResource, nodeBRM.getNodeResource.getMaxResource)
+            aRate > bRate
           }
         } {
           t: Throwable =>

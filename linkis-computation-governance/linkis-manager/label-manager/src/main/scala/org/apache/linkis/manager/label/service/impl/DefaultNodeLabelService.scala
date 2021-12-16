@@ -116,34 +116,46 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
     val willBeAdd = newKeyList.diff(oldKeyList)
     val willBeUpdate = oldKeyList.diff(willBeDelete)
     val modifiableKeyList = LabelUtils.listAllUserModifiableLabel()
-    if(!CollectionUtils.isEmpty(willBeDelete)){
-      nodeLabels.foreach(nodeLabel =>  {
-        if(modifiableKeyList.contains(nodeLabel.getLabelKey) && willBeDelete.contains(nodeLabel.getLabelKey)){
-          labelManagerPersistence.removeLabel(nodeLabel.getId)
+    if (!CollectionUtils.isEmpty(willBeDelete)) {
+      nodeLabels.foreach(nodeLabel => {
+        if (modifiableKeyList.contains(nodeLabel.getLabelKey) && willBeDelete.contains(nodeLabel.getLabelKey)) {
+          val labelIds = new util.ArrayList[Integer]()
+          labelIds.add(nodeLabel.getId)
+          labelManagerPersistence.removeNodeLabels(instance, labelIds)
         }
       })
     }
-    if(!CollectionUtils.isEmpty(willBeUpdate)){
+    /**
+     * update step:
+     * 1.delete relations of old labels
+     * 2.add new relation between new labels and instance
+     */
+    if (!CollectionUtils.isEmpty(willBeUpdate)) {
       labels.foreach(label => {
         if(modifiableKeyList.contains(label.getLabelKey) && willBeUpdate.contains(label.getLabelKey)){
           nodeLabels.filter(_.getLabelKey.equals(label.getLabelKey)).foreach(oldLabel => {
             val persistenceLabel = LabelManagerUtils.convertPersistenceLabel(label)
-            persistenceLabel.setId(oldLabel.getId)
-            labelManagerPersistence.updateLabel(persistenceLabel.getId, persistenceLabel)
+            val labelIds = new util.ArrayList[Integer]()
+            labelIds.add(oldLabel.getId)
+            labelManagerPersistence.removeNodeLabels(instance, labelIds)
+            val newLabelId = tryToAddLabel(persistenceLabel)
+            labelIds.remove(oldLabel.getId)
+            labelIds.add(newLabelId)
+            labelManagerPersistence.addLabelToNode(instance, labelIds)
           })
         }
       })
     }
     if(!CollectionUtils.isEmpty(willBeAdd)) {
       labels.filter(label => willBeAdd.contains(label.getLabelKey)).foreach(label => {
-        if(modifiableKeyList.contains(label.getLabelKey)){
+         if(modifiableKeyList.contains(label.getLabelKey)){
           val persistenceLabel = LabelManagerUtils.convertPersistenceLabel(label)
           val labelId = tryToAddLabel(persistenceLabel)
-          if (labelId > 0) {
-            val labelIds = new util.ArrayList[Integer]()
-            labelIds.add(labelId)
-            labelManagerPersistence.addLabelToNode(instance, labelIds)
-          }
+           if (labelId > 0) {
+             val labelIds = new util.ArrayList[Integer]()
+             labelIds.add(labelId)
+             labelManagerPersistence.addLabelToNode(instance, labelIds)
+           }
         }
       })
     }
@@ -165,14 +177,6 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
   override def removeLabelsFromNode(instance: ServiceInstance): Unit = {
     val removeLabels = labelManagerPersistence.getLabelByServiceInstance(instance).filter(label => ! LabelManagerConf.LONG_LIVED_LABEL.contains( label.getLabelKey))
     labelManagerPersistence.removeNodeLabels(instance, removeLabels.map(_.getId))
-  }
-
-  @Transactional(rollbackFor = Array(classOf[Exception]))
-  override def removeLabelsFromNodeWithoutPermanent(instance: ServiceInstance, permanentLabel: Array[String] = Array()): Unit = {
-    val labels = labelManagerPersistence.getLabelByServiceInstance(instance)
-    val lowerCasePermanentLabels = permanentLabel.map(_.toLowerCase())
-    val withoutPermanentLabel = labels.filterNot(label => lowerCasePermanentLabels.contains(label.getLabelKey.toLowerCase)).map(_.getId)
-    labelManagerPersistence.removeNodeLabels(instance, withoutPermanentLabel)
   }
 
   /**
@@ -198,11 +202,11 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
   }
 
   /**
-   * Get scored node instances
-   *
-   * @param labels searchableLabel or other normal labels
-   * @return
-   */
+    * Get scored node instances
+    *
+    * @param labels searchableLabel or other normal labels
+    * @return
+    */
   override def getScoredNodesByLabels(labels: util.List[Label[_]]): util.List[ScoreServiceInstance] = {
     getScoredNodeMapsByLabels(labels).map(_._1).toList
   }
@@ -217,11 +221,11 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
     //Try to convert the label list to key value list
     if (null != labels && labels.nonEmpty) {
       //Get the persistence labels by kvList
-      val requireLabels = labels.filter(_.getFeature == Feature.CORE)
-      //Extra the necessary labels whose feature equals Feature.CORE or Feature.SUITABLE
-      val necessaryLabels = requireLabels.map(LabelManagerUtils.convertPersistenceLabel)
-      val inputLabels = labels.map(LabelManagerUtils.convertPersistenceLabel)
-      return getScoredNodeMapsByLabels(inputLabels, necessaryLabels)
+        val requireLabels = labels.filter(_.getFeature == Feature.CORE)
+        //Extra the necessary labels whose feature equals Feature.CORE or Feature.SUITABLE
+        val necessaryLabels = requireLabels.map(LabelManagerUtils.convertPersistenceLabel)
+        val inputLabels = labels.map(LabelManagerUtils.convertPersistenceLabel)
+        return getScoredNodeMapsByLabels(inputLabels, necessaryLabels)
     }
     new util.HashMap[ScoreServiceInstance, util.List[Label[_]]]()
   }
@@ -269,33 +273,33 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
         necessaryLabels.map(_.getLabelKey).toSet
       }
       //Rebuild in-degree relations
-      inNodeDegree.clear()
-      val removeNodes = new ArrayBuffer[ServiceInstance]()
-      outNodeDegree.foreach{
-        case(node, iLabels) =>
-          //The core tag must be exactly the same
-          if (null != necessaryLabels ) {
-            val coreLabelKeys = iLabels.map(ManagerUtils.persistenceLabelToRealLabel).filter(_.getFeature  == Feature.CORE).map(_.getLabelKey).toSet
-            if (necessaryLabelKeys.containsAll(coreLabelKeys) && coreLabelKeys.size == necessaryLabelKeys.size) {
-              iLabels.foreach( label => {
-                if (!inNodeDegree.contains(label)) {
-                  val inNodes = new util.ArrayList[ServiceInstance]()
-                  inNodeDegree.put(label, inNodes)
-                }
-                val inNodes = inNodeDegree.get(label)
-                inNodes.add(node)
-              })
-            } else {
-              removeNodes += node
-            }
-          }
-      }
+       inNodeDegree.clear()
+       val removeNodes = new ArrayBuffer[ServiceInstance]()
+       outNodeDegree.foreach{
+         case(node, iLabels) =>
+           //The core tag must be exactly the same
+           if (null != necessaryLabels ) {
+             val coreLabelKeys = iLabels.map(ManagerUtils.persistenceLabelToRealLabel).filter(_.getFeature  == Feature.CORE).map(_.getLabelKey).toSet
+             if (necessaryLabelKeys.containsAll(coreLabelKeys) && coreLabelKeys.size == necessaryLabelKeys.size) {
+               iLabels.foreach( label => {
+                 if (!inNodeDegree.contains(label)) {
+                   val inNodes = new util.ArrayList[ServiceInstance]()
+                   inNodeDegree.put(label, inNodes)
+                 }
+                 val inNodes = inNodeDegree.get(label)
+                 inNodes.add(node)
+               })
+             } else {
+               removeNodes += node
+             }
+           }
+       }
 
-      // Remove nodes with mismatched labels
+       // Remove nodes with mismatched labels
       if (removeNodes.nonEmpty && removeNodes.size == outNodeDegree.size())
         info(s"The entered labels${necessaryLabels} do not match the labels of the node itself")
-      removeNodes.foreach(outNodeDegree.remove(_))
-      return nodeLabelScorer.calculate( inNodeDegree, outNodeDegree, labels).asInstanceOf[util.Map[ScoreServiceInstance, util.List[Label[_]]]]
+       removeNodes.foreach(outNodeDegree.remove(_))
+       return nodeLabelScorer.calculate( inNodeDegree, outNodeDegree, labels).asInstanceOf[util.Map[ScoreServiceInstance, util.List[Label[_]]]]
     }
     new util.HashMap[ScoreServiceInstance, util.List[Label[_]]]()
   }

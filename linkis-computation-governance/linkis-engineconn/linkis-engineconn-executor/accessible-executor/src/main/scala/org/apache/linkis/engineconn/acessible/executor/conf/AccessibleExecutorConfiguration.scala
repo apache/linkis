@@ -30,7 +30,7 @@ object AccessibleExecutorConfiguration {
 
   val ENGINECONN_LOG_NUM_SEND_ONCE = CommonVars("wds.linkis.engineconn.log.send.once", 100)
 
-  val ENGINECONN_LOG_SEND_TIME_INTERVAL = CommonVars("wds.linkis.engineconn.log.send.time.interval", 30)
+  val ENGINECONN_LOG_SEND_TIME_INTERVAL = CommonVars("wds.linkis.engineconn.log.send.time.interval", 200)
 
   val ENGINECONN_LOG_SEND_SIZE = CommonVars[Int]("wds.linkis.engineconn.log.send.cache.size", 5)
 

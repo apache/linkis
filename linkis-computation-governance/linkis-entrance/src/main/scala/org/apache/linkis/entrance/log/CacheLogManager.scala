@@ -17,40 +17,45 @@
  
 package org.apache.linkis.entrance.log
 
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.exception.{CacheNotReadyException, EntranceErrorCode}
 import org.apache.linkis.entrance.job.EntranceExecutionJob
-import org.apache.linkis.governance.common.entity.task.RequestPersistTask
 import org.apache.linkis.scheduler.queue.Job
 /**
   * LogManager implementation, using a singleton class
   * LogManager 的实现, 采用单例类进行
   */
-class CacheLogManager extends LogManager {
+class CacheLogManager extends LogManager with Logging {
 
   override def getLogReader(execId: String): LogReader = {
-    var retLogReader:LogReader = null
-     this.entranceContext.getOrCreateScheduler().get(execId).foreach {
-       case entranceExecutionJob: EntranceExecutionJob =>
-         retLogReader = entranceExecutionJob.getLogReader.getOrElse({
-           this.synchronized {
-             val logWriter: CacheLogWriter =
-               entranceExecutionJob.getLogWriter.getOrElse(createLogWriter(entranceExecutionJob)).asInstanceOf[CacheLogWriter]
-             val sharedCache: Cache = logWriter.getCache.
-               getOrElse(throw CacheNotReadyException(EntranceErrorCode.CACHE_NOT_READY.getErrCode, EntranceErrorCode.CACHE_NOT_READY.getDesc))
-             val logPath: String = entranceExecutionJob.getJobRequest.getLogPath
-             new CacheLogReader(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, sharedCache, entranceExecutionJob.getUser)
-           }
-         })
-         entranceExecutionJob.setLogReader(retLogReader)
-       case _ => null
-     }
+    var retLogReader: LogReader = null
+    this.entranceContext.getOrCreateScheduler().get(execId).foreach {
+      case entranceExecutionJob: EntranceExecutionJob =>
+        retLogReader = entranceExecutionJob.getLogReader.getOrElse({
+          this.synchronized {
+            val sharedCache: Cache =
+              entranceExecutionJob.getLogWriter.getOrElse(createLogWriter(entranceExecutionJob)) match {
+                case cacheLogWriter: CacheLogWriter =>
+                  cacheLogWriter.getCache.getOrElse(throw CacheNotReadyException(EntranceErrorCode.CACHE_NOT_READY.getErrCode, EntranceErrorCode.CACHE_NOT_READY.getDesc))
+                case _ =>
+                  Cache(1)
+              }
+            val logPath: String = entranceExecutionJob.getJobRequest.getLogPath
+            new CacheLogReader(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, sharedCache, entranceExecutionJob.getUser)
+          }
+        })
+        entranceExecutionJob.setLogReader(retLogReader)
+      case _ => null
+    }
     retLogReader
   }
 
 
   override def createLogWriter(job: Job): LogWriter = {
-
+    if (null != job && job.isCompleted) {
+      return null
+    }
     job match {
       case entranceExecutionJob: EntranceExecutionJob => {
         val cache: Cache = Cache(EntranceConfiguration.DEFAULT_CACHE_MAX.getValue)
@@ -58,11 +63,12 @@ class CacheLogManager extends LogManager {
         val cacheLogWriter: CacheLogWriter =
           new CacheLogWriter(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, cache, entranceExecutionJob.getUser)
         entranceExecutionJob.setLogWriter(cacheLogWriter)
-        val webSocketCacheLogReader: WebSocketCacheLogReader =
+        logger.info(s"job ${entranceExecutionJob.getJobRequest.getId} create cacheLogWriter")
+        /*val webSocketCacheLogReader: WebSocketCacheLogReader =
           new WebSocketCacheLogReader(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, cache, entranceExecutionJob.getUser)
         entranceExecutionJob.setWebSocketLogReader(webSocketCacheLogReader)
         val webSocketLogWriter: WebSocketLogWriter = new WebSocketLogWriter(entranceExecutionJob, entranceContext.getOrCreateLogListenerBus)
-        entranceExecutionJob.setWebSocketLogWriter(webSocketLogWriter)
+        entranceExecutionJob.setWebSocketLogWriter(webSocketLogWriter)*/
         cacheLogWriter
       }
       case _ => null

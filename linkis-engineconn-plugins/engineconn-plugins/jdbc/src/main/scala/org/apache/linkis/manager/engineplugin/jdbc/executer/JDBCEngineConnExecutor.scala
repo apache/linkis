@@ -147,11 +147,11 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     }
   }
 
-  override def getProgressInfo: Array[JobProgressInfo] = Array.empty[JobProgressInfo]
+  override def getProgressInfo(taskID: String): Array[JobProgressInfo] = Array.empty[JobProgressInfo]
 
   override protected def callback(): Unit = {}
 
-  override def progress(): Float = {
+  override def progress(taskID: String): Float = {
     0
   }
 

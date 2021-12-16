@@ -28,4 +28,8 @@ object Configuration {
   val ENGINE_TYPE = CommonVars.apply("wds.linkis.configuration.engine.type", EngineType.getAllEngineTypes.asScala.mkString(","))
 
   val MANAGER_SPRING_NAME = CommonVars("wds.linkis.engineconn.manager.name", "linkis-cg-linkismanager")
+
+  val GLOBAL_CONF_CHN_NAME = "全局设置"
+
+  val GLOBAL_CONF_CHN_OLDNAME = "通用设置"
 }

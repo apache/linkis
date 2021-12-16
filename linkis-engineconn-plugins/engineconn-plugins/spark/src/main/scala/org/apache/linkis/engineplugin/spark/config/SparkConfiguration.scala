@@ -65,7 +65,7 @@ object SparkConfiguration extends Logging {
 
   val SPARK_DRIVER_CLASSPATH = CommonVars[String]("spark.driver.extraClassPath", "")
 
-  val SPARK_DRIVER_EXTRA_JAVA_OPTIONS = CommonVars[String]("spark.driver.extraJavaOptions", "\"-Dwds.linkis.configuration=linkis-engine.properties " + "\"")
+  val SPARK_DRIVER_EXTRA_JAVA_OPTIONS = CommonVars[String]("spark.driver.extraJavaOptions", "\"-Dwds.linkis.server.conf=linkis-engine.properties " + "\"")
 
   val SPARK_DEFAULT_EXTERNAL_JARS_PATH = CommonVars[String]("spark.external.default.jars", "")
 

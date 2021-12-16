@@ -17,10 +17,8 @@
  
 package org.apache.linkis.manager.am.service.heartbeat
 
-import java.util.concurrent.TimeUnit
-
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.manager.am.conf.AMConfiguration
+import org.apache.linkis.manager.am.conf.ManagerMonitorConf
 import org.apache.linkis.manager.am.service.HeartbeatService
 import org.apache.linkis.manager.common.entity.metrics.AMNodeMetrics
 import org.apache.linkis.manager.common.monitor.ManagerMonitor
@@ -29,9 +27,11 @@ import org.apache.linkis.manager.persistence.{NodeManagerPersistence, NodeMetric
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
 import org.apache.linkis.message.annotation.Receiver
 import org.apache.linkis.resourcemanager.utils.RMConfiguration
-import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+
+import java.util.concurrent.TimeUnit
+import javax.annotation.PostConstruct
 
 @Service
 class AMHeartbeatService extends HeartbeatService with Logging {
@@ -52,7 +52,7 @@ class AMHeartbeatService extends HeartbeatService with Logging {
 
   @PostConstruct
   def init(): Unit = {
-    if (null != managerMonitor && AMConfiguration.MONITOR_SWITCH_ON.getValue) {
+    if (null != managerMonitor && ManagerMonitorConf.MONITOR_SWITCH_ON.getValue) {
       info("start init AMHeartbeatService monitor")
       Utils.defaultScheduler.scheduleAtFixedRate(managerMonitor, 1000, RMConfiguration.RM_ENGINE_SCAN_INTERVAL.getValue.toLong, TimeUnit.MILLISECONDS)
 
@@ -68,9 +68,9 @@ class AMHeartbeatService extends HeartbeatService with Logging {
     nodeMetrics.setHeartBeatMsg(nodeHeartbeatMsg.getHeartBeatMsg)
     nodeMetrics.setOverLoad(metricsConverter.convertOverLoadInfo(nodeHeartbeatMsg.getOverLoadInfo))
     nodeMetrics.setServiceInstance(nodeHeartbeatMsg.getServiceInstance)
-    if(nodeHeartbeatMsg.getStatus != null){
+    if (nodeHeartbeatMsg.getStatus != null) {
       nodeMetrics.setStatus(metricsConverter.convertStatus(nodeHeartbeatMsg.getStatus))
-    }else{
+    } else {
       nodeMetrics.setStatus(0)
     }
     nodeMetricManagerPersistence.addOrupdateNodeMetrics(nodeMetrics)

@@ -59,7 +59,6 @@ abstract class EntranceJob extends Job {
   var codeParser: CodeParser = _
 
   private var entranceListenerBus: Option[EntranceEventListenerBus[EntranceEventListener, EntranceEvent]] = None
-  private var entranceLogListenerBus: Option[EntranceLogListenerBus[EntranceLogListener, EntranceLogEvent]] = None
   private var progressInfo: Array[JobProgressInfo] = Array.empty
   private val persistedResultSets = new AtomicInteger(0)
 //  private var resultSize = -1
@@ -67,12 +66,6 @@ abstract class EntranceJob extends Job {
 
   def setEntranceListenerBus(entranceListenerBus: EntranceEventListenerBus[EntranceEventListener, EntranceEvent]): Unit =
     this.entranceListenerBus = Option(entranceListenerBus)
-
-  def setEntranceLogListenerBus(entranceLogListenerBus: EntranceLogListenerBus[EntranceLogListener, EntranceLogEvent]): Unit =
-    this.entranceLogListenerBus = Option(entranceLogListenerBus)
-
-
-  def getEntranceListenerBus = this.entranceListenerBus
 
   def setProgressInfo(progressInfo: Array[JobProgressInfo]): Unit = this.progressInfo = progressInfo
 
@@ -133,19 +126,7 @@ abstract class EntranceJob extends Job {
   }
 
   override def afterStateChanged(fromState: SchedulerEventState, toState: SchedulerEventState): Unit = {
-    /*if (SchedulerEventState.isRunning(toState)) {
-      def setEngineInstance(task: Task): Unit = task match {
-        case requestTask: RequestPersistTask => getExecutor match {
-          case engine: EntranceExecutor => requestTask.setEngineInstance(engine.getInstance.getInstance)
-          case _ =>
-        }
-        case haTask: HaPersistenceTask => setEngineInstance(haTask.task)
-        case _ =>
-      }
-
-      setEngineInstance(jobRequest)
-    }*/
-    updateJobRequestStatus(toState.toString)
+    //updateJobRequestStatus(toState.toString)
     super.afterStateChanged(fromState, toState)
     toState match {
       case Scheduled =>
@@ -185,33 +166,13 @@ abstract class EntranceJob extends Job {
   }
 
   override def onFailure(errorMsg: String, t: Throwable): Unit = {
-    updateJobRequestStatus(SchedulerEventState.Failed.toString)
+    //updateJobRequestStatus(SchedulerEventState.Failed.toString)
     val generatedMsg = LogUtils.generateERROR(s"Sorry, your job executed failed with reason: $errorMsg")
-    this.entranceLogListenerBus.foreach(_.post(
-      EntrancePushLogEvent(this, generatedMsg)))
-   this.getLogListener.foreach(_.onLogUpdate(this, generatedMsg))
-//    transitionCompleted() // todo
-    if (StringUtils.isBlank(getJobRequest.getErrorDesc)) {
-      if (null != t) {
-        getJobRequest.setErrorDesc(errorMsg + " " + t.getMessage)
-      } else {
-        getJobRequest.setErrorDesc(errorMsg)
-      }
-    }
+    getLogListener.foreach(_.onLogUpdate(this, generatedMsg))
     super.onFailure(errorMsg, t)
   }
 
   override protected def transitionCompleted(executeCompleted: CompletedExecuteResponse): Unit = {
-    executeCompleted match {
-      case error: ErrorExecuteResponse => //  todo checkif RPCUtils.isReceiverNotExists(error.t) =>
-        entranceListenerBus.foreach(_.post(MissingEngineNotifyEvent(this, error.t, getExecutor)))
-        updateJobRequestStatus(SchedulerEventState.Failed.toString)
-      case _ : SuccessExecuteResponse =>
-        updateJobRequestStatus(SchedulerEventState.Succeed.toString)
-        getJobRequest.setErrorCode(0)
-        getJobRequest.setErrorDesc(null)
-      case _ =>
-    }
     Utils.tryAndErrorMsg(clearInstanceInfo())("Failed to clear executor")
     super.transitionCompleted(executeCompleted)
   }

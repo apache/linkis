@@ -93,7 +93,6 @@ abstract class EntranceServer extends Logging {
       job match {
         case entranceJob: EntranceJob => {
           entranceJob.setEntranceListenerBus(getEntranceContext.getOrCreateEventListenerBus)
-          entranceJob.setEntranceLogListenerBus(getEntranceContext.getOrCreateLogListenerBus)
         }
         case _ =>
       }
@@ -108,11 +107,6 @@ abstract class EntranceServer extends Logging {
       logger.info(msg)
       job match {
         case entranceJob: EntranceJob =>
-          getEntranceContext.getOrCreateScheduler().getSchedulerContext.getOrCreateExecutorManager match {
-            case entranceExecutorManager: EntranceExecutorManager =>
-              entranceExecutorManager.setJobExecIdAndEntranceJob(entranceJob.getId, entranceJob)
-            case _ =>
-          }
           entranceJob.getJobRequest.setReqId(job.getId())
           if(jobTimeoutManager.timeoutCheck && JobTimeoutManager.hasTimeoutLabel(entranceJob)) jobTimeoutManager.add(job.getId(), entranceJob)
           entranceJob.getLogListener.foreach(_.onLogUpdate(entranceJob, msg))
@@ -122,8 +116,7 @@ abstract class EntranceServer extends Logging {
       job.getId()
     }{t =>
       job.onFailure("Submitting the query failed!(提交查询失败！)", t)
-      var _jobRequest: JobRequest = null
-      Utils.tryAndError(_jobRequest = job.asInstanceOf[EntranceJob].getJobRequest)
+      val _jobRequest: JobRequest = getEntranceContext.getOrCreateEntranceParser().parseToJobRequest(job)
       getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(_jobRequest)
       t match {
         case e: LinkisException => e
@@ -159,7 +152,6 @@ abstract class EntranceServer extends Logging {
         entranceWebSocketService = Some(new EntranceWebSocketService)
         entranceWebSocketService.foreach(_.setEntranceServer(this))
         entranceWebSocketService.foreach(getEntranceContext.getOrCreateEventListenerBus.addListener)
-        entranceWebSocketService.foreach(getEntranceContext.getOrCreateLogListenerBus.addListener)
       }
     }
     entranceWebSocketService

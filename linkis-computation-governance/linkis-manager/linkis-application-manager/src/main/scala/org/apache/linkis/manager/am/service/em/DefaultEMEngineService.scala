@@ -33,6 +33,7 @@ import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.service.common.label.LabelFilter
 import org.apache.commons.collections.MapUtils
+import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -91,12 +92,24 @@ class DefaultEMEngineService extends EMEngineService with Logging {
     if (MapUtils.isEmpty(instanceAndLabels)) {
       new AMErrorException(AMConstant.EM_ERROR_CODE, "No corresponding EM")
     }
-    val nodes = getEMNodes(instanceAndLabels.keys.toArray)
+    // TODO add em select rule to do this
+    val emInstanceLabelOption = labels.find(_.isInstanceOf[EMInstanceLabel])
+    val filterInstanceAndLabel = if (emInstanceLabelOption.isDefined) {
+      val emInstanceLabel = emInstanceLabelOption.get.asInstanceOf[EMInstanceLabel]
+      info(s"use emInstanceLabel , will be route to ${emInstanceLabel.getServiceInstance}")
+      if (!instanceAndLabels.exists(_._1.equals(emInstanceLabel.getServiceInstance))) {
+        throw new AMErrorException(AMConstant.EM_ERROR_CODE, s"You specified em ${emInstanceLabel.getServiceInstance}, but the corresponding EM does not exist in the Manager")
+      }
+      instanceAndLabels.filter(_._1.getServiceInstance.equals(emInstanceLabel.getServiceInstance))
+    } else {
+      instanceAndLabels.toMap
+    }
+    val nodes = getEMNodes(filterInstanceAndLabel.keys.toArray)
     if (null == nodes) {
       return null
     }
     nodes.foreach { node =>
-      val persistenceLabel = instanceAndLabels.find(_._1.getServiceInstance.equals(node.getServiceInstance)).map(_._2)
+      val persistenceLabel = filterInstanceAndLabel.find(_._1.getServiceInstance.equals(node.getServiceInstance)).map(_._2)
       persistenceLabel.foreach(labelList => node.setLabels(labelList.map(ManagerUtils.persistenceLabelToRealLabel)))
     }
     nodes

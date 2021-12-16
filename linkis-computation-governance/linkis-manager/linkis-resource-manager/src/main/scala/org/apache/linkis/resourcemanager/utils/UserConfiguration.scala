@@ -17,11 +17,8 @@
  
 package org.apache.linkis.resourcemanager.utils
 
-import java.util
-
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
-
 import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfigWithGlobalConfig, RequestQueryGlobalConfig, ResponseQueryConfig}
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
@@ -31,6 +28,8 @@ import org.apache.linkis.protocol.CacheableProtocol
 import org.apache.linkis.resourcemanager.exception.RMWarnException
 import org.apache.linkis.resourcemanager.utils.RMConfiguration._
 import org.apache.linkis.rpc.RPCMapCache
+
+import java.util
 
 object UserConfiguration extends Logging {
 
@@ -50,7 +49,6 @@ object UserConfiguration extends Logging {
     override protected def createRequest(labelTuple: (UserCreatorLabel, EngineTypeLabel)): CacheableProtocol = {
       RequestQueryEngineConfigWithGlobalConfig(labelTuple._1, labelTuple._2)
     }
-
     override protected def createMap(any: Any): util.Map[String, String] = any match {
       case response: ResponseQueryConfig => response.getKeyAndValue
     }
@@ -73,7 +71,7 @@ object UserConfiguration extends Logging {
     (userCreateLabel, engineType)
   }
 
-  def getUserConfiguredResource(resourceType: ResourceType, userCreatorLabel: UserCreatorLabel,  engineTypeLabel: EngineTypeLabel) = {
+  def getUserConfiguredResource(resourceType: ResourceType, userCreatorLabel: UserCreatorLabel, engineTypeLabel: EngineTypeLabel): Resource = {
     Utils.tryAndWarn{
       val userCreatorAvailableResource = generateResource(resourceType, engineMapCache.getCacheMap(userCreatorLabel, engineTypeLabel))
       info(s"${userCreatorLabel.getUser} on creator ${userCreatorLabel.getCreator} available engine ${engineTypeLabel.getEngineType} resource:$userCreatorAvailableResource")

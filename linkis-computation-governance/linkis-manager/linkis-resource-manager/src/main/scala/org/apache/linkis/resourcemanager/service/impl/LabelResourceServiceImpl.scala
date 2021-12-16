@@ -18,19 +18,19 @@
 package org.apache.linkis.resourcemanager.service.impl
 
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.manager.common.entity.persistence.{PersistenceLabel, PersistenceResource}
+import org.apache.linkis.manager.common.entity.persistence.PersistenceResource
 import org.apache.linkis.manager.common.entity.resource.NodeResource
 import org.apache.linkis.manager.common.utils.ResourceUtils
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import org.apache.linkis.manager.label.entity.{CombinedLabel, Label}
+import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.service.ResourceLabelService
-import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.manager.persistence.{LabelManagerPersistence, ResourceManagerPersistence}
 import org.apache.linkis.resourcemanager.domain.RMLabelContainer
 import org.apache.linkis.resourcemanager.service.LabelResourceService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import java.util
 import scala.collection.JavaConversions._
 
 
@@ -52,29 +52,23 @@ class LabelResourceServiceImpl extends LabelResourceService with Logging {
     resourceLabelService.getResourceByLabel(label)
   }
 
-  override def setLabelResource(label: Label[_], nodeResource: NodeResource): Unit = {
-    resourceLabelService.setResourceToLabel(label, nodeResource)
+  override def setLabelResource(label: Label[_], nodeResource: NodeResource, source: String): Unit = {
+    resourceLabelService.setResourceToLabel(label, nodeResource, source)
   }
 
   override def getResourcesByUser(user: String): Array[NodeResource] = {
     resourceManagerPersistence.getResourceByUser(user).map(ResourceUtils.fromPersistenceResource).toArray
   }
 
-  override def enrichLabels(labelContainer: RMLabelContainer): RMLabelContainer = {
-     new RMLabelContainer(labelContainer.getLabels)
+  override def enrichLabels(labels: util.List[Label[_]]): RMLabelContainer = {
+     new RMLabelContainer(labels)
   }
 
   override def removeResourceByLabel(label: Label[_]): Unit = {
     resourceLabelService.removeResourceByLabel(label)
   }
 
-  /**
-   * 方法同 setLabelResource 只适用于启动引擎申请资源后设置engineConn资源
-   *
-   * @param label
-   * @param nodeResource
-   */
-  override def setEngineConnLabelResource(label: Label[_], nodeResource: NodeResource): Unit = resourceLabelService.setEngineConnResourceToLabel(label, nodeResource)
+  override def setEngineConnLabelResource(label: Label[_], nodeResource: NodeResource, source: String): Unit = resourceLabelService.setEngineConnResourceToLabel(label, nodeResource, source)
 
   override def getLabelsByResource(resource: PersistenceResource): Array[Label[_]] = {
     labelManagerPersistence.getLabelByResource(resource).map{ label =>

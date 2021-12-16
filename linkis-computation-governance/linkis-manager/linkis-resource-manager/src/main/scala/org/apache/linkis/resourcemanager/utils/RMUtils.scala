@@ -21,16 +21,41 @@ import org.apache.linkis.common.conf.{CommonVars, TimeType}
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource
 import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.serializer.NodeResourceSerializer
+import org.apache.linkis.manager.label.entity.engine.EngineType
+import org.apache.linkis.server.BDPJettyServerHelper
 import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization.{read, write}
 
+import scala.collection.JavaConverters.asScalaBufferConverter
+
 object RMUtils extends Logging {
 
-  implicit val formats = DefaultFormats + ResourceSerializer
+  lazy val GSON = BDPJettyServerHelper.gson
+  implicit val formats = DefaultFormats + ResourceSerializer + NodeResourceSerializer
+  val mapper = BDPJettyServerHelper.jacksonJson
 
   val MANAGER_KILL_ENGINE_EAIT = CommonVars("wds.linkis.manager.rm.kill.engine.wait", new TimeType("30s"))
 
-  val RM_REQUEST_ENABLE = CommonVars("wds.linkis.manager.rm.request.enable", false)
+  val RM_REQUEST_ENABLE = CommonVars("wds.linkis.manager.rm.request.enable", true)
+
+  val RM_RESOURCE_LOCK_WAIT_TIME = CommonVars("wds.linkis.manager.rm.lock.wait", 5 * 60 * 1000)
+
+  val RM_DEBUG_ENABLE = CommonVars("wds.linkis.manager.rm.debug.enable", false)
+
+  val RM_DEBUG_LOG_PATH = CommonVars("wds.linkis.manager.rm.debug.log.path", "file:///tmp/linkis/rmLog")
+
+  val EXTERNAL_RESOURCE_REFRESH_TIME = CommonVars("wds.linkis.manager.rm.external.resource.regresh.time", new TimeType("30m"))
+
+  val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
+
+  val COMBINED_USERCREATOR_ENGINETYPE = "combined_userCreator_engineType"
+
+  val ENGINE_TYPE = CommonVars.apply("wds.linkis.configuration.engine.type", EngineType.getAllEngineTypes.asScala.mkString(","))
+
+  val AM_SERVICE_NAME = "linkis-cg-linkismanager"
+
+
 
   def deserializeResource(plainResource: String): Resource = {
     read[Resource](plainResource)
@@ -39,6 +64,7 @@ object RMUtils extends Logging {
   def serializeResource(resource: Resource): String = {
     write(resource)
   }
+
 
   def toPersistenceResource(nodeResource: NodeResource) : PersistenceResource = {
     val persistenceResource = new PersistenceResource
@@ -51,19 +77,10 @@ object RMUtils extends Logging {
     persistenceResource
   }
 
-  /*  def fromPersistenceResource(persistenceResource: PersistenceResource) : CommonNodeResource = {
-      val nodeResource = new CommonNodeResource
-      if(persistenceResource.getMaxResource != null) nodeResource.setMaxResource(deserializeResource(persistenceResource.getMaxResource))
-      if(persistenceResource.getMinResource != null) nodeResource.setMinResource(deserializeResource(persistenceResource.getMinResource))
-      if(persistenceResource.getLockedResource != null) nodeResource.setLockedResource(deserializeResource(persistenceResource.getLockedResource))
-      if(persistenceResource.getExpectedResource != null) nodeResource.setMaxResource(deserializeResource(persistenceResource.getExpectedResource))
-      if(persistenceResource.getLeftResource != null) nodeResource.setLeftResource(deserializeResource(persistenceResource.getLeftResource))
-      nodeResource.setResourceType(ResourceType.valueOf(persistenceResource.getResourceType))
-      nodeResource
-    }*/
+
 
   def aggregateNodeResource(firstNodeResource: NodeResource, secondNodeResource: NodeResource) : CommonNodeResource = {
-    if(firstNodeResource != null && secondNodeResource != null){
+    if (firstNodeResource != null && secondNodeResource != null) {
       val aggregatedNodeResource = new CommonNodeResource
       aggregatedNodeResource.setResourceType(firstNodeResource.getResourceType)
       aggregatedNodeResource.setMaxResource(aggregateResource(firstNodeResource.getMaxResource, secondNodeResource.getMaxResource))
@@ -73,7 +90,7 @@ object RMUtils extends Logging {
       aggregatedNodeResource.setLeftResource(aggregateResource(firstNodeResource.getLeftResource, secondNodeResource.getLeftResource))
       return aggregatedNodeResource
     }
-    if(firstNodeResource == null && secondNodeResource == null){
+    if (firstNodeResource == null && secondNodeResource == null) {
       return null
     }
     if(firstNodeResource == null) {
@@ -83,7 +100,7 @@ object RMUtils extends Logging {
     }
   }
 
-  def aggregateResource(firstResource: Resource, secondResource: Resource) :  Resource = {
+  def aggregateResource(firstResource: Resource, secondResource: Resource): Resource = {
     (firstResource, secondResource) match {
       case (null, null) => null
       case (null, secondResource) => secondResource

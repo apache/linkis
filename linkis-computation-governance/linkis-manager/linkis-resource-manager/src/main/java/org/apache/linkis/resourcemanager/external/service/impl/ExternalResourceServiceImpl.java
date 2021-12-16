@@ -17,6 +17,10 @@
  
 package org.apache.linkis.resourcemanager.external.service.impl;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
@@ -44,6 +48,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 @Component
@@ -57,6 +63,17 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
     ExternalResourceIdentifierParser[] identifierParsers;
 
     ExternalResourceRequester[] resourceRequesters;
+
+    private LoadingCache<String, List<ExternalResourceProvider>> providerCache = CacheBuilder.newBuilder().maximumSize(20)
+    .expireAfterAccess(1, TimeUnit.HOURS)
+    .refreshAfterWrite(RMUtils.EXTERNAL_RESOURCE_REFRESH_TIME().getValue().toLong(), TimeUnit.MINUTES)
+    .build( new CacheLoader<String, List<ExternalResourceProvider>>() {
+
+        @Override
+        public List<ExternalResourceProvider> load(String resourceType) {
+            return providerDao.selectByResourceType(resourceType);
+        }
+    });
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -105,7 +122,7 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
                 return function.apply(null);
             } catch (Exception e){
                 errorMsg = "Failed to request external resource" + ExceptionUtils.getRootCauseMessage(e);
-                logger.warn("failed to request external resource provider", e);
+                logger.warn("failed to request external resource provider, retryNum {}", times,  e);
                 times ++;
             }
         }
@@ -122,11 +139,15 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
         } else {
             realClusterLabel = (ClusterLabel) label;
         }
-        List<ExternalResourceProvider> providers = providerDao.selectByResourceType(resourceType.toString());
-        for (ExternalResourceProvider provider : providers) {
-            if (provider.getName().equals(realClusterLabel.getClusterName())) {
-                return provider;
+        try {
+            List<ExternalResourceProvider> providers = providerCache.get(resourceType.toString());
+            for (ExternalResourceProvider provider : providers) {
+                if (provider.getName().equals(realClusterLabel.getClusterName())) {
+                    return provider;
+                }
             }
+        } catch (ExecutionException e) {
+            throw new RMErrorException(110013, "No suitable ExternalResourceProvider found for cluster: " + realClusterLabel.getClusterName(), e);
         }
         throw new RMErrorException(110013, "No suitable ExternalResourceProvider found for cluster: " + realClusterLabel.getClusterName());
     }

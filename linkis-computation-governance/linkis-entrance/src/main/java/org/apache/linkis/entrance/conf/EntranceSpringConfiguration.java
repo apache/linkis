@@ -96,14 +96,6 @@ public class EntranceSpringConfiguration {
         return entranceEventListenerBus;
     }
 
-    @EntranceLogListenerBusBeanAnnotation
-    @ConditionalOnMissingBean(name = {EntranceLogListenerBusBeanAnnotation.BEAN_NAME})
-    public EntranceLogListenerBus<EntranceLogListener, EntranceLogEvent> generateEntranceLogListenerBus() {
-        EntranceLogListenerBus<EntranceLogListener, EntranceLogEvent> entranceLogListenerBus = new EntranceLogListenerBus<EntranceLogListener, EntranceLogEvent>();
-        entranceLogListenerBus.start();
-        return entranceLogListenerBus;
-    }
-
     /**
      * Update by peaceWong add CSEntranceInterceptor
      *

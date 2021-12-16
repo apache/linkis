@@ -18,7 +18,9 @@
 package org.apache.linkis.jobhistory.util
 
 import java.io.{InputStream, OutputStream}
+import java.text.SimpleDateFormat
 import java.util.Date
+
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -43,6 +45,8 @@ object QueryUtils extends Logging {
   private val CHARSET = "utf-8"
   private val CODE_SPLIT = ";"
   private val LENGTH_SPLIT = "#"
+
+  private val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
 
   def storeExecutionCode(jobRequest: JobRequest): Unit = {
       storeExecutionCode(jobRequest.getExecuteUser, jobRequest.getExecutionCode, path => jobRequest.setExecutionCode(path))
@@ -127,5 +131,9 @@ object QueryUtils extends Logging {
 
   def getJobHistoryAdmin(): Array[String] = {
     JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN.getValue.split(",")
+  }
+
+  def dateToString(date: Date): String = {
+    dateFormat.format(date)
   }
 }

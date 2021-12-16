@@ -18,7 +18,7 @@
 package org.apache.linkis.configuration.receiver
 
 import org.apache.linkis.configuration.service.ConfigurationService
-import org.apache.linkis.governance.common.protocol.conf.{RequestConfigByLabel, RequestQueryEngineConfig, RequestQueryEngineTypeDefault, RequestQueryGlobalConfig}
+import org.apache.linkis.governance.common.protocol.conf.{RequestConfigByLabel, RequestQueryEngineConfig, RequestQueryEngineConfigWithGlobalConfig, RequestQueryEngineTypeDefault, RequestQueryGlobalConfig}
 import org.apache.linkis.rpc.{Receiver, Sender}
 
 import scala.concurrent.duration.Duration
@@ -37,6 +37,7 @@ class ConfigurationReceiver extends Receiver{
   override def receiveAndReply(message: Any, sender: Sender): Any = message match {
     case RequestQueryGlobalConfig(username) => configurationService.queryGlobalConfig(username)
     case RequestQueryEngineTypeDefault(engineType) => configurationService.queryDefaultEngineConfig(engineType)
+    case RequestQueryEngineConfigWithGlobalConfig(userCreatorLabel,engineTypeLabel,filter) => configurationService.queryConfigWithGlobal(userCreatorLabel,engineTypeLabel,filter)
     case RequestQueryEngineConfig(userCreatorLabel,engineTypeLabel,filter) => configurationService.queryConfig(userCreatorLabel,engineTypeLabel,filter)
     case RequestConfigByLabel(labelList,isMerge) => configurationService.queryConfigByLabel(labelList, isMerge)
   }

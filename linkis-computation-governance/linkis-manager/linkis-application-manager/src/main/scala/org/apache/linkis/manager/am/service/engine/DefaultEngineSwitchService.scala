@@ -27,6 +27,6 @@ import org.springframework.stereotype.Service
 class DefaultEngineSwitchService extends EngineSwitchService {
 
   @Receiver
-  override def switchEngine(engineSwitchRequest: EngineSwitchRequest): EngineNode = ???
+  override def switchEngine(engineSwitchRequest: EngineSwitchRequest): EngineNode = null
 
 }

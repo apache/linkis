@@ -17,8 +17,6 @@
  
 package org.apache.linkis.manager.label.service.impl
 
-import java.util
-
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.entity.node.ScoreServiceInstance
@@ -27,8 +25,7 @@ import org.apache.linkis.manager.common.utils.ManagerUtils
 import org.apache.linkis.manager.label.LabelManagerUtils
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.conf.LabelManagerConf
-import org.apache.linkis.manager.label.entity.Label.ValueRelation
-import org.apache.linkis.manager.label.entity.{Feature, Label, UserModifiable}
+import org.apache.linkis.manager.label.entity.{Feature, Label}
 import org.apache.linkis.manager.label.score.NodeLabelScorer
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.label.utils.LabelUtils
@@ -38,6 +35,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.CollectionUtils
 
+import java.util
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -179,13 +177,6 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
     labelManagerPersistence.removeNodeLabels(instance, removeLabels.map(_.getId))
   }
 
-  @Transactional(rollbackFor = Array(classOf[Exception]))
-  override def removeLabelsFromNodeWithoutPermanent(instance: ServiceInstance, permanentLabel: Array[String] = Array()): Unit = {
-    val labels = labelManagerPersistence.getLabelByServiceInstance(instance)
-    val lowerCasePermanentLabels = permanentLabel.map(_.toLowerCase())
-    val withoutPermanentLabel = labels.filterNot(label => lowerCasePermanentLabels.contains(label.getLabelKey.toLowerCase)).map(_.getId)
-    labelManagerPersistence.removeNodeLabels(instance, withoutPermanentLabel)
-  }
 
   /**
    * Get node instances by labels

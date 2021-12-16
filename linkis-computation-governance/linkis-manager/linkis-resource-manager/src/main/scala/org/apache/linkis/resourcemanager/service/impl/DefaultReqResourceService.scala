@@ -28,7 +28,4 @@ class DefaultReqResourceService(labelResourceService: LabelResourceService) exte
 
   override val resourceType: ResourceType = ResourceType.Default
 
-  override def canRequest(labelContainer: RMLabelContainer, resource: NodeResource): Boolean = {
-    super.canRequest(labelContainer, resource)
-  }
 }

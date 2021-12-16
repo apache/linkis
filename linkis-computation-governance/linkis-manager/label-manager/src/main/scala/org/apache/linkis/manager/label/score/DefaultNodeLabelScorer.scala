@@ -147,6 +147,10 @@ class DefaultNodeLabelScorer extends NodeLabelScorer{
       case (instance, _) =>
         instance.setScore(instance.getScore + math.abs(offset))
     }
-    mapAsJavaMap(rawOutput.toMap)
+    if (null != rawOutput && rawOutput.nonEmpty) {
+      new util.HashMap[ScoreServiceInstance, util.List[PersistenceLabel]](rawOutput.toMap)
+    } else {
+      new util.HashMap[ScoreServiceInstance, util.List[PersistenceLabel]]()
+    }
   }
 }

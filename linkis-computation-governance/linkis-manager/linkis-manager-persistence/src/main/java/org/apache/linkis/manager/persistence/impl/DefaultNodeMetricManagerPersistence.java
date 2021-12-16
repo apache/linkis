@@ -20,6 +20,7 @@ package org.apache.linkis.manager.persistence.impl;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.manager.common.entity.metrics.NodeMetrics;
 import org.apache.linkis.manager.common.entity.node.Node;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceNode;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetrics;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetricsEntity;
 import org.apache.linkis.manager.dao.NodeManagerMapper;
@@ -27,6 +28,8 @@ import org.apache.linkis.manager.dao.NodeMetricManagerMapper;
 import org.apache.linkis.manager.exception.PersistenceErrorException;
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -34,6 +37,8 @@ import java.util.List;
 
 
 public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPersistence {
+
+    private static Logger logger = LoggerFactory.getLogger(DefaultNodeMetricManagerPersistence.class);
 
     private NodeManagerMapper nodeManagerMapper;
 
@@ -75,6 +80,11 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
         PersistenceNodeMetrics persistenceNodeMetrics = new PersistenceNodeMetrics();
         String instance = nodeMetrics.getServiceInstance().getInstance();
         //todo 异常信息后面统一处理
+        PersistenceNode node = nodeManagerMapper.getNodeInstance(instance);
+        if(node == null){
+            logger.warn("The request of update node metrics was ignored, because the node " + instance + " is not exist.");
+            return;
+        }
         int isInstanceIdExist = nodeMetricManagerMapper.checkInstanceExist(instance);
         //是否存在
         if (isInstanceIdExist == 0) {
@@ -93,7 +103,6 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
             persistenceNodeMetrics.setHeartBeatMsg(nodeMetrics.getHeartBeatMsg());
             persistenceNodeMetrics.setOverLoad(nodeMetrics.getOverLoad());
             persistenceNodeMetrics.setStatus(nodeMetrics.getStatus());
-            persistenceNodeMetrics.setCreateTime(new Date());
             persistenceNodeMetrics.setUpdateTime(new Date());
             nodeMetricManagerMapper.updateNodeMetrics(persistenceNodeMetrics, instance);
         } else {
@@ -139,7 +148,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
     @Override
     public void deleteNodeMetrics(Node node) throws PersistenceErrorException {
         String instance = node.getServiceInstance().getInstance();
-        nodeMetricManagerMapper.deleteNodeMetrics(instance);
+        nodeMetricManagerMapper.deleteNodeMetricsByInstance(instance);
     }
 
     @Override

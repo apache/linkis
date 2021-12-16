@@ -19,7 +19,7 @@ package org.apache.linkis.resourcemanager.service.impl
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.entity.resource.{Resource, ResourceType}
-import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.{CombinedLabel, Label}
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
 import org.apache.linkis.resourcemanager.service.LabelResourceService
@@ -32,7 +32,9 @@ case class ResourceLogService() extends Logging{
   @Autowired
   var labelResourceService: LabelResourceService = _
 
-  private def printLog(changeType: String, status: String, engineLabel: EngineInstanceLabel = null, ecmLabel: EMInstanceLabel = null) :String = {
+
+
+  private def printLog(changeType: String, status: String, engineLabel: EngineInstanceLabel = null, ecmLabel: EMInstanceLabel = null): String = {
     val logString = new StringBuilder(changeType + " ")
     logString ++= (status + ", ")
     if (engineLabel != null) {
@@ -67,12 +69,6 @@ case class ResourceLogService() extends Logging{
         case ChangeType.ENGINE_CLEAR => {
           printLog(changeType, ChangeType.FAILED, engineLabel, ecmLabel)
         }
-        case ChangeType.ENGINE_RESOURCE_ADD => {
-          printLog(changeType, ChangeType.FAILED, engineLabel, ecmLabel)
-        }
-        case ChangeType.ENGINE_RESOURCE_MINUS => {
-          printLog(changeType, ChangeType.FAILED, engineLabel, ecmLabel)
-        }
         case ChangeType.ECM_INIT => {
           printLog(changeType, ChangeType.FAILED, null, ecmLabel)
         }
@@ -87,9 +83,9 @@ case class ResourceLogService() extends Logging{
         }
         case _ => " "
       }
-      if(exception != null){
+      if (exception != null) {
         error(log, exception)
-      }else{
+      } else {
         error(log)
       }
     }
@@ -101,12 +97,6 @@ case class ResourceLogService() extends Logging{
           printLog(changeType, ChangeType.SUCCESS, engineLabel, ecmLabel)
         }
         case ChangeType.ENGINE_CLEAR => {
-          printLog(changeType, ChangeType.SUCCESS, engineLabel, ecmLabel)
-        }
-        case ChangeType.ENGINE_RESOURCE_ADD => {
-          printLog(changeType, ChangeType.SUCCESS, engineLabel, ecmLabel)
-        }
-        case ChangeType.ENGINE_RESOURCE_MINUS => {
           printLog(changeType, ChangeType.SUCCESS, engineLabel, ecmLabel)
         }
         case ChangeType.ECM_INIT => {
@@ -121,30 +111,43 @@ case class ResourceLogService() extends Logging{
         case ChangeType.ECM_Resource_MINUS => {
           printLog(changeType, ChangeType.SUCCESS, engineLabel, ecmLabel)
         }
-        case _ =>" "
+        case _ => " "
       }
       info(log)
     }
+  }
+
+  def printUsedResourceNode(nodeLabel: EngineInstanceLabel, source: CombinedLabel): Unit = {
+    printNode(nodeLabel, source)
+  }
+
+  def printReleaseResourceNode(nodeLabel: EngineInstanceLabel, source: CombinedLabel): Unit = {
+    printNode(nodeLabel, source)
+  }
+
+  def printNode(nodeLabel: EngineInstanceLabel, source: CombinedLabel): Unit = {
+    val log = s"${nodeLabel.getInstance()}\t${source.getStringValue}"
+    info(log)
   }
 }
 
 object ChangeType {
 
+  val ENGINE_REQUEST = "EngineResourceRequest"
+
   val ENGINE_INIT = "EngineResourceInit"
 
   val ENGINE_CLEAR = "EngineResourceClear"
 
-  val ENGINE_RESOURCE_ADD = "EngineResourceAdd"
-
-  val ENGINE_RESOURCE_MINUS = "EngineResourceMinus"
-
   val ECM_INIT = "ECMResourceInit"
 
-  val ECM_CLEAR = "ECMResourceClear"
+  val ECM_RESOURCE_LOCK = "ECMResourceLock"
 
   val ECM_RESOURCE_ADD = "ECMResourceAdd"
 
   val ECM_Resource_MINUS = "ECMResourceMinus"
+
+  val ECM_CLEAR = "ECMResourceClear"
 
   val SUCCESS = "success"
 

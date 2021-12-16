@@ -120,7 +120,7 @@ public class QueryPersistenceManager extends PersistenceManager{
             // todo check
             updatedProgress = -1 * progress;
         }
-        if(Double.isNaN(updatedProgress)){
+        if(job.getProgress() >= 0 && job.getProgress() == updatedProgress){
             return ;
         }
         job.setProgress(updatedProgress);

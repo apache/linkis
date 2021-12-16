@@ -68,6 +68,13 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
     var labelList: util.List[Label[_]] = LabelUtils.distinctLabel(labelBuilderFactory.getLabels(engineReuseRequest.getLabels),
       userLabelService.getUserLabels(engineReuseRequest.getUser))
 
+    val exclusionInstances: Array[String]= labelList.find(_.isInstanceOf[ReuseExclusionLabel]) match {
+      case Some(l) =>
+        l.asInstanceOf[ReuseExclusionLabel].getInstances
+      case None =>
+        Array.empty[String]
+    }
+
     labelList = labelList.filter(_.isInstanceOf[EngineNodeLabel])
 
     val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
@@ -82,23 +89,20 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
     }
 
     val instances = nodeLabelService.getScoredNodeMapsByLabels(labelList)
-    if (null == instances || instances.isEmpty) {
-      throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, s"No engine can be reused")
+
+
+    if (null != instances && null != exclusionInstances && exclusionInstances.nonEmpty) {
+      val instancesKeys = instances.keys.toArray
+      instancesKeys.filter{ instance =>
+        exclusionInstances.exists(_.equalsIgnoreCase(instance.getServiceInstance.getInstance))
+      }.foreach{ instance =>
+        logger.info(s"will be reuse ${instance.getServiceInstance}, cause use exclusion label")
+        instances.remove(instance)
+      }
     }
-    labelList.find(_.isInstanceOf[ReuseExclusionLabel]) match {
-      case Some(l) =>
-        val exclusionInstances = l.asInstanceOf[ReuseExclusionLabel].getInstances
-        val instancesIterator = instances.iterator
-        while(instancesIterator.hasNext){
-          val instance = instancesIterator.next
-          if(exclusionInstances.contains(instance._1.getServiceInstance.getInstance)){
-            instancesIterator.remove
-          }
-        }
-      case None =>
-    }
+
     if (null == instances || instances.isEmpty) {
-      throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, s"No engine can be reused")
+      throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, s"No engine can be reused, cause from db is null")
     }
     var engineScoreList = getEngineNodeManager.getEngineNodes(instances.map(_._1).toSeq.toArray)
 

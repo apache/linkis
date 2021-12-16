@@ -97,6 +97,9 @@ class DefaultEMEngineService extends EMEngineService with Logging {
     val filterInstanceAndLabel = if (emInstanceLabelOption.isDefined) {
       val emInstanceLabel = emInstanceLabelOption.get.asInstanceOf[EMInstanceLabel]
       info(s"use emInstanceLabel , will be route to ${emInstanceLabel.getServiceInstance}")
+      if (!instanceAndLabels.exists(_._1.equals(emInstanceLabel.getServiceInstance))) {
+        throw new AMErrorException(AMConstant.EM_ERROR_CODE, s"You specified em ${emInstanceLabel.getServiceInstance}, but the corresponding EM does not exist in the Manager")
+      }
       instanceAndLabels.filter(_._1.getServiceInstance.equals(emInstanceLabel.getServiceInstance))
     } else {
       instanceAndLabels.toMap

@@ -43,6 +43,4 @@ abstract class EntranceContext {
     */
   def getOrCreateEventListenerBus: EntranceEventListenerBus[EntranceEventListener, EntranceEvent]
 
-  def getOrCreateLogListenerBus: EntranceLogListenerBus[EntranceLogListener, EntranceLogEvent]
-
 }

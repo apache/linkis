@@ -27,4 +27,7 @@ object JobhistoryConfiguration {
   val ENTRANCE_SPRING_NAME = CommonVars("wds.linkis.entrance.spring.name", "linkis-cg-entrance")
   val ENTRANCE_INSTANCE_DELEMITER = CommonVars("wds.linkis.jobhistory.instance.delemiter", ";")
 
+  val UPDATE_RETRY_TIMES = CommonVars("wds.linkis.jobhistory.update.retry.times", 3)
+  val UPDATE_RETRY_INTERVAL = CommonVars("wds.linkis.jobhistory.update.retry.interval", 3 * 1000)
+
 }

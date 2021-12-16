@@ -31,8 +31,15 @@ import java.util.concurrent.ExecutorService;
 
 public class MessageExecutorExecutionManager extends ExecutorManager {
 
-    private final ExecutorService executorService = Utils.newCachedThreadPool(
-            Runtime.getRuntime().availableProcessors() * 2, "message-executor_", false);
+    private  ExecutorService executorService = null;
+
+    public MessageExecutorExecutionManager(){
+
+    }
+
+    public MessageExecutorExecutionManager(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
 
     @Override
     public void setExecutorListener(ExecutorListener executorListener) {

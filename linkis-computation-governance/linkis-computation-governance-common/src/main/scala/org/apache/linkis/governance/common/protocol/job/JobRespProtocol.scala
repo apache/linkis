@@ -32,6 +32,11 @@ class JobRespProtocol {
    * 1 failed
    * 2 retry
    */
+  /**
+    * 0 success
+    * 1 failed
+    * 2 retry
+    */
   @BeanProperty
   var status: Int = 0
   @BeanProperty
@@ -40,6 +45,7 @@ class JobRespProtocol {
   var exception : Exception = _
   @BeanProperty
   var data: util.Map[String, Object] = new util.HashMap[String, Object]()
+
 
   override def equals(o: Any): Boolean = {
     if (this == o) return true

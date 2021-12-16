@@ -280,7 +280,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
         if (ExecutionNodeStatus.isCompleted(task.getStatus)) {
           response = ResponseTaskProgress(taskID, 1.0f, null)
         } else {
-          response = Utils.tryQuietly(ResponseTaskProgress(taskID, executor.progress(), executor.getProgressInfo))
+          response = Utils.tryQuietly(ResponseTaskProgress(taskID, executor.progress(taskID), executor.getProgressInfo(taskID)))
         }
       } else {
         response = ResponseTaskProgress(taskID, -1, null)

@@ -35,10 +35,12 @@ public class PersistenceNodeEntity implements Node {
 
     private Date updateTime;
 
+
     @Override
     public Date getUpdateTime() {
         return updateTime;
     }
+
 
     @Override
     public void setUpdateTime(Date updateTime) {

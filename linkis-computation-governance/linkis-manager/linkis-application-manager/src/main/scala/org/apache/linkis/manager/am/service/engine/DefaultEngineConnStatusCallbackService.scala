@@ -17,9 +17,11 @@
  
 package org.apache.linkis.manager.am.service.engine
 
-import java.util
+import org.apache.commons.lang.StringUtils
 
+import java.util
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.metrics.AMNodeMetrics
 import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallbackToAM
@@ -39,6 +41,8 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
   @Autowired
   private var metricsConverter: MetricsConverter = _
 
+  private val canRetryLogs = AMConfiguration.AM_CAN_RETRY_LOGS.getValue.split(";")
+
   @Receiver
   override def dealEngineConnStatusCallback(engineConnStatusCallbackToAM: EngineConnStatusCallbackToAM): Unit = {
 
@@ -48,12 +52,33 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
     heartBeatMsg.put(AMConstant.START_REASON, engineConnStatusCallbackToAM.initErrorMsg)
     if (engineConnStatusCallbackToAM.canRetry) {
       heartBeatMsg.put(AMConstant.EC_CAN_RETRY, engineConnStatusCallbackToAM.canRetry)
+    } else if (matchRetryLog(engineConnStatusCallbackToAM.initErrorMsg)){
+      info(s"match canRetry log ${engineConnStatusCallbackToAM.serviceInstance}")
+      heartBeatMsg.put(AMConstant.EC_CAN_RETRY, engineConnStatusCallbackToAM.canRetry)
     }
+
     nodeMetrics.setHeartBeatMsg(BDPJettyServerHelper.jacksonJson.writeValueAsString(heartBeatMsg))
     nodeMetrics.setServiceInstance(engineConnStatusCallbackToAM.serviceInstance)
     nodeMetrics.setStatus(metricsConverter.convertStatus(engineConnStatusCallbackToAM.status))
+
+
     nodeMetricManagerPersistence.addOrupdateNodeMetrics(nodeMetrics)
     info(s"Finished to deal engineConnStatusCallbackToAM $engineConnStatusCallbackToAM")
 
+  }
+
+
+  private def matchRetryLog(errorMsg: String): Boolean = {
+    var flag = false
+    if (StringUtils.isNotBlank(errorMsg)) {
+      val errorMsgLowCase = errorMsg.toLowerCase
+      canRetryLogs.foreach(canRetry =>
+        if (  errorMsgLowCase.contains(canRetry) ) {
+          error(s"match engineConn log fatal logs,is $canRetry")
+          flag = true
+        }
+      )
+    }
+    flag
   }
 }

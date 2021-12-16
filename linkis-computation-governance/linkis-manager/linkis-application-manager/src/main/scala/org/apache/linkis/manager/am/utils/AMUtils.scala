@@ -88,7 +88,10 @@ object AMUtils {
         AMEngineNodeVo.setLabels(node.getLabels)
         AMEngineNodeVo.setApplicationName(node.getServiceInstance.getApplicationName)
         AMEngineNodeVo.setInstance(node.getServiceInstance.getInstance)
-        AMEngineNodeVo.setEmInstance(node.getEMNode.getServiceInstance.getInstance)
+        if (null != node.getEMNode) {
+          AMEngineNodeVo.setEmInstance(node.getEMNode.getServiceInstance.getInstance)
+        }
+
         if(!node.getLabels.isEmpty){
           val engineTypeLabel = node.getLabels.asScala.find(_.isInstanceOf[EngineTypeLabel]).getOrElse(null)
           if(engineTypeLabel != null){

@@ -14,18 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.am.service.em
 
 import java.util
 import java.util.concurrent.TimeUnit
-
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.manager.EMNodeManager
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.node.{AMEMNode, EMNode}
-import org.apache.linkis.manager.common.protocol.em.{RegisterEMRequest, RegisterEMResponse}
+import org.apache.linkis.manager.common.protocol.em.{EMResourceRegisterRequest, RegisterEMRequest, RegisterEMResponse}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.message.annotation.{Order, Receiver}
@@ -34,6 +33,8 @@ import org.apache.linkis.message.publisher.MessagePublisher
 import org.apache.linkis.protocol.label.NodeLabelAddRequest
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.linkis.manager.label.service.NodeLabelAddService
+import org.apache.linkis.resourcemanager.message.RMMessageService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -46,7 +47,12 @@ class DefaultEMRegisterService extends EMRegisterService with Logging {
   private var emNodeManager: EMNodeManager = _
 
   @Autowired
-  private var publisher: MessagePublisher = _
+  private var nodeLabelAddService: NodeLabelAddService = _
+
+  @Autowired
+  private var rmMessageService: RMMessageService = _
+
+
 
   def registerEMRequest2EMNode(emRegister: RegisterEMRequest): EMNode = {
     val emNode = new AMEMNode()
@@ -78,24 +84,31 @@ class DefaultEMRegisterService extends EMRegisterService with Logging {
     emRegister.getLabels.put(eMInstanceLabel.getLabelKey, eMInstanceLabel.getStringValue)
     val instanceLabelAddRequest = new NodeLabelAddRequest(emRegister.getServiceInstance, emRegister.getLabels)
     info(s"Start to publish em{${emRegister.getServiceInstance}} label request to Label ")
-    val job = publisher.publish(instanceLabelAddRequest)
-    Utils.tryAndWarn(job.get(AMConfiguration.EM_LABEL_INIT_WAIT.getValue.toLong, TimeUnit.MILLISECONDS))
+    nodeLabelAddService.addNodeLabels(instanceLabelAddRequest)
     info(s"Finished to deal em{${emRegister.getServiceInstance}} label ")
-    smc.setResult(RegisterEMResponse(isSuccess = true))
+    addEMNodeMetrics(emRegister)
+    rmMessageService.dealWithRegisterEMRequest(emRegister)
+    RegisterEMResponse(isSuccess = true)
   }{ t =>
     error(s"Failed to register ecm ${emRegister.getServiceInstance}", t)
-    smc.setResult(RegisterEMResponse(isSuccess = false, ExceptionUtils.getRootCauseMessage(t)))
+    RegisterEMResponse(isSuccess = false, ExceptionUtils.getRootCauseMessage(t))
   }
 
-  /**
-    * EM注册插入的初始Metrics信息
-    *
-    * @param emRegister
-    */
-  @Receiver
-  override def addEMNodeMetrics(emRegister: RegisterEMRequest): Unit = {
+
+  implicit def registerEMRequest2RMRequest(registerEMRequest: RegisterEMRequest): EMResourceRegisterRequest = {
+    val emResourceRegisterRequest = new EMResourceRegisterRequest
+    emResourceRegisterRequest.setAlias(registerEMRequest.getAlias)
+    emResourceRegisterRequest.setLabels(registerEMRequest.getLabels)
+    emResourceRegisterRequest.setNodeResource(registerEMRequest.getNodeResource)
+    emResourceRegisterRequest.setServiceInstance(registerEMRequest.getServiceInstance)
+    emResourceRegisterRequest.setUser(registerEMRequest.getUser)
+    emResourceRegisterRequest
+  }
+
+   def addEMNodeMetrics(emRegister: RegisterEMRequest): Unit = {
     info(s"Start to init em{${emRegister.getServiceInstance}}  metrics")
     emNodeManager.initEMNodeMetrics(registerEMRequest2EMNode(emRegister))
     info(s"Finished to init em{${emRegister.getServiceInstance}}  metrics")
   }
+
 }

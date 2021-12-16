@@ -54,8 +54,6 @@ class DefaultEMNodPointer(val node: Node) extends AbstractNodePointer with EMNod
         case engineStopResponse: EngineStopResponse =>
           if (!engineStopResponse.getStopStatus) {
             info(s"Kill engine : ${engineStopRequest.getServiceInstance.toString} failed, because ${engineStopResponse.getMsg} . Will ask engine to suicide.")
-            val engineSuicideRequest = new EngineSuicideRequest(engineStopRequest.getServiceInstance, engineStopRequest.getUser)
-            EngineStopService.askEngineToSuicide(engineSuicideRequest)
           } else {
             info(s"Succeed to kill engine ${engineStopRequest.getServiceInstance.toString}.")
           }

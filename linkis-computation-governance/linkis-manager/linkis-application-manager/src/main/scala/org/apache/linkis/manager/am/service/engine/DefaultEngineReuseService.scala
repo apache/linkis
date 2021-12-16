@@ -17,9 +17,10 @@
  
 package org.apache.linkis.manager.am.service.engine
 
+import org.apache.commons.lang.exception.ExceptionUtils
+
 import java.util
 import java.util.concurrent.{TimeUnit, TimeoutException}
-
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
@@ -29,7 +30,8 @@ import org.apache.linkis.manager.am.selector.NodeSelector
 import org.apache.linkis.manager.am.utils.AMUtils
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.node.EngineNode
-import org.apache.linkis.manager.common.protocol.engine.EngineReuseRequest
+import org.apache.linkis.manager.common.protocol.engine.{EngineReuseRequest, EngineStopRequest}
+import org.apache.linkis.manager.common.utils.ManagerUtils
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.entity.engine.ReuseExclusionLabel
@@ -58,6 +60,9 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
   @Autowired
   private var engineReuseLabelChoosers: util.List[EngineReuseLabelChooser] = _
 
+  @Autowired
+  private var engineStopService: EngineStopService = _
+
   @Receiver
   @throws[LinkisRetryException]
   override def reuseEngine(engineReuseRequest: EngineReuseRequest): EngineNode = {
@@ -68,7 +73,7 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
     var labelList: util.List[Label[_]] = LabelUtils.distinctLabel(labelBuilderFactory.getLabels(engineReuseRequest.getLabels),
       userLabelService.getUserLabels(engineReuseRequest.getUser))
 
-    val exclusionInstances: Array[String]= labelList.find(_.isInstanceOf[ReuseExclusionLabel]) match {
+    val exclusionInstances: Array[String] = labelList.find(_.isInstanceOf[ReuseExclusionLabel]) match {
       case Some(l) =>
         l.asInstanceOf[ReuseExclusionLabel].getInstances
       case None =>
@@ -90,17 +95,15 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
 
     val instances = nodeLabelService.getScoredNodeMapsByLabels(labelList)
 
-
     if (null != instances && null != exclusionInstances && exclusionInstances.nonEmpty) {
       val instancesKeys = instances.keys.toArray
       instancesKeys.filter{ instance =>
         exclusionInstances.exists(_.equalsIgnoreCase(instance.getServiceInstance.getInstance))
       }.foreach{ instance =>
-        logger.info(s"will be reuse ${instance.getServiceInstance}, cause use exclusion label")
+        logger.info(s"will  be not reuse ${instance.getServiceInstance}, cause use exclusion label")
         instances.remove(instance)
-      }
+     }
     }
-
     if (null == instances || instances.isEmpty) {
       throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, s"No engine can be reused, cause from db is null")
     }
@@ -121,9 +124,19 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
       if (choseNode.isEmpty) {
         throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, "No engine can be reused")
       }
-      //TODO 需要加上Label不匹配判断？如果
+
       //5. 调用EngineNodeManager 进行reuse 如果reuse失败，则去掉该engine进行重新reuse走3和4
-      engine = Utils.tryAndWarn(getEngineNodeManager.reuseEngine(choseNode.get.asInstanceOf[EngineNode]))
+      val engineNode = choseNode.get.asInstanceOf[EngineNode]
+      logger.info(s"prepare to reuse engineNode: ${engineNode.getServiceInstance}")
+      engine = Utils.tryCatch(getEngineNodeManager.reuseEngine(engineNode)) { t: Throwable =>
+          error(s"Failed to reuse engine ${engineNode.getServiceInstance}", t)
+          if (ExceptionUtils.getRootCause(t).isInstanceOf[TimeoutException]) {
+            error(s"Failed to reuse ${engineNode.getServiceInstance}, now to stop this")
+            val stopEngineRequest = new EngineStopRequest(engineNode.getServiceInstance, ManagerUtils.getAdminUser)
+            engineStopService.asyncStopEngine(stopEngineRequest)
+          }
+          null
+      }
       if (null == engine) {
         count = count + 1
         engineScoreList = engineScoreList.filter(!_.equals(choseNode.get))

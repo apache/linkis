@@ -31,11 +31,4 @@ trait EMRegisterService {
     */
   def addEMNodeInstance(emRegister: RegisterEMRequest, scm: ServiceMethodContext): Unit
 
-  /**
-    * EM注册插入的初始Metrics信息
-    *
-    * @param emRegister
-    */
-  def addEMNodeMetrics(emRegister: RegisterEMRequest): Unit
-
 }

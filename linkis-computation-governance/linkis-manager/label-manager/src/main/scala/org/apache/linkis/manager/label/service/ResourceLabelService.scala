@@ -23,7 +23,7 @@ import org.apache.linkis.manager.label.entity.Label
 
 trait ResourceLabelService {
 
-  def setEngineConnResourceToLabel(label: Label[_], nodeResource: NodeResource):Unit
+  def setEngineConnResourceToLabel(label: Label[_], nodeResource: NodeResource, source: String): Unit
 
 
   /**
@@ -42,7 +42,7 @@ trait ResourceLabelService {
     * @param label
     * @param resource
     */
-  def setResourceToLabel(label: Label[_], resource: NodeResource)
+  def setResourceToLabel(label: Label[_], resource: NodeResource, source: String)
 
   /**
     * 通过Label 返回对应的Resource

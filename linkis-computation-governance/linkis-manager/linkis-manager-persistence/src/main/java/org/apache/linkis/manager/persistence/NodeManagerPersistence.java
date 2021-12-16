@@ -35,7 +35,7 @@ public interface NodeManagerPersistence {
      */
     void addNodeInstance(Node node) throws PersistenceErrorException;
 
-    void updateEngineNode(ServiceInstance serviceInstance, Node node) throws PersistenceErrorException,LinkisRetryException;;
+    void updateEngineNode(ServiceInstance serviceInstance, Node node) throws PersistenceErrorException, LinkisRetryException;
 
     /**
      * 移除node
@@ -114,4 +114,5 @@ public interface NodeManagerPersistence {
      * @throws PersistenceErrorException
      */
     List<EngineNode> getEngineNodeByEM(ServiceInstance serviceInstance) throws PersistenceErrorException;
+
 }

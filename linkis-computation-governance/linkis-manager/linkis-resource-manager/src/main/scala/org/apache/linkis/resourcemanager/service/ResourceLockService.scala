@@ -40,12 +40,12 @@ class ResourceLockService extends Logging {
   def tryLock(labelContainer: RMLabelContainer): Boolean = tryLock(labelContainer, Long.MaxValue)
 
   def tryLock(labelContainer: RMLabelContainer, timeout: Long): Boolean = {
-    if(StringUtils.isBlank(labelContainer.getCurrentLabel.getStringValue)
+    if (StringUtils.isBlank(labelContainer.getCurrentLabel.getStringValue)
       || !labelContainer.getCurrentLabel.isInstanceOf[ResourceLabel]
-      || labelContainer.getLockedLabels.contains(labelContainer.getCurrentLabel)){
+      || labelContainer.getLockedLabels.contains(labelContainer.getCurrentLabel)) {
       return true
     }
-    val lockedBy = if(labelContainer.getUserCreatorLabel == null) DEFAULT_LOCKED_BY else labelContainer.getUserCreatorLabel.getUser
+    val lockedBy = if (labelContainer.getUserCreatorLabel == null) DEFAULT_LOCKED_BY else labelContainer.getUserCreatorLabel.getUser
     val persistenceLock = new PersistenceLock
     persistenceLock.setLockObject(labelContainer.getCurrentLabel.getStringValue)
     persistenceLock.setCreateTime(new Date)
@@ -53,9 +53,13 @@ class ResourceLockService extends Logging {
     persistenceLock.setUpdateTime(new Date)
     persistenceLock.setUpdator(lockedBy)
     try {
-      val isLocked: Boolean = lockManagerPersistence.lock(persistenceLock, timeout)
-      if(isLocked){
-        info(labelContainer.getLabels + " successfully locked label" + persistenceLock.getLockObject)
+      val isLocked: Boolean = if (timeout > 0) {
+        lockManagerPersistence.lock(persistenceLock, timeout)
+      } else {
+        lockManagerPersistence.lock(persistenceLock, Long.MaxValue)
+      }
+      if(isLocked) {
+        info(labelContainer.getCurrentLabel + " successfully locked label" + persistenceLock.getLockObject)
         labelContainer.getLockedLabels.add(labelContainer.getCurrentLabel)
       }
       isLocked
@@ -68,15 +72,15 @@ class ResourceLockService extends Logging {
 
   def unLock(labelContainer: RMLabelContainer): Unit = {
     val labelIterator = labelContainer.getLockedLabels.iterator
-    while(labelIterator.hasNext){
+    while(labelIterator.hasNext) {
       val label = labelIterator.next
-      if(!StringUtils.isBlank(label.getStringValue)){
+      if (!StringUtils.isBlank(label.getStringValue)) {
         val persistenceLock = new PersistenceLock
         persistenceLock.setLockObject(label.getStringValue)
         try {
           lockManagerPersistence.unlock(persistenceLock)
           info("unlocked " + persistenceLock.getLockObject)
-        }catch {
+        } catch {
           case t: Throwable =>
             error(s"failed to unlock label [${persistenceLock.getLockObject}]", t)
             throw t
@@ -86,10 +90,10 @@ class ResourceLockService extends Logging {
     }
   }
 
-  def clearTimeoutLock(timeout: Long) = {
+  def clearTimeoutLock(timeout: Long): Unit = {
     val currentTime = System.currentTimeMillis
     lockManagerPersistence.getAll.foreach{ lock =>
-      if(currentTime - lock.getCreateTime.getTime > timeout){
+      if (currentTime - lock.getCreateTime.getTime > timeout) {
         lockManagerPersistence.unlock(lock)
         warn("timeout force unlock " + lock.getLockObject)
       }

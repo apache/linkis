@@ -15,11 +15,18 @@
  * limitations under the License.
  */
  
-package org.apache.linkis.jobhistory.exception;
+package org.apache.linkis.governance.common.entity.job;
 
 
-public class QueryException extends Exception {
-    public QueryException(String message) {
-        super(message);
+import org.apache.linkis.common.exception.ErrorException;
+
+public class QueryException extends ErrorException {
+
+    public QueryException(int errCode, String desc) {
+        super(errCode, desc);
+    }
+
+    public QueryException(int errCode, String desc, String ip, int port, String serviceKind) {
+        super(errCode, desc, ip, port, serviceKind);
     }
 }

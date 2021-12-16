@@ -57,25 +57,25 @@ public class DefaultMessageExecutor extends AbstractMessageExecutor implements E
     @Override
     public ExecuteResponse execute(ExecuteRequest executeRequest) {
         if (event instanceof MessageJob) {
-            TransactionManager txManager = ((MessageJob) event).getContext().getTxManager();
-            Object o = txManager.begin();
+//            TransactionManager txManager = ((MessageJob) event).getContext().getTxManager();
+//            Object o = txManager.begin();
             try {
                 run((MessageJob) event);
-                txManager.commit(o);
+                //txManager.commit(o);
                 return new SuccessExecuteResponse();
             } catch (InterruptedException ie) {
                 //handle InterruptedException
                 logger().error("message job execution interrupted", ie);
-                txManager.rollback(o);
+               // txManager.rollback(o);
                 return new ErrorExecuteResponse("message job execution interrupted", ie);
             } catch (MessageWarnException mwe) {
                 //handle method call failed
                 logger().error("method call normal error return");
-                txManager.rollback(o);
+               // txManager.rollback(o);
                 return new ErrorExecuteResponse("method call failed", mwe);
             } catch (Throwable t) {
                 logger().debug("unexpected error occur", t);
-                txManager.rollback(o);
+                //txManager.rollback(o);
                 return new ErrorExecuteResponse("unexpected error", t);
             }
         }

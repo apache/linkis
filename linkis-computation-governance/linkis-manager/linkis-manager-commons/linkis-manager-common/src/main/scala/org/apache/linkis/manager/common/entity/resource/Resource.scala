@@ -110,6 +110,7 @@ object Resource extends Logging {
     case s: SpecialResource => new SpecialResource(new java.util.HashMap[String, AnyVal]())
     case r: Resource => throw new ResourceWarnException(11003, "not supported resource type " + r.getClass)
   }
+
 }
 
 case class UserAvailableResource(moduleName: String, resource: Resource)
@@ -328,18 +329,18 @@ class YarnResource(val queueMemory: Long, val queueCores: Int, val queueInstance
     new YarnResource(queueMemory / rate, queueCores / rate, queueInstances / rate, queueName)
 
   def moreThan(r: Resource): Boolean = {
-    queueMemory > r.queueMemory && queueCores > r.queueCores && queueInstances >= r.queueInstances
+    queueMemory > r.queueMemory && queueCores > r.queueCores
   }
 
   def caseMore(r: Resource): Boolean = {
-    queueMemory > r.queueMemory || queueCores > r.queueCores || queueInstances >= r.queueInstances
+    queueMemory > r.queueMemory || queueCores > r.queueCores
   }
 
   def equalsTo(r: Resource): Boolean =
-    queueName == r.queueName && queueMemory == r.queueMemory && queueCores == r.queueCores && queueInstances == r.queueInstances
+    queueName == r.queueName && queueMemory == r.queueMemory && queueCores == r.queueCores
 
   override def notLess(r: Resource): Boolean =
-    queueName >= r.queueName && queueMemory >= r.queueMemory && queueCores >= r.queueCores && queueInstances >= r.queueInstances
+    queueMemory >= r.queueMemory && queueCores >= r.queueCores
 
 
 
@@ -368,7 +369,7 @@ class DriverAndYarnResource(val loadInstanceResource: LoadInstanceResource, val 
       false
     }
     else
-      true
+      false
   }
 
   def isModuleOperate: Boolean = {

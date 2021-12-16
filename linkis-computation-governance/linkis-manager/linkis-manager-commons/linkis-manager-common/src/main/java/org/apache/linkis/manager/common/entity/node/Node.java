@@ -21,6 +21,7 @@ import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.protocol.message.RequestProtocol;
 
+import java.util.Date;
 
 public interface Node extends RequestProtocol {
 
@@ -37,6 +38,16 @@ public interface Node extends RequestProtocol {
     String getOwner();
 
     String getMark();
+
+
+    Date getUpdateTime();
+
+    void setUpdateTime(Date updateTime);
+
+    Date getStartTime();
+
+
+    void setStartTime(Date startTime);
 
 
 }

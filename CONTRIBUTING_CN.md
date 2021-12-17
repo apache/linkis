@@ -2,9 +2,9 @@
 
 | **版本管理信息表** |                                   |
 | ----------- | --------------------------------- |
-| 现行版本        | 1.1 版，2021年5月                     |
-| 现行版本发布日期    | 2021 年 5 月 6 日                    |
-| 修订信息        | 1. 增加Issue 提交指引，修改一些描述 |
+| 现行版本        | 1.2 版，2021年12月                     |
+| 现行版本发布日期    | 2021 年 12 月 17 日                    |
+| 修订信息        | 1. 因仓库移交至apache，以及Linkis-Doc文档迁移至linkis官网，修改一些链接 |
 
 非常感谢贡献Linkis项目！在参与贡献之前，请仔细阅读以下指引。
 
@@ -24,7 +24,7 @@
 
 ### 1.4 文档改进
 
-Linkis 文档位于[Linkis-Doc](https://github.com/WeBankFinTech/Linkis-Doc) ，文档的补充完善对于Linkis 的发展也至关重要。
+Linkis 文档位于[Linkis官网](https://linkis.apache.org/zh-CN/docs/latest/introduction/) ，文档的补充完善对于Linkis 的发展也至关重要。
 
 ### 1.5 其他
 包括参与和帮助组织社区交流、社区运营活动等，其他能够帮助Linkis 项目和社区的活动。
@@ -50,7 +50,7 @@ Linkis 前后端代码共用同一个代码库，但在开发上是分离的。�
 我们建议克隆 dev-* 分支来开发，这样在向 Linkis 主项目提交 PR 时合并冲突的可能性会小很多
 
 ```bash
-git clone https://github.com/yourname/Linkis.git --branch dev-*
+git clone https://github.com/yourname/incubator-linkis.git --branch dev-*
 ```
 
 #### 2.2.1 后端
@@ -78,7 +78,7 @@ git clone https://github.com/yourname/Linkis.git --branch dev-*
 
 3. 代码目录结构
    
-   详见 [Linkis代码目录结构](https://github.com/WeBankFinTech/Linkis/wiki/Linkis%E6%BA%90%E7%A0%81%E5%B1%82%E7%BA%A7%E7%BB%93%E6%9E%84%E8%AF%A6%E8%A7%A3)
+   详见 [Linkis代码目录结构](https://github.com/apache/incubator-linkis/wiki/Linkis%E6%BA%90%E7%A0%81%E5%B1%82%E7%BA%A7%E7%BB%93%E6%9E%84%E8%AF%A6%E8%A7%A3)
 
 4. 日志目录
 
@@ -107,7 +107,7 @@ git clone https://github.com/yourname/Linkis.git --branch dev-*
 ### 2.3 Issue 提交指引
 - 如果您还不知道怎样向开源项目发起 PR，请参考[About issues](https://docs.github.com/en/github/managing-your-work-on-github/about-issues)
 - Issue 名称，应一句话简单描述您的问题或建议；为了项目的国际化推广，请用英文，或中英文双语书写 issue.
-- 每个Issue，请至少带上component 和type 两个label，如component=Computation Governance/EngineConn，type=Improvement.参考:[issue #590](https://github.com/WeBankFinTech/Linkis/issues/590)
+- 每个Issue，请至少带上component 和type 两个label，如component=Computation Governance/EngineConn，type=Improvement.参考:[issue #590](https://github.com/apache/incubator-linkis/issues/590)
 
 ### 2.3 Pull Request(PR) 提交指引
 

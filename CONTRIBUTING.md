@@ -51,7 +51,7 @@ Linkis front-end and back-end code share the same code base, but they are separa
 We recommend cloning the dev-* branch for development, so that the possibility of merge conflicts when submitting a PR to the main Linkis project will be much smaller
 
 ```bash
-git clone https://github.com/yourname/Linkis.git --branch dev-*
+git clone https://github.com/yourname/incubator-linkis.git --branch dev-*
 ```
 
 #### 2.2.1 Backend

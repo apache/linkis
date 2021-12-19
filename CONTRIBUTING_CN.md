@@ -2,9 +2,9 @@
 
 | **版本管理信息表** |                                   |
 | ----------- | --------------------------------- |
-| 现行版本        | 1.2 版，2021年12月                     |
+| 现行版本        | 1.2 版                   |
 | 现行版本发布日期    | 2021 年 12 月 17 日                    |
-| 修订信息        | 1. 因仓库移交至apache，以及Linkis-Doc文档迁移至linkis官网，修改一些链接 |
+| 修订信息        | 1. 因仓库移交至apache，以及Linkis-Doc文档迁移至linkis官网，修改对应链接 |
 
 非常感谢贡献Linkis项目！在参与贡献之前，请仔细阅读以下指引。
 
@@ -78,7 +78,7 @@ git clone https://github.com/yourname/incubator-linkis.git --branch dev-*
 
 3. 代码目录结构
    
-   详见 [Linkis代码目录结构](https://github.com/apache/incubator-linkis/wiki/Linkis%E6%BA%90%E7%A0%81%E5%B1%82%E7%BA%A7%E7%BB%93%E6%9E%84%E8%AF%A6%E8%A7%A3)
+   详见 [Linkis代码目录结构](https://linkis.apache.org/zh-CN/docs/latest/deployment/sourcecode_hierarchical_structure)
 
 4. 日志目录
 

@@ -54,19 +54,19 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 
 # Download
 
-Please go to the [Linkis releases page](https://github.com/apache/incubator-linkis/releases) to download a compiled distribution or a source code package of Linkis.
+Please go to the [Linkis Releases Page](https://github.com/apache/incubator-linkis/releases) to download a compiled distribution or a source code package of Linkis.
 
 # Compile and deploy
 Please follow [Compile Guide](https://linkis.apache.org/docs/latest/development/linkis_compile_and_package) to compile Linkis from source code.  
-Please refer to [Deployment_Documents](https://linkis.apache.org/docs/latest/deployment/quick_deploy) to do the deployment.
+Please refer to [Deployment Documents](https://linkis.apache.org/docs/latest/deployment/quick_deploy) to do the deployment.
 
 
 # Examples and Guidance
-You can find examples and guidance for how to use and manage Linkis in [User_Manual](https://linkis.apache.org/docs/latest/user_guide/overview), [Engine_Usage_Documents](https://linkis.apache.org/docs/latest/engine_usage/overview) and [API_Documents](https://linkis.apache.org/docs/latest/api/overview).
+You can find examples and guidance for how to use and manage Linkis in [User Manual](https://linkis.apache.org/docs/latest/user_guide/overview), [Engine Usage Documents](https://linkis.apache.org/docs/latest/engine_usage/overview) and [API Documents](https://linkis.apache.org/docs/latest/api/overview).
 
 # Documentation
 
-The documentation of linkis is in [linkis-Website git repository](https://github.com/apache/incubator-linkis-website).
+The documentation of linkis is in [Linkis-Website Git Repository](https://github.com/apache/incubator-linkis-website).
 
 # Architecture
 Linkis services could be divided into three categories: computation governance services, public enhancement services and microservice governance services.

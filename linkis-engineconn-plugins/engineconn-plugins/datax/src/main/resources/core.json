@@ -1,0 +1,89 @@
+{
+  "entry": {
+    "environment": {}
+  },
+  "common": {
+    "column": {
+      "datetimeFormat": "yyyy-MM-dd HH:mm:ss",
+      "timeFormat": "HH:mm:ss",
+      "dateFormat": "yyyy-MM-dd",
+      "extraFormats": [
+        "yyyyMMdd"
+      ],
+      "timeZone": "GMT+8",
+      "encoding": "utf-8"
+    }
+  },
+  "core": {
+    "dataXServer": {
+      "address": "${server.address}/api/v1/task/process",
+      "timeout": 10000,
+      "protocol":"http",
+      "endpoint": {
+        "report": "/report",
+        "reportState": "/report/state"
+      },
+      "reportDataxLog": false,
+      "reportPerfLog": false
+    },
+    "transport": {
+      "type": "record",
+      "channel":{
+        "speed":{
+          "byte": 5242880,
+          "record": 10000
+        },
+        "flowControlInterval": 20,
+        "capacity": 512,
+        "byteCapacity": 67108864
+      },
+      "record":{
+        "channel": {
+          "class": "com.alibaba.datax.core.transport.channel.memory.MemoryRecordChannel"
+        },
+        "exchanger": {
+          "class": "com.alibaba.datax.core.plugin.BufferedRecordExchanger",
+          "bufferSize": 32
+        }
+      },
+      "stream":{
+        "channel":{
+          "class": "com.webank.wedatasphere.exchangis.datax.core.transport.channel.memory.MemoryStreamChannel",
+          "blockSize": 8192
+        }
+      }
+
+    },
+    "container": {
+      "job": {
+        "reportInterval": 5000,
+        "sleepInterval": 5000
+      },
+      "taskGroup": {
+        "reportInterval": 5000,
+        "sleepInterval": 100,
+        "channel": 5
+      },
+      "trace": {
+        "enable": "false"
+      }
+    },
+    "statistics": {
+      "collector": {
+        "plugin": {
+          "taskClass": "com.alibaba.datax.core.statistics.plugin.task.StdoutPluginCollector",
+          "maxDirtyNumber": 10
+        }
+      }
+    },
+    "processor":{
+      "loader":{
+          "plugin":{
+            "class":"com.webank.wedatasphere.exchangis.datax.core.processor.loader.plugin.DefaultPluginProcessorLoader",
+            "package": "com.webank.wedatasphere.exchangis.datax.core.processor.impl",
+            "sourcePath":"proc/src"
+          }
+      }
+    }
+  }
+}

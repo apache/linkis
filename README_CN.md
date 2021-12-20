@@ -46,7 +46,7 @@ Linkis 自2019年开源发布以来，已累计积累了700多家试验企业和
 
 # 下载
 
-请前往[Linkis releases 页面](https://github.com/apache/incubator-linkis/wiki/Linkis-Releases) 下载Linkis 的已编译版本或源码包。
+请前往[Linkis releases 页面](https://github.com/apache/incubator-linkis/releases) 下载Linkis 的已编译版本或源码包。
 
 # 编译和安装部署
 请参照[编译指引](https://linkis.apache.org/zh-CN/docs/latest/development/linkis_compile_and_package) 来编译Linkis 源码。  

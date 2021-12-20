@@ -26,6 +26,7 @@ public class LinkisDataxClient {
             //Load the datax class redefined by progress, notice that is not be resolved
             jarLoader.loadClass("com.alibaba.datax.core.AbstractContainer", false);
             jarLoader.loadClass("com.alibaba.datax.core.job.JobContainer", false);
+            jarLoader.loadClass("com.alibaba.datax.core.taskgroup.TaskGroupContainer",false);
             dataxEngineClass = jarLoader.loadClass("com.alibaba.datax.core.Engine");
             //Add the datax-core-{version}.jar to class path
             jarLoader.addJarURL(Configuration.class.getProtectionDomain().getCodeSource().getLocation().getPath());

@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.metadata.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,9 +33,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.linkis.metadata.util.DWSConfig;
 import org.apache.log4j.Logger;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,13 +55,15 @@ public class DataSourceServiceImpl implements DataSourceService {
     @Autowired
     HiveMetaDao hiveMetaDao;
 
+    @Autowired
+    HiveMetaWithPermissionService hiveMetaWithPermissionService;
 
     ObjectMapper jsonMapper = new ObjectMapper();
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public JsonNode getDbs(String userName) throws Exception {
-        List<String> dbs = getDbsOptionalPermissionWithLoginUser(userName);
+        List<String> dbs = hiveMetaWithPermissionService.getDbsOptionalUserName(userName);
         ArrayNode dbsNode = jsonMapper.createArrayNode();
         for (String db : dbs) {
             ObjectNode dbNode = jsonMapper.createObjectNode();
@@ -75,7 +77,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     @Override
     public JsonNode getDbsWithTables(String userName) throws Exception {
         ArrayNode dbNodes = jsonMapper.createArrayNode();
-        List<String> dbs =getDbsOptionalPermissionWithLoginUser(userName);
+        List<String> dbs =  hiveMetaWithPermissionService.getDbsOptionalUserName(userName);
         for (String db : dbs) {
             ObjectNode dbNode = jsonMapper.createObjectNode();
             dbNode.put("databaseName", db);
@@ -93,13 +95,7 @@ public class DataSourceServiceImpl implements DataSourceService {
             Map<String, String> map = Maps.newHashMap();
             map.put("dbName", database);
             map.put("userName", userName);
-            Boolean flag= DWSConfig.HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED.getValue();
-            if(flag){
-                listTables = hiveMetaDao.getTablesByDbNameAndUser(map);
-            }else{
-                listTables = hiveMetaDao.getTablesByDbName(map);
-            }
-
+            listTables =hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(map);
         } catch (Throwable e) {
             logger.error("Failed to list Tables:", e);
             throw new RuntimeException(e);
@@ -261,12 +257,4 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
 
-    private List<String> getDbsOptionalPermissionWithLoginUser(String userName) {
-        Boolean flag=DWSConfig.HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED.getValue();
-        if(flag) {
-            return hiveMetaDao.getDbsByUser(userName);
-        }else {
-            return hiveMetaDao.getAllDbs();
-        }
-    }
 }

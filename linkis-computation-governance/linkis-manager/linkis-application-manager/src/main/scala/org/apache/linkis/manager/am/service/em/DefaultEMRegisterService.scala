@@ -71,7 +71,7 @@ class DefaultEMRegisterService extends EMRegisterService with Logging {
     */
   @Receiver
   @Order(1)
-  override def addEMNodeInstance(emRegister: RegisterEMRequest, smc: ServiceMethodContext): Unit = Utils.tryCatch{
+  override def addEMNodeInstance(emRegister: RegisterEMRequest, smc: ServiceMethodContext): RegisterEMResponse = Utils.tryCatch{
     info(s"Start to save em{${emRegister.getServiceInstance}}  in persistence")
     emNodeManager.addEMNodeInstance(registerEMRequest2EMNode(emRegister))
     info(s"Finished to save em{${emRegister.getServiceInstance}}  in persistence")

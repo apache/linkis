@@ -17,7 +17,7 @@
  
 package org.apache.linkis.manager.am.service.em
 
-import org.apache.linkis.manager.common.protocol.em.RegisterEMRequest
+import org.apache.linkis.manager.common.protocol.em.{RegisterEMRequest, RegisterEMResponse}
 import org.apache.linkis.message.builder.ServiceMethodContext
 
 
@@ -25,10 +25,10 @@ trait EMRegisterService {
 
 
   /**
-    * EM注册请求的第一个处理的请求，用于插入Instance信息
+    * Process ecm registration request, complete the registration of instance, label, resource and other information
     *
     * @param emRegister
     */
-  def addEMNodeInstance(emRegister: RegisterEMRequest, scm: ServiceMethodContext): Unit
+  def addEMNodeInstance(emRegister: RegisterEMRequest, scm: ServiceMethodContext): RegisterEMResponse
 
 }

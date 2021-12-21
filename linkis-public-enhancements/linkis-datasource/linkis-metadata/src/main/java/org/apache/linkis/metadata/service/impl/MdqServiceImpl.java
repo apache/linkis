@@ -17,6 +17,7 @@
  
 package org.apache.linkis.metadata.service.impl;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import org.apache.linkis.common.utils.ByteTimeUtils;
@@ -45,6 +46,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.linkis.metadata.util.DWSConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,7 +148,7 @@ public class MdqServiceImpl implements MdqService {
     public String displaysql(MdqTableBO mdqTableBO) {
         String dbName = mdqTableBO.getTableBaseInfo().getBase().getDatabase();
         String tableName = mdqTableBO.getTableBaseInfo().getBase().getName();
-        String displayStr = "//意书后台正在为您创建新的数据库表";
+        String displayStr = "//Linkis 后台正在为您创建新的数据库表";
         return displayStr;
     }
 
@@ -172,7 +174,14 @@ public class MdqServiceImpl implements MdqService {
         map.put("dbName", database);
         map.put("userName", user);
         map.put("tableName", tableName);
-        List<Map<String, Object>> tables = hiveMetaDao.getTablesByDbNameAndUser(map);
+        Boolean flag= DWSConfig.HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED.getValue();
+        List<Map<String, Object>> tables= Lists.newArrayList();;
+        if(flag){
+            tables = hiveMetaDao.getTablesByDbNameAndUser(map);
+        }else{
+            tables = hiveMetaDao.getTablesByDbName(map);
+        }
+
         List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(map);
         Optional<Map<String, Object>> tableOptional = tables.parallelStream()
                 .filter(f -> tableName.equals(f.get("NAME"))).findFirst();

@@ -120,7 +120,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>0.2.9</version>
+            <version>${druid.version}</version>
         </dependency>
 
         <dependency>

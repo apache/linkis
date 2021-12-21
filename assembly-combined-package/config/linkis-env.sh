@@ -126,7 +126,7 @@ CS_PORT=9108
 
 ## LDAP is for enterprise authorization, if you just want to have a try, ignore it.
 #LDAP_URL=ldap://localhost:1389/
-#LDAP_BASEDN=dc=webank,dc=com
+#LDAP_BASEDN=dc=apache,dc=com
 #LDAP_USER_NAME_FORMAT=cn=%s@xxx.com,OU=xxx,DC=xxx,DC=com
 
 ## java application default jvm memory

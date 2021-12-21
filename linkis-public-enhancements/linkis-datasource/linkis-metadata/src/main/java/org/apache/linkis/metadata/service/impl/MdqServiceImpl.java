@@ -5,19 +5,18 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.metadata.service.impl;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import org.apache.linkis.common.utils.ByteTimeUtils;
@@ -40,13 +39,13 @@ import org.apache.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
 import org.apache.linkis.metadata.hive.config.DSEnum;
 import org.apache.linkis.metadata.hive.config.DataSource;
 import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
+import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.apache.linkis.metadata.service.MdqService;
 import org.apache.linkis.metadata.type.MdqImportType;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.linkis.metadata.util.DWSConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +64,9 @@ public class MdqServiceImpl implements MdqService {
 
     @Autowired
     private HiveMetaDao hiveMetaDao;
+
+    @Autowired
+    HiveMetaWithPermissionService hiveMetaWithPermissionService;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -148,7 +150,7 @@ public class MdqServiceImpl implements MdqService {
     public String displaysql(MdqTableBO mdqTableBO) {
         String dbName = mdqTableBO.getTableBaseInfo().getBase().getDatabase();
         String tableName = mdqTableBO.getTableBaseInfo().getBase().getName();
-        String displayStr = "//Linkis 后台正在为您创建新的数据库表";
+        String displayStr = "//The backend of Linkis is creating a new database table for you";
         return displayStr;
     }
 
@@ -174,14 +176,7 @@ public class MdqServiceImpl implements MdqService {
         map.put("dbName", database);
         map.put("userName", user);
         map.put("tableName", tableName);
-        Boolean flag= DWSConfig.HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED.getValue();
-        List<Map<String, Object>> tables= Lists.newArrayList();;
-        if(flag){
-            tables = hiveMetaDao.getTablesByDbNameAndUser(map);
-        }else{
-            tables = hiveMetaDao.getTablesByDbName(map);
-        }
-
+        List<Map<String, Object>> tables = hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(map);
         List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(map);
         Optional<Map<String, Object>> tableOptional = tables.parallelStream()
                 .filter(f -> tableName.equals(f.get("NAME"))).findFirst();

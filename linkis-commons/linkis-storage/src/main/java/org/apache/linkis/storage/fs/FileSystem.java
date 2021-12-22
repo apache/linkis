@@ -27,8 +27,16 @@ import java.io.IOException;
 
 public abstract class FileSystem implements Fs{
 
-    protected  String user;
+    protected String user;
+    private String defaultFilePerm = "rwxr-----"; //740
+    private String defaultFolderPerm = "rwxr-x---"; //750
 
+    public String getDefaultFilePerm() {
+        return defaultFilePerm;
+    }
+    public String getDefaultFolderPerm() {
+        return defaultFolderPerm;
+    }
 
     public abstract String listRoot() throws IOException;
 

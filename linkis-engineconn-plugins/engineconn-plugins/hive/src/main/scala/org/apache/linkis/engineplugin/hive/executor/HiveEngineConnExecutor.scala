@@ -300,13 +300,7 @@ class HiveEngineConnExecutor(id: Int,
    * 在job完成之前，要将singleSqlProgressMap的剩余的内容全部变为成功
    */
   private def onComplete(): Unit = {
-    if (engineExecutorContext != null) {
-      val arrayBuffer: ArrayBuffer[JobProgressInfo] = new ArrayBuffer[JobProgressInfo]()
-      singleSqlProgressMap foreach {
-        case (jobId, progress) => arrayBuffer += JobProgressInfo(jobId, 200, 0, 0, 200)
-      }
-      engineExecutorContext.pushProgress(1.0f, arrayBuffer.toArray[JobProgressInfo])
-    }
+
   }
 
 
@@ -350,18 +344,19 @@ class HiveEngineConnExecutor(id: Int,
         }
       }
       var totalProgress: Float = 0.0F
+      val hiveRunJobs = if (numberOfMRJobs <= 0) 1 else numberOfMRJobs
       singleSqlProgressMap foreach {
         case (_name, _progress) => totalProgress += _progress
       }
       try {
-        totalProgress = totalProgress / (numberOfMRJobs * totalSQLs)
+        totalProgress = totalProgress / (hiveRunJobs * totalSQLs)
       } catch {
         case e: Exception => totalProgress = 0.0f
         case _ => totalProgress = 0.0f
       }
 
       logger.debug(s"hive progress is $totalProgress")
-      if (totalProgress.isNaN || totalProgress.isInfinite) return 0.0f
+      if (totalProgress.isNaN || totalProgress.isInfinite) return currentBegin
       totalProgress + currentBegin
     } else 0.0f
   }

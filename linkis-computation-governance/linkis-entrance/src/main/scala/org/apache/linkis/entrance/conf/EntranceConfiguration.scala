@@ -156,4 +156,6 @@ object EntranceConfiguration {
   val JOBINFO_UPDATE_RETRY_MAX_TIME = CommonVars[Integer]("wds.linkis.entrance.jobinfo.update.retry.max.times", 3)
 
   val JOBINFO_UPDATE_RETRY_INTERVAL = CommonVars[Integer]("wds.linkis.entrance.jobinfo.update.retry.interval", 2 * 60 * 1000)
+
+  val ENTRANCE_CODEPARSER_ENABLE = CommonVars[java.lang.Boolean]("wds.linkis.entrance.code.parser.enable", false)
 }

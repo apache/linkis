@@ -219,14 +219,6 @@ public class DataSourceParamKeyDefinition {
         this.require = require;
     }
 
-    public Scope getScope() {
-        return scope;
-    }
-
-    public void setScope(Scope scope) {
-        this.scope = scope;
-    }
-
     public Long getRefId() {
         return refId;
     }
@@ -243,4 +235,11 @@ public class DataSourceParamKeyDefinition {
         this.refValue = refValue;
     }
 
+    public Scope getScope() {
+        return scope;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
+    }
 }

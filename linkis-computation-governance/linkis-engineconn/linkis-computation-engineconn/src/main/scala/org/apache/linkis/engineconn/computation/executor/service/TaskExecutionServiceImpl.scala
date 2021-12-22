@@ -257,9 +257,10 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
    * @return
    */
   private def openDaemonForTask(task: EngineConnTask, taskFuture: Future[_], scheduler: ExecutorService): Future[_] = {
+    val sleepInterval = ComputationExecutorConf.ENGINE_PROGRESS_FETCH_INTERVAL.getValue
     scheduler.submit(new Runnable {
       override def run(): Unit = Utils.tryAndWarn {
-        val sleepInterval = ComputationExecutorConf.ENGINE_PROGRESS_FETCH_INTERVAL.getValue
+        Utils.tryQuietly(Thread.sleep(TimeUnit.MILLISECONDS.convert(1, TimeUnit.SECONDS)))
         while (null != taskFuture && !taskFuture.isDone) {
           if (ExecutionNodeStatus.isCompleted(task.getStatus) || ExecutionNodeStatus.isRunning(task.getStatus)) {
             sendToEntrance(task, taskProgress(task.getTaskId))

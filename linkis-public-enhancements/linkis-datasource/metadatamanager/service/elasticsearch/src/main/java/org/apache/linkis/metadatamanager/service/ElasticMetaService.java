@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class ElasticMetaService extends AbstractMetaService<ElasticConnection> {
     @Override
     public MetadataConnection<ElasticConnection> getConnection(String operator, Map<String, Object> params)
-    throws Exception{
+            throws Exception{
         String[] endPoints = new String[]{};
         Object urls = params.get(ElasticParamsMapper.PARAM_ES_URLS.getValue());
         if(!(urls instanceof List)){

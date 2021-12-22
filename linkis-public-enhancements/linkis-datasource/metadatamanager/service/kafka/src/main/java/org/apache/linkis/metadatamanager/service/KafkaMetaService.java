@@ -78,6 +78,9 @@ public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
             conn = new KafkaConnection(brokers);
         }
 
+        // because KafkaAdminClient.create does not do a real connection, we use listTopics here for testing connection
+        conn.getClient().listTopics().names().get();
+
         return new MetadataConnection<>(conn, true);
     }
 

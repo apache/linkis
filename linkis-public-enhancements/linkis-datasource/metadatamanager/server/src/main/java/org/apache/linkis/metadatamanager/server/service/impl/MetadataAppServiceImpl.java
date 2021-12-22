@@ -35,22 +35,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 @Service
 public class MetadataAppServiceImpl implements MetadataAppService {
     private Sender dataSourceRpcSender;
+    private MetaClassLoaderManager metaClassLoaderManager;
 
     @PostConstruct
     public void init(){
         dataSourceRpcSender = Sender.getSender(MdmConfiguration.DATA_SOURCE_SERVICE_APPLICATION.getValue());
+        metaClassLoaderManager = new MetaClassLoaderManager();
     }
+
+
+    @Override
+    public void getConnection(String dataSourceType, String operator, Map<String, Object> params) throws Exception {
+        BiFunction<String, Object[], Object> invoker = metaClassLoaderManager.getInvoker(dataSourceType);
+        invoker.apply("getConnection", new Object[]{operator, params});
+    }
+
     @Override
     public List<String> getDatabasesByDsId(String dataSourceId, String system) throws ErrorException {
         DsInfoResponse dsInfoResponse = reqToGetDataSourceInfo(dataSourceId, system);
         if(StringUtils.isNotBlank(dsInfoResponse.dsType())){
-            MetadataResponse metaQueryResponse = doAndGetMetaInfo(dsInfoResponse.dsType(),
-                    new MetaGetDatabases(dsInfoResponse.params(), dsInfoResponse.creator()));
-            return Json.fromJson(metaQueryResponse.data(), List.class, String.class);
+            BiFunction<String, Object[], Object> invoker = metaClassLoaderManager.getInvoker(dsInfoResponse.dsType());
+            return (List<String>)invoker.apply("getDatabases", new Object[]{dsInfoResponse.creator(), dsInfoResponse.params()});
         }
         return new ArrayList<>();
     }
@@ -59,9 +69,8 @@ public class MetadataAppServiceImpl implements MetadataAppService {
     public List<String> getTablesByDsId(String dataSourceId, String database, String system) throws ErrorException {
         DsInfoResponse dsInfoResponse = reqToGetDataSourceInfo(dataSourceId, system);
         if(StringUtils.isNotBlank(dsInfoResponse.dsType())){
-            MetadataResponse metaQueryResponse = doAndGetMetaInfo(dsInfoResponse.dsType(),
-                    new MetaGetTables(dsInfoResponse.params(), database, dsInfoResponse.creator()));
-            return Json.fromJson(metaQueryResponse.data(), List.class, String.class);
+            BiFunction<String, Object[], Object> invoker = metaClassLoaderManager.getInvoker(dsInfoResponse.dsType());
+            return (List<String>)invoker.apply("getTables", new Object[]{dsInfoResponse.creator(), dsInfoResponse.params(), database});
         }
         return new ArrayList<>();
     }
@@ -70,9 +79,8 @@ public class MetadataAppServiceImpl implements MetadataAppService {
     public Map<String, String> getTablePropsByDsId(String dataSourceId, String database, String table, String system) throws ErrorException {
         DsInfoResponse dsInfoResponse = reqToGetDataSourceInfo(dataSourceId, system);
         if(StringUtils.isNotBlank(dsInfoResponse.dsType())){
-            MetadataResponse metaQueryResponse = doAndGetMetaInfo(dsInfoResponse.dsType(),
-                    new MetaGetTableProps(dsInfoResponse.params(), database, table, dsInfoResponse.creator()));
-            return Json.fromJson(metaQueryResponse.data(), Map.class, String.class, String.class);
+            BiFunction<String, Object[], Object> invoker = metaClassLoaderManager.getInvoker(dsInfoResponse.dsType());
+            return (Map<String, String>)invoker.apply("getTableProps", new Object[]{dsInfoResponse.creator(), dsInfoResponse.params(), database, table});
         }
         return new HashMap<>();
     }
@@ -81,9 +89,14 @@ public class MetadataAppServiceImpl implements MetadataAppService {
     public MetaPartitionInfo getPartitionsByDsId(String dataSourceId, String database, String table, String system) throws ErrorException {
         DsInfoResponse dsInfoResponse = reqToGetDataSourceInfo(dataSourceId, system);
         if(StringUtils.isNotBlank(dsInfoResponse.dsType())){
-            MetadataResponse metaQueryResponse = doAndGetMetaInfo(dsInfoResponse.dsType(),
-                    new MetaGetPartitions(dsInfoResponse.params(), database, table, dsInfoResponse.creator()));
-            return Json.fromJson(metaQueryResponse.data(), MetaPartitionInfo.class);
+            BiFunction<String, Object[], Object> invoker = metaClassLoaderManager.getInvoker(dsInfoResponse.dsType());
+            Object partitions = invoker.apply("getPartitions", new Object[]{dsInfoResponse.creator(), dsInfoResponse.params(), database, table});
+            try {
+                String partitionsJson = BDPJettyServerHelper.jacksonJson().writeValueAsString(partitions);
+                return BDPJettyServerHelper.jacksonJson().readValue(partitionsJson,MetaPartitionInfo.class);
+            }catch (Exception e){
+                throw new ErrorException(-1, "Partitions Error msg:"+e.getMessage());
+            }
         }
         return new MetaPartitionInfo();
     }
@@ -92,9 +105,8 @@ public class MetadataAppServiceImpl implements MetadataAppService {
     public List<MetaColumnInfo> getColumns(String dataSourceId, String database, String table, String system) throws ErrorException {
         DsInfoResponse dsInfoResponse = reqToGetDataSourceInfo(dataSourceId, system);
         if(StringUtils.isNotBlank(dsInfoResponse.dsType())){
-            MetadataResponse metaQueryResponse = doAndGetMetaInfo(dsInfoResponse.dsType(),
-                    new MetaGetColumns(dsInfoResponse.params(), database, table, dsInfoResponse.creator()));
-            return Json.fromJson(metaQueryResponse.data(), List.class, MetaColumnInfo.class);
+            BiFunction<String, Object[], Object> invoker = metaClassLoaderManager.getInvoker(dsInfoResponse.dsType());
+            return (List<MetaColumnInfo>)invoker.apply("getColumns", new Object[]{dsInfoResponse.creator(), dsInfoResponse.params(), database, table});
         }
         return new ArrayList<>();
     }
@@ -125,29 +137,4 @@ public class MetadataAppServiceImpl implements MetadataAppService {
         }
     }
 
-    /**
-     * Request to get meta information
-     * @param dataSourceType
-     * @param request
-     * @return
-     */
-    public MetadataResponse doAndGetMetaInfo(String dataSourceType, MetadataQueryProtocol request) throws ErrorException {
-        Sender sender = Sender.getSender(MdmConfiguration.METADATA_SERVICE_APPLICATION.getValue() + "-" + dataSourceType.toLowerCase());
-        Object rpcResult = null;
-        try{
-            rpcResult = sender.ask(request);
-        }catch(Exception e){
-            throw new ErrorException(-1, "Remote Service Error[远端服务出错, 联系运维处理]");
-        }
-        if(rpcResult instanceof MetadataResponse){
-            MetadataResponse response = (MetadataResponse)rpcResult;
-            if(!response.status()){
-                throw new ErrorException(-1, "Error in ["+dataSourceType.toUpperCase()+"] Metadata Service Server[元数据服务出错], " +
-                        "[" +response.data() + "]");
-            }
-            return response;
-        }else{
-            throw new ErrorException(-1, "Remote Service Error[远端服务出错, 联系运维处理]");
-        }
-    }
 }

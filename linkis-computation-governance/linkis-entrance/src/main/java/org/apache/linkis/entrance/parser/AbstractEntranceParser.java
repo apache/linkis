@@ -21,6 +21,7 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.EntranceParser;
+import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.exception.EntranceErrorCode;
 import org.apache.linkis.entrance.exception.EntranceIllegalParamException;
 import org.apache.linkis.entrance.execute.EntranceJob;
@@ -133,7 +134,7 @@ public abstract class AbstractEntranceParser extends EntranceParser {
         Label<?> codeTypeLabel = jobReq.getLabels().stream().filter(l -> l.getLabelKey().equalsIgnoreCase(LabelKeyConstant.CODE_TYPE_KEY)).findFirst().orElseGet(null);
         if (null != codeTypeLabel) {
             CodeParser codeParser = CodeParserFactory.getCodeParser(CodeType.getType(codeTypeLabel.getStringValue()));
-            if (null != codeParser) {
+            if (null != codeParser && !isNoNeedParser(codeTypeLabel)) {
                 job.setCodeParser(codeParser);
             } else {
                 job.setCodeParser(new EmptyCodeParser());
@@ -141,5 +142,11 @@ public abstract class AbstractEntranceParser extends EntranceParser {
         }
         return job;
     }
+
+    private boolean isNoNeedParser(Label<?> codeTypeLabel) {
+      return ! EntranceConfiguration.ENTRANCE_CODEPARSER_ENABLE().getValue();
+    }
+
+
 
 }

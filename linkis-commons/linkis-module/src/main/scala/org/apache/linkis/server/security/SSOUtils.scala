@@ -17,8 +17,7 @@
  
 package org.apache.linkis.server.security
 
-import java.util
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, RSAUtils, Utils}
@@ -26,29 +25,37 @@ import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.linkis.server.exception.{IllegalUserTicketException, LoginExpireException, NonLoginException}
 import javax.servlet.http.Cookie
 import org.apache.commons.lang.time.DateFormatUtils
-
-import scala.collection.JavaConversions
+import scala.collection.JavaConverters._
 
 object SSOUtils extends Logging {
 
   private[security] val USER_TICKET_ID_STRING = "bdp-user-ticket-id"
+
   private val sessionTimeout = ServerConfiguration.BDP_SERVER_WEB_SESSION_TIMEOUT.getValue.toLong
-  private val userTicketIdToLastAccessTime = new util.HashMap[String, Long]()
+
+  private val userTicketIdToLastAccessTime = new ConcurrentHashMap[String, Long]()
+
   val sslEnable: Boolean = ServerConfiguration.BDP_SERVER_SECURITY_SSL.getValue
-  def decryptLogin(passwordString: String): String = if(sslEnable) {
+
+  def decryptLogin(passwordString: String): String = if (sslEnable) {
     new String(RSAUtils.decrypt(passwordString), Configuration.BDP_ENCODING.getValue)
   } else passwordString
 
   Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
-    override def run(): Unit = JavaConversions.mapAsScalaMap(userTicketIdToLastAccessTime).filter(System.currentTimeMillis - _._2 > sessionTimeout).foreach {
-      case (k, v) => if(userTicketIdToLastAccessTime.containsKey(k)) userTicketIdToLastAccessTime synchronized {
-        if(userTicketIdToLastAccessTime.containsKey(k) && System.currentTimeMillis - userTicketIdToLastAccessTime.get(k) > sessionTimeout) {
-          info(s"remove timeout userTicket $k, since the last access time is ${DateFormatUtils.format(v, "yyyy-MM-dd HH:mm:ss")}.")
-          userTicketIdToLastAccessTime.remove(k)
+    override def run(): Unit = Utils.tryCatch {
+     userTicketIdToLastAccessTime.asScala.filter(System.currentTimeMillis - _._2 > sessionTimeout).foreach {
+        case (k, v) => if (userTicketIdToLastAccessTime.containsKey(k)) {
+          if (userTicketIdToLastAccessTime.containsKey(k) && System.currentTimeMillis - userTicketIdToLastAccessTime.get(k) > sessionTimeout) {
+            info(s"remove timeout userTicket $k, since the last access time is ${DateFormatUtils.format(v, "yyyy-MM-dd HH:mm:ss")}.")
+            userTicketIdToLastAccessTime.remove(k)
+          }
         }
       }
+    } {
+      t => logger.error("failed to do remove", t)
     }
-  }, sessionTimeout, sessionTimeout/10, TimeUnit.MILLISECONDS)
+  }, sessionTimeout, sessionTimeout / 10, TimeUnit.MILLISECONDS
+  )
 
   private[security] def getUserAndLoginTime(userTicketId: String): Option[(String, Long)] = {
     ServerConfiguration.getUsernameByTicket(userTicketId).map { userAndLoginTime =>
@@ -67,7 +74,7 @@ object SSOUtils extends Logging {
   def setLoginUser(addCookie: Cookie => Unit, username: String): Unit = {
     info(s"add login userTicketCookie for user $username.")
     val userTicketId = getUserTicketId(username)
-    userTicketIdToLastAccessTime synchronized userTicketIdToLastAccessTime.put(userTicketId, System.currentTimeMillis())
+    userTicketIdToLastAccessTime.put(userTicketId, System.currentTimeMillis())
     val cookie = new Cookie(USER_TICKET_ID_STRING, userTicketId)
     cookie.setMaxAge(-1)
     if(sslEnable) cookie.setSecure(true)
@@ -78,7 +85,7 @@ object SSOUtils extends Logging {
   def setLoginUser(addUserTicketKV: (String, String) => Unit, username: String): Unit = {
     info(s"add login userTicket for user $username.")
     val userTicketId = getUserTicketKV(username)
-    userTicketIdToLastAccessTime synchronized userTicketIdToLastAccessTime.put(userTicketId._2, System.currentTimeMillis())
+    userTicketIdToLastAccessTime.put(userTicketId._2, System.currentTimeMillis())
     addUserTicketKV(userTicketId._1, userTicketId._2)
   }
 
@@ -90,8 +97,8 @@ object SSOUtils extends Logging {
   def removeLoginUser(getCookies: => Array[Cookie]): Unit = {
     val cookies = getCookies
     if(cookies != null) cookies.find(_.getName == USER_TICKET_ID_STRING).foreach { cookie =>
-      if(userTicketIdToLastAccessTime.containsKey(cookie.getValue)) userTicketIdToLastAccessTime synchronized {
-        if(userTicketIdToLastAccessTime.containsKey(cookie.getValue)) userTicketIdToLastAccessTime.remove(cookie.getValue)
+      if (userTicketIdToLastAccessTime.containsKey(cookie.getValue)) {
+        userTicketIdToLastAccessTime.remove(cookie.getValue)
       }
       cookie.setValue(null)
       cookie.setMaxAge(0)
@@ -107,8 +114,8 @@ object SSOUtils extends Logging {
   }
 
   def removeLoginUser(removeKeyReturnValue: String => Option[String]): Unit = removeKeyReturnValue(USER_TICKET_ID_STRING).foreach{ t =>
-    if(userTicketIdToLastAccessTime.containsKey(t)) userTicketIdToLastAccessTime synchronized {
-      if(userTicketIdToLastAccessTime.containsKey(t)) userTicketIdToLastAccessTime.remove(t)
+    if (userTicketIdToLastAccessTime.containsKey(t)) {
+       userTicketIdToLastAccessTime.remove(t)
     }
   }
 
@@ -130,16 +137,16 @@ object SSOUtils extends Logging {
 
   def updateLastAccessTime(getUserTicketId: String => Option[String]): Unit = getUserTicketId(USER_TICKET_ID_STRING).foreach(isTimeoutOrNot)
 
-  private def isTimeoutOrNot(userTicketId: String): Unit = if(!userTicketIdToLastAccessTime.containsKey(userTicketId)) {
+  private def isTimeoutOrNot(userTicketId: String): Unit = if (!userTicketIdToLastAccessTime.containsKey(userTicketId)) {
     throw new LoginExpireException("You are not logged in, please login first!(您尚未登录，请先登录!)")
   } else {
     val lastAccessTime = userTicketIdToLastAccessTime.get(userTicketId)
-    if(System.currentTimeMillis - lastAccessTime > sessionTimeout && !Configuration.IS_TEST_MODE.getValue) userTicketIdToLastAccessTime synchronized {
-      if(userTicketIdToLastAccessTime.containsKey(userTicketId) && System.currentTimeMillis - userTicketIdToLastAccessTime.get(userTicketId) > sessionTimeout) {
+    if (System.currentTimeMillis - lastAccessTime > sessionTimeout && !Configuration.IS_TEST_MODE.getValue) {
+      if (userTicketIdToLastAccessTime.containsKey(userTicketId) && System.currentTimeMillis - userTicketIdToLastAccessTime.get(userTicketId) > sessionTimeout) {
         userTicketIdToLastAccessTime.remove(userTicketId)
         throw new LoginExpireException("Login has expired, please log in again!(登录已过期，请重新登录！)")
       }
-    } else if(System.currentTimeMillis - lastAccessTime >= sessionTimeout * 0.5) userTicketIdToLastAccessTime synchronized {
+    } else if (System.currentTimeMillis - lastAccessTime >= sessionTimeout * 0.5) {
       userTicketIdToLastAccessTime.put(userTicketId, System.currentTimeMillis)
     }
   }

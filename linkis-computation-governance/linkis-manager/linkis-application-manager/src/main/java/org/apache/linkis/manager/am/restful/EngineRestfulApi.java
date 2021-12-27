@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.am.restful;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -27,6 +27,7 @@ import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.service.engine.EngineCreateService;
 import org.apache.linkis.manager.am.service.engine.EngineInfoService;
 import org.apache.linkis.manager.am.service.engine.EngineOperateService;
+import org.apache.linkis.manager.am.service.engine.EngineStopService;
 import org.apache.linkis.manager.am.utils.AMUtils;
 import org.apache.linkis.manager.am.vo.AMEngineNodeVo;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
@@ -87,6 +88,9 @@ public class EngineRestfulApi {
 
     @Autowired
     private NodeLabelService nodeLabelService;
+
+    @Autowired
+    private EngineStopService engineStopService;
 
     @Autowired
     private MessagePublisher messagePublisher;
@@ -154,9 +158,21 @@ public class EngineRestfulApi {
             return Message.error("You have no permission to kill EngineConn " + serviceInstance);
         }
         EngineStopRequest stopEngineRequest = new EngineStopRequest(serviceInstance, userName);
-        MessageJob job = messagePublisher.publish(stopEngineRequest);
-        job.get(RMUtils.MANAGER_KILL_ENGINE_EAIT().getValue().toLong(), TimeUnit.MILLISECONDS);
+        engineStopService.stopEngine(stopEngineRequest);
         logger.info("Finished to kill engineConn {}.", serviceInstance);
+        return Message.ok("Kill engineConn succeed.");
+    }
+
+    @RequestMapping(path = "/rm/enginekill", method = RequestMethod.POST)
+    public Message killEngine( HttpServletRequest req, @RequestBody Map<String, String>[] param) throws Exception {
+        String userName = SecurityFilter.getLoginUsername(req);
+        for (Map<String, String>engineParam : param) {
+            String moduleName = engineParam.get("applicationName");
+            String engineInstance = engineParam.get("engineInstance");
+            EngineStopRequest stopEngineRequest = new EngineStopRequest(ServiceInstance.apply(moduleName, engineInstance), userName);
+            engineStopService.stopEngine(stopEngineRequest);
+            logger.info("Finished to kill engines");
+        }
         return Message.ok("Kill engineConn succeed.");
     }
 
@@ -182,19 +198,19 @@ public class EngineRestfulApi {
         ArrayList<AMEngineNodeVo> allengineNodes = AMUtils.copyToAMEngineNodeVo(engineNodes);
         ArrayList<AMEngineNodeVo> allEMVoFilter1 = allengineNodes;
         if(CollectionUtils.isNotEmpty(allEMVoFilter1) && emInstace != null){
-            allEMVoFilter1 = (ArrayList<AMEngineNodeVo>) allEMVoFilter1.stream().filter(em -> {return em.getInstance().contains(emInstace.asText());}).collect(Collectors.toList());
+            allEMVoFilter1 = (ArrayList<AMEngineNodeVo>) allEMVoFilter1.stream().filter(em -> em.getInstance() != null && em.getInstance().contains(emInstace.asText())).collect(Collectors.toList());
         }
         ArrayList<AMEngineNodeVo> allEMVoFilter2 = allEMVoFilter1;
         if(CollectionUtils.isNotEmpty(allEMVoFilter2) && nodeStatus != null && !StringUtils.isEmpty(nodeStatus.asText())){
-            allEMVoFilter2 = (ArrayList<AMEngineNodeVo>) allEMVoFilter2.stream().filter(em -> {return em.getNodeStatus() != null ? em.getNodeStatus().equals(NodeStatus.valueOf(nodeStatus.asText())) : false;}).collect(Collectors.toList());
+            allEMVoFilter2 = (ArrayList<AMEngineNodeVo>) allEMVoFilter2.stream().filter(em -> em.getNodeStatus() != null && em.getNodeStatus().equals(NodeStatus.valueOf(nodeStatus.asText()))).collect(Collectors.toList());
         }
         ArrayList<AMEngineNodeVo> allEMVoFilter3 = allEMVoFilter2;
         if(CollectionUtils.isNotEmpty(allEMVoFilter3) && owner != null && !StringUtils.isEmpty(owner.asText())){
-            allEMVoFilter3 = (ArrayList<AMEngineNodeVo>) allEMVoFilter3.stream().filter(em ->{return em.getOwner().equalsIgnoreCase(owner.asText());}).collect(Collectors.toList());
+            allEMVoFilter3 = (ArrayList<AMEngineNodeVo>) allEMVoFilter3.stream().filter(em -> em.getOwner() != null && em.getOwner().equalsIgnoreCase(owner.asText())).collect(Collectors.toList());
         }
         ArrayList<AMEngineNodeVo> allEMVoFilter4 = allEMVoFilter3;
         if(CollectionUtils.isNotEmpty(allEMVoFilter4) && engineType != null && !StringUtils.isEmpty(engineType.asText())){
-            allEMVoFilter4 = (ArrayList<AMEngineNodeVo>) allEMVoFilter4.stream().filter(em ->{return em.getEngineType().equalsIgnoreCase(engineType.asText());}).collect(Collectors.toList());
+            allEMVoFilter4 = (ArrayList<AMEngineNodeVo>) allEMVoFilter4.stream().filter(em -> em.getEngineType() != null && em.getEngineType().equalsIgnoreCase(engineType.asText())).collect(Collectors.toList());
         }
         return Message.ok().data("engines", allEMVoFilter4);
     }
@@ -265,6 +281,8 @@ public class EngineRestfulApi {
                 .data("errorMsg", engineOperateResponse.errorMsg())
                 .data("isError", engineOperateResponse.isError());
     }
+
+
 
     private boolean isAdmin(String user) {
         String[] adminArray = AMConfiguration.GOVERNANCE_STATION_ADMIN().getValue().split(",");

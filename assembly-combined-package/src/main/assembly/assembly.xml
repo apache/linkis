@@ -26,6 +26,27 @@
 
   <fileSets>
     <fileSet>
+      <directory>../</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+          <include>README*</include>
+          <include>LICENSE*</include>
+          <include>NOTICE*</include>
+          <include>DISCLAIMER*</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>
+          licenses/
+      </directory>
+      <outputDirectory>licenses</outputDirectory>
+      <includes>
+          <include>**/*</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
       <directory>
         bin/
       </directory>

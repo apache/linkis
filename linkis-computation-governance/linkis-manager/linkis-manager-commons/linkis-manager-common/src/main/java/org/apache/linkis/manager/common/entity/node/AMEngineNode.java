@@ -58,6 +58,10 @@ public class AMEngineNode implements EngineNode, ScoreServiceInstance {
 
     private Date startTime;
 
+    private Date updateTime;
+
+
+
     public AMEngineNode() {
 
     }
@@ -190,9 +194,20 @@ public class AMEngineNode implements EngineNode, ScoreServiceInstance {
     }
 
     @Override
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    @Override
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    @Override
     public Date getStartTime() {
         return startTime;
     }
+
 
     @Override
     public void setStartTime(Date startTime) {

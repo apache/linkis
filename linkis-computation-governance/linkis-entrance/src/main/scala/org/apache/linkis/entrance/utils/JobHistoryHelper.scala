@@ -29,6 +29,7 @@ import org.apache.linkis.protocol.query.cache.{CacheTaskResult, RequestReadCache
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.SchedulerEventState
 import java.util
+import java.util.Date
 
 import javax.servlet.http.HttpServletRequest
 import org.apache.commons.lang.StringUtils
@@ -87,6 +88,7 @@ object JobHistoryHelper extends Logging{
     jobRequest.setId(taskID)
     jobRequest.setStatus(SchedulerEventState.Cancelled.toString)
     jobRequest.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS.toString)
+    jobRequest.setUpdatedTime(new Date(System.currentTimeMillis()))
     val jobReqUpdate = JobReqUpdate(jobRequest)
     sender.ask(jobReqUpdate)
     sender.ask(jobDetailReqUpdate)
@@ -110,6 +112,7 @@ object JobHistoryHelper extends Logging{
       jobRequest.setId(taskID)
       jobRequest.setStatus(SchedulerEventState.Cancelled.toString)
       jobRequest.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS.toString)
+      jobRequest.setUpdatedTime(new Date(System.currentTimeMillis()))
       jobReqList.add(jobRequest)
     })
     val jobDetailReqBatchUpdate = JobDetailReqBatchUpdate(subJobInfoList)

@@ -96,4 +96,5 @@ abstract class ResourceManager {
     */
   def getResourceInfo(serviceInstances: Array[ServiceInstance]): ResourceInfo
 
+
 }

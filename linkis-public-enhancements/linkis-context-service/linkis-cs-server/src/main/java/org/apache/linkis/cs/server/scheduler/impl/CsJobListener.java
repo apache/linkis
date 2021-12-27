@@ -57,7 +57,9 @@ public class CsJobListener implements JobListener {
                 HttpResponseProtocol responseProtocol = answerJob.getResponseProtocol();
                 if (!job.isSucceed() && responseProtocol instanceof RestResponseProtocol) {
                     ErrorExecuteResponse errorResponse = job.getErrorResponse();
-                    ((RestResponseProtocol) responseProtocol).error(errorResponse.message(), errorResponse.t());
+                    if (errorResponse != null) {
+                        ((RestResponseProtocol) responseProtocol).error(errorResponse.message(), errorResponse.t());
+                    }
                 }
                 answerJob.getResponseProtocol().notifyJob();
             }

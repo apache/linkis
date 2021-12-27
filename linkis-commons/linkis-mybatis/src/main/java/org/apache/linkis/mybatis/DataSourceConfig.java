@@ -54,6 +54,8 @@ public class DataSourceConfig extends JavaLog {
         boolean testOnBorrow = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_TESTONBORROW.getValue();
         boolean testOnReturn = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_TESTONRETURN.getValue();
         boolean poolPreparedStatements = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_POOLPREPAREDSTATEMENTS.getValue();
+        boolean removeAbandoned = MybatisConfiguration.MYBATIS_DATASOURCE_REMOVE_ABANDONED_ENABLED.getValue();
+        int removeAbandonedTimeout = MybatisConfiguration.MYBATIS_DATASOURCE_REMOVE_ABANDONED_TIMEOUT.getValue();
         BasicDataSource datasource = new BasicDataSource();
         info("Database connection address information(数据库连接地址信息)=" + dbUrl);
         datasource.setUrl(dbUrl);
@@ -71,6 +73,8 @@ public class DataSourceConfig extends JavaLog {
         datasource.setTestOnBorrow(testOnBorrow);
         datasource.setTestOnReturn(testOnReturn);
         datasource.setPoolPreparedStatements(poolPreparedStatements);
+        datasource.setRemoveAbandoned(removeAbandoned);
+        datasource.setRemoveAbandonedTimeout(removeAbandonedTimeout);
         return datasource;
     }
 

@@ -27,8 +27,8 @@ import org.apache.linkis.configuration.util.LabelEntityParser
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder
 import org.apache.linkis.manager.label.entity.CombinedLabel
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
-import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.configuration.conf.Configuration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -158,8 +158,8 @@ class CategoryService extends Logging{
       throw new ConfigurationException(s"${engineType}-${version} is exist, cannot be created(${engineType}-${version}已经存在，无法创建)")
     }
     val creator = categoryList.getCategoryName match {
-      case "全局设置" => LabelUtils.COMMON_VALUE
-      case "通用设置" => LabelUtils.COMMON_VALUE
+      case Configuration.GLOBAL_CONF_CHN_NAME | Configuration.GLOBAL_CONF_CHN_OLDNAME =>
+        throw new ConfigurationException("Global setting do not allow the configuration of engines to be added(全局设置不允许添加引擎配置!)")
       case _ => categoryList.getCategoryName
     }
     val combinedLabel = configurationService.generateCombinedLabel(engineType,version,null,creator)

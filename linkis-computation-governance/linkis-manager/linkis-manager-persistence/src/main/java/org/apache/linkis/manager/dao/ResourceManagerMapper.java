@@ -34,39 +34,19 @@ public interface ResourceManagerMapper {
 
     @Update({ "update linkis_cg_manager_linkis_resources set max_resource = #{persistenceResource.maxResource},min_resource = #{persistenceResource.minResource}, " +
             "used_resource=#{persistenceResource.usedResource},left_resource=#{persistenceResource.leftResource},expected_resource=#{persistenceResource.expectedResource}," +
-            "locked_resource=#{persistenceResource.lockedResource},resourceType=#{persistenceResource.resourceType}," +
-            "update_time=#{persistenceResource.updateTime},create_time=#{persistenceResource.createTime} where ticketId = #{ticketId}"})
+            "locked_resource=#{persistenceResource.lockedResource}," +
+            "update_time=#{persistenceResource.updateTime} where ticketId = #{ticketId}"})
     void nodeResourceUpdate(@Param("ticketId") String ticketId,@Param("persistenceResource") PersistenceResource persistenceResource);
 
     @Update({"update linkis_cg_manager_linkis_resources set max_resource = #{persistenceResource.maxResource},min_resource = #{persistenceResource.minResource}," +
             "used_resource=#{persistenceResource.usedResource},left_resource=#{persistenceResource.leftResource},expected_resource=#{persistenceResource.expectedResource}," +
-            "locked_resource=#{persistenceResource.lockedResource},resourceType=#{persistenceResource.resourceType},ticketId=#{persistenceResource.ticketId}," +
-            "update_time=#{persistenceResource.updateTime},create_time=#{persistenceResource.createTime} where id = #{resourceId}"})
+            "locked_resource=#{persistenceResource.lockedResource}," +
+            "update_time=#{persistenceResource.updateTime} where id = #{resourceId}"})
     void nodeResourceUpdateByResourceId(@Param("resourceId") int resourceId,@Param("persistenceResource") PersistenceResource persistenceResource);
 
     @Select("select id from linkis_cg_manager_linkis_resources where ticketId is null and id in ( select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id=B.label_id and B.service_instance=#{instance})")
     int getNodeResourceUpdateResourceId(@Param("instance") String  instance);
 
-//    @Select("select * from linkis_cg_manager_linkis_resources where  id  in  \n" +
-//            "(select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id=B.label_id  and B.service_instance_id=#{serviceInstanceId})")
-//    @Results({
-//            @Result(property = "maxResource", column = "max_resource"),
-//            @Result(property = "minResource", column = "min_resource"),
-//            @Result(property = "usedResource", column = "used_resource"),
-//            @Result(property = "leftResource", column = "left_resource"),
-//            @Result(property = "expectedResource", column = "expected_resource"),
-//            @Result(property = "lockedResource", column = "locked_resource"),
-//            @Result(property = "updateTime", column = "update_time"),
-//            @Result(property = "createTime", column = "create_time"),
-//
-//    })
-//    List<PersistenceResource> getResourceByServiceInstanceId(@Param("serviceInstanceId") int serviceInstanceId);
-//
-//    @Select("select * from linkis_cg_manager_linkis_resources where id = #{id}")
-//    PersistenceResource getResourceById(@Param("id") int id);
-//
-//    @Delete("delete from linkis_cg_manager_linkis_resources where id = #{id}")
-//    void deleteResourceById(@Param("id") int id);
 
     @Delete("delete from linkis_cg_manager_label_resource where label_id in (select label_id from linkis_cg_manager_label_service_instance where service_instance=#{instance})")
     void deleteResourceAndLabelId(@Param("instance") String  instance);
@@ -97,4 +77,10 @@ public interface ResourceManagerMapper {
 
     @Select("select * from linkis_cg_manager_label where id in (select label_id from linkis_cg_manager_label_resource A join linkis_cg_manager_linkis_resources B on A.resource_id=B.id and B.ticketId=#{ticketId})")
     List<PersistenceLabel> getLabelsByTicketId(@Param("ticketId") String ticketId);
+
+    void deleteResourceById(@Param("ids") List<Integer> ids);
+
+    void deleteResourceRelByResourceId(@Param("ids") List<Integer> ids);
+
+    PersistenceResource getResourceById(@Param("id") Integer id);
 }

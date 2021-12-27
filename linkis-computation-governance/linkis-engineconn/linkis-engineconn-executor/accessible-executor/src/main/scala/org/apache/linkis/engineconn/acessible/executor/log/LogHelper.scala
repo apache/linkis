@@ -43,7 +43,7 @@ object LogHelper extends Logging {
     Thread.sleep(30)
     //logCache.synchronized{
     if (logListener == null) {
-      warn("logListener is null, can not push remain logs")
+      logger.warn("logListener is null, can not push remain logs")
       //return
     } else {
       var logs: util.List[String] = null
@@ -74,7 +74,7 @@ object LogHelper extends Logging {
     override def run(): Unit = Utils.tryAndWarn {
 
       if (logListener == null || logCache == null) {
-        info("logCache or logListener is null")
+        logger.debug("logCache or logListener is null")
         return
       } else {
         if (logCache.size > CACHE_SIZE) {

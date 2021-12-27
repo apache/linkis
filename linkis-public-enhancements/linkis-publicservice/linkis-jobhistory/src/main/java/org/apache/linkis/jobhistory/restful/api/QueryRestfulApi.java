@@ -25,7 +25,7 @@ import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration;
 import org.apache.linkis.jobhistory.conversions.TaskConversions;
 import org.apache.linkis.jobhistory.dao.JobDetailMapper;
 import org.apache.linkis.jobhistory.entity.*;
-import org.apache.linkis.jobhistory.exception.QueryException;
+import org.apache.linkis.governance.common.entity.job.QueryException;
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService;
 import org.apache.linkis.jobhistory.util.QueryUtils;
 import org.apache.linkis.protocol.constants.TaskConstant;
@@ -41,7 +41,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.sql.Date;
 
@@ -112,11 +111,11 @@ public class QueryRestfulApi {
             sDate = new Date(startDate);
         }
         if (endDate != null) {
-            //eDate= new Date(endDate);
-            Calendar instance = Calendar.getInstance();
-            instance.setTimeInMillis(endDate);
-            instance.add(Calendar.DAY_OF_MONTH, 1);
-            eDate = new Date(instance.getTime().getTime()); // todo check
+            eDate= new Date(endDate);
+//            Calendar instance = Calendar.getInstance();
+//            instance.setTimeInMillis(endDate);
+//            instance.add(Calendar.DAY_OF_MONTH, 1);
+//            eDate = new Date(instance.getTime().getTime()); // todo check
         }
         if (proxyUser != null && QueryUtils.isJobHistoryAdmin(username)) {
             if (!StringUtils.isEmpty(proxyUser)) {

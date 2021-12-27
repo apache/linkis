@@ -32,7 +32,7 @@
           <include>README*</include>
           <include>LICENSE*</include>
           <include>NOTICE*</include>
-          <include> DISCLAIMER*</include>
+          <include>DISCLAIMER*</include>
       </includes>
     </fileSet>
 

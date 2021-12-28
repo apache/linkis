@@ -72,7 +72,7 @@ public class FlinkOnceJobTest {
         EngineConnMetricsOperator metricsOperator = (EngineConnMetricsOperator) onceJob.getOperator(EngineConnMetricsOperator.OPERATOR_NAME());
         logOperator.setFromLine(1);
         logOperator.setPageSize(100);
-        EngineConnLogs logs = logOperator.apply();
+        EngineConnLogs logs = (EngineConnLogs) logOperator.apply();
         System.out.println("logPath: " + logs.logPath() + ", logs: " + logs.logs());
         System.out.println("Metrics: " + metricsOperator.apply());
         onceJob.waitForCompleted();

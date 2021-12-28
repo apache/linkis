@@ -28,7 +28,6 @@ import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
-import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder
 import org.apache.linkis.message.annotation.Receiver
 import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.springframework.beans.factory.annotation.Autowired
@@ -52,9 +51,6 @@ class DefaultEMInfoService extends EMInfoService with Logging {
 
   @Autowired
   private var nodeMetricManagerPersistence: NodeMetricManagerPersistence = _
-
-  @Autowired
-  private var nodePointerBuilder: NodePointerBuilder = _
 
   @Autowired
   private var defaultMetricsConverter: MetricsConverter = _

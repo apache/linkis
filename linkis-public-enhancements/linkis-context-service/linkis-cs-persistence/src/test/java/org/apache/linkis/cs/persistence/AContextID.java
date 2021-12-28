@@ -28,7 +28,7 @@ public class AContextID implements UserContextID, HAContextID {
 
     private String contextId;
 
-    private String user = "neiljianliu";
+    private String user = "hadoop";
 
     private String instance = "instance";
 

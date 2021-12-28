@@ -58,7 +58,7 @@ public class ContextIDTest {
     public void testUpdateContextID() throws CSErrorException {
         AContextID aContextID = new AContextID();
         aContextID.setContextId("84695");
-        aContextID.setUser("johnnwang");
+        aContextID.setUser("hadoop");
         aContextID.setExpireTime(new Date());
         aContextID.setExpireType(ExpireType.TODAY);
         aContextID.setInstance("updateInstance");

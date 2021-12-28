@@ -48,7 +48,7 @@ object VariableParser {
     variables.toArray
   }
 
-  //TODO need delete 20200321 update by peaceWong
+  //TODO need delete
   def isContextIDINFO(key : String): Boolean ={
     "contextID".equalsIgnoreCase(key) || "nodeName".equalsIgnoreCase(key)
   }

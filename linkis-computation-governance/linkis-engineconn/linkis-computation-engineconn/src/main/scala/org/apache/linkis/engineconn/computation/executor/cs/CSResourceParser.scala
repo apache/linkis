@@ -42,7 +42,7 @@ class CSResourceParser {
 
   def parse(props: util.Map[String, Object], code: String, contextIDValueStr: String, nodeNameStr: String): String = {
 
-    //TODO getBMLResource peaceWong
+    //TODO getBMLResource
     val bmlResourceList = CSResourceService.getInstance().getUpstreamBMLResource(contextIDValueStr, nodeNameStr)
 
     val parsedResources = new util.ArrayList[util.Map[String, Object]]()

@@ -17,10 +17,10 @@
 
 package org.apache.linkis.engineconn.once.executor.operator
 
-import org.apache.linkis.engineconn.acessible.executor.operator.{Operator, OperatorFactory}
 import org.apache.linkis.engineconn.common.exception.EngineConnException
 import org.apache.linkis.engineconn.once.executor.OperableOnceExecutor
 import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManager
+import org.apache.linkis.manager.common.operator.{Operator, OperatorFactory}
 
 
 class OperableOnceEngineConnOperator extends Operator {
@@ -35,7 +35,12 @@ class OperableOnceEngineConnOperator extends Operator {
       case operableOnceExecutor: OperableOnceExecutor =>
         operatorName match {
           case PROGRESS_OPERATOR_NAME =>
-            Map("progress" -> operableOnceExecutor.getProgress, "progressInfo" -> operableOnceExecutor.getProgressInfo)
+            val progressInfo = operableOnceExecutor.getProgressInfo
+            val progressInfoMap = if (progressInfo != null && progressInfo.nonEmpty) {
+              progressInfo.map(progressInfo => Map("id" -> progressInfo.id, "totalTasks" -> progressInfo.totalTasks,
+                "runningTasks" -> progressInfo.runningTasks, "failedTasks" -> progressInfo.failedTasks, "succeedTasks" -> progressInfo.succeedTasks))
+            } else Array.empty[Map[String, Any]]
+            Map("progress" -> operableOnceExecutor.getProgress, "progressInfo" -> progressInfoMap)
           case METRICS_OPERATOR_NAME =>
             Map("metrics" -> operableOnceExecutor.getMetrics)
           case DIAGNOSIS_OPERATOR_NAME =>

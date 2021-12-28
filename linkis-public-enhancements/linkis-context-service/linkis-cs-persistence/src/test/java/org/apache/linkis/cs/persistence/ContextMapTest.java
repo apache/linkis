@@ -47,7 +47,7 @@ public class ContextMapTest {
         persistenceContextID.setContextId(String.valueOf(new Random().nextInt(100000)));
         AContextValue aContextValue = new AContextValue();
         CSTable csTable = new CSTable();
-        csTable.setCreator("neiljianliu");
+        csTable.setCreator("hadoop");
         csTable.setName("table1");
         aContextValue.setValue(csTable);
         aContextKeyValue.setContextValue(aContextValue);
@@ -143,7 +143,7 @@ public class ContextMapTest {
         persistenceContextID.setContextId("10067");
         AContextValue aContextValue = new AContextValue();
         CSTable csTable = new CSTable();
-        csTable.setCreator("johnnwang");
+        csTable.setCreator("hadoop");
         csTable.setName("tableUpdate");
         aContextValue.setValue(csTable);
         aContextKeyValue.setContextValue(aContextValue);

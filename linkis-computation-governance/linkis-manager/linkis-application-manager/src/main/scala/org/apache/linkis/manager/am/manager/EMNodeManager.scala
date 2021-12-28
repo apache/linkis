@@ -19,6 +19,7 @@ package org.apache.linkis.manager.am.manager
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode, Node, ScoreServiceInstance}
+import org.apache.linkis.manager.common.protocol.em.{ECMOperateRequest, ECMOperateResponse}
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 
@@ -65,4 +66,6 @@ trait EMNodeManager {
   def addEMNodeInstance(emNode: EMNode): Unit
 
   def initEMNodeMetrics(emNode: EMNode): Unit
+
+  def executeOperation(ecmNode: EMNode, request: ECMOperateRequest): ECMOperateResponse
 }

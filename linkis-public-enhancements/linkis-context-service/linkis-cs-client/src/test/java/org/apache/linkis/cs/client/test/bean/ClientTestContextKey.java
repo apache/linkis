@@ -25,7 +25,7 @@ import org.apache.linkis.cs.common.entity.source.ContextKey;
 public class ClientTestContextKey implements ContextKey {
 
 
-    private final String key = "cooperyang.txt";
+    private final String key = "hadoop.txt";
 
 
 

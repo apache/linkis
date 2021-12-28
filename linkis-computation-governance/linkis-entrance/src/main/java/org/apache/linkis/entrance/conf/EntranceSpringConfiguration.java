@@ -97,7 +97,7 @@ public class EntranceSpringConfiguration {
     }
 
     /**
-     * Update by peaceWong add CSEntranceInterceptor
+     * add CSEntranceInterceptor
      *
      * @return
      */

@@ -71,7 +71,7 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
     executeLine(engineExecutionContext, newcode)
   }
 
-  override def progress(): Float = {
+  override def progress(taskID: String): Float = {
     if (null != this.engineExecutionContext) {
       this.engineExecutionContext.getCurrentParagraph / this.engineExecutionContext.getTotalParagraph.asInstanceOf[Float]
     } else {
@@ -79,9 +79,12 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
     }
   }
 
-  override def getProgressInfo: Array[JobProgressInfo] = {
+  override def getProgressInfo(taskID: String): Array[JobProgressInfo] = {
     val jobProgressInfo = new ArrayBuffer[JobProgressInfo]()
-    if (0.0f == progress()) {
+    if (null == this.engineExecutionContext) {
+      return jobProgressInfo.toArray
+    }
+    if (0.0f == progress(taskID)) {
       jobProgressInfo += JobProgressInfo(engineExecutionContext.getJobId.getOrElse(""), 1, 1, 0, 0)
     } else {
       jobProgressInfo += JobProgressInfo(engineExecutionContext.getJobId.getOrElse(""), 1, 0, 0, 1)

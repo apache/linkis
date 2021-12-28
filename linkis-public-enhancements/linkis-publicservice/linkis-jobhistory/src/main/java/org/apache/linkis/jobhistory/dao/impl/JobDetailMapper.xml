@@ -44,7 +44,7 @@
     <insert id="insertJobDetail" flushCache="true" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.jobhistory.entity.JobDetail">
         INSERT INTO linkis_ps_job_history_detail(<include refid="insert_job_list"/>)
         VALUES (#{job_history_id},#{result_location},#{result_array_size},#{execution_content},#{job_group_info},
-        #{created_time},#{updated_time},#{status},#{priority})
+        #{created_time},#{updatedTimeMills},#{status},#{priority})
     </insert>
 
     <select id="selectJobDetailByJobDetailId" resultMap="jobDetailMap" >
@@ -96,7 +96,7 @@
     <update id="updateJobDetail" flushCache="true" parameterType="org.apache.linkis.jobhistory.entity.JobDetail">
         UPDATE linkis_ps_job_history_detail
         <trim prefix="set" suffixOverrides=",">
-            <if test="updated_time != null">updated_time = #{updated_time},</if>
+            <if test="updatedTimeMills != null">updated_time = #{updatedTimeMills},</if>
             <if test="result_location != null">result_location = #{result_location},</if>
             <if test="result_array_size != null">result_array_size = #{result_array_size},</if>
             <if test="execution_content!= null">execution_content = #{execution_content},</if>
@@ -105,7 +105,9 @@
             <if test="status != null">status = #{status},</if>
             <if test="priority != null">priority = #{priority},</if>
         </trim>
-        WHERE id =#{id}
+        <![CDATA[
+        WHERE id =#{id} AND updated_time < #{updatedTimeMills}
+        ]]>
     </update>
 
     <select id="selectJobDetailStatusForUpdateByJobDetailId" resultType="java.lang.String">

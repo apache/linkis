@@ -36,7 +36,6 @@
         <module>linkis-manager-commons/linkis-manager-service-common</module>
         <module>linkis-manager-commons/linkis-resource-manager-common</module>
         <module>linkis-manager-persistence</module>
-        <module>linkis-manager-monitor</module>
         <module>linkis-resource-manager</module>
         <module>linkis-application-manager</module>
     </modules>

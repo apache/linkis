@@ -23,6 +23,7 @@ import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
 import org.apache.linkis.manager.dao.LabelManagerMapper;
 import org.apache.linkis.manager.dao.ResourceManagerMapper;
 import org.apache.linkis.manager.entity.Tunple;
+import org.apache.linkis.manager.exception.PersistenceErrorException;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.persistence.ResourceLabelPersistence;
 import org.apache.linkis.manager.util.PersistenceUtils;
@@ -82,11 +83,9 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
     }
 
     @Override
-    // @Transactional(rollbackFor = Throwable.class)
+   // @Transactional(rollbackFor = Throwable.class)
     public void setResourceToLabel(PersistenceLabel label, PersistenceResource persistenceResource) {
         if (label == null || persistenceResource == null) return;
-
-        // TODO: 2020/8/31 id 的包装类
         if (label.getId() <= 0) {
             if (StringUtils.isEmpty(label.getStringValue())) return;
             PersistenceLabel resourceLabel = labelManagerMapper.getLabelByKeyValue(label.getLabelKey(), label.getStringValue());
@@ -97,12 +96,6 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
             }
         }
 
-        //插入resource和relation记录
-        persistenceResource.setCreator(System.getProperty("user.name"));
-        persistenceResource.setUpdator(System.getProperty("user.name"));
-
-        //找到label对应的persistenceResourceId，不存在就插入，存在就更新
-        // TODO: 2020/9/8 多resource的判断，persistenceResource 有id的话，直接update这个
         List <PersistenceResource> resourceByLabels = labelManagerMapper.listResourceByLaBelId(label.getId());
         if (CollectionUtils.isNotEmpty(resourceByLabels)) {
             if(resourceByLabels.size() > 1){
@@ -111,8 +104,14 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
             PersistenceResource resourceToUpdate = Iterables.getFirst(resourceByLabels, null);
             resourceManagerMapper.nodeResourceUpdateByResourceId(resourceToUpdate.getId(), persistenceResource);
         } else {
-            resourceManagerMapper.registerResource(persistenceResource);
-            labelManagerMapper.addLabelsAndResource(persistenceResource.getId(), Collections.singletonList(label.getId()));
+            synchronized (this){
+                List <PersistenceResource> resources = labelManagerMapper.listResourceByLaBelId(label.getId());
+                if(CollectionUtils.isEmpty(resources)) {
+                    persistenceResource.setCreator(persistenceResource.getUpdator());
+                    resourceManagerMapper.registerResource(persistenceResource);
+                    labelManagerMapper.addLabelsAndResource(persistenceResource.getId(), Collections.singletonList(label.getId()));
+                }
+            }
         }
     }
 
@@ -139,12 +138,15 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
     }
 
     @Override
-    // @Transactional(rollbackFor = Throwable.class)
-    public void removeResourceByLabel(PersistenceLabel label) {
+   // @Transactional(rollbackFor = Throwable.class)
+    public void removeResourceByLabel(PersistenceLabel label) throws PersistenceErrorException {
         //label id 不为空，则直接通过label_id 查询，否则通过 value_key and value_content 查询
         int labelId = label.getId() ;
         if (labelId <= 0 ) {
             PersistenceLabel labelByKeyValue = labelManagerMapper.getLabelByKeyValue(label.getLabelKey(), label.getStringValue());
+            if(labelByKeyValue == null){
+                throw new PersistenceErrorException(210001, "label not found, this label may be removed already.");
+            }
             labelId = labelByKeyValue.getId();
         }
         if (labelId > 0) {

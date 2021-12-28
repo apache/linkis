@@ -14,24 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.manager.am.service.em
 
-import java.util
+package org.apache.linkis.manager.am.service.em
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
-import org.apache.linkis.manager.am.exception.{AMErrorCode, AMErrorException}
 import org.apache.linkis.manager.am.manager.EMNodeManager
-import org.apache.linkis.manager.am.vo.EMNodeVo
-import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy
+import org.apache.linkis.manager.common.entity.metrics.NodeHealthyInfo
 import org.apache.linkis.manager.common.entity.node.{AMEMNode, EMNode}
 import org.apache.linkis.manager.common.protocol.em.GetEMInfoRequest
-import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
+import org.apache.linkis.manager.service.common.metrics.MetricsConverter
+import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder
 import org.apache.linkis.message.annotation.Receiver
 import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.springframework.beans.factory.annotation.Autowired
@@ -54,6 +51,12 @@ class DefaultEMInfoService extends EMInfoService with Logging {
 
   @Autowired
   private var nodeMetricManagerPersistence: NodeMetricManagerPersistence = _
+
+  @Autowired
+  private var nodePointerBuilder: NodePointerBuilder = _
+
+  @Autowired
+  private var defaultMetricsConverter: MetricsConverter = _
 
 
   @Receiver
@@ -81,25 +84,25 @@ class DefaultEMInfoService extends EMInfoService with Logging {
   }
 
   override def getEM(serviceInstance: ServiceInstance): EMNode = {
-    if(serviceInstance != null){
+    if (serviceInstance != null) {
       emNodeManager.getEM(serviceInstance)
-    }else null
+    } else {
+      null
+    }
   }
 
-  /**
-   * 目前仅支持用户进行EM健康状态的修改
-   *
-   * @param serviceInstance
-   * @param healthyStatus
-   */
-  override def updateEMInfo(serviceInstance: ServiceInstance, healthyStatus: String): Unit={
+
+  override def updateEMInfo(serviceInstance: ServiceInstance, nodeHealthyInfo: NodeHealthyInfo): Unit = {
     val node = emNodeManager.getEM(serviceInstance)
     if (null != node) {
       val metrics = nodeMetricManagerPersistence.getNodeMetrics(node)
-      if(healthyStatus != null && !healthyStatus.equals(metrics.getHealthy)){
-        metrics.setHealthy(healthyStatus)
-        nodeMetricManagerPersistence.addOrupdateNodeMetrics(metrics)
-        info(s"success to update healthy metric of instance: ${serviceInstance.getInstance},${metrics.getHealthy} => ${healthyStatus} !")
+      if(null != metrics && null != nodeHealthyInfo) {
+        val oldHealthyInfo = defaultMetricsConverter.parseHealthyInfo(metrics)
+        if (! nodeHealthyInfo.getNodeHealthy.equals(oldHealthyInfo.getNodeHealthy)) {
+          metrics.setHealthy(defaultMetricsConverter.convertHealthyInfo(nodeHealthyInfo))
+          nodeMetricManagerPersistence.addOrupdateNodeMetrics(metrics)
+          logger.info(s"success to update healthy metric of instance: ${serviceInstance.getInstance},${metrics.getHealthy}")
+        }
       }
     }
   }

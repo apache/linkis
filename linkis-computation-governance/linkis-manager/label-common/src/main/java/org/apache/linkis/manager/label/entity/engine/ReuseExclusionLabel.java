@@ -44,11 +44,21 @@ public class ReuseExclusionLabel extends GenericLabel {
     }
 
     @ValueSerialNum(0)
-    public ReuseExclusionLabel setInstances(String[] instances) {
+    public ReuseExclusionLabel setInstances(String instances) {
         if (null == getValue()) {
             setValue(new HashMap<>());
         }
-        getValue().put("instances", StringUtils.join(instances,";"));
+        getValue().put("instances", instances);
         return this;
+    }
+
+    @Override
+    public String getStringValue() {
+        return getValue().get("instances");
+    }
+
+    @Override
+    protected void setStringValue(String stringValue) {
+        setInstances(stringValue);
     }
 }

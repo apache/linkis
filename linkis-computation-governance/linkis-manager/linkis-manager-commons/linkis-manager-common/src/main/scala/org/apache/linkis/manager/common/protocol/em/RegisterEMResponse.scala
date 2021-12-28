@@ -19,4 +19,4 @@ package org.apache.linkis.manager.common.protocol.em
 
 import org.apache.linkis.protocol.message.RequestProtocol
 
-case class RegisterEMResponse(isSuccess:Boolean, msg: String = "success") extends RequestProtocol
+case class RegisterEMResponse(isSuccess:Boolean, msg: String = "success") extends RequestProtocol with Serializable

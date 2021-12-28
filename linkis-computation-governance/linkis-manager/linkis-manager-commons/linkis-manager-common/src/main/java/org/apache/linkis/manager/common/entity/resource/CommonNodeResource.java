@@ -21,6 +21,8 @@ import java.util.Date;
 
 public class CommonNodeResource implements NodeResource {
 
+    private Integer id;
+
     private ResourceType resourceType;
 
     private Resource maxResource;
@@ -50,6 +52,15 @@ public class CommonNodeResource implements NodeResource {
         commonNodeResource.setExpectedResource(zeroResource);
         commonNodeResource.setLeftResource(zeroResource);
         return commonNodeResource;
+    }
+
+    @Override
+    public Integer getId() {
+        return id;
+    }
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     @Override

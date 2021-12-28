@@ -43,7 +43,9 @@ class EngineConnOperateResult extends LinkisManagerResult {
 
   def getAsOption[T](key: String): Option[T] = Option(getAs(key))
 
-  def getAs[T](key: String): T = if(getResult != null && result.containsKey(key)) result.get(key).asInstanceOf[T]
-   else null.asInstanceOf[T]
+  def getAs[T](key: String): T = getAs(key, null.asInstanceOf[T])
+
+  def getAs[T](key: String, defaultValue: T): T = if(getResult != null && result.containsKey(key)) result.get(key).asInstanceOf[T]
+   else defaultValue
 
 }

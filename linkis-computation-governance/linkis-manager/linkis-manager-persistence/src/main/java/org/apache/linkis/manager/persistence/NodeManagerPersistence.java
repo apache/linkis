@@ -17,6 +17,7 @@
  
 package org.apache.linkis.manager.persistence;
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.exception.LinkisRetryException;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
 import org.apache.linkis.manager.common.entity.node.Node;
 import org.apache.linkis.manager.exception.PersistenceErrorException;
@@ -34,7 +35,7 @@ public interface NodeManagerPersistence {
      */
     void addNodeInstance(Node node) throws PersistenceErrorException;
 
-    void updateEngineNode(ServiceInstance serviceInstance, Node node) throws PersistenceErrorException;
+    void updateEngineNode(ServiceInstance serviceInstance, Node node) throws PersistenceErrorException, LinkisRetryException;
 
     /**
      * 移除node
@@ -113,4 +114,5 @@ public interface NodeManagerPersistence {
      * @throws PersistenceErrorException
      */
     List<EngineNode> getEngineNodeByEM(ServiceInstance serviceInstance) throws PersistenceErrorException;
+
 }

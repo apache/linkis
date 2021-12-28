@@ -108,7 +108,7 @@ startApp
 
 echo "start-all shell script executed completely"
 
-echo "Start to check all dss microservice"
+echo "Start to check all linkis microservice"
 
 function checkServer() {
 echo "<-------------------------------->"

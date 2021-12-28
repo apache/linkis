@@ -20,7 +20,6 @@ package org.apache.linkis.manager.am.service.engine
 
 import java.util
 import java.util.concurrent.{TimeUnit, TimeoutException}
-
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
@@ -45,7 +44,7 @@ import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
 import org.apache.linkis.manager.label.utils.LabelUtils
-import org.apache.linkis.manager.persistence.{NodeMetricManagerPersistence, ResourceManagerPersistence}
+import org.apache.linkis.manager.persistence.{NodeManagerPersistence, NodeMetricManagerPersistence, ResourceManagerPersistence}
 import org.apache.linkis.manager.service.common.label.{LabelChecker, LabelFilter}
 import org.apache.linkis.message.annotation.Receiver
 import org.apache.linkis.message.builder.ServiceMethodContext
@@ -57,7 +56,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConversions._
+import scala.concurrent.ExecutionContextExecutorService
 import scala.concurrent.duration.Duration
+
+
 
 @Service
 class DefaultEngineCreateService extends AbstractEngineService with EngineCreateService with Logging {
@@ -99,18 +101,32 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
   @Autowired
   private var engineReuseLabelChoosers: util.List[EngineReuseLabelChooser] = _
 
+  @Autowired
+  private var nodeManagerPersistence: NodeManagerPersistence = _
+
+  @Autowired
+  private var engineStopService: EngineStopService = _
+
   def getEngineNode(serviceInstance: ServiceInstance): EngineNode = {
     val engineNode = getEngineNodeManager.getEngineNode(serviceInstance)
-    if (engineNode.getNodeStatus == null){
-      engineNode.setNodeStatus(NodeStatus.values()(nodeMetricManagerPersistence.getNodeMetrics(engineNode).getStatus))
+    if (engineNode != null) {
+      if (engineNode.getNodeStatus == null) {
+        engineNode.setNodeStatus(NodeStatus.values()(nodeMetricManagerPersistence.getNodeMetrics(engineNode).getStatus))
+      }
+      return engineNode
     }
-    if(engineNode != null) return engineNode
     val labels = resourceManagerPersistence.getLabelsByTicketId(serviceInstance.getInstance)
     labels.foreach { label =>
       LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel[Label[_]](label.getLabelKey, label.getStringValue) match {
         case engineInstanceLabel: EngineInstanceLabel =>
           val serviceInstance = ServiceInstance(engineInstanceLabel.getServiceName, engineInstanceLabel.getInstance)
-          return getEngineNodeManager.getEngineNode(serviceInstance)
+          val engineNode = getEngineNodeManager.getEngineNode(serviceInstance)
+          if (engineNode != null) {
+            if (engineNode.getNodeStatus == null) {
+              engineNode.setNodeStatus(NodeStatus.values()(nodeMetricManagerPersistence.getNodeMetrics(engineNode).getStatus))
+            }
+            return engineNode
+          }
         case _ =>
       }
     }
@@ -153,7 +169,10 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     val emScoreNodeList = getEMService().getEMNodes(emLabelList.filter(!_.isInstanceOf[EngineTypeLabel]))
 
     //3. 执行Select  比如负载过高，返回没有负载低的EM，每个规则如果返回为空就抛出异常
-    val choseNode = if (null == emScoreNodeList || emScoreNodeList.isEmpty) null else nodeSelector.choseNode(emScoreNodeList.toArray)
+    val choseNode = if (null == emScoreNodeList || emScoreNodeList.isEmpty) null else {
+      logger.info(s"Suitable ems size is ${emScoreNodeList.length}")
+      nodeSelector.choseNode(emScoreNodeList.toArray)
+    }
     if (null == choseNode || choseNode.isEmpty) {
       throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s" The em of labels${engineCreateRequest.getLabels} not found")
     }
@@ -183,7 +202,7 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
     engineConnAliasLabel.setAlias(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
     labelList.add(engineConnAliasLabel)
-    nodeLabelService.addLabelsToNode(engineNode.getServiceInstance,  labelFilter.choseEngineLabel(LabelUtils.distinctLabel(labelList, fromEMGetEngineLabels(emNode.getLabels))))
+    nodeLabelService.addLabelsToNode(engineNode.getServiceInstance, labelFilter.choseEngineLabel(LabelUtils.distinctLabel(labelList, fromEMGetEngineLabels(emNode.getLabels))))
     if(System.currentTimeMillis - startTime >= timeout && engineCreateRequest.isIgnoreTimeout) {
       info(s"Return a EngineConn $engineNode for request: $engineCreateRequest since the creator set ignoreTimeout=true and maxStartTime is reached.")
       return engineNode
@@ -191,26 +210,26 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     Utils.tryCatch {
       val leftWaitTime = timeout - (System.currentTimeMillis - startTime)
       info(s"Start to wait engineConn($engineNode) to be available, but only ${ByteTimeUtils.msDurationToString(leftWaitTime)} left.")
-      //9 获取启动的引擎信息，并等待引擎的状态变为IDLE，如果等待超时则返回给用户，并抛出异常
+      // 9 获取启动的引擎信息，并等待引擎的状态变为IDLE，如果等待超时则返回给用户，并抛出异常
       Utils.waitUntil(() => ensuresIdle(engineNode, resourceTicketId), Duration(leftWaitTime, TimeUnit.MILLISECONDS))
     } {
       case _: TimeoutException =>
-        if(!engineCreateRequest.isIgnoreTimeout) {
-          info(s"Waiting for $engineNode initialization TimeoutException , now stop it.")
+        if (!engineCreateRequest.isIgnoreTimeout) {
+          logger.info(s"Waiting for engineNode:$engineNode($resourceTicketId) initialization TimeoutException , now stop it.")
           val stopEngineRequest = new EngineStopRequest(engineNode.getServiceInstance, ManagerUtils.getAdminUser)
-          smc.publish(stopEngineRequest)
-          throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, s"Waiting for Engine initialization failure, already waiting $timeout ms TicketId ${resourceTicketId}")
+          engineStopService.asyncStopEngine(stopEngineRequest)
+          throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, s"Waiting for engineNode:$engineNode($resourceTicketId) initialization TimeoutException, already waiting $timeout ms")
         } else {
-          warn(s"Waiting for $engineNode initialization TimeoutException, ignore this exception since the creator set ignoreTimeout=true.")
+          logger.warn(s"Waiting for $engineNode($resourceTicketId) initialization TimeoutException, ignore this exception since the creator set ignoreTimeout=true.")
           return engineNode
         }
       case t: Throwable =>
-        info(s"Waiting for $engineNode initialization failure , now stop it.")
+        logger.info(s"Waiting for $engineNode($resourceTicketId) initialization failure , now stop it.")
         val stopEngineRequest = new EngineStopRequest(engineNode.getServiceInstance, ManagerUtils.getAdminUser)
-        smc.publish(stopEngineRequest)
+        engineStopService.asyncStopEngine(stopEngineRequest)
         throw t
     }
-    info(s"Finished to create Engine for request: $engineCreateRequest and get engineNode $engineNode.")
+    logger.info(s"Finished to create Engine for request: $engineCreateRequest and get engineNode $engineNode. time taken ${System.currentTimeMillis() - startTime}ms")
     engineNode
   }
 
@@ -219,7 +238,9 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     // 4.1 TODO 如果EM资源不足，触发EM回收空闲的engine
     // 4.2 TODO 如果用户资源不足，触发用户空闲的engine回收
     //读取管理台的的配置
-    if(engineCreateRequest.getProperties == null) engineCreateRequest.setProperties(new util.HashMap[String,String]())
+    if (engineCreateRequest.getProperties == null) {
+      engineCreateRequest.setProperties(new util.HashMap[String, String]())
+    }
     val configProp = engineConnConfigurationService.getConsoleConfiguration(labelList)
     val props = engineCreateRequest.getProperties
     if (null != configProp && configProp.nonEmpty) {
@@ -237,8 +258,8 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
       case AvailableResource(ticketId) =>
         (ticketId, resource)
       case NotEnoughResource(reason) =>
-        warn(s"资源不足，请重试: $reason")
-        throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"资源不足，请重试: $reason")
+        warn(s"not engough resource: $reason")
+        throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"not engough resource: : $reason")
     }
   }
 
@@ -257,7 +278,6 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
       val (reason, canRetry) = getStartErrorInfo(metrics.getHeartBeatMsg)
       if(canRetry.isDefined) {
         throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, s"${engineNode.getServiceInstance} ticketID:$resourceTicketId 初始化引擎失败,原因: ${reason}")
-        //throw new AMErrorException(AMConstant.EM_ERROR_CODE, s"初始化引擎失败,原因: ${reason}")
       }
       throw new AMErrorException(AMConstant.EM_ERROR_CODE, s"${engineNode.getServiceInstance} ticketID:$resourceTicketId 初始化引擎失败,原因: ${reason}")
     }

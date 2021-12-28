@@ -17,8 +17,11 @@
  
 package org.apache.linkis.entrance.parser;
 
+import java.util.Date;
+import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.EntranceParser;
+import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.exception.EntranceErrorCode;
 import org.apache.linkis.entrance.exception.EntranceIllegalParamException;
 import org.apache.linkis.entrance.execute.EntranceJob;
@@ -66,6 +69,35 @@ public abstract class AbstractEntranceParser extends EntranceParser {
         return null;
     }
 
+
+    /**
+     * Parse the executing job into a task, such as operations such as updating the task information in the database.(将正在执行的job解析为一个task，用于诸如更新数据库中task信息等操作)
+     * @param job
+     * @return
+     * @throws EntranceIllegalParamException
+     */
+    @Override
+    public JobRequest parseToJobRequest(Job job) throws EntranceIllegalParamException{
+        if (job == null){
+            throw new EntranceIllegalParamException(20002, "job can't be null");
+        }
+        JobRequest jobRequest = ((EntranceJob)job).getJobRequest();
+        if(StringUtils.isEmpty(jobRequest.getReqId())) {
+            jobRequest.setReqId(job.getId());
+        }
+
+        jobRequest.setProgress("" + job.getProgress());
+        jobRequest.setStatus(job.getState().toString());
+        jobRequest.setUpdatedTime(new Date(System.currentTimeMillis()));
+        if(job.isCompleted() && ! job.isSucceed() && job.getErrorResponse() != null
+            && StringUtils.isBlank(jobRequest.getErrorDesc())
+            && StringUtils.isNotEmpty(job.getErrorResponse().message())) {
+            jobRequest.setErrorDesc(job.getErrorResponse().message());
+        }
+        return jobRequest;
+    }
+
+
     /**
      * Parse a jobReq into an executable job(将一个task解析成一个可执行的job)
      *  todo Parse to jobGroup
@@ -94,7 +126,7 @@ public abstract class AbstractEntranceParser extends EntranceParser {
         Map<String, Object> properties = TaskUtils.getRuntimeMap(job.getParams());
         properties.put(GovernanceConstant.TASK_SOURCE_MAP_KEY(), jobReq.getSource());
         job.setEntranceListenerBus(entranceContext.getOrCreateEventListenerBus());
-        job.setEntranceLogListenerBus(entranceContext.getOrCreateLogListenerBus());
+        //job.setEntranceLogListenerBus(entranceContext.getOrCreateLogListenerBus());
         job.setEntranceContext(entranceContext);
         job.setListenerEventBus(null);
         job.setProgress(0f);
@@ -102,7 +134,7 @@ public abstract class AbstractEntranceParser extends EntranceParser {
         Label<?> codeTypeLabel = jobReq.getLabels().stream().filter(l -> l.getLabelKey().equalsIgnoreCase(LabelKeyConstant.CODE_TYPE_KEY)).findFirst().orElseGet(null);
         if (null != codeTypeLabel) {
             CodeParser codeParser = CodeParserFactory.getCodeParser(CodeType.getType(codeTypeLabel.getStringValue()));
-            if (null != codeParser) {
+            if (null != codeParser && !isNoNeedParser(codeTypeLabel)) {
                 job.setCodeParser(codeParser);
             } else {
                 job.setCodeParser(new EmptyCodeParser());
@@ -110,5 +142,11 @@ public abstract class AbstractEntranceParser extends EntranceParser {
         }
         return job;
     }
+
+    private boolean isNoNeedParser(Label<?> codeTypeLabel) {
+      return ! EntranceConfiguration.ENTRANCE_CODEPARSER_ENABLE().getValue();
+    }
+
+
 
 }

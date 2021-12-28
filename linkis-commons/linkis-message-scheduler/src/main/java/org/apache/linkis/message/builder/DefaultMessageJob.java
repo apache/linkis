@@ -156,7 +156,8 @@ public class DefaultMessageJob extends Job implements MessageJob {
         if (unit == null) unit = TimeUnit.NANOSECONDS;
         if (!this.isCompleted()
                 && !SchedulerEventState.isCompleted(SchedulerEventState.apply(waitComplete(true, unit.toNanos(timeout))))) {
-            throw new TimeoutException();
+            String msg = "task: " +  this.requestProtocol + "time out " + timeout;
+            throw new TimeoutException(msg);
         }
         return handleResult();
     }

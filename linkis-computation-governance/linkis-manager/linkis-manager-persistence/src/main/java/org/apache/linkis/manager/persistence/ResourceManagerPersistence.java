@@ -44,6 +44,14 @@ public interface ResourceManagerPersistence {
     List<PersistenceResource> getResourceByLabel(Label label) throws PersistenceErrorException;
 
     /**
+     *
+     * @param labels
+     * @return
+     * @throws PersistenceErrorException
+     */
+    List<PersistenceResource> getResourceByLabels(List<? extends Label> labels) throws PersistenceErrorException;
+
+    /**
      * 根据用户获取资源
      * @param user
      * @return
@@ -106,5 +114,11 @@ public interface ResourceManagerPersistence {
     List<PersistenceLabel> getLabelsByTicketId(String ticketId);
 
     void lockResource(List<Integer> labelIds,PersistenceResource persistenceResource);
+
+    void deleteResourceById(List<Integer> id);
+
+    void deleteResourceRelByResourceId(List<Integer> id);
+
+    PersistenceResource getNodeResourceById (Integer id);
 
 }

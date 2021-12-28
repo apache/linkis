@@ -29,7 +29,7 @@ object ECMPluginConf {
 
   val ECM_MARK_ATTEMPTS = CommonVars("wds.linkis.orchestrator.ecm.mark.apply.attempts", 2)
 
-  val ECM_MARK_APPLY_TIME = CommonVars("wds.linkis.orchestrator.ecm.mark.apply.time", new TimeType("10m"))
+  val ECM_MARK_APPLY_TIME = CommonVars("wds.linkis.orchestrator.ecm.mark.apply.time", new TimeType("11m"))
 
   val ECM_ERROR_CODE = 12001
 

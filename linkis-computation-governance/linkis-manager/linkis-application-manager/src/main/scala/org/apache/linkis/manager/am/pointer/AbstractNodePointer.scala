@@ -76,6 +76,10 @@ abstract class AbstractNodePointer extends NodePointer with Logging {
     *
     * @return
     */
-  override def updateLabels(labels: Array[Label[_]]): Unit = ???
+  override def updateLabels(labels: Array[Label[_]]): Unit = {
+
+  }
+
+
 
 }

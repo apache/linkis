@@ -39,7 +39,7 @@ class DefaultEngineRecycleService extends AbstractEngineService with EngineRecyc
   private var ruleExecutorList: util.List[RecyclingRuleExecutor] = _
 
   @Autowired
-  private var publisher: MessagePublisher = _
+  private var engineStopService: EngineStopService = _
 
   @Receiver
   override def recycleEngine(engineRecyclingRequest: EngineRecyclingRequest): Array[ServiceInstance] = {
@@ -66,7 +66,7 @@ class DefaultEngineRecycleService extends AbstractEngineService with EngineRecyc
     //3. 调用EMService stopEngine
     recyclingNodeSet.foreach { serviceInstance =>
       val stopEngineRequest = new EngineStopRequest(serviceInstance, engineRecyclingRequest.getUser)
-      publisher.publish(stopEngineRequest)
+      engineStopService.asyncStopEngine(stopEngineRequest)
     }
     info(s"Finished to recycle engine ,num ${recyclingNodeSet.size}")
     recyclingNodeSet.toArray

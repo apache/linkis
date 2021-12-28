@@ -15,16 +15,26 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.common.protocol.engine
+package org.apache.linkis.manager.common.protocol
 
-import org.apache.linkis.manager.common.protocol.OperateResponse
-import org.apache.linkis.protocol.message.RequestProtocol
-
-import scala.collection.JavaConverters.mapAsJavaMapConverter
+import org.apache.linkis.governance.common.exception.GovernanceErrorException
 
 
-case class EngineOperateResponse(result: Map[String, Any],
-                                 isError: Boolean = false,
-                                 errorMsg: String = "") extends OperateResponse with RequestProtocol {
-  override def getResult: java.util.Map[String, Any] = result.asJava
+trait OperateRequest {
+  val user: String
+  val parameters: java.util.Map[String, Object]
+}
+
+object OperateRequest {
+
+  val OPERATOR_NAME_KEY = "__operator_name__"
+
+  def getOperationName(parameters: Map[String, Any]): String =
+    parameters.getOrElse(OperateRequest.OPERATOR_NAME_KEY,
+      throw new GovernanceErrorException(20031, s"$OPERATOR_NAME_KEY is not exists.")).asInstanceOf[String]
+
+  def getOperationName(parameters: java.util.Map[String, Any]): String = parameters.get(OperateRequest.OPERATOR_NAME_KEY) match {
+    case v: String => v
+    case _ => throw new GovernanceErrorException(20031, s"$OPERATOR_NAME_KEY is not exists.")
+  }
 }

@@ -5,30 +5,31 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.manager.service.common.pointer
 
-import org.apache.linkis.manager.common.entity.node.EngineNode
+package org.apache.linkis.manager.am.service.em
+
+import org.apache.linkis.manager.am.manager.EMNodeManager
+import org.apache.linkis.manager.common.entity.node.EMNode
 import org.apache.linkis.manager.common.protocol.em.{ECMOperateRequest, ECMOperateResponse}
-import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
-import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 
 
-trait EMNodPointer extends NodePointer {
+@Service
+class DefaultECMOperateService extends ECMOperateService {
 
-  def createEngine(engineBuildRequest: EngineConnBuildRequest): EngineNode
+  @Autowired
+  private var emNodeManager: EMNodeManager = _
 
-  def stopEngine(engineStopRequest: EngineStopRequest): Unit
-
-  def executeOperation(request: ECMOperateRequest): ECMOperateResponse
-
+  override def executeOperation(ecmNode: EMNode, request: ECMOperateRequest): ECMOperateResponse =
+    emNodeManager.executeOperation(ecmNode, request)
 }

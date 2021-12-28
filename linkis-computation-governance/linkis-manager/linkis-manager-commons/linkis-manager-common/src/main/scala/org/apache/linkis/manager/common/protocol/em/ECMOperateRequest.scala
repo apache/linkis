@@ -5,30 +5,31 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.manager.service.common.pointer
 
-import org.apache.linkis.manager.common.entity.node.EngineNode
-import org.apache.linkis.manager.common.protocol.em.{ECMOperateRequest, ECMOperateResponse}
-import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
-import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
+package org.apache.linkis.manager.common.protocol.em
+
+import java.util
+
+import org.apache.linkis.manager.common.protocol.OperateRequest
+import org.apache.linkis.protocol.message.RequestProtocol
+
+import scala.collection.JavaConverters.mapAsJavaMapConverter
 
 
-trait EMNodPointer extends NodePointer {
+case class ECMOperateRequest(user: String,
+                             parameters: util.Map[String, Object]) extends OperateRequest with RequestProtocol {
+  def this(user: String, parameters: Map[String, Any]) = this(user, new util.HashMap[String, Object](parameters.map{case (k, v: Object) => (k, v)}.asJava))
+}
 
-  def createEngine(engineBuildRequest: EngineConnBuildRequest): EngineNode
-
-  def stopEngine(engineStopRequest: EngineStopRequest): Unit
-
-  def executeOperation(request: ECMOperateRequest): ECMOperateResponse
-
+object ECMOperateRequest {
+  val ENGINE_CONN_INSTANCE_KEY = "__engine_conn_instance__"
 }

@@ -31,7 +31,7 @@ public class SchedulerTest {
         DefaultHttpAnswerJob job = new DefaultHttpAnswerJob();
         ContextIDProtocol contextIDProtocol = new ContextIDProtocol();
         RestResponseProtocol responseProtocol = new RestResponseProtocol();
-        contextIDProtocol.setUsername("neiljianliu");
+        contextIDProtocol.setUsername("hadoop");
         job.setRequestProtocol(contextIDProtocol);
         job.setResponseProtocol(responseProtocol);
         scheduler.sumbit(job);

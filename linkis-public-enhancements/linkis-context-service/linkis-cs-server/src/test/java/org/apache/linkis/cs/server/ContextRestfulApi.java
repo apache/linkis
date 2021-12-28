@@ -132,7 +132,7 @@ public class ContextRestfulApi implements CsRestfulParent {
         ContextValue contextValue = new PersistenceContextValue();
         CSTable csTable = new CSTable();
         csTable.setName("table1");
-        csTable.setCreator("neiljianliu");
+        csTable.setCreator("hadoop");
         String encode = jsonSerializer.encode(csTable);
         contextValue.setValue(encode);
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SET, contextID, contextKey, contextValue);
@@ -156,7 +156,7 @@ public class ContextRestfulApi implements CsRestfulParent {
         ContextValue contextValue = new PersistenceContextValue();
         CSTable csTable = new CSTable();
         csTable.setName("tableupdate");
-        csTable.setCreator("neiljianliuupdate");
+        csTable.setCreator("hadoopupdate");
         String encode = jsonSerializer.encode(csTable);
         contextValue.setValue(encode);
         ContextKeyValue contextKeyValue = new PersistenceContextKeyValue();

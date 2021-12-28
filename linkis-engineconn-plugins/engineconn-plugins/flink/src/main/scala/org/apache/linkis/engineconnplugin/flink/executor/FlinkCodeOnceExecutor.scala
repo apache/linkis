@@ -21,19 +21,25 @@ import java.util
 import java.util.concurrent.Future
 import java.util.function.Supplier
 
-import org.apache.linkis.common.utils.{ByteTimeUtils, Utils, VariableUtils}
-import org.apache.linkis.engineconn.once.executor.OnceExecutorExecutionContext
-import org.apache.linkis.engineconnplugin.flink.client.deployment.YarnPerJobClusterDescriptorAdapter
-import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
-import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException
-import org.apache.linkis.governance.common.paser.{CodeParserFactory, CodeType}
-import org.apache.linkis.protocol.constants.TaskConstant
-import org.apache.linkis.scheduler.executer.ErrorExecuteResponse
+import org.apache.calcite.rel.metadata.{JaninoRelMetadataProvider, RelMetadataQueryBase}
 import org.apache.commons.lang.StringUtils
 import org.apache.flink.client.deployment.ClusterClientJobClientAdapter
 import org.apache.flink.client.program.{ClusterClient, ClusterClientProvider}
 import org.apache.flink.table.api.{ResultKind, TableResult}
+import org.apache.flink.table.planner.plan.metadata.FlinkDefaultRelMetadataProvider
 import org.apache.hadoop.yarn.api.records.ApplicationId
+import org.apache.linkis.common.utils.{ByteTimeUtils, Utils, VariableUtils}
+import org.apache.linkis.engineconn.once.executor.OnceExecutorExecutionContext
+import org.apache.linkis.engineconnplugin.flink.client.deployment.YarnPerJobClusterDescriptorAdapter
+import org.apache.linkis.engineconnplugin.flink.client.sql.operation.OperationFactory
+import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultKind.SUCCESS_WITH_CONTENT
+import org.apache.linkis.engineconnplugin.flink.client.sql.parser.{SqlCommand, SqlCommandParser}
+import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
+import org.apache.linkis.engineconnplugin.flink.exception.{FlinkInitFailedException, SqlParseException}
+import org.apache.linkis.governance.common.paser.{CodeParserFactory, CodeType}
+import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.scheduler.executer.ErrorExecuteResponse
+
 
 
 class FlinkCodeOnceExecutor(override val id: Long,
@@ -62,6 +68,7 @@ class FlinkCodeOnceExecutor(override val id: Long,
     future = Utils.defaultScheduler.submit(new Runnable {
       override def run(): Unit = {
         info("Try to execute codes.")
+        RelMetadataQueryBase.THREAD_PROVIDERS.set(JaninoRelMetadataProvider.of(FlinkDefaultRelMetadataProvider.INSTANCE))
         Utils.tryCatch(CodeParserFactory.getCodeParser(CodeType.SQL).parse(codes).filter(StringUtils.isNotBlank).foreach(runCode)){ t =>
           error("Run code failed!", t)
           setResponse(ErrorExecuteResponse("Run code failed!", t))
@@ -83,6 +90,24 @@ class FlinkCodeOnceExecutor(override val id: Long,
     val trimmedCode = StringUtils.trim(code)
     info(s"$getId >> " + trimmedCode)
     val startTime = System.currentTimeMillis
+    val callOpt = SqlCommandParser.getSqlCommandParser.parse(code.trim, true)
+    if(!callOpt.isPresent) throw new SqlParseException("Unknown statement: " + code)
+    val resultSet = callOpt.get().command match {
+      case SqlCommand.SET | SqlCommand.USE_CATALOG | SqlCommand.USE | SqlCommand.SHOW_MODULES |
+        SqlCommand.DESCRIBE_TABLE | SqlCommand.EXPLAIN =>
+        val operation = OperationFactory.getOperationFactory.createOperation(callOpt.get(), flinkEngineConnContext)
+        Some(operation.execute())
+      case command if command.toString.startsWith("SHOW_") =>
+        val operation = OperationFactory.getOperationFactory.createOperation(callOpt.get(), flinkEngineConnContext)
+        Some(operation.execute())
+      case _ => None
+    }
+    resultSet.foreach(r => r.getResultKind match {
+      case SUCCESS_WITH_CONTENT =>
+        info(r.toString)
+        return
+      case _ => return
+    })
     val tableResult = flinkEngineConnContext.getExecutionContext.wrapClassLoader(new Supplier[TableResult]{
       override def get(): TableResult = flinkEngineConnContext.getExecutionContext.getTableEnvironment.executeSql(trimmedCode)
     })

@@ -93,7 +93,7 @@ object EntranceConfiguration {
 
   val ERROR_CODE_FILE = CommonVars("wds.linkis.errorcode.file", "")
 
-  //todo enjoyyin Simple processing first, this log is not filtered, and subsequent optimization is performed.(先简单处理 不过滤这个日志，后续进行优化)
+  //todo Simple processing first, this log is not filtered, and subsequent optimization is performed.(先简单处理 不过滤这个日志，后续进行优化)
   val HIVE_SPECIAL_LOG_INCLUDE = CommonVars("wds.linkis.hive.special.log.include", "org.apache.hadoop.hive.ql.exec.Task")
 
   val SHARE_FILE_PRE = CommonVars("wds.linkis.share.file.prefix", "")

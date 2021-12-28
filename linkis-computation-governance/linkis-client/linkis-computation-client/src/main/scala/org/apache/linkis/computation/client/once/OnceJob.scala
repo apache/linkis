@@ -32,6 +32,7 @@ trait OnceJob extends AbstractLinkisJob {
 
   protected var engineConnId: String = _
   protected var serviceInstance: ServiceInstance = _
+  protected var ticketId: String = _
 
   protected def wrapperEC[T](op: => T): T = wrapperObj(serviceInstance, "Please submit job first.")(op)
 
@@ -45,11 +46,16 @@ trait OnceJob extends AbstractLinkisJob {
     .setInstance(serviceInstance.getInstance).setUser(user).build()).getNodeInfo
   }
 
-  protected def getStatus(nodeInfo: util.Map[String, Any]): String = nodeInfo.get("nodeStatus") match {
-    case status: String => status
-  }
+  protected def getTicketId(nodeInfo: util.Map[String, Any]): String = getAs(nodeInfo, "ticketId")
+
+  protected def getStatus(nodeInfo: util.Map[String, Any]): String = getAs(nodeInfo, "nodeStatus")
 
   protected def getServiceInstance(nodeInfo: util.Map[String, Any]): ServiceInstance = nodeInfo.get("serviceInstance") match {
+    case serviceInstance: util.Map[String, Any] =>
+      ServiceInstance(getAs(serviceInstance, "applicationName"), getAs(serviceInstance, "instance"))
+  }
+
+  protected def getECMServiceInstance(nodeInfo: util.Map[String, Any]): ServiceInstance = nodeInfo.get("ecmServiceInstance") match {
     case serviceInstance: util.Map[String, Any] =>
       ServiceInstance(getAs(serviceInstance, "applicationName"), getAs(serviceInstance, "instance"))
   }

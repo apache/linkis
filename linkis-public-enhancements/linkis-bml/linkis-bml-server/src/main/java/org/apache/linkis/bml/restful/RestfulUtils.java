@@ -58,7 +58,7 @@ public class RestfulUtils {
                                             ResourceService resourceService){
         //String realUser = resourceService.getOwner(resourceId);
         //return user.equals(realUser);
-        //todo cooperyang
+        //todo
         return true;
     }
 

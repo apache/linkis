@@ -25,7 +25,7 @@ public class LinkisClientKeys {
     /**
      * User Not configurable
      */
-    public static final String ADMIN_USERS = "hadoop,root,shangda";
+    public static final String ADMIN_USERS = "hadoop,root";
     public static final String LINKIS_CLIENT_NONCUSTOMIZABLE = "wds.linkis.client.noncustomizable";
     public static final String LINKIS_CLIENT_NONCUSTOMIZABLE_ENABLE_USER_SPECIFICATION = LINKIS_CLIENT_NONCUSTOMIZABLE + ".enable.user.specification"; //allow user to specify submit user
     public static final String LINKIS_CLIENT_NONCUSTOMIZABLE_ENABLE_PROXY_USER = LINKIS_CLIENT_NONCUSTOMIZABLE + ".enable.proxy.user"; //allow user to specify proxy user

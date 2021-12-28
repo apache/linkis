@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.am.pointer
 
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.manager.am.exception.AMErrorException
-import org.apache.linkis.manager.am.service.engine.EngineStopService
 import org.apache.linkis.manager.am.utils.AMUtils
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.node.{EngineNode, Node}
-import org.apache.linkis.manager.common.protocol.engine.{EngineStopRequest, EngineStopResponse, EngineSuicideRequest}
+import org.apache.linkis.manager.common.protocol.em.{ECMOperateRequest, ECMOperateResponse}
+import org.apache.linkis.manager.common.protocol.engine.{EngineStopRequest, EngineStopResponse}
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 import org.apache.linkis.manager.service.common.pointer.EMNodPointer
 
@@ -63,5 +63,10 @@ class DefaultEMNodPointer(val node: Node) extends AbstractNodePointer with EMNod
     }
   }
 
-
+  override def executeOperation(request: ECMOperateRequest): ECMOperateResponse = {
+    getSender.ask(request) match {
+      case response: ECMOperateResponse => response
+      case _ => throw new AMErrorException(AMConstant.ENGINE_ERROR_CODE, "Failed to execute ECM operation.")
+    }
+  }
 }

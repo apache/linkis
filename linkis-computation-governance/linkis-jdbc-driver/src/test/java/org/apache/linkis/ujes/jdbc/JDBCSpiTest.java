@@ -33,7 +33,7 @@ public class JDBCSpiTest {
     private static UJESSQLConnection conn;
     public static UJESSQLConnection getConnection() throws ClassNotFoundException, SQLException {
         Class.forName("org.apache.linkis.ujes.jdbc.UJESSQLDriver");
-        conn = (UJESSQLConnection) DriverManager.getConnection("jdbc:linkis://127.0.0.1:9001", "shanhuang", "Abcd1234@");
+        conn = (UJESSQLConnection) DriverManager.getConnection("jdbc:linkis://127.0.0.1:9001", "root", "123456");
         return conn;
     }
     @Test

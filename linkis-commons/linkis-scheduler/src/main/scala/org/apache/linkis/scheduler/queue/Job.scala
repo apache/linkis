@@ -122,7 +122,6 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   }
 
   /**
-    * updated by enjoyyin
     * After some jobs call kill, they cannot be killed correctly, causing the state to not be flipped.（一些job调用kill之后，不能被正确kill，导致状态不能翻转）
     */
   protected def forceCancel(t: Throwable): Unit = {

@@ -71,11 +71,12 @@ public class YarnPerJobClusterDescriptorAdapter extends ClusterDescriptorAdapter
 		return false;
 	}
 
-    public void deployCluster(JobID jobId, ClusterClient<ApplicationId> clusterClient) {
+    public void deployCluster(JobID jobId, ClusterClient<ApplicationId> clusterClient) throws JobExecutionException {
 		this.clusterClient = clusterClient;
 		this.setJobId(jobId);
 		this.clusterID = clusterClient.getClusterId();
 		webInterfaceUrl = clusterClient.getWebInterfaceURL();
+		bindApplicationId();
 	}
 
 }

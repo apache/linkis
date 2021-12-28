@@ -147,3 +147,5 @@ linkis-public-enhancements/linkis-publicservice/linkis-error-code/target/
 linkis-public-enhancements/target/
 linkis-spring-cloud-services/linkis-service-gateway/target/
 linkis-spring-cloud-services/target/
+
+target/

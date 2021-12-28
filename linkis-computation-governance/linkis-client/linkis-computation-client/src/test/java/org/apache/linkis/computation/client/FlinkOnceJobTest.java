@@ -19,6 +19,9 @@ package org.apache.linkis.computation.client;
 
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.computation.client.once.simple.SubmittableSimpleOnceJob;
+import org.apache.linkis.computation.client.operator.impl.EngineConnLogOperator;
+import org.apache.linkis.computation.client.operator.impl.EngineConnLogs;
+import org.apache.linkis.computation.client.operator.impl.EngineConnMetricsOperator;
 import org.apache.linkis.computation.client.utils.LabelKeyUtils;
 
 public class FlinkOnceJobTest {
@@ -65,6 +68,13 @@ public class FlinkOnceJobTest {
                 .build();
         onceJob.submit();
         System.out.println(onceJob.getId());
+        EngineConnLogOperator logOperator = (EngineConnLogOperator) onceJob.getOperator(EngineConnLogOperator.OPERATOR_NAME());
+        EngineConnMetricsOperator metricsOperator = (EngineConnMetricsOperator) onceJob.getOperator(EngineConnMetricsOperator.OPERATOR_NAME());
+        logOperator.setFromLine(1);
+        logOperator.setPageSize(100);
+        EngineConnLogs logs = (EngineConnLogs) logOperator.apply();
+        System.out.println("logPath: " + logs.logPath() + ", logs: " + logs.logs());
+        System.out.println("Metrics: " + metricsOperator.apply());
         onceJob.waitForCompleted();
         System.exit(0);
     }

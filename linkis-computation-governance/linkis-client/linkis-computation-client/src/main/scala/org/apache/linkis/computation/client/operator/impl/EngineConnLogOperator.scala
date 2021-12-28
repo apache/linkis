@@ -20,10 +20,15 @@ package org.apache.linkis.computation.client.operator.impl
 
 import java.util
 
-import org.apache.commons.lang.StringUtils
-import org.apache.linkis.computation.client.once.action.EngineConnOperateAction
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.computation.client.LinkisJob
+import org.apache.linkis.computation.client.once.action.{ECMOperateAction, EngineConnOperateAction}
 import org.apache.linkis.computation.client.once.result.EngineConnOperateResult
+import org.apache.linkis.computation.client.once.simple.SubmittableSimpleOnceJob
 import org.apache.linkis.computation.client.operator.OnceJobOperator
+import org.apache.linkis.computation.client.utils.LabelKeyUtils
+import org.apache.linkis.ujes.client.exception.UJESJobException
+import org.apache.commons.lang.StringUtils
 
 
 class EngineConnLogOperator extends OnceJobOperator[EngineConnLogs]  {
@@ -32,7 +37,14 @@ class EngineConnLogOperator extends OnceJobOperator[EngineConnLogs]  {
   private var fromLine = 1
   private var ignoreKeywords: String = _
   private var onlyKeywords: String = _
+  private var engineConnType: String = _
   private var lastRows = 0
+  private var ecmServiceInstance: ServiceInstance = _
+  private var ecInstance: String = _
+
+  def setEngineConnType(engineConnType: String): Unit = this.engineConnType = engineConnType
+
+  def setECMServiceInstance(serviceInstance: ServiceInstance): Unit = ecmServiceInstance = serviceInstance
 
   def setPageSize(pageSize: Int): Unit = this.pageSize = pageSize
 
@@ -44,21 +56,55 @@ class EngineConnLogOperator extends OnceJobOperator[EngineConnLogs]  {
 
   def setLastRows(lastRows: Int): Unit = this.lastRows = lastRows
 
+  /**
+    * Try to fetch logs from ECM.
+    * @return
+    */
+  override protected def createOperateActionBuilder(): EngineConnOperateAction.Builder = {
+    if (ecInstance == null) {
+      ecInstance = getServiceInstance.getInstance
+      if (ecmServiceInstance == null) {
+        throw new UJESJobException(20310, "ecmServiceInstance must be set!")
+      }
+      setServiceInstance(ecmServiceInstance)
+    }
+    ECMOperateAction.newBuilder()
+  }
+
+
+  override def initOperator[U <: LinkisJob](job: U): Unit = job match {
+    case submittableSimpleOnceJob: SubmittableSimpleOnceJob =>
+      this.ecmServiceInstance = submittableSimpleOnceJob.getECMServiceInstance
+      this.engineConnType = submittableSimpleOnceJob.createEngineConnAction.getRequestPayloads.get("labels") match {
+        case labels: util.Map[String, String] => labels.get(LabelKeyUtils.ENGINE_TYPE_LABEL_KEY)
+      }
+    case _ =>
+  }
+
   override protected def addParameters(builder: EngineConnOperateAction.Builder): Unit = {
     builder.addParameter("pageSize", pageSize)
     builder.addParameter("fromLine", fromLine)
-    if(StringUtils.isNotEmpty(ignoreKeywords))
+    builder.addParameter("ticketId", getTicketId)
+    builder.addParameter("creator", getUser)
+    builder.addParameter("engineConnInstance", ecInstance)
+    if (StringUtils.isNotEmpty(engineConnType)) {
+      builder.addParameter("engineConnType", engineConnType)
+    }
+    if (StringUtils.isNotEmpty(ignoreKeywords)) {
       builder.addParameter("ignoreKeywords", ignoreKeywords)
-    if(StringUtils.isNotEmpty(onlyKeywords))
+    }
+    if (StringUtils.isNotEmpty(onlyKeywords)) {
       builder.addParameter("onlyKeywords", onlyKeywords)
-    if(lastRows > 0)
+    }
+    if (lastRows > 0) {
       builder.addParameter("lastRows", lastRows)
+    }
   }
 
   override protected def resultToObject(result: EngineConnOperateResult): EngineConnLogs = {
-    val rows: Int = result.getAs("rows")
-    fromLine += rows
-    EngineConnLogs(result.getAs("logPath"), result.getAs("logs"),  rows)
+    val endLine: Int = result.getAs("endLine", 0)
+    fromLine = endLine + 1
+    EngineConnLogs(result.getAs("logPath"), result.getAs("logs"), endLine)
   }
 
   override def getName: String = EngineConnLogOperator.OPERATOR_NAME
@@ -69,4 +115,4 @@ object EngineConnLogOperator {
   val OPERATOR_NAME = "engineConnLog"
 }
 
-case class EngineConnLogs(logPath: String, logs: util.ArrayList[String], rows: Int)
+case class EngineConnLogs(logPath: String, logs: util.ArrayList[String], endLine: Int)

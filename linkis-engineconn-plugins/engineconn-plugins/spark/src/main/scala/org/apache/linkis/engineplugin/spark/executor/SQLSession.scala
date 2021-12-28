@@ -113,7 +113,7 @@ object SQLSession extends Logging {
       throw new SparkEngineException(40001, s"read record  exception", t)
     }
     logger.warn(s"Time taken: ${System.currentTimeMillis() - startTime}, Fetched $index row(s).")
-    //Update by peaceWong to register TempTable
+    //to register TempTable
     //Utils.tryAndErrorMsg(CSTableRegister.registerTempTable(engineExecutorContext, writer, alias, columns))("Failed to register tmp table:")
     engineExecutionContext.appendStdout(s"${EngineUtils.getName} >> Time taken: ${System.currentTimeMillis() - startTime}, Fetched $index row(s).")
     engineExecutionContext.sendResultSet(writer)

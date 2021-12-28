@@ -17,10 +17,10 @@
 
 package org.apache.linkis.engineconn.acessible.executor.operator.impl
 
-import org.apache.linkis.engineconn.acessible.executor.operator.Operator
 import org.apache.linkis.engineconn.common.exception.EngineConnException
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.YarnExecutor
+import org.apache.linkis.manager.common.operator.Operator
 
 
 class EngineConnApplicationInfoOperator extends Operator {

@@ -49,7 +49,7 @@ public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAd
         } catch (Exception e) {
             throw new JobExecutionException(ExceptionUtils.getRootCauseMessage(e), e);
         }
-
+        bindApplicationId();
     }
 
     public boolean initJobId() throws Exception {

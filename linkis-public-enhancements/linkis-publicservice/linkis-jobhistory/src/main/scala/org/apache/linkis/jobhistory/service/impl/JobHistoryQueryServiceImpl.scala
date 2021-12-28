@@ -148,7 +148,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
             jobHistoryMapper.updateJobHistory(jobUpdate)
 
             // todo
-            /*//updated by shanhuang to write cache
+            /*//to write cache
             if (TaskStatus.Succeed.toString.equals(jobReq.getStatus) && queryCacheService.needCache(jobReq)) {
               info("Write cache for task: " + jobReq.getId)
               jobReq.setExecutionCode(executionCode)

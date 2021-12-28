@@ -21,10 +21,7 @@ package org.apache.linkis.eureka.conf;
 //import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 //import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-/**
- * created by cooperyang on 2020/7/29
- * Description:
- */
+
 /*@EnableWebSecurity
 public class EurekaSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override

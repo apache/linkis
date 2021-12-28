@@ -23,9 +23,7 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.server.JMap
 
-/**
-  * created by cooperyang on 2019/1/9.
-  */
+
 class GatewayRoute {
 
   private var requestURI: String = _

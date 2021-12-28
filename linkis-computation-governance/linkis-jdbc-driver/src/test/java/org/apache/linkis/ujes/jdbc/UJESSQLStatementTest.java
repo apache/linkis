@@ -59,10 +59,10 @@ public class UJESSQLStatementTest {
     @Before
     public void setParams(){
         sql = "show tables";
-        sqlCreate = "CREATE TABLE if not exists johnnwang_qml.test1236 as select * from ai_fmi_ods.1000_10";
-        sqlInsert = "insert into johnnwang_qml.test1236 select * from ai_fmi_ods.1000_10 limit 10";
-        sqlSelect = "select * from johnnwang_qml.test1236";
-        sqlDrop = "drop table johnnwang_qml.test1236";
+        sqlCreate = "CREATE TABLE if not exists db.test1236 as select * from ai_fmi_ods.1000_10";
+        sqlInsert = "insert into db.test1236 select * from ai_fmi_ods.1000_10 limit 10";
+        sqlSelect = "select * from db.test1236";
+        sqlDrop = "drop table db.test1236";
         maxRows = 100;
         queryTimeout = 10000;
     }

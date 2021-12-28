@@ -30,6 +30,7 @@ class YarnSessionClusterDescriptorAdapter(executionContext: ExecutionContext) ex
     clusterClient = clusterClientProvider.getClusterClient
     clusterID = clusterClient.getClusterId
     webInterfaceUrl = clusterClient.getWebInterfaceURL
+    bindApplicationId()
   }
 
   override def setJobId(jobId: JobID): Unit = super.setJobId(jobId)

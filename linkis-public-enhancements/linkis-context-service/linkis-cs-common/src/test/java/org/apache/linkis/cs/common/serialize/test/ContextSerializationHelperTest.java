@@ -42,11 +42,11 @@ public class ContextSerializationHelperTest {
         ContextSerializationHelper contextSerializationHelper = ContextSerializationHelper.getInstance();
 
         CSTable csTable = new CSTable();
-        csTable.setCreator("neiljianliu");
+        csTable.setCreator("hadoop");
         csTable.setName("table1");
 
         CSTable csTable1 = new CSTable();
-        csTable1.setCreator("neiljianliu");
+        csTable1.setCreator("hadoop");
         csTable1.setName("table2");
         CSTableMetadataContextHistory csTableMetadataContextHistory = new CSTableMetadataContextHistory();
         csTableMetadataContextHistory.setTable(csTable);
@@ -62,11 +62,11 @@ public class ContextSerializationHelperTest {
         ContextSerializationHelper contextSerializationHelper = ContextSerializationHelper.getInstance();
         List<Table> tables = new ArrayList<>();
         CSTable csTable = new CSTable();
-        csTable.setCreator("neiljianliu");
+        csTable.setCreator("hadoop");
         csTable.setName("table1");
 
         CSTable csTable1 = new CSTable();
-        csTable1.setCreator("neiljianliu");
+        csTable1.setCreator("hadoop");
         csTable1.setName("table2");
         tables.add(csTable);
         tables.add(csTable1);
@@ -104,11 +104,11 @@ public class ContextSerializationHelperTest {
         LinkisHAWorkFlowContextID haWorkFlowContextID = new LinkisHAWorkFlowContextID();
         haWorkFlowContextID.setBackupInstance("test123");
         haWorkFlowContextID.setInstance("test1234");
-        haWorkFlowContextID.setUser("johnnwang");
+        haWorkFlowContextID.setUser("hadoop");
         haWorkFlowContextID.setContextId("hello");
         haWorkFlowContextID.setFlow("hellof");
         String json = contextSerializationHelper.serialize(haWorkFlowContextID);
-        String objstr = "{\"type\": \"HAWorkFlowContextID\",\"value\": \"{\\n  \\\"instance\\\": null,\\n  \\\"backupInstance\\\": null,\\n  \\\"user\\\": \\\"neiljianliu\\\",\\n  \\\"workspaceID\\\": null,\\n  \\\"project\\\": \\\"test01_neiljianliu\\\",\\n  \\\"flow\\\": \\\"dedede\\\",\\n  \\\"contextId\\\": \\\"24-24--YmRwZHdzMTEwMDAxOjkxMTY\\\\u003dYmRwZHdzMTEwMDAxOjkxMTY\\\\u003d85197\\\",\\n  \\\"version\\\": \\\"v000001\\\",\\n  \\\"env\\\": null\\n}\"}\n";
+        String objstr = "{\"type\": \"HAWorkFlowContextID\",\"value\": \"{\\n  \\\"instance\\\": null,\\n  \\\"backupInstance\\\": null,\\n  \\\"user\\\": \\\"hadoop\\\",\\n  \\\"workspaceID\\\": null,\\n  \\\"project\\\": \\\"test01_neiljianliu\\\",\\n  \\\"flow\\\": \\\"dedede\\\",\\n  \\\"contextId\\\": \\\"24-24--YmRwZHdzMTEwMDAxOjkxMTY\\\\u003dYmRwZHdzMTEwMDAxOjkxMTY\\\\u003d85197\\\",\\n  \\\"version\\\": \\\"v000001\\\",\\n  \\\"env\\\": null\\n}\"}\n";
         Object deserialize = contextSerializationHelper.deserialize(objstr);
         System.out.println(json);
     }
@@ -148,7 +148,7 @@ public class ContextSerializationHelperTest {
        /* LinkisHAWorkFlowContextID haWorkFlowContextID = new LinkisHAWorkFlowContextID();
         haWorkFlowContextID.setBackupInstance("test123");
         haWorkFlowContextID.setInstance("test1234");
-        haWorkFlowContextID.setUser("johnnwang");
+        haWorkFlowContextID.setUser("hadoop");
         haWorkFlowContextID.setContextId("hello");
         haWorkFlowContextID.setFlow("hellof");
         String json = contextSerializationHelper.serialize(haWorkFlowContextID);

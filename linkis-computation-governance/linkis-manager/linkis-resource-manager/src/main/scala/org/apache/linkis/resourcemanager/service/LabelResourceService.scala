@@ -17,6 +17,8 @@
  
 package org.apache.linkis.resourcemanager.service
 
+import java.util
+
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource
 import org.apache.linkis.manager.common.entity.resource.NodeResource
 import org.apache.linkis.manager.label.entity.Label
@@ -26,20 +28,18 @@ abstract class LabelResourceService {
 
   def getLabelResource(label: Label[_]): NodeResource
 
-  def setLabelResource(label: Label[_], nodeResource: NodeResource) : Unit
+  def setLabelResource(label: Label[_], nodeResource: NodeResource, source: String) : Unit
 
   /**
-   * 方法同 setLabelResource 只适用于启动引擎申请资源后设置engineConn资源
    * this function is the same to setLabelResource
    * @param label
    * @param nodeResource
    */
-  def setEngineConnLabelResource(label: Label[_], nodeResource: NodeResource) : Unit
+  def setEngineConnLabelResource(label: Label[_], nodeResource: NodeResource, source: String) : Unit
 
   def getResourcesByUser(user: String) : Array[NodeResource]
 
-  // 需要通过AM传入的Label（用户的Label和EMLabel）从LabelResource拿到所有关系的Label：里面包含所有的单Label和CombineLabel。
-  def enrichLabels(labelContainer: RMLabelContainer) : RMLabelContainer
+  def enrichLabels(labels: util.List[Label[_]]) : RMLabelContainer
 
   def removeResourceByLabel(label: Label[_]): Unit
 

@@ -94,7 +94,6 @@
     <properties>
         <apache.commons-lang3.version>3.9</apache.commons-lang3.version>
         <junit.version>4.13.1</junit.version>
-        <log4j2.version>2.13.3</log4j2.version>
     </properties>
 
     <build>

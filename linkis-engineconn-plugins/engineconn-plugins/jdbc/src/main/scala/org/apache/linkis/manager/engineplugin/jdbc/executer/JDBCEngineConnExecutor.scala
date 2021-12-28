@@ -54,6 +54,11 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]](2)
   private var connection: Connection = null
 
+  override def init(): Unit = {
+    super.init()
+    connectionManager.startRefreshKerberosLoginStatusThread()
+  }
+
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
     val realCode = code.trim()
     val properties = engineExecutorContext.getProperties.asInstanceOf[util.Map[String, String]]
@@ -64,6 +69,11 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
       properties.put("jdbc.url", globalConfig.get("wds.linkis.jdbc.connect.url"))
       properties.put("jdbc.username", globalConfig.get("wds.linkis.jdbc.username"))
       properties.put("jdbc.password", globalConfig.get("wds.linkis.jdbc.password"))
+      properties.put("jdbc.auth.type", globalConfig.get("wds.linkis.jdbc.auth.type"))
+      properties.put("jdbc.principal", globalConfig.get("wds.linkis.jdbc.principal"))
+      properties.put("jdbc.keytab.location", globalConfig.get("wds.linkis.jdbc.keytab.location"))
+      properties.put("jdbc.proxy.user.property", globalConfig.getOrDefault("wds.linkis.jdbc.proxy.user.property", ""))
+      properties.put("jdbc.proxy.user", globalConfig.getOrDefault("wds.linkis.jdbc.proxy.user", EngineConnObject.getEngineCreationContext.getUser))
     }
 
     info(s"jdbc client begins to run jdbc code:\n ${realCode.trim}")
@@ -137,11 +147,11 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     }
   }
 
-  override def getProgressInfo: Array[JobProgressInfo] = Array.empty[JobProgressInfo]
+  override def getProgressInfo(taskID: String): Array[JobProgressInfo] = Array.empty[JobProgressInfo]
 
   override protected def callback(): Unit = {}
 
-  override def progress(): Float = {
+  override def progress(taskID: String): Float = {
     0
   }
 
@@ -152,6 +162,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     if (connection != null) {
       connection.close()
     }
+    connectionManager.shutdownRefreshKerberosLoginService()
   }
 
   override def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = null

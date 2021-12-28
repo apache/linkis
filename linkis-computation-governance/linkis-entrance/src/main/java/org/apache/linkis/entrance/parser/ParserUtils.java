@@ -17,7 +17,9 @@
  
 package org.apache.linkis.entrance.parser;
 
+import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.entrance.conf.EntranceConfiguration$;
+import org.apache.linkis.entrance.utils.CommonLogPathUtils;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
 import org.apache.linkis.manager.label.utils.LabelUtil;
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.linkis.storage.utils.StorageUtils;
 
 public final class ParserUtils {
 
@@ -53,12 +56,6 @@ public final class ParserUtils {
         }
         if (StringUtils.isEmpty(logPathPrefix)){
             logPathPrefix = EntranceConfiguration$.MODULE$.DEFAULT_LOGPATH_PREFIX().getValue();
-            String umUser = jobRequest.getSubmitUser();
-            if (logPathPrefix.endsWith("/")){
-                logPathPrefix = logPathPrefix + umUser;
-            }else{
-                logPathPrefix = logPathPrefix + "/" + umUser;
-            }
         }
         /*Determine whether logPathPrefix is terminated with /, if it is, delete */
         /*判断是否logPathPrefix是否是以 / 结尾， 如果是，就删除*/
@@ -69,8 +66,17 @@ public final class ParserUtils {
         SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
         String dateString = dateFormat.format(date);
         String creator = LabelUtil.getUserCreator(jobRequest.getLabels())._2;
-        logPath = logPathPrefix + "/" + "log" +
+        String umUser = jobRequest.getSubmitUser();
+        FsPath lopPrefixPath = new FsPath(logPathPrefix);
+        if (StorageUtils.HDFS().equals(lopPrefixPath.getFsType())) {
+            String commonLogPath =  logPathPrefix + "/" + "log" +
+                "/" + dateString + "/" + creator;
+            logPath = commonLogPath + "/" + umUser + "/" + jobRequest.getId() + ".log";
+            CommonLogPathUtils.buildCommonPath(commonLogPath);
+        } else {
+            logPath = logPathPrefix + "/" + umUser + "/" + "log" +
                 "/" + creator + "/" + dateString + "/" + jobRequest.getId() + ".log";
+        }
         jobRequest.setLogPath(logPath);
     }
 

@@ -35,12 +35,5 @@ abstract class EntranceParser {
   def parseToJob(jobReq: JobRequest): Job
 
   @throws[ErrorException]
-  def parseToJob(job: Job): JobRequest = job match {
-    case entranceJob: EntranceJob => {
-      entranceJob.getJobRequest
-    }
-    case _ =>
-      null
-  }
-
+  def parseToJobRequest(job: Job): JobRequest
 }

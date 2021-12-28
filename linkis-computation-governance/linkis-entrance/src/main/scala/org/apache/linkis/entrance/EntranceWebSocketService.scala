@@ -159,12 +159,6 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
     //executeResponseMsg
   }
 
-  private def pushLog(log:String, job:Job):Unit = {
-    if(entranceServer.getEntranceContext.getOrCreateEventListenerBus != null)
-      entranceServer.getEntranceContext.getOrCreateLogListenerBus.post(EntrancePushLogEvent(job, log))
-  }
-
-
   def dealLog(event: ServerEvent, id:String):Message = {
     var retMessage:Message = null
     val realID = ZuulEntranceUtils.parseExecID(id)(3)

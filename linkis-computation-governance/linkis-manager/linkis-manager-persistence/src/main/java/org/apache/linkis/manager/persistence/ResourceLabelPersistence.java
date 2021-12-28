@@ -19,6 +19,7 @@ package org.apache.linkis.manager.persistence;
 import org.apache.linkis.manager.common.entity.label.LabelKeyValue;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
+import org.apache.linkis.manager.exception.PersistenceErrorException;
 import org.apache.linkis.manager.label.entity.Label;
 
 import java.util.List;
@@ -69,7 +70,7 @@ public interface ResourceLabelPersistence {
      *
      * @param label
      */
-    void removeResourceByLabel(PersistenceLabel label);
+    void removeResourceByLabel(PersistenceLabel label) throws PersistenceErrorException;
 
 
     /**

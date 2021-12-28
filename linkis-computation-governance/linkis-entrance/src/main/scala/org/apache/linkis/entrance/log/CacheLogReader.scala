@@ -24,11 +24,7 @@ import org.apache.linkis.common.io.{Fs, FsPath}
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.storage.FSFactory
 
-class CacheLogReader(logPath:String ,
-                              charset:String,
-                              sharedCache: Cache,
-                              user: String)
-  extends LogReader(charset:String){
+class CacheLogReader(logPath: String, charset: String, sharedCache: Cache, user: String) extends LogReader(charset: String) {
 
   val lock:Object = new Object
 
@@ -48,8 +44,7 @@ class CacheLogReader(logPath:String ,
         fileSystem.init(new util.HashMap[String, String]())
       }
     }
-    val inputStream:InputStream = fileSystem.read(new FsPath(logPath))
-    //val inputStream = new FileInputStream(logPath)
+    val inputStream: InputStream = fileSystem.read(new FsPath(logPath))
     inputStream
   }
 
@@ -69,24 +64,14 @@ class CacheLogReader(logPath:String ,
     val min = sharedCache.cachedLogs.min
     val max = sharedCache.cachedLogs.max
     if(fromLine > max) return 0
-    var from = fromLine
-    val to = if(fromLine >= min) {
-      if(size >= 0 && max >= fromLine + size) fromLine + size else max + 1
+    val from = fromLine
+    val to = if (fromLine >= min) {
+      if (size >= 0 && max >= fromLine + size) fromLine + size else max + 1
     } else {
       //If you are getting it from a file, you don't need to read the cached data again. In this case, you can guarantee that the log will not be missing.
       //如果是从文件中进行进行获取，就不需要对缓存的数据再进行读取,这样的话，可以保证日志是不会缺失的
       val read = super.readLog(deal, fromLine, size)
       return read
-//      from = min
-//      if(size < 0) max + 1
-//      else {
-//        if(read >= size) return size
-//        //如果是从
-//        //val left = size - read
-//        //deal("\n")
-//
-//        //if(max >= min + left) min + left else max + 1
-//      }
     }
 
     (from until to) map sharedCache.cachedLogs.get  foreach deal
@@ -110,5 +95,3 @@ class CacheLogReader(logPath:String ,
     closed = true
   }
 }
-
-

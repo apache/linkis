@@ -26,6 +26,8 @@ import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalP
 import org.apache.linkis.entrance.execute.EntranceJob
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.entrance.{JobQueuingTimeoutLabel, JobRunningTimeoutLabel}
+
 
 import scala.collection.JavaConversions._
 
@@ -79,15 +81,18 @@ class JobTimeoutManager extends Logging {
         val queuingTime = currentTime - job.getScheduledTime / 1000
         val runningTime = currentTime - job.getStartTime / 1000
         if (!job.isCompleted) {
-          val jobQueuingTimeoutOpt = job.jobRequest.getLabels.find(i => i.getLabelKey == LabelKeyConstant.JOB_QUEUING_TIMEOUT_KEY)
-          val jobRunningTimeoutOpt = job.jobRequest.getLabels.find(i => i.getLabelKey == LabelKeyConstant.JOB_RUNNING_TIMEOUT_KEY)
-          if (jobQueuingTimeoutOpt.isDefined) {
-            warn(s"Job queuing timeout, cancel it now: ${job.getId()}")
-            if (queuingTime >= jobQueuingTimeoutOpt.get.getStringValue.toInt) job.cancel()
-          }
-          if (jobRunningTimeoutOpt.isDefined) {
-            warn(s"Job running timeout, cancel it now: ${job.getId()}")
-            if (runningTime >= jobQueuingTimeoutOpt.get.getStringValue.toInt) job.cancel()
+          job.jobRequest.getLabels foreach {
+            case queueTimeOutLabel: JobQueuingTimeoutLabel =>
+              if (queueTimeOutLabel.getQueuingTimeout > 0 && queuingTime >= queueTimeOutLabel.getQueuingTimeout) {
+                warn(s"Job queuing timeout, cancel it now: ${job.getId()}")
+                job.cancel()
+              }
+            case jobRunningTimeoutLabel: JobRunningTimeoutLabel =>
+              if (jobRunningTimeoutLabel.getRunningTimeout > 0 && runningTime >= jobRunningTimeoutLabel.getRunningTimeout) {
+                warn(s"Job running timeout, cancel it now: ${job.getId()}")
+                job.cancel()
+              }
+            case _ =>
           }
         }
       }

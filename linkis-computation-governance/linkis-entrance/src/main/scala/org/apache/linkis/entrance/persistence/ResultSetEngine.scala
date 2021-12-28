@@ -17,12 +17,12 @@
  
 package org.apache.linkis.entrance.persistence
 
-import org.apache.linkis.entrance.job.EntranceExecuteRequest
 import org.apache.linkis.scheduler.executer.OutputExecuteResponse
+import org.apache.linkis.scheduler.queue.Job
 
 
 abstract class ResultSetEngine {
 
-  def persistResultSet(entranceExe: EntranceExecuteRequest, executeCompleted: OutputExecuteResponse): String
+  def persistResultSet(job: Job, executeCompleted: OutputExecuteResponse): String
 
 }

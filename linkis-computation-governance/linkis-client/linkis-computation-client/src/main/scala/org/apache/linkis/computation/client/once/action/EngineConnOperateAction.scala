@@ -37,7 +37,7 @@ object EngineConnOperateAction {
 
     private var parameters: util.Map[String, Any] = new util.HashMap[String, Any]
 
-    def operatorName(operatorName: String): this.type  = {
+    def operatorName(operatorName: String): this.type = {
       this.operatorName = operatorName
       this
     }
@@ -55,8 +55,11 @@ object EngineConnOperateAction {
       this
     }
 
+    protected def newEngineConnOperateAction(): EngineConnOperateAction =
+      new EngineConnOperateAction
+
     override protected def createGetEngineConnAction(): EngineConnOperateAction = {
-      val action = new EngineConnOperateAction
+      val action = newEngineConnOperateAction()
       addParameter(OPERATOR_NAME_KEY, operatorName)
       action.addRequestPayload("parameters", parameters)
       action

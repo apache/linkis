@@ -17,21 +17,28 @@
  
 package org.apache.linkis.engineconnplugin.flink.client.deployment;
 
-import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
-import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration;
-import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
-import java.io.Closeable;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
+import org.apache.commons.lang.StringUtils;
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.JobStatus;
 import org.apache.flink.client.deployment.ClusterRetrieveException;
 import org.apache.flink.client.program.ClusterClient;
+import org.apache.flink.configuration.Configuration;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.yarn.YarnClusterDescriptor;
+import org.apache.flink.yarn.configuration.YarnConfigOptions;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
+import org.apache.hadoop.yarn.util.ConverterUtils;
+import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
+import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration;
+import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.Closeable;
+import java.lang.reflect.Method;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 /**
  * Cluster Descriptor Adapter, adaptable with datastream/sql tasks(集群交互适配器，适合datastream、sql方式作业)
@@ -128,6 +135,37 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
 				LOG.error(String.format("Job: %s operation failed!", jobId), e);
 				throw new JobExecutionException(String.format("Job: %s operation failed!", jobId), e);
 			}
+		}
+	}
+
+	protected void bindApplicationId() throws JobExecutionException {
+		Method method = null;
+		try {
+			method = StreamExecutionEnvironment.class.getDeclaredMethod("getConfiguration");
+		} catch (NoSuchMethodException e) {
+			throw new JobExecutionException("Not support flink version, StreamExecutionEnvironment.class is not exists getConfiguration method!", e);
+		}
+		method.setAccessible(true);
+		Configuration configuration;
+		try {
+			configuration = (Configuration) method.invoke(executionContext.getStreamExecutionEnvironment());
+		} catch (Exception e) {
+			throw new JobExecutionException("StreamExecutionEnvironment.getConfiguration() execute failed!", e);
+		}
+		String applicationId = configuration.getString(YarnConfigOptions.APPLICATION_ID);
+		if(StringUtils.isNotBlank(applicationId)) {
+			LOG.info("The applicationId {} is exists in StreamExecutionEnvironment, ignore to bind applicationId to StreamExecutionEnvironment.", applicationId);
+			return;
+		}
+		applicationId = executionContext.getFlinkConfig().getString(YarnConfigOptions.APPLICATION_ID);
+		if(StringUtils.isBlank(applicationId) && this.clusterID == null) {
+			throw new JobExecutionException("No applicationId is exists!");
+		} else if(StringUtils.isNotBlank(applicationId)) {
+			configuration.setString(YarnConfigOptions.APPLICATION_ID, applicationId);
+			LOG.info("Bind applicationId {} to StreamExecutionEnvironment.", applicationId);
+		} else {
+			configuration.setString(YarnConfigOptions.APPLICATION_ID, ConverterUtils.toString(clusterID));
+			LOG.info("Bind applicationId {} to StreamExecutionEnvironment.", clusterID);
 		}
 	}
 

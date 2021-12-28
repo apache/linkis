@@ -17,10 +17,10 @@
 
 package org.apache.linkis.engineconn.once.executor.operator
 
-import org.apache.linkis.engineconn.acessible.executor.operator.{Operator, OperatorFactory}
 import org.apache.linkis.engineconn.common.exception.EngineConnException
 import org.apache.linkis.engineconn.once.executor.OperableOnceExecutor
 import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManager
+import org.apache.linkis.manager.common.operator.{Operator, OperatorFactory}
 
 
 class OperableOnceEngineConnOperator extends Operator {

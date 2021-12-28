@@ -58,6 +58,8 @@ public class AMEngineNode implements EngineNode, ScoreServiceInstance {
 
     private Date startTime;
 
+    private String ticketId;
+
     public AMEngineNode() {
 
     }
@@ -187,6 +189,16 @@ public class AMEngineNode implements EngineNode, ScoreServiceInstance {
     @Override
     public void setLock(String lock) {
         this.lock = lock;
+    }
+
+    @Override
+    public String getTicketId() {
+        return ticketId;
+    }
+
+    @Override
+    public void setTicketId(String ticketId) {
+        this.ticketId = ticketId;
     }
 
     @Override

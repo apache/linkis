@@ -215,6 +215,7 @@ Third party Apache 2.0 licenses
 ========================================================================
 
 The following components are provided under the Apache 2.0 License.
+The text of each license is also included at assembly-combined-package/licenses/LICENSE-[project].txt.
 
   (Apache License, Version 2.0) Apache Commons Codec (commons-codec:commons-codec:1.10 - http://commons.apache.org/proper/commons-codec/)
   (Apache License, Version 2.0) Apache Commons Collections (commons-collections:commons-collections:3.2.2 - http://commons.apache.org/collections/)
@@ -276,6 +277,7 @@ Third party CDDL licenses
 ========================================================================
 
 The following components are provided under the CDDL License.
+The text of each license is also included at assembly-combined-package/licenses/LICENSE-[project].txt.
 
   (CDDL 1.1) (GPL2 w/ CPE) jersey-json (com.sun.jersey:jersey-json:1.19 - https://jersey.java.net/jersey-json/)
   (CDDL 1.1) (GPL2 w/ CPE) jersey-server (com.sun.jersey:jersey-server:1.19.1 - https://jersey.java.net/jersey-server/)
@@ -288,6 +290,7 @@ Third party BSD licenses
 ========================================================================
 
 The following components are provided under the BSD License.
+The text of each license is also included at assembly-combined-package/licenses/LICENSE-[project].txt.
 
   (The 3-Clause BSD License) Py4J (net.sf.py4j:py4j:0.10.4 - http://nexus.sonatype.org/oss-repository-hosting.html/py4j)
 
@@ -296,6 +299,8 @@ Third party MIT licenses
 ========================================================================
 
 The following components are provided under the MIT License.
+The text of each license is also included at assembly-combined-package/licenses/LICENSE-[project].txt.
+
   (The MIT License (MIT)) pagehelper 5 (com.github.pagehelper:pagehelper:5.1.4 - https://github.com/pagehelper/Mybatis-PageHelper)
   (The MIT License) Mockito (org.mockito:mockito-all:2.0.2-beta - http://www.mockito.org)
   (The MIT License) SLF4J API Module (org.slf4j:slf4j-api:1.7.30 - http://www.slf4j.org)
@@ -303,6 +308,7 @@ The following components are provided under the MIT License.
 
 ======================================================================================
 Third party of Linkis Web project
+The text of each license is also included at web/licenses/LICENSE-[project].txt.
 
     (The Apache-2.0 License) dexie@2.0.4 (https://github.com/dfahlander/Dexie.js)
     (The BSD-3-Clause License) highlight.js@10.7.3 (https://github.com/highlightjs/highlight.js)

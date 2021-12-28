@@ -129,7 +129,7 @@ class PythonCodeParser extends SingleCodeParser {
         statementBuffer.append(l)
         recordBrackets(bracketStack, l)
       case l if quotationMarks => statementBuffer.append(l)
-      //shanhuang 用于修复python的引号问题
+      //用于修复python的引号问题
       //recordBrackets(bracketStack, l)
       case l if notDoc && l.startsWith("#") =>
       case l if StringUtils.isNotBlank(statementBuffer.last) && statementBuffer.last.endsWith("""\""") =>

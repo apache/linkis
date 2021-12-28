@@ -64,10 +64,7 @@ import static org.apache.linkis.filesystem.conf.WorkSpaceConfiguration.*;
 import static org.apache.linkis.filesystem.constant.WorkSpaceConstants.*;
 
 
-/**
- * johnnwang
- * 2018/10/25
- */
+
 @RestController
 @RequestMapping(path = "/filesystem")
 public class FsRestfulApi {

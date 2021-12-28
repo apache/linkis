@@ -19,9 +19,7 @@ package org.apache.linkis.computation.client.once.result
 
 import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
-/**
-  * Created by enjoyyin on 2021/12/18.
-  */
+
 @DWSHttpMessageResult("/api/rest_j/v\\d+/linkisManager/executeECMOperation")
 class ECMOperateResult extends EngineConnOperateResult {
 

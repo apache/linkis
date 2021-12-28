@@ -24,7 +24,6 @@ import org.apache.linkis.storage.exception.StorageErrorException
 /**
   * IOClient is used to execute the proxy as the ujes code execution entry in io and get the return result.
   * IOClient用于在io进行代理作为ujes的代码执行入口，并获取返回结果
-  * Created by johnnwang on 2018/11/2.
   */
 trait IOClient {
   def execute(user: String, methodEntity: MethodEntity, params:java.util.Map[String,Any]):String

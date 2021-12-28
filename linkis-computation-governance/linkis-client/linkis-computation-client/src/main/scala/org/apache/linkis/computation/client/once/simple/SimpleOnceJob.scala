@@ -68,31 +68,41 @@ trait SimpleOnceJob extends OnceJob {
   }
 
   protected def transformToId(): Unit = {
-    engineConnId = serviceInstance.getApplicationName.length + serviceInstance.getApplicationName + serviceInstance.getInstance
+    engineConnId = ticketId.length + "_" + serviceInstance.getApplicationName.length +
+      ticketId + serviceInstance.getApplicationName + serviceInstance.getInstance
   }
 
   protected def transformToServiceInstance(): Unit = engineConnId match {
-    case SimpleOnceJob.ENGINE_CONN_ID_REGEX(len, serviceInstanceStr) =>
-      val length = len.toInt
-      serviceInstance = ServiceInstance(serviceInstanceStr.substring(0, length), serviceInstanceStr.substring(length))
+    case SimpleOnceJob.ENGINE_CONN_ID_REGEX(ticketIdLen, appNameLen, serviceInstanceStr) =>
+      val index1 = ticketIdLen.toInt
+      val index2 = index1 + appNameLen.toInt
+      ticketId = serviceInstanceStr.substring(0, index1)
+      serviceInstance = ServiceInstance(serviceInstanceStr.substring(index1, index2), serviceInstanceStr.substring(index2))
   }
 
   protected def initOnceOperatorActions(): Unit = addOperatorAction {
     case onceJobOperator: OnceJobOperator[_] =>
-      onceJobOperator.setUser(user).setServiceInstance(serviceInstance).setLinkisManagerClient(linkisManagerClient)
+      onceJobOperator.setUser(user).setTicketId(ticketId).setServiceInstance(serviceInstance).setLinkisManagerClient(linkisManagerClient)
     case operator => operator
   }
 
 }
 
 class SubmittableSimpleOnceJob(protected override val linkisManagerClient: LinkisManagerClient,
-                               createEngineConnAction: CreateEngineConnAction)
+                               val createEngineConnAction: CreateEngineConnAction)
   extends SimpleOnceJob with SubmittableOnceJob with AbstractSubmittableLinkisJob {
+
+  private var ecmServiceInstance: ServiceInstance = _
+
+  def getECMServiceInstance: ServiceInstance = ecmServiceInstance
+
   override protected def doSubmit(): Unit = {
     info(s"Ready to create a engineConn: ${createEngineConnAction.getRequestPayload}.")
     val nodeInfo = linkisManagerClient.createEngineConn(createEngineConnAction)
     lastNodeInfo = nodeInfo.getNodeInfo
     serviceInstance = getServiceInstance(lastNodeInfo)
+    ticketId = getTicketId(lastNodeInfo)
+    ecmServiceInstance = getECMServiceInstance(lastNodeInfo)
     lastEngineConnState = getStatus(lastNodeInfo)
     info(s"EngineConn created with status $lastEngineConnState, the nodeInfo is $lastNodeInfo.")
     initOnceOperatorActions()
@@ -102,7 +112,7 @@ class SubmittableSimpleOnceJob(protected override val linkisManagerClient: Linki
       serviceInstance = getServiceInstance(lastNodeInfo)
       info(s"EngineConn of $serviceInstance is in $lastEngineConnState.")
       transformToId()
-    }else{
+    } else {
       info(s"EngineConn $serviceInstance is aleady running, transform to id")
       transformToId()
     }
@@ -122,7 +132,7 @@ class ExistingSimpleOnceJob(protected override val linkisManagerClient: LinkisMa
 
 object SimpleOnceJob {
 
-  private val ENGINE_CONN_ID_REGEX = "(\\d+)(.+)".r
+  private val ENGINE_CONN_ID_REGEX = "(\\d+)_(\\d+)(.+)".r
 
   def builder(): SimpleOnceJobBuilder = new SimpleOnceJobBuilder
 

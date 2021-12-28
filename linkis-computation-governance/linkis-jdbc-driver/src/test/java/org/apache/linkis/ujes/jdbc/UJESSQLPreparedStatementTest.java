@@ -53,13 +53,13 @@ public class UJESSQLPreparedStatementTest {
     @Test
     public void crud(){
         preStatement = conn.prepareStatement("");
-        preStatement.executeUpdate("CREATE TABLE if not exists johnnwang_qml.test1236 as select * from ai_fmi_ods.1000_10");
-        preStatement.executeUpdate("insert into johnnwang_qml.test1236 select * from ai_fmi_ods.1000_10");
-      //  preStatement.executeUpdate("update johnnwang_qml.test1236 set label=6 where label=1");
-        preStatement.executeUpdate("select * from johnnwang_qml.test1236");
+        preStatement.executeUpdate("CREATE TABLE if not exists db.test1236 as select * from ai_fmi_ods.1000_10");
+        preStatement.executeUpdate("insert into db.test1236 select * from ai_fmi_ods.1000_10");
+      //  preStatement.executeUpdate("update db.test1236 set label=6 where label=1");
+        preStatement.executeUpdate("select * from db.test1236");
         UJESSQLResultSet resultSet = preStatement.getResultSet();
         showResult(resultSet);
-        preStatement.execute("drop table johnnwang_qml.test1236");
+        preStatement.execute("drop table db.test1236");
         Assert.assertTrue(resultSet.isAfterLast());
     }
 
@@ -85,7 +85,7 @@ public class UJESSQLPreparedStatementTest {
 
     @Test
     public void selectTest(){
-        preStatement = conn.prepareStatement("select * from shanhuang_ind.testjohn1 limit 10");
+        preStatement = conn.prepareStatement("select * from db.table limit 10");
         UJESSQLResultSet resultSet = preStatement.executeQuery();
         showResult(resultSet);
         Assert.assertTrue(resultSet.isAfterLast());

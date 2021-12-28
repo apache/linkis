@@ -25,6 +25,8 @@ object AMConfiguration {
 
   val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
 
+  val ECM_ADMIN_OPERATIONS = CommonVars("wds.linkis.governance.admin.operations", "")
+
   val ENGINE_START_MAX_TIME = CommonVars("wds.linkis.manager.am.engine.start.max.time", new TimeType("10m"))
 
   val ENGINE_CONN_START_REST_MAX_WAIT_TIME = CommonVars("wds.linkis.manager.am.engine.rest.start.max.time", new TimeType("40s"))
@@ -68,6 +70,10 @@ object AMConfiguration {
   private def getDefaultMultiEngineUser(): String = {
     val jvmUser = Utils.getJvmUser
     s""" {jdbc:"$jvmUser", es: "$jvmUser", presto:"$jvmUser",appconn:"$jvmUser", io_file:"root"}"""
+  }
+
+  def isAdmin(userName: String): Boolean = {
+    GOVERNANCE_STATION_ADMIN.getValue.split(",").contains(userName)
   }
 
 }

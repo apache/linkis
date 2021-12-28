@@ -23,6 +23,7 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.entity.node._
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeEntity
+import org.apache.linkis.manager.common.protocol.em.{ECMOperateRequest, ECMOperateResponse}
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 import org.apache.linkis.manager.exception.NodeInstanceDuplicateException
@@ -174,5 +175,8 @@ class DefaultEMNodeManager extends EMNodeManager with Logging {
     nodePointerBuilder.buildEMNodePointer(emNode).stopEngine(engineStopRequest)
   }
 
+  override def executeOperation(ecmNode: EMNode, request: ECMOperateRequest): ECMOperateResponse = {
+    nodePointerBuilder.buildEMNodePointer(ecmNode).executeOperation(request)
+  }
 
 }

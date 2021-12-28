@@ -24,7 +24,7 @@ import java.util.List;
 
 public interface Constant {
 
-    String FILE_SYSTEM_USER = "neiljianliu";
+    String FILE_SYSTEM_USER = "hadoop";
 
     List<String> resourceTypes = Lists.newArrayList(Arrays.asList("hdfs", "share", "file"));
 

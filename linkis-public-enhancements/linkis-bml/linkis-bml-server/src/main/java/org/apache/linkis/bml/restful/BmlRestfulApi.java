@@ -514,7 +514,7 @@ public class BmlRestfulApi {
                 basic.setCreateTime(resource.getCreateTime());
                 basic.setDownloadedFileName(resource.getDownloadedFileName());
                 basic.setOwner(resource.getUser());
-                //todo cooperyang 正确的版本信息
+                //todo 正确的版本信息
                 basic.setNumberOfVerions(10);
                 if (resource.isExpire()){
                     basic.setExpireTime(RestfulUtils.getExpireTime(resource.getCreateTime(),resource.getExpireType(), resource.getExpireTime()));

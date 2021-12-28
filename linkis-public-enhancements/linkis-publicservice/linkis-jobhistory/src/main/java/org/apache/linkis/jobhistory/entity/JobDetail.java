@@ -18,6 +18,7 @@
 package org.apache.linkis.jobhistory.entity;
 
 import java.util.Date;
+import org.apache.linkis.jobhistory.util.QueryUtils;
 
 
 public class JobDetail {
@@ -59,10 +60,19 @@ public class JobDetail {
    private Date updated_time;
 
 
+
    private String status;
 
 
    private Integer priority;
+
+    private String updatedTimeMills;
+
+    public String getUpdatedTimeMills() {
+        return  QueryUtils.dateToString(getUpdated_time());
+    }
+
+
 
     public Long getId() {
         return id;

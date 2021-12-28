@@ -58,8 +58,8 @@ object CustomVariableUtils extends Logging {
   /**
     * replace custom variable
     * 1. Get the user-defined variable from the code and replace it
-  * 2. If 1 is not done, then get the user-defined variable from args and replace it.
-  * 3. If 2 is not done, get the user-defined variable from the console and replace it.
+    * 2. If 1 is not done, then get the user-defined variable from args and replace it.
+    * 3. If 2 is not done, get the user-defined variable from the console and replace it.
 
     * 1. 从代码中得到用户定义的变量，进行替换
     * 2. 如果1没有做，那么从args中得到用户定义的变量，进行替换

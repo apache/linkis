@@ -70,9 +70,9 @@ class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with L
 
   override def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = null
 
-  override def progress(): Float = if (null == progressInfo) 0f else 1f
+  override def progress(taskID: String): Float = if (null == progressInfo) 0f else 1f
 
-  override def getProgressInfo: Array[JobProgressInfo] = null
+  override def getProgressInfo(taskID: String): Array[JobProgressInfo] = null
 
   override def supportCallBackLogs(): Boolean = true
 

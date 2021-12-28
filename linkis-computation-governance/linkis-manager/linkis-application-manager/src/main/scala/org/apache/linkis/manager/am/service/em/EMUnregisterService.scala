@@ -18,12 +18,11 @@
 package org.apache.linkis.manager.am.service.em
 
 import org.apache.linkis.manager.common.protocol.em.{EMInfoClearRequest, StopEMRequest}
-import org.apache.linkis.message.builder.ServiceMethodContext
 
 
 trait EMUnregisterService {
 
-  def stopEM(stopEMRequest: StopEMRequest, smc: ServiceMethodContext): Unit
+  def stopEM(stopEMRequest: StopEMRequest): Unit
 
   def clearEMInstanceInfo(emClearRequest: EMInfoClearRequest): Unit
 

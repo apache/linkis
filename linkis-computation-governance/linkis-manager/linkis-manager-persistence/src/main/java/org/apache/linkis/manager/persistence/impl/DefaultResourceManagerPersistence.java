@@ -26,7 +26,9 @@ import org.apache.linkis.manager.dao.ResourceManagerMapper;
 import org.apache.linkis.manager.exception.PersistenceErrorException;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.persistence.ResourceManagerPersistence;
+import org.apache.commons.collections.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -92,6 +94,15 @@ public class DefaultResourceManagerPersistence implements ResourceManagerPersist
     }
 
     @Override
+    public List<PersistenceResource> getResourceByLabels(List<? extends Label> labels) throws PersistenceErrorException {
+        if(CollectionUtils.isNotEmpty(labels)) {
+            return labelManagerMapper.getResourcesByLabels(labels);
+        }else{
+            return new ArrayList<PersistenceResource>();
+        }
+    }
+
+    @Override
     public List<PersistenceResource> getResourceByUser(String user) throws PersistenceErrorException {
         List<PersistenceResource> persistenceResourceList = resourceManagerMapper.getResourceByUserName(user);
         return persistenceResourceList;
@@ -153,5 +164,21 @@ public class DefaultResourceManagerPersistence implements ResourceManagerPersist
         resourceManagerMapper.registerResource(persistenceResource);
         int resourceId = persistenceResource.getId();
         labelManagerMapper.addLabelsAndResource(resourceId,labelIds);
+    }
+
+    @Override
+    public void deleteResourceById(List<Integer> id) {
+        resourceManagerMapper.deleteResourceById(id);
+    }
+
+    @Override
+    public void deleteResourceRelByResourceId(List<Integer> id) {
+        resourceManagerMapper.deleteResourceRelByResourceId(id);
+    }
+
+    @Override
+    public PersistenceResource getNodeResourceById(Integer id) {
+        PersistenceResource resource = resourceManagerMapper.getResourceById(id);
+        return resource;
     }
 }

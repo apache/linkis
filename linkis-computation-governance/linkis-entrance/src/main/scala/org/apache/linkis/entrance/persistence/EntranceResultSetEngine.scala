@@ -34,76 +34,23 @@ import org.apache.commons.lang.StringUtils
 
 
 class EntranceResultSetEngine extends ResultSetEngine with Logging {
-  override def persistResultSet(request: EntranceExecuteRequest, executeCompleted: OutputExecuteResponse): String = {
+  override def persistResultSet(job: Job, executeCompleted: OutputExecuteResponse): String = {
 
     executeCompleted match {
       case AliasOutputExecuteResponse(alias, output) =>
         if (ResultSetFactory.getInstance.isResultSetPath(output)) getDir(output)
         else {
           throw new EntranceErrorException(EntranceErrorCode.RESULT_NOT_PERSISTED_ERROR.getErrCode, EntranceErrorCode.RESULT_NOT_PERSISTED_ERROR.getDesc)
-//          val resultSet = ResultSetFactory.getInstance.getResultSetByContent(output)
-//          writeResult(alias, output, request.getJob, resultSet)
         }
       case CacheOutputExecuteResponse(alias, output) =>
         if (ResultSetFactory.getInstance.isResultSetPath(output)) {
           getDir(output)
-//        if(ResultSetFactory.getInstance.isResultSet(output)){
-//          val resultSet = ResultSetFactory.getInstance.getResultSetByContent(output)
-//          writeResult(alias, output, request.getJob, resultSet)
         } else {
           throw new EntranceErrorException(EntranceErrorCode.RESULT_NOT_PERSISTED_ERROR.getErrCode, EntranceErrorCode.RESULT_NOT_PERSISTED_ERROR.getDesc)
-//          val resultSet = ResultSetFactory.getInstance.getResultSetByPath(FsPath.getFsPath(output))
-//          copyResult(alias, output, request.getJob, resultSet)
         }
     }
   }
 
-  /*private def copyResult(alias: String, output: String, job: Job, resultSet:ResultSet[_ <: MetaData, _ <: Record]) : String = {
-    var user:String="hadoop"
-    val storePath = job match {
-      case j: EntranceExecutionJob => j.jobToExecuteRequest() match {
-        case s: StorePathExecuteRequest => {
-          user = j.getUser
-          s.storePath
-        }
-        case _ => null
-      }
-      case _ => null
-    }
-    if(storePath != null) {
-      val path = if(alias.contains("_")) resultSet.getResultSetPath(new FsPath(storePath),  alias) else resultSet.getResultSetPath(new FsPath(storePath),  "_" + alias)
-      FileSystemUtils.copyFile(path, FsPath.getFsPath(output), user)
-      path.getSchemaPath
-    } else null
-  }*/
-
-  /*private def writeResult(alias: String, output: String, job: Job, resultSet:ResultSet[_ <: MetaData, _ <: Record]) = {
-    var user:String="hadoop"
-    val storePath = job match {
-      case j: EntranceExecutionJob => j.jobToExecuteRequest() match {
-        case s: StorePathExecuteRequest => {
-          user = j.getUser
-          s.storePath
-        }
-        case _ => null
-      }
-      case _ => null
-    }
-    if(storePath != null) {
-      //TODO Remove _ stitching(去掉_拼接)
-      val path = if(alias.contains("_")) resultSet.getResultSetPath(new FsPath(storePath),  alias) else resultSet.getResultSetPath(new FsPath(storePath),  "_" + alias)
-
-      FileSystemUtils.createNewFile(path, user,true)
-      val writer = ResultSetWriter.getResultSetWriter(resultSet, 0, path, user)
-      Utils.tryFinally {
-        writer.addMetaDataAndRecordString(output)
-        writer.flush()
-      }{
-        IOUtils.closeQuietly(writer)
-      }
-      path.getSchemaPath
-    } else null
-  }*/
 
   private def getDir(str: String): String = {
     if (str.endsWith("/")) {

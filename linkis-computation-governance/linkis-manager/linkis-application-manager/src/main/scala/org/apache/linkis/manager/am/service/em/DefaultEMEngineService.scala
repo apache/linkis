@@ -18,7 +18,6 @@
 package org.apache.linkis.manager.am.service.em
 
 import java.util
-
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.am.exception.AMErrorException
 import org.apache.linkis.manager.am.manager.{EMNodeManager, EngineNodeManager}
@@ -33,6 +32,7 @@ import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.service.common.label.LabelFilter
 import org.apache.commons.collections.MapUtils
+import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -74,12 +74,16 @@ class DefaultEMEngineService extends EMEngineService with Logging {
   }
 
   override def stopEngine(engineNode: EngineNode, emNode: EMNode): Unit = {
-    info(s"EM ${emNode.getServiceInstance} start to stop Engine ${engineNode.getServiceInstance}")
+    if (null == emNode) {
+      logger.error(s" The emNode of ${engineNode.getServiceInstance} is null")
+      return
+    }
+    logger.debug(s"EM ${emNode.getServiceInstance} start to stop Engine ${engineNode.getServiceInstance}")
     val engineStopRequest = new EngineStopRequest
     engineStopRequest.setServiceInstance(engineNode.getServiceInstance)
     emNodeManager.stopEngine(engineStopRequest, emNode)
     //engineNodeManager.deleteEngineNode(engineNode)
-    info(s"EM ${emNode.getServiceInstance} finished to stop Engine ${engineNode.getServiceInstance}")
+    logger.info(s"EM ${emNode.getServiceInstance} finished to stop Engine ${engineNode.getServiceInstance}")
   }
 
   override def getEMNodes(scoreServiceInstances: Array[ScoreServiceInstance]): Array[EMNode] = {
@@ -91,12 +95,24 @@ class DefaultEMEngineService extends EMEngineService with Logging {
     if (MapUtils.isEmpty(instanceAndLabels)) {
       new AMErrorException(AMConstant.EM_ERROR_CODE, "No corresponding EM")
     }
-    val nodes = getEMNodes(instanceAndLabels.keys.toArray)
+    // TODO add em select rule to do this
+    val emInstanceLabelOption = labels.find(_.isInstanceOf[EMInstanceLabel])
+    val filterInstanceAndLabel = if (emInstanceLabelOption.isDefined) {
+      val emInstanceLabel = emInstanceLabelOption.get.asInstanceOf[EMInstanceLabel]
+      info(s"use emInstanceLabel , will be route to ${emInstanceLabel.getServiceInstance}")
+      if (instanceAndLabels.exists(_._1.equals(emInstanceLabel.getServiceInstance))) {
+        throw new AMErrorException(AMConstant.EM_ERROR_CODE, s"You specified em ${emInstanceLabel.getServiceInstance}, but the corresponding EM does not exist in the Manager")
+      }
+      instanceAndLabels.filter(_._1.getServiceInstance.equals(emInstanceLabel.getServiceInstance))
+    } else {
+      instanceAndLabels.toMap
+    }
+    val nodes = getEMNodes(filterInstanceAndLabel.keys.toArray)
     if (null == nodes) {
       return null
     }
     nodes.foreach { node =>
-      val persistenceLabel = instanceAndLabels.find(_._1.getServiceInstance.equals(node.getServiceInstance)).map(_._2)
+      val persistenceLabel = filterInstanceAndLabel.find(_._1.getServiceInstance.equals(node.getServiceInstance)).map(_._2)
       persistenceLabel.foreach(labelList => node.setLabels(labelList.map(ManagerUtils.persistenceLabelToRealLabel)))
     }
     nodes

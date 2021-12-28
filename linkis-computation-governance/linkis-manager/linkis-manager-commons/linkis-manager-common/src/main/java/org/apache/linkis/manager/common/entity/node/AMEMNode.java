@@ -53,6 +53,29 @@ public class AMEMNode implements EMNode, ScoreServiceInstance {
 
     private Date startTime;
 
+    private Date updateTime;
+
+    @Override
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    @Override
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    @Override
+    public Date getStartTime() {
+        return startTime;
+    }
+
+
+    @Override
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
     public AMEMNode() {
 
     }
@@ -161,15 +184,6 @@ public class AMEMNode implements EMNode, ScoreServiceInstance {
         this.nodeHealthyInfo = nodeHealthyInfo;
     }
 
-    @Override
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    @Override
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
 
     @Override
     public String toString() {

@@ -18,6 +18,7 @@
 package org.apache.linkis.message.scheduler;
 
 import static org.apache.linkis.message.conf.MessageSchedulerConf.MAX_PARALLELISM_CONSUMERS;
+import static org.apache.linkis.message.conf.MessageSchedulerConf.MAX_PARALLELISM_USER;
 import static org.apache.linkis.message.conf.MessageSchedulerConf.MAX_QUEUE_CAPACITY;
 import static org.apache.linkis.message.conf.MessageSchedulerConf.MAX_RUNNING_JOB;
 
@@ -49,9 +50,11 @@ public class DefaultMessageScheduler implements MessageScheduler {
     }
 
     public DefaultMessageScheduler(GroupFactory groupFactory){
-        ParallelSchedulerContextImpl schedulerContext = new ParallelSchedulerContextImpl(MAX_PARALLELISM_CONSUMERS);
-        schedulerContext.setConsumerManager(new ParallelConsumerManager(MAX_PARALLELISM_CONSUMERS, "RpcMessageScheduler"));
-        schedulerContext.setExecutorManager(new MessageExecutorExecutionManager());
+        ParallelSchedulerContextImpl schedulerContext = new ParallelSchedulerContextImpl(MAX_PARALLELISM_USER);
+        ParallelConsumerManager parallelConsumerManager = new ParallelConsumerManager(MAX_PARALLELISM_CONSUMERS, "RpcMessageScheduler");
+        schedulerContext.setConsumerManager(parallelConsumerManager);
+        MessageExecutorExecutionManager messageExecutorExecutionManager = new MessageExecutorExecutionManager(parallelConsumerManager.getOrCreateExecutorService());
+        schedulerContext.setExecutorManager(messageExecutorExecutionManager);
         if(groupFactory != null) {
             schedulerContext.setGroupFactory(groupFactory);
         } else {

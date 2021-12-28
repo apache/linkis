@@ -30,7 +30,8 @@ public interface NodeMetricManagerMapper {
             "values(#{nodeMetrics.instance},#{nodeMetrics.status},#{nodeMetrics.overLoad},#{nodeMetrics.heartBeatMsg},#{nodeMetrics.healthy},now(),now())")
     void addNodeMetrics(@Param("nodeMetrics") PersistenceNodeMetrics nodeMetrics);
 
-    @Select("select count(instance) from  linkis_cg_manager_service_instance_metrics where instance = #{instance}")
+    @Select("select count(id) from  linkis_cg_manager_service_instance_metrics met inner join linkis_cg_manager_service_instance ins" +
+            " on met.instance = #{instance} and ins.instance = #{instance} and met.instance = ins.instance")
     int checkInstanceExist(@Param("instance") String  instance);
 
 
@@ -68,7 +69,6 @@ public interface NodeMetricManagerMapper {
             "<if test=\"nodeMetrics.heartBeatMsg != null\">  heartbeat_msg = #{nodeMetrics.heartBeatMsg},</if>" +
             "<if test=\"nodeMetrics.healthy != null\">  healthy_status=#{nodeMetrics.healthy}, </if>" +
             "<if test=\"nodeMetrics.updateTime != null\">  update_time=#{nodeMetrics.updateTime},</if>" +
-            "<if test=\"nodeMetrics.createTime != null\">   create_time=#{nodeMetrics.createTime},</if>" +
             "</trim> where instance = #{instance}" +
             "</script>"})
     void updateNodeMetrics(@Param("nodeMetrics") PersistenceNodeMetrics nodeMetrics, @Param("instance") String instance);

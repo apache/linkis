@@ -71,7 +71,7 @@ class SecurityFilter extends Filter {
       false
     } else if(request.getRequestURI == ServerConfiguration.BDP_SERVER_RESTFUL_LOGIN_URI.getValue) {
       true
-    } else if( ServerConfiguration.BDP_SERVER_RESTFUL_PASS_AUTH_REQUEST_URI.exists(request.getRequestURI.startsWith)) {
+    } else if( ServerConfiguration.BDP_SERVER_RESTFUL_PASS_AUTH_REQUEST_URI.exists(r => !r.equals("") && request.getRequestURI.startsWith(r))) {
       SecurityFilter.info("pass auth uri: " + request.getRequestURI)
       true
     }else {

@@ -17,9 +17,9 @@
  
 package org.apache.linkis.resourcemanager.message
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.common.protocol.em.{EMInfoClearRequest, RegisterEMRequest, StopEMRequest}
+import org.apache.linkis.manager.common.protocol.em.{EMInfoClearRequest, EMResourceRegisterRequest, RegisterEMRequest, StopEMRequest}
 import org.apache.linkis.manager.common.protocol.engine.EngineInfoClearRequest
 import org.apache.linkis.manager.common.protocol.node.NodeHeartbeatMsg
 import org.apache.linkis.manager.common.protocol.resource.ResourceUsedProtocol
@@ -27,6 +27,7 @@ import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.service.common.label.ManagerLabelService
 import org.apache.linkis.message.annotation.Receiver
 import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.resourcemanager.domain.RMLabelContainer
 import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -45,7 +46,7 @@ class RMMessageService extends Logging {
   @Autowired
   private var nodeLabelService: NodeLabelService = _
 
-  @Receiver
+
   def dealWithEMInfoClearRequest(eMInfoClearRequest: EMInfoClearRequest, smc: ServiceMethodContext): Unit = {
     resourceManager.unregister(eMInfoClearRequest.getEm.getServiceInstance)
   }
@@ -55,7 +56,7 @@ class RMMessageService extends Logging {
     resourceManager.resourceReleased(engineInfoClearRequest.getEngineNode.getLabels)
   }
 
-  @Receiver
+
   def dealWithNodeHeartbeatMsg(nodeHeartbeatMsg: NodeHeartbeatMsg, smc: ServiceMethodContext): Unit = {
     debug(s"Start to deal with nodeHeartbeatMsg resource info $nodeHeartbeatMsg")
     /*val labels = nodeLabelService.getNodeLabels(nodeHeartbeatMsg.getServiceInstance)
@@ -82,16 +83,23 @@ class RMMessageService extends Logging {
   def dealWithResourceUsedProtocol(resourceUsedProtocol: ResourceUsedProtocol): Unit = {
     info(s"Start to deal with resourceUsedProtocol $resourceUsedProtocol")
     val labels = nodeLabelService.getNodeLabels(resourceUsedProtocol.serviceInstance)
-    resourceManager.resourceUsed(labels, resourceUsedProtocol.engineResource)
+    Utils.tryCatch(resourceManager.resourceUsed(labels, resourceUsedProtocol.engineResource)) {
+      case exception: Exception => {
+        val nodeLabels = new RMLabelContainer(labels)
+        warn(s"usedResource failed, request from:${nodeLabels.getCombinedUserCreatorEngineTypeLabel.getStringValue}, request engine: ${nodeLabels.getEngineInstanceLabel}, " +
+          s"reason:${exception.getMessage}")
+        throw exception
+      }
+    }
   }
 
-  @Receiver
-  def dealWithRegisterEMRequest(registerEMRequest: RegisterEMRequest, smc: ServiceMethodContext): Unit = {
+
+  def dealWithRegisterEMRequest(registerEMRequest: EMResourceRegisterRequest): Unit = {
     resourceManager.register(registerEMRequest.getServiceInstance, registerEMRequest.getNodeResource)
   }
 
 
-  def dealWithStopEMRequest(stopEMRequest: StopEMRequest, smc: ServiceMethodContext): Unit = {
+  def dealWithStopEMRequest(stopEMRequest: StopEMRequest): Unit = {
     resourceManager.unregister(stopEMRequest.getEm)
   }
 

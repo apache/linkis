@@ -2,9 +2,9 @@
 
 | **Version Management Information Form** | |
 | ----------- | --------------------------------- |
-| Current version | Version 1.1, May 2021 |
-| Current version release date | May 6, 2021 |
-| Revision Information | 1. Add Issue submission guidelines and modify some descriptions |
+| Current version | Version 1.2|
+| Current version release date | December 17, 2021 |
+| Revision information | 1. Due to the transfer of the git repository to apache and the migration of Linkis-Doc documents to the linkis official website, corresponding links were modified |
 
 Thank you very much for contributing to the Linkis project! Before participating in the contribution, please read the following guidelines carefully.
 
@@ -24,7 +24,7 @@ Helping answering the questions in the Linkis community is a very valuable way t
 
 ### 1.4 Documentation Refinements
 
-You can find linkis documentations at [Linkis-Doc](https://github.com/WeBankFinTech/Linkis-Doc), and the supplement of the document is also crucial to the development of Linkis.
+You can find linkis documentations at [linkis-Website](https://linkis.apache.org/docs/latest/introduction), and the supplement of the document is also crucial to the development of Linkis.
 
 ### 1.5 Other
 Including participating in and helping to organize community exchanges, community operation activities, etc., and other activities that can help the Linkis project and the community.
@@ -51,7 +51,7 @@ Linkis front-end and back-end code share the same code base, but they are separa
 We recommend cloning the dev-* branch for development, so that the possibility of merge conflicts when submitting a PR to the main Linkis project will be much smaller
 
 ```bash
-git clone https://github.com/yourname/Linkis.git --branch dev-*
+git clone https://github.com/yourname/incubator-linkis.git --branch dev-*
 ```
 
 #### 2.2.1 Backend
@@ -79,7 +79,7 @@ The user configuration is in the project root directory /config/, the project st
 
 3. Code directory structure
    
-   For details, see [Linkis Code Directory Structure](https://github.com/WeBankFinTech/Linkis/wiki/Linkis%E6%BA%90%E7%A0%81%E5%B1%82%E7%BA%A7%E7 %BB%93%E6%9E%84%E8%AF%A6%E8%A7%A3)
+   For details, see [Linkis Code Directory Structure](https://linkis.apache.org/docs/latest/deployment/sourcecode_hierarchical_structure)
 
 4. Log directory
 
@@ -108,13 +108,13 @@ The user configuration is in the project root directory /config/, the project st
 ### 2.3 Issue submission guidelines
 - If you still don’t know how to initiate a PR to an open source project, please refer to [About issues](https://docs.github.com/en/github/managing-your-work-on-github/about-issues)
 - Issue name, which should briefly describe your problem or suggestion in one sentence; for the international promotion of the project, please write the issue in English or both Chinese and English.
-- For each Issue, please bring at least two labels, component and type, such as component=Computation Governance/EngineConn, type=Improvement. Reference: [issue #590](https://github.com/WeBankFinTech/Linkis/issues/ 590)
+- For each Issue, please bring at least two labels, component and type, such as component=Computation Governance/EngineConn, type=Improvement. Reference: [issue #590](https://github.com/apache/incubator-linkis/issues/590)
 
 ### 2.3 Pull Request(PR) Submission Guidelines
 
-- If you still don’t know how to initiate a PR to an open source project, please refer to [About pull requests](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull -requests)
+- If you still don’t know how to initiate a PR to an open source project, please refer to [About pull requests](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests)
   Whether it is a bug fix or a new feature development, please submit a PR to the dev-* branch.
-- PR and submission name follow the principle of `<type>(<scope>): <subject>`, for details, please refer to Ruan Yifeng's [Commit message and Change log writing guide](http://www.ruanyifeng.com/blog/ 2016/01/commit_message_change_log.html) this article.
+- PR and submission name follow the principle of `<type>(<scope>): <subject>`, for details, please refer to Ruan Yifeng's [Commit message and Change log writing guide](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html) this article.
 - If the PR contains new features, the document update should be included in this PR.
 - If this PR is not ready to merge, please add [WIP] prefix to the head of the name (WIP = work-in-progress).
 - All submissions to dev-* branches need to go through at least one review before they can be merged

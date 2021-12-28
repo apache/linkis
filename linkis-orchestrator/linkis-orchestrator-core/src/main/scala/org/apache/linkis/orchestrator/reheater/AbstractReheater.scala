@@ -34,24 +34,24 @@ abstract class AbstractReheater extends Reheater with Logging {
       var changed = false
       Utils.tryCatch(Option(reheaterTransforms).foreach { transforms =>
         Option(execTask.getChildren).map(_.map{ child =>
-          val newChild = transforms.foldLeft(child)((node, transform) => transform.apply(node, execTask.getPhysicalContext).asInstanceOf[ExecTask])
-          if(!child.theSame(newChild)) {
+          val newChild = transforms.foldLeft(child)((node, transform) => transform.apply(node, execTask.getPhysicalContext))
+          if (!child.theSame(newChild)) {
             changed = true
             newChild.relateParents(child)
             newChild
           } else child
         }).foreach { children =>
-          if(changed) {
+          if (changed) {
             execTask.withNewChildren(children)
           }
         }
       }) { t =>
-        error(s"Reheat ${execTask.getIDInfo()} failed, now mark it failed!", t)
-        execTask.getPhysicalContext.markFailed(s"Reheat ${execTask.getIDInfo()} failed, now mark it failed!", t)
+        logger.error(s" Reheat ${execTask.getIDInfo()} failed, now mark it failed!", t)
+        execTask.getPhysicalContext.markFailed(s" Reheat ${execTask.getIDInfo()} failed, now mark it failed!", t)
       }
       reheat.setReheated()
-      if(changed) {
-        info(s"${execTask.getIDInfo()} reheated. The physicalTree has been changed. The new tree is ${execTask.simpleString}." )
+      if (changed) {
+        logger.info(s"${execTask.getIDInfo()} reheated. The physicalTree has been changed. The new tree is ${execTask.simpleString}.")
       }
     case _ =>
   }

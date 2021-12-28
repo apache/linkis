@@ -62,7 +62,7 @@ public class RMLabelContainer {
         }catch (Exception e){
             logger.warn("failed to get combinedUserCreatorEngineTypeLabel", e);
         }
-        this.labels = LabelUtils.distinctLabel(this.labels, this.labels);
+        this.labels = LabelUtils.distinctLabel(this.labels, labels);
     }
 
     public List<Label<?>> getLabels() {
@@ -102,9 +102,9 @@ public class RMLabelContainer {
     public EngineTypeLabel getEngineTypeLabel() throws RMErrorException {
         if(engineTypeLabel == null){
             for (Label label : labels) {
-                if(label instanceof EngineTypeLabel){
-                    return (EngineTypeLabel) label;
-                }
+             if(label instanceof EngineTypeLabel){
+                 return (EngineTypeLabel) label;
+             }
             }
         } else {
             return engineTypeLabel;

@@ -18,10 +18,9 @@
 package org.apache.linkis.manager.am.manager
 
 import java.util
-
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, RetryHandler, Utils}
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.locker.EngineNodeLocker
 import org.apache.linkis.manager.common.constant.AMConstant
@@ -38,6 +37,7 @@ import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+import java.lang.reflect.UndeclaredThrowableException
 import scala.collection.JavaConversions._
 
 
@@ -110,7 +110,20 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
   }
 
   override def reuseEngine(engineNode: EngineNode): EngineNode = {
-    useEngine(engineNode)
+    val node = getEngineNodeInfo(engineNode)
+    if (!NodeStatus.isAvailable(node.getNodeStatus)) {
+      return null
+    }
+    if (!NodeStatus.isLocked(node.getNodeStatus)) {
+      val lockStr = engineLocker.lockEngine(node, AMConfiguration.ENGINE_LOCKER_MAX_TIME.getValue)
+      if (lockStr.isEmpty) {
+        throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, s"Failed to request lock from engine by reuse ${node.getServiceInstance}")
+      }
+      node.setLock(lockStr.get)
+      node
+    } else {
+      null
+    }
   }
 
   /**
@@ -121,7 +134,11 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
     * @return
     */
   override def useEngine(engineNode: EngineNode, timeout: Long): EngineNode = {
-    val node = getEngineNodeInfo(engineNode)
+    val retryHandler = new RetryHandler {}
+    retryHandler.addRetryException(classOf[feign.RetryableException])
+    retryHandler.addRetryException(classOf[UndeclaredThrowableException])
+    val node = retryHandler.retry[EngineNode](getEngineNodeInfo(engineNode), "getEngineNodeInfo")
+    //val node = getEngineNodeInfo(engineNode)
     if (!NodeStatus.isAvailable(node.getNodeStatus)) {
       return null
     }
@@ -226,12 +243,18 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
     nodeManagerPersistence.getEngineNode(serviceInstance)
   }
 
+  /**
+   * 1.serviceInstance中取出instance（实际是ticketId）
+   * 2.update serviceInstance 表，包括 instance替换，替换mark，owner，updator，creator的空值，更新updateTime
+   * 3.update engine_em关联表
+   * 4.update label ticket_id ==> instance
+   *
+   * @param serviceInstance
+   * @param engineNode
+   */
   override def updateEngineNode(serviceInstance: ServiceInstance, engineNode: EngineNode): Unit = {
     nodeManagerPersistence.updateEngineNode(serviceInstance, engineNode)
-    //1.serviceInstance中取出instance（实际是ticketId）
-    //2.update serviceInstance 表，包括 instance替换，替换mark，owner，updator，creator的空值，更新updateTime
-    //3.update engine_em关联表
-    //4.update label ticket_id ==> instance
+    Utils.tryAndWarnMsg(nodeMetricManagerPersistence.deleteNodeMetrics(engineNode))("Failed to clear old metrics")
     val engineLabel = labelBuilderFactory.createLabel(classOf[EngineInstanceLabel])
     engineLabel.setInstance(engineNode.getServiceInstance.getInstance)
     engineLabel.setServiceName(engineNode.getServiceInstance.getApplicationName)

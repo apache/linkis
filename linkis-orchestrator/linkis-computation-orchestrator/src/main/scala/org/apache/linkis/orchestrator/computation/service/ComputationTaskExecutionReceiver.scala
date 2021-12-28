@@ -103,33 +103,48 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
   @Receiver
   override def taskStatusReceiver(taskStatus: ResponseTaskStatus, smc: ServiceMethodContext): Unit = {
     val serviceInstance = RPCUtils.getServiceInstanceFromSender(smc.getSender)
+    var isExist = false
     codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, taskStatus.execId).foreach { codeExecutor =>
       val event = TaskStatusEvent(codeExecutor.getExecTask, taskStatus.status)
-      info(s"From engineConn receive status info:$taskStatus, now post to listenerBus event: $event")
+      logger.info(s"From engineConn receive status info:$taskStatus, now post to listenerBus event: $event")
       codeExecutor.getExecTask.getPhysicalContext.broadcastSyncEvent(event)
       codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
+      isExist = true
+    }
+    if (! isExist) {
+      logger.warn(s" from $serviceInstance received ${taskStatus} cannot find execTask to deal")
     }
   }
 
   @Receiver
   override def taskResultSizeReceiver(taskResultSize: ResponseTaskResultSize, smc: ServiceMethodContext): Unit = {
     val serviceInstance = RPCUtils.getServiceInstanceFromSender(smc.getSender)
+    var isExist = false
     codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, taskResultSize.execId).foreach { codeExecutor =>
       val event = TaskResultSetSizeEvent(codeExecutor.getExecTask, taskResultSize.resultSize)
-      info(s"From engineConn receive resultSet size info$taskResultSize, now post to listenerBus event: $event")
+      logger.info(s"From engineConn receive resultSet size info$taskResultSize, now post to listenerBus event: $event")
       codeExecutor.getExecTask.getPhysicalContext.broadcastSyncEvent(event)
       codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
+      isExist = true
+    }
+    if (! isExist) {
+      logger.warn(s"from $serviceInstance received $taskResultSize cannot find execTask to deal")
     }
   }
 
   @Receiver
   override def taskResultSetReceiver(taskResultSet: ResponseTaskResultSet, smc: ServiceMethodContext): Unit = {
     val serviceInstance = RPCUtils.getServiceInstanceFromSender(smc.getSender)
+    var isExist = false
     codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, taskResultSet.execId).foreach { codeExecutor =>
       val event = TaskResultSetEvent(codeExecutor.getExecTask, ResultSet(taskResultSet.output, taskResultSet.alias))
-      info(s"From engineConn receive resultSet  info $taskResultSet , now post to listenerBus event: $event")
+      logger.info(s"From engineConn receive resultSet  info $taskResultSet , now post to listenerBus event: $event")
       codeExecutor.getExecTask.getPhysicalContext.broadcastSyncEvent(event)
       codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
+      isExist = true
+    }
+    if (! isExist) {
+      logger.warn(s"from $serviceInstance received $taskResultSet cannot find execTask to deal")
     }
   }
 
@@ -140,11 +155,16 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
   override def taskErrorReceiver(responseTaskError: ResponseTaskError, smc: ServiceMethodContext): Unit = {
 
     val serviceInstance = RPCUtils.getServiceInstanceFromSender(smc.getSender)
+    var isExist = false
     codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, responseTaskError.execId).foreach { codeExecutor =>
       val event = TaskErrorResponseEvent(codeExecutor.getExecTask, responseTaskError.errorMsg)
-      info(s"From engineConn receive responseTaskError  info$responseTaskError, now post to listenerBus event: $event")
+      logger.info(s"From engineConn receive responseTaskError  info$responseTaskError, now post to listenerBus event: $event")
       codeExecutor.getExecTask.getPhysicalContext.broadcastSyncEvent(event)
       codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
+      isExist = true
+    }
+    if (! isExist) {
+      logger.warn(s"from $serviceInstance received $responseTaskError cannot find execTask to deal")
     }
 
   }

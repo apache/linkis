@@ -80,9 +80,10 @@ class DefaultResourceLabelService extends ResourceLabelService with Logging {
     * @param label
     * @param resource
     */
-  override def setResourceToLabel(label: Label[_], resource: NodeResource): Unit = {
-
-    resourceLabelPersistence.setResourceToLabel(LabelManagerUtils.convertPersistenceLabel(label), ResourceUtils.toPersistenceResource(resource))
+  override def setResourceToLabel(label: Label[_], resource: NodeResource, source: String): Unit = {
+    val persistResource = ResourceUtils.toPersistenceResource(resource)
+    persistResource.setUpdator(source)
+    resourceLabelPersistence.setResourceToLabel(LabelManagerUtils.convertPersistenceLabel(label), persistResource)
   }
 
   /**
@@ -92,6 +93,9 @@ class DefaultResourceLabelService extends ResourceLabelService with Logging {
     * @return
     */
   override def getResourceByLabel(label: Label[_]): NodeResource = {
+    if (null == label) {
+      return null
+    }
     val persistenceResource = label match {
       case p: PersistenceLabel => resourceLabelPersistence.getResourceByLabel(p)
       case _ =>  resourceLabelPersistence.getResourceByLabel(LabelManagerUtils.convertPersistenceLabel(label))
@@ -119,12 +123,14 @@ class DefaultResourceLabelService extends ResourceLabelService with Logging {
     resourceLabelPersistence.removeResourceByLabels(labels.map(LabelManagerUtils.convertPersistenceLabel))
   }
 
-  override def setEngineConnResourceToLabel(label: Label[_], nodeResource: NodeResource): Unit = {
+  override def setEngineConnResourceToLabel(label: Label[_], nodeResource: NodeResource, source: String): Unit = {
     label match {
-      case label:EngineInstanceLabel =>
+      case label: EngineInstanceLabel =>
         val resource = ResourceUtils.toPersistenceResource(nodeResource)
         resource.setTicketId(label.getInstance())
-        resourceLabelPersistence.setResourceToLabel(LabelManagerUtils.convertPersistenceLabel(label), resource)
+        val resourceLabel = LabelManagerUtils.convertPersistenceLabel(label)
+        resource.setUpdator(source)
+        resourceLabelPersistence.setResourceToLabel(resourceLabel, resource)
       case _ =>
     }
   }

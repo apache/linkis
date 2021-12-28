@@ -21,6 +21,8 @@ import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 
+import java.util.Date;
+
 public class InfoRMNode implements RMNode {
 
     private ServiceInstance serviceInstance;
@@ -33,6 +35,9 @@ public class InfoRMNode implements RMNode {
 
     private NodeStatus nodeStatus;
 
+    private Date startTime;
+
+    private Date updateTime;
 
     @Override
     public NodeResource getNodeResource() {
@@ -72,5 +77,26 @@ public class InfoRMNode implements RMNode {
     @Override
     public String getMark() {
         return mark;
+    }
+
+    @Override
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    @Override
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    @Override
+    public Date getStartTime() {
+        return startTime;
+    }
+
+
+    @Override
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
     }
 }

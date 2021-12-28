@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.bml.common;
 
 import org.apache.linkis.bml.conf.BmlServerConfiguration;
@@ -27,6 +27,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,9 +40,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Description: 资源文件上传到hdfs存储目录，存储的原则是一个资源
- */
+/** Description: 资源文件上传到hdfs存储目录，存储的原则是一个资源 */
 public class HdfsResourceHelper implements ResourceHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(HdfsResourceHelper.class);
@@ -49,8 +48,13 @@ public class HdfsResourceHelper implements ResourceHelper {
     private static final String SCHEMA = "hdfs://";
 
     @Override
-    public long upload(String path, String user, InputStream inputStream,
-                       StringBuilder stringBuilder, boolean overwrite) throws UploadResourceException {
+    public long upload(
+            String path,
+            String user,
+            InputStream inputStream,
+            StringBuilder stringBuilder,
+            boolean overwrite)
+            throws UploadResourceException {
         OutputStream outputStream = null;
         InputStream is0 = null;
         InputStream is1 = null;
@@ -67,7 +71,7 @@ public class HdfsResourceHelper implements ResourceHelper {
             long beforeSize = -1;
             is0 = fileSystem.read(fsPath);
             int ch0 = 0;
-            while((ch0 = is0.read(buffer)) != -1){
+            while ((ch0 = is0.read(buffer)) != -1) {
                 beforeSize += ch0;
             }
             outputStream = fileSystem.write(fsPath, overwrite);
@@ -81,11 +85,11 @@ public class HdfsResourceHelper implements ResourceHelper {
             if (stringBuilder != null) {
                 stringBuilder.append(Hex.encodeHexString(md5Digest.digest()));
             }
-            //通过文件名获取的文件所有的字节，这样就避免了错误更新后的更新都是错的
+            // 通过文件名获取的文件所有的字节，这样就避免了错误更新后的更新都是错的
             long afterSize = -1;
             is1 = fileSystem.read(fsPath);
             int ch1 = 0;
-            while((ch1 = is1.read(buffer)) != -1){
+            while ((ch1 = is1.read(buffer)) != -1) {
                 afterSize += ch1;
             }
             size = Math.max(size, afterSize - beforeSize);
@@ -101,10 +105,10 @@ public class HdfsResourceHelper implements ResourceHelper {
             throw uploadResourceException;
         } finally {
             IOUtils.closeQuietly(outputStream);
-            if (fileSystem != null){
+            if (fileSystem != null) {
                 try {
-                fileSystem.close();
-            } catch (Exception e) {
+                    fileSystem.close();
+                } catch (Exception e) {
                     logger.error("close filesystem failed", e);
                 }
             }
@@ -115,17 +119,11 @@ public class HdfsResourceHelper implements ResourceHelper {
         return size;
     }
 
+    @Override
+    public void update(String path) {}
 
     @Override
-    public void update(String path) {
-
-    }
-
-
-    @Override
-    public void getResource(String path, int start, int end) {
-
-    }
+    public void getResource(String path, int start, int end) {}
 
     @Override
     public String getSchema() {
@@ -133,24 +131,40 @@ public class HdfsResourceHelper implements ResourceHelper {
     }
 
     /**
-     * Motivation to modify this path：
-     * This path is under /apps-data/hadoop/user on hdfs, which is mixed with the result set file.
-     * Bml files cannot be synchronized separately. When the user verifies the workflow,
-     * it is necessary to synchronize the full amount of personal and full hdfs data each time, which is very inconvenient.
-     * */
+     * Motivation to modify this path： This path is under /apps-data/hadoop/user on hdfs, which is
+     * mixed with the result set file. Bml files cannot be synchronized separately. When the user
+     * verifies the workflow, it is necessary to synchronize the full amount of personal and full
+     * hdfs data each time, which is very inconvenient.
+     */
     @Override
     public String generatePath(String user, String fileName, Map<String, Object> properties) {
         String resourceHeader = (String) properties.get("resourceHeader");
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         String dateStr = format.format(new Date());
         if (StringUtils.isNotEmpty(resourceHeader)) {
-            return getSchema() + BmlServerConfiguration.BML_HDFS_PREFIX().getValue()
-                    + "/" + user + "/bml" + "/" + dateStr + "/" + resourceHeader + "/" + fileName;
+            return getSchema()
+                    + BmlServerConfiguration.BML_HDFS_PREFIX().getValue()
+                    + "/"
+                    + user
+                    + "/bml"
+                    + "/"
+                    + dateStr
+                    + "/"
+                    + resourceHeader
+                    + "/"
+                    + fileName;
         } else {
-            return getSchema() + BmlServerConfiguration.BML_HDFS_PREFIX().getValue() + "/" + user + "/bml" + "/" + dateStr + "/" + fileName;
+            return getSchema()
+                    + BmlServerConfiguration.BML_HDFS_PREFIX().getValue()
+                    + "/"
+                    + user
+                    + "/bml"
+                    + "/"
+                    + dateStr
+                    + "/"
+                    + fileName;
         }
     }
-
 
     @Override
     public boolean checkIfExists(String path, String user) throws IOException {

@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.bml.common;
 
 import org.apache.linkis.bml.conf.BmlServerConfiguration;
@@ -22,10 +22,12 @@ import org.apache.linkis.common.io.Fs;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.storage.FSFactory;
 import org.apache.linkis.storage.utils.FileSystemUtils;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,19 +40,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Description:本地存储bml文件
- */
-public class LocalResourceHelper implements ResourceHelper{
+/** Description:本地存储bml文件 */
+public class LocalResourceHelper implements ResourceHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalResourceHelper.class);
 
-
     private static final String LOCAL_SCHEMA = "file://";
 
-
     @Override
-    public long upload(String path, String user, InputStream inputStream, StringBuilder stringBuilder, boolean overwrite) throws UploadResourceException {
+    public long upload(
+            String path,
+            String user,
+            InputStream inputStream,
+            StringBuilder stringBuilder,
+            boolean overwrite)
+            throws UploadResourceException {
         OutputStream outputStream = null;
         InputStream is0 = null;
         InputStream is1 = null;
@@ -67,7 +71,7 @@ public class LocalResourceHelper implements ResourceHelper{
             long beforeSize = -1;
             is0 = fileSystem.read(fsPath);
             int ch0 = 0;
-            while((ch0 = is0.read(buffer)) != -1){
+            while ((ch0 = is0.read(buffer)) != -1) {
                 beforeSize += ch0;
             }
             outputStream = fileSystem.write(fsPath, overwrite);
@@ -82,11 +86,12 @@ public class LocalResourceHelper implements ResourceHelper{
                 stringBuilder.append(Hex.encodeHexString(md5Digest.digest()));
             }
 
-            //Get all the bytes of the file by the file name. In this way, the wrong updated is avoided.
+            // Get all the bytes of the file by the file name. In this way, the wrong updated is
+            // avoided.
             long afterSize = -1;
             is1 = fileSystem.read(fsPath);
             int ch1 = 0;
-            while((ch1 = is1.read(buffer)) != -1){
+            while ((ch1 = is1.read(buffer)) != -1) {
                 afterSize += ch1;
             }
             size = Math.max(size, afterSize - beforeSize);
@@ -102,7 +107,7 @@ public class LocalResourceHelper implements ResourceHelper{
             throw uploadResourceException;
         } finally {
             IOUtils.closeQuietly(outputStream);
-            if (fileSystem != null){
+            if (fileSystem != null) {
                 try {
                     fileSystem.close();
                 } catch (IOException e) {
@@ -117,14 +122,10 @@ public class LocalResourceHelper implements ResourceHelper{
     }
 
     @Override
-    public void update(String path) {
-
-    }
+    public void update(String path) {}
 
     @Override
-    public void getResource(String path, int start, int end) {
-
-    }
+    public void getResource(String path, int start, int end) {}
 
     @Override
     public String generatePath(String user, String fileName, Map<String, Object> properties) {
@@ -132,10 +133,25 @@ public class LocalResourceHelper implements ResourceHelper{
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         String dateStr = format.format(new Date());
         if (StringUtils.isNotEmpty(resourceHeader)) {
-            return getSchema() + BmlServerConfiguration.BML_LOCAL_PREFIX().getValue()
-                    + "/" + user + "/" + dateStr + "/" + resourceHeader + "/" + fileName;
+            return getSchema()
+                    + BmlServerConfiguration.BML_LOCAL_PREFIX().getValue()
+                    + "/"
+                    + user
+                    + "/"
+                    + dateStr
+                    + "/"
+                    + resourceHeader
+                    + "/"
+                    + fileName;
         } else {
-            return getSchema() + BmlServerConfiguration.BML_LOCAL_PREFIX().getValue() + "/" + user + "/" + dateStr + "/" + fileName;
+            return getSchema()
+                    + BmlServerConfiguration.BML_LOCAL_PREFIX().getValue()
+                    + "/"
+                    + user
+                    + "/"
+                    + dateStr
+                    + "/"
+                    + fileName;
         }
     }
 

@@ -5,22 +5,24 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.label.builder.factory;
 
 import org.apache.linkis.manager.label.builder.LabelBuilder;
 import org.apache.linkis.manager.label.conf.LabelCommonConfig;
+
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
+
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +46,8 @@ public class LabelBuilderFactoryContext {
             synchronized (LabelBuilderFactoryContext.class) {
                 if (labelBuilderFactory == null) {
                     String className = LabelCommonConfig.LABEL_FACTORY_CLASS.acquireNew();
-                    if (clazz == StdLabelBuilderFactory.class && StringUtils.isNotBlank(className)) {
+                    if (clazz == StdLabelBuilderFactory.class
+                            && StringUtils.isNotBlank(className)) {
                         try {
                             clazz = ClassUtils.getClass(className);
                         } catch (ClassNotFoundException e) {
@@ -71,7 +74,8 @@ public class LabelBuilderFactoryContext {
     private static void labelBuilderInitRegister(LabelBuilderFactory labelBuilderFactory) {
         Reflections reflections = org.apache.linkis.common.utils.ClassUtils.reflections();
 
-        Set<Class<? extends LabelBuilder>> allLabelBuilderClass = reflections.getSubTypesOf(LabelBuilder.class);
+        Set<Class<? extends LabelBuilder>> allLabelBuilderClass =
+                reflections.getSubTypesOf(LabelBuilder.class);
         if (null != allLabelBuilderClass) {
             Iterator<Class<? extends LabelBuilder>> iterator = allLabelBuilderClass.iterator();
             while (iterator.hasNext()) {
@@ -85,5 +89,4 @@ public class LabelBuilderFactoryContext {
             }
         }
     }
-
 }

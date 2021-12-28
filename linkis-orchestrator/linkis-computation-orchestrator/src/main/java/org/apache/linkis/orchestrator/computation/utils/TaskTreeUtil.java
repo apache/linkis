@@ -23,11 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-
 public class TaskTreeUtil {
 
-
-    public static <T> List<T> getAllTask(List<Object> list, Class<T> classT) throws IllegalArgumentException {
+    public static <T> List<T> getAllTask(List<Object> list, Class<T> classT)
+            throws IllegalArgumentException {
         List<T> rsList = new ArrayList<T>();
         if (null == classT) {
             throw new IllegalArgumentException("classT cannot be null.");
@@ -41,18 +40,20 @@ public class TaskTreeUtil {
         return rsList;
     }
 
-    public static <T> List<T> getAllTaskRecursive(ExecTask root, Class<T> classT) throws IllegalArgumentException {
+    public static <T> List<T> getAllTaskRecursive(ExecTask root, Class<T> classT)
+            throws IllegalArgumentException {
         if (null == root || null == classT) {
             throw new IllegalArgumentException("classT cannot be null.");
         }
 
         List<T> rsList = new ArrayList<>();
-        Function<Object, Integer> visitFunc = (o) -> {
-            if (classT.isInstance(o)) {
-                rsList.add(classT.cast(o));
-            }
-            return 0;
-        };
+        Function<Object, Integer> visitFunc =
+                (o) -> {
+                    if (classT.isInstance(o)) {
+                        rsList.add(classT.cast(o));
+                    }
+                    return 0;
+                };
 
         traverseTask(root, visitFunc);
         return rsList;
@@ -68,5 +69,4 @@ public class TaskTreeUtil {
             }
         }
     }
-
 }

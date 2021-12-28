@@ -77,6 +77,7 @@ trait AbstractLinkisJob extends LinkisJob with Logging {
   override final def getOperator(operatorName: String): Operator[_] = {
     var operator = OperatorFactory().createOperatorByName(operatorName)
     operatorActions.foreach(action => operator = action(operator))
+    operator.initOperator(this)
     operator
 //    operatorActions.foldLeft(operator)((operator, action) => action(operator))
   }

@@ -17,11 +17,15 @@
  
 package org.apache.linkis.computation.client.operator
 
+import org.apache.linkis.computation.client.LinkisJob
+
 
 trait Operator[T] {
 
   def getName: String
 
   def apply(): T
+
+  def initOperator[U <: LinkisJob](job: U): Unit = {}
 
 }

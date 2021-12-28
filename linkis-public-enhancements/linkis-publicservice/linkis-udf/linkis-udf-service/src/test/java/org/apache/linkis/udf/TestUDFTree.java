@@ -28,7 +28,7 @@ import java.net.URLClassLoader;
 public class TestUDFTree {
 
     public static void main(String[] args) throws MalformedURLException, ClassNotFoundException, NoSuchMethodException {
-        File hiveDependency = new File("C:\\Users\\johnnwang\\.m2\\repository\\org\\apache\\hive\\hive-exec\\1.2.1\\hive-exec-1.2.1.jar");
+        File hiveDependency = new File("repository\\org\\apache\\hive\\hive-exec\\1.2.1\\hive-exec-1.2.1.jar");
         File jar = new File("E:\\tm_client_1.6.jar");
         URL[] url = {new URL("file:" + jar.getAbsolutePath()), new URL("file:" + hiveDependency.getAbsolutePath())};
         URLClassLoader loader = URLClassLoader.newInstance(url);

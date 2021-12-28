@@ -190,6 +190,7 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     //6. 调用EM发送引擎启动请求调用ASK TODO 异常和等待时间处理
     val engineNode = getEMService().createEngine(engineBuildRequest, emNode)
     info(s"Finished to create  engineConn $engineNode. ticketId is $resourceTicketId")
+    engineNode.setTicketId(resourceTicketId);
     //7. 更新持久化信息：包括插入engine/metrics
     //AM会更新serviceInstance表  需要将ticketID进行替换,并更新 EngineConn的Label 需要修改EngineInstanceLabel 中的id为Instance信息
     val oldServiceInstance = new ServiceInstance

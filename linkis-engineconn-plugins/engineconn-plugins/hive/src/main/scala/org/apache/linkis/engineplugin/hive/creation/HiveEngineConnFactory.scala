@@ -69,7 +69,7 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
       hiveConf.setVar(HiveConf.ConfVars.HIVEFETCHOUTPUTSERDE, HiveEngineConfiguration.BASE64_SERDE_CLASS)
       hiveConf.set("enable_fetch_base64","true")
     }
-    /* //Update by peaceWong add hook to HiveDriver
+    /* //add hook to HiveDriver
      if (StringUtils.isNotBlank(EnvConfiguration.LINKIS_HIVE_POST_HOOKS)) {
        val hooks = if (StringUtils.isNotBlank(hiveConf.get("hive.exec.post.hooks"))) {
          hiveConf.get("hive.exec.post.hooks") + "," + EnvConfiguration.LINKIS_HIVE_POST_HOOKS
@@ -78,7 +78,7 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
        }
        hiveConf.set("hive.exec.post.hooks", hooks)
      }*/
-    //Update by peaceWong enable hive.stats.collect.scancols
+    //enable hive.stats.collect.scancols
     hiveConf.setBoolean("hive.stats.collect.scancols", true)
     val ugi = HDFSUtils.getUserGroupInformation(Utils.getJvmUser)
     val sessionState: SessionState = ugi.doAs(new PrivilegedExceptionAction[SessionState] {

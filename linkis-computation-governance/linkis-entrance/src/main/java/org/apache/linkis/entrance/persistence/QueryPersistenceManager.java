@@ -149,7 +149,7 @@ public class QueryPersistenceManager extends PersistenceManager{
 
     @Override
     public void onJobCompleted(Job job) {
-        //update by peaceWong to set jobID to CS
+        //to set jobID to CS
         try {
             if (job.isSucceed()) {
                 CSEntranceHelper.registerCSRSData(job);

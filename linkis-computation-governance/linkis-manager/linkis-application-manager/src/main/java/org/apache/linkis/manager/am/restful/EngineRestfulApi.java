@@ -18,7 +18,11 @@
 package org.apache.linkis.manager.am.restful;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
@@ -48,30 +52,18 @@ import org.apache.linkis.message.publisher.MessagePublisher;
 import org.apache.linkis.resourcemanager.utils.RMUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import scala.Predef;
-import scala.Tuple2;
-import scala.collection.JavaConverters;
 
 @RequestMapping(path = "/linkisManager", produces = {"application/json"})
 @RestController
@@ -132,7 +124,13 @@ public class EngineRestfulApi {
         //to transform to a map
         Map<String, Object> retEngineNode = new HashMap<>();
         retEngineNode.put("serviceInstance", engineNode.getServiceInstance());
-        retEngineNode.put("nodeStatus", engineNode.getNodeStatus().toString());
+        if (null == engineNode.getNodeStatus()) {
+            engineNode.setNodeStatus(NodeStatus.Starting);
+        } else {
+            retEngineNode.put("nodeStatus", engineNode.getNodeStatus().toString());
+        }
+        retEngineNode.put("ticketId", engineNode.getTicketId());
+        retEngineNode.put("ecmServiceInstance", engineNode.getEMNode().getServiceInstance());
         return Message.ok("create engineConn succeed.").data("engine", retEngineNode);
     }
 
@@ -266,18 +264,10 @@ public class EngineRestfulApi {
         Map<String, Object> parameters = objectMapper.convertValue(jsonNode.get("parameters")
                 , new TypeReference<Map<String, Object>>(){});
 
-        EngineOperateRequest engineOperateRequest = new EngineOperateRequest(userName
-                , JavaConverters.mapAsScalaMapConverter(parameters).asScala().toMap(Predef.conforms()));
-
+        EngineOperateRequest engineOperateRequest = new EngineOperateRequest(userName, parameters);
         EngineOperateResponse engineOperateResponse = engineOperateService.executeOperation(engineNode, engineOperateRequest);
-
-        Map<String, Object> result = new HashMap<>(0);
-        if (engineOperateResponse != null && engineOperateResponse.result() != null) {
-            result = JavaConverters.mapAsJavaMapConverter(engineOperateResponse.result()).asJava();
-        }
-
         return Message.ok()
-                .data("result", result)
+                .data("result", engineOperateResponse.getResult())
                 .data("errorMsg", engineOperateResponse.errorMsg())
                 .data("isError", engineOperateResponse.isError());
     }
@@ -285,11 +275,10 @@ public class EngineRestfulApi {
 
 
     private boolean isAdmin(String user) {
-        String[] adminArray = AMConfiguration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
-        return ArrayUtils.contains(adminArray, user);
+        return AMConfiguration.isAdmin(user);
     }
 
-    private ServiceInstance getServiceInstance(JsonNode jsonNode) throws AMErrorException {
+    static ServiceInstance getServiceInstance(JsonNode jsonNode) throws AMErrorException {
         String applicationName = jsonNode.get("applicationName").asText();
         String instance = jsonNode.get("instance").asText();
         if(StringUtils.isEmpty(applicationName)){

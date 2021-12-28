@@ -111,13 +111,15 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
     markReq.setCreateService(markReq.getCreateService + s"mark_id: ${mark.getMarkId()}")
     // getEngineConn Executor
     info(s"create Executor for execId ${execTask.getIDInfo()} mark id is ${mark.getMarkId()}, user ${mark.getMarkReq.getUser}")
-    execTask.getPhysicalContext.pushLog(TaskLogEvent(execTask, LogUtils.generateInfo("Background is starting a new engine for you, it may take several seconds, please wait")))
+    execTask.getPhysicalContext.pushLog(TaskLogEvent(execTask, LogUtils.generateInfo(s"Background is starting a new engine for you,execId ${execTask.getIDInfo()} mark id is ${mark.getMarkId()}, it may take several seconds, please wait")))
     val engineConnExecutor = engineConnManager.getAvailableEngineConnExecutor(mark)
     if (null == engineConnExecutor) {
       return null
     }
     val codeExecTaskExecutor = new CodeExecTaskExecutor(engineConnExecutor, execTask, mark)
-    execTaskToExecutor.put(execTask.getId, codeExecTaskExecutor)
+    execTaskToExecutor synchronized {
+      execTaskToExecutor.put(execTask.getId, codeExecTaskExecutor)
+    }
     info(s"Finished to create Executor for execId ${execTask.getIDInfo()} mark id is ${mark.getMarkId()}, user ${mark.getMarkReq.getUser}")
     codeExecTaskExecutor
   }
@@ -125,7 +127,7 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
   protected def createMarkReq(execTask: CodeLogicalUnitExecTask): MarkReq = {
 
     val loadBalanceLabel = LabelUtil.getLoadBalanceLabel(execTask.getLabels)
-    val markReq: MarkReq =  if (null != loadBalanceLabel) {
+    val markReq: MarkReq = if (null != loadBalanceLabel) {
       new LoadBanlanceMarkReq
     } else {
       val defaultMarkReq = new DefaultMarkReq
@@ -178,6 +180,7 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
   /**
    * The job execution process is normal. After the job is completed, you can call this method.
    * This method will determine the bind engine label. If it is a non-end type job, no operation will be performed.
+   *
    * @param execTask
    * @param executor
    */
@@ -204,15 +207,18 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
   /**
    * The method is used to clean up the executor, here will trigger the unlock of ec,
    * but if it is with the loadBlance tag, the unlock step will be skipped
+   *
    * @param executor
    * @param labels
    */
-  private def clearExecutorById( executor: CodeExecTaskExecutor, labels: util.List[Label[_]], forceRelease: Boolean = false): Unit = {
+  private def clearExecutorById(executor: CodeExecTaskExecutor, labels: util.List[Label[_]], forceRelease: Boolean = false): Unit = {
     if (null == executor || executor.getEngineConnExecutor == null) return
     val loadBalanceLabel = LabelUtil.getLoadBalanceLabel(labels)
     if (null == loadBalanceLabel || forceRelease) {
       info(s"To release engine ConnExecutor ${executor}")
-      getEngineConnManager(labels).releaseEngineConnExecutor(executor.getEngineConnExecutor, executor.getMark)
+      Utils.tryAndWarn {
+        getEngineConnManager(labels).releaseEngineConnExecutor(executor.getEngineConnExecutor, executor.getMark)
+      }
     } else {
       info(s"Task has loadBalanceLabel, Not need to delete executor ${executor}")
     }
@@ -228,7 +234,7 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
       instanceToExecutors synchronized {
         if (null != executors && executors.nonEmpty) {
           instanceToExecutors.put(executor.getEngineConnExecutor.getServiceInstance, executors)
-        } else  {
+        } else {
           instanceToExecutors.remove(executor.getEngineConnExecutor.getServiceInstance)
         }
       }
@@ -240,21 +246,21 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
   }
 
   override def addEngineConnTaskID(executor: CodeExecTaskExecutor): Unit = {
-    if (execTaskToExecutor.contains(executor.getExecTaskId)) {
-      val codeExecutor = new CodeExecTaskExecutor(executor.getEngineConnExecutor, executor.getExecTask, executor.getMark)
-      codeExecutor.setEngineConnTaskId(executor.getEngineConnTaskId)
-      execTaskToExecutor.put(executor.getExecTaskId, codeExecutor)
-      info(s"To add codeExecTaskExecutor  $executor to instanceToExecutors")
-      val executors = instanceToExecutors.getOrElse(executor.getEngineConnExecutor.getServiceInstance, Array.empty[CodeExecTaskExecutor])
-      instanceToExecutors synchronized {
-        instanceToExecutors.put(executor.getEngineConnExecutor.getServiceInstance, executors.+:(codeExecutor))
-      }
+    /* val codeExecutor = new CodeExecTaskExecutor(executor.getEngineConnExecutor, executor.getExecTask, executor.getMark)
+     codeExecutor.setEngineConnTaskId(executor.getEngineConnTaskId)*/
+    execTaskToExecutor synchronized {
+      execTaskToExecutor.put(executor.getExecTaskId, executor)
+    }
+    info(s"To add codeExecTaskExecutor  $executor to instanceToExecutors")
+    val executors = instanceToExecutors.getOrElse(executor.getEngineConnExecutor.getServiceInstance, Array.empty[CodeExecTaskExecutor])
+    instanceToExecutors synchronized {
+      instanceToExecutors.put(executor.getEngineConnExecutor.getServiceInstance, executors.+:(executor))
     }
   }
 
   private def getEngineConnManager(labels: util.List[Label[_]]): EngineConnManager = {
-    if(null == labels || labels.isEmpty) return defaultEngineConnManager
-    if(labels.asScala.exists(_.isInstanceOf[LoadBalanceLabel])){
+    if (null == labels || labels.isEmpty) return defaultEngineConnManager
+    if (labels.asScala.exists(_.isInstanceOf[LoadBalanceLabel])) {
       return labelEngineConnManager
     }
     defaultEngineConnManager
@@ -267,6 +273,7 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
   /**
    * If the job is executed abnormally, such as execution failure, or being killed,
    * it will go to the process for cleaning up, and the engineConn lock will be released.
+   *
    * @param execTask
    * @param execTaskExecutor
    */
@@ -277,6 +284,7 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
 
   /**
    * Task failed because ec exited unexpectedly, so need to clean up ec immediately
+   *
    * @param execTask
    * @param executor
    */

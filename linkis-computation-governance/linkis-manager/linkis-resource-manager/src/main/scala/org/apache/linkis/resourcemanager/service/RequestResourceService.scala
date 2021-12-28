@@ -17,13 +17,12 @@
  
 package org.apache.linkis.resourcemanager.service
 
-import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.resourcemanager.domain.RMLabelContainer
-import org.apache.linkis.resourcemanager.exception.RMWarnException
-import org.apache.linkis.resourcemanager.utils.RMUtils.aggregateResource
-import org.apache.linkis.resourcemanager.utils.{AlertUtils, RMConfiguration, RMUtils, UserConfiguration}
+import org.apache.linkis.resourcemanager.exception.{RMErrorCode, RMWarnException}
+import org.apache.linkis.resourcemanager.utils.{RMUtils, UserConfiguration}
 
 abstract class RequestResourceService(labelResourceService: LabelResourceService) extends Logging{
 
@@ -32,105 +31,138 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
   val enableRequest = RMUtils.RM_REQUEST_ENABLE.getValue
 
   def canRequest(labelContainer: RMLabelContainer, resource: NodeResource): Boolean = {
+
+    labelContainer.getCurrentLabel match {
+      case emInstanceLabel: EMInstanceLabel =>
+        return checkEMResource(labelContainer.getUserCreatorLabel.getUser, emInstanceLabel, resource)
+      case _ =>
+    }
+
     var labelResource = labelResourceService.getLabelResource(labelContainer.getCurrentLabel)
+    val requestResource = resource.getMinResource
     // for configuration resource
-    if(labelContainer.getCombinedUserCreatorEngineTypeLabel.equals(labelContainer.getCurrentLabel)){
-      if(labelResource == null) {
+    if (labelContainer.getCombinedUserCreatorEngineTypeLabel.equals(labelContainer.getCurrentLabel)) {
+      if (labelResource == null) {
         labelResource = new CommonNodeResource
         labelResource.setResourceType(resource.getResourceType)
         labelResource.setUsedResource(Resource.initResource(resource.getResourceType))
         labelResource.setLockedResource(Resource.initResource(resource.getResourceType))
-        info(s"ResourceInit:${labelContainer.getCurrentLabel.getStringValue}")
+        logger.info(s"ResourceInit: ${labelContainer.getCurrentLabel.getStringValue} ")
       }
       val configuredResource = UserConfiguration.getUserConfiguredResource(resource.getResourceType, labelContainer.getUserCreatorLabel, labelContainer.getEngineTypeLabel)
-      debug(s"Get configured resource ${configuredResource} for [${labelContainer.getUserCreatorLabel}] and [${labelContainer.getEngineTypeLabel}]")
+      logger.debug(s"Get configured resource ${configuredResource} for [${labelContainer.getUserCreatorLabel}] and [${labelContainer.getEngineTypeLabel}] ")
       labelResource.setMaxResource(configuredResource)
       labelResource.setMinResource(Resource.initResource(labelResource.getResourceType))
       labelResource.setLeftResource(labelResource.getMaxResource - labelResource.getUsedResource - labelResource.getLockedResource)
-      labelResourceService.setLabelResource(labelContainer.getCurrentLabel, labelResource)
-      info(s"${labelContainer.getCurrentLabel} to request [${resource.getMinResource}]  \t labelResource: Max: ${labelResource.getMaxResource}  \t " +
+      labelResourceService.setLabelResource(labelContainer.getCurrentLabel, labelResource, labelContainer.getCombinedUserCreatorEngineTypeLabel.getStringValue)
+      logger.debug(s"${labelContainer.getCurrentLabel} to request [${requestResource}]  \t labelResource: Max: ${labelResource.getMaxResource}  \t " +
         s"use:  ${labelResource.getUsedResource}  \t locked: ${labelResource.getLockedResource}")
     }
-    debug(s"Label [${labelContainer.getCurrentLabel}] has resource + [${labelResource }]")
-    if(labelResource != null){
+    logger.debug(s"Label [${labelContainer.getCurrentLabel}] has resource + [${labelResource }]")
+    if (labelResource != null) {
       val labelAvailableResource = labelResource.getLeftResource
-      if(labelAvailableResource < resource.getMinResource && enableRequest){
-        info(s"Failed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${resource.getMinResource}] > label available resource[${labelAvailableResource}]")
+      if(labelAvailableResource < requestResource && enableRequest) {
+        logger.info(s"Failed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] > label available resource[${labelAvailableResource}]")
         // TODO sendAlert(moduleInstance, user, creator, requestResource, moduleAvailableResource.resource, moduleLeftResource)
-        val notEnoughMessage = generateNotEnoughMessage(aggregateResource(labelResource.getUsedResource, labelResource.getLockedResource), labelAvailableResource)
+        val notEnoughMessage = generateNotEnoughMessage(requestResource, labelAvailableResource)
         throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)
       }
-      info(s"Passed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${resource.getMinResource}] <= label available resource[${labelAvailableResource}]")
+      logger.debug(s"Passed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] <= label available resource[${labelAvailableResource}]")
+      true
+    } else {
+      logger.warn(s"No resource available found for label ${labelContainer.getCurrentLabel}")
+      throw new RMWarnException(11201, s"Resource label ${labelContainer.getCurrentLabel} has no resource, please check resource in db.")
     }
-    warn(s"No resource available found for label ${labelContainer.getCurrentLabel}")
-    return true
   }
 
-  def sendAlert(moduleInstance: ServiceInstance, user: String, creator:String,  requestResource: Resource, availableResource: Resource, moduleLeftResource: Resource) = {
-    if(RMConfiguration.ALERT_ENABLED.getValue){
-      info("start sending alert")
-      val title = s"user ${user} failed to request resource on EM(${moduleInstance.getApplicationName},${moduleInstance.getInstance})"
-      val queueContact = requestResource match {
-        case d: DriverAndYarnResource => AlertUtils.getContactByQueue(d.yarnResource.queueName)
-        case y: YarnResource => AlertUtils.getContactByQueue(y.queueName)
-        case _ => RMConfiguration.ALERT_DEFAULT_CONTACT.getValue
+  private def checkEMResource(user: String, emInstanceLabel: EMInstanceLabel, resource: NodeResource): Boolean = {
+    val labelResource = labelResourceService.getLabelResource(emInstanceLabel)
+    val requestResource = resource.getMinResource
+    logger.debug(s"emInstanceLabel resource info ${labelResource }")
+    if (labelResource != null) {
+      val labelAvailableResource = labelResource.getLeftResource
+      if(labelAvailableResource < requestResource && enableRequest) {
+        logger.info(s"user want to use resource[${requestResource}] > em ${emInstanceLabel.getInstance()} available resource[${labelAvailableResource}]")
+        // TODO sendAlert(moduleInstance, user, creator, requestResource, moduleAvailableResource.resource, moduleLeftResource)
+        val notEnoughMessage = generateECMNotEnoughMessage(requestResource, labelAvailableResource)
+        throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)
       }
-      val detail =
-        s"请联系用户[${user}]或相关人员[${queueContact}]\n" +
-          s"user request resource: ${requestResource}\n " +
-          s"user available resource: ${availableResource}\n " +
-          s"EM left resource: ${moduleLeftResource}\n "
-      AlertUtils.sendAlertAsync(title, detail);
-      info("finished sending alert")
+      logger.debug(s"Passed check: resource[${requestResource}] want to use em ${emInstanceLabel.getInstance()}  available resource[${labelAvailableResource}]")
+      true
+    } else {
+      logger.warn(s"No resource available found for em ${emInstanceLabel.getInstance()} ")
+      throw new RMWarnException(11201, s"No resource available found for em ${emInstanceLabel.getInstance()} ")
     }
   }
+
+  def generateECMNotEnoughMessage(requestResource: Resource, availableResource: Resource) : (Int, String) = {
+    val loadRequestResource = requestResource match {
+      case li: LoadInstanceResource => li
+      case driverAndYarnResource: DriverAndYarnResource => driverAndYarnResource.loadInstanceResource
+      case _ => null
+    }
+    loadRequestResource match {
+      case li: LoadInstanceResource =>
+        val loadInstanceAvailable = availableResource.asInstanceOf[LoadInstanceResource]
+        if(li.cores > loadInstanceAvailable.cores) {
+          (RMErrorCode.ECM_CPU_INSUFFICIENT.getCode, RMErrorCode.ECM_CPU_INSUFFICIENT.getMessage)
+        } else if (li.memory > loadInstanceAvailable.memory) {
+          (RMErrorCode.ECM_MEMORY_INSUFFICIENT.getCode, RMErrorCode.ECM_MEMORY_INSUFFICIENT.getMessage)
+        } else {
+          (RMErrorCode.ECM_INSTANCES_INSUFFICIENT.getCode, RMErrorCode.ECM_INSTANCES_INSUFFICIENT.getMessage)
+        }
+      case _ =>
+        (RMErrorCode.ECM_RESOURCE_INSUFFICIENT.getCode, RMErrorCode.ECM_RESOURCE_INSUFFICIENT.getMessage)
+    }
+  }
+
 
   def generateNotEnoughMessage(requestResource: Resource, availableResource: Resource) : (Int, String) = {
     requestResource match {
       case m: MemoryResource =>
-        (11011, s"Drive memory resources are insufficient, to reduce the drive memory(内存资源不足，建议调小驱动内存)")
+        (RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getCode, RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getMessage)
       case c: CPUResource =>
-        (11012, s"CPU resources are insufficient, to reduce the number of driver cores(CPU资源不足，建议调小驱动核数)")
+        (RMErrorCode.DRIVER_CPU_INSUFFICIENT.getCode, RMErrorCode.DRIVER_CPU_INSUFFICIENT.getMessage)
       case i: InstanceResource =>
-        (11013, s"Insufficient number of instances, idle engines can be killed(实例数不足，可以kill空闲的引擎)")
+        (RMErrorCode.INSTANCES_INSUFFICIENT.getCode, RMErrorCode.INSTANCES_INSUFFICIENT.getMessage)
       case l: LoadResource =>
         val loadAvailable = availableResource.asInstanceOf[LoadResource]
-        if(l.cores > loadAvailable.cores){
-          (11012, s"CPU resources are insufficient, to reduce the number of driver cores(CPU资源不足，建议调小驱动核数)")
+        if(l.cores > loadAvailable.cores) {
+          (RMErrorCode.DRIVER_CPU_INSUFFICIENT.getCode, RMErrorCode.DRIVER_CPU_INSUFFICIENT.getMessage)
         } else {
-          (11011, s"Drive memory resources are insufficient, to reduce the drive memory(内存资源不足，建议调小驱动内存)")
+          (RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getCode, RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getMessage)
         }
       case li: LoadInstanceResource =>
         val loadInstanceAvailable = availableResource.asInstanceOf[LoadInstanceResource]
-        if(li.cores > loadInstanceAvailable.cores){
-          (11012, s"CPU resources are insufficient, to reduce the number of driver cores(CPU资源不足，建议调小驱动核数)")
+        if(li.cores > loadInstanceAvailable.cores) {
+          (RMErrorCode.DRIVER_CPU_INSUFFICIENT.getCode, RMErrorCode.DRIVER_CPU_INSUFFICIENT.getMessage)
         } else if (li.memory > loadInstanceAvailable.memory) {
-          (11011, s"Drive memory resources are insufficient, to reduce the drive memory(内存资源不足，建议调小驱动内存)")
+          (RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getCode, RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getMessage)
         } else {
-          (11013, s"Insufficient number of instances, idle engines can be killed(实例数不足，可以kill空闲的引擎)")
+          (RMErrorCode.INSTANCES_INSUFFICIENT.getCode, RMErrorCode.INSTANCES_INSUFFICIENT.getMessage)
         }
       case yarn: YarnResource =>
         val yarnAvailable = availableResource.asInstanceOf[YarnResource]
-        if(yarn.queueCores > yarnAvailable.queueCores){
-          (11014, s"Queue CPU resources are insufficient, reduce the number of executors.(队列CPU资源不足，建议调小执行器个数)")
-        } else if (yarn.queueMemory > yarnAvailable.queueMemory){
-          (11015, s"Insufficient queue memory resources, reduce the executor memory")
+        if(yarn.queueCores > yarnAvailable.queueCores) {
+          (RMErrorCode.QUEUE_CPU_INSUFFICIENT.getCode, RMErrorCode.QUEUE_CPU_INSUFFICIENT.getMessage)
+        } else if (yarn.queueMemory > yarnAvailable.queueMemory) {
+          (RMErrorCode.QUEUE_MEMORY_INSUFFICIENT.getCode, RMErrorCode.QUEUE_MEMORY_INSUFFICIENT.getMessage)
         } else {
-          (11016, s"Insufficient number of queue instances, idle engines can be killed(队列实例数不足，可以kill空闲的引擎)")
+          (RMErrorCode.QUEUE_INSTANCES_INSUFFICIENT.getCode, RMErrorCode.QUEUE_INSTANCES_INSUFFICIENT.getMessage)
         }
       case dy: DriverAndYarnResource =>
         val dyAvailable = availableResource.asInstanceOf[DriverAndYarnResource]
         if(dy.loadInstanceResource.memory > dyAvailable.loadInstanceResource.memory ||
           dy.loadInstanceResource.cores > dyAvailable.loadInstanceResource.cores ||
-          dy.loadInstanceResource.instances > dyAvailable.loadInstanceResource.instances){
+          dy.loadInstanceResource.instances > dyAvailable.loadInstanceResource.instances) {
           val detail = generateNotEnoughMessage(dy.loadInstanceResource, dyAvailable.loadInstanceResource)
-          (detail._1, s"When requesting server resources，${detail._2}")
+          (detail._1, {detail._2})
         } else {
           val detail = generateNotEnoughMessage(dy.yarnResource, dyAvailable.yarnResource)
-          (detail._1, s"When requesting server resources，${detail._2}")
+          (detail._1, {detail._2})
         }
-      case s: SpecialResource => throw new RMWarnException(11003,"not supported resource type " + s.getClass)
-      case r: Resource => throw new RMWarnException(11003,"not supported resource type " + r.getClass)
+      case s: SpecialResource => throw new RMWarnException(11003, " not supported resource type " + s.getClass)
+      case r: Resource => throw new RMWarnException(11003, "not supported resource type " + r.getClass)
     }
   }
 }

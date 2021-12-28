@@ -44,8 +44,9 @@ class CallbackEngineConnHook extends EngineConnHook with Logging  {
     val parser = DWCArgumentsParser.parse(engineCreationContext.getArgs)
     DWCArgumentsParser.setDWCOptionMap(parser.getDWCConfMap)
     val existsExcludePackages = ServerConfiguration.BDP_SERVER_EXCLUDE_PACKAGES.getValue
-    if (!StringUtils.isEmpty(existsExcludePackages))
+    if (!StringUtils.isEmpty(existsExcludePackages)) {
       DataWorkCloudApplication.setProperty(ServerConfiguration.BDP_SERVER_EXCLUDE_PACKAGES.key, existsExcludePackages)
+    }
     // 加载spring类
     val map = new mutable.HashMap[String, String]()
     val newMap = map.++(parser.getSpringConfMap)
@@ -64,8 +65,8 @@ class CallbackEngineConnHook extends EngineConnHook with Logging  {
   override def afterEngineServerStartFailed(engineCreationContext: EngineCreationContext, throwable: Throwable): Unit = {
     val engineConnAfterStartCallback = new EngineConnAfterStartCallback(engineCreationContext.getEMInstance)
     val prefixMsg = Sender.getThisServiceInstance + s": log dir: ${EngineConnConf.getLogDir},"
-    engineConnAfterStartCallback.callback(EngineConnStatusCallback(Sender.getThisServiceInstance,
-      engineCreationContext.getTicketId, NodeStatus.Failed, prefixMsg + ExceptionUtils.getRootCauseMessage(throwable)))
+    Utils.tryAndError(engineConnAfterStartCallback.callback(EngineConnStatusCallback(Sender.getThisServiceInstance,
+      engineCreationContext.getTicketId, NodeStatus.Failed, prefixMsg + ExceptionUtils.getRootCauseMessage(throwable))))
     error("EngineConnSever start failed! now exit.", throwable)
     ShutdownHook.getShutdownHook.notifyError(throwable)
   }
@@ -75,8 +76,8 @@ class CallbackEngineConnHook extends EngineConnHook with Logging  {
 
   override def afterEngineServerStartSuccess(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit = {
     val engineConnAfterStartCallback = new EngineConnAfterStartCallback(engineCreationContext.getEMInstance)
-    engineConnAfterStartCallback.callback(EngineConnStatusCallback(Sender.getThisServiceInstance,
-      engineCreationContext.getTicketId, getNodeStatusOfStartSuccess(engineCreationContext, engineConn), "success"))
+    Utils.tryAndError(engineConnAfterStartCallback.callback(EngineConnStatusCallback(Sender.getThisServiceInstance,
+      engineCreationContext.getTicketId, getNodeStatusOfStartSuccess(engineCreationContext, engineConn), "success")))
     warn("EngineConnServer start succeed!")
   }
 

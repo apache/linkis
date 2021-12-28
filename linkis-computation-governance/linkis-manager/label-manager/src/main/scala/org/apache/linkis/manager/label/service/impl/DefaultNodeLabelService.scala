@@ -17,8 +17,6 @@
  
 package org.apache.linkis.manager.label.service.impl
 
-import java.util
-
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.entity.node.ScoreServiceInstance
@@ -27,8 +25,7 @@ import org.apache.linkis.manager.common.utils.ManagerUtils
 import org.apache.linkis.manager.label.LabelManagerUtils
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.conf.LabelManagerConf
-import org.apache.linkis.manager.label.entity.Label.ValueRelation
-import org.apache.linkis.manager.label.entity.{Feature, Label, UserModifiable}
+import org.apache.linkis.manager.label.entity.{Feature, Label}
 import org.apache.linkis.manager.label.score.NodeLabelScorer
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.label.utils.LabelUtils
@@ -38,6 +35,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.CollectionUtils
 
+import java.util
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -119,17 +117,29 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
     if(!CollectionUtils.isEmpty(willBeDelete)){
       nodeLabels.foreach(nodeLabel =>  {
         if(modifiableKeyList.contains(nodeLabel.getLabelKey) && willBeDelete.contains(nodeLabel.getLabelKey)){
-          labelManagerPersistence.removeLabel(nodeLabel.getId)
+          val labelIds = new util.ArrayList[Integer]()
+          labelIds.add(nodeLabel.getId)
+          labelManagerPersistence.removeNodeLabels(instance, labelIds)
         }
       })
     }
-    if(!CollectionUtils.isEmpty(willBeUpdate)){
+    /**
+      * update step:
+      * 1.delete relations of old labels
+      * 2.add new relation between new labels and instance
+      */
+    if (!CollectionUtils.isEmpty(willBeUpdate)) {
       labels.foreach(label => {
         if(modifiableKeyList.contains(label.getLabelKey) && willBeUpdate.contains(label.getLabelKey)){
           nodeLabels.filter(_.getLabelKey.equals(label.getLabelKey)).foreach(oldLabel => {
             val persistenceLabel = LabelManagerUtils.convertPersistenceLabel(label)
-            persistenceLabel.setId(oldLabel.getId)
-            labelManagerPersistence.updateLabel(persistenceLabel.getId, persistenceLabel)
+            val labelIds = new util.ArrayList[Integer]()
+            labelIds.add(oldLabel.getId)
+            labelManagerPersistence.removeNodeLabels(instance, labelIds)
+            val newLabelId = tryToAddLabel(persistenceLabel)
+            labelIds.remove(oldLabel.getId)
+            labelIds.add(newLabelId)
+            labelManagerPersistence.addLabelToNode(instance, labelIds)
           })
         }
       })
@@ -167,13 +177,6 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
     labelManagerPersistence.removeNodeLabels(instance, removeLabels.map(_.getId))
   }
 
-  @Transactional(rollbackFor = Array(classOf[Exception]))
-  override def removeLabelsFromNodeWithoutPermanent(instance: ServiceInstance, permanentLabel: Array[String] = Array()): Unit = {
-    val labels = labelManagerPersistence.getLabelByServiceInstance(instance)
-    val lowerCasePermanentLabels = permanentLabel.map(_.toLowerCase())
-    val withoutPermanentLabel = labels.filterNot(label => lowerCasePermanentLabels.contains(label.getLabelKey.toLowerCase)).map(_.getId)
-    labelManagerPersistence.removeNodeLabels(instance, withoutPermanentLabel)
-  }
 
   /**
    * Get node instances by labels

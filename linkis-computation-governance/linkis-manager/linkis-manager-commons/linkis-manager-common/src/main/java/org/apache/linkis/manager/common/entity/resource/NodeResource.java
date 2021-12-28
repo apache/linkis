@@ -24,6 +24,10 @@ import java.util.Date;
 
 public interface NodeResource extends Serializable, RequestProtocol {
 
+    Integer getId();
+
+    void setId(Integer id);
+
     ResourceType getResourceType();
 
     void setCreateTime(Date createTime);

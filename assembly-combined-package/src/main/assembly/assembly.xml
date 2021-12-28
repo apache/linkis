@@ -26,6 +26,27 @@
 
   <fileSets>
     <fileSet>
+      <directory>../</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+          <include>README*</include>
+          <include>LICENSE*</include>
+          <include>NOTICE*</include>
+          <include>DISCLAIMER*</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>
+          licenses/
+      </directory>
+      <outputDirectory>licenses</outputDirectory>
+      <includes>
+          <include>**/*</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
       <directory>
         bin/
       </directory>
@@ -55,7 +76,7 @@
           </directory>
           <outputDirectory></outputDirectory>
           <includes>
-              <include>apache-linkis-${linkis.version}-combined-dist.tar.gz</include>
+              <include>apache-linkis-${linkis.version}-incubating-dist.tar.gz</include>
           </includes>
           <fileMode>0777</fileMode>
       </fileSet>

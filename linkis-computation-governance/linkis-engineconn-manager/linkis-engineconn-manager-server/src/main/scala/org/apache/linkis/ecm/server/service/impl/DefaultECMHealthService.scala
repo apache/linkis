@@ -44,7 +44,7 @@ class DefaultECMHealthService extends ECMHealthService with ECMEventListener {
   private val runtime: Runtime = Runtime.getRuntime
 
   private val future = Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
-    override def run(): Unit = {
+    override def run(): Unit =Utils.tryAndWarn{
       if (LinkisECMApplication.isReady) {
         reportHealth(getLastEMHealthReport)
       }

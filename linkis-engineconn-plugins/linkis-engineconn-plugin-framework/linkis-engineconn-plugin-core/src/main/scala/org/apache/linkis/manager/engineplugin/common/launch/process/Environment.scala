@@ -17,13 +17,15 @@
  
 package org.apache.linkis.manager.engineplugin.common.launch.process
 
+import org.apache.commons.lang.StringUtils
+
 
 object Environment extends Enumeration {
 
   type Environment = Value
   val USER, ECM_HOME, PWD, PATH, SHELL, JAVA_HOME, CLASSPATH,
       HADOOP_HOME, HADOOP_CONF_DIR, HIVE_CONF_DIR, LOG_DIRS, TEMP_DIRS,
-      ECM_HOST, ECM_PORT, RANDOM_PORT, SERVICE_DISCOVERY,EUREKA_PREFER_IP,ENGINECONN_ENVKEYS = Value
+      ECM_HOST, ECM_PORT, RANDOM_PORT, SERVICE_DISCOVERY,EUREKA_PREFER_IP, UDF_JARS, ENGINECONN_ENVKEYS = Value
 
   def variable(environment: Environment): String = LaunchConstants.EXPANSION_MARKER_LEFT + environment + LaunchConstants.EXPANSION_MARKER_RIGHT
 
@@ -44,6 +46,14 @@ object LaunchConstants {
       env.get(Environment.CLASSPATH.toString) + CLASS_PATH_SEPARATOR + value
     } else value
     env.put(Environment.CLASSPATH.toString, v)
+  }
+
+  def addPathToUDFPath(env: java.util.Map[String, String], value: String): Unit = {
+    if (StringUtils.isBlank(value)) return
+    val v = if(env.containsKey(Environment.UDF_JARS.toString)) {
+      env.get(Environment.UDF_JARS.toString) + "," + value
+    } else value
+    env.put(Environment.UDF_JARS.toString, v)
   }
 
 }

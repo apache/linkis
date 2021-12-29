@@ -31,7 +31,7 @@ class JarUDFLoadECMHook extends ECMHook with Logging {
         info("start loading UDFs")
         val udfInfos = UDFClient.getUdfInfos(request.user,"udf").filter{ info => info.getUdfType == 0 && info.getExpire == false && StringUtils.isNotBlank(info.getPath) && info.getLoad == true }
         udfInfos.foreach{ udfInfo =>
-          LaunchConstants.addPathToClassPath(pel.environment, udfInfo.getPath)
+          LaunchConstants.addPathToUDFPath(pel.environment, udfInfo.getPath)
         }
     }
   }

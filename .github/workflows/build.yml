@@ -46,8 +46,7 @@ jobs:
     - name: Build backend by maven
       run: |
           mvn -N install
-          mvn clean install
-          mvn package
+          mvn clean package
     - name: Build frontend by node.js
       run: |
           cd web

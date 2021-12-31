@@ -1,4 +1,20 @@
 <!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<!--
 If you wish to turn off checking for a section of code, you can put a comment in the source
 before and after the section, with the following syntax:
   // scalastyle:off
@@ -187,7 +203,6 @@ This file is divided into 3 sections:
     <!--                              Custom checker                               -->
     <!-- ================================================================================ -->
 
-    <!-- As of SPARK-7977 all printlns need to be wrapped in '// scalastyle:off/on println' -->
     <check customId="println" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
         <parameters>
             <parameter name="regex">println</parameter>
@@ -198,7 +213,6 @@ This file is divided into 3 sections:
       // scalastyle:on println]]></customMessage>
     </check>
 
-    <!-- As of SPARK-9613 JavaConversions should be replaced with JavaConverters-->
     <check customId="javaconversions" level="error" class="org.scalastyle.scalariform.TokenChecker" enabled="true">
         <parameters>
             <parameter name="regex">JavaConversions</parameter>
@@ -486,11 +500,11 @@ This file is divided into 3 sections:
 
     <check level="error" class="org.scalastyle.scalariform.ImportOrderChecker" enabled="false">
         <parameters>
-            <parameter name="groups">java,scala,3rdParty,spark</parameter>
+            <parameter name="groups">java,scala,3rdParty,linkis</parameter>
             <parameter name="group.java">javax?\..*</parameter>
             <parameter name="group.scala">scala\..*</parameter>
-            <parameter name="group.3rdParty">(?!org\.apache\.spark\.).*</parameter>
-            <parameter name="group.spark">org\.apache\.spark\..*</parameter>
+            <parameter name="group.3rdParty">(?!org\.apache\.linkis\.).*</parameter>
+            <parameter name="group.linkis">org\.apache\.linkis\..*</parameter>
         </parameters>
     </check>
 

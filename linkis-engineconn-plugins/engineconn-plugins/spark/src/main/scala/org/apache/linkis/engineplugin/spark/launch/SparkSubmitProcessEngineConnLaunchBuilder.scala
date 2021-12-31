@@ -33,16 +33,13 @@ import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
 import org.apache.linkis.protocol.UserWithCreator
 import org.apache.commons.lang.StringUtils
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 import org.apache.linkis.hadoop.common.conf.HadoopConf
 
 
-/**
 
- *
- * @Date 2020/10/23
- */
 class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngineConnLaunchBuilder {
 
   private[this] val fsRoot = "hdfs://"
@@ -172,9 +169,11 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
 
     //addOpt("--jars",Some(ENGINEMANAGER_JAR.getValue))
 //    info("No need to add jars for " + _jars.map(fromPath).exists(x => x.equals("hdfs:///")).toString())
-    _jars = _jars.filter(_.isNotBlankPath())
-
-    if(_jars.nonEmpty) {
+    if (_jars.isEmpty) {
+      _jars += AbsolutePath("")
+    }
+    _jars += AbsolutePath(variable(UDF_JARS))
+    if (_jars.nonEmpty) {
       addList("--jars", _jars.map(fromPath))
     }
 

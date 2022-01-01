@@ -161,7 +161,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     val cmd = CommandLine.parse(pythonExec)
     cmd.addArgument(createFakeShell(pythonScriptPath).getAbsolutePath, false)
     cmd.addArgument(port.toString, false)
-    cmd.addArgument(EngineUtils.sparkSubmitVersion().replaceAll("\\.", ""), false)
+    cmd.addArgument(EngineUtils.sparkSubmitVersion().substring(0,5).replaceAll("\\.", ""), false)
     cmd.addArgument(py4jToken, false)
     cmd.addArgument(pythonClasspath.toString(), false)
     cmd.addArgument(pyFiles, false)

@@ -17,13 +17,15 @@
 
 package org.apache.linkis.datasource.client.request
 
+import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SOURCE_SERVICE_MODULE
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
+
 
 class GetConnectParamsByDataSourceIdAction extends GetAction with DataSourceAction {
   private var dataSourceId: Long = _
 
-  override def suffixURLs: Array[String] = Array("datasource", dataSourceId.toString, "connect_params")
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, dataSourceId.toString, "connect_params")
 
   private var user:String = _
 

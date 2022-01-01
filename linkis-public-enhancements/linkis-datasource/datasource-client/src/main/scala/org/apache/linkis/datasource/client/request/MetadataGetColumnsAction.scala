@@ -17,15 +17,17 @@
 
 package org.apache.linkis.datasource.client.request
 
+import org.apache.linkis.datasource.client.config.DatasourceClientConfig.METADATA_SERVICE_MODULE
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
+
 
 class MetadataGetColumnsAction extends GetAction with DataSourceAction {
   private var dataSourceId: Long = _
   private var database: String = _
   private var table: String = _
 
-  override def suffixURLs: Array[String] = Array("metadata", "columns", dataSourceId.toString, "db", database, "table", table)
+  override def suffixURLs: Array[String] = Array(METADATA_SERVICE_MODULE.getValue, "columns", dataSourceId.toString, "db", database, "table", table)
 
   private var user:String = _
 

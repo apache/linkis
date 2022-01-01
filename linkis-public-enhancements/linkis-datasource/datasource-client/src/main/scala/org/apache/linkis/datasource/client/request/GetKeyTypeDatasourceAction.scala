@@ -17,12 +17,15 @@
 
 package org.apache.linkis.datasource.client.request
 
-
 import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SOURCE_SERVICE_MODULE
+import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
 
-class GetAllDataSourceTypesAction extends GetAction with DataSourceAction {
-  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "type", "all")
+
+class GetKeyTypeDatasourceAction extends GetAction with DataSourceAction{
+  private var dataSourceTypeId: Long = _
+
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "key_define","type", dataSourceTypeId.toString)
 
   private var user:String = _
 
@@ -30,11 +33,11 @@ class GetAllDataSourceTypesAction extends GetAction with DataSourceAction {
 
   override def getUser: String = this.user
 }
-
-object GetAllDataSourceTypesAction {
+object GetKeyTypeDatasourceAction{
   def builder(): Builder = new Builder
 
-  class Builder private[GetAllDataSourceTypesAction]() {
+  class Builder private[GetKeyTypeDatasourceAction]() {
+    private var dataSourceTypeId: Long = _
     private var user: String = _
 
     def setUser(user: String): Builder = {
@@ -42,11 +45,19 @@ object GetAllDataSourceTypesAction {
       this
     }
 
-    def build(): GetAllDataSourceTypesAction = {
-      val action = new GetAllDataSourceTypesAction
-      action.setUser(user)
+    def setDataSourceTypeId(dataSourceTypeId: Long): Builder = {
+      this.dataSourceTypeId = dataSourceTypeId
+      this
+    }
 
-      action
+    def build(): GetKeyTypeDatasourceAction = {
+      if(user == null) throw new DataSourceClientBuilderException("user is needed!")
+
+      val getKeyTypeDatasourceAction = new GetKeyTypeDatasourceAction
+      getKeyTypeDatasourceAction.dataSourceTypeId = this.dataSourceTypeId
+      getKeyTypeDatasourceAction.setUser(user)
+      getKeyTypeDatasourceAction
     }
   }
 }
+

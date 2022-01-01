@@ -15,19 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadatamanager.service.receiver
+package org.apache.linkis.datasource.client.response
 
-import org.apache.linkis.DataWorkCloudApplication
-import org.apache.linkis.metadatamanager.common.receiver.BaseMetaReceiver
-import org.apache.linkis.metadatamanager.common.service.MetadataService
-import org.springframework.stereotype.Component
+import org.apache.linkis.httpclient.dws.response.DWSResult
 
-import javax.annotation.PostConstruct
+import scala.beans.BeanProperty
 
-@Component
-class KafkaReceiver extends BaseMetaReceiver{
-  @PostConstruct
-  def init(): Unit = {
-    metadataService = DataWorkCloudApplication.getApplicationContext.getBean(classOf[MetadataService])
-  }
+@DWSHttpMessageResult("/api/rest_j/v\\d+/datasource/info/(\\S+)/expire")
+class ExpireDataSourceResult extends DWSResult{
+    @BeanProperty var expire_id: Long = _
 }

@@ -15,18 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadatamanager;
+package org.apache.linkis.datasource.client.response
 
-import org.apache.linkis.DataWorkCloudApplication;
-import org.apache.linkis.LinkisBaseServerApp;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.linkis.httpclient.dws.response.DWSResult
 
-public class LinkisMetadataManagerHiveApplication {
-    private static final Log logger = LogFactory.getLog(LinkisMetadataManagerHiveApplication.class);
+import scala.beans.BeanProperty
 
-    public static void main(String[] args) throws ReflectiveOperationException {
-        logger.info("Start to running LinkisMetadataManagerHiveApplication");
-        LinkisBaseServerApp.main(args);
-    }
+@DWSHttpMessageResult("/api/rest_j/v\\d+/datasource/info/(\\S+)/json")
+class UpdateDataSourceResult extends DWSResult{
+  @BeanProperty var insert_id: Long = _
 }

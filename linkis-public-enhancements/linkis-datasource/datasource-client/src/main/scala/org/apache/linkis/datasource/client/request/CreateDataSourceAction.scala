@@ -19,33 +19,51 @@ package org.apache.linkis.datasource.client.request
 
 
 import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SOURCE_SERVICE_MODULE
-import org.apache.linkis.httpclient.request.GetAction
+import org.apache.linkis.httpclient.dws.DWSHttpClient
+import org.apache.linkis.httpclient.request.POSTAction
 
-class GetAllDataSourceTypesAction extends GetAction with DataSourceAction {
-  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "type", "all")
+import java.util
+import scala.collection.JavaConversions._
 
-  private var user:String = _
+class CreateDataSourceAction extends POSTAction with DataSourceAction{
+  override def getRequestPayload: String = DWSHttpClient.jacksonJson.writeValueAsString(getRequestPayloads)
+
+  private var user: String = _
 
   override def setUser(user: String): Unit = this.user = user
 
   override def getUser: String = this.user
-}
 
-object GetAllDataSourceTypesAction {
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "info", "json")
+}
+object CreateDataSourceAction {
   def builder(): Builder = new Builder
 
-  class Builder private[GetAllDataSourceTypesAction]() {
+  class Builder private[CreateDataSourceAction]() {
     private var user: String = _
+    private var payload: util.Map[String, Any] = new util.HashMap[String, Any]()
 
     def setUser(user: String): Builder = {
       this.user = user
       this
     }
 
-    def build(): GetAllDataSourceTypesAction = {
-      val action = new GetAllDataSourceTypesAction
-      action.setUser(user)
+    def addRequestPayload(key: String, value: Any): Builder = {
+      if(value != null) this.payload.put(key, value)
+      this
+    }
 
+    def addRequestPayloads(map: util.Map[String, Any]): Builder = {
+      this.synchronized(this.payload = map)
+      this
+    }
+
+    def build(): CreateDataSourceAction = {
+      val action = new CreateDataSourceAction
+      action.setUser(user)
+      this.payload.foreach(k=>{
+        action.addRequestPayload(k._1, k._2)
+      })
       action
     }
   }

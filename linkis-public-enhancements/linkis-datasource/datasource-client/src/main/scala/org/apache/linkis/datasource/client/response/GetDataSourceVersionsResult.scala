@@ -15,18 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadatamanager;
+package org.apache.linkis.datasource.client.response
 
-import org.apache.linkis.DataWorkCloudApplication;
-import org.apache.linkis.LinkisBaseServerApp;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.linkis.httpclient.dws.DWSHttpClient
+import org.apache.linkis.httpclient.dws.response.DWSResult
 
-public class LinkisMetadataManagerKafkaApplication {
-    private static final Log logger = LogFactory.getLog(LinkisMetadataManagerKafkaApplication.class);
+import java.util
+import scala.beans.BeanProperty
 
-    public static void main(String[] args) throws ReflectiveOperationException {
-        logger.info("Start to running LinkisMetadataManagerKafkaApplication");
-        LinkisBaseServerApp.main(args);
-    }
+@DWSHttpMessageResult("/api/rest_j/v\\d+/datasource/(\\S+)/versions")
+class GetDataSourceVersionsResult extends DWSResult{
+  @BeanProperty var versions: util.List[java.util.Map[String, Any]] = _
+
+  def getDatasourceVersion: util.List[DatasourceVersion]={
+    import scala.collection.JavaConverters._
+    versions.asScala.map(x=>{
+      val str = DWSHttpClient.jacksonJson.writeValueAsString(x)
+      DWSHttpClient.jacksonJson.readValue(str, classOf[DatasourceVersion])
+    }).asJava
+  }
 }

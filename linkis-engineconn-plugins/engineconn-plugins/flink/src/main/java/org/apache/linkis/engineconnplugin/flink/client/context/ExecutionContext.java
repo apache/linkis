@@ -111,7 +111,7 @@ public class ExecutionContext {
 			Environment environment,
 			@Nullable SessionState sessionState,
 			List<URL> dependencies,
-			Configuration flinkConfig) {
+			Configuration flinkConfig) throws SqlExecutionException {
 		this.environment = environment;
 		this.flinkConfig = flinkConfig;
 		this.sessionState = sessionState;
@@ -127,6 +127,7 @@ public class ExecutionContext {
 		LOG.debug("Deployment descriptor: {}", environment.getDeployment());
 		LOG.info("flinkConfig config: {}", flinkConfig);
 		clusterClientFactory = new LinkisYarnClusterClientFactory();
+		getTableEnvironment();
 	}
 
 	public StreamExecutionEnvironment getStreamExecutionEnvironment() {

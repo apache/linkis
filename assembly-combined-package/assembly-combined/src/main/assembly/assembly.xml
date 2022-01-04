@@ -349,75 +349,28 @@
       </fileSet>
 
 
+      <!-- data source manager-->
       <fileSet>
           <directory>
-              ${project.parent.basedir}/linkis-public-enhancements/linkis-datasource/datasourcemanager/server/target/out/lib
+              ../../linkis-public-enhancements/linkis-datasource/linkis-datasource-manager/server/target/out/lib/
           </directory>
           <outputDirectory>
-              lib/linkis-public-enhancements/linkis-ps-datasourcemanager
+              lib/linkis-public-enhancements/linkis-ps-data-source-manager
           </outputDirectory>
           <includes>
               <include>*.jar</include>
           </includes>
       </fileSet>
-
+      <!-- metadata manager -->
       <fileSet>
           <directory>
-              ${project.parent.basedir}/linkis-public-enhancements/linkis-datasource/metadatamanager/server/target/out/lib
+              ../../linkis-public-enhancements/linkis-datasource/linkis-metadata-manager/server/target/out/lib/
           </directory>
           <outputDirectory>
               lib/linkis-public-enhancements/linkis-ps-metadatamanager
           </outputDirectory>
           <includes>
-              <include>*.jar</include>
-          </includes>
-      </fileSet>
-
-      <fileSet>
-          <directory>
-              ${project.parent.basedir}/linkis-public-enhancements/linkis-datasource/metadatamanager/service/mysql/target/out/lib
-          </directory>
-          <outputDirectory>
-              lib/linkis-public-enhancements/linkis-ps-metadatamanager-mysql
-          </outputDirectory>
-          <includes>
-              <include>*.jar</include>
-          </includes>
-      </fileSet>
-
-      <fileSet>
-          <directory>
-              ${project.parent.basedir}/linkis-public-enhancements/linkis-datasource/metadatamanager/service/kafka/target/out/lib
-          </directory>
-          <outputDirectory>
-              lib/linkis-public-enhancements/linkis-ps-metadatamanager-kafka
-          </outputDirectory>
-          <includes>
-              <include>*.jar</include>
-          </includes>
-      </fileSet>
-
-      <fileSet>
-          <directory>
-              ${project.parent.basedir}/linkis-public-enhancements/linkis-datasource/metadatamanager/service/hive/target/out/lib
-          </directory>
-          <outputDirectory>
-              lib/linkis-public-enhancements/linkis-ps-metadatamanager-hive
-          </outputDirectory>
-          <includes>
-              <include>*.jar</include>
-          </includes>
-      </fileSet>
-
-      <fileSet>
-          <directory>
-              ${project.parent.basedir}/linkis-public-enhancements/linkis-datasource/metadatamanager/service/elasticsearch/target/out/lib
-          </directory>
-          <outputDirectory>
-              lib/linkis-public-enhancements/linkis-ps-metadatamanager-es
-          </outputDirectory>
-          <includes>
-              <include>*.jar</include>
+              <include>**/*</include>
           </includes>
       </fileSet>
   </fileSets>

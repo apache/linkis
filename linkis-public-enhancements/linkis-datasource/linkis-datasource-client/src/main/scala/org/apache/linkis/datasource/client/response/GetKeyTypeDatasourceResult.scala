@@ -20,17 +20,19 @@ package org.apache.linkis.datasource.client.response
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition
 import org.apache.linkis.httpclient.dws.DWSHttpClient
 import org.apache.linkis.httpclient.dws.response.DWSResult
-
 import java.util
+
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/datasource/key_define/type/(\\S+)")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/data-source-manager/key_define/type/(\\S+)")
 class GetKeyTypeDatasourceResult extends DWSResult{
   @BeanProperty var key_define: util.List[java.util.Map[String, Any]] = _
 
-  def getDataSourceParamKeyDefinitions: util.List[DataSourceParamKeyDefinition] ={
+  def getDataSourceParamKeyDefinitions: util.List[DataSourceParamKeyDefinition] = {
     import scala.collection.JavaConverters._
-    key_define.asScala.map(x=>{
+    key_define.asScala.map(x => {
       val str = DWSHttpClient.jacksonJson.writeValueAsString(x)
       DWSHttpClient.jacksonJson.readValue(str, classOf[DataSourceParamKeyDefinition])
     }).asJava

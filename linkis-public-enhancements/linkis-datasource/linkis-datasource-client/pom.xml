@@ -22,7 +22,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>linkis-public-enhancements</artifactId>
+        <artifactId>linkis</artifactId>
         <groupId>org.apache.linkis</groupId>
         <version>1.0.3</version>
         <relativePath>../../pom.xml</relativePath>
@@ -39,13 +39,13 @@
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-datasourcemanager-common</artifactId>
+            <artifactId>linkis-datasource-manager-common</artifactId>
             <version>${linkis.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-metadatamanager-common</artifactId>
+            <artifactId>linkis-metadata-manager-common</artifactId>
             <version>${linkis.version}</version>
         </dependency>
     </dependencies>

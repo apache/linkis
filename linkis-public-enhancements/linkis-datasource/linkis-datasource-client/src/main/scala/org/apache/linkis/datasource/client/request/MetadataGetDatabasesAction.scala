@@ -27,7 +27,7 @@ class MetadataGetDatabasesAction extends GetAction with DataSourceAction {
 
   override def suffixURLs: Array[String] = Array(METADATA_SERVICE_MODULE.getValue, "dbs", dataSourceId.toString)
 
-  private var user:String = _
+  private var user: String = _
 
   override def setUser(user: String): Unit = this.user = user
 
@@ -39,7 +39,7 @@ object MetadataGetDatabasesAction {
 
   class Builder private[MetadataGetDatabasesAction]() {
     private var dataSourceId: Long = _
-    private var system:String = _
+    private var system: String = _
     private var user: String = _
 
     def setUser(user: String): Builder = {
@@ -58,7 +58,7 @@ object MetadataGetDatabasesAction {
     }
 
     def build(): MetadataGetDatabasesAction = {
-      if(dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      if (dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
       if(system == null) throw new DataSourceClientBuilderException("system is needed!")
       if(user == null) throw new DataSourceClientBuilderException("user is needed!")
 

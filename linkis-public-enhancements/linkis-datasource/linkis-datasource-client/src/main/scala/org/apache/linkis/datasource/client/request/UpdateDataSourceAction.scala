@@ -24,13 +24,13 @@ import org.apache.linkis.httpclient.dws.DWSHttpClient
 import org.apache.linkis.httpclient.request.PutAction
 
 import java.util
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class UpdateDataSourceAction extends PutAction with DataSourceAction{
   override def getRequestPayload: String = DWSHttpClient.jacksonJson.writeValueAsString(getRequestPayloads)
 
   private var user: String = _
-  private var dataSourceId:String = _
+  private var dataSourceId: String = _
 
   override def setUser(user: String): Unit = this.user = user
 
@@ -43,21 +43,21 @@ object UpdateDataSourceAction {
 
   class Builder private[UpdateDataSourceAction]() {
     private var user: String = _
-    private var dataSourceId:String=_
+    private var dataSourceId: String = _
     private var payload: util.Map[String, Any] = new util.HashMap[String, Any]
 
-    def setUser(user:String):Builder={
+    def setUser(user: String): Builder = {
       this.user = user
       this
     }
 
-    def setDataSourceId(dataSourceId:String): Builder ={
+    def setDataSourceId(dataSourceId: String): Builder = {
       this.dataSourceId = dataSourceId
       this
     }
 
     def addRequestPayload(key: String, value: Any): Builder = {
-      if(value != null) this.payload.put(key, value)
+      if (value != null) this.payload.put(key, value)
       this
     }
 
@@ -67,14 +67,14 @@ object UpdateDataSourceAction {
     }
 
     def build(): UpdateDataSourceAction = {
-      if(dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      if (dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
       if(user == null) throw new DataSourceClientBuilderException("user is needed!")
 
       val action = new UpdateDataSourceAction()
-      action.dataSourceId =dataSourceId
+      action.dataSourceId = dataSourceId
       action.user = user
 
-      this.payload.foreach(k=>{
+      this.payload.asScala.foreach(k => {
         action.addRequestPayload(k._1, k._2)
       })
       action

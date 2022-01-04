@@ -24,7 +24,7 @@ import org.apache.linkis.httpclient.request.GetAction
 class GetAllDataSourceTypesAction extends GetAction with DataSourceAction {
   override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "type", "all")
 
-  private var user:String = _
+  private var user: String = _
 
   override def setUser(user: String): Unit = this.user = user
 

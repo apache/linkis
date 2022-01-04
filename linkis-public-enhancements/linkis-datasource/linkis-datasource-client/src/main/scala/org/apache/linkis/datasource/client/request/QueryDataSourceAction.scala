@@ -25,7 +25,7 @@ import org.apache.linkis.httpclient.request.GetAction
 class QueryDataSourceAction extends GetAction with DataSourceAction{
   override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "info")
 
-  private var user:String = _
+  private var user: String = _
 
   override def setUser(user: String): Unit = this.user = user
 
@@ -36,12 +36,12 @@ object QueryDataSourceAction {
   def builder(): Builder = new Builder
 
   class Builder private[QueryDataSourceAction]() {
-    private var system:String = _
-    private var name:String = _
-    private var typeId:Long = _
-    private var identifies:String = _
-    private var currentPage:Integer = _
-    private var pageSize:Integer = _
+    private var system: String = _
+    private var name: String = _
+    private var typeId: Long = _
+    private var identifies: String = _
+    private var currentPage: Integer = _
+    private var pageSize: Integer = _
     private var user: String = _
 
     def setUser(user: String): Builder = {
@@ -49,38 +49,38 @@ object QueryDataSourceAction {
       this
     }
 
-    def setSystem(system:String):Builder={
+    def setSystem(system: String): Builder = {
       this.system = system
       this
     }
 
-    def setName(name:String):Builder={
+    def setName(name: String): Builder = {
       this.name = name
       this
     }
 
-    def setTypeId(typeId:Long):Builder={
+    def setTypeId(typeId: Long): Builder = {
       this.typeId = typeId
       this
     }
 
-    def setIdentifies(identifies:String):Builder={
+    def setIdentifies(identifies: String): Builder = {
       this.identifies = identifies
       this
     }
 
-    def setCurrentPage(currentPage:Integer):Builder={
+    def setCurrentPage(currentPage: Integer): Builder = {
       this.currentPage = currentPage
       this
     }
 
-    def setPageSize(pageSize:Integer):Builder={
+    def setPageSize(pageSize: Integer): Builder = {
       this.pageSize = pageSize
       this
     }
 
     def build(): QueryDataSourceAction = {
-      if(system == null) throw new DataSourceClientBuilderException("system is needed!")
+      if (system == null) throw new DataSourceClientBuilderException("system is needed!")
       if(name == null) throw new DataSourceClientBuilderException("name is needed!")
       if(typeId == null) throw new DataSourceClientBuilderException("typeId is needed!")
       if(identifies == null) throw new DataSourceClientBuilderException("identifies is needed!")

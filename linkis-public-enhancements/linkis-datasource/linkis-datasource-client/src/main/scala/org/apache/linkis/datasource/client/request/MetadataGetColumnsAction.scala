@@ -29,7 +29,7 @@ class MetadataGetColumnsAction extends GetAction with DataSourceAction {
 
   override def suffixURLs: Array[String] = Array(METADATA_SERVICE_MODULE.getValue, "columns", dataSourceId.toString, "db", database, "table", table)
 
-  private var user:String = _
+  private var user: String = _
 
   override def setUser(user: String): Unit = this.user = user
 
@@ -44,7 +44,7 @@ object MetadataGetColumnsAction {
     private var dataSourceId: Long = _
     private var database: String = _
     private var table: String = _
-    private var system:String = _
+    private var system: String = _
     private var user: String = _
 
     def setUser(user: String): Builder = {
@@ -73,7 +73,7 @@ object MetadataGetColumnsAction {
     }
 
     def build(): MetadataGetColumnsAction = {
-      if(dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      if (dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
       if(database == null) throw new DataSourceClientBuilderException("database is needed!")
       if(table == null) throw new DataSourceClientBuilderException("table is needed!")
       if(system == null) throw new DataSourceClientBuilderException("system is needed!")

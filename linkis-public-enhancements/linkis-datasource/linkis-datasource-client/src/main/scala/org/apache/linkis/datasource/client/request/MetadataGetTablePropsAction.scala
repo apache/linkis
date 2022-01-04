@@ -29,7 +29,7 @@ class MetadataGetTablePropsAction extends GetAction with DataSourceAction {
 
   override def suffixURLs: Array[String] = Array(METADATA_SERVICE_MODULE.getValue, "props", dataSourceId.toString, "db", database, "table", table)
 
-  private var user:String = _
+  private var user: String = _
 
   override def setUser(user: String): Unit = this.user = user
 
@@ -43,7 +43,7 @@ object MetadataGetTablePropsAction {
     private var dataSourceId: Long = _
     private var database: String = _
     private var table: String = _
-    private var system:String = _
+    private var system: String = _
     private var user: String = _
 
     def setUser(user: String): Builder = {
@@ -72,7 +72,7 @@ object MetadataGetTablePropsAction {
     }
 
     def build(): MetadataGetTablePropsAction = {
-      if(dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      if (dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
       if(database == null) throw new DataSourceClientBuilderException("database is needed!")
       if(table == null) throw new DataSourceClientBuilderException("table is needed!")
       if(system == null) throw new DataSourceClientBuilderException("system is needed!")

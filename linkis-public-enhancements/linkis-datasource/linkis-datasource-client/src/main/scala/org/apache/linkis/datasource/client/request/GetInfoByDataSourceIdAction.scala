@@ -27,7 +27,7 @@ class GetInfoByDataSourceIdAction extends GetAction with DataSourceAction {
 
   override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "info", dataSourceId.toString)
 
-  private var user:String = _
+  private var user: String = _
 
   override def setUser(user: String): Unit = this.user = user
 
@@ -39,7 +39,7 @@ object GetInfoByDataSourceIdAction {
 
   class Builder private[GetInfoByDataSourceIdAction]() {
     private var dataSourceId: Long = _
-    private var system:String = _
+    private var system: String = _
     private var user: String = _
 
     def setUser(user: String): Builder = {
@@ -58,7 +58,7 @@ object GetInfoByDataSourceIdAction {
     }
 
     def build(): GetInfoByDataSourceIdAction = {
-      if(dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      if (dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
       if(system == null) throw new DataSourceClientBuilderException("system is needed!")
       if(user == null) throw new DataSourceClientBuilderException("user is needed!")
 

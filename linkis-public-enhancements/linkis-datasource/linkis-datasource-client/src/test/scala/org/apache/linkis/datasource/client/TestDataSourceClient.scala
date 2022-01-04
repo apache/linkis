@@ -30,7 +30,7 @@ object TestDataSourceClient {
       .addServerUrl("http://127.0.0.1:9001")
       .connectionTimeout(30000)
       .discoveryEnabled(false)
-      .discoveryFrequency(1,TimeUnit.MINUTES)
+      .discoveryFrequency(1, TimeUnit.MINUTES)
       .loadbalancerEnabled(true)
       .maxConnectionSize(5)
       .retryEnabled(false)
@@ -52,7 +52,7 @@ object TestDataSourceClient {
                                         .setCurrentPage(1)
                                         .setPageSize(1)
                                         .setUser("hadoop")
-                                        .build() ).getDataSourceEnv
+                                        .build()).getDataSourceEnv
 
     val getInfoByDataSourceIdResult = dataSourceClient.getInfoByDataSourceId(
         GetInfoByDataSourceIdAction.builder().setDataSourceId(1).setSystem("xx").setUser("hadoop").build()
@@ -72,8 +72,6 @@ object TestDataSourceClient {
     val getConnectParamsByDataSourceIdResult = dataSourceClient.getConnectParams(
       GetConnectParamsByDataSourceIdAction.builder().setDataSourceId(1).setSystem("xx").setUser("hadoop").build()
     )
-
-    println("ss")
 
 
   }

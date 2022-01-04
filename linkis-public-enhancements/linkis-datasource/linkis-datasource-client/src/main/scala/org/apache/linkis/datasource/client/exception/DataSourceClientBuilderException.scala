@@ -19,4 +19,9 @@ package org.apache.linkis.datasource.client.exception
 
 import org.apache.linkis.common.exception.ErrorException
 
-class DataSourceClientBuilderException(errorDesc: String) extends ErrorException(31000, errorDesc)
+class DataSourceClientBuilderException(errorDesc: String) extends ErrorException(31000, errorDesc) {
+  def this(errorDesc: String, t: Throwable) = {
+    this(errorDesc)
+    super.initCause(t)
+  }
+}

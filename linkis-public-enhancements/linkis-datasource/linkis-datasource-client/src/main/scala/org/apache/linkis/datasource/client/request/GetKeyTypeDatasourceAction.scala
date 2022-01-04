@@ -25,9 +25,9 @@ import org.apache.linkis.httpclient.request.GetAction
 class GetKeyTypeDatasourceAction extends GetAction with DataSourceAction{
   private var dataSourceTypeId: Long = _
 
-  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "key_define","type", dataSourceTypeId.toString)
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "key_define", "type", dataSourceTypeId.toString)
 
-  private var user:String = _
+  private var user: String = _
 
   override def setUser(user: String): Unit = this.user = user
 
@@ -51,7 +51,7 @@ object GetKeyTypeDatasourceAction{
     }
 
     def build(): GetKeyTypeDatasourceAction = {
-      if(user == null) throw new DataSourceClientBuilderException("user is needed!")
+      if (user == null) throw new DataSourceClientBuilderException("user is needed!")
 
       val getKeyTypeDatasourceAction = new GetKeyTypeDatasourceAction
       getKeyTypeDatasourceAction.dataSourceTypeId = this.dataSourceTypeId

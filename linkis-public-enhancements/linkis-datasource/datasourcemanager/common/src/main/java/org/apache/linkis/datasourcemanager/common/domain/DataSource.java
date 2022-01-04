@@ -17,6 +17,7 @@
 
 package org.apache.linkis.datasourcemanager.common.domain;
 
+import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -24,6 +25,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.*;
 
@@ -40,6 +42,7 @@ public class DataSource {
      * Data source name
      */
     @NotNull
+    @Pattern(regexp = "^[\\w\\u4e00-\\u9fa5_-]+$")
     private String dataSourceName;
 
     /**
@@ -253,7 +256,11 @@ public class DataSource {
 
     public Map<String, Object> getConnectParams() {
         if(connectParams.isEmpty() && StringUtils.isNotBlank(parameter)){
-            connectParams.putAll(Objects.requireNonNull(Json.fromJson(parameter, Map.class)));
+            try {
+                connectParams.putAll(Objects.requireNonNull(Json.fromJson(parameter, Map.class)));
+            } catch (JsonErrorException e) {
+                //Ignore
+            }
         }
         return connectParams;
     }

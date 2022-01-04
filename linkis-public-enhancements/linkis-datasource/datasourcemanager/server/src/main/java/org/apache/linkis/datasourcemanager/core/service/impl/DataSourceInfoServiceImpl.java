@@ -21,6 +21,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.domain.DatasourceVersion;
+import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 import org.apache.linkis.datasourcemanager.core.dao.*;
 import org.apache.linkis.datasourcemanager.core.formdata.FormStreamContent;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
@@ -39,10 +40,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -92,15 +90,29 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     @Override
     public DataSource getDataSourceInfo(Long dataSourceId) {
         DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
-        String  parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, dataSource.getVersionId());
-        dataSource.setParameter(parameter);
+        if (Objects.nonNull(dataSource)){
+            String  parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, dataSource.getVersionId());
+            dataSource.setParameter(parameter);
+        }
+        return dataSource;
+    }
+
+    @Override
+    public DataSource getDataSourceInfo(String dataSourceName) {
+        DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
+        if (Objects.nonNull(dataSource)){
+            String parameter = dataSourceVersionDao.selectOneVersion(dataSource.getId(), dataSource.getVersionId());
+            dataSource.setParameter(parameter);
+        }
         return dataSource;
     }
     @Override
     public DataSource getDataSourceInfo(Long dataSourceId, Long version) {
         DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
-        String parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, version);
-        dataSource.setParameter(parameter);
+        if (Objects.nonNull(dataSource)) {
+            String parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, version);
+            dataSource.setParameter(parameter);
+        }
         return dataSource;
     }
 
@@ -114,18 +126,40 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     @Override
     public DataSource getDataSourceInfoForConnect(Long dataSourceId) {
         DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
-        String parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, dataSource.getPublishedVersionId());
-        return mergeParams(dataSource, parameter);
+        if (Objects.nonNull(dataSource)) {
+            // TODO dataSource.getPublishedVersionId() NullPoint Exception
+            String parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, dataSource.getPublishedVersionId());
+            return mergeParams(dataSource, parameter);
+        }
+        return null;
+    }
+
+    @Override
+    public DataSource getDataSourceInfoForConnect(String dataSourceName) {
+        DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
+        if (Objects.nonNull(dataSource)) {
+            String parameter = dataSourceVersionDao.selectOneVersion(dataSource.getId(), dataSource.getPublishedVersionId());
+            return mergeParams(dataSource, parameter);
+        }
+        return null;
     }
 
     private DataSource mergeParams(DataSource dataSource, String parameter) {
         dataSource.setParameter(parameter);
-        Map<String, String> connectParams = Objects.requireNonNull(Json.fromJson(parameter, Map.class));
-        if(connectParams.containsKey("envId")) {
-            Long envId = Long.valueOf(connectParams.get("envId"));
-            // remove envId for connect
-            dataSource.getConnectParams().remove("envId");
-            addEnvParamsToDataSource(envId, dataSource);
+        if (StringUtils.isNotBlank(parameter)) {
+            Map<String, String> connectParams = new HashMap<>();
+            try {
+                connectParams = Objects.requireNonNull(Json.fromJson(parameter, Map.class));
+            } catch (JsonErrorException e) {
+                LOG.warn("Unrecognized the parameter: " + parameter +" in data source, id: [" + dataSource.getId() + "]", e);
+                // TODO throws Exception defined Exception
+            }
+            if (connectParams.containsKey("envId")) {
+                Long envId = Long.valueOf(connectParams.get("envId"));
+                // remove envId for connect
+                dataSource.getConnectParams().remove("envId");
+                addEnvParamsToDataSource(envId, dataSource);
+            }
         }
         return dataSource;
     }
@@ -141,8 +175,20 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     @Override
     public DataSource getDataSourceInfoForConnect(Long dataSourceId, Long version) {
         DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
-        String parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, version);
-        return mergeParams(dataSource, parameter);
+        if (Objects.nonNull(dataSource)) {
+            String parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, version);
+            return mergeParams(dataSource, parameter);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean existDataSource(String dataSourceName) {
+        if (StringUtils.isNotBlank(dataSourceName)){
+            DataSource dataSource = dataSourceDao.selectOneByName(dataSourceName);
+            return Objects.nonNull(dataSource);
+        }
+        return false;
     }
 
     @Override
@@ -160,6 +206,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
             if (affect > 0) {
                 // delete parameter version
                 int versionNum = dataSourceVersionDao.removeFromDataSourceId(dataSourceId);
+                // TODO throws Exception
                 return dataSourceId;
             }
         }
@@ -218,6 +265,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
                 Map<String, Object> connectParams = dataSourceEnv.getConnectParams();
                 List<DataSourceParamKeyDefinition> keyDefinitions = dataSourceParamKeyDao
                         .listByDataSourceTypeAndScope(dataSourceEnv.getDataSourceTypeId(), DataSourceParamKeyDefinition.Scope.ENV);
+                // TODO throws ERROR Exception
                 keyDefinitions.forEach(keyDefinition -> {
                     if (keyDefinition.getValueType() == DataSourceParamKeyDefinition.ValueType.FILE
                             && connectParams.containsKey(keyDefinition.getKey())) {
@@ -227,6 +275,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
                                     .valueOf(connectParams.get(keyDefinition.getKey())));
                         } catch (Exception e) {
                             //Ignore remove error
+                            // TODO LOG and throws LinkisRuntimeException
                         }
                     }
                 });
@@ -322,6 +371,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
         // 1. set version + 1
         Long latestVersion = dataSourceVersionDao.getLatestVersion(datasourceId);
+        // TODO NullPoint latestVersion
         long newVersionId = latestVersion + 1;
         datasourceVersion.setVersionId(newVersionId);
 
@@ -446,6 +496,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
             if (e.getCause() instanceof ErrorException) {
                 throw (ErrorException) e.getCause();
             }
+            // TODO wrapped Exception
             throw e;
         }
     }
@@ -468,7 +519,8 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
                         : bmlAppService.clientUpdateResource(userName, resourceId, inputStream);
             } catch (Exception e) {
                 //Wrap with runtime exception
-                throw new RuntimeException(e);
+//                throw new RuntimeException(e);
+                // TODO defined Exception
             }
         }
         return null;
@@ -489,6 +541,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
                     bmlAppService.clientRemoveResource(userName, resourceId);
                 } catch (Exception ie) {
                     //ignore
+                    // TODO throws RPC Exception
                 }
             }
         }

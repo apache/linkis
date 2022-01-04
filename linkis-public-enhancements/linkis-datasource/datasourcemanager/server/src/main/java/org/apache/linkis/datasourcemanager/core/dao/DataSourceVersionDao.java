@@ -44,7 +44,7 @@ public interface DataSourceVersionDao {
      * @param version
      * @return
      */
-    String selectOneVersion(@Param("dataSourceId")Long dataSourceId, @Param("version")Long version);
+    String selectOneVersion(@Param("dataSourceId") Long dataSourceId, @Param("version") Long version);
 
     /**
      * get version list from datasource id

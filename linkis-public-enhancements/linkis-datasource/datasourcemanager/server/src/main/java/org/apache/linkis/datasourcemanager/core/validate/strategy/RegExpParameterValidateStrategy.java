@@ -33,7 +33,10 @@ public class RegExpParameterValidateStrategy implements ParameterValidateStrateg
 
     @Override
     public boolean accept(DataSourceParamKeyDefinition.ValueType valueType) {
-        return valueType == DataSourceParamKeyDefinition.ValueType.EMAIL || valueType == DataSourceParamKeyDefinition.ValueType.TEXT || valueType == DataSourceParamKeyDefinition.ValueType.LIST;
+        return valueType == DataSourceParamKeyDefinition.ValueType.EMAIL ||
+                valueType == DataSourceParamKeyDefinition.ValueType.TEXT ||
+                valueType == DataSourceParamKeyDefinition.ValueType.LIST ||
+                valueType == DataSourceParamKeyDefinition.ValueType.TEXTAREA;
     }
 
     @Override

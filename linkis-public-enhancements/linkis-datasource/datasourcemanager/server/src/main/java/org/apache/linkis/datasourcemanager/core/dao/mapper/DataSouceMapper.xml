@@ -102,7 +102,7 @@
         <include refid="data_source_insert_columns"/>
         ) VALUES(#{dataSourceName}, #{dataSourceTypeId},
         #{dataSourceDesc,jdbcType=VARCHAR}, #{createIdentify}, #{createSystem}, #{createUser},
-        #{parameter}, #{createTime}, #{modifyUser,jdbcType=VARCHAR}, #{modifyTime,jdbcType=DATE},
+        #{parameter}, #{createTime}, #{modifyUser,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP},
         #{labels})
     </insert>
 
@@ -116,6 +116,15 @@
         </where>
     </select>
 
+    <select id="selectOneDetailByName" resultMap="dataSourceDetailMap">
+        <![CDATA[SELECT ]]>
+        <include refid="data_source_join_type"/>
+        <![CDATA[ FROM `linkis_datasource_type` t
+        INNER JOIN `linkis_datasource` d ON t.`id` = d.`datasource_type_id`]]>
+        <where>
+            d.`datasource_name` = #{dataSourceName} LIMIT 1
+        </where>
+    </select>
     <select id="selectOne" resultMap="dataSourceMap">
         <![CDATA[SELECT ]]>
         <include refid="data_source_query_columns"/>
@@ -125,6 +134,15 @@
         </where>
     </select>
 
+    <select id="selectOneByName" resultMap="dataSourceMap">
+        <![CDATA[SELECT ]]>
+        <include refid="data_source_query_columns"/>
+        <![CDATA[ FROM `linkis_datasource` ]]>
+        <where>
+            `datasource_name` = #{dataSourceName}
+        </where>
+        <![CDATA[ LIMIT 1; ]]>
+    </select>
     <select id="selectEnvById" resultType="DataSourceEnv">
         <![CDATA[
         SELECT `env_name`, `parameter` AS `env_parameter`
@@ -150,7 +168,7 @@
             </if>
             <![CDATA[`create_identify` = #{createIdentify,jdbcType=VARCHAR},]]>
             <![CDATA[`create_system` = #{createSystem,jdbcType=VARCHAR},]]>
-            <![CDATA[`modify_time` = #{modifyTime,jdbcType=DATE},]]>
+            <![CDATA[`modify_time` = #{modifyTime,jdbcType=TIMESTAMP},]]>
             <![CDATA[`modify_user` = #{modifyUser,jdbcType=VARCHAR},]]>
             <![CDATA[`labels` = #{labels,jdbcType=VARCHAR}]]>
         </set>
@@ -181,6 +199,9 @@
             <if test="dataSourceTypeId != null and dataSourceTypeId > 0">
                 <![CDATA[AND `datasource_type_id` = #{dataSourceTypeId}]]>
             </if>
+            <if test="permissionUser != null and permissionUser != ''">
+                <![CDATA[AND `create_user` = #{permissionUser}]]>
+            </if>
 <!--            <if test="createIdentifyList.size() > 0">-->
 <!--                <choose>-->
 <!--                    <when test="createIdentifyList.size() == 1">-->
@@ -197,6 +218,7 @@
 <!--                </choose>-->
 <!--            </if>-->
         </where>
+        <![CDATA[ ORDER BY create_time DESC ]]>
     </select>
 
     <update id="setPublishedVersionId">

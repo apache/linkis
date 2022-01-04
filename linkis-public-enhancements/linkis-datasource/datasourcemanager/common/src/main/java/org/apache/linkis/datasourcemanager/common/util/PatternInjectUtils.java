@@ -17,6 +17,7 @@
  
 package org.apache.linkis.datasourcemanager.common.util;
 
+import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -48,7 +49,7 @@ public class PatternInjectUtils {
      * @param useDefault use default Value
      * @return
      */
-    public static String inject(String template, Object[] params, boolean useDefault, boolean escape, boolean placeholder){
+    public static String inject(String template, Object[] params, boolean useDefault, boolean escape, boolean placeholder) throws JsonErrorException {
         Matcher matcher = REGEX.matcher(template);
         StringBuffer sb = new StringBuffer();
         int offset = 0;
@@ -87,7 +88,7 @@ public class PatternInjectUtils {
         matcher.appendTail(sb);
         return sb.toString().replace("\\$","$");
     }
-    public static String inject(String pattern, Object[] params){
+    public static String inject(String pattern, Object[] params) throws JsonErrorException {
         return inject(pattern, params, true, true, true);
     }
 
@@ -98,7 +99,7 @@ public class PatternInjectUtils {
      * @param useDefault
      * @return
      */
-    public static String inject(String template, Map<String, Object> params, boolean useDefault, boolean escape, boolean placeholder){
+    public static String inject(String template, Map<String, Object> params, boolean useDefault, boolean escape, boolean placeholder) throws JsonErrorException {
         Matcher matcher = REGEX.matcher(template);
         StringBuffer sb = new StringBuffer();
         //will be more faster?
@@ -161,7 +162,7 @@ public class PatternInjectUtils {
         return sb.toString().replace("\\$", "$");
     }
 
-    public static String inject(String template, Map<String, Object> params){
+    public static String inject(String template, Map<String, Object> params) throws JsonErrorException {
         return inject(template, params, true, true, true);
     }
 

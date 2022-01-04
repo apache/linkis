@@ -34,6 +34,9 @@ import org.apache.commons.lang.StringUtils;
 //import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -41,18 +44,12 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Path("/data_source/op/")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-@Component
+@RestController
+@RequestMapping(value = "/data-source-manager/op/", produces = {"application/json"})
 public class DataSourceOperateRestfulApi {
 
     @Autowired
@@ -77,10 +74,9 @@ public class DataSourceOperateRestfulApi {
         this.formDataTransformer = FormDataTransformerFactory.buildCustom();
     }
 
-    @POST
-    @Path("/connect/json")
+    @RequestMapping( value = "/connect/json", method = RequestMethod.POST)
     public Message connect(DataSource dataSource,
-                            @Context HttpServletRequest request){
+                            HttpServletRequest request){
         return RestfulApiHelper.doAndResponse(() -> {
             String operator = SecurityFilter.getLoginUsername(request);
             //Bean validation
@@ -90,7 +86,7 @@ public class DataSourceOperateRestfulApi {
             }
             doConnect(operator, dataSource);
             return Message.ok().data("ok", true);
-        }, "/data_source/op/connect/json","");
+        }, "/data-source-manager/op/connect/json","");
     }
 
 //    @POST
@@ -102,7 +98,7 @@ public class DataSourceOperateRestfulApi {
 //            DataSource dataSource = formDataTransformer.transformToObject(multiPartForm, DataSource.class, beanValidator);
 //            doConnect(operator, dataSource);
 //            return Message.ok().data("ok", true);
-//        }, "/data_source/op/connect/form","");
+//        }, "/data-source-manager/op/connect/form","");
 //    }
 
     /**
@@ -123,8 +119,7 @@ public class DataSourceOperateRestfulApi {
         Map<String,Object> connectParams = dataSource.getConnectParams();
         parameterValidator.validate(keyDefinitionList, connectParams);
         DataSourceType dataSourceType = dataSourceRelateService.getDataSourceType(dataSource.getDataSourceTypeId());
-        metadataOperateService.doRemoteConnect(MdmConfiguration.METADATA_SERVICE_APPLICATION.getValue()
-                        + (StringUtils.isNotBlank(dataSourceType.getName())?("-" +dataSourceType.getName().toLowerCase()) : ""),
+        metadataOperateService.doRemoteConnect(MdmConfiguration.METADATA_SERVICE_APPLICATION.getValue(),dataSourceType.getName().toLowerCase(),
                 operator, dataSource.getConnectParams());
     }
 }

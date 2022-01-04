@@ -43,24 +43,37 @@ public interface DataSourceDao {
     DataSource selectOneDetail(@Param("dataSourceId") Long dataSourceId);
 
     /**
+     * View detail by name
+     * @param dataSourceName data source name
+     * @return data source entity
+     */
+    DataSource selectOneDetailByName(@Param("dataSourceName") String dataSourceName);
+    /**
      * View normal
      * @param dataSourceId data source id
      * @return data source entity
      */
     DataSource selectOne(@Param("dataSourceId") Long dataSourceId);
+
+    /**
+     * Select one by username
+     * @param dataSourceName data source name
+     * @return data source entity
+     */
+    DataSource selectOneByName(@Param("dataSourceName") String dataSourceName);
     /**
      * Delete One
      * @param dataSourceId data source id
      * @return affect row
      */
-    int removeOne(@Param("dataSourceId")Long dataSourceId);
+    int removeOne(@Param("dataSourceId") Long dataSourceId);
 
     /**
      * Expire One
      * @param dataSourceId data source id
      * @return affect row
      */
-    int expireOne(@Param("dataSourceId")Long dataSourceId);
+    int expireOne(@Param("dataSourceId") Long dataSourceId);
 
 
     /**
@@ -81,12 +94,12 @@ public interface DataSourceDao {
      * @param dataSourceId
      * @param versionId
      */
-    int setPublishedVersionId(@Param("dataSourceId")Long dataSourceId, @Param("versionId")Long versionId);
+    int setPublishedVersionId(@Param("dataSourceId") Long dataSourceId, @Param("versionId") Long versionId);
 
     /**
      * update version id
      * @param datasourceId
      * @param versionId
      */
-    void updateVersionId(@Param("dataSourceId")Long datasourceId, @Param("versionId")long versionId);
+    void updateVersionId(@Param("dataSourceId") Long datasourceId, @Param("versionId") long versionId);
 }

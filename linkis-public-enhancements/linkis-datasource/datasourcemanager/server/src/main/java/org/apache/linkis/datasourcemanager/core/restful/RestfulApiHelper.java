@@ -18,7 +18,7 @@
 package org.apache.linkis.datasourcemanager.core.restful;
 
 import org.apache.linkis.common.exception.WarnException;
-import org.apache.linkis.datasourcemanager.common.DsmConfiguration;
+import org.apache.linkis.datasourcemanager.common.auth.AuthContext;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
 import org.apache.linkis.datasourcemanager.common.util.CryptoUtils;
 import org.apache.linkis.datasourcemanager.core.restful.exception.BeanValidationExceptionMapper;
@@ -41,7 +41,7 @@ public class RestfulApiHelper {
      * @return
      */
     public static boolean isAdminUser(String userName){
-        List<String> userList = Arrays.asList(DsmConfiguration.DSM_ADMIN_USER_LIST.getValue().split(","));
+        List<String> userList = Arrays.asList(AuthContext.AUTH_ADMINISTRATOR.getValue().split(","));
         return userList.contains(userName);
     }
 

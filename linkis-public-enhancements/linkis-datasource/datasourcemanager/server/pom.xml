@@ -25,7 +25,7 @@
     </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>linkis-datasourcemanager-server</artifactId>
+  <artifactId>linkis-datasource-manager-server</artifactId>
 
 
   <properties>
@@ -47,7 +47,7 @@
     <!-- data source manager common dependency-->
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-datasourcemanager-common</artifactId>
+      <artifactId>linkis-datasource-manager-common</artifactId>
       <version>${linkis.version}</version>
       <exclusions>
         <exclusion>
@@ -74,6 +74,14 @@
           <artifactId>hk2-api</artifactId>
           <groupId>org.glassfish.hk2</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>jersey-server</artifactId>
+          <groupId>org.glassfish.jersey.core</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jersey-common</artifactId>
+          <groupId>org.glassfish.jersey.core</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <!--bml client-->
@@ -81,23 +89,40 @@
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-bml-client</artifactId>
       <version>${linkis.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>guava</artifactId>
+          <groupId>com.google.guava</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-mybatis</artifactId>
       <version>${linkis.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>spring-core</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-beans</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!--rpc-->
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-rpc</artifactId>
       <version>${linkis.version}</version>
+      <scope>provided</scope>
     </dependency>
     <!--Metadata common-->
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-metadatamanager-common</artifactId>
+      <artifactId>linkis-metadata-manager-common</artifactId>
       <version>${linkis.version}</version>
     </dependency>
   </dependencies>

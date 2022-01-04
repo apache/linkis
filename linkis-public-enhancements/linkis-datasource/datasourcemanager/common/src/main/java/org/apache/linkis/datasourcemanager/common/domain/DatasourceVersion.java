@@ -17,6 +17,7 @@
 
 package org.apache.linkis.datasourcemanager.common.domain;
 
+import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -91,7 +92,11 @@ public class DatasourceVersion {
 
     public Map<String, Object> getConnectParams() {
         if(connectParams.isEmpty() && StringUtils.isNotBlank(parameter)){
-            connectParams.putAll(Objects.requireNonNull(Json.fromJson(parameter, Map.class)));
+            try {
+                connectParams.putAll(Objects.requireNonNull(Json.fromJson(parameter, Map.class)));
+            } catch (JsonErrorException e) {
+                //Ignore
+            }
         }
         return connectParams;
     }

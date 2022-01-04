@@ -24,38 +24,38 @@ trait MetadataQueryProtocol {
 }
 
 /**
- * Request to get database list
- * @param params
+   * Request to get database list
+   * @param params
  */
 case class MetaGetDatabases(params: util.Map[String, Object], operator: String) extends MetadataQueryProtocol
 
 /**
- * Request to get table list
- * @param params
+   * Request to get table list
+   * @param params
  */
 case class MetaGetTables(params: util.Map[String, Object], database: String, operator: String) extends MetadataQueryProtocol
 
 /**
- * Request to get table properties
- * @param params
- * @param database
- * @param table
+   * Request to get table properties
+   * @param params
+   * @param database
+   * @param table
  */
 case class MetaGetTableProps(params: util.Map[String, Object], database: String, table: String, operator: String) extends MetadataQueryProtocol
 
 /**
- * Request to get partition list
- * @param params
- * @param database
- * @param table
+   * Request to get partition list
+   * @param params
+   * @param database
+   * @param table
  */
 case class MetaGetPartitions(params: util.Map[String, Object], database: String, table: String, operator: String) extends MetadataQueryProtocol
 
 /**
- * Request to get column list
- * @param params
- * @param database
- * @param table
+   * Request to get column list
+   * @param params
+   * @param database
+   * @param table
  */
 case class MetaGetColumns(params: util.Map[String, Object], database: String, table: String, operator: String) extends MetadataQueryProtocol
 

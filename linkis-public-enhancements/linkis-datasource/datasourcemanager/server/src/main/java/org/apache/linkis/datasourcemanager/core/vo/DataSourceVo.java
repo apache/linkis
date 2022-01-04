@@ -34,6 +34,8 @@ public class DataSourceVo extends PageViewVo{
 
     private String createSystem;
 
+    private String permissionUser;
+
     public DataSourceVo(){
 
     }
@@ -78,5 +80,13 @@ public class DataSourceVo extends PageViewVo{
 
     public void setCreateIdentifyList(List<String> createIdentifyList) {
         this.createIdentifyList = createIdentifyList;
+    }
+
+    public String getPermissionUser() {
+        return permissionUser;
+    }
+
+    public void setPermissionUser(String permissionUser) {
+        this.permissionUser = permissionUser;
     }
 }

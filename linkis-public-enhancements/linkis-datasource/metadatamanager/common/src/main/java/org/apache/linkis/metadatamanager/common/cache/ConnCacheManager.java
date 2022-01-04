@@ -24,34 +24,40 @@ import java.util.concurrent.TimeUnit;
 
 public class ConnCacheManager implements CacheManager {
     private ConcurrentHashMap<String, Cache> cacheStore = new ConcurrentHashMap<>();
+    private static CacheManager manager;
     private ConnCacheManager(){
 
     }
 
     public static CacheManager custom(){
-        return new ConnCacheManager();
+        if (null == manager){
+            synchronized (ConnCacheManager.class){
+                if (null == manager){
+                    manager = new ConnCacheManager();
+                }
+            }
+        }
+        return manager;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <V> Cache<String, V> buildCache(String cacheId, RemovalListener<String, V> removalListener) {
-        Cache<String, V> vCache = CacheBuilder.newBuilder()
-                .maximumSize(CacheConfiguration.CACHE_MAX_SIZE.getValue())
-                .expireAfterWrite(CacheConfiguration.CACHE_EXPIRE_TIME.getValue(), TimeUnit.SECONDS)
-                .removalListener(removalListener)
-                .build();
-        cacheStore.putIfAbsent(cacheId, vCache);
-        return vCache;
+        return cacheStore.computeIfAbsent(cacheId, id -> CacheBuilder.newBuilder()
+            .maximumSize(CacheConfiguration.CACHE_MAX_SIZE.getValue())
+            .expireAfterWrite(CacheConfiguration.CACHE_EXPIRE_TIME.getValue(), TimeUnit.SECONDS)
+            .removalListener(removalListener)
+            .build());
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <V> LoadingCache<String, V> buildCache(String cacheId, CacheLoader<String, V> loader,
                                                   RemovalListener<String, V> removalListener) {
-        LoadingCache<String, V> vCache = CacheBuilder.newBuilder()
+        return (LoadingCache<String, V>)cacheStore.computeIfAbsent(cacheId,  id -> CacheBuilder.newBuilder()
                 .maximumSize(CacheConfiguration.CACHE_MAX_SIZE.getValue())
                 .expireAfterWrite(CacheConfiguration.CACHE_EXPIRE_TIME.getValue(), TimeUnit.SECONDS)
                 .removalListener(removalListener)
-                .build(loader);
-        cacheStore.putIfAbsent(cacheId, vCache);
-        return vCache;
+                .build(loader));
     }
 }

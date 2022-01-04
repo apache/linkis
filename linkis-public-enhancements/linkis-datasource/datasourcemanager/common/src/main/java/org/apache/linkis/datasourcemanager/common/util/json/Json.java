@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
+import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 /**
@@ -58,7 +60,7 @@ public class Json {
     private Json(){}
 
     @SuppressWarnings("unchecked")
-    public static <T> T fromJson(String json, Class<?> clazz, Class<?>... parameters){
+    public static <T> T fromJson(String json, Class<?> clazz, Class<?>... parameters)  throws JsonErrorException {
         if(StringUtils.isNotBlank(json)){
             try{
                 if(parameters.length > 0){
@@ -72,30 +74,32 @@ public class Json {
                 }
                 return (T)mapper.readValue(json, clazz);
             } catch (Exception e) {
-                logger.info(e.getLocalizedMessage());
-                throw new RuntimeException(e);
+                String message = "Unable to deserialize to object from string(json) in type: [" +
+                        (null != clazz ? clazz.getSimpleName() : "UNKNOWN") + "], parameters size: " + parameters.length;
+                throw new JsonErrorException( -1, message, e);
             }
         }
         return null;
     }
 
-    public static <T> T fromJson(InputStream stream, Class<?> clazz, Class<?>... parameters){
+    public static <T> T fromJson(InputStream stream, Class<?> clazz, Class<?>... parameters) throws JsonErrorException{
         StringBuilder builder = new StringBuilder();
         String jsonStr = null;
         try{
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
             while((jsonStr = reader.readLine()) != null){
                 builder.append(jsonStr);
             }
             reader.close();
         }catch(Exception e){
-            logger.info(e.getLocalizedMessage());
-            throw new RuntimeException(e);
+            String message = "Unable to deserialize to object from stream(json) in type: [" +
+                    (null != clazz ? clazz.getSimpleName() : "UNKNOWN") + "], parameters size: " + parameters.length;
+            throw new JsonErrorException( -1, message, e);
         }
         return fromJson(builder.toString(), clazz, parameters);
     }
 
-    public static String toJson(Object obj, Class<?> model){
+    public static String toJson(Object obj, Class<?> model) throws JsonErrorException {
         ObjectWriter writer = mapper.writer();
         if(null != obj){
             try{
@@ -104,8 +108,8 @@ public class Json {
                 }
                 return writer.writeValueAsString(obj);
             } catch (JsonProcessingException e) {
-                logger.info(e.getLocalizedMessage());
-                throw new RuntimeException(e);
+                String message = "Unable to serialize the object in type: ["+ (null != model ? model.getSimpleName() : "UNKNOWN") + "]";
+                throw new JsonErrorException( -1, message, e);
             }
         }
         return null;

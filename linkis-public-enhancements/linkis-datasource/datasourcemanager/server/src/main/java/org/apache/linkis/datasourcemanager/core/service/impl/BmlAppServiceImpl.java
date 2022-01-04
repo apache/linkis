@@ -35,6 +35,7 @@ import java.io.InputStream;
 
 /**
  * Wrap the communication between Bml service
+ * // TODO RPCException defined
  */
 @Service
 @RefreshScope

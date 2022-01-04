@@ -30,7 +30,7 @@ trait DsmQueryProtocol {
  * Query request of Data Source Information
  * @param id
  */
-case class DsInfoQueryRequest(id: String, system: String) extends DsmQueryProtocol
+case class DsInfoQueryRequest(id: String, name: String, system: String) extends DsmQueryProtocol
 
 /**
  * Response of parameter map

@@ -18,10 +18,10 @@
 package org.apache.linkis.datasourcemanager.core.validate.strategy;
 
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
+import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.datasourcemanager.core.formdata.FormStreamContent;
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateException;
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateStrategy;
-import org.apache.linkis.metadatamanager.common.Json;
 
 import java.util.List;
 import java.util.Map;

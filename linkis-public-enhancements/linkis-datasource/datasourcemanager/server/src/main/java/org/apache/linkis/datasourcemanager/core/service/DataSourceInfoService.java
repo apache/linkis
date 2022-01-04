@@ -52,6 +52,12 @@ public interface DataSourceInfoService {
     DataSource getDataSourceInfo(Long dataSourceId);
 
     /**
+     * Get data source for current version by data source name
+     * @param dataSourceName data source name
+     * @return data source entity
+     */
+    DataSource getDataSourceInfo(String dataSourceName);
+    /**
      * Get data source
      * @param dataSourceId id
      * @return data source entity
@@ -170,6 +176,13 @@ public interface DataSourceInfoService {
     DataSource getDataSourceInfoForConnect(Long dataSourceId);
 
     /**
+     * get datasource info for connect for published version by name, if there is a dependency environment,
+     * merge datasource parameter and environment parameter.
+     * @param dataSourceName
+     * @return
+     */
+    DataSource getDataSourceInfoForConnect(String dataSourceName);
+    /**
      * get datasource info for connect, if there is a dependency environment,
      * merge datasource parameter and environment parameter.
      *
@@ -179,5 +192,10 @@ public interface DataSourceInfoService {
      */
     DataSource getDataSourceInfoForConnect(Long dataSourceId, Long version);
 
-
+    /**
+     * Check if exist data source
+     * @param dataSourceName data source name
+     * @return boolean
+     */
+    boolean existDataSource(String dataSourceName);
 }

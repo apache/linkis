@@ -30,9 +30,10 @@ public interface MetadataOperateService {
     /**
      * Build connection with  parameters in request
      * @param mdRemoteServiceName metadata remote service
+     * @param dataSourceType dataSource type
      * @param operator operate user
      * @param connectParams parameters
      * @throws ErrorException
      */
-    void doRemoteConnect(String mdRemoteServiceName, String operator, Map<String, Object> connectParams) throws WarnException;
+    void doRemoteConnect(String mdRemoteServiceName, String dataSourceType, String operator, Map<String, Object> connectParams) throws WarnException;
 }

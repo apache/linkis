@@ -25,5 +25,5 @@ public class MdmConfiguration {
             CommonVars.apply("wds.linkis.server.mdm.service.app.name", "linkis-ps-metadatamanager");
 
     public static CommonVars<String> DATA_SOURCE_SERVICE_APPLICATION =
-            CommonVars.apply("wds.linkis.server.dsm.app.name", "linkis-ps-datasourcemanager");
+            CommonVars.apply("wds.linkis.server.dsm.app.name", "linkis-ps-data-source-manager");
 }

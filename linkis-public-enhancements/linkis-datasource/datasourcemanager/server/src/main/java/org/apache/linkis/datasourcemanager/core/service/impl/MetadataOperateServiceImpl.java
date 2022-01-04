@@ -45,7 +45,7 @@ public class MetadataOperateServiceImpl implements MetadataOperateService {
     @Autowired
     private BmlAppService bmlAppService;
     @Override
-    public void doRemoteConnect(String mdRemoteServiceName ,
+    public void doRemoteConnect(String mdRemoteServiceName , String dataSourceType,
                                 String operator, Map<String, Object> connectParams) throws WarnException {
         List<String> uploadedResources = new ArrayList<>();
         try{
@@ -66,6 +66,7 @@ public class MetadataOperateServiceImpl implements MetadataOperateService {
                             uploadedResources.add(resourceId);
                             entry.setValue(resourceId);
                         } catch (ErrorException e) {
+                            // TODO redefined a exception extends warnException
                             throw new WarnException(BML_SERVICE_ERROR.getValue(), "Fail to operate file in request[上传文件处理失败]");
                         }
                     }
@@ -76,7 +77,7 @@ public class MetadataOperateServiceImpl implements MetadataOperateService {
             //Get a sender
             Sender sender = Sender.getSender(mdRemoteServiceName);
             try {
-                Object object = sender.ask(new MetadataConnect(operator, connectParams, ""));
+                Object object = sender.ask(new MetadataConnect(dataSourceType, operator, connectParams, ""));
                 if (object instanceof MetadataResponse) {
                     MetadataResponse response = (MetadataResponse) object;
                     if (!response.status()) {
@@ -87,10 +88,10 @@ public class MetadataOperateServiceImpl implements MetadataOperateService {
                     throw new WarnException(REMOTE_METADATA_SERVICE_ERROR.getValue(),
                             "Remote Service Error[远端服务出错, 联系运维处理]");
                 }
-            }catch(Throwable t){
+            }catch(Exception t){
                 if(!(t instanceof WarnException)) {
                     throw new WarnException(REMOTE_METADATA_SERVICE_ERROR.getValue(),
-                            "Remote Service Error[远端服务出错, 联系运维处理]");
+                            "Remote Service Error[远端服务出错, 联系运维处理], message:[" + t.getMessage() + "]");
                 }
                 throw t;
             }
@@ -102,6 +103,7 @@ public class MetadataOperateServiceImpl implements MetadataOperateService {
                         bmlAppService.clientRemoveResource(operator, resourceId);
                     }catch(Exception e){
                         //ignore
+                        //TODO add strategy to fix the failure of deleting
                     }
                 });
             }

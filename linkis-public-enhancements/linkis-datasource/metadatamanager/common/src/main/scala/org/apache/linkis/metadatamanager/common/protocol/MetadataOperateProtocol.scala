@@ -24,8 +24,8 @@ trait MetadataOperateProtocol {
 }
 
 /**
- * Request to do connect
- * @param version
- * @param params
+   * Request to do connect
+   * @param version
+   * @param params
  */
 case class MetadataConnect(dataSourceType: String, operator: String, params: util.Map[String, Object], version: String) extends MetadataOperateProtocol

@@ -27,6 +27,8 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 public class DataSourceParameterValidator implements ParameterValidator {
@@ -48,28 +50,50 @@ public class DataSourceParameterValidator implements ParameterValidator {
     @Override
     public void validate(List<DataSourceParamKeyDefinition> paramKeyDefinitions,
                          Map<String, Object> parameters) throws ParameterValidateException{
-        for(DataSourceParamKeyDefinition paramKeyDefinition : paramKeyDefinitions){
-            String keyName = paramKeyDefinition.getKey();
-            Object keyValue = parameters.get(keyName);
-            DataSourceParamKeyDefinition.ValueType valueType = paramKeyDefinition.getValueType();
-            if(null == keyValue){
-                String defaultValue = paramKeyDefinition.getDefaultValue();
-                if(StringUtils.isNotBlank(defaultValue) &&
-                        valueType == DataSourceParamKeyDefinition.ValueType.SELECT){
-                    defaultValue = defaultValue.split(",")[0].trim();
+        //Covert parameters map to <DataSourceParamKeyDefinition.getId(), Object>
+        Map<DataSourceParamKeyDefinition, Object> defToValue = paramKeyDefinitions.stream().filter(def ->
+                Objects.nonNull(parameters.get(def.getKey())))
+                .collect(Collectors.toMap(def -> def, def ->{
+                    Object keyValue = parameters.get(def.getKey());
+                    parameters.put(def.getKey(), keyValue);
+                    return keyValue;
+                }));
+        for(DataSourceParamKeyDefinition def : paramKeyDefinitions){
+            //Deal with cascade relation
+            boolean needValidate = false;
+            if(Objects.nonNull(def.getRefId())){
+                DataSourceParamKeyDefinition refDef = new DataSourceParamKeyDefinition();
+                refDef.setId(def.getRefId());
+                Object refValue = defToValue.get(refDef);
+                if(Objects.nonNull(refValue) && Objects.equals(refValue, def.getRefValue())){
+                    needValidate = true;
                 }
-                keyValue = defaultValue;
+            }else{
+                needValidate = true;
             }
-            if(null == keyValue || StringUtils.isBlank(String.valueOf(keyValue))){
-                if(paramKeyDefinition.isRequire()) {
-                    throw new ParameterValidateException("Param Validate Failed[参数校验出错], [the value of key: '"
-                            + keyName + " cannot be blank']");
+            if (needValidate){
+                String keyName = def.getKey();
+                Object keyValue = parameters.get(def.getKey());
+                DataSourceParamKeyDefinition.ValueType valueType = def.getValueType();
+                if(null == keyValue ){
+                    String defaultValue = def.getDefaultValue();
+                    if(StringUtils.isNotBlank(defaultValue) &&
+                            valueType == DataSourceParamKeyDefinition.ValueType.SELECT){
+                        defaultValue = defaultValue.split(",")[0].trim();
+                    }
+                    keyValue = defaultValue;
                 }
-                continue;
-            }
-            for(ParameterValidateStrategy validateStrategy : strategies){
-                if(validateStrategy.accept(valueType)) {
-                    validateStrategy.validate(paramKeyDefinition, keyValue);
+                if( null == keyValue || StringUtils.isBlank(String.valueOf(keyValue))){
+                    if(def.isRequire()) {
+                        throw new ParameterValidateException("Param Validate Failed[参数校验出错], [the value of key: '"
+                                + keyName + " cannot be blank']");
+                    }
+                    continue;
+                }
+                for(ParameterValidateStrategy validateStrategy : strategies){
+                    if(validateStrategy.accept(def.getValueType())) {
+                        validateStrategy.validate(def, keyValue);
+                    }
                 }
             }
         }

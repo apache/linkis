@@ -19,7 +19,8 @@ package org.apache.linkis.metadatamanager.common.service;
 
 import com.google.common.cache.Cache;
 import org.apache.linkis.common.exception.WarnException;
-import org.apache.linkis.metadatamanager.common.Json;
+import org.apache.linkis.datasourcemanager.common.util.json.Json;
+import org.apache.linkis.metadatamanager.common.cache.CacheConfiguration;
 import org.apache.linkis.metadatamanager.common.cache.CacheManager;
 import org.apache.linkis.metadatamanager.common.cache.ConnCacheManager;
 import org.apache.linkis.metadatamanager.common.domain.MetaColumnInfo;
@@ -36,12 +37,14 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
 public abstract class AbstractMetaService<C extends Closeable> implements MetadataService {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMetaService.class);
     private static final String CONN_CACHE_REQ = "_STORED";
-
 
     private CacheManager connCacheManager;
 
@@ -147,44 +150,83 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
         throw new WarnException(-1, "This method is no supported");
     }
 
-    protected void close(C connection){
+    public void close(C connection){
         try {
             connection.close();
         } catch (IOException e) {
-            throw new MetaRuntimeException("Fail to close connection[关闭连接失败], [" + e.getMessage() + "]");
+            throw new MetaRuntimeException("Fail to close connection[关闭连接失败], [" + e.getMessage() + "]", e);
         }
     }
 
     protected <R>R getConnAndRun(String operator, Map<String, Object> params, Function<C, R> action) {
         String cacheKey = "";
+        MetadataConnection<C> connection = null;
         try{
             cacheKey = md5String(Json.toJson(params, null), "", 2);
-            MetadataConnection<C> connection;
             if(null != reqCache) {
-                connection = reqCache.get(cacheKey, () -> getConnection(operator, params));
+                ConnectionCache<C> connectionCache = getConnectionInCache(reqCache, cacheKey, () -> getConnection(operator, params));
+                connection = connectionCache.connection;
+                // Update the actually cache key
+                cacheKey = connectionCache.cacheKey;
             }else{
                 connection = getConnection(operator, params);
             }
             return run(connection, action);
         }catch(Exception e){
             LOG.error("Error to invoke meta service", e);
-            if(StringUtils.isNotBlank(cacheKey)){
+            if(StringUtils.isNotBlank(cacheKey) && Objects.nonNull(reqCache)){
                 reqCache.invalidate(cacheKey);
             }
-            throw new MetaRuntimeException(e.getMessage());
+            throw new MetaRuntimeException(e.getMessage(), e);
+        }finally{
+            if (Objects.nonNull(connection) && connection.isLock() &&
+                    connection.getLock().isHeldByCurrentThread()){
+                connection.getLock().unlock();
+            }
         }
     }
     private <R>R run(MetadataConnection<C> connection, Function<C, R> action){
         if(connection.isLock()){
-            connection.getLock().lock();
-            try{
+            if (!connection.getLock().isHeldByCurrentThread()){
+                connection.getLock().lock();
+                try{
+                    return action.apply(connection.getConnection());
+                }finally{
+                    connection.getLock().unlock();
+                }
+            } else {
                 return action.apply(connection.getConnection());
-            }finally{
-                connection.getLock().unlock();
             }
         }else{
             return action.apply(connection.getConnection());
         }
+    }
+
+    /**
+     * Get connection cache element
+     * @param cache cache entity
+     * @param cacheKey  cache key
+     * @param callable callable function
+     * @return connection cache
+     * @throws ExecutionException exception in caching
+     */
+    private ConnectionCache<C> getConnectionInCache(Cache<String, MetadataConnection<C>> cache,
+                                                       String cacheKey, Callable<? extends MetadataConnection<C>> callable) throws ExecutionException {
+        int poolSize = CacheConfiguration.CACHE_IN_POOL_SIZE.getValue();
+        if (poolSize <= 0){
+            poolSize = 1;
+        }
+        MetadataConnection<C> connection = null;
+        String cacheKeyInPool = cacheKey + "_0";
+        for (int i = 0; i < poolSize; i ++) {
+            connection = cache.get(cacheKeyInPool, callable);
+            if (!connection.isLock() || connection.getLock().tryLock()){
+                break;
+            }
+            cacheKeyInPool = cacheKey + "_" + i;
+            LOG.info("The connection cache: [" + cacheKeyInPool + "] has been occupied, now to find the other in pool");
+        }
+        return new ConnectionCache<>(cacheKeyInPool, connection);
     }
 
     private String md5String(String source, String salt, int iterator){
@@ -210,5 +252,25 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
             throw new RuntimeException(e.getMessage());
         }
         return token.toString();
+    }
+
+    /**
+     * Cache element
+     */
+    private static class ConnectionCache<C>{
+
+        public ConnectionCache(String cacheKey, MetadataConnection<C> connection){
+            this.cacheKey = cacheKey;
+            this.connection = connection;
+        }
+        /**
+         * Connection
+         */
+        MetadataConnection<C> connection;
+
+        /**
+         * Actual cacheKey
+         */
+        String cacheKey;
     }
 }

@@ -43,7 +43,7 @@
 
     <select id="selectOneVersion" resultType="string">
         SELECT `parameter`
-         FROM `linkis_datasource_version` WHERE datasource_id = #{dataSourceId} and `version_id` = #{version};
+         FROM `linkis_datasource_version` WHERE datasource_id = #{dataSourceId} and `version_id` = #{version, jdbcType=INTEGER};
     </select>
 
     <select id="getVersionsFromDatasourceId" resultMap="dataSourceVersionMap">

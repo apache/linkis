@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Parameter key definition for data source type
@@ -43,6 +44,10 @@ public class DataSourceParamKeyDefinition {
          * String
          */
         TEXT(String.class),
+        /**
+         * String
+         */
+        TEXTAREA(String.class),
         /**
          * Long
          */
@@ -219,6 +224,14 @@ public class DataSourceParamKeyDefinition {
         this.require = require;
     }
 
+    public Scope getScope() {
+        return scope;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
+    }
+
     public Long getRefId() {
         return refId;
     }
@@ -235,11 +248,20 @@ public class DataSourceParamKeyDefinition {
         this.refValue = refValue;
     }
 
-    public Scope getScope() {
-        return scope;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DataSourceParamKeyDefinition that = (DataSourceParamKeyDefinition) o;
+        return Objects.equals(id, that.id);
     }
 
-    public void setScope(Scope scope) {
-        this.scope = scope;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -18,24 +18,21 @@ package org.apache.linkis.engineconnplugin.sqoop.executor
 
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
 import org.apache.linkis.engineconn.common.conf.EngineConnConf.ENGINE_CONN_LOCAL_PATH_PWD_KEY
-import org.apache.linkis.engineconn.once.executor.OnceExecutorExecutionContext
-import org.apache.linkis.engineconnplugin.sqoop.client.LinkisSqoopClient
+import org.apache.linkis.engineconn.once.executor.{OnceExecutorExecutionContext, OperableOnceExecutor}
 import org.apache.linkis.engineconnplugin.sqoop.context.SqoopEnvConfiguration.{LINKIS_QUEUE_NAME, LINKIS_SQOOP_TASK_MANAGER_CPU_CORES, LINKIS_SQOOP_TASK_MANAGER_MEMORY}
-import org.apache.linkis.governance.common.paser.{CodeParserFactory, CodeType}
 import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, DriverAndYarnResource, LoadInstanceResource, NodeResource, YarnResource}
-import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.scheduler.executer.ErrorExecuteResponse
-import org.apache.commons.lang.StringUtils
 import org.apache.linkis.engineconnplugin.sqoop.client.LinkisSqoopClient
 import org.apache.linkis.engineconnplugin.sqoop.client.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.sqoop.context.SqoopEngineConnContext
+import org.apache.linkis.protocol.engine.JobProgressInfo
 
 import java.util
 import java.util.concurrent.{Future, TimeUnit}
 
 
 class SqoopOnceCodeExecutor(override val id: Long,
-                            override protected val sqoopEngineConnContext: SqoopEngineConnContext) extends SqoopOnceExecutor{
+                            override protected val sqoopEngineConnContext: SqoopEngineConnContext) extends SqoopOnceExecutor with OperableOnceExecutor{
 
 
   private var params:util.Map[String, String] = _;
@@ -54,9 +51,6 @@ class SqoopOnceCodeExecutor(override val id: Long,
           }
           info("All codes completed, now stop SqoopEngineConn.")
           closeDaemon()
-        if(!isFailed) {
-          trySucceed()
-        }
           this synchronized notify()
       }
     })
@@ -95,4 +89,18 @@ class SqoopOnceCodeExecutor(override val id: Long,
   protected def closeDaemon(): Unit = {
     if(daemonThread != null) daemonThread.cancel(true)
   }
+
+  override def getProgress: Float = LinkisSqoopClient.progress()
+
+  override def getProgressInfo: Array[JobProgressInfo] = {
+    val infoMap = LinkisSqoopClient.getProgressInfo
+    val jobInfo =  JobProgressInfo(LinkisSqoopClient.getApplicationId,infoMap.get("totalTasks"),infoMap.get("runningTasks"),infoMap.get("failedTasks"),infoMap.get("succeedTasks"))
+    info("Progress Job Info"+jobInfo)
+    Array(jobInfo)
+  }
+
+
+  override def getMetrics: util.Map[String, Any] = LinkisSqoopClient.getMetrics.asInstanceOf[util.Map[String, Any]]
+
+  override def getDiagnosis: util.Map[String, Any] = LinkisSqoopClient.getDiagnosis.asInstanceOf[util.Map[String,Any]]
 }

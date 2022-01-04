@@ -39,7 +39,7 @@ trait SqoopOnceExecutor extends ManageableOnceExecutor with SqoopExecutor{
 
   override def getId: String = "SqoopOnceApp_"+ id
   override def close(): Unit = {
-    Sqoop.close()
+    LinkisSqoopClient.close()
     super.close()
   }
   override def trySucceed(): Boolean = {

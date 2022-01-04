@@ -341,7 +341,7 @@ public class JobBase {
     protected void setJob(Job job) {
         LOG.info("Customize JobBase Set The Job");
         mrJob = job;
-        Sqoop.jobBase = job;
+        Sqoop.job.set(job);
     }
 
     /**

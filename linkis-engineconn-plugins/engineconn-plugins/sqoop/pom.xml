@@ -41,7 +41,14 @@
             <groupId>org.apache.sqoop</groupId>
             <artifactId>sqoop</artifactId>
             <version>1.4.7</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/java/lib/sqoop-1.4.7.jar</systemPath>
         </dependency>
+        <!--<dependency>
+            <groupId>org.apache.sqoop</groupId>
+            <artifactId>sqoop</artifactId>
+            <version>1.4.7</version>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-exec</artifactId>

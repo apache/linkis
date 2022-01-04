@@ -16,7 +16,6 @@
 
 package org.apache.linkis.engineconnplugin.datax.executor
 
-import com.alibaba.datax.core.Engine
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.common.conf.EngineConnConf.ENGINE_CONN_LOCAL_PATH_PWD_KEY
 import org.apache.linkis.engineconn.core.EngineConnObject

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.engineplugin.spark.utils
 
 import java.io.{IOException, InputStream, OutputStream}
 import java.net.ServerSocket
 import java.util.HashMap
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.Utils
@@ -29,11 +30,11 @@ import org.apache.linkis.rpc.Sender
 import org.apache.linkis.storage.resultset.ResultSetReader
 import org.apache.linkis.storage.utils.StorageUtils
 import org.apache.linkis.storage.{FSFactory, LineMetaData}
-
+import org.apache.linkis.common.utils.Logging
 /**
-  *
-  */
-object EngineUtils {
+ *
+ */
+object EngineUtils extends  Logging{
   private val user:String = System.getProperty("user.name")
   private var sparkVersion: String = _
   private  var fileSystem : org.apache.linkis.common.io.Fs = _
@@ -46,24 +47,32 @@ object EngineUtils {
   }
 
   def sparkSubmitVersion(): String = {
-    if(sparkVersion != null) {
+    if (sparkVersion != null) {
       return sparkVersion
     }
-    val sparkSubmit = CommonVars("wds.linkis.server.spark-submit", "spark-submit").getValue
-    val pb = new ProcessBuilder(sparkSubmit, "--version")
-    pb.redirectErrorStream(true)
-    pb.redirectInput(ProcessBuilder.Redirect.PIPE)
-
-    val process = new LineBufferedProcess(pb.start())
-    val exitCode = process.waitFor()
-    val output = process.inputIterator.mkString("\n")
-
-    val regex = """version (.*)""".r.unanchored
-
-    sparkVersion = output match {
-      case regex(version) => version
-      case _ => throw new IOException(f"Unable to determing spark-submit version [$exitCode]:\n$output")
+    val sparkVersionVar = CommonVars("wds.linkis.engine.spark.version", "")
+    if (StringUtils.isNotBlank(sparkVersionVar.getValue.trim)) {
+      val output = sparkVersionVar.getValue.trim
+      val regex = """([\d.]*)""".r.unanchored
+      sparkVersion = output match {
+        case regex(version) => version
+        case _ => throw new IOException(f"spark version  is invalid :\n$output")
+      }
+    } else {
+      val sparkSubmit = CommonVars("wds.linkis.server.spark-submit", "spark-submit").getValue
+      val pb = new ProcessBuilder(sparkSubmit, "--version")
+      pb.redirectErrorStream(true)
+      pb.redirectInput(ProcessBuilder.Redirect.PIPE)
+      val process = new LineBufferedProcess(pb.start())
+      val exitCode = process.waitFor()
+      val output = process.inputIterator.mkString("\n")
+      val regex = """version ([\d.]*)""".r.unanchored
+      sparkVersion = output match {
+        case regex(version) => version
+        case _ => throw new IOException(f"Unable to determing spark-submit version [$exitCode]:\n$output")
+      }
     }
+    info("spark version is " + sparkVersion)
     sparkVersion
   }
 
@@ -113,7 +122,7 @@ object EngineUtils {
         while (resultSetReader.hasNext){
           sb.append(resultSetReader.getRecord).append("\n")
         }
-       sb.toString()
+        sb.toString()
       case _ => dolphinContent
     }
     errorMsg

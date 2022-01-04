@@ -17,7 +17,7 @@
  
 package org.apache.linkis.metadatamanager.service;
 
-import org.apache.linkis.metadatamanager.common.Json;
+import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -73,7 +73,7 @@ public class ElasticConnection implements Closeable {
         ping();
     }
 
-    public List<String> getAllIndices() throws IOException {
+    public List<String> getAllIndices() throws Exception {
         List<String> indices = new ArrayList<>();
         Request request = new Request("GET", "_cat/indices");
         request.addParameter("format", "JSON");
@@ -88,7 +88,7 @@ public class ElasticConnection implements Closeable {
         return indices;
     }
 
-    public List<String> getTypes(String index) throws IOException{
+    public List<String> getTypes(String index) throws Exception{
         List<String> types = new ArrayList<>();
         Request request = new Request("GET", index +"/_mappings");
         Response response = restClient.performRequest(request);
@@ -105,7 +105,7 @@ public class ElasticConnection implements Closeable {
         return types;
     }
 
-    public Map<Object, Object> getProps(String index, String type) throws IOException{
+    public Map<Object, Object> getProps(String index, String type) throws Exception{
         Request request = new Request("GET", index + "/_mappings/" + type);
         Response response = restClient.performRequest(request);
         Map<String, Map<String, Object>> result =

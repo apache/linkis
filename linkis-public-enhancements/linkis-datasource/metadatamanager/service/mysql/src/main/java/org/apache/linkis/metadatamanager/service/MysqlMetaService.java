@@ -17,7 +17,7 @@
  
 package org.apache.linkis.metadatamanager.service;
 
-import org.apache.linkis.metadatamanager.common.Json;
+import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadatamanager.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadatamanager.common.service.AbstractMetaService;
 import org.apache.linkis.metadatamanager.common.service.MetadataConnection;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class SqlMetaService extends AbstractMetaService<SqlConnection> {
+public class MysqlMetaService extends AbstractMetaService<SqlConnection> {
     @Override
     public MetadataConnection<SqlConnection> getConnection(String operator, Map<String, Object> params) throws Exception {
         String host = String.valueOf(params.getOrDefault(SqlParamsMapper.PARAM_SQL_HOST.getValue(), ""));

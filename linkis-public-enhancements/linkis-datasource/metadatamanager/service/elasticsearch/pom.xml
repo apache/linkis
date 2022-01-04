@@ -25,7 +25,7 @@
     </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>linkis-metadatamanager-service-es</artifactId>
+  <artifactId>linkis-metadata-manager-service-es</artifactId>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <es.version>6.7.1</es.version>
@@ -34,8 +34,9 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-metadatamanager-common</artifactId>
+      <artifactId>linkis-metadata-manager-common</artifactId>
       <version>${linkis.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.linkis</groupId>
@@ -47,6 +48,7 @@
           <groupId>org.ow2.asm</groupId>
         </exclusion>
       </exclusions>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.elasticsearch.client</groupId>

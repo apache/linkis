@@ -68,11 +68,11 @@ public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
                 LOG.info("Start to download resource id:[" + keytabResourceId +"]");
                 String keytabFilePath = resource.getFile().getAbsolutePath() + "/" + UUID.randomUUID().toString().replace("-", "");
                 if(!downloadResource(keytabResourceId, operator, keytabFilePath)){
-                    throw new MetaRuntimeException("Fail to download resource i:[" + keytabResourceId +"]");
+                    throw new MetaRuntimeException("Fail to download resource i:[" + keytabResourceId +"]", null);
                 }
                 conn = new KafkaConnection(brokers, principle, keytabFilePath);
             }else{
-                throw new MetaRuntimeException("Cannot find the keytab file in connect parameters");
+                throw new MetaRuntimeException("Cannot find the keytab file in connect parameters", null);
             }
         }else{
             conn = new KafkaConnection(brokers);

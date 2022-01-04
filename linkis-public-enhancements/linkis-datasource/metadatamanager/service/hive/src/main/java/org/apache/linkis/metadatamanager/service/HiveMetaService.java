@@ -21,6 +21,7 @@ import org.apache.linkis.bml.client.BmlClient;
 import org.apache.linkis.bml.client.BmlClientFactory;
 import org.apache.linkis.bml.protocol.BmlDownloadResponse;
 import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadatamanager.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadatamanager.common.domain.MetaPartitionInfo;
 import org.apache.linkis.metadatamanager.common.exception.MetaRuntimeException;
@@ -69,14 +70,14 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
                 LOG.info("Start to download resource id:[" + keytabResourceId +"]");
                 String keytabFilePath = resource.getFile().getAbsolutePath() + "/" + UUID.randomUUID().toString().replace("-", "");
                 if(!downloadResource(keytabResourceId, operator, keytabFilePath)){
-                    throw new MetaRuntimeException("Fail to download resource i:[" + keytabResourceId +"]");
+                    throw new MetaRuntimeException("Fail to download resource i:[" + keytabResourceId +"]", null);
                 }
-                conn = new HiveConnection(uris, principle, keytabFilePath);
+                conn = new HiveConnection(uris, principle, keytabFilePath, getExtraHadoopConf(params));
             }else{
-                throw new MetaRuntimeException("Cannot find the keytab file in connect parameters");
+                throw new MetaRuntimeException("Cannot find the keytab file in connect parameters", null);
             }
         }else{
-            conn = new HiveConnection(uris);
+            conn = new HiveConnection(uris, getExtraHadoopConf(params));
         }
         return new MetadataConnection<>(conn, true);
     }
@@ -194,4 +195,23 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
             throw new RuntimeException("Fail to get Hive table properties(获取表参数信息失败)", e);
         }
     }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, String> getExtraHadoopConf(Map<String, Object> connectParams){
+        Map<String, String> extraHadoopConf = new HashMap<>();
+        Object extraHadoopConfObj = connectParams.get(HiveParamsMapper.PARAM_HADOOP_CONF.getValue());
+        if (Objects.nonNull(extraHadoopConfObj)){
+            try {
+                if (!(extraHadoopConfObj instanceof Map)) {
+                    extraHadoopConf = Json.fromJson(String.valueOf(extraHadoopConfObj), Map.class, String.class, String.class);
+                }else{
+                    extraHadoopConf = (Map<String, String>)extraHadoopConfObj;
+                }
+            }catch(Exception e){
+                throw new MetaRuntimeException("Cannot parse the param:[" +HiveParamsMapper.PARAM_HADOOP_CONF.getValue() + "]", e);
+            }
+        }
+        return extraHadoopConf;
+    }
+
 }

@@ -17,7 +17,7 @@
  
 package org.apache.linkis.metadatamanager.service;
 
-import org.apache.linkis.metadatamanager.common.Json;
+import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadatamanager.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadatamanager.common.service.AbstractMetaService;
 import org.apache.linkis.metadatamanager.common.service.MetadataConnection;
@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
-public class ElasticMetaService extends AbstractMetaService<ElasticConnection> {
+public class EsMetaService extends AbstractMetaService<ElasticConnection> {
     @Override
     public MetadataConnection<ElasticConnection> getConnection(String operator, Map<String, Object> params)
             throws Exception{

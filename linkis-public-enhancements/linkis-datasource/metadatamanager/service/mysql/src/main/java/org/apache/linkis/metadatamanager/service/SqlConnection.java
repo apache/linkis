@@ -40,6 +40,12 @@ public class SqlConnection implements Closeable {
     private static final CommonVars<String> SQL_CONNECT_URL =
             CommonVars.apply("wds.linkis.server.mdm.service.sql.url", "jdbc:mysql://%s:%s/%s");
 
+    private static final CommonVars<Integer> SQL_CONNECT_TIMEOUT =
+            CommonVars.apply("wds.linkis.server.mdm.service.sql.connect.timeout", 3000);
+
+    private static final CommonVars<Integer> SQL_SOCKET_TIMEOUT =
+            CommonVars.apply("wds.linkis.server.mdm.service.sql.socket.timeout", 6000);
+
     private Connection conn;
 
     private ConnectMessage connectMessage;
@@ -205,6 +211,8 @@ public class SqlConnection implements Closeable {
             this.username = username;
             this.password = password;
             this.extraParams = extraParams;
+            this.extraParams.put("connectTimeout", SQL_CONNECT_TIMEOUT.getValue());
+            this.extraParams.put("socketTimeout", SQL_SOCKET_TIMEOUT.getValue());
         }
     }
 }

@@ -25,7 +25,7 @@
         <version>1.0.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>linkis-metadatamanager-service-kafka</artifactId>
+    <artifactId>linkis-metadata-manager-service-kafka</artifactId>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -34,30 +34,28 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-metadatamanager-common</artifactId>
+            <artifactId>linkis-metadata-manager-common</artifactId>
             <version>${linkis.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-module</artifactId>
             <version>${linkis.version}</version>
+            <scope>provided</scope>
         </dependency>
         <!--bml client-->
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-bml-client</artifactId>
             <version>${linkis.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
             <version>2.7.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-module</artifactId>
-            <version>${linkis.version}</version>
         </dependency>
     </dependencies>
 

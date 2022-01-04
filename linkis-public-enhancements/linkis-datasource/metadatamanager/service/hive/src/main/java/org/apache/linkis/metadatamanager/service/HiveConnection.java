@@ -29,6 +29,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
 import java.security.PrivilegedExceptionAction;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static org.apache.hadoop.fs.FileSystem.FS_DEFAULT_NAME_KEY;
@@ -54,7 +55,7 @@ public class HiveConnection implements Closeable {
         }
     }
 
-    public HiveConnection(String uris, String principle, String keytabFilePath) throws Exception {
+    public HiveConnection(String uris, String principle, String keytabFilePath, Map<String, String> hadoopConf) throws Exception {
         final HiveConf conf = new HiveConf();
         conf.setVar(HiveConf.ConfVars.METASTOREURIS, uris);
         conf.setVar(HiveConf.ConfVars.METASTORE_USE_THRIFT_SASL, "true");
@@ -62,15 +63,17 @@ public class HiveConnection implements Closeable {
         //Disable the cache in FileSystem
         conf.setBoolean(String.format("fs.%s.impl.disable.cache", URI.create(conf.get(FS_DEFAULT_NAME_KEY, "")).getScheme()), true);
         conf.set("hadoop.security.authentication", "kerberos");
+        hadoopConf.forEach(conf::set);
         principle = principle.substring(0, principle.indexOf("@"));
         UserGroupInformation ugi = UserGroupInformationWrapper.loginUserFromKeytab(conf,
                 principle, keytabFilePath);
         hiveClient = getHive(ugi, conf);
     }
 
-    public HiveConnection(String uris) throws Exception{
+    public HiveConnection(String uris, Map<String, String> hadoopConf) throws Exception{
         final HiveConf conf = new HiveConf();
         conf.setVar(HiveConf.ConfVars.METASTOREURIS, uris);
+        hadoopConf.forEach(conf::set);
         //Disable the cache in FileSystem
         conf.setBoolean(String.format("fs.%s.impl.disable.cache", URI.create(conf.get(FS_DEFAULT_NAME_KEY, "")).getScheme()), true);
         //TODO choose an authentication strategy for hive, and then use createProxyUser

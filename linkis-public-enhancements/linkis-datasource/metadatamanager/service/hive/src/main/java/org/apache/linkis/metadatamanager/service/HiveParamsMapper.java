@@ -30,4 +30,6 @@ public class HiveParamsMapper {
     public static final CommonVars<String> PARAM_HIVE_KEYTAB =
             CommonVars.apply("wds.linkis.server.mdm.service.hive.keytab", "keytab");
 
+    public static final CommonVars<String> PARAM_HADOOP_CONF =
+            CommonVars.apply("wds.linkis.server.mdm.service.hadoop.conf", "hadoopConf");
 }

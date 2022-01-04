@@ -24,34 +24,23 @@
         <version>1.0.3</version>
     </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>linkis-metadatamanager-server</artifactId>
+  <artifactId>linkis-metadata-manager-server</artifactId>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-module</artifactId>
-      <version>${linkis.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>asm</artifactId>
-          <groupId>org.ow2.asm</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
     <!--Metadata common-->
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-metadatamanager-common</artifactId>
+      <artifactId>linkis-metadata-manager-common</artifactId>
       <version>${linkis.version}</version>
     </dependency>
     <!-- data source manager common dependency-->
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-datasourcemanager-common</artifactId>
+      <artifactId>linkis-datasource-manager-common</artifactId>
       <version>${linkis.version}</version>
       <exclusions>
         <exclusion>
@@ -65,6 +54,7 @@
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-rpc</artifactId>
       <version>${linkis.version}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

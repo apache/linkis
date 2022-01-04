@@ -19,7 +19,7 @@
         xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/2.3"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/2.3 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-    <id>linkis-mdm-server</id>
+    <id>linkis-metadata-manager-server</id>
     <formats>
         <format>zip</format>
         <format>dir</format>
@@ -42,13 +42,59 @@
 
     <fileSets>
         <fileSet>
-            <directory>${basedir}/src/main/resources</directory>
+            <directory>${basedir}/../service/elasticsearch/target/out/lib</directory>
+            <fileMode>0755</fileMode>
+            <outputDirectory>lib/service/elasticsearch</outputDirectory>
             <includes>
-                <include>*</include>
+                <include>*.jar</include>
             </includes>
-            <fileMode>0777</fileMode>
-            <outputDirectory>conf</outputDirectory>
-            <lineEnding>unix</lineEnding>
+            <excludes>
+                <exclude>*-javadoc.jar</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../service/hive/target/out/lib</directory>
+            <fileMode>0755</fileMode>
+            <outputDirectory>lib/service/hive</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*-javadoc.jar</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../service/kafka/target/out/lib</directory>
+            <fileMode>0755</fileMode>
+            <outputDirectory>lib/service/kafka</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*-javadoc.jar</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../service/mysql/target/out/lib</directory>
+            <fileMode>0755</fileMode>
+            <outputDirectory>lib/service/mysql</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*-javadoc.jar</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../service/tdsql/target/out/lib</directory>
+            <fileMode>0755</fileMode>
+            <outputDirectory>lib/service/tdsql</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*-javadoc.jar</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
 

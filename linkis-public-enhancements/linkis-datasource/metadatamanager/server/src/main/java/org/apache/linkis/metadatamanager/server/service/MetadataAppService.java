@@ -27,11 +27,18 @@ import java.util.Map;
 public interface MetadataAppService {
 
     /**
+     * Get connection
+     * @param params connect params
+     * @return
+     */
+    void getConnection(String dataSourceType, String operator, Map<String, Object> params) throws Exception;
+
+    /**
      * @param dataSourceId data source id
      * @param system system
      * @return
      */
-    List<String> getDatabasesByDsId(String dataSourceId, String system) throws ErrorException;
+    List<String> getDatabasesByDsId(String dataSourceId, String system, String userName) throws ErrorException;
 
     /**
      * @param dataSourceId data source id
@@ -39,7 +46,7 @@ public interface MetadataAppService {
      * @param database database
      * @return
      */
-    List<String> getTablesByDsId(String dataSourceId, String database, String system) throws ErrorException;
+    List<String> getTablesByDsId(String dataSourceId, String database, String system, String userName) throws ErrorException;
 
     /**
      * @param dataSourceId data source id
@@ -48,7 +55,8 @@ public interface MetadataAppService {
      * @param system system
      * @return
      */
-    Map<String, String> getTablePropsByDsId(String dataSourceId, String database, String table, String system) throws ErrorException;
+    Map<String, String> getTablePropsByDsId(String dataSourceId, String database, String table,
+                                            String system, String userName) throws ErrorException;
     /**
      * @param dataSourceId data source i
      * @param database database
@@ -56,7 +64,8 @@ public interface MetadataAppService {
      * @param system system
      * @return
      */
-    MetaPartitionInfo getPartitionsByDsId(String dataSourceId, String database, String table, String system) throws ErrorException;
+    MetaPartitionInfo getPartitionsByDsId(String dataSourceId, String database, String table,
+                                          String system, String userName) throws ErrorException;
 
     /**
      * @param dataSourceId data source id
@@ -65,5 +74,6 @@ public interface MetadataAppService {
      * @param system system
      * @return
      */
-    List<MetaColumnInfo> getColumns(String dataSourceId, String database, String table, String system) throws ErrorException;
+    List<MetaColumnInfo> getColumns(String dataSourceId, String database, String table,
+                                    String system, String userName) throws ErrorException;
 }

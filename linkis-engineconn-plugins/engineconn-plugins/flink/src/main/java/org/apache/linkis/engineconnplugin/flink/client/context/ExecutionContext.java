@@ -128,11 +128,12 @@ public class ExecutionContext {
 		LOG.info("flinkConfig config: {}", flinkConfig);
 		clusterClientFactory = new LinkisYarnClusterClientFactory();
 	}
-
-	public StreamExecutionEnvironment getStreamExecutionEnvironment() {
+	public StreamExecutionEnvironment getStreamExecutionEnvironment() throws SqlExecutionException{
+		if(streamExecEnv == null) {
+			getTableEnvironment();
+		}
 		return streamExecEnv;
 	}
-
 	public void setString(String key, String value) {
 		this.flinkConfig.setString(key, value);
 	}

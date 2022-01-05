@@ -1,13 +1,12 @@
 #!/bin/bash
 #
-# Copyright 2019 WeBank
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
 # http://www.apache.org/licenses/LICENSE-2.0
-#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +16,7 @@
 
 #set -x
 export LANG=en_US.utf-8
-LINKIS_CLIENT='com.webank.wedatasphere.linkis.cli.application.LinkisClientApplication'
+LINKIS_CLIENT='org.apache.linkis.cli.application.LinkisClientApplication'
 
 i=0
 for arg in "$@"
@@ -32,23 +31,28 @@ done
 # finf java_home
 #===============================================
 locate_java_home() {
-  local JAVA8_HOME_CANDIDATES='\
-    /usr/java/jdk1.8* \
-    /nemo/jdk1.8*'
-
-  JAVA_HOME_CANDIDATES="$JAVA8_HOME_CANDIDATES"
-
-  # attempt to find java 8
   flag=""
-  for candidate_regex in $JAVA_HOME_CANDIDATES ; do
-      for candidate in `ls -rd $candidate_regex 2>/dev/null`; do
-        if [ -e $candidate/bin/java ]; then
-          export JAVA_HOME=$candidate
-          flag="true"
-          break 2
-        fi
-      done
-  done
+  if [[ -e "$JAVA_HOME" && -e $JAVA_HOME/bin/java ]]; then
+    flag="true"
+  else
+    local JAVA8_HOME_CANDIDATES='\
+      /usr/java/jdk1.8* \
+      /nemo/jdk1.8*'
+
+    JAVA_HOME_CANDIDATES="$JAVA8_HOME_CANDIDATES"
+
+    # attempt to find java 8
+
+    for candidate_regex in $JAVA_HOME_CANDIDATES ; do
+        for candidate in `ls -rd $candidate_regex 2>/dev/null`; do
+          if [ -e $candidate/bin/java ]; then
+            export JAVA_HOME=$candidate
+            flag="true"
+            break 2
+          fi
+        done
+    done
+  fi
 
   if [ -z "$flag" ]; then
     echo -e "\033[0;31;40mNo JDK 8 found. linkis-client requires Java 1.8\033[0m" 1>&2

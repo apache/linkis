@@ -1,19 +1,20 @@
 /*
- * Copyright 2019 WeBank
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
+
 
 // vue.config.js
 const path = require('path')
@@ -155,18 +156,34 @@ module.exports = {
       .end()
     if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'sandbox' || process.env.NODE_ENV === 'bdp') {
       config.plugin('compress').use(FileManagerPlugin, [{
+      events: {
         onEnd: {
           copy: [
-            { source: './config.sh', destination: `./dist` },
-            { source: './install.sh', destination: `./dist` }
+            { source: './config.sh', destination: `./dist/config.sh`,toType: 'file'},
+            { source: './install.sh', destination: `./dist/install.sh`,toType: 'file' },
+            { source: '../NOTICE', destination: `./dist/NOTICE`,toType: 'file'},
+            { source: '../LICENSE', destination: `./dist/LICENSE`,toType: 'file'},
+            { source: '../DISCLAIMER-WIP', destination: `./dist/DISCLAIMER-WIP`,toType: 'file'},
+            { source: './licenses', destination: `./dist/licenses` }
           ],
           // 先删除根目录下的zip包
-          delete: [`./wedatasphere-linkis-${getVersion()}-dist.zip`],
+          delete: [`./apache-linkis-${getVersion()}-incubating-web-bin.tar.gz`],
           // 将dist文件夹下的文件进行打包
           archive: [
-            { source: './dist', destination: `./wedatasphere-linkis-${getVersion()}-dist.zip` },
+            { source: './dist', destination: `./apache-linkis-${getVersion()}-incubating-web-bin.tar.gz`,format: 'tar' ,
+             options: {
+                            gzip: true,
+                            gzipOptions: {
+                              level: 1,
+                            },
+                            globOptions: {
+                              dot: true,
+                            },
+                          }
+               },
           ]
         },
+        }
       }])
     }
   },

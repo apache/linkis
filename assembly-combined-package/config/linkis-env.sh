@@ -1,14 +1,12 @@
 #!/bin/bash
-
 #
-# Copyright 2019 WeBank
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
 # http://www.apache.org/licenses/LICENSE-2.0
-#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,6 +53,13 @@ HIVE_META_PASSWORD=""
 
 ##YARN REST URL  spark engine required
 YARN_RESTFUL_URL=http://127.0.0.1:8088
+
+## request spnego enabled Yarn resource restful interface When Yarn enable kerberos
+## If your environment yarn interface can be accessed directly, ignore it
+#KERBEROS_ENABLE=true
+#PRINCIPAL_NAME=yarn
+#KEYTAB_PATH=/etc/security/keytabs/yarn.keytab
+#KRB5_PATH=/etc/krb5.conf
 
 ###HADOOP CONF DIR
 HADOOP_CONF_DIR=/appcom/config/hadoop-config
@@ -121,7 +126,7 @@ CS_PORT=9108
 
 ## LDAP is for enterprise authorization, if you just want to have a try, ignore it.
 #LDAP_URL=ldap://localhost:1389/
-#LDAP_BASEDN=dc=webank,dc=com
+#LDAP_BASEDN=dc=apache,dc=com
 #LDAP_USER_NAME_FORMAT=cn=%s@xxx.com,OU=xxx,DC=xxx,DC=com
 
 ## java application default jvm memory
@@ -130,7 +135,7 @@ export SERVER_HEAP_SIZE="512M"
 ##The decompression directory and the installation directory need to be inconsistent
 LINKIS_HOME=/appcom/Install/LinkisInstall
 
-LINKIS_VERSION=1.0.2
+LINKIS_VERSION=1.0.3
 
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module

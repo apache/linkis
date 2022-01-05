@@ -100,7 +100,7 @@ public class DataSourceCoreRestfulApi {
 
 
     @RequestMapping(value = "/info/json" ,method = RequestMethod.POST)
-    public Message insertJsonInfo(DataSource dataSource, HttpServletRequest req) {
+    public Message insertJsonInfo(@RequestBody DataSource dataSource, HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(() -> {
             String userName = SecurityFilter.getLoginUsername(req);
             //Bean validation
@@ -119,7 +119,7 @@ public class DataSourceCoreRestfulApi {
     }
 
     @RequestMapping(value = "/info/{data_source_id}/json",method = RequestMethod.PUT)
-    public Message updateDataSourceInJson(DataSource dataSource,
+    public Message updateDataSourceInJson(@RequestBody DataSource dataSource,
                                            @PathVariable("data_source_id") Long dataSourceId,
                                             HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(() -> {
@@ -159,7 +159,7 @@ public class DataSourceCoreRestfulApi {
     @RequestMapping(value = "/parameter/{datasource_id}/json", method = RequestMethod.POST)
     public Message insertJsonParameter(
             @PathVariable("datasource_id") Long datasourceId,
-            @RequestParam("params") Map<String, Object> params,
+            @RequestBody Map<String, Object> params,
             HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(() -> {
             Map<String, Object> connectParams = (Map) params.get("connectParams");

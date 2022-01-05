@@ -68,7 +68,7 @@ public class DataSourceAdminRestfulApi {
     }
 
     @RequestMapping(value = "/env/json",method = RequestMethod.POST)
-    public Message insertJsonEnv(DataSourceEnv dataSourceEnv, HttpServletRequest req) throws ErrorException {
+    public Message insertJsonEnv(@RequestBody DataSourceEnv dataSourceEnv, HttpServletRequest req) throws ErrorException {
         return RestfulApiHelper.doAndResponse(()-> {
             String userName = SecurityFilter.getLoginUsername(req);
             if (!RestfulApiHelper.isAdminUser(userName)) {
@@ -131,7 +131,7 @@ public class DataSourceAdminRestfulApi {
     }
 
     @RequestMapping(value = "/env/{env_id}/json",method = RequestMethod.PUT)
-    public Message updateJsonEnv(DataSourceEnv dataSourceEnv,
+    public Message updateJsonEnv(@RequestBody DataSourceEnv dataSourceEnv,
                                   @PathVariable("env_id")Long envId,
                                    HttpServletRequest request) throws ErrorException {
         return RestfulApiHelper.doAndResponse(() -> {

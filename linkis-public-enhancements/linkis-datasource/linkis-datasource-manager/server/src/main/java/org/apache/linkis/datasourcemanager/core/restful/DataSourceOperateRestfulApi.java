@@ -34,6 +34,7 @@ import org.apache.commons.lang.StringUtils;
 //import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -75,7 +76,7 @@ public class DataSourceOperateRestfulApi {
     }
 
     @RequestMapping( value = "/connect/json", method = RequestMethod.POST)
-    public Message connect(DataSource dataSource,
+    public Message connect(@RequestBody DataSource dataSource,
                             HttpServletRequest request){
         return RestfulApiHelper.doAndResponse(() -> {
             String operator = SecurityFilter.getLoginUsername(request);

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.manager.dao.LockManagerMapper">
+
+<!--    &lt;!&ndash; 增 &ndash;&gt;-->
+<!--    <sql id="instance_id">-->
+<!--        `id`,`instance`,`name`,`owner`,`mark`,`update_time`,`create_time`,`updator`,`creator`-->
+<!--    </sql>-->
+
+<!--    <insert id="addNodeInstance" useGeneratedKeys="true" keyProperty="id"-->
+<!--            parameterType="org.apache.linkis.manager.common.entity.persistence.PersistenceNode">-->
+<!--        INSERT INTO  linkis_cg_manager_service_instance(<include refid="instance_id"/>)-->
+<!--        VALUES (#{id},#{instance},#{applicationName},#{owner},#{mark},#{updateTime},#{createTime},#{updator},#{creator})-->
+<!--    </insert>-->
+
+    <!-- 删除 -->
+<!--    <delete id="removeNodeInstance">-->
+<!--        DELETE FROM  linkis_cg_manager_service_instance where instance = #{instance} and name = #{name}-->
+<!--    </delete>-->
+
+
+    <!-- 获取 -->
+<!--    <resultMap id="PersistenceNodeInstance"-->
+<!--               type="org.apache.linkis.manager.common.entity.persistence.PersistenceNode">-->
+<!--        <id column="owner" property="owner"/>-->
+<!--    </resultMap>-->
+
+<!--    <select id="getNodeInstances" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceNode">-->
+<!--        SELECT * FROM  linkis_cg_manager_service_instance where owner = #{owner}-->
+<!--    </select>-->
+
+    <!-- 更新 -->
+<!--    <update id="updateNodeInstance"-->
+<!--            parameterType="org.apache.linkis.manager.common.entity.persistence.PersistenceNode">-->
+<!--        UPDATE  linkis_cg_manager_service_instance-->
+<!--        <trim prefix="set" suffixOverrides=",">-->
+<!--            <if test="instance != null">`instance` = #{instance},</if>-->
+<!--            <if test="name != null">`name` = #{applicationName},</if>-->
+<!--            <if test="owner != null">`owner` = #{owner},</if>-->
+<!--            <if test="mark != null">`mark` = #{instance},</if>-->
+<!--            <if test="update_time != null">`update_time` = #{updateTime},</if>-->
+<!--            <if test="create_time != null">`create_time` = #{createTime},</if>-->
+<!--            <if test="updator != null">`updator` = #{updator},</if>-->
+<!--            <if test="creator != null">`creator` = #{creator},</if>-->
+<!--        </trim>-->
+<!--        WHERE instance = #{instance} and name = #{name}-->
+<!--    </update>-->
+
+
+<!--    <select id="getNodeInstanceId" resultType="int">-->
+<!--        SELECT id FROM  linkis_cg_manager_service_instance where instance = #{instance} and name = #{name}-->
+<!--    </select>-->
+
+
+
+
+</mapper>

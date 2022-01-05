@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.jobhistory.dao.JobHistoryMapper">
+
+    <resultMap id="jobHistoryMap" type="org.apache.linkis.jobhistory.entity.JobHistory" autoMapping="false" >
+        <id property="id" column="id" />
+        <result property = "job_req_id" column = "job_req_id" />
+        <result property = "submit_user" column = "submit_user" />
+        <result property = "execute_user" column = "execute_user" />
+        <result property = "source" column = "source" />
+        <result property = "labels" column = "labels" />
+        <result property = "params" column = "params" />
+        <result property = "progress" column = "progress" />
+        <result property = "status" column = "status" />
+        <result property = "log_path" column = "log_path" />
+        <result property = "error_code" column = "error_code" />
+        <result property = "error_desc" column = "error_desc" />
+        <result property = "created_time" column = "created_time" />
+        <result property = "updated_time" column = "updated_time" />
+        <result property = "instances" column = "instances" />
+        <result property = "metrics" column = "metrics" />
+        <result property = "engine_type" column = "engine_type" />
+        <result property = "execution_code" column = "execution_code" />
+    </resultMap>
+
+
+    <sql id="job_list">
+        `id`, `job_req_id`, `submit_user`, `execute_user`, `source`, `labels`, `params`,
+        `progress`, `status`, `log_path`, `error_code`, `error_desc`, `created_time`, `updated_time`,
+        `instances`, `metrics`,`engine_type`, `execution_code`
+    </sql>
+
+    <sql id="insert_job_list">
+        `job_req_id`, `submit_user`, `execute_user`, `source`, `labels`, `params`,
+        `progress`, `status`, `log_path`, `error_code`, `error_desc`, `created_time`, `updated_time`, `instances`, `metrics`,`engine_type`, `execution_code`
+    </sql>
+
+    <insert id="insertJobHistory" flushCache="true" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
+        INSERT INTO linkis_ps_job_history_group_history(<include refid="insert_job_list"/>)
+        VALUES (#{job_req_id},#{submit_user},#{execute_user},#{source},
+        #{labels},#{params},#{progress},
+        #{status},#{log_path},#{error_code},#{error_desc},
+        #{created_time}, #{updateTimeMills},#{instances},#{metrics},#{engine_type},#{execution_code})
+    </insert>
+
+
+  <select id="selectJobHistory" useCache="false" resultMap="jobHistoryMap" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
+        SELECT * FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="id != null">id = #{id}</if>
+            <if test="job_req_id != null">and job_req_id = #{job_req_id}</if>
+            <if test="submit_user != null">and submit_user = #{submit_user}</if>
+            <if test="execute_user != null">and execute_user = #{execute_user}</if>
+<!--            <if test="source != null">and source = #{source}</if>-->
+<!--            <if test="labels != null">and labels = #{labels}</if>-->
+<!--            <if test="params != null">and params = #{params}</if>-->
+            <if test="progress != null">and progress = #{progress}</if>
+            <if test="status != null">and status = #{status}</if>
+<!--            <if test="log_path != null">and log_path = #{log_path}</if>-->
+<!--            <if test="error_code != null">and error_code = #{error_code}</if>-->
+<!--            <if test="error_desc != null">and error_desc = #{error_desc}</if>-->
+            <if test="created_time != null">and created_time = #{created_time}</if>
+            <if test="updated_time != null">and updated_time = #{updated_time}</if>
+            <if test="instances != null">and instances = #{instances}</if>
+<!--            <if test="metrics != null">and metrics = #{metrics}</if>-->
+            <if test="engine_type != null">and engine_type = #{engine_type}</if>
+            <!--            <if test="execution_code != null">and execution_code = #{execution_code }</if>-->
+        </where>
+    </select>
+
+
+    <select id="search" useCache="true" resultMap="jobHistoryMap" >
+        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="id != null">id = #{id}</if>
+            <if test="umUser != null">and submit_user = #{umUser}</if>
+            <if test="engineType != null">and engine_type = #{engineType}</if>
+            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
+            <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
+        </where>
+        ORDER BY linkis_ps_job_history_group_history.created_time DESC
+    </select>
+
+    <!-- // todo check -->
+    <update id="updateJobHistory" flushCache="true" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
+        UPDATE linkis_ps_job_history_group_history
+        <trim prefix="set" suffixOverrides=",">
+            <if test="updated_time != null">updated_time = #{updateTimeMills},</if>
+            <if test="job_req_id != null">job_req_id = #{job_req_id},</if>
+            <if test="submit_user != null">submit_user = #{submit_user},</if>
+            <if test="execute_user != null">execute_user = #{execute_user},</if>
+            <if test="source != null">source = #{source},</if>
+            <if test="labels != null">labels = #{labels},</if>
+            <if test="params != null">params = #{params},</if>
+            <if test="progress != null">progress = #{progress},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="log_path != null">log_path = #{log_path},</if>
+            <if test="error_code != null">error_code = #{error_code},</if>
+            <if test="error_desc != null">error_desc = #{error_desc},</if>
+            <if test="created_time != null">created_time = #{created_time},</if>
+            <if test="instances != null">instances = #{instances},</if>
+            <if test="metrics != null">metrics = #{metrics},</if>
+            <if test="engine_type != null">engine_type = #{engine_type},</if>
+            <if test="execution_code != null">and execution_code = #{execution_code},</if>
+        </trim>
+        <![CDATA[
+        WHERE id = #{id} AND updated_time <= #{updateTimeMills}
+        ]]>
+    </update>
+
+    <select id="selectJobHistoryStatusForUpdate" flushCache="true" resultType="java.lang.String">
+        SELECT
+        bdt.`status`
+        FROM
+        `linkis_ps_job_history_group_history` bdt
+        WHERE
+        id = #{jobId} FOR UPDATE
+    </select>
+</mapper>

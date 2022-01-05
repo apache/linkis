@@ -16,8 +16,7 @@
   ~ limitations under the License.
   -->
   
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>linkis</artifactId>
@@ -26,37 +25,41 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>linkis-public-enhancements</artifactId>
+    <artifactId>linkis-metadata-manager-service-mysql</artifactId>
 
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>linkis-bml</module>
-        <module>linkis-context-service</module>
-        <module>linkis-datasource</module>
-        <module>linkis-datasource/linkis-metadata</module>
-        <module>linkis-publicservice</module>
-    </modules>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <mysql.version>5.1.34</mysql.version>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-metadata</artifactId>
+            <artifactId>linkis-metadata-manager-common</artifactId>
             <version>${linkis.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-bml</artifactId>
+            <artifactId>linkis-module</artifactId>
             <version>${linkis.version}</version>
-            <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <artifactId>asm</artifactId>
+                    <groupId>org.ow2.asm</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-publicservice</artifactId>
-            <version>${linkis.version}</version>
-            <type>pom</type>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -88,7 +91,7 @@
                         </goals>
                         <configuration>
                             <descriptors>
-                                <descriptor>distribution.xml</descriptor>
+                                <descriptor>src/main/assembly/distribution.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
@@ -99,17 +102,16 @@
                     <appendAssemblyId>false</appendAssemblyId>
                     <attach>false</attach>
                     <descriptors>
-                        <descriptor>distribution.xml</descriptor>
+                        <descriptor>src/main/assembly/distribution.xml</descriptor>
                     </descriptors>
                 </configuration>
             </plugin>
         </plugins>
         <resources>
             <resource>
-                <directory>${basedir}/src/main/resources</directory>
+                <directory>src/main/resources</directory>
             </resource>
         </resources>
         <finalName>${project.artifactId}-${project.version}</finalName>
     </build>
-
 </project>

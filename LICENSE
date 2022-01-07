@@ -293,7 +293,7 @@ The following components are provided under the BSD License.
 The text of each license is also included at assembly-combined-package/licenses/LICENSE-[project].txt.
 
   (The 3-Clause BSD License) Py4J (net.sf.py4j:py4j:0.10.4 - http://nexus.sonatype.org/oss-repository-hosting.html/py4j)
-
+  (The 3-Clause BSD License) linkis-engineconn-plugins/engineconn-plugins/python/src/main/py4j/py4j-*-src.zip
 ========================================================================
 Third party MIT licenses
 ========================================================================

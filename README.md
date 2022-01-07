@@ -75,11 +75,11 @@ Linkis services could be divided into three categories: computation governance s
 - The microservice governance services, including Spring Cloud Gateway, Eureka and Open Feign.
 
 Below is the Linkis architecture diagram. You can find more detailed architecture docs in [Linkis-Doc/Architecture](https://linkis.apache.org/docs/latest/architecture/overview).
-![architecture](images/Linkis_1.0_architecture.png)
+![architecture](images/linkis_1.0_architecture.png)
 
 Based on Linkis the computation middleware, we've built a lot of applications and tools on top of it in the big data platform suite [WeDataSphere](https://github.com/WeBankFinTech/WeDataSphere). Below are the currently available open-source projects. More projects upcoming, please stay tuned.
 
-![wedatasphere_stack_Linkis](images/wedatasphere_stack_Linkis.png)
+![wedatasphere_stack_Linkis](images/wedatasphere_stack_linkis.png)
 
 # Contributing
 

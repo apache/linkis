@@ -30,7 +30,7 @@
         <module>assembly-combined</module>
     </modules>
 
-    <artifactId>apache-linkis-combined-package</artifactId>
+    <artifactId>linkis-install-package</artifactId>
     <packaging>pom</packaging>
     <build>
         <plugins>

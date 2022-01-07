@@ -133,7 +133,7 @@ CS_PORT=9108
 export SERVER_HEAP_SIZE="512M"
 
 ##The decompression directory and the installation directory need to be inconsistent
-LINKIS_HOME=/appcom/Install/LinkisInstall
+#LINKIS_HOME=/appcom/Install/LinkisInstall
 
 LINKIS_VERSION=1.0.3
 

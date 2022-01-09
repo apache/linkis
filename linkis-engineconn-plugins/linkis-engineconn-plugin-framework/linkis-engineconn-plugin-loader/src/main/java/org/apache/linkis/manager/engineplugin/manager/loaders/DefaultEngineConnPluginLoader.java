@@ -139,7 +139,7 @@ public class DefaultEngineConnPluginLoader extends CacheablesEngineConnPluginLoa
                 return new EngineConnPluginInstance(newPluginInfo, enginePlugin);
             }
          }
-        throw new EngineConnPluginNotFoundException("No plugin found" + enginePluginInfo.typeLabel().getStringValue() + "please check your configuration", null);
+        throw new EngineConnPluginNotFoundException("No plugin found " + enginePluginInfo.typeLabel().getStringValue() + ", please check your configuration", null);
     }
 
     /**

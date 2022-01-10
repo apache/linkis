@@ -1,3 +1,4 @@
+
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
@@ -201,20 +202,175 @@
    limitations under the License.
 
 
+APACHE COMMONS MATH DERIVATIVE WORKS: 
 
-============================================================================
-   APACHE LINKIS SUBCOMPONENTS:
+The Apache commons-math library includes a number of subcomponents
+whose implementation is derived from original sources written
+in C or Fortran.  License terms of the original sources
+are reproduced below.
 
-   The Apache Linkis project contains subcomponents with separate copyright
-   notices and license terms. Your use of the source code for the these
-   subcomponents is subject to the terms and conditions of the following
-   licenses.
+===============================================================================
+For the lmder, lmpar and qrsolv Fortran routine from minpack and translated in
+the LevenbergMarquardtOptimizer class in package
+org.apache.commons.math.optimization.general 
+Original source copyright and license statement:
+
+Minpack Copyright Notice (1999) University of Chicago.  All rights reserved
+
+Redistribution and use in source and binary forms, with or
+without modification, are permitted provided that the
+following conditions are met:
+
+1. Redistributions of source code must retain the above
+copyright notice, this list of conditions and the following
+disclaimer.
+
+2. Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following
+disclaimer in the documentation and/or other materials
+provided with the distribution.
+
+3. The end-user documentation included with the
+redistribution, if any, must include the following
+acknowledgment:
+
+   "This product includes software developed by the
+   University of Chicago, as Operator of Argonne National
+   Laboratory.
+
+Alternately, this acknowledgment may appear in the software
+itself, if and wherever such third-party acknowledgments
+normally appear.
+
+4. WARRANTY DISCLAIMER. THE SOFTWARE IS SUPPLIED "AS IS"
+WITHOUT WARRANTY OF ANY KIND. THE COPYRIGHT HOLDER, THE
+UNITED STATES, THE UNITED STATES DEPARTMENT OF ENERGY, AND
+THEIR EMPLOYEES: (1) DISCLAIM ANY WARRANTIES, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO ANY IMPLIED WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE
+OR NON-INFRINGEMENT, (2) DO NOT ASSUME ANY LEGAL LIABILITY
+OR RESPONSIBILITY FOR THE ACCURACY, COMPLETENESS, OR
+USEFULNESS OF THE SOFTWARE, (3) DO NOT REPRESENT THAT USE OF
+THE SOFTWARE WOULD NOT INFRINGE PRIVATELY OWNED RIGHTS, (4)
+DO NOT WARRANT THAT THE SOFTWARE WILL FUNCTION
+UNINTERRUPTED, THAT IT IS ERROR-FREE OR THAT ANY ERRORS WILL
+BE CORRECTED.
+
+5. LIMITATION OF LIABILITY. IN NO EVENT WILL THE COPYRIGHT
+HOLDER, THE UNITED STATES, THE UNITED STATES DEPARTMENT OF
+ENERGY, OR THEIR EMPLOYEES: BE LIABLE FOR ANY INDIRECT,
+INCIDENTAL, CONSEQUENTIAL, SPECIAL OR PUNITIVE DAMAGES OF
+ANY KIND OR NATURE, INCLUDING BUT NOT LIMITED TO LOSS OF
+PROFITS OR LOSS OF DATA, FOR ANY REASON WHATSOEVER, WHETHER
+SUCH LIABILITY IS ASSERTED ON THE BASIS OF CONTRACT, TORT
+(INCLUDING NEGLIGENCE OR STRICT LIABILITY), OR OTHERWISE,
+EVEN IF ANY OF SAID PARTIES HAS BEEN WARNED OF THE
+POSSIBILITY OF SUCH LOSS OR DAMAGES.
+===============================================================================
+
+Copyright and license statement for the odex Fortran routine developed by
+E. Hairer and G. Wanner and translated in GraggBulirschStoerIntegrator class
+in package org.apache.commons.math.ode.nonstiff:
 
 
-========================================================================
-BSD licenses
-========================================================================
+Copyright (c) 2004, Ernst Hairer
 
-The following components are provided under the BSD License.
-    linkis-engineconn-plugins/engineconn-plugins/python/src/main/py4j/py4j-*-src.zip(See linkis-engineconn-plugins/engineconn-plugins/python/src/main/py4j/LICENSE-py4j-0.10.7-src.txt for text of this license)
-========================================================================
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are 
+met:
+
+- Redistributions of source code must retain the above copyright 
+notice, this list of conditions and the following disclaimer.
+
+- Redistributions in binary form must reproduce the above copyright 
+notice, this list of conditions and the following disclaimer in the 
+documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS 
+IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED 
+TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A 
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR 
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+===============================================================================
+
+Copyright and license statement for the original lapack fortran routines
+translated in EigenDecompositionImpl class in package
+org.apache.commons.math.linear:
+
+Copyright (c) 1992-2008 The University of Tennessee.  All rights reserved.
+
+$COPYRIGHT$
+
+Additional copyrights may follow
+
+$HEADER$
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+- Redistributions of source code must retain the above copyright
+  notice, this list of conditions and the following disclaimer. 
+  
+- Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer listed
+  in this license in the documentation and/or other materials
+  provided with the distribution.
+  
+- Neither the name of the copyright holders nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+  
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT  
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT  
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+===============================================================================
+
+Copyright and license statement for the original Mersenne twister C
+routines translated in MersenneTwister class in package 
+org.apache.commons.math.random:
+
+   Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
+   All rights reserved.                          
+
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions
+   are met:
+
+     1. Redistributions of source code must retain the above copyright
+        notice, this list of conditions and the following disclaimer.
+
+     2. Redistributions in binary form must reproduce the above copyright
+        notice, this list of conditions and the following disclaimer in the
+        documentation and/or other materials provided with the distribution.
+
+     3. The names of its contributors may not be used to endorse or promote 
+        products derived from this software without specific prior written 
+        permission.
+
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+   A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+

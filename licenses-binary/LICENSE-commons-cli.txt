@@ -200,21 +200,3 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-
-
-============================================================================
-   APACHE LINKIS SUBCOMPONENTS:
-
-   The Apache Linkis project contains subcomponents with separate copyright
-   notices and license terms. Your use of the source code for the these
-   subcomponents is subject to the terms and conditions of the following
-   licenses.
-
-
-========================================================================
-BSD licenses
-========================================================================
-
-The following components are provided under the BSD License.
-    linkis-engineconn-plugins/engineconn-plugins/python/src/main/py4j/py4j-*-src.zip(See linkis-engineconn-plugins/engineconn-plugins/python/src/main/py4j/LICENSE-py4j-0.10.7-src.txt for text of this license)
-========================================================================

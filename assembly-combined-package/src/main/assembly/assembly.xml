@@ -25,26 +25,33 @@
   <includeBaseDirectory>false</includeBaseDirectory>
 
   <fileSets>
-    <fileSet>
-      <directory>../</directory>
-      <outputDirectory></outputDirectory>
-      <includes>
-          <include>README*</include>
-          <include>LICENSE*</include>
-          <include>NOTICE*</include>
-          <include>DISCLAIMER*</include>
-      </includes>
-    </fileSet>
+      <fileSet>
+          <directory>../</directory>
+          <outputDirectory></outputDirectory>
+          <includes>
+              <include>README*</include>
+              <include>DISCLAIMER*</include>
+          </includes>
+      </fileSet>
 
-    <fileSet>
-      <directory>
-          licenses/
-      </directory>
-      <outputDirectory>licenses</outputDirectory>
-      <includes>
-          <include>**/*</include>
-      </includes>
-    </fileSet>
+      <fileSet>
+          <directory>${project.build.directory}/</directory>
+          <outputDirectory></outputDirectory>
+          <includes>
+              <include>LICENSE</include>
+              <include>NOTICE</include>
+          </includes>
+      </fileSet>
+
+      <fileSet>
+          <directory>
+              ../licenses-binary/
+          </directory>
+          <outputDirectory>licenses</outputDirectory>
+          <includes>
+              <include>**/*</include>
+          </includes>
+      </fileSet>
 
     <fileSet>
       <directory>

@@ -164,7 +164,7 @@ module.exports = {
             { source: '../NOTICE-binary-ui', destination: `./dist/NOTICE`,toType: 'file'},
             { source: '../LICENSE-binary-ui', destination: `./dist/LICENSE`,toType: 'file'},
             { source: '../DISCLAIMER-WIP', destination: `./dist/DISCLAIMER-WIP`,toType: 'file'},
-            { source: './licenses-binary-ui', destination: `./dist/licenses` }
+            { source: '../licenses-binary-ui', destination: `./dist/licenses` }
           ],
           // 先删除根目录下的zip包
           delete: [`./apache-linkis-${getVersion()}-incubating-web-bin.tar.gz`],

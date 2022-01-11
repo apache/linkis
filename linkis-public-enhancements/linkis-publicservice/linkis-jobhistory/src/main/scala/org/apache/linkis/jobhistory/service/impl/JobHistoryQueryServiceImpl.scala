@@ -96,12 +96,12 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       if (jobReq.getStatus != null) {
         val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
         if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus)) {
-          throw new QueryException(120001,s"任务Id${jobReq.getId}在数据库中的task状态为：${oldStatus}更新的task状态为：${jobReq.getStatus}更新失败！")
+          throw new QueryException(120001,s"jobId:${jobReq.getId}，在数据库中的task状态为：${oldStatus}，更新的task状态为：${jobReq.getStatus}，更新失败！")
         }
       }
       val jobUpdate = jobRequest2JobHistory(jobReq)
       if(jobUpdate.getUpdated_time == null) {
-        throw new QueryException(120001,s"job${jobReq.getId}更新job相关信息失败，请指定该请求的更新时间!")
+        throw new QueryException(120001,s"jobId:${jobReq.getId}，更新job相关信息失败，请指定该请求的更新时间!")
       }
       jobHistoryMapper.updateJobHistory(jobUpdate)
       val map = new util.HashMap[String, Object]
@@ -141,7 +141,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
             if (jobReq.getStatus != null) {
               val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
               if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus))
-                throw new QueryException(120001,s"${jobReq.getId}数据库中的task状态为：${oldStatus}更新的task状态为：${jobReq.getStatus}更新失败！")
+                throw new QueryException(120001,s"jobId:${jobReq.getId}，在数据库中的task状态为：${oldStatus}，更新的task状态为：${jobReq.getStatus}，更新失败！")
             }
             val jobUpdate = jobRequest2JobHistory(jobReq)
             jobUpdate.setUpdated_time(new Timestamp(System.currentTimeMillis()))

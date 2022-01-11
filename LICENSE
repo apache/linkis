@@ -231,7 +231,6 @@ Apache 2.0 licenses
 ========================================================================
 
 The following file are provided under the  Apache 2.0  License.
-    images/*.png
     web/.editorconfig
     web/.env
     web/.eslintignore

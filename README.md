@@ -91,7 +91,7 @@ For code and documentation contributions, please follow the [contribution guide]
 Any questions or suggestions please kindly submit an issue.  
 You can scan the QR code below to join our WeChat and QQ group to get more immediate response.
 
-![introduction05](images/wedatasphere_contact_01.png)
+![introduction05](https://user-images.githubusercontent.com/7869972/148767386-0663f833-547d-4c30-8876-081bb966ffb8.png)
 
 Meetup videos on [Bilibili](https://space.bilibili.com/598542776?from=search&seid=14344213924133040656).
 

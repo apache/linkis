@@ -38,7 +38,7 @@ trait SimpleOnceJob extends OnceJob {
   override def getId: String = wrapperEC(engineConnId)
 
   override def isCompleted: Boolean = wrapperEC {
-    if(finalEngineConnState != null) return true
+    if (finalEngineConnState != null) return true
     lastNodeInfo = getNodeInfo
     lastEngineConnState = getStatus(lastNodeInfo)
     isCompleted(lastEngineConnState)
@@ -50,7 +50,7 @@ trait SimpleOnceJob extends OnceJob {
       getJobListeners.foreach(_.onJobFinished(this))
       true
     case "unlock" | "running" | "idle" | "busy" =>
-      if(!isRunning) {
+      if (!isRunning) {
         isRunning = true
         getJobListeners.foreach(_.onJobRunning(this))
       }
@@ -68,8 +68,7 @@ trait SimpleOnceJob extends OnceJob {
   }
 
   protected def transformToId(): Unit = {
-    engineConnId = ticketId.length + "_" + serviceInstance.getApplicationName.length +
-      ticketId + serviceInstance.getApplicationName + serviceInstance.getInstance
+    engineConnId = s"${ticketId.length}_${serviceInstance.getApplicationName.length}_${ticketId}${serviceInstance.getApplicationName}${serviceInstance.getInstance}"
   }
 
   protected def transformToServiceInstance(): Unit = engineConnId match {
@@ -132,7 +131,7 @@ class ExistingSimpleOnceJob(protected override val linkisManagerClient: LinkisMa
 
 object SimpleOnceJob {
 
-  private val ENGINE_CONN_ID_REGEX = "(\\d+)_(\\d+)(.+)".r
+  private val ENGINE_CONN_ID_REGEX = "(\\d+)_(\\d+)_(.+)".r
 
   def builder(): SimpleOnceJobBuilder = new SimpleOnceJobBuilder
 

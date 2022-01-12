@@ -27,6 +27,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
@@ -111,7 +112,9 @@ public class HDFSFileSystem extends FileSystem {
         if (!canExecute(getParentPath(path))) {
             throw new IOException("You have not permission to access path " + path);
         }
-        return fs.mkdirs(new Path(path));
+        boolean result = fs.mkdirs(new Path(path));
+        this.setPermission(new FsPath(path), this.getDefaultFolderPerm());
+        return result;
     }
 
     @Override
@@ -124,7 +127,9 @@ public class HDFSFileSystem extends FileSystem {
         if (!canExecute(parentPath)) {
             throw new IOException("You have not permission to access path " + path);
         }
-        return fs.mkdirs(new Path(path));
+        boolean result = fs.mkdirs(new Path(path));
+        this.setPermission(new FsPath(path), this.getDefaultFolderPerm());
+        return result;
     }
 
 
@@ -237,7 +242,9 @@ public class HDFSFileSystem extends FileSystem {
         if (!overwrite) {
             return fs.append(new Path(path));
         } else {
-            return fs.create(new Path(path), true);
+            FSDataOutputStream out = fs.create(new Path(path), true);
+            this.setPermission(dest, this.getDefaultFilePerm());
+            return out;
         }
     }
 
@@ -246,7 +253,9 @@ public class HDFSFileSystem extends FileSystem {
         if (!canExecute(getParentPath(dest))) {
             throw new IOException("You have not permission to access path " + dest);
         }
-        return fs.createNewFile(new Path(checkHDFSPath(dest)));
+        boolean result = fs.createNewFile(new Path(checkHDFSPath(dest)));
+        this.setPermission(new FsPath(dest), this.getDefaultFilePerm());
+        return result;
     }
 
     @Override
@@ -254,7 +263,9 @@ public class HDFSFileSystem extends FileSystem {
         if (!canExecute(getParentPath(dest))) {
             throw new IOException("You have not permission to access path " + dest);
         }
-        return FileUtil.copy(fs, new Path(checkHDFSPath(origin)), fs, new Path(checkHDFSPath(dest)), false, true, fs.getConf());
+        boolean res = FileUtil.copy(fs, new Path(checkHDFSPath(origin)), fs, new Path(checkHDFSPath(dest)), false, true, fs.getConf());
+        this.setPermission(new FsPath(dest), this.getDefaultFilePerm());
+        return res;
     }
 
     @Override

@@ -150,7 +150,7 @@ public class LocalFileSystem extends FileSystem {
                 if(!user.equals(getOwner(dirToMake.getAbsolutePath()))) {
                     setOwner(new FsPath(dirToMake.getAbsolutePath()), user, null);
                 }
-                setPermission(new FsPath(dirToMake.getAbsolutePath()), "rwxr-x---");
+                setPermission(new FsPath(dirToMake.getAbsolutePath()), this.getDefaultFolderPerm());
             } else {
                 return false;
             }
@@ -179,7 +179,7 @@ public class LocalFileSystem extends FileSystem {
         }
         FileUtils.copyFile(new File(origin), file);
         try {
-            setPermission(new FsPath(dest), "rwxr-----");
+            setPermission(new FsPath(dest), this.getDefaultFilePerm());
             if(!user.equals(getOwner(dest))) {
                 setOwner(new FsPath(dest), user, null);
             }
@@ -335,7 +335,7 @@ public class LocalFileSystem extends FileSystem {
         }
         file.createNewFile();
         try {
-            setPermission(new FsPath(dest), "rwxr-----");
+            setPermission(new FsPath(dest), this.getDefaultFilePerm());
             if(!user.equals(getOwner(dest))) {
                 setOwner(new FsPath(dest), user, null);
             }

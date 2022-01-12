@@ -40,8 +40,8 @@ github:
     - context-service
     - scriptis
   enabled_merge_buttons:
+    merge:  true
     squash: true
-    merge:  false
     rebase: false
   protected_branches:
     master:

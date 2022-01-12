@@ -23,7 +23,6 @@
     <id>linkis-ujes-spark-entrance</id>
     <formats>
         <format>dir</format>
-        <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <baseDirectory>linkis-ujes-linkis-entrance</baseDirectory>

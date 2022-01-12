@@ -39,5 +39,4 @@ need_cmd mysql
 need_cmd telnet
 need_cmd tar
 need_cmd sed
-need_cmd dos2unix
 echo "<-----end to check used cmd---->"

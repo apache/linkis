@@ -59,7 +59,7 @@ function checkHadoopAndHive(){
     hadoopVersion="`hdfs version`"
     defaultHadoopVersion="2.7"
     checkversion "$hadoopVersion" $defaultHadoopVersion hadoop
-    checkversion "$(whereis hive)" "1.2" hive
+    checkversion "$(whereis hive)" "2.3" hive
 }
 
 function checkversion(){
@@ -114,8 +114,8 @@ isSuccess "check env"
 
 ##load config
 echo "step1:load config "
-export LINKIS_CONFIG_PATH=${LINKIS_CONFIG_PATH:-"${workDir}/config/linkis-env.sh"}
-export LINKIS_DB_CONFIG_PATH=${LINKIS_DB_CONFIG_PATH:-"${workDir}/config/db.sh"}
+export LINKIS_CONFIG_PATH=${LINKIS_CONFIG_PATH:-"${workDir}/deploy-config/linkis-env.sh"}
+export LINKIS_DB_CONFIG_PATH=${LINKIS_DB_CONFIG_PATH:-"${workDir}/deploy-config/db.sh"}
 source ${LINKIS_CONFIG_PATH}
 source ${LINKIS_DB_CONFIG_PATH}
 
@@ -173,7 +173,6 @@ isSuccess "create  $WORKSPACE_USER_ROOT_PATH directory"
    elif [[ $HDFS_USER_ROOT_PATH == hdfs://* ]];then
      localRootDir=${HDFS_USER_ROOT_PATH#hdfs://}
      hdfs dfs -mkdir -p $localRootDir/$deployUser
-     hdfs dfs -chmod -R 775 $localRootDir/$deployUser
    else
      echo "does not support $HDFS_USER_ROOT_PATH filesystem types"
    fi
@@ -191,7 +190,7 @@ isSuccess "create  $WORKSPACE_USER_ROOT_PATH directory"
    elif [[ $RESULT_SET_ROOT_PATH == hdfs://* ]];then
      localRootDir=${RESULT_SET_ROOT_PATH#hdfs://}
          hdfs dfs -mkdir -p $localRootDir/$deployUser
-         hdfs dfs -chmod -R 775 $localRootDir/$deployUser
+
    else
      echo "does not support $RESULT_SET_ROOT_PATH filesystem types"
    fi
@@ -211,15 +210,15 @@ echo "create dir LINKIS_HOME: $LINKIS_HOME"
 sudo mkdir -p $LINKIS_HOME;sudo chown -R $deployUser:$deployUser $LINKIS_HOME
 isSuccess "Create the dir of  $LINKIS_HOME"
 
-LINKIS_PACKAGE=${workDir}/apache-linkis-${LINKIS_VERSION}-incubating-dist.tar.gz
+LINKIS_PACKAGE=${workDir}/linkis-package
 
-if ! test -e ${LINKIS_PACKAGE}; then
+if ! test -d ${LINKIS_PACKAGE}; then
     echo "**********Error: please put ${LINKIS_PACKAGE} in $workDir! "
     exit 1
 else
-    echo "Start to unzip ${LINKIS_PACKAGE} ."
-    tar -xzf ${LINKIS_PACKAGE}  -C $LINKIS_HOME
-    isSuccess "Unzip ${LINKIS_PACKAGE} to $LINKIS_HOME"
+    echo "Start to cp ${LINKIS_PACKAGE} to $LINKIS_HOME."
+    cp -r $LINKIS_PACKAGE/* $LINKIS_HOME
+    isSuccess "cp ${LINKIS_PACKAGE} to $LINKIS_HOME"
 fi
 
 cp ${LINKIS_CONFIG_PATH} $LINKIS_HOME/conf
@@ -410,5 +409,5 @@ then
 fi
 
 
-echo "Congratulations! You have installed Linkis $LINKIS_VERSION successfully, please use sbin/linkis-start-all.sh to start it!"
+echo "Congratulations! You have installed Linkis $LINKIS_VERSION successfully, please use sh $LINKIS_HOME/sbin/linkis-start-all.sh to start it!"
 echo "Your default account password is$deployUser/$defaultPwd"

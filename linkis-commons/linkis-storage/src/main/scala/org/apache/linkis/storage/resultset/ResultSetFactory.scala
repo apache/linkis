@@ -18,7 +18,7 @@
 package org.apache.linkis.storage.resultset
 
 import org.apache.linkis.common.io.resultset.ResultSet
-import org.apache.linkis.common.io.{FsPath, MetaData, Record}
+import org.apache.linkis.common.io.{Fs, FsPath, MetaData, Record}
 
 import scala.collection.mutable
 
@@ -27,6 +27,7 @@ import scala.collection.mutable
 trait ResultSetFactory extends scala.AnyRef {
   def getResultSetByType(resultSetType : scala.Predef.String) :ResultSet[_ <: MetaData, _ <: Record]
   def getResultSetByPath(fsPath : FsPath) : ResultSet[_ <: MetaData, _ <: Record]
+  def getResultSetByPath(fsPath: FsPath, fs: Fs) : ResultSet[_ <: MetaData, _ <: Record]
   def getResultSetByContent(content : scala.Predef.String) : ResultSet[_ <: MetaData, _ <: Record]
   def exists(resultSetType : scala.Predef.String) : scala.Boolean
   def isResultSetPath(path : scala.Predef.String) : scala.Boolean

@@ -105,6 +105,10 @@
                     <artifactId>jackson-databind</artifactId>
                     <groupId>com.fasterxml.jackson.core</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>io.github.x-stream</groupId>
+                    <artifactId>mxparser</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 

@@ -78,7 +78,6 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <!--这里指定要运行的main类-->
                             <mainClass>org.apache.linkis.ujes.jdbc.UJESSQLDriverMain</mainClass>
                         </manifest>
                     </archive>
@@ -88,8 +87,8 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id> <!-- 此处指定继承合并 -->
-                        <phase>package</phase> <!-- 绑定到打包阶段 -->
+                        <id>make-assembly</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>

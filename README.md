@@ -14,9 +14,9 @@ As a computation middleware, Linkis provides powerful connectivity, reuse, orche
 Since the first release of Linkis in 2019, it has accumulated more than **700** trial companies and **1000+** sandbox trial users, which involving diverse industries, from finance, banking, tele-communication, to manufactory, internet companies and so on. Lots of companies have already used Linkis as a unified entrance for the underlying computation and storage engines of the big data platform.
 
 
-![linkis-intro-01](images/linkis-intro-01.png)
+![linkis-intro-01](https://user-images.githubusercontent.com/7869972/148767375-aeb11b93-16ca-46d7-a30e-92fbefe2bd5e.png)
 
-![linkis-intro-03](images/linkis-intro-03.png)
+![linkis-intro-03](https://user-images.githubusercontent.com/7869972/148767380-c34f44b2-9320-4633-9ec8-662701f41d15.png)
 
 # Features
 
@@ -75,11 +75,11 @@ Linkis services could be divided into three categories: computation governance s
 - The microservice governance services, including Spring Cloud Gateway, Eureka and Open Feign.
 
 Below is the Linkis architecture diagram. You can find more detailed architecture docs in [Linkis-Doc/Architecture](https://linkis.apache.org/docs/latest/architecture/overview).
-![architecture](images/Linkis_1.0_architecture.png)
+![architecture](https://user-images.githubusercontent.com/7869972/148767383-f87e84ba-5baa-4125-8b6e-d0aa4f7d3a66.png)
 
 Based on Linkis the computation middleware, we've built a lot of applications and tools on top of it in the big data platform suite [WeDataSphere](https://github.com/WeBankFinTech/WeDataSphere). Below are the currently available open-source projects. More projects upcoming, please stay tuned.
 
-![wedatasphere_stack_Linkis](images/wedatasphere_stack_Linkis.png)
+![wedatasphere_stack_Linkis](https://user-images.githubusercontent.com/7869972/148767389-049361df-3609-4c2f-a4e2-c904c273300e.png)
 
 # Contributing
 
@@ -91,7 +91,7 @@ For code and documentation contributions, please follow the [contribution guide]
 Any questions or suggestions please kindly submit an issue.  
 You can scan the QR code below to join our WeChat and QQ group to get more immediate response.
 
-![introduction05](images/wedatasphere_contact_01.png)
+![introduction05](https://user-images.githubusercontent.com/7869972/148767386-0663f833-547d-4c30-8876-081bb966ffb8.png)
 
 Meetup videos on [Bilibili](https://space.bilibili.com/598542776?from=search&seid=14344213924133040656).
 

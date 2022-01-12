@@ -22,7 +22,6 @@
         xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/2.3 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
     <id>linkis-cli</id>
     <formats>
-        <format>tar.gz</format>
         <format>dir</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>

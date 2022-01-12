@@ -25,26 +25,33 @@
   <includeBaseDirectory>false</includeBaseDirectory>
 
   <fileSets>
-    <fileSet>
-      <directory>../</directory>
-      <outputDirectory></outputDirectory>
-      <includes>
-          <include>README*</include>
-          <include>LICENSE*</include>
-          <include>NOTICE*</include>
-          <include>DISCLAIMER*</include>
-      </includes>
-    </fileSet>
+      <fileSet>
+          <directory>../</directory>
+          <outputDirectory></outputDirectory>
+          <includes>
+              <include>README*</include>
+              <include>DISCLAIMER*</include>
+          </includes>
+      </fileSet>
 
-    <fileSet>
-      <directory>
-          licenses/
-      </directory>
-      <outputDirectory>licenses</outputDirectory>
-      <includes>
-          <include>**/*</include>
-      </includes>
-    </fileSet>
+      <fileSet>
+          <directory>${project.build.directory}/</directory>
+          <outputDirectory></outputDirectory>
+          <includes>
+              <include>LICENSE</include>
+              <include>NOTICE</include>
+          </includes>
+      </fileSet>
+
+      <fileSet>
+          <directory>
+              ../licenses-binary/
+          </directory>
+          <outputDirectory>licenses</outputDirectory>
+          <includes>
+              <include>**/*</include>
+          </includes>
+      </fileSet>
 
     <fileSet>
       <directory>
@@ -60,9 +67,9 @@
 
       <fileSet>
           <directory>
-              config/
+              deploy-config/
           </directory>
-          <outputDirectory>config</outputDirectory>
+          <outputDirectory>deploy-config</outputDirectory>
           <includes>
               <include>**/*</include>
           </includes>
@@ -72,13 +79,12 @@
 
       <fileSet>
           <directory>
-              assembly-combined/target/
+              assembly-combined/target/linkis-package
           </directory>
-          <outputDirectory></outputDirectory>
+          <outputDirectory>linkis-package</outputDirectory>
           <includes>
-              <include>apache-linkis-${linkis.version}-incubating-dist.tar.gz</include>
+              <include>**/*</include>
           </includes>
-          <fileMode>0777</fileMode>
       </fileSet>
 
   </fileSets>

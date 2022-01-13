@@ -34,11 +34,6 @@
             "
           >
             <div class="cardItemTitle">
-              <SvgIcon
-                style="font-size: 16px"
-                color="#5580eb"
-                icon-class="base"
-              />
               {{ `${menuName}-${item.categoryName}` }}
             </div>
             <div class="cardItemDesc">

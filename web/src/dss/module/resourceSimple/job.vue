@@ -49,9 +49,8 @@
             ></Icon>
             <span
               class="job-manager-item-progress"
-              :style="{'width': item.progress ? (item.progress * 100).toFixed(2) + '%' : 0}"></span>
-            <SvgIcon class='job-manager-item-icon' :icon-class="getIconClass(item).icon" style='font-size: 24px;' :color="getIconClass(item).color"/>
-            <span class="job-manager-item-label">{{ getLabel(item) }}</span>
+              :style="{'width': item.progress ? (item.progress * 100).toFixed(2) + '%' : 0,}"></span>
+            <span class="job-manager-item-label" :style="{marginLeft: '16px'}">{{ getLabel(item) }}</span>
             <span class="job-manager-item-progress-label">{{ item.progress ? (item.progress * 100).toFixed(2) + '%' : '' }}</span>
             <Icon
               size="16"

@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-name: incubator-linkis ci actions
+name: Build
 
 on:
   push:

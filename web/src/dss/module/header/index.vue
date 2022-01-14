@@ -25,7 +25,7 @@
           v-show="isNavShowMenu"
           @mouseleave="mouseleave"
           @click="mouseover">
-          <SvgIcon style="font-size: 28px;" icon-class="menu" color="#00FFFF"/>
+          <SvgIcon style="font-size: 28px;" icon-class="common" color="#00FFFF"/>
         </div>
         <div class="logo">
           <img
@@ -39,7 +39,7 @@
         </div>
       </div>
       <!-- <span v-if="showWorkspaceNav && !currentProject.id" class="workspace-icon" :title="$t('message.common.project')">
-        <SvgIcon style="font-size: 2rem;" class="icon selected workspace-svg" icon-class="project" color="#ffffff"/>
+        <SvgIcon style="font-size: 2rem;" class="icon selected workspace-svg" icon-class="common" color="#ffffff"/>
       </span> -->
       <Dropdown class="project-dro" v-if="showWorkspaceNav && !currentProject.id">
         <div class="project">
@@ -60,7 +60,7 @@
         </DropdownMenu>
       </Dropdown>
       <!-- <span v-if="currentProject.id" class="proj-select" :title="$t('message.common.project')">
-        <SvgIcon style="font-size: 2rem;" icon-class="file" color="#1d9cf0"/>
+        <SvgIcon style="font-size: 2rem;" icon-class="common" color="#1d9cf0"/>
       </span>&nbsp; -->
       <Dropdown class="project-dro" v-if="currentProject.id">
         <div class="project">

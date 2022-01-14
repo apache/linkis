@@ -46,7 +46,7 @@
           class="nav-menu-right-item-child"
           :key="item.title"
           @click.stop="handleClick(item)">
-          <SvgIcon class='nav-menu-right-item-icon' :icon-class="iconSplit(item.icon)[0]" :color="iconSplit(item.icon)[1]"/>
+          <SvgIcon class='nav-menu-right-item-icon' icon-class="common" :color="iconSplit(item.icon)[1]"/>
           <span>{{item.title}}</span>
         </div>
       </div>

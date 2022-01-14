@@ -50,7 +50,8 @@
               v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead'))"
               :key="index"
               @click="subitem.isActive = !subitem.isActive">
-              <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" :icon-class="supportIcon(subitem).icon" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/>
+              <span>{{ calssifyName(item) }}</span>
+              <!-- <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" icon-class="common" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/> -->
               <Icon
                 v-show="subitem.isActive"
                 class="engine-right"
@@ -90,7 +91,7 @@
               v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead'))"
               :key="index"
               @click="subitem.isActive = !subitem.isActive">
-              <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" :icon-class="supportIcon(subitem).icon" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/>
+              <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" icon-class="common" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/>
               <Icon
                 v-show="subitem.isActive"
                 class="engine-right"
@@ -130,7 +131,7 @@
               v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead'))"
               :key="index"
               @click="subitem.isActive = !subitem.isActive">
-              <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" :icon-class="supportIcon(subitem).icon" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/>
+              <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" icon-class="common" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/>
               <Icon
                 v-show="subitem.isActive"
                 class="engine-right"

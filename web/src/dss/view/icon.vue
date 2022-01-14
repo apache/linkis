@@ -19,7 +19,7 @@
   <div class="icon-content">
     <ul>
       <li v-for="item in list" :key="item" @click="copy(item)" class="icon-style">
-        <SvgIcon :icon-class="item"/>
+        <SvgIcon icon-class="common"/>
         <div>{{item}}</div>
       </li>
     </ul>
@@ -39,9 +39,9 @@ export default {
     }
   },
   methods: {
-    copy(data){
+    copy(){
       let inputEl = document.createElement('input');
-      inputEl.value = `<SvgIcon style="font-size: 1rem;" color="#444444" icon-class="${data}"/>`;
+      inputEl.value = `<SvgIcon style="font-size: 1rem;" color="#444444" icon-class="common"/>`;
       document.body.appendChild(inputEl);
       inputEl.select(); // 选择对象;
       document.execCommand("Copy"); // 执行浏览器复制命令

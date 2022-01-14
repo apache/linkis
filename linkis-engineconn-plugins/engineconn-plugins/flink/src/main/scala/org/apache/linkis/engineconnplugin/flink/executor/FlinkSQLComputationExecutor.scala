@@ -151,7 +151,7 @@ class FlinkSQLComputationExecutor(id: Long,
 
   override def close(): Unit = {
     if (operation != null) {
-      operation.cancelJob()
+      Utils.tryQuietly(operation.cancelJob()) // ignore this exception since the application will be stopped.
     }
     flinkEngineConnContext.getExecutionContext.createClusterDescriptor().close()
     flinkEngineConnContext.getExecutionContext.getClusterClientFactory.close()

@@ -20,6 +20,7 @@ package org.apache.linkis.engineconnplugin.flink.executor
 import java.io.Closeable
 import java.util
 import java.util.concurrent.TimeUnit
+
 import org.apache.calcite.rel.metadata.{JaninoRelMetadataProvider, RelMetadataQueryBase}
 import org.apache.flink.api.common.JobStatus._
 import org.apache.flink.table.planner.plan.metadata.FlinkDefaultRelMetadataProvider
@@ -37,11 +38,12 @@ import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
 import org.apache.linkis.engineconnplugin.flink.exception.{ExecutorInitException, SqlParseException}
 import org.apache.linkis.engineconnplugin.flink.listener.RowsType.RowsType
 import org.apache.linkis.engineconnplugin.flink.listener.{FlinkStreamingResultSetListener, InteractiveFlinkStatusListener}
+import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.linkis.storage.resultset.ResultSetFactory
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 
 class FlinkSQLComputationExecutor(id: Long,
@@ -51,6 +53,7 @@ class FlinkSQLComputationExecutor(id: Long,
   private var clusterDescriptor: YarnSessionClusterDescriptorAdapter = _
 
   override def init(): Unit = {
+    setCodeParser(new SQLCodeParser)
     ClusterDescriptorAdapterFactory.create(flinkEngineConnContext.getExecutionContext) match {
       case adapter: YarnSessionClusterDescriptorAdapter => clusterDescriptor = adapter
       case adapter if adapter != null => throw new ExecutorInitException(s"Not support ${adapter.getClass.getSimpleName} for FlinkSQLComputationExecutor.")
@@ -78,11 +81,11 @@ class FlinkSQLComputationExecutor(id: Long,
         this.operation = jobOperation
         jobOperation.addFlinkListener(new FlinkSQLStatusListener(jobOperation, engineExecutionContext))
         jobOperation.addFlinkListener(new FlinkSQLStreamingResultSetListener(jobOperation, engineExecutionContext))
-        val properties: util.Map[String, String] = engineExecutionContext.getProperties.map {
+        val properties: util.Map[String, String] = engineExecutionContext.getProperties.asScala.map {
           case (k, v: String) => (k, v)
           case (k, v) if v != null => (k, v.toString)
           case (k, _) => (k, null)
-        }
+        }.asJava
         jobOperation.addFlinkListener(new DevFlinkSQLStreamingListener(jobOperation, properties))
       case _ =>
     }
@@ -114,7 +117,7 @@ class FlinkSQLComputationExecutor(id: Long,
               case _ =>
             }
           case jobOperation: JobOperation =>
-            jobOperation.getFlinkListeners.find(_.isInstanceOf[FlinkSQLStatusListener]).foreach { case listener: FlinkSQLStatusListener =>
+            jobOperation.getFlinkListeners.asScala.find(_.isInstanceOf[FlinkSQLStatusListener]).foreach { case listener: FlinkSQLStatusListener =>
               listener.waitForCompleted()
               return listener.getResponse
             }
@@ -130,7 +133,7 @@ class FlinkSQLComputationExecutor(id: Long,
   }
 
   //TODO wait for completed.
-  override def progress(taskID: String): Float = if(operation == null) 0 else operation.getJobStatus match {
+  override def progress(taskID: String): Float = if (operation == null) 0 else operation.getJobStatus match {
     case jobState if jobState.isGloballyTerminalState => 1
     case RUNNING => 0.5f
     case _ => 0
@@ -144,11 +147,11 @@ class FlinkSQLComputationExecutor(id: Long,
     super.killTask(taskId)
   }
 
-  override def getId: String = "FlinkComputationSQL_"+ id
+  override def getId: String = "FlinkComputationSQL_" + id
 
   override def close(): Unit = {
-    if(operation != null) {
-      operation.cancelJob()
+    if (operation != null) {
+      Utils.tryQuietly(operation.cancelJob()) // ignore this exception since the application will be stopped.
     }
     flinkEngineConnContext.getExecutionContext.createClusterDescriptor().close()
     flinkEngineConnContext.getExecutionContext.getClusterClientFactory.close()
@@ -165,11 +168,11 @@ class FlinkSQLStatusListener(jobOperation: JobOperation, engineExecutionContext:
     // Only success need to close.
     val executeCostTime = ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)
     info(s"Time taken: $executeCostTime, $rowsType $rows row(s), wait resultSet to be stored.")
-    Utils.tryCatch(jobOperation.getFlinkListeners.foreach {
+    Utils.tryCatch(jobOperation.getFlinkListeners.asScala.foreach {
       case listener: Closeable =>
         listener.close()
       case _ =>
-    }){t =>
+    }) {t =>
       onFailed("Failed to close Listeners", t, rowsType)
       return
     }
@@ -188,7 +191,7 @@ class FlinkSQLStatusListener(jobOperation: JobOperation, engineExecutionContext:
   def getResponse: ExecuteResponse = resp
 
   def waitForCompleted(maxWaitTime: Long): Unit = synchronized {
-    if(maxWaitTime < 0) wait() else wait(maxWaitTime)
+    if (maxWaitTime < 0) wait() else wait(maxWaitTime)
   }
 
   def waitForCompleted(): Unit = waitForCompleted(-1)
@@ -238,7 +241,7 @@ class DevFlinkSQLStreamingListener(jobOperation: JobOperation,
   }
 
   private val future = Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
-    override def run(): Unit = if(System.currentTimeMillis - lastPulledTime > maxWaitForResultTime) {
+    override def run(): Unit = if (System.currentTimeMillis - lastPulledTime > maxWaitForResultTime) {
       warn(s"Job killed since reached the max time ${ByteTimeUtils.msDurationToString(maxWaitForResultTime)} of waiting for resultSet. Notice: only the dev environment will touch off the automatic kill.")
       stopJobOperation()
     }
@@ -246,7 +249,7 @@ class DevFlinkSQLStreamingListener(jobOperation: JobOperation,
 
   def stopJobOperation(): Unit = {
     future.cancel(false)
-    jobOperation.getFlinkListeners.foreach {
+    jobOperation.getFlinkListeners.asScala.foreach {
       case listener: InteractiveFlinkStatusListener => listener.markSuccess(writtenLines)
       case _ =>
     }

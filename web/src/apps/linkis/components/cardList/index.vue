@@ -49,7 +49,7 @@
             class="edit"
             style="font-size: 14px"
             color="#5580eb"
-            icon-class="setting"
+            icon-class="common"
           />
           <!-- 引擎删除 -->
           <SvgIcon
@@ -58,12 +58,12 @@
             class="close"
             style="font-size: 16px"
             color="#5580eb"
-            icon-class="status-fail"
+            icon-class="common"
           />
         </li>
         <!-- add -->
         <li v-if="isOpenAdd" class="cardItem add" @click="addList">
-          <SvgIcon icon-class="xingzeng" />
+          <SvgIcon icon-class="common" />
         </li>
       </ul>
     </div>

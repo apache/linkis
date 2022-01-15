@@ -285,7 +285,6 @@ netty-transport-native-epoll-4.1.49.Final-linux-x86_64.jar
 netty-transport-native-unix-common-4.1.49.Final.jar
 nio-multipart-parser-1.1.0.jar
 nio-stream-storage-1.1.3.jar
-ooxml-schemas-1.3.jar
 orc-core-1.3.3.jar
 org.eclipse.wst.xml.xpath2.processor-2.1.100.jar
 oro-2.0.8.jar
@@ -293,9 +292,9 @@ osgi-resource-locator-1.0.1.jar
 pagehelper-5.1.4.jar
 paranamer-2.7.jar
 paranamer-2.8.jar
-poi-3.17.jar
-poi-ooxml-3.17.jar
-poi-ooxml-schemas-3.17.jar
+poi-5.2.0.jar
+poi-ooxml-5.2.0.jar
+poi-ooxml-lite-5.2.0.jar
 protobuf-java-2.5.0.jar
 protostuff-api-1.6.2.jar
 protostuff-collectionschema-1.6.2.jar

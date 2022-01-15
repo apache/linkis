@@ -17,7 +17,7 @@
  
 package org.apache.linkis.storage.excel;
 
-import com.monitorjbl.xlsx.StreamingReader;
+import com.github.pjfanning.xlsx.StreamingReader;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -37,12 +37,10 @@ public class XlsxUtils {
         Workbook wb = null;
         if(inputStream != null){
             wb = StreamingReader.builder()
-                    .sstCacheSize(100)
                     .rowCacheSize(2)    // number of rows to keep in memory (defaults to 10)
                     .open(inputStream);
         } else {
             wb = StreamingReader.builder()
-                    .sstCacheSize(100)
                     .rowCacheSize(2)    // number of rows to keep in memory (defaults to 10)
                     .open(file);
         }

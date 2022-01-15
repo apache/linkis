@@ -209,7 +209,7 @@ license terms. Your use of these subcomponents is subject to the terms
 and conditions of the following licenses:
 
 
-Office Open XML schemas (ooxml-schemas-1.*.jar)
+Office Open XML schemas (poi-ooxml-lite*.jar)
 
     The Office Open XML schema definitions used by Apache POI are
     a part of the Office Open XML ECMA Specification (ECMA-376, [1]).

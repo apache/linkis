@@ -39,13 +39,11 @@ public class XlsxUtils {
             if(inputStream != null){
                 wb = StreamingReader.builder()
                         .rowCacheSize(2)    // number of rows to keep in memory (defaults to 10)
-                        .setReadStyles(false)
                         .setUseSstReadOnly(true)
                         .open(inputStream);
             } else {
                 wb = StreamingReader.builder()
                         .rowCacheSize(2)    // number of rows to keep in memory (defaults to 10)
-                        .setReadStyles(false)
                         .setUseSstReadOnly(true)
                         .open(file);
             }

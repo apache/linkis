@@ -72,6 +72,8 @@
                 "day": "天"
             },
             "tableColumns": {
+                "instanceName": "实例名称",
+                "initiator":"启动者",
                 "engineInstance": "引擎实例",
                 "engineType": "引擎类型",
                 "taskID": "任务ID",

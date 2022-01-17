@@ -73,6 +73,8 @@
         "day": "Day"
       },
       "tableColumns": {
+        "instanceName": "Instance Name",
+        "initiator": "Initiator",
         "engineInstance": "Engine instance",
         "engineType": "Engine type",
         "taskID": "Task ID",

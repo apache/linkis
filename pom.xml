@@ -422,23 +422,15 @@
                             <exclude>**/*.iml</exclude>
                             <exclude>**/*.txt</exclude>
                             <exclude>**/*.json</exclude>
-                            <exclude>images/*</exclude>
                             <exclude>web/.editorconfig</exclude>
                             <exclude>web/.env</exclude>
                             <exclude>web/.eslintignore</exclude>
                             <exclude>web/.jshintrc</exclude>
-                            <exclude>web/patches/iview+3.5.4.patch</exclude>
+
                             <exclude>web/public/favicon.ico</exclude>
                             <exclude>web/dist/**</exclude>
                             <exclude>web/node_modules/**</exclude>
                             <exclude>web/apache-linkis-*-web-bin.tar.gz</exclude>
-                            <exclude>web/src/dss/assets/images/*.png</exclude>
-                            <exclude>web/src/dss/assets/images/*.jpg</exclude>
-                            <exclude>web/src/dss/assets/images/*.jpeg</exclude>
-                            <exclude>web/src/apps/linkis/assets/images/*.png</exclude>
-                            <!-- todo confirm-->
-                            <exclude>web/src/components/svgIcon/svg/*.svg</exclude>
-                            <exclude>web/src/dss/assets/projectIconFont/iconfont.svg</exclude>
 
                             <exclude>**/*.md</exclude>
                             <exclude>.git/</exclude>

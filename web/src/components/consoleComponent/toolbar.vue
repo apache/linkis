@@ -80,7 +80,7 @@
           placement="right"
           popper-class="we-poptip">
           <div @click.stop="openPopup('download')">
-            <SvgIcon :style="{ 'font-size': '20px' }" icon-class="downLoad" color="#515a6e" />
+            <SvgIcon :style="{ 'font-size': '20px' }" icon-class="common" color="#515a6e" />
             <span v-if="isIconLabelShow" :title="$t('message.common.download')" class="v-toolbar-icon">{{ $t('message.common.download') }}</span>
           </div>
           <div slot="content">
@@ -161,7 +161,7 @@
       <li
         @click="openPopup('export')"
         v-if="$route.name === 'Home' && analysistext.flag !== 2">
-        <SvgIcon :style="{ 'font-size': '20px' }" icon-class="export" color="#515a6e"/>
+        <SvgIcon :style="{ 'font-size': '20px' }" icon-class="common" color="#515a6e"/>
         <span
           class="v-toolbar-icon"
           v-if="isIconLabelShow">{{ $t('message.common.toolbar.export') }}</span>
@@ -170,14 +170,14 @@
         @click="openPopup('rowView')"
         v-if="row"
         :title="$t('message.common.toolbar.rowToColumnTitle')">
-        <SvgIcon :style="{ 'font-size': '20px' }" icon-class="transform" color="#515a6e"/>
+        <SvgIcon :style="{ 'font-size': '20px' }" icon-class="common" color="#515a6e"/>
         <span v-if="isIconLabelShow" class="v-toolbar-icon">{{$t('message.common.toolbar.rowToColumn')}}</span>
       </li>
       <li
         @click="openPopup('filter')"
         :title="$t('message.common.toolbar.resultGroupLineFilter')"
         v-if="showFilter">
-        <SvgIcon :style="{ 'font-size': '20px' }" icon-class="export" color="#515a6e"/>
+        <SvgIcon :style="{ 'font-size': '20px' }" icon-class="common" color="#515a6e"/>
         <span
           class="v-toolbar-icon"
           v-if="isIconLabelShow">{{$t('message.common.toolbar.lineFilter')}}</span>

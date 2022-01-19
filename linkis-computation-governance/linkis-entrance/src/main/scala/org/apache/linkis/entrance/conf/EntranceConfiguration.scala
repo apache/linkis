@@ -125,7 +125,7 @@ object EntranceConfiguration {
   val SCHEDULER_CREATOR = CommonVars("wds.linkis.entrance.scheduler.creator", "scheduler")
 
 
-  val SKIP_AUTH = CommonVars("wds.linkis.entrance.skip.auth", false)
+  val SKIP_AUTH = CommonVars("wds.linkis.entrance.skip.auth", true)
 
   val PROGRESS_PUSH = CommonVars[String]("wds.linkis.entrance.push.progress", "false")
 

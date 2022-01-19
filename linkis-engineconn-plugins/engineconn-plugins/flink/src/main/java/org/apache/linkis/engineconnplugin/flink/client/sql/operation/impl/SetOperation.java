@@ -17,6 +17,10 @@
  
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl;
 
+import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.shaded.guava18.com.google.common.collect.ImmutableMap;
+import org.apache.flink.table.types.logical.VarCharType;
+import org.apache.flink.types.Row;
 import org.apache.linkis.engineconnplugin.flink.client.config.Environment;
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.NonJobOperation;
@@ -27,13 +31,10 @@ import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.Resu
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet;
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
 import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.shaded.guava18.com.google.common.collect.ImmutableMap;
-import org.apache.flink.table.types.logical.VarCharType;
-import org.apache.flink.types.Row;
 
 /**
  * Operation for SET command.
@@ -82,12 +83,11 @@ public class SetOperation implements NonJobOperation {
 			// Renew the ExecutionContext by new environment.
 			// Book keep all the session states of current ExecutionContext then
 			// re-register them into the new one.
-			ExecutionContext newExecutionContext = context
+			ExecutionContext.Builder builder = context
 				.newExecutionContextBuilder(context.getEnvironmentContext().getDefaultEnv())
 				.env(newEnv)
-				.sessionState(sessionState)
-				.build();
-			context.setExecutionContext(newExecutionContext);
+				.sessionState(sessionState);
+			context.setExecutionContext(executionContext.cloneExecutionContext(builder));
 
 			return OperationUtil.OK;
 		}

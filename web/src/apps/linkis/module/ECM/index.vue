@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div class="ecm" >
     <Search :statusList="healthyStatusList" :ownerList="ownerList" @search="search" />
@@ -123,7 +123,7 @@ export default {
       },
       columns: [
         {
-          title: "实例名称", // 实例名称
+          title: this.$t('message.linkis.tableColumns.instanceName'), // 实例名称
           key: 'instance',
           minWidth: 150,
           className: 'table-project-column',
@@ -157,7 +157,7 @@ export default {
           minWidth: 150,
         },
         {
-          title: "启动者", // 启动者
+          title: this.$t('message.linkis.tableColumns.initiator'), // 启动者
           key: 'owner',
           className: 'table-project-column',
           minWidth: 150,
@@ -282,7 +282,7 @@ export default {
     async getListAllNodeHealthyStatus() {
       try {
         let healthyStatusList = await api.fetch('/linkisManager/listAllECMHealthyStatus', { onlyEditable: true }, 'get') || {};
-        
+
         let list = healthyStatusList.nodeHealthy || [];
         this.healthyStatusList = [...list];
       } catch (err) {
@@ -303,7 +303,7 @@ export default {
     addEnter (key, value) {
       this.formItem.labels.push({ key, value });
     },
-    
+
     // 修改tag
     editEnter(editInputKey, editInputValue,editedInputValue) {
       let index = this.formItem.labels.findIndex((item)=>{

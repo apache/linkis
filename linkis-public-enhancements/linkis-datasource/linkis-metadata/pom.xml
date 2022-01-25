@@ -120,7 +120,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>${druid.version}</version>
+            <version>0.2.9</version>
         </dependency>
 
         <dependency>
@@ -136,7 +136,11 @@
             <scope>provided</scope>
         </dependency>
 
-
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.15</version>
+        </dependency>
     </dependencies>
 
     <build>

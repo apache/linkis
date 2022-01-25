@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.metadata.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +35,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,15 +54,13 @@ public class DataSourceServiceImpl implements DataSourceService {
     @Autowired
     HiveMetaDao hiveMetaDao;
 
-    @Autowired
-    HiveMetaWithPermissionService hiveMetaWithPermissionService;
 
     ObjectMapper jsonMapper = new ObjectMapper();
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public JsonNode getDbs(String userName) throws Exception {
-        List<String> dbs = hiveMetaWithPermissionService.getDbsOptionalUserName(userName);
+        List<String> dbs = hiveMetaDao.getDbsByUser(userName);
         ArrayNode dbsNode = jsonMapper.createArrayNode();
         for (String db : dbs) {
             ObjectNode dbNode = jsonMapper.createObjectNode();
@@ -77,7 +74,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     @Override
     public JsonNode getDbsWithTables(String userName) throws Exception {
         ArrayNode dbNodes = jsonMapper.createArrayNode();
-        List<String> dbs =  hiveMetaWithPermissionService.getDbsOptionalUserName(userName);
+        List<String> dbs = hiveMetaDao.getDbsByUser(userName);
         for (String db : dbs) {
             ObjectNode dbNode = jsonMapper.createObjectNode();
             dbNode.put("databaseName", db);
@@ -95,7 +92,7 @@ public class DataSourceServiceImpl implements DataSourceService {
             Map<String, String> map = Maps.newHashMap();
             map.put("dbName", database);
             map.put("userName", userName);
-            listTables =hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(map);
+            listTables = hiveMetaDao.getTablesByDbNameAndUser(map);
         } catch (Throwable e) {
             logger.error("Failed to list Tables:", e);
             throw new RuntimeException(e);

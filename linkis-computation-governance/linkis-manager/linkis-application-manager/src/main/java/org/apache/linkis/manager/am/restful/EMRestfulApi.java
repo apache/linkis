@@ -5,29 +5,41 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.am.restful;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.converter.DefaultMetricsConverter;
 import org.apache.linkis.manager.am.exception.AMErrorCode;
 import org.apache.linkis.manager.am.exception.AMErrorException;
+import org.apache.linkis.manager.am.service.em.ECMOperateService;
 import org.apache.linkis.manager.am.service.em.EMInfoService;
+import org.apache.linkis.manager.am.service.engine.EngineCreateService;
 import org.apache.linkis.manager.am.utils.AMUtils;
 import org.apache.linkis.manager.am.vo.EMNodeVo;
 import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy;
 import org.apache.linkis.manager.common.entity.metrics.NodeHealthyInfo;
 import org.apache.linkis.manager.common.entity.node.EMNode;
+import org.apache.linkis.manager.common.entity.node.EngineNode;
+import org.apache.linkis.manager.common.protocol.OperateRequest$;
+import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest;
+import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest$;
+import org.apache.linkis.manager.common.protocol.em.ECMOperateResponse;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
 import org.apache.linkis.manager.label.entity.Label;
@@ -67,9 +79,17 @@ public class EMRestfulApi {
     @Autowired
     private DefaultMetricsConverter defaultMetricsConverter;
 
+    @Autowired
+    private EngineCreateService engineCreateService;
+
+    @Autowired
+    private ECMOperateService ecmOperateService;
+
     private LabelBuilderFactory stdLabelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory();
 
     private Logger logger = LoggerFactory.getLogger(EMRestfulApi.class);
+
+    private String[] adminOperations = AMConfiguration.ECM_ADMIN_OPERATIONS().getValue().split(",");
 
 
     //todo add healthInfo
@@ -132,10 +152,10 @@ public class EMRestfulApi {
             throw new AMErrorException(AMErrorCode.QUERY_PARAM_NULL.getCode(),"serviceInstance:" + applicationName + " non-existent(服务实例" + applicationName + "不存在)");
         }
         String healthyStatus = jsonNode.get("emStatus").asText();
-        if(healthyStatus != null && NodeHealthy.valueOf(healthyStatus) != null){
+        if(healthyStatus != null){
             NodeHealthyInfo nodeHealthyInfo = new NodeHealthyInfo();
             nodeHealthyInfo.setNodeHealthy(NodeHealthy.valueOf(healthyStatus));
-            emInfoService.updateEMInfo(serviceInstance, defaultMetricsConverter.convertHealthyInfo(nodeHealthyInfo));
+            emInfoService.updateEMInfo(serviceInstance, nodeHealthyInfo);
         }
         JsonNode labels = jsonNode.get("labels");
         Set<String> labelKeySet = new HashSet<>();
@@ -160,6 +180,92 @@ public class EMRestfulApi {
             logger.info("success to update label of instance: " + serviceInstance.getInstance());
         }
         return Message.ok("修改EM信息成功");
+    }
+
+    @RequestMapping(path = "/executeECMOperationByEC", method = RequestMethod.POST)
+    public Message executeECMOperationByEC(HttpServletRequest req, @RequestBody JsonNode jsonNode) throws AMErrorException {
+        String userName = SecurityFilter.getLoginUsername(req);
+        ServiceInstance serviceInstance = EngineRestfulApi.getServiceInstance(jsonNode);
+        logger.info("User {} try to execute ECM Operation by EngineConn {}.", userName, serviceInstance);
+        EngineNode engineNode = engineCreateService.getEngineNode(serviceInstance);
+        Map<String, Object> parameters;
+        try {
+            parameters = JsonUtils.jackson().readValue(jsonNode.get("parameters").toString(),
+                    new TypeReference<Map<String, Object>>() {
+                    });
+        } catch (JsonProcessingException e){
+            logger.error("Fail to process the operation parameters: [{}] in request", jsonNode.get("parameters").toString(), e);
+            return Message.error("Fail to process the operation parameters, cased by " +  ExceptionUtils.getRootCauseMessage(e));
+        }
+        parameters.put(ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY(), serviceInstance.getInstance());
+        if(!userName.equals(engineNode.getOwner()) && !AMConfiguration.isAdmin(userName)) {
+            return Message.error("You have no permission to execute ECM Operation by this EngineConn " + serviceInstance);
+        }
+        return executeECMOperation(engineNode.getEMNode(), new ECMOperateRequest(userName, parameters));
+    }
+
+
+    @RequestMapping(path = "/executeECMOperation", method = RequestMethod.POST)
+    public Message executeECMOperation(HttpServletRequest req, @RequestBody JsonNode jsonNode) throws AMErrorException {
+        String userName = SecurityFilter.getLoginUsername(req);
+        ServiceInstance serviceInstance = EngineRestfulApi.getServiceInstance(jsonNode);
+        logger.info("User {} try to execute ECM Operation with {}.", userName, serviceInstance);
+        EMNode ecmNode = this.emInfoService.getEM(serviceInstance);
+        Map<String, Object> parameters;
+        try {
+            parameters = JsonUtils.jackson().readValue(jsonNode.get("parameters").toString(),
+                    new TypeReference<Map<String, Object>>() {
+                    });
+        } catch (JsonProcessingException e) {
+            logger.error("Fail to process the operation parameters: [{}] in request", jsonNode.get("parameters").toString(), e);
+            return Message.error("Fail to process the operation parameters, cased by " +  ExceptionUtils.getRootCauseMessage(e));
+        }
+        return executeECMOperation(ecmNode, new ECMOperateRequest(userName, parameters));
+    }
+
+    @RequestMapping(path = "/openEngineLog", method = RequestMethod.POST)
+    public Message openEngineLog(HttpServletRequest req, @RequestBody JsonNode jsonNode) throws AMErrorException {
+        String userName = SecurityFilter.getLoginUsername(req);
+        EMNode ecmNode;
+        Map<String, Object> parameters;
+        try {
+            String emInstance = jsonNode.get("emInstance").asText();
+            String engineInstance = jsonNode.get("instance").asText();
+            ServiceInstance serviceInstance = EngineRestfulApi.getServiceInstance(jsonNode);
+            logger.info("User {} try to open engine: {} log.", userName, serviceInstance);
+            ecmNode = this.emInfoService.getEM(ServiceInstance.apply("linkis-cg-engineconnmanager", emInstance));
+            logger.info("ecm node info:{}", ecmNode);
+            parameters = JsonUtils.jackson().readValue(jsonNode.get("parameters").toString(),
+                    new TypeReference<Map<String, Object>>() {
+                    });
+            String logType = (String) parameters.get("logType");
+            if (!logType.equals("stdout") && !logType.equals("stderr")) {
+                throw new AMErrorException(AMErrorCode.PARAM_ERROR.getCode(), AMErrorCode.PARAM_ERROR.getMessage());
+            }
+            parameters.put(OperateRequest$.MODULE$.OPERATOR_NAME_KEY(), "engineConnLog");
+            parameters.put(ECMOperateRequest$.MODULE$.ENGINE_CONN_INSTANCE_KEY(), engineInstance);
+        } catch (JsonProcessingException e) {
+            logger.error("Fail to process the operation parameters: [{}] in request", jsonNode.get("parameters").toString(), e);
+            return Message.error("Fail to process the operation parameters, cased by " + ExceptionUtils.getRootCauseMessage(e));
+        } catch (Exception e) {
+            logger.error("Failed to open engine log, error:", e);
+            return Message.error(e.getMessage());
+        }
+        return executeECMOperation(ecmNode, new ECMOperateRequest(userName, parameters));
+    }
+
+    private Message executeECMOperation(EMNode ecmNode, ECMOperateRequest ecmOperateRequest) {
+        String operationName = OperateRequest$.MODULE$.getOperationName(ecmOperateRequest.parameters());
+        if(ArrayUtils.contains(adminOperations, operationName) && !AMConfiguration.isAdmin(ecmOperateRequest.user())) {
+            logger.warn("User {} has no permission to execute {} admin Operation in ECM {}.", ecmOperateRequest.user(), operationName, ecmNode.getServiceInstance());
+            return Message.error("You have no permission to execute " + operationName + " admin Operation in ECM " + ecmNode.getServiceInstance());
+        }
+        ECMOperateResponse engineOperateResponse = ecmOperateService.executeOperation(ecmNode, ecmOperateRequest);
+
+        return Message.ok()
+                .data("result", engineOperateResponse.getResult())
+                .data("errorMsg", engineOperateResponse.errorMsg())
+                .data("isError", engineOperateResponse.isError());
     }
 
 }

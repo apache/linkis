@@ -116,13 +116,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- This package could only be added to one library path of  linkismanager-->
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-manager-monitor</artifactId>
-            <version>${linkis.version}</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
 

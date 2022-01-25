@@ -17,23 +17,7 @@
  
 package org.apache.linkis.engineconnplugin.flink.client.context;
 
-import org.apache.linkis.engineconnplugin.flink.client.config.Environment;
-import org.apache.linkis.engineconnplugin.flink.client.factory.LinkisYarnClusterClientFactory;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import javax.annotation.Nullable;
 import org.apache.flink.api.common.ExecutionConfig;
-import org.apache.flink.api.dag.Pipeline;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.client.ClientUtils;
 import org.apache.flink.client.program.StreamContextEnvironment;
@@ -54,40 +38,33 @@ import org.apache.flink.table.catalog.Catalog;
 import org.apache.flink.table.catalog.CatalogManager;
 import org.apache.flink.table.catalog.FunctionCatalog;
 import org.apache.flink.table.catalog.GenericInMemoryCatalog;
-import org.apache.flink.table.client.config.entries.ExecutionEntry;
-import org.apache.flink.table.client.config.entries.SinkTableEntry;
-import org.apache.flink.table.client.config.entries.SourceSinkTableEntry;
-import org.apache.flink.table.client.config.entries.SourceTableEntry;
-import org.apache.flink.table.client.config.entries.TableEntry;
-import org.apache.flink.table.client.config.entries.TemporalTableEntry;
-import org.apache.flink.table.client.config.entries.ViewEntry;
+import org.apache.flink.table.client.config.entries.*;
 import org.apache.flink.table.delegation.Executor;
 import org.apache.flink.table.delegation.ExecutorFactory;
 import org.apache.flink.table.delegation.Planner;
 import org.apache.flink.table.delegation.PlannerFactory;
 import org.apache.flink.table.descriptors.CoreModuleDescriptorValidator;
-import org.apache.flink.table.factories.BatchTableSinkFactory;
-import org.apache.flink.table.factories.BatchTableSourceFactory;
-import org.apache.flink.table.factories.CatalogFactory;
-import org.apache.flink.table.factories.ComponentFactoryService;
-import org.apache.flink.table.factories.ModuleFactory;
-import org.apache.flink.table.factories.TableFactoryService;
-import org.apache.flink.table.factories.TableSinkFactory;
-import org.apache.flink.table.factories.TableSourceFactory;
-import org.apache.flink.table.functions.AggregateFunction;
-import org.apache.flink.table.functions.FunctionDefinition;
-import org.apache.flink.table.functions.FunctionService;
-import org.apache.flink.table.functions.ScalarFunction;
-import org.apache.flink.table.functions.TableFunction;
-import org.apache.flink.table.functions.UserDefinedFunction;
+import org.apache.flink.table.factories.*;
+import org.apache.flink.table.functions.*;
 import org.apache.flink.table.module.Module;
 import org.apache.flink.table.module.ModuleManager;
 import org.apache.flink.table.sinks.TableSink;
 import org.apache.flink.table.sources.TableSource;
 import org.apache.flink.util.TemporaryClassLoaderContext;
 import org.apache.flink.yarn.YarnClusterDescriptor;
+import org.apache.linkis.engineconnplugin.flink.client.config.Environment;
+import org.apache.linkis.engineconnplugin.flink.client.factory.LinkisYarnClusterClientFactory;
+import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class ExecutionContext {
 
@@ -97,7 +74,7 @@ public class ExecutionContext {
 	private final ClassLoader classLoader;
 
 	private final Configuration flinkConfig;
-	private final LinkisYarnClusterClientFactory clusterClientFactory;
+	private LinkisYarnClusterClientFactory clusterClientFactory;
 
 	private TableEnvironmentInternal tableEnv;
 	private ExecutionEnvironment execEnv;
@@ -112,6 +89,15 @@ public class ExecutionContext {
 			@Nullable SessionState sessionState,
 			List<URL> dependencies,
 			Configuration flinkConfig) {
+		this(environment, sessionState, dependencies, flinkConfig, new LinkisYarnClusterClientFactory());
+	}
+
+	private ExecutionContext(
+			Environment environment,
+			@Nullable SessionState sessionState,
+			List<URL> dependencies,
+			Configuration flinkConfig,
+			LinkisYarnClusterClientFactory clusterClientFactory) {
 		this.environment = environment;
 		this.flinkConfig = flinkConfig;
 		this.sessionState = sessionState;
@@ -126,13 +112,14 @@ public class ExecutionContext {
 			flinkConfig);
 		LOG.debug("Deployment descriptor: {}", environment.getDeployment());
 		LOG.info("flinkConfig config: {}", flinkConfig);
-		clusterClientFactory = new LinkisYarnClusterClientFactory();
+		this.clusterClientFactory = clusterClientFactory;
 	}
-
-	public StreamExecutionEnvironment getStreamExecutionEnvironment() {
+	public StreamExecutionEnvironment getStreamExecutionEnvironment() throws SqlExecutionException{
+		if(streamExecEnv == null) {
+			getTableEnvironment();
+		}
 		return streamExecEnv;
 	}
-
 	public void setString(String key, String value) {
 		this.flinkConfig.setString(key, value);
 	}
@@ -216,19 +203,6 @@ public class ExecutionContext {
 	public LinkisYarnClusterClientFactory getClusterClientFactory() {
 		return clusterClientFactory;
 	}
-
-	public Pipeline createPipeline(String name) {
-		return wrapClassLoader(() -> {
-			if (streamExecEnv != null) {
-				StreamTableEnvironmentImpl streamTableEnv = (StreamTableEnvironmentImpl) tableEnv;
-				return streamTableEnv.getPipeline(name);
-			} else {
-				BatchTableEnvironmentImpl batchTableEnv = (BatchTableEnvironmentImpl) tableEnv;
-				return batchTableEnv.getPipeline(name);
-			}
-		});
-	}
-
 
 	/** Returns a builder for this {@link ExecutionContext}. */
 	public static Builder builder(
@@ -586,6 +560,17 @@ public class ExecutionContext {
 		}
 	}
 
+	public ExecutionContext cloneExecutionContext(Builder builder) {
+		ExecutionContext newExecutionContext = builder.clusterClientFactory(clusterClientFactory).build();
+		if(this.tableEnv != null) {
+			newExecutionContext.tableEnv = tableEnv;
+			newExecutionContext.execEnv = execEnv;
+			newExecutionContext.streamExecEnv = streamExecEnv;
+			newExecutionContext.executor = executor;
+		}
+		return newExecutionContext;
+	}
+
 	//~ Inner Class -------------------------------------------------------------------------------
 
 	/** Builder for {@link ExecutionContext}. */
@@ -596,6 +581,7 @@ public class ExecutionContext {
 		private final Configuration configuration;
 		private Environment defaultEnv;
 		private Environment currentEnv;
+		private LinkisYarnClusterClientFactory clusterClientFactory;
 
 		// Optional members.
 		@Nullable
@@ -622,21 +608,32 @@ public class ExecutionContext {
 			return this;
 		}
 
-		public ExecutionContext build() throws SqlExecutionException {
+		Builder clusterClientFactory(LinkisYarnClusterClientFactory clusterClientFactory) {
+			this.clusterClientFactory = clusterClientFactory;
+			return this;
+		}
+
+		public ExecutionContext build() {
 			if(sessionEnv == null){
 				this.currentEnv = defaultEnv;
 			}
-			try {
+			if(clusterClientFactory == null) {
 				return new ExecutionContext(
-					this.currentEnv == null ? Environment.merge(defaultEnv, sessionEnv) : this.currentEnv,
-					this.sessionState,
-					this.dependencies,
-					this.configuration);
-			} catch (Exception t) {
-				// catch everything such that a configuration does not crash the executor
-				throw new SqlExecutionException("Could not create execution context.", t);
+						this.currentEnv == null ? Environment.merge(defaultEnv, sessionEnv) : this.currentEnv,
+						this.sessionState,
+						this.dependencies,
+						this.configuration);
+			} else {
+				return new ExecutionContext(
+						this.currentEnv == null ? Environment.merge(defaultEnv, sessionEnv) : this.currentEnv,
+						this.sessionState,
+						this.dependencies,
+						this.configuration,
+						this.clusterClientFactory);
 			}
 		}
+
+
 	}
 
 	/** Represents the state that should be reused in one session. **/

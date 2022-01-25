@@ -5,22 +5,22 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.storage.resultset
 
 import java.util
 
 import org.apache.linkis.common.io.resultset.ResultSet
-import org.apache.linkis.common.io.{FsPath, MetaData, Record}
+import org.apache.linkis.common.io.{Fs, FsPath, MetaData, Record}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.domain.Dolphin
@@ -64,6 +64,15 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging{
   override def getResultSet(output: String): ResultSet[_ <: MetaData, _ <: Record] = getResultSet(output,StorageUtils.getJvmUser)
 
   override def getResultSetType:Array[String] = resultTypes
+
+  override def getResultSetByPath(fsPath: FsPath, fs: Fs): ResultSet[_ <: MetaData, _ <: Record] = {
+    val inputStream = fs.read(fsPath)
+    val resultSetType = Dolphin.getType(inputStream)
+    if (StringUtils.isEmpty(resultSetType)) throw new StorageWarnException(51000, s"The file (${fsPath.getPath}) is empty(文件(${fsPath.getPath}) 为空)")
+    Utils.tryQuietly(inputStream.close())
+    //Utils.tryQuietly(fs.close())
+    getResultSetByType(resultSetType)
+  }
 
   override def getResultSetByPath(fsPath: FsPath, proxyUser: String): ResultSet[_ <: MetaData, _ <: Record] = {
     if(fsPath == null ) return null

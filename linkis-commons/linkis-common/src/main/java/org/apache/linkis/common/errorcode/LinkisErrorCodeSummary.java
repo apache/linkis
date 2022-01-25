@@ -30,7 +30,7 @@ public enum LinkisErrorCodeSummary {
      * 26000-29999 linkis-engineconn-plugins
      */
     EngineManagerErrorException
-            (321, "引擎启动失败", "在某种情况下启动失败", "cooperyang", "EngineConnManager")
+            (321, "引擎启动失败", "在某种情况下启动失败", "hadoop", "EngineConnManager")
     ;
     /**
      * 错误码

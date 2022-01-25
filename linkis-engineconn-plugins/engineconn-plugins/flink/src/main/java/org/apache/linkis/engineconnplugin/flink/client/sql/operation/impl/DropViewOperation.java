@@ -60,12 +60,11 @@ public class DropViewOperation implements NonJobOperation {
 			ExecutionContext oldExecutionContext = context.getExecutionContext();
 			oldExecutionContext.wrapClassLoader(tableEnv -> tableEnv.dropTemporaryView(viewName));
 			// Renew the ExecutionContext.
-			ExecutionContext newExecutionContext = context
+			ExecutionContext.Builder builder = context
 				.newExecutionContextBuilder(context.getEnvironmentContext().getDefaultEnv())
 				.env(newEnv)
-				.sessionState(context.getExecutionContext().getSessionState())
-				.build();
-			context.setExecutionContext(newExecutionContext);
+				.sessionState(context.getExecutionContext().getSessionState());
+			context.setExecutionContext(context.getExecutionContext().cloneExecutionContext(builder));
 		}
 
 		return OperationUtil.OK;

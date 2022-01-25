@@ -85,7 +85,12 @@ object FileSource {
   }
 
   def create(fsPath: FsPath, fs: Fs): FileSource = {
-    create(fsPath, fs.read(fsPath))
+    if (!canRead(fsPath.getPath)) throw new StorageErrorException(54001, "Unsupported open file type(不支持打开的文件类型)")
+    if (isResultSet(fsPath)) {
+      new ResultsetFileSource(Array(createResultSetFileSplit(fsPath, fs)))
+    } else {
+      new TextFileSource(Array(createTextFileSplit(fsPath, fs)))
+    }
   }
 
   def create(fsPath: FsPath, is: InputStream): FileSource = {
@@ -97,18 +102,25 @@ object FileSource {
     }
   }
 
-  private def createResultSetFileSplit(fsPath: FsPath, fs: Fs): FileSplit = {
-    createResultSetFileSplit(fsPath, fs.read(fsPath))
-  }
-
   private def createResultSetFileSplit(fsPath: FsPath, is: InputStream): FileSplit = {
     val resultset = ResultSetFactory.getInstance.getResultSetByPath(fsPath)
     val resultsetReader = ResultSetReader.getResultSetReader(resultset, is)
     new FileSplit(resultsetReader, resultset.resultSetType())
   }
 
+  private def createResultSetFileSplit(fsPath: FsPath, fs: Fs): FileSplit = {
+    val resultset = ResultSetFactory.getInstance.getResultSetByPath(fsPath, fs)
+    val resultsetReader = ResultSetReader.getResultSetReader(resultset, fs.read(fsPath))
+    new FileSplit(resultsetReader, resultset.resultSetType())
+  }
+
   private def createTextFileSplit(fsPath: FsPath, is: InputStream): FileSplit = {
     val scriptFsReader = ScriptFsReader.getScriptFsReader(fsPath, StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue, is)
+    new FileSplit(scriptFsReader)
+  }
+
+  private def createTextFileSplit(fsPath: FsPath, fs: Fs): FileSplit = {
+    val scriptFsReader = ScriptFsReader.getScriptFsReader(fsPath, StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue, fs.read(fsPath))
     new FileSplit(scriptFsReader)
   }
 

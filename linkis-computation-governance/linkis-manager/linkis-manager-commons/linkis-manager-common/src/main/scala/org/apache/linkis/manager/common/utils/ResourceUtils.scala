@@ -49,8 +49,25 @@ object ResourceUtils {
   }
 
   def fromPersistenceResource(persistenceResource: PersistenceResource): CommonNodeResource = {
-    if(persistenceResource == null) return null
+    if (persistenceResource == null) return null
     val nodeResource = new CommonNodeResource
+    if (persistenceResource.getId != null) nodeResource.setId(persistenceResource.getId)
+    if (persistenceResource.getMaxResource != null) nodeResource.setMaxResource(deserializeResource(persistenceResource.getMaxResource))
+    if (persistenceResource.getMinResource != null) nodeResource.setMinResource(deserializeResource(persistenceResource.getMinResource))
+    if (persistenceResource.getLockedResource != null) nodeResource.setLockedResource(deserializeResource(persistenceResource.getLockedResource))
+    if (persistenceResource.getExpectedResource != null) nodeResource.setExpectedResource(deserializeResource(persistenceResource.getExpectedResource))
+    if (persistenceResource.getLeftResource != null) nodeResource.setLeftResource(deserializeResource(persistenceResource.getLeftResource))
+    if (persistenceResource.getUsedResource != null) nodeResource.setUsedResource(deserializeResource(persistenceResource.getUsedResource))
+    if (persistenceResource.getCreateTime != null) nodeResource.setCreateTime(persistenceResource.getCreateTime)
+    if (persistenceResource.getUpdateTime != null) nodeResource.setUpdateTime(persistenceResource.getUpdateTime)
+    nodeResource.setResourceType(ResourceType.valueOf(persistenceResource.getResourceType))
+    nodeResource
+  }
+
+  def fromPersistenceResourceAndUser(persistenceResource: PersistenceResource): UserResource = {
+    if (persistenceResource == null) return null
+    val nodeResource = new UserResource
+    if (persistenceResource.getId != null) nodeResource.setId(persistenceResource.getId)
     if (persistenceResource.getMaxResource != null) nodeResource.setMaxResource(deserializeResource(persistenceResource.getMaxResource))
     if (persistenceResource.getMinResource != null) nodeResource.setMinResource(deserializeResource(persistenceResource.getMinResource))
     if (persistenceResource.getLockedResource != null) nodeResource.setLockedResource(deserializeResource(persistenceResource.getLockedResource))
@@ -93,5 +110,27 @@ object ResourceUtils {
     return nodeResource
   }
 
+  /**
+   * Get the proportion of left resources, and return the smallest CPU, memory, and instance
+   * @param leftResource
+   * @param maxResource
+   * @return
+   */
+  def getLoadInstanceResourceRate(leftResource: Resource, maxResource: Resource): Float = {
+    if (null == leftResource) return 0
+    if (null == maxResource) return 1
+    leftResource match {
+      case leftLoadInstanceResource: LoadInstanceResource =>
+        maxResource match {
+          case maxLoadInstanceResource: LoadInstanceResource =>
+            val cpuRate = if (maxLoadInstanceResource.cores >  0) (leftLoadInstanceResource.cores * 1.0F) / maxLoadInstanceResource.cores else 1F
+            val memoryRate = if (maxLoadInstanceResource.memory > 0) (leftLoadInstanceResource.memory * 1.0F) / maxLoadInstanceResource.memory else 1F
+            val instanceRate = if (maxLoadInstanceResource.instances > 0) (leftLoadInstanceResource.instances * 1.0F) / maxLoadInstanceResource.instances else 1F
+            Math.min(Math.min(cpuRate, memoryRate), instanceRate)
+          case _ => 1F
+        }
+      case _ => 1F
+    }
+  }
 
 }

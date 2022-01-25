@@ -122,7 +122,7 @@ public class PersistenceTest {
     public void testListResourceLabelByKeyValuesMaps() throws InvocationTargetException, IllegalAccessException {
         HashMap<String, Map<String, String>> labelKeyValues = new HashMap<>();
         HashMap<String, String> key1 = new HashMap<>();
-        key1.put("instance", "johnnwang:9026");
+        key1.put("instance", "localhost:9026");
         key1.put("serviceName", "linkis-engineManager");
         labelKeyValues.put("emInstance", key1);
         HashMap<String, String> key2 = new HashMap<>();

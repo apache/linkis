@@ -90,35 +90,6 @@ SERVER_NAME="ps-cs"
 SERVER_IP=$CS_INSTALL_IP
 startApp
 
-#datasourcemanager
-SERVER_NAME="ps-datasourcemanager"
-SERVER_IP=$DATASOURCEMANAGER_INSTALL_IP
-startApp
-
-#metadatamanager
-SERVER_NAME="ps-metadatamanager"
-SERVER_IP=$METADATAMANAGER_INSTALL_IP
-startApp
-
-#metadatamanager-es
-SERVER_NAME="ps-metadatamanager-es"
-SERVER_IP=$METADATAMANAGER_ES_INSTALL_IP
-startApp
-
-#metadatamanager-hive
-SERVER_NAME="ps-metadatamanager-hive"
-SERVER_IP=$METADATAMANAGER_HIVE_INSTALL_IP
-startApp
-
-#metadatamanager-kafka
-SERVER_NAME="ps-metadatamanager-kafka"
-SERVER_IP=$METADATAMANAGER_KAFKA_INSTALL_IP
-startApp
-
-#metadatamanager-mysql
-SERVER_NAME="ps-metadatamanager-mysql"
-SERVER_IP=$METADATAMANAGER_MYSQL_INSTALL_IP
-startApp
 
 #entrnace
 SERVER_NAME="cg-entrance"
@@ -137,7 +108,7 @@ startApp
 
 echo "start-all shell script executed completely"
 
-echo "Start to check all dss microservice"
+echo "Start to check all linkis microservice"
 
 function checkServer() {
 echo "<-------------------------------->"

@@ -124,7 +124,7 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
 
   override def getAvailableEngineConnExecutor(mark: Mark): EngineConnExecutor = {
     info(s"mark ${mark.getMarkId()} start to  getAvailableEngineConnExecutor")
-    if (null != mark && getMarkCache().containsKey(mark)) {
+    if (null != mark) {
       tryReuseEngineConnExecutor(mark) match {
         case Some(engineConnExecutor) => return engineConnExecutor
         case None =>
@@ -135,7 +135,7 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
       debug(s"mark ${mark.getMarkId()} Finished to  getAvailableEngineConnExecutor by create")
       engineConnExecutor
     } else {
-      throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE, " mark cannot null")
+      throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE, s" mark ${mark.getMarkId()} cannot null")
     }
   }
 
@@ -184,6 +184,7 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
 
   protected def addMark(mark: Mark, instances: util.List[ServiceInstance]): Unit = MARK_CACHE_LOCKER.synchronized {
     if (null != mark && !getMarkCache().containsKey(mark)) {
+      logger.info(s"add mark ${mark.getMarkId()}")
       getMarkCache().put(mark, instances)
     }
   }
@@ -194,6 +195,12 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
     } else {
       null
     }
+  }
+
+  protected def getMarksByInstance(serviceInstance: ServiceInstance): Array[Mark] = MARK_CACHE_LOCKER.synchronized {
+    getMarkCache().filter { keyValue =>
+      keyValue._2.exists(serviceInstance.equals(_))
+    }.keys.toArray
   }
 
   override def releaseEngineConnExecutor(engineConnExecutor: EngineConnExecutor, mark: Mark): Unit = {

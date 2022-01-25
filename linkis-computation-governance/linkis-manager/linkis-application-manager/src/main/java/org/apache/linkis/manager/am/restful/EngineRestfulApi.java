@@ -5,20 +5,24 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.am.restful;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
@@ -27,6 +31,7 @@ import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.service.engine.EngineCreateService;
 import org.apache.linkis.manager.am.service.engine.EngineInfoService;
 import org.apache.linkis.manager.am.service.engine.EngineOperateService;
+import org.apache.linkis.manager.am.service.engine.EngineStopService;
 import org.apache.linkis.manager.am.utils.AMUtils;
 import org.apache.linkis.manager.am.vo.AMEngineNodeVo;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
@@ -47,30 +52,18 @@ import org.apache.linkis.message.publisher.MessagePublisher;
 import org.apache.linkis.resourcemanager.utils.RMUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import scala.Predef;
-import scala.Tuple2;
-import scala.collection.JavaConverters;
 
 @RequestMapping(path = "/linkisManager", produces = {"application/json"})
 @RestController
@@ -87,6 +80,9 @@ public class EngineRestfulApi {
 
     @Autowired
     private NodeLabelService nodeLabelService;
+
+    @Autowired
+    private EngineStopService engineStopService;
 
     @Autowired
     private MessagePublisher messagePublisher;
@@ -128,7 +124,13 @@ public class EngineRestfulApi {
         //to transform to a map
         Map<String, Object> retEngineNode = new HashMap<>();
         retEngineNode.put("serviceInstance", engineNode.getServiceInstance());
-        retEngineNode.put("nodeStatus", engineNode.getNodeStatus().toString());
+        if (null == engineNode.getNodeStatus()) {
+            engineNode.setNodeStatus(NodeStatus.Starting);
+        } else {
+            retEngineNode.put("nodeStatus", engineNode.getNodeStatus().toString());
+        }
+        retEngineNode.put("ticketId", engineNode.getTicketId());
+        retEngineNode.put("ecmServiceInstance", engineNode.getEMNode().getServiceInstance());
         return Message.ok("create engineConn succeed.").data("engine", retEngineNode);
     }
 
@@ -154,9 +156,21 @@ public class EngineRestfulApi {
             return Message.error("You have no permission to kill EngineConn " + serviceInstance);
         }
         EngineStopRequest stopEngineRequest = new EngineStopRequest(serviceInstance, userName);
-        MessageJob job = messagePublisher.publish(stopEngineRequest);
-        job.get(RMUtils.MANAGER_KILL_ENGINE_EAIT().getValue().toLong(), TimeUnit.MILLISECONDS);
+        engineStopService.stopEngine(stopEngineRequest);
         logger.info("Finished to kill engineConn {}.", serviceInstance);
+        return Message.ok("Kill engineConn succeed.");
+    }
+
+    @RequestMapping(path = "/rm/enginekill", method = RequestMethod.POST)
+    public Message killEngine( HttpServletRequest req, @RequestBody Map<String, String>[] param) throws Exception {
+        String userName = SecurityFilter.getLoginUsername(req);
+        for (Map<String, String>engineParam : param) {
+            String moduleName = engineParam.get("applicationName");
+            String engineInstance = engineParam.get("engineInstance");
+            EngineStopRequest stopEngineRequest = new EngineStopRequest(ServiceInstance.apply(moduleName, engineInstance), userName);
+            engineStopService.stopEngine(stopEngineRequest);
+            logger.info("Finished to kill engines");
+        }
         return Message.ok("Kill engineConn succeed.");
     }
 
@@ -182,19 +196,19 @@ public class EngineRestfulApi {
         ArrayList<AMEngineNodeVo> allengineNodes = AMUtils.copyToAMEngineNodeVo(engineNodes);
         ArrayList<AMEngineNodeVo> allEMVoFilter1 = allengineNodes;
         if(CollectionUtils.isNotEmpty(allEMVoFilter1) && emInstace != null){
-            allEMVoFilter1 = (ArrayList<AMEngineNodeVo>) allEMVoFilter1.stream().filter(em -> {return em.getInstance().contains(emInstace.asText());}).collect(Collectors.toList());
+            allEMVoFilter1 = (ArrayList<AMEngineNodeVo>) allEMVoFilter1.stream().filter(em -> em.getInstance() != null && em.getInstance().contains(emInstace.asText())).collect(Collectors.toList());
         }
         ArrayList<AMEngineNodeVo> allEMVoFilter2 = allEMVoFilter1;
         if(CollectionUtils.isNotEmpty(allEMVoFilter2) && nodeStatus != null && !StringUtils.isEmpty(nodeStatus.asText())){
-            allEMVoFilter2 = (ArrayList<AMEngineNodeVo>) allEMVoFilter2.stream().filter(em -> {return em.getNodeStatus() != null ? em.getNodeStatus().equals(NodeStatus.valueOf(nodeStatus.asText())) : false;}).collect(Collectors.toList());
+            allEMVoFilter2 = (ArrayList<AMEngineNodeVo>) allEMVoFilter2.stream().filter(em -> em.getNodeStatus() != null && em.getNodeStatus().equals(NodeStatus.valueOf(nodeStatus.asText()))).collect(Collectors.toList());
         }
         ArrayList<AMEngineNodeVo> allEMVoFilter3 = allEMVoFilter2;
         if(CollectionUtils.isNotEmpty(allEMVoFilter3) && owner != null && !StringUtils.isEmpty(owner.asText())){
-            allEMVoFilter3 = (ArrayList<AMEngineNodeVo>) allEMVoFilter3.stream().filter(em ->{return em.getOwner().equalsIgnoreCase(owner.asText());}).collect(Collectors.toList());
+            allEMVoFilter3 = (ArrayList<AMEngineNodeVo>) allEMVoFilter3.stream().filter(em -> em.getOwner() != null && em.getOwner().equalsIgnoreCase(owner.asText())).collect(Collectors.toList());
         }
         ArrayList<AMEngineNodeVo> allEMVoFilter4 = allEMVoFilter3;
         if(CollectionUtils.isNotEmpty(allEMVoFilter4) && engineType != null && !StringUtils.isEmpty(engineType.asText())){
-            allEMVoFilter4 = (ArrayList<AMEngineNodeVo>) allEMVoFilter4.stream().filter(em ->{return em.getEngineType().equalsIgnoreCase(engineType.asText());}).collect(Collectors.toList());
+            allEMVoFilter4 = (ArrayList<AMEngineNodeVo>) allEMVoFilter4.stream().filter(em -> em.getEngineType() != null && em.getEngineType().equalsIgnoreCase(engineType.asText())).collect(Collectors.toList());
         }
         return Message.ok().data("engines", allEMVoFilter4);
     }
@@ -250,28 +264,21 @@ public class EngineRestfulApi {
         Map<String, Object> parameters = objectMapper.convertValue(jsonNode.get("parameters")
                 , new TypeReference<Map<String, Object>>(){});
 
-        EngineOperateRequest engineOperateRequest = new EngineOperateRequest(userName
-                , JavaConverters.mapAsScalaMapConverter(parameters).asScala().toMap(Predef.conforms()));
-
+        EngineOperateRequest engineOperateRequest = new EngineOperateRequest(userName, parameters);
         EngineOperateResponse engineOperateResponse = engineOperateService.executeOperation(engineNode, engineOperateRequest);
-
-        Map<String, Object> result = new HashMap<>(0);
-        if (engineOperateResponse != null && engineOperateResponse.result() != null) {
-            result = JavaConverters.mapAsJavaMapConverter(engineOperateResponse.result()).asJava();
-        }
-
         return Message.ok()
-                .data("result", result)
+                .data("result", engineOperateResponse.getResult())
                 .data("errorMsg", engineOperateResponse.errorMsg())
                 .data("isError", engineOperateResponse.isError());
     }
 
+
+
     private boolean isAdmin(String user) {
-        String[] adminArray = AMConfiguration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
-        return ArrayUtils.contains(adminArray, user);
+        return AMConfiguration.isAdmin(user);
     }
 
-    private ServiceInstance getServiceInstance(JsonNode jsonNode) throws AMErrorException {
+    static ServiceInstance getServiceInstance(JsonNode jsonNode) throws AMErrorException {
         String applicationName = jsonNode.get("applicationName").asText();
         String instance = jsonNode.get("instance").asText();
         if(StringUtils.isEmpty(applicationName)){

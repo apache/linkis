@@ -106,36 +106,39 @@
         <spring.feign.version>2.2.1.RELEASE</spring.feign.version>
         <spring.boot.version>2.3.2.RELEASE</spring.boot.version>
         <spring.cloud.version>2.2.1.RELEASE</spring.cloud.version>
-        <guava.version>25.1-jre</guava.version>
+        <guava.version>30.0-jre</guava.version>
         <gson.version>2.8.5</gson.version>
         <fasterxml.jackson.version>2.11.3</fasterxml.jackson.version>
         <scala.version>2.11.12</scala.version>
         <jdk.compile.version>1.8</jdk.compile.version>
         <plugin.scala.version>2.15.2</plugin.scala.version>
         <scala.binary.version>2.11</scala.binary.version>
-        <netty.version>4.1.44.Final</netty.version>
+        <netty.version>4.1.60.Final</netty.version>
         <json4s.version>3.5.3</json4s.version>
         <jersey.version>2.16</jersey.version>
         <jersey.servlet.version>2.23.1</jersey.servlet.version>
         <jetty.version>9.4.20.v20190813</jetty.version>
-        <httpclient.version>4.5.4</httpclient.version>
+        <httpclient.version>4.5.13</httpclient.version>
         <httpmime.version>4.5.4</httpmime.version>
         <slf4j.version>1.7.30</slf4j.version>
         <maven.version>3.3.3</maven.version>
-        <xstream.core.version>1.4.15</xstream.core.version>
-        <spring.version>5.2.12.RELEASE</spring.version>
-        <spring.security.cryto.version>5.3.6.RELEASE</spring.security.cryto.version>
+        <xstream.core.version>1.4.18</xstream.core.version>
+        <spring.version>5.2.15.RELEASE</spring.version>
+        <spring.security.cryto.version>5.4.4</spring.security.cryto.version>
         <reflections.version>0.9.10</reflections.version>
         <mybatis-plus.boot.starter.version>3.4.1</mybatis-plus.boot.starter.version>
+        <mysql.connector.version>5.1.49</mysql.connector.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <javassist.version>3.19.0-GA</javassist.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-io.version>2.4</commons-io.version>
+        <druid.version>1.1.22</druid.version>
         <apache-rat-plugin.version>0.13</apache-rat-plugin.version>
         <assembly.package.rootpath>${basedir}</assembly.package.rootpath>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <log4j2.version>2.17.0</log4j2.version>
     </properties>
 
     <dependencyManagement>
@@ -219,6 +222,13 @@
                 <artifactId>commons-collections</artifactId>
                 <version>${commons-collections.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.connector.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -266,10 +276,13 @@
                         <artifactId>maven-deploy-plugin</artifactId>
                         <version>3.0.0-M1</version>
                     </plugin>
-                    <!--<plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>3.0.1</version>
+                       <configuration>
+                           <doclint>none</doclint>
+                       </configuration>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -278,7 +291,7 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>-->
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
@@ -296,43 +309,6 @@
                 </plugins>
             </build>
         </profile>
-        <!--check dependency jar license -->
-        <profile>
-            <id>licenseCheck</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>license-maven-plugin</artifactId>
-                        <version>2.0.0</version>
-                        <executions>
-                            <execution>
-                                <id>license-check</id>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>add-third-party</goal>
-                                </goals>
-                                <configuration>
-                                    <includeOptional>false</includeOptional>
-                                    <useMissingFile>false</useMissingFile>
-                                    <failOnMissing>false</failOnMissing>
-                                    <licenseMerges>
-                                        <licenseMerge>Apache License, Version 2.0|The Apache Software License, Version
-                                            2.0|ASF 2.0|Apache 2|Apache-2.0|Apache 2.0 License|Apache 2.0|Apache License v2.0|Apache License 2.0|The Apache License, Version 2.0|The Apache Software License, Version 2.0
-                                        </licenseMerge>
-                                        <licenseMerge>The MIT License|MIT License</licenseMerge>
-                                        <licenseMerge>The 3-Clause BSD License|New BSD License|3-Clause BSD
-                                            License|BSD|3-Clause BSD License|The New BSD License
-                                        </licenseMerge>
-                                    </licenseMerges>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
     </profiles>
 
 
@@ -412,13 +388,6 @@
                                 <goal>testCompile</goal>
                             </goals>
                         </execution>
-                        <execution>
-                            <id>attach-scaladocs</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>doc-jar</goal>
-                            </goals>
-                        </execution>
                     </executions>
                     <configuration>
                         <scalaVersion>${scala.version}</scalaVersion>
@@ -432,6 +401,7 @@
                     <version>2.6</version>
                 </plugin>
 
+                <!--mvn apache-rat:check-->
                 <plugin>
                     <groupId>org.apache.rat</groupId>
                     <artifactId>apache-rat-plugin</artifactId>
@@ -451,16 +421,17 @@
                             <exclude>**/.idea/</exclude>
                             <exclude>**/*.iml</exclude>
                             <exclude>**/*.txt</exclude>
-                            <exclude>**/*.svg</exclude>
-                            <exclude>**/*.png</exclude>
                             <exclude>**/*.json</exclude>
-                            <exclude>**/*.patch</exclude>
+                            <exclude>web/.editorconfig</exclude>
+                            <exclude>web/.env</exclude>
+                            <exclude>web/.eslintignore</exclude>
+                            <exclude>web/.jshintrc</exclude>
 
-                            <exclude>**/*.editorconfig</exclude>
-                            <exclude>**/*.env</exclude>
-                            <exclude>**/*.eslintignore</exclude>
-                            <exclude>**/*.jshintrc</exclude>
-                            <exclude>**/*.patch</exclude>
+                            <exclude>web/public/favicon.ico</exclude>
+                            <exclude>web/dist/**</exclude>
+                            <exclude>web/node_modules/**</exclude>
+                            <exclude>web/apache-linkis-*-web-bin.tar.gz</exclude>
+
                             <exclude>**/*.md</exclude>
                             <exclude>.git/</exclude>
                             <exclude>.gitignore</exclude>
@@ -473,17 +444,74 @@
                             <exclude>CONTRIBUTING.md</exclude>
                             <exclude>CONTRIBUTING_CN.md</exclude>
                             <exclude>DISCLAIMER-WIP</exclude>
+                            <exclude>DISCLAIMER</exclude>
                             <exclude>README.md</exclude>
                             <exclude>**/META-INF/**</exclude>
                             <exclude>.github/**</exclude>
                             <exclude>compiler/**</exclude>
                             <exclude>**/generated/**</exclude>
-                            <exclude>**/spring.factories</exclude>
-                            <exclude>**/*.tdr</exclude>
-                            <exclude>**/*.tcd</exclude>
-                            <exclude>**/*.tdd</exclude>
                         </excludes>
                     </configuration>
+                </plugin>
+
+
+                <!--mvn license:add-third-party-->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>2.0.0</version>
+                    <executions>
+                        <execution>
+                            <id>license-check</id>
+                            <configuration>
+                                <!--<includedScopes>compile</includedScopes>-->
+                                <licenseMerges>
+                                    <licenseMerge>Apache License, Version 2.0|ASF 2.0|Apache 2.0 License|Apache 2.0|Apache 2|Apache License 2.0|Apache License Version 2.0|Apache License Version 2|Apache License v2.0|Apache License|Apache Public License 2.0|Apache Software License - Version 2.0|Apache v2|Apache-2.0|Apache_2_0_license
+                                        Apache|The Apache License, Version 2.0|The Apache Software License, Version 2.0|</licenseMerge>
+                                    <licenseMerge>MIT License|The MIT License</licenseMerge>
+                                    <licenseMerge>The 3-Clause BSD License|BSD-3-Clause|BSD 3-Clause|New BSD License|BSD 3-Clause License|BSD|3-Clause BSD License|New BSD license|The New BSD License|The BSD 3-Clause License</licenseMerge>
+                                    <licenseMerge>The 2-Clause BSD License|BSD-2-Clause|The BSD License|BSD License</licenseMerge>
+                                    <licenseMerge>Mozilla Public License Version 1.1|MPL 1.1</licenseMerge>
+                                    <licenseMerge>CDDL_1.0|CDDL 1.0</licenseMerge>
+                                    <licenseMerge>CDDL_1.0|COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</licenseMerge>
+                                    <licenseMerge>CDDL_1.0|Common_Development_and_Distribution_License_(CDDL)_v1_0</licenseMerge>
+                                    <licenseMerge>CDDL_1.0|Common Development and Distribution License (CDDL) v1.0</licenseMerge>
+                                    <licenseMerge>CDDL_1.0|CDDL 1.0 license</licenseMerge>
+                                    <licenseMerge>CDDL_1.0|CDDL 2</licenseMerge>
+                                    <licenseMerge>Eclipse Public License-1|Common_Public_License_Version_1_0</licenseMerge>
+                                    <licenseMerge>Eclipse Public License-1|Eclipse_Public_License_-_Version_1_0</licenseMerge>
+                                    <licenseMerge>Eclipse Public License-1|EPL 1.0 license</licenseMerge>
+
+                                    <licenseMerge>GPL|GNU General Public Library</licenseMerge>
+                                </licenseMerges>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.scalastyle</groupId>
+                    <artifactId>scalastyle-maven-plugin</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <verbose>false</verbose>
+                        <failOnViolation>true</failOnViolation>
+                        <includeTestSourceDirectory>false</includeTestSourceDirectory>
+                        <failOnWarning>false</failOnWarning>
+                        <sourceDirectory>${basedir}/src/main/scala</sourceDirectory>
+                        <testSourceDirectory>${basedir}/src/test/scala</testSourceDirectory>
+                        <configLocation>scalastyle-config.xml</configLocation>
+                        <outputFile>${basedir}/target/scalastyle-output.xml</outputFile>
+                        <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+                        <!--   <outputEncoding>${project.reporting.outputEncoding}</outputEncoding>-->
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>

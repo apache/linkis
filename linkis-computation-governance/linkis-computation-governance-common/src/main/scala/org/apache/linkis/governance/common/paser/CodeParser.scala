@@ -129,7 +129,7 @@ class PythonCodeParser extends SingleCodeParser {
         statementBuffer.append(l)
         recordBrackets(bracketStack, l)
       case l if quotationMarks => statementBuffer.append(l)
-      //shanhuang 用于修复python的引号问题
+      //用于修复python的引号问题
       //recordBrackets(bracketStack, l)
       case l if notDoc && l.startsWith("#") =>
       case l if StringUtils.isNotBlank(statementBuffer.last) && statementBuffer.last.endsWith("""\""") =>
@@ -186,34 +186,40 @@ class PythonCodeParser extends SingleCodeParser {
 }
 
 
-object Main {
-  def main(args: Array[String]): Unit = {
-    val codeParser = new PythonCodeParser
-    val code = "if True: \n print 1 \nelif N=123: \n print 456 \nelse: \n print 789"
-    println(code)
-    val arrCodes = codeParser.parse(code)
-    print(arrCodes.mkString("||\n"))
-  }
-}
-
-class SQLCodeParser extends SingleCodeParser {
+class SQLCodeParser extends SingleCodeParser with Logging  {
 
   override val codeType: CodeType = CodeType.SQL
 
   val separator = ";"
 
+  val specialSeparator = """\;"""
+
   val defaultLimit: Int = GovernanceCommonConf.ENGINE_DEFAULT_LIMIT.getValue
 
-  override def parse(code: String): Array[String] = {
-    //val realCode = StringUtils.substringAfter(code, "\n")
-    val codeBuffer = new ArrayBuffer[String]()
+  private def findRealSemicolonIndex(tempCode: String):Array[Int] = {
+    val realTempCode = if (!tempCode.endsWith(""";""")) tempCode + ";" else tempCode
+    val array = new ArrayBuffer[Int]()
+    for(i <- 0 until realTempCode.length - 1){
+      if ('\\' != realTempCode.charAt(i) && ';' == realTempCode.charAt(i + 1)) array += ( i + 1)
+    }
+    array.toArray
+  }
 
+  override def parse(code: String): Array[String] = {
+    val codeBuffer = new ArrayBuffer[String]()
     def appendStatement(sqlStatement: String): Unit = {
       codeBuffer.append(sqlStatement)
     }
-
-    if (StringUtils.contains(code, separator)) {
-      StringUtils.split(code, ";").foreach {
+    if (StringUtils.contains(code, specialSeparator)) {
+      val indices = findRealSemicolonIndex(code)
+      var oldIndex = 0
+      indices.foreach{
+        index => val singleCode = code.substring(oldIndex, index)
+          oldIndex = index + 1
+          if(StringUtils.isNotBlank(singleCode)) appendStatement(singleCode)
+      }
+    } else if (StringUtils.contains(code, separator)) {
+      StringUtils.split(code, ";").foreach{
         case s if StringUtils.isBlank(s) =>
         case s if isSelectCmdNoLimit(s) => appendStatement(s);
         case s => appendStatement(s);
@@ -234,19 +240,15 @@ class SQLCodeParser extends SingleCodeParser {
     if (code.contains("limit")) code = code.substring(code.lastIndexOf("limit")).trim
     else if (code.contains("LIMIT")) code = code.substring(code.lastIndexOf("LIMIT")).trim.toLowerCase
     else return true
-    code.matches("limit\\s+\\d+\\s*;?")
-    /**
-     * org.apache.linkis.entrance.interceptor.impl.Explain has convert and check the limit for code,
-     * so the check here is redundancy
-     */
-    /*    val hasLimit = code.matches("limit\\s+\\d+\\s*;?")
-        if (hasLimit) {
-          if (code.indexOf(";") > 0) code = code.substring(5, code.length - 1).trim
-          else code = code.substring(5).trim
-          val limitNum = code.toInt
-          if (limitNum > defaultLimit) throw new IllegalArgumentException("We at most allowed to limit " + defaultLimit + ", but your SQL has been over the max rows.")
-        }
-        !hasLimit*/
+    val hasLimit = code.matches("limit\\s+\\d+\\s*;?")
+    if (hasLimit) {
+      if (code.indexOf(";") > 0) code = code.substring(5, code.length - 1).trim
+      else code = code.substring(5).trim
+      val limitNum = code.toInt
+      if (limitNum > defaultLimit) // throw new IllegalArgumentException("We at most allowed to limit " + defaultLimit + ", but your SQL has been over the max rows.")
+        warn(s"Limit num ${limitNum} is over then max rows : ${defaultLimit}")
+    }
+    !hasLimit
   }
 }
 
@@ -258,13 +260,14 @@ class EmptyCodeParser extends SingleCodeParser {
 
 }
 
+
 object CodeType extends Enumeration {
   type CodeType = Value
-  val Python, SQL, Scala, Shell, Other, Remain = Value
+  val Python, SQL, Scala, Shell, Other, Remain, JSON = Value
 
   def getType(codeType: String): CodeType = codeType.toLowerCase() match {
     case "python" | "pyspark" | "py" => Python
-    case "sql" | "hql" => SQL
+    case "sql" | "hql" | "psql" => SQL
     case "scala" => Scala
     case "shell" | "sh" => Shell
     case _ => Other

@@ -49,7 +49,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
      public Message createContextID(HttpServletRequest req) throws InterruptedException {
         //contextID是client传过来的序列化的id
         PersistenceContextID contextID = new PersistenceContextID();
-        contextID.setUser("neiljianliu");
+        contextID.setUser("hadoop");
         contextID.setExpireType(ExpireType.TODAY);
         contextID.setExpireTime(new Date());
         contextID.setInstance("cs-server1");
@@ -71,7 +71,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     @RequestMapping(path = "updateContextID",method = RequestMethod.POST)
      public Message updateContextID( HttpServletRequest req) throws InterruptedException, CSErrorException {
         PersistenceContextID contextID = new PersistenceContextID();
-        contextID.setUser("johnnwang");
+        contextID.setUser("hadoop");
         contextID.setExpireType(ExpireType.NEVER);
         contextID.setExpireTime(new Date());
         contextID.setInstance("cs-server2");

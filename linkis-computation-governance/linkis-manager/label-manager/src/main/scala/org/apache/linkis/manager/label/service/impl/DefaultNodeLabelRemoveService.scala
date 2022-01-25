@@ -42,12 +42,10 @@ class DefaultNodeLabelRemoveService extends NodeLabelRemoveService with Logging 
 
   private val labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
-
   @Receiver
   override def removeNodeLabel(nodeLabelRemoveRequest: NodeLabelRemoveRequest): Unit = {
     info(s"Start to remove labels from node ${nodeLabelRemoveRequest.getServiceInstance}")
-    val permanentLabelKey = LabelCommonConfig.PERMANENT_LABEL.getValue.split(",")
-    nodeLabelService.removeLabelsFromNodeWithoutPermanent(nodeLabelRemoveRequest.getServiceInstance,permanentLabelKey)
+    nodeLabelService.removeLabelsFromNode(nodeLabelRemoveRequest.getServiceInstance)
     val persistenceLabel = if (nodeLabelRemoveRequest.isEngine) {
       val engineLabel = labelFactory.createLabel(classOf[EngineInstanceLabel])
       engineLabel.setInstance(nodeLabelRemoveRequest.getServiceInstance.getInstance)

@@ -17,7 +17,7 @@
  
 package org.apache.linkis.orchestrator.ecm
 
-import java.net.SocketTimeoutException
+import java.net.{ConnectException, SocketException, SocketTimeoutException}
 import java.util
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
@@ -122,9 +122,9 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
           throw t
       }
     }
-    if(retryException != null){
+    if (retryException != null) {
       throw retryException
-    }else{
+    } else {
       throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE,
         s"${mark.getMarkId()} Failed to ask engineAskRequest $engineAskRequest by retry ${getEngineConnApplyAttempts - count}  ")
     }
@@ -132,9 +132,16 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
 
   private def getEngineNodeAskManager(engineAskRequest: EngineAskRequest, mark: Mark): EngineNode = {
     val response = Utils.tryCatch(getManagerSender().ask(engineAskRequest)) { t: Throwable =>
+        val baseMsg = s"mark ${mark.getMarkId()}  failed to ask linkis Manager Can be retried "
         ExceptionUtils.getRootCause(t) match {
           case socketTimeoutException: SocketTimeoutException =>
-            val msg = s"mark ${mark.getMarkId()}  failed to ask linkis Manager Can be retried " + ExceptionUtils.getRootCauseMessage(t)
+            val msg = baseMsg + ExceptionUtils.getRootCauseMessage(t)
+            throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, msg)
+          case socketException: SocketException =>
+            val msg = baseMsg + ExceptionUtils.getRootCauseMessage(t)
+            throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, msg)
+          case connectException: ConnectException =>
+            val msg = baseMsg + ExceptionUtils.getRootCauseMessage(t)
             throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, msg)
           case _ =>
             throw t
@@ -152,8 +159,8 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
             engineNode
           case EngineCreateError(id, exception, retry) =>
             debug(s"${mark.getMarkId()} async id:$id Failed  to async get EngineNode, $exception")
-            if(retry){
-              throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, id + " Failed  to async get EngineNode" + exception)
+            if(retry) {
+              throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, id + " Failed  to async get EngineNode " + exception)
             }else{
               throw new ECMPluginErrorException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, id + " Failed  to async get EngineNode " + exception)
             }

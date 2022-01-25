@@ -25,7 +25,7 @@ import org.apache.linkis.scheduler.listener.LogListener
 import org.apache.linkis.scheduler.queue.Job
 
 
-abstract class LogManager extends LogListener with Logging with EntranceLogListener{
+abstract class LogManager extends LogListener with Logging {
 
   protected var errorCodeListener: Option[ErrorCodeListener] = None
   protected var errorCodeManager: Option[ErrorCodeManager] = None
@@ -45,10 +45,14 @@ abstract class LogManager extends LogListener with Logging with EntranceLogListe
       job match{
         case entranceExecutionJob: EntranceExecutionJob =>
           if (entranceExecutionJob.getLogWriter.isEmpty) entranceExecutionJob synchronized {
-            if (entranceExecutionJob.getLogWriter.isEmpty) createLogWriter(entranceExecutionJob)
+            if (entranceExecutionJob.getLogWriter.isEmpty) {
+              val logWriter = createLogWriter(entranceExecutionJob)
+              if (null == logWriter) {
+                return
+              }
+            }
           }
           entranceExecutionJob.getLogWriter.foreach(logWriter => logWriter.write(log))
-          entranceExecutionJob.getWebSocketLogWriter.foreach(writer => writer.write(log))
           errorCodeManager.foreach(_.errorMatch(log).foreach { case (code, errorMsg) =>
             errorCodeListener.foreach(_.onErrorCodeCreated(job, code, errorMsg))
           })
@@ -60,24 +64,8 @@ abstract class LogManager extends LogListener with Logging with EntranceLogListe
     }
   }
 
-  override def onEvent(event: EntranceLogEvent): Unit = {
-    event match {
-      case event: EntranceJobLogEvent => {
-        entranceContext.getOrCreateLogManager().dealLogEvent(event.job, event.log)
-      }
-      case _ =>
-    }
-  }
-
-  override def onEventError(event: EntranceLogEvent, t: Throwable): Unit = {
-    event match {
-      case EntranceJobLogEvent(job,log) => info(s"jobId:${job.getId()} log append error, reason:${t}")
-      case _ =>
-    }
-  }
-
   override def onLogUpdate(job: Job, log: String): Unit = {
-    entranceContext.getOrCreateLogListenerBus.post(EntranceJobLogEvent(job,log))
+    dealLogEvent(job, log)
   }
 
 }

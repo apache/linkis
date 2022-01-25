@@ -33,11 +33,27 @@ public class PersistenceNodeEntity implements Node {
 
     private Date startTime;
 
+    private Date updateTime;
+
+
+    @Override
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+
+    @Override
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    @Override
     public Date getStartTime() {
         return startTime;
     }
 
 
+    @Override
     public void setStartTime(Date startTime) {
         this.startTime = startTime;
     }

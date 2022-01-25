@@ -50,7 +50,7 @@ public class TestContextCacheService {
         persistenceManager.getContextIDPersistence().deleteContextID(contextIDStr);
         PersistenceContextID persistenceContextID = new PersistenceContextID();
         persistenceContextID.setContextId(String.valueOf(contextIDStr));
-        persistenceContextID.setUser("johnnwang");
+        persistenceContextID.setUser("hadoop");
         persistenceContextID.setExpireTime(new Date());
         persistenceContextID.setExpireType(ExpireType.TODAY);
         persistenceContextID.setInstance("updateInstance");

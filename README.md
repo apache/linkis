@@ -14,15 +14,15 @@ As a computation middleware, Linkis provides powerful connectivity, reuse, orche
 Since the first release of Linkis in 2019, it has accumulated more than **700** trial companies and **1000+** sandbox trial users, which involving diverse industries, from finance, banking, tele-communication, to manufactory, internet companies and so on. Lots of companies have already used Linkis as a unified entrance for the underlying computation and storage engines of the big data platform.
 
 
-![linkis-intro-01](images/linkis-intro-01.png)
+![linkis-intro-01](https://user-images.githubusercontent.com/7869972/148767375-aeb11b93-16ca-46d7-a30e-92fbefe2bd5e.png)
 
-![linkis-intro-03](images/linkis-intro-03.png)
+![linkis-intro-03](https://user-images.githubusercontent.com/7869972/148767380-c34f44b2-9320-4633-9ec8-662701f41d15.png)
 
 # Features
 
 - **Support for diverse underlying computation storage engines**.  
     Currently supported computation/storage engines: Spark, Hive, Python, Presto, ElasticSearch, MLSQL, TiSpark, JDBC, Shell, etc;      
-    Computation/storage engines to be supported: Flink, Impala, etc;      
+    Computation/storage engines to be supported: Flink(Supported in version >=1.0.2), Impala, etc;      
     Supported scripting languages: SparkSQL, HiveQL, Python, Shell, Pyspark, R, Scala and JDBC, etc.  
   
 - **Powerful task/request governance capabilities**. With services such as Orchestrator, Label Manager and customized Spring Cloud Gateway, Linkis is able to provide multi-level labels based, cross-cluster/cross-IDC fine-grained routing, load balance, multi-tenancy, traffic control, resource control, and orchestration strategies like dual-active, active-standby, etc.  
@@ -39,7 +39,7 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 
 | **Engine** | **Supported Version** | **Linkis 0.X version requirement**| **Linkis 1.X version requirement** | **Description** |
 |:---- |:---- |:---- |:---- |:---- |
-|Flink |1.11.0|\>=dev-0.12.0, PR #703 not merged yet.|ongoing|	Flink EngineConn. Supports FlinkSQL code, and also supports Flink Jar to Linkis Manager to start a new Yarn application.|
+|Flink |1.12.2|\>=dev-0.12.0, PR #703 not merged yet.|>=1.0.2|	Flink EngineConn. Supports FlinkSQL code, and also supports Flink Jar to Linkis Manager to start a new Yarn application.|
 |Impala|\>=3.2.0, CDH >=6.3.0"|\>=dev-0.12.0, PR #703 not merged yet.|ongoing|Impala EngineConn. Supports Impala SQL.|
 |Presto|\>= 0.180|\>=0.11.0|ongoing|Presto EngineConn. Supports Presto SQL.|
 |ElasticSearch|\>=6.0|\>=0.11.0|ongoing|ElasticSearch EngineConn. Supports SQL and DSL code.|
@@ -54,19 +54,19 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 
 # Download
 
-Please go to the [Linkis releases page](https://github.com/WeBankFinTech/Linkis/releases) to download a compiled distribution or a source code package of Linkis.
+Please go to the [Linkis Releases Page](https://github.com/apache/incubator-linkis/releases) to download a compiled distribution or a source code package of Linkis.
 
 # Compile and deploy
-Please follow [Compile Guide](https://github.com/WeBankFinTech/Linkis-Doc/blob/master/en_US/Development_Documents/Linkis_Compilation_Document.md) to compile Linkis from source code.  
-Please refer to [Deployment_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/en_US/Deployment_Documents) to do the deployment.
+Please follow [Compile Guide](https://linkis.apache.org/docs/latest/development/linkis_compile_and_package) to compile Linkis from source code.  
+Please refer to [Deployment Documents](https://linkis.apache.org/docs/latest/deployment/quick_deploy) to do the deployment.
 
 
 # Examples and Guidance
-You can find examples and guidance for how to use and manage Linkis in [User_Manual](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/en_US/User_Manual), [Engine_Usage_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/en_US/Engine_Usage_Documentations) and [API_Documents](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/en_US/API_Documentations).
+You can find examples and guidance for how to use and manage Linkis in [User Manual](https://linkis.apache.org/docs/latest/user_guide/overview), [Engine Usage Documents](https://linkis.apache.org/docs/latest/engine_usage/overview) and [API Documents](https://linkis.apache.org/docs/latest/api/overview).
 
 # Documentation
 
-The documentation of linkis is in [Linkis-Doc](https://github.com/WeBankFinTech/Linkis-Doc).
+The documentation of linkis is in [Linkis-Website Git Repository](https://github.com/apache/incubator-linkis-website).
 
 # Architecture
 Linkis services could be divided into three categories: computation governance services, public enhancement services and microservice governance services.
@@ -74,28 +74,28 @@ Linkis services could be divided into three categories: computation governance s
 - The public enhancement services, including the material library service, context service, and data source service;
 - The microservice governance services, including Spring Cloud Gateway, Eureka and Open Feign.
 
-Below is the Linkis architecture diagram. You can find more detailed architecture docs in [Linkis-Doc/Architecture](https://github.com/WeBankFinTech/Linkis-Doc/tree/master/en_US/Architecture_Documents).
-![architecture](images/Linkis_1.0_architecture.png)
+Below is the Linkis architecture diagram. You can find more detailed architecture docs in [Linkis-Doc/Architecture](https://linkis.apache.org/docs/latest/architecture/overview).
+![architecture](https://user-images.githubusercontent.com/7869972/148767383-f87e84ba-5baa-4125-8b6e-d0aa4f7d3a66.png)
 
 Based on Linkis the computation middleware, we've built a lot of applications and tools on top of it in the big data platform suite [WeDataSphere](https://github.com/WeBankFinTech/WeDataSphere). Below are the currently available open-source projects. More projects upcoming, please stay tuned.
 
-![wedatasphere_stack_Linkis](images/wedatasphere_stack_Linkis.png)
+![wedatasphere_stack_Linkis](https://user-images.githubusercontent.com/7869972/148767389-049361df-3609-4c2f-a4e2-c904c273300e.png)
 
 # Contributing
 
 Contributions are always welcomed, we need more contributors to build Linkis together. either code, or doc, or other supports that could help the community.  
-For code and documentation contributions, please follow the [contribution guide](https://github.com/WeBankFinTech/Linkis-Doc/blob/master/en_US/Development_Documents/Contributing.md).
+For code and documentation contributions, please follow the [contribution guide](https://linkis.apache.org/community/how-to-contribute).
 
 # Contact Us
 
 Any questions or suggestions please kindly submit an issue.  
 You can scan the QR code below to join our WeChat and QQ group to get more immediate response.
 
-![introduction05](images/wedatasphere_contact_01.png)
+![introduction05](https://user-images.githubusercontent.com/7869972/148767386-0663f833-547d-4c30-8876-081bb966ffb8.png)
 
 Meetup videos on [Bilibili](https://space.bilibili.com/598542776?from=search&seid=14344213924133040656).
 
 # Who is Using Linkis
 
-We opened [an issue](https://github.com/WeBankFinTech/Linkis/issues/23) for users to feedback and record who is using Linkis.  
+We opened [an issue](https://github.com/apache/incubator-linkis/issues/23) for users to feedback and record who is using Linkis.  
 Since the first release of Linkis in 2019, it has accumulated more than **700** trial companies and **1000+** sandbox trial users, which involving diverse industries, from finance, banking, tele-communication, to manufactory, internet companies and so on.

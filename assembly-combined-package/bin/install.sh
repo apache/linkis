@@ -59,7 +59,7 @@ function checkHadoopAndHive(){
     hadoopVersion="`hdfs version`"
     defaultHadoopVersion="2.7"
     checkversion "$hadoopVersion" $defaultHadoopVersion hadoop
-    checkversion "$(whereis hive)" "1.2" hive
+    checkversion "$(whereis hive)" "2.3" hive
 }
 
 function checkversion(){
@@ -114,8 +114,8 @@ isSuccess "check env"
 
 ##load config
 echo "step1:load config "
-export LINKIS_CONFIG_PATH=${LINKIS_CONFIG_PATH:-"${workDir}/config/linkis-env.sh"}
-export LINKIS_DB_CONFIG_PATH=${LINKIS_DB_CONFIG_PATH:-"${workDir}/config/db.sh"}
+export LINKIS_CONFIG_PATH=${LINKIS_CONFIG_PATH:-"${workDir}/deploy-config/linkis-env.sh"}
+export LINKIS_DB_CONFIG_PATH=${LINKIS_DB_CONFIG_PATH:-"${workDir}/deploy-config/db.sh"}
 source ${LINKIS_CONFIG_PATH}
 source ${LINKIS_DB_CONFIG_PATH}
 
@@ -173,7 +173,6 @@ isSuccess "create  $WORKSPACE_USER_ROOT_PATH directory"
    elif [[ $HDFS_USER_ROOT_PATH == hdfs://* ]];then
      localRootDir=${HDFS_USER_ROOT_PATH#hdfs://}
      hdfs dfs -mkdir -p $localRootDir/$deployUser
-     hdfs dfs -chmod -R 775 $localRootDir/$deployUser
    else
      echo "does not support $HDFS_USER_ROOT_PATH filesystem types"
    fi
@@ -191,7 +190,7 @@ isSuccess "create  $WORKSPACE_USER_ROOT_PATH directory"
    elif [[ $RESULT_SET_ROOT_PATH == hdfs://* ]];then
      localRootDir=${RESULT_SET_ROOT_PATH#hdfs://}
          hdfs dfs -mkdir -p $localRootDir/$deployUser
-         hdfs dfs -chmod -R 775 $localRootDir/$deployUser
+
    else
      echo "does not support $RESULT_SET_ROOT_PATH filesystem types"
    fi
@@ -211,15 +210,15 @@ echo "create dir LINKIS_HOME: $LINKIS_HOME"
 sudo mkdir -p $LINKIS_HOME;sudo chown -R $deployUser:$deployUser $LINKIS_HOME
 isSuccess "Create the dir of  $LINKIS_HOME"
 
-LINKIS_PACKAGE=${workDir}/apache-linkis-${LINKIS_VERSION}-combined-dist.tar.gz
+LINKIS_PACKAGE=${workDir}/linkis-package
 
-if ! test -e ${LINKIS_PACKAGE}; then
+if ! test -d ${LINKIS_PACKAGE}; then
     echo "**********Error: please put ${LINKIS_PACKAGE} in $workDir! "
     exit 1
 else
-    echo "Start to unzip ${LINKIS_PACKAGE} ."
-    tar -xzf ${LINKIS_PACKAGE}  -C $LINKIS_HOME
-    isSuccess "Unzip ${LINKIS_PACKAGE} to $LINKIS_HOME"
+    echo "Start to cp ${LINKIS_PACKAGE} to $LINKIS_HOME."
+    cp -r $LINKIS_PACKAGE/* $LINKIS_HOME
+    isSuccess "cp ${LINKIS_PACKAGE} to $LINKIS_HOME"
 fi
 
 cp ${LINKIS_CONFIG_PATH} $LINKIS_HOME/conf
@@ -228,6 +227,15 @@ cp ${LINKIS_CONFIG_PATH} $LINKIS_HOME/conf
 if [ "$YARN_RESTFUL_URL" != "" ]
 then
   sed -i ${txt}  "s#@YARN_RESTFUL_URL#$YARN_RESTFUL_URL#g" $LINKIS_HOME/db/linkis_dml.sql
+fi
+if [ "$KERBEROS_ENABLE" != "" ]
+then
+  sed -i ${txt}  "s#@KERBEROS_ENABLE#$KERBEROS_ENABLE#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@PRINCIPAL_NAME#$PRINCIPAL_NAME#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@KEYTAB_PATH#$KEYTAB_PATH#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@KRB5_PATH#$KRB5_PATH#g" $LINKIS_HOME/db/linkis_dml.sql
+else
+  sed -i ${txt}  "s#@KERBEROS_ENABLE#false#g" $LINKIS_HOME/db/linkis_dml.sql
 fi
 
 common_conf=$LINKIS_HOME/conf/linkis.properties
@@ -242,7 +250,7 @@ fi
 
 if [ "$HIVE_VERSION" != "" ]
 then
-  sed -i ${txt}  "s#hive-1.2.1#hive-$HIVE_VERSION#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#hive-2.3.3#hive-$HIVE_VERSION#g" $LINKIS_HOME/db/linkis_dml.sql
   sed -i ${txt}  "s#\#wds.linkis.hive.engine.version.*#wds.linkis.hive.engine.version=$HIVE_VERSION#g" $common_conf
 fi
 
@@ -318,10 +326,12 @@ sed -i ${txt}  "s#wds.linkis.filesystem.hdfs.root.path.*#wds.linkis.filesystem.h
 ##gateway
 gateway_conf=$LINKIS_HOME/conf/linkis-mg-gateway.properties
 echo "update conf $gateway_conf"
+defaultPwd=`date +%s%N | md5sum |cut -c 1-9`
 sed -i ${txt}  "s#wds.linkis.ldap.proxy.url.*#wds.linkis.ldap.proxy.url=$LDAP_URL#g" $gateway_conf
 sed -i ${txt}  "s#wds.linkis.ldap.proxy.baseDN.*#wds.linkis.ldap.proxy.baseDN=$LDAP_BASEDN#g" $gateway_conf
 sed -i ${txt}  "s#wds.linkis.ldap.proxy.userNameFormat.*#wds.linkis.ldap.proxy.userNameFormat=$LDAP_USER_NAME_FORMAT#g" $gateway_conf
 sed -i ${txt}  "s#wds.linkis.admin.user.*#wds.linkis.admin.user=$deployUser#g" $gateway_conf
+sed -i ${txt}  "s#\#wds.linkis.admin.password.*#wds.linkis.admin.password=$defaultPwd#g" $gateway_conf
 if [ "$GATEWAY_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$GATEWAY_PORT#g" $gateway_conf
@@ -341,6 +351,13 @@ then
   ENGINECONN_ROOT_PATH=$LINKIS_HOME/engineroot
 fi
 sed -i ${txt}  "s#wds.linkis.engineconn.root.dir.*#wds.linkis.engineconn.root.dir=$ENGINECONN_ROOT_PATH#g" $ecm_conf
+
+if [ ! -d $ENGINECONN_ROOT_PATH ] ;then
+    echo "create dir ENGINECONN_ROOT_PATH: $ENGINECONN_ROOT_PATH"
+    mkdir -p $ENGINECONN_ROOT_PATH
+fi
+sudo chmod -R 771 $ENGINECONN_ROOT_PATH
+
 if [ "$ENGINECONNMANAGER_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$ENGINECONNMANAGER_PORT#g" $ecm_conf
@@ -392,4 +409,5 @@ then
 fi
 
 
-echo "Congratulations! You have installed Linkis $LINKIS_VERSION successfully, please use sbin/linkis-start-all.sh to start it!"
+echo "Congratulations! You have installed Linkis $LINKIS_VERSION successfully, please use sh $LINKIS_HOME/sbin/linkis-start-all.sh to start it!"
+echo "Your default account password is$deployUser/$defaultPwd"

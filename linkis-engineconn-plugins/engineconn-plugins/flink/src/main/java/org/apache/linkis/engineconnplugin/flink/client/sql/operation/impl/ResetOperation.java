@@ -40,11 +40,10 @@ public class ResetOperation implements NonJobOperation {
 		// Renew the ExecutionContext by merging the default environment with original session context.
 		// Book keep all the session states of current ExecutionContext then
 		// re-register them into the new one.
-		ExecutionContext newExecutionContext = context
+		ExecutionContext.Builder builder = context
 			.newExecutionContextBuilder(context.getEnvironmentContext().getDefaultEnv())
-			.sessionState(executionContext.getSessionState())
-			.build();
-		context.setExecutionContext(newExecutionContext);
+			.sessionState(executionContext.getSessionState());
+		context.setExecutionContext(executionContext.cloneExecutionContext(builder));
 
 		return OperationUtil.OK;
 	}

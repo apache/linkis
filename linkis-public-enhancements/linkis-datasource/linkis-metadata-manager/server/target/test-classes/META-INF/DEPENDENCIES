@@ -1,0 +1,17 @@
+// ------------------------------------------------------------------
+// Transitive dependencies of this project determined from the
+// maven pom organized by organization.
+// ------------------------------------------------------------------
+
+linkis-metadata-manager-server
+
+
+From: 'The Apache Software Foundation' (http://www.apache.org/)
+  - linkis-datasource-manager-common (https://github.com/apache/incubator-linkis/linkis-datasource-manager-common) org.apache.linkis:linkis-datasource-manager-common:jar:1.0.3
+    License: Apache 2.0 License  (http://www.apache.org/licenses/LICENSE-2.0.html)
+  - linkis-metadata-manager-common (https://github.com/apache/incubator-linkis/linkis-metadata-manager-common) org.apache.linkis:linkis-metadata-manager-common:jar:1.0.3
+    License: Apache 2.0 License  (http://www.apache.org/licenses/LICENSE-2.0.html)
+
+
+
+

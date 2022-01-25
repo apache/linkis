@@ -77,43 +77,24 @@ public class QueryPersistenceManager extends PersistenceManager{
     }
 
     @Override
-    public void onResultSetCreated(EntranceExecuteRequest request, OutputExecuteResponse response) {
+    public void onResultSetCreated(Job job, OutputExecuteResponse response) {
         String path;
         try {
-            path = createResultSetEngine().persistResultSet(request, response);
+            path = createResultSetEngine().persistResultSet(job, response);
         } catch (Throwable e) {
-            EntranceJob job = null;
-            ExecutorManager executorManager = getEntranceContext().getOrCreateScheduler().getSchedulerContext().getOrCreateExecutorManager();
-            if (EntranceExecutorManager.class.isInstance(executorManager)) {
-                job = (EntranceJob) ((EntranceExecutorManager) executorManager).getEntranceJobByExecId(request.getJob().getId()).getOrElse(null);
-            }
-            String msg = "Persist resultSet failed for subJob : " + request.getSubJobInfo().getSubJobDetail().getId() + ", response : " + BDPJettyServerHelper.gson().toJson(response);
+            String msg = "Persist resultSet failed for subJob : " + job.getId() + ", response : " + BDPJettyServerHelper.gson().toJson(response);
             logger.error(msg);
             if (null != job) {
                 job.onFailure("persist resultSet failed!", e);
             } else {
-                logger.error("Cannot find job : {} in cache of ExecutorManager.", request.getJob().getJobRequest().getId());
+                logger.error("Cannot find job : {} in cache of ExecutorManager.", job.getId());
             }
             return;
         }
-        if(StringUtils.isNotBlank(path)) {
-            EntranceJob job = null;
-            try {
-                ExecutorManager executorManager = getEntranceContext().getOrCreateScheduler().getSchedulerContext().getOrCreateExecutorManager();
-                if (EntranceExecutorManager.class.isInstance(executorManager)) {
-                    job = (EntranceJob) ((EntranceExecutorManager) executorManager).getEntranceJobByExecId(request.getJob().getId()).getOrElse(null);
-                }
-            } catch (Throwable e) {
-                try {
-                    entranceContext.getOrCreateLogManager().onLogUpdate(job, "store resultSet failed! reason: " + ExceptionUtils.getRootCauseMessage(e));
-                    logger.error("store resultSet failed! reason:", e);
-                } catch (Throwable e1){
-                    logger.error("job {} onLogUpdate error, reason:", job.getId(), e1);
-                }
-                return;
-            }
-            SubJobInfo subJobInfo = request.getJob().getRunningSubJob();
-            String resultLocation = request.getJob().getRunningSubJob().getSubJobDetail().getResultLocation();
+        if(StringUtils.isNotBlank(path) && job instanceof EntranceJob) {
+            EntranceJob entranceJob = (EntranceJob) job;
+            SubJobInfo subJobInfo = entranceJob.getRunningSubJob();
+            String resultLocation = entranceJob.getRunningSubJob().getSubJobDetail().getResultLocation();
             if (StringUtils.isEmpty(resultLocation)) {
                 synchronized (subJobInfo.getSubJobDetail()) {
                     // todo check
@@ -138,6 +119,9 @@ public class QueryPersistenceManager extends PersistenceManager{
             logger.error("Got negitive progress : " + progress + ", job : " + ((EntranceJob) job).getJobRequest().getId());
             // todo check
             updatedProgress = -1 * progress;
+        }
+        if(job.getProgress() >= 0 && job.getProgress() == updatedProgress){
+            return ;
         }
         job.setProgress(updatedProgress);
         EntranceJob entranceJob = (EntranceJob) job;
@@ -165,7 +149,7 @@ public class QueryPersistenceManager extends PersistenceManager{
 
     @Override
     public void onJobCompleted(Job job) {
-        //update by peaceWong to set jobID to CS
+        //to set jobID to CS
         try {
             if (job.isSucceed()) {
                 CSEntranceHelper.registerCSRSData(job);
@@ -182,7 +166,7 @@ public class QueryPersistenceManager extends PersistenceManager{
             job.setProgress(1);
         }
         try{
-            jobRequest = ((EntranceJob) job).getJobRequest();
+            jobRequest = this.entranceContext.getOrCreateEntranceParser().parseToJobRequest(job);
             if (job.isSucceed()){
                 //如果是job是成功的，那么需要将task的错误描述等都要设置为null
                 jobRequest.setErrorCode(0);
@@ -201,7 +185,6 @@ public class QueryPersistenceManager extends PersistenceManager{
     }
 
     @Override
-    public void onResultSizeCreated(EntranceExecuteRequest entranceExecuteRequest, int resultSize) {
-        entranceExecuteRequest.getSubJobInfo().getSubJobDetail().setResultSize(resultSize);
+    public void onResultSizeCreated(Job job, int resultSize) {
     }
 }

@@ -98,7 +98,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
     if (resultSetFactory.isResultSetPath(output) || resultSetFactory.isResultSet(output)) {
       val listenerBus = getEngineSyncListenerBus
       getJobId.foreach(jId => {
-        //TODO peacewong executor.getEngineServerContext().getEngineAsyncListenerBus().post(ResultSetCreatedEvent(jId, output, alias))
+        //TODO executor.getEngineServerContext().getEngineAsyncListenerBus().post(ResultSetCreatedEvent(jId, output, alias))
         listenerBus.postToAll(TaskResultCreateEvent(jId, output, alias))
         resultSize += 1
       })
@@ -122,7 +122,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
   def newResultSetWriter(resultSet: ResultSet[_ <: MetaData, _ <: Record],
                          resultSetPath: FsPath,
                          alias: String): ResultSetWriter[_ <: MetaData, _ <: Record] = {
-    //update by peaceWong 20200402
+    //update by 20200402
     resultSet match {
       case result: TableResultSet =>
         val contextIDStr = ContextServiceUtils.getContextIDStrByMap(getProperties)
@@ -136,7 +136,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
         }
       case _ => ResultSetWriter.getResultSetWriter(resultSet, ComputationExecutorConf.ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath, executorUser)
     }
-    //update by peaceWong 20200402 end
+    //update by 20200402 end
   }
 
   def appendStdout(log: String): Unit = if (executor.isInternalExecute) {

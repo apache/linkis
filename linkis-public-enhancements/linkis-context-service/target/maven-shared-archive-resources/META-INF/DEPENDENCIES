@@ -1,0 +1,99 @@
+// ------------------------------------------------------------------
+// Transitive dependencies of this project determined from the
+// maven pom organized by organization.
+// ------------------------------------------------------------------
+
+linkis-context-service
+
+
+From: 'an unknown organization'
+  - mybatis-plus (https://github.com/baomidou/mybatis-plus) com.baomidou:mybatis-plus:jar:3.4.1
+    License: The Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - mybatis-plus (https://github.com/baomidou/mybatis-plus) com.baomidou:mybatis-plus-annotation:jar:3.4.1
+    License: The Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - mybatis-plus (https://github.com/baomidou/mybatis-plus) com.baomidou:mybatis-plus-boot-starter:jar:3.4.1
+    License: The Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - mybatis-plus (https://github.com/baomidou/mybatis-plus) com.baomidou:mybatis-plus-core:jar:3.4.1
+    License: The Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - mybatis-plus (https://github.com/baomidou/mybatis-plus) com.baomidou:mybatis-plus-extension:jar:3.4.1
+    License: The Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - pagehelper 5 (https://github.com/pagehelper/Mybatis-PageHelper) com.github.pagehelper:pagehelper:jar:5.1.4
+    License: The MIT License (MIT)  (https://github.com/pagehelper/Mybatis-PageHelper/blob/master/LICENSE)
+  - FindBugs-Annotations (http://findbugs.sourceforge.net/) com.google.code.findbugs:annotations:jar:2.0.1
+    License: GNU Lesser Public License  (http://www.gnu.org/licenses/lgpl.html)
+  - Gson (https://github.com/google/gson/gson) com.google.code.gson:gson:jar:2.8.5
+    License: Apache 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Javassist (http://www.javassist.org/) org.javassist:javassist:bundle:3.19.0-GA
+    License: MPL 1.1  (http://www.mozilla.org/MPL/MPL-1.1.html)    License: LGPL 2.1  (http://www.gnu.org/licenses/lgpl-2.1.html)    License: Apache License 2.0  (http://www.apache.org/licenses/)
+  - Reflections (http://github.com/ronmamo/reflections) org.reflections:reflections:jar:0.9.10
+    License: WTFPL  (http://www.wtfpl.net/)    License: The New BSD License  (http://www.opensource.org/licenses/bsd-license.html)
+
+From: 'JSQLParser'
+  - JSQLParser library (https://github.com/JSQLParser/JSqlParser) com.github.jsqlparser:jsqlparser:bundle:1.0
+    License: GNU Library or Lesser General Public License (LGPL) V2.1  (http://www.gnu.org/licenses/lgpl-2.1.html)    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+From: 'MyBatis.org' (http://www.mybatis.org/)
+  - mybatis-spring (http://www.mybatis.org/spring/) org.mybatis:mybatis-spring:jar:2.0.5
+    License: The Apache Software License, Version 2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+
+From: 'MyBatis.org' (https://www.mybatis.org/)
+  - mybatis (http://www.mybatis.org/mybatis-3) org.mybatis:mybatis:jar:3.5.6
+    License: The Apache Software License, Version 2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+
+From: 'Pivotal Software, Inc.' (https://spring.io)
+  - spring-boot-starter-jdbc (https://spring.io/projects/spring-boot) org.springframework.boot:spring-boot-starter-jdbc:jar:2.3.2.RELEASE
+    License: Apache License, Version 2.0  (https://www.apache.org/licenses/LICENSE-2.0)
+
+From: 'QOS.ch' (http://www.qos.ch)
+  - SLF4J API Module (http://www.slf4j.org) org.slf4j:slf4j-api:jar:1.7.30
+    License: MIT License  (http://www.opensource.org/licenses/mit-license.php)
+
+From: 'Spring IO' (https://spring.io/projects/spring-framework)
+  - Spring Beans (https://github.com/spring-projects/spring-framework) org.springframework:spring-beans:jar:5.2.15.RELEASE
+    License: Apache License, Version 2.0  (https://www.apache.org/licenses/LICENSE-2.0)
+  - Spring Core (https://github.com/spring-projects/spring-framework) org.springframework:spring-core:jar:5.2.15.RELEASE
+    License: Apache License, Version 2.0  (https://www.apache.org/licenses/LICENSE-2.0)
+  - Spring Commons Logging Bridge (https://github.com/spring-projects/spring-framework) org.springframework:spring-jcl:jar:5.2.15.RELEASE
+    License: Apache License, Version 2.0  (https://www.apache.org/licenses/LICENSE-2.0)
+  - Spring JDBC (https://github.com/spring-projects/spring-framework) org.springframework:spring-jdbc:jar:5.2.15.RELEASE
+    License: Apache License, Version 2.0  (https://www.apache.org/licenses/LICENSE-2.0)
+  - Spring Transaction (https://github.com/spring-projects/spring-framework) org.springframework:spring-tx:jar:5.2.15.RELEASE
+    License: Apache License, Version 2.0  (https://www.apache.org/licenses/LICENSE-2.0)
+
+From: 'The Apache Software Foundation' (http://www.apache.org/)
+  - Commons Math (http://commons.apache.org/math/) org.apache.commons:commons-math3:jar:3.1.1
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - linkis-cs-cache (https://github.com/apache/incubator-linkis/linkis-cs-cache) org.apache.linkis:linkis-cs-cache:jar:1.0.3
+    License: Apache 2.0 License  (http://www.apache.org/licenses/LICENSE-2.0.html)
+  - linkis-cs-common (https://github.com/apache/incubator-linkis/linkis-cs-common) org.apache.linkis:linkis-cs-common:jar:1.0.3
+    License: Apache 2.0 License  (http://www.apache.org/licenses/LICENSE-2.0.html)
+  - linkis-cs-highavailable (https://github.com/apache/incubator-linkis/linkis-cs-highavailable) org.apache.linkis:linkis-cs-highavailable:jar:1.0.3
+    License: Apache 2.0 License  (http://www.apache.org/licenses/LICENSE-2.0.html)
+  - linkis-cs-listener (https://github.com/apache/incubator-linkis/linkis-cs-listener) org.apache.linkis:linkis-cs-listener:jar:1.0.3
+    License: Apache 2.0 License  (http://www.apache.org/licenses/LICENSE-2.0.html)
+  - linkis-cs-persistence (https://github.com/apache/incubator-linkis/linkis-cs-persistence) org.apache.linkis:linkis-cs-persistence:jar:1.0.3
+    License: Apache 2.0 License  (http://www.apache.org/licenses/LICENSE-2.0.html)
+  - linkis-cs-search (https://github.com/apache/incubator-linkis/linkis-cs-search) org.apache.linkis:linkis-cs-search:jar:1.0.3
+    License: Apache 2.0 License  (http://www.apache.org/licenses/LICENSE-2.0.html)
+  - linkis-cs-server (https://github.com/apache/incubator-linkis/linkis-cs-server) org.apache.linkis:linkis-cs-server:jar:1.0.3
+    License: Apache 2.0 License  (http://www.apache.org/licenses/LICENSE-2.0.html)
+  - linkis-instance-label-client (https://github.com/apache/incubator-linkis/linkis-instance-label-client) org.apache.linkis:linkis-instance-label-client:jar:1.0.3
+    License: Apache 2.0 License  (http://www.apache.org/licenses/LICENSE-2.0.html)
+  - linkis-label-common (https://github.com/apache/incubator-linkis/linkis-label-common) org.apache.linkis:linkis-label-common:jar:1.0.3
+    License: Apache 2.0 License  (http://www.apache.org/licenses/LICENSE-2.0.html)
+  - linkis-mybatis (https://github.com/apache/incubator-linkis/linkis-mybatis) org.apache.linkis:linkis-mybatis:jar:1.0.3
+    License: Apache 2.0 License  (http://www.apache.org/licenses/LICENSE-2.0.html)
+
+From: 'The Apache Software Foundation' (https://www.apache.org/)
+  - Apache Commons Lang (http://commons.apache.org/proper/commons-lang/) org.apache.commons:commons-lang3:jar:3.8.1
+    License: Apache License, Version 2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Apache Commons Text (http://commons.apache.org/proper/commons-text) org.apache.commons:commons-text:jar:1.6
+    License: Apache License, Version 2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+
+From: 'Zaxxer.com' (https://github.com/brettwooldridge)
+  - HikariCP (https://github.com/brettwooldridge/HikariCP) com.zaxxer:HikariCP:bundle:3.4.5
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+
+
+

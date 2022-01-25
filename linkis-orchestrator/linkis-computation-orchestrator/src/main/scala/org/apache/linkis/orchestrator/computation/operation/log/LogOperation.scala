@@ -17,6 +17,8 @@
  
 package org.apache.linkis.orchestrator.computation.operation.log
 
+import java.util.concurrent.ConcurrentHashMap
+
 import org.apache.linkis.common.listener.Event
 import org.apache.linkis.orchestrator.core.AbstractOrchestration
 import org.apache.linkis.orchestrator.extensions.operation.Operation
@@ -33,7 +35,7 @@ import scala.collection.mutable
   */
 class LogOperation(orchestratorSession: OrchestratorSession) extends Operation[LogProcessor] with TaskLogListener{
 
-  private val execTaskToLogProcessor = new mutable.HashMap[String, LogProcessor]()
+  private val execTaskToLogProcessor = new ConcurrentHashMap[String, LogProcessor]()
 
   private var isInitialized = false
 
@@ -78,7 +80,7 @@ class LogOperation(orchestratorSession: OrchestratorSession) extends Operation[L
   }
 
   override def onLogUpdate(taskLogEvent: TaskLogEvent): Unit = {
-    execTaskToLogProcessor.get(taskLogEvent.execTask.getPhysicalContext.getRootTask.getId).foreach(_.writeLog(taskLogEvent.log))
+    Option(execTaskToLogProcessor.get(taskLogEvent.execTask.getPhysicalContext.getRootTask.getId)).foreach(_.writeLog(taskLogEvent.log))
   }
 
   override def onEventError(event: Event, t: Throwable): Unit = {}

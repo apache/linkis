@@ -36,3 +36,13 @@ pagehelper:
 #ribbon:
 #  ReadTimeout: 10000
 #  ConnectTimeout: 10000
+
+#  enable for knife4j used by all micro services except gateway and eureka
+#knife4j:
+#  enable: true
+#  basic:
+#    enable: false
+#    # Basic认证用户名
+#    username: test
+#    # Basic认证密码
+#    password: 123

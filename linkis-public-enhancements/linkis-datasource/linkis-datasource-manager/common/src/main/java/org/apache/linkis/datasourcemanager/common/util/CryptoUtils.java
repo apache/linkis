@@ -27,7 +27,7 @@ public class CryptoUtils {
     private CryptoUtils(){
     }
     /**
-     * 序列化对象为String字符
+     * The serialized object is a string character
      *
      * @param o Object
      * @return String
@@ -48,7 +48,7 @@ public class CryptoUtils {
     }
 
     /**
-     * 反序列化字符串为对象
+     * Deserialize string as object
      *
      * @param str String
      * @return Object

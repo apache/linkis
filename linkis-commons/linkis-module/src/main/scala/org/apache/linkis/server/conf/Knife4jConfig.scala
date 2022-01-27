@@ -16,6 +16,12 @@ import springfox.documentation.spi.DocumentationType
 import springfox.documentation.spring.web.plugins.Docket
 import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc
 
+/**
+- 启动knife的apidoc的步骤很简单
+- 1,打开application-linkis.yml,配置knife4j.enable=true
+- 2,打开linkis.properties，配置ds.linkis.test.mode=true
+- 3，启动服务之后，通过微服务地址http://ip:port/api/rest_j/v1/doc.html访问
+ */
 @EnableSwagger2WebMvc
 @EnableKnife4j
 @Configuration

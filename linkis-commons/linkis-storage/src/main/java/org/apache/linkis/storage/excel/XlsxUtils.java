@@ -17,7 +17,7 @@
  
 package org.apache.linkis.storage.excel;
 
-import com.monitorjbl.xlsx.StreamingReader;
+import com.github.pjfanning.xlsx.StreamingReader;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -33,45 +33,47 @@ import java.util.List;
 public class XlsxUtils {
 
     public static List<List<String>> getBasicInfo(InputStream inputStream, File file) throws Exception{
-        List<List<String>> res = new ArrayList<>();
-        Workbook wb = null;
-        if(inputStream != null){
-            wb = StreamingReader.builder()
-                    .sstCacheSize(100)
-                    .rowCacheSize(2)    // number of rows to keep in memory (defaults to 10)
-                    .open(inputStream);
-        } else {
-            wb = StreamingReader.builder()
-                    .sstCacheSize(100)
-                    .rowCacheSize(2)    // number of rows to keep in memory (defaults to 10)
-                    .open(file);
-        }
-        List<String> sheetNames = new ArrayList<>();
-        for(Sheet sheet : wb){
-            sheetNames.add(sheet.getSheetName());
-        }
+        try {
+            List<List<String>> res = new ArrayList<>();
+            Workbook wb = null;
+            if(inputStream != null){
+                wb = StreamingReader.builder()
+                        .rowCacheSize(2)    // number of rows to keep in memory (defaults to 10)
+                        .setUseSstReadOnly(true)
+                        .open(inputStream);
+            } else {
+                wb = StreamingReader.builder()
+                        .rowCacheSize(2)    // number of rows to keep in memory (defaults to 10)
+                        .setUseSstReadOnly(true)
+                        .open(file);
+            }
+            List<String> sheetNames = new ArrayList<>();
+            for(Sheet sheet : wb){
+                sheetNames.add(sheet.getSheetName());
+            }
 
-        Sheet sheet = wb.getSheetAt(0);
-        Iterator<Row> iterator = sheet.iterator();
-        Row row = null;
-        while(iterator.hasNext() && row == null){
-            row = iterator.next();
-        }
+            Sheet sheet = wb.getSheetAt(0);
+            Iterator<Row> iterator = sheet.iterator();
+            Row row = null;
+            while(iterator.hasNext() && row == null){
+                row = iterator.next();
+            }
 
-        if(row == null){
-            throw new Exception("The incoming Excel file is empty(传入的Excel文件为空)");
-        }
+            if(row == null){
+                throw new Exception("The incoming Excel file is empty(传入的Excel文件为空)");
+            }
 
-        List<String> values = new ArrayList<>();
-        for(Cell cell:row){
-            values.add(cell.getStringCellValue());
+            List<String> values = new ArrayList<>();
+            for(Cell cell:row){
+                values.add(cell.getStringCellValue());
+            }
+            res.add(sheetNames);
+            res.add(values);
+            return res;
+        } finally {
+            if(inputStream != null){
+                inputStream.close();
+            }
         }
-        if(inputStream != null){
-            inputStream.close();
-        }
-        res.add(sheetNames);
-        res.add(values);
-        return res;
-
     }
 }

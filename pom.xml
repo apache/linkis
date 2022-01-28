@@ -121,6 +121,7 @@
         <httpclient.version>4.5.4</httpclient.version>
         <httpmime.version>4.5.4</httpmime.version>
         <slf4j.version>1.7.30</slf4j.version>
+        <knife4j.version>2.0.9</knife4j.version>
         <maven.version>3.3.3</maven.version>
         <xstream.core.version>1.4.15</xstream.core.version>
         <spring.version>5.2.12.RELEASE</spring.version>

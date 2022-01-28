@@ -245,12 +245,12 @@ junit-4.13.1.jar
 LatencyUtils-2.0.3.jar
 leveldbjni-all-1.8.jar
 log4j-1.2.17.jar
-log4j-1.2-api-2.13.3.jar
+log4j-1.2-api-2.17.1.jar
 log4j-1.2-api-2.6.2.jar
-log4j-api-2.13.3.jar
-log4j-core-2.13.3.jar
-log4j-jul-2.13.3.jar
-log4j-slf4j-impl-2.13.3.jar
+log4j-api-2.17.1.jar
+log4j-core-2.17.1.jar
+log4j-jul-2.17.1.jar
+log4j-slf4j-impl-2.17.1.jar
 log4j-web-2.6.2.jar
 mchange-commons-java-0.2.15.jar
 metrics-core-3.1.0.jar

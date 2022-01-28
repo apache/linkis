@@ -38,10 +38,10 @@ import org.springframework.beans.factory.annotation.Value
  * it is very easy to enable knife when you want to use apiDoc(based on swagger2)
  * you can follow these steps to enable
  * 1, open application-linkis.yml and set knife4j.production=false
- * 2, open linkis.properties and set ds.linkis.test.mode=true
+ * 2, open linkis.properties and set wds.linkis.test.mode=true ## it will be renamed as linkis.test.mode in future release
  * 3, restart the service and you can visit http://ip:port/api/rest_j/v1/doc.html
  *
- * or you can use apidoc by following steps  without enable ds.linkis.test.mode
+ * or you can use apidoc by following steps  without enable wds.linkis.test.mode
  * 1, open application-linkis.yml and set knife4j.production=false
  * 2, open linkis.propertes ,and set wds.linkis.server.user.restful.uri.pass.auth=/api/rest_j/v1/doc.html,/api/rest_j/v1/swagger-resources,/api/rest_j/v1/webjars,/api/rest_j/v1/v2/api-docs
  * 3, restart the service and you can visit http://ip:port/api/rest_j/v1/doc.html

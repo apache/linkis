@@ -98,7 +98,6 @@
         <module>linkis-extensions</module>
         <module>assembly-combined-package</module>
     </modules>
-
     <properties>
         <linkis.version>1.0.3</linkis.version>
         <hadoop.version>2.7.2</hadoop.version>

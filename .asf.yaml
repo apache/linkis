@@ -49,7 +49,7 @@ github:
   enabled_merge_buttons:
     merge:  true
     squash: true
-    rebase: false
+    rebase: true
   protected_branches:
     master:
       required_status_checks:
@@ -58,12 +58,6 @@ github:
         dismiss_stale_reviews: true
         required_approving_review_count: 2
     dev-1.1.0:
-      required_status_checks:
-        strict: true
-      required_pull_request_reviews:
-        dismiss_stale_reviews: true
-        required_approving_review_count: 1
-    dev-1.1.1:
       required_status_checks:
         strict: true
       required_pull_request_reviews:

@@ -87,18 +87,6 @@ public class DataSourceOperateRestfulApi {
         }, "/data-source-manager/op/connect/json","");
     }
 
-//    @POST
-//    @Path("/connect/form")
-//    public Response connect(FormDataMultiPart multiPartForm,
-//                            @Context HttpServletRequest request){
-//        return RestfulApiHelper.doAndResponse(() -> {
-//            String operator = SecurityFilter.getLoginUsername(request);
-//            DataSource dataSource = formDataTransformer.transformToObject(multiPartForm, DataSource.class, beanValidator);
-//            doConnect(operator, dataSource);
-//            return Message.ok().data("ok", true);
-//        }, "/data-source-manager/op/connect/form","");
-//    }
-
     /**
      * Build a connection
      * @param dataSource

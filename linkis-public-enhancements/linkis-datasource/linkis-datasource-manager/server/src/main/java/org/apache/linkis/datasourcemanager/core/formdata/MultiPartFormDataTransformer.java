@@ -35,7 +35,4 @@ public interface MultiPartFormDataTransformer {
      * @throws ValidationException
      * @throws ErrorException
      */
-//    <T>T transformToObject(FormDataMultiPart formData, Class<?> clazz, Validator beanValidator)
-//            throws ValidationException, ErrorException;
-
 }

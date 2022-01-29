@@ -41,9 +41,14 @@ then
    export DEBUG_CMD="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=$DEBUG_PORT"
 fi
 
+
+if [[ -e "$SKYWALKING_AGENT_PATH" && -e $SKYWALKING_AGENT_PATH ]]; then
+    export JAVA_AGENT_OPTS="-javaagent:$SKYWALKING_AGENT_PATH=agent.service_name=$SERVER_NAME"
+fi
+
 if test -z "$SERVER_JAVA_OPTS"
 then
-  export SERVER_JAVA_OPTS=" -DserviceName=$SERVER_NAME -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$LINKIS_LOG_DIR/${SERVER_NAME}-gc.log $DEBUG_CMD"
+  export SERVER_JAVA_OPTS=" $JAVA_AGENT_OPTS -DserviceName=$SERVER_NAME -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$LINKIS_LOG_DIR/${SERVER_NAME}-gc.log $DEBUG_CMD"
 fi
 
 

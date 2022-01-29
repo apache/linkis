@@ -26,6 +26,7 @@ import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.execute.EntranceJob$;
 import org.apache.linkis.entrance.log.*;
 import org.apache.linkis.entrance.persistence.PersistenceManager;
+import org.apache.linkis.entrance.utils.CommonLogPathUtils;
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.governance.common.entity.job.SubJobDetail;
 import org.apache.linkis.governance.common.entity.job.SubJobInfo;
@@ -221,6 +222,8 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
             }
         }
         String resultSetPathRoot = GovernanceCommonConf.RESULT_SET_STORE_PATH().getValue(runtimeMapTmp);
+        //issue 1314, create the resultSetStorePath by jvmuser with privilege 770
+        CommonLogPathUtils.buildCommonPath(GovernanceCommonConf.RESULT_SET_STORE_PATH().getValue());
         Map<String, Object> jobMap = new HashMap<String, Object>();
         jobMap.put(RequestTask$.MODULE$.RESULT_SET_STORE_PATH(), resultSetPathRoot);
         runtimeMapOri.put(QueryParams$.MODULE$.JOB_KEY(), jobMap);

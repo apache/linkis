@@ -116,7 +116,7 @@
         <json4s.version>3.5.3</json4s.version>
         <jersey.version>2.16</jersey.version>
         <jersey.servlet.version>2.23.1</jersey.servlet.version>
-        <jetty.version>9.4.20.v20190813</jetty.version>
+        <jetty.version>9.4.44.v20210927</jetty.version>
         <httpclient.version>4.5.13</httpclient.version>
         <httpmime.version>4.5.4</httpmime.version>
         <slf4j.version>1.7.30</slf4j.version>

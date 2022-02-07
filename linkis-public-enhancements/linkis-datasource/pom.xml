@@ -35,5 +35,6 @@
         <module>linkis-metadata-manager/common</module>
         <module>linkis-metadata-manager/server</module>
         <module>linkis-metadata-manager/service/elasticsearch</module>
+        <module>linkis-metadata-manager/service/hive</module>
     </modules>
 </project>

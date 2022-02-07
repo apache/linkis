@@ -97,7 +97,6 @@
         <module>linkis-engineconn-plugins</module>
         <module>linkis-extensions</module>
         <module>assembly-combined-package</module>
-        <module>linkis-public-enhancements/linkis-datasource/linkis-metadata-manager/service/elasticsearch</module>
     </modules>
     <properties>
         <linkis.version>1.0.3</linkis.version>

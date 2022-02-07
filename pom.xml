@@ -122,7 +122,7 @@
         <httpmime.version>4.5.4</httpmime.version>
         <slf4j.version>1.7.30</slf4j.version>
         <maven.version>3.3.3</maven.version>
-        <xstream.core.version>1.4.18</xstream.core.version>
+        <xstream.core.version>1.4.19</xstream.core.version>
         <spring.version>5.2.15.RELEASE</spring.version>
         <spring.security.cryto.version>5.4.4</spring.security.cryto.version>
         <reflections.version>0.9.10</reflections.version>

@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.httpclient.config
 
+import org.apache.commons.lang.StringUtils
 import org.apache.linkis.common.utils.RetryHandler
 import org.apache.linkis.httpclient.authentication.{AbstractAuthenticationStrategy, AuthenticationStrategy}
 import org.apache.linkis.httpclient.loadbalancer.LoadBalancerStrategy
@@ -25,6 +26,7 @@ import scala.concurrent.duration.TimeUnit
 
 
 class ClientConfig private() {
+
   private var serverUrl: String = _
   private var discoveryEnabled: Boolean = false
   private var discoveryPeriod: Long = _
@@ -36,7 +38,7 @@ class ClientConfig private() {
   private var authTokenValue: String = _
   private var connectTimeout: Long = _
   private var readTimeout: Long = _
-  private var maxConnection: Int = _
+  private var maxConnection: Int = 20
   private var retryEnabled: Boolean = _
   private var retryHandler: RetryHandler = _
 
@@ -46,7 +48,9 @@ class ClientConfig private() {
                              authTokenKey: String, authTokenValue: String) = {
     this()
     this.serverUrl = serverUrl
+
     this.discoveryEnabled = discoveryEnabled
+
     this.discoveryPeriod = discoveryPeriod
     this.discoveryTimeUnit = discoveryTimeUnit
     this.loadbalancerEnabled = loadbalancerEnabled
@@ -66,18 +70,39 @@ class ClientConfig private() {
   }
 
   def getServerUrl = serverUrl
+
+  def getDefaultServerUrl: String = {
+    if (StringUtils.isNotBlank(serverUrl) && serverUrl.contains(HttpClientConstant.URL_SPLIT_TOKEN)) {
+      serverUrl.split(HttpClientConstant.URL_SPLIT_TOKEN)(0)
+    } else {
+      serverUrl
+    }
+  }
+
   def isDiscoveryEnabled = discoveryEnabled
+
   def getDiscoveryPeriod = discoveryPeriod
+
   def getDiscoveryTimeUnit = discoveryTimeUnit
+
   def isLoadbalancerEnabled = loadbalancerEnabled
+
   def getLoadbalancerStrategy = loadbalancerStrategy
+
   def getAuthenticationStrategy = authenticationStrategy
+
   def getAuthTokenKey: String = authTokenKey
+
   def getAuthTokenValue: String = authTokenValue
+
   def getConnectTimeout = connectTimeout
+
   def getReadTimeout = readTimeout
+
   def getMaxConnection = maxConnection
+
   def isRetryEnabled = retryEnabled
+
   def getRetryHandler = retryHandler
 
 }

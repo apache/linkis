@@ -66,4 +66,6 @@ object StorageConfiguration {
 
   val HDFS_PATH_PREFIX_REMOVE = CommonVars[Boolean]("wds.linkis.storage.hdfs.prefxi.remove", true)
 
+  val FS_CACHE_DISABLE = CommonVars[java.lang.Boolean]("wds.linkis.fs.hdfs.impl.disable.cache", false)
+
 }

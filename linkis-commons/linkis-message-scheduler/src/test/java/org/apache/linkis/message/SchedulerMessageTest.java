@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.message;
 
 import org.apache.linkis.message.annotation.Receiver;
@@ -27,6 +27,7 @@ import org.apache.linkis.message.parser.ServiceMethod;
 import org.apache.linkis.message.registry.AbstractImplicitRegistry;
 import org.apache.linkis.message.registry.AbstractServiceRegistry;
 import org.apache.linkis.protocol.message.RequestProtocol;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.reflections.Reflections;
@@ -40,21 +41,20 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-/**
- * @date 2020/7/14
- */
+/** @date 2020/7/14 */
 public class SchedulerMessageTest {
 
     private AbstractMessageSchedulerContext context;
 
-    Reflections reflections = new Reflections(MessageSchedulerConf.SERVICE_SCAN_PACKAGE, new MethodAnnotationsScanner());
+    Reflections reflections =
+            new Reflections(
+                    MessageSchedulerConf.SERVICE_SCAN_PACKAGE, new MethodAnnotationsScanner());
 
     @Before
     public void before() {
 
         context = new DefaultMessageSchedulerContext();
     }
-
 
     @Test
     public void servieParserTest() throws InterruptedException {
@@ -72,14 +72,18 @@ public class SchedulerMessageTest {
 
     @Test
     public void implicitParserTest() throws InterruptedException {
-        Map<String, List<ImplicitMethod>> parse = context.getImplicitParser().parse(new TestService());
+        Map<String, List<ImplicitMethod>> parse =
+                context.getImplicitParser().parse(new TestService());
         System.out.println(parse.size());
     }
 
     @Test
     public void springRegisterTest() {
         Set<Method> methodsAnnotatedWith = reflections.getMethodsAnnotatedWith(Receiver.class);
-        Set<? extends Class<?>> collect = methodsAnnotatedWith.stream().map(Method::getDeclaringClass).collect(Collectors.toSet());
+        Set<? extends Class<?>> collect =
+                methodsAnnotatedWith.stream()
+                        .map(Method::getDeclaringClass)
+                        .collect(Collectors.toSet());
         System.out.println(collect.size());
     }
 
@@ -106,5 +110,4 @@ public class SchedulerMessageTest {
 
         System.out.println(System.currentTimeMillis() - start);
     }
-
 }

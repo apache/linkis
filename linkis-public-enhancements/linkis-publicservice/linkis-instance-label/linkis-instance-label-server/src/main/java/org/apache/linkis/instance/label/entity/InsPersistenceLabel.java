@@ -5,25 +5,23 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.instance.label.entity;
 
 import org.apache.linkis.manager.label.entity.GenericLabel;
 
 import java.util.Date;
 
-/**
- * like: PersistenceLabel in label-manager-common
- */
+/** like: PersistenceLabel in label-manager-common */
 public class InsPersistenceLabel extends GenericLabel {
     private Integer id;
     private int labelValueSize = -1;
@@ -85,14 +83,14 @@ public class InsPersistenceLabel extends GenericLabel {
 
     @Override
     public boolean equals(Object other) {
-        if(null != this.getLabelKey() && other instanceof InsPersistenceLabel){
-            InsPersistenceLabel otherInsLabel = (InsPersistenceLabel)other;
-            if(this.getLabelKey().equals(otherInsLabel.getLabelKey())){
-                return (null == this.getStringValue() && null == otherInsLabel.getStringValue()) ||
-                        (null != this.getStringValue() && this.getStringValue().equals(otherInsLabel.getStringValue()));
+        if (null != this.getLabelKey() && other instanceof InsPersistenceLabel) {
+            InsPersistenceLabel otherInsLabel = (InsPersistenceLabel) other;
+            if (this.getLabelKey().equals(otherInsLabel.getLabelKey())) {
+                return (null == this.getStringValue() && null == otherInsLabel.getStringValue())
+                        || (null != this.getStringValue()
+                                && this.getStringValue().equals(otherInsLabel.getStringValue()));
             }
         }
         return super.equals(other);
     }
-
 }

@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.bml.Entity;
 
 import java.util.Date;
@@ -32,9 +32,6 @@ public class Resource {
     private static final String EXPIRE_TIME = "expireTime";
     private static final String UPDATER = "updator";
 
-
-
-
     private int id;
 
     private boolean isPrivate;
@@ -51,10 +48,7 @@ public class Resource {
 
     private String expireType;
 
-    /**
-     *  expireTime的形式是 yyyy-MM-dd
-     *  或 yyyy-MM-dd HH:mm:ss
-     */
+    /** expireTime的形式是 yyyy-MM-dd 或 yyyy-MM-dd HH:mm:ss */
     private String expireTime;
 
     private Date updateTime;
@@ -95,10 +89,9 @@ public class Resource {
         this.system = system;
     }
 
-    public Resource() {
-    }
+    public Resource() {}
 
-    public Resource(String resourceId, String user, String downloadedFileName){
+    public Resource(String resourceId, String user, String downloadedFileName) {
         this.user = user;
         this.resourceId = resourceId;
         this.createTime = new Date(System.currentTimeMillis());
@@ -211,51 +204,52 @@ public class Resource {
         this.maxVersion = maxVersion;
     }
 
-    public static Resource createNewResource(String resourceId, String user, String downloadedFileName, Map<String, Object> properties){
+    public static Resource createNewResource(
+            String resourceId,
+            String user,
+            String downloadedFileName,
+            Map<String, Object> properties) {
         Resource resource = new Resource(resourceId, user, downloadedFileName);
-        if (properties.get(MAX_VERSION) == null){
+        if (properties.get(MAX_VERSION) == null) {
             resource.setMaxVersion(10);
-        }else{
+        } else {
             resource.setMaxVersion(Integer.parseInt(properties.get(MAX_VERSION).toString()));
         }
-        if (properties.get(IS_EXPIRE) == null){
-            //默认是不过期的
+        if (properties.get(IS_EXPIRE) == null) {
+            // 默认是不过期的
             resource.setExpire(false);
-        }else{
+        } else {
             resource.setExpire(properties.get(IS_EXPIRE).toString().equalsIgnoreCase("true"));
         }
-        if (properties.get(SYSTEM) == null){
+        if (properties.get(SYSTEM) == null) {
             resource.setSystem("WTSS");
-        }else{
+        } else {
             resource.setSystem(properties.get(SYSTEM).toString());
         }
-        if (properties.get(IS_PRIVATE) == null){
+        if (properties.get(IS_PRIVATE) == null) {
             resource.setPrivate(true);
-        }else{
+        } else {
             resource.setPrivate(properties.get(IS_PRIVATE).toString().equalsIgnoreCase("true"));
         }
-        if (properties.get(RESOURCE_HEADER) == null){
+        if (properties.get(RESOURCE_HEADER) == null) {
             resource.setResourceHeader(null);
-        }else{
-            resource.setResourceHeader((String)(properties.get(RESOURCE_HEADER)));
+        } else {
+            resource.setResourceHeader((String) (properties.get(RESOURCE_HEADER)));
         }
-        //如果资源是过期的，需要设置资源过期的类型和时间
-        if (resource.isExpire()){
-            if (properties.get(EXPIRE_TYPE) == null){
+        // 如果资源是过期的，需要设置资源过期的类型和时间
+        if (resource.isExpire()) {
+            if (properties.get(EXPIRE_TYPE) == null) {
                 resource.setExpireType("time");
-            }else{
-                resource.setExpireType((String)(properties.get(EXPIRE_TYPE)));
+            } else {
+                resource.setExpireType((String) (properties.get(EXPIRE_TYPE)));
             }
-            if (properties.get(EXPIRE_TIME) == null){
-                //默认设置50天过期
+            if (properties.get(EXPIRE_TIME) == null) {
+                // 默认设置50天过期
                 resource.setExpireTime("50d");
-            }else{
-                resource.setExpireTime((String)(properties.get(EXPIRE_TIME)));
+            } else {
+                resource.setExpireTime((String) (properties.get(EXPIRE_TIME)));
             }
         }
         return resource;
     }
-
-
-
 }

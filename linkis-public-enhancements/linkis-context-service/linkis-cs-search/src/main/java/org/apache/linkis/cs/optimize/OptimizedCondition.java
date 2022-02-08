@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.optimize;
 
 import org.apache.linkis.cs.condition.BinaryLogicCondition;
@@ -35,20 +35,28 @@ public class OptimizedCondition implements Node {
     OptimizedCondition left;
     OptimizedCondition right;
 
-    public OptimizedCondition(Condition condition, ConditionCostCalculator conditionCostCalculator) {
+    public OptimizedCondition(
+            Condition condition, ConditionCostCalculator conditionCostCalculator) {
         new OptimizedCondition(condition, HIGH_PRIORITY, conditionCostCalculator);
     }
 
-    public OptimizedCondition(Condition condition, Double priority, ConditionCostCalculator conditionCostCalculator) {
+    public OptimizedCondition(
+            Condition condition, Double priority, ConditionCostCalculator conditionCostCalculator) {
         this.condition = condition;
         this.priority = priority;
         this.cost = conditionCostCalculator.calculate(condition);
-        if(condition instanceof BinaryLogicCondition){
+        if (condition instanceof BinaryLogicCondition) {
             BinaryLogicCondition binaryLogicCondition = (BinaryLogicCondition) condition;
-            this.left = new OptimizedCondition(binaryLogicCondition.getLeft(), HIGH_PRIORITY, conditionCostCalculator);
-            this.right = new OptimizedCondition(binaryLogicCondition.getRight(), LOW_PRIORITY, conditionCostCalculator);
-        } else if(condition instanceof UnaryLogicCondition){
-            this.left = new OptimizedCondition(((UnaryLogicCondition) condition).getOrigin(), conditionCostCalculator);
+            this.left =
+                    new OptimizedCondition(
+                            binaryLogicCondition.getLeft(), HIGH_PRIORITY, conditionCostCalculator);
+            this.right =
+                    new OptimizedCondition(
+                            binaryLogicCondition.getRight(), LOW_PRIORITY, conditionCostCalculator);
+        } else if (condition instanceof UnaryLogicCondition) {
+            this.left =
+                    new OptimizedCondition(
+                            ((UnaryLogicCondition) condition).getOrigin(), conditionCostCalculator);
         }
     }
 
@@ -82,7 +90,7 @@ public class OptimizedCondition implements Node {
 
     @Override
     public void shift() {
-        if(condition instanceof BinaryLogicCondition){
+        if (condition instanceof BinaryLogicCondition) {
             OptimizedCondition tmp = this.left;
             this.left = this.right;
             this.right = tmp;

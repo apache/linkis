@@ -23,12 +23,21 @@
         <artifactId>linkis</artifactId>
         <groupId>org.apache.linkis</groupId>
         <version>1.0.3</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>linkis-module</artifactId>
 
     <dependencies>
+        <!--add knif2 dependency-->
+        <dependency>
+              <groupId>com.github.xiaoymin</groupId>
+              <artifactId>knife4j-spring-boot-starter</artifactId>
+              <version>${knife4j.version}</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-common</artifactId>

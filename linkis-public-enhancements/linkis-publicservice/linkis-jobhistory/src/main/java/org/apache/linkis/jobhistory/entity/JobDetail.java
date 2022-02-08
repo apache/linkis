@@ -5,74 +5,65 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.jobhistory.entity;
 
-import java.util.Date;
 import org.apache.linkis.jobhistory.util.QueryUtils;
 
+import java.util.Date;
 
 public class JobDetail {
 
+    private Long id;
 
-  private Long  id;
+    private Long job_history_id;
 
+    /*
+    separated multi result path
+     */
 
-  private Long job_history_id;
+    private String result_location;
 
-  /*
-  separated multi result path
-   */
+    /*
+    how many result sets
+     */
 
-   private String result_location;
+    private Integer result_array_size;
 
-  /*
-  how many result sets
-   */
+    /*
+    code
+     */
 
-   private Integer result_array_size;
+    private String execution_content;
 
-  /*
-  code
-   */
+    /*
+    json of jobGroup
+     */
 
-   private String execution_content;
+    private String job_group_info;
 
-  /*
-  json of jobGroup
-   */
+    private Date created_time;
 
-   private String job_group_info;
+    private Date updated_time;
 
+    private String status;
 
-   private Date created_time;
-
-
-   private Date updated_time;
-
-
-
-   private String status;
-
-
-   private Integer priority;
+    private Integer priority;
 
     private String updatedTimeMills;
 
     public String getUpdatedTimeMills() {
-        return  QueryUtils.dateToString(getUpdated_time());
+        return QueryUtils.dateToString(getUpdated_time());
     }
-
-
 
     public Long getId() {
         return id;

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.resourcemanager.utils;
 
-
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthSchemeProvider;
 import org.apache.http.auth.AuthScope;
@@ -32,14 +31,16 @@ import org.apache.http.impl.auth.SPNegoSchemeFactory;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.security.auth.Subject;
 import javax.security.auth.kerberos.KerberosPrincipal;
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.security.Principal;
 import java.security.PrivilegedAction;
@@ -51,7 +52,6 @@ public class RequestKerberosUrlUtils {
     public static Logger logger = LoggerFactory.getLogger(RequestKerberosUrlUtils.class);
     private String principal;
     private String keyTabLocation;
-
 
     public RequestKerberosUrlUtils(String principal, String keyTabLocation) {
         super();
@@ -67,55 +67,68 @@ public class RequestKerberosUrlUtils {
         }
     }
 
-    public RequestKerberosUrlUtils(String principal, String keyTabLocation, String krb5Location, boolean isDebug) {
+    public RequestKerberosUrlUtils(
+            String principal, String keyTabLocation, String krb5Location, boolean isDebug) {
         this(principal, keyTabLocation, isDebug);
         System.setProperty("java.security.krb5.conf", krb5Location);
     }
 
     private static HttpClient buildSpengoHttpClient() {
         HttpClientBuilder builder = HttpClientBuilder.create();
-        Lookup<AuthSchemeProvider> authSchemeRegistry = RegistryBuilder.<AuthSchemeProvider>create().
-                register(AuthSchemes.SPNEGO, new SPNegoSchemeFactory(true)).build();
+        Lookup<AuthSchemeProvider> authSchemeRegistry =
+                RegistryBuilder.<AuthSchemeProvider>create()
+                        .register(AuthSchemes.SPNEGO, new SPNegoSchemeFactory(true))
+                        .build();
         builder.setDefaultAuthSchemeRegistry(authSchemeRegistry);
         BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(new AuthScope(null, -1, null), new Credentials() {
-            @Override
-            public Principal getUserPrincipal() {
-                return null;
-            }
+        credentialsProvider.setCredentials(
+                new AuthScope(null, -1, null),
+                new Credentials() {
+                    @Override
+                    public Principal getUserPrincipal() {
+                        return null;
+                    }
 
-            @Override
-            public String getPassword() {
-                return null;
-            }
-        });
+                    @Override
+                    public String getPassword() {
+                        return null;
+                    }
+                });
         builder.setDefaultCredentialsProvider(credentialsProvider);
         CloseableHttpClient httpClient = builder.build();
         return httpClient;
     }
 
     public HttpResponse callRestUrl(final String url, final String userId) {
-        logger.warn(String.format("Calling KerberosHttpClient %s %s %s", this.principal, this.keyTabLocation, url));
-        Configuration config = new Configuration() {
-            @SuppressWarnings("serial")
-            @Override
-            public AppConfigurationEntry[] getAppConfigurationEntry(String name) {
-                return new AppConfigurationEntry[]{new AppConfigurationEntry("com.sun.security.auth.module.Krb5LoginModule",
-                        AppConfigurationEntry.LoginModuleControlFlag.REQUIRED, new HashMap<String, Object>() {
-                    {
-                        put("useTicketCache", "false");
-                        put("useKeyTab", "true");
-                        put("keyTab", keyTabLocation);
-                        put("refreshKrb5Config", "true");
-                        put("principal", principal);
-                        put("storeKey", "true");
-                        put("doNotPrompt", "true");
-                        put("isInitiator", "true");
-                        put("debug", "false");
+        logger.warn(
+                String.format(
+                        "Calling KerberosHttpClient %s %s %s",
+                        this.principal, this.keyTabLocation, url));
+        Configuration config =
+                new Configuration() {
+                    @SuppressWarnings("serial")
+                    @Override
+                    public AppConfigurationEntry[] getAppConfigurationEntry(String name) {
+                        return new AppConfigurationEntry[] {
+                            new AppConfigurationEntry(
+                                    "com.sun.security.auth.module.Krb5LoginModule",
+                                    AppConfigurationEntry.LoginModuleControlFlag.REQUIRED,
+                                    new HashMap<String, Object>() {
+                                        {
+                                            put("useTicketCache", "false");
+                                            put("useKeyTab", "true");
+                                            put("keyTab", keyTabLocation);
+                                            put("refreshKrb5Config", "true");
+                                            put("principal", principal);
+                                            put("storeKey", "true");
+                                            put("doNotPrompt", "true");
+                                            put("isInitiator", "true");
+                                            put("debug", "false");
+                                        }
+                                    })
+                        };
                     }
-                })};
-            }
-        };
+                };
         Set<Principal> princ = new HashSet<Principal>(1);
         princ.add(new KerberosPrincipal(userId));
         Subject sub = new Subject(false, princ, new HashSet<Object>(), new HashSet<Object>());
@@ -123,24 +136,26 @@ public class RequestKerberosUrlUtils {
             LoginContext lc = new LoginContext("Krb5Login", sub, null, config);
             lc.login();
             Subject serviceSubject = lc.getSubject();
-            return Subject.doAs(serviceSubject, new PrivilegedAction<HttpResponse>() {
-                HttpResponse httpResponse = null;
+            return Subject.doAs(
+                    serviceSubject,
+                    new PrivilegedAction<HttpResponse>() {
+                        HttpResponse httpResponse = null;
 
-                @Override
-                public HttpResponse run() {
-                    try {
-                        HttpUriRequest request = new HttpGet(url);
-                        HttpClient spnegoHttpClient = buildSpengoHttpClient();
-                        httpResponse = spnegoHttpClient.execute(request);
-                        return httpResponse;
-                    } catch (IOException ioe) {
-                        logger.error("request yarn url:{} failed",url,ioe);
-                    }
-                    return httpResponse;
-                }
-            });
+                        @Override
+                        public HttpResponse run() {
+                            try {
+                                HttpUriRequest request = new HttpGet(url);
+                                HttpClient spnegoHttpClient = buildSpengoHttpClient();
+                                httpResponse = spnegoHttpClient.execute(request);
+                                return httpResponse;
+                            } catch (IOException ioe) {
+                                logger.error("request yarn url:{} failed", url, ioe);
+                            }
+                            return httpResponse;
+                        }
+                    });
         } catch (Exception le) {
-            logger.error("Krb5Login login failed",le);
+            logger.error("Krb5Login login failed", le);
         }
         return null;
     }

@@ -5,18 +5,17 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.filesystem.restful.api;
 
+package org.apache.linkis.filesystem.restful.api;
 
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.FsWriter;
@@ -40,76 +39,83 @@ import org.apache.linkis.storage.script.*;
 import org.apache.linkis.storage.source.FileSource;
 import org.apache.linkis.storage.source.FileSource$;
 import org.apache.linkis.storage.utils.StorageUtils;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.math3.util.Pair;
 import org.apache.http.Consts;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import static org.apache.linkis.filesystem.conf.WorkSpaceConfiguration.*;
 import static org.apache.linkis.filesystem.constant.WorkSpaceConstants.*;
-
-
 
 @RestController
 @RequestMapping(path = "/filesystem")
 public class FsRestfulApi {
 
-    @Autowired
-    private FsService fsService;
+    @Autowired private FsService fsService;
 
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-     /**
+    /**
      * check 权限
+     *
      * @param requestPath
      * @param userName
      * @return
      */
-    private boolean checkIsUsersDirectory(String requestPath,String userName){
+    private boolean checkIsUsersDirectory(String requestPath, String userName) {
         boolean ownerCheck = WorkSpaceConfiguration.FILESYSTEM_PATH_CHECK_OWNER.getValue();
-        if(!ownerCheck){
-            LOGGER.debug("not check filesystem owner." );
+        if (!ownerCheck) {
+            LOGGER.debug("not check filesystem owner.");
             return true;
         }
-        requestPath = requestPath.toLowerCase().trim()+"/";
-        String hdfsUserRootPathPrefix = WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue());
+        requestPath = requestPath.toLowerCase().trim() + "/";
+        String hdfsUserRootPathPrefix =
+                WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue());
         String hdfsUserRootPathSuffix = HDFS_USER_ROOT_PATH_SUFFIX.getValue();
         String localUserRootPath = WorkspaceUtil.suffixTuning(LOCAL_USER_ROOT_PATH.getValue());
         String path;
 
         String workspacePath = hdfsUserRootPathPrefix + userName + hdfsUserRootPathSuffix;
         String enginconnPath = localUserRootPath + userName;
-        if(WorkspaceUtil.isLogAdmin(userName)){
+        if (WorkspaceUtil.isLogAdmin(userName)) {
             workspacePath = hdfsUserRootPathPrefix;
             enginconnPath = localUserRootPath;
         }
-        LOGGER.debug("requestPath:" + requestPath );
-        LOGGER.debug("workspacePath:" + workspacePath );
-        LOGGER.debug("enginconnPath:" + enginconnPath );
-        LOGGER.debug("adminUser:" + WorkSpaceConfiguration.FILESYSTEM_LOG_ADMIN.getValue() );
-        return  (requestPath.indexOf(workspacePath) > -1) || (requestPath.indexOf(enginconnPath) > -1) ;
-
+        LOGGER.debug("requestPath:" + requestPath);
+        LOGGER.debug("workspacePath:" + workspacePath);
+        LOGGER.debug("enginconnPath:" + enginconnPath);
+        LOGGER.debug("adminUser:" + WorkSpaceConfiguration.FILESYSTEM_LOG_ADMIN.getValue());
+        return (requestPath.indexOf(workspacePath) > -1)
+                || (requestPath.indexOf(enginconnPath) > -1);
     }
 
-    @RequestMapping(path = "/getUserRootPath",method = RequestMethod.GET)
-    public Message getUserRootPath(HttpServletRequest req, @RequestParam(value="pathType",required=false) String pathType) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/getUserRootPath", method = RequestMethod.GET)
+    public Message getUserRootPath(
+            HttpServletRequest req,
+            @RequestParam(value = "pathType", required = false) String pathType)
+            throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
-        String hdfsUserRootPathPrefix = WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue());
+        String hdfsUserRootPathPrefix =
+                WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue());
         String hdfsUserRootPathSuffix = HDFS_USER_ROOT_PATH_SUFFIX.getValue();
         String localUserRootPath = WorkspaceUtil.suffixTuning(LOCAL_USER_ROOT_PATH.getValue());
         String path;
@@ -129,14 +135,15 @@ public class FsRestfulApi {
         return Message.ok().data(String.format("user%sRootPath", returnType), path);
     }
 
-    @RequestMapping(path = "/createNewDir",method = RequestMethod.POST)
-    public Message createNewDir(HttpServletRequest req,@RequestBody JsonNode json) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/createNewDir", method = RequestMethod.POST)
+    public Message createNewDir(HttpServletRequest req, @RequestBody JsonNode json)
+            throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         String path = json.get("path").textValue();
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
-        if (!checkIsUsersDirectory(path,userName)) {
+        if (!checkIsUsersDirectory(path, userName)) {
             throw WorkspaceExceptionManager.createException(80010, path);
         }
         WorkspaceUtil.fileAndDirNameSpecialCharCheck(path);
@@ -149,14 +156,15 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
-    @RequestMapping(path = "/createNewFile",method = RequestMethod.POST)
-    public Message createNewFile(HttpServletRequest req,@RequestBody JsonNode json) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/createNewFile", method = RequestMethod.POST)
+    public Message createNewFile(HttpServletRequest req, @RequestBody JsonNode json)
+            throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         String path = json.get("path").textValue();
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
-        if (!checkIsUsersDirectory(path,userName)) {
+        if (!checkIsUsersDirectory(path, userName)) {
             throw WorkspaceExceptionManager.createException(80010, path);
         }
         WorkspaceUtil.fileAndDirNameSpecialCharCheck(path);
@@ -169,24 +177,28 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
-    @RequestMapping(path = "/rename",method = RequestMethod.POST)
-    public Message rename(HttpServletRequest req,@RequestBody JsonNode json) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/rename", method = RequestMethod.POST)
+    public Message rename(HttpServletRequest req, @RequestBody JsonNode json)
+            throws IOException, WorkSpaceException {
         String oldDest = json.get("oldDest").textValue();
         String newDest = json.get("newDest").textValue();
         String userName = SecurityFilter.getLoginUsername(req);
         if (FILESYSTEM_PATH_CHECK_TRIGGER.getValue()) {
-            LOGGER.info(String.format("path check trigger is open,now check the path,oldDest:%s,newDest:%s", oldDest, newDest));
+            LOGGER.info(
+                    String.format(
+                            "path check trigger is open,now check the path,oldDest:%s,newDest:%s",
+                            oldDest, newDest));
             PathValidator$.MODULE$.validate(oldDest, userName);
             PathValidator$.MODULE$.validate(newDest, userName);
         }
-        if (!checkIsUsersDirectory(newDest,userName)) {
+        if (!checkIsUsersDirectory(newDest, userName)) {
             throw WorkspaceExceptionManager.createException(80010, newDest);
         }
         if (StringUtils.isEmpty(oldDest)) {
             throw WorkspaceExceptionManager.createException(80004, oldDest);
         }
         if (StringUtils.isEmpty(newDest)) {
-            //No change in file name(文件名字无变化)
+            // No change in file name(文件名字无变化)
             return Message.ok();
         }
         WorkspaceUtil.fileAndDirNameSpecialCharCheck(newDest);
@@ -200,40 +212,44 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
-    @RequestMapping(path = "/upload",method = RequestMethod.POST)
-    public Message upload(HttpServletRequest req,
-        @RequestParam("path") String path,
-        @RequestParam("file") List<MultipartFile> files) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/upload", method = RequestMethod.POST)
+    public Message upload(
+            HttpServletRequest req,
+            @RequestParam("path") String path,
+            @RequestParam("file") List<MultipartFile> files)
+            throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
-        if (!checkIsUsersDirectory(path,userName)) {
+        if (!checkIsUsersDirectory(path, userName)) {
             throw WorkspaceExceptionManager.createException(80010, path);
         }
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         for (MultipartFile p : files) {
-            String fileName = new String(p.getOriginalFilename().getBytes(Consts.ISO_8859_1), Consts.UTF_8);
+            String fileName =
+                    new String(p.getOriginalFilename().getBytes(Consts.ISO_8859_1), Consts.UTF_8);
             FsPath fsPathNew = new FsPath(fsPath.getPath() + "/" + fileName);
             WorkspaceUtil.fileAndDirNameSpecialCharCheck(fsPathNew.getPath());
             fileSystem.createNewFile(fsPathNew);
             try (InputStream is = p.getInputStream();
-                 OutputStream outputStream = fileSystem.write(fsPathNew, true)) {
+                    OutputStream outputStream = fileSystem.write(fsPathNew, true)) {
                 IOUtils.copy(is, outputStream);
             }
         }
         return Message.ok();
     }
 
-    @RequestMapping(path = "/deleteDirOrFile",method = RequestMethod.POST)
-    public Message deleteDirOrFile(HttpServletRequest req,@RequestBody JsonNode json) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/deleteDirOrFile", method = RequestMethod.POST)
+    public Message deleteDirOrFile(HttpServletRequest req, @RequestBody JsonNode json)
+            throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         String path = json.get("path").textValue();
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
-        if (!checkIsUsersDirectory(path,userName)) {
+        if (!checkIsUsersDirectory(path, userName)) {
             throw WorkspaceExceptionManager.createException(80010, path);
         }
         FsPath fsPath = new FsPath(path);
@@ -241,21 +257,23 @@ public class FsRestfulApi {
         if (!fileSystem.exists(fsPath)) {
             throw WorkspaceExceptionManager.createException(80008);
         }
-        if (!fileSystem.canWrite(fsPath.getParent()) || !fileSystem.canExecute(fsPath.getParent())) {
+        if (!fileSystem.canWrite(fsPath.getParent())
+                || !fileSystem.canExecute(fsPath.getParent())) {
             throw WorkspaceExceptionManager.createException(80009);
         }
         deleteAllFiles(fileSystem, fsPath);
         return Message.ok();
     }
 
-    @RequestMapping(path = "/getDirFileTrees",method = RequestMethod.GET)
-    public Message getDirFileTrees(HttpServletRequest req,
-                                    @RequestParam(value="path",required=false) String path) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/getDirFileTrees", method = RequestMethod.GET)
+    public Message getDirFileTrees(
+            HttpServletRequest req, @RequestParam(value = "path", required = false) String path)
+            throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
-        if (!checkIsUsersDirectory(path,userName)) {
+        if (!checkIsUsersDirectory(path, userName)) {
             throw WorkspaceExceptionManager.createException(80010, path);
         }
         FsPath fsPath = new FsPath(path);
@@ -265,7 +283,8 @@ public class FsRestfulApi {
         }
         DirFileTree dirFileTree = new DirFileTree();
         dirFileTree.setPath(fsPath.getSchemaPath());
-        //if(!isInUserWorkspace(path,userName)) throw new WorkSpaceException("The user does not have permission to view the contents of the directory");
+        // if(!isInUserWorkspace(path,userName)) throw new WorkSpaceException("The user does not
+        // have permission to view the contents of the directory");
         if (!fileSystem.canExecute(fsPath) || !fileSystem.canRead(fsPath)) {
             throw WorkspaceExceptionManager.createException(80010);
         }
@@ -281,8 +300,12 @@ public class FsRestfulApi {
                 dirFileTreeChildren.setParentPath(fsPath.getSchemaPath());
                 if (!children.isdir()) {
                     dirFileTreeChildren.setIsLeaf(true);
-                    dirFileTreeChildren.getProperties().put("size", String.valueOf(children.getLength()));
-                    dirFileTreeChildren.getProperties().put("modifytime", String.valueOf(children.getModification_time()));
+                    dirFileTreeChildren
+                            .getProperties()
+                            .put("size", String.valueOf(children.getLength()));
+                    dirFileTreeChildren
+                            .getProperties()
+                            .put("modifytime", String.valueOf(children.getModification_time()));
                 }
                 dirFileTree.getChildren().add(dirFileTreeChildren);
             }
@@ -290,10 +313,12 @@ public class FsRestfulApi {
         return Message.ok().data("dirFileTrees", dirFileTree);
     }
 
-    @RequestMapping(path = "/download",method = RequestMethod.POST)
-    public void download(HttpServletRequest req,
-                         HttpServletResponse response,
-                         @RequestBody Map<String, String> json) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/download", method = RequestMethod.POST)
+    public void download(
+            HttpServletRequest req,
+            HttpServletResponse response,
+            @RequestBody Map<String, String> json)
+            throws IOException, WorkSpaceException {
         InputStream inputStream = null;
         ServletOutputStream outputStream = null;
         PrintWriter writer = null;
@@ -307,11 +332,12 @@ public class FsRestfulApi {
             if (StringUtils.isEmpty(charset)) {
                 charset = Consts.UTF_8.toString();
             }
-            if (!checkIsUsersDirectory(path,userName)) {
+            if (!checkIsUsersDirectory(path, userName)) {
                 throw WorkspaceExceptionManager.createException(80010, path);
             }
             FsPath fsPath = new FsPath(path);
-            // TODO: 2018/11/29 Judging the directory, the directory cannot be downloaded(判断目录,目录不能下载)
+            // TODO: 2018/11/29 Judging the directory, the directory cannot be
+            // downloaded(判断目录,目录不能下载)
             FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
             if (!fileSystem.exists(fsPath)) {
                 throw WorkspaceExceptionManager.createException(8011);
@@ -322,7 +348,8 @@ public class FsRestfulApi {
             response.setCharacterEncoding(charset);
             java.nio.file.Path source = Paths.get(fsPath.getPath());
             response.addHeader("Content-Type", Files.probeContentType(source));
-            response.addHeader("Content-Disposition", "attachment;filename=" + new File(path).getName());
+            response.addHeader(
+                    "Content-Disposition", "attachment;filename=" + new File(path).getName());
             outputStream = response.getOutputStream();
             while ((bytesRead = inputStream.read(buffer, 0, 1024)) != -1) {
                 outputStream.write(buffer, 0, bytesRead);
@@ -345,38 +372,41 @@ public class FsRestfulApi {
         }
     }
 
-    @RequestMapping(path = "/isExist",method = RequestMethod.GET)
-    public Message isExist(HttpServletRequest req,
-                            @RequestParam(value="path",required=false) String path) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/isExist", method = RequestMethod.GET)
+    public Message isExist(
+            HttpServletRequest req, @RequestParam(value = "path", required = false) String path)
+            throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         FsPath fsPath = new FsPath(path);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
-        if (!checkIsUsersDirectory(path,userName)) {
+        if (!checkIsUsersDirectory(path, userName)) {
             throw WorkspaceExceptionManager.createException(80010, path);
         }
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         return Message.ok().data("isExist", fileSystem.exists(fsPath));
     }
 
-    @RequestMapping(path = "/openFile",method = RequestMethod.GET)
-    public Message openFile(HttpServletRequest req,
-                             @RequestParam(value="path",required=false) String path,
-                             @RequestParam(value="page",defaultValue = "1") Integer page,
-                             @RequestParam(value="pageSize",defaultValue="5000") Integer pageSize,
-                             @RequestParam(value="charset",defaultValue="utf-8") String charset) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/openFile", method = RequestMethod.GET)
+    public Message openFile(
+            HttpServletRequest req,
+            @RequestParam(value = "path", required = false) String path,
+            @RequestParam(value = "page", defaultValue = "1") Integer page,
+            @RequestParam(value = "pageSize", defaultValue = "5000") Integer pageSize,
+            @RequestParam(value = "charset", defaultValue = "utf-8") String charset)
+            throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         Message message = Message.ok();
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
-        if (!checkIsUsersDirectory(path,userName)) {
+        if (!checkIsUsersDirectory(path, userName)) {
             throw WorkspaceExceptionManager.createException(80010, path);
         }
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
-        //Throws an exception if the file does not have read access(如果文件没读权限，抛出异常)
+        // Throws an exception if the file does not have read access(如果文件没读权限，抛出异常)
         if (!fileSystem.canRead(fsPath)) {
             throw WorkspaceExceptionManager.createException(80012);
         }
@@ -397,15 +427,15 @@ public class FsRestfulApi {
         }
     }
 
-
     /**
      * @param req
      * @param json
      * @return
      * @throws IOException
      */
-    @RequestMapping(path = "/saveScript",method = RequestMethod.POST)
-    public Message saveScript(HttpServletRequest req, @RequestBody Map<String, Object> json) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/saveScript", method = RequestMethod.POST)
+    public Message saveScript(HttpServletRequest req, @RequestBody Map<String, Object> json)
+            throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         String path = (String) json.get("path");
         if (StringUtils.isEmpty(path)) {
@@ -415,7 +445,7 @@ public class FsRestfulApi {
         if (StringUtils.isEmpty(charset)) {
             charset = Consts.UTF_8.toString();
         }
-        if (!checkIsUsersDirectory(path,userName)) {
+        if (!checkIsUsersDirectory(path, userName)) {
             throw WorkspaceExceptionManager.createException(80010, path);
         }
         String scriptContent = (String) json.get("scriptContent");
@@ -430,9 +460,9 @@ public class FsRestfulApi {
         if (!fileSystem.canWrite(fsPath)) {
             throw WorkspaceExceptionManager.createException(80014);
         }
-        try (
-                ScriptFsWriter scriptFsWriter = ScriptFsWriter.getScriptFsWriter(fsPath, charset, fileSystem.write(fsPath, true));
-        ) {
+        try (ScriptFsWriter scriptFsWriter =
+                ScriptFsWriter.getScriptFsWriter(
+                        fsPath, charset, fileSystem.write(fsPath, true)); ) {
             scriptFsWriter.addMetaData(new ScriptMetaData(v));
             String[] split = scriptContent.split("\\n");
             for (int i = 0; i < split.length; i++) {
@@ -445,17 +475,19 @@ public class FsRestfulApi {
         }
     }
 
-    @RequestMapping(path = "resultsetToExcel",method = RequestMethod.GET)
+    @RequestMapping(path = "resultsetToExcel", method = RequestMethod.GET)
     public void resultsetToExcel(
             HttpServletRequest req,
             HttpServletResponse response,
-            @RequestParam(value="path",required=false) String path,
-            @RequestParam(value="charset",defaultValue ="utf-8") String charset,
-            @RequestParam(value="outputFileType",defaultValue ="csv") String outputFileType,
-            @RequestParam(value="csvSeperator",defaultValue =",") String csvSeperator,
-            @RequestParam(value="outputFileName",defaultValue ="downloadResultset") String outputFileName,
-            @RequestParam(value="sheetName",defaultValue ="result") String sheetName,
-            @RequestParam(value="nullValue",defaultValue ="NULL") String nullValue) throws WorkSpaceException, IOException {
+            @RequestParam(value = "path", required = false) String path,
+            @RequestParam(value = "charset", defaultValue = "utf-8") String charset,
+            @RequestParam(value = "outputFileType", defaultValue = "csv") String outputFileType,
+            @RequestParam(value = "csvSeperator", defaultValue = ",") String csvSeperator,
+            @RequestParam(value = "outputFileName", defaultValue = "downloadResultset")
+                    String outputFileName,
+            @RequestParam(value = "sheetName", defaultValue = "result") String sheetName,
+            @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue)
+            throws WorkSpaceException, IOException {
         ServletOutputStream outputStream = null;
         FsWriter fsWriter = null;
         PrintWriter writer = null;
@@ -470,22 +502,31 @@ public class FsRestfulApi {
             if (StringUtils.isEmpty(path)) {
                 throw WorkspaceExceptionManager.createException(80004, path);
             }
-            if (!checkIsUsersDirectory(path,userName)) {
+            if (!checkIsUsersDirectory(path, userName)) {
                 throw WorkspaceExceptionManager.createException(80010, path);
             }
-            response.addHeader("Content-Disposition", "attachment;filename="
-                    + new String(outputFileName.getBytes("UTF-8"), "ISO8859-1") + "." + outputFileType);
+            response.addHeader(
+                    "Content-Disposition",
+                    "attachment;filename="
+                            + new String(outputFileName.getBytes("UTF-8"), "ISO8859-1")
+                            + "."
+                            + outputFileType);
             response.setCharacterEncoding(charset);
             outputStream = response.getOutputStream();
             // 前台传""会自动转为null
             if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) nullValue = "";
-            fileSource = FileSource$.MODULE$.create(fsPath, fileSystem).addParams("nullValue", nullValue);
+            fileSource =
+                    FileSource$.MODULE$
+                            .create(fsPath, fileSystem)
+                            .addParams("nullValue", nullValue);
             switch (outputFileType) {
                 case "csv":
                     if (FileSource$.MODULE$.isTableResultSet(fileSource)) {
                         fsWriter = CSVFsWriter.getCSVFSWriter(charset, csvSeperator, outputStream);
                     } else {
-                        fsWriter = ScriptFsWriter.getScriptFsWriter(new FsPath(outputFileType), charset, outputStream);
+                        fsWriter =
+                                ScriptFsWriter.getScriptFsWriter(
+                                        new FsPath(outputFileType), charset, outputStream);
                     }
                     response.addHeader("Content-Type", "text/plain");
                     if (isLimitDownloadSize) {
@@ -496,7 +537,9 @@ public class FsRestfulApi {
                     if (!FileSource$.MODULE$.isTableResultSet(fileSource)) {
                         throw WorkspaceExceptionManager.createException(80024);
                     }
-                    fsWriter = ExcelFsWriter.getExcelFsWriter(charset, sheetName, DEFAULT_DATE_TYPE, outputStream);
+                    fsWriter =
+                            ExcelFsWriter.getExcelFsWriter(
+                                    charset, sheetName, DEFAULT_DATE_TYPE, outputStream);
                     response.addHeader("Content-Type", XLSX_RESPONSE_CONTENT_TYPE);
                     if (isLimitDownloadSize) {
                         fileSource = fileSource.page(1, excelDownloadSize);
@@ -525,13 +568,15 @@ public class FsRestfulApi {
         }
     }
 
-    @RequestMapping(path = "resultsetsToExcel",method = RequestMethod.GET)
+    @RequestMapping(path = "resultsetsToExcel", method = RequestMethod.GET)
     public void resultsetsToExcel(
             HttpServletRequest req,
             HttpServletResponse response,
-            @RequestParam(value="path",required=false) String path,
-            @RequestParam(value="outputFileName",defaultValue = "downloadResultset") String outputFileName,
-            @RequestParam(value="nullValue",defaultValue="NULL") String nullValue) throws WorkSpaceException, IOException {
+            @RequestParam(value = "path", required = false) String path,
+            @RequestParam(value = "outputFileName", defaultValue = "downloadResultset")
+                    String outputFileName,
+            @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue)
+            throws WorkSpaceException, IOException {
         ServletOutputStream outputStream = null;
         FsWriter fsWriter = null;
         PrintWriter writer = null;
@@ -543,24 +588,31 @@ public class FsRestfulApi {
             if (StringUtils.isEmpty(path)) {
                 throw WorkspaceExceptionManager.createException(80004, path);
             }
-            if (!checkIsUsersDirectory(path,userName)) {
+            if (!checkIsUsersDirectory(path, userName)) {
                 throw WorkspaceExceptionManager.createException(80010, path);
             }
-            //list目录下的文件
+            // list目录下的文件
             FsPathListWithError fsPathListWithError = fileSystem.listPathWithError(fsPath);
             if (fsPathListWithError == null) {
                 throw WorkspaceExceptionManager.createException(80029);
             }
-            FsPath[] fsPaths = fsPathListWithError.getFsPaths().toArray(new FsPath[]{});
+            FsPath[] fsPaths = fsPathListWithError.getFsPaths().toArray(new FsPath[] {});
             boolean isLimitDownloadSize = RESULT_SET_DOWNLOAD_IS_LIMIT.getValue();
             Integer excelDownloadSize = RESULT_SET_DOWNLOAD_MAX_SIZE_EXCEL.getValue();
-            response.addHeader("Content-Disposition", "attachment;filename="
-                    + new String(outputFileName.getBytes(StandardCharsets.UTF_8), "ISO8859-1") + ".xlsx");
+            response.addHeader(
+                    "Content-Disposition",
+                    "attachment;filename="
+                            + new String(
+                                    outputFileName.getBytes(StandardCharsets.UTF_8), "ISO8859-1")
+                            + ".xlsx");
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
             outputStream = response.getOutputStream();
             // 前台传""会自动转为null
             if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) nullValue = "";
-            fileSource = FileSource$.MODULE$.create(fsPaths, fileSystem).addParams("nullValue", nullValue);
+            fileSource =
+                    FileSource$.MODULE$
+                            .create(fsPaths, fileSystem)
+                            .addParams("nullValue", nullValue);
             if (!FileSource$.MODULE$.isTableResultSet(fileSource)) {
                 throw WorkspaceExceptionManager.createException(80024);
             }
@@ -589,19 +641,21 @@ public class FsRestfulApi {
         }
     }
 
-    @RequestMapping(path = "formate",method = RequestMethod.GET)
-    public Message formate(HttpServletRequest req,
-                            @RequestParam(value="path",required=false) String path,
-                            @RequestParam(value="encoding",defaultValue="utf-8") String encoding,
-                            @RequestParam(value="fieldDelimiter",defaultValue=",") String fieldDelimiter,
-                            @RequestParam(value="hasHeader",defaultValue="false") Boolean hasHeader,
-                            @RequestParam(value="quote",defaultValue="\"") String quote,
-                            @RequestParam(value="escapeQuotes",defaultValue="false") Boolean escapeQuotes) throws Exception {
+    @RequestMapping(path = "formate", method = RequestMethod.GET)
+    public Message formate(
+            HttpServletRequest req,
+            @RequestParam(value = "path", required = false) String path,
+            @RequestParam(value = "encoding", defaultValue = "utf-8") String encoding,
+            @RequestParam(value = "fieldDelimiter", defaultValue = ",") String fieldDelimiter,
+            @RequestParam(value = "hasHeader", defaultValue = "false") Boolean hasHeader,
+            @RequestParam(value = "quote", defaultValue = "\"") String quote,
+            @RequestParam(value = "escapeQuotes", defaultValue = "false") Boolean escapeQuotes)
+            throws Exception {
         String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
-        if (!checkIsUsersDirectory(path,userName)) {
+        if (!checkIsUsersDirectory(path, userName)) {
             throw WorkspaceExceptionManager.createException(80010, path);
         }
         String suffix = path.substring(path.lastIndexOf("."));
@@ -650,10 +704,12 @@ public class FsRestfulApi {
         }
     }
 
-    @RequestMapping(path = "/openLog",method = RequestMethod.GET)
-    public Message openLog(HttpServletRequest req,
-        @RequestParam(value="path",required=false) String path,
-        @RequestParam(value="proxyUser",required=false) String proxyUser) throws IOException, WorkSpaceException {
+    @RequestMapping(path = "/openLog", method = RequestMethod.GET)
+    public Message openLog(
+            HttpServletRequest req,
+            @RequestParam(value = "path", required = false) String path,
+            @RequestParam(value = "proxyUser", required = false) String proxyUser)
+            throws IOException, WorkSpaceException {
         String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
@@ -661,7 +717,7 @@ public class FsRestfulApi {
         if (proxyUser != null && WorkspaceUtil.isLogAdmin(userName)) {
             userName = proxyUser;
         }
-        if (!checkIsUsersDirectory(path,userName)) {
+        if (!checkIsUsersDirectory(path, userName)) {
             throw WorkspaceExceptionManager.createException(80010, path);
         }
         FsPath fsPath = new FsPath(path);
@@ -669,13 +725,25 @@ public class FsRestfulApi {
         if (!fileSystem.canRead(fsPath)) {
             throw WorkspaceExceptionManager.createException(80018);
         }
-        try (FileSource fileSource = FileSource$.MODULE$.create(fsPath, fileSystem).addParams("ifMerge", "false")) {
+        try (FileSource fileSource =
+                FileSource$.MODULE$.create(fsPath, fileSystem).addParams("ifMerge", "false")) {
             Pair<Object, ArrayList<String[]>> collect = fileSource.collect()[0];
-            StringBuilder[] log = Arrays.stream(new StringBuilder[4]).map(f -> new StringBuilder()).toArray(StringBuilder[]::new);
+            StringBuilder[] log =
+                    Arrays.stream(new StringBuilder[4])
+                            .map(f -> new StringBuilder())
+                            .toArray(StringBuilder[]::new);
             ArrayList<String[]> snd = collect.getSecond();
             LogLevel start = new LogLevel(LogLevel.Type.ALL);
-            snd.stream().map(f -> f[0]).forEach(s -> WorkspaceUtil.logMatch(s, start).forEach(i -> log[i].append(s).append("\n")));
-            return Message.ok().data("log", Arrays.stream(log).map(StringBuilder::toString).toArray(String[]::new));
+            snd.stream()
+                    .map(f -> f[0])
+                    .forEach(
+                            s ->
+                                    WorkspaceUtil.logMatch(s, start)
+                                            .forEach(i -> log[i].append(s).append("\n")));
+            return Message.ok()
+                    .data(
+                            "log",
+                            Arrays.stream(log).map(StringBuilder::toString).toArray(String[]::new));
         }
     }
 

@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cli.application;
 
 import org.apache.linkis.cli.application.constants.AppConstants;
@@ -78,8 +78,10 @@ import org.apache.linkis.cli.core.interactor.var.SysVarAccess;
 import org.apache.linkis.cli.core.interactor.var.VarAccess;
 import org.apache.linkis.cli.core.presenter.Presenter;
 import org.apache.linkis.cli.core.utils.LogUtils;
+
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,33 +89,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @description: Main Enterance
- */
+/** @description: Main Enterance */
 public class LinkisClientApplication {
     private static Logger logger = LoggerFactory.getLogger(LinkisClientApplication.class);
 
     /**
-     * generate Templates
-     * load env variables
-     * TODO: load version info
+     * generate Templates load env variables TODO: load version info
      *
      * @return PreparedData
      */
     private static PreparedData prepare() throws LinkisClientRuntimeException {
-    /*
-      generate template
-     */
+        /*
+         generate template
+        */
         CmdTemplate template = new UniversalCmdTemplate();
         Map<String, CmdTemplate> templateMap = new HashedMap();
         templateMap.put(template.getCmdType().getName(), template);
-    /*
-      load env variables
-     */
+        /*
+         load env variables
+        */
         Map<String, ClientProperties> propertiesMap = new HashMap<>();
-        PropertiesLoader loader = new StdPropsLoader()
-                .addPropertiesReader(new SysPropsReader())
-                .addPropertiesReader(new SysEnvReader());
+        PropertiesLoader loader =
+                new StdPropsLoader()
+                        .addPropertiesReader(new SysPropsReader())
+                        .addPropertiesReader(new SysEnvReader());
         for (ClientProperties properties : loader.loadProperties()) {
             propertiesMap.put(properties.getPropsId(), properties);
         }
@@ -122,28 +121,27 @@ public class LinkisClientApplication {
     }
 
     /**
-     * parse user input
-     * load user config
-     * load default config
-     * check if all inputs are ok
+     * parse user input load user config load default config check if all inputs are ok
      *
      * @param args user input arguments
      * @return ProcessedData
      */
-    private static ProcessedData processInput(String[] args, PreparedData preparedData) throws Exception {
+    private static ProcessedData processInput(String[] args, PreparedData preparedData)
+            throws Exception {
 
         if (preparedData == null) {
             return null;
         }
 
-    /*
-      user input
-     */
+        /*
+         user input
+        */
         CmdTemplate template = preparedData.getTemplateMap().get(LinkisCmdType.UNIVERSAL.getName());
-        Parser parser = new SingleCmdParser()
-                .setMapper(null)
-                .setTemplate(template)
-                .setFitter(new SingleTplFitter());
+        Parser parser =
+                new SingleCmdParser()
+                        .setMapper(null)
+                        .setTemplate(template)
+                        .setFitter(new SingleTplFitter());
 
         ParseResult result = parser.parse(args);
 
@@ -153,95 +151,109 @@ public class LinkisClientApplication {
         Params params = result.getParams();
         logger.debug("==========params============\n" + Utils.GSON.toJson(params));
 
-    /*
-      VarAccess for sys_prop, sys_env
-     */
+        /*
+         VarAccess for sys_prop, sys_env
+        */
         Map<String, ClientProperties> propertiesMap = preparedData.getPropertiesMap();
-        VarAccess sysVarAccess = new SysVarAccess()
-                .setSysProp(propertiesMap.get(CommonConstants.SYSTEM_PROPERTIES_IDENTIFIER))
-                .setSysEnv(propertiesMap.get(CommonConstants.SYSTEM_ENV_IDENTIFIER));
+        VarAccess sysVarAccess =
+                new SysVarAccess()
+                        .setSysProp(propertiesMap.get(CommonConstants.SYSTEM_PROPERTIES_IDENTIFIER))
+                        .setSysEnv(propertiesMap.get(CommonConstants.SYSTEM_ENV_IDENTIFIER));
         logger.debug("==========sys_var============\n" + Utils.GSON.toJson(sysVarAccess));
 
-        LogUtils.getInformationLogger().info("LogFile path: " +
-                sysVarAccess.getVar(String.class, LinkisClientKeys.LOG_PATH_KEY) + "/" +
-                sysVarAccess.getVar(String.class, LinkisClientKeys.LOG_FILE_KEY)
-        );
-    /*
-      default config, -Dconf.root & -Dconf.file specifies config path
-     */
-        //scan config files given root path
-        String configPath = sysVarAccess.getVar(String.class, LinkisClientKeys.CLIENT_CONFIG_ROOT_KEY);
-        String defaultConfFileName = sysVarAccess.getVarOrDefault(
-                String.class, LinkisClientKeys.DEFAULT_CONFIG_FILE_NAME_KEY, AppConstants.DEFAULT_CONFIG_NAME);
+        LogUtils.getInformationLogger()
+                .info(
+                        "LogFile path: "
+                                + sysVarAccess.getVar(String.class, LinkisClientKeys.LOG_PATH_KEY)
+                                + "/"
+                                + sysVarAccess.getVar(String.class, LinkisClientKeys.LOG_FILE_KEY));
+        /*
+         default config, -Dconf.root & -Dconf.file specifies config path
+        */
+        // scan config files given root path
+        String configPath =
+                sysVarAccess.getVar(String.class, LinkisClientKeys.CLIENT_CONFIG_ROOT_KEY);
+        String defaultConfFileName =
+                sysVarAccess.getVarOrDefault(
+                        String.class,
+                        LinkisClientKeys.DEFAULT_CONFIG_FILE_NAME_KEY,
+                        AppConstants.DEFAULT_CONFIG_NAME);
         if (StringUtils.isBlank(configPath)) {
             throw new PropsException(
-                    "PRP0007", ErrorLevel.ERROR, CommonErrMsg.PropsLoaderErr,
-                    "configuration root path specified by env variable: " +
-                            LinkisClientKeys.CLIENT_CONFIG_ROOT_KEY + " is empty.");
+                    "PRP0007",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.PropsLoaderErr,
+                    "configuration root path specified by env variable: "
+                            + LinkisClientKeys.CLIENT_CONFIG_ROOT_KEY
+                            + " is empty.");
         }
 
-        List<PropertiesReader> readersList = new PropsFilesScanner().getPropsReaders(configPath); //+1 user config
-    /*
-      user defined config
-     */
+        List<PropertiesReader> readersList =
+                new PropsFilesScanner().getPropsReaders(configPath); // +1 user config
+        /*
+         user defined config
+        */
         String userConfPath = null;
         if (params.containsParam(LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG)) {
-            userConfPath = (String) params
-                    .getParamItemMap()
-                    .get(LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG)
-                    .getValue();
+            userConfPath =
+                    (String)
+                            params.getParamItemMap()
+                                    .get(LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG)
+                                    .getValue();
         }
         if (StringUtils.isNotBlank(userConfPath)) {
-            PropertiesReader reader = new PropsFileReader()
-                    .setPropsId(LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG)
-                    .setPropsPath(userConfPath);
+            PropertiesReader reader =
+                    new PropsFileReader()
+                            .setPropsId(LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG)
+                            .setPropsPath(userConfPath);
             readersList.add(reader);
         } else {
-            LogUtils.getInformationLogger().info("User does not provide usr-configuration file. Will use default config");
+            LogUtils.getInformationLogger()
+                    .info("User does not provide usr-configuration file. Will use default config");
         }
-    /*
-     load properties
-     */
-        PropertiesLoader loader = new StdPropsLoader()
-                .addPropertiesReaders(
-                        readersList.toArray(
-                                new PropertiesReader[readersList.size()]
-                        )
-                );
+        /*
+        load properties
+        */
+        PropertiesLoader loader =
+                new StdPropsLoader()
+                        .addPropertiesReaders(
+                                readersList.toArray(new PropertiesReader[readersList.size()]));
         ClientProperties[] loaderResult = loader.loadProperties();
         for (ClientProperties properties : loaderResult) {
-            if (StringUtils.equals(properties.getPropsId(), LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG)) {
+            if (StringUtils.equals(
+                    properties.getPropsId(), LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG)) {
                 for (Map.Entry prop : properties.entrySet()) {
-                    if (StringUtils.startsWith((String) prop.getKey(), LinkisClientKeys.LINKIS_CLIENT_NONCUSTOMIZABLE)) {
-                        throw new PropsException("PRP0007", ErrorLevel.ERROR, CommonErrMsg.PropsLoaderErr, "User cannot specify non-customizable configuration: " + prop.getKey());
+                    if (StringUtils.startsWith(
+                            (String) prop.getKey(),
+                            LinkisClientKeys.LINKIS_CLIENT_NONCUSTOMIZABLE)) {
+                        throw new PropsException(
+                                "PRP0007",
+                                ErrorLevel.ERROR,
+                                CommonErrMsg.PropsLoaderErr,
+                                "User cannot specify non-customizable configuration: "
+                                        + prop.getKey());
                     }
                 }
-
             }
             propertiesMap.put(properties.getPropsId(), properties);
         }
 
-    /*
-      VarAccess for cmd, config
-     */
-        VarAccess stdVarAccess = new StdVarAccess()
-                .setCmdParams(params)
-                .setUserConf(propertiesMap.get(LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG))
-                .setDefaultConf(propertiesMap.get(defaultConfFileName))
-                .init();
+        /*
+         VarAccess for cmd, config
+        */
+        VarAccess stdVarAccess =
+                new StdVarAccess()
+                        .setCmdParams(params)
+                        .setUserConf(propertiesMap.get(LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG))
+                        .setDefaultConf(propertiesMap.get(defaultConfFileName))
+                        .init();
         logger.info("==========std_var============\n" + Utils.GSON.toJson(stdVarAccess));
 
-
-        return new ProcessedData(null,
-                params.getCmdType(),
-                stdVarAccess,
-                sysVarAccess
-        );
+        return new ProcessedData(null, params.getCmdType(), stdVarAccess, sysVarAccess);
     }
 
     /**
-     * submit job
-     * display result
+     * submit job display result
      *
      * @return FinishedData
      */
@@ -250,58 +262,58 @@ public class LinkisClientApplication {
             return null;
         }
 
-    /*
-    decide jobBuilder and executorBuilder
-     */
+        /*
+        decide jobBuilder and executorBuilder
+         */
         ExecutionSuiteFactory suiteFactory = new SuiteFactoryImpl();
         ExecutionSuite suite = suiteFactory.getSuite(data.getCmdType(), data.getStdVarAccess());
 
-    /*
-    build job
-     */
+        /*
+        build job
+         */
         Executor executor = null;
         Job job = null;
         ResultHandler[] resultHandlers = null;
         Execution execution = suite.getExecution();
         if (suite.getJobBuilder() != null) {
-            job = suite.getJobBuilder()
-                    .setStdVarAccess(data.getStdVarAccess())
-                    .setSysVarAccess(data.getSysVarAccess())
-                    .build();
-
+            job =
+                    suite.getJobBuilder()
+                            .setStdVarAccess(data.getStdVarAccess())
+                            .setSysVarAccess(data.getSysVarAccess())
+                            .build();
 
             logger.info("==========job============\n" + Utils.GSON.toJson(job));
-
 
             Validator jobValidator = new LinkisJobValidator();
             jobValidator.doValidation(job);
         }
 
-
-    /*
-    prepare executor
-     */
+        /*
+        prepare executor
+         */
         if (suite.getExecutorBuilder() != null) {
-            executor = suite.getExecutorBuilder()
-                    .setStdVarAccess(data.getStdVarAccess())
-                    .setSysVarAccess(data.getSysVarAccess())
-                    .build();
+            executor =
+                    suite.getExecutorBuilder()
+                            .setStdVarAccess(data.getStdVarAccess())
+                            .setSysVarAccess(data.getSysVarAccess())
+                            .build();
         }
 
-    /*
-    Execution
-     */
+        /*
+        Execution
+         */
 
-        LinkisClientDriver driver = new UjesClientDriverBuilder()
-                .setStdVarAccess(data.getStdVarAccess())
-                .setSysVarAccess(data.getSysVarAccess())
-                .build();
+        LinkisClientDriver driver =
+                new UjesClientDriverBuilder()
+                        .setStdVarAccess(data.getStdVarAccess())
+                        .setSysVarAccess(data.getSysVarAccess())
+                        .build();
         // TODO: use executor rather than driver in presenter
 
         DriverTransformer driverTransformer = new UjesClientDriverTransformer();
         if (execution instanceof SyncSubmission) {
             // TODO: use executor rather than driver in presenter
-            //TODO: let suiteFactory do this, but don't want to new an Executor
+            // TODO: let suiteFactory do this, but don't want to new an Executor
             LinkisJobLogPresenter inclogPresenter = new LinkisJobLogPresenter();
             inclogPresenter.setClientDriver(driver);
             inclogPresenter.setTransformer(driverTransformer);
@@ -323,9 +335,9 @@ public class LinkisClientApplication {
             ((SyncSubmission) execution).getIncLogFinObserverRegistered(logFinEvent);
         }
 
-    /*
-    ResultHandler
-     */
+        /*
+        ResultHandler
+         */
         if (suite.getResultHandlers() != null) {
             resultHandlers = suite.getResultHandlers();
             for (ResultHandler handler : resultHandlers) {
@@ -341,20 +353,26 @@ public class LinkisClientApplication {
             }
         }
 
-    /*
-    execute
-     */
+        /*
+        execute
+         */
         final Executor executorKill = executor;
         final Job jobKill = job;
-        Thread hook = new Thread(() -> execution.terminate(executorKill, jobKill)); //add ShutdownHook so that job can be killed if ctrl + c
+        Thread hook =
+                new Thread(
+                        () ->
+                                execution.terminate(
+                                        executorKill,
+                                        jobKill)); // add ShutdownHook so that job can be killed if
+        // ctrl + c
         if (executorKill != null && jobKill != null) {
             Runtime.getRuntime().addShutdownHook(hook);
         }
         ExecutionResult result = execution.execute(executor, job);
-        Runtime.getRuntime().removeShutdownHook(hook); //execution complete, no need ShutdownHook anymore
+        Runtime.getRuntime()
+                .removeShutdownHook(hook); // execution complete, no need ShutdownHook anymore
         return new FinishedData(result, resultHandlers);
     }
-
 
     public static void main(String[] args) {
 
@@ -402,8 +420,5 @@ public class LinkisClientApplication {
             executionResult.setExecutionStatus(ExecutionStatus.FAILED);
             new DefaultResultHandler().process(executionResult);
         }
-
     }
-
-
 }

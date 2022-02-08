@@ -5,21 +5,22 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.engineconnplugin.flink.client.sql.parser;
 
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.OperationFactory;
 import org.apache.linkis.engineconnplugin.flink.exception.SqlParseException;
 import org.apache.linkis.engineconnplugin.flink.util.ClassUtil;
+
 import org.apache.calcite.config.Lex;
 import org.apache.calcite.sql.*;
 import org.apache.calcite.sql.parser.SqlParser;
@@ -38,12 +39,14 @@ import java.util.stream.Stream;
 public class SqlCommandParserImpl implements SqlCommandParser {
 
     @Override
-    public Optional<SqlCommandCall> parse(String stmt, boolean isBlinkPlanner) throws SqlParseException {
+    public Optional<SqlCommandCall> parse(String stmt, boolean isBlinkPlanner)
+            throws SqlParseException {
         // normalize
         String stmtForRegexMatch = stmt.trim();
         // remove ';' at the end
         if (stmtForRegexMatch.endsWith(";")) {
-            stmtForRegexMatch = stmtForRegexMatch.substring(0, stmtForRegexMatch.length() - 1).trim();
+            stmtForRegexMatch =
+                    stmtForRegexMatch.substring(0, stmtForRegexMatch.length() - 1).trim();
         }
 
         // only parse gateway specific statements
@@ -55,7 +58,8 @@ public class SqlCommandParserImpl implements SqlCommandParser {
                     for (int i = 0; i < groups.length; i++) {
                         groups[i] = matcher.group(i + 1);
                     }
-                    return cmd.getOperandConverter().apply(groups)
+                    return cmd.getOperandConverter()
+                            .apply(groups)
                             .map((operands) -> new SqlCommandCall(cmd, operands));
                 }
             }
@@ -65,10 +69,11 @@ public class SqlCommandParserImpl implements SqlCommandParser {
     }
 
     /**
-     * Flink Parser only supports partial Operations, so we directly use Calcite Parser here.
-     * Once Flink Parser supports all Operations, we should use Flink Parser instead of Calcite Parser.
+     * Flink Parser only supports partial Operations, so we directly use Calcite Parser here. Once
+     * Flink Parser supports all Operations, we should use Flink Parser instead of Calcite Parser.
      */
-    private Optional<SqlCommandCall> parseStmt(String stmt, boolean isBlinkPlanner) throws SqlParseException {
+    private Optional<SqlCommandCall> parseStmt(String stmt, boolean isBlinkPlanner)
+            throws SqlParseException {
         SqlParser.Config config = createSqlParserConfig(isBlinkPlanner);
         SqlParser sqlParser = SqlParser.create(stmt, config);
         SqlNodeList sqlNodes;
@@ -87,38 +92,39 @@ public class SqlCommandParserImpl implements SqlCommandParser {
         SqlNode node = sqlNodes.get(0);
         if (node.getKind().belongsTo(SqlKind.QUERY)) {
             cmd = SqlCommand.SELECT;
-            operands = new String[] { stmt };
+            operands = new String[] {stmt};
         } else if (node instanceof RichSqlInsert) {
             RichSqlInsert insertNode = (RichSqlInsert) node;
             cmd = insertNode.isOverwrite() ? SqlCommand.INSERT_OVERWRITE : SqlCommand.INSERT_INTO;
-            operands = new String[] { stmt, insertNode.getTargetTable().toString() };
+            operands = new String[] {stmt, insertNode.getTargetTable().toString()};
         } else if (node instanceof SqlShowTables) {
             cmd = SqlCommand.SHOW_TABLES;
             operands = new String[0];
         } else if (node instanceof SqlCreateTable) {
             cmd = SqlCommand.CREATE_TABLE;
-            operands = new String[] { stmt };
+            operands = new String[] {stmt};
         } else if (node instanceof SqlDropTable) {
             cmd = SqlCommand.DROP_TABLE;
-            operands = new String[] { stmt };
+            operands = new String[] {stmt};
         } else if (node instanceof SqlCreateCatalog) {
             cmd = SqlCommand.CREATE_CATALOG;
-            operands = new String[] { stmt };
+            operands = new String[] {stmt};
         } else if (node instanceof SqlDropCatalog) {
             cmd = SqlCommand.DROP_CATALOG;
-            operands = new String[] { stmt };
+            operands = new String[] {stmt};
         } else if (node instanceof SqlAlterTable) {
             cmd = SqlCommand.ALTER_TABLE;
-            operands = new String[] { stmt };
+            operands = new String[] {stmt};
         } else if (node instanceof SqlCreateView) {
             // TableEnvironment currently does not support creating view
             // so we have to perform the modification here
             SqlCreateView createViewNode = (SqlCreateView) node;
             cmd = SqlCommand.CREATE_VIEW;
-            operands = new String[] {
-                    createViewNode.getViewName().toString(),
-                    createViewNode.getQuery().toString()
-            };
+            operands =
+                    new String[] {
+                        createViewNode.getViewName().toString(),
+                        createViewNode.getQuery().toString()
+                    };
         } else if (node instanceof SqlDropView) {
             // TableEnvironment currently does not support dropping view
             // so we have to perform the modification here
@@ -139,19 +145,20 @@ public class SqlCommandParserImpl implements SqlCommandParser {
             }
 
             cmd = SqlCommand.DROP_VIEW;
-            operands = new String[] { dropViewNode.getViewName().toString(), String.valueOf(ifExists) };
+            operands =
+                    new String[] {dropViewNode.getViewName().toString(), String.valueOf(ifExists)};
         } else if (node instanceof SqlShowDatabases) {
             cmd = SqlCommand.SHOW_DATABASES;
             operands = new String[0];
         } else if (node instanceof SqlCreateDatabase) {
             cmd = SqlCommand.CREATE_DATABASE;
-            operands = new String[] { stmt };
+            operands = new String[] {stmt};
         } else if (node instanceof SqlDropDatabase) {
             cmd = SqlCommand.DROP_DATABASE;
-            operands = new String[] { stmt };
+            operands = new String[] {stmt};
         } else if (node instanceof SqlAlterDatabase) {
             cmd = SqlCommand.ALTER_DATABASE;
-            operands = new String[] { stmt };
+            operands = new String[] {stmt};
         } else if (node instanceof SqlShowCatalogs) {
             cmd = SqlCommand.SHOW_CATALOGS;
             operands = new String[0];
@@ -160,33 +167,36 @@ public class SqlCommandParserImpl implements SqlCommandParser {
             operands = new String[0];
         } else if (node instanceof SqlUseCatalog) {
             cmd = SqlCommand.USE_CATALOG;
-            operands = new String[] { ((SqlUseCatalog) node).getCatalogName().getSimple() };
+            operands = new String[] {((SqlUseCatalog) node).getCatalogName().getSimple()};
         } else if (node instanceof SqlUseDatabase) {
             cmd = SqlCommand.USE;
-            operands = new String[] { ((SqlUseDatabase) node).getDatabaseName().toString() };
+            operands = new String[] {((SqlUseDatabase) node).getDatabaseName().toString()};
         } else if (node instanceof SqlRichDescribeTable) {
             cmd = SqlCommand.DESCRIBE_TABLE;
             // TODO support describe extended
             String[] fullTableName = ((SqlRichDescribeTable) node).fullTableName();
             String escapedName =
-                    Stream.of(fullTableName).map(s -> "`" + s + "`").collect(Collectors.joining("."));
-            operands = new String[] { escapedName };
+                    Stream.of(fullTableName)
+                            .map(s -> "`" + s + "`")
+                            .collect(Collectors.joining("."));
+            operands = new String[] {escapedName};
         } else if (node instanceof SqlExplain) {
             cmd = SqlCommand.EXPLAIN;
             // TODO support explain details
-            operands = new String[] { ((SqlExplain) node).getExplicandum().toString() };
+            operands = new String[] {((SqlExplain) node).getExplicandum().toString()};
         } else if (node instanceof SqlSetOption) {
             SqlSetOption setNode = (SqlSetOption) node;
             // refer to SqlSetOption#unparseAlterOperation
             if (setNode.getValue() != null) {
                 cmd = SqlCommand.SET;
-                operands = new String[] { setNode.getName().toString(), setNode.getValue().toString() };
+                operands =
+                        new String[] {setNode.getName().toString(), setNode.getValue().toString()};
             } else {
                 cmd = SqlCommand.RESET;
                 if ("ALL".equals(setNode.getName().toString().toUpperCase())) {
                     operands = new String[0];
                 } else {
-                    operands = new String[] { setNode.getName().toString() };
+                    operands = new String[] {setNode.getName().toString()};
                 }
             }
         } else {
@@ -204,14 +214,15 @@ public class SqlCommandParserImpl implements SqlCommandParser {
     }
 
     /**
-     * A temporary solution. We can't get the default SqlParser config through table environment now.
+     * A temporary solution. We can't get the default SqlParser config through table environment
+     * now.
      */
     private SqlParser.Config createSqlParserConfig(boolean isBlinkPlanner) {
-        SqlParser.Config config = SqlParser
-                .config()
-                .withParserFactory(FlinkSqlParserImpl.FACTORY)
-                .withConformance(FlinkSqlConformance.DEFAULT)
-                .withLex(Lex.JAVA);
+        SqlParser.Config config =
+                SqlParser.config()
+                        .withParserFactory(FlinkSqlParserImpl.FACTORY)
+                        .withConformance(FlinkSqlConformance.DEFAULT)
+                        .withLex(Lex.JAVA);
         if (isBlinkPlanner) {
             return config.withIdentifierMaxLength(256);
         } else {
@@ -222,14 +233,15 @@ public class SqlCommandParserImpl implements SqlCommandParser {
     private static SqlCommandParser sqlCommandParser;
 
     public static SqlCommandParser getInstance() {
-        if(sqlCommandParser == null) {
+        if (sqlCommandParser == null) {
             synchronized (OperationFactory.class) {
-                if(sqlCommandParser == null) {
-                    sqlCommandParser = ClassUtil.getInstance(SqlCommandParser.class, new SqlCommandParserImpl());
+                if (sqlCommandParser == null) {
+                    sqlCommandParser =
+                            ClassUtil.getInstance(
+                                    SqlCommandParser.class, new SqlCommandParserImpl());
                 }
             }
         }
         return sqlCommandParser;
     }
-
 }

@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.client.service;
 
 import org.apache.linkis.common.exception.ErrorException;
@@ -28,25 +28,24 @@ import org.apache.linkis.cs.common.entity.source.*;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.exception.ErrorCode;
 import org.apache.linkis.cs.common.utils.CSCommonUtils;
+
 import org.apache.commons.lang.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class CSTableService implements TableService {
 
-    private final static Logger logger = LoggerFactory.getLogger(CSTableService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CSTableService.class);
 
     private SearchService searchService = DefaultSearchService.getInstance();
 
     private static CSTableService csTableService;
 
-    private CSTableService() {
-
-    }
+    private CSTableService() {}
 
     public static CSTableService getInstance() {
         if (null == csTableService) {
@@ -72,7 +71,8 @@ public class CSTableService implements TableService {
     }
 
     @Override
-    public List<CSTable> getUpstreamTables(String contextIDStr, String nodeName) throws CSErrorException {
+    public List<CSTable> getUpstreamTables(String contextIDStr, String nodeName)
+            throws CSErrorException {
         List<CSTable> rsList = new ArrayList<>();
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
             return rsList;
@@ -81,9 +81,12 @@ public class CSTableService implements TableService {
             ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
             if (null != contextID) {
                 if (contextID instanceof CombinedNodeIDContextID) {
-                    contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
+                    contextID =
+                            ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
                 }
-                rsList = searchService.searchUpstreamContext(contextID, nodeName, Integer.MAX_VALUE, CSTable.class);
+                rsList =
+                        searchService.searchUpstreamContext(
+                                contextID, nodeName, Integer.MAX_VALUE, CSTable.class);
             }
             return rsList;
         } catch (ErrorException e) {
@@ -93,7 +96,8 @@ public class CSTableService implements TableService {
     }
 
     @Override
-    public CSTable getUpstreamSuitableTable(String contextIDStr, String nodeName, String keyword) throws CSErrorException {
+    public CSTable getUpstreamSuitableTable(String contextIDStr, String nodeName, String keyword)
+            throws CSErrorException {
         CSTable csTable = null;
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
             return csTable;
@@ -102,32 +106,37 @@ public class CSTableService implements TableService {
             ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
             if (null != contextID) {
                 if (contextID instanceof CombinedNodeIDContextID) {
-                    contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
+                    contextID =
+                            ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
                 }
                 csTable = searchService.searchContext(contextID, keyword, nodeName, CSTable.class);
             }
         } catch (ErrorException e) {
-            throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "getUpstreamSuitableTable error ", e);
+            throw new CSErrorException(
+                    ErrorCode.DESERIALIZE_ERROR, "getUpstreamSuitableTable error ", e);
         }
         return csTable;
     }
 
     @Override
-    public List<ContextKeyValue> searchUpstreamTableKeyValue(String contextIDStr, String nodeName) throws CSErrorException {
+    public List<ContextKeyValue> searchUpstreamTableKeyValue(String contextIDStr, String nodeName)
+            throws CSErrorException {
         try {
             ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
             if (contextID instanceof CombinedNodeIDContextID) {
                 contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
             }
-            return searchService.searchUpstreamKeyValue(contextID, nodeName, Integer.MAX_VALUE, CSTable.class);
+            return searchService.searchUpstreamKeyValue(
+                    contextID, nodeName, Integer.MAX_VALUE, CSTable.class);
         } catch (ErrorException e) {
-            throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Failed to searchUpstreamTableKeyValue ", e);
+            throw new CSErrorException(
+                    ErrorCode.DESERIALIZE_ERROR, "Failed to searchUpstreamTableKeyValue ", e);
         }
     }
 
-
     @Override
-    public void putCSTable(String contextIDStr, String contextKeyStr, CSTable csTable) throws CSErrorException {
+    public void putCSTable(String contextIDStr, String contextKeyStr, CSTable csTable)
+            throws CSErrorException {
         ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
         try {
             ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
@@ -162,9 +171,9 @@ public class CSTableService implements TableService {
         }
     }
 
-
     @Override
-    public void registerCSTable(String contextIDStr, String nodeName, String alias, CSTable csTable) throws CSErrorException {
+    public void registerCSTable(String contextIDStr, String nodeName, String alias, CSTable csTable)
+            throws CSErrorException {
 
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
             return;
@@ -180,7 +189,9 @@ public class CSTableService implements TableService {
                     contextKey.setContextScope(ContextScope.PUBLIC);
                     contextKey.setContextType(ContextType.METADATA);
                     contextKey.setKey(CSCommonUtils.getTableKey(nodeName, tmpTable));
-                    CSTable oldCsTable = getCSTable(contextIDStr, SerializeHelper.serializeContextKey(contextKey));
+                    CSTable oldCsTable =
+                            getCSTable(
+                                    contextIDStr, SerializeHelper.serializeContextKey(contextKey));
                     if (null == oldCsTable) {
                         tableName = tmpTable;
                         break;
@@ -200,7 +211,8 @@ public class CSTableService implements TableService {
             contextKey.setKey(CSCommonUtils.getTableKey(nodeName, tableName));
             putCSTable(contextIDStr, SerializeHelper.serializeContextKey(contextKey), csTable);
         } catch (ErrorException e) {
-            throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Failed to register cs tmp table ", e);
+            throw new CSErrorException(
+                    ErrorCode.DESERIALIZE_ERROR, "Failed to register cs tmp table ", e);
         }
     }
 }

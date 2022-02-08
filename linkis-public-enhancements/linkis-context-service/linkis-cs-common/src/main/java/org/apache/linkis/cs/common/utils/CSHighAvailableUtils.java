@@ -5,38 +5,39 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.common.utils;
 
-import com.google.gson.Gson;
 import org.apache.linkis.cs.common.entity.source.CommonHAContextID;
 import org.apache.linkis.cs.common.entity.source.HAContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.exception.ErrorCode;
+
 import org.apache.commons.lang.StringUtils;
+
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class CSHighAvailableUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(CSHighAvailableUtils.class);
-    private final static String HAID_PART_DELEMETER = "--";
-    private final static String HAID_INS_LEN_DELEMETER = "-";
-    private final static int HAID_PARTS_NUM = 2;
-    private final static Gson gson = new Gson();
+    private static final String HAID_PART_DELEMETER = "--";
+    private static final String HAID_INS_LEN_DELEMETER = "-";
+    private static final int HAID_PARTS_NUM = 2;
+    private static final Gson gson = new Gson();
 
     private static final int TWO = 2;
 
@@ -44,10 +45,10 @@ public class CSHighAvailableUtils {
         if (StringUtils.isBlank(haid)) {
             return false;
         }
-        String [] arr = haid.split(HAID_PART_DELEMETER);
+        String[] arr = haid.split(HAID_PART_DELEMETER);
         if (null != arr && arr.length == HAID_PARTS_NUM) {
             int insLen = 0;
-            String [] lenArr = arr[0].split(HAID_INS_LEN_DELEMETER);
+            String[] lenArr = arr[0].split(HAID_INS_LEN_DELEMETER);
             if (null == lenArr || lenArr.length < TWO) {
                 return false;
             }
@@ -68,12 +69,28 @@ public class CSHighAvailableUtils {
         return false;
     }
 
-    public static String encodeHAIDKey(String contextID, String instance, List<String> backupInstanceList) throws CSErrorException {
-        if (!StringUtils.isNumeric(contextID) || StringUtils.isBlank(instance) || null == backupInstanceList || backupInstanceList.isEmpty()) {
-            logger.error("Cannot encodeHAIDKey, contextID : " + contextID
-                    + ", instance : " + instance + ", backupInstanceList : " + gson.toJson(backupInstanceList));
-            throw new CSErrorException(ErrorCode.INVALID_HAID_ENCODE_PARAMS, "Cannot encodeHAIDKey, contextID : " + contextID
-                    + ", instance : " + instance + ", backupInstanceList : " + gson.toJson(backupInstanceList));
+    public static String encodeHAIDKey(
+            String contextID, String instance, List<String> backupInstanceList)
+            throws CSErrorException {
+        if (!StringUtils.isNumeric(contextID)
+                || StringUtils.isBlank(instance)
+                || null == backupInstanceList
+                || backupInstanceList.isEmpty()) {
+            logger.error(
+                    "Cannot encodeHAIDKey, contextID : "
+                            + contextID
+                            + ", instance : "
+                            + instance
+                            + ", backupInstanceList : "
+                            + gson.toJson(backupInstanceList));
+            throw new CSErrorException(
+                    ErrorCode.INVALID_HAID_ENCODE_PARAMS,
+                    "Cannot encodeHAIDKey, contextID : "
+                            + contextID
+                            + ", instance : "
+                            + instance
+                            + ", backupInstanceList : "
+                            + gson.toJson(backupInstanceList));
         }
         StringBuilder idBuilder = new StringBuilder("");
         StringBuilder instBuilder = new StringBuilder("");
@@ -83,9 +100,7 @@ public class CSHighAvailableUtils {
             idBuilder.append(HAID_INS_LEN_DELEMETER).append(ins.length());
             instBuilder.append(ins);
         }
-        idBuilder.append(HAID_PART_DELEMETER)
-                .append(instBuilder)
-                .append(contextID);
+        idBuilder.append(HAID_PART_DELEMETER).append(instBuilder).append(contextID);
         return idBuilder.toString();
     }
 
@@ -97,8 +112,8 @@ public class CSHighAvailableUtils {
             logger.error("Invalid haid : " + haid);
             throw new CSErrorException(ErrorCode.INVALID_HAID_STRING, "Invalid haid : " + haid);
         }
-        String [] partArr = haid.split(HAID_PART_DELEMETER);
-        String [] insArr = partArr[0].split(HAID_INS_LEN_DELEMETER);
+        String[] partArr = haid.split(HAID_PART_DELEMETER);
+        String[] insArr = partArr[0].split(HAID_INS_LEN_DELEMETER);
         String contextID = null;
         List<String> instanceList = new ArrayList<>();
         String insStr = partArr[1];
@@ -112,13 +127,15 @@ public class CSHighAvailableUtils {
             contextID = insStr.substring(index);
         } catch (NumberFormatException e) {
             logger.error("Invalid haid : " + haid + ", " + e.getMessage());
-            throw new CSErrorException(ErrorCode.INVALID_HAID_STRING, "Invalid haid : " + haid + ", " + e.getMessage());
+            throw new CSErrorException(
+                    ErrorCode.INVALID_HAID_STRING,
+                    "Invalid haid : " + haid + ", " + e.getMessage());
         }
         String instance = instanceList.remove(0);
         return new CommonHAContextID(instance, instanceList.get(0), contextID);
     }
 
-    public static void main(String [] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         String haid1 = "24--24--YmRwaGRwMTFpZGUwMTo5MTE2YmRwaGRwMTFpZGUwMTo5MTE084835";
         System.out.println(checkHAIDBasicFormat(haid1));
         String id = "8798";

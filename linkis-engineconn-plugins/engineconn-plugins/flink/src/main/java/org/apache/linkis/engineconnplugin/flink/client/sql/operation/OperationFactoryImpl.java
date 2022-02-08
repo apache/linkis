@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation;
 
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl.*;
@@ -23,14 +23,13 @@ import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
 import org.apache.linkis.engineconnplugin.flink.exception.SqlParseException;
 import org.apache.linkis.engineconnplugin.flink.util.ClassUtil;
 
-
 public class OperationFactoryImpl implements OperationFactory {
 
-    private OperationFactoryImpl() {
-    }
+    private OperationFactoryImpl() {}
 
     @Override
-    public Operation createOperation(SqlCommandCall call, FlinkEngineConnContext context) throws SqlParseException {
+    public Operation createOperation(SqlCommandCall call, FlinkEngineConnContext context)
+            throws SqlParseException {
         Operation operation;
         switch (call.command) {
             case SELECT:
@@ -40,7 +39,9 @@ public class OperationFactoryImpl implements OperationFactory {
                 operation = new CreateViewOperation(context, call.operands[0], call.operands[1]);
                 break;
             case DROP_VIEW:
-                operation = new DropViewOperation(context, call.operands[0], Boolean.parseBoolean(call.operands[1]));
+                operation =
+                        new DropViewOperation(
+                                context, call.operands[0], Boolean.parseBoolean(call.operands[1]));
                 break;
             case CREATE_TABLE:
             case DROP_TABLE:
@@ -108,7 +109,8 @@ public class OperationFactoryImpl implements OperationFactory {
                 operation = new ExplainOperation(context, call.operands[0]);
                 break;
             default:
-                throw new SqlParseException("Unsupported command call " + call + ". This is a bug.");
+                throw new SqlParseException(
+                        "Unsupported command call " + call + ". This is a bug.");
         }
         return operation;
     }
@@ -116,14 +118,15 @@ public class OperationFactoryImpl implements OperationFactory {
     private static OperationFactory operationFactory;
 
     public static OperationFactory getInstance() {
-        if(operationFactory == null) {
+        if (operationFactory == null) {
             synchronized (OperationFactory.class) {
-                if(operationFactory == null) {
-                    operationFactory = ClassUtil.getInstance(OperationFactory.class, new OperationFactoryImpl());
+                if (operationFactory == null) {
+                    operationFactory =
+                            ClassUtil.getInstance(
+                                    OperationFactory.class, new OperationFactoryImpl());
                 }
             }
         }
         return operationFactory;
     }
-
 }

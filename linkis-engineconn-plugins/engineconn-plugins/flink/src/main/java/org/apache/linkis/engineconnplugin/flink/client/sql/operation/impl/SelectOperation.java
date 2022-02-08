@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl;
 
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
@@ -28,11 +28,7 @@ import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.Colu
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
 import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.table.api.Table;
@@ -44,12 +40,17 @@ import org.apache.flink.table.types.DataType;
 import org.apache.flink.table.types.logical.utils.LogicalTypeUtils;
 import org.apache.flink.table.types.utils.DataTypeUtils;
 import org.apache.flink.types.Row;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Operation for SELECT command.
- */
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+/** Operation for SELECT command. */
 public class SelectOperation extends AbstractJobOperation {
 
     private static final Logger LOG = LoggerFactory.getLogger(SelectOperation.class);
@@ -87,7 +88,8 @@ public class SelectOperation extends AbstractJobOperation {
     }
 
     @Override
-    protected Optional<Tuple2<List<Row>, List<Boolean>>> fetchJobResults() throws SqlExecutionException {
+    protected Optional<Tuple2<List<Row>, List<Boolean>>> fetchJobResults()
+            throws SqlExecutionException {
         Optional<Tuple2<List<Row>, List<Boolean>>> ret;
         synchronized (lock) {
             if (result == null) {
@@ -109,7 +111,8 @@ public class SelectOperation extends AbstractJobOperation {
         return columnInfos;
     }
 
-    private Optional<Tuple2<List<Row>, List<Boolean>>> fetchBatchResult() throws SqlExecutionException {
+    private Optional<Tuple2<List<Row>, List<Boolean>>> fetchBatchResult()
+            throws SqlExecutionException {
         BatchResult<?> batchResult = (BatchResult<?>) this.result;
         TypedResult<List<Row>> typedResult = batchResult.retrieveChanges();
         if (typedResult.getType() == TypedResult.ResultType.PAYLOAD) {
@@ -120,7 +123,8 @@ public class SelectOperation extends AbstractJobOperation {
         }
     }
 
-    private Optional<Tuple2<List<Row>, List<Boolean>>> fetchStreamingResult() throws SqlExecutionException {
+    private Optional<Tuple2<List<Row>, List<Boolean>>> fetchStreamingResult()
+            throws SqlExecutionException {
         ChangelogResult changLogResult = (ChangelogResult) this.result;
         TypedResult<List<Tuple2<Boolean, Row>>> typedResult = changLogResult.retrieveChanges();
         if (typedResult.getType() == TypedResult.ResultType.EOS) {
@@ -140,32 +144,40 @@ public class SelectOperation extends AbstractJobOperation {
     }
 
     private JobID executeQueryInternal(ExecutionContext executionContext, String query)
-        throws SqlExecutionException {
+            throws SqlExecutionException {
         // create table
-        final Table table = createTable(executionContext, executionContext.getTableEnvironment(), query);
-        boolean isChangelogResult = executionContext.getEnvironment().getExecution().inStreamingMode();
+        final Table table =
+                createTable(executionContext, executionContext.getTableEnvironment(), query);
+        boolean isChangelogResult =
+                executionContext.getEnvironment().getExecution().inStreamingMode();
         // initialize result
         resultSchema = removeTimeAttributes(table.getSchema());
         if (isChangelogResult) {
-            result = ResultUtil.createChangelogResult(
-                    executionContext.getFlinkConfig(),
-                    executionContext.getEnvironment(),
-                    resultSchema,
-                    executionContext.getExecutionConfig());
+            result =
+                    ResultUtil.createChangelogResult(
+                            executionContext.getFlinkConfig(),
+                            executionContext.getEnvironment(),
+                            resultSchema,
+                            executionContext.getExecutionConfig());
         } else {
-            result = ResultUtil.createBatchResult(
-                    resultSchema,
-                    executionContext.getExecutionConfig());
+            result =
+                    ResultUtil.createBatchResult(
+                            resultSchema, executionContext.getExecutionConfig());
         }
         result.setFlinkListeners(getFlinkListeners());
-        final String tableName = String.format("_tmp_table_%s", UUID.randomUUID().toString().replace("-", ""));
+        final String tableName =
+                String.format("_tmp_table_%s", UUID.randomUUID().toString().replace("-", ""));
         TableResult tableResult;
         try {
-            // writing to a sink requires an optimization step that might reference UDFs during code compilation
-            tableResult = executionContext.wrapClassLoader(tableEnv -> {
-                tableEnv.registerTableSinkInternal(tableName, result.getTableSink());
-                return table.executeInsert(tableName);
-            });
+            // writing to a sink requires an optimization step that might reference UDFs during code
+            // compilation
+            tableResult =
+                    executionContext.wrapClassLoader(
+                            tableEnv -> {
+                                tableEnv.registerTableSinkInternal(
+                                        tableName, result.getTableSink());
+                                return table.executeInsert(tableName);
+                            });
         } catch (Exception t) {
             // the result needs to be closed as long as
             // it not stored in the result store
@@ -178,20 +190,26 @@ public class SelectOperation extends AbstractJobOperation {
             executionContext.wrapClassLoader(tableEnv -> tableEnv.dropTemporaryTable(tableName));
         }
 
-        return tableResult.getJobClient().map(jobClient -> {
-            JobID jobId = jobClient.getJobID();
-            LOG.info("Submit flink job: {} successfully.", jobId);
-            // start result retrieval
-            result.startRetrieval(jobClient);
-            return jobId;
-        }).orElseThrow(() -> new SqlExecutionException("No job is generated, please ask admin for help!"));
+        return tableResult
+                .getJobClient()
+                .map(
+                        jobClient -> {
+                            JobID jobId = jobClient.getJobID();
+                            LOG.info("Submit flink job: {} successfully.", jobId);
+                            // start result retrieval
+                            result.startRetrieval(jobClient);
+                            return jobId;
+                        })
+                .orElseThrow(
+                        () ->
+                                new SqlExecutionException(
+                                        "No job is generated, please ask admin for help!"));
     }
 
-
-    /**
-     * Creates a table using the given query in the given table environment.
-     */
-    private Table createTable(ExecutionContext context, TableEnvironment tableEnv, String selectQuery) throws SqlExecutionException {
+    /** Creates a table using the given query in the given table environment. */
+    private Table createTable(
+            ExecutionContext context, TableEnvironment tableEnv, String selectQuery)
+            throws SqlExecutionException {
         // parse and validate query
         try {
             return context.wrapClassLoader(() -> tableEnv.sqlQuery(selectQuery));
@@ -205,13 +223,12 @@ public class SelectOperation extends AbstractJobOperation {
         final TableSchema.Builder builder = TableSchema.builder();
         for (int i = 0; i < schema.getFieldCount(); i++) {
             final DataType dataType = schema.getFieldDataTypes()[i];
-            final DataType convertedType = DataTypeUtils.replaceLogicalType(
-                    dataType,
-                    LogicalTypeUtils.removeTimeAttributes(dataType.getLogicalType()));
+            final DataType convertedType =
+                    DataTypeUtils.replaceLogicalType(
+                            dataType,
+                            LogicalTypeUtils.removeTimeAttributes(dataType.getLogicalType()));
             builder.field(schema.getFieldNames()[i], convertedType);
         }
         return builder.build();
     }
-
-
 }

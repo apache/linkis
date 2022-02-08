@@ -18,9 +18,7 @@
 package org.apache.linkis.manager.engineplugin.jdbc;
 
 public enum JdbcAuthType {
-    /**
-     * the auth type of jdbc
-     */
+    /** the auth type of jdbc */
     SIMPLE("SIMPLE"),
     USERNAME("USERNAME"),
     KERBEROS("KERBEROS");
@@ -41,6 +39,7 @@ public enum JdbcAuthType {
                 return s;
             }
         }
-        throw new UnsupportedOperationException("the login authentication type of " + authType + " is not supported");
+        throw new UnsupportedOperationException(
+                "the login authentication type of " + authType + " is not supported");
     }
 }

@@ -5,20 +5,21 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.governance.common.entity.task;
 
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.protocol.task.Task;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -29,19 +30,16 @@ import java.util.Map;
 public class RequestPersistTask implements Task {
 
     private Long taskID;
-    /**
-     * instance 是指该task所在的统一入口的实例 ip + port
-     */
+    /** instance 是指该task所在的统一入口的实例 ip + port */
     private String instance;
+
     private String execId;
     private String umUser;
     private String submitUser;
 
-
-    /**
-     * engineInstance 是指task执行所请求的engine的实例信息，ip+port
-     */
+    /** engineInstance 是指task执行所请求的engine的实例信息，ip+port */
     private String engineInstance;
+
     private String executionCode;
     private Float progress;
     private String logPath;
@@ -52,23 +50,18 @@ public class RequestPersistTask implements Task {
     private Integer errCode;
     private String errDesc;
     private String taskResource;
-    /**
-     * executeApplicationName 参数指的是用户所寻求的服务，比如spark python R等等
-     */
+    /** executeApplicationName 参数指的是用户所寻求的服务，比如spark python R等等 */
     private String executeApplicationName;
-    /**
-     * requestApplicationName 是creator的传参名，例如IDE或WTSS等
-     */
+    /** requestApplicationName 是creator的传参名，例如IDE或WTSS等 */
     private String requestApplicationName;
-    /**
-     * source 存放脚本来源，scriptPath是其中一个参数用户采用传入执行脚本的方式，scriptPath就是脚本的存储地址
-     */
+    /** source 存放脚本来源，scriptPath是其中一个参数用户采用传入执行脚本的方式，scriptPath就是脚本的存储地址 */
     private java.util.Map<String, String> source;
     /**
      * runType需要和executeApplicationName结合使用，如用户选择了Spark做为服务，他还需要指明使用哪种执行方式，比如pySpark RSpark等
      * runType和runType是同一个属性，为了兼容以前的代码
      */
     private String runType;
+
     private String engineType;
     private java.util.Map<String, Object> params;
 
@@ -76,11 +69,9 @@ public class RequestPersistTask implements Task {
 
     private List<Label<?>> labels;
 
-
     private String createService;
 
     private String description;
-
 
     public String getEngineType() {
         return engineType;
@@ -302,27 +293,58 @@ public class RequestPersistTask implements Task {
 
     @Override
     public String toString() {
-        return "RequestPersistTask{" +
-                "taskID=" + taskID +
-                ", instance='" + instance + '\'' +
-                ", execId='" + execId + '\'' +
-                ", umUser='" + umUser + '\'' +
-                ", engineInstance='" + engineInstance + '\'' +
-                ", executionCode='" + executionCode + '\'' +
-                ", progress=" + progress +
-                ", logPath='" + logPath + '\'' +
-                ", resultLocation='" + resultLocation + '\'' +
-                ", status='" + status + '\'' +
-                ", createdTime=" + createdTime +
-                ", updatedTime=" + updatedTime +
-                ", errCode=" + errCode +
-                ", errDesc='" + errDesc + '\'' +
-                ", executeApplicationName='" + executeApplicationName + '\'' +
-                ", requestApplicationName='" + requestApplicationName + '\'' +
-                ", source=" + source +
-                ", runType='" + runType + '\'' +
-                ", params=" + params +
-                '}';
+        return "RequestPersistTask{"
+                + "taskID="
+                + taskID
+                + ", instance='"
+                + instance
+                + '\''
+                + ", execId='"
+                + execId
+                + '\''
+                + ", umUser='"
+                + umUser
+                + '\''
+                + ", engineInstance='"
+                + engineInstance
+                + '\''
+                + ", executionCode='"
+                + executionCode
+                + '\''
+                + ", progress="
+                + progress
+                + ", logPath='"
+                + logPath
+                + '\''
+                + ", resultLocation='"
+                + resultLocation
+                + '\''
+                + ", status='"
+                + status
+                + '\''
+                + ", createdTime="
+                + createdTime
+                + ", updatedTime="
+                + updatedTime
+                + ", errCode="
+                + errCode
+                + ", errDesc='"
+                + errDesc
+                + '\''
+                + ", executeApplicationName='"
+                + executeApplicationName
+                + '\''
+                + ", requestApplicationName='"
+                + requestApplicationName
+                + '\''
+                + ", source="
+                + source
+                + ", runType='"
+                + runType
+                + '\''
+                + ", params="
+                + params
+                + '}';
     }
 
     @Override

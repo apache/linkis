@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.datasourcemanager.common.util;
 
 import org.apache.commons.codec.binary.Base64;
@@ -24,8 +24,7 @@ import java.io.*;
 import java.security.MessageDigest;
 
 public class CryptoUtils {
-    private CryptoUtils(){
-    }
+    private CryptoUtils() {}
     /**
      * The serialized object is a string character
      *
@@ -42,7 +41,7 @@ public class CryptoUtils {
             oos.close();
             bos.close();
             return new String(new Base64().encode(bos.toByteArray()));
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -57,34 +56,35 @@ public class CryptoUtils {
      */
     public static Object string2Object(String str) {
         try {
-            ByteArrayInputStream bis = new ByteArrayInputStream(new Base64().decode(str.getBytes()));
+            ByteArrayInputStream bis =
+                    new ByteArrayInputStream(new Base64().decode(str.getBytes()));
             ObjectInputStream ois = new ObjectInputStream(bis);
             Object o = ois.readObject();
             bis.close();
             ois.close();
             return o;
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     /**
      * MD5 encrypt
+     *
      * @param source
      * @param salt
      * @param iterator
      * @return
      */
-    public static String md5(String source, String salt, int iterator){
+    public static String md5(String source, String salt, int iterator) {
         StringBuilder token = new StringBuilder();
-        try{
+        try {
             MessageDigest digest = MessageDigest.getInstance("md5");
-            if(StringUtils.isNotEmpty(salt)){
+            if (StringUtils.isNotEmpty(salt)) {
                 digest.update(salt.getBytes("UTF-8"));
             }
             byte[] result = digest.digest(source.getBytes());
-            for(int i = 0; i < iterator - 1; i++){
+            for (int i = 0; i < iterator - 1; i++) {
                 digest.reset();
                 result = digest.digest(result);
             }
@@ -95,10 +95,9 @@ public class CryptoUtils {
                 }
                 token.append(Integer.toHexString(temp));
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
         return token.toString();
     }
-
 }

@@ -5,19 +5,18 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.persistence.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.exception.CSWarnException;
 import org.apache.linkis.cs.common.serialize.helper.ContextSerializationHelper;
@@ -26,10 +25,14 @@ import org.apache.linkis.cs.persistence.annotation.Ignore;
 import org.apache.linkis.cs.persistence.entity.ExtraFieldClass;
 import org.apache.linkis.cs.persistence.exception.ThrowingFunction;
 import org.apache.linkis.server.BDPJettyServerHelper;
+
 import org.apache.commons.math3.util.Pair;
+
+import org.springframework.beans.BeanUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -37,7 +40,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
 
 public class PersistenceUtils {
 
@@ -47,11 +49,13 @@ public class PersistenceUtils {
 
     private static String generateGetMethod(Field field) {
         String fieldName = field.getName();
-        return String.format("get%s%s", fieldName.substring(0, 1).toUpperCase(), fieldName.substring(1));
+        return String.format(
+                "get%s%s", fieldName.substring(0, 1).toUpperCase(), fieldName.substring(1));
     }
 
     public static String generateSetMethod(String fieldName) {
-        return String.format("set%s%s", fieldName.substring(0, 1).toUpperCase(), fieldName.substring(1));
+        return String.format(
+                "set%s%s", fieldName.substring(0, 1).toUpperCase(), fieldName.substring(1));
     }
 
     private static boolean canIgnore(Field field) {
@@ -60,14 +64,19 @@ public class PersistenceUtils {
 
     private static List<String> getIgnoreFieldName(Class<?> clazz) {
         if (clazz.getAnnotation(Ignore.class) != null) {
-            return Arrays.stream(clazz.getDeclaredFields()).map(Field::getName).collect(Collectors.toList());
+            return Arrays.stream(clazz.getDeclaredFields())
+                    .map(Field::getName)
+                    .collect(Collectors.toList());
         } else {
             return Arrays.stream(clazz.getDeclaredFields())
-                    .filter(PersistenceUtils::canIgnore).map(Field::getName).collect(Collectors.toList());
+                    .filter(PersistenceUtils::canIgnore)
+                    .map(Field::getName)
+                    .collect(Collectors.toList());
         }
     }
 
-    public static <T, S> Pair<S, ExtraFieldClass> transfer(T t, Class<S> sClass) throws CSErrorException {
+    public static <T, S> Pair<S, ExtraFieldClass> transfer(T t, Class<S> sClass)
+            throws CSErrorException {
         try {
             ExtraFieldClass extraFieldClass = new ExtraFieldClass();
             S s = sClass.newInstance();
@@ -79,7 +88,7 @@ public class PersistenceUtils {
                 if (!canIgnore.contains(field.getName())) {
                     Method method = tClass.getMethod(generateGetMethod(field));
                     if (null != method.invoke(t)) {
-                        //field.getType().getName() 无法拿到子类的类型
+                        // field.getType().getName() 无法拿到子类的类型
                         Object invoke = method.invoke(t);
                         extraFieldClass.addFieldName(field.getName());
                         if (invoke == null) {
@@ -109,15 +118,20 @@ public class PersistenceUtils {
                 if (LONG_TYP.equals(extraFieldClass.getOneFieldType(i))) {
                     Long value = new Long(extraFieldClass.getOneFieldValue(i).toString());
                     field.set(t, value);
-                } else if (Enum.class.isAssignableFrom(Class.forName(extraFieldClass.getOneFieldType(i)))) {
-                    //反序列化支持枚举类
+                } else if (Enum.class.isAssignableFrom(
+                        Class.forName(extraFieldClass.getOneFieldType(i)))) {
+                    // 反序列化支持枚举类
                     Class<?> enumClass = Class.forName(extraFieldClass.getOneFieldType(i));
                     Method valueOf = enumClass.getMethod("valueOf", String.class);
                     Object invoke = valueOf.invoke(null, extraFieldClass.getOneFieldValue(i));
                     field.set(t, invoke);
-                } else if (!BeanUtils.isSimpleProperty(Class.forName(extraFieldClass.getOneFieldType(i)))) {
-                    //非基本类型的话,使用jackson进行反序列化  // TODO: 2020/3/5 这里属性的序列化and反序列化最好修改为utils的序列化器
-                    Object o = json.convertValue(extraFieldClass.getOneFieldValue(i), Class.forName(extraFieldClass.getOneFieldType(i)));
+                } else if (!BeanUtils.isSimpleProperty(
+                        Class.forName(extraFieldClass.getOneFieldType(i)))) {
+                    // 非基本类型的话,使用jackson进行反序列化  // TODO: 2020/3/5 这里属性的序列化and反序列化最好修改为utils的序列化器
+                    Object o =
+                            json.convertValue(
+                                    extraFieldClass.getOneFieldValue(i),
+                                    Class.forName(extraFieldClass.getOneFieldType(i)));
                     field.set(t, o);
                 } else {
                     field.set(t, extraFieldClass.getOneFieldValue(i));
@@ -155,5 +169,4 @@ public class PersistenceUtils {
     public static <T> T deserialize(String Str) throws CSErrorException {
         return (T) SERIALIZE.deserialize(Str);
     }
-
 }

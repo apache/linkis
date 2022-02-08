@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.contextcache.cache.cskey.impl;
 
 import org.apache.linkis.cs.common.entity.enumeration.ContextType;
@@ -22,8 +22,10 @@ import org.apache.linkis.cs.common.entity.source.ContextKey;
 import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
 import org.apache.linkis.cs.contextcache.cache.cskey.ContextValueMapSet;
 import org.apache.linkis.cs.contextcache.index.ContextInvertedIndexSetImpl;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,14 +33,13 @@ import java.util.*;
 
 public class ContextValueMapSetImpl implements ContextValueMapSet {
 
-
     private static final Logger logger = LoggerFactory.getLogger(ContextInvertedIndexSetImpl.class);
 
     Map<String, Map<String, ContextKeyValue>> contextValueMapSet = new HashMap<>();
 
     @Override
     public Map<String, ContextKeyValue> getContextValueMap(ContextType contextType) {
-        if(contextType == null) {
+        if (contextType == null) {
             contextType = ContextType.METADATA;
         }
         String csType = contextType.name();
@@ -58,16 +59,16 @@ public class ContextValueMapSetImpl implements ContextValueMapSet {
         if (contextKeyValue.getContextKey() != null
                 && contextKeyValue.getContextValue() != null
                 && StringUtils.isNotBlank(contextKeyValue.getContextKey().getKey())) {
-            return getContextValueMap(contextKeyValue.getContextKey().getContextType()).put(contextKeyValue.getContextKey().getKey(), contextKeyValue);
+            return getContextValueMap(contextKeyValue.getContextKey().getContextType())
+                    .put(contextKeyValue.getContextKey().getKey(), contextKeyValue);
         }
         return null;
     }
 
-
     @Override
     public ContextKeyValue getByContextKey(ContextKey contextKey, ContextType contextType) {
         if (contextKey != null && StringUtils.isNotBlank(contextKey.getKey())) {
-           return getContextValueMap(contextType).get(contextKey.getKey());
+            return getContextValueMap(contextType).get(contextKey.getKey());
         }
         return null;
     }
@@ -81,8 +82,9 @@ public class ContextValueMapSetImpl implements ContextValueMapSet {
     }
 
     @Override
-    public List<ContextKeyValue> getByContextKeys(List<String> contextKeys, ContextType contextType) {
-        if(CollectionUtils.isEmpty(contextKeys)) {
+    public List<ContextKeyValue> getByContextKeys(
+            List<String> contextKeys, ContextType contextType) {
+        if (CollectionUtils.isEmpty(contextKeys)) {
             return null;
         }
         List<ContextKeyValue> contextKeyValueList = new ArrayList<>();
@@ -97,27 +99,26 @@ public class ContextValueMapSetImpl implements ContextValueMapSet {
 
     @Override
     public List<ContextKeyValue> getAllValuesByType(ContextType contextType) {
-        
+
         Collection<ContextKeyValue> values = getContextValueMap(contextType).values();
 
-        if (null != values){
+        if (null != values) {
             return new ArrayList<>(values);
         }
         return null;
     }
 
-
     @Override
     public List<ContextKeyValue> getAllLikes(String regex, ContextType contextType) {
-        if (StringUtils.isBlank(regex)){
+        if (StringUtils.isBlank(regex)) {
             return null;
         }
         Map<String, ContextKeyValue> contextValueMap = getContextValueMap(contextType);
         List<ContextKeyValue> contextKeyValueList = new ArrayList<>();
         Iterator<String> iterator = contextValueMap.keySet().iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             String key = iterator.next();
-            if(key.matches(regex)){
+            if (key.matches(regex)) {
                 contextKeyValueList.add(contextValueMap.get(key));
             }
         }
@@ -128,17 +129,16 @@ public class ContextValueMapSetImpl implements ContextValueMapSet {
     public List<ContextKeyValue> getAll() {
         List<ContextKeyValue> contextKeyValueList = new ArrayList<>();
 
-        for (Map<String, ContextKeyValue> contextKeyValueMap : contextValueMapSet.values()){
+        for (Map<String, ContextKeyValue> contextKeyValueMap : contextValueMapSet.values()) {
             contextKeyValueList.addAll(contextKeyValueMap.values());
         }
         return contextKeyValueList;
     }
 
-
     @Override
     public ContextKeyValue remove(String contextKey, ContextType contextType) {
-        if (StringUtils.isNotBlank(contextKey)){
-            return  getContextValueMap(contextType).remove(contextKey);
+        if (StringUtils.isNotBlank(contextKey)) {
+            return getContextValueMap(contextType).remove(contextKey);
         }
         return null;
     }
@@ -150,7 +150,7 @@ public class ContextValueMapSetImpl implements ContextValueMapSet {
 
     @Override
     public List<ContextKey> findByKeyPrefix(String preFix) {
-        if (StringUtils.isBlank(preFix)){
+        if (StringUtils.isBlank(preFix)) {
             return null;
         }
         List<ContextKey> contextKeyValueList = new ArrayList<>();
@@ -168,19 +168,18 @@ public class ContextValueMapSetImpl implements ContextValueMapSet {
 
     @Override
     public List<ContextKey> findByKeyPrefix(String preFix, ContextType csType) {
-        if (StringUtils.isBlank(preFix)){
+        if (StringUtils.isBlank(preFix)) {
             return null;
         }
         Map<String, ContextKeyValue> contextValueMap = getContextValueMap(csType);
         List<ContextKey> contextKeyValueList = new ArrayList<>();
         Iterator<String> iterator = contextValueMap.keySet().iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             String key = iterator.next();
-            if(key.startsWith(preFix)){
+            if (key.startsWith(preFix)) {
                 contextKeyValueList.add(contextValueMap.get(key).getContextKey());
             }
         }
         return contextKeyValueList;
     }
-
 }

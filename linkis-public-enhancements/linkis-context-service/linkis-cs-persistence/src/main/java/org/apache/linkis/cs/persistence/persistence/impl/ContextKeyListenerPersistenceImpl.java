@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.persistence.persistence.impl;
 
 import org.apache.linkis.cs.common.entity.listener.CommonContextKeyListenerDomain;
@@ -28,10 +28,12 @@ import org.apache.linkis.cs.persistence.entity.PersistenceContextKeyListener;
 import org.apache.linkis.cs.persistence.entity.PersistenceContextKeyValue;
 import org.apache.linkis.cs.persistence.persistence.ContextKeyListenerPersistence;
 import org.apache.linkis.cs.persistence.persistence.ContextMapPersistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,47 +43,53 @@ import java.util.stream.Collectors;
 @Component
 public class ContextKeyListenerPersistenceImpl implements ContextKeyListenerPersistence {
 
-    @Autowired
-    private ContextKeyListenerMapper contextKeyListenerMapper;
+    @Autowired private ContextKeyListenerMapper contextKeyListenerMapper;
 
-    @Autowired
-    private ContextMapMapper contextMapMapper;
+    @Autowired private ContextMapMapper contextMapMapper;
 
-    @Autowired
-    private ContextMapPersistence contextMapPersistence;
+    @Autowired private ContextMapPersistence contextMapPersistence;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public void create(ContextID contextID, ContextKeyListenerDomain contextKeyListenerDomain) throws CSErrorException {
+    public void create(ContextID contextID, ContextKeyListenerDomain contextKeyListenerDomain)
+            throws CSErrorException {
         PersistenceContextKeyListener listener = new PersistenceContextKeyListener();
         listener.setSource(contextKeyListenerDomain.getSource());
         // contextKey 去数据库中查出响应的id
-        PersistenceContextKeyValue contextMap = contextMapMapper.getContextMap(contextID, contextKeyListenerDomain.getContextKey());
+        PersistenceContextKeyValue contextMap =
+                contextMapMapper.getContextMap(contextID, contextKeyListenerDomain.getContextKey());
         listener.setKeyId(contextMap.getId());
         contextKeyListenerMapper.createKeyListener(listener);
     }
 
     @Override
-    public void remove(ContextID contextID, ContextKeyListenerDomain contextKeyListenerDomain) throws CSErrorException {
-        PersistenceContextKeyValue contextMap = contextMapMapper.getContextMap(contextID, contextKeyListenerDomain.getContextKey());
+    public void remove(ContextID contextID, ContextKeyListenerDomain contextKeyListenerDomain)
+            throws CSErrorException {
+        PersistenceContextKeyValue contextMap =
+                contextMapMapper.getContextMap(contextID, contextKeyListenerDomain.getContextKey());
         Integer keyId = contextMap.getId();
         contextKeyListenerMapper.remove(contextKeyListenerDomain, keyId);
     }
 
     @Override
     public void removeAll(ContextID contextID) throws CSErrorException {
-        //找到contextID 对应的所有map id
-        List<Integer> keyIds = contextMapMapper.getAllContextMapByContextID(contextID).stream()
-                .map(PersistenceContextKeyValue::getId).collect(Collectors.toList());
+        // 找到contextID 对应的所有map id
+        List<Integer> keyIds =
+                contextMapMapper.getAllContextMapByContextID(contextID).stream()
+                        .map(PersistenceContextKeyValue::getId)
+                        .collect(Collectors.toList());
         contextKeyListenerMapper.removeAll(keyIds);
     }
 
     @Override
     public List<ContextKeyListenerDomain> getAll(ContextID contextID) throws CSErrorException {
-        List<PersistenceContextKeyValue> pKVs = contextMapMapper.getAllContextMapByContextID(contextID);
-        List<Integer> keyIds = contextMapMapper.getAllContextMapByContextID(contextID).stream()
-                .map(PersistenceContextKeyValue::getId).collect(Collectors.toList());
+        List<PersistenceContextKeyValue> pKVs =
+                contextMapMapper.getAllContextMapByContextID(contextID);
+        List<Integer> keyIds =
+                contextMapMapper.getAllContextMapByContextID(contextID).stream()
+                        .map(PersistenceContextKeyValue::getId)
+                        .collect(Collectors.toList());
         ArrayList<ContextKeyListenerDomain> domains = new ArrayList<>();
         if (!keyIds.isEmpty()) {
             logger.info("fetch %s keyIds by contextId %s", keyIds.size(), contextID.getContextId());
@@ -93,19 +101,26 @@ public class ContextKeyListenerPersistenceImpl implements ContextKeyListenerPers
         return domains;
     }
 
-    public ContextKeyListenerDomain pDomainToCommon(PersistenceContextKeyListener listener, ContextID contextID, List<PersistenceContextKeyValue> pKVs) throws CSErrorException {
+    public ContextKeyListenerDomain pDomainToCommon(
+            PersistenceContextKeyListener listener,
+            ContextID contextID,
+            List<PersistenceContextKeyValue> pKVs)
+            throws CSErrorException {
         CommonContextKeyListenerDomain domain = new CommonContextKeyListenerDomain();
         domain.setSource(listener.getSource());
-        Optional<PersistenceContextKeyValue> first = pKVs.stream().filter(kv -> kv.getId().equals(listener.getId())).findFirst();
+        Optional<PersistenceContextKeyValue> first =
+                pKVs.stream().filter(kv -> kv.getId().equals(listener.getId())).findFirst();
         if (first.isPresent()) {
-            ContextKeyValue contextKeyValue = contextMapPersistence.get(contextID, first.get().getContextKey());
+            ContextKeyValue contextKeyValue =
+                    contextMapPersistence.get(contextID, first.get().getContextKey());
             domain.setContextKey(contextKeyValue.getContextKey());
         }
         return domain;
     }
 
     @Override
-    public ContextKeyListenerDomain getBy(ContextKeyListenerDomain contextKeyListenerDomain) throws CSErrorException {
+    public ContextKeyListenerDomain getBy(ContextKeyListenerDomain contextKeyListenerDomain)
+            throws CSErrorException {
 
         return contextKeyListenerDomain;
     }

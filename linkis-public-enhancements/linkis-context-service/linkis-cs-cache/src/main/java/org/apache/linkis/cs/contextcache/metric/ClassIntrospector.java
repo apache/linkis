@@ -5,32 +5,29 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.contextcache.metric;
-
-
-import sun.misc.Unsafe;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
+import sun.misc.Unsafe;
+
 public class ClassIntrospector {
 
     private static final Unsafe unsafe;
-    /**
-     * Size of any Object reference
-     */
+    /** Size of any Object reference */
     private static final int objectRefSize;
 
     static {
@@ -46,9 +43,7 @@ public class ClassIntrospector {
         }
     }
 
-    /**
-     * Sizes of all primitive values
-     */
+    /** Sizes of all primitive values */
     private static final Map<Class<?>, Integer> primitiveSizes;
 
     static {
@@ -63,16 +58,15 @@ public class ClassIntrospector {
     }
 
     /**
-     * Get object information for any Java object. Do not pass primitives to
-     * this method because they will boxed and the information you will get will
-     * be related to a boxed version of your value.
+     * Get object information for any Java object. Do not pass primitives to this method because
+     * they will boxed and the information you will get will be related to a boxed version of your
+     * value.
      *
      * @param obj Object to introspect
      * @return Object info
      * @throws IllegalAccessException
      */
-    public ObjectInfo introspect(final Object obj)
-            throws IllegalAccessException {
+    public ObjectInfo introspect(final Object obj) throws IllegalAccessException {
         try {
             return introspect(obj, null);
         } finally { // clean visited cache before returning in order to make
@@ -83,11 +77,9 @@ public class ClassIntrospector {
 
     // we need to keep track of already visited objects in order to support
     // cycles in the object graphs
-    private IdentityHashMap<Object, Boolean> m_visited = new IdentityHashMap<Object, Boolean>(
-            100);
+    private IdentityHashMap<Object, Boolean> m_visited = new IdentityHashMap<Object, Boolean>(100);
 
-    private ObjectInfo introspect(final Object obj, final Field fld)
-            throws IllegalAccessException {
+    private ObjectInfo introspect(final Object obj, final Field fld) throws IllegalAccessException {
         // use Field type only if the field contains null. In this case we will
         // at least know what's expected to be
         // stored in this field. Otherwise, if a field has interface type, we
@@ -106,8 +98,8 @@ public class ClassIntrospector {
             m_visited.put(obj, true);
         }
 
-        final Class<?> type = (fld == null || (obj != null && !isPrimitive)) ? obj
-                .getClass() : fld.getType();
+        final Class<?> type =
+                (fld == null || (obj != null && !isPrimitive)) ? obj.getClass() : fld.getType();
         int arraySize = 0;
         int baseOffset = 0;
         int indexScale = 0;
@@ -119,14 +111,28 @@ public class ClassIntrospector {
 
         final ObjectInfo root;
         if (fld == null) {
-            root = new ObjectInfo("", type.getCanonicalName(), getContents(obj,
-                    type), 0, getShallowSize(type), arraySize, baseOffset,
-                    indexScale);
+            root =
+                    new ObjectInfo(
+                            "",
+                            type.getCanonicalName(),
+                            getContents(obj, type),
+                            0,
+                            getShallowSize(type),
+                            arraySize,
+                            baseOffset,
+                            indexScale);
         } else {
             final int offset = (int) unsafe.objectFieldOffset(fld);
-            root = new ObjectInfo(fld.getName(), type.getCanonicalName(),
-                    getContents(obj, type), offset, getShallowSize(type),
-                    arraySize, baseOffset, indexScale);
+            root =
+                    new ObjectInfo(
+                            fld.getName(),
+                            type.getCanonicalName(),
+                            getContents(obj, type),
+                            offset,
+                            getShallowSize(type),
+                            arraySize,
+                            baseOffset,
+                            indexScale);
         }
 
         if (!isRecursive && obj != null) {
@@ -176,10 +182,14 @@ public class ClassIntrospector {
         if (!type.isArray()) {
             return false;
         }
-        if (type == byte[].class || type == boolean[].class
-                || type == char[].class || type == short[].class
-                || type == int[].class || type == long[].class
-                || type == float[].class || type == double[].class) {
+        if (type == byte[].class
+                || type == boolean[].class
+                || type == char[].class
+                || type == short[].class
+                || type == int[].class
+                || type == long[].class
+                || type == float[].class
+                || type == double[].class) {
             return false;
         }
         return true;
@@ -191,24 +201,15 @@ public class ClassIntrospector {
             return "null";
         }
         if (type.isArray()) {
-            if (type == byte[].class)
-                return Arrays.toString((byte[]) val);
-            else if (type == boolean[].class)
-                return Arrays.toString((boolean[]) val);
-            else if (type == char[].class)
-                return Arrays.toString((char[]) val);
-            else if (type == short[].class)
-                return Arrays.toString((short[]) val);
-            else if (type == int[].class)
-                return Arrays.toString((int[]) val);
-            else if (type == long[].class)
-                return Arrays.toString((long[]) val);
-            else if (type == float[].class)
-                return Arrays.toString((float[]) val);
-            else if (type == double[].class)
-                return Arrays.toString((double[]) val);
-            else
-                return Arrays.toString((Object[]) val);
+            if (type == byte[].class) return Arrays.toString((byte[]) val);
+            else if (type == boolean[].class) return Arrays.toString((boolean[]) val);
+            else if (type == char[].class) return Arrays.toString((char[]) val);
+            else if (type == short[].class) return Arrays.toString((short[]) val);
+            else if (type == int[].class) return Arrays.toString((int[]) val);
+            else if (type == long[].class) return Arrays.toString((long[]) val);
+            else if (type == float[].class) return Arrays.toString((float[]) val);
+            else if (type == double[].class) return Arrays.toString((double[]) val);
+            else return Arrays.toString((Object[]) val);
         }
         return val.toString();
     }

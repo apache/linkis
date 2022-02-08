@@ -5,20 +5,19 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.metadata.domain.mdq.po;
 
 import java.util.Date;
-
 
 public class MdqTable {
     private Long id;
@@ -177,24 +176,49 @@ public class MdqTable {
 
     @Override
     public String toString() {
-        return "MdqTable{" +
-                "id=" + id +
-                ", database='" + database + '\'' +
-                ", name='" + name + '\'' +
-                ", alias='" + alias + '\'' +
-                ", creator='" + creator + '\'' +
-                ", comment='" + comment + '\'' +
-                ", createTime=" + createTime +
-                ", productName='" + productName + '\'' +
-                ", projectName='" + projectName + '\'' +
-                ", usage='" + usage + '\'' +
-                ", lifecycle=" + lifecycle +
-                ", useWay=" + useWay +
-                ", isImport=" + isImport +
-                ", modelLevel=" + modelLevel +
-                ", isExternalUse=" + isExternalUse +
-                ", isPartitionTable=" + isPartitionTable +
-                ", isAvailable=" + isAvailable +
-                '}';
+        return "MdqTable{"
+                + "id="
+                + id
+                + ", database='"
+                + database
+                + '\''
+                + ", name='"
+                + name
+                + '\''
+                + ", alias='"
+                + alias
+                + '\''
+                + ", creator='"
+                + creator
+                + '\''
+                + ", comment='"
+                + comment
+                + '\''
+                + ", createTime="
+                + createTime
+                + ", productName='"
+                + productName
+                + '\''
+                + ", projectName='"
+                + projectName
+                + '\''
+                + ", usage='"
+                + usage
+                + '\''
+                + ", lifecycle="
+                + lifecycle
+                + ", useWay="
+                + useWay
+                + ", isImport="
+                + isImport
+                + ", modelLevel="
+                + modelLevel
+                + ", isExternalUse="
+                + isExternalUse
+                + ", isPartitionTable="
+                + isPartitionTable
+                + ", isAvailable="
+                + isAvailable
+                + '}';
     }
 }

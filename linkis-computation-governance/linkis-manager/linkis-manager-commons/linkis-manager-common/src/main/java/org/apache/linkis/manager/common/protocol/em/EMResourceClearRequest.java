@@ -21,7 +21,6 @@ import org.apache.linkis.common.ServiceInstance;
 
 import java.io.Serializable;
 
-
 public class EMResourceClearRequest implements EMRequest, Serializable {
 
     private String user;

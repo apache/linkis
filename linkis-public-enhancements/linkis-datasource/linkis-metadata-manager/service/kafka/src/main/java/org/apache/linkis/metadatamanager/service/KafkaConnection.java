@@ -28,7 +28,7 @@ import java.util.Properties;
 public class KafkaConnection implements Closeable {
     private AdminClient adminClient;
 
-    public KafkaConnection(String uris) throws Exception{
+    public KafkaConnection(String uris) throws Exception {
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, uris);
         adminClient = KafkaAdminClient.create(props);
@@ -40,7 +40,7 @@ public class KafkaConnection implements Closeable {
         adminClient = KafkaAdminClient.create(props);
     }
 
-    public AdminClient getClient(){
+    public AdminClient getClient() {
         return adminClient;
     }
 

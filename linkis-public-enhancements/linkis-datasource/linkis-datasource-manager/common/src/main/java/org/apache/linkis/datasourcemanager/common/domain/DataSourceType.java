@@ -17,46 +17,33 @@
 
 package org.apache.linkis.datasourcemanager.common.domain;
 
-
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-/**
- * Data source type entity
- */
-@JsonSerialize(include= JsonSerialize.Inclusion.NON_EMPTY)
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"}, ignoreUnknown = true)
+/** Data source type entity */
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
+@JsonIgnoreProperties(
+        value = {"hibernateLazyInitializer", "handler"},
+        ignoreUnknown = true)
 public class DataSourceType {
 
     private String id;
-    /**
-     * Name
-     */
+    /** Name */
     private String name;
-    /**
-     * Description
-     */
+    /** Description */
     private String description;
-    /**
-     * The display name of the type
-     */
+    /** The display name of the type */
     private String option;
-    /**
-     * classifier
-     */
+    /** classifier */
     private String classifier;
-    /**
-     * Icon url
-     */
+    /** Icon url */
     private String icon;
     /**
-     * Tells the user the number of levels for the datasource
-     * eg:
-     * for mysql/hive/presto datasource: (datasource) --> database --> tables --> column 3
-     * for kafka datasource: (datasource) --> topic --> partition 2
+     * Tells the user the number of levels for the datasource eg: for mysql/hive/presto datasource:
+     * (datasource) --> database --> tables --> column 3 for kafka datasource: (datasource) -->
+     * topic --> partition 2
      */
     private int layers;
-
 
     public String getId() {
         return id;

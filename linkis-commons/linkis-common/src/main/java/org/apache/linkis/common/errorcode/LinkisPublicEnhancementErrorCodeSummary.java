@@ -5,18 +5,17 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.common.errorcode;
 
+package org.apache.linkis.common.errorcode;
 
 public enum LinkisPublicEnhancementErrorCodeSummary {
     ;
@@ -25,7 +24,8 @@ public enum LinkisPublicEnhancementErrorCodeSummary {
     private String comment;
     private String module;
 
-    LinkisPublicEnhancementErrorCodeSummary(int errorCode, String errorDesc, String comment, String module) {
+    LinkisPublicEnhancementErrorCodeSummary(
+            int errorCode, String errorDesc, String comment, String module) {
         ErrorCodeUtils.validateErrorCode(errorCode, 15000, 19999);
         this.errorCode = errorCode;
         this.errorDesc = errorDesc;
@@ -57,7 +57,6 @@ public enum LinkisPublicEnhancementErrorCodeSummary {
         this.comment = comment;
     }
 
-
     public String getModule() {
         return module;
     }
@@ -65,7 +64,6 @@ public enum LinkisPublicEnhancementErrorCodeSummary {
     public void setModule(String module) {
         this.module = module;
     }
-
 
     @Override
     public String toString() {

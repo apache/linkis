@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,6 @@
 
 package org.apache.linkis.datasourcemanager.core.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv;
@@ -33,11 +30,17 @@ import org.apache.linkis.datasourcemanager.core.service.BmlAppService;
 import org.apache.linkis.datasourcemanager.core.service.DataSourceInfoService;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.commons.lang.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.*;
@@ -48,23 +51,17 @@ import java.util.stream.Collectors;
 public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataSourceInfoService.class);
-    @Autowired
-    private BmlAppService bmlAppService;
+    @Autowired private BmlAppService bmlAppService;
 
-    @Autowired
-    private DataSourceTypeEnvDao dataSourceTypeEnvDao;
+    @Autowired private DataSourceTypeEnvDao dataSourceTypeEnvDao;
 
-    @Autowired
-    private DataSourceDao dataSourceDao;
+    @Autowired private DataSourceDao dataSourceDao;
 
-    @Autowired
-    private DataSourceEnvDao dataSourceEnvDao;
+    @Autowired private DataSourceEnvDao dataSourceEnvDao;
 
-    @Autowired
-    private DataSourceParamKeyDao dataSourceParamKeyDao;
+    @Autowired private DataSourceParamKeyDao dataSourceParamKeyDao;
 
-    @Autowired
-    private DataSourceVersionDao dataSourceVersionDao;
+    @Autowired private DataSourceVersionDao dataSourceVersionDao;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -74,6 +71,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
     /**
      * The DataSource parameter takes precedence over the environment parameter
+     *
      * @param dataSourceEnvId data source environment
      * @param dataSource data source
      */
@@ -90,8 +88,9 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     @Override
     public DataSource getDataSourceInfo(Long dataSourceId) {
         DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
-        if (Objects.nonNull(dataSource)){
-            String  parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, dataSource.getVersionId());
+        if (Objects.nonNull(dataSource)) {
+            String parameter =
+                    dataSourceVersionDao.selectOneVersion(dataSourceId, dataSource.getVersionId());
             dataSource.setParameter(parameter);
         }
         return dataSource;
@@ -100,12 +99,15 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     @Override
     public DataSource getDataSourceInfo(String dataSourceName) {
         DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
-        if (Objects.nonNull(dataSource)){
-            String parameter = dataSourceVersionDao.selectOneVersion(dataSource.getId(), dataSource.getVersionId());
+        if (Objects.nonNull(dataSource)) {
+            String parameter =
+                    dataSourceVersionDao.selectOneVersion(
+                            dataSource.getId(), dataSource.getVersionId());
             dataSource.setParameter(parameter);
         }
         return dataSource;
     }
+
     @Override
     public DataSource getDataSourceInfo(Long dataSourceId, Long version) {
         DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
@@ -128,7 +130,9 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
         if (Objects.nonNull(dataSource)) {
             // TODO dataSource.getPublishedVersionId() NullPoint Exception
-            String parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, dataSource.getPublishedVersionId());
+            String parameter =
+                    dataSourceVersionDao.selectOneVersion(
+                            dataSourceId, dataSource.getPublishedVersionId());
             return mergeParams(dataSource, parameter);
         }
         return null;
@@ -138,7 +142,9 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     public DataSource getDataSourceInfoForConnect(String dataSourceName) {
         DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
         if (Objects.nonNull(dataSource)) {
-            String parameter = dataSourceVersionDao.selectOneVersion(dataSource.getId(), dataSource.getPublishedVersionId());
+            String parameter =
+                    dataSourceVersionDao.selectOneVersion(
+                            dataSource.getId(), dataSource.getPublishedVersionId());
             return mergeParams(dataSource, parameter);
         }
         return null;
@@ -151,7 +157,13 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
             try {
                 connectParams = Objects.requireNonNull(Json.fromJson(parameter, Map.class));
             } catch (JsonErrorException e) {
-                LOG.warn("Unrecognized the parameter: " + parameter +" in data source, id: [" + dataSource.getId() + "]", e);
+                LOG.warn(
+                        "Unrecognized the parameter: "
+                                + parameter
+                                + " in data source, id: ["
+                                + dataSource.getId()
+                                + "]",
+                        e);
                 // TODO throws Exception defined Exception
             }
             if (connectParams.containsKey("envId")) {
@@ -165,8 +177,8 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     }
 
     /**
-     * get datasource info for connect, if there is a dependency environment,
-     * merge datasource parameter and environment parameter.
+     * get datasource info for connect, if there is a dependency environment, merge datasource
+     * parameter and environment parameter.
      *
      * @param dataSourceId
      * @param version
@@ -184,7 +196,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
     @Override
     public boolean existDataSource(String dataSourceName) {
-        if (StringUtils.isNotBlank(dataSourceName)){
+        if (StringUtils.isNotBlank(dataSourceName)) {
             DataSource dataSource = dataSourceDao.selectOneByName(dataSourceName);
             return Objects.nonNull(dataSource);
         }
@@ -201,7 +213,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     public Long removeDataSourceInfo(Long dataSourceId, String createSystem) {
         DataSource dataSource = dataSourceDao.selectOne(dataSourceId);
         if (null != dataSource) {
-            //First to delete record in db
+            // First to delete record in db
             int affect = dataSourceDao.removeOne(dataSourceId);
             if (affect > 0) {
                 // delete parameter version
@@ -230,14 +242,17 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveDataSourceEnv(DataSourceEnv dataSourceEnv) throws ErrorException {
-        storeConnectParams(dataSourceEnv.getCreateUser(), dataSourceEnv.getKeyDefinitions(),
+        storeConnectParams(
+                dataSourceEnv.getCreateUser(),
+                dataSourceEnv.getKeyDefinitions(),
                 dataSourceEnv.getConnectParams(),
                 parameter -> {
                     dataSourceEnv.setParameter(parameter);
-                    //Save environment into database
+                    // Save environment into database
                     dataSourceEnvDao.insertOne(dataSourceEnv);
-                    //Store relation
-                    dataSourceTypeEnvDao.insertRelation(dataSourceEnv.getDataSourceTypeId(), dataSourceEnv.getId());
+                    // Store relation
+                    dataSourceTypeEnvDao.insertRelation(
+                            dataSourceEnv.getDataSourceTypeId(), dataSourceEnv.getId());
                 });
     }
 
@@ -256,29 +271,35 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     public Long removeDataSourceEnv(Long envId) {
         DataSourceEnv dataSourceEnv = dataSourceEnvDao.selectOneDetail(envId);
         if (null != dataSourceEnv) {
-            //First to delete record in db
+            // First to delete record in db
             int affect = dataSourceEnvDao.removeOne(envId);
             if (affect > 0) {
-                //Remove relations
+                // Remove relations
                 dataSourceTypeEnvDao.removeRelationsByEnvId(envId);
-                //Remove resource
+                // Remove resource
                 Map<String, Object> connectParams = dataSourceEnv.getConnectParams();
-                List<DataSourceParamKeyDefinition> keyDefinitions = dataSourceParamKeyDao
-                        .listByDataSourceTypeAndScope(dataSourceEnv.getDataSourceTypeId(), DataSourceParamKeyDefinition.Scope.ENV);
+                List<DataSourceParamKeyDefinition> keyDefinitions =
+                        dataSourceParamKeyDao.listByDataSourceTypeAndScope(
+                                dataSourceEnv.getDataSourceTypeId(),
+                                DataSourceParamKeyDefinition.Scope.ENV);
                 // TODO throws ERROR Exception
-                keyDefinitions.forEach(keyDefinition -> {
-                    if (keyDefinition.getValueType() == DataSourceParamKeyDefinition.ValueType.FILE
-                            && connectParams.containsKey(keyDefinition.getKey())) {
-                        try {
-                            //Proxy creator to delete resource
-                            bmlAppService.clientRemoveResource(dataSourceEnv.getCreateUser(), String
-                                    .valueOf(connectParams.get(keyDefinition.getKey())));
-                        } catch (Exception e) {
-                            //Ignore remove error
-                            // TODO LOG and throws LinkisRuntimeException
-                        }
-                    }
-                });
+                keyDefinitions.forEach(
+                        keyDefinition -> {
+                            if (keyDefinition.getValueType()
+                                            == DataSourceParamKeyDefinition.ValueType.FILE
+                                    && connectParams.containsKey(keyDefinition.getKey())) {
+                                try {
+                                    // Proxy creator to delete resource
+                                    bmlAppService.clientRemoveResource(
+                                            dataSourceEnv.getCreateUser(),
+                                            String.valueOf(
+                                                    connectParams.get(keyDefinition.getKey())));
+                                } catch (Exception e) {
+                                    // Ignore remove error
+                                    // TODO LOG and throws LinkisRuntimeException
+                                }
+                            }
+                        });
                 return envId;
             }
         }
@@ -287,17 +308,22 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateDataSourceEnv(DataSourceEnv updatedOne, DataSourceEnv storedOne) throws ErrorException {
-        updateConnectParams(updatedOne.getCreateUser(), updatedOne.getKeyDefinitions(),
-                updatedOne.getConnectParams(), storedOne.getConnectParams(),
+    public void updateDataSourceEnv(DataSourceEnv updatedOne, DataSourceEnv storedOne)
+            throws ErrorException {
+        updateConnectParams(
+                updatedOne.getCreateUser(),
+                updatedOne.getKeyDefinitions(),
+                updatedOne.getConnectParams(),
+                storedOne.getConnectParams(),
                 parameter -> {
                     updatedOne.setParameter(parameter);
-                    //Update environment into database
+                    // Update environment into database
                     dataSourceEnvDao.updateOne(updatedOne);
                     if (!updatedOne.getDataSourceTypeId().equals(storedOne.getDataSourceTypeId())) {
-                        //Remove old relation and add new relation
+                        // Remove old relation and add new relation
                         dataSourceTypeEnvDao.removeRelationsByEnvId(updatedOne.getId());
-                        dataSourceTypeEnvDao.insertRelation(updatedOne.getDataSourceTypeId(), updatedOne.getId());
+                        dataSourceTypeEnvDao.insertRelation(
+                                updatedOne.getDataSourceTypeId(), updatedOne.getId());
                     }
                 });
     }
@@ -320,7 +346,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     public Long expireDataSource(Long dataSourceId) {
         DataSource dataSource = dataSourceDao.selectOne(dataSourceId);
         if (null != dataSource) {
-            //First to delete record in db
+            // First to delete record in db
             int affect = dataSourceDao.expireOne(dataSourceId);
             if (affect > 0) {
                 return dataSourceId;
@@ -329,10 +355,8 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         return -1L;
     }
 
-
     /**
-     * publish datasource by id
-     * set published_version_id to versionId;
+     * publish datasource by id set published_version_id to versionId;
      *
      * @param dataSourceId
      * @return
@@ -340,7 +364,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     @Override
     public int publishByDataSourceId(Long dataSourceId, Long versionId) {
         Long latestVersion = dataSourceVersionDao.getLatestVersion(dataSourceId);
-        if(versionId > latestVersion){
+        if (versionId > latestVersion) {
             // can't publish a version that does not exist
             return 0;
         }
@@ -349,7 +373,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
     /**
      * insert a datasource parameter, return new version, and update current versionId of datasource
-     *
      *
      * @param keyDefinitionList
      * @param datasourceId
@@ -360,12 +383,18 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public long insertDataSourceParameter(List<DataSourceParamKeyDefinition> keyDefinitionList, Long datasourceId, Map<String, Object> connectParams, String username, String comment) throws ErrorException {
+    public long insertDataSourceParameter(
+            List<DataSourceParamKeyDefinition> keyDefinitionList,
+            Long datasourceId,
+            Map<String, Object> connectParams,
+            String username,
+            String comment)
+            throws ErrorException {
 
         DatasourceVersion datasourceVersion = new DatasourceVersion();
         datasourceVersion.setCreateUser(username);
         datasourceVersion.setDatasourceId(datasourceId);
-        if(null != comment) {
+        if (null != comment) {
             datasourceVersion.setComment(comment);
         }
 
@@ -376,8 +405,10 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         datasourceVersion.setVersionId(newVersionId);
 
         // 2. set parameter, (check connectParams and remove if not in definedKeyNames);
-        List<String> definedKeyNames = keyDefinitionList.stream().map(DataSourceParamKeyDefinition::getKey)
-                .collect(Collectors.toList());
+        List<String> definedKeyNames =
+                keyDefinitionList.stream()
+                        .map(DataSourceParamKeyDefinition::getKey)
+                        .collect(Collectors.toList());
         connectParams.entrySet().removeIf(entry -> !definedKeyNames.contains(entry.getKey()));
         datasourceVersion.setParameter(Json.toJson(connectParams, null));
 
@@ -398,11 +429,10 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
      */
     @Override
     public List<DatasourceVersion> getVersionList(Long datasourceId) {
-        List<DatasourceVersion> versionList = dataSourceVersionDao.getVersionsFromDatasourceId(datasourceId);
+        List<DatasourceVersion> versionList =
+                dataSourceVersionDao.getVersionsFromDatasourceId(datasourceId);
         return versionList;
     }
-
-
 
     /**
      * @param userName
@@ -412,42 +442,62 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
      * @param parameterCallback
      * @throws ErrorException
      */
-    private void updateConnectParams(String userName, List<DataSourceParamKeyDefinition> keyDefinitionList,
-                                     Map<String, Object> updatedParams, Map<String, Object> storedParams,
-                                     Consumer<String> parameterCallback) throws ErrorException {
-        List<String> definedKeyNames = keyDefinitionList.stream().map(DataSourceParamKeyDefinition::getKey)
-                .collect(Collectors.toList());
+    private void updateConnectParams(
+            String userName,
+            List<DataSourceParamKeyDefinition> keyDefinitionList,
+            Map<String, Object> updatedParams,
+            Map<String, Object> storedParams,
+            Consumer<String> parameterCallback)
+            throws ErrorException {
+        List<String> definedKeyNames =
+                keyDefinitionList.stream()
+                        .map(DataSourceParamKeyDefinition::getKey)
+                        .collect(Collectors.toList());
         List<String> uploadedResources = new ArrayList<>();
         try {
-            updatedParams.entrySet().removeIf(entry -> {
-                if (!definedKeyNames.contains(entry.getKey())) {
-                    return true;
-                }
-                Object paramValue = entry.getValue();
-                if (paramValue instanceof FormStreamContent) {
-                    String resourceId = String.valueOf(storedParams.getOrDefault(entry.getKey(), ""));
-                    if (StringUtils.isNotBlank(resourceId)) {
-                        uploadFormStream(userName, (FormStreamContent) paramValue, resourceId);
-                    } else {
-                        resourceId = uploadFormStream(userName, (FormStreamContent) paramValue, "");
-                    }
-                    if (null == resourceId) {
-                        return true;
-                    }
-                    uploadedResources.add(resourceId);
-                    entry.setValue(resourceId);
-                }
-                storedParams.remove(entry.getKey());
-                return false;
-            });
-            //Found the duplicate File
+            updatedParams
+                    .entrySet()
+                    .removeIf(
+                            entry -> {
+                                if (!definedKeyNames.contains(entry.getKey())) {
+                                    return true;
+                                }
+                                Object paramValue = entry.getValue();
+                                if (paramValue instanceof FormStreamContent) {
+                                    String resourceId =
+                                            String.valueOf(
+                                                    storedParams.getOrDefault(entry.getKey(), ""));
+                                    if (StringUtils.isNotBlank(resourceId)) {
+                                        uploadFormStream(
+                                                userName,
+                                                (FormStreamContent) paramValue,
+                                                resourceId);
+                                    } else {
+                                        resourceId =
+                                                uploadFormStream(
+                                                        userName,
+                                                        (FormStreamContent) paramValue,
+                                                        "");
+                                    }
+                                    if (null == resourceId) {
+                                        return true;
+                                    }
+                                    uploadedResources.add(resourceId);
+                                    entry.setValue(resourceId);
+                                }
+                                storedParams.remove(entry.getKey());
+                                return false;
+                            });
+            // Found the duplicate File
             List<String> duplicateResources = new ArrayList<>();
-            keyDefinitionList.forEach(definedKey -> {
-                if (definedKey.getValueType() == DataSourceParamKeyDefinition.ValueType.FILE
-                        && storedParams.containsKey(definedKey.getKey())) {
-                    duplicateResources.add(String.valueOf(storedParams.get(definedKey.getKey())));
-                }
-            });
+            keyDefinitionList.forEach(
+                    definedKey -> {
+                        if (definedKey.getValueType() == DataSourceParamKeyDefinition.ValueType.FILE
+                                && storedParams.containsKey(definedKey.getKey())) {
+                            duplicateResources.add(
+                                    String.valueOf(storedParams.get(definedKey.getKey())));
+                        }
+                    });
             parameterCallback.accept(Json.toJson(updatedParams, null));
             deleteResources(userName, duplicateResources);
         } catch (Exception e) {
@@ -460,36 +510,45 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     }
 
     /**
-     * Upload the form stream context in connect parameters,
-     * and serialize parameters
+     * Upload the form stream context in connect parameters, and serialize parameters
      *
      * @param keyDefinitionList
      * @param connectParams
      * @param parameterCallback
      */
-    private void storeConnectParams(String userName, List<DataSourceParamKeyDefinition> keyDefinitionList,
-                                    Map<String, Object> connectParams,
-                                    Consumer<String> parameterCallback) throws ErrorException {
-        List<String> definedKeyNames = keyDefinitionList.stream().map(DataSourceParamKeyDefinition::getKey)
-                .collect(Collectors.toList());
+    private void storeConnectParams(
+            String userName,
+            List<DataSourceParamKeyDefinition> keyDefinitionList,
+            Map<String, Object> connectParams,
+            Consumer<String> parameterCallback)
+            throws ErrorException {
+        List<String> definedKeyNames =
+                keyDefinitionList.stream()
+                        .map(DataSourceParamKeyDefinition::getKey)
+                        .collect(Collectors.toList());
         List<String> uploadedResources = new ArrayList<>();
         try {
-            connectParams.entrySet().removeIf(entry -> {
-                if (!definedKeyNames.contains(entry.getKey())) {
-                    return true;
-                }
-                Object paramValue = entry.getValue();
-                //Upload stream resource in connection params
-                if (paramValue instanceof FormStreamContent) {
-                    String resourceId = uploadFormStream(userName, (FormStreamContent) paramValue, "");
-                    if (null == resourceId) {
-                        return true;
-                    }
-                    uploadedResources.add(resourceId);
-                    entry.setValue(resourceId);
-                }
-                return false;
-            });
+            connectParams
+                    .entrySet()
+                    .removeIf(
+                            entry -> {
+                                if (!definedKeyNames.contains(entry.getKey())) {
+                                    return true;
+                                }
+                                Object paramValue = entry.getValue();
+                                // Upload stream resource in connection params
+                                if (paramValue instanceof FormStreamContent) {
+                                    String resourceId =
+                                            uploadFormStream(
+                                                    userName, (FormStreamContent) paramValue, "");
+                                    if (null == resourceId) {
+                                        return true;
+                                    }
+                                    uploadedResources.add(resourceId);
+                                    entry.setValue(resourceId);
+                                }
+                                return false;
+                            });
             parameterCallback.accept(Json.toJson(connectParams, null));
         } catch (Exception e) {
             deleteResources(userName, uploadedResources);
@@ -504,22 +563,24 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     /**
      * Upload form stream
      *
-     * @param userName      user name
+     * @param userName user name
      * @param streamContent stream content
-     * @param resourceId    resource id
+     * @param resourceId resource id
      * @return resource id or version tab
      */
-    private String uploadFormStream(String userName, FormStreamContent streamContent, String resourceId) {
+    private String uploadFormStream(
+            String userName, FormStreamContent streamContent, String resourceId) {
         String fileName = streamContent.getFileName();
         InputStream inputStream = streamContent.getStream();
         if (null != inputStream) {
-            //Proxy creator to upload resource
+            // Proxy creator to upload resource
             try {
-                return StringUtils.isBlank(resourceId) ? bmlAppService.clientUploadResource(userName, fileName, inputStream)
+                return StringUtils.isBlank(resourceId)
+                        ? bmlAppService.clientUploadResource(userName, fileName, inputStream)
                         : bmlAppService.clientUpdateResource(userName, resourceId, inputStream);
             } catch (Exception e) {
-                //Wrap with runtime exception
-//                throw new RuntimeException(e);
+                // Wrap with runtime exception
+                //                throw new RuntimeException(e);
                 // TODO defined Exception
             }
         }
@@ -529,18 +590,18 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     /**
      * Delete uploaded resources
      *
-     * @param userName          user name
+     * @param userName user name
      * @param uploadedResources resource id list
      */
     private void deleteResources(String userName, List<String> uploadedResources) {
         if (!uploadedResources.isEmpty()) {
-            //Remove duplicated resource
+            // Remove duplicated resource
             for (String resourceId : uploadedResources) {
                 try {
-                    //Proxy to delete resource
+                    // Proxy to delete resource
                     bmlAppService.clientRemoveResource(userName, resourceId);
                 } catch (Exception ie) {
-                    //ignore
+                    // ignore
                     // TODO throws RPC Exception
                 }
             }

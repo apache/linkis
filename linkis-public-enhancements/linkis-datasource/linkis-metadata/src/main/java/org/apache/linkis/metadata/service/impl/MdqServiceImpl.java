@@ -17,8 +17,6 @@
 
 package org.apache.linkis.metadata.service.impl;
 
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
 import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.hadoop.common.utils.HDFSUtils;
 import org.apache.linkis.metadata.dao.MdqDao;
@@ -42,31 +40,32 @@ import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.apache.linkis.metadata.service.MdqService;
 import org.apache.linkis.metadata.type.MdqImportType;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 @Service
 public class MdqServiceImpl implements MdqService {
-    @Autowired
-    private MdqDao mdqDao;
+    @Autowired private MdqDao mdqDao;
 
-    @Autowired
-    private HiveMetaDao hiveMetaDao;
+    @Autowired private HiveMetaDao hiveMetaDao;
 
-    @Autowired
-    HiveMetaWithPermissionService hiveMetaWithPermissionService;
+    @Autowired HiveMetaWithPermissionService hiveMetaWithPermissionService;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -81,7 +80,7 @@ public class MdqServiceImpl implements MdqService {
     @DataSource(name = DSEnum.SECONDE_DATA_SOURCE)
     @Transactional
     public Long persistTable(MdqTableBO mdqTableBO, String userName) {
-        //查询，如果数据库中有这个表，而且是导入创建的，删掉表基本信息
+        // 查询，如果数据库中有这个表，而且是导入创建的，删掉表基本信息
         checkIfNeedDeleteTable(mdqTableBO);
         MdqTableBaseInfoBO tableBaseInfo = mdqTableBO.getTableBaseInfo();
         MdqTable table = DomainCoversionUtils.mdqTableBaseInfoBOToMdqTable(tableBaseInfo);
@@ -89,10 +88,15 @@ public class MdqServiceImpl implements MdqService {
         table.setCreator(userName);
         mdqDao.insertTable(table);
         List<MdqTableFieldsInfoBO> tableFieldsInfo = mdqTableBO.getTableFieldsInfo();
-        List<MdqField> mdqFieldList = DomainCoversionUtils.mdqTableFieldsInfoBOListToMdqFieldList(tableFieldsInfo, table.getId());
+        List<MdqField> mdqFieldList =
+                DomainCoversionUtils.mdqTableFieldsInfoBOListToMdqFieldList(
+                        tableFieldsInfo, table.getId());
         if (table.getPartitionTable() && table.getImport()) {
-            //创建表是导入,并且是分区表的话,自动去掉最后一个ds列
-            List<MdqField> collect = mdqFieldList.stream().filter(f -> "ds".equals(f.getName())).collect(Collectors.toList());
+            // 创建表是导入,并且是分区表的话,自动去掉最后一个ds列
+            List<MdqField> collect =
+                    mdqFieldList.stream()
+                            .filter(f -> "ds".equals(f.getName()))
+                            .collect(Collectors.toList());
             if (collect.size() > 1) {
                 mdqFieldList.remove(collect.get(1));
             }
@@ -123,26 +127,42 @@ public class MdqServiceImpl implements MdqService {
         if (isImport) {
             importType = mdqTableBO.getImportInfo().getImportType();
         }
-        logger.info("库名:" + database + "表名:" + tableName + "是否是分区:"
-                + isPartitionsTabble + "是否是导入创建:" + isImport + "导入类型:" + importType);
+        logger.info(
+                "库名:"
+                        + database
+                        + "表名:"
+                        + tableName
+                        + "是否是分区:"
+                        + isPartitionsTabble
+                        + "是否是导入创建:"
+                        + isImport
+                        + "导入类型:"
+                        + importType);
         if (oldTable != null) {
-            if (isImport && (importType == MdqImportType.Csv.ordinal() || importType == MdqImportType.Excel.ordinal())) {
+            if (isImport
+                    && (importType == MdqImportType.Csv.ordinal()
+                            || importType == MdqImportType.Excel.ordinal())) {
                 String destination = mdqTableBO.getImportInfo().getArgs().get("destination");
                 HashMap hashMap = new Gson().fromJson(destination, HashMap.class);
                 if (Boolean.valueOf(hashMap.get("importData").toString())) {
-                    logger.info("Simply add a partition column without dropping the original table(只是单纯增加分区列，不删除掉原来的表)");
+                    logger.info(
+                            "Simply add a partition column without dropping the original table(只是单纯增加分区列，不删除掉原来的表)");
                     return;
                 }
             }
-            logger.info("This will overwrite the tables originally created through the wizard(将覆盖掉原来通过向导建立的表):" + oldTable);
+            logger.info(
+                    "This will overwrite the tables originally created through the wizard(将覆盖掉原来通过向导建立的表):"
+                            + oldTable);
             mdqDao.deleteTableBaseInfo(oldTable.getId());
         }
     }
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public MdqTableStatisticInfoVO getTableStatisticInfo(String database, String tableName, String user) throws IOException {
-        MdqTableStatisticInfoVO mdqTableStatisticInfoVO = getTableStatisticInfoFromHive(database, tableName, user);
+    public MdqTableStatisticInfoVO getTableStatisticInfo(
+            String database, String tableName, String user) throws IOException {
+        MdqTableStatisticInfoVO mdqTableStatisticInfoVO =
+                getTableStatisticInfoFromHive(database, tableName, user);
         return mdqTableStatisticInfoVO;
     }
 
@@ -157,31 +177,36 @@ public class MdqServiceImpl implements MdqService {
     @DataSource(name = DSEnum.SECONDE_DATA_SOURCE)
     @Override
     public boolean isExistInMdq(String database, String tableName, String user) {
-        //查询mdq表，而且active需要为true
+        // 查询mdq表，而且active需要为true
         MdqTable table = mdqDao.selectTableByName(database, tableName, user);
         return table != null;
     }
 
     @DataSource(name = DSEnum.SECONDE_DATA_SOURCE)
     @Override
-    public MdqTableBaseInfoVO getTableBaseInfoFromMdq(String database, String tableName, String user) {
+    public MdqTableBaseInfoVO getTableBaseInfoFromMdq(
+            String database, String tableName, String user) {
         MdqTable table = mdqDao.selectTableByName(database, tableName, user);
         return DomainCoversionUtils.mdqTableToMdqTableBaseInfoVO(table);
     }
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public MdqTableBaseInfoVO getTableBaseInfoFromHive(String database, String tableName, String user) {
+    public MdqTableBaseInfoVO getTableBaseInfoFromHive(
+            String database, String tableName, String user) {
         Map<String, String> map = Maps.newHashMap();
         map.put("dbName", database);
         map.put("userName", user);
         map.put("tableName", tableName);
-        List<Map<String, Object>> tables = hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(map);
+        List<Map<String, Object>> tables =
+                hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(map);
         List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(map);
-        Optional<Map<String, Object>> tableOptional = tables.parallelStream()
-                .filter(f -> tableName.equals(f.get("NAME"))).findFirst();
-        Map<String, Object> talbe = tableOptional.orElseThrow(() -> new IllegalArgumentException("table不存在"));
-        MdqTableBaseInfoVO mdqTableBaseInfoVO = DomainCoversionUtils.mapToMdqTableBaseInfoVO(talbe, database);
+        Optional<Map<String, Object>> tableOptional =
+                tables.parallelStream().filter(f -> tableName.equals(f.get("NAME"))).findFirst();
+        Map<String, Object> talbe =
+                tableOptional.orElseThrow(() -> new IllegalArgumentException("table不存在"));
+        MdqTableBaseInfoVO mdqTableBaseInfoVO =
+                DomainCoversionUtils.mapToMdqTableBaseInfoVO(talbe, database);
         String tableComment = hiveMetaDao.getTableComment(database, tableName);
         mdqTableBaseInfoVO.getBase().setComment(tableComment);
         mdqTableBaseInfoVO.getBase().setPartitionTable(!partitionKeys.isEmpty());
@@ -190,7 +215,8 @@ public class MdqServiceImpl implements MdqService {
 
     @DataSource(name = DSEnum.SECONDE_DATA_SOURCE)
     @Override
-    public List<MdqTableFieldsInfoVO> getTableFieldsInfoFromMdq(String database, String tableName, String user) {
+    public List<MdqTableFieldsInfoVO> getTableFieldsInfoFromMdq(
+            String database, String tableName, String user) {
         MdqTable table = mdqDao.selectTableByName(database, tableName, user);
         List<MdqField> mdqFieldList = mdqDao.listMdqFieldByTableId(table.getId());
         return DomainCoversionUtils.mdqFieldListToMdqTableFieldsInfoVOList(mdqFieldList);
@@ -198,85 +224,101 @@ public class MdqServiceImpl implements MdqService {
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public List<MdqTableFieldsInfoVO> getTableFieldsInfoFromHive(String database, String tableName, String user) {
+    public List<MdqTableFieldsInfoVO> getTableFieldsInfoFromHive(
+            String database, String tableName, String user) {
         Map<String, String> param = Maps.newHashMap();
         param.put("dbName", database);
         param.put("tableName", tableName);
         List<Map<String, Object>> columns = hiveMetaDao.getColumns(param);
         List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(param);
-        List<MdqTableFieldsInfoVO> normalColumns = DomainCoversionUtils.normalColumnListToMdqTableFieldsInfoVOList(columns);
-        List<MdqTableFieldsInfoVO> partitions = DomainCoversionUtils.partitionColumnListToMdqTableFieldsInfoVOList(partitionKeys);
+        List<MdqTableFieldsInfoVO> normalColumns =
+                DomainCoversionUtils.normalColumnListToMdqTableFieldsInfoVOList(columns);
+        List<MdqTableFieldsInfoVO> partitions =
+                DomainCoversionUtils.partitionColumnListToMdqTableFieldsInfoVOList(partitionKeys);
         normalColumns.addAll(partitions);
         return normalColumns;
     }
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public MdqTableStatisticInfoVO getTableStatisticInfoFromHive(String database, String tableName, String user) throws IOException {
+    public MdqTableStatisticInfoVO getTableStatisticInfoFromHive(
+            String database, String tableName, String user) throws IOException {
         Map<String, String> map = Maps.newHashMap();
         map.put("dbName", database);
         map.put("tableName", tableName);
         List<String> partitions = hiveMetaDao.getPartitions(map);
         MdqTableStatisticInfoVO mdqTableStatisticInfoVO = new MdqTableStatisticInfoVO();
-        mdqTableStatisticInfoVO.setRowNum(0);//下个版本
+        mdqTableStatisticInfoVO.setRowNum(0); // 下个版本
         mdqTableStatisticInfoVO.setTableLastUpdateTime(null);
-        mdqTableStatisticInfoVO.setFieldsNum(getTableFieldsInfoFromHive(database, tableName, user).size());
+        mdqTableStatisticInfoVO.setFieldsNum(
+                getTableFieldsInfoFromHive(database, tableName, user).size());
 
         String tableLocation = getTableLocation(database, tableName);
         mdqTableStatisticInfoVO.setTableSize(getTableSize(tableLocation));
         mdqTableStatisticInfoVO.setFileNum(getTableFileNum(tableLocation));
         if (partitions.isEmpty()) {
-            //非分区表
+            // 非分区表
             mdqTableStatisticInfoVO.setPartitionsNum(0);
         } else {
-            //分区表
+            // 分区表
             mdqTableStatisticInfoVO.setPartitionsNum(getPartitionsNum(tableLocation));
-            mdqTableStatisticInfoVO.setPartitions(getMdqTablePartitionStatisticInfoVO(partitions, ""));
+            mdqTableStatisticInfoVO.setPartitions(
+                    getMdqTablePartitionStatisticInfoVO(partitions, ""));
         }
         return mdqTableStatisticInfoVO;
     }
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public MdqTablePartitionStatisticInfoVO getPartitionStatisticInfo(String database, String tableName, String userName,
-                                                                      String partitionPath) throws IOException {
+    public MdqTablePartitionStatisticInfoVO getPartitionStatisticInfo(
+            String database, String tableName, String userName, String partitionPath)
+            throws IOException {
         String tableLocation = getTableLocation(database, tableName);
         logger.info("start to get partitionStatisticInfo,path:{}", tableLocation + partitionPath);
         return create(tableLocation + partitionPath);
     }
 
     public static void main(String[] args) {
-        ArrayList<String> strings = new ArrayList<String>() {
-            {
-                add("year=2020/day=0605/time=004");
-                add("year=2020/day=0605");
-                add("year=2020/day=0606");
-                add("year=2019/day=0606");
-                add("year=2019/day=0605");
-                add("year=2021");
-            }
-        };
+        ArrayList<String> strings =
+                new ArrayList<String>() {
+                    {
+                        add("year=2020/day=0605/time=004");
+                        add("year=2020/day=0605");
+                        add("year=2020/day=0606");
+                        add("year=2019/day=0606");
+                        add("year=2019/day=0605");
+                        add("year=2021");
+                    }
+                };
         MdqServiceImpl mdqService = new MdqServiceImpl();
-        List<MdqTablePartitionStatisticInfoVO> mdqTablePartitionStatisticInfoVO = mdqService.getMdqTablePartitionStatisticInfoVO(strings, "");
+        List<MdqTablePartitionStatisticInfoVO> mdqTablePartitionStatisticInfoVO =
+                mdqService.getMdqTablePartitionStatisticInfoVO(strings, "");
         System.out.println(mdqTablePartitionStatisticInfoVO);
     }
 
-    public List<MdqTablePartitionStatisticInfoVO> getMdqTablePartitionStatisticInfoVO(List<String> partitions, String partitionPath) {
-        //part_name(year=2020/day=0605) => MdqTablePartitionStatisticInfoVO 这里只是返回name，没有相关的分区统计数据
+    public List<MdqTablePartitionStatisticInfoVO> getMdqTablePartitionStatisticInfoVO(
+            List<String> partitions, String partitionPath) {
+        // part_name(year=2020/day=0605) => MdqTablePartitionStatisticInfoVO 这里只是返回name，没有相关的分区统计数据
         ArrayList<MdqTablePartitionStatisticInfoVO> statisticInfoVOS = new ArrayList<>();
-        Map<String, List<Tunple<String, String>>> partitionsStr = partitions.stream().map(this::splitStrByFirstSlanting)
-                .filter(Objects::nonNull)//去掉null的
-                .collect(Collectors.groupingBy(Tunple::getKey));
-        partitionsStr.forEach((k, v) -> {
-            MdqTablePartitionStatisticInfoVO mdqTablePartitionStatisticInfoVO = new MdqTablePartitionStatisticInfoVO();
-            mdqTablePartitionStatisticInfoVO.setName(k);
-            String subPartitionPath = String.format("%s/%s", partitionPath, k);
-            mdqTablePartitionStatisticInfoVO.setPartitionPath(subPartitionPath);
-            List<String> subPartitions = v.stream().map(Tunple::getValue).collect(Collectors.toList());
-            List<MdqTablePartitionStatisticInfoVO> childrens = getMdqTablePartitionStatisticInfoVO(subPartitions, subPartitionPath);
-            mdqTablePartitionStatisticInfoVO.setChildrens(childrens);
-            statisticInfoVOS.add(mdqTablePartitionStatisticInfoVO);
-        });
+        Map<String, List<Tunple<String, String>>> partitionsStr =
+                partitions.stream()
+                        .map(this::splitStrByFirstSlanting)
+                        .filter(Objects::nonNull) // 去掉null的
+                        .collect(Collectors.groupingBy(Tunple::getKey));
+        partitionsStr.forEach(
+                (k, v) -> {
+                    MdqTablePartitionStatisticInfoVO mdqTablePartitionStatisticInfoVO =
+                            new MdqTablePartitionStatisticInfoVO();
+                    mdqTablePartitionStatisticInfoVO.setName(k);
+                    String subPartitionPath = String.format("%s/%s", partitionPath, k);
+                    mdqTablePartitionStatisticInfoVO.setPartitionPath(subPartitionPath);
+                    List<String> subPartitions =
+                            v.stream().map(Tunple::getValue).collect(Collectors.toList());
+                    List<MdqTablePartitionStatisticInfoVO> childrens =
+                            getMdqTablePartitionStatisticInfoVO(subPartitions, subPartitionPath);
+                    mdqTablePartitionStatisticInfoVO.setChildrens(childrens);
+                    statisticInfoVOS.add(mdqTablePartitionStatisticInfoVO);
+                });
         return statisticInfoVOS;
     }
 
@@ -297,7 +339,8 @@ public class MdqServiceImpl implements MdqService {
     }
 
     private MdqTablePartitionStatisticInfoVO create(String path) throws IOException {
-        MdqTablePartitionStatisticInfoVO mdqTablePartitionStatisticInfoVO = new MdqTablePartitionStatisticInfoVO();
+        MdqTablePartitionStatisticInfoVO mdqTablePartitionStatisticInfoVO =
+                new MdqTablePartitionStatisticInfoVO();
         mdqTablePartitionStatisticInfoVO.setName(new Path(path).getName());
         mdqTablePartitionStatisticInfoVO.setFileNum(getTableFileNum(path));
         mdqTablePartitionStatisticInfoVO.setPartitionSize(getTableSize(path));
@@ -343,7 +386,8 @@ public class MdqServiceImpl implements MdqService {
         int tableFileNum = 0;
         if (StringUtils.isNotBlank(tableLocation)) {
             FileStatus tableFile = getRootHdfs().getFileStatus(new Path(tableLocation));
-            tableFileNum = (int) getRootHdfs().getContentSummary(tableFile.getPath()).getFileCount();
+            tableFileNum =
+                    (int) getRootHdfs().getContentSummary(tableFile.getPath()).getFileCount();
         }
         return tableFileNum;
     }
@@ -352,12 +396,14 @@ public class MdqServiceImpl implements MdqService {
         String tableSize = "0B";
         if (StringUtils.isNotBlank(tableLocation)) {
             FileStatus tableFile = getRootHdfs().getFileStatus(new Path(tableLocation));
-            tableSize = ByteTimeUtils.bytesToString(getRootHdfs().getContentSummary(tableFile.getPath()).getLength());
+            tableSize =
+                    ByteTimeUtils.bytesToString(
+                            getRootHdfs().getContentSummary(tableFile.getPath()).getLength());
         }
         return tableSize;
     }
 
-    volatile private static FileSystem rootHdfs = null;
+    private static volatile FileSystem rootHdfs = null;
 
     private FileSystem getRootHdfs() {
         if (rootHdfs == null) {
@@ -369,5 +415,4 @@ public class MdqServiceImpl implements MdqService {
         }
         return rootHdfs;
     }
-
 }

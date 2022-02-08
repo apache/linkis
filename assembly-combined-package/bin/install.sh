@@ -322,6 +322,7 @@ sed -i ${txt}  "s#wds.linkis.home.*#wds.linkis.home=$LINKIS_HOME#g" $common_conf
 sed -i ${txt}  "s#wds.linkis.filesystem.root.path.*#wds.linkis.filesystem.root.path=$WORKSPACE_USER_ROOT_PATH#g" $common_conf
 sed -i ${txt}  "s#wds.linkis.filesystem.hdfs.root.path.*#wds.linkis.filesystem.hdfs.root.path=$HDFS_USER_ROOT_PATH#g" $common_conf
 
+sed -i ${txt}  "s#wds.linkis.bml.hdfs.prefix.*#wds.linkis.bml.hdfs.prefix=$HDFS_USER_ROOT_PATH#g" $common_conf
 
 ##gateway
 gateway_conf=$LINKIS_HOME/conf/linkis-mg-gateway.properties

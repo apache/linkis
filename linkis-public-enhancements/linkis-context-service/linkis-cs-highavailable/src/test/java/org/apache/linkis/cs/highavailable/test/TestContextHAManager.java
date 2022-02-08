@@ -5,19 +5,18 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.highavailable.test;
 
-import com.google.gson.Gson;
 import org.apache.linkis.DataWorkCloudApplication;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.conf.BDPConfiguration;
@@ -31,11 +30,9 @@ import org.apache.linkis.cs.highavailable.test.haid.TestHAID;
 import org.apache.linkis.cs.highavailable.test.persist.TestPersistence;
 import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.conf.ServerConfiguration;
+
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.webapp.WebAppContext;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -57,6 +54,13 @@ import org.springframework.core.env.StandardEnvironment;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.DispatcherType;
+
+import com.google.gson.Gson;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.webapp.WebAppContext;
+
 import java.util.EnumSet;
 
 @SpringBootApplication
@@ -68,55 +72,64 @@ public class TestContextHAManager extends SpringBootServletInitializer {
     private static ServiceInstance serviceInstance;
     private static final Gson gson = new Gson();
 
-    public static void main(String [] args) throws ReflectiveOperationException {
+    public static void main(String[] args) throws ReflectiveOperationException {
 
         final SpringApplication application = new SpringApplication(TestContextHAManager.class);
-        application.addListeners(new ApplicationListener<ApplicationPreparedEvent>(){
-            public void onApplicationEvent(ApplicationPreparedEvent applicationPreparedEvent) {
-                System.out.println("add config from config server...");
-                if(applicationContext == null) {
-                    applicationContext = applicationPreparedEvent.getApplicationContext();
-                }
-                System.out.println("initialize DataWorkCloud spring application...");
-                initDWCApplication();
-
-            }
-        });
-        application.addListeners(new ApplicationListener<RefreshScopeRefreshedEvent>() {
-            public void onApplicationEvent(RefreshScopeRefreshedEvent applicationEvent) {
-                System.out.println("refresh config from config server...");
-                updateRemoteConfig();
-            }
-        });
+        application.addListeners(
+                new ApplicationListener<ApplicationPreparedEvent>() {
+                    public void onApplicationEvent(
+                            ApplicationPreparedEvent applicationPreparedEvent) {
+                        System.out.println("add config from config server...");
+                        if (applicationContext == null) {
+                            applicationContext = applicationPreparedEvent.getApplicationContext();
+                        }
+                        System.out.println("initialize DataWorkCloud spring application...");
+                        initDWCApplication();
+                    }
+                });
+        application.addListeners(
+                new ApplicationListener<RefreshScopeRefreshedEvent>() {
+                    public void onApplicationEvent(RefreshScopeRefreshedEvent applicationEvent) {
+                        System.out.println("refresh config from config server...");
+                        updateRemoteConfig();
+                    }
+                });
         String listeners = ServerConfiguration.BDP_SERVER_SPRING_APPLICATION_LISTENERS().getValue();
-        if(StringUtils.isNotBlank(listeners)) {
+        if (StringUtils.isNotBlank(listeners)) {
             for (String listener : listeners.split(",")) {
-                application.addListeners((ApplicationListener<?>) Class.forName(listener).newInstance());
+                application.addListeners(
+                        (ApplicationListener<?>) Class.forName(listener).newInstance());
             }
         }
         applicationContext = application.run(args);
 
         try {
-//            Thread.sleep(3000l);
-            AbstractContextHAManager haManager = (AbstractContextHAManager) applicationContext.getBean(AbstractContextHAManager.class);
+            //            Thread.sleep(3000l);
+            AbstractContextHAManager haManager =
+                    (AbstractContextHAManager)
+                            applicationContext.getBean(AbstractContextHAManager.class);
             if (null == haManager) {
                 System.err.println("Null haManager!");
-                return ;
+                return;
             }
             testHAManager(haManager);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private static void initDWCApplication() {
         serviceInstance = new ServiceInstance();
-        serviceInstance.setApplicationName(applicationContext.getEnvironment().getProperty("spring.application.name"));
-        serviceInstance.setInstance(Utils.getComputerName() + ":" + applicationContext.getEnvironment().getProperty("server.port"));
+        serviceInstance.setApplicationName(
+                applicationContext.getEnvironment().getProperty("spring.application.name"));
+        serviceInstance.setInstance(
+                Utils.getComputerName()
+                        + ":"
+                        + applicationContext.getEnvironment().getProperty("server.port"));
         LinkisException.setApplicationName(serviceInstance.getApplicationName());
         LinkisException.setHostname(Utils.getComputerName());
-        LinkisException.setHostPort(Integer.parseInt(applicationContext.getEnvironment().getProperty("server.port")));
+        LinkisException.setHostPort(
+                Integer.parseInt(applicationContext.getEnvironment().getProperty("server.port")));
     }
 
     public static void updateRemoteConfig() {
@@ -130,17 +143,18 @@ public class TestContextHAManager extends SpringBootServletInitializer {
     private static void addOrUpdateRemoteConfig(Environment env, boolean isUpdateOrNot) {
         StandardEnvironment environment = (StandardEnvironment) env;
         PropertySource propertySource = environment.getPropertySources().get("bootstrapProperties");
-        if(propertySource == null) {
+        if (propertySource == null) {
             return;
         }
         CompositePropertySource source = (CompositePropertySource) propertySource;
-        for (String key: source.getPropertyNames()) {
+        for (String key : source.getPropertyNames()) {
             Object val = source.getProperty(key);
-            if(val == null) {
+            if (val == null) {
                 continue;
             }
-            if(isUpdateOrNot) {
-                System.out.println("update remote config => " + key + " = " + source.getProperty(key));
+            if (isUpdateOrNot) {
+                System.out.println(
+                        "update remote config => " + key + " = " + source.getProperty(key));
                 BDPConfiguration.set(key, val.toString());
             } else {
                 System.out.println("add remote config => " + key + " = " + source.getProperty(key));
@@ -158,37 +172,42 @@ public class TestContextHAManager extends SpringBootServletInitializer {
     public WebServerFactoryCustomizer<JettyServletWebServerFactory> jettyFactoryCustomizer() {
         return new WebServerFactoryCustomizer<JettyServletWebServerFactory>() {
             public void customize(JettyServletWebServerFactory jettyServletWebServerFactory) {
-                jettyServletWebServerFactory.addServerCustomizers(new JettyServerCustomizer() {
-                    public void customize(Server server) {
-                        Handler[] childHandlersByClass = server.getChildHandlersByClass(WebAppContext.class);
-                        final WebAppContext webApp = (WebAppContext) childHandlersByClass[0];
-                        FilterHolder filterHolder = new FilterHolder(CharacterEncodingFilter.class);
-                        filterHolder.setInitParameter("encoding", Configuration.BDP_ENCODING().getValue());
-                        filterHolder.setInitParameter("forceEncoding", "true");
-                        webApp.addFilter(filterHolder, "/*", EnumSet.allOf(DispatcherType.class));
-                        //BDPJettyServerHelper.setupRestApiContextHandler(webApp);
-                        BDPJettyServerHelper.setupSpringRestApiContextHandler(webApp);
-                        if(ServerConfiguration.BDP_SERVER_SOCKET_MODE().getValue()) {
-                            BDPJettyServerHelper.setupControllerServer(webApp);
-                        }
-                        if(!ServerConfiguration.BDP_SERVER_DISTINCT_MODE().getValue()) {
-                            BDPJettyServerHelper.setupWebAppContext(webApp);
-                        }
-                    }
-                });
+                jettyServletWebServerFactory.addServerCustomizers(
+                        new JettyServerCustomizer() {
+                            public void customize(Server server) {
+                                Handler[] childHandlersByClass =
+                                        server.getChildHandlersByClass(WebAppContext.class);
+                                final WebAppContext webApp =
+                                        (WebAppContext) childHandlersByClass[0];
+                                FilterHolder filterHolder =
+                                        new FilterHolder(CharacterEncodingFilter.class);
+                                filterHolder.setInitParameter(
+                                        "encoding", Configuration.BDP_ENCODING().getValue());
+                                filterHolder.setInitParameter("forceEncoding", "true");
+                                webApp.addFilter(
+                                        filterHolder, "/*", EnumSet.allOf(DispatcherType.class));
+                                // BDPJettyServerHelper.setupRestApiContextHandler(webApp);
+                                BDPJettyServerHelper.setupSpringRestApiContextHandler(webApp);
+                                if (ServerConfiguration.BDP_SERVER_SOCKET_MODE().getValue()) {
+                                    BDPJettyServerHelper.setupControllerServer(webApp);
+                                }
+                                if (!ServerConfiguration.BDP_SERVER_DISTINCT_MODE().getValue()) {
+                                    BDPJettyServerHelper.setupWebAppContext(webApp);
+                                }
+                            }
+                        });
             }
         };
     }
-
-
 
     // test
     private static void testHAManager(AbstractContextHAManager contextHAManager) {
         // 1 test create
         TestHAID haid = new TestHAID();
         try {
-            TestPersistence testPersistence = contextHAManager.getContextHAProxy(new TestPersistence());
-            HAContextID  haContextID = testPersistence.createHAID(haid);
+            TestPersistence testPersistence =
+                    contextHAManager.getContextHAProxy(new TestPersistence());
+            HAContextID haContextID = testPersistence.createHAID(haid);
             testPersistence.passHAID(haContextID);
             testPersistence.setContextId(haContextID.getContextId());
         } catch (CSErrorException e) {
@@ -200,5 +219,4 @@ public class TestContextHAManager extends SpringBootServletInitializer {
     public static ServiceInstance getServiceInstance() {
         return serviceInstance;
     }
-
 }

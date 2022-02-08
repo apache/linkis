@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.contextcache.test.service;
 
 import org.apache.linkis.cs.common.entity.enumeration.ContextType;
@@ -28,8 +28,10 @@ import org.apache.linkis.cs.contextcache.test.csid.TestContextID;
 import org.apache.linkis.cs.contextcache.test.keyword.TestContextKey;
 import org.apache.linkis.cs.contextcache.test.keyword.TestContextKeyValue;
 import org.apache.linkis.cs.contextcache.test.keyword.TestContextValue;
-import org.junit.Before;
+
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import org.junit.Before;
 
 import java.util.List;
 
@@ -43,10 +45,12 @@ public class TestContextCacheService {
 
     @Before
     public void generateData() throws CSErrorException {
-        context = new AnnotationConfigApplicationContext("org.apache.linkis.cs","org.apache.linkis.mybatis");
+        context =
+                new AnnotationConfigApplicationContext(
+                        "org.apache.linkis.cs", "org.apache.linkis.mybatis");
         System.out.println("ioc容器加载完成");
         contextCacheService = context.getBean(ContextCacheService.class);
-       /* ContextPersistenceManager persistenceManager = context.getBean(ContextPersistenceManager.class);
+        /* ContextPersistenceManager persistenceManager = context.getBean(ContextPersistenceManager.class);
         persistenceManager.getContextIDPersistence().deleteContextID(contextIDStr);
         PersistenceContextID persistenceContextID = new PersistenceContextID();
         persistenceContextID.setContextId(String.valueOf(contextIDStr));
@@ -74,27 +78,27 @@ public class TestContextCacheService {
         persistenceManager.getContextMapPersistence().create(contextID, testContextKeyValue);*/
     }
 
-    //@Test
+    // @Test
     public void testGetAll() {
         try {
             ContextID contextID = new TestContextID();
             contextID.setContextId(contextIDStr);
             List<ContextKeyValue> all = contextCacheService.getAll(contextID);
-            if (null != all){
-                all.stream().forEach(contextKeyValue -> {
-                    System.out.println(contextKeyValue.getContextKey().getKey());
-                    System.out.println(contextKeyValue.getContextValue().getValue());
-                });
+            if (null != all) {
+                all.stream()
+                        .forEach(
+                                contextKeyValue -> {
+                                    System.out.println(contextKeyValue.getContextKey().getKey());
+                                    System.out.println(
+                                            contextKeyValue.getContextValue().getValue());
+                                });
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
-
-
-   // @Test
+    // @Test
     public void testGet() {
         ContextID contextID = new TestContextID();
         contextID.setContextId(contextIDStr);
@@ -104,35 +108,37 @@ public class TestContextCacheService {
         System.out.println(contextKeyValue1.getContextValue().getValue());
     }
 
-   // @Test
+    // @Test
     public void testGetValues() {
         ContextID contextID = new TestContextID();
         contextID.setContextId(contextIDStr);
-        List<ContextKeyValue> contextKeyValueList = contextCacheService.getValues(contextID, "flow2", ContextType.METADATA);
-        if (null != contextKeyValueList){
-            contextKeyValueList.stream().forEach(contextKeyValue -> {
-                System.out.println(contextKeyValue.getContextKey().getKey());
-            });
+        List<ContextKeyValue> contextKeyValueList =
+                contextCacheService.getValues(contextID, "flow2", ContextType.METADATA);
+        if (null != contextKeyValueList) {
+            contextKeyValueList.stream()
+                    .forEach(
+                            contextKeyValue -> {
+                                System.out.println(contextKeyValue.getContextKey().getKey());
+                            });
         }
-
-
     }
 
-   // @Test
+    // @Test
     public void testLike() {
         ContextID contextID = new TestContextID();
         contextID.setContextId(contextIDStr);
-        List<ContextKeyValue> contextKeyValueList = contextCacheService.getAllLikes(contextID, ".*node1.*", ContextType.METADATA);
-        if (null != contextKeyValueList){
-            contextKeyValueList.stream().forEach(contextKeyValue -> {
-                System.out.println(contextKeyValue.getContextKey().getKey());
-            });
+        List<ContextKeyValue> contextKeyValueList =
+                contextCacheService.getAllLikes(contextID, ".*node1.*", ContextType.METADATA);
+        if (null != contextKeyValueList) {
+            contextKeyValueList.stream()
+                    .forEach(
+                            contextKeyValue -> {
+                                System.out.println(contextKeyValue.getContextKey().getKey());
+                            });
         }
-
-
     }
 
-   // @Before
+    // @Before
     public void testPut() throws CSErrorException {
 
         ContextID contextID = new TestContextID();

@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cli.core.interactor.var;
 
 import org.apache.linkis.cli.common.entity.command.ParamItem;
@@ -26,15 +26,17 @@ import org.apache.linkis.cli.core.exception.VarAccessException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.utils.SpecialMap;
 import org.apache.linkis.cli.core.utils.converter.PredefinedStringConverters;
+
 import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 /**
- * @description: Retrieve value from input command/config/sys_prop/sys_env etc.
- * order should be: command option > k-v in map-type option > user config > default config > default
+ * @description: Retrieve value from input command/config/sys_prop/sys_env etc. order should be:
+ *     command option > k-v in map-type option > user config > default config > default
  */
 public class StdVarAccess implements VarAccess {
     private static Logger logger = LoggerFactory.getLogger(StdVarAccess.class);
@@ -43,15 +45,17 @@ public class StdVarAccess implements VarAccess {
     private ClientProperties defaultConf;
     private Map<String, String> subMapCache;
 
-    public StdVarAccess() {
-    }
+    public StdVarAccess() {}
 
-    public StdVarAccess(Params primaryParam, Params cmdParams, ClientProperties userConf, ClientProperties defaultConf) {
+    public StdVarAccess(
+            Params primaryParam,
+            Params cmdParams,
+            ClientProperties userConf,
+            ClientProperties defaultConf) {
         this.cmdParams = cmdParams;
         this.userConf = userConf;
         this.defaultConf = defaultConf;
     }
-
 
     public StdVarAccess setCmdParams(Params cmdParams) {
         this.cmdParams = cmdParams;
@@ -88,39 +92,47 @@ public class StdVarAccess implements VarAccess {
 
     private void putSubMapCache(Map<String, String> subMapCache, Params param) {
         for (ParamItem item : param.getParamItemMap().values()) {
-            //scan through all map type value and try get value for key
-            if (item.getValue() != null &&
-                    item.hasVal() &&
-                    item.getValue() instanceof Map &&
-                    !(item.getValue() instanceof SpecialMap)) {
+            // scan through all map type value and try get value for key
+            if (item.getValue() != null
+                    && item.hasVal()
+                    && item.getValue() instanceof Map
+                    && !(item.getValue() instanceof SpecialMap)) {
                 try {
                     Map<String, String> subMap = (Map<String, String>) item.getValue();
                     for (Map.Entry<String, String> entry : subMap.entrySet()) {
                         if (subMapCache.containsKey(item.getKey())) {
-                            logger.warn("Value of duplicated key \"{}\" in subMap \"{}\" will be ignored.", item.getKey(), item.getKey());
-                        } else if (StringUtils.isNotBlank(entry.getKey()) &&
-                                StringUtils.isNotBlank(entry.getValue())) {
+                            logger.warn(
+                                    "Value of duplicated key \"{}\" in subMap \"{}\" will be ignored.",
+                                    item.getKey(),
+                                    item.getKey());
+                        } else if (StringUtils.isNotBlank(entry.getKey())
+                                && StringUtils.isNotBlank(entry.getValue())) {
                             subMapCache.put(entry.getKey(), entry.getValue());
                         }
                     }
                 } catch (ClassCastException e) {
-                    logger.warn("Param: {} has an unsupported Map type(not Map<String, String>). It wiil be ignored", item.getKey());
+                    logger.warn(
+                            "Param: {} has an unsupported Map type(not Map<String, String>). It wiil be ignored",
+                            item.getKey());
                 }
             }
         }
     }
 
-
     @Override
     public void checkInit() {
-        if (this.cmdParams == null ||
-                this.defaultConf == null ||
-                this.subMapCache == null) {
-            throw new VarAccessException("VA0002", ErrorLevel.ERROR, CommonErrMsg.VarAccessInitErr, "stdVarAccess is not inited. " +
-                    "cmdParams: " + cmdParams +
-                    "defaultConf: " + defaultConf +
-                    "subMapCache: " + subMapCache
-            );
+        if (this.cmdParams == null || this.defaultConf == null || this.subMapCache == null) {
+            throw new VarAccessException(
+                    "VA0002",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.VarAccessInitErr,
+                    "stdVarAccess is not inited. "
+                            + "cmdParams: "
+                            + cmdParams
+                            + "defaultConf: "
+                            + defaultConf
+                            + "subMapCache: "
+                            + subMapCache);
         }
     }
 
@@ -136,7 +148,6 @@ public class StdVarAccess implements VarAccess {
         return val != null ? val : defaultValue;
     }
 
-
     @Override
     public <T> T getVar(Class<T> clazz, String key) {
         checkInit();
@@ -150,10 +161,7 @@ public class StdVarAccess implements VarAccess {
         T c1 = getVarFromCfg(clazz, key, userConf);
         T c2 = getVarFromCfg(clazz, key, defaultConf);
 
-        return p1 != null ? p1 :
-                c1 != null ? c1 :
-                        c2 != null ? c2 :
-                                pd1;
+        return p1 != null ? p1 : c1 != null ? c1 : c2 != null ? c2 : pd1;
     }
 
     private <T> T getVarFromParam(Class<T> clazz, String key, Params params) {
@@ -161,32 +169,38 @@ public class StdVarAccess implements VarAccess {
             return null;
         }
 
-        Object v1 = params.getParamItemMap().containsKey(key) && params.getParamItemMap().get(key).hasVal() ?
-                setNullIfEmpty(params.getParamItemMap().get(key).getValue()) : null;
+        Object v1 =
+                params.getParamItemMap().containsKey(key)
+                                && params.getParamItemMap().get(key).hasVal()
+                        ? setNullIfEmpty(params.getParamItemMap().get(key).getValue())
+                        : null;
 
         Object v2 = setNullIfEmpty(convertStringVal(clazz, subMapCache.getOrDefault(key, null)));
 
-        //extraParam has lower priority
-        Object v3 = params.getExtraProperties() == null ?
-                null : setNullIfEmpty(params.getExtraProperties().getOrDefault(key, null));
+        // extraParam has lower priority
+        Object v3 =
+                params.getExtraProperties() == null
+                        ? null
+                        : setNullIfEmpty(params.getExtraProperties().getOrDefault(key, null));
 
-        Object retObj = v1 != null ? v1 :
-                v2 != null ? v2 : v3;
+        Object retObj = v1 != null ? v1 : v2 != null ? v2 : v3;
 
         return clazz.cast(retObj);
     }
 
     private boolean paramHasVar(String key, Params params) {
-        boolean b1 = params.getParamItemMap().containsKey(key) && params.getParamItemMap().get(key).hasVal();
+        boolean b1 =
+                params.getParamItemMap().containsKey(key)
+                        && params.getParamItemMap().get(key).hasVal();
         boolean b2 = subMapCache.containsKey(key);
         boolean b3 = params.getExtraProperties().containsKey(key);
         return b1 || b2 || b3;
     }
 
     private <T> T getDefaultVarFromParam(Class<T> clazz, String key, Params params) {
-        if (params == null ||
-                StringUtils.isBlank(key) ||
-                !params.getParamItemMap().containsKey(key)) {
+        if (params == null
+                || StringUtils.isBlank(key)
+                || !params.getParamItemMap().containsKey(key)) {
             return null;
         }
 
@@ -208,9 +222,11 @@ public class StdVarAccess implements VarAccess {
         try {
             strVal = (String) val;
         } catch (ClassCastException e) {
-            throw new VarAccessException("VA0003", ErrorLevel.ERROR, CommonErrMsg.VarAccessErr,
-                    "Cannot getVar \"" + key + "\" from config. Cause: value is not String"
-            );
+            throw new VarAccessException(
+                    "VA0003",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.VarAccessErr,
+                    "Cannot getVar \"" + key + "\" from config. Cause: value is not String");
         }
 
         return convertStringVal(clazz, strVal);
@@ -250,25 +266,31 @@ public class StdVarAccess implements VarAccess {
         } else if (clazz == Boolean.class) {
             ret = convertGivenConverter(strVal, PredefinedStringConverters.BOOLEAN_CONVERTER);
         } else if (Map.class.isAssignableFrom(clazz)) {
-            //TODO: throw or return null if not string map
+            // TODO: throw or return null if not string map
             ret = null;
-//          convertGivenConverter(strVal, PredefinedStringConverters.STRING_MAP_CONVERTER);
+            //          convertGivenConverter(strVal,
+            // PredefinedStringConverters.STRING_MAP_CONVERTER);
         } else if (clazz == String[].class) {
             ret = null;
-//      ret = convertGivenConverter(strVal, PredefinedStringConverters.STR_ARRAY_CONVERTER);
+            //      ret = convertGivenConverter(strVal,
+            // PredefinedStringConverters.STR_ARRAY_CONVERTER);
         } else {
-            throw new VarAccessException("VA0004", ErrorLevel.ERROR, CommonErrMsg.VarAccessErr,
-                    "Cannot convertStringVal \"" + strVal + "\" to " + clazz.getCanonicalName() + "designated type is not supported"
-            );
+            throw new VarAccessException(
+                    "VA0004",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.VarAccessErr,
+                    "Cannot convertStringVal \""
+                            + strVal
+                            + "\" to "
+                            + clazz.getCanonicalName()
+                            + "designated type is not supported");
         }
         return clazz.cast(ret);
     }
 
-
     private <T> T convertGivenConverter(String strVal, AbstractStringConverter<T> converter) {
         return converter.convert(strVal);
     }
-
 
     @Override
     public String[] getAllVarKeys() {
@@ -290,7 +312,7 @@ public class StdVarAccess implements VarAccess {
                 }
             }
             for (String key : subMapCache.keySet()) {
-                //scan through all map type value and try add key
+                // scan through all map type value and try add key
                 if (!varKeys.contains(key)) {
                     varKeys.add(key);
                 }

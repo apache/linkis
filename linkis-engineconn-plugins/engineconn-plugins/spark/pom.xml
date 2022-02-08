@@ -89,8 +89,8 @@
                     <groupId>io.netty</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>xlsx-streamer</artifactId>
-                    <groupId>com.monitorjbl</groupId>
+                    <groupId>com.github.pjfanning</groupId>
+                    <artifactId>excel-streaming-reader</artifactId>
                 </exclusion>
                 <exclusion>
                     <artifactId>netty-all</artifactId>

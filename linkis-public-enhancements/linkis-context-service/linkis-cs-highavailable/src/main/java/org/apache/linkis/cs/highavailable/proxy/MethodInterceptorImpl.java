@@ -5,29 +5,31 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.highavailable.proxy;
 
-import com.google.gson.Gson;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.HAContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.highavailable.AbstractContextHAManager;
 import org.apache.linkis.cs.highavailable.exception.CSErrorCode;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
+
 import org.apache.commons.lang.StringUtils;
+
+import net.sf.cglib.proxy.MethodInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import net.sf.cglib.proxy.MethodProxy;
+import com.google.gson.Gson;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -41,8 +43,8 @@ import java.util.Map;
  */
 public class MethodInterceptorImpl implements MethodInterceptor {
 
-    private final static Logger logger = LoggerFactory.getLogger(MethodInterceptorImpl.class);
-    private final static Gson gson = new Gson();
+    private static final Logger logger = LoggerFactory.getLogger(MethodInterceptorImpl.class);
+    private static final Gson gson = new Gson();
     private AbstractContextHAManager contextHAManager;
     private Object object;
     private final Map<Integer, String> contextIDCacheMap = new HashMap<Integer, String>();
@@ -56,7 +58,8 @@ public class MethodInterceptorImpl implements MethodInterceptor {
     }
 
     @Override
-    public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+    public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy)
+            throws Throwable {
 
         this.contextIDCacheMap.clear();
         // 1，执行方法前转换
@@ -64,7 +67,7 @@ public class MethodInterceptorImpl implements MethodInterceptor {
 
             // ①参数含有ContextID实例
             if (ContextID.class.isInstance(args[i])) {
-                ContextID contextID = (ContextID)args[i];
+                ContextID contextID = (ContextID) args[i];
                 convertContextIDBeforeInvoke(contextID, i);
             }
 
@@ -76,14 +79,21 @@ public class MethodInterceptorImpl implements MethodInterceptor {
         if (method.getName().toLowerCase().contains(CONTEXTID)) {
             for (int j = 0; j < args.length; j++) {
                 if (String.class.isInstance(args[j])) {
-                    String pStr = (String)args[j];
+                    String pStr = (String) args[j];
                     if (StringUtils.isNotBlank(pStr) && !StringUtils.isNumeric(pStr)) {
                         if (this.contextHAManager.getContextHAChecker().isHAIDValid(pStr)) {
-                            String contextID = this.contextHAManager.getContextHAChecker().parseHAIDFromKey(pStr).getContextId();
+                            String contextID =
+                                    this.contextHAManager
+                                            .getContextHAChecker()
+                                            .parseHAIDFromKey(pStr)
+                                            .getContextId();
                             args[j] = contextID;
                         } else {
-                            logger.error("Invalid HAID : " + pStr + " in method : " + method.getName());
-                            throw new CSErrorException(CSErrorCode.INVALID_HAID, "Invalid HAID : " + pStr + " in method : " + method.getName());
+                            logger.error(
+                                    "Invalid HAID : " + pStr + " in method : " + method.getName());
+                            throw new CSErrorException(
+                                    CSErrorCode.INVALID_HAID,
+                                    "Invalid HAID : " + pStr + " in method : " + method.getName());
                         }
                     }
                     break;
@@ -99,15 +109,18 @@ public class MethodInterceptorImpl implements MethodInterceptor {
         if (null != oriResult) {
             // ①判断集合中元素是否有getContextID方法
             if (List.class.isInstance(oriResult)) {
-                List objList = (List)oriResult;
+                List objList = (List) oriResult;
                 for (Object oneParameter : objList) {
                     convertGetContextIDAfterInvoke(oneParameter);
                 }
                 // ②判断ContextID
             } else if (HAContextID.class.isInstance(oriResult)) {
-                HAContextID haContextID = (HAContextID)oriResult;
+                HAContextID haContextID = (HAContextID) oriResult;
                 if (StringUtils.isNumeric(haContextID.getContextId())) {
-                    String haId = this.contextHAManager.getContextHAChecker().convertHAIDToHAKey(haContextID);
+                    String haId =
+                            this.contextHAManager
+                                    .getContextHAChecker()
+                                    .convertHAIDToHAKey(haContextID);
                     haContextID.setContextId(haId);
                 }
             } else {
@@ -121,18 +134,24 @@ public class MethodInterceptorImpl implements MethodInterceptor {
         for (int k = 0; k < args.length; k++) {
             if (ContextID.class.isInstance(args[k])) {
                 if (this.contextIDCacheMap.containsKey(k)) {
-                    ContextID contextID = (ContextID)args[k];
+                    ContextID contextID = (ContextID) args[k];
                     contextID.setContextId(this.contextIDCacheMap.get(k));
                 } else {
                     if (HAContextID.class.isInstance(args[k])) {
-                        HAContextID haContextID = (HAContextID)args[k];
+                        HAContextID haContextID = (HAContextID) args[k];
                         if (StringUtils.isNumeric(haContextID.getContextId())) {
-                            if (StringUtils.isNotBlank(haContextID.getInstance()) && StringUtils.isNotBlank(haContextID.getBackupInstance())) {
-                                String haId = this.contextHAManager.getContextHAChecker().convertHAIDToHAKey(haContextID);
+                            if (StringUtils.isNotBlank(haContextID.getInstance())
+                                    && StringUtils.isNotBlank(haContextID.getBackupInstance())) {
+                                String haId =
+                                        this.contextHAManager
+                                                .getContextHAChecker()
+                                                .convertHAIDToHAKey(haContextID);
                                 haContextID.setContextId(haId);
                             } else {
                                 logger.error("Invalid HAContextID : " + gson.toJson(haContextID));
-                                throw new CSErrorException(CSErrorCode.INVAID_HA_CONTEXTID, "Invalid HAContextID : " + gson.toJson(haContextID));
+                                throw new CSErrorException(
+                                        CSErrorCode.INVAID_HA_CONTEXTID,
+                                        "Invalid HAContextID : " + gson.toJson(haContextID));
                             }
                         }
                     }
@@ -147,28 +166,37 @@ public class MethodInterceptorImpl implements MethodInterceptor {
         return oriResult;
     }
 
-
-    private void convertContextIDBeforeInvoke(ContextID contextID, int index) throws CSErrorException {
+    private void convertContextIDBeforeInvoke(ContextID contextID, int index)
+            throws CSErrorException {
         if (null == contextID) {
             return;
         }
         if (StringUtils.isNumeric(contextID.getContextId())) {
             if (HAContextID.class.isInstance(contextID)) {
-                logger.error("ContextId of HAContextID instance cannot be numberic. contextId : " + gson.toJson(contextID));
-                throw new CSErrorException(CSErrorCode.INVALID_CONTEXTID, "ContextId of HAContextID instance cannot be numberic. contextId : " + gson.toJson(contextID));
+                logger.error(
+                        "ContextId of HAContextID instance cannot be numberic. contextId : "
+                                + gson.toJson(contextID));
+                throw new CSErrorException(
+                        CSErrorCode.INVALID_CONTEXTID,
+                        "ContextId of HAContextID instance cannot be numberic. contextId : "
+                                + gson.toJson(contextID));
             }
         } else {
             if (HAContextID.class.isInstance(contextID)) {
                 if (null == contextID.getContextId()) {
                     this.contextHAManager.convertProxyHAID((HAContextID) contextID);
-                } else if (this.contextHAManager.getContextHAChecker().isHAIDValid(contextID.getContextId())) {
+                } else if (this.contextHAManager
+                        .getContextHAChecker()
+                        .isHAIDValid(contextID.getContextId())) {
                     if (index > 0) {
                         this.contextIDCacheMap.put(index, contextID.getContextId());
                     }
                     this.contextHAManager.convertProxyHAID((HAContextID) contextID);
                 } else {
                     logger.error("Invalid haContextId. contextId : " + gson.toJson(contextID));
-                    throw new CSErrorException(CSErrorCode.INVALID_HAID, "Invalid haContextId. contextId : " + gson.toJson(contextID));
+                    throw new CSErrorException(
+                            CSErrorCode.INVALID_HAID,
+                            "Invalid haContextId. contextId : " + gson.toJson(contextID));
                 }
             }
         }
@@ -180,9 +208,12 @@ public class MethodInterceptorImpl implements MethodInterceptor {
                 try {
                     Object result = innerMethod.invoke(object);
                     if (null != object && ContextID.class.isInstance(result)) {
-                        convertContextIDBeforeInvoke((ContextID)result, -1);
+                        convertContextIDBeforeInvoke((ContextID) result, -1);
                     } else {
-                        logger.warn("Method {} returns non-contextid object : {}", innerMethod.getName(), gson.toJson(object));
+                        logger.warn(
+                                "Method {} returns non-contextid object : {}",
+                                innerMethod.getName(),
+                                gson.toJson(object));
                     }
                 } catch (Exception e) {
                     logger.error("call method : {} error, ", innerMethod.getName(), e);
@@ -206,15 +237,27 @@ public class MethodInterceptorImpl implements MethodInterceptor {
                 logger.warn("Invoke method : {} error. ", method.getName(), e);
             }
             if (null != result && HAContextID.class.isInstance(result)) {
-                HAContextID haContextID = (HAContextID)result;
+                HAContextID haContextID = (HAContextID) result;
                 if (StringUtils.isNumeric(haContextID.getContextId())
                         && StringUtils.isNotBlank(haContextID.getInstance())
                         && StringUtils.isNotBlank(haContextID.getBackupInstance())) {
-                    String haid = this.contextHAManager.getContextHAChecker().convertHAIDToHAKey(haContextID);
+                    String haid =
+                            this.contextHAManager
+                                    .getContextHAChecker()
+                                    .convertHAIDToHAKey(haContextID);
                     haContextID.setContextId(haid);
                 } else {
-                    logger.error("GetContextID method : " + method.getName() + " returns invalid haContextID : " + gson.toJson(result));
-                    throw new CSErrorException(CSErrorCode.INVALID_HAID, "GetContextID method : " + method.getName() + " returns invalid haContextID : " + gson.toJson(result));
+                    logger.error(
+                            "GetContextID method : "
+                                    + method.getName()
+                                    + " returns invalid haContextID : "
+                                    + gson.toJson(result));
+                    throw new CSErrorException(
+                            CSErrorCode.INVALID_HAID,
+                            "GetContextID method : "
+                                    + method.getName()
+                                    + " returns invalid haContextID : "
+                                    + gson.toJson(result));
                 }
             }
         }

@@ -17,10 +17,10 @@
 
 package org.apache.linkis.datasourcemanager.core;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.linkis.LinkisBaseServerApp;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class LinkisDataSourceManagerApplication {
 

@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl;
 
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
@@ -23,11 +23,7 @@ import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.Colu
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
 import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.listener.RowsType;
-import java.sql.Statement;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.table.api.TableEnvironment;
@@ -35,12 +31,17 @@ import org.apache.flink.table.api.TableResult;
 import org.apache.flink.table.types.logical.BigIntType;
 import org.apache.flink.types.Row;
 import org.apache.flink.util.CloseableIterator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Operation for INSERT command.
- */
+import java.sql.Statement;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+/** Operation for INSERT command. */
 public class InsertOperation extends AbstractJobOperation {
     private static final Logger LOG = LoggerFactory.getLogger(InsertOperation.class);
 
@@ -49,11 +50,13 @@ public class InsertOperation extends AbstractJobOperation {
 
     private boolean fetched = false;
 
-    public InsertOperation(FlinkEngineConnContext context, String statement, String tableIdentifier) {
+    public InsertOperation(
+            FlinkEngineConnContext context, String statement, String tableIdentifier) {
         super(context);
         this.statement = statement;
-        this.columnInfos = Collections.singletonList(
-                ColumnInfo.create(tableIdentifier, new BigIntType(false)));
+        this.columnInfos =
+                Collections.singletonList(
+                        ColumnInfo.create(tableIdentifier, new BigIntType(false)));
     }
 
     @Override
@@ -67,8 +70,10 @@ public class InsertOperation extends AbstractJobOperation {
             return Optional.empty();
         } else {
             fetched = true;
-            return Optional.of(Tuple2.of(Collections.singletonList(
-                Row.of((long) Statement.SUCCESS_NO_INFO)), null));
+            return Optional.of(
+                    Tuple2.of(
+                            Collections.singletonList(Row.of((long) Statement.SUCCESS_NO_INFO)),
+                            null));
         }
     }
 
@@ -77,7 +82,8 @@ public class InsertOperation extends AbstractJobOperation {
         return columnInfos;
     }
 
-    private JobID executeUpdateInternal(ExecutionContext executionContext) throws SqlExecutionException {
+    private JobID executeUpdateInternal(ExecutionContext executionContext)
+            throws SqlExecutionException {
         TableEnvironment tableEnv = executionContext.getTableEnvironment();
         // parse and validate statement
         TableResult tableResult;
@@ -94,21 +100,33 @@ public class InsertOperation extends AbstractJobOperation {
 
     protected void asyncNotify(TableResult tableResult) {
         CompletableFuture.completedFuture(tableResult)
-            .thenApply(result -> {
-                CloseableIterator<Row> iterator = result.collect();
-                int affected = 0;
-                while(iterator.hasNext()) {
-                    Row row = iterator.next();
-                    affected = Integer.parseInt(row.getField(0).toString());
-                }
-                return affected;
-            }).whenComplete((affected, throwable) -> {
-                if(throwable != null) {
-                    getFlinkStatusListeners().forEach(listener -> listener.onFailed("Error while submitting job.", throwable, RowsType.Affected()));
-                } else {
-                    getFlinkStatusListeners().forEach(listener -> listener.onSuccess(affected, RowsType.Affected()));
-                }
-            });
+                .thenApply(
+                        result -> {
+                            CloseableIterator<Row> iterator = result.collect();
+                            int affected = 0;
+                            while (iterator.hasNext()) {
+                                Row row = iterator.next();
+                                affected = Integer.parseInt(row.getField(0).toString());
+                            }
+                            return affected;
+                        })
+                .whenComplete(
+                        (affected, throwable) -> {
+                            if (throwable != null) {
+                                getFlinkStatusListeners()
+                                        .forEach(
+                                                listener ->
+                                                        listener.onFailed(
+                                                                "Error while submitting job.",
+                                                                throwable,
+                                                                RowsType.Affected()));
+                            } else {
+                                getFlinkStatusListeners()
+                                        .forEach(
+                                                listener ->
+                                                        listener.onSuccess(
+                                                                affected, RowsType.Affected()));
+                            }
+                        });
     }
-
 }

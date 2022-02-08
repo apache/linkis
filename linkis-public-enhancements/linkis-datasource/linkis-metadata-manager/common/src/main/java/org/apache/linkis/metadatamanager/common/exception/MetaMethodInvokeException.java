@@ -19,16 +19,15 @@ package org.apache.linkis.metadatamanager.common.exception;
 
 import org.apache.linkis.common.exception.ErrorException;
 
-/**
- * Exception in invoking metadata service
- */
+/** Exception in invoking metadata service */
 public class MetaMethodInvokeException extends ErrorException {
     public MetaMethodInvokeException(int errCode, String desc, Throwable t) {
         super(errCode, desc);
         super.initCause(t);
     }
 
-    public MetaMethodInvokeException(String method, Object[] args, int errCode, String desc, Throwable t) {
+    public MetaMethodInvokeException(
+            String method, Object[] args, int errCode, String desc, Throwable t) {
         this(errCode, desc, t);
         this.method = method;
         this.args = args;

@@ -17,19 +17,19 @@
 
 package org.apache.linkis.datasourcemanager.common.auth;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.server.security.SecurityFilter;
 
+import org.apache.commons.lang.StringUtils;
+
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Auth context
- */
+/** Auth context */
 public class AuthContext {
 
     public static CommonVars<String> AUTH_ADMINISTRATOR =
@@ -39,11 +39,11 @@ public class AuthContext {
 
     private static List<String> administrators = new ArrayList<>();
 
-    static{
+    static {
         String adminStr = AUTH_ADMINISTRATOR.getValue();
-        if(StringUtils.isNotBlank(adminStr)){
-            for(String admin : adminStr.split(AUTH_SEPARATOR)){
-                if(StringUtils.isNotBlank(admin)){
+        if (StringUtils.isNotBlank(adminStr)) {
+            for (String admin : adminStr.split(AUTH_SEPARATOR)) {
+                if (StringUtils.isNotBlank(admin)) {
                     administrators.add(admin);
                 }
             }
@@ -52,30 +52,32 @@ public class AuthContext {
 
     /**
      * If has permission of data source
+     *
      * @param dataSource data source
      * @param request request
      * @return boolean
      */
-    public static boolean hasPermission(DataSource dataSource, HttpServletRequest request){
+    public static boolean hasPermission(DataSource dataSource, HttpServletRequest request) {
         String username = SecurityFilter.getLoginUsername(request);
         return hasPermission(dataSource, username);
     }
 
-    public static boolean hasPermission(DataSource dataSource, String username){
+    public static boolean hasPermission(DataSource dataSource, String username) {
         if (Objects.nonNull(dataSource)) {
             String creator = dataSource.getCreateUser();
-            return (administrators.contains(username) ||
-                    (StringUtils.isNotBlank(creator) && username.equals(creator)));
+            return (administrators.contains(username)
+                    || (StringUtils.isNotBlank(creator) && username.equals(creator)));
         }
         return false;
     }
 
     /**
      * If is admin
+     *
      * @param username username
      * @return boolean
      */
-    public static boolean isAdministrator(String username){
+    public static boolean isAdministrator(String username) {
         return administrators.contains(username);
     }
 }

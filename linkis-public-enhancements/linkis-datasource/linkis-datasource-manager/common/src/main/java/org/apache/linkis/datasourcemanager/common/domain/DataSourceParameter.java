@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,20 +23,16 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Store the data source information
- */
+/** Store the data source information */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"}, ignoreUnknown = true)
+@JsonIgnoreProperties(
+        value = {"hibernateLazyInitializer", "handler"},
+        ignoreUnknown = true)
 public class DataSourceParameter {
 
-    /**
-     * Connection parameters
-     */
+    /** Connection parameters */
     private Map<String, Object> connectParams = new HashMap<>();
-    /**
-     * comment
-     */
+    /** comment */
     private String comment;
 
     public Map<String, Object> getConnectParams() {

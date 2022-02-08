@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cli.core.interactor.properties;
 
 import org.apache.linkis.cli.common.entity.properties.ClientProperties;
@@ -25,7 +25,6 @@ import org.apache.linkis.cli.core.exception.handler.DefaultExceptionHandler;
 import org.apache.linkis.cli.core.interactor.properties.reader.PropertiesReader;
 
 import java.util.*;
-
 
 public class StdPropsLoader implements PropertiesLoader {
     Map<String, PropertiesReader> readersMap;
@@ -66,7 +65,6 @@ public class StdPropsLoader implements PropertiesLoader {
         readersMap.remove(identifier);
     }
 
-
     @Override
     public ClientProperties[] loadProperties() {
         checkInit();
@@ -91,7 +89,10 @@ public class StdPropsLoader implements PropertiesLoader {
     @Override
     public void checkInit() {
         if (readersMap == null || readersMap.size() == 0) {
-            throw new PropsException("PRP0003", ErrorLevel.ERROR, CommonErrMsg.PropsLoaderInitErr,
+            throw new PropsException(
+                    "PRP0003",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.PropsLoaderInitErr,
                     "properties loader is not inited because it contains no reader");
         }
     }

@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cli.application.suite;
 
 import org.apache.linkis.cli.application.constants.LinkisClientKeys;
@@ -44,7 +44,6 @@ import org.apache.linkis.cli.core.interactor.job.JobBuilder;
 import org.apache.linkis.cli.core.interactor.result.DefaultResultHandler;
 import org.apache.linkis.cli.core.interactor.var.VarAccess;
 
-
 public class SuiteFactoryImpl implements ExecutionSuiteFactory {
     @Override
     public ExecutionSuite getSuite(CmdType cmdType, VarAccess varAccess) {
@@ -72,19 +71,21 @@ public class SuiteFactoryImpl implements ExecutionSuiteFactory {
                 ((HelpExecution) execution).setTemplate(new UniversalCmdTemplate());
                 return new ExecutionSuite(execution, null, null, defaultHandler);
             } else {
-                //TODO:support async_exec
+                // TODO:support async_exec
                 execution = new SyncSubmission();
                 executorBuilder = new LinkisSubmitExecutorBuilder();
                 jobBuilder = new LinkisJobBuilder();
                 presentHandler.setPresenter(new LinkisJobResultPresenter());
                 presentHandler.setConverter(new LinkisResultModelConverter());
-
             }
-            return new ExecutionSuite(execution, jobBuilder, executorBuilder, presentHandler, defaultHandler);
+            return new ExecutionSuite(
+                    execution, jobBuilder, executorBuilder, presentHandler, defaultHandler);
         } else {
-            throw new ExecutorException("EXE0029", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "Command Type is not supported");
+            throw new ExecutorException(
+                    "EXE0029",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Command Type is not supported");
         }
-
     }
-
 }

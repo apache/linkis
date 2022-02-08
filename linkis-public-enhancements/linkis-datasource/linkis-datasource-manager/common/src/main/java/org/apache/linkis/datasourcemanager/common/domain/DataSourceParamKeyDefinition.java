@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.datasourcemanager.common.domain;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -26,130 +26,82 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Parameter key definition for data source type
- */
-@JsonSerialize(include= JsonSerialize.Inclusion.NON_EMPTY)
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"}, ignoreUnknown = true)
+/** Parameter key definition for data source type */
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
+@JsonIgnoreProperties(
+        value = {"hibernateLazyInitializer", "handler"},
+        ignoreUnknown = true)
 public class DataSourceParamKeyDefinition {
-    /**
-     * Key-value type
-     */
-    public enum ValueType{
-        /**
-         * Email format
-         */
+    /** Key-value type */
+    public enum ValueType {
+        /** Email format */
         EMAIL(String.class),
-        /**
-         * String
-         */
+        /** String */
         TEXT(String.class),
-        /**
-         * String
-         */
+        /** String */
         TEXTAREA(String.class),
-        /**
-         * Long
-         */
+        /** Long */
         NUMBER(Long.class),
-        /**
-         * SELECT
-         */
+        /** SELECT */
         SELECT(String.class),
-        /**
-         * List
-         */
+        /** List */
         LIST(List.class),
-        /**
-         * Map
-         */
+        /** Map */
         MAP(Map.class),
-        /**
-         * RADIO
-         */
+        /** RADIO */
         RADIO(String.class),
-        /**
-         * Password
-         */
+        /** Password */
         PASSWORD(String.class),
-        /**
-         * DateTime
-         */
+        /** DateTime */
         DATE(Date.class),
-        /**
-         * File
-         */
-        FILE(InputStream .class);
+        /** File */
+        FILE(InputStream.class);
         Class<?> type;
-        ValueType(Class<?> type){
+
+        ValueType(Class<?> type) {
             this.type = type;
         }
-        public Class<?> getJavaType(){
+
+        public Class<?> getJavaType() {
             return this.type;
         }
     }
 
-    public enum Scope{
-        /**
-         * Env SCOPE
-         */
+    public enum Scope {
+        /** Env SCOPE */
         ENV,
     }
-    /**
-     * Definition id
-     */
+    /** Definition id */
     private Long id;
 
-    /**
-     * Key name
-     */
+    /** Key name */
     private String key;
 
-    /**
-     * Definition description
-     */
+    /** Definition description */
     private String description;
 
-    /**
-     * Option name
-     */
+    /** Option name */
     private String name;
 
-    /**
-     * Default value
-     */
+    /** Default value */
     private String defaultValue;
 
-    /**
-     * Value type
-     */
+    /** Value type */
     private ValueType valueType;
-    /**
-     * Scope
-     */
+    /** Scope */
     private Scope scope;
-    /**
-     * If the definition is required
-     */
+    /** If the definition is required */
     private boolean require;
-    /**
-     * Value regex
-     */
+    /** Value regex */
     private String valueRegex;
 
-    /**
-     * Reference id
-     */
+    /** Reference id */
     private Long refId;
 
-    /**
-     * Reference value
-     */
+    /** Reference value */
     private String refValue;
 
-    /**
-     * Form fill content
-     */
+    /** Form fill content */
     private String dataSource;
 
     public String getDataSource() {

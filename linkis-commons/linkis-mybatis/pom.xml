@@ -69,6 +69,13 @@
             <artifactId>pagehelper</artifactId>
             <version>5.1.4</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

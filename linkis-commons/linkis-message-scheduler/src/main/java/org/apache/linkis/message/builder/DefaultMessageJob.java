@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.message.builder;
 
 import org.apache.linkis.message.context.AbstractMessageSchedulerContext;
@@ -33,7 +33,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.LockSupport;
 
-
 public class DefaultMessageJob extends Job implements MessageJob {
 
     private RequestProtocol requestProtocol;
@@ -44,7 +43,7 @@ public class DefaultMessageJob extends Job implements MessageJob {
 
     private AbstractMessageSchedulerContext context;
 
-    //implements of MessageJob
+    // implements of MessageJob
 
     @Override
     public RequestProtocol getRequestProtocol() {
@@ -62,7 +61,8 @@ public class DefaultMessageJob extends Job implements MessageJob {
     }
 
     @Override
-    public void setMethodExecuteWrappers(Map<String, List<MethodExecuteWrapper>> methodExecuteWrappers) {
+    public void setMethodExecuteWrappers(
+            Map<String, List<MethodExecuteWrapper>> methodExecuteWrappers) {
         this.methodExecuteWrappers = methodExecuteWrappers;
     }
 
@@ -86,11 +86,10 @@ public class DefaultMessageJob extends Job implements MessageJob {
         this.context = context;
     }
 
-    //implements of Job
+    // implements of Job
 
     @Override
-    public void init() {
-    }
+    public void init() {}
 
     @Override
     public ExecuteRequest jobToExecuteRequest() {
@@ -108,15 +107,13 @@ public class DefaultMessageJob extends Job implements MessageJob {
     }
 
     @Override
-    public void close() throws IOException {
-    }
+    public void close() throws IOException {}
 
     // implements of Future
 
     // TODO: 2020/8/3 state 和blockThread的cas化
 
     Thread blockThread = null;
-
 
     public Thread getBlockThread() {
         return this.blockThread;
@@ -152,11 +149,13 @@ public class DefaultMessageJob extends Job implements MessageJob {
     }
 
     @Override
-    public Object get(long timeout, TimeUnit unit) throws ExecutionException, InterruptedException, TimeoutException {
+    public Object get(long timeout, TimeUnit unit)
+            throws ExecutionException, InterruptedException, TimeoutException {
         if (unit == null) unit = TimeUnit.NANOSECONDS;
         if (!this.isCompleted()
-                && !SchedulerEventState.isCompleted(SchedulerEventState.apply(waitComplete(true, unit.toNanos(timeout))))) {
-            String msg = "task: " +  this.requestProtocol + "time out " + timeout;
+                && !SchedulerEventState.isCompleted(
+                        SchedulerEventState.apply(waitComplete(true, unit.toNanos(timeout))))) {
+            String msg = "task: " + this.requestProtocol + "time out " + timeout;
             throw new TimeoutException(msg);
         }
         return handleResult();
@@ -170,16 +169,14 @@ public class DefaultMessageJob extends Job implements MessageJob {
             }
             if (this.isCompleted()) {
                 return this.getState().id();
-            } else if (blockThread == null)
-                blockThread = Thread.currentThread();
+            } else if (blockThread == null) blockThread = Thread.currentThread();
             else if (timed) {
                 nanos = endTime - System.nanoTime();
                 if (nanos <= 0) {
                     return this.getState().id();
                 }
                 LockSupport.parkNanos(this, nanos);
-            } else
-                LockSupport.park(this);
+            } else LockSupport.park(this);
         }
     }
 }

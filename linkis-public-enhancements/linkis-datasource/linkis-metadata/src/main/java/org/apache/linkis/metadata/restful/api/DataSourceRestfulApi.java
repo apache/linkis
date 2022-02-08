@@ -5,25 +5,26 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.metadata.restful.api;
 
 import org.apache.linkis.metadata.restful.remote.DataSourceRestfulRemote;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import com.fasterxml.jackson.databind.JsonNode;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,18 +33,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 @RestController
 @RequestMapping(path = "/datasource")
 public class DataSourceRestfulApi implements DataSourceRestfulRemote {
 
     private static final Logger logger = Logger.getLogger(DataSourceRestfulApi.class);
 
-    @Autowired
-    DataSourceService dataSourceService;
-
+    @Autowired DataSourceService dataSourceService;
 
     @Override
-    @RequestMapping(path = "dbs",method = RequestMethod.GET)
+    @RequestMapping(path = "dbs", method = RequestMethod.GET)
     public Message queryDatabaseInfo(HttpServletRequest req) {
         String userName = SecurityFilter.getLoginUsername(req);
         try {
@@ -56,8 +57,8 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     }
 
     @Override
-    @RequestMapping(path = "all",method = RequestMethod.GET)
-    public Message queryDbsWithTables(HttpServletRequest req){
+    @RequestMapping(path = "all", method = RequestMethod.GET)
+    public Message queryDbsWithTables(HttpServletRequest req) {
         String userName = SecurityFilter.getLoginUsername(req);
         try {
             JsonNode dbs = dataSourceService.getDbsWithTables(userName);
@@ -68,10 +69,11 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
-
     @Override
-    @RequestMapping(path = "tables",method = RequestMethod.GET)
-    public Message queryTables(@RequestParam(value="database",required=false) String database, HttpServletRequest req){
+    @RequestMapping(path = "tables", method = RequestMethod.GET)
+    public Message queryTables(
+            @RequestParam(value = "database", required = false) String database,
+            HttpServletRequest req) {
         String userName = SecurityFilter.getLoginUsername(req);
         try {
             JsonNode tables = dataSourceService.queryTables(database, userName);
@@ -83,8 +85,11 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     }
 
     @Override
-    @RequestMapping(path = "columns",method = RequestMethod.GET)
-    public Message queryTableMeta(@RequestParam(value="database",required=false) String database,  @RequestParam(value="table",required=false) String table, HttpServletRequest req){
+    @RequestMapping(path = "columns", method = RequestMethod.GET)
+    public Message queryTableMeta(
+            @RequestParam(value = "database", required = false) String database,
+            @RequestParam(value = "table", required = false) String table,
+            HttpServletRequest req) {
         String userName = SecurityFilter.getLoginUsername(req);
         try {
             JsonNode columns = dataSourceService.queryTableMeta(database, table, userName);
@@ -96,12 +101,16 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     }
 
     @Override
-    @RequestMapping(path = "size",method = RequestMethod.GET)
-    public Message sizeOf(@RequestParam(value="database",required=false) String database,  @RequestParam(value="table",required=false) String table, @RequestParam(value="partition",required=false) String partition, HttpServletRequest req){
+    @RequestMapping(path = "size", method = RequestMethod.GET)
+    public Message sizeOf(
+            @RequestParam(value = "database", required = false) String database,
+            @RequestParam(value = "table", required = false) String table,
+            @RequestParam(value = "partition", required = false) String partition,
+            HttpServletRequest req) {
         String userName = SecurityFilter.getLoginUsername(req);
         try {
             JsonNode sizeNode;
-            if (StringUtils.isBlank(partition)){
+            if (StringUtils.isBlank(partition)) {
                 sizeNode = dataSourceService.getTableSize(database, table, userName);
             } else {
                 sizeNode = dataSourceService.getPartitionSize(database, table, partition, userName);
@@ -114,10 +123,13 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     }
 
     @Override
-    @RequestMapping(path = "partitions",method = RequestMethod.GET)
-    public Message partitions(@RequestParam(value="database",required=false) String database,  @RequestParam(value="table",required=false) String table, HttpServletRequest req){
+    @RequestMapping(path = "partitions", method = RequestMethod.GET)
+    public Message partitions(
+            @RequestParam(value = "database", required = false) String database,
+            @RequestParam(value = "table", required = false) String table,
+            HttpServletRequest req) {
         String userName = SecurityFilter.getLoginUsername(req);
-        try{
+        try {
             JsonNode partitionNode = dataSourceService.getPartitions(database, table, userName);
             return Message.ok("").data("partitionInfo", partitionNode);
         } catch (Exception e) {

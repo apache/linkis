@@ -17,10 +17,6 @@
 
 package org.apache.linkis.manager.am.restful;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
@@ -48,11 +44,12 @@ import org.apache.linkis.manager.label.exception.LabelErrorException;
 import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
+
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang.exception.ExceptionUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,119 +59,171 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
-
-@RequestMapping(path = "/linkisManager", produces = {"application/json"})
+@RequestMapping(
+        path = "/linkisManager",
+        produces = {"application/json"})
 @RestController
 public class EMRestfulApi {
 
-    @Autowired
-    private EMInfoService emInfoService;
+    @Autowired private EMInfoService emInfoService;
 
-    @Autowired
-    private NodeLabelService nodeLabelService;
+    @Autowired private NodeLabelService nodeLabelService;
 
-    @Autowired
-    private DefaultMetricsConverter defaultMetricsConverter;
+    @Autowired private DefaultMetricsConverter defaultMetricsConverter;
 
-    @Autowired
-    private EngineCreateService engineCreateService;
+    @Autowired private EngineCreateService engineCreateService;
 
-    @Autowired
-    private ECMOperateService ecmOperateService;
+    @Autowired private ECMOperateService ecmOperateService;
 
-    private LabelBuilderFactory stdLabelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory();
+    private LabelBuilderFactory stdLabelBuilderFactory =
+            LabelBuilderFactoryContext.getLabelBuilderFactory();
 
     private Logger logger = LoggerFactory.getLogger(EMRestfulApi.class);
 
     private String[] adminOperations = AMConfiguration.ECM_ADMIN_OPERATIONS().getValue().split(",");
 
-
-    //todo add healthInfo
+    // todo add healthInfo
     @RequestMapping(path = "/listAllEMs", method = RequestMethod.GET)
-    public Message listAllEMs(HttpServletRequest req,
-                              @RequestParam(value = "instance",required = false) String instance,
-                              @RequestParam(value = "nodeHealthy",required = false) String nodeHealthy,
-                              @RequestParam(value = "owner",required = false)String owner) throws AMErrorException {
+    public Message listAllEMs(
+            HttpServletRequest req,
+            @RequestParam(value = "instance", required = false) String instance,
+            @RequestParam(value = "nodeHealthy", required = false) String nodeHealthy,
+            @RequestParam(value = "owner", required = false) String owner)
+            throws AMErrorException {
         String userName = SecurityFilter.getLoginUsername(req);
         String[] adminArray = AMConfiguration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
-        if(adminArray != null && !Arrays.asList(adminArray).contains(userName)){
-            throw new AMErrorException(210003,"only admin can search ECMs(只有管理员才能查询ECM)");
+        if (adminArray != null && !Arrays.asList(adminArray).contains(userName)) {
+            throw new AMErrorException(210003, "only admin can search ECMs(只有管理员才能查询ECM)");
         }
         EMNode[] allEM = emInfoService.getAllEM();
         ArrayList<EMNodeVo> allEMVo = AMUtils.copyToEMVo(allEM);
         ArrayList<EMNodeVo> allEMVoFilter1 = allEMVo;
-        if(CollectionUtils.isNotEmpty(allEMVoFilter1) && !StringUtils.isEmpty(instance)){
-            allEMVoFilter1 = (ArrayList<EMNodeVo>) allEMVoFilter1.stream().filter(em -> {return em.getInstance().contains(instance);}).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(allEMVoFilter1) && !StringUtils.isEmpty(instance)) {
+            allEMVoFilter1 =
+                    (ArrayList<EMNodeVo>)
+                            allEMVoFilter1.stream()
+                                    .filter(
+                                            em -> {
+                                                return em.getInstance().contains(instance);
+                                            })
+                                    .collect(Collectors.toList());
         }
         ArrayList<EMNodeVo> allEMVoFilter2 = allEMVoFilter1;
-        if(CollectionUtils.isNotEmpty(allEMVoFilter2) && !StringUtils.isEmpty(nodeHealthy)){
-            allEMVoFilter2 = (ArrayList<EMNodeVo>) allEMVoFilter2.stream().filter(em -> {return em.getNodeHealthy() != null ? em.getNodeHealthy().equals(NodeHealthy.valueOf(nodeHealthy)) : true;}).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(allEMVoFilter2) && !StringUtils.isEmpty(nodeHealthy)) {
+            allEMVoFilter2 =
+                    (ArrayList<EMNodeVo>)
+                            allEMVoFilter2.stream()
+                                    .filter(
+                                            em -> {
+                                                return em.getNodeHealthy() != null
+                                                        ? em.getNodeHealthy()
+                                                                .equals(
+                                                                        NodeHealthy.valueOf(
+                                                                                nodeHealthy))
+                                                        : true;
+                                            })
+                                    .collect(Collectors.toList());
         }
         ArrayList<EMNodeVo> allEMVoFilter3 = allEMVoFilter2;
-        if(CollectionUtils.isNotEmpty(allEMVoFilter3) && !StringUtils.isEmpty(owner)){
-            allEMVoFilter3 = (ArrayList<EMNodeVo>) allEMVoFilter3.stream().filter(em ->{return em.getOwner().equalsIgnoreCase(owner);}).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(allEMVoFilter3) && !StringUtils.isEmpty(owner)) {
+            allEMVoFilter3 =
+                    (ArrayList<EMNodeVo>)
+                            allEMVoFilter3.stream()
+                                    .filter(
+                                            em -> {
+                                                return em.getOwner().equalsIgnoreCase(owner);
+                                            })
+                                    .collect(Collectors.toList());
         }
         return Message.ok().data("EMs", allEMVoFilter3);
     }
 
     @RequestMapping(path = "/listAllECMHealthyStatus", method = RequestMethod.GET)
-    public Message listAllNodeHealthyStatus( HttpServletRequest req,
-                                             @RequestParam(value = "onlyEditable",required = false) Boolean onlyEditable){
+    public Message listAllNodeHealthyStatus(
+            HttpServletRequest req,
+            @RequestParam(value = "onlyEditable", required = false) Boolean onlyEditable) {
         NodeHealthy[] nodeHealthy = NodeHealthy.values();
-        if(onlyEditable){
-            nodeHealthy = new NodeHealthy[]{NodeHealthy.Healthy, NodeHealthy.UnHealthy,
-                    NodeHealthy.WARN, NodeHealthy.StockAvailable, NodeHealthy.StockUnavailable};
+        if (onlyEditable) {
+            nodeHealthy =
+                    new NodeHealthy[] {
+                        NodeHealthy.Healthy,
+                        NodeHealthy.UnHealthy,
+                        NodeHealthy.WARN,
+                        NodeHealthy.StockAvailable,
+                        NodeHealthy.StockUnavailable
+                    };
         }
         return Message.ok().data("nodeHealthy", nodeHealthy);
     }
 
     @RequestMapping(path = "/modifyEMInfo", method = RequestMethod.PUT)
     @Transactional(rollbackFor = Exception.class)
-    public Message modifyEMInfo( HttpServletRequest req, @RequestBody JsonNode jsonNode) throws AMErrorException, LabelErrorException {
+    public Message modifyEMInfo(HttpServletRequest req, @RequestBody JsonNode jsonNode)
+            throws AMErrorException, LabelErrorException {
         String username = SecurityFilter.getLoginUsername(req);
         String[] adminArray = AMConfiguration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
-        if(adminArray != null && !Arrays.asList(adminArray).contains(username)){
-            throw new AMErrorException(210003,"only admin can modify ecm information(只有管理员才能修改EM信息)");
+        if (adminArray != null && !Arrays.asList(adminArray).contains(username)) {
+            throw new AMErrorException(
+                    210003, "only admin can modify ecm information(只有管理员才能修改EM信息)");
         }
         String applicationName = jsonNode.get("applicationName").asText();
         String instance = jsonNode.get("instance").asText();
-        if(StringUtils.isEmpty(applicationName)){
-            throw new AMErrorException(AMErrorCode.QUERY_PARAM_NULL.getCode(), "applicationName cannot be null(请求参数applicationName不能为空)");
+        if (StringUtils.isEmpty(applicationName)) {
+            throw new AMErrorException(
+                    AMErrorCode.QUERY_PARAM_NULL.getCode(),
+                    "applicationName cannot be null(请求参数applicationName不能为空)");
         }
-        if(StringUtils.isEmpty(instance)){
-            throw new AMErrorException(AMErrorCode.QUERY_PARAM_NULL.getCode(), "instance cannot be null(请求参数instance不能为空)");
+        if (StringUtils.isEmpty(instance)) {
+            throw new AMErrorException(
+                    AMErrorCode.QUERY_PARAM_NULL.getCode(),
+                    "instance cannot be null(请求参数instance不能为空)");
         }
-        ServiceInstance serviceInstance = ServiceInstance.apply(applicationName,instance);
-        if(serviceInstance == null){
-            throw new AMErrorException(AMErrorCode.QUERY_PARAM_NULL.getCode(),"serviceInstance:" + applicationName + " non-existent(服务实例" + applicationName + "不存在)");
+        ServiceInstance serviceInstance = ServiceInstance.apply(applicationName, instance);
+        if (serviceInstance == null) {
+            throw new AMErrorException(
+                    AMErrorCode.QUERY_PARAM_NULL.getCode(),
+                    "serviceInstance:"
+                            + applicationName
+                            + " non-existent(服务实例"
+                            + applicationName
+                            + "不存在)");
         }
         String healthyStatus = jsonNode.get("emStatus").asText();
-        if(healthyStatus != null){
+        if (healthyStatus != null) {
             NodeHealthyInfo nodeHealthyInfo = new NodeHealthyInfo();
             nodeHealthyInfo.setNodeHealthy(NodeHealthy.valueOf(healthyStatus));
             emInfoService.updateEMInfo(serviceInstance, nodeHealthyInfo);
         }
         JsonNode labels = jsonNode.get("labels");
         Set<String> labelKeySet = new HashSet<>();
-        if(labels != null){
+        if (labels != null) {
             ArrayList<Label<?>> newLabelList = new ArrayList<>();
             Iterator<JsonNode> iterator = labels.iterator();
-            while(iterator.hasNext()){
+            while (iterator.hasNext()) {
                 JsonNode label = iterator.next();
                 String labelKey = label.get("labelKey").asText();
                 String stringValue = label.get("stringValue").asText();
                 Label newLabel = stdLabelBuilderFactory.createLabel(labelKey, stringValue);
-                if(newLabel instanceof UserModifiable) {
+                if (newLabel instanceof UserModifiable) {
                     ((UserModifiable) newLabel).valueCheck(stringValue);
                 }
                 labelKeySet.add(labelKey);
                 newLabelList.add(newLabel);
             }
-            if(labelKeySet.size() != newLabelList.size()){
-                throw new AMErrorException(210003, "Failed to update label, include repeat labels(更新label失败，包含重复label)");
+            if (labelKeySet.size() != newLabelList.size()) {
+                throw new AMErrorException(
+                        210003,
+                        "Failed to update label, include repeat labels(更新label失败，包含重复label)");
             }
             nodeLabelService.updateLabelsToNode(serviceInstance, newLabelList);
             logger.info("success to update label of instance: " + serviceInstance.getInstance());
@@ -183,48 +232,70 @@ public class EMRestfulApi {
     }
 
     @RequestMapping(path = "/executeECMOperationByEC", method = RequestMethod.POST)
-    public Message executeECMOperationByEC(HttpServletRequest req, @RequestBody JsonNode jsonNode) throws AMErrorException {
+    public Message executeECMOperationByEC(HttpServletRequest req, @RequestBody JsonNode jsonNode)
+            throws AMErrorException {
         String userName = SecurityFilter.getLoginUsername(req);
         ServiceInstance serviceInstance = EngineRestfulApi.getServiceInstance(jsonNode);
-        logger.info("User {} try to execute ECM Operation by EngineConn {}.", userName, serviceInstance);
+        logger.info(
+                "User {} try to execute ECM Operation by EngineConn {}.",
+                userName,
+                serviceInstance);
         EngineNode engineNode = engineCreateService.getEngineNode(serviceInstance);
         Map<String, Object> parameters;
         try {
-            parameters = JsonUtils.jackson().readValue(jsonNode.get("parameters").toString(),
-                    new TypeReference<Map<String, Object>>() {
-                    });
-        } catch (JsonProcessingException e){
-            logger.error("Fail to process the operation parameters: [{}] in request", jsonNode.get("parameters").toString(), e);
-            return Message.error("Fail to process the operation parameters, cased by " +  ExceptionUtils.getRootCauseMessage(e));
+            parameters =
+                    JsonUtils.jackson()
+                            .readValue(
+                                    jsonNode.get("parameters").toString(),
+                                    new TypeReference<Map<String, Object>>() {});
+        } catch (JsonProcessingException e) {
+            logger.error(
+                    "Fail to process the operation parameters: [{}] in request",
+                    jsonNode.get("parameters").toString(),
+                    e);
+            return Message.error(
+                    "Fail to process the operation parameters, cased by "
+                            + ExceptionUtils.getRootCauseMessage(e));
         }
         parameters.put(ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY(), serviceInstance.getInstance());
-        if(!userName.equals(engineNode.getOwner()) && !AMConfiguration.isAdmin(userName)) {
-            return Message.error("You have no permission to execute ECM Operation by this EngineConn " + serviceInstance);
+        if (!userName.equals(engineNode.getOwner()) && !AMConfiguration.isAdmin(userName)) {
+            return Message.error(
+                    "You have no permission to execute ECM Operation by this EngineConn "
+                            + serviceInstance);
         }
-        return executeECMOperation(engineNode.getEMNode(), new ECMOperateRequest(userName, parameters));
+        return executeECMOperation(
+                engineNode.getEMNode(), new ECMOperateRequest(userName, parameters));
     }
 
-
     @RequestMapping(path = "/executeECMOperation", method = RequestMethod.POST)
-    public Message executeECMOperation(HttpServletRequest req, @RequestBody JsonNode jsonNode) throws AMErrorException {
+    public Message executeECMOperation(HttpServletRequest req, @RequestBody JsonNode jsonNode)
+            throws AMErrorException {
         String userName = SecurityFilter.getLoginUsername(req);
         ServiceInstance serviceInstance = EngineRestfulApi.getServiceInstance(jsonNode);
         logger.info("User {} try to execute ECM Operation with {}.", userName, serviceInstance);
         EMNode ecmNode = this.emInfoService.getEM(serviceInstance);
         Map<String, Object> parameters;
         try {
-            parameters = JsonUtils.jackson().readValue(jsonNode.get("parameters").toString(),
-                    new TypeReference<Map<String, Object>>() {
-                    });
+            parameters =
+                    JsonUtils.jackson()
+                            .readValue(
+                                    jsonNode.get("parameters").toString(),
+                                    new TypeReference<Map<String, Object>>() {});
         } catch (JsonProcessingException e) {
-            logger.error("Fail to process the operation parameters: [{}] in request", jsonNode.get("parameters").toString(), e);
-            return Message.error("Fail to process the operation parameters, cased by " +  ExceptionUtils.getRootCauseMessage(e));
+            logger.error(
+                    "Fail to process the operation parameters: [{}] in request",
+                    jsonNode.get("parameters").toString(),
+                    e);
+            return Message.error(
+                    "Fail to process the operation parameters, cased by "
+                            + ExceptionUtils.getRootCauseMessage(e));
         }
         return executeECMOperation(ecmNode, new ECMOperateRequest(userName, parameters));
     }
 
     @RequestMapping(path = "/openEngineLog", method = RequestMethod.POST)
-    public Message openEngineLog(HttpServletRequest req, @RequestBody JsonNode jsonNode) throws AMErrorException {
+    public Message openEngineLog(HttpServletRequest req, @RequestBody JsonNode jsonNode)
+            throws AMErrorException {
         String userName = SecurityFilter.getLoginUsername(req);
         EMNode ecmNode;
         Map<String, Object> parameters;
@@ -233,20 +304,30 @@ public class EMRestfulApi {
             String engineInstance = jsonNode.get("instance").asText();
             ServiceInstance serviceInstance = EngineRestfulApi.getServiceInstance(jsonNode);
             logger.info("User {} try to open engine: {} log.", userName, serviceInstance);
-            ecmNode = this.emInfoService.getEM(ServiceInstance.apply("linkis-cg-engineconnmanager", emInstance));
+            ecmNode =
+                    this.emInfoService.getEM(
+                            ServiceInstance.apply("linkis-cg-engineconnmanager", emInstance));
             logger.info("ecm node info:{}", ecmNode);
-            parameters = JsonUtils.jackson().readValue(jsonNode.get("parameters").toString(),
-                    new TypeReference<Map<String, Object>>() {
-                    });
+            parameters =
+                    JsonUtils.jackson()
+                            .readValue(
+                                    jsonNode.get("parameters").toString(),
+                                    new TypeReference<Map<String, Object>>() {});
             String logType = (String) parameters.get("logType");
             if (!logType.equals("stdout") && !logType.equals("stderr")) {
-                throw new AMErrorException(AMErrorCode.PARAM_ERROR.getCode(), AMErrorCode.PARAM_ERROR.getMessage());
+                throw new AMErrorException(
+                        AMErrorCode.PARAM_ERROR.getCode(), AMErrorCode.PARAM_ERROR.getMessage());
             }
             parameters.put(OperateRequest$.MODULE$.OPERATOR_NAME_KEY(), "engineConnLog");
             parameters.put(ECMOperateRequest$.MODULE$.ENGINE_CONN_INSTANCE_KEY(), engineInstance);
         } catch (JsonProcessingException e) {
-            logger.error("Fail to process the operation parameters: [{}] in request", jsonNode.get("parameters").toString(), e);
-            return Message.error("Fail to process the operation parameters, cased by " + ExceptionUtils.getRootCauseMessage(e));
+            logger.error(
+                    "Fail to process the operation parameters: [{}] in request",
+                    jsonNode.get("parameters").toString(),
+                    e);
+            return Message.error(
+                    "Fail to process the operation parameters, cased by "
+                            + ExceptionUtils.getRootCauseMessage(e));
         } catch (Exception e) {
             logger.error("Failed to open engine log, error:", e);
             return Message.error(e.getMessage());
@@ -255,17 +336,27 @@ public class EMRestfulApi {
     }
 
     private Message executeECMOperation(EMNode ecmNode, ECMOperateRequest ecmOperateRequest) {
-        String operationName = OperateRequest$.MODULE$.getOperationName(ecmOperateRequest.parameters());
-        if(ArrayUtils.contains(adminOperations, operationName) && !AMConfiguration.isAdmin(ecmOperateRequest.user())) {
-            logger.warn("User {} has no permission to execute {} admin Operation in ECM {}.", ecmOperateRequest.user(), operationName, ecmNode.getServiceInstance());
-            return Message.error("You have no permission to execute " + operationName + " admin Operation in ECM " + ecmNode.getServiceInstance());
+        String operationName =
+                OperateRequest$.MODULE$.getOperationName(ecmOperateRequest.parameters());
+        if (ArrayUtils.contains(adminOperations, operationName)
+                && !AMConfiguration.isAdmin(ecmOperateRequest.user())) {
+            logger.warn(
+                    "User {} has no permission to execute {} admin Operation in ECM {}.",
+                    ecmOperateRequest.user(),
+                    operationName,
+                    ecmNode.getServiceInstance());
+            return Message.error(
+                    "You have no permission to execute "
+                            + operationName
+                            + " admin Operation in ECM "
+                            + ecmNode.getServiceInstance());
         }
-        ECMOperateResponse engineOperateResponse = ecmOperateService.executeOperation(ecmNode, ecmOperateRequest);
+        ECMOperateResponse engineOperateResponse =
+                ecmOperateService.executeOperation(ecmNode, ecmOperateRequest);
 
         return Message.ok()
                 .data("result", engineOperateResponse.getResult())
                 .data("errorMsg", engineOperateResponse.errorMsg())
                 .data("isError", engineOperateResponse.isError());
     }
-
 }

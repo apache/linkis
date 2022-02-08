@@ -17,20 +17,18 @@
 
 package org.apache.linkis.metadata.hive.dao;
 
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 import java.util.Map;
-import org.apache.ibatis.annotations.Param;
 
 public interface HiveMetaDao {
 
     String getLocationByDbAndTable(Map<String, String> map);
 
-
     List<String> getDbsByUser(String userName);
 
-    /**
-     * @return get all list of DBS NAME without filtering by userName
-     */
+    /** @return get all list of DBS NAME without filtering by userName */
     List<String> getAllDbs();
 
     List<Map<String, Object>> getTablesByDbNameAndUser(Map<String, String> map);

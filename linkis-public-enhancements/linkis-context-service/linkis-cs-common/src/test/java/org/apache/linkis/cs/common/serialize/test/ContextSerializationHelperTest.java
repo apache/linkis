@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.common.serialize.test;
 
 import org.apache.linkis.cs.common.entity.enumeration.ContextScope;
@@ -35,11 +35,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class ContextSerializationHelperTest {
 
     public static void main(String[] args) throws Exception {
-        ContextSerializationHelper contextSerializationHelper = ContextSerializationHelper.getInstance();
+        ContextSerializationHelper contextSerializationHelper =
+                ContextSerializationHelper.getInstance();
 
         CSTable csTable = new CSTable();
         csTable.setCreator("hadoop");
@@ -48,7 +48,8 @@ public class ContextSerializationHelperTest {
         CSTable csTable1 = new CSTable();
         csTable1.setCreator("hadoop");
         csTable1.setName("table2");
-        CSTableMetadataContextHistory csTableMetadataContextHistory = new CSTableMetadataContextHistory();
+        CSTableMetadataContextHistory csTableMetadataContextHistory =
+                new CSTableMetadataContextHistory();
         csTableMetadataContextHistory.setTable(csTable);
         csTableMetadataContextHistory.setOperationType(TableOperationType.ACCESS);
         csTableMetadataContextHistory.setSource("SparkEngine");
@@ -59,7 +60,8 @@ public class ContextSerializationHelperTest {
     }
 
     public static void testLineageHistory() throws Exception {
-        ContextSerializationHelper contextSerializationHelper = ContextSerializationHelper.getInstance();
+        ContextSerializationHelper contextSerializationHelper =
+                ContextSerializationHelper.getInstance();
         List<Table> tables = new ArrayList<>();
         CSTable csTable = new CSTable();
         csTable.setCreator("hadoop");
@@ -83,7 +85,8 @@ public class ContextSerializationHelperTest {
     }
 
     public static void testCommonResourceHistory() throws Exception {
-        ContextSerializationHelper contextSerializationHelper = ContextSerializationHelper.getInstance();
+        ContextSerializationHelper contextSerializationHelper =
+                ContextSerializationHelper.getInstance();
         LinkisBMLResource resource = new LinkisBMLResource();
         resource.setResourceId("dfasdfsr2456wertg");
         resource.setVersion("v000002");
@@ -100,7 +103,8 @@ public class ContextSerializationHelperTest {
     }
 
     public static void testHAContextID() throws Exception {
-        ContextSerializationHelper contextSerializationHelper = ContextSerializationHelper.getInstance();
+        ContextSerializationHelper contextSerializationHelper =
+                ContextSerializationHelper.getInstance();
         LinkisHAWorkFlowContextID haWorkFlowContextID = new LinkisHAWorkFlowContextID();
         haWorkFlowContextID.setBackupInstance("test123");
         haWorkFlowContextID.setInstance("test1234");
@@ -108,24 +112,26 @@ public class ContextSerializationHelperTest {
         haWorkFlowContextID.setContextId("hello");
         haWorkFlowContextID.setFlow("hellof");
         String json = contextSerializationHelper.serialize(haWorkFlowContextID);
-        String objstr = "{\"type\": \"HAWorkFlowContextID\",\"value\": \"{\\n  \\\"instance\\\": null,\\n  \\\"backupInstance\\\": null,\\n  \\\"user\\\": \\\"hadoop\\\",\\n  \\\"workspaceID\\\": null,\\n  \\\"project\\\": \\\"test01_neiljianliu\\\",\\n  \\\"flow\\\": \\\"dedede\\\",\\n  \\\"contextId\\\": \\\"24-24--YmRwZHdzMTEwMDAxOjkxMTY\\\\u003dYmRwZHdzMTEwMDAxOjkxMTY\\\\u003d85197\\\",\\n  \\\"version\\\": \\\"v000001\\\",\\n  \\\"env\\\": null\\n}\"}\n";
+        String objstr =
+                "{\"type\": \"HAWorkFlowContextID\",\"value\": \"{\\n  \\\"instance\\\": null,\\n  \\\"backupInstance\\\": null,\\n  \\\"user\\\": \\\"hadoop\\\",\\n  \\\"workspaceID\\\": null,\\n  \\\"project\\\": \\\"test01_neiljianliu\\\",\\n  \\\"flow\\\": \\\"dedede\\\",\\n  \\\"contextId\\\": \\\"24-24--YmRwZHdzMTEwMDAxOjkxMTY\\\\u003dYmRwZHdzMTEwMDAxOjkxMTY\\\\u003d85197\\\",\\n  \\\"version\\\": \\\"v000001\\\",\\n  \\\"env\\\": null\\n}\"}\n";
         Object deserialize = contextSerializationHelper.deserialize(objstr);
         System.out.println(json);
     }
 
-    public static void testCSFlowInfos() throws Exception{
-        ContextSerializationHelper contextSerializationHelper = ContextSerializationHelper.getInstance();
+    public static void testCSFlowInfos() throws Exception {
+        ContextSerializationHelper contextSerializationHelper =
+                ContextSerializationHelper.getInstance();
         CommonContextValue contextValue = new CommonContextValue();
         contextValue.setKeywords("test.123.test");
 
         Map<String, Object> infos = new HashMap<>();
         List<Map<String, String>> edges = new ArrayList<>();
-        for (int i = 0; i < 10 ; i++) {
+        for (int i = 0; i < 10; i++) {
             Map<String, String> edge = new HashMap<>();
-            edge.put("source","job_export_tb1_crdtloan " + i);
-            edge.put("target","job_export_tb1_crdtloan");
-            edge.put("sourceLocation","top");
-            edge.put("targetLocation","left");
+            edge.put("source", "job_export_tb1_crdtloan " + i);
+            edge.put("target", "job_export_tb1_crdtloan");
+            edge.put("sourceLocation", "top");
+            edge.put("targetLocation", "left");
             edges.add(edge);
         }
         infos.put("edges", edges);
@@ -137,15 +143,18 @@ public class ContextSerializationHelperTest {
         csFlowInfos.setInfos(infos);
         contextValue.setValue(csFlowInfos);
         System.out.println(contextSerializationHelper.serialize(contextValue));
-        Object deserialize = contextSerializationHelper.deserialize(contextSerializationHelper.serialize(contextValue));
+        Object deserialize =
+                contextSerializationHelper.deserialize(
+                        contextSerializationHelper.serialize(contextValue));
         ContextValue contextValue1 = (ContextValue) deserialize;
-        CSFlowInfos value1 = (CSFlowInfos)contextValue1.getValue();
+        CSFlowInfos value1 = (CSFlowInfos) contextValue1.getValue();
         System.out.println(value1.getInfos());
     }
 
-    private static void testSrialzer() throws Exception{
-        ContextSerializationHelper contextSerializationHelper = ContextSerializationHelper.getInstance();
-       /* LinkisHAWorkFlowContextID haWorkFlowContextID = new LinkisHAWorkFlowContextID();
+    private static void testSrialzer() throws Exception {
+        ContextSerializationHelper contextSerializationHelper =
+                ContextSerializationHelper.getInstance();
+        /* LinkisHAWorkFlowContextID haWorkFlowContextID = new LinkisHAWorkFlowContextID();
         haWorkFlowContextID.setBackupInstance("test123");
         haWorkFlowContextID.setInstance("test1234");
         haWorkFlowContextID.setUser("hadoop");
@@ -176,5 +185,4 @@ public class ContextSerializationHelperTest {
         Object obj = contextSerializationHelper.deserialize(json);
         System.out.println("hello");
     }
-
 }

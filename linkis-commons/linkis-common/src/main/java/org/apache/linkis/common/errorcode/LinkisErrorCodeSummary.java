@@ -5,56 +5,40 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.common.errorcode;
 
+package org.apache.linkis.common.errorcode;
 
 public enum LinkisErrorCodeSummary {
 
     /**
-     * 10000-10999 linkis-frame
-     * 11000-12999 linkis-commons
-     * 13000-14999 linkis-spring-cloud-services
-     * 15000-19999 linkis-public-enhancements
-     * 20000-24999 linkis-computation-governance
-     * 25000-25999 linkis-extensions
-     * 26000-29999 linkis-engineconn-plugins
+     * 10000-10999 linkis-frame 11000-12999 linkis-commons 13000-14999 linkis-spring-cloud-services
+     * 15000-19999 linkis-public-enhancements 20000-24999 linkis-computation-governance 25000-25999
+     * linkis-extensions 26000-29999 linkis-engineconn-plugins
      */
-    EngineManagerErrorException
-            (321, "引擎启动失败", "在某种情况下启动失败", "hadoop", "EngineConnManager")
-    ;
-    /**
-     * 错误码
-     */
+    EngineManagerErrorException(321, "引擎启动失败", "在某种情况下启动失败", "hadoop", "EngineConnManager");
+    /** 错误码 */
     private int errorCode;
-    /**
-     * 错误描述
-     */
+    /** 错误描述 */
     private String errorDesc;
-    /**
-     * 评论
-     */
+    /** 评论 */
     private String comment;
 
-    /**
-     * errorCode的创建人
-     */
+    /** errorCode的创建人 */
     private String creator;
-    /**
-     * 所属的linkis的模块
-     */
+    /** 所属的linkis的模块 */
     private String module;
 
-    LinkisErrorCodeSummary(int errorCode, String errorDesc, String comment, String creator, String module) {
+    LinkisErrorCodeSummary(
+            int errorCode, String errorDesc, String comment, String creator, String module) {
         this.errorCode = errorCode;
         this.errorDesc = errorDesc;
         this.comment = comment;

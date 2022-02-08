@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.client.service;
 
 import org.apache.linkis.common.exception.ErrorException;
@@ -28,27 +28,28 @@ import org.apache.linkis.cs.common.entity.source.ContextKey;
 import org.apache.linkis.cs.common.entity.source.ContextValue;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.exception.ErrorCode;
+
 import org.apache.commons.lang.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CSVariableService  implements VariableService{
+public class CSVariableService implements VariableService {
 
-    private final static Logger logger = LoggerFactory.getLogger(CSVariableService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CSVariableService.class);
 
     private SearchService searchService = DefaultSearchService.getInstance();
 
     private static CSVariableService csVariableService;
 
-    private CSVariableService(){
-
-    }
+    private CSVariableService() {}
 
     @Override
-    public List<LinkisVariable> getUpstreamVariables(String contextIDStr, String nodeName) throws CSErrorException{
+    public List<LinkisVariable> getUpstreamVariables(String contextIDStr, String nodeName)
+            throws CSErrorException {
         List<LinkisVariable> rsList = new ArrayList<>();
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
             return rsList;
@@ -56,18 +57,23 @@ public class CSVariableService  implements VariableService{
         try {
             ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
             if (null != contextID) {
-                rsList = searchService.searchUpstreamContext(contextID, nodeName, Integer.MAX_VALUE, LinkisVariable.class);
+                rsList =
+                        searchService.searchUpstreamContext(
+                                contextID, nodeName, Integer.MAX_VALUE, LinkisVariable.class);
             }
             return rsList;
         } catch (Throwable e) {
             logger.error("Failed to get variable : " + contextIDStr, e);
-           // throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Failed to get variable : " + contextIDStr + "e : " + e.getMessage());
+            // throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Failed to get variable : " +
+            // contextIDStr + "e : " + e.getMessage());
         }
         return rsList;
     }
 
     @Override
-    public void putVariable(String contextIDStr, String contextKeyStr, LinkisVariable linkisVariable) throws CSErrorException {
+    public void putVariable(
+            String contextIDStr, String contextKeyStr, LinkisVariable linkisVariable)
+            throws CSErrorException {
         ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
         try {
             ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);

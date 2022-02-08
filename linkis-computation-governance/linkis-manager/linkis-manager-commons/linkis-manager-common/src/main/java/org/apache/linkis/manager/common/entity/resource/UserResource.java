@@ -17,7 +17,6 @@
 
 package org.apache.linkis.manager.common.entity.resource;
 
-
 public class UserResource extends CommonNodeResource {
 
     private String username;
@@ -28,7 +27,7 @@ public class UserResource extends CommonNodeResource {
 
     private String version;
 
-    private String loadResourceStatus ;
+    private String loadResourceStatus;
 
     private String queueResourceStatus;
 

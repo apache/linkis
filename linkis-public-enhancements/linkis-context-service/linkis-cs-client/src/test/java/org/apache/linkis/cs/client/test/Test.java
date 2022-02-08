@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.client.test;
 
 import org.apache.linkis.cs.client.Context;
@@ -32,9 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class Test {
-    public static void main(String[] args)throws Exception{
+    public static void main(String[] args) throws Exception {
         /*ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
         ContextID contextID = new LinkisHAWorkFlowContextID();
         Context context = contextClient.createContext(contextID);
@@ -70,7 +69,6 @@ public class Test {
         Thread.sleep(5000);
         contextClient.close();*/
         testCSFlowInfos();
-
     }
 
     public static void testCSFlowInfos() throws Exception {
@@ -83,15 +81,16 @@ public class Test {
         Context context = contextClient.createContext(contextID);
         System.out.println(context.getContextID().getContextId());
 
-        ContextSerializationHelper contextSerializationHelper = ContextSerializationHelper.getInstance();
+        ContextSerializationHelper contextSerializationHelper =
+                ContextSerializationHelper.getInstance();
         CommonContextValue contextValue = new CommonContextValue();
         Map<String, Object> infos = new HashMap<>();
         List<Map<String, String>> edges = new ArrayList<>();
         Map<String, String> edge = new HashMap<>();
-        edge.put("source","sql " );
-        edge.put("target","hql");
-        edge.put("sourceLocation","bottom");
-        edge.put("targetLocation","top");
+        edge.put("source", "sql ");
+        edge.put("target", "hql");
+        edge.put("sourceLocation", "bottom");
+        edge.put("targetLocation", "top");
         edges.add(edge);
         infos.put("edges", edges);
         infos.put("parent", "flow2");

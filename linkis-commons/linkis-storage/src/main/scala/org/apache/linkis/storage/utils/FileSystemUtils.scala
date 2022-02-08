@@ -29,7 +29,7 @@ import org.apache.linkis.storage.fs.impl.LocalFileSystem
 object FileSystemUtils extends Logging{
 
   def copyFile(filePath: FsPath, origin: FsPath, user: String): Unit = {
-    val fileSystem = FSFactory.getFsByProxyUser(filePath,user).asInstanceOf[FileSystem]
+    val fileSystem = FSFactory.getFsByProxyUser(filePath, user).asInstanceOf[FileSystem]
     Utils.tryFinally {
       fileSystem.init(null)
       if (!fileSystem.exists(filePath)) {
@@ -43,41 +43,36 @@ object FileSystemUtils extends Logging{
   }
 
   /**
-    * Create a new file(创建新文件)
-    * @param filePath
-    * @param createParentWhenNotExists Whether to recursively create a directory(是否递归创建目录)
-    */
+   * Create a new file(创建新文件)
+   *
+   * @param filePath
+   * @param createParentWhenNotExists Whether to recursively create a directory(是否递归创建目录)
+   */
   def createNewFile(filePath: FsPath, createParentWhenNotExists: Boolean): Unit = {
-    val fileSystem = FSFactory.getFs(filePath).asInstanceOf[FileSystem]
+    createNewFile(filePath, StorageUtils.getJvmUser, createParentWhenNotExists)
+  }
+
+  def createNewFile(filePath: FsPath, user: String, createParentWhenNotExists: Boolean): Unit = {
+    val fileSystem = FSFactory.getFsByProxyUser(filePath, user).asInstanceOf[FileSystem]
     Utils.tryFinally {
       fileSystem.init(null)
-      if (!fileSystem.exists(filePath)) {
-        if (!fileSystem.exists(filePath.getParent)) {
-          if(!createParentWhenNotExists) throw new IOException("parent dir " + filePath.getParent.getPath + " dose not exists.")
-          fileSystem.mkdirs(filePath.getParent)
-        }
-        fileSystem.createNewFile(filePath)
-      }
+      createNewFileWithFileSystem(fileSystem, filePath, user, createParentWhenNotExists)
     }(Utils.tryQuietly(fileSystem.close()))
   }
 
-  def createNewFile(filePath: FsPath, user:String,createParentWhenNotExists: Boolean): Unit = {
-    val fileSystem = FSFactory.getFsByProxyUser(filePath,user).asInstanceOf[FileSystem]
-    Utils.tryFinally {
-      fileSystem.init(null)
-      if (!fileSystem.exists(filePath)) {
-        if (!fileSystem.exists(filePath.getParent)) {
-          if(!createParentWhenNotExists) throw new IOException("parent dir " + filePath.getParent.getPath + " dose not exists.")
-          mkdirs(fileSystem,filePath.getParent, user)
-        }
-        fileSystem.createNewFile(filePath)
-        fileSystem match {
-          case l:LocalFileSystem => fileSystem.setOwner(filePath,user)
-          case _ => info(s"doesn't need to call setOwner")
-        }
-        /*fileSystem.setOwner(filePath,user,StorageConfiguration.STORAGE_HDFS_GROUP.getValue)*/
+  def createNewFileWithFileSystem(fileSystem: FileSystem, filePath: FsPath, user: String, createParentWhenNotExists: Boolean): Unit = {
+    if (!fileSystem.exists(filePath)) {
+      if (!fileSystem.exists(filePath.getParent)) {
+        if (!createParentWhenNotExists) throw new IOException("parent dir " + filePath.getParent.getPath + " dose not exists.")
+        mkdirs(fileSystem, filePath.getParent, user)
       }
-    }(Utils.tryQuietly(fileSystem.close()))
+      fileSystem.createNewFile(filePath)
+      fileSystem match {
+        case l: LocalFileSystem => fileSystem.setOwner(filePath, user)
+        case _ => info(s"doesn't need to call setOwner")
+      }
+      /*fileSystem.setOwner(filePath,user,StorageConfiguration.STORAGE_HDFS_GROUP.getValue)*/
+    }
   }
 
   /**
@@ -89,22 +84,22 @@ object FileSystemUtils extends Logging{
     * @return
     */
   @throws[IOException]
-  def mkdirs(fileSystem: FileSystem,dest: FsPath, user: String): Boolean = {
+  def mkdirs(fileSystem: FileSystem, dest: FsPath, user: String): Boolean = {
     var parentPath = dest.getParent
     val dirsToMake = new util.Stack[FsPath]()
     dirsToMake.push(dest)
-    while (!fileSystem.exists(parentPath)){
+    while (!fileSystem.exists(parentPath)) {
       dirsToMake.push(parentPath)
       parentPath = parentPath.getParent
     }
-    if(! fileSystem.canExecute(parentPath)){
+    if (!fileSystem.canExecute(parentPath)) {
       throw new IOException("You have not permission to access path " + dest.getPath)
     }
-    while (!dirsToMake.empty()){
+    while (!dirsToMake.empty()) {
       val path = dirsToMake.pop()
       fileSystem.mkdir(path)
       fileSystem match {
-        case l:LocalFileSystem => fileSystem.setOwner(path,user)
+        case l: LocalFileSystem => fileSystem.setOwner(path, user)
         case _ => info(s"doesn't need to call setOwner")
       }
       //fileSystem.setOwner(path,user,StorageConfiguration.STORAGE_HDFS_GROUP.getValue)

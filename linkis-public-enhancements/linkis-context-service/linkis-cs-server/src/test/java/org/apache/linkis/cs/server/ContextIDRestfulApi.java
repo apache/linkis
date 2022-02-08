@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.server;
 
 import org.apache.linkis.cs.common.entity.enumeration.ExpireType;
@@ -25,7 +25,7 @@ import org.apache.linkis.cs.server.enumeration.ServiceType;
 import org.apache.linkis.cs.server.scheduler.CsScheduler;
 import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
 import org.apache.linkis.server.Message;
-import com.fasterxml.jackson.databind.JsonNode;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,19 +35,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
+import java.util.Date;
 
 @RestController
 @RequestMapping(path = "/contextservice")
 public class ContextIDRestfulApi implements CsRestfulParent {
 
-    @Autowired
-    private CsScheduler csScheduler;
+    @Autowired private CsScheduler csScheduler;
 
-    @RequestMapping(path = "createContextID",method = RequestMethod.POST)
-     public Message createContextID(HttpServletRequest req) throws InterruptedException {
-        //contextID是client传过来的序列化的id
+    @RequestMapping(path = "createContextID", method = RequestMethod.POST)
+    public Message createContextID(HttpServletRequest req) throws InterruptedException {
+        // contextID是client传过来的序列化的id
         PersistenceContextID contextID = new PersistenceContextID();
         contextID.setUser("hadoop");
         contextID.setExpireType(ExpireType.TODAY);
@@ -59,8 +60,10 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "contextId");
     }
 
-     @RequestMapping(path = "getContextID",method = RequestMethod.GET)
-     public Message getContextID( HttpServletRequest req, @RequestParam(value="contextId",required=false) String id) throws InterruptedException, CSErrorException {
+    @RequestMapping(path = "getContextID", method = RequestMethod.GET)
+    public Message getContextID(
+            HttpServletRequest req, @RequestParam(value = "contextId", required = false) String id)
+            throws InterruptedException, CSErrorException {
         if (StringUtils.isEmpty(id)) {
             throw new CSErrorException(97000, "contxtId cannot be empty");
         }
@@ -68,8 +71,9 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @RequestMapping(path = "updateContextID",method = RequestMethod.POST)
-     public Message updateContextID( HttpServletRequest req) throws InterruptedException, CSErrorException {
+    @RequestMapping(path = "updateContextID", method = RequestMethod.POST)
+    public Message updateContextID(HttpServletRequest req)
+            throws InterruptedException, CSErrorException {
         PersistenceContextID contextID = new PersistenceContextID();
         contextID.setUser("hadoop");
         contextID.setExpireType(ExpireType.NEVER);
@@ -86,8 +90,9 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @RequestMapping(path = "resetContextID",method = RequestMethod.POST)
-     public Message resetContextID( HttpServletRequest req) throws InterruptedException, CSErrorException {
+    @RequestMapping(path = "resetContextID", method = RequestMethod.POST)
+    public Message resetContextID(HttpServletRequest req)
+            throws InterruptedException, CSErrorException {
         String id = null;
         if (StringUtils.isEmpty(id)) {
             throw new CSErrorException(97000, "contxtId cannot be empty");
@@ -96,9 +101,9 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-
-    @RequestMapping(path = "removeContextID",method = RequestMethod.POST)
-     public Message removeContextID( HttpServletRequest req, @RequestBody JsonNode json) throws InterruptedException, CSErrorException {
+    @RequestMapping(path = "removeContextID", method = RequestMethod.POST)
+    public Message removeContextID(HttpServletRequest req, @RequestBody JsonNode json)
+            throws InterruptedException, CSErrorException {
         String id = json.get("contextId").textValue();
         if (StringUtils.isEmpty(id)) {
             throw new CSErrorException(97000, "contxtId cannot be empty");
@@ -116,5 +121,4 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     public CsScheduler getScheduler() {
         return this.csScheduler;
     }
-
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,84 +17,62 @@
 
 package org.apache.linkis.datasourcemanager.common.domain;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import org.apache.commons.lang.StringUtils;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import java.util.*;
 
-/**
- * Store the data source information
- */
-@JsonSerialize(include= JsonSerialize.Inclusion.NON_EMPTY)
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"}, ignoreUnknown = true)
+/** Store the data source information */
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
+@JsonIgnoreProperties(
+        value = {"hibernateLazyInitializer", "handler"},
+        ignoreUnknown = true)
 public class DataSource {
 
     private Long id;
 
-    /**
-     * Data source name
-     */
+    /** Data source name */
     @NotNull
     @Pattern(regexp = "^[\\w\\u4e00-\\u9fa5_-]+$")
     private String dataSourceName;
 
-    /**
-     * Data source description
-     */
+    /** Data source description */
     @Size(min = 0, max = 200)
     private String dataSourceDesc;
 
-    /**
-     * ID of data source type
-     */
-    @NotNull
-    private Long dataSourceTypeId;
+    /** ID of data source type */
+    @NotNull private Long dataSourceTypeId;
 
-    /**
-     * Identify from creator
-     */
+    /** Identify from creator */
     private String createIdentify;
 
-    /**
-     * System name from creator
-     */
-    @NotNull
-    private String createSystem;
-    /**
-     * Connection parameters
-     */
+    /** System name from creator */
+    @NotNull private String createSystem;
+    /** Connection parameters */
     private Map<String, Object> connectParams = new HashMap<>();
-    /**
-     * Parameter JSON string
-     */
-    @JsonIgnore
-    private String parameter;
+    /** Parameter JSON string */
+    @JsonIgnore private String parameter;
 
-    /**
-     * ID of data source environment
-     */
+    /** ID of data source environment */
     private Long dataSourceEnvId;
 
-    /**
-     * Create time
-     */
+    /** Create time */
     private Date createTime;
 
-    /**
-     * Modify time
-     */
+    /** Modify time */
     private Date modifyTime;
 
-    /**
-     * Modify user
-     */
+    /** Modify user */
     private String modifyUser;
 
     private String createUser;
@@ -109,22 +87,18 @@ public class DataSource {
 
     private boolean expire;
 
-    /**
-     * Data source type entity
-     */
+    /** Data source type entity */
     private DataSourceType dataSourceType;
 
-    /**
-     * Data source env
-     */
+    /** Data source env */
     private DataSourceEnv dataSourceEnv;
 
-    @JsonIgnore
-    private List<DataSourceParamKeyDefinition> keyDefinitions = new ArrayList<>();
+    @JsonIgnore private List<DataSourceParamKeyDefinition> keyDefinitions = new ArrayList<>();
 
-    public DataSource(){
+    public DataSource() {
         this.createTime = Calendar.getInstance().getTime();
     }
+
     public Long getId() {
         return id;
     }
@@ -253,13 +227,12 @@ public class DataSource {
         this.labels = labels;
     }
 
-
     public Map<String, Object> getConnectParams() {
-        if(connectParams.isEmpty() && StringUtils.isNotBlank(parameter)){
+        if (connectParams.isEmpty() && StringUtils.isNotBlank(parameter)) {
             try {
                 connectParams.putAll(Objects.requireNonNull(Json.fromJson(parameter, Map.class)));
             } catch (JsonErrorException e) {
-                //Ignore
+                // Ignore
             }
         }
         return connectParams;
@@ -272,7 +245,6 @@ public class DataSource {
     public List<DatasourceVersion> getVersion() {
         return versions;
     }
-
 
     public boolean isExpire() {
         return expire;

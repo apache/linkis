@@ -5,46 +5,41 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.message.scheduler;
 
-import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.scheduler.executer.Executor;
 import org.apache.linkis.scheduler.executer.ExecutorManager;
 import org.apache.linkis.scheduler.listener.ExecutorListener;
 import org.apache.linkis.scheduler.queue.SchedulerEvent;
+
+import java.util.concurrent.ExecutorService;
+
 import scala.Option;
 import scala.Some;
 import scala.concurrent.duration.Duration;
 
-import java.util.concurrent.ExecutorService;
-
-
 public class MessageExecutorExecutionManager extends ExecutorManager {
 
-    private  ExecutorService executorService = null;
+    private ExecutorService executorService = null;
 
-    public MessageExecutorExecutionManager(){
-
-    }
+    public MessageExecutorExecutionManager() {}
 
     public MessageExecutorExecutionManager(ExecutorService executorService) {
         this.executorService = executorService;
     }
 
     @Override
-    public void setExecutorListener(ExecutorListener executorListener) {
-
-    }
+    public void setExecutorListener(ExecutorListener executorListener) {}
 
     @Override
     public Executor createExecutor(SchedulerEvent event) {
@@ -72,12 +67,8 @@ public class MessageExecutorExecutionManager extends ExecutorManager {
     }
 
     @Override
-    public void delete(Executor executor) {
-
-    }
+    public void delete(Executor executor) {}
 
     @Override
-    public void shutdown() {
-
-    }
+    public void shutdown() {}
 }

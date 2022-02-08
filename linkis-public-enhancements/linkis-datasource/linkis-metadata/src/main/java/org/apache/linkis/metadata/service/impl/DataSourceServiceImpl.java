@@ -17,27 +17,30 @@
 
 package org.apache.linkis.metadata.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.hadoop.common.utils.HDFSUtils;
 import org.apache.linkis.metadata.hive.config.DSEnum;
 import org.apache.linkis.metadata.hive.config.DataSource;
 import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
 import org.apache.linkis.metadata.service.DataSourceService;
+import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -52,11 +55,9 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     private static FileSystem rootHdfs = null;
 
-    @Autowired
-    HiveMetaDao hiveMetaDao;
+    @Autowired HiveMetaDao hiveMetaDao;
 
-    @Autowired
-    HiveMetaWithPermissionService hiveMetaWithPermissionService;
+    @Autowired HiveMetaWithPermissionService hiveMetaWithPermissionService;
 
     ObjectMapper jsonMapper = new ObjectMapper();
 
@@ -77,7 +78,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     @Override
     public JsonNode getDbsWithTables(String userName) throws Exception {
         ArrayNode dbNodes = jsonMapper.createArrayNode();
-        List<String> dbs =  hiveMetaWithPermissionService.getDbsOptionalUserName(userName);
+        List<String> dbs = hiveMetaWithPermissionService.getDbsOptionalUserName(userName);
         for (String db : dbs) {
             ObjectNode dbNode = jsonMapper.createObjectNode();
             dbNode.put("databaseName", db);
@@ -95,7 +96,7 @@ public class DataSourceServiceImpl implements DataSourceService {
             Map<String, String> map = Maps.newHashMap();
             map.put("dbName", database);
             map.put("userName", userName);
-            listTables =hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(map);
+            listTables = hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(map);
         } catch (Throwable e) {
             logger.error("Failed to list Tables:", e);
             throw new RuntimeException(e);
@@ -158,12 +159,14 @@ public class DataSourceServiceImpl implements DataSourceService {
     public JsonNode getTableSize(String dbName, String tableName, String userName) {
         logger.info("getTable:" + userName);
 
-
         String tableSize = "";
         try {
-            FileStatus tableFile = getRootHdfs().getFileStatus(new Path(this.getTableLocation(dbName, tableName)));
+            FileStatus tableFile =
+                    getRootHdfs().getFileStatus(new Path(this.getTableLocation(dbName, tableName)));
             if (tableFile.isDirectory()) {
-                tableSize = ByteTimeUtils.bytesToString(getRootHdfs().getContentSummary(tableFile.getPath()).getLength());
+                tableSize =
+                        ByteTimeUtils.bytesToString(
+                                getRootHdfs().getContentSummary(tableFile.getPath()).getLength());
             } else {
                 tableSize = ByteTimeUtils.bytesToString(tableFile.getLen());
             }
@@ -179,7 +182,8 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public JsonNode getPartitionSize(String dbName, String tableName, String partitionName, String userName) {
+    public JsonNode getPartitionSize(
+            String dbName, String tableName, String partitionName, String userName) {
         Map<String, String> map = Maps.newHashMap();
         map.put("dbName", dbName);
         map.put("tableName", tableName);
@@ -229,7 +233,8 @@ public class DataSourceServiceImpl implements DataSourceService {
                         }
                     } else {
                         String parentPath = StringUtils.join(Arrays.copyOfRange(lables, 0, i), "/");
-                        String currentPath = StringUtils.join(Arrays.copyOfRange(lables, 0, i + 1), "/");
+                        String currentPath =
+                                StringUtils.join(Arrays.copyOfRange(lables, 0, i + 1), "/");
                         if (!nameToNode.containsKey(currentPath)) {
                             ObjectNode childJson = jsonMapper.createObjectNode();
                             childJson.put("label", lables[i]);
@@ -255,6 +260,4 @@ public class DataSourceServiceImpl implements DataSourceService {
         }
         return rootHdfs;
     }
-
-
 }

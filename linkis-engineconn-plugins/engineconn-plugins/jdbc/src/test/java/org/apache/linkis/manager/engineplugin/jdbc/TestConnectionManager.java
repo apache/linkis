@@ -25,8 +25,8 @@ import java.util.Map;
 
 public class TestConnectionManager {
     public static void main(String[] args) throws Exception {
-//        Pattern pattern = Pattern.compile("^(jdbc:\\w+://\\S+:[0-9]+)\\s*");
-      /*  String url = "jdbc:mysql://xxx.xxx.xxx.xxx:8504/xx?useUnicode=true&amp;characterEncoding=UTF-8&amp;createDatabaseIfNotExist=true";
+        //        Pattern pattern = Pattern.compile("^(jdbc:\\w+://\\S+:[0-9]+)\\s*");
+        /*  String url = "jdbc:mysql://xxx.xxx.xxx.xxx:8504/xx?useUnicode=true&amp;characterEncoding=UTF-8&amp;createDatabaseIfNotExist=true";
         Properties properties = new Properties();
         properties.put("driverClassName", "org.apache.hive.jdbc.HiveDriver");
         properties.put("url", "jdbc:hive2://xxx.xxx.xxx.xxx:10000/");
@@ -76,7 +76,6 @@ public class TestConnectionManager {
             conn.close();
             Thread.sleep(100000);
         }
-
 
         System.out.println("end .......");
     }

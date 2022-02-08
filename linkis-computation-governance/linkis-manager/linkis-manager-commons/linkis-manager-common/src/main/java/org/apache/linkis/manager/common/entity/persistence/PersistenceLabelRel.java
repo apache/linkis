@@ -17,7 +17,6 @@
 
 package org.apache.linkis.manager.common.entity.persistence;
 
-
 public class PersistenceLabelRel extends PersistenceLabel {
 
     private Integer resourceId;

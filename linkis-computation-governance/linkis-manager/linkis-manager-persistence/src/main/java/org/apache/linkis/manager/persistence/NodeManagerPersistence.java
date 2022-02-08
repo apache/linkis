@@ -5,17 +5,18 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.persistence;
+
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.exception.LinkisRetryException;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
@@ -23,7 +24,6 @@ import org.apache.linkis.manager.common.entity.node.Node;
 import org.apache.linkis.manager.exception.PersistenceErrorException;
 
 import java.util.List;
-
 
 public interface NodeManagerPersistence {
 
@@ -35,7 +35,8 @@ public interface NodeManagerPersistence {
      */
     void addNodeInstance(Node node) throws PersistenceErrorException;
 
-    void updateEngineNode(ServiceInstance serviceInstance, Node node) throws PersistenceErrorException, LinkisRetryException;
+    void updateEngineNode(ServiceInstance serviceInstance, Node node)
+            throws PersistenceErrorException, LinkisRetryException;
 
     /**
      * 移除node
@@ -53,7 +54,6 @@ public interface NodeManagerPersistence {
      * @throws PersistenceErrorException
      */
     List<Node> getNodes(String owner) throws PersistenceErrorException;
-
 
     /**
      * 获取所有node列表
@@ -73,6 +73,7 @@ public interface NodeManagerPersistence {
 
     /**
      * 根据 servericeinstance 获取 Node
+     *
      * @param serviceInstance
      * @return
      * @throws PersistenceErrorException
@@ -80,8 +81,7 @@ public interface NodeManagerPersistence {
     Node getNode(ServiceInstance serviceInstance) throws PersistenceErrorException;
 
     /**
-     * 1. 插入Engine
-     * 2. 插入Engine和EM关系
+     * 1. 插入Engine 2. 插入Engine和EM关系
      *
      * @param engineNode
      * @throws PersistenceErrorException
@@ -89,8 +89,7 @@ public interface NodeManagerPersistence {
     void addEngineNode(EngineNode engineNode) throws PersistenceErrorException;
 
     /**
-     * 1. 删除Engine和Em关系，以及清理和Engine相关的metrics信息
-     * 2. 删除Engine本身
+     * 1. 删除Engine和Em关系，以及清理和Engine相关的metrics信息 2. 删除Engine本身
      *
      * @param engineNode
      * @throws PersistenceErrorException
@@ -113,6 +112,6 @@ public interface NodeManagerPersistence {
      * @return
      * @throws PersistenceErrorException
      */
-    List<EngineNode> getEngineNodeByEM(ServiceInstance serviceInstance) throws PersistenceErrorException;
-
+    List<EngineNode> getEngineNodeByEM(ServiceInstance serviceInstance)
+            throws PersistenceErrorException;
 }

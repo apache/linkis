@@ -36,3 +36,8 @@ pagehelper:
 #ribbon:
 #  ReadTimeout: 10000
 #  ConnectTimeout: 10000
+
+##disable  kinif4j.production when you want to use apidoc during development
+knife4j:
+  enable: true
+  production: true

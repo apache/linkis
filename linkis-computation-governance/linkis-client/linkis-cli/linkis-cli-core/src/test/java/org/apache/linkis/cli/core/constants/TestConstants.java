@@ -5,50 +5,52 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.cli.core.constants;
 
+package org.apache.linkis.cli.core.constants;
 
 public class TestConstants {
 
     public static final String PRIMARY = "test.primary";
     public static final String PRIMARY_DESC = " command";
 
-    //for command name
+    // for command name
     public static final String SPARK = "spark";
     public static final String HIVE = "hive";
 
-    //for command description
+    // for command description
     public static final String SPARK_DESC = "Execute sql with spark";
     public static final String HIVE_DESC = "Execute hive sql";
     public static final String JOB_DESC = "";
 
-    //Common command params
+    // Common command params
     public static final String PARAM_COMMON_FILE = "param.common.file";
     public static final String PARAM_COMMON_CMD = "param.common.command";
     public static final String PARAM_COMMON_OUTPUT = "param.common.output";
     public static final String PARAM_COMMON_ARGS = "param.common.args";
     public static final String PARAM_COMMON_SPLIT = "param.common.split";
-    public static final String PARAM_COMMON_OTHER_KV = "param.common.other.kv"; // for customize some parameters for some commands. Has to be in the for of kv-pairs separated by ','
+    public static final String PARAM_COMMON_OTHER_KV =
+            "param.common.other.kv"; // for customize some parameters for some commands. Has to be
+    // in the for of kv-pairs separated by ','
     public static final String PARAM_YARN_QUEUE = "param.yarn.queue";
 
-
-    //for job command
+    // for job command
     public static final String PARAM_JOB_TYPE = "param.job.type";
     public static final String PARAM_JOB_ID = "param.job.id";
     public static final String PARAM_FORCE_KILL = "param.force.kill";
     public static final String LINKIS_JOBID_PREFIX = "lks_";
 
-    public static final String PARAM_MAPPER_KV_STRING = "param.mapper.kv.string"; //Rules for ParamKeyMapper. format: key1=value1,key2=value2...
+    public static final String PARAM_MAPPER_KV_STRING =
+            "param.mapper.kv.string"; // Rules for ParamKeyMapper. format:
+    // key1=value1,key2=value2...
     public static final String YARN_QUEUE = "wds.linkis.yarnqueue";
     public static final String YARN_QUEUE_DEFAULT = "default";
     public static final String YARN_QUEUE_CORE_MAX = "wds.linkis.yarnqueue.cores.max";
@@ -64,10 +66,8 @@ public class TestConstants {
     public static final String LINKIS_CLIENT_MEMORY_MAX = "wds.linkis.client.memory.max";
     public static final String LINKIS_CLIENT_MEMORY_MAX_DEFAULT = "20G";
 
-
-    //Common
+    // Common
     public static final String LINKIS_NULL_VALUE = "";
-
 
     public static final String SPARK_CMD = "spark";
 
@@ -85,7 +85,6 @@ public class TestConstants {
     public static final String LINKIS_SPARK_EXECUTOR_MEMORY = "spark.executor.memory";
     public static final String LINKIS_SPARK_SHUFFLE_PARTITIONS = "spark.sql.shuffle.partitions";
 
-
     public static final String PARAM_DB = "param.primary.database";
     public static final String PARAM_PROXY = "param.primary.proxy";
     public static final String PARAM_USER = "param.primary.user";
@@ -97,8 +96,5 @@ public class TestConstants {
     public static final String PARAM_REAL_NAME = "param.primary.realName";
     public static final String PARAM_PIN_TOKEN = "param.primary.pinToken";
 
-
     public static final String PARAM_PROPERTIES = "params.properties";
-
-
 }

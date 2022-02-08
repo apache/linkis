@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.storage.fs.impl;
 
 import org.apache.linkis.common.io.FsPath;
@@ -24,6 +24,7 @@ import org.apache.linkis.storage.domain.FsPathListWithError;
 import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.utils.StorageConfiguration;
 import org.apache.linkis.storage.utils.StorageUtils;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -35,6 +36,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.permission.FsAction;
 import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.security.UserGroupInformation;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +46,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 
 public class HDFSFileSystem extends FileSystem {
 
@@ -58,11 +59,7 @@ public class HDFSFileSystem extends FileSystem {
 
     private static final Logger logger = LoggerFactory.getLogger(HDFSFileSystem.class);
 
-    /**
-     * File System abstract method start
-     */
-
-
+    /** File System abstract method start */
     @Override
     public String listRoot() throws IOException {
         return "/";
@@ -134,7 +131,6 @@ public class HDFSFileSystem extends FileSystem {
         return result;
     }
 
-
     @Override
     public boolean setPermission(FsPath dest, String permission) throws IOException {
         String path = checkHDFSPath(dest.getPath());
@@ -165,7 +161,10 @@ public class HDFSFileSystem extends FileSystem {
         FileStatus[] stat = fs.listStatus(new Path(checkHDFSPath(path.getPath())));
         List<FsPath> fsPaths = new ArrayList<FsPath>();
         for (FileStatus f : stat) {
-            fsPaths.add(fillStorageFile(new FsPath(StorageUtils.HDFS_SCHEMA() + f.getPath().toUri().getPath()), f));
+            fsPaths.add(
+                    fillStorageFile(
+                            new FsPath(StorageUtils.HDFS_SCHEMA() + f.getPath().toUri().getPath()),
+                            f));
         }
         if (fsPaths.isEmpty()) {
             return null;
@@ -173,12 +172,11 @@ public class HDFSFileSystem extends FileSystem {
         return new FsPathListWithError(fsPaths, "");
     }
 
-    /**
-     * FS interface method start
-     */
+    /** FS interface method start */
     @Override
     public void init(Map<String, String> properties) throws IOException {
-        if (MapUtils.isNotEmpty(properties) && properties.containsKey(StorageConfiguration.PROXY_USER().key())) {
+        if (MapUtils.isNotEmpty(properties)
+                && properties.containsKey(StorageConfiguration.PROXY_USER().key())) {
             user = StorageConfiguration.PROXY_USER().getValue(properties);
         }
 
@@ -195,7 +193,6 @@ public class HDFSFileSystem extends FileSystem {
                     conf.set(key, v);
                 }
             }
-
         }
         if (StorageConfiguration.FS_CACHE_DISABLE().getValue()) {
             conf.set("fs.hdfs.impl.disable.cache", "true");
@@ -205,7 +202,6 @@ public class HDFSFileSystem extends FileSystem {
             throw new IOException("init HDFS FileSystem failed!");
         }
     }
-
 
     @Override
     public String fsName() {
@@ -267,7 +263,15 @@ public class HDFSFileSystem extends FileSystem {
         if (!canExecute(getParentPath(dest))) {
             throw new IOException("You have not permission to access path " + dest);
         }
-        boolean res = FileUtil.copy(fs, new Path(checkHDFSPath(origin)), fs, new Path(checkHDFSPath(dest)), false, true, fs.getConf());
+        boolean res =
+                FileUtil.copy(
+                        fs,
+                        new Path(checkHDFSPath(origin)),
+                        fs,
+                        new Path(checkHDFSPath(dest)),
+                        false,
+                        true,
+                        fs.getConf());
         this.setPermission(new FsPath(dest), this.getDefaultFilePerm());
         return res;
     }
@@ -337,7 +341,9 @@ public class HDFSFileSystem extends FileSystem {
         if (!isOwner(checkHDFSPath(oldDest.getPath()))) {
             throw new IOException("You have not permission to rename path " + oldDest.getPath());
         }
-        return fs.rename(new Path(checkHDFSPath(oldDest.getPath())), new Path(checkHDFSPath(newDest.getPath())));
+        return fs.rename(
+                new Path(checkHDFSPath(oldDest.getPath())),
+                new Path(checkHDFSPath(newDest.getPath())));
     }
 
     @Override
@@ -349,11 +355,7 @@ public class HDFSFileSystem extends FileSystem {
         }
     }
 
-
-    /**
-     * Utils method start
-     */
-
+    /** Utils method start */
     private FsPath fillStorageFile(FsPath fsPath, FileStatus fileStatus) throws IOException {
         fsPath.setAccess_time(fileStatus.getAccessTime());
         fsPath.setModification_time(fileStatus.getModificationTime());
@@ -387,7 +389,7 @@ public class HDFSFileSystem extends FileSystem {
             groupNames = ugi.getGroupNames();
         } catch (NullPointerException e) {
             if ((Boolean) org.apache.linkis.common.conf.Configuration.IS_TEST_MODE().getValue()) {
-                groupNames = new String[]{"hadoop"};
+                groupNames = new String[] {"hadoop"};
             } else {
                 throw e;
             }
@@ -400,7 +402,7 @@ public class HDFSFileSystem extends FileSystem {
             if (permission.getGroupAction().implies(access)) {
                 return true;
             }
-        } else { //other class
+        } else { // other class
             if (permission.getOtherAction().implies(access)) {
                 return true;
             }
@@ -418,9 +420,11 @@ public class HDFSFileSystem extends FileSystem {
 
     private String checkHDFSPath(String path) {
         try {
-            boolean checkHdfsPath = (boolean) StorageConfiguration.HDFS_PATH_PREFIX_CHECK_ON().getValue();
+            boolean checkHdfsPath =
+                    (boolean) StorageConfiguration.HDFS_PATH_PREFIX_CHECK_ON().getValue();
             if (checkHdfsPath) {
-                boolean rmHdfsPrefix = (boolean) StorageConfiguration.HDFS_PATH_PREFIX_REMOVE().getValue();
+                boolean rmHdfsPrefix =
+                        (boolean) StorageConfiguration.HDFS_PATH_PREFIX_REMOVE().getValue();
                 if (rmHdfsPrefix) {
                     if (StringUtils.isBlank(path)) {
                         return path;
@@ -429,7 +433,10 @@ public class HDFSFileSystem extends FileSystem {
                         // leave the first "/" in path
                         int remainIndex = HDFS_PREFIX_WITHOUT_AUTH.length() - 1;
                         if (logger.isDebugEnabled()) {
-                            logger.debug("checkHDFSPath  ori path : {}, after path : {}", path, path.substring(remainIndex));
+                            logger.debug(
+                                    "checkHDFSPath  ori path : {}, after path : {}",
+                                    path,
+                                    path.substring(remainIndex));
                         }
                         return path.substring(remainIndex);
                     } else if (path.startsWith(HDFS_PREFIX_WITH_AUTH)) {
@@ -440,7 +447,10 @@ public class HDFSFileSystem extends FileSystem {
                             return path;
                         }
                         if (logger.isDebugEnabled()) {
-                            logger.debug("checkHDFSPath  ori path : {}, after path : {}", path, "/" + t1[1]);
+                            logger.debug(
+                                    "checkHDFSPath  ori path : {}, after path : {}",
+                                    path,
+                                    "/" + t1[1]);
                         }
                         return "/" + t1[1];
                     } else {

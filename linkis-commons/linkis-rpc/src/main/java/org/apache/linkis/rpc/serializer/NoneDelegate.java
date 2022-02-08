@@ -50,31 +50,4 @@ public class NoneDelegate implements Delegate<Option> {
         return Option.class;
     }
 
-    /*@Override
-    public WireFormat.FieldType getFieldType() {
-        return WireFormat.FieldType.UINT32;
-    }
-
-    @Override
-    public None$ readFrom(Input input) throws IOException {
-        if(0 != input.readUInt32())
-            throw new ProtostuffException("Corrupt input.");
-
-        return None$.MODULE$;
-    }
-
-    @Override
-    public void writeTo(Output output, int number, None$ none$, boolean repeated) throws IOException {
-        output.writeFixed64(number, 0, repeated);
-    }
-
-    @Override
-    public void transfer(Pipe pipe, Input input, Output output, int number, boolean repeated) throws IOException {
-        output.writeUInt32(number, input.readUInt32(), repeated);
-    }
-
-    @Override
-    public Class<?> typeClass() {
-        return None$.class;
-    }*/
 }

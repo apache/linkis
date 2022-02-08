@@ -25,6 +25,9 @@ object DefaultLoadbalancerStrategy extends LoadBalancerStrategy {
 
     override def chooseServerUrl(requestBody: String): String = {
       val serverUrls = getAllServerUrls.filterNot(getAllUnhealthyServerUrls.contains)
+      if (serverUrls.isEmpty) {
+        return null
+      }
       Random.shuffle(serverUrls.toList).head
     }
 

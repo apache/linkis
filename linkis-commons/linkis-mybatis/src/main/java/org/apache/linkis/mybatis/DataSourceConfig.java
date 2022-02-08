@@ -19,7 +19,7 @@ package org.apache.linkis.mybatis;
 
 import org.apache.linkis.common.utils.JavaLog;
 import org.apache.linkis.mybatis.conf.MybatisConfiguration;
-import org.apache.commons.dbcp.BasicDataSource;
+import com.alibaba.druid.pool.DruidDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -56,7 +56,7 @@ public class DataSourceConfig extends JavaLog {
         boolean poolPreparedStatements = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_POOLPREPAREDSTATEMENTS.getValue();
         boolean removeAbandoned = MybatisConfiguration.MYBATIS_DATASOURCE_REMOVE_ABANDONED_ENABLED.getValue();
         int removeAbandonedTimeout = MybatisConfiguration.MYBATIS_DATASOURCE_REMOVE_ABANDONED_TIMEOUT.getValue();
-        BasicDataSource datasource = new BasicDataSource();
+        DruidDataSource datasource = new DruidDataSource();
         info("Database connection address information(数据库连接地址信息)=" + dbUrl);
         datasource.setUrl(dbUrl);
         datasource.setUsername(username);

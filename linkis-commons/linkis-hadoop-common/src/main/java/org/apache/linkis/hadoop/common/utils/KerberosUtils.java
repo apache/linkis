@@ -18,8 +18,10 @@
 package org.apache.linkis.hadoop.common.utils;
 
 import org.apache.linkis.hadoop.common.conf.HadoopConf;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.security.UserGroupInformation;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,13 +30,10 @@ import java.io.IOException;
 import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.HADOOP_SECURITY_AUTHENTICATION;
 import static org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod.KERBEROS;
 
-
 public class KerberosUtils {
     private static final Logger LOG = LoggerFactory.getLogger(KerberosUtils.class);
 
-
-    private KerberosUtils() {
-    }
+    private KerberosUtils() {}
 
     private static Configuration createKerberosSecurityConfiguration() {
         Configuration conf = HDFSUtils.getConfiguration(HadoopConf.HADOOP_ROOT_USER().getValue());
@@ -52,10 +51,13 @@ public class KerberosUtils {
                 UserGroupInformation.loginUserFromKeytab(principal, keytab);
                 LOG.info("Login successfully with keytab: {} and principal: {}", keytab, principal);
             } else {
-                LOG.info("The user has already logged in using keytab and principal, no action required");
+                LOG.info(
+                        "The user has already logged in using keytab and principal, no action required");
             }
         } catch (IOException e) {
-            LOG.error("Failed to get either keytab location or principal name in the jdbc executor", e);
+            LOG.error(
+                    "Failed to get either keytab location or principal name in the jdbc executor",
+                    e);
         }
     }
 
@@ -75,7 +77,8 @@ public class KerberosUtils {
         } catch (Exception e) {
             LOG.error("Unable to run kinit for linkis jdbc executor", e);
         }
-        LOG.debug("Neither Keytab nor ticket based login. runRefreshKerberosLoginWork() returning false");
+        LOG.debug(
+                "Neither Keytab nor ticket based login. runRefreshKerberosLoginWork() returning false");
         return false;
     }
 
@@ -89,23 +92,30 @@ public class KerberosUtils {
         try {
             refreshInterval = Long.parseLong(refreshIntervalString);
         } catch (NumberFormatException e) {
-            LOG.error("Cannot get time in MS for the given string, " + refreshIntervalString
-                    + " defaulting to 86400000 ", e);
+            LOG.error(
+                    "Cannot get time in MS for the given string, "
+                            + refreshIntervalString
+                            + " defaulting to 86400000 ",
+                    e);
             refreshInterval = 86400000L;
-
         }
         return refreshInterval;
     }
 
     public static Integer kinitFailTimesThreshold() {
         Integer kinitFailThreshold = 5;
-        //defined in linkis-env.sh, if not initialized then the default value is 5.
+        // defined in linkis-env.sh, if not initialized then the default value is 5.
         if (System.getenv("LINKIS_JDBC_KERBEROS_KINIT_FAIL_THRESHOLD") != null) {
             try {
-                kinitFailThreshold = new Integer(System.getenv("LINKIS_JDBC_KERBEROS_KINIT_FAIL_THRESHOLD"));
+                kinitFailThreshold =
+                        new Integer(System.getenv("LINKIS_JDBC_KERBEROS_KINIT_FAIL_THRESHOLD"));
             } catch (Exception e) {
-                LOG.error("Cannot get integer value from the given string, " + System
-                        .getenv("LINKIS_JDBC_KERBEROS_KINIT_FAIL_THRESHOLD") + " defaulting to " + kinitFailThreshold, e);
+                LOG.error(
+                        "Cannot get integer value from the given string, "
+                                + System.getenv("LINKIS_JDBC_KERBEROS_KINIT_FAIL_THRESHOLD")
+                                + " defaulting to "
+                                + kinitFailThreshold,
+                        e);
             }
         }
         return kinitFailThreshold;

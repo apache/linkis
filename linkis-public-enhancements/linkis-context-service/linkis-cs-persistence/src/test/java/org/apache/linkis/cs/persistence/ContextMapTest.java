@@ -5,19 +5,18 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.persistence;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.linkis.cs.common.entity.enumeration.ContextScope;
 import org.apache.linkis.cs.common.entity.enumeration.ContextType;
 import org.apache.linkis.cs.common.entity.metadata.CSTable;
@@ -26,7 +25,10 @@ import org.apache.linkis.cs.common.entity.source.LinkisHAWorkFlowContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.persistence.entity.PersistenceContextID;
 import org.apache.linkis.cs.persistence.persistence.ContextMapPersistence;
+
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.List;
 import java.util.Random;
@@ -39,7 +41,6 @@ public class ContextMapTest {
         context = new AnnotationConfigApplicationContext(Scan.class);
         contextMapPersistence = context.getBean(ContextMapPersistence.class);
     }
-
 
     public void testcreateContextMap() throws CSErrorException, JsonProcessingException {
         AContextKeyValue aContextKeyValue = new AContextKeyValue();
@@ -55,11 +56,9 @@ public class ContextMapTest {
         contextMapPersistence.create(persistenceContextID, aContextKeyValue);
     }
 
-
     public void testDeleteContextID() throws CSErrorException {
-        //contextIDPersistence.deleteContextID(-1193959466);
+        // contextIDPersistence.deleteContextID(-1193959466);
     }
-
 
     public void testGetContextMap() throws CSErrorException {
         AContextID aContextID = new AContextID();
@@ -67,9 +66,8 @@ public class ContextMapTest {
         AContextKey aContextKey = new AContextKey();
         aContextKey.setKey("key");
         ContextKeyValue keyValue = contextMapPersistence.get(aContextID, aContextKey);
-        System.out.println(((AContextKey)keyValue.getContextKey()).getA());
+        System.out.println(((AContextKey) keyValue.getContextKey()).getA());
     }
-
 
     public void testGetAllContextMapByKey() throws CSErrorException {
         AContextID aContextID = new AContextID();
@@ -78,7 +76,6 @@ public class ContextMapTest {
         System.out.println(key.size());
     }
 
-
     public void testGetAllContextMapByContextID() throws CSErrorException {
         AContextID aContextID = new AContextID();
         aContextID.setContextId("82633");
@@ -86,56 +83,49 @@ public class ContextMapTest {
         System.out.println(key.size());
     }
 
-
     public void testGetAllContextMapByScope() throws CSErrorException {
         AContextID aContextID = new AContextID();
         aContextID.setContextId("82633");
-        List<ContextKeyValue> key = contextMapPersistence.getAll(aContextID,ContextScope.FRIENDLY);
+        List<ContextKeyValue> key = contextMapPersistence.getAll(aContextID, ContextScope.FRIENDLY);
         System.out.println(key.size());
     }
-
 
     public void testGetAllContextMapByType() throws CSErrorException {
         AContextID aContextID = new AContextID();
         aContextID.setContextId("82633");
-        List<ContextKeyValue> key = contextMapPersistence.getAll(aContextID,ContextType.ENV);
+        List<ContextKeyValue> key = contextMapPersistence.getAll(aContextID, ContextType.ENV);
         System.out.println(key.size());
     }
-
 
     public void testremoveContextMap() throws CSErrorException {
         AContextID aContextID = new AContextID();
         aContextID.setContextId("13532");
         AContextKey aContextKey = new AContextKey();
         aContextKey.setKey("keyadsfaccc");
-        contextMapPersistence.remove(aContextID,aContextKey);
+        contextMapPersistence.remove(aContextID, aContextKey);
     }
-
 
     public void testremoveAllContextMapbyContextID() throws CSErrorException {
         AContextID aContextID = new AContextID();
         aContextID.setContextId("8263356");
-/*        AContextKey aContextKey = new AContextKey();
+        /*        AContextKey aContextKey = new AContextKey();
         aContextKey.setKey("keydelete");
         aContextKey.setContextScope(ContextScope.FRIENDLY);
         aContextKey.setContextType(ContextType.ENV);*/
         contextMapPersistence.removeAll(aContextID);
     }
 
-
     public void testremoveAllContextMapbyScope() throws CSErrorException {
         AContextID aContextID = new AContextID();
         aContextID.setContextId("82633456");
-        contextMapPersistence.removeAll(aContextID,ContextScope.FRIENDLY);
+        contextMapPersistence.removeAll(aContextID, ContextScope.FRIENDLY);
     }
-
 
     public void testremoveAllContextMapbyType() throws CSErrorException {
         AContextID aContextID = new AContextID();
         aContextID.setContextId("36694");
-        contextMapPersistence.removeAll(aContextID,ContextType.ENV);
+        contextMapPersistence.removeAll(aContextID, ContextType.ENV);
     }
-
 
     public void testUpdateContextMap() throws CSErrorException, JsonProcessingException {
         AContextKeyValue aContextKeyValue = new AContextKeyValue();
@@ -153,9 +143,8 @@ public class ContextMapTest {
         aContextKey.setContextScope(ContextScope.PRIVATE);
         aContextKey.setContextType(ContextType.COST);
         aContextKeyValue.setContextKey(aContextKey);
-        contextMapPersistence.update(persistenceContextID,aContextKeyValue);
+        contextMapPersistence.update(persistenceContextID, aContextKeyValue);
     }
-
 
     public void test003() throws CSErrorException {
         LinkisHAWorkFlowContextID linkisHAWorkFlowContextID = new LinkisHAWorkFlowContextID();
@@ -164,11 +153,9 @@ public class ContextMapTest {
         System.out.println(all.size());
     }
 
-
     public void test004() throws CSErrorException {
         LinkisHAWorkFlowContextID linkisHAWorkFlowContextID = new LinkisHAWorkFlowContextID();
         linkisHAWorkFlowContextID.setContextId("12345");
-        contextMapPersistence.removeByKeyPrefix(linkisHAWorkFlowContextID,ContextType.COST,"aaa");
+        contextMapPersistence.removeByKeyPrefix(linkisHAWorkFlowContextID, ContextType.COST, "aaa");
     }
-
 }

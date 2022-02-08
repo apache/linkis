@@ -5,19 +5,18 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.highavailable;
 
-import com.google.gson.Gson;
 import org.apache.linkis.cs.common.entity.source.HAContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.highavailable.exception.CSErrorCode;
@@ -25,42 +24,39 @@ import org.apache.linkis.cs.highavailable.ha.BackupInstanceGenerator;
 import org.apache.linkis.cs.highavailable.ha.ContextHAChecker;
 import org.apache.linkis.cs.highavailable.ha.ContextHAIDGenerator;
 import org.apache.linkis.cs.highavailable.proxy.MethodInterceptorImpl;
-import net.sf.cglib.proxy.Callback;
-import net.sf.cglib.proxy.Enhancer;
+
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-/**
- * ContextService高可用管理器默认实现
- * 采用CGLib动态代理，一般用于CS持久层存储转换，将HAContextID实例进行转换
- */
+import net.sf.cglib.proxy.Callback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import net.sf.cglib.proxy.Enhancer;
+import com.google.gson.Gson;
+
+/** ContextService高可用管理器默认实现 采用CGLib动态代理，一般用于CS持久层存储转换，将HAContextID实例进行转换 */
 @Component
 public class DefaultContextHAManager extends AbstractContextHAManager {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultContextHAManager.class);
     private static final Gson gson = new Gson();
 
-    @Autowired
-    private ContextHAIDGenerator contextHAIDGenerator;
-    @Autowired
-    private ContextHAChecker contextHAChecker;
-    @Autowired
-    private BackupInstanceGenerator backupInstanceGenerator;
+    @Autowired private ContextHAIDGenerator contextHAIDGenerator;
+    @Autowired private ContextHAChecker contextHAChecker;
+    @Autowired private BackupInstanceGenerator backupInstanceGenerator;
 
     public DefaultContextHAManager() {}
 
-
     @Override
-    public <T> T  getContextHAProxy(T persistence) throws CSErrorException {
+    public <T> T getContextHAProxy(T persistence) throws CSErrorException {
         Callback callback = new MethodInterceptorImpl(this, persistence);
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(persistence.getClass());
-        Callback [] callbacks = new Callback[] {callback};
+        Callback[] callbacks = new Callback[] {callback};
         enhancer.setCallbacks(callbacks);
-        return (T)enhancer.create();
+        return (T) enhancer.create();
     }
 
     @Override
@@ -77,16 +73,22 @@ public class DefaultContextHAManager extends AbstractContextHAManager {
             haContextID.setInstance(tmpHAID.getInstance());
             haContextID.setBackupInstance(tmpHAID.getBackupInstance());
             return haContextID;
-        } else if (StringUtils.isNotBlank(haContextID.getInstance()) && StringUtils.isNotBlank(haContextID.getBackupInstance())) {
+        } else if (StringUtils.isNotBlank(haContextID.getInstance())
+                && StringUtils.isNotBlank(haContextID.getBackupInstance())) {
             if (StringUtils.isNumeric(haContextID.getContextId())) {
                 // convert contextID to haID
                 String haIdKey = contextHAChecker.convertHAIDToHAKey(haContextID);
                 haContextID.setContextId(haIdKey);
             } else if (contextHAChecker.isHAIDValid(haContextID.getContextId())) {
-                String contextID = contextHAChecker.parseHAIDFromKey(haContextID.getContextId()).getContextId();
+                String contextID =
+                        contextHAChecker
+                                .parseHAIDFromKey(haContextID.getContextId())
+                                .getContextId();
                 haContextID.setContextId(contextID);
             } else {
-                throw new CSErrorException(CSErrorCode.INVALID_HAID, "Invalid contextID in haContextID : " + gson.toJson(haContextID));
+                throw new CSErrorException(
+                        CSErrorCode.INVALID_HAID,
+                        "Invalid contextID in haContextID : " + gson.toJson(haContextID));
             }
             return haContextID;
         } else {
@@ -101,7 +103,9 @@ public class DefaultContextHAManager extends AbstractContextHAManager {
                 haContextID.setInstance(tmpHAID.getInstance());
                 haContextID.setBackupInstance(tmpHAID.getBackupInstance());
             } else {
-                throw new CSErrorException(CSErrorCode.INVALID_HAID, "Invalid contextID in haContextID : " + gson.toJson(haContextID));
+                throw new CSErrorException(
+                        CSErrorCode.INVALID_HAID,
+                        "Invalid contextID in haContextID : " + gson.toJson(haContextID));
             }
             // todo debug
             if (contextHAChecker.isHAContextIDValid(haContextID)) {
@@ -125,5 +129,4 @@ public class DefaultContextHAManager extends AbstractContextHAManager {
     public BackupInstanceGenerator getBackupInstanceGenerator() {
         return backupInstanceGenerator;
     }
-
 }

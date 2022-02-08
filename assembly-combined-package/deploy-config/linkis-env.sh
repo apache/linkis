@@ -141,4 +141,4 @@ LINKIS_VERSION=1.0.3
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module
 
 ## If SKYWALKING_AGENT_PATH is set, the Linkis components will be started with Skywalking agent
-SKYWALKING_AGENT_PATH=/appcom/config/skywalking-agent/skywalking-agent.jar
+#SKYWALKING_AGENT_PATH=/appcom/config/skywalking-agent/skywalking-agent.jar

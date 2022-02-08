@@ -37,5 +37,6 @@
         <module>linkis-metadata-manager/service/elasticsearch</module>
         <module>linkis-metadata-manager/service/hive</module>
         <module>linkis-metadata-manager/service/kafka</module>
+        <module>linkis-metadata-manager/service/mysql</module>
     </modules>
 </project>

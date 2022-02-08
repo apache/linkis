@@ -19,11 +19,16 @@ package org.apache.linkis.manager.engineplugin.jdbc;
 
 import org.apache.linkis.hadoop.common.utils.KerberosUtils;
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration;
+
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.commons.lang.StringUtils;
 
 import javax.sql.DataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -31,10 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import static org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType.*;
-
 
 public class ConnectionManager {
 
@@ -45,12 +47,11 @@ public class ConnectionManager {
     private final Map<String, String> supportedDBs = new HashMap<String, String>();
     private final List<String> supportedDBNames = new ArrayList<String>();
 
-    private volatile static ConnectionManager connectionManager;
+    private static volatile ConnectionManager connectionManager;
     private ScheduledExecutorService scheduledExecutorService;
     private Integer kinitFailCount = 0;
 
-    private ConnectionManager() {
-    }
+    private ConnectionManager() {}
 
     public static ConnectionManager getInstance() {
         if (connectionManager == null) {
@@ -93,7 +94,8 @@ public class ConnectionManager {
                 return;
             }
         }
-        throw new IllegalArgumentException("Illegal url or not supported url type (url: " + url + ").");
+        throw new IllegalArgumentException(
+                "Illegal url or not supported url type (url: " + url + ").");
     }
 
     private String getRealURL(String url) {
@@ -128,14 +130,23 @@ public class ConnectionManager {
             if (StringUtils.isNotBlank(proxyUserProperty)) {
                 url = url.concat(";").concat(proxyUserProperty + "=" + jdbcProxyUser);
                 props.put("url", url);
-                logger.info(String.format("Try to Create a new %s JDBC DBCP with url(%s), kerberos, proxyUser(%s).", dbType, url, jdbcProxyUser));
+                logger.info(
+                        String.format(
+                                "Try to Create a new %s JDBC DBCP with url(%s), kerberos, proxyUser(%s).",
+                                dbType, url, jdbcProxyUser));
             } else {
-                logger.info(String.format("Try to Create a new %s JDBC DBCP with url(%s), kerberos.", dbType, url));
+                logger.info(
+                        String.format(
+                                "Try to Create a new %s JDBC DBCP with url(%s), kerberos.",
+                                dbType, url));
             }
         }
 
         if (isUsernameAuthType(properties)) {
-            logger.info(String.format("Try to Create a new %s JDBC DBCP with url(%s), username(%s), password(%s).", dbType, url, username, password));
+            logger.info(
+                    String.format(
+                            "Try to Create a new %s JDBC DBCP with url(%s), username(%s), password(%s).",
+                            dbType, url, username, password));
             props.put("username", username);
             props.put("password", password);
         }
@@ -188,7 +199,8 @@ public class ConnectionManager {
         }
     }
 
-    private Connection getConnection(String url, Map<String, String> properties) throws SQLException {
+    private Connection getConnection(String url, Map<String, String> properties)
+            throws SQLException {
         String key = getRealURL(url);
         DataSource dataSource = databaseToDataSources.get(key);
         if (dataSource == null) {
@@ -221,34 +233,47 @@ public class ConnectionManager {
     }
 
     private JdbcAuthType getJdbcAuthType(Map<String, String> properties) {
-        String authType = properties.getOrDefault("jdbc.auth.type", USERNAME.getAuthType()).trim().toUpperCase();
+        String authType =
+                properties
+                        .getOrDefault("jdbc.auth.type", USERNAME.getAuthType())
+                        .trim()
+                        .toUpperCase();
         return of(authType);
     }
 
     public ScheduledExecutorService startRefreshKerberosLoginStatusThread() {
         scheduledExecutorService = Executors.newScheduledThreadPool(1);
-        scheduledExecutorService.submit(new Callable<Object>() {
-            @Override
-            public Object call() throws Exception {
-                if (KerberosUtils.runRefreshKerberosLogin()) {
-                    logger.info("Ran runRefreshKerberosLogin command successfully.");
-                    kinitFailCount = 0;
-                    logger.info("Scheduling Kerberos ticket refresh thread with interval {} ms", KerberosUtils.getKerberosRefreshInterval());
-                    scheduledExecutorService.schedule(this, KerberosUtils.getKerberosRefreshInterval(), TimeUnit.MILLISECONDS);
-                } else {
-                    kinitFailCount++;
-                    logger.info("runRefreshKerberosLogin failed for {} time(s).", kinitFailCount);
-                    if (kinitFailCount >= KerberosUtils.kinitFailTimesThreshold()) {
-                        logger.error("runRefreshKerberosLogin failed for max attempts, calling close executor.");
-                        // close();
-                    } else {
-                        // wait for 1 second before calling runRefreshKerberosLogin() again
-                        scheduledExecutorService.schedule(this, 1, TimeUnit.SECONDS);
+        scheduledExecutorService.submit(
+                new Callable<Object>() {
+                    @Override
+                    public Object call() throws Exception {
+                        if (KerberosUtils.runRefreshKerberosLogin()) {
+                            logger.info("Ran runRefreshKerberosLogin command successfully.");
+                            kinitFailCount = 0;
+                            logger.info(
+                                    "Scheduling Kerberos ticket refresh thread with interval {} ms",
+                                    KerberosUtils.getKerberosRefreshInterval());
+                            scheduledExecutorService.schedule(
+                                    this,
+                                    KerberosUtils.getKerberosRefreshInterval(),
+                                    TimeUnit.MILLISECONDS);
+                        } else {
+                            kinitFailCount++;
+                            logger.info(
+                                    "runRefreshKerberosLogin failed for {} time(s).",
+                                    kinitFailCount);
+                            if (kinitFailCount >= KerberosUtils.kinitFailTimesThreshold()) {
+                                logger.error(
+                                        "runRefreshKerberosLogin failed for max attempts, calling close executor.");
+                                // close();
+                            } else {
+                                // wait for 1 second before calling runRefreshKerberosLogin() again
+                                scheduledExecutorService.schedule(this, 1, TimeUnit.SECONDS);
+                            }
+                        }
+                        return null;
                     }
-                }
-                return null;
-            }
-        });
+                });
         return scheduledExecutorService;
     }
 

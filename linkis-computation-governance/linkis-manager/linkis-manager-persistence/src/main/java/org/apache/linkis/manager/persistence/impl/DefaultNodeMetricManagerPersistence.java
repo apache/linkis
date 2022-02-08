@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.persistence.impl;
 
 import org.apache.linkis.common.ServiceInstance;
@@ -30,15 +30,16 @@ import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-
 public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPersistence {
 
-    private static Logger logger = LoggerFactory.getLogger(DefaultNodeMetricManagerPersistence.class);
+    private static Logger logger =
+            LoggerFactory.getLogger(DefaultNodeMetricManagerPersistence.class);
 
     private NodeManagerMapper nodeManagerMapper;
 
@@ -62,7 +63,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
 
     @Override
     public void addNodeMetrics(NodeMetrics nodeMetrics) throws PersistenceErrorException {
-        //直接插入 NodeMetric即可
+        // 直接插入 NodeMetric即可
         PersistenceNodeMetrics persistenceNodeMetrics = new PersistenceNodeMetrics();
         persistenceNodeMetrics.setInstance(nodeMetrics.getServiceInstance().getInstance());
         persistenceNodeMetrics.setHealthy(nodeMetrics.getHealthy());
@@ -71,7 +72,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
         persistenceNodeMetrics.setStatus(nodeMetrics.getStatus());
         persistenceNodeMetrics.setCreateTime(new Date());
         persistenceNodeMetrics.setUpdateTime(new Date());
-        //todo 异常信息后面统一处理
+        // todo 异常信息后面统一处理
         nodeMetricManagerMapper.addNodeMetrics(persistenceNodeMetrics);
     }
 
@@ -79,14 +80,17 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
     public void addOrupdateNodeMetrics(NodeMetrics nodeMetrics) throws PersistenceErrorException {
         PersistenceNodeMetrics persistenceNodeMetrics = new PersistenceNodeMetrics();
         String instance = nodeMetrics.getServiceInstance().getInstance();
-        //todo 异常信息后面统一处理
+        // todo 异常信息后面统一处理
         PersistenceNode node = nodeManagerMapper.getNodeInstance(instance);
-        if(node == null){
-            logger.warn("The request of update node metrics was ignored, because the node " + instance + " is not exist.");
+        if (node == null) {
+            logger.warn(
+                    "The request of update node metrics was ignored, because the node "
+                            + instance
+                            + " is not exist.");
             return;
         }
         int isInstanceIdExist = nodeMetricManagerMapper.checkInstanceExist(instance);
-        //是否存在
+        // 是否存在
         if (isInstanceIdExist == 0) {
             persistenceNodeMetrics.setInstance(nodeMetrics.getServiceInstance().getInstance());
             persistenceNodeMetrics.setHealthy(nodeMetrics.getHealthy());
@@ -95,7 +99,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
             persistenceNodeMetrics.setStatus(nodeMetrics.getStatus());
             persistenceNodeMetrics.setCreateTime(new Date());
             persistenceNodeMetrics.setUpdateTime(new Date());
-            //todo 异常信息后面统一处理
+            // todo 异常信息后面统一处理
             nodeMetricManagerMapper.addNodeMetrics(persistenceNodeMetrics);
         } else if (isInstanceIdExist == 1) {
             persistenceNodeMetrics.setInstance(nodeMetrics.getServiceInstance().getInstance());
@@ -106,12 +110,13 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
             persistenceNodeMetrics.setUpdateTime(new Date());
             nodeMetricManagerMapper.updateNodeMetrics(persistenceNodeMetrics, instance);
         } else {
-            //其他情况都不处理，打印个告警日志
+            // 其他情况都不处理，打印个告警日志
         }
     }
 
     @Override
-    public List<NodeMetrics> getNodeMetrics(List<? extends Node> nodes) throws PersistenceErrorException {
+    public List<NodeMetrics> getNodeMetrics(List<? extends Node> nodes)
+            throws PersistenceErrorException {
         if (nodes == null || nodes.isEmpty()) return Collections.emptyList();
         List<NodeMetrics> nodeMetricsList = new ArrayList<>();
         List<String> instances = new ArrayList<>();
@@ -120,30 +125,33 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
             instances.add(instance);
         }
 
-        //根据  id 查 metric 信息
-        List<PersistenceNodeMetrics> persistenceNodeMetricsList = nodeMetricManagerMapper.getNodeMetricsByInstances(instances);
+        // 根据  id 查 metric 信息
+        List<PersistenceNodeMetrics> persistenceNodeMetricsList =
+                nodeMetricManagerMapper.getNodeMetricsByInstances(instances);
 
         for (PersistenceNodeMetrics persistenceNodeMetric : persistenceNodeMetricsList) {
             for (Node node : nodes) {
-                if (persistenceNodeMetric.getInstance().equals(node.getServiceInstance().getInstance())) {
+                if (persistenceNodeMetric
+                        .getInstance()
+                        .equals(node.getServiceInstance().getInstance())) {
                     persistenceNodeMetric.setServiceInstance(node.getServiceInstance());
                     nodeMetricsList.add(persistenceNodeMetric);
                 }
             }
         }
 
-
         return nodeMetricsList;
     }
 
     @Override
     public NodeMetrics getNodeMetrics(Node node) throws PersistenceErrorException {
-        PersistenceNodeMetrics persistenceNodeMetrics = nodeMetricManagerMapper.getNodeMetricsByInstance(node.getServiceInstance().getInstance());
+        PersistenceNodeMetrics persistenceNodeMetrics =
+                nodeMetricManagerMapper.getNodeMetricsByInstance(
+                        node.getServiceInstance().getInstance());
         if (persistenceNodeMetrics == null) return null;
         persistenceNodeMetrics.setServiceInstance(node.getServiceInstance());
         return persistenceNodeMetrics;
     }
-
 
     @Override
     public void deleteNodeMetrics(Node node) throws PersistenceErrorException {
@@ -153,7 +161,8 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
 
     @Override
     public List<NodeMetrics> getAllNodeMetrics() throws PersistenceErrorException {
-        List<PersistenceNodeMetricsEntity> allNodeMetrics = nodeMetricManagerMapper.getAllNodeMetrics();
+        List<PersistenceNodeMetricsEntity> allNodeMetrics =
+                nodeMetricManagerMapper.getAllNodeMetrics();
         List<NodeMetrics> persistenceNodeMetricsList = new ArrayList<>();
         for (PersistenceNodeMetricsEntity persistenceNodeMetricsEntity : allNodeMetrics) {
             PersistenceNodeMetrics persistenceNodeMetrics = new PersistenceNodeMetrics();

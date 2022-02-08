@@ -5,19 +5,19 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.optimize.dfs;
 
-public class MinCostBinaryTree implements BinaryTree{
+public class MinCostBinaryTree implements BinaryTree {
 
     Node rootNode;
     BinaryTree left;
@@ -26,14 +26,14 @@ public class MinCostBinaryTree implements BinaryTree{
 
     public MinCostBinaryTree(Node rootNode) {
         this.rootNode = rootNode;
-        if(this.rootNode.visited()){
+        if (this.rootNode.visited()) {
             return;
         }
-        if(rootNode.getLeft() == null){
+        if (rootNode.getLeft() == null) {
             this.cost = rootNode.getCost();
             return;
         }
-        if(rootNode.getRight() == null){
+        if (rootNode.getRight() == null) {
             this.left = new MinCostBinaryTree(rootNode.getLeft());
             this.cost = this.left.getCost();
             return;
@@ -41,15 +41,19 @@ public class MinCostBinaryTree implements BinaryTree{
 
         BinaryTree firstLeft = new MinCostBinaryTree(rootNode.getLeft());
         BinaryTree firstRight = new MinCostBinaryTree(rootNode.getRight());
-        Double firstCost = firstLeft.getCost() * rootNode.getLeft().getPriority() + firstRight.getCost()*rootNode.getRight().getPriority();
+        Double firstCost =
+                firstLeft.getCost() * rootNode.getLeft().getPriority()
+                        + firstRight.getCost() * rootNode.getRight().getPriority();
 
         rootNode.shift();
 
         BinaryTree secondLeft = new MinCostBinaryTree(rootNode.getLeft());
         BinaryTree secondRight = new MinCostBinaryTree(rootNode.getRight());
-        Double secondCost = secondLeft.getCost() * rootNode.getLeft().getPriority() + secondRight.getCost()*rootNode.getRight().getPriority();
+        Double secondCost =
+                secondLeft.getCost() * rootNode.getLeft().getPriority()
+                        + secondRight.getCost() * rootNode.getRight().getPriority();
 
-        if(firstCost > secondCost){
+        if (firstCost > secondCost) {
             this.left = secondLeft;
             this.right = secondRight;
             this.cost = secondCost;

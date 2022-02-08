@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.ecm.server;
 
 import org.apache.linkis.DataWorkCloudApplication;
@@ -25,8 +25,10 @@ import org.apache.linkis.ecm.core.listener.ECMSyncListenerBus;
 import org.apache.linkis.ecm.server.context.ECMContext;
 import org.apache.linkis.ecm.server.listener.ECMClosedEvent;
 import org.apache.linkis.ecm.server.listener.ECMReadyEvent;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextClosedEvent;
@@ -34,12 +36,11 @@ import org.springframework.context.event.EventListener;
 
 import static org.apache.linkis.ecm.server.conf.ECMConfiguration.ECM_ASYNC_BUS_WAITTOEMPTY_TIME;
 
-
 public class LinkisECMApplication extends DataWorkCloudApplication {
 
     private static ECMContext ecmContext;
 
-    private volatile static boolean ready;
+    private static volatile boolean ready;
 
     private static ServiceInstance ecmServiceInstance;
 
@@ -79,7 +80,6 @@ public class LinkisECMApplication extends DataWorkCloudApplication {
     }
 }
 
-
 @Configuration
 class ECMApplicationListener {
 
@@ -107,7 +107,8 @@ class ECMApplicationListener {
         LinkisECMApplication.setReady(false);
         ECMClosedEvent ecmClosedEvent = new ECMClosedEvent();
         LinkisECMApplication.getContext().getECMSyncListenerBus().postToAll(ecmClosedEvent);
-        ECMAsyncListenerBus ecmAsyncListenerBus = LinkisECMApplication.getContext().getECMAsyncListenerBus();
+        ECMAsyncListenerBus ecmAsyncListenerBus =
+                LinkisECMApplication.getContext().getECMAsyncListenerBus();
         ecmAsyncListenerBus.postToAll(ecmClosedEvent);
         logger.info(String.format("wait ECM:%s asyncBus empty", serviceInstance));
         try {
@@ -119,6 +120,4 @@ class ECMApplicationListener {
         ecmAsyncListenerBus.stop();
         logger.info("ECM is closed");
     }
-
 }
-

@@ -5,18 +5,17 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.storage.factory.impl;
 
+package org.apache.linkis.storage.factory.impl;
 
 import org.apache.linkis.common.io.Fs;
 import org.apache.linkis.storage.factory.BuildFactory;
@@ -24,15 +23,15 @@ import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.fs.impl.HDFSFileSystem;
 import org.apache.linkis.storage.io.IOMethodInterceptorCreator$;
 import org.apache.linkis.storage.utils.StorageUtils;
-import net.sf.cglib.proxy.Enhancer;
 
+import net.sf.cglib.proxy.Enhancer;
 
 public class BuildHDFSFileSystem implements BuildFactory {
 
-
     /**
-     * If it is a node with hdfs configuration file, then go to the proxy mode of hdfs, if not go to io proxy mode
-     * 如果是有hdfs配置文件的节点，则走hdfs的代理模式，如果不是走io代理模式
+     * If it is a node with hdfs configuration file, then go to the proxy mode of hdfs, if not go to
+     * io proxy mode 如果是有hdfs配置文件的节点，则走hdfs的代理模式，如果不是走io代理模式
+     *
      * @param user
      * @param proxyUser
      * @return
@@ -44,10 +43,11 @@ public class BuildHDFSFileSystem implements BuildFactory {
         if (StorageUtils.isHDFSNode()) {
             fs = new HDFSFileSystem();
         } else {
-            //TODO Agent user(代理的用户)
+            // TODO Agent user(代理的用户)
             Enhancer enhancer = new Enhancer();
             enhancer.setSuperclass(HDFSFileSystem.class.getSuperclass());
-            enhancer.setCallback(IOMethodInterceptorCreator$.MODULE$.getIOMethodInterceptor(fsName()));
+            enhancer.setCallback(
+                    IOMethodInterceptorCreator$.MODULE$.getIOMethodInterceptor(fsName()));
             fs = (FileSystem) enhancer.create();
         }
         fs.setUser(proxyUser);

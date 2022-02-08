@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.server;
 
 import org.apache.linkis.cs.server.enumeration.ServiceMethod;
@@ -32,9 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface CsRestfulParent {
 
-    default HttpAnswerJob submitRestJob(HttpServletRequest req,
-                                        ServiceMethod method,
-                                        Object... objects) throws InterruptedException {
+    default HttpAnswerJob submitRestJob(
+            HttpServletRequest req, ServiceMethod method, Object... objects)
+            throws InterruptedException {
         HttpAnswerJob job = (HttpAnswerJob) new RestJobBuilder().build(getServiceType());
         HttpRequestProtocol protocol = job.getRequestProtocol();
         protocol.setUsername(SecurityFilter.getLoginUsername(req));
@@ -53,7 +53,7 @@ public interface CsRestfulParent {
             }
             int status = ((RestResponseProtocol) responseProtocol).get().getStatus();
             if (status == 1) {
-                //failed
+                // failed
                 return ((RestResponseProtocol) responseProtocol).get();
             } else if (status == 0) {
                 Object data = job.getResponseProtocol().getResponseData();
@@ -68,5 +68,4 @@ public interface CsRestfulParent {
     ServiceType getServiceType();
 
     CsScheduler getScheduler();
-
 }

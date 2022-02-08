@@ -5,24 +5,22 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.cli.application.presenter.model;
 
+package org.apache.linkis.cli.application.presenter.model;
 
 import org.apache.linkis.cli.common.entity.execution.jobexec.JobStatus;
 import org.apache.linkis.cli.core.presenter.model.PresenterModel;
 
 import java.util.Date;
-
 
 public class LinkisJobInfoModel implements PresenterModel {
 
@@ -53,7 +51,30 @@ public class LinkisJobInfoModel implements PresenterModel {
     private String requestApplicationName;
     private Double progress;
 
-    public LinkisJobInfoModel(String cid, String jobId, Boolean success, String message, String taskID, String instance, String execId, String strongerExecId, String umUser, String executionCode, String logPath, JobStatus status, String engineType, String runType, Long costTime, Date createdTime, Date updatedTime, Date engineStartTime, Integer errCode, String errMsg, String executeApplicationName, String requestApplicationName, Double progress) {
+    public LinkisJobInfoModel(
+            String cid,
+            String jobId,
+            Boolean success,
+            String message,
+            String taskID,
+            String instance,
+            String execId,
+            String strongerExecId,
+            String umUser,
+            String executionCode,
+            String logPath,
+            JobStatus status,
+            String engineType,
+            String runType,
+            Long costTime,
+            Date createdTime,
+            Date updatedTime,
+            Date engineStartTime,
+            Integer errCode,
+            String errMsg,
+            String executeApplicationName,
+            String requestApplicationName,
+            Double progress) {
         this.cid = cid;
         this.jobId = jobId;
         this.success = success;

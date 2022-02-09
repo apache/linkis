@@ -189,8 +189,8 @@ isSuccess "create  $WORKSPACE_USER_ROOT_PATH directory"
          sudo chmod -R 775 $localRootDir/$deployUser
    elif [[ $RESULT_SET_ROOT_PATH == hdfs://* ]];then
      localRootDir=${RESULT_SET_ROOT_PATH#hdfs://}
-         hdfs dfs -mkdir -p $localRootDir/$deployUser
-
+         hdfs dfs -mkdir -p $localRootDir
+         hdfs dfs -chmod 775 $localRootDir
    else
      echo "does not support $RESULT_SET_ROOT_PATH filesystem types"
    fi
@@ -373,6 +373,10 @@ entrance_conf=$LINKIS_HOME/conf/linkis-cg-entrance.properties
 if [ "$ENTRANCE_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$ENTRANCE_PORT#g" $entrance_conf
+fi
+if [ "$RESULT_SET_ROOT_PATH" != "" ]
+then
+  sed -i ${txt}  "s#wds.linkis.resultSet.store.path.*wds.linkis.resultSet.store.path=$RESULT_SET_ROOT_PATH#g" $entrance_conf
 fi
 
 publicservice_conf=$LINKIS_HOME/conf/linkis-ps-publicservice.properties

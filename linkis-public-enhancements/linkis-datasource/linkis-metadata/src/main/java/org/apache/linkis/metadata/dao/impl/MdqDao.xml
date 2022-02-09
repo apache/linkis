@@ -15,7 +15,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="org.apache.linkis.metadata.dao.MdqDao">
@@ -54,7 +54,7 @@
     </select>
 
     <insert id="insertTable" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.metadata.domain.mdq.po.MdqTable">
-      INSERT INTO linkis_ps_datasource_table(<include refid="table_List"/>) VALUES (
+        INSERT INTO linkis_ps_datasource_table(<include refid="table_List"/>) VALUES (
         #{id},#{database},#{name},#{alias},#{creator},#{comment},#{createTime},#{productName},#{projectName},#{usage},
         #{lifecycle},#{useWay},#{isImport},#{modelLevel},#{isExternalUse},#{isPartitionTable},#{isAvailable}
         )

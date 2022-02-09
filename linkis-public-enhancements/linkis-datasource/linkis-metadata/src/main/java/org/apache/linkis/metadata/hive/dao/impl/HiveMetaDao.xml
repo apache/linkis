@@ -15,7 +15,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
+  
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="org.apache.linkis.metadata.hive.dao.HiveMetaDao">
@@ -45,11 +45,6 @@
         order by NAME
     </select>
 
-    <select id="getAllDbs" resultType="java.lang.String">
-        select NAME from DBS
-        GROUP BY NAME
-        order by NAME
-    </select>
     <select id="getTablesByDbNameAndUser" resultType="map"  parameterType="map">
         select t2.TBL_NAME as NAME, t2.TBL_TYPE as TYPE, t2.CREATE_TIME as CREATE_TIME, t2.LAST_ACCESS_TIME as LAST_ACCESS_TIME, t2.OWNER as OWNER
         from DB_PRIVS t1,TBLS t2, DBS t3
@@ -81,16 +76,6 @@
         and t2.DB_ID=t3.DB_ID
         and lcase(t1.TBL_PRIV) in ('select','all')
         and t1.PRINCIPAL_NAME in (select ROLE_NAME from ROLES where ROLE_ID in (select ROLE_ID from ROLE_MAP where PRINCIPAL_NAME = #{userName,jdbcType=VARCHAR}))
-        and t3.NAME = #{dbName,jdbcType=VARCHAR}
-        order by NAME;
-    </select>
-
-
-    <select id="getTablesByDbName" resultType="map"  parameterType="map">
-        select t2.TBL_NAME as NAME, t2.TBL_TYPE as TYPE, t2.CREATE_TIME as CREATE_TIME, t2.LAST_ACCESS_TIME as LAST_ACCESS_TIME, t2.OWNER as OWNER
-        from TBLS t2 , DBS t3
-        where
-        t2.DB_ID=t3.DB_ID
         and t3.NAME = #{dbName,jdbcType=VARCHAR}
         order by NAME;
     </select>
@@ -138,7 +123,7 @@
         );
     </select>
 
-    <select id="getTableComment" resultType="java.lang.String">
+    <select id="getTableComment" resultType="String">
         SELECT
         tp.PARAM_VALUE
         FROM

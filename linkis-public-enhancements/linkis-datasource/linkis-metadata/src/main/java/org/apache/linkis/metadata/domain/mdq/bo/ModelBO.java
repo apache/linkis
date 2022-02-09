@@ -17,6 +17,7 @@
 
 package org.apache.linkis.metadata.domain.mdq.bo;
 
+
 public class ModelBO {
     private Integer lifecycle;
     private Integer modelLevel;

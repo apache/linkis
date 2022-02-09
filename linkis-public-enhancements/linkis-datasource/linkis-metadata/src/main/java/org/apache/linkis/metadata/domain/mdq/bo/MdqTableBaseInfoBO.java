@@ -17,6 +17,7 @@
 
 package org.apache.linkis.metadata.domain.mdq.bo;
 
+
 public class MdqTableBaseInfoBO {
     private BaseBO base;
     private ModelBO model;

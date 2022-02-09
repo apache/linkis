@@ -38,5 +38,6 @@
         <module>linkis-metadata-manager/service/hive</module>
         <module>linkis-metadata-manager/service/kafka</module>
         <module>linkis-metadata-manager/service/mysql</module>
+        <module>linkis-datasource-client</module>
     </modules>
 </project>

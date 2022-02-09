@@ -17,6 +17,7 @@
 
 package org.apache.linkis.metadata.domain.mdq.po;
 
+
 public class MdqImport {
     private Long id;
     private Long tableId;

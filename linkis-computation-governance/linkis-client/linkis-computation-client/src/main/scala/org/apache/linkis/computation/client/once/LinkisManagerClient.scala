@@ -34,7 +34,8 @@ trait LinkisManagerClient extends Closeable {
 
   def killEngineConn(killEngineConnAction: KillEngineConnAction): KillEngineConnResult
 
-  def executeEngineConnOperation(engineOperateAction: EngineConnOperateAction): EngineConnOperateResult
+  def executeEngineConnOperation(engineConnOperateAction: EngineConnOperateAction): EngineConnOperateResult
+
 
 }
 object LinkisManagerClient {

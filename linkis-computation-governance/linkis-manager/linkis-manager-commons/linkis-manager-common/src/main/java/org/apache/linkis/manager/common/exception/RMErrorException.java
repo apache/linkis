@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.resourcemanager.exception;
+package org.apache.linkis.manager.common.exception;
 
 import org.apache.linkis.common.exception.ErrorException;
 

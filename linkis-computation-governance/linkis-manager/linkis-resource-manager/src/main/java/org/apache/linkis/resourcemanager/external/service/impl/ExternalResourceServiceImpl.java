@@ -19,11 +19,11 @@ package org.apache.linkis.resourcemanager.external.service.impl;
 
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
+import org.apache.linkis.manager.common.exception.RMErrorException;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.cluster.ClusterLabel;
 import org.apache.linkis.resourcemanager.domain.RMLabelContainer;
-import org.apache.linkis.resourcemanager.exception.RMErrorException;
 import org.apache.linkis.resourcemanager.external.dao.ExternalResourceProviderDao;
 import org.apache.linkis.resourcemanager.external.domain.ExternalAppInfo;
 import org.apache.linkis.resourcemanager.external.domain.ExternalResourceIdentifier;

@@ -36,11 +36,12 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class ScheduledTask {
 
-    private static final Long SIZWE = 365 * RestfulUtils.DAY;
 
-    @Autowired private ResourceService resourceService;
+    @Autowired
+    private ResourceService resourceService;
 
-    @Autowired private VersionService versionService;
+    @Autowired
+    private VersionService versionService;
 
     private Logger logger = LoggerFactory.getLogger(ScheduledTask.class);
 

@@ -144,3 +144,13 @@ class BmlDownloadShareResult extends BmlResult{
 class BmlUpdateProjectResult extends BmlResult{
 
 }
+
+@DWSHttpMessageResult("/api/rest_j/v\\d+/bml/rollbackVersion")
+class BmlRollbackVersionResult extends BmlResult{
+
+}
+
+@DWSHttpMessageResult("/api/rest_j/v\\d+/bml/copyResourceToAnotherUser")
+class BmlCopyResourceResult extends BmlResult{
+
+}

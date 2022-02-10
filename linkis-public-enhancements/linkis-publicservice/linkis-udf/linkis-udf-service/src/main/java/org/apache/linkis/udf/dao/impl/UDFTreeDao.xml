@@ -54,12 +54,12 @@
         WHERE id = #{id,jdbcType=BIGINT}
     </update>
 
-    <delete id="deleteTree" >
+    <delete id="deleteTree">
         DELETE FROM linkis_ps_udf_tree
         where id = #{arg0} and user_name=#{arg1}
     </delete>
 
-    <select id="getTreeById" resultMap="UDFTreeResultMap">
+    <select id="getTreeByIdAndCategory" resultMap="UDFTreeResultMap">
         select
         <include refid="udf_Tree_List"/>
         from linkis_ps_udf_tree
@@ -82,5 +82,21 @@
         </if>
     </select>
 
+    <select id="getTreeByNameAndUser" resultMap="UDFTreeResultMap">
+        select
+        <include refid="udf_Tree_List"/>
+        from linkis_ps_udf_tree
+        where name=#{treeName} and user_name=#{userName} and category=#{category} and parent in
+        (select id from linkis_ps_udf_tree where parent = -1 and category=#{category} and user_name=#{userName})
+    </select>
 
+    <select id="getUserDirectory" resultType="java.lang.String">
+        select name from linkis_ps_udf_tree where user_name=#{userName} and category=#{category} and parent in
+        (select id from linkis_ps_udf_tree where parent = -1 and category=#{category} and user_name=#{userName})
+    </select>
+
+    <select id="getTreeById" resultType="org.apache.linkis.udf.entity.UDFTree">
+        select <include refid="udf_Tree_List"/>
+        from linkis_ps_udf_tree where id=#{id}
+    </select>
 </mapper>

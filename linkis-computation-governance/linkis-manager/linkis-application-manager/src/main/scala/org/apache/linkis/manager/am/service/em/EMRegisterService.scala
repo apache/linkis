@@ -18,7 +18,7 @@
 package org.apache.linkis.manager.am.service.em
 
 import org.apache.linkis.manager.common.protocol.em.{RegisterEMRequest, RegisterEMResponse}
-import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.rpc.Sender
 
 
 trait EMRegisterService {
@@ -29,6 +29,6 @@ trait EMRegisterService {
     *
     * @param emRegister
     */
-  def addEMNodeInstance(emRegister: RegisterEMRequest, scm: ServiceMethodContext): RegisterEMResponse
+  def addEMNodeInstance(emRegister: RegisterEMRequest, sender: Sender): RegisterEMResponse
 
 }

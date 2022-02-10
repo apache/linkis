@@ -18,11 +18,12 @@
 package org.apache.linkis.manager.am.service.engine
 
 import org.apache.linkis.manager.common.protocol.engine.{EngineConnReleaseRequest, EngineInfoClearRequest}
+import org.apache.linkis.rpc.Sender
 
 
 trait EngineKillService {
 
   def killEngine(engineInfoClearRequest: EngineInfoClearRequest): Unit
 
-  def dealEngineRelease(engineConnReleaseRequest: EngineConnReleaseRequest): Unit
+  def dealEngineRelease(engineConnReleaseRequest: EngineConnReleaseRequest, sender: Sender): Unit
 }

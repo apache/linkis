@@ -31,6 +31,7 @@ object RunType extends Enumeration {
   val SHELL = Value("shell")
   val IO_FILE = Value("io_file")
   val IO_HDFS = Value("io_hdfs")
+  val FPS = Value("fps")
   val PIPELINE = Value("pipeline")
   val JDBC = Value("jdbc")
   val PRESTO_SQL = Value("psql")

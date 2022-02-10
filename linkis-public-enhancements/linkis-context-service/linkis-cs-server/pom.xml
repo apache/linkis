@@ -73,7 +73,7 @@
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.linkis</groupId>
-                    <artifactId>linkis-message-scheduler</artifactId>
+                    <artifactId>linkis-rpc</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -85,14 +85,14 @@
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.linkis</groupId>
-                    <artifactId>linkis-message-scheduler</artifactId>
+                    <artifactId>linkis-rpc</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-message-scheduler</artifactId>
+            <artifactId>linkis-rpc</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>

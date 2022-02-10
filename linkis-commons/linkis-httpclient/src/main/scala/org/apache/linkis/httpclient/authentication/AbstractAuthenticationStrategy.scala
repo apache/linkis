@@ -18,12 +18,12 @@
 package org.apache.linkis.httpclient.authentication
 
 import java.util.concurrent.ConcurrentHashMap
-
 import org.apache.linkis.httpclient.Client
 import org.apache.linkis.httpclient.config.ClientConfig
 import org.apache.linkis.httpclient.request.{Action, UserAction}
 import org.apache.commons.lang.StringUtils
 import org.apache.http.HttpResponse
+import org.apache.linkis.common.utils.Logging
 
 
 abstract class AbstractAuthenticationStrategy extends AuthenticationStrategy with Logging{

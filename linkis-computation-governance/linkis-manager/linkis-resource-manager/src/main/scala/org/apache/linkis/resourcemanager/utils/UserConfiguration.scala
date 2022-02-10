@@ -21,11 +21,11 @@ import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfigWithGlobalConfig, RequestQueryGlobalConfig, ResponseQueryConfig}
 import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.exception.RMWarnException
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.manager.label.utils.{EngineTypeLabelCreator, LabelUtils}
 import org.apache.linkis.protocol.CacheableProtocol
-import org.apache.linkis.resourcemanager.exception.RMWarnException
 import org.apache.linkis.resourcemanager.utils.RMConfiguration._
 import org.apache.linkis.rpc.RPCMapCache
 

@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.resourcemanager.exception;
+package org.apache.linkis.manager.common.exception;
 
-import org.apache.linkis.common.exception.FatalException;
+import org.apache.linkis.common.exception.WarnException;
 
-public class RMFatalException extends FatalException {
+public class RMWarnException extends WarnException {
 
-    public RMFatalException(int errCode, String desc) {
+    public RMWarnException(int errCode, String desc) {
         super(errCode, desc);
     }
 
-    public RMFatalException(int errCode, String desc, String ip, int port, String serviceKind) {
+    public RMWarnException(int errCode, String desc, String ip, int port, String serviceKind) {
         super(errCode, desc, ip, port, serviceKind);
     }
 }

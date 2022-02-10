@@ -19,8 +19,9 @@ package org.apache.linkis.resourcemanager.service.impl
 
 import org.apache.linkis.manager.common.entity.resource.ResourceType.DriverAndYarn
 import org.apache.linkis.manager.common.entity.resource.{DriverAndYarnResource, NodeResource, Resource, ResourceSerializer, ResourceType, YarnResource}
+import org.apache.linkis.manager.common.exception.RMWarnException
 import org.apache.linkis.resourcemanager.domain.RMLabelContainer
-import org.apache.linkis.resourcemanager.exception.{RMErrorCode, RMWarnException}
+import org.apache.linkis.resourcemanager.exception.RMErrorCode
 import org.apache.linkis.resourcemanager.external.service.ExternalResourceService
 import org.apache.linkis.resourcemanager.external.yarn.YarnResourceIdentifier
 import org.apache.linkis.resourcemanager.service.{LabelResourceService, RequestResourceService}

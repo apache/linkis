@@ -15,29 +15,38 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.resourcemanager.protocol;
+package org.apache.linkis.manager.common.protocol.engine;
 
-import org.apache.linkis.manager.common.protocol.em.EMRequest;
+import org.apache.linkis.manager.common.entity.node.EngineNode;
 
-public class TimeoutEMEngineRequest implements EMRequest {
+import java.io.Serializable;
+
+
+public class EngineReourceClearRequest implements EngineRequest, Serializable {
+
+
+    private EngineNode engineNode;
 
     private String user;
-    private String ticketId;
 
-    @Override
-    public String getUser() {
-        return user;
+    public EngineReourceClearRequest() {
+
+    }
+
+    public EngineNode getEngineNode() {
+        return engineNode;
+    }
+
+    public void setEngineNode(EngineNode engineNode) {
+        this.engineNode = engineNode;
     }
 
     public void setUser(String user) {
         this.user = user;
     }
 
-    public String getTicketId() {
-        return ticketId;
-    }
-
-    public void setTicketId(String ticketId) {
-        this.ticketId = ticketId;
+    @Override
+    public String getUser() {
+        return user;
     }
 }

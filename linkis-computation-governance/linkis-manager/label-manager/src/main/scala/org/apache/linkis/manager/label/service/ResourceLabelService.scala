@@ -17,6 +17,7 @@
  
 package org.apache.linkis.manager.label.service
 
+import org.apache.linkis.manager.common.entity.persistence.PersistenceResource
 import org.apache.linkis.manager.common.entity.resource.NodeResource
 import org.apache.linkis.manager.label.entity.Label
 
@@ -64,6 +65,8 @@ trait ResourceLabelService {
 
 
   def removeResourceByLabels(labels: java.util.List[Label[_]]): Unit
+
+  def getPersistenceResourceByLabel(label: Label[_]): PersistenceResource
 
 
 }

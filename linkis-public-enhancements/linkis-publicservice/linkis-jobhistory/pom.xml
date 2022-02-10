@@ -63,6 +63,11 @@
             <artifactId>linkis-computation-governance-common</artifactId>
             <version>${linkis.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-manager-common</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
     </dependencies>
 
 

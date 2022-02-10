@@ -24,6 +24,7 @@ import java.{lang, util}
 import com.google.gson._
 import org.apache.linkis.bml.http.HttpConf
 import org.apache.linkis.httpclient.request._
+import org.apache.http.HttpResponse
 
 trait BmlAction extends UserAction{
 
@@ -184,8 +185,9 @@ case class BmlUpdateShareResourceAction(filePaths:Array[String],
 
 case class BmlDownloadAction() extends BmlGETAction with DownloadAction with UserAction{
 
-  private var inputStream:InputStream = _
-  private var user:String = _
+  private var inputStream: InputStream = _
+  private var user: String = _
+  private var respoonse: HttpResponse = _
 
   def getInputStream:InputStream = this.inputStream
 
@@ -198,13 +200,18 @@ case class BmlDownloadAction() extends BmlGETAction with DownloadAction with Use
   override def setUser(user: String): Unit = this.user = user
 
   override def getUser: String = this.user
+
+  override def getResponse: HttpResponse = respoonse
+
+  override def setResponse(response: HttpResponse): Unit = this.respoonse = response
 }
 
 
 case class BmlDownloadShareAction() extends BmlGETAction with DownloadAction with UserAction{
 
-  private var inputStream:InputStream = _
-  private var user:String = _
+  private var inputStream: InputStream = _
+  private var user: String = _
+  private var response: HttpResponse = _
 
   def getInputStream:InputStream = this.inputStream
 
@@ -217,6 +224,10 @@ case class BmlDownloadShareAction() extends BmlGETAction with DownloadAction wit
   override def setUser(user: String): Unit = this.user = user
 
   override def getUser: String = this.user
+
+  override def getResponse: HttpResponse = response
+
+  override def setResponse(response: HttpResponse): Unit = this.response = response
 }
 
 
@@ -279,4 +290,16 @@ case class UpdateBmlProjectAction() extends BmlPOSTAction{
 
 case class BmlAttachAction()extends BmlPOSTAction{
   override def getURL: String = HttpConf.attachUrl
+}
+
+case class BmlChangeOwnerAction() extends BmlPOSTAction {
+  override def getURL: String = HttpConf.changeOwnerUrl
+}
+
+case class BmlCopyResourceAction() extends BmlPOSTAction {
+  override def getURL: String = HttpConf.copyResourceUrl
+}
+
+case class BmlRollbackVersionAction() extends BmlPOSTAction {
+  override def getURL: String = HttpConf.rollbackVersionUrl
 }

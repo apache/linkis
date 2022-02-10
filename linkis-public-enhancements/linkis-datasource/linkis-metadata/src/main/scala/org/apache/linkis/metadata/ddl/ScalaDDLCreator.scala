@@ -75,6 +75,9 @@ object ScalaDDLCreator extends DDLCreator with SQLConst with Logging{
         append(RIGHT_PARENTHESES).append(SPACE)
     }
     createTableCode.append(STORED_AS).append(SPACE).append(MdqConfiguration.DEFAULT_STORED_TYPE.getValue).append(SPACE)
+    if (StringUtils.isNotBlank(tableInfo.getTableBaseInfo.getBase.getComment)) {
+      createTableCode.append(COMMENT).append(SPACE).append(SINGLE_MARK).append(tableInfo.getTableBaseInfo.getBase.getComment).append(SINGLE_MARK).append(SPACE)
+    }
     createTableCode.append(MARKS)
     createTableCode.append(RIGHT_PARENTHESES)
     val finalCode = createTableCode.toString()

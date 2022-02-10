@@ -17,6 +17,7 @@
 
 package org.apache.linkis.resourcemanager.external.service.impl;
 
+import org.apache.linkis.manager.common.conf.RMConfiguration;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
 import org.apache.linkis.manager.common.exception.RMErrorException;
@@ -33,7 +34,6 @@ import org.apache.linkis.resourcemanager.external.parser.YarnResourceIdentifierP
 import org.apache.linkis.resourcemanager.external.request.ExternalResourceRequester;
 import org.apache.linkis.resourcemanager.external.service.ExternalResourceService;
 import org.apache.linkis.resourcemanager.external.yarn.YarnResourceRequester;
-import org.apache.linkis.resourcemanager.utils.RMConfiguration;
 import org.apache.linkis.resourcemanager.utils.RMUtils;
 
 import org.apache.commons.lang.exception.ExceptionUtils;

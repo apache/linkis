@@ -21,9 +21,11 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.manager.common.entity.resource.NodeResource
 import org.apache.linkis.protocol.message.RequestProtocol
 
+import java.util
 
 trait ResourceProtocol extends RequestProtocol
 
 case class ResourceUsedProtocol(serviceInstance: ServiceInstance, engineResource: NodeResource, ticketId: String = null) extends RequestProtocol
 
+case class ResponseTaskYarnResource(execId: String, resourceMap: util.HashMap[String, ResourceWithStatus]) extends RequestProtocol
 

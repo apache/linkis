@@ -17,7 +17,7 @@
  
 package org.apache.linkis.instance.label.service
 
-import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.rpc.Sender
 import org.apache.linkis.protocol.label._
 
 
@@ -27,21 +27,21 @@ trait InsLabelRpcService {
    * Attach labels
    * @param insLabelAttachRequest request
    */
-  def attachLabelsToInstance(context: ServiceMethodContext, insLabelAttachRequest: InsLabelAttachRequest): Unit = ???
+  def attachLabelsToInstance(sender: Sender, insLabelAttachRequest: InsLabelAttachRequest): Unit = ???
 
   /**
    * Refresh labels
    * @param insLabelRefreshRequest request
    */
-  def refreshLabelsToInstance(context: ServiceMethodContext, insLabelRefreshRequest: InsLabelRefreshRequest): Unit = ???
+  def refreshLabelsToInstance(sender: Sender, insLabelRefreshRequest: InsLabelRefreshRequest): Unit = ???
 
   /**
    * Remove labels
    * @param insLabelRemoveRequest request
    */
-  def removeLabelsFromInstance(context: ServiceMethodContext, insLabelRemoveRequest: InsLabelRemoveRequest): Unit = ???
+  def removeLabelsFromInstance(sender: Sender, insLabelRemoveRequest: InsLabelRemoveRequest): Unit = ???
 
-  def queryLabelsFromInstance(context: ServiceMethodContext, insLabelQueryRequest: InsLabelQueryRequest): InsLabelQueryResponse
+  def queryLabelsFromInstance(sender: Sender, insLabelQueryRequest: InsLabelQueryRequest): InsLabelQueryResponse
 
-  def queryInstanceFromLabels(context: ServiceMethodContext, labelInsQueryRequest: LabelInsQueryRequest): LabelInsQueryResponse
+  def queryInstanceFromLabels(sender: Sender, labelInsQueryRequest: LabelInsQueryRequest): LabelInsQueryResponse
 }

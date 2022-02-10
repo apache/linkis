@@ -15,34 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.resourcemanager.protocol;
+package org.apache.linkis.manager.common.protocol.resource
 
-public class TimeoutEMEngineResponse {
-    private String ticketId;
-    private Boolean canReleaseResource;
-    private Long nextAskInterval;
+/**
+ * @param queueMemory memory unit is bytes
+ * @param queueCores
+ * @param queueInstances
+ * @param jobStatus
+ */
+class ResourceWithStatus(val queueMemory: Long, val queueCores: Int, val queueInstances: Int, val jobStatus: String, val queue: String) {
 
-    public String getTicketId() {
-        return ticketId;
-    }
-
-    public void setTicketId(String ticketId) {
-        this.ticketId = ticketId;
-    }
-
-    public Boolean getCanReleaseResource() {
-        return canReleaseResource;
-    }
-
-    public void setCanReleaseResource(Boolean canReleaseResource) {
-        this.canReleaseResource = canReleaseResource;
-    }
-
-    public Long getNextAskInterval() {
-        return nextAskInterval;
-    }
-
-    public void setNextAskInterval(Long nextAskInterval) {
-        this.nextAskInterval = nextAskInterval;
-    }
 }

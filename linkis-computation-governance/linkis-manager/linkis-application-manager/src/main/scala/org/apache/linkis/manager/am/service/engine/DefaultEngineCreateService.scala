@@ -28,7 +28,7 @@ import org.apache.linkis.manager.am.conf.{AMConfiguration, EngineConnConfigurati
 import org.apache.linkis.manager.am.exception.{AMErrorCode, AMErrorException}
 import org.apache.linkis.manager.am.label.EngineReuseLabelChooser
 import org.apache.linkis.manager.am.pointer.EngineConnPluginPointer
-import org.apache.linkis.manager.am.selector.NodeSelector
+import org.apache.linkis.manager.am.selector.{ECAvailableRule, NodeSelector}
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
@@ -48,6 +48,7 @@ import org.apache.linkis.manager.service.common.label.{LabelChecker, LabelFilter
 import org.apache.linkis.rpc.serializer.annotation.Receiver
 import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.apache.linkis.resourcemanager.{AvailableResource, NotEnoughResource}
+import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.BDPJettyServerHelper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

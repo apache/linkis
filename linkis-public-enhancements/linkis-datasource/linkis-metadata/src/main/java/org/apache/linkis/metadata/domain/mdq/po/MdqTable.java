@@ -19,7 +19,6 @@ package org.apache.linkis.metadata.domain.mdq.po;
 
 import java.util.Date;
 
-
 public class MdqTable {
     private Long id;
     private String database;
@@ -177,24 +176,49 @@ public class MdqTable {
 
     @Override
     public String toString() {
-        return "MdqTable{" +
-                "id=" + id +
-                ", database='" + database + '\'' +
-                ", name='" + name + '\'' +
-                ", alias='" + alias + '\'' +
-                ", creator='" + creator + '\'' +
-                ", comment='" + comment + '\'' +
-                ", createTime=" + createTime +
-                ", productName='" + productName + '\'' +
-                ", projectName='" + projectName + '\'' +
-                ", usage='" + usage + '\'' +
-                ", lifecycle=" + lifecycle +
-                ", useWay=" + useWay +
-                ", isImport=" + isImport +
-                ", modelLevel=" + modelLevel +
-                ", isExternalUse=" + isExternalUse +
-                ", isPartitionTable=" + isPartitionTable +
-                ", isAvailable=" + isAvailable +
-                '}';
+        return "MdqTable{"
+                + "id="
+                + id
+                + ", database='"
+                + database
+                + '\''
+                + ", name='"
+                + name
+                + '\''
+                + ", alias='"
+                + alias
+                + '\''
+                + ", creator='"
+                + creator
+                + '\''
+                + ", comment='"
+                + comment
+                + '\''
+                + ", createTime="
+                + createTime
+                + ", productName='"
+                + productName
+                + '\''
+                + ", projectName='"
+                + projectName
+                + '\''
+                + ", usage='"
+                + usage
+                + '\''
+                + ", lifecycle="
+                + lifecycle
+                + ", useWay="
+                + useWay
+                + ", isImport="
+                + isImport
+                + ", modelLevel="
+                + modelLevel
+                + ", isExternalUse="
+                + isExternalUse
+                + ", isPartitionTable="
+                + isPartitionTable
+                + ", isAvailable="
+                + isAvailable
+                + '}';
     }
 }

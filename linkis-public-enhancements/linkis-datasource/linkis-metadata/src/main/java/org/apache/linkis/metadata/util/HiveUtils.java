@@ -1,4 +1,4 @@
-  /*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,39 +17,37 @@
 
 package org.apache.linkis.metadata.util;
 
-  import org.apache.commons.codec.binary.Base64;
-  import org.apache.commons.lang.StringUtils;
-  import org.apache.hadoop.conf.Configuration;
-  import org.apache.hadoop.fs.Path;
-  import org.apache.log4j.Logger;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.log4j.Logger;
 
-  import java.io.File;
+import java.io.File;
 
-  public class HiveUtils {
+public class HiveUtils {
 
-      static Logger logger = Logger.getLogger(HiveUtils.class);
+    static Logger logger = Logger.getLogger(HiveUtils.class);
 
-      public static Configuration getDefaultConf(String userName) {
-          Configuration conf = new Configuration();
-          String hiveConfPath = DWSConfig.HIVE_CONF_DIR.getValue();
-          if (StringUtils.isNotEmpty(hiveConfPath)) {
-              logger.info("Load hive configuration from " + hiveConfPath);
-              conf.addResource(new Path(hiveConfPath + File.separator + "hive-site.xml"));
-          } else {
-              conf.addResource("hive-site.xml");
-          }
-          return conf;
-      }
+    public static Configuration getDefaultConf(String userName) {
+        Configuration conf = new Configuration();
+        String hiveConfPath = DWSConfig.HIVE_CONF_DIR.getValue();
+        if (StringUtils.isNotEmpty(hiveConfPath)) {
+            logger.info("Load hive configuration from " + hiveConfPath);
+            conf.addResource(new Path(hiveConfPath + File.separator + "hive-site.xml"));
+        } else {
+            conf.addResource("hive-site.xml");
+        }
+        return conf;
+    }
 
-      public static String decode(String str) {
-          String res = str;
-          try {
-              res = new String(Base64.decodeBase64(str));
-          } catch (Throwable e) {
-              logger.error(str + " decode failed", e);
-          }
-          return res;
-      }
-
-
-  }
+    public static String decode(String str) {
+        String res = str;
+        try {
+            res = new String(Base64.decodeBase64(str));
+        } catch (Throwable e) {
+            logger.error(str + " decode failed", e);
+        }
+        return res;
+    }
+}

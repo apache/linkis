@@ -19,7 +19,6 @@ package org.apache.linkis.metadata.domain.mdq.bo;
 
 import java.util.List;
 
-
 public class MdqTableBO {
 
     private MdqTableImportInfoBO importInfo;

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.metadata.domain.mdq.po;
 
-
 public class MdqField {
     private Long id;
     private Long tableId;

@@ -19,11 +19,10 @@ package org.apache.linkis.metadata.domain.mdq.bo;
 
 import java.util.Map;
 
-
 public class MdqTableImportInfoBO {
     private Integer importType;
 
-    private Map<String,String> args;
+    private Map<String, String> args;
 
     private String destination;
 

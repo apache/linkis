@@ -17,7 +17,6 @@
 
 package org.apache.linkis.metadata.domain.mdq.bo;
 
-
 public class MdqTableFieldsInfoBO {
     private String name;
     private String type;

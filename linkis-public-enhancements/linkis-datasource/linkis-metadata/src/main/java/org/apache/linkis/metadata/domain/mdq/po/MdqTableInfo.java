@@ -19,7 +19,6 @@ package org.apache.linkis.metadata.domain.mdq.po;
 
 import java.util.Date;
 
-
 public class MdqTableInfo {
     private Long id;
     private Long tableId;

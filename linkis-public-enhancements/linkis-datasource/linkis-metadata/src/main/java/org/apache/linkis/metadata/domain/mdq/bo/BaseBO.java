@@ -19,7 +19,6 @@ package org.apache.linkis.metadata.domain.mdq.bo;
 
 import java.util.Date;
 
-
 public class BaseBO {
     private String database;
     private String name;

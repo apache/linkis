@@ -17,7 +17,6 @@
 
 package org.apache.linkis.metadata.domain.mdq.bo;
 
-
 public class ApplicationBO {
     private String productName;
     private String projectName;

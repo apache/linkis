@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.resourcemanager.utils
+package org.apache.linkis.manager.common.conf
 
 import org.apache.linkis.common.conf.{ByteType, CommonVars, TimeType}
 

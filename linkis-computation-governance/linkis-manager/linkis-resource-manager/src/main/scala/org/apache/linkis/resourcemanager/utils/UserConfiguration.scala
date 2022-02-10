@@ -26,7 +26,7 @@ import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContex
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.manager.label.utils.{EngineTypeLabelCreator, LabelUtils}
 import org.apache.linkis.protocol.CacheableProtocol
-import org.apache.linkis.resourcemanager.utils.RMConfiguration._
+import org.apache.linkis.manager.common.conf.RMConfiguration._
 import org.apache.linkis.rpc.RPCMapCache
 
 import java.util

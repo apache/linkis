@@ -21,14 +21,14 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.protocol.engine.EngineCreateRequest
-import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.rpc.Sender
 
 trait EngineCreateService {
 
   def getEngineNode(serviceInstance: ServiceInstance): EngineNode
 
   @throws[LinkisRetryException]
-  def createEngine(engineCreateRequest: EngineCreateRequest, smc: ServiceMethodContext): EngineNode
+  def createEngine(engineCreateRequest: EngineCreateRequest, sender: Sender): EngineNode
 
 
 }

@@ -18,8 +18,7 @@
 package org.apache.linkis.manager.am.service.engine
 
 
-import java.util
-import java.util.concurrent.{TimeUnit, TimeoutException}
+import org.apache.commons.lang.StringUtils
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
@@ -46,17 +45,16 @@ import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelServi
 import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.manager.persistence.{NodeManagerPersistence, NodeMetricManagerPersistence, ResourceManagerPersistence}
 import org.apache.linkis.manager.service.common.label.{LabelChecker, LabelFilter}
-import org.apache.linkis.message.annotation.Receiver
-import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.rpc.serializer.annotation.Receiver
 import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.apache.linkis.resourcemanager.{AvailableResource, NotEnoughResource}
 import org.apache.linkis.server.BDPJettyServerHelper
-import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+import java.util
+import java.util.concurrent.{TimeUnit, TimeoutException}
 import scala.collection.JavaConversions._
-import scala.concurrent.ExecutionContextExecutorService
 import scala.concurrent.duration.Duration
 
 
@@ -111,7 +109,8 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     val engineNode = getEngineNodeManager.getEngineNode(serviceInstance)
     if (engineNode != null) {
       if (engineNode.getNodeStatus == null) {
-        engineNode.setNodeStatus(NodeStatus.values()(nodeMetricManagerPersistence.getNodeMetrics(engineNode).getStatus))
+        val nodeMetric = nodeMetricManagerPersistence.getNodeMetrics(engineNode)
+        engineNode.setNodeStatus(if (Option(nodeMetric).isDefined) NodeStatus.values()(nodeMetric.getStatus) else NodeStatus.Starting)
       }
       return engineNode
     }
@@ -137,7 +136,7 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
 
   @Receiver
   @throws[LinkisRetryException]
-  override def createEngine(engineCreateRequest: EngineCreateRequest, smc: ServiceMethodContext): EngineNode = {
+  override def createEngine(engineCreateRequest: EngineCreateRequest, sender: Sender): EngineNode = {
     val startTime = System.currentTimeMillis
     info(s"Start to create Engine for request: $engineCreateRequest.")
     val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
@@ -187,15 +186,30 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
       resource,
       EngineConnCreationDescImpl(engineCreateRequest.getCreateService, engineCreateRequest.getDescription, engineCreateRequest.getProperties))
 
-    //6. 调用EM发送引擎启动请求调用ASK TODO 异常和等待时间处理
-    val engineNode = getEMService().createEngine(engineBuildRequest, emNode)
-    info(s"Finished to create  engineConn $engineNode. ticketId is $resourceTicketId")
-    engineNode.setTicketId(resourceTicketId);
-    //7. 更新持久化信息：包括插入engine/metrics
+    //6. 调用EM发送引擎启动请求调用ASK
     //AM会更新serviceInstance表  需要将ticketID进行替换,并更新 EngineConn的Label 需要修改EngineInstanceLabel 中的id为Instance信息
     val oldServiceInstance = new ServiceInstance
-    oldServiceInstance.setApplicationName(engineNode.getServiceInstance.getApplicationName)
+    oldServiceInstance.setApplicationName(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
     oldServiceInstance.setInstance(resourceTicketId)
+
+    val engineNode = Utils.tryCatch(getEMService().createEngine(engineBuildRequest, emNode)) {
+      case t: Throwable =>
+        logger.info(s"Failed to create ec($resourceTicketId) ask ecm ${emNode.getServiceInstance}")
+        val failedEcNode = getEngineNodeManager.getEngineNode(oldServiceInstance)
+        if (null == failedEcNode) {
+          logger.info(s" engineConn is not exists in db: $oldServiceInstance ")
+        } else {
+          failedEcNode.setLabels(nodeLabelService.getNodeLabels(oldServiceInstance))
+          failedEcNode.getLabels.addAll(LabelUtils.distinctLabel(labelFilter.choseEngineLabel(labelList), emNode.getLabels))
+          engineStopService.engineConnInfoClear(failedEcNode)
+        }
+        throw t
+    }
+
+    info(s"Finished to create  engineConn $engineNode. ticketId is $resourceTicketId")
+    engineNode.setTicketId(resourceTicketId)
+    //7. 更新持久化信息：包括插入engine/metrics
+
     getEngineNodeManager.updateEngineNode(oldServiceInstance, engineNode)
 
     //8. 新增 EngineConn的Label,添加engineConn的Alias
@@ -207,29 +221,13 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
       info(s"Return a EngineConn $engineNode for request: $engineCreateRequest since the creator set ignoreTimeout=true and maxStartTime is reached.")
       return engineNode
     }
-    Utils.tryCatch {
-      val leftWaitTime = timeout - (System.currentTimeMillis - startTime)
-      info(s"Start to wait engineConn($engineNode) to be available, but only ${ByteTimeUtils.msDurationToString(leftWaitTime)} left.")
-      // 9 获取启动的引擎信息，并等待引擎的状态变为IDLE，如果等待超时则返回给用户，并抛出异常
-      Utils.waitUntil(() => ensuresIdle(engineNode, resourceTicketId), Duration(leftWaitTime, TimeUnit.MILLISECONDS))
-    } {
-      case _: TimeoutException =>
-        if (!engineCreateRequest.isIgnoreTimeout) {
-          logger.info(s"Waiting for engineNode:$engineNode($resourceTicketId) initialization TimeoutException , now stop it.")
-          val stopEngineRequest = new EngineStopRequest(engineNode.getServiceInstance, ManagerUtils.getAdminUser)
-          engineStopService.asyncStopEngine(stopEngineRequest)
-          throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, s"Waiting for engineNode:$engineNode($resourceTicketId) initialization TimeoutException, already waiting $timeout ms")
-        } else {
-          logger.warn(s"Waiting for $engineNode($resourceTicketId) initialization TimeoutException, ignore this exception since the creator set ignoreTimeout=true.")
-          return engineNode
-        }
-      case t: Throwable =>
-        logger.info(s"Waiting for $engineNode($resourceTicketId) initialization failure , now stop it.")
-        val stopEngineRequest = new EngineStopRequest(engineNode.getServiceInstance, ManagerUtils.getAdminUser)
-        engineStopService.asyncStopEngine(stopEngineRequest)
-        throw t
+    val leftWaitTime = timeout - (System.currentTimeMillis - startTime)
+    if (ECAvailableRule.getInstance.isNeedAvailable(labelList)) {
+      ensureECAvailable(engineNode, resourceTicketId, leftWaitTime)
+      logger.info(s"Finished to create Engine for request: $engineCreateRequest and get engineNode $engineNode. time taken ${System.currentTimeMillis() - startTime}ms")
+    } else {
+      logger.info(s"Finished to create Engine for request: $engineCreateRequest and get engineNode $engineNode.And did not judge the availability,time taken ${System.currentTimeMillis() - startTime}ms")
     }
-    logger.info(s"Finished to create Engine for request: $engineCreateRequest and get engineNode $engineNode. time taken ${System.currentTimeMillis() - startTime}ms")
     engineNode
   }
 
@@ -300,5 +298,31 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     (null, None)
   }
 
+  /**
+   * Need to ensure that the newly created amount ec is available before returning
+   * @param engineNode
+   * @param resourceTicketId
+   * @param timeout
+   * @return
+   */
+  def ensureECAvailable(engineNode: EngineNode, resourceTicketId: String, timeout: Long): EngineNode = {
+    Utils.tryCatch {
+      info(s"Start to wait engineConn($engineNode) to be available, but only ${ByteTimeUtils.msDurationToString(timeout)} left.")
+      // 获取启动的引擎信息，并等待引擎的状态变为IDLE，如果等待超时则返回给用户，并抛出异常
+      Utils.waitUntil(() => ensuresIdle(engineNode, resourceTicketId), Duration(timeout, TimeUnit.MILLISECONDS))
+    } {
+      case _: TimeoutException =>
+        logger.info(s"Waiting for engineNode:$engineNode($resourceTicketId) initialization TimeoutException , now stop it.")
+        val stopEngineRequest = new EngineStopRequest(engineNode.getServiceInstance, ManagerUtils.getAdminUser)
+        engineStopService.asyncStopEngine(stopEngineRequest)
+        throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, s"Waiting for engineNode:$engineNode($resourceTicketId) initialization TimeoutException, already waiting $timeout ms")
+      case t: Throwable =>
+        logger.info(s"Waiting for $engineNode($resourceTicketId) initialization failure , now stop it.")
+        val stopEngineRequest = new EngineStopRequest(engineNode.getServiceInstance, ManagerUtils.getAdminUser)
+        engineStopService.asyncStopEngine(stopEngineRequest)
+        throw t
+    }
+    engineNode
+  }
 
 }

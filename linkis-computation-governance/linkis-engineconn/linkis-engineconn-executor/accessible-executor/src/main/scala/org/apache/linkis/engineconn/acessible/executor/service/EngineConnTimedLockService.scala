@@ -109,7 +109,7 @@ class EngineConnTimedLockService extends LockService with Logging {
             })
           } else {
             error("No valid executors while adding lock.")
-          accessibleExecutor.transition(NodeStatus.Idle)
+            accessibleExecutor.transition(NodeStatus.Idle)
           }
           ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus.post(ExecutorLockEvent(accessibleExecutor, lockString))
           Some(lockString)

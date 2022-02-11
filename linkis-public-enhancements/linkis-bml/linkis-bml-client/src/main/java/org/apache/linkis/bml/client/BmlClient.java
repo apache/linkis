@@ -126,9 +126,11 @@ public interface BmlClient extends Closeable {
     BmlDownloadResponse downloadShareResource(
             String user, String resourceId, String version, String path, boolean overwrite);
 
-    BmlChangeOwnerResponse changeOwnerByResourceId(String resourceId, String oldOwner, String newOwner);
+    BmlChangeOwnerResponse changeOwnerByResourceId(
+            String resourceId, String oldOwner, String newOwner);
 
-    BmlCopyResourceResponse copyResourceToAnotherUser(String resourceId, String anotherUser, String originOwner);
+    BmlCopyResourceResponse copyResourceToAnotherUser(
+            String resourceId, String anotherUser, String originOwner);
 
     BmlRollbackVersionResponse rollbackVersion(String resourceId, String version, String user);
 }

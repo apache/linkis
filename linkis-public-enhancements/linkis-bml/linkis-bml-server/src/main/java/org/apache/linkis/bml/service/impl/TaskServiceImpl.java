@@ -17,7 +17,6 @@
 
 package org.apache.linkis.bml.service.impl;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.linkis.bml.Entity.Resource;
 import org.apache.linkis.bml.Entity.ResourceTask;
 import org.apache.linkis.bml.Entity.ResourceVersion;
@@ -31,14 +30,15 @@ import org.apache.linkis.bml.service.ResourceService;
 import org.apache.linkis.bml.service.TaskService;
 import org.apache.linkis.bml.service.VersionService;
 import org.apache.linkis.bml.threading.TaskState;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.storage.FSFactory;
 import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.utils.StorageConfiguration;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -289,7 +289,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResourceTask createRollbackVersionTask(String resourceId, String version, String user, Map<String, Object> properties) throws Exception {
+    public ResourceTask createRollbackVersionTask(
+            String resourceId, String version, String user, Map<String, Object> properties)
+            throws Exception {
         LOGGER.info("begin to rollback version,resourceId:{}, version:{}", resourceId, version);
         String lastVersion = getResourceLastVersion(resourceId);
         String newVersion = generateNewVersion(lastVersion);
@@ -302,7 +304,9 @@ public class TaskServiceImpl implements TaskService {
             src = firstVersionPath + "_" + version;
         }
         FileSystem fs = null;
-        ResourceTask resourceTask = ResourceTask.createRollbackVersionTask(resourceId, newVersion, user, null, properties);
+        ResourceTask resourceTask =
+                ResourceTask.createRollbackVersionTask(
+                        resourceId, newVersion, user, null, properties);
         try {
             taskDao.insert(resourceTask);
             FsPath srcPath = new FsPath(src);
@@ -319,7 +323,8 @@ public class TaskServiceImpl implements TaskService {
             versionDao.insertNewVersion(insertVersion);
             taskDao.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
         } catch (Exception e) {
-            taskDao.updateState2Failed(resourceTask.getId(), TaskState.FAILED.getValue(), new Date(), e.getMessage());
+            taskDao.updateState2Failed(
+                    resourceTask.getId(), TaskState.FAILED.getValue(), new Date(), e.getMessage());
             throw e;
         } finally {
             IOUtils.closeQuietly(fs);
@@ -330,14 +335,21 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public ResourceTask createCopyResourceTask(String resourceId, String anotherUser, Map<String, Object> properties) throws Exception{
-        List<ResourceVersion> resourceVersions = versionDao.getResourceVersionsByResourceId(resourceId);
+    public ResourceTask createCopyResourceTask(
+            String resourceId, String anotherUser, Map<String, Object> properties)
+            throws Exception {
+        List<ResourceVersion> resourceVersions =
+                versionDao.getResourceVersionsByResourceId(resourceId);
         String newResourceId = UUID.randomUUID().toString();
         ResourceHelper resourceHelper = ResourceHelperFactory.getResourceHelper();
         String firstPath = resourceHelper.generatePath(anotherUser, newResourceId, properties);
         FsPath firstDestPath = new FsPath(firstPath);
-        FileSystem hadoopFs = (FileSystem) FSFactory.getFsByProxyUser(firstDestPath, StorageConfiguration.HDFS_ROOT_USER().getValue());
-        FileSystem anotherUserFs = (FileSystem) FSFactory.getFsByProxyUser(firstDestPath, anotherUser);
+        FileSystem hadoopFs =
+                (FileSystem)
+                        FSFactory.getFsByProxyUser(
+                                firstDestPath, StorageConfiguration.HDFS_ROOT_USER().getValue());
+        FileSystem anotherUserFs =
+                (FileSystem) FSFactory.getFsByProxyUser(firstDestPath, anotherUser);
         try {
             hadoopFs.init(null);
             anotherUserFs.init(null);
@@ -347,7 +359,8 @@ public class TaskServiceImpl implements TaskService {
         } catch (IOException e) {
             LOGGER.error("failed to get filesystem:", e);
         }
-        ResourceTask resourceTask = ResourceTask.createCopyResourceTask(newResourceId, anotherUser, null, properties);
+        ResourceTask resourceTask =
+                ResourceTask.createCopyResourceTask(newResourceId, anotherUser, null, properties);
         taskDao.insert(resourceTask);
         for (ResourceVersion resourceVersion : resourceVersions) {
             try {
@@ -357,21 +370,28 @@ public class TaskServiceImpl implements TaskService {
                     destPath = new FsPath(firstPath + "_" + resourceVersion.getVersion());
                 } else {
                     destPath = new FsPath(firstPath);
-                    Resource insertResource = Resource.createNewResource(newResourceId, anotherUser, newResourceId, properties);
+                    Resource insertResource =
+                            Resource.createNewResource(
+                                    newResourceId, anotherUser, newResourceId, properties);
                     resourceDao.uploadResource(insertResource);
                 }
                 hadoopFs.copyFile(srcPath, destPath);
                 hadoopFs.setOwner(destPath, anotherUser);
-                ResourceVersion insertVersion = ResourceVersion.copyFromOldResourceVersion(resourceVersion);
+                ResourceVersion insertVersion =
+                        ResourceVersion.copyFromOldResourceVersion(resourceVersion);
                 insertVersion.setResource(destPath.getSchemaPath());
                 insertVersion.setStartTime(new Date());
                 insertVersion.setEndTime(new Date());
                 insertVersion.setResourceId(newResourceId);
                 versionDao.insertNewVersion(insertVersion);
             } catch (Exception e) {
-                //某一个版本copy失败
-//                LOGGER.error("failed to copy bml file: ", e);
-                taskDao.updateState2Failed(resourceTask.getId(), TaskState.FAILED.getValue(), new Date(), e.getMessage());
+                // 某一个版本copy失败
+                //                LOGGER.error("failed to copy bml file: ", e);
+                taskDao.updateState2Failed(
+                        resourceTask.getId(),
+                        TaskState.FAILED.getValue(),
+                        new Date(),
+                        e.getMessage());
                 IOUtils.closeQuietly(anotherUserFs);
                 IOUtils.closeQuietly(hadoopFs);
                 throw e;

@@ -118,8 +118,8 @@ public class EntranceSpringConfiguration {
             new OnceJobInterceptor(),
             new CSEntranceInterceptor(),
             new ShellDangerousGrammerInterceptor(),
-            //new PythonCodeCheckInterceptor(),
-            //new DBInfoCompleteInterceptor(),
+            // new PythonCodeCheckInterceptor(),
+            // new DBInfoCompleteInterceptor(),
             new SparkCodeCheckInterceptor(),
             new SQLCodeCheckInterceptor(),
             new LabelCheckInterceptor(),
@@ -193,8 +193,6 @@ public class EntranceSpringConfiguration {
         return new EntranceSchedulerContext(groupFactory, consumerManager, executorManager);
     }
 
-
-
     @EntranceExecutorManagerBeanAnnotation
     @ConditionalOnMissingBean(name = {EntranceExecutorManagerBeanAnnotation.BEAN_NAME})
     public ExecutorManager generateExecutorManager(
@@ -215,5 +213,4 @@ public class EntranceSpringConfiguration {
         scheduler.start();
         return scheduler;
     }
-
 }

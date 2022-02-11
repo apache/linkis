@@ -5,10 +5,10 @@ import java.util.Date;
 public class UDFVersion {
     private Long id;
     private Long udfId;
-    private String path; //仅存储用户上一次上传的路径 作提示用
+    private String path; // 仅存储用户上一次上传的路径 作提示用
     private String bmlResourceId;
     private String bmlResourceVersion;
-    private Boolean isPublished; //共享udf被使用的是已发布的最新版本
+    private Boolean isPublished; // 共享udf被使用的是已发布的最新版本
     private String registerFormat;
     private String useFormat;
     private String description;
@@ -16,12 +16,20 @@ public class UDFVersion {
 
     private String md5;
 
+    public UDFVersion() {}
 
-    public UDFVersion() {
-    }
-
-    public UDFVersion(Long id, Long udfId, String path, String bmlResourceId, String bmlResourceVersion,
-                      Boolean isPublished, String registerFormat, String useFormat, String description, Date createTime, String md5) {
+    public UDFVersion(
+            Long id,
+            Long udfId,
+            String path,
+            String bmlResourceId,
+            String bmlResourceVersion,
+            Boolean isPublished,
+            String registerFormat,
+            String useFormat,
+            String description,
+            Date createTime,
+            String md5) {
         this.id = id;
         this.udfId = udfId;
         this.path = path;
@@ -34,7 +42,6 @@ public class UDFVersion {
         this.createTime = createTime;
         this.md5 = md5;
     }
-
 
     public String getMd5() {
         return md5;

@@ -17,27 +17,26 @@
 
 package org.apache.linkis.rpc.serializer.registry;
 
-import com.google.common.collect.Interner;
-import com.google.common.collect.Interners;
 import org.apache.linkis.common.utils.JavaLog;
 import org.apache.linkis.rpc.serializer.parser.DefaultServiceParser;
 import org.apache.linkis.rpc.serializer.parser.ServiceMethod;
 import org.apache.linkis.rpc.serializer.parser.ServiceParser;
+
 import org.springframework.aop.support.AopUtils;
+
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 public abstract class AbstractServiceRegistry extends JavaLog implements ServiceRegistry {
 
     @SuppressWarnings("all")
     public final Interner<String> lock = Interners.<String>newWeakInterner();
-    /**
-     * key:requestprotocol or custom implicit object class name
-     */
+    /** key:requestprotocol or custom implicit object class name */
     private final Map<String, List<ServiceMethod>> serviceMethodCache = new ConcurrentHashMap<>();
 
     private final Map<String, Object> registedServieMap = new ConcurrentHashMap<>();
@@ -47,21 +46,29 @@ public abstract class AbstractServiceRegistry extends JavaLog implements Service
     @SuppressWarnings("all")
     @Override
     public void register(Object service) {
-        //防止不同方式注册时候的并发，比如spring和手动注册,同时防止不同包名下类名一样的service
-        // 默认用getName，则会拿到spring代理过的类，没有方法的注解，比如 org.apache.linkis.jobhistory.service.impl.JobHistoryQueryServiceImpl$$EnhancerBySpringCGLIB$$5fa1dd59
-//        String serviceName = service.getClass().getName();
+        // 防止不同方式注册时候的并发，比如spring和手动注册,同时防止不同包名下类名一样的service
+        // 默认用getName，则会拿到spring代理过的类，没有方法的注解，比如
+        // org.apache.linkis.jobhistory.service.impl.JobHistoryQueryServiceImpl$$EnhancerBySpringCGLIB$$5fa1dd59
+        //        String serviceName = service.getClass().getName();
         // 下面会拿到原始的class，包含方法注解信息
         String serviceName = AopUtils.getTargetClass(service).getName();
         synchronized (this.lock.intern(serviceName)) {
-            //1.是否注册过
+            // 1.是否注册过
             Object o = this.registedServieMap.get(serviceName);
             if (o != null) return;
-            //2..解析
+            // 2..解析
             Map<String, List<ServiceMethod>> serviceMethods = serviceParser.parse(service);
-            serviceMethods.entrySet().stream().forEach(entry -> {if(entry.getValue().size() != 1){
-                error(String.format("rpc receive method init error! find %s method for the request:%s, this type of rpc request will not be handled!", entry.getValue().size(), entry.getKey()));
-            }});
-            //3.注册
+            serviceMethods.entrySet().stream()
+                    .forEach(
+                            entry -> {
+                                if (entry.getValue().size() != 1) {
+                                    error(
+                                            String.format(
+                                                    "rpc receive method init error! find %s method for the request:%s, this type of rpc request will not be handled!",
+                                                    entry.getValue().size(), entry.getKey()));
+                                }
+                            });
+            // 3.注册
             serviceMethods.forEach(this::register);
             this.registedServieMap.put(serviceName, service);
         }
@@ -74,9 +81,9 @@ public abstract class AbstractServiceRegistry extends JavaLog implements Service
      */
     @SuppressWarnings("all")
     private void register(String key, List<ServiceMethod> serviceMethods) {
-        //防止相同key在不同service的并发注册
+        // 防止相同key在不同service的并发注册
         synchronized (this.lock.intern(key)) {
-            //1.添加cache
+            // 1.添加cache
             refreshServiceMethodCache(key, serviceMethods);
         }
     }
@@ -88,5 +95,4 @@ public abstract class AbstractServiceRegistry extends JavaLog implements Service
     public Map<String, List<ServiceMethod>> getServiceMethodCache() {
         return this.serviceMethodCache;
     }
-
 }

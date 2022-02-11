@@ -18,7 +18,6 @@
 package org.apache.linkis.bml.common;
 
 import org.apache.linkis.bml.conf.BmlServerConfiguration;
-import org.apache.linkis.bml.restful.RestfulUtils;
 import org.apache.linkis.bml.service.ResourceService;
 import org.apache.linkis.bml.service.VersionService;
 import org.apache.linkis.common.utils.Utils;
@@ -36,12 +35,9 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class ScheduledTask {
 
+    @Autowired private ResourceService resourceService;
 
-    @Autowired
-    private ResourceService resourceService;
-
-    @Autowired
-    private VersionService versionService;
+    @Autowired private VersionService versionService;
 
     private Logger logger = LoggerFactory.getLogger(ScheduledTask.class);
 

@@ -46,9 +46,7 @@ public class JobRequest {
     private Date createdTime;
     private Date updatedTime;
     private String instances;
-    /**
-     * result location
-     */
+    /** result location */
     private String resultLocation;
 
     private Map<String, Object> metrics = new HashMap<>();

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.resourcemanager.restful.vo;
 
-
 public class UserCreatorEngineType {
 
     private String user;

@@ -19,7 +19,6 @@ package org.apache.linkis.rpc.serializer.parser;
 
 import java.lang.reflect.Method;
 
-
 public class ServiceMethod {
 
     private Object service;

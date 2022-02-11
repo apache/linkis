@@ -223,5 +223,4 @@ public class ResourceVersion {
         insertVersion.setEndTime(oldVersion.getEndTime());
         return insertVersion;
     }
-
 }

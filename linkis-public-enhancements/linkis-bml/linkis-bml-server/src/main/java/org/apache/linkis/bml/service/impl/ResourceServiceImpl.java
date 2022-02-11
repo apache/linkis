@@ -196,7 +196,5 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public void copyResourceToOtherUser(String resourceId, String otherUser) {
-
-    }
+    public void copyResourceToOtherUser(String resourceId, String otherUser) {}
 }

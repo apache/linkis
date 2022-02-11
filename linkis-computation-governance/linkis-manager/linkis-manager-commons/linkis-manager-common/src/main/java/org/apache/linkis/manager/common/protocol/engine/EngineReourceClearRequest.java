@@ -21,17 +21,13 @@ import org.apache.linkis.manager.common.entity.node.EngineNode;
 
 import java.io.Serializable;
 
-
 public class EngineReourceClearRequest implements EngineRequest, Serializable {
-
 
     private EngineNode engineNode;
 
     private String user;
 
-    public EngineReourceClearRequest() {
-
-    }
+    public EngineReourceClearRequest() {}
 
     public EngineNode getEngineNode() {
         return engineNode;

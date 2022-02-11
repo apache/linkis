@@ -20,8 +20,6 @@ package org.apache.linkis.mybatis;
 import org.apache.linkis.common.utils.JavaLog;
 import org.apache.linkis.mybatis.conf.MybatisConfiguration;
 
-import com.alibaba.druid.pool.DruidDataSource;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,5 +89,4 @@ public class DataSourceConfig extends JavaLog {
         datasource.setRemoveAbandonedTimeout(removeAbandonedTimeout);
         return datasource;
     }
-
 }

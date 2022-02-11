@@ -3,9 +3,11 @@ package org.apache.linkis.publicservice.common.lock.service.impl;
 import org.apache.linkis.publicservice.common.lock.dao.CommonLockMapper;
 import org.apache.linkis.publicservice.common.lock.entity.CommonLock;
 import org.apache.linkis.publicservice.common.lock.service.CommonLockService;
+
+import org.springframework.dao.DataAccessException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
 
 import java.util.List;
 
@@ -29,7 +31,7 @@ public class DefaultCommonLockService implements CommonLockService {
         Boolean isLocked = tryLock(commonLock, timeOut);
         while (!isLocked && System.currentTimeMillis() - startTime < timeOut) {
             try {
-                Thread.sleep(1000);// TODO
+                Thread.sleep(1000); // TODO
                 isLocked = tryLock(commonLock, timeOut);
             } catch (InterruptedException e) {
                 logger.warn("lock waiting interrupted", e);
@@ -57,6 +59,4 @@ public class DefaultCommonLockService implements CommonLockService {
     public List<CommonLock> getAll() {
         return commonLockMapper.getAll();
     }
-
-
 }

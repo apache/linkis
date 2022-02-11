@@ -20,7 +20,7 @@ package org.apache.linkis.engineconn.acessible.executor.service
 import org.apache.linkis.engineconn.acessible.executor.listener.ExecutorStatusListener
 import org.apache.linkis.manager.common.protocol.engine.EngineSuicideRequest
 import org.apache.linkis.manager.common.protocol.node.{RequestNodeStatus, ResponseNodeStatus}
-import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.rpc.Sender
 
 trait AccessibleService extends ExecutorStatusListener {
 
@@ -30,7 +30,7 @@ trait AccessibleService extends ExecutorStatusListener {
 
   def reStartExecutor: Boolean
 
-  def dealEngineStopRequest(engineSuicideRequest: EngineSuicideRequest, smc: ServiceMethodContext): Unit
+  def dealEngineStopRequest(engineSuicideRequest: EngineSuicideRequest, sender: Sender): Unit
 
 
 

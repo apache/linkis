@@ -64,14 +64,18 @@ public class ECCanKillRequest implements EngineRequest {
         this.userCreatorLabel = userCreatorLabel;
     }
 
-
     @Override
     public String toString() {
-        return "ECCanKillRequest{" +
-                "user='" + user + '\'' +
-                ", engineConnInstance=" + engineConnInstance +
-                ", engineTypeLabel=" + engineTypeLabel +
-                ", userCreatorLabel=" + userCreatorLabel +
-                '}';
+        return "ECCanKillRequest{"
+                + "user='"
+                + user
+                + '\''
+                + ", engineConnInstance="
+                + engineConnInstance
+                + ", engineTypeLabel="
+                + engineTypeLabel
+                + ", userCreatorLabel="
+                + userCreatorLabel
+                + '}';
     }
 }

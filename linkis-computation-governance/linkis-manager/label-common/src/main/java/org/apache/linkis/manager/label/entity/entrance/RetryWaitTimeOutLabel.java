@@ -23,8 +23,7 @@ import org.apache.linkis.manager.label.entity.annon.ValueSerialNum;
 
 import java.util.HashMap;
 
-public class RetryWaitTimeOutLabel extends GenericLabel implements JobStrategyLabel  {
-
+public class RetryWaitTimeOutLabel extends GenericLabel implements JobStrategyLabel {
 
     public RetryWaitTimeOutLabel() {
         setLabelKey(LabelKeyConstant.RETRY_TIMEOUT_KEY);

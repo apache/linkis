@@ -50,5 +50,4 @@ public class NoneDelegate implements Delegate<Option> {
     public Class<?> typeClass() {
         return Option.class;
     }
-
 }

@@ -17,19 +17,21 @@
 
 package org.apache.linkis.udf.service.impl;
 
-import com.google.common.collect.Iterables;
 import org.apache.linkis.udf.dao.UDFTreeDao;
-import org.apache.linkis.udf.entity.UDFInfo;
 import org.apache.linkis.udf.entity.UDFTree;
 import org.apache.linkis.udf.excepiton.UDFException;
 import org.apache.linkis.udf.service.UDFService;
 import org.apache.linkis.udf.service.UDFTreeService;
 import org.apache.linkis.udf.vo.UDFInfoVo;
+
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+
+import com.google.common.collect.Iterables;
 
 import java.util.*;
 
@@ -40,10 +42,8 @@ public class UDFTreeServiceImpl implements UDFTreeService {
 
     private static final Logger logger = Logger.getLogger(UDFTreeServiceImpl.class);
 
-    @Autowired
-    private UDFTreeDao udfTreeDao;
-    @Autowired
-    private UDFService udfService;
+    @Autowired private UDFTreeDao udfTreeDao;
+    @Autowired private UDFService udfService;
 
     Map<String, List<UDFTree>> firstFloor = new HashMap<>();
     Map<String, String> firstFloorName = new HashedMap();
@@ -68,13 +68,13 @@ public class UDFTreeServiceImpl implements UDFTreeService {
         List<UDFTree> childrens = new ArrayList<>();
         if (firstFloor.get(category) == null || firstFloor.get(category).size() != 4) {
             List<UDFTree> root = new ArrayList<>();
-            //sys
+            // sys
             root.add(0, getFirstFloor(SYS_USER, category));
-            //bdp
+            // bdp
             root.add(1, getFirstFloor(BDP_USER, category));
-            //shared
+            // shared
             root.add(2, getFirstFloor(SHARE_USER, category));
-            //expired
+            // expired
             root.add(3, getFirstFloor(EXPIRE_USER, category));
 
             firstFloor.put(category, root);
@@ -105,12 +105,15 @@ public class UDFTreeServiceImpl implements UDFTreeService {
         List<UDFTree> first = udfTreeDao.getTreesByParentId(params);
         if (first == null || first.size() == 0) {
             String treeName = firstFloorName.getOrDefault(userName, "个人函数");
-            UDFTree udfTree = new UDFTree(null, -1L, treeName, userName, "", new Date(), new Date(), category);
+            UDFTree udfTree =
+                    new UDFTree(
+                            null, -1L, treeName, userName, "", new Date(), new Date(), category);
             udfTreeDao.addTree(udfTree);
             return udfTree;
         }
         if (first.size() > 1) {
-            throw new UDFException("user(用户)" + userName + "There are two root directory directories(存在两个根目录目录)");
+            throw new UDFException(
+                    "user(用户)" + userName + "There are two root directory directories(存在两个根目录目录)");
         }
         return first.get(0);
     }
@@ -177,7 +180,8 @@ public class UDFTreeServiceImpl implements UDFTreeService {
      * @throws UDFException
      */
     @Override
-    public UDFTree getTreeById(Long id, String userName, String type, String category) throws UDFException {
+    public UDFTree getTreeById(Long id, String userName, String type, String category)
+            throws UDFException {
         UDFTree udfTree = null;
         if (id == null || id < 0) {
             udfTree = initTree(userName, category);
@@ -189,7 +193,7 @@ public class UDFTreeServiceImpl implements UDFTreeService {
             Map<String, Object> params = new HashedMap();
             params.put("parent", udfTree.getId());
             params.put("category", category);
-            //TODO Determine if the user can list(判断用户是否可以list)
+            // TODO Determine if the user can list(判断用户是否可以list)
             List<UDFTree> childrens = udfTreeDao.getTreesByParentId(params);
             List<UDFInfoVo> udfInfos = null;
             switch (type) {
@@ -199,7 +203,8 @@ public class UDFTreeServiceImpl implements UDFTreeService {
                 case BDP_USER:
                     udfInfos = udfService.getUDFInfoByTreeId(udfTree.getId(), userName, category);
                     break;
-                // case "self": udfInfos =  udfService.getUDFInfoByTreeId(udfTree.getId(), userName); break;
+                    // case "self": udfInfos =  udfService.getUDFInfoByTreeId(udfTree.getId(),
+                    // userName); break;
                 case SHARE_USER:
                     udfInfos = udfService.getSharedUDFs(userName, category);
                     break;

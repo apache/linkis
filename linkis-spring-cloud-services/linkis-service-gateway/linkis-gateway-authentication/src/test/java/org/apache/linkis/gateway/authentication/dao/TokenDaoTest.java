@@ -2,14 +2,14 @@ package org.apache.linkis.gateway.authentication.dao;
 
 import org.apache.linkis.gateway.authentication.dao.utils.MyBatisUtil;
 import org.apache.linkis.gateway.authentication.entity.TokenEntity;
+
 import org.apache.ibatis.session.SqlSession;
+
 import org.junit.Assert;
 
 import java.util.List;
 
-/**
- * Created by shangda on 2021/9/9.
- */
+/** Created by shangda on 2021/9/9. */
 public class TokenDaoTest {
     @org.junit.Test
     public void selectTokenByName() throws Exception {
@@ -33,5 +33,4 @@ public class TokenDaoTest {
         }
         Assert.assertEquals(cnt, 10);
     }
-
 }

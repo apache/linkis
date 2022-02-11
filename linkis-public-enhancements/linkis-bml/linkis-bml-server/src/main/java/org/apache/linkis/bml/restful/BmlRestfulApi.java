@@ -36,11 +36,11 @@ import org.apache.linkis.bml.vo.ResourceVO;
 import org.apache.linkis.bml.vo.ResourceVersionsVO;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.security.SecurityFilter;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
-import org.apache.linkis.server.security.SecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,10 +51,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
@@ -830,7 +826,8 @@ public class BmlRestfulApi {
     }
 
     @RequestMapping(path = "changeOwner", method = RequestMethod.POST)
-    public Message changeOwnerByResourceId(HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ErrorException {
+    public Message changeOwnerByResourceId(
+            HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ErrorException {
         String username = SecurityFilter.getLoginUsername(request);
         String resourceId = jsonNode.get("resourceId").textValue();
         String oldOwner = jsonNode.get("oldOwner").textValue();
@@ -840,7 +837,8 @@ public class BmlRestfulApi {
     }
 
     @RequestMapping(path = "copyResourceToAnotherUser", method = RequestMethod.POST)
-    public Message copyResourceToAnotherUser(HttpServletRequest request, @RequestBody JsonNode jsonNode) {
+    public Message copyResourceToAnotherUser(
+            HttpServletRequest request, @RequestBody JsonNode jsonNode) {
         String username = SecurityFilter.getLoginUsername(request);
         String resourceId = jsonNode.get("resourceId").textValue();
         String anotherUser = jsonNode.get("anotherUser").textValue();
@@ -850,11 +848,12 @@ public class BmlRestfulApi {
             String clientIp = HttpRequestHelper.getIp(request);
             Map<String, Object> properties = new HashMap<>();
             properties.put("clientIp", clientIp);
-            properties.put("maxVersion",0);
+            properties.put("maxVersion", 0);
             properties.put("system", "dss");
             ResourceTask resourceTask = null;
             synchronized (resourceId.intern()) {
-                resourceTask = taskService.createCopyResourceTask(resourceId, anotherUser, properties);
+                resourceTask =
+                        taskService.createCopyResourceTask(resourceId, anotherUser, properties);
             }
             message = Message.ok();
             message.data("resourceId", resourceTask.getResourceId());
@@ -866,20 +865,26 @@ public class BmlRestfulApi {
         return message;
     }
 
-    @RequestMapping(path = "rollbackVersion",method = RequestMethod.POST)
+    @RequestMapping(path = "rollbackVersion", method = RequestMethod.POST)
     public Message rollbackVersion(HttpServletRequest request, @RequestBody JsonNode jsonNode) {
         String username = SecurityFilter.getLoginUsername(request);
         String resourceId = jsonNode.get("resourceId").textValue();
         String rollbackVersion = jsonNode.get("version").textValue();
         Message message = null;
         try {
-            logger.info("用户 {} 开始rollback bml resource: {}, version:{} ", username, resourceId, rollbackVersion);
+            logger.info(
+                    "用户 {} 开始rollback bml resource: {}, version:{} ",
+                    username,
+                    resourceId,
+                    rollbackVersion);
             String clientIp = HttpRequestHelper.getIp(request);
             Map<String, Object> properties = new HashMap<>();
             properties.put("clientIp", clientIp);
             ResourceTask resourceTask = null;
             synchronized (resourceId.intern()) {
-                resourceTask = taskService.createRollbackVersionTask(resourceId, rollbackVersion, username, properties);
+                resourceTask =
+                        taskService.createRollbackVersionTask(
+                                resourceId, rollbackVersion, username, properties);
             }
             message = Message.ok();
             message.data("resourceId", resourceTask.getResourceId())
@@ -888,7 +893,11 @@ public class BmlRestfulApi {
             logger.error("failed to rollback version:", e);
             message = Message.error(e.getMessage());
         }
-        logger.info("用户 {} 结束rollback bml resource: {}, version:{} ", username, resourceId, rollbackVersion);
+        logger.info(
+                "用户 {} 结束rollback bml resource: {}, version:{} ",
+                username,
+                resourceId,
+                rollbackVersion);
         return message;
     }
 }

@@ -2,7 +2,6 @@ package org.apache.linkis.gateway.authentication.entity;
 
 import java.util.Date;
 
-
 public class TokenEntity {
     private String id;
     private String tokenName;

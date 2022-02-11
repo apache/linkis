@@ -16,11 +16,11 @@ public class UDFAddVo {
     private Date createTime;
     private Date updateTime;
 
-    private String path; //仅存储用户上一次上传的路径 作提示用
+    private String path; // 仅存储用户上一次上传的路径 作提示用
     private String registerFormat;
     private String useFormat;
     private String description;
-    private String directory;  //分类，个人函数一级目录
+    private String directory; // 分类，个人函数一级目录
     private Boolean isLoad;
 
     private Map<String, Boolean> operationStatus;

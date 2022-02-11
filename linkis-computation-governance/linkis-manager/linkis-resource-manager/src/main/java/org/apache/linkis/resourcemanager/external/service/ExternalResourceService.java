@@ -19,8 +19,8 @@ package org.apache.linkis.resourcemanager.external.service;
 
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
-import org.apache.linkis.resourcemanager.domain.RMLabelContainer;
 import org.apache.linkis.manager.common.exception.RMErrorException;
+import org.apache.linkis.resourcemanager.domain.RMLabelContainer;
 import org.apache.linkis.resourcemanager.external.domain.ExternalAppInfo;
 import org.apache.linkis.resourcemanager.external.domain.ExternalResourceIdentifier;
 

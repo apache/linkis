@@ -67,9 +67,7 @@ public class JobHistory {
      */
     private String executionCode;
 
-    /**
-     * result location
-     */
+    /** result location */
     private String resultLocation;
 
     public Long getId() {
@@ -216,8 +214,8 @@ public class JobHistory {
         this.executionCode = executionCode;
     }
 
-    public String getUpdateTimeMills(){
-        return  QueryUtils.dateToString(getUpdatedTime());
+    public String getUpdateTimeMills() {
+        return QueryUtils.dateToString(getUpdatedTime());
     }
 
     public String getResultLocation() {
@@ -230,10 +228,15 @@ public class JobHistory {
 
     @Override
     public String toString() {
-        return "JobHistory{" +
-                "id=" + id +
-                ", jobReqId='" + jobReqId + '\'' +
-                ", labels='" + labels + '\'' +
-                '}';
+        return "JobHistory{"
+                + "id="
+                + id
+                + ", jobReqId='"
+                + jobReqId
+                + '\''
+                + ", labels='"
+                + labels
+                + '\''
+                + '}';
     }
 }

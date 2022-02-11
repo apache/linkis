@@ -18,6 +18,7 @@
 package org.apache.linkis.udf.dao;
 
 import org.apache.linkis.udf.entity.UDFTree;
+
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -37,7 +38,11 @@ public interface UDFTreeDao {
 
     List<UDFTree> getTreesByParentId(Map<String, Object> params);
 
-    UDFTree getTreeByNameAndUser(@Param("treeName") String treeName, @Param("userName") String userName,@Param("category") String category);
+    UDFTree getTreeByNameAndUser(
+            @Param("treeName") String treeName,
+            @Param("userName") String userName,
+            @Param("category") String category);
 
-    List<String> getUserDirectory(@Param("userName") String userName, @Param("category") String category);
+    List<String> getUserDirectory(
+            @Param("userName") String userName, @Param("category") String category);
 }

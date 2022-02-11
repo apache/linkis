@@ -107,14 +107,24 @@ public class DownloadModel {
 
     @Override
     public String toString() {
-        return "DownloadModel{" +
-                "id=" + id +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                ", clientIp='" + clientIp + '\'' +
-                ", state=" + state +
-                ", resourceId='" + resourceId + '\'' +
-                ", downloader='" + downloader + '\'' +
-                '}';
+        return "DownloadModel{"
+                + "id="
+                + id
+                + ", startTime="
+                + startTime
+                + ", endTime="
+                + endTime
+                + ", clientIp='"
+                + clientIp
+                + '\''
+                + ", state="
+                + state
+                + ", resourceId='"
+                + resourceId
+                + '\''
+                + ", downloader='"
+                + downloader
+                + '\''
+                + '}';
     }
 }

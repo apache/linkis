@@ -23,7 +23,6 @@ import org.apache.linkis.manager.common.utils.ResourceUtils;
 
 import java.util.Date;
 
-
 public class PersistenceResourceActionRecord {
 
     private Integer id;
@@ -48,18 +47,20 @@ public class PersistenceResourceActionRecord {
 
     private Date createTime;
 
-    public PersistenceResourceActionRecord() {
-    }
+    public PersistenceResourceActionRecord() {}
 
     public PersistenceResourceActionRecord(String labelValue, String ticketId, Resource resource) {
         this.labelValue = labelValue;
         this.ticketId = ticketId;
         this.requestTimes = 0;
-        this.requestResourceAll = ResourceUtils.serializeResource(Resource.initResource(ResourceType.LoadInstance));
+        this.requestResourceAll =
+                ResourceUtils.serializeResource(Resource.initResource(ResourceType.LoadInstance));
         this.usedTimes = 0;
-        this.usedResourceAll = ResourceUtils.serializeResource(Resource.initResource(ResourceType.LoadInstance));
+        this.usedResourceAll =
+                ResourceUtils.serializeResource(Resource.initResource(ResourceType.LoadInstance));
         this.releaseTimes = 0;
-        this.releaseResourceAll = ResourceUtils.serializeResource(Resource.initResource(ResourceType.LoadInstance));
+        this.releaseResourceAll =
+                ResourceUtils.serializeResource(Resource.initResource(ResourceType.LoadInstance));
         this.updateTime = new Date(System.currentTimeMillis());
         this.createTime = new Date(System.currentTimeMillis());
     }

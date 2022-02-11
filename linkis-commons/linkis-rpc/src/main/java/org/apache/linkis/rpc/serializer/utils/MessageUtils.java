@@ -20,15 +20,16 @@ package org.apache.linkis.rpc.serializer.utils;
 import org.apache.linkis.DataWorkCloudApplication;
 import org.apache.linkis.rpc.serializer.method.MethodExecuteWrapper;
 import org.apache.linkis.rpc.serializer.parser.ServiceMethod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 public class MessageUtils {
 
@@ -56,7 +57,9 @@ public class MessageUtils {
         }
     }
 
-    public static boolean orderIsMin(MethodExecuteWrapper methodExecuteWrapper, List<MethodExecuteWrapper> methodExecuteWrappers) {
+    public static boolean orderIsMin(
+            MethodExecuteWrapper methodExecuteWrapper,
+            List<MethodExecuteWrapper> methodExecuteWrappers) {
         for (MethodExecuteWrapper tmp : methodExecuteWrappers) {
             if (tmp.getOrder() < methodExecuteWrapper.getOrder()) {
                 return false;
@@ -88,5 +91,4 @@ public class MessageUtils {
         }
         return null;
     }
-
 }

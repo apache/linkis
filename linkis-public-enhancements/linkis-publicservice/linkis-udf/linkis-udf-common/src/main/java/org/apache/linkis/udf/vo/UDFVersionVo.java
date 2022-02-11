@@ -1,16 +1,14 @@
 package org.apache.linkis.udf.vo;
 
-import org.apache.linkis.udf.entity.UDFVersion;
-
 import java.util.Date;
 
 public class UDFVersionVo {
     private Long id;
     private Long udfId;
-    private String path; //仅存储用户上一次上传的路径 作提示用
+    private String path; // 仅存储用户上一次上传的路径 作提示用
     private String bmlResourceId;
     private String bmlResourceVersion;
-    private Boolean isPublished; //共享udf被使用的是已发布的最新版本
+    private Boolean isPublished; // 共享udf被使用的是已发布的最新版本
     private String registerFormat;
     private String useFormat;
     private String description;

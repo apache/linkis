@@ -19,5 +19,4 @@ package org.apache.linkis.manager.common.protocol.yarn;
 
 import org.apache.linkis.protocol.message.RequestProtocol;
 
-public class YarnAuthorizationRequest implements RequestProtocol {
-}
+public class YarnAuthorizationRequest implements RequestProtocol {}

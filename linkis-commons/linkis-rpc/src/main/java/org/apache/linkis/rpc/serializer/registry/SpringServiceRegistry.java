@@ -26,13 +26,16 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
 public class SpringServiceRegistry extends AbstractServiceRegistry {
 
     public SpringServiceRegistry() {
-        Set<? extends Class<?>> services = RPCConfiguration.REFLECTIONS().getMethodsAnnotatedWith(Receiver.class).stream()
-                .map(Method::getDeclaringClass).collect(Collectors.toSet());
-        services.stream().map(MessageUtils::getBean).filter(Objects::nonNull).forEach(this::register);
+        Set<? extends Class<?>> services =
+                RPCConfiguration.REFLECTIONS().getMethodsAnnotatedWith(Receiver.class).stream()
+                        .map(Method::getDeclaringClass)
+                        .collect(Collectors.toSet());
+        services.stream()
+                .map(MessageUtils::getBean)
+                .filter(Objects::nonNull)
+                .forEach(this::register);
     }
-
 }

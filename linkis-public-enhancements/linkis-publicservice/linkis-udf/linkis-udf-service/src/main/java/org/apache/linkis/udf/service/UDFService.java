@@ -17,15 +17,13 @@
 
 package org.apache.linkis.udf.service;
 
-import com.github.pagehelper.PageInfo;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.udf.entity.UDFInfo;
-import org.apache.linkis.udf.entity.UDFVersion;
 import org.apache.linkis.udf.excepiton.UDFException;
 import org.apache.linkis.udf.vo.*;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import com.github.pagehelper.PageInfo;
+
 import java.util.*;
 
 public interface UDFService {
@@ -44,13 +42,15 @@ public interface UDFService {
 
     List<UDFInfo> getUDFSByUserName(String userName) throws UDFException;
 
-    List<UDFInfoVo> getUDFSByTreeIdAndUser(Long treeId, String userName, String category) throws UDFException;
+    List<UDFInfoVo> getUDFSByTreeIdAndUser(Long treeId, String userName, String category)
+            throws UDFException;
 
-   /* List<UDFInfo> getSysUDF();
+    /* List<UDFInfo> getSysUDF();
 
     List<UDFInfo> getSysUDFByTreeId(Integer treeId);*/
 
-    List<UDFInfoVo> getUDFInfoByTreeId(Long treeId, String userName, String category) throws UDFException;
+    List<UDFInfoVo> getUDFInfoByTreeId(Long treeId, String userName, String category)
+            throws UDFException;
 
     Map<String, List<String>> generateInitSql(String userName) throws UDFException;
 
@@ -68,7 +68,8 @@ public interface UDFService {
 
     Boolean isUDFManager(String userName);
 
-    void checkSharedUsers(Set<String> sharedUsers, String userName, String udfname) throws UDFException;
+    void checkSharedUsers(Set<String> sharedUsers, String userName, String udfname)
+            throws UDFException;
 
     UDFInfo addSharedUDFInfo(UDFInfo sharedUDFInfo) throws UDFException;
 
@@ -84,9 +85,10 @@ public interface UDFService {
 
     void removeSharedUser(Collection<String> oldsharedUsers, Long udfId);
 
-//    FsPath copySharedUdfFile(String userName, UDFInfo udfInfo) throws IOException;
+    //    FsPath copySharedUdfFile(String userName, UDFInfo udfInfo) throws IOException;
 
-    UDFInfo createSharedUdfInfo(UDFInfo udfInfo, Long shareParentId, FsPath sharedPath) throws Exception;
+    UDFInfo createSharedUdfInfo(UDFInfo udfInfo, Long shareParentId, FsPath sharedPath)
+            throws Exception;
 
     void handoverUdf(Long udfId, String handoverUser) throws UDFException;
 
@@ -98,7 +100,13 @@ public interface UDFService {
 
     List<UDFVersionVo> getUdfVersionList(long udfId);
 
-    PageInfo<UDFAddVo> getManagerPages(String udfName, Collection<Integer> udfType, String createUser, int curPage, int pageSize) throws Exception;
+    PageInfo<UDFAddVo> getManagerPages(
+            String udfName,
+            Collection<Integer> udfType,
+            String createUser,
+            int curPage,
+            int pageSize)
+            throws Exception;
 
     String downLoadUDF(long udfId, String version, String user) throws Exception;
 
@@ -107,5 +115,4 @@ public interface UDFService {
     List<String> allUdfUsers();
 
     List<String> getUserDirectory(String user, String category);
-
 }

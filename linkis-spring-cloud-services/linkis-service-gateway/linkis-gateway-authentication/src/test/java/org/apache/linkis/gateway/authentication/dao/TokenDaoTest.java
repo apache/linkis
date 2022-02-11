@@ -26,7 +26,6 @@ import org.junit.Assert;
 
 import java.util.List;
 
-
 public class TokenDaoTest {
     @org.junit.Test
     public void selectTokenByName() throws Exception {

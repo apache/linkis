@@ -25,7 +25,8 @@ class ResultsetFileSource(fileSplits: Array[FileSplit]) extends AbstractFileSour
 
   shuffle({
     case t: TableRecord => new TableRecord(t.row.map {
-      case null | "NULL" | "" => getParams.getOrDefault("nullValue", "NULL")
+      case null | "NULL" => getParams.getOrDefault("nullValue", "NULL")
+      case "" => getParams.getOrDefault("nullValue", "")
       case value: Double => StorageUtils.doubleToString(value)
       case r => r
     })

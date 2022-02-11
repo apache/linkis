@@ -24,7 +24,10 @@ public enum OperationEnum {
     DOWNLOAD("download", 2),
     DELETE_VERSION("deleteVersion", 3),
     DELETE_RESOURCE("deleteResource", 4),
-    DELETE_RESOURCES("deleteResources", 5);
+    DELETE_RESOURCES("deleteResources", 5),
+    ROLLBACK_VERSION("rollbackVersion", 6),
+    COPY_RESOURCE("copyResource", 7);
+
     private String value;
     private int id;
 

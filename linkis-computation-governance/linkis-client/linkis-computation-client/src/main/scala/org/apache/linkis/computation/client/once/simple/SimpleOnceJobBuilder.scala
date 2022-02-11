@@ -78,15 +78,16 @@ class SimpleOnceJobBuilder private[simple]()
   override def build(): SubmittableSimpleOnceJob = {
     ensureNotNull(labels, "labels")
     ensureNotNull(jobContent, "jobContent")
-    nullThenSet(params){
+    nullThenSet(params) {
       params = new util.HashMap[String, Any]
     }
-    nullThenSet(source){
+    nullThenSet(source) {
       source = new util.HashMap[String, Any]()
     }
     addStartupParam("label." + LabelKeyConstant.CODE_TYPE_KEY, jobContent.get("runType"))
-    if(!labels.containsKey(SimpleOnceJobBuilder.ONCE_ENGINE_CONN_MODE_LABEL_KEY))
+    if (!labels.containsKey(SimpleOnceJobBuilder.ONCE_ENGINE_CONN_MODE_LABEL_KEY)) {
       addLabel(ONCE_ENGINE_CONN_MODE_LABEL_KEY, ONCE_ENGINE_CONN_MODE_LABEL_VALUE)
+    }
     val properties = new util.HashMap[String, String]
     properties.put(OnceExecutorContentUtils.ONCE_EXECUTOR_CONTENT_KEY, getOnceExecutorContent)
     properties.putAll(TaskUtils.getStartupMap(params))
@@ -114,8 +115,8 @@ object SimpleOnceJobBuilder {
   private var bmlClient: BmlClient = _
   private var linkisManagerClient: LinkisManagerClient = _
   def getBmlClient: BmlClient = {
-    if(bmlClient == null) synchronized {
-      if(bmlClient == null) {
+    if (bmlClient == null) synchronized {
+      if (bmlClient == null) {
         bmlClient = BmlClientFactory.createBmlClient(LinkisJobBuilder.getDefaultClientConfig)
         Utils.addShutdownHook(() => bmlClient.close())
       }
@@ -123,8 +124,8 @@ object SimpleOnceJobBuilder {
     bmlClient
   }
   def getLinkisManagerClient: LinkisManagerClient = {
-    if(linkisManagerClient == null) synchronized {
-      if(linkisManagerClient == null) {
+    if (linkisManagerClient == null) synchronized {
+      if (linkisManagerClient == null) {
         linkisManagerClient = LinkisManagerClient(LinkisJobBuilder.getDefaultUJESClient)
         Utils.addShutdownHook(() => linkisManagerClient.close())
       }

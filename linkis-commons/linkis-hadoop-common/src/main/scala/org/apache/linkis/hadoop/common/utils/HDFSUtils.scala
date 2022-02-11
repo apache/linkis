@@ -99,40 +99,50 @@ object HDFSUtils extends Logging {
 
   def getHDFSUserFileSystem(userName: String, conf: org.apache.hadoop.conf.Configuration): FileSystem = if (HadoopConf.HDFS_ENABLE_CACHE) {
     val locker = userName + LOCKER_SUFFIX
-        locker.intern().synchronized {
-          val hdfsFileSystemContainer = if (fileSystemCache.containsKey(userName)) {
-            fileSystemCache.get(userName)
-          } else {
-            val newHDFSFileSystemContainer = new HDFSFileSystemContainer(createFileSystem(userName, conf), userName)
-            fileSystemCache.put(userName, newHDFSFileSystemContainer)
-            newHDFSFileSystemContainer
-          }
-          hdfsFileSystemContainer.addAccessCount()
-          hdfsFileSystemContainer.updateLastAccessTime
-          hdfsFileSystemContainer.getFileSystem
-        }
+    locker.intern().synchronized {
+      val hdfsFileSystemContainer = if (fileSystemCache.containsKey(userName)) {
+        fileSystemCache.get(userName)
       } else {
-        createFileSystem(userName, conf)
+        val newHDFSFileSystemContainer = new HDFSFileSystemContainer(createFileSystem(userName, conf), userName)
+        fileSystemCache.put(userName, newHDFSFileSystemContainer)
+        newHDFSFileSystemContainer
       }
+      hdfsFileSystemContainer.addAccessCount()
+      hdfsFileSystemContainer.updateLastAccessTime
+      hdfsFileSystemContainer.getFileSystem
+    }
+  } else {
+    createFileSystem(userName, conf)
+  }
 
 
-      def createFileSystem(userName: String, conf: org.apache.hadoop.conf.Configuration): FileSystem =
-      getUserGroupInformation(userName)
+  def createFileSystem(userName: String, conf: org.apache.hadoop.conf.Configuration): FileSystem =
+    getUserGroupInformation(userName)
       .doAs(new PrivilegedExceptionAction[FileSystem] {
         def run = FileSystem.get(conf)
       })
 
-       def closeHDFSFIleSystem(fileSystem: FileSystem, userName: String): Unit = if (null != fileSystem && StringUtils.isNotBlank(userName)) {
-          if (HadoopConf.HDFS_ENABLE_CACHE) {
-              val hdfsFileSystemContainer = fileSystemCache.get(userName)
-              if (null != hdfsFileSystemContainer) {
-                val locker = userName + LOCKER_SUFFIX
-                locker synchronized hdfsFileSystemContainer.minusAccessCount()
-              }
-          } else {
-            fileSystem.close()
-          }
+  def closeHDFSFIleSystem(fileSystem: FileSystem, userName: String): Unit = if (null != fileSystem && StringUtils.isNotBlank(userName)) {
+    closeHDFSFIleSystem(fileSystem, userName, false)
+  }
+
+  def closeHDFSFIleSystem(fileSystem: FileSystem, userName: String, isForce: Boolean): Unit = if (null != fileSystem && StringUtils.isNotBlank(userName)) {
+    if (HadoopConf.HDFS_ENABLE_CACHE) {
+      val hdfsFileSystemContainer = fileSystemCache.get(userName)
+      if (null != hdfsFileSystemContainer) {
+        val locker = userName + LOCKER_SUFFIX
+        if (isForce) {
+          locker synchronized fileSystemCache.remove(hdfsFileSystemContainer.getUser)
+          IOUtils.closeQuietly(hdfsFileSystemContainer.getFileSystem)
+          info(s"user${hdfsFileSystemContainer.getUser} to Force remove hdfsFileSystemContainer")
+        } else {
+          locker synchronized hdfsFileSystemContainer.minusAccessCount()
         }
+      }
+    } else {
+      IOUtils.closeQuietly(fileSystem)
+    }
+  }
 
   def getUserGroupInformation(userName: String): UserGroupInformation = {
       if (KERBEROS_ENABLE.getValue) {

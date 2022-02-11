@@ -30,7 +30,7 @@ import org.apache.linkis.engineconn.executor.service.ManagerService
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.engine.{EngineConnReleaseRequest, EngineSuicideRequest}
 import org.apache.linkis.manager.common.protocol.node.{RequestNodeStatus, ResponseNodeStatus}
-import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.rpc.serializer.annotation.Receiver
 import org.apache.linkis.message.builder.ServiceMethodContext
 import org.apache.linkis.rpc.Sender
 

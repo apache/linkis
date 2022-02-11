@@ -24,7 +24,7 @@ trait EngineService {
 
 
 
-  def getEngineNodeManager:EngineNodeManager
+  def getEngineNodeManager: EngineNodeManager
 
   def getEMService(): EMEngineService
 

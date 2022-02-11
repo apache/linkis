@@ -37,7 +37,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-message-scheduler</artifactId>
+            <artifactId>linkis-rpc</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -61,11 +61,7 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-resource-manager-common</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-mybatis</artifactId>

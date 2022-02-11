@@ -5,22 +5,17 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.message.scheduler;
 
-import static org.apache.linkis.message.conf.MessageSchedulerConf.MAX_PARALLELISM_CONSUMERS;
-import static org.apache.linkis.message.conf.MessageSchedulerConf.MAX_PARALLELISM_USER;
-import static org.apache.linkis.message.conf.MessageSchedulerConf.MAX_QUEUE_CAPACITY;
-import static org.apache.linkis.message.conf.MessageSchedulerConf.MAX_RUNNING_JOB;
+package org.apache.linkis.message.scheduler;
 
 import org.apache.linkis.message.builder.MessageJob;
 import org.apache.linkis.message.builder.MessageJobListener;
@@ -32,6 +27,10 @@ import org.apache.linkis.scheduler.queue.parallelqueue.ParallelConsumerManager;
 import org.apache.linkis.scheduler.queue.parallelqueue.ParallelScheduler;
 import org.apache.linkis.scheduler.queue.parallelqueue.ParallelSchedulerContextImpl;
 
+import static org.apache.linkis.message.conf.MessageSchedulerConf.MAX_PARALLELISM_CONSUMERS;
+import static org.apache.linkis.message.conf.MessageSchedulerConf.MAX_PARALLELISM_USER;
+import static org.apache.linkis.message.conf.MessageSchedulerConf.MAX_QUEUE_CAPACITY;
+import static org.apache.linkis.message.conf.MessageSchedulerConf.MAX_RUNNING_JOB;
 
 public class DefaultMessageScheduler implements MessageScheduler {
 
@@ -49,17 +48,21 @@ public class DefaultMessageScheduler implements MessageScheduler {
         this(null);
     }
 
-    public DefaultMessageScheduler(GroupFactory groupFactory){
-        ParallelSchedulerContextImpl schedulerContext = new ParallelSchedulerContextImpl(MAX_PARALLELISM_USER);
-        ParallelConsumerManager parallelConsumerManager = new ParallelConsumerManager(MAX_PARALLELISM_CONSUMERS, "RpcMessageScheduler");
+    public DefaultMessageScheduler(GroupFactory groupFactory) {
+        ParallelSchedulerContextImpl schedulerContext =
+                new ParallelSchedulerContextImpl(MAX_PARALLELISM_USER);
+        ParallelConsumerManager parallelConsumerManager =
+                new ParallelConsumerManager(MAX_PARALLELISM_CONSUMERS, "RpcMessageScheduler");
         schedulerContext.setConsumerManager(parallelConsumerManager);
-        MessageExecutorExecutionManager messageExecutorExecutionManager = new MessageExecutorExecutionManager(parallelConsumerManager.getOrCreateExecutorService());
+        MessageExecutorExecutionManager messageExecutorExecutionManager =
+                new MessageExecutorExecutionManager(
+                        parallelConsumerManager.getOrCreateExecutorService());
         schedulerContext.setExecutorManager(messageExecutorExecutionManager);
-        if(groupFactory != null) {
+        if (groupFactory != null) {
             schedulerContext.setGroupFactory(groupFactory);
         } else {
             groupFactory = schedulerContext.getOrCreateGroupFactory();
-            if(groupFactory instanceof FIFOGroupFactory) {
+            if (groupFactory instanceof FIFOGroupFactory) {
                 FIFOGroupFactory fifoGroupFactory = (FIFOGroupFactory) groupFactory;
                 fifoGroupFactory.setDefaultMaxRunningJobs(MAX_RUNNING_JOB);
                 fifoGroupFactory.setDefaultMaxAskExecutorTimes(MAX_ASK_EXECUTOR_TIMES);
@@ -83,6 +86,4 @@ public class DefaultMessageScheduler implements MessageScheduler {
             linkisScheduler.submit((Job) messageJob);
         }
     }
-
-
 }

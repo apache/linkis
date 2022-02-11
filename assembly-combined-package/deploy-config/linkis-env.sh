@@ -43,7 +43,7 @@ ENGINECONN_ROOT_PATH=/appcom/tmp
 #ENTRANCE_CONFIG_LOG_PATH=hdfs:///tmp/linkis/
 
 ### Path to store job ResultSet:file or hdfs path
-#RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis ##hdfs:// required
+RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis ##hdfs:// required
 
 ### Provide the DB information of Hive metadata database.
 ### Attention! If there are special characters like "&", they need to be enclosed in quotation marks.
@@ -139,3 +139,6 @@ LINKIS_VERSION=1.0.3
 
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module
+
+## If SKYWALKING_AGENT_PATH is set, the Linkis components will be started with Skywalking agent
+#SKYWALKING_AGENT_PATH=/appcom/config/skywalking-agent/skywalking-agent.jar

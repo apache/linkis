@@ -98,7 +98,6 @@
         <module>linkis-extensions</module>
         <module>assembly-combined-package</module>
     </modules>
-
     <properties>
         <linkis.version>1.0.3</linkis.version>
         <hadoop.version>2.7.2</hadoop.version>
@@ -117,10 +116,11 @@
         <json4s.version>3.5.3</json4s.version>
         <jersey.version>2.16</jersey.version>
         <jersey.servlet.version>2.23.1</jersey.servlet.version>
-        <jetty.version>9.4.20.v20190813</jetty.version>
+        <jetty.version>9.4.44.v20210927</jetty.version>
         <httpclient.version>4.5.13</httpclient.version>
         <httpmime.version>4.5.4</httpmime.version>
         <slf4j.version>1.7.30</slf4j.version>
+        <knife4j.version>2.0.9</knife4j.version>
         <maven.version>3.3.3</maven.version>
         <xstream.core.version>1.4.19</xstream.core.version>
         <spring.version>5.2.15.RELEASE</spring.version>
@@ -132,13 +132,14 @@
         <javassist.version>3.19.0-GA</javassist.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-lang.version>2.6</commons-lang.version>
-        <commons-io.version>2.4</commons-io.version>
+        <commons-io.version>2.11.0</commons-io.version>
         <druid.version>1.1.22</druid.version>
         <apache-rat-plugin.version>0.13</apache-rat-plugin.version>
         <assembly.package.rootpath>${basedir}</assembly.package.rootpath>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <log4j2.version>2.17.0</log4j2.version>
+        <log4j2.version>2.17.1</log4j2.version>
+        <spotless.version>2.4.2</spotless.version>
     </properties>
 
     <dependencyManagement>
@@ -507,6 +508,35 @@
                     </configuration>
                     <executions>
                         <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>com.diffplug.spotless</groupId>
+                    <artifactId>spotless-maven-plugin</artifactId>
+                    <version>${spotless.version}</version>
+                    <configuration>
+                        <java>
+                            <googleJavaFormat>
+                                <version>1.7</version>
+                                <style>AOSP</style>
+                            </googleJavaFormat>
+
+                            <!-- \# refers to the static imports -->
+                            <importOrder>
+                                <order>org.apache.linkis,org.apache,org.springframework,javax,java,scala,\#</order>
+                            </importOrder>
+
+                            <removeUnusedImports />
+                        </java>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>spotless-check</id>
+                            <phase>validate</phase>
                             <goals>
                                 <goal>check</goal>
                             </goals>

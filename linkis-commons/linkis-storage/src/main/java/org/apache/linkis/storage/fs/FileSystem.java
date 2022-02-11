@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.storage.fs;
 
 import org.apache.linkis.common.io.Fs;
@@ -24,16 +24,16 @@ import org.apache.linkis.storage.domain.FsPathListWithError;
 import java.io.File;
 import java.io.IOException;
 
-
-public abstract class FileSystem implements Fs{
+public abstract class FileSystem implements Fs {
 
     protected String user;
-    private String defaultFilePerm = "rwxr-----"; //740
-    private String defaultFolderPerm = "rwxr-x---"; //750
+    private String defaultFilePerm = "rwxr-----"; // 740
+    private String defaultFolderPerm = "rwxr-x---"; // 750
 
     public String getDefaultFilePerm() {
         return defaultFilePerm;
     }
+
     public String getDefaultFolderPerm() {
         return defaultFolderPerm;
     }
@@ -45,7 +45,6 @@ public abstract class FileSystem implements Fs{
     public abstract long getFreeSpace(FsPath dest) throws IOException;
 
     public abstract long getUsableSpace(FsPath dest) throws IOException;
-
 
     public abstract boolean canExecute(FsPath dest) throws IOException;
 
@@ -61,25 +60,24 @@ public abstract class FileSystem implements Fs{
         return null;
     }
 
-    public   boolean createNewFile(FsPath dest) throws IOException{
+    public boolean createNewFile(FsPath dest) throws IOException {
         return create(dest.getPath());
     }
 
-    public boolean copyFile(FsPath origin, FsPath dest) throws IOException{
+    public boolean copyFile(FsPath origin, FsPath dest) throws IOException {
         return copy(origin.getPath(), dest.getPath());
     }
 
     /**
      * Set permissions for a path(设置某个路径的权限)
+     *
      * @param dest path(路径)
      * @param permission Permissions, such as rwxr-x---etc.(权限，如rwxr-x---等)
-     * @throws IOException Setting a failure throws an exception, or throws an exception if the user is not owner(设置失败抛出异常，或者如果该用户不是owner，也会抛出异常)
+     * @throws IOException Setting a failure throws an exception, or throws an exception if the user
+     *     is not owner(设置失败抛出异常，或者如果该用户不是owner，也会抛出异常)
      * @return
      */
     public abstract boolean setPermission(FsPath dest, String permission) throws IOException;
-
-
-
 
     public String getUser() {
         return user;
@@ -91,7 +89,7 @@ public abstract class FileSystem implements Fs{
 
     protected FsPath getParentPath(String path) {
         String parentPath = "";
-        if(File.separatorChar == '/') {
+        if (File.separatorChar == '/') {
             parentPath = new File(path).getParent();
         } else {
             parentPath = path.substring(0, path.lastIndexOf("/"));
@@ -103,5 +101,4 @@ public abstract class FileSystem implements Fs{
         FsPath fsPath = get(dest);
         return user.equals(fsPath.getOwner()) || user.equals(rootUserName());
     }
-
 }

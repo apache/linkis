@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.common.io;
 
 import org.apache.commons.lang.StringUtils;
@@ -31,13 +31,10 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-
 public class FsPath {
 
-
     public static final String CUR_DIR = ".";
-    public static final boolean WINDOWS
-            = System.getProperty("os.name").startsWith("Windows");
+    public static final boolean WINDOWS = System.getProperty("os.name").startsWith("Windows");
     public static final char SEPARATOR_CHAR = '/';
     public static final String SEPARATOR = "/";
     private static final Pattern hasDriveLetterSpecifier = Pattern.compile("^/?[a-zA-Z]:");
@@ -69,17 +66,16 @@ public class FsPath {
         // parse uri scheme, if any
         int colon = pathString.indexOf(':');
         int slash = pathString.indexOf('/');
-        if ((colon != -1) &&
-                ((slash == -1) || (colon < slash))) {     // has a scheme
+        if ((colon != -1) && ((slash == -1) || (colon < slash))) { // has a scheme
             scheme = pathString.substring(0, colon);
-            start = colon+1;
+            start = colon + 1;
         }
         // parse uri authority, if any
-        if (pathString.startsWith("//", start) &&
-                (pathString.length()-start > 2)) {       // has authority
-            int nextSlash = pathString.indexOf('/', start+2);
+        if (pathString.startsWith("//", start)
+                && (pathString.length() - start > 2)) { // has authority
+            int nextSlash = pathString.indexOf('/', start + 2);
             int authEnd = nextSlash > 0 ? nextSlash : pathString.length();
-            authority = pathString.substring(start+2, authEnd);
+            authority = pathString.substring(start + 2, authEnd);
             start = authEnd;
         }
 
@@ -102,23 +98,21 @@ public class FsPath {
         initialize(scheme, authority, path, null);
     }
 
-    private void checkPathArg( String path ) throws IllegalArgumentException {
+    private void checkPathArg(String path) throws IllegalArgumentException {
         // disallow construction of a Path from an empty string
-        if ( path == null ) {
-            throw new IllegalArgumentException(
-                    "Can not create a Path from a null string");
+        if (path == null) {
+            throw new IllegalArgumentException("Can not create a Path from a null string");
         }
-        if( path.length() == 0 ) {
-            throw new IllegalArgumentException(
-                    "Can not create a Path from an empty string");
+        if (path.length() == 0) {
+            throw new IllegalArgumentException("Can not create a Path from an empty string");
         }
     }
 
-    private void initialize(String scheme, String authority, String path,
-                            String fragment) {
+    private void initialize(String scheme, String authority, String path, String fragment) {
         try {
-            this.uri = new URI(scheme, authority, normalizePath(scheme, path), null, fragment)
-                    .normalize();
+            this.uri =
+                    new URI(scheme, authority, normalizePath(scheme, path), null, fragment)
+                            .normalize();
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);
         }
@@ -130,18 +124,18 @@ public class FsPath {
 
         // Remove backslashes if this looks like a Windows path. Avoid
         // the substitution if it looks like a non-local URI.
-        if (WINDOWS &&
-                (hasWindowsDrive(path) ||
-                        (scheme == null) ||
-                        (scheme.isEmpty()) ||
-                        (scheme.equals("file")))) {
+        if (WINDOWS
+                && (hasWindowsDrive(path)
+                        || (scheme == null)
+                        || (scheme.isEmpty())
+                        || (scheme.equals("file")))) {
             path = StringUtils.replace(path, "\\", "/");
         }
 
         // trim trailing slash from non-root path (ignoring windows drive)
         int minLength = startPositionWithoutWindowsDrive(path) + 1;
         if (path.length() > minLength && path.endsWith(SEPARATOR)) {
-            path = path.substring(0, path.length()-1);
+            path = path.substring(0, path.length() - 1);
         }
 
         return path;
@@ -153,23 +147,20 @@ public class FsPath {
 
     private static int startPositionWithoutWindowsDrive(String path) {
         if (hasWindowsDrive(path)) {
-            return path.charAt(0) ==  SEPARATOR_CHAR ? 3 : 2;
+            return path.charAt(0) == SEPARATOR_CHAR ? 3 : 2;
         } else {
             return 0;
         }
     }
 
-    /**
-     *
-     * @return if no storage type pointed, hdfs type will returned
-     */
+    /** @return if no storage type pointed, hdfs type will returned */
     public String getFsType() {
         return getFsType("file");
     }
 
     public String getFsType(String defaultType) {
         String scheme = uri.getScheme();
-        if(StringUtils.isEmpty(scheme)) {
+        if (StringUtils.isEmpty(scheme)) {
             return defaultType;
         } else {
             return scheme;
@@ -192,7 +183,8 @@ public class FsPath {
         String path = uri.getPath();
         int lastSlash = path.lastIndexOf('/');
         int start = startPositionWithoutWindowsDrive(path);
-        if ((path.length() == start) ||               // empty path
+        if ((path.length() == start)
+                || // empty path
                 (lastSlash == start && path.length() == start + 1)) { // at root
             return null;
         }
@@ -258,29 +250,32 @@ public class FsPath {
     }
 
     public void setPermissions(Set<PosixFilePermission> permissions) throws IOException {
-//        this.permissions = FileSystem.permissionFormatted(permissions);
+        //        this.permissions = FileSystem.permissionFormatted(permissions);
         this.permissions = permissions.toArray(new PosixFilePermission[] {});
         this.permissionString = PosixFilePermissions.toString(permissions);
     }
 
     public void setPermissionString(String permissionString) throws IOException {
         this.permissionString = permissionFormatted(permissionString);
-        this.permissions = PosixFilePermissions.fromString(this.permissionString).toArray(new PosixFilePermission[] {});
+        this.permissions =
+                PosixFilePermissions.fromString(this.permissionString)
+                        .toArray(new PosixFilePermission[] {});
     }
 
     public String getPath() {
-        if(WINDOWS && ! "hdfs".equals(getFsType())){
+        if (WINDOWS && !"hdfs".equals(getFsType())) {
             return uri.getAuthority() + uri.getPath();
         }
         return uri.getPath();
     }
 
-    public String getSchemaPath(){
-        if(WINDOWS && ! "hdfs".equals(getFsType())){
+    public String getSchemaPath() {
+        if (WINDOWS && !"hdfs".equals(getFsType())) {
             return getFsType() + "://" + uri.getAuthority() + uri.getPath();
         }
         return getFsType() + "://" + uri.getPath();
     }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -288,7 +283,7 @@ public class FsPath {
         sb.append("{");
         sb.append("path=").append(uri.getPath());
         sb.append("; isDirectory=").append(isdir);
-        if(!isdir){
+        if (!isdir) {
             sb.append("; length=").append(length);
         }
         sb.append("; modification_time=").append(modification_time);
@@ -301,7 +296,7 @@ public class FsPath {
     }
 
     public static String permissionFormatted(String permission) throws IOException {
-        if(!StringUtils.isNumeric(permission)) {
+        if (!StringUtils.isNumeric(permission)) {
             return permission;
         }
         char[] ps = permission.toCharArray();
@@ -311,15 +306,24 @@ public class FsPath {
     public static String permissionFormatted(char i) throws IOException {
         int in = Integer.parseInt(String.valueOf(i));
         switch (in) {
-            case 0: return "---";
-            case 1: return "--x";
-            case 2: return "-w-";
-            case 3: return "-wx";
-            case 4: return "r--";
-            case 5: return "r-x";
-            case 6: return "rw-";
-            case 7: return "rwx";
-            default: throw new IOException("Incorrent permission number " + in);
+            case 0:
+                return "---";
+            case 1:
+                return "--x";
+            case 2:
+                return "-w-";
+            case 3:
+                return "-wx";
+            case 4:
+                return "r--";
+            case 5:
+                return "r-x";
+            case 6:
+                return "rw-";
+            case 7:
+                return "rwx";
+            default:
+                throw new IOException("Incorrent permission number " + in);
         }
     }
 

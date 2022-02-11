@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.execution.impl;
 
 import org.apache.linkis.cs.common.entity.source.ContextID;
@@ -30,19 +30,26 @@ public abstract class BinaryLogicConditionExecution extends AbstractConditionExe
 
     ContextCacheFetcher fastFetcher;
 
-    public BinaryLogicConditionExecution(BinaryLogicCondition condition, ContextCacheService contextCacheService, ContextID contextID) {
+    public BinaryLogicConditionExecution(
+            BinaryLogicCondition condition,
+            ContextCacheService contextCacheService,
+            ContextID contextID) {
         super(condition, contextCacheService, contextID);
-        ContextTypeCondition contextTypeCondition = findFastCondition(condition.getLeft(), condition);
-        if(contextTypeCondition != null){
-            fastFetcher = new ContextTypeContextSearchFetcher(contextCacheService, contextTypeCondition.getContextType());
+        ContextTypeCondition contextTypeCondition =
+                findFastCondition(condition.getLeft(), condition);
+        if (contextTypeCondition != null) {
+            fastFetcher =
+                    new ContextTypeContextSearchFetcher(
+                            contextCacheService, contextTypeCondition.getContextType());
         }
     }
 
-    protected ContextTypeCondition findFastCondition(Condition condition, BinaryLogicCondition parent){
-        if(condition instanceof BinaryLogicCondition){
+    protected ContextTypeCondition findFastCondition(
+            Condition condition, BinaryLogicCondition parent) {
+        if (condition instanceof BinaryLogicCondition) {
             BinaryLogicCondition binaryLogicCondition = (BinaryLogicCondition) condition;
             return findFastCondition(binaryLogicCondition.getLeft(), binaryLogicCondition);
-        } else if(condition instanceof ContextTypeCondition){
+        } else if (condition instanceof ContextTypeCondition) {
             parent.setLeft(null);
             return (ContextTypeCondition) condition;
         } else {

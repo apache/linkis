@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.server.service.impl;
 
 import org.apache.linkis.cs.common.entity.listener.CommonContextKeyListenerDomain;
@@ -30,10 +30,12 @@ import org.apache.linkis.cs.persistence.persistence.ContextIDListenerPersistence
 import org.apache.linkis.cs.persistence.persistence.ContextKeyListenerPersistence;
 import org.apache.linkis.cs.server.enumeration.ServiceType;
 import org.apache.linkis.cs.server.service.ContextListenerService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +43,9 @@ import java.util.List;
 @Component
 public class ContextListenerServiceImpl extends ContextListenerService {
 
-    @Autowired
-    private ContextPersistenceManager persistenceManager;
+    @Autowired private ContextPersistenceManager persistenceManager;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
 
     private ContextIDListenerPersistence getIDListenerPersistence() throws CSErrorException {
         return persistenceManager.getContextIDListenerPersistence();
@@ -60,9 +60,9 @@ public class ContextListenerServiceImpl extends ContextListenerService {
         return ServiceType.CONTEXT_LISTENER.name();
     }
 
-
     @Override
-    public void onBind(ContextID contextID, ContextIDListenerDomain domain) throws CSErrorException {
+    public void onBind(ContextID contextID, ContextIDListenerDomain domain)
+            throws CSErrorException {
         logger.info(String.format("onBind,csId:%s", contextID.getContextId()));
         domain.setContextID(contextID);
         getIDListenerPersistence().create(contextID, domain);
@@ -71,10 +71,13 @@ public class ContextListenerServiceImpl extends ContextListenerService {
     }
 
     @Override
-    public void onBind(ContextID contextID, ContextKey contextKey, ContextKeyListenerDomain domain) throws CSErrorException {
-        logger.info(String.format("onBind,csId:%s,key:%s", contextID.getContextId(), contextKey.getKey()));
+    public void onBind(ContextID contextID, ContextKey contextKey, ContextKeyListenerDomain domain)
+            throws CSErrorException {
+        logger.info(
+                String.format(
+                        "onBind,csId:%s,key:%s", contextID.getContextId(), contextKey.getKey()));
         domain.setContextKey(contextKey);
-        // TODO: 2020/2/28  
+        // TODO: 2020/2/28
         if (domain instanceof CommonContextKeyListenerDomain) {
             ((CommonContextKeyListenerDomain) domain).setContextID(contextID);
         }
@@ -87,8 +90,10 @@ public class ContextListenerServiceImpl extends ContextListenerService {
     public List<ContextKeyValueBean> heartbeat(String clientSource) {
         logger.info(String.format("heartbeat,clientSource:%s", clientSource));
         DefaultContextListenerManager instance = DefaultContextListenerManager.getInstance();
-        ArrayList<ContextKeyValueBean> idCallback = instance.getContextIDCallbackEngine().getListenerCallback(clientSource);
-        ArrayList<ContextKeyValueBean> keyCallback = instance.getContextKeyCallbackEngine().getListenerCallback(clientSource);
+        ArrayList<ContextKeyValueBean> idCallback =
+                instance.getContextIDCallbackEngine().getListenerCallback(clientSource);
+        ArrayList<ContextKeyValueBean> keyCallback =
+                instance.getContextKeyCallbackEngine().getListenerCallback(clientSource);
         idCallback.addAll(keyCallback);
         return idCallback;
     }

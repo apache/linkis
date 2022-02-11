@@ -24,5 +24,4 @@ public interface HiveMetaWithPermissionService {
     List<String> getDbsOptionalUserName(String userName);
 
     List<Map<String, Object>> getTablesByDbNameAndOptionalUserName(Map<String, String> map);
-
 }

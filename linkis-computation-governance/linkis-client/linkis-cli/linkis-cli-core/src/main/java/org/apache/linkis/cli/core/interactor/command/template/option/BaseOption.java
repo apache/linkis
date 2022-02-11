@@ -5,27 +5,28 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cli.core.interactor.command.template.option;
 
 import org.apache.linkis.cli.common.entity.command.CmdOption;
 import org.apache.linkis.cli.common.utils.converter.AbstractStringConverter;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.MessageFormat;
 
 /**
- * @description: Abstract StdOption for CommandTemplate.
- * key:unique id key for an option. defaultValue takes no effect other than displaying default value
+ * @description: Abstract StdOption for CommandTemplate. key:unique id key for an option.
+ *     defaultValue takes no effect other than displaying default value
  */
 public abstract class BaseOption<T> implements CmdOption<T>, Cloneable {
     private final String keyPrefix;
@@ -39,9 +40,13 @@ public abstract class BaseOption<T> implements CmdOption<T>, Cloneable {
     protected String rawVal = null;
     protected T value = null;
 
-
-    protected BaseOption(final String keyPrefix, final String key, final String description, final boolean isOptional,
-                         final T defaultValue, final AbstractStringConverter<T> converter) {
+    protected BaseOption(
+            final String keyPrefix,
+            final String key,
+            final String description,
+            final boolean isOptional,
+            final T defaultValue,
+            final AbstractStringConverter<T> converter) {
         this.keyPrefix = keyPrefix;
         this.key = key;
         this.description = description;
@@ -50,14 +55,11 @@ public abstract class BaseOption<T> implements CmdOption<T>, Cloneable {
         this.isOptional = isOptional;
     }
 
-
     /**
      * Get StdOption paramName
      *
      * @return StdOption paramName
      */
-
-
     public String getKeyPrefix() {
         return keyPrefix;
     }
@@ -75,7 +77,10 @@ public abstract class BaseOption<T> implements CmdOption<T>, Cloneable {
 
     public void setValueWithStr(String value) throws IllegalArgumentException {
         if (StringUtils.isNotBlank(this.rawVal) && !StringUtils.equals(this.rawVal, value)) {
-            String msg = MessageFormat.format("Multiple Values for same option were found! Option: \"{0}\"", this.getParamName());
+            String msg =
+                    MessageFormat.format(
+                            "Multiple Values for same option were found! Option: \"{0}\"",
+                            this.getParamName());
             throw new IllegalArgumentException(msg);
         } else {
             try {

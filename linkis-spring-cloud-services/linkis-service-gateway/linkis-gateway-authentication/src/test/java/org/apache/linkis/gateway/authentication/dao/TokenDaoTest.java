@@ -37,7 +37,6 @@ public class TokenDaoTest {
         }
     }
 
-
     public void getAllTokens() throws Exception {
         SqlSession session = MyBatisUtil.getSqlSession();
         TokenDao dao = session.getMapper(TokenDao.class);

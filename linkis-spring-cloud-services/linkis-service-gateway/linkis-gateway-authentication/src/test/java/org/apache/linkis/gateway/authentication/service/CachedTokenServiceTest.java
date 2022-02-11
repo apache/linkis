@@ -24,18 +24,13 @@ import org.apache.linkis.gateway.authentication.exception.TokenAuthException;
 
 import org.apache.ibatis.session.SqlSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 import java.util.List;
 
 public class CachedTokenServiceTest {
 
     private CachedTokenService service;
-
 
     public void doBefore() {
         //        service = new CachedTokenService();
@@ -49,7 +44,6 @@ public class CachedTokenServiceTest {
         //        service.init();
     }
 
-
     public void isTokenAcceptableWithHost() throws Exception {
         if (service != null) {
             Assert.assertTrue(service.isTokenAcceptableWithHost("test1", "127.0.0.1"));
@@ -57,7 +51,6 @@ public class CachedTokenServiceTest {
             Assert.assertTrue(service.isTokenAcceptableWithHost("test3", "127.0.0.1"));
         }
     }
-
 
     public void doAuth() throws Exception {
         if (service != null) {
@@ -99,7 +92,6 @@ public class CachedTokenServiceTest {
         }
     }
 
-
     public void isTokenAcceptableWithUser() throws Exception {
         if (service != null) {
             Assert.assertTrue(service.isTokenAcceptableWithUser("test1", "hduser05"));
@@ -107,7 +99,6 @@ public class CachedTokenServiceTest {
             Assert.assertTrue(service.isTokenAcceptableWithUser("test2", "hduser05"));
         }
     }
-
 
     public void isTokenValid() throws Exception {
         if (service != null) {

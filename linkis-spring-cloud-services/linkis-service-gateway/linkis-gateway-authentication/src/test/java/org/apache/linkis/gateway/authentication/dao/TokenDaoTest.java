@@ -27,7 +27,7 @@ import org.junit.Assert;
 import java.util.List;
 
 public class TokenDaoTest {
-    @org.junit.Test
+
     public void selectTokenByName() throws Exception {
         SqlSession session = MyBatisUtil.getSqlSession();
         TokenDao dao = session.getMapper(TokenDao.class);
@@ -37,7 +37,7 @@ public class TokenDaoTest {
         }
     }
 
-    @org.junit.Test
+
     public void getAllTokens() throws Exception {
         SqlSession session = MyBatisUtil.getSqlSession();
         TokenDao dao = session.getMapper(TokenDao.class);

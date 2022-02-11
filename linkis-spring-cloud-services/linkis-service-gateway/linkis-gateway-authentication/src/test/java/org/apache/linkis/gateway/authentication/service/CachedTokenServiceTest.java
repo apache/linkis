@@ -34,9 +34,9 @@ import java.util.List;
 
 public class CachedTokenServiceTest {
 
-    @Autowired private CachedTokenService service;
+    private CachedTokenService service;
 
-    @Before
+
     public void doBefore() {
         //        service = new CachedTokenService();
         SqlSession session = MyBatisUtil.getSqlSession();
@@ -49,7 +49,7 @@ public class CachedTokenServiceTest {
         //        service.init();
     }
 
-    @Test
+
     public void isTokenAcceptableWithHost() throws Exception {
         if (service != null) {
             Assert.assertTrue(service.isTokenAcceptableWithHost("test1", "127.0.0.1"));
@@ -58,7 +58,7 @@ public class CachedTokenServiceTest {
         }
     }
 
-    @Test
+
     public void doAuth() throws Exception {
         if (service != null) {
             Assert.assertTrue(service.doAuth("test1", "hduser05", "127.0.0.1"));
@@ -99,7 +99,7 @@ public class CachedTokenServiceTest {
         }
     }
 
-    @Test
+
     public void isTokenAcceptableWithUser() throws Exception {
         if (service != null) {
             Assert.assertTrue(service.isTokenAcceptableWithUser("test1", "hduser05"));
@@ -108,7 +108,7 @@ public class CachedTokenServiceTest {
         }
     }
 
-    @Test
+
     public void isTokenValid() throws Exception {
         if (service != null) {
             Assert.assertTrue(service.isTokenValid("test1"));

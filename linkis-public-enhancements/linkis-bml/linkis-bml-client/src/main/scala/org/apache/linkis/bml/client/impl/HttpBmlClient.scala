@@ -17,9 +17,8 @@
 
 package org.apache.linkis.bml.client.impl
 
-import java.io.{File, IOException, InputStream}
+import java.io.{ByteArrayInputStream, File, IOException, InputStream}
 import java.util
-
 import org.apache.linkis.bml.client.AbstractBmlClient
 import org.apache.linkis.bml.common._
 import org.apache.linkis.bml.conf.BmlConfiguration._
@@ -29,7 +28,7 @@ import org.apache.linkis.bml.request._
 import org.apache.linkis.bml.response.{BmlCreateBmlProjectResult, _}
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.io.FsPath
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.httpclient.authentication.AuthenticationStrategy
 import org.apache.linkis.httpclient.config.ClientConfigBuilder
 import org.apache.linkis.httpclient.dws.DWSHttpClient
@@ -38,6 +37,7 @@ import org.apache.linkis.httpclient.dws.config.DWSClientConfig
 import org.apache.linkis.storage.FSFactory
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
+import org.apache.http.client.methods.CloseableHttpResponse
 
 class HttpBmlClient(clientConfig: DWSClientConfig,
                    serverUrl: String,

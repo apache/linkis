@@ -319,9 +319,7 @@ public class SpringCloudGatewayWebsocketFilter implements GlobalFilter, Ordered 
 
     interface FluxSinkListener<T> {
         void setFluxSink(FluxSink<T> fluxSink);
-
         void next(T t);
-
         void complete();
     }
 }

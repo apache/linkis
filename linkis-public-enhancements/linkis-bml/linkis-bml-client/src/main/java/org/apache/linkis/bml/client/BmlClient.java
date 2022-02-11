@@ -32,11 +32,11 @@ public interface BmlClient extends Closeable {
      * @param resourceID resourceID
      * @return InputStream
      */
-    public BmlDownloadResponse downloadResource(String user, String resourceID);
+    BmlDownloadResponse downloadResource(String user, String resourceID);
 
-    public BmlDownloadResponse downloadResource(String user, String resourceId, String version);
+    BmlDownloadResponse downloadResource(String user, String resourceId, String version);
 
-    public BmlDownloadResponse downloadResource(
+    BmlDownloadResponse downloadResource(
             String user, String resourceId, String version, String path, boolean overwrite);
 
     /**
@@ -47,7 +47,7 @@ public interface BmlClient extends Closeable {
      * @param targetFilePath 指定文件目录
      * @return BmlRelateResult 包含resourceId和新的version
      */
-    public BmlRelateResponse relateResource(String resourceID, String targetFilePath);
+    BmlRelateResponse relateResource(String resourceID, String targetFilePath);
 
     /**
      * 更新资源信息
@@ -56,9 +56,9 @@ public interface BmlClient extends Closeable {
      * @param filePath 目标文件路径
      * @return resourceId 新的版本信息
      */
-    public BmlUpdateResponse updateResource(String user, String resourceID, String filePath);
+    BmlUpdateResponse updateResource(String user, String resourceID, String filePath);
 
-    public BmlUpdateResponse updateResource(
+    BmlUpdateResponse updateResource(
             String user, String resourceID, String filePath, InputStream inputStream);
 
     /**
@@ -69,7 +69,7 @@ public interface BmlClient extends Closeable {
      * @param inputStream 上传资源的输入流
      * @return 包含resourceId和version
      */
-    public BmlUploadResponse uploadResource(String user, String filePath, InputStream inputStream);
+    BmlUploadResponse uploadResource(String user, String filePath, InputStream inputStream);
 
     /**
      * 上传文件，用户指定文件路径，客户端自动获取输入流
@@ -78,7 +78,7 @@ public interface BmlClient extends Closeable {
      * @param filePath 文件路径
      * @return 包含resourceId和version
      */
-    public BmlUploadResponse uploadResource(String user, String filePath);
+    BmlUploadResponse uploadResource(String user, String filePath);
 
     /**
      * 获取resource的所有版本
@@ -87,33 +87,32 @@ public interface BmlClient extends Closeable {
      * @param resourceId 资源Id
      * @return resourceId对应下的所有版本信息
      */
-    public BmlResourceVersionsResponse getVersions(String user, String resourceId);
+    BmlResourceVersionsResponse getVersions(String user, String resourceId);
 
     /** */
-    public BmlDeleteResponse deleteResource(String user, String resourceId, String version);
+    BmlDeleteResponse deleteResource(String user, String resourceId, String version);
 
-    public BmlDeleteResponse deleteResource(String user, String resourceId);
+    BmlDeleteResponse deleteResource(String user, String resourceId);
 
-    public BmlCreateProjectResponse createBmlProject(
+    BmlCreateProjectResponse createBmlProject(
             String creator, String projectName, List<String> accessUsers, List<String> editUsers);
 
     BmlUpdateProjectPrivResponse updateProjectPriv(
             String username, String projectName, List<String> editUsers, List<String> accessUsers);
 
-    public BmlUploadResponse uploadShareResource(
+    BmlUploadResponse uploadShareResource(
             String user, String projectName, String filePath, InputStream inputStream);
 
-    public BmlUploadResponse uploadShareResource(String user, String projectName, String filePath);
+    BmlUploadResponse uploadShareResource(String user, String projectName, String filePath);
 
-    public BmlDownloadResponse downloadShareResource(
-            String user, String resourceId, String version);
+    BmlDownloadResponse downloadShareResource(String user, String resourceId, String version);
 
-    public BmlDownloadResponse downloadShareResource(String user, String resourceId);
+    BmlDownloadResponse downloadShareResource(String user, String resourceId);
 
-    public BmlUpdateResponse updateShareResource(
+    BmlUpdateResponse updateShareResource(
             String user, String resourceId, String filePath, InputStream inputStream);
 
-    public BmlUpdateResponse updateShareResource(String user, String resourceId, String filePath);
+    BmlUpdateResponse updateShareResource(String user, String resourceId, String filePath);
 
     BmlProjectInfoResponse getProjectInfoByName(String projectName);
 

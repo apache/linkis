@@ -17,6 +17,8 @@
 
 package org.apache.linkis.metadata.domain.mdq.bo;
 
+import java.util.Map;
+
 public class MdqTableFieldsInfoBO {
     private String name;
     private String type;
@@ -29,6 +31,16 @@ public class MdqTableFieldsInfoBO {
     private String comment;
 
     private String partitionsValue;
+
+    private Map<String, Object> modeInfo;
+
+    public Map<String, Object> getModeInfo() {
+        return modeInfo;
+    }
+
+    public void setModeInfo(Map<String, Object> modeInfo) {
+        this.modeInfo = modeInfo;
+    }
 
     public String getName() {
         return name;

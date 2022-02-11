@@ -27,7 +27,7 @@ import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 import org.apache.linkis.manager.label.utils.LabelUtils;
-import org.apache.linkis.resourcemanager.exception.RMErrorException;
+import org.apache.linkis.manager.common.exception.RMErrorException;
 
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;

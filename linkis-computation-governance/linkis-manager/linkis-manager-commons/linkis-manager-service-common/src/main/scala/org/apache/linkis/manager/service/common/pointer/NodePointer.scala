@@ -19,7 +19,7 @@ package org.apache.linkis.manager.service.common.pointer
 
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.Node
-import org.apache.linkis.manager.common.protocol.node.NodeHeartbeatMsg
+import org.apache.linkis.manager.common.protocol.node.{NodeHealthyRequest, NodeHeartbeatMsg}
 import org.apache.linkis.manager.label.entity.Label
 
 
@@ -60,6 +60,8 @@ trait NodePointer {
     * @return
     */
   def updateLabels(labels: Array[Label[_]]): Unit
+
+  def updateNodeHealthyRequest(nodeHealthyRequest: NodeHealthyRequest): Unit
 
   override def equals(obj: Any): Boolean = obj match {
     case nodeB: Node => getNode().getServiceInstance.equals(nodeB.getServiceInstance)

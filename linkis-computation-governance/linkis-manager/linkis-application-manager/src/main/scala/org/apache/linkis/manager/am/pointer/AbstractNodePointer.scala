@@ -81,5 +81,8 @@ abstract class AbstractNodePointer extends NodePointer with Logging {
   }
 
 
+  override def updateNodeHealthyRequest(nodeHealthyRequest: NodeHealthyRequest): Unit = {
+    getSender.send(nodeHealthyRequest)
+  }
 
 }

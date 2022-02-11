@@ -54,4 +54,8 @@ public interface ResourceService {
     boolean checkExpire(String resourceId, String version);
 
     void cleanExpiredResources();
+
+    void changeOwnerByResourceId(String resourceId, String oldOwner, String newOwner);
+
+    void copyResourceToOtherUser(String resourceId, String otherUser);
 }

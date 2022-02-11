@@ -17,12 +17,17 @@
  
 package org.apache.linkis.resourcemanager.service.impl
 
-import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.manager.common.entity.resource.{Resource, ResourceType}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.common.entity.persistence.PersistenceResourceActionRecord
+import org.apache.linkis.manager.common.entity.resource.{Resource, ResourceActionRecord, ResourceType}
+import org.apache.linkis.manager.common.exception.ResourceWarnException
+import org.apache.linkis.manager.common.utils.ResourceUtils
 import org.apache.linkis.manager.label.entity.{CombinedLabel, Label}
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
+import org.apache.linkis.manager.persistence.ResourceManagerPersistence
 import org.apache.linkis.resourcemanager.service.LabelResourceService
+import org.apache.linkis.resourcemanager.utils.RMUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -31,6 +36,9 @@ case class ResourceLogService() extends Logging{
 
   @Autowired
   var labelResourceService: LabelResourceService = _
+
+  @Autowired
+  var resourceManagerPersistence: ResourceManagerPersistence = _
 
 
 
@@ -129,6 +137,80 @@ case class ResourceLogService() extends Logging{
     val log = s"${nodeLabel.getInstance()}\t${source.getStringValue}"
     info(log)
   }
+
+  def deserialize(persistenceResourceActionRecord: PersistenceResourceActionRecord): ResourceActionRecord = {
+    val resourceActionRecord = new ResourceActionRecord
+    resourceActionRecord.setId(persistenceResourceActionRecord.getId)
+    resourceActionRecord.setLabelValue(persistenceResourceActionRecord.getLabelValue)
+    resourceActionRecord.setTicketId(persistenceResourceActionRecord.getTicketId)
+    resourceActionRecord.setRequestTimes(persistenceResourceActionRecord.getRequestTimes)
+    resourceActionRecord.setRequestResourceAll(ResourceUtils.deserializeResource(persistenceResourceActionRecord.getRequestResourceAll))
+    resourceActionRecord.setUsedTimes(persistenceResourceActionRecord.getUsedTimes)
+    resourceActionRecord.setUsedResourceAll(ResourceUtils.deserializeResource(persistenceResourceActionRecord.getUsedResourceAll))
+    resourceActionRecord.setReleaseTimes(persistenceResourceActionRecord.getReleaseTimes)
+    resourceActionRecord.setReleaseResourceAll(ResourceUtils.deserializeResource(persistenceResourceActionRecord.getReleaseResourceAll))
+    resourceActionRecord.setCreateTime(persistenceResourceActionRecord.getCreateTime)
+    resourceActionRecord.setUpdateTime(persistenceResourceActionRecord.getUpdateTime)
+    resourceActionRecord
+  }
+
+
+  def serialize(resourceActionRecord: ResourceActionRecord): PersistenceResourceActionRecord = {
+    val persistenceResourceActionRecord = new PersistenceResourceActionRecord
+    persistenceResourceActionRecord.setId(resourceActionRecord.getId)
+    persistenceResourceActionRecord.setLabelValue(resourceActionRecord.getLabelValue)
+    persistenceResourceActionRecord.setTicketId(resourceActionRecord.getTicketId)
+    persistenceResourceActionRecord.setRequestTimes(resourceActionRecord.getRequestTimes)
+    persistenceResourceActionRecord.setRequestResourceAll(ResourceUtils.serializeResource(resourceActionRecord.getRequestResourceAll))
+    persistenceResourceActionRecord.setUsedTimes(resourceActionRecord.getUsedTimes)
+    persistenceResourceActionRecord.setUsedResourceAll(ResourceUtils.serializeResource(resourceActionRecord.getUsedResourceAll))
+    persistenceResourceActionRecord.setReleaseTimes(resourceActionRecord.getReleaseTimes)
+    persistenceResourceActionRecord.setReleaseResourceAll(ResourceUtils.serializeResource(resourceActionRecord.getReleaseResourceAll))
+    persistenceResourceActionRecord.setCreateTime(resourceActionRecord.getCreateTime)
+    persistenceResourceActionRecord.setUpdateTime(resourceActionRecord.getUpdateTime)
+    persistenceResourceActionRecord
+  }
+
+  def recordUserResourceAction(userCreatorEngineType: CombinedLabel, ticketId: String, changeType: String, resource: Resource): Unit = {
+    if (RMUtils.RM_RESOURCE_ACTION_RECORD.getValue) {
+      var persistenceResourceActionRecord = resourceManagerPersistence.getResourceActionRecord(ticketId)
+      if(persistenceResourceActionRecord == null) {
+        persistenceResourceActionRecord = new PersistenceResourceActionRecord(userCreatorEngineType.getStringValue, ticketId, resource)
+        Utils.tryQuietly(resourceManagerPersistence.insertResourceActionRecord(persistenceResourceActionRecord))
+      }
+      val resourceActionRecord = deserialize(persistenceResourceActionRecord)
+      changeType match {
+        case ChangeType.ENGINE_REQUEST => {
+          resourceActionRecord.setRequestTimes(resourceActionRecord.getRequestTimes + 1)
+          resourceActionRecord.setRequestResourceAll(resourceActionRecord.getRequestResourceAll + resource)
+        }
+        case ChangeType.ENGINE_INIT => {
+          resourceActionRecord.setUsedTimes(resourceActionRecord.getUsedTimes + 1)
+          resourceActionRecord.setUsedResourceAll(resourceActionRecord.getUsedResourceAll + resource)
+        }
+        case ChangeType.ENGINE_CLEAR => {
+          resourceActionRecord.setReleaseTimes(resourceActionRecord.getReleaseTimes + 1)
+          resourceActionRecord.setReleaseResourceAll(resourceActionRecord.getReleaseResourceAll + resource)
+        }
+      }
+      Utils.tryCatch(resourceManagerPersistence.updateResourceActionRecord(serialize(resourceActionRecord))) {
+        case exception: Exception => {
+          warn(s"ResourceActionRecord failed, ${userCreatorEngineType.getStringValue} with ticketId ${ticketId} after ${changeType}, ${resource}", exception)
+        }
+      }
+    }
+  }
+
+  def recordUserResourceAction(userCreatorEngineType: CombinedLabel, engineInstanceLabel: EngineInstanceLabel, changeType: String, resource: Resource): Unit = {
+    if (RMUtils.RM_RESOURCE_ACTION_RECORD.getValue) {
+      val instanceResource = labelResourceService.getPersistenceResource(engineInstanceLabel)
+      if(instanceResource == null) {
+        throw new ResourceWarnException(11005, s"${engineInstanceLabel} resource is null, resource action will not be record")
+      }
+      recordUserResourceAction(userCreatorEngineType, instanceResource.getTicketId, changeType, resource)
+    }
+  }
+
 }
 
 object ChangeType {

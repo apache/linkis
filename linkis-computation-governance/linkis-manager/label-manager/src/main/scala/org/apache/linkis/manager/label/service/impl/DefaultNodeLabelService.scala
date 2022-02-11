@@ -114,9 +114,9 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
     val willBeAdd = newKeyList.diff(oldKeyList)
     val willBeUpdate = oldKeyList.diff(willBeDelete)
     val modifiableKeyList = LabelUtils.listAllUserModifiableLabel()
-    if(!CollectionUtils.isEmpty(willBeDelete)){
-      nodeLabels.foreach(nodeLabel =>  {
-        if(modifiableKeyList.contains(nodeLabel.getLabelKey) && willBeDelete.contains(nodeLabel.getLabelKey)){
+    if (!CollectionUtils.isEmpty(willBeDelete)) {
+      nodeLabels.foreach(nodeLabel => {
+        if (modifiableKeyList.contains(nodeLabel.getLabelKey) && willBeDelete.contains(nodeLabel.getLabelKey)) {
           val labelIds = new util.ArrayList[Integer]()
           labelIds.add(nodeLabel.getId)
           labelManagerPersistence.removeNodeLabels(instance, labelIds)

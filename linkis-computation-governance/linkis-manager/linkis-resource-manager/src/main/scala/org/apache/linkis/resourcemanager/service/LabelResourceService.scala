@@ -45,4 +45,6 @@ abstract class LabelResourceService {
 
   def getLabelsByResource(resource: PersistenceResource): Array[Label[_]]
 
+  def getPersistenceResource(label: Label[_]): PersistenceResource
+
 }

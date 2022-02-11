@@ -40,7 +40,7 @@ import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.exception.engineconn.{EngineConnExecutorErrorCode, EngineConnExecutorErrorException}
 import org.apache.linkis.governance.common.protocol.task._
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.rpc.serializer.annotation.Receiver
 import org.apache.linkis.message.builder.ServiceMethodContext
 import org.apache.linkis.protocol.message.RequestProtocol
 import org.apache.linkis.rpc.Sender

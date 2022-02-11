@@ -18,17 +18,12 @@
 package org.apache.linkis.resourcemanager.message
 
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.common.protocol.em.{EMInfoClearRequest, EMResourceRegisterRequest, RegisterEMRequest, StopEMRequest}
-import org.apache.linkis.manager.common.protocol.engine.EngineInfoClearRequest
-import org.apache.linkis.manager.common.protocol.node.NodeHeartbeatMsg
+import org.apache.linkis.manager.common.protocol.em.{EMResourceRegisterRequest, StopEMRequest}
 import org.apache.linkis.manager.common.protocol.resource.ResourceUsedProtocol
 import org.apache.linkis.manager.label.service.NodeLabelService
-import org.apache.linkis.manager.service.common.label.ManagerLabelService
-import org.apache.linkis.message.annotation.Receiver
-import org.apache.linkis.message.builder.ServiceMethodContext
 import org.apache.linkis.resourcemanager.domain.RMLabelContainer
 import org.apache.linkis.resourcemanager.service.ResourceManager
+import org.apache.linkis.rpc.serializer.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -40,43 +35,7 @@ class RMMessageService extends Logging {
   private var resourceManager: ResourceManager = _
 
   @Autowired
-  private var managerLabelService: ManagerLabelService = _
-
-
-  @Autowired
   private var nodeLabelService: NodeLabelService = _
-
-
-  def dealWithEMInfoClearRequest(eMInfoClearRequest: EMInfoClearRequest, smc: ServiceMethodContext): Unit = {
-    resourceManager.unregister(eMInfoClearRequest.getEm.getServiceInstance)
-  }
-
-  @Receiver
-  def dealWithEngineInfoClearRequest(engineInfoClearRequest: EngineInfoClearRequest, smc: ServiceMethodContext): Unit = {
-    resourceManager.resourceReleased(engineInfoClearRequest.getEngineNode.getLabels)
-  }
-
-
-  def dealWithNodeHeartbeatMsg(nodeHeartbeatMsg: NodeHeartbeatMsg, smc: ServiceMethodContext): Unit = {
-    debug(s"Start to deal with nodeHeartbeatMsg resource info $nodeHeartbeatMsg")
-    /*val labels = nodeLabelService.getNodeLabels(nodeHeartbeatMsg.getServiceInstance)
-    if (managerLabelService.isEngine(labels) && !nodeHeartbeatMsg.getStatus.equals(NodeStatus.ShuttingDown)) {
-      resourceManager.resourceReport(labels, nodeHeartbeatMsg.getNodeResource)
-    }*/
-    debug(s"Finished to deal with nodeHeartbeatMsg resource info $nodeHeartbeatMsg")
-    /* info(s"Start to deal with resourceUsedProtocol $nodeHeartbeatMsg")
-     val labels = nodeLabelService.getNodeLabels(nodeHeartbeatMsg.getServiceInstance)
-     resourceManager.resourceUsed(labels, nodeHeartbeatMsg.getNodeResource)
-     if(managerLabelService.isEM(nodeHeartbeatMsg.getServiceInstance)){
-       //resourceManager.register(nodeHeartbeatMsg.getServiceInstance, nodeHeartbeatMsg.getNodeResource)
-     } else if(managerLabelService.isEngine(nodeHeartbeatMsg.getServiceInstance)){
-       info(s"Start to deal with resourceUsedProtocol $nodeHeartbeatMsg")
-
-
-     } else {
-       info(s"${nodeHeartbeatMsg.getServiceInstance} is neither EM nor Engine")
-     }*/
-  }
 
 
   @Receiver

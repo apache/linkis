@@ -18,8 +18,6 @@
 package org.apache.linkis.manager.am.service.engine
 
 import org.apache.commons.lang.StringUtils
-
-import java.util
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.common.constant.AMConstant
@@ -27,10 +25,12 @@ import org.apache.linkis.manager.common.entity.metrics.AMNodeMetrics
 import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallbackToAM
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
-import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.rpc.serializer.annotation.Receiver
 import org.apache.linkis.server.BDPJettyServerHelper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+
+import java.util
 
 @Service
 class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackService with Logging {

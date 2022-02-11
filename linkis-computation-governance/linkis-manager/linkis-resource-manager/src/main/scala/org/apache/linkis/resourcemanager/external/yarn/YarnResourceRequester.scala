@@ -19,13 +19,13 @@ package org.apache.linkis.resourcemanager.external.yarn
 
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, NodeResource, ResourceType, YarnResource}
-import org.apache.linkis.resourcemanager.exception.{RMErrorException, RMWarnException}
 import org.apache.linkis.resourcemanager.external.domain.{ExternalAppInfo, ExternalResourceIdentifier, ExternalResourceProvider}
 import org.apache.linkis.resourcemanager.external.request.ExternalResourceRequester
 import org.apache.http.{HttpHeaders, HttpResponse}
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
+import org.apache.linkis.manager.common.exception.{RMErrorException, RMWarnException}
 import org.apache.linkis.resourcemanager.utils.RequestKerberosUrlUtils
 import org.json4s.JValue
 import org.json4s.JsonAST._
@@ -37,7 +37,7 @@ import scala.collection.mutable.ArrayBuffer
 
 class YarnResourceRequester extends ExternalResourceRequester with Logging {
 
-  private var provider:ExternalResourceProvider = _
+  private var provider: ExternalResourceProvider = _
 
   private def getAuthorizationStr = {
     val user = this.provider.getConfigMap.getOrDefault("user","").asInstanceOf[String]

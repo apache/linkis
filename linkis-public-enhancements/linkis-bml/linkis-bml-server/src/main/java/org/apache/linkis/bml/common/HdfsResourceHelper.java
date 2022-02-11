@@ -105,16 +105,16 @@ public class HdfsResourceHelper implements ResourceHelper {
             throw uploadResourceException;
         } finally {
             IOUtils.closeQuietly(outputStream);
-            if (fileSystem != null) {
+            IOUtils.closeQuietly(inputStream);
+            IOUtils.closeQuietly(is0);
+            IOUtils.closeQuietly(is1);
+            if (fileSystem != null){
                 try {
                     fileSystem.close();
                 } catch (Exception e) {
                     logger.error("close filesystem failed", e);
                 }
             }
-            IOUtils.closeQuietly(inputStream);
-            IOUtils.closeQuietly(is0);
-            IOUtils.closeQuietly(is1);
         }
         return size;
     }
@@ -142,27 +142,10 @@ public class HdfsResourceHelper implements ResourceHelper {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         String dateStr = format.format(new Date());
         if (StringUtils.isNotEmpty(resourceHeader)) {
-            return getSchema()
-                    + BmlServerConfiguration.BML_HDFS_PREFIX().getValue()
-                    + "/"
-                    + user
-                    + "/bml"
-                    + "/"
-                    + dateStr
-                    + "/"
-                    + resourceHeader
-                    + "/"
-                    + fileName;
+            return getSchema() + BmlServerConfiguration.BML_HDFS_PREFIX().getValue()
+                    + "/" + user + "/bml" + "/" + dateStr + "/" + resourceHeader + "/" + fileName;
         } else {
-            return getSchema()
-                    + BmlServerConfiguration.BML_HDFS_PREFIX().getValue()
-                    + "/"
-                    + user
-                    + "/bml"
-                    + "/"
-                    + dateStr
-                    + "/"
-                    + fileName;
+            return getSchema() + BmlServerConfiguration.BML_HDFS_PREFIX().getValue() + "/" + user + "/bml" + "/" + dateStr + "/" + fileName;
         }
     }
 

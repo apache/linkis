@@ -247,7 +247,7 @@
             <exclusions>
                 <exclusion>
                     <artifactId>linkis-httpclient</artifactId>
-                    <groupId>com.webank.wedatasphere.linkis</groupId>
+                    <groupId>org.apache.linkis</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

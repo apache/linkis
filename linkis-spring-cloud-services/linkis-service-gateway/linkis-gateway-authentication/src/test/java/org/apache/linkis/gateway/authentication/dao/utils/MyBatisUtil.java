@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-
 public class MyBatisUtil {
 
     public static SqlSessionFactory sqlSessionFactory;
@@ -45,7 +44,6 @@ public class MyBatisUtil {
     public static SqlSession getSqlSession() {
         return sqlSessionFactory.openSession();
     }
-
 
     public static void closeSqlSession(SqlSession sqlSession) {
         if (sqlSession != null) {

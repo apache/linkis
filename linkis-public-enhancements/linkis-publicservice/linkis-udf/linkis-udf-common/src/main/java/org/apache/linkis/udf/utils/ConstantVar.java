@@ -19,19 +19,26 @@ package org.apache.linkis.udf.utils;
 
 public class ConstantVar {
 
-    public static final int UDF_JAR = 0;
-    public static final int UDF_PY = 1;
-    public static final int UDF_SCALA = 2;
-    public static final int FUNCTION_PY = 3;
-    public static final int FUNCTION_SCALA = 4;
+    //udf type
+    public final static int UDF_JAR = 0;
+    public final static int UDF_PY = 1;
+    public final static int UDF_SCALA = 2;
+    public final static int FUNCTION_PY = 3;
+    public final static int FUNCTION_SCALA = 4;
 
-    public static final String FUNCTION = "function";
-    public static final String UDF = "udf";
-    public static final String ALL = "all";
+    //category
+    public final static String FUNCTION = "function";
+    public final static String UDF = "udf";
+    public final static String ALL = "all";
 
-    public static final String SYS = "sys";
-    public static final String BDP = "bdp";
-    public static final String SELF = "self";
-    public static final String SHARE = "share";
-    public static final String[] specialTypes = new String[] {SYS, BDP, SHARE};
+    //user type
+    public final static String SYS_USER = "sys";
+    public final static String BDP_USER = "bdp";
+    public final static String SELF_USER = "self";
+    public final static String SHARE_USER = "share";
+    public final static String EXPIRE_USER = "expire";
+
+
+    public final static String[] specialTypes = new String[]{SYS_USER, BDP_USER, SHARE_USER, EXPIRE_USER};
+
 }

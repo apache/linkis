@@ -20,6 +20,7 @@ package org.apache.linkis.manager.persistence.impl;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceResourceActionRecord;
 import org.apache.linkis.manager.dao.LabelManagerMapper;
 import org.apache.linkis.manager.dao.NodeManagerMapper;
 import org.apache.linkis.manager.dao.ResourceManagerMapper;
@@ -200,5 +201,20 @@ public class DefaultResourceManagerPersistence implements ResourceManagerPersist
     public PersistenceResource getNodeResourceById(Integer id) {
         PersistenceResource resource = resourceManagerMapper.getResourceById(id);
         return resource;
+    }
+
+    @Override
+    public PersistenceResourceActionRecord getResourceActionRecord(String ticketId) {
+        return resourceManagerMapper.getResourceActionRecord(ticketId);
+    }
+
+    @Override
+    public void insertResourceActionRecord(PersistenceResourceActionRecord resourceActionRecord) {
+        resourceManagerMapper.insertResourceActionRecord(resourceActionRecord);
+    }
+
+    @Override
+    public void updateResourceActionRecord(PersistenceResourceActionRecord resourceActionRecord) {
+        resourceManagerMapper.updateResourceActionRecord(resourceActionRecord);
     }
 }

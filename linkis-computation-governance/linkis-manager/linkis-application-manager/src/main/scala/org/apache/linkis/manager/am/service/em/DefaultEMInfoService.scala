@@ -24,11 +24,13 @@ import org.apache.linkis.manager.am.manager.EMNodeManager
 import org.apache.linkis.manager.common.entity.metrics.NodeHealthyInfo
 import org.apache.linkis.manager.common.entity.node.{AMEMNode, EMNode}
 import org.apache.linkis.manager.common.protocol.em.GetEMInfoRequest
+import org.apache.linkis.manager.common.protocol.node.NodeHealthyRequest
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
-import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder
+import org.apache.linkis.rpc.serializer.annotation.Receiver
 import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -51,6 +53,9 @@ class DefaultEMInfoService extends EMInfoService with Logging {
 
   @Autowired
   private var nodeMetricManagerPersistence: NodeMetricManagerPersistence = _
+
+  @Autowired
+  private var nodePointerBuilder: NodePointerBuilder = _
 
   @Autowired
   private var defaultMetricsConverter: MetricsConverter = _
@@ -98,6 +103,9 @@ class DefaultEMInfoService extends EMInfoService with Logging {
         if (! nodeHealthyInfo.getNodeHealthy.equals(oldHealthyInfo.getNodeHealthy)) {
           metrics.setHealthy(defaultMetricsConverter.convertHealthyInfo(nodeHealthyInfo))
           nodeMetricManagerPersistence.addOrupdateNodeMetrics(metrics)
+          val nodeHealthyRequest: NodeHealthyRequest = new NodeHealthyRequest
+          nodeHealthyRequest.setNodeHealthy(nodeHealthyInfo.getNodeHealthy)
+          nodePointerBuilder.buildEMNodePointer(node).updateNodeHealthyRequest(nodeHealthyRequest)
           logger.info(s"success to update healthy metric of instance: ${serviceInstance.getInstance},${metrics.getHealthy}")
         }
       }

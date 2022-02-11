@@ -151,4 +151,6 @@ object SSOUtils extends Logging {
     }
   }
 
+  def getSessionTimeOut(): Long = sessionTimeout
+
 }

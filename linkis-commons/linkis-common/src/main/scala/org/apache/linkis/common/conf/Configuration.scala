@@ -38,7 +38,7 @@ object Configuration extends Logging {
 
   val REFLECT_SCAN_PACKAGE = CommonVars.apply("wds.linkis.reflect.scan.package", "org.apache.linkis,com.webank.wedatasphere").getValue.split(",")
 
-  val CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.console.configuration.application.name", "linkis-ps-publicservice")
+  val CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.console.configuration.application.name", "linkis-ps-configuration")
 
   val CLOUD_CONSOLE_VARIABLE_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.console.variable.application.name", "linkis-ps-publicservice")
 

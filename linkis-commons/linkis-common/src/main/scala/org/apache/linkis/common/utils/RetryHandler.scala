@@ -37,7 +37,7 @@ trait RetryHandler extends Logging {
   def setRetryMaxPeriod(retryMaxPeriod: Long): Unit = this.maxPeriod = retryMaxPeriod
   def getRetryMaxPeriod: Long = maxPeriod
   def addRetryException(t: Class[_  <: Throwable]): Unit = retryExceptions += t
-  def getRetryExceptions: Array[Class[_  <: Throwable]] = retryExceptions.toArray
+  def getRetryExceptions: Array[Class[_ <: Throwable]] = retryExceptions.toArray
 
   protected def exceptionCanRetry(t: Throwable): Boolean = !t.isInstanceOf[FatalException] &&
     retryExceptions.exists(c => CommonClassUtils.isAssignable(t.getClass, c))
@@ -49,13 +49,13 @@ trait RetryHandler extends Logging {
   }
 
   def retry[T](op: => T, retryName: String): T = {
-    if(retryExceptions.isEmpty || retryNum <= 1) return op
+    if (retryExceptions.isEmpty || retryNum <= 1) return op
     var retry = 0
     var result = null.asInstanceOf[T]
     while(retry < retryNum && result == null) result = Utils.tryCatch(op) { t =>
       retry += 1
       if(retry >= retryNum) throw t
-      else if(exceptionCanRetry(t)) {
+      else if (exceptionCanRetry(t)) {
         val retryInterval = nextInterval(retry)
         info(retryName + s" failed with ${t.getClass.getName}, wait ${ByteTimeUtils.msDurationToString(retryInterval)} for next retry. Retried $retry++ ...")
         Utils.tryQuietly(Thread.sleep(retryInterval))
@@ -65,3 +65,7 @@ trait RetryHandler extends Logging {
     result
   }
 }
+
+class DefaultRetryHandler extends RetryHandler {
+}
+

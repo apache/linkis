@@ -23,6 +23,7 @@
     <id>linkis-gateway</id>
     <formats>
         <format>dir</format>
+        <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <baseDirectory>linkis-gateway</baseDirectory>
@@ -35,37 +36,13 @@
             <useProjectArtifact>true</useProjectArtifact>
             <useTransitiveDependencies>true</useTransitiveDependencies>
             <unpack>false</unpack>
-            <useStrictFiltering>true</useStrictFiltering>
+            <useStrictFiltering>false</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
         </dependencySet>
     </dependencySets>
 
     <fileSets>
-        <fileSet>
-            <directory>${basedir}/src/main/resources</directory>
-            <includes>
-                <include>*</include>
-            </includes>
-            <fileMode>0777</fileMode>
-            <outputDirectory>conf</outputDirectory>
-            <lineEnding>unix</lineEnding>
-        </fileSet>
-        <!--<fileSet>
-            <directory>${basedir}/bin</directory>
-            <includes>
-                <include>*</include>
-            </includes>
-            <fileMode>0777</fileMode>
-            <outputDirectory>bin</outputDirectory>
-            <lineEnding>unix</lineEnding>
-        </fileSet>
-        <fileSet>
-            <directory>.</directory>
-            <excludes>
-                <exclude>*/**</exclude>
-            </excludes>
-            <outputDirectory>logs</outputDirectory>
-        </fileSet>-->
+
     </fileSets>
 
 </assembly>

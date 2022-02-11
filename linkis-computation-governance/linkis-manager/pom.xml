@@ -34,7 +34,6 @@
         <module>label-manager</module>
         <module>linkis-manager-commons/linkis-manager-common</module>
         <module>linkis-manager-commons/linkis-manager-service-common</module>
-        <module>linkis-manager-commons/linkis-resource-manager-common</module>
         <module>linkis-manager-persistence</module>
         <module>linkis-resource-manager</module>
         <module>linkis-application-manager</module>

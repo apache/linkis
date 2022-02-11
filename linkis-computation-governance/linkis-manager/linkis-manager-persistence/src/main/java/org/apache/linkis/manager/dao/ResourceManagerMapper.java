@@ -21,6 +21,7 @@ import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
 
 import org.apache.ibatis.annotations.*;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceResourceActionRecord;
 
 import java.util.List;
 
@@ -102,4 +103,10 @@ public interface ResourceManagerMapper {
     void deleteResourceRelByResourceId(@Param("ids") List<Integer> ids);
 
     PersistenceResource getResourceById(@Param("id") Integer id);
+
+    PersistenceResourceActionRecord getResourceActionRecord(@Param("ticketId") String ticketId);
+
+    void updateResourceActionRecord(@Param("resourceActionRecord") PersistenceResourceActionRecord resourceActionRecord);
+
+    PersistenceResourceActionRecord insertResourceActionRecord(@Param("resourceActionRecord") PersistenceResourceActionRecord resourceActionRecord);
 }

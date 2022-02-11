@@ -45,7 +45,12 @@ object ResultSetReader {
       val resultSet = rsFactory.getResultSetByPath(resPath)
       val fs = FSFactory.getFs(resPath)
       fs.init(null)
-      ResultSetReader.getResultSetReader(resultSet, fs.read(resPath))
+      val reader = ResultSetReader.getResultSetReader(resultSet, fs.read(resPath))
+      reader match {
+        case storageResultSetReader: StorageResultSetReader[_, _] => storageResultSetReader.setFs(fs)
+        case _ =>
+      }
+      reader
     }
   }
 

@@ -18,7 +18,7 @@
 package org.apache.linkis.httpclient.dws.authentication
 
 import org.apache.linkis.common.utils.ByteTimeUtils
-import org.apache.linkis.httpclient.authentication.{AbstractAuthenticationStrategy, AuthenticationAction, AuthenticationResult}
+import org.apache.linkis.httpclient.authentication.{AbstractAuthenticationStrategy, Authentication, AuthenticationAction, AuthenticationResult}
 import org.apache.linkis.httpclient.dws.exception.AuthenticationFailedException
 import org.apache.linkis.httpclient.dws.request.DWSAuthenticationAction
 import org.apache.linkis.httpclient.dws.response.DWSAuthenticationResult
@@ -27,13 +27,21 @@ import org.apache.commons.lang.StringUtils
 import org.apache.http.HttpResponse
 
 class StaticAuthenticationStrategy(override protected val sessionMaxAliveTime: Long) extends AbstractAuthenticationStrategy {
-   def this() = this(ByteTimeUtils.timeStringAsMs("2h"))
+  def this() = this(ByteTimeUtils.timeStringAsMs("1h"))
+
+  private var serverSessionTimeout: Long = sessionMaxAliveTime
+
+  def setServerSessionTimeout(serverSessionTimeout: Long): Unit = {
+    this.serverSessionTimeout = serverSessionTimeout
+  }
+
+  def getServerSessionTimeOut: Long = this.serverSessionTimeout
 
   override protected def getUser(requestAction: Action): String = requestAction match {
     case _: AuthenticationAction => null
     case authAction: UserAction =>
       // If UserAction not contains user, then use the authTokenKey by default.
-      if(StringUtils.isBlank(authAction.getUser)) getClientConfig.getAuthTokenKey
+      if (StringUtils.isBlank(authAction.getUser)) getClientConfig.getAuthTokenKey
       else authAction.getUser
     case _ if StringUtils.isNotBlank(getClientConfig.getAuthTokenKey) => getClientConfig.getAuthTokenKey
     case _ => null
@@ -41,8 +49,10 @@ class StaticAuthenticationStrategy(override protected val sessionMaxAliveTime: L
 
   override protected def getAuthenticationAction(requestAction: Action, serverUrl: String): AuthenticationAction = {
     val action = new DWSAuthenticationAction(serverUrl)
-    def pwd: String = if(StringUtils.isNotBlank(getClientConfig.getAuthTokenValue)) getClientConfig.getAuthTokenValue
-      else throw new AuthenticationFailedException("the value of authTokenValue in ClientConfig must be exists, since no password is found to login.")
+
+    def pwd: String = if (StringUtils.isNotBlank(getClientConfig.getAuthTokenValue)) getClientConfig.getAuthTokenValue
+    else throw new AuthenticationFailedException("the value of authTokenValue in ClientConfig must be exists, since no password is found to login.")
+
     requestAction match {
       case userPwd: UserPwdAction =>
         action.addRequestPayload("userName", userPwd.getUser)
@@ -60,6 +70,25 @@ class StaticAuthenticationStrategy(override protected val sessionMaxAliveTime: L
   }
 
   override def getAuthenticationResult(response: HttpResponse, requestAction: AuthenticationAction): AuthenticationResult = {
-    new DWSAuthenticationResult(response, requestAction.serverUrl)
+    val result = new DWSAuthenticationResult(response, requestAction.serverUrl)
+    val timeout = result.getData.get("sessionTimeOut")
+    // update session timeout
+    if (null != timeout) {
+      setServerSessionTimeout(timeout.toString.toLong)
+    }
+    result
   }
+
+  override def isTimeout(authentication: Authentication): Boolean = System.currentTimeMillis() - authentication.getLastAccessTime >= serverSessionTimeout
+
+  override def enforceLogin(requestAction: Action, serverUrl: String): Authentication = {
+    val key = getKey(requestAction, serverUrl)
+    if (key == null) return null
+    key.intern() synchronized {
+      val authentication = tryLogin(requestAction, serverUrl)
+      putSession(key, authentication)
+      authentication
+    }
+  }
+
 }

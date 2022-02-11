@@ -17,8 +17,8 @@
 
 package org.apache.linkis.manager.am.service.em
 
-import java.util
-import java.util.concurrent.TimeUnit
+import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.manager.EMNodeManager
@@ -27,16 +27,15 @@ import org.apache.linkis.manager.common.entity.node.{AMEMNode, EMNode}
 import org.apache.linkis.manager.common.protocol.em.{EMResourceRegisterRequest, RegisterEMRequest, RegisterEMResponse}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
-import org.apache.linkis.message.annotation.{Order, Receiver}
-import org.apache.linkis.message.builder.ServiceMethodContext
-import org.apache.linkis.message.publisher.MessagePublisher
-import org.apache.linkis.protocol.label.NodeLabelAddRequest
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.linkis.manager.label.service.NodeLabelAddService
+import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.protocol.label.NodeLabelAddRequest
 import org.apache.linkis.resourcemanager.message.RMMessageService
+import org.apache.linkis.rpc.Sender
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+
+import java.util
 
 
 @Service
@@ -70,8 +69,7 @@ class DefaultEMRegisterService extends EMRegisterService with Logging {
     * @param emRegister
     */
   @Receiver
-  @Order(1)
-  override def addEMNodeInstance(emRegister: RegisterEMRequest, smc: ServiceMethodContext): RegisterEMResponse = Utils.tryCatch{
+  override def addEMNodeInstance(emRegister: RegisterEMRequest, sender: Sender): RegisterEMResponse = Utils.tryCatch{
     info(s"Start to save em{${emRegister.getServiceInstance}}  in persistence")
     emNodeManager.addEMNodeInstance(registerEMRequest2EMNode(emRegister))
     info(s"Finished to save em{${emRegister.getServiceInstance}}  in persistence")

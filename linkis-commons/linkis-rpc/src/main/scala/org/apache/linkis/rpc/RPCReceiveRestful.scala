@@ -70,6 +70,8 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
   def initListenerBus(): Unit =  {
     if(!receiverChoosers.exists(_.isInstanceOf[CommonReceiverChooser]))
       receiverChoosers = receiverChoosers :+ new CommonReceiverChooser
+    if(!receiverChoosers.exists(_.isInstanceOf[MessageReceiverChooser]))
+      receiverChoosers = receiverChoosers :+ new MessageReceiverChooser
     info("init all receiverChoosers in spring beans, list => " + receiverChoosers.toList)
     if(!receiverSenderBuilders.exists(_.isInstanceOf[CommonReceiverSenderBuilder]))
       receiverSenderBuilders = receiverSenderBuilders :+ new CommonReceiverSenderBuilder
@@ -108,7 +110,7 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
   }
 
   private implicit def toMessage(obj: Any): Message = obj match {
-    case Unit | () =>
+    case Unit | () | null =>
       RPCProduct.getRPCProduct.ok()
     case _: BoxedUnit => RPCProduct.getRPCProduct.ok()
     case _ =>

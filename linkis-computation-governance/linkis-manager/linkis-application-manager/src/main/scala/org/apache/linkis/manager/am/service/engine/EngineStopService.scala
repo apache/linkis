@@ -17,6 +17,7 @@
  
 package org.apache.linkis.manager.am.service.engine
 
+import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.protocol.engine.{EngineConnReleaseRequest, EngineStopRequest, EngineSuicideRequest}
 import org.apache.linkis.rpc.Sender
 
@@ -24,13 +25,15 @@ import org.apache.linkis.rpc.Sender
 trait EngineStopService {
 
 
-  def stopEngine(engineStopRequest: EngineStopRequest): Unit
+  def stopEngine(engineStopRequest: EngineStopRequest, sender: Sender): Unit
 
   def asyncStopEngine(engineStopRequest: EngineStopRequest): Unit
 
-  def engineSuicide(engineSuicideRequest: EngineSuicideRequest): Unit
+  def engineSuicide(engineSuicideRequest: EngineSuicideRequest, sender: Sender): Unit
 
-  def dealEngineRelease(engineConnReleaseRequest: EngineConnReleaseRequest): Unit
+  def dealEngineRelease(engineConnReleaseRequest: EngineConnReleaseRequest, sender: Sender): Unit
+
+  def engineConnInfoClear(ecNode: EngineNode): Unit
 
 }
 

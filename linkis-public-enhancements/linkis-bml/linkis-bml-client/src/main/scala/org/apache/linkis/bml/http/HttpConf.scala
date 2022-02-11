@@ -43,6 +43,10 @@ object HttpConf {
   val uploadShareResourceUrl:String = urlPrefix + "/" + "uploadShareResource"
   val updateShareResourceUrl:String = urlPrefix + "/" + "updateShareResource"
   val attachUrl:String = urlPrefix + "/" + "attachResourceAndProject"
+  val changeOwnerUrl: String = urlPrefix + "/" + "changeOwner"
+  val rollbackVersionUrl: String = urlPrefix + "/" + "rollbackVersion"
+  val copyResourceUrl: String = urlPrefix + "/" + "copyResourceToAnotherUser"
+
   def main(args: Array[String]): Unit = {
     println(uploadURL)
     println(downloadURL)

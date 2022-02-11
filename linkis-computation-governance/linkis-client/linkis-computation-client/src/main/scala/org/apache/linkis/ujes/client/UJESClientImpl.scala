@@ -23,7 +23,7 @@ import org.apache.linkis.httpclient.response.Result
 import org.apache.linkis.ujes.client.request.UJESJobAction
 
 class UJESClientImpl(clientConfig: DWSClientConfig) extends UJESClient {
-  private val dwsHttpClient = new DWSHttpClient(clientConfig, "UJES-Job-Execution-Thread")
+  private val dwsHttpClient = new DWSHttpClient(clientConfig, "Linkis-Job-Execution-Thread")
   override protected[client] def executeUJESJob(ujesJobAction: UJESJobAction): Result = ujesJobAction match {
     case action: Action => dwsHttpClient.execute(action)
   }

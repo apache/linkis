@@ -75,4 +75,8 @@ class LabelResourceServiceImpl extends LabelResourceService with Logging {
       labelFactory.createLabel(label.getLabelKey, label.getValue)
     }.toArray
   }
+
+  override def getPersistenceResource(label: Label[_]): PersistenceResource = {
+    resourceLabelService.getPersistenceResourceByLabel(label)
+  }
 }

@@ -41,6 +41,8 @@
         <module>linkis-script-dev/linkis-storage-script-dev-server</module>
 
         <module>linkis-error-code</module>
+        <module>linkis-ps-common-lock</module>
+
 
     </modules>
 

@@ -32,7 +32,7 @@ import org.apache.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeSta
 import org.apache.linkis.manager.common.entity.metrics.{NodeHealthyInfo, NodeOverLoadInfo}
 import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadInstanceResource}
 import org.apache.linkis.manager.common.protocol.node.{NodeHeartbeatMsg, NodeHeartbeatRequest}
-import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.rpc.serializer.annotation.Receiver
 import org.apache.linkis.rpc.Sender
 import org.springframework.beans.factory.annotation.Autowired
 

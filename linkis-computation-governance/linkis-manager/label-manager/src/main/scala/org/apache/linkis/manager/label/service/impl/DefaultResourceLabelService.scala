@@ -18,10 +18,9 @@
 package org.apache.linkis.manager.label.service.impl
 
 import java.util
-
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.entity.label.LabelKeyValue
-import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel
+import org.apache.linkis.manager.common.entity.persistence.{PersistenceLabel, PersistenceResource}
 import org.apache.linkis.manager.common.entity.resource.NodeResource
 import org.apache.linkis.manager.common.utils.ResourceUtils
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
@@ -100,11 +99,27 @@ class DefaultResourceLabelService extends ResourceLabelService with Logging {
       case p: PersistenceLabel => resourceLabelPersistence.getResourceByLabel(p)
       case _ =>  resourceLabelPersistence.getResourceByLabel(LabelManagerUtils.convertPersistenceLabel(label))
     }
-    if(persistenceResource.isEmpty){
+    if(persistenceResource.isEmpty) {
       null
     } else {
       // TODO: 判断取哪个resource
       ResourceUtils.fromPersistenceResource(persistenceResource.get(0))
+    }
+  }
+
+
+  override def getPersistenceResourceByLabel(label: Label[_]): PersistenceResource = {
+    if (null == label) {
+      return null
+    }
+    val persistenceResource = label match {
+      case p: PersistenceLabel => resourceLabelPersistence.getResourceByLabel(p)
+      case _ => resourceLabelPersistence.getResourceByLabel(LabelManagerUtils.convertPersistenceLabel(label))
+    }
+    if(persistenceResource.isEmpty) {
+      null
+    } else {
+      persistenceResource.get(0)
     }
   }
 

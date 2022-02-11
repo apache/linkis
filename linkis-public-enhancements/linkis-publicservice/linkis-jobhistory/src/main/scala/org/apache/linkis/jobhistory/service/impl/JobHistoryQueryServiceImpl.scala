@@ -19,25 +19,21 @@ package org.apache.linkis.jobhistory.service.impl
 
 import java.lang
 import java.sql.Timestamp
-
 import com.google.common.collect.Iterables
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants
+import org.apache.linkis.governance.common.entity.job.{JobRequest, JobRequestWithDetail, QueryException, SubJobDetail}
+import org.apache.linkis.governance.common.protocol.job._
 import org.apache.linkis.jobhistory.conversions.TaskConversions._
 import org.apache.linkis.jobhistory.dao.{JobDetailMapper, JobHistoryMapper}
 import org.apache.linkis.jobhistory.entity.JobHistory
 import org.apache.linkis.jobhistory.util.QueryUtils
-import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.commons.lang.exception.ExceptionUtils
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 import java.util
 import java.util.Date
-
-import org.apache.commons.lang.exception.ExceptionUtils
-import org.apache.linkis.common.errorcode.LinkisPublicEnhancementErrorCodeSummary
-import org.apache.linkis.common.exception.LinkisRetryException
-import org.apache.linkis.governance.common.constant.job.JobRequestConstants
-import org.apache.linkis.governance.common.entity.job.{JobRequest, JobRequestWithDetail, QueryException, SubJobDetail}
-import org.apache.linkis.governance.common.protocol.job.{JobReqBatchUpdate, JobReqInsert, JobReqQuery, JobReqUpdate, JobRespProtocol}
 import org.apache.linkis.jobhistory.entity.QueryJobHistory
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService
 import org.apache.linkis.jobhistory.transitional.TaskStatus
@@ -64,7 +60,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     Utils.tryCatch {
       QueryUtils.storeExecutionCode(jobReqInsert.jobReq)
       val jobInsert = jobRequest2JobHistory(jobReqInsert.jobReq)
-      jobInsert.setUpdated_time(jobInsert.getCreated_time)
+      jobInsert.setUpdatedTime(jobInsert.getCreatedTime)
       jobHistoryMapper.insertJobHistory(jobInsert)
       val map = new util.HashMap[String, Object]()
       map.put(JobRequestConstants.JOB_ID, jobInsert.getId.asInstanceOf[Object])
@@ -83,7 +79,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   override def change(jobReqUpdate: JobReqUpdate): JobRespProtocol = {
     val jobReq = jobReqUpdate.jobReq
     jobReq.setExecutionCode(null)
-    info("Update data to the database(往数据库中更新数据)：status:" + jobReq.getStatus)
+    info("Update data to the database(往数据库中更新数据)：task " + jobReq.getId + "status:" + jobReq.getStatus)
     val jobResp = new JobRespProtocol
     Utils.tryCatch {
       if (jobReq.getErrorDesc != null) {
@@ -100,9 +96,10 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         }
       }
       val jobUpdate = jobRequest2JobHistory(jobReq)
-      if(jobUpdate.getUpdated_time == null) {
+      if(jobUpdate.getUpdatedTime == null) {
         throw new QueryException(120001,s"jobId:${jobReq.getId}，更新job相关信息失败，请指定该请求的更新时间!")
       }
+      logger.info(s"Update data to the database(往数据库中更新数据)：task ${jobReq.getId} + status ${jobReq.getStatus}, updateTime: ${jobUpdate.getUpdateTimeMills}, progress : ${jobUpdate.getProgress}")
       jobHistoryMapper.updateJobHistory(jobUpdate)
       val map = new util.HashMap[String, Object]
       map.put(JobRequestConstants.JOB_ID, jobReq.getId.asInstanceOf[Object])
@@ -144,7 +141,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
                 throw new QueryException(120001,s"jobId:${jobReq.getId}，在数据库中的task状态为：${oldStatus}，更新的task状态为：${jobReq.getStatus}，更新失败！")
             }
             val jobUpdate = jobRequest2JobHistory(jobReq)
-            jobUpdate.setUpdated_time(new Timestamp(System.currentTimeMillis()))
+            jobUpdate.setUpdatedTime(new Timestamp(System.currentTimeMillis()))
             jobHistoryMapper.updateJobHistory(jobUpdate)
 
             // todo
@@ -210,7 +207,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
    override def getJobHistoryByIdAndName(jobId: java.lang.Long, userName: String): JobHistory = {
     val jobReq = new JobHistory
     jobReq.setId(jobId)
-    jobReq.setSubmit_user(userName)
+    jobReq.setSubmitUser(userName)
     val jobHistoryList = jobHistoryMapper.selectJobHistory(jobReq)
     if (jobHistoryList.isEmpty) null else jobHistoryList.get(0)
   }
@@ -239,7 +236,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         val queryJobHistory = new QueryJobHistory
         queryJobHistory.setId(jobId)
         queryJobHistory.setStatus(TaskStatus.Inited.toString)
-        queryJobHistory.setSubmit_user("EMPTY")
+        queryJobHistory.setSubmitUser("EMPTY")
         queryJobHistory
       })
   }

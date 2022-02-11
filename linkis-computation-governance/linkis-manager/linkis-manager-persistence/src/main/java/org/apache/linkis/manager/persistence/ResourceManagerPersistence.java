@@ -20,6 +20,7 @@ package org.apache.linkis.manager.persistence;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceResourceActionRecord;
 import org.apache.linkis.manager.exception.PersistenceErrorException;
 import org.apache.linkis.manager.label.entity.Label;
 
@@ -135,5 +136,13 @@ public interface ResourceManagerPersistence {
 
     void deleteResourceRelByResourceId(List<Integer> id);
 
-    PersistenceResource getNodeResourceById(Integer id);
+    PersistenceResource getNodeResourceById (Integer id);
+
+    PersistenceResourceActionRecord getResourceActionRecord(String ticketId);
+
+    void insertResourceActionRecord(PersistenceResourceActionRecord resourceActionRecord);
+
+    void updateResourceActionRecord(PersistenceResourceActionRecord resourceActionRecord);
+
+
 }

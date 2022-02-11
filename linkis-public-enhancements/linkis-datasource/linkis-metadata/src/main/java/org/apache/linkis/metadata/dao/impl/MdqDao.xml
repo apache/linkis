@@ -28,7 +28,7 @@
 
     <sql id="field_List">
         id, `table_id`, `name`, `alias`, `type`, `comment`,`express`,
-        `rule`,`is_partition_field`,`is_primary`,`length`
+        `rule`,`is_partition_field`,`is_primary`,`length`,`mode_info`
     </sql>
 
     <sql id="import_List">

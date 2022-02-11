@@ -55,7 +55,7 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
         Option(insLabelService.searchInstancesByLabels(routeLabels.get))
       case _ =>
         if (null != serviceInstance) {
-          warn("Cannot find route labels, now to find the default [" + serviceInstance.getApplicationName + "] service instances")
+          logger.info("Cannot find route labels, now to find the default [" + serviceInstance.getApplicationName + "] service instances")
           //Use application name to query service instances
           Option(insLabelService.searchUnRelateInstances(serviceInstance))
         } else {

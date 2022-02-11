@@ -5,18 +5,17 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.filesystem.util;
 
+package org.apache.linkis.filesystem.util;
 
 import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
 import org.apache.linkis.filesystem.entity.LogLevel;
@@ -33,12 +32,18 @@ import java.util.regex.Pattern;
 
 public class WorkspaceUtil {
 
-    public static String infoReg = "((19|20)[0-9]{2})-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) "
-            + "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]" + "\\.\\d{3}\\s*INFO(.*)";
-    public static String warnReg = "((19|20)[0-9]{2})-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) "
-            + "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]" + "\\.\\d{3}\\s*WARN(.*)";
-    public static String errorReg = "((19|20)[0-9]{2})-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) "
-            + "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]" + "\\.\\d{3}\\s*ERROR(.*)";
+    public static String infoReg =
+            "((19|20)[0-9]{2})-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) "
+                    + "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]"
+                    + "\\.\\d{3}\\s*INFO(.*)";
+    public static String warnReg =
+            "((19|20)[0-9]{2})-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) "
+                    + "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]"
+                    + "\\.\\d{3}\\s*WARN(.*)";
+    public static String errorReg =
+            "((19|20)[0-9]{2})-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) "
+                    + "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]"
+                    + "\\.\\d{3}\\s*ERROR(.*)";
     public static String allReg = "(.*?)";
 
     public static List<LogLevel.Type> logReg = new ArrayList<>();
@@ -54,7 +59,8 @@ public class WorkspaceUtil {
             }
         }
         ArrayList<Integer> result = new ArrayList<>();
-        Optional<LogLevel.Type> any = logReg.stream().filter(r -> Pattern.matches(r.getReg(), code)).findAny();
+        Optional<LogLevel.Type> any =
+                logReg.stream().filter(r -> Pattern.matches(r.getReg(), code)).findAny();
         if (any.isPresent()) {
             result.add(any.get().ordinal());
             result.add(LogLevel.Type.ALL.ordinal());
@@ -68,13 +74,11 @@ public class WorkspaceUtil {
         return result;
     }
 
-    public static Function<String, String> suffixTuningFunction = p -> {
-        if (p.endsWith(File.separator))
-            return p;
-        else
-            return p + File.separator;
-
-    };
+    public static Function<String, String> suffixTuningFunction =
+            p -> {
+                if (p.endsWith(File.separator)) return p;
+                else return p + File.separator;
+            };
 
     public static String suffixTuning(String path) {
         return suffixTuningFunction.apply(path);
@@ -86,7 +90,7 @@ public class WorkspaceUtil {
         if (i != -1) {
             name = name.substring(0, i);
         }
-        //只支持数字,字母大小写,下划线,中文
+        // 只支持数字,字母大小写,下划线,中文
         String specialRegEx = "^[\\w\\u4e00-\\u9fa5]{1,200}$";
         Pattern specialPattern = Pattern.compile(specialRegEx);
         if (!specialPattern.matcher(name).find()) {
@@ -95,7 +99,7 @@ public class WorkspaceUtil {
     }
 
     public static boolean isLogAdmin(String username) {
-        return Arrays.stream(WorkSpaceConfiguration.FILESYSTEM_LOG_ADMIN.getValue().split(",")).anyMatch(username::equalsIgnoreCase);
+        return Arrays.stream(WorkSpaceConfiguration.FILESYSTEM_LOG_ADMIN.getValue().split(","))
+                .anyMatch(username::equalsIgnoreCase);
     }
-
 }

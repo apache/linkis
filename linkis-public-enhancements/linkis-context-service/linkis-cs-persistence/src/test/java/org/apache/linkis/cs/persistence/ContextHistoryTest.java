@@ -5,30 +5,31 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.persistence;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.linkis.cs.common.entity.enumeration.ContextType;
 import org.apache.linkis.cs.common.entity.history.ContextHistory;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.persistence.entity.PersistenceContextID;
 import org.apache.linkis.cs.persistence.persistence.ContextHistoryPersistence;
 import org.apache.linkis.cs.persistence.persistence.KeywordContextHistoryPersistence;
+
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.List;
 import java.util.Random;
-
 
 public class ContextHistoryTest {
     AnnotationConfigApplicationContext context = null;
@@ -55,7 +56,7 @@ public class ContextHistoryTest {
     }
 
     public void testDeleteContextHistory() throws CSErrorException {
-        //contextIDPersistence.deleteContextID(-1193959466);
+        // contextIDPersistence.deleteContextID(-1193959466);
     }
 
     public void testGetContextHistory() throws CSErrorException {
@@ -64,7 +65,6 @@ public class ContextHistoryTest {
         ContextHistory history = contextHistoryPersistence.getHistory(aContextID, 19359L);
         AContextHistory history1 = (AContextHistory) history;
         System.out.println(history1.getVersion());
-
     }
 
     public void testGetContextHistoryBySource() throws CSErrorException {
@@ -73,7 +73,6 @@ public class ContextHistoryTest {
         ContextHistory history = contextHistoryPersistence.getHistory(aContextID, "source");
         AContextHistory history1 = (AContextHistory) history;
         System.out.println(history1.getVersion());
-
     }
 
     public void testGetHistoriesByContextID() throws CSErrorException {
@@ -86,12 +85,16 @@ public class ContextHistoryTest {
     public void testSearchHistoriesByContextIDAndKeywords() throws CSErrorException {
         AContextID aContextID = new AContextID();
         aContextID.setContextId("53277");
-        List<ContextHistory> histories = keywordContextHistoryPersistence.search(aContextID,new String[]{"keyword1","keyword2"});
+        List<ContextHistory> histories =
+                keywordContextHistoryPersistence.search(
+                        aContextID, new String[] {"keyword1", "keyword2"});
         System.out.println(histories.size());
     }
 
     public void testSearchHistoriesByType() throws CSErrorException {
-        List<ContextHistory> histories = keywordContextHistoryPersistence.search(ContextType.METADATA,new String[]{"keyword1","keyword2"});
+        List<ContextHistory> histories =
+                keywordContextHistoryPersistence.search(
+                        ContextType.METADATA, new String[] {"keyword1", "keyword2"});
         System.out.println(histories.size());
     }
 
@@ -101,7 +104,6 @@ public class ContextHistoryTest {
         contextHistoryPersistence.removeHistory(aContextID, "source");
     }
 
-
     public void testUpdateContextHistory() throws CSErrorException {
         AContextHistory aContextHistory = new AContextHistory();
         aContextHistory.setKeyword("update keywords");
@@ -109,7 +111,6 @@ public class ContextHistoryTest {
         aContextHistory.setSource("updatesource");
         aContextHistory.setId(19359);
         AContextID aContextID = new AContextID();
-        contextHistoryPersistence.updateHistory(aContextID,aContextHistory);
+        contextHistoryPersistence.updateHistory(aContextID, aContextHistory);
     }
-
 }

@@ -5,19 +5,18 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.client.test.test_multiuser;
 
-import com.google.gson.Gson;
 import org.apache.linkis.cs.client.Context;
 import org.apache.linkis.cs.client.ContextClient;
 import org.apache.linkis.cs.client.builder.ContextClientFactory;
@@ -28,21 +27,25 @@ import org.apache.linkis.cs.common.entity.source.*;
 import org.apache.linkis.cs.common.serialize.helper.ContextSerializationHelper;
 import org.apache.linkis.cs.common.serialize.helper.SerializationHelper;
 
+import com.google.gson.Gson;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-
 public class TestChangeContext {
 
-    public static void main(String [] args) {
+    public static void main(String[] args) {
 
         ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
         try {
             // 1, read context
             File file = new File(TestCreateContext.CONTEXTID_PATH);
             if (!file.exists()) {
-                System.out.println("Error, contextID serialize file : " + TestCreateContext.CONTEXTID_PATH + " invalid.");
+                System.out.println(
+                        "Error, contextID serialize file : "
+                                + TestCreateContext.CONTEXTID_PATH
+                                + " invalid.");
                 return;
             }
             FileReader fr = new FileReader(file);
@@ -60,13 +63,15 @@ public class TestChangeContext {
 
             SerializationHelper serializationHelper = ContextSerializationHelper.getInstance();
             if (!serializationHelper.accepts(contextIDStr)) {
-                System.out.println("Invalid contextStr : " + contextIDStr + ", cannot be deserialized");
+                System.out.println(
+                        "Invalid contextStr : " + contextIDStr + ", cannot be deserialized");
                 return;
             }
             Object contextObject = serializationHelper.deserialize(contextIDStr);
             System.out.println("Deserialized obj : " + new Gson().toJson(contextObject));
             if (!LinkisHAWorkFlowContextID.class.isInstance(contextObject)) {
-                System.out.println("Invalid contextObject, not LinkisHAWorkFlowContextID instance.");
+                System.out.println(
+                        "Invalid contextObject, not LinkisHAWorkFlowContextID instance.");
                 return;
             }
             LinkisHAWorkFlowContextID contextID = (LinkisHAWorkFlowContextID) contextObject;

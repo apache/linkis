@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.execution;
 
 import org.apache.linkis.cs.common.entity.source.ContextID;
@@ -31,7 +31,7 @@ import org.apache.linkis.cs.optimize.impl.CostBasedConditionOptimizer;
 
 import java.util.List;
 
-public abstract class AbstractConditionExecution implements ConditionExecution{
+public abstract class AbstractConditionExecution implements ConditionExecution {
 
     protected ContextSearchMatcher contextSearchMatcher;
     protected ContextSearchRuler contextSearchRuler;
@@ -40,7 +40,8 @@ public abstract class AbstractConditionExecution implements ConditionExecution{
     protected Condition condition;
     protected ContextID contextID;
 
-    public AbstractConditionExecution(Condition condition, ContextCacheService contextCacheService, ContextID contextID) {
+    public AbstractConditionExecution(
+            Condition condition, ContextCacheService contextCacheService, ContextID contextID) {
         this.condition = condition;
         this.contextCacheService = contextCacheService;
         this.contextID = contextID;
@@ -48,20 +49,20 @@ public abstract class AbstractConditionExecution implements ConditionExecution{
 
     @Override
     public List<ContextKeyValue> execute() {
-        if(needOptimization()){
+        if (needOptimization()) {
             OptimizedCondition optimizedCondition = getConditionOptimizer().optimize(condition);
         }
         ContextCacheFetcher fastFetcher = getFastFetcher();
-        if(fastFetcher != null){
+        if (fastFetcher != null) {
             return getContextSearchRuler().rule(fastFetcher.fetch(contextID));
         } else {
             return getContextCacheFetcher().fetch(contextID);
         }
     }
 
-    abstract protected boolean needOptimization();
+    protected abstract boolean needOptimization();
 
-    abstract protected ContextCacheFetcher getFastFetcher();
+    protected abstract ContextCacheFetcher getFastFetcher();
 
     @Override
     public ContextSearchMatcher getContextSearchMatcher() {
@@ -94,7 +95,7 @@ public abstract class AbstractConditionExecution implements ConditionExecution{
         return new CostBasedConditionOptimizer(getConditionCostCalculator());
     }
 
-    public ConditionCostCalculator getConditionCostCalculator(){
+    public ConditionCostCalculator getConditionCostCalculator() {
         return new ConditionCostCalculator();
     }
 }

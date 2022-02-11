@@ -19,13 +19,11 @@ package org.apache.linkis.manager.common.entity.enumeration;
 
 public enum MaintainType {
 
-
     /**
-     * Engine remains unreleased type
-     * Default: automatic release
-     * day: keep one engine during working hours from 9:00 to 21:00
-     * week: weekdays Monday to Friday keep one engine
+     * Engine remains unreleased type Default: automatic release day: keep one engine during working
+     * hours from 9:00 to 21:00 week: weekdays Monday to Friday keep one engine
      */
-    Default, day, week
-
+    Default,
+    day,
+    week
 }

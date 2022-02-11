@@ -17,7 +17,4 @@
 
 package org.apache.linkis.resourcemanager.utils;
 
-public class AlertUtils {
-
-
-}
+public class AlertUtils {}

@@ -48,5 +48,4 @@ public class MyBatisUtil {
             sqlSession.close();
         }
     }
-
 }

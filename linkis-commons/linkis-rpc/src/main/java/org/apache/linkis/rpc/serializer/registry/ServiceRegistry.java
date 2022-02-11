@@ -17,9 +17,7 @@
 
 package org.apache.linkis.rpc.serializer.registry;
 
-
 public interface ServiceRegistry {
 
     void register(Object service);
-
 }

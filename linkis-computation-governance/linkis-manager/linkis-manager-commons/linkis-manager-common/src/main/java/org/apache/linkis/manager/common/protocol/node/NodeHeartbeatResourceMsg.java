@@ -26,8 +26,8 @@ import org.apache.linkis.protocol.AbstractRetryableProtocol;
 
 import java.io.Serializable;
 
-
-public class NodeHeartbeatResourceMsg extends AbstractRetryableProtocol implements HeartbeatProtocol, Serializable {
+public class NodeHeartbeatResourceMsg extends AbstractRetryableProtocol
+        implements HeartbeatProtocol, Serializable {
 
     private NodeStatus status;
 
@@ -97,9 +97,11 @@ public class NodeHeartbeatResourceMsg extends AbstractRetryableProtocol implemen
 
     @Override
     public String toString() {
-        return "NodeHeartbeatMsg{" +
-                "status=" + status +
-                ", serviceInstance=" + serviceInstance +
-                '}';
+        return "NodeHeartbeatMsg{"
+                + "status="
+                + status
+                + ", serviceInstance="
+                + serviceInstance
+                + '}';
     }
 }

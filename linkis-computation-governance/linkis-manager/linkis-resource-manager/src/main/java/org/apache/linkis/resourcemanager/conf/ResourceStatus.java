@@ -20,31 +20,34 @@ package org.apache.linkis.resourcemanager.conf;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.manager.common.entity.resource.Resource;
 
-
 public enum ResourceStatus {
 
     /**
-     * normal: left resource/max resource < normalThreshold
-     * warn: normalThreshold <= left resource/max resource < warnThreshold
-     * critical: left resource/max resource >= warnThreshold
+     * normal: left resource/max resource < normalThreshold warn: normalThreshold <= left
+     * resource/max resource < warnThreshold critical: left resource/max resource >= warnThreshold
      */
-    normal,warn,critical;
+    normal,
+    warn,
+    critical;
 
-    public static Float normalThreshold = CommonVars.apply("wds.linkis.resourcemanager.resource.threashold.normal",0.5f).getValue();
+    public static Float normalThreshold =
+            CommonVars.apply("wds.linkis.resourcemanager.resource.threashold.normal", 0.5f)
+                    .getValue();
 
-    public static Float warnThreshold = CommonVars.apply("wds.linkis.resourcemanager.resource.threashold.warn",0.2f).getValue();
+    public static Float warnThreshold =
+            CommonVars.apply("wds.linkis.resourcemanager.resource.threashold.warn", 0.2f)
+                    .getValue();
 
     public static ResourceStatus measure(Resource leftResource, Resource maxResource) {
-        if(leftResource != null && maxResource != null) {
-            if(leftResource.$less$eq(maxResource.$times(warnThreshold))){
+        if (leftResource != null && maxResource != null) {
+            if (leftResource.$less$eq(maxResource.$times(warnThreshold))) {
                 return critical;
-            }else if(leftResource.$less$eq(maxResource.$times(normalThreshold))){
+            } else if (leftResource.$less$eq(maxResource.$times(normalThreshold))) {
                 return warn;
-            }else {
+            } else {
                 return normal;
             }
         }
         return normal;
     }
-
 }

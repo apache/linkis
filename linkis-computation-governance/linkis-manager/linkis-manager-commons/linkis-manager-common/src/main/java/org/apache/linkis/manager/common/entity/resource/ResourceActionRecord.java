@@ -19,7 +19,6 @@ package org.apache.linkis.manager.common.entity.resource;
 
 import java.util.Date;
 
-
 public class ResourceActionRecord {
 
     private Integer id;
@@ -51,7 +50,6 @@ public class ResourceActionRecord {
     public void setId(Integer id) {
         this.id = id;
     }
-
 
     public String getLabelValue() {
         return labelValue;

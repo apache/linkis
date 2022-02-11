@@ -17,10 +17,8 @@
 
 package org.apache.linkis.udf.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import com.google.common.collect.Lists;
 import org.apache.linkis.bml.client.BmlClient;
+import org.apache.linkis.bml.client.BmlClientFactory;
 import org.apache.linkis.bml.protocol.*;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.io.FsPath;
@@ -40,28 +38,27 @@ import org.apache.linkis.udf.excepiton.UDFException;
 import org.apache.linkis.udf.service.UDFService;
 import org.apache.linkis.udf.utils.ConstantVar;
 import org.apache.linkis.udf.vo.*;
-import org.apache.linkis.bml.client.BmlClientFactory;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -100,17 +97,13 @@ public class UDFServiceImpl implements UDFService {
                         ConstantVar.UDF_SCALA));
     }
 
-    @Autowired
-    private UDFDao udfDao;
+    @Autowired private UDFDao udfDao;
 
-    @Autowired
-    private UDFTreeDao udfTreeDao;
+    @Autowired private UDFTreeDao udfTreeDao;
 
-    @Autowired
-    private UDFVersionDao udfVersionDao;
+    @Autowired private UDFVersionDao udfVersionDao;
 
-    @Autowired
-    private CommonLockService commonLockService;
+    @Autowired private CommonLockService commonLockService;
 
     private final BmlClient bmlClient = BmlClientFactory.createBmlClient();
 
@@ -118,7 +111,7 @@ public class UDFServiceImpl implements UDFService {
     @Transactional(rollbackFor = Exception.class)
     public void addUDF(UDFAddVo udfVo, String userName) throws Exception {
         logger.info(userName + " add udfVo: " + udfVo.getUdfName());
-        //锁同一用户
+        // 锁同一用户
         CommonLock commonLock = new CommonLock();
         commonLock.setLockObject(userName + _LOCK);
         commonLock.setCreateTime(new Date());
@@ -126,19 +119,21 @@ public class UDFServiceImpl implements UDFService {
         try {
             commonLockService.lock(commonLock, LOCK_TIMEOUT);
             if (validateDuplicateUDFName(udfVo.getUdfName(), userName)) {
-                throw new UDFException("The name of udf is the same name. Please rename it and rebuild it.(udf的名字重名，请改名后重建)");
+                throw new UDFException(
+                        "The name of udf is the same name. Please rename it and rebuild it.(udf的名字重名，请改名后重建)");
             }
             if (StringUtils.isEmpty(udfVo.getDirectory())) {
                 throw new UDFException("分类名不能为空！");
             }
-            //支持hdfs path
+            // 支持hdfs path
             FsPath fsPath = new FsPath(udfVo.getPath());
-//        FileSystem fileSystem = (FileSystem) FSFactory.getFs(fsPath.getFsType());
+            //        FileSystem fileSystem = (FileSystem) FSFactory.getFs(fsPath.getFsType());
             FileSystem fileSystem = (FileSystem) FSFactory.getFsByProxyUser(fsPath, userName);
             if (udfVo.getUdfType() == UDF_JAR && StringUtils.isNotBlank(udfVo.getPath())) {
-                validateJarFileName(udfVo.getPath().substring(udfVo.getPath().lastIndexOf("/") + 1), userName);
+                validateJarFileName(
+                        udfVo.getPath().substring(udfVo.getPath().lastIndexOf("/") + 1), userName);
             }
-            //todo inputStream拷贝
+            // todo inputStream拷贝
             InputStream is = null, is2 = null;
             String md5 = "";
             BmlUploadResponse response;
@@ -163,7 +158,10 @@ public class UDFServiceImpl implements UDFService {
                 throw new UDFException("上传到bml失败，文件路径为：" + udfVo.getPath());
             }
             // 判断分类不存在则创建
-            String category = udfVo.getUdfType() == FUNCTION_PY || udfVo.getUdfType() == FUNCTION_SCALA ? FUNCTION : UDF;
+            String category =
+                    udfVo.getUdfType() == FUNCTION_PY || udfVo.getUdfType() == FUNCTION_SCALA
+                            ? FUNCTION
+                            : UDF;
             UDFTree parentTree = getOrCreateTree(userName, category, udfVo.getDirectory());
 
             UDFInfo udfInfo = new UDFInfo();
@@ -203,18 +201,28 @@ public class UDFServiceImpl implements UDFService {
         return false;
     }
 
-    private BmlUploadResponse uploadToBml(String userName, String filePath, InputStream inputStream) {
-        BmlUploadResponse response = bmlClient.uploadResource(userName == null ? Utils.getJvmUser() : userName, filePath, inputStream);
+    private BmlUploadResponse uploadToBml(
+            String userName, String filePath, InputStream inputStream) {
+        BmlUploadResponse response =
+                bmlClient.uploadResource(
+                        userName == null ? Utils.getJvmUser() : userName, filePath, inputStream);
         return response;
     }
 
-    private BmlUpdateResponse uploadToBml(String userName, String filePath, InputStream inputStream, String resourceId) {
-        BmlUpdateResponse response = bmlClient.updateResource(userName == null ? Utils.getJvmUser() : userName, resourceId, filePath, inputStream);
+    private BmlUpdateResponse uploadToBml(
+            String userName, String filePath, InputStream inputStream, String resourceId) {
+        BmlUpdateResponse response =
+                bmlClient.updateResource(
+                        userName == null ? Utils.getJvmUser() : userName,
+                        resourceId,
+                        filePath,
+                        inputStream);
         return response;
     }
 
     private BmlDownloadResponse downloadBml(String userName, String resourceId, String version) {
-        return bmlClient.downloadResource(userName == null ? Utils.getJvmUser() : userName, resourceId, version);
+        return bmlClient.downloadResource(
+                userName == null ? Utils.getJvmUser() : userName, resourceId, version);
     }
 
     private void validateJarFileName(String jarPath, String userName) throws UDFException {
@@ -224,46 +232,56 @@ public class UDFServiceImpl implements UDFService {
         }
     }
 
-//    @Deprecated
-//    private void validateJarFile(UDFInfo udfInfo, String userName) throws UDFException {
-//        File targetFile = new File(UdfConfiguration.UDF_TMP_PATH().getValue() + udfInfo.getPath());
-//        FsPath fsPath = new FsPath("file://" + udfInfo.getPath());
-//        Fs remoteFs = FSFactory.getFsByProxyUser(fsPath,userName);
-//        try{
-//            remoteFs.init(null);
-//            if(remoteFs.exists(fsPath)){
-//                InputStream remoteStream = remoteFs.read(fsPath);
-//                if(!targetFile.exists()){
-//                    targetFile.getParentFile().mkdirs();
-//                    targetFile.createNewFile();
-//                }
-//                Files.copy(remoteStream, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-//                IOUtils.closeQuietly(remoteStream);
-//            }
-//        }catch (IOException e){
-//            logger.error(e);
-//            throw new UDFException("Verify that there is a problem with the UDF jar package(校验UDF jar包存在问题)：" + e.getMessage());
-//        }
-//
-//        this.getClass().getResource("").getFile();
-//        File hiveDependency = new File(UdfConfiguration.UDF_HIVE_EXEC_PATH().getValue());
-//        String udfClassName = StringUtils.substringBetween(udfInfo.getRegisterFormat(), "\"", "\"");
-//        try{
-//            URL[] url = {new URL("file://" + targetFile.getAbsolutePath()), new URL("file://" + hiveDependency.getAbsolutePath())};
-//            URLClassLoader loader = URLClassLoader.newInstance(url);
-//            Class clazz = loader.loadClass(udfClassName);
-//            Constructor constructor = clazz.getConstructor(new Class[0]);
-//            if(!Modifier.isPublic(constructor.getModifiers())) throw new NoSuchMethodException();
-//        }catch (ClassNotFoundException cne){
-//            throw new UDFException("There is a problem verifying the UDF jar package: the class is not found(校验UDF jar包存在问题：找不到类) " + cne.getMessage());
-//        } catch (NoSuchMethodException e) {
-//            throw new UDFException("There is a problem verifying the UDF jar package: class(校验UDF jar包存在问题：类) " + udfClassName + " Missing public no-argument constructor(缺少public的无参数构造方法)");
-//        }catch (Exception e){
-//            throw new UDFException("Verify that there is a problem with the UDF jar package(校验UDF jar包存在问题)：" + e.getMessage());
-//        } finally {
-//            targetFile.delete();
-//        }
-//    }
+    //    @Deprecated
+    //    private void validateJarFile(UDFInfo udfInfo, String userName) throws UDFException {
+    //        File targetFile = new File(UdfConfiguration.UDF_TMP_PATH().getValue() +
+    // udfInfo.getPath());
+    //        FsPath fsPath = new FsPath("file://" + udfInfo.getPath());
+    //        Fs remoteFs = FSFactory.getFsByProxyUser(fsPath,userName);
+    //        try{
+    //            remoteFs.init(null);
+    //            if(remoteFs.exists(fsPath)){
+    //                InputStream remoteStream = remoteFs.read(fsPath);
+    //                if(!targetFile.exists()){
+    //                    targetFile.getParentFile().mkdirs();
+    //                    targetFile.createNewFile();
+    //                }
+    //                Files.copy(remoteStream, targetFile.toPath(),
+    // StandardCopyOption.REPLACE_EXISTING);
+    //                IOUtils.closeQuietly(remoteStream);
+    //            }
+    //        }catch (IOException e){
+    //            logger.error(e);
+    //            throw new UDFException("Verify that there is a problem with the UDF jar
+    // package(校验UDF jar包存在问题)：" + e.getMessage());
+    //        }
+    //
+    //        this.getClass().getResource("").getFile();
+    //        File hiveDependency = new File(UdfConfiguration.UDF_HIVE_EXEC_PATH().getValue());
+    //        String udfClassName = StringUtils.substringBetween(udfInfo.getRegisterFormat(), "\"",
+    // "\"");
+    //        try{
+    //            URL[] url = {new URL("file://" + targetFile.getAbsolutePath()), new URL("file://"
+    // + hiveDependency.getAbsolutePath())};
+    //            URLClassLoader loader = URLClassLoader.newInstance(url);
+    //            Class clazz = loader.loadClass(udfClassName);
+    //            Constructor constructor = clazz.getConstructor(new Class[0]);
+    //            if(!Modifier.isPublic(constructor.getModifiers())) throw new
+    // NoSuchMethodException();
+    //        }catch (ClassNotFoundException cne){
+    //            throw new UDFException("There is a problem verifying the UDF jar package: the
+    // class is not found(校验UDF jar包存在问题：找不到类) " + cne.getMessage());
+    //        } catch (NoSuchMethodException e) {
+    //            throw new UDFException("There is a problem verifying the UDF jar package:
+    // class(校验UDF jar包存在问题：类) " + udfClassName + " Missing public no-argument
+    // constructor(缺少public的无参数构造方法)");
+    //        }catch (Exception e){
+    //            throw new UDFException("Verify that there is a problem with the UDF jar
+    // package(校验UDF jar包存在问题)：" + e.getMessage());
+    //        } finally {
+    //            targetFile.delete();
+    //        }
+    //    }
 
     @Override
     @Transactional
@@ -277,7 +295,8 @@ public class UDFServiceImpl implements UDFService {
             throw new UDFException("No old UDF found by this ID.");
         }
         if (!userName.equals(oldUdfInfo.getCreateUser())) {
-            throw new UDFException("Current user must be consistent with the modified user(当前用户必须和修改用户一致)");
+            throw new UDFException(
+                    "Current user must be consistent with the modified user(当前用户必须和修改用户一致)");
         }
         if (!oldUdfInfo.getUdfType().equals(udfUpdateVo.getUdfType())) {
             throw new UDFException("UDF type modification is not allowed.");
@@ -285,16 +304,21 @@ public class UDFServiceImpl implements UDFService {
         if (!udfUpdateVo.getUdfName().equals(oldUdfInfo.getUdfName())) {
             throw new UDFException("The name of udf is not allowed modified.(udf的名字禁止修改！)");
         }
-        //不考虑jar共享
+        // 不考虑jar共享
         if (udfUpdateVo.getUdfType() == UDF_JAR && StringUtils.isNotBlank(udfUpdateVo.getPath())) {
-            int cnt = udfVersionDao.getOtherSameJarCount(userName, udfUpdateVo.getPath().
-                    substring(udfUpdateVo.getPath().lastIndexOf("/") + 1), udfUpdateVo.getId());
+            int cnt =
+                    udfVersionDao.getOtherSameJarCount(
+                            userName,
+                            udfUpdateVo
+                                    .getPath()
+                                    .substring(udfUpdateVo.getPath().lastIndexOf("/") + 1),
+                            udfUpdateVo.getId());
             if (cnt > 0) {
                 throw new UDFException("用户的udf已存在同名jar");
             }
         }
         oldUdfInfo.setUpdateTime(new Date());
-//        udfInfo.setPath(StringUtils.replace(udfInfo.getPath(), "file://", ""));
+        //        udfInfo.setPath(StringUtils.replace(udfInfo.getPath(), "file://", ""));
         CommonLock persistenceLock = new CommonLock();
         persistenceLock.setLockObject(userName + _LOCK);
         persistenceLock.setCreateTime(new Date());
@@ -305,7 +329,7 @@ public class UDFServiceImpl implements UDFService {
             if (null == latestVersion) {
                 throw new UDFException("can't found latestVersion for the udf");
             }
-            //支持hdfs path
+            // 支持hdfs path
             FsPath fsPath = new FsPath(udfUpdateVo.getPath());
             FileSystem fileSystem = (FileSystem) FSFactory.getFsByProxyUser(fsPath, userName);
             InputStream is = null, is2 = null;
@@ -325,7 +349,9 @@ public class UDFServiceImpl implements UDFService {
                     return;
                 }
                 is2 = fileSystem.read(fsPath);
-                response = uploadToBml(userName, fsPath.getPath(), is2, latestVersion.getBmlResourceId());
+                response =
+                        uploadToBml(
+                                userName, fsPath.getPath(), is2, latestVersion.getBmlResourceId());
             } catch (IOException e) {
                 throw new UDFException("文件读取异常：" + e.getMessage());
             } catch (Exception e) {
@@ -360,7 +386,8 @@ public class UDFServiceImpl implements UDFService {
 
     @Override
     @Deprecated
-    public UDFInfo createSharedUdfInfo(UDFInfo udfInfo, Long shareParentId, FsPath sharedPath) throws Exception {
+    public UDFInfo createSharedUdfInfo(UDFInfo udfInfo, Long shareParentId, FsPath sharedPath)
+            throws Exception {
         UDFInfo sharedUDFInfo = new UDFInfo();
         DateConverter converter = new DateConverter(new Date());
         BeanUtilsBean.getInstance().getConvertUtils().register(converter, Date.class);
@@ -369,34 +396,51 @@ public class UDFServiceImpl implements UDFService {
         sharedUDFInfo.setCreateTime(new Date());
         sharedUDFInfo.setUpdateTime(new Date());
         sharedUDFInfo.setTreeId(shareParentId);
-//        sharedUDFInfo.setPath(sharedPath.getPath());
+        //        sharedUDFInfo.setPath(sharedPath.getPath());
         sharedUDFInfo.setShared(true);
         sharedUDFInfo.setExpire(false);
         return sharedUDFInfo;
     }
 
-    private UDFTree getOrCreateTree(String userName, String category, String treeName) throws UDFException {
-        //个人函数目录
-        List<UDFTree> selfTree = udfTreeDao.getTreesByParentId(new HashMap<String, Object>() {{
-            put("parent", -1);
-            put("userName", userName);
-            put("category", category);
-        }});
+    private UDFTree getOrCreateTree(String userName, String category, String treeName)
+            throws UDFException {
+        // 个人函数目录
+        List<UDFTree> selfTree =
+                udfTreeDao.getTreesByParentId(
+                        new HashMap<String, Object>() {
+                            {
+                                put("parent", -1);
+                                put("userName", userName);
+                                put("category", category);
+                            }
+                        });
         if (selfTree == null || selfTree.size() == 0) {
             throw new UDFException("该用户没有个人函数目录!");
         }
-        List<UDFTree> selfTreeChildren = udfTreeDao.getTreesByParentId(new HashMap<String, Object>() {{
-            put("parent", selfTree.get(0).getId());
-            put("userName", userName);
-            put("category", category);
-        }});
+        List<UDFTree> selfTreeChildren =
+                udfTreeDao.getTreesByParentId(
+                        new HashMap<String, Object>() {
+                            {
+                                put("parent", selfTree.get(0).getId());
+                                put("userName", userName);
+                                put("category", category);
+                            }
+                        });
         for (UDFTree tree : selfTreeChildren) {
             if (tree.getName().equals(treeName)) {
                 return tree;
             }
         }
-        UDFTree treeToAdd = new UDFTree(null, selfTree.get(0).getId(), treeName,
-                userName, "", new Date(), new Date(), category);
+        UDFTree treeToAdd =
+                new UDFTree(
+                        null,
+                        selfTree.get(0).getId(),
+                        treeName,
+                        userName,
+                        "",
+                        new Date(),
+                        new Date(),
+                        category);
         udfTreeDao.addTree(treeToAdd);
         return treeToAdd;
     }
@@ -409,51 +453,63 @@ public class UDFServiceImpl implements UDFService {
         List<UDFVersion> udfVersionList = udfVersionDao.getAllVersions(udfId);
         UDFVersion latestVersion = udfVersionDao.selectLatestByUdfId(udfId);
         long count = udfDao.getSameNameCountByUser(udfInfo.getUdfName(), handoverUser);
-        long sharedCount = udfDao.getShareSameNameCountExcludeUser(udfInfo.getUdfName(), handoverUser, udfInfo.getCreateUser());
+        long sharedCount =
+                udfDao.getShareSameNameCountExcludeUser(
+                        udfInfo.getUdfName(), handoverUser, udfInfo.getCreateUser());
         if (count > 0 || sharedCount > 0) {
             throw new UDFException("The handoverUser has same name udf.(被移交用户包含重名udf)");
         }
-        //只考虑校验最新版本的jar是否同名，否则需要校验移交udf的所有版本的jar
+        // 只考虑校验最新版本的jar是否同名，否则需要校验移交udf的所有版本的jar
         if (udfInfo.getUdfType() == UDF_JAR && StringUtils.isNotBlank(latestVersion.getPath())) {
-            validateJarFileName(latestVersion.getPath().substring(latestVersion.getPath().lastIndexOf("/") + 1), handoverUser);
+            validateJarFileName(
+                    latestVersion.getPath().substring(latestVersion.getPath().lastIndexOf("/") + 1),
+                    handoverUser);
         }
         String oldUser = udfInfo.getCreateUser();
         udfInfo.setCreateUser(handoverUser);
-        String category = udfInfo.getUdfType() == FUNCTION_PY || udfInfo.getUdfType() == FUNCTION_SCALA ? FUNCTION : UDF;
+        String category =
+                udfInfo.getUdfType() == FUNCTION_PY || udfInfo.getUdfType() == FUNCTION_SCALA
+                        ? FUNCTION
+                        : UDF;
         UDFTree originTree = udfTreeDao.getTreeById(udfInfo.getTreeId());
 
         UDFTree tree = getOrCreateTree(handoverUser, category, originTree.getName());
         udfInfo.setTreeId(tree.getId());
         udfDao.updateUDF(udfInfo);
-        //若用户共享了该udf，需要删除记录
+        // 若用户共享了该udf，需要删除记录
         udfDao.deleteSharedUser(handoverUser, udfId);
-        //移交用户不保留加载
+        // 移交用户不保留加载
         udfDao.deleteLoadInfo(udfId, oldUser);
 
-//        String newResourceId = "";
-//        long versionCnt = 0;
-//        for (UDFVersion udfVersion : udfVersionList) {
-//            // todo BMLService添加copy方法，根据resourceID直接复制
-//            BmlDownloadResponse downloadResponse = downloadBml(oldUser, udfVersion.getBmlResourceId(), udfVersion.getBmlResourceVersion());
-//            if (!downloadResponse.isSuccess()) {
-//                throw new UDFException("bml下载异常！");
-//            }
-//            if (versionCnt++ == 0) {
-//                try {
-//                    BmlUploadResponse uploadResponse = uploadToBml(handoverUser, udfVersion.getPath(), downloadResponse.inputStream());
-//                    newResourceId = uploadResponse.resourceId();
-//                } finally {
-//                    IOUtils.closeQuietly(downloadResponse.inputStream());
-//                }
-//            } else {
-//                try {
-//                    uploadToBml(handoverUser, udfVersion.getPath(), downloadResponse.inputStream(), newResourceId);
-//                } finally {
-//                    IOUtils.closeQuietly(downloadResponse.inputStream());
-//                }
-//            }
-//        }
-        BmlCopyResourceResponse response = bmlClient.copyResourceToAnotherUser(latestVersion.getBmlResourceId(), handoverUser, oldUser);
+        //        String newResourceId = "";
+        //        long versionCnt = 0;
+        //        for (UDFVersion udfVersion : udfVersionList) {
+        //            // todo BMLService添加copy方法，根据resourceID直接复制
+        //            BmlDownloadResponse downloadResponse = downloadBml(oldUser,
+        // udfVersion.getBmlResourceId(), udfVersion.getBmlResourceVersion());
+        //            if (!downloadResponse.isSuccess()) {
+        //                throw new UDFException("bml下载异常！");
+        //            }
+        //            if (versionCnt++ == 0) {
+        //                try {
+        //                    BmlUploadResponse uploadResponse = uploadToBml(handoverUser,
+        // udfVersion.getPath(), downloadResponse.inputStream());
+        //                    newResourceId = uploadResponse.resourceId();
+        //                } finally {
+        //                    IOUtils.closeQuietly(downloadResponse.inputStream());
+        //                }
+        //            } else {
+        //                try {
+        //                    uploadToBml(handoverUser, udfVersion.getPath(),
+        // downloadResponse.inputStream(), newResourceId);
+        //                } finally {
+        //                    IOUtils.closeQuietly(downloadResponse.inputStream());
+        //                }
+        //            }
+        //        }
+        BmlCopyResourceResponse response =
+                bmlClient.copyResourceToAnotherUser(
+                        latestVersion.getBmlResourceId(), handoverUser, oldUser);
         if (!response.isSuccess()) {
             throw new UDFException("failed to copy resource to anotherUser:" + handoverUser);
         }
@@ -483,29 +539,45 @@ public class UDFServiceImpl implements UDFService {
     public void rollbackUDF(Long udfId, String version, String userName) throws UDFException {
         logger.info("begin to rollback udf, udfId: " + udfId);
         UDFVersion udfVersion = udfVersionDao.selectByUdfIdAndVersion(udfId, version);
-//        BmlDownloadResponse downloadResponse = downloadBml(userName, udfVersion.getBmlResourceId(), udfVersion.getBmlResourceVersion());
-//        if (!downloadResponse.isSuccess()) {
-//            throw new UDFException("bml下载异常！");
-//        }
-//        BmlUpdateResponse updateResponse = null;
-//        try {
-//            updateResponse = uploadToBml(userName, udfVersion.getPath(), downloadResponse.inputStream(), udfVersion.getBmlResourceId());
-//            if (!updateResponse.isSuccess()) {
-//                throw new UDFException("bml上传异常！");
-//            }
-//        } catch (Exception e) {
-//            logger.error(e.getMessage(), e);
-//            throw new UDFException("bml上传异常！" + e.getMessage());
-//        } finally {
-//            IOUtils.closeQuietly(downloadResponse.inputStream());
-//        }
-        BmlRollbackVersionResponse response = bmlClient.rollbackVersion(udfVersion.getBmlResourceId(), udfVersion.getBmlResourceVersion(), userName);
+        //        BmlDownloadResponse downloadResponse = downloadBml(userName,
+        // udfVersion.getBmlResourceId(), udfVersion.getBmlResourceVersion());
+        //        if (!downloadResponse.isSuccess()) {
+        //            throw new UDFException("bml下载异常！");
+        //        }
+        //        BmlUpdateResponse updateResponse = null;
+        //        try {
+        //            updateResponse = uploadToBml(userName, udfVersion.getPath(),
+        // downloadResponse.inputStream(), udfVersion.getBmlResourceId());
+        //            if (!updateResponse.isSuccess()) {
+        //                throw new UDFException("bml上传异常！");
+        //            }
+        //        } catch (Exception e) {
+        //            logger.error(e.getMessage(), e);
+        //            throw new UDFException("bml上传异常！" + e.getMessage());
+        //        } finally {
+        //            IOUtils.closeQuietly(downloadResponse.inputStream());
+        //        }
+        BmlRollbackVersionResponse response =
+                bmlClient.rollbackVersion(
+                        udfVersion.getBmlResourceId(),
+                        udfVersion.getBmlResourceVersion(),
+                        userName);
         if (!response.isSuccess()) {
             throw new UDFException("bml rollback version 异常！");
         }
-        UDFVersion newVersion = new UDFVersion(null, udfVersion.getUdfId(), udfVersion.getPath(), response.resourceId(),
-                response.version(), udfVersion.getPublished(), udfVersion.getRegisterFormat(), udfVersion.getUseFormat(),
-                udfVersion.getDescription(), new Date(), udfVersion.getMd5());
+        UDFVersion newVersion =
+                new UDFVersion(
+                        null,
+                        udfVersion.getUdfId(),
+                        udfVersion.getPath(),
+                        response.resourceId(),
+                        response.version(),
+                        udfVersion.getPublished(),
+                        udfVersion.getRegisterFormat(),
+                        udfVersion.getUseFormat(),
+                        udfVersion.getDescription(),
+                        new Date(),
+                        udfVersion.getMd5());
         udfVersionDao.addUdfVersion(newVersion);
         logger.info("end to rollback udf, udfId: " + udfId);
     }
@@ -516,7 +588,13 @@ public class UDFServiceImpl implements UDFService {
     }
 
     @Override
-    public PageInfo<UDFAddVo> getManagerPages(String udfName, Collection<Integer> udfType, String createUser, int curPage, int pageSize) throws Exception {
+    public PageInfo<UDFAddVo> getManagerPages(
+            String udfName,
+            Collection<Integer> udfType,
+            String createUser,
+            int curPage,
+            int pageSize)
+            throws Exception {
         logger.info("begin to get managerPages.");
         List<UDFAddVo> retList = new ArrayList<>();
         PageHelper.startPage(curPage, pageSize);
@@ -525,25 +603,35 @@ public class UDFServiceImpl implements UDFService {
         boolean ismanager = isUDFManager(createUser);
         List<Long> loadedUdf = udfDao.getLoadedUDFIds(createUser);
         if (pageInfo.getList() != null) {
-            pageInfo.getList().forEach(l -> {
-                l.setLoad(loadedUdf.contains(l.getId()));
-                boolean canExpire = false;
-                if (Boolean.TRUE.equals(l.getShared())) {
-                    long loadCount = udfDao.getUserLoadCountByUdfId(l.getId(), createUser);
-                    if (loadCount > 0) {
-                        canExpire = true;
-                    }
-                }
-                boolean finalCanExpire = canExpire;
-                l.setOperationStatus(new HashMap<String, Boolean>() {{
-                    put("canUpdate", true);
-                    put("canDelete", !finalCanExpire);
-                    put("canExpire", finalCanExpire);
-                    put("canShare", ismanager);
-                    put("canPublish", ismanager && Boolean.TRUE.equals(l.getShared()));
-                    put("canHandover", true);
-                }});
-            });
+            pageInfo.getList()
+                    .forEach(
+                            l -> {
+                                l.setLoad(loadedUdf.contains(l.getId()));
+                                boolean canExpire = false;
+                                if (Boolean.TRUE.equals(l.getShared())) {
+                                    long loadCount =
+                                            udfDao.getUserLoadCountByUdfId(l.getId(), createUser);
+                                    if (loadCount > 0) {
+                                        canExpire = true;
+                                    }
+                                }
+                                boolean finalCanExpire = canExpire;
+                                l.setOperationStatus(
+                                        new HashMap<String, Boolean>() {
+                                            {
+                                                put("canUpdate", true);
+                                                put("canDelete", !finalCanExpire);
+                                                put("canExpire", finalCanExpire);
+                                                put("canShare", ismanager);
+                                                put(
+                                                        "canPublish",
+                                                        ismanager
+                                                                && Boolean.TRUE.equals(
+                                                                        l.getShared()));
+                                                put("canHandover", true);
+                                            }
+                                        });
+                            });
         }
         logger.info("end to get managerPages.");
         return pageInfo;
@@ -557,8 +645,12 @@ public class UDFServiceImpl implements UDFService {
             throw new UDFException("jar类型的udf不支持下载查看内容");
         }
         UDFVersion udfVersion = udfVersionDao.selectByUdfIdAndVersion(udfId, version);
-        BmlDownloadResponse downloadResponse = downloadBml(user, udfVersion.getBmlResourceId(), udfVersion.getBmlResourceVersion());
-        String content = IOUtils.toString(downloadResponse.inputStream(), Configuration.BDP_ENCODING().getValue());
+        BmlDownloadResponse downloadResponse =
+                downloadBml(
+                        user, udfVersion.getBmlResourceId(), udfVersion.getBmlResourceVersion());
+        String content =
+                IOUtils.toString(
+                        downloadResponse.inputStream(), Configuration.BDP_ENCODING().getValue());
         IOUtils.closeQuietly(downloadResponse.inputStream());
         logger.info("user " + user + " end to downLoad udf, udfId: " + udfId);
         return content;
@@ -568,10 +660,14 @@ public class UDFServiceImpl implements UDFService {
     public DownloadVo downloadToLocal(long udfId, String version, String user) throws Exception {
         logger.info("user " + user + " begin to downLoad udf, udfId: " + udfId);
         UDFVersion udfVersion = udfVersionDao.selectByUdfIdAndVersion(udfId, version);
-        BmlDownloadResponse downloadResponse = downloadBml(user, udfVersion.getBmlResourceId(), udfVersion.getBmlResourceVersion());
-//        IOUtils.closeQuietly(downloadResponse.inputStream());
+        BmlDownloadResponse downloadResponse =
+                downloadBml(
+                        user, udfVersion.getBmlResourceId(), udfVersion.getBmlResourceVersion());
+        //        IOUtils.closeQuietly(downloadResponse.inputStream());
         logger.info("user " + user + " end to downLoad udf, udfId: " + udfId);
-        return new DownloadVo(udfVersion.getPath().substring(udfVersion.getPath().lastIndexOf("/") + 1), downloadResponse.inputStream());
+        return new DownloadVo(
+                udfVersion.getPath().substring(udfVersion.getPath().lastIndexOf("/") + 1),
+                downloadResponse.inputStream());
     }
 
     @Override
@@ -585,36 +681,38 @@ public class UDFServiceImpl implements UDFService {
     }
 
     //    @Override
-//    public FsPath copySharedUdfFile(String userName, UDFInfo udfInfo) throws IOException {
-//        String fileName = FilenameUtils.getBaseName(udfInfo.getPath()) + System.currentTimeMillis() + "." + FilenameUtils.getExtension(udfInfo.getPath());
-//        FsPath udfPath = FsPath.getFsPath(udfInfo.getPath());
-//        FsPath sharedPath = FsPath.getFsPath(UdfConfiguration.UDF_SHARE_PATH().getValue(), fileName);
-//        FileSystem fileSystem = (FileSystem) FSFactory.getFsByProxyUser(sharedPath, userName);
-//        try{
-//            fileSystem.init(null);
-//            File file = new File(sharedPath.getPath());
-//            if (!file.exists()) {
-//                file.createNewFile();
-//                file.setReadable(true, false);
-//                file.setWritable(true, false);
-//                //fileSystem.createNewFile(sharedPath);
-//            }
-//            InputStream udfStream = fileSystem.read(udfPath);
-//            FileUtils.copyInputStreamToFile(udfStream, file);
-//            //fileSystem.setPermission(sharedPath, "-rwxrwxrwx");
-//        } catch (Exception e){
-//            fileSystem.close();
-//            throw e;
-//        }
-//        return sharedPath;
-//    }
+    //    public FsPath copySharedUdfFile(String userName, UDFInfo udfInfo) throws IOException {
+    //        String fileName = FilenameUtils.getBaseName(udfInfo.getPath()) +
+    // System.currentTimeMillis() + "." + FilenameUtils.getExtension(udfInfo.getPath());
+    //        FsPath udfPath = FsPath.getFsPath(udfInfo.getPath());
+    //        FsPath sharedPath = FsPath.getFsPath(UdfConfiguration.UDF_SHARE_PATH().getValue(),
+    // fileName);
+    //        FileSystem fileSystem = (FileSystem) FSFactory.getFsByProxyUser(sharedPath, userName);
+    //        try{
+    //            fileSystem.init(null);
+    //            File file = new File(sharedPath.getPath());
+    //            if (!file.exists()) {
+    //                file.createNewFile();
+    //                file.setReadable(true, false);
+    //                file.setWritable(true, false);
+    //                //fileSystem.createNewFile(sharedPath);
+    //            }
+    //            InputStream udfStream = fileSystem.read(udfPath);
+    //            FileUtils.copyInputStreamToFile(udfStream, file);
+    //            //fileSystem.setPermission(sharedPath, "-rwxrwxrwx");
+    //        } catch (Exception e){
+    //            fileSystem.close();
+    //            throw e;
+    //        }
+    //        return sharedPath;
+    //    }
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public Boolean deleteUDF(Long udfId, String userName) throws UDFException {
         logger.info(userName + " begin to delete udf, udfId: " + udfId);
         UDFInfo udfInfo = udfDao.getUDFById(udfId);
-        //被用户加载的共享udf不能被删
+        // 被用户加载的共享udf不能被删
         if (Boolean.TRUE.equals(udfInfo.getShared())) {
             long loadCount = udfDao.getUserLoadCountByUdfId(udfId, userName);
             if (loadCount > 0) {
@@ -623,7 +721,7 @@ public class UDFServiceImpl implements UDFService {
                 udfDao.deleteAllSharedUser(udfId);
             }
         }
-        //若不是共享udf，load_info最多一条记录
+        // 若不是共享udf，load_info最多一条记录
         udfDao.deleteLoadInfo(udfId, userName);
         udfDao.deleteUDF(udfId, userName);
         udfVersionDao.deleteVersionByUdfId(udfId);
@@ -664,20 +762,24 @@ public class UDFServiceImpl implements UDFService {
                             "There is a Jar package function with the same name(存在同名的Jar包函数)： "
                                     + udfInfo.getUdfName());
                 }
-                //校验jar包名字
-//                String path = udfInfo.getPath();
-//                String jarPath = path.substring(path.lastIndexOf("/"));
-//                if (!StringUtils.isEmpty(jarPath)) {
-//                    List<UDFInfo> sameJarUDF = udfDao.getSameJarUDF(userName, jarPath);
-//                    for (UDFInfo udf : sameJarUDF) {
-//                        if (path.equalsIgnoreCase(udf.getPath())) {
-//                            continue;
-//                        }
-//                        if (jarPath.equalsIgnoreCase(udf.getPath().substring(udf.getPath().lastIndexOf("/")))) {
-//                            throw new UDFException("There is a Jar package with a different path of the same name. The UDF name is(存在同名不同路径的Jar包,UDF名字为)：" + udf.getUdfName() + ",The jar path is(jar路径为)" + udf.getPath());
-//                        }
-//                    }
-//                }
+                // 校验jar包名字
+                //                String path = udfInfo.getPath();
+                //                String jarPath = path.substring(path.lastIndexOf("/"));
+                //                if (!StringUtils.isEmpty(jarPath)) {
+                //                    List<UDFInfo> sameJarUDF = udfDao.getSameJarUDF(userName,
+                // jarPath);
+                //                    for (UDFInfo udf : sameJarUDF) {
+                //                        if (path.equalsIgnoreCase(udf.getPath())) {
+                //                            continue;
+                //                        }
+                //                        if
+                // (jarPath.equalsIgnoreCase(udf.getPath().substring(udf.getPath().lastIndexOf("/")))) {
+                //                            throw new UDFException("There is a Jar package with a
+                // different path of the same name. The UDF name is(存在同名不同路径的Jar包,UDF名字为)：" +
+                // udf.getUdfName() + ",The jar path is(jar路径为)" + udf.getPath());
+                //                        }
+                //                    }
+                //                }
 
             }
             udfDao.addLoadInfo(id, userName);
@@ -730,37 +832,37 @@ public class UDFServiceImpl implements UDFService {
         List<String> functionsPython = new ArrayList<>();
         List<String> functionsScala = new ArrayList<>();
 
-//        for (UDFInfo udfInfo : loadedUDFs) {
-//            if (udfInfo.getUdfType() == UDF_JAR) {
-//                if (!fileSet.contains(udfInfo.getPath())) {
-//                    fileSet.add(udfInfo.getPath());
-//                    udfJars.add(udfInfo.getPath());
-//                }
-//                registerJars.add(udfInfo.getRegisterFormat());
-//            } else if (udfInfo.getUdfType() == ConstantVar.UDF_PY) {
-//                if (!fileSet.contains(udfInfo.getPath())) {
-//                    fileSet.add(udfInfo.getPath());
-//                    udfPys.add(udfInfo.getPath());
-//                }
-//                registerPys.add(udfInfo.getRegisterFormat());
-//            } else if (udfInfo.getUdfType() == ConstantVar.UDF_SCALA) {
-//                if (!fileSet.contains(udfInfo.getPath())) {
-//                    fileSet.add(udfInfo.getPath());
-//                    udfScalas.add(udfInfo.getPath());
-//                }
-//                registerScalas.add(udfInfo.getRegisterFormat());
-//            } else if (udfInfo.getUdfType() == ConstantVar.FUNCTION_PY) {
-//                if (!fileSet.contains(udfInfo.getPath())) {
-//                    fileSet.add(udfInfo.getPath());
-//                    functionsPython.add(udfInfo.getPath());
-//                }
-//            } else if (udfInfo.getUdfType() == ConstantVar.FUNCTION_SCALA) {
-//                if (!fileSet.contains(udfInfo.getPath())) {
-//                    fileSet.add(udfInfo.getPath());
-//                    functionsScala.add(udfInfo.getPath());
-//                }
-//            }
-//        }
+        //        for (UDFInfo udfInfo : loadedUDFs) {
+        //            if (udfInfo.getUdfType() == UDF_JAR) {
+        //                if (!fileSet.contains(udfInfo.getPath())) {
+        //                    fileSet.add(udfInfo.getPath());
+        //                    udfJars.add(udfInfo.getPath());
+        //                }
+        //                registerJars.add(udfInfo.getRegisterFormat());
+        //            } else if (udfInfo.getUdfType() == ConstantVar.UDF_PY) {
+        //                if (!fileSet.contains(udfInfo.getPath())) {
+        //                    fileSet.add(udfInfo.getPath());
+        //                    udfPys.add(udfInfo.getPath());
+        //                }
+        //                registerPys.add(udfInfo.getRegisterFormat());
+        //            } else if (udfInfo.getUdfType() == ConstantVar.UDF_SCALA) {
+        //                if (!fileSet.contains(udfInfo.getPath())) {
+        //                    fileSet.add(udfInfo.getPath());
+        //                    udfScalas.add(udfInfo.getPath());
+        //                }
+        //                registerScalas.add(udfInfo.getRegisterFormat());
+        //            } else if (udfInfo.getUdfType() == ConstantVar.FUNCTION_PY) {
+        //                if (!fileSet.contains(udfInfo.getPath())) {
+        //                    fileSet.add(udfInfo.getPath());
+        //                    functionsPython.add(udfInfo.getPath());
+        //                }
+        //            } else if (udfInfo.getUdfType() == ConstantVar.FUNCTION_SCALA) {
+        //                if (!fileSet.contains(udfInfo.getPath())) {
+        //                    fileSet.add(udfInfo.getPath());
+        //                    functionsScala.add(udfInfo.getPath());
+        //                }
+        //            }
+        //        }
         Map<String, List<String>> res = new HashedMap();
         res.put("udfJars", udfJars);
         res.put("registerJars", registerJars);
@@ -779,15 +881,14 @@ public class UDFServiceImpl implements UDFService {
         List<UDFInfo> loadedUDFs = udfDao.getLoadedUDFs(userName);
         Set<String> fileSet = new HashSet<>();
         for (UDFInfo udfInfo : loadedUDFs) {
-//            if (udfInfo.getUdfType() == 0) {
-//                if (!fileSet.contains(udfInfo.getPath())) {
-//                    fileSet.add(udfInfo.getPath());
-//                }
-//            }
+            //            if (udfInfo.getUdfType() == 0) {
+            //                if (!fileSet.contains(udfInfo.getPath())) {
+            //                    fileSet.add(udfInfo.getPath());
+            //                }
+            //            }
         }
         return fileSet.iterator();
     }
-
 
     @Override
     @Deprecated
@@ -804,7 +905,8 @@ public class UDFServiceImpl implements UDFService {
     @Override
     @Deprecated
     public List<UDFInfo> getSharedUDFInfos(Long id, String userName, String category) {
-        return udfDao.selectSharedUDFInfosByTreeIdAndUserName(id, userName, categoryToCodes.get(category));
+        return udfDao.selectSharedUDFInfosByTreeIdAndUserName(
+                id, userName, categoryToCodes.get(category));
     }
 
     /**
@@ -817,18 +919,23 @@ public class UDFServiceImpl implements UDFService {
     @Override
     public List<UDFInfoVo> getSharedUDFs(String userName, String category) {
         List<UDFInfoVo> udfIds = getLatesetPublishedUDF(userName, category);
-        return udfIds.stream().filter(l -> !Boolean.TRUE.equals(l.getExpire())).collect(Collectors.toList());
+        return udfIds.stream()
+                .filter(l -> !Boolean.TRUE.equals(l.getExpire()))
+                .collect(Collectors.toList());
     }
 
     private List<UDFInfoVo> getLatesetPublishedUDF(String userName, String category) {
-        List<UDFInfoVo> udfIds = udfDao.getLatesetPublishedUDF(userName, categoryToCodes.get(category));
+        List<UDFInfoVo> udfIds =
+                udfDao.getLatesetPublishedUDF(userName, categoryToCodes.get(category));
         return udfIds;
     }
 
     @Override
     public List<UDFInfoVo> getExpiredUDFs(String userName, String category) {
         List<UDFInfoVo> udfIds = getLatesetPublishedUDF(userName, category);
-        return udfIds.stream().filter(l -> Boolean.TRUE.equals(l.getExpire())).collect(Collectors.toList());
+        return udfIds.stream()
+                .filter(l -> Boolean.TRUE.equals(l.getExpire()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -841,11 +948,12 @@ public class UDFServiceImpl implements UDFService {
     }
 
     @Override
-    public void checkSharedUsers(Set<String> sharedUsers, String userName, String udfName) throws UDFException {
+    public void checkSharedUsers(Set<String> sharedUsers, String userName, String udfName)
+            throws UDFException {
         if (sharedUsers.contains(userName)) {
             throw new UDFException("Do not support sharing to yourself!(不支持分享给自己!)");
         }
-        //校验共享用户是否包含同名udf
+        // 校验共享用户是否包含同名udf
         for (String shareduser : sharedUsers) {
             if (StringUtils.isEmpty(shareduser)) {
                 throw new UDFException("共享用户不能包含空用户名！");
@@ -854,29 +962,36 @@ public class UDFServiceImpl implements UDFService {
                 throw new UDFException("用户名只能包含字母数字下划线！");
             }
             long count = udfDao.getSameNameCountByUser(udfName, shareduser);
-            long sharedCount = udfDao.getShareSameNameCountExcludeUser(udfName, shareduser, userName);
+            long sharedCount =
+                    udfDao.getShareSameNameCountExcludeUser(udfName, shareduser, userName);
             if (count > 0 || sharedCount > 0) {
                 throw new UDFException("用户：" + shareduser + "包含同名udf！");
             }
         }
-//        List<String> notExistUsers = Lists.newArrayList();
-//        for(String sharedUser: sharedUsers){
-//            Long userId = udfDao.selectIdByUserName(sharedUser);
-//            if(userId == null){
-//                notExistUsers.add(sharedUser);
-//            }
-//        }
-//        if(!notExistUsers.isEmpty()){
-//            throw new UDFException("Sharing user does not exist：" + String.join(",", notExistUsers));
-//        }
+        //        List<String> notExistUsers = Lists.newArrayList();
+        //        for(String sharedUser: sharedUsers){
+        //            Long userId = udfDao.selectIdByUserName(sharedUser);
+        //            if(userId == null){
+        //                notExistUsers.add(sharedUser);
+        //            }
+        //        }
+        //        if(!notExistUsers.isEmpty()){
+        //            throw new UDFException("Sharing user does not exist：" + String.join(",",
+        // notExistUsers));
+        //        }
     }
 
     @Override
     @Deprecated
     public UDFInfo addSharedUDFInfo(UDFInfo sharedUDFInfo) throws UDFException {
-        long count = udfDao.getShareSameNameCountByUser(sharedUDFInfo.getUdfName(), sharedUDFInfo.getCreateUser());
+        long count =
+                udfDao.getShareSameNameCountByUser(
+                        sharedUDFInfo.getUdfName(), sharedUDFInfo.getCreateUser());
         if (count > 0) {
-            throw new UDFException("Shared udf name(分享的udf的名字)(" + sharedUDFInfo.getUdfName() + ")Already exists, please edit the name and re-share(已存在，请修改名字后重新进行分享)");
+            throw new UDFException(
+                    "Shared udf name(分享的udf的名字)("
+                            + sharedUDFInfo.getUdfName()
+                            + ")Already exists, please edit the name and re-share(已存在，请修改名字后重新进行分享)");
         }
         udfDao.addUDF(sharedUDFInfo);
         return sharedUDFInfo;
@@ -924,11 +1039,10 @@ public class UDFServiceImpl implements UDFService {
 
     @Override
     public void removeSharedUser(Collection<String> oldsharedUsers, Long udfId) {
-        //同时需要取消共享用户加载这个udf
+        // 同时需要取消共享用户加载这个udf
         for (String oldsharedUser : oldsharedUsers) {
             udfDao.deleteSharedUser(oldsharedUser, udfId);
             udfDao.deleteLoadInfo(udfId, oldsharedUser);
         }
     }
-
 }

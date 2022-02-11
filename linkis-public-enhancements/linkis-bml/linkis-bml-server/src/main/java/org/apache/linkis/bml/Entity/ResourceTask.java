@@ -168,8 +168,12 @@ public class ResourceTask {
         return resourceTask;
     }
 
-    public static ResourceTask createRollbackVersionTask(String resourceId, String version, String user,
-                                                         String system, Map<String, Object> properties) {
+    public static ResourceTask createRollbackVersionTask(
+            String resourceId,
+            String version,
+            String user,
+            String system,
+            Map<String, Object> properties) {
         ResourceTask resourceTask = new ResourceTask();
         resourceTask.setResourceId(resourceId);
         resourceTask.setVersion(version);
@@ -185,8 +189,8 @@ public class ResourceTask {
         return resourceTask;
     }
 
-    public static ResourceTask createCopyResourceTask(String resourceId, String user,
-                                                         String system, Map<String, Object> properties) {
+    public static ResourceTask createCopyResourceTask(
+            String resourceId, String user, String system, Map<String, Object> properties) {
         ResourceTask resourceTask = new ResourceTask();
         resourceTask.setResourceId(resourceId);
         resourceTask.setExtraParams(null);
@@ -201,7 +205,7 @@ public class ResourceTask {
         return resourceTask;
     }
 
-  public String getResourceId() {
+    public String getResourceId() {
         return resourceId;
     }
 

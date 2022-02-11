@@ -16,6 +16,7 @@
  */
 
 package org.apache.linkis.udf.entity;
+
 import org.apache.linkis.udf.vo.UDFInfoVo;
 
 import java.util.Date;
@@ -37,7 +38,7 @@ public class UDFTree {
     private List<UDFInfoVo> udfInfos;
     private List<UDFTree> childrens;
 
-    public UDFTree(){};
+    public UDFTree() {};
 
     public UDFTree(
             Long id,

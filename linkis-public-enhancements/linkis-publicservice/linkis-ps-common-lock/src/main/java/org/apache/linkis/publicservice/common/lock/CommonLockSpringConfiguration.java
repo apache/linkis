@@ -3,6 +3,7 @@ package org.apache.linkis.publicservice.common.lock;
 import org.apache.linkis.publicservice.common.lock.dao.CommonLockMapper;
 import org.apache.linkis.publicservice.common.lock.service.CommonLockService;
 import org.apache.linkis.publicservice.common.lock.service.impl.DefaultCommonLockService;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

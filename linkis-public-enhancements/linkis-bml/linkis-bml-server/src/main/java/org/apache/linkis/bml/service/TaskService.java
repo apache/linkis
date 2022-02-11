@@ -61,12 +61,12 @@ public interface TaskService {
 
     ResourceTask createDeleteResourceTask(String resourceId, String user, String ip);
 
-  ResourceTask createDeleteResourcesTask(List<String> resourceIds, String user, String ip);
+    ResourceTask createDeleteResourcesTask(List<String> resourceIds, String user, String ip);
 
-  ResourceTask createRollbackVersionTask(String resourceId, String version, String user, Map<String, Object> properties)
-          throws Exception;
+    ResourceTask createRollbackVersionTask(
+            String resourceId, String version, String user, Map<String, Object> properties)
+            throws Exception;
 
-  ResourceTask createCopyResourceTask(String resourceId, String anotherUser, Map<String, Object> properties)
-          throws Exception;
-
+    ResourceTask createCopyResourceTask(
+            String resourceId, String anotherUser, Map<String, Object> properties) throws Exception;
 }

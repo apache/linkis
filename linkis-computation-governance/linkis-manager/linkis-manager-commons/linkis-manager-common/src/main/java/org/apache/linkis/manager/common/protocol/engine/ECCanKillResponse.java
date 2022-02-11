@@ -25,7 +25,6 @@ public class ECCanKillResponse implements EngineRequest {
 
     private String reason;
 
-
     @Override
     public String getUser() {
         return user;
@@ -53,10 +52,15 @@ public class ECCanKillResponse implements EngineRequest {
 
     @Override
     public String toString() {
-        return "ECCanKillResponse{" +
-                "user='" + user + '\'' +
-                ", flag=" + flag +
-                ", reason='" + reason + '\'' +
-                '}';
+        return "ECCanKillResponse{"
+                + "user='"
+                + user
+                + '\''
+                + ", flag="
+                + flag
+                + ", reason='"
+                + reason
+                + '\''
+                + '}';
     }
 }

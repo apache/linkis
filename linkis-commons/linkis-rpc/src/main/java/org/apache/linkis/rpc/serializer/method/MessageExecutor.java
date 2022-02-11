@@ -29,31 +29,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 public class MessageExecutor extends JavaLog {
 
-    private List<MethodExecuteWrapper> getMinOrderMethodWrapper(Map<String, List<MethodExecuteWrapper>> methodWrappers) {
-        //get min key order
+    private List<MethodExecuteWrapper> getMinOrderMethodWrapper(
+            Map<String, List<MethodExecuteWrapper>> methodWrappers) {
+        // get min key order
         List<MethodExecuteWrapper> minOrderMethodWrapper = new ArrayList<>();
-        methodWrappers.forEach((k, v) -> v.forEach(m -> {
-            if (MessageUtils.orderIsMin(m, v)) {
-                minOrderMethodWrapper.add(m);
-            }
-        }));
+        methodWrappers.forEach(
+                (k, v) ->
+                        v.forEach(
+                                m -> {
+                                    if (MessageUtils.orderIsMin(m, v)) {
+                                        minOrderMethodWrapper.add(m);
+                                    }
+                                }));
         return minOrderMethodWrapper;
     }
 
-    public Object execute(RequestProtocol requestProtocol, Map<String, List<MethodExecuteWrapper>> methodWrappers, Sender sender) throws InterruptedException, MessageErrorException {
+    public Object execute(
+            RequestProtocol requestProtocol,
+            Map<String, List<MethodExecuteWrapper>> methodWrappers,
+            Sender sender)
+            throws InterruptedException, MessageErrorException {
         Integer count = methodWrappers.values().stream().map(List::size).reduce(0, Integer::sum);
         if (count == 1) {
             return executeOneMethod(requestProtocol, methodWrappers, sender);
         } else {
-            throw new MessageErrorException(120001, String.format("find %s method for the rpc request:%s", count, requestProtocol.getClass().getName()));
+            throw new MessageErrorException(
+                    120001,
+                    String.format(
+                            "find %s method for the rpc request:%s",
+                            count, requestProtocol.getClass().getName()));
         }
     }
 
-
-    private Object executeOneMethod(RequestProtocol requestProtocol, Map<String, List<MethodExecuteWrapper>> methodWrappers, Sender sender) {
+    private Object executeOneMethod(
+            RequestProtocol requestProtocol,
+            Map<String, List<MethodExecuteWrapper>> methodWrappers,
+            Sender sender) {
         List<MethodExecuteWrapper> methodExecuteWrappers = getMinOrderMethodWrapper(methodWrappers);
         Object result = null;
         if (methodExecuteWrappers.size() == 1) {
@@ -79,5 +92,4 @@ public class MessageExecutor extends JavaLog {
         }
         return result;
     }
-
 }

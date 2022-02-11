@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface CommonLockService {
     Boolean lock(CommonLock commonLock, Long timeOut);
+
     void unlock(CommonLock commonLock);
+
     List<CommonLock> getAll();
 }

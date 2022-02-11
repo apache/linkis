@@ -21,7 +21,6 @@ import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus;
 
 import java.io.Serializable;
 
-
 public class YarnResourceWithStatusVo implements Serializable {
 
     public Long queueMemory;
@@ -45,7 +44,13 @@ public class YarnResourceWithStatusVo implements Serializable {
         this.queue = resourceWithStatus.queue();
     }
 
-    public YarnResourceWithStatusVo(String applicationId, Long queueMemory, Integer queueCores, Integer queueInstances, String jobStatus, String queue) {
+    public YarnResourceWithStatusVo(
+            String applicationId,
+            Long queueMemory,
+            Integer queueCores,
+            Integer queueInstances,
+            String jobStatus,
+            String queue) {
         this.applicationId = applicationId;
         this.queueMemory = queueMemory;
         this.queueCores = queueCores;

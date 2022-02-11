@@ -17,7 +17,6 @@
 
 package org.apache.linkis.rpc.serializer.exception;
 
-
 import org.apache.linkis.common.exception.WarnException;
 
 public class MessageWarnException extends WarnException {
@@ -30,5 +29,4 @@ public class MessageWarnException extends WarnException {
         super(errCode, desc);
         initCause(t);
     }
-
 }

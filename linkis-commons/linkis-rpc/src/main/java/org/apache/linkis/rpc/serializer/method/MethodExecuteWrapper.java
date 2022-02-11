@@ -21,7 +21,6 @@ import org.apache.linkis.rpc.serializer.parser.ServiceMethod;
 
 import java.lang.reflect.Method;
 
-
 public class MethodExecuteWrapper {
 
     public MethodExecuteWrapper(ServiceMethod serviceMethod) {
@@ -48,7 +47,6 @@ public class MethodExecuteWrapper {
         return this.serviceMethod.getService();
     }
 
-
     public String getAlias() {
         return this.serviceMethod.getAlias();
     }
@@ -68,5 +66,4 @@ public class MethodExecuteWrapper {
     public boolean isSenderOnLeft() {
         return this.serviceMethod.isSenderOnLeft();
     }
-
 }

@@ -19,13 +19,9 @@ package org.apache.linkis.datasourcemanager.common;
 
 import org.apache.linkis.common.conf.CommonVars;
 
-/**
- * Configuration
- */
+/** Configuration */
 public class DsmConfiguration {
 
     public static CommonVars<String> DSM_ADMIN_USER_LIST =
             CommonVars.apply("wds.linkis.server.dsm.admin.users", "");
-
-
 }

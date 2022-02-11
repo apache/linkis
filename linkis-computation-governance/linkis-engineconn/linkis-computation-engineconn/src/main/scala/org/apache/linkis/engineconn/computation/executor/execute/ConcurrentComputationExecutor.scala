@@ -30,7 +30,7 @@ abstract class ConcurrentComputationExecutor(override val outputPrintLimit: Int 
       error(s"Executor is busy but still got new task ! Running task num : ${getRunningTask}")
     }
     if (getRunningTask >= getConcurrentLimit) synchronized {
-      if (getRunningTask >= getConcurrentLimit) {
+      if (getRunningTask >= getConcurrentLimit && NodeStatus.isIdle(getStatus)) {
         info(s"running task($getRunningTask) > concurrent limit $getConcurrentLimit, now to mark engine to busy ")
         transition(NodeStatus.Busy)
       }

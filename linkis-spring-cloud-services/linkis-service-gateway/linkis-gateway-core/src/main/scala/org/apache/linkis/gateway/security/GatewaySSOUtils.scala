@@ -18,6 +18,7 @@
 package org.apache.linkis.gateway.security
 
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.http.{GatewayContext, GatewayHttpRequest}
 import org.apache.linkis.server.exception.LoginExpireException
 import org.apache.linkis.server.security.SecurityFilter._
@@ -28,6 +29,36 @@ import scala.collection.JavaConversions._
 
 object GatewaySSOUtils extends Logging {
   private def getCookies(gatewayContext: GatewayContext): Array[Cookie] = gatewayContext.getRequest.getCookies.flatMap(_._2).toArray
+  private val DOMAIN_REGEX = "[a-zA-Z][a-zA-Z0-9\\.]+".r
+  private val IP_REGEX = "([^:]+):.+".r
+
+  private val level = GatewayConfiguration.GATEWAY_DOMAIN_LEVEL.getValue
+
+  /**
+    * "dss.wds.weoa.com" -> ".wds.weoa.com"
+    * "dss.weoa.com" -> ".weoa.com"
+    * "dss.com" -> "dss.com"
+    * "127.0.0.1" -> "127.0.0.1"
+    * "127.0.0.1:8080" -> "127.0.0.1"
+    * @param host the Host in HttpRequest Headers
+    * @return
+    */
+  def getCookieDomain(host: String): String = host match {
+    case DOMAIN_REGEX() =>
+      val domains = host.split("\\.")
+      val index = if (domains.length > level) level else if (domains.length == level) level -1 else domains.length
+      if (index < 0) {
+        return host
+      }
+      val parsedDomains = domains.takeRight(index)
+      if (null == parsedDomains || parsedDomains.length < level) {
+        return host
+      }
+      val domain = parsedDomains.mkString(".")
+      if(domains.length >= level) "." + domain else domain
+    case IP_REGEX(ip) => ip
+    case _ => host
+  }
   def getLoginUser(gatewayContext: GatewayContext): Option[String] = {
     val cookies = getCookies(gatewayContext)
     Utils.tryCatch(SSOUtils.getLoginUser(cookies)) {
@@ -39,7 +70,11 @@ object GatewaySSOUtils extends Logging {
   def getLoginUsername(gatewayContext: GatewayContext): String = SSOUtils.getLoginUsername(getCookies(gatewayContext))
   def setLoginUser(gatewayContext: GatewayContext, username: String): Unit = {
     val proxyUser = ProxyUserUtils.getProxyUser(username)
-    SSOUtils.setLoginUser(c => gatewayContext.getResponse.addCookie(c), proxyUser)
+    SSOUtils.setLoginUser(c => {
+      val host = gatewayContext.getRequest.getHeaders.get("Host")
+      if(host != null && host.nonEmpty) c.setDomain(getCookieDomain(host.head))
+      gatewayContext.getResponse.addCookie(c)
+    }, proxyUser)
   }
   def setLoginUser(request: GatewayHttpRequest, username: String): Unit = {
     val proxyUser = ProxyUserUtils.getProxyUser(username)

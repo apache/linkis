@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <environments default="test">
+        <environment id="test">
+            <transactionManager type="JDBC"/>
+            <dataSource type="UNPOOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url"
+                          value="jdbc:mysql://10.107.108.111:3306/vsbi_gz_bdap_sit_01?characterEncoding=UTF-8"/>
+                <property name="username" value="bdp_vsbi"/>
+                <property name="password" value="bdpVsbi@2019"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="TokenMapper.xml"/>
+    </mappers>
+</configuration>

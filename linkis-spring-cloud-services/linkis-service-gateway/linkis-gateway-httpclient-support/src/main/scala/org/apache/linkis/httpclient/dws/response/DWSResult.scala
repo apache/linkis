@@ -17,12 +17,15 @@
  
 package org.apache.linkis.httpclient.dws.response
 
-import java.util
+import org.apache.linkis.common.conf.CommonVars
 
-import org.apache.linkis.common.utils.Logging
+import java.util
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.httpclient.dws.DWSHttpClient
 import org.apache.linkis.httpclient.exception.HttpClientResultException
 import org.apache.linkis.httpclient.response.HttpResult
+import org.apache.commons.lang.StringUtils
+import org.apache.linkis.httpclient.dws.response.DWSResult.LOGGEDIN_STR
 
 trait DWSResult extends Logging with HttpResult {
 
@@ -51,17 +54,36 @@ trait DWSResult extends Logging with HttpResult {
   override def getStatusCode: Int = statusCode
 
   override def set(responseBody: String, statusCode: Int, url: String, contentType: String): Unit = {
-    if(statusCode != 200) throw new HttpClientResultException(s"URL $url request failed! ResponseBody is $responseBody." )
-    resultMap = DWSHttpClient.jacksonJson.readValue(responseBody, classOf[util.Map[String, Object]])
-    status = resultMap.get("status").asInstanceOf[Int]
-    if(status != 0) throw new HttpClientResultException(s"URL $url request failed! ResponseBody is $responseBody." )
-    message = getResultMap.get("message").asInstanceOf[String]
-    data = getResultMap.get("data").asInstanceOf[util.Map[String, Object]]
-    this.responseBody = responseBody
-    this.statusCode = statusCode
-    this.url = url
-    this.contentType = contentType
+//    if(statusCode != 200) throw new HttpClientResultException(s"URL $url request failed! ResponseBody is $responseBody." )
+    var newStatusCode = statusCode
+    Utils.tryCatch {
+      resultMap = DWSHttpClient.jacksonJson.readValue(responseBody, classOf[util.Map[String, Object]])
+      status = resultMap.get("status").asInstanceOf[Int]
+      message = getResultMap.get("message").asInstanceOf[String]
+      if(status != 0) {
+        if (StringUtils.isBlank(message) || !message.contains(LOGGEDIN_STR)) {
+          throw new HttpClientResultException(s"URL $url request failed! ResponseBody is $responseBody.")
+        }
+        this.status = 0
+        newStatusCode = 200
+      }
+      data = getResultMap.get("data").asInstanceOf[util.Map[String, Object]]
+      this.responseBody = responseBody
+      this.statusCode = newStatusCode
+      this.url = url
+      this.contentType = contentType
+    } {
+      case e: Exception =>
+        throw new HttpClientResultException(s"URL $url request failed! ResponseBody is $responseBody. ${e.getMessage}")
+    }
+
   }
 
   override def getResponseBody: String = responseBody
+}
+
+object DWSResult {
+
+  lazy val LOGGEDIN_STR = CommonVars("wds.linkis.httpclient.default.logged_in.str", "Already logged in, please log out").getValue
+
 }

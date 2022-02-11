@@ -30,6 +30,7 @@ import org.apache.linkis.server.BDPJettyServerHelper
 import scala.collection.JavaConversions._
 
 trait RouteLabelParser {
+
   /**
    * Parse main
    * @param gatewayContext context

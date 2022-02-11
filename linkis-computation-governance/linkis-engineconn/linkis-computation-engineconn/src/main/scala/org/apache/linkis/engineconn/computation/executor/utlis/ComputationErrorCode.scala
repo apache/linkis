@@ -15,16 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ecm.server.exception
+package org.apache.linkis.engineconn.computation.executor.utlis
 
-object ECMErrorCode {
+object ComputationErrorCode {
 
-  val EC_START_TIME_OUT = 11100
 
-  val EC_INTERRUPT_TIME_OUT = 11101
+  val ASYNC_EXECUTOR_ERROR_CODE = 11301
 
-  val EC_START_FAILED = 11102
+  val UDF_LOAD_ERROR_CODE = 11302
 
-  val EC_FETCH_LOG_FAILED = 11110
 
 }

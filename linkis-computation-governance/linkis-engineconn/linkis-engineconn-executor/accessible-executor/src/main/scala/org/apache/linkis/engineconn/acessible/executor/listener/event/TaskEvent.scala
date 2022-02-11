@@ -34,3 +34,5 @@ case class TaskStatusChangedEvent(taskId: String, fromStatus: ExecutionNodeStatu
 case class TaskResultCreateEvent(taskId: String, resStr: String, alias: String) extends TaskEvent
 
 case class TaskResultSizeCreatedEvent(taskId: String, resultSize: Int) extends TaskEvent
+
+case class TaskResponseErrorEvent(taskId: String, errorMsg: String) extends TaskEvent

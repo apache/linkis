@@ -37,6 +37,7 @@
         <module>linkis-module</module>
         <module>linkis-mybatis</module>
         <module>linkis-rpc</module>
+        <module>linkis-message-scheduler</module>
         <module>linkis-storage</module>
     </modules>
 

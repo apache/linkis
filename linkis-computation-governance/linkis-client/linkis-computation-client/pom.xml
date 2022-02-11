@@ -64,11 +64,11 @@
             <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>com.webank.wedatasphere.linkis</groupId>
+                    <groupId>org.apache.linkis</groupId>
                     <artifactId>linkis-storage</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.webank.wedatasphere.linkis</groupId>
+                    <groupId>org.apache.linkis</groupId>
                     <artifactId>linkis-hadoop-common</artifactId>
                 </exclusion>
                 <exclusion>

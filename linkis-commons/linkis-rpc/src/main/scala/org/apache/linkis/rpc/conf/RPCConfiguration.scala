@@ -48,7 +48,7 @@ object RPCConfiguration {
   val ENABLE_LOCAL_MESSAGE = CommonVars("wds.linkis.rpc.conf.enable.local.message", false)
   val LOCAL_APP_LIST = CommonVars("wds.linkis.rpc.conf.local.app.list", "").getValue.split(",")
 
-  val SERVICE_SCAN_PACKAGE = CommonVars("wds.linkis.ms.service.scan.package", "com.webank.wedatasphere").getValue
+  val SERVICE_SCAN_PACKAGE = CommonVars("wds.linkis.ms.service.scan.package", "org.apache.linkis").getValue
 
   val REFLECTIONS = new Reflections(SERVICE_SCAN_PACKAGE, new MethodAnnotationsScanner(), new TypeAnnotationsScanner(), new SubTypesScanner())
 

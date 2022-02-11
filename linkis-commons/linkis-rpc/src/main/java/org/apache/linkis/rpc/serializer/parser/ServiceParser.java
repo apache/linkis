@@ -20,9 +20,7 @@ package org.apache.linkis.rpc.serializer.parser;
 import java.util.List;
 import java.util.Map;
 
-
 public interface ServiceParser {
 
     Map<String, List<ServiceMethod>> parse(Object service);
-
 }

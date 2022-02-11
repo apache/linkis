@@ -49,7 +49,8 @@ public class RouteLabel extends InheritableLabel<String> implements UserModifiab
             if (stringValue.split(SerializableLabel.VALUE_SEPARATOR).length != 1) {
                 throw new LabelErrorException(
                         LabelConstant.LABEL_BUILDER_ERROR_CODE,
-                        "The value of the label is set incorrectly, only 1 value can be set, and the symbol cannot be used" + VALUE_SEPARATOR);
+                        "The value of the label is set incorrectly, only 1 value can be set, and the symbol cannot be used"
+                                + VALUE_SEPARATOR);
             }
         }
     }

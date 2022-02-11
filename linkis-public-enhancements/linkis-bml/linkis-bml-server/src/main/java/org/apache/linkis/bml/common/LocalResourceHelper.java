@@ -133,10 +133,25 @@ public class LocalResourceHelper implements ResourceHelper {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         String dateStr = format.format(new Date());
         if (StringUtils.isNotEmpty(resourceHeader)) {
-            return getSchema() + BmlServerConfiguration.BML_LOCAL_PREFIX().getValue()
-                    + "/" + user + "/" + dateStr + "/" + resourceHeader + "/" + fileName;
+            return getSchema()
+                    + BmlServerConfiguration.BML_LOCAL_PREFIX().getValue()
+                    + "/"
+                    + user
+                    + "/"
+                    + dateStr
+                    + "/"
+                    + resourceHeader
+                    + "/"
+                    + fileName;
         } else {
-            return getSchema() + BmlServerConfiguration.BML_LOCAL_PREFIX().getValue() + "/" + user + "/" + dateStr + "/" + fileName;
+            return getSchema()
+                    + BmlServerConfiguration.BML_LOCAL_PREFIX().getValue()
+                    + "/"
+                    + user
+                    + "/"
+                    + dateStr
+                    + "/"
+                    + fileName;
         }
     }
 

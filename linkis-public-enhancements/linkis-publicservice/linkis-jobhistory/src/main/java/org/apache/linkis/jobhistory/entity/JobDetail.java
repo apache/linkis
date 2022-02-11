@@ -25,39 +25,35 @@ public class JobDetail {
 
     private Long id;
 
-
-  private Long jobHistoryId;
+    private Long jobHistoryId;
 
     /*
     separated multi result path
      */
 
-   private String resultLocation;
+    private String resultLocation;
 
     /*
     how many result sets
      */
 
-   private Integer resultArraySize;
+    private Integer resultArraySize;
 
     /*
     code
      */
 
-   private String executionContent;
+    private String executionContent;
 
     /*
     json of jobGroup
      */
 
-   private String jobGroupInfo;
+    private String jobGroupInfo;
 
+    private Date createdTime;
 
-   private Date createdTime;
-
-
-   private Date updatedTime;
-
+    private Date updatedTime;
 
     private String status;
 
@@ -66,7 +62,7 @@ public class JobDetail {
     private String updatedTimeMills;
 
     public String getUpdatedTimeMills() {
-        return  QueryUtils.dateToString(getUpdatedTime());
+        return QueryUtils.dateToString(getUpdatedTime());
     }
 
     public Long getId() {

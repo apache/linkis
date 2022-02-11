@@ -17,7 +17,6 @@
 
 package org.apache.linkis.rpc.serializer.exception;
 
-
 import org.apache.linkis.common.exception.ErrorException;
 
 public class MessageErrorException extends ErrorException {
@@ -30,5 +29,4 @@ public class MessageErrorException extends ErrorException {
         super(errCode, desc);
         initCause(t);
     }
-
 }

@@ -45,6 +45,10 @@ public interface ResourceDao {
     @Select("select owner from `linkis_ps_bml_resources` where resource_id = #{resourceId} ")
     String getUserByResourceId(@Param("resourceId") String resourceId);
 
-    @Update("update `linkis_ps_bml_resources` set owner = #{newOwner} where resource_id = #{resourceId} and owner=#{oldOwner}")
-    void changeOwner(@Param("resourceId") String resourceId, @Param("oldOwner") String oldOwner, @Param("newOwner") String newOwner);
+    @Update(
+            "update `linkis_ps_bml_resources` set owner = #{newOwner} where resource_id = #{resourceId} and owner=#{oldOwner}")
+    void changeOwner(
+            @Param("resourceId") String resourceId,
+            @Param("oldOwner") String oldOwner,
+            @Param("newOwner") String newOwner);
 }

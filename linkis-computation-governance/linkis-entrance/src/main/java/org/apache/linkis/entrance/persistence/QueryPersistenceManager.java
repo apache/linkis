@@ -34,7 +34,7 @@ import org.apache.commons.lang.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.Long;
+
 import scala.Option;
 import scala.Tuple2;
 
@@ -137,8 +137,8 @@ public class QueryPersistenceManager extends PersistenceManager {
             // todo check
             updatedProgress = -1 * progress;
         }
-        if(Double.isNaN(updatedProgress)){
-            return ;
+        if (Double.isNaN(updatedProgress)) {
+            return;
         }
         EntranceJob entranceJob = (EntranceJob) job;
         float persistedProgress = 0.0f;
@@ -147,8 +147,8 @@ public class QueryPersistenceManager extends PersistenceManager {
         } catch (Exception e) {
             logger.warn("Invalid progress : " + entranceJob.getJobRequest().getProgress(), e);
         }
-        if(job.getProgress() >= 0 && persistedProgress >= updatedProgress){
-            return ;
+        if (job.getProgress() >= 0 && persistedProgress >= updatedProgress) {
+            return;
         }
         job.setProgress(updatedProgress);
         entranceJob.getJobRequest().setProgress(String.valueOf(updatedProgress));
@@ -182,13 +182,15 @@ public class QueryPersistenceManager extends PersistenceManager {
             if (job.isSucceed()) {
                 CSEntranceHelper.registerCSRSData(job);
             } else {
-                JobRequest jobRequest = this.entranceContext.getOrCreateEntranceParser().parseToJobRequest(job);
+                JobRequest jobRequest =
+                        this.entranceContext.getOrCreateEntranceParser().parseToJobRequest(job);
                 if (null == jobRequest.getErrorCode() || jobRequest.getErrorCode() == 0) {
-                    Option<Tuple2<String, String>> tuple2Option = FlexibleErrorCodeManager.errorMatch(jobRequest.getErrorDesc());
+                    Option<Tuple2<String, String>> tuple2Option =
+                            FlexibleErrorCodeManager.errorMatch(jobRequest.getErrorDesc());
                     if (tuple2Option.isDefined()) {
                         logger.info(jobRequest.getId() + " to reset errorCode by errorMsg");
                         Tuple2<String, String> errorCodeContent = tuple2Option.get();
-                        jobRequest.setErrorCode( Integer.parseInt(errorCodeContent._1));
+                        jobRequest.setErrorCode(Integer.parseInt(errorCodeContent._1));
                         jobRequest.setErrorDesc(errorCodeContent._2);
                     }
                 }
@@ -224,8 +226,5 @@ public class QueryPersistenceManager extends PersistenceManager {
     }
 
     @Override
-    public void onResultSizeCreated(Job job, int resultSize) {
-
-
-    }
+    public void onResultSizeCreated(Job job, int resultSize) {}
 }

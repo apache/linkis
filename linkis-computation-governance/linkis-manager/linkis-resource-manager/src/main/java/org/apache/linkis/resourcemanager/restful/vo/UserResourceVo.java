@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
-
 public class UserResourceVo implements Serializable {
 
     private Integer id;
@@ -176,5 +175,4 @@ public class UserResourceVo implements Serializable {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
-
 }

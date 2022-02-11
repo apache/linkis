@@ -17,32 +17,21 @@
 
 package org.apache.linkis.udf.api;
 
-
-import com.github.pagehelper.PageInfo;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.udf.entity.UDFInfo;
 import org.apache.linkis.udf.entity.UDFTree;
-import org.apache.linkis.udf.entity.UDFVersion;
 import org.apache.linkis.udf.excepiton.UDFException;
 import org.apache.linkis.udf.service.UDFService;
 import org.apache.linkis.udf.service.UDFTreeService;
-import org.apache.linkis.udf.service.impl.UDFServiceImpl;
 import org.apache.linkis.udf.utils.ConstantVar;
 import org.apache.linkis.udf.vo.*;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Consts;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,18 +41,22 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
-import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.apache.linkis.udf.utils.ConstantVar.*;
 
-/**
- * Created by johnnwang on 8/11/18.
- */
+/** Created by johnnwang on 8/11/18. */
 @RestController
 @RequestMapping(path = "udf")
 public class UDFApi {
@@ -118,7 +111,8 @@ public class UDFApi {
         return message;
     }
 
-    private void fetchUdfInfoRecursively(List<UDFInfoVo> allInfo, UDFTree udfTree, String realUser) throws Throwable {
+    private void fetchUdfInfoRecursively(List<UDFInfoVo> allInfo, UDFTree udfTree, String realUser)
+            throws Throwable {
         if (CollectionUtils.isNotEmpty(udfTree.getUdfInfos())) {
             for (UDFInfoVo udfInfo : udfTree.getUdfInfos()) {
                 if (udfInfo.getLoad()) {
@@ -176,7 +170,7 @@ public class UDFApi {
             udfvo.setUpdateTime(new Date());
             udfService.addUDF(udfvo, userName);
             message = Message.ok();
-//            message.data("udf", udfvo);
+            //            message.data("udf", udfvo);
         } catch (Exception e) {
             logger.error("Failed to add UDF: ", e);
             message = Message.error(e.getMessage());
@@ -189,10 +183,11 @@ public class UDFApi {
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
-            UDFUpdateVo udfUpdateVo = mapper.treeToValue(json.get("udfUpdateVo"), UDFUpdateVo.class);
+            UDFUpdateVo udfUpdateVo =
+                    mapper.treeToValue(json.get("udfUpdateVo"), UDFUpdateVo.class);
             udfService.updateUDF(udfUpdateVo, userName);
             message = Message.ok();
-//            message.data("udf", udfUpdateVo);
+            //            message.data("udf", udfUpdateVo);
         } catch (Exception e) {
             logger.error("Failed to update UDF: ", e);
             message = Message.error(e.getMessage());
@@ -353,20 +348,21 @@ public class UDFApi {
             Set<String> sharedUserSet = new HashSet<>(userList);
             UDFInfo udfInfo = mapper.treeToValue(json.get("udfInfo"), UDFInfo.class);
             udfInfo = verifyOperationUser(userName, udfInfo.getId());
-//            if (udfInfo.getUdfType() == UDF_JAR) {
-//                throw new UDFException("jar类型UDF不支持共享");
-//            }
-            //Verify shared user identity(校验分享的用户身份)
+            //            if (udfInfo.getUdfType() == UDF_JAR) {
+            //                throw new UDFException("jar类型UDF不支持共享");
+            //            }
+            // Verify shared user identity(校验分享的用户身份)
             udfService.checkSharedUsers(sharedUserSet, userName, udfInfo.getUdfName());
 
-            Set<String> oldsharedUsers = new HashSet<>(udfService.getAllSharedUsersByUdfId(userName, udfInfo.getId()));
+            Set<String> oldsharedUsers =
+                    new HashSet<>(udfService.getAllSharedUsersByUdfId(userName, udfInfo.getId()));
             Set<String> temp = new HashSet<>(sharedUserSet);
             temp.retainAll(oldsharedUsers);
             sharedUserSet.removeAll(temp);
             oldsharedUsers.removeAll(temp);
             udfService.removeSharedUser(oldsharedUsers, udfInfo.getId());
             udfService.addSharedUser(sharedUserSet, udfInfo.getId());
-            //第一次共享，发布最新版本
+            // 第一次共享，发布最新版本
             if (!Boolean.TRUE.equals(udfInfo.getShared())) {
                 udfService.publishLatestUdf(udfInfo.getId());
             }
@@ -423,8 +419,10 @@ public class UDFApi {
                 throw new UDFException("The handover user can't be null!");
             }
             UDFInfo udfInfo = verifyOperationUser(userName, udfId);
-            if (udfService.isUDFManager(udfInfo.getCreateUser()) && !udfService.isUDFManager(handoverUser)) {
-                throw new UDFException("Admin users cannot hand over UDFs to regular users.(管理员用户不能移交UDF给普通用户！)");
+            if (udfService.isUDFManager(udfInfo.getCreateUser())
+                    && !udfService.isUDFManager(handoverUser)) {
+                throw new UDFException(
+                        "Admin users cannot hand over UDFs to regular users.(管理员用户不能移交UDF给普通用户！)");
             }
             udfService.handoverUdf(udfId, handoverUser);
             message = Message.ok();
@@ -448,11 +446,12 @@ public class UDFApi {
             throw new UDFException("can't find udf by this id!");
         }
         if (!udfInfo.getCreateUser().equals(userName)) {
-            throw new UDFException("createUser must be consistent with the operation user(创建用户必须和操作用户一致)");
+            throw new UDFException(
+                    "createUser must be consistent with the operation user(创建用户必须和操作用户一致)");
         }
         return udfInfo;
     }
-    
+
     @RequestMapping(path = "/publish", method = RequestMethod.POST)
     public Message publishUDF(HttpServletRequest req, @RequestBody JsonNode json) {
         Message message = null;
@@ -477,7 +476,7 @@ public class UDFApi {
     }
 
     @RequestMapping(path = "/rollback", method = RequestMethod.POST)
-    public Message rollbackUDF(HttpServletRequest req,@RequestBody JsonNode json) {
+    public Message rollbackUDF(HttpServletRequest req, @RequestBody JsonNode json) {
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
@@ -522,23 +521,31 @@ public class UDFApi {
      * @return
      */
     @RequestMapping(path = "/managerPages", method = RequestMethod.POST)
-    public Message managerPages(HttpServletRequest req,@RequestBody JsonNode jsonNode) {
+    public Message managerPages(HttpServletRequest req, @RequestBody JsonNode jsonNode) {
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
             if (StringUtils.isEmpty(userName)) {
                 throw new UDFException("username is empty!");
             }
-            String udfName = jsonNode.get("udfName") == null ? null : jsonNode.get("udfName").textValue();
+            String udfName =
+                    jsonNode.get("udfName") == null ? null : jsonNode.get("udfName").textValue();
             String udfType = jsonNode.get("udfType").textValue();
-            String createUser = jsonNode.get("createUser") == null ? null : jsonNode.get("createUser").textValue();
+            String createUser =
+                    jsonNode.get("createUser") == null
+                            ? null
+                            : jsonNode.get("createUser").textValue();
             int curPage = jsonNode.get("curPage").intValue();
             int pageSize = jsonNode.get("pageSize").intValue();
             Collection<Integer> udfTypes = null;
             if (!StringUtils.isEmpty(udfType)) {
-                udfTypes = Arrays.stream(udfType.split(",")).map(Integer::parseInt).collect(Collectors.toList());
+                udfTypes =
+                        Arrays.stream(udfType.split(","))
+                                .map(Integer::parseInt)
+                                .collect(Collectors.toList());
             }
-            PageInfo<UDFAddVo> pageInfo = udfService.getManagerPages(udfName, udfTypes, userName, curPage, pageSize);
+            PageInfo<UDFAddVo> pageInfo =
+                    udfService.getManagerPages(udfName, udfTypes, userName, curPage, pageSize);
             message = Message.ok();
             message.data("infoList", pageInfo.getList());
             message.data("totalPage", pageInfo.getPages());
@@ -551,7 +558,7 @@ public class UDFApi {
     }
 
     @RequestMapping(path = "/downloadUdf", method = RequestMethod.POST)
-    public Message downloadUdf(HttpServletRequest req,@RequestBody JsonNode json) {
+    public Message downloadUdf(HttpServletRequest req, @RequestBody JsonNode json) {
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);
@@ -571,8 +578,9 @@ public class UDFApi {
     }
 
     @RequestMapping(path = "/downloadToLocal", method = RequestMethod.POST)
-    public void downloadToLocal(HttpServletRequest req, HttpServletResponse response,
-                                @RequestBody JsonNode json) throws IOException {
+    public void downloadToLocal(
+            HttpServletRequest req, HttpServletResponse response, @RequestBody JsonNode json)
+            throws IOException {
         PrintWriter writer = null;
         InputStream is = null;
         BufferedInputStream fis = null;
@@ -590,11 +598,12 @@ public class UDFApi {
             // 清空response
             response.reset();
             response.setCharacterEncoding("UTF-8");
-            //Content-Disposition的作用：告知浏览器以何种方式显示响应返回的文件，用浏览器打开还是以附件的形式下载到本地保存
-            //attachment表示以附件方式下载 inline表示在线打开 "Content-Disposition: inline; filename=文件名.mp3"
+            // Content-Disposition的作用：告知浏览器以何种方式显示响应返回的文件，用浏览器打开还是以附件的形式下载到本地保存
+            // attachment表示以附件方式下载 inline表示在线打开 "Content-Disposition: inline; filename=文件名.mp3"
             // filename表示文件的默认名称，因为网络传输只支持URL编码的相关支付，因此需要将文件名URL编码后进行传输,前端收到后需要反编码才能获取到真正的名称
-            response.addHeader("Content-Disposition", "attachment;filename=" + downloadVo.getFileName());
-//            response.addHeader("Content-Length", "" + file.length());
+            response.addHeader(
+                    "Content-Disposition", "attachment;filename=" + downloadVo.getFileName());
+            //            response.addHeader("Content-Length", "" + file.length());
             outputStream = new BufferedOutputStream(response.getOutputStream());
             response.setContentType("application/octet-stream");
             byte[] buffer = new byte[1024];
@@ -641,7 +650,8 @@ public class UDFApi {
 
     @Deprecated
     @RequestMapping(path = "/userDirectory", method = RequestMethod.GET)
-    public Message getUserDirectory(HttpServletRequest req, @RequestParam("category") String category) {
+    public Message getUserDirectory(
+            HttpServletRequest req, @RequestParam("category") String category) {
         Message message = null;
         try {
             String userName = SecurityFilter.getLoginUsername(req);

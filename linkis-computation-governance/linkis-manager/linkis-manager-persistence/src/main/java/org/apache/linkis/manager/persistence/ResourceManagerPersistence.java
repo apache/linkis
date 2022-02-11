@@ -136,13 +136,11 @@ public interface ResourceManagerPersistence {
 
     void deleteResourceRelByResourceId(List<Integer> id);
 
-    PersistenceResource getNodeResourceById (Integer id);
+    PersistenceResource getNodeResourceById(Integer id);
 
     PersistenceResourceActionRecord getResourceActionRecord(String ticketId);
 
     void insertResourceActionRecord(PersistenceResourceActionRecord resourceActionRecord);
 
     void updateResourceActionRecord(PersistenceResourceActionRecord resourceActionRecord);
-
-
 }

@@ -21,9 +21,11 @@ import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.rpc.serializer.annotation.Chain;
 import org.apache.linkis.rpc.serializer.annotation.Order;
 import org.apache.linkis.rpc.serializer.annotation.Receiver;
+
+import org.springframework.aop.support.AopUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.aop.support.AopUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -32,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 public class DefaultServiceParser implements ServiceParser {
 
     Logger logger = LoggerFactory.getLogger(DefaultServiceParser.class);
@@ -40,7 +41,7 @@ public class DefaultServiceParser implements ServiceParser {
     @Override
     public Map<String, List<ServiceMethod>> parse(Object service) {
         // TODO: 2020/7/15 more analysis
-//        Method[] methods = service.getClass().getMethods();
+        //        Method[] methods = service.getClass().getMethods();
         Method[] methods = AopUtils.getTargetClass(service).getMethods();
         return Arrays.stream(methods)
                 .filter(this::methodFilterPredicate)
@@ -52,7 +53,8 @@ public class DefaultServiceParser implements ServiceParser {
         ServiceMethod serviceMethod = new ServiceMethod();
         serviceMethod.setMethod(method);
         serviceMethod.setService(service);
-        serviceMethod.setAlias(String.format("%s.%s", service.getClass().getName(), method.getName()));
+        serviceMethod.setAlias(
+                String.format("%s.%s", service.getClass().getName(), method.getName()));
         Order order = method.getAnnotation(Order.class);
         if (order != null) {
             serviceMethod.setOrder(order.value());
@@ -67,18 +69,24 @@ public class DefaultServiceParser implements ServiceParser {
             if (Sender.class.isAssignableFrom(parameters[0].getType()))
                 serviceMethod.setSenderOnLeft(true);
         }
-        logger.info(method + " parameter:" + Arrays.toString(Arrays.stream(parameters).map(Parameter::getName).toArray()));
+        logger.info(
+                method
+                        + " parameter:"
+                        + Arrays.toString(
+                                Arrays.stream(parameters).map(Parameter::getName).toArray()));
         @SuppressWarnings("all")
-        Parameter parameter = Arrays.stream(parameters).filter(p -> !Sender.class.isAssignableFrom(p.getType()))
-                .findFirst().get();
+        Parameter parameter =
+                Arrays.stream(parameters)
+                        .filter(p -> !Sender.class.isAssignableFrom(p.getType()))
+                        .findFirst()
+                        .get();
         serviceMethod.setProtocolName(parameter.getType().getName());
         return serviceMethod;
     }
 
     /**
-     * 标注了@Receiver注解，方法至少一个参数
-     * 1个参数：非ServiceMethodContext 子类即可
-     * 2个参数 其中一个需要是ServiceMethodContext 的子类 && 2个参数都非ServiceMethodContext 子类即可
+     * 标注了@Receiver注解，方法至少一个参数 1个参数：非ServiceMethodContext 子类即可 2个参数 其中一个需要是ServiceMethodContext 的子类
+     * && 2个参数都非ServiceMethodContext 子类即可
      *
      * @param method
      * @return
@@ -89,12 +97,13 @@ public class DefaultServiceParser implements ServiceParser {
             if (method.getParameterCount() == 1) {
                 return !Sender.class.isAssignableFrom(parameterTypes[0]);
             } else if (method.getParameterCount() == 2) {
-                boolean hasContext = Arrays.stream(parameterTypes).anyMatch(Sender.class::isAssignableFrom);
-                boolean allContext = Arrays.stream(parameterTypes).allMatch(Sender.class::isAssignableFrom);
+                boolean hasContext =
+                        Arrays.stream(parameterTypes).anyMatch(Sender.class::isAssignableFrom);
+                boolean allContext =
+                        Arrays.stream(parameterTypes).allMatch(Sender.class::isAssignableFrom);
                 return hasContext && !allContext;
             }
         }
         return false;
     }
-
 }

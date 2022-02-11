@@ -92,9 +92,9 @@ public class EMRestfulApi {
 
     private String[] adminOperations = AMConfiguration.ECM_ADMIN_OPERATIONS().getValue().split(",");
 
-    private void checkAdmin(String userName) throws AMErrorException  {
-        if(!AMConfiguration.isAdmin(userName)){
-            throw new AMErrorException(210003,"Only admin can modify ECMs(只有管理员才能修改ECM).");
+    private void checkAdmin(String userName) throws AMErrorException {
+        if (!AMConfiguration.isAdmin(userName)) {
+            throw new AMErrorException(210003, "Only admin can modify ECMs(只有管理员才能修改ECM).");
         }
     }
 
@@ -128,10 +128,11 @@ public class EMRestfulApi {
                             allEMVoFilter2.stream()
                                     .filter(
                                             em -> {
-                                                return em.getNodeHealthy() == null || em.getNodeHealthy()
-                                                        .equals(
-                                                                NodeHealthy.valueOf(
-                                                                        nodeHealthy));
+                                                return em.getNodeHealthy() == null
+                                                        || em.getNodeHealthy()
+                                                                .equals(
+                                                                        NodeHealthy.valueOf(
+                                                                                nodeHealthy));
                                             })
                                     .collect(Collectors.toList());
         }

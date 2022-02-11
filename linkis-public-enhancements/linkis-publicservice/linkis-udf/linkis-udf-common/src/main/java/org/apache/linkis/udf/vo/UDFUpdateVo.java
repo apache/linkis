@@ -4,7 +4,7 @@ public class UDFUpdateVo {
     private Long id;
     private String udfName;
     private Integer udfType;
-    private String path; //仅存储用户上一次上传的路径 作提示用
+    private String path; // 仅存储用户上一次上传的路径 作提示用
     private String registerFormat;
     private String useFormat;
     private String description;

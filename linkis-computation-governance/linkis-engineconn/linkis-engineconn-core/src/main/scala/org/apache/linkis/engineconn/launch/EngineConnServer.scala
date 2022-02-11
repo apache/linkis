@@ -5,18 +5,19 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.engineconn.launch
 
+import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -34,11 +35,9 @@ import org.apache.linkis.governance.common.utils.EngineConnArgumentsParser
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
 import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.commons.lang.exception.ExceptionUtils
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
-
 
 object EngineConnServer extends Logging {
 
@@ -51,23 +50,23 @@ object EngineConnServer extends Logging {
     info("<<---------------------EngineConnServer Start --------------------->>")
 
     try {
-      // 1. 封装EngineCreationContext
+      // 1. build EngineCreationContext
       init(args)
       val isTestMode = Configuration.IS_TEST_MODE.getValue(engineCreationContext.getOptions)
-      if(isTestMode) {
+      if (isTestMode) {
         info(s"Step into test mode, pause 30s if debug is required. If you want to disable test mode, please set ${Configuration.IS_TEST_MODE.key} = false.")
         Utils.sleepQuietly(30000)
       }
       info("Finished to create EngineCreationContext, EngineCreationContext content: " + EngineConnUtils.GSON.toJson(engineCreationContext))
       EngineConnHook.getEngineConnHooks.foreach(_.beforeCreateEngineConn(getEngineCreationContext))
       info("Finished to execute hook of beforeCreateEngineConn.")
-      //2. 创建EngineConn
+      //2. cresate EngineConn
       val engineConn = getEngineConnManager.createEngineConn(getEngineCreationContext)
       info(s"Finished to create ${engineConn.getEngineConnType}EngineConn.")
       EngineConnHook.getEngineConnHooks.foreach(_.beforeExecutionExecute(getEngineCreationContext, engineConn))
       info("Finished to execute all hooks of beforeExecutionExecute.")
-      //3. 注册的executions 执行
-      Utils.tryThrow(executeEngineConn(engineConn)){ t =>
+      //3. register executions
+      Utils.tryThrow(executeEngineConn(engineConn)) { t =>
         error(s"Init executors error. Reason: ${ExceptionUtils.getRootCauseMessage(t)}", t)
         throw new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INIT_EXECUTOR_FAILED, "Init executors failed. ", t)
       }
@@ -77,22 +76,19 @@ object EngineConnServer extends Logging {
       info("Finished to execute hook of afterExecutionExecute")
       EngineConnHook.getEngineConnHooks.foreach(_.afterEngineServerStartSuccess(getEngineCreationContext, engineConn))
     } catch {
-      case t: Throwable =>
-        error("EngineConnServer Start Failed", t)
-        EngineConnHook.getEngineConnHooks.foreach(_.afterEngineServerStartFailed(getEngineCreationContext, t))
-        System.exit(1)
+       case t: Throwable =>
+         error("EngineConnServer Start Failed.", t)
+         EngineConnHook.getEngineConnHooks.foreach(_.afterEngineServerStartFailed(getEngineCreationContext, t))
+         System.exit(1)
     }
 
-    //4. 等待Executions执行完毕
+    //4. wait Executions execute
     ShutdownHook.getShutdownHook.waitForStopOrError()
     info("<<---------------------EngineConnServer Exit --------------------->>")
     System.exit(ShutdownHook.getShutdownHook.getExitCode())
   }
 
-  /**
-    *
-    * @param args main函数入参
-    */
+
   private def init(args: Array[String]): Unit = {
     val arguments = EngineConnArgumentsParser.getEngineConnArgumentsParser.parseToObj(args)
     val engineConf = arguments.getEngineConnConfMap
@@ -118,14 +114,15 @@ object EngineConnServer extends Logging {
   }
 
   private def executeEngineConn(engineConn: EngineConn): Unit = {
-    EngineConnExecution.getEngineConnExecutions.foreach{
+    EngineConnExecution.getEngineConnExecutions.foreach {
       case execution: AbstractEngineConnExecution =>
         info(s"Ready to execute ${execution.getClass.getSimpleName}.")
         execution.execute(getEngineCreationContext, engineConn)
-        if(execution.returnAfterMeExecuted(getEngineCreationContext, engineConn)) return
+        if (execution.returnAfterMeExecuted(getEngineCreationContext, engineConn)) return
       case execution =>
         info(s"Ready to execute ${execution.getClass.getSimpleName}.")
-        execution.execute(getEngineCreationContext, engineConn)}
+        execution.execute(getEngineCreationContext, engineConn)
+    }
   }
 
   def getEngineCreationContext: EngineCreationContext = this.engineCreationContext

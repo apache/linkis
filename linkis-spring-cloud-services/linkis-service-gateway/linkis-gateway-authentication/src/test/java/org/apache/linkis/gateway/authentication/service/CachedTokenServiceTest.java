@@ -32,7 +32,6 @@ import org.junit.Test;
 
 import java.util.List;
 
-
 public class CachedTokenServiceTest {
 
     @Autowired private CachedTokenService service;

@@ -72,7 +72,6 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     @RequestMapping(path = "/execute", method = RequestMethod.POST)
     public Message execute(HttpServletRequest req, @RequestBody Map<String, Object> json) {
         Message message = null;
-        //        try{
         logger.info("Begin to get an execID");
         json.put(TaskConstant.UMUSER, SecurityFilter.getLoginUsername(req));
         HashMap<String, String> map = (HashMap) json.get(TaskConstant.SOURCE);
@@ -117,11 +116,6 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         message.data("execID", execID);
         message.data("taskID", taskID);
         logger.info("End to get an an execID: {}, taskID: {}", execID, taskID);
-        //        }catch(ErrorException e){
-        //            message = Message.error(e.getDesc());
-        //            message.setStatus(1);
-        //            message.setMethod("/api/entrance/execute");
-        //        }
         return message;
     }
 
@@ -231,7 +225,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 }
                 message = Message.ok();
                 message.setMethod("/api/entrance/" + id + "/progress");
-                // TODO 去掉绝对值判断
+
                 message.data("progress", Math.abs(job.get().getProgress()))
                         .data("execID", id)
                         .data("progressInfo", list);
@@ -374,7 +368,6 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             String id = idNode.get(i).asText();
             Long taskID = taskIDNode.get(i).asLong();
             String realId = ZuulEntranceUtils.parseExecID(id)[3];
-            // 通过jobid获取job,可能会由于job找不到而导致有looparray的报错,一旦报错的话，就可以将该任务直接置为Cancenlled
             Option<Job> job = Option.apply(null);
             try {
                 job = entranceServer.getJob(realId);
@@ -453,7 +446,6 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             @PathVariable("id") String id,
             @RequestParam(value = "taskID", required = false) long taskID) {
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
-        // 通过jobid获取job,可能会由于job找不到而导致有looparray的报错,一旦报错的话，就可以将该任务直接置为Cancenlled
         Option<Job> job = Option.apply(null);
         try {
             job = entranceServer.getJob(realId);

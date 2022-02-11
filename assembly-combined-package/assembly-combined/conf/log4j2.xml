@@ -21,7 +21,10 @@
         <RollingFile name="RollingFile" append="false" fileName="${env:LINKIS_LOG_DIR}/${sys:serviceName}.log"
                      filePattern="${env:LINKIS_LOG_DIR}/$${date:yyyy-MM}/${sys:serviceName}/linkis-log-%d{yyyy-MM-dd}-%i.log">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
-            <SizeBasedTriggeringPolicy size="100MB"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1 hour" />
+                <SizeBasedTriggeringPolicy size="100MB"/>
+            </Policies>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
     </appenders>

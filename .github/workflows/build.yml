@@ -43,10 +43,14 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
+    - name: Code format check
+      run: |
+          ./mvnw -N install
+          ./mvnw spotless:check
     - name: Build backend by maven
       run: |
-          mvn -N install
-          mvn clean package
+          ./mvnw -N install
+          ./mvnw clean package
     - name: Build frontend by node.js
       run: |
           cd web

@@ -20,16 +20,16 @@ package org.apache.linkis.ecm.server.operator
 
 import java.io.{File, RandomAccessFile}
 import java.util
-
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.ecm.server.exception.{ECMErrorCode, ECMErrorException}
+import org.apache.linkis.ecm.server.exception.ECMErrorException
 import org.apache.linkis.ecm.server.service.{EngineConnListService, LocalDirsHandleService}
 import org.apache.linkis.manager.common.operator.Operator
 import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.ecm.core.conf.ECMErrorCode
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.util.matching.Regex
@@ -130,12 +130,12 @@ class EngineConnLogOperator extends Operator with Logging {
         .getOrElse {
           val creator = getAsThrow[String]("creator")
           val engineConnType = getAsThrow[String]("engineConnType")
-          localDirsHandleService.getEngineConnLogDir(creator, ticketId)
+          localDirsHandleService.getEngineConnLogDir(creator, ticketId, engineConnType)
         }
       (logDir, ticketId)
     }
-    val logPath = new File(engineConnLogDir, EngineConnLogOperator.LOG_FILE_NAME.getValue)
-    if(!logPath.exists() || !logPath.isFile) {
+    val logPath = new File(engineConnLogDir, getAs("logType", EngineConnLogOperator.LOG_FILE_NAME.getValue));
+    if (!logPath.exists() || !logPath.isFile) {
       throw new ECMErrorException(ECMErrorCode.EC_FETCH_LOG_FAILED, s"LogFile $logPath is not exists or is not a file.")
     }
     info(s"Try to fetch EngineConn(id: $ticketId, instance: $engineConnInstance) logs from ${logPath.getPath}.")

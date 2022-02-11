@@ -84,6 +84,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.oshi</groupId>
+            <artifactId>oshi-core</artifactId>
+            <version>5.3.4</version>
+        </dependency>
+
     </dependencies>
 
     <build>

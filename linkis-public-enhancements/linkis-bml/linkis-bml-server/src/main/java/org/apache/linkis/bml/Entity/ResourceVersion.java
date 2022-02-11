@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.bml.Entity;
 
 import java.util.Date;
@@ -43,16 +43,13 @@ public class ResourceVersion {
 
     private String system;
 
-
     private Date startTime;
 
     private Date endTime;
 
-
     private long startByte;
 
     private long endByte;
-
 
     private String updator;
 
@@ -95,7 +92,6 @@ public class ResourceVersion {
     public void setResource(String resource) {
         this.resource = resource;
     }
-
 
     public long getId() {
         return id;
@@ -161,7 +157,6 @@ public class ResourceVersion {
         this.endByte = endByte;
     }
 
-
     public Date getStartTime() {
         return startTime;
     }
@@ -186,8 +181,14 @@ public class ResourceVersion {
         this.updator = updator;
     }
 
-    public static ResourceVersion createNewResourceVersion(String resourceId, String resourcePath, String fileMd5,
-                                                           String clientIp, long size, String version, long startByte){
+    public static ResourceVersion createNewResourceVersion(
+            String resourceId,
+            String resourcePath,
+            String fileMd5,
+            String clientIp,
+            long size,
+            String version,
+            long startByte) {
         ResourceVersion resourceVersion = new ResourceVersion();
         resourceVersion.setResourceId(resourceId);
         resourceVersion.setResource(resourcePath);
@@ -202,5 +203,4 @@ public class ResourceVersion {
         resourceVersion.setEndTime(new Date(System.currentTimeMillis()));
         return resourceVersion;
     }
-
 }

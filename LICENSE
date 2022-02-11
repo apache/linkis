@@ -234,4 +234,5 @@ The following file are provided under the  Apache 2.0  License.
     web/src/common/i18n/zh.json
     web/src/config.json
     web/public/favicon.ico
+    Maven Wrapper(mvnw, mvnw.cmd, .mvn/* files in root path), https://github.com/takari/maven-wrapper   Apache 2.0
 

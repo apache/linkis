@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.common.entity.resource;
 
 import java.util.Date;
@@ -41,7 +41,7 @@ public class CommonNodeResource implements NodeResource {
 
     private Date updateTime;
 
-    public static NodeResource initNodeResource(ResourceType resourceType){
+    public static NodeResource initNodeResource(ResourceType resourceType) {
         CommonNodeResource commonNodeResource = new CommonNodeResource();
         commonNodeResource.setResourceType(resourceType);
         Resource zeroResource = Resource.initResource(resourceType);
@@ -58,6 +58,7 @@ public class CommonNodeResource implements NodeResource {
     public Integer getId() {
         return id;
     }
+
     @Override
     public void setId(Integer id) {
         this.id = id;
@@ -133,8 +134,6 @@ public class CommonNodeResource implements NodeResource {
         this.lockedResource = lockedResource;
     }
 
-
-
     @Override
     public Resource getExpectedResource() {
         return expectedResource;
@@ -147,7 +146,7 @@ public class CommonNodeResource implements NodeResource {
 
     @Override
     public Resource getLeftResource() {
-        if(this.leftResource == null && getMaxResource() != null && getUsedResource() != null) {
+        if (this.leftResource == null && getMaxResource() != null && getUsedResource() != null) {
             return getMaxResource().minus(getUsedResource());
         } else {
             return this.leftResource;
@@ -161,14 +160,21 @@ public class CommonNodeResource implements NodeResource {
 
     @Override
     public String toString() {
-        return "CommonNodeResource{" +
-                "resourceType=" + resourceType +
-                ", maxResource=" + maxResource +
-                ", minResource=" + minResource +
-                ", usedResource=" + usedResource +
-                ", lockedResource=" + lockedResource +
-                ", expectedResource=" + expectedResource +
-                ", leftResource=" + leftResource +
-                '}';
+        return "CommonNodeResource{"
+                + "resourceType="
+                + resourceType
+                + ", maxResource="
+                + maxResource
+                + ", minResource="
+                + minResource
+                + ", usedResource="
+                + usedResource
+                + ", lockedResource="
+                + lockedResource
+                + ", expectedResource="
+                + expectedResource
+                + ", leftResource="
+                + leftResource
+                + '}';
     }
 }

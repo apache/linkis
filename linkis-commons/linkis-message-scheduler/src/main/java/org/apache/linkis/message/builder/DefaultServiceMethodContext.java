@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.message.builder;
 
 import org.apache.linkis.message.context.MessageSchedulerContext;
@@ -23,17 +23,18 @@ import org.apache.linkis.protocol.message.RequestProtocol;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.scheduler.queue.Job;
 import org.apache.linkis.scheduler.queue.SchedulerEventState;
-import scala.concurrent.duration.Duration;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.apache.linkis.message.conf.MessageSchedulerConf.*;
+import scala.concurrent.duration.Duration;
 
+import static org.apache.linkis.message.conf.MessageSchedulerConf.*;
 
 public class DefaultServiceMethodContext implements ServiceMethodContext {
 
@@ -126,13 +127,13 @@ public class DefaultServiceMethodContext implements ServiceMethodContext {
 
     @Override
     public boolean isInterrupted() {
-        //linkis-shceduler 没有isInterrupted状态
+        // linkis-shceduler 没有isInterrupted状态
         return SchedulerEventState.Cancelled() == this.job.get().getState();
     }
 
     @Override
     public boolean isCancel() {
-        //linkis-shceduler只有cancel
+        // linkis-shceduler只有cancel
         return SchedulerEventState.Cancelled() == this.job.get().getState();
     }
 
@@ -162,5 +163,4 @@ public class DefaultServiceMethodContext implements ServiceMethodContext {
     public void removeSkips() {
         this.skips.remove();
     }
-
 }

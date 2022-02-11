@@ -77,9 +77,10 @@ class ECMSpringConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  def getLinuxProcessEngineConnLaunchService(resourceLocalizationService: ResourceLocalizationService): EngineConnLaunchService = {
+  def getLinuxProcessEngineConnLaunchService(resourceLocalizationService: ResourceLocalizationService, localDirsHandleService: LocalDirsHandleService): EngineConnLaunchService = {
     val service = new LinuxProcessEngineConnLaunchService
     service.setResourceLocalizationService(resourceLocalizationService)
+    service.setLocalDirsHandleService(localDirsHandleService)
     service
   }
 

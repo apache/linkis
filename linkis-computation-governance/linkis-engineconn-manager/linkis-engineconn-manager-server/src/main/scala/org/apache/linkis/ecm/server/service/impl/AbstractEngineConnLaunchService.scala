@@ -92,28 +92,27 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
           conn.setServiceInstance(serviceInstance)
         case _ =>
       }
+      afterLaunch(request, conn, duration)
+
 
       val future = Future {
-        afterLaunch(request, conn, duration)
+        logger.info(s"wait engineConn  ${conn.getServiceInstance} start")
+        waitEngineConnStart(request, conn, duration)
       }
 
       future onComplete {
         case Failure(t) =>
-          throw t
+          logger.error(s"init ${conn.getServiceInstance} failed.${conn.getEngineConnLaunchRunner.getEngineConnLaunch.getEngineConnManagerEnv().engineConnWorkDir}")
         case Success(_) =>
-          info(s"init ${conn.getServiceInstance} succeed.")
+          logger.info(s"init ${conn.getServiceInstance} succeed.${conn.getEngineConnLaunchRunner.getEngineConnLaunch.getEngineConnManagerEnv().engineConnWorkDir}")
       }
-      //超时忽略，如果状态翻转了则直接返回
-      Utils.tryQuietly(Await.result(future, Duration(WAIT_ENGINECONN_PID.getValue.toLong, TimeUnit.MILLISECONDS)))
-    }{
-      //failed，1.被ms打断，2.超时，3.普通错误，比如process
-      t: Throwable =>
-        error(s"init ${conn.getServiceInstance} failed, now stop and delete it. message: ${t.getMessage}")
-        conn.getEngineConnLaunchRunner.stop()
-        Sender.getSender(MANAGER_SPRING_NAME).send(EngineConnStatusCallbackToAM(conn.getServiceInstance,
-          NodeStatus.ShuttingDown, " wait init failed , reason " + ExceptionUtils.getRootCauseMessage(t)))
-        LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnStatusChangeEvent(conn.getTickedId, Failed))
-        throw t
+    } { t =>
+      error(s"init ${conn.getServiceInstance} failed, ${conn.getEngineConnLaunchRunner.getEngineConnLaunch.getEngineConnManagerEnv().engineConnWorkDir}, now stop and delete it. message: ${t.getMessage}", t)
+      conn.getEngineConnLaunchRunner.stop()
+      Sender.getSender(MANAGER_SPRING_NAME).send(EngineConnStatusCallbackToAM(conn.getServiceInstance,
+        NodeStatus.ShuttingDown, " wait init failed , reason " + ExceptionUtils.getRootCauseMessage(t)))
+      LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnStatusChangeEvent(conn.getTickedId, Failed))
+      throw t
     }
     val engineNode = new AMEngineNode()
     engineNode.setLabels(conn.getLabels)
@@ -123,6 +122,8 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
     engineNode.setMark("process")
     engineNode
   }
+
+  def waitEngineConnStart(request: EngineConnLaunchRequest, conn: EngineConn, duration: Long): Unit
 
   def createEngineConn: EngineConn = new DefaultEngineConn
 

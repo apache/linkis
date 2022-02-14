@@ -54,16 +54,13 @@ public class ReceiverMethodSearcher {
         String protocolName = requestProtocol.getClass().getName();
         Map<String, List<ServiceMethod>> protocolServiceMethods =
                 this.protocolServiceMethodCache.get(protocolName);
-        // 静态信息，无需加锁
         if (protocolServiceMethods == null) {
             Map<String, List<ServiceMethod>> serviceMethodCache =
                     serviceRegistry.getServiceMethodCache();
-            // 找出注册方法中，参数是当前请求的父类的
             Map<String, List<ServiceMethod>> serviceMatchs =
                     serviceMethodCache.entrySet().stream()
                             .filter(e -> MessageUtils.isAssignableFrom(e.getKey(), protocolName))
                             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            // group by chain name 扁平化后再group，这时protocol的父类可能和转换的处于同一个chain中
             serviceMatchs =
                     serviceMatchs.values().stream()
                             .flatMap(Collection::stream)
@@ -80,7 +77,6 @@ public class ReceiverMethodSearcher {
             }
             this.protocolServiceMethodCache.put(protocolName, serviceMatchs);
         }
-        // clone 对象并返回
         return serviceMethod2Wrapper(this.protocolServiceMethodCache.get(protocolName));
     }
 

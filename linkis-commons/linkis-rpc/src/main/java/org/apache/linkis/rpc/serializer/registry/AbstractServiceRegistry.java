@@ -46,11 +46,6 @@ public abstract class AbstractServiceRegistry extends JavaLog implements Service
     @SuppressWarnings("all")
     @Override
     public void register(Object service) {
-        // 防止不同方式注册时候的并发，比如spring和手动注册,同时防止不同包名下类名一样的service
-        // 默认用getName，则会拿到spring代理过的类，没有方法的注解，比如
-        // org.apache.linkis.jobhistory.service.impl.JobHistoryQueryServiceImpl$$EnhancerBySpringCGLIB$$5fa1dd59
-        //        String serviceName = service.getClass().getName();
-        // 下面会拿到原始的class，包含方法注解信息
         String serviceName = AopUtils.getTargetClass(service).getName();
         synchronized (this.lock.intern(serviceName)) {
             // 1.是否注册过

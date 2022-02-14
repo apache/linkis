@@ -29,17 +29,21 @@
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M - %msg%xEx%n"/>
         </Send>
 
-        <File name="stderr" fileName="${env:PWD}/logs/stderr" append="true">
+        <Console name="stderr" target="SYSTEM_ERR">
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
-        </File>
+        </Console>
     </appenders>
     <loggers>
         <root level="INFO">
-            <!--<appender-ref ref="RollingFile"/>-->
+            <appender-ref ref="stderr"/>
             <appender-ref ref="Console"/>
             <appender-ref ref="Send"/>
         </root>
-        <logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter " level="error" additivity="true">
+        <logger name="org.apache.linkis.message.builder.DefaultMessageJob" level="warn" additivity="true">
+            <appender-ref ref="Console"/>
+        </logger>
+        <logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter" level="error" additivity="true">
             <appender-ref ref="stderr"/>
         </logger>
         <logger name="com.netflix.discovery" level="warn" additivity="true">
@@ -76,6 +80,11 @@
         <logger name="org.apache.hadoop.ipc.Client" level="ERROR" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
+
+        <logger name="org.apache.hadoop.ipc.Client" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+
     </loggers>
 </configuration>
 

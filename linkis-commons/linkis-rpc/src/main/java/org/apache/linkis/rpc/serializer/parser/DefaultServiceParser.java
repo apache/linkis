@@ -84,13 +84,7 @@ public class DefaultServiceParser implements ServiceParser {
         return serviceMethod;
     }
 
-    /**
-     * 标注了@Receiver注解，方法至少一个参数 1个参数：非ServiceMethodContext 子类即可 2个参数 其中一个需要是ServiceMethodContext 的子类
-     * && 2个参数都非ServiceMethodContext 子类即可
-     *
-     * @param method
-     * @return
-     */
+
     private boolean methodFilterPredicate(Method method) {
         if (method.getAnnotation(Receiver.class) != null) {
             Class<?>[] parameterTypes = method.getParameterTypes();

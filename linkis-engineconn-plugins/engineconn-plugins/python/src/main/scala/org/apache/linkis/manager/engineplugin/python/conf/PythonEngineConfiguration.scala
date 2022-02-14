@@ -17,7 +17,7 @@
  
 package org.apache.linkis.manager.engineplugin.python.conf
 
-import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.{CommonVars, TimeType}
 
 
 object PythonEngineConfiguration {
@@ -27,5 +27,7 @@ object PythonEngineConfiguration {
   val PYTHON_VERSION = CommonVars("pythonVersion", "/appcom/Install/anaconda3/bin/python")
 
   val PYTHON_PATH:CommonVars[String] = CommonVars[String]("python.path", "", "Specify Python's extra path, which only accepts shared storage paths（指定Python额外的path，该路径只接受共享存储的路径）.")
+
+  val PYTHON_LANGUAGE_REPL_INIT_TIME = CommonVars[TimeType]("wds.linkis.engine.python.language-repl.init.time", new TimeType("30s"))
 
 }

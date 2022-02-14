@@ -42,6 +42,7 @@ class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with L
 
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]()
 
+  private var thread: Thread = _
 
 
 
@@ -49,10 +50,15 @@ class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with L
     index += 1
     var failedTasks = 0
     var succeedTasks = 1
-    val newOptions = engineExecutorContext.getProperties
+    val newOptions = new util.HashMap[String, String]()
+    newOptions.putAll(EngineConnObject.getEngineCreationContext.getOptions)
+    engineExecutorContext.getProperties.foreach { keyAndValue =>
+      newOptions.put(keyAndValue._1, keyAndValue._2.toString)
+    }
     newOptions.foreach({ case (k, v) => info(s"key is $k, value is $v") })
     val regex = "(?i)\\s*from\\s+(\\S+)\\s+to\\s+(\\S+)\\s?".r
     try {
+      thread = Thread.currentThread()
       code match {
         case regex(sourcePath, destPath) => PipelineExecutorSelector.select(sourcePath,destPath,newOptions.asInstanceOf[util.Map[String, String]]).execute(sourcePath,destPath,engineExecutorContext)
         case _ => throw new PipeLineErrorException(70007, "非法的out脚本语句（Illegal out script statement）")
@@ -104,6 +110,14 @@ class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with L
   }
 
   override def getId(): String = Sender.getThisServiceInstance.getInstance + "_" + id
+
+  override def killTask(taskId: String): Unit = {
+    logger.info(s"hive begins to kill job with id : ${taskId}")
+    if (null != thread) {
+      Utils.tryAndWarn(thread.interrupt())
+    }
+    super.killTask(taskId)
+  }
 
 }
 

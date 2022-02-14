@@ -38,18 +38,24 @@ import org.apache.hadoop.hive.common.HiveInterruptUtils
 import org.apache.hadoop.hive.conf.HiveConf
 import org.apache.hadoop.hive.conf.HiveConf.ConfVars
 import org.apache.hadoop.hive.metastore.api.{FieldSchema, Schema}
-import org.apache.hadoop.hive.ql.Driver
+import org.apache.hadoop.hive.ql.{Driver, QueryPlan}
+import org.apache.hadoop.hive.ql.exec.Utilities
 import org.apache.hadoop.hive.ql.exec.mr.HadoopJobExecHelper
 import org.apache.hadoop.hive.ql.processors.{CommandProcessor, CommandProcessorFactory, CommandProcessorResponse}
 import org.apache.hadoop.hive.ql.session.SessionState
-import org.apache.hadoop.mapred.RunningJob
+import org.apache.hadoop.mapred.{JobStatus, RunningJob}
 import org.apache.hadoop.security.UserGroupInformation
 import org.slf4j.LoggerFactory
-
 import java.io.ByteArrayOutputStream
 import java.security.PrivilegedExceptionAction
 import java.util
 import java.util.concurrent.atomic.AtomicBoolean
+
+import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
+import org.apache.linkis.engineplugin.hive.conf.Counters
+import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
+import org.apache.commons.lang.StringUtils
+
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer

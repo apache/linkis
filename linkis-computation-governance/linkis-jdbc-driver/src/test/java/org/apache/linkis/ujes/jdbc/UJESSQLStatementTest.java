@@ -5,18 +5,17 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.ujes.jdbc;
 
+package org.apache.linkis.ujes.jdbc;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -43,9 +42,8 @@ public class UJESSQLStatementTest {
     private static String sqlSelect;
     private static String sqlDrop;
 
-
     @BeforeClass
-    public static void createConnection(){
+    public static void createConnection() {
         try {
             conn = CreateConnection.getConnection();
             statement = (UJESSQLStatement) conn.createStatement();
@@ -57,7 +55,7 @@ public class UJESSQLStatementTest {
     }
 
     @Before
-    public void setParams(){
+    public void setParams() {
         sql = "show tables";
         sqlCreate = "CREATE TABLE if not exists db.test1236 as select * from ai_fmi_ods.1000_10";
         sqlInsert = "insert into db.test1236 select * from ai_fmi_ods.1000_10 limit 10";
@@ -70,7 +68,6 @@ public class UJESSQLStatementTest {
     @Test
     public void execute() {
         assertTrue(statement.execute(sql));
-
     }
 
     @Test
@@ -80,16 +77,21 @@ public class UJESSQLStatementTest {
     }
 
     @Test
-    public void crud(){
+    public void crud() {
         statement.executeQuery(sqlCreate);
         statement.executeQuery(sqlInsert);
         UJESSQLResultSet resultSet = statement.executeQuery(sqlSelect);
         int columnCount = 0;
-        while(resultSet.next()){
+        while (resultSet.next()) {
             UJESSQLResultSetMetaData rsmd = resultSet.getMetaData();
-            for(int i = 1; i <= rsmd.getColumnCount(); i++){
-                System.out.print(rsmd.getColumnName(i) + ":" + rsmd.getColumnTypeName(i) + ":" +
-                        resultSet.getObject(i) + "   ");
+            for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+                System.out.print(
+                        rsmd.getColumnName(i)
+                                + ":"
+                                + rsmd.getColumnTypeName(i)
+                                + ":"
+                                + resultSet.getObject(i)
+                                + "   ");
                 columnCount = i;
             }
         }
@@ -99,20 +101,19 @@ public class UJESSQLStatementTest {
     }
 
     @Test
-    public void setMaxRows(){
+    public void setMaxRows() {
         statement.setMaxRows(maxRows);
         assertEquals(maxRows, statement.getMaxRows());
     }
 
-
     @Test
-    public void setQueryTimeout(){
+    public void setQueryTimeout() {
         statement.setQueryTimeout(queryTimeout);
         assertEquals(statement.getQueryTimeout(), queryTimeout * 1000);
     }
 
     @Test
-    public void cancel(){
+    public void cancel() {
         statement.executeQuery(sql);
         statement.cancel();
         assertNull(statement.getResultSet());
@@ -120,13 +121,12 @@ public class UJESSQLStatementTest {
     }
 
     @Test
-    public void getConnWhenIsClosed(){
+    public void getConnWhenIsClosed() {
         assertEquals(statement.getConnection(), conn);
     }
 
-
     @AfterClass
-    public static void closeStateAndConn(){
+    public static void closeStateAndConn() {
         statement.close();
         conn.close();
     }

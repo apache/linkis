@@ -57,12 +57,12 @@ class PythonSession extends Logging {
   private val queryLock = new Array[Byte](0)
   private var code: String = _
   private var pid: Option[String] = None
-  private var gatewayInited = false
+
   private val pythonDefaultVersion: String = EngineConnServer.getEngineCreationContext.getOptions.getOrDefault("python.version", "python")
 
 
   def init(): Unit = {
-    initGateway
+
   }
 
   def setEngineExecutionContext(engineExecutorContext: EngineExecutionContext): Unit = {
@@ -111,28 +111,40 @@ class PythonSession extends Logging {
     process = builder.start()
     Utils.addShutdownHook {
       close
-      Utils.tryAndError(pid.foreach(p => Utils.exec(Array("kill", "-9", p), 3000l)))
+      Utils.tryAndError(pid.foreach(p => Utils.exec(Array("kill", "-9", p), 3000L)))
     }
-    gatewayInited = true
+
     Future {
       val exitCode = process.waitFor()
       info("PythonExecutor has stopped with exit code " + exitCode)
-      if (!process.isAlive) {
-        warn("Python shell process exited.")
+      Utils.tryFinally({
+        if (promise != null && !promise.isCompleted) {
+          promise.failure(new ExecuteException(60003, "Pyspark process  has stopped, query failed!"))
+        }
+      }) {
+        close
+      }
+    }
+    // Wait up to 30 seconds（最多等待30秒）
+    Utils.waitUntil(() => pythonScriptInitialized, PythonEngineConfiguration.PYTHON_LANGUAGE_REPL_INIT_TIME.getValue.toDuration)
+  }
+
+  def lazyInitGageWay(): Unit = {
+    if (process == null) synchronized {
+      if (process == null) {
+        Utils.tryThrow(initGateway) { t => {
+          logger.error("initialize python executor failed, please ask administrator for help!", t)
+          Utils.tryAndWarn(close)
+          throw t
+        }
+        }
       }
     }
   }
 
   def execute(code: String): Unit = {
-    if (!gatewayInited) synchronized {
-      if (!gatewayInited) {
-        initGateway
-      }
-    }
-    if (null == process || !process.isAlive) {
-      val msg = "Python process is not alive."
-      error(msg)
-      throw new ExecuteException(desc = msg)
+    if (!pythonScriptInitialized) {
+      throw new IllegalStateException("PythonSession process cannot be initialized, please ask administrator for help.")
     }
     promise = Promise[String]()
     this.code = Kind.getRealCode(code)
@@ -156,13 +168,13 @@ class PythonSession extends Logging {
     }
   }
 
-  def onPythonScriptInitialized(pid: Int) = {
+  def onPythonScriptInitialized(pid: Int): Unit = {
     this.pid = Some(pid.toString)
     pythonScriptInitialized = true
     info(s"Python executor has been initialized with pid($pid).")
   }
 
-  def getStatements = {
+  def getStatements: PythonInterpretRequest = {
     queryLock synchronized {
       while (code == null) queryLock.wait()
     }
@@ -171,49 +183,68 @@ class PythonSession extends Logging {
     request
   }
 
-  def printStdout(out: String): Unit = println(out)
-
-  def setStatementsFinished(out: String, error: Boolean) = {
+  def setStatementsFinished(out: String, error: Boolean): Promise[String] = {
     info(s"A python code finished, has some errors happened? $error.")
     Utils.tryAndError(Thread.sleep(10))
     if (!error) {
       promise.success(outputStream.toString)
     } else {
-      promise.failure(new PythonExecuteError(41001, out))
+      if (promise.isCompleted) {
+        info("promise is completed and should start another python gateway")
+        close
+        null
+      } else {
+        promise.failure(new PythonExecuteError(41001, out))
+      }
     }
   }
 
-  def appendOutput(message: String) = {
-    info("output message: " + message)
-    if (pythonScriptInitialized != true) {
+  def appendOutput(message: String): Unit = {
+    if (!pythonScriptInitialized) {
       info(message)
     } else {
-      //      for (c <- message){
-      //        outputStream.write(c)
-      //      }
-      message.getBytes("utf-8").foreach(x => outputStream.write(x))
-      // outputStream.write(message.getBytes("utf-8"))
+      outputStream.write(message.getBytes("utf-8"))
+    }
+  }
+
+  def appendErrorOutput(message: String): Unit = {
+    if (!pythonScriptInitialized) {
+      info(message)
+    } else {
+      error(message)
+      engineExecutionContext.appendStdout(s"errorMessage is $message")
+    }
+  }
+
+  def printLog(log: Any): Unit = {
+    if (engineExecutionContext != null) {
+      engineExecutionContext.appendStdout("+++++++++++++++")
+      engineExecutionContext.appendStdout(log.toString)
+      engineExecutionContext.appendStdout("+++++++++++++++")
+    } else {
+      logger.warn("engine context is null can not send log")
     }
   }
 
   def close: Unit = {
+    logger.info("python executor ready to close")
     if (process != null) {
       if (gatewayServer != null) {
         Utils.tryAndError(gatewayServer.shutdown())
         gatewayServer = null
       }
       IOUtils.closeQuietly(outputStream)
-      pid.foreach(p => Utils.exec(Array("kill", "-9", p), 3000l))
-      process.destroy()
-      process = null
+      Utils.tryAndErrorMsg {
+        pid.foreach(p => Utils.exec(Array("kill", "-9", p), 3000L))
+        process.destroy()
+        process = null
+        this.pythonScriptInitialized = false
+      }("process close failed")
     }
+    logger.info("python executor Finished to close")
   }
 
   def kind: Kind = Python()
-
-  def onProcessFailed(e: ExecuteException): Unit = error("", e)
-
-  def onProcessComplete(i: Int): Unit = info("Python executor has completed with exit code " + i)
 
   def changeDT(dt: String): DataType = dt match {
     case "int" | "int16" | "int32" | "int64" => IntType
@@ -303,6 +334,6 @@ object PythonSession extends Logging {
 case class PythonInterpretRequest(statements: String)
 
 case class Python() extends Kind {
-  override def toString = "python"
+  override def toString: String = "python"
 }
 

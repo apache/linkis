@@ -59,7 +59,7 @@ class HiveEngineConnExecutor(id: Int,
                              sessionState: SessionState,
                              ugi: UserGroupInformation,
                              hiveConf: HiveConf,
-                             baos: ByteArrayOutputStream = null) extends ComputationExecutor {
+                             baos: ByteArrayOutputStream = null) extends ComputationExecutor with ResourceFetchExecutor {
 
   private val LOG = LoggerFactory.getLogger(getClass)
 
@@ -93,6 +93,10 @@ class HiveEngineConnExecutor(id: Int,
 
   private var thread: Thread = _
 
+  private val applicationStringName = "application"
+
+  private val splitter = "_"
+
   override def init(): Unit = {
     LOG.info(s"Ready to change engine state!")
     if (HadoopConf.KEYTAB_PROXYUSER_ENABLED.getValue) {
@@ -121,7 +125,7 @@ class HiveEngineConnExecutor(id: Int,
     } else engineExecutorContext.appendStdout(s"$getId >> ${realCode.trim}")
     val tokens = realCode.trim.split("""\s+""")
     SessionState.setCurrentSessionState(sessionState)
-
+    sessionState.setLastCommand(code)
     val proc = CommandProcessorFactory.get(tokens, hiveConf)
     this.proc = proc
     LOG.debug("ugi is " + ugi.getUserName)
@@ -167,6 +171,19 @@ class HiveEngineConnExecutor(id: Int,
       driver.setTryCount(tryCount + 1)
       val startTime = System.currentTimeMillis()
       try {
+        Utils.tryCatch{
+          val compileRet = driver.compile(realCode)
+          if (0 != compileRet) {
+            warn(s"compile realCode error status : ${compileRet}")
+          }
+          val queryPlan = driver.getPlan
+          val numberOfJobs = Utilities.getMRTasks(queryPlan.getRootTasks).size
+          numberOfMRJobs = numberOfJobs
+          info(s"there are ${numberOfMRJobs} jobs.")
+        }{
+          case e:Exception => logger.warn("obtain hive execute query plan failed,", e)
+          case t:Throwable => logger.warn("obtain hive execute query plan failed,", t)
+        }
         if (numberOfMRJobs > 0) engineExecutorContext.appendStdout(s"Your hive sql has $numberOfMRJobs MR jobs to do")
         val hiveResponse: CommandProcessorResponse = driver.run(realCode)
         if (hiveResponse.getResponseCode != 0) {
@@ -329,6 +346,32 @@ class HiveEngineConnExecutor(id: Int,
     super.close()
   }
 
+  override def FetchResource: util.HashMap[String, ResourceWithStatus] = {
+    val resourceMap = new util.HashMap[String, ResourceWithStatus]()
+    val queue = hiveConf.get("mapreduce.job.queuename")
+    HadoopJobExecHelper.runningJobs.foreach(yarnJob => {
+      val counters = yarnJob.getCounters
+      if(counters != null) {
+        val millsMap = counters.getCounter(Counters.MILLIS_MAPS)
+        val millsReduces = counters.getCounter(Counters.MILLIS_REDUCES)
+        val totalMapCores = counters.getCounter(Counters.VCORES_MILLIS_MAPS)
+        val totalReducesCores = counters.getCounter(Counters.VCORES_MILLIS_REDUCES)
+        val totalMapMBMemory = counters.getCounter(Counters.MB_MILLIS_MAPS)
+        val totalReducesMBMemory = counters.getCounter(Counters.MB_MILLIS_REDUCES)
+        var avgCores = 0
+        var avgMemory = 0L
+        if(millsMap > 0 && millsReduces > 0) {
+          avgCores = Math.ceil(totalMapCores/millsMap + totalReducesCores/millsReduces).toInt
+          avgMemory = Math.ceil(totalMapMBMemory*1024*1024/millsMap + totalReducesMBMemory.toLong*1024*1024/millsReduces).toLong
+          val yarnResource = new ResourceWithStatus(avgMemory, avgCores, 0, JobStatus.getJobRunState(yarnJob.getJobStatus.getRunState), queue)
+          val applicationId = applicationStringName + splitter + yarnJob.getID.getJtIdentifier + splitter + yarnJob.getID.getId
+          resourceMap.put(applicationId, yarnResource)
+        }
+      }
+    })
+    resourceMap
+  }
+
 
   override def progress(taskID: String): Float = {
     if (engineExecutorContext != null) {
@@ -446,6 +489,16 @@ class HiveEngineConnExecutor(id: Int,
 }
 
 class HiveDriverProxy(driver: Any) extends Logging {
+
+  def getDriver(): Any = driver
+
+  def compile(command: String): Int = {
+    driver.getClass.getMethod("compile", classOf[String]).invoke(driver, command.asInstanceOf[AnyRef]).asInstanceOf[Int]
+  }
+
+  def getPlan(): QueryPlan = {
+    driver.getClass.getMethod("getPlan").invoke(driver).asInstanceOf[QueryPlan]
+  }
 
   def getSchema(): Schema = {
     driver.getClass.getMethod("getSchema").invoke(driver).asInstanceOf[Schema]

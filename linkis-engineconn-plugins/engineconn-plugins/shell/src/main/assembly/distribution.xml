@@ -45,7 +45,17 @@
     <fileSets>
 
         <fileSet>
-            <directory>${basedir}/src/main/resources</directory>
+            <directory>${basedir}/src/main/resources/bin</directory>
+            <includes>
+                <include>*</include>
+            </includes>
+            <fileMode>0777</fileMode>
+            <outputDirectory>/dist/v${shell.version}/bin</outputDirectory>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+
+        <fileSet>
+            <directory>${basedir}/src/main/resources/conf</directory>
             <includes>
                 <include>*</include>
             </includes>

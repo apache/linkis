@@ -26,11 +26,16 @@ import org.apache.linkis.manager.engineplugin.common.resource.{EngineResourceFac
 import org.apache.linkis.manager.engineplugin.shell.builder.ShellProcessEngineConnLaunchBuilder
 import org.apache.linkis.manager.engineplugin.shell.factory.ShellEngineConnFactory
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel}
+import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
 
 class ShellEngineConnPlugin extends EngineConnPlugin {
 
-  private val EP_CONTEXT_CONSTRUCTOR_LOCK = new Object()
+  private val resourceLocker = new Object()
+
+  private val engineLaunchBuilderLocker = new Object()
+
+  private val engineFactoryLocker = new Object()
 
   private var engineResourceFactory: EngineResourceFactory = _
 
@@ -42,30 +47,23 @@ class ShellEngineConnPlugin extends EngineConnPlugin {
 
 
   override def init(params: util.Map[String, Any]): Unit = {
-    val typeMap = new util.HashMap[String,String]()
-    typeMap.put("type","shell")
-    typeMap.put("version","1")
-    val typeLabel =new EngineTypeLabel()
-    typeLabel.setValue(typeMap)
-    this.defaultLabels.add(typeLabel)
+    val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(EngineType.SHELL.toString)
+    this.defaultLabels.add(engineTypeLabel)
   }
 
-  override def getEngineResourceFactory: EngineResourceFactory = EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-    if (null == engineResourceFactory) {
+  override def getEngineResourceFactory: EngineResourceFactory = {
+    if (null == engineResourceFactory) resourceLocker synchronized {
       engineResourceFactory = new GenericEngineResourceFactory
     }
     engineResourceFactory
   }
 
-  override def getEngineConnLaunchBuilder: EngineConnLaunchBuilder = EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-    if (null == engineLaunchBuilder) {
-      engineLaunchBuilder = new ShellProcessEngineConnLaunchBuilder
-    }
-    engineLaunchBuilder
+  override def getEngineConnLaunchBuilder: EngineConnLaunchBuilder = {
+    new ShellProcessEngineConnLaunchBuilder
   }
 
-  override def getEngineConnFactory: EngineConnFactory = EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-    if (null == engineFactory) {
+  override def getEngineConnFactory: EngineConnFactory = {
+    if (null == engineFactory) engineFactoryLocker synchronized {
       engineFactory = new ShellEngineConnFactory
     }
     engineFactory

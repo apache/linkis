@@ -18,37 +18,25 @@
 import api from '@/common/service/api';
 import { serialize } from 'object-to-formdata';
 
-/**
- * 获取数据源列表
- */
+
 const getDataSourceList = (params)=>{
   return api.fetch('data_source/info', params, 'get')
 }
 
-/**
- * 获取数据源类型列表
- */
 const getDataSourceTypeList = ()=>{
   return api.fetch('/data_source/type/all', {}, 'get')
 }
 
-/**
- * 获取环境列表
- */
 const getEnvList = ()=>{
   return api.fetch('data_source/env', {}, 'get')
 }
 
-/**
- * 
- * @returns 获取datasource key定义
- */
 const getKeyDefine = (id)=>{
   return api.fetch(`/data_source/key_define/type/${id}`, {}, 'get')
 }
 
 /**
- * 创建数据源
+ * createDataSource
  * @param {*} realFormData 
  * @returns 
  */
@@ -57,7 +45,7 @@ const createDataSource = (realFormData)=>{
 }
 
 /**
- * 创建数据源 formdata
+ * createDataSource formdata
  * @param {*} realFormData 
  * @returns 
  */
@@ -66,7 +54,6 @@ const createDataSourceForm = (realFormData)=>{
 }
 
 /**
- * 更新数据源
  * @param {*} datasourceId 
  * @param {*} data 
  * @returns 
@@ -77,8 +64,8 @@ const updateDataSource = (data, datasourceId)=>{
 
 /**
  * 
- * @param {数据源id} datasourceId 
- * @param {连接参数} data 
+ * @param  datasourceId 
+ * @param  data 
  * @returns 
  */
 const saveConnectParams = (datasourceId, data, comment)=>{
@@ -86,7 +73,6 @@ const saveConnectParams = (datasourceId, data, comment)=>{
 }
 
 /**
- * 创建数据源 formdata
  * @param {*} realFormData 
  * @returns 
  */
@@ -97,16 +83,14 @@ const saveConnectParamsForm = (datasourceId, data, comment)=>{
   
 
 /**
- * 
- * @param {数据源id} datasourceId 
- * @returns 数据源详情
+ * @param  datasourceId 
+ * @returns 
  */
 const getDataSourceByIdAndVersion = (datasourceId, version)=>{
   return api.fetch(`/data_source/info/${datasourceId}/${version}`, {}, 'get')
 }
 /**
- * 获取版本列表
- * @param {数据源id}} datasourceId 
+ * @param datasourceId 
  * @returns 
  */
 const getVersionListByDatasourceId = (datasourceId)=>{
@@ -117,8 +101,7 @@ const getVersionListByDatasourceId = (datasourceId)=>{
 
 
 /**
- * 设置过期=软删除  
- * @param {数据源id} datasourceId 
+ * @param datasourceId 
  * @returns 
  */
 const expire = (datasourceId)=>{
@@ -126,7 +109,7 @@ const expire = (datasourceId)=>{
 }
 
 /**
- * 发布数据源
+ * publish datasource
  * @param {*} datasourceId 
  * @param {*} versionId 
  * @returns 
@@ -136,18 +119,12 @@ const publish = (datasourceId, versionId)=>{
 }
 
 /**
- * 连接数据源
- * @param {连接信息} data 
+ * @param data 
  * @returns 
  */
 const connect = (data)=> {
   return api.fetch(`data_source/op/connect/json`, data);
 }
-
-
-//过期done
-//创建数据源，创建版本done
-//
 
 export  {
   getDataSourceList,

@@ -65,4 +65,3 @@ new Vue({
   i18n,
   render: (h) => h(App)
 }).$mount('#app')
-console.log(`当前环境:${process.env.NODE_ENV}`)

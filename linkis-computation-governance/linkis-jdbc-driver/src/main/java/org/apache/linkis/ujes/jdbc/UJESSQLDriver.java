@@ -44,7 +44,12 @@ public class UJESSQLDriver extends UJESSQLDriverMain implements Driver {
     static String ENGINE_TYPE = "EngineType";
 
     static String USER = "user";
+    static String TOKEN_KEY = "key";
+    static String TOKEN_VALUE = "value";
     static String PASSWORD = "password";
+    static boolean TABLEAU_SERVER = false;
+    static String LIMIT_ENABLED = "true";
+    static String LIMIT = "limit";
 
     static String VERSION = "version";
     static int DEFAULT_VERSION = 1;

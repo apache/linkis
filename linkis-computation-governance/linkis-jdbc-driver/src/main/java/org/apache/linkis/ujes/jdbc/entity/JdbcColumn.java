@@ -44,26 +44,6 @@ public class JdbcColumn {
         this.ordinalPos = ordinalPos;
     }
 
-    public String getColumnName() {
-        return columnName;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public String getTableCatalog() {
-        return tableCatalog;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public Integer getSqlType() throws SQLException {
-        return UJESSQLTypeParser.parserFromName(type);
-    }
-
     static int columnDisplaySize(int columnType) throws SQLException {
         // according to hiveTypeToSqlType possible options are:
         switch (columnType) {
@@ -93,13 +73,13 @@ public class JdbcColumn {
         }
     }
 
-    static int columnPrecision(int columnType) throws SQLException {
+    public static int columnPrecision(int columnType) throws SQLException {
         // according to hiveTypeToSqlType possible options are:
         switch (columnType) {
             case Types.BOOLEAN:
                 return 1;
             case Types.VARCHAR:
-            case Types.CHAR:
+            case Types.NVARCHAR:
                 return Integer.MAX_VALUE; // hive has no max limit for strings
             case Types.TINYINT:
                 return 3;
@@ -124,12 +104,12 @@ public class JdbcColumn {
         }
     }
 
-    static int columnScale(int columnType) throws SQLException {
+    public static int columnScale(int columnType) throws SQLException {
         // according to hiveTypeToSqlType possible options are:
         switch (columnType) {
             case Types.BOOLEAN:
             case Types.VARCHAR:
-            case Types.CHAR:
+            case Types.NVARCHAR:
             case Types.TINYINT:
             case Types.SMALLINT:
             case Types.INTEGER:
@@ -147,6 +127,26 @@ public class JdbcColumn {
             default:
                 throw new SQLException("Invalid column type: " + columnType);
         }
+    }
+
+    public String getColumnName() {
+        return columnName;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public String getTableCatalog() {
+        return tableCatalog;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public Integer getSqlType() throws SQLException {
+        return UJESSQLTypeParser.parserFromName(type);
     }
 
     public Integer getColumnSize() throws SQLException {

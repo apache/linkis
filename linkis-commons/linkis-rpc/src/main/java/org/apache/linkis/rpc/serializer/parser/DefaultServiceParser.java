@@ -84,7 +84,6 @@ public class DefaultServiceParser implements ServiceParser {
         return serviceMethod;
     }
 
-
     private boolean methodFilterPredicate(Method method) {
         if (method.getAnnotation(Receiver.class) != null) {
             Class<?>[] parameterTypes = method.getParameterTypes();

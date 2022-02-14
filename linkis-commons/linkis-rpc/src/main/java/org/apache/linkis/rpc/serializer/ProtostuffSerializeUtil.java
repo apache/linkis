@@ -81,7 +81,6 @@ public class ProtostuffSerializeUtil {
     }
 
     /**
-     *
      * @param hexString
      * @return
      */
@@ -102,7 +101,6 @@ public class ProtostuffSerializeUtil {
         }
         return byteArray;
     }
-
 
     public static String toHexString(byte[] byteArray) {
         if (byteArray == null)

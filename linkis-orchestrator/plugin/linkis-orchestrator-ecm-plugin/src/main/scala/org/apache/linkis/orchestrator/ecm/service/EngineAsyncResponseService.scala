@@ -18,7 +18,7 @@
 package org.apache.linkis.orchestrator.ecm.service
 
 import org.apache.linkis.manager.common.protocol.engine.{EngineCreateError, EngineCreateSuccess}
-import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.rpc.Sender
 
 /**
   *
@@ -26,7 +26,7 @@ import org.apache.linkis.message.builder.ServiceMethodContext
   */
 trait EngineAsyncResponseService {
 
-  def onSuccess(engineCreateSuccess: EngineCreateSuccess, smc: ServiceMethodContext): Unit
+  def onSuccess(engineCreateSuccess: EngineCreateSuccess, sender: Sender): Unit
 
-  def onError(engineCreateError: EngineCreateError, smc: ServiceMethodContext): Unit
+  def onError(engineCreateError: EngineCreateError, sender: Sender): Unit
 }

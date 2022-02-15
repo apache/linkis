@@ -49,9 +49,6 @@
         <logger name="org.apache.hadoop.hive.ql.exec.StatsTask" level="info" additivity="true">
             <appender-ref ref="SendPackage"/>
         </logger>
-        <logger name="org.apache.linkis.message.builder.DefaultMessageJob" level="warn" additivity="true">
-            <appender-ref ref="Console"/>
-        </logger>
         <logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter" level="error" additivity="true">
             <appender-ref ref="stderr"/>
         </logger>

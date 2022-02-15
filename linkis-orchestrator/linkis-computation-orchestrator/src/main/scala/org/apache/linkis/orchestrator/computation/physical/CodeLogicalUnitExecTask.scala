@@ -82,9 +82,6 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
       val response = Utils.tryCatch(codeExecutor.getEngineConnExecutor.execute(requestTask)) {
         t: Throwable =>
           logger.error(s"Failed to submit ${getIDInfo()} to ${codeExecutor.getEngineConnExecutor.getServiceInstance}", t)
-          codeExecTaskExecutorManager.getByExecTaskId(this.getId).foreach { codeEngineConnExecutor =>
-            codeExecTaskExecutorManager.markECFailed(this, codeEngineConnExecutor)
-          }
           throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, t.getMessage)
       }
       response match {
@@ -189,7 +186,7 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
       if (StringUtils.isNotBlank(codeEngineConnExecutor.getEngineConnTaskId)) {
         info(s"execTask($getId) be killed, engineConn execId is${codeEngineConnExecutor.getEngineConnTaskId}")
         Utils.tryAndWarn(codeEngineConnExecutor.getEngineConnExecutor.killTask(codeEngineConnExecutor.getEngineConnTaskId))
-        Utils.tryAndWarn(codeExecTaskExecutorManager.unLockEngineConn(this, codeEngineConnExecutor))
+        //Utils.tryAndWarn(codeExecTaskExecutorManager.unLockEngineConn(this, codeEngineConnExecutor))
       }
     }
     isCanceled = true
@@ -215,18 +212,7 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
   override def clear(isSucceed: Boolean): Unit = {
 
     codeExecTaskExecutorManager.getByExecTaskId(this.getId).foreach { codeEngineConnExecutor =>
-      if (isSucceed) {
-        debug(s"ExecTask(${getIDInfo()}) execute  success executor be delete.")
-        Utils.tryAndWarn(codeExecTaskExecutorManager.delete(this, codeEngineConnExecutor))
-      } else {
-        if (StringUtils.isBlank(codeEngineConnExecutor.getEngineConnTaskId)) {
-          error(s"${getIDInfo()} Failed to submit running, now to remove  codeEngineConnExecutor, forceRelease")
-          codeExecTaskExecutorManager.markECFailed(this, codeEngineConnExecutor)
-        } else {
-          debug(s"ExecTask(${getIDInfo()}) execute  failed executor be unLock.")
-          Utils.tryAndWarn(codeExecTaskExecutorManager.unLockEngineConn(this, codeEngineConnExecutor))
-        }
-      }
+      codeExecTaskExecutorManager.markTaskCompleted(this, codeEngineConnExecutor, isSucceed)
     }
   }
 }

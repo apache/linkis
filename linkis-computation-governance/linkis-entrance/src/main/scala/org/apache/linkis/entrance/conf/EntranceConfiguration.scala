@@ -33,7 +33,7 @@ object EntranceConfiguration {
     * QUERY_PERSISTENCE_SPRING_APPLICATION_NAME is the name of the application that represents the query module in springcloud
     * QUERY_PERSISTENCE_SPRING_APPLICATION_NAME 是表示query模块在springcloud中的应用名称
     */
-  val QUERY_PERSISTENCE_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.query.application.name", "linkis-ps-publicservice")
+  val QUERY_PERSISTENCE_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.query.application.name", "linkis-ps-jobhistory")
   /**
     * DEFAULT_LOGPATH_PREFIX is the prefix that represents the default log storage path
     * DEFAULT_LOGPATH_PREFIX 是表示默认的日志存储路径的前缀
@@ -125,7 +125,7 @@ object EntranceConfiguration {
   val SCHEDULER_CREATOR = CommonVars("wds.linkis.entrance.scheduler.creator", "scheduler")
 
 
-  val SKIP_AUTH = CommonVars("wds.linkis.entrance.skip.auth", true)
+  val SKIP_AUTH = CommonVars("wds.linkis.entrance.skip.auth", false)
 
   val PROGRESS_PUSH = CommonVars[String]("wds.linkis.entrance.push.progress", "true")
 
@@ -134,8 +134,6 @@ object EntranceConfiguration {
   val CONCURRENT_MAX_RUNNING_JOBS = CommonVars("wds.linkis.concurrent.group.factory.running.jobs", 30)
 
   val CONCURRENT_EXECUTOR_TIME = CommonVars("wds.linkis.concurrent.group.factory.executor.time", 5 * 60 * 1000)
-
-  val ENGINE_MANAGER_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.enginemanager.application.name", "linkis-cg-engineconnmanager")
 
   val ENTRANCE_ENGINE_LASTUPDATE_TIMEOUT = CommonVars("wds.linkis.entrance.engine.lastupdate.timeout", new TimeType("5s"))
   val ENTRANCE_ENGINE_ACTIVITY_TIMEOUT = CommonVars("wds.linkis.entrance.engine.timeout", new TimeType("10s"))
@@ -151,11 +149,25 @@ object EntranceConfiguration {
   val USER_PARALLEL_REFLESH_TIME  = CommonVars("wds.linkis.user.parallel.reflesh.time", 30)
 
 
+
   val JOBINFO_UPDATE_RETRY = CommonVars[java.lang.Boolean]("wds.linkis.entrance.jobinfo.update.retry", true)
 
   val JOBINFO_UPDATE_RETRY_MAX_TIME = CommonVars[Integer]("wds.linkis.entrance.jobinfo.update.retry.max.times", 3)
 
   val JOBINFO_UPDATE_RETRY_INTERVAL = CommonVars[Integer]("wds.linkis.entrance.jobinfo.update.retry.interval", 2 * 60 * 1000)
 
+  val CODE_PARSER_SELECTIVE_IGNORED = CommonVars[java.lang.Boolean]("wds.linkis.entrance.code.parser.selective.ignored", true)
+
+
   val ENTRANCE_CODEPARSER_ENABLE = CommonVars[java.lang.Boolean]("wds.linkis.entrance.code.parser.enable", false)
+
+  val YARN_QUEUE_CORES_MAX = CommonVars[Integer]("wds.linkis.entrance.yarn.queue.core.max", 300)
+
+  val YARN_QUEUE_MEMORY_MAX = CommonVars[Integer]("wds.linkis.entrance.yarn.queue.memory.max.g", 1000)
+
+  val ENABLE_HDFS_LOG_CACHE = CommonVars[Boolean] ("linkis.entrance.enable.hdfs.log.cache", true).getValue
+
+  val LOG_PUSH_INTERVAL_TIME = CommonVars("wds.linkis.entrance.log.push.interval.time", 5 * 60 * 1000)
+
+
 }

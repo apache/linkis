@@ -34,11 +34,11 @@ class CommandTask extends AbstractTask {
 
   override def withNewParents(parent: Array[Task]): Unit = {}
 
-  override def getId: String = ???
+  override def getId: String = null
 
-  override def getParents: Array[Task] = ???
+  override def getParents: Array[Task] = null
 
-  override def getChildren: Array[Task] = ???
+  override def getChildren: Array[Task] = null
 
-  override protected def newNode(): Task = ???
+  override protected def newNode(): Task = null
 }

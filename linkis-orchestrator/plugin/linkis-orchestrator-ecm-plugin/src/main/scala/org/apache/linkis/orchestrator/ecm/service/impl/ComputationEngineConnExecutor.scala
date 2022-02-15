@@ -111,6 +111,7 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
         killTask(execId)
       }
     }
+    getRunningTasks.clear()
     true
   }
 

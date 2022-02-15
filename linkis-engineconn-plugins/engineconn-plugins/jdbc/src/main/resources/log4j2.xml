@@ -41,9 +41,6 @@
             <appender-ref ref="Console"/>
             <appender-ref ref="Send"/>
         </root>
-        <logger name="org.apache.linkis.message.builder.DefaultMessageJob" level="warn" additivity="true">
-            <appender-ref ref="Console"/>
-        </logger>
         <logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter" level="error" additivity="true">
             <appender-ref ref="stderr"/>
         </logger>

@@ -32,13 +32,7 @@
         <root level="INFO">
             <appender-ref ref="RollingFile"/>
         </root>
-        <logger name="org.apache.linkis.message.builder.DefaultMessageJob" level="warn" additivity="true">
-            <appender-ref ref="RollingFile"/>
-        </logger>
 
-        <logger name="org.apache.linkis.message.scheduler.DefaultMessageExecutor" level="warn" additivity="true">
-            <appender-ref ref="RollingFile"/>
-        </logger>
         <logger name="com.netflix.loadbalancer.DynamicServerListLoadBalancer" level="warn" additivity="true">
             <appender-ref ref="RollingFile"/>
         </logger>

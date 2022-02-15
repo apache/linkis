@@ -38,7 +38,7 @@ class CodeExecTaskExecutor(engineConnExecutor: EngineConnExecutor, execTask: Exe
 
   def getEngineConnTaskId: String = engineConnTaskId
 
-  def setEngineConnTaskId(engineConnTaskId: String ) = this.engineConnTaskId = engineConnTaskId
+  def setEngineConnTaskId(engineConnTaskId: String): Unit = this.engineConnTaskId = engineConnTaskId
 
   def getMark: Mark = mark
 

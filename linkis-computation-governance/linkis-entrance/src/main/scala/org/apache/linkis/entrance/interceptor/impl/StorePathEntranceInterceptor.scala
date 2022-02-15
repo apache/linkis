@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.entrance.interceptor.impl
 
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -34,14 +34,14 @@ import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapCon
 
 class StorePathEntranceInterceptor extends EntranceInterceptor with Logging {
   /**
-    * The apply function is to supplement the information of the incoming parameter task, making the content of this task more complete.
-    * Additional information includes: database information supplement, custom variable substitution, code check, limit limit, etc.
-    * apply函数是对传入参数task进行信息的补充，使得这个task的内容更加完整。
-    * 补充的信息包括: 数据库信息补充、自定义变量替换、代码检查、limit限制等
-    *
-    * @param jobReq
-    * @return
-    */
+   * The apply function is to supplement the information of the incoming parameter task, making the content of this task more complete.
+   * Additional information includes: database information supplement, custom variable substitution, code check, limit limit, etc.
+   * apply函数是对传入参数task进行信息的补充，使得这个task的内容更加完整。
+   * 补充的信息包括: 数据库信息补充、自定义变量替换、代码检查、limit限制等
+   *
+   * @param jobReq
+   * @return
+   */
   override def apply(jobReq: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
     val globalConfig = Utils.tryAndWarn(GlobalConfigurationKeyValueCache.getCacheMap(jobReq))
     var parentPath: String = null
@@ -76,6 +76,7 @@ class StorePathEntranceInterceptor extends EntranceInterceptor with Logging {
     TaskUtils.addRuntimeMap(paramsMap, runtimeMap)
     val params = new util.HashMap[String, Object]()
     paramsMap.asScala.foreach(kv => params.put(kv._1, kv._2.asInstanceOf[Object]))
+    jobReq.setResultLocation(parentPath)
     jobReq.setParams(params)
     jobReq
   }

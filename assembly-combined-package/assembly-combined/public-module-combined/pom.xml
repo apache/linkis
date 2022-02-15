@@ -32,7 +32,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-message-scheduler</artifactId>
+            <artifactId>linkis-rpc</artifactId>
             <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
@@ -69,6 +69,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-scheduler</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
@@ -106,6 +113,10 @@
                     <artifactId>netty-all</artifactId>
                     <groupId>io.netty</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>netty-all</artifactId>
+                    <groupId>io.netty</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -132,6 +143,12 @@
             <groupId>io.protostuff</groupId>
             <artifactId>protostuff-api</artifactId>
             <version>1.6.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.4</version>
         </dependency>
 
     </dependencies>

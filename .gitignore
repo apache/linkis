@@ -10,7 +10,6 @@ linkis.iws
 linkis-commons/linkis-common/target/
 linkis-commons/linkis-hadoop-common/target/
 linkis-commons/linkis-httpclient/target/
-linkis-commons/linkis-message-scheduler/target/
 linkis-commons/linkis-module/target/
 linkis-commons/linkis-mybatis/target/
 linkis-commons/linkis-protocol/target/

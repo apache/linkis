@@ -17,6 +17,9 @@
  
 package org.apache.linkis.orchestrator.plans.physical
 
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.entrance.RetryWaitTimeOutLabel
+import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.orchestrator.conf.OrchestratorConfiguration
 import org.apache.linkis.orchestrator.exception.{OrchestratorErrorCodeSummary, OrchestratorErrorException}
 import org.apache.linkis.orchestrator.execution.TaskResponse
@@ -26,9 +29,7 @@ import org.apache.linkis.orchestrator.strategy.{ResultSetExecTask, StatusInfoExe
 import org.apache.linkis.orchestrator.strategy.async.AsyncExecTask
 import org.apache.linkis.orchestrator.utils.OrchestratorIDCreator
 
-/**
- *
- */
+
 class RetryExecTask(private val originTask: ExecTask, private val age: Int = 1) extends AbstractExecTask
   with StatusInfoExecTask with ResultSetExecTask with AsyncExecTask{
 
@@ -37,6 +38,22 @@ class RetryExecTask(private val originTask: ExecTask, private val age: Int = 1) 
   private var physicalContext: PhysicalContext = _
 
   private val createTime = System.currentTimeMillis()
+
+
+  private val maxWaitTime = getMaxWaitTime()
+
+  private  def getMaxWaitTime(): Long = {
+    val userCreatorLabel = LabelUtil.getUserCreatorLabel(getLabels)
+    var waitTime: Long = OrchestratorConfiguration.RETRY_TASK_WAIT_TIME.getValue
+    if (null != userCreatorLabel && OrchestratorConfiguration.SCHEDULIS_CREATOR.getValue.equalsIgnoreCase(userCreatorLabel.getCreator)) {
+      waitTime = OrchestratorConfiguration.SCHEDULER_RETRY_TASK_WAIT_TIME.getValue
+    }
+    val reTryTimeOutLabel = LabelUtil.getLabelFromList[RetryWaitTimeOutLabel](getLabels)
+    if (null != reTryTimeOutLabel) {
+      waitTime = reTryTimeOutLabel.getJobRetryTimeout
+    }
+    waitTime
+  }
 
   def getOriginTask: ExecTask = {
     originTask
@@ -49,18 +66,26 @@ class RetryExecTask(private val originTask: ExecTask, private val age: Int = 1) 
   override def canExecute: Boolean = {
     val takenTime = System.currentTimeMillis() - createTime
     if(originTask != null) {
-      originTask.canExecute && takenTime > OrchestratorConfiguration.RETRY_TASK_WAIT_TIME.getValue
-    }
-    else {
+      originTask.canExecute && takenTime > maxWaitTime
+    } else {
       throw new OrchestratorErrorException(OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE,
-        s"${getIDInfo()} originTask task cannot be null" )
+        s"${getIDInfo()} originTask task cannot be null")
+    }
+  }
+
+  def getLabels: java.util.List[Label[_]] = {
+    val labels = getOriginTask.getTaskDesc.getOrigin.getASTOrchestration.getASTContext.getLabels
+    if (null != labels) {
+      labels
+    } else {
+      null
     }
   }
 
   override def execute(): TaskResponse = {
-    if(canExecute){
+    if (canExecute) {
       originTask.execute()
-    }else {
+    } else {
       throw new OrchestratorErrorException(OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE,
         s"${getIDInfo()} task cannot be execute, task will be retried maybe not exist" +
           "(任务不允许被执行，被重热的任务可能不存在)")
@@ -68,7 +93,7 @@ class RetryExecTask(private val originTask: ExecTask, private val age: Int = 1) 
   }
 
   override def isLocalMode: Boolean = {
-    if(originTask != null){
+    if (originTask != null) {
       originTask.isLocalMode
     }
     false
@@ -83,9 +108,9 @@ class RetryExecTask(private val originTask: ExecTask, private val age: Int = 1) 
   }
 
   override def verboseString: String = {
-    if(originTask.verboseString != null){
+    if (originTask.verboseString != null) {
       originTask.verboseString
-    }else{
+    } else {
       getTaskDesc.toString
     }
   }
@@ -123,7 +148,7 @@ class RetryExecTask(private val originTask: ExecTask, private val age: Int = 1) 
   }
 
   override def canDealEvent(event: TaskInfoEvent): Boolean = {
-    if (null != getOriginTask ) {
+    if (null != getOriginTask) {
       getOriginTask.getId.equals(event.execTask.getId)
     } else {
       false

@@ -14,81 +14,82 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.entrance.log
 
-import java.io.{Closeable, Flushable, OutputStream}
-import java.util
-
+import org.apache.commons.lang.StringUtils
+import org.apache.hadoop.hdfs.client.HdfsDataOutputStream
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.exception.EntranceErrorException
 import org.apache.linkis.storage.FSFactory
+import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.utils.FileSystemUtils
-import org.apache.commons.lang.StringUtils
-import org.apache.hadoop.hdfs.client.HdfsDataOutputStream
+
+import java.io.{Closeable, Flushable, OutputStream}
+import java.util
 
 
 abstract class LogWriter(charset: String) extends Closeable with Flushable with Logging {
 
-    private var firstWrite = true
+  private var firstWrite = true
 
-    protected var outputStream: OutputStream
+  protected var outputStream: OutputStream
 
-    def write(msg: String): Unit = synchronized {
-      val log = if (!firstWrite) "\n" + msg else {
-        logger.info(s"$toString write first one line log")
-        firstWrite = false
-        msg
-      }
-      Utils.tryAndWarnMsg{
-        outputStream.write(log.getBytes(charset))
+  def write(msg: String): Unit = synchronized {
+    val log = if (!firstWrite) "\n" + msg else {
+      logger.info(s"$toString write first one line log")
+      firstWrite = false
+      msg
+    }
+    Utils.tryAndWarnMsg{
+      outputStream.write(log.getBytes(charset))
+      outputStream.flush()
+    }(s"$toString error when write query log to outputStream.")
+  }
+
+
+
+  def flush(): Unit = Utils.tryAndWarnMsg[Unit] {
+    outputStream match {
+      case hdfs: HdfsDataOutputStream =>
+        // todo check
+        hdfs.hflush()
+      case _ =>
         outputStream.flush()
-      }(s"$toString error when write query log to outputStream.")
     }
+  }(s"$toString Error encounters when flush log, ")
 
-
-
-    def flush(): Unit = Utils.tryAndWarnMsg[Unit] {
-      outputStream match {
-        case hdfs: HdfsDataOutputStream =>
-          // todo check
-          hdfs.hflush()
-        case _ =>
-          outputStream.flush()
-      }
-    }(s"$toString Error encounters when flush log, ")
-
-    def close(): Unit = {
-      logger.info(s" $toString logWriter close")
-      flush()
-      if (outputStream != null) {
-        Utils.tryQuietly(outputStream.close())
-        outputStream = null
-      }
+  def close(): Unit = {
+    logger.info(s" $toString logWriter close")
+    flush()
+    if (outputStream != null) {
+      Utils.tryQuietly(outputStream.close())
+      outputStream = null
     }
   }
+}
 
-  abstract class AbstractLogWriter(logPath: String,
-                                   user: String,
-                                   charset: String) extends LogWriter(charset) {
-    if (StringUtils.isBlank(logPath)) throw new EntranceErrorException(20301, "logPath cannot be empty.")
-    protected var fileSystem = FSFactory.getFsByProxyUser(new FsPath(logPath), user)
-    fileSystem.init(new util.HashMap[String, String]())
+abstract class AbstractLogWriter(logPath: String,
+                                 user: String,
+                                 charset: String) extends LogWriter(charset) {
+  if (StringUtils.isBlank(logPath)) throw new EntranceErrorException(20301, "logPath cannot be empty.")
+  protected var fileSystem = FSFactory.getFsByProxyUser(new FsPath(logPath), user).asInstanceOf[FileSystem]
+  fileSystem.init(new util.HashMap[String, String]())
 
-    protected var outputStream: OutputStream = {
-      FileSystemUtils.createNewFile(new FsPath(logPath), user, true)
-      fileSystem.write(new FsPath(logPath), true)
-    }
-
-
-    override def close(): Unit = {
-      super.close()
-      if (fileSystem != null) Utils.tryAndWarnMsg{
-        fileSystem.close()
-        fileSystem = null
-      }(s"$toString Error encounters when closing fileSystem")
-    }
-
-    override def toString: String = logPath
+  override protected var outputStream: OutputStream = {
+    FileSystemUtils.createNewFileWithFileSystem(fileSystem, new FsPath(logPath), user, true)
+    fileSystem.write(new FsPath(logPath), true)
   }
+
+
+  override def close(): Unit = {
+    super.close()
+    if (fileSystem != null) Utils.tryAndWarnMsg{
+      fileSystem.close()
+      fileSystem = null
+    }(s"$toString Error encounters when closing fileSystem")
+  }
+
+  override def toString: String = logPath
+}

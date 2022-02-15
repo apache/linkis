@@ -14,19 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.entrance.log
 
+import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.exception.{CacheNotReadyException, EntranceErrorCode}
 import org.apache.linkis.entrance.job.EntranceExecutionJob
 import org.apache.linkis.scheduler.queue.Job
-/**
-  * LogManager implementation, using a singleton class
-  * LogManager 的实现, 采用单例类进行
-  */
+import org.apache.linkis.storage.utils.StorageUtils
+
+
 class CacheLogManager extends LogManager with Logging {
+
+
 
   override def getLogReader(execId: String): LogReader = {
     var retLogReader: LogReader = null
@@ -38,6 +40,8 @@ class CacheLogManager extends LogManager with Logging {
               entranceExecutionJob.getLogWriter.getOrElse(createLogWriter(entranceExecutionJob)) match {
                 case cacheLogWriter: CacheLogWriter =>
                   cacheLogWriter.getCache.getOrElse(throw CacheNotReadyException(EntranceErrorCode.CACHE_NOT_READY.getErrCode, EntranceErrorCode.CACHE_NOT_READY.getDesc))
+                case hdfsCacheLogWriter: HDFSCacheLogWriter =>
+                  hdfsCacheLogWriter.getCache.getOrElse(throw CacheNotReadyException(EntranceErrorCode.CACHE_NOT_READY.getErrCode, EntranceErrorCode.CACHE_NOT_READY.getDesc))
                 case _ =>
                   Cache(1)
               }
@@ -60,8 +64,12 @@ class CacheLogManager extends LogManager with Logging {
       case entranceExecutionJob: EntranceExecutionJob => {
         val cache: Cache = Cache(EntranceConfiguration.DEFAULT_CACHE_MAX.getValue)
         val logPath: String = entranceExecutionJob.getJobRequest.getLogPath
-        val cacheLogWriter: CacheLogWriter =
+        val fsLogPath = new FsPath(logPath)
+        val cacheLogWriter: LogWriter = if (EntranceConfiguration.ENABLE_HDFS_LOG_CACHE && StorageUtils.HDFS == fsLogPath.getFsType) {
+          new HDFSCacheLogWriter(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, cache, entranceExecutionJob.getUser)
+        } else {
           new CacheLogWriter(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, cache, entranceExecutionJob.getUser)
+        }
         entranceExecutionJob.setLogWriter(cacheLogWriter)
         logger.info(s"job ${entranceExecutionJob.getJobRequest.getId} create cacheLogWriter")
         /*val webSocketCacheLogReader: WebSocketCacheLogReader =

@@ -168,7 +168,9 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
     }
 
     //addOpt("--jars",Some(ENGINEMANAGER_JAR.getValue))
-//    info("No need to add jars for " + _jars.map(fromPath).exists(x => x.equals("hdfs:///")).toString())
+    //info("No need to add jars for " + _jars.map(fromPath).exists(x => x.equals("hdfs:///")).toString())
+    _jars = _jars.filter(_.isNotBlankPath())
+
     if (_jars.isEmpty) {
       _jars += AbsolutePath("")
     }
@@ -370,14 +372,15 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
       val file = new java.io.File(x.path)
       file.isFile
     }).foreach(jar)
+
+    proxyUser(getValueAndRemove(properties,"proxyUser", ""))
     if (null != darResource) {
       this.queue(darResource.yarnResource.queueName)
     } else {
       this.queue("default")
     }
 
-
-    this.driverClassPath(getValueAndRemove(properties, SparkConfiguration.SPARK_DRIVER_CLASSPATH))
+    this.driverClassPath(getValueAndRemove(properties,  SparkConfiguration.SPARK_DRIVER_CLASSPATH))
     this.driverClassPath(variable(CLASSPATH))
     this.redirectOutput(Redirect.PIPE)
     this.redirectErrorStream(true)
@@ -427,9 +430,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
 
 object SparkSubmitProcessEngineConnLaunchBuilder {
 
-  def apply(): SparkSubmitProcessEngineConnLaunchBuilder = {
-    new SparkSubmitProcessEngineConnLaunchBuilder
-  }
+  def newBuilder(): SparkSubmitProcessEngineConnLaunchBuilder = new SparkSubmitProcessEngineConnLaunchBuilder
 
   sealed trait Path {
 

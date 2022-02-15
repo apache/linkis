@@ -107,12 +107,9 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     super.killTask(taskID)
     info(s"To close python cli task $taskID")
     Utils.tryAndError(close)
-    info(s"To delete python executor task $taskID")
-    Utils.tryAndError(ExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray))
-    info(s"Finished to kill python task $taskID")
   }
 
-  override def close = {
+  override def close: Unit = {
     info("python executor ready to close")
     if (process != null) {
       if (gatewayServer != null) {
@@ -120,10 +117,15 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
         gatewayServer = null
       }
       IOUtils.closeQuietly(lineOutputStream)
-      pid.foreach(p => Utils.exec(Array("kill", "-9", p), 3000l))
-      process.destroy()
-      process = null
+      Utils.tryAndErrorMsg {
+        pid.foreach(p => Utils.exec(Array("kill", "-9", p), 3000L))
+        process.destroy()
+        process = null
+      }("process close failed")
     }
+    info(s"To delete python executor")
+    Utils.tryAndError(ExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray))
+    info(s"Finished to kill python")
     info("python executor Finished to close")
   }
 
@@ -133,7 +135,11 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     //  如果从前端获取到用户所设置的Python版本为Python3 则取Python3的环境变量，否则默认为Python2
     logger.info(s"spark.python.version => ${engineCreationContext.getOptions.get("spark.python.version")}")
     val userDefinePythonVersion = engineCreationContext.getOptions.getOrDefault("spark.python.version", "python").toString.toLowerCase()
-    val sparkPythonVersion = if(StringUtils.isNotBlank(userDefinePythonVersion)) userDefinePythonVersion else "python"
+    val sparkPythonVersion = if (StringUtils.isNotBlank(userDefinePythonVersion)&& userDefinePythonVersion.equals("python3")) {
+      SparkConfiguration.PYSPARK_PYTHON3_PATH.getValue
+    } else {
+      userDefinePythonVersion
+    }
     val pythonExec = CommonVars("PYSPARK_DRIVER_PYTHON", sparkPythonVersion).getValue
 
     val pythonScriptPath = CommonVars("python.script.path", "python/mix_pyspark.py").getValue
@@ -146,11 +152,11 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     val pythonClasspath = new StringBuilder(pythonPath)
 
     //
-    val files = sc.getConf.get("spark.files", "")
-    info("output spark files "+ sc.getConf.get("spark.files", ""))
-    if(StringUtils.isNotEmpty(files)) {
-      pythonClasspath ++= File.pathSeparator ++= files.split(",").filter(_.endsWith(".zip")).mkString(File.pathSeparator)
-    }
+     val files = sc.getConf.get("spark.files", "")
+     logger.info(s"output spark files ${files}")
+     if(StringUtils.isNotEmpty(files)) {
+       pythonClasspath ++= File.pathSeparator ++= files.split(",").filter(_.endsWith(".zip")).mkString(File.pathSeparator)
+     }
     //extra python package
     val pyFiles = sc.getConf.get("spark.submit.pyFiles", "")
     logger.info(s"spark.submit.pyFiles => ${pyFiles}")
@@ -171,8 +177,8 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     val env = builder.environment()
     if (StringUtils.isBlank(sc.getConf.get("spark.pyspark.python", ""))) {
       info("spark.pyspark.python is null")
-      if (sparkPythonVersion.equals("python3")) {
-        info("userDefinePythonVersion is python3 will be set to PYSPARK_PYTHON")
+      if(userDefinePythonVersion.equals("python3")) {
+        info(s"userDefinePythonVersion is $pythonExec will be set to PYSPARK_PYTHON")
         env.put("PYSPARK_PYTHON", pythonExec)
       }
     } else {
@@ -197,6 +203,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
 
     Future {
       val exitCode = process.waitFor()
+      pythonScriptInitialized = false
       info("Pyspark process  has stopped with exit code " + exitCode)
       //      close
       Utils.tryFinally({
@@ -228,7 +235,8 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   def lazyInitGageWay(): Unit = {
     if (process == null) {
       Utils.tryThrow(initGateway) { t => {
-        error("initialize python executor failed, please ask administrator for help!",t)
+        logger.error("initialize python executor failed, please ask administrator for help!", t)
+        Utils.tryAndWarn(close)
         throw t
       }
       }
@@ -272,11 +280,11 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   def onPythonScriptInitialized(pid: Int) = {
     this.pid = Some(pid.toString)
     pythonScriptInitialized = true
-    info("Pyspark process has been initialized.")
+    info(s"Pyspark process has been initialized.pid is $pid")
   }
 
   def getStatements = {
-    queryLock synchronized {while(code == null) queryLock.wait()}
+    queryLock synchronized {while(code == null || ! pythonScriptInitialized) queryLock.wait()}
     info("Prepare to deal python code, code: " + code.substring(0, if (code.indexOf("\n") > 0) code.indexOf("\n") else code.length))
     //    lineOutputStream.reset(this.engineExecutorContext)
     val request = PythonInterpretRequest(code, jobGroup)

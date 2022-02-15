@@ -38,18 +38,18 @@
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-engineconn-launch</artifactId>
+            <artifactId>linkis-engineconn-core</artifactId>
             <version>${linkis.version}</version>
         </dependency>
 
-        <!--<dependency>
+        <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-scheduler</artifactId>
             <version>${linkis.version}</version>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-message-scheduler</artifactId>
+            <artifactId>linkis-rpc</artifactId>
             <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
@@ -57,7 +57,9 @@
                     <groupId>org.reflections</groupId>
                 </exclusion>
             </exclusions>
+            <scope>provided</scope>
         </dependency>
+
     </dependencies>
 
     <build>

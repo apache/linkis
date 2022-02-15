@@ -18,13 +18,13 @@
 package org.apache.linkis.engineconn.computation.executor.service
 
 import org.apache.linkis.governance.common.protocol.task._
-import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.ExecuteResponse
 
 
 trait TaskExecutionService {
 
-  def execute(requestTask: RequestTask, smc: ServiceMethodContext): ExecuteResponse
+  def execute(requestTask: RequestTask, sender: Sender): ExecuteResponse
 
 //  def taskStatus(taskID: String): ResponseTaskStatus
 

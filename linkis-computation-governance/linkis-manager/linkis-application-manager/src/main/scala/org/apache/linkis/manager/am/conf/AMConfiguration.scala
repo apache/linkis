@@ -19,6 +19,7 @@ package org.apache.linkis.manager.am.conf
 
 import org.apache.linkis.common.conf.{CommonVars, TimeType}
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.manager.common.entity.enumeration.MaintainType
 
 
 object AMConfiguration {
@@ -27,7 +28,7 @@ object AMConfiguration {
 
   val ECM_ADMIN_OPERATIONS = CommonVars("wds.linkis.governance.admin.operations", "")
 
-  val ENGINE_START_MAX_TIME = CommonVars("wds.linkis.manager.am.engine.start.max.time", new TimeType("10m"))
+  val ENGINE_START_MAX_TIME = CommonVars("wds.linkis.manager.am.engine.start.max.time", new TimeType("11m"))
 
   val ENGINE_CONN_START_REST_MAX_WAIT_TIME = CommonVars("wds.linkis.manager.am.engine.rest.start.max.time", new TimeType("40s"))
 
@@ -66,6 +67,11 @@ object AMConfiguration {
 
 
   val ASYNC_STOP_ENGINE_MAX_THREAD_SIZE: Int = CommonVars("wds.linkis.async.stop.engine.size", 20).getValue
+
+  val EC_MAINTAIN_TIME_STR = CommonVars("wds.linkis.ec.maintain.time.key", MaintainType.Default.toString)
+
+  val EC_MAINTAIN_WORK_START_TIME = CommonVars("wds.linkis.ec.maintain.time.work.start.time", 8).getValue
+  val EC_MAINTAIN_WORK_END_TIME = CommonVars("wds.linkis.ec.maintain.time.work.end.time", 19).getValue
 
   private def getDefaultMultiEngineUser(): String = {
     val jvmUser = Utils.getJvmUser

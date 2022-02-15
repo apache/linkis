@@ -20,8 +20,8 @@ package org.apache.linkis.storage.resultset
 import java.io.{ByteArrayInputStream, IOException, InputStream}
 
 import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetReader}
-import org.apache.linkis.common.io.{MetaData, Record}
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.io.{Fs, MetaData, Record}
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.storage.domain.Dolphin
 import org.apache.linkis.storage.exception.StorageWarnException
 import org.apache.linkis.storage.utils.StorageUtils
@@ -37,6 +37,8 @@ class StorageResultSetReader[K <: MetaData, V <: Record](resultSet: ResultSet[K,
   private var row: Record = _
   private var colCount = 0
   private var rowCount = 0
+
+  private var fs: Fs = _
 
   private val READ_CACHE = 1024
   private val bytes = new Array[Byte](READ_CACHE)
@@ -96,6 +98,9 @@ class StorageResultSetReader[K <: MetaData, V <: Record](resultSet: ResultSet[K,
     row
   }
 
+  def setFs(fs:Fs):Unit = this.fs = fs
+  def getFs:Fs = this.fs
+
   @scala.throws[IOException]
   override def getMetaData: MetaData = {
     if(metaData == null) init()
@@ -108,8 +113,12 @@ class StorageResultSetReader[K <: MetaData, V <: Record](resultSet: ResultSet[K,
     if(recordNum < 0 ) return -1
 
     if(metaData == null) getMetaData
-    for(i <- recordNum until (0, -1)){
-      try inputStream.skip(Dolphin.readInt(inputStream)) catch { case t: Throwable => return -1}
+    for(i <- recordNum until (0, -1)) {
+      try inputStream.skip(Dolphin.readInt(inputStream))
+      catch {
+        case t: Throwable =>
+          return recordNum - i
+      }
     }
     recordNum
   }
@@ -130,5 +139,8 @@ class StorageResultSetReader[K <: MetaData, V <: Record](resultSet: ResultSet[K,
   @scala.throws[IOException]
   override def available: Long = inputStream.available()
 
-  override def close(): Unit = inputStream.close()
+  override def close(): Unit = {
+    inputStream.close()
+    if(this.fs != null) Utils.tryQuietly(this.fs.close())
+  }
 }

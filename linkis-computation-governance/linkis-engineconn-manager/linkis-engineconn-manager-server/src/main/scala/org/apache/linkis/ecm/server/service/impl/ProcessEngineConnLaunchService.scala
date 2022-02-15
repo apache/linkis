@@ -18,7 +18,6 @@
 package org.apache.linkis.ecm.server.service.impl
 
 import java.util.concurrent.TimeUnit
-
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.ecm.core.engineconn.EngineConn
@@ -26,6 +25,7 @@ import org.apache.linkis.ecm.core.launch.ProcessEngineConnLaunch
 import org.apache.linkis.ecm.server.LinkisECMApplication
 import org.apache.linkis.ecm.server.conf.ECMConfiguration
 import org.apache.linkis.ecm.server.conf.ECMConfiguration.MANAGER_SPRING_NAME
+import org.apache.linkis.ecm.core.conf.ECMErrorCode
 import org.apache.linkis.ecm.server.errorcode.ECMErrorConstants
 import org.apache.linkis.ecm.server.exception.ECMErrorException
 import org.apache.linkis.ecm.server.listener.EngineConnStatusChangeEvent
@@ -36,6 +36,8 @@ import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLau
 import org.apache.linkis.rpc.Sender
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.linkis.ecm.server.service.LocalDirsHandleService
+import org.apache.linkis.manager.label.utils.LabelUtil
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Future, TimeoutException}
@@ -43,18 +45,34 @@ import scala.concurrent.{Future, TimeoutException}
 
 abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchService {
 
-  override def afterLaunch(request: EngineConnLaunchRequest, conn: EngineConn, duration: Long): Unit = {
-    super.afterLaunch(request, conn, duration)
+  private var localDirsHandleService: LocalDirsHandleService = _
+
+  def setLocalDirsHandleService(localDirsHandleService: LocalDirsHandleService): Unit = this.localDirsHandleService = localDirsHandleService
+
+
+  override def waitEngineConnStart(request: EngineConnLaunchRequest, conn: EngineConn, duration: Long): Unit = {
     conn.getEngineConnLaunchRunner.getEngineConnLaunch match {
-      case launch: ProcessEngineConnLaunch => try {
+      case launch: ProcessEngineConnLaunch => Utils.tryCatch{
+        // Set the pid of the shell script before the pid callBack returns
+        launch.getPid().foreach(conn.setPid)
         processMonitorThread(conn, launch, duration)
-      } catch {
-        case e: ECMErrorException =>
-          warn(s"Failed to init ${conn.getServiceInstance}, status shutting down")
+      }{
+        case e: Throwable =>
           val logPath = Utils.tryCatch(conn.getEngineConnManagerEnv.engineConnLogDirs) { t =>
-            ECMConfiguration.ENGINECONN_ROOT_DIR + "/userName/" + conn.getTickedId + "/logs"
+            localDirsHandleService.getEngineConnLogDir(request.user, request.ticketId, LabelUtil.getEngineType(request.labels))
           }
-          Sender.getSender(MANAGER_SPRING_NAME).send(EngineConnStatusCallbackToAM(conn.getServiceInstance, NodeStatus.ShuttingDown, "Failed to start EngineConn, reason: " + ExceptionUtils.getRootCauseMessage(e) + s"\n You can go to this path($logPath) to find the reason or ask the administrator for help"))
+          val canRetry = e match {
+            case ecmError: ECMErrorException =>
+              if (ECMErrorCode.EC_START_TIME_OUT == ecmError.getErrCode) {
+                true
+              } else {
+                false
+              }
+            case _ => false
+          }
+          logger.warn(s"Failed to init ${conn.getServiceInstance}, status shutting down, canRetry $canRetry, logPath $logPath", e)
+          Sender.getSender(MANAGER_SPRING_NAME).send(EngineConnStatusCallbackToAM(conn.getServiceInstance, NodeStatus.ShuttingDown, "Failed to start EngineConn, reason: " + ExceptionUtils.getRootCauseMessage(e) + s"\n You can go to this path($logPath) to find the reason or ask the administrator for help", canRetry))
+          throw e
       }
       case _ =>
     }
@@ -65,17 +83,17 @@ abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchSe
     val tickedId = engineConn.getTickedId
     val errorMsg = new StringBuilder
     Future {
-      val iterator = IOUtils.lineIterator(launch.getProcessInputStream,  Configuration.BDP_ENCODING.getValue)
+      val iterator = IOUtils.lineIterator(launch.getProcessInputStream, Configuration.BDP_ENCODING.getValue)
       var count = 0
       val maxLen = ECMConfiguration.ENGINE_START_ERROR_MSG_MAX_LEN.getValue
       while (!isCompleted(engineConn) && iterator.hasNext && count < maxLen) {
         val line = iterator.next()
-        println(s"${engineConn.getTickedId}:${line}")
         errorMsg.append(line).append("\n")
         count += 1
       }
       val exitCode = Option(launch.processWaitFor)
       if (exitCode.exists(_ != 0)) {
+        logger.info(s"engine ${tickedId} process exit ")
         LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnStatusChangeEvent(tickedId, ShuttingDown))
       } else {
         LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnStatusChangeEvent(tickedId, Success))
@@ -84,10 +102,10 @@ abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchSe
     Utils.tryThrow(Utils.waitUntil(() => engineConn.getStatus != Starting, Duration(timeout, TimeUnit.MILLISECONDS))) {
       case e: TimeoutException =>
         throw new ECMErrorException(ECMErrorConstants.ECM_ERROR, s"wait for $engineConn initial timeout.")
-      case e: InterruptedException => //比如被ms cancel
+      case e: InterruptedException =>
         throw new ECMErrorException(ECMErrorConstants.ECM_ERROR, s"wait for $engineConn initial interrupted.")
       case t: Throwable =>
-        error(s"unexpected error, now shutdown it.")
+        logger.error(s"unexpected error, now shutdown it.")
         throw t
     }
     if (engineConn.getStatus == ShuttingDown) {

@@ -46,6 +46,9 @@ public class JobRequest {
     private Date createdTime;
     private Date updatedTime;
     private String instances;
+    /** result location */
+    private String resultLocation;
+
     private Map<String, Object> metrics = new HashMap<>();
 
     public Long getId() {
@@ -182,6 +185,14 @@ public class JobRequest {
 
     public void setMetrics(Map<String, Object> metrics) {
         this.metrics = metrics;
+    }
+
+    public String getResultLocation() {
+        return resultLocation;
+    }
+
+    public void setResultLocation(String resultLocation) {
+        this.resultLocation = resultLocation;
     }
 
     @Override

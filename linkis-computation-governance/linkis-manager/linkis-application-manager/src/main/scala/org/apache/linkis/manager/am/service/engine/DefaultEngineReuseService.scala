@@ -18,9 +18,6 @@
 package org.apache.linkis.manager.am.service.engine
 
 import org.apache.commons.lang.exception.ExceptionUtils
-
-import java.util
-import java.util.concurrent.{TimeUnit, TimeoutException}
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
@@ -33,15 +30,18 @@ import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.protocol.engine.{EngineReuseRequest, EngineStopRequest}
 import org.apache.linkis.manager.common.utils.ManagerUtils
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.entity.engine.ReuseExclusionLabel
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
+import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
 import org.apache.linkis.manager.label.utils.LabelUtils
-import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.Sender
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+import java.util
+import java.util.concurrent.{TimeUnit, TimeoutException}
 import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
 
@@ -65,7 +65,7 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
 
   @Receiver
   @throws[LinkisRetryException]
-  override def reuseEngine(engineReuseRequest: EngineReuseRequest): EngineNode = {
+  override def reuseEngine(engineReuseRequest: EngineReuseRequest, sender: Sender): EngineNode = {
     info(s"Start to reuse Engine for request: $engineReuseRequest")
     //TODO Label Factory And builder
     val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory

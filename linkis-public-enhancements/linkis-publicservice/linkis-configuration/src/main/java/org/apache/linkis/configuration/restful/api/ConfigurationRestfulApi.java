@@ -17,7 +17,6 @@
 
 package org.apache.linkis.configuration.restful.api;
 
-import com.netflix.discovery.converters.Auto;
 import org.apache.linkis.configuration.conf.Configuration;
 import org.apache.linkis.configuration.entity.*;
 import org.apache.linkis.configuration.exception.ConfigurationException;
@@ -33,8 +32,9 @@ import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.commons.lang.StringUtils;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -57,10 +57,10 @@ public class ConfigurationRestfulApi {
 
     @Autowired private ConfigurationService configurationService;
 
-    @Autowired
-    private CategoryService categoryService;
+    @Autowired private CategoryService categoryService;
 
-    private static String[] adminArray = Configuration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
+    private static String[] adminArray =
+            Configuration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -199,7 +199,7 @@ public class ConfigurationRestfulApi {
         if (StringUtils.isEmpty(categoryName) || categoryName.equals(NULL)) {
             throw new ConfigurationException("categoryName is null, cannot be added");
         }
-        if(StringUtils.isEmpty(categoryName) || categoryName.contains("-")){
+        if (StringUtils.isEmpty(categoryName) || categoryName.contains("-")) {
             throw new ConfigurationException("categoryName cannot be included '-'");
         }
         categoryService.createFirstCategory(categoryName, description);
@@ -207,7 +207,8 @@ public class ConfigurationRestfulApi {
     }
 
     @RequestMapping(path = "/deleteCategory", method = RequestMethod.POST)
-    public Message deleteCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ConfigurationException {
+    public Message deleteCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
+            throws ConfigurationException {
         String username = SecurityFilter.getLoginUsername(request);
         checkAdmin(username);
         Integer categoryId = jsonNode.get("categoryId").asInt();
@@ -223,7 +224,7 @@ public class ConfigurationRestfulApi {
         String engineType = jsonNode.get("engineType").asText();
         String version = jsonNode.get("version").asText();
         String description = jsonNode.get("description").asText();
-        if(categoryId <= 0){
+        if (categoryId <= 0) {
             throw new ConfigurationException("creator is null, cannot be added");
         }
         if (StringUtils.isEmpty(engineType) || engineType.toLowerCase().equals(NULL)) {
@@ -319,9 +320,8 @@ public class ConfigurationRestfulApi {
     }
 
     private void checkAdmin(String userName) throws ConfigurationException {
-        if(adminArray != null && !Arrays.asList(adminArray).contains(userName)){
+        if (adminArray != null && !Arrays.asList(adminArray).contains(userName)) {
             throw new ConfigurationException("only admin can modify category(只有管理员才能修改目录)");
         }
     }
-
 }

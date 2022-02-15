@@ -26,6 +26,7 @@ import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.interceptor.exception.{PythonCodeCheckException, ScalaCodeCheckException}
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalParamException}
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.mutable.ArrayBuffer
@@ -158,7 +159,10 @@ object SQLExplain extends Explain {
     }
     logAppender.append(LogUtils.generateInfo("SQL code check has passed" + "\n"))
     requestPersistTask.setExecutionCode(fixedCode.mkString(";\n"))
-    info(s"after sql limit code is ${requestPersistTask.getExecutionCode}")
+    if(StringUtils.isEmpty(requestPersistTask.getExecutionCode)){
+      throw new EntranceIllegalParamException(EntranceErrorCode.EXECUTION_CODE_ISNULL.getErrCode,EntranceErrorCode.EXECUTION_CODE_ISNULL.getDesc)
+    }
+    debug(s"after sql limit code is ${requestPersistTask.getExecutionCode}")
   }
 
   private def findRealSemicolonIndex(tempCode: String):Array[Int] = {
@@ -200,8 +204,12 @@ object SQLExplain extends Explain {
     }
     val a = words.toArray
     val length = a.length
-    val second_last = a(length - 2)
-    !"limit".equals(second_last.toLowerCase())
+    if(a.length > 1) {
+      val second_last = a(length - 2)
+      !"limit".equals(second_last.toLowerCase())
+    } else {
+      false
+    }
   }
 
   private def cleanComment(sql:String):String = {
@@ -308,8 +316,6 @@ object PythonExplain extends Explain{
           throw PythonCodeCheckException(20072, "can not use process module")
         else if (SC_STOP.findAllIn(code).nonEmpty)
           throw PythonCodeCheckException(20073, "You can not stop SparkContext, It's dangerous")
-        else if (FROM_NUMPY_IMPORT.findAllIn(code).nonEmpty)
-          throw PythonCodeCheckException(20074, "Numpy packages cannot be imported in this way")
         else if (FROM_NUMPY_IMPORT.findAllIn(code).nonEmpty)
           throw PythonCodeCheckException(20074, "Numpy packages cannot be imported in this way")
       }

@@ -21,6 +21,7 @@ import org.apache.linkis.entrance.orchestrator.plugin.EntranceUserParallelOrches
 import org.apache.linkis.orchestrator.OrchestratorSession
 import org.apache.linkis.orchestrator.computation.ComputationOrchestratorSessionFactory
 import org.apache.linkis.orchestrator.computation.operation.progress.ProgressOperationBuilder
+import org.apache.linkis.orchestrator.computation.operation.resource.ResourceReportOperationBuilder
 import org.apache.linkis.orchestrator.core.AbstractOrchestratorContext
 import org.apache.linkis.orchestrator.extensions.OperationExtensions
 import org.apache.linkis.orchestrator.extensions.OperationExtensions.OperationExtensionsBuilder
@@ -36,6 +37,7 @@ object EntranceOrchestrationFactory {
     val addOnOperation = new OperationExtensionsBuilder {
       override def apply(v1: OperationExtensions): Unit = {
         v1.injectOperation(new ProgressOperationBuilder())
+        v1.injectOperation(new ResourceReportOperationBuilder())
       }
     }
     orchestratorSessionBuilder.withOperationExtensions(addOnOperation)

@@ -34,6 +34,8 @@ abstract class LogManager extends LogListener with Logging {
   def setEntranceContext(entranceContext: EntranceContext): Unit = this.entranceContext = entranceContext
   def setErrorCodeListener(errorCodeListener: ErrorCodeListener): Unit = this.errorCodeListener = Option(errorCodeListener)
   def setErrorCodeManager(errorCodeManager: ErrorCodeManager): Unit = this.errorCodeManager = Option(errorCodeManager)
+  def getErrorCodeManager(): Option[ErrorCodeManager] = errorCodeManager
+  def getErrorCodeListener: Option[ErrorCodeListener] = errorCodeListener
 
   def getLogReader(execId: String): LogReader
 
@@ -42,7 +44,7 @@ abstract class LogManager extends LogListener with Logging {
   def dealLogEvent(job: Job, log: String): Unit = {
     Utils.tryCatch{
       //     warn(s"jobid :${job.getId()}\nlog : ${log}")
-      job match{
+      job match {
         case entranceExecutionJob: EntranceExecutionJob =>
           if (entranceExecutionJob.getLogWriter.isEmpty) entranceExecutionJob synchronized {
             if (entranceExecutionJob.getLogWriter.isEmpty) {
@@ -63,6 +65,8 @@ abstract class LogManager extends LogListener with Logging {
       case t: Throwable => logger.warn(s"write log for job ${job.getId} failed", t)
     }
   }
+
+
 
   override def onLogUpdate(job: Job, log: String): Unit = {
     dealLogEvent(job, log)

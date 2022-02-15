@@ -28,26 +28,30 @@ import org.apache.linkis.scheduler.queue.Job
   */
 class CacheLogManager extends LogManager with Logging {
 
+
+
   override def getLogReader(execId: String): LogReader = {
     var retLogReader: LogReader = null
-    this.entranceContext.getOrCreateScheduler().get(execId).foreach {
-      case entranceExecutionJob: EntranceExecutionJob =>
-        retLogReader = entranceExecutionJob.getLogReader.getOrElse({
-          this.synchronized {
-            val sharedCache: Cache =
-              entranceExecutionJob.getLogWriter.getOrElse(createLogWriter(entranceExecutionJob)) match {
-                case cacheLogWriter: CacheLogWriter =>
-                  cacheLogWriter.getCache.getOrElse(throw CacheNotReadyException(EntranceErrorCode.CACHE_NOT_READY.getErrCode, EntranceErrorCode.CACHE_NOT_READY.getDesc))
-                case _ =>
-                  Cache(1)
-              }
-            val logPath: String = entranceExecutionJob.getJobRequest.getLogPath
-            new CacheLogReader(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, sharedCache, entranceExecutionJob.getUser)
-          }
-        })
-        entranceExecutionJob.setLogReader(retLogReader)
-      case _ => null
-    }
+     this.entranceContext.getOrCreateScheduler().get(execId).foreach {
+       case entranceExecutionJob: EntranceExecutionJob =>
+         retLogReader = entranceExecutionJob.getLogReader.getOrElse({
+           this.synchronized {
+             val sharedCache: Cache =
+               entranceExecutionJob.getLogWriter.getOrElse(createLogWriter(entranceExecutionJob)) match {
+                 case cacheLogWriter: CacheLogWriter =>
+                   cacheLogWriter.getCache.getOrElse(throw CacheNotReadyException(EntranceErrorCode.CACHE_NOT_READY.getErrCode, EntranceErrorCode.CACHE_NOT_READY.getDesc))
+                 case hdfsCacheLogWriter: HDFSCacheLogWriter =>
+                   hdfsCacheLogWriter.getCache.getOrElse(throw CacheNotReadyException(EntranceErrorCode.CACHE_NOT_READY.getErrCode, EntranceErrorCode.CACHE_NOT_READY.getDesc))
+                 case _ =>
+                   Cache(1)
+               }
+             val logPath: String = entranceExecutionJob.getJobRequest.getLogPath
+             new CacheLogReader(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, sharedCache, entranceExecutionJob.getUser)
+           }
+         })
+         entranceExecutionJob.setLogReader(retLogReader)
+       case _ => null
+     }
     retLogReader
   }
 
@@ -60,8 +64,12 @@ class CacheLogManager extends LogManager with Logging {
       case entranceExecutionJob: EntranceExecutionJob => {
         val cache: Cache = Cache(EntranceConfiguration.DEFAULT_CACHE_MAX.getValue)
         val logPath: String = entranceExecutionJob.getJobRequest.getLogPath
-        val cacheLogWriter: CacheLogWriter =
+        val fsLogPath = new FsPath(logPath)
+        val cacheLogWriter: LogWriter = if (EntranceConfiguration.ENABLE_HDFS_LOG_CACHE && StorageUtils.HDFS == fsLogPath.getFsType) {
+          new HDFSCacheLogWriter(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, cache, entranceExecutionJob.getUser)
+        } else {
           new CacheLogWriter(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, cache, entranceExecutionJob.getUser)
+        }
         entranceExecutionJob.setLogWriter(cacheLogWriter)
         logger.info(s"job ${entranceExecutionJob.getJobRequest.getId} create cacheLogWriter")
         /*val webSocketCacheLogReader: WebSocketCacheLogReader =

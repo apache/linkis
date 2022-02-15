@@ -35,8 +35,6 @@ object GatewaySSOUtils extends Logging {
   private val level = GatewayConfiguration.GATEWAY_DOMAIN_LEVEL.getValue
 
   /**
-    * "dss.wds.localhost" -> ".wds.localhost"
-    * "dss.localhost" -> ".localhost"
     * "dss.com" -> "dss.com"
     * "127.0.0.1" -> "127.0.0.1"
     * "127.0.0.1:8080" -> "127.0.0.1"

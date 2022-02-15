@@ -21,10 +21,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.orchestrator.extensions.catalyst.ReheaterTransform
 import org.apache.linkis.orchestrator.plans.physical.{ExecTask, ReheatableExecTask}
 
-/**
-  *
-  *
-  */
+
 abstract class AbstractReheater extends Reheater with Logging {
 
   override def reheat(execTask: ExecTask): Unit = execTask match {

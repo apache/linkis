@@ -15,18 +15,27 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.message.exception;
+package org.apache.linkis.entrance.utils
 
-import org.apache.linkis.common.exception.ErrorException;
+object RGBUtils {
 
-public class MessageErrorException extends ErrorException {
+  val GREEN = "green"
 
-    public MessageErrorException(int errCode, String desc) {
-        super(errCode, desc);
+  val YELLOW = "yellow"
+
+  val RED = "red"
+
+  val FirstLevelPercent = 0.5
+
+  val SecondLevelPercent = 0.7
+
+  def getRGB(percent: Float): String = {
+    if (percent <= FirstLevelPercent) {
+      GREEN
+    } else if (percent <= SecondLevelPercent) {
+      YELLOW
+    } else {
+      RED
     }
-
-    public MessageErrorException(int errCode, String desc, Throwable t) {
-        super(errCode, desc);
-        initCause(t);
-    }
+  }
 }

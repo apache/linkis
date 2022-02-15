@@ -14,25 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.entrance.interceptor.impl
 
-import java.text.SimpleDateFormat
-import java.util
-import java.util.{Calendar, Date}
-
+import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang.time.DateUtils
 import org.apache.linkis.common.conf.Configuration
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.interceptor.exception.VarSubstitutionException
+import org.apache.linkis.entrance.interceptor.impl.CustomVariableUtils.{dateFormatLocal, dateFormatStdLocal}
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.protocol.variable.{RequestQueryAppVariable, RequestQueryGlobalVariable, ResponseQueryVariable}
 import org.apache.linkis.rpc.Sender
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.time.DateUtils
-import org.apache.linkis.common.utils.{Logging, Utils}
 
+import java.text.SimpleDateFormat
+import java.util
+import java.util.{Calendar, Date}
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -47,43 +46,54 @@ object CustomVariableUtils extends Logging {
   private val SCALA_TYPE: String = "scala"
   private val R_TYPE: String = "r"
   private val RUN_DATE = "run_date"
-  private val RUN_TODAY = "run_today"
   private val TEAM: String = "team"
 
   /**
-    * date Format
-    */
-  private val dateFormat = new SimpleDateFormat("yyyyMMdd")
-  private val dateFormat_std = new SimpleDateFormat("yyyy-MM-dd")
+   * date Format
+   */
+  val dateFormatLocal = new ThreadLocal[SimpleDateFormat]() {
+    override protected def initialValue = new SimpleDateFormat("yyyyMMdd")
+  }
+
+  val dateFormatStdLocal = new ThreadLocal[SimpleDateFormat]() {
+    override protected def initialValue = new SimpleDateFormat("yyyy-MM-dd")
+  }
+
+  val dateFormatMonLocal = new ThreadLocal[SimpleDateFormat]() {
+    override protected def initialValue = new SimpleDateFormat("yyyyMM")
+  }
+
+  val dateFormatMonStdLocal = new ThreadLocal[SimpleDateFormat]() {
+    override protected def initialValue = new SimpleDateFormat("yyyy-MM")
+  }
 
   private val codeReg = "\\$\\{\\s*[A-Za-z][A-Za-z0-9_\\.]*\\s*[\\+\\-\\*/]?\\s*[A-Za-z0-9_\\.]*\\s*\\}".r
 
   /**
-    * calculation Reg
-    * Get custom variables, if it is related to the left and right variables of the analytical calculation of the calculation
-    */
+   * calculation Reg
+   * Get custom variables, if it is related to the left and right variables of the analytical calculation of the calculation
+   */
   private val calReg = "(\\s*[A-Za-z][A-Za-z0-9_\\.]*\\s*)([\\+\\-\\*/]?)(\\s*[A-Za-z0-9_\\.]*\\s*)".r
 
-
   /**
-    * replace custom variable
-    * 1. Get the user-defined variable from the code and replace it
-    *   * 2. If 1 is not done, then get the user-defined variable from args and replace it.
-    *   * 3. If 2 is not done, get the user-defined variable from the console and replace it.
-    *
-    * 1. 从代码中得到用户定义的变量，进行替换
-    * 2. 如果1没有做，那么从args中得到用户定义的变量，进行替换
-    * 3. 如果2没有做，从CS中得到用户定义的变量，进行替换
-    *3. 如果3没有做，从控制台中得到用户定义的变量，进行替换
-    *
-    * @param jobRequest : requestPersistTask
-    * @return
-    */
+   * replace custom variable
+   * 1. Get the user-defined variable from the code and replace it
+   *   * 2. If 1 is not done, then get the user-defined variable from args and replace it.
+   *   * 3. If 2 is not done, get the user-defined variable from the console and replace it.
+   *
+   * 1. 从代码中得到用户定义的变量，进行替换
+   * 2. 如果1没有做，那么从args中得到用户定义的变量，进行替换
+   * 3. 如果2没有做，从CS中得到用户定义的变量，进行替换
+   *3. 如果3没有做，从控制台中得到用户定义的变量，进行替换
+   *
+   * @param jobRequest : requestPersistTask
+   * @return
+   */
   def replaceCustomVar(jobRequest: JobRequest, runType: String): (Boolean, String) = {
     val code: String = jobRequest.getExecutionCode
     var codeType = SQL_TYPE
     runType match {
-      case "hql" | "sql" | "jdbc" | "hive"| "psql" => codeType = SQL_TYPE
+      case "hql" | "sql" | "jdbc" | "hive" | "psql" => codeType = SQL_TYPE
       case "python" | "py" => codeType = PY_TYPE
       case "java" => codeType = JAVA_TYPE
       case "scala" => codeType = SCALA_TYPE
@@ -92,7 +102,6 @@ object CustomVariableUtils extends Logging {
     }
 
     var run_date: CustomDateType = null
-    var run_today: CustomDateType = null
     val nameAndType = mutable.Map[String, VariableType]()
     val nameAndValue: mutable.Map[String, String] = getCustomVar(code, codeType)
 
@@ -103,13 +112,6 @@ object CustomVariableUtils extends Logging {
           if (StringUtils.isNotEmpty(run_date_str)) {
             run_date = new CustomDateType(run_date_str, false)
             nameAndType(RUN_DATE) = DateType(run_date)
-          }
-        }
-        case RUN_TODAY => if (nameAndType.get(RUN_TODAY).isEmpty) {
-          val run_today_str = value.asInstanceOf[String]
-          if (StringUtils.isNotEmpty(run_today_str)) {
-            run_today = new CustomDateType(run_today_str, false)
-            nameAndType(RUN_TODAY) = DateType(run_today)
           }
         }
         case _ => if (nameAndType.get(key).isEmpty && StringUtils.isNotEmpty(value)) {
@@ -126,18 +128,16 @@ object CustomVariableUtils extends Logging {
     //第一步来自code的变量替换
     putNameAndType(nameAndValue)
 
-
     /* Perform the second step to replace the parameters passed in args*/
     /* 进行第二步，对args传进的参数进行替换*/
     val variableMap = TaskUtils.getVariableMap(jobRequest.getParams.asInstanceOf[util.Map[String, Any]])
       .map { case (k, v) => k -> v.asInstanceOf[String] }
     putNameAndType(variableMap)
 
-    /* Go to the four step and take the user's parameters to the linkis-ps-publicservice module.*/
-    /*进行第四步，向linkis-ps-publicservice模块去拿用户的参数*/
+    /* Go to the four step and take the user's parameters to the cloud-publicservice module.*/
+    /*进行第四步，向cloud-publicservice模块去拿用户的参数*/
     val sender = Sender.getSender(Configuration.CLOUD_CONSOLE_VARIABLE_SPRING_APPLICATION_NAME.getValue)
-
-    val umUser: String = jobRequest.getSubmitUser
+    val umUser: String = jobRequest.getExecuteUser
     val codeTypeFromLabel = LabelUtil.getCodeType(jobRequest.getLabels)
     val userCreator = LabelUtil.getUserCreator(jobRequest.getLabels)
     val creator: String = if (null != userCreator) userCreator._2 else null
@@ -152,10 +152,9 @@ object CustomVariableUtils extends Logging {
       val keyAndValueScala: mutable.Map[String, String] = keyAndValue
       putNameAndType(keyAndValueScala)
     }
-
     /*The last step, if you have not set run_date, then it is the default */
     /*最后一步，如果都没有设置run_date，那么就是默认*/
-    if (nameAndType.get(RUN_DATE).isEmpty || null == run_date){
+    if (nameAndType.get(RUN_DATE).isEmpty || null == run_date) {
       run_date = new CustomDateType(getYesterday(false), false)
       nameAndType(RUN_DATE) = DateType(new CustomDateType(run_date.toString, false))
     }
@@ -165,21 +164,49 @@ object CustomVariableUtils extends Logging {
     nameAndType("run_month_end") = MonthType(new CustomMonthType(run_date.toString, false, true))
     nameAndType("run_month_end_std") = MonthType(new CustomMonthType(run_date.toString, true, true))
 
-
     /*
-    Variables based on run_today
+    calculate run_today based on run_date
     */
-    if (nameAndType.get(RUN_TODAY).isEmpty || null == run_today) {
-      run_today = new CustomDateType(getToday(false), false)
-      nameAndType(RUN_TODAY) = DateType(new CustomDateType(run_today.toString, false))
-    }
+    val run_today = new CustomDateType(getToday(false, run_date + 1), false)
+    nameAndType("run_today") = DateType(new CustomDateType(run_today.toString, false))
     nameAndType("run_today_std") = DateType(new CustomDateType(run_today.getStdDate))
     nameAndType("run_month_now_begin") = MonthType(new CustomMonthType(new CustomMonthType(run_today.toString, false) - 1, false))
     nameAndType("run_month_now_begin_std") = MonthType(new CustomMonthType(new CustomMonthType(run_today.toString, false) - 1))
     nameAndType("run_month_now_end") = MonthType(new CustomMonthType(new CustomMonthType(run_today.toString, false) - 1, false, true))
     nameAndType("run_month_now_end_std") = MonthType(new CustomMonthType(new CustomMonthType(run_today.toString, false) - 1, true, true))
 
-    if (nameAndType.get("user").isEmpty){
+    // calculate run_mon base on run_date
+    val run_mon = new CustomMonType(getMonthDay(false, run_date.getDate), false)
+    nameAndType("run_mon") = MonType(new CustomMonType(run_mon.toString, false))
+    nameAndType("run_mon_std") = MonType(new CustomMonType(run_mon.toString, true, false))
+    nameAndType("run_mon_start") = MonType(new CustomMonType(run_mon.toString, false, false))
+    nameAndType("run_mon_start_std") = MonType(new CustomMonType(run_mon.toString, true, false))
+    nameAndType("run_mon_end") = MonType(new CustomMonType(run_mon.toString, false, true))
+    nameAndType("run_mon_end_std") = MonType(new CustomMonType(run_mon.toString, true, true))
+
+
+    /**
+      * Uncomment after WTSS has fixed the following inconsistency issue:
+      * "run_month_now_begin/run_month_now_end" returns current_month subtract 1 month. But:
+      * "run_quarter_now_begin/run_quarter_now_end/run_half_year_now_begin/run_half_year_now_end" etc.
+      * returns current quarter/halfYear/year without subtracting 1 quarter/halfYear/year.
+      * --Shangda
+      */
+    //    nameAndType("run_quarter_now_begin") = QuarterType(new CustomQuarterType(new CustomQuarterType(run_today.toString, false) - 1, false))
+    //    nameAndType("run_quarter_now_begin_std") = QuarterType(new CustomQuarterType(new CustomQuarterType(run_today.toString, false) - 1))
+    //    nameAndType("run_quarter_now_end") = QuarterType(new CustomQuarterType(new CustomQuarterType(run_today.toString, false) - 1, false, true))
+    //    nameAndType("run_quarter_now_end_std") = QuarterType(new CustomQuarterType(new CustomQuarterType(run_today.toString, false) - 1, true, true))
+    //
+    //    nameAndType("run_half_year_now_begin") = HalfYearType(new CustomHalfYearType(new CustomHalfYearType(run_today.toString, false) - 1, false))
+    //    nameAndType("run_half_year_now_begin_std") = HalfYearType(new CustomHalfYearType(new CustomHalfYearType(run_today.toString, false) - 1))
+    //    nameAndType("run_half_year_now_end") = HalfYearType(new CustomHalfYearType(new CustomHalfYearType(run_today.toString, false) - 1, false, true))
+    //    nameAndType("run_half_year_now_end_std") = HalfYearType(new CustomHalfYearType(new CustomHalfYearType(run_today.toString, false) - 1, true, true))
+    //
+    //    nameAndType("run_year_now_begin") = YearType(new CustomYearType(new CustomYearType(run_today.toString, false) - 1, false))
+    //    nameAndType("run_year_now_begin_std") = YearType(new CustomYearType(new CustomYearType(run_today.toString, false) - 1))
+    //    nameAndType("run_year_now_end") = YearType(new CustomYearType(new CustomYearType(run_today.toString, false) - 1, false, true))
+    //    nameAndType("run_year_now_end_std") = YearType(new CustomYearType(new CustomYearType(run_today.toString, false) - 1, true, true))
+    if (nameAndType.get("user").isEmpty) {
       nameAndType("user") = StringType(jobRequest.getSubmitUser)
     }
     (true, parserVar(code, nameAndType))
@@ -207,16 +234,16 @@ object CustomVariableUtils extends Logging {
       calReg.findFirstMatchIn(str).foreach(ma => {
         i = i + 1
         /**
-          * name left value
-          * rightValue right value
-          * signal: + - * /
-          */
+         * name left value
+         * rightValue right value
+         * signal: + - * /
+         */
         val name = ma.group(1)
         val signal = ma.group(2)
         val rightValue = ma.group(3)
 
         if (name == null || name.trim.isEmpty) {
-          throw  VarSubstitutionException(20041,s"[$str] replaced var is null")
+          throw VarSubstitutionException(20041, s"[$str] replaced var is null")
         } else {
           var expression = name.trim
           val varType = nameAndType.get(name.trim).orNull
@@ -258,7 +285,7 @@ object CustomVariableUtils extends Logging {
     //   Utils.trimBlank()
   }
 
-  private def deleteUselessSemicolon(code:mutable.StringBuilder): String ={
+  private def deleteUselessSemicolon(code: mutable.StringBuilder): String = {
     val tempStr = code.toString()
     val arr = new ArrayBuffer[String]()
     tempStr.split(";").filter(StringUtils.isNotBlank).foreach(arr += _)
@@ -266,9 +293,9 @@ object CustomVariableUtils extends Logging {
   }
 
 
-  def replaceTeamParams(code:String, teamParams:java.util.Map[String,java.util.List[String]]):String = {
+  def replaceTeamParams(code: String, teamParams: java.util.Map[String, java.util.List[String]]): String = {
     if (StringUtils.isEmpty(code)) return code
-    val tempParams:mutable.Map[String, VariableType] = mutable.Map[String, VariableType]()
+    val tempParams: mutable.Map[String, VariableType] = mutable.Map[String, VariableType]()
     import scala.collection.JavaConversions._
     teamParams foreach {
       case (key, value) => logger.info("teamParams key is {}", key)
@@ -280,7 +307,6 @@ object CustomVariableUtils extends Logging {
     }
     parserVar(code, tempParams)
   }
-
 
   /**
     * Get user-defined variables and values
@@ -344,8 +370,13 @@ object CustomVariableUtils extends Logging {
     * @param std :2017-11-16
     * @return
     */
-  def getToday(std: Boolean = true): String = {
+  def getToday(std: Boolean = true, dateString: String = null): String = {
+    val dateFormat = dateFormatLocal.get()
+    val dateFormat_std = dateFormatStdLocal.get()
     val cal: Calendar = Calendar.getInstance()
+    if (dateString != null) {
+      cal.setTime(dateFormat.parse(dateString))
+    }
     if (std) {
       dateFormat_std.format(cal.getTime)
     } else {
@@ -359,6 +390,8 @@ object CustomVariableUtils extends Logging {
     * @return
     */
   def getYesterday(std: Boolean = true): String = {
+    val dateFormat = dateFormatLocal.get()
+    val dateFormat_std = dateFormatStdLocal.get()
     val cal: Calendar = Calendar.getInstance()
     cal.add(Calendar.DATE, -1)
     if (std) {
@@ -369,13 +402,30 @@ object CustomVariableUtils extends Logging {
   }
 
   /**
-    * Get Month"s date
-    *
-    * @param std   :2017-11-01
-    * @param isEnd :01 or 30,31
-    * @return
-    */
+   *
+   * @param std 202106
+   * @return
+   */
+  def getMonthDay(std: Boolean = true, date: Date = null): String = {
+    val dateFormat = dateFormatMonLocal.get()
+    val dateFormat_std = dateFormatMonStdLocal.get()
+    if (std) {
+      dateFormat_std.format(date)
+    } else {
+      dateFormat.format(date)
+    }
+  }
+
+  /**
+   * Get Month"s date
+   *
+   * @param std   :2017-11-01
+   * @param isEnd :01 or 30,31
+   * @return
+   */
   def getMonth(std: Boolean = true, isEnd: Boolean = false, date: Date): String = {
+    val dateFormat = dateFormatLocal.get()
+    val dateFormat_std = dateFormatStdLocal.get()
     val cal: Calendar = Calendar.getInstance()
     cal.setTime(date)
     cal.set(Calendar.DATE, 1)
@@ -389,14 +439,31 @@ object CustomVariableUtils extends Logging {
     }
   }
 
+  def getMon(std: Boolean = true, isEnd: Boolean = false, date: Date): String = {
+    val dateFormat = dateFormatMonLocal.get()
+    val dateFormat_std = dateFormatMonStdLocal.get()
+    val cal: Calendar = Calendar.getInstance()
+    cal.setTime(date)
+    if (isEnd) {
+      cal.set(Calendar.MONTH, Calendar.DECEMBER)
+    }
+    if (std) {
+      dateFormat_std.format(cal.getTime)
+    } else {
+      dateFormat.format(cal.getTime)
+    }
+  }
+
   /**
-    * get 1st day or last day of a Quarter
-    * @param std
-    * @param isEnd
-    * @param date
-    * @return
-    */
+   * get 1st day or last day of a Quarter
+   * @param std
+   * @param isEnd
+   * @param date
+   * @return
+   */
   def getQuarter(std: Boolean = true, isEnd: Boolean = false, date: Date): String = {
+    val dateFormat = dateFormatLocal.get()
+    val dateFormat_std = dateFormatStdLocal.get()
     val cal: Calendar = Calendar.getInstance()
     cal.setTime(date)
     cal.set(Calendar.DATE, 1)
@@ -422,13 +489,15 @@ object CustomVariableUtils extends Logging {
   }
 
   /**
-    * get 1st day or last day of a HalfYear
-    * @param std
-    * @param isEnd
-    * @param date
-    * @return
-    */
+   * get 1st day or last day of a HalfYear
+   * @param std
+   * @param isEnd
+   * @param date
+   * @return
+   */
   def getHalfYear(std: Boolean = true, isEnd: Boolean = false, date: Date): String = {
+    val dateFormat = dateFormatLocal.get()
+    val dateFormat_std = dateFormatStdLocal.get()
     val cal: Calendar = Calendar.getInstance()
     cal.setTime(date)
     cal.set(Calendar.DATE, 1)
@@ -450,13 +519,15 @@ object CustomVariableUtils extends Logging {
   }
 
   /**
-    * get 1st day or last day of a year
-    * @param std
-    * @param isEnd
-    * @param date
-    * @return
-    */
+   * get 1st day or last day of a year
+   * @param std
+   * @param isEnd
+   * @param date
+   * @return
+   */
   def getYear(std: Boolean = true, isEnd: Boolean = false, date: Date): String = {
+    val dateFormat = dateFormatLocal.get()
+    val dateFormat_std = dateFormatStdLocal.get()
     val cal: Calendar = Calendar.getInstance()
     cal.setTime(date)
     cal.set(Calendar.DATE, 1)
@@ -521,6 +592,18 @@ case class DateType(value: CustomDateType) extends VariableType {
 }
 
 case class MonthType(value: CustomMonthType) extends VariableType {
+  override def getValue: String = value.toString
+
+  def calculator(signal: String, bValue: String): String = {
+    signal match {
+      case "+" => value + bValue.toInt
+      case "-" => value - bValue.toInt
+      case _ => throw VarSubstitutionException(20046, s"Date class is not supported to uss：${signal}")
+    }
+  }
+}
+
+case class MonType(value: CustomMonType) extends VariableType {
   override def getValue: String = value.toString
 
   def calculator(signal: String, bValue: String): String = {
@@ -635,8 +718,8 @@ case class StringType(value: String) extends VariableType {
 
 class CustomDateType(date: String, std: Boolean = true) {
 
-  val dateFormat = new SimpleDateFormat("yyyyMMdd")
-  val dateFormat_std = new SimpleDateFormat("yyyy-MM-dd")
+  protected val dateFormat = dateFormatLocal.get()
+  protected val dateFormat_std = dateFormatStdLocal.get()
 
   def -(days: Int): String = {
     if (std) {
@@ -710,6 +793,36 @@ class CustomMonthType(date: String, std: Boolean = true, isEnd: Boolean = false)
 
 }
 
+class CustomMonType(date: String, std: Boolean = true, isEnd: Boolean = false) {
+
+  val dateFormat = new SimpleDateFormat("yyyyMM")
+
+  def -(months: Int): String = {
+    if (std) {
+      CustomVariableUtils.getMon(std, isEnd, DateUtils.addMonths(dateFormat.parse(date), -months))
+    } else {
+      CustomVariableUtils.getMon(std, isEnd, DateUtils.addMonths(dateFormat.parse(date), -months))
+    }
+  }
+
+  def +(months: Int): String = {
+    if (std) {
+      CustomVariableUtils.getMon(std, isEnd, DateUtils.addMonths(dateFormat.parse(date), months))
+    } else {
+      CustomVariableUtils.getMon(std, isEnd, DateUtils.addMonths(dateFormat.parse(date), months))
+    }
+  }
+
+  override def toString: String = {
+    if (std) {
+      CustomVariableUtils.getMon(std, isEnd, dateFormat.parse(date))
+    } else {
+      val v = dateFormat.parse(date)
+      CustomVariableUtils.getMon(std, isEnd, v)
+    }
+  }
+
+}
 
 /*
  Given a Date, convert into Quarter

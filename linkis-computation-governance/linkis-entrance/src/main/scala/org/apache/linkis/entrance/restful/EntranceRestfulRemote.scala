@@ -33,18 +33,14 @@ trait EntranceRestfulRemote {
   @RequestMapping(value = Array("/entrance/submit"), method = Array(RequestMethod.POST))
   def submit(req: HttpServletRequest, @RequestBody json: util.Map[String, Any]): Message
 
-  //  @RequestMapping(value = Array("/api/entrance/{id}"), method = Array(RequestMethod.GET))
-//  def get(@PathVariable("id") id: String): Response
-
   @RequestMapping(value = Array("/entrance/{id}/status"), method = Array(RequestMethod.GET))
-  def status(@PathVariable("id") id: String, @RequestParam(value="taskID",required = false) taskID:String): Message
+  def status(@PathVariable("id") id : String, @RequestParam(value = "taskID", required = false) taskID: String): Message
 
   @RequestMapping(value = Array("/entrance/{id}/progress"), method = Array(RequestMethod.POST))
   def progress(@PathVariable("id") id: String): Message
 
-  //TODO The resultSet interface is provided here, you need to think about it again, temporarily remove it.(resultSet这个接口是否在这里提供，还需再思考一下，先暂时去掉)
-//  @RequestMapping(value = Array("/api/entrance/{id}/resultSet"), method = Array(RequestMethod.POST))
-//  def resultSet(@PathVariable("id") id: String): Message
+  @RequestMapping(value = Array("/entrance/{id}/progressWithResource"), method = Array(RequestMethod.POST))
+  def progressWithResource(@PathVariable("id") id: String): Message
 
   @RequestMapping(value = Array("/entrance/{id}/log"), method = Array(RequestMethod.POST))
   def log(req: HttpServletRequest, @PathVariable("id") id: String): Message
@@ -53,7 +49,7 @@ trait EntranceRestfulRemote {
   def killJobs(req: HttpServletRequest, @RequestBody jsonNode: JsonNode): Message
 
   @RequestMapping(value = Array("/entrance/{id}/kill"), method = Array(RequestMethod.POST))
-  def kill(@PathVariable("id") id: String, @RequestParam("taskID") taskID:scala.Long): Message
+  def kill(@PathVariable("id") id : String, @RequestParam("taskID") taskID : scala.Long): Message
 
   @RequestMapping(value = Array("/entrance/{id}/pause"), method = Array(RequestMethod.POST))
   def pause(@PathVariable("id") id: String): Message

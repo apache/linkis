@@ -41,9 +41,6 @@
              <appender-ref ref="stderr"/>
         </root>
 
-        <logger name="org.apache.linkis.message.builder.DefaultMessageJob" level="warn" additivity="true">
-            <appender-ref ref="Console"/>
-        </logger>
 
     </loggers>
 </configuration>

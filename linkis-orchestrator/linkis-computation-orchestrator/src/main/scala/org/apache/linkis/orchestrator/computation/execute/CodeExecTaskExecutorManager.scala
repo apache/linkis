@@ -48,11 +48,39 @@ trait CodeExecTaskExecutorManager {
 
   def shutdown(): Unit
 
-  def delete(execTask: CodeLogicalUnitExecTask, executor: CodeExecTaskExecutor): Unit
+  /**
+   * The job execution process is normal. After the job is completed, you can call this method.
+   * This method will determine the bind engine label. If it is a non-end type job, no operation will be performed.
+   *
+   * @param execTask
+   * @param executor
+   */
+  protected def delete(execTask: CodeLogicalUnitExecTask, executor: CodeExecTaskExecutor): Unit
 
-  def unLockEngineConn(execTask: CodeLogicalUnitExecTask, execTaskExecutor: CodeExecTaskExecutor): Unit
+  /**
+   * If the job is executed abnormally, such as execution failure, or being killed,
+   * it will go to the process for cleaning up, and the engineConn lock will be released.
+   *
+   * @param execTask
+   * @param execTaskExecutor
+   */
+  protected def unLockEngineConn(execTask: CodeLogicalUnitExecTask, execTaskExecutor: CodeExecTaskExecutor): Unit
 
-  def markECFailed(execTask: CodeLogicalUnitExecTask, executor: CodeExecTaskExecutor): Unit
+  /**
+   * Task failed because ec exited unexpectedly, so need to clean up ec immediately
+   *
+   * @param execTask
+   * @param executor
+   */
+  protected def markECFailed(execTask: CodeLogicalUnitExecTask, executor: CodeExecTaskExecutor): Unit
+
+  /**
+   * The method of marking task completion externally
+   * @param execTask
+   * @param executor
+   * @param isSucceed
+   */
+  def markTaskCompleted(execTask: CodeLogicalUnitExecTask, executor: CodeExecTaskExecutor, isSucceed: Boolean): Unit
 
   def getAllInstanceToExecutorCache(): mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]]
 
@@ -66,12 +94,12 @@ object CodeExecTaskExecutorManager  extends Logging{
   private var codeExecTaskExecutorManager: CodeExecTaskExecutorManager = _
 
   def getCodeExecTaskExecutorManager: CodeExecTaskExecutorManager = {
-    if(codeExecTaskExecutorManager == null) synchronized {
-      if(codeExecTaskExecutorManager == null) {
-        val orchestratorBuilder = if(StringUtils.isNotBlank(ComputationOrchestratorConf.EXECUTOR_MANAGER_BUILDER_CLASS.getValue))
+    if (codeExecTaskExecutorManager == null) synchronized {
+      if (codeExecTaskExecutorManager == null) {
+        val orchestratorBuilder = if (StringUtils.isNotBlank(ComputationOrchestratorConf.EXECUTOR_MANAGER_BUILDER_CLASS.getValue)) {
           ClassUtils.getClassInstance(ComputationOrchestratorConf.EXECUTOR_MANAGER_BUILDER_CLASS.getValue)
-        else  new DefaultCodeExecTaskExecutorManager
-        info("Use " + orchestratorBuilder.getClass.getName + " to instance a new codeExecTaskExecutorManager.")
+        } else new DefaultCodeExecTaskExecutorManager
+        logger.info("Use " + orchestratorBuilder.getClass.getName + " to instance a new codeExecTaskExecutorManager.")
         codeExecTaskExecutorManager = orchestratorBuilder
       }
     }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.entrance.log
 
 import java.io.{Closeable, IOException, InputStream}
@@ -34,7 +34,7 @@ abstract class LogReader(charset: String) extends Closeable with Logging{
   @throws[IOException]
   def getInputStream: InputStream
 
-  def getCharset:String = charset
+  def getCharset: String = charset
 
   /**
     * Get logs and sort by log level(获取日志，并按照日志级别分类)
@@ -57,7 +57,7 @@ abstract class LogReader(charset: String) extends Closeable with Logging{
     val all = new StringBuilder
     val read = readLog(singleLog => {
       val length = 1
-      if (StringUtils.isNotBlank(singleLog)){
+      if (StringUtils.isNotBlank(singleLog)) {
         singleLog match {
           case ERROR_HEADER1() | ERROR_HEADER2() =>
             concatLog(length, singleLog, error, all)
@@ -87,11 +87,11 @@ abstract class LogReader(charset: String) extends Closeable with Logging{
     read
   }
 
-  private def concatLog(length:Int, log:String, flag:StringBuilder, all:StringBuilder):Unit = {
-    if(length == 1){
+  private def concatLog(length: Int, log: String, flag: StringBuilder, all: StringBuilder): Unit = {
+    if (length == 1) {
       flag ++= log ++= "\n"
       all ++= log ++= "\n"
-    }else{
+    } else {
       flag ++= log ++= "\n\n"
       all ++= log ++= "\n\n"
     }
@@ -100,7 +100,7 @@ abstract class LogReader(charset: String) extends Closeable with Logging{
 
   def read(logs: java.lang.StringBuilder, fromLine: Int, size: Int = 100): Int = {
     logs.setLength(0)
-    val read = readLog((r:String) => {
+    val read = readLog((r: String) => {
       logs.append(r)
       logs.append("\n")}, fromLine, size)
     if(logs.length() > 0) logs.setLength(logs.length() - 1)
@@ -108,13 +108,13 @@ abstract class LogReader(charset: String) extends Closeable with Logging{
   }
 
   protected def readLog(deal: String => Unit, fromLine: Int, size: Int = 100): Int = {
-    val from = if(fromLine < 0) 0 else fromLine
+    val from = if (fromLine < 0) 0 else fromLine
     var line, read = 0
     val lineIterator = IOUtils.lineIterator(getInputStream, charset)
     Utils.tryFinally(
-      while(lineIterator.hasNext && (read < size || size < 0)) {
+      while (lineIterator.hasNext && (read < size || size < 0)) {
         val r = lineIterator.next()
-        if(line >= from) {
+        if (line >= from) {
           deal(r)
           read += 1
         }

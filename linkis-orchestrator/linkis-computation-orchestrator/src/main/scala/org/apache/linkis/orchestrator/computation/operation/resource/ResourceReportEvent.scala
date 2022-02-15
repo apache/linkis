@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.message.builder;
+package org.apache.linkis.orchestrator.computation.operation.resource
 
-public enum MessageJobTimeoutPolicy {
-    CANCEL,
+import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
+import org.apache.linkis.orchestrator.Orchestration
 
-    INTERRUPT,
+import java.util
 
-    PARTIAL
-}
+
+case class ResourceReportEvent(orchestration: Orchestration, resourceMap: util.HashMap[String, ResourceWithStatus])

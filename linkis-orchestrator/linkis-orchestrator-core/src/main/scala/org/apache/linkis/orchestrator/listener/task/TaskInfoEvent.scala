@@ -23,6 +23,9 @@ import org.apache.linkis.orchestrator.execution.CompletedTaskResponse
 import org.apache.linkis.orchestrator.listener.{OrchestratorAsyncEvent, OrchestratorSyncEvent}
 import org.apache.linkis.orchestrator.plans.physical.ExecTask
 import org.apache.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
+
+import java.util
 
 /**
   *
@@ -74,3 +77,6 @@ case class TaskProgressEvent(execTask: ExecTask, progress: Float, progressInfo: 
 }
 
 case class TaskConsumerEvent(execTask: ExecTask) extends TaskInfoEvent with OrchestratorAsyncEvent
+
+case class TaskYarnResourceEvent(execTask: ExecTask, resourceMap: util.HashMap[String, ResourceWithStatus]) extends TaskInfoEvent with OrchestratorAsyncEvent
+

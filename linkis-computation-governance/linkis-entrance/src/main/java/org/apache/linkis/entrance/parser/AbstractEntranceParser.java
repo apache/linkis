@@ -135,11 +135,9 @@ public abstract class AbstractEntranceParser extends EntranceParser {
                     EntranceErrorCode.LABEL_PARAMS_INVALID.getErrCode(), msg);
         }
         job.setParams(jobReq.getParams());
-        // TODO 放置source到RequestTask的properties中，后续会进行优化
         Map<String, Object> properties = TaskUtils.getRuntimeMap(job.getParams());
         properties.put(GovernanceConstant.TASK_SOURCE_MAP_KEY(), jobReq.getSource());
         job.setEntranceListenerBus(entranceContext.getOrCreateEventListenerBus());
-        // job.setEntranceLogListenerBus(entranceContext.getOrCreateLogListenerBus());
         job.setEntranceContext(entranceContext);
         job.setListenerEventBus(null);
         job.setProgress(0f);

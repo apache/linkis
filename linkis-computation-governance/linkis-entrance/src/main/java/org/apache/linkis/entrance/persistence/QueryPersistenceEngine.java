@@ -160,7 +160,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
 
     @Override
     public SubJobDetail retrieveJobDetailReq(Long jobDetailId)
-            throws EntranceIllegalParamException, QueryFailedException, EntranceRPCException {
+            throws EntranceIllegalParamException, EntranceRPCException {
 
         if (jobDetailId == null || jobDetailId < 0) {
             throw new EntranceIllegalParamException(20003, "taskID can't be null or less than 0");

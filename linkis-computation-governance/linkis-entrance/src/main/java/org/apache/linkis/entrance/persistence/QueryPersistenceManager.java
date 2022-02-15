@@ -87,7 +87,7 @@ public class QueryPersistenceManager extends PersistenceManager {
         String path;
         try {
             path = createResultSetEngine().persistResultSet(job, response);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             String msg =
                     "Persist resultSet failed for subJob : "
                             + job.getId()
@@ -97,7 +97,7 @@ public class QueryPersistenceManager extends PersistenceManager {
             if (null != job) {
                 job.onFailure("persist resultSet failed!", e);
             } else {
-                logger.error("Cannot find job : {} in cache of ExecutorManager.", job.getId());
+                logger.error("Cannot find job : {} in cache of ExecutorManager.", job.getId(), e);
             }
             return;
         }
@@ -117,7 +117,7 @@ public class QueryPersistenceManager extends PersistenceManager {
                                 .getSubJobDetail()
                                 .setResultLocation(new FsPath(path).getSchemaPath());
                         createPersistenceEngine().updateIfNeeded(subJobInfo);
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         entranceContext.getOrCreateLogManager().onLogUpdate(job, e.toString());
                     }
                 }
@@ -128,7 +128,7 @@ public class QueryPersistenceManager extends PersistenceManager {
     @Override
     public void onProgressUpdate(Job job, float progress, JobProgressInfo[] progressInfo) {
         float updatedProgress = progress;
-        if (progress < 0) {
+        if (updatedProgress < 0) {
             logger.error(
                     "Got negitive progress : "
                             + progress
@@ -209,7 +209,6 @@ public class QueryPersistenceManager extends PersistenceManager {
         try {
             jobRequest = this.entranceContext.getOrCreateEntranceParser().parseToJobRequest(job);
             if (job.isSucceed()) {
-                // 如果是job是成功的，那么需要将task的错误描述等都要设置为null
                 jobRequest.setErrorCode(0);
                 jobRequest.setErrorDesc("");
             }

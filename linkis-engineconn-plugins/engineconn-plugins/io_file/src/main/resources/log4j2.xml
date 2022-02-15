@@ -22,16 +22,27 @@
             <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M - %msg%xEx%n"/>
         </Console>
-        <File name="stderr" fileName="${env:PWD}/logs/stderr" append="true">
+
+        <Send name="Send" >
+            <Filters>
+                <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY" />
+            </Filters>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M - %msg%xEx%n"/>
+        </Send>
+
+        <Console name="stderr" target="SYSTEM_ERR">
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
-        </File>
+        </Console>
     </appenders>
     <loggers>
         <root level="INFO">
              <appender-ref ref="Console"/>
+             <appender-ref ref="stderr"/>
         </root>
-        <logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter " level="error" additivity="true">
-            <appender-ref ref="stderr"/>
+
+        <logger name="org.apache.linkis.message.builder.DefaultMessageJob" level="warn" additivity="true">
+            <appender-ref ref="Console"/>
         </logger>
 
     </loggers>

@@ -38,6 +38,18 @@
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-scheduler</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-scheduler</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-cs-cache</artifactId>
             <version>${linkis.version}</version>
             <exclusions>
@@ -73,7 +85,7 @@
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.linkis</groupId>
-                    <artifactId>linkis-message-scheduler</artifactId>
+                    <artifactId>linkis-rpc</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -85,16 +97,26 @@
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.linkis</groupId>
-                    <artifactId>linkis-message-scheduler</artifactId>
+                    <artifactId>linkis-rpc</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-message-scheduler</artifactId>
+            <artifactId>linkis-rpc</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jcl</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

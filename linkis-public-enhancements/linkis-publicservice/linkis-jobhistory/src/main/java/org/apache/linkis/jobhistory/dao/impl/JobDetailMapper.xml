@@ -22,13 +22,13 @@
 
     <resultMap id="jobDetailMap" type="org.apache.linkis.jobhistory.entity.JobDetail" autoMapping="false" >
         <id property = "id" column = "id" />
-        <result property = "job_history_id" column = "job_history_id" />
-        <result property = "result_location" column = "result_location" />
-        <result property = "result_array_size" column = "result_array_size" />
-        <result property = "execution_content" column = "execution_content" />
-        <result property = "job_group_info" column = "job_group_info" />
-        <result property = "created_time" column = "created_time" />
-        <result property = "updated_time" column = "updated_time" />
+        <result property = "jobHistoryId" column = "job_history_id" />
+        <result property = "resultLocation" column = "result_location" />
+        <result property = "resultArraySize" column = "result_array_size" />
+        <result property = "executionContent" column = "execution_content" />
+        <result property = "jobGroupInfo" column = "job_group_info" />
+        <result property = "createdTime" column = "created_time" />
+        <result property = "updatedTime" column = "updated_time" />
         <result property = "status" column = "status" />
         <result property = "priority" column = "priority" />
     </resultMap>
@@ -43,8 +43,8 @@
 
     <insert id="insertJobDetail" flushCache="true" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.jobhistory.entity.JobDetail">
         INSERT INTO linkis_ps_job_history_detail(<include refid="insert_job_list"/>)
-        VALUES (#{job_history_id},#{result_location},#{result_array_size},#{execution_content},#{job_group_info},
-        #{created_time},#{updatedTimeMills},#{status},#{priority})
+        VALUES (#{jobHistoryId},#{resultLocation},#{resultArraySize},#{executionContent},#{jobGroupInfo},
+        #{createdTime},#{updatedTimeMills},#{status},#{priority})
     </insert>
 
     <select id="selectJobDetailByJobDetailId" resultMap="jobDetailMap" >
@@ -97,11 +97,11 @@
         UPDATE linkis_ps_job_history_detail
         <trim prefix="set" suffixOverrides=",">
             <if test="updatedTimeMills != null">updated_time = #{updatedTimeMills},</if>
-            <if test="result_location != null">result_location = #{result_location},</if>
-            <if test="result_array_size != null">result_array_size = #{result_array_size},</if>
-            <if test="execution_content!= null">execution_content = #{execution_content},</if>
-            <if test="job_group_info != null">job_group_info = #{job_group_info},</if>
-            <if test="created_time != null">created_time = #{created_time},</if>
+            <if test="resultLocation != null">result_location = #{resultLocation},</if>
+            <if test="resultArraySize != null">result_array_size = #{resultArraySize},</if>
+            <if test="executionContent!= null">execution_content = #{executionContent},</if>
+            <if test="jobGroupInfo != null">job_group_info = #{jobGroupInfo},</if>
+            <if test="createdTime != null">created_time = #{createdTime},</if>
             <if test="status != null">status = #{status},</if>
             <if test="priority != null">priority = #{priority},</if>
         </trim>

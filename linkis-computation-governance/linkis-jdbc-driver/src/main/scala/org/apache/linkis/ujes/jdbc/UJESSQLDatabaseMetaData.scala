@@ -19,17 +19,16 @@ package org.apache.linkis.ujes.jdbc
 
 import java.sql.{Connection, DatabaseMetaData, ResultSet, RowIdLifetime}
 import java.util
-
 import org.apache.linkis.ujes.client.request.{GetColumnsAction, GetDBSAction, GetTablesAction}
 import org.apache.linkis.ujes.jdbc.entity.JdbcColumn
 import org.apache.linkis.ujes.jdbc.utils.JDBCUtils
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.common.utils.Logging
 
 import scala.collection.JavaConversions._
 
 
-
-class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends DatabaseMetaData {
+class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends DatabaseMetaData with Logging {
   override def allProceduresAreCallable(): Boolean = false
 
   override def allTablesAreSelectable(): Boolean = false
@@ -279,6 +278,7 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends Data
     } else {
       s"${getUserName}_ind"
     }
+    logger.info(s"resultCatalog is ${resultCatalog}")
     val getTableAction = GetTablesAction.builder().setUser(getUserName).setDatabase(resultCatalog).build()
     val result = ujesSQLConnection.ujesClient.getTables(getTableAction)
     val tables = result.getTables
@@ -293,47 +293,51 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends Data
         resultTables.add(resultTable)
       }
     }
-    new LinkisMetaDataResultSet[util.Map[String, String]](util.Arrays.asList("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "TABLE_TYPE", "REMARKS"), util.Arrays.asList("string", "string", "string", "string", "string"), resultTables) {
+    val resultSet: LinkisMetaDataResultSet[util.Map[String, String]] =
+      new LinkisMetaDataResultSet[util.Map[String, String]](util.Arrays.asList("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "TABLE_TYPE", "REMARKS"),
+        util.Arrays.asList("string", "string", "string", "string", "string"),
+        resultTables) {
+        private var cnt = 0
 
-      private var cnt = 0
-
-      override def next(): Boolean = {
-        if (cnt < data.size()) {
-          val resultTable = new util.ArrayList[Object](5)
-          val table = data.get(cnt)
-          resultTable.add(table.get("catalog"))
-          resultTable.add(null)
-          resultTable.add(table.get("tableName"))
-          resultTable.add(table.get("tableType"))
-          resultTable.add(table.get(""))
-          row = resultTable
-          cnt = cnt + 1
-          true
-        } else {
-          false
+        override def next(): Boolean = {
+          if (cnt < data.size()) {
+            val resultTable = new util.ArrayList[Object](5)
+            val table = data.get(cnt)
+            resultTable.add(table.get("catalog"))
+            resultTable.add(null)
+            resultTable.add(table.get("tableName"))
+            resultTable.add(table.get("tableType"))
+            resultTable.add(table.get(""))
+            row = resultTable
+            cnt = cnt + 1
+            true
+          } else {
+            false
+          }
         }
       }
-    }
-
+    logger.info(s"resultSet is ${resultSet}")
+    resultSet
   }
 
   override def getSchemas: ResultSet = {
-    new LinkisMetaDataResultSet(util.Arrays.asList("TABLE_SCHEM", "TABLE_CATALOG"), util.Arrays.asList("string", "string"), null) {
-      override def next(): Boolean = false
-    }
+    getCatalogs
   }
 
   override def getCatalogs: ResultSet = {
     val getDBSAction = GetDBSAction.builder().setUser(getUserName).build()
     val dBSResult = ujesSQLConnection.ujesClient.getDBS(getDBSAction)
     val dbsName = dBSResult.getDBSName()
-    new LinkisMetaDataResultSet[String](util.Arrays.asList("TABLE_SCHEM", "TABLE_CATALOG"), util.Arrays.asList("string", "string"), dbsName) {
+    import scala.collection.JavaConversions._
+    logger.info(s"dbNames are " + dbsName.mkString(","))
+    new LinkisMetaDataResultSet[String](util.Arrays.asList("TABLE_SCHEMA", "TABLE_CATALOG"),
+      util.Arrays.asList("string", "string"), dbsName) {
       private var cnt = 0
 
       override def next(): Boolean = {
         if (cnt < data.size()) {
           val db = new util.ArrayList[Object](2)
-          db.add(null)
+          db.add(data.get(cnt))
           db.add(data.get(cnt))
           row = db
           cnt = cnt + 1
@@ -542,7 +546,12 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends Data
 
   override def getRowIdLifetime: RowIdLifetime = throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getRowIdLifetime not supported")
 
-  override def getSchemas(catalog: String, schemaPattern: String): ResultSet = null
+  override def getSchemas(catalog: String, schemaPattern: String): ResultSet = {
+    logger.info("get schemas for linkis")
+    val resultSet = getCatalogs
+    logger.info(s"schemas is ${resultSet}")
+    resultSet
+  }
 
   override def supportsStoredFunctionsUsingCallSyntax(): Boolean = false
 

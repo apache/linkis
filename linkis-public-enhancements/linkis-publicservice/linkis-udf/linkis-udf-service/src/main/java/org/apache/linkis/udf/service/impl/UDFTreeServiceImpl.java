@@ -18,11 +18,11 @@
 package org.apache.linkis.udf.service.impl;
 
 import org.apache.linkis.udf.dao.UDFTreeDao;
-import org.apache.linkis.udf.entity.UDFInfo;
 import org.apache.linkis.udf.entity.UDFTree;
 import org.apache.linkis.udf.excepiton.UDFException;
 import org.apache.linkis.udf.service.UDFService;
 import org.apache.linkis.udf.service.UDFTreeService;
+import org.apache.linkis.udf.vo.UDFInfoVo;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
@@ -35,29 +35,24 @@ import com.google.common.collect.Iterables;
 
 import java.util.*;
 
+import static org.apache.linkis.udf.utils.ConstantVar.*;
+
 @Service
 public class UDFTreeServiceImpl implements UDFTreeService {
 
     private static final Logger logger = Logger.getLogger(UDFTreeServiceImpl.class);
 
-    private static final int THREE = 3;
-
     @Autowired private UDFTreeDao udfTreeDao;
-
     @Autowired private UDFService udfService;
 
     Map<String, List<UDFTree>> firstFloor = new HashMap<>();
-
-    public static final String SYS_USER = "sys";
-    public static final String BDP_USER = "bdp";
-    public static final String SHARE_USER = "share";
-
     Map<String, String> firstFloorName = new HashedMap();
 
     {
         firstFloorName.put(SYS_USER, "系统函数");
         firstFloorName.put(BDP_USER, "BDAP函数");
         firstFloorName.put(SHARE_USER, "共享函数");
+        firstFloorName.put(EXPIRE_USER, "过期函数");
     }
 
     /**
@@ -71,8 +66,7 @@ public class UDFTreeServiceImpl implements UDFTreeService {
     @Override
     public UDFTree initTree(String userName, String category) throws UDFException {
         List<UDFTree> childrens = new ArrayList<>();
-        if (firstFloor.get(category) == null || firstFloor.get(category).size() != THREE) {
-
+        if (firstFloor.get(category) == null || firstFloor.get(category).size() != 4) {
             List<UDFTree> root = new ArrayList<>();
             // sys
             root.add(0, getFirstFloor(SYS_USER, category));
@@ -80,10 +74,12 @@ public class UDFTreeServiceImpl implements UDFTreeService {
             root.add(1, getFirstFloor(BDP_USER, category));
             // shared
             root.add(2, getFirstFloor(SHARE_USER, category));
+            // expired
+            root.add(3, getFirstFloor(EXPIRE_USER, category));
 
             firstFloor.put(category, root);
         }
-        for (int i = 0; i < THREE; i++) {
+        for (int i = 0; i < 4; i++) {
             childrens.add(firstFloor.get(category).get(i));
         }
         childrens.add(getFirstFloor(userName, category));
@@ -190,7 +186,7 @@ public class UDFTreeServiceImpl implements UDFTreeService {
         if (id == null || id < 0) {
             udfTree = initTree(userName, category);
         } else {
-            udfTree = udfTreeDao.getTreeById(id, category);
+            udfTree = udfTreeDao.getTreeByIdAndCategory(id, category);
             if (udfTree == null) {
                 return udfTree;
             }
@@ -199,7 +195,7 @@ public class UDFTreeServiceImpl implements UDFTreeService {
             params.put("category", category);
             // TODO Determine if the user can list(判断用户是否可以list)
             List<UDFTree> childrens = udfTreeDao.getTreesByParentId(params);
-            List<UDFInfo> udfInfos = null;
+            List<UDFInfoVo> udfInfos = null;
             switch (type) {
                 case SYS_USER:
                     udfInfos = udfService.getUDFSByTreeIdAndUser(udfTree.getId(), type, category);
@@ -210,7 +206,10 @@ public class UDFTreeServiceImpl implements UDFTreeService {
                     // case "self": udfInfos =  udfService.getUDFInfoByTreeId(udfTree.getId(),
                     // userName); break;
                 case SHARE_USER:
-                    udfInfos = udfService.getSharedUDFInfos(udfTree.getId(), userName, category);
+                    udfInfos = udfService.getSharedUDFs(userName, category);
+                    break;
+                case EXPIRE_USER:
+                    udfInfos = udfService.getExpiredUDFs(userName, category);
                     break;
                 default:
                     udfInfos = udfService.getUDFInfoByTreeId(udfTree.getId(), userName, category);
@@ -223,6 +222,7 @@ public class UDFTreeServiceImpl implements UDFTreeService {
     }
 
     @Override
+    @Deprecated
     public UDFTree getSharedTree(String category) throws UDFException {
         Map<String, Object> params = new HashedMap();
         params.put("parent", -1L);

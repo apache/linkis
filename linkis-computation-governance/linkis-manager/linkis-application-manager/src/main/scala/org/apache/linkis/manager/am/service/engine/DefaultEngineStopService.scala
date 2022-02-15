@@ -17,18 +17,17 @@
 
 package org.apache.linkis.manager.am.service.engine
 
-import java.util.concurrent.TimeUnit
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.common.entity.node.EngineNode
-import org.apache.linkis.manager.common.protocol.engine.{EngineConnReleaseRequest, EngineInfoClearRequest, EngineStopRequest, EngineSuicideRequest}
+import org.apache.linkis.manager.common.exception.RMErrorException
+import org.apache.linkis.manager.common.protocol.engine.{EngineConnReleaseRequest, EngineStopRequest, EngineSuicideRequest}
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.label.service.impl.DefaultNodeLabelRemoveService
-import org.apache.linkis.message.annotation.Receiver
-import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.rpc.serializer.annotation.Receiver
 import org.apache.linkis.protocol.label.NodeLabelRemoveRequest
-import org.apache.linkis.resourcemanager.exception.{RMErrorCode, RMErrorException}
+import org.apache.linkis.resourcemanager.exception.RMErrorCode
 import org.apache.linkis.resourcemanager.service.impl.DefaultResourceManager
 import org.apache.linkis.rpc.Sender
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,7 +42,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
   private var nodeLabelService: NodeLabelService = _
 
   @Autowired
-   var resourceManager: DefaultResourceManager = _
+  private var resourceManager: DefaultResourceManager = _
 
   @Autowired
   private var nodeLabelRemoveService: DefaultNodeLabelRemoveService = _
@@ -52,8 +51,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
 
 
   @Receiver
-  override def stopEngine(engineStopRequest: EngineStopRequest): Unit = {
-    //TODO delete
+  override def stopEngine(engineStopRequest: EngineStopRequest, sender: Sender): Unit = {
     engineStopRequest.getServiceInstance.setApplicationName(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
     logger.info(s" user ${engineStopRequest.getUser} prepare to stop engine ${engineStopRequest.getServiceInstance}")
     val node = getEngineNodeManager.getEngineNode(engineStopRequest.getServiceInstance)
@@ -79,7 +77,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
    * 3. to clear am info
    * @param ecNode
    */
-  private def engineConnInfoClear(ecNode: EngineNode): Unit = {
+  override def engineConnInfoClear(ecNode: EngineNode): Unit = {
     logger.info(s"Start to clear ec info $ecNode")
     // 1. to clear engine resource
     Utils.tryCatch{
@@ -102,13 +100,13 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
   }
 
   @Receiver
-  override def engineSuicide(engineSuicideRequest: EngineSuicideRequest): Unit = {
+  override def engineSuicide(engineSuicideRequest: EngineSuicideRequest, sender: Sender): Unit = {
     logger.info(s"Will ask engine : ${engineSuicideRequest.getServiceInstance.toString} of user : ${engineSuicideRequest.getUser} to suicide.")
     EngineStopService.askEngineToSuicide(engineSuicideRequest)
   }
 
   @Receiver
-  override def dealEngineRelease(engineConnReleaseRequest: EngineConnReleaseRequest): Unit = {
+  override def dealEngineRelease(engineConnReleaseRequest: EngineConnReleaseRequest, sender: Sender): Unit = {
     info(s"Start to kill engine , with msg : ${engineConnReleaseRequest.getMsg}, ${engineConnReleaseRequest.getServiceInstance.toString}")
     if (null == engineConnReleaseRequest.getServiceInstance) {
       warn(s"Invalid empty serviceInstance, will not kill engine.")
@@ -127,7 +125,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
   override def asyncStopEngine(engineStopRequest: EngineStopRequest): Unit = {
     Future {
       info(s"Start to async stop engineFailed $engineStopRequest")
-      Utils.tryAndErrorMsg(stopEngine(engineStopRequest))(s"async stop engineFailed $engineStopRequest")
+      Utils.tryAndErrorMsg(stopEngine(engineStopRequest, Sender.getSender(Sender.getThisServiceInstance)))(s"async stop engineFailed $engineStopRequest")
     }
   }
 }

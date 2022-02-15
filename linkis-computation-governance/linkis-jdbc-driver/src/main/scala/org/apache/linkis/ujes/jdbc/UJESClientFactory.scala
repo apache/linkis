@@ -19,25 +19,24 @@ package org.apache.linkis.ujes.jdbc
 
 import java.util
 import java.util.Properties
-
 import org.apache.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy
 import org.apache.linkis.httpclient.dws.config.DWSClientConfigBuilder
 import org.apache.linkis.ujes.client.UJESClient
 import org.apache.linkis.ujes.jdbc.UJESSQLDriverMain._
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.common.utils.Logging
 
-
-object UJESClientFactory {
+object UJESClientFactory extends Logging {
 
   private val ujesClients = new util.HashMap[String, UJESClient]
 
   def getUJESClient(props: Properties): UJESClient = {
     val host = props.getProperty(HOST)
     val port = props.getProperty(PORT)
-    val serverUrl = if(StringUtils.isNotBlank(port)) s"http://$host:$port" else "http://" + host
-    if(ujesClients.containsKey(serverUrl)) ujesClients.get(serverUrl)
+    val serverUrl = if (StringUtils.isNotBlank(port)) s"http://$host:$port" else "http://" + host
+    if (ujesClients.containsKey(serverUrl)) ujesClients.get(serverUrl)
     else serverUrl.intern synchronized {
-      if(ujesClients.containsKey(serverUrl)) return ujesClients.get(serverUrl)
+      if (ujesClients.containsKey(serverUrl)) return ujesClients.get(serverUrl)
       val ujesClient = createUJESClient(serverUrl, props)
       ujesClients.put(serverUrl, ujesClient)
       ujesClient
@@ -75,7 +74,7 @@ object UJESClientFactory {
         }
       }
     }
-    if(!versioned) clientConfigBuilder.setDWSVersion("v" + DEFAULT_VERSION)
+    if (!versioned) clientConfigBuilder.setDWSVersion("v" + DEFAULT_VERSION)
     UJESClient(clientConfigBuilder.build())
   }
 

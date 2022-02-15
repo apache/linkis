@@ -17,13 +17,14 @@
 
 package org.apache.linkis.resourcemanager.external.service.impl;
 
+import org.apache.linkis.manager.common.conf.RMConfiguration;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
+import org.apache.linkis.manager.common.exception.RMErrorException;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.cluster.ClusterLabel;
 import org.apache.linkis.resourcemanager.domain.RMLabelContainer;
-import org.apache.linkis.resourcemanager.exception.RMErrorException;
 import org.apache.linkis.resourcemanager.external.dao.ExternalResourceProviderDao;
 import org.apache.linkis.resourcemanager.external.domain.ExternalAppInfo;
 import org.apache.linkis.resourcemanager.external.domain.ExternalResourceIdentifier;
@@ -33,7 +34,6 @@ import org.apache.linkis.resourcemanager.external.parser.YarnResourceIdentifierP
 import org.apache.linkis.resourcemanager.external.request.ExternalResourceRequester;
 import org.apache.linkis.resourcemanager.external.service.ExternalResourceService;
 import org.apache.linkis.resourcemanager.external.yarn.YarnResourceRequester;
-import org.apache.linkis.resourcemanager.utils.RMConfiguration;
 import org.apache.linkis.resourcemanager.utils.RMUtils;
 
 import org.apache.commons.lang.exception.ExceptionUtils;

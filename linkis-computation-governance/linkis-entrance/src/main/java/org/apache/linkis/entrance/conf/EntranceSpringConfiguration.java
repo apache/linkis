@@ -59,7 +59,7 @@ public class EntranceSpringConfiguration {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     {
-        logger.info("load the ujes-entrance spring configuration.");
+        logger.info("load the linkis-cg-entrance spring configuration.");
     }
 
     @PersistenceEngineBeanAnnotation
@@ -118,8 +118,8 @@ public class EntranceSpringConfiguration {
             new OnceJobInterceptor(),
             new CSEntranceInterceptor(),
             new ShellDangerousGrammerInterceptor(),
-            new PythonCodeCheckInterceptor(),
-            new DBInfoCompleteInterceptor(),
+            // new PythonCodeCheckInterceptor(),
+            // new DBInfoCompleteInterceptor(),
             new SparkCodeCheckInterceptor(),
             new SQLCodeCheckInterceptor(),
             new LabelCheckInterceptor(),
@@ -193,38 +193,6 @@ public class EntranceSpringConfiguration {
         return new EntranceSchedulerContext(groupFactory, consumerManager, executorManager);
     }
 
-    /* @EngineRequesterBeanAnnotation
-        @ConditionalOnMissingBean(name = {EngineRequesterBeanAnnotation.BEAN_NAME})
-        public EngineRequester generateEngineRequester(){
-            return new EngineRequesterImpl();
-        }
-    */
-    /*  @EngineSelectorBeanAnnotation
-        @ConditionalOnMissingBean(name = {EngineSelectorBeanAnnotation.BEAN_NAME})
-        public EngineSelector generateEngineSelector(@EntranceListenerBusBeanAnnotation.EntranceListenerBusAutowiredAnnotation
-                                                                 EntranceEventListenerBus<EntranceEventListener, EntranceEvent> entranceEventListenerBus) {
-            SingleEngineSelector singleEngineSelector = new SingleEngineSelector();
-            singleEngineSelector.setEntranceEventListenerBus(entranceEventListenerBus);
-            return singleEngineSelector;
-        }
-    */
-    /*@EngineBuilderBeanAnnotation
-    @ConditionalOnMissingBean(name = {EngineBuilderBeanAnnotation.BEAN_NAME})
-    public EngineBuilder generateEngineBuilder(@GroupFactoryBeanAnnotation.GroupFactoryAutowiredAnnotation GroupFactory groupFactory) {
-        return new AbstractEngineBuilder(groupFactory) {
-            @Override
-            public EntranceEngine createEngine(long id) {
-                return new SingleEntranceEngine(id);
-            }
-        };
-    }*/
-
-    /* @EngineManagerBeanAnnotation
-    @ConditionalOnMissingBean(name = {EngineManagerBeanAnnotation.BEAN_NAME})
-    public EngineManager generateEngineManager() {
-        return new EngineManagerImpl();
-    }*/
-
     @EntranceExecutorManagerBeanAnnotation
     @ConditionalOnMissingBean(name = {EntranceExecutorManagerBeanAnnotation.BEAN_NAME})
     public ExecutorManager generateExecutorManager(
@@ -245,22 +213,4 @@ public class EntranceSpringConfiguration {
         scheduler.start();
         return scheduler;
     }
-
-    /*  @NewEngineBroadcastListenerBeanAnnotation
-    @ConditionalOnMissingBean(name = {NewEngineBroadcastListenerBeanAnnotation.BEAN_NAME})
-    public NewEngineBroadcastListener generateNewEngineBroadcastListener(@EntranceExecutorManagerBeanAnnotation.EntranceExecutorManagerAutowiredAnnotation
-                                                                                 EntranceExecutorManager entranceExecutorManager) {
-        NewEngineBroadcastListener newEngineBroadcastListener = new NewEngineBroadcastListener();
-        newEngineBroadcastListener.setEntranceExecutorManager(entranceExecutorManager);
-        return newEngineBroadcastListener;
-    }
-
-    @ResponseEngineStatusChangedBroadcastListenerBeanAnnotation
-    @ConditionalOnMissingBean(name = {ResponseEngineStatusChangedBroadcastListenerBeanAnnotation.BEAN_NAME})
-    public ResponseEngineStatusChangedBroadcastListener generateResponseEngineStatusChangedBroadcastListener(@EntranceExecutorManagerBeanAnnotation.EntranceExecutorManagerAutowiredAnnotation
-                                                                                 EntranceExecutorManager entranceExecutorManager) {
-        ResponseEngineStatusChangedBroadcastListener broadcastListener = new ResponseEngineStatusChangedBroadcastListener();
-        broadcastListener.setEntranceExecutorManager(entranceExecutorManager);
-        return broadcastListener;
-    }*/
 }

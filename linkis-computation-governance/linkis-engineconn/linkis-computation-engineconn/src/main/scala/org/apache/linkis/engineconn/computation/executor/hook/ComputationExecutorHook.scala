@@ -54,5 +54,5 @@ object ComputationExecutorHook extends Logging {
     hooks.sortWith((a, b) => a.getOrder() <= b.getOrder()).toArray
   }
 
-  def getComputationExecutorHooks = computationExecutorHooks
+  def getComputationExecutorHooks: Array[ComputationExecutorHook] = computationExecutorHooks
 }

@@ -20,20 +20,17 @@ package org.apache.linkis.udf.entity;
 import java.util.Date;
 
 public class UDFInfo {
-
     private Long id;
     private String createUser;
     private String udfName;
     private Integer udfType;
-    private String path;
-    private String registerFormat;
-    private String useFormat;
-    private String description;
     private Boolean isExpire;
     private Boolean isShared;
     private Long treeId;
     private Date createTime;
     private Date updateTime;
+    private String sys;
+    private String clusterName;
 
     private Boolean isLoad;
 
@@ -58,10 +55,6 @@ public class UDFInfo {
         this.createUser = createUser;
         this.udfName = udfName;
         this.udfType = udfType;
-        this.path = path;
-        this.registerFormat = registerFormat;
-        this.useFormat = useFormat;
-        this.description = description;
         this.isExpire = isExpire;
         this.isShared = isShared;
         this.treeId = treeId;
@@ -100,38 +93,6 @@ public class UDFInfo {
 
     public void setUdfType(Integer udfType) {
         this.udfType = udfType;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getRegisterFormat() {
-        return registerFormat;
-    }
-
-    public void setRegisterFormat(String registerFormat) {
-        this.registerFormat = registerFormat;
-    }
-
-    public String getUseFormat() {
-        return useFormat;
-    }
-
-    public void setUseFormat(String useFormat) {
-        this.useFormat = useFormat;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Boolean getExpire() {
@@ -180,5 +141,21 @@ public class UDFInfo {
 
     public void setLoad(Boolean load) {
         isLoad = load;
+    }
+
+    public String getSys() {
+        return sys;
+    }
+
+    public void setSys(String sys) {
+        this.sys = sys;
+    }
+
+    public String getClusterName() {
+        return clusterName;
+    }
+
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
     }
 }

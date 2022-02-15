@@ -41,8 +41,7 @@ import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.UserModifiable;
 import org.apache.linkis.manager.label.exception.LabelErrorException;
 import org.apache.linkis.manager.label.service.NodeLabelService;
-import org.apache.linkis.message.builder.MessageJob;
-import org.apache.linkis.message.publisher.MessagePublisher;
+import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 
@@ -63,9 +62,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 @RequestMapping(
@@ -84,14 +80,12 @@ public class EngineRestfulApi {
 
     @Autowired private EngineStopService engineStopService;
 
-    @Autowired private MessagePublisher messagePublisher;
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private LabelBuilderFactory stdLabelBuilderFactory =
             LabelBuilderFactoryContext.getLabelBuilderFactory();
 
-    private Logger logger = LoggerFactory.getLogger(EMRestfulApi.class);
+    private static final Logger logger = LoggerFactory.getLogger(EMRestfulApi.class);
 
     @RequestMapping(path = "/createEngineConn", method = RequestMethod.POST)
     public Message createEngineConn(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -110,16 +104,11 @@ public class EngineRestfulApi {
                 userName,
                 ByteTimeUtils.msDurationToString(timeout),
                 engineCreateRequest);
-        MessageJob job = messagePublisher.publish(engineCreateRequest);
+        Sender sender = Sender.getSender(Sender.getThisServiceInstance());
         EngineNode engineNode;
         try {
-            engineNode = (EngineNode) job.get(timeout, TimeUnit.MILLISECONDS);
-        } catch (TimeoutException e) {
-            logger.error(String.format("User %s create engineConn timeout.", userName), e);
-            job.cancel(true);
-            return Message.error(
-                    "Create engineConn timeout, usually caused by the too long initialization of EngineConn(创建引擎超时，通常都是因为初始化引擎时间太长导致).");
-        } catch (ExecutionException e) {
+            engineNode = engineCreateService.createEngine(engineCreateRequest, sender);
+        } catch (Exception e) {
             logger.error(String.format("User %s create engineConn failed.", userName), e);
             return Message.error(
                     String.format(
@@ -166,7 +155,8 @@ public class EngineRestfulApi {
             return Message.error("You have no permission to kill EngineConn " + serviceInstance);
         }
         EngineStopRequest stopEngineRequest = new EngineStopRequest(serviceInstance, userName);
-        engineStopService.stopEngine(stopEngineRequest);
+        Sender sender = Sender.getSender(Sender.getThisServiceInstance());
+        engineStopService.stopEngine(stopEngineRequest, sender);
         logger.info("Finished to kill engineConn {}.", serviceInstance);
         return Message.ok("Kill engineConn succeed.");
     }
@@ -175,13 +165,14 @@ public class EngineRestfulApi {
     public Message killEngine(HttpServletRequest req, @RequestBody Map<String, String>[] param)
             throws Exception {
         String userName = SecurityFilter.getLoginUsername(req);
+        Sender sender = Sender.getSender(Sender.getThisServiceInstance());
         for (Map<String, String> engineParam : param) {
             String moduleName = engineParam.get("applicationName");
             String engineInstance = engineParam.get("engineInstance");
             EngineStopRequest stopEngineRequest =
                     new EngineStopRequest(
                             ServiceInstance.apply(moduleName, engineInstance), userName);
-            engineStopService.stopEngine(stopEngineRequest);
+            engineStopService.stopEngine(stopEngineRequest, sender);
             logger.info("Finished to kill engines");
         }
         return Message.ok("Kill engineConn succeed.");

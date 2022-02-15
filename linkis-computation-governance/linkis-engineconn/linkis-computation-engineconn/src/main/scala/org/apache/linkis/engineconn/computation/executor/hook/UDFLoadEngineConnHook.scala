@@ -17,8 +17,8 @@
  
 package org.apache.linkis.engineconn.computation.executor.hook
 
-import java.io.File
 
+import org.apache.linkis.bml.client.{BmlClient, BmlClientFactory}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
@@ -27,75 +27,42 @@ import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecuto
 import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, EngineTypeLabel}
+import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, EngineTypeLabel, RunType}
 import org.apache.linkis.udf.UDFClient
-import org.apache.linkis.udf.entity.UDFInfo
 import org.apache.linkis.udf.utils.ConstantVar
-import org.apache.commons.io.FileUtils
+import org.apache.commons.io.{FileUtils, IOUtils}
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.engineconn.core.engineconn.EngineConnManager
+import org.apache.linkis.engineconn.executor.entity.Executor
+import org.apache.linkis.manager.label.entity.engine.RunType.RunType
+import org.apache.linkis.udf.vo.UDFInfoVo
 
+import java.io.File
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
-abstract class UDFLoadEngineConnHook extends EngineConnHook with Logging {
+abstract class UDFLoad extends Logging {
+
   protected val udfType: BigInt
   protected val category: String
-  protected val runType: String
+  protected val runType: RunType
 
-  protected def getRealRunType(engineType: String): String = runType
+  private val bmlClient: BmlClient = BmlClientFactory.createBmlClient()
 
-  protected def constructCode(udfInfo: UDFInfo): String
+  protected def getRealRunType(engineType: String): RunType = runType
 
-  override def afterExecutionExecute(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit = {
-    val user = engineCreationContext.getUser
-    val codeLanguageLabel = new CodeLanguageLabel
-    engineCreationContext.getLabels().find(_.isInstanceOf[EngineTypeLabel]) match {
-      case Some(engineTypeLabel) =>
-        codeLanguageLabel.setCodeType(getRealRunType(engineTypeLabel.asInstanceOf[EngineTypeLabel].getEngineType))
-      case None =>
-        codeLanguageLabel.setCodeType(runType)
-        warn("no EngineTypeLabel found, use default runType")
-    }
-    val labels = Array[Label[_]](codeLanguageLabel)
-    generateCode(user).foreach {
-      case "" =>
-      case c: String =>
-        info("Submit udf registration to engine, code: " + c)
-        ExecutorManager.getInstance.getExecutorByLabels(labels) match {
-          case executor: ComputationExecutor =>
-//            val task  = new CommonEngineConnTask("udf-register-" + UDFLoadEngineConnHook.taskIdGenerator.incrementAndGet(), false)
-//            task.setCode(c)
-//            task.setStatus(ExecutionNodeStatus.Scheduled)
-//            task.setLabels(labels)
-//            task.setProperties(Maps.newHashMap())
-//            executor.execute(task)
-            Utils.tryCatch(executor.executeLine(new EngineExecutionContext(executor), c)){
-              case t: Throwable =>
-                if (! ComputationExecutorConf.UDF_LOAD_FAILED_IGNORE.getValue) {
-                  Utils.tryQuietly(executor.close())
-                  throw t
-                }else {
-                  error("Failed to load udf", t)
-                  null
-                }
-            }
-        }
-        info("executed code: " + c)
-    }
-  }
-
-  protected def acceptCodeType(line: String): Boolean = {
-    line.startsWith("%" + runType)
-  }
+  protected def constructCode(udfInfo: UDFInfoVo): String
 
   protected def generateCode(user: String): Array[String] = {
     val codeBuffer = new ArrayBuffer[String]
     val statementBuffer = new ArrayBuffer[String]
     var accept = true
-    getLoadUdfCode(user).split("\n").foreach{
+    getLoadUdfCode(user).split("\n").foreach {
       case "" =>
       case l if l.startsWith("%") =>
-        if(acceptCodeType(l)){
+
+        if (acceptCodeType(l)) {
           accept = true
           codeBuffer.append(statementBuffer.mkString("\n"))
           statementBuffer.clear()
@@ -105,25 +72,127 @@ abstract class UDFLoadEngineConnHook extends EngineConnHook with Logging {
       case l if accept => statementBuffer.append(l)
       case _ =>
     }
-    if(statementBuffer.nonEmpty) codeBuffer.append(statementBuffer.mkString("\n"))
-    codeBuffer.toArray
+    if (statementBuffer.nonEmpty) codeBuffer.append(statementBuffer.mkString("\n"))
+    codeBuffer.filter(StringUtils.isNotBlank).toArray
   }
+
+  protected def acceptCodeType(line: String): Boolean = {
+    line.startsWith("%" + runType.toString)
+  }
+
 
   protected def getLoadUdfCode(user: String): String = {
     info("start loading UDFs")
-    val udfInfos = UDFClient.getUdfInfos(user, category).filter{ info => info.getUdfType == udfType && info.getExpire == false && info.getLoad == true}
-    udfInfos.map(constructCode).mkString("\n")
+    val udfInfos = UDFClient.getUdfInfosByUdfType(user, category, udfType)
+    info("all udfs: ")
+    udfInfos.foreach { l => info("udfName:" + l.getUdfName + " bml_resource_id:" + l.getBmlResourceId + "\n") }
+    udfInfos.filter { info => StringUtils.isNotEmpty(info.getBmlResourceId) }.map(constructCode).mkString("\n")
   }
 
   protected def readFile(path: String): String = {
     info("read file: " + path)
     val file = new File(path)
-    if(file.exists()){
+    if (file.exists()) {
       FileUtils.readFileToString(file)
     } else {
       info("udf file: [" + path + "] doesn't exist, ignore it.")
       ""
     }
+  }
+
+  protected def readFile(user: String, resourceId: String, resourceVersion: String): String = {
+    info("begin to download udf from bml.")
+    val downloadResponse = bmlClient.downloadResource(if (user == null) Utils.getJvmUser else user, resourceId, resourceVersion)
+    if (downloadResponse.isSuccess) {
+      Utils.tryFinally {
+        IOUtils.toString(downloadResponse.inputStream, Configuration.BDP_ENCODING.getValue)
+      } {
+        IOUtils.closeQuietly(downloadResponse.inputStream)
+      }
+    } else {
+      info("failed to download udf from bml.")
+      ""
+    }
+  }
+
+  private def getFunctionCode(): Array[String] = {
+    val engineCreationContext = EngineConnManager.getEngineConnManager.getEngineConn.getEngineCreationContext
+    val user = engineCreationContext.getUser
+    Utils.tryCatch(generateCode(user)) {
+      case t: Throwable =>
+        if (!ComputationExecutorConf.UDF_LOAD_FAILED_IGNORE.getValue) {
+          logger.error("Failed to load function, executor close ")
+          throw t
+        } else {
+          logger.error("Failed to load function", t)
+          Array.empty[String]
+        }
+    }
+  }
+
+  private def executeFunctionCode(codes: Array[String], executor: ComputationExecutor): Unit = {
+    if (null == codes || null == executor) {
+      return
+    }
+    codes.foreach { code =>
+      logger.info("Submit function registration to engine, code: " + code)
+      Utils.tryCatch(executor.executeLine(new EngineExecutionContext(executor), code)) {
+        case t: Throwable =>
+          if (!ComputationExecutorConf.UDF_LOAD_FAILED_IGNORE.getValue) {
+            Utils.tryQuietly(executor.close())
+            logger.error("Failed to load function, executor close ")
+            throw t
+          } else {
+            logger.error("Failed to load function", t)
+            null
+          }
+      }
+    }
+  }
+
+  protected def loadFunctions(executor: Executor): Unit = {
+
+    val codes = getFunctionCode()
+    if (null != codes && codes.nonEmpty) {
+      executor match {
+        case computationExecutor: ComputationExecutor =>
+          executeFunctionCode(codes, computationExecutor)
+        case _ =>
+      }
+    }
+    logger.info(s"Successful to execute function code ${runType}, type : ${udfType}")
+  }
+
+  protected def loadUDF(labels : Array[Label[_]]): Unit = {
+
+    val codes = getFunctionCode()
+    if (null != codes && codes.nonEmpty) {
+      val executor = ExecutorManager.getInstance.getExecutorByLabels(labels)
+      executor match {
+        case computationExecutor: ComputationExecutor =>
+          executeFunctionCode(codes, computationExecutor)
+        case _ =>
+      }
+    }
+    logger.info(s"Successful to execute code ${runType}, type : ${udfType}")
+  }
+
+}
+
+abstract class UDFLoadEngineConnHook extends UDFLoad with EngineConnHook with Logging {
+
+
+  override def afterExecutionExecute(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit = {
+    val codeLanguageLabel = new CodeLanguageLabel
+    engineCreationContext.getLabels().find(_.isInstanceOf[EngineTypeLabel]) match {
+      case Some(engineTypeLabel) =>
+        codeLanguageLabel.setCodeType(getRealRunType(engineTypeLabel.asInstanceOf[EngineTypeLabel].getEngineType).toString)
+      case None =>
+        codeLanguageLabel.setCodeType(runType.toString)
+        warn("no EngineTypeLabel found, use default runType")
+    }
+    val labels = Array[Label[_]](codeLanguageLabel)
+    loadUDF(labels)
   }
 
   override def afterEngineServerStartFailed(engineCreationContext: EngineCreationContext, throwable: Throwable): Unit = {}
@@ -137,59 +206,40 @@ abstract class UDFLoadEngineConnHook extends EngineConnHook with Logging {
 class JarUdfEngineHook extends UDFLoadEngineConnHook {
   override val udfType: BigInt = ConstantVar.UDF_JAR
   override val category: String = ConstantVar.UDF
-  override val runType = "sql"
+  override val runType = RunType.SQL
 
-  override protected def constructCode(udfInfo: UDFInfo): String = {
+  override protected def constructCode(udfInfo: UDFInfoVo): String = {
     "%sql\n" + udfInfo.getRegisterFormat
   }
 
-  override protected def getRealRunType(engineType: String): String = {
-    if(engineType.equals("hive")){
-      return "hql"
+  override protected def getRealRunType(engineType: String): RunType = {
+    if (engineType.equals("hive")) {
+      return RunType.HIVE
     }
     runType
   }
 }
-class PyUdfEngineHook extends UDFLoadEngineConnHook{
+
+class PyUdfEngineHook extends UDFLoadEngineConnHook {
   override val udfType: BigInt = ConstantVar.UDF_PY
   override val category: String = ConstantVar.UDF
-  override val runType = "py"
-  override protected def constructCode(udfInfo: UDFInfo): String = {
-    "%py\n" + readFile(udfInfo.getPath) + "\n" + (if(StringUtils.isNotBlank(udfInfo.getRegisterFormat)) udfInfo.getRegisterFormat else "")
+  override val runType = RunType.PYSPARK
+
+  override protected def constructCode(udfInfo: UDFInfoVo): String = {
+    "%py\n" + readFile(udfInfo.getCreateUser, udfInfo.getBmlResourceId, udfInfo.getBmlResourceVersion) + "\n" +
+      (if (StringUtils.isNotBlank(udfInfo.getRegisterFormat)) udfInfo.getRegisterFormat else "")
   }
 }
-class ScalaUdfEngineHook extends UDFLoadEngineConnHook{
+
+class ScalaUdfEngineHook extends UDFLoadEngineConnHook {
   override val udfType: BigInt = ConstantVar.UDF_SCALA
   override val category: String = ConstantVar.UDF
-  override val runType = "scala"
-  override protected def constructCode(udfInfo: UDFInfo): String = {
-    "%scala\n" + readFile(udfInfo.getPath) + "\n" + (if(StringUtils.isNotBlank(udfInfo.getRegisterFormat)) udfInfo.getRegisterFormat else "")
-  }
-}
-class PyFunctionEngineHook extends UDFLoadEngineConnHook{
-  override val udfType: BigInt = ConstantVar.FUNCTION_PY
-  override val category: String = ConstantVar.FUNCTION
-  override val runType = "py"
-  override protected def constructCode(udfInfo: UDFInfo): String = {
-    "%py\n" + readFile(udfInfo.getPath)
+  override val runType = RunType.SCALA
+
+  override protected def constructCode(udfInfo: UDFInfoVo): String = {
+    "%scala\n" + readFile(udfInfo.getCreateUser, udfInfo.getBmlResourceId, udfInfo.getBmlResourceVersion) + "\n" +
+      (if (StringUtils.isNotBlank(udfInfo.getRegisterFormat)) udfInfo.getRegisterFormat else "")
   }
 
-  override protected def getRealRunType(engineType: String): String = {
-    if(engineType.equals("python")){
-      return "python"
-    }
-    runType
-  }
-}
-class ScalaFunctionEngineHook extends UDFLoadEngineConnHook{
-  override val udfType: BigInt = ConstantVar.FUNCTION_SCALA
-  override val category: String = ConstantVar.FUNCTION
-  override val runType = "scala"
-  override protected def constructCode(udfInfo: UDFInfo): String = {
-    "%scala\n" + readFile(udfInfo.getPath)
-  }
 }
 
-//object UDFLoadEngineConnHook {
-//  val taskIdGenerator = new AtomicInteger(0)
-//}

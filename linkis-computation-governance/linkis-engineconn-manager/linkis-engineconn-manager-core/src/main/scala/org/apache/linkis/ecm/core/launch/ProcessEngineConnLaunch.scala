@@ -125,6 +125,14 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
 
   def getEngineConnPort: String = engineConnPort
 
+  protected def getProcess(): Process = this.process
+
+  /**
+   * Get the pid of the startup process
+   * @return
+   */
+  def getPid(): Option[String] = None
+
   protected def getCommandArgs: Array[String] = {
     if (request.creationDesc.properties.exists { case (k, v) => k.contains(" ") || (v != null && v.contains(" ")) })
       throw new ErrorException(30000, "Startup parameters contain spaces!(启动参数中包含空格！)") //TODO exception

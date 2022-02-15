@@ -22,6 +22,7 @@ import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.cs.CSEntranceHelper;
 import org.apache.linkis.entrance.execute.EntranceJob;
+import org.apache.linkis.entrance.log.FlexibleErrorCodeManager;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
 import org.apache.linkis.governance.common.entity.job.SubJobInfo;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
@@ -33,6 +34,9 @@ import org.apache.commons.lang.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import scala.Option;
+import scala.Tuple2;
 
 public class QueryPersistenceManager extends PersistenceManager {
 
@@ -133,11 +137,20 @@ public class QueryPersistenceManager extends PersistenceManager {
             // todo check
             updatedProgress = -1 * progress;
         }
-        if (job.getProgress() >= 0 && job.getProgress() == updatedProgress) {
+        if (Double.isNaN(updatedProgress)) {
+            return;
+        }
+        EntranceJob entranceJob = (EntranceJob) job;
+        float persistedProgress = 0.0f;
+        try {
+            persistedProgress = Float.parseFloat(entranceJob.getJobRequest().getProgress());
+        } catch (Exception e) {
+            logger.warn("Invalid progress : " + entranceJob.getJobRequest().getProgress(), e);
+        }
+        if (job.getProgress() >= 0 && persistedProgress >= updatedProgress) {
             return;
         }
         job.setProgress(updatedProgress);
-        EntranceJob entranceJob = (EntranceJob) job;
         entranceJob.getJobRequest().setProgress(String.valueOf(updatedProgress));
         updateJobStatus(job);
     }
@@ -168,6 +181,19 @@ public class QueryPersistenceManager extends PersistenceManager {
         try {
             if (job.isSucceed()) {
                 CSEntranceHelper.registerCSRSData(job);
+            } else {
+                JobRequest jobRequest =
+                        this.entranceContext.getOrCreateEntranceParser().parseToJobRequest(job);
+                if (null == jobRequest.getErrorCode() || jobRequest.getErrorCode() == 0) {
+                    Option<Tuple2<String, String>> tuple2Option =
+                            FlexibleErrorCodeManager.errorMatch(jobRequest.getErrorDesc());
+                    if (tuple2Option.isDefined()) {
+                        logger.info(jobRequest.getId() + " to reset errorCode by errorMsg");
+                        Tuple2<String, String> errorCodeContent = tuple2Option.get();
+                        jobRequest.setErrorCode(Integer.parseInt(errorCodeContent._1));
+                        jobRequest.setErrorDesc(errorCodeContent._2);
+                    }
+                }
             }
         } catch (Throwable e) {
             logger.error("Failed to register cs rs data ", e);
@@ -185,7 +211,7 @@ public class QueryPersistenceManager extends PersistenceManager {
             if (job.isSucceed()) {
                 // 如果是job是成功的，那么需要将task的错误描述等都要设置为null
                 jobRequest.setErrorCode(0);
-                jobRequest.setErrorDesc(null);
+                jobRequest.setErrorDesc("");
             }
         } catch (Exception e) {
             entranceContext.getOrCreateLogManager().onLogUpdate(job, e.getMessage());

@@ -21,9 +21,9 @@ object PipeLineConstant {
   val DEFAULTC_HARSET = "utf-8"
   val DEFAULT_SHEETNAME = "result"
   val DEFAULT_DATEFORMATE = "yyyy-MM-dd HH:mm:ss"
-  val PIPELINE_OUTPUT_ISOVERWRITE = "wds.linkis.engine.pipeline.output.isoverwtite"
-  val PIPELINE_OUTPUT_SHUFFLE_NULL_TYPE = "wds.linkis.engine.pipeline.output.shuffle.null.type"
-  val PIPELINE_OUTPUT_CHARSET = "wds.linkis.engine.pipeline.output.charset"
-  val PIPELINE_FIELD_SPLIT = "wds.linkis.engine.pipeline.field.split"
+  val PIPELINE_OUTPUT_ISOVERWRITE = "pipeline.output.isoverwtite"
+  val PIPELINE_OUTPUT_SHUFFLE_NULL_TYPE = "pipeline.output.shuffle.null.type"
+  val PIPELINE_OUTPUT_CHARSET = "pipeline.output.charset"
+  val PIPELINE_FIELD_SPLIT = "pipeline.field.split"
   val BLANK = "BLANK"
 }

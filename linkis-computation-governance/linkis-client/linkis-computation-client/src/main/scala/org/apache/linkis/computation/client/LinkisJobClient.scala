@@ -35,7 +35,7 @@ object LinkisJobClient extends Closeable {
   val once = OnceJob
 
   override def close(): Unit = {
-    if(config.justGetDefaultUJESClient != null) {
+    if (config.justGetDefaultUJESClient != null) {
       config.justGetDefaultUJESClient.close()
     }
   }

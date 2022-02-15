@@ -45,8 +45,8 @@ private[conf] object BDPConfiguration extends Logging {
     val propertyFile = sysProps.getOrElse("wds.linkis.configuration", DEFAULT_PROPERTY_FILE_NAME)
     val configFileURL = getClass.getClassLoader.getResource(propertyFile)
     if (configFileURL != null && new File(configFileURL.getPath).exists) {
+      warn(s"******************************** Notice: The Linkis configuration file is $propertyFile ! ***************************")
       initConfig(config, configFileURL.getPath)
-      info(s"******************************** Info: The Linkis read $propertyFile file from $configFileURL ！***************************")
     }
     else warn(s"******************************** Notice: The Linkis configuration file $propertyFile is not exists! ***************************")
 
@@ -54,10 +54,10 @@ private[conf] object BDPConfiguration extends Logging {
     val serverConf = sysProps.getOrElse("wds.linkis.server.conf", DEFAULT_SERVER_CONF_FILE_NAME)
     val serverConfFileURL = getClass.getClassLoader.getResource(serverConf)
     if (serverConfFileURL != null && new File(serverConfFileURL.getPath).exists) {
+      warn(s"******************************** Notice: The Linkis serverConf file is $propertyFile ! ***************************")
       initConfig(config, serverConfFileURL.getPath)
-      info(s"******************************** Info: The Linkis read $serverConf file from $serverConfFileURL ！***************************")
     }
-    else warn(s"******************************** Notice: The Linkis serverConf file $serverConf is not exists! ***************************")
+    else warn(s"******************************** Notice: The Linkis serverConf file $serverConfFileURL is not exists! ***************************")
 
     // load  server confs
     val propertyFileOptions = sysProps.get("wds.linkis.server.confs")
@@ -66,10 +66,10 @@ private[conf] object BDPConfiguration extends Logging {
       propertyFiles.foreach { propertyF =>
         val configFileURL = getClass.getClassLoader.getResource(propertyF)
         if (configFileURL != null && new File(configFileURL.getPath).exists) {
+          warn(s"******************************** Notice: The Linkis server.confs  is file $propertyF ***************************")
           initConfig(config, configFileURL.getPath)
-          info(s"******************************** Info: The Linkis read $propertyF file from $configFileURL ！***************************")
         }
-        else warn(s"******************************** Notice: The Linkis configuration file $propertyF is not exists! ***************************")
+        else warn(s"******************************** Notice: The Linkis server.confs file $propertyF is not exists! ***************************")
       }
     }
 

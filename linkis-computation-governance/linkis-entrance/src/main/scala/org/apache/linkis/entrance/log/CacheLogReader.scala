@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.entrance.log
 
 import java.io.{IOException, InputStream}
@@ -26,20 +26,20 @@ import org.apache.linkis.storage.FSFactory
 
 class CacheLogReader(logPath: String, charset: String, sharedCache: Cache, user: String) extends LogReader(charset: String) {
 
-  val lock:Object = new Object
+  val lock: Object = new Object
 
-  def getCache:Cache = sharedCache
+  def getCache: Cache = sharedCache
 
-  var inputStream:InputStream = _
+  var inputStream: InputStream = _
 
-  var fileSystem:Fs = _
+  var fileSystem: Fs = _
 
   var closed = false
 
 
   private def createInputStream: InputStream = {
     if (fileSystem == null) this synchronized {
-      if (fileSystem == null){
+      if (fileSystem == null) {
         fileSystem = FSFactory.getFsByProxyUser(new FsPath(logPath), user)
         fileSystem.init(new util.HashMap[String, String]())
       }
@@ -51,7 +51,7 @@ class CacheLogReader(logPath: String, charset: String, sharedCache: Cache, user:
 
   override def getInputStream: InputStream = {
     if (inputStream == null) lock.synchronized{
-      if (inputStream == null){
+      if (inputStream == null) {
         inputStream = createInputStream
       }
     }
@@ -68,8 +68,7 @@ class CacheLogReader(logPath: String, charset: String, sharedCache: Cache, user:
     val to = if (fromLine >= min) {
       if (size >= 0 && max >= fromLine + size) fromLine + size else max + 1
     } else {
-      //If you are getting it from a file, you don't need to read the cached data again. In this case, you can guarantee that the log will not be missing.
-      //如果是从文件中进行进行获取，就不需要对缓存的数据再进行读取,这样的话，可以保证日志是不会缺失的
+      // If you are getting it from a file, you don't need to read the cached data again. In this case, you can guarantee that the log will not be missing.
       val read = super.readLog(deal, fromLine, size)
       return read
     }
@@ -86,7 +85,7 @@ class CacheLogReader(logPath: String, charset: String, sharedCache: Cache, user:
       })
       inputStream = null
     }
-    if (fileSystem != null){
+    if (fileSystem != null) {
       Utils.tryQuietly(fileSystem.close(), t => {
         warn("Error encounters when closing fileSystem.", t)
       })
@@ -95,3 +94,5 @@ class CacheLogReader(logPath: String, charset: String, sharedCache: Cache, user:
     closed = true
   }
 }
+
+

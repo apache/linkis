@@ -24,7 +24,10 @@ import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.log.LogReader;
 import org.apache.linkis.entrance.utils.JobHistoryHelper;
+import org.apache.linkis.entrance.utils.RGBUtils;
+import org.apache.linkis.entrance.vo.YarnResourceWithStatusVo;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
+import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus;
 import org.apache.linkis.protocol.constants.TaskConstant;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils;
@@ -81,10 +84,10 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         }
         String ip = JobHistoryHelper.getRequestIpAddr(req);
         map.put(TaskConstant.REQUEST_IP, ip);
-        String execID = entranceServer.execute(json);
-        Job job = entranceServer.getJob(execID).get();
+        String jobId = entranceServer.execute(json);
+        Job job = entranceServer.getJob(jobId).get();
         JobRequest jobReq = ((EntranceJob) job).getJobRequest();
-        Long taskID = jobReq.getId();
+        Long jobReqId = jobReq.getId();
         pushLog(
                 LogUtils.generateInfo(
                         "You have submitted a new job, script code (after variable substitution) is"),
@@ -96,26 +99,26 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         pushLog(
                 "************************************SCRIPT CODE************************************",
                 job);
+        String execID =
+                ZuulEntranceUtils.generateExecID(
+                        jobId,
+                        Sender.getThisServiceInstance().getApplicationName(),
+                        new String[] {Sender.getThisInstance()});
         pushLog(
                 LogUtils.generateInfo(
                         "Your job is accepted,  jobID is "
                                 + execID
                                 + " and taskID is "
-                                + taskID
+                                + jobReqId
                                 + " in "
                                 + Sender.getThisServiceInstance().toString()
                                 + ". Please wait it to be scheduled"),
                 job);
-        execID =
-                ZuulEntranceUtils.generateExecID(
-                        execID,
-                        Sender.getThisServiceInstance().getApplicationName(),
-                        new String[] {Sender.getThisInstance()});
         message = Message.ok();
         message.setMethod("/api/entrance/execute");
         message.data("execID", execID);
-        message.data("taskID", taskID);
-        logger.info("End to get an an execID: {}, taskID: {}", execID, taskID);
+        message.data("taskID", jobReqId);
+        logger.info("End to get an an execID: {}, taskID: {}", execID, jobReqId);
         return message;
     }
 
@@ -131,10 +134,10 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         }
         String ip = JobHistoryHelper.getRequestIpAddr(req);
         map.put(TaskConstant.REQUEST_IP, ip);
-        String execID = entranceServer.execute(json);
-        Job job = entranceServer.getJob(execID).get();
+        String jobId = entranceServer.execute(json);
+        Job job = entranceServer.getJob(jobId).get();
         JobRequest jobRequest = ((EntranceJob) job).getJobRequest();
-        Long taskID = jobRequest.getId();
+        Long jobReqId = jobRequest.getId();
         pushLog(
                 LogUtils.generateInfo(
                         "You have submitted a new job, script code (after variable substitution) is"),
@@ -149,23 +152,23 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         pushLog(
                 LogUtils.generateInfo(
                         "Your job is accepted,  jobID is "
-                                + execID
-                                + " and taskID is "
-                                + taskID
+                                + jobId
+                                + " and jobReqId is "
+                                + jobReqId
                                 + " in "
                                 + Sender.getThisServiceInstance().toString()
                                 + ". Please wait it to be scheduled"),
                 job);
-        execID =
+        String execID =
                 ZuulEntranceUtils.generateExecID(
-                        execID,
+                        jobId,
                         Sender.getThisServiceInstance().getApplicationName(),
                         new String[] {Sender.getThisInstance()});
         message = Message.ok();
         message.setMethod("/api/entrance/submit");
         message.data("execID", execID);
-        message.data("taskID", taskID);
-        logger.info("End to get an an execID: {}, taskID: {}", execID, taskID);
+        message.data("taskID", jobReqId);
+        logger.info("End to get an an execID: {}, taskID: {}", execID, jobReqId);
         return message;
     }
 
@@ -207,8 +210,13 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     public Message progress(@PathVariable("id") String id) {
         Message message = null;
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
-        Option<Job> job = entranceServer.getJob(realId);
-        if (job.isDefined()) {
+        Option<Job> job = null;
+        try {
+            job = entranceServer.getJob(realId);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        if (job != null && job.isDefined()) {
             JobProgressInfo[] jobProgressInfos = ((EntranceJob) job.get()).getProgressInfo();
             if (jobProgressInfos == null) {
                 message =
@@ -225,6 +233,95 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 }
                 message = Message.ok();
                 message.setMethod("/api/entrance/" + id + "/progress");
+
+                message.data("progress", Math.abs(job.get().getProgress()))
+                        .data("execID", id)
+                        .data("progressInfo", list);
+            }
+        } else {
+            message =
+                    Message.error(
+                            "The job corresponding to the ID is empty, and the corresponding task progress cannot be obtained.(ID 对应的job为空，不能获取相应的任务进度)");
+        }
+        return message;
+    }
+
+    @RequestMapping(path = "/{id}/progressWithResource", method = RequestMethod.GET)
+    public Message progressWithResource(@PathVariable("id") String id) {
+        Message message = null;
+        String realId = ZuulEntranceUtils.parseExecID(id)[3];
+        Option<Job> job = null;
+        try {
+            job = entranceServer.getJob(realId);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        if (job != null && job.isDefined()) {
+            JobProgressInfo[] jobProgressInfos = ((EntranceJob) job.get()).getProgressInfo();
+            if (jobProgressInfos == null) {
+                message =
+                        Message.error(
+                                "Can not get the corresponding progress information, it may be that the corresponding progress information has not been generated(不能获取相应的进度信息,可能是相应的进度信息还未生成)");
+                message.setMethod("/api/entrance/" + id + "/progressWithResource");
+            } else {
+                List<Map<String, Object>> list = new ArrayList<>();
+                for (JobProgressInfo jobProgressInfo : jobProgressInfos) {
+                    if ("true".equals(EntranceConfiguration.PROGRESS_PUSH().getValue())
+                            || jobProgressInfo.totalTasks() > 0) {
+                        setJobProgressInfos(list, jobProgressInfo);
+                    }
+                }
+                message = Message.ok();
+                message.setMethod("/api/entrance/" + id + "/progressWithResource");
+
+                JobRequest jobRequest = ((EntranceJob) job.get()).getJobRequest();
+                Map<String, Object> metrics = jobRequest.getMetrics();
+                Map<String, Object> metricsVo = new HashMap<>();
+                if (metrics.containsKey(TaskConstant.ENTRANCEJOB_YARNRESOURCE)) {
+                    HashMap<String, ResourceWithStatus> resourceMap =
+                            (HashMap<String, ResourceWithStatus>)
+                                    metrics.get(TaskConstant.ENTRANCEJOB_YARNRESOURCE);
+                    ArrayList<YarnResourceWithStatusVo> resoureList = new ArrayList<>(12);
+                    resourceMap.forEach(
+                            (applicationId, resource) -> {
+                                resoureList.add(
+                                        new YarnResourceWithStatusVo(applicationId, resource));
+                            });
+                    metricsVo.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, resoureList);
+                    Optional<Integer> cores =
+                            resourceMap.values().stream()
+                                    .map(resource -> resource.queueCores())
+                                    .reduce((x, y) -> x + y);
+                    Optional<Long> memory =
+                            resourceMap.values().stream()
+                                    .map(resource -> resource.queueMemory())
+                                    .reduce((x, y) -> x + y);
+                    float corePercent = 0.0f;
+                    float memoryPercent = 0.0f;
+                    if (cores.isPresent()) {
+                        corePercent =
+                                cores.get().floatValue()
+                                        / EntranceConfiguration.YARN_QUEUE_CORES_MAX().getValue();
+                        memoryPercent =
+                                memory.get().floatValue()
+                                        / (EntranceConfiguration.YARN_QUEUE_MEMORY_MAX()
+                                                        .getValue()
+                                                        .longValue()
+                                                * 1024
+                                                * 1024
+                                                * 1024);
+                    }
+                    String coreRGB = RGBUtils.getRGB(corePercent);
+                    String memoryRGB = RGBUtils.getRGB(memoryPercent);
+                    metricsVo.put(TaskConstant.ENTRANCEJOB_CORE_PERCENT, corePercent);
+                    metricsVo.put(TaskConstant.ENTRANCEJOB_MEMORY_PERCENT, memoryPercent);
+                    metricsVo.put(TaskConstant.ENTRANCEJOB_CORE_RGB, coreRGB);
+                    metricsVo.put(TaskConstant.ENTRANCEJOB_MEMORY_RGB, memoryRGB);
+
+                    message.data(TaskConstant.ENTRANCEJOB_YARN_METRICS, metricsVo);
+                } else {
+                    message.data(TaskConstant.ENTRANCEJOB_YARNRESOURCE, null);
+                }
 
                 message.data("progress", Math.abs(job.get().getProgress()))
                         .data("execID", id)
@@ -437,7 +534,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         if (!waitToForceKill.isEmpty()) {
             JobHistoryHelper.forceBatchKill(waitToForceKill);
         }
-        return Message.ok("停止任务成功").data("messages", messages);
+        return Message.ok("success").data("messages", messages);
     }
 
     // todo confirm long or Long

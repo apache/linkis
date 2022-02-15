@@ -126,7 +126,7 @@ CREATE TABLE if not exists `linkis_ps_bml_resources_task` (
   `operation` varchar(20) NOT NULL COMMENT 'Operation type. upload = 0, update = 1',
   `state` varchar(20) NOT NULL DEFAULT 'Schduled' COMMENT 'Current status of the task:Schduled, Running, Succeed, Failed,Cancelled',
   `submit_user` varchar(20) NOT NULL DEFAULT '' COMMENT 'Job submission user name',
-  `system` varchar(20) DEFAULT 'dss' COMMENT 'Subsystem name: wtss',
+  `system` varchar(20) NOT NULL DEFAULT 'dss' COMMENT 'Subsystem name: wtss',
   `instance` varchar(128) NOT NULL COMMENT 'Material library example',
   `client_ip` varchar(50) DEFAULT NULL COMMENT 'Request IP',
   `extra_params` text COMMENT 'Additional key information. Such as the resource IDs and versions that are deleted in batches, and all versions under the resource are deleted',
@@ -134,5 +134,6 @@ CREATE TABLE if not exists `linkis_ps_bml_resources_task` (
   `start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Starting time',
   `end_time` datetime DEFAULT NULL COMMENT 'End Time',
   `last_update_time` datetime NOT NULL COMMENT 'Last update time',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `resource_id_version` (`resource_id`,`version`, `operation`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

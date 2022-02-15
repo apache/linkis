@@ -23,6 +23,7 @@
     <id>linkis-application-manager</id>
     <formats>
         <format>dir</format>
+        <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <baseDirectory>linkis-engineconn-plugin-server</baseDirectory>

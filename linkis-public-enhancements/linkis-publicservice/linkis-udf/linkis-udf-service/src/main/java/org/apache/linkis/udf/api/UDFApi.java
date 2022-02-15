@@ -56,7 +56,6 @@ import java.util.stream.Collectors;
 
 import static org.apache.linkis.udf.utils.ConstantVar.*;
 
-/** Created by johnnwang on 8/11/18. */
 @RestController
 @RequestMapping(path = "udf")
 public class UDFApi {

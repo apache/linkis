@@ -17,6 +17,7 @@
 
 package org.apache.linkis.configuration.restful.api;
 
+import org.apache.linkis.configuration.conf.Configuration;
 import org.apache.linkis.configuration.entity.*;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.CategoryService;
@@ -31,8 +32,9 @@ import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 
+import org.apache.commons.lang.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,6 +48,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -55,6 +58,9 @@ public class ConfigurationRestfulApi {
     @Autowired private ConfigurationService configurationService;
 
     @Autowired private CategoryService categoryService;
+
+    private static String[] adminArray =
+            Configuration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -69,9 +75,9 @@ public class ConfigurationRestfulApi {
             @RequestParam(value = "keyJson", required = false) String keyJson)
             throws ConfigurationException {
         String username = SecurityFilter.getLoginUsername(req);
-        if (StringUtils.isEmpty(engineType)
-                || StringUtils.isEmpty(version)
-                || StringUtils.isEmpty(token)) {
+        if (StringUtils.isBlank(engineType)
+                || StringUtils.isBlank(version)
+                || StringUtils.isBlank(token)) {
             throw new ConfigurationException("params cannot be empty!");
         }
         // todo 检验token
@@ -187,18 +193,24 @@ public class ConfigurationRestfulApi {
     public Message createFirstCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
         String username = SecurityFilter.getLoginUsername(request);
+        checkAdmin(username);
         String categoryName = jsonNode.get("categoryName").asText();
         String description = jsonNode.get("description").asText();
         if (StringUtils.isEmpty(categoryName) || categoryName.equals(NULL)) {
             throw new ConfigurationException("categoryName is null, cannot be added");
+        }
+        if (StringUtils.isEmpty(categoryName) || categoryName.contains("-")) {
+            throw new ConfigurationException("categoryName cannot be included '-'");
         }
         categoryService.createFirstCategory(categoryName, description);
         return Message.ok();
     }
 
     @RequestMapping(path = "/deleteCategory", method = RequestMethod.POST)
-    public Message deleteCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode) {
+    public Message deleteCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
+            throws ConfigurationException {
         String username = SecurityFilter.getLoginUsername(request);
+        checkAdmin(username);
         Integer categoryId = jsonNode.get("categoryId").asInt();
         categoryService.deleteCategory(categoryId);
         return Message.ok();
@@ -212,7 +224,7 @@ public class ConfigurationRestfulApi {
         String engineType = jsonNode.get("engineType").asText();
         String version = jsonNode.get("version").asText();
         String description = jsonNode.get("description").asText();
-        if (StringUtils.isEmpty(categoryId) || categoryId <= 0) {
+        if (categoryId <= 0) {
             throw new ConfigurationException("creator is null, cannot be added");
         }
         if (StringUtils.isEmpty(engineType) || engineType.toLowerCase().equals(NULL)) {
@@ -305,5 +317,11 @@ public class ConfigurationRestfulApi {
         configurationService.queryConfig(userCreatorLabel, engineTypeLabel, "wds.linkis.rm");
         Message message = Message.ok();
         return message;
+    }
+
+    private void checkAdmin(String userName) throws ConfigurationException {
+        if (adminArray != null && !Arrays.asList(adminArray).contains(userName)) {
+            throw new ConfigurationException("only admin can modify category(只有管理员才能修改目录)");
+        }
     }
 }

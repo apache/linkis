@@ -80,6 +80,10 @@ object SparkConfiguration extends Logging {
 
   val IS_VIEWFS_ENV = CommonVars("wds.linkis.spark.engine.is.viewfs.env", true)
 
+  val ENGINE_SHUTDOWN_LOGS = CommonVars("wds.linkis.spark.engineconn.fatal.log", "error writing class;OutOfMemoryError")
+
+  val PYSPARK_PYTHON3_PATH = CommonVars[String]("pyspark.python3.path", "/appcom/Install/anaconda3/bin/python")
+
   private def getMainJarName(): String = {
     val somePath = ClassUtils.jarOfClass(classOf[SparkEngineConnFactory])
     if (somePath.isDefined) {

@@ -32,8 +32,8 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
   */
 object DolphinToSpark {
 
-  val bigDecimalPrecision = 20
-  val bigDecimalScale = 10
+  private val bigDecimalPrecision = 20
+  private val bigDecimalScale = 10
 
   def createTempView(spark: SparkSession, tableName: String, res: String): Unit = {
     createTempView(spark, tableName, res, false)
@@ -45,20 +45,20 @@ object DolphinToSpark {
       val metadata = reader.getMetaData.asInstanceOf[TableMetaData]
       val rowList = new util.ArrayList[Row]()
       var len = SparkConfiguration.DOLPHIN_LIMIT_LEN.getValue
-      while (reader.hasNext && len > 0){
+      while (reader.hasNext && len > 0) {
         rowList.add(Row.fromSeq(reader.getRecord.asInstanceOf[TableRecord].row))
         len = len -1
       }
-      val df: DataFrame = spark.createDataFrame(rowList,metadataToSchema(metadata))
+      val df: DataFrame = spark.createDataFrame(rowList, metadataToSchema(metadata))
       df.createOrReplaceTempView(tableName)
     }
   }
 
-  def metadataToSchema(metaData: TableMetaData):StructType = {
-    new StructType(metaData.columns.map(field => StructField(field.columnName,toSparkType(field.dataType))))
+  def metadataToSchema(metaData: TableMetaData): StructType = {
+    new StructType(metaData.columns.map(field => StructField(field.columnName, toSparkType(field.dataType))))
   }
 
-  def toSparkType(dataType:wds.DataType):DataType = dataType match {
+  def toSparkType(dataType: wds.DataType): DataType = dataType match {
     case wds.NullType => NullType
     case wds.BooleanType =>  BooleanType
     case wds.ShortIntType => ShortType

@@ -46,15 +46,18 @@ class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long) extends
 
     info("SQLExecutor run query: " + code)
     engineExecutionContext.appendStdout(s"${EngineUtils.getName} >> $code")
-    Utils.tryCatch{
+    val standInClassLoader = Thread.currentThread().getContextClassLoader
+    try {
       val sqlStartTime = System.currentTimeMillis()
+      Thread.currentThread().setContextClassLoader(sparkEngineSession.sparkSession.sharedState.jarClassLoader)
+      val extensions = org.apache.linkis.engineplugin.spark.extension.SparkSqlExtension.getSparkSqlExtensions()
       val df = sparkEngineSession.sqlContext.sql(code)
 
-      Utils.tryQuietly(SparkSqlExtension.getSparkSqlExtensions().foreach(_.afterExecutingSQL(sparkEngineSession.sqlContext, code, df,
+      Utils.tryQuietly(extensions.foreach(_.afterExecutingSQL(sparkEngineSession.sqlContext, code, df,
         SparkConfiguration.SQL_EXTENSION_TIMEOUT.getValue, sqlStartTime)))
       SQLSession.showDF(sparkEngineSession.sparkContext, jobGroup, df, null, SparkConfiguration.SHOW_DF_MAX_RES.getValue, engineExecutionContext)
-      SuccessExecuteResponse().asInstanceOf[CompletedExecuteResponse]
-    }{
+      SuccessExecuteResponse()
+    } catch {
       case e: InvocationTargetException =>
         var cause = ExceptionUtils.getCause(e)
         if (cause == null) cause = e
@@ -63,6 +66,8 @@ class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long) extends
       case ite: Exception =>
         // error("execute sparkSQL failed!", ite)
         ErrorExecuteResponse(ExceptionUtils.getRootCauseMessage(ite), ite)
+    } finally {
+      Thread.currentThread().setContextClassLoader(standInClassLoader)
     }
   }
 

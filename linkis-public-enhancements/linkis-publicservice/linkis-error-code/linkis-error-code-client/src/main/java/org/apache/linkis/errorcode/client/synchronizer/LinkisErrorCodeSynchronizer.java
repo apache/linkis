@@ -66,7 +66,13 @@ public class LinkisErrorCodeSynchronizer {
                                 List<LinkisErrorCode> copyErrorCodes =
                                         new ArrayList<>(linkisErrorCodeList);
                                 try {
-                                    linkisErrorCodeList = errorCodeClient.getErrorCodesFromServer();
+                                    List<LinkisErrorCode> tmpList =
+                                            errorCodeClient.getErrorCodesFromServer();
+                                    if (null != tmpList && !tmpList.isEmpty()) {
+                                        linkisErrorCodeList = tmpList;
+                                    } else {
+                                        LOGGER.warn("Got empty errorCodeList.");
+                                    }
                                 } catch (Throwable t) {
                                     LOGGER.error("Failed to get ErrorCodes from linkis server", t);
                                     linkisErrorCodeList = copyErrorCodes;

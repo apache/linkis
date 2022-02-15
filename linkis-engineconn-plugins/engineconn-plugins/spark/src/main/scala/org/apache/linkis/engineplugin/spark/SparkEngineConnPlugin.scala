@@ -26,14 +26,19 @@ import org.apache.linkis.manager.engineplugin.common.creation.EngineConnFactory
 import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
 import org.apache.linkis.manager.engineplugin.common.resource.EngineResourceFactory
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel}
+import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
 
 
 class SparkEngineConnPlugin extends EngineConnPlugin {
 
   private val defaultLabels = new util.ArrayList[Label[_]]()
 
-  private val EP_CONTEXT_CONSTRUCTOR_LOCK = new Object()
+  private val resourceLocker = new Object()
+
+  private val engineLaunchBuilderLocker = new Object()
+
+  private val engineFactoryLocker = new Object()
 
   private var engineResourceFactory: EngineResourceFactory = _
 
@@ -42,38 +47,26 @@ class SparkEngineConnPlugin extends EngineConnPlugin {
   private var engineFactory: EngineConnFactory = _
 
   override def init(params: util.Map[String, Any]): Unit = {
-    val typeMap = new util.HashMap[String,String]()
-    typeMap.put("type","spark")
-    typeMap.put("version","2.4.3")
-    val typeLabel =new EngineTypeLabel()
-    typeLabel.setValue(typeMap)
-    this.defaultLabels.add(typeLabel)
+    val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(EngineType.SPARK.toString)
+    this.defaultLabels.add(engineTypeLabel)
   }
 
   override def getEngineResourceFactory: EngineResourceFactory = {
-    EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized{
-      if(null == engineResourceFactory){
-        engineResourceFactory = new SparkEngineConnResourceFactory
-      }
-      engineResourceFactory
+    if (null == engineResourceFactory) resourceLocker.synchronized {
+      engineResourceFactory = new SparkEngineConnResourceFactory
     }
+    engineResourceFactory
   }
 
   override def getEngineConnLaunchBuilder: EngineConnLaunchBuilder = {
-    EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-      // todo check
-      engineLaunchBuilder = SparkSubmitProcessEngineConnLaunchBuilder.apply()
-      engineLaunchBuilder
-    }
+    SparkSubmitProcessEngineConnLaunchBuilder.newBuilder()
   }
 
   override def getEngineConnFactory: EngineConnFactory = {
-      EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-        if (null == engineFactory) {
-          engineFactory = new SparkEngineConnFactory
-        }
-        engineFactory
-      }
+    if (null == engineFactory) engineFactoryLocker.synchronized {
+      engineFactory = new SparkEngineConnFactory
+    }
+    engineFactory
   }
 
   override def getDefaultLabels: util.List[Label[_]] = {

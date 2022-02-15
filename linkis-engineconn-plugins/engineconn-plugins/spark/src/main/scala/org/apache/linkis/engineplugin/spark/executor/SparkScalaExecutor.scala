@@ -71,6 +71,8 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
 
   private val outputDir = sparkEngineSession.outputDir
 
+  private val fatalLogs = SparkConfiguration.ENGINE_SHUTDOWN_LOGS.getValue.split(";")
+
   protected implicit val executor = Utils.newCachedExecutionContext(5, "Spark-Scala-REPL-Thread-", true)
 
   override def init(): Unit = {
@@ -156,7 +158,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
       Utils.tryCatch(sparkILoop.interpret(code)){ t =>
         error("task error info:", t)
         val msg = ExceptionUtils.getRootCauseMessage(t)
-        if (msg.contains("OutOfMemoryError")) {
+        if (matchFatalLog(msg)) {
           error("engine oom now to set status to shutdown")
           ExecutorManager.getInstance.getReportExecutor.tryShutdown()
         }
@@ -184,8 +186,13 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
           IOUtils.closeQuietly(lineOutputStream)
           var errorMsg: String = null
             if (StringUtils.isNotBlank(output)) {
-            errorMsg = Utils.tryCatch(EngineUtils.getResultStrByDolphinTextContent(output))(t => t.getMessage)
-            error("Execute code error for "+  errorMsg)
+              errorMsg = Utils.tryCatch(EngineUtils.getResultStrByDolphinTextContent(output))(t => t.getMessage)
+              error("Execute code error for "+  errorMsg)
+              engineExecutionContext.appendStdout("Execute code error for "+  errorMsg)
+              if (matchFatalLog(errorMsg)) {
+                error("engine log fatal logs now to set status to shutdown")
+                ExecutorManager.getInstance.getReportExecutor.tryShutdown()
+              }
           } else {
             error("No error message is captured, please see the detailed log")
           }
@@ -197,6 +204,19 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
     result
   }
 
+  private def matchFatalLog(errorMsg: String): Boolean = {
+    var flag = false
+    if (StringUtils.isNotBlank(errorMsg)) {
+      val errorMsgLowCase = errorMsg.toLowerCase
+      fatalLogs.foreach(fatalLog =>
+        if (  errorMsgLowCase.contains(fatalLog) ) {
+          error(s"match engineConn log fatal logs,is $fatalLog")
+          flag = true
+        }
+      )
+    }
+    flag
+  }
 
 
   private def createSparkILoop = {
@@ -233,7 +253,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
     settings.processArguments(List("-Yrepl-class-based",
       "-Yrepl-outdir", s"${outputDir.getAbsolutePath}", "-classpath", classpath), true)
     settings.usejavacp.value = true
-    settings.embeddedDefaults(Thread.currentThread().getContextClassLoader())
+    settings.embeddedDefaults(SparkUtils.getClass.getClassLoader)
     sparkILoop.settings = settings
     sparkILoop.createInterpreter()
 

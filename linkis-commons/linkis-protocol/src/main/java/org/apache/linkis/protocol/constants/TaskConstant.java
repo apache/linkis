@@ -54,6 +54,12 @@ public interface TaskConstant {
     String ENTRANCEJOB_SCHEDULE_TIME = "scheduleTime";
     String ENTRANCEJOB_TO_ORCHESTRATOR = "timeToOrchestrator";
     String ENTRANCEJOB_COMPLETE_TIME = "completeTime";
+    String ENTRANCEJOB_YARN_METRICS = "yarnMetrics";
+    String ENTRANCEJOB_YARNRESOURCE = "yarnResource";
+    String ENTRANCEJOB_CORE_PERCENT = "corePercent";
+    String ENTRANCEJOB_MEMORY_PERCENT = "memoryPercent";
+    String ENTRANCEJOB_CORE_RGB = "coreRGB";
+    String ENTRANCEJOB_MEMORY_RGB = "memoryRGB";
 
     String PARAMS_DATA_SOURCE = "dataSources";
 

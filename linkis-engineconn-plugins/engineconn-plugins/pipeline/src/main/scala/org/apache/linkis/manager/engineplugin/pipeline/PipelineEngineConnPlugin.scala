@@ -29,7 +29,11 @@ import org.apache.linkis.manager.label.entity.Label
 
 class PipelineEngineConnPlugin extends EngineConnPlugin {
 
-  private val EP_CONTEXT_CONSTRUCTOR_LOCK = new Object()
+  private val resourceLocker = new Object()
+
+  private val engineLaunchBuilderLocker = new Object()
+
+  private val engineFactoryLocker = new Object()
 
   private var engineResourceFactory: EngineResourceFactory = _
 
@@ -41,22 +45,19 @@ class PipelineEngineConnPlugin extends EngineConnPlugin {
 
   override def init(params: util.Map[String, Any]): Unit = {}
 
-  override def getEngineResourceFactory: EngineResourceFactory = EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-    if (null == engineResourceFactory) {
+  override def getEngineResourceFactory: EngineResourceFactory = {
+    if (null == engineResourceFactory) resourceLocker synchronized {
       engineResourceFactory = new GenericEngineResourceFactory
     }
     engineResourceFactory
   }
 
-  override def getEngineConnLaunchBuilder: EngineConnLaunchBuilder = EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-    if (null == engineLaunchBuilder) {
-      engineLaunchBuilder = new PipelineEngineConnLaunchBuilder
-    }
-    engineLaunchBuilder
+  override def getEngineConnLaunchBuilder: EngineConnLaunchBuilder = {
+    new PipelineEngineConnLaunchBuilder
   }
 
-  override def getEngineConnFactory: EngineConnFactory = EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-    if (null == engineFactory) {
+  override def getEngineConnFactory: EngineConnFactory = {
+    if (null == engineFactory) engineFactoryLocker synchronized {
       engineFactory = new PipelineEngineConnFactory
     }
     engineFactory

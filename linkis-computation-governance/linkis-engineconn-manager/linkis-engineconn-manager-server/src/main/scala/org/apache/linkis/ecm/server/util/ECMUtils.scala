@@ -33,8 +33,11 @@ import scala.collection.JavaConversions._
 
 object ECMUtils {
 
+  @volatile var bmlClient: BmlClient = _
+  val lock = new Object()
+
   private def download(resource: BmlResource, userName: String): util.Map[String, Object] = {
-    val client: BmlClient = createBMLClient(userName)
+    val client: BmlClient = getBMLClient(userName)
     var response: BmlDownloadResponse = null
     if (resource.getVersion == null) {
       response = client.downloadShareResource(userName, resource.getResourceId)
@@ -55,11 +58,13 @@ object ECMUtils {
     IOUtils.closeQuietly(is)
   }
 
-  private def createBMLClient(userName: String): BmlClient = {
-    if (userName == null)
-      BmlClientFactory.createBmlClient()
-    else
-      BmlClientFactory.createBmlClient(userName)
+  private def getBMLClient(userName: String): BmlClient = {
+    if (bmlClient == null) {
+      lock.synchronized {
+        if (bmlClient == null) bmlClient = BmlClientFactory.createBmlClient(userName)
+      }
+    }
+    bmlClient
   }
 
 

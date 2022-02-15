@@ -62,4 +62,6 @@ abstract class AbstractFileSource(var fileSplits: Array[FileSplit]) extends File
 
   override def getTypes: Array[String] = this.fileSplits.map(_.`type`)
 
+  override def getFileInfo(needToCountRowNumber: Int = 5000): Array[Pair[Int, Int]] = fileSplits.map(_.getFileInfo(needToCountRowNumber))
+
 }

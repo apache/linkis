@@ -79,7 +79,9 @@ public class UserCreatorLabel extends GenericLabel implements EngineNodeLabel, U
             if (stringValue.split(SerializableLabel.VALUE_SEPARATOR).length != 2) {
                 throw new LabelErrorException(
                         LabelConstant.LABEL_BUILDER_ERROR_CODE,
-                        "标签usercreator的值设置错误，需要2个值，并且需要使用" + VALUE_SEPARATOR + "隔开");
+                        "The value of the label is set incorrectly, only one value can be set, and the symbol cannot be used"
+                                + VALUE_SEPARATOR
+                                + "隔开");
             }
         }
     }

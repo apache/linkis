@@ -100,4 +100,6 @@ object ServerConfiguration extends Logging{
   val BDP_SERVER_RESTFUL_REGISTER_CLASSES = CommonVars("wds.linkis.server.restful.register.classes", "")
 //  val BDP_SERVER_SOCKET_SERVICE_SCAN_PACKAGES = CommonVars("wds.linkis.server.socket.service.scan.packages", BDP_SERVER_RESTFUL_SCAN_PACKAGES.getValue)
   val IS_GATEWAY = CommonVars("wds.linkis.is.gateway", "false")
+  val BDP_SERVER_WEB_ALLOW_ORIGIN = CommonVars("wds.linkis.server.web.alloworigin", "*")
+  val BDP_SERVER_WEB_ALLOW_METHOD = CommonVars("wds.linkis.server.web.allowmethod", "POST,GET,OPTIONS,PUT,HEAD,DELETE")
 }

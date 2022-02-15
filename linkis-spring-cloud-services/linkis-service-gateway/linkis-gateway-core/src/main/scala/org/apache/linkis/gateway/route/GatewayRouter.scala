@@ -21,6 +21,7 @@ import java.util
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.exception.TooManyServiceException
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
@@ -39,19 +40,25 @@ trait GatewayRouter {
 }
 abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
   import scala.collection.JavaConversions._
+  protected val enabledRefresh = GatewayConfiguration.GATEWAY_SERVER_REFRESH_ENABLED.getValue
   protected def findAndRefreshIfNotExists(serviceId: String, findService: => Option[String]): Option[String] = {
     var service = findService
     if(service.isEmpty) {
       val applicationNotExists = new NoApplicationExistsException(10050, "Application " +
         serviceId + " is not exists any instances.")
-      Utils.tryThrow(Utils.waitUntil(() =>{
-        ServiceInstanceUtils.refreshServiceInstances()
-        service = findService
-        service.nonEmpty
-      }, ServiceInstanceUtils.serviceRefreshMaxWaitTime(), 500, 2000)){ t =>
-        warn(s"Need a random $serviceId instance, but no one can find in Discovery refresh.", t)
-        applicationNotExists.initCause(t)
-        applicationNotExists
+      if (enabledRefresh) {
+        Utils.tryThrow(Utils.waitUntil(() =>{
+          ServiceInstanceUtils.refreshServiceInstances()
+          service = findService
+          service.nonEmpty
+        }, ServiceInstanceUtils.serviceRefreshMaxWaitTime(), 500, 2000)){ t =>
+          warn(s"Need a random $serviceId instance, but no one can find in Discovery refresh.", t)
+          applicationNotExists.initCause(t)
+          applicationNotExists
+        }
+      } else {
+
+        throw applicationNotExists
       }
     }
     service
@@ -107,7 +114,9 @@ class DefaultGatewayRouter(var gatewayRouters: Array[GatewayRouter]) extends Abs
     service.map { applicationName =>
       if(StringUtils.isNotBlank(serviceInstance.getInstance)) {
         val _serviceInstance = ServiceInstance(applicationName, serviceInstance.getInstance)
-        ServiceInstanceUtils.getRPCServerLoader.getOrRefreshServiceInstance(_serviceInstance)
+        if (enabledRefresh) {
+          ServiceInstanceUtils.getRPCServerLoader.getOrRefreshServiceInstance(_serviceInstance)
+        }
         _serviceInstance
       } else ServiceInstance(applicationName, null)
     }.get

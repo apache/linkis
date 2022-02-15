@@ -18,7 +18,6 @@
 package org.apache.linkis.engineconn.acessible.executor.execution
 
 import java.util.concurrent.TimeUnit
-
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
@@ -32,10 +31,11 @@ import org.apache.linkis.engineconn.executor.entity.{Executor, LabelExecutor, Re
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.executor.service.ManagerService
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.common.protocol.engine.EngineConnReleaseRequest
+import org.apache.linkis.manager.common.protocol.engine.{ECCanKillRequest, EngineConnReleaseRequest}
 import org.apache.linkis.manager.common.protocol.resource.ResourceUsedProtocol
 import org.apache.linkis.rpc.Sender
 import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.linkis.manager.label.utils.LabelUtil
 
 
 class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
@@ -74,37 +74,32 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
     val maxFreeTimeVar = AccessibleExecutorConfiguration.ENGINECONN_MAX_FREE_TIME.getValue(context.getOptions)
     val maxFreeTimeStr = maxFreeTimeVar.toString
     val maxFreeTime = maxFreeTimeVar.toLong
-    info("executorStatusChecker created， maxFreeTimeMills is " + maxFreeTime)
+    logger.info("executorStatusChecker created， maxFreeTimeMills is " + maxFreeTime)
     Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
       override def run(): Unit = Utils.tryAndWarn {
         val accessibleExecutor = ExecutorManager.getInstance.getReportExecutor match {
           case executor: AccessibleExecutor => executor
           case executor: Executor =>
-            warn(s"Executor(${executor.getId}) is not a AccessibleExecutor, do noting when reached max free time .")
+            logger.warn(s"Executor(${executor.getId}) is not a AccessibleExecutor, do noting when reached max free time .")
             return
         }
         if (NodeStatus.isCompleted(accessibleExecutor.getStatus)) {
           error(s"${accessibleExecutor.getId} has completed with status ${accessibleExecutor.getStatus}, now stop it.")
           ShutdownHook.getShutdownHook.notifyStop()
         } else if (accessibleExecutor.getStatus == NodeStatus.ShuttingDown) {
-          warn(s"${accessibleExecutor.getId} is ShuttingDown...")
+          logger.warn(s"${accessibleExecutor.getId} is ShuttingDown...")
           ShutdownHook.getShutdownHook.notifyStop()
-        } else if (maxFreeTime > 0 && (NodeStatus.Unlock.equals(accessibleExecutor.getStatus) || NodeStatus.Idle.equals(accessibleExecutor.getStatus) )
+        } else if (maxFreeTime > 0 && (NodeStatus.Unlock.equals(accessibleExecutor.getStatus) || NodeStatus.Idle.equals(accessibleExecutor.getStatus))
           && System.currentTimeMillis - accessibleExecutor.getLastActivityTime > maxFreeTime) {
-          warn(s"${accessibleExecutor.getId} has not been used for $maxFreeTimeStr, now try to shutdown it.")
-          ShutdownHook.getShutdownHook.notifyStop()
-          requestManagerReleaseExecutor(" idle release")
-          Utils.defaultScheduler.scheduleWithFixedDelay(new Runnable {
-            override def run(): Unit = {
-              Utils.tryCatch {
-                warn(s"Now exit with code ${ShutdownHook.getShutdownHook.getExitCode()}")
-                System.exit(ShutdownHook.getShutdownHook.getExitCode())
-              } { t =>
-                error(s"Exit error : ${ExceptionUtils.getRootCauseMessage(t)}.", t)
-                System.exit(-1)
-              }
-            }
-          }, 3000,1000*10, TimeUnit.MILLISECONDS)
+          if (ifECCanMaintain()) {
+            logger.info("ec will not be killed at this time")
+            accessibleExecutor.updateLastActivityTime()
+          } else {
+            logger.warn(s"${accessibleExecutor.getId} has not been used for $maxFreeTimeStr, now try to shutdown it.")
+            requestManagerReleaseExecutor(" idle release")
+            ShutdownHook.getShutdownHook.notifyStop()
+          }
+
         }
       }
     }, 3 * 60 * 1000, AccessibleExecutorConfiguration.ENGINECONN_HEARTBEAT_TIME.getValue.toLong, TimeUnit.MILLISECONDS)
@@ -113,6 +108,37 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
   def requestManagerReleaseExecutor(msg: String): Unit = {
     val engineReleaseRequest = new EngineConnReleaseRequest(Sender.getThisServiceInstance, Utils.getJvmUser, msg, EngineConnObject.getEngineCreationContext.getTicketId)
     ManagerService.getManagerService.requestReleaseEngineConn(engineReleaseRequest)
+  }
+
+  private def isMaintainSupported(): Boolean = {
+    if (! AccessibleExecutorConfiguration.ENABLE_MAINTAIN.getValue) return false
+    val userCreator = LabelUtil.getUserCreatorLabel(EngineConnObject.getEngineCreationContext.getLabels())
+    if (null != userCreator && AccessibleExecutorConfiguration.ENABLE_MAINTAIN_CREATORS.getValue.contains(userCreator.getCreator)) {
+      logger.info(s"${userCreator.getStringValue} maintain enabled")
+      true
+    } else {
+      false
+    }
+  }
+
+  private def ifECCanMaintain(): Boolean = {
+    if (! isMaintainSupported()) return false
+    val engineTypeLabel = LabelUtil.getEngineTypeLabel(EngineConnObject.getEngineCreationContext.getLabels())
+    val userCreator = LabelUtil.getUserCreatorLabel(EngineConnObject.getEngineCreationContext.getLabels())
+    if (null == engineTypeLabel) return false
+    val ecCanKillRequest = new ECCanKillRequest
+    ecCanKillRequest.setEngineConnInstance(Sender.getThisServiceInstance)
+    ecCanKillRequest.setUser(userCreator.getUser)
+    ecCanKillRequest.setUserCreatorLabel(userCreator)
+    ecCanKillRequest.setEngineTypeLabel(engineTypeLabel)
+    Utils.tryCatch{
+      val response = ManagerService.getManagerService.ecCanKillRequest(ecCanKillRequest)
+      logger.info(s"From manager get $response")
+      ! response.getFlag
+    } { throwable: Throwable =>
+      logger.warn("Failed to ecCanKillRequestManager, will be default exit", throwable)
+      false
+    }
   }
 
   protected def reportUsedResource(executor: Executor, engineCreationContext: EngineCreationContext): Unit = executor match {

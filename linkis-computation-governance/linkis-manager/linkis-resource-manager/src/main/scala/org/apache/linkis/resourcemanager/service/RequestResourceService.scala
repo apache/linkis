@@ -19,9 +19,10 @@ package org.apache.linkis.resourcemanager.service
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.exception.RMWarnException
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.resourcemanager.domain.RMLabelContainer
-import org.apache.linkis.resourcemanager.exception.{RMErrorCode, RMWarnException}
+import org.apache.linkis.resourcemanager.exception.RMErrorCode
 import org.apache.linkis.resourcemanager.utils.{RMUtils, UserConfiguration}
 
 abstract class RequestResourceService(labelResourceService: LabelResourceService) extends Logging{

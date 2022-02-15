@@ -127,7 +127,7 @@ object EntranceConfiguration {
 
   val SKIP_AUTH = CommonVars("wds.linkis.entrance.skip.auth", true)
 
-  val PROGRESS_PUSH = CommonVars[String]("wds.linkis.entrance.push.progress", "false")
+  val PROGRESS_PUSH = CommonVars[String]("wds.linkis.entrance.push.progress", "true")
 
   val CONCURRENT_FACTORY_MAX_CAPACITY = CommonVars("wds.linkis.concurrent.group.factory.capacity", 1000)
 

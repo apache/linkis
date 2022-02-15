@@ -30,6 +30,16 @@ public class MdqField {
     private Boolean isPrimary;
     private Integer length;
 
+    private String modeInfo;
+
+    public String getModeInfo() {
+        return modeInfo;
+    }
+
+    public void setModeInfo(String modeInfo) {
+        this.modeInfo = modeInfo;
+    }
+
     public Integer getLength() {
         return length;
     }

@@ -92,6 +92,13 @@
             <artifactId>linkis-label-common</artifactId>
             <version>${linkis.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-gateway-authentication</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

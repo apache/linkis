@@ -15,25 +15,27 @@
  * limitations under the License.
  */
  
-package org.apache.linkis.entrance.interceptor.impl
+package org.apache.linkis.orchestrator.computation.catalyst.converter.ruler
 
 import java.util.regex.Pattern
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.entrance.conf.EntranceConfiguration
-import org.apache.linkis.entrance.interceptor.exception.{PythonCodeCheckException, ScalaCodeCheckException}
-import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.orchestrator.computation.catalyst.converter.exception.{CodeCheckException, PythonCodeCheckException, ScalaCodeCheckException}
 import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.mutable.ArrayBuffer
 
-
+/**
+  *
+  * Description:
+  */
 abstract class Explain extends Logging {
   /**
     * 用于检查code是否符合规范
+    *
     * @param code
     * @param error
     * @return
@@ -49,11 +51,12 @@ object SparkExplain extends Explain {
   private val scCancelAllJobs = Pattern.compile("sc\\.cancelAllJobs(\\s*)")
   private val runtime = Pattern.compile("Runtime\\.getRuntime")
   private val LINE_BREAK = "\n"
-  private val LOG:Logger = LoggerFactory.getLogger(getClass)
+  private val LOG: Logger = LoggerFactory.getLogger(getClass)
+
   override def authPass(code: String, error: StringBuilder): Boolean = {
-    if (EntranceConfiguration.SKIP_AUTH.getValue) {
-      return true
-    }
+    //    if (EntranceConfiguration.IS_QML.getValue) {
+    //      return true
+    //    }
     if (scStop.matcher(code).find()) {
       error.append("Authentication error: sc.stop() is not allowed in IDE.")
       false
@@ -77,97 +80,67 @@ object SQLExplain extends Explain {
   val NO_LIMIT_STRING = "\n!with no limit!"
 
   val SQL_DEFAULT_LIMIT: CommonVars[Int] = CommonVars("wds.linkis.sql.default.limit", 5000)
-  val SQL_APPEND_LIMIT:String = " limit " + SQL_DEFAULT_LIMIT.getValue
+  val SQL_APPEND_LIMIT: String = " limit " + SQL_DEFAULT_LIMIT.getValue
   val DROP_TABLE_SQL = "\\s*drop\\s+table\\s+\\w+\\s*"
   val CREATE_DATABASE_SQL = "\\s*create\\s+database\\s+\\w+\\s*"
   private val IDE_ALLOW_NO_LIMIT_REGEX = "--set\\s*ide.engine.no.limit.allow\\s*=\\s*true".r.unanchored
   private val LINE_BREAK = "\n"
   private val COMMENT_FLAG = "--"
   val SET_OWN_USER = "set owner user"
-  private val LIMIT:String = "limit"
-  private val LIMIT_UPPERCASE:String = "LIMIT"
+  private val LIMIT: String = "limit"
+  private val LIMIT_UPPERCASE: String = "LIMIT"
   private val IDE_ALLOW_NO_LIMIT = "--set wds.linkis.engine.no.limit.allow=true"
-  private val LOG:Logger = LoggerFactory.getLogger(getClass)
+  private val LOG: Logger = LoggerFactory.getLogger(getClass)
+
   override def authPass(code: String, error: StringBuilder): Boolean = {
-    if (code.trim.matches(CREATE_DATABASE_SQL)){
+    if (code.trim.matches(CREATE_DATABASE_SQL)) {
       error.append("Sorry, you have no permission to create database")
       false
-    }else true
+    } else true
   }
 
   /**
     * to deal with sql limit
     *
     * @param executionCode sql code
-    * @param requestPersistTask use to store inited logs
     */
-  def dealSQLLimit(executionCode:String, requestPersistTask: JobRequest, logAppender: java.lang.StringBuilder):Unit = {
-    val fixedCode:ArrayBuffer[String] = new ArrayBuffer[String]()
+  def dealSQLLimit(executionCode: String, logAppender: java.lang.StringBuilder): String = {
+    val fixedCode: ArrayBuffer[String] = new ArrayBuffer[String]()
     val tempCode = SQLCommentHelper.dealComment(executionCode)
-    val isNoLimitAllowed = Utils.tryCatch{
+    val isNoLimitAllowed = Utils.tryCatch {
       IDE_ALLOW_NO_LIMIT_REGEX.findFirstIn(executionCode).isDefined
-    }{
-      case e:Exception => logger.warn("sql limit check error happens")
+    } {
+      case e: Exception => logger.warn("sql limit check error happens")
         executionCode.contains(IDE_ALLOW_NO_LIMIT)
     }
-    if (isNoLimitAllowed) logAppender.append(LogUtils.generateWarn("please pay attention ,SQL full export mode opened(请注意,SQL全量导出模式打开)\n"))
-    if(tempCode.contains("""\;""")){
-      val semicolonIndexes = findRealSemicolonIndex(tempCode)
-      var oldIndex = 0
-      semicolonIndexes.foreach{
-        index => val singleCode = tempCode.substring(oldIndex, index)
-          oldIndex = index + 1
-          if (isSelectCmd(singleCode)){
-            val trimCode = singleCode.trim
-            if (isSelectCmdNoLimit(trimCode) && !isNoLimitAllowed){
-              logAppender.append(LogUtils.generateWarn(s"You submitted a sql without limit, DSS will add limit 5000 to your sql") + "\n")
-              //将注释先干掉,然后再进行添加limit
-              val realCode = cleanComment(trimCode)
-              fixedCode += (realCode + SQL_APPEND_LIMIT)
-            }else if (isSelectOverLimit(singleCode) && !isNoLimitAllowed){
-              val trimCode = singleCode.trim
-              logAppender.append(LogUtils.generateWarn(s"You submitted a sql with limit exceeding 5000, it is not allowed. DSS will change your limit to 5000") + "\n")
-              fixedCode += repairSelectOverLimit(trimCode)
-            }else{
-              fixedCode += singleCode.trim
-            }
-          }else{
-            fixedCode += singleCode.trim
-          }
-      }
-    }else{
+    if (isNoLimitAllowed) logAppender.append(LogUtils.generateWarn("请注意,SQL全量导出模式打开\n"))
+    Utils.tryCatch{
       tempCode.split(";") foreach { singleCode =>
-        if (isSelectCmd(singleCode)){
+        if (isSelectCmd(singleCode)) {
           val trimCode = singleCode.trim
-          if (isSelectCmdNoLimit(trimCode) && !isNoLimitAllowed){
+          if (isSelectCmdNoLimit(trimCode) && !isNoLimitAllowed) {
             logAppender.append(LogUtils.generateWarn(s"You submitted a sql without limit, DSS will add limit 5000 to your sql") + "\n")
             //将注释先干掉,然后再进行添加limit
             val realCode = cleanComment(trimCode)
             fixedCode += (realCode + SQL_APPEND_LIMIT)
-          }else if (isSelectOverLimit(singleCode) && !isNoLimitAllowed){
+          } else if (isSelectOverLimit(singleCode) && !isNoLimitAllowed) {
             val trimCode = singleCode.trim
             logAppender.append(LogUtils.generateWarn(s"You submitted a sql with limit exceeding 5000, it is not allowed. DSS will change your limit to 5000") + "\n")
             fixedCode += repairSelectOverLimit(trimCode)
-          }else{
+          } else {
             fixedCode += singleCode.trim
           }
-        }else{
+        } else {
           fixedCode += singleCode.trim
         }
       }
+    }{
+      case exception: ArrayIndexOutOfBoundsException => {
+        throw CodeCheckException(20051, "failed to check code, please check your code grammar!")
+      }
     }
     logAppender.append(LogUtils.generateInfo("SQL code check has passed" + "\n"))
-    requestPersistTask.setExecutionCode(fixedCode.mkString(";\n"))
-    info(s"after sql limit code is ${requestPersistTask.getExecutionCode}")
-  }
-
-  private def findRealSemicolonIndex(tempCode: String):Array[Int] = {
-    val realTempCode = if (!tempCode.endsWith(""";""")) tempCode + ";" else tempCode
-    val array = new ArrayBuffer[Int]()
-    for(i <- 0 until realTempCode.length - 1){
-      if ('\\' != realTempCode.charAt(i) && ';' == realTempCode.charAt(i + 1)) array += ( i + 1)
-    }
-    array.toArray
+    fixedCode.mkString(";\n")
   }
 
 
@@ -181,7 +154,7 @@ object SQLExplain extends Explain {
     }
     //如果一段sql是 --xxx回车select * from default.users，那么他也是select语句
     val realCode = cleanComment(code)
-    // 以前，在判断，对于select* from xxx这样的SQL时会出现问题的，但是这种语法hive是支持的
+    // 以前，在判断，对于select* from xxx这样的SQL时会出现问题的，但是这种语法hive是支持的。
     realCode.trim.split("\\s+")(0).toLowerCase.contains("select")
   }
 
@@ -200,11 +173,15 @@ object SQLExplain extends Explain {
     }
     val a = words.toArray
     val length = a.length
-    val second_last = a(length - 2)
-    !"limit".equals(second_last.toLowerCase())
+    if(a.length > 1) {
+      val second_last = a(length - 2)
+      !"limit".equals(second_last.toLowerCase())
+    } else {
+      false
+    }
   }
 
-  private def cleanComment(sql:String):String = {
+  private def cleanComment(sql: String): String = {
     val cleanSql = new StringBuilder
     sql.trim.split(LINE_BREAK) foreach {
       singleSql => if (!singleSql.trim().startsWith(COMMENT_FLAG)) cleanSql.append(singleSql).append(LINE_BREAK)
@@ -238,29 +215,30 @@ object SQLExplain extends Explain {
 
   /**
     * 修改正确
+    *
     * @param cmd code
     * @return String
     */
   def repairSelectOverLimit(cmd: String): String = {
     var code = cmd.trim
-    var preCode=""
-    var tailCode=""
+    var preCode = ""
+    var tailCode = ""
     var limitNum = SQL_DEFAULT_LIMIT.getValue
     if (code.toLowerCase.contains("limit")) {
-      preCode=code.substring(0,code.toLowerCase().lastIndexOf("limit")).trim
+      preCode = code.substring(0, code.toLowerCase().lastIndexOf("limit")).trim
       tailCode = code.substring(code.toLowerCase().lastIndexOf("limit")).trim
     }
     if (isUpperSelect(cmd)) preCode + " LIMIT " + limitNum else preCode + " limit " + limitNum
   }
 
-  private def isUpperSelect(selectSql:String):Boolean = {
+  private def isUpperSelect(selectSql: String): Boolean = {
     if (selectSql.trim.startsWith("SELECT")) true else false
   }
 
 
 }
 
-object PythonExplain extends Explain{
+object PythonExplain extends Explain {
   /**
     * User is not allowed to import sys module(不允许用户导入sys模块)
     */
@@ -279,27 +257,26 @@ object PythonExplain extends Explain{
   private val IMPORT_SUBPORCESS_MODULE = """import\s+subprocess""".r.unanchored
   private val FROM_SUBPROCESS_IMPORT = """from\s+subprocess\s+import\s+.*""".r.unanchored
 
-
-  /**
-   * Because of importing numpy package, spark engine will report an error,
-   * so we forbid this usage.
-   * */
-  private val FROM_NUMPY_IMPORT = """from\s+numpy\s+import\s+.*""".r.unanchored
-
-
   private val CAN_PASS_CODES = "subprocess.run;subprocess.Popen;subprocess.check_output"
 
   /**
     * Forbidden user stop sparkContext(禁止用户stop sparkContext)
     */
   private val SC_STOP = """sc\.stop""".r.unanchored
-  override def authPass(code: String, error: StringBuilder): Boolean = {
-    if (EntranceConfiguration.SKIP_AUTH.getValue) {
-      return true
-    }
 
+  /**
+    * Because of importing numpy package, spark engine will report an error,
+    * so we forbid this usage.
+    **/
+  private val FROM_NUMPY_IMPORT = """from\s+numpy\s+import\s+.*""".r.unanchored
+
+
+  override def authPass(code: String, error: StringBuilder): Boolean = {
+    //    if (EntranceConfiguration.IS_QML.getValue) {
+    //      return true
+    //    }
     CAN_PASS_CODES.split(";").foreach(c => {
-      if (code.contains(c)){
+      if (code.contains(c)) {
         if (IMPORT_SYS_MOUDLE.findAllIn(code).nonEmpty || FROM_SYS_IMPORT.findAllIn(code).nonEmpty)
           throw PythonCodeCheckException(20070, "can not use sys module")
         else if (IMPORT_OS_MOUDLE.findAllIn(code).nonEmpty || FROM_OS_IMPORT.findAllIn(code).nonEmpty)
@@ -310,12 +287,10 @@ object PythonExplain extends Explain{
           throw PythonCodeCheckException(20073, "You can not stop SparkContext, It's dangerous")
         else if (FROM_NUMPY_IMPORT.findAllIn(code).nonEmpty)
           throw PythonCodeCheckException(20074, "Numpy packages cannot be imported in this way")
-        else if (FROM_NUMPY_IMPORT.findAllIn(code).nonEmpty)
-          throw PythonCodeCheckException(20074, "Numpy packages cannot be imported in this way")
+        return true
       }
     })
-
-    code.split(System.lineSeparator()) foreach {code =>
+    code.split(System.lineSeparator()) foreach { code =>
       if (IMPORT_SYS_MOUDLE.findAllIn(code).nonEmpty || FROM_SYS_IMPORT.findAllIn(code).nonEmpty)
         throw PythonCodeCheckException(20070, "can not use sys module")
       else if (IMPORT_OS_MOUDLE.findAllIn(code).nonEmpty || FROM_OS_IMPORT.findAllIn(code).nonEmpty)
@@ -326,19 +301,22 @@ object PythonExplain extends Explain{
         throw PythonCodeCheckException(20072, "can not use subprocess module")
       else if (SC_STOP.findAllIn(code).nonEmpty)
         throw PythonCodeCheckException(20073, "You can not stop SparkContext, It's dangerous")
+      else if (FROM_NUMPY_IMPORT.findAllIn(code).nonEmpty)
+        throw PythonCodeCheckException(20074, "Numpy packages cannot be imported in this way")
     }
     true
   }
 }
 
-object ScalaExplain extends Explain{
+object ScalaExplain extends Explain {
   private val systemExit = """System.exit""".r.unanchored
   private val runtime = """Runtime.getRunTime""".r.unanchored
-  private val LOG:Logger = LoggerFactory.getLogger(getClass)
+  private val LOG: Logger = LoggerFactory.getLogger(getClass)
+
   override def authPass(code: String, error: StringBuilder): Boolean = {
-    if (EntranceConfiguration.SKIP_AUTH.getValue) {
-      return true
-    }
+    //    if (EntranceConfiguration.IS_QML.getValue) {
+    //      return true
+    //    }
     code match {
       case systemExit() => LOG.error("scala code can not use System.exit")
         throw ScalaCodeCheckException(20074, "scala code can not use System.exit")

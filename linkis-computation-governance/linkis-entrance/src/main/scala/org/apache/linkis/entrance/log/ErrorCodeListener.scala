@@ -55,9 +55,8 @@ class PersistenceErrorCodeListener extends ErrorCodeListener{
     */
   override def onErrorCodeCreated(job: Job, errorCode: String, detailErrorMsg: String): Unit = {
     val jobRequest: JobRequest = this.entranceParser.parseToJobRequest(job)
-    val errorCodeNumber = Integer.parseInt(errorCode)
-    if (jobRequest.getErrorCode != errorCodeNumber) {
-      jobRequest.setErrorCode(errorCodeNumber)
+    if (StringUtils.isEmpty(jobRequest.getErrorDesc) || "50032".equals(errorCode)) {
+      jobRequest.setErrorCode(Integer.parseInt(errorCode))
       val realErrorMsg = if (detailErrorMsg.length <= 255) detailErrorMsg else detailErrorMsg.substring(0, 255)
       jobRequest.setErrorDesc(realErrorMsg)
       persistenceManager.createPersistenceEngine().updateIfNeeded(jobRequest)

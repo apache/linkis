@@ -75,8 +75,6 @@ abstract class EntranceJob extends Job {
 
   def getEntranceContext: EntranceContext = this.entranceContext
 
-  def getRunningSubJobIndex: Int
-
   def getRunningSubJob: SubJobInfo = {
     if (null != jobGroups && jobGroups.size > 0) {
       jobGroups(0)

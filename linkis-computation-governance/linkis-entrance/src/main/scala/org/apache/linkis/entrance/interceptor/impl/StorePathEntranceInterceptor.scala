@@ -76,7 +76,6 @@ class StorePathEntranceInterceptor extends EntranceInterceptor with Logging {
     TaskUtils.addRuntimeMap(paramsMap, runtimeMap)
     val params = new util.HashMap[String, Object]()
     paramsMap.asScala.foreach(kv => params.put(kv._1, kv._2.asInstanceOf[Object]))
-    jobReq.setResultLocation(parentPath)
     jobReq.setParams(params)
     jobReq
   }

@@ -125,6 +125,11 @@ class ComputationOrchestratorSessionFactoryImpl extends ComputationOrchestratorS
     }
   }
 
+  private val varSubstitutionConverterCheckRuler = new ConverterCheckRulerBuilder(){
+    override def apply(v1: OrchestratorSession): ConverterCheckRuler = {
+      new VarSubstitutionConverterCheckRuler
+    }
+  }
 
   //validator
 

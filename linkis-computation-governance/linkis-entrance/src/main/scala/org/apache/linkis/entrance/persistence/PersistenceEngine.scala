@@ -39,7 +39,7 @@ trait PersistenceEngine extends Closeable with Flushable {
   /**
     * If a task's progress, status, logs, and result set are updated, this method is updated <br>
     * 如果一个任务的进度、状态、日志和结果集发生更新，由此方法进行更新<br>
-    * @param jobReq
+    * @param task
     */
   @throws[ErrorException]
   def updateIfNeeded(jobReq: JobRequest): Unit

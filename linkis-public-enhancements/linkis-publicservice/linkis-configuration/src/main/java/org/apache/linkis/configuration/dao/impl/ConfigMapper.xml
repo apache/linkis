@@ -143,7 +143,8 @@
     <select id="listKeyByStringValue" resultMap="ConfigKeyMap">
         SELECT <include refid="Config_Key_Column"/>
         FROM linkis_ps_configuration_config_key
-        WHERE id IN (SELECT id FROM linkis_cg_manager_label WHERE label_value = #{stringValue})
+        WHERE id IN (SELECT b.config_key_id FROM linkis_cg_manager_label a JOIN linkis_ps_configuration_key_engine_relation b
+        ON a.label_value = #{stringValue} AND a.id = b.engine_type_label_id)
     </select>
 
 
@@ -191,7 +192,7 @@
         SELECT c.id AS category_id, c.level, c.description, c.tag, c.update_time, c.create_time,
         l.id, l.label_key, l.label_value, l.label_feature, l.label_value_size
         FROM linkis_ps_configuration_category AS c
-        LEFT OUTER JOIN linkis_cg_manager_label as l on c.label_id = l.id
+        INNER JOIN linkis_cg_manager_label as l on c.label_id = l.id
     </select>
 
     <select id="getCategoryById" resultMap="CategoryMap">

@@ -19,7 +19,7 @@ package org.apache.linkis.engineplugin.spark.cs
 
 import java.util.regex.Pattern
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.cs.client.service.CSTableService
 import org.apache.linkis.cs.common.entity.metadata.CSTable
 import org.apache.linkis.cs.common.utils.CSCommonUtils
@@ -32,7 +32,7 @@ import org.apache.spark.sql.execution.datasources.csv.DolphinToSpark
 import scala.collection.mutable.ArrayBuffer
 
 
-class CSTableParser extends Logging {
+object CSTableParser extends Logging {
 
   private val pb: Pattern = Pattern.compile(CSCommonUtils.CS_TMP_TABLE_PREFIX + "[^\\s\";'()]+[$\\s]{0,1}", Pattern.CASE_INSENSITIVE)
 
@@ -62,13 +62,13 @@ class CSTableParser extends Logging {
     val parsedTables = new ArrayBuffer[String]()
     csTempTables.foreach{ csTempTable =>
       val table = getCSTable(csTempTable, contextIDValueStr, nodeNameStr)
-      if (null == table){
-        throw new ExecuteError(40007,s"The csTable that name is $csTempTable not found in cs")
+      if (null == table) {
+        throw new ExecuteError(40007, s"The csTable that name is $csTempTable not found in cs")
       }
       registerTempTable(table)
       parsedTables.append(csTempTable)
     }
-    StringUtils.replaceEach(code, csTempTables,parsedTables.toArray)
+    StringUtils.replaceEach(code, csTempTables, parsedTables.toArray)
   }
 
   /**
@@ -77,14 +77,27 @@ class CSTableParser extends Logging {
     * @param csTempTable
     * @return
     */
-  def getCSTable(csTempTable:String,  contextIDValueStr: String, nodeNameStr: String):CSTable = {
+  def getCSTable(csTempTable: String, contextIDValueStr: String, nodeNameStr: String): CSTable = {
     CSTableService.getInstance().getUpstreamSuitableTable(contextIDValueStr, nodeNameStr, csTempTable)
   }
 
-  def registerTempTable(csTable: CSTable):Unit = {
+  def registerTempTable(csTable: CSTable): Unit = {
     val spark = SparkSession.builder().enableHiveSupport().getOrCreate()
-    info(s"Start to create  tempView to sparkSession viewName(${csTable.getName}) location(${csTable.getLocation})")
+    logger.info(s"Start to create  tempView to sparkSession viewName(${csTable.getName}) location(${csTable.getLocation})")
     DolphinToSpark.createTempView(spark, csTable.getName, csTable.getLocation, true)
-    info(s"Finished to create  tempView to sparkSession viewName(${csTable.getName}) location(${csTable.getLocation})")
+    logger.info(s"Finished to create  tempView to sparkSession viewName(${csTable.getName}) location(${csTable.getLocation})")
   }
+
+  private def unRegisterTempTable(tmpView: String): Unit = {
+    val spark = SparkSession.builder().enableHiveSupport().getOrCreate()
+    logger.info(s"to drop temp view $tmpView")
+    spark.catalog.dropTempView(tmpView)
+  }
+
+  def clearCSTmpView(code: String, contextIDValueStr: String, nodeNameStr: String): Unit = Utils.tryAndWarnMsg {
+    val tables = getCSTempTable(code)
+    tables.foreach(unRegisterTempTable)
+  }("Failed to clearCSTmpView")
+
+
 }

@@ -136,23 +136,23 @@ class ConfigurationService extends Logging {
   }
 
   def updateUserValue(createList: util.List[ConfigValue], updateList: util.List[ConfigValue]): Unit = {
-    if(!CollectionUtils.isEmpty(createList)){
+    if(!CollectionUtils.isEmpty(createList)) {
       configMapper.insertValueList(createList)
     }
-    if(!CollectionUtils.isEmpty(updateList)){
+    if(!CollectionUtils.isEmpty(updateList)) {
       configMapper.updateUserValueList(updateList)
     }
   }
 
   def clearAMCacheConf(username: String, creator: String, engine: String, version: String): Unit = {
     val sender = Sender.getSender(Configuration.MANAGER_SPRING_NAME.getValue)
-    if(StringUtils.isNotEmpty(username)){
+    if(StringUtils.isNotEmpty(username)) {
       val userCreatorLabel = LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[UserCreatorLabel])
       userCreatorLabel.setUser(username)
       userCreatorLabel.setCreator(creator)
       val request = new RemoveCacheConfRequest
       request.setUserCreatorLabel(userCreatorLabel)
-      if(StringUtils.isNotEmpty(engine) && StringUtils.isNotEmpty(version)){
+      if(StringUtils.isNotEmpty(engine) && StringUtils.isNotEmpty(version)) {
         val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(engine)
         engineTypeLabel.setVersion(version)
         request.setEngineTypeLabel(engineTypeLabel)
@@ -287,37 +287,55 @@ class ConfigurationService extends Logging {
       throw new ConfigurationException("The label parameter is empty(label参数为空，无法根据label查询相关配置)")
     }
   }
+
+  def replaceCreatorToEngine(defaultCreatorConfigs: util.List[ConfigKeyValue], defaultEngineConfigs: util.List[ConfigKeyValue]): Unit = {
+    defaultCreatorConfigs.asScala.foreach(creatorConfig => {
+      if (creatorConfig.getKey != null) {
+        val engineconfig = defaultEngineConfigs.asScala.find(_.getKey.equals(creatorConfig.getKey))
+        if(engineconfig.isDefined) {
+          engineconfig.get.setDefaultValue(creatorConfig.getConfigValue)
+        } else {
+          defaultEngineConfigs.add(creatorConfig)
+        }
+      }
+    })
+  }
+
   def getFullTreeByLabelList(labelList: java.util.List[Label[_]], useDefaultConfig: Boolean = true): util.ArrayList[ConfigTree] = {
     labelCheck(labelList)
     val combinedLabel = combinedLabelBuilder.build("",labelList).asInstanceOf[CombinedLabelImpl]
-    info("start to get config by label（开始通过标签获取配置信息）")
     val label = labelMapper.getLabelByKeyValue(combinedLabel.getLabelKey,combinedLabel.getStringValue)
     var configs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
     if(label != null && label.getId > 0){
       configs = configMapper.getConfigKeyValueByLabelId(label.getId)
     }
-    var defaultConfigs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
+    var defaultEngineConfigs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
+    var defaultCreatorConfigs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
     if(useDefaultConfig) {
-      //todo 优先级：用户配置-->creator的默认引擎配置-->默认引擎配置,现在缺少creator级别的覆盖
-      //现在所有获取的默认配置都是获取引擎级别的默认配置，暂时没有应用级别的默认配置。
-      //如果需要增强上述特性，需要考虑：
-      //1.对于获取引擎配置：需要将此处生成label的creator改成对应的应用
-      //2.对于新增引擎配置：需要修改createSecondCategory用于获取linkedEngineTypeLabel的label，同样将它的creator替换成应用的creator
-      //3.对于数据库初始化：需要修改linkis.dml文件中--关联label和默认配置，将label.label_value = @SPARK_ALL等引擎修改成@SPARK_IDE等等每个应用
-      //notice:第二点和第三点的性质是一样的，第三点是为了添加系统自带的引擎，第二点是通过管理台配置的方式，让用户省掉第三步
-      val defaultLabelList = LabelParameterParser.changeUserToDefault(labelList)
-      val defaultCombinedLabel = combinedLabelBuilder.build("", defaultLabelList).asInstanceOf[CombinedLabelImpl]
-      val defaultLabel = labelMapper.getLabelByKeyValue(defaultCombinedLabel.getLabelKey, defaultCombinedLabel.getStringValue)
-      if(defaultLabel != null){
-        defaultConfigs = configMapper.getConfigKeyValueByLabelId(defaultLabel.getId)
+      //优先级：用户配置-->creator的默认引擎配置-->默认引擎配置
+      //对于数据库初始化：需要修改linkis.dml文件中--关联label和默认配置，将label.label_value = @SPARK_ALL等引擎修改成@SPARK_IDE等等每个应用
+      val defaultCretorLabelList = LabelParameterParser.changeUserToDefault(labelList, false)
+      val defaultCreatorCombinedLabel = combinedLabelBuilder.build("", defaultCretorLabelList).asInstanceOf[CombinedLabelImpl]
+      val defaultCreatorLabel = labelMapper.getLabelByKeyValue(defaultCreatorCombinedLabel.getLabelKey, defaultCreatorCombinedLabel.getStringValue)
+      if(defaultCreatorLabel != null) {
+        defaultCreatorConfigs = configMapper.getConfigKeyValueByLabelId(defaultCreatorLabel.getId)
       }
-      if(CollectionUtils.isEmpty(defaultConfigs)){
-        warn(s"The default configuration is empty. Please check the default configuration information in the database table(默认配置为空,请检查数据库表中关于标签${defaultCombinedLabel.getStringValue}的默认配置信息是否完整)")
+      val defaultEngineLabelList = LabelParameterParser.changeUserToDefault(labelList)
+      val defaultEngineCombinedLabel = combinedLabelBuilder.build("", defaultEngineLabelList).asInstanceOf[CombinedLabelImpl]
+      val defaultEngineLabel = labelMapper.getLabelByKeyValue(defaultEngineCombinedLabel.getLabelKey, defaultEngineCombinedLabel.getStringValue)
+      if(defaultEngineLabel != null) {
+        defaultEngineConfigs = configMapper.getConfigKeyValueByLabelId(defaultEngineLabel.getId)
+      }
+      if(CollectionUtils.isEmpty(defaultEngineConfigs)) {
+        warn(s"The default configuration is empty. Please check the default configuration information in the database table(默认配置为空,请检查数据库表中关于标签${defaultEngineCombinedLabel.getStringValue}的默认配置信息是否完整)")
+      }
+      val userCreatorLabel = labelList.asScala.find(_.isInstanceOf[UserCreatorLabel]).get.asInstanceOf[UserCreatorLabel]
+      if(Configuration.USE_CREATOR_DEFAULE_VALUE && userCreatorLabel.getCreator != "*") {
+        replaceCreatorToEngine(defaultCreatorConfigs, defaultEngineConfigs)
       }
     }
     //persisteUservalue(configs,defaultConfigs,combinedLabel,label)
-    info("finished to get config by label, start to build config tree(获取配置信息成功,开始返回配置树)")
-    buildTreeResult(configs,defaultConfigs)
+    buildTreeResult(configs, defaultEngineConfigs)
   }
 
 

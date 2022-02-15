@@ -839,23 +839,4 @@ CREATE TABLE `linkis_mg_gateway_auth_token` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
--- ----------------------------
--- Table structure for linkis_et_validator_checkinfo
--- ----------------------------
-DROP TABLE IF EXISTS `linkis_et_validator_checkinfo`;
-CREATE TABLE `linkis_et_validator_checkinfo` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `execute_user` varchar(64) COLLATE utf8_bin NOT NULL,
-  `db_name` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-  `params` text COLLATE utf8_bin,
-  `code_type` varchar(32) COLLATE utf8_bin NOT NULL,
-  `operation_type` varchar(32) COLLATE utf8_bin NOT NULL,
-  `status` tinyint(4) DEFAULT NULL,
-  `code` text COLLATE utf8_bin,
-  `msg` text COLLATE utf8_bin,
-  `risk_level` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `hit_rules` text COLLATE utf8_bin,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
 

@@ -15,12 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.serializer.parser;
+package org.apache.linkis.rpc.message.exception;
 
-import java.util.List;
-import java.util.Map;
+import org.apache.linkis.common.exception.ErrorException;
 
-public interface ServiceParser {
+public class MessageErrorException extends ErrorException {
 
-    Map<String, List<ServiceMethod>> parse(Object service);
+    public MessageErrorException(int errCode, String desc) {
+        super(errCode, desc);
+    }
+
+    public MessageErrorException(int errCode, String desc, Throwable t) {
+        super(errCode, desc);
+        initCause(t);
+    }
 }

@@ -31,7 +31,7 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.engine.{EngineConnReleaseRequest, EngineSuicideRequest}
 import org.apache.linkis.manager.common.protocol.node.{RequestNodeStatus, ResponseNodeStatus}
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.event.{ContextClosedEvent, EventListener}
 import org.springframework.stereotype.Service

@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.serializer.method;
+package org.apache.linkis.rpc.message.method;
 
 import org.apache.linkis.common.utils.JavaLog;
 import org.apache.linkis.protocol.message.RequestProtocol;
 import org.apache.linkis.rpc.Sender;
-import org.apache.linkis.rpc.serializer.exception.MessageErrorException;
-import org.apache.linkis.rpc.serializer.exception.MessageWarnException;
-import org.apache.linkis.rpc.serializer.utils.MessageUtils;
+import org.apache.linkis.rpc.message.exception.MessageErrorException;
+import org.apache.linkis.rpc.message.exception.MessageWarnException;
+import org.apache.linkis.rpc.message.utils.MessageUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

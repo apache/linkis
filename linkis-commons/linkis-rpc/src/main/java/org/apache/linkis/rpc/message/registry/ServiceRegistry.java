@@ -15,15 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.serializer.annotation;
+package org.apache.linkis.rpc.message.registry;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public interface ServiceRegistry {
 
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Order {
-    int value() default 2147483647;
+    void register(Object service);
 }

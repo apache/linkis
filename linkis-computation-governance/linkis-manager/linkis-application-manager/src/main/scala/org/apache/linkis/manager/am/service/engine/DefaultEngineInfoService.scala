@@ -29,7 +29,7 @@ import org.apache.linkis.manager.am.manager.{EMNodeManager, EngineNodeManager}
 import org.apache.linkis.manager.am.vo.AMEngineNodeVo
 import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
 import org.apache.linkis.manager.label.service.NodeLabelService
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

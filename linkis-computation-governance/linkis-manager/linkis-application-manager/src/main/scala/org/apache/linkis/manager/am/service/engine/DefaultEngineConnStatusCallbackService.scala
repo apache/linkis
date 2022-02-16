@@ -25,7 +25,7 @@ import org.apache.linkis.manager.common.entity.metrics.AMNodeMetrics
 import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallbackToAM
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.server.BDPJettyServerHelper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

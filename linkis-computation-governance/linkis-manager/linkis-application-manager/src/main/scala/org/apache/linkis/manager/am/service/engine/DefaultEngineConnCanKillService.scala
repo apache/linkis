@@ -26,7 +26,7 @@ import org.apache.linkis.manager.common.protocol.engine.{ECCanKillRequest, ECCan
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.label.utils.LabelUtil
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

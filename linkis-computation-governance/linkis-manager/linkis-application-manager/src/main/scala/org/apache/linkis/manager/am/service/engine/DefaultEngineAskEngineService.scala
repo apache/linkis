@@ -25,7 +25,7 @@ import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.protocol.engine._
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.rpc.Sender
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

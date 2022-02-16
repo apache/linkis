@@ -23,7 +23,7 @@ import org.apache.linkis.manager.common.protocol.resource.ResourceUsedProtocol
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.resourcemanager.domain.RMLabelContainer
 import org.apache.linkis.resourcemanager.service.ResourceManager
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

@@ -15,15 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.serializer.annotation;
+package org.apache.linkis.rpc.message.parser;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.List;
+import java.util.Map;
 
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Method {
-    String value() default "";
+public interface ServiceParser {
+
+    Map<String, List<ServiceMethod>> parse(Object service);
 }

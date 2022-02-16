@@ -23,7 +23,7 @@ import org.apache.linkis.ecm.server.conf.ECMConfiguration._
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.engineplugin.common.launch.entity.{EngineConnBuildRequest, EngineConnLaunchRequest}
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 
 
 class LinuxProcessEngineConnLaunchService extends ProcessEngineConnLaunchService {

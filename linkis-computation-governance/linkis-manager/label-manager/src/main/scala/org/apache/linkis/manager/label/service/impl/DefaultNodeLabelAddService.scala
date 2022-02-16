@@ -24,7 +24,7 @@ import org.apache.linkis.manager.common.protocol.label.LabelReportRequest
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.service.{NodeLabelAddService, NodeLabelService}
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.protocol.label.NodeLabelAddRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

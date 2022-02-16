@@ -28,7 +28,7 @@ import org.apache.linkis.orchestrator.core.ResultSet
 import org.apache.linkis.orchestrator.ecm.service.TaskExecutionReceiver
 import org.apache.linkis.orchestrator.listener.task._
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.rpc.utils.RPCUtils
 import org.springframework.stereotype.Service
 

@@ -46,7 +46,7 @@ import org.apache.linkis.manager.common.protocol.resource.ResponseTaskYarnResour
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.message.RequestProtocol
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.rpc.utils.RPCUtils
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, IncompleteExecuteResponse, SubmitResponse}
 import org.apache.linkis.server.BDPJettyServerHelper

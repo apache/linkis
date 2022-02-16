@@ -25,7 +25,7 @@ import org.apache.linkis.ecm.server.service.EngineConnStatusCallbackService
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus.{Failed, Running}
 import org.apache.linkis.manager.common.protocol.engine.{EngineConnStatusCallback, EngineConnStatusCallbackToAM}
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.rpc.Sender
 import org.springframework.stereotype.Service
 

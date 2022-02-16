@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.serializer.method;
+package org.apache.linkis.rpc.message.method;
 
 import org.apache.linkis.protocol.message.RequestProtocol;
-import org.apache.linkis.rpc.serializer.exception.MessageWarnException;
-import org.apache.linkis.rpc.serializer.parser.ServiceMethod;
-import org.apache.linkis.rpc.serializer.registry.SpringServiceRegistry;
-import org.apache.linkis.rpc.serializer.utils.MessageUtils;
+import org.apache.linkis.rpc.message.exception.MessageWarnException;
+import org.apache.linkis.rpc.message.parser.ServiceMethod;
+import org.apache.linkis.rpc.message.registry.SpringServiceRegistry;
+import org.apache.linkis.rpc.message.utils.MessageUtils;
 
 import java.util.Collection;
 import java.util.HashMap;

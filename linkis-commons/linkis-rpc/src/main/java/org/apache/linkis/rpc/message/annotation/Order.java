@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.serializer.annotation;
+package org.apache.linkis.rpc.message.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,7 +24,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Chain {
-
-    String value() default "default";
+public @interface Order {
+    int value() default 2147483647;
 }

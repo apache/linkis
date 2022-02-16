@@ -25,7 +25,7 @@ import org.apache.linkis.manager.common.exception.RMErrorException
 import org.apache.linkis.manager.common.protocol.engine.{EngineConnReleaseRequest, EngineStopRequest, EngineSuicideRequest}
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.label.service.impl.DefaultNodeLabelRemoveService
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.protocol.label.NodeLabelRemoveRequest
 import org.apache.linkis.resourcemanager.exception.RMErrorCode
 import org.apache.linkis.resourcemanager.service.impl.DefaultResourceManager

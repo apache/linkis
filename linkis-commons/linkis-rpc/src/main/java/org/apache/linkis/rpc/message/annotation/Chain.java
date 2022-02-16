@@ -15,18 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.serializer.exception;
+package org.apache.linkis.rpc.message.annotation;
 
-import org.apache.linkis.common.exception.ErrorException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class MessageErrorException extends ErrorException {
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Chain {
 
-    public MessageErrorException(int errCode, String desc) {
-        super(errCode, desc);
-    }
-
-    public MessageErrorException(int errCode, String desc, Throwable t) {
-        super(errCode, desc);
-        initCause(t);
-    }
+    String value() default "default";
 }

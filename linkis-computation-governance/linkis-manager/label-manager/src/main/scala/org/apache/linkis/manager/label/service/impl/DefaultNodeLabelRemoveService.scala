@@ -24,7 +24,7 @@ import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
 import org.apache.linkis.manager.label.service.{NodeLabelRemoveService, NodeLabelService}
 import org.apache.linkis.manager.persistence.LabelManagerPersistence
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.protocol.label.NodeLabelRemoveRequest
 import org.apache.linkis.manager.label.conf.LabelCommonConfig
 import org.apache.linkis.manager.label.exception.LabelRuntimeException

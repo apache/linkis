@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.serializer.registry;
+package org.apache.linkis.rpc.message.registry;
 
 import org.apache.linkis.common.utils.JavaLog;
-import org.apache.linkis.rpc.serializer.parser.DefaultServiceParser;
-import org.apache.linkis.rpc.serializer.parser.ServiceMethod;
-import org.apache.linkis.rpc.serializer.parser.ServiceParser;
+import org.apache.linkis.rpc.message.parser.DefaultServiceParser;
+import org.apache.linkis.rpc.message.parser.ServiceMethod;
+import org.apache.linkis.rpc.message.parser.ServiceParser;
 
 import org.springframework.aop.support.AopUtils;
 

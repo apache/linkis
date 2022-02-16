@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.serializer.method;
+package org.apache.linkis.rpc.message.method;
 
-import org.apache.linkis.rpc.serializer.parser.ServiceMethod;
+import org.apache.linkis.rpc.message.parser.ServiceMethod;
 
 import java.lang.reflect.Method;
 

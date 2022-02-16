@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.serializer.utils;
+package org.apache.linkis.rpc.message.utils;
 
 import org.apache.linkis.DataWorkCloudApplication;
-import org.apache.linkis.rpc.serializer.method.MethodExecuteWrapper;
-import org.apache.linkis.rpc.serializer.parser.ServiceMethod;
+import org.apache.linkis.rpc.message.method.MethodExecuteWrapper;
+import org.apache.linkis.rpc.message.parser.ServiceMethod;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;

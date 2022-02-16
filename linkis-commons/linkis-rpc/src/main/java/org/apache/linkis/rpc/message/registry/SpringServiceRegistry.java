@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.serializer.registry;
+package org.apache.linkis.rpc.message.registry;
 
 import org.apache.linkis.rpc.conf.RPCConfiguration;
-import org.apache.linkis.rpc.serializer.annotation.Receiver;
-import org.apache.linkis.rpc.serializer.utils.MessageUtils;
+import org.apache.linkis.rpc.message.annotation.Receiver;
+import org.apache.linkis.rpc.message.utils.MessageUtils;
 
 import java.lang.reflect.Method;
 import java.util.Objects;

@@ -23,7 +23,7 @@ import org.apache.linkis.manager.common.protocol.engine.{EngineCreateError, Engi
 import org.apache.linkis.orchestrator.ecm.cache.EngineAsyncResponseCache
 import org.apache.linkis.orchestrator.ecm.service.EngineAsyncResponseService
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.stereotype.Service
 
 /**

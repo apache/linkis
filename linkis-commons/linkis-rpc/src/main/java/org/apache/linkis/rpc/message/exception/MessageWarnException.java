@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.serializer.exception;
+package org.apache.linkis.rpc.message.exception;
 
 import org.apache.linkis.common.exception.WarnException;
 

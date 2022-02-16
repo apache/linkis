@@ -23,7 +23,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.jobhistory.dao.{JobDetailMapper, JobHistoryMapper}
 import org.apache.linkis.jobhistory.entity.JobDetail
 import org.apache.linkis.jobhistory.service.JobHistoryDetailQueryService
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import java.util
 
 import org.apache.commons.lang.exception.ExceptionUtils

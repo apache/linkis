@@ -24,7 +24,7 @@ import org.apache.linkis.instance.label.service.{InsLabelRpcService, InsLabelSer
 import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.utils.LabelUtils
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.protocol.label._
 import org.springframework.beans.factory.annotation.Autowired

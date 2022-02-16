@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.serializer.parser;
+package org.apache.linkis.rpc.message.parser;
 
 import org.apache.linkis.rpc.Sender;
-import org.apache.linkis.rpc.serializer.annotation.Chain;
-import org.apache.linkis.rpc.serializer.annotation.Order;
-import org.apache.linkis.rpc.serializer.annotation.Receiver;
+import org.apache.linkis.rpc.message.annotation.Chain;
+import org.apache.linkis.rpc.message.annotation.Order;
+import org.apache.linkis.rpc.message.annotation.Receiver;
 
 import org.springframework.aop.support.AopUtils;
 

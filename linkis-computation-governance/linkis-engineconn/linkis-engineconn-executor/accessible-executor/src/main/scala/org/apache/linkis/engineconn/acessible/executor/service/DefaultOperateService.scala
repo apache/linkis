@@ -20,7 +20,7 @@ import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.operator.OperatorFactory
 import org.apache.linkis.manager.common.protocol.engine.{EngineOperateRequest, EngineOperateResponse}
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters.mapAsScalaMapConverter

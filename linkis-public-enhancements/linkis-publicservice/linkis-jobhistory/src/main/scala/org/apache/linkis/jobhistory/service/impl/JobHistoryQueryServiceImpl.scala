@@ -28,7 +28,7 @@ import org.apache.linkis.jobhistory.conversions.TaskConversions._
 import org.apache.linkis.jobhistory.dao.{JobDetailMapper, JobHistoryMapper}
 import org.apache.linkis.jobhistory.entity.JobHistory
 import org.apache.linkis.jobhistory.util.QueryUtils
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.commons.lang.exception.ExceptionUtils
 
 import scala.collection.JavaConverters.asScalaBufferConverter

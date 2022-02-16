@@ -31,7 +31,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.{EngineConnR
 
 import javax.annotation.PostConstruct
 import org.apache.commons.lang.StringUtils
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

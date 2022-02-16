@@ -28,7 +28,7 @@ import org.apache.linkis.manager.common.protocol.em.{EMResourceRegisterRequest, 
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.manager.label.service.NodeLabelAddService
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.protocol.label.NodeLabelAddRequest
 import org.apache.linkis.resourcemanager.message.RMMessageService
 import org.apache.linkis.rpc.Sender

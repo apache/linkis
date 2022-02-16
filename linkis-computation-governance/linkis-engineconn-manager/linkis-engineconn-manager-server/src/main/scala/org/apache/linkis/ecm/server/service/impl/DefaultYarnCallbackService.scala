@@ -20,7 +20,7 @@ package org.apache.linkis.ecm.server.service.impl
 import org.apache.linkis.ecm.server.LinkisECMApplication
 import org.apache.linkis.ecm.server.listener.{YarnAppIdCallbackEvent, YarnInfoCallbackEvent}
 import org.apache.linkis.ecm.server.service.YarnCallbackService
-import org.apache.linkis.rpc.serializer.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.protocol.callback.{YarnAPPIdCallbackProtocol, YarnInfoCallbackProtocol}
 
 

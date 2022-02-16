@@ -18,7 +18,7 @@
 package org.apache.linkis.rpc
 
 import org.apache.linkis.protocol.message.RequestProtocol
-import org.apache.linkis.rpc.serializer.method.{MessageExecutor, ReceiverMethodSearcher}
+import org.apache.linkis.rpc.message.method.{MessageExecutor, ReceiverMethodSearcher}
 
 import scala.concurrent.duration.Duration
 import scala.language.implicitConversions

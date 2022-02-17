@@ -51,7 +51,7 @@ Linkis 自2019年开源发布以来，已累计积累了700多家试验企业和
 | --------------- | -------------------------------------------------------------------- | --------- | ---------- | 
 | [**DataSphere Studio**](https://github.com/WeBankFinTech/DataSphereStudio/blob/master/README-ZH.md)  | DataSphere Studio（简称 DSS）数据应用开发管理集成框架    | DSS 0.9.1[已发布] | **DSS 1.0.1[开发中]** |
 | [**Scriptis**](https://github.com/WeBankFinTech/Scriptis)   | 支持在线写 SQL、Pyspark、HiveQL 等脚本，提交给[Linkis](https://github.com/apache/incubator-linkis)执行的数据分析 Web 工具。 | Scriptis合并在DSS中（DSS 0.9.1[已发布]） | 在DSS 1.0.1中[开发中] |
-| [**Schedulis**](https://github.com/WeBankFinTech/Schedulis) | 基于 Azkaban 二次开发的工作流任务调度系统,具备高性能，高可用和多租户资源隔离等金融级特性。 | Schedulis 0.6.1[已发布] | **Schedulis1.0.1 [开发中]** |
+| [**Schedulis**](https://github.com/WeBankFinTech/Schedulis) | 基于 Azkaban 二次开发的工作流任务调度系统,具备高性能，高可用和多租户资源隔离等金融级特性。 | Schedulis 0.6.1[已发布] | **Schedulis0.6.2 [开发中]** |
 | [**Qualitis**](https://github.com/WeBankFinTech/Qualitis)   | 数据质量校验工具，提供数据完整性、正确性等数据校验能力 | Qualitis 0.8.0[已发布] | **Qualitis 1.0.3 [开发中]** |
 | [**Streamis**](https://github.com/WeBankFinTech/Streamis)  | 流式应用开发管理工具。支持发布 Flink Jar 和 Flink SQL ，提供流式应用的开发调试和生产管理能力，如：启停、状态监控、checkpoint 等。 | 不支持 | **Streamis 0.1.0 [开发中]** |
 | [**Exchangis**](https://github.com/WeBankFinTech/Exchangis) | 支持对结构化及无结构化的异构数据源之间的数据传输的数据交换平台，即将发布的 Exchangis1.0，将与 DSS 工作流打通 | 不支持 | **Exchangis 1.0.0 [开发中]** |

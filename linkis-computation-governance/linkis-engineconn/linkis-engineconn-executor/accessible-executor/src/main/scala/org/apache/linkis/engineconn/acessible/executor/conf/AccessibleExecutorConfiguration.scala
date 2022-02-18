@@ -35,7 +35,7 @@ object AccessibleExecutorConfiguration {
   val ENGINECONN_LOG_SEND_SIZE = CommonVars[Int]("wds.linkis.engineconn.log.send.cache.size", 5)
 
 
-  val ENGINECONN_MAX_FREE_TIME = CommonVars("wds.linkis.engineconn.max.free.time", new TimeType("0.5h"))
+  val ENGINECONN_MAX_FREE_TIME = CommonVars("wds.linkis.engineconn.max.free.time", new TimeType("30m"))
 
   val ENGINECONN_LOCK_CHECK_INTERVAL = CommonVars("wds.linkis.engineconn.lock.free.interval", new TimeType("3m"))
 

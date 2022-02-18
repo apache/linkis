@@ -19,7 +19,6 @@ package org.apache.linkis.jobhistory.restful.api;
 
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.governance.common.entity.job.QueryException;
-import org.apache.linkis.governance.common.entity.job.SubJobDetail;
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration;
 import org.apache.linkis.jobhistory.conversions.TaskConversions;
 import org.apache.linkis.jobhistory.dao.JobDetailMapper;
@@ -43,9 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping(path = "/jobhistory")
@@ -72,22 +69,31 @@ public class QueryRestfulApi {
             username = null;
         }
         JobHistory jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(jobId, username);
-        List<SubJobDetail> subJobDetails =
-                TaskConversions.jobdetails2SubjobDetail(
-                        jobDetailMapper.selectJobDetailByJobHistoryId(jobId));
-        QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, subJobDetails);
+        //        List<SubJobDetail> subJobDetails =
+        // TaskConversions.jobdetails2SubjobDetail(jobDetailMapper.selectJobDetailByJobHistoryId(jobId));
+        try {
+            if (null != jobHistory) {
+                QueryUtils.exchangeExecutionCode(jobHistory);
+            }
+        } catch (Exception e) {
+            log.error(
+                    "Exchange executionCode for job with id : {} failed, {}",
+                    jobHistory.getId(),
+                    e);
+        }
+        QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, null);
         // todo check
         if (taskVO == null) {
             return Message.error(
                     "The corresponding job was not found, or there may be no permission to view the job"
                             + "(没有找到对应的job，也可能是没有查看该job的权限)");
         }
-        for (SubJobDetail subjob : subJobDetails) {
-            if (!StringUtils.isEmpty(subjob.getResultLocation())) {
-                taskVO.setResultLocation(subjob.getResultLocation());
-                break;
-            }
-        }
+        //        for (SubJobDetail subjob : subJobDetails) {
+        //            if (!StringUtils.isEmpty(subjob.getResultLocation())) {
+        //                taskVO.setResultLocation(subjob.getResultLocation());
+        //                break;
+        //            }
+        //        }
         return Message.ok().data(TaskConstant.TASK, taskVO);
     }
 
@@ -103,35 +109,43 @@ public class QueryRestfulApi {
             @RequestParam(value = "taskID", required = false) Long taskID,
             @RequestParam(value = "executeApplicationName", required = false)
                     String executeApplicationName,
-            @RequestParam(value = "proxyUser", required = false) String proxyUser)
+            @RequestParam(value = "proxyUser", required = false) String proxyUser,
+            @RequestParam(value = "isAdminView", required = false) Boolean isAdminView)
             throws IOException, QueryException {
         String username = SecurityFilter.getLoginUsername(req);
+        if (StringUtils.isEmpty(status)) {
+            status = null;
+        }
         if (StringUtils.isEmpty(pageNow)) {
             pageNow = 1;
         }
         if (StringUtils.isEmpty(pageSize)) {
             pageSize = 20;
         }
-        if (startDate != null && endDate == null) {
+        if (endDate == null) {
             endDate = System.currentTimeMillis();
         }
-        Date sDate = null;
-        Date eDate = null;
-        if (startDate != null) {
-            sDate = new Date(startDate);
+        if (startDate == null) {
+            startDate = 0L;
         }
-        if (endDate != null) {
-            eDate = new Date(endDate);
-            //            Calendar instance = Calendar.getInstance();
-            //            instance.setTimeInMillis(endDate);
-            //            instance.add(Calendar.DAY_OF_MONTH, 1);
-            //            eDate = new Date(instance.getTime().getTime()); // todo check
+        Date sDate = new Date(startDate);
+        Date eDate = new Date(endDate);
+        if (sDate.getTime() == eDate.getTime()) {
+            Calendar instance = Calendar.getInstance();
+            instance.setTimeInMillis(endDate);
+            instance.add(Calendar.DAY_OF_MONTH, 1);
+            eDate = new Date(instance.getTime().getTime()); // todo check
         }
-        if (proxyUser != null && QueryUtils.isJobHistoryAdmin(username)) {
-            if (!StringUtils.isEmpty(proxyUser)) {
-                username = proxyUser;
-            } else {
-                username = null;
+        if (isAdminView == null) {
+            isAdminView = false;
+        }
+        if (QueryUtils.isJobHistoryAdmin(username)) {
+            if (isAdminView) {
+                if (proxyUser != null) {
+                    username = StringUtils.isEmpty(proxyUser) ? null : proxyUser;
+                } else {
+                    username = null;
+                }
             }
         }
         List<JobHistory> queryTasks = null;

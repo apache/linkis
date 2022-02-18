@@ -178,7 +178,7 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
     jobReqBuilder.setId(subJobId)
     jobReqBuilder.setSubmitUser(entranceExecuteRequest.submitUser())
     jobReqBuilder.setExecuteUser(entranceExecuteRequest.executeUser())
-    val codeTypeLabel: Label[_] = LabelUtil.getCodeTypeLabel(entranceExecuteRequest.getLables)
+    val codeTypeLabel: Label[_] = LabelUtil.getCodeTypeLabel(entranceExecuteRequest.getLabels)
     if (null == codeTypeLabel) {
       throw new EntranceErrorException(EntranceErrorCode.EXECUTE_REQUEST_INVALID.getErrCode, s"code Type Label is needed")
     }
@@ -186,7 +186,7 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
     codes.add(entranceExecuteRequest.code())
     val codeLogicalUnit = new CodeLogicalUnit(codes, codeTypeLabel.asInstanceOf[CodeLanguageLabel])
     jobReqBuilder.setCodeLogicalUnit(codeLogicalUnit)
-    jobReqBuilder.setLabels(entranceExecuteRequest.getLables)
+    jobReqBuilder.setLabels(entranceExecuteRequest.getLabels)
     jobReqBuilder.setExecuteUser(entranceExecuteRequest.executeUser())
     jobReqBuilder.setParams(entranceExecuteRequest.properties().asInstanceOf[util.Map[String, Any]])
     jobReqBuilder.build()

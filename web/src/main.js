@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 
 import Vue from 'vue'
 import iView from 'iview'
 import VueRouter from 'vue-router'
+import formCreate from '@form-create/iview'
 import { apps } from './dynamic-apps'
 import component from './components'
 import App from './dss/view/app.vue'
@@ -35,12 +36,12 @@ import './dss/module/index.js'
 
 // moduleMixin
 if (apps.requireComponent) {
-  apps.requireComponent.forEach(item=>{
+  apps.requireComponent.forEach(item => {
     mixinDispatch(item)
   })
 }
 if (apps.requireComponentVue) {
-  apps.requireComponentVue.forEach(item=>{
+  apps.requireComponentVue.forEach(item => {
     mixinDispatch(undefined, item)
   })
 }
@@ -50,6 +51,7 @@ Vue.use(component)
 Vue.use(iView, {
   i18n: (key, value) => i18n.t(key, value)
 })
+Vue.use(formCreate)
 
 Vue.config.productionTip = false
 Vue.prototype.$Message.config({
@@ -63,4 +65,3 @@ new Vue({
   i18n,
   render: (h) => h(App)
 }).$mount('#app')
-console.log(`当前环境:${process.env.NODE_ENV}`)

@@ -65,7 +65,7 @@
       "resourceManagement": {
         "resourceUsage": "Resource usage",
         "applicationList": "Application List"
-    },
+      },
       "time": {
         "second": "Second",
         "minute": "Minute",
@@ -120,7 +120,8 @@
             "dateReport": "Global Variables",
             "globalValiable": "Frequently Asked",
             "microserviceManage": "Microservice management",
-            "ECMManage": "ECM Management"
+            "ECMManage": "ECM Management",
+            "dataSourceManage": "DataSource Manage"
           }
         }
       },
@@ -235,6 +236,42 @@
       },
       "success": {
         "update": "Successfully updated global variables!"
+      },
+      "datasource": {
+        "pleaseInput": "Please input",
+        "datasourceSrc": "Datasource",
+        "connectTest": "Test Connection",
+        "sourceName": "Data source name",
+        "sourceDec": "Data source description",
+        "sourceType": "Data source type:",
+        "creator": "Creator:",
+        "create": "New data source",
+        "exports": "Demonstration export data source",
+        "imports": "Demonstration of importing data sources",
+        "Expired": "Expired",
+        "versionList": "Version List",
+        "dataSourceName": "Data Source Name",
+        "dataSourceType": "Data Source Type",
+        "dataSourceEnv": "Available Space",
+        "status": "Status",
+        "permissions": "Permissions",
+        "label": "label",
+        "Version": "Version",
+        "desc": "Description",
+        "action": "Action",
+        "createUser": "Create User",
+        "createTime": "Create Time",
+        "versionDec": "Version Description",
+        "watch": "View",
+        "rollback": "Rollback",
+        "publish": "Publish",
+        "initVersion": "Initial Version",
+        "updateVersion": "Version update",
+        "published": "Published",
+        "unpublish": "Unpublished",
+        "cannotPublish": "Cannot Publish",
+        "used": "Available",
+        "commentValue": "Roll back from version {text}"
       }
     }
   }

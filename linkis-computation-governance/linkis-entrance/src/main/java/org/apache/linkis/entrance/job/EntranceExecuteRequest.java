@@ -47,7 +47,7 @@ public class EntranceExecuteRequest
     }
 
     private SubJobInfo subJobInfo;
-    private List<Label<?>> lables;
+    private List<Label<?>> labels;
 
     public SubJobInfo getSubJobInfo() {
         return subJobInfo;
@@ -57,12 +57,12 @@ public class EntranceExecuteRequest
         this.subJobInfo = subJobInfo;
     }
 
-    public List<Label<?>> getLables() {
-        return lables;
+    public List<Label<?>> getLabels() {
+        return labels;
     }
 
-    public void setLables(List<Label<?>> lables) {
-        this.lables = lables;
+    public void setLabels(List<Label<?>> labels) {
+        this.labels = labels;
     }
 
     public EntranceExecutionJob getJob() {
@@ -114,7 +114,7 @@ public class EntranceExecuteRequest
 
     @Override
     public List<Label<?>> labels() {
-        if (null == lables || lables.isEmpty()) {
+        if (null == labels || labels.isEmpty()) {
             if (null != job.getJobRequest()) {
                 return job.getJobRequest().getLabels();
             } else {

@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 
 /**
  * 操作Api
@@ -109,8 +109,8 @@ const api = {
   instance: instance,
   error: {
     '-1': function(res) {
-      if (res.data && res.data.enableSSO && res.data.SSOURL) {
-        return window.location.replace(res.data.SSOURL);
+      if (res.data.data && res.data.data.enableSSO && res.data.data.SSOURL) {
+        return window.location.replace(res.data.data.SSOURL);
       }
       router.push('/login');
       throw new Error('您尚未登录，请先登录!');
@@ -183,7 +183,7 @@ const success = function(response) {
         console.log(response.data, '潜在性能问题大数据量', len)
       }
     }
-    
+
     return result || {};
   }
 };
@@ -251,7 +251,7 @@ const param = function(url, data, option) {
       option.data = data;
     }
   }
-  // cacheOptions接口数据缓存 {time} time为0则请求之后缓存在内存里的数据不清理 
+  // cacheOptions接口数据缓存 {time} time为0则请求之后缓存在内存里的数据不清理
   if (option.cacheOptions) {
     option.adapter = cache(option.cacheOptions)
   }

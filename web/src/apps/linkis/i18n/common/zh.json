@@ -6,7 +6,7 @@
             "emptyString": "空字符串",
             "addAppType": "新增应用类型",
             "editContents": "编辑目录",
-            "eurekeRegisterCenter":  "Eureke注册中心",
+            "eurekeRegisterCenter": "Eureke注册中心",
             "addParameterConfig": "新增参数配置",
             "editDescriptionEngineConfig": "编辑引擎配置",
             "name": "名称",
@@ -54,6 +54,9 @@
             "generalView": "切换普通视图",
             "manageView": "切换管理员视图",
             "back": "返回",
+            "prev": "上一步",
+            "complete": "完成",
+            "close": "关闭",
             "warning": {
                 "api": "接口请求中，请稍候！",
                 "data": "数据请求中，请稍候！",
@@ -120,7 +123,8 @@
                         "dateReport": "全局变量",
                         "globalValiable": "常见问题",
                         "ECMManage": "ECM管理",
-                        "microserviceManage": "微服务管理"
+                        "microserviceManage": "微服务管理",
+                        "dataSourceManage": "数据源管理"
                     }
                 }
             },
@@ -235,6 +239,42 @@
             },
             "success": {
                 "update": "全局变量更新成功！"
+            },
+            "datasource": {
+                "pleaseInput": "请输入",
+                "datasourceSrc": "数据源",
+                "connectTest": "测试连接",
+                "sourceName": "数据源名称",
+                "sourceDec": "数据源描述",
+                "sourceType": "数据源类型:",
+                "creator": "创建人:",
+                "create": "新增数据源",
+                "exports": "批量导出数据源",
+                "imports": "批量导入数据源",
+                "overdue": "过期",
+                "versionList": "版本列表",
+                "dataSourceName": "数据源名称",
+                "dataSourceType": "数据源类型",
+                "dataSourceEnv": "可用集群",
+                "status": "状态",
+                "permissions": "权限",
+                "label": "标签",
+                "version": "版本",
+                "desc": "描述",
+                "action": "操作",
+                "createUser": "创建人",
+                "createTime": "创建时间",
+                "versionDec": "版本描述",
+                "watch": "查看",
+                "rollback": "回滚",
+                "publish": "发布",
+                "initVersion": "初始化版本",
+                "updateVersion": "版本更新",
+                "published": "已发布",
+                "unpublish": "未发布",
+                "cannotPublish": "不可发布",
+                "used": "可用",
+                "commentValue": "从版本 {text} 回滚"
             }
         }
     }

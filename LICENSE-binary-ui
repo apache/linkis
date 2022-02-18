@@ -240,3 +240,5 @@ See licenses-binary-ui/ for text of these licenses.
     (The MIT License) vuedraggable@2.24.3 (https://github.com/SortableJS/Vue.Draggable)
     (The MIT License) vuescroll@4.16.1 (https://github.com/YvesCoding/vuescroll)
     (The MIT License) worker-loader@2.0.0 (https://github.com/webpack-contrib/worker-loader)
+    (The MIT License) @form-create/iview@2.5.13 (https://github.com/xaboy/form-create)
+    (The MIT License) object-to-formdata@4.2.2 (https://github.com/therealparmesh/object-to-formdata)

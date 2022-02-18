@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div class="table-warp">
     <form-create :rule="rule" v-model="fApi" :option="options" :value.sync="formData"/>
@@ -62,7 +62,9 @@ const typesMap = {
   // dataSource: 'options',
   dataSource: (data, source, self)=>{
     const fApi = self.fApi;
-    if(/^https?:/.test(data.dataSource)){
+    try {
+      return {options: JSON.parse(data.dataSource)}
+    } catch (error) {
       api.fetch(data.dataSource, {}, 'get').then(result=>{
         delete source.options;
         source.options = result.env_list.map(item=>{
@@ -72,12 +74,6 @@ const typesMap = {
         fApi.refreshOptions();
       })
       return {options: []}
-    }else {
-      try {
-        return {options: JSON.parse(data.dataSource)}
-      } catch (error) {
-        return {options: []}
-      }
     }
   },
   key: 'field',

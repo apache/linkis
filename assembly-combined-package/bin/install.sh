@@ -415,4 +415,4 @@ fi
 
 
 echo "Congratulations! You have installed Linkis $LINKIS_VERSION successfully, please use sh $LINKIS_HOME/sbin/linkis-start-all.sh to start it!"
-echo "Your default account password is$deployUser/$defaultPwd"
+echo "Your default account/password is $deployUser/$defaultPwd"

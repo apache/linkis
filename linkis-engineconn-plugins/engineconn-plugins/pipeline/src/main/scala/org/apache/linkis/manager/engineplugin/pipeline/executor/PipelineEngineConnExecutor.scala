@@ -90,7 +90,7 @@ class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with L
       }
     }
     val actualUsedResource = new LoadInstanceResource(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue(properties).toLong,
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_CORES.getValue(properties), EngineConnPluginConf.JAVA_ENGINE_REQUEST_INSTANCE.getValue)
+      EngineConnPluginConf.JAVA_ENGINE_REQUEST_CORES.getValue(properties), EngineConnPluginConf.JAVA_ENGINE_REQUEST_INSTANCE)
     val resource = new CommonNodeResource
     resource.setUsedResource(actualUsedResource)
     resource

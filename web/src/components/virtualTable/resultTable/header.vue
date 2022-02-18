@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div
     class="list-view list-header"
@@ -31,9 +31,10 @@
         slot-scope="{col, index}">
         <div
           class="we-table-header-box"
-          @dblclick.prevent.stop="handleDblClick(col)">
+          @dblclick.prevent.stop="handleDblClick($event, col)">
           <span
             class="we-table-header-content"
+            :data-col="col.title"
             :title="col.colHeadHoverTitle">{{ col.content }}</span>
           <span
             v-if="col.sortable"
@@ -127,8 +128,14 @@ export default {
         },
       });
     },
-    handleDblClick(col) {
-      this.$emit('dbl-click', col);
+    handleDblClick(e, col) {
+      if (e && e.target && e.target.dataset.col) {
+        this.$emit('dbl-click', col);
+        const selection = window.getSelection();
+        selection.selectAllChildren(e.target);
+      } else {
+        window.getSelection().removeAllRanges();
+      }
     },
   },
 };

@@ -234,7 +234,7 @@ public class ConnectionManager {
 
     private JdbcAuthType getJdbcAuthType(Map<String, String> properties) {
         String authType = properties.getOrDefault("jdbc.auth.type", USERNAME.getAuthType());
-        if(authType==null||authType.trim().length()==0) return of(USERNAME.getAuthType());
+        if (authType == null || authType.trim().length() == 0) return of(USERNAME.getAuthType());
         return of(authType.trim().toUpperCase());
     }
 

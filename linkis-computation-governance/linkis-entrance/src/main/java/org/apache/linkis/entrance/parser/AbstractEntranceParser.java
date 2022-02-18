@@ -89,7 +89,7 @@ public abstract class AbstractEntranceParser extends EntranceParser {
 
         jobRequest.setProgress("" + job.getProgress());
         jobRequest.setStatus(job.getState().toString());
-        jobRequest.setUpdatedTime(new Date(System.currentTimeMillis()));
+        jobRequest.setUpdatedTime(new Date());
         if (job.isCompleted()
                 && !job.isSucceed()
                 && job.getErrorResponse() != null
@@ -123,9 +123,9 @@ public abstract class AbstractEntranceParser extends EntranceParser {
                                                 .equalsIgnoreCase(
                                                         LabelKeyConstant.USER_CREATOR_TYPE_KEY))
                         .findFirst()
-                        .orElseGet(null);
+                        .orElse(null);
         if (null != userCreateLabel) {
-            job.setCreator(userCreateLabel.getStringValue().split("\\-")[1]);
+            job.setCreator(userCreateLabel.getStringValue().split("-")[1]);
         } else {
             String msg =
                     "JobRequest doesn't hava valid userCreator label. labels : "
@@ -139,7 +139,6 @@ public abstract class AbstractEntranceParser extends EntranceParser {
         Map<String, Object> properties = TaskUtils.getRuntimeMap(job.getParams());
         properties.put(GovernanceConstant.TASK_SOURCE_MAP_KEY(), jobReq.getSource());
         job.setEntranceListenerBus(entranceContext.getOrCreateEventListenerBus());
-        // job.setEntranceLogListenerBus(entranceContext.getOrCreateLogListenerBus());
         job.setEntranceContext(entranceContext);
         job.setListenerEventBus(null);
         job.setProgress(0f);
@@ -151,12 +150,12 @@ public abstract class AbstractEntranceParser extends EntranceParser {
                                         l.getLabelKey()
                                                 .equalsIgnoreCase(LabelKeyConstant.CODE_TYPE_KEY))
                         .findFirst()
-                        .orElseGet(null);
+                        .orElse(null);
         if (null != codeTypeLabel) {
             CodeParser codeParser =
                     CodeParserFactory.getCodeParser(
                             CodeType.getType(codeTypeLabel.getStringValue()));
-            if (null != codeParser && !isNoNeedParser(codeTypeLabel)) {
+            if (null != codeParser && !isNoNeedParser()) {
                 job.setCodeParser(codeParser);
             } else {
                 job.setCodeParser(new EmptyCodeParser());
@@ -165,7 +164,7 @@ public abstract class AbstractEntranceParser extends EntranceParser {
         return job;
     }
 
-    private boolean isNoNeedParser(Label<?> codeTypeLabel) {
+    private boolean isNoNeedParser() {
         return !EntranceConfiguration.ENTRANCE_CODEPARSER_ENABLE().getValue();
     }
 }

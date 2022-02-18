@@ -30,13 +30,6 @@
     <artifactId>linkis-module</artifactId>
 
     <dependencies>
-        <!--add knif2 dependency-->
-        <dependency>
-              <groupId>com.github.xiaoymin</groupId>
-              <artifactId>knife4j-spring-boot-starter</artifactId>
-              <version>${knife4j.version}</version>
-        </dependency>
-
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
@@ -141,6 +134,14 @@
                 <exclusion>
                     <artifactId>asm</artifactId>
                     <groupId>org.ow2.asm</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty.websocket</groupId>
+                    <artifactId>websocket-server</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

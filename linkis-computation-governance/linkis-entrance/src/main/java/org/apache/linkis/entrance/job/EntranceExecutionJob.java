@@ -285,7 +285,7 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
         List<Label<?>> labels = new ArrayList<Label<?>>();
         labels.addAll(getJobRequest().getLabels());
         labels.add(bindEngineLabel);
-        executeRequest.setLables(labels);
+        executeRequest.setLabels(labels);
         if (isCompleted) {
             return null;
         } else {

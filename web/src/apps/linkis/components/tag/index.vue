@@ -5,28 +5,28 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div class="linkiesTagModal">
     <Tooltip
-      v-for="item in tagList"
-      :key="`${item.key}${item.value}`"
+      v-for="(item,index) in tagList"
+      :key="`${item.key}${item.value}${index}`"
       :content="`${item.key}-${item.value}`"
       placement="top"
     >
       <Tag
         ref="tag"
         v-if="
-          !clickValue.includes(item.value)
+          !clickValue.includes(`${item.key}${item.value}`)
         "
         :name="`${item.key}${item.value}`"
         :closable ="item.modifiable ? true : false"
@@ -39,7 +39,7 @@
       </Tag>
       <!-- 编辑标签 -->
       <div class="addAndCancel" v-else>
-        <Input ref="editInputValue" :value="item.value" style="width: 200px" @on-enter="exitTags">
+        <Input ref="editInputValue" :value="item.value" style="width: 200px" @on-enter="()=>exitTags(item)">
           <Select ref="editInputKey" :value="item.key"  disabled  slot="prepend" style="width: 80px">
             <Option
               v-for="item in selectList"
@@ -50,7 +50,7 @@
           </Select>
         </Input>
         <ButtonGroup style="margin-left: 10px">
-          <Button type="primary" @click="exitTags">
+          <Button type="primary" @click="()=>exitTags(item)">
             {{ $t("message.linkis.submit") }}
           </Button>
           <Button @click="handleExitTagsCancel">
@@ -118,26 +118,15 @@ export default {
     return {
       value2: "", // input
       value1: this.currentKey, // select
-      editValue: "",
       adding: false,
-      clickValue: "",
-      tagClickValue: "",
-      inputCurrentValue: [],
-      editing: false,
-      exitValue: "",
+      clickValue: ""
     };
   },
   computed: {},
-  /*  watch: {
-    clickValue() {
-      this.inputCurrentValue = this.tagList.find((item) => {
-        return item.key + item.value === this.clickValue;
-      });
-    },
-  }, */
   methods: {
     handleAdd() {
       this.adding = true;
+      this.clickValue = '';
       this.value2 = "";
     },
 
@@ -148,13 +137,7 @@ export default {
       this.$emit("onCloseTag", name, index, event);
     },
     change() {
-      /* if(this.value1 && this.value2) {
-        this.$emit('addEnter', this.value1, this.value2)
-        this.adding = false;
-      } else {
-        this.$Message.error( "标签内容不能为空！");
-      } */
-      let reg = /[`~!#$%^&*()_\+=<>?:"{}|~！#￥%……&*（）={}|《》？：“”【】、；‘’，。、\s+]/g;
+      let reg = /[`~!#$%^&*()\+=<>?:"{}|~！#￥%……&*（）={}|《》？：“”【】、；‘’，。、\s+]/g;
       if (reg.test(this.value2)) {
         this.$Message.error("标签内容不能为特殊符号和空格！");
       } else if (this.value2.length >= 16) {
@@ -166,7 +149,7 @@ export default {
     },
 
     handleTagChange(cheacked, name) {
-      this.editing = true;
+      this.adding = false;
       this.clickValue = name;
       // input 聚焦
       this.$nextTick(()=> {
@@ -174,26 +157,25 @@ export default {
       })
     },
     //编辑确认
-    exitTags() {
-      // 修改前的值
-      let editInputKey = this.$refs.editInputKey[0].value;
-      let editInputValue = this.$refs.editInputValue[0].value;
-      //当前修改之后的值
+    exitTags(item) {
       let editedInputValue = this.$refs.editInputValue[0].$refs.input.value;
-      // console.log(editInputKey, editInputValue,editedInputValue);
-      let reg = /[`~!#$%^&*()_\+=<>?:"{}|~！#￥%……&*（）={}|《》？：“”【】、；‘’，。、\s+]/g;
+      let reg = /[`~!#$%^&*()\+=<>?:"{}|~！#￥%……&*（）={}|《》？：“”【】、；‘’，。、\s+]/g;
       if (reg.test(editedInputValue)) {
         this.$Message.error("标签内容不能为特殊符号和空格！");
       } else if (editedInputValue.length >= 16) {
         this.$Message.error("标签内容长度不超过16！");
-      } else if (editInputKey && editedInputValue) {
-        this.$emit("editEnter", editInputKey, editInputValue,editedInputValue);
+      } else if (item.key && editedInputValue) {
+        this.$emit("editEnter", item.key, item.value, editedInputValue);
         this.clickValue = '';
       }
     },
 
     handleExitTagsCancel() {
       this.clickValue = ''
+    },
+    resetTagAdd(v) {
+      this.adding = v
+      this.value2 = "";
     }
   },
 };

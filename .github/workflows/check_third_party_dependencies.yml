@@ -35,6 +35,7 @@ jobs:
           mvn -N install
       - name: mvn install
         run:
+          #pom.xml also introduce linkis related jar,so run mvn install in first time
           mvn install
       - name: mvn dependency:copy-dependencies
         run:
@@ -45,8 +46,11 @@ jobs:
           cat ~/current_dependencies.txt
       - name: check third dependencies
         run: |
+          #by using commond join ,to check whether there are new third-party dependencies,compared with file(tool/dependencies/known-dependencies.txt) 
           sort ${{ github.workspace }}/tool/dependencies/known-dependencies.txt > ~/known-dependencies.txt 
           join -t : -o 1.1 2.1 -a2 ~/known-dependencies.txt ~/current_dependencies.txt > ~/result.txt
+          #print new third-party dependencies name if it exists 
           awk -F ":" '{if($1=="")print $2" is not in file known-dependencies.txt!"}' ~/result.txt
           result=`awk -F ":" '{if($1=="")print $2}'  ~/result.txt |wc -l`
+          #if has new third-party,the Action will fail
           if [[ $result == 0 ]];then echo "All third dependencies is known!" ;else exit 1;fi

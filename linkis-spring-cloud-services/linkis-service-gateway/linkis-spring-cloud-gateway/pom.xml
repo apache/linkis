@@ -58,10 +58,34 @@
             <artifactId>spring-cloud-starter-gateway</artifactId>
             <version>${spring.cloud.version}</version>
             <exclusions>
-<!--                <exclusion>-->
-<!--                    <artifactId>hibernate-validator</artifactId>-->
-<!--                    <groupId>org.hibernate.validator</groupId>-->
-<!--                </exclusion>-->
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-jetty</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-server</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-webapp</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>websocket-server</artifactId>
+                    <groupId>org.eclipse.jetty.websocket</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty </groupId>
+                    <artifactId>netty-all</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jackson-databind</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
                 <exclusion>
                     <artifactId>spring-boot-starter-logging</artifactId>
                     <groupId>org.springframework.boot</groupId>

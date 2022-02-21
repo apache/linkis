@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div
     class="we-toolbar-wrap">
@@ -68,12 +68,7 @@
         </Poptip>
       </li>
       <li v-if="analysistext.flag !== 2 && rsDownload" :style="{cursor: rsDownload ? 'pointer': 'not-allowed'}">
-        <div v-if="!rsDownload">
-          <Icon type="ios-cloud-download-outline"  :size="iconSize" />
-          <span v-if="isIconLabelShow" :title="$t('message.common.download')" class="v-toolbar-icon">{{ $t('message.common.download') }}</span>
-        </div>
         <Poptip
-          v-else
           :transfer="true"
           :width="200"
           v-model="popup.download"
@@ -94,6 +89,7 @@
                     <Radio label="1">CSV</Radio>
                   </Col>
                   <Col
+                    v-if="resultType === '2'"
                     span="10"
                     offset="4">
                     <Radio label="2">Excel</Radio>
@@ -231,12 +227,16 @@ export default {
       type: String,
       defalut: `filesystem`
     },
+    resultType: {
+      type: String,
+      defalut: ''
+    },
     comData: {
       type: Object
     }
   },
   data() {
-    const rsDownload = this.getProjectJsonResult('rsDownload')
+    const rsDownload = this.getProjectJsonResult('rsDownload', 'linkis')
     return {
       rsDownload,
       popup: {
@@ -278,6 +278,13 @@ export default {
   },
   methods: {
     openPopup(type) {
+      if (type === 'download') {
+        this.download = {
+          format: '1',
+          coding: '1',
+          nullValue: '1',
+        }
+      }
       if (type === 'export') {
         this.$refs.exportToShare.open();
       } else if (type === 'rowView') {
@@ -312,7 +319,15 @@ export default {
       const charset = this.download.coding === '1' ? 'utf-8' : 'gbk';
       const nullValue = this.download.nullValue === '1' ? 'NULL' : 'BLANK';
       const timestamp = moment.unix(moment().unix()).format('MMDDHHmm');
-      const filename = `Result_${this.script.fileName || this.script.title}_${timestamp}`;
+      let fileName = ''
+      if (this.$route.query.fileName && this.$route.query.fileName !== 'undefined') {
+        fileName = this.$route.query.fileName
+      } else if ( this.script.fileName && this.script.fileName !== 'undefined') {
+        fileName = this.script.fileName
+      } else if(this.script.title && this.script.title !== 'undefined') {
+        fileName = this.script.title
+      }
+      const filename = `Result_${fileName}_${timestamp}`;
       let temPath = this.currentPath;
       // api执行下载的结果集路径不一样
       let apiPath = `${this.getResultUrl}/resultsetToExcel`;

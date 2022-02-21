@@ -54,7 +54,7 @@ trait EntranceRestfulRemote {
   def killJobs(@Context req: HttpServletRequest, jsonNode: JsonNode, @PathVariable("id") id: String): Response
 
   @RequestMapping(value = Array("/entrance/{id}/kill"), method = Array(RequestMethod.POST))
-  def kill(@PathVariable("id") id: String, @QueryParam("taskID") taskID:Long): Response
+  def kill(@PathVariable("id") id: String, @QueryParam("taskID") taskID: java.lang.Long): Response
 
   @RequestMapping(value = Array("/entrance/{id}/pause"), method = Array(RequestMethod.POST))
   def pause(@PathVariable("id") id: String): Response

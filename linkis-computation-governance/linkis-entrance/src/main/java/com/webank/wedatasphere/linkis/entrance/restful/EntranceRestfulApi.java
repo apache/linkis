@@ -381,7 +381,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     @Override
     @GET
     @Path("/{id}/kill")
-    public Response kill(@PathParam("id") String id, @QueryParam("taskID") long taskID) {
+    public Response kill(@PathParam("id") String id, @QueryParam("taskID") Long taskID) {
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
         //通过jobid获取job,可能会由于job找不到而导致有looparray的报错,一旦报错的话，就可以将该任务直接置为Cancenlled
         Option<Job> job = Option.apply(null);

@@ -363,7 +363,6 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     }
 
 
-    //todo confirm long or Long
     @RequestMapping(path = "/{id}/kill",method = RequestMethod.GET)
     public Message kill(@PathVariable("id") String id, @RequestParam(value = "taskID",required = false) Long taskID) {
         String realId = ZuulEntranceUtils.parseExecID(id)[3];

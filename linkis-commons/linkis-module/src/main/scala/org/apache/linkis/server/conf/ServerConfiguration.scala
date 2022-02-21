@@ -38,25 +38,38 @@ object ServerConfiguration extends Logging{
     throw new BDPInitServerException(10010, "DataWorkCloud service must set the version, please add property [[wds.linkis.server.version]] to properties file.")
   }
 
-  val cryptKey =  new BASE64Encoder().encode(CommonVars("wds.linkis.crypt.key", "bdp-for-server").getValue.getBytes)
+  val cryptKey = new BASE64Encoder().encode(CommonVars("wds.linkis.crypt.key", "bdp-for-server").getValue.getBytes)
+
   private val ticketHeader = CommonVars("wds.linkis.ticket.header", "bfs_").getValue
-  def getUsernameByTicket(ticketId: String): Option[String] = if(StringUtils.isEmpty(ticketId)) None
+
+  def getUsernameByTicket(ticketId: String): Option[String] = if (StringUtils.isEmpty(ticketId)) None
   else {
     val userName = DESUtil.decrypt(ticketId, ServerConfiguration.cryptKey)
     if(userName.startsWith(ticketHeader)) Some(userName.substring(ticketHeader.length))
     else None
   }
-  def getUsernameByTicket(ticketId: Any): Option[String] = if(ticketId == null) None else getUsernameByTicket(ticketId.toString)
+  def getUsernameByTicket(ticketId: Any): Option[String] = if (ticketId == null) None else getUsernameByTicket(ticketId.toString)
+
   def getTicketByUsername(userName: String): String = {
+    if (LINKIE_USERNAME_SUFFIX_ENABLE) {
+      val username = userName.split(",")(0)
+      val time = userName.split(",")(1)
+      val proxyUser = username + LINKIE_USERNAME_SUFFIX_NAME
+      logger.info(s"$username will be proxied as ${proxyUser}")
+      DESUtil.encrypt(ticketHeader + proxyUser + "," + time, ServerConfiguration.cryptKey)
+    } else {
       DESUtil.encrypt(ticketHeader + userName, ServerConfiguration.cryptKey)
+    }
   }
 
   val BDP_TEST_USER = CommonVars("wds.linkis.test.user", "")
 
   val BDP_SERVER_HOME = CommonVars("wds.linkis.server.home", CommonVars("LINKIS_HOME", "").getValue)
   val BDP_SERVER_DISTINCT_MODE = CommonVars("wds.linkis.server.distinct.mode", new Boolean(true))
-  if(!BDP_SERVER_DISTINCT_MODE.getValue && StringUtils.isEmpty(BDP_SERVER_HOME.getValue))
+
+  if (!BDP_SERVER_DISTINCT_MODE.getValue && StringUtils.isEmpty(BDP_SERVER_HOME.getValue)) {
     throw new BDPInitServerException(11000, "wds.linkis.server.home或BDP_SERVER_HOME haven't set!")
+  }
   val BDP_SERVER_SOCKET_MODE = CommonVars("wds.linkis.server.socket.mode", new Boolean(false))
   val BDP_SERVER_IDENT_STRING = CommonVars("wds.linkis.server.ident.string", "true")
   val BDP_SERVER_SERVER_JETTY_NAME = CommonVars("wds.linkis.server.jetty.name", "")
@@ -102,4 +115,9 @@ object ServerConfiguration extends Logging{
   val IS_GATEWAY = CommonVars("wds.linkis.is.gateway", "false")
   val BDP_SERVER_WEB_ALLOW_ORIGIN = CommonVars("wds.linkis.server.web.alloworigin", "*")
   val BDP_SERVER_WEB_ALLOW_METHOD = CommonVars("wds.linkis.server.web.allowmethod", "POST,GET,OPTIONS,PUT,HEAD,DELETE")
+
+  val LINKIE_USERNAME_SUFFIX_ENABLE = CommonVars("linkis.username.suffix.enable", false).getValue
+
+  val LINKIE_USERNAME_SUFFIX_NAME = CommonVars("linkis.username.suffix.name", "_c").getValue
+
 }

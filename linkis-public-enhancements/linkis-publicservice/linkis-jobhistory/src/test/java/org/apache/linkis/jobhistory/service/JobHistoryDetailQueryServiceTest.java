@@ -17,14 +17,15 @@
 
 package org.apache.linkis.jobhistory.service;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
 import org.apache.linkis.governance.common.entity.job.SubJobDetail;
 import org.apache.linkis.governance.common.entity.job.SubJobInfo;
 import org.apache.linkis.governance.common.protocol.job.*;
 import org.apache.linkis.jobhistory.dao.JobDetailMapper;
 import org.apache.linkis.jobhistory.service.impl.JobHistoryDetailQueryServiceImpl;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -41,16 +42,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(MockitoExtension.class)
 class JobHistoryDetailQueryServiceTest {
 
-    @InjectMocks
-    JobHistoryDetailQueryServiceImpl service;
+    @InjectMocks JobHistoryDetailQueryServiceImpl service;
 
-    @Mock
-    JobDetailMapper mapper;
+    @Mock JobDetailMapper mapper;
 
     /**
-     * User-created test data, if it is an auto-increment id, it should not be assigned
-     * CURD should be based on the data created by this method
-     * insert
+     * User-created test data, if it is an auto-increment id, it should not be assigned CURD should
+     * be based on the data created by this method insert
      *
      * @return SubJobInfo
      */
@@ -116,13 +114,13 @@ class JobHistoryDetailQueryServiceTest {
         list.add(buildSubJobInfo());
         list.add(buildSubJobInfo());
         JobDetailReqBatchUpdate jobDetailReqBatchUpdate = new JobDetailReqBatchUpdate(list);
-        ArrayList<JobRespProtocol> jobRespProtocolArrayList = service.batchChange(jobDetailReqBatchUpdate);
+        ArrayList<JobRespProtocol> jobRespProtocolArrayList =
+                service.batchChange(jobDetailReqBatchUpdate);
 
-        //list is matched with the predicate of stream for assertion judgment
+        // list is matched with the predicate of stream for assertion judgment
         Predicate<JobRespProtocol> statusPrecate = e -> e.getStatus() == 0;
         assertEquals(2, jobRespProtocolArrayList.size());
         assertTrue(jobRespProtocolArrayList.stream().anyMatch(statusPrecate));
-
     }
 
     @Test

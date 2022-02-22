@@ -17,17 +17,15 @@
 
 package org.apache.linkis.jobhistory.dao;
 
-
 import org.apache.linkis.jobhistory.Scan;
+
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @SpringBootTest(classes = Scan.class)
 @Transactional
 @Rollback(true)
 @EnableTransactionManagement
-public abstract class BaseDaoTest {
-}
+public abstract class BaseDaoTest {}

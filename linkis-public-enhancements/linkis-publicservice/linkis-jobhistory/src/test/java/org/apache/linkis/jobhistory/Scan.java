@@ -17,11 +17,10 @@
 
 package org.apache.linkis.jobhistory;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 @EnableAutoConfiguration
 @MapperScan("org.apache.linkis.jobhistory.dao")
-public class Scan {
-}
+public class Scan {}

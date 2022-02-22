@@ -303,6 +303,10 @@
                    <groupId>org.junit.vintage</groupId>
                    <artifactId>junit-vintage-engine</artifactId>
                </exclusion>
+               <exclusion>
+                   <artifactId>spring-boot-starter-logging</artifactId>
+                   <groupId>org.springframework.boot</groupId>
+               </exclusion>
            </exclusions>
            <scope>test</scope>
        </dependency>

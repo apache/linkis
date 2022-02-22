@@ -53,7 +53,7 @@ trait EntranceRestfulRemote {
   def killJobs(req: HttpServletRequest, @RequestBody jsonNode: JsonNode): Message
 
   @RequestMapping(value = Array("/entrance/{id}/kill"), method = Array(RequestMethod.POST))
-  def kill(@PathVariable("id") id: String, @RequestParam("taskID") taskID:scala.Long): Message
+  def kill(@PathVariable("id") id: String, @RequestParam("taskID") taskID: java.lang.Long): Message
 
   @RequestMapping(value = Array("/entrance/{id}/pause"), method = Array(RequestMethod.POST))
   def pause(@PathVariable("id") id: String): Message

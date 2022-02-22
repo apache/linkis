@@ -140,3 +140,13 @@ object Message {
     case 4 => 206
   }
 }
+
+object MessageStatus {
+
+  val NO_LOGIN: Int = -1
+  val SUCCESS: Int = 0
+  val ERROR: Int = 1
+  val VALIDATE_FAILED : Int = 2
+  val AUTH_FAILED: Int = 3
+  val WARNING: Int = 4
+}

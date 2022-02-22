@@ -140,6 +140,13 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <log4j2.version>2.17.1</log4j2.version>
         <spotless.version>2.4.2</spotless.version>
+        <junit5.version>5.6.1</junit5.version>
+        <mockito.version>3.9.0</mockito.version>
+        <assertj.version>3.17.2</assertj.version>
+        <h2.version>1.4.200</h2.version>
+        <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
+        <jacoco.version>0.8.7</jacoco.version>
+        <jacoco.skip>false</jacoco.skip>
     </properties>
 
     <dependencyManagement>
@@ -230,10 +237,92 @@
                 <version>${mysql.connector.version}</version>
                 <scope>test</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit5.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
+   <dependencies>
+       <!-- Test -->
+       <dependency>
+           <groupId>org.junit.jupiter</groupId>
+           <artifactId>junit-jupiter</artifactId>
+           <scope>test</scope>
+       </dependency>
 
+       <dependency>
+           <groupId>org.junit.vintage</groupId>
+           <artifactId>junit-vintage-engine</artifactId>
+           <scope>test</scope>
+       </dependency>
+
+       <dependency>
+           <groupId>org.mockito</groupId>
+           <artifactId>mockito-core</artifactId>
+           <version>${mockito.version}</version>
+           <scope>test</scope>
+       </dependency>
+       <dependency>
+           <groupId>org.mockito</groupId>
+           <artifactId>mockito-inline</artifactId>
+           <version>${mockito.version}</version>
+           <scope>test</scope>
+       </dependency>
+       <dependency>
+           <groupId>org.mockito</groupId>
+           <artifactId>mockito-junit-jupiter</artifactId>
+           <version>${mockito.version}</version>
+           <scope>test</scope>
+       </dependency>
+
+       <dependency>
+           <groupId>org.assertj</groupId>
+           <artifactId>assertj-core</artifactId>
+           <version>${assertj.version}</version>
+           <scope>test</scope>
+       </dependency>
+       <dependency>
+           <groupId>org.springframework.boot</groupId>
+           <artifactId>spring-boot-starter-test</artifactId>
+           <exclusions>
+               <exclusion>
+                   <!-- The module is compatible with junit4 and junit 5, this example uses junit5 directly-->
+                   <groupId>org.junit.vintage</groupId>
+                   <artifactId>junit-vintage-engine</artifactId>
+               </exclusion>
+           </exclusions>
+           <scope>test</scope>
+       </dependency>
+       <dependency>
+           <groupId>com.h2database</groupId>
+           <artifactId>h2</artifactId>
+           <version>${h2.version}</version>
+           <scope>test</scope>
+       </dependency>
+       <dependency>
+           <groupId>org.springframework.boot</groupId>
+           <artifactId>spring-boot-starter-data-jpa</artifactId>
+           <scope>test</scope>
+       </dependency>
+       <dependency>
+           <groupId>org.springframework</groupId>
+           <artifactId>spring-test</artifactId>
+           <scope>test</scope>
+       </dependency>
+   </dependencies>
 
     <profiles>
         <!-- jacoco: mvn validate -Pjacoco  -->

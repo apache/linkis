@@ -32,7 +32,7 @@ public class JobHistoryTest {
     @DisplayName("Method description: ...")
     public void testGetUpdateTimeMills() throws Exception {
         long time = 1643738522000L; // 2022-02-02 02:02:02.000
-        //String timestr = "2022-02-02 02:02:02.000";
+        // String timestr = "2022-02-02 02:02:02.000";
 
         JobHistory jobHistory = new JobHistory();
         Date date = new Date(time);
@@ -40,7 +40,7 @@ public class JobHistoryTest {
         jobHistory.setUpdated_time(date);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        String expectedStr=dateFormat.format(date);
+        String expectedStr = dateFormat.format(date);
         assertEquals(expectedStr, jobHistory.getUpdateTimeMills());
     }
 }

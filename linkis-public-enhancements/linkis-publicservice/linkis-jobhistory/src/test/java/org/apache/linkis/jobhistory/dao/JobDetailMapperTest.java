@@ -18,6 +18,9 @@
 package org.apache.linkis.jobhistory.dao;
 
 import org.apache.linkis.jobhistory.entity.JobDetail;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,30 +28,27 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-
 class JobDetailMapperTest extends BaseDaoTest {
 
     private static final Logger logger = LoggerFactory.getLogger(JobDetailMapperTest.class);
 
-    @Autowired
-    JobDetailMapper jobDetailMapper;
+    @Autowired JobDetailMapper jobDetailMapper;
 
     /**
-     * User-created test data, if it is an auto-increment id, it should not be assigned
-     * CURD should be based on the data created by this method
-     * insert
+     * User-created test data, if it is an auto-increment id, it should not be assigned CURD should
+     * be based on the data created by this method insert
      *
      * @return JobDetail
      */
     private JobDetail insertOne() {
-        //insertOne
+        // insertOne
         JobDetail jobDetail = new JobDetail();
         jobDetail.setJob_history_id(0L);
         jobDetail.setResult_location("/test/location");
@@ -67,21 +67,19 @@ class JobDetailMapperTest extends BaseDaoTest {
     @BeforeAll
     @DisplayName("Each unit test method is executed once before execution")
     protected static void beforeAll() throws Exception {
-        //Start the console of h2 to facilitate viewing of h2 data
-        Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8082")
-                .start();
+        // Start the console of h2 to facilitate viewing of h2 data
+        Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8082").start();
     }
-
 
     @AfterAll
     @DisplayName("Each unit test method is executed once before execution")
-    protected static void afterAll() throws Exception {
-    }
+    protected static void afterAll() throws Exception {}
 
     @Test
     void testSelectJobDetailByJobHistoryId() {
         JobDetail jobDetail = insertOne();
-        List<JobDetail> result = jobDetailMapper.selectJobDetailByJobHistoryId(jobDetail.getJob_history_id());
+        List<JobDetail> result =
+                jobDetailMapper.selectJobDetailByJobHistoryId(jobDetail.getJob_history_id());
         assertNotEquals(result.size(), 0);
     }
 
@@ -96,7 +94,6 @@ class JobDetailMapperTest extends BaseDaoTest {
     void testInsertJobDetail() {
         JobDetail jobDetail = insertOne();
         assertTrue(jobDetail.getId() > 0);
-
     }
 
     @Test
@@ -105,7 +102,8 @@ class JobDetailMapperTest extends BaseDaoTest {
         JobDetail expectedJobDetail = insertOne();
         expectedJobDetail.setResult_location("modify " + expectedJobDetail.getResult_location());
         expectedJobDetail.setResult_array_size(10);
-        expectedJobDetail.setExecution_content("modify " + expectedJobDetail.getExecution_content());
+        expectedJobDetail.setExecution_content(
+                "modify " + expectedJobDetail.getExecution_content());
         expectedJobDetail.setJob_group_info("modify " + expectedJobDetail.getJob_group_info());
         expectedJobDetail.setCreated_time(new Date());
         expectedJobDetail.setUpdated_time(new Date());
@@ -114,21 +112,20 @@ class JobDetailMapperTest extends BaseDaoTest {
 
         jobDetailMapper.updateJobDetail(expectedJobDetail);
 
-        JobDetail actualJobDetail = jobDetailMapper.selectJobDetailByJobDetailId(expectedJobDetail.getId());
+        JobDetail actualJobDetail =
+                jobDetailMapper.selectJobDetailByJobDetailId(expectedJobDetail.getId());
 
-//        assertEquals(expectedJobDetail, actualJobDetail);
-////       assertThat(actual, samePropertyValuesAs(expected));
-       // Determine whether the property values of the two objects are exactly the same
+        //        assertEquals(expectedJobDetail, actualJobDetail);
+        ////       assertThat(actual, samePropertyValuesAs(expected));
+        // Determine whether the property values of the two objects are exactly the same
         assertThat(actualJobDetail).usingRecursiveComparison().isEqualTo(expectedJobDetail);
-
     }
 
     @Test
     void testSelectJobDetailStatusForUpdateByJobDetailId() {
         JobDetail jobDetail = insertOne();
-        String result = jobDetailMapper.selectJobDetailStatusForUpdateByJobDetailId(jobDetail.getId());
+        String result =
+                jobDetailMapper.selectJobDetailStatusForUpdateByJobDetailId(jobDetail.getId());
         assertNotNull(result);
-
     }
-
 }

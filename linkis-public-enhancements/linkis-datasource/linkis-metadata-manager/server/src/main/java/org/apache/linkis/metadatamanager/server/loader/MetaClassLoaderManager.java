@@ -57,7 +57,7 @@ public class MetaClassLoaderManager {
             CommonVars.apply("wds.linkis.server.mdm.service.instance.expire-in-seconds", 60);
 
     private static final String META_CLASS_NAME =
-            "com.webank.wedatasphere.linkis.metadatamanager.service.%sMetaService";
+            "org.apache.linkis.metadatamanager.service.%sMetaService";
 
     private static final Logger LOG = LoggerFactory.getLogger(MetaClassLoaderManager.class);
 

@@ -2,6 +2,7 @@
 .idea
 .DS_Store
 
+dist/
 out/
 linkis.ipr
 linkis.iws

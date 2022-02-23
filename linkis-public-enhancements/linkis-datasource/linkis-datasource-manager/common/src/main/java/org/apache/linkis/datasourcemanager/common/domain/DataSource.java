@@ -17,19 +17,16 @@
 
 package org.apache.linkis.datasourcemanager.common.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
-
-import org.apache.commons.lang.StringUtils;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
 import java.util.*;
 
 /** Store the data source information */
@@ -93,7 +90,8 @@ public class DataSource {
     /** Data source env */
     private DataSourceEnv dataSourceEnv;
 
-    @JsonIgnore private List<DataSourceParamKeyDefinition> keyDefinitions = new ArrayList<>();
+    @JsonIgnore
+    private List<DataSourceParamKeyDefinition> keyDefinitions = new ArrayList<>();
 
     public DataSource() {
         this.createTime = Calendar.getInstance().getTime();

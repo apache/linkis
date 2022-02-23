@@ -17,13 +17,11 @@
 
 package org.apache.linkis.datasourcemanager.common.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
-
-import org.apache.commons.lang.StringUtils;
-
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.util.Date;
 import java.util.HashMap;

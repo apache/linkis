@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# description:  data-source-manager start cmd
+# @author:      davidhua
+# @created:     12.11.2021
+#
+# Modified for Linkis 1.0.0
+
+
+export SERVER_SUFFIX="linkis-public-enhancements/linkis-ps-data-source-manager"
+
+
+export DEBUG_PORT=10019
+
+export SERVER_CLASS=org.apache.linkis.datasourcemanager.core.LinkisDataSourceManagerApplication
+
+export COMMON_START_BIN=$LINKIS_HOME/sbin/ext/linkis-common-start
+if [[ ! -f "${COMMON_START_BIN}" ]]; then
+    echo "The $COMMON_START_BIN  does not exist!"
+    exit 1
+else
+    sh $COMMON_START_BIN
+fi

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.datasourcemanager.core.restful;
 
+import com.github.pagehelper.PageInfo;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.ServiceErrorCode;
 import org.apache.linkis.datasourcemanager.common.auth.AuthContext;
@@ -35,7 +36,8 @@ import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 import org.apache.linkis.metadatamanager.common.MdmConfiguration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,18 +47,13 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
-
-import com.github.pagehelper.PageInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.*;
 
 @RestController
 @RequestMapping(
-        value = "/data-source-manager-manager",
+        value = "/data-source-manager",
         produces = {"application/json"})
 public class DataSourceCoreRestfulApi {
 
@@ -513,10 +510,10 @@ public class DataSourceCoreRestfulApi {
 
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public Message queryDataSource(
-            @RequestParam("system") String createSystem,
-            @RequestParam("name") String dataSourceName,
-            @RequestParam("typeId") Long dataSourceTypeId,
-            @RequestParam("identifies") String identifies,
+            @RequestParam(value = "system", required = false) String createSystem,
+            @RequestParam(value = "name", required = false) String dataSourceName,
+            @RequestParam(value = "typeId", required = false) Long dataSourceTypeId,
+            @RequestParam(value = "identifies", required = false) String identifies,
             @RequestParam("currentPage") Integer currentPage,
             @RequestParam("pageSize") Integer pageSize,
             HttpServletRequest req) {

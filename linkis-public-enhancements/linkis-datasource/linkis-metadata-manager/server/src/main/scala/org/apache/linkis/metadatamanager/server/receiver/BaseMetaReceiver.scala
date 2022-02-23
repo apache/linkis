@@ -35,7 +35,7 @@ class BaseMetaReceiver extends Receiver with Logging{
   private var metadataAppService:MetadataAppService = _
 
 
-  override def receive(message: Any, sender: Sender): Unit = ???
+  override def receive(message: Any, sender: Sender): Unit = {}
 
   override def receiveAndReply(message: Any, sender: Sender): Any = invoke(metadataAppService, message)
 

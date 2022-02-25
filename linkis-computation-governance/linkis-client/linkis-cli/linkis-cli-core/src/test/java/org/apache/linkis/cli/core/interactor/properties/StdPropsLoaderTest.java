@@ -20,13 +20,13 @@ package org.apache.linkis.cli.core.interactor.properties;
 import org.apache.linkis.cli.common.entity.properties.ClientProperties;
 import org.apache.linkis.cli.core.interactor.properties.reader.PropertiesReader;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class StdPropsLoaderTest {
     PropertiesLoader loader;

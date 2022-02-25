@@ -287,6 +287,9 @@
                 <exclude>xmlenc:xmlenc:jar</exclude>
                 <exclude>xmlpull:xmlpull:jar</exclude>
                 <exclude>xpp3:xpp3_min:jar</exclude>
+                <exclude>com.google.code.findbugs:annotations:jar</exclude>
+                <exclude>commons-logging:commons-logging:jar</exclude>
+                <exclude>org.apache.httpcomponents:httpcore:jar</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

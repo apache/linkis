@@ -28,8 +28,8 @@ import org.apache.linkis.message.registry.AbstractImplicitRegistry;
 import org.apache.linkis.message.registry.AbstractServiceRegistry;
 import org.apache.linkis.protocol.message.RequestProtocol;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 
@@ -50,7 +50,7 @@ public class SchedulerMessageTest {
             new Reflections(
                     MessageSchedulerConf.SERVICE_SCAN_PACKAGE, new MethodAnnotationsScanner());
 
-    @Before
+    @BeforeEach
     public void before() {
 
         context = new DefaultMessageSchedulerContext();

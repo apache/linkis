@@ -69,12 +69,6 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>RELEASE</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-cs-listener</artifactId>
             <version>${linkis.version}</version>

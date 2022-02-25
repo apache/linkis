@@ -20,11 +20,11 @@ package org.apache.linkis.cli.core.interactor.command.fitter;
 import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.core.interactor.command.template.TestSparkCmdTemplate;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SingleTplFitterTest {
     Fitter fitter;

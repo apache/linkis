@@ -23,7 +23,6 @@ import org.apache.linkis.cli.core.exception.CommandException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
 public class CommandExceptionHandlerTest {
     Exception e;
     CommandException ce1, ce2, ce3;

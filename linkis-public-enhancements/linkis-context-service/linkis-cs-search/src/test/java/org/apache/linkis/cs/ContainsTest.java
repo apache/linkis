@@ -31,12 +31,13 @@ import org.apache.linkis.cs.keyword.TestContextKey;
 import org.apache.linkis.cs.keyword.TestContextKeyValue;
 
 import com.google.common.collect.Lists;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ContainsTest {
     List<ContextKeyValue> contextKeyValues = Lists.newArrayList();

@@ -37,6 +37,15 @@
             <unpack>false</unpack>
             <useStrictFiltering>false</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
+            <excludes>
+                <exclude>com.google.code.gson:gson:jar</exclude>
+                <exclude>org.reflections:reflections:jar</exclude>
+                <exclude>org.slf4j:slf4j-api:jar</exclude>
+                <exclude>org.springframework:spring-beans:jar</exclude>
+                <exclude>org.springframework:spring-core:jar</exclude>
+                <exclude>org.springframework:spring-jcl:jar</exclude>
+                <exclude>org.springframework:spring-tx:jar</exclude>
+            </excludes>
 
         </dependencySet>
     </dependencySets>

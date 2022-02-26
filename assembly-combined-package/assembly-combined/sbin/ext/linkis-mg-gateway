@@ -75,6 +75,9 @@ fi
 ## set class path
 export SERVER_CLASS_PATH=$SERVER_CONF_PATH:$SERVER_LIB/*
 
+echo  "=====Java Start Command====="
+echo  "nohup java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS 2>&1 > $LINKIS_LOG_DIR/${SERVER_NAME}.out &"
+
 nohup java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS 2>&1 >  $LINKIS_LOG_DIR/${SERVER_NAME}.out &
 
 pid=$!

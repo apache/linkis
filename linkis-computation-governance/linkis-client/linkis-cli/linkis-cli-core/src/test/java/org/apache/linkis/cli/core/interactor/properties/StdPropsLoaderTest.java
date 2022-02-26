@@ -20,17 +20,18 @@ package org.apache.linkis.cli.core.interactor.properties;
 import org.apache.linkis.cli.common.entity.properties.ClientProperties;
 import org.apache.linkis.cli.core.interactor.properties.reader.PropertiesReader;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class StdPropsLoaderTest {
     PropertiesLoader loader;
 
-    @Before
+    @BeforeEach
     public void before() throws Exception {
         System.setProperty("conf.root", "src/test/resources/conf/");
         System.setProperty("conf.file", "linkis-cli.properties");
@@ -51,7 +52,7 @@ public class StdPropsLoaderTest {
                                 readersList.toArray(new PropertiesReader[readersList.size()]));
     }
 
-    @After
+    @AfterEach
     public void after() throws Exception {}
 
     /** Method: setPropertiesReaders(PropertiesReader[] readers) */
@@ -99,7 +100,7 @@ public class StdPropsLoaderTest {
             System.out.println(props.getPropsId());
             System.out.println(props.getPropertiesSourcePath());
             System.out.println(props);
-            Assert.assertFalse(0 == props.size());
+            assertFalse(0 == props.size());
         }
     }
 

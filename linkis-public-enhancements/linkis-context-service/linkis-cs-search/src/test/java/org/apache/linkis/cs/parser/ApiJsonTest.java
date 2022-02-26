@@ -28,12 +28,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ApiJsonTest {
 
@@ -65,7 +66,7 @@ public class ApiJsonTest {
                 objectMapper.convertValue(jsonNode, new TypeReference<Map<Object, Object>>() {});
         ConditionParser conditionParser = ConditionParser.parserMap.get(conditionMap.get("type"));
         Condition condition = conditionParser.parse(conditionMap);
-        Assert.assertEquals(condition.getConditionType(), ConditionType.Logic);
+        assertEquals(condition.getConditionType(), ConditionType.Logic);
     }
 
     @Test

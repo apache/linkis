@@ -38,6 +38,17 @@
             <useStrictFiltering>true</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
+                <exclude>com.google.code.findbugs:annotations:jar</exclude>
+                <exclude>commons-beanutils:commons-beanutils:jar</exclude>
+                <exclude>commons-codec:commons-codec:jar</exclude>
+                <exclude>commons-collections:commons-collections:jar</exclude>
+                <exclude>commons-logging:commons-logging:jar</exclude>
+                <exclude>com.google.code.gson:gson:jar</exclude>
+<!--                <exclude>org.apache.hadoop:hadoop-annotations:jar</exclude>-->
+<!--                <exclude>commons-httpclient:commons-httpclient:jar</exclude>-->
+                <exclude>org.apache.httpcomponents:httpcore:jar</exclude>
+                <exclude>org.javassist:javassist:jar</exclude>
+                <exclude>org.reflections:reflections:jar</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

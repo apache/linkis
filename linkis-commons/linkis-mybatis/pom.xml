@@ -66,7 +66,7 @@
         <dependency>
             <artifactId>spring-jdbc</artifactId>
             <groupId>org.springframework</groupId>
-            <version>${spring.version}</version>
+            <!--<version>${spring.version}</version>-->
         </dependency>
         <dependency>
             <groupId>com.github.pagehelper</groupId>

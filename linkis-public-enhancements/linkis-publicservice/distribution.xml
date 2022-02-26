@@ -304,6 +304,22 @@
                 <exclude>xmlenc:xmlenc:jar</exclude>
                 <exclude>xmlpull:xmlpull:jar</exclude>
                 <exclude>xpp3:xpp3_min:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-starter-openfeign:jar</exclude>
+                <exclude>commons-fileupload:commons-fileupload:jar</exclude>
+                <exclude>org.apache.commons:commons-math3:jar</exclude>
+                <exclude>com.google.errorprone:error_prone_annotations:jar</exclude>
+                <exclude>io.github.openfeign:feign-core:jar</exclude>
+                <exclude>io.github.openfeign.form:feign-form:jar</exclude>
+                <exclude>io.github.openfeign.form:feign-form-spring:jar</exclude>
+                <exclude>io.github.openfeign:feign-hystrix:jar</exclude>
+                <exclude>io.github.openfeign:feign-slf4j:jar</exclude>
+                <exclude>org.apache.httpcomponents:httpcore:jar</exclude>
+                <exclude>io.protostuff:protostuff-api:jar</exclude>
+                <exclude>io.protostuff:protostuff-collectionschema:jar</exclude>
+                <exclude>io.protostuff:protostuff-core:jar</exclude>
+                <exclude>io.protostuff:protostuff-runtime:jar</exclude>
+                <exclude>org.springframework:spring-jcl:jar</exclude>
+                <exclude>org.springframework:spring-tx:jar</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.application;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -120,7 +121,7 @@ public class LinkisClientApplicationTest {
                 };
     }
 
-    @After
+    @AfterEach
     public void after() throws Exception {}
 
     /** Method: main(String[] args) */

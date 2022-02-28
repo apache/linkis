@@ -46,7 +46,7 @@ public class RestfulTest {
 
     Resource resource = new LinkisBMLResource();
 
-    /*@Before*/
+    /*@BeforeEach*/
     public void init() {
         contextClient = ContextClientFactory.getOrCreateContextClient();
         contextID = new LinkisHAWorkFlowContextID();

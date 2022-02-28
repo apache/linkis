@@ -100,7 +100,11 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
 
     @Override
     public MetaPartitionInfo getPartitions(
-            String operator, Map<String, Object> params, String database, String table, boolean traverse) {
+            String operator,
+            Map<String, Object> params,
+            String database,
+            String table,
+            boolean traverse) {
         return this.getConnAndRun(
                 operator, params, conn -> this.queryPartitions(conn, database, table, traverse));
     }
@@ -113,11 +117,16 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
     }
 
     @Override
-    public  Map<String, String> getPartitionProps(
-            String operator, Map<String, Object> params, String database, String table,
-                                                  String partition) {
+    public Map<String, String> getPartitionProps(
+            String operator,
+            Map<String, Object> params,
+            String database,
+            String table,
+            String partition) {
         return this.getConnAndRun(
-                operator, params, conn -> this.queryPartitionProps(conn, database, table, partition));
+                operator,
+                params,
+                conn -> this.queryPartitionProps(conn, database, table, partition));
     }
 
     /**
@@ -149,7 +158,8 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
      * @param table table
      * @return
      */
-    public MetaPartitionInfo queryPartitions(C connection, String database, String table, boolean traverse) {
+    public MetaPartitionInfo queryPartitions(
+            C connection, String database, String table, boolean traverse) {
         throw new WarnException(-1, "This method is no supported");
     }
 
@@ -167,13 +177,15 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
 
     /**
      * Get the properties of partition
+     *
      * @param connection
      * @param database
      * @param table
      * @param partition
      * @return
      */
-    public Map<String, String> queryPartitionProps(C connection, String database, String table, String partition){
+    public Map<String, String> queryPartitionProps(
+            C connection, String database, String table, String partition) {
         throw new WarnException(-1, "This method is no supported");
     }
 

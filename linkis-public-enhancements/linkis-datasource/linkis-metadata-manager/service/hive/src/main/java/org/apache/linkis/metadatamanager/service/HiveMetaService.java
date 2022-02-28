@@ -17,7 +17,6 @@
 
 package org.apache.linkis.metadatamanager.service;
 
-import org.apache.hadoop.hive.ql.metadata.Hive;
 import org.apache.linkis.bml.client.BmlClient;
 import org.apache.linkis.bml.client.BmlClientFactory;
 import org.apache.linkis.bml.protocol.BmlDownloadResponse;
@@ -32,6 +31,7 @@ import org.apache.linkis.metadatamanager.common.service.MetadataConnection;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
+import org.apache.hadoop.hive.ql.metadata.Hive;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.metadata.Partition;
 import org.apache.hadoop.hive.ql.metadata.Table;
@@ -148,12 +148,16 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
     }
 
     @Override
-    public MetaPartitionInfo queryPartitions(HiveConnection connection, String database, String table, boolean traverse) {
+    public MetaPartitionInfo queryPartitions(
+            HiveConnection connection, String database, String table, boolean traverse) {
         List<Partition> partitions;
         Table rawTable;
         try {
             rawTable = connection.getClient().getTable(database, table);
-            partitions = traverse? connection.getClient().getPartitions(rawTable) : Collections.emptyList();
+            partitions =
+                    traverse
+                            ? connection.getClient().getPartitions(rawTable)
+                            : Collections.emptyList();
         } catch (HiveException e) {
             throw new RuntimeException("Fail to get Hive partitions(获取分区信息失败)", e);
         }
@@ -163,7 +167,7 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
         partitionKeys.forEach(e -> partKeys.add(e.getName()));
         info.setPartKeys(partKeys);
         if (traverse) {
-            //Static partitions
+            // Static partitions
             Map<String, MetaPartitionInfo.PartitionNode> pMap = new HashMap<>(20);
             MetaPartitionInfo.PartitionNode root = new MetaPartitionInfo.PartitionNode();
             info.setRoot(root);
@@ -178,7 +182,8 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
                             String name = fieldSchema.getName();
                             String value = values.get(i);
                             String nameValue = name + "=" + value;
-                            MetaPartitionInfo.PartitionNode node = new MetaPartitionInfo.PartitionNode();
+                            MetaPartitionInfo.PartitionNode node =
+                                    new MetaPartitionInfo.PartitionNode();
                             if (i > 0) {
                                 MetaPartitionInfo.PartitionNode parent = pMap.get(parentNameValue);
                                 parent.setName(name);
@@ -233,23 +238,28 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
     }
 
     @Override
-    public Map<String, String> queryPartitionProps(HiveConnection connection, String database, String table, String partition) {
+    public Map<String, String> queryPartitionProps(
+            HiveConnection connection, String database, String table, String partition) {
         Map<String, String> properties = new HashMap<>();
         Hive client = connection.getClient();
-        if (Objects.nonNull(client) && StringUtils.isNotBlank(partition)){
+        if (Objects.nonNull(client) && StringUtils.isNotBlank(partition)) {
             try {
                 // Convert to pairs of (partition_key: partition_value)
-                Map<String, String> partitionParts = Arrays.stream(partition.split(PARTITION_PART_SEPARATOR))
-                        .map(part -> part.split(PARTITION_KV_SEPARATOR)).collect(Collectors.toMap(kv -> kv[0], kv -> kv.length > 1 ? kv[1] : ""));
+                Map<String, String> partitionParts =
+                        Arrays.stream(partition.split(PARTITION_PART_SEPARATOR))
+                                .map(part -> part.split(PARTITION_KV_SEPARATOR))
+                                .collect(
+                                        Collectors.toMap(
+                                                kv -> kv[0], kv -> kv.length > 1 ? kv[1] : ""));
                 Table rawTable = client.getTable(database, table);
-                Partition rawPartition= client.getPartition(rawTable, partitionParts, false);
-                if (Objects.nonNull(rawPartition)){
+                Partition rawPartition = client.getPartition(rawTable, partitionParts, false);
+                if (Objects.nonNull(rawPartition)) {
                     Properties metadataProps = rawPartition.getMetadataFromPartitionSchema();
                     Enumeration<?> propertyNames = metadataProps.propertyNames();
-                    while (propertyNames.hasMoreElements()){
+                    while (propertyNames.hasMoreElements()) {
                         String propName = String.valueOf(propertyNames.nextElement());
-                        Optional.ofNullable(metadataProps.getProperty(propName,null)).ifPresent(value
-                                -> properties.put(propName, value));
+                        Optional.ofNullable(metadataProps.getProperty(propName, null))
+                                .ifPresent(value -> properties.put(propName, value));
                     }
                 }
             } catch (Exception e) {

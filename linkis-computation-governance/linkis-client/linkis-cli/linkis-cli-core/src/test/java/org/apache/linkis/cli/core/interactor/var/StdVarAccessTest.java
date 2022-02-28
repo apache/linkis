@@ -35,21 +35,23 @@ import org.apache.linkis.cli.core.interactor.validate.ParsedTplValidator;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class StdVarAccessTest {
     String[] cmdStr;
     VarAccess stdVarAccess;
 
-    @Before
+    @BeforeEach
     public void before() throws Exception {
         cmdStr =
                 new String[] {
@@ -139,7 +141,7 @@ public class StdVarAccessTest {
                         .init();
     }
 
-    @After
+    @AfterEach
     public void after() throws Exception {}
 
     /** Method: setPrimaryParam(Params primaryParam) */
@@ -200,27 +202,27 @@ public class StdVarAccessTest {
     @Test
     public void testGetVar() throws Exception {
         System.out.println(stdVarAccess.getVar(String.class, TestConstants.PARAM_COMMON_CMD));
-        Assert.assertEquals(
+        assertEquals(
                 stdVarAccess.getVar(String.class, TestConstants.PARAM_COMMON_CMD), "show tables");
         System.out.println(stdVarAccess.getVar(String.class, "user.props"));
-        Assert.assertEquals(stdVarAccess.getVar(String.class, "wds.linkis.client.not.exist"), null);
+        assertEquals(stdVarAccess.getVar(String.class, "wds.linkis.client.not.exist"), null);
         System.out.println(
                 stdVarAccess.getVar(
                         Integer.class,
                         TestConstants.PARAM_SPARK_EXECUTOR_CORES)); // see if priority works
-        Assert.assertEquals(
+        assertEquals(
                 (long) stdVarAccess.getVar(Integer.class, TestConstants.PARAM_SPARK_EXECUTOR_CORES),
                 4);
-        Assert.assertEquals((long) stdVarAccess.getVar(Integer.class, "conf.prop.integer"), 9);
-        Assert.assertEquals(stdVarAccess.getVar(String.class, "conf.prop.string"), "str");
-        Assert.assertEquals(
+        assertEquals((long) stdVarAccess.getVar(Integer.class, "conf.prop.integer"), 9);
+        assertEquals(stdVarAccess.getVar(String.class, "conf.prop.string"), "str");
+        assertEquals(
                 stdVarAccess.getVar(
                         String.class, "wds.linkis.client.param.conf.spark.executor.memory"),
                 "11111G");
 
         System.out.println(stdVarAccess.getAllVarKeys().length);
         System.out.println(Arrays.toString(stdVarAccess.getAllVarKeys()));
-        Assert.assertTrue(stdVarAccess.getAllVarKeys().length != 0);
+        assertTrue(stdVarAccess.getAllVarKeys().length != 0);
     }
 
     /** Method: getVarOrDefault(Class<T> clazz, String key, T defaultValue) */

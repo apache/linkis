@@ -15,7 +15,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -40,7 +40,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
@@ -65,47 +64,46 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-            <version>${spring.eureka.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>jsr311-api</artifactId>
                     <groupId>javax.ws.rs</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-autoconfigure</artifactId>
-                    <groupId>org.springframework.boot</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-aop</artifactId>
-                    <groupId>org.springframework.boot</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.springframework.cloud</groupId>
                     <artifactId>spring-cloud-starter</artifactId>
-                    <groupId>org.springframework.cloud</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.springframework.cloud</groupId>
                     <artifactId>spring-cloud-commons</artifactId>
-                    <groupId>org.springframework.cloud</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.springframework.cloud</groupId>
                     <artifactId>spring-cloud-context</artifactId>
-                    <groupId>org.springframework.cloud</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter</artifactId>
-                    <groupId>org.springframework.boot</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-cache</artifactId>
-                    <groupId>org.springframework.boot</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-core</artifactId>
-                    <groupId>com.fasterxml.jackson.core</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>jackson-databind</artifactId>
                     <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>io.github.x-stream</groupId>
@@ -226,7 +224,6 @@
                     <groupId>org.springframework.cloud</groupId>
                 </exclusion>
             </exclusions>
-            <version>${spring.cloud.version}</version>
         </dependency>
 
         <dependency>
@@ -250,7 +247,6 @@
                 </exclusion>
             </exclusions>
             <groupId>org.springframework.cloud</groupId>
-            <version>${spring.cloud.version}</version>
         </dependency>
         <dependency>
             <artifactId>spring-cloud-starter</artifactId>
@@ -269,13 +265,11 @@
                 </exclusion>
             </exclusions>
             <groupId>org.springframework.cloud</groupId>
-            <version>${spring.cloud.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-context</artifactId>
-            <version>${spring.cloud.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>spring-security-crypto</artifactId>
@@ -287,7 +281,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-commons</artifactId>
-            <version>${spring.cloud.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>spring-security-crypto</artifactId>
@@ -299,7 +292,6 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
-            <version>${spring.security.cryto.version}</version>
         </dependency>
 
 

@@ -317,3 +317,21 @@ INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) 
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('95005','未配置代理用户，请在ITSM走WTSS用户变更单，为你的用户授权改代理用户','请联系系统管理员为您的用户添加该代理用户',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('60079','所查库表无权限','Authorization failed:No privilege',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('30002','启动引擎超时，您可以进行任务重试','wait for DefaultEngineConn',0);
+INSERT INTO `linkis_datasource_type` VALUES
+(1,'mysql','mysql数据库','mysql数据库','关系型数据库','',3),
+(2,'kafka','kafka','kafka','消息队列','',2),
+(3,'presto','presto SQL','presto','大数据存储','',3),
+(4,'hive','hive数据库','hive','大数据存储','',3),
+(6,'mongodb','default','default','DEFAULT',NULL,3);
+
+INSERT INTO `linkis_datasource_type_key` VALUES
+(1,1,'host','Host',NULL,'TEXT',NULL,1,'mysql Host ',NULL,NULL,NULL,NULL,'2021-04-08 03:13:36','2021-04-08 03:13:36'),
+(2,1,'port','端口',NULL,'TEXT',NULL,1,'端口',NULL,NULL,NULL,NULL,'2021-04-17 03:10:28','2021-04-17 03:10:28'),
+(3,1,'params','连接参数',NULL,'TEXT',NULL,0,'输入JSON格式: {\"param\":\"value\"}',NULL,NULL,NULL,NULL,'2021-12-06 10:35:00','2021-12-06 10:35:00'),
+(9,1,'username','用户名',NULL,'TEXT',NULL,1,'用户名','^[0-9A-Za-z_-]+$',NULL,NULL,NULL,'2021-04-12 01:54:39','2021-04-12 01:54:39'),
+(10,1,'password','密码',NULL,'PASSWORD',NULL,1,'密码','',NULL,NULL,NULL,'2021-04-12 01:54:39','2021-04-12 01:54:39'),
+(11,4,'envId','集群环境',NULL,'SELECT',NULL,1,'集群环境',NULL,NULL,NULL,'/api/rest_j/v1/data-source-manager/env_list/all/type/4','2021-05-12 03:03:34','2021-05-12 03:03:34');
+
+INSERT INTO `linkis_datasource_env` VALUES
+(1,'测试环境SIT','测试环境SIT',4,'{\"uris\":\"thrift://localhost:9083\", \"hadoopConf\":{\"hive.metastore.execute.setugi\":\"true\"}}','2021-10-26 14:57:29',NULL,'2021-10-26 14:57:29',NULL),
+(2,'测试环境UAT','测试环境UAT',4,'{\"uris\":\"thrift://localhost:9083\", \"hadoopConf\":{\"hive.metastore.execute.setugi\":\"true\"}}','2022-01-04 17:24:20',NULL,'2022-01-04 17:24:20',NULL);

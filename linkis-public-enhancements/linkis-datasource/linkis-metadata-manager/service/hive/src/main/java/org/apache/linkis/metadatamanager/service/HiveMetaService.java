@@ -143,13 +143,12 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
     }
 
     @Override
-    public MetaPartitionInfo queryPartitions(
-            HiveConnection connection, String database, String table) {
+    public MetaPartitionInfo queryPartitions(HiveConnection connection, String database, String table, boolean traverse) {
         List<Partition> partitions;
         Table rawTable;
         try {
             rawTable = connection.getClient().getTable(database, table);
-            partitions = connection.getClient().getPartitions(rawTable);
+            partitions = traverse? connection.getClient().getPartitions(rawTable) : Collections.emptyList();
         } catch (HiveException e) {
             throw new RuntimeException("Fail to get Hive partitions(获取分区信息失败)", e);
         }
@@ -158,37 +157,38 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
         List<String> partKeys = new ArrayList<>();
         partitionKeys.forEach(e -> partKeys.add(e.getName()));
         info.setPartKeys(partKeys);
-        // Static partitions
-        Map<String, MetaPartitionInfo.PartitionNode> pMap = new HashMap<>(20);
-        MetaPartitionInfo.PartitionNode root = new MetaPartitionInfo.PartitionNode();
-        info.setRoot(root);
-        long t = System.currentTimeMillis();
-        for (Partition p : partitions) {
-            try {
-                List<String> values = p.getValues();
-                if (!partitionKeys.isEmpty()) {
-                    String parentNameValue = "";
-                    for (int i = 0; i < values.size(); i++) {
-                        FieldSchema fieldSchema = partitionKeys.get(i);
-                        String name = fieldSchema.getName();
-                        String value = values.get(i);
-                        String nameValue = name + "=" + value;
-                        MetaPartitionInfo.PartitionNode node =
-                                new MetaPartitionInfo.PartitionNode();
-                        if (i > 0) {
-                            MetaPartitionInfo.PartitionNode parent = pMap.get(parentNameValue);
-                            parent.setName(name);
-                            parent.getPartitions().putIfAbsent(value, node);
-                        } else {
-                            root.setName(name);
-                            root.getPartitions().putIfAbsent(value, node);
+        if (traverse) {
+            //Static partitions
+            Map<String, MetaPartitionInfo.PartitionNode> pMap = new HashMap<>(20);
+            MetaPartitionInfo.PartitionNode root = new MetaPartitionInfo.PartitionNode();
+            info.setRoot(root);
+            long t = System.currentTimeMillis();
+            for (Partition p : partitions) {
+                try {
+                    List<String> values = p.getValues();
+                    if (!partitionKeys.isEmpty()) {
+                        String parentNameValue = "";
+                        for (int i = 0; i < values.size(); i++) {
+                            FieldSchema fieldSchema = partitionKeys.get(i);
+                            String name = fieldSchema.getName();
+                            String value = values.get(i);
+                            String nameValue = name + "=" + value;
+                            MetaPartitionInfo.PartitionNode node = new MetaPartitionInfo.PartitionNode();
+                            if (i > 0) {
+                                MetaPartitionInfo.PartitionNode parent = pMap.get(parentNameValue);
+                                parent.setName(name);
+                                parent.getPartitions().putIfAbsent(value, node);
+                            } else {
+                                root.setName(name);
+                                root.getPartitions().putIfAbsent(value, node);
+                            }
+                            parentNameValue += "/" + nameValue;
+                            pMap.putIfAbsent(parentNameValue, node);
                         }
-                        parentNameValue += "/" + nameValue;
-                        pMap.putIfAbsent(parentNameValue, node);
                     }
+                } catch (Exception e) {
+                    LOG.warn(e.getMessage(), e);
                 }
-            } catch (Exception e) {
-                LOG.warn(e.getMessage(), e);
             }
         }
         return info;

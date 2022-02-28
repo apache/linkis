@@ -73,6 +73,8 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
                             assert notification.getValue() != null;
                             close(notification.getValue().getConnection());
                         });
+        // Clean up the req cache
+        reqCache.cleanUp();
     }
 
     @Override
@@ -98,9 +100,9 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
 
     @Override
     public MetaPartitionInfo getPartitions(
-            String operator, Map<String, Object> params, String database, String table) {
+            String operator, Map<String, Object> params, String database, String table, boolean traverse) {
         return this.getConnAndRun(
-                operator, params, conn -> this.queryPartitions(conn, database, table));
+                operator, params, conn -> this.queryPartitions(conn, database, table, traverse));
     }
 
     @Override
@@ -139,7 +141,7 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
      * @param table table
      * @return
      */
-    public MetaPartitionInfo queryPartitions(C connection, String database, String table) {
+    public MetaPartitionInfo queryPartitions(C connection, String database, String table, boolean traverse) {
         throw new WarnException(-1, "This method is no supported");
     }
 

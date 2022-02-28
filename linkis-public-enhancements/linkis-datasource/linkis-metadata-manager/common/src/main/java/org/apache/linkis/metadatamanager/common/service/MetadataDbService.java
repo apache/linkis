@@ -57,10 +57,11 @@ public interface MetadataDbService extends BaseMetadataService {
      * @param params params
      * @param database
      * @param table
+     * @param traverse if traverse to get all values, default: false
      * @return
      */
     MetaPartitionInfo getPartitions(
-            String operator, Map<String, Object> params, String database, String table);
+            String operator, Map<String, Object> params, String database, String table, boolean traverse);
 
     /**
      * Get all field information from table specified

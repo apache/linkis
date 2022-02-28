@@ -25,9 +25,9 @@ import org.apache.linkis.cli.core.interactor.command.template.TestParamMapper;
 import org.apache.linkis.cli.core.interactor.command.template.TestSparkCmdTemplate;
 import org.apache.linkis.cli.core.utils.CommonUtils;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +36,7 @@ public class SingleCmdParserTest {
     String[] cmdStr;
     Map<String, CmdTemplate> templateMap;
 
-    @Before
+    @BeforeEach
     public void before() throws Exception {
         cmdStr =
                 new String[] {
@@ -72,7 +72,7 @@ public class SingleCmdParserTest {
         templateMap.put(template.getCmdType().getName(), template);
     }
 
-    @After
+    @AfterEach
     public void after() throws Exception {}
 
     /** Method: parse(String[] input) */

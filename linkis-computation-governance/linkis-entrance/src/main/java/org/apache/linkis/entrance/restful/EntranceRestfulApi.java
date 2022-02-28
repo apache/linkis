@@ -541,7 +541,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     @RequestMapping(path = "/{id}/kill", method = RequestMethod.GET)
     public Message kill(
             @PathVariable("id") String id,
-            @RequestParam(value = "taskID", required = false) long taskID) {
+            @RequestParam(value = "taskID", required = false) Long taskID) {
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
         Option<Job> job = Option.apply(null);
         try {

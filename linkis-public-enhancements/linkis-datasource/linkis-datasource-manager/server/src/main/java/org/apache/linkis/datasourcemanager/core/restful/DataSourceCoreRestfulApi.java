@@ -56,7 +56,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping(
-        value = "/data-source-manager-manager",
+        value = "/data-source-manager",
         produces = {"application/json"})
 public class DataSourceCoreRestfulApi {
 
@@ -513,10 +513,10 @@ public class DataSourceCoreRestfulApi {
 
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public Message queryDataSource(
-            @RequestParam("system") String createSystem,
-            @RequestParam("name") String dataSourceName,
-            @RequestParam("typeId") Long dataSourceTypeId,
-            @RequestParam("identifies") String identifies,
+            @RequestParam(value = "system", required = false) String createSystem,
+            @RequestParam(value = "name", required = false) String dataSourceName,
+            @RequestParam(value = "typeId", required = false) Long dataSourceTypeId,
+            @RequestParam(value = "identifies", required = false) String identifies,
             @RequestParam("currentPage") Integer currentPage,
             @RequestParam("pageSize") Integer pageSize,
             HttpServletRequest req) {

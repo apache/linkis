@@ -26,7 +26,7 @@ object EngineConnPluginConf {
 
   val JAVA_ENGINE_REQUEST_CORES = CommonVars[Int]("wds.linkis.engineconn.java.driver.cores", 2)
 
-  val JAVA_ENGINE_REQUEST_INSTANCE = CommonVars[Int]("wds.linkis.engineconn.java.driver.instannce", 1)
+  val JAVA_ENGINE_REQUEST_INSTANCE = 1
 
   val ENGINECONN_TYPE_NAME = CommonVars[String]("wds.linkis.engineconn.type.name", "python")
 

@@ -112,6 +112,14 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
                 operator, params, conn -> this.queryColumns(conn, database, table));
     }
 
+    @Override
+    public  Map<String, String> getPartitionProps(
+            String operator, Map<String, Object> params, String database, String table,
+                                                  String partition) {
+        return this.getConnAndRun(
+                operator, params, conn -> this.queryPartitionProps(conn, database, table, partition));
+    }
+
     /**
      * Get database list by connection
      *
@@ -154,6 +162,18 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
      * @return
      */
     public List<MetaColumnInfo> queryColumns(C connection, String database, String table) {
+        throw new WarnException(-1, "This method is no supported");
+    }
+
+    /**
+     * Get the properties of partition
+     * @param connection
+     * @param database
+     * @param table
+     * @param partition
+     * @return
+     */
+    public Map<String, String> queryPartitionProps(C connection, String database, String table, String partition){
         throw new WarnException(-1, "This method is no supported");
     }
 

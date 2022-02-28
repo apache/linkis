@@ -227,6 +227,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
           }
         } {
           case exception: RMWarnException => return NotEnoughResource(exception.getMessage)
+          case exception: Exception => throw exception
         }
         val usedResource = labelResourceService.getLabelResource(label)
         if (usedResource == null) {

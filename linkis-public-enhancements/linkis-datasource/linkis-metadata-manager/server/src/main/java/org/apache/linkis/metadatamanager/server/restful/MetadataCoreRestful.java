@@ -145,28 +145,30 @@ public class MetadataCoreRestful {
             value = "/props/{data_source_id}/db/{database}/table/{table}/partition/{partition}",
             method = RequestMethod.GET)
     public Message getPartitionProps(
-            @PathVariable("data_source_id")String dataSourceId,
-            @PathVariable("database")String database,
+            @PathVariable("data_source_id") String dataSourceId,
+            @PathVariable("database") String database,
             @PathVariable("table") String table,
             @PathVariable("partition") String partition,
-            @RequestParam("system")String system,
+            @RequestParam("system") String system,
             HttpServletRequest request) {
-        try{
-            if(StringUtils.isBlank(system)){
+        try {
+            if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
             }
-            Map<String, String> partitionProps = metadataAppService.getPartitionPropsByDsId(
-                    dataSourceId,
-                    database,
-                    table,
-                    partition,
-                    system,
-                    SecurityFilter.getLoginUsername(request));
+            Map<String, String> partitionProps =
+                    metadataAppService.getPartitionPropsByDsId(
+                            dataSourceId,
+                            database,
+                            table,
+                            partition,
+                            system,
+                            SecurityFilter.getLoginUsername(request));
             return Message.ok().data("props", partitionProps);
-        }catch(Exception e){
+        } catch (Exception e) {
             return errorToResponseMessage(
                     "Fail to get partition properties[获取分区参数信息失败], id:["
-                            + dataSourceId +"]"
+                            + dataSourceId
+                            + "]"
                             + ", system:["
                             + system
                             + "], database:["
@@ -174,7 +176,8 @@ public class MetadataCoreRestful {
                             + "], table:["
                             + table
                             + "], partition:["
-                            + partition + "]",
+                            + partition
+                            + "]",
                     e);
         }
     }

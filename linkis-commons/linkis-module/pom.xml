@@ -40,7 +40,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <!--<version>${spring.version}</version>-->
         </dependency>
 
         <dependency>
@@ -65,7 +64,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-            <!--            <version>${spring.eureka.version}</version>-->
             <exclusions>
                 <exclusion>
                     <artifactId>jsr311-api</artifactId>
@@ -226,7 +224,6 @@
                     <groupId>org.springframework.cloud</groupId>
                 </exclusion>
             </exclusions>
-            <!--<version>${spring.cloud.version}</version>-->
         </dependency>
 
         <dependency>
@@ -250,7 +247,6 @@
                 </exclusion>
             </exclusions>
             <groupId>org.springframework.cloud</groupId>
-            <!--<version>${spring.cloud.version}</version>-->
         </dependency>
         <dependency>
             <artifactId>spring-cloud-starter</artifactId>
@@ -269,13 +265,11 @@
                 </exclusion>
             </exclusions>
             <groupId>org.springframework.cloud</groupId>
-            <!--<version>${spring.cloud.version}</version>-->
         </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-context</artifactId>
-            <!--<version>${spring.cloud.version}</version>-->
             <exclusions>
                 <exclusion>
                     <artifactId>spring-security-crypto</artifactId>
@@ -287,7 +281,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-commons</artifactId>
-            <!--<version>${spring.cloud.version}</version>-->
             <exclusions>
                 <exclusion>
                     <artifactId>spring-security-crypto</artifactId>
@@ -299,7 +292,6 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
-            <!--            <version>${spring.security.cryto.version}</version>-->
         </dependency>
 
 

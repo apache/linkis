@@ -60,12 +60,6 @@
             <version>${linkis.version}</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.apache.linkis</groupId>-->
-<!--            <artifactId>linkis-cs-highavailable</artifactId>-->
-<!--            <version>${linkis.version}</version>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-cs-listener</artifactId>

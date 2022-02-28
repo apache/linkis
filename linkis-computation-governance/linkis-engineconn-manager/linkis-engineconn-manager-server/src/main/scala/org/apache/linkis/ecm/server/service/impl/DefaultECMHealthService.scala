@@ -96,15 +96,7 @@ class DefaultECMHealthService extends ECMHealthService with ECMEventListener {
 
   override def reportHealth(report: ECMHealthReport): Unit = {
     val heartbeat: NodeHeartbeatMsg = transferECMHealthReportToNodeHeartbeatMsg(report)
-    val resourceHeartbeat: NodeHeartbeatResourceMsg = new NodeHeartbeatResourceMsg
-    resourceHeartbeat.setHealthyInfo(heartbeat.getHealthyInfo)
-    resourceHeartbeat.setHeartBeatMsg(heartbeat.getHeartBeatMsg)
-    resourceHeartbeat.setNodeResource(heartbeat.getNodeResource)
-    resourceHeartbeat.setOverLoadInfo(heartbeat.getOverLoadInfo)
-    resourceHeartbeat.setServiceInstance(heartbeat.getServiceInstance)
-    resourceHeartbeat.setStatus(heartbeat.getStatus)
     Sender.getSender(MANAGER_SPRING_NAME).send(heartbeat)
-    Sender.getSender(MANAGER_SPRING_NAME).send(resourceHeartbeat)
   }
 
   private def transferECMHealthReportToNodeHeartbeatMsg(report: ECMHealthReport) = {

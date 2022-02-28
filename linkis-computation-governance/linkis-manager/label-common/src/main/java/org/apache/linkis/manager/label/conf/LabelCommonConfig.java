@@ -72,6 +72,9 @@ public class LabelCommonConfig {
     public static final CommonVars<String> PRESTO_ENGINE_VERSION =
             CommonVars.apply("wds.linkis.presto.engine.version", "0.234");
 
+    public static final CommonVars<String> OPENLOOKENG_ENGINE_VERSION =
+            CommonVars.apply("wds.linkis.openlookeng.engine.version", "1.5.0");
+
     public static final CommonVars<String> PERMANENT_LABEL =
             CommonVars.apply("wds.linkis.am.permanent.label", "tenant");
 

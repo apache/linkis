@@ -31,7 +31,7 @@ import org.apache.linkis.cs.contextcache.test.keyword.TestContextValue;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.util.List;
 
@@ -43,7 +43,7 @@ public class TestContextCacheService {
 
     private ContextCacheService contextCacheService;
 
-    @Before
+    @BeforeEach
     public void generateData() throws CSErrorException {
         context =
                 new AnnotationConfigApplicationContext(
@@ -138,7 +138,7 @@ public class TestContextCacheService {
         }
     }
 
-    // @Before
+    // @BeforeEach
     public void testPut() throws CSErrorException {
 
         ContextID contextID = new TestContextID();

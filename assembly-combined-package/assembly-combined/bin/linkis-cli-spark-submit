@@ -189,4 +189,4 @@ if (( NUM_ARGS == 0 )); then
 else
     parse
 fi
-exec ${WORK_DIR}/bin/linkis-cli-start -engineType spark-2.4.3 -codeType sql "${PARSED_CMD[@]}"
+exec ${WORK_DIR}/bin/linkis-cli -engineType spark-2.4.3 -codeType sql "${PARSED_CMD[@]}"

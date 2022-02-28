@@ -33,7 +33,7 @@ import org.apache.linkis.cs.common.entity.source.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestRemove {
 

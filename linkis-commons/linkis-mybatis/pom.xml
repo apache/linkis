@@ -57,12 +57,15 @@
                     <artifactId>spring-jdbc</artifactId>
                     <groupId>org.springframework</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>HikariCP</artifactId>
+                    <groupId>com.zaxxer</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <artifactId>spring-jdbc</artifactId>
             <groupId>org.springframework</groupId>
-            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.pagehelper</groupId>

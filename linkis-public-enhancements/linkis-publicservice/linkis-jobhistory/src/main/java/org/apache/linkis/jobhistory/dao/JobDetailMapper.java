@@ -23,13 +23,13 @@ import java.util.List;
 
 public interface JobDetailMapper {
 
-    List<JobDetail> selectJobDetailByJobHistoryId(Long jobId);
+    List<JobDetail> selectJobDetailByJobHistoryId(Long jobHistoryId);
 
     JobDetail selectJobDetailByJobDetailId(Long jobId);
 
     List<JobDetail> queryJobHistoryDetail(JobDetail JobDetail);
 
-    Long insertJobDetail(JobDetail insertJob);
+    int insertJobDetail(JobDetail insertJob);
 
     void updateJobDetail(JobDetail updateJob);
 

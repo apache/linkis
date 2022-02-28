@@ -338,6 +338,31 @@
           </includes>
       </fileSet>
 
+      <!-- datasource manager -->
+      <fileSet>
+          <directory>
+              ../../linkis-public-enhancements/linkis-datasource/linkis-datasource-manager/server/target/out/lib/
+          </directory>
+          <outputDirectory>
+              lib/linkis-public-enhancements/linkis-ps-data-source-manager
+          </outputDirectory>
+          <includes>
+              <include>*.jar</include>
+          </includes>
+      </fileSet>
+      <!-- metadata manager -->
+      <fileSet>
+          <directory>
+              ../../linkis-public-enhancements/linkis-datasource/linkis-metadata-manager/server/target/out/lib/
+          </directory>
+          <outputDirectory>
+              lib/linkis-public-enhancements/linkis-ps-metadatamanager
+          </outputDirectory>
+          <includes>
+              <include>**/*</include>
+          </includes>
+      </fileSet>
+
   </fileSets>
 
   <dependencySets>

@@ -31,18 +31,19 @@ import org.apache.linkis.cs.keyword.TestContextKey;
 import org.apache.linkis.cs.keyword.TestContextKeyValue;
 
 import com.google.common.collect.Lists;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ContextSearchTest {
 
     List<ContextKeyValue> contextKeyValues = Lists.newArrayList();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         ContextID contextID = new TestContextID();
@@ -86,6 +87,6 @@ public class ContextSearchTest {
         contextID.setContextId("id");
         List<ContextKeyValue> list =
                 contextSearch.search(contextCacheService, contextID, condition);
-        Assert.assertEquals(1, list.size());
+        assertEquals(1, list.size());
     }
 }

@@ -38,6 +38,15 @@
             <useStrictFiltering>true</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
+<!--                <exclude>commons-httpclient:commons-httpclient:jar</exclude>-->
+                <exclude>org.apache.httpcomponents:httpcore:jar</exclude>
+                <exclude>org.javassist:javassist:jar</exclude>
+                <exclude>org.reflections:reflections:jar</exclude>
+<!--                <exclude>org.slf4j:slf4j-api:jar</exclude>-->
+                <exclude>org.springframework:spring-beans:jar</exclude>
+                <exclude>org.springframework:spring-core:jar</exclude>
+                <exclude>org.springframework:spring-jcl:jar</exclude>
+                <exclude>org.springframework:spring-tx:jar</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

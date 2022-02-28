@@ -21,14 +21,14 @@ import org.apache.linkis.cli.application.data.ProcessedData;
 import org.apache.linkis.cli.application.interactor.command.template.ProcessInputUtil;
 import org.apache.linkis.cli.application.interactor.command.template.TestSparkCmdTemplate;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class LinkisJobBuilderTest {
     LinkisJobBuilder builder;
 
-    @Before
+    @BeforeEach
     public void before() throws Exception {
         String[] cmdStr =
                 new String[] {
@@ -68,7 +68,7 @@ public class LinkisJobBuilderTest {
         //      .setSysVarAccess(data.getSysVarAccess());
     }
 
-    @After
+    @AfterEach
     public void after() throws Exception {}
 
     /** Method: setIdentifier(String identifier) */
@@ -83,7 +83,7 @@ public class LinkisJobBuilderTest {
         // TODO: Test goes here...
         //  LinkisJob job = builder.build();
         //  System.out.println(CommonUtils.GSON.toJson(job));
-        //  Assert.assertEquals(job.getParamConfMap().get("spark.executor.instances"), "8");
+        //  assertEquals(job.getParamConfMap().get("spark.executor.instances"), "8");
     }
 
     /** Method: setStdVarAccess(VarAccess varAccess) */

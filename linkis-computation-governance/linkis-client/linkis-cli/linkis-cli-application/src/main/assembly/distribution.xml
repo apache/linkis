@@ -40,6 +40,46 @@
                 <exclude>org.apache.spark:*:jar</exclude>
                 <exclude>org.apache.zookeeper:*:jar</exclude>
                 <exclude>org.apache.avro:*:jar</exclude>
+                <exclude>com.google.code.findbugs:annotations:jar</exclude>
+                <exclude>commons-beanutils:commons-beanutils:jar</exclude>
+                <exclude>commons-codec:commons-codec:jar</exclude>
+                <exclude>commons-collections:commons-collections:jar</exclude>
+                <exclude>commons-io:commons-io:jar</exclude>
+                <exclude>org.checkerframework:checker-qual:jar</exclude>
+                <exclude>commons-lang:commons-lang:jar</exclude>
+                <exclude>org.apache.commons:commons-lang3:jar</exclude>
+                <exclude>commons-net:commons-net:jar</exclude>
+                <exclude>com.google.errorprone:error_prone_annotations:jar</exclude>
+                <exclude>com.google.guava:failureaccess:jar</exclude>
+                <exclude>com.google.code.gson:gson:jar</exclude>
+                <exclude>com.google.guava:guava:jar</exclude>
+                <exclude>commons-httpclient:commons-httpclient:jar</exclude>
+                <exclude>commons-net:commons-net:jar</exclude>
+                <exclude>com.google.errorprone:error_prone_annotations:jar</exclude>
+                <exclude>org.apache.httpcomponents:httpcore:jar</exclude>
+                <exclude>com.google.j2objc:j2objc-annotations:jar</exclude>
+                <exclude>com.fasterxml.jackson.core:jackson-annotations:jar</exclude>
+                <exclude>com.fasterxml.jackson.core:jackson-core:jar</exclude>
+                <exclude>com.fasterxml.jackson.core:jackson-databind:jar</exclude>
+                <exclude>com.fasterxml.jackson.module:jackson-module-parameter-names:jar</exclude>
+                <exclude>com.fasterxml.jackson.module:jackson-module-scala_2.11:jar</exclude>
+                <exclude>jakarta.annotation:jakarta.annotation-api:jar</exclude>
+                <exclude>org.javassist:javassist:jar</exclude>
+                <exclude>org.json4s:json4s-ast_2.11:jar</exclude>
+                <exclude>org.json4s:json4s-core_2.11:jar</exclude>
+                <exclude>org.json4s:json4s-scalap_2.11:jar</exclude>
+                <exclude>org.json4s:json4s-jackson_2.11:jar</exclude>
+                <exclude>org.apache.logging.log4j:log4j-api:jar</exclude>
+                <exclude>org.apache.logging.log4j:log4j-core:jar</exclude>
+                <exclude>org.apache.logging.log4j:log4j-jul:jar</exclude>
+                <exclude>org.apache.logging.log4j:log4j-slf4j-impl:jar</exclude>
+                <exclude>com.thoughtworks.paranamer:paranamer:jar</exclude>
+                <exclude>org.reflections:reflections:jar</exclude>
+                <exclude>org.scala-lang:scala-compiler:jar</exclude>
+                <exclude>org.scala-lang:scala-library:jar</exclude>
+                <exclude>org.scala-lang:scala-reflect:jar</exclude>
+                <exclude>org.scala-lang:scalap:jar</exclude>
+                <exclude>org.slf4j:slf4j-api:jar</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

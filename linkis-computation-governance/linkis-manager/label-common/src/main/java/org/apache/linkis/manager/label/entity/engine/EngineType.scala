@@ -55,6 +55,8 @@ object EngineType extends Enumeration with Logging {
 
   val DATAX = Value("datax")
 
+  val OPENLOOKENG = Value("openlookeng")
+
   def mapFsTypeToEngineType(fsType: String): String = {
     fsType match {
       case "file" =>

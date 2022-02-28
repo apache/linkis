@@ -15,22 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.mybatis;
+package org.apache.linkis.metadata.condition;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.apache.linkis.common.conf.CommonVars;
 
-import javax.sql.DataSource;
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 
-@Configuration
-@ConfigurationProperties
-public class DataSourceConfig {
+public class DataSourceCondition implements Condition {
 
-    @Bean(name = "dataSource", destroyMethod = "close")
-    @ConditionalOnMissingBean
-    public DataSource dataSource() {
-        return DataSourceUtils.buildDataSource(null, null, null);
+    @Override
+    public boolean matches(
+            ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata) {
+        return CommonVars.apply("linkis.metatdata.datasource.use.self", true).getValue();
     }
 }

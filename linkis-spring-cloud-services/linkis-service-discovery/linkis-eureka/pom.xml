@@ -39,13 +39,11 @@
                     <artifactId>spring-boot-starter</artifactId>
                 </exclusion>
             </exclusions>
-            <version>${spring.cloud.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-            <version>${spring.eureka.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>spring-boot-starter-logging</artifactId>

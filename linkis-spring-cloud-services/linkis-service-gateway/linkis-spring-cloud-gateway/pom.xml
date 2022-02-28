@@ -56,12 +56,7 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
-            <version>${spring.cloud.version}</version>
             <exclusions>
-<!--                <exclusion>-->
-<!--                    <artifactId>hibernate-validator</artifactId>-->
-<!--                    <groupId>org.hibernate.validator</groupId>-->
-<!--                </exclusion>-->
                 <exclusion>
                     <artifactId>spring-boot-starter-logging</artifactId>
                     <groupId>org.springframework.boot</groupId>
@@ -87,7 +82,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-gateway-core</artifactId>
-            <version>${spring.cloud.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

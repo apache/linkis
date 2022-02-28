@@ -28,8 +28,8 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -43,7 +43,7 @@ public class PersistenceTest {
 
     ResourceLabelPersistence resourceLabelPersistence = null;
 
-    @Before
+    @BeforeEach
     public void before() {
         context = new AnnotationConfigApplicationContext(Scan.class);
         labelManagerMapper = context.getBean(LabelManagerMapper.class);

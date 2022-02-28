@@ -47,7 +47,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
-<!--            <version>${spring.feign.version}</version>-->
             <exclusions>
                 <exclusion>
                     <artifactId>spring-boot-autoconfigure</artifactId>
@@ -94,7 +93,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-commons</artifactId>
-            <!--<version>${spring.cloud.version}</version>-->
             <exclusions>
                 <exclusion>
                     <artifactId>spring-security-crypto</artifactId>

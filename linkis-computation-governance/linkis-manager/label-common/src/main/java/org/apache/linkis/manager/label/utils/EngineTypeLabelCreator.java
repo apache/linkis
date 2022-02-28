@@ -70,6 +70,9 @@ public class EngineTypeLabelCreator {
                     defaultVersion.put(
                             EngineType.FLINK().toString(),
                             LabelCommonConfig.FLINK_ENGINE_VERSION.getValue());
+                    defaultVersion.put(
+                            EngineType.OPENLOOKENG().toString(),
+                            LabelCommonConfig.FLINK_ENGINE_VERSION.getValue());
                     defaultVersion.put("*", "*");
                 }
             }

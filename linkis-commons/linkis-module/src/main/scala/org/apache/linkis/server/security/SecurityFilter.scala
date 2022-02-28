@@ -144,7 +144,14 @@ object SecurityFilter extends Logging {
     if(sslEnable) cookie.setSecure(true)
     response.addCookie(cookie)
   }
-  def getLoginUsername(req: HttpServletRequest): String = getLoginUser(req).getOrElse(throw new IllegalUserTicketException( s"Illegal user token information(非法的用户token信息)."))
+  def getLoginUsername(req: HttpServletRequest): String = {
+    if (Configuration.IS_TEST_MODE.getValue) {
+      ServerConfiguration.BDP_TEST_USER.getValue;
+    } else {
+      getLoginUser(req).getOrElse(throw new IllegalUserTicketException(s"Illegal user token information(非法的用户token信息)."))
+    }
+
+  }
   def setLoginUser(resp: HttpServletResponse, username: String): Unit = SSOUtils.setLoginUser(c => resp.addCookie(c), username)
   def removeLoginUser(req: HttpServletRequest, resp: HttpServletResponse): Unit = {
     SSOUtils.removeLoginUser(req.getCookies)

@@ -31,9 +31,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <!--<module>linkis-bml</module>
+        <module>linkis-bml</module>
         <module>linkis-context-service</module>
-        <module>linkis-datasource/linkis-metadata</module>-->
+        <module>linkis-datasource/linkis-metadata</module>
         <!--<module>linkis-datasource</module>-->
         <module>linkis-publicservice</module>
     </modules>

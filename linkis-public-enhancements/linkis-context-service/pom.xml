@@ -34,16 +34,13 @@
     <modules>
 
         <module>linkis-cs-common</module>
-        <module>linkis-cs-client</module>
         <module>linkis-cs-listener</module>
-
+        <module>linkis-cs-client</module>
         <module>linkis-cs-cache</module>
         <module>linkis-cs-persistence</module>
         <module>linkis-cs-highavailable</module>
         <module>linkis-cs-search</module>
         <module>linkis-cs-server</module>
-
-        <module>linkis-cs-engine-support</module>
 
     </modules>
 

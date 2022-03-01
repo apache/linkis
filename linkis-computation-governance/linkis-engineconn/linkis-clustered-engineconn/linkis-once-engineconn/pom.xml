@@ -73,17 +73,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-cs-engine-support</artifactId>
-            <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>reflections</artifactId>
-                    <groupId>org.reflections</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>

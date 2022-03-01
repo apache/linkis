@@ -17,9 +17,9 @@
 
 package org.apache.linkis.cli.application;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,7 @@ public class LinkisClientApplicationTest {
     String[] cmdStr;
     String[] cmdStr2;
 
-    @Before
+    @BeforeEach
     public void before() throws Exception {
         System.setProperty("conf.root", "src/test/resources/conf/");
         System.setProperty("user.name", "hadoop");
@@ -121,7 +121,7 @@ public class LinkisClientApplicationTest {
                 };
     }
 
-    @After
+    @AfterEach
     public void after() throws Exception {}
 
     /** Method: main(String[] args) */

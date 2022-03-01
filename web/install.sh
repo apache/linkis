@@ -71,7 +71,7 @@ echo ""
 # 创建文件并配置nginx
 linkisConf(){
 
-	s_host='$host'
+	  s_host='$host'
     s_remote_addr='$remote_addr'
     s_proxy_add_x_forwarded_for='$proxy_add_x_forwarded_for'
     s_http_upgrade='$http_upgrade'

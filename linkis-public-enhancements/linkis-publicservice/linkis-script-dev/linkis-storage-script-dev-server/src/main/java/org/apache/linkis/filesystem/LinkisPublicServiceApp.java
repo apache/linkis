@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.jobhistory;
+package org.apache.linkis.filesystem;
 
 import org.apache.linkis.LinkisBaseServerApp;
 

@@ -102,8 +102,7 @@ class JobDetailMapperTest extends BaseDaoTest {
         JobDetail expectedJobDetail = insertOne();
         expectedJobDetail.setResultLocation("modify " + expectedJobDetail.getResultLocation());
         expectedJobDetail.setResultArraySize(10);
-        expectedJobDetail.setExecutionContent(
-                "modify " + expectedJobDetail.getExecutionContent());
+        expectedJobDetail.setExecutionContent("modify " + expectedJobDetail.getExecutionContent());
         expectedJobDetail.setJobGroupInfo("modify " + expectedJobDetail.getJobGroupInfo());
         expectedJobDetail.setCreatedTime(new Date());
         expectedJobDetail.setUpdatedTime(new Date());

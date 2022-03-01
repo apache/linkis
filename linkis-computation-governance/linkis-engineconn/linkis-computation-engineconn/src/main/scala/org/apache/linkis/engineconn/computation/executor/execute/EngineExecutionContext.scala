@@ -17,16 +17,15 @@
  
 package org.apache.linkis.engineconn.computation.executor.execute
 
-import java.io.File
-import java.util
-
+import org.apache.commons.io.IOUtils
+import org.apache.commons.lang.StringUtils
 import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetWriter}
 import org.apache.linkis.common.io.{FsPath, MetaData, Record}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.cs.client.utils.ContextServiceUtils
-import org.apache.linkis.cs.storage.CSTableResultSetWriter
 import org.apache.linkis.engineconn.acessible.executor.listener.event.{TaskLogUpdateEvent, TaskProgressUpdateEvent, TaskResultCreateEvent, TaskResultSizeCreatedEvent}
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
+import org.apache.linkis.engineconn.computation.executor.cs.CSTableResultSetWriter
 import org.apache.linkis.engineconn.executor.ExecutorExecutionContext
 import org.apache.linkis.engineconn.executor.entity.Executor
 import org.apache.linkis.engineconn.executor.listener.{EngineConnAsyncListenerBus, EngineConnSyncListenerBus, ExecutorListenerBusContext}
@@ -36,8 +35,9 @@ import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, OutputE
 import org.apache.linkis.storage.resultset.table.TableResultSet
 import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
-import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+
+import java.io.File
+import java.util
 
 class EngineExecutionContext(executor: ComputationExecutor, executorUser: String = Utils.getJvmUser) extends
     ExecutorExecutionContext with Logging {

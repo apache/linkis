@@ -839,4 +839,46 @@ CREATE TABLE `linkis_mg_gateway_auth_token` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
+-- ----------------------------
+-- Table structure for linkis_datasource_type_key
+-- ----------------------------
+DROP TABLE IF EXISTS `linkis_datasource_type_key`;
+CREATE TABLE `linkis_datasource_type_key`
+(
+    `id`                  int(11)                       NOT NULL AUTO_INCREMENT,
+    `data_source_type_id` int(11)                       NOT NULL,
+    `key`                 varchar(32) COLLATE utf8_bin  NOT NULL,
+    `name`                varchar(32) COLLATE utf8_bin  NOT NULL,
+    `default_value`       varchar(50) COLLATE utf8_bin  NULL     DEFAULT NULL,
+    `value_type`          varchar(50) COLLATE utf8_bin  NOT NULL,
+    `scope`               varchar(50) COLLATE utf8_bin  NULL     DEFAULT NULL,
+    `require`             tinyint(1)                    NULL     DEFAULT 0,
+    `description`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
+    `value_regex`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
+    `ref_id`              bigint(20)                    NULL     DEFAULT NULL,
+    `ref_value`           varchar(50) COLLATE utf8_bin  NULL     DEFAULT NULL,
+    `data_source`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
+    `update_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  CHARACTER SET = utf8
+  COLLATE = utf8_bin;
 
+-- ----------------------------
+-- Table structure for linkis_datasource_version
+-- ----------------------------
+DROP TABLE IF EXISTS `linkis_datasource_version`;
+CREATE TABLE `linkis_datasource_version`
+(
+    `version_id`    int(11)                        NOT NULL AUTO_INCREMENT,
+    `datasource_id` int(11)                        NOT NULL,
+    `parameter`     varchar(2048) COLLATE utf8_bin NULL DEFAULT NULL,
+    `comment`       varchar(255) COLLATE utf8_bin  NULL DEFAULT NULL,
+    `create_time`   datetime(0)                    NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_user`   varchar(255) COLLATE utf8_bin  NULL DEFAULT NULL,
+    PRIMARY KEY (`version_id`, `datasource_id`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 21
+  CHARACTER SET = utf8
+  COLLATE = utf8_bin;

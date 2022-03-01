@@ -55,6 +55,12 @@ export SERVER_CLASS=org.apache.linkis.eureka.SpringCloudEurekaApplication
 ## conf dir
 export SERVER_CONF_PATH=$LINKIS_CONF_DIR
 
+## commons lib
+export LINKIS_COMMONS_LIB=$LINKIS_HOME/$LINKIS_PUBLIC_MODULE
+if [ ! -r "$LINKIS_COMMONS_LIB" ] ; then
+    echo "linkis commons lib not exists $LINKIS_COMMONS_LIB"
+    exit 1
+fi
 
 ## server lib
 export SERVER_LIB=$LINKIS_HOME/lib/$SERVER_SUFFIX
@@ -64,7 +70,7 @@ if [ ! -r "$SERVER_LIB" ] ; then
 fi
 
 ## set class path
-export SERVER_CLASS_PATH=$SERVER_CONF_PATH:$SERVER_LIB/*
+export SERVER_CLASS_PATH=$SERVER_CONF_PATH:$LINKIS_COMMONS_LIB/*:$SERVER_LIB/*
 
 SERVER_IP="`hostname --fqdn`"
 
@@ -84,6 +90,8 @@ else
 fi
 
 SPRING_ARGS="$SPRING_ARGS --spring.profiles.active=eureka"
+echo  "=====Java Start Command====="
+echo  "nohup java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS 2>&1 > $LINKIS_LOG_DIR/${SERVER_NAME}.out &"
 nohup java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS 2>&1 > $LINKIS_LOG_DIR/${SERVER_NAME}.out &
 
 pid=$!

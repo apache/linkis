@@ -43,36 +43,20 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${apache.commons-lang3.version}</version>
+            <version>${commons-lang3.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-module</artifactId>
-            <scope>test</scope>
+            <scope>provided</scope>
             <version>${linkis.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-            <version>${junit.version}</version>
         </dependency>
 
     </dependencies>
 
-    <properties>
-        <junit.version>4.13.1</junit.version>
-        <apache.commons-lang3.version>3.9</apache.commons-lang3.version>
-    </properties>
 
     <build>
         <plugins>

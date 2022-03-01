@@ -391,6 +391,7 @@ poi-5.2.0.jar
 poi-ooxml-5.2.0.jar
 poi-ooxml-lite-5.2.0.jar
 poi-shared-strings-2.4.0.jar
+protobuf-java-3.13.0.jar
 protobuf-java-3.15.8.jar
 protostuff-api-1.6.2.jar
 protostuff-collectionschema-1.6.2.jar

@@ -31,8 +31,6 @@ object SSOUtils extends Logging {
 
   private[security] val USER_TICKET_ID_STRING = ServerConfiguration.LINKIS_SERVER_SESSION_TICKETID_KEY.getValue
 
-  private[security] val PROXY_USER_TICKET_ID_STRING = ServerConfiguration.LINKIS_SERVER_SESSION_PROXY_TICKETID_KEY.getValue
-
   private val sessionTimeout = ServerConfiguration.BDP_SERVER_WEB_SESSION_TIMEOUT.getValue.toLong
 
   private val userTicketIdToLastAccessTime = new ConcurrentHashMap[String, Long]()
@@ -105,7 +103,7 @@ object SSOUtils extends Logging {
       cookie.setValue(null)
       cookie.setMaxAge(0)
     }
-    removeProxyUser(cookies)
+    ProxyUserSSOUtils.removeProxyUser(cookies)
   }
 
   def removeLoginUserByAddCookie(addEmptyCookie: Cookie => Unit): Unit = {
@@ -156,29 +154,6 @@ object SSOUtils extends Logging {
 
   def getSessionTimeOut(): Long = sessionTimeout
 
-  def getProxyUserTicketKV(proxyUsername: String): (String, String) = {
-    val userTicketId = getUserTicketId(proxyUsername)
-    (PROXY_USER_TICKET_ID_STRING, userTicketId)
-  }
 
-  def setProxyUserCookie(addCookie: Cookie => Unit, username: String): Unit = {
-    info(s"add login userTicketCookie for user $username.")
-    val userTicketIdKv = getProxyUserTicketKV(username)
-    val cookie = new Cookie(userTicketIdKv._1, userTicketIdKv._2)
-    cookie.setMaxAge(-1)
-    if(sslEnable) cookie.setSecure(true)
-    cookie.setPath("/")
-    addCookie(cookie)
-  }
-
-  def getProxyUser(getCookies: => Array[Cookie]): Option[String] = getLoginUser(_ => Option(getCookies).flatMap(_.find(_.getName == PROXY_USER_TICKET_ID_STRING).map(_.getValue)))
-
-  def removeProxyUser(getCookies: => Array[Cookie]): Unit = {
-    val cookies = getCookies
-    if(cookies != null) cookies.find(_.getName == PROXY_USER_TICKET_ID_STRING).foreach { cookie =>
-      cookie.setValue(null)
-      cookie.setMaxAge(0)
-    }
-  }
 
 }

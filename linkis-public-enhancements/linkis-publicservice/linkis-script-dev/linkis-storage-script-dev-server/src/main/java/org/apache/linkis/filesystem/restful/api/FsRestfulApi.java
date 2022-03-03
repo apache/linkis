@@ -388,6 +388,43 @@ public class FsRestfulApi {
         return Message.ok().data("isExist", fileSystem.exists(fsPath));
     }
 
+    @RequestMapping(path = "/fileInfo", method = RequestMethod.GET)
+    public Message fileInfo(
+            HttpServletRequest req,
+            @RequestParam(value = "path", required = false) String path,
+            @RequestParam(value = "pageSize", defaultValue = "5000") Integer pageSize)
+            throws IOException, WorkSpaceException {
+        String userName = SecurityFilter.getLoginUsername(req);
+        if (StringUtils.isEmpty(path)) {
+            throw WorkspaceExceptionManager.createException(80004, path);
+        }
+        FsPath fsPath = new FsPath(path);
+        FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+        // Throws an exception if the file does not have read access(如果文件没读权限，抛出异常)
+        if (!fileSystem.canRead(fsPath)) {
+            throw WorkspaceExceptionManager.createException(80012);
+        }
+        FileSource fileSource = null;
+        try {
+            Message message = Message.ok();
+            fileSource = FileSource$.MODULE$.create(fsPath, fileSystem);
+            Pair<Object, Object>[] fileInfo = fileSource.getFileInfo(pageSize);
+            IOUtils.closeQuietly(fileSource);
+            if (null != fileInfo && fileInfo.length > 0) {
+                message.data("path", path);
+                message.data("colNumber", fileInfo[0].getFirst());
+                message.data("rowNumber", fileInfo[0].getSecond());
+            } else {
+                message.data("path", path);
+                message.data("colNumber", 0);
+                message.data("rowNumber", 0);
+            }
+            return message;
+        } finally {
+            IOUtils.closeQuietly(fileSource);
+        }
+    }
+
     @RequestMapping(path = "/openFile", method = RequestMethod.GET)
     public Message openFile(
             HttpServletRequest req,

@@ -36,7 +36,7 @@ class ExcelExecutor extends PipeLineExecutor {
     var fileSource: FileSource = null
     var excelFsWriter: ExcelFsWriter = null
     val sourceFsPath = new FsPath(sourcePath)
-    val destFsPath = new FsPath(s"$destPath.xlsx")
+    val destFsPath = new FsPath(destPath)
     val sourceFs = FSFactory.getFs(sourceFsPath)
     sourceFs.init(null)
     val destFs = FSFactory.getFs(destFsPath)

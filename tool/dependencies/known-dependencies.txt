@@ -55,7 +55,7 @@ commons-codec-1.14.jar
 commons-collections-3.2.2.jar
 commons-collections4-4.4.jar
 commons-compiler-3.1.2.jar
-commons-compress-1.20.jar
+commons-compress-1.21.jar
 commons-compress-1.4.1.jar
 commons-compress-1.9.jar
 commons-configuration-1.10.jar

@@ -20,7 +20,7 @@ package org.apache.linkis.bml.restful;
 import org.apache.linkis.bml.common.BmlAuthorityException;
 import org.apache.linkis.bml.common.Constant;
 import org.apache.linkis.bml.service.ResourceService;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -39,7 +39,7 @@ public class RestfulUtils {
     public static String getUserName(HttpServletRequest request) throws BmlAuthorityException {
         String user;
         try {
-            user = SecurityFilter.getLoginUsername(request);
+            user = ModuleUserUtils.getOperationUser(request);
         } catch (final Exception e) {
             throw new BmlAuthorityException();
         }

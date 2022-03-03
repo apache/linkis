@@ -22,7 +22,7 @@ import org.apache.linkis.filesystem.bml.BMLHelper;
 import org.apache.linkis.filesystem.exception.WorkSpaceException;
 import org.apache.linkis.filesystem.exception.WorkspaceExceptionManager;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.apache.linkis.storage.script.*;
 import org.apache.linkis.storage.script.writer.StorageScriptFsWriter;
 import org.apache.linkis.storage.source.FileSource;
@@ -59,7 +59,7 @@ public class BMLFsRestfulApi {
             @RequestParam(value = "projectName", required = false) String projectName,
             @RequestParam(value = "fileName", defaultValue = "test.sql") String fileName)
             throws IOException, WorkSpaceException {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "openScriptFromBML");
         Map<String, Object> query = bmlHelper.query(userName, resourceId, version);
         InputStream inputStream = (InputStream) query.get("stream");
         try (FileSource fileSource =
@@ -91,7 +91,7 @@ public class BMLFsRestfulApi {
             @RequestParam(value = "creator", required = false) String creator,
             @RequestParam(value = "fileName", defaultValue = "test.sql") String fileName)
             throws IOException, WorkSpaceException {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "openScriptFromBML");
         if (!StringUtils.isEmpty(creator)) {
             userName = creator;
         }
@@ -123,13 +123,14 @@ public class BMLFsRestfulApi {
     @RequestMapping(path = "/saveScriptToBML", method = RequestMethod.POST)
     public Message saveScriptToBML(HttpServletRequest req, @RequestBody Map<String, Object> json)
             throws IOException {
-        String userName = SecurityFilter.getLoginUsername(req);
+
         String scriptContent = (String) json.get("scriptContent");
         Map<String, Object> params = (Map<String, Object>) json.get("metadata");
         String fileName = (String) json.get("fileName");
         String resourceId = (String) json.get("resourceId");
         String creator = (String) json.get("creator");
         String projectName = (String) json.get("projectName");
+        String userName = ModuleUserUtils.getOperationUser(req, "saveScriptToBML" + fileName);
         ScriptFsWriter writer =
                 StorageScriptFsWriter.getScriptFsWriter(
                         new FsPath(fileName), Consts.UTF_8.toString(), null);

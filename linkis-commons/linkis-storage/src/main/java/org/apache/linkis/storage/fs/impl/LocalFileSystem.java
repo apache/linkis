@@ -178,8 +178,8 @@ public class LocalFileSystem extends FileSystem {
                                 + ", only owner can mkdir path "
                                 + destParentDir);
             }
+            return true;
         }
-        return false;
     }
 
     @Override

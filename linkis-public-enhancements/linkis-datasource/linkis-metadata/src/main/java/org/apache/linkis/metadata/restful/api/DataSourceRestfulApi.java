@@ -20,7 +20,7 @@ package org.apache.linkis.metadata.restful.api;
 import org.apache.linkis.metadata.restful.remote.DataSourceRestfulRemote;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -46,7 +46,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     @Override
     @RequestMapping(path = "dbs", method = RequestMethod.GET)
     public Message queryDatabaseInfo(HttpServletRequest req) {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "get dbs");
         try {
             JsonNode dbs = dataSourceService.getDbs(userName);
             return Message.ok("").data("dbs", dbs);
@@ -59,7 +59,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     @Override
     @RequestMapping(path = "all", method = RequestMethod.GET)
     public Message queryDbsWithTables(HttpServletRequest req) {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "get all db and tables");
         try {
             JsonNode dbs = dataSourceService.getDbsWithTables(userName);
             return Message.ok("").data("dbs", dbs);
@@ -74,7 +74,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     public Message queryTables(
             @RequestParam(value = "database", required = false) String database,
             HttpServletRequest req) {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "get tables");
         try {
             JsonNode tables = dataSourceService.queryTables(database, userName);
             return Message.ok("").data("tables", tables);
@@ -90,7 +90,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             @RequestParam(value = "database", required = false) String database,
             @RequestParam(value = "table", required = false) String table,
             HttpServletRequest req) {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "get columns of table " + table);
         try {
             JsonNode columns = dataSourceService.queryTableMeta(database, table, userName);
             return Message.ok("").data("columns", columns);
@@ -107,7 +107,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             @RequestParam(value = "table", required = false) String table,
             @RequestParam(value = "partition", required = false) String partition,
             HttpServletRequest req) {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "get size ");
         try {
             JsonNode sizeNode;
             if (StringUtils.isBlank(partition)) {
@@ -128,7 +128,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             @RequestParam(value = "database", required = false) String database,
             @RequestParam(value = "table", required = false) String table,
             HttpServletRequest req) {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "get partitions of " + table);
         try {
             JsonNode partitionNode = dataSourceService.getPartitions(database, table, userName);
             return Message.ok("").data("partitionInfo", partitionNode);

@@ -37,6 +37,7 @@ import org.apache.linkis.scheduler.queue.Job;
 import org.apache.linkis.scheduler.queue.SchedulerEventState;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -76,7 +77,8 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     public Message execute(HttpServletRequest req, @RequestBody Map<String, Object> json) {
         Message message = null;
         logger.info("Begin to get an execID");
-        json.put(TaskConstant.UMUSER, SecurityFilter.getLoginUsername(req));
+        json.put(TaskConstant.EXECUTE_USER, ModuleUserUtils.getOperationUser(req));
+        json.put(TaskConstant.SUBMIT_USER, SecurityFilter.getLoginUsername(req));
         HashMap<String, String> map = (HashMap) json.get(TaskConstant.SOURCE);
         if (map == null) {
             map = new HashMap<>();
@@ -88,6 +90,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         Job job = entranceServer.getJob(jobId).get();
         JobRequest jobReq = ((EntranceJob) job).getJobRequest();
         Long jobReqId = jobReq.getId();
+        ModuleUserUtils.getOperationUser(req, "execute task,id: " + jobReqId);
         pushLog(
                 LogUtils.generateInfo(
                         "You have submitted a new job, script code (after variable substitution) is"),
@@ -126,6 +129,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     public Message submit(HttpServletRequest req, @RequestBody Map<String, Object> json) {
         Message message = null;
         logger.info("Begin to get an execID");
+        json.put(TaskConstant.EXECUTE_USER, ModuleUserUtils.getOperationUser(req));
         json.put(TaskConstant.SUBMIT_USER, SecurityFilter.getLoginUsername(req));
         HashMap<String, String> map = (HashMap) json.get(TaskConstant.SOURCE);
         if (map == null) {

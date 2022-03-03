@@ -36,7 +36,7 @@ import org.apache.linkis.bml.vo.ResourceVO;
 import org.apache.linkis.bml.vo.ResourceVersionsVO;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -828,7 +828,6 @@ public class BmlRestfulApi {
     @RequestMapping(path = "changeOwner", method = RequestMethod.POST)
     public Message changeOwnerByResourceId(
             HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ErrorException {
-        String username = SecurityFilter.getLoginUsername(request);
         String resourceId = jsonNode.get("resourceId").textValue();
         String oldOwner = jsonNode.get("oldOwner").textValue();
         String newOwner = jsonNode.get("newOwner").textValue();
@@ -839,7 +838,7 @@ public class BmlRestfulApi {
     @RequestMapping(path = "copyResourceToAnotherUser", method = RequestMethod.POST)
     public Message copyResourceToAnotherUser(
             HttpServletRequest request, @RequestBody JsonNode jsonNode) {
-        String username = SecurityFilter.getLoginUsername(request);
+        String username = ModuleUserUtils.getOperationUser(request, "copyResourceToAnotherUser");
         String resourceId = jsonNode.get("resourceId").textValue();
         String anotherUser = jsonNode.get("anotherUser").textValue();
         Message message = null;
@@ -867,7 +866,7 @@ public class BmlRestfulApi {
 
     @RequestMapping(path = "rollbackVersion", method = RequestMethod.POST)
     public Message rollbackVersion(HttpServletRequest request, @RequestBody JsonNode jsonNode) {
-        String username = SecurityFilter.getLoginUsername(request);
+        String username = ModuleUserUtils.getOperationUser(request, "rollbackVersion");
         String resourceId = jsonNode.get("resourceId").textValue();
         String rollbackVersion = jsonNode.get("version").textValue();
         Message message = null;

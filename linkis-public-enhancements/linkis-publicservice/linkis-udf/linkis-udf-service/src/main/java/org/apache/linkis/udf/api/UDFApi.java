@@ -18,7 +18,7 @@
 package org.apache.linkis.udf.api;
 
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.apache.linkis.udf.entity.UDFInfo;
 import org.apache.linkis.udf.entity.UDFTree;
 import org.apache.linkis.udf.excepiton.UDFException;
@@ -73,7 +73,7 @@ public class UDFApi {
     public Message allUDF(HttpServletRequest req, String jsonString) {
         Message message = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+            String userName = ModuleUserUtils.getOperationUser(req, "get all udfs ");
             if (!StringUtils.isEmpty(jsonString)) {
                 Map<String, Object> json = mapper.reader(Map.class).readValue(jsonString);
                 String type = (String) json.getOrDefault("type", "self");
@@ -143,7 +143,7 @@ public class UDFApi {
     public Message listUDF(HttpServletRequest req, @RequestBody Map<String, Object> json) {
         Message message = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+            String userName = ModuleUserUtils.getOperationUser(req, "list udfs ");
             String type = (String) json.getOrDefault("type", SELF_USER);
             Long treeId = ((Integer) json.getOrDefault("treeId", -1)).longValue();
             String category = ((String) json.getOrDefault("category", ALL));
@@ -162,7 +162,7 @@ public class UDFApi {
     public Message addUDF(HttpServletRequest req, @RequestBody JsonNode json) {
         Message message = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+            String userName = ModuleUserUtils.getOperationUser(req, "add udf ");
             UDFAddVo udfvo = mapper.treeToValue(json.get("udfAddVo"), UDFAddVo.class);
             udfvo.setCreateUser(userName);
             udfvo.setCreateTime(new Date());
@@ -181,7 +181,7 @@ public class UDFApi {
     public Message updateUDF(HttpServletRequest req, @RequestBody JsonNode json) {
         Message message = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+            String userName = ModuleUserUtils.getOperationUser(req, "update udf ");
             UDFUpdateVo udfUpdateVo =
                     mapper.treeToValue(json.get("udfUpdateVo"), UDFUpdateVo.class);
             udfService.updateUDF(udfUpdateVo, userName);
@@ -196,7 +196,7 @@ public class UDFApi {
 
     @RequestMapping(path = "delete/{id}", method = RequestMethod.POST)
     public Message deleteUDF(HttpServletRequest req, @PathVariable("id") Long id) {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "delete udf " + id);
         Message message = null;
         try {
             verifyOperationUser(userName, id);
@@ -214,7 +214,7 @@ public class UDFApi {
             HttpServletRequest req,
             @RequestParam(value = "udfId", required = false) Long udfId,
             @RequestParam(value = "isLoad", required = false) Boolean isLoad) {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "isload ");
         Message message = null;
         try {
             if (isLoad) {
@@ -232,7 +232,8 @@ public class UDFApi {
 
     @RequestMapping(path = "/tree/add", method = RequestMethod.POST)
     public Message addTree(HttpServletRequest req, @RequestBody UDFTree udfTree) {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName =
+                ModuleUserUtils.getOperationUser(req, "add udf tree " + udfTree.getName());
         Message message = null;
         try {
             udfTree.setCreateTime(new Date());
@@ -251,7 +252,8 @@ public class UDFApi {
 
     @RequestMapping(path = "/tree/update", method = RequestMethod.POST)
     public Message updateTree(HttpServletRequest req, @RequestBody UDFTree udfTree) {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName =
+                ModuleUserUtils.getOperationUser(req, "update udf tree " + udfTree.getName());
         Message message = null;
         try {
             udfTree.setUpdateTime(new Date());
@@ -269,7 +271,7 @@ public class UDFApi {
 
     @RequestMapping(path = "/tree/delete/{id}", method = RequestMethod.GET)
     public Message deleteTree(HttpServletRequest req, @PathVariable("id") Long id) {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "delete udf tree " + id);
         Message message = null;
         try {
             udfTreeService.deleteTree(id, userName);
@@ -285,7 +287,7 @@ public class UDFApi {
     public Message Authenticate(HttpServletRequest req) {
         Message message = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+            String userName = ModuleUserUtils.getOperationUser(req);
             if (StringUtils.isEmpty(userName)) {
                 throw new UDFException("UserName is Empty!");
             }
@@ -307,14 +309,15 @@ public class UDFApi {
     public Message setExpire(HttpServletRequest req, @RequestBody JsonNode json) {
         Message message = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
-            if (StringUtils.isEmpty(userName)) {
-                throw new UDFException("UserName is Empty!");
-            }
             Long udfId = json.get("udfId").longValue();
             if (StringUtils.isEmpty(udfId)) {
                 throw new UDFException("udfId is Empty!");
             }
+            String userName = ModuleUserUtils.getOperationUser(req, "set expire udf " + udfId);
+            if (StringUtils.isEmpty(userName)) {
+                throw new UDFException("UserName is Empty!");
+            }
+
             verifyOperationUser(userName, udfId);
             udfService.setUdfExpire(udfId, userName);
             message = Message.ok();
@@ -333,7 +336,7 @@ public class UDFApi {
     public Message shareUDF(HttpServletRequest req, @RequestBody JsonNode json) throws Throwable {
         Message message = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+            String userName = ModuleUserUtils.getOperationUser(req);
             if (StringUtils.isEmpty(userName)) {
                 throw new UDFException("UserName is Empty!");
             }
@@ -382,7 +385,7 @@ public class UDFApi {
     public Message getSharedUsers(HttpServletRequest req, @RequestBody JsonNode json) {
         Message message = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+            String userName = ModuleUserUtils.getOperationUser(req);
             if (StringUtils.isEmpty(userName)) {
                 throw new UDFException("UserName is Empty!");
             }
@@ -408,14 +411,16 @@ public class UDFApi {
     public Message handoverUDF(HttpServletRequest req, @RequestBody JsonNode json) {
         Message message = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
-            if (StringUtils.isEmpty(userName)) {
-                throw new UDFException("username is empty!");
-            }
             long udfId = json.get("udfId").longValue();
             String handoverUser = json.get("handoverUser").textValue();
             if (StringUtils.isEmpty(handoverUser)) {
                 throw new UDFException("The handover user can't be null!");
+            }
+            String userName =
+                    ModuleUserUtils.getOperationUser(
+                            req, String.join(",", "hand over udf", "" + udfId, handoverUser));
+            if (StringUtils.isEmpty(userName)) {
+                throw new UDFException("username is empty!");
             }
             UDFInfo udfInfo = verifyOperationUser(userName, udfId);
             if (udfService.isUDFManager(udfInfo.getCreateUser())
@@ -455,7 +460,7 @@ public class UDFApi {
     public Message publishUDF(HttpServletRequest req, @RequestBody JsonNode json) {
         Message message = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+            String userName = ModuleUserUtils.getOperationUser(req);
             if (StringUtils.isEmpty(userName)) {
                 throw new UDFException("username is empty!");
             }
@@ -478,7 +483,7 @@ public class UDFApi {
     public Message rollbackUDF(HttpServletRequest req, @RequestBody JsonNode json) {
         Message message = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+            String userName = ModuleUserUtils.getOperationUser(req);
             if (StringUtils.isEmpty(userName)) {
                 throw new UDFException("username is empty!");
             }
@@ -498,7 +503,7 @@ public class UDFApi {
     public Message versionList(HttpServletRequest req, @RequestParam("udfId") long udfId) {
         Message message = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+            String userName = ModuleUserUtils.getOperationUser(req);
             if (StringUtils.isEmpty(userName)) {
                 throw new UDFException("username is empty!");
             }
@@ -523,7 +528,7 @@ public class UDFApi {
     public Message managerPages(HttpServletRequest req, @RequestBody JsonNode jsonNode) {
         Message message = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+            String userName = ModuleUserUtils.getOperationUser(req);
             if (StringUtils.isEmpty(userName)) {
                 throw new UDFException("username is empty!");
             }
@@ -560,12 +565,13 @@ public class UDFApi {
     public Message downloadUdf(HttpServletRequest req, @RequestBody JsonNode json) {
         Message message = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+
+            long udfId = json.get("udfId").longValue();
+            String version = json.get("version").textValue();
+            String userName = ModuleUserUtils.getOperationUser(req, "downloadUdf " + udfId);
             if (StringUtils.isEmpty(userName)) {
                 throw new UDFException("username is empty!");
             }
-            long udfId = json.get("udfId").longValue();
-            String version = json.get("version").textValue();
             String content = udfService.downLoadUDF(udfId, version, userName);
             message = Message.ok();
             message.data("content", content);
@@ -585,12 +591,13 @@ public class UDFApi {
         BufferedInputStream fis = null;
         BufferedOutputStream outputStream = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+
+            long udfId = json.get("udfId").longValue();
+            String version = json.get("version").textValue();
+            String userName = ModuleUserUtils.getOperationUser(req, "downloadUdf " + udfId);
             if (StringUtils.isEmpty(userName)) {
                 throw new UDFException("username is empty!");
             }
-            long udfId = json.get("udfId").longValue();
-            String version = json.get("version").textValue();
             DownloadVo downloadVo = udfService.downloadToLocal(udfId, version, userName);
             is = downloadVo.getInputStream();
             fis = new BufferedInputStream(is);
@@ -633,7 +640,7 @@ public class UDFApi {
     public Message allUdfUsers(HttpServletRequest req, @RequestBody JsonNode json) {
         Message message = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+            String userName = ModuleUserUtils.getOperationUser(req, "allUdfUsers ");
             if (StringUtils.isEmpty(userName)) {
                 throw new UDFException("username is empty!");
             }
@@ -653,7 +660,7 @@ public class UDFApi {
             HttpServletRequest req, @RequestParam("category") String category) {
         Message message = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+            String userName = ModuleUserUtils.getOperationUser(req, "userDirectory ");
             if (StringUtils.isEmpty(userName)) {
                 throw new UDFException("username is empty!");
             }

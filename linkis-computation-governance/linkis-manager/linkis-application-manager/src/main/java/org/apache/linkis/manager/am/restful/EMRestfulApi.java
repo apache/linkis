@@ -43,7 +43,7 @@ import org.apache.linkis.manager.label.entity.UserModifiable;
 import org.apache.linkis.manager.label.exception.LabelErrorException;
 import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -106,7 +106,7 @@ public class EMRestfulApi {
             @RequestParam(value = "nodeHealthy", required = false) String nodeHealthy,
             @RequestParam(value = "owner", required = false) String owner)
             throws AMErrorException {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "listAllEMs");
         checkAdmin(userName);
         EMNode[] allEM = emInfoService.getAllEM();
         ArrayList<EMNodeVo> allEMVo = AMUtils.copyToEMVo(allEM);
@@ -172,7 +172,7 @@ public class EMRestfulApi {
     @Transactional(rollbackFor = Exception.class)
     public Message modifyEMInfo(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException, LabelErrorException {
-        String username = SecurityFilter.getLoginUsername(req);
+        String username = ModuleUserUtils.getOperationUser(req, "modifyEMInfo");
         checkAdmin(username);
         String applicationName = jsonNode.get("applicationName").asText();
         String instance = jsonNode.get("instance").asText();
@@ -232,8 +232,9 @@ public class EMRestfulApi {
     @RequestMapping(path = "/executeECMOperationByEC", method = RequestMethod.POST)
     public Message executeECMOperationByEC(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException {
-        String userName = SecurityFilter.getLoginUsername(req);
+
         ServiceInstance serviceInstance = EngineRestfulApi.getServiceInstance(jsonNode);
+        String userName = ModuleUserUtils.getOperationUser(req, "executeECMOperationByEC");
         logger.info(
                 "User {} try to execute ECM Operation by EngineConn {}.",
                 userName,
@@ -268,7 +269,7 @@ public class EMRestfulApi {
     @RequestMapping(path = "/executeECMOperation", method = RequestMethod.POST)
     public Message executeECMOperation(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "executeECMOperation");
         ServiceInstance serviceInstance = EngineRestfulApi.getServiceInstance(jsonNode);
         logger.info("User {} try to execute ECM Operation with {}.", userName, serviceInstance);
         EMNode ecmNode = this.emInfoService.getEM(serviceInstance);
@@ -294,7 +295,7 @@ public class EMRestfulApi {
     @RequestMapping(path = "/openEngineLog", method = RequestMethod.POST)
     public Message openEngineLog(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "openEngineLog");
         EMNode ecmNode;
         Map<String, Object> parameters;
         try {

@@ -22,7 +22,7 @@ public class ModuleUserUtils {
      * @param httpServletRequest
      * @return
      */
-    public ProxyUserEntity getProxyUserEntity(HttpServletRequest httpServletRequest) {
+    public static ProxyUserEntity getProxyUserEntity(HttpServletRequest httpServletRequest) {
         String loginUser = SecurityFilter.getLoginUsername(httpServletRequest);
         Option<String> proxyUserUsername =
                 ProxyUserSSOUtils.getProxyUserUsername(httpServletRequest);
@@ -41,7 +41,8 @@ public class ModuleUserUtils {
      * @param msg
      * @return
      */
-    public ProxyUserEntity getProxyUserEntity(HttpServletRequest httpServletRequest, String msg) {
+    public static ProxyUserEntity getProxyUserEntity(
+            HttpServletRequest httpServletRequest, String msg) {
         ProxyUserEntity proxyUserEntity = getProxyUserEntity(httpServletRequest);
         LOGGER.info(
                 "user {} proxy to {} operation {}",
@@ -51,7 +52,7 @@ public class ModuleUserUtils {
         return proxyUserEntity;
     }
 
-    public String getOperationUser(HttpServletRequest httpServletRequest) {
+    public static String getOperationUser(HttpServletRequest httpServletRequest) {
         ProxyUserEntity proxyUserEntity = getProxyUserEntity(httpServletRequest);
         if (proxyUserEntity.isProxyMode()) {
             return proxyUserEntity.getProxyUser();
@@ -67,7 +68,7 @@ public class ModuleUserUtils {
      * @param msg
      * @return
      */
-    public String getOperationUser(HttpServletRequest httpServletRequest, String msg) {
+    public static String getOperationUser(HttpServletRequest httpServletRequest, String msg) {
         ProxyUserEntity proxyUserEntity = getProxyUserEntity(httpServletRequest, msg);
         if (proxyUserEntity.isProxyMode()) {
             return proxyUserEntity.getProxyUser();

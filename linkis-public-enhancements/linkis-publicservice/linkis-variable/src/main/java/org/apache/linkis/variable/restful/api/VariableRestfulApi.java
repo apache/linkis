@@ -18,7 +18,7 @@
 package org.apache.linkis.variable.restful.api;
 
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.apache.linkis.variable.entity.VarKeyValueVO;
 import org.apache.linkis.variable.exception.VariableException;
 import org.apache.linkis.variable.service.VariableService;
@@ -70,7 +70,7 @@ public class VariableRestfulApi {
 
     @RequestMapping(path = "listGlobalVariable", method = RequestMethod.GET)
     public Message listGlobalVariable(HttpServletRequest req) {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "listGlobalVariable ");
         List<VarKeyValueVO> kvs = variableService.listGlobalVariable(userName);
         return Message.ok().data("globalVariables", kvs);
     }
@@ -78,7 +78,7 @@ public class VariableRestfulApi {
     @RequestMapping(path = "saveGlobalVariable", method = RequestMethod.POST)
     public Message saveGlobalVariable(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException, VariableException {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "saveGlobalVariable ");
         List<VarKeyValueVO> userVariables = variableService.listGlobalVariable(userName);
         List globalVariables = mapper.treeToValue(json.get("globalVariables"), List.class);
         variableService.saveGlobalVaraibles(globalVariables, userVariables, userName);

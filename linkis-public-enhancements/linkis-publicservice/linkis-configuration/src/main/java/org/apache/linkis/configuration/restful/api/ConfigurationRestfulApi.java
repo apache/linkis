@@ -30,7 +30,7 @@ import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 import org.apache.linkis.manager.label.utils.LabelUtils;
 import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -74,7 +74,6 @@ public class ConfigurationRestfulApi {
             @RequestParam(value = "token", required = false) String token,
             @RequestParam(value = "keyJson", required = false) String keyJson)
             throws ConfigurationException {
-        String username = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isBlank(engineType)
                 || StringUtils.isBlank(version)
                 || StringUtils.isBlank(token)) {
@@ -168,7 +167,7 @@ public class ConfigurationRestfulApi {
             @RequestParam(value = "version", required = false) String version,
             @RequestParam(value = "creator", required = false) String creator)
             throws ConfigurationException {
-        String username = SecurityFilter.getLoginUsername(req);
+        String username = ModuleUserUtils.getOperationUser(req, "getFullTreesByAppName");
         if (creator != null && (creator.equals("通用设置") || creator.equals("全局设置"))) {
             engineType = "*";
             version = "*";
@@ -184,7 +183,6 @@ public class ConfigurationRestfulApi {
 
     @RequestMapping(path = "/getCategory", method = RequestMethod.GET)
     public Message getCategory(HttpServletRequest req) {
-        String username = SecurityFilter.getLoginUsername(req);
         List<CategoryLabelVo> categoryLabelList = categoryService.getAllCategory();
         return Message.ok().data("Category", categoryLabelList);
     }
@@ -192,7 +190,7 @@ public class ConfigurationRestfulApi {
     @RequestMapping(path = "/createFirstCategory", method = RequestMethod.POST)
     public Message createFirstCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
-        String username = SecurityFilter.getLoginUsername(request);
+        String username = ModuleUserUtils.getOperationUser(request, "createFirstCategory");
         checkAdmin(username);
         String categoryName = jsonNode.get("categoryName").asText();
         String description = jsonNode.get("description").asText();
@@ -209,7 +207,7 @@ public class ConfigurationRestfulApi {
     @RequestMapping(path = "/deleteCategory", method = RequestMethod.POST)
     public Message deleteCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
-        String username = SecurityFilter.getLoginUsername(request);
+        String username = ModuleUserUtils.getOperationUser(request, "deleteCategory");
         checkAdmin(username);
         Integer categoryId = jsonNode.get("categoryId").asInt();
         categoryService.deleteCategory(categoryId);
@@ -219,7 +217,6 @@ public class ConfigurationRestfulApi {
     @RequestMapping(path = "/createSecondCategory", method = RequestMethod.POST)
     public Message createSecondCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
-        String username = SecurityFilter.getLoginUsername(request);
         Integer categoryId = jsonNode.get("categoryId").asInt();
         String engineType = jsonNode.get("engineType").asText();
         String version = jsonNode.get("version").asText();
@@ -246,7 +243,7 @@ public class ConfigurationRestfulApi {
         if (creator != null && (creator.equals("通用设置") || creator.equals("全局设置"))) {
             creator = "*";
         }
-        String username = SecurityFilter.getLoginUsername(req);
+        String username = ModuleUserUtils.getOperationUser(req, "saveFullTree");
         ArrayList<ConfigValue> createList = new ArrayList<>();
         ArrayList<ConfigValue> updateList = new ArrayList<>();
         for (Object o : fullTrees) {
@@ -285,7 +282,6 @@ public class ConfigurationRestfulApi {
     @RequestMapping(path = "/updateCategoryInfo", method = RequestMethod.POST)
     public Message updateCategoryInfo(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
-        String username = SecurityFilter.getLoginUsername(request);
         String description = null;
         Integer categoryId = null;
         try {

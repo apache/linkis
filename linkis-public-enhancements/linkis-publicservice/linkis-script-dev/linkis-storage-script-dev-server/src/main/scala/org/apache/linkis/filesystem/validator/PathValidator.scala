@@ -18,7 +18,6 @@
 package org.apache.linkis.filesystem.validator
 
 import java.io.File
-
 import com.fasterxml.jackson.databind.JsonNode
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration._
@@ -27,7 +26,9 @@ import org.apache.linkis.filesystem.util.WorkspaceUtil
 import org.apache.linkis.server
 import org.apache.linkis.server.{Message, catchIt}
 import org.apache.linkis.server.security.SecurityFilter
+import org.apache.linkis.server.utils.ModuleUserUtils
 import org.apache.linkis.storage.utils.StorageUtils
+
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.{Around, Aspect, Pointcut}
@@ -68,7 +69,7 @@ class PathValidator extends Logging {
       case index: Int => {
         val proxyUser = paramNames.indexOf("proxyUser")
         if (proxyUser == -1 || StringUtils.isEmpty(args(proxyUser))) {
-          username = SecurityFilter.getLoginUsername(args(index).asInstanceOf[HttpServletRequest])
+          username = ModuleUserUtils.getOperationUser(args(index).asInstanceOf[HttpServletRequest])
         } else {
           //增加proxyuser的判断
           username = args(proxyUser).toString

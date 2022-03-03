@@ -17,26 +17,23 @@
  
 package org.apache.linkis.rpc
 
-import java.util.concurrent.TimeUnit
-
+import org.apache.commons.lang.StringUtils
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.protocol.BroadcastProtocol
 import org.apache.linkis.rpc.conf.RPCConfiguration.{BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX, BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_MAX, BDP_RPC_RECEIVER_ASYN_QUEUE_CAPACITY}
 import org.apache.linkis.rpc.exception.DWCURIException
 import org.apache.linkis.rpc.transform.{RPCConsumer, RPCProduct}
 import org.apache.linkis.server.{Message, catchIt}
-import javax.annotation.PostConstruct
-import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.web.bind.annotation.{RequestBody, RequestMapping, RequestMethod, RestController}
 
+import java.util.concurrent.TimeUnit
+import javax.annotation.PostConstruct
 import scala.concurrent.duration.Duration
 import scala.runtime.BoxedUnit
 
 
 @RestController
-@ConditionalOnMissingBean(name = Array("messageRPCReceiveRestful"))
 private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
 
   @Autowired(required = false)

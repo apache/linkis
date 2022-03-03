@@ -73,7 +73,7 @@ class ExcelExecutor extends PipeLineExecutor {
     super.execute(sourcePath, destPath, engineExecutorContext)
   }
 
-  override def Kind: String = "excel"
+  override def Kind: String = "xlsx"
 }
 
 object ExcelExecutor {

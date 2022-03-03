@@ -43,7 +43,7 @@ object RMConfiguration {
   val USER_AVAILABLE_YARN_INSTANCE_MEMORY = CommonVars("wds.linkis.rm.yarnqueue.memory.max", new ByteType("450g"))
   val USER_AVAILABLE_YARN_INSTANCE = CommonVars("wds.linkis.rm.yarnqueue.instance.max", 30)
   val USER_AVAILABLE_YARN_QUEUE_NAME = CommonVars("wds.linkis.rm.yarnqueue", "default")
-  val USER_AVAILABLE_CLUSTER_NAME = CommonVars("wds.linkis.rm.cluster", "sit")
+  val USER_AVAILABLE_CLUSTER_NAME = CommonVars("wds.linkis.rm.cluster", "default")
 
   val USER_MODULE_WAIT_USED = CommonVars("wds.linkis.rm.user.module.wait.used", 60 * 10L)
   val USER_MODULE_WAIT_RELEASE = CommonVars("wds.linkis.rm.user.module.wait.used", -1L)
@@ -66,8 +66,9 @@ object RMConfiguration {
   //publics service
   val HIVE_ENGINE_MAINTAIN_TIME_STR = CommonVars("wds.linkis.hive.maintain.time.key", "wds.linkis.hive.maintain.time")
 
-  val DEFAULT_YARN_CLUSTER_NAME = CommonVars("wds.linkis.rm.default.yarn.cluster.name", "sit")
+  val DEFAULT_YARN_CLUSTER_NAME = CommonVars("wds.linkis.rm.default.yarn.cluster.name", "default")
   val DEFAULT_YARN_TYPE = CommonVars("wds.linkis.rm.default.yarn.cluster.type", "Yarn")
   val EXTERNAL_RETRY_NUM = CommonVars("wds.linkis.rm.external.retry.num", 3)
+  val DEFAULT_YARN_RM_WEB_ADDRESS_DELIMITER = CommonVars("wds.linkis.rm.default.yarn.webaddress.delimiter", ";")
 
 }

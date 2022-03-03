@@ -21,7 +21,6 @@ import org.apache.commons.lang.StringUtils
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{DESUtil, Logging}
 import org.apache.linkis.server.conf.ServerConfiguration
-import org.apache.linkis.server.security.SecurityFilter.getLoginUser
 
 import javax.servlet.http.{Cookie, HttpServletRequest}
 

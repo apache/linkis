@@ -43,7 +43,7 @@ import org.apache.linkis.manager.label.exception.LabelErrorException;
 import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -90,7 +90,7 @@ public class EngineRestfulApi {
     @RequestMapping(path = "/createEngineConn", method = RequestMethod.POST)
     public Message createEngineConn(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws IOException, InterruptedException {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "createEngineConn");
         EngineCreateRequest engineCreateRequest =
                 objectMapper.treeToValue(jsonNode, EngineCreateRequest.class);
         engineCreateRequest.setUser(userName);
@@ -135,7 +135,7 @@ public class EngineRestfulApi {
     @RequestMapping(path = "/getEngineConn", method = RequestMethod.POST)
     public Message getEngineConn(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "getEngineConn");
         ServiceInstance serviceInstance = getServiceInstance(jsonNode);
         EngineNode engineNode = engineCreateService.getEngineNode(serviceInstance);
         if (!userName.equals(engineNode.getOwner()) && !isAdmin(userName)) {
@@ -147,8 +147,10 @@ public class EngineRestfulApi {
     @RequestMapping(path = "/killEngineConn", method = RequestMethod.POST)
     public Message killEngineConn(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws Exception {
-        String userName = SecurityFilter.getLoginUsername(req);
+
         ServiceInstance serviceInstance = getServiceInstance(jsonNode);
+        String userName =
+                ModuleUserUtils.getOperationUser(req, "killEngineConn：" + serviceInstance);
         logger.info("User {} try to kill engineConn {}.", userName, serviceInstance);
         EngineNode engineNode = engineCreateService.getEngineNode(serviceInstance);
         if (!userName.equals(engineNode.getOwner()) && !isAdmin(userName)) {
@@ -164,7 +166,7 @@ public class EngineRestfulApi {
     @RequestMapping(path = "/rm/enginekill", method = RequestMethod.POST)
     public Message killEngine(HttpServletRequest req, @RequestBody Map<String, String>[] param)
             throws Exception {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "enginekill");
         Sender sender = Sender.getSender(Sender.getThisServiceInstance());
         for (Map<String, String> engineParam : param) {
             String moduleName = engineParam.get("applicationName");
@@ -180,7 +182,7 @@ public class EngineRestfulApi {
 
     @RequestMapping(path = "/listUserEngines", method = RequestMethod.GET)
     public Message listUserEngines(HttpServletRequest req) {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "listUserEngines");
         List<EngineNode> engineNodes = engineInfoService.listUserEngines(userName);
         return Message.ok().data("engines", engineNodes);
     }
@@ -188,7 +190,7 @@ public class EngineRestfulApi {
     @RequestMapping(path = "/listEMEngines", method = RequestMethod.POST)
     public Message listEMEngines(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws IOException, AMErrorException {
-        String username = SecurityFilter.getLoginUsername(req);
+        String username = ModuleUserUtils.getOperationUser(req, "listEMEngines");
         if (!isAdmin(username)) {
             throw new AMErrorException(
                     210003, "Only admin can search engine information(只有管理员才能查询所有引擎信息).");
@@ -265,7 +267,7 @@ public class EngineRestfulApi {
     @RequestMapping(path = "/modifyEngineInfo", method = RequestMethod.PUT)
     public Message modifyEngineInfo(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException, LabelErrorException {
-        String username = SecurityFilter.getLoginUsername(req);
+        String username = ModuleUserUtils.getOperationUser(req, "modifyEngineInfo");
         if (!isAdmin(username)) {
             throw new AMErrorException(
                     210003, "Only admin can modify engineConn information(只有管理员才能修改引擎信息).");
@@ -309,7 +311,7 @@ public class EngineRestfulApi {
     @RequestMapping(path = "/executeEngineConnOperation", method = RequestMethod.POST)
     public Message executeEngineConnOperation(
             HttpServletRequest req, @RequestBody JsonNode jsonNode) throws Exception {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "executeEngineConnOperation");
         ServiceInstance serviceInstance = getServiceInstance(jsonNode);
         logger.info("User {} try to execute Engine Operation {}.", userName, serviceInstance);
         EngineNode engineNode = engineCreateService.getEngineNode(serviceInstance);

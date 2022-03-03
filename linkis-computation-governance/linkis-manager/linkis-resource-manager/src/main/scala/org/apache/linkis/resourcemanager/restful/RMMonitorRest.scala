@@ -44,6 +44,7 @@ import org.apache.linkis.resourcemanager.service.impl.UserResourceService
 import org.apache.linkis.resourcemanager.service.{LabelResourceService, ResourceManager}
 import org.apache.linkis.resourcemanager.utils.{RMUtils, UserConfiguration}
 import org.apache.linkis.server.security.SecurityFilter
+import org.apache.linkis.server.utils.ModuleUserUtils
 import org.apache.linkis.server.{BDPJettyServerHelper, Message}
 import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization.write
@@ -108,7 +109,7 @@ class RMMonitorRest extends Logging {
   @RequestMapping(path = Array("applicationlist"), method = Array(RequestMethod.POST))
   def getApplicationList(request: HttpServletRequest, @RequestBody param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
-    val userName = SecurityFilter.getLoginUsername(request)
+    val userName = ModuleUserUtils.getOperationUser(request, "applicationlist")
     val userCreator = param.get("userCreator").asInstanceOf[String]
     val engineType = if (param.get("engineType") == null) null else param.get("engineType").asInstanceOf[String]
     val nodes = getEngineNodes(userName, true)
@@ -228,7 +229,7 @@ class RMMonitorRest extends Logging {
   @RequestMapping(path = Array("userresources"), method = Array(RequestMethod.POST))
   def getUserResource(request: HttpServletRequest, @RequestBody(required = false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
-    val userName = SecurityFilter.getLoginUsername(request)
+    val userName = ModuleUserUtils.getOperationUser(request, "get userresources")
     var nodes = getEngineNodes(userName, true)
     if (nodes == null) {
       nodes = new Array[EngineNode](0)
@@ -336,7 +337,7 @@ class RMMonitorRest extends Logging {
   @RequestMapping(path = Array("engines"), method = Array(RequestMethod.POST))
   def getEngines(request: HttpServletRequest, @RequestBody(required = false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
-    val userName = SecurityFilter.getLoginUsername(request)
+    val userName = ModuleUserUtils.getOperationUser(request, "get engines")
     val nodes = getEngineNodes(userName, true)
     if(nodes == null || nodes.isEmpty) return message
     val engines = ArrayBuffer[mutable.HashMap[String, Any]]()
@@ -455,7 +456,7 @@ class RMMonitorRest extends Logging {
   @RequestMapping(path = Array("queues"), method = Array(RequestMethod.POST))
   def getQueues(request: HttpServletRequest, @RequestBody(required = false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok()
-    val userName = SecurityFilter.getLoginUsername(request)
+    val userName = ModuleUserUtils.getOperationUser(request, "get queues")
     val clusters = new mutable.ArrayBuffer[Any]()
     val clusterInfo = new mutable.HashMap[String, Any]()
     val queues = new mutable.LinkedHashSet[String]()

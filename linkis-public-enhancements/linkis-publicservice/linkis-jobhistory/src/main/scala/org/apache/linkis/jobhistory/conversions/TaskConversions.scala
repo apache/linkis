@@ -273,10 +273,18 @@ object TaskConversions extends Logging {
     if(null != metrics && metrics.containsKey(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) && metrics.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) != null){
       createTime = dealString2Date(metrics.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME).toString)
     }
-    if(isJobFinished(job.getStatus) && null != completeTime && null != createTime){
-      taskVO.setCostTime(completeTime.getTime - createTime.getTime)
-    }else if (null != createTime){
-      taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
+    if (null != createTime) {
+      if(isJobFinished(job.getStatus)) {
+        if (null != completeTime) {
+          taskVO.setCostTime(completeTime.getTime - createTime.getTime)
+        } else if (null != job.getUpdatedTime) {
+          taskVO.setCostTime(job.getUpdatedTime.getTime - createTime.getTime)
+        } else {
+          taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
+        }
+      } else{
+        taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
+      }
     }
 
     val entranceName = JobhistoryConfiguration.ENTRANCE_SPRING_NAME.getValue

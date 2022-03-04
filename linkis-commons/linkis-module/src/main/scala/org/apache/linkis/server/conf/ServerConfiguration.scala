@@ -99,6 +99,8 @@ object ServerConfiguration extends Logging{
   val BDP_SERVER_WAR_TEMPDIR = CommonVars("wds.linkis.server.war.tempdir", new File(BDP_SERVER_HOME.getValue, "web/webapps").getPath)
   val BDP_SERVER_SERVER_DEFAULT_DIR_ALLOWED = CommonVars("wds.linkis.server.default.dir.allowed", "false")
   val BDP_SERVER_WEB_SESSION_TIMEOUT = CommonVars("wds.linkis.server.web.session.timeout", new TimeType("2h"))
+  //val LINKIS_SERVER_SESSION_TICKETID_KEY = CommonVars("wds.linkis.session.ticket.key", "linkis_user_session_ticket_id_v1")
+  val LINKIS_SERVER_SESSION_TICKETID_KEY = CommonVars("wds.linkis.session.ticket.key", "bdp-user-ticket-id")
 
   val BDP_SERVER_EVENT_QUEUE_SIZE = CommonVars("wds.linkis.server.event.queue.size", 5000)
   val BDP_SERVER_EVENT_CONSUMER_THREAD_SIZE = CommonVars("wds.linkis.server.event.consumer.thread", 10)

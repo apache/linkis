@@ -21,7 +21,7 @@ import java.io.Closeable
 import java.util
 
 import org.apache.linkis.common.io.{FsReader, FsWriter, MetaData, Record}
-import org.apache.linkis.storage.domain.Column
+import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.linkis.storage.script.{ScriptMetaData, VariableParser}
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
@@ -109,7 +109,7 @@ class FileSplit(var fsReader: FsReader[_ <: MetaData, _ <: Record], var `type`: 
 
   def collectRecord(record: Record): Array[String] = {
     record match {
-      case t: TableRecord => t.row.map(_.toString)
+      case t: TableRecord => t.row.map(DataType.valueToString)
       case l: LineRecord => Array(l.getLine)
     }
   }

@@ -620,7 +620,7 @@ See licenses-binary/ for text of these licenses.
     (The 2-Clause BSD License) AntLR Parser Generator (antlr:antlr:2.7.7 - http://www.antlr.org/)
     (The 2-Clause BSD License) JLine (jline:jline:2.12 - http://nexus.sonatype.org/oss-repository-hosting.html/jline)
     (The 2-Clause BSD License) Stax2 API (org.codehaus.woodstox:stax2-api:4.2 - http://github.com/FasterXML/stax2-api)
-    (The 2-Clause BSD License) curvesapi (com.github.virtuald:curvesapi:1.06 - https://github.com/virtuald/curvesapi)
+    (The 2-Clause BSD License) curvesapi (com.github.virtuald:curvesapi:1.07 - https://github.com/virtuald/curvesapi)
     (The 2-Clause BSD License) xmlenc Library (xmlenc:xmlenc:0.52 - http://xmlenc.sourceforge.net)
     (The 3-Clause BSD License) (WTFPL) Reflections (org.reflections:reflections:0.9.10 - http://github.com/ronmamo/reflections)
     (The 3-Clause BSD License) Commons Compiler (org.codehaus.janino:commons-compiler:2.7.6 - http://docs.codehaus.org/display/JANINO/Home/commons-compiler)

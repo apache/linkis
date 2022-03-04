@@ -29,7 +29,7 @@ import scala.collection.JavaConverters._
 
 object SSOUtils extends Logging {
 
-  private[security] val USER_TICKET_ID_STRING = "bdp-user-ticket-id"
+  private[security] val USER_TICKET_ID_STRING = ServerConfiguration.LINKIS_SERVER_SESSION_TICKETID_KEY.getValue
 
   private val sessionTimeout = ServerConfiguration.BDP_SERVER_WEB_SESSION_TIMEOUT.getValue.toLong
 

@@ -21,6 +21,7 @@ import java.io._
 
 import org.apache.linkis.common.io.{MetaData, Record}
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.storage.domain.DataType
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.commons.io.IOUtils
 
@@ -57,9 +58,8 @@ class StorageCSVWriter(val charset: String, val separator: String, val outputStr
 
   @scala.throws[IOException]
   override def addRecord(record: Record): Unit = {
-    val body = record.asInstanceOf[TableRecord].row.map(_.toString) //read时候进行null替换等等
+    val body = record.asInstanceOf[TableRecord].row.map(DataType.valueToString)
     write(body)
-    //IOUtils.write(compact(body).getBytes(charset),outputStream)
   }
 
   override def flush(): Unit = {

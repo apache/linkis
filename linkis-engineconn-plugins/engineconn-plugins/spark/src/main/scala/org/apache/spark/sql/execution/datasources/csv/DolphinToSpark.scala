@@ -17,8 +17,9 @@
  
 package org.apache.spark.sql.execution.datasources.csv
 
-import java.util
+import org.apache.linkis.common.conf.CommonVars
 
+import java.util
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.storage.resultset.ResultSetReader
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}

@@ -20,6 +20,7 @@ package org.apache.linkis.entrance.persistence;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.entrance.EntranceContext;
+import org.apache.linkis.entrance.cli.heartbeat.CliHeartbeatMonitor;
 import org.apache.linkis.entrance.cs.CSEntranceHelper;
 import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.log.FlexibleErrorCodeManager;
@@ -44,8 +45,17 @@ public class QueryPersistenceManager extends PersistenceManager {
     private PersistenceEngine persistenceEngine;
     private ResultSetEngine resultSetEngine;
     private static final Logger logger = LoggerFactory.getLogger(QueryPersistenceManager.class);
-    //  private EntranceWebSocketService entranceWebSocketService; //TODO The latter version, to be
-    // removed, webSocket unified walk ListenerBus(后面的版本，要去掉，webSocket统一走ListenerBus)
+  //  private EntranceWebSocketService entranceWebSocketService; //TODO The latter version, to be removed, webSocket unified walk ListenerBus(后面的版本，要去掉，webSocket统一走ListenerBus)
+
+    private CliHeartbeatMonitor cliHeartbeatMonitor;
+
+    public CliHeartbeatMonitor getCliHeartbeatMonitor() {
+        return cliHeartbeatMonitor;
+    }
+
+    public void setCliHeartbeatMonitor(CliHeartbeatMonitor cliHeartbeatMonitor) {
+        this.cliHeartbeatMonitor = cliHeartbeatMonitor;
+    }
 
     public void setPersistenceEngine(PersistenceEngine persistenceEngine) {
         this.persistenceEngine = persistenceEngine;
@@ -163,6 +173,7 @@ public class QueryPersistenceManager extends PersistenceManager {
     @Override
     public void onJobInited(Job job) {
         updateJobStatus(job);
+        cliHeartbeatMonitor.registerIfCliJob(job);
     }
 
     @Override
@@ -198,6 +209,7 @@ public class QueryPersistenceManager extends PersistenceManager {
         } catch (Throwable e) {
             logger.error("Failed to register cs rs data ", e);
         }
+        cliHeartbeatMonitor.unRegisterIfCliJob(job);
         updateJobStatus(job);
     }
 

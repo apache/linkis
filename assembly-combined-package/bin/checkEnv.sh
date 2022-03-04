@@ -94,6 +94,7 @@ echo "check tar"
 need_cmd tar
 echo "check sed"
 need_cmd sed
+need_cmd dos2unix
 echo "<-----end to check used cmd---->"
 
 checkSpark

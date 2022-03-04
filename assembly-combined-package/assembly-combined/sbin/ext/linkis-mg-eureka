@@ -25,10 +25,10 @@ SERVER_SUFFIX="linkis-spring-cloud-services/linkis-mg-eureka"
 #export DEBUG_PORT=
 
 if [ "$LINKIS_LOG_DIR" = "" ]; then
-  export LINKIS_LOG_DIR="$LINKIS_HOME/logs"
+  export LINKIS_LOG_DIR="/data/bdp/logs/linkis"
 fi
 if [ ! -w "$LINKIS_LOG_DIR" ] ; then
-  mkdir -p "$LINKIS_LOG_DIR"
+  sudo mkdir -p $LINKIS_LOG_DIR; sudo chown -R hadoop:hadoop $LINKIS_LOG_DIR
 fi
 
 if test -z "$SERVER_HEAP_SIZE"
@@ -55,12 +55,6 @@ export SERVER_CLASS=org.apache.linkis.eureka.SpringCloudEurekaApplication
 ## conf dir
 export SERVER_CONF_PATH=$LINKIS_CONF_DIR
 
-## commons lib
-export LINKIS_COMMONS_LIB=$LINKIS_HOME/$LINKIS_PUBLIC_MODULE
-if [ ! -r "$LINKIS_COMMONS_LIB" ] ; then
-    echo "linkis commons lib not exists $LINKIS_COMMONS_LIB"
-    exit 1
-fi
 
 ## server lib
 export SERVER_LIB=$LINKIS_HOME/lib/$SERVER_SUFFIX
@@ -70,7 +64,7 @@ if [ ! -r "$SERVER_LIB" ] ; then
 fi
 
 ## set class path
-export SERVER_CLASS_PATH=$SERVER_CONF_PATH:$LINKIS_COMMONS_LIB/*:$SERVER_LIB/*
+export SERVER_CLASS_PATH=$SERVER_CONF_PATH:$SERVER_LIB/*
 
 SERVER_IP="`hostname --fqdn`"
 

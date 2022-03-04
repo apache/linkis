@@ -32,8 +32,8 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
   */
 object DolphinToSpark {
 
-  private val bigDecimalPrecision = 20
-  private val bigDecimalScale = 10
+  private val bigDecimalPrecision = CommonVars("wds.linkis.dolphin.decimal.precision", 32).getValue
+  private val bigDecimalScale = CommonVars("wds.linkis.dolphin.decimal.scale", 10).getValue
 
   def createTempView(spark: SparkSession, tableName: String, res: String): Unit = {
     createTempView(spark, tableName, res, false)
@@ -60,15 +60,17 @@ object DolphinToSpark {
 
   def toSparkType(dataType: wds.DataType): DataType = dataType match {
     case wds.NullType => NullType
-    case wds.BooleanType =>  BooleanType
+    //case wds.StringType | wds.CharType | wds.VarcharType | wds.StructType | wds.ListType | wds.ArrayType | wds.MapType => StringType
+    case wds.BooleanType => BooleanType
     case wds.ShortIntType => ShortType
     case wds.IntType => IntegerType
     case wds.LongType => LongType
     case wds.BigIntType => LongType
     case wds.FloatType => FloatType
-    case wds.DoubleType  => DoubleType
-    case wds.DecimalType => DecimalType(bigDecimalPrecision,bigDecimalScale)
+    case wds.DoubleType => DoubleType
+    case wds.DecimalType => DecimalType(bigDecimalPrecision, bigDecimalScale)
     case wds.DateType => DateType
+    //case wds.TimestampType => TimestampType
     case wds.BinaryType => BinaryType
     case _ => StringType
   }

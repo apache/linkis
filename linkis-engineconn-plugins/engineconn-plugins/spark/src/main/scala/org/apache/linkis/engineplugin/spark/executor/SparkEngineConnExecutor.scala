@@ -55,16 +55,17 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
 
   private var executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]()
 
+  private var thread: Thread = _
+
   override def init(): Unit = {
     info(s"Ready to change engine state!")
 //    setCodeParser()  // todo check
     super.init()
   }
 
-
-
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = Utils.tryFinally {
     this.engineExecutionContext = engineExecutorContext
+    thread = Thread.currentThread()
     if (sc.isStopped) {
       error("Spark application has already stopped, please restart it.")
       transition(NodeStatus.Failed)
@@ -208,6 +209,9 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
   override def killTask(taskID: String): Unit = {
     if (!sc.isStopped) {
       sc.cancelAllJobs
+      if (null != thread) {
+        Utils.tryAndWarn(thread.interrupt())
+      }
       killRunningTask()
     }
     super.killTask(taskID)

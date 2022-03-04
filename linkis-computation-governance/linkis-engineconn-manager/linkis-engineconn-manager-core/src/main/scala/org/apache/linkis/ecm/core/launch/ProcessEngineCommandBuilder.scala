@@ -18,9 +18,9 @@
 package org.apache.linkis.ecm.core.launch
 
 import java.io.OutputStream
-
 import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants
 import org.apache.commons.io.IOUtils
+import org.apache.linkis.ecm.core.conf.ECPCoreConf
 
 
 trait ProcessEngineCommandBuilder {

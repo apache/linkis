@@ -144,6 +144,7 @@
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
         <jacoco.version>0.8.7</jacoco.version>
         <jacoco.skip>false</jacoco.skip>
+        <junit.version>4.12</junit.version>
     </properties>
 
     <dependencyManagement>

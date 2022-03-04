@@ -25,7 +25,7 @@ declare -A ord_opts=(\
         # ['--silent']=true \ #not supported
         # ['-v']=true \ #not supported
         # ['--verbose']=true \ #not supported
-        ['--hiveconf']='-confMap' \
+        # ['--hiveconf']='-confMap' \
         ['-d']='-varMap' \
         ['--hivevar']='-varMap' \
         #linkis opts
@@ -37,17 +37,14 @@ declare -A ord_opts=(\
 declare -A confMap_opts=(\
         #cli options
         # ['--database']='k_db' \
-)
-
-#options that should be put in varMap(for variable substitution)
-declare -A kv_var_opts=(\
-        ['-d']=true \
-        ['--hivevar']=true \
+        ['-v']='wds.linkis.hive.verbose' \
+        ['--verbose']='wds.linkis.hive.verbose' \
 )
 
 #k-v pairs style options
-declare -A kv_conf_opts=(\
-        ['--hiveconf']=true \
+declare -A confMap_kv_opts=(\
+        #cli options
+        ['--hiveconf']='-confMap' \
 )
 
 # for help
@@ -68,6 +65,8 @@ declare -A help_msg=(\
         ['--status']="--status" \
 )
 
+# LINKIS_HIVECONF_PREFIX='linkis.hiveconf.'
+
 function print_help() {
     printf "Usage:\n"
     for key in $(echo ${!help_msg[*]})
@@ -83,9 +82,9 @@ function print_help() {
                 else
                     printf " %-30s%-30s\n" "" "${msg: i}"
                 fi
-                
+
             done
-            
+
         fi
     done
 }
@@ -100,10 +99,6 @@ do
 done
 NUM_ARGS=$i
 
-CONFMAP_OPTS=""
-VARMAP_OPTS=""
-LABELMAP_OPTS=""
-REMAINS_STR=""
 declare -a PARSED_CMD
 j=0
 
@@ -123,28 +118,23 @@ function parse() {
                         PARSED_CMD[$j]=$lks_opt
                         PARSED_CMD[$j+1]=$val
                         ((j=j+2))
-                elif [ -n "${kv_conf_opts[${arg}]}" ]; then
+                elif [ -n "${confMap_kv_opts[${arg}]}" ]; then
+                        key=${confMap_kv_opts[${arg}]}
+                        # if [ "${arg}"x == "--hiveconf"x ]; then
+                        #     kv_str=$LINKIS_HIVECONF_PREFIX$val
+                        # else
+                        #     kv_str=$val
+                        # fi
                         kv_str=$val
-                        if [ -n "${CONFMAP_OPT}" ]; then
-                            CONFMAP_OPT=$CONFMAP_OPT","$kv_str
-                        else
-                            CONFMAP_OPT=$kv_str
-                        fi
-                elif [ -n "${kv_var_opts[${arg}]}" ]; then
-                        kv_str=$val
-                        if [ -n "${VARMAP_OPTS}" ]; then
-                            VARMAP_OPTS=$VARMAP_OPTS","$kv_str
-                        else
-                            VARMAP_OPTS=$kv_str
-                        fi
+                        PARSED_CMD[$j]='-confMap'
+                        PARSED_CMD[$j+1]=$kv_str
+                        ((j=j+2))
                 elif [ -n "${confMap_opts[${arg}]}" ]; then
                         key=${confMap_opts[${arg}]}
                         kv_str=$key"="$val
-                        if [ -n "${CONFMAP_OPT}" ]; then
-                            CONFMAP_OPT=$CONFMAP_OPT","$kv_str
-                        else
-                            CONFMAP_OPT=$kv_str   
-                        fi
+                        PARSED_CMD[$j]='-confMap'
+                        PARSED_CMD[$j+1]=$kv_str
+                        ((j=j+2))
                 else
                         PARSED_CMD[$j]=$arg
                         PARSED_CMD[$j+1]=$val
@@ -156,31 +146,21 @@ function parse() {
                 ((j++))
         fi
     done
-    if [ -n "${CONFMAP_OPT}" ]; then
-        PARSED_CMD[$j]="-confMap"
-        PARSED_CMD[$j+1]=$CONFMAP_OPT
-        ((j=j+2))
-    fi
-    if [ -n "${VARMAP_OPTS}" ]; then
-        PARSED_CMD[$j]="-varMap"
-        PARSED_CMD[$j+1]=$VARMAP_OPTS
-        ((j=j+2))
-    fi
 }
 
 
 current_dir=`pwd`
-if [ -n $WORK_DIR ]; then
-    work_dir=`dirname "$0"`/../
-    export WORK_DIR=`cd ${work_dir};pwd`
-fi
+work_dir=`dirname "$0"`/../
+export WORK_DIR=`cd ${work_dir};pwd`
 cd ${current_dir}/
+
 if (( NUM_ARGS == 0 )); then
     PARSED_CMD[$j]='--help'
     print_help
 else
     parse
 fi
-exec ${WORK_DIR}/bin/linkis-cli -engineType hive-1.2.1 -codeType hql  "${PARSED_CMD[@]}"
+
+exec ${WORK_DIR}/bin/linkis-cli-pre -engineType hive-2.3.3 -codeType hql  "${PARSED_CMD[@]}"
 
 

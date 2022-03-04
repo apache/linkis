@@ -19,6 +19,7 @@
 <assembly>
   <id>dist</id>
   <formats>
+    <format>tar.gz</format>
     <format>dir</format>
   </formats>
   <includeBaseDirectory>false</includeBaseDirectory>
@@ -26,16 +27,26 @@
   <fileSets>
 
     <fileSet>
-      <directory>
-        bin/
-      </directory>
-      <outputDirectory>bin</outputDirectory>
+      <directory>../..</directory>
+      <outputDirectory></outputDirectory>
       <includes>
-        <include>**/*</include>
+        <include>README*</include>
+        <include>LICENSE*</include>
+        <include>NOTICE*</include>
       </includes>
-      <fileMode>0755</fileMode>
-      <lineEnding>unix</lineEnding>
     </fileSet>
+
+      <fileSet>
+          <directory>
+              bin/
+          </directory>
+          <outputDirectory>bin</outputDirectory>
+          <includes>
+              <include>**/*</include>
+          </includes>
+          <fileMode>0755</fileMode>
+          <lineEnding>unix</lineEnding>
+      </fileSet>
 
     <fileSet>
       <directory>
@@ -54,6 +65,19 @@
               sbin/
           </directory>
           <outputDirectory>sbin</outputDirectory>
+          <includes>
+              <include>**/*</include>
+          </includes>
+          <fileMode>0777</fileMode>
+          <directoryMode>0755</directoryMode>
+          <lineEnding>unix</lineEnding>
+      </fileSet>
+
+      <fileSet>
+          <directory>
+              bin/
+          </directory>
+          <outputDirectory>bin</outputDirectory>
           <includes>
               <include>**/*</include>
           </includes>
@@ -234,7 +258,30 @@
               <include>*</include>
           </includes>
       </fileSet>
-
+        <!-- data source manager-->
+      <fileSet>
+          <directory>
+              ../../linkis-public-enhancements/linkis-datasource/linkis-datasource-manager/server/target/out/lib/
+          </directory>
+          <outputDirectory>
+              lib/linkis-public-enhancements/linkis-ps-datasourcemanager
+          </outputDirectory>
+          <includes>
+              <include>*</include>
+          </includes>
+      </fileSet>
+      <!-- metadata manager -->
+      <fileSet>
+          <directory>
+              ../../linkis-public-enhancements/linkis-datasource/linkis-metadata-manager/server/target/out/lib/
+          </directory>
+          <outputDirectory>
+              lib/linkis-public-enhancements/linkis-ps-metadatamanager
+          </outputDirectory>
+          <includes>
+              <include>*</include>
+          </includes>
+      </fileSet>
             <!--application-manager-->
       <fileSet>
           <directory>
@@ -303,7 +350,7 @@
               ../../linkis-computation-governance/linkis-client/linkis-cli/linkis-cli-application/target/out/conf
           </directory>
           <outputDirectory>
-              conf/linkis-cli
+              conf/linkis-computation-governance/linkis-client/linkis-cli
           </outputDirectory>
           <includes>
               <include>*</include>

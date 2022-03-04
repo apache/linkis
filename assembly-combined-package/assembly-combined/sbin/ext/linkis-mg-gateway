@@ -25,10 +25,10 @@ SERVER_SUFFIX="linkis-spring-cloud-services/linkis-mg-gateway"
 #export DEBUG_PORT=
 
 if [ "$LINKIS_LOG_DIR" = "" ]; then
-  export LINKIS_LOG_DIR="$LINKIS_HOME/logs"
+  export LINKIS_LOG_DIR="/data/bdp/logs/linkis"
 fi
 if [ ! -w "$LINKIS_LOG_DIR" ] ; then
-  mkdir -p "$LINKIS_LOG_DIR"
+  sudo mkdir -p $LINKIS_LOG_DIR; sudo chown -R hadoop:hadoop $LINKIS_LOG_DIR
 fi
 
 if test -z "$SERVER_HEAP_SIZE"
@@ -48,7 +48,7 @@ fi
 
 if test -z "$SERVER_JAVA_OPTS"
 then
-  export SERVER_JAVA_OPTS=" $JAVA_AGENT_OPTS -DserviceName=$SERVER_NAME -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$LINKIS_LOG_DIR/${SERVER_NAME}-gc.log $DEBUG_CMD"
+  export SERVER_JAVA_OPTS=" $JAVA_AGENT_OPTS -Dreactor.netty.ioWorkerCount=50 -DserviceName=$SERVER_NAME -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$LINKIS_LOG_DIR/${SERVER_NAME}-gc.log $DEBUG_CMD"
 fi
 
 

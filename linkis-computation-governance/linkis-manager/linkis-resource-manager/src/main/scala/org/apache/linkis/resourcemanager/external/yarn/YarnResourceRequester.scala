@@ -36,7 +36,7 @@ import sun.misc.BASE64Encoder
 
 import java.util
 import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
-import scala.collection.JavaConverters._
+import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
 class YarnResourceRequester extends ExternalResourceRequester with Logging {

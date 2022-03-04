@@ -171,4 +171,5 @@ object EntranceConfiguration {
 
   val CLI_HEARTBEAT_THRESHOLD_SECONDS = CommonVars[Long] ("linkis.entrance.cli.heartbeat.threshold.sec", 30l).getValue
 
+  val LOG_PUSH_INTERVAL_TIME = CommonVars("wds.linkis.entrance.log.push.interval.time", 5 * 60 * 1000)
 }

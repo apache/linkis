@@ -1,6 +1,23 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.apache.linkis.engineconn.computation.executor.upstream.access
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.{CommonVars, DWCArgumentsParser}
@@ -14,6 +31,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
 import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.server.conf.ServerConfiguration
+import java.util
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -30,16 +48,16 @@ object ECTaskEntranceInfoAccessHelper {
     val host = CommonVars(Environment.ECM_HOST.toString, "127.0.0.1").getValue
     val port = CommonVars(Environment.ECM_PORT.toString, "80").getValue
     engineCreationContext.setEMInstance(ServiceInstance(GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue, s"$host:$port"))
-    val labels = new ArrayBuffer[Label[_]]
+    val labels = new util.ArrayList[Label[_]]
     val labelArgs = engineConf.filter(_._1.startsWith(EngineConnArgumentsParser.LABEL_PREFIX))
     if (labelArgs.nonEmpty) {
       labelArgs.foreach { case (key, value) =>
-        labels += labelBuilderFactory.createLabel[Label[_]](key.replace(EngineConnArgumentsParser.LABEL_PREFIX, ""), value)
+        labels.add(labelBuilderFactory.createLabel[Label[_]](key.replace(EngineConnArgumentsParser.LABEL_PREFIX, ""), value))
       }
-      engineCreationContext.setLabels(labels.toList)
+      engineCreationContext.setLabels(labels)
     }
     val jMap = new java.util.HashMap[String, String](engineConf.size)
-    jMap.putAll(engineConf)
+    engineConf.foreach(kv => jMap.put(kv._1, kv._2))
     engineCreationContext.setOptions(jMap)
     engineCreationContext.setArgs(args)
     //    EngineConnObject.setEngineCreationContext(engineCreationContext)

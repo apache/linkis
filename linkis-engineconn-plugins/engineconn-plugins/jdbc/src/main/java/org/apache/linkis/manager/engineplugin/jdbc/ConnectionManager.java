@@ -17,19 +17,17 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc;
 
-import org.apache.linkis.hadoop.common.utils.KerberosUtils;
-import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration;
-
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.commons.lang.StringUtils;
-
-import javax.sql.DataSource;
-
+import org.apache.linkis.hadoop.common.utils.KerberosUtils;
+import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -46,6 +44,7 @@ public class ConnectionManager {
 
     private final Map<String, String> supportedDBs = new HashMap<String, String>();
     private final List<String> supportedDBNames = new ArrayList<String>();
+    private final Map<String, String> supportedDBsValidQuery = new HashMap<String, String>();
 
     private static volatile ConnectionManager connectionManager;
     private ScheduledExecutorService scheduledExecutorService;
@@ -79,6 +78,18 @@ public class ConnectionManager {
             }
             supportedDBNames.add(supportedDBInfo[0]);
             this.supportedDBs.put(supportedDBInfo[0], supportedDBInfo[1]);
+        }
+    }
+
+    {
+        String supportedDBValidQueryString = JDBCConfiguration.JDBC_SUPPORT_DBS_VALIDATION_QUERY().getValue();
+        String[] supportedDBsValidQuery = supportedDBValidQueryString.split(",");
+        for (String supportedDBValidQuery : supportedDBsValidQuery) {
+            String[] supportedDBValidQueryInfo = supportedDBValidQuery.split("=>");
+            if (supportedDBValidQueryInfo.length != 2) {
+                throw new IllegalArgumentException("Illegal validation query info " + supportedDBValidQuery);
+            }
+            this.supportedDBsValidQuery.put(supportedDBValidQueryInfo[0], supportedDBValidQueryInfo[1]);
         }
     }
 
@@ -121,7 +132,7 @@ public class ConnectionManager {
         props.put("initialSize", 1);
         props.put("testOnBorrow", false);
         props.put("testWhileIdle", true);
-        props.put("validationQuery", "show databases;");
+        props.put("validationQuery", this.supportedDBsValidQuery.get(dbType));
 
         if (isKerberosAuthType(properties)) {
             String jdbcProxyUser = properties.get("jdbc.proxy.user");

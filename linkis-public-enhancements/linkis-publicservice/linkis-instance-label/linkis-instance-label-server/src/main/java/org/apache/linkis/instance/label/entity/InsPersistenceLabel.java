@@ -91,6 +91,6 @@ public class InsPersistenceLabel extends GenericLabel {
                                 && this.getStringValue().equals(otherInsLabel.getStringValue()));
             }
         }
-        return super.equals(other);
+        return false;
     }
 }

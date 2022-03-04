@@ -15,21 +15,24 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconn.computation.executor.utlis
-
-object ComputationErrorCode {
+package org.apache.linkis.engineconn.computation.executor.upstream.entity
 
 
-  val ASYNC_EXECUTOR_ERROR_CODE = 11301
+/**
+  * stores data representing upstream node state
+  */
+trait UpstreamConnection {
+  def getKey(): String
 
-  val UDF_LOAD_ERROR_CODE = 11302
+  def getCurrentServiceInstanceName(): String
 
-  val VARIABLE_NULL_ERROR_CODE = 21304 //TODO
+  def getUpstreamServiceInstanceName(): String
 
-  val START_UPSTREAM_MONITOR_TWICE = 21304 //TODO
+  def updatePrevAliveTimeStamp(target: Long): Unit
 
-  val INVALID_DATA_TYPE_ERROR_CODE = 21304 //TODO
+  def getPrevUpdatedAliveTimestamp(): Long
 
-  val UPSTREAM_MONITOR_EXCEPTION = 21304 //TODO
+  def isAlive(): Boolean
 
+  def isSameConnectionAs(upstreamConnection: UpstreamConnection): Boolean
 }

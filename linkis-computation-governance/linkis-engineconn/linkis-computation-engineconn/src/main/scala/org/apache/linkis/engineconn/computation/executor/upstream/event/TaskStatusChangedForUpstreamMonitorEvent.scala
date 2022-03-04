@@ -15,21 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconn.computation.executor.utlis
+package org.apache.linkis.engineconn.computation.executor.upstream.event
 
-object ComputationErrorCode {
+import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskEvent
+import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
+import org.apache.linkis.engineconn.computation.executor.execute.ComputationExecutor
+import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 
 
-  val ASYNC_EXECUTOR_ERROR_CODE = 11301
-
-  val UDF_LOAD_ERROR_CODE = 11302
-
-  val VARIABLE_NULL_ERROR_CODE = 21304 //TODO
-
-  val START_UPSTREAM_MONITOR_TWICE = 21304 //TODO
-
-  val INVALID_DATA_TYPE_ERROR_CODE = 21304 //TODO
-
-  val UPSTREAM_MONITOR_EXCEPTION = 21304 //TODO
-
-}
+case class TaskStatusChangedForUpstreamMonitorEvent(taskId: String, fromStatus: ExecutionNodeStatus, toStatus: ExecutionNodeStatus, task: EngineConnTask, executor: ComputationExecutor) extends TaskEvent

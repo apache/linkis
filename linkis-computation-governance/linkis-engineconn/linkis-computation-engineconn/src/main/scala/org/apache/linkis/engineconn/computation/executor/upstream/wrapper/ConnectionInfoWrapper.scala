@@ -15,21 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconn.computation.executor.utlis
+package org.apache.linkis.engineconn.computation.executor.upstream.wrapper
 
-object ComputationErrorCode {
+import org.apache.linkis.engineconn.computation.executor.upstream.entity.UpstreamConnection
 
+trait ConnectionInfoWrapper {
 
-  val ASYNC_EXECUTOR_ERROR_CODE = 11301
+  def getKey(): String
 
-  val UDF_LOAD_ERROR_CODE = 11302
+  def getLastUpdateTime(): Long
 
-  val VARIABLE_NULL_ERROR_CODE = 21304 //TODO
+  def updateConnectionInfo(newInfo: UpstreamConnection): Unit
 
-  val START_UPSTREAM_MONITOR_TWICE = 21304 //TODO
+  def getUpstreamConnection(): UpstreamConnection
 
-  val INVALID_DATA_TYPE_ERROR_CODE = 21304 //TODO
-
-  val UPSTREAM_MONITOR_EXCEPTION = 21304 //TODO
-
+  def shouldClear(): Boolean
 }

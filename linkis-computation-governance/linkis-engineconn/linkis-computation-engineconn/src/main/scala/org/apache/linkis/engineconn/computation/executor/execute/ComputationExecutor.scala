@@ -29,6 +29,7 @@ import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskStatus
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.creation.ComputationExecutorManager
+import org.apache.linkis.engineconn.computation.executor.upstream.event.TaskStatusChangedForUpstreamMonitorEvent
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
 import org.apache.linkis.engineconn.core.EngineConnObject
@@ -309,6 +310,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
     }
     if (oriStatus != newStatus && !isInternalExecute) {
       listenerBusContext.getEngineConnSyncListenerBus.postToAll(TaskStatusChangedEvent(task.getTaskId, oriStatus, newStatus))
+      listenerBusContext.getEngineConnSyncListenerBus.postToAll(TaskStatusChangedForUpstreamMonitorEvent(task.getTaskId, oriStatus, newStatus, task, this))
     }
   }
 

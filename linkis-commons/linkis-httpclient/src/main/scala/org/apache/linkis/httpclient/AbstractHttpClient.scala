@@ -19,7 +19,6 @@ package org.apache.linkis.httpclient
 
 import java.net.URI
 import java.util
-
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.io.{Fs, FsPath}
 import org.apache.linkis.httpclient.authentication.{AbstractAuthenticationStrategy, AuthenticationAction, HttpAuthentication}
@@ -30,7 +29,7 @@ import org.apache.linkis.httpclient.loadbalancer.{AbstractLoadBalancer, DefaultL
 import org.apache.linkis.httpclient.request._
 import org.apache.linkis.httpclient.response._
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.http.client.{CookieStore, ResponseHandler}
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.entity.{DeflateDecompressingEntity, EntityBuilder, GzipDecompressingEntity, UrlEncodedFormEntity}
@@ -43,7 +42,7 @@ import org.apache.http.impl.client.{BasicCookieStore, CloseableHttpClient, HttpC
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
 import org.apache.http.{HttpResponse, _}
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 
 import scala.collection.JavaConversions._
 
@@ -108,8 +107,12 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
       val response = executeRequest(req, Some(waitTime).filter(_ > 0))
       if (response.getStatusLine.getStatusCode == 401) {
         tryLogin(action, getRequestUrl(action), true)
-        logger.info("The user is not logged in, client  retry Login")
-        throw new HttpClientRetryException("The user is not logged in,Client had reTry Login, you can set a retry")
+        logger.info("The user is not logged in, please log in first, you can set a retry")
+        val msg = Utils.tryCatch(EntityUtils.toString(response.getEntity)) {
+          t => warn("failed to parse entity", t)
+          ""
+        }
+        throw new HttpClientRetryException("The user is not logged in, please log in first, you can set a retry, message: " + msg)
       }
       val taken = System.currentTimeMillis - startTime
       attempts.add(taken)

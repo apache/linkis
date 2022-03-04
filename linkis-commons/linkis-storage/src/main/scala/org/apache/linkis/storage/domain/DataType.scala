@@ -20,12 +20,13 @@ package org.apache.linkis.storage.domain
 import java.sql.{Date, Timestamp}
 
 import org.apache.linkis.common.utils.{Logging, Utils}
-
+import java.math.{BigDecimal => JavaBigDecimal}
 
 object DataType extends Logging{
 
 
   val NULL_VALUE = "NULL"
+  val LOWCASE_NULL_VALUE = "null"
   //TODO Change to fine-grained regular expressions(改为精细化正则表达式)
   val DECIMAL_REGEX = "^decimal\\(\\d*\\,\\d*\\)".r.unanchored
 
@@ -80,7 +81,7 @@ object DataType extends Logging{
     case LongType | BigIntType => if(isNumberNull(value)) null else value.toLong
     case FloatType => if(isNumberNull(value)) null else value.toFloat
     case DoubleType  => if(isNumberNull(value)) null else value.toDouble
-    case DecimalType => if(isNumberNull(value)) null else BigDecimal(value)
+    case DecimalType => if(isNumberNull(value)) null else new JavaBigDecimal(value)
     case DateType => if(isNumberNull(value)) null else Date.valueOf(value)
     case TimestampType => if(isNumberNull(value)) null else Timestamp.valueOf(value).toString.stripSuffix(".0")
     case BinaryType => if(isNull(value)) null else value.getBytes()
@@ -97,6 +98,15 @@ object DataType extends Logging{
     true
   } else {
     false
+  }
+
+  def valueToString(value: Any): String = {
+    if (null == value) return LOWCASE_NULL_VALUE
+    value match {
+      case javaDecimal: JavaBigDecimal =>
+        javaDecimal.toPlainString
+      case _ => value.toString
+    }
   }
 
 }

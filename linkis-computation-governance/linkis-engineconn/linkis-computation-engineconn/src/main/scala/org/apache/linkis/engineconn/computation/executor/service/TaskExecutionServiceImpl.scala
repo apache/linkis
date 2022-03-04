@@ -112,15 +112,15 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     info("Received a new task, task content is " + requestTask)
     if (StringUtils.isBlank(requestTask.getLock)) {
       error(s"Invalid lock : ${requestTask.getLock} , requestTask : " + requestTask)
-      return ErrorExecuteResponse(s"Invalid lock : ${requestTask.getLock}.", new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INVALID_PARAMS, "Invalid lock or code"))
+      return ErrorExecuteResponse(s"Invalid lock : ${requestTask.getLock}.", new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INVALID_PARAMS, "Invalid lock or code(请获取到锁后再提交任务.)"))
     }
     if (!lockService.isLockExist(requestTask.getLock)) {
       error(s"Lock ${requestTask.getLock} not exist, cannot execute.")
-      return ErrorExecuteResponse("Lock not exixt", new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INVALID_LOCK, "Lock : " + requestTask.getLock + " not exist."))
+      return ErrorExecuteResponse("Lock not exixt", new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INVALID_LOCK, "Lock : " + requestTask.getLock + " not exist(您的锁无效，请重新获取后再提交)."))
     }
 
     if (StringUtils.isBlank(requestTask.getCode)) {
-      return IncompleteExecuteResponse("Your code is incomplete, it may be that only comments are selected for execution")
+      return IncompleteExecuteResponse("Your code is incomplete, it may be that only comments are selected for execution(您的代码不完整，可能是仅仅选中了注释进行执行)")
     }
 
     val taskId: Int = taskExecutedNum.incrementAndGet()
@@ -173,8 +173,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
         val labelsStr = if (labels != null) labels.filter(_ != null).map(_.getStringValue).mkString(",") else ""
         val msg = "Invalid computationExecutor : " + o.getClass.getName + ", labels : " + labelsStr + ", requestTask : " + task.getTaskId
         error(msg)
-        ErrorExecuteResponse("Invalid computationExecutor.",
-          new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INVALID_ENGINE_TYPE, msg))
+        ErrorExecuteResponse("Invalid computationExecutor(生成无效的计算引擎，请联系管理员).", new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INVALID_ENGINE_TYPE, msg))
     }
   }
 
@@ -432,6 +431,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     case taskResultCreateEvent: TaskResultCreateEvent => onResultSetCreated(taskResultCreateEvent)
     case taskResultSizeCreatedEvent: TaskResultSizeCreatedEvent => onResultSizeCreated(taskResultSizeCreatedEvent)
     case taskResponseErrorEvent: TaskResponseErrorEvent => onTaskResponseErrorEvent(taskResponseErrorEvent)
+    case taskStatusChangedEvent2: TaskStatusChangedForUpstreamMonitorEvent => info("ignored TaskStatusChangedEvent2 for entrance monitoring, task: " + taskStatusChangedEvent2.taskId)
     case _ =>
       warn("Unknown event : " + BDPJettyServerHelper.gson.toJson(event))
   }

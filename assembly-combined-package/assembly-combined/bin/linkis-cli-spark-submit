@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 
-# set -x
 export LANG=en_US.utf-8
+#set -x
 #ordinary options
 declare -A ord_opts=(\
         # ['--master']=true \ #not supported
@@ -39,10 +39,10 @@ declare -A ord_opts=(\
 #options that should be put in confMap(startupMap)
 declare -A confMap_opts=(\
         ['--name']='appName' \
-        ['--jars']='jars' \
-        ['--py-files']='spark.yarn.dist.files' \
+        ['--jars']='spark.jars' \
+        ['--py-files']='spark.submit.pyFiles' \
         ['--driver-memory']='spark.driver.memory' \
-        ['--driver-java-options']='spark.driver.extraJavaOptions' \
+        # ['--driver-java-options']='spark.driver.extraJavaOptions' \
         # ['--driver-library-path']='k3' \
         ['--driver-class-path']='wds.linkis.spark.driver.extra.class.path' \
         ['--executor-memory']='spark.executor.memory' \
@@ -57,6 +57,7 @@ declare -A confMap_opts=(\
         # ['--archives']='k10' \
         # ['--principal']=true \ #not supported
         # ['--keytab']=true \ #not supported
+        ['--verbose']='wds.linkis.spark.verbose' \
 )
 
 #options that should be put in varMap(for variable substitution)
@@ -85,8 +86,8 @@ declare -A help_msg=(\
         ['--kill']="If given, kills the linkis job specified" \
         ['--status']="If given, requests the status of the linkis job" \
         ['--driver-memory']="Memory for driver, unit: G (e.g. 2) " \
-        ['--driver-java-options']="Extra Java options to pass to the driver." \
-        #['--driver-library-path']="Extra library path entries to pass to the driver." \
+        # ['--driver-java-options']="Extra Java options to pass to the driver." \
+        # ['--driver-library-path']="Extra library path entries to pass to the driver." \
         ['--driver-class-path']="Extra class path entries to pass to the driver." \
         ['--conf']="Arbitrary Spark configuration property"
         ['--executor-memory']="Memory per executor, unit: G (e.g. 2)" \
@@ -135,17 +136,18 @@ do
 done
 NUM_ARGS=$i
 
-CONFMAP_OPTS=""
-VARMAP_OPTS=""
-LABELMAP_OPTS=""
-REMAINS_STR=""
 declare -a PARSED_CMD
 j=0
+IS_PYSPARK="false"
+IS_SCALA="false"
 
 function parse() {
     for((i=0;i<NUM_ARGS;i++));
     do
         arg=${ARGS[${i}]}
+        if [[ "$arg" =~ .*\.py$ ]] || [[ "$arg" =~ .*\.py3$ ]]; then
+            IS_PYSPARK="true"
+        fi
         if [ -n "${help_opts[${arg}]}" ]; then
             print_help
             PARSED_CMD[$j]=${help_opts[${arg}]}
@@ -178,15 +180,21 @@ function parse() {
 }
 
 current_dir=`pwd`
-if [ -n $WORK_DIR ]; then
-    work_dir=`dirname "$0"`/../
-    export WORK_DIR=`cd ${work_dir};pwd`
-fi
+work_dir=`dirname "$0"`/../
+export WORK_DIR=`cd ${work_dir};pwd`
 cd ${current_dir}/
+
 if (( NUM_ARGS == 0 )); then
     PARSED_CMD[$j]='--help'
     print_help
 else
     parse
 fi
-exec ${WORK_DIR}/bin/linkis-cli -engineType spark-2.4.3 -codeType sql "${PARSED_CMD[@]}"
+
+if [ "$IS_PYSPARK"x == "true"x ]; then
+    exec ${WORK_DIR}/bin/linkis-cli-pre -engineType spark-2.4.3 -codeType py "${PARSED_CMD[@]}"
+elif [ "IS_SCALA"x == "true"x ]; then
+    exec ${WORK_DIR}/bin/linkis-cli-pre -engineType spark-2.4.3 -codeType scala "${PARSED_CMD[@]}"
+else
+    exec ${WORK_DIR}/bin/linkis-cli-pre -engineType spark-2.4.3 "${PARSED_CMD[@]}"
+fi

@@ -46,30 +46,84 @@ fi
 ## import common.sh
 source ${workDir}/bin/common.sh
 
-##load config
-echo "======= Step 1: Load deploy-config/* =========="
-export LINKIS_CONFIG_PATH=${LINKIS_CONFIG_PATH:-"${workDir}/deploy-config/linkis-env.sh"}
-export LINKIS_DB_CONFIG_PATH=${LINKIS_DB_CONFIG_PATH:-"${workDir}/deploy-config/db.sh"}
 
+
+function checkPythonAndJava(){
+    python --version
+    isSuccess "execute python --version"
+    java -version
+    isSuccess "execute java --version"
+}
+
+function checkHadoopAndHive(){
+    hadoopVersion="`hdfs version`"
+    defaultHadoopVersion="2.7"
+    checkversion "$hadoopVersion" $defaultHadoopVersion hadoop
+    checkversion "$(whereis hive)" "1.2" hive
+}
+
+function checkversion(){
+versionStr=$1
+defaultVersion=$2
+module=$3
+
+result=$(echo $versionStr | grep "$defaultVersion")
+if [ -n "$result" ]; then
+    echo "$module version match"
+else
+   echo "WARN: Your $module version is not $defaultVersion, there may be compatibility issues:"
+   echo " 1: Continue installation, there may be compatibility issues"
+   echo " 2: Exit installation"
+   echo ""
+   read -p "Please input the choice:"  idx
+   if [[ '2' = "$idx" ]];then
+    echo "You chose  Exit installation"
+    exit 1
+   fi
+fi
+}
+
+function checkSpark(){
+ spark-submit --version
+ isSuccess "execute spark-submit --version"
+}
+
+say() {
+    printf 'check command fail \n %s\n' "$1"
+}
+
+err() {
+    say "$1" >&2
+    exit 1
+}
+
+check_cmd() {
+    command -v "$1" > /dev/null 2>&1
+}
+
+need_cmd() {
+    if ! check_cmd "$1"; then
+        err "need '$1' (command not found)"
+    fi
+}
+
+
+
+sh ${workDir}/bin/checkEnv.sh
+isSuccess "check env"
+
+##load config
+echo "step1:load config "
+export LINKIS_CONFIG_PATH=${LINKIS_CONFIG_PATH:-"${workDir}/config/linkis-env.sh"}
+export LINKIS_DB_CONFIG_PATH=${LINKIS_DB_CONFIG_PATH:-"${workDir}/config/db.sh"}
 source ${LINKIS_CONFIG_PATH}
 source ${LINKIS_DB_CONFIG_PATH}
 
 isSuccess "load config"
 
 
-echo "======= Step 2: Check env =========="
-## check env
-sh ${workDir}/bin/checkEnv.sh
-isSuccess "check env"
 
-until mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD  -e ";" ; do
-     echo "try to connect to linkis mysql $MYSQL_HOST:$MYSQL_PORT/$MYSQL_DB failed, please check db configuration in:$LINKIS_DB_CONFIG_PATH"
-     exit 1
-done
-
-echo "======= Step 3: Create necessary directory =========="
-
-echo "[WORKSPACE_USER_ROOT_PATH] try to create directory"
+echo "create hdfs  directory and local directory"
 if [ "$WORKSPACE_USER_ROOT_PATH" != "" ]
 then
   localRootDir=$WORKSPACE_USER_ROOT_PATH
@@ -105,6 +159,7 @@ echo "[HDFS_USER_ROOT_PATH] try to create directory"
      localRootDir=${HDFS_USER_ROOT_PATH#hdfs://}
      echo "[HDFS_USER_ROOT_PATH] try to create hdfs dir,cmd is: hdfs dfs -mkdir -p $localRootDir/$deployUser"
      hdfs dfs -mkdir -p $localRootDir/$deployUser
+     hdfs dfs -chmod -R 775 $localRootDir/$deployUser
    else
      echo "[HDFS_USER_ROOT_PATH] does not support $HDFS_USER_ROOT_PATH filesystem types"
    fi
@@ -127,8 +182,8 @@ echo "[RESULT_SET_ROOT_PATH] try to create directory"
    elif [[ $RESULT_SET_ROOT_PATH == hdfs://* ]];then
      localRootDir=${RESULT_SET_ROOT_PATH#hdfs://}
      echo "[RESULT_SET_ROOT_PATH] try to create hdfs dir,cmd is: hdfs dfs -mkdir -p $localRootDir/$deployUser"
-     hdfs dfs -mkdir -p $localRootDir
-     hdfs dfs -chmod 775 $localRootDir
+     hdfs dfs -mkdir -p $localRootDir/$deployUser
+     hdfs dfs -chmod 775 $localRootDir/$deployUser
    else
      echo "[RESULT_SET_ROOT_PATH] does not support $RESULT_SET_ROOT_PATH filesystem types"
    fi
@@ -163,16 +218,13 @@ if ! test -d ${LINKIS_PACKAGE}; then
     echo "**********${RED}Error${NC}: please put ${LINKIS_PACKAGE} in $workDir! "
     exit 1
 else
-    echo "Start to cp ${LINKIS_PACKAGE} to $LINKIS_HOME."
-    cp -r $LINKIS_PACKAGE/* $LINKIS_HOME
-    isSuccess "cp ${LINKIS_PACKAGE} to $LINKIS_HOME"
+    echo "Start to unzip ${LINKIS_PACKAGE} ."
+    tar -xzf ${LINKIS_PACKAGE}  -C $LINKIS_HOME
+    isSuccess "Unzip ${LINKIS_PACKAGE} to $LINKIS_HOME"
 fi
 
 cp ${LINKIS_CONFIG_PATH} $LINKIS_HOME/conf
 
-
-
-echo "======= Step 4: Create linkis table =========="
 ## sql init
 if [ "$YARN_RESTFUL_URL" != "" ]
 then
@@ -249,8 +301,7 @@ fi
 
 
 #Deal common config
-echo ""
-echo "======= Step 5: Update config =========="
+echo "Update config..."
 
 if test -z "$EUREKA_INSTALL_IP"
 then

@@ -105,6 +105,12 @@ abstract class EntranceServer extends Logging {
       getEntranceContext.getOrCreateScheduler().submit(job)
       val msg = s"Job with jobId : ${job.getId} and execID : ${job.getId()} submitted "
       logger.info(msg)
+      /**
+        * job.afterStateChanged() method is only called in job.run(), and job.run() is called only after job is scheduled
+        * so it suggest that we lack a hook for job init, currently we call this to trigger JobListener.onJobinit()
+        * */
+      job.getJobListener.foreach(_.onJobInited(job))
+
       job match {
         case entranceJob: EntranceJob =>
           entranceJob.getJobRequest.setReqId(job.getId())

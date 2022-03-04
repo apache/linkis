@@ -15,21 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconn.computation.executor.utlis
+package org.apache.linkis.engineconn.computation.executor.upstream
 
-object ComputationErrorCode {
+import org.apache.linkis.engineconn.computation.executor.upstream.access.ConnectionInfoAccess
+import org.apache.linkis.engineconn.computation.executor.upstream.handler.MonitorHandler
 
+/**
+  * query upstream node info by UpstreamNodeInfoAccess
+  * call UpstreamMonitorHandler to handle undesirable upstream states
+  */
+trait UpstreamConnectionMonitor {
+  def getUpstreamNodeInfoAccess(): ConnectionInfoAccess
 
-  val ASYNC_EXECUTOR_ERROR_CODE = 11301
-
-  val UDF_LOAD_ERROR_CODE = 11302
-
-  val VARIABLE_NULL_ERROR_CODE = 21304 //TODO
-
-  val START_UPSTREAM_MONITOR_TWICE = 21304 //TODO
-
-  val INVALID_DATA_TYPE_ERROR_CODE = 21304 //TODO
-
-  val UPSTREAM_MONITOR_EXCEPTION = 21304 //TODO
-
+  def getHandler(): MonitorHandler
 }

@@ -101,9 +101,9 @@ abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchSe
     }
     Utils.tryThrow(Utils.waitUntil(() => engineConn.getStatus != Starting, Duration(timeout, TimeUnit.MILLISECONDS))) {
       case e: TimeoutException =>
-        throw new ECMErrorException(ECMErrorConstants.ECM_ERROR, s"wait for $engineConn initial timeout.")
-      case e: InterruptedException =>
-        throw new ECMErrorException(ECMErrorConstants.ECM_ERROR, s"wait for $engineConn initial interrupted.")
+        throw new ECMErrorException(ECMErrorCode.EC_START_TIME_OUT, s"wait for engineConn initial timeout(请求引擎超时，可能是因为队列资源不足导致，请重试) $engineConn .")
+      case e: InterruptedException => //比如被ms cancel
+        throw new ECMErrorException(ECMErrorCode.EC_INTERRUPT_TIME_OUT, s"wait for initial interrupted(请求引擎被中断，可能是因为你操作了引擎取消操作，请重试) $engineConn .")
       case t: Throwable =>
         logger.error(s"unexpected error, now shutdown it.")
         throw t

@@ -62,7 +62,7 @@ class LinkisManagerClientImpl(ujesClient: UJESClient) extends LinkisManagerClien
 
   override def killEngineConn(killEngineConnAction: KillEngineConnAction): KillEngineConnResult = execute(killEngineConnAction)
 
-  override def executeEngineConnOperation(engineOperateAction: EngineConnOperateAction): EngineConnOperateResult = execute(engineOperateAction)
+  override def executeEngineConnOperation(engineConnOperateAction: EngineConnOperateAction): EngineConnOperateResult = execute(engineConnOperateAction)
 
   override def close(): Unit = ujesClient.close()
 }

@@ -47,7 +47,7 @@ class EngineConnLogOperator extends Operator with Logging {
     if (lastRows > EngineConnLogOperator.MAX_LOG_FETCH_SIZE.getValue) {
       throw new ECMErrorException(ECMErrorCode.EC_FETCH_LOG_FAILED, s"Cannot fetch more than ${EngineConnLogOperator.MAX_LOG_FETCH_SIZE.getValue} lines of logs.")
     } else if (lastRows > 0) {
-      val logs = Utils.exec(Array("tail", "-f", logPath.getPath), 5000).split("\n")
+      val logs = Utils.exec(Array("tail", "-n", lastRows + "", logPath.getPath), 5000).split("\n")
       return Map("logs" -> logs, "rows" -> logs.length)
     }
     val pageSize = getAs("pageSize", 100)
@@ -103,15 +103,11 @@ class EngineConnLogOperator extends Operator with Logging {
 
   private def includeLine(line: String,
                           onlyKeywordList: Array[String], ignoreKeywordList: Array[String]): Boolean = {
-    if (onlyKeywordList.nonEmpty && onlyKeywordList.exists(line.contains)) {
-      true
-    } else if (ignoreKeywordList.nonEmpty && !ignoreKeywordList.exists(line.contains)) {
-      true
-    } else if (onlyKeywordList.isEmpty && ignoreKeywordList.isEmpty) {
-      true
-    } else {
-      false
+    var accept: Boolean = ignoreKeywordList.isEmpty || !ignoreKeywordList.exists(line.contains)
+    if (accept) {
+      accept = onlyKeywordList.isEmpty || onlyKeywordList.exists(line.contains)
     }
+    accept
   }
   private def getLogPath(implicit parameters: Map[String, Any]): File = {
     if (engineConnListService == null) {

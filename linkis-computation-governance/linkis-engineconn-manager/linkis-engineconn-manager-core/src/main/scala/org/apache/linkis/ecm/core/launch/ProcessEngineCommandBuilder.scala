@@ -65,6 +65,10 @@ class UnixProcessEngineCommandBuilder extends ShellProcessEngineCommandBuilder {
 
   newLine("#!/bin/bash")
 
+  if (ECPCoreConf.CORE_DUMP_DISABLE) {
+    newLine("ulimit -c 0")
+  }
+
   private def addErrorCheck(): Unit = {
     newLine("linkis_engineconn_errorcode=$?")
     newLine("if [ $linkis_engineconn_errorcode -ne 0 ]")

@@ -60,6 +60,8 @@ object EntranceConfiguration {
     * requestApplicationName(Creator) 默认的服务名，默认为IDE
     */
   val DEFAULT_REQUEST_APPLICATION_NAME = CommonVars("wds.linkis.default.requestApplication.name", "IDE")
+
+  val SQL_LIMIT_CREATOR = CommonVars("wds.linkis.sql.limit.creator", "IDE,Visualis")
   /**
     * runType
     */
@@ -117,8 +119,8 @@ object EntranceConfiguration {
 
 
   val SHELL_DANGER_CHECK_SWITCH = CommonVars("wds.linkis.entrance.shell.danger.check.enabled", true)
-  val SHELL_DANGER_USAGE = CommonVars("wds.linkis.shell.danger.usage", "rm,sh,find,kill,python,for,source,hdfs,hadoop,spark-sql,spark-submit,pyspark,spark-shell,hive,yarn,df,dd")
-  val SHELL_WHITE_USAGE = CommonVars("wds.linkis.shell.white.usage", "cd,ls,echo")
+  val SHELL_DANGER_USAGE = CommonVars("wds.linkis.shell.danger.usage", "bdp-client")
+  val SHELL_WHITE_USAGE = CommonVars("wds.linkis.shell.white.usage", "sqoop,cd,ll,ls,echo,cat,tree,diff,who,grep,whoami,set,pwd,cut,file,head,less,if,while")
 
   val FLOW_EXECUTION_CREATOR = CommonVars("wds.linkis.entrance.flow.creator", "nodeexecution")
 
@@ -127,7 +129,7 @@ object EntranceConfiguration {
 
   val SKIP_AUTH = CommonVars("wds.linkis.entrance.skip.auth", false)
 
-  val PROGRESS_PUSH = CommonVars[String]("wds.linkis.entrance.push.progress", "true")
+  val PROGRESS_PUSH = CommonVars[String]("wds.linkis.entrance.push.progress", "false")
 
   val CONCURRENT_FACTORY_MAX_CAPACITY = CommonVars("wds.linkis.concurrent.group.factory.capacity", 1000)
 
@@ -167,7 +169,6 @@ object EntranceConfiguration {
 
   val ENABLE_HDFS_LOG_CACHE = CommonVars[Boolean] ("linkis.entrance.enable.hdfs.log.cache", true).getValue
 
-  val LOG_PUSH_INTERVAL_TIME = CommonVars("wds.linkis.entrance.log.push.interval.time", 5 * 60 * 1000)
-
+  val CLI_HEARTBEAT_THRESHOLD_SECONDS = CommonVars[Long] ("linkis.entrance.cli.heartbeat.threshold.sec", 30l).getValue
 
 }

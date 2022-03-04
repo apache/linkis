@@ -19,7 +19,7 @@ package org.apache.linkis.entrance.execute
 
 import java.util
 import java.util.Date
-import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.{AtomicInteger, AtomicLong}
 
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.Utils
@@ -64,6 +64,13 @@ abstract class EntranceJob extends Job {
   //  private var resultSize = -1
   private var entranceContext: EntranceContext = _
 
+  /**
+    * Record newest time that a client access status of this job
+    * Can be used to monitor client status.
+    * e.g. server can detect if linkis-cli process has abnormally ended then kill the job
+    * */
+  private val newestAccessByClientTimestamp: AtomicLong = new AtomicLong(-1l) //volatile
+
   def setEntranceListenerBus(entranceListenerBus: EntranceEventListenerBus[EntranceEventListener, EntranceEvent]): Unit =
     this.entranceListenerBus = Option(entranceListenerBus)
 
@@ -74,6 +81,13 @@ abstract class EntranceJob extends Job {
   def setEntranceContext(entranceContext: EntranceContext): Unit = this.entranceContext = entranceContext
 
   def getEntranceContext: EntranceContext = this.entranceContext
+
+  def getNewestAccessByClientTimestamp: Long = this.newestAccessByClientTimestamp.get()
+
+  def updateNewestAccessByClientTimestamp(): Unit = {
+    val newTime = System.currentTimeMillis()
+    newestAccessByClientTimestamp.set(newTime)
+  }
 
   def getRunningSubJobIndex: Int
 
@@ -168,7 +182,6 @@ abstract class EntranceJob extends Job {
   }
 
   override def onFailure(errorMsg: String, t: Throwable): Unit = {
-    //updateJobRequestStatus(SchedulerEventState.Failed.toString)
     val generatedMsg = LogUtils.generateERROR(s"Sorry, your job executed failed with reason: $errorMsg")
     getLogListener.foreach(_.onLogUpdate(this, generatedMsg))
     super.onFailure(errorMsg, t)

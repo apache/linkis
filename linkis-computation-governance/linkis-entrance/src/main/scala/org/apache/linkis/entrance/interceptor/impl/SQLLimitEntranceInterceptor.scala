@@ -17,13 +17,21 @@
  
 package org.apache.linkis.entrance.interceptor.impl
 
+import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.utils.LabelUtil
 
 
 class SQLLimitEntranceInterceptor extends EntranceInterceptor {
+  private val  LIMIT_CREATORS = EntranceConfiguration.SQL_LIMIT_CREATOR.getValue
+
   override def apply(task: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
+    /*val (user, creator) = LabelUtil.getUserCreator(task.getLabels)
+    if (! LIMIT_CREATORS.contains(creator)) {
+      logAppender.append(LogUtils.generateWarn(s"The code you submit will not be limited by the limit \n") )
+      return task
+    }*/
     val codeType = {
       val codeType = LabelUtil.getCodeType(task.getLabels)
       if (null != codeType) {

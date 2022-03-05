@@ -142,6 +142,47 @@ public class MetadataCoreRestful {
     }
 
     @RequestMapping(
+            value = "/props/{data_source_id}/db/{database}/table/{table}/partition/{partition}",
+            method = RequestMethod.GET)
+    public Message getPartitionProps(
+            @PathVariable("data_source_id") String dataSourceId,
+            @PathVariable("database") String database,
+            @PathVariable("table") String table,
+            @PathVariable("partition") String partition,
+            @RequestParam("system") String system,
+            HttpServletRequest request) {
+        try {
+            if (StringUtils.isBlank(system)) {
+                return Message.error("'system' is missing[缺少系统名]");
+            }
+            Map<String, String> partitionProps =
+                    metadataAppService.getPartitionPropsByDsId(
+                            dataSourceId,
+                            database,
+                            table,
+                            partition,
+                            system,
+                            SecurityFilter.getLoginUsername(request));
+            return Message.ok().data("props", partitionProps);
+        } catch (Exception e) {
+            return errorToResponseMessage(
+                    "Fail to get partition properties[获取分区参数信息失败], id:["
+                            + dataSourceId
+                            + "]"
+                            + ", system:["
+                            + system
+                            + "], database:["
+                            + database
+                            + "], table:["
+                            + table
+                            + "], partition:["
+                            + partition
+                            + "]",
+                    e);
+        }
+    }
+
+    @RequestMapping(
             value = "/partitions/{data_source_id}/db/{database}/table/{table}",
             method = RequestMethod.GET)
     public Message getPartitions(

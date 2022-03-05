@@ -186,6 +186,14 @@ public class UniversalCmdTemplate extends AbstractCmdTemplate {
                     "specify configurationMap(startupMap) for your job. You can put any start-up parameters into this Map(e.g. spark.executor.instances). Input format: -confMap key1=value1 -confMap key2=value2",
                     true);
 
+    protected MapOption runtimeMapOp =
+            mapOption(
+                    LinkisClientKeys.JOB_PARAM_RUNTIME,
+                    LinkisClientKeys.JOB_PARAM_RUNTIME,
+                    new String[] {"-runtimeMap"},
+                    "specify configurationMap(runtimeMap) for your job. You can put any runtime parameters into this Map(e.g. jdbc.url). Input format: -runtimeMap key1=value1 -runtimeMap key2=value2",
+                    true);
+
     protected SpecialMapOption varMapOp =
             speciaMapOption(
                     LinkisClientKeys.JOB_PARAM_VAR,

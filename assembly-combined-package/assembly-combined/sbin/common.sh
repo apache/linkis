@@ -19,8 +19,7 @@ source ~/.bash_profile
 
 export local_host="`hostname --fqdn`"
 
-#ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
-ipaddr=`hostname -i`
+ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
 
 function isLocal(){
     if [ "$1" == "127.0.0.1" ];then

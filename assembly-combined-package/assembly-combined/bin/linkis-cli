@@ -16,7 +16,7 @@
 export LANG=en_US.utf-8
 #set -x
 
-LINKIS_CLIENT='com.webank.wedatasphere.linkis.cli.application.LinkisClientApplication'
+LINKIS_CLIENT='org.apache.linkis.cli.application.LinkisClientApplication'
 
 i=0
 for arg in "$@"

@@ -34,16 +34,24 @@ import java.lang.annotation.Target;
 @Component(value = CliHeartBeatMonitorAnnotation.BEAN_NAME)
 public @interface CliHeartBeatMonitorAnnotation {
     String BEAN_NAME = "cliHeartBeatMonitor";
+
     @AliasFor(annotation = Component.class)
     String value() default BEAN_NAME;
 
-    @Target({ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD, ElementType.TYPE, ElementType.PARAMETER})
+    @Target({
+        ElementType.CONSTRUCTOR,
+        ElementType.FIELD,
+        ElementType.METHOD,
+        ElementType.TYPE,
+        ElementType.PARAMETER
+    })
     @Retention(RetentionPolicy.RUNTIME)
     @Qualifier(BEAN_NAME)
     @Autowired
     @interface CliHeartBeatMonitorAutowiredAnnotation {
         @AliasFor(annotation = Qualifier.class)
         String value() default BEAN_NAME;
+
         @AliasFor(annotation = Autowired.class)
         boolean required() default true;
     }

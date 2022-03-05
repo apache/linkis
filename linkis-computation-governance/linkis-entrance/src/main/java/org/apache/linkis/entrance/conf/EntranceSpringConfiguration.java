@@ -78,7 +78,7 @@ public class EntranceSpringConfiguration {
 
     @CliHeartBeatMonitorAnnotation
     @ConditionalOnMissingBean(name = {CliHeartBeatMonitorAnnotation.BEAN_NAME})
-    public CliHeartbeatMonitor generateCliHeartbeatMonitor(){
+    public CliHeartbeatMonitor generateCliHeartbeatMonitor() {
         CliHeartbeatMonitor cliHeartbeatMonitor = new CliHeartbeatMonitor(new KillHandler());
         cliHeartbeatMonitor.start();
         return cliHeartbeatMonitor;
@@ -86,9 +86,13 @@ public class EntranceSpringConfiguration {
 
     @PersistenceManagerBeanAnnotation
     @ConditionalOnMissingBean(name = {PersistenceManagerBeanAnnotation.BEAN_NAME})
-    public PersistenceManager generatePersistenceManager(@PersistenceEngineBeanAnnotation.PersistenceEngineAutowiredAnnotation PersistenceEngine persistenceEngine,
-                                                         @ResultSetEngineBeanAnnotation.ResultSetEngineAutowiredAnnotation ResultSetEngine resultSetEngine,
-                                                         @CliHeartBeatMonitorAnnotation.CliHeartBeatMonitorAutowiredAnnotation CliHeartbeatMonitor cliHeartbeatMonitor){
+    public PersistenceManager generatePersistenceManager(
+            @PersistenceEngineBeanAnnotation.PersistenceEngineAutowiredAnnotation
+                    PersistenceEngine persistenceEngine,
+            @ResultSetEngineBeanAnnotation.ResultSetEngineAutowiredAnnotation
+                    ResultSetEngine resultSetEngine,
+            @CliHeartBeatMonitorAnnotation.CliHeartBeatMonitorAutowiredAnnotation
+                    CliHeartbeatMonitor cliHeartbeatMonitor) {
         logger.info("init PersistenceManager.");
         QueryPersistenceManager persistenceManager = new QueryPersistenceManager();
         persistenceManager.setPersistenceEngine(persistenceEngine);
@@ -99,14 +103,18 @@ public class EntranceSpringConfiguration {
 
     @EntranceParserBeanAnnotation
     @ConditionalOnMissingBean(name = {EntranceParserBeanAnnotation.BEAN_NAME})
-    public EntranceParser generateEntranceParser(@PersistenceManagerBeanAnnotation.PersistenceManagerAutowiredAnnotation PersistenceManager persistenceManager){
+    public EntranceParser generateEntranceParser(
+            @PersistenceManagerBeanAnnotation.PersistenceManagerAutowiredAnnotation
+                    PersistenceManager persistenceManager) {
         return new CommonEntranceParser(persistenceManager);
     }
 
     @EntranceListenerBusBeanAnnotation
     @ConditionalOnMissingBean(name = {EntranceListenerBusBeanAnnotation.BEAN_NAME})
-    public EntranceEventListenerBus<EntranceEventListener, EntranceEvent> generateEntranceEventListenerBus() {
-        EntranceEventListenerBus<EntranceEventListener, EntranceEvent> entranceEventListenerBus = new EntranceEventListenerBus<EntranceEventListener, EntranceEvent>();
+    public EntranceEventListenerBus<EntranceEventListener, EntranceEvent>
+            generateEntranceEventListenerBus() {
+        EntranceEventListenerBus<EntranceEventListener, EntranceEvent> entranceEventListenerBus =
+                new EntranceEventListenerBus<EntranceEventListener, EntranceEvent>();
         entranceEventListenerBus.start();
         return entranceEventListenerBus;
     }
@@ -141,8 +149,11 @@ public class EntranceSpringConfiguration {
 
     @ErrorCodeListenerBeanAnnotation
     @ConditionalOnMissingBean(name = {ErrorCodeListenerBeanAnnotation.BEAN_NAME})
-    public ErrorCodeListener generateErrorCodeListener(@PersistenceManagerBeanAnnotation.PersistenceManagerAutowiredAnnotation PersistenceManager persistenceManager,
-                                                       @EntranceParserBeanAnnotation.EntranceParserAutowiredAnnotation EntranceParser entranceParser) {
+    public ErrorCodeListener generateErrorCodeListener(
+            @PersistenceManagerBeanAnnotation.PersistenceManagerAutowiredAnnotation
+                    PersistenceManager persistenceManager,
+            @EntranceParserBeanAnnotation.EntranceParserAutowiredAnnotation
+                    EntranceParser entranceParser) {
         PersistenceErrorCodeListener errorCodeListener = new PersistenceErrorCodeListener();
         errorCodeListener.setEntranceParser(entranceParser);
         errorCodeListener.setPersistenceManager(persistenceManager);
@@ -152,8 +163,8 @@ public class EntranceSpringConfiguration {
     @ErrorCodeManagerBeanAnnotation
     @ConditionalOnMissingBean(name = {ErrorCodeManagerBeanAnnotation.BEAN_NAME})
     public ErrorCodeManager generateErrorCodeManager() {
-       /* try {
-            Class.forName("com.webank.wedatasphere.linkis.errorcode.client.handler.LinkisErrorCodeHandler");
+        /* try {
+            Class.forName("org.apache.linkis.errorcode.client.handler.LinkisErrorCodeHandler");
         } catch (final Exception e) {
             logger.error("failed to init linkis error code handler", e);
         }*/
@@ -162,8 +173,11 @@ public class EntranceSpringConfiguration {
 
     @LogManagerBeanAnnotation
     @ConditionalOnMissingBean(name = {LogManagerBeanAnnotation.BEAN_NAME})
-    public LogManager generateLogManager(@ErrorCodeListenerBeanAnnotation.ErrorCodeListenerAutowiredAnnotation ErrorCodeListener errorCodeListener,
-                                         @ErrorCodeManagerBeanAnnotation.ErrorCodeManagerAutowiredAnnotation ErrorCodeManager errorCodeManager){
+    public LogManager generateLogManager(
+            @ErrorCodeListenerBeanAnnotation.ErrorCodeListenerAutowiredAnnotation
+                    ErrorCodeListener errorCodeListener,
+            @ErrorCodeManagerBeanAnnotation.ErrorCodeManagerAutowiredAnnotation
+                    ErrorCodeManager errorCodeManager) {
         CacheLogManager logManager = new CacheLogManager();
         logManager.setErrorCodeListener(errorCodeListener);
         logManager.setErrorCodeManager(errorCodeManager);
@@ -185,23 +199,30 @@ public class EntranceSpringConfiguration {
 
     @SchedulerContextBeanAnnotation
     @ConditionalOnMissingBean(name = {SchedulerContextBeanAnnotation.BEAN_NAME})
-    public SchedulerContext generateSchedulerContext(@GroupFactoryBeanAnnotation.GroupFactoryAutowiredAnnotation GroupFactory groupFactory,
-                                                     @EntranceExecutorManagerBeanAnnotation.EntranceExecutorManagerAutowiredAnnotation ExecutorManager executorManager,
-                                                     @ConsumerManagerBeanAnnotation.ConsumerManagerAutowiredAnnotation ConsumerManager consumerManager) {
+    public SchedulerContext generateSchedulerContext(
+            @GroupFactoryBeanAnnotation.GroupFactoryAutowiredAnnotation GroupFactory groupFactory,
+            @EntranceExecutorManagerBeanAnnotation.EntranceExecutorManagerAutowiredAnnotation
+                    ExecutorManager executorManager,
+            @ConsumerManagerBeanAnnotation.ConsumerManagerAutowiredAnnotation
+                    ConsumerManager consumerManager) {
         return new EntranceSchedulerContext(groupFactory, consumerManager, executorManager);
     }
 
     @EntranceExecutorManagerBeanAnnotation
     @ConditionalOnMissingBean(name = {EntranceExecutorManagerBeanAnnotation.BEAN_NAME})
-    public ExecutorManager generateExecutorManager(@GroupFactoryBeanAnnotation.GroupFactoryAutowiredAnnotation GroupFactory groupFactory) {
-        EngineConnManagerBuilder engineConnManagerBuilder = EngineConnManagerBuilder$.MODULE$.builder();
+    public ExecutorManager generateExecutorManager(
+            @GroupFactoryBeanAnnotation.GroupFactoryAutowiredAnnotation GroupFactory groupFactory) {
+        EngineConnManagerBuilder engineConnManagerBuilder =
+                EngineConnManagerBuilder$.MODULE$.builder();
         engineConnManagerBuilder.setPolicy(Policy.Process);
         return new EntranceExecutorManagerImpl(groupFactory, engineConnManagerBuilder.build());
     }
 
     @SchedulerBeanAnnotation
     @ConditionalOnMissingBean(name = {SchedulerBeanAnnotation.BEAN_NAME})
-    public Scheduler generateScheduler(@SchedulerContextBeanAnnotation.SchedulerContextAutowiredAnnotation SchedulerContext schedulerContext) {
+    public Scheduler generateScheduler(
+            @SchedulerContextBeanAnnotation.SchedulerContextAutowiredAnnotation
+                    SchedulerContext schedulerContext) {
         Scheduler scheduler = new ParallelScheduler(schedulerContext);
         scheduler.init();
         scheduler.start();

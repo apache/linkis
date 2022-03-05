@@ -2434,4 +2434,1010 @@ This product includes software developed at
 The Apache Software Foundation (http://www.apache.org/).
 
 
+-------------------------------------- Token provider NOTICE --------------------------------------
 
+Token provider
+Copyright 2014-2017 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Scala NOTICE --------------------------------------
+
+Scala
+Copyright (c) 2002-2019 EPFL
+Copyright (c) 2011-2019 Lightbend, Inc.
+
+Scala includes software developed at
+LAMP/EPFL (https://lamp.epfl.ch/) and
+Lightbend, Inc. (https://www.lightbend.com/).
+
+Licensed under the Apache License, Version 2.0 (the "License").
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+This software includes projects with other licenses -- see `doc/LICENSE.md`.
+
+
+
+-------------------------------------- Kerby XDR NOTICE --------------------------------------
+
+Kerby XDR Project
+Copyright 2014-2017 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Kerby Util NOTICE --------------------------------------
+
+Kerby Util
+Copyright 2014-2017 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Kerby PKIX NOTICE --------------------------------------
+
+Kerby PKIX Project
+Copyright 2014-2017 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Kerby PKIX NOTICE --------------------------------------
+
+Kerby Config
+Copyright 2014-2017 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Kerby ASN1 NOTICE --------------------------------------
+
+Kerby ASN1 Project
+Copyright 2014-2017 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Kerb Simple Kdc NOTICE --------------------------------------
+
+Kerb Simple Kdc
+Copyright 2014-2017 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Kerby-kerb Server NOTICE --------------------------------------
+
+Kerby-kerb Server
+Copyright 2014-2017 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Kerby-kerb Identity NOTICE --------------------------------------
+
+Kerby-kerb Identity
+Copyright 2014-2017 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Kerby-kerb Crypto NOTICE --------------------------------------
+
+Kerby-kerb Crypto
+Copyright 2014-2020 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Kerby-kerb core NOTICE --------------------------------------
+
+Kerby-kerb core
+Copyright 2014-2020 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Kerby-kerb Common NOTICE --------------------------------------
+
+Kerby-kerb Common
+Copyright 2014-2020 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Kerby-kerb Admin NOTICE --------------------------------------
+
+Kerby-kerb Admin
+Copyright 2014-2020 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Byte Buddy NOTICE --------------------------------------
+
+Copyright ${project.inceptionYear} - ${current.year} ${copyright.holder}
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
+
+-------------------------------------- Audience Annotations NOTICE --------------------------------------
+
+Apache Yetus - Audience Annotations
+Copyright 2015-2017 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- XmlBeans NOTICE --------------------------------------
+
+   =========================================================================
+   ==  NOTICE file corresponding to section 4(d) of the Apache License,   ==
+   ==  Version 2.0, in this case for the Apache XmlBeans distribution.    ==
+   =========================================================================
+
+   This product includes software developed at
+   The Apache Software Foundation (http://www.apache.org/).
+
+   Portions of this software were originally based on the following:
+     - software copyright (c) 2000-2003, BEA Systems, <http://www.bea.com/>.
+
+   Aside from contributions to the Apache XMLBeans project, this
+   software also includes:
+
+    - one or more source files from the Apache Xerces-J and Apache Axis
+      products, Copyright (c) 1999-2003 Apache Software Foundation
+
+    - W3C XML Schema documents Copyright 2001-2003 (c) World Wide Web
+      Consortium (Massachusetts Institute of Technology, European Research
+      Consortium for Informatics and Mathematics, Keio University)
+
+    - resolver.jar from Apache Xml Commons project,
+      Copyright (c) 2001-2003 Apache Software Foundation
+
+
+
+-------------------------------------- BoneCP NOTICE --------------------------------------
+
+   =========================================================================
+   ==  NOTICE file corresponding to the section 4 d of                    ==
+   ==  the Apache License, Version 2.0,                                   ==
+   ==  in this case for the BoneCP (Java connection pool).                ==
+   =========================================================================
+
+   BoneCP
+   Copyright 2010 Wallace Wadge
+
+   This product includes software developed by
+   Wallace Wadge (http://jolbox.com/).
+
+
+
+-------------------------------------- Chill NOTICE --------------------------------------
+
+Chill is a set of Scala extensions for Kryo.
+Copyright 2012 Twitter, Inc.
+
+Third Party Dependencies:
+
+Kryo 2.17
+BSD 3-Clause License
+http://code.google.com/p/kryo
+
+Commons-Codec 1.7
+Apache Public License 2.0
+http://hadoop.apache.org
+
+
+
+-------------------------------------- Flink Clients NOTICE --------------------------------------
+
+Flink : Clients
+Copyright 2014-2022 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+-------------------------------------- flink-connector-hive NOTICE --------------------------------------
+
+flink-connector-hive
+Copyright 2014-2021 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+This project bundles the following dependencies under the Apache Software License 2.0. (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+- org.apache.parquet:parquet-hadoop:1.11.1
+- org.apache.parquet:parquet-column:1.11.1
+- org.apache.parquet:parquet-common:1.11.1
+- org.apache.parquet:parquet-encoding:1.11.1
+- org.apache.parquet:parquet-format-structures:1.11.1
+- org.apache.parquet:parquet-jackson:1.11.1
+
+
+
+-------------------------------------- flink-connector-kafka NOTICE --------------------------------------
+
+Flink : Connectors : Kafka
+Copyright 2014-2022 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Flink Optimizer NOTICE --------------------------------------
+
+Flink : Optimizer
+Copyright 2014-2021 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Flink Runtime NOTICE --------------------------------------
+
+flink-runtime
+Copyright 2014-2021 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+This project bundles the following dependencies under the Apache Software License 2.0. (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+- com.typesafe.akka:akka-remote_2.11:2.5.21
+- io.netty:netty:3.10.6.Final
+
+This project bundles io.netty:netty:3.10.6.Final from which it inherits the following notices:
+
+This product contains the extensions to Java Collections Framework which has
+been derived from the works by JSR-166 EG, Doug Lea, and Jason T. Greene:
+
+  * LICENSE:
+    * licenses/LICENSE.jsr166y (Public Domain)
+  * HOMEPAGE:
+    * http://gee.cs.oswego.edu/cgi-bin/viewcvs.cgi/jsr166/
+    * http://viewvc.jboss.org/cgi-bin/viewvc.cgi/jbosscache/experimental/jsr166/
+
+This product contains a modified version of Robert Harder's Public Domain
+Base64 Encoder and Decoder, which can be obtained at:
+
+  * LICENSE:
+    * licenses/LICENSE.base64 (Public Domain)
+  * HOMEPAGE:
+    * http://iharder.sourceforge.net/current/java/base64/
+
+This product contains a modified version of 'JZlib', a re-implementation of
+zlib in pure Java, which can be obtained at:
+
+  * LICENSE:
+    * licenses/LICENSE.jzlib (BSD Style License)
+  * HOMEPAGE:
+    * http://www.jcraft.com/jzlib/
+
+This product contains a modified version of 'Webbit', a Java event based
+WebSocket and HTTP server:
+
+  * LICENSE:
+    * licenses/LICENSE.webbit (BSD License)
+  * HOMEPAGE:
+    * https://github.com/joewalnes/webbit
+
+
+
+-------------------------------------- Flink Scala NOTICE --------------------------------------
+
+Flink : Scala
+Copyright 2014-2022 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Flink Shaded Asm NOTICE --------------------------------------
+
+// ------------------------------------------------------------------
+// NOTICE file corresponding to the section 4d of The Apache License,
+// Version 2.0, in this case for Apache Flink-shaded
+// ------------------------------------------------------------------
+
+Apache Flink-shaded
+Copyright 2006-2021 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+flink-shaded-asm7
+Copyright 2014-2021 The Apache Software Foundation
+
+This project bundles the following dependencies under the BSD license.
+See bundled license files for details.
+
+- org.ow2.asm:asm:7.1
+- org.ow2.asm:asm-analysis:7.1
+- org.ow2.asm:asm-commons:7.1
+- org.ow2.asm:asm-tree:7.1
+
+
+
+-------------------------------------- Flink Shaded Guava NOTICE --------------------------------------
+
+// ------------------------------------------------------------------
+// NOTICE file corresponding to the section 4d of The Apache License,
+// Version 2.0, in this case for Apache Flink-shaded
+// ------------------------------------------------------------------
+
+Apache Flink-shaded
+Copyright 2006-2022 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+flink-shaded-guava-30
+Copyright 2014-2021 The Apache Software Foundation
+
+This project bundles the following dependencies under the Apache Software License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+- com.google.guava:guava:30.1.1-jre
+- com.google.guava:failureaccess:1.0.1
+
+
+
+-------------------------------------- Flink Shaded Jackson NOTICE --------------------------------------
+
+// ------------------------------------------------------------------
+// NOTICE file corresponding to the section 4d of The Apache License,
+// Version 2.0, in this case for Apache Flink-shaded
+// ------------------------------------------------------------------
+
+Apache Flink-shaded
+Copyright 2006-2022 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+flink-shaded-jackson
+Copyright 2014-2021 The Apache Software Foundation
+
+This project includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+This project bundles the following dependencies under the Apache Software License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+- com.fasterxml.jackson.core:jackson-annotations:2.12.4
+- com.fasterxml.jackson.core:jackson-core:2.12.4
+- com.fasterxml.jackson.core:jackson-databind:2.12.4
+- com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.12.4
+- com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.4
+- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.12.4
+- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.4
+- org.yaml:snakeyaml:1.29
+
+# Jackson JSON processor
+
+Jackson is a high-performance, Free/Open Source JSON processing library.
+It was originally written by Tatu Saloranta (tatu.saloranta@iki.fi), and has
+been in development since 2007.
+It is currently developed by a community of developers.
+
+## Licensing
+
+Jackson 2.x core and extension components are licensed under Apache License 2.0
+To find the details that apply to this artifact see the accompanying LICENSE file.
+
+## Credits
+
+A list of contributors may be found from CREDITS(-2.x) file, which is included
+in some artifacts (usually source distributions); but is always available
+from the source code management (SCM) system project uses.
+
+Jackson is a high-performance, Free/Open Source JSON processing library.
+It was originally written by Tatu Saloranta (tatu.saloranta@iki.fi), and has
+been in development since 2007.
+It is currently developed by a community of developers, as well as supported
+commercially by FasterXML.com.
+
+Jackson core and extension components may be licensed under different licenses.
+To find the details that apply to this artifact see the accompanying LICENSE file.
+For more information, including possible other licensing options, contact
+FasterXML.com (http://fasterxml.com).
+
+A list of contributors may be found from CREDITS file, which is included
+in some artifacts (usually source distributions); but is always available
+from the source code management (SCM) system project uses.
+
+
+
+-------------------------------------- Flink Shaded Netty NOTICE --------------------------------------
+
+// ------------------------------------------------------------------
+// NOTICE file corresponding to the section 4d of The Apache License,
+// Version 2.0, in this case for Apache Flink-shaded
+// ------------------------------------------------------------------
+
+Apache Flink-shaded
+Copyright 2006-2020 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+flink-shaded-netty
+Copyright 2014-2018 The Apache Software Foundation
+
+This project includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+This project bundles the following dependencies under the Apache Software License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+- io.netty:netty-all:4.1.49.Final
+
+
+
+-------------------------------------- Flink Shaded Zookeeper NOTICE --------------------------------------
+
+// ------------------------------------------------------------------
+// NOTICE file corresponding to the section 4d of The Apache License,
+// Version 2.0, in this case for Apache Flink-shaded
+// ------------------------------------------------------------------
+
+Apache Flink-shaded
+Copyright 2006-2020 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+flink-shaded-zookeeper-3
+Copyright 2014-2020 The Apache Software Foundation
+
+This project bundles the following dependencies under the Apache Software License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+- com.google.guava:guava:27.0.1-jre
+- org.apache.curator:curator-client:4.2.0
+- org.apache.curator:curator-framework:4.2.0
+- org.apache.curator:curator-recipes:4.2.0
+- org.apache.zookeeper:zookeeper:3.4.14
+
+
+Curator Recipes
+Copyright 2011-2019 The Apache Software Foundation
+
+Curator Framework
+Copyright 2011-2019 The Apache Software Foundation
+
+Curator Client
+Copyright 2011-2019 The Apache Software Foundation
+
+
+
+-------------------------------------- Flink SQL Client NOTICE --------------------------------------
+
+// ------------------------------------------------------------------
+// NOTICE file corresponding to the section 4d of The Apache License,
+// Version 2.0, in this case for Apache Flink
+// ------------------------------------------------------------------
+
+Apache Flink
+Copyright 2006-2021 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+flink-sql-client
+Copyright 2014-2021 The Apache Software Foundation
+
+This project bundles the following dependencies under the BSD license.
+See bundled license files for details.
+
+- org.jline:jline-terminal:3.9.0
+- org.jline:jline-reader:3.9.0
+
+
+
+-------------------------------------- Flink Streaming Java NOTICE --------------------------------------
+
+// ------------------------------------------------------------------
+// NOTICE file corresponding to the section 4d of The Apache License,
+// Version 2.0, in this case for Apache Flink
+// ------------------------------------------------------------------
+
+Apache Flink
+Copyright 2006-2021 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+Flink : Streaming Java
+Copyright 2014-2021 The Apache Software Foundation
+
+
+
+-------------------------------------- Flink Streaming Scala NOTICE --------------------------------------
+
+// ------------------------------------------------------------------
+// NOTICE file corresponding to the section 4d of The Apache License,
+// Version 2.0, in this case for Apache Flink
+// ------------------------------------------------------------------
+
+Apache Flink
+Copyright 2006-2021 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+Flink : Streaming Scala
+Copyright 2014-2021 The Apache Software Foundation
+
+
+-------------------------------------- Flink Table Api Java Bridge NOTICE --------------------------------------
+
+// ------------------------------------------------------------------
+// NOTICE file corresponding to the section 4d of The Apache License,
+// Version 2.0, in this case for Apache Flink
+// ------------------------------------------------------------------
+
+Apache Flink
+Copyright 2006-2021 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+Flink : Table : API Java bridge
+Copyright 2014-2021 The Apache Software Foundation
+
+
+-------------------------------------- Flink Table Api Scala NOTICE --------------------------------------
+
+// ------------------------------------------------------------------
+// NOTICE file corresponding to the section 4d of The Apache License,
+// Version 2.0, in this case for Apache Flink
+// ------------------------------------------------------------------
+
+Apache Flink
+Copyright 2006-2021 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+Flink : Table : API Scala
+Copyright 2014-2021 The Apache Software Foundation
+
+
+
+-------------------------------------- Flink Table Api Scala Bridge NOTICE --------------------------------------
+
+// ------------------------------------------------------------------
+// NOTICE file corresponding to the section 4d of The Apache License,
+// Version 2.0, in this case for Apache Flink
+// ------------------------------------------------------------------
+
+Apache Flink
+Copyright 2006-2021 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+Flink : Table : API Scala bridge
+Copyright 2014-2021 The Apache Software Foundation
+
+
+
+-------------------------------------- Flink Table Planner Blink NOTICE --------------------------------------
+
+// ------------------------------------------------------------------
+// NOTICE file corresponding to the section 4d of The Apache License,
+// Version 2.0, in this case for Apache Flink
+// ------------------------------------------------------------------
+
+Apache Flink
+Copyright 2006-2021 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+
+flink-table-planner-blink
+Copyright 2014-2021 The Apache Software Foundation
+
+This project bundles the following dependencies under the Apache Software License 2.0. (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+- com.google.guava:guava:29.0-jre
+- com.google.guava:failureaccess:1.0.1
+- com.esri.geometry:esri-geometry-api:2.2.0
+- com.fasterxml.jackson.core:jackson-annotations:2.10.5
+- com.fasterxml.jackson.core:jackson-core:2.10.5
+- com.fasterxml.jackson.core:jackson-databind:2.10.5.1
+- com.jayway.jsonpath:json-path:2.4.0
+- org.apache.calcite:calcite-core:1.26.0
+- org.apache.calcite:calcite-linq4j:1.26.0
+- org.apache.calcite.avatica:avatica-core:1.17.0
+- commons-codec:commons-codec:1.13
+- commons-io:commons-io:2.7
+
+This project bundles the following dependencies under the BSD license.
+See bundled license files for details
+
+- org.codehaus.janino:janino:3.0.11
+- org.codehaus.janino:commons-compiler:3.0.11
+
+This project bundles the following dependencies under the ICU license.
+See bundled license files for details
+
+- com.ibm.icu:icu4j:67.1
+
+
+Flink : Table : SQL Parser
+Copyright 2014-2021 The Apache Software Foundation
+
+Flink : Table : SQL Parser Hive
+Copyright 2014-2021 The Apache Software Foundation
+
+Apache Calcite -- Avatica
+Copyright 2012-2020 The Apache Software Foundation
+
+Apache Calcite
+Copyright 2012-2020 The Apache Software Foundation
+
+This product is based on source code originally developed
+by DynamoBI Corporation, LucidEra Inc., SQLstream Inc. and others
+under the auspices of the Eigenbase Foundation
+and released as the LucidDB project.
+
+The web site includes files generated by Jekyll.
+
+# Jackson JSON processor
+
+Jackson is a high-performance, Free/Open Source JSON processing library.
+It was originally written by Tatu Saloranta (tatu.saloranta@iki.fi), and has
+been in development since 2007.
+It is currently developed by a community of developers, as well as supported
+commercially by FasterXML.com.
+
+## Licensing
+
+Jackson core and extension components may licensed under different licenses.
+To find the details that apply to this artifact see the accompanying LICENSE file.
+For more information, including possible other licensing options, contact
+FasterXML.com (http://fasterxml.com).
+
+## Credits
+
+A list of contributors may be found from CREDITS file, which is included
+in some artifacts (usually source distributions); but is always available
+from the source code management (SCM) system project uses.
+
+Jackson core and extension components may be licensed under different licenses.
+To find the details that apply to this artifact see the accompanying LICENSE file.
+For more information, including possible other licensing options, contact
+FasterXML.com (http://fasterxml.com).
+
+Apache Commons Codec
+Copyright 2002-2019 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (https://www.apache.org/).
+
+src/test/org/apache/commons/codec/language/DoubleMetaphoneTest.java
+contains test data from http://aspell.net/test/orig/batch0.tab.
+Copyright (C) 2002 Kevin Atkinson (kevina@gnu.org)
+
+===============================================================================
+
+The content of package org.apache.commons.codec.language.bm has been translated
+from the original php source code available at http://stevemorse.org/phoneticinfo.htm
+with permission from the original authors.
+Original source copyright:
+Copyright (c) 2008 Alexander Beider & Stephen P. Morse.
+
+Apache Commons IO
+Copyright 2002-2020 The Apache Software Foundation
+
+
+
+-------------------------------------- Flink Table Runtime Blink NOTICE --------------------------------------
+
+// ------------------------------------------------------------------
+// NOTICE file corresponding to the section 4d of The Apache License,
+// Version 2.0, in this case for Apache Flink
+// ------------------------------------------------------------------
+
+Apache Flink
+Copyright 2006-2021 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+Flink : Table : Runtime Blink
+Copyright 2014-2021 The Apache Software Foundation
+
+
+
+-------------------------------------- Flink Yarn NOTICE --------------------------------------
+
+// ------------------------------------------------------------------
+// NOTICE file corresponding to the section 4d of The Apache License,
+// Version 2.0, in this case for Apache Flink
+// ------------------------------------------------------------------
+
+Apache Flink
+Copyright 2006-2021 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+Flink : Yarn
+Copyright 2014-2021 The Apache Software Foundation
+
+
+
+-------------------------------------- Guava Retrying NOTICE --------------------------------------
+
+Copyright 2012-2015 Ray Holder
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
+
+-------------------------------------- HTrace Core4 NOTICE --------------------------------------
+
+htrace-core4
+Copyright 2016 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- HttpAsyncClient NOTICE --------------------------------------
+
+Apache HttpAsyncClient
+Copyright 2010-2016 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- HttpCore NIO NOTICE --------------------------------------
+
+Apache HttpCore NIO
+Copyright 2005-2016 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Jackson Jaxrs Json Provider NOTICE --------------------------------------
+
+# Jackson JSON processor
+
+Jackson is a high-performance, Free/Open Source JSON processing library.
+It was originally written by Tatu Saloranta (tatu.saloranta@iki.fi), and has
+been in development since 2007.
+It is currently developed by a community of developers, as well as supported
+commercially by FasterXML.com.
+
+## Licensing
+
+Jackson core and extension components may be licensed under different licenses.
+To find the details that apply to this artifact see the accompanying LICENSE file.
+For more information, including possible other licensing options, contact
+FasterXML.com (http://fasterxml.com).
+
+## Credits
+
+A list of contributors may be found from CREDITS file, which is included
+in some artifacts (usually source distributions); but is always available
+from the source code management (SCM) system project uses.
+
+
+
+-------------------------------------- JDO API NOTICE --------------------------------------
+
+Apache Java Data Objects (JDO)
+Copyright 2005-2006 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Jersey Bean Validation NOTICE --------------------------------------
+
+# Notice for Jersey Bean Validation module
+This content is produced and maintained by the Eclipse Jersey project.
+
+* https://projects.eclipse.org/projects/ee4j.jersey
+
+## Trademarks
+Eclipse Jersey is a trademark of the Eclipse Foundation.
+
+## Copyright
+
+All content is the property of the respective authors or their employers. For
+more information regarding authorship of content, please consult the listed
+source code repository logs.
+
+## Declared Project Licenses
+
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v. 2.0 which is available at
+http://www.eclipse.org/legal/epl-2.0. This Source Code may also be made
+available under the following Secondary Licenses when the conditions for such
+availability set forth in the Eclipse Public License v. 2.0 are satisfied: GNU
+General Public License, version 2 with the GNU Classpath Exception which is
+available at https://www.gnu.org/software/classpath/license.html.
+
+SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+## Source Code
+The project maintains the following source code repositories:
+
+* https://github.com/eclipse-ee4j/jersey
+
+## Third-party Content
+
+Hibernate Validator CDI, 7.0.0.Final
+* License: Apache License, 2.0
+* Project: https://beanvalidation.org/
+* Repackaged in org.glassfish.jersey.server.validation.internal.hibernate
+
+
+
+-------------------------------------- JUnit NOTICE --------------------------------------
+
+   ===================================================================================
+   ==  Notices and attributions required by libraries that the project depends on   ==
+   ===================================================================================
+
+ The JUnit depends on Java Hamcrest (http://hamcrest.org/JavaHamcrest/).
+
+
+
+-------------------------------------- Thrift NOTICE --------------------------------------
+
+Apache Thrift
+Copyright 2006-2010 The Apache Software Foundation.
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+-------------------------------------- Snappy Java NOTICE --------------------------------------
+
+This product includes software developed by Google
+ Snappy: http://code.google.com/p/snappy/ (New BSD License)
+
+
+This library containd statically linked libstdc++. This inclusion is allowed by
+"GCC RUntime Library Exception"
+http://gcc.gnu.org/onlinedocs/libstdc++/manual/license.html
+
+== Contributors ==
+  * Tatu Saloranta
+    * Providing benchmark suite
+  * Alec Wysoker
+    * Performance and memory usage improvement
+
+
+
+-------------------------------------- Spring Plugin Core NOTICE --------------------------------------
+
+Spring Plugin - Core 2.0.0.RELEASE
+Copyright (c) [2008-2019] Pivotal Software, Inc.
+
+This product is licensed to you under the Apache License, Version 2.0 (the "License").
+You may not use this product except in compliance with the License.
+
+This product may include a number of subcomponents with
+separate copyright notices and license terms. Your use of the source
+code for the these subcomponents is subject to the terms and
+conditions of the subcomponent's license, as noted in the LICENSE file.
+
+
+
+-------------------------------------- Spring Plugin Metadata NOTICE --------------------------------------
+
+Spring Plugin - Metadata Extension 2.0.0.RELEASE
+Copyright (c) [2008-2019] Pivotal Software, Inc.
+
+This product is licensed to you under the Apache License, Version 2.0 (the "License").
+You may not use this product except in compliance with the License.
+
+This product may include a number of subcomponents with
+separate copyright notices and license terms. Your use of the source
+code for the these subcomponents is subject to the terms and
+conditions of the subcomponent's license, as noted in the LICENSE file.
+
+
+
+-------------------------------------- Spring Security NOTICE --------------------------------------
+
+   ======================================================================
+   == NOTICE file corresponding to section 4(d) of the Apache License, ==
+   == Version 2.0, in this case for the Spring Security distribution.  ==
+   ======================================================================
+
+   The end-user documentation included with a redistribution, if any,
+   must include the following acknowledgement:
+
+     "This product includes software developed by Spring Security
+      Project (https://www.springframework.org/security)."
+
+   Alternately, this acknowledgement may appear in the software itself,
+   if and wherever such third-party acknowledgements normally appear.
+
+   The names "Spring", "Spring Security", "Spring Security System",
+   "SpringSource", "Acegi", "Acegi Security", "Acegi Security System",
+   "Acegi" or any derivatives thereof may not be used to endorse or
+   promote products derived from this software without prior written
+   permission. For written permission, please contact
+   ben.alex@springsource.com.

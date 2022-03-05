@@ -31,6 +31,7 @@ import org.apache.linkis.metadatamanager.common.service.MetadataConnection;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
+import org.apache.hadoop.hive.ql.metadata.Hive;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.metadata.Partition;
 import org.apache.hadoop.hive.ql.metadata.Table;
@@ -47,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class HiveMetaService extends AbstractMetaService<HiveConnection> {
@@ -56,6 +58,9 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
             CommonVars.apply("wds.linkis.server.mdm.service.temp.location", "classpath:/tmp");
 
     private BmlClient client;
+
+    private static final String PARTITION_PART_SEPARATOR = ",";
+    private static final String PARTITION_KV_SEPARATOR = "=";
 
     @PostConstruct
     public void buildClient() {
@@ -144,12 +149,15 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
 
     @Override
     public MetaPartitionInfo queryPartitions(
-            HiveConnection connection, String database, String table) {
+            HiveConnection connection, String database, String table, boolean traverse) {
         List<Partition> partitions;
         Table rawTable;
         try {
             rawTable = connection.getClient().getTable(database, table);
-            partitions = connection.getClient().getPartitions(rawTable);
+            partitions =
+                    traverse
+                            ? connection.getClient().getPartitions(rawTable)
+                            : Collections.emptyList();
         } catch (HiveException e) {
             throw new RuntimeException("Fail to get Hive partitions(获取分区信息失败)", e);
         }
@@ -158,37 +166,39 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
         List<String> partKeys = new ArrayList<>();
         partitionKeys.forEach(e -> partKeys.add(e.getName()));
         info.setPartKeys(partKeys);
-        // Static partitions
-        Map<String, MetaPartitionInfo.PartitionNode> pMap = new HashMap<>(20);
-        MetaPartitionInfo.PartitionNode root = new MetaPartitionInfo.PartitionNode();
-        info.setRoot(root);
-        long t = System.currentTimeMillis();
-        for (Partition p : partitions) {
-            try {
-                List<String> values = p.getValues();
-                if (!partitionKeys.isEmpty()) {
-                    String parentNameValue = "";
-                    for (int i = 0; i < values.size(); i++) {
-                        FieldSchema fieldSchema = partitionKeys.get(i);
-                        String name = fieldSchema.getName();
-                        String value = values.get(i);
-                        String nameValue = name + "=" + value;
-                        MetaPartitionInfo.PartitionNode node =
-                                new MetaPartitionInfo.PartitionNode();
-                        if (i > 0) {
-                            MetaPartitionInfo.PartitionNode parent = pMap.get(parentNameValue);
-                            parent.setName(name);
-                            parent.getPartitions().putIfAbsent(value, node);
-                        } else {
-                            root.setName(name);
-                            root.getPartitions().putIfAbsent(value, node);
+        if (traverse) {
+            // Static partitions
+            Map<String, MetaPartitionInfo.PartitionNode> pMap = new HashMap<>(20);
+            MetaPartitionInfo.PartitionNode root = new MetaPartitionInfo.PartitionNode();
+            info.setRoot(root);
+            long t = System.currentTimeMillis();
+            for (Partition p : partitions) {
+                try {
+                    List<String> values = p.getValues();
+                    if (!partitionKeys.isEmpty()) {
+                        String parentNameValue = "";
+                        for (int i = 0; i < values.size(); i++) {
+                            FieldSchema fieldSchema = partitionKeys.get(i);
+                            String name = fieldSchema.getName();
+                            String value = values.get(i);
+                            String nameValue = name + "=" + value;
+                            MetaPartitionInfo.PartitionNode node =
+                                    new MetaPartitionInfo.PartitionNode();
+                            if (i > 0) {
+                                MetaPartitionInfo.PartitionNode parent = pMap.get(parentNameValue);
+                                parent.setName(name);
+                                parent.getPartitions().putIfAbsent(value, node);
+                            } else {
+                                root.setName(name);
+                                root.getPartitions().putIfAbsent(value, node);
+                            }
+                            parentNameValue += "/" + nameValue;
+                            pMap.putIfAbsent(parentNameValue, node);
                         }
-                        parentNameValue += "/" + nameValue;
-                        pMap.putIfAbsent(parentNameValue, node);
                     }
+                } catch (Exception e) {
+                    LOG.warn(e.getMessage(), e);
                 }
-            } catch (Exception e) {
-                LOG.warn(e.getMessage(), e);
             }
         }
         return info;
@@ -225,6 +235,38 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
         } catch (Exception e) {
             throw new RuntimeException("Fail to get Hive table properties(获取表参数信息失败)", e);
         }
+    }
+
+    @Override
+    public Map<String, String> queryPartitionProps(
+            HiveConnection connection, String database, String table, String partition) {
+        Map<String, String> properties = new HashMap<>();
+        Hive client = connection.getClient();
+        if (Objects.nonNull(client) && StringUtils.isNotBlank(partition)) {
+            try {
+                // Convert to pairs of (partition_key: partition_value)
+                Map<String, String> partitionParts =
+                        Arrays.stream(partition.split(PARTITION_PART_SEPARATOR))
+                                .map(part -> part.split(PARTITION_KV_SEPARATOR))
+                                .collect(
+                                        Collectors.toMap(
+                                                kv -> kv[0], kv -> kv.length > 1 ? kv[1] : ""));
+                Table rawTable = client.getTable(database, table);
+                Partition rawPartition = client.getPartition(rawTable, partitionParts, false);
+                if (Objects.nonNull(rawPartition)) {
+                    Properties metadataProps = rawPartition.getMetadataFromPartitionSchema();
+                    Enumeration<?> propertyNames = metadataProps.propertyNames();
+                    while (propertyNames.hasMoreElements()) {
+                        String propName = String.valueOf(propertyNames.nextElement());
+                        Optional.ofNullable(metadataProps.getProperty(propName, null))
+                                .ifPresent(value -> properties.put(propName, value));
+                    }
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Fail to get partition's properties(获取分区参数信息失败)", e);
+            }
+        }
+        return properties;
     }
 
     @SuppressWarnings("unchecked")

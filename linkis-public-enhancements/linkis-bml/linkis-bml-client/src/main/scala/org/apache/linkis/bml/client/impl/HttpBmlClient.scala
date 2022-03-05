@@ -17,7 +17,7 @@
 
 package org.apache.linkis.bml.client.impl
 
-import java.io.{ByteArrayInputStream, File, IOException, InputStream}
+import java.io.{OutputStream, File, IOException, InputStream}
 import java.util
 import org.apache.linkis.bml.client.AbstractBmlClient
 import org.apache.linkis.bml.common._
@@ -38,6 +38,7 @@ import org.apache.linkis.storage.FSFactory
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.http.client.methods.CloseableHttpResponse
+
 
 class HttpBmlClient(clientConfig: DWSClientConfig,
                    serverUrl: String,
@@ -125,7 +126,7 @@ class HttpBmlClient(clientConfig: DWSClientConfig,
     * @param overwrite 是否是追加
     * @return 返回的inputStream已经被全部读完，所以返回一个null,另外的fullFileName是整个文件的名字
     */
-  override def downloadResource(user: String, resourceId: String, version: String, path: String, overwrite:Boolean = false): BmlDownloadResponse = {
+  override def downloadResource(user: String, resourceId: String, version: String, path: String, overwrite: Boolean = false): BmlDownloadResponse = {
     val fsPath = new FsPath(path)
     val fileSystem = FSFactory.getFsByProxyUser(fsPath, user)
     fileSystem.init(new util.HashMap[String, String]())
@@ -135,12 +136,13 @@ class HttpBmlClient(clientConfig: DWSClientConfig,
     downloadAction.getParameters += "resourceId" -> resourceId
     if(StringUtils.isNotEmpty(version)) downloadAction.getParameters += "version" -> version
     downloadAction.setUser(user)
-    val downloadResult = dwsClient.execute(downloadAction)
-    val fullFilePath = new FsPath(fullFileName)
-    if (downloadResult != null){
-      val inputStream = downloadAction.getInputStream
-      val outputStream = fileSystem.write(fullFilePath, overwrite)
-      try{
+      var inputStream: InputStream = null
+      var outputStream: OutputStream = null
+      try {
+        dwsClient.execute(downloadAction)
+        val fullFilePath = new FsPath(fullFileName)
+        outputStream = fileSystem.write(fullFilePath, overwrite)
+        inputStream = downloadAction.getInputStream
         IOUtils.copy(inputStream, outputStream)
         downloadAction.getResponse match {
           case r: CloseableHttpResponse =>
@@ -148,24 +150,20 @@ class HttpBmlClient(clientConfig: DWSClientConfig,
           case o: Any =>
             info(s"Download response : ${o.getClass.getName} cannot close.")
         }
-      }catch{
-        case e:IOException => logger.error("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)", e)
+      } catch {
+        case e: IOException => logger.error("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)", e)
           val exception = BmlClientFailException("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)")
           exception.initCause(e)
-          throw e
-        case t:Throwable => logger.error("failed to copy stream (流复制失败)",t)
+          throw exception
+        case t: Throwable => logger.error("failed to copy stream (流复制失败)", t)
           throw t
-      }finally{
-        IOUtils.closeQuietly(inputStream)
-        IOUtils.closeQuietly(outputStream)
+      } finally {
+        if (null != inputStream) IOUtils.closeQuietly(inputStream)
+        if (null != outputStream) IOUtils.closeQuietly(outputStream)
         fileSystem.close()
       }
       BmlDownloadResponse(isSuccess = true, null, resourceId, version, fullFileName)
-    }else{
-      fileSystem.close()
-      BmlDownloadResponse(isSuccess = false, null, null, null, null)
     }
-  }
 
 
   override def downloadShareResource(user: String, resourceId: String, version: String, path: String,
@@ -179,30 +177,27 @@ class HttpBmlClient(clientConfig: DWSClientConfig,
     downloadAction.getParameters += "resourceId" -> resourceId
     if(StringUtils.isNotEmpty(version)) downloadAction.getParameters += "version" -> version
     downloadAction.setUser(user)
-    val downloadResult = dwsClient.execute(downloadAction)
-    val fullFilePath = new FsPath(fullFileName)
-    if (downloadResult != null){
-      val inputStream = downloadAction.getInputStream
-      val outputStream = fileSystem.write(fullFilePath, overwrite)
-      try{
+    var inputStream: InputStream = null
+    var outputStream: OutputStream = null
+    try {
+      dwsClient.execute(downloadAction)
+      val fullFilePath = new FsPath(fullFileName)
+      outputStream = fileSystem.write(fullFilePath, overwrite)
+      inputStream = downloadAction.getInputStream
         IOUtils.copy(inputStream, outputStream)
-      }catch{
+      } catch {
         case e:IOException => logger.error("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)", e)
           val exception = BmlClientFailException("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)")
           exception.initCause(e)
           throw e
         case t:Throwable => logger.error("failed to copy stream (流复制失败)",t)
           throw t
-      }finally{
-        IOUtils.closeQuietly(inputStream)
-        IOUtils.closeQuietly(outputStream)
+      } finally {
+       if (null != inputStream) IOUtils.closeQuietly(inputStream)
+       if (null != outputStream) IOUtils.closeQuietly(outputStream)
         fileSystem.close()
       }
       BmlDownloadResponse(isSuccess = true, null, resourceId, version, fullFileName)
-    }else{
-      fileSystem.close()
-      BmlDownloadResponse(isSuccess = false, null, null, null, null)
-    }
   }
 
 

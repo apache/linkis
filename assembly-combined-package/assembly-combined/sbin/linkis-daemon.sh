@@ -114,7 +114,7 @@ function stop()
       if [[ -z "${pid}" ]]; then
         echo "server $SERVER_NAME is not running"
       else
-        wait_for_server_to_die $pid 300
+        wait_for_server_to_die $pid 40
         $(rm -f ${SERVER_PID})
         echo "server $SERVER_NAME is stopped."
       fi

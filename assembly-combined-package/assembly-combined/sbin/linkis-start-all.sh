@@ -69,7 +69,7 @@ SERVER_NAME="mg-gateway"
 SERVER_IP=$GATEWAY_INSTALL_IP
 startApp
 
-#publicservice
+#publicenservice
 SERVER_NAME="ps-publicservice"
 SERVER_IP=$PUBLICSERVICE_INSTALL_IP
 startApp

@@ -30,16 +30,14 @@ if [ "$LINKIS_HOME" = "" ]; then
   export LINKIS_HOME=$INSTALL_HOME
 fi
 
-if [ -z "$LINKIS_CONF_DIR" ]
-then
-  LINKIS_CONF_DIR="$LINKIS_HOME/conf"
-fi
-
-
 info="We will stop all linkis applications, it will take some time, please wait"
 echo ${info}
 
+
+
+
 source ${LINKIS_HOME}/sbin/common.sh
+
 
 function stopApp(){
 echo "<-------------------------------->"
@@ -52,27 +50,6 @@ fi
 
 executeCMD $SERVER_IP "$SERVER_STOP_CMD"
 
-echo "<-------------------------------->"
-}
-
-function clearResource(){
-echo "<-------------------------------->"
-echo "Begin to clear resource..."
-LINKIS_PROPERTIES_PATH="${LINKIS_CONF_DIR}/db.sh"
-source ${LINKIS_PROPERTIES_PATH}
-mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -D$MYSQL_DB -p$MYSQL_PASSWORD --default-character-set=utf8 -e "DELETE FROM linkis_cg_manager_label_resource"
-checkpoint1=$?
-mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -D$MYSQL_DB -p$MYSQL_PASSWORD --default-character-set=utf8 -e "DELETE FROM linkis_cg_manager_linkis_resources"
-checkpoint2=$?
-mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -D$MYSQL_DB -p$MYSQL_PASSWORD --default-character-set=utf8 -e "DELETE FROM linkis_cg_manager_service_instance_metrics"
-checkpoint3=$?
-mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -D$MYSQL_DB -p$MYSQL_PASSWORD --default-character-set=utf8 -e "DELETE FROM linkis_cg_manager_lock"
-if [ ${checkpoint1} -ne 0 -o ${checkpoint2} -ne 0 -o ${checkpoint3} -ne 0 -o $? -ne 0 ]
-then
-  echo "Failed to clear resource, pleck check your db.sh configuration."
-else
-  echo "Success to clear all resource!"
-fi
 echo "<-------------------------------->"
 }
 
@@ -118,7 +95,5 @@ stopApp
 export SERVER_NAME="mg-eureka"
 SERVER_IP=$EUREKA_INSTALL_IP
 stopApp
-
-clearResource
 
 echo "stop-all shell script executed completely"

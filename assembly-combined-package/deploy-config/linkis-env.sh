@@ -38,12 +38,12 @@ HDFS_USER_ROOT_PATH=hdfs:///tmp/linkis ##hdfs:// required
 
 
 ### Path to store started engines and engine logs, must be local
-ENGINECONN_ROOT_PATH=/data/bdp/linkis
+ENGINECONN_ROOT_PATH=/appcom/tmp
 
 #ENTRANCE_CONFIG_LOG_PATH=hdfs:///tmp/linkis/
 
 ### Path to store job ResultSet:file or hdfs path
-#RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis ##hdfs:// required
+RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis ##hdfs:// required
 
 ### Provide the DB information of Hive metadata database.
 ### Attention! If there are special characters like "&", they need to be enclosed in quotation marks.
@@ -134,7 +134,7 @@ CS_PORT=9108
 export SERVER_HEAP_SIZE="512M"
 
 ##The decompression directory and the installation directory need to be inconsistent
-LINKIS_HOME=/appcom/Install/LinkisInstall
+#LINKIS_HOME=/appcom/Install/LinkisInstall
 
 LINKIS_VERSION=1.1.0
 

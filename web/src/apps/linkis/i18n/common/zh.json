@@ -51,6 +51,7 @@
             "save": "保存",
             "edit": "编辑",
             "cancel": "取消",
+            "create": "新建",
             "noDataText": "暂无数据",
             "userName": "用户名",
             "unselect": "请选择",
@@ -82,7 +83,7 @@
             },
             "tableColumns": {
                 "instanceName": "实例名称",
-                "initiator":"启动者",
+                "initiator": "启动者",
                 "engineInstance": "引擎实例",
                 "engineType": "引擎类型",
                 "appType": "应用类型",

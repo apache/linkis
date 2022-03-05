@@ -155,13 +155,13 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager) extends A
 
     val jobReq = new JobRequest
     jobReq.setCreatedTime(new Date(System.currentTimeMillis))
-    val umUser = params.get(TaskConstant.UMUSER).asInstanceOf[String]
+    val umUser = params.get(TaskConstant.EXECUTE_USER).asInstanceOf[String]
     val submitUser = params.get(TaskConstant.SUBMIT_USER).asInstanceOf[String]
     jobReq.setSubmitUser(submitUser)
     if (StringUtils.isBlank(submitUser)) {
       jobReq.setSubmitUser(umUser)
     }
-    if (umUser == null) throw new EntranceIllegalParamException(20005, "umUser can not be null")
+    if (umUser == null) throw new EntranceIllegalParamException(20005, "execute user can not be null")
     jobReq.setExecuteUser(umUser)
     var executionCode = params.get(TaskConstant.EXECUTIONCODE).asInstanceOf[String]
     val _params = params.get(TaskConstant.PARAMS)

@@ -103,6 +103,7 @@ object SSOUtils extends Logging {
       cookie.setValue(null)
       cookie.setMaxAge(0)
     }
+    ProxyUserSSOUtils.removeProxyUser(cookies)
   }
 
   def removeLoginUserByAddCookie(addEmptyCookie: Cookie => Unit): Unit = {
@@ -152,5 +153,7 @@ object SSOUtils extends Logging {
   }
 
   def getSessionTimeOut(): Long = sessionTimeout
+
+
 
 }

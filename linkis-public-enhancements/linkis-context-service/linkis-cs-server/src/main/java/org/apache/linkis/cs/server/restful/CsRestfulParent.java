@@ -33,7 +33,7 @@ import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
 import org.apache.linkis.cs.server.scheduler.RestJobBuilder;
 import org.apache.linkis.cs.server.util.CsUtils;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -51,7 +51,7 @@ public interface CsRestfulParent {
         // TODO: 2020/3/3 单例
         HttpAnswerJob job = (HttpAnswerJob) new RestJobBuilder().build(getServiceType());
         HttpRequestProtocol protocol = job.getRequestProtocol();
-        protocol.setUsername(SecurityFilter.getLoginUsername(req));
+        protocol.setUsername(ModuleUserUtils.getOperationUser(req));
         protocol.setServiceMethod(method);
         protocol.setRequestObjects(objects);
         getScheduler().submit(job);

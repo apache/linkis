@@ -122,4 +122,8 @@ object ServerConfiguration extends Logging{
 
   val LINKIE_USERNAME_SUFFIX_NAME = CommonVars("linkis.username.suffix.name", "_c").getValue
 
+  val LINKIS_SERVER_SESSION_TICKETID_KEY = CommonVars("wds.linkis.session.ticket.key", "linkis_user_session_ticket_id_v1")
+
+  val LINKIS_SERVER_SESSION_PROXY_TICKETID_KEY = CommonVars("wds.linkis.session.proxy.user.ticket.key", "linkis_user_session_proxy_ticket_id_v1")
+
 }

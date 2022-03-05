@@ -20,6 +20,7 @@ package org.apache.linkis.bml.restful;
 import org.apache.linkis.bml.Entity.DownloadModel;
 import org.apache.linkis.bml.Entity.ResourceTask;
 import org.apache.linkis.bml.common.BmlProjectNoEditException;
+import org.apache.linkis.bml.common.BmlQueryFailException;
 import org.apache.linkis.bml.common.BmlServerParaErrorException;
 import org.apache.linkis.bml.conf.BmlServerConfiguration;
 import org.apache.linkis.bml.service.*;
@@ -48,8 +49,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
-
-import static org.apache.linkis.bml.restful.BmlRestfulApi.URL_PREFIX;
 
 @RequestMapping(path = "/bml")
 @RestController
@@ -262,7 +261,7 @@ public class BmlProjectRestful {
     }
 
     @RequestMapping(path = "downloadShareResource", method = RequestMethod.GET)
-    public Message downloadShareResource(
+    public void downloadShareResource(
             @RequestParam(value = "resourceId", required = false) String resourceId,
             @RequestParam(value = "version", required = false) String version,
             HttpServletResponse resp,
@@ -309,11 +308,7 @@ public class BmlProjectRestful {
                             properties);
             downloadModel.setEndTime(new Date(System.currentTimeMillis()));
             downloadModel.setState(0);
-            if (downloadResult) {
-                message = Message.ok("Download resource successfully(下载资源成功)");
-                message.setStatus(0);
-                message.setMethod(URL_PREFIX + "download");
-            } else {
+            if (!downloadResult) {
                 LOGGER.warn(
                         "ResourceId :{}, version:{} has a problem when user {} downloads the resource. The copied size is less than 0 (用户 {} 下载资源 resourceId: {}, version:{} 出现问题,复制的size小于0)",
                         user,
@@ -323,9 +318,7 @@ public class BmlProjectRestful {
                         resourceId,
                         version);
                 downloadModel.setState(1);
-                message = Message.error("Failed to download the resource(下载资源失败)");
-                message.setStatus(1);
-                message.setMethod(URL_PREFIX + "download");
+                throw new BmlQueryFailException("Failed to download the resource(下载资源失败)");
             }
             downloadService.addDownloadRecord(downloadModel);
             LOGGER.info(
@@ -373,7 +366,6 @@ public class BmlProjectRestful {
                 resourceId,
                 user,
                 resourceId);
-        return message;
     }
 
     @RequestMapping(path = "getProjectInfo", method = RequestMethod.GET)

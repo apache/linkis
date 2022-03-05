@@ -17,11 +17,22 @@
  
 package org.apache.linkis.httpclient.request
 
+import org.apache.http.HttpResponse
+import org.apache.linkis.common.utils.Logging
+
 import scala.tools.nsc.interpreter.InputStream
 
 
-trait DownloadAction {
+trait DownloadAction extends Logging {
+
+  def getResponse: HttpResponse
+
+  def setResponse(response: HttpResponse)
 
   def write(inputStream: InputStream): Unit
 
+  def write(inputStream: InputStream, response: HttpResponse): Unit = {
+    write(inputStream)
+    setResponse(response)
+  }
 }

@@ -45,7 +45,8 @@ public class QueryPersistenceManager extends PersistenceManager {
     private PersistenceEngine persistenceEngine;
     private ResultSetEngine resultSetEngine;
     private static final Logger logger = LoggerFactory.getLogger(QueryPersistenceManager.class);
-  //  private EntranceWebSocketService entranceWebSocketService; //TODO The latter version, to be removed, webSocket unified walk ListenerBus(后面的版本，要去掉，webSocket统一走ListenerBus)
+    //  private EntranceWebSocketService entranceWebSocketService; //TODO The latter version, to be
+    // removed, webSocket unified walk ListenerBus(后面的版本，要去掉，webSocket统一走ListenerBus)
 
     private CliHeartbeatMonitor cliHeartbeatMonitor;
 

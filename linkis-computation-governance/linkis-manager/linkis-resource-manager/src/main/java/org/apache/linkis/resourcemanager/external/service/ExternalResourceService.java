@@ -55,7 +55,5 @@ public interface ExternalResourceService {
             throws RMErrorException;
 
     ExternalResourceProvider chooseProvider(
-            ResourceType resourceType,
-            RMLabelContainer labelContainer)
-            throws RMErrorException;
+            ResourceType resourceType, RMLabelContainer labelContainer) throws RMErrorException;
 }

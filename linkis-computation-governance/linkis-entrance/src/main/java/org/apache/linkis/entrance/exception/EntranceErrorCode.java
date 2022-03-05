@@ -28,11 +28,11 @@ public enum EntranceErrorCode {
     INIT_JOB_ERROR(20012, "Init job error "),
     RESULT_NOT_PERSISTED_ERROR(20013, "Result not persisted error "),
     GROUP_NOT_FOUND(20014, "group not found"),
-    EXECUTION_CODE_ISNULL(20015, "execute code is null, nothing will be execute!(执行代码为空，没有任何代码会被执行)"),
+    EXECUTION_CODE_ISNULL(
+            20015, "execute code is null, nothing will be execute!(执行代码为空，没有任何代码会被执行)"),
     JOB_UPDATE_FAILED(20016, "job update failed"),
-    VARIABLE_NULL_EXCEPTION(20017, "variable is null")
+    VARIABLE_NULL_EXCEPTION(20017, "variable is null");
 
-    ;
     private int errCode;
     private String desc;
 

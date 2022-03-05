@@ -107,28 +107,41 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
     @Override
     public void init() throws EntranceErrorException {
         List<EntranceErrorException> errList = new ArrayList<>();
-        SubJobInfo[] subJobInfos = Arrays.stream(getCodeParser().parse(getJobRequest().getExecutionCode())).map(code -> {
-            SubJobInfo subJobInfo = new SubJobInfo();
-            // todo don't need whole jobRequest, but need executeUser
-            subJobInfo.setJobReq(getJobRequest());
-            subJobInfo.setStatus(SchedulerEventState.Inited().toString());
-            subJobInfo.setCode(code);
-            // persist and update jobDetail
-            SubJobDetail subJobDetail = createNewJobDetail();
-            subJobInfo.setSubJobDetail(subJobDetail);
-            subJobInfo.setProgress(0.0f);
-            subJobDetail.setExecutionContent(code);
-            subJobDetail.setJobGroupId(getJobRequest().getId());
-            subJobDetail.setStatus(SchedulerEventState.Inited().toString());
-            subJobDetail.setCreatedTime(new Date(System.currentTimeMillis()));
-            subJobDetail.setUpdatedTime(new Date(System.currentTimeMillis()));
-            try {
-                persistenceManager.createPersistenceEngine().persist(subJobInfo);
-            } catch (Exception e1) {
-                errList.add(new EntranceErrorException(EntranceErrorCode.INIT_JOB_ERROR.getErrCode(), "Init subjob error, please submit it again(任务初始化失败，请稍后重试). " + e1.getMessage()));
-            }
-            return subJobInfo;
-        }).toArray(SubJobInfo[]::new);
+        SubJobInfo[] subJobInfos =
+                Arrays.stream(getCodeParser().parse(getJobRequest().getExecutionCode()))
+                        .map(
+                                code -> {
+                                    SubJobInfo subJobInfo = new SubJobInfo();
+                                    // todo don't need whole jobRequest, but need executeUser
+                                    subJobInfo.setJobReq(getJobRequest());
+                                    subJobInfo.setStatus(SchedulerEventState.Inited().toString());
+                                    subJobInfo.setCode(code);
+                                    // persist and update jobDetail
+                                    SubJobDetail subJobDetail = createNewJobDetail();
+                                    subJobInfo.setSubJobDetail(subJobDetail);
+                                    subJobInfo.setProgress(0.0f);
+                                    subJobDetail.setExecutionContent(code);
+                                    subJobDetail.setJobGroupId(getJobRequest().getId());
+                                    subJobDetail.setStatus(SchedulerEventState.Inited().toString());
+                                    subJobDetail.setCreatedTime(
+                                            new Date(System.currentTimeMillis()));
+                                    subJobDetail.setUpdatedTime(
+                                            new Date(System.currentTimeMillis()));
+                                    try {
+                                        persistenceManager
+                                                .createPersistenceEngine()
+                                                .persist(subJobInfo);
+                                    } catch (Exception e1) {
+                                        errList.add(
+                                                new EntranceErrorException(
+                                                        EntranceErrorCode.INIT_JOB_ERROR
+                                                                .getErrCode(),
+                                                        "Init subjob error, please submit it again(任务初始化失败，请稍后重试). "
+                                                                + e1.getMessage()));
+                                    }
+                                    return subJobInfo;
+                                })
+                        .toArray(SubJobInfo[]::new);
         if (errList.size() > 0) {
             logger.error(errList.get(0).getDesc());
             throw errList.get(0);
@@ -187,7 +200,8 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
                 runtimeMapTmp.put(entry.getKey(), entry.getValue().toString());
             }
         }
-        String resultSetPathRoot = GovernanceCommonConf.RESULT_SET_STORE_PATH().getValue(runtimeMapTmp);
+        String resultSetPathRoot =
+                GovernanceCommonConf.RESULT_SET_STORE_PATH().getValue(runtimeMapTmp);
         Map<String, Object> jobMap = new HashMap<String, Object>();
         jobMap.put(RequestTask$.MODULE$.RESULT_SET_STORE_PATH(), resultSetPathRoot);
         runtimeMapOri.put(QueryParams$.MODULE$.JOB_KEY(), jobMap);
@@ -229,10 +243,11 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
             isHead = true;
             isTail = true;
         }
-        BindEngineLabel bindEngineLabel = new BindEngineLabel()
-                .setJobGroupId(getJobRequest().getId().toString())
-                .setIsJobGroupHead(String.valueOf(isHead))
-                .setIsJobGroupEnd(String.valueOf(isTail));
+        BindEngineLabel bindEngineLabel =
+                new BindEngineLabel()
+                        .setJobGroupId(getJobRequest().getId().toString())
+                        .setIsJobGroupHead(String.valueOf(isHead))
+                        .setIsJobGroupEnd(String.valueOf(isTail));
         if (isHead) {
             jobMap.put(GovernanceConstant.RESULTSET_INDEX(), 0);
             setResultSize(0);
@@ -279,16 +294,39 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
             getJobRequest().setMetrics(new HashMap<>());
         }
         Map<String, Object> metricsMap = getJobRequest().getMetrics();
-        String createTime = metricsMap.containsKey(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) ? simpleDateFormat.format(metricsMap.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME)) : "not created";
-        String scheduleTime = metricsMap.containsKey(TaskConstant.ENTRANCEJOB_SCHEDULE_TIME) ? simpleDateFormat.format(metricsMap.get(TaskConstant.ENTRANCEJOB_SCHEDULE_TIME)) : "not scheduled";
-        String startTime = metricsMap.containsKey(TaskConstant.ENTRANCEJOB_TO_ORCHESTRATOR) ? simpleDateFormat.format(metricsMap.get(TaskConstant.ENTRANCEJOB_TO_ORCHESTRATOR)) : "not submitted to orchestrator";
-        String endTime = metricsMap.containsKey(TaskConstant.ENTRANCEJOB_COMPLETE_TIME) ? simpleDateFormat.format(metricsMap.get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME)) : "on running or not started";
+        String createTime =
+                metricsMap.containsKey(TaskConstant.ENTRANCEJOB_SUBMIT_TIME)
+                        ? simpleDateFormat.format(
+                                metricsMap.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME))
+                        : "not created";
+        String scheduleTime =
+                metricsMap.containsKey(TaskConstant.ENTRANCEJOB_SCHEDULE_TIME)
+                        ? simpleDateFormat.format(
+                                metricsMap.get(TaskConstant.ENTRANCEJOB_SCHEDULE_TIME))
+                        : "not scheduled";
+        String startTime =
+                metricsMap.containsKey(TaskConstant.ENTRANCEJOB_TO_ORCHESTRATOR)
+                        ? simpleDateFormat.format(
+                                metricsMap.get(TaskConstant.ENTRANCEJOB_TO_ORCHESTRATOR))
+                        : "not submitted to orchestrator";
+        String endTime =
+                metricsMap.containsKey(TaskConstant.ENTRANCEJOB_COMPLETE_TIME)
+                        ? simpleDateFormat.format(
+                                metricsMap.get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME))
+                        : "on running or not started";
         String runTime;
-        if (metricsMap.containsKey(TaskConstant.ENTRANCEJOB_COMPLETE_TIME)){
-            runTime = Utils.msDurationToString((((Date) metricsMap.get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME))).getTime()
-            - (((Date) metricsMap.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME))).getTime());
-        }else{
-            runTime = "The task did not end normally and the usage time could not be counted.(任务并未正常结束，无法统计使用时间)";
+        if (metricsMap.containsKey(TaskConstant.ENTRANCEJOB_COMPLETE_TIME)) {
+            runTime =
+                    Utils.msDurationToString(
+                            (((Date) metricsMap.get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME)))
+                                            .getTime()
+                                    - (((Date)
+                                                    metricsMap.get(
+                                                            TaskConstant.ENTRANCEJOB_SUBMIT_TIME)))
+                                            .getTime());
+        } else {
+            runTime =
+                    "The task did not end normally and the usage time could not be counted.(任务并未正常结束，无法统计使用时间)";
         }
         String metric =
                 "Task creation time(任务创建时间): "
@@ -316,7 +354,7 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
             // todo  Do a lot of aftercare work when close(close时候要做很多的善后工作)
             if (this.getLogWriter().isDefined()) {
                 IOUtils.closeQuietly(this.getLogWriter().get());
-                //this.setLogWriter(null);
+                // this.setLogWriter(null);
             } else {
                 logger.info("job:" + jobRequest().getId() + "LogWriter is null");
             }
@@ -354,7 +392,7 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
             for (SubJobInfo subJobInfo : subJobInfoArray) {
                 progressInfoList.addAll(subJobInfo.getProgressInfoMap().values());
             }
-            return progressInfoList.toArray(new JobProgressInfo[]{});
+            return progressInfoList.toArray(new JobProgressInfo[] {});
         }
         return super.getProgressInfo();
     }

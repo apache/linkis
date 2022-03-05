@@ -17,7 +17,6 @@
 
 package org.apache.linkis.resourcemanager.external.service.impl;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import org.apache.linkis.manager.common.conf.RMConfiguration;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
@@ -43,6 +42,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -118,7 +118,8 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
                                         externalResourceRequester.requestResourceInfo(
                                                 identifier, provider),
                                 (i) ->
-                                        externalResourceRequester.reloadExternalResourceAddress(provider));
+                                        externalResourceRequester.reloadExternalResourceAddress(
+                                                provider));
         return resource;
     }
 
@@ -149,18 +150,21 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
                                         externalResourceRequester.requestAppInfo(
                                                 identifier, provider),
                                 (i) ->
-                                        externalResourceRequester.reloadExternalResourceAddress(provider));
+                                        externalResourceRequester.reloadExternalResourceAddress(
+                                                provider));
         return appInfos;
     }
 
-    private Object retry(int retryNum, Function function, Function reloadExternalAddress) throws RMErrorException {
+    private Object retry(int retryNum, Function function, Function reloadExternalAddress)
+            throws RMErrorException {
         int times = 0;
         String errorMsg = "Failed to request external resource";
         while (times < retryNum) {
             try {
                 return function.apply(null);
             } catch (Exception e) {
-                if ((JsonParseException.class.isInstance(e.getCause()) && e.getCause().getMessage().contains("This is standby RM"))
+                if ((JsonParseException.class.isInstance(e.getCause())
+                                && e.getCause().getMessage().contains("This is standby RM"))
                         || ConnectException.class.isInstance(e.getCause())) {
                     if (null != reloadExternalAddress) {
                         try {
@@ -181,7 +185,8 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
     }
 
     @Override
-    public ExternalResourceProvider chooseProvider(ResourceType resourceType, RMLabelContainer labelContainer) throws RMErrorException {
+    public ExternalResourceProvider chooseProvider(
+            ResourceType resourceType, RMLabelContainer labelContainer) throws RMErrorException {
         Label label = labelContainer.find(ClusterLabel.class);
         ClusterLabel realClusterLabel = null;
         if (label == null) {

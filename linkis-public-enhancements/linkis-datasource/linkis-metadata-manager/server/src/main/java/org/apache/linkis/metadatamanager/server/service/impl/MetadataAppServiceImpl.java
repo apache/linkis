@@ -107,6 +107,32 @@ public class MetadataAppServiceImpl implements MetadataAppService {
     }
 
     @Override
+    public Map<String, String> getPartitionPropsByDsId(
+            String dataSourceId,
+            String database,
+            String table,
+            String partition,
+            String system,
+            String userName)
+            throws ErrorException {
+        DsInfoResponse dsInfoResponse = reqToGetDataSourceInfo(dataSourceId, system, userName);
+        if (StringUtils.isNotBlank(dsInfoResponse.dsType())) {
+            return invokeMetaMethod(
+                    dsInfoResponse.dsType(),
+                    "getPartitionProps",
+                    new Object[] {
+                        dsInfoResponse.creator(),
+                        dsInfoResponse.params(),
+                        database,
+                        table,
+                        partition
+                    },
+                    Map.class);
+        }
+        return new HashMap<>();
+    }
+
+    @Override
     public Map<String, String> getTablePropsByDsId(
             String dataSourceId, String database, String table, String system, String userName)
             throws ErrorException {

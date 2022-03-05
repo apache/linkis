@@ -234,9 +234,12 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     @Override
     public PageInfo<DataSource> queryDataSourceInfoPage(DataSourceVo dataSourceVo) {
         PageHelper.startPage(dataSourceVo.getCurrentPage(), dataSourceVo.getPageSize());
-        List<DataSource> queryList = dataSourceDao.selectByPageVo(dataSourceVo);
-        PageInfo<DataSource> pageInfo = new PageInfo<>(queryList);
-        return pageInfo;
+        try {
+            List<DataSource> queryList = dataSourceDao.selectByPageVo(dataSourceVo);
+            return new PageInfo<>(queryList);
+        } finally {
+            PageHelper.clearPage();
+        }
     }
 
     @Override

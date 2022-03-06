@@ -55,43 +55,56 @@ echo "<-------------------------------->"
 
 
 
-#gateway
+#linkis-mg-gateway
 SERVER_NAME="mg-gateway"
 SERVER_IP=$GATEWAY_INSTALL_IP
 stopApp
 
-#cs-server
+#linkis-ps-cs
 SERVER_NAME="ps-cs"
 SERVER_IP=$CS_INSTALL_IP
 stopApp
 
-#ecm
+if [ "$ENABLE_METADATA_MANAGER" == "true" ]; then
+  #linkis-ps-data-source-manager
+  SERVER_NAME="ps-data-source-manager"
+  SERVER_IP=$DATASOURCE_MANAGER_IP
+  stopApp
+
+  #linkis-ps-metadatamanager
+  SERVER_NAME="ps-metadatamanager"
+  SERVER_IP=$METADATA_MANAGER_IP
+  stopApp
+fi
+
+
+#linkis-cg-engineconnmanager(ecm)
 SERVER_NAME="cg-engineconnmanager"
 SERVER_IP=$ENGINECONNMANAGER_INSTALL_IP
 stopApp
 
 
-#entrnace
+#linkis-cg-entrance
 SERVER_NAME="cg-entrance"
 SERVER_IP=$ENTRANCE_INSTALL_IP
 stopApp
 
-#ecp
+#linkis-cg-engineplugin(ecp)
 SERVER_NAME="cg-engineplugin"
 SERVER_IP=$ENGINECONN_PLUGIN_SERVER_INSTALL_IP
 stopApp
 
-#publicservice
+#linkis-ps-publicservice
 SERVER_NAME="ps-publicservice"
 SERVER_IP=$PUBLICSERVICE_INSTALL_IP
 stopApp
 
-#manager
+#linkis-cg-linkismanager
 SERVER_NAME="cg-linkismanager"
 SERVER_IP=$MANAGER_INSTALL_IP
 stopApp
 
-#eureka
+#linkis-mg-eureka
 export SERVER_NAME="mg-eureka"
 SERVER_IP=$EUREKA_INSTALL_IP
 stopApp

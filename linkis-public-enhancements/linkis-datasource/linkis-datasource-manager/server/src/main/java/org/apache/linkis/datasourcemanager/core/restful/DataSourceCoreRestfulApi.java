@@ -51,7 +51,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.*;
 
 @RestController
@@ -86,7 +85,6 @@ public class DataSourceCoreRestfulApi {
                             dataSourceRelateService.getAllDataSourceTypes();
                     return Message.ok().data("type_list", dataSourceTypes);
                 },
-                "/data-source-manager/type/all",
                 "Fail to get all types of data source[获取数据源类型列表失败]");
     }
 
@@ -98,7 +96,6 @@ public class DataSourceCoreRestfulApi {
                             dataSourceRelateService.getKeyDefinitionsByType(dataSourceTypeId);
                     return Message.ok().data("key_define", keyDefinitions);
                 },
-                "/data-source-manager/key_define/type/" + dataSourceTypeId,
                 "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
     }
 
@@ -126,7 +123,6 @@ public class DataSourceCoreRestfulApi {
                     insertDataSource(dataSource);
                     return Message.ok().data("insert_id", dataSource.getId());
                 },
-                "/data-source-manager/info/json",
                 "Fail to insert data source[新增数据源失败]");
     }
 
@@ -169,7 +165,6 @@ public class DataSourceCoreRestfulApi {
                     dataSourceInfoService.updateDataSourceInfo(dataSource);
                     return Message.ok().data("update_id", dataSourceId);
                 },
-                "/data-source-manager/info/" + dataSourceId + "/json",
                 "Fail to update data source[更新数据源失败]");
     }
 
@@ -219,7 +214,6 @@ public class DataSourceCoreRestfulApi {
 
                     return Message.ok().data("version", versionId);
                 },
-                "/data-source-manager/parameter/" + datasourceId + "/json",
                 "Fail to insert data source parameter [保存数据源参数失败]");
     }
 
@@ -249,7 +243,6 @@ public class DataSourceCoreRestfulApi {
                     }
                     return Message.ok().data("info", dataSource);
                 },
-                "/data-source-manager/info/" + dataSourceId,
                 "Fail to access data source[获取数据源信息失败]");
     }
 
@@ -273,7 +266,6 @@ public class DataSourceCoreRestfulApi {
                     }
                     return Message.ok().data("info", dataSource);
                 },
-                "/data-source-manager/info/name/" + URLEncoder.encode(dataSourceName, "UTF-8"),
                 "Fail to access data source[获取数据源信息失败]");
     }
 
@@ -306,7 +298,6 @@ public class DataSourceCoreRestfulApi {
                     }
                     return Message.ok().data("info", dataSource);
                 },
-                "/data-source-manager/info/" + dataSourceId + "/" + version,
                 "Fail to access data source[获取数据源信息失败]");
     }
 
@@ -342,7 +333,6 @@ public class DataSourceCoreRestfulApi {
                     }
                     return Message.ok().data("versions", versions);
                 },
-                "/data-source-manager/" + dataSourceId + "/versions",
                 "Fail to access data source[获取数据源信息失败]");
     }
 
@@ -367,7 +357,6 @@ public class DataSourceCoreRestfulApi {
                     }
                     return Message.ok();
                 },
-                "/data-source-manager/publish/" + dataSourceId + "/" + versionId,
                 "Fail to publish datasource[数据源版本发布失败]");
     }
 
@@ -396,7 +385,6 @@ public class DataSourceCoreRestfulApi {
                     }
                     return Message.ok().data("remove_id", removeId);
                 },
-                "/data-source-manager/info/" + dataSourceId,
                 "Fail to remove data source[删除数据源信息失败]");
     }
 
@@ -419,7 +407,6 @@ public class DataSourceCoreRestfulApi {
                     }
                     return Message.ok().data("expire_id", expireId);
                 },
-                "/data-source-manager/info/" + dataSourceId + "/expire",
                 "Fail to expire data source[数据源过期失败]");
     }
 
@@ -448,7 +435,6 @@ public class DataSourceCoreRestfulApi {
                             connectParams);
                     return Message.ok().data("connectParams", connectParams);
                 },
-                "/data-source-manager/" + dataSourceId + "/connect_params",
                 "Fail to connect data source[连接数据源失败]");
     }
 
@@ -471,9 +457,9 @@ public class DataSourceCoreRestfulApi {
                             connectParams);
                     return Message.ok().data("connectParams", connectParams);
                 },
-                "/data-source-manager/name/"
-                        + URLEncoder.encode(dataSourceName, "UTF-8")
-                        + "/connect_params",
+                //                "/data-source-manager/name/"
+                //                        + URLEncoder.encode(dataSourceName, "UTF-8")
+                //                        + "/connect_params",
                 "Fail to connect data source[连接数据源失败]");
     }
 
@@ -507,7 +493,6 @@ public class DataSourceCoreRestfulApi {
                             dataSource.getConnectParams());
                     return Message.ok().data("ok", true);
                 },
-                "/data_source/" + dataSourceId + "/" + version + "/op/connect",
                 "Fail to connect data source[连接数据源失败]");
     }
 
@@ -539,7 +524,6 @@ public class DataSourceCoreRestfulApi {
                             .data("query_list", queryList)
                             .data("totalPage", pageInfo.getTotal());
                 },
-                "/data-source-manager/info",
                 "Fail to query page of data source[查询数据源失败]");
     }
 

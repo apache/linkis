@@ -45,12 +45,6 @@ ENGINECONN_ROOT_PATH=/appcom/tmp
 ### Path to store job ResultSet:file or hdfs path
 RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis ##hdfs:// required
 
-### Provide the DB information of Hive metadata database.
-### Attention! If there are special characters like "&", they need to be enclosed in quotation marks.
-HIVE_META_URL=""
-HIVE_META_USER=""
-HIVE_META_PASSWORD=""
-
 ##YARN REST URL  spark engine required
 YARN_RESTFUL_URL=http://127.0.0.1:8088
 
@@ -74,7 +68,7 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 #SPARK_VERSION
 #SPARK_VERSION=2.4.3
 ##HIVE_VERSION
-#HIVE_VERSION=1.2.1
+#HIVE_VERSION=2.3.3
 #PYTHON_VERSION=python2
 
 ################### The install Configuration of all Micro-Services #####################
@@ -92,35 +86,44 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 EUREKA_PORT=20303
 export EUREKA_PREFER_IP=false
 
-###  Gateway install information
+##linkis-mg-gateway
 #GATEWAY_INSTALL_IP=127.0.0.1
 GATEWAY_PORT=9001
 
-### ApplicationManager
+##linkis-cg-linkismanager
 #MANAGER_INSTALL_IP=127.0.0.1
 MANAGER_PORT=9101
 
-### EngineManager
+##linkis-cg-engineconnmanager
 #ENGINECONNMANAGER_INSTALL_IP=127.0.0.1
 ENGINECONNMANAGER_PORT=9102
 
 
-
-### EnginePluginServer
+##linkis-cg-engineplugin
 #ENGINECONN_PLUGIN_SERVER_INSTALL_IP=127.0.0.1
 ENGINECONN_PLUGIN_SERVER_PORT=9103
 
-### LinkisEntrance
+##linkis-cg-entrance
 #ENTRANCE_INSTALL_IP=127.0.0.1
 ENTRANCE_PORT=9104
 
-###  publicservice
+##linkis-ps-publicservice
 #PUBLICSERVICE_INSTALL_IP=127.0.0.1
 PUBLICSERVICE_PORT=9105
 
-### cs
+##linkis-ps-cs
 #CS_INSTALL_IP=127.0.0.1
 CS_PORT=9108
+
+
+##linkis-ps-data-source-manager
+#DATASOURCE_MANAGER_IP=127.0.0.1
+DATASOURCE_MANAGER_PORT=9109
+
+##linkis-ps-metadatamanager
+#METADATA_MANAGER_IP=127.0.0.1
+METADATA_MANAGER_PORT=9110
+
 
 ########################################################################################
 
@@ -142,3 +145,6 @@ LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module
 
 ## If SKYWALKING_AGENT_PATH is set, the Linkis components will be started with Skywalking agent
 #SKYWALKING_AGENT_PATH=/appcom/config/skywalking-agent/skywalking-agent.jar
+
+#If you want to start metadata related microservices, you can set this export ENABLE_METADATA_MANAGE=true
+export ENABLE_METADATA_MANAGER=false

@@ -84,7 +84,6 @@ public class DataSourceAdminRestfulApi {
                     insertDataSourceEnv(dataSourceEnv);
                     return Message.ok().data("insert_id", dataSourceEnv.getId());
                 },
-                "/data-source-manager/env/json",
                 "Fail to insert data source environment[新增数据源环境失败]");
     }
 
@@ -96,7 +95,6 @@ public class DataSourceAdminRestfulApi {
                             dataSourceInfoService.listDataSourceEnvByType(typeId);
                     return Message.ok().data("env_list", envList);
                 },
-                "/data-source-manager/env_list/all/type/" + typeId,
                 "Fail to get data source environment list[获取数据源环境清单失败]");
     }
 
@@ -107,7 +105,6 @@ public class DataSourceAdminRestfulApi {
                     DataSourceEnv dataSourceEnv = dataSourceInfoService.getDataSourceEnv(envId);
                     return Message.ok().data("env", dataSourceEnv);
                 },
-                "/data-source-manager/env/" + envId,
                 "Fail to get data source environment[获取数据源环境信息失败]");
     }
 
@@ -128,7 +125,6 @@ public class DataSourceAdminRestfulApi {
                     }
                     return Message.ok().data("remove_id", removeId);
                 },
-                "/data-source-manager/env/" + envId,
                 "Fail to remove data source environment[删除数据源环境信息失败]");
     }
 
@@ -166,7 +162,6 @@ public class DataSourceAdminRestfulApi {
                     updateDataSourceEnv(dataSourceEnv, storedDataSourceEnv);
                     return Message.ok().data("update_id", envId);
                 },
-                "/data-source-manager/env/" + envId + "/json",
                 "Fail to update data source environment[更新数据源环境失败]");
     }
 
@@ -186,7 +181,6 @@ public class DataSourceAdminRestfulApi {
                             dataSourceInfoService.queryDataSourceEnvPage(dataSourceEnvVo);
                     return Message.ok().data("query_list", queryList);
                 },
-                "/data-source-manager/env",
                 "Fail to query page of data source environment[查询数据源环境失败]");
     }
 

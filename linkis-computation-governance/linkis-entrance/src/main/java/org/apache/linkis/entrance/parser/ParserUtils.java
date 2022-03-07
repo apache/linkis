@@ -48,16 +48,10 @@ public final class ParserUtils {
         types.put("sparksql", "sql");
     }
 
-    public static void generateLogPath(
-            JobRequest jobRequest, Map<String, String> responseQueryConfig) {
+    public static void generateLogPath(JobRequest jobRequest, Map<String, String> params) {
         String logPath = null;
         String logPathPrefix = null;
         String logMid = "log";
-        if (responseQueryConfig != null) {
-            logPathPrefix =
-                    responseQueryConfig.get(
-                            EntranceConfiguration$.MODULE$.CLOUD_CONSOLE_LOGPATH_KEY().getValue());
-        }
         if (StringUtils.isEmpty(logPathPrefix)) {
             logPathPrefix = EntranceConfiguration$.MODULE$.DEFAULT_LOGPATH_PREFIX().getValue();
         }
@@ -70,7 +64,7 @@ public final class ParserUtils {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String dateString = dateFormat.format(date);
         String creator = LabelUtil.getUserCreator(jobRequest.getLabels())._2;
-        String umUser = jobRequest.getSubmitUser();
+        String umUser = jobRequest.getExecuteUser();
         FsPath lopPrefixPath = new FsPath(logPathPrefix);
         if (StorageUtils.HDFS().equals(lopPrefixPath.getFsType())) {
             String commonLogPath = logPathPrefix + "/" + "log" + "/" + dateString + "/" + creator;

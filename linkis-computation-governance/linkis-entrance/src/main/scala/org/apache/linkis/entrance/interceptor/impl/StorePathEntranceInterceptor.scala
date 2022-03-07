@@ -17,8 +17,8 @@
 
 package org.apache.linkis.entrance.interceptor.impl
 
-import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.entrance.cache.GlobalConfigurationKeyValueCache
+import org.apache.commons.lang.time.DateFormatUtils
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
@@ -26,7 +26,6 @@ import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.server.BDPJettyServerHelper
-import org.apache.commons.lang.time.DateFormatUtils
 
 import java.util
 import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
@@ -43,15 +42,9 @@ class StorePathEntranceInterceptor extends EntranceInterceptor with Logging {
    * @return
    */
   override def apply(jobReq: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
-    val globalConfig = Utils.tryAndWarn(GlobalConfigurationKeyValueCache.getCacheMap(jobReq))
-    var parentPath: String = null
-    if (null != globalConfig && globalConfig.containsKey(GovernanceCommonConf.RESULT_SET_STORE_PATH.key))
-      parentPath = GovernanceCommonConf.RESULT_SET_STORE_PATH.getValue(globalConfig)
-    else {
-      parentPath = GovernanceCommonConf.RESULT_SET_STORE_PATH.getValue
-      if (!parentPath.endsWith("/")) parentPath += "/"
-      parentPath += jobReq.getSubmitUser
-    }
+    var parentPath: String = GovernanceCommonConf.RESULT_SET_STORE_PATH.getValue
+    if (!parentPath.endsWith("/")) parentPath += "/"
+    parentPath += jobReq.getExecuteUser
     if (!parentPath.endsWith("/")) parentPath += "/linkis/"
     else parentPath += "linkis/"
     val userCreator = LabelUtil.getUserCreator(jobReq.getLabels)

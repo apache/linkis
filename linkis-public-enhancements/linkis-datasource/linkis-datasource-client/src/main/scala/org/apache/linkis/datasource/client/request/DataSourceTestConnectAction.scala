@@ -26,7 +26,7 @@ import org.apache.linkis.httpclient.request.PutAction
 class DataSourceTestConnectAction private() extends PutAction with DataSourceAction {
   private var user: String = _
 
-  private var dataSourceId: String = _
+  private var dataSourceId: Long = _
 
   private var version: String = _
 
@@ -34,7 +34,7 @@ class DataSourceTestConnectAction private() extends PutAction with DataSourceAct
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, dataSourceId, version, "op", "connect")
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, dataSourceId.toString, version, "op", "connect")
 
   override def getRequestPayload: String = DWSHttpClient.jacksonJson.writeValueAsString(getRequestPayloads)
 }
@@ -43,7 +43,7 @@ object DataSourceTestConnectAction {
 
   class Builder private[DataSourceTestConnectAction]() {
     private var user: String = _
-    private var dataSourceId: String = _
+    private var dataSourceId: Long = _
     private var version: String = _
 
     def setUser(user: String): Builder = {
@@ -51,7 +51,7 @@ object DataSourceTestConnectAction {
       this
     }
 
-    def setDataSourceId(dataSourceId: String): Builder = {
+    def setDataSourceId(dataSourceId: Long): Builder = {
       this.dataSourceId = dataSourceId
       this
     }

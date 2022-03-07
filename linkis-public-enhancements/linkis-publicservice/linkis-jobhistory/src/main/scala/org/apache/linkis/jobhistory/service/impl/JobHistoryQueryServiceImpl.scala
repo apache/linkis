@@ -213,7 +213,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
    override def search(jobId: java.lang.Long, username: String, status: String, sDate: Date, eDate: Date, engineType: String): util.List[JobHistory] = {
-    import scala.collection.JavaConversions._
+
     val split: util.List[String] = if (status != null) status.split(",").toList else null
     jobHistoryMapper.search(jobId, username, split, sDate, eDate, engineType)
   }

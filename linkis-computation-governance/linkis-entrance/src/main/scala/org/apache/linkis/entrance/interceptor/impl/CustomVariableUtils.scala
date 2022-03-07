@@ -207,7 +207,7 @@ object CustomVariableUtils extends Logging {
     //    nameAndType("run_year_now_end") = YearType(new CustomYearType(new CustomYearType(run_today.toString, false) - 1, false, true))
     //    nameAndType("run_year_now_end_std") = YearType(new CustomYearType(new CustomYearType(run_today.toString, false) - 1, true, true))
     if (nameAndType.get("user").isEmpty) {
-      nameAndType("user") = StringType(jobRequest.getSubmitUser)
+      nameAndType("user") = StringType(jobRequest.getExecuteUser)
     }
     (true, parserVar(code, nameAndType))
   }

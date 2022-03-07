@@ -53,7 +53,7 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory) extends Execu
     markReq.setCreateService(EntranceConfiguration.DEFAULT_CREATE_SERVICE.getValue)
     // todo get default config from db
     markReq.setProperties(jobReq.getParams)
-    markReq.setUser(jobReq.getSubmitUser)
+    markReq.setUser(jobReq.getExecuteUser)
     markReq.setLabels(LabelUtils.labelsToMap(jobReq.getLabels))
     markReq
   }

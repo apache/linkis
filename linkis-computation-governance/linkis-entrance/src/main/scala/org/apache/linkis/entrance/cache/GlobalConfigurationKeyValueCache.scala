@@ -31,7 +31,7 @@ object GlobalConfigurationKeyValueCache extends
   RPCMapCache[JobRequest, String, String](Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue) {
 
   override protected def createRequest(jobReq: JobRequest): CacheableProtocol =
-    RequestQueryGlobalConfig(jobReq.getSubmitUser)
+    RequestQueryGlobalConfig(jobReq.getExecuteUser)
 
   override protected def createMap(any: Any): util.Map[String, String] = any match {
     case response: ResponseQueryConfig => response.getKeyAndValue

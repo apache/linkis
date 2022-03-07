@@ -113,7 +113,7 @@ public class QueryRestfulApi {
             @RequestParam(value = "proxyUser", required = false) String proxyUser,
             @RequestParam(value = "isAdminView", required = false) Boolean isAdminView)
             throws IOException, QueryException {
-        String username = ModuleUserUtils.getOperationUser(req, "list task ");
+        String username = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(status)) {
             status = null;
         }

@@ -17,17 +17,19 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc;
 
+import org.apache.linkis.hadoop.common.utils.KerberosUtils;
+import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration;
+
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.commons.lang.StringUtils;
-import org.apache.linkis.hadoop.common.utils.KerberosUtils;
-import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration;
+
+import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;

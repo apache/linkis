@@ -84,14 +84,17 @@ public class ConnectionManager {
     }
 
     {
-        String supportedDBValidQueryString = JDBCConfiguration.JDBC_SUPPORT_DBS_VALIDATION_QUERY().getValue();
+        String supportedDBValidQueryString =
+                JDBCConfiguration.JDBC_SUPPORT_DBS_VALIDATION_QUERY().getValue();
         String[] supportedDBsValidQuery = supportedDBValidQueryString.split(",");
         for (String supportedDBValidQuery : supportedDBsValidQuery) {
             String[] supportedDBValidQueryInfo = supportedDBValidQuery.split("=>");
             if (supportedDBValidQueryInfo.length != 2) {
-                throw new IllegalArgumentException("Illegal validation query info " + supportedDBValidQuery);
+                throw new IllegalArgumentException(
+                        "Illegal validation query info " + supportedDBValidQuery);
             }
-            this.supportedDBsValidQuery.put(supportedDBValidQueryInfo[0], supportedDBValidQueryInfo[1]);
+            this.supportedDBsValidQuery.put(
+                    supportedDBValidQueryInfo[0], supportedDBValidQueryInfo[1]);
         }
     }
 

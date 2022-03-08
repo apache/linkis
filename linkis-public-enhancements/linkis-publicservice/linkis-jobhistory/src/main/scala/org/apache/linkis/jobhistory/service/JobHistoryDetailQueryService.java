@@ -18,12 +18,8 @@
 package org.apache.linkis.jobhistory.service;
 
 import org.apache.linkis.governance.common.protocol.job.*;
-import org.apache.linkis.jobhistory.entity.QueryJobHistory;
-import org.apache.linkis.rpc.Sender;
 
-import java.sql.Date;
 import java.util.ArrayList;
-import java.util.List;
 
 public interface JobHistoryDetailQueryService {
 
